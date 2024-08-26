@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-27258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CEA195FDBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 01:18:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA82C95FDBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 01:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90DDB1C226CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 23:18:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9524C2816FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 23:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4A419D093;
-	Mon, 26 Aug 2024 23:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BD119D886;
+	Mon, 26 Aug 2024 23:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HqYf0des"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rc/zL9Tk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EC413DB90;
-	Mon, 26 Aug 2024 23:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E8580027;
+	Mon, 26 Aug 2024 23:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724714297; cv=none; b=syjeiaxAR0WrJw4H7LN8nKsXFCGL5vUXcVq6DeRxkg6I5WErKBNN/C24pkyohvYTYlUvhFFSXVJ2a9E1I2OL0M+mEq2aqdpmnkN1iRRe1i5FhHowuOPeguNg6Y/hy+3n4CMRhwJxwb2G7PSJHwaz7msTCgzyG1461tsnsbFO8rU=
+	t=1724714511; cv=none; b=AlM0nXkEEiNiZOCKrebv+U5yuY3lqpVk8rbc2AJUG1U3fhR+fa/hiu5xFjeervvXgEggkJEAyerW3wxddt7fgM3IdfG6QJQJ5BvrEFjQiQytB+NPTegFCH+ETdUQRb4PZxp4ii7vwvfIZ7C2WGqPMMKb/T5w2QMwS6XRnKSidYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724714297; c=relaxed/simple;
-	bh=1dpNJlo6lGijOrGFGNCx0R1fCSCkUOR4V6uR9R3YQf8=;
+	s=arc-20240116; t=1724714511; c=relaxed/simple;
+	bh=nrxAK3cZ51QgoEX/irFEk03z6aVmYQZR0sYAle5hMGw=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sdZ904gPbRzv7WuQYPoCu0NUh8tkCcgsugBBdwPnht3gqx0pwFzzIVvPzekNKPQlMHcgmr4PpcyEJGuPQpc1GJ3kAd/4EXlMcoRIxJ+3r3Hu91ebhY9UK3M7OM/kOxjY4whCYG2OkzfbqqT8PaxyQEo0/5AWbyVPAO5vcLFwt2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HqYf0des; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version:Content-Type; b=Hzyw23Xr3Vfl72VZc+aKvgI8VMUMG+Eb4faLY7aFN/vtaD7jmDcLKEERp8nRbtOiknZs+qZWMdQCwR8/yaLZlYeebDRPo0mRH4GVttAk7d/37rp6ryuymEWsrftDnkvqQZnKBXjXsOypRrO0af50M8iWlFZyzfdFwo0M6BTL8EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rc/zL9Tk; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724714294; x=1756250294;
+  t=1724714509; x=1756250509;
   h=from:to:cc:subject:in-reply-to:references:date:
    message-id:mime-version;
-  bh=1dpNJlo6lGijOrGFGNCx0R1fCSCkUOR4V6uR9R3YQf8=;
-  b=HqYf0deszrMq8UoxHlFgVdeYHPUcvEhWuO9sL3XAkQHC8ZV7n62OGrVm
-   JSsgVclg7zuqRlzGM1QKsYyic5knpO6gipGhi0RbMZIdYkxc/O0rj0rH/
-   JoBfuTTuDfgYe9CEyDAIrXpoCKmFcP3H41TvCHBOSSG/h3s7dX9jLM7xD
-   WGt8DXcVHvcKcqCgffVoH7KHfmuzpvs7calSX/g2t3WWKsZ9lXohalWY5
-   AL/NbhIWGDJuAoTg6FBU2cW8O2P9HSnpXoUDRhBsEJNlRwNY6nAiaCu7i
-   MPFjCuGJUTN6xYmssQoXL3JAciG4/kWPIT5D1bvrebMMruMrSWSKIUXRJ
-   g==;
-X-CSE-ConnectionGUID: M5xCa3DyT9GDPlpHbbcnhA==
-X-CSE-MsgGUID: hJY/hrHwQ8iISkXTHMID9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="22759264"
+  bh=nrxAK3cZ51QgoEX/irFEk03z6aVmYQZR0sYAle5hMGw=;
+  b=Rc/zL9TkX1FkFV1LGUuDGY9+nJgQa6RCQ5R2vSrsOrNjMVcMMuJ/PJb0
+   q6OMs7LqFlr2ZQCLV64w4JhDRmrhyydsCvA41RYStbJyLtXcqpo/5hZtH
+   Tm3sD6PsnzZKCRSB+luPj22Uv0/63wOBEeFkNUUZrN1PgBuTdkXIcIc0I
+   vERc2vGRsNxWhPWYJMCngUQkTCAT1EcYdOtwWc4vV9rkbTsuIZKB496pQ
+   qf/pAm+PGStCzHI8xmMDzxKMovm1WSWH/qX/Q0kDqZ6SUIhedxSFIL5Kd
+   3Ay339sXZxiPS02+iqQI3l2nRWnpFzCAGTTiB2ZEwsm9d7whsY8tNfw33
+   Q==;
+X-CSE-ConnectionGUID: 3bSVQ4xoQpSMhXPHeYDbGQ==
+X-CSE-MsgGUID: ynkT5hOuSVKSFv61LHiLsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="26959489"
 X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="22759264"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:18:13 -0700
-X-CSE-ConnectionGUID: mpYXIYZNSX+bE/KdPiZ84A==
-X-CSE-MsgGUID: AUU4DNqxTS6H6CUNTg1BMg==
+   d="scan'208";a="26959489"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:21:49 -0700
+X-CSE-ConnectionGUID: tbt0GUXcQrKwymXuya3qsA==
+X-CSE-MsgGUID: 6P5uqhX1QtmCh0b9VhOttg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62623183"
+   d="scan'208";a="62982573"
 Received: from mesiment-mobl2.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.223.39])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:18:10 -0700
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:21:46 -0700
 From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: brauner@kernel.org, hu1.chen@intel.com, miklos@szeredi.hu,
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com,
  malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
- lizhen.you@intel.com, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/16] overlayfs/file: Convert to cred_guard()
-In-Reply-To: <CAOQ4uxizZ0wM4LPUkAnpJT7ouJGeEa7FPUZqe9M17xL1w_gddQ@mail.gmail.com>
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 16/16] overlayfs: Remove ovl_override_creds_light()
+In-Reply-To: <CAJfpegt+M3RAQbWgfos=rk1iMu7CRhVS1Z5jHSHFpndTOb4Lgw@mail.gmail.com>
 References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-11-vinicius.gomes@intel.com>
- <CAOQ4uxizZ0wM4LPUkAnpJT7ouJGeEa7FPUZqe9M17xL1w_gddQ@mail.gmail.com>
-Date: Mon, 26 Aug 2024 16:18:07 -0700
-Message-ID: <87plpukh5c.fsf@intel.com>
+ <20240822012523.141846-17-vinicius.gomes@intel.com>
+ <CAJfpegt+M3RAQbWgfos=rk1iMu7CRhVS1Z5jHSHFpndTOb4Lgw@mail.gmail.com>
+Date: Mon, 26 Aug 2024 16:21:42 -0700
+Message-ID: <87jzg2kgzd.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,46 +79,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Amir Goldstein <amir73il@gmail.com> writes:
->> -       old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
->> -       ret = vfs_fallocate(real.file, mode, offset, len);
->> -       revert_creds_light(old_cred);
->> +       cred_scoped_guard(ovl_creds(file_inode(file)->i_sb))
->> +               ret = vfs_fallocate(real.file, mode, offset, len);
+Miklos Szeredi <miklos@szeredi.hu> writes:
+
+> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
 >>
+>> Remove the declaration of this unsafe helper.
+>>
+>> As the GUARD() helper guarantees that the cleanup will run, it is less
+>> error prone.
 >
-> I find this syntax confusing. Even though it is a valid syntax,
-> I prefer that if there is a scope we use explicit brackets for it even
-> if the scope is
-> a single line.
+> This statement is somewhat dubious.
 >
+> I suggest that unless and until the goto issue can be fixed the
+> conversion to guards is postponed.
 
-Will add the brackets.
+That's a good point. I just want to point out that the issue is only
+with the combination of the "plain" (not scoped) GUARD() statements and
+'goto'.
 
-> How about using:
->        {
->                cred_guard(ovl_creds(file_inode(file)->i_sb));
->                ret = vfs_fallocate(real.file, mode, offset, len);
->        }
->
-> It is more clear and helps averting the compiler bug(?).
-
-I prefer the scoped_cred_guard() idiom, having it spelled out sounds
-better to me. But a new block should avoid the bug as well.
+But I would be happy to postpone that, if the trouble is not worth it.
+As all the performance gains come from the conversion to the _light()
+helpers.
 
 >
-> Maybe we should just place cred_guard(ovl_creds(file_inode(file_out)->i_sb))
-> in ovl_copy_file_range()?
->
-> I don't think that the order of ovl_override_creds() vs. inode_lock()
-> really matters?
->
-
-Most probably the order should not matter. Will change this.
-
 > Thanks,
-> Amir.
-
+> Miklos
 
 Cheers,
 -- 
