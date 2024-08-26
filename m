@@ -1,147 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-27122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574FE95EC27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 10:38:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8938995EC6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 10:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 008501F21342
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 08:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFE11C21636
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 08:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D7E13C693;
-	Mon, 26 Aug 2024 08:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D2D13D8B8;
+	Mon, 26 Aug 2024 08:53:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF3773478;
-	Mon, 26 Aug 2024 08:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E10918027;
+	Mon, 26 Aug 2024 08:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724661476; cv=none; b=n3dZAyZnrI5yVYlIDQwBufphlH+vhySQk3Z5/fIcXIrAZNcCtXEiWCxbVJbYMLumD1Z14Cq8K3MHpJzFsTXLTi4O/NmIyyAqetwJ0FcPh39gG6j4+hxYA5APeZLsQc1QLh/0z4061ouMhYqMxn7HD9EhDJrkZzaem9/vZ5cv5oc=
+	t=1724662438; cv=none; b=IW9EFmca9eI8q82Kb/WrBXL/T/2xWDl0pSJ7nJ0EDjnjUqxWzKg5uFpSmeA9wWHufZUNVK0CxeRYhluASG5wSeQVLVjE9/8sAhBmZTo/du7WCWmnqI/KkMErdBV2jFr2Z220sldeYNUOj9qKz8uoTlKLYQNVk4cVlyFnoSCslxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724661476; c=relaxed/simple;
-	bh=Hr69Ny0Fx+veT36ohPJ0ZeQmzGQbKmDpmYlnHx6h2l8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sPxtaeFYbUDBU5DVez22+YDQkJyv3zgYt/ujk4TSAUBJ+1xglotXc8GZcBLxI1UxeyCtgNUNURwHfY20yaRxa8BQde2CE2T30muYVwHYbQCxEPKZfNk4Jo1U0dbo8hj0FtDcDcXnI2SEk+GLu0aP/lzDC/okdxzHaIxxOK1cmoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WskZl5slLz9sRr;
-	Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id qtZt4nGFX6b0; Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WskZl4WrZz9sRk;
-	Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 85D558B773;
-	Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id g2eIkF1jnL0E; Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
-Received: from [192.168.233.85] (PO17705.IDSI0.si.c-s.fr [192.168.233.85])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1399C8B763;
-	Mon, 26 Aug 2024 10:37:50 +0200 (CEST)
-Message-ID: <7e519ba2-0293-4320-84bf-44f930fc286d@csgroup.eu>
-Date: Mon, 26 Aug 2024 10:37:49 +0200
+	s=arc-20240116; t=1724662438; c=relaxed/simple;
+	bh=38PYgfBDOgmNZ6SWVY3f4zWpCuTfdX6HwO52RgcsoAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QR0wyKZtOhnpP4LVUjsJ3dOIz7cd/00ZjBKnrcfP5zfIQbijyizRPj1WpKSVfrRKp4c9YZRcCxhxHjJs4fHiIk8MKxWB2R1rV7ZmOLApBEWidNHlryS3jn1XvEp3c/YUBkXX0MNclPxo4qEzINlmY5lodbnFoh5SA7ckJUh9VYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b3so4712765a12.0;
+        Mon, 26 Aug 2024 01:53:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724662436; x=1725267236;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OoJCp3I2BA9KRjpRd6U32PSSLO6IqLbkxDMlM0I2ct8=;
+        b=WuhS1JunozL4UP2sGVriKvJsHoIAHUbaDaRIGGRAt5gfJp1aIwzQe6Gm3/TH8wrQv/
+         kHLLDGWz95sAs+wFWlH4rTCOcFkqjaTeAW8AgxtzYd30QwT8kS9Dyho1ky5yBUcBCNhI
+         ajBoSI6ERij/48nTQxb2Dsk7A11cH3E+WPPqGR+QO6/mCpmF2zbP8Ak8v2DH2Y93iVI+
+         cTXVcxUHqlfEmXdqrIWzimAiOT3UOBZqH5SlYjX3F3cYXpZ/geVc+XFOBVTNnfnsiVR/
+         Olj2DXeCvmMa+CRtz3cKo2La6MzB3UjyxqzLpPNHsrVlllUPO/XLyVDICrPDZHEHDgyr
+         L2iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUujoWp2p5BJjB7p+GI7gkDlwWcYcJXNuDci8YFA9niaKdvDbQ8GT84IpMn4jsllltcWj3lFEPbwdcCTWxQiw==@vger.kernel.org, AJvYcCVDCtuRPKjlJHqesxWyRSiyKLr/0f++DE13o5hfjxi8K9pvW7fMYO1U3q9C9F6kUVA4VQu4HXUp5Mz8l0jj@vger.kernel.org, AJvYcCWw13IxGUw76BF3yl0zSwWzz4eN0o/eV8+MNCqP1EnfJRlWEAMuyFd7OuUN0eMb8Ckex7p3XlywgXmFfP1o204GFsJ8EHWD@vger.kernel.org, AJvYcCXlJoAanGWTnd02cVpjNfYWj8SqxTNmvgUZJ5/zhcoWMonu9rC87Gf/E0BLipAu+FddY02+tZaw0RlvV213JA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlxhQVQEVXaJbkHVKGCPNPlNAHRzymFQREOtaOZgFwP0kEmGOE
+	RhaVLKHjMwLM6vSKpvXhWRJX9xKpotEgYA24f5lLIW2a1MBX46Gq
+X-Google-Smtp-Source: AGHT+IEGem3Ufu8tZwQeokdMzmP3eaFZqmvIML5mh8Xq54tW+A+yVSA/vBHoHsP+JHd+JsIfra7TMw==
+X-Received: by 2002:a17:907:31cb:b0:a86:b00a:7a27 with SMTP id a640c23a62f3a-a86b00a7cfbmr511137966b.60.1724662434947;
+        Mon, 26 Aug 2024 01:53:54 -0700 (PDT)
+Received: from localhost.localdomain ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f21fe18sm630636866b.29.2024.08.26.01.53.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 01:53:54 -0700 (PDT)
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] get rid of PF_MEMALLOC_NORECLAIM
+Date: Mon, 26 Aug 2024 10:47:11 +0200
+Message-ID: <20240826085347.1152675-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/17] vdso: Clean header inclusion in getrandom
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
- <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <2a081f1fff5e40f496153f8e0162fc7ec5adab2e.1724309198.git.christophe.leroy@csgroup.eu>
- <Zsw3xMoX2EI5UUs1@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <Zsw3xMoX2EI5UUs1@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+https://lore.kernel.org/all/20240812090525.80299-1-laoar.shao@gmail.com/T/#u
+attempted to build on top of PF_MEMALLOC_NORECLAIM introduced by 
+eab0af905bfc ("mm: introduce PF_MEMALLOC_NORECLAIM,
+PF_MEMALLOC_NOWARN"). This flag has been merged even though there was an
+explicit push back from the MM people - https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
 
+These two patches are dropping the flag and use an explicit GFP_NOWAIT
+allocation context in the bcache inode allocation code. This required to
+push gfp mask down to inode_init_always and its LSM hooks. I am not really
+familiar with this code so please give it a thorough review.
 
-Le 26/08/2024 à 10:07, Jason A. Donenfeld a écrit :
-> On Thu, Aug 22, 2024 at 09:13:10AM +0200, Christophe Leroy wrote:
->>   
->> +#define _PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
->> +#define _PAGE_MASK (~(_PAGE_SIZE - 1))
-> 
-> If PAGE_SIZE isn't defined at this point, why not just call it PAGE_SIZE
-> instead of _PAGE_SIZE? But if that's the case, why not put the vdso
-> definition of PAGE_SIZE into some vdso header included by this file?
-
-It was working ok on powerpc but on x86 I got:
-
-   CC      arch/x86/entry/vdso/vgetrandom.o
-In file included from arch/x86/entry/vdso/vgetrandom.c:7:
-arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:24: error: 
-"PAGE_SIZE" redefined [-Werror]
-    24 | #define PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
-       |
-In file included from ./arch/x86/include/asm/page.h:9,
-                  from ./arch/x86/include/asm/thread_info.h:12,
-                  from ./include/linux/thread_info.h:60,
-                  from ./include/linux/smp.h:118,
-                  from ./include/linux/alloc_tag.h:14,
-                  from ./include/linux/percpu.h:5,
-                  from ./arch/x86/include/asm/msr.h:15,
-                  from ./arch/x86/include/asm/vdso/gettimeofday.h:19,
-                  from ./include/vdso/datapage.h:164,
-                  from 
-arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:7,
-                  from arch/x86/entry/vdso/vgetrandom.c:7:
-./arch/x86/include/asm/page_types.h:11: note: this is the location of 
-the previous definition
-    11 | #define PAGE_SIZE  (_AC(1,UL) << PAGE_SHIFT)
-       |
-In file included from arch/x86/entry/vdso/vgetrandom.c:7:
-arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:25: error: 
-"PAGE_MASK" redefined [-Werror]
-    25 | #define PAGE_MASK (~(PAGE_SIZE - 1))
-       |
-In file included from ./arch/x86/include/asm/page.h:9,
-                  from ./arch/x86/include/asm/thread_info.h:12,
-                  from ./include/linux/thread_info.h:60,
-                  from ./include/linux/smp.h:118,
-                  from ./include/linux/alloc_tag.h:14,
-                  from ./include/linux/percpu.h:5,
-                  from ./arch/x86/include/asm/msr.h:15,
-                  from ./arch/x86/include/asm/vdso/gettimeofday.h:19,
-                  from ./include/vdso/datapage.h:164,
-                  from 
-arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:7,
-                  from arch/x86/entry/vdso/vgetrandom.c:7:
-./arch/x86/include/asm/page_types.h:12: note: this is the location of 
-the previous definition
-    12 | #define PAGE_MASK  (~(PAGE_SIZE-1))
-       |
-cc1: all warnings being treated as errors
-
-
-Christophe
 
