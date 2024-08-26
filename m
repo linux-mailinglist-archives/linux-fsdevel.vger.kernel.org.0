@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-27106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD6E95EA4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:24:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4939C95EA58
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE8C285F1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 07:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05FBB286ABE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 07:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E91D12D1E9;
-	Mon, 26 Aug 2024 07:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EAC13212B;
+	Mon, 26 Aug 2024 07:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="WRvWNHkl"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eYAnrPy3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC75222071;
-	Mon, 26 Aug 2024 07:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CACD12BEBE;
+	Mon, 26 Aug 2024 07:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657070; cv=none; b=nxf2Q6cK8XfLrPuY/3WOUsZAtmGzzkqXRnnyArbbRsW/89Cpcxm79NmCgnDu6xynJG0I6rk4Aulwa0wfe0oJtY96dgzvSCjSKYrfmAT9bh+iURoR3Xq7Lf0tISEz6apHyXMn5enu3GpYixrR1WTBckRNSphOp5cGz812emqec+0=
+	t=1724657214; cv=none; b=mMQ1Sq6W9sNAKgp6twW9C/f5AfzlZHM6tZ+jYxDWhAWitShKfik3NB/F6mOemoDUl4VQuVCRhd00WcwXi+zK40ENJSkmEpxVSzltbTu7J7mjoGWENIteS0wYDyQu/LVBremcac5K7cx4jPt7tykeW4CPYOkII8NM3Bg+vfN+8sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657070; c=relaxed/simple;
-	bh=GtFc7xCyj5PhXPTfXtXpN7lJ60XrHzRvFzuO/ud9I5k=;
+	s=arc-20240116; t=1724657214; c=relaxed/simple;
+	bh=OyH99wmO5mv066v8pAidbzidLzJx3ynfsY7lGCuhtNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdoRz52FjOtdo6sO44cyjTS86HIXhLdAvJSTV0Xn3gkznJgkwRBybmQ2MQXeu+BwtHU6/yHhhFbmJl+4Bsa+48sdmKYweX7C7F4VojbxkxHNY9c39/K+KC4msAo1JIB1bUTKR+3vA8ROUNNAmZCz+djPwjV7w5fL/fV5ZJjmwRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=WRvWNHkl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AFAC4FDFE;
-	Mon, 26 Aug 2024 07:24:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEZz/okHFVg9dtt0wEtAuD/kr0NVIs6s1dHTFkrUgEqHesRiODLUHMToHywwNGBnNXETCF3zLTKQKUpwN2dw6IkfzxowVu8T+k+/mdQ3KQum+aGo+sPwk7KoWSrIno+h7bgADqBfH/kY+FtFY/zlWx+imjNdIZViyM8J4/4YJuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eYAnrPy3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2BEC4FDF3;
+	Mon, 26 Aug 2024 07:26:51 +0000 (UTC)
 Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="WRvWNHkl"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eYAnrPy3"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724657065;
+	t=1724657210;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4XYrcqllZpLLj+sqSt83ZS4OGpB+ny/dHDpTQVKEcw0=;
-	b=WRvWNHkl3kMGmPVF84AOTFbuLtotKvO5WMOvOcjiQTO5GGt6yxvAvXfJ5NC3ABH4Au/AaH
-	lXGxAvyyPehGMUl9Mc67zHgogobiWleqNKnOoQ+iYXZybbgRN4TFpXcnAnXpsJUY6u7XVU
-	ZC6nTPIX+X1v5ceKtm4RmJaWa03cBCQ=
+	bh=w24dLA36c/d+xQ7ZOImOMWGl1II9pRfdgFurGBE0teA=;
+	b=eYAnrPy37tSdpNsOmLxnE9vtVohlmjxR65Olke78XoDNkBDbyRAPVZ8yVj5TfBfvzC93iz
+	U17fXHlJI9Qzp1HLsBACdsK6/LpPt0sDt6PMsbbcE1euKmR/4Icub25zv3gIElrlQ9wXEB
+	9UYlaBoAY1m9Yx1tf5dw5a/jQPgDNBY=
 Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9e51e9de (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 26 Aug 2024 07:24:25 +0000 (UTC)
-Date: Mon, 26 Aug 2024 09:24:16 +0200
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d127c021 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:26:50 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:26:40 +0200
 From: "Jason A. Donenfeld" <Jason@zx2c4.com>
 To: Christophe Leroy <christophe.leroy@csgroup.eu>
 Cc: Michael Ellerman <mpe@ellerman.id.au>,
@@ -65,10 +65,11 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-arch@vger.kernel.org, linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 03/17] vdso: Add __arch_get_k_vdso_rng_data()
-Message-ID: <ZswtoMbWC3se1su3@zx2c4.com>
+Subject: Re: [PATCH v2 13/17] selftests: vdso: Don't hard-code location of
+ vDSO sources
+Message-ID: <ZswuMITw0PLJJBuU@zx2c4.com>
 References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <30560b394eaa00fded11fa5bbe5f679c7ffe1714.1724309198.git.christophe.leroy@csgroup.eu>
+ <a40d859dba5654239650eec44d75ab45c98221f4.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,30 +78,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <30560b394eaa00fded11fa5bbe5f679c7ffe1714.1724309198.git.christophe.leroy@csgroup.eu>
+In-Reply-To: <a40d859dba5654239650eec44d75ab45c98221f4.1724309198.git.christophe.leroy@csgroup.eu>
 
-On Thu, Aug 22, 2024 at 09:13:11AM +0200, Christophe Leroy wrote:
-> _vdso_data is specific to x86 and __arch_get_k_vdso_data() is provided
-> so that all architectures can provide the requested pointer.
+On Thu, Aug 22, 2024 at 09:13:21AM +0200, Christophe Leroy wrote:
+> Architectures use different location for vDSO sources:
+> 	arch/mips/vdso
+> 	arch/sparc/vdso
+> 	arch/arm64/kernel/vdso
+> 	arch/riscv/kernel/vdso
+> 	arch/csky/kernel/vdso
+> 	arch/x86/um/vdso
+> 	arch/x86/entry/vdso
+> 	arch/powerpc/kernel/vdso
+> 	arch/arm/vdso
+> 	arch/loongarch/vdso
 > 
-> Do the same with _vdso_rng_data, provide __arch_get_k_vdso_rng_data()
-> and don't use x86 _vdso_rng_data directly.
-> 
-> Until now vdso/vsyscall.h was only included by time/vsyscall.c but now
-> it will also be included in char/random.c, leading to a duplicate
-> declaration of _vdso_data and _vdso_rng_data.
-> 
-> To fix this issue, move declaration in a C file. vma.c looks like the
-> most appropriate candidate. Don't need to replace the definitions in
-> vsyscall.h by declarations as declarations are already in asm/vvar.h
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
-> v2: Move x86 DEFINE_VVAR(_vdso_data) and DEFINE_VVAR(_vdso_rng_data) in vma.c
+> Don't hard-code vdso sources location in selftest Makefile,
+> instead create a vdso/ symbolic link in tools/arch/$arch/ and
+> update Makefile accordingly.
 
-Thanks, this seems sane to me. I'll apply this now to random.git as a
-fix; it should have been done this way before and is going to be a
-headache to coordinate later.
+That seems like a good way of handling it. As archs add their
+implementations, they can just add the symlink and do no more work. It
+will also make review slightly easier: if I don't see the symlink added,
+I'll know the submitter didn't actually test their chacha :-P.
+
+I'll take this into my random.git tree now as a fix.
 
 Jason
 
