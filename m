@@ -1,284 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-27212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F8195F97D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 21:16:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893AD95F98A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 21:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F042815C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 19:16:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD79A1C221D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 19:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C95A1991DB;
-	Mon, 26 Aug 2024 19:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460AE19992B;
+	Mon, 26 Aug 2024 19:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="GLBS+gR2"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L/ckrLmI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6FA8172D;
-	Mon, 26 Aug 2024 19:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3141991AB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 19:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724699781; cv=none; b=W1gzDJuyob8wa/7d+1W4sSrdeW2xR4XNSNkXwJ/JlIjPfhgeaQHvsxzaBm3O6z992T29EP05i8I/8bM3mUjoEv7gsZhXB0FqsZZRrgp9aIWqrPeFyMwfpQ9zAQHXxV6t3fEj1Npmv8CLTGSXbvZykxDQnWtMrhFTjkVr9wbAp40=
+	t=1724699887; cv=none; b=YLZ09c73zQot0SioocTSIMjmkXKwmrsBwhE08m2pDbncqU5LX377RjyNrQLheI9vzdo732DO47EXM/tMfxBN3cMYGLpHtYNUgavFwlJuAJaZrcAQuEP8gGduMHdNuBy6kNbnnUrKjg/plIEZAi/d6c/igFIn2MTHLImxg/YYAKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724699781; c=relaxed/simple;
-	bh=cx468KJ08rlmZd4wLEzE3TVaVa41wb+HjrHLhhigw4Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dt/8N3IQRT2c9pSU7vJpQDpxwMsyVkDU/5N+7lonK3TcKm6uboP4no7Mja7bYtI1g6YkOK+PsWXEQDdavcazQKmYPsfwDGBnAfkQTIvpSyt1zCSo09UeQftG3ifqokXz5ki5C7+olATc+8GtP3wfbrp9kPNLF5HhHKihgnYwEIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=GLBS+gR2; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BCB4240005;
-	Mon, 26 Aug 2024 19:16:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1724699776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w0VEqc8BYGwvTO4wyQo53jv3gizHDf8cXhhgy61CCnM=;
-	b=GLBS+gR2PhYxpT3tU4PmPMQS8KVT06tkCf4EC7RPqeaRnrP6Mhzzq9nz6URF4Yzu9S5pO4
-	1LVGpJVKcUwIEXq/vRpeYZc2QKlY8QTfDpj+NgCQVwYmPmWBnPHAgHz++iaM1jFNsTkJsv
-	NjoUXHbq/KpIy2g+lcFX3XbEj97XkKh68unmBVfRKKpAcY/KhpixH60bN/Y9Rb+xNGtfiH
-	rxysY4bypf+NbR33J+s57EfRMv6OI6DorkgMbgokVnUArnSPoJHWTCkAcBhQl/wdUSSolZ
-	3iP7hrTBZBmYal6iR9bKouTjZ/R3vSBK5HQg8GGyP30tBvcqp+tS9kwKFhwMPw==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,
-  krisman@kernel.org,  Daniel Rosenberg <drosen@google.com>,
-  smcv@collabora.com
-Subject: Re: [PATCH 1/5] tmpfs: Add casefold lookup support
-In-Reply-To: <20240823173332.281211-2-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Fri, 23 Aug 2024 14:33:28 -0300")
-References: <20240823173332.281211-1-andrealmeid@igalia.com>
-	<20240823173332.281211-2-andrealmeid@igalia.com>
-Date: Mon, 26 Aug 2024 15:16:13 -0400
-Message-ID: <871q2bf62q.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724699887; c=relaxed/simple;
+	bh=RjoCyBPuUmwzR99UmfsOy2bs4prLnpGChJPMeAZvhHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ux0n4H4fT7HkzqT+uG4TLaQpviqqHh2dBeTc61c9gSuM8Y+evmIWOKj3Mn++kTFAbvo/YTxNNYy50ZO21JDNliJYuOs0FQMygBN4uQzNnsD8b3bG3k02H8TgCZDPwijD/l8WGaJRDAbEs4iNFkusmQSIqwhBdOhyUFhWMxpIpyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L/ckrLmI; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a866cea40c4so539153166b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 12:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724699883; x=1725304683; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xiRoHNB81Ptn4aOx86M2sFOjWxRebcIeVsDZD8ofhhk=;
+        b=L/ckrLmILb4eNkczjvddaC5JtvIM8FMrKnDkzUW3dZp+/43rhA792RA6zBgMakPXQR
+         1OKKRLwEF367d/taaiZN9jlMZBnsAH72jB4S+ktiM3X9cNhEnbjBt1GFQnvzV53Qh3qY
+         /4azuEsMpnhQVOOcW0Anxs5ddN0pSi+enzQNinOUpOjPuYSisj0aYyWxKBqKuqWphx9R
+         C7cMPYdm4Xu8QtnulkcZWCSjoRLXWNgCeJhBeh/+IZYUiFujtEe8+VCgrb3krn+flvDu
+         GOX4E1rVKSS5ZYrxwzNB6bjqQfiAgmwgz/JXhoI+R6zdLm9qzcCmjduDJFDvrQLn/IuD
+         qslA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724699883; x=1725304683;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xiRoHNB81Ptn4aOx86M2sFOjWxRebcIeVsDZD8ofhhk=;
+        b=ZjrQV1+QyF3kbmMQoTYOSCEROM/iqBDQlyYBc6Z7M3QofA+5xB9roSiGjh+ad2U7cV
+         RxP4NgmIsGwwrvgHx+DMKvt7cvGea61PDXCSwuL6ln/c688LtjkUdP6VJVH+AIllU0EE
+         YicJsBUXhLb1mQGca4j/YuE614r9D0VOwtITLrgfTWwQ1Y8v4dUwMhqrcTbftuYqft/P
+         u6LzSLOM4djnQmOG7mI+M9p5Y/ubP4+8yesLDCB96dtd/UHufxIWuJn1swbWH33ikG6s
+         85DiuVWc8bXuHC6qFclADBXuqQW9KMkVlkiHchgcq2/HS/q3dJ6520TE2Djm84rtizbN
+         HjpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIaBXOqkSStz3zQJC2TFx+t/iDjrx9RYpCXgVi09w+tJMFB/NqfrKzEseloxuleyzCI1X9moVcZFLHWDpL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsDBWtYBwJthz9R5qqLbEZRwHEFqF0iOnNBt4cMo774J3+oxZ8
+	PVyw7wiFOvup9bd/I1hZXJGv7SarBXiyY1iI77P7UQrgr68hGIA9ae+nMVfhrQk=
+X-Google-Smtp-Source: AGHT+IHrIGYU84UjYCNbDb6/WHAjCYTMtATn4QzceOzz/6tH9FwHu3qL8H4cTXqk5vNmGiA77oJtcw==
+X-Received: by 2002:a17:907:f1d8:b0:a86:9ac9:f3ff with SMTP id a640c23a62f3a-a86a5198afdmr798222466b.26.1724699882968;
+        Mon, 26 Aug 2024 12:18:02 -0700 (PDT)
+Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5486a1esm10338066b.10.2024.08.26.12.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 12:18:02 -0700 (PDT)
+Date: Mon, 26 Aug 2024 21:18:01 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
+Message-ID: <ZszU6dTOJYmujMPd@tiehlicka>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-3-mhocko@kernel.org>
+ <ZsyKQSesqc5rDFmg@casper.infradead.org>
+ <ZsyyqxSv3-IbaAAO@tiehlicka>
+ <ZszAI7oYsh7FvGgg@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZszAI7oYsh7FvGgg@casper.infradead.org>
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+On Mon 26-08-24 18:49:23, Matthew Wilcox wrote:
+> On Mon, Aug 26, 2024 at 06:51:55PM +0200, Michal Hocko wrote:
+[...]
+> > If a plan revert is preferably, I will go with it.
+> 
+> There aren't any other users of PF_MEMALLOC_NOWARN and it definitely
+> seems like something you want at a callsite rather than blanket for every
+> allocation below this point.  We don't seem to have many PF_ flags left,
+> so let's not keep it around if there's no immediate plans for it.
 
-> Enable casefold lookup in tmpfs, based on the enconding defined by
-> userspace. That means that instead of comparing byte per byte a file
-> name, it compares to a case-insensitive equivalent of the Unicode
-> string.
+Good point. What about this?
+--- 
+From 923cd429d4b1a3520c93bcf46611ae74a3158865 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Mon, 26 Aug 2024 21:15:02 +0200
+Subject: [PATCH] Revert "mm: introduce PF_MEMALLOC_NORECLAIM,
+ PF_MEMALLOC_NOWARN"
 
-Hey,
->
-> * dcache handling
->
-> There's a special need when dealing with case-insensitive dentries.
-> First of all, we currently invalidated every negative casefold dentries.
-> That happens because currently VFS code has no proper support to deal
-> with that, giving that it could incorrectly reuse a previous filename
-> for a new file that has a casefold match. For instance, this could
-> happen:
->
-> $ mkdir DIR
-> $ rm -r DIR
-> $ mkdir dir
-> $ ls
-> DIR/
+This reverts commit eab0af905bfc3e9c05da2ca163d76a1513159aa4.
 
-Right. Hopefully we can lift the limitation once we get the negative
-dentry support for casefolded directories merged.
+There is no existing user of those flags. PF_MEMALLOC_NOWARN is
+dangerous because a nested allocation context can use GFP_NOFAIL which
+could cause unexpected failure. Such a code would be hard to maintain
+because it could be deeper in the call chain.
 
-> And would be perceived as inconsistency from userspace point of view,
-> because even that we match files in a case-insensitive manner, we still
-> honor whatever is the initial filename.
->
-> Along with that, tmpfs stores only the first equivalent name dentry used
-> in the dcache, preventing duplications of dentries in the dcache. The
-> d_compare() version for casefold files stores a normalized string, and
-> before every lookup, the filename is normalized as well, achieving a
-> casefolded lookup.
+PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
+that such a allocation contex is inherently unsafe if the context
+doesn't fully control all allocations called from this context.
 
-This is a bit misleading, because d_compare doesn't store
-anything. d_compare does a case-insensitive comparison of the
-filename-under-lookup with the dentry name, but it doesn't store
-filename-under-lookup.
+While PF_MEMALLOC_NOWARN is not dangerous the way PF_MEMALLOC_NORECLAIM
+is it doesn't have any user and as Matthew has pointed out we are
+running out of those flags so better reclaim it without any real users.
 
->  2 files changed, 63 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index 1d06b1e5408a..1a1196b077a6 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -73,6 +73,7 @@ struct shmem_sb_info {
->  	struct list_head shrinklist;  /* List of shinkable inodes */
->  	unsigned long shrinklist_len; /* Length of shrinklist */
->  	struct shmem_quota_limits qlimits; /* Default quota limits */
-> +	bool casefold;
+[1] https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
 
-This is redundant. you can just check sb->s_encoding !=3D NULL.
->  };
->=20=20
->  static inline struct shmem_inode_info *SHMEM_I(struct inode *inode)
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 5a77acf6ac6a..aa272c62f811 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -40,6 +40,8 @@
->  #include <linux/fs_parser.h>
->  #include <linux/swapfile.h>
->  #include <linux/iversion.h>
-> +#include <linux/unicode.h>
-> +#include <linux/parser.h>
->  #include "swap.h"
->=20=20
->  static struct vfsmount *shm_mnt __ro_after_init;
-> @@ -123,6 +125,8 @@ struct shmem_options {
->  	bool noswap;
->  	unsigned short quota_types;
->  	struct shmem_quota_limits qlimits;
-> +	struct unicode_map *encoding;
-> +	bool strict_encoding;
->  #define SHMEM_SEEN_BLOCKS 1
->  #define SHMEM_SEEN_INODES 2
->  #define SHMEM_SEEN_HUGE 4
-> @@ -3427,6 +3431,12 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode =
-*dir,
->  	if (IS_ERR(inode))
->  		return PTR_ERR(inode);
->=20=20
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (sb_has_strict_encoding(dir->i_sb) && IS_CASEFOLDED(dir) &&
-> +	    dir->i_sb->s_encoding && utf8_validate(dir->i_sb->s_encoding, &dent=
-ry->d_name))
-> +		return -EINVAL;
-> +#endif
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ include/linux/sched.h    |  4 ++--
+ include/linux/sched/mm.h | 17 ++++-------------
+ 2 files changed, 6 insertions(+), 15 deletions(-)
 
-Can you made this a helper that other filesystems can use?  Also,
-sorting it to check IS_CASEFOLDED(dir) first would be a good idea.
-
-> +
->  	error =3D simple_acl_create(dir, inode);
->  	if (error)
->  		goto out_iput;
-> @@ -3435,6 +3445,9 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *=
-dir,
->  	if (error && error !=3D -EOPNOTSUPP)
->  		goto out_iput;
->=20=20
-> +	if (IS_CASEFOLDED(dir))
-> +		d_add(dentry, NULL);
-> +
-
-I get why you do this here and elsewhere: Since we disable negative
-dentries in case-insensitive directories, you have an unhashed dentry
-here.  We can get away with it in ext4/f2fs because the next lookup will
-find the file on disk and create the dentry, but in shmem we need to
-hash it.
-
-But it is not the right way to do it. you are effectively creating a
-negative dentry to turn it positive right below. One problem with that
-is that if simple_offset_add() fails, you left an illegal negative
-dentry in a case-insensitive directory. Another, is that a parallel
-lookup will be able to find the negative dentry temporarily.  fsnotify
-will also behave weirdly.
-
-What I think you should do is call d_add once with the proper inode and
-never call d_instantiate for it.
-
-> +	/*
-> +	 * For now, VFS can't deal with case-insensitive negative dentries, so
-> +	 * we destroy them
-> +	 */
-> +	if (IS_CASEFOLDED(dir))
-> +		d_invalidate(dentry);
-> +
->  	return 0;
->  }
-
-s/destroy/invalidate/
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f8d150343d42..731ff1078c9e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1657,8 +1657,8 @@ extern struct pid *cad_pid;
+ 						 * I am cleaning dirty pages from some other bdi. */
+ #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
+ #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
+-#define PF_MEMALLOC_NORECLAIM	0x00800000	/* All allocation requests will clear __GFP_DIRECT_RECLAIM */
+-#define PF_MEMALLOC_NOWARN	0x01000000	/* All allocation requests will inherit __GFP_NOWARN */
++#define PF__HOLE__00800000	0x00800000
++#define PF__HOLE__01000000	0x01000000
+ #define PF__HOLE__02000000	0x02000000
+ #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
+ #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index 91546493c43d..07c4fde32827 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -258,25 +258,16 @@ static inline gfp_t current_gfp_context(gfp_t flags)
+ {
+ 	unsigned int pflags = READ_ONCE(current->flags);
+ 
+-	if (unlikely(pflags & (PF_MEMALLOC_NOIO |
+-			       PF_MEMALLOC_NOFS |
+-			       PF_MEMALLOC_NORECLAIM |
+-			       PF_MEMALLOC_NOWARN |
+-			       PF_MEMALLOC_PIN))) {
++	if (unlikely(pflags & (PF_MEMALLOC_NOIO | PF_MEMALLOC_NOFS | PF_MEMALLOC_PIN))) {
+ 		/*
+-		 * Stronger flags before weaker flags:
+-		 * NORECLAIM implies NOIO, which in turn implies NOFS
++		 * NOIO implies both NOIO and NOFS and it is a weaker context
++		 * so always make sure it makes precedence
+ 		 */
+-		if (pflags & PF_MEMALLOC_NORECLAIM)
+-			flags &= ~__GFP_DIRECT_RECLAIM;
+-		else if (pflags & PF_MEMALLOC_NOIO)
++		if (pflags & PF_MEMALLOC_NOIO)
+ 			flags &= ~(__GFP_IO | __GFP_FS);
+ 		else if (pflags & PF_MEMALLOC_NOFS)
+ 			flags &= ~__GFP_FS;
+ 
+-		if (pflags & PF_MEMALLOC_NOWARN)
+-			flags |= __GFP_NOWARN;
+-
+ 		if (pflags & PF_MEMALLOC_PIN)
+ 			flags &= ~__GFP_MOVABLE;
+ 	}
+-- 
+2.46.0
 
 
-> @@ -4471,6 +4497,11 @@ static void shmem_put_super(struct super_block *sb)
->  {
->  	struct shmem_sb_info *sbinfo =3D SHMEM_SB(sb);
->=20=20
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (sbinfo->casefold)
-> +		utf8_unload(sb->s_encoding);
-> +#endif
-
-if (sb->s_encoding)
-  utf8_unload(sb->s_encoding);
-
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (ctx->encoding) {
-> +		sb->s_encoding =3D ctx->encoding;
-> +		generic_set_sb_d_ops(sb);
-> +		if (ctx->strict_encoding)
-> +			sb->s_encoding_flags =3D SB_ENC_STRICT_MODE_FL;
-> +		sbinfo->casefold =3D true;
-> +	}
-> +#endif
-> +
->  #else
->  	sb->s_flags |=3D SB_NOUSER;
->  #endif
-> @@ -4704,11 +4746,28 @@ static const struct inode_operations shmem_inode_=
-operations =3D {
->  #endif
->  };
->=20=20
-> +static struct dentry *shmem_lookup(struct inode *dir, struct dentry *den=
-try, unsigned int flags)
-> +{
-> +	if (dentry->d_name.len > NAME_MAX)
-> +		return ERR_PTR(-ENAMETOOLONG);
-> +
-> +	/*
-> +	 * For now, VFS can't deal with case-insensitive negative dentries, so
-> +	 * we prevent them from being created
-> +	 */
-> +	if (IS_CASEFOLDED(dir))
-> +		return NULL;
-> +
-> +	d_add(dentry, NULL);
-> +
-> +	return NULL;
-> +}
-> +
->  static const struct inode_operations shmem_dir_inode_operations =3D {
->  #ifdef CONFIG_TMPFS
->  	.getattr	=3D shmem_getattr,
->  	.create		=3D shmem_create,
-> -	.lookup		=3D simple_lookup,
-> +	.lookup		=3D shmem_lookup,
->  	.link		=3D shmem_link,
->  	.unlink		=3D shmem_unlink,
->  	.symlink	=3D shmem_symlink,
-> @@ -4791,6 +4850,8 @@ int shmem_init_fs_context(struct fs_context *fc)
->  	ctx->uid =3D current_fsuid();
->  	ctx->gid =3D current_fsgid();
->=20=20
-> +	ctx->encoding =3D NULL;
-> +
-
-I find the organization of this patchset a bit weird because the other
-part of the init_fs_context is only done in patch 3.  Perhaps 1 and 3
-should be merged together to make review easier.
-
-
---=20
-Gabriel Krisman Bertazi
+-- 
+Michal Hocko
+SUSE Labs
 
