@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-27148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8216195F083
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:07:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46A095F089
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A76931C22101
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:07:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998B2286C01
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8068E1862B8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DB918757A;
 	Mon, 26 Aug 2024 12:05:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E55316EC19;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F4416F262;
 	Mon, 26 Aug 2024 12:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724673955; cv=none; b=uMLnJ19NV+l5Vz9CEn1U286DydaLFnYRAwN718zsaGczvU1pJxUp1SNk9avUQIoOblwjyvYuq+h7p4Tzb65DGBkEsf/rdH1l4c9ujgC0N1SoGn8Mifz8tocDyWtxRS9SJQ8z2KVGaU++liN7t/oYiSMsaSRZMCJRFNKrTHLD7e4=
+	t=1724673955; cv=none; b=OjXmkNrMXVuS+ozO7RsxhxuyHHHdHFLonUrUpEyaS6UY3QhWqyb9euqbeh/ZlAWgmMPjRrNyF6uznKZrKCpLas950OSlHNvp4ZLeeBsggWKBEjYi6dcTXSQ3icvAJQotrWPqfet38MtMQyceS+gxZJ59p9RFm80efHPc0T4NrPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724673955; c=relaxed/simple;
-	bh=mOpqRJqcTa3aFt5LqEXBMlD+dlCToV0cJhoNi8dD7Zc=;
+	bh=CulbPYR/PtGE/cSv5ghlj2I1fT+sMeoUvCx6Es+4Rko=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PlF+1XbMlpbRLh9pyzSofY9I0tW8I9+Wh6yjXOUcfdJfQ0TRbWllA6fo/0rXcaXfLU7wLkPJ99S87YSzpCW5awBgxbwISFFwoIbRwtyMw7fYEGyKH+Qrxc+2Q3bBlEuz9DWojE93Qfxm3JwEu1Y78nQTKjky647+jOsVsXMDx8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+	 MIME-Version:Content-Type; b=hZpNI3/WVrnEVkH1C6Y4N1s9/x2JSk+fBAI4r/Wh8qXHwGaI5enhT1jY2Ne+gmuK4FdifS+MlELcDzLWcrLHx83lNyP9k+87uCoFERhxerzsQapA0pzx7gHSrJEZYw3aFKnLMKJekoxl2ly3Ak0t6xSKeZ3kWjpZwgmRdBWsjVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WsqBW6Kndz2Cnfm;
-	Mon, 26 Aug 2024 20:05:39 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wsq5C2dFqzQqhb;
+	Mon, 26 Aug 2024 20:01:03 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id A83AD1A0188;
-	Mon, 26 Aug 2024 20:05:48 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id F1B301800D0;
+	Mon, 26 Aug 2024 20:05:50 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
- 2024 20:05:46 +0800
+ 2024 20:05:48 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -55,9 +55,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
 	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-Subject: [PATCH -next 12/15] fs: dcache: move the sysctl into its own file
-Date: Mon, 26 Aug 2024 20:04:46 +0800
-Message-ID: <20240826120449.1666461-13-yukaixiong@huawei.com>
+Subject: [PATCH -next 13/15] x86: vdso: move the sysctl into its own file
+Date: Mon, 26 Aug 2024 20:04:47 +0800
+Message-ID: <20240826120449.1666461-14-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240826120449.1666461-1-yukaixiong@huawei.com>
 References: <20240826120449.1666461-1-yukaixiong@huawei.com>
@@ -72,105 +72,89 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-The sysctl_vfs_cache_pressure belongs to fs/dcache.c, move it to
-its own file from kernel/sysctl.c. As a part of fs/dcache.c cleaning,
-sysctl_vfs_cache_pressure is changed to a static variable, and export
-vfs_pressure_ratio with EXPORT_SYMBOL_GPL to be used by other files.
-And move the unneeded include(linux/dcache.h).
+When CONFIG_X86_32 is defined and CONFIG_UML is not defined,
+vdso_enabled belongs to arch/x86/entry/vdso/vdso32-setup.c.
+So, move it into its own file.
+
+Before this patch, vdso_enabled was allowed to be set to
+a value exceeding 1 on x86_32 architecture. After this patch is
+applied, vdso_enabled is not permitted to set the value more than 1.
+It does not matter, because according to the function load_vdso32(),
+only vdso_enabled is set to 1, VDSO would be enabled. Other values
+all mean "disabled". The same limitation could be seen in the
+function vdso32_setup().
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 ---
- fs/dcache.c            | 21 +++++++++++++++++++--
- include/linux/dcache.h |  7 +------
- kernel/sysctl.c        |  9 ---------
- 3 files changed, 20 insertions(+), 17 deletions(-)
+ arch/x86/entry/vdso/vdso32-setup.c | 16 +++++++++++-----
+ kernel/sysctl.c                    |  8 +-------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 1af75fa68638..8717d5026cda 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -73,8 +73,13 @@
-  * If no ancestor relationship:
-  * arbitrary, since it's serialized on rename_lock
-  */
--int sysctl_vfs_cache_pressure __read_mostly = 100;
--EXPORT_SYMBOL_GPL(sysctl_vfs_cache_pressure);
-+static int sysctl_vfs_cache_pressure __read_mostly = 100;
-+
-+unsigned long vfs_pressure_ratio(unsigned long val)
-+{
-+	return mult_frac(val, sysctl_vfs_cache_pressure, 100);
-+}
-+EXPORT_SYMBOL_GPL(vfs_pressure_ratio);
+diff --git a/arch/x86/entry/vdso/vdso32-setup.c b/arch/x86/entry/vdso/vdso32-setup.c
+index 76e4e74f35b5..5a6886a006ab 100644
+--- a/arch/x86/entry/vdso/vdso32-setup.c
++++ b/arch/x86/entry/vdso/vdso32-setup.c
+@@ -51,15 +51,17 @@ __setup("vdso32=", vdso32_setup);
+ __setup_param("vdso=", vdso_setup, vdso32_setup, 0);
+ #endif
  
- __cacheline_aligned_in_smp DEFINE_SEQLOCK(rename_lock);
+-#ifdef CONFIG_X86_64
  
-@@ -196,8 +201,20 @@ static struct ctl_table fs_dcache_sysctls[] = {
- 	},
- };
+ #ifdef CONFIG_SYSCTL
+-/* Register vsyscall32 into the ABI table */
+ #include <linux/sysctl.h>
  
-+static struct ctl_table vm_dcache_sysctls[] = {
-+	{
-+		.procname	= "vfs_cache_pressure",
-+		.data		= &sysctl_vfs_cache_pressure,
-+		.maxlen		= sizeof(sysctl_vfs_cache_pressure),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+	},
-+};
-+
- static int __init init_fs_dcache_sysctls(void)
+-static struct ctl_table abi_table2[] = {
++static struct ctl_table vdso_table[] = {
+ 	{
++#ifdef CONFIG_X86_64
+ 		.procname	= "vsyscall32",
++#elif (defined(CONFIG_X86_32) && !defined(CONFIG_UML))
++		.procname	= "vdso_enabled",
++#endif
+ 		.data		= &vdso32_enabled,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+@@ -71,10 +73,14 @@ static struct ctl_table abi_table2[] = {
+ 
+ static __init int ia32_binfmt_init(void)
  {
-+	register_sysctl_init("vm", vm_dcache_sysctls);
- 	register_sysctl_init("fs", fs_dcache_sysctls);
+-	register_sysctl("abi", abi_table2);
++#ifdef CONFIG_X86_64
++	/* Register vsyscall32 into the ABI table */
++	register_sysctl("abi", vdso_table);
++#elif (defined(CONFIG_X86_32) && !defined(CONFIG_UML))
++	register_sysctl_init("vm", vdso_table);
++#endif
  	return 0;
  }
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index bff956f7b2b9..c81c2e9e13df 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -508,12 +508,7 @@ static inline int simple_positive(const struct dentry *dentry)
- 	return d_really_is_positive(dentry) && !d_unhashed(dentry);
- }
+ __initcall(ia32_binfmt_init);
+ #endif /* CONFIG_SYSCTL */
  
--extern int sysctl_vfs_cache_pressure;
--
--static inline unsigned long vfs_pressure_ratio(unsigned long val)
--{
--	return mult_frac(val, sysctl_vfs_cache_pressure, 100);
--}
-+unsigned long vfs_pressure_ratio(unsigned long val);
- 
- /**
-  * d_inode - Get the actual inode of this dentry
+-#endif	/* CONFIG_X86_64 */
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index d638a1bac9af..6f03fc749794 100644
+index 6f03fc749794..24617be93119 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -46,7 +46,6 @@
- #include <linux/key.h>
- #include <linux/times.h>
- #include <linux/limits.h>
--#include <linux/dcache.h>
- #include <linux/syscalls.h>
- #include <linux/nfs_fs.h>
- #include <linux/acpi.h>
-@@ -2024,14 +2023,6 @@ static struct ctl_table kern_table[] = {
+@@ -2023,17 +2023,11 @@ static struct ctl_table kern_table[] = {
  };
  
  static struct ctl_table vm_table[] = {
--	{
--		.procname	= "vfs_cache_pressure",
--		.data		= &sysctl_vfs_cache_pressure,
--		.maxlen		= sizeof(sysctl_vfs_cache_pressure),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--	},
- #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
-    (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
+-#if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
+-   (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
++#if defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL)
  	{
+ 		.procname	= "vdso_enabled",
+-#ifdef CONFIG_X86_32
+-		.data		= &vdso32_enabled,
+-		.maxlen		= sizeof(vdso32_enabled),
+-#else
+ 		.data		= &vdso_enabled,
+ 		.maxlen		= sizeof(vdso_enabled),
+-#endif
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 		.extra1		= SYSCTL_ZERO,
 -- 
 2.25.1
 
