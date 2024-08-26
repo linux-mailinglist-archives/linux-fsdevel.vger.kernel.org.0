@@ -1,60 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-27217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545B495F9CE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 21:40:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B3295F9D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 21:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870B51C20FFE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 19:40:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E880E1F22AC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 19:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2B919995D;
-	Mon, 26 Aug 2024 19:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E38A199245;
+	Mon, 26 Aug 2024 19:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V8cvKRlV"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oThpUoU5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2560B1990CD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 19:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4BB80034;
+	Mon, 26 Aug 2024 19:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724701196; cv=none; b=DDIVZG8wlBavVWT+9rYm5yw70Evk85wiT6DJfovBiPuXqT5AXhgK7uycaeGnEOOLEocZIYV3dQAPDDaob3iPte37R0J2lM3zw/qb/QLmx2SSVwSmPccc2O4IaIF0I+iXgWEia3OnWay9+ZukUdgyIvZV61uXjWz6ii/BqsBbDaU=
+	t=1724701309; cv=none; b=VR/hGsnr8X3EsEpvtoe1sIqDODAULDxlHHg+uYtK1R0soea2AvYX1JAn+4uQWy1Uos8OgwWdho2/piPy3BK18BPYagYkrTow0f3G5ZFHZi6gsXBJeG4WrIsjmPetx4gnnPANNeRR+q6hjov/aqr0Rk1mDkkBZliPuhIfayelwP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724701196; c=relaxed/simple;
-	bh=XEulr65+yh66N3PPWR+wg8huhyytrpHFe0zJ+ZFzCnI=;
+	s=arc-20240116; t=1724701309; c=relaxed/simple;
+	bh=rQg+bs4LSYTBr14ItbIkLw2k8hVj9LRq9zs7I9326GI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XCRlonq+09BrJrzMyYIpyhTfvqZs1Ixv2pmqJ1wsMxXPhGsuDjNfCYu5cyja/i0wOAjE2dmzyG/Nz7J+XwakZoXonkmfg9gPvKqmaxtqdoHGWJiU6c2UzV+LZmxtPGmACZ31w1jyb0OlfWhijkcKS0pt9b9/xUWHbDO9Q6/CAsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V8cvKRlV; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 26 Aug 2024 15:39:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724701193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8E/6L+ulNsRyaHYOTIlLjfcvhy62fxlcDeAIHJ8v4Ks=;
-	b=V8cvKRlVtBhQKeYuIHdYYCUBDHWBs7l5h7bwYMUlck2FF7vO0I70RWpj0RHO9D1SxfpY/R
-	aOaZ+6ve08kYIPyePAQplsSQyHKdzdyPJjqJpH8sea54fRE8DsES3fVtNbNeYK1C5R627I
-	HJLBFnfng6C5djJJ8e4kAR/ovwX0ymE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=esgKde4vKKBrTStcjkJOUkU8jTx8Z5pHzqpwX/YAYuPQbE5nRy3qOtSYMt7NzHOQUz/Z3VPskiJSCuOXh257zyfLFSf/bTiw0+1fz4YMOHIJjDEUyG/WkRgvuVL6iHXjhDSHjJxnKLby3urpMunw8RInQe/gmw9bGNp4LqrbVtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oThpUoU5; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4GhdGhSKm/X6M79tv+fW2tzMUeqm3WW+Lfyk9i49dck=; b=oThpUoU5vYTVKD5qeQ01khcag6
+	iKPwDcC1WirdPD97QM6WSkOuTlTTSE1wD+paQpI9tCvtzZhoy9453c5qgEt0deqKYTeTGey7YfUwq
+	SG/I4AAetAEiE/WRrar65awouCdeW8kThmqOknroHf/zviskvBnfbzaMZeo/iZJvlaqS4d2X1iGvO
+	Wu/Rr4XjNT2MRrsyQ3FJP6PMvdoOftPdvgA1Kp2ZLcM9qYV9JahuHKrdhVogufDU6UdmF6uVg3dmS
+	tc4e+I5AWpqnNMznPbJ8qI+N9sCl9gk4/heib5YctZCBpEEQRUArbfbIWQen6SEgDq3RKWODqoyyE
+	0J85j6DA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sifaw-0000000FvjY-0toK;
+	Mon, 26 Aug 2024 19:41:42 +0000
+Date: Mon, 26 Aug 2024 20:41:42 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
 Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+Message-ID: <Zszado75SnObVKG5@casper.infradead.org>
 References: <20240826085347.1152675-1-mhocko@kernel.org>
  <20240826085347.1152675-2-mhocko@kernel.org>
+ <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,33 +70,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
 
-On Mon, Aug 26, 2024 at 10:47:12AM GMT, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+On Mon, Aug 26, 2024 at 03:39:47PM -0400, Kent Overstreet wrote:
+> Given the amount of plumbing required here, it's clear that passing gfp
+> flags is the less safe way of doing it, and this really does belong in
+> the allocation context.
 > 
-> bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
-> inode to achieve GFP_NOWAIT semantic while holding locks. If this
-> allocation fails it will drop locks and use GFP_NOFS allocation context.
-> 
-> We would like to drop PF_MEMALLOC_NORECLAIM because it is really
-> dangerous to use if the caller doesn't control the full call chain with
-> this flag set. E.g. if any of the function down the chain needed
-> GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
-> cause unexpected failure.
-> 
-> While this is not the case in this particular case using the scoped gfp
-> semantic is not really needed bacause we can easily pus the allocation
-> context down the chain without too much clutter.
+> Failure to pass gfp flags correctly (which we know is something that
+> happens today, e.g. vmalloc -> pte allocation) means you're introducing
+> a deadlock.
 
-yeah, eesh, nack.
-
-Given the amount of plumbing required here, it's clear that passing gfp
-flags is the less safe way of doing it, and this really does belong in
-the allocation context.
-
-Failure to pass gfp flags correctly (which we know is something that
-happens today, e.g. vmalloc -> pte allocation) means you're introducing
-a deadlock.
+The problem with vmalloc is that the page table allocation _doesn't_
+take a GFP parameter.
 
