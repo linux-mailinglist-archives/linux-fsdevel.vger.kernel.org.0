@@ -1,56 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-27382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA986960FEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 17:04:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DA1961017
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 17:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 877B3286CFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 15:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DCD1F23E31
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 15:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25B21C6F71;
-	Tue, 27 Aug 2024 15:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162771C86EA;
+	Tue, 27 Aug 2024 15:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DYISb620"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eQjOz17B"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BE61C8FBF;
-	Tue, 27 Aug 2024 15:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC041B4C4E;
+	Tue, 27 Aug 2024 15:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770979; cv=none; b=GjkPsszy7O05HukOFV5yy3/5emLfGBIV+/45n/e6w621akDIdJeWjJ1/f8BFudyTKFiBcEgxckPA3sRr7gkOBsvyZcV6vA6BLAbdf22KFTvGeHJddr/ezS+hqi/EqSlqLLC7b8eBkkRW8pDC8aXvHuJ3ivW1wBcyiXZ8BtcbkAM=
+	t=1724771089; cv=none; b=QrXcFp0n5zRpRzNC+y/UNr1rp0kKHyiXpfjVlX3IeBMev64bvgPQIvpSVhoe5egxi5Z/Jh5kufv2/H58fpjI6fLx2tOUHr4CRhRkLvk4HPYAdryWeq9eLovrsFO4sUD2P6yPasiN493GKtFkoWkWGuX+7nG8n0nt4Pu9xqYK3FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770979; c=relaxed/simple;
-	bh=DGeuAlNpdqPKNQUtwqeFawFV/F1pn/+Qt9ZlH0sCdTI=;
+	s=arc-20240116; t=1724771089; c=relaxed/simple;
+	bh=wDYW8gW0iFD4ucJiSk3Ju6zNrQakk8Q6mFCoh2H18vI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qio21Qzx7ImX0r4HAsgVmoaxRPpLHe56AqijJc3EdX8RWgQPR2vt66EGLlxIObcKJM9A/m6QUmtH5toegfn2yP4xaU3reRaBy8+/pBUgG4gbAyNUl5zSP+SkmajBak5NhxP/K/R7AegACWNTYyNqv1ws7GulfU68OkhsokOmtqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DYISb620; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53E5AC61049;
-	Tue, 27 Aug 2024 15:02:58 +0000 (UTC)
+	 MIME-Version; b=QfuQ8FyABtTiyVqG6mMGNJIkSD0ifg8U3ha5DD9t9k9JM1YH9SLifUtcxl41BrHfsG9kAIMvYVanP/B/RRuQQPo+rwT5DIOhm9YVmeBvgRE+fZCQor2VKWOEPnZhBnZs7eLXcMhXMKyHkg7v9SgbkS432Pc/uv60psQhBelsoLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eQjOz17B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B375C6105B;
+	Tue, 27 Aug 2024 15:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724770978;
-	bh=DGeuAlNpdqPKNQUtwqeFawFV/F1pn/+Qt9ZlH0sCdTI=;
+	s=korg; t=1724771089;
+	bh=wDYW8gW0iFD4ucJiSk3Ju6zNrQakk8Q6mFCoh2H18vI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DYISb620C9sHPQtx2F4Q3mMdld0DjQb+PFFezSWZB/DU+KoGy51Uv5YXiTU89nef1
-	 vRuwJZtZefQrBpSQBezQSUgNNpsa/z28SHWoZ1ES1JTyLed92D2/CeuEX6fzbBMNSc
-	 ifKnip7LKJFRm3VxIWy4hCJwn0a/BFissHh1w11M=
+	b=eQjOz17Bu6fuo1pppSU9uwYM2mRL/QC6yAZDV1PpUywYl2OaRSLOyWaS9sP8AIho5
+	 A73XRUm5zTZPtdjW2poQUXvBUTo074gWdqIW4FQC/a8URx9RVXX41lyAEm3zaYmAUJ
+	 bPwCS8VkPR6+05dwBTzp8K2RCmmlAHc5M1MrCWXg=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Max Kellermann <max.kellermann@ionos.com>,
 	David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	v9fs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	ceph-devel@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
 	netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 6.10 050/273] fs/netfs/fscache_cookie: add missing "n_accesses" check
-Date: Tue, 27 Aug 2024 16:36:14 +0200
-Message-ID: <20240827143835.303285388@linuxfoundation.org>
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.10 083/273] 9p: Fix DIO read through netfs
+Date: Tue, 27 Aug 2024 16:36:47 +0200
+Message-ID: <20240827143836.571273512@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240827143833.371588371@linuxfoundation.org>
 References: <20240827143833.371588371@linuxfoundation.org>
@@ -69,115 +82,194 @@ Content-Transfer-Encoding: 8bit
 
 ------------------
 
-From: Max Kellermann <max.kellermann@ionos.com>
+From: Dominique Martinet <asmadeus@codewreck.org>
 
-commit f71aa06398aabc2e3eaac25acdf3d62e0094ba70 upstream.
+[ Upstream commit e3786b29c54cdae3490b07180a54e2461f42144c ]
 
-This fixes a NULL pointer dereference bug due to a data race which
-looks like this:
+If a program is watching a file on a 9p mount, it won't see any change in
+size if the file being exported by the server is changed directly in the
+source filesystem, presumably because 9p doesn't have change notifications,
+and because netfs skips the reads if the file is empty.
 
-  BUG: kernel NULL pointer dereference, address: 0000000000000008
-  #PF: supervisor read access in kernel mode
-  #PF: error_code(0x0000) - not-present page
-  PGD 0 P4D 0
-  Oops: 0000 [#1] SMP PTI
-  CPU: 33 PID: 16573 Comm: kworker/u97:799 Not tainted 6.8.7-cm4all1-hp+ #43
-  Hardware name: HP ProLiant DL380 Gen9/ProLiant DL380 Gen9, BIOS P89 10/17/2018
-  Workqueue: events_unbound netfs_rreq_write_to_cache_work
-  RIP: 0010:cachefiles_prepare_write+0x30/0xa0
-  Code: 57 41 56 45 89 ce 41 55 49 89 cd 41 54 49 89 d4 55 53 48 89 fb 48 83 ec 08 48 8b 47 08 48 83 7f 10 00 48 89 34 24 48 8b 68 20 <48> 8b 45 08 4c 8b 38 74 45 49 8b 7f 50 e8 4e a9 b0 ff 48 8b 73 10
-  RSP: 0018:ffffb4e78113bde0 EFLAGS: 00010286
-  RAX: ffff976126be6d10 RBX: ffff97615cdb8438 RCX: 0000000000020000
-  RDX: ffff97605e6c4c68 RSI: ffff97605e6c4c60 RDI: ffff97615cdb8438
-  RBP: 0000000000000000 R08: 0000000000278333 R09: 0000000000000001
-  R10: ffff97605e6c4600 R11: 0000000000000001 R12: ffff97605e6c4c68
-  R13: 0000000000020000 R14: 0000000000000001 R15: ffff976064fe2c00
-  FS:  0000000000000000(0000) GS:ffff9776dfd40000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000008 CR3: 000000005942c002 CR4: 00000000001706f0
-  Call Trace:
-   <TASK>
-   ? __die+0x1f/0x70
-   ? page_fault_oops+0x15d/0x440
-   ? search_module_extables+0xe/0x40
-   ? fixup_exception+0x22/0x2f0
-   ? exc_page_fault+0x5f/0x100
-   ? asm_exc_page_fault+0x22/0x30
-   ? cachefiles_prepare_write+0x30/0xa0
-   netfs_rreq_write_to_cache_work+0x135/0x2e0
-   process_one_work+0x137/0x2c0
-   worker_thread+0x2e9/0x400
-   ? __pfx_worker_thread+0x10/0x10
-   kthread+0xcc/0x100
-   ? __pfx_kthread+0x10/0x10
-   ret_from_fork+0x30/0x50
-   ? __pfx_kthread+0x10/0x10
-   ret_from_fork_asm+0x1b/0x30
-   </TASK>
-  Modules linked in:
-  CR2: 0000000000000008
-  ---[ end trace 0000000000000000 ]---
+Fix this by attempting to read the full size specified when a DIO read is
+requested (such as when 9p is operating in unbuffered mode) and dealing
+with a short read if the EOF was less than the expected read.
 
-This happened because fscache_cookie_state_machine() was slow and was
-still running while another process invoked fscache_unuse_cookie();
-this led to a fscache_cookie_lru_do_one() call, setting the
-FSCACHE_COOKIE_DO_LRU_DISCARD flag, which was picked up by
-fscache_cookie_state_machine(), withdrawing the cookie via
-cachefiles_withdraw_cookie(), clearing cookie->cache_priv.
+To make this work, filesystems using netfslib must not set
+NETFS_SREQ_CLEAR_TAIL if performing a DIO read where that read hit the EOF.
+I don't want to mandatorily clear this flag in netfslib for DIO because,
+say, ceph might make a read from an object that is not completely filled,
+but does not reside at the end of file - and so we need to clear the
+excess.
 
-At the same time, yet another process invoked
-cachefiles_prepare_write(), which found a NULL pointer in this code
-line:
+This can be tested by watching an empty file over 9p within a VM (such as
+in the ktest framework):
 
-  struct cachefiles_object *object = cachefiles_cres_object(cres);
+        while true; do read content; if [ -n "$content" ]; then echo $content; break; fi; done < /host/tmp/foo
 
-The next line crashes, obviously:
+then writing something into the empty file.  The watcher should immediately
+display the file content and break out of the loop.  Without this fix, it
+remains in the loop indefinitely.
 
-  struct cachefiles_cache *cache = object->volume->cache;
-
-During cachefiles_prepare_write(), the "n_accesses" counter is
-non-zero (via fscache_begin_operation()).  The cookie must not be
-withdrawn until it drops to zero.
-
-The counter is checked by fscache_cookie_state_machine() before
-switching to FSCACHE_COOKIE_STATE_RELINQUISHING and
-FSCACHE_COOKIE_STATE_WITHDRAWING (in "case
-FSCACHE_COOKIE_STATE_FAILED"), but not for
-FSCACHE_COOKIE_STATE_LRU_DISCARDING ("case
-FSCACHE_COOKIE_STATE_ACTIVE").
-
-This patch adds the missing check.  With a non-zero access counter,
-the function returns and the next fscache_end_cookie_access() call
-will queue another fscache_cookie_state_machine() call to handle the
-still-pending FSCACHE_COOKIE_DO_LRU_DISCARD.
-
-Fixes: 12bb21a29c19 ("fscache: Implement cookie user counting and resource pinning")
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Fixes: 80105ed2fd27 ("9p: Use netfslib read/write_iter")
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218916
 Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/20240729162002.3436763-2-dhowells@redhat.com
-cc: Jeff Layton <jlayton@kernel.org>
+Link: https://lore.kernel.org/r/1229195.1723211769@warthog.procyon.org.uk
+cc: Eric Van Hensbergen <ericvh@kernel.org>
+cc: Latchesar Ionkov <lucho@ionkov.net>
+cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+cc: v9fs@lists.linux.dev
+cc: linux-afs@lists.infradead.org
+cc: ceph-devel@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
 cc: netfs@lists.linux.dev
 cc: linux-fsdevel@vger.kernel.org
-cc: stable@vger.kernel.org
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/fscache_cookie.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/9p/vfs_addr.c     |  3 ++-
+ fs/afs/file.c        |  3 ++-
+ fs/ceph/addr.c       |  6 ++++--
+ fs/netfs/io.c        | 17 +++++++++++------
+ fs/nfs/fscache.c     |  3 ++-
+ fs/smb/client/file.c |  3 ++-
+ 6 files changed, 23 insertions(+), 12 deletions(-)
 
---- a/fs/netfs/fscache_cookie.c
-+++ b/fs/netfs/fscache_cookie.c
-@@ -741,6 +741,10 @@ again_locked:
- 			spin_lock(&cookie->lock);
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index a97ceb105cd8d..24fdc74caeba4 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -75,7 +75,8 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
+ 
+ 	/* if we just extended the file size, any portion not in
+ 	 * cache won't be on server and is zeroes */
+-	__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++	if (subreq->rreq->origin != NETFS_DIO_READ)
++		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 
+ 	netfs_subreq_terminated(subreq, err ?: total, false);
+ }
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index c3f0c45ae9a9b..ec1be0091fdb5 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -242,7 +242,8 @@ static void afs_fetch_data_notify(struct afs_operation *op)
+ 
+ 	req->error = error;
+ 	if (subreq) {
+-		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++		if (subreq->rreq->origin != NETFS_DIO_READ)
++			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 		netfs_subreq_terminated(subreq, error ?: req->actual_len, false);
+ 		req->subreq = NULL;
+ 	} else if (req->done) {
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 73b5a07bf94de..d2194022132ec 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -246,7 +246,8 @@ static void finish_netfs_read(struct ceph_osd_request *req)
+ 	if (err >= 0) {
+ 		if (sparse && err > 0)
+ 			err = ceph_sparse_ext_map_end(op);
+-		if (err < subreq->len)
++		if (err < subreq->len &&
++		    subreq->rreq->origin != NETFS_DIO_READ)
+ 			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 		if (IS_ENCRYPTED(inode) && err > 0) {
+ 			err = ceph_fscrypt_decrypt_extents(inode,
+@@ -282,7 +283,8 @@ static bool ceph_netfs_issue_op_inline(struct netfs_io_subrequest *subreq)
+ 	size_t len;
+ 	int mode;
+ 
+-	__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++	if (rreq->origin != NETFS_DIO_READ)
++		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 	__clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
+ 
+ 	if (subreq->start >= inode->i_size)
+diff --git a/fs/netfs/io.c b/fs/netfs/io.c
+index f3abc5dfdbc0c..19ec6990dc91e 100644
+--- a/fs/netfs/io.c
++++ b/fs/netfs/io.c
+@@ -530,7 +530,8 @@ void netfs_subreq_terminated(struct netfs_io_subrequest *subreq,
+ 
+ 	if (transferred_or_error == 0) {
+ 		if (__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags)) {
+-			subreq->error = -ENODATA;
++			if (rreq->origin != NETFS_DIO_READ)
++				subreq->error = -ENODATA;
+ 			goto failed;
  		}
- 		if (test_bit(FSCACHE_COOKIE_DO_LRU_DISCARD, &cookie->flags)) {
-+			if (atomic_read(&cookie->n_accesses) != 0)
-+				/* still being accessed: postpone it */
-+				break;
+ 	} else {
+@@ -601,9 +602,14 @@ netfs_rreq_prepare_read(struct netfs_io_request *rreq,
+ 			}
+ 			if (subreq->len > ictx->zero_point - subreq->start)
+ 				subreq->len = ictx->zero_point - subreq->start;
 +
- 			__fscache_set_cookie_state(cookie,
- 						   FSCACHE_COOKIE_STATE_LRU_DISCARDING);
- 			wake = true;
++			/* We limit buffered reads to the EOF, but let the
++			 * server deal with larger-than-EOF DIO/unbuffered
++			 * reads.
++			 */
++			if (subreq->len > rreq->i_size - subreq->start)
++				subreq->len = rreq->i_size - subreq->start;
+ 		}
+-		if (subreq->len > rreq->i_size - subreq->start)
+-			subreq->len = rreq->i_size - subreq->start;
+ 		if (rreq->rsize && subreq->len > rreq->rsize)
+ 			subreq->len = rreq->rsize;
+ 
+@@ -739,11 +745,10 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
+ 	do {
+ 		kdebug("submit %llx + %llx >= %llx",
+ 		       rreq->start, rreq->submitted, rreq->i_size);
+-		if (rreq->origin == NETFS_DIO_READ &&
+-		    rreq->start + rreq->submitted >= rreq->i_size)
+-			break;
+ 		if (!netfs_rreq_submit_slice(rreq, &io_iter))
+ 			break;
++		if (test_bit(NETFS_SREQ_NO_PROGRESS, &rreq->flags))
++			break;
+ 		if (test_bit(NETFS_RREQ_BLOCKED, &rreq->flags) &&
+ 		    test_bit(NETFS_RREQ_NONBLOCK, &rreq->flags))
+ 			break;
+diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+index ddc1ee0319554..bc20ba50283c8 100644
+--- a/fs/nfs/fscache.c
++++ b/fs/nfs/fscache.c
+@@ -361,7 +361,8 @@ void nfs_netfs_read_completion(struct nfs_pgio_header *hdr)
+ 		return;
+ 
+ 	sreq = netfs->sreq;
+-	if (test_bit(NFS_IOHDR_EOF, &hdr->flags))
++	if (test_bit(NFS_IOHDR_EOF, &hdr->flags) &&
++	    sreq->rreq->origin != NETFS_DIO_READ)
+ 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &sreq->flags);
+ 
+ 	if (hdr->error)
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index 2e3c4d0277dbb..9e4f4e67768b9 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -196,7 +196,8 @@ static void cifs_req_issue_read(struct netfs_io_subrequest *subreq)
+ 			goto out;
+ 	}
+ 
+-	__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++	if (subreq->rreq->origin != NETFS_DIO_READ)
++		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 
+ 	rc = rdata->server->ops->async_readv(rdata);
+ out:
+-- 
+2.43.0
+
 
 
 
