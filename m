@@ -1,147 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-27340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99261960650
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 11:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 726AF96068A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 12:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C3D281A0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 09:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A1812887B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 10:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D1419D892;
-	Tue, 27 Aug 2024 09:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBE919B3EC;
+	Tue, 27 Aug 2024 10:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="lYJCSq4x"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="anJzIiLA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Cga5pB6q";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="anJzIiLA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Cga5pB6q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A5C82D91;
-	Tue, 27 Aug 2024 09:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8F5364A9;
+	Tue, 27 Aug 2024 10:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752498; cv=none; b=IneYrDEfKhwH2Kdf1pPAr2DSC5WidfmAe7pD403DszKZMIq+5xJabDgUHCobQW5OOR/sWTgOp+sNsZNmLYaZHx+mgJo9fP+G3rW7z88NTkT9DJfoLwmMKiq1th5yXHw1xyq54yWzePM8nmp3YGBKCaW0cNt66Dh6PbQ0nS2E2DA=
+	t=1724752849; cv=none; b=J9f1hUbPgbYNtI9nwXlgQ3Kx5cLVIbGUzDJUySq3tXHYosTNn94sVgBqncWKKkpGuNYZJE/VdypcB/nB1annikQm4VpmmZKbfXK6wVsX6W5bYroELSwsaAYkM+0qDkLjphEQGfOMPUliPyizt7grdD65oFuDWwqTDSsVWldT6cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752498; c=relaxed/simple;
-	bh=FI10dEkXRoEqfg6u3Q2Dk6B7FUz2tABo2Vlbk9C316k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F248bkgsBXd82ykfggDMSXriU9ffNQH8wQByn5um6MogsiLn4Hx6YhCQXMCARRo9+TVZrq94J4GcWzwl4fCWW6y1ObrAfL+qg7sUw/Uoo4WbOZEao6KFEvKq8ZpDIEDOWGEx92WyXxYe++Olf1SJpoDfggSlfewZWD5iMht4xWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=lYJCSq4x; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1724752485;
-	bh=FI10dEkXRoEqfg6u3Q2Dk6B7FUz2tABo2Vlbk9C316k=;
-	h=From:Date:Subject:To:Cc:From;
-	b=lYJCSq4xVpHE+cQK3ydTfc7R+h08/E3nryaC3+wegsJUN62L0jB2LSgT0Vumi3Ti7
-	 mKZ1Tcw3FG3qMy7Z3aw3DRVTImtVXNGXo99HKGJExWe9Gc0LtnhHtsmSA5OSBLgsey
-	 Tw4RRdtrMgIEr091KB0I0ygsmDvAp/6mZOQWKHvo=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 27 Aug 2024 11:54:43 +0200
-Subject: [PATCH] sysctl: avoid spurious permanent empty tables
+	s=arc-20240116; t=1724752849; c=relaxed/simple;
+	bh=VI9dtI/WAkLKuR/tijciKts/9rXXeGlBaovyd+X7OeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgk1QZ+bXmHaw3TQIr/hgvQYYkUY6/Qf9AP0FY9OGy3bl91UdP7Z5VYmZ9SpbeN1JZZa6KPj1zT0cDz/gqZjNqva4wdQTuRSfBPB7yvOoeHgIwJoYY87RLO8vV9AiSTMEO+iuu0hhwgi1B8QF5knB4na0Gv+vH2zfR9fsPXAQ4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=anJzIiLA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Cga5pB6q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=anJzIiLA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Cga5pB6q; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 70BCF21B0C;
+	Tue, 27 Aug 2024 10:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724752845; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9162i3i+o72LGv4bQrnFxBt/xA3Dpeirq/7V6JbFMBk=;
+	b=anJzIiLAWuu+v4JMeweySNYi6rR+tnrWrORd2SGRXaZAe6ptYeSU3uPXzcN2oL6pBYPvlp
+	5PeTzT8kZSV0S9JD3TvFLopyTgDCqg8CVLEKvbiuXEMyBXWdvKp9cn5UXmghJqxuOqv/9H
+	bF11iixGyyjcQP08Gai17dkYZvN4p1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724752845;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9162i3i+o72LGv4bQrnFxBt/xA3Dpeirq/7V6JbFMBk=;
+	b=Cga5pB6qymLRKsIV6DE55Gvz+PvdKdMF5ANlUc6lMMOoO1ZY2RPbAEQQptbxUgCsmFckQl
+	GtG2BpFcIPkxkpDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724752845; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9162i3i+o72LGv4bQrnFxBt/xA3Dpeirq/7V6JbFMBk=;
+	b=anJzIiLAWuu+v4JMeweySNYi6rR+tnrWrORd2SGRXaZAe6ptYeSU3uPXzcN2oL6pBYPvlp
+	5PeTzT8kZSV0S9JD3TvFLopyTgDCqg8CVLEKvbiuXEMyBXWdvKp9cn5UXmghJqxuOqv/9H
+	bF11iixGyyjcQP08Gai17dkYZvN4p1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724752845;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9162i3i+o72LGv4bQrnFxBt/xA3Dpeirq/7V6JbFMBk=;
+	b=Cga5pB6qymLRKsIV6DE55Gvz+PvdKdMF5ANlUc6lMMOoO1ZY2RPbAEQQptbxUgCsmFckQl
+	GtG2BpFcIPkxkpDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C10813A44;
+	Tue, 27 Aug 2024 10:00:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AZN1Fs2jzWZrMAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 27 Aug 2024 10:00:45 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1C6BEA0965; Tue, 27 Aug 2024 12:00:45 +0200 (CEST)
+Date: Tue, 27 Aug 2024 12:00:45 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH] vfs: elide smp_mb in iversion handling in the common case
+Message-ID: <20240827100045.m3mpko3tvmmjkmvm@quack3>
+References: <20240815083310.3865-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240827-sysctl-const-shared-identity-v1-1-2714a798c4ff@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAGKizWYC/x3MSwqAMAwA0atI1ga0+L+KuKhtqgGp0hRRxLtbX
- D4Y5gGhwCQwZA8EOll49wllnoFZtV8I2SaDKlRVdKpFucXEDc3uJaKsOpBNCfnI8cZez13ZUO2
- smyEtjkCOr38/Tu/7ATpks/FuAAAA
-To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
- Joel Granados <j.granados@samsung.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- llvm@lists.linux.dev, kernel test robot <oliver.sang@intel.com>, 
- stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724752485; l=2962;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=FI10dEkXRoEqfg6u3Q2Dk6B7FUz2tABo2Vlbk9C316k=;
- b=P41gnbdv8wnYCR3Jy/tGAVFr6kZg1Y61NS35L88Tmn9hFgmek9RBBh+ZeYOgYD73HwW/DRQds
- LZWja3uU0A4BTl4eJU7IQIqwWV15p75mh1h1wz/XdwM9FV8jNo8NIe8
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815083310.3865-1-mjguzik@gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-The test if a table is a permanently empty one, inspects the address of
-the registered ctl_table argument.
-However as sysctl_mount_point is an empty array and does not occupy and
-space it can end up sharing an address with another object in memory.
-If that other object itself is a "struct ctl_table" then registering
-that table will fail as it's incorrectly recognized as permanently empty.
+On Thu 15-08-24 10:33:10, Mateusz Guzik wrote:
+> According to bpftrace on these routines most calls result in cmpxchg,
+> which already provides the same guarantee.
+> 
+> In inode_maybe_inc_iversion elision is possible because even if the
+> wrong value was read due to now missing smp_mb fence, the issue is going
+> to correct itself after cmpxchg. If it appears cmpxchg wont be issued,
+> the fence + reload are there bringing back previous behavior.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> chances are this entire barrier guarantee is of no significance, but i'm
+> not signing up to review it
 
-Avoid this issue by adding a dummy element to the array so that the
-array is not empty anymore and the potential address sharing is avoided.
-Explicitly register the table with zero elements as otherwise the dummy
-element would be recognized as a sentinel element which would lead to a
-runtime warning from the sysctl core.
+Jeff might have a ready answer here - added to CC. I think the barrier is
+needed in principle so that you can guarantee that after a data change you
+will be able to observe an i_version change.
 
-While the issue seems unlikely to be encountered at this time, this
-seems mostly be due to luck.
-Also a future change, constifying sysctl_mount_point and root_table, can
-reliably trigger this issue on clang 18.
+> I verified the force flag is not *always* set (but it is set in the most
+> common case).
 
-Given that empty arrays are non-standard in the first place,
-avoid them if possible.
+Well, I'm not convinced the more complicated code is really worth it.
+'force' will be set when we update timestamps which happens once per tick
+(usually 1-4 ms). So that is common case on lightly / moderately loaded
+system. On heavily write(2)-loaded system, 'force' should be mostly false
+and unless you also heavily stat(2) the modified files, the common path is
+exactly the "if (!force && !(cur & I_VERSION_QUERIED))" branch. So saving
+one smp_mb() on moderately loaded system per couple of ms (per inode)
+doesn't seem like a noticeable win...
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202408051453.f638857e-lkp@intel.com
-Fixes: 4a7b29f65094 ("sysctl: move sysctl type to ctl_table_header")
-Fixes: a35dd3a786f5 ("sysctl: drop now unnecessary out-of-bounds check")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-This was originally part of a feature series [0], but is resubmitted on
-its own to make it into v6.11To.
-
-[0] https://lore.kernel.org/lkml/20240805-sysctl-const-api-v2-0-52c85f02ee5e@weissschuh.net/
----
- fs/proc/proc_sysctl.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 9553e77c9d31..d11ebc055ce0 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -29,8 +29,13 @@ static const struct inode_operations proc_sys_inode_operations;
- static const struct file_operations proc_sys_dir_file_operations;
- static const struct inode_operations proc_sys_dir_operations;
- 
--/* Support for permanently empty directories */
--static struct ctl_table sysctl_mount_point[] = { };
-+/*
-+ * Support for permanently empty directories.
-+ * Must be non-empty to avoid sharing an address with other tables.
-+ */
-+static struct ctl_table sysctl_mount_point[] = {
-+	{ }
-+};
- 
- /**
-  * register_sysctl_mount_point() - registers a sysctl mount point
-@@ -42,7 +47,7 @@ static struct ctl_table sysctl_mount_point[] = { };
-  */
- struct ctl_table_header *register_sysctl_mount_point(const char *path)
- {
--	return register_sysctl(path, sysctl_mount_point);
-+	return register_sysctl_sz(path, sysctl_mount_point, 0);
- }
- EXPORT_SYMBOL(register_sysctl_mount_point);
- 
-
----
-base-commit: 3e9bff3bbe1355805de919f688bef4baefbfd436
-change-id: 20240827-sysctl-const-shared-identity-9ab816e5fdfb
-
-Best regards,
+									Honza
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 8aa34870449f..61ae4811270a 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1990,13 +1990,19 @@ bool inode_maybe_inc_iversion(struct inode *inode, bool force)
+>  	 * information, but the legacy inode_inc_iversion code used a spinlock
+>  	 * to serialize increments.
+>  	 *
+> -	 * Here, we add full memory barriers to ensure that any de-facto
+> -	 * ordering with other info is preserved.
+> +	 * We add a full memory barrier to ensure that any de facto ordering
+> +	 * with other state is preserved (either implicitly coming from cmpxchg
+> +	 * or explicitly from smp_mb if we don't know upfront if we will execute
+> +	 * the former).
+>  	 *
+> -	 * This barrier pairs with the barrier in inode_query_iversion()
+> +	 * These barriers pair with inode_query_iversion().
+>  	 */
+> -	smp_mb();
+>  	cur = inode_peek_iversion_raw(inode);
+> +	if (!force && !(cur & I_VERSION_QUERIED)) {
+> +		smp_mb();
+> +		cur = inode_peek_iversion_raw(inode);
+> +	}
+> +
+>  	do {
+>  		/* If flag is clear then we needn't do anything */
+>  		if (!force && !(cur & I_VERSION_QUERIED))
+> @@ -2025,20 +2031,22 @@ EXPORT_SYMBOL(inode_maybe_inc_iversion);
+>  u64 inode_query_iversion(struct inode *inode)
+>  {
+>  	u64 cur, new;
+> +	bool fenced = false;
+>  
+> +	/*
+> +	 * Memory barriers (implicit in cmpxchg, explicit in smp_mb) pair with
+> +	 * inode_maybe_inc_iversion(), see that routine for more details.
+> +	 */
+>  	cur = inode_peek_iversion_raw(inode);
+>  	do {
+>  		/* If flag is already set, then no need to swap */
+>  		if (cur & I_VERSION_QUERIED) {
+> -			/*
+> -			 * This barrier (and the implicit barrier in the
+> -			 * cmpxchg below) pairs with the barrier in
+> -			 * inode_maybe_inc_iversion().
+> -			 */
+> -			smp_mb();
+> +			if (!fenced)
+> +				smp_mb();
+>  			break;
+>  		}
+>  
+> +		fenced = true;
+>  		new = cur | I_VERSION_QUERIED;
+>  	} while (!atomic64_try_cmpxchg(&inode->i_version, &cur, new));
+>  	return cur >> I_VERSION_QUERIED_SHIFT;
+> -- 
+> 2.43.0
+> 
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
