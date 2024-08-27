@@ -1,104 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-27354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E12496082B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 13:09:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB88960844
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 13:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28BE0B21689
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 11:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C347C1C22983
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 11:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DCF19EEBF;
-	Tue, 27 Aug 2024 11:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7C619F485;
+	Tue, 27 Aug 2024 11:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJjteGJ4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UG9mG0ew"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19367155CBD;
-	Tue, 27 Aug 2024 11:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F77155CBD;
+	Tue, 27 Aug 2024 11:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724756930; cv=none; b=iRo+uiTBhaCMyrBOHEePJMcZGAcrZH82wLokZ/Ekp5ZfVYXx4KZh3SAAGsOqmVkS7ds7jFFWJuhwiS4HbVNYs6qnFh8k2bk+dILwZl9qKYufdEiFC0HPCDLrwYkR3Aj9+gwn+HthGVSutnlcKUttSXaQxMto8rfwbRKPqlTqo2Q=
+	t=1724757244; cv=none; b=IBuo0Xj9wtznnV+/93CkLPBiFJlUneoldQBun3dtfnWUJ58ROeqq6JysnW3Gsd5P0MPJz0flbJDr1d57+eg/zPVRJJPU3fQ8ifpdQq7IWSm6MUhBa8IgF3Fs4W80XtWXZlmQu7KZbcWBpSm6KArkHfitPYjSSUN6wbF/58Nz1VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724756930; c=relaxed/simple;
-	bh=0jqwgqPIXNN1LmGJDYYxJ3TQrTr4aXoEwYHIdHuw+8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MY3ZykzO+j3Ja4x7ZykIzAd6El6/5sBU+EiMeKiLZ+T5c65cgDNuKJp09kbp4YgWCvld9fwk9iXYJi13z39YfYEpzqz0uR7mi8m8Ja1HY8pYB29aC5bydBxgr5SURFLSyas9M8e0GazRbUMTotZbm2ye33nBAb2nIdDJk8L1oiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJjteGJ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1CD8C8B7A0;
-	Tue, 27 Aug 2024 11:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724756929;
-	bh=0jqwgqPIXNN1LmGJDYYxJ3TQrTr4aXoEwYHIdHuw+8o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rJjteGJ4vHkow673wpU3uvzb0qWFO4R5Vbi/MOwUpeey0EppkCDijPpJJaEIZGPEh
-	 4i7Ty9XwKiVVaj6QVVZrUg9df128mUjSjB+3tgJwmmGlVwj1h+ZiVwRaddPKD6PdUx
-	 gB/b44o9dKnbygwJD/8Az3pTdfE345zu1ytwhL0YIkmdvkp3HLud6xVim2n8Y/g4oJ
-	 HidNpm9+B49ogWM4b+AzTsGWiXbwiBa6dPqcADEbZxXZvD/a8U2W/VKFkKVtYNo/k+
-	 J0KH/4u4u13sv6ID/ctAy59+HCSF/D6GokVxOVFywqceUVvxzLTFMhIS/C504OPL22
-	 K1JXRWIsFc8Wg==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	linux-block@vger.kernel.org,
-	dlemoal@kernel.org,
-	djwong@kernel.org,
-	Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH][RFC] iomap: add a private argument for iomap_file_buffered_write
-Date: Tue, 27 Aug 2024 13:07:43 +0200
-Message-ID: <20240827-inmitten-gletscher-db68c1048145@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To:  <7f55c7c32275004ba00cddf862d970e6e633f750.1724755651.git.josef@toxicpanda.com>
-References:  <7f55c7c32275004ba00cddf862d970e6e633f750.1724755651.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1724757244; c=relaxed/simple;
+	bh=sJB6BWfeo6L2k2FVR6KRU+TF3NDH+eFLGAGCx52AgpM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ob0LBjqKiJgDScse+jU5DdoGkKrOUwrym7sbnIMti1N7ktXMbgrOSw80wcWsy5NPL/r6SaZKb670G+oHsTiZ3G3VQ0zGhsHQUvAfOyTYK9HwAQ8NOqca52Ky7z4i4y1PdWUpACOKYo4EBY/EYCt16sYFvSAX3p3q+/DdpMEcdkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UG9mG0ew; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3da6d3f22so4158330a91.0;
+        Tue, 27 Aug 2024 04:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724757242; x=1725362042; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sJB6BWfeo6L2k2FVR6KRU+TF3NDH+eFLGAGCx52AgpM=;
+        b=UG9mG0ewNni3FG+f5iAV4N+6KSOwWg0f22nU3r1rZufNV4myMBnWHWmt5lvxywTjcJ
+         wXGjRH7miXSu1T4oGCtaZIyhgHnzX8kRW4d7IK4x2G/KLuqV7SArQ3gziJ/SrlqQIds9
+         b71iL83J4k3BkdfP8rivSzclhnXFsLMS8EiZixkMaops37/GuVcTxyxVp/gz2yW8D/cU
+         u/aSs8Ml4YrlDqiJYxBM+bgGdirC4kFYkRHqIFQL8qjDswJVN3LIhGW/8XV27F45G82s
+         duPAFdbwdsVtocn/zm0n/YELhBuMwjKZpraPHW+LBKHToCH0MhCdG/eXXpZ84i25dvfl
+         JWHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724757242; x=1725362042;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sJB6BWfeo6L2k2FVR6KRU+TF3NDH+eFLGAGCx52AgpM=;
+        b=ryKEj1Xl9aEZeVLRss0FkrVZZqleX3pcmF3mrAl712ptG0+IUUAgnddG7N+Jj8Nr9F
+         /Vu+8I5YTIJ5Du4tg5nlEAmksvPdQ17/Al1ooC4i7DLFPhOGSWkYorXoqJmKb7uGm1op
+         V+3fjN0i/vTRV8l0naLmfNU+3/s23ZT6FY6uW+xC91sTV5YCVGDyv+c16lSRyE/ZrlS5
+         2rrpLKtRDfh/e30lCUfjPOsJQoBd8aTUCcX4HiyHR13aAvy53n8cr6e9NTZam8rsqcy4
+         3XXpQR6Jr8Q7zozR35b93yd1Xd7lCPfG9ilB8Bo5GCdULbE0ANC1/gwn0pQzHy2W9rDk
+         bibQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2uVeEMDtMLrcaB/ilAJ5tdJ9+9giWZ5NfS6SHSS61tra9JwRymZaj34tzcTNidmX4o5vbuDTrxqk7@vger.kernel.org, AJvYcCURvEO3DLotTjICthPUt/gQ6shK4XKMZGqAn2T9WvPvPo0DRCt6ETOTto7CNZEOZD8KlO7rINJ3x+fMcko2@vger.kernel.org, AJvYcCUynvI8xS9TMlQHSKSEaUl1pKoVQ3+6n7/1cKMxILcIJkcCpZ5bNGJV3L+2kAt43YslVS+3dTJyVUKFcYeC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr581USSJYybZHV4cyRpniR1k+9G0+Zk4V35rSMYmm4TMo9wwj
+	xxEyZ+ka9lwnde9ChyCs5lDG82A5LrY16eRtgAgDgCmaMTnKRVaQ
+X-Google-Smtp-Source: AGHT+IGy6XBinqHN2biziYVYPIivzfLbv3BkETS0DT0xIa0yiUoP6SRdTTr1nKiVtLH6NfNaOjw/+g==
+X-Received: by 2002:a17:90b:2251:b0:2d3:c0ea:72b3 with SMTP id 98e67ed59e1d1-2d646d269f9mr15273439a91.34.1724757241903;
+        Tue, 27 Aug 2024 04:14:01 -0700 (PDT)
+Received: from [127.0.0.1] ([103.85.75.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebbd9d65sm13997504a91.48.2024.08.27.04.13.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 04:14:01 -0700 (PDT)
+Message-ID: <9cf7d25751d18729d14eef077b58c431f2267e0f.camel@gmail.com>
+Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>, 
+	brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Date: Tue, 27 Aug 2024 19:13:57 +0800
+In-Reply-To: <Zs2m1cXz2o8o1IC-@infradead.org>
+References: <0000000000008964f1061f8c32b6@google.com>
+	 <de72f61cd96c9e55160328dd8b0c706767849e45.camel@gmail.com>
+	 <Zs2m1cXz2o8o1IC-@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1546; i=brauner@kernel.org; h=from:subject:message-id; bh=0jqwgqPIXNN1LmGJDYYxJ3TQrTr4aXoEwYHIdHuw+8o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSd3bxrx17z38m3G2c83XVI9N7mnb9WXXU56tY+/amk7 aYDe0SSwztKWRjEuBhkxRRZHNpNwuWW81RsNsrUgJnDygQyhIGLUwAmUqfC8D99+eQNHRfZLWbE iujOfnJR5OGSpTd7qy8ufPBlqlthpeRcRoYn9w9EKBy67XJYs76qxkWmRMNJd8a7Iu9F6/o8Xl6 Y9pYfAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
 
-On Tue, 27 Aug 2024 06:51:36 -0400, Josef Bacik wrote:
-> In order to switch fuse over to using iomap for buffered writes we need
-> to be able to have the struct file for the original write, in case we
-> have to read in the page to make it uptodate.  Handle this by using the
-> existing private field in the iomap_iter, and add the argument to
-> iomap_file_buffered_write.  This will allow us to pass the file in
-> through the iomap buffered write path, and is flexible for any other
-> file systems needs.
-> 
-> [...]
+On Tue, 2024-08-27 at 03:13 -0700, Christoph Hellwig wrote:
+> On Tue, Aug 27, 2024 at 04:54:41PM +0800, Julian Sun wrote:
+> > On Tue, 2024-08-13 at 01:14 -0700, syzbot wrote:
+> > Hi,
+> >=20
+> > Is this still a valid problem, or is it a known issue? If it is
+> > still
+> > valid, I'd like to dig it into, but do you have any ideas or
+> > suggestions before I proceed? Thanks.
+>=20
+> I tried to reproduce it locally but haven't hit it.=C2=A0 Once reproduced
+> the next debug check would be which of the need zeroing conditions
+> triggers.
+>=20
 
-It's in vfs.blocksize because there's other work that touches iomap in there.
-But I'll likely rename the branch to something that's more generic such as
-vfs.iomap at some point soon now that we have other stuff coming in.
+Hi Christoph, thanks for your reply.
 
----
+Did you use the config and reproducer provided by syzbot? I can easily
+reproduce this issue using the config and c reproducer provided by
+syzbot. =20
 
-Applied to the vfs.blocksize branch of the vfs/vfs.git tree.
-Patches in the vfs.blocksize branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.blocksize
-
-[1/1] iomap: add a private argument for iomap_file_buffered_write
-      https://git.kernel.org/vfs/vfs/c/f143d1a48d6e
+Thanks,
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
