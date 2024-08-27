@@ -1,142 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-27388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C3C9611EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 17:25:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A799612B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 17:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19A91F23772
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 15:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EAF92833A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 15:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A49B1C7B71;
-	Tue, 27 Aug 2024 15:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403321C942C;
+	Tue, 27 Aug 2024 15:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGHgnwUA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaG2ACua"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFC51C5783;
-	Tue, 27 Aug 2024 15:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432CB1BFE01
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 15:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772282; cv=none; b=h6ffmNwXLLu5BHf/hpnQ4RQMC89INCDNQFznVTp4+/Vu2YB1uztBrEp12Y1KX7HbPEDcMvVg+15zfJaGgKHOXT9FVkNoepAgLS86SnhuYDMp/bap11bLyjs8GG5DeY3kDAGVEiCZVpd5qxua/q2A+yjnCre12QEj371+VzA9k7I=
+	t=1724772747; cv=none; b=rE650imUHlzFqZNNFsO4opexz6mxQXpmqyI0prOH+q8/yioZZg772UBcIucDZ3wbu8hYt86zck0CMmfuOZSL+/ZPSb1dZsRmn+7YUsiM/ELMUF+J2FT6xE8Mgm/RYLDQ7upIbeJDsW+Uy5Q6+6TTgf01ZHGNnxBD72PKqjON5x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772282; c=relaxed/simple;
-	bh=YQ2VG2DYOB80viZEe5vmkUS0nQMT8d50waYYo97gKDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pLc/kIC2r6r2Y+iQ7baiS4VJkkU9/HQmw5+BcHC2Okf3ribHaf+gjQQH8LVSM5LX08AEj3+M10pL+Gq4N+R+vx1xnAuF87PRVRkdKbLOfu1qIHWsMkqZG85omHtT7NDh8sJEj6iDSggE4ojBULG69Q2Ws0Ew2d4JaBxq7We/F5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGHgnwUA; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1724772747; c=relaxed/simple;
+	bh=+G0P7m9P9Ql41ErlAbmI4kZCWChJR4V9ggEQP6aXa7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a3/C+o4H7yrLAscqmIYRfNG5zyJF3WV75Un1y4rq516DsdBTeiSQzWJ2SJMecR13ol6aPFq1xwdFBxebDahMUcqoJJc8Fm6tqDGKMWfc/tk1Huomkk0U7UQ2gVEKERKdnqrzrB3Ygt1NNwzNJguNkVbqM2BVQxMrAJAXOWRbrdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VaG2ACua; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-533461323cdso6432164e87.2;
-        Tue, 27 Aug 2024 08:24:40 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d3b5f2f621so4112202a91.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 08:32:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724772279; x=1725377079; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5+3AhCX+ZJlKziiTtmYukdp7nOWfib5WaN8umHYwjNM=;
-        b=kGHgnwUA8rDbifE6CSeLybERnaV+OJUI6XaY7gW831M09T48b0IwTRucAg26v/p2Ou
-         8KqLix3w3ehQUbjXmgGBDOmoWzOXtp/zFmMoThRkjMPsiXWCrlHaaad3zFNcvGuuqfjN
-         StdLWrCbIvKQ1GMPvC7zDglbWf5jx7LnUms8GxUfaSccp1pYbR8CB9sniNfnGnKNdDwQ
-         yq2ewVN/aZ7tsKrFly+ZRCn4cCCjiKWXJjc7BUFGMTRxROSKDR4rADkse2OmzhsRGgjn
-         RzC6PFVhDkI6N2mJ4arsRanoOFu87WyjWc5TFb6fiEmFx0j3GPFSlUQJR9yKcitEqGwT
-         V11g==
+        d=gmail.com; s=20230601; t=1724772745; x=1725377545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zk4AzFBJa8dC60mmH+xnlDfktedvtplvnRYofBaChpE=;
+        b=VaG2ACua0BlqgxxKfk9bfxONpkupJiH4YOq5jHUnJCndmsr0xcH0vgQ+w2FhN1nt3E
+         gvo8YF0AK778fM0W6dKH7rR8GHcOWU2/K/PvUSAx1Zdr8Nu9qtWjsHrBnEZamggPZW1t
+         jzxI5SjXCPK5nA7qjTroMmRnaocWGtg/hCEWNFHli86B/PDtd/3k7pNjZrhC3Bumc3KO
+         3AK5izN23P6kKHZgkBybAx/0wHSp9m8UgHS70vs1DHhJpfMYqvUeYmP54zAHQGEKSCT6
+         kK5D4JFR4B+mGx/8XBXwvy5dgshzTiRi23x11nwkgK0jm+qtnJ0Gp3IU5peaOhxIydaI
+         PphA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724772279; x=1725377079;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5+3AhCX+ZJlKziiTtmYukdp7nOWfib5WaN8umHYwjNM=;
-        b=H2ahzvFnCnwnSUog5OPFtIQylUAaRap0jLFi0Db/iRbfSar6bCPKOdSJhA6Z+sR6J1
-         ZDeH/h3JlTD0NMNchB3WoX1jifC60iKVq7HR3PsMSNcjt+/Fl2HTSxli11qywo68KPsT
-         WMMyV46quCgHP/h+Lvi7sdKNY4Lr673dJr8cBFBAJRied0drm8XLy0ZOcsh0GsFpTCWv
-         iWdZA2HK3RnuzotMGQ9SL2PQ+OjwB+uOAR8hNh5spyNloqtFmVD6ryxMn3rSMOT5fQKZ
-         5YkWIH8S1RzmdWk/VhDEwu5wHvTYuW1dVMrdOftBC9nZGg9P8D4gTIZ9lHEM5wcnSaH0
-         QoQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVRrqTnPtaubxGrTFMR3LvsvJq1yLwVipkNgaZsyaRzkvpssy+WuKETEZ7EFX9bUic9F5UJoV271yusZvQ@vger.kernel.org, AJvYcCX46MgojIFseqQLmTMgCVemTt3UmlM1B+ogdIvPxZqiO0h+l/fXQNG6ZKAUKCD+2QVrMXuBdO7rkKI2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxR0XrTnCiEl2cYu4uoxvEmYN2tQlCePHjztmVzMlC2Ffrg7QW
-	vaPAovQClNAX8jLMjy7fp5fOORJMGvmH+s/CklaLuFqEfzu+I/Lc
-X-Google-Smtp-Source: AGHT+IE6eAaVS0g91zaL8EKcj3HOTk8vY8xhM7k1eoix4HsI/20/Uae50383wAdhbyY8fhBzSbDc4Q==
-X-Received: by 2002:a05:6512:6cf:b0:52c:e0fb:92c0 with SMTP id 2adb3069b0e04-5343883abdfmr8530719e87.34.1724772278344;
-        Tue, 27 Aug 2024 08:24:38 -0700 (PDT)
-Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea59474sm1800442e87.150.2024.08.27.08.24.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 08:24:38 -0700 (PDT)
-Message-ID: <1037bb5a-a48f-47cb-ace7-5e0aba7c6195@gmail.com>
-Date: Tue, 27 Aug 2024 17:24:36 +0200
+        d=1e100.net; s=20230601; t=1724772745; x=1725377545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zk4AzFBJa8dC60mmH+xnlDfktedvtplvnRYofBaChpE=;
+        b=nNgy7sAS98VGtw3OL+vXhgPkWeEFO4EFzrY2IvxVNzFqVC47qEmI5yTcvs8R9jFifh
+         sFhIw5NfUcKuHyQNKRWZjaN2JKcjndMh7II8hZxkhI2COrViXB6t7LvbOLTD0gJYaKCD
+         Rcs7RZJbubcmSSP0SLJPpZDU+TfraBPQbQzAf8SrvtvApXjYXkc6wzIfjHc9MpPecnM/
+         ao+jQ7V8VHVMwvzbOyWwBqsnWdrYZORMM0WWKN/sL7PInm70hpeUbGog6zohydSjAGgG
+         +f9fIrfoELn58mPDFERNpJyacBaYmioL83vHfhjqFtD8UPFFMNXFNU+xWDiuDmSfMkJ6
+         7s3Q==
+X-Gm-Message-State: AOJu0Yw3+G9L+yS+IaVQdp1jypG8IwGqBJHxGRJztx2zUbsZQ0i3W7/8
+	DI0ZitB7qOLlEhu/zLNcobLGS2Mvu+WWn7VmYqFK5qn9/r/HcP/PGCOxFqakJZj/l08NRrFxDQE
+	8/tZWpegHLJss80rmb7QmRarHS/w=
+X-Google-Smtp-Source: AGHT+IEfYcWnz6cLtHY9lrqU1rt6Yoi5xAHXySnosUFvA0co//YOHKX7W76ryLEHZH3r7myaFCiYnIPE1/aEERQD4uc=
+X-Received: by 2002:a17:90b:3884:b0:2d8:27c3:87d7 with SMTP id
+ 98e67ed59e1d1-2d827c38942mr3099445a91.8.1724772745079; Tue, 27 Aug 2024
+ 08:32:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ANNOUNCE] xfs-linux: for-next updated to a24cae8fc1f1
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: dchinner@redhat.com, djwong@kernel.org, hch@lst.de,
- kjell.m.randa@gmail.com, linux-fsdevel@vger.kernel.org,
- linux-xfs@vger.kernel.org, willy@infradead.org, wozizhi@huawei.com
-References: <877cc2rom1.fsf@debian-BULLSEYE-live-builder-AMD64>
-Content-Language: en-US
-From: Anders Blomdell <anders.blomdell@gmail.com>
-In-Reply-To: <877cc2rom1.fsf@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAOw_e7bB3C_zbpq6U+FdrjbwJAOKFJk1ZLLETrR+5xqRmv44SQ@mail.gmail.com>
+ <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com>
+From: Han-Wen Nienhuys <hanwenn@gmail.com>
+Date: Tue, 27 Aug 2024 17:32:13 +0200
+Message-ID: <CAOw_e7bMbwXzv00YeGw2NjGDfUpasaQix40iXC2EcLHk=n2wTA@mail.gmail.com>
+Subject: Re: FUSE passthrough: fd lifetime?
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since 6.10 is still marked as a stable release, maybe this shold go into 6.10-fixes branch as well?
+On Tue, Aug 27, 2024 at 3:48=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Tue, Aug 27, 2024 at 11:42=E2=80=AFAM Han-Wen Nienhuys <hanwenn@gmail.=
+com> wrote:
+> >
+> > Hi folks,
+>
+> Hi Han-Wen,
+>
+> For future reference, please CC FUSE and libfuse maintainers
+> and FUSE passthrough developer (me) if you want to make sure
+> that you got our attention.
 
-   Dave Chinner (1):
-       [95179935bead] xfs: xfs_finobt_count_blocks() walks the wrong btree
+Sure. Who is the libfuse maintainer these days?
 
-/Anders
+> > I tried simply closing the backing FD right after obtaining the
+> > backing ID, and it seems to work. Is this permitted?
+>
+> Yes.
 
-On 2024-08-27 17:05, Chandan Babu R wrote:
-> Hi folks,
-> 
-> The for-next branch of the xfs-linux repository at:
-> 
-> 	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
-> 
-> has just been updated.
-> 
-> Patches often get missed, so please check if your outstanding patches
-> were in this update. If they have not been in this update, please
-> resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-> the next update.
-> 
-> The new head of the for-next branch is commit:
-> 
-> a24cae8fc1f1 xfs: reset rootdir extent size hint after growfsrt
-> 
-> 9 new commits:
-> 
-> Darrick J. Wong (6):
->        [e21fea4ac3cf] xfs: fix di_onlink checking for V1/V2 inodes
->        [5335affcff91] xfs: fix folio dirtying for XFILE_ALLOC callers
->        [410e8a18f8e9] xfs: don't bother reporting blocks trimmed via FITRIM
->        [6b35cc8d9239] xfs: use XFS_BUF_DADDR_NULL for daddrs in getfsmap code
->        [16e1fbdce9c8] xfs: take m_growlock when running growfsrt
->        [a24cae8fc1f1] xfs: reset rootdir extent size hint after growfsrt
-> 
-> Dave Chinner (1):
->        [95179935bead] xfs: xfs_finobt_count_blocks() walks the wrong btree
-> 
-> Zizhi Wo (2):
->        [68415b349f3f] xfs: Fix the owner setting issue for rmap query in xfs fsmap
->        [ca6448aed4f1] xfs: Fix missing interval for missing_owner in xfs fsmap
-> 
-> Code Diffstat:
-> 
->   fs/xfs/libxfs/xfs_ialloc_btree.c |  2 +-
->   fs/xfs/libxfs/xfs_inode_buf.c    | 14 +++--
->   fs/xfs/scrub/xfile.c             |  2 +-
->   fs/xfs/xfs_discard.c             | 36 ++++--------
->   fs/xfs/xfs_fsmap.c               | 30 ++++++++--
->   fs/xfs/xfs_rtalloc.c             | 78 ++++++++++++++++++++-----
->   6 files changed, 114 insertions(+), 48 deletions(-)
+awesome!
+
+> BTW, since you are one of the first (publicly announced) users of
+> FUSE passthrough, it would be helpful to get feedback about API,
+> which could change down the road and about your wish list.
+
+For full transparency, I just work on the go-fuse library for fun, I
+don't have direct applications for passthrough at the moment. That
+said, I have been trying to make it go faster, and obviously bypassing
+user-space for reads/writes helps in a big way.
+
+> Specifically, I have WIP patches for
+> - readdir() passthrough
+> - stat()/getxattr()/listxattr() passthrough
+>
+> and users feedback could help me decide how to prioritize between
+> those (and other) FUSE passthrough efforts.
+
+It's been useful in the past to defer all file operations to an
+underlying file, and only change where in the tree a file is surfaced.
+In that sense, it would be nice to just say "pass all operations on
+this (open) file to this other file". Go-FUSE has a LoopbackFile and
+LoopbackNode that lets you do that very easily, but it would be extra
+attractive if that would also avoid kernel roundtrips.
+
+For flexibility, it might be useful to pass a bitmask or a list of
+FUSE opcodes back to the kernel, so you can select which operations
+should be passed through.
+
+The most annoying part of the current functionality is the
+CAP_SYS_ADMIN restriction; I am not sure everyone is prepared to run
+their file systems as root. Could the ioctl check that the file was
+opened as O_RDWR, and stop checking for root?
+
+If you are proposing to do xattr functions, that means that you also
+will do passthrough for files that are not opened?
+
+Right now, the backing ID is in the OpenOut structure; how would you
+pass back the backing ID so it could be used for stat() ? IMO the most
+natural solution would be to extend the lookup response so you can
+directly insert a backing ID there.
+
+I made a mistake in how I treat opendir/readdir in the high-level
+go-fuse API. Until that is fixed, I cannot use passthrough for
+readdir. That said, part of making FUSE filesystems go fast is to
+amortize the cost of lookup using readdirplus. That wouldn't work with
+readdir passthrough, so it may not be that useful.
+
+So in summary, my wishlist for passthrough (decreasing importance):
+
+1.  get rid of cap_sys_admin requirement
+2. allow passthrough for all file operations (fallocate, fsync, flush,
+setattr, etc.)
+
+cheers,
+--=20
+Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
 
