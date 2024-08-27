@@ -1,121 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-27397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8FBD961391
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:04:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B2196139A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B344B22A3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:04:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC741C232EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447861CDFC4;
-	Tue, 27 Aug 2024 16:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93371C93B6;
+	Tue, 27 Aug 2024 16:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJsFMc+4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0YiOHzs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4E21C86F4;
-	Tue, 27 Aug 2024 16:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1758A1C6F48
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 16:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724774634; cv=none; b=n/Gy1Nr7mIoN4R4DM+vVj7cdX4rDZTGMKzzkxsOaMtkHlj+/kdSMNrXMp+BKnnV/zkQI6pKofepMKesNuW5AVplHCOmS6jUh9W6jRm09jhoV+SJa47GpBSF5IJ6F6Q8be8z7aeyZ2g8InF6qFr9ABJw9seVARy1MtKz9hUWKTE0=
+	t=1724774720; cv=none; b=rVjdc014wycehNNLuIcB6p8qpDbjDVW6ANyBnxcAup+9IW/9/7Vs5Wx+s7aS+bVVl+bNP1++z1gC1gKzP9GLOQtjUvfUF4c2XyP0i1kTEOdAQBLvfsvOxMB9g7ENVxAbE4fuopUVAP4WuU3Ec3nejz3cyzwA0s94ZyqjEKDsLFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724774634; c=relaxed/simple;
-	bh=j2K6j335okpZ6K66oy7S+jmdBzIkN4HHqxmSJr07Apw=;
+	s=arc-20240116; t=1724774720; c=relaxed/simple;
+	bh=s8P+tRPzYwjOiQdXkmPvI2R3fODV+CgoGK+rb+No/5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mj+IBsh/8nbi+m/pDnKOBWF0xJhVJk24HH8hbFox+EMjVJsYpBNmCF7vuA/qyPbuv7UeYjxPVqu81Drgwf0LNLWEFThBTkpaTA+xSz0E6W/htTxdmVDi5ItR9upMcmn2WvO4upGY1IioLU7fXW61YEA5CFCuIJuhmMasncFHu1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJsFMc+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 017FBC5819A;
-	Tue, 27 Aug 2024 16:03:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqDk3mLkv77D3gCsyD34mkkUqU6Whdx5Boe+ifF9NRbROZbqyzxBYxB1rW5F48kL1++p5hR3RE9eybrsGTcINGR/GAw1iFmeVRjgX3wwGXfAPPZbS6Y3ABPApGeFThMZorseYTKf7uCNkdcKOFXXoo1k0Ydtck/+kESk/tXOJ7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0YiOHzs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8CEC581B0;
+	Tue, 27 Aug 2024 16:05:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724774634;
-	bh=j2K6j335okpZ6K66oy7S+jmdBzIkN4HHqxmSJr07Apw=;
+	s=k20201202; t=1724774719;
+	bh=s8P+tRPzYwjOiQdXkmPvI2R3fODV+CgoGK+rb+No/5E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jJsFMc+4yKBBUG4AYT2rndPxLgjUJIxmijZ2YUgT95oyTEFx/oihNLFCPPgOyYqIT
-	 NpY2G+8Sa0DpxmLAHbtTtHqcrOgswSncCFbkAzRpyZt696QFMRup56JjMOcLZChxyV
-	 2WMHPkP4Dp1T4m+l6qyC6y/Mq2erMgQSVrtWRpjRLqMYFdpL4D+muzkwdNDSLGKjy6
-	 4cT2oK/rPm3db+3HycWWDe7nOh3sM1Xjl/Q5QgfWWG2SjzLUaTR/gS7iIiaYDMEQcG
-	 HWWx3aK4OB24erDrIq7lKE2g9dP16wbEn1DB76vaOUpjuVYkWUTQEV3jL8ieiY9Dht
-	 leJy6+FDhiRSg==
-Date: Tue, 27 Aug 2024 09:03:53 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Brian Foster <bfoster@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 5/6] xfs: move the xfs_is_always_cow_inode check into
- xfs_alloc_file_space
-Message-ID: <20240827160353.GT865349@frogsfrogsfrogs>
-References: <20240827065123.1762168-1-hch@lst.de>
- <20240827065123.1762168-6-hch@lst.de>
+	b=J0YiOHzsoM5+uuZINH/Z6B4l9eSV+FmfJWkRPLp1WvIAJkETEki3y1VPfBa7sezEk
+	 7rsMTU6/kHKeCoir9ekKsrBPb0abF7qp2TkYmGp5bL+nUqjdLo/EZk+u1c/ljv02aj
+	 2rNqiqGejhbfTlj0nTomSOKLsDaLjmf51VQ76BbKNkIzLu/UCAR7ZCPeSc0LIQvttV
+	 Na8VLUir1DjFQvyys+f1XrrvLykaYBjIp5/cL0TbYGEkPUSyAPLq1taYiJQsBKHkYO
+	 N0nSMC05aE0otO7UqxFPcyJl8aPwgdZsk7AgeqgMl6G7x/K24+c37sUUocgq5DiGl2
+	 AHhLDS/sJAMZg==
+Date: Tue, 27 Aug 2024 18:05:15 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] fs,mm: add kmem_cache_create_rcu()
+Message-ID: <20240827-lehrjahr-bezichtigen-ecb2da63d900@brauner>
+References: <20240827-work-kmem_cache-rcu-v2-0-7bc9c90d5eef@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240827065123.1762168-6-hch@lst.de>
+In-Reply-To: <20240827-work-kmem_cache-rcu-v2-0-7bc9c90d5eef@kernel.org>
 
-On Tue, Aug 27, 2024 at 08:50:49AM +0200, Christoph Hellwig wrote:
-> Move the xfs_is_always_cow_inode check from the caller into
-> xfs_alloc_file_space to prepare for refactoring of xfs_file_fallocate.
+On Tue, Aug 27, 2024 at 05:59:41PM GMT, Christian Brauner wrote:
+> When a kmem cache is created with SLAB_TYPESAFE_BY_RCU the free pointer
+> must be located outside of the object because we don't know what part of
+> the memory can safely be overwritten as it may be needed to prevent
+> object recycling.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> That has the consequence that SLAB_TYPESAFE_BY_RCU may end up adding a
+> new cacheline. This is the case for .e.g, struct file. After having it
+> shrunk down by 40 bytes and having it fit in three cachelines we still
+> have SLAB_TYPESAFE_BY_RCU adding a fourth cacheline because it needs to
+> accomodate the free pointer and is hardware cacheline aligned.
+> 
+> I tried to find ways to rectify this as struct file is pretty much
+> everywhere and having it use less memory is a good thing. So here's a
+> proposal.
+> 
+> I was hoping to get something to this effect into v6.12.
+> 
+> If we really want to switch to a struct to pass kmem_cache parameters I
+> can do the preparatory patch to convert all kmem_cache_create() and
+> kmem_cache_create_usercopy() callers to use a struct for initialization
+> of course. I can do this as a preparatory work or as follow-up work to
+> this series. Thoughts?
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+So one thing I can do is to add:
 
---D
+struct kmem_cache_args {
+	.freeptr_offset,
+	.useroffset,
+	.flags,
+	.name,
+};
 
-> ---
->  fs/xfs/xfs_bmap_util.c | 3 +++
->  fs/xfs/xfs_file.c      | 8 +++-----
->  2 files changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-> index 187a0dbda24fc4..e9fdebaa40ea59 100644
-> --- a/fs/xfs/xfs_bmap_util.c
-> +++ b/fs/xfs/xfs_bmap_util.c
-> @@ -653,6 +653,9 @@ xfs_alloc_file_space(
->  	xfs_bmbt_irec_t		imaps[1], *imapp;
->  	int			error;
->  
-> +	if (xfs_is_always_cow_inode(ip))
-> +		return 0;
-> +
->  	trace_xfs_alloc_file_space(ip);
->  
->  	if (xfs_is_shutdown(mp))
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 5b9e49da06013c..489bc1b173c268 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -987,11 +987,9 @@ xfs_file_fallocate(
->  			}
->  		}
->  
-> -		if (!xfs_is_always_cow_inode(ip)) {
-> -			error = xfs_alloc_file_space(ip, offset, len);
-> -			if (error)
-> -				goto out_unlock;
-> -		}
-> +		error = xfs_alloc_file_space(ip, offset, len);
-> +		if (error)
-> +			goto out_unlock;
->  	}
->  
->  	/* Change file size if needed */
-> -- 
-> 2.43.0
-> 
-> 
+accompanied by:
+
+int kmem_create_cache(struct kmem_cache_args *args);
+
+and then switch both the filp cache and Jens' io_kiocb cache over to use
+these two helpers. Then we can convert other callers one by one.
+
+@Vlastimil, @Jens, @Linus what do you think?
 
