@@ -1,94 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-27267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A62E95FEAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 04:03:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547A995FEE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 04:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB7B282EEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 02:03:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F150F1F2284D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 02:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED76101DE;
-	Tue, 27 Aug 2024 02:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4688C8C7;
+	Tue, 27 Aug 2024 02:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIQ5ks6D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AEA1854;
-	Tue, 27 Aug 2024 02:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECC210A1F;
+	Tue, 27 Aug 2024 02:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724724217; cv=none; b=ZvevYAyRwuEzEyVZ1h0dIVL4QxHXmfAYcpVAEHL7NXYAUYNsbHTGuZypi7L50PqDyc4LFDzXFlXEFApL0Oe36/MAQMXBRJRaMFS+5dN/ckLKxpLhkaitKAwQBwRII7TZCze16vxLZj/Gs7Ehi5FTK8NhszljlkaqddlhnlE6a/s=
+	t=1724724781; cv=none; b=XhUT6792Uru3BaqGyjhd9OLaVsq6mzQdXMA0m9L9MyYtxh9DAL2a+4wo5xbksFLDskaMF9kp6dBEbN9pmA8uJLnfaU/GyyP2focMQrAa4O4VPVmCvrI11c9OkkuKnnXv/twyNPd8CEifr4S4ddCisXMWTq/BudpFm1QygHho8iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724724217; c=relaxed/simple;
-	bh=+Lw+5WYJJxM1tmEOAqj+YhhvBRg1BYVaNNNg1e1GHmw=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KwBpqDC4jJYoxFEEsEFG5RrwkP4MyyOaysXthM5AQYFciKxebcAiGqRgolaougzP+IBX2/hLRYrU2oQTKBSC1Fo/lJqb1XR7JQbucl+UMLR58/6XCbkFlTrmWzzudEN1Q5irPPYGREodMUUtVb9ZBEAupQ9Fas13PRXNOmqVPtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wt9n601DVz1S97D;
-	Tue, 27 Aug 2024 10:03:21 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2077C140136;
-	Tue, 27 Aug 2024 10:03:32 +0800 (CST)
-Received: from [10.174.178.75] (10.174.178.75) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 27 Aug 2024 10:03:29 +0800
-Subject: Re: [PATCH -next 00/15] sysctl: move sysctls from vm_table into its
- own files
-To: Kees Cook <kees@kernel.org>
-References: <20240826120449.1666461-1-yukaixiong@huawei.com>
- <202408261256.ACC5E323B2@keescook>
-CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
-	<ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<j.granados@samsung.com>, <willy@infradead.org>, <Liam.Howlett@oracle.com>,
-	<vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>,
-	<anna@kernel.org>, <chuck.lever@oracle.com>, <jlayton@kernel.org>,
-	<neilb@suse.de>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <paul@paul-moore.com>,
-	<jmorris@namei.org>, <linux-sh@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-From: yukaixiong <yukaixiong@huawei.com>
-Message-ID: <99407b2b-25db-d559-cded-babf34381a5e@huawei.com>
-Date: Tue, 27 Aug 2024 10:03:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1724724781; c=relaxed/simple;
+	bh=52eAx3gO8uEk6S8PQUMzNViD8dCJuPh/+GLrhAbSKlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SoC0yLQxBU3wA9bFa2sHigsvSMDiZFzArOxuLKB/jNDk2rJAQpCl4OuDDeBs05rDcB6No4fzy7Ju1B7dodqDxcLOizlqtm/jahJsnfrXesZZd/GNyoW2/YBKgvVrwrcn4Vbb7cYEStFZLp/hR4gEjWb2FAAGPu8SoOx+lF5HXE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIQ5ks6D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEF4C4AF63;
+	Tue, 27 Aug 2024 02:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724724780;
+	bh=52eAx3gO8uEk6S8PQUMzNViD8dCJuPh/+GLrhAbSKlk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pIQ5ks6DlsyEiHTDCZQFffom2YyAGESNmjUUIUVG37c7UepB53U7rIn1xiDcw1YZl
+	 xud3feF1RKVcUReq7xNezXE1Tu1HUKMqtqClf7JZjxYOhBxaKtRUFBJ6TYduF6Pcah
+	 +ltC5fyTX8ACflI4ri2yAD9uXsa/lqA+7y5q2s1PkWbko39haG2BojvVO/GvUM44dK
+	 Rg9NDbAB8wSCiZbkF16A9sN/CmG6DErv/y5OqsXzPT2MclfAErsLS3vYq0il50URHw
+	 AvfwXYGkLuLX0wvuvbjIbCvDU2X5FkFUuDhBnewAI+4vQiQ+jyX70B1Dl6vZpeNmqX
+	 OdKo4vIKnOAfQ==
+Date: Mon, 26 Aug 2024 19:13:00 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+	gnoack@google.com, mic@digikod.net, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
+ directly
+Message-ID: <20240827021300.GK6043@frogsfrogsfrogs>
+References: <20240827014108.222719-1-lihongbo22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <202408261256.ACC5E323B2@keescook>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpeml500022.china.huawei.com (7.185.36.66) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827014108.222719-1-lihongbo22@huawei.com>
 
+On Tue, Aug 27, 2024 at 01:41:08AM +0000, Hongbo Li wrote:
+> Many mainstream file systems already support the GETVERSION ioctl,
+> and their implementations are completely the same, essentially
+> just obtain the value of i_generation. We think this ioctl can be
+> implemented at the VFS layer, so the file systems do not need to
+> implement it individually.
 
+What if a filesystem never touches i_generation?  Is it ok to advertise
+a generation number of zero when that's really meaningless?  Or should
+we gate the generic ioctl on (say) whether or not the fs implements file
+handles and/or supports nfs?
 
-On 2024/8/27 3:57, Kees Cook wrote:
-> On Mon, Aug 26, 2024 at 08:04:34PM +0800, Kaixiong Yu wrote:
->> This patch series moves sysctls of vm_table in kernel/sysctl.c to
->> places where they actually belong, and do some related code clean-ups.
->> After this patch series, all sysctls in vm_table have been moved into its
->> own files, meanwhile, delete vm_table.
-> This is really nice! Thanks for doing this migration. I sent a note
-> about the "fs: dcache: ..." patch that I don't think will be a problem.
->
-> Reviewed-by: Kees Cook <kees@kernel.org>
->
-Thanks for your review !:-) Looking forward to future opportunities for 
-further discussion and collaboration.
+--D
+
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+>  fs/ioctl.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 64776891120c..dff887ec52c4 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -878,6 +878,9 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
+>  	case FS_IOC_GETFSUUID:
+>  		return ioctl_getfsuuid(filp, argp);
+>  
+> +	case FS_IOC_GETVERSION:
+> +		return put_user(inode->i_generation, (int __user *)argp);
+> +
+>  	case FS_IOC_GETFSSYSFSPATH:
+>  		return ioctl_get_fs_sysfs_path(filp, argp);
+>  
+> @@ -992,6 +995,9 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
+>  		cmd = (cmd == FS_IOC32_GETFLAGS) ?
+>  			FS_IOC_GETFLAGS : FS_IOC_SETFLAGS;
+>  		fallthrough;
+> +	case FS_IOC32_GETVERSION:
+> +		cmd = FS_IOC_GETVERSION;
+> +		fallthrough;
+>  	/*
+>  	 * everything else in do_vfs_ioctl() takes either a compatible
+>  	 * pointer argument or no argument -- call it with a modified
+> -- 
+> 2.34.1
+> 
+> 
 
