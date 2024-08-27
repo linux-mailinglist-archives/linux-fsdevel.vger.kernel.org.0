@@ -1,100 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-27376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C90960E4D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:47:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8727A960F22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106F2286DDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 14:47:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F571F24282
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 14:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7698D44C8C;
-	Tue, 27 Aug 2024 14:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16F21C8FDC;
+	Tue, 27 Aug 2024 14:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TbmNjXMC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGtFWehd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2C71C6F43
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 14:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA341C5792;
+	Tue, 27 Aug 2024 14:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770026; cv=none; b=nG3OFPho9Mpiz3paT0v3NhIvk2lUQHes8M3M2UmHgOMAz4pMtkOtbcK7mGfPtgpJhkRpP08km+DHBGA0lo3N/0E6yKR5I1kvZX6XU2DLaUN84AH1za8zUegfnPkor3DgIVxv6nMD+aQ2KiMI+z4PY85n4xkAKLeEd3rtz+ko21E=
+	t=1724770503; cv=none; b=Ti1/kyZCaZfQU/40VTZhQr78TVtp2PgW5FAXWadCMK9Y1+f+4rEz3YaNCCx8GRc/OfraMbAWiElGmALY5X9tWPZdhp1dyWZuKxiOnVVJ8mdd8/OQkwMUw4BrLndS7NrahRl63kEnam2bZSTBXx9kQJg9oPh7FnsHRXCJIAML5Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770026; c=relaxed/simple;
-	bh=+AmonIJCykCJOo/Uu7OJvxf21efia77ZJrd62BC4QT4=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=UCipK5ZmdKBPN0ZdjOJvNZYOTHTwqpCFqZrW+Tx3AQTnUIdoLitV5GgVZiPRTbEzjIyFbFiFb/VOw0UJMeo+MM0wg+YdLRZkzJbGU+TUI9AL290MTe82afotaMzbA4Ko+Er4yqeHL+eAQcJLYwaP4stXEWmiLTpBTea9Ms2kzlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TbmNjXMC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724770024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=aFd0/WLiPXvJiPqmeiXOS+H/ZKM/prGo2nSmnbwce94=;
-	b=TbmNjXMCMthsRFDMg5VVrTx/0yYY2YvEGRGi9pPJ9oV7yJmIOoq51GQ+LkXoDSm9GNmfKE
-	ea1GVFTyfndCLHpNqOfZzIvhNDNvO0m18vk2Z+Y6qkUELvXMoQpSn8ksIQo8iWNy0qslCa
-	Pb4JM6lnAEDvu6HlYJBDvgkSRts+rgk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-664-9rtXBTUGNpe2wr4MTBTVGQ-1; Tue,
- 27 Aug 2024 10:47:01 -0400
-X-MC-Unique: 9rtXBTUGNpe2wr4MTBTVGQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 23F7C1955BF4;
-	Tue, 27 Aug 2024 14:46:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 61AAD19560AA;
-	Tue, 27 Aug 2024 14:46:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Jan Kara <jack@suse.cz>
-cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-    Steve French <sfrench@samba.org>, netfs@lists.linux.dev,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: The mapping->invalidate_lock, copy-offload and cifs
+	s=arc-20240116; t=1724770503; c=relaxed/simple;
+	bh=vj2+uX4DyJ0X9AMUJ15fS1HOXBIX9BaNH5KrRvHAu/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyP7pQtCpTZz6w6aNNXGl0RMRnW8jd0ZxiaKljIyuZ2QHl04BdSUdoIwpacwh3txjGHd5cEUaQLDdvBG9Pj2N1m1H4zyWhmh5YGPAIhzmcOQbYK/pV1CdaQdGoMNOHeuyMqoAZfzGpFGHwqXxfHiBss0oKuytqLhmt+umhx6mkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGtFWehd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E225DC4E68F;
+	Tue, 27 Aug 2024 14:55:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724770503;
+	bh=vj2+uX4DyJ0X9AMUJ15fS1HOXBIX9BaNH5KrRvHAu/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gGtFWehd0bTpb75y/zS5e/LmeuBMzOVYKNzaCAsDKitMuRLwNVLEAt25mBRWrVGsM
+	 W8dhQav+624/E0F9V5jNvGsHADmHXHvYFGmEluXyqPvNhTAtwsk7Kq67xW5iYEudFx
+	 HFSAmeFRSvecEbCBrmXM+W55YADafc2pU4Jvx62hBlgNyTLrA0bAb2cp3YGNYrVi/y
+	 KBXaqkjAYoMjAuG7krhZkXahXkjjOFwrMQa5164XsM9IP2U7EdhNaIEhhs0lhK61s/
+	 yqFhyIuw+5/saH+J+LwETZouClWe1j8nsbPXhyTNDNa3uHWJQdzo3IvkMxB4zOkP19
+	 HlwukIekMFF5A==
+Date: Tue, 27 Aug 2024 07:55:02 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Brian Foster <bfoster@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 3/6] fs: sort out the fallocate mode vs flag mess
+Message-ID: <20240827145502.GP865349@frogsfrogsfrogs>
+References: <20240827065123.1762168-1-hch@lst.de>
+ <20240827065123.1762168-4-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <774274.1724770015.1@warthog.procyon.org.uk>
-Date: Tue, 27 Aug 2024 15:46:55 +0100
-Message-ID: <774275.1724770015@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827065123.1762168-4-hch@lst.de>
 
-Hi Jann,
+On Tue, Aug 27, 2024 at 08:50:47AM +0200, Christoph Hellwig wrote:
+> The fallocate system call takes a mode argument, but that argument
+> contains a wild mix of exclusive modes and an optional flags.
+> 
+> Replace FALLOC_FL_SUPPORTED_MASK with FALLOC_FL_MODE_MASK, which excludes
+> the optional flag bit, so that we can use switch statement on the value
+> to easily enumerate the cases while getting the check for duplicate modes
+> for free.
+> 
+> To make this (and in the future the file system implementations) more
+> readable also add a symbolic name for the 0 mode used to allocate blocks.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-I'm looking at trying to fix cifs_file_copychunk_range().  Currently, it
-invalidates the destination range, apart from a partial folio at either end
-which will be flushed, and then tries the copy.  But if the copy fails or can
-only be partially completed (eg. ENOSPC), we lose any data in the destination
-region, so I think it needs to be flushed and invalidated rather than just
-being invalidated.
+For a brief moment I wondered if it were possible to set more than one
+mode bit but it looks like none of the implementations support that kind
+of wackiness (e.g. COLLAPSE|INSERT_RANGE for magicks!) so we're good:
 
-Now, we have filemap_invalidate_inode() which I can use to flush back and
-invalidate the folios under the invalidate_lock (thereby avoiding the need for
-launder_folio).  However, that doesn't prevent mmap from reinstating the
-destination folios with modifications whilst the copy is ongoing the moment
-the invalidate_lock is dropped.
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Question is: would it be reasonable to do the copy offload whilst holding the
-invalidate_lock for the duration?
+--D
 
-Thanks,
-David
-
+> ---
+>  fs/open.c                   | 51 ++++++++++++++++++-------------------
+>  include/linux/falloc.h      | 18 ++++++++-----
+>  include/uapi/linux/falloc.h |  1 +
+>  3 files changed, 38 insertions(+), 32 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 22adbef7ecc2a6..daf1b55ca8180b 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -252,40 +252,39 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>  	if (offset < 0 || len <= 0)
+>  		return -EINVAL;
+>  
+> -	/* Return error if mode is not supported */
+> -	if (mode & ~FALLOC_FL_SUPPORTED_MASK)
+> +	if (mode & ~(FALLOC_FL_MODE_MASK | FALLOC_FL_KEEP_SIZE))
+>  		return -EOPNOTSUPP;
+>  
+> -	/* Punch hole and zero range are mutually exclusive */
+> -	if ((mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE)) ==
+> -	    (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE))
+> -		return -EOPNOTSUPP;
+> -
+> -	/* Punch hole must have keep size set */
+> -	if ((mode & FALLOC_FL_PUNCH_HOLE) &&
+> -	    !(mode & FALLOC_FL_KEEP_SIZE))
+> +	/*
+> +	 * Modes are exclusive, even if that is not obvious from the encoding
+> +	 * as bit masks and the mix with the flag in the same namespace.
+> +	 *
+> +	 * To make things even more complicated, FALLOC_FL_ALLOCATE_RANGE is
+> +	 * encoded as no bit set.
+> +	 */
+> +	switch (mode & FALLOC_FL_MODE_MASK) {
+> +	case FALLOC_FL_ALLOCATE_RANGE:
+> +	case FALLOC_FL_UNSHARE_RANGE:
+> +	case FALLOC_FL_ZERO_RANGE:
+> +		break;
+> +	case FALLOC_FL_PUNCH_HOLE:
+> +		if (!(mode & FALLOC_FL_KEEP_SIZE))
+> +			return -EOPNOTSUPP;
+> +		break;
+> +	case FALLOC_FL_COLLAPSE_RANGE:
+> +	case FALLOC_FL_INSERT_RANGE:
+> +		if (mode & FALLOC_FL_KEEP_SIZE)
+> +			return -EOPNOTSUPP;
+> +		break;
+> +	default:
+>  		return -EOPNOTSUPP;
+> -
+> -	/* Collapse range should only be used exclusively. */
+> -	if ((mode & FALLOC_FL_COLLAPSE_RANGE) &&
+> -	    (mode & ~FALLOC_FL_COLLAPSE_RANGE))
+> -		return -EINVAL;
+> -
+> -	/* Insert range should only be used exclusively. */
+> -	if ((mode & FALLOC_FL_INSERT_RANGE) &&
+> -	    (mode & ~FALLOC_FL_INSERT_RANGE))
+> -		return -EINVAL;
+> -
+> -	/* Unshare range should only be used with allocate mode. */
+> -	if ((mode & FALLOC_FL_UNSHARE_RANGE) &&
+> -	    (mode & ~(FALLOC_FL_UNSHARE_RANGE | FALLOC_FL_KEEP_SIZE)))
+> -		return -EINVAL;
+> +	}
+>  
+>  	if (!(file->f_mode & FMODE_WRITE))
+>  		return -EBADF;
+>  
+>  	/*
+> -	 * We can only allow pure fallocate on append only files
+> +	 * On append-only files only space preallocation is supported.
+>  	 */
+>  	if ((mode & ~FALLOC_FL_KEEP_SIZE) && IS_APPEND(inode))
+>  		return -EPERM;
+> diff --git a/include/linux/falloc.h b/include/linux/falloc.h
+> index f3f0b97b167579..3f49f3df6af5fb 100644
+> --- a/include/linux/falloc.h
+> +++ b/include/linux/falloc.h
+> @@ -25,12 +25,18 @@ struct space_resv {
+>  #define FS_IOC_UNRESVSP64	_IOW('X', 43, struct space_resv)
+>  #define FS_IOC_ZERO_RANGE	_IOW('X', 57, struct space_resv)
+>  
+> -#define	FALLOC_FL_SUPPORTED_MASK	(FALLOC_FL_KEEP_SIZE |		\
+> -					 FALLOC_FL_PUNCH_HOLE |		\
+> -					 FALLOC_FL_COLLAPSE_RANGE |	\
+> -					 FALLOC_FL_ZERO_RANGE |		\
+> -					 FALLOC_FL_INSERT_RANGE |	\
+> -					 FALLOC_FL_UNSHARE_RANGE)
+> +/*
+> + * Mask of all supported fallocate modes.  Only one can be set at a time.
+> + *
+> + * In addition to the mode bit, the mode argument can also encode flags.
+> + * FALLOC_FL_KEEP_SIZE is the only supported flag so far.
+> + */
+> +#define FALLOC_FL_MODE_MASK	(FALLOC_FL_ALLOCATE_RANGE |	\
+> +				 FALLOC_FL_PUNCH_HOLE |		\
+> +				 FALLOC_FL_COLLAPSE_RANGE |	\
+> +				 FALLOC_FL_ZERO_RANGE |		\
+> +				 FALLOC_FL_INSERT_RANGE |	\
+> +				 FALLOC_FL_UNSHARE_RANGE)
+>  
+>  /* on ia32 l_start is on a 32-bit boundary */
+>  #if defined(CONFIG_X86_64)
+> diff --git a/include/uapi/linux/falloc.h b/include/uapi/linux/falloc.h
+> index 51398fa57f6cdf..5810371ed72bbd 100644
+> --- a/include/uapi/linux/falloc.h
+> +++ b/include/uapi/linux/falloc.h
+> @@ -2,6 +2,7 @@
+>  #ifndef _UAPI_FALLOC_H_
+>  #define _UAPI_FALLOC_H_
+>  
+> +#define FALLOC_FL_ALLOCATE_RANGE 0x00 /* allocate range */
+>  #define FALLOC_FL_KEEP_SIZE	0x01 /* default is extend size */
+>  #define FALLOC_FL_PUNCH_HOLE	0x02 /* de-allocates range */
+>  #define FALLOC_FL_NO_HIDE_STALE	0x04 /* reserved codepoint */
+> -- 
+> 2.43.0
+> 
+> 
 
