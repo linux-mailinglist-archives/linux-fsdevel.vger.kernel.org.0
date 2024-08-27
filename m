@@ -1,235 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-27437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A6E961866
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 22:15:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07A896188E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 22:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA101C22F57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 20:15:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 279FDB22BB0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 20:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA19C158218;
-	Tue, 27 Aug 2024 20:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7991A18661B;
+	Tue, 27 Aug 2024 20:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vYi3HUMv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b0Cz1XsW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vYi3HUMv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b0Cz1XsW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KP7+ifKU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33C182877
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 20:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78B32E62B;
+	Tue, 27 Aug 2024 20:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724789737; cv=none; b=Nmk7Akom80Q4CrHXeE0GJA2+SC0CmbY9hqrgYLZLOvAckawisQFoIFAfpJ9SethoBzygN1hQ8AM7H45rRSD4hcfh8CZiozm9c5uiWqbYXJrp6C3X1YHx61z4THSAWY/a9VjSC0UR3Phjo1hOgKrdNaQ/0XNuRuhVpcREYxAVRR0=
+	t=1724790872; cv=none; b=P6uE5LUf9QKV9ZdEXMq+gBCYtUm9z0GxRyIgfN0ZhWp7vfO4izJ6XuH33A9j9GLcjDE/2e210bRx6ZkAM/vz7wTUAabVQBa9HD/nm2OO1xJwAOMiGoZV0pd0QrAQDvJ5+XbsZimh/JaD9RgA3UFpf8hQbF/hgfoZmsAb82cen9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724789737; c=relaxed/simple;
-	bh=CWObhrSRvzhh7tFoOSGiXUAWVKBca5FyYSszZ5TgF68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NCPb1sUnDJ6bSIn8R5gUyeRhTR+LtevqJ6VTiDTXnXmVioF9ogGHgdDjBj1S63Ui3AfojD2sVyZ2jhI14M/zqMbBlGTseatRp3yZVMWnbg8ezoj80sStNW7vycf6ngZLgLiDjxJfPk+E0TZeccYE/5DinbTMWzaN+pCm7PZrCG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vYi3HUMv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b0Cz1XsW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vYi3HUMv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b0Cz1XsW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CB8A91FB8B;
-	Tue, 27 Aug 2024 20:15:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724789732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=knGWaxH0R4m4TuW4TvM6nfIpA71Qplb2bUBb1bkN+fM=;
-	b=vYi3HUMvibdq7PAKrKGB19OXblhVQ3UO+nax9hTPh+f9zWiL5ZqG7FRVnjDfyOtCuAHDFD
-	wdYAiILks64A1y8UaVGuqkOfyYP8kvjl8kQGZfmxQ6Imz8YQ0vh69KDyiRWf9Nk7bJU9uo
-	Dkfn1b04o6VjA8j8lNuQktR6dP00Ouc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724789732;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=knGWaxH0R4m4TuW4TvM6nfIpA71Qplb2bUBb1bkN+fM=;
-	b=b0Cz1XsWgroKjYdyQLGZ5bR0mOCkMcnPdP0pO3UbN++fNSPyqB/VMmbciAJs1lKO4k2Zyh
-	8qSDy8fqLn/kJIDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vYi3HUMv;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=b0Cz1XsW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724789732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=knGWaxH0R4m4TuW4TvM6nfIpA71Qplb2bUBb1bkN+fM=;
-	b=vYi3HUMvibdq7PAKrKGB19OXblhVQ3UO+nax9hTPh+f9zWiL5ZqG7FRVnjDfyOtCuAHDFD
-	wdYAiILks64A1y8UaVGuqkOfyYP8kvjl8kQGZfmxQ6Imz8YQ0vh69KDyiRWf9Nk7bJU9uo
-	Dkfn1b04o6VjA8j8lNuQktR6dP00Ouc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724789732;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=knGWaxH0R4m4TuW4TvM6nfIpA71Qplb2bUBb1bkN+fM=;
-	b=b0Cz1XsWgroKjYdyQLGZ5bR0mOCkMcnPdP0pO3UbN++fNSPyqB/VMmbciAJs1lKO4k2Zyh
-	8qSDy8fqLn/kJIDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B490413A20;
-	Tue, 27 Aug 2024 20:15:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vFq9K+Qzzma+fAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 27 Aug 2024 20:15:32 +0000
-Message-ID: <96dd4a75-e83f-4807-b43e-bd5552f6aa6d@suse.cz>
-Date: Tue, 27 Aug 2024 22:15:32 +0200
+	s=arc-20240116; t=1724790872; c=relaxed/simple;
+	bh=nL656klfj72UXKbQ1kigvDKpTewYtq848tbr531Sjmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PyeHWt5aZGOgIu2pMJJQEpksMwtL0Vehy5bTrpckj+U25qejgPZfjKFK4UuugQ28UlmD50agmDKgE4phky/uhUlrZ4gxmzsg8jjpll+qVGNeYlp2pFVGvW/INGHrnfkgQ1Lmh2d8rg+9FkW1eflv+cuV9zQjG1sxgopJZC1Gt5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KP7+ifKU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B179C32786;
+	Tue, 27 Aug 2024 20:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724790872;
+	bh=nL656klfj72UXKbQ1kigvDKpTewYtq848tbr531Sjmk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=KP7+ifKUCF8iQyJ8eaBhwQECY0WZ0nZRPn9JkFS1XxNylDj1iIYO9UK5fESDvGhyh
+	 NXkDwKXamGLHw1SdjNPUyc/zl3wwbM9Z/rt07zbBqZlMuCBEfOoB/CDJ2FHG25ED5y
+	 3bsj5VYRVLBCvvStc/dzDnIYy2z1CBYNIEfX7S9bk8+hCBv8cS4kXOY8sCSxO2aNIa
+	 qq7maIPVx/EGmVyuO/sBC/HiJ54ifx1KFsYlHVw639iEuYvHB54W5vLq4wqWsCc0lq
+	 sbdCZfKYXOfqyS7vpfaVHWklAH/GspDI8gXF3OiPqIlWE8eaERW7wWM7biCQ8YZNJe
+	 INYqtZSekkS7g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0E6DFCE11D3; Tue, 27 Aug 2024 13:34:32 -0700 (PDT)
+Date: Tue, 27 Aug 2024 13:34:32 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jon Kohler <jon@nutanix.com>
+Cc: "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+	"jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+	"josh@joshtriplett.org" <josh@joshtriplett.org>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	Z qiang <qiang.zhang1211@gmail.com>
+Subject: Re: SRCU hung task on 5.10.y on synchronize_srcu(&fsnotify_mark_srcu)
+Message-ID: <95fbe7cc-8752-4e38-8c2e-5df5e544a3cc@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <1E829024-48BF-4647-A1DD-AC7E8BFA0FA2@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] fs,mm: add kmem_cache_create_rcu()
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>, Jann Horn <jannh@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
-References: <20240827-work-kmem_cache-rcu-v2-0-7bc9c90d5eef@kernel.org>
- <20240827-lehrjahr-bezichtigen-ecb2da63d900@brauner>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240827-lehrjahr-bezichtigen-ecb2da63d900@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: CB8A91FB8B
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1E829024-48BF-4647-A1DD-AC7E8BFA0FA2@nutanix.com>
 
-On 8/27/24 18:05, Christian Brauner wrote:
-> On Tue, Aug 27, 2024 at 05:59:41PM GMT, Christian Brauner wrote:
->> When a kmem cache is created with SLAB_TYPESAFE_BY_RCU the free pointer
->> must be located outside of the object because we don't know what part of
->> the memory can safely be overwritten as it may be needed to prevent
->> object recycling.
->> 
->> That has the consequence that SLAB_TYPESAFE_BY_RCU may end up adding a
->> new cacheline. This is the case for .e.g, struct file. After having it
->> shrunk down by 40 bytes and having it fit in three cachelines we still
->> have SLAB_TYPESAFE_BY_RCU adding a fourth cacheline because it needs to
->> accomodate the free pointer and is hardware cacheline aligned.
->> 
->> I tried to find ways to rectify this as struct file is pretty much
->> everywhere and having it use less memory is a good thing. So here's a
->> proposal.
->> 
->> I was hoping to get something to this effect into v6.12.
->> 
->> If we really want to switch to a struct to pass kmem_cache parameters I
->> can do the preparatory patch to convert all kmem_cache_create() and
->> kmem_cache_create_usercopy() callers to use a struct for initialization
->> of course. I can do this as a preparatory work or as follow-up work to
->> this series. Thoughts?
+On Tue, Aug 27, 2024 at 08:01:27PM +0000, Jon Kohler wrote:
+> Hey Paul, Lai, Josh, and the RCU list and Jan/FS list -
+> Reaching out about a tricky hung task issue that I'm running into. I've
+> got a virtualized Linux guest on top of a KVM based platform, running
+> a 5.10.y based kernel. The issue we're running into is a hung task that
+> *only* happens on shutdown/reboot of this particular VM once every 
+> 20-50 times.
 > 
-> So one thing I can do is to add:
+> The signature of the hung task is always similar to the output below,
+> where we appear to hang on the call to 
+>     synchronize_srcu(&fsnotify_mark_srcu)
+
+One thing to try would be to add trace_printk() or similar to the SRCU
+readers, just in case someone was using srcu_read_lock_notrace() on
+fsnotify_mark_srcu, which I see no trace of in current mainline.
+
+Alternatively, if there is a version where this does not happen, try
+bisecting.  Each bisection step would require something like 400-500
+shutdown/reboots to prove the commit good.  (Obviously, the first failure
+proves the commit bad, which for one-out-of-50 failures will take on
+average about 35 shutdown/reboots.)
+
+There could also be a bad SRCU backport from mainline, so please check
+what SRCU backports you have in your 5.10.y stable release.  (Though
+maybe Jack has already done this?)
+
+							Thanx, Paul
+
+> in fsnotify_connector_destroy_workfn / fsnotify_mark_destroy_workfn,
+> where two kernel threads are both calling synchronize_srcu, then
+> scheduling out in wait_for_completion, and completely going out to
+> lunch for over 4 minutes. This then triggers the hung task timeout and
+> things blow up.
 > 
-> struct kmem_cache_args {
-> 	.freeptr_offset,
-> 	.useroffset,
-> 	.flags,
-> 	.name,
-> };
-
-Hm basically everyone uses name, size and some flags, so how about we leave
-those as direct parameters and args is for the rest, and in most cases would
-be NULL.
-
-> accompanied by:
+> We are running audit=1 for this system and are using an el8 based
+> userspace.
 > 
-> int kmem_create_cache(struct kmem_cache_args *args);
-
-I think we can't reuse the name with different parameters as long the old
-one exists?
-
-> and then switch both the filp cache and Jens' io_kiocb cache over to use
-> these two helpers. Then we can convert other callers one by one.
+> I've flipped through the fs/notify code base for both 5.10 as well as
+> upstream mainline to see if something jumped off the page, and I
+> haven't yet spotted any particular suspect code from the caller side.
 > 
-> @Vlastimil, @Jens, @Linus what do you think?
-
-In the other thread you said it's best to leave such refactoring to
-maintainers and I agree and don't ask you to do the cleanup in order to get
-what you need (and we don't need to rush it either).
+> This hang appears to come up at the very end of the shutdown/reboot
+> process, seemingly after the system starts to unwind through initrd.
+> 
+> What I'm working on now is adding some instrumentation to the dracut
+> shutdown initrd scripts to see if I can how far we get down that path
+> before the system fails to make forward progress, which may give some
+> hints. TBD on that. I've also enabled lockdep with CONFIG_PROVE_RCU and
+> a plethora of DEBUG options [2], and didn't get anything interesting.
+> To be clear, we haven't seen lockdep spit out any complaints as of yet.
+> 
+> Reaching out to see if this sounds familar to anyone on the list, or if
+> there are any particular areas of the RCU code base that might be
+> suspect for this kind of issue. I'm happy to provide more information,
+> as frankly, I'm quite stumped at the moment.
+> 
+> Thanks all,
+> Jon
+> 
+> [1] panic trace
+>     Normal shutdown process, then hangs on the following:
+>     ...
+>     dracut Warning: Killing all remaining processes
+>     ...
+>     INFO: task kworker/u20:7:1200701 blocked for more than 241 seconds.
+>           Tainted: G           O      5.10.205-2.el8.x86_64 #1
+>     "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     task:kworker/u20:7   state:D stack:    0 pid:1200701 ppid:     2 flags:0x00004080
+>     Workqueue: events_unbound fsnotify_connector_destroy_workfn
+>     Call Trace:
+>      __schedule+0x267/0x790
+>      schedule+0x3c/0xb0
+>      schedule_timeout+0x219/0x2b0
+>      wait_for_completion+0x9e/0x100
+>      __synchronize_srcu.part.24+0x83/0xb0
+>      ? __bpf_trace_rcu_utilization+0x10/0x10
+>      ? synchronize_srcu+0x5d/0xf0
+>      fsnotify_connector_destroy_workfn+0x46/0x80
+>      process_one_work+0x1fc/0x390
+>      worker_thread+0x2d/0x3e0
+>      ? process_one_work+0x390/0x390
+>      kthread+0x114/0x130
+>      ? kthread_park+0x80/0x80
+>      ret_from_fork+0x1f/0x30
+>     INFO: task kworker/u20:8:1287360 blocked for more than 241 seconds.
+>           Tainted: G           O      5.10.205-2.el8.x86_64 #1
+>     "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     task:kworker/u20:8   state:D stack:    0 pid:1287360 ppid:     2 flags:0x00004080
+>     Workqueue: events_unbound fsnotify_mark_destroy_workfn
+>     Call Trace:
+>      __schedule+0x267/0x790
+>      schedule+0x3c/0xb0
+>      schedule_timeout+0x219/0x2b0
+>      ? add_timer+0x14a/0x200
+>      wait_for_completion+0x9e/0x100
+>      __synchronize_srcu.part.24+0x83/0xb0
+>      ? __bpf_trace_rcu_utilization+0x10/0x10
+>      fsnotify_mark_destroy_workfn+0x77/0xe0
+>      process_one_work+0x1fc/0x390
+>      ? process_one_work+0x390/0x390
+>      worker_thread+0x2d/0x3e0
+>      ? process_one_work+0x390/0x390
+>      kthread+0x114/0x130
+>      ? kthread_park+0x80/0x80
+>      ret_from_fork+0x1f/0x30
+>     Kernel panic - not syncing: hung_task: blocked tasks
+>     CPU: 1 PID: 64 Comm: khungtaskd Kdump: loaded Tainted: G           O      5.10.205-2.el8.x86_64 #1
+>     Hardware name: Red Hat KVM, BIOS 20230302.1.2662.el8 04/01/2014
+>     Call Trace:
+>      dump_stack+0x6d/0x8c
+>      panic+0x114/0x2ea
+>      watchdog.cold.8+0xb5/0xb5
+>      ? hungtask_pm_notify+0x50/0x50
+>      kthread+0x114/0x130
+>      ? kthread_park+0x80/0x80
+>      ret_from_fork+0x1f/0x30
+> 
+> [2] additional debugging config knobs turned up.
+>     CONFIG_PROVE_LOCKING=y
+>     CONFIG_LOCK_STAT=y
+>     CONFIG_DEBUG_RT_MUTEXES=y
+>     CONFIG_DEBUG_SPINLOCK=y
+>     CONFIG_DEBUG_MUTEXES=y
+>     CONFIG_DEBUG_WW_MUTEX_SLOWPATH=y
+>     CONFIG_DEBUG_RWSEMS=y
+>     CONFIG_DEBUG_LOCK_ALLOC=y
+>     CONFIG_LOCKDEP=y
+>     CONFIG_LOCKDEP_BITS=15
+>     CONFIG_LOCKDEP_CHAINS_BITS=16
+>     CONFIG_LOCKDEP_STACK_TRACE_BITS=19
+>     CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=14
+>     CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=12
+>     CONFIG_DEBUG_SHIRQ=y
+>     CONFIG_WQ_WATCHDOG=y
+>     CONFIG_DEBUG_ATOMIC_SLEEP=y
+>     CONFIG_DEBUG_LIST=y
+>     CONFIG_DEBUG_PLIST=y
+>     CONFIG_DEBUG_SG=y
+>     CONFIG_DEBUG_NOTIFIERS=y
+>     CONFIG_BUG_ON_DATA_CORRUPTION=y
 
