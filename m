@@ -1,257 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-27423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BC8961694
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 20:15:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE329616F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 20:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486111C22CAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:15:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0421F20F29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9531D1F70;
-	Tue, 27 Aug 2024 18:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiHXc+fn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C94E1D278E;
+	Tue, 27 Aug 2024 18:25:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from c.mail.sonic.net (c.mail.sonic.net [64.142.111.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED431CFEA4;
-	Tue, 27 Aug 2024 18:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6015264A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 18:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.142.111.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782539; cv=none; b=P+0rNVzGPaXtx2OlhyHylyFy7GYCHDDD2lrEwQBCI+y4i/8mAxec4JrVo2VC25W7jNsfahIpfMkbv1LYdVyDbegH59uXb9LCYMNJ3iqcIsyfCBM78PgBuqZRfym79u5xiDf+dPCbukTl/pLN44ad8WrBbTJHTrFUIY+ifuHtJqA=
+	t=1724783142; cv=none; b=g4f9W3QtT+5yTEgwIdvizKg68zfRhrLNXQPjszZRcwLn/H+ft28ME+71uyP1ty/VoK3Cbhv456prShnvkniE0GonkwfWmqScGw14QecYYy8dzZIg2LK+yzud3MRAhP4HvV1wx9MRbwyuOsfi0avYT/97OrGeXMUNetr0fEP2pV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782539; c=relaxed/simple;
-	bh=pVcgVy77zQ4wQus05rb9bOVof4LW3fmLFvD+y6zxvXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fyAG+TAr1PgIPYLaAcR3xZhkMQTnx7tNUyWYR3ZS86EmRhYK9gazGAE5piSFvObjeyMxm6SjEwoDd+HoVtDX5bwl+Ba3LImwxafxPcTDxRFL15SJ3T6UPipcceXTTMvi8XUQw0j+gx4+wDNSbjiGv2iQXi0LTe1J/tVJmVr974I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AiHXc+fn; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53436e04447so4921656e87.1;
-        Tue, 27 Aug 2024 11:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724782535; x=1725387335; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hlfGmOBnGqhl9bDyEbypN0UaVHevitrcJ0rKYwQl5/c=;
-        b=AiHXc+fnO1qMbSjAfmiVgdHZy55jlFY8XOw0B78+vo+2jJjXlmu9NAUWXm8eyh/jlZ
-         CrAaQcHL/omo7H3KAgbQB4rrjam3M/1ft0K7WKkn2o+eyjj26wQs+Bc8qi040IR3w+Mj
-         h8dSGECgUjMoSqewkxvQD8YZb4sekuZq+IbvLITYRIGY7CMxeIhOcfzuBwePpEoRE6/H
-         LGj+S0o5IEo3KenJx0wMEw/luhXGOyoocGvpbQzMnFg3evOuxkSiUFnXSYdpwPcuLRDF
-         zLxG4vXs7Zlq7+h1vdT31viaviPWGzUZbbRdJTpLx4Op1JklJwnPE9sJbdqvbdhJy4v9
-         eaEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724782535; x=1725387335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hlfGmOBnGqhl9bDyEbypN0UaVHevitrcJ0rKYwQl5/c=;
-        b=ZtJ39FyMKZlzy1bev13dM8yFo6eLKsHY/8VmpaF44TI4vfwb9cxIREHE098KQ3UP8m
-         VEfns05LNUxpqshCgCT913Gefz7adp4JRP/+DQtysvgOmS+fAILbaZ3k5XRDlJFqtRC3
-         pyp+TNwCSPLrzbKhk0RIK4scgQQYcOPg1qAQbvF3/nHgrAcVUDISQJ3G5Kiap3D+pfWP
-         ge8iGOdm45f24x2qUGdLsqzV6hXwKZO/4LJM/EJXVo6kpghXKs/OHzkSw2vQgduiVnlw
-         8CNEce0aaETg1yzxR5r4vrafW+7BUUAFpgsQiHH6dhMAEgMCz9YG23wr3CNf5+lhgRk3
-         T+Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCX3wFEykBhrpAqG/b2bsSSHrJiZUn7vwRTk8daO2WYo4KX1ngHrc6IkO14DispyjwwnlUku5x1S6xUU4D9L@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqEPR0fErAPXwWX1iWocnG35vJhL/Axef51qvzvkDLTpVpeHxe
-	OK8lUhzpeNWrO8YVF5QIScB98Pb++x5ataPEzCrUi43lcC3HWJx32vBIOLN1U7CjTKx8/AWyWt9
-	n8hjP7Ac1y84BFve/QhFzGtbDPTMoeBW5
-X-Google-Smtp-Source: AGHT+IEkjqrF4FP+oAa6lnud8Uip502gdhKTnzl2pIyhc6GpVhajGR80N1K7g3Po4H1LC8WOf86r5n5FBOTFUons4OA=
-X-Received: by 2002:a05:6512:3f04:b0:533:415e:cd9a with SMTP id
- 2adb3069b0e04-534555eff79mr6785e87.23.1724782534569; Tue, 27 Aug 2024
- 11:15:34 -0700 (PDT)
+	s=arc-20240116; t=1724783142; c=relaxed/simple;
+	bh=4mweyo9rUA60C9hIwuLbGFY/enkmWmdh0Y/SEx8hlGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=BBV9Dk1SrlZTOC6OO/6gUjRGhwLulxWURJ15DuknOylmkVisXIbfKK2XIVaS57nt6EN7fbC3mCGcKI50XA7YARkfEGztdHWDBrq67JoiNTWbpYx1N5iP/cN++2ews2v2tTIqJfAcHwptuJgtrbjzWBKwtvEvqzmrOGpgtpfc3YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nom.one; spf=pass smtp.mailfrom=nom.one; arc=none smtp.client-ip=64.142.111.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nom.one
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nom.one
+Received: from 192-184-190-79.static.sonic.net (192-184-190-79.static.sonic.net [192.184.190.79])
+	(authenticated bits=0)
+	by c.mail.sonic.net (8.16.1/8.16.1) with ESMTPA id 47RIFMYd013891;
+	Tue, 27 Aug 2024 11:15:23 -0700
+From: Forest <forestix@nom.one>
+To: Steve French <smfrench@gmail.com>
+Cc: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+        netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, regressions@lists.linux.dev
+Subject: Re: [REGRESSION] cifs: Subreq overread in dmesg, invalid argument & no data available in apps
+Date: Tue, 27 Aug 2024 11:15:23 -0700
+Message-ID: <7p5scjdvcr18u94mv04m03fpprf2gpmc0r@sonic.net>
+References: <37fncjpgsq45becdf2pdju0idf3hj3dtmb@sonic.net> <CAH2r5mtZAGg4kC8ERMog=X8MRoup3Wcp1YC7j+d08pXsifXCCg@mail.gmail.com>
+In-Reply-To: <CAH2r5mtZAGg4kC8ERMog=X8MRoup3Wcp1YC7j+d08pXsifXCCg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827015152.222983-1-lihongbo22@huawei.com>
-In-Reply-To: <20240827015152.222983-1-lihongbo22@huawei.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Wed, 28 Aug 2024 03:15:17 +0900
-Message-ID: <CAKFNMomMtJbEbZNRAzari3koP1eRHOrUDQ=rAxDbL6yfHHG=gg@mail.gmail.com>
-Subject: Re: [PATCH -next] nilfs2: support STATX_DIOALIGN for statx file
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Sonic-CAuth: UmFuZG9tSVZi7F1VjyEv0wcDqhj6iL90uNrKYFvcbx3DOX88rgztrJnFTS5QuE9N5xNNnRylgzZzSCwWhOBV76RDuAeZbKAa
+X-Sonic-ID: C;/AN6U6Bk7xG968+N3bHVhw== M;goSHU6Bk7xG968+N3bHVhw==
+X-Spam-Flag: No
+X-Sonic-Spam-Details: -0.0/5.0 by cerberusd
 
-Hi Hongbo,
+I applied those two patches on top of commit 3e9bff3bbe13 ("Merge tag
+'vfs-6.11-rc6.fixes'").  With those, the echo/cat/xxd test behaves as
+expected, at least the few times I tried it. No errors, no extra null bytes,
+no warning in dmesg.
 
-Thanks for the suggestion.
 
-I checked the STATX_DIOALIGN specification while looking at the
-implementation of other file systems, and I thought that if DIO
-support is incomplete, the dio_xx_align member should be set to 0.
+On Mon, 26 Aug 2024 22:32:35 -0500, Steve French wrote:
 
-Due to the nature of NILFS2 as a log-structured file system, DIO
-writes fall back to buffered io.  (DIO reads are supported)
-
-This is similar to the journal data mode of ext4 and the blkzoned
-device support of f2fs, but in such case, these file systems return a
-value of 0 (direct I/O not supported).
-
-So, it's fine to respond to a STATX_DIOALIGN request, but I think the
-value of dio_xx_align should be set to 0 to match these file systems.
-
-In this sense, there may be no need to rush to support STATX_DIOALIGN
-now.  Do you still think it would be better to have it?
-
-The following are some minor comments:
-
-On Tue, Aug 27, 2024 at 10:58=E2=80=AFAM Hongbo Li wrote:
+>Yes - thanks for reporting this.  I can reproduce this (although
+>slightly different error on "cat foo" with 6.11-rc5 vs. later patches
+>in for-next - I get ""No data available" now with some of David's
+>additional patches instead of "Invalid argument" which you get on
+>6.11-rc5).
 >
-> Add support for STATX_DIOALIGN to nilfs2, so that direct I/O alignment
-> restrictions are exposed to userspace in a generic way.
+>This problem looks related to something that David has discussed
+>earlier - on the wire (with 6.11-rc5) we see SMB3 READ with the server
+>returning  "STATUS_INVALID_PARAMETER" - there are actually two reads
+>in a row that are similar (1MB at offset 0), the first succeeds, the
+>second request  has a "credit charge" of 1 (instead of 16 which is
+>what I would have expected)  which is likely related to the cause of
+>the problem (and the second read fails).
 >
-> By default, nilfs2 uses the default getattr implemented at vfs layer,
-> so we should implement getattr in nilfs2 to fill the dio_xx_align
-> members. The nilfs2 does not have the special align requirements. So
-> we use the default alignment setting from block layer.
-> We have done the following test:
+>It looks like some of this is fixed with David's patch:
 >
-> [Before]
-> ```
-> ./statx_test /mnt/nilfs2/test
-> statx(/mnt/nilfs2/test) =3D 0
-> dio mem align:0
-> dio offset align:0
-> ```
+>https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=netfs-fixes&id=78d0d91398ad7bc37e73cdda65602ac8b6d675bb
 >
-> [After]
-> ```
-> ./statx_test /mnt/nilfs2/test
-> statx(/mnt/nilfs2/test) =3D 0
-> dio mem align:512
-> dio offset align:512
-> ```
+>0014-cifs-Fix-lack-of-credit-renegotiation-on-read-retry.patch
 >
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->  fs/nilfs2/file.c  |  1 +
->  fs/nilfs2/inode.c | 20 ++++++++++++++++++++
->  fs/nilfs2/namei.c |  2 ++
->  fs/nilfs2/nilfs.h |  2 ++
->  4 files changed, 25 insertions(+)
+>It is possible that the second part of this is fixed with:
 >
-> diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
-> index 0e3fc5ba33c7..5528918d4b96 100644
-> --- a/fs/nilfs2/file.c
-> +++ b/fs/nilfs2/file.c
-> @@ -154,6 +154,7 @@ const struct file_operations nilfs_file_operations =
-=3D {
+>https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=netfs-fixes&id=e81de4d9db1c25dc3e9feb21548fc5f3e2b3ad8e
 >
->  const struct inode_operations nilfs_file_inode_operations =3D {
->         .setattr        =3D nilfs_setattr,
-> +       .getattr        =3D nilfs_getattr,
->         .permission     =3D nilfs_permission,
->         .fiemap         =3D nilfs_fiemap,
->         .fileattr_get   =3D nilfs_fileattr_get,
-> diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-> index 7340a01d80e1..b5bb2c2de32c 100644
-> --- a/fs/nilfs2/inode.c
-> +++ b/fs/nilfs2/inode.c
-> @@ -1001,6 +1001,26 @@ int nilfs_setattr(struct mnt_idmap *idmap, struct =
-dentry *dentry,
->         return err;
->  }
+>Is there an easy way for you to retry with those two patches?
 >
-> +int nilfs_getattr(struct mnt_idmap *idmap, const struct path *path,
-> +                       struct kstat *stat, u32 request_mask, unsigned in=
-t query_flags)
-> +{
-> +       struct inode *const inode =3D d_inode(path->dentry);
-> +       struct block_device *bdev =3D inode->i_sb->s_bdev;
-> +       unsigned int blksize =3D (1 << inode->i_blkbits);
-> +
-> +       if ((request_mask & STATX_DIOALIGN) && S_ISREG(inode->i_mode)) {
-> +               stat->result_mask |=3D STATX_DIOALIGN;
-> +
-
-> +               if (bdev)
-> +                       blksize =3D bdev_logical_block_size(bdev);
-
-I don't think there's any need to check that bdev is NULL, but is
-there a reason?
-
-If sb->s_bdev can be NULL, I think that for such devices, a NULL
-pointer dereference bug will occur in the mount path.
-That's why I was concerned about this.
-
-> +               stat->dio_mem_align =3D blksize;
-> +               stat->dio_offset_align =3D blksize;
-> +       }
-> +
-> +       generic_fillattr(idmap, request_mask, inode, stat);
-> +       return 0;
-> +}
-> +
->  int nilfs_permission(struct mnt_idmap *idmap, struct inode *inode,
->                      int mask)
->  {
-> diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-> index c950139db6ef..ad56f4f8be1f 100644
-> --- a/fs/nilfs2/namei.c
-> +++ b/fs/nilfs2/namei.c
-> @@ -546,6 +546,7 @@ const struct inode_operations nilfs_dir_inode_operati=
-ons =3D {
->         .mknod          =3D nilfs_mknod,
->         .rename         =3D nilfs_rename,
->         .setattr        =3D nilfs_setattr,
-> +       .getattr        =3D nilfs_getattr,
-
-In the case of directories, the STATX_DIOALIGN request is ignored, so
-I don't think this is necessary for now. (It can be added in the
-future when supporting other optional getattr requests/responses).
-
->         .permission     =3D nilfs_permission,
->         .fiemap         =3D nilfs_fiemap,
->         .fileattr_get   =3D nilfs_fileattr_get,
-> @@ -554,6 +555,7 @@ const struct inode_operations nilfs_dir_inode_operati=
-ons =3D {
->
->  const struct inode_operations nilfs_special_inode_operations =3D {
->         .setattr        =3D nilfs_setattr,
-> +       .getattr        =3D nilfs_getattr,
->         .permission     =3D nilfs_permission,
->  };
-
-Ditto.
-
->
-> diff --git a/fs/nilfs2/nilfs.h b/fs/nilfs2/nilfs.h
-> index 4017f7856440..98a8b28ca1db 100644
-> --- a/fs/nilfs2/nilfs.h
-> +++ b/fs/nilfs2/nilfs.h
-> @@ -280,6 +280,8 @@ extern void nilfs_truncate(struct inode *);
->  extern void nilfs_evict_inode(struct inode *);
->  extern int nilfs_setattr(struct mnt_idmap *, struct dentry *,
->                          struct iattr *);
-> +extern int nilfs_getattr(struct mnt_idmap *idmap, const struct path *pat=
-h,
-> +                       struct kstat *stat, u32 request_mask, unsigned in=
-t query_flags);
-
-Do not add the "extern" directive to new function declarations.
-We are moving towards eliminating the extern declarator from function
-declarations whenever possible.
-
->  extern void nilfs_write_failed(struct address_space *mapping, loff_t to)=
-;
->  int nilfs_permission(struct mnt_idmap *idmap, struct inode *inode,
->                      int mask);
-> --
-> 2.34.1
->
-
-That's all for my comments.
-
-Thanks,
-Ryusuke Konishi
+>On Sun, Aug 25, 2024 at 6:26?PM Forest <forestix@nom.one> wrote:
+>>
+>> #regzbot introduced: e3786b29c54c
+>>
+>> Dear maintainers,
+>>
+>> Recent kernel release candidates have a cifs regression that produces
+>> unexpected errors in userspace and a WARNING (with stack trace) in dmesg.
+>>
+>> I can consistently reproduce it with these commands on a mounted Samba
+>> share:
+>>
+>>
+>> $ echo hello > foo
+>> $ ls -l foo
+>> -rw-r----- 1 user user 6 Aug 25 15:41 foo
+>> $ cat foo
+>> cat: foo: Invalid argument
+>> $ xxd foo
+>> 00000000: 6865 6c6c 6f0a 0000 0000 0000 0000 0000  hello...........
+>> 00000010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+>> (...more null bytes...)
+>> 00001fe0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+>> 00001ff0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+>> xxd: No data available
+>>
+>>
+>> The xxd command above also triggers these kernel log messages...
+>>
+>>   Subreq overread: R3[1] 312 > 8192 - 7956
+>>   WARNING: CPU: 30 PID: 421 at fs/netfs/io.c:495
+>>
+>> ...followed by the usual module list and stack trace.
+>>
+>>
+>> The bug is present in kernel v6.11-rc5, but not the 6.10 series.
+>>
+>> Git bisect says:
+>>
+>> e3786b29c54cdae3490b07180a54e2461f42144c is the first bad commit
+>> commit e3786b29c54cdae3490b07180a54e2461f42144c
+>> Author: Dominique Martinet <asmadeus@codewreck.org>
+>> Date:   Thu Aug 8 14:29:38 2024 +0100
+>>     9p: Fix DIO read through netfs
+>>
+>>
+>> Here's the full dmesg output when I run xxd on kernel v6.11-rc5:
+>>
+>> [   48.137018] ------------[ cut here ]------------
+>> [   48.137021] Subreq overread: R3[1] 312 > 8192 - 7956
+>> [   48.137029] WARNING: CPU: 30 PID: 421 at fs/netfs/io.c:495 netfs_subreq_terminated+0x276/0x2d0 [netfs]
+>> [   48.137046] Modules linked in: rfcomm algif_hash algif_skcipher af_alg cmac nls_utf8 cifs cifs_arc4 nls_ucs2_utils cifs_md4 dns_resolver netfs nft_masq nft_chain_nat nf_nat
+>> nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 bridge stp llc nf_tables nfnetlink nvme_fabrics essiv authenc crypto_null snd_seq_dummy snd_hrtimer snd_seq snd_seq_device qrtr zstd
+>> zram bnep binfmt_misc nls_ascii nls_cp437 vfat fat mt7921e snd_hda_codec_realtek mt7921_common snd_hda_codec_generic mt792x_lib snd_hda_scodec_component mt76_connac_lib
+>> snd_hda_codec_hdmi mt76 btusb snd_hda_intel amd_atl btrtl intel_rapl_msr snd_intel_dspcfg intel_rapl_common snd_intel_sdw_acpi btintel amd64_edac edac_mce_amd mac80211 btbcm
+>> snd_hda_codec asus_nb_wmi eeepc_wmi btmtk asus_wmi kvm_amd snd_hda_core sparse_keymap bluetooth libarc4 snd_hwdep platform_profile kvm cfg80211 snd_pcm battery wmi_bmof rapl
+>> snd_timer sp5100_tco ccp pcspkr watchdog snd k10temp rfkill soundcore joydev sg evdev nct6775 nct6775_core hwmon_vid msr parport_pc ppdev lp parport loop efi_pstore
+>> [   48.137103]  configfs ip_tables x_tables autofs4 ext4 mbcache jbd2 btrfs dm_crypt dm_mod efivarfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx
+>> xor raid6_pq libcrc32c crc32c_generic raid1 raid0 md_mod hid_generic usbhid hid amdgpu amdxcp drm_exec gpu_sched drm_buddy i2c_algo_bit drm_suballoc_helper drm_display_helper
+>> sd_mod cec crct10dif_pclmul rc_core crc32_pclmul xhci_pci drm_ttm_helper crc32c_intel ttm ahci xhci_hcd drm_kms_helper libahci r8169 ghash_clmulni_intel libata sha512_ssse3
+>> realtek nvme mdio_devres sha256_ssse3 drm usbcore scsi_mod sha1_ssse3 i2c_piix4 libphy video nvme_core i2c_smbus usb_common scsi_common crc16 wmi gpio_amdpt gpio_generic button
+>> aesni_intel gf128mul crypto_simd cryptd
+>> [   48.137148] CPU: 30 UID: 0 PID: 421 Comm: kworker/30:1 Not tainted 6.11.0-rc5 #3
+>> [   48.137150] Hardware name: ASUS System XXXXXXXXXX
+>> [   48.137151] Workqueue: cifsiod smb2_readv_worker [cifs]
+>> [   48.137176] RIP: 0010:netfs_subreq_terminated+0x276/0x2d0 [netfs]
+>> [   48.137182] Code: 66 ff ff ff 0f 1f 44 00 00 e9 5c ff ff ff 48 89 f1 0f b7 93 86 00 00 00 8b b5 ac 01 00 00 48 c7 c7 78 81 7a c2 e8 ba 68 2f da <0f> 0b 48 8b 43 70 31 d2 4c
+>> 8d ab 98 00 00 00 66 89 93 84 00 00 00
+>> [   48.137183] RSP: 0018:ffffad8942637e58 EFLAGS: 00010282
+>> [   48.137185] RAX: 0000000000000000 RBX: ffff9d09639a7200 RCX: 0000000000000027
+>> [   48.137186] RDX: ffff9d107e721788 RSI: 0000000000000001 RDI: ffff9d107e721780
+>> [   48.137187] RBP: ffff9d094bf38a00 R08: 0000000000000000 R09: 0000000000000003
+>> [   48.137187] R10: ffffad8942637ce8 R11: ffff9d109de3cfe8 R12: 0000000000000001
+>> [   48.137188] R13: ffff9d095fcf6000 R14: ffff9d09639a7208 R15: 0000000000000000
+>> [   48.137189] FS:  0000000000000000(0000) GS:ffff9d107e700000(0000) knlGS:0000000000000000
+>> [   48.137190] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   48.137191] CR2: 000055d1a3402760 CR3: 00000006b0222000 CR4: 0000000000750ef0
+>> [   48.137192] PKRU: 55555554
+>> [   48.137193] Call Trace:
+>> [   48.137194]  <TASK>
+>> [   48.137197]  ? __warn+0x80/0x120
+>> [   48.137201]  ? netfs_subreq_terminated+0x276/0x2d0 [netfs]
+>> [   48.137207]  ? report_bug+0x164/0x190
+>> [   48.137210]  ? prb_read_valid+0x1b/0x30
+>> [   48.137213]  ? handle_bug+0x41/0x70
+>> [   48.137215]  ? exc_invalid_op+0x17/0x70
+>> [   48.137216]  ? asm_exc_invalid_op+0x1a/0x20
+>> [   48.137220]  ? netfs_subreq_terminated+0x276/0x2d0 [netfs]
+>> [   48.137225]  ? netfs_subreq_terminated+0x276/0x2d0 [netfs]
+>> [   48.137230]  process_one_work+0x179/0x390
+>> [   48.137233]  worker_thread+0x249/0x350
+>> [   48.137235]  ? __pfx_worker_thread+0x10/0x10
+>> [   48.137237]  kthread+0xcf/0x100
+>> [   48.137240]  ? __pfx_kthread+0x10/0x10
+>> [   48.137242]  ret_from_fork+0x31/0x50
+>> [   48.137244]  ? __pfx_kthread+0x10/0x10
+>> [   48.137246]  ret_from_fork_asm+0x1a/0x30
+>> [   48.137250]  </TASK>
+>> [   48.137251] ---[ end trace 0000000000000000 ]---
+>>
 
