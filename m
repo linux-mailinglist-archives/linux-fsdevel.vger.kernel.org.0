@@ -1,117 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-27401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7109613C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:14:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC5B9613D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4513B1F2413C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:14:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F801B22F4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF09F1CCEFE;
-	Tue, 27 Aug 2024 16:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEpoxL2j"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65DF1CB142;
+	Tue, 27 Aug 2024 16:17:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260C31CBE8F;
-	Tue, 27 Aug 2024 16:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3D01C86F6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 16:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724775257; cv=none; b=u04+OKIp8Y8Vn7TJSGV+WmsFXl6WNfMgeJ0PD/E0fdNmSJjllQ3RBv6b+nceBf6S75qjUm7Uz3t+fSIMy3rAS1vdE5nTWEsKztA+QV+C6pz+QaTyrE/1sGcNdrX7+Ttxk/zUS2dtetbMDl4FnzgIsJcZWbPRzGrIWgRT9w82SCM=
+	t=1724775425; cv=none; b=CvFviD+q2MvIzRL+V6xNIFO2HTRGVl5UMO2kGDNP3KofgKc+N1ZswTlkkQNBkv7Sz7xn/8gFZIShCSY9R0SX54PJePEjglYYXp/4ggdXa/IjxmDzrL5y2Rs2aeb14acxO+JFbEbWWLJnfuC+suAKQp4JwkC6qacjJEDRavvsDHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724775257; c=relaxed/simple;
-	bh=qGZe//87Ad+MQ9pCLChDZiENV5roGQM7RxHylRBQ/Qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1ecSNRlG9+OfauqRDgSqoJWvyrc+TzT/fU0PqUd4GHcXk38Ez8hUNb4RRCnCqAfCM94ltNZRv0f1Yoa9zquk/g6Ger9daUcaIYPYUCUIKDrjZ3UNdjGy/oM/9TSjST4zBXqx8tSXAGThFQiSsoKxDqFk27S5UOxBd+mU+dgdOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEpoxL2j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D6DC5383C;
-	Tue, 27 Aug 2024 16:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724775256;
-	bh=qGZe//87Ad+MQ9pCLChDZiENV5roGQM7RxHylRBQ/Qg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PEpoxL2jbnnPi2ZZv1w0NMg5LKaWNaOfhSWlKJDlpyefl7IZYZcXA0zuC+PMHfAzO
-	 1hHzFWBIUqTJko98HBXJEP+9BR7+JKQf2i55ubErJ/Yxnjr1155coZ21yY9/+L6ZBb
-	 kiVGofNr8DmPWNlrImaqvIyvhJTHkvWNmu+9CnoJs0xcy9cThCjznUTbt26PgR/Kvz
-	 Ro/VLKWqYiOG/ua5LTVMBZ2xHGnD0urdJ00DvazpUdS+p1kyQW4Lx9kF2VILWr57WK
-	 0vDtHf39A+Moa5Sm6/BSLYbDjOjcalyePVhc+assAgkfjV5RZ/7DnC+aUxIlP3V8cr
-	 0BftsriqH4AYA==
-Date: Tue, 27 Aug 2024 09:14:16 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/10] iomap: handle a post-direct I/O invalidate race in
- iomap_write_delalloc_release
-Message-ID: <20240827161416.GV865349@frogsfrogsfrogs>
-References: <20240827051028.1751933-1-hch@lst.de>
- <20240827051028.1751933-2-hch@lst.de>
+	s=arc-20240116; t=1724775425; c=relaxed/simple;
+	bh=5XAqISp1O5JZg1ULLaLmQmHYO6E/l554W9XWwLazz7w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fx458OfMCi8F4fdDl+Ycchb4TdO2jfydhLV2maC0Cjzr1wTDzCB9/4ApZbWvhFx3oiTPHE5li9pBoH/8yso8ML3u0KfS5wkGw6jgA/M+Z+9mxfcT0ha8vtQ9Yn3LUjL21CoGSVGjAEq/pl4wGURUlZsUKub021jy7Eomwf/pAOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-829faef5aeaso64200539f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 09:17:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724775423; x=1725380223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xwdLy7ifDFmOoT2TcapjsucGnYM4zQXePJyan7677kc=;
+        b=UfUdougsD42Cbdi0tDQmd3iqeCO9v8pZ7ztIfehJXzRPocemGdAu1LxjTEsaELB8jw
+         Vzi988rlCO8r3tSMUeFGY3+Z0PdMFybLNOxuSX4wrVaSxFbD6WRL73ECT/CfjBF4Eowd
+         fJmvRCWwJARfTqXQINOMcwtT/TUEKA/6tQcFq4OH4uIWXHGX83tHxzk8y3wm8GeWdscs
+         tygciGx3UK0rGKcmGMR5cSKB5QEca/hGhOYV+iELyFlrEQjSs4hD7ZO826Bo+euoIS6s
+         6TPy3u+U2T0yVehTDOZ0JMjI68O/+ygCcE9frgmIYHPobcX7hu4tsLobbVuCiG6lZ4o6
+         zkVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNJIs1XHjVUMJyzd4GdIwk7KeWX7dVn8ZixivcdhP66E7CkbFOdsU0UV4BYYiu5TFbD6Fs87HogD+iB2Ys@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiQSUEiPHPFoaydtW/MznE/68+JIgzNWnCUi24PiRiGKiviK9T
+	ELIsAPZfkQEexCJEQ/NxARjkN2ZVt7wvk10Hyd0zU36gHRUgNIVYZYeT3eyTZkDGFDuRZb9+0E7
+	qaGn/ge+7Rar+hLoC28sWZkj1nmaknLT6IsDxENiqBY7si+GR5f59jdA=
+X-Google-Smtp-Source: AGHT+IGpwEmPBIxSKDNU4LNMXj+yBrZQT3OiZ3ToEhcwCQyzlfwwdNLqvvVvcM3LRCTQNIhnwWPtHyIODAfKlavgXJMzK0Y9wJWI
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827051028.1751933-2-hch@lst.de>
+X-Received: by 2002:a05:6638:1485:b0:4b9:ad20:51ff with SMTP id
+ 8926c6da1cb9f-4ce8284ec5bmr330404173.1.1724775423189; Tue, 27 Aug 2024
+ 09:17:03 -0700 (PDT)
+Date: Tue, 27 Aug 2024 09:17:03 -0700
+In-Reply-To: <000000000000be9914061763f17a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006ab89d0620ac92fc@google.com>
+Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel NULL pointer
+ dereference in attr_make_nonresident
+From: syzbot <syzbot+5b6ed16da1077f45bc8e@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 27, 2024 at 07:09:48AM +0200, Christoph Hellwig wrote:
-> When direct I/O completions invalidates the page cache it holds neither the
-> i_rwsem nor the invalidate_lock so it can be racing with
-> iomap_write_delalloc_release.  If the search for the end of the region that
-> contains data returns the start offset we hit such a race and just need to
-> look for the end of the newly created hole instead.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/iomap/buffered-io.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index f420c53d86acc5..69a931de1979b9 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1241,7 +1241,15 @@ static int iomap_write_delalloc_release(struct inode *inode,
->  			error = data_end;
->  			goto out_unlock;
->  		}
-> -		WARN_ON_ONCE(data_end <= start_byte);
-> +
-> +		/*
-> +		 * If we race with post-direct I/O invalidation of the page cache,
-> +		 * there might be no data left at start_byte.
-> +		 */
-> +		if (data_end == start_byte)
-> +			continue;
+syzbot suspects this issue was fixed by commit:
 
-Is there any chance that we could get stuck in a loop here?  I
-think it's the case that if SEEK_HOLE returns data_end == start_byte,
-then the next time through the loop, the SEEK_DATA will return something
-that is > start_byte.  Unless someone is very rapidly writing and
-punching the page cache?
+commit 0f9579d9e0331b6255132ac06bdf2c0a01cceb90
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Mon Jun 3 06:58:13 2024 +0000
 
-Hmm but then if *xfs* is punching delalloc then we're we holding the
-iolock so who else could be doing that?
+    fs/ntfs3: Add missing .dirty_folio in address_space_operations
 
-If the answers are 'no' and 'nobody' then
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=116e278d980000
+start commit:   34afb82a3c67 Merge tag '6.10-rc6-smb3-server-fixes' of git..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=5b6ed16da1077f45bc8e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110a2c7e980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1312ea4e980000
 
---D
+If the result looks correct, please mark the issue as fixed by replying with:
 
-> +
-> +		WARN_ON_ONCE(data_end < start_byte);
->  		WARN_ON_ONCE(data_end > scan_end_byte);
->  
->  		error = iomap_write_delalloc_scan(inode, &punch_start_byte,
-> -- 
-> 2.43.0
-> 
-> 
+#syz fix: fs/ntfs3: Add missing .dirty_folio in address_space_operations
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
