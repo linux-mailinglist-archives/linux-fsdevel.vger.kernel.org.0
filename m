@@ -1,125 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-27309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD0F960198
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 08:27:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91BD960212
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 08:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976102825F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 06:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD13C1C2236E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 06:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51C31487D6;
-	Tue, 27 Aug 2024 06:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC82149DF4;
+	Tue, 27 Aug 2024 06:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hxOQOsCF"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MDj1d/+W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEA5146596;
-	Tue, 27 Aug 2024 06:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBC0145A07
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 06:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724739971; cv=none; b=bXbjXdz9RRbPJEu2al8rPSna9bf0OfY2Sy1NNWDeZ7wn/911wFN5KG2XgVYg9Gp5N1SGwduqNoFyhSH++W/hVbCdIuIM3B78UyzuzgfHUdhnbvT2a+7FiCo8kLM0pfY2vh66MmidPhiT7JhjFxzLJ9wRKriYKpoDATs0mPCqwoc=
+	t=1724740826; cv=none; b=ePPCrT6R2ylEkSYJrzn2uuWC3/vjJwpnZXUrfGhrU+jvl8JOatbmAPnpG+QI+P4nr4Whomr7FpYWpIyekaLCgcf2F/8eXuly7xe0hSIaJ/0Z1usFMi4J1O3Rfy6t6cNbKDmWUhnOinHle3Xpau+O/emujOKYs++gdwbMM0yudO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724739971; c=relaxed/simple;
-	bh=dEhTUlXeWzHxDgVzj0ci8VW5ybz/ubs17Yn9nv7EjYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=emHdnXlghI+wz6XfLPaOcSh6WL4maDLRubsG+R/TLXSeK+kGkhR+dBFak7VS50K+HpOvy6GgG2iy+hXKVqI2rlx2xbWwh2KTeq96OS+e3wXIq+oVc5fEhOCjx7LOB9UjTCEAgiXvqoQQa9Ktk5jAjxBsrehh1gfCSI49QLIcQUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hxOQOsCF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724739964;
-	bh=dEhTUlXeWzHxDgVzj0ci8VW5ybz/ubs17Yn9nv7EjYM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hxOQOsCFKBD0D/EMlqQ2y4x3oKZAVhGs1l9NbRS2Ipjg2J/qKk9Yz4utwKQb59RS7
-	 j3LZF50BJBnI1P5Hdt/TrW/LuRB3VnKVKT14vJG4DBsL14Uq7Y3xiKpSK5UBwm3mdn
-	 CI06KAzzE+ge/aGhW3BZp3B0JsNY7cGVI1FvSD8bKgcuxmwHwt9s5x9QxhK+mB+wXS
-	 2sFb1z662ze1E/MmoRPEaztGuhGloCL+LhnGzTENyhSchPHvWQI9xaTS8jxjDkHnFW
-	 0sUk2iyNrR9dTPTYCZgaHAiCQ31VOuZvpcbKQftPdxxwh+3iOIiyfbh+52WeGaGXCg
-	 sQWUk2Q1/57AA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WtHcD3GgXz4w2R;
-	Tue, 27 Aug 2024 16:26:04 +1000 (AEST)
-Date: Tue, 27 Aug 2024 16:26:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org,
- p.raghav@samsung.com, dchinner@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-next@vger.kernel.org
-Subject: Re: [PATCH] iomap: remove set_memor_ro() on zero page
-Message-ID: <20240827162603.1a86804a@canb.auug.org.au>
-In-Reply-To: <20240827055539.GL865349@frogsfrogsfrogs>
-References: <20240826212632.2098685-1-mcgrof@kernel.org>
-	<20240827055539.GL865349@frogsfrogsfrogs>
+	s=arc-20240116; t=1724740826; c=relaxed/simple;
+	bh=uAcZu4y7bLgSB9heMOo1Yp8Y1l5hXVmDLaXgDUIlAH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1z0qmC1fyS1KJynxTWqw3OVgh1rF3KJATKo2Ubk44wRWyZhuE0maYwSJWxgZMHVdI6ycrIYVqYb0zFns2MvsabBbz7WwhqknEgNNaCPNnHzlkc18Qiqte4Qx2ASNgvZZhekzJisQjXovi7ixemVGXEz8+2ZOndJULOqpCzER8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MDj1d/+W; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 Aug 2024 02:40:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724740821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQptxE7qA2VWIgX3oNQ1mmeqR6GHf9K4w2oDVMxZa14=;
+	b=MDj1d/+WOS5gCRitsfLH/21htkLMK4K2TIyc1MjdWb4dK3v74eylUATRf/+g4Be72CAJh7
+	fzv9vUbTA26ve+x7v0o/7FORTyGpY9JqJ7tG7RX0B1mJDSXS3uyYkuxYyVHjkQ7D+uAV3R
+	GAQt+lBjNurKvR3kiN0ZcLosVVtHkqo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <ru3d2bfrnyap7t3ya5kke3fqyrnj2hgbl4z2negbqkqj7z4mr2@gqrstl4lpl5h>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
+ <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+ <ZszeUAMgGkGNz8H9@tiehlicka>
+ <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
+ <ZszlQEqdDl4vt43M@tiehlicka>
+ <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
+ <Zs1rvLlk0mXklHyf@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/WnlHn7eTQnOBUQK_4ciR3n7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs1rvLlk0mXklHyf@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/WnlHn7eTQnOBUQK_4ciR3n7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 27, 2024 at 08:01:32AM GMT, Michal Hocko wrote:
+> You are not really answering the main concern I have brought up though.
+> I.e. GFP_NOFAIL being fundamentally incompatible with NORECLAIM semantic
+> because the page allocator doesn't and will not support this allocation
+> mode.  Scoped noreclaim semantic makes such a use much less visible
+> because it can be deep in the scoped context there more error prone to
+> introduce thus making the code harder to maintain. 
 
-Hi all,
+You're too attached to GFP_NOFAIL.
 
-On Mon, 26 Aug 2024 22:55:39 -0700 "Darrick J. Wong" <djwong@kernel.org> wr=
-ote:
->
-> On Mon, Aug 26, 2024 at 02:26:32PM -0700, Luis Chamberlain wrote:
-> > Stephen reported a boot failure on ppc power8 system where
-> > set_memor_ro() on the new zero page failed [0]. Christophe Leroy
-> > further clarifies we can't use this on on linear memory on ppc, and
-> > so instead of special casing this just for PowerPC [2] remove the
-> > call as suggested by Darrick.
-> >=20
-> > [0] https://lore.kernel.org/all/20240826175931.1989f99e@canb.auug.org.a=
-u/T/#u
-> > [1] https://lore.kernel.org/all/b0fe75b4-c1bb-47f7-a7c3-2534b31c1780@cs=
-group.eu/
-> > [2] https://lore.kernel.org/all/ZszrJkFOpiy5rCma@bombadil.infradead.org/
-> >=20
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org> =20
->=20
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+GFP_NOFAIL is something we very rarely use, and it's not something we
+want to use. Furthermore, GFP_NOFAIL allocations can fail regardless of
+this patch - e.g. if it's more than 2 pages, it's not going to be
+GFP_NOFAIL. In general you can't avoid having error paths for memory
+allocations, and GFP_NOFAIL can't fundamentally change that.
 
-I added this to linux-next today, and it seems to have fixed the run
-time warning, so
+Stop trying to design things around GFP_NOFAIL.
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> I do see why you would like to have NOWAIT kvmalloc support available
+> and I also do see challenges in achieving that. But I completely fail to
+> see why you are bring that up _here_ as that is not really relevant to
+> PF_MEMALLOC_NORECLAIM use by bcachefs because it demonstrably doesn't
+> need that. There is no other user of the flag at the moment so dropping
+> the flag before there is more misuse is a reasonable goal. If you want
+> to bring up vmalloc NOWAIT support then feel free to do that in another
+> context and we can explore potential ways to achieve that.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WnlHn7eTQnOBUQK_4ciR3n7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbNcXsACgkQAVBC80lX
-0GwSvQf/SZMg3tJDWWeP8zI9bZsMGEGzu5BLoZ5oj8mmXcuOqPucOfCNi/tvrAh1
-OnGlCyfZzYNT8IeItMqx7z2IgUW+PFDfXJhNCRUo/HNtI35ujrDjheFJahmA+Fxx
-pupM1EiDiKOY366X0XzQ3vc1Q224QMIcWw7NgpPC2xN3xhsiV4w3d5WSyP/hDigq
-2wlrdH8H8ssAD9EM6JXfqPxvFYEoTJzCPj4Nl7/o+/c15SRfGjwXFkd3hbUE2eif
-fXlSIFoPaRIwQDvff0jipIQG3ArRIRa0UsyiBvnmdGalXLgG9WoHKrlUzR+a/IU3
-+xa+rMHLb9LGTX8ggF8/6S7lWyzF6A==
-=5GmB
------END PGP SIGNATURE-----
-
---Sig_/WnlHn7eTQnOBUQK_4ciR3n7--
+The inconsistencies between what PF_MEMALLOC supports and what gfp flags
+support are quite relevant. If gfp flags aren't plumbed everywhere, and
+aren't going to be plumbed everywhere (and that is the current
+decision), then we must have PF_MEMALLOC support.
 
