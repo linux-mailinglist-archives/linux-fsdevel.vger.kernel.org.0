@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-27302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16F896011F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 07:37:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67AA5960125
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 07:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A677F282D42
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 05:37:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5EF1C222F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 05:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7FB7E76D;
-	Tue, 27 Aug 2024 05:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC4F7E76D;
+	Tue, 27 Aug 2024 05:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oofV1dnx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tlkPpN6g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EAE219FF;
-	Tue, 27 Aug 2024 05:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BDC8C13;
+	Tue, 27 Aug 2024 05:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724737033; cv=none; b=GqCDPj8yzcPoeS4WetCrOKbI26fZ7CUkRnXF0DE10foheK1NUQJHJf34FDzvwID5gZt+6PvjFBSlk3/F6kxE6famsWKVeSJAs0gmITSf6lb2HZSn9gzI7WkpAvtYDC5OHfNe6e4PCX5Y4KX/bP2zlgpCuYmiWDIq8rpYa9mPa9E=
+	t=1724737465; cv=none; b=YB28eSJIdOsMFl9+HtaJl+ZrRnk4usSLkOAAsGFK8ANaa7PK9mr6CQeKyKT0KdHUIEX7SQo2X7/Of/c1PJm/K8NooULd4iEnrjJlgIyY3j8DOzy4WQvb0SgpelTcF/ksqkNDaCyPC6jQidw0q69yw9UBfreozLvzxvdwdMFc0YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724737033; c=relaxed/simple;
-	bh=FL8QMhvmY7D4W97mKq5c6qB6W77X4e851Ydl4kL/M9A=;
+	s=arc-20240116; t=1724737465; c=relaxed/simple;
+	bh=GBlXGrFCl1FRYT4KQQPvi092iMx/sBc21pvRXwJGyGA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLiqaNwHqQ2pcKcW7jGtn6YIrGKq2JXMqxyroL4xIT4oTsPZyvOzVnsnLCJLH4JxRDPcEF1xQTLB4lAIGeh0YCSUMM4imWw7mDdHjOJoBvJ3KtI9j6LRs0n3VfIsWYuePyLXY8lLNEGcUPb90qAHIM/OZ0t2cvZIHZnRFq1F3HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oofV1dnx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7021BC8B7A0;
-	Tue, 27 Aug 2024 05:37:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K5iXu86KHLImgOGAlGV2hlJHYBhn7zTS4VCCs6RUtHtjwcqM6t0SDLk2Tjg52Qomtd6WDUFIWj/kxQ4bjNQqD0fv9v3wNdsNwMcfmDUTH5DtjXwGv85s/3ijb8lV/Kyt6JpQNkWprEuYKoXrB+5jOAeH/oBSIeQv/OsQxn4ujdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tlkPpN6g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50DFEC8B7A0;
+	Tue, 27 Aug 2024 05:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724737033;
-	bh=FL8QMhvmY7D4W97mKq5c6qB6W77X4e851Ydl4kL/M9A=;
+	s=k20201202; t=1724737465;
+	bh=GBlXGrFCl1FRYT4KQQPvi092iMx/sBc21pvRXwJGyGA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oofV1dnx5iaw+EB5Lg06Cavz+fw+Qz1r1U1b5YuJySn/0PU6VI8HbGFWOPm0d5Wi5
-	 0AKg5SKF241FKo76FFdO8y29f2HJGF4WVkRZYMdRknj4M/isIh15bAMHyqG50g/VjB
-	 VR6WPhTXWBLgoL0FwBjyLHQScnV4N7KOtlEh07mX1WTk8/PAirmjtSDW+cPZ3Gxdf+
-	 LhT6zvU8dW9hhEP/jNbxM8ZKCbIq/dh77Rwd770k9q0W6fe78NuD4Rtra3iUcMTGXg
-	 z8Tg07PO35RdOK0QJBtCKCC/oy20JGmHlAWYhVgVpwtL7TneRHRiq09CgX6jIYc4Dg
-	 xz4yjZ2zJ6FKg==
-Date: Mon, 26 Aug 2024 22:37:12 -0700
+	b=tlkPpN6gnguIZa6voj7rF/zR0mddZSSCeGKJAUUoNX82xE43iqscjxCpFOY8mF7iw
+	 avg+aOouy+x7zwvDEA9heji5mQZpkftYlnQJ7qchYEBMDfEGNAXw84SF3Tib+qLnmW
+	 dYqnfLoyE+/1xRwZ3Oz0/FQ8/TGKnLaF5XUy1dcoB+t6t7VX07ijHUDe11GVV0y8O6
+	 czE+CAjAd/tUMmlJfM6u26oMLtrpq5IxKPdxMZYMk3KNnKTs5Tes0ewOvjOH7f+/LL
+	 nk4VK8uAY4j+1UsKr1Tgn9PCXipd6cS+HskrfIei6cgkbhHCAqjLQu6qbrI1EfkCRF
+	 mrB5jCVfHmNuQ==
+Date: Mon, 26 Aug 2024 22:44:24 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-	gnoack@google.com, mic@digikod.net, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
- directly
-Message-ID: <20240827053712.GL6043@frogsfrogsfrogs>
-References: <20240827014108.222719-1-lihongbo22@huawei.com>
- <20240827021300.GK6043@frogsfrogsfrogs>
- <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Chandan Babu R <chandan.babu@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 02/10] iomap: improve shared block detection in
+ iomap_unshare_iter
+Message-ID: <20240827054424.GM6043@frogsfrogsfrogs>
+References: <20240827051028.1751933-1-hch@lst.de>
+ <20240827051028.1751933-3-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,73 +60,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+In-Reply-To: <20240827051028.1751933-3-hch@lst.de>
 
-On Tue, Aug 27, 2024 at 10:32:38AM +0800, Hongbo Li wrote:
+On Tue, Aug 27, 2024 at 07:09:49AM +0200, Christoph Hellwig wrote:
+> Currently iomap_unshare_iter relies on the IOMAP_F_SHARED flag to detect
+> blocks to unshare.  This is reasonable, but IOMAP_F_SHARED is also useful
+> for the file system to do internal book keeping for out of place writes.
+> XFS used to that, until it got removed in commit 72a048c1056a
+> ("xfs: only set IOMAP_F_SHARED when providing a srcmap to a write")
+> because unshare for incorrectly unshare such blocks.
 > 
+> Add an extra safeguard by checking the explicitly provided srcmap instead
+> of the fallback to the iomap for valid data, as that catches the case
+> where we'd just copy from the same place we'd write to easily, allowing
+> to reinstate setting IOMAP_F_SHARED for all XFS writes that go to the
+> COW fork.
 > 
-> On 2024/8/27 10:13, Darrick J. Wong wrote:
-> > On Tue, Aug 27, 2024 at 01:41:08AM +0000, Hongbo Li wrote:
-> > > Many mainstream file systems already support the GETVERSION ioctl,
-> > > and their implementations are completely the same, essentially
-> > > just obtain the value of i_generation. We think this ioctl can be
-> > > implemented at the VFS layer, so the file systems do not need to
-> > > implement it individually.
-> > 
-> > What if a filesystem never touches i_generation?  Is it ok to advertise
-> > a generation number of zero when that's really meaningless?  Or should
-> > we gate the generic ioctl on (say) whether or not the fs implements file
-> > handles and/or supports nfs?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
 > 
-> This ioctl mainly returns the i_generation, and whether it has meaning is up
-> to the specific file system. Some tools will invoke IOC_GETVERSION, such as
-> `lsattr -v`(but if it's lattr, it won't), but users may not necessarily
-> actually use this value.
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 69a931de1979b9..737a005082e035 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1337,16 +1337,25 @@ EXPORT_SYMBOL_GPL(iomap_file_buffered_write_punch_delalloc);
+>  static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+>  {
+>  	struct iomap *iomap = &iter->iomap;
+> -	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+>  	loff_t pos = iter->pos;
+>  	loff_t length = iomap_length(iter);
+>  	loff_t written = 0;
+>  
+> -	/* don't bother with blocks that are not shared to start with */
+> +	/* Don't bother with blocks that are not shared to start with. */
+>  	if (!(iomap->flags & IOMAP_F_SHARED))
+>  		return length;
+> -	/* don't bother with holes or unwritten extents */
+> -	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
+> +
+> +	/*
+> +	 * Don't bother with holes or unwritten extents.
+> +	 *
+> +	 * Note that we use srcmap directly instead of iomap_iter_srcmap as
+> +	 * unsharing requires providing a separate source map, and the presence
+> +	 * of one is a good indicator that unsharing is needed, unlike
+> +	 * IOMAP_F_SHARED which can be set for any data that goes into the COW
 
-That's not how that works.  If the kernel starts exporting a datum,
-people will start using it, and then the expectation that it will
-*continue* to work becomes ingrained in the userspace ABI forever.
-Be careful about establishing new behaviors for vfat.
+Maybe we should rename it then?
+
+IOMAP_F_OUT_OF_PLACE_WRITE.
+
+Yuck.
+
+IOMAP_F_ELSEWHERE
+
+Not much better.  Maybe just add a comment that "IOMAP_F_SHARED" really
+just means an out of place write (aka srcmap is not just a hole).
 
 --D
 
-> Thanks,
-> Hongbo
+> +	 * fork for XFS.
+> +	 */
+> +	if (iter->srcmap.type == IOMAP_HOLE ||
+> +	    iter->srcmap.type == IOMAP_UNWRITTEN)
+>  		return length;
+>  
+>  	do {
+> -- 
+> 2.43.0
 > 
-> > 
-> > --D
-> > 
-> > > Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> > > ---
-> > >   fs/ioctl.c | 6 ++++++
-> > >   1 file changed, 6 insertions(+)
-> > > 
-> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > > index 64776891120c..dff887ec52c4 100644
-> > > --- a/fs/ioctl.c
-> > > +++ b/fs/ioctl.c
-> > > @@ -878,6 +878,9 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-> > >   	case FS_IOC_GETFSUUID:
-> > >   		return ioctl_getfsuuid(filp, argp);
-> > > +	case FS_IOC_GETVERSION:
-> > > +		return put_user(inode->i_generation, (int __user *)argp);
-> > > +
-> > >   	case FS_IOC_GETFSSYSFSPATH:
-> > >   		return ioctl_get_fs_sysfs_path(filp, argp);
-> > > @@ -992,6 +995,9 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
-> > >   		cmd = (cmd == FS_IOC32_GETFLAGS) ?
-> > >   			FS_IOC_GETFLAGS : FS_IOC_SETFLAGS;
-> > >   		fallthrough;
-> > > +	case FS_IOC32_GETVERSION:
-> > > +		cmd = FS_IOC_GETVERSION;
-> > > +		fallthrough;
-> > >   	/*
-> > >   	 * everything else in do_vfs_ioctl() takes either a compatible
-> > >   	 * pointer argument or no argument -- call it with a modified
-> > > -- 
-> > > 2.34.1
-> > > 
-> > > 
-> > 
 > 
 
