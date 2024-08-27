@@ -1,120 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-27370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D835E960B0C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 14:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C66FD960B1A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 14:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172381C22774
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 12:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0198F1C22D9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 12:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50DE1BF816;
-	Tue, 27 Aug 2024 12:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7091BD000;
+	Tue, 27 Aug 2024 12:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="JgL/ulg/"
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="G1giUSWT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A771BAED5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 12:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A04A19CCE7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 12:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762959; cv=none; b=KDinO6tdMpvY3wdwKKMrs57Bnemv3UMwV1ieKkviXLkU4bny3vqq5FxSc5Qi/Z2cYxuxc3PMfi3nOvkdCCrCJ42KinFd8MvRWvn222R6CT4AETG4j/DP26C/Hp7gSUSHilLZZDLLp483SMiTMM6cFpDsCSml7ulzi5WyCDehUQI=
+	t=1724763110; cv=none; b=kCRhIV3ZcS1VzMbfBP2O6Zr8+cXFhxLfl9M5LUu1sAHa0EXdj27AnL2JBgDF3g6b+stjE4kcn0GqsAywnkMI+WoyZVRcWsBVd/gGj4LoIB/mtlmeqVLpkDDDJphyCX2zPoZn3YV6RdgT5zlzCWAWP0llXqbMF6i0jX7O+qe0sQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762959; c=relaxed/simple;
-	bh=wscF2ITDjL+zA0jES7wvT52POg2jmCcdiSKrj3iQL20=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LRq0Sk9svHzGt3WzFjKiK9YnwCwGzQV+RmW3OEBp3HktXDSaTMg778FyxU3cxEPTbjyWVmt1wBrZ+7dtpXMkkgUM56+kcegmemdPQYZXyzkgvv3kyrOy6Ugr82TcQpL2jcJC9AaCtVvE6Hb1KkdslDjF4q/bhgpbROCeVxJ6sfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=JgL/ulg/; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1724763110; c=relaxed/simple;
+	bh=pIZ/9NAl6sknpOSyqXJf5pTwFKUE753sOw+rcvyB6VU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=G/TWsynNUnfF7u6cdciecicQ79sVPadXX97Mk1hNI5Hh6TdQM5Qu1Muj8NSZM9/tLP/nAghlYSunXglsoUQXk51ezAiDcU3bRZwhxXUnWw+dvLoRhZv+IKNu+CZHrNbHZ8oT8D6yE+iM76NwB8cUL8G2oKlsCNm+cq37ikImafo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=G1giUSWT; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42b964d7526so2438525e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 05:49:17 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bece5b572eso863993a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 05:51:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724762956; x=1725367756; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d7tHPmr1c4+0oZPwNoAX8qZLaMbelgh9RbQRLc/3HQo=;
-        b=JgL/ulg/2Z2Mj2WEr+h+Wz37L/IJdeSH5F+gfayj1E9o+9nnAnu2mm2qkJvxzhFeKn
-         w14SAHwowv0zBNN2wAHuLSMTXnHc6j7kNdK77SZ20/RQR11xohOiPV4agD+M4HnCEUiz
-         qFVLHguerMHYQJv1hzA+kBEP/KYjgs/u4Q29ckrgxXCCF4059prR/oxzkc1kPBu6+0G4
-         qR3cDjiA8Yib3YSxxJYKCt2wNiZxSMF9acHwMow3YbPtYaSr6STb2PnOYn9jELphGpoC
-         vwTvr2gUdtVea+9NUh6yhA2upFlVWNnE15tmMZMH9ZZHq0YjnurbC9J773rzU2CPIwxa
-         2rlQ==
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724763107; x=1725367907; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pIZ/9NAl6sknpOSyqXJf5pTwFKUE753sOw+rcvyB6VU=;
+        b=G1giUSWTLUShSyezgmAP5WTfaGBx/tLINNFnvAOp9ueN22h2VimoNhyMaip/SfsEft
+         zze4dh1+xorUmC20Z7ipZm9EKBL4nP6eOMVU6Y1ZYfl35qZGhxvf5U5XunkwJpYD0UQL
+         Ns7/qTTLiLy38nLKAQ/WUWW8QpdXf9NqA6NXuxnijOmti3G2W3JGr1e541DtqyWy7SRk
+         qSqarZ44xodpwv2Fg0YDyOmjeOSHJxHtPXSAcM7FjHejC7gA5mc21S6hZAnmLv/PlXUF
+         SC67/xI1xUZEtLmnhivMGH3DJjqKIzDT8HERVe9QJ37XBSzwGc1HoAZtiUHQFO6+0j1o
+         sQlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724762956; x=1725367756;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d7tHPmr1c4+0oZPwNoAX8qZLaMbelgh9RbQRLc/3HQo=;
-        b=fO2gO3xmggd3cUY7bPYARBVGLgjbuwH9Z4m9MIKytsy6DWR99/+lsQaZ7Pm7jfoqCB
-         uTJ0H/LLZk0t6lPX+w72ivR8DtEeQ/vT/OgYlSObj8c93WzqUIlGyM0ZuEwZBj3WvteN
-         wjwlKX1frYWoxGaETEkCrq5g7WhIh4TYGtFTFMq7vOnMrRb73myGDguVe9h7dmT2r/3C
-         AHYpNCoLs3bKxctpskbaC7WJ8jnejyj4+9k3u4U8YMb7XR4oX0WVwqdk71En8uxXLhwk
-         HgdByA9BJ10hsn7AJVF1iRq53pakiXwy+1Buc2SKjD/TX4PG1YVo/sH8hgi0/1MXV7FC
-         P8Vg==
-X-Gm-Message-State: AOJu0YxWiZREFsokQDW/VX8rIjhQjIOh0IV9DQdtl80yVl+m09+gERDK
-	uUWvcZSYccQovBStmfc0FVN6xtAnRhSdwpThewRMYPdm/1fMoCMO8GP9FIv6fFU=
-X-Google-Smtp-Source: AGHT+IH/VZhYdTzKRXtBrAVvHca6e6ly//DPo9FBNebV2MpbS/nxnzOZskjXpyL/QDH+VENRiMxe/Q==
-X-Received: by 2002:a05:600c:3c99:b0:426:668f:5ed7 with SMTP id 5b1f17b1804b1-42acc8dd868mr60882815e9.2.1724762955347;
-        Tue, 27 Aug 2024 05:49:15 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac516252asm184042295e9.26.2024.08.27.05.49.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 05:49:15 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: dsterba@suse.com,
-	gustavoars@kernel.org,
-	kees@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] affs: Replace one-element array with flexible-array member
-Date: Tue, 27 Aug 2024 14:48:40 +0200
-Message-ID: <20240827124839.81288-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1724763107; x=1725367907;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pIZ/9NAl6sknpOSyqXJf5pTwFKUE753sOw+rcvyB6VU=;
+        b=CaHpONOXc4HkjoJU6HZhwWjngynqPiqQ876uKZhKnipo2Nb2Vd/HTJdpUwPjUMdIk2
+         Skz1lkJFCpxxrhi+71kSNrvY5ZqhDfzpXzOeS5W5oSauIVVDt4uR/E5MNyZvHxlne3UW
+         3b0Ux/ew9CrI5W66ww2R/MyO3GbgmH0pTY0Ra1u5wBl+ORy4UR/vCnLpaf+i2eNrhZQL
+         NT8FcZrRmKEHAA4TiN/T3DPM/LgrxQlroEuFyGoQhEIIORoYm99HPgztPEDduIcU8iTd
+         sugfe6v/nhWcZBKvxDg4VDVSzbroi9qnk5XIkKWqeoheEFtzV2PMmjrX7qxS28i+em6a
+         K/oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUt7qbPgbQoQ1FR9DpyRZebIdt9qv4NcmhdSVWcbGVdOvMuaz16bePLlgdwr72/AIIfxSlzcdxdtw9MRHT0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6Vpk0cgkm1eYLPJS/43pVRgN+BniSGMV7wfPPiCIWHvOqtYSJ
+	cjBJ1FoQHdTkqDKahLK9HyKpuiCPQEOE8GijMLVpvJGtuNkq7X4Mc8T4X2Rzg5o=
+X-Google-Smtp-Source: AGHT+IGI/KqUx0O1B5OMUKooRpbtrwcBTIHeYmCBtCsBzSzU5pJS6J8O88BgzLYlgAW1IzGiJylzZw==
+X-Received: by 2002:a05:6402:51c7:b0:5a0:d706:c1fe with SMTP id 4fb4d7f45d1cf-5c0891f071fmr4899966a12.6.1724763107214;
+        Tue, 27 Aug 2024 05:51:47 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:1050:bb01:8cae:d35d:b93e:b368])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c5b39sm985401a12.20.2024.08.27.05.51.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Aug 2024 05:51:46 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] affs: Remove unused struct members in affs_root_head
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <9EB1D6D7-DD1F-433D-BF6D-7DAC53EE4BAF@toblux.com>
+Date: Tue, 27 Aug 2024 14:51:35 +0200
+Cc: dsterba@suse.com,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <761C500D-3075-4958-9011-DEE38B235A39@toblux.com>
+References: <20240826142735.64490-2-thorsten.blum@toblux.com>
+ <202408261307.F7D2AD650@keescook>
+ <9EB1D6D7-DD1F-433D-BF6D-7DAC53EE4BAF@toblux.com>
+To: Kees Cook <kees@kernel.org>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-Replace the deprecated one-element array with a modern flexible-array
-member in the struct affs_root_head.
+On 26. Aug 2024, at 22:48, Thorsten Blum <thorsten.blum@toblux.com> =
+wrote:
+> On 26. Aug 2024, at 22:08, Kees Cook <kees@kernel.org> wrote:
+>> On Mon, Aug 26, 2024 at 04:27:36PM +0200, Thorsten Blum wrote:
+>>> Only ptype is actually used. Remove the other struct members.
+>>>=20
+>>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+>>> ---
+>>> fs/affs/amigaffs.h | 6 ------
+>>> 1 file changed, 6 deletions(-)
+>>>=20
+>>> diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
+>>> index 1b973a669d23..9b40ae618852 100644
+>>> --- a/fs/affs/amigaffs.h
+>>> +++ b/fs/affs/amigaffs.h
+>>> @@ -49,12 +49,6 @@ struct affs_short_date {
+>>>=20
+>>> struct affs_root_head {
+>>> __be32 ptype;
+>>> - __be32 spare1;
+>>> - __be32 spare2;
+>>> - __be32 hash_size;
+>>> - __be32 spare3;
+>>> - __be32 checksum;
+>>> - __be32 hashtable[1];
+>>> };
+>>=20
+>> This is removing documentation, in a way. Since I suspect you were
+>> looking at this due to hashtable, maybe just change that to [] and =
+note
+>> that it (and the other fields) aren't used, but they're kept around =
+to
+>> help document the format.
+>=20
+> Yes, I was looking at hashtable. I'll submit a v2.
 
-Add a comment that most struct members are not used, but kept as
-documentation.
+I submitted a new patch instead of a v2.
 
-Link: https://github.com/KSPP/linux/issues/79
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- fs/affs/amigaffs.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
-index 1b973a669d23..da3217ab6adb 100644
---- a/fs/affs/amigaffs.h
-+++ b/fs/affs/amigaffs.h
-@@ -49,12 +49,13 @@ struct affs_short_date {
- 
- struct affs_root_head {
- 	__be32 ptype;
-+	/* The following fields are not used, but kept as documentation. */
- 	__be32 spare1;
- 	__be32 spare2;
- 	__be32 hash_size;
- 	__be32 spare3;
- 	__be32 checksum;
--	__be32 hashtable[1];
-+	__be32 hashtable[];
- };
- 
- struct affs_root_tail {
--- 
-2.46.0
-
+Link: =
+https://lore.kernel.org/linux-kernel/20240827124839.81288-2-thorsten.blum@=
+toblux.com/
 
