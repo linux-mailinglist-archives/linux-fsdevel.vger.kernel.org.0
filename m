@@ -1,89 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-27273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B8B95FFA1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 05:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3A795FFC6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 05:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16899B21B09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 03:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32BE61F22C4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 03:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D235117C9B;
-	Tue, 27 Aug 2024 03:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70C73232;
+	Tue, 27 Aug 2024 03:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i8xcbSD1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8925B18030;
-	Tue, 27 Aug 2024 03:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB3E1805E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 03:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724728060; cv=none; b=kaRtkSjoIzTyLdt8xIQx/Vh+XcNqeOD1623T30IystpJpTyvEYVp880vEok78+QMMf+ZPp5p3ZhT44C6G2H+DCvcGUv+jPRBni6nM0MLLnXDy5CkuMRtdCwvzdA0bYuoWxXtUR6Vto3mx+fJIgYDkPOHEe1bGDZkNs6pR8o/Lsg=
+	t=1724729400; cv=none; b=lHQMJECMtpzzZrVS13DAyTFK9CQ41RA0SiirMjwvEK0QnABGJBWURH3wDKxhYir1ym3bxmS3BNCLF8rr895k6B/M/tNpgtYJlJQ/ffANdtRJnB/1GLGAiYDZrPSG+dLf/1Aq7//M6uwnFLM30YoVKYy+oBRoRpxT9uFcSffL2uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724728060; c=relaxed/simple;
-	bh=CyZfbQmPhMQsZgkcv0sUPwAENxyiX4nXFW6VgAc4L2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nrqAEceH8bn0lQkoi4Qm9JcJBPgS3hqqXyRtoSXhr1fvpEFp2d9l9jQgeiekbQCch8EU27LIacpCDUW25IFd5PCFBHGPmewNL7uJRnMozdJME14w24vhk9a6CtaAmYV62yd10DmIbuOKuLXc3mNwefXri4IiLikOPF/iOPSgofw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WtCBJ4r0Kz16PTM;
-	Tue, 27 Aug 2024 11:06:48 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1FC3B140137;
-	Tue, 27 Aug 2024 11:07:35 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 27 Aug 2024 11:07:34 +0800
-Message-ID: <e756e428-1300-45c8-84b7-178c14c9ff62@huawei.com>
-Date: Tue, 27 Aug 2024 11:07:34 +0800
+	s=arc-20240116; t=1724729400; c=relaxed/simple;
+	bh=WKIOaTG/O7gm+4/VSs3liOn/sNcWabSkU8R9R2Wzwc4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BiNqCpgWKDKmZbJWnpwsMvqxRq9DqqiZdVCtoNnX/qSsr0vjG+YgZzULzFSMAeeUWhbKkllC/7QdPfLqvkV+j4mUJTPs9Hp1uXwWfPrcUQoqAfOCyAWzATC8dLHlUOmW7c/NEhIY1Yb+/NJBJJJPeQM16WFsAcfsXes1stzHKrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i8xcbSD1; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Aug 2024 23:29:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724729396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=WKIOaTG/O7gm+4/VSs3liOn/sNcWabSkU8R9R2Wzwc4=;
+	b=i8xcbSD1ASqsUiZOK46wyT2H2y2KvX+yFJtQNePtQ8Jhn/SeA770yXrIrhJdqoP9xMD2qC
+	DISxxYz1yd34hv1DRkXqrnKCS+gNxCY/JwgpU6yYnllUYTLfiaKvLLoo35WY+ECvHo0DWR
+	+zAXU9wG/OplzgB1NY2W3hNLUH3afng=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org
+Subject: bcachefs dropped writes with lockless buffered io path,
+ COMPACTION/MIGRATION=y
+Message-ID: <ieb2nptxxk2apxfijk3qcjoxlz5uitsl5jn6tigunjmuqmkrwm@le74h3edr6oy>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
- directly
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>
-CC: <brauner@kernel.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
-	<gnoack@google.com>, <mic@digikod.net>, <linux-fsdevel@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>
-References: <20240827014108.222719-1-lihongbo22@huawei.com>
- <Zs0_qeIPppYYLTac@casper.infradead.org>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <Zs0_qeIPppYYLTac@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
+We had a report of corruption on nixos, on tests that build a system
+image, it bisected to the patch that enabled buffered writes without
+taking the inode lock:
 
+https://evilpiepirate.org/git/bcachefs.git/commit/?id=7e64c86cdc6c
 
-On 2024/8/27 10:53, Matthew Wilcox wrote:
-> On Tue, Aug 27, 2024 at 01:41:08AM +0000, Hongbo Li wrote:
->> Many mainstream file systems already support the GETVERSION ioctl,
->> and their implementations are completely the same, essentially
->> just obtain the value of i_generation. We think this ioctl can be
->> implemented at the VFS layer, so the file systems do not need to
->> implement it individually.
-> 
-> ... then you should also remove the implementation from every
-> filesystem, not just add it to the VFS.
-> 
+It appears that dirty folios are being dropped somehow; corrupt files,
+when checked against good copies, have ranges of 0s that are 4k aligned
+(modulo 2k, likely a misaligned partition).
 
-Yeah, this is just an RFC submission, mainly to see what everyone's 
-opinions are. If this is ok, I will send the v2 that includes the 
-removal of all file systems' implementations on IOC_GETVERSION.
+Interestingly, it only triggers for QEMU - the test fails pretty
+consistently and we have a lot of nixos users, we'd notice (via nix
+store verifies) if the corruption was more widespread. We believe it
+only triggers with QEMU's snapshots mode (but don't quote me on that).
 
-Thanks,
-Hongbo
+Further digging implicates CONFIG_COMPACTION or CONFIG_MIGRATION.
 
-> 
+Testing with COMPACTION, MIGRATION=n and TRANSPARENT_HUGEPAGE=y passes
+reliably.
+
+On the bcachefs side, I've been testing with that patch reduced to just
+"don't take inode lock if not extending"; i.e. killing the fancy stuff
+to preserve write atomicity. It really does appear to be "don't take
+inode lock -> dirty folios get dropped".
+
+It's not a race with truncate, or anything silly like that; bcachefs has
+the pagecache add lock, which serves here for locking vs. truncate.
+
+So - this is a real head scratcher. The inode lock really doesn't do
+much in IO paths, it's there for synchronization with truncate and write
+vs. write atomicity - the mm paths know nothing about it. Page
+fault/mkwrite paths don't take it at all; a buffered non-extending write
+should be able to work similarly: the folio lock should be entirely
+sufficient here.
+
+Anyone got any bright ideas?
 
