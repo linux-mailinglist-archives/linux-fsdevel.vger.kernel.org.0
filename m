@@ -1,114 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-27359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF61960925
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 13:43:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E265D96093C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 13:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48584280FA7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 11:43:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC101C22554
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 11:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A875F1A01B6;
-	Tue, 27 Aug 2024 11:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348ED19FA72;
+	Tue, 27 Aug 2024 11:48:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0DD19EED8;
-	Tue, 27 Aug 2024 11:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49FB155CA5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 11:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758964; cv=none; b=DaBo5JZgf46musTu0GNsoM9MX+2f5f9ezSe8pZNuo61nnCRO18Do6mwLkeww0YlpcxD05zBmXEa6QHp1QmVfoZfqYey4+KSwQQFLh97vDzExeB81dkJizscwHPLzqUMC5JbnNARaA2dXDIYaiqkxVZd4paOjUhTYRpTtvuPkwBE=
+	t=1724759283; cv=none; b=tnQHVEImeJcgiRWmKBgDEj7rQXtgMxshg/qsjEeHezACOjOcsVg2zl+2GohzACL6PLcDXNHP3jq/+k62PnyfwD/1Mi4clargpM0n6M6l+t47dRdnl6fkKiRY66YLyw+TEkUExws3WuwK2vstpjBYBW3yzceUUFTUfBpkkJvAQuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758964; c=relaxed/simple;
-	bh=dPe8DbtxerYaaq8xecDoFTNyrI561S8eGoHGxCwKKGI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=usqiJ1WgWXWuKGWgCJU7kYBCqzeXt6Jn5DOG66Gl7gI9zGjoCstiqnqkKs0c8ITn2B4cgy7Yd2GPiyY97P942pkT+1tnVJy9Ch0ysfHYXKOARLidby6YTaDvBaKQcvn4Yws9k4UBwp8WmLow9Vuk4pBtGgBFFtd8Q4zjnpxADw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	s=arc-20240116; t=1724759283; c=relaxed/simple;
+	bh=xtuvclMCs8tB2+Ts7aoJIVT198TtlA+CT+9bLh9krpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hGBOWNIF+xZhR6C+FDQvQH+K2UrgXWw4D1PHKrBG43r3you43EZXiMW7/SJf5BtT6G4+SRnuH+Z6iMfB2SvExLViY7DeajRBmtEOZYFUrl3O+bARPJhpeOh2CHSCGgVOuImtuCmrDgRhdIE8vEry7iUepak5VDs/cJ3k2rwVjYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WtQcd5HGQzyQYJ;
-	Tue, 27 Aug 2024 19:41:53 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id E3F4F18007C;
-	Tue, 27 Aug 2024 19:42:40 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
- 2024 19:42:40 +0800
-From: yangyun <yangyun50@huawei.com>
-To: <miklos@szeredi.hu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lixiaokeng@huawei.com>, <yangyun50@huawei.com>
-Subject: Re:[PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
-Date: Tue, 27 Aug 2024 19:41:46 +0800
-Message-ID: <20240827114146.3474592-1-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <CAJfpegt_P=Dj-CXnbZYK+XZW8ZwNH0_Str30q9vub0o00UMuWQ@mail.gmail.com>
-References: <CAJfpegt_P=Dj-CXnbZYK+XZW8ZwNH0_Str30q9vub0o00UMuWQ@mail.gmail.com>
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WtQjH6nG5zfbdw;
+	Tue, 27 Aug 2024 19:45:55 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 64A4E140202;
+	Tue, 27 Aug 2024 19:47:59 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 27 Aug 2024 19:47:59 +0800
+Message-ID: <6c1baa6e-5f71-418f-a7fc-27c798e51498@huawei.com>
+Date: Tue, 27 Aug 2024 19:47:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/9] f2fs: new mount API conversion
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <brauner@kernel.org>,
+	<lczerner@redhat.com>, <linux-fsdevel@vger.kernel.org>
+References: <20240814023912.3959299-1-lihongbo22@huawei.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20240814023912.3959299-1-lihongbo22@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Mon, Aug 26, 2024 at 09:12:39PM +0200, Miklos Szeredi wrote:
-> On Mon, 26 Aug 2024 at 15:07, yangyun <yangyun50@huawei.com> wrote:
-> >
-> > Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO
-> > for FOPEN_DIRECT_IO") gave the async direct IO code path in the
-> > fuse_direct_read_iter() and fuse_direct_write_iter(). But since
-> > these two functions are only called under FOPEN_DIRECT_IO is set,
-> > it seems that we can also use the async direct IO even the flag
-> > IOCB_DIRECT is not set to enjoy the async direct IO method. Also
-> > move the definition of fuse_io_priv to where it is used in fuse_
-> > direct_write_iter.
+Does there exist CI test for f2fs? I can only write the mount test for 
+f2fs refer to tests/ext4/053. And I have tested this in local.
+
+Thanks,
+Hongbo
+
+On 2024/8/14 10:39, Hongbo Li wrote:
+> Since many filesystems have done the new mount API conversion,
+> we introduce the new mount API conversion in f2fs.
 > 
-> I'm interested in the motivation for this patch.
+> The series can be applied on top of the current mainline tree
+> and the work is based on the patches from Lukas Czerner (has
+> done this in ext4[1]). His patch give me a lot of ideas.
 > 
-> There's a minor risk of regressions when introducing such a behavior
-> change, so there should also be a strong supporting argument, which
-> seems to be missing in this case.
-
-Thanks for your reply!
-
-It seems that there is a risk of regressions. But I think adding an argument 
-in this case is not so graceful, whatever adding this argument to the 
-`struct fuse_file->open_flags` or adding it to the init flags in `struct 
-fuse_init_args`.
-
-The reasons are:
-
-1. Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO for FOPEN_DIRECT_IO") 
-also changes the behavior from sync to async direct io, but does not import a new 
-argument to avoid the risk of regressions.
-
-2. Fuse already has an init flags FUSE_ASYNC_DIO in `fuse_init_args`, which indicates
-that the direct io should be submitted asynchrounously. The comment in function 
-`fuse_direct_IO()` also indicates the situation:
-"
-      /*   
-         * By default, we want to optimize all I/Os with async request
-         * submission to the client filesystem if supported.
-         */
-"
-But the code does not go through the async direct io code path in the case described in current patch.
-
-3. If adding a argument, it would be so many arguments about async and direct io (FUSE_ASYNC_DIO, 
-FUSE_ASYNC_READ, FOPEN_DIRECT_IO, etc), which may be redundant and confuse the developers about 
-their differences.
-
-What do you think ? 
-
+> Here is a high level description of the patchset:
 > 
-> Thanks,
-> Miklos
+> 1. Prepare the f2fs mount parameters required by the new mount
+> API and use it for parsing, while still using the old API to
+> get mount options string. Split the parameter parsing and
+> validation of the parse_options helper into two separate
+> helpers.
+> 
+>    f2fs: Add fs parameter specifications for mount options
+>    f2fs: move the option parser into handle_mount_opt
+>    f2fs: move option validation into a separate helper
+> 
+> 2. Remove the use of sb/sbi structure of f2fs from all the
+> parsing code, because with the new mount API the parsing is
+> going to be done before we even get the super block. In this
+> part, we introduce f2fs_fs_context to hold the temporary
+> options when parsing. For the simple options check, it has
+> to be done during parsing by using f2fs_fs_context structure.
+> For the check which needs sb/sbi, we do this during super
+> block filling.
+> 
+>    f2fs: Allow sbi to be NULL in f2fs_printk
+>    f2fs: Add f2fs_fs_context to record the mount options
+>    f2fs: separate the options parsing and options checking
+> 
+> 3. Switch the f2fs to use the new mount API for mount and
+> remount.
+> 
+>    f2fs: introduce fs_context_operation structure
+>    f2fs: switch to the new mount api
+> 
+> 4. Cleanup the old unused structures and helpers.
+> 
+>    f2fs: remove unused structure and functions
+> 
+> There is still a potential to do some cleanups and perhaps
+> refactoring. However that can be done later after the conversion
+> to the new mount API which is the main purpose of the patchset.
+> 
+> [1] https://lore.kernel.org/all/20211021114508.21407-1-lczerner@redhat.com/
+> 
+> Hongbo Li (9):
+>    f2fs: Add fs parameter specifications for mount options
+>    f2fs: move the option parser into handle_mount_opt
+>    f2fs: move option validation into a separate helper
+>    f2fs: Allow sbi to be NULL in f2fs_printk
+>    f2fs: Add f2fs_fs_context to record the mount options
+>    f2fs: separate the options parsing and options checking
+>    f2fs: introduce fs_context_operation structure
+>    f2fs: switch to the new mount api
+>    f2fs: remove unused structure and functions
+> 
+>   fs/f2fs/super.c | 2211 ++++++++++++++++++++++++++++-------------------
+>   1 file changed, 1341 insertions(+), 870 deletions(-)
+> 
 
