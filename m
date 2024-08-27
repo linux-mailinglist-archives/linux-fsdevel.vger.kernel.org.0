@@ -1,187 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-27419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB0696158B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 19:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F96B9615B3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 19:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B321F24141
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 17:34:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397B21F21962
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 17:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7F71CC8A3;
-	Tue, 27 Aug 2024 17:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BC41D1F52;
+	Tue, 27 Aug 2024 17:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCkoa9HF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmwVJHbA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3E854767
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 17:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10981C6885;
+	Tue, 27 Aug 2024 17:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724780089; cv=none; b=ifB9r+J9KcZXXxo4vEuunIccWRm6krwSqK3URxjQT+hg0Qq8zIQgQcQsCxckjZNPoXHtOlki0LXicTc9JT03Ey5QCykrNHSD/11XwB023dICD+Gg662mA0hm3ZvuDsvk1LaGZ0IgO+nAvjtjeGCLSfUvDfkjcsvTPi52m8mZf48=
+	t=1724780753; cv=none; b=elabwE/14QEjR0MWkGMjLrpZh0NrqM7OMr8owhakqts7rjkkNK5BD+F17dTTI1LtMt9AiL/9kQsJFt10YASJXb4Db9q981ANzA46v31LqdJJ089CJFMsEXcXeyTi52qC7v+gov3OQHYrf4fR/rq01tdNrG+zq3z1+Mixt9Zs8is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724780089; c=relaxed/simple;
-	bh=sKCXupEb2kheZgsZWeSc5tmf8YuTVfzvmes8iYPFMcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CGPDVSHIca4ofVOnhR4MWbxsFgVaqarVa5m3elk1FGZF7I7R3Tuo1PrShV0ZksGc4c7V+nbzAkf7EWtFpHpYZo+h9xLgpAwIUqqbETZJUHZHC8RPTbYNsZDpRbGWNbcPL0F7TD2iEpwnpDz5h8GclbzZVSE6xitaWNd8b8Rr9BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCkoa9HF; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a1df0a9281so355275785a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 10:34:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724780087; x=1725384887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/64mMcUViNA1K+v2j+vqDSuPO6YcZUAV9leSECKmRpw=;
-        b=VCkoa9HFRW/nCJ8YivTHZnqhcn6olwsJ1CVu4z+QEksaIzS7m5dnKkyHwOIEmzPbnH
-         w6c+QrQwgzTqTS9YQGBI6n9bOQ3G6t+kfOZlt7G6R5wryOaNwLy7ECi5d8hc1bjmXGyG
-         weSmKkoGHqKO1R1xzP3gOcv2oDUschqx6y5Ift2FPWMM26cJTk7IpbYhLHhW5V4vO9Nw
-         B8EVpmf9/acmMu/eTcJJXHSwrEHIASMU7GWc68P+ycPoh6yX5OUvc973CoT8VlDOE8Ba
-         7gMpPpJCc0jcNuXSoUqOlaZkTg+lBnigRUK6GUFvnKWe+SQcrriZ84yeE0oZ1LB/Ezgc
-         eDtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724780087; x=1725384887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/64mMcUViNA1K+v2j+vqDSuPO6YcZUAV9leSECKmRpw=;
-        b=XgeRl+bKO2qNhhdNu/mxt54ynBxRIG+5Ez0gg5I3WjmnKBAQzSPtTjQAKWOOUx6VFo
-         LbvJKaUCUA3duzMHbOpF3HzKZMdJLPSQUr4QJLfeqd5nK2ySxIYj1AILh+wocUh77V2/
-         XcUxZl53ZlnImXrvMDSF56EZGyifYMyQgB78zKRaujUssEKzJdefsQT/nbrXom+KWSYl
-         bCR4xyQ4UDX1uer3VP14C8/4BQQKixeRrcqM2F216KCon5AIpZZloojbLGge9y5tuDC/
-         qiz6YCj4PFphiAy9ETBBqs7ekEMupUtEzpEIf1vNRvxjSh0C+guFr1utaox2xntd3vW5
-         qBdg==
-X-Gm-Message-State: AOJu0YzCV5D+lMdN68OlmPUvrV2ULGcr+WjuSW9OkNI0+FE7rPU8D/R7
-	j8YavlxG/y0r0n7+ClN3ZDejK6QMQYrNJjQwITZuDGYIEeM3GsssSUMAhp4oc5xcFTwg6LnqHsH
-	ssEYe5hlV753AC3YCgL0VNiVYSa6WG8Foe78=
-X-Google-Smtp-Source: AGHT+IHG1LNggkzrbyLp4epLYbHN3o1Gn0fTgSfqPZJhM9g1cMse1FL+8pUF3PmaE8qXbPFtZhvVMo2ZMl3mWt2dob4=
-X-Received: by 2002:a05:620a:4448:b0:7a1:c40d:7575 with SMTP id
- af79cd13be357-7a6896ed92bmr1664495785a.17.1724780086959; Tue, 27 Aug 2024
- 10:34:46 -0700 (PDT)
+	s=arc-20240116; t=1724780753; c=relaxed/simple;
+	bh=O6kkepmtbXWG69F82jx7uGfAfErWYr3SzzcU865GlgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdBdyIXpm7WUgAtB3ANKhJAnAqNjzdh5rdYXMEDCN5RmUGPpRo9dkE+xjwyBCCb+gPdY7eEbdEPC0hzeqXsErQJFx3B6GVrDMGYI4A0Cb5nDqsSiOhbUC7Q9AwFxIHTPkV/JCOFcxpp5G95USDpscZ7zQODq8KD84oC2gMvDr0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmwVJHbA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 256C0C58295;
+	Tue, 27 Aug 2024 17:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724780753;
+	bh=O6kkepmtbXWG69F82jx7uGfAfErWYr3SzzcU865GlgQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dmwVJHbA4PNdmhvarNo/MxWNroRldSXG3vFPbj+CYm9zIdSeBWDbxaVAmdkmVLJbz
+	 i8RoSFD6VszEkWxJMLeHy3yRmwbwf9tTxLyrNDXesrzYje0L/nTMoabkk9+zI3PdnQ
+	 05+9F2XRBu60yMnqicR13QJ7lb6HL3up0UkBtdTtR/IMiyKUQQcWe2J487hI8q/vwk
+	 5U5JavTNK5NRw+msYBuzhZM3GYGFCZeEY/MFLkgzsqtHwNdvh6KYg/VcOyoaVFKDpM
+	 JvcMiU+VdEVMNEm4EsSd+opW/i33JqiCcvSkU85T807oCbUyooTE55zpZzFCS8N5/4
+	 kOImCcE8EKVcw==
+Date: Tue, 27 Aug 2024 13:45:52 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13 09/19] nfs_common: add NFS LOCALIO auxiliary protocol
+ enablement
+Message-ID: <Zs4Q0FqoHEKUjrDj@kernel.org>
+References: <20240823181423.20458-1-snitzer@kernel.org>
+ <20240823181423.20458-10-snitzer@kernel.org>
+ <172463235065.6062.5648288713828077276@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOw_e7bB3C_zbpq6U+FdrjbwJAOKFJk1ZLLETrR+5xqRmv44SQ@mail.gmail.com>
- <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com> <CAOw_e7bMbwXzv00YeGw2NjGDfUpasaQix40iXC2EcLHk=n2wTA@mail.gmail.com>
-In-Reply-To: <CAOw_e7bMbwXzv00YeGw2NjGDfUpasaQix40iXC2EcLHk=n2wTA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 27 Aug 2024 19:34:36 +0200
-Message-ID: <CAOQ4uximem-HV4fCYPFMm9wANntKY4XjBGo8=y2zAMciq-5YOQ@mail.gmail.com>
-Subject: Re: FUSE passthrough: fd lifetime?
-To: Han-Wen Nienhuys <hanwenn@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172463235065.6062.5648288713828077276@noble.neil.brown.name>
 
-On Tue, Aug 27, 2024 at 5:32=E2=80=AFPM Han-Wen Nienhuys <hanwenn@gmail.com=
-> wrote:
+On Mon, Aug 26, 2024 at 10:32:30AM +1000, NeilBrown wrote:
+> On Sat, 24 Aug 2024, Mike Snitzer wrote:
+> > 
+> > Also, expose localio's required nfsd symbols to NFS client:
+> > - Cache nfsd_open_local_fh symbol (defined in next commit) and other
+> >   required nfsd symbols in a globally accessible 'nfs_to'
+> >   nfs_to_nfsd_t struct.
+> 
+> I'm not thrilled with the mechanism for getting these symbols.
+> 
+> I'd rather nfsd passed the symbols to nfs_uuid_is_local(), and it stored
+> them somewhere that nfs can see them.  No need for reference counting
+> etc.  If nfs/localio holds an auth_domain, then it implicitly holds a
+> reference to the nfsd module and the functions cannot disappear.
 >
-> On Tue, Aug 27, 2024 at 3:48=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > On Tue, Aug 27, 2024 at 11:42=E2=80=AFAM Han-Wen Nienhuys <hanwenn@gmai=
-l.com> wrote:
-> > >
-> > > Hi folks,
-> >
-> > Hi Han-Wen,
-> >
-> > For future reference, please CC FUSE and libfuse maintainers
-> > and FUSE passthrough developer (me) if you want to make sure
-> > that you got our attention.
->
-> Sure. Who is the libfuse maintainer these days?
+> I would created an 'nfs_localio_operations' structure which is defined
+> in nfsd as a constant.
+> The address of this is passed to nfs_uud_is_local() and that address
+> is stored in nfs_to if it doesn't already have the correct value.
+> 
+> So no need for symbol_request() or symbol_put().
 
-Oops, forgot to CC Bernd.
+I'm not seeing why we'd want to actively engineer some even more
+bespoke way to access nfsd symbols.  The symbol refcounting is only
+done when the client first connects as part of the LOCALIO handshake
+(or when client is destroyed and LOCALIO enabled), so it isn't getting
+in the way.
 
->
-> > > I tried simply closing the backing FD right after obtaining the
-> > > backing ID, and it seems to work. Is this permitted?
-> >
-> > Yes.
->
-> awesome!
->
-> > BTW, since you are one of the first (publicly announced) users of
-> > FUSE passthrough, it would be helpful to get feedback about API,
-> > which could change down the road and about your wish list.
->
-> For full transparency, I just work on the go-fuse library for fun, I
-> don't have direct applications for passthrough at the moment. That
-> said, I have been trying to make it go faster, and obviously bypassing
-> user-space for reads/writes helps in a big way.
->
-> > Specifically, I have WIP patches for
-> > - readdir() passthrough
-> > - stat()/getxattr()/listxattr() passthrough
-> >
-> > and users feedback could help me decide how to prioritize between
-> > those (and other) FUSE passthrough efforts.
->
-> It's been useful in the past to defer all file operations to an
-> underlying file, and only change where in the tree a file is surfaced.
-> In that sense, it would be nice to just say "pass all operations on
-> this (open) file to this other file". Go-FUSE has a LoopbackFile and
-> LoopbackNode that lets you do that very easily, but it would be extra
-> attractive if that would also avoid kernel roundtrips.
->
-> For flexibility, it might be useful to pass a bitmask or a list of
-> FUSE opcodes back to the kernel, so you can select which operations
-> should be passed through.
+Happy to revisit this but I'd really prefer to use standard convention
+(symbol_request and symbol_put) to establish nfs's dependency on
+nfsd's symbols.
 
-There is an ops_mask in my WIP patches:
-https://github.com/amir73il/linux/commits/fuse-backing-inode-wip/
+> > +
+> > +DEFINE_MUTEX(nfs_uuid_mutex);
+> 
+> This doesn't need to be a mutex - a spinlock is sufficient.
 
->
-> The most annoying part of the current functionality is the
-> CAP_SYS_ADMIN restriction; I am not sure everyone is prepared to run
-> their file systems as root. Could the ioctl check that the file was
-> opened as O_RDWR, and stop checking for root?
->
+Fixed, thanks.
 
-Donno. It's a challenge. Will need to think about it.
+> > +
+> > +bool nfs_uuid_is_local(const uuid_t *uuid, struct net *net, struct auth_domain *dom)
+> > +{
+> > +	bool is_local = false;
+> > +	nfs_uuid_t *nfs_uuid;
+> > +
+> > +	rcu_read_lock();
+> > +	nfs_uuid = nfs_uuid_lookup(uuid);
+> > +	if (nfs_uuid) {
+> > +		is_local = true;
+> > +		nfs_uuid->net = net;
+> 
+> It looks odd that you don't take a reference to the net.
+> It is probably correct but a comment explaining why would help.
+> Is it that the dom implies a reference to the net?
 
-> If you are proposing to do xattr functions, that means that you also
-> will do passthrough for files that are not opened?
->
-> Right now, the backing ID is in the OpenOut structure; how would you
-> pass back the backing ID so it could be used for stat() ? IMO the most
-> natural solution would be to extend the lookup response so you can
-> directly insert a backing ID there.
+No, I just made the code tolerate the net having been torn down
+(see: fs/nfsd/localio.c:nfsd_open_local_fh), but it'd be safer to take
+a proper reference here.
 
-Yes, that's the idea.
-The WIP demonstrates a different lifetime for the backing inode
-that could persist from lookup to evict, but the lookup response was
-not extended yet.
+I'll work through it once more and update accordingly.
 
->
-> I made a mistake in how I treat opendir/readdir in the high-level
-> go-fuse API. Until that is fixed, I cannot use passthrough for
-> readdir. That said, part of making FUSE filesystems go fast is to
-> amortize the cost of lookup using readdirplus. That wouldn't work with
-> readdir passthrough, so it may not be that useful.
->
-
-This is indeed a challenge.
-I'll need to see how to deal with it.
-
-> So in summary, my wishlist for passthrough (decreasing importance):
->
-> 1.  get rid of cap_sys_admin requirement
-> 2. allow passthrough for all file operations (fallocate, fsync, flush,
-> setattr, etc.)
->
-
-Thanks for the feedback!
-Amir.
+Thanks!
 
