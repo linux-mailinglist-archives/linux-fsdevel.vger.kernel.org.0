@@ -1,132 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-27454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532FA961936
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 23:30:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12790961943
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 23:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869E71C22D83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 21:30:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F532B22BF0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 21:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F3A1D4149;
-	Tue, 27 Aug 2024 21:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5261D4149;
+	Tue, 27 Aug 2024 21:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sbj2Nwni"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJ+Vxdy9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832EC481CD;
-	Tue, 27 Aug 2024 21:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23478197A7E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 21:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724794193; cv=none; b=WbGWqwXRRtmfR5/WkhltJMFwWKlYXkVjxpOP1VWP7hgQCz6nIRUv5g7lRLG6xnmRSZIB1bR+WT4aAqAsU23S3e0gEQuy6xOHlcdsOSApDykICvy5u1ymL7+SDylEULy+34xb02mFZPZSA0SgZfT2FA7zLBAarX9t0PjsTGA0f9g=
+	t=1724794263; cv=none; b=o/NK3OyWU4TimThb7rXADvfKk6I8++JA3NSwJ/EaJoVE8/DlsXPn9J7FSjbDlrxkzBEECp95iq+gwtpuNvYdysanWmRSA8fbqc5X2EdblofThL59MnA/9Oio35uf9eC0otCYHhK8HYCgsobuj6op5ldS+NjWiAUAE1p0U87tU4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724794193; c=relaxed/simple;
-	bh=d+yn0nkxzSuimP+TA4VAK1zkmLd8RAXtLCH9HszvZbs=;
+	s=arc-20240116; t=1724794263; c=relaxed/simple;
+	bh=PT4qqBG/eAqWztL4ohiS4mw5KZPktRx4byT45TZxxf0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dK1k1yt/uUOPEounG6h3hsRdvY1tTRvF3iwLVIAjtNt5h2beSCUfm5eSil8/u0h36hc7UgCzc9WPHldnymwJxgUw6/au3xqZ18qw9FZ745hfkdp5e6YQPQJH4GYIAfncpCCKTMek3u3W90yfKCxOM4mx1ZNhRIrjEKmqIos2frw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sbj2Nwni; arc=none smtp.client-ip=209.85.167.52
+	 To:Cc:Content-Type; b=HBWqS6zzb2cA/y8I6Mn+SCC2GJ0j88X2baFdjB0GJCttrDrryfbhwKYALvDF+kyV67uJKRVwV0tnTkfipv+CMT7XA/XmBW+XyZSEdvXoMKUo1M1DXm+1xVrxLuk5xI3WD8JfzAt7IY3xsF7sM7ttYBQcjK2iu7jhO2RtFNFloWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJ+Vxdy9; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-533496017f8so7974377e87.0;
-        Tue, 27 Aug 2024 14:29:51 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4503ccbc218so784181cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 14:31:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724794190; x=1725398990; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724794261; x=1725399061; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d+yn0nkxzSuimP+TA4VAK1zkmLd8RAXtLCH9HszvZbs=;
-        b=Sbj2NwniihelUq8zKM8FyTI2uCym5fkmKiARY9P4C3dBAkCncGpDizzw67x9hI+po8
-         /40I4fr6ao3G60lke8HSIK2K5PJJRUYk7rjVIrPqOTRZt1LwGEQVmUqNgkm871vf241B
-         QKOF3v7r0RHlEaOKol5SgxY8IO7DSp0LHdp/u9YuoQj9yClFIBp4TZ60EqKGO3XrKlWe
-         pDqSVwzcY+Qehu3qEwtWOOZeJ7r5ciM4WOEXQmNhhH3Us28OzwSz1jw19/E/8xPJCW3p
-         PQkaPzaarAZ5rDGUlR/taIec4enZvkSHzhnAKkS1FfkxtfTZ9MZR1xSVNIUDhGEjH+IL
-         i2rw==
+        bh=7UC9q13LRBfBsODQoa37ejFbFiZLT9U8n0Ty88+QhB8=;
+        b=FJ+Vxdy9RiyxTiAAFcbRTanj+nV1yTPyW1VgWjnbtAtAaONd4UVNkqbjdEMPNLCynr
+         VqvEelDfIny6GqE5/vlezNDpqah1LgCzfGyJfFG9O9YjP32vy1LT10oioBi9vjWuvfZC
+         UTPJ3zPHeJCAc9cR2O/Wr4bZfTB/VY6czTeGN5NLQZLomYUylBQV/gNDT7v+sne573Rp
+         Zu09EebLlTjK+5eMJ6og08W2J1bhzBYE5uNk26iKla/PE6jGnrKbC7bViCWQrDU57PNO
+         fZYiwv0z1ddIGRPCuyDLe+AEf9ShVNRy2hmNlR05wWFF/s3HsZkk/IdRQRAMegfmaYt/
+         nxpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724794190; x=1725398990;
+        d=1e100.net; s=20230601; t=1724794261; x=1725399061;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d+yn0nkxzSuimP+TA4VAK1zkmLd8RAXtLCH9HszvZbs=;
-        b=BelUIXGRgRZSbFwItGB/K4swAH9CJHphYfM8Z8/ItXn48tIxIZq75vwT4oOrY2FBpF
-         H+SI0LDx/7PyFZ4XZHo4GDarQnm7VAkvRGXwGpR+Iqp7hM0Fb+H+mPvQ/4aG2AheaDDu
-         DL6UDG0iTtAu3M3WOUi7r8apFdh9rejCp1ASaXRoSLEZgu8GhlCugQZcUCHgPP8TC/pl
-         m647XGEAcrvLGLZS/YcCKf93zApQFVy/2/cc4jc6b8TgcoLM84wo4+C8FQYXNZ4RELrJ
-         Ud391H7g4MxCwIa48bNnjuiA9sUK684uecfAobEx+jWlyqKxc2+qsZKPd5GHmq/8cW35
-         FIuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNBdZDuhEOj+8oBgYqb1L9PeT5lYaNF0T7GWloDrY3behD7tBeUNO2JGEQ7roFsct1VScQB41q/9ytyQ==@vger.kernel.org, AJvYcCWsVR3C/IIAlXMn7ax6fGrGZr8raH9jNPSzh0/Met9DafCeEd9hoo7zPblZEeaK7AE/gnum3ejcxd+K@vger.kernel.org, AJvYcCX3xOo0rFad4HXL5uSt02xxK4gh+znU9XcVUNNgqjrV41kuYvAI2lFxTtv+Oo/szXSCvBpQtK+kNLIq4e2gfQ==@vger.kernel.org, AJvYcCX81jNXvpMktZwC/v8coiy9UGXyEkgNrQofI1sYIt4OVYce9uWHi561kFlqeRmGeNTLyzn+dBdZ9ieQ@vger.kernel.org, AJvYcCXY6W0vJPCiMlDeat2mrY6jxHIoOhUsF+YRUHcis1MYpToVlhgsRAnzPEY+5E83IiYSovv/7x+O@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCyoaji2s+3LrapigVMaby0EGRGzuyQInZ/phAIoVV7SvCwIcd
-	qBi0J+oRIgvR1cD77sUoY7MhNt6BwwW5OrqMTipvIRgz6Y7FouWLx6nSxy+abhhF0uTNT8QUIA5
-	jN/1A0waSk+WqhZSDzW6I7I9/2Uw=
-X-Google-Smtp-Source: AGHT+IGMOY6Yiz4YkwEpjgWpibJQdtfTsGczDtl/VBKoJFb+V6GQ4EsLOSKLYsP/M6ZKPP5miCYIGAihYSQoDTyOxJw=
-X-Received: by 2002:a05:6512:2386:b0:52c:df8c:72cc with SMTP id
- 2adb3069b0e04-5343885f615mr9361153e87.43.1724794189192; Tue, 27 Aug 2024
- 14:29:49 -0700 (PDT)
+        bh=7UC9q13LRBfBsODQoa37ejFbFiZLT9U8n0Ty88+QhB8=;
+        b=eFr1A763bwLO06HdNsE1Xds1FIUJMS6sRJ8JgujEAipZwR50YXC/+5b/xsKfBNTmbK
+         V8FczvwdeAQZFzt3LbpJ9Z2J6W9buORXxMl4Gu5G8ITMZBMy2XBkVBTLS7Vnm5DSckwg
+         xTCqNZvSjILdfgVeSs01LX4M1X05MRny9jd8UPEuCN1P9YYkuF6hm9slO69c3CYBrHNK
+         KO+W3vfBCp1u8zUp+15k62raGxJttG3SUWe6R1R09pozlNV+ujzZPr5xkttDPETIo8A7
+         Ys5CAiFelgc0GId0C1AEQkVZJiNp3tO4y3b1TweK2lKfSKJoNJU572h9ojSEcNaMRfQA
+         wrRA==
+X-Gm-Message-State: AOJu0YzbISkBY6f2tnWk9aW9Jttuhxd2BhNVz/0DBA5z7HBA0fXD8bqB
+	4xro4oxyMybwnz6eZnNwmTebN5ZLBSUf4Th1uQ0cG6y+MnAchgCkHPStH+eHFfC1GJILZf1sX1z
+	8dpyCrmXK18TR54CPYweeNCv3K24L4pJZ
+X-Google-Smtp-Source: AGHT+IG4D6jKjc9mRv0nPldy/vqf8Iq7H5+Dh01OErS9SkOQIDHhcdUD54t2r2Lyah5L/93mE712T5tBJ7Ryn7LgEdY=
+X-Received: by 2002:ac8:5782:0:b0:44f:ca11:3927 with SMTP id
+ d75a77b69052e-4566e671ea1mr1914801cf.25.1724794260848; Tue, 27 Aug 2024
+ 14:31:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827143833.371588371@linuxfoundation.org> <20240827143836.571273512@linuxfoundation.org>
- <Zs4v6aV4-VpIqdfy@codewreck.org>
-In-Reply-To: <Zs4v6aV4-VpIqdfy@codewreck.org>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 27 Aug 2024 16:29:38 -0500
-Message-ID: <CAH2r5mtaz5NSzhvq0hyWJJVvYyk_h-LxW=Ku_YjwSEe49EDO7A@mail.gmail.com>
-Subject: Re: [PATCH 6.10 083/273] 9p: Fix DIO read through netfs
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, David Howells <dhowells@redhat.com>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, v9fs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Sasha Levin <sashal@kernel.org>
+References: <cover.1724791233.git.josef@toxicpanda.com> <fb8b6509ff4f2f282048de6884f764f2eeefee12.1724791233.git.josef@toxicpanda.com>
+In-Reply-To: <fb8b6509ff4f2f282048de6884f764f2eeefee12.1724791233.git.josef@toxicpanda.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 27 Aug 2024 14:30:49 -0700
+Message-ID: <CAJnrk1ZKo70gkgQn0uLuy6QFYPJwhujxcZBS+GFj_X2_-kpS0g@mail.gmail.com>
+Subject: Re: [PATCH 03/11] fuse: convert fuse_fill_write_pages to use folios
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, miklos@szeredi.hu, 
+	bschubert@ddn.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-We are working through this regression with David this week -
-hopefully will have more info in a few days
+On Tue, Aug 27, 2024 at 1:46=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
+wrote:
+>
+> Convert this to grab the folio directly, and update all the helpers to
+> use the folio related functions.
+>
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  fs/fuse/file.c | 28 +++++++++++++++-------------
+>  1 file changed, 15 insertions(+), 13 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 3621dbc17167..8cd3911446b6 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1215,7 +1215,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io=
+_args *ia,
+>
+>         do {
+>                 size_t tmp;
+> -               struct page *page;
+> +               struct folio *folio;
+>                 pgoff_t index =3D pos >> PAGE_SHIFT;
+>                 size_t bytes =3D min_t(size_t, PAGE_SIZE - offset,
+>                                      iov_iter_count(ii));
+> @@ -1227,25 +1227,27 @@ static ssize_t fuse_fill_write_pages(struct fuse_=
+io_args *ia,
+>                 if (fault_in_iov_iter_readable(ii, bytes))
+>                         break;
+>
+> -               err =3D -ENOMEM;
+> -               page =3D grab_cache_page_write_begin(mapping, index);
+> -               if (!page)
+> +               folio =3D __filemap_get_folio(mapping, index, FGP_WRITEBE=
+GIN,
+> +                                           mapping_gfp_mask(mapping));
+> +               if (!IS_ERR(folio)) {
 
-On Tue, Aug 27, 2024 at 2:59=E2=80=AFPM Dominique Martinet
-<asmadeus@codewreck.org> wrote:
+I think you meant to put IS_ERR here instead of !IS_ERR?
+
+> +                       err =3D PTR_ERR(folio);
+>                         break;
+> +               }
 >
-> Greg Kroah-Hartman wrote on Tue, Aug 27, 2024 at 04:36:47PM +0200:
-> > From: Dominique Martinet <asmadeus@codewreck.org>
-> >
-> > [ Upstream commit e3786b29c54cdae3490b07180a54e2461f42144c ]
+>                 if (mapping_writably_mapped(mapping))
+> -                       flush_dcache_page(page);
+> +                       flush_dcache_folio(folio);
 >
-> As much as I'd like to have this in, it breaks cifs so please hold this
-> patch until at least these two patches also get backported (I didn't
-> actually test the fix so not sure which is needed, *probably*
-> either/both):
-> 950b03d0f66 ("netfs: Fix missing iterator reset on retry of short read")
-> https://lore.kernel.org/r/20240823200819.532106-8-dhowells@redhat.com ("n=
-etfs, cifs: Fix handling of short DIO read")
+> -               tmp =3D copy_page_from_iter_atomic(page, offset, bytes, i=
+i);
+> -               flush_dcache_page(page);
+> +               tmp =3D copy_folio_from_iter_atomic(folio, offset, bytes,=
+ ii);
+> +               flush_dcache_folio(folio);
 >
-> For some reason the former got in master but the later wasn't despite
-> having been sent together, I might have missed some mails and only the
-> first might actually be required.. David, Steve please let us know if
-> just the first is enough.
+>                 if (!tmp) {
+> -                       unlock_page(page);
+> -                       put_page(page);
+> +                       folio_unlock(folio);
+> +                       folio_put(folio);
+>                         goto again;
+>                 }
 >
-> Either way the 9p patch can wait a couple more weeks; stuck debian CI
-> (9p) is bad but cifs corruptions are worse.
+>                 err =3D 0;
+> -               ap->pages[ap->num_pages] =3D page;
+> +               ap->pages[ap->num_pages] =3D &folio->page;
+>                 ap->descs[ap->num_pages].length =3D tmp;
+>                 ap->num_pages++;
 >
-> Thanks,
+> @@ -1257,10 +1259,10 @@ static ssize_t fuse_fill_write_pages(struct fuse_=
+io_args *ia,
+>
+>                 /* If we copied full page, mark it uptodate */
+>                 if (tmp =3D=3D PAGE_SIZE)
+> -                       SetPageUptodate(page);
+> +                       folio_mark_uptodate(folio);
+>
+> -               if (PageUptodate(page)) {
+> -                       unlock_page(page);
+> +               if (folio_test_uptodate(folio)) {
+> +                       folio_unlock(folio);
+>                 } else {
+>                         ia->write.page_locked =3D true;
+>                         break;
 > --
-> Dominique
+> 2.43.0
 >
-
-
---=20
-Thanks,
-
-Steve
 
