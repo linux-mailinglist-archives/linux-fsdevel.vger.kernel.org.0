@@ -1,75 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-27428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB7E96171D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 20:38:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BAA961792
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 21:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169C61F22872
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 781E51C236B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 19:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE8D1D2F4D;
-	Tue, 27 Aug 2024 18:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DCA1D2F6E;
+	Tue, 27 Aug 2024 18:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGlydHT+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from d.mail.sonic.net (d.mail.sonic.net [64.142.111.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982E41D27A0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 18:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.142.111.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640871A08AD;
+	Tue, 27 Aug 2024 18:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724783927; cv=none; b=c4noCmLV1GmN1ljZAbArkys6Tuirzeh3IZ9Pr+ZfKoVq6ZHsxa3+COV2eJ+X89eutLbIKR2hSxYHI2/kTjWaTr4X8HDmG0NqDY7JHrS4OAMPjh82hiK8yGdKFDciQ1aDzY7yNxCQ0l/DGLlTK/3b9JJ/AJXUrniX0ghmD8UOX7E=
+	t=1724785103; cv=none; b=VET4i8qqlRKr29dHsveWHFWqbNbJsWFdNfR3mGca58lUwFywfYd9z6AqL/q1JQQQHRaH1yWZ2ZVTJ5ysTTX7gY38MZynMjmatkPzWDiTe8CbpGsxf7xM/JuGCzoxDpfhy6XXihtoWCWJ6qRP3FCeIC40VLwHsPH+zLp2zszUVRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724783927; c=relaxed/simple;
-	bh=+F/anzSI4Fm5wVv2mzl2/R6RHwj4iXQ42Tr/l3oEugU=;
-	h=From:To:Cc:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=Y+Nr+FxcdyxY8LvlY7kj9M13IYxfTh2ptRXrsRY2yK4Edgkf6fUmD6nKwi8HGYjem0E7x4wNgRU6Bi7h7zFyE5WQH73cGpCqa4+vMXRM9227q9jaxwoR/9CbEcZCeqQI6NNJYtaF7mvfZR79jej7JcRuijo4DEquh0KdhxYf/sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nom.one; spf=pass smtp.mailfrom=nom.one; arc=none smtp.client-ip=64.142.111.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nom.one
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nom.one
-Received: from 192-184-190-79.static.sonic.net (192-184-190-79.static.sonic.net [192.184.190.79])
-	(authenticated bits=0)
-	by d.mail.sonic.net (8.16.1/8.16.1) with ESMTPA id 47RIcc0W004765;
-	Tue, 27 Aug 2024 11:38:38 -0700
-From: Forest <forestix@nom.one>
-To: Forest <forestix@nom.one>
-Cc: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-        netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, stable@vger.kernel.org,
-        regressions@lists.linux.dev
-Subject: Re: [REGRESSION] cifs: triggers bad flatpak & ostree signatures, corrupts ffmpeg & mkvmerge outputs
-Date: Tue, 27 Aug 2024 11:38:38 -0700
-Message-ID: <g87scjlif3eaff02i2u2kstullto3erb95@sonic.net>
-References: <pv2lcjhveti4sfua95o0u6r4i73r39srra@sonic.net>
-In-Reply-To: <pv2lcjhveti4sfua95o0u6r4i73r39srra@sonic.net>
+	s=arc-20240116; t=1724785103; c=relaxed/simple;
+	bh=vLz/NoDp7pbRnxxF2juDTNJNY8UMb9N7KWVJHzXPCFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C6Qzbn1dGdJJG4lzwaL1uZRdJwDKg9hEBvwrwS13DSnmmNQhx63EXySfKGwwiWxyQ8xkNhxZGQCGcfVq8nUuoiwLqdsvLzB8NOF94+zafYPjsgvQ8JdSHYuoJdWYrduh3rs9a2nJlAq7c+AjebWdF6PhV+mjPlxVv0Ly8lt8ya4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGlydHT+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC91C4AF18;
+	Tue, 27 Aug 2024 18:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724785102;
+	bh=vLz/NoDp7pbRnxxF2juDTNJNY8UMb9N7KWVJHzXPCFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HGlydHT+yPpXfcmuPu20jMVlxyUNrXDCDmoknwtmPI+YN+5gKnxnHzLS0yVEXNkWz
+	 OK1LI+vlsdz2txg7XSewknO0qUgS/U8Ao+Mt47Z5uQjqFrXaOlcw5NowssW6vr9pUh
+	 70hgjszY7PFqIg8xEbTF2ujaAu1ZmoVMfTFsQJjdh0DcQn1Hw0sUX8lct3DNX3S+VA
+	 5VqsJjBjmkA86NxtfZIZsUmZkbaHDuEqODRDq7bYfaCqXN9W/aaew4hKyom53h2vR8
+	 vEu/ZNEelZhVr9pG6Qe87axcU4cEOmXupW0F9P/9uaoRSwpvJw46f33RZmKFqHFZ/k
+	 /98CEq+0OC/kA==
+Date: Tue, 27 Aug 2024 14:58:21 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13 04/19] nfsd: factor out __fh_verify to allow NULL
+ rqstp to be passed
+Message-ID: <Zs4hzbVmqwWKqQ3u@kernel.org>
+References: <20240823181423.20458-1-snitzer@kernel.org>
+ <20240823181423.20458-5-snitzer@kernel.org>
+ <ZstOonct0HiaRCBM@tissot.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Sonic-CAuth: UmFuZG9tSVaWlo+voc/tb5rtMHTPlFeVb+Ex/T+O8qBjdZaly11Tri5gdVa32opJXwwx5hukqQtYx/GVNc5a9fKyBck4Lg2k
-X-Sonic-ID: C;cARUk6Nk7xGDt65Sr7edkQ== M;VhFck6Nk7xGDt65Sr7edkQ==
-X-Spam-Flag: No
-X-Sonic-Spam-Details: -0.0/5.0 by cerberusd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <ZstOonct0HiaRCBM@tissot.1015granger.net>
 
-On Sat, 24 Aug 2024 18:50:40 -0700, Forest wrote:
+On Sun, Aug 25, 2024 at 11:32:50AM -0400, Chuck Lever wrote:
+> On Fri, Aug 23, 2024 at 02:14:02PM -0400, Mike Snitzer wrote:
+> > From: NeilBrown <neilb@suse.de>
+> > 
+> > __fh_verify() offers an interface like fh_verify() but doesn't require
+> > a struct svc_rqst *, instead it also takes the specific parts as
+> > explicit required arguments.  So it is safe to call __fh_verify() with
+> > a NULL rqstp, but the net, cred, and client args must not be NULL.
+> > 
+> > __fh_verify() does not use SVC_NET(), nor does the functions it calls.
+> > 
+> > Rather then depending on rqstp->rq_vers to determine nfs version, pass
+> > it in explicitly.  This removes another dependency on rqstp and ensures
+> > the correct version is checked.  The rqstp can be for an NLM request and
+> > while some code tests that, other code does not.
+> > 
+> > Rather than using rqstp->rq_client pass the client and gssclient
+> > explicitly to __fh_verify and then to nfsd_set_fh_dentry().
+> > 
+> > The final places where __fh_verify unconditionally dereferences rqstp
+> > involve checking if the connection is suitably secure.  They look at
+> > rqstp->rq_xprt which is not meaningful in the target use case of
+> > "localio" NFS in which the client talks directly to the local server.
+> > So have these always succeed when rqstp is NULL.
+> > 
+> > Lastly, 4 associated tracepoints are only used if rqstp is not NULL
+> > (this is a stop-gap that should be properly fixed so localio also
+> > benefits from the utility these tracepoints provide when debugging
+> > fh_verify issues).
+> > 
+> > Signed-off-by: NeilBrown <neilb@suse.de>
+> > Co-developed-by: Mike Snitzer <snitzer@kernel.org>
+> > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+> 
+> IMO this patch needs to be split up. There are several changes that
+> need separate explanation and rationale, and the changes here need
+> to be individually bisectable.
+> 
+> If you prefer, I can provide a patch series that replaces this one
+> patch, or Neil could provide it if he wants.
 
->I was unable to determine whether 6.11.0-rc4 fixes it, due to another cifs bug
->in that version (which I hope to report soon).
+I'm probably not the best person to take a crack at splitting this
+patch up.
 
-That bug is now reported:
+Neil initially had factored out N patches, but they weren't fully
+baked so when I had to fix the code up it became a challenge to
+sprinkle fixes across the N patches.  Because they were all
+pretty interdependent.
 
-https://lore.kernel.org/linux-cifs/37fncjpgsq45becdf2pdju0idf3hj3dtmb@sonic.net/T/#u
+In the end, all these changes are in service to allowing for the
+possibility that the rqstp not available (NULL).  So it made sense to
+fold them together.
 
-A pair of patches considered in that bug's discussion allowed me to test
-this regression on 3e9bff3bbe13, which is one commit ahead of v6.11-rc5.
-The mkvmerge output corruption is still present.
+I really don't see how factoring these changes out to N patches makes
+them useful for bisection (you need all of them to test the case when
+rqstp is NULL, and a partial application of changes to track down a
+rqstp-full regression really isn't such a concern given fh_verify()
+fully passes all args to __fh_verify so status-quo preserved).
+
+All said, if your intuition and experience makes you feel splitting
+this patch up is needed then I'm fine with it and I welcome your or
+Neil's contribtion.  It is fiddley work though, so having had my own
+challenges with the code when these changes were split out makes me
+hesitant to jump on splitting them out again.
+
+Hope I've explained myself clearly... not being confrontational,
+dismissive or anything else. ;)
+
+> A few more specific comments below.
+> 
+> 
+> > ---
+> >  fs/nfsd/export.c |   8 ++-
+> >  fs/nfsd/nfsfh.c  | 124 ++++++++++++++++++++++++++++-------------------
+> >  2 files changed, 82 insertions(+), 50 deletions(-)
+> > 
+> > diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> > index 7bb4f2075ac5..fe36f441d1d9 100644
+> > --- a/fs/nfsd/export.c
+> > +++ b/fs/nfsd/export.c
+> > @@ -1077,7 +1077,13 @@ static struct svc_export *exp_find(struct cache_detail *cd,
+> >  __be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp)
+> >  {
+> >  	struct exp_flavor_info *f, *end = exp->ex_flavors + exp->ex_nflavors;
+> > -	struct svc_xprt *xprt = rqstp->rq_xprt;
+> > +	struct svc_xprt *xprt;
+> > +
+> > +	if (!rqstp)
+> > +		/* Always allow LOCALIO */
+> > +		return 0;
+> > +
+> > +	xprt = rqstp->rq_xprt;
+> 
+> check_nfsd_access() is a public API, so it needs a kdoc comment.
+> 
+> These changes should be split into a separate patch with a clear
+> rationale of why "Always allow LOCALIO" is secure and appropriate
+> to do.
+
+Separate patch aside, I'll try to improve that comment.
+
+Thanks,
+Mike
 
