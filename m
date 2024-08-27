@@ -1,128 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-27470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B348961A33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 01:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE538961A27
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 00:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB13284749
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 23:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3388D285198
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 22:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443E31D45EB;
-	Tue, 27 Aug 2024 23:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E6B1D416C;
+	Tue, 27 Aug 2024 22:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dt81/wgN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8981618D62D;
-	Tue, 27 Aug 2024 23:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4359984D34;
+	Tue, 27 Aug 2024 22:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724799651; cv=none; b=NFVpYFAX7he7VvHBDFtkxT9T4a4pn4/WWHDjjMQx88YPfuAXx7Dgj8UpWIxwk48ok/yf98/jeg1xtnnJ+hq5Ng7r5f6iwIfvi130X5fnrB2f8KoTbQE4YhjsHDV/ylE/FTnl/bjQsYxvPUlHBK51OdN9kdTXowO9uEyrMDYCZfU=
+	t=1724799342; cv=none; b=dF15vha6q+Nie8OQ6hwVOXMQu28teAL7WCPIOzg4Q55HDHMk1ZJUDdGZdDdKs9q6YfDGH0QBktrQamxM8JMVA6cMMzWEV3xMm2e3tf4nJV0NDMX8EwD1yBPH4u3qMQ0nnLgRFcUsfoTWIfal6kPXTLRtIEHKw3xPZwJv0peKUig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724799651; c=relaxed/simple;
-	bh=zVR+j9/Y69HgPcEEApJAHkp51d4U9AleXPztiiA++P8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMfYUGrkEh5D+cYXn60iktOmbQFaII36/YhbucpyAbpuhG+0VoXxMr74S88I2cX34A195t1FKUompzeC478534Z5Mc1/MWvCaq45s1vYv77xl/R/XF7k+hL2hVh42MFJG0VqBmDWvTt/NJZ4S29Vv9ojfiB2/XmHLDkeNg0vxHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 47RMrWeM032045;
-	Tue, 27 Aug 2024 17:53:32 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 47RMrUKh032044;
-	Tue, 27 Aug 2024 17:53:30 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Tue, 27 Aug 2024 17:53:30 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
-Message-ID: <20240827225330.GC29862@gate.crashing.org>
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu> <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu> <20240827180819.GB2049@sol.localdomain>
+	s=arc-20240116; t=1724799342; c=relaxed/simple;
+	bh=ptaK3/0U1Jk7BWxeibzeeYBhWoS6mOGUpCQa77r6vN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OTSFoHrwDl800JVWUDSqYpQfOJiSkmwYN4XDqUaMDJ5rMpp4PG5x4EGL2LDEsmbebs1PRH9B0BJbc4zv89xa1gBZU3FcsZL7n+R4LDkAGVPdNSJWeoR6WMpZjCrda9ztJQacV+EVnC+Zg9CQ/Us8w2r/UnUtQCkgY9CLuxmBLMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dt81/wgN; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7bcf8077742so4228999a12.0;
+        Tue, 27 Aug 2024 15:55:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724799340; x=1725404140; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lsar/HY/igeb/N5PuHSa3F5h30LOxiVIggShUntngqQ=;
+        b=dt81/wgNoy7YANdV3IVwfD7mrD6UAphmOvYUcku/NI0wYypbJJdsZ+iYOUwzo6k/29
+         WMwK32knhosRMpvdxuuIF3XtocNTgzS8/vQswpUoUct9ziArIZiCj6snbVCAuJFiRM9Q
+         VREnh0BP6i37AHS4GSBaL4io3abvpS9NXPm8eNk/rDa3IUXvwrqclI01Y+f50qMmvp9p
+         AdugjQDOO4kcUW5lAt0VYPopIVx9EI3Zfjd+ISOU/pjDWrnOStmF4G23KzOpK7oi18za
+         D4reAI9ApSTBljH4/N+0m8tYrVvPXNSHEtUXfvXlfRlTcXY6CPwfyZDAlFHQjbaUh+fN
+         QhTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724799340; x=1725404140;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lsar/HY/igeb/N5PuHSa3F5h30LOxiVIggShUntngqQ=;
+        b=Gw+4XElG7IMdUxNQGo/+QLD3PQ/C4Wkz75A7nnhPvbRuXfgUIzbbesq6BZCGEGfbGj
+         s0GiR+zqiUvmo3/mpB6GWfPeCaPH1MDEjiSrhDeYV50R6qwQU61IwBK0zZS+qbtaPIC1
+         acEE9ioxi1rsr3oucepPPKFHptK6+WpYL/DbvwAeqW6KQtgKfckftySchdTyj8JWzcUU
+         oVbvVV+Mb6mmxgvgX+TXUaVji7kuPV+U3qVl/G9p6TfU4aAlJ5JFI+NuNnyBXZvXuGuO
+         a0huawgqbAvwaqRHT1xEbJBPWypYZeqG+ItcvXN4jK6bV0fs+qGWH/R7ufTuRVV8Guoh
+         +7Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDxSMWA4X+LG4vKnGvZVSR4iJF/s4Se05LJf9DRFzuAG+FONOHzyLfET9MpNkdmO5A9wGOcd96TDRSkvHS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVSgTiFB8s2Psj7wtN+i/30pUhyjs8rooS6r158JqLwePvTdWn
+	/U+X78K034Q5LZaVtpBdF9atpGDOLqbpipt0+sxsqLI1uPjP9WDy7EvEZTG/WI+AZsk6fclhc+d
+	asXg7Yu3nGh1uPcFzuPYe7DRtf2IQ13Xg
+X-Google-Smtp-Source: AGHT+IEwZt/y/Izw+LkAhH0vb5FK6Tqi8+RkxcIA31fyuJCPe6KaDFJJQoLNTS13v7fc+ZxHjgXzpe2+0WzO3L5ese0=
+X-Received: by 2002:a17:90a:8d0f:b0:2d3:bc5e:8452 with SMTP id
+ 98e67ed59e1d1-2d646d30403mr15932467a91.32.1724799340358; Tue, 27 Aug 2024
+ 15:55:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827180819.GB2049@sol.localdomain>
-User-Agent: Mutt/1.4.2.3i
+MIME-Version: 1.0
+References: <20240813230300.915127-1-andrii@kernel.org>
+In-Reply-To: <20240813230300.915127-1-andrii@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 27 Aug 2024 15:55:28 -0700
+Message-ID: <CAEf4BzY4v6D9gusa+fkY1qg4m-yT8VVFg2Y-++BdrheQMp+j6Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/8] BPF follow ups to struct fd refactorings
+To: viro@kernel.org, brauner@kernel.org
+Cc: bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@kernel.org, linux-fsdevel@vger.kernel.org, 
+	torvalds@linux-foundation.org, Andrii Nakryiko <andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
-> On Thu, Aug 22, 2024 at 09:13:13AM +0200, Christophe Leroy wrote:
-> > With the current implementation, __cvdso_getrandom_data() calls
-> > memset(), which is unexpected in the VDSO.
-> > 
-> > Rewrite opaque data initialisation to avoid memset().
-> > 
-> > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > ---
-> >  lib/vdso/getrandom.c | 15 ++++++++++-----
-> >  1 file changed, 10 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
-> > index cab153c5f9be..4a56f45141b4 100644
-> > --- a/lib/vdso/getrandom.c
-> > +++ b/lib/vdso/getrandom.c
-> > @@ -4,6 +4,7 @@
-> >   */
-> >  
-> >  #include <linux/minmax.h>
-> > +#include <linux/array_size.h>
-> >  #include <vdso/datapage.h>
-> >  #include <vdso/getrandom.h>
-> >  #include <vdso/unaligned.h>
-> > @@ -74,11 +75,15 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
-> >  	u32 counter[2] = { 0 };
-> >  
-> >  	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags)) {
-> > -		*(struct vgetrandom_opaque_params *)opaque_state = (struct vgetrandom_opaque_params) {
-> > -			.size_of_opaque_state = sizeof(*state),
-> > -			.mmap_prot = PROT_READ | PROT_WRITE,
-> > -			.mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS
-> > -		};
-> > +		struct vgetrandom_opaque_params *params = opaque_state;
-> > +		int i;
-> > +
-> > +		params->size_of_opaque_state = sizeof(*state);
-> > +		params->mmap_prot = PROT_READ | PROT_WRITE;
-> > +		params->mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS;
-> > +		for (i = 0; i < ARRAY_SIZE(params->reserved); i++)
-> > +			params->reserved[i] = 0;
-> > +
-> >  		return 0;
-> >  	}
-> 
-> Is there a compiler flag that could be used to disable the generation of calls
-> to memset?
+On Tue, Aug 13, 2024 at 4:03=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org>=
+ wrote:
+>
+> This patch set extracts all the BPF-related changes done in [0] into
+> a separate series based on top of stable-struct_fd branch ([1]) merged in=
+to
+> bpf-next tree. There are also a few changes, additions, and adjustments:
+>
+>   - patch subjects adjusted to use "bpf: " prefix consistently;
+>   - patch #2 is extracting bpf-related changes from original patch #19
+>     ("fdget_raw() users: switch to CLASS(fd_raw, ...)") and is ordered a =
+bit
+>     earlier in this patch set;
+>   - patch #3 is reimplemented and replaces original patch #17
+>     ("bpf: resolve_pseudo_ldimm64(): take handling of a single ldimm64 in=
+sn into helper")
+>     completely;
+>   - in patch #4 ("bpf: switch maps to CLASS(fd, ...)"), which was origina=
+lly
+>     patch #18 ("bpf maps: switch to CLASS(fd, ...)"), I've combined
+>     __bpf_get_map() and bpf_file_to_map() into __bpf_get_map(), as the la=
+tter
+>     is only used from it and makes no sense to keep separate;
+>   - as part of rebasing patch #4, I adjusted newly added in patch #3
+>     add_used_map_from_fd() function to use CLASS(fd, ...), as now
+>     __bpf_get_map() doesn't do its own fdput() anymore. This made unneces=
+sary
+>     any further bpf_map_inc() changes, because we still rely on struct fd=
+ to
+>     keep map's file reference alive;
+>   - patches #5 and #6 are BPF-specific bits extracted from original patch=
+ #23
+>     ("fdget(), trivial conversions") and #24 ("fdget(), more trivial conv=
+ersions");
+>   - patch #7 constifies security_bpf_token_create() LSM hook;
+>   - patch #8 is original patch #35 ("convert bpf_token_create()"), with
+>     path_get()+path_put() removed now that LSM hook above was adjusted.
+>
+> All these patches were pushed into a separate bpf-next/struct_fd branch (=
+[2]).
+> They were also merged into bpf-next/for-next so they can get early testin=
+g in
+> linux-next.
+>
+>   [0] https://lore.kernel.org/bpf/20240730050927.GC5334@ZenIV/
+>   [1] https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/log/?h=
+=3Dstable-struct_fd
+>   [2] https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/lo=
+g/?h=3Dstruct_fd
+>
+> Al Viro (6):
+>   bpf: convert __bpf_prog_get() to CLASS(fd, ...)
+>   bpf: switch fdget_raw() uses to CLASS(fd_raw, ...)
+>   bpf: switch maps to CLASS(fd, ...)
+>   bpf: trivial conversions for fdget()
+>   bpf: more trivial fdget() conversions
+>   bpf: convert bpf_token_create() to CLASS(fd, ...)
+>
+> Andrii Nakryiko (2):
+>   bpf: factor out fetching bpf_map from FD and adding it to used_maps
+>     list
+>   security,bpf: constify struct path in bpf_token_create() LSM hook
+>
 
--fno-tree-loop-distribute-patterns .  But, as always, read up on it, see
-what it actually does (and how it avoids your problem, and mostly: learn
-what the actual problem *was*!)
+Al, Christian,
 
-Have fun,
+Can you guys please take a look and let us know if this looks sane and
+fine to you? I kept Al's patches mostly intact (see my notes in the
+cover letter above), and patch #3 does the refactoring I proposed
+earlier, keeping explicit fdput() temporarily, until Al's
+__bpf_map_get() refactoring which allows and nice and simple CLASS(fd)
+conversion.
 
+I think we end up at exactly what the end goal of the original series
+is: using CLASS(fd, ...) throughout with all the benefits.
 
-Segher
+>  include/linux/bpf.h            |  11 +-
+>  include/linux/lsm_hook_defs.h  |   2 +-
+>  include/linux/security.h       |   4 +-
+>  kernel/bpf/bpf_inode_storage.c |  24 ++---
+>  kernel/bpf/btf.c               |  11 +-
+>  kernel/bpf/map_in_map.c        |  38 ++-----
+>  kernel/bpf/syscall.c           | 181 +++++++++------------------------
+>  kernel/bpf/token.c             |  74 +++++---------
+>  kernel/bpf/verifier.c          | 110 +++++++++++---------
+>  net/core/sock_map.c            |  23 ++---
+>  security/security.c            |   2 +-
+>  security/selinux/hooks.c       |   2 +-
+>  12 files changed, 179 insertions(+), 303 deletions(-)
+>
+> --
+> 2.43.5
+>
 
