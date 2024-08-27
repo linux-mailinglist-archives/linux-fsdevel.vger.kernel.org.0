@@ -1,101 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-27390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418B3961314
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 17:41:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EA0961334
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 17:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8661F24625
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 15:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7926D28227B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 15:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101DA1C6F5E;
-	Tue, 27 Aug 2024 15:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B467F1C93B0;
+	Tue, 27 Aug 2024 15:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLoqYMKp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hOM4mHZr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AE61C5788
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 15:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C94264A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 15:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724773305; cv=none; b=iHd7h175EJRtRU5xppN57hIfk0rUDeTLSdSDU6gs9ICH0xydw546avM5LDsa3ll31yUArS43hj71MtSx0vfCpZJKo9DVJ4TXOSI8ok39e3elByxxSbeSRDgtnusQPdcdcwflxXqGirDpjZg8pBObhp88OUCALYEqUeebRRSBSVA=
+	t=1724773674; cv=none; b=hb56k+jsRK2m9axNxoc80uI6Xr3lcO/J8ERZvyNxW8UdhpLkgoJxAzQsS/kuWdl89eoJGIdgMDch6WT1lHSpgM3VXsln7tU52zH3yoRGlq3JvH5tHqg0gj0GBy8qNyL/NdP3NNqtaTznL8Qr7l0ShCvmEaR/qawFbPb9baMPzms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724773305; c=relaxed/simple;
-	bh=/l1hw/DmLl794HmOiuczWXV5W/HhEfG4Hr77769V9U4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I2P/zqPiP6FqT3BPQ8YW3cLPo+JEDmrIOo0wYym4tKv0NPGEKrng+x8jIKKYKBpA/7e6F5F+59MfPmXG7Pc6FboNVbKmf6iY8m5fXQmwQyXpstG6+LL6Q8fYTNT5j9LQKaTAxlYv2GqINQhENYIsXZwh0hWWvvTrpOTF9/zaWS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cLoqYMKp; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-70b2421471aso3481356a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 08:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724773303; x=1725378103; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25EAD/8DG+F4+n6Psk8Rztykwu2YA9RYX2iAuDLaK7E=;
-        b=cLoqYMKpgF/dCNl1OqGr7bn2xmHG2TCnWrsjiLIFjgoWc34In1P6w5Myq1h3YQi2Bu
-         02Fiy1Amg/My1FH79Z2lkxV+mE8sZvDStpsRDO30sXN7V7bfWRdI3l0omXtX+FeVMlQY
-         c1iy3akfVCuES9OcAnW7Pyfe1IvR4bp9d6LhtWh4qzuP+0g3Sjjl/JOiu0dKCLpBWOIj
-         +cAVYImLMkWq13zAj5eApAGHE3Ycf+siVul+AqgD3ecaYQ1u8x9P4MvP1yFfgz1ePvo9
-         /lQD5tmGMtwcVR7VepbU8ONWR5x2KUEzLJFK8Re1nu6tJRFIHaYmEXVa/U3nwlsn0kZl
-         lIdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724773303; x=1725378103;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=25EAD/8DG+F4+n6Psk8Rztykwu2YA9RYX2iAuDLaK7E=;
-        b=vM+CziTNayLGjPhZT9ZyS3uTVBbxlO4JDdDxNK15mlcRjygr0TbPnjGbpV9sr5+hQq
-         9UCJ1qCRAKW/NzLyk6qHzDrDwXg8ZIFt9pqPvZYmffNo78nCpzK0CVDPCeC6KEnzrWSC
-         NrzpObO9XYcIcQZN6JH/lduIvdsHisBj9IHoVQzwmyfhCKAyDcYHjRLLfVUV9g6Ustps
-         8SlCv3+xlG67yjLZbgOlf0hDu+j2ghJOOXaRENX8J4nl0DqV5B9nQmIH2I4kZkQuhnRU
-         TPeyJ80zHyIPU3viJj4Psro+HPIMURF8xVTXdtiQSjDoE2pIwwl6Y7xQM2w5fayRL3hD
-         GDqA==
-X-Gm-Message-State: AOJu0YzH2OGZiwqaECGDn+7HtqjUjtGHYkmnsDZATY7sih/HKGbiWonX
-	Kycz9UbAh2JFpgomy3d0v/qkVjPHKJSaOnlsGsyP8n0AU4msNSZcwoaNhZRp2Vq6iKAguRIndyM
-	37vAO2ZqaRRM6CmhLrpdzMexjoi8=
-X-Google-Smtp-Source: AGHT+IGBmn6t8n/VbAc72deqSD+cK1PrauyWvgwRAXgfCer3zpgctAqFT/A82FO/SymWX3wqcHsNohThMdIRBy9wgEU=
-X-Received: by 2002:a17:90b:5211:b0:2cf:5e34:f1e4 with SMTP id
- 98e67ed59e1d1-2d646bb6701mr15347666a91.13.1724773303092; Tue, 27 Aug 2024
- 08:41:43 -0700 (PDT)
+	s=arc-20240116; t=1724773674; c=relaxed/simple;
+	bh=mX7nfHXld2mBFsl25w8MwO1IRuyNcp/OiOqnPdEVX/U=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=VjeUlppdacPKmvRUUZuUp/ja59EDZTAhPs46D7G7mJM37QUt+WtDzLZJwNtxypU6H2814UxiYT/tyqfXiBlKwIxtT8Ja+NxkRiw6usUizgPB28ZCW/jkwJB/3QxD2Wq6KAhrIvYQHEJMH9M+rX6t+oI8pKZDrETgu0uN9Wal88U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hOM4mHZr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724773671;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DWBRfGjoLyD8v0ummSlyJMhm9Y7pJVqza2oUVXSgR2s=;
+	b=hOM4mHZrsWHCHpRa9SoB2bwTwpN0y+LzWPWks+G62rqFcq0rGPwQI0tGjbanfk8L2VTLPm
+	PZ+bOx0F1ZwhEYU+E2EYl8n26hY2WIYcqvlLDnGvndhrOWJgXy4GRBYNAcWYeAMg0ZaIjw
+	07jSY/y/FV/Geyw/BUraLEr4L1nj6Mk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-400-cxr-aK1BMeO3_XGtL99SmQ-1; Tue,
+ 27 Aug 2024 11:47:46 -0400
+X-MC-Unique: cxr-aK1BMeO3_XGtL99SmQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F84D1955F56;
+	Tue, 27 Aug 2024 15:47:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 67F811955F1B;
+	Tue, 27 Aug 2024 15:47:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Steve French <stfrench@microsoft.com>
+cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <nspmangalore@gmail.com>,
+    Rohith Surabattula <rohiths.msft@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Fix copy offload to flush destination region
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOw_e7bB3C_zbpq6U+FdrjbwJAOKFJk1ZLLETrR+5xqRmv44SQ@mail.gmail.com>
- <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com> <CAOw_e7bMbwXzv00YeGw2NjGDfUpasaQix40iXC2EcLHk=n2wTA@mail.gmail.com>
-In-Reply-To: <CAOw_e7bMbwXzv00YeGw2NjGDfUpasaQix40iXC2EcLHk=n2wTA@mail.gmail.com>
-From: Han-Wen Nienhuys <hanwenn@gmail.com>
-Date: Tue, 27 Aug 2024 17:41:32 +0200
-Message-ID: <CAOw_e7bCymG-HBLT+W6Wuucq7mLyC4wY5C-bjEGFiooK6+hDZg@mail.gmail.com>
-Subject: Re: FUSE passthrough: fd lifetime?
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <861651.1724773660.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Tue, 27 Aug 2024 16:47:40 +0100
+Message-ID: <861652.1724773660@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Aug 27, 2024 at 5:32=E2=80=AFPM Han-Wen Nienhuys <hanwenn@gmail.com=
-> wrote:
+    =
 
-> Right now, the backing ID is in the OpenOut structure; how would you
-> pass back the backing ID so it could be used for stat() ? IMO the most
-> natural solution would be to extend the lookup response so you can
-> directly insert a backing ID there.
+Fix cifs_file_copychunk_range() to flush the destination region before
+invalidating it to avoid potential loss of data should the copy fail, in
+whole or in part, in some way.
 
-Actually, scratch that: the primary use case for things I've built in
-the past are lazily loading file systems, where you only want to fetch
-the file if it is opened for reading/writing.  If you have to provide
-the backing file before it is opened, it would negate the benefits of
-using FUSE altogether.
+Fixes: 7b2404a886f8 ("cifs: Fix flushing, invalidation and file size with =
+copy_file_range()")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <stfrench@microsoft.com>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: linux-mm@kvack.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/client/cifsfs.c |   21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
---=20
-Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index d89485235425..2a2523c93944 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -1341,7 +1341,6 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+ 	struct cifsFileInfo *smb_file_target;
+ 	struct cifs_tcon *src_tcon;
+ 	struct cifs_tcon *target_tcon;
+-	unsigned long long destend, fstart, fend;
+ 	ssize_t rc;
+ =
+
+ 	cifs_dbg(FYI, "copychunk range\n");
+@@ -1391,25 +1390,13 @@ ssize_t cifs_file_copychunk_range(unsigned int xid=
+,
+ 			goto unlock;
+ 	}
+ =
+
+-	destend =3D destoff + len - 1;
+-
+-	/* Flush the folios at either end of the destination range to prevent
+-	 * accidental loss of dirty data outside of the range.
++	/* Flush and invalidate all the folios in the destination region.  If
++	 * the copy was successful, then some of the flush is extra overhead,
++	 * but we need to allow for the copy failing in some way (eg. ENOSPC).
+ 	 */
+-	fstart =3D destoff;
+-	fend =3D destend;
+-
+-	rc =3D cifs_flush_folio(target_inode, destoff, &fstart, &fend, true);
++	rc =3D filemap_invalidate_inode(target_inode, true, destoff, destoff + l=
+en - 1);
+ 	if (rc)
+ 		goto unlock;
+-	rc =3D cifs_flush_folio(target_inode, destend, &fstart, &fend, false);
+-	if (rc)
+-		goto unlock;
+-	if (fend > target_cifsi->netfs.zero_point)
+-		target_cifsi->netfs.zero_point =3D fend + 1;
+-
+-	/* Discard all the folios that overlap the destination region. */
+-	truncate_inode_pages_range(&target_inode->i_data, fstart, fend);
+ =
+
+ 	fscache_invalidate(cifs_inode_cookie(target_inode), NULL,
+ 			   i_size_read(target_inode), 0);
+
 
