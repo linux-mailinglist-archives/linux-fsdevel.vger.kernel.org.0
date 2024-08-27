@@ -1,57 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-27406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08919613E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:22:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719839613E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D304284DF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:22:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EE2D1F2396C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACE71CBE8F;
-	Tue, 27 Aug 2024 16:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6595B1CDA2D;
+	Tue, 27 Aug 2024 16:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+QONV2m"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sZnlG62M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696FC374C3;
-	Tue, 27 Aug 2024 16:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85C71C4EE3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 16:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724775750; cv=none; b=UGTh/Dvwd3tXh4jET1PAWqWoPNeIMHbrFnnW6slgyctPjZuSZUqR/aJuXtIbpdOptCcOktkjh/kdtKez2hVpIVNwSi9Rx9gJK7ch8JIfXqG/2TImrEOIuFjskccS5fsUyvVT6RLUO3nzpVlThg25MD4hrA3DHaBoTapklHpcGO4=
+	t=1724775813; cv=none; b=DGxYO7fQ7VIWz1mYGqweOYKWvwm5EhJ61Uja27Ay/sNU2jsSYyPn6QzVyVm4hHfC9AdqTngQl0A5eOGLxhyILmm/djNV9TkODHYYT2L3xXa8fkk+QhV3nIIM7CWV7mGD3Xacp3+b7NCHuQmf3y3Od5GPnpgTJGCAGtwmmzYG4V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724775750; c=relaxed/simple;
-	bh=Fooc4/XVE9XFnfhfwTXkSG71NFjps/XG/iuKIaRVlKU=;
+	s=arc-20240116; t=1724775813; c=relaxed/simple;
+	bh=rd63YkIL9487GOLG6/Jc3gLl9tCEqEZuYuQRCxqy3U8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPQfM7kYK9p5FQmSR3prHgkmaM+FNAAXrfnBssWajc5uDXRJk61fQVePDVF5slhR7NcOrswwhm/Yk2qfdPBhzLQFU+Rk5NXmeFFlqLflP78XTBpMnWLpf4grzOtnPSR8HsQN8cGuXS254TNIvopbqc4VUdhJjooY/HF6xVlOMnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+QONV2m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 400C8C4DE00;
-	Tue, 27 Aug 2024 16:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724775750;
-	bh=Fooc4/XVE9XFnfhfwTXkSG71NFjps/XG/iuKIaRVlKU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t+QONV2mDS+BK4MyWPwHjXqi8ObsYD8TMfRuXBsnGC8dtpsAYq/puZT0kDPnkAxh3
-	 7h0MKsvgLxdgM8NdE6ZMopPdKxxPXKpa4+KYGIUaqE8RfwzOv11c4d0dmfT/D8rINf
-	 FiZddCcPRpf5imxuEyGfLDwMegVEBxbcRdFeahv55cYkq1g2Bgx5PZE3MTnQ2xa3cF
-	 KtfQP+K5ZHKdPeOg9eKkYlHzoq6vBx3YXNj0mchdGlGlqBYgBozvmYCMbvdIn0V7yp
-	 NhzQ5xSG/xuCvZQQwzVE1qXSj34Fv9yDJRVXxXPwNUonxtMNCvP6JQeOAeWceBhleh
-	 ddNhFO2uf5n+g==
-Date: Tue, 27 Aug 2024 09:22:29 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 03/10] iomap: pass flags to
- iomap_file_buffered_write_punch_delalloc
-Message-ID: <20240827162229.GX865349@frogsfrogsfrogs>
-References: <20240827051028.1751933-1-hch@lst.de>
- <20240827051028.1751933-4-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f4A0rlqYSRjhmh6tXid3vM5IUrsK0vDrUv67P1Gz023pMsadP2w82sVwifXlSTKinBbRqgdliT2Sp1YgMqY3zvMcELdLoH1x4sYq4hWvM/lvFmIL/9eiOTw0vyPA2NRwq0vBft9aNu11COqKnT2A5wyPdxTT/wgLcXy59DQU7Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sZnlG62M; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 Aug 2024 12:23:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724775808;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=htkUwT1XE4QM6RoTgmwAjSxaCzoDMjE3DAY/HRSuk30=;
+	b=sZnlG62MyXzTfLQSuvstTkB7jcfdIpA/QECcst659aF+Mwrmk4sVIpFuxLNIMJyH77X/si
+	44PqmljGbjKPXlbmyn5qUz+RX+9UX9J02JwIMNkhlcYEyXZpOTxSgxhq95RFpN0pitq8GO
+	x8Shdiv52IoPQhxPawdX6c0i+9Ia1V8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.11, v2
+Message-ID: <ltl35vocjtma5an2yo7digcdpcsvf6clrvcd4vdkf67gwabogf@syqzgnw5rodw>
+References: <73rweeabpoypzqwyxa7hld7tnkskkaotuo3jjfxnpgn6gg47ly@admkywnz4fsp>
+ <d0da8ba5-e73e-454a-bbd7-a4e11886ea8b@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,97 +58,65 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827051028.1751933-4-hch@lst.de>
+In-Reply-To: <d0da8ba5-e73e-454a-bbd7-a4e11886ea8b@stanley.mountain>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 27, 2024 at 07:09:50AM +0200, Christoph Hellwig wrote:
-> To fix short write error handling, We'll need to figure out what operation
-> iomap_file_buffered_write_punch_delalloc is called for.  Pass the flags
-> argument on to it, and reorder the argument list to match that of
-> ->iomap_end so that the compiler only has to add the new punch argument
-> to the end of it instead of reshuffling the registers.
+On Tue, Aug 27, 2024 at 01:53:55PM GMT, Dan Carpenter wrote:
+> On Thu, Jul 19, 2024 at 06:36:50PM -0400, Kent Overstreet wrote:
+> >       bcachefs: Unlock trans when waiting for user input in fsck
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Hello Kent Overstreet,
+> 
+> ommit 889fb3dc5d6f ("bcachefs: Unlock trans when waiting for user
+> input in fsck") from May 29, 2024 (linux-next), leads to the
+> following (UNPUBLISHED) Smatch static checker warning:
+> 
+> fs/bcachefs/error.c:129 bch2_fsck_ask_yn() error: double unlocked 'trans' (orig line 113)
+> 
+> fs/bcachefs/error.c
+>    102  static enum ask_yn bch2_fsck_ask_yn(struct bch_fs *c, struct btree_trans *trans)
+>    103  {
+>    104          struct stdio_redirect *stdio = c->stdio;
+>    105  
+>    106          if (c->stdio_filter && c->stdio_filter != current)
+>    107                  stdio = NULL;
+>    108  
+>    109          if (!stdio)
+>    110                  return YN_NO;
+>    111  
+>    112          if (trans)
+>    113                  bch2_trans_unlock(trans);
+>                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+> Unlock
+> 
+>    114  
+>    115          unsigned long unlock_long_at = trans ? jiffies + HZ * 2 : 0;
+>    116          darray_char line = {};
+>    117          int ret;
+>    118  
+>    119          do {
+>    120                  unsigned long t;
+>    121                  bch2_print(c, " (y,n, or Y,N for all errors of this type) ");
+>    122  rewait:
+>    123                  t = unlock_long_at
+>    124                          ? max_t(long, unlock_long_at - jiffies, 0)
+>    125                          : MAX_SCHEDULE_TIMEOUT;
+>    126  
+>    127                  int r = bch2_stdio_redirect_readline_timeout(stdio, &line, t);
+>    128                  if (r == -ETIME) {
+>    129                          bch2_trans_unlock_long(trans);
+>                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Double unlock
 
-Looks good,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Those are different types of unlocks.
 
---D
+The first unlock drops btree locks, but we still have pointers and lock
+sequence numbers to those nodes so that we can do a bch2_trans_relock()
+later, and continue the same transaction.
 
-> ---
->  fs/iomap/buffered-io.c |  5 ++---
->  fs/xfs/xfs_iomap.c     |  5 +++--
->  include/linux/iomap.h  | 10 ++++++----
->  3 files changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 737a005082e035..34de9f58794ad5 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -23,7 +23,6 @@
->  
->  #define IOEND_BATCH_SIZE	4096
->  
-> -typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
->  /*
->   * Structure allocated for each folio to track per-block uptodate, dirty state
->   * and I/O completions.
-> @@ -1300,8 +1299,8 @@ static int iomap_write_delalloc_release(struct inode *inode,
->   *         internal filesystem allocation lock
->   */
->  int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
-> -		struct iomap *iomap, loff_t pos, loff_t length,
-> -		ssize_t written, iomap_punch_t punch)
-> +		loff_t pos, loff_t length, ssize_t written, unsigned flags,
-> +		struct iomap *iomap, iomap_punch_t punch)
->  {
->  	loff_t			start_byte;
->  	loff_t			end_byte;
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 72c981e3dc9211..47b5c83588259e 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1231,8 +1231,9 @@ xfs_buffered_write_iomap_end(
->  	struct xfs_mount	*mp = XFS_M(inode->i_sb);
->  	int			error;
->  
-> -	error = iomap_file_buffered_write_punch_delalloc(inode, iomap, offset,
-> -			length, written, &xfs_buffered_write_delalloc_punch);
-> +	error = iomap_file_buffered_write_punch_delalloc(inode, offset, length,
-> +			written, flags, iomap,
-> +			&xfs_buffered_write_delalloc_punch);
->  	if (error && !xfs_is_shutdown(mp)) {
->  		xfs_alert(mp, "%s: unable to clean up ino 0x%llx",
->  			__func__, XFS_I(inode)->i_ino);
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 6fc1c858013d1e..83da37d64d1144 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -258,10 +258,6 @@ static inline const struct iomap *iomap_iter_srcmap(const struct iomap_iter *i)
->  
->  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
->  		const struct iomap_ops *ops);
-> -int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
-> -		struct iomap *iomap, loff_t pos, loff_t length, ssize_t written,
-> -		int (*punch)(struct inode *inode, loff_t pos, loff_t length));
-> -
->  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
->  void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
->  bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
-> @@ -277,6 +273,12 @@ int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
->  		const struct iomap_ops *ops);
->  vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf,
->  			const struct iomap_ops *ops);
-> +
-> +typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
-> +int iomap_file_buffered_write_punch_delalloc(struct inode *inode, loff_t pos,
-> +		loff_t length, ssize_t written, unsigned flag,
-> +		struct iomap *iomap, iomap_punch_t punch);
-> +
->  int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  		u64 start, u64 len, const struct iomap_ops *ops);
->  loff_t iomap_seek_hole(struct inode *inode, loff_t offset,
-> -- 
-> 2.43.0
-> 
-> 
+But we still have an SRCU read lock held which prevents those nodes
+from being reclaimed, and we can't hold that for too long either.
+
+So if we're blocked here too long we have to also do an unlock_long(),
+which forces a transaction restart.
 
