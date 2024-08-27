@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-27299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2129600EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 07:11:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6159600EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 07:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059A41F2320A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 05:11:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B9A2836CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 05:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF305149E16;
-	Tue, 27 Aug 2024 05:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EBB149013;
+	Tue, 27 Aug 2024 05:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vpmWYNyL"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="twUHlQK+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E03149013;
-	Tue, 27 Aug 2024 05:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04A3148FF6;
+	Tue, 27 Aug 2024 05:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724735454; cv=none; b=WG1OVDvv5VttUc/Nf5srH6hKHFUgWuIQyXobT/nQmi5WPESABDo/FzrAmPJzEvUyAY2DRwB+ipXWBG5hjnU81D0z7TM+n59SPkdPGWqq0Wxya5TtRMwjz4EkY5T/yXjnScNk1BTE6JhxDDkEioJtnH9UmYZNTw60BiDipVogC6c=
+	t=1724735457; cv=none; b=rFB0+b0pWtKoLNyBThq/clbHT+ANDS3qqzq1jtD6co1zJ2Iai9m14z8DN1vA0dcJdp/WyvfdtayQ8JzdZJ2LiU7NBq8Kc8jSgHs/OuSGXECUm4VyITlAhFMtOayuXPiA32d1MiMy7t2DASOT8V486Tm/M37K6tha8wkmpGM6Z8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724735454; c=relaxed/simple;
-	bh=ZTCOquPpCzRzhjZXWOklBFJz78YTG5Dd6Ir+XG9apok=;
+	s=arc-20240116; t=1724735457; c=relaxed/simple;
+	bh=jvY3TJ5Xo4Arf5fXcydVNHlVPWIMm7Gh4ZAjOFyFjrs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IZ5QZqu1N9hApNMxYISVa9mTS9M0UXoLF8Xmjih4ykJftzqNYPEoi9kul6CRlu4+VHINFd/NA8oHTPAEZaGv04wlsOBrCyE+fKwLhxrQdIz8tVDaqA4+cHWNdRNr5H73BpAQszflJqUqz3hRVxfAQdfnog7hTND65gpWrku80gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vpmWYNyL; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=MGTXPCalJLJvO2U52PVXvcqTZVY7mbrYl88+pp84A6yua1IRVhW7n3LUlmgEQfNU67SwECRiFY38YGaAVyBDtMyvhwPeOhwRln60cUImn21kl1IAvFFiPsoeF1//9rdnqA8//RlA8VwB00Jj684fDf9/rDaHuuooxGVI4TMALgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=twUHlQK+; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=sk5n7rYhl7O2On1J9SYWjeUEsfz3Nm7b0kEgPbon5ZU=; b=vpmWYNyLzvtwNO91g2ZOT047Bp
-	Tm9YDqLxAWa1Y+dRCO4FOgPSJu6QxVFqXtOdFkafPlpZD2s9Hm307pMS1vjYV9A3ZaIZJPWpAE9hE
-	mIojFbsDxy632W2BTeZwdjd4ZiCf5DEsmShHxpYXCB610wsAE9OPQwJuJVHUQm7Q36jB2DdmLN+R9
-	2rGNPQnUFyIbtM65wYo5JuoxLmQyS6WSOTtVR5ns9KUNKeaTx1RDoEWsV8A8mBae+hJSRhfktWKpo
-	pQdGvHlLlPsEfxUPggJTcVlHmYeid5lg4nCeHXlsGLYOZgN4+LusS9WuTRQ7uiuN1wLdbPwBUmwTc
-	43Q6OJbA==;
+	bh=2BJ7wEgRytdez6wX5d5tK1D5vLK+1FX1/tMbbReuJ1c=; b=twUHlQK+ocmv0Z6lwk+8AVaiYC
+	1ssI4bvq7ACIAypgoDHSt8o7HMz1Jt6aKFJqLrH9xlRg++7JtFhqXkSm8Nx2eDTe3aNpmn/hn7Lzi
+	ZEiAPiuUh0GrwDAtj15qZ7NKG67NwhFb5FD/h85XrkYDmeLtPxLUUjq7HRmN9AYtcbTnJNjeJl6zO
+	hJ+jAMc79eXMeoxNJWtA3kDts8Tms0O36OpqYt2re/I+PWs1ePHf6GuspBVII06IW8LlpNmMDhRES
+	LZilqBnyLT3wLZXCHdKGHeNxvcm4f2cEgEw5me3h9dOFcSB9Fvw24oAHEtoUPN9U+Ca2uhrduGLn7
+	IhSLTCHg==;
 Received: from 2a02-8389-2341-5b80-0483-5781-2c2b-8fb4.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:483:5781:2c2b:8fb4] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sioTk-00000009oxF-0Yb8;
-	Tue, 27 Aug 2024 05:10:52 +0000
+	id 1sioTm-00000009oxo-2xd3;
+	Tue, 27 Aug 2024 05:10:55 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Chandan Babu R <chandan.babu@oracle.com>,
 	Christian Brauner <brauner@kernel.org>,
 	"Darrick J. Wong" <djwong@kernel.org>
 Cc: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 09/10] xfs: set IOMAP_F_SHARED for all COW fork allocations
-Date: Tue, 27 Aug 2024 07:09:56 +0200
-Message-ID: <20240827051028.1751933-10-hch@lst.de>
+Subject: [PATCH 10/10] xfs: punch delalloc extents from the COW fork for COW writes
+Date: Tue, 27 Aug 2024 07:09:57 +0200
+Message-ID: <20240827051028.1751933-11-hch@lst.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240827051028.1751933-1-hch@lst.de>
 References: <20240827051028.1751933-1-hch@lst.de>
@@ -66,60 +66,44 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Change to always set xfs_buffered_write_iomap_begin for COW fork
-allocations even if they don't overlap existing data fork extents,
-which will allow the iomap_end callback to detect if it has to punch
-stale delalloc blocks from the COW fork instead of the data fork.  It
-also means we sample the sequence counter for both the data and the COW
-fork when writing to the COW fork, which ensures we properly revalidate
-when only COW fork changes happens.
+When ->iomap_end is called on a short write to the COW fork it needs to
+punch stale delalloc data from the COW fork and not the data fork.
 
-This is essentially a revert of commit 72a048c1056a ("xfs: only set
-IOMAP_F_SHARED when providing a srcmap to a write"). This is fine because
-the problem that the commit fixed has now been dealt with in iomap by
-only looking at the actual srcmap and not the fallback to the write
-iomap.
-
-Note that the direct I/O path was never changed and has always set
-IOMAP_F_SHARED for all COW fork allocations.
+Ensure that IOMAP_F_NEW is set for new COW fork allocations in
+xfs_buffered_write_iomap_begin, and then use the IOMAP_F_SHARED flag
+in xfs_buffered_write_delalloc_punch to decide which fork to punch.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/xfs/xfs_iomap.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ fs/xfs/xfs_iomap.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index e0dc6393686c01..22e9613a995f12 100644
+index 22e9613a995f12..4113e09cb836a8 100644
 --- a/fs/xfs/xfs_iomap.c
 +++ b/fs/xfs/xfs_iomap.c
-@@ -1186,20 +1186,19 @@ xfs_buffered_write_iomap_begin(
- 	return 0;
- 
- found_cow:
--	seq = xfs_iomap_inode_sequence(ip, 0);
- 	if (imap.br_startoff <= offset_fsb) {
--		error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0, seq);
-+		error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0,
-+				xfs_iomap_inode_sequence(ip, 0));
- 		if (error)
- 			goto out_unlock;
--		seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
--		xfs_iunlock(ip, lockmode);
--		return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags,
--					 IOMAP_F_SHARED, seq);
-+	} else {
-+		xfs_trim_extent(&cmap, offset_fsb, imap.br_startoff - offset_fsb);
+@@ -1195,7 +1195,7 @@ xfs_buffered_write_iomap_begin(
+ 		xfs_trim_extent(&cmap, offset_fsb, imap.br_startoff - offset_fsb);
  	}
  
--	xfs_trim_extent(&cmap, offset_fsb, imap.br_startoff - offset_fsb);
-+	iomap_flags = IOMAP_F_SHARED;
-+	seq = xfs_iomap_inode_sequence(ip, iomap_flags);
+-	iomap_flags = IOMAP_F_SHARED;
++	iomap_flags |= IOMAP_F_SHARED;
+ 	seq = xfs_iomap_inode_sequence(ip, iomap_flags);
  	xfs_iunlock(ip, lockmode);
--	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, 0, seq);
-+	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, iomap_flags, seq);
+ 	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, iomap_flags, seq);
+@@ -1212,8 +1212,10 @@ xfs_buffered_write_delalloc_punch(
+ 	loff_t			length,
+ 	struct iomap		*iomap)
+ {
+-	xfs_bmap_punch_delalloc_range(XFS_I(inode), XFS_DATA_FORK, offset,
+-			offset + length);
++	xfs_bmap_punch_delalloc_range(XFS_I(inode),
++			(iomap->flags & IOMAP_F_SHARED) ?
++				XFS_COW_FORK : XFS_DATA_FORK,
++			offset, offset + length);
+ }
  
- out_unlock:
- 	xfs_iunlock(ip, lockmode);
+ static int
 -- 
 2.43.0
 
