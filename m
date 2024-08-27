@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-27400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B90E9613AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:08:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7109613C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002C01F233EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4513B1F2413C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BC71C93B6;
-	Tue, 27 Aug 2024 16:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF09F1CCEFE;
+	Tue, 27 Aug 2024 16:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTFyVX0A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEpoxL2j"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC031A0726;
-	Tue, 27 Aug 2024 16:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260C31CBE8F;
+	Tue, 27 Aug 2024 16:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724774907; cv=none; b=mQrpHCs1WFtS+SeHNn5f001aYSfbG5CSr9rj4ixEpL5/tQOeKFUI4cQMIhICnVQBvQaW+NPoBPBq5zxfvW0HJygUnUY3xDcbLX5bPXu37rxJcvFxFPIUyI0YIrLytzIgMRHoUzutAeggtrdK6so3wGlPIOc4tOnngOO2QfGT48Y=
+	t=1724775257; cv=none; b=u04+OKIp8Y8Vn7TJSGV+WmsFXl6WNfMgeJ0PD/E0fdNmSJjllQ3RBv6b+nceBf6S75qjUm7Uz3t+fSIMy3rAS1vdE5nTWEsKztA+QV+C6pz+QaTyrE/1sGcNdrX7+Ttxk/zUS2dtetbMDl4FnzgIsJcZWbPRzGrIWgRT9w82SCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724774907; c=relaxed/simple;
-	bh=TXDRS7lXUCRKRE6nQ2+0gejSHVe2zbDjrojORqrRI/4=;
+	s=arc-20240116; t=1724775257; c=relaxed/simple;
+	bh=qGZe//87Ad+MQ9pCLChDZiENV5roGQM7RxHylRBQ/Qg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ssrbispT/miyDZogMRFTUG460jfXLnOnpdnNVX26EXDnxC33hhXjEDoEr+6LEHrILp2kJonsLHp+sFE9lBxp6Ba4tsxAaYDyEMUYSsiot+Vdep2/cLOAsm0NO29ert9PL/Bnz4jiTOXZNDPKRY2yGa2LVInoMF/PX78GfjJEYtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTFyVX0A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADE52C61076;
-	Tue, 27 Aug 2024 16:08:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=L1ecSNRlG9+OfauqRDgSqoJWvyrc+TzT/fU0PqUd4GHcXk38Ez8hUNb4RRCnCqAfCM94ltNZRv0f1Yoa9zquk/g6Ger9daUcaIYPYUCUIKDrjZ3UNdjGy/oM/9TSjST4zBXqx8tSXAGThFQiSsoKxDqFk27S5UOxBd+mU+dgdOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEpoxL2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D6DC5383C;
+	Tue, 27 Aug 2024 16:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724774904;
-	bh=TXDRS7lXUCRKRE6nQ2+0gejSHVe2zbDjrojORqrRI/4=;
+	s=k20201202; t=1724775256;
+	bh=qGZe//87Ad+MQ9pCLChDZiENV5roGQM7RxHylRBQ/Qg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OTFyVX0A19JadU4zgB0qAyng472imX0BNg6NeQRYgGzENal5NmFs9V3HV0jmvICjD
-	 5vNHkVMm0FH6eVw208PWk0xwsOUhZ4aoGP32OmJc7INCUB/Dx9yEi8gr2c5QmQZoof
-	 J37hUALnTZMRtmJV3+X62AZ9YnsxQcaA64b2E3YkRmyvBBTalPXemacZoM9TAiWMS3
-	 zxmS1o5azdBKdQkQxbowNXXfAGz4x2rBpxQGKzgGFq3FV+N51CzHoSKvOv6zrcuxqE
-	 0AhuEJFuzHTAsLD0ZT+Wf+ifZe3eZ/rfl8Bj+K/CsVQXeAOJu8h0tqfT7hHpEYDNYI
-	 Nrb8ad9G/s/Ow==
-Date: Tue, 27 Aug 2024 12:08:23 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v13 07/19] SUNRPC: add rpcauth_map_clnt_to_svc_cred_local
-Message-ID: <Zs359_29KyHnEqdr@kernel.org>
-References: <20240823181423.20458-1-snitzer@kernel.org>
- <20240823181423.20458-8-snitzer@kernel.org>
- <ZstK7BKf02uD17sl@tissot.1015granger.net>
+	b=PEpoxL2jbnnPi2ZZv1w0NMg5LKaWNaOfhSWlKJDlpyefl7IZYZcXA0zuC+PMHfAzO
+	 1hHzFWBIUqTJko98HBXJEP+9BR7+JKQf2i55ubErJ/Yxnjr1155coZ21yY9/+L6ZBb
+	 kiVGofNr8DmPWNlrImaqvIyvhJTHkvWNmu+9CnoJs0xcy9cThCjznUTbt26PgR/Kvz
+	 Ro/VLKWqYiOG/ua5LTVMBZ2xHGnD0urdJ00DvazpUdS+p1kyQW4Lx9kF2VILWr57WK
+	 0vDtHf39A+Moa5Sm6/BSLYbDjOjcalyePVhc+assAgkfjV5RZ/7DnC+aUxIlP3V8cr
+	 0BftsriqH4AYA==
+Date: Tue, 27 Aug 2024 09:14:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Chandan Babu R <chandan.babu@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/10] iomap: handle a post-direct I/O invalidate race in
+ iomap_write_delalloc_release
+Message-ID: <20240827161416.GV865349@frogsfrogsfrogs>
+References: <20240827051028.1751933-1-hch@lst.de>
+ <20240827051028.1751933-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,81 +60,58 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZstK7BKf02uD17sl@tissot.1015granger.net>
+In-Reply-To: <20240827051028.1751933-2-hch@lst.de>
 
-On Sun, Aug 25, 2024 at 11:17:00AM -0400, Chuck Lever wrote:
-> On Fri, Aug 23, 2024 at 02:14:05PM -0400, Mike Snitzer wrote:
-> > From: Weston Andros Adamson <dros@primarydata.com>
-> > 
-> > Add new funtion rpcauth_map_clnt_to_svc_cred_local which maps a
-> > generic cred to a svc_cred suitable for use in nfsd.
-> > 
-> > This is needed by the localio code to map nfs client creds to nfs
-> > server credentials.
-> > 
-> > Following from net/sunrpc/auth_unix.c:unx_marshal() it is clear that
-> > ->fsuid and ->fsgid must be used (rather than ->uid and ->gid).  In
-> > addition, these uid and gid must be translated with from_kuid_munged()
-> > so local client uses correct uid and gid when acting as local server.
-> > 
-> > Suggested-by: NeilBrown <neilb@suse.de> # to approximate unx_marshal()
-> > Signed-off-by: Weston Andros Adamson <dros@primarydata.com>
-> > Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > Co-developed-by: Mike Snitzer <snitzer@kernel.org>
-> > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
-> > ---
-> >  include/linux/sunrpc/auth.h |  4 ++++
-> >  net/sunrpc/auth.c           | 22 ++++++++++++++++++++++
-> >  2 files changed, 26 insertions(+)
-> > 
-> > diff --git a/include/linux/sunrpc/auth.h b/include/linux/sunrpc/auth.h
-> > index 61e58327b1aa..4cfb68f511db 100644
-> > --- a/include/linux/sunrpc/auth.h
-> > +++ b/include/linux/sunrpc/auth.h
-> > @@ -11,6 +11,7 @@
-> >  #define _LINUX_SUNRPC_AUTH_H
-> >  
-> >  #include <linux/sunrpc/sched.h>
-> > +#include <linux/sunrpc/svcauth.h>
-> >  #include <linux/sunrpc/msg_prot.h>
-> >  #include <linux/sunrpc/xdr.h>
-> >  
-> > @@ -184,6 +185,9 @@ int			rpcauth_uptodatecred(struct rpc_task *);
-> >  int			rpcauth_init_credcache(struct rpc_auth *);
-> >  void			rpcauth_destroy_credcache(struct rpc_auth *);
-> >  void			rpcauth_clear_credcache(struct rpc_cred_cache *);
-> > +void			rpcauth_map_clnt_to_svc_cred_local(struct rpc_clnt *clnt,
-> > +							   const struct cred *,
-> > +							   struct svc_cred *);
-> >  char *			rpcauth_stringify_acceptor(struct rpc_cred *);
-> >  
-> >  static inline
-> > diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-> > index 04534ea537c8..3b6d91b36589 100644
-> > --- a/net/sunrpc/auth.c
-> > +++ b/net/sunrpc/auth.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/sunrpc/clnt.h>
-> >  #include <linux/sunrpc/gss_api.h>
-> >  #include <linux/spinlock.h>
-> > +#include <linux/user_namespace.h>
-> >  
-> >  #include <trace/events/sunrpc.h>
-> >  
-> > @@ -308,6 +309,27 @@ rpcauth_init_credcache(struct rpc_auth *auth)
-> >  }
-> >  EXPORT_SYMBOL_GPL(rpcauth_init_credcache);
-> >  
+On Tue, Aug 27, 2024 at 07:09:48AM +0200, Christoph Hellwig wrote:
+> When direct I/O completions invalidates the page cache it holds neither the
+> i_rwsem nor the invalidate_lock so it can be racing with
+> iomap_write_delalloc_release.  If the search for the end of the region that
+> contains data returns the start offset we hit such a race and just need to
+> look for the end of the newly created hole instead.
 > 
-> rpcauth_map_clnt_to_svc_cred_local() needs a kdoc comment.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
-> Since it is called only from fs/nfsd/localio.c -- should this API
->                                 ^^^^
-> reside in net/sunrpc/svcauth.c instead of net/sunrpc/auth.c ?
-> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index f420c53d86acc5..69a931de1979b9 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1241,7 +1241,15 @@ static int iomap_write_delalloc_release(struct inode *inode,
+>  			error = data_end;
+>  			goto out_unlock;
+>  		}
+> -		WARN_ON_ONCE(data_end <= start_byte);
+> +
+> +		/*
+> +		 * If we race with post-direct I/O invalidation of the page cache,
+> +		 * there might be no data left at start_byte.
+> +		 */
+> +		if (data_end == start_byte)
+> +			continue;
 
-Yes, that makes sense.  I also renamed it to
-svcauth_map_clnt_to_svc_cred_local
+Is there any chance that we could get stuck in a loop here?  I
+think it's the case that if SEEK_HOLE returns data_end == start_byte,
+then the next time through the loop, the SEEK_DATA will return something
+that is > start_byte.  Unless someone is very rapidly writing and
+punching the page cache?
 
-Thanks.
+Hmm but then if *xfs* is punching delalloc then we're we holding the
+iolock so who else could be doing that?
+
+If the answers are 'no' and 'nobody' then
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> +
+> +		WARN_ON_ONCE(data_end < start_byte);
+>  		WARN_ON_ONCE(data_end > scan_end_byte);
+>  
+>  		error = iomap_write_delalloc_scan(inode, &punch_start_byte,
+> -- 
+> 2.43.0
+> 
+> 
 
