@@ -1,375 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-27422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7009096168A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 20:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BC8961694
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 20:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 944DD1C224F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:14:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486111C22CAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7471D2783;
-	Tue, 27 Aug 2024 18:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9531D1F70;
+	Tue, 27 Aug 2024 18:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5mmBUmC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiHXc+fn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA9D1CE6F9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 18:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED431CFEA4;
+	Tue, 27 Aug 2024 18:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782452; cv=none; b=M+VyVyMxWLwIIJ0vZxR4hMyBxyOQxMUicA7PPYAqcLvVcxtAPkfqGpVQ6XII5nRUdmLS0UuOcywNsi4B+Ki/MTxXSz4NLkJhFL67qlH8DdNypoTJszZ9/1sh9KT2APNXh6ZMdZOL0C/vRGdQ0d7X6132ff93aQGERjiF04pwpPA=
+	t=1724782539; cv=none; b=P+0rNVzGPaXtx2OlhyHylyFy7GYCHDDD2lrEwQBCI+y4i/8mAxec4JrVo2VC25W7jNsfahIpfMkbv1LYdVyDbegH59uXb9LCYMNJ3iqcIsyfCBM78PgBuqZRfym79u5xiDf+dPCbukTl/pLN44ad8WrBbTJHTrFUIY+ifuHtJqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782452; c=relaxed/simple;
-	bh=SJZE6OJLdzVE2FnIiJQaJMkOfSQluTx/Gsa/bLb1x6I=;
+	s=arc-20240116; t=1724782539; c=relaxed/simple;
+	bh=pVcgVy77zQ4wQus05rb9bOVof4LW3fmLFvD+y6zxvXU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gffZ58aOxYoKHKYL9A4sNcD7Xl4gozC/z+iA/el9YHyH82eyF3o8zMTJILzT9oa+0RwLu9KS2WkaD5gba0qV/WozNAsypsDWZQ407Iz+pSdX4iewtZ70L26WEF3WiocDmEBn80zX4wS3AqlroI1mGQugjPC3Lo6uPV/6P0ghXio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P5mmBUmC; arc=none smtp.client-ip=209.85.160.178
+	 To:Cc:Content-Type; b=fyAG+TAr1PgIPYLaAcR3xZhkMQTnx7tNUyWYR3ZS86EmRhYK9gazGAE5piSFvObjeyMxm6SjEwoDd+HoVtDX5bwl+Ba3LImwxafxPcTDxRFL15SJ3T6UPipcceXTTMvi8XUQw0j+gx4+wDNSbjiGv2iQXi0LTe1J/tVJmVr974I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AiHXc+fn; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-454b3d8999aso32954011cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 11:14:09 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53436e04447so4921656e87.1;
+        Tue, 27 Aug 2024 11:15:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724782448; x=1725387248; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724782535; x=1725387335; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Saixu2ZHi8LjIfX1rlik0tXctawLg6RuqecL4ASZpAg=;
-        b=P5mmBUmCFjXU2lVOe0MUCxGeC24x4Fa16P1cZt/+o5uzjT7AG70UmJd8kPuSLId3CE
-         eS6Bm2HmGRH8v2eiccsBBjkrAaHXINA0IXRy+zn69PDpVV1+5QWFIGfRpypl2BU3t8rc
-         NzS6qBNcTyFiIOVdBcDD0ziNus95oOg+xyzYBVdTQQ2lpz4RaHIjyHsJT+3UhuNkwQ3A
-         24fIlkqs0mJtYlEfcfB30e96gT/3aC80iy2Epplc9zMQbzmO5jcsYOZk8CjnWMxk4fmj
-         v8J7eNiEnp6hjkWSs2RlrH4eOTuaBgSKOlCyEYcnnw7Sn+qWOs9RD90d1w8OWLVnsuKR
-         AdIg==
+        bh=hlfGmOBnGqhl9bDyEbypN0UaVHevitrcJ0rKYwQl5/c=;
+        b=AiHXc+fnO1qMbSjAfmiVgdHZy55jlFY8XOw0B78+vo+2jJjXlmu9NAUWXm8eyh/jlZ
+         CrAaQcHL/omo7H3KAgbQB4rrjam3M/1ft0K7WKkn2o+eyjj26wQs+Bc8qi040IR3w+Mj
+         h8dSGECgUjMoSqewkxvQD8YZb4sekuZq+IbvLITYRIGY7CMxeIhOcfzuBwePpEoRE6/H
+         LGj+S0o5IEo3KenJx0wMEw/luhXGOyoocGvpbQzMnFg3evOuxkSiUFnXSYdpwPcuLRDF
+         zLxG4vXs7Zlq7+h1vdT31viaviPWGzUZbbRdJTpLx4Op1JklJwnPE9sJbdqvbdhJy4v9
+         eaEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724782448; x=1725387248;
+        d=1e100.net; s=20230601; t=1724782535; x=1725387335;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Saixu2ZHi8LjIfX1rlik0tXctawLg6RuqecL4ASZpAg=;
-        b=StBP4sncjk/5fmP2pxIsDX9TfFnIk9uKDPH2OUYaOAkSPKBVqQSWvUdSCNRTCgaLFg
-         TBO5QLlZcwp54AvvXnvPBWIY1yGa4ikCFhkS8YN00LLnKkFGQ04hv2ZSMvwb4Hj5tA3I
-         JTXZjlW8B+WbIlBgusbYCmoETG+yAhhi/r4+/qMG7TXHb7ims3bJdfjWqF8lcvjv+hDN
-         Ws36kZ0T45NdQdr5x18MXjrhoMCVm/Bn/CfL0/hYDtJEJKndacI0kFkdpeuEJXd90w4f
-         WOtjhlz/UGzsZpKKHDCORJDj8+mEBEiqcVVyW9YaLfSASeavJW2jkjX0pld2TyxG+6g2
-         Vl8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXD1X1Yhvu2VqcL2CxRIj4DTKAzy6seYdSRqVijxbyAS/+Hf6UDS9YMfsgxA4X44O/zALD0Mh3hIPH2FLe@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHtd/vI/mRHRnjk6OL5eGAne1jsi1SW6EZuUCq+KmrBIM3mKv1
-	xZ4HFLAZDZotKLwkcNLA7//Co+Z02AvyXlrSxza+xZeAh3qW9WiZqSXUll0pHdP5fWugJah0VkG
-	7H4j47D1cLVGOGI+yRAdVeL3G/uM=
-X-Google-Smtp-Source: AGHT+IFfhadsHihSkL3FcU1d3qzbcop/+rVacPBBJSLznSSbVIcr6mOj5Y0j4+eKWJxdUZm2xJF2HJQiD3intKdHXHU=
-X-Received: by 2002:a05:622a:1dc4:b0:454:f400:455c with SMTP id
- d75a77b69052e-45509c35bf8mr180466871cf.30.1724782448053; Tue, 27 Aug 2024
- 11:14:08 -0700 (PDT)
+        bh=hlfGmOBnGqhl9bDyEbypN0UaVHevitrcJ0rKYwQl5/c=;
+        b=ZtJ39FyMKZlzy1bev13dM8yFo6eLKsHY/8VmpaF44TI4vfwb9cxIREHE098KQ3UP8m
+         VEfns05LNUxpqshCgCT913Gefz7adp4JRP/+DQtysvgOmS+fAILbaZ3k5XRDlJFqtRC3
+         pyp+TNwCSPLrzbKhk0RIK4scgQQYcOPg1qAQbvF3/nHgrAcVUDISQJ3G5Kiap3D+pfWP
+         ge8iGOdm45f24x2qUGdLsqzV6hXwKZO/4LJM/EJXVo6kpghXKs/OHzkSw2vQgduiVnlw
+         8CNEce0aaETg1yzxR5r4vrafW+7BUUAFpgsQiHH6dhMAEgMCz9YG23wr3CNf5+lhgRk3
+         T+Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCX3wFEykBhrpAqG/b2bsSSHrJiZUn7vwRTk8daO2WYo4KX1ngHrc6IkO14DispyjwwnlUku5x1S6xUU4D9L@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqEPR0fErAPXwWX1iWocnG35vJhL/Axef51qvzvkDLTpVpeHxe
+	OK8lUhzpeNWrO8YVF5QIScB98Pb++x5ataPEzCrUi43lcC3HWJx32vBIOLN1U7CjTKx8/AWyWt9
+	n8hjP7Ac1y84BFve/QhFzGtbDPTMoeBW5
+X-Google-Smtp-Source: AGHT+IEkjqrF4FP+oAa6lnud8Uip502gdhKTnzl2pIyhc6GpVhajGR80N1K7g3Po4H1LC8WOf86r5n5FBOTFUons4OA=
+X-Received: by 2002:a05:6512:3f04:b0:533:415e:cd9a with SMTP id
+ 2adb3069b0e04-534555eff79mr6785e87.23.1724782534569; Tue, 27 Aug 2024
+ 11:15:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813232241.2369855-1-joannelkoong@gmail.com>
- <20240813232241.2369855-3-joannelkoong@gmail.com> <2cd21f0b-e3db-4a6f-8a5e-8da4991985e8@linux.alibaba.com>
- <CAJnrk1Z+z8JzCu4QxnGRHsXGLQNmjfi32aGMqRjAE_C0LRn-7Q@mail.gmail.com>
- <5488bfcc-80be-4eb1-aac0-ed904becdb1c@linux.alibaba.com> <CAJnrk1aPFhPG9YuOqPo4DtipsdNNmaA96aQBatz03MkH7kPcWA@mail.gmail.com>
- <cca30890-afd0-412e-b4c8-c075bcaf9ed5@linux.alibaba.com>
-In-Reply-To: <cca30890-afd0-412e-b4c8-c075bcaf9ed5@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 27 Aug 2024 11:13:57 -0700
-Message-ID: <CAJnrk1b_95fQwWWTWOm0FG25PXOp+dgmPVx6XYrhfHOzdoW01g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] fuse: add default_request_timeout and
- max_request_timeout sysctls
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, laoar.shao@gmail.com, kernel-team@meta.com, 
-	Bernd Schubert <bschubert@ddn.com>
+References: <20240827015152.222983-1-lihongbo22@huawei.com>
+In-Reply-To: <20240827015152.222983-1-lihongbo22@huawei.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Wed, 28 Aug 2024 03:15:17 +0900
+Message-ID: <CAKFNMomMtJbEbZNRAzari3koP1eRHOrUDQ=rAxDbL6yfHHG=gg@mail.gmail.com>
+Subject: Re: [PATCH -next] nilfs2: support STATX_DIOALIGN for statx file
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 1:12=E2=80=AFAM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
+Hi Hongbo,
+
+Thanks for the suggestion.
+
+I checked the STATX_DIOALIGN specification while looking at the
+implementation of other file systems, and I thought that if DIO
+support is incomplete, the dio_xx_align member should be set to 0.
+
+Due to the nature of NILFS2 as a log-structured file system, DIO
+writes fall back to buffered io.  (DIO reads are supported)
+
+This is similar to the journal data mode of ext4 and the blkzoned
+device support of f2fs, but in such case, these file systems return a
+value of 0 (direct I/O not supported).
+
+So, it's fine to respond to a STATX_DIOALIGN request, but I think the
+value of dio_xx_align should be set to 0 to match these file systems.
+
+In this sense, there may be no need to rush to support STATX_DIOALIGN
+now.  Do you still think it would be better to have it?
+
+The following are some minor comments:
+
+On Tue, Aug 27, 2024 at 10:58=E2=80=AFAM Hongbo Li wrote:
 >
-> On 8/24/24 6:54 AM, Joanne Koong wrote:
-> > On Thu, Aug 22, 2024 at 7:17=E2=80=AFPM Jingbo Xu <jefflexu@linux.aliba=
-ba.com> wrote:
-> >>
-> >> On 8/23/24 5:19 AM, Joanne Koong wrote:
-> >>> On Thu, Aug 22, 2024 at 12:06=E2=80=AFAM Jingbo Xu <jefflexu@linux.al=
-ibaba.com> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 8/14/24 7:22 AM, Joanne Koong wrote:
-> >>>>> Introduce two new sysctls, "default_request_timeout" and
-> >>>>> "max_request_timeout". These control timeouts on replies by the
-> >>>>> server to kernel-issued fuse requests.
-> >>>>>
-> >>>>> "default_request_timeout" sets a timeout if no timeout is specified=
- by
-> >>>>> the fuse server on mount. 0 (default) indicates no timeout should b=
-e enforced.
-> >>>>>
-> >>>>> "max_request_timeout" sets a maximum timeout for fuse requests. If =
-the
-> >>>>> fuse server attempts to set a timeout greater than max_request_time=
-out,
-> >>>>> the system will default to max_request_timeout. Similarly, if the m=
-ax
-> >>>>> default timeout is greater than the max request timeout, the system=
- will
-> >>>>> default to the max request timeout. 0 (default) indicates no timeou=
-t should
-> >>>>> be enforced.
-> >>>>>
-> >>>>> $ sysctl -a | grep fuse
-> >>>>> fs.fuse.default_request_timeout =3D 0
-> >>>>> fs.fuse.max_request_timeout =3D 0
-> >>>>>
-> >>>>> $ echo 0x100000000 | sudo tee /proc/sys/fs/fuse/default_request_tim=
-eout
-> >>>>> tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
-> >>>>>
-> >>>>> $ echo 0xFFFFFFFF | sudo tee /proc/sys/fs/fuse/default_request_time=
-out
-> >>>>> 0xFFFFFFFF
-> >>>>>
-> >>>>> $ sysctl -a | grep fuse
-> >>>>> fs.fuse.default_request_timeout =3D 4294967295
-> >>>>> fs.fuse.max_request_timeout =3D 0
-> >>>>>
-> >>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> >>>>> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> >>>>> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-> >>>>> ---
-> >>>>>  Documentation/admin-guide/sysctl/fs.rst | 17 ++++++++++
-> >>>>>  fs/fuse/Makefile                        |  2 +-
-> >>>>>  fs/fuse/fuse_i.h                        | 16 ++++++++++
-> >>>>>  fs/fuse/inode.c                         | 19 ++++++++++-
-> >>>>>  fs/fuse/sysctl.c                        | 42 +++++++++++++++++++++=
-++++
-> >>>>>  5 files changed, 94 insertions(+), 2 deletions(-)
-> >>>>>  create mode 100644 fs/fuse/sysctl.c
-> >>>>>
-> >>>>> diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentatio=
-n/admin-guide/sysctl/fs.rst
-> >>>>> index 47499a1742bd..44fd495f69b4 100644
-> >>>>> --- a/Documentation/admin-guide/sysctl/fs.rst
-> >>>>> +++ b/Documentation/admin-guide/sysctl/fs.rst
-> >>>>> @@ -332,3 +332,20 @@ Each "watch" costs roughly 90 bytes on a 32-bi=
-t kernel, and roughly 160 bytes
-> >>>>>  on a 64-bit one.
-> >>>>>  The current default value for ``max_user_watches`` is 4% of the
-> >>>>>  available low memory, divided by the "watch" cost in bytes.
-> >>>>> +
-> >>>>> +5. /proc/sys/fs/fuse - Configuration options for FUSE filesystems
-> >>>>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>>>> +
-> >>>>> +This directory contains the following configuration options for FU=
-SE
-> >>>>> +filesystems:
-> >>>>> +
-> >>>>> +``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file=
- for
-> >>>>> +setting/getting the default timeout (in seconds) for a fuse server=
- to
-> >>>>> +reply to a kernel-issued request in the event where the server did=
- not
-> >>>>> +specify a timeout at mount. 0 indicates no timeout.
-> >>>>> +
-> >>>>> +``/proc/sys/fs/fuse/max_request_timeout`` is a read/write file for
-> >>>>> +setting/getting the maximum timeout (in seconds) for a fuse server=
- to
-> >>>>> +reply to a kernel-issued request. If the server attempts to set a
-> >>>>> +timeout greater than max_request_timeout, the system will use
-> >>>>> +max_request_timeout as the timeout. 0 indicates no timeout.
-> >>>>
-> >>>> "0 indicates no timeout"
-> >>>>
-> >>>> I think 0 max_request_timeout shall indicate that there's no explici=
-t
-> >>>> maximum limitation for request_timeout.
-> >>>
-> >>> Hi Jingbo,
-> >>>
-> >>> Ah I see where the confusion in the wording is (eg that "0 indicates
-> >>> no timeout" could be interpreted to mean there is no timeout at all
-> >>> for the connection, rather than no timeout as the max limit). Thanks
-> >>> for pointing this out. I'll make this more explicit in v5. I'll chang=
-e
-> >>> the wording above for the "default_request_timeout" case too.
-> >>>
-> >>>>
-> >>>>
-> >>>>> diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
-> >>>>> index 6e0228c6d0cb..cd4ef3e08ebf 100644
-> >>>>> --- a/fs/fuse/Makefile
-> >>>>> +++ b/fs/fuse/Makefile
-> >>>>> @@ -7,7 +7,7 @@ obj-$(CONFIG_FUSE_FS) +=3D fuse.o
-> >>>>>  obj-$(CONFIG_CUSE) +=3D cuse.o
-> >>>>>  obj-$(CONFIG_VIRTIO_FS) +=3D virtiofs.o
-> >>>>>
-> >>>>> -fuse-y :=3D dev.o dir.o file.o inode.o control.o xattr.o acl.o rea=
-ddir.o ioctl.o
-> >>>>> +fuse-y :=3D dev.o dir.o file.o inode.o control.o xattr.o acl.o rea=
-ddir.o ioctl.o sysctl.o
-> >>>>>  fuse-y +=3D iomode.o
-> >>>>>  fuse-$(CONFIG_FUSE_DAX) +=3D dax.o
-> >>>>>  fuse-$(CONFIG_FUSE_PASSTHROUGH) +=3D passthrough.o
-> >>>>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> >>>>> index 0a2fa487a3bf..dae9977fa050 100644
-> >>>>> --- a/fs/fuse/fuse_i.h
-> >>>>> +++ b/fs/fuse/fuse_i.h
-> >>>>> @@ -47,6 +47,14 @@
-> >>>>>  /** Number of dentries for each connection in the control filesyst=
-em */
-> >>>>>  #define FUSE_CTL_NUM_DENTRIES 5
-> >>>>>
-> >>>>> +/*
-> >>>>> + * Default timeout (in seconds) for the server to reply to a reque=
-st
-> >>>>> + * if no timeout was specified on mount
-> >>>>> + */
-> >>>>> +extern u32 fuse_default_req_timeout;
-> >>>>> +/** Max timeout (in seconds) for the server to reply to a request =
-*/
-> >>>>> +extern u32 fuse_max_req_timeout;
-> >>>>> +
-> >>>>>  /** List of active connections */
-> >>>>>  extern struct list_head fuse_conn_list;
-> >>>>>
-> >>>>> @@ -1486,4 +1494,12 @@ ssize_t fuse_passthrough_splice_write(struct=
- pipe_inode_info *pipe,
-> >>>>>                                     size_t len, unsigned int flags)=
+> Add support for STATX_DIOALIGN to nilfs2, so that direct I/O alignment
+> restrictions are exposed to userspace in a generic way.
+>
+> By default, nilfs2 uses the default getattr implemented at vfs layer,
+> so we should implement getattr in nilfs2 to fill the dio_xx_align
+> members. The nilfs2 does not have the special align requirements. So
+> we use the default alignment setting from block layer.
+> We have done the following test:
+>
+> [Before]
+> ```
+> ./statx_test /mnt/nilfs2/test
+> statx(/mnt/nilfs2/test) =3D 0
+> dio mem align:0
+> dio offset align:0
+> ```
+>
+> [After]
+> ```
+> ./statx_test /mnt/nilfs2/test
+> statx(/mnt/nilfs2/test) =3D 0
+> dio mem align:512
+> dio offset align:512
+> ```
+>
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+>  fs/nilfs2/file.c  |  1 +
+>  fs/nilfs2/inode.c | 20 ++++++++++++++++++++
+>  fs/nilfs2/namei.c |  2 ++
+>  fs/nilfs2/nilfs.h |  2 ++
+>  4 files changed, 25 insertions(+)
+>
+> diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
+> index 0e3fc5ba33c7..5528918d4b96 100644
+> --- a/fs/nilfs2/file.c
+> +++ b/fs/nilfs2/file.c
+> @@ -154,6 +154,7 @@ const struct file_operations nilfs_file_operations =
+=3D {
+>
+>  const struct inode_operations nilfs_file_inode_operations =3D {
+>         .setattr        =3D nilfs_setattr,
+> +       .getattr        =3D nilfs_getattr,
+>         .permission     =3D nilfs_permission,
+>         .fiemap         =3D nilfs_fiemap,
+>         .fileattr_get   =3D nilfs_fileattr_get,
+> diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+> index 7340a01d80e1..b5bb2c2de32c 100644
+> --- a/fs/nilfs2/inode.c
+> +++ b/fs/nilfs2/inode.c
+> @@ -1001,6 +1001,26 @@ int nilfs_setattr(struct mnt_idmap *idmap, struct =
+dentry *dentry,
+>         return err;
+>  }
+>
+> +int nilfs_getattr(struct mnt_idmap *idmap, const struct path *path,
+> +                       struct kstat *stat, u32 request_mask, unsigned in=
+t query_flags)
+> +{
+> +       struct inode *const inode =3D d_inode(path->dentry);
+> +       struct block_device *bdev =3D inode->i_sb->s_bdev;
+> +       unsigned int blksize =3D (1 << inode->i_blkbits);
+> +
+> +       if ((request_mask & STATX_DIOALIGN) && S_ISREG(inode->i_mode)) {
+> +               stat->result_mask |=3D STATX_DIOALIGN;
+> +
+
+> +               if (bdev)
+> +                       blksize =3D bdev_logical_block_size(bdev);
+
+I don't think there's any need to check that bdev is NULL, but is
+there a reason?
+
+If sb->s_bdev can be NULL, I think that for such devices, a NULL
+pointer dereference bug will occur in the mount path.
+That's why I was concerned about this.
+
+> +               stat->dio_mem_align =3D blksize;
+> +               stat->dio_offset_align =3D blksize;
+> +       }
+> +
+> +       generic_fillattr(idmap, request_mask, inode, stat);
+> +       return 0;
+> +}
+> +
+>  int nilfs_permission(struct mnt_idmap *idmap, struct inode *inode,
+>                      int mask)
+>  {
+> diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
+> index c950139db6ef..ad56f4f8be1f 100644
+> --- a/fs/nilfs2/namei.c
+> +++ b/fs/nilfs2/namei.c
+> @@ -546,6 +546,7 @@ const struct inode_operations nilfs_dir_inode_operati=
+ons =3D {
+>         .mknod          =3D nilfs_mknod,
+>         .rename         =3D nilfs_rename,
+>         .setattr        =3D nilfs_setattr,
+> +       .getattr        =3D nilfs_getattr,
+
+In the case of directories, the STATX_DIOALIGN request is ignored, so
+I don't think this is necessary for now. (It can be added in the
+future when supporting other optional getattr requests/responses).
+
+>         .permission     =3D nilfs_permission,
+>         .fiemap         =3D nilfs_fiemap,
+>         .fileattr_get   =3D nilfs_fileattr_get,
+> @@ -554,6 +555,7 @@ const struct inode_operations nilfs_dir_inode_operati=
+ons =3D {
+>
+>  const struct inode_operations nilfs_special_inode_operations =3D {
+>         .setattr        =3D nilfs_setattr,
+> +       .getattr        =3D nilfs_getattr,
+>         .permission     =3D nilfs_permission,
+>  };
+
+Ditto.
+
+>
+> diff --git a/fs/nilfs2/nilfs.h b/fs/nilfs2/nilfs.h
+> index 4017f7856440..98a8b28ca1db 100644
+> --- a/fs/nilfs2/nilfs.h
+> +++ b/fs/nilfs2/nilfs.h
+> @@ -280,6 +280,8 @@ extern void nilfs_truncate(struct inode *);
+>  extern void nilfs_evict_inode(struct inode *);
+>  extern int nilfs_setattr(struct mnt_idmap *, struct dentry *,
+>                          struct iattr *);
+> +extern int nilfs_getattr(struct mnt_idmap *idmap, const struct path *pat=
+h,
+> +                       struct kstat *stat, u32 request_mask, unsigned in=
+t query_flags);
+
+Do not add the "extern" directive to new function declarations.
+We are moving towards eliminating the extern declarator from function
+declarations whenever possible.
+
+>  extern void nilfs_write_failed(struct address_space *mapping, loff_t to)=
 ;
-> >>>>>  ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_st=
-ruct *vma);
-> >>>>>
-> >>>>> +#ifdef CONFIG_SYSCTL
-> >>>>> +int fuse_sysctl_register(void);
-> >>>>> +void fuse_sysctl_unregister(void);
-> >>>>> +#else
-> >>>>> +static inline int fuse_sysctl_register(void) { return 0; }
-> >>>>> +static inline void fuse_sysctl_unregister(void) { return; }
-> >>>>> +#endif /* CONFIG_SYSCTL */
-> >>>>> +
-> >>>>>  #endif /* _FS_FUSE_I_H */
-> >>>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> >>>>> index 9e69006fc026..cf333448f2d3 100644
-> >>>>> --- a/fs/fuse/inode.c
-> >>>>> +++ b/fs/fuse/inode.c
-> >>>>> @@ -35,6 +35,10 @@ DEFINE_MUTEX(fuse_mutex);
-> >>>>>
-> >>>>>  static int set_global_limit(const char *val, const struct kernel_p=
-aram *kp);
-> >>>>>
-> >>>>> +/* default is no timeout */
-> >>>>> +u32 fuse_default_req_timeout =3D 0;
-> >>>>> +u32 fuse_max_req_timeout =3D 0;
-> >>>>> +
-> >>>>>  unsigned max_user_bgreq;
-> >>>>>  module_param_call(max_user_bgreq, set_global_limit, param_get_uint=
-,
-> >>>>>                 &max_user_bgreq, 0644);
-> >>>>> @@ -1678,6 +1682,7 @@ int fuse_fill_super_common(struct super_block=
- *sb, struct fuse_fs_context *ctx)
-> >>>>>       struct fuse_conn *fc =3D fm->fc;
-> >>>>>       struct inode *root;
-> >>>>>       struct dentry *root_dentry;
-> >>>>> +     u32 req_timeout;
-> >>>>>       int err;
-> >>>>>
-> >>>>>       err =3D -EINVAL;
-> >>>>> @@ -1730,10 +1735,16 @@ int fuse_fill_super_common(struct super_blo=
-ck *sb, struct fuse_fs_context *ctx)
-> >>>>>       fc->group_id =3D ctx->group_id;
-> >>>>>       fc->legacy_opts_show =3D ctx->legacy_opts_show;
-> >>>>>       fc->max_read =3D max_t(unsigned int, 4096, ctx->max_read);
-> >>>>> -     fc->req_timeout =3D ctx->req_timeout * HZ;
-> >>>>>       fc->destroy =3D ctx->destroy;
-> >>>>>       fc->no_control =3D ctx->no_control;
-> >>>>>       fc->no_force_umount =3D ctx->no_force_umount;
-> >>>>> +     req_timeout =3D ctx->req_timeout ?: fuse_default_req_timeout;
-> >>>>> +     if (!fuse_max_req_timeout)
-> >>>>> +             fc->req_timeout =3D req_timeout * HZ;
-> >>>>> +     else if (!req_timeout)
-> >>>>> +             fc->req_timeout =3D fuse_max_req_timeout * HZ;
-> >>>>
-> >>>> So if fuse_max_req_timeout is non-zero and req_timeout is zero (eith=
-er
-> >>>> because of 0 fuse_default_req_timeout, or explicit "-o request_timeo=
-ut =3D
-> >>>> 0" mount option), the final request timeout is exactly
-> >>>> fuse_max_req_timeout, which is unexpected as I think 0
-> >>>> fuse_default_req_timeout, or "-o request_timeout=3D0" shall indicate=
- no
-> >>>> timeout.
-> >>>
-> >>> fuse_max_req_timeout takes precedence over fuse_default_req_timeout
-> >>> (eg if the system administrator wants to enforce a max limit on fuse
-> >>> timeouts, that is imposed even if a specific fuse server didn't
-> >>> indicate a timeout or indicated no timeout). Sorry, that wasn't made
-> >>> clear in the documentation. I'll add that in for v5.
-> >>
-> >> OK that is quite confusing.  If the system admin wants to enforce a
-> >> timeout, then a non-zero fuse_default_req_timeout is adequate.  What's
-> >> the case where fuse_default_req_timeout must be 0, and the aystem admi=
-n
-> >> has to impose the enforced timeout through fuse_max_req_timeout?
-> >>
-> >> IMHO the semantics of fuse_max_req_timeout is not straightforward and
-> >> can be confusing if it implies an enforced timeout when no timeout is
-> >> specified, while at the same time it also imposes a maximum limitation
-> >> when timeout is specified.
-> >
-> > In my point of view, max_req_timeout is the ultimate safeguard the
-> > administrator can set to enforce a timeout on all fuse requests on the
-> > system (eg to mitigate rogue servers). When this is set, this
-> > guarantees that absolutely no request will take longer than
-> > max_req_timeout for the server to respond.
-> >
-> > My understanding of /proc/sys sysctls is that ACLs can be used to
-> > grant certain users/groups write permission for specific sysctl
-> > parameters. So if a user wants to enforce a default request timeout,
-> > they can set that. If that timeout is shorter than what the max
-> > request timeout has been set to, then the request should time out
-> > earlier according to that desired default timeout. But if it's greater
-> > than what the max request timeout allows, then the max request timeout
-> > limits the timeout on the request (the max request timeout is the
-> > absolute upper bound on how long a request reply can take). It doesn't
-> > matter if the user set no timeout as the default req timeout - what
-> > matters is that there is a max req timeout on the system, and that
-> > takes precedence for enforcing how long request replies can take.
-> >
->
-> Sorry for the late reply, just back from vacation these days.
->
-> Anyway, if max_req_timeout enforces a maximum timeout no matter whether
-> the fuse server explicitly specifies a timeout or not, then the
-> semantics of fuse_default_req_timeout seems a little bit overlapped with
-> max_req_timeout, right?  The only place where fuse_default_req_timeout
-> plays a role is when ctx->req_timeout and fuse_max_req_timeout are both
-> zero, in which case we can get the same effect if we eliminate
-> fuse_default_req_timeout and configure a non-zero fuse_max_req_timeout.
+>  int nilfs_permission(struct mnt_idmap *idmap, struct inode *inode,
+>                      int mask);
+> --
+> 2.34.1
 >
 
-The behavior would not be the same if we eliminated
-fuse_default_request_timeout and configured a non-zero
-fuse_max_request_timeout instead. For example, say we want a default
-timeout of 10 secs. With fuse_default_request_timeout set to 10 secs,
-if a server specifies a timeout that is 15 secs, that is perfectly ok.
-If we get rid of fuse_default_request_timeout and just use
-fuse_max_request_timeout of 10 secs, that will limit servers to 10
-secs even if they specified 15 secs.
+That's all for my comments.
 
 Thanks,
-Joanne
-
-> --
-> Thanks,
-> Jingbo
+Ryusuke Konishi
 
