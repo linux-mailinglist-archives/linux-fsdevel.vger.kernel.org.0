@@ -1,132 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-27280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF98495FFF1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 05:48:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2AF96002E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 06:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3462835E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 03:48:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009E02831F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 04:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E01121340;
-	Tue, 27 Aug 2024 03:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0264E46425;
+	Tue, 27 Aug 2024 04:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1Y9tJ2Oi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDB7175BF;
-	Tue, 27 Aug 2024 03:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0854FEAF6;
+	Tue, 27 Aug 2024 04:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724730475; cv=none; b=HFMgG03+CE5Iz14UaSb2+EjbdeIvviucMWDIoZQdHy2YjkHyZiT7YJdWM2jNqdkCUxWREJuok8KCocnQuxVNpptbZcvR0uySWNDXvsvLIAh74F7Wf0vHStgoxar1JK7WAK4ZFgcS2U1Zlj/AG2RiEUSbMdvf2Qkfnu9rFor48h4=
+	t=1724731677; cv=none; b=CN9Vk/JGEb0PMCOFLhaR1LfZft47jSqYlNo0d4+KFIDSuINaJlWhyVhWSQMLtEOYFogOcxogm1+DtQSGd5Q9YXcNw14wan8RwzfcYvEeMRBs0EsWiXt0iRTM11tRiAcattdO84uGaI2HKXHqeNF8V/5L6Zpotgqh+CeKEvMW6MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724730475; c=relaxed/simple;
-	bh=lPtDJ1wNWNDenZoG4SuiqmoxqD7FETC475odRZucW5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tFY3dfLFjssGBGq1gc31zTq8+/dhEJiiyAnsJgabAuZ7hEx0wUkzljvAJM8AzuFCu6kWlM5JMYsPPwXPk0anozCJjExIe9ViIURwFtaZwzftklvL4H9Ni6lKSIAkwCUQRs6cs6ZjN8CChdVQ+d5mm6gLQd4sywg0eQM7RkzNC5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WtD5K1TnDz4f3jM8;
-	Tue, 27 Aug 2024 11:47:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B12321A14E7;
-	Tue, 27 Aug 2024 11:47:47 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP4 (Coremail) with SMTP id gCh0CgB37IJfTM1m5shTCw--.52889S3;
-	Tue, 27 Aug 2024 11:47:47 +0800 (CST)
-Message-ID: <5b7455f8-4637-4ec0-a016-233827131fb2@huaweicloud.com>
-Date: Tue, 27 Aug 2024 11:47:43 +0800
+	s=arc-20240116; t=1724731677; c=relaxed/simple;
+	bh=RtUA6cq7N9QmBBZxtw9JQjTCZ4WN/zo2ZWjZeftflNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cbr+mkBxFdBcGip6XMijEH8LV6ay0XlQ4rh7OsphraCJWlQX+Je3djPFRFPV/r7LszKI3nNKM+BEzI6/XophUC7r6avCjw2q25dKrBW52HQNa5FB6a5eMcv7XeC/LhF/Xk7d0Nt65eJ2ZBkxflM2Uxd9e/evS3ztd4oknRvPHio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1Y9tJ2Oi; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RtUA6cq7N9QmBBZxtw9JQjTCZ4WN/zo2ZWjZeftflNA=; b=1Y9tJ2Oi/J4f69kPCbpWSCDjv+
+	zifJLauBV+9m365svWPvGL1dxgLhmaTGndTMGaDaVYMRVeY7+EbadmfK9TyDjAnr5l10C5bzAipPH
+	g6AdCDXe3nCglX8sgodr8bw+CgcK43juXW0COmrq9O9kuE+osMZBLVyiqQO+/7sFgWkO0qw5In2l9
+	ljeoGaiRsB1rgc4gEyKj9T55Z+Vzzuu+AJYKpuYbaTfeX2MmPfjnDSL+yLyIg6v7vcW/C7Cfx6BYq
+	JNicPMx4i8iNn6tq2fOR6OXpY+vTAx5P3P1W5kmUW6OY0TVC1cOBIbeG/f3tRj2+CxXfhvG9LV9rR
+	EEftR/FA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sinUl-00000009fTG-19Ti;
+	Tue, 27 Aug 2024 04:07:51 +0000
+Date: Mon, 26 Aug 2024 21:07:51 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: brauner@kernel.org, djwong@kernel.org, sfr@canb.auug.org.au,
+	p.raghav@samsung.com, dchinner@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: [PATCH] iomap: remove set_memor_ro() on zero page
+Message-ID: <Zs1RFxM9tW1-O4rg@infradead.org>
+References: <20240826212632.2098685-1-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cachefiles: fix dentry leak in cachefiles_open_file()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, David Howells <dhowells@redhat.com>,
- Jeff Layton <jlayton@kernel.org>, stable@kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>,
- Gao Xiang <hsiangkao@linux.alibaba.com>, Hou Tao <houtao1@huawei.com>,
- Jingbo Xu <jefflexu@linux.alibaba.com>, Yang Erkun <yangerkun@huawei.com>,
- Yu Kuai <yukuai3@huawei.com>, Zizhi Wo <wozizhi@huawei.com>,
- Baokun Li <libaokun1@huawei.com>
-References: <20240826040018.2990763-1-libaokun@huaweicloud.com>
- <467d9b9b-34b4-4a94-95c1-1d41f0a91e05@web.de>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <467d9b9b-34b4-4a94-95c1-1d41f0a91e05@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB37IJfTM1m5shTCw--.52889S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7GryUWF4kGw4rZFWUKFyDWrg_yoW8Jr4UpF
-	Way3WUKryfWr4UKr4kAa1Fvw1F9397WFs0q3W3Wr9rAan0qryYvr12grn0qF98AryDJr42
-	qa1j9a43X3yUJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	aFAJUUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAIBWbMPH9KgwAAss
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826212632.2098685-1-mcgrof@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 2024/8/26 21:55, Markus Elfring wrote:
-> …
->> Add the missing dput() to cachefiles_open_file() for a quick fix.
-> I suggest to use a goto chain accordingly.
->
->
-> …
+On Mon, Aug 26, 2024 at 02:26:32PM -0700, Luis Chamberlain wrote:
+> Stephen reported a boot failure on ppc power8 system where
+> set_memor_ro() on the new zero page failed [0]. Christophe Leroy
+> further clarifies we can't use this on on linear memory on ppc, and
+> so instead of special casing this just for PowerPC [2] remove the
+> call as suggested by Darrick.
 
-Hi Markus,
+I've already asked for it not to be added multiple times, but I'm
+glad we're getting there now:
 
-
-Thanks for the suggestion, but I think the current solution is simple
-enough that we don't need to add a label to it.
-
-Actually, at first I was going to release the reference count of the
-dentry uniformly in cachefiles_look_up_object() and delete all dput()
-in cachefiles_open_file(), but this may conflict when backporting
-the code to stable. So just keep it simple to facilitate backporting
-to stable.
-
-Thanks,
-Baokun
->> +++ b/fs/cachefiles/namei.c
->> @@ -554,6 +554,7 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
->>   	if (!cachefiles_mark_inode_in_use(object, d_inode(dentry))) {
->>   		pr_notice("cachefiles: Inode already in use: %pd (B=%lx)\n",
->>   			  dentry, d_inode(dentry)->i_ino);
->> +		dput(dentry);
->>   		return false;
-> Please replace two statements by the statement “goto put_dentry;”.
->
->
-> …
->> error:
->> 	cachefiles_do_unmark_inode_in_use(object, d_inode(dentry));
-> +put_dentry:
->> 	dput(dentry);
->> 	return false;
->> }
-> Regards,
-> Markus
-
--- 
-With Best Regards,
-Baokun Li
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
