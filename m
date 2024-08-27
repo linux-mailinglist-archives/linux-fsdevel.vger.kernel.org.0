@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-27411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328CE96142D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D28961435
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 18:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C51A7B21961
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C8A1C23311
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 16:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166BE1CC150;
-	Tue, 27 Aug 2024 16:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFD91CDFC4;
+	Tue, 27 Aug 2024 16:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6QwQ84X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyTZWfDS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7489A1CE6F9;
-	Tue, 27 Aug 2024 16:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D0B54767;
+	Tue, 27 Aug 2024 16:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724776643; cv=none; b=HOHQFSV6gll2ktLSdAg9YrMq8WGii6YbVQJ6SPlMBOvuN8iucm8DlcJDj0mmXuZq2xcUKeYhyY6Pesw4YOETzY3THp4iWST9dxlTEghd3ivJZOptTtGnxIRjh8v2A7YdAsHxhhnTFnJE4JOd5aB1L1cSD/BJ8phLXwpuoK4wysY=
+	t=1724776737; cv=none; b=YlXTRsauSwVWCibcZXWUDtOOM2fvTsEsLtQCsgvcmUXo5mlgBwSZgJTcHSV+nyRf8XawoY6v9c08gjjdKHWuoQJLnWBDiEPyPG4taMsgzukz0gEv4yAfyNAynXs6fJDKCFUtuMBXizewmz7GD2j42rR1rPFJcyDqiv7e4mpyOIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724776643; c=relaxed/simple;
-	bh=mvSehc3EehbvAoAsqkIEwF2dBH7XDmmb1Qjzcd299RU=;
+	s=arc-20240116; t=1724776737; c=relaxed/simple;
+	bh=4BgrvTiyAvVY/mr4WiAPphx+VLnfc/W2cDsr1zDg9RI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDlN2zplbWyCzzPhdIzR9PaU0eW1NHsYK7NtaP0kYKLM9gXhiyPhKGEKkLsrCbUz9RaAb/n9RWHCqv/HX/0Up+fglLDX/4WZP7aQlaGGKjtthY2a0Whf0/6VGOw/Sr0lGeeQRQLfULoYN+FNhClLKPCsyfqJjGQ8Vl346WUM26A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6QwQ84X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02330C4AF0C;
-	Tue, 27 Aug 2024 16:37:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZyLocTweU09TePs7WAGQ5hCCB9LKSyY8Vbngofaf+djnllfgq4yTVxQ0BDRCPmK9wTTMy9r97ghuhp03qqxVUd9AqWCyrBPqHyd4xMbI8R/gZ5Oh0d6z5jePhMlY7L+uam7PoWk+IogXh3OGXJR3qIwSp3w28Xf9phonS+2CR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyTZWfDS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B712CC4AF09;
+	Tue, 27 Aug 2024 16:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724776643;
-	bh=mvSehc3EehbvAoAsqkIEwF2dBH7XDmmb1Qjzcd299RU=;
+	s=k20201202; t=1724776736;
+	bh=4BgrvTiyAvVY/mr4WiAPphx+VLnfc/W2cDsr1zDg9RI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P6QwQ84XjrmpvDnL7d4ov+VSjcsmal6lKmDXAxXSIWt8L5GaqF2cbmuoolYgTt6E1
-	 tGO2Urki+JfM2mvNJ4zKA72v5F5BLpXPBrx2xzXL/xA3ghOSH0xNWbkQgG3bX+crp5
-	 zB71kXyDjV823ZV3eC8Kyy1Z9k8ceXzzGqAd/724ZMWEEC2MD3J7muJVIjLpPGA54T
-	 p4e++37BvxURgNvM3X+L649jj73E65VQBrEQxNkSNSDHfxYRAA6zDbHepr2kmcbiqD
-	 0qbW2nCcVlshQYkz0T25r9p1sxHOR9ezyC5yvFs8wf9+ewoJCHNYLWJ8A6wKJ6WP3S
-	 sRcLIO8B5z7EQ==
-Date: Tue, 27 Aug 2024 09:37:22 -0700
+	b=LyTZWfDSI6ihRmAGQbQVAZOIsagLzqPjcbQIRK1774LL2akA1RZC1DjP55EuyNH4y
+	 hyNjf+MFcIADy4OakxZ2BJs6TiGD2pwDwaOFHuqoHMOaGjFBePPmpmj0VEaOptzk9X
+	 /9DVDl2IzETX96EhC9StnoXnRKHJryhMvu01tbEdvn74SnDYitW9rxhTrlYF1u+lyb
+	 T+s4ql4SEjIriuIeSl96xHK9eTE5zMqOhOUb0hvhHGPMRIOVtCydc6z+FoEPEmg2n2
+	 /1C4D1ybrCbeYJk8+bzgHuHdcM26giQuObDylxOn87iZLyWmTzurJ+vBrAaNG5z7hZ
+	 tv/PPOiifZStg==
+Date: Tue, 27 Aug 2024 09:38:56 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Chandan Babu R <chandan.babu@oracle.com>,
 	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 07/10] xfs: support the COW fork in
- xfs_bmap_punch_delalloc_range
-Message-ID: <20240827163722.GB865349@frogsfrogsfrogs>
+Subject: Re: [PATCH 08/10] xfs: share a bit more code in
+ xfs_buffered_write_iomap_begin
+Message-ID: <20240827163856.GC865349@frogsfrogsfrogs>
 References: <20240827051028.1751933-1-hch@lst.de>
- <20240827051028.1751933-8-hch@lst.de>
+ <20240827051028.1751933-9-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,119 +60,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827051028.1751933-8-hch@lst.de>
+In-Reply-To: <20240827051028.1751933-9-hch@lst.de>
 
-On Tue, Aug 27, 2024 at 07:09:54AM +0200, Christoph Hellwig wrote:
-> xfs_buffered_write_iomap_begin can also create delallocate reservations
-> that need cleaning up, prepare for that by adding support for the COW
-> fork in xfs_bmap_punch_delalloc_range.
+On Tue, Aug 27, 2024 at 07:09:55AM +0200, Christoph Hellwig wrote:
+> Introduce a local iomap_flags variable so that the code allocating new
+> delalloc blocks in the data fork can fall through to the found_imap
+> label and reuse the code to unlock and fill the iomap.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Seems fine to me.
+That looks pretty straightforward
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/xfs/xfs_aops.c      |  4 ++--
->  fs/xfs/xfs_bmap_util.c | 10 +++++++---
->  fs/xfs/xfs_bmap_util.h |  2 +-
->  fs/xfs/xfs_iomap.c     |  3 ++-
->  4 files changed, 12 insertions(+), 7 deletions(-)
+>  fs/xfs/xfs_iomap.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 6dead20338e24c..559a3a57709748 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -116,7 +116,7 @@ xfs_end_ioend(
->  	if (unlikely(error)) {
->  		if (ioend->io_flags & IOMAP_F_SHARED) {
->  			xfs_reflink_cancel_cow_range(ip, offset, size, true);
-> -			xfs_bmap_punch_delalloc_range(ip, offset,
-> +			xfs_bmap_punch_delalloc_range(ip, XFS_DATA_FORK, offset,
->  					offset + size);
->  		}
->  		goto done;
-> @@ -456,7 +456,7 @@ xfs_discard_folio(
->  	 * byte of the next folio. Hence the end offset is only dependent on the
->  	 * folio itself and not the start offset that is passed in.
->  	 */
-> -	xfs_bmap_punch_delalloc_range(ip, pos,
-> +	xfs_bmap_punch_delalloc_range(ip, XFS_DATA_FORK, pos,
->  				folio_pos(folio) + folio_size(folio));
->  }
->  
-> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-> index fe2e2c93097550..15c8f90f19a934 100644
-> --- a/fs/xfs/xfs_bmap_util.c
-> +++ b/fs/xfs/xfs_bmap_util.c
-> @@ -443,11 +443,12 @@ xfs_getbmap(
->  void
->  xfs_bmap_punch_delalloc_range(
->  	struct xfs_inode	*ip,
-> +	int			whichfork,
->  	xfs_off_t		start_byte,
->  	xfs_off_t		end_byte)
->  {
->  	struct xfs_mount	*mp = ip->i_mount;
-> -	struct xfs_ifork	*ifp = &ip->i_df;
-> +	struct xfs_ifork	*ifp = xfs_ifork_ptr(ip, whichfork);
->  	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, start_byte);
->  	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, end_byte);
->  	struct xfs_bmbt_irec	got, del;
-> @@ -475,11 +476,14 @@ xfs_bmap_punch_delalloc_range(
->  			continue;
->  		}
->  
-> -		xfs_bmap_del_extent_delay(ip, XFS_DATA_FORK, &icur, &got, &del);
-> +		xfs_bmap_del_extent_delay(ip, whichfork, &icur, &got, &del);
->  		if (!xfs_iext_get_extent(ifp, &icur, &got))
->  			break;
->  	}
->  
-> +	if (whichfork == XFS_COW_FORK && !ifp->if_bytes)
-> +		xfs_inode_clear_cowblocks_tag(ip);
-> +
->  out_unlock:
->  	xfs_iunlock(ip, XFS_ILOCK_EXCL);
->  }
-> @@ -590,7 +594,7 @@ xfs_free_eofblocks(
->  	 */
->  	if (ip->i_diflags & (XFS_DIFLAG_PREALLOC | XFS_DIFLAG_APPEND)) {
->  		if (ip->i_delayed_blks) {
-> -			xfs_bmap_punch_delalloc_range(ip,
-> +			xfs_bmap_punch_delalloc_range(ip, XFS_DATA_FORK,
->  				round_up(XFS_ISIZE(ip), mp->m_sb.sb_blocksize),
->  				LLONG_MAX);
->  		}
-> diff --git a/fs/xfs/xfs_bmap_util.h b/fs/xfs/xfs_bmap_util.h
-> index eb0895bfb9dae4..b29760d36e1ab1 100644
-> --- a/fs/xfs/xfs_bmap_util.h
-> +++ b/fs/xfs/xfs_bmap_util.h
-> @@ -30,7 +30,7 @@ xfs_bmap_rtalloc(struct xfs_bmalloca *ap)
->  }
->  #endif /* CONFIG_XFS_RT */
->  
-> -void	xfs_bmap_punch_delalloc_range(struct xfs_inode *ip,
-> +void	xfs_bmap_punch_delalloc_range(struct xfs_inode *ip, int whichfork,
->  		xfs_off_t start_byte, xfs_off_t end_byte);
->  
->  struct kgetbmap {
 > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 1e11f48814c0d0..24d69c8c168aeb 100644
+> index 24d69c8c168aeb..e0dc6393686c01 100644
 > --- a/fs/xfs/xfs_iomap.c
 > +++ b/fs/xfs/xfs_iomap.c
-> @@ -1215,7 +1215,8 @@ xfs_buffered_write_delalloc_punch(
->  	loff_t			length,
->  	struct iomap		*iomap)
->  {
-> -	xfs_bmap_punch_delalloc_range(XFS_I(inode), offset, offset + length);
-> +	xfs_bmap_punch_delalloc_range(XFS_I(inode), XFS_DATA_FORK, offset,
-> +			offset + length);
->  }
+> @@ -975,6 +975,7 @@ xfs_buffered_write_iomap_begin(
+>  	int			allocfork = XFS_DATA_FORK;
+>  	int			error = 0;
+>  	unsigned int		lockmode = XFS_ILOCK_EXCL;
+> +	unsigned int		iomap_flags = 0;
+>  	u64			seq;
 >  
->  static int
+>  	if (xfs_is_shutdown(mp))
+> @@ -1145,6 +1146,11 @@ xfs_buffered_write_iomap_begin(
+>  		}
+>  	}
+>  
+> +	/*
+> +	 * Flag newly allocated delalloc blocks with IOMAP_F_NEW so we punch
+> +	 * them out if the write happens to fail.
+> +	 */
+> +	iomap_flags |= IOMAP_F_NEW;
+>  	if (allocfork == XFS_COW_FORK) {
+>  		error = xfs_bmapi_reserve_delalloc(ip, allocfork, offset_fsb,
+>  				end_fsb - offset_fsb, prealloc_blocks, &cmap,
+> @@ -1162,19 +1168,11 @@ xfs_buffered_write_iomap_begin(
+>  	if (error)
+>  		goto out_unlock;
+>  
+> -	/*
+> -	 * Flag newly allocated delalloc blocks with IOMAP_F_NEW so we punch
+> -	 * them out if the write happens to fail.
+> -	 */
+> -	seq = xfs_iomap_inode_sequence(ip, IOMAP_F_NEW);
+> -	xfs_iunlock(ip, lockmode);
+>  	trace_xfs_iomap_alloc(ip, offset, count, allocfork, &imap);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, IOMAP_F_NEW, seq);
+> -
+>  found_imap:
+> -	seq = xfs_iomap_inode_sequence(ip, 0);
+> +	seq = xfs_iomap_inode_sequence(ip, iomap_flags);
+>  	xfs_iunlock(ip, lockmode);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0, seq);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, iomap_flags, seq);
+>  
+>  convert_delay:
+>  	xfs_iunlock(ip, lockmode);
 > -- 
 > 2.43.0
 > 
