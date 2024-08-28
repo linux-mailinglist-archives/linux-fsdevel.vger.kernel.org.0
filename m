@@ -1,85 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-27645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6597963387
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC0BF9633A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22B69B22ADD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 21:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E3B928341F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 21:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B271B1B011D;
-	Wed, 28 Aug 2024 21:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0B01AC8A9;
+	Wed, 28 Aug 2024 21:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="REgv7IQR"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="nRjvRQ6w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6731B010C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 21:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11EE45C1C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 21:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724879033; cv=none; b=s9XlNasj6ty0EqvEqQERMLKiy2ptVab4URrR77XonSL/n9EfQrjwSv2aGFir/zR5LVw5VRN/VuAixDbEonF2G57XDsOVVCxArGnxOGaDwWpcA7sKK4QacWR4qKy/FaURZxMVs1T77nb16F1R211g4XTK0W4ivZu202DIZckR0Yg=
+	t=1724879682; cv=none; b=D3fUiMb8G6HVy0k0oQdgr6blJSi04Fk6FAlIctxcS0YOpYSYlwEGy9Nfg3pB+o69P62kUuVbPpNn/klp4UnYsADJ5f9OZRTwIK4nlJm0iOyFAV4TxDYkSrBEPRBikERS2gIaWRyocl6u2MHXevEYXdcVIvIrQ4nBcMT97ILl9kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724879033; c=relaxed/simple;
-	bh=dZLD/JcsA3bm8Cz88EokWnyb6qwNyJsN5B2wjUVoB8s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MGWhHqPF76JrzFCwJa1wde6kHyhnhGl7RgPOAgh6Q/vWqGNR76h7kpvmrSm8XE6gWjdWfM+B4+3Hl9b2FP97atnasKm4++gps1zn2rZOoa084jYK8V/j6aMoJcXvEWK6+AUM/qsyKE5xM7YbcZETJ8o2ZzVWtv3gHimEhpc/lyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=REgv7IQR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724879030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HnRbucMY226i4IUYHJiuv+7kBNxjZEs05bItUy7sjXs=;
-	b=REgv7IQR0dZOkBay5uqUMA+aoN7jimvi7JXLWm6KZVqRHEu628UwOXFM3xQaHFaWux4Hx5
-	SOdGGpqAeYpzq77PsVe2MW6OxFR+zjrQPFOkocPPln2RmxbIM6Mzw7Qo0HaOXqJGy/5I12
-	ekiGzf8xSPc77/tecm2rikHEdkbKbSY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-iAIpNcUkPheyG0CeJjFQ_w-1; Wed,
- 28 Aug 2024 17:03:45 -0400
-X-MC-Unique: iAIpNcUkPheyG0CeJjFQ_w-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 010F11955BF1;
-	Wed, 28 Aug 2024 21:03:43 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.30])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5B35C1955BF2;
-	Wed, 28 Aug 2024 21:03:38 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <sfrench@samba.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] netfs, cifs: Improve some debugging bits
-Date: Wed, 28 Aug 2024 22:02:47 +0100
-Message-ID: <20240828210249.1078637-7-dhowells@redhat.com>
-In-Reply-To: <20240828210249.1078637-1-dhowells@redhat.com>
-References: <20240828210249.1078637-1-dhowells@redhat.com>
+	s=arc-20240116; t=1724879682; c=relaxed/simple;
+	bh=wDocM1nibkJgFPtzX3nNihUrjJkuqGJ/uWfgIhDKhR4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Mo0Xdq7LOXMedkuhhqumrsuPTfiFUG5C8ir3HSPmkX9gQfCnuiDH5ipcn1Tp3zKVdBpNLMhjJLabv5XumvNmU9ZmwCcqcVWmxGoa6lidvn65VInROJ4Ikg4S4X/60HVyCG3D5Mv5YvsAvibsSWkI7Iq+5aENr1DOyJ8l0jLStw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=nRjvRQ6w; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6bf7707dbb6so9094226d6.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 14:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724879679; x=1725484479; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4STFdGAzcN+DnHOdAyG33gatjZ2EZ2Gs7/Q0wf64nwc=;
+        b=nRjvRQ6wiJJ8UaBoD3LvjeBPEA/KsmC09+L/43AOaOEsPdV4g+0PhVN0pKQoF3HrUS
+         jbyu3xERjMsRfiPznPjpZPJdBzofGLkIEHgFBX4ZNHm02U33LqyQ3LXStOTlC6QOji7V
+         brv9EmEPFeQZ1E9MTPnEaOuGLR0VpqHNIKokFRLJ3bu3fM7wOjiLSvWRudyTnPcOkNkR
+         0z2MpisRcTP1oWKeEoRDxNqoDZb2BCnkXBAiii0daytGh4guS3y/TmZ5YCwK4SabjvIj
+         VdQZ2sdeblY5yGoRkXhQv++j2sb6BUPLdaa/dexWwmKc26CqMjPhg58CK1lMEOKzY3wV
+         qoBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724879679; x=1725484479;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4STFdGAzcN+DnHOdAyG33gatjZ2EZ2Gs7/Q0wf64nwc=;
+        b=YcLN/BRFi1dtrTXeNmEJRZSmpMQqTdvudPS1Fge834qiobXp28ukEYN8DemgAMwDCl
+         Kjp14otfDP0Cw7NnQrDRuEr1VYimWQeVXUi0armlkB6+CJKxJKSPwnimLh+kcKcc/MRP
+         eLs1ccc1NNWgXh3RhYpw07zBySUP44XOosWt5/sYpCp2oLwT4d6jVt24bfFKquVJocTZ
+         oJd3oj9K9tJWSEkFZa43A/82D43AQi8GtqV7co+V269fqGFYz89+vUrKLDR4W3T4KHsu
+         +1Sl7qmu83jSA9MIt9Yh2nkOKommI/L9IhBXuluELagbzTOmyyTITqKCyqPnhldQw4sC
+         jYGg==
+X-Gm-Message-State: AOJu0YwlfDpuC9jllPF8GSNoUHvKBfNVGekvWPsFID93ee9/rTRu0KQ/
+	fmSlSVMu864xkyl7QxwiTYWT5fEYim6kqIvnw1M491g1uzb75UbOR1U0GnPOtsEwvg9ie6o/WBI
+	+
+X-Google-Smtp-Source: AGHT+IHbKCKwEdQDcaewESL5Zdx4Zf4acDQMWgvODZGGlktPnUax6yJrSAmecFbrwbbzn9bI1GSLXw==
+X-Received: by 2002:a05:6214:1946:b0:6bf:7efc:1117 with SMTP id 6a1803df08f44-6c33f33d66emr9516396d6.9.1724879679337;
+        Wed, 28 Aug 2024 14:14:39 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162dcd10esm67937616d6.105.2024.08.28.14.14.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 14:14:38 -0700 (PDT)
+From: Josef Bacik <josef@toxicpanda.com>
+To: linux-fsdevel@vger.kernel.org,
+	amir73il@gmail.com,
+	miklos@szeredi.hu,
+	joannelkoong@gmail.com,
+	bschubert@ddn.com,
+	willy@infradead.org
+Subject: [PATCH v2 00/11] fuse: convert to using folios and iomap
+Date: Wed, 28 Aug 2024 17:13:50 -0400
+Message-ID: <cover.1724879414.git.josef@toxicpanda.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,66 +82,64 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Improve some debugging bits:
+v1: https://lore.kernel.org/linux-fsdevel/cover.1724791233.git.josef@toxicpanda.com/
 
- (1) The netfslib _debug() macro doesn't need a newline in its format
-     string.
+v1->v2:
+- Fixed my fstests setup to use --nopassthrough so my code actually got tested
+  this time.
+- Fixed a bug where we double put on the folio in readpages, because previous
+  behavior was the reference was maintained until the endio, but
+  readahead_folio() drops the reference on the folio, so we need to not call put
+  in the endio anymore.
+- Fixed the IS_ERR inversion pointed out by Joanne.
+- Made the various adjustments pointed out by Willy.
+- Updated the Kconfig per hch's suggestion.
+- Pushed to my GH tree since there are dependencies to make it easier to see
+  what the code is https://github.com/josefbacik/linux/tree/fuse-iomap
 
- (2) Display the request debug ID and subrequest index in messages emitted
-     in smb2_adjust_credits() to make it easier to reference in traces.
+--- Original email ---
+Hello,
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/io.c           | 2 +-
- fs/smb/client/smb2ops.c | 8 +++++---
- 2 files changed, 6 insertions(+), 4 deletions(-)
+This is a prep series for my work to enable large folios on fuse.  It has two
+dependencies, one is Joanne's writeback clean patches
 
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index 943128507af5..d6ada4eba744 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -270,7 +270,7 @@ static void netfs_reset_subreq_iter(struct netfs_io_request *rreq,
- 	if (count == remaining)
- 		return;
- 
--	_debug("R=%08x[%u] ITER RESUB-MISMATCH %zx != %zx-%zx-%llx %x\n",
-+	_debug("R=%08x[%u] ITER RESUB-MISMATCH %zx != %zx-%zx-%llx %x",
- 	       rreq->debug_id, subreq->debug_index,
- 	       iov_iter_count(&subreq->io_iter), subreq->transferred,
- 	       subreq->len, rreq->i_size,
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 4df84ebe8dbe..e6540072ffb0 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -316,7 +316,8 @@ smb2_adjust_credits(struct TCP_Server_Info *server,
- 				      cifs_trace_rw_credits_no_adjust_up);
- 		trace_smb3_too_many_credits(server->CurrentMid,
- 				server->conn_id, server->hostname, 0, credits->value - new_val, 0);
--		cifs_server_dbg(VFS, "request has less credits (%d) than required (%d)",
-+		cifs_server_dbg(VFS, "R=%x[%x] request has less credits (%d) than required (%d)",
-+				subreq->rreq->debug_id, subreq->subreq.debug_index,
- 				credits->value, new_val);
- 
- 		return -EOPNOTSUPP;
-@@ -338,8 +339,9 @@ smb2_adjust_credits(struct TCP_Server_Info *server,
- 		trace_smb3_reconnect_detected(server->CurrentMid,
- 			server->conn_id, server->hostname, scredits,
- 			credits->value - new_val, in_flight);
--		cifs_server_dbg(VFS, "trying to return %d credits to old session\n",
--			 credits->value - new_val);
-+		cifs_server_dbg(VFS, "R=%x[%x] trying to return %d credits to old session\n",
-+				subreq->rreq->debug_id, subreq->subreq.debug_index,
-+				credits->value - new_val);
- 		return -EAGAIN;
- 	}
- 
+https://lore.kernel.org/linux-fsdevel/20240826211908.75190-1-joannelkoong@gmail.com/
+
+and an iomap patch to allow us to pass the file through the buffered write path
+
+https://lore.kernel.org/linux-fsdevel/7f55c7c32275004ba00cddf862d970e6e633f750.1724755651.git.josef@toxicpanda.com/
+
+I've run these through an fstests run with passthrough_hp --direct-io,
+everything looks good.
+
+The last remaining bit that needs to be made to use folios is the splice/pipe
+code, which I need to be a lot more careful about.  The next step is to plumb
+through the ability to handle large folios.  But this is a decent start and
+removes the bulk of FUSE's use of struct page, and is relatively safe and
+straightforward.  Thanks,
+
+Josef
+
+Josef Bacik (11):
+  fuse: convert readahead to use folios
+  fuse: convert fuse_send_write_pages to use folios
+  fuse: convert fuse_fill_write_pages to use folios
+  fuse: convert fuse_page_mkwrite to use folios
+  fuse: use kiocb_modified in buffered write path
+  fuse: use iomap for writeback cache buffered writes
+  fuse: convert fuse_do_readpage to use folios
+  fuse: convert fuse_writepage_need_send to take a folio
+  fuse: use the folio based vmstat helpers
+  fuse: convert fuse_retrieve to use folios
+  fuse: convert fuse_notify_store to use folios
+
+ fs/fuse/Kconfig |   2 +
+ fs/fuse/dev.c   |  38 +++---
+ fs/fuse/file.c  | 315 ++++++++++++++++++++++++------------------------
+ 3 files changed, 183 insertions(+), 172 deletions(-)
+
+-- 
+2.43.0
 
 
