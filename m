@@ -1,180 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-27501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F469961D08
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 05:32:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6A3961D0C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 05:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ABE9B225C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:32:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF9561F23EDE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC1113C670;
-	Wed, 28 Aug 2024 03:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB7414264A;
+	Wed, 28 Aug 2024 03:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Ho4gSxBg"
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="k0+J59F2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FE7611E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 03:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A913314287
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 03:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724815946; cv=none; b=IdvdgGmXqH/1sfGySIBglgWCqF8d8gH1oSC+AHON+6pAJFEcjYiEvZy68kgy2MTe4rY6HwvHcy3jV0TvS01WN82nsYSfAgxVsDfGhkVioW1IHdCPYQOS1OzkIEjgpS65K2McAVeCEcQClR7epDPJtwK9Cqk/ntnyuIfXMYJ8yew=
+	t=1724815955; cv=none; b=U4MLrN3F+g/zuViEsiTwkbys27LwDjQaVZo0g52ib+uJVEGWHypz7LdJD1uOwe4/+LcMq4GuIcRs0DHlnA95mrI1KLSnggikj19rGM7cxYJA8yIDDs/5v4NkxUmiOk5kGuTjboiXEzeunoWxYNCRxfyhTrrMA1TxY7RRd/0Hi3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724815946; c=relaxed/simple;
-	bh=LGXlHY009TvNznTX3c4gbHgo/PGn48DHAu/OfUtduR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQfNcJasVbObxR8cNtBLwvx8Zi/2nOrK+yJ/3iquTLDd+gh432fyKOL5WDKZDZTclpTcO+7XXw4Ai3cpckAfYcSh5Wqz/c8U/EuUeLSTumvi2nHdrkvM2fnr3SL7dkowdDPyZWh4xcRWh5l/myNULB81Gp3oKDGB5QscOmxzvgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Ho4gSxBg; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d3c08541cdso4872199a91.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 20:32:25 -0700 (PDT)
+	s=arc-20240116; t=1724815955; c=relaxed/simple;
+	bh=5I+HdjJIRMydaP7gAcyCzrj8B9drhLDnFzt8FtBGUOA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tbM9KGJSBNVG6gjcXiFCR+55FvgL/dlQfQVgKN2QSJVth/pt6Hl87V1SxbH5lo3zJnJXHGIQnDOBkDYNuu59khpPBgOF1uAP7HGwc8GO8DMYPC7BwHKErxoIVTwE4ygzweO9xOOXSqIW8M6zzC1lLMHbL65/KxPLJH7s2MGnf+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=k0+J59F2; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d3bd8784d3so4870728a91.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 20:32:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724815944; x=1725420744; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dOUwFnh8dRGJzRbK7IWvINcshuS8hyE9hSMQAPyOBfI=;
-        b=Ho4gSxBgY81JBaVvZp8dI9NxNM4Qw41zoBHbkK4TQxQJgqqtJ/fo9tk3L9Rn3W91R/
-         lTpEZL8AphxTWB3KvTILaymc1jkC8w5EP1dTp2IN/KPk0ndmu9mPKAaYBD6y4ooJXXom
-         MFF/9zYWhpQj6weQg3YlqfUgNiNRpOVm4b3T0uCdSUiMY+MPxbipzu+Nht7dMrINtxl0
-         YxG0gVb4TNLWPPE4WSv1hTbShIgk0s8e9Dzn551dR9ZdB65T7Y/dEHeyxGl8BmW+GvR5
-         E8UQTJAbL6FrtYzlvAthXjlkBLn5ZLhWRW7vWr4yxEvWgqO0NlVMwGHrIF6uOKsQfgrm
-         xbzQ==
+        d=shopee.com; s=shopee.com; t=1724815952; x=1725420752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lkrS/c7eA51KRjEOsPxgljxFXqyg4/bJQNYY4aZ/YZU=;
+        b=k0+J59F253kT1+gcaySRTHP1yOtHy7pSMloQntshMOMOWr9R0PIW30swmC6KZV+J7O
+         FiQH3eFeSrfFJl16+TcaKMNQrcjVB0oN6pqjunbDq6hhQFIy2kH3KvxZO0h1s3VKvtbu
+         l4/MiWPUchXAWrKsz7Fh8hkOt6tPFvWwHDzGPeCyd0Q0EcTTVPUFLR1ClcNfOxQ6kNn+
+         5HcxXlgxmmWjSZVGqD1HlE3REw9Du6imCLkNAaLyJQI1kMWtoR8ruU93Mt3E1YeFeI2l
+         4RYG53Z1DgPAgWNaOwpSSYf8S1PNDES0ZcDNw2Y/XXDEdvCsNmAV0lhwKRSbnm/20U5m
+         0p9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724815944; x=1725420744;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dOUwFnh8dRGJzRbK7IWvINcshuS8hyE9hSMQAPyOBfI=;
-        b=UUNR8fei01F9DE/btvPsa2O30y+mJgq+MiKb0MBfeVrYPKNwd80iJznMoR6CjFd3Nb
-         t48R/eJJ5eq6tBZ2HMod1s2ZJKh0gg487MG86MA+MEZZG6N/6cOUbuIiXJo3DCsL30dj
-         css3UERbWhdzHHb1fx9VmvdiRcDgzY8p9Q/rqlD1DkrHLml1vtgvRV57OXwp6ww6ol/i
-         cY2Sok9tjMroFH1sn2blKBOIGzJXHpMklTKpp/QWFzf3zUv1R67vRrekkeQ2nIgi2WBS
-         YEUpl9btJ6OyWCIs4D22jKZ9FYkVGWiIZ4bWW4V1ft5xnwwxDcnKMir+u3yvY6EI5vay
-         LXFQ==
-X-Gm-Message-State: AOJu0Yy8fCmO4nGg4yHA8yLvlLEpLa3vhgo23rDjv93gTX4RjevL9UlY
-	VQwnNGAevBJ8EzB5v/aPGSJfz5TAWygpfjYNcPJkjTORMfucM0A+QHNoJAKDnRNV7/1XvzYhXhk
-	e
-X-Google-Smtp-Source: AGHT+IGQnmK2Kx24hDKpI+BVFCeBMtIVqGG2N0/z6DHuYSL/PxeKxx30BPfqZGyDNMUOFOzL+KIWmg==
-X-Received: by 2002:a17:90a:9ad:b0:2c9:77d8:bb60 with SMTP id 98e67ed59e1d1-2d646d6f468mr16953327a91.35.1724815944575;
-        Tue, 27 Aug 2024 20:32:24 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d84462af10sm362282a91.34.2024.08.27.20.32.23
+        d=1e100.net; s=20230601; t=1724815952; x=1725420752;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lkrS/c7eA51KRjEOsPxgljxFXqyg4/bJQNYY4aZ/YZU=;
+        b=sr3w6DbW7e7dj4LziZCygSP/wndE652ZZqr0XCTIq9dlTB0dHzn8Mn5eP0My/dKnMj
+         tiH5UUvr5y8iL6HfqDFQQBBpoIaDSDGc/FD+RZdEPw7y25/SWfA4QYR3u3hMz1kaDwMR
+         WYJl1rN0SMKcBwuTepuSXzbQSjESYNkO7vwOxopa74Sdinf7Sk8h/dU8yyd0c2waNyPc
+         ayxvfxzIgWRxiT6szMqufJYNOXquyyr0JLPSwyUPI7MYlmUkZ87lYKbd6jJSbo7j0ZJ9
+         Yu8dy0rCzhhr+YPZP2HAz03TvwfpBCgtkl0+G7dFOLOWe9y44zBf9kDTalQwsWrS1+9t
+         M1ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9957A7O1lvMi5PHfcl3on2ZUz5eb1rxZOqxKfSKnmVJaChzrz1vFUxJYdAM9a2eegiX83QtmpDtQhK5Ll@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+iFeNwrvGVPUhMmaHrs31EUcrLvh6j3SDitVyvj8/SiFr5iAH
+	yS6rOboMEKbFFipfNwNXUM45JyuUyhHsXWe2ZFKGsiWcoIIe1DVTyHhl+0CBWBA=
+X-Google-Smtp-Source: AGHT+IG1fanM1xqpwU6LysH/RO6JJxsuwXSldXMwzYv+IXWA2QBQfOmN6P64rUkB5BabAl1YTzK4rQ==
+X-Received: by 2002:a17:90a:a40d:b0:2c2:deda:8561 with SMTP id 98e67ed59e1d1-2d646d8db89mr15290079a91.41.1724815951882;
+        Tue, 27 Aug 2024 20:32:31 -0700 (PDT)
+Received: from localhost.localdomain ([143.92.64.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8283f6d9csm1985951a91.0.2024.08.27.20.32.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 20:32:24 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sj9Px-00FI5C-0A;
-	Wed, 28 Aug 2024 13:32:21 +1000
-Date: Wed, 28 Aug 2024 13:32:21 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH 02/10] mm: shrinker: Add a .to_text() method for shrinkers
-Message-ID: <Zs6aRZrjqPXQue6r@dread.disaster.area>
-References: <20240824191020.3170516-1-kent.overstreet@linux.dev>
- <20240824191020.3170516-3-kent.overstreet@linux.dev>
+        Tue, 27 Aug 2024 20:32:31 -0700 (PDT)
+From: Haifeng Xu <haifeng.xu@shopee.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: tytso@mit.edu,
+	yi.zhang@huaweicloud.com,
+	yukuai1@huaweicloud.com,
+	tj@kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haifeng Xu <haifeng.xu@shopee.com>
+Subject: [PATCH] buffer: Associate the meta bio with blkg from buffer page
+Date: Wed, 28 Aug 2024 11:32:24 +0800
+Message-Id: <20240828033224.146584-1-haifeng.xu@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240824191020.3170516-3-kent.overstreet@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 24, 2024 at 03:10:09PM -0400, Kent Overstreet wrote:
-> This adds a new callback method to shrinkers which they can use to
-> describe anything relevant to memory reclaim about their internal state,
-> for example object dirtyness.
-....
+In our production environment, we found many tasks were hung for
+a long time. Their call traces are like these:
 
-> +	if (!mutex_trylock(&shrinker_mutex)) {
-> +		seq_buf_puts(out, "(couldn't take shrinker lock)");
-> +		return;
-> +	}
+thread 1:
 
-Please don't use the shrinker_mutex like this. There can be tens of
-thousands of entries in the shrinker list (because memcgs) and
-holding the shrinker_mutex for long running traversals like this is
-known to cause latency problems for memcg reaping. If we are at
-ENOMEM, the last thing we want to be doing is preventing memcgs from
-being reaped.
+PID: 189529  TASK: ffff92ab51e5c080  CPU: 34  COMMAND: "mc"
+[ffffa638db807800] __schedule at ffffffff83b19898
+[ffffa638db807888] schedule at ffffffff83b19e9e
+[ffffa638db8078a8] io_schedule at ffffffff83b1a316
+[ffffa638db8078c0] bit_wait_io at ffffffff83b1a751
+[ffffa638db8078d8] __wait_on_bit at ffffffff83b1a373
+[ffffa638db807918] out_of_line_wait_on_bit at ffffffff83b1a46d
+[ffffa638db807970] __wait_on_buffer at ffffffff831b9c64
+[ffffa638db807988] jbd2_log_do_checkpoint at ffffffff832b556e
+[ffffa638db8079e8] __jbd2_log_wait_for_space at ffffffff832b55dc
+[ffffa638db807a30] add_transaction_credits at ffffffff832af369
+[ffffa638db807a98] start_this_handle at ffffffff832af50f
+[ffffa638db807b20] jbd2__journal_start at ffffffff832afe1f
+[ffffa638db807b60] __ext4_journal_start_sb at ffffffff83241af3
+[ffffa638db807ba8] __ext4_new_inode at ffffffff83253be6
+[ffffa638db807c80] ext4_mkdir at ffffffff8327ec9e
+[ffffa638db807d10] vfs_mkdir at ffffffff83182a92
+[ffffa638db807d50] ovl_mkdir_real at ffffffffc0965c9f [overlay]
+[ffffa638db807d80] ovl_create_real at ffffffffc0965e8b [overlay]
+[ffffa638db807db8] ovl_create_or_link at ffffffffc09677cc [overlay]
+[ffffa638db807e10] ovl_create_object at ffffffffc0967a48 [overlay]
+[ffffa638db807e60] ovl_mkdir at ffffffffc0967ad3 [overlay]
+[ffffa638db807e70] vfs_mkdir at ffffffff83182a92
+[ffffa638db807eb0] do_mkdirat at ffffffff83184305
+[ffffa638db807f08] __x64_sys_mkdirat at ffffffff831843df
+[ffffa638db807f28] do_syscall_64 at ffffffff83b0bf1c
+[ffffa638db807f50] entry_SYSCALL_64_after_hwframe at ffffffff83c0007c
 
-> +	list_for_each_entry(shrinker, &shrinker_list, list) {
-> +		struct shrink_control sc = { .gfp_mask = GFP_KERNEL, };
+other threads:
 
-This iteration and counting setup is neither node or memcg aware.
-For node aware shrinkers, this will only count the items freeable
-on node 0, and ignore all the other memory in the system. For memcg
-systems, it will also only scan the root memcg and so miss counting
-any memory in memcg owned caches.
+PID: 21125  TASK: ffff929f5b9a0000  CPU: 44  COMMAND: "task_server"
+[ffffa638aff9b900] __schedule at ffffffff83b19898
+[ffffa638aff9b988] schedule at ffffffff83b19e9e
+[ffffa638aff9b9a8] schedule_preempt_disabled at ffffffff83b1a24e
+[ffffa638aff9b9b8] __mutex_lock at ffffffff83b1af28
+[ffffa638aff9ba38] __mutex_lock_slowpath at ffffffff83b1b1a3
+[ffffa638aff9ba48] mutex_lock at ffffffff83b1b1e2
+[ffffa638aff9ba60] mutex_lock_io at ffffffff83b1b210
+[ffffa638aff9ba80] __jbd2_log_wait_for_space at ffffffff832b563b
+[ffffa638aff9bac8] add_transaction_credits at ffffffff832af369
+[ffffa638aff9bb30] start_this_handle at ffffffff832af50f
+[ffffa638aff9bbb8] jbd2__journal_start at ffffffff832afe1f
+[ffffa638aff9bbf8] __ext4_journal_start_sb at ffffffff83241af3
+[ffffa638aff9bc40] ext4_dirty_inode at ffffffff83266d0a
+[ffffa638aff9bc60] __mark_inode_dirty at ffffffff831ab423
+[ffffa638aff9bca0] generic_update_time at ffffffff8319169d
+[ffffa638aff9bcb0] inode_update_time at ffffffff831916e5
+[ffffa638aff9bcc0] file_update_time at ffffffff83191b01
+[ffffa638aff9bd08] file_modified at ffffffff83191d47
+[ffffa638aff9bd20] ext4_write_checks at ffffffff8324e6e4
+[ffffa638aff9bd40] ext4_buffered_write_iter at ffffffff8324edfb
+[ffffa638aff9bd78] ext4_file_write_iter at ffffffff8324f553
+[ffffa638aff9bdf8] ext4_file_write_iter at ffffffff8324f505
+[ffffa638aff9be00] new_sync_write at ffffffff8316dfca
+[ffffa638aff9be90] vfs_write at ffffffff8316e975
+[ffffa638aff9bec8] ksys_write at ffffffff83170a97
+[ffffa638aff9bf08] __x64_sys_write at ffffffff83170b2a
+[ffffa638aff9bf18] do_syscall_64 at ffffffff83b0bf1c
+[ffffa638aff9bf38] asm_common_interrupt at ffffffff83c00cc8
+[ffffa638aff9bf50] entry_SYSCALL_64_after_hwframe at ffffffff83c0007c
 
-IOWs, the shrinker iteration mechanism needs to iterate both by NUMA
-node and by memcg. On large machines with multiple nodes and hosting
-thousands of memcgs, a total shrinker state iteration is has to walk
-a -lot- of structures.
+The filesystem is ext4(ordered). The meta data can be written out by
+writeback, but if there are too many dirty pages, we had to do
+checkpoint to write out the meta data in current thread context.
 
-And example of this is drop_slab() - called from
-/proc/sys/vm/drop_caches(). It does this to iterate all the
-shrinkers for all the nodes and memcgs in the system:
+In this case, the blkg of thread1 has set io.max, so the j_checkpoint_mutex
+can't be released and many threads must wait for it. However, the blkg from
+buffer page didn' set any io policy. Therefore, for the meta buffer head,
+we can associate the bio with blkg from the buffer page instead of current
+thread context.
 
-static unsigned long drop_slab_node(int nid)
-{
-        unsigned long freed = 0;
-        struct mem_cgroup *memcg = NULL;
+Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+---
+ fs/buffer.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-        memcg = mem_cgroup_iter(NULL, NULL, NULL);
-        do {
-                freed += shrink_slab(GFP_KERNEL, nid, memcg, 0);
-        } while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
-
-        return freed;
-}
-
-void drop_slab(void)
-{
-        int nid;
-        int shift = 0;
-        unsigned long freed;
-
-        do {
-                freed = 0;
-                for_each_online_node(nid) {
-                        if (fatal_signal_pending(current))
-                                return;
-
-                        freed += drop_slab_node(nid);
-                }
-        } while ((freed >> shift++) > 1);
-}
-
-Hence any iteration for finding the 10 largest shrinkable caches in
-the system needs to do something similar. Only, it needs to iterate
-memcgs first and then aggregate object counts across all nodes for
-shrinkers that are NUMA aware.
-
-Because it needs direct access to the shrinkers, it will need to use
-the RCU lock + refcount method of traversal because that's the only
-safe way to go from memcg to shrinker instance. IOWs, it
-needs to mirror the code in shrink_slab/shrink_slab_memcg to obtain
-a safe reference to the relevant shrinker so it can call
-->count_objects() and store a refcounted pointer to the shrinker(s)
-that will get printed out after the scan is done....
-
-Once the shrinker iteration is sorted out, I'll look further at the
-rest of the code in this patch...
-
--Dave.
+diff --git a/fs/buffer.c b/fs/buffer.c
+index e55ad471c530..a7889f258d0d 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2819,6 +2819,17 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
+ 	if (wbc) {
+ 		wbc_init_bio(wbc, bio);
+ 		wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
++	} else if (buffer_meta(bh)) {
++		struct folio *folio;
++		struct cgroup_subsys_state *memcg_css, *blkcg_css;
++
++		folio = page_folio(bh->b_page);
++		memcg_css = mem_cgroup_css_from_folio(folio);
++		if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
++		    cgroup_subsys_on_dfl(io_cgrp_subsys)) {
++			blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
++			bio_associate_blkg_from_css(bio, blkcg_css);
++		}
+ 	}
+ 
+ 	submit_bio(bio);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.25.1
+
 
