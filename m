@@ -1,91 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-27585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA409628F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:42:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F247E962902
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66BA1F24A7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A404A1F221BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E06187878;
-	Wed, 28 Aug 2024 13:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCA7188CC6;
+	Wed, 28 Aug 2024 13:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jz/nPOOu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985BF187859;
-	Wed, 28 Aug 2024 13:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F2017BB25;
+	Wed, 28 Aug 2024 13:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724852546; cv=none; b=TO9iUS+D4gfqqIYh+H5wdVmgYM9f0/q/gig0OOUdnAeRTbDKRMsacBl/fsfBK4JLealhIfAFvGDqtGLHJj6j5BW10Eq1VEA+9zamE/DqNWQgZ+AVqy5gaAZ7vG3vuN91whPTwvRXrCMgsxxeG3rWNfMM+fyiHNfQLridADUN2jA=
+	t=1724852625; cv=none; b=PBs7aOvZRnNb6HupEloPwQPdWo0S10wDl71s9hTTBwrvn06N1K6to2cM/wsn2ZTjCzuhLIp1B+a03cKL7Nqbq7aHA8mSsMoUe7sOlQZ/WX82mo/v4j9ry34yj/VNx/h3pwVJHx9IHkIPHmTS3r1H3S13Qs+J3mXK9Nhkzyuv1h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724852546; c=relaxed/simple;
-	bh=FkxFFVdwX1/bT3jf5ugN2YTPZ65TkfFpCS/ghepAw8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OO145qDdyD0dou5FuOcrGhNUfphNz1+AmYSoZFGRwCols+Zj+6z+at+EWpNfuv5Q4DigqGl+1mqtRVzg90z2PCI+h6dmJyETfia6kIjT/2fuee1MLt4Gkn8uKhSRiUc6DCuy33ttRA16lgOU2MpeBG2Da8erFUZyzYYZAOgFFmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wv5Db5c8FzyRBl;
-	Wed, 28 Aug 2024 21:41:51 +0800 (CST)
-Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
-	by mail.maildlp.com (Postfix) with ESMTPS id 42D35180105;
-	Wed, 28 Aug 2024 21:42:22 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
- (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
- 2024 21:42:21 +0800
-Message-ID: <a64ff81d-3b3d-44e8-9a1d-0d226dca2c8a@huawei.com>
-Date: Wed, 28 Aug 2024 21:42:21 +0800
+	s=arc-20240116; t=1724852625; c=relaxed/simple;
+	bh=vUCy+esMmmIriBrBlRQ/31MuOgDJ+ygm7nRLEW5Xqrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESNw3JeOfCfKnXxsQpt6qOves3AB8XkqLAPyVLFdeizaqebO21oUKMT6McgntDHXuIoKYXSmSjXKA5hVHJpo/cjBYjzPL/0lZXk+/AhjTQ8ztuU1QGpnEdNdI+7xoMjqTfwDZY0sRVyzyCvYzMrPR4k4eDjwz1npD3/AdrfJw2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jz/nPOOu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EE4EC98EE3;
+	Wed, 28 Aug 2024 13:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724852624;
+	bh=vUCy+esMmmIriBrBlRQ/31MuOgDJ+ygm7nRLEW5Xqrk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jz/nPOOujBTjhMz0brFF+TVmPv00EZ6RkW9IETGOlegJnv1iP0A7Gmg/kew4aXaby
+	 /oFvT3XVKC1MpRjhejrWxl7KpZr8pwBs3Kq96c1FN/8b3nDDfYTUypGcSCYuFM26vK
+	 K9j52Du8W+wLg1awymI3Dvaa5bqXymzKw/VyJAM2YcrFKvK7eoRH11gLE3Dg5FnfF2
+	 4EUIV5Fex5iPKPdW9xV+nH03bToEBjIizw0+dbUchpeMfND8G08mQHib/wcdg8G3ck
+	 tBORZgwX2W2M5ohjNa2myNIeyTGIhOnyLewIWlWTxQs7yHXtQUWLAzF3NyA/2CNskn
+	 +v9qkEL10c4zQ==
+Date: Wed, 28 Aug 2024 15:43:39 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Hongbo Li <lihongbo22@huawei.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: RFC: add STATX_DIO_READ_ALIGN
+Message-ID: <20240828-gaswerk-wohlfahrt-744e04b7becd@brauner>
+References: <20240828051149.1897291-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] netfs: Delete subtree of 'fs/netfs' when netfs module
- exits
-To: Christian Brauner <brauner@kernel.org>
-CC: <dhowells@redhat.com>, <jlayton@kernel.org>, <netfs@lists.linux.dev>,
-	<jefflexu@linux.alibaba.com>, <linux-erofs@lists.ozlabs.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yangerkun@huawei.com>, <houtao1@huawei.com>, <yukuai3@huawei.com>,
-	<wozizhi@huawei.com>, <stable@kernel.org>, Gao Xiang <xiang@kernel.org>,
-	Baokun Li <libaokun@huaweicloud.com>
-References: <20240826113404.3214786-1-libaokun@huaweicloud.com>
- <20240828-fuhren-platzen-fc6210881103@brauner>
- <b003bb7c-7af0-484f-a6d9-da15b09e3a96@huaweicloud.com>
- <20240828-federn-testreihe-97c4f6ec5772@brauner>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20240828-federn-testreihe-97c4f6ec5772@brauner>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml100021.china.huawei.com (7.185.36.148)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828051149.1897291-1-hch@lst.de>
 
-On 2024/8/28 21:37, Christian Brauner wrote:
->> Hi Christian,
->>
->>
->> Thank you for applying this patch!
->>
->> I just realized that the parentheses are in the wrong place here,
->> could you please help me correct them?
->>>> Therefore use remove_proc_subtree instead() of remove_proc_entry() to
->> ^^ remove_proc_subtree() instead
-> Sure, done.
->
-Thanks a lot!
+On Wed, Aug 28, 2024 at 08:11:00AM GMT, Christoph Hellwig wrote:
+> Hi all,
+> 
+> file systems that write out of place usually require different alignment
+> for direct I/O writes than what they can do for reads.  This series tries
+> to address this by yet another statx field.
 
-
-Cheers,
-Baokun
-
-
+I think that's fine. If we run out of statx spare fields we can start
+versioning by size using via STATX__RESERVED.
 
