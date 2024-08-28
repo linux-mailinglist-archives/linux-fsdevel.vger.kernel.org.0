@@ -1,190 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-27562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DEDE96264A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:47:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5354B962668
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1AF51F23DC6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:47:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3441C20F38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC21172767;
-	Wed, 28 Aug 2024 11:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5109416CD2D;
+	Wed, 28 Aug 2024 11:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dQ+2oV2G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NQk4GbpW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tZxo/Ji4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p4D6y0Ku"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKMyzPd1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9652115B12F;
-	Wed, 28 Aug 2024 11:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E1A15FCE6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 11:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845629; cv=none; b=KkYZQ3WBvrzObciXHw+s2asE804En/q4as+AX/P69ILo+oreSOdoNDLs4gkVf7FmpYKNkqEbkScKBGe2XxZwxb39u4/L3GRRPo5tp8n3jbqvtJESuj7ge08JqloFb/o/9GltJnmfk//lj8Avgo4qsc3c8aTLtbhjLRNP/6Ui5Ro=
+	t=1724846018; cv=none; b=TSURTn4cDHV3E+sZ98fgQpxvhassDGTj3UxKbxoyOwh/XK87biEpv8ZJ36Jvkkh+DLxwYPCWnMAxIZ7AgIDyeo0onBbs2Ns5gpSm5WV1YDXRhSsZPzRrqO9UXDIy975mUIhXO7EtYCq3rcCYz8lHNdLZ4fhOUph26nJqGmGdM8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845629; c=relaxed/simple;
-	bh=Enm6138RgDorhRk3wxn+bP/C4XQ9FuqyGaItLvRMgdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSCXPHZLHRBHJT9/0W6VSdnHC6JYn7HROGIKIopJhTb/BS12PV1aQsOe/Kq96DRQ4iuFMyL3OXltEdVRoGj37rHWqbCmUw7zd/GXmAHbUerXXbsLyW8QnpfX1s5xhpkC/xTLRWKDvqKqVYslrC4T+5roi/Jpdt20unBk/1REN1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dQ+2oV2G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NQk4GbpW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tZxo/Ji4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p4D6y0Ku; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7FBB221CCD;
-	Wed, 28 Aug 2024 11:47:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724845625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ujrJinPxS9XcnTqjoRDZaPXZgAYarh+WtsinJKeeaNU=;
-	b=dQ+2oV2GEe3BvxPTGq9PA3L7lTDgbkOrxTgQ1TwoHH3yxksYHRTzLWOkLdGxfdrbTbohKn
-	PteOIjZNuBlfhKJckDq6Ksu4Zt5xLH5CTu9FQgLaAIy83jdbZCDmS4mdgLfvrbtUQ3Vku1
-	g/j/PxZSjpvOyKkf577hfRxX5B0jliU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724845625;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ujrJinPxS9XcnTqjoRDZaPXZgAYarh+WtsinJKeeaNU=;
-	b=NQk4GbpW8gCSRyJXqumTanIcjbNWiEWxGT3EM1iPwaysyTaCUoXIkn3fRW9ehC4Af9km/e
-	OCZ9jigssEUt1RCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="tZxo/Ji4";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=p4D6y0Ku
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724845624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ujrJinPxS9XcnTqjoRDZaPXZgAYarh+WtsinJKeeaNU=;
-	b=tZxo/Ji4F7JauhlytQiILq0fzXLkVABvocO30orpIke4CtIqChLoZGKiByH0wbz0Ihwxof
-	PtNk5xt3Xfe/CGU6B945PDRfO1dH4V0n8mQxetFV7s94IA5eCzvtnM+IZxM1YJ6K7ZDR23
-	BW1OM/RrBsTblpCbo4JSSuclFWPgFMw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724845624;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ujrJinPxS9XcnTqjoRDZaPXZgAYarh+WtsinJKeeaNU=;
-	b=p4D6y0KuyNEN8e/GlJbuqzz8wko685ztXfeAlsVL4pR1jGpR89OG/HPNOnc4pSk6IesmxH
-	Shsazly+0gePudDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6AB681398F;
-	Wed, 28 Aug 2024 11:47:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GRIIGjgOz2ZeBQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 11:47:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0E4B4A0968; Wed, 28 Aug 2024 13:47:04 +0200 (CEST)
-Date: Wed, 28 Aug 2024 13:47:04 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yu Jiaoliang <yujiaoliang@vivo.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Seth Forshee <sforshee@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v2] mnt_idmapping: Use kmemdup_array instead of kmemdup
- for multiple allocation
-Message-ID: <20240828114704.mjzb3pxnjt45lt45@quack3>
-References: <20240823015542.3006262-1-yujiaoliang@vivo.com>
+	s=arc-20240116; t=1724846018; c=relaxed/simple;
+	bh=CENLyNdDhgcWFi6agZtY6YkqFXEfyhWLH7RldX/xba4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fvxsJFY+rM74NxfdAyQXEvf48PYqLUP+/Qx0m9Tzm+lIIpOnrAGiGDWjWcEqfFeOLyvkUj4ZwShGLWAxmjWetB0mc2898yjbgrbRZK6BxLrokkRC2SuR+r8WHqIV5RdmLKOfiS+8ZGn5nTZhuiGihAgGLD8Vk7By44kh3wWexRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKMyzPd1; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1dcc7bc05so430075985a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 04:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724846016; x=1725450816; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EDUPIgEg8rroOBWEOBK84+CMyAj/BV1AKtlwun+83bQ=;
+        b=jKMyzPd1noXWpbrJ3xR7ZogThQes6T0NYXlksFfUGumim+pI+toxBFJa3AsfJ/LIYT
+         6Ni5XuyaM1+buSxe4ySJZ48yASCtp/FrH69XYKVhLTp1wsOX6qBUsLKOikau0QJ3wqq0
+         xLrAdMlrhHeM9sIZSbiOmKYU1krZc+zFvw7VJ0+wbZhxMCF68O9j6K8SWIzKw+saDdVB
+         6z9hvJUKsCxjXvASdgKJEwYD6ykl7nEBDgmTo5Ra5ke7U/vtVUIUfQDjjtrL9FYJgnvG
+         fASaA6vzefRzEkQB7MOOGs5M+XK21AzcFsvNLXqH+3ZD6BkxB/D1foBDwkmnuejxoJl+
+         SFzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724846016; x=1725450816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EDUPIgEg8rroOBWEOBK84+CMyAj/BV1AKtlwun+83bQ=;
+        b=EPp/WA6yz6hCRcTqDGd/b8CvekCLQPGp5EYDarjnQpNgE8I1TF3NJYSQ1QGiBOqnKo
+         gsWj/cG7gOYuqtnVNAvl51i1CRt7uI5HFORvgx49Zkq1kKz/sp8afmS3omIxykOMF4my
+         y1oG+SufgYSsNtUd1j2UGCYu/sTcBH5SHiRD6GE9Zr7JCn3q/Czx9HcKSlq7mt6i9fb7
+         +l6ZWJQq1QxyBfHxalewLuYp32sBDp+LkWrTyfdOcT6pWEUuGqY7WsieCUN0Wc7chj0g
+         SJV6vZj/PLyut6Bp//MauRchB2oZtjQj5/rF9dh3pZkEyk2lSlI/eVttyYran2Vf98jW
+         HLQA==
+X-Gm-Message-State: AOJu0YwM7+mInv/Wp8DW9ivBWlK+IYZy45f7W7DBwvPcYuPEDrq3DqKl
+	YVP2irRnTJGsxjtmWnskOmy2ouObZB0oNaPu/Cozqk0YKHuzrHTqkULBL89p3ethqQu4fMxm/C/
+	OgdHc/1xAeedaqyQdLtr8AtXqPeax5qtN
+X-Google-Smtp-Source: AGHT+IFkWTtMCdY3DN8zidZpx6uw2pmvljcLMkzkmZ28Pw0iWt/MbLBjKGiICVgA+3AdGTuZ/gvSYZTRfW1N9CmFdQI=
+X-Received: by 2002:a05:620a:c4b:b0:79d:5b21:804a with SMTP id
+ af79cd13be357-7a6896e3855mr2254649985a.14.1724846015849; Wed, 28 Aug 2024
+ 04:53:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823015542.3006262-1-yujiaoliang@vivo.com>
-X-Rspamd-Queue-Id: 7FBB221CCD
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vivo.com:email,suse.cz:email,suse.cz:dkim,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <CAOw_e7bB3C_zbpq6U+FdrjbwJAOKFJk1ZLLETrR+5xqRmv44SQ@mail.gmail.com>
+ <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com>
+ <CAOw_e7YnJwTioM-98CoXWf7AOmTcY29Jgtqz4uTGQFQgY+b1kg@mail.gmail.com>
+ <CAOQ4uxhApT09b45snk=ssgrfUU4UOimRH+3xTeA5FJyX6qL07w@mail.gmail.com>
+ <CAOw_e7axjatL=dwd2HAVcgC4j8_6A393kBj7kL_VHPUKfZJaqg@mail.gmail.com>
+ <CAOQ4uxgFbBCRLFM4QdQYK3xESMixWqxtC1Q9Hk4p=bjWeWk1ZQ@mail.gmail.com> <CAOw_e7YD6f4aOAr6cuOGQOzhPtOwsNWv7-CqTE1iaF8qq-eR4w@mail.gmail.com>
+In-Reply-To: <CAOw_e7YD6f4aOAr6cuOGQOzhPtOwsNWv7-CqTE1iaF8qq-eR4w@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 28 Aug 2024 13:53:24 +0200
+Message-ID: <CAOQ4uxi4vU2dVvrLENjfZUKVG8mmsqRY+RBRMigUdC_RePC3+g@mail.gmail.com>
+Subject: Re: FUSE passthrough: fd lifetime?
+To: Han-Wen Nienhuys <hanwenn@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 23-08-24 09:55:41, Yu Jiaoliang wrote:
-> Let the kememdup_array() take care about multiplication and possible
-> overflows.
-> 
-> v2:Add a new modification for reverse array.
-> 
-> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+On Wed, Aug 28, 2024 at 1:02=E2=80=AFPM Han-Wen Nienhuys <hanwenn@gmail.com=
+> wrote:
+>
+> On Wed, Aug 28, 2024 at 12:48=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
+om> wrote:
+>
+> > > Similarly, it looks like the first backing ID is usually 1. Is it
+> > > guaranteed that 0 is never a valid backing ID? I am not sure, and it
+> > > would certainly help implementation on my side.
+> >
+> > No guarantee.
+> > There was some suggestion about special use for value 0,
+> > but I don't remember what it was right now.
+>
+> In a file system, not all inodes are backed by a file. If 0 would not
+> be handed out as an ID, then backing ID=3D0 could mean: this node is not
+> backed by a file (and doesn't need to unregister the ID on
+> forget/release). If 0 is a valid ID, I either have to add another
+> boolean to the inode, or keep calling the ioctl until I get a non-zero
+> value.
+>
+> Reading, the code, the call is
+>
+>         id =3D idr_alloc_cyclic(&fc->backing_files_map, fb, 1, 0, GFP_ATO=
+MIC);
+>
+> ie. start=3D1. In other words, if the counter wraps, it will start at 1
+> again, and 0 is not handed out.
 
-Looks good. Feel free to add:
+Yes, I understand.
+I think the rational for reserving 0 as special value was for the
+future use of FOPEN_PASSTHROUGH response to mean
+"passthrough to backing inode if one was already mapped during lookup".
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+So yeah, I am personally ok with the backing id handle being > 0
+as it is in the code right now.
 
-								Honza
-
-> ---
->  fs/mnt_idmapping.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-> index 3c60f1eaca61..79491663dbc0 100644
-> --- a/fs/mnt_idmapping.c
-> +++ b/fs/mnt_idmapping.c
-> @@ -228,15 +228,15 @@ static int copy_mnt_idmap(struct uid_gid_map *map_from,
->  		return 0;
->  	}
->  
-> -	forward = kmemdup(map_from->forward,
-> -			  nr_extents * sizeof(struct uid_gid_extent),
-> -			  GFP_KERNEL_ACCOUNT);
-> +	forward = kmemdup_array(map_from->forward, nr_extents,
-> +				sizeof(struct uid_gid_extent),
-> +				GFP_KERNEL_ACCOUNT);
->  	if (!forward)
->  		return -ENOMEM;
->  
-> -	reverse = kmemdup(map_from->reverse,
-> -			  nr_extents * sizeof(struct uid_gid_extent),
-> -			  GFP_KERNEL_ACCOUNT);
-> +	reverse = kmemdup_array(map_from->reverse, nr_extents,
-> +				sizeof(struct uid_gid_extent),
-> +				GFP_KERNEL_ACCOUNT);
->  	if (!reverse) {
->  		kfree(forward);
->  		return -ENOMEM;
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
 
