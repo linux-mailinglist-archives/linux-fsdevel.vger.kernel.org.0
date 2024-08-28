@@ -1,197 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-27603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968DC962C6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:31:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CAF962C70
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A27F1F25CA3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33B028506D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2181A4B6F;
-	Wed, 28 Aug 2024 15:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2391A2560;
+	Wed, 28 Aug 2024 15:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y7rYdcRQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N4u4aZXl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CFxc6WFe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8iehbQLw"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hIkthkAs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eqb59ify";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DCoEEKQt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a0LHxSiN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD5D1A3BA1;
-	Wed, 28 Aug 2024 15:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68D936130
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 15:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724859079; cv=none; b=Vnp0yBPJYfWrXQFCo2R3pT0oAllLfkpR+yWl+vXi1ta7vk7H3Xx2Xh5QnUnojAolYAAxwVA7lrpdpTY6OIFQLwzvxVZZaNeTVCqHmzUkzXnrmOKncigOnbtzSjxv3FbgMdtIgy3R1S5fATl1680dBoDYWBKGYPhZVdOnBPBLVyA=
+	t=1724859155; cv=none; b=FLA5fW5N1o62T+fvWwRVKD8dpbfCPkkawLvEc7FRt5tvn85EaZeYl6S4EQFDPhOKbgVPZN3Kx0+1hkBkVmQOa7ZNd9IBtYixy1vFoG74/e/O97xDo76oC61an6180uLv6FtGJ0d27z3qq7lIxq5LW5TpvxNZWvLFyv9B86zfOME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724859079; c=relaxed/simple;
-	bh=7+FvgUqMo200TNqjygfZfe6YbVbnUCy5WJkoyzFztZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PUTcdRjKa7CygEXSOB3/OByr7mltuEDLEjngJmHyKwjYyzOnr7E7KxLENbfvN43CsD3Sf5Qx71Se1iAne9ihCCEAJBis7nRaMCAUMYRRRH1Gh3UVCgCqxN4oHl8Sro2z0Xjb07dnZr/iB/d9KkJG+VS1j5ah5g6PesLKoETWo74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y7rYdcRQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N4u4aZXl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CFxc6WFe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8iehbQLw; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1724859155; c=relaxed/simple;
+	bh=7db9bTYqgdMCyxc2L/Js3zThJsQp6K0BT84qbSYD2Ls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YCnQuNT2xegLHS1TOZ9RSKKuTY4HJe3kKxAFQetjh31Ik3m6p2ndrsBIoTyAt+2cizI9nkVNaO4lmfpOd79LqWn5CqzsfEyrb1aNA27TqbbnDxQeFVBBbx8yXIqhDMiuRQiTqlSJ7hqvEt3RNTBzGrZLW0rjJQkBySrHSSuyYJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hIkthkAs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eqb59ify; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DCoEEKQt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a0LHxSiN; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EF6D921B27;
-	Wed, 28 Aug 2024 15:31:15 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F19D72128D;
+	Wed, 28 Aug 2024 15:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724859076; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724859152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g47bOqualS+Xf14l46cXJeDn1Uj8OzVWMX9HkIH0YlU=;
-	b=y7rYdcRQfkTtchLByLSjoN9oEJNBaLYTTpEGsm2cMqPQzvX5I7+srULk1XQwTHeEXB+5uJ
-	P3f3x+b++/3anPZcXl8drF0MbmGW9SDl6aQ5+Rhd/XrFr/wWrmxexj5CBZAF7wNQoK516/
-	e65/LIMgwzjb23PErzyNHkF4fNDUEys=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/30HVpwm3y8t8laymO+cA+yyn3VAYsntCVJidWQKKMs=;
+	b=hIkthkAseO1t9KcQPU1g45FPrbotoI9ohOQwVkkFJO8+mkVEHY4aJHHgoPMqtmHJ+BEdp9
+	IweE06rYC7xA+g0zgKGD4lLGZR7uLtJZnzf/oM6NVBHTuNsKk60XWJHcY4GkZSm0mghJFP
+	ILL2af7EdlD5kBe5Mc0IF3uJPCmyLp8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724859076;
+	s=susede2_ed25519; t=1724859152;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g47bOqualS+Xf14l46cXJeDn1Uj8OzVWMX9HkIH0YlU=;
-	b=N4u4aZXlHlsU2PfmH40oCmldtiNRg0fPGlc5To6gQ3pdch1ov0K+v6lP30HZXsjbcqFajz
-	FPlqJSut+kBrzPCg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/30HVpwm3y8t8laymO+cA+yyn3VAYsntCVJidWQKKMs=;
+	b=eqb59ify94LKMLZhgXSSx3chaUchvUBrpEjldFlWbIHECuID52G6JYuF9tjVIOA/zWPnO+
+	x7BRt4dxSTeRvfBA==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=CFxc6WFe;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8iehbQLw
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724859075; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724859151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g47bOqualS+Xf14l46cXJeDn1Uj8OzVWMX9HkIH0YlU=;
-	b=CFxc6WFeHM5MBrTmsNrdfYPed4zhrBaC3tC3E993wzyznA/Tv6Y+ZbEaRnLv/vlOMtsTyu
-	5PozC8BxSG1jibRlGCa9vn1T0KoAR40652IXLHHexmesQ6MH0ZyBPyxs/V4+c8JpZHZ1lG
-	U3HHD8okwhFSiD9lYJ0wpTpFMKw0z98=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/30HVpwm3y8t8laymO+cA+yyn3VAYsntCVJidWQKKMs=;
+	b=DCoEEKQtIiRRlJoUxIowjhijO/w+JIgONO6SC0RQGy0kgmnjbR6njnQQIkJYUd7GAgfMv3
+	DuH/uKIqNLEN78uVvCD13X06NCZ4ErXBee05Q2EkQD0+GMj/XGu3NWuIlvLa7/QKPvhOqV
+	QbLi8x0I9wFyNCYITbo/hU6IZ0FVHt4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724859075;
+	s=susede2_ed25519; t=1724859151;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g47bOqualS+Xf14l46cXJeDn1Uj8OzVWMX9HkIH0YlU=;
-	b=8iehbQLw/iCWJib7AUi7MRs3OeS2cX99Vkfx2Mbm39bcxSP53cwMnTBq+CeI+dlSolFO3s
-	GIXlk+GgDqwCUeBg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/30HVpwm3y8t8laymO+cA+yyn3VAYsntCVJidWQKKMs=;
+	b=a0LHxSiNlceNfP2BnZJP+08kEzZmOgm5oKRKE5r6QsAWoosiAWl0Z20PRwZwcGwv4HvVlq
+	aWtDapVCRlVU8pCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E562A138D2;
-	Wed, 28 Aug 2024 15:31:15 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA711138D2;
+	Wed, 28 Aug 2024 15:32:31 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RqL+N8NCz2bLUQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 15:31:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8C68EA0965; Wed, 28 Aug 2024 17:31:15 +0200 (CEST)
-Date: Wed, 28 Aug 2024 17:31:15 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Brian Foster <bfoster@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 1/6] block: remove checks for FALLOC_FL_NO_HIDE_STALE
-Message-ID: <20240828153115.vhgsc7obs34b2bws@quack3>
-References: <20240827065123.1762168-1-hch@lst.de>
- <20240827065123.1762168-2-hch@lst.de>
+	id ChjkNA9Dz2ZCUgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 28 Aug 2024 15:32:31 +0000
+Message-ID: <f570af61-a7c8-45cd-bd13-3bc4d1101df7@suse.cz>
+Date: Wed, 28 Aug 2024 17:32:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827065123.1762168-2-hch@lst.de>
-X-Rspamd-Queue-Id: EF6D921B27
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] fs,mm: add kmem_cache_create_rcu()
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Jann Horn <jannh@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240827-work-kmem_cache-rcu-v2-0-7bc9c90d5eef@kernel.org>
+ <20240827-lehrjahr-bezichtigen-ecb2da63d900@brauner>
+ <96dd4a75-e83f-4807-b43e-bd5552f6aa6d@suse.cz>
+ <20240828-basen-verteidigen-327c7a299ee2@brauner>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240828-basen-verteidigen-327c7a299ee2@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	ARC_NA(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Score: -4.30
 X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Tue 27-08-24 08:50:45, Christoph Hellwig wrote:
-> While the FALLOC_FL_NO_HIDE_STALE value has been registered, it has
-> always been rejected by vfs_fallocate before making it into
-> blkdev_fallocate because it isn't in the supported mask.
+On 8/28/24 14:18, Christian Brauner wrote:
+>> > @Vlastimil, @Jens, @Linus what do you think?
+>> 
+>> In the other thread you said it's best to leave such refactoring to
+>> maintainers and I agree and don't ask you to do the cleanup in order to get
+>> what you need (and we don't need to rush it either).
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  block/fops.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
+> I mainly didn't want to wait for that huge refactor to be done before we
+> get a workable solution for v6.12 since the patch isn't all that huge.
 > 
-> diff --git a/block/fops.c b/block/fops.c
-> index 9825c1713a49a9..7f48f03a62e9a8 100644
-> --- a/block/fops.c
-> +++ b/block/fops.c
-> @@ -771,7 +771,7 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  
->  #define	BLKDEV_FALLOC_FL_SUPPORTED					\
->  		(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |		\
-> -		 FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE)
-> +		 FALLOC_FL_ZERO_RANGE)
->  
->  static long blkdev_fallocate(struct file *file, int mode, loff_t start,
->  			     loff_t len)
-> @@ -830,14 +830,6 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
->  					     len >> SECTOR_SHIFT, GFP_KERNEL,
->  					     BLKDEV_ZERO_NOFALLBACK);
->  		break;
-> -	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE | FALLOC_FL_NO_HIDE_STALE:
-> -		error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
-> -		if (error)
-> -			goto fail;
-> -
-> -		error = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
-> -					     len >> SECTOR_SHIFT, GFP_KERNEL);
-> -		break;
->  	default:
->  		error = -EOPNOTSUPP;
->  	}
-> -- 
-> 2.43.0
+> But I'm not shying away from cleanup work I'm the cause of.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> So I'm happy to do it for v6.13 as a follow-up but I also don't want to
+> steal this away from you because it'll probably be a fun task to get to
+> port everything to struct kmem_cache_args and clean that all up.
+
+So if you want, be my guest :) Yeah could be a fun task, but I'll probably
+be too busy for a while now.
 
