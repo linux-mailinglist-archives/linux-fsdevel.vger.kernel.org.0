@@ -1,69 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-27646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0BF9633A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68ED69633A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E3B928341F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 21:14:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F98283235
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 21:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0B01AC8A9;
-	Wed, 28 Aug 2024 21:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C581AD3F2;
+	Wed, 28 Aug 2024 21:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="nRjvRQ6w"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="q76dVhRl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11EE45C1C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 21:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BE51AC429
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 21:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724879682; cv=none; b=D3fUiMb8G6HVy0k0oQdgr6blJSi04Fk6FAlIctxcS0YOpYSYlwEGy9Nfg3pB+o69P62kUuVbPpNn/klp4UnYsADJ5f9OZRTwIK4nlJm0iOyFAV4TxDYkSrBEPRBikERS2gIaWRyocl6u2MHXevEYXdcVIvIrQ4nBcMT97ILl9kI=
+	t=1724879683; cv=none; b=imW9qPmthpslxyu6zJIViWwvup2B85R8VjFauq2Uer+JBpHBWeYmwrbH54r8VDhV/C0wTQrNSf9ZxuL9wNHYA7XSlqeJV4EPyPF7jVJCAAHqr1Zpm778g+PanpFa/8zoOw7/Po0BTPAKOY6ghw/lYAl2AW2+EymTvF3KmnAdzck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724879682; c=relaxed/simple;
-	bh=wDocM1nibkJgFPtzX3nNihUrjJkuqGJ/uWfgIhDKhR4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Mo0Xdq7LOXMedkuhhqumrsuPTfiFUG5C8ir3HSPmkX9gQfCnuiDH5ipcn1Tp3zKVdBpNLMhjJLabv5XumvNmU9ZmwCcqcVWmxGoa6lidvn65VInROJ4Ikg4S4X/60HVyCG3D5Mv5YvsAvibsSWkI7Iq+5aENr1DOyJ8l0jLStw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=nRjvRQ6w; arc=none smtp.client-ip=209.85.219.44
+	s=arc-20240116; t=1724879683; c=relaxed/simple;
+	bh=/rTcYLoPcRIZV6/SmiOMJpBdcT9n4KwY5LbgEXkH9j0=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MtSIhngCbJ2ec3hIGJIkVQhI48lfQR+4IGQm9OcsTACuIuUqTkWauehUJFnWY1WdE8NtJ5AE+9dmCsJzeJswoJYjnO9lj+lHrs0AH06XD4W7UnTpN2dI7x12i2hc1sOJxeZLv8ydU+3ax1sNenhoaRa2unnzYZ2ZvS26fFZtO3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=q76dVhRl; arc=none smtp.client-ip=209.85.167.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6bf7707dbb6so9094226d6.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 14:14:40 -0700 (PDT)
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3db145c8010so1502154b6e.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 14:14:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724879679; x=1725484479; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4STFdGAzcN+DnHOdAyG33gatjZ2EZ2Gs7/Q0wf64nwc=;
-        b=nRjvRQ6wiJJ8UaBoD3LvjeBPEA/KsmC09+L/43AOaOEsPdV4g+0PhVN0pKQoF3HrUS
-         jbyu3xERjMsRfiPznPjpZPJdBzofGLkIEHgFBX4ZNHm02U33LqyQ3LXStOTlC6QOji7V
-         brv9EmEPFeQZ1E9MTPnEaOuGLR0VpqHNIKokFRLJ3bu3fM7wOjiLSvWRudyTnPcOkNkR
-         0z2MpisRcTP1oWKeEoRDxNqoDZb2BCnkXBAiii0daytGh4guS3y/TmZ5YCwK4SabjvIj
-         VdQZ2sdeblY5yGoRkXhQv++j2sb6BUPLdaa/dexWwmKc26CqMjPhg58CK1lMEOKzY3wV
-         qoBQ==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724879681; x=1725484481; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pNrq5/HUpXvsAD1MkCKtRH19IM1YIvu9q8Bg/8sxvEc=;
+        b=q76dVhRlTNtlu3urFmq0PjsOV1cJ0CZa/v06jzX4XzI8ar7fqTAuhv4cj86u+AGC1a
+         LxTEsPUsueM72ZpALIFiBmaFVoqjDwxx+TMJcP7kov/VUNveJVu7sIFgDAbypIiLnQg1
+         +OkpDMCiz22EsGAKTfhNstjjLxZMulLqY2OE1jEyYV4Jvo5BmgLfU5mORA7UcQcWnnCO
+         vdCc+ProGTJiJFQTdb2Qi+ieBUXUlgsMfKFB2zWWR2bQCS2JZhIDJ7DJtqqzMKncweL/
+         ZxOAv2HSx4JGHxohK/dNylKPS3FlA/HJ90U7gWCYT6ui75j2mUdksX06GjCtJzBCsGOt
+         fgxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724879679; x=1725484479;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4STFdGAzcN+DnHOdAyG33gatjZ2EZ2Gs7/Q0wf64nwc=;
-        b=YcLN/BRFi1dtrTXeNmEJRZSmpMQqTdvudPS1Fge834qiobXp28ukEYN8DemgAMwDCl
-         Kjp14otfDP0Cw7NnQrDRuEr1VYimWQeVXUi0armlkB6+CJKxJKSPwnimLh+kcKcc/MRP
-         eLs1ccc1NNWgXh3RhYpw07zBySUP44XOosWt5/sYpCp2oLwT4d6jVt24bfFKquVJocTZ
-         oJd3oj9K9tJWSEkFZa43A/82D43AQi8GtqV7co+V269fqGFYz89+vUrKLDR4W3T4KHsu
-         +1Sl7qmu83jSA9MIt9Yh2nkOKommI/L9IhBXuluELagbzTOmyyTITqKCyqPnhldQw4sC
-         jYGg==
-X-Gm-Message-State: AOJu0YwlfDpuC9jllPF8GSNoUHvKBfNVGekvWPsFID93ee9/rTRu0KQ/
-	fmSlSVMu864xkyl7QxwiTYWT5fEYim6kqIvnw1M491g1uzb75UbOR1U0GnPOtsEwvg9ie6o/WBI
-	+
-X-Google-Smtp-Source: AGHT+IHbKCKwEdQDcaewESL5Zdx4Zf4acDQMWgvODZGGlktPnUax6yJrSAmecFbrwbbzn9bI1GSLXw==
-X-Received: by 2002:a05:6214:1946:b0:6bf:7efc:1117 with SMTP id 6a1803df08f44-6c33f33d66emr9516396d6.9.1724879679337;
-        Wed, 28 Aug 2024 14:14:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724879681; x=1725484481;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pNrq5/HUpXvsAD1MkCKtRH19IM1YIvu9q8Bg/8sxvEc=;
+        b=X+84LxQsEC2zJm0ajrln5hN8cIjcVjneBWgx77iU06VH6bCezyviH3hGZOcrhFXCpW
+         nQ6ujB2eMEwghG42MyRN32sKxQPlkiNpJi7JJbH64y2tYD6xOwgcJ4y2Nmq2+sM8sDAb
+         8Xnur6wimGKMMBW0ko4MrFxDLLZln8zagt40ybqVPC99/p2ksmPRoQqSZfXrTI3gHWIg
+         LFKaIF4lHdkLJdhX6TS2/BfpHcdpQEysV5W2zh4DeW5M2CnKVWqxkNEtMFu4woF9ETKu
+         tMzcFU7Sw5ZBkFbI+9mnQZC/io+tIlKzF0dNIgctGARSLxdo5F4KxRasqaHvsYoWUGQP
+         cIpw==
+X-Gm-Message-State: AOJu0Yyzm2cLX2Tm7FVjn6MwVfqMazDQRBOF1CUrtEolkik++JvbcEDf
+	9+zNZSBDtXfCu67Xy+1uhbx6+3/cTAn26+zt2WTIrqnf6EDl6gNmhPRnl0oJoBOT5NwbREAwtOt
+	y
+X-Google-Smtp-Source: AGHT+IEWj6d61UsxElpUcYRhUT/IBgERWAcY7tW3nDPciNZYvgm3z4yzvNzA/L3RRHevdhOl6z7eRQ==
+X-Received: by 2002:a05:6808:2004:b0:3da:ab89:a808 with SMTP id 5614622812f47-3df05e33094mr753104b6e.20.1724879680764;
+        Wed, 28 Aug 2024 14:14:40 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162dcd10esm67937616d6.105.2024.08.28.14.14.38
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-454fdfc5968sm64830931cf.15.2024.08.28.14.14.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 14:14:38 -0700 (PDT)
+        Wed, 28 Aug 2024 14:14:40 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-fsdevel@vger.kernel.org,
 	amir73il@gmail.com,
@@ -71,10 +74,12 @@ To: linux-fsdevel@vger.kernel.org,
 	joannelkoong@gmail.com,
 	bschubert@ddn.com,
 	willy@infradead.org
-Subject: [PATCH v2 00/11] fuse: convert to using folios and iomap
-Date: Wed, 28 Aug 2024 17:13:50 -0400
-Message-ID: <cover.1724879414.git.josef@toxicpanda.com>
+Subject: [PATCH v2 01/11] fuse: convert readahead to use folios
+Date: Wed, 28 Aug 2024 17:13:51 -0400
+Message-ID: <277609d4fde934da213f74f235f3731bd7f50230.1724879414.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1724879414.git.josef@toxicpanda.com>
+References: <cover.1724879414.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,62 +88,102 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-v1: https://lore.kernel.org/linux-fsdevel/cover.1724791233.git.josef@toxicpanda.com/
+Currently we're using the __readahead_batch() helper which populates our
+fuse_args_pages->pages array with pages.  Convert this to use the newer
+folio based pattern which is to call readahead_folio() to get the next
+folio in the read ahead batch.  I've updated the code to use things like
+folio_size() and to take into account larger folio sizes, but this is
+purely to make that eventual work easier to do, we currently will not
+get large folios so this is more future proofing than actual support.
 
-v1->v2:
-- Fixed my fstests setup to use --nopassthrough so my code actually got tested
-  this time.
-- Fixed a bug where we double put on the folio in readpages, because previous
-  behavior was the reference was maintained until the endio, but
-  readahead_folio() drops the reference on the folio, so we need to not call put
-  in the endio anymore.
-- Fixed the IS_ERR inversion pointed out by Joanne.
-- Made the various adjustments pointed out by Willy.
-- Updated the Kconfig per hch's suggestion.
-- Pushed to my GH tree since there are dependencies to make it easier to see
-  what the code is https://github.com/josefbacik/linux/tree/fuse-iomap
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+---
+ fs/fuse/file.c | 43 ++++++++++++++++++++++++++++---------------
+ 1 file changed, 28 insertions(+), 15 deletions(-)
 
---- Original email ---
-Hello,
-
-This is a prep series for my work to enable large folios on fuse.  It has two
-dependencies, one is Joanne's writeback clean patches
-
-https://lore.kernel.org/linux-fsdevel/20240826211908.75190-1-joannelkoong@gmail.com/
-
-and an iomap patch to allow us to pass the file through the buffered write path
-
-https://lore.kernel.org/linux-fsdevel/7f55c7c32275004ba00cddf862d970e6e633f750.1724755651.git.josef@toxicpanda.com/
-
-I've run these through an fstests run with passthrough_hp --direct-io,
-everything looks good.
-
-The last remaining bit that needs to be made to use folios is the splice/pipe
-code, which I need to be a lot more careful about.  The next step is to plumb
-through the ability to handle large folios.  But this is a decent start and
-removes the bulk of FUSE's use of struct page, and is relatively safe and
-straightforward.  Thanks,
-
-Josef
-
-Josef Bacik (11):
-  fuse: convert readahead to use folios
-  fuse: convert fuse_send_write_pages to use folios
-  fuse: convert fuse_fill_write_pages to use folios
-  fuse: convert fuse_page_mkwrite to use folios
-  fuse: use kiocb_modified in buffered write path
-  fuse: use iomap for writeback cache buffered writes
-  fuse: convert fuse_do_readpage to use folios
-  fuse: convert fuse_writepage_need_send to take a folio
-  fuse: use the folio based vmstat helpers
-  fuse: convert fuse_retrieve to use folios
-  fuse: convert fuse_notify_store to use folios
-
- fs/fuse/Kconfig |   2 +
- fs/fuse/dev.c   |  38 +++---
- fs/fuse/file.c  | 315 ++++++++++++++++++++++++------------------------
- 3 files changed, 183 insertions(+), 172 deletions(-)
-
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 88f872c02349..2fd6513ac53e 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -938,7 +938,6 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
+ 		struct folio *folio = page_folio(ap->pages[i]);
+ 
+ 		folio_end_read(folio, !err);
+-		folio_put(folio);
+ 	}
+ 	if (ia->ff)
+ 		fuse_file_put(ia->ff, false);
+@@ -985,18 +984,36 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+ static void fuse_readahead(struct readahead_control *rac)
+ {
+ 	struct inode *inode = rac->mapping->host;
++	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+-	unsigned int i, max_pages, nr_pages = 0;
++	unsigned int max_pages, nr_pages;
++	pgoff_t first = readahead_index(rac);
++	pgoff_t last = first + readahead_count(rac) - 1;
+ 
+ 	if (fuse_is_bad(inode))
+ 		return;
+ 
++	wait_event(fi->page_waitq, !fuse_range_is_writeback(inode, first, last));
++
+ 	max_pages = min_t(unsigned int, fc->max_pages,
+ 			fc->max_read / PAGE_SIZE);
+ 
+-	for (;;) {
++	/*
++	 * This is only accurate the first time through, since readahead_folio()
++	 * doesn't update readahead_count() from the previous folio until the
++	 * next call.  Grab nr_pages here so we know how many pages we're going
++	 * to have to process.  This means that we will exit here with
++	 * readahead_count() == folio_nr_pages(last_folio), but we will have
++	 * consumed all of the folios, and read_pages() will call
++	 * readahead_folio() again which will clean up the rac.
++	 */
++	nr_pages = readahead_count(rac);
++
++	while (nr_pages) {
+ 		struct fuse_io_args *ia;
+ 		struct fuse_args_pages *ap;
++		struct folio *folio;
++		unsigned cur_pages = min(max_pages, nr_pages);
+ 
+ 		if (fc->num_background >= fc->congestion_threshold &&
+ 		    rac->ra->async_size >= readahead_count(rac))
+@@ -1006,23 +1023,19 @@ static void fuse_readahead(struct readahead_control *rac)
+ 			 */
+ 			break;
+ 
+-		nr_pages = readahead_count(rac) - nr_pages;
+-		if (nr_pages > max_pages)
+-			nr_pages = max_pages;
+-		if (nr_pages == 0)
+-			break;
+-		ia = fuse_io_alloc(NULL, nr_pages);
++		ia = fuse_io_alloc(NULL, cur_pages);
+ 		if (!ia)
+ 			return;
+ 		ap = &ia->ap;
+-		nr_pages = __readahead_batch(rac, ap->pages, nr_pages);
+-		for (i = 0; i < nr_pages; i++) {
+-			fuse_wait_on_page_writeback(inode,
+-						    readahead_index(rac) + i);
+-			ap->descs[i].length = PAGE_SIZE;
++
++		while (ap->num_pages < cur_pages &&
++		       (folio = readahead_folio(rac)) != NULL) {
++			ap->pages[ap->num_pages] = &folio->page;
++			ap->descs[ap->num_pages].length = folio_size(folio);
++			ap->num_pages++;
+ 		}
+-		ap->num_pages = nr_pages;
+ 		fuse_send_readpages(ia, rac->file);
++		nr_pages -= cur_pages;
+ 	}
+ }
+ 
 -- 
 2.43.0
 
