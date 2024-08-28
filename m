@@ -1,170 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-27532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBC596235D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:29:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B499623DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B0991C216E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 09:29:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC8B285E78
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 09:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989D616088F;
-	Wed, 28 Aug 2024 09:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC9E166F14;
+	Wed, 28 Aug 2024 09:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eAVUYfuf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SiHkstRf";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eAVUYfuf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SiHkstRf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6pFQw9F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C74E1607B7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 09:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2EC15D5CF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 09:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724837345; cv=none; b=sRivouUQ1fekbdfCPF44MTqLu0J6tdCEXF1l6TZXk+MCCIRlZrlqlNSdzwgY1AfCJ2/FzX4PPJaZ//kMX1BzMDcoQwyZ+7daUE8oBHEm1otZSLNdi/84koWpF1Ai7RhWbXVSSYRfoGbwYDkRMGC6shJ8iQ60KUvZ23kxHalKNhE=
+	t=1724838440; cv=none; b=o5MEvkT5aeZ3+cbMip7CKjugKlLtkcie6mhes/p6zv4ACguVp4ohhXfMqdeMQJ2nf4I776K9Y6BSyP0uQ14XV9JtMy/x0Ml2ykN02P8rflM4UM+HW/pX2QYR6DX47sOMLQWGEzZup1v8eKk11oOAxZf9Q+43HasOr8P+nPmaxzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724837345; c=relaxed/simple;
-	bh=hzErxGP7Sq8mXDNrDSzb6/CcMd+Rl//5OW6/03cDBCI=;
+	s=arc-20240116; t=1724838440; c=relaxed/simple;
+	bh=8e9pG6U+yU2XijdDDN5D22TTXrNVdvVl3m3ZxA2sVss=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJ6Frx9WOtEYJS/FiZUu0P/Sw9QxGHHw/F+FApzXNoyyJDAwG5hsFPmgpns1Zuud9mr3wRngODrYm8MNqFL/FzZ77EC6Z7MrwA+UEFyZ+naFBdv1ai4GxsUV+KnfXAd5SMKodTLRcnEJfV2OEHfKjvzfv1vua2kkVzDy01Suj50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eAVUYfuf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SiHkstRf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eAVUYfuf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SiHkstRf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 46CAC1FBED;
-	Wed, 28 Aug 2024 09:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724837341; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rw74xpNFJ52VzvdxjNqCm/GTQqm0JttK8nmWlSqcd3M=;
-	b=eAVUYfufwhyvVbNPioRTlNXowNiylINL55+d5jvoX+Ya0Uaoo2euiR/aOySUiUFWAZkGxz
-	6zTlpIE1ywwJfR4Eo2/kpjrqUOHZtZjtrv99O+kc28VYh26ts7s3339vUmpFfLK8Goyq0D
-	+t8XuDJh4K+b1rIIij0ZyUKpo118U54=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724837341;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rw74xpNFJ52VzvdxjNqCm/GTQqm0JttK8nmWlSqcd3M=;
-	b=SiHkstRfg0H/HcEOKm9DC7ErBntpEGxVdyfD4cGiPSUDdoqPmoABjLp4JbTjGUtCF1wTQW
-	Paj0+4mF1/zYQxCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724837341; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rw74xpNFJ52VzvdxjNqCm/GTQqm0JttK8nmWlSqcd3M=;
-	b=eAVUYfufwhyvVbNPioRTlNXowNiylINL55+d5jvoX+Ya0Uaoo2euiR/aOySUiUFWAZkGxz
-	6zTlpIE1ywwJfR4Eo2/kpjrqUOHZtZjtrv99O+kc28VYh26ts7s3339vUmpFfLK8Goyq0D
-	+t8XuDJh4K+b1rIIij0ZyUKpo118U54=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724837341;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rw74xpNFJ52VzvdxjNqCm/GTQqm0JttK8nmWlSqcd3M=;
-	b=SiHkstRfg0H/HcEOKm9DC7ErBntpEGxVdyfD4cGiPSUDdoqPmoABjLp4JbTjGUtCF1wTQW
-	Paj0+4mF1/zYQxCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3C3871398F;
-	Wed, 28 Aug 2024 09:29:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mj7KDt3tzmZ9VgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 09:29:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E9A34A0968; Wed, 28 Aug 2024 11:28:56 +0200 (CEST)
-Date: Wed, 28 Aug 2024 11:28:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH -next] fs: use LIST_HEAD() to simplify code
-Message-ID: <20240828092856.2gyeootlfcyxwlbo@quack3>
-References: <20240821065456.2294216-1-lihongbo22@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EMFkIApfDVImcX9sPtYvKiGaAw8dZZsSJ/JHvhl8skhxDWN2EZVeK0TZcKK5IwecwJw5XCFe6vdNwONT43/Y743jjN9YGF82HWI0JTkk2g9QnLYU4MzydibU6m1VFB3cQLeM7AfrG/ZPeJXcUAzCv6k10EIBl9k3sg5EwP1Qvvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6pFQw9F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BC5C8DC25;
+	Wed, 28 Aug 2024 09:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724838440;
+	bh=8e9pG6U+yU2XijdDDN5D22TTXrNVdvVl3m3ZxA2sVss=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C6pFQw9FF3b1cP9Y8OcFlf4gPzS/9ZSEV3uJ+vrpzWSQLgrtJCOQo3Y70m3i27vOR
+	 b2Ese0kc8iwIDhCcoWkW9V63GNlMWS9OiLJHbqRkCzDEMklkw2uMT+pwhwD9Omxk2S
+	 aQe1QPXooXeCyNF6roqh5wciXUbOnQkWVxC6tWsCmOtIzZmwi5QCo2qfhlPznOtqgt
+	 KCkBgGB6DnWnik4gKxGNJEBHDLHF8YTcJjvMpl7UqKq5Vko6nSKhiLnuPOp+G2xKIz
+	 V739bTsye85ZOLFr+F2YsrozBPPMCmF+PPYX2hjMQ6b4gq9Iww5u2oY/SJyMBLIeUG
+	 brUK0OhKGtsgA==
+Date: Wed, 28 Aug 2024 11:47:15 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Jens Axboe <axboe@kernel.dk>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Jann Horn <jannh@google.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] mm: add kmem_cache_create_rcu()
+Message-ID: <20240828-blicken-zeiteinheit-bbbe9724f1ea@brauner>
+References: <20240827-work-kmem_cache-rcu-v2-0-7bc9c90d5eef@kernel.org>
+ <20240827-work-kmem_cache-rcu-v2-2-7bc9c90d5eef@kernel.org>
+ <ee495744-bb34-4467-8838-3cec016fda0d@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240821065456.2294216-1-lihongbo22@huawei.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <ee495744-bb34-4467-8838-3cec016fda0d@suse.cz>
 
-On Wed 21-08-24 14:54:56, Hongbo Li wrote:
-> list_head can be initialized automatically with LIST_HEAD()
-> instead of calling INIT_LIST_HEAD().
+On Tue, Aug 27, 2024 at 11:10:10PM GMT, Vlastimil Babka wrote:
+> On 8/27/24 17:59, Christian Brauner wrote:
+> > When a kmem cache is created with SLAB_TYPESAFE_BY_RCU the free pointer
+> > must be located outside of the object because we don't know what part of
+> > the memory can safely be overwritten as it may be needed to prevent
+> > object recycling.
+> > 
+> > That has the consequence that SLAB_TYPESAFE_BY_RCU may end up adding a
+> > new cacheline. This is the case for .e.g, struct file. After having it
+> > shrunk down by 40 bytes and having it fit in three cachelines we still
+> > have SLAB_TYPESAFE_BY_RCU adding a fourth cacheline because it needs to
+> > accomodate the free pointer and is hardware cacheline aligned.
+> > 
+> > I tried to find ways to rectify this as struct file is pretty much
+> > everywhere and having it use less memory is a good thing. So here's a
+> > proposal.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > 
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> So logistically patch 3 needs stuff in the vfs tree and having 1+2 in slab
+> tree and 3 in vfs that depends on 1+2 elsewhere is infeasible, so it will be
+> easiest for whole series to be in vfs, right?
 
-Looks good. Feel free to add:
+Yeah, that's fine by me.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/buffer.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index e55ad471c530..31a9062cad7e 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -774,12 +774,11 @@ EXPORT_SYMBOL(block_dirty_folio);
->  static int fsync_buffers_list(spinlock_t *lock, struct list_head *list)
->  {
->  	struct buffer_head *bh;
-> -	struct list_head tmp;
->  	struct address_space *mapping;
->  	int err = 0, err2;
->  	struct blk_plug plug;
-> +	LIST_HEAD(tmp);
->  
-> -	INIT_LIST_HEAD(&tmp);
->  	blk_start_plug(&plug);
->  
->  	spin_lock(lock);
-> -- 
-> 2.34.1
+> > ---
+> >  include/linux/slab.h |   9 ++++
+> >  mm/slab.h            |   1 +
+> >  mm/slab_common.c     | 133 ++++++++++++++++++++++++++++++++++++---------------
+> >  mm/slub.c            |  17 ++++---
+> >  4 files changed, 114 insertions(+), 46 deletions(-)
+> > 
+> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+> > index eb2bf4629157..5b2da2cf31a8 100644
+> > --- a/include/linux/slab.h
+> > +++ b/include/linux/slab.h
+> > @@ -212,6 +212,12 @@ enum _slab_flag_bits {
+> >  #define SLAB_NO_OBJ_EXT		__SLAB_FLAG_UNUSED
+> >  #endif
+> >  
+> > +/*
+> > + * freeptr_t represents a SLUB freelist pointer, which might be encoded
+> > + * and not dereferenceable if CONFIG_SLAB_FREELIST_HARDENED is enabled.
+> > + */
+> > +typedef struct { unsigned long v; } freeptr_t;
+> > +
+> >  /*
+> >   * ZERO_SIZE_PTR will be returned for zero sized kmalloc requests.
+> >   *
+> > @@ -242,6 +248,9 @@ struct kmem_cache *kmem_cache_create_usercopy(const char *name,
+> >  			slab_flags_t flags,
+> >  			unsigned int useroffset, unsigned int usersize,
+> >  			void (*ctor)(void *));
+> > +struct kmem_cache *kmem_cache_create_rcu(const char *name, unsigned int size,
+> > +					 unsigned int freeptr_offset,
+> > +					 slab_flags_t flags);
+> >  void kmem_cache_destroy(struct kmem_cache *s);
+> >  int kmem_cache_shrink(struct kmem_cache *s);
+> >  
+> > diff --git a/mm/slab.h b/mm/slab.h
+> > index dcdb56b8e7f5..b05512a14f07 100644
+> > --- a/mm/slab.h
+> > +++ b/mm/slab.h
+> > @@ -261,6 +261,7 @@ struct kmem_cache {
+> >  	unsigned int object_size;	/* Object size without metadata */
+> >  	struct reciprocal_value reciprocal_size;
+> >  	unsigned int offset;		/* Free pointer offset */
+> > +	unsigned int rcu_freeptr_offset; /* Specific free pointer requested */
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> More precisely something like:
+> 
+> 				  Specific offset requested (if not
+> 				  UINT_MAX)
+
+Yep, added that.
+
+> 
+> ?
+> 
+> >  #ifdef CONFIG_SLUB_CPU_PARTIAL
+> >  	/* Number of per cpu partial objects to keep around */
+> >  	unsigned int cpu_partial;
+> > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > index c8dd7e08c5f6..c4beff642fff 100644
+> > --- a/mm/slab_common.c
+> > +++ b/mm/slab_common.c
+> > @@ -202,9 +202,10 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
+> >  }
+> >  
+> >  static struct kmem_cache *create_cache(const char *name,
+> > -		unsigned int object_size, unsigned int align,
+> > -		slab_flags_t flags, unsigned int useroffset,
+> > -		unsigned int usersize, void (*ctor)(void *))
+> > +		unsigned int object_size, unsigned int freeptr_offset,
+> > +		unsigned int align, slab_flags_t flags,
+> > +		unsigned int useroffset, unsigned int usersize,
+> > +		void (*ctor)(void *))
+> >  {
+> >  	struct kmem_cache *s;
+> >  	int err;
+> > @@ -212,6 +213,12 @@ static struct kmem_cache *create_cache(const char *name,
+> >  	if (WARN_ON(useroffset + usersize > object_size))
+> >  		useroffset = usersize = 0;
+> >  
+> > +	err = -EINVAL;
+> > +	if (freeptr_offset < UINT_MAX &&
+> 
+> freeptr_offset != UINT_MAX to be more obvious and match has_freeptr_offset() ?
+
+Done.
+
+> 
+> > +	    (freeptr_offset >= object_size ||
+> > +	     (freeptr_offset && !(flags & SLAB_TYPESAFE_BY_RCU))))
+> 
+> and here drop the "freeptr_offset &&" as zero is a valid value
+
+Yes, thank you.
+
+> 
+> instead we could want alignment to sizeof(freeptr_t) if we were paranoid?
+
+Added a check for that.
+
+> 
+> > +		goto out;
+> 
+> The rest seems good to me now.
+
+Thanks for the review! v3 incoming
 
