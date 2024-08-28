@@ -1,128 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-27548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACB8962539
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 12:48:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD31962553
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 12:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF251C21822
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 10:48:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907BB1F23CF2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 10:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A9B16A37C;
-	Wed, 28 Aug 2024 10:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6134416C42C;
+	Wed, 28 Aug 2024 10:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLUNT2+y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFdDRb5p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E531581E0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 10:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D08168C26
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 10:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724842082; cv=none; b=rVIZmotk2sJKG/7lfP8/q3k+uTrYwyMhuh8aFPYgVgLMVhMDh/+b6SKx7MXgWQU0FjYV6UfufBFxzFo02acwQu57dlUxTkmPOZP8Iqy9Y6hu1CLfi+MmapjlipQat+gICQXFxCbPSroyBSWAF03yPyNmHKK9Hf68pVMhW1YVoKE=
+	t=1724842623; cv=none; b=MrfQljnOPCZIGHLyVRwt0/MX1mDvg8bQ7IGn2LjSiUCLhCfhTtJwWOg3Ns5FkGUWoTJBnsI7baF+9rrTyHpbys+TYPgOT7/A+395kM/EIt1y4Zll3JPULWyfFY/hHQjqPGgYLNWxrwgbOknXKMk0dUFFWPDJRZaeYuTD0ILi87M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724842082; c=relaxed/simple;
-	bh=25RFEZCC+MOPwsF2W/Qg8fFAOjsUPL7pT3dA0yn25jM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iy7dTyJXsJcc4JBYvkTNWBnr9OfzyejqhS9tbxlx0HnfQkl0pSG7XkxrYdDpqzDJw98FNJlM9M5U5L6lNGKd6W0u3u59XXnoAbBgUAXPGc5jPVcAzKabE7eEflUGKsDh8e9JU8T51zYW+jwYZKmbV3Z5tJjcxJ7hD0gPadrNMIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLUNT2+y; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b99988b6ceso64661097b3.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 03:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724842080; x=1725446880; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25RFEZCC+MOPwsF2W/Qg8fFAOjsUPL7pT3dA0yn25jM=;
-        b=hLUNT2+y+f3sBMsifnTxhcZAJxq9Fmy912a+8X6Rtskrkntcje6JmEgeUagon+E/IJ
-         a4v1njj+4KKmdQVI3vYL7ZWHjfhly+kednVWp6z+2MoI7+T1WAUy9GQuFnqzOx1C/mLu
-         tQSaDHHLem6kClO9FC+PjcuBy2Z3x+A+O8t72OW8X3n6awARQ8HrK0cZ5oFfiDsaSfyC
-         gbYNEWWyqQDEfOeHAA8lKUi6A1zvmm56221BM/zREYCRY49Q+rYvjXq7mvmNG1xMz0xT
-         NyukQEjAKWR45jDepopFVBBjHuQtpHJMxEiK0orVVJ95xuMLPWdF4v6q9HJrpnclH9MX
-         Dkkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724842080; x=1725446880;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=25RFEZCC+MOPwsF2W/Qg8fFAOjsUPL7pT3dA0yn25jM=;
-        b=rVP1b8LE2VAjPdw1Edvp2xEEQYpsPqbkikMuHJ40CJk3B7B4j+ZLXCIliw+WevqP2f
-         zfXNpQVDantQNdu65T6wyF3Gp5cYTCY6NpG+dmZmADhhaFonqHyA6Q1CntJDXIx4jIXU
-         WIo3r2ywOFb5530t8koOEyTPndliklkO8HF3NJvj+gwmhGCDj9YJn64Ue1OxfZWGi4d2
-         DUmtzt1oxRFmSUZki2ALpvGjZ3ifBX3ofgB80JR1p4Nun7lQyidv4P4bbN8WP4rkRNRf
-         S1muWc20mf7BVcUkUmxBnUE6KOAuGXTE6+L1Ane2Xf3vB4JSaA9TKBAXkAgn6lluzmCZ
-         qvgw==
-X-Gm-Message-State: AOJu0Yz3MUSKg5NFoxpE3Q9PXZYR2pwbpan8rpD8itKcz6W+zuJ6JuJP
-	LEzzfVZIDCh9xgJnZSd1GhwNShLS9Iiw9/32bRKuKBO0V9Ey648okcK15C+P4grCZwCJmL28NwN
-	SZxaBgL9WzZoI8j1kpMpX81MTUWk=
-X-Google-Smtp-Source: AGHT+IG9JQ4Rgqz6YdwhSPYEsS9qeAT3H9Auk+man0xTTkf6ywB7cKxKKdBWXzwOES9bnvfn87qT+6CZH1ysMB5KkJ4=
-X-Received: by 2002:a05:690c:d8c:b0:664:db79:b275 with SMTP id
- 00721157ae682-6c61f0bc1ffmr212737947b3.0.1724842079876; Wed, 28 Aug 2024
- 03:47:59 -0700 (PDT)
+	s=arc-20240116; t=1724842623; c=relaxed/simple;
+	bh=30jtxC8VQgZtD1NmPoRfx+NWuzYQzJ6T6yXQfSWpXBU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oxHftQOp/fq4hW7+pa4XP9nHbP7uMEB2QIhgTeisvCmQGnctg+vfx5yyTcu2KKEKgjuo2PmEYn0hEZAiGRmaxp9O+lskapAJrqXGew++7nP77HGeyB6GOVpnZXJpaXt7BTdAJVhpQIfxoeGaNwX2FO5eX/mKApmYUAyAmBAGdiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFdDRb5p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE589C4CAB7;
+	Wed, 28 Aug 2024 10:57:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724842623;
+	bh=30jtxC8VQgZtD1NmPoRfx+NWuzYQzJ6T6yXQfSWpXBU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=KFdDRb5pWNd/hkQ7AKhObZGrGAiG6B7hGfZ08Z1+an4myKbwfFcWUfgGaD8LcMcyC
+	 BAVx9b2Ffrupl1ogCReHSgf7F9CeQIX6JANi9bPBf0eIKRZ9IXWJBz1QKp3tVuRfd+
+	 cr+sWrDqRhwzdCaHDTXus7ohAjy3b5S0N5B+4Nbo6XoIV3i4P3CCZlr4tPvC3oIGFZ
+	 lmOJZIGssx+D+RrOVmxHeX3wdAJZ8va+SJXXay2WBMc+bdBkbTvupd2VRA8TsAcvPN
+	 qgOBewD82hGSFUlHTp7UcecLq/cOXW+xPenOcenaXZ8C/h/3kZADZCtKzd8FWXeZCc
+	 1DdEwwcukIeCA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v3 0/3] fs,mm: add kmem_cache_create_rcu()
+Date: Wed, 28 Aug 2024 12:56:22 +0200
+Message-Id: <20240828-work-kmem_cache-rcu-v3-0-5460bc1f09f6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOw_e7bB3C_zbpq6U+FdrjbwJAOKFJk1ZLLETrR+5xqRmv44SQ@mail.gmail.com>
- <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com>
- <CAOw_e7YnJwTioM-98CoXWf7AOmTcY29Jgtqz4uTGQFQgY+b1kg@mail.gmail.com>
- <CAOQ4uxhApT09b45snk=ssgrfUU4UOimRH+3xTeA5FJyX6qL07w@mail.gmail.com> <CAOw_e7axjatL=dwd2HAVcgC4j8_6A393kBj7kL_VHPUKfZJaqg@mail.gmail.com>
-In-Reply-To: <CAOw_e7axjatL=dwd2HAVcgC4j8_6A393kBj7kL_VHPUKfZJaqg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 28 Aug 2024 12:47:47 +0200
-Message-ID: <CAOQ4uxgFbBCRLFM4QdQYK3xESMixWqxtC1Q9Hk4p=bjWeWk1ZQ@mail.gmail.com>
-Subject: Re: FUSE passthrough: fd lifetime?
-To: Han-Wen Nienhuys <hanwenn@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFYCz2YC/22OzWrDMBCEXyXo3A2q0vgnp7xHCEVej2OhWgqrW
+ G0JfvfKgUAOve3AfPPtXSWIQ1KHzV0JsksuhhJ2bxvFow0XkOtLVkabD92Ymr6jePITpk+2PIK
+ EZxraGrt9pTVzpQp5FQzu57F6Opfc2QTqxAYe1608pO3kEq/V0aVblN+HP7+vwFNVUfR+vjoIA
+ oXi6hF8OfumsVyZGm3HxzI6B4haLdm84v9/mg1pqjtuudX9HhiOHhLwtY1yUedlWf4Anb3YMhE
+ BAAA=
+To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
+ "Paul E. McKenney" <paulmck@kernel.org>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, Jann Horn <jannh@google.com>, 
+ Linus Torvalds <torvalds@linux-foundation.org>, 
+ Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2197; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=30jtxC8VQgZtD1NmPoRfx+NWuzYQzJ6T6yXQfSWpXBU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdZ6rRf3l7kRRTmk10TUNq0+Yv/4T2LjtxUk/2ewL7d
+ 03NKd/PdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk72tGhhOXw78Jqno5zDgq
+ +d725b+fsZVHWk+v2HyPsdwsSimoNIeR4cKri99jb/G77J1YpRQTY9yhUb8uk+tv3ayFeneeTvt
+ VxgQA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Wed, Aug 28, 2024 at 12:33=E2=80=AFPM Han-Wen Nienhuys <hanwenn@gmail.co=
-m> wrote:
->
-> On Wed, Aug 28, 2024 at 12:06=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
-om> wrote:
-> >
-> > On Wed, Aug 28, 2024 at 12:00=E2=80=AFPM Han-Wen Nienhuys <hanwenn@gmai=
-l.com> wrote:
-> > >
-> > > On Tue, Aug 27, 2024 at 3:48=E2=80=AFPM Amir Goldstein <amir73il@gmai=
-l.com> wrote:
-> > >
-> > > > BTW, since you are one of the first (publicly announced) users of
-> > > > FUSE passthrough, it would be helpful to get feedback about API,
-> > > > which could change down the road and about your wish list.
-> > >
-> > > I guess it is too late to change now, but I noticed that
-> > > fuse_backing_map takes the file descriptors and backing IDs as signed
-> > > int32. Why int32 and not uint32 ? open(2) is documented as never
-> > > returning negative integers.
-> > >
-> >
-> > It seemed safer this way and allows to extend the API with special
-> > return codes later.
-> > Why? what is to gain from uint32 in this API?
->
-> Consistency. Almost all fields in the FUSE API are uint64 or uint32.
-> Having it be different suggests that something special is going on,
-> and that negative numbers have a valid use case. If they're always
-> non-negative, that could be documented.
->
-> Similarly, it looks like the first backing ID is usually 1. Is it
-> guaranteed that 0 is never a valid backing ID? I am not sure, and it
-> would certainly help implementation on my side.
+When a kmem cache is created with SLAB_TYPESAFE_BY_RCU the free pointer
+must be located outside of the object because we don't know what part of
+the memory can safely be overwritten as it may be needed to prevent
+object recycling.
 
-No guarantee.
-There was some suggestion about special use for value 0,
-but I don't remember what it was right now.
+That has the consequence that SLAB_TYPESAFE_BY_RCU may end up adding a
+new cacheline. This is the case for .e.g, struct file. After having it
+shrunk down by 40 bytes and having it fit in three cachelines we still
+have SLAB_TYPESAFE_BY_RCU adding a fourth cacheline because it needs to
+accomodate the free pointer and is hardware cacheline aligned.
 
-Thanks,
-Amir.
+I tried to find ways to rectify this as struct file is pretty much
+everywhere and having it use less memory is a good thing.
+
+Before this series cat /proc/slabinfo:
+
+filp                1198   1248    256   32    2 : tunables    0    0    0 : slabdata     39     39      0
+                                   ^^^
+
+After this series cat /proc/slabinfo:
+
+filp                1323   1323    192   21    1 : tunables    0    0    0 : slabdata     63     63      0
+                                   ^^^
+I was hoping to get something to this effect into v6.12.
+
+Thanks!
+Christian
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v3:
+- Check for alignment of freeptr.
+- Minor documentation fixes.
+- Fix freeptr validation.
+- Link to v2: https://lore.kernel.org/r/20240827-work-kmem_cache-rcu-v2-0-7bc9c90d5eef@kernel.org
+
+Changes in v2:
+- Export freeptr_t.
+- Remove boolean.
+- Various other fixes
+- Link to v1: https://lore.kernel.org/r/20240826-okkupieren-nachdenken-d88ac627e9bc@brauner
+
+---
+Christian Brauner (3):
+      mm: remove unused root_cache argument
+      mm: add kmem_cache_create_rcu()
+      fs: use kmem_cache_create_rcu()
+
+ fs/file_table.c      |   6 +--
+ include/linux/fs.h   |   2 +
+ include/linux/slab.h |   9 ++++
+ mm/slab.h            |   2 +
+ mm/slab_common.c     | 139 ++++++++++++++++++++++++++++++++++++---------------
+ mm/slub.c            |  20 +++++---
+ 6 files changed, 127 insertions(+), 51 deletions(-)
+---
+base-commit: 766508e7e2c5075eb744cb29b8cef6fa835b0344
+change-id: 20240827-work-kmem_cache-rcu-f97e35600cc6
+
 
