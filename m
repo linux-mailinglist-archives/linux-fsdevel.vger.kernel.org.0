@@ -1,292 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-27590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C999629C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3909629E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF24281EEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 14:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23210286736
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 14:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD4B18A6B4;
-	Wed, 28 Aug 2024 14:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD2F18A6B4;
+	Wed, 28 Aug 2024 14:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lUPrPAEb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrGd79/b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F34718030
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 14:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9746168489;
+	Wed, 28 Aug 2024 14:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854013; cv=none; b=tR+PQOgsHoLrgpsJ0J/rs4fq5s2/auF7vTPy0nDVVf2CUA67a64GRhiNBXsEHhyc54zF8xiEYbf7dsHfW2rYq+fHu+/UlPDFovASfqv5Ac0QbDW6PSAtFfq2oDrqvXeiBxjW2PMs6Mug38OW7pKj0V2uhmzIbs3ZMJ4si9RNI0U=
+	t=1724854257; cv=none; b=AjjwJENaHKnLSm698l7VIPb4Epo4iaYWh6IpD5U4uCLg5b59R4G6+zs7Uy8ifT5SU8OyU2TqHyWby8Fg10cJXkGzGtUWy6ztg3dUSB//mWP5EbOjL0sl1UZA5HhTfGlFO6O3Xf2AyswwdMbOir7WwL7hWiG8Unp0SD31VBjyBdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854013; c=relaxed/simple;
-	bh=zzK14fWrPUuudbxqi6ng+t4f17P5uwJ8zh/WvUmUxtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lAyizNyQbAm6QQnCBEugHVLc4vU/VXJyoOoer4XMYwWJ3oB5N4EpuwJzZCa06V/YKQwA/gS8u329+rvK28KH/YIwvxo4PZcUinJvSuS92HH3ZeRgp7r6ugWfkzQ7mrDiCOpwovGrGX0LMqE1xwpkX5QNzPoiD157rWMhrus1UL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lUPrPAEb; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724854007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VJbp8fr1GlW6ECEDnV4RCK1aKov0prOyDv8ht3obM7k=;
-	b=lUPrPAEbk1pnf69ukK55YVxXYzYSeFvObJ68IrWkasWn8ycrQLHu/FMQiB3eoZG3/YrUw/
-	C1RPji6tJPOs7xCJhn+J27nWK9OhIRMv/1I3NF80+i5jMDpLTq8FCiZ9eThYdQe94WbqDn
-	lQBsQ/cH2XFoc7v7kCR1G568Zq7RGJ8=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: 
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>,
-	Dave Chinner <dchinner@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc allocations
-Date: Wed, 28 Aug 2024 10:06:36 -0400
-Message-ID: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1724854257; c=relaxed/simple;
+	bh=qp4XkaS0PrbdLwrhGw+MAEDZjVMGB9Unfk/C47vHb70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/UoDRrnuqkCC0J8YhqM7igEVMqZTVDSi+FWYsYoqoCRwSk6l0lBWLT5H8Ac4HvcNADxKhoH32G0MG1iLqBwHynT3/vgAAdzvlkITChc6zbwsLqavcAzRArB0ffS9BoiJoqaVdUYsw6TgtEMtYUArfNADdOJGhmTqY4NcZCFqZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrGd79/b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1587FC58190;
+	Wed, 28 Aug 2024 14:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724854256;
+	bh=qp4XkaS0PrbdLwrhGw+MAEDZjVMGB9Unfk/C47vHb70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NrGd79/bkxy5uNQSg/aQYVCZzUtcQChkqi1vHEE8JgYEoneD4TVnVrA1U7uCyOu2P
+	 pc4jhnotRJpVsL81E5tXJPcCEgMj9RXQkul0ZZ9KDmng9yDoTCIFM3N1mg/mFvBl+q
+	 pPA9Aqo/x1Hi0n02i143QiN7a7ZonIkfp0w1wH1rqSzGhfEhNlOQwqP+9Jsk8htbdA
+	 On0mqHZtaVndCmx7CgTwOUvNp7/5tqCwJhPtO+fjMwkA8elE4/u2nkJXf6keavdJY9
+	 zZBHjrCKs8/25LXBlgtf6MsU7IvAviSPZoTamroPsID1x8qWzjRcU88z2D0pRjvMbx
+	 7MGTLq6mfNUvA==
+Date: Wed, 28 Aug 2024 16:10:49 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>, 
+	Matus Jokay <matus.jokay@stuba.sk>, "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v8 1/8] Get rid of __get_task_comm()
+Message-ID: <hxwogrharokumnbphayi22qnl4yxeqxkxdddjkshso3nztroq5@lb3wbcsp3vhf>
+References: <20240828030321.20688-1-laoar.shao@gmail.com>
+ <20240828030321.20688-2-laoar.shao@gmail.com>
+ <lql4y2nvs3ewadszhmv4m6fnqja4ff4ymuurpidlwvgf4twvru@esnh37a2jxbd>
+ <n2fxqs3tekvljezaqpfnwhsmjymch4vb47y744zwmy7urf3flv@zvjtepkem4l7>
+ <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="egnngjetwmt4ba2t"
+Content-Disposition: inline
+In-Reply-To: <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
 
-vmalloc doesn't correctly respect gfp flags - gfp flags aren't used for
-pte allocation, so doing vmalloc/kvmalloc allocations with reclaim
-unsafe locks is a potential deadlock.
 
-Note that we also want to use PF_MEMALLOC_NORECLAIM, not
-PF_MEMALLOC_NOFS, because when we're doing allocations with btree locks
-held we have a fallback available - drop locks and do a normal
-GFP_KERNEL allocation. We don't want to be invoking reclaim with btree
-locks held at all, since these are big shared locks and overalll system
-performance is sensitive to hold times.
+--egnngjetwmt4ba2t
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>, 
+	Matus Jokay <matus.jokay@stuba.sk>, "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v8 1/8] Get rid of __get_task_comm()
+References: <20240828030321.20688-1-laoar.shao@gmail.com>
+ <20240828030321.20688-2-laoar.shao@gmail.com>
+ <lql4y2nvs3ewadszhmv4m6fnqja4ff4ymuurpidlwvgf4twvru@esnh37a2jxbd>
+ <n2fxqs3tekvljezaqpfnwhsmjymch4vb47y744zwmy7urf3flv@zvjtepkem4l7>
+ <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- fs/bcachefs/acl.c             |  5 ++--
- fs/bcachefs/btree_cache.c     |  3 ++-
- fs/bcachefs/btree_iter.h      | 46 +++++++++++++++++++----------------
- fs/bcachefs/btree_key_cache.c | 10 ++++----
- fs/bcachefs/ec.c              | 12 ++++-----
- fs/bcachefs/fs.c              |  8 ------
- 6 files changed, 41 insertions(+), 43 deletions(-)
+Hi Yafang,
 
-diff --git a/fs/bcachefs/acl.c b/fs/bcachefs/acl.c
-index 87f1be9d4db4..1def61875a6f 100644
---- a/fs/bcachefs/acl.c
-+++ b/fs/bcachefs/acl.c
-@@ -137,7 +137,7 @@ static struct posix_acl *bch2_acl_from_disk(struct btree_trans *trans,
- 		return NULL;
- 
- 	acl = allocate_dropping_locks(trans, ret,
--			posix_acl_alloc(count, _gfp));
-+			posix_acl_alloc(count, GFP_KERNEL));
- 	if (!acl)
- 		return ERR_PTR(-ENOMEM);
- 	if (ret) {
-@@ -427,7 +427,8 @@ int bch2_acl_chmod(struct btree_trans *trans, subvol_inum inum,
- 	if (ret)
- 		goto err;
- 
--	ret = allocate_dropping_locks_errcode(trans, __posix_acl_chmod(&acl, _gfp, mode));
-+	ret = allocate_dropping_locks_errcode(trans,
-+					 __posix_acl_chmod(&acl, GFP_KERNEL, mode));
- 	if (ret)
- 		goto err;
- 
-diff --git a/fs/bcachefs/btree_cache.c b/fs/bcachefs/btree_cache.c
-index 9f096fdcaf9a..e0090fa551d7 100644
---- a/fs/bcachefs/btree_cache.c
-+++ b/fs/bcachefs/btree_cache.c
-@@ -729,7 +729,8 @@ struct btree *bch2_btree_node_mem_alloc(struct btree_trans *trans, bool pcpu_rea
- 
- 	mutex_unlock(&bc->lock);
- 
--	if (btree_node_data_alloc(c, b, GFP_NOWAIT|__GFP_NOWARN)) {
-+	if (memalloc_flags_do(PF_MEMALLOC_NORECLAIM,
-+			      btree_node_data_alloc(c, b, GFP_KERNEL|__GFP_NOWARN))) {
- 		bch2_trans_unlock(trans);
- 		if (btree_node_data_alloc(c, b, GFP_KERNEL|__GFP_NOWARN))
- 			goto err;
-diff --git a/fs/bcachefs/btree_iter.h b/fs/bcachefs/btree_iter.h
-index 6d87e57745da..0ea21a5f6d86 100644
---- a/fs/bcachefs/btree_iter.h
-+++ b/fs/bcachefs/btree_iter.h
-@@ -865,29 +865,33 @@ struct bkey_s_c bch2_btree_iter_peek_and_restart_outlined(struct btree_iter *);
- 	(_do) ?: bch2_trans_relock(_trans);				\
- })
- 
--#define allocate_dropping_locks_errcode(_trans, _do)			\
--({									\
--	gfp_t _gfp = GFP_NOWAIT|__GFP_NOWARN;				\
--	int _ret = _do;							\
--									\
--	if (bch2_err_matches(_ret, ENOMEM)) {				\
--		_gfp = GFP_KERNEL;					\
--		_ret = drop_locks_do(_trans, _do);			\
--	}								\
--	_ret;								\
-+#define memalloc_flags_do(_flags, _do)						\
-+({										\
-+	unsigned _saved_flags = memalloc_flags_save(_flags);			\
-+	typeof(_do) _ret = _do;							\
-+	memalloc_noreclaim_restore(_saved_flags);				\
-+	_ret;									\
- })
- 
--#define allocate_dropping_locks(_trans, _ret, _do)			\
--({									\
--	gfp_t _gfp = GFP_NOWAIT|__GFP_NOWARN;				\
--	typeof(_do) _p = _do;						\
--									\
--	_ret = 0;							\
--	if (unlikely(!_p)) {						\
--		_gfp = GFP_KERNEL;					\
--		_ret = drop_locks_do(_trans, ((_p = _do), 0));		\
--	}								\
--	_p;								\
-+#define allocate_dropping_locks_errcode(_trans, _do)				\
-+({										\
-+	int _ret = memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN, _do);\
-+										\
-+	if (bch2_err_matches(_ret, ENOMEM)) {					\
-+		_ret = drop_locks_do(_trans, _do);				\
-+	}									\
-+	_ret;									\
-+})
-+
-+#define allocate_dropping_locks(_trans, _ret, _do)				\
-+({										\
-+	typeof(_do) _p = memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN, _do);\
-+										\
-+	_ret = 0;								\
-+	if (unlikely(!_p)) {							\
-+		_ret = drop_locks_do(_trans, ((_p = _do), 0));			\
-+	}									\
-+	_p;									\
- })
- 
- #define bch2_trans_run(_c, _do)						\
-diff --git a/fs/bcachefs/btree_key_cache.c b/fs/bcachefs/btree_key_cache.c
-index af84516fb607..feea58778d44 100644
---- a/fs/bcachefs/btree_key_cache.c
-+++ b/fs/bcachefs/btree_key_cache.c
-@@ -117,12 +117,12 @@ static void bkey_cached_free(struct btree_key_cache *bc,
- 	this_cpu_inc(*bc->nr_pending);
- }
- 
--static struct bkey_cached *__bkey_cached_alloc(unsigned key_u64s, gfp_t gfp)
-+static struct bkey_cached *__bkey_cached_alloc(unsigned key_u64s)
- {
--	struct bkey_cached *ck = kmem_cache_zalloc(bch2_key_cache, gfp);
-+	struct bkey_cached *ck = kmem_cache_zalloc(bch2_key_cache, GFP_KERNEL);
- 	if (unlikely(!ck))
- 		return NULL;
--	ck->k = kmalloc(key_u64s * sizeof(u64), gfp);
-+	ck->k = kmalloc(key_u64s * sizeof(u64), GFP_KERNEL);
- 	if (unlikely(!ck->k)) {
- 		kmem_cache_free(bch2_key_cache, ck);
- 		return NULL;
-@@ -146,7 +146,7 @@ bkey_cached_alloc(struct btree_trans *trans, struct btree_path *path, unsigned k
- 		goto lock;
- 
- 	ck = allocate_dropping_locks(trans, ret,
--				     __bkey_cached_alloc(key_u64s, _gfp));
-+				     __bkey_cached_alloc(key_u64s));
- 	if (ret) {
- 		if (ck)
- 			kfree(ck->k);
-@@ -240,7 +240,7 @@ static int btree_key_cache_create(struct btree_trans *trans, struct btree_path *
- 		mark_btree_node_locked_noreset(path, 0, BTREE_NODE_UNLOCKED);
- 
- 		struct bkey_i *new_k = allocate_dropping_locks(trans, ret,
--				kmalloc(key_u64s * sizeof(u64), _gfp));
-+						kmalloc(key_u64s * sizeof(u64), GFP_KERNEL));
- 		if (unlikely(!new_k)) {
- 			bch_err(trans->c, "error allocating memory for key cache key, btree %s u64s %u",
- 				bch2_btree_id_str(ck->key.btree_id), key_u64s);
-diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
-index 141a4c63142f..e2163cbf63a9 100644
---- a/fs/bcachefs/ec.c
-+++ b/fs/bcachefs/ec.c
-@@ -890,12 +890,12 @@ int bch2_ec_read_extent(struct btree_trans *trans, struct bch_read_bio *rbio)
- 
- /* stripe bucket accounting: */
- 
--static int __ec_stripe_mem_alloc(struct bch_fs *c, size_t idx, gfp_t gfp)
-+static int __ec_stripe_mem_alloc(struct bch_fs *c, size_t idx)
- {
- 	ec_stripes_heap n, *h = &c->ec_stripes_heap;
- 
- 	if (idx >= h->size) {
--		if (!init_heap(&n, max(1024UL, roundup_pow_of_two(idx + 1)), gfp))
-+		if (!init_heap(&n, max(1024UL, roundup_pow_of_two(idx + 1)), GFP_KERNEL))
- 			return -BCH_ERR_ENOMEM_ec_stripe_mem_alloc;
- 
- 		mutex_lock(&c->ec_stripes_heap_lock);
-@@ -909,11 +909,11 @@ static int __ec_stripe_mem_alloc(struct bch_fs *c, size_t idx, gfp_t gfp)
- 		free_heap(&n);
- 	}
- 
--	if (!genradix_ptr_alloc(&c->stripes, idx, gfp))
-+	if (!genradix_ptr_alloc(&c->stripes, idx, GFP_KERNEL))
- 		return -BCH_ERR_ENOMEM_ec_stripe_mem_alloc;
- 
- 	if (c->gc_pos.phase != GC_PHASE_not_running &&
--	    !genradix_ptr_alloc(&c->gc_stripes, idx, gfp))
-+	    !genradix_ptr_alloc(&c->gc_stripes, idx, GFP_KERNEL))
- 		return -BCH_ERR_ENOMEM_ec_stripe_mem_alloc;
- 
- 	return 0;
-@@ -923,7 +923,7 @@ static int ec_stripe_mem_alloc(struct btree_trans *trans,
- 			       struct btree_iter *iter)
- {
- 	return allocate_dropping_locks_errcode(trans,
--			__ec_stripe_mem_alloc(trans->c, iter->pos.offset, _gfp));
-+			__ec_stripe_mem_alloc(trans->c, iter->pos.offset));
- }
- 
- /*
-@@ -2193,7 +2193,7 @@ int bch2_stripes_read(struct bch_fs *c)
- 			if (k.k->type != KEY_TYPE_stripe)
- 				continue;
- 
--			ret = __ec_stripe_mem_alloc(c, k.k->p.offset, GFP_KERNEL);
-+			ret = __ec_stripe_mem_alloc(c, k.k->p.offset);
- 			if (ret)
- 				break;
- 
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index bc8dd89ec15c..153ec4e5c0f4 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -273,14 +273,6 @@ static struct bch_inode_info *bch2_inode_hash_insert(struct bch_fs *c,
- 	}
- }
- 
--#define memalloc_flags_do(_flags, _do)						\
--({										\
--	unsigned _saved_flags = memalloc_flags_save(_flags);			\
--	typeof(_do) _ret = _do;							\
--	memalloc_noreclaim_restore(_saved_flags);				\
--	_ret;									\
--})
--
- static struct inode *bch2_alloc_inode(struct super_block *sb)
- {
- 	BUG();
--- 
-2.45.2
+On Wed, Aug 28, 2024 at 09:40:35PM GMT, Yafang Shao wrote:
+> > Ahh, the actual generic definition is in <include/linux/string.h>.
+> > You could do
+> >
+> >         diff --git i/include/linux/string.h w/include/linux/string.h
+> >         index 9edace076ddb..060504719904 100644
+> >         --- i/include/linux/string.h
+> >         +++ w/include/linux/string.h
+> >         @@ -76,11 +76,11 @@ ssize_t sized_strscpy(char *, const char *,=
+ size_t);
+> >           * known size.
+> >           */
+> >          #define __strscpy0(dst, src, ...)      \
+> >         -       sized_strscpy(dst, src, sizeof(dst) + __must_be_array(d=
+st))
+> >         +       sized_strscpy(dst, src, ARRAY_SIZE(dst))
+> >          #define __strscpy1(dst, src, size)     sized_strscpy(dst, src,=
+ size)
+> >
+> >          #define __strscpy_pad0(dst, src, ...)  \
+> >         -       sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_arr=
+ay(dst))
+> >         +       sized_strscpy_pad(dst, src, ARRAY_SIZE(dst))
+> >          #define __strscpy_pad1(dst, src, size) sized_strscpy_pad(dst, =
+src, size)
+> >
+> >          /**
+>=20
+> Thank you for your suggestion. How does the following commit log look
+> to you? Does it meet your expectations?
+>=20
+>     string: Use ARRAY_SIZE() in strscpy()
+>=20
+>     We can use ARRAY_SIZE() instead to clarify that they are regular char=
+acters.
 
+I would write the following:
+
+For symmetry with wide-character string functions, ARRAY_SIZE() is more
+appropriate than sizeof().
+
+For example, one would call wcs*cpy(dst, src, ARRAY_SIZE(dst)).
+The call wcs*cpy(dst, src, sizeof(dst)) would be bogus, since the
+argument is the number of wide characters, not the number of bytes.
+
+When translating that to normal characters, one wants conceptually the
+same operation, but on (normal) characters.  That is, one wants
+strscpy(dst, src, ARRAY_SIZE(dst)).  While strscpy() with sizeof() works
+just fine because sizeof(char)=3D=3D1 by definition, it is conceptually
+wrong to use it.
+
+By using ARRAY_SIZE(), we get the __must_be_array() check for free.
+
+>=20
+>     Co-developed-by: Alejandro Colomar <alx@kernel.org>
+>     Signed-off-by: Alejandro Colomar <alx@kernel.org>
+>     Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+>=20
+> diff --git a/arch/um/include/shared/user.h b/arch/um/include/shared/user.h
+> index bbab79c0c074..07216996e3a9 100644
+> --- a/arch/um/include/shared/user.h
+> +++ b/arch/um/include/shared/user.h
+> @@ -14,7 +14,7 @@
+>   * copying too much infrastructure for my taste, so userspace files
+>   * get less checking than kernel files.
+>   */
+> -#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+> +#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]) + __must_be_array(x))
+>=20
+>  /* This is to get size_t and NULL */
+>  #ifndef __UM_HOST__
+> @@ -60,7 +60,7 @@ static inline void print_hex_dump(const char *level,
+> const char *prefix_str,
+>  extern int in_aton(char *str);
+>  extern size_t strlcat(char *, const char *, size_t);
+>  extern size_t sized_strscpy(char *, const char *, size_t);
+> -#define strscpy(dst, src)      sized_strscpy(dst, src, sizeof(dst))
+> +#define strscpy(dst, src)      sized_strscpy(dst, src, ARRAY_SIZE(dst))
+>=20
+>  /* Copied from linux/compiler-gcc.h since we can't include it directly */
+>  #define barrier() __asm__ __volatile__("": : :"memory")
+> diff --git a/include/linux/string.h b/include/linux/string.h
+> index 9edace076ddb..060504719904 100644
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+>=20
+> @@ -76,11 +76,11 @@ ssize_t sized_strscpy(char *, const char *, size_t);
+>   * known size.
+>   */
+>  #define __strscpy0(dst, src, ...)      \
+> -       sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst))
+> +       sized_strscpy(dst, src, ARRAY_SIZE(dst))
+>  #define __strscpy1(dst, src, size)     sized_strscpy(dst, src, size)
+>=20
+>  #define __strscpy_pad0(dst, src, ...)  \
+> -       sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst))
+> +       sized_strscpy_pad(dst, src, ARRAY_SIZE(dst))
+>  #define __strscpy_pad1(dst, src, size) sized_strscpy_pad(dst, src, size)
+
+The diff looks good to me.  Thanks!
+
+Cheers,
+Alex
+
+>=20
+>  /**
+>=20
+> --
+> Regards
+>=20
+> Yafang
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--egnngjetwmt4ba2t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbPL+QACgkQnowa+77/
+2zJobg//W3RHrDHVBPuZSKc3m1rr+m7+7TxlOxTaXg8qwoJHeHq4f/sbSV5l1HR4
+UF2gEJicrF4OknzCcegkXqdjxs1MUkzlaMxIQmj0yPgQmZ1Upg9aoGlVJNyjynvD
+09twa1O3azCA8YvuZc+vn0YoqbGkM54+OPWJaBsSERqgcVF57/vXgS702rKBqwhw
+3CrAWa/WTX5z10Q6yX+kwV8gWrtOBsMyAQRk53Yr3ZRR8DhCyK1ImS8BSHROV8+T
+Dz5g8o2WzPkvKZiLq/Slxa9UpRvw5j5RBh3GBGxhZcubv8arya/FMwXotUa2L3Rr
+uvfxbQw6lCR15FlHrI8984b99T7YkIr/pxYmrQABScUz7uMqJAhVutei6YJJgkUs
+jpEsNQeOiDgJoQUU7xcVuP1ME6sgdU7/vxYfcjiybYX0rvaVjKTRWRAQt6NmmvqX
+L6sZ94Tmba4wN92Akga5S3wnEadpbFHZtVGOVbc6tHz9ee0uVksD+DWSQVz7F8pw
+vMu73OMlE/cp9AFZhtVDuUCqneXgvgEGs86akKQuVdx2fSeZG3CVkTH5L8vSlTGi
+AlUtf5jlr8oHAP3g6Jl5KTxgGQXaXybO0RlbyVgM1ZrT+vrHLIB0mwBTJ3cIBKLS
+jAh4WPx1tmvxpQw9/G3igu98xN7ttGBv7Lc+WxmGK/aQfJtl6T4=
+=TaLj
+-----END PGP SIGNATURE-----
+
+--egnngjetwmt4ba2t--
 
