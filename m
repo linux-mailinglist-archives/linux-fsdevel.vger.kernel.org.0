@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-27495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1ABC961C94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 05:04:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B38961C99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 05:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A938B2119F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:04:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21C7285347
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFB71411DE;
-	Wed, 28 Aug 2024 03:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9437643AB9;
+	Wed, 28 Aug 2024 03:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tko/Fbck"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhcW4YYu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F3C3AC2B;
-	Wed, 28 Aug 2024 03:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43EE13BACB;
+	Wed, 28 Aug 2024 03:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724814242; cv=none; b=kP1ZKtN+qwpiCB+cGgC1Wgo0hFRHhI9Pj/Wc4ui9AbEfvfj3xS7AR1HtPftT7PhIWEhxG3f1XZjl3kFw1o7bhzO2pdtkZXHXHK6vDLTiPTNOCtdSnH9JbkyKijcvG+VyvzfBshYOyckYEU1TdrazphSimlk3o6LlSkfxQatfLLQ=
+	t=1724814248; cv=none; b=gP5K8t4SG5uMz8LXIJQZcqlgo/P1t0Ql+c6UoKe8mfbT7glKV2Y8Q/UIClK9glsPwUq7bSA9urVryaJYtjzxdnJ2lsR/EuTujJq2yvSEF4unoGz7rE9zeofju/6FbL2+xhIM+zoJQw1kdkucqKc0Af8ukSVmUYyVxLi6TI7fSSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724814242; c=relaxed/simple;
-	bh=ABhttoS6oXw2j+hmHjcdgyTovB2nFehBatzjdciJ3nM=;
+	s=arc-20240116; t=1724814248; c=relaxed/simple;
+	bh=56ESQtaoBbBqZU/saKgTljkr5U/isylgWUhSQpUUDZM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=INhLyBAuWMmNhR8Qv6CDlQngzhtqlqhAXTWrPAaS7LiPtGg0svKtQyUTao0FrVtcHmlhReCNA8YwepelPkYdEV5pTVRB7qDRExhaqa67yJlHPoAWdpH3th30kMbZyHn+pGPoNIAyiKa5y+pVvFLVvGrDr3ZCuHrHcc6XNT04Ne0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tko/Fbck; arc=none smtp.client-ip=209.85.215.171
+	 MIME-Version; b=gheBdwoXtHVfkoNUJFP6S1/tjNt/MMKZrk+6X8u0wIC8GN3RIkpIu7XlKJrj9DMybfClhHM4xNNewRq/ufvKkIb+vpVMp6NxbH7qdjWt81EWeQUXB08nkvVGvfcXY2UtkibEMhzH6Z8yeN3Tkqk3ejEBQEGYyMHJ1tX4PPAavw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhcW4YYu; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6bce380eb96so3435379a12.0;
-        Tue, 27 Aug 2024 20:04:00 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d3b595c18dso130048a91.0;
+        Tue, 27 Aug 2024 20:04:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724814240; x=1725419040; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724814246; x=1725419046; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mIIMsSPqVp5AusgTbRbdrgF3qEr8ccJBENe3BbQ0UBw=;
-        b=Tko/Fbck1Eb42MU9iHY8WN5DxJwkwvSYihJQoYgbWCy5WgELU+TdmQPGrduKpmJDCU
-         /qw7z4vgBAGiBdm/RR9QWCqhgHGQhI6tK36qEzZW4BW4bVlBii3VaPoGqkM/tsqp317J
-         W6WmtXvNIYlA4dh2p5u1tf5F0vVTDwAD06SHPKIpDvNtXJnMXzQT0GCtBfaZjYwDb3ZE
-         mQ1O6/K9044FNXKvOTfaPqfbnK2MK1pCV5vg2Mc3C85XhBCffaxFXRC9E0ddbt6qIROd
-         Dtx1ceaEzEYCq3cM5FhWKoIg3HafGGuaJ5K26SMX8ud1hcFtEZoxtLFVl7fakXMLyJ4d
-         SrzA==
+        bh=QQdkC9XISn7BWPlTE5/iE7aUj/L2jeLonKoaBsbNpS0=;
+        b=HhcW4YYu8/USBGyVJ+zTZSsOoWr2MhH1FufFaiuA1Fb0VP2O+I4aEhMaB8r0hdNPto
+         KhHV/jCBPDPX0S/0+ARkH4n6xNOAkbL/LdCgijK3kEfTNh3o6TCDmRLrFGnb54YOQABF
+         vlrAAY1b0kFKkyZHW4nEmHytFwlGf4+0fzElecIdwZ/1FYIxP4zXmkzTALtqIrO/5Q5t
+         y1+0h8ivUfZMZAigr+6BDg55DlSnlvuoUMEzKFL4bWrlSNfhj4YBYDxZM5F4UOtXJkUT
+         oKkl4RrYE4rn5KpgB0F+r/gzrWGEPzMC2CzveyqpNz3AamiBaYnIsx/yCZf9hq9FF6X/
+         earw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724814240; x=1725419040;
+        d=1e100.net; s=20230601; t=1724814246; x=1725419046;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mIIMsSPqVp5AusgTbRbdrgF3qEr8ccJBENe3BbQ0UBw=;
-        b=Z2Mw9oXG+PfnbzkY5qGQx4K5Zv6xxrQZkxJ55L/AiKjjzKy/5UCuTJmS/UgDsISR1k
-         CMlqoqPUPS/jeFxJhe9EJV3LWeG+QQiBHLft99DAgtoFFm5qfrHEiH7vhK5krFcKKQeZ
-         8NAP5UWD7jHK00K2xemTdGbX8xgGFbRLKE01wm0L/4uOTbyTYPXrDYottV9EpVOkfZ0Z
-         zv79yWZMeZTFANB+ZTi0OJa8SkPvakQkEoHdDu7DnavXZFcuvp7FyoqQrwcnfdPMuANe
-         YRZAGMtYT5hH4tFp0zem4AdVdu+AOZLJ4xtcQ2fjoACkG7Fcofq85QidzOq6LbePwpo1
-         qJLw==
-X-Forwarded-Encrypted: i=1; AJvYcCULeLsR+ZYi6MDnNdFPOGH6UU0kd57wUz2RwqEmFC7UXxnSYCZJrSennvB4wTsbAtP2Ackx30lM/eepsGKA9JHpgTkW@vger.kernel.org, AJvYcCVMwehzf9YqJdFQzXqV2WxqPS2EVqPUfAh7GOAriVVnUwR6s/pX4ASMo4P1u9LJn83Dmpui0tjsOc+0E2jQAg==@vger.kernel.org, AJvYcCVftzj3tyVz8viDNjx7jWU7NzXIDFHuKEmdidAmPKYWcMq+FXjTBPx+kYOC68Iz8+AhNHe7/9vCiIaeC3cer4spNsPIJyND@vger.kernel.org, AJvYcCVv10XsoXGdmjgFirUGrqO0Eyt+435PfByBMlW1/kFplXkJky1+BIt2kOxbOT4kzhR6MDw7pA==@vger.kernel.org, AJvYcCWVwWxgmhFd/+YhZ7m4KZwc6GBiPlpBsbSzGEANSzDeBoBvlko8K63jQ2U48MkTJTOwHc9a@vger.kernel.org, AJvYcCXAf5R9dkPQdNPYnVrhF6xiIs0H2j0Um2nkvorC3J1VEDaQgHxRJ9EFDJKGG3sl+ZBnj4gogwaA@vger.kernel.org, AJvYcCXBUtDdc6BjFDa56G2kNW7SZp3uszBgm/pr3FqyfFTn4qq/cub8igJdf7IPa5zCd18TujZonuIWsA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRGmCc60h6fjiq1xJecjN1i5cpYOrn+KYfOBVN4UYEbG4LyOD5
-	DH3GFQboyfTy9dpoH8t88zsLY2x8cqR6DSERM8vXvQV+vKZTX0/J
-X-Google-Smtp-Source: AGHT+IFERm607QheW54BofDpcXniBv+8JM5KHrTSMUx7woXR1463qkdvSKbT6nvldL/lDZfqmA0dvg==
-X-Received: by 2002:a05:6a20:43a5:b0:1c4:c7ae:ecea with SMTP id adf61e73a8af0-1ccd286f499mr543329637.11.1724814239886;
-        Tue, 27 Aug 2024 20:03:59 -0700 (PDT)
+        bh=QQdkC9XISn7BWPlTE5/iE7aUj/L2jeLonKoaBsbNpS0=;
+        b=uvDvkDX2Vuuutl8DgfKNcuL+oR7aQBzSQIuPanniUDEWu1P/GVb+AzCHw9QjvM5K0h
+         v/kiUPPKKwmuKtaYIeRKLv+B4qhPLk1Mo1vWY5AwfwmxjKW8RKS2nJ7h/LmH63RXloj/
+         GChwwVo7J4zWoVI2+0FqeaJKLYC0UMSUD5LMmBhIjPlitMJuNVYAUMSVdyZ12pg1xj37
+         6T+z3fY1H0Hge0KV+VGHE5taAKSH/q2UvivRErat18pNPqzgNy9u3c+RYExF4SAr+HuE
+         A4whVKxGrZ9l/5fKVZmIdrq8Jd9Ke6tzJneX34In3FUhmhHTfBvpMepHktk2LSZb5Bfz
+         3U7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU89CKuWWu9iqSQdTrXna7Krzsg1cLMkgo/h0m/AL3I3Ry+/rf0e97R05xKJVivgFbfju1q@vger.kernel.org, AJvYcCUObRj4d5UegTrTvn/9fhM6ttjqL56ZDHn4fnibIs2QaOiAIS+4e0R5at8RvtgmDlzq09q9DQ==@vger.kernel.org, AJvYcCV3keT07imD6RxVPjOBmImFicLxBApt8VV363sIlGzFBXV0Ren4s5rs213MkFyFO+dxEfL1HTaepQYffMnMFg==@vger.kernel.org, AJvYcCVJdXVpxKiNUJrrDXCncqQpYomASD8Vd9JZ+TMvdi0a0JI50nyCdYPtdlnOM9p1AvO2uBYeWjq6@vger.kernel.org, AJvYcCVSsIkyff4UMq+QmwVs6+pyFgeSzJHrZO9Zl504ZGOzd+S0z9UWMG0nG9J+lnu0SCVGVo35KGl0fB2UI40gdgNJ9lMV@vger.kernel.org, AJvYcCVuPfJtHIXUMIGWc+fvAW93mkMZ7QXjUmbzwmuqskodZCIy9qnNoYmb82cyv4OlGG+yM5pkXn/HH5QUmFBGCZYbGGgUntiv@vger.kernel.org, AJvYcCXV4oW5CXp+TkeOo4DIDpBRi85iRpvX1TG6iqcktSZfJ7YDltviznSvFp4SbdMmHRfZBavlBmOIrg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDnq+/AQXrIMmWRsPhAiLrYIcCQQiEwLrenxYmoyJMgNoekl2j
+	027ov+7E8TzNWgyH6L4BbfEbQsdgCh5dpI3LyYHZIpJwCzR8jVoq
+X-Google-Smtp-Source: AGHT+IHxaydVqwv10Tfh2ak5vjo3hT38eMV2JYlayqlM6cQqHxMPAOmu6Mb/QjPRAxpmFPgYrqTvlA==
+X-Received: by 2002:a17:90a:304b:b0:2cf:f860:f13b with SMTP id 98e67ed59e1d1-2d843da1884mr1305336a91.17.1724814245904;
+        Tue, 27 Aug 2024 20:04:05 -0700 (PDT)
 Received: from localhost.localdomain ([39.144.104.43])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445db8f6sm317977a91.1.2024.08.27.20.03.53
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445db8f6sm317977a91.1.2024.08.27.20.04.00
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2024 20:03:59 -0700 (PDT)
+        Tue, 27 Aug 2024 20:04:05 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org
 Cc: torvalds@linux-foundation.org,
@@ -87,14 +87,10 @@ Cc: torvalds@linux-foundation.org,
 	netdev@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Yafang Shao <laoar.shao@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v8 3/8] security: Replace memcpy() with get_task_comm()
-Date: Wed, 28 Aug 2024 11:03:16 +0800
-Message-Id: <20240828030321.20688-4-laoar.shao@gmail.com>
+	Quentin Monnet <qmo@kernel.org>
+Subject: [PATCH v8 4/8] bpftool: Ensure task comm is always NUL-terminated
+Date: Wed, 28 Aug 2024 11:03:17 +0800
+Message-Id: <20240828030321.20688-5-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 In-Reply-To: <20240828030321.20688-1-laoar.shao@gmail.com>
 References: <20240828030321.20688-1-laoar.shao@gmail.com>
@@ -106,62 +102,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Quoted from Linus [0]:
-
-  selinux never wanted a lock, and never wanted any kind of *consistent*
-  result, it just wanted a *stable* result.
-
-Using get_task_comm() to read the task comm ensures that the name is
-always NUL-terminated, regardless of the source string. This approach also
-facilitates future extensions to the task comm.
+Let's explicitly ensure the destination string is NUL-terminated. This way,
+it won't be affected by changes to the source string.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-LINK: https://lore.kernel.org/all/CAHk-=wivfrF0_zvf+oj6==Sh=-npJooP8chLPEfaFV0oNYTTBA@mail.gmail.com/ [0]
-Acked-by: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Ondrej Mosnacek <omosnace@redhat.com>
+Reviewed-by: Quentin Monnet <qmo@kernel.org>
 ---
- security/lsm_audit.c         | 4 ++--
- security/selinux/selinuxfs.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ tools/bpf/bpftool/pids.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 849e832719e2..9a8352972086 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -207,7 +207,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 	BUILD_BUG_ON(sizeof(a->u) > sizeof(void *)*2);
+diff --git a/tools/bpf/bpftool/pids.c b/tools/bpf/bpftool/pids.c
+index 9b898571b49e..23f488cf1740 100644
+--- a/tools/bpf/bpftool/pids.c
++++ b/tools/bpf/bpftool/pids.c
+@@ -54,6 +54,7 @@ static void add_ref(struct hashmap *map, struct pid_iter_entry *e)
+ 		ref = &refs->refs[refs->ref_cnt];
+ 		ref->pid = e->pid;
+ 		memcpy(ref->comm, e->comm, sizeof(ref->comm));
++		ref->comm[sizeof(ref->comm) - 1] = '\0';
+ 		refs->ref_cnt++;
  
- 	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
--	audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(comm)));
-+	audit_log_untrustedstring(ab, get_task_comm(comm, current));
- 
- 	switch (a->type) {
- 	case LSM_AUDIT_DATA_NONE:
-@@ -302,7 +302,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 				char comm[sizeof(tsk->comm)];
- 				audit_log_format(ab, " opid=%d ocomm=", pid);
- 				audit_log_untrustedstring(ab,
--				    memcpy(comm, tsk->comm, sizeof(comm)));
-+				    get_task_comm(comm, tsk));
- 			}
- 		}
- 		break;
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index e172f182b65c..c9b05be27ddb 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -708,7 +708,7 @@ static ssize_t sel_write_checkreqprot(struct file *file, const char __user *buf,
- 	if (new_value) {
- 		char comm[sizeof(current->comm)];
- 
--		memcpy(comm, current->comm, sizeof(comm));
-+		strscpy(comm, current->comm);
- 		pr_err("SELinux: %s (%d) set checkreqprot to 1. This is no longer supported.\n",
- 		       comm, current->pid);
- 	}
+ 		return;
+@@ -77,6 +78,7 @@ static void add_ref(struct hashmap *map, struct pid_iter_entry *e)
+ 	ref = &refs->refs[0];
+ 	ref->pid = e->pid;
+ 	memcpy(ref->comm, e->comm, sizeof(ref->comm));
++	ref->comm[sizeof(ref->comm) - 1] = '\0';
+ 	refs->ref_cnt = 1;
+ 	refs->has_bpf_cookie = e->has_bpf_cookie;
+ 	refs->bpf_cookie = e->bpf_cookie;
 -- 
 2.43.5
 
