@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-27602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D54962C64
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 968DC962C6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103861F24B82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A27F1F25CA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE3D1A38EF;
-	Wed, 28 Aug 2024 15:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2181A4B6F;
+	Wed, 28 Aug 2024 15:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eQSIr+9y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="McydTb1b";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qafg0vVc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D3mwNydd"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y7rYdcRQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N4u4aZXl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CFxc6WFe";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8iehbQLw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED58913D8B4;
-	Wed, 28 Aug 2024 15:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD5D1A3BA1;
+	Wed, 28 Aug 2024 15:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724859069; cv=none; b=GbCtdNBkWg7uVLQbkeZ7X+U/dj7fBJqiLFBUMNb+6kkX7gE74mkccvx72ZhiAJ9Km8gs1nj+ce4fVufXzX5D73ozoVtbLT1hmnF6KEW7XffycisPYbEPtZbqEAQLwCCCwppS2cR+8lZdcBooeycMnx/EFIzB4ZOMef6tiosiCTk=
+	t=1724859079; cv=none; b=Vnp0yBPJYfWrXQFCo2R3pT0oAllLfkpR+yWl+vXi1ta7vk7H3Xx2Xh5QnUnojAolYAAxwVA7lrpdpTY6OIFQLwzvxVZZaNeTVCqHmzUkzXnrmOKncigOnbtzSjxv3FbgMdtIgy3R1S5fATl1680dBoDYWBKGYPhZVdOnBPBLVyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724859069; c=relaxed/simple;
-	bh=b+k29GysQ7R3bruZV4HT9pMcZKn6eKuFi5vbwqLjxyQ=;
+	s=arc-20240116; t=1724859079; c=relaxed/simple;
+	bh=7+FvgUqMo200TNqjygfZfe6YbVbnUCy5WJkoyzFztZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i1d5Wb3oSsOGCVqyZN49hMjMv09YoHGkeCuMo6Qs7jRgduELQIiR0YpCJs4Ym2WM0RCWOSeV3jLhXeHBXuv/AL6m+fcks3EEXeENI8T4x7zQbb3EEAbPJxumJns0iDIId6Ro5LBwvBIaWe8vdOtHtTN8v+p8mOCVJo+dEP5fqaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eQSIr+9y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=McydTb1b; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qafg0vVc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D3mwNydd; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUTcdRjKa7CygEXSOB3/OByr7mltuEDLEjngJmHyKwjYyzOnr7E7KxLENbfvN43CsD3Sf5Qx71Se1iAne9ihCCEAJBis7nRaMCAUMYRRRH1Gh3UVCgCqxN4oHl8Sro2z0Xjb07dnZr/iB/d9KkJG+VS1j5ah5g6PesLKoETWo74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y7rYdcRQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N4u4aZXl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CFxc6WFe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8iehbQLw; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EDE921FC31;
-	Wed, 28 Aug 2024 15:31:05 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EF6D921B27;
+	Wed, 28 Aug 2024 15:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724859066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724859076; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8GllTruHW3XoQ0H3fzpZDxViaLpqzGacRC6r1YXyznc=;
-	b=eQSIr+9yRwKF/L1QWf9YwxWbDj7H4NAbo7ZfMaCMaKJV56uOmXxSSDPJuGyUh1+hgxK+4o
-	TXgeAeBTcc80bO6nBkdM3R54PLXU5KSqWICikz+vgvL+d0G63YdVVqmdJSs9eGewNT0Ew+
-	95GBsVCJ6SmEkKUHgZOmT2XP2fUEq0o=
+	bh=g47bOqualS+Xf14l46cXJeDn1Uj8OzVWMX9HkIH0YlU=;
+	b=y7rYdcRQfkTtchLByLSjoN9oEJNBaLYTTpEGsm2cMqPQzvX5I7+srULk1XQwTHeEXB+5uJ
+	P3f3x+b++/3anPZcXl8drF0MbmGW9SDl6aQ5+Rhd/XrFr/wWrmxexj5CBZAF7wNQoK516/
+	e65/LIMgwzjb23PErzyNHkF4fNDUEys=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724859066;
+	s=susede2_ed25519; t=1724859076;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8GllTruHW3XoQ0H3fzpZDxViaLpqzGacRC6r1YXyznc=;
-	b=McydTb1bSyyIVr1158BSJOoylK6SPD+pilFZteRTR/Icx0VAlunDKdyDMnUtdNud/v86nA
-	MG922/QJIO25hIDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qafg0vVc;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=D3mwNydd
+	bh=g47bOqualS+Xf14l46cXJeDn1Uj8OzVWMX9HkIH0YlU=;
+	b=N4u4aZXlHlsU2PfmH40oCmldtiNRg0fPGlc5To6gQ3pdch1ov0K+v6lP30HZXsjbcqFajz
+	FPlqJSut+kBrzPCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=CFxc6WFe;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8iehbQLw
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724859065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724859075; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8GllTruHW3XoQ0H3fzpZDxViaLpqzGacRC6r1YXyznc=;
-	b=qafg0vVcekSAf7iJlLFNknjS4SejN5uv7eJA8jLdyq3YD31zFgY+Ry5n8k7eLdrMxBO10P
-	MwHoLj3olsP+ofnQejgrSTSu2xwvL57kCKhrsDF08y//pcMLBZEhK4V60lnAblzSJ9eNSB
-	j7mZcdG3WZb0x72y2wV57KIIObU/9uY=
+	bh=g47bOqualS+Xf14l46cXJeDn1Uj8OzVWMX9HkIH0YlU=;
+	b=CFxc6WFeHM5MBrTmsNrdfYPed4zhrBaC3tC3E993wzyznA/Tv6Y+ZbEaRnLv/vlOMtsTyu
+	5PozC8BxSG1jibRlGCa9vn1T0KoAR40652IXLHHexmesQ6MH0ZyBPyxs/V4+c8JpZHZ1lG
+	U3HHD8okwhFSiD9lYJ0wpTpFMKw0z98=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724859065;
+	s=susede2_ed25519; t=1724859075;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8GllTruHW3XoQ0H3fzpZDxViaLpqzGacRC6r1YXyznc=;
-	b=D3mwNyddM6osPBA5WP/7nl7dvRAWJ2NQNNb3QnIXJ5KsJ5sX83BjNsy5j/thFrj07NIgKz
-	7QgnpAzd4NvmMUBA==
+	bh=g47bOqualS+Xf14l46cXJeDn1Uj8OzVWMX9HkIH0YlU=;
+	b=8iehbQLw/iCWJib7AUi7MRs3OeS2cX99Vkfx2Mbm39bcxSP53cwMnTBq+CeI+dlSolFO3s
+	GIXlk+GgDqwCUeBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E24DA138D2;
-	Wed, 28 Aug 2024 15:31:05 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E562A138D2;
+	Wed, 28 Aug 2024 15:31:15 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cO83N7lCz2a9UQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 15:31:05 +0000
+	id RqL+N8NCz2bLUQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 15:31:15 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 78644A0965; Wed, 28 Aug 2024 17:31:05 +0200 (CEST)
-Date: Wed, 28 Aug 2024 17:31:05 +0200
+	id 8C68EA0965; Wed, 28 Aug 2024 17:31:15 +0200 (CEST)
+Date: Wed, 28 Aug 2024 17:31:15 +0200
 From: Jan Kara <jack@suse.cz>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -98,10 +98,10 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
 	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 2/6] ext4: remove tracing for FALLOC_FL_NO_HIDE_STALE
-Message-ID: <20240828153105.ccvfoppoljdyowry@quack3>
+Subject: Re: [PATCH 1/6] block: remove checks for FALLOC_FL_NO_HIDE_STALE
+Message-ID: <20240828153115.vhgsc7obs34b2bws@quack3>
 References: <20240827065123.1762168-1-hch@lst.de>
- <20240827065123.1762168-3-hch@lst.de>
+ <20240827065123.1762168-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,9 +110,10 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827065123.1762168-3-hch@lst.de>
-X-Rspamd-Queue-Id: EDE921FC31
-X-Spam-Level: 
+In-Reply-To: <20240827065123.1762168-2-hch@lst.de>
+X-Rspamd-Queue-Id: EF6D921B27
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -121,31 +122,31 @@ X-Spamd-Result: default: False [-4.01 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[13];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[3];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
 	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue 27-08-24 08:50:46, Christoph Hellwig wrote:
-> FALLOC_FL_NO_HIDE_STALE can't make it past vfs_fallocate (and if the
-> flag does what the name implies that's a good thing as it would be
-> highly dangerous).  Remove the dead tracing code for it.
+On Tue 27-08-24 08:50:45, Christoph Hellwig wrote:
+> While the FALLOC_FL_NO_HIDE_STALE value has been registered, it has
+> always been rejected by vfs_fallocate before making it into
+> blkdev_fallocate because it isn't in the supported mask.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
@@ -156,21 +157,37 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  include/trace/events/ext4.h | 1 -
->  1 file changed, 1 deletion(-)
+>  block/fops.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 > 
-> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> index cc5e9b7b2b44e7..156908641e68f1 100644
-> --- a/include/trace/events/ext4.h
-> +++ b/include/trace/events/ext4.h
-> @@ -91,7 +91,6 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
->  #define show_falloc_mode(mode) __print_flags(mode, "|",		\
->  	{ FALLOC_FL_KEEP_SIZE,		"KEEP_SIZE"},		\
->  	{ FALLOC_FL_PUNCH_HOLE,		"PUNCH_HOLE"},		\
-> -	{ FALLOC_FL_NO_HIDE_STALE,	"NO_HIDE_STALE"},	\
->  	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
->  	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
+> diff --git a/block/fops.c b/block/fops.c
+> index 9825c1713a49a9..7f48f03a62e9a8 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -771,7 +771,7 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
 >  
+>  #define	BLKDEV_FALLOC_FL_SUPPORTED					\
+>  		(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |		\
+> -		 FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE)
+> +		 FALLOC_FL_ZERO_RANGE)
+>  
+>  static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+>  			     loff_t len)
+> @@ -830,14 +830,6 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+>  					     len >> SECTOR_SHIFT, GFP_KERNEL,
+>  					     BLKDEV_ZERO_NOFALLBACK);
+>  		break;
+> -	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE | FALLOC_FL_NO_HIDE_STALE:
+> -		error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
+> -		if (error)
+> -			goto fail;
+> -
+> -		error = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
+> -					     len >> SECTOR_SHIFT, GFP_KERNEL);
+> -		break;
+>  	default:
+>  		error = -EOPNOTSUPP;
+>  	}
 > -- 
 > 2.43.0
 > 
