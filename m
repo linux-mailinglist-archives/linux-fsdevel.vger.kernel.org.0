@@ -1,280 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-27605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E36962C7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:34:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE80962C99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126351C241E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:34:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91169287652
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111B01A2C20;
-	Wed, 28 Aug 2024 15:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7ECB1A2C0A;
+	Wed, 28 Aug 2024 15:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C7KT8q2q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IDDARMRi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B5qnEANe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZnUx22B/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDdad5/I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678DC13D889;
-	Wed, 28 Aug 2024 15:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0430114831D;
+	Wed, 28 Aug 2024 15:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724859274; cv=none; b=a+dZnGSgmQO1EM5UFKMPw1OFhzc9beVs+xST+ti/ks5tFGqPxda3yB0KqnR5NHOJTs9H/QaXjLRqJ5/sdYc+ZPLvkVsv5+n7ihMUm7vGwZ/DVEg5YS/tRCx1IQYU9AYixKiw+d+HQufXdkLQNdhNuAVl5DpBNo4NZiVQh+CsxV4=
+	t=1724859638; cv=none; b=rdTunW4YN6UjEgrj0fswHayCuUacgWq9q/7Bplk9WwrcJdnofyzf5whkBP+PWpq5hDqBZVvLmMflJ/qkanLxaU7Ybxy7p2wtRtrjQ/YWgaHbdLBBQ7mxKeVyU6KrUowgUl1eD6eVxY3BUPmIP6rI1H9vJ5KBg8pRMAjOT5B4Ae4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724859274; c=relaxed/simple;
-	bh=0MrHZwsCW0Y57nuox4lGSlndzkqpr7aXr7jJnEOkGb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HyIjQeNlR8uo1vS8zy52wKSCeuyda32pyw0f4+3+4974qd5fzXPlrspVCAvc07h3FMBuJy478z+uIew6sIVqBYTlramla1OERJ9MHkK2IATYsa2RDEE2CI90hJaGCbTdl0iJz/lHGq3Vzyu3Aohn4Npg9lEzw4zwRW7RPKqRPeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C7KT8q2q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IDDARMRi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=B5qnEANe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZnUx22B/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A6B871FC86;
-	Wed, 28 Aug 2024 15:34:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724859270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9O0Vci8+b4q68G1caoGSF7w6opascpZiikpZjFP/dws=;
-	b=C7KT8q2qDGqR1u9oNyBhQ/hB78uMIU6/M9/PWy5ALFxWbK2kfqJ/JoNpykYicWEsgD8B7F
-	GGBh0kR/TQsy290MAVPox+Zp/mtHmJPTzQDnCbUtM3ilM01elaAxCR/XRuCELiY5m/qT45
-	yAD8687VvNU3P7xLXn8sbTFjOCav8/0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724859270;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9O0Vci8+b4q68G1caoGSF7w6opascpZiikpZjFP/dws=;
-	b=IDDARMRid5PxQwYtyCDQNRwHUUeSdvEuUdWZbt2RBQAJ8t+rJVOZaIa+B9Z67WkH5p6vKT
-	XFMfIrhAnmjLaqBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724859267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9O0Vci8+b4q68G1caoGSF7w6opascpZiikpZjFP/dws=;
-	b=B5qnEANeVKXFIGM4wBUQN+RS2R0os77bJKi1uaU64QbSfC45aQxgTeTu32Z0amJBHS0gha
-	jni1bYtByeXEyN1r3chuykid/X+J3j3iJlh8b7HF3HMkViw8ncPwhOUt5e9V/jasfqUiMp
-	ayr4yUFDzcE5v+M9jzi7Y0+A7bCP1aU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724859267;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9O0Vci8+b4q68G1caoGSF7w6opascpZiikpZjFP/dws=;
-	b=ZnUx22B/FJKxla0jIH+VKSDQbj2OgNOT6rjjehHDmjTgjrJ+ceODF1hVt5ukX2lzHbldM2
-	6HKI4LAizAOoK/BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8FA8C138D2;
-	Wed, 28 Aug 2024 15:34:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id L3XLIoNDz2bnUgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 15:34:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 304CFA0965; Wed, 28 Aug 2024 17:34:27 +0200 (CEST)
-Date: Wed, 28 Aug 2024 17:34:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Brian Foster <bfoster@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 3/6] fs: sort out the fallocate mode vs flag mess
-Message-ID: <20240828153427.tbuzninrbj6wtam4@quack3>
-References: <20240827065123.1762168-1-hch@lst.de>
- <20240827065123.1762168-4-hch@lst.de>
+	s=arc-20240116; t=1724859638; c=relaxed/simple;
+	bh=+z7/VLAc5zAKqxwt9kQI0vxm8x7sulgvUDeMTRfB+wo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PRedaW+VPkSXEZiXQm/b7MiqpdY6PJQpleAa0t0DXb44Xms0VE2kBJv/v4oDujlSejYTT0oShgIalDrWiTSryjKxtsxt90pz97jPaMiAwT3lvkaOAWSWqhGOI/Dp+IUta4NdauZr6VsIqC0tazew2hsdaLctPgO+a6G1JBtb4OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDdad5/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781E7C4CEC9;
+	Wed, 28 Aug 2024 15:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724859637;
+	bh=+z7/VLAc5zAKqxwt9kQI0vxm8x7sulgvUDeMTRfB+wo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hDdad5/IY68zkrft/92YWfFtjDz6TFndSmnpp5pqAtaDdhgaQHXnMYujF2CwZtAvo
+	 s1dVBctohqByWUo15KsHC1yXOsb3CsxrVYgXiTlMrxSNBqKSRHb2u/dgFnWDlyP45P
+	 kmzBzCQlLYmgzPMvmTlIEcYXhkLufuTJDpchreYUAd0yoHp8hJGCENnAbHqZR1NUMB
+	 63ZyNil+E22vWl4w+ZhugE7V8Y5RiBnHkIJ248WfFc80AZtPJMZpvtsLhvJEQmQQ7b
+	 rjS4mie2g2VPxttgup163SLxFXlpDbWSy4ple6kkn/VZnDNkSEFpYi5cJmSqRwT5Qa
+	 F/BVlj/jrU5iw==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so94243731fa.1;
+        Wed, 28 Aug 2024 08:40:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV05xct5gfUJ2WZGILTjXAdPU1k8W3sJVDHX0yp56hujCJuB0om51JlDpME3pndc1JSGNNhTppmsXal/h0gRg==@vger.kernel.org, AJvYcCWCZcSHufCGoUAdCMPQp0fRVxzYrmJVjlDzwf0cxRS/AVusgr5YsPCWVlftT7yGyfOU/wqCrlcjbhFN6Cmn@vger.kernel.org, AJvYcCWJc0C107/wSVlSw7lu1Aj6ndpsarTY6yOGjRRO4HE/t98Ijb6jv9LZCMI7jFCd7FcjbgtKAFMoWKnBMAHGhHxd@vger.kernel.org, AJvYcCWjqeQIr7Tp60H/3mg3ypNTH87qpaqx7Qo/ZbC9RsxV1WEmgE6ye0ccCcN7C8UoAVsL5VQxbixOBVqhyYtSNozUr6l3@vger.kernel.org, AJvYcCXXwvItc36YPp8dou+RaeRRAFMMDrdJ/AutmCKqlkH8WFKpoWipIYNKclPx/lM6JATUIbrBztf3eUOk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdD0WqGot810jQ21YEOxntFmOYzJGRAgRGKnttnKWwoA4o9Ruq
+	remfgM00GECRUV8PLUP2W7qAfs+qOrF6p2t/1b537Jptf0jXTwVFEddbyUz0ByKKmqRPPkNMiJR
+	cm0v6Z7nuSvrjE8S7emkgFHCZQ7k=
+X-Google-Smtp-Source: AGHT+IHIXIHDcxvkoioWarqDfEAwvoOHHvvDveL69dLtIdivksLO7ybL0XqtoFeExKbS+796rHsbT/SXItR1tBLUGxI=
+X-Received: by 2002:a2e:461a:0:b0:2f3:f182:49f3 with SMTP id
+ 38308e7fff4ca-2f6106e36e6mr594741fa.22.1724859635743; Wed, 28 Aug 2024
+ 08:40:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827065123.1762168-4-hch@lst.de>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,lst.de:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu>
+ <20240827180819.GB2049@sol.localdomain> <20240827225330.GC29862@gate.crashing.org>
+ <Zs8HirKLk-SrwTIu@zx2c4.com> <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com>
+ <20240828124519.GE29862@gate.crashing.org>
+In-Reply-To: <20240828124519.GE29862@gate.crashing.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 28 Aug 2024 17:40:23 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGmDmxy75eP=rf_fzKmg0g_FeKV43jk2G_gibnKZBtVww@mail.gmail.com>
+Message-ID: <CAMj1kXGmDmxy75eP=rf_fzKmg0g_FeKV43jk2G_gibnKZBtVww@mail.gmail.com>
+Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, "Jason A . Donenfeld" <Jason@zx2c4.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>, Andrew Morton <akpm@linux-foundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>, 
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue 27-08-24 08:50:47, Christoph Hellwig wrote:
-> The fallocate system call takes a mode argument, but that argument
-> contains a wild mix of exclusive modes and an optional flags.
-> 
-> Replace FALLOC_FL_SUPPORTED_MASK with FALLOC_FL_MODE_MASK, which excludes
-> the optional flag bit, so that we can use switch statement on the value
-> to easily enumerate the cases while getting the check for duplicate modes
-> for free.
-> 
-> To make this (and in the future the file system implementations) more
-> readable also add a symbolic name for the 0 mode used to allocate blocks.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Wed, 28 Aug 2024 at 14:57, Segher Boessenkool
+<segher@kernel.crashing.org> wrote:
+>
+> On Wed, Aug 28, 2024 at 12:24:12PM +0000, Arnd Bergmann wrote:
+> > On Wed, Aug 28, 2024, at 11:18, Jason A. Donenfeld wrote:
+> > > On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
+> > >> On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
+> > >> >
+> > >> > Is there a compiler flag that could be used to disable the generation of calls
+> > >> > to memset?
+> > >>
+> > >> -fno-tree-loop-distribute-patterns .  But, as always, read up on it, see
+> > >> what it actually does (and how it avoids your problem, and mostly: learn
+> > >> what the actual problem *was*!)
+> > >
+> > > This might help with various loops, but it doesn't help with the matter
+> > > that this patch fixes, which is struct initialization. I just tried it
+> > > with the arm64 patch to no avail.
+> >
+> > Maybe -ffreestanding can help here? That should cause the vdso to be built
+> > with the assumption that there is no libc, so it would neither add nor
+> > remove standard library calls. Not sure if that causes other problems,
+> > e.g. if the calling conventions are different.
+>
+> "GCC requires the freestanding
+> environment provide 'memcpy', 'memmove', 'memset' and 'memcmp'."
+>
+> This is precisely to implement things like struct initialisation.  Maybe
+> we should have a "-ffreeerstanding" or "-ffreefloating" or think of
+> something funnier still environment as well, this problem has been there
+> since the -ffreestanding flag has existed, but the problem is as old as
+> the night.
+>
+> -fno-builtin might help a bit more, but just attack the problem at
+> its root, like I suggested?
+>
 
-Looks good. Feel free to add:
+In my experience, this is likely to do the opposite: it causes the
+compiler to 'forget' the semantics of memcpy() and memset(), so that
+explicit trivial calls will no longer be elided and replaced with
+plain loads and stores (as it can no longer guarantee the equivalence)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> (This isn't a new problem, originally it showed up as "GCC replaces
+> (part of) my memcpy() implementation by a (recursive) call to memcpy()"
+> and, well, that doesn't quite work!)
+>
 
-								Honza
+This needs to be fixed for Clang as well, so throwing GCC specific
+flags at it will at best be a partial solution.
 
-> ---
->  fs/open.c                   | 51 ++++++++++++++++++-------------------
->  include/linux/falloc.h      | 18 ++++++++-----
->  include/uapi/linux/falloc.h |  1 +
->  3 files changed, 38 insertions(+), 32 deletions(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index 22adbef7ecc2a6..daf1b55ca8180b 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -252,40 +252,39 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  	if (offset < 0 || len <= 0)
->  		return -EINVAL;
->  
-> -	/* Return error if mode is not supported */
-> -	if (mode & ~FALLOC_FL_SUPPORTED_MASK)
-> +	if (mode & ~(FALLOC_FL_MODE_MASK | FALLOC_FL_KEEP_SIZE))
->  		return -EOPNOTSUPP;
->  
-> -	/* Punch hole and zero range are mutually exclusive */
-> -	if ((mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE)) ==
-> -	    (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE))
-> -		return -EOPNOTSUPP;
-> -
-> -	/* Punch hole must have keep size set */
-> -	if ((mode & FALLOC_FL_PUNCH_HOLE) &&
-> -	    !(mode & FALLOC_FL_KEEP_SIZE))
-> +	/*
-> +	 * Modes are exclusive, even if that is not obvious from the encoding
-> +	 * as bit masks and the mix with the flag in the same namespace.
-> +	 *
-> +	 * To make things even more complicated, FALLOC_FL_ALLOCATE_RANGE is
-> +	 * encoded as no bit set.
-> +	 */
-> +	switch (mode & FALLOC_FL_MODE_MASK) {
-> +	case FALLOC_FL_ALLOCATE_RANGE:
-> +	case FALLOC_FL_UNSHARE_RANGE:
-> +	case FALLOC_FL_ZERO_RANGE:
-> +		break;
-> +	case FALLOC_FL_PUNCH_HOLE:
-> +		if (!(mode & FALLOC_FL_KEEP_SIZE))
-> +			return -EOPNOTSUPP;
-> +		break;
-> +	case FALLOC_FL_COLLAPSE_RANGE:
-> +	case FALLOC_FL_INSERT_RANGE:
-> +		if (mode & FALLOC_FL_KEEP_SIZE)
-> +			return -EOPNOTSUPP;
-> +		break;
-> +	default:
->  		return -EOPNOTSUPP;
-> -
-> -	/* Collapse range should only be used exclusively. */
-> -	if ((mode & FALLOC_FL_COLLAPSE_RANGE) &&
-> -	    (mode & ~FALLOC_FL_COLLAPSE_RANGE))
-> -		return -EINVAL;
-> -
-> -	/* Insert range should only be used exclusively. */
-> -	if ((mode & FALLOC_FL_INSERT_RANGE) &&
-> -	    (mode & ~FALLOC_FL_INSERT_RANGE))
-> -		return -EINVAL;
-> -
-> -	/* Unshare range should only be used with allocate mode. */
-> -	if ((mode & FALLOC_FL_UNSHARE_RANGE) &&
-> -	    (mode & ~(FALLOC_FL_UNSHARE_RANGE | FALLOC_FL_KEEP_SIZE)))
-> -		return -EINVAL;
-> +	}
->  
->  	if (!(file->f_mode & FMODE_WRITE))
->  		return -EBADF;
->  
->  	/*
-> -	 * We can only allow pure fallocate on append only files
-> +	 * On append-only files only space preallocation is supported.
->  	 */
->  	if ((mode & ~FALLOC_FL_KEEP_SIZE) && IS_APPEND(inode))
->  		return -EPERM;
-> diff --git a/include/linux/falloc.h b/include/linux/falloc.h
-> index f3f0b97b167579..3f49f3df6af5fb 100644
-> --- a/include/linux/falloc.h
-> +++ b/include/linux/falloc.h
-> @@ -25,12 +25,18 @@ struct space_resv {
->  #define FS_IOC_UNRESVSP64	_IOW('X', 43, struct space_resv)
->  #define FS_IOC_ZERO_RANGE	_IOW('X', 57, struct space_resv)
->  
-> -#define	FALLOC_FL_SUPPORTED_MASK	(FALLOC_FL_KEEP_SIZE |		\
-> -					 FALLOC_FL_PUNCH_HOLE |		\
-> -					 FALLOC_FL_COLLAPSE_RANGE |	\
-> -					 FALLOC_FL_ZERO_RANGE |		\
-> -					 FALLOC_FL_INSERT_RANGE |	\
-> -					 FALLOC_FL_UNSHARE_RANGE)
-> +/*
-> + * Mask of all supported fallocate modes.  Only one can be set at a time.
-> + *
-> + * In addition to the mode bit, the mode argument can also encode flags.
-> + * FALLOC_FL_KEEP_SIZE is the only supported flag so far.
-> + */
-> +#define FALLOC_FL_MODE_MASK	(FALLOC_FL_ALLOCATE_RANGE |	\
-> +				 FALLOC_FL_PUNCH_HOLE |		\
-> +				 FALLOC_FL_COLLAPSE_RANGE |	\
-> +				 FALLOC_FL_ZERO_RANGE |		\
-> +				 FALLOC_FL_INSERT_RANGE |	\
-> +				 FALLOC_FL_UNSHARE_RANGE)
->  
->  /* on ia32 l_start is on a 32-bit boundary */
->  #if defined(CONFIG_X86_64)
-> diff --git a/include/uapi/linux/falloc.h b/include/uapi/linux/falloc.h
-> index 51398fa57f6cdf..5810371ed72bbd 100644
-> --- a/include/uapi/linux/falloc.h
-> +++ b/include/uapi/linux/falloc.h
-> @@ -2,6 +2,7 @@
->  #ifndef _UAPI_FALLOC_H_
->  #define _UAPI_FALLOC_H_
->  
-> +#define FALLOC_FL_ALLOCATE_RANGE 0x00 /* allocate range */
->  #define FALLOC_FL_KEEP_SIZE	0x01 /* default is extend size */
->  #define FALLOC_FL_PUNCH_HOLE	0x02 /* de-allocates range */
->  #define FALLOC_FL_NO_HIDE_STALE	0x04 /* reserved codepoint */
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Omitting the struct assignment is a reasonable way to reduce the
+likelihood that a memset() will be emitted, so for this patch
+
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+
+It is not a complete solution, unfortunately, and I guess there may be
+other situations (compiler/arch combinations) where this might pop up
+again.
 
