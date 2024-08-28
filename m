@@ -1,62 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-27659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976929633D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:27:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5F89634A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 00:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B3B1C2363D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 21:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AB828674B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 22:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E1C1ACE10;
-	Wed, 28 Aug 2024 21:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E0B1AC8A9;
+	Wed, 28 Aug 2024 22:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QOpyQjSw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCeoCepV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C111AAE0D;
-	Wed, 28 Aug 2024 21:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6501A76B9;
+	Wed, 28 Aug 2024 22:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724880418; cv=none; b=Lkg4odpcI71ZbKZtsWmLAEL2EkFFlLHHpuBd8/f4JiTTMpirMAqiAouOW7hbFlaxZcnRlMeZwtKX3Hf6p5B8+Fi2Cm7AaHqo5cG8+sNZK+0N0ZBc1xdBkuSDPsmekhNKnDL0E4Ssnrz1U2cmg+tUFgNDeHqMKZ92eauT7ggnOrU=
+	t=1724883745; cv=none; b=ojsewdcdW5EBFl8seNxQu32G2QitQbZcUGTZ2war+TQBCdDifeyTkdm1Hsyf3jFIQvd666F6RKI0taohTTSY9//+25kX/GeXzssep4FXrldCLsH4tYk858X0YyArA58+l4jxUstrWJQVfuG2vG/w+6hoE0bzAseX3rV+NeB7Nd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724880418; c=relaxed/simple;
-	bh=vGx9HlegbSiFbbKaNUoRuWhVR+WntfoN9NTC7WHE02Q=;
+	s=arc-20240116; t=1724883745; c=relaxed/simple;
+	bh=uaRq3lgyla0tm6OWnaXtSL8VHv25JXRSqRWdpjHtVNE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QxnybIm3m/El6vUyt3oBieuChSiXIzO1swCdguVjMLQ/7FcjN8H0e0SPMBDThQ4uxeMx6rG/JXJJk7UxScm1O1ZS9NUNTSa8UTjuJU9cZxeE1ABzYRJrdDQpCtUlg6yz41NKvCIICITuMyJraVJ/DIYVrNM9+GAhBvblSu7rA2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QOpyQjSw; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0LhlfCKQ+1SzuxGlLV2cm1LHeLbux8Kp6w9vH1H+QGU=; b=QOpyQjSwc7hQC4dANP6cDjFxy/
-	vFwAoAhwmL5ZBNs5AVYoRjsJVMVx1pc92FHsoI8gJmLHEnJinnEJcZ06c5/TpmT+uIV3HTtnjyw4K
-	k5fDViZ1RumFOlRM/ngORHSzt014fwADpWegOqkHNisAMcY9gwRmV7lZSn5t5neZGUwEoRyGQGsZf
-	twHarXZAF6wRDrA9KD9M30IOWgLOnIoVq+TWoUplw3NH43YIdAWIobVkNSuOJPrvEVCHN+58fDoao
-	OPIDkv8RkIahBHXik3H6mqwWbWTXE+900bUvpFctPYRnIw3YZP+FY9uftY2W5+QQ8l38gdAF4lqyW
-	UTaIH5KA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sjQBo-0000000H3xz-3WdR;
-	Wed, 28 Aug 2024 21:26:52 +0000
-Date: Wed, 28 Aug 2024 14:26:52 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] xfs: Fix format specifier for max_folio_size in
- xfs_fs_fill_super()
-Message-ID: <Zs-WHKj4Jn6Beoon@bombadil.infradead.org>
-References: <20240827-xfs-fix-wformat-bs-gt-ps-v1-1-aec6717609e0@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kWMCdA58tywfTfs2Oz14YowpRCMjJgzAvVEUW6N1o1UvXtSbslAjNKPPxew9kjDg/jExsXzcr4rbuPpcAb9b0Lk3LPaAQCPbVh1TfDHu+OhI2x5jr8qWWizzUBMTTwOa1pW9zX5VKb53Ir1uhix+l/Dp6w7jHjIYf2wLrr84g7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCeoCepV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A7F6C4CEC0;
+	Wed, 28 Aug 2024 22:22:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724883743;
+	bh=uaRq3lgyla0tm6OWnaXtSL8VHv25JXRSqRWdpjHtVNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FCeoCepV0gG4cuOVF3ks5Bp5aeJVeAasvq4W39MZU3wY3Ey+v+JM9cE3OIHmhhXAZ
+	 7Ce3oBXIfZbJtqP1KkjoaQWkldvMtMFQKXaIaItKWsWTmryqMof+LVNpHiMCQ9/yzc
+	 8m8bGAThpRfeLap6i1uqTTLwdmaVkSKYbYV9rfSRYqqvlCNapEnFSc4mNWTTLejX8M
+	 ae6ckGvyYHaoFdt5BlxslBZj4d0Ia/M1logiy3nwxR2lZDbrYg9vw4J73zDPwssgTg
+	 qbkwV7588hbSGth3gaOcG7HRe4OB6ws/CyIAVowC0U/hUCuLPUN/eH/RfXE4K+XRtz
+	 MtuJTrfrKZHhA==
+Date: Wed, 28 Aug 2024 15:22:22 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	josef@toxicpanda.com, david@fromorbit.com
+Subject: Re: [PATCH v2 1/2] iomap: fix handling of dirty folios over
+ unwritten extents
+Message-ID: <20240828222222.GB6224@frogsfrogsfrogs>
+References: <20240828181912.41517-1-bfoster@redhat.com>
+ <20240828181912.41517-2-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,39 +59,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827-xfs-fix-wformat-bs-gt-ps-v1-1-aec6717609e0@kernel.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <20240828181912.41517-2-bfoster@redhat.com>
 
-On Tue, Aug 27, 2024 at 04:15:05PM -0700, Nathan Chancellor wrote:
-> When building for a 32-bit architecture, where 'size_t' is 'unsigned
-> int', there is a warning due to use of '%ld', the specifier for a 'long
-> int':
+On Wed, Aug 28, 2024 at 02:19:10PM -0400, Brian Foster wrote:
+> The iomap zero range implementation doesn't properly handle dirty
+> pagecache over unwritten mappings. It skips such mappings as if they
+> were pre-zeroed. If some part of an unwritten mapping is dirty in
+> pagecache from a previous write, the data in cache should be zeroed
+> as well. Instead, the data is left in cache and creates a stale data
+> exposure problem if writeback occurs sometime after the zero range.
 > 
->   In file included from fs/xfs/xfs_linux.h:82,
->                    from fs/xfs/xfs.h:26,
->                    from fs/xfs/xfs_super.c:7:
->   fs/xfs/xfs_super.c: In function 'xfs_fs_fill_super':
->   fs/xfs/xfs_super.c:1654:1: error: format '%ld' expects argument of type 'long int', but argument 5 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
->    1654 | "block size (%u bytes) not supported; Only block size (%ld) or less is supported",
->         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    1655 |                                 mp->m_sb.sb_blocksize, max_folio_size);
->         |                                                        ~~~~~~~~~~~~~~
->         |                                                        |
->         |                                                        size_t {aka unsigned int}
->   ...
->   fs/xfs/xfs_super.c:1654:58: note: format string is defined here
->    1654 | "block size (%u bytes) not supported; Only block size (%ld) or less is supported",
->         |                                                        ~~^
->         |                                                          |
->         |                                                          long int
->         |                                                        %d
+> Most callers are unaffected by this because the higher level
+> filesystem contexts that call zero range typically perform a filemap
+> flush of the target range for other reasons. A couple contexts that
+> don't otherwise need to flush are write file size extension and
+> truncate in XFS. The former path is currently susceptible to the
+> stale data exposure problem and the latter performs a flush
+> specifically to work around it.
 > 
-> Use the proper 'size_t' specifier, '%zu', to resolve the warning.
+> This is clearly inconsistent and incomplete. As a first step toward
+> correcting behavior, lift the XFS workaround to iomap_zero_range()
+> and unconditionally flush the range before the zero range operation
+> proceeds. While this appears to be a bit of a big hammer, most all
+> users already do this from calling context save for the couple of
+> exceptions noted above. Future patches will optimize or elide this
+> flush while maintaining functional correctness.
 > 
-> Fixes: 0ab3ca31b012 ("xfs: enable block size larger than page size support")
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> Fixes: ae259a9c8593 ("fs: introduce iomap infrastructure")
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+I wonder why gfs2 (aka the other iomap_zero_range user) doesn't have a
+truncate-down flush hammer, but maybe it doesn't support unwritten
+extents?  I didn't find anything obvious when I looked, so
 
-  Luis
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+(but you might want to see if Andreas has any loud objections to this)
+
+--D
+
+> ---
+>  fs/iomap/buffered-io.c | 10 ++++++++++
+>  fs/xfs/xfs_iops.c      | 10 ----------
+>  2 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index f420c53d86ac..3e846f43ff48 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1451,6 +1451,16 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+>  	};
+>  	int ret;
+>  
+> +	/*
+> +	 * Zero range wants to skip pre-zeroed (i.e. unwritten) mappings, but
+> +	 * pagecache must be flushed to ensure stale data from previous
+> +	 * buffered writes is not exposed.
+> +	 */
+> +	ret = filemap_write_and_wait_range(inode->i_mapping,
+> +			pos, pos + len - 1);
+> +	if (ret)
+> +		return ret;
+> +
+>  	while ((ret = iomap_iter(&iter, ops)) > 0)
+>  		iter.processed = iomap_zero_iter(&iter, did_zero);
+>  	return ret;
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 1cdc8034f54d..ddd3697e6ecd 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -870,16 +870,6 @@ xfs_setattr_size(
+>  		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
+>  				&did_zeroing);
+>  	} else {
+> -		/*
+> -		 * iomap won't detect a dirty page over an unwritten block (or a
+> -		 * cow block over a hole) and subsequently skips zeroing the
+> -		 * newly post-EOF portion of the page. Flush the new EOF to
+> -		 * convert the block before the pagecache truncate.
+> -		 */
+> -		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
+> -						     newsize);
+> -		if (error)
+> -			return error;
+>  		error = xfs_truncate_page(ip, newsize, &did_zeroing);
+>  	}
+>  
+> -- 
+> 2.45.0
+> 
+> 
 
