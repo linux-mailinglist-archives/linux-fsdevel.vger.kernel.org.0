@@ -1,323 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-27488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76719961C25
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 04:33:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25E3961C24
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 04:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012E81F24B4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 02:33:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34940B22631
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 02:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134883CF74;
-	Wed, 28 Aug 2024 02:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF9241A8F;
+	Wed, 28 Aug 2024 02:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RntGJRjl"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jaeM4dmn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5A09460
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 02:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724812391; cv=none; b=LLU68Sifezdake8r5StUxQelvcgpk684bwivy6YdfH7AvEQz/CBLTZQMPsG/JgdOIacoFJ9dcwM24xfYl30aSGYaRJrF6ZskjVgkGThwaz1OlpnjP8R9XE6jQaOQHWhsTDsT5dq43nsbJ2BWZVzBhGwcEg/QsiWLebQk15C3D40=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724812391; c=relaxed/simple;
-	bh=HnRkE2m+CMIyEbJmZjd2DERKjyW7u06/q3ywQ5yhJQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o6/hdUe9uRNLKgBE7EXEScJRnBTw9N0Ig7N5r+tdGLuNcWL0zbxg3Zod90t5RT5JMHZw+b3nr+8xTAskyViW4+kCs45Erw8P0UpRfu3wU7pNqVDn34Y9dKkQ+bWskxG28aol/8bTRkT6G6bIbIJpSPY0SW2UOijyBGvSIG1usIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RntGJRjl; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724812380; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=nPhU3QqNYn4xHu9flI6RmBH6x1JRbAv8Hel5V+c4hN0=;
-	b=RntGJRjlb+Op4emBzDtcUB4urG/OvhTOEGz4+EbKXXebzo1StwHoE0g5uyXiHM0EoXMCrjK+ZdcyfLWcPe7FGYDwrnEv9MyeBrmAzCNst57bYlHJxrjC9ZdmekW6lPg87Wf9WxoqHkYn5jx8IqhrZFjcnGli8CkS2vMHWroqOIw=
-Received: from 30.221.147.140(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WDo30Ye_1724812061)
-          by smtp.aliyun-inc.com;
-          Wed, 28 Aug 2024 10:27:41 +0800
-Message-ID: <b0334041-f1dc-41b2-832b-cf7d0a2ba764@linux.alibaba.com>
-Date: Wed, 28 Aug 2024 10:27:39 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0BA8F49
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 02:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724812370; cv=fail; b=eeA4hBWjaf5uxvdgu3z9M/NXXq/BmrAgMGXsbtNIFF+CF540HLSS5fxVGsgYB9umhyEUjngosZaT1sKXSBVzHcyLERKy6U383S0AHW4OC0geEs7+zjY0b/TiDhdxCJDsxgwUYBy7ILdU9H5214JoVRXQBzRyzqyw0ZOc9v6bMKI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724812370; c=relaxed/simple;
+	bh=dPdrFkh76M/ckTsGMCVa333PNqAfk6JrRr7toFLOeDs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZVXjOrHLDGIseWl56yHLho9++rrlgitvQhjWPbkg7Jeg7Ki86Er37vbbAwT3xTt8HIREXpMjuTLnYDHg3FG8Lv6358MCjoebGzOKImHhi6lcTIiRGyphRh/G7lfepJEWStlyeXBEZaZqY4a1lmWwO5t9Rbu3u6MU9I6EN7FRwVc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jaeM4dmn; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724812368; x=1756348368;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=dPdrFkh76M/ckTsGMCVa333PNqAfk6JrRr7toFLOeDs=;
+  b=jaeM4dmnvLQVds7f8vX9rPfbI8AP8tcVB52GWgpXfL9uPZ5p9w0yW62M
+   ZnzpFbIaUue9QGkFpqbRT4ed2GPNEg5r5T2jJQkrdIMMJOHr1Fv5soprH
+   AK5jHX0uqn4IbtoiT6BsadxSe3jYqePcx9rTqjpEDOoQ9K5Hz4rGmIwZC
+   UnIAAOOOK9zfqNledKoLmjGSiHoOnsNrK7kO/ci3hKUrdepHerqsrb4fu
+   pfSx/UI7u1tSr4yDX6unaQnJlJKlyY+34UN8IDM7jN6UXaa6a5PJtbtea
+   w/E7mvr85lZ2Z1ZjnEPvXlgA6T/Ex4eSt5ueuPYSpLU847K65MGqYkQJK
+   w==;
+X-CSE-ConnectionGUID: kmOXT4OSSxeU9VDltMsp/w==
+X-CSE-MsgGUID: Bls+pLT7S6i05DBYAMzRNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="22847234"
+X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
+   d="scan'208";a="22847234"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 19:32:48 -0700
+X-CSE-ConnectionGUID: XI+aCWJ3QqCooFG12p/2vA==
+X-CSE-MsgGUID: W8aKPJ7YSYWt94yNOVbBxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
+   d="scan'208";a="63059794"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Aug 2024 19:32:47 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 27 Aug 2024 19:32:47 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 27 Aug 2024 19:32:46 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 27 Aug 2024 19:32:46 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 27 Aug 2024 19:32:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Qf3Xkyva63ec6ZtPDAIptttxp/wKRvVxYh9BhcnEYw4wgH3bd2V8J8JVQ4zHfdYReRhijND9HVJ/toD5G5X2HKnR1VEBmIEU/Km/UrHWZwzH0pzmIMzab+9sWWEKto31hlSIUOUEr97X7tZKItePzkiZTfsvLimPPU0C2M6B8hKfLrVIIi83KxB66OLR767a9iEp1K2W9LdSM8UOibkbtlUKK7ohQc5u457gKJBbma92RCnL1IZ5D6je/tAagmzg2vaUdKQbFuiwSqrzBFPO690gW+/7+g01Qg7EHObQOmcfTaVSsiQ8Kn3MHcIN5WyBq4oknTV9bj+OdjE0nuYiQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qZ3qF1q7hkzoenmBNPJanbHNGLOfuhC8fXMXtvNpzpk=;
+ b=Di4Zx/uEpo/me6v7h38QtM8LffjPRBkTHysgaW6XZX1EJXJuQ1UPyydkU+8zecIqfsx99/IPmPGOhxYXQ0IQo1t0+u3JgvMSU50mLunT+pFDA8AKPII4oQNB/GUleMIe9cNcSE5l58Bmm5jls53gMyF45tfWlT4VrMb6qRKDY43irC1TLkBsSmgzVmy+xoVum7lnEsqLh/JISlMiXAJzGZVtRyx9VldHeuV0e3PzKEM8whN27HFR54+0WHVZyURuGpTzwBDBpRfnq5YhFPWh1WogI1noyaCcmwdJEcTzBfLK9GhKUH6oxQyQ5PYkYu8vvvqv717793efNDILTCYSGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by LV8PR11MB8581.namprd11.prod.outlook.com (2603:10b6:408:1e5::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Wed, 28 Aug
+ 2024 02:32:44 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
+ 02:32:44 +0000
+Date: Wed, 28 Aug 2024 10:32:34 +0800
+From: Oliver Sang <oliver.sang@intel.com>
+To: Christian Brauner <brauner@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Christian Brauner
+	<christianvanbrauner@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+	<ying.huang@intel.com>, <feng.tang@intel.com>, <fengwei.yin@intel.com>,
+	<oliver.sang@intel.com>
+Subject: Re: [brauner-vfs:work.dio] [fs]  155a115703:  fio.write_iops -2.3%
+ regression
+Message-ID: <Zs6MQrimwwCVCbVk@xsang-OptiPlex-9020>
+References: <202408271524.6ecfb631-oliver.sang@intel.com>
+ <20240827-ansehen-mengenlehre-13e54cc52e38@brauner>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240827-ansehen-mengenlehre-13e54cc52e38@brauner>
+X-ClientProxiedBy: SI2PR04CA0006.apcprd04.prod.outlook.com
+ (2603:1096:4:197::13) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] fuse: add default_request_timeout and
- max_request_timeout sysctls
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
- bernd.schubert@fastmail.fm, laoar.shao@gmail.com, kernel-team@meta.com,
- Bernd Schubert <bschubert@ddn.com>
-References: <20240813232241.2369855-1-joannelkoong@gmail.com>
- <20240813232241.2369855-3-joannelkoong@gmail.com>
- <2cd21f0b-e3db-4a6f-8a5e-8da4991985e8@linux.alibaba.com>
- <CAJnrk1Z+z8JzCu4QxnGRHsXGLQNmjfi32aGMqRjAE_C0LRn-7Q@mail.gmail.com>
- <5488bfcc-80be-4eb1-aac0-ed904becdb1c@linux.alibaba.com>
- <CAJnrk1aPFhPG9YuOqPo4DtipsdNNmaA96aQBatz03MkH7kPcWA@mail.gmail.com>
- <cca30890-afd0-412e-b4c8-c075bcaf9ed5@linux.alibaba.com>
- <CAJnrk1b_95fQwWWTWOm0FG25PXOp+dgmPVx6XYrhfHOzdoW01g@mail.gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJnrk1b_95fQwWWTWOm0FG25PXOp+dgmPVx6XYrhfHOzdoW01g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|LV8PR11MB8581:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76f6c7bc-2174-4830-e067-08dcc709b24b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gdoGKlQ0lCAuGDwNcD0N/BFMIHsQwxfPKuFwcYEARFjkDWY0irqQ8M4oeYzQ?=
+ =?us-ascii?Q?Pg+VlOkEQs/T5thuBAo6bP9FkxR2LPaqyMADJTejR/ZTnTWx1Zwslald9SKc?=
+ =?us-ascii?Q?5L08pUngASa1DDaZCANwUvDflCfxHBooH3xnshVUWhzFek2z+GTuQS9D0Z9X?=
+ =?us-ascii?Q?1/wsbXtSoLVxDkZKxZrlRTgLfdEs2j/X8A0S0tIBybIMg2TI2zfd504Aw2GH?=
+ =?us-ascii?Q?MRdmyTz8C0naQ5wFeogieBKU1zpGRRnptu3kGJPW9/vRWvedLTC8Bg2XoSdu?=
+ =?us-ascii?Q?0OS6XPDjTg7WLIFBHPLHGzd43T1cuSvy/AgFn7SUIvNjj4tDqEt3eYS2YzCc?=
+ =?us-ascii?Q?vftrgBVzdjUvCuNY88EMtnRO9iUXbggRkgaUjCgWhZ/41gk0h/52QHtZLM4l?=
+ =?us-ascii?Q?diEDdIExt49IOHUOa89o0Nf1cpDZEfmWe5Xe+nkH3mXXGFGFa1+oEuwCte3j?=
+ =?us-ascii?Q?t6ryOVZoJ3l+OTUC2aptfw1TqAMSPxSBDaGcNCTV4zcqD6taWel6ez7XRx9/?=
+ =?us-ascii?Q?VXWWnuqFrG4ECeSmSo9w67PscWlMhgwCEhC4tr4XmpE1dsF/Jew/XjoIpVoJ?=
+ =?us-ascii?Q?ofRAxyD7IK7A4fr+0A1iUP1kZQQ7LzDb+4wAYvwXCgQhW6/Wq9XUZK7EZych?=
+ =?us-ascii?Q?tKa7jbgpewzmlXhpxW6sVRuJCquPHfvHuAUztpeK3Ff0SRmTSff2YQMnEmUn?=
+ =?us-ascii?Q?hbouEO6iahXCvUYno+XpVsEjjXShheAFyzwJk7j87uWiHrYoMp+wpkYbVdAk?=
+ =?us-ascii?Q?2w0xfS0GbRAASWNXGRMH1SQwCB4nEsEazj6jfenNIJu+Pkcehkzh7hGewGvU?=
+ =?us-ascii?Q?Nc+B6lfgif7Ld7hCVYyFvdfmjlNT6JJ7fc60N0pU5leXHekpXmhOsxLLDhOt?=
+ =?us-ascii?Q?ERczbIf+E5kUxaeAykKlCn83cDt81tw0whlPmzJ8ZKNef/2oZJd1Q3DsOvWt?=
+ =?us-ascii?Q?xUIcyaRhZnxKcOJWjTNG+SfF+v5+3r4QnYEMQD+LJzhWHcxQ+fnCHo8MZIRk?=
+ =?us-ascii?Q?1OFdYJ3++uIMenuPRpCQNUG2LtV5saK3Oq16OLENdgmSnQEQ34jCGOEMvwlV?=
+ =?us-ascii?Q?b/gSBgEvNQQXqR8om5/nlJhGWDG8aj6qQfgZjH6QX+RnfafAIYhKhVv0Y80m?=
+ =?us-ascii?Q?7Zw/eotBOnheOFZbfIdqDi/jQEHg9ZByNPhBaprLDO+bz3SlHslBnmCtVi2G?=
+ =?us-ascii?Q?GYjW5QHq/jx0X62mq/uAwHggMpHrr/ahnUZn5ulMJjgk1gj/7iGeqlTUMnjp?=
+ =?us-ascii?Q?PqcDLTBfmcVakAZuVlEfrQ/xVl+BZOyGviqbwHdRbyiJT9Kg+sIY4mhCO/0O?=
+ =?us-ascii?Q?OT4FqMA0TUb5vDd2NghvbGlLHhUJwut5Mk1dVGRhZRDDUw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?O9FRUhvoFeedN0TiEJSVs22O7p+czleQ2DZwaOZ5NnmQvprW+zofvglQAbTL?=
+ =?us-ascii?Q?iQ52SNzd69NxmCnhpMcNeGpLWjx+B8zQd0MTeKLRDQ01CDK/ce9gX/n/Qfq8?=
+ =?us-ascii?Q?3wg0yy9HKkgliaRpNmGV6+HOTJeyiH0LQZwdmAA1twoqNZeXH7DQfsHCI+C0?=
+ =?us-ascii?Q?F43xa/gWginclxSXCs6AGBEHWIFRX+Ygc0vU2Nbcque+teNbdTA07L1gXUsL?=
+ =?us-ascii?Q?iEQdRmyMZHAS+oduC3mQhjgq4cZvxHQT+2MlwraZBrJjv8b2wb/r+HEy5F9V?=
+ =?us-ascii?Q?B5YRTo+eufIOZHG2XwTMpdZX1Lwws9euiRFMFPSMP6alfHNhJu5dJFdB1oQn?=
+ =?us-ascii?Q?7J9lokTyei81mWWqD20OiZl6Q7g48b+e+oCPfxXbD0S7bAtZvG0upx2YwsMS?=
+ =?us-ascii?Q?eRo1vaYXYQbR+mL2Al6YVNvHok/lA1kdTTZsdDjAnJmIDENBlcPnP9bw6r1z?=
+ =?us-ascii?Q?oVrXnXyp1EgBChrznPnaT9i3rRFy5JN5qQknfqKjmDU55E3BrecoQ5F9I3r9?=
+ =?us-ascii?Q?ZyIQlLhy1cT74SWE5l2vyLUh1yYHDI4Y5Os1O6naqZ3Z1zT6NE5lmjDEwRyL?=
+ =?us-ascii?Q?bYYNLUzSMNX9fC+iRO+/mhbk751a3U0Sbd6s7HnJPVKzxDtGVn5oEY2UsEWu?=
+ =?us-ascii?Q?GJ7zGSmKls3qk8LPap2lpfy0vNRx2NplxFQvt8ImvWPIFwxZStmjwggsbPwJ?=
+ =?us-ascii?Q?4pDLMAZ833pRn4C7/zBiuwssCBIig8tTVibdlE6Ftw07LUQBgkAeU9FC8Oh8?=
+ =?us-ascii?Q?Tpk4DH0rveGJzptlfbTVBN6oNUxx2V5AZjHeBcOFzWnQK32UYDI7vCie56TF?=
+ =?us-ascii?Q?N5Gv1ZbYMoqX0FonqypBQKKUpHttV/xnTClZX6+QAMm7fczMvuto0H9jF5gI?=
+ =?us-ascii?Q?amHKrPRhY2EvACh2NH3ozPtx2G3lscedhQYv83lBtjxfskrBsU56d0uOZnL+?=
+ =?us-ascii?Q?G5bY5WISx2FAFpAkh8F3EfIC0WcAb09yDo6pp+Dek3HdBbdl/c5g27FoEFMr?=
+ =?us-ascii?Q?3NNvmuouV23jKimpMnpD4WFMPMlbu8sPvQ/LnWuoVZxb/9TYePwzPrJ7rXk4?=
+ =?us-ascii?Q?8gls6hUR0JjsVsKd5GgaQ+jzJRemjsSsHdHlFk4YrEGJruvIWaIMEPi+0uvB?=
+ =?us-ascii?Q?w5vksO9Uv+9tSB/9ZkxQvNmUAeSCKww+gl0+AFguTqsDmoyg1TbRO0MICA2t?=
+ =?us-ascii?Q?9dFftHINLFOlowaQBD9nXbVqSDq/i2U2AOJBOYu7cEv27hR+o0JayQaUMFMg?=
+ =?us-ascii?Q?lMV824YJpNuggP3n1pD6DX50rFCCzb2mj5JxXv5YoGX8QQGRG0CDNR+Fy0HX?=
+ =?us-ascii?Q?K3XliHHdE63Oqf+X3qI09Ybsmnim7GpBlQEuz0gcvk1X4SfxTBwvVUpu3dut?=
+ =?us-ascii?Q?xFifNLDilnid6S7yKpMmwSEvjq6ieJMAlf9yBdqi/wNoxqxoK400RDl+WUu7?=
+ =?us-ascii?Q?iaOGubGdBnRrdZ/NPFxMvMO2R+IVKDK+hI84SGuNI3/2UKAWoqiw8g2oltgH?=
+ =?us-ascii?Q?Qj7zPJbvpBNgs+FjJlgCSEH8NJKNI/VVnhC4kQNXWfAMeAJgQKwDT/G2FBL4?=
+ =?us-ascii?Q?oSt7u8uupcPfsXyASphvROVow+xqfB6d7JOMJoNzmoV8WRB2blqBclEQL4gL?=
+ =?us-ascii?Q?VQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76f6c7bc-2174-4830-e067-08dcc709b24b
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 02:32:44.0528
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5v3LQ8b0TDqesVpLFOHplqnj9ziLWHYTZPmcx+jgWuPQ1CJ8vS+H2EvJtQX+A0C8AHCIkDimxebt0ahNHk4wzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8581
+X-OriginatorOrg: intel.com
 
+hi, Christian,
 
-
-On 8/28/24 2:13 AM, Joanne Koong wrote:
-> On Tue, Aug 27, 2024 at 1:12 AM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>
->> On 8/24/24 6:54 AM, Joanne Koong wrote:
->>> On Thu, Aug 22, 2024 at 7:17 PM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>>>
->>>> On 8/23/24 5:19 AM, Joanne Koong wrote:
->>>>> On Thu, Aug 22, 2024 at 12:06 AM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 8/14/24 7:22 AM, Joanne Koong wrote:
->>>>>>> Introduce two new sysctls, "default_request_timeout" and
->>>>>>> "max_request_timeout". These control timeouts on replies by the
->>>>>>> server to kernel-issued fuse requests.
->>>>>>>
->>>>>>> "default_request_timeout" sets a timeout if no timeout is specified by
->>>>>>> the fuse server on mount. 0 (default) indicates no timeout should be enforced.
->>>>>>>
->>>>>>> "max_request_timeout" sets a maximum timeout for fuse requests. If the
->>>>>>> fuse server attempts to set a timeout greater than max_request_timeout,
->>>>>>> the system will default to max_request_timeout. Similarly, if the max
->>>>>>> default timeout is greater than the max request timeout, the system will
->>>>>>> default to the max request timeout. 0 (default) indicates no timeout should
->>>>>>> be enforced.
->>>>>>>
->>>>>>> $ sysctl -a | grep fuse
->>>>>>> fs.fuse.default_request_timeout = 0
->>>>>>> fs.fuse.max_request_timeout = 0
->>>>>>>
->>>>>>> $ echo 0x100000000 | sudo tee /proc/sys/fs/fuse/default_request_timeout
->>>>>>> tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
->>>>>>>
->>>>>>> $ echo 0xFFFFFFFF | sudo tee /proc/sys/fs/fuse/default_request_timeout
->>>>>>> 0xFFFFFFFF
->>>>>>>
->>>>>>> $ sysctl -a | grep fuse
->>>>>>> fs.fuse.default_request_timeout = 4294967295
->>>>>>> fs.fuse.max_request_timeout = 0
->>>>>>>
->>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>>>>>> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
->>>>>>> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
->>>>>>> ---
->>>>>>>  Documentation/admin-guide/sysctl/fs.rst | 17 ++++++++++
->>>>>>>  fs/fuse/Makefile                        |  2 +-
->>>>>>>  fs/fuse/fuse_i.h                        | 16 ++++++++++
->>>>>>>  fs/fuse/inode.c                         | 19 ++++++++++-
->>>>>>>  fs/fuse/sysctl.c                        | 42 +++++++++++++++++++++++++
->>>>>>>  5 files changed, 94 insertions(+), 2 deletions(-)
->>>>>>>  create mode 100644 fs/fuse/sysctl.c
->>>>>>>
->>>>>>> diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
->>>>>>> index 47499a1742bd..44fd495f69b4 100644
->>>>>>> --- a/Documentation/admin-guide/sysctl/fs.rst
->>>>>>> +++ b/Documentation/admin-guide/sysctl/fs.rst
->>>>>>> @@ -332,3 +332,20 @@ Each "watch" costs roughly 90 bytes on a 32-bit kernel, and roughly 160 bytes
->>>>>>>  on a 64-bit one.
->>>>>>>  The current default value for ``max_user_watches`` is 4% of the
->>>>>>>  available low memory, divided by the "watch" cost in bytes.
->>>>>>> +
->>>>>>> +5. /proc/sys/fs/fuse - Configuration options for FUSE filesystems
->>>>>>> +=====================================================================
->>>>>>> +
->>>>>>> +This directory contains the following configuration options for FUSE
->>>>>>> +filesystems:
->>>>>>> +
->>>>>>> +``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file for
->>>>>>> +setting/getting the default timeout (in seconds) for a fuse server to
->>>>>>> +reply to a kernel-issued request in the event where the server did not
->>>>>>> +specify a timeout at mount. 0 indicates no timeout.
->>>>>>> +
->>>>>>> +``/proc/sys/fs/fuse/max_request_timeout`` is a read/write file for
->>>>>>> +setting/getting the maximum timeout (in seconds) for a fuse server to
->>>>>>> +reply to a kernel-issued request. If the server attempts to set a
->>>>>>> +timeout greater than max_request_timeout, the system will use
->>>>>>> +max_request_timeout as the timeout. 0 indicates no timeout.
->>>>>>
->>>>>> "0 indicates no timeout"
->>>>>>
->>>>>> I think 0 max_request_timeout shall indicate that there's no explicit
->>>>>> maximum limitation for request_timeout.
->>>>>
->>>>> Hi Jingbo,
->>>>>
->>>>> Ah I see where the confusion in the wording is (eg that "0 indicates
->>>>> no timeout" could be interpreted to mean there is no timeout at all
->>>>> for the connection, rather than no timeout as the max limit). Thanks
->>>>> for pointing this out. I'll make this more explicit in v5. I'll change
->>>>> the wording above for the "default_request_timeout" case too.
->>>>>
->>>>>>
->>>>>>
->>>>>>> diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
->>>>>>> index 6e0228c6d0cb..cd4ef3e08ebf 100644
->>>>>>> --- a/fs/fuse/Makefile
->>>>>>> +++ b/fs/fuse/Makefile
->>>>>>> @@ -7,7 +7,7 @@ obj-$(CONFIG_FUSE_FS) += fuse.o
->>>>>>>  obj-$(CONFIG_CUSE) += cuse.o
->>>>>>>  obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
->>>>>>>
->>>>>>> -fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
->>>>>>> +fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o sysctl.o
->>>>>>>  fuse-y += iomode.o
->>>>>>>  fuse-$(CONFIG_FUSE_DAX) += dax.o
->>>>>>>  fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
->>>>>>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
->>>>>>> index 0a2fa487a3bf..dae9977fa050 100644
->>>>>>> --- a/fs/fuse/fuse_i.h
->>>>>>> +++ b/fs/fuse/fuse_i.h
->>>>>>> @@ -47,6 +47,14 @@
->>>>>>>  /** Number of dentries for each connection in the control filesystem */
->>>>>>>  #define FUSE_CTL_NUM_DENTRIES 5
->>>>>>>
->>>>>>> +/*
->>>>>>> + * Default timeout (in seconds) for the server to reply to a request
->>>>>>> + * if no timeout was specified on mount
->>>>>>> + */
->>>>>>> +extern u32 fuse_default_req_timeout;
->>>>>>> +/** Max timeout (in seconds) for the server to reply to a request */
->>>>>>> +extern u32 fuse_max_req_timeout;
->>>>>>> +
->>>>>>>  /** List of active connections */
->>>>>>>  extern struct list_head fuse_conn_list;
->>>>>>>
->>>>>>> @@ -1486,4 +1494,12 @@ ssize_t fuse_passthrough_splice_write(struct pipe_inode_info *pipe,
->>>>>>>                                     size_t len, unsigned int flags);
->>>>>>>  ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma);
->>>>>>>
->>>>>>> +#ifdef CONFIG_SYSCTL
->>>>>>> +int fuse_sysctl_register(void);
->>>>>>> +void fuse_sysctl_unregister(void);
->>>>>>> +#else
->>>>>>> +static inline int fuse_sysctl_register(void) { return 0; }
->>>>>>> +static inline void fuse_sysctl_unregister(void) { return; }
->>>>>>> +#endif /* CONFIG_SYSCTL */
->>>>>>> +
->>>>>>>  #endif /* _FS_FUSE_I_H */
->>>>>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->>>>>>> index 9e69006fc026..cf333448f2d3 100644
->>>>>>> --- a/fs/fuse/inode.c
->>>>>>> +++ b/fs/fuse/inode.c
->>>>>>> @@ -35,6 +35,10 @@ DEFINE_MUTEX(fuse_mutex);
->>>>>>>
->>>>>>>  static int set_global_limit(const char *val, const struct kernel_param *kp);
->>>>>>>
->>>>>>> +/* default is no timeout */
->>>>>>> +u32 fuse_default_req_timeout = 0;
->>>>>>> +u32 fuse_max_req_timeout = 0;
->>>>>>> +
->>>>>>>  unsigned max_user_bgreq;
->>>>>>>  module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
->>>>>>>                 &max_user_bgreq, 0644);
->>>>>>> @@ -1678,6 +1682,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
->>>>>>>       struct fuse_conn *fc = fm->fc;
->>>>>>>       struct inode *root;
->>>>>>>       struct dentry *root_dentry;
->>>>>>> +     u32 req_timeout;
->>>>>>>       int err;
->>>>>>>
->>>>>>>       err = -EINVAL;
->>>>>>> @@ -1730,10 +1735,16 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
->>>>>>>       fc->group_id = ctx->group_id;
->>>>>>>       fc->legacy_opts_show = ctx->legacy_opts_show;
->>>>>>>       fc->max_read = max_t(unsigned int, 4096, ctx->max_read);
->>>>>>> -     fc->req_timeout = ctx->req_timeout * HZ;
->>>>>>>       fc->destroy = ctx->destroy;
->>>>>>>       fc->no_control = ctx->no_control;
->>>>>>>       fc->no_force_umount = ctx->no_force_umount;
->>>>>>> +     req_timeout = ctx->req_timeout ?: fuse_default_req_timeout;
->>>>>>> +     if (!fuse_max_req_timeout)
->>>>>>> +             fc->req_timeout = req_timeout * HZ;
->>>>>>> +     else if (!req_timeout)
->>>>>>> +             fc->req_timeout = fuse_max_req_timeout * HZ;
->>>>>>
->>>>>> So if fuse_max_req_timeout is non-zero and req_timeout is zero (either
->>>>>> because of 0 fuse_default_req_timeout, or explicit "-o request_timeout =
->>>>>> 0" mount option), the final request timeout is exactly
->>>>>> fuse_max_req_timeout, which is unexpected as I think 0
->>>>>> fuse_default_req_timeout, or "-o request_timeout=0" shall indicate no
->>>>>> timeout.
->>>>>
->>>>> fuse_max_req_timeout takes precedence over fuse_default_req_timeout
->>>>> (eg if the system administrator wants to enforce a max limit on fuse
->>>>> timeouts, that is imposed even if a specific fuse server didn't
->>>>> indicate a timeout or indicated no timeout). Sorry, that wasn't made
->>>>> clear in the documentation. I'll add that in for v5.
->>>>
->>>> OK that is quite confusing.  If the system admin wants to enforce a
->>>> timeout, then a non-zero fuse_default_req_timeout is adequate.  What's
->>>> the case where fuse_default_req_timeout must be 0, and the aystem admin
->>>> has to impose the enforced timeout through fuse_max_req_timeout?
->>>>
->>>> IMHO the semantics of fuse_max_req_timeout is not straightforward and
->>>> can be confusing if it implies an enforced timeout when no timeout is
->>>> specified, while at the same time it also imposes a maximum limitation
->>>> when timeout is specified.
->>>
->>> In my point of view, max_req_timeout is the ultimate safeguard the
->>> administrator can set to enforce a timeout on all fuse requests on the
->>> system (eg to mitigate rogue servers). When this is set, this
->>> guarantees that absolutely no request will take longer than
->>> max_req_timeout for the server to respond.
->>>
->>> My understanding of /proc/sys sysctls is that ACLs can be used to
->>> grant certain users/groups write permission for specific sysctl
->>> parameters. So if a user wants to enforce a default request timeout,
->>> they can set that. If that timeout is shorter than what the max
->>> request timeout has been set to, then the request should time out
->>> earlier according to that desired default timeout. But if it's greater
->>> than what the max request timeout allows, then the max request timeout
->>> limits the timeout on the request (the max request timeout is the
->>> absolute upper bound on how long a request reply can take). It doesn't
->>> matter if the user set no timeout as the default req timeout - what
->>> matters is that there is a max req timeout on the system, and that
->>> takes precedence for enforcing how long request replies can take.
->>>
->>
->> Sorry for the late reply, just back from vacation these days.
->>
->> Anyway, if max_req_timeout enforces a maximum timeout no matter whether
->> the fuse server explicitly specifies a timeout or not, then the
->> semantics of fuse_default_req_timeout seems a little bit overlapped with
->> max_req_timeout, right?  The only place where fuse_default_req_timeout
->> plays a role is when ctx->req_timeout and fuse_max_req_timeout are both
->> zero, in which case we can get the same effect if we eliminate
->> fuse_default_req_timeout and configure a non-zero fuse_max_req_timeout.
->>
+On Tue, Aug 27, 2024 at 10:39:23AM +0200, Christian Brauner wrote:
+> On Tue, Aug 27, 2024 at 04:33:55PM GMT, kernel test robot wrote:
+> > 
+> > 
+> > Hello,
+> > 
+> > kernel test robot noticed a -2.3% regression of fio.write_iops on:
+> > 
+> > 
+> > commit: 155a11570398943dcb623a2390ac27f9eae3d8b3 ("fs: remove audit dummy context check")
+> > https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git work.dio
 > 
-> The behavior would not be the same if we eliminated
-> fuse_default_request_timeout and configured a non-zero
-> fuse_max_request_timeout instead. For example, say we want a default
-> timeout of 10 secs. With fuse_default_request_timeout set to 10 secs,
-> if a server specifies a timeout that is 15 secs, that is perfectly ok.
-> If we get rid of fuse_default_request_timeout and just use
-> fuse_max_request_timeout of 10 secs, that will limit servers to 10
-> secs even if they specified 15 secs.
+> This is a dead branch and the patches in there have gone into other
+> branches in different versions.
 > 
+> Aside from that it seems extremely unlikely to be related to this.
 
-Alright, make sense to me.
+thanks a lot for information!
 
-I suddenly realized that zero timeout (either the fuse server explicitly
-specifies "-o request_timeout=0" or fuse_default_req_timeout is 0)
-actually indicates an infinite timeout。  In this perspective, capping
-the (infinite) timeout to fuse_max_request_timeout indeed makes sense.
-
-
--- 
-Thanks,
-Jingbo
+> 
+> Thanks!
+> Christian
 
