@@ -1,134 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-27546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFD7962511
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 12:38:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACB8962539
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 12:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26D81C20EAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 10:38:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF251C21822
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 10:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E909E16BE29;
-	Wed, 28 Aug 2024 10:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A9B16A37C;
+	Wed, 28 Aug 2024 10:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZxmvhUIH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLUNT2+y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B296D1684B4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 10:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E531581E0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 10:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724841473; cv=none; b=ZoHdIUqyLibAub0shMpwywmrhd458IBymbqIiVLJSOG/AJye08r+lkBCaDwI0qhMAmFKVrjdEMAT2IkmItSHLtUmozeS6gnSqCRHdwDbwSh6h1JQbZBYRWIJ+NLC09V6K7p87wxkyk7X23BveIW36Q8e+121SLxJRrZaLzdY4cA=
+	t=1724842082; cv=none; b=rVIZmotk2sJKG/7lfP8/q3k+uTrYwyMhuh8aFPYgVgLMVhMDh/+b6SKx7MXgWQU0FjYV6UfufBFxzFo02acwQu57dlUxTkmPOZP8Iqy9Y6hu1CLfi+MmapjlipQat+gICQXFxCbPSroyBSWAF03yPyNmHKK9Hf68pVMhW1YVoKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724841473; c=relaxed/simple;
-	bh=awO9DQBZwmRwy4r7lJ+MHeDWGPO1ch0i7FbvQQz5STw=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=fiejuaHV9YX2GrpfSTaDL7vwdphRcjPWOG4so5XRop/8uGYlA1Oceq43oAwSaqaGmJ5ueFZrtrFYydfM0YoloYa3s9CeVYzaAIJJFehZqRcumJ6kcLX/TPtR1NY46Fju7ov/LLjL2hYVYxafJHlVhHMy+YC/xLBJn5w7xLMNfDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZxmvhUIH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724841470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jzUkFIussh+cyc5LHCiRLDkre+V+EO0118aAT2+MjKQ=;
-	b=ZxmvhUIHcy6sVvF6sRt44C6GmAnweAwg3VZRk5rq/wsGXhW9ijMebUZtcYjCGg4J91BQi8
-	5vqt4SIhkw0P8dXQz9cN6KZLU6xirWZceqPTWhQf9AYPAJKHNL0ag+JuA+AlPNWHpnmBi7
-	4iPyUIw+p3hCJcLX4anXy4AFvGX4VLw=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-633-xiNa3xA0NW2wayu8oJcNdg-1; Wed,
- 28 Aug 2024 06:37:46 -0400
-X-MC-Unique: xiNa3xA0NW2wayu8oJcNdg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6E17A1955D4C;
-	Wed, 28 Aug 2024 10:37:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 58CDF1955D56;
-	Wed, 28 Aug 2024 10:37:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240826113404.3214786-1-libaokun@huaweicloud.com>
-References: <20240826113404.3214786-1-libaokun@huaweicloud.com>
-To: libaokun@huaweicloud.com
-Cc: dhowells@redhat.com, netfs@lists.linux.dev, jlayton@kernel.org,
-    hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
-    linux-erofs@lists.ozlabs.org, brauner@kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
-    wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
-    stable@kernel.org
-Subject: Re: [PATCH] netfs: Delete subtree of 'fs/netfs' when netfs module exits
+	s=arc-20240116; t=1724842082; c=relaxed/simple;
+	bh=25RFEZCC+MOPwsF2W/Qg8fFAOjsUPL7pT3dA0yn25jM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iy7dTyJXsJcc4JBYvkTNWBnr9OfzyejqhS9tbxlx0HnfQkl0pSG7XkxrYdDpqzDJw98FNJlM9M5U5L6lNGKd6W0u3u59XXnoAbBgUAXPGc5jPVcAzKabE7eEflUGKsDh8e9JU8T51zYW+jwYZKmbV3Z5tJjcxJ7hD0gPadrNMIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLUNT2+y; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b99988b6ceso64661097b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 03:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724842080; x=1725446880; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=25RFEZCC+MOPwsF2W/Qg8fFAOjsUPL7pT3dA0yn25jM=;
+        b=hLUNT2+y+f3sBMsifnTxhcZAJxq9Fmy912a+8X6Rtskrkntcje6JmEgeUagon+E/IJ
+         a4v1njj+4KKmdQVI3vYL7ZWHjfhly+kednVWp6z+2MoI7+T1WAUy9GQuFnqzOx1C/mLu
+         tQSaDHHLem6kClO9FC+PjcuBy2Z3x+A+O8t72OW8X3n6awARQ8HrK0cZ5oFfiDsaSfyC
+         gbYNEWWyqQDEfOeHAA8lKUi6A1zvmm56221BM/zREYCRY49Q+rYvjXq7mvmNG1xMz0xT
+         NyukQEjAKWR45jDepopFVBBjHuQtpHJMxEiK0orVVJ95xuMLPWdF4v6q9HJrpnclH9MX
+         Dkkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724842080; x=1725446880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=25RFEZCC+MOPwsF2W/Qg8fFAOjsUPL7pT3dA0yn25jM=;
+        b=rVP1b8LE2VAjPdw1Edvp2xEEQYpsPqbkikMuHJ40CJk3B7B4j+ZLXCIliw+WevqP2f
+         zfXNpQVDantQNdu65T6wyF3Gp5cYTCY6NpG+dmZmADhhaFonqHyA6Q1CntJDXIx4jIXU
+         WIo3r2ywOFb5530t8koOEyTPndliklkO8HF3NJvj+gwmhGCDj9YJn64Ue1OxfZWGi4d2
+         DUmtzt1oxRFmSUZki2ALpvGjZ3ifBX3ofgB80JR1p4Nun7lQyidv4P4bbN8WP4rkRNRf
+         S1muWc20mf7BVcUkUmxBnUE6KOAuGXTE6+L1Ane2Xf3vB4JSaA9TKBAXkAgn6lluzmCZ
+         qvgw==
+X-Gm-Message-State: AOJu0Yz3MUSKg5NFoxpE3Q9PXZYR2pwbpan8rpD8itKcz6W+zuJ6JuJP
+	LEzzfVZIDCh9xgJnZSd1GhwNShLS9Iiw9/32bRKuKBO0V9Ey648okcK15C+P4grCZwCJmL28NwN
+	SZxaBgL9WzZoI8j1kpMpX81MTUWk=
+X-Google-Smtp-Source: AGHT+IG9JQ4Rgqz6YdwhSPYEsS9qeAT3H9Auk+man0xTTkf6ywB7cKxKKdBWXzwOES9bnvfn87qT+6CZH1ysMB5KkJ4=
+X-Received: by 2002:a05:690c:d8c:b0:664:db79:b275 with SMTP id
+ 00721157ae682-6c61f0bc1ffmr212737947b3.0.1724842079876; Wed, 28 Aug 2024
+ 03:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <952422.1724841455.1@warthog.procyon.org.uk>
+References: <CAOw_e7bB3C_zbpq6U+FdrjbwJAOKFJk1ZLLETrR+5xqRmv44SQ@mail.gmail.com>
+ <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com>
+ <CAOw_e7YnJwTioM-98CoXWf7AOmTcY29Jgtqz4uTGQFQgY+b1kg@mail.gmail.com>
+ <CAOQ4uxhApT09b45snk=ssgrfUU4UOimRH+3xTeA5FJyX6qL07w@mail.gmail.com> <CAOw_e7axjatL=dwd2HAVcgC4j8_6A393kBj7kL_VHPUKfZJaqg@mail.gmail.com>
+In-Reply-To: <CAOw_e7axjatL=dwd2HAVcgC4j8_6A393kBj7kL_VHPUKfZJaqg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 28 Aug 2024 12:47:47 +0200
+Message-ID: <CAOQ4uxgFbBCRLFM4QdQYK3xESMixWqxtC1Q9Hk4p=bjWeWk1ZQ@mail.gmail.com>
+Subject: Re: FUSE passthrough: fd lifetime?
+To: Han-Wen Nienhuys <hanwenn@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Aug 2024 11:37:35 +0100
-Message-ID: <952423.1724841455@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-libaokun@huaweicloud.com wrote:
+On Wed, Aug 28, 2024 at 12:33=E2=80=AFPM Han-Wen Nienhuys <hanwenn@gmail.co=
+m> wrote:
+>
+> On Wed, Aug 28, 2024 at 12:06=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
+om> wrote:
+> >
+> > On Wed, Aug 28, 2024 at 12:00=E2=80=AFPM Han-Wen Nienhuys <hanwenn@gmai=
+l.com> wrote:
+> > >
+> > > On Tue, Aug 27, 2024 at 3:48=E2=80=AFPM Amir Goldstein <amir73il@gmai=
+l.com> wrote:
+> > >
+> > > > BTW, since you are one of the first (publicly announced) users of
+> > > > FUSE passthrough, it would be helpful to get feedback about API,
+> > > > which could change down the road and about your wish list.
+> > >
+> > > I guess it is too late to change now, but I noticed that
+> > > fuse_backing_map takes the file descriptors and backing IDs as signed
+> > > int32. Why int32 and not uint32 ? open(2) is documented as never
+> > > returning negative integers.
+> > >
+> >
+> > It seemed safer this way and allows to extend the API with special
+> > return codes later.
+> > Why? what is to gain from uint32 in this API?
+>
+> Consistency. Almost all fields in the FUSE API are uint64 or uint32.
+> Having it be different suggests that something special is going on,
+> and that negative numbers have a valid use case. If they're always
+> non-negative, that could be documented.
+>
+> Similarly, it looks like the first backing ID is usually 1. Is it
+> guaranteed that 0 is never a valid backing ID? I am not sure, and it
+> would certainly help implementation on my side.
 
-> In netfs_init() or fscache_proc_init(), we create dentry under 'fs/netfs=
-',
-> but in netfs_exit(), we only delete the proc entry of 'fs/netfs' without
-> deleting its subtree. This triggers the following WARNING:
-> =
+No guarantee.
+There was some suggestion about special use for value 0,
+but I don't remember what it was right now.
 
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> remove_proc_entry: removing non-empty directory 'fs/netfs', leaking at l=
-east 'requests'
-> WARNING: CPU: 4 PID: 566 at fs/proc/generic.c:717 remove_proc_entry+0x16=
-0/0x1c0
-> Modules linked in: netfs(-)
-> CPU: 4 UID: 0 PID: 566 Comm: rmmod Not tainted 6.11.0-rc3 #860
-> RIP: 0010:remove_proc_entry+0x160/0x1c0
-> Call Trace:
->  <TASK>
->  netfs_exit+0x12/0x620 [netfs]
->  __do_sys_delete_module.isra.0+0x14c/0x2e0
->  do_syscall_64+0x4b/0x110
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =
-
-> Therefore use remove_proc_subtree instead() of remove_proc_entry() to
-> fix the above problem.
-> =
-
-> Fixes: 7eb5b3e3a0a5 ("netfs, fscache: Move /proc/fs/fscache to /proc/fs/=
-netfs and put in a symlink")
-> Cc: stable@kernel.org
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-
-Should remove_proc_entry() just remove the entire subtree anyway?
-
-But you can add:
-
-	Acked-by: David Howells <dhowells@redhat.com>
-
-David
-
+Thanks,
+Amir.
 
