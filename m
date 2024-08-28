@@ -1,109 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-27595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B1B962AF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:59:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0823D962B18
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481821C22A7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 14:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1491F25861
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D691A0B15;
-	Wed, 28 Aug 2024 14:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54CA18801A;
+	Wed, 28 Aug 2024 15:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVT0pES8"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+mtfxFn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OdJ4/OrV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+mtfxFn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OdJ4/OrV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088E117C9AF;
-	Wed, 28 Aug 2024 14:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99821188014
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 15:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857150; cv=none; b=HyMqtJqtdrYkf0iXKlphl2yELuv8rN7s8rU3zc5fnPld/DcqW4rPFHx6/7atG/V1Hbn/4FwBM28F7rbTM6dFM8ycMZQU77mcWbQp/NKXYYksYuccPQIs/KWd5hkTkDIXwvG4YZyJd5o/VFPSEQQgvrPuNdsgsWhWUdjhLKHuUDA=
+	t=1724857515; cv=none; b=X40sQJOBGGdx/66Lzsi9Y6yS+7AJrGvlK8/ogxB7FsldgtgUAhEu8x22bhO8Gos5Cww9Oh3wEB4H0p8RjzEDEULNo+Y127WZBI1bEujgCtbLQ56UOoqREcyVYFd8qqcthNx/+viyf7JyjXy7nfAf3sk+jJbArxK1rBYmG159i/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857150; c=relaxed/simple;
-	bh=UpzTDQbTDM/duQdOjIrQF0JtfhbJsdmFGxYvGryuTxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CIpmsGNBiQo6emj5a688ScF+iQTIsoE0M2lbsogk690/DD5RKWP7IJZKNNb3+jtWHu/DThgfNhcm8ub6DJY9YVW189S806q6TyRy67O16OpX7qSiwBjoipBh7e8kJJCf07Pe5rH1aAdP6XFWtYstsChW4FFKLX4guxupIBxIP5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVT0pES8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96EABC4CEDF;
-	Wed, 28 Aug 2024 14:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724857149;
-	bh=UpzTDQbTDM/duQdOjIrQF0JtfhbJsdmFGxYvGryuTxk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fVT0pES8N4PTFkiCAwxNpO3Cg29t7OPWu7yjC+pA3SXVg8PJqiXGwGVa+bnL7dJs4
-	 DZIQV+K9/5/NPv3UxO1xcCZ4XoDV0gZQYFRwcxdB36iPowOcmtu24JEevYL9yLw8nv
-	 mcuhQy/UCzoXHn4eZJWxbDn3ZQSjIiC8BcMHzNbyuBr0pu3BIW4QvGSyWv4BpBvSY/
-	 SgtK6QW0dX5i0VGoej1CCMc9Ux4/UrqYgxnlEdP3x/2Rr32LgYzX/r+1koyJA+37up
-	 odG8/YtATU6VO7ij/D/6QUuJGrjnXR4jXXR4kP8MwzetNZ97WOzYocUpTctL35PdHz
-	 lCMEd+lAg13Mg==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Brian Foster <bfoster@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chandan Babu R <chandan.babu@oracle.com>
-Subject: Re: [PATCH 1/6] block: remove checks for FALLOC_FL_NO_HIDE_STALE
-Date: Wed, 28 Aug 2024 16:58:47 +0200
-Message-ID: <20240828-bauen-leben-c8bb953a9fae@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240827065123.1762168-2-hch@lst.de>
-References: <20240827065123.1762168-1-hch@lst.de> <20240827065123.1762168-2-hch@lst.de>
+	s=arc-20240116; t=1724857515; c=relaxed/simple;
+	bh=rHwQF0O8vmyVzXx6Nln94w0Ex0zfrxbEQ31uaCMTPdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bSjl8OoK3lpVn0arwCgE5zRMeA6SVcxfyNG9HVNJ7fX4cIgR+YjzkPAPYk4aBhmuS27aDPfbsVZNmwaQBC64aBdmj8+syA757iprsP3wSy/PTjm2wPlUNvm2m36rNz6KPGn4QCBZoKcnZb/oAYuVyOiWnG1l7Lhnhj9ljPGcXSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+mtfxFn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OdJ4/OrV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+mtfxFn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OdJ4/OrV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A97D41FC31;
+	Wed, 28 Aug 2024 15:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724857511; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GR41SlpZFv+SB0q+a8VGuFZLcD15i/CK6lhqY3nbQ0o=;
+	b=L+mtfxFnR156jW1obQp+8RvgzLmMR2oY1Mt88s3+f3yS+hLDOu1igo7RfhXa86YF3OoqGn
+	vbzY6iEjq9yqkppM+0tTfOYSWrkuiY3smeOyweEYYC5ttqisBL41hRSyRzFZMWAmdRpxiB
+	MIyqTijZh7sOahDIegBHnHa5NQhf5Gs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724857511;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GR41SlpZFv+SB0q+a8VGuFZLcD15i/CK6lhqY3nbQ0o=;
+	b=OdJ4/OrVxYKFSEme+2g9ySfBs5nw1OrUtVhrGhNiN2ZntSzXmHBt+mI75TycsvGX5ADtE8
+	hGhF0o25NOgzCrDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724857511; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GR41SlpZFv+SB0q+a8VGuFZLcD15i/CK6lhqY3nbQ0o=;
+	b=L+mtfxFnR156jW1obQp+8RvgzLmMR2oY1Mt88s3+f3yS+hLDOu1igo7RfhXa86YF3OoqGn
+	vbzY6iEjq9yqkppM+0tTfOYSWrkuiY3smeOyweEYYC5ttqisBL41hRSyRzFZMWAmdRpxiB
+	MIyqTijZh7sOahDIegBHnHa5NQhf5Gs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724857511;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GR41SlpZFv+SB0q+a8VGuFZLcD15i/CK6lhqY3nbQ0o=;
+	b=OdJ4/OrVxYKFSEme+2g9ySfBs5nw1OrUtVhrGhNiN2ZntSzXmHBt+mI75TycsvGX5ADtE8
+	hGhF0o25NOgzCrDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93E31138D2;
+	Wed, 28 Aug 2024 15:05:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6W/GI6c8z2YfSQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 28 Aug 2024 15:05:11 +0000
+Message-ID: <2590ea60-12f1-4b7a-a5b5-bfb7c3906e30@suse.cz>
+Date: Wed, 28 Aug 2024 17:05:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1593; i=brauner@kernel.org; h=from:subject:message-id; bh=UpzTDQbTDM/duQdOjIrQF0JtfhbJsdmFGxYvGryuTxk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdtzZZ+fPJvXuvTxXsXqpguebWGw9R9oAtW/l4V36Ks Ll1cOGcvo5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJxPIwMky/cuDUxf32EV5h 81f+XvrK+cvRPBM1C+HchQonb5r2qZ5h+J/4+1/Li76oKBEHjlsCV5Z4HZ1aE7f+M4PH3J9/bS8 arOEBAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] mm: remove unused root_cache argument
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Jann Horn <jannh@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+References: <20240828-work-kmem_cache-rcu-v3-0-5460bc1f09f6@kernel.org>
+ <20240828-work-kmem_cache-rcu-v3-1-5460bc1f09f6@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240828-work-kmem_cache-rcu-v3-1-5460bc1f09f6@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, 27 Aug 2024 08:50:45 +0200, Christoph Hellwig wrote:
-> While the FALLOC_FL_NO_HIDE_STALE value has been registered, it has
-> always been rejected by vfs_fallocate before making it into
-> blkdev_fallocate because it isn't in the supported mask.
+Ad subject: "... of create_cache()" ?
+
+On 8/28/24 12:56, Christian Brauner wrote:
+> That argument is unused so remove it.
 > 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+
+> ---
+>  mm/slab_common.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 40b582a014b8..c8dd7e08c5f6 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -204,8 +204,7 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
+>  static struct kmem_cache *create_cache(const char *name,
+>  		unsigned int object_size, unsigned int align,
+>  		slab_flags_t flags, unsigned int useroffset,
+> -		unsigned int usersize, void (*ctor)(void *),
+> -		struct kmem_cache *root_cache)
+> +		unsigned int usersize, void (*ctor)(void *))
+>  {
+>  	struct kmem_cache *s;
+>  	int err;
+> @@ -334,7 +333,7 @@ kmem_cache_create_usercopy(const char *name,
+>  
+>  	s = create_cache(cache_name, size,
+>  			 calculate_alignment(flags, align, size),
+> -			 flags, useroffset, usersize, ctor, NULL);
+> +			 flags, useroffset, usersize, ctor);
+>  	if (IS_ERR(s)) {
+>  		err = PTR_ERR(s);
+>  		kfree_const(cache_name);
 > 
 
-Applied to the vfs.fallocate branch of the vfs/vfs.git tree.
-Patches in the vfs.fallocate branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fallocate
-
-[1/6] block: remove checks for FALLOC_FL_NO_HIDE_STALE
-      https://git.kernel.org/vfs/vfs/c/a24dfa515642
-[2/6] ext4: remove tracing for FALLOC_FL_NO_HIDE_STALE
-      https://git.kernel.org/vfs/vfs/c/c5a8e5423301
-[3/6] fs: sort out the fallocate mode vs flag mess
-      https://git.kernel.org/vfs/vfs/c/2f6369068139
-[4/6] xfs: call xfs_flush_unmap_range from xfs_free_file_space
-      https://git.kernel.org/vfs/vfs/c/2764727be269
-[5/6] xfs: move the xfs_is_always_cow_inode check into xfs_alloc_file_space
-      https://git.kernel.org/vfs/vfs/c/12206b1c423b
-[6/6] xfs: refactor xfs_file_fallocate
-      https://git.kernel.org/vfs/vfs/c/a0c3802f87a2
 
