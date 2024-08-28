@@ -1,83 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-27633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6729630EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 21:27:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E17D963100
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 21:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABFBB225D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 19:26:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC366B2399F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 19:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E399C1ABEAA;
-	Wed, 28 Aug 2024 19:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE2F1AAE25;
+	Wed, 28 Aug 2024 19:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SOek8DVw"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WNz6fg9w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD8E1A76CE
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 19:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8C21A76A6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 19:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724873210; cv=none; b=DwToSVyq1RPN0oXT77MUXFxXCT5c7wIPEO716bHIoe5E/C4rf6xaQ8nFuKavynjHNUfaXVlhkDwgog3+ICkiK1UhjdW+cIzGPW2Ue9WgJ1Dn34qovdiw2Jqaqjd++GMXr35nPyNPewHFzA7rRoingEk42hjgkAay0CBo6uRVI0c=
+	t=1724873646; cv=none; b=qEQ+eZ774LR6pJr6t69E+PYiUqWScjHg/iGg1A5Au57NgKaHUVWEn4ADcHGbi7KXnjqWKeAiMsuQUDmLcJUwoioA9eaZbT0nbfRcdKfruh6EpelLhVdlAqGf2/HYQM23XodMe/9dPFWHaFSlLLShojJRGN1LiqGwEq1MzM6oN7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724873210; c=relaxed/simple;
-	bh=7xf1I7u+DLd4YcPjBzGWhhwMtUyUjBReXr2LDbueJZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Crp3w4GdWcC7SwfnURE8NK6694BAaI7atva09vr+DcxJAd2OXJU3PCdmPROVTNKRURRkejVAA0HP2OVn+cNbu2vMMuuJJSt/Qnb/Z5wn2eSRtKKtRn7BtWxSgTNJsD4xFUZvSib6zml6LS3J9ZnVkKegwCtkI+/XciFlHDvM9Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SOek8DVw; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3718ca50fd7so4521524f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 12:26:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724873206; x=1725478006; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3BWPnH/8lZG8VOT7Muu9Q8tFJ7+yTh7np+tLLr9rmZU=;
-        b=SOek8DVwiQ9WHUS2cO8aZxyjRclaYaYSCftDCTcnP4cI/W21ntvqAdGaF0D3KKHgGY
-         zpfSz0YdOyplsc9ZYoGxWubpAl7ZtlsD/NkowB2fEbPkXeqmSvaJ0oGO3ZI2RE2OVsoR
-         87WwTZAtcbRLgHQB6ACgyFhRirWpeb5SD1iLDTQ4sE2DsXcoFip26KUEx5kZt/3Xsy7N
-         pc7ogaBotWPSNFfsjz4DDezZtLYlbGIIIfk6Ibnc0xtHOLDx1r0QNHUC63vdQLMDYZn6
-         zIMkOrEKkzOeSJaSu6w27PgosM/ClaFJSBMjDbu6xF1bHBShLCSrbCJxvJ05msoDKfoR
-         X/cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724873206; x=1725478006;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3BWPnH/8lZG8VOT7Muu9Q8tFJ7+yTh7np+tLLr9rmZU=;
-        b=SXQUox0ONgImTkBjI/t9ig++rKD9CoBSCE9lY6V6HeyQwAAWS7goLn+KWpnG5NM5rE
-         lLXVjfFVxI8lZz6vaFn25pN1i1wZNS5Pn06RNcg8nlVJVffyuX134aoSpbqyE1PhMNbt
-         LZht8Pz1q+YVvvP+KuERq7LkVnDwTxQUkK6MkNwIdk5S6IwS85x8jPvStvUlj4eBliOO
-         IX2/7LwkcXcEsqswZBxYKbHgdtkETThtKkXXp+PlkOTRGgC7Ro2zx0I5NB8j0lR/UVZS
-         nBh9414J1fottRQjZbQdDlTsvnTXFHoT7CSuBjpqSrvQ3+K01mP1LJU4gRL9En+k1slD
-         kHEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcwZEX8dJLsUn13kahJah2WL+d+yOp5eR5L63zereXEJjR2iiYl2vKG04XBTRNPnYMb0QL3IODCs1YdjvC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoUiDMs/4H1H6NoUubKTmBLACUYSrpNVrxLPBkI0AHam4YnEsj
-	RSNFhAP4Y73PhXatGjyUbc2uj4KMyiaGweTQhad7U1DXnUP9sbq8ow2NBzwDyTM=
-X-Google-Smtp-Source: AGHT+IGSdX36+aZ+9SeTj1XTGLTshw7rKy42yJjltzlpBmSmdNx5/FIzbRURRgjLzDSYixg0ss1fwA==
-X-Received: by 2002:a5d:6652:0:b0:367:4383:d9b4 with SMTP id ffacd0b85a97d-3749b58f28emr314412f8f.56.1724873205639;
-        Wed, 28 Aug 2024 12:26:45 -0700 (PDT)
-Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549cf50sm278878966b.79.2024.08.28.12.26.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 12:26:45 -0700 (PDT)
-Date: Wed, 28 Aug 2024 21:26:44 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Message-ID: <Zs959Pa5H5WeY5_i@tiehlicka>
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org>
- <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+	s=arc-20240116; t=1724873646; c=relaxed/simple;
+	bh=8hzsAoFrbePX2ZlOFQyDibxk40h4Rjz/0yRcXOGdZ0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jX6ODYankXb2vboTWvO/tnZEhl6z6qfu4Bv8AhTbqSos9/iwwi+ohleFN/EOfz5TousJOvduwEp68krkMAPdrwjteOzuS3MZTgbx9pWAoK38DP0d46BfOw16jUrCSiPqbE521ISwks61DKG0ftQGs0XVdVkKRrzhkBJxrur1SkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WNz6fg9w; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=JtbjKTfmM+UP1vEVd8JI6eNQRWwDQaBWwfQUq/ObO2g=; b=WNz6fg9w6KVX9Pb5Lt4oDtdTlG
+	5vBFS5iiOp/35SYznabaLGl45x8l/vF4qRGpVs2VpmBYtfreyJeSxegIkv5PbOA0o5QYz2PrlZ+Mt
+	GIKoVljTuKAF03OfbGwuttyXuF5Ranp3sA/bL13bUwcjRwz+CmiWav1+aoK4pchEs80fsrSPoYyeR
+	FHmbTUk9kdHrGkygro1ll1ISDPvLSkbthMH8R4XZs0UzJFRYUnTwlDn4zpK+5sD1l8Eq0Y5mgAG66
+	R1djFUPIQUfqjnHW7F6gisESZSM5V5/059yi0oNi7FS8OFXtM4NiMlrVwTdGsg111l+TpCaIE5lZY
+	shZs2xUQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sjOQb-00000000xNL-1AFc;
+	Wed, 28 Aug 2024 19:34:01 +0000
+Date: Wed, 28 Aug 2024 20:34:00 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Dave Chinner <david@fromorbit.com>,
+	"Darrick J. Wong" <darrick.wong@oracle.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>
+Subject: VFS caching of file extents
+Message-ID: <Zs97qHI-wA1a53Mm@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,49 +61,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
 
-On Wed 28-08-24 15:11:19, Kent Overstreet wrote:
-> On Wed, Aug 28, 2024 at 07:48:43PM GMT, Matthew Wilcox wrote:
-> > On Wed, Aug 28, 2024 at 10:06:36AM -0400, Kent Overstreet wrote:
-> > > vmalloc doesn't correctly respect gfp flags - gfp flags aren't used for
-> > > pte allocation, so doing vmalloc/kvmalloc allocations with reclaim
-> > > unsafe locks is a potential deadlock.
-> > 
-> > Kent, the approach you've taken with this was NACKed.  You merged it
-> > anyway (!).  Now you're spreading this crap further, presumably in an effort
-> > to make it harder to remove.
-> 
-> Excuse me? This is fixing a real issue which has been known for years.
+Today it is the responsibility of each filesystem to maintain the mapping
+from file logical addresses to disk blocks (*).  There are various ways
+to query that information, eg calling get_block() or using iomap.
 
-If you mean a lack of GFP_NOWAIT support in vmalloc then this is not a
-bug but a lack of feature. vmalloc has never promissed to support this
-allocation mode and a scoped gfp flag will not magically make it work
-because there is a sleeping lock involved in an allocation path in some
-cases.
+What if we pull that information up into the VFS?  Filesystems obviously
+_control_ that information, so need to be able to invalidate entries.
+And we wouldn't want to store all extents in the VFS all the time, so
+would need to have a way to call into the filesystem to populate ranges
+of files.  We'd need to decide how to lock/protect that information
+-- a per-file lock?  A per-extent lock?  No locking, just a seqcount?
+We need a COW bit in the extent which tells the user that this extent
+is fine for reading through, but if there's a write to be done then the
+filesystem needs to be asked to create a new extent.
 
-If you really need this feature to be added then you should clearly
-describe your usecase and listen to people who are familiar with the
-vmalloc internals rather than heavily pushing your direction which
-doesn't work anyway.
+There are a few problems I think this can solve.  One is efficient
+implementation of NFS READPLUS.  Another is the callback from iomap
+to the filesystem when doing buffered writeback.  A third is having a
+common implementation of FIEMAP.  I've heard rumours that FUSE would like
+something like this, and maybe there are other users that would crop up.
 
-> It was decided _years_ ago that PF_MEMALLOC flags were how this was
-> going to be addressed.
+Anyway, this is as far as my thinking has got on this topic for now.
+Maybe there's a good idea here, maybe it's all a huge overengineered mess
+waiting to happen.  I'm sure other people know this area of filesystems
+better than I do.
 
-Nope! It has been decided that _some_ gfp flags are acceptable to be used
-by scoped APIs. Most notably NOFS and NOIO are compatible with reclaim
-modifiers and other flags so these are indeed safe to be used that way.
-
-> > Stop it.  Work with us to come up with an acceptable approach.  I
-> > think there is one that will work, but you need to listen to the people
-> > who're giving you feedback because Linux is too big of a code-base for
-> > you to understand everything.
-> 
-> No, you guys need to stop pushing broken shit.
-
-This is not the way to work with other people. Seriously!
-
--- 
-Michal Hocko
-SUSE Labs
+(*) For block device filesystems.  Obviously network filesystems and
+synthetic filesystems don't care and can stop reading now.  Umm, unless
+maybe they _want_ to use it, eg maybe there's a sharded thing going on and
+the fs wants to store information about each shard in the extent cache?
 
