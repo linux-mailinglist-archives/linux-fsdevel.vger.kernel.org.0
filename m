@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-27670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D903696358C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 01:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F401C963591
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 01:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 955CF286382
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0E452862E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E012B1B14FD;
-	Wed, 28 Aug 2024 23:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D7C1B151F;
+	Wed, 28 Aug 2024 23:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNcQU5ny"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cz73NrRR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344A61AE875;
-	Wed, 28 Aug 2024 23:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6188F1AB528;
+	Wed, 28 Aug 2024 23:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724887763; cv=none; b=bd16z0lQPuU7OzbGwtKohOKko6n8NH2/4bk7mbaba9qLWqkGMixCxtiKIb72p5xla6AAYDNwsCJrigWcBvMagfrA37b7irzHZ692WGJSMC35yQME6upK/S+SyEHrqqjKRotu5/lmG1R3hdRw1ifDcHR+biEgC2c5ruhtmRy/9uU=
+	t=1724887770; cv=none; b=dXmx3UwgDVm7HyBTSqNAnsg0tkQa2qyayM7kIZzLsXli55Qcj0f8NLCMVyvtcf+hx8CiX6SmD4p4IzCGJjHf2lWTcKPCGJSw+5YoCVcbgFzvUHAhhLKRc9Ag1N1Tk4JDjV0STCqYz8YhvmxzMpFfcgjhr7ThtX6CzeEylNefJQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724887763; c=relaxed/simple;
-	bh=4p/cwsbgBUzYKsL2fclAIfpUU9Y3uPXu2QlRekLj7SY=;
+	s=arc-20240116; t=1724887770; c=relaxed/simple;
+	bh=aZLVmFYMLYBJTw70Mh617DMlgsxzLSY47vsY1KvY2Vc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TyXmdx8kSXHgRZ5jW7/4BKuP7HTlGUefO2JaZQv/+bH/YJ2IrHKoqpN1ZbmTS/GSGFsmTB6wqlZUlerrH4IVMSQ3bObjNDNWkE7sJ+HzZ9tdMn4i0rQfOZJiImS7yqmO9eiQ2BpkvSR0wzqHuHyNygmTM2CrdpxeQaf2kWwSWQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNcQU5ny; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB798C4CEC9;
-	Wed, 28 Aug 2024 23:29:15 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=e8xiZgF/Fk9L5I1hW7TA/lYcBA14Ef4kpyML9O5gKqgC7Ti6mEb1094wniSMzbTLFD4+UyVI7Ec8JD0pOnXDLuWBi0SOdJci19eqYH6xlPD/nn9RI/ZuXUBnjcS76Zl5Lqu59LRUiKwx3YA8NxyCPtMoSWNdM5It/yKI35VjkBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cz73NrRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 162C3C4CEC4;
+	Wed, 28 Aug 2024 23:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724887762;
-	bh=4p/cwsbgBUzYKsL2fclAIfpUU9Y3uPXu2QlRekLj7SY=;
+	s=k20201202; t=1724887769;
+	bh=aZLVmFYMLYBJTw70Mh617DMlgsxzLSY47vsY1KvY2Vc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kNcQU5nyrsMetOTGFm6ud7UHZ/GnC48WWUDtMXTgWHntNfYUFLWWUbL9x2wYmUDTy
-	 x7lAq0JvS+9YS0FzCoPtxTbjpqy3dltQDe4nreFRosly12F+4B+Wb+N0OvQBsE8bQD
-	 UcMJcKi5VwuSPfz3VnTbOn6GfEtR23FPaLmt68TzAf1gDpvvAlmr0hc4FoH6g6T8LM
-	 dmi7fEHFLFgHQ/wd35qLqQxoyt33lXfh+qz2JE53etAKJK1fN/NYH0a+3sQkBQIbTb
-	 jVUc8RtgEhHBH+qzQiPpSMaOsGUxLEcwHNhLcC9cIUgM3x1hBKYNObyRW8qXnPl/7y
-	 jk9bBXyYZiSHQ==
+	b=Cz73NrRREni0I44pWymBuUuv9mgmhh/mGUfqrEXuZyPxUz/ve2fyH0krcqYscrFVT
+	 tMOutL24WhWgnJhCgesxrP6spfa7yYTQiyh1NkJ4fEybAKRzvszXmZCgUBQwkKq9sE
+	 VgxmZ+u1eRdYssjem3MbxO983nCGoTQEAqyVLgJBfYPRtc1fIuhg6WRtigDI2VyEFH
+	 XrEPmsGxA8cPld86cRPm+r/niGJ7uTzbtO9rQBEnZ/bdj5alefscSEt3iewiCuWYvD
+	 6OqS1IiU1mcHmeogoCIioQU2NfnYrtgcNiVo1w28Gg/BYVb/Yt5Ewwk97kP4pZ1bf0
+	 qwUFdbbcp3S5w==
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 29 Aug 2024 00:27:23 +0100
-Subject: [PATCH v12 07/39] arm64/sysreg: Add definitions for architected
- GCS caps
+Date: Thu, 29 Aug 2024 00:27:24 +0100
+Subject: [PATCH v12 08/39] arm64/gcs: Add manual encodings of GCS
+ instructions
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-arm64-gcs-v12-7-42fec947436a@kernel.org>
+Message-Id: <20240829-arm64-gcs-v12-8-42fec947436a@kernel.org>
 References: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
 In-Reply-To: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -80,60 +80,122 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1474; i=broonie@kernel.org;
- h=from:subject:message-id; bh=4p/cwsbgBUzYKsL2fclAIfpUU9Y3uPXu2QlRekLj7SY=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmz7J98aWl1pxIvDvuP+c4z7xD1MmZ369TKWVm31vC
- ZPKg71mJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZs+yfQAKCRAk1otyXVSH0DWhB/
- 9LgFKRD1xzzF2u2DcCqEwfQNnsJraBn1ikyZXthyso+/206Wxdaj6j6nc8nWNfdRhZgLV2t+fzG0jo
- Iqy1hG93N0nh6yqsPqlIgSAUqDnBq8+GpuhxlQy/nbpu2V6m5KslRv2aoooWQCcm3+VF9uw8elyiEk
- 8K1yoV30FcvolqwyqiZIvm+S23v39l+nKYnW8QpvGSiHjSeltbT/rzxCHDZjG389l0YAM7lKEm3bWT
- BCFwq57PaZOdi/pK9ntm+WT8D25rZXmUhRtmILh9YNxOVifkuPFXQXHfD8Vu0zOZTTR/3kOWXQmrKC
- aSV0N0IHiwIlq88HTD622I9HTZSO2a
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2696; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=aZLVmFYMLYBJTw70Mh617DMlgsxzLSY47vsY1KvY2Vc=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmz7J+2A9wTYcmLu2ffzfaieFLiTCxyNWtiE+1zEeH
+ 0PrWnyyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZs+yfgAKCRAk1otyXVSH0LRGB/
+ 4rI1hq2nzSZ2Uef0emQbgrJ8nFepY+ZOc8ZtvCPyd/vbAbyXpSDqKwwqpAzmcYvvA7SJoQi6/acUeH
+ Nez0Bb0WVz7kOorJZ+0bU3O0ls8O9LiIg9n8KzWaF6gKhLVVBSd93v0GcJsEzKzlGmwCstee/V0iSl
+ N6XEkqzM1Yuq7s+VNhQVDgIcPU4VmjUsTG4M45MoxUWTh7OXNFl18Be3fp4KIL+xD7erjymuQeINmK
+ lRSukIEzOGIQMhJZAfICsxu3SidH8bp5eKEQ0PDTJho+3qFutI1iKJeMEhUVjlebig3PMqx/snFbE2
+ QxNe3eRH55+S8miA6x+CDGEkrWtSsD
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The architecture defines a format for guarded control stack caps, used
-to mark the top of an unused GCS in order to limit the potential for
-exploitation via stack switching. Add definitions associated with these.
+Define C callable functions for GCS instructions used by the kernel. In
+order to avoid ambitious toolchain requirements for GCS support these are
+manually encoded, this means we have fixed register numbers which will be
+a bit limiting for the compiler but none of these should be used in
+sufficiently fast paths for this to be a problem.
+
+Note that GCSSTTR is used to store to EL0.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/sysreg.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/include/asm/gcs.h     | 51 ++++++++++++++++++++++++++++++++++++++++
+ arch/arm64/include/asm/uaccess.h | 22 +++++++++++++++++
+ 2 files changed, 73 insertions(+)
 
-diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index 4a9ea103817e..b8d8718a7b8b 100644
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -1077,6 +1077,26 @@
- #define POE_RXW		UL(0x7)
- #define POE_MASK	UL(0xf)
- 
+diff --git a/arch/arm64/include/asm/gcs.h b/arch/arm64/include/asm/gcs.h
+new file mode 100644
+index 000000000000..7c5e95218db6
+--- /dev/null
++++ b/arch/arm64/include/asm/gcs.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * Definitions for Guarded Control Stack
++ * Copyright (C) 2023 ARM Ltd.
 + */
++#ifndef __ASM_GCS_H
++#define __ASM_GCS_H
 +
-+#define GCS_CAP_ADDR_MASK		GENMASK(63, 12)
-+#define GCS_CAP_ADDR_SHIFT		12
-+#define GCS_CAP_ADDR_WIDTH		52
-+#define GCS_CAP_ADDR(x)			FIELD_GET(GCS_CAP_ADDR_MASK, x)
++#include <asm/types.h>
++#include <asm/uaccess.h>
 +
-+#define GCS_CAP_TOKEN_MASK		GENMASK(11, 0)
-+#define GCS_CAP_TOKEN_SHIFT		0
-+#define GCS_CAP_TOKEN_WIDTH		12
-+#define GCS_CAP_TOKEN(x)		FIELD_GET(GCS_CAP_TOKEN_MASK, x)
++static inline void gcsb_dsync(void)
++{
++	asm volatile(".inst 0xd503227f" : : : "memory");
++}
 +
-+#define GCS_CAP_VALID_TOKEN		0x1
-+#define GCS_CAP_IN_PROGRESS_TOKEN	0x5
++static inline void gcsstr(u64 *addr, u64 val)
++{
++	register u64 *_addr __asm__ ("x0") = addr;
++	register long _val __asm__ ("x1") = val;
 +
-+#define GCS_CAP(x)	((((unsigned long)x) & GCS_CAP_ADDR_MASK) | \
-+					       GCS_CAP_VALID_TOKEN)
++	/* GCSSTTR x1, x0 */
++	asm volatile(
++		".inst 0xd91f1c01\n"
++		:
++		: "rZ" (_val), "r" (_addr)
++		: "memory");
++}
 +
- #define ARM64_FEATURE_FIELD_BITS	4
++static inline void gcsss1(u64 Xt)
++{
++	asm volatile (
++		"sys #3, C7, C7, #2, %0\n"
++		:
++		: "rZ" (Xt)
++		: "memory");
++}
++
++static inline u64 gcsss2(void)
++{
++	u64 Xt;
++
++	asm volatile(
++		"SYSL %0, #3, C7, C7, #3\n"
++		: "=r" (Xt)
++		:
++		: "memory");
++
++	return Xt;
++}
++
++#endif
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index 28f665e0975a..6aba10e38d1c 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -502,4 +502,26 @@ static inline size_t probe_subpage_writeable(const char __user *uaddr,
  
- /* Defined for compatibility only, do not add new users. */
+ #endif /* CONFIG_ARCH_HAS_SUBPAGE_FAULTS */
+ 
++#ifdef CONFIG_ARM64_GCS
++
++static inline int gcssttr(unsigned long __user *addr, unsigned long val)
++{
++	register unsigned long __user *_addr __asm__ ("x0") = addr;
++	register unsigned long _val __asm__ ("x1") = val;
++	int err = 0;
++
++	/* GCSSTTR x1, x0 */
++	asm volatile(
++		"1: .inst 0xd91f1c01\n"
++		"2: \n"
++		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
++		: "+r" (err)
++		: "rZ" (_val), "r" (_addr)
++		: "memory");
++
++	return err;
++}
++
++#endif /* CONFIG_ARM64_GCS */
++
+ #endif /* __ASM_UACCESS_H */
 
 -- 
 2.39.2
