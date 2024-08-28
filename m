@@ -1,84 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-27503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BD4961D16
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 05:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D481D961D1A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 05:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E79A1F243CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3281F247BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1966D13C670;
-	Wed, 28 Aug 2024 03:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C4F13E03A;
+	Wed, 28 Aug 2024 03:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="W0tdZLgZ"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="NyjfLId7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A886C200CD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 03:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7383C488
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 03:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724816600; cv=none; b=JPZIkPWoTsxyAMpDektW1iyZruDw6WvpgKi5MG/9fi1dI3QF0voUrf6zU+Ink+Mp502QhrwXUEw1at/D3q5VnJUQHeBntIdgf25VbI9bTVbz1lffBfA8kF+8Y4qPmsAfyQNUJe+oEiaLMkk67rPY7yXoJD+xCHrJNPd2g0jzBKk=
+	t=1724816717; cv=none; b=NQl6NSWyvJwI7YCTe2sRROglCtM/zMfagdAcng4lxm6sdlbE86zIUWb754bZSD3mLnkMEEmkQDhkxMiQ/jNQhkcIrvXfN2hqcIXW6TwQmD2VdGdhiA3CbiCQa6Ryq31sODm+J+XNEpULMcjtjLOftUn7UrWV3Qyr/Po8uGANv10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724816600; c=relaxed/simple;
-	bh=oJbbjEsTWJeh83Dbun3VLdDqfv3FibOrWpkJ3MsioDw=;
+	s=arc-20240116; t=1724816717; c=relaxed/simple;
+	bh=olGyObC/pNWdjCOWjhvhkAzzCytLDWIL4PH/8OIefGM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FtSJyaIccH5+5AyiZU8i8eZzGbBX74ea6Po13IZkVmRfuC0kUCVxVh+NtEfeD5p/hwYgP59+ba8uDbEBCz3L7Mrn89SRjyFihLW8jUSuUTn5Oh/mNgGdoj5wa3RaPbTMHqh3F+jSNEtN5FTkyk1gWDcY6VwMzsEoYPgyWth3le4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=W0tdZLgZ; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7bb75419123so3992295a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 20:43:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724816598; x=1725421398; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3gcUZ1E5jMHxcb+3WwyGJu9jgAZgzxZf/U+LqyUjPCQ=;
-        b=W0tdZLgZI2HW8oNW+qA0W0Q4981gb1aDKuEGkOuQVMpVXehPkGu8E5PMntnxj1Zf+8
-         0CHsBrZgZLfArAij8xnMDXNcg4gIh1kn0AJmpu0S7wlYRAOW1UuEghzcHyBN65EowxXn
-         yzDbDR9s45KS/Wv1w/0DaQhhdOBBP9xsDZAhrk+WxlOUmqIMMiEk/dnpwKxs4Wh5J37N
-         w1kHEzTqLRVuABx8XoyJ7pmUyHHWc+BKjHJgajar4v6yW2m0m+tA7Y+82oDdLLXis8qh
-         F4jpUs4nNh2oq6EyVrnzBbdW8nUsJBXA0F9zY3IvgfZCw2OeShJUdkO4xLLrUKsyPdcz
-         0wXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724816598; x=1725421398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3gcUZ1E5jMHxcb+3WwyGJu9jgAZgzxZf/U+LqyUjPCQ=;
-        b=AzaKRfjuph8z2k63QTqMdLu0VU4+Dz44CfClTb59C8o+3SzJHupH3XSwZS4FjK/tO7
-         jQWkMG2HCZSFsp+cth7r7RudjMToGEBCCGlkU4HnJFXB/BvqvJ4yiNVaf/ljFrVbmrH9
-         MBtO+LRsqY/3vx3RVAH8rKgs9Gk8m+qYO7Oq9mmC2RRPu+bof7oPl6GYLgVEMurxSdHJ
-         DqiI9o9l36+ZqGGdImAmk/Qxza1hj31KUx3G9Tp5AqgwgBv6VoTjAPfcbXpyJvwuhg0B
-         qWd4+270OhlgO0TBU45aMuHA9aYFARW0gr+Js2ymHLyho6Fz99/Z/mL/Qlwb93Z+0UYd
-         0Gqg==
-X-Gm-Message-State: AOJu0YwXSLCEv1pH0oNKHmv0B9WgX04G+3kTJIEuSu8YVGXg6NdvRLa8
-	nQVgkXn8pUW+FCaVdAUsACo1wFD2Y571mzFPHrY/JivSC5Jw5vocBHmePS56T0Q=
-X-Google-Smtp-Source: AGHT+IG6kQZeI9NbtLZWTvUhFsTxQi88npVwo77efHV7cZ8AlR8vpP3boDhXVMWim2DvAlGjyUTESw==
-X-Received: by 2002:a05:6a21:9614:b0:1c2:8cf4:7656 with SMTP id adf61e73a8af0-1cc8b41ff12mr15414408637.10.1724816597889;
-        Tue, 27 Aug 2024 20:43:17 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445fa589sm383406a91.17.2024.08.27.20.43.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 20:43:17 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sj9aT-00FIY6-1J;
-	Wed, 28 Aug 2024 13:43:13 +1000
-Date: Wed, 28 Aug 2024 13:43:13 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 10/10] fs: super_cache_to_text()
-Message-ID: <Zs6c0QIObPzSiH/1@dread.disaster.area>
-References: <20240824191020.3170516-1-kent.overstreet@linux.dev>
- <20240824191020.3170516-11-kent.overstreet@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cWJA8QwcYUs6gV9Xj/3M3+tim+mfjw/7geJ3CIhhoVXikVNnRTKZ/3+abp/xxlpBd7STJoFBRDpCMWwjTNMvYIS6rUn/SbOSCT2W8iTTzm7hmkZigx0depGbj+OAXO/SfJBErlRtJfT9f4mRUna3gqnF4MJ38hdh22Nwe88flws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=NyjfLId7; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47S3icJN013986
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 23:44:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1724816682; bh=fPLsyPvjLqRwSFvB9BZOO6c6tjlD9gjUehKmT9DuOnQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=NyjfLId7vqU22f9gjSHMfxsxs6/DT10NAIXYdf1ye9kJjtqE4CoDBaN3poS5NRkYm
+	 pAm8qextppKJ7LFibtnDu6scAW51nlTMHqiXWXW6mfSdgN+r8NOTLiRT/x1PuBkUXn
+	 auLhWuAngtEOEcVlyQPY4WMLcDORuz/KZzDLdPtBahxvBEloz++Pfam4dr1Ob1aQyq
+	 7aXpO634uQ3YZwiY3bX+Y7Up0QPTNz0Wgwl8Y7LVAHKjXhjZ7yuz9Y+MyvZnSi4w7g
+	 mu0l6+ObSmv4sv9+L48ZECWwK8/iChkz2wAHFAHfzL+ZGo1GNkGSX1Ibx7nyo6t4Rl
+	 6VV7cFE061Fcg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 69DC815C02C1; Tue, 27 Aug 2024 23:44:38 -0400 (EDT)
+Date: Tue, 27 Aug 2024 23:44:38 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Hongbo Li <lihongbo22@huawei.com>,
+        jack@suse.cz, viro@zeniv.linux.org.uk, gnoack@google.com,
+        mic@digikod.net, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
+ directly
+Message-ID: <20240828034438.GB9627@mit.edu>
+References: <20240827014108.222719-1-lihongbo22@huawei.com>
+ <20240827021300.GK6043@frogsfrogsfrogs>
+ <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+ <20240827053712.GL6043@frogsfrogsfrogs>
+ <20240827-abmelden-erbarmen-775c12ce2ae5@brauner>
+ <20240827171148.GN6043@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,58 +72,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240824191020.3170516-11-kent.overstreet@linux.dev>
+In-Reply-To: <20240827171148.GN6043@frogsfrogsfrogs>
 
-On Sat, Aug 24, 2024 at 03:10:17PM -0400, Kent Overstreet wrote:
-> Implement shrinker.to_text() for the superblock shrinker: print out nr
-> of dentries and inodes, total and shrinkable.
+On Tue, Aug 27, 2024 at 10:11:48AM -0700, Darrick J. Wong wrote:
 > 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> ---
->  fs/super.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index 5b0fea6ff1cd..d3e43127e311 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -36,6 +36,7 @@
->  #include <linux/lockdep.h>
->  #include <linux/user_namespace.h>
->  #include <linux/fs_context.h>
-> +#include <linux/seq_buf.h>
->  #include <uapi/linux/mount.h>
->  #include "internal.h"
->  
-> @@ -270,6 +271,16 @@ static unsigned long super_cache_count(struct shrinker *shrink,
->  	return total_objects;
->  }
->  
-> +static void super_cache_to_text(struct seq_buf *out, struct shrinker *shrink)
-> +{
-> +	struct super_block *sb = shrink->private_data;
-> +
-> +	seq_buf_printf(out, "inodes:   total %zu shrinkable %lu\n",
-> +		       per_cpu_sum(sb->s_inodes_nr), list_lru_count(&sb->s_inode_lru));
-> +	seq_buf_printf(out, "dentries: toal %zu shrinkbale %lu\n",
-> +		       per_cpu_sum(sb->s_dentry_nr), list_lru_count(&sb->s_dentry_lru));
+> But in seriousness, the usual four filesystems return i_generation.
+> That is changed every time an inumber gets reused so that anyone with an
+> old file handle cannot accidentally open the wrong file.  In theory one
+> could use GETVERSION to construct file handles (if you do, UHLHAND!)
+> instead of using name_to_handle_at, which is why it's dangerous to
+> implement GETVERSION for everyone without checking if i_generation makes
+> sense.
 
-There's no superblock identification in this output - how are we
-supposed to take this information and relate it to the filesystems
-that are mounted on the system?
+I believe the primary use case for {FS,EXT4}_IOC_GETVERSION was for
+userspace NFS servers to construt file handles.
 
-Also, list_lru_count() only counts root memcg objects, so any inodes
-and dentries accounted to memcgs and are freeable will not be
-included in this output. For systems with lots of memcgs, that will
-result in the superblock reporting lots of inodes and dentries, but
-almost nothing being freeable. hence to do this correctly, there
-needs to be per-node, per-memcg list_lru_count_one() iteration here...
+For file systems that don't store persistent i_generation numbers, I
+think it would be absolutely wrong that FS_IOC_GETVERSION to return
+zero, or some nonsense random number.  The right thing to do would be
+to have it return an ENOTTY error if somene tries to call
+FS_IOC_GETVERSION on a vfat file system.  Otherwise this could lead to
+potential user data loss/corruption for users of userspace nfs servers.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+	       	    		    	      	 - Ted
 
