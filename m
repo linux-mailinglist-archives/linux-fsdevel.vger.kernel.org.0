@@ -1,79 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-27519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB173961DC5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 06:53:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A533961DF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 07:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5981284629
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 04:53:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA2B1B22EF9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 05:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6969814A4DD;
-	Wed, 28 Aug 2024 04:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C30814B956;
+	Wed, 28 Aug 2024 05:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X3HxUN3G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39150145FFF;
-	Wed, 28 Aug 2024 04:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC8314A630;
+	Wed, 28 Aug 2024 05:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724820778; cv=none; b=js31nkh5vMpLk/vjX1/WcnT/BksfR8rieSyApYrEh96pA/Npmi3H4lC9h4XRSH6MyahwgH1N3q+a1i7FRVvpRjHXFIjM+GJEuuNdogVxrJMDXaiBpFiAjVqdzqux1Pj6W0C2W42kVuXqYuA7Fz+mAqwr03CkJyQcqPdrPkz85Sg=
+	t=1724821920; cv=none; b=lDG7iCGQrhKZwAixlgg9r4ocT3ViVB7JUbn1Trq9FRr6g/Gtdf6RiIz0ZfTKjJQGJwQLdslEx4X77b+zyErJbx9K3WK4aqR7d2h3tAD0T3p/7ZdkHadEMLNHPF8GwjTF/QJ6fqeBTwe8Nncii4P9E2rhT/JKOYlEZAq4fwkOnfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724820778; c=relaxed/simple;
-	bh=XdRMWpI7VfLF8kAv/SP9cCPhoRpzJ6x/21suRcCEvmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2PWyqoWsllu30PF5XO/lUbET9xoTY8kWmwSR+IPIhZu07HH1u0CjLizVF29RWzvTyytVGuRTQrOYFdNhKuXEOg8Vt3Yvlx0yVI3P9LYXTGAReFuSCKINmdBtdepxcd6BJvw86jFvaKLCAoZLu6cDFlXDY5ZGfTIbBkA51ryGMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+	s=arc-20240116; t=1724821920; c=relaxed/simple;
+	bh=bdm0aOLyAz81WxxOGs3gd2CNrQr7fVLHYghOaVv/kJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=itRyZkmJ6kUaYrPuCtF44ykiup2D2fL0ucfUWyMtSMLavoldq0f4mJigRi0E5r0AJSGSc223ELZk8ZJk3ThBK82dSA9eC5WGmwQAqq/OxFtPojvQYOzrUmCPnEkI3mp+pZrrVK3kmu6Nt6ZA23+zQTN8vy2LxyQua3Uv00Sylac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X3HxUN3G; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6AF7F68B05; Wed, 28 Aug 2024 06:52:53 +0200 (CEST)
-Date: Wed, 28 Aug 2024 06:52:52 +0200
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=qSrOGe9vJINzdxtkitGbypmH6rCj1S+W6yy7xPpVUoU=; b=X3HxUN3G5AQjNd4nruMAMvMJoV
+	QVcBtF1VxfYhH2aCiOyzjGwmKI3MB6O9yfeATurSVzgs6siJEU9RKbXJG8eYVPLKdTIaT8TG8W8UU
+	0EPjbk52n7fZIjattgXlSkWQ834pUD5JaC7W6552Vq4WdhCrlTWvJrK4WJljGvd3b3gl2fxWYZ5Mz
+	f7hRxeNwu5XK7Yi02li2+uMqKoQtx0ioB17f2aZj23D8NbZjQoGY9AYmANwym8LmX27bfJMm8JakZ
+	vMLoJbvTEH0h8wvQpdLJRdFyu24i67SAj9qrESC+MnnH8wyCeTpCDTKgU7EHKTgfrlMFGOwIgI1Uq
+	6/yocsEw==;
+Received: from ppp-2-84-49-240.home.otenet.gr ([2.84.49.240] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sjAyK-0000000DsCP-08Ei;
+	Wed, 28 Aug 2024 05:11:56 +0000
 From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>,
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,
 	Chandan Babu R <chandan.babu@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/10] iomap: remove the
- iomap_file_buffered_write_punch_delalloc return value
-Message-ID: <20240828045252.GD31463@lst.de>
-References: <20240827051028.1751933-1-hch@lst.de> <20240827051028.1751933-7-hch@lst.de> <20240827163613.GA865349@frogsfrogsfrogs>
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	linux-nilfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: RFC: add STATX_DIO_READ_ALIGN
+Date: Wed, 28 Aug 2024 08:11:00 +0300
+Message-ID: <20240828051149.1897291-1-hch@lst.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827163613.GA865349@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Aug 27, 2024 at 09:36:13AM -0700, Darrick J. Wong wrote:
-> > 
-> > As the only instance of ->punch never returns an error, an such an error
-> > would be fatal anyway remove the entire error propagation and don't
-> > return an error code from iomap_file_buffered_write_punch_delalloc.
-> 
-> Not sure I like this one -- if the ->iomap_begin method returns some
-> weird error to iomap_seek_{data,hole}, then I think we'd at least want
-> to complain about that?
+Hi all,
 
-iomap_file_buffered_write_punch_delalloc never calls into
-iomap_seek_{data,hole} and thus ->iomap_begin.  It just uses the lower
-level mapping_seek_hole_data that checks dirty state, and that always
-returns either an offset or -ENXIO, which is a special signal and not
-an error.
+file systems that write out of place usually require different alignment
+for direct I/O writes than what they can do for reads.  This series tries
+to address this by yet another statx field.
 
-> Though I guess we're punching delalloc mappings for a failed pagecache
-> write, so we've already got ourselves a juicy EIO to throw up to the
-> application so maybe it's fine not to bother with the error recovery
-> erroring out.  Right?
+Note that the code is completely untested - I wrote it and got preempted
+and only sent this out because Hongbo Li brought the issue up in the
+nilfs2 context.  I've just started a vacation so I'm unlikely to get
+back to it any time soon, but if someone wants to take the work over
+go for it.  I'll probably answer to email at least every other day or
+so.
 
-But that is true as well.
-
+Diffstat:
+ fs/stat.c                 |    1 
+ fs/xfs/xfs_iops.c         |   37 +++++++++++++----
+ include/linux/stat.h      |    1 
+ include/uapi/linux/stat.h |   99 ++++++++++++++++++++++++++++++++++------------
+ 4 files changed, 106 insertions(+), 32 deletions(-)
 
