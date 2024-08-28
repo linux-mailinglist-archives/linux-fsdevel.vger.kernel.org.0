@@ -1,90 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-27609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46846962D28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 18:02:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA480962D50
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 18:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA00D1F219C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:02:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 293DBB22B3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A0F1A3BBF;
-	Wed, 28 Aug 2024 16:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CA31A3BB3;
+	Wed, 28 Aug 2024 16:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="IHL+oubC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDMdtMJP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC40D1A254C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 16:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50CF13775E;
+	Wed, 28 Aug 2024 16:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724860900; cv=none; b=Q2YAfDMlk5FCLEV5bQ3CxCL7xixxLjaFOr1Xxs5U4WEqcyWBSOhMZNSX5/2PZfkS5DsZ7PSQj55bHmsPqB8hoVf5CpmSbtKdGo2jzlUpbIXExyYfqv5yP+d6jcsn5apa2c+cjFp+CZxDi3gqxWVaXfv5oeExOqo7q02WAjiWjAI=
+	t=1724861405; cv=none; b=BWjBEMHiNX35tNzzFZGKe4BQhhIqMWhRNOeD3mbdC6n971nqwWUfMD1jcZp+RmTBS5jgA72NEINM4bC/nh/xRnkoSAM4C6APz8us9XwJYEbhuMDCsC+OwEQcEmo1zM2/P9Bd6Ihq931E23+VnZvnnvp4U2892RsY1pvmDT9qfZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724860900; c=relaxed/simple;
-	bh=xOJyaX8eDP3JJi8TXw9iibsjr95k7dWvoIYF0PDKRt4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VyrHwVsy5vgBa6LDDsXlpP8Od/Shlp4nPKpMoiRLhsm6TnHtIn08q2ewtIeTz4lUmaR4fBI9iRTjdTC3Fr6kCNjTrKQ3UBadwfTuYv9HYPyFlI44K4TmoYE1LalNWlaB8fGv2Q9BVOy0wfNwKPRSAl6x4r51SNibutQCxPqc5c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=IHL+oubC; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a86a0b5513aso608715866b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 09:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724860896; x=1725465696; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BvzGWmKRfT1F45Aqj5R12rQjwDY4TtY3hxkmmi79R88=;
-        b=IHL+oubClNaZvOC/KWkru7R7KK2Am2ecPolUPGY5Td6chveRshKS6wzHpZmqjhaTUR
-         qs6mLxOOTI7F9+6dtE+H4Ucu05G5GI3/HMJtS0Gt5nCHHiT4HEAUh4E3nK8cgZSltiKA
-         Rru+LytMHLWZ7Kr2gLMxXa3HDgRvZaD4IXddM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724860896; x=1725465696;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BvzGWmKRfT1F45Aqj5R12rQjwDY4TtY3hxkmmi79R88=;
-        b=Y+28778XAmi01o/Rqq1IN9bcbrljN9OO+HL5L+W56perWvXMyvqIqzF7QWP7OVzql5
-         x/WeT4qACjIYxR61MZFfxjCUf1SKeXHYAbTBIKWVZHVLqq2/nYMNJJDi8KJIOUuBC8T/
-         uvHetaS+g7Mj3meprqzp/1cXCAsiCfo8ccIEDLASH7TRWaACAA9T9XRUuZmWJF1ZJ9kq
-         YytRoi+sNaWzshGMULtW6+LKKpTkjEZbiXV4C18SVBRMrfp0lNxFBDOZp/d3+gCm7MfR
-         wi7UQv+b1b1VmpdolegPyEK5QNNrO6zZT11RyhUGrmhVTeoBkpDHWuUmS/eFuVwOqbL5
-         As2w==
-X-Gm-Message-State: AOJu0YwCnSdEr/n16cQlxCJD/HlDFdlR2HYDWHz2qbA3338ZvSU5LvEs
-	IJGuyjIevlCS4CXVQ9b/jUvVTp7eyT6Zh3PkZgKJqNhpMsGuNMr+szAQvj6rBX3yx+UvqNs8YYD
-	PyhaBTEVzP5D9sOodZWHjnYo1xQkT/PPjzW86Rg==
-X-Google-Smtp-Source: AGHT+IEwHNc1kfEtW3POxV8Da0toY1GDPKpdHXzApzzezvVoGapBNR5raTns6y7lPGVZvIIvMGyIzCXSD3u7V63eJqA=
-X-Received: by 2002:a17:907:d5a0:b0:a86:a090:5caa with SMTP id
- a640c23a62f3a-a86a52de579mr1181447566b.34.1724860895583; Wed, 28 Aug 2024
- 09:01:35 -0700 (PDT)
+	s=arc-20240116; t=1724861405; c=relaxed/simple;
+	bh=5gCyXX8Bq2vU6a/ioVEkb49fxdLAIegxKwjcc6pXyT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e5TXbEK7Lcafg/C45JJj7/1iLnkpTVqcX1+IqMEgFIuTBULc8fHjDc111Ro+vID8aj+iWQeC/BbDfesVEjIotBZGJ2L9f3NpGVQNt5lGZpVHXtMan4AR8gnLMXSEk9pduEs4A95BLl0PruWsk/sNtBJrMt1U8iHEVFKZnXG1Kb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDMdtMJP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 513F1C4CED8;
+	Wed, 28 Aug 2024 16:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724861405;
+	bh=5gCyXX8Bq2vU6a/ioVEkb49fxdLAIegxKwjcc6pXyT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YDMdtMJPVO8SYN2blFJyFvekwizxL0U/Bt8OQiBLIO59Ajl9kWY4a5U1/RfrKXhLE
+	 br3+epEu0CLZDR7haYWCtaEkBvWkb+9IZJK1VQkSiYPURrduls9OKOBV163JpAsJRF
+	 V9LQyldInlcY5WE5/8JgHvm6hZ9BS1Fs3iQYkZYJ9Q0GGzo3F4wwXUObSyJsrYx1Ia
+	 XcwDFhMkwBX8eHqZAJ99Kny74k9F3lFQxflcbNbU0kqqDGeB21w4O1J0f90EFJuXqb
+	 6Hmyh/kibnx3qKRSXieNYpa3Cooo+Iz4QH1KeRbY+7yj3vZyEOl5sgPo4KaJu4JEdi
+	 UC9jPssea/vJw==
+Date: Wed, 28 Aug 2024 09:10:04 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/5] xfs: move the tagged perag lookup helpers to
+ xfs_icache.c
+Message-ID: <20240828161004.GG1977952@frogsfrogsfrogs>
+References: <20240821063901.650776-1-hch@lst.de>
+ <20240821063901.650776-3-hch@lst.de>
+ <20240821163407.GH865349@frogsfrogsfrogs>
+ <Zs7DoMzcyh7QbfUb@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fc6559455ed29437cd414c0fc838ef4749670ff2.1720017492.git.josef@toxicpanda.com>
-In-Reply-To: <fc6559455ed29437cd414c0fc838ef4749670ff2.1720017492.git.josef@toxicpanda.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 28 Aug 2024 18:01:23 +0200
-Message-ID: <CAJfpegv07=fxHxT8mfE0HGXr1XpmER8bV0hpE32LSoaVr-4qGw@mail.gmail.com>
-Subject: Re: [PATCH][RESEND] fuse: add simple request tracepoints
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs7DoMzcyh7QbfUb@infradead.org>
 
-On Wed, 3 Jul 2024 at 16:39, Josef Bacik <josef@toxicpanda.com> wrote:
->
-> I've been timing various fuse operations and it's quite annoying to do
-> with kprobes.  Add two tracepoints for sending and ending fuse requests
-> to make it easier to debug and time various operations.
->
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+On Tue, Aug 27, 2024 at 11:28:48PM -0700, Christoph Hellwig wrote:
+> On Wed, Aug 21, 2024 at 09:34:07AM -0700, Darrick J. Wong wrote:
+> > I don't particularly like moving these functions to another file, but I
+> > suppose the icache is the only user of these tags.  How hard is it to
+> > make userspace stubs that assert if anyone ever tries to use it?
+> 
+> I looked into not moving them, but the annoying thing is that we then
+> need to make the ici_tag_to_mark helper added later and the marks
+> global.  Unless this is a blocker for you I'd much prefer to just
+> keep all the tag/mark logic contained in icache.c for now.  Things
+> might change a bit if/when we do the generic xfs_group and also use
+> tags for garbage collection of zoned rtgs, but I'd rather build the
+> right abstraction when we get to that.  That will probably also
+> include sorting out the current mess with the ICI vs IWALK flags.
 
-Applied, thanks.
+Or converting pag_ici_root to an xarray, and then we can make all of
+them use the same mark symbols. <shrug>
 
-Miklos
+--D
 
