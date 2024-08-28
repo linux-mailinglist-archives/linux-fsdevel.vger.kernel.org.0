@@ -1,95 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-27565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DCA962670
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 769F6962669
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A57D32835BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A5D281F9A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC26217166E;
-	Wed, 28 Aug 2024 11:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="in6SYVIE"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F3616D9BA;
+	Wed, 28 Aug 2024 11:53:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369C414A4D6;
-	Wed, 28 Aug 2024 11:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43C114A4D6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 11:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724846200; cv=none; b=RntI+fogDOGxtTVEZc4gzMkR7G8tS4p6Q/2Fc2TOYp4OtdMQOMhcsY0jx4XVdCDwccs/xhIbJsb5haDm28bf5PpUWCbhosgJYK//3sC0146YS1kkXnr2v6h2Iyl3UwxlfHAhRZqqzRJaPF5DH9laMu1gAufnHi8uDCAqzEcCZzI=
+	t=1724846039; cv=none; b=eBe1OBHONLEZ5++8abFp5HF+7N0XaC/X7RYYYTovoBnSB9VVmu/DTzWp8WnW1Lo0EU3OtUknouEEB5ufJYhGeSDjYJwTxnePk1vNr8oqkMJIF7iO5n7o5Ii+xTLwiY1TTzmAKbWiY0fzYZdKTo2NFsNd+qDZKHQxmjVZd1ihf7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724846200; c=relaxed/simple;
-	bh=o/x43QyAFuBKLjQeSbCZYiPg/EBcEZ7K3ni3oeBZtcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Li+B5g6cwVMhwpy1XKevikWthVo8d8Cg2hJasweu6SPlR0AjRAkSizkQP1jpAzbh5nShfE68VEMINDi9J+Er/JOXrlKukgsChtdIcqTceCtvF3xjlVlMynmBYELZlfPOFYXkNbK93/zhVwmHn1EomNqRZMbGDnSNhLE80sFA8Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=in6SYVIE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9042CC98EC4;
-	Wed, 28 Aug 2024 11:56:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724846199;
-	bh=o/x43QyAFuBKLjQeSbCZYiPg/EBcEZ7K3ni3oeBZtcc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=in6SYVIE3hOp/7QxRmJc4ZpvUl6UF78kWEKVR99dLnKXqKLvoaADn4i0t/CHfzWfx
-	 Kgzr48j09UmCNI0NFmgnHwoEHT40bWttNznGrayzLodjQQD5vCjK+ya5RQp5uc/rWh
-	 zLrsFV1uptGpxVVzEnOvfQRxP/ZBdYm3kx5AfjFgIRCe5p8LxwXbVdNEZub1evpg0j
-	 x5efZNNJGrSPMdYNbOSIwgq0OgN9XcfXPyk2BpHQXC+jsFEb9xzjnKAielbE9rYbg1
-	 ORJ+4C3izqfC54VJLWMiozqw9p4Oj8MBYxjh442XWFuaO+UOqSOVYne3fypK8B+P30
-	 kB4c9CPl030Yw==
-From: Christian Brauner <brauner@kernel.org>
-To: Yu Jiaoliang <yujiaoliang@vivo.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	opensource.kernel@vivo.com,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Seth Forshee <sforshee@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mnt_idmapping: Use kmemdup_array instead of kmemdup for multiple allocation
-Date: Wed, 28 Aug 2024 13:56:23 +0200
-Message-ID: <20240828-heizung-august-f14076473669@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240823015542.3006262-1-yujiaoliang@vivo.com>
-References: <20240823015542.3006262-1-yujiaoliang@vivo.com>
+	s=arc-20240116; t=1724846039; c=relaxed/simple;
+	bh=Q93TqhxpDAenL7lwa/1VBxKIzkGe4weUVL8erqHBd+o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=StC+C5M+6DV9bL/X2gThlrzR9a2NOTu0Hg6pEUnzeN3uHaU4ck2HHN7TJVQ1wLVXwf6xAvlBIpoCc9Up409yLcNHIZOycjkGLP2lL5RWDFBJRCDJtWpy+OiTXQHsvNivp1iVL9mkU750AUgu0Iu8gWTEX/nXsGSPBEZ935vgQt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wv2p36YpSzpTsR;
+	Wed, 28 Aug 2024 19:52:11 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0735D180AE6;
+	Wed, 28 Aug 2024 19:53:54 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
+ (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
+ 2024 19:53:53 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <dlemoal@kernel.org>, <naohiro.aota@wdc.com>, <jth@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <lihongbo22@huawei.com>
+Subject: [PATCH -next] zonefs: obtain fs magic from superblock
+Date: Wed, 28 Aug 2024 20:01:52 +0800
+Message-ID: <20240828120152.3695626-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=990; i=brauner@kernel.org; h=from:subject:message-id; bh=o/x43QyAFuBKLjQeSbCZYiPg/EBcEZ7K3ni3oeBZtcc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdFyiYnOP5pKyCJdxDLimRpfam156K/KDC7Tt/aK1Qf pj+202jo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKL6xn+WSufvXP7deSth2Gf WG1Z7Wc8sWDcvqlCZrXghP/nX5r+OM3IsLrhmkyPu1zZY/XA54FyQe+nXxE5Z1t5WUEi0oM3wdi cAQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Fri, 23 Aug 2024 09:55:41 +0800, Yu Jiaoliang wrote:
-> Let the kememdup_array() take care about multiplication and possible
-> overflows.
-> 
-> v2:Add a new modification for reverse array.
-> 
-> 
+The sb->s_magic holds the file system magic, we can use
+this to avoid use file system magic macro directly.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+ fs/zonefs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index faf1eb87895d..1ecbf19ccc58 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -444,7 +444,7 @@ static int zonefs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+ 	enum zonefs_ztype t;
+ 
+-	buf->f_type = ZONEFS_MAGIC;
++	buf->f_type = sb->s_magic;
+ 	buf->f_bsize = sb->s_blocksize;
+ 	buf->f_namelen = ZONEFS_NAME_MAX;
+ 
+-- 
+2.34.1
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] mnt_idmapping: Use kmemdup_array instead of kmemdup for multiple allocation
-      https://git.kernel.org/vfs/vfs/c/639639c8ce66
 
