@@ -1,128 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-27563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5354B962668
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:53:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DCA962670
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3441C20F38
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A57D32835BF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5109416CD2D;
-	Wed, 28 Aug 2024 11:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC26217166E;
+	Wed, 28 Aug 2024 11:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKMyzPd1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="in6SYVIE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E1A15FCE6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 11:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369C414A4D6;
+	Wed, 28 Aug 2024 11:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724846018; cv=none; b=TSURTn4cDHV3E+sZ98fgQpxvhassDGTj3UxKbxoyOwh/XK87biEpv8ZJ36Jvkkh+DLxwYPCWnMAxIZ7AgIDyeo0onBbs2Ns5gpSm5WV1YDXRhSsZPzRrqO9UXDIy975mUIhXO7EtYCq3rcCYz8lHNdLZ4fhOUph26nJqGmGdM8I=
+	t=1724846200; cv=none; b=RntI+fogDOGxtTVEZc4gzMkR7G8tS4p6Q/2Fc2TOYp4OtdMQOMhcsY0jx4XVdCDwccs/xhIbJsb5haDm28bf5PpUWCbhosgJYK//3sC0146YS1kkXnr2v6h2Iyl3UwxlfHAhRZqqzRJaPF5DH9laMu1gAufnHi8uDCAqzEcCZzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724846018; c=relaxed/simple;
-	bh=CENLyNdDhgcWFi6agZtY6YkqFXEfyhWLH7RldX/xba4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fvxsJFY+rM74NxfdAyQXEvf48PYqLUP+/Qx0m9Tzm+lIIpOnrAGiGDWjWcEqfFeOLyvkUj4ZwShGLWAxmjWetB0mc2898yjbgrbRZK6BxLrokkRC2SuR+r8WHqIV5RdmLKOfiS+8ZGn5nTZhuiGihAgGLD8Vk7By44kh3wWexRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKMyzPd1; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1dcc7bc05so430075985a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 04:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724846016; x=1725450816; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EDUPIgEg8rroOBWEOBK84+CMyAj/BV1AKtlwun+83bQ=;
-        b=jKMyzPd1noXWpbrJ3xR7ZogThQes6T0NYXlksFfUGumim+pI+toxBFJa3AsfJ/LIYT
-         6Ni5XuyaM1+buSxe4ySJZ48yASCtp/FrH69XYKVhLTp1wsOX6qBUsLKOikau0QJ3wqq0
-         xLrAdMlrhHeM9sIZSbiOmKYU1krZc+zFvw7VJ0+wbZhxMCF68O9j6K8SWIzKw+saDdVB
-         6z9hvJUKsCxjXvASdgKJEwYD6ykl7nEBDgmTo5Ra5ke7U/vtVUIUfQDjjtrL9FYJgnvG
-         fASaA6vzefRzEkQB7MOOGs5M+XK21AzcFsvNLXqH+3ZD6BkxB/D1foBDwkmnuejxoJl+
-         SFzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724846016; x=1725450816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EDUPIgEg8rroOBWEOBK84+CMyAj/BV1AKtlwun+83bQ=;
-        b=EPp/WA6yz6hCRcTqDGd/b8CvekCLQPGp5EYDarjnQpNgE8I1TF3NJYSQ1QGiBOqnKo
-         gsWj/cG7gOYuqtnVNAvl51i1CRt7uI5HFORvgx49Zkq1kKz/sp8afmS3omIxykOMF4my
-         y1oG+SufgYSsNtUd1j2UGCYu/sTcBH5SHiRD6GE9Zr7JCn3q/Czx9HcKSlq7mt6i9fb7
-         +l6ZWJQq1QxyBfHxalewLuYp32sBDp+LkWrTyfdOcT6pWEUuGqY7WsieCUN0Wc7chj0g
-         SJV6vZj/PLyut6Bp//MauRchB2oZtjQj5/rF9dh3pZkEyk2lSlI/eVttyYran2Vf98jW
-         HLQA==
-X-Gm-Message-State: AOJu0YwM7+mInv/Wp8DW9ivBWlK+IYZy45f7W7DBwvPcYuPEDrq3DqKl
-	YVP2irRnTJGsxjtmWnskOmy2ouObZB0oNaPu/Cozqk0YKHuzrHTqkULBL89p3ethqQu4fMxm/C/
-	OgdHc/1xAeedaqyQdLtr8AtXqPeax5qtN
-X-Google-Smtp-Source: AGHT+IFkWTtMCdY3DN8zidZpx6uw2pmvljcLMkzkmZ28Pw0iWt/MbLBjKGiICVgA+3AdGTuZ/gvSYZTRfW1N9CmFdQI=
-X-Received: by 2002:a05:620a:c4b:b0:79d:5b21:804a with SMTP id
- af79cd13be357-7a6896e3855mr2254649985a.14.1724846015849; Wed, 28 Aug 2024
- 04:53:35 -0700 (PDT)
+	s=arc-20240116; t=1724846200; c=relaxed/simple;
+	bh=o/x43QyAFuBKLjQeSbCZYiPg/EBcEZ7K3ni3oeBZtcc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Li+B5g6cwVMhwpy1XKevikWthVo8d8Cg2hJasweu6SPlR0AjRAkSizkQP1jpAzbh5nShfE68VEMINDi9J+Er/JOXrlKukgsChtdIcqTceCtvF3xjlVlMynmBYELZlfPOFYXkNbK93/zhVwmHn1EomNqRZMbGDnSNhLE80sFA8Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=in6SYVIE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9042CC98EC4;
+	Wed, 28 Aug 2024 11:56:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724846199;
+	bh=o/x43QyAFuBKLjQeSbCZYiPg/EBcEZ7K3ni3oeBZtcc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=in6SYVIE3hOp/7QxRmJc4ZpvUl6UF78kWEKVR99dLnKXqKLvoaADn4i0t/CHfzWfx
+	 Kgzr48j09UmCNI0NFmgnHwoEHT40bWttNznGrayzLodjQQD5vCjK+ya5RQp5uc/rWh
+	 zLrsFV1uptGpxVVzEnOvfQRxP/ZBdYm3kx5AfjFgIRCe5p8LxwXbVdNEZub1evpg0j
+	 x5efZNNJGrSPMdYNbOSIwgq0OgN9XcfXPyk2BpHQXC+jsFEb9xzjnKAielbE9rYbg1
+	 ORJ+4C3izqfC54VJLWMiozqw9p4Oj8MBYxjh442XWFuaO+UOqSOVYne3fypK8B+P30
+	 kB4c9CPl030Yw==
+From: Christian Brauner <brauner@kernel.org>
+To: Yu Jiaoliang <yujiaoliang@vivo.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	opensource.kernel@vivo.com,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Seth Forshee <sforshee@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mnt_idmapping: Use kmemdup_array instead of kmemdup for multiple allocation
+Date: Wed, 28 Aug 2024 13:56:23 +0200
+Message-ID: <20240828-heizung-august-f14076473669@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240823015542.3006262-1-yujiaoliang@vivo.com>
+References: <20240823015542.3006262-1-yujiaoliang@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOw_e7bB3C_zbpq6U+FdrjbwJAOKFJk1ZLLETrR+5xqRmv44SQ@mail.gmail.com>
- <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com>
- <CAOw_e7YnJwTioM-98CoXWf7AOmTcY29Jgtqz4uTGQFQgY+b1kg@mail.gmail.com>
- <CAOQ4uxhApT09b45snk=ssgrfUU4UOimRH+3xTeA5FJyX6qL07w@mail.gmail.com>
- <CAOw_e7axjatL=dwd2HAVcgC4j8_6A393kBj7kL_VHPUKfZJaqg@mail.gmail.com>
- <CAOQ4uxgFbBCRLFM4QdQYK3xESMixWqxtC1Q9Hk4p=bjWeWk1ZQ@mail.gmail.com> <CAOw_e7YD6f4aOAr6cuOGQOzhPtOwsNWv7-CqTE1iaF8qq-eR4w@mail.gmail.com>
-In-Reply-To: <CAOw_e7YD6f4aOAr6cuOGQOzhPtOwsNWv7-CqTE1iaF8qq-eR4w@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 28 Aug 2024 13:53:24 +0200
-Message-ID: <CAOQ4uxi4vU2dVvrLENjfZUKVG8mmsqRY+RBRMigUdC_RePC3+g@mail.gmail.com>
-Subject: Re: FUSE passthrough: fd lifetime?
-To: Han-Wen Nienhuys <hanwenn@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=990; i=brauner@kernel.org; h=from:subject:message-id; bh=o/x43QyAFuBKLjQeSbCZYiPg/EBcEZ7K3ni3oeBZtcc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdFyiYnOP5pKyCJdxDLimRpfam156K/KDC7Tt/aK1Qf pj+202jo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKL6xn+WSufvXP7deSth2Gf WG1Z7Wc8sWDcvqlCZrXghP/nX5r+OM3IsLrhmkyPu1zZY/XA54FyQe+nXxE5Z1t5WUEi0oM3wdi cAQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 1:02=E2=80=AFPM Han-Wen Nienhuys <hanwenn@gmail.com=
-> wrote:
->
-> On Wed, Aug 28, 2024 at 12:48=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
-om> wrote:
->
-> > > Similarly, it looks like the first backing ID is usually 1. Is it
-> > > guaranteed that 0 is never a valid backing ID? I am not sure, and it
-> > > would certainly help implementation on my side.
-> >
-> > No guarantee.
-> > There was some suggestion about special use for value 0,
-> > but I don't remember what it was right now.
->
-> In a file system, not all inodes are backed by a file. If 0 would not
-> be handed out as an ID, then backing ID=3D0 could mean: this node is not
-> backed by a file (and doesn't need to unregister the ID on
-> forget/release). If 0 is a valid ID, I either have to add another
-> boolean to the inode, or keep calling the ioctl until I get a non-zero
-> value.
->
-> Reading, the code, the call is
->
->         id =3D idr_alloc_cyclic(&fc->backing_files_map, fb, 1, 0, GFP_ATO=
-MIC);
->
-> ie. start=3D1. In other words, if the counter wraps, it will start at 1
-> again, and 0 is not handed out.
+On Fri, 23 Aug 2024 09:55:41 +0800, Yu Jiaoliang wrote:
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> v2:Add a new modification for reverse array.
+> 
+> 
 
-Yes, I understand.
-I think the rational for reserving 0 as special value was for the
-future use of FOPEN_PASSTHROUGH response to mean
-"passthrough to backing inode if one was already mapped during lookup".
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-So yeah, I am personally ok with the backing id handle being > 0
-as it is in the code right now.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Thanks,
-Amir.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] mnt_idmapping: Use kmemdup_array instead of kmemdup for multiple allocation
+      https://git.kernel.org/vfs/vfs/c/639639c8ce66
 
