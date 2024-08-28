@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-27667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C7796357E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 01:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36060963581
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 01:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9883F1C224E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DDD1C22748
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C0D1B012D;
-	Wed, 28 Aug 2024 23:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DADC1B140E;
+	Wed, 28 Aug 2024 23:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dch4Alwn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtDMwdQp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D601AE05F;
-	Wed, 28 Aug 2024 23:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B118A1AE05F;
+	Wed, 28 Aug 2024 23:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724887741; cv=none; b=nIOpDz6ZCRDNw7CfHi4az2ZCgVnTrn44iKc/Qz5AzaXVgGCo2cXBoUOiSJ+8uLvATFa+sP2wV1T1kEDSfbqvpd93GnULhv5zJNew/J6ecmR2itAvUyBWmGxLpyzwco6je+Z81ctVWlJPPyLr9hMtwVZeW+hddWz641sNVTWJ3+0=
+	t=1724887748; cv=none; b=Yhnl3mwt1aPftiE2zoHDNnlaXK629mJQ4oTugO3SIuxTYn/h9J8PrdH8cQHqPagA7Xj0Wz7kQGAqIX11zCRRZmmwz9ElZY0Khr1EKkaZYGabsoETdC9JzGOM5H44yAIwSWiHekNJ/YIPBReqNLxhnAI9qYkQYaa1KgPSOKDY3KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724887741; c=relaxed/simple;
-	bh=/QxGsZ7kGu5gcX/2Pir/IdpixOHnIz8YHhHUjvvkxmA=;
+	s=arc-20240116; t=1724887748; c=relaxed/simple;
+	bh=rOh4m4fj2wClbocRq0H+LpbzuLewpkO3M5BRFF5QA9g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WypS1YnlZnCMKpsklrajAvfnnnk0XCpT1YQMG36u2FAS5/WxnT3RXV3fm9zsWFjL6RSV9lAHXhugT7KMktumx2R8zAKd6W3D3moOA84+jdHUH6Nj9opipgBn0baoyitRCsKDXCYSftgPPON+Qk9aUyPggW3QHdh+jqsQis+n5vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dch4Alwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C9CC4CEC8;
-	Wed, 28 Aug 2024 23:28:54 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XvVfioMAVDquS30tBOV3MmWEip+zm1b9XIRW0KDeV4XM+QWLeLJhAoGj7B451rsxJSRvhbfTPC3ihENfO6mSUED4WPkdF7uYZdO8VtH0DtYRV+Pje4/0P3FVPROXm7bQk8G7UlPhhrF4KYPuXYvG95iLDkE5Hnzx5AzHFfv9cBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZtDMwdQp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D85C4CEC9;
+	Wed, 28 Aug 2024 23:29:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724887741;
-	bh=/QxGsZ7kGu5gcX/2Pir/IdpixOHnIz8YHhHUjvvkxmA=;
+	s=k20201202; t=1724887748;
+	bh=rOh4m4fj2wClbocRq0H+LpbzuLewpkO3M5BRFF5QA9g=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Dch4AlwnMww3ej5URFeoT7x7Lev1k7H8PfLuNI+LwoCFNneQnjJs9vb2zt1U2QD8/
-	 5vK1WYnGpyFj4up78NnltxMwusYylMmyfidRDyUV+1KYcmZTcg+xubKzz9RZeb6TFv
-	 bXoBF/l2tieBJefKx+VWOAEn+ZfXH1EfArtxYqcPtu0HzIDqpgPTL/R5NCzwQVoGWn
-	 f4whxK1TPfVIsaZSn36OosZSHprlsnO109lDpcFTlt0o/Jgb4WZ5Nn/ZapHfXI1S8N
-	 aZsgbTKsIvTNWrzeCuFTo/G23qMdKgHVaSOjB/ArekHEj1mdH+XWOl27UXr/fOGEAK
-	 9PCdsbrpdwQWg==
+	b=ZtDMwdQpJIDs2Rkwg0UYeDSZGl9Kgy35c06eDIK4/xNomEaD++8/p8t2QXdJEAztH
+	 wSDe8Jup97ATXtYoBygYSHUOvxgA0EtDFbcoVHiHXkZU64s+4e7QdTpYwjHwYUNNA4
+	 fmXhbKdf9yiRBra8gOySoZ5GyegNK29pluB9SC4oXQpTUsASjznj/+gelnrStbMUCQ
+	 mzoDrv+bTHH8lLa0Z0jhD+yocQgZqM15phOtwWzVvG0Hlip8JN4BaxASDLVEXK4jb0
+	 ciKTdIgx29iXFhoHHZ6RBmDIqv5QKOIIhKW1Dsd8YOdLxp4HP/wwySaJA5xzlpY4PO
+	 wYLCOROxVvtxw==
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 29 Aug 2024 00:27:20 +0100
-Subject: [PATCH v12 04/39] mman: Add map_shadow_stack() flags
+Date: Thu, 29 Aug 2024 00:27:21 +0100
+Subject: [PATCH v12 05/39] arm64: Document boot requirements for Guarded
+ Control Stacks
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-arm64-gcs-v12-4-42fec947436a@kernel.org>
+Message-Id: <20240829-arm64-gcs-v12-5-42fec947436a@kernel.org>
 References: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
 In-Reply-To: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -79,62 +80,79 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1882; i=broonie@kernel.org;
- h=from:subject:message-id; bh=/QxGsZ7kGu5gcX/2Pir/IdpixOHnIz8YHhHUjvvkxmA=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmz7J7DhuYvgHPWvnQp5L8SSC8eApPBM4bB5f2073J
- OnOxkUWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZs+yewAKCRAk1otyXVSH0CSnB/
- 0UYRHqMOQvkJ6ZhOUS+LmaFsZNTO8rFSfgNqHMjXQFWl7ziyzoBWr1U1wbZMbFddsopgmWMSYcf0rw
- YwpLd9I2lcZqjq3FHDCWwh8SOg+fQ6fVjdfuHVlmu5z5JzU8YZZoyeA31dX2oZMuHbD+9aZO2LD20g
- kvsn+DNpCft1yj2u4nwLU3gIapk/kI/+xG+ekt4s2whveyu3aa6X0vaIVrlAdi8sS9zLDr2278O/9h
- PCnTnh+PHA9SCW3aSKj/vMsjPAqZ944hBvr2zYb4oDlIdWaiik3UBpDqqGozZoQkoqyzgi5IAL+nlX
- sY/TPmQVG7qwODzTybUjKTTE+3LaAk
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2380; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=rOh4m4fj2wClbocRq0H+LpbzuLewpkO3M5BRFF5QA9g=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmz7J8Z5KYwVa17Tubvy4OA5GT6N3rKn+DrkFI1TFj
+ ZrKgfK2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZs+yfAAKCRAk1otyXVSH0MAcB/
+ 9SchQoHpvxwB9OxCqShz/dLftqcvRCIWxO9ZgoadV/U4Z50nuJqBdPypaRBS3bZjxOdOISP6XQ/CbU
+ 3V5v+g4JXxiGcKDkpOi/GfmZ6t1GA/fgPZdFp7Ckdq8Pt0Zt/kwqhC/xwj48+HPd3g5yzqtjHeJ9VG
+ yMVnneUwHH2TzyyvgGOyEVPO6GLr8arjGFoQ31TxvfiC+NskBEnNqcixA8MMAzSn+sZ8Xfxuyxmvgi
+ MILIA4dpUWrY3uWd/x5J6+znHC9MOgmcxRhX2X16jFT1Zd5K/rFTcP6Wz1FXTwZMdn/T7eo3Yjz4iO
+ RIWXdgHpzMXKw6EeHaoiWr7gUCLOry
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-In preparation for adding arm64 GCS support make the map_shadow_stack()
-SHADOW_STACK_SET_TOKEN flag generic and add _SET_MARKER. The existing
-flag indicates that a token usable for stack switch should be added to
-the top of the newly mapped GCS region while the new flag indicates that
-a top of stack marker suitable for use by unwinders should be added
-above that.
+FEAT_GCS introduces a number of new system registers, we require that
+access to these registers is not trapped when we identify that the feature
+is present.  There is also a HCRX_EL2 control to make GCS operations
+functional.
 
-For arm64 the top of stack marker is all bits 0.
+Since if GCS is enabled any function call instruction will cause a fault
+we also require that the feature be specifically disabled, existing
+kernels implicitly have this requirement and especially given that the
+MMU must be disabled it is difficult to see a situation where leaving
+GCS enabled would be reasonable.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/x86/include/uapi/asm/mman.h | 3 ---
- include/uapi/asm-generic/mman.h  | 4 ++++
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ Documentation/arch/arm64/booting.rst | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/arch/x86/include/uapi/asm/mman.h b/arch/x86/include/uapi/asm/mman.h
-index 46cdc941f958..ac1e6277212b 100644
---- a/arch/x86/include/uapi/asm/mman.h
-+++ b/arch/x86/include/uapi/asm/mman.h
-@@ -5,9 +5,6 @@
- #define MAP_32BIT	0x40		/* only give out 32bit addresses */
- #define MAP_ABOVE4G	0x80		/* only map above 4GB */
+diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
+index b57776a68f15..aed6e9f47cf3 100644
+--- a/Documentation/arch/arm64/booting.rst
++++ b/Documentation/arch/arm64/booting.rst
+@@ -411,6 +411,38 @@ Before jumping into the kernel, the following conditions must be met:
  
--/* Flags for map_shadow_stack(2) */
--#define SHADOW_STACK_SET_TOKEN	(1ULL << 0)	/* Set up a restore token in the shadow stack */
--
- #include <asm-generic/mman.h>
+     - HFGRWR_EL2.nPIRE0_EL1 (bit 57) must be initialised to 0b1.
  
- #endif /* _ASM_X86_MMAN_H */
-diff --git a/include/uapi/asm-generic/mman.h b/include/uapi/asm-generic/mman.h
-index 57e8195d0b53..5e3d61ddbd8c 100644
---- a/include/uapi/asm-generic/mman.h
-+++ b/include/uapi/asm-generic/mman.h
-@@ -19,4 +19,8 @@
- #define MCL_FUTURE	2		/* lock all future mappings */
- #define MCL_ONFAULT	4		/* lock all pages that are faulted in */
- 
-+#define SHADOW_STACK_SET_TOKEN (1ULL << 0)     /* Set up a restore token in the shadow stack */
-+#define SHADOW_STACK_SET_MARKER (1ULL << 1)     /* Set up a top of stack marker in the shadow stack */
++ - For CPUs with Guarded Control Stacks (FEAT_GCS):
 +
++  - GCSCR_EL1 must be initialised to 0.
 +
- #endif /* __ASM_GENERIC_MMAN_H */
++  - GCSCRE0_EL1 must be initialised to 0.
++
++  - If EL3 is present:
++
++    - SCR_EL3.GCSEn (bit 39) must be initialised to 0b1.
++
++  - If EL2 is present:
++
++    - GCSCR_EL2 must be initialised to 0.
++
++ - If the kernel is entered at EL1 and EL2 is present:
++
++    - HCRX_EL2.GCSEn must be initialised to 0b1.
++
++    - HFGITR_EL2.nGCSEPP (bit 59) must be initialised to 0b1.
++
++    - HFGITR_EL2.nGCSSTR_EL1 (bit 58) must be initialised to 0b1.
++
++    - HFGITR_EL2.nGCSPUSHM_EL1 (bit 57) must be initialised to 0b1.
++
++    - HFGRTR_EL2.nGCS_EL1 (bit 53) must be initialised to 0b1.
++
++    - HFGRTR_EL2.nGCS_EL0 (bit 52) must be initialised to 0b1.
++
++    - HFGWTR_EL2.nGCS_EL1 (bit 53) must be initialised to 0b1.
++
++    - HFGWTR_EL2.nGCS_EL0 (bit 52) must be initialised to 0b1.
++
+ The requirements described above for CPU mode, caches, MMUs, architected
+ timers, coherency and system registers apply to all CPUs.  All CPUs must
+ enter the kernel in the same exception level.  Where the values documented
 
 -- 
 2.39.2
