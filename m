@@ -1,60 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-27617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC3F962D96
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 18:24:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BC9962DA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 18:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39370286769
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:24:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB451F22FA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5968C1A3BB8;
-	Wed, 28 Aug 2024 16:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0EB1A3BC3;
+	Wed, 28 Aug 2024 16:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XfuDFhQd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iO/rozde"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE785B216;
-	Wed, 28 Aug 2024 16:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EEE44C68;
+	Wed, 28 Aug 2024 16:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724862242; cv=none; b=fS2zi9TUqJaLuoEKgDBC8jg3fGV83Ase16UY7zlbMXGUuUQtIgeSGWnsRu5zbWZ87hxmaOx0KLxb4LUuNUnsRELsDzVGsRRm9dKc5RyuOGeKsMkgqQmgLPAKwingNRWrCIypSh76Srb97gdiD95nba0cpKFFyrBKD3lDutEmCOA=
+	t=1724862474; cv=none; b=NDVoJAwziHuu86D9GgFn7IeTV8kxiAvXo+lbwgeCOxzeHKP053SE/lc4SCg45EZHDX80nhvmA3AtqK6VKTZZUZ198aOz0w/6rQM+HLRWM7raMVlu+rPk0J2dm3iAmyQb0dD3VoIySctzVmvzBmdavVgQSqUdvOTYoriVqepQqfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724862242; c=relaxed/simple;
-	bh=ek64Ez7ALjiYZoEu8O8UR2K7pZSJzTJIRhJiWuUvKVM=;
+	s=arc-20240116; t=1724862474; c=relaxed/simple;
+	bh=yiHtmwtZpevDfS/QkcYT/xZiCrDHFrmlQuTjJLiii0g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OzJhDf0Zm8QzYv6uwWlHW5ihCRwWxRvsrA6Yr0lpxcrYQWKcpQe16iGtUFhQgpstUSnCqAyJ51RqleEQRWYsbI/id/LiPtNRtP31z2/cKMVl9nEBIWofbtbatuFb/BD+gaxnWww/cu5Krl6w6bjSwZPHYcGJvZayMy1i1tYeMoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XfuDFhQd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293CFC4CED9;
-	Wed, 28 Aug 2024 16:24:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=R2fv4fYwZ8jGkTTnOn6GFvMQM3dI2C0zybJfxf3KwhrAEUk7Krd1SMfN07fspEe80A4Nlsgkr9kD9gzZWDgJFFYIlQgsW6zhCS31ZdKcYNxvF6mYBNyyJvEEdeVsCpn08jXuWxuwin3Tu3rqluK6dCD93sx0rSLwKJeB0AYkuvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iO/rozde; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F59C4FE01;
+	Wed, 28 Aug 2024 16:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724862242;
-	bh=ek64Ez7ALjiYZoEu8O8UR2K7pZSJzTJIRhJiWuUvKVM=;
+	s=k20201202; t=1724862473;
+	bh=yiHtmwtZpevDfS/QkcYT/xZiCrDHFrmlQuTjJLiii0g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XfuDFhQdK9DmS9eYIEIOuHtwsigN4kYgMA52ZtixYFqYZVocAEMSeTpaZRuWM6qzs
-	 DcWt3P9mT1qoGtTNxyB390kFVPFeBAbPKV1/wvlVka6g9idWxxBt+fziSChLO+c2/c
-	 SMryVhxPvGNuzndVlx2N29GQ2GhumBHTd7sD4DQ6oYoUp1v3dyDphPzOV39rPQWQ5g
-	 JBkJvtMT1U+kjbx0+wt5zMH7JVHtdqkfzhYVWxWXGU1bQHqE34u4GfTjTPiuFMcxm8
-	 tzIl13bouFK0lSYb+b3qj8iCNFme0erPlq4oCAqtogr2KrqJcp5fenGCFXo0teEbYu
-	 HgCsfVXiBi8Bg==
-Date: Wed, 28 Aug 2024 09:24:01 -0700
+	b=iO/rozdep5jfgDNCIskmXHmvBLHhqBXai6uXXkp2Qopjp3ZHxbcNKd8fErDy4lSfj
+	 AuhFE1oGtaP/1OOXRlZHwgyFiFwXqg8KwOCoY0Gm0lGZNmdJTDgdsDMVVl2k1k2Y21
+	 4ptEYVKfJBolMAgM0oMN8K6YmwBCTFxWAvtgX2UJxulruKud8WTPspV1EnqMD+tySk
+	 ZqsKgZqGkzJ97I7Rm+qyBQG0S606lomjJ0wKM1WCymEssrjUAmWZhrE/+qIk/EtluO
+	 QOIFZHQYFioRLmr7j6Y3AY9AjjFJbu6WQERwDCpwnSufnI0Y9KhoI1ZyYVcs26ACSn
+	 +UUSIcK4ton4Q==
+Date: Wed, 28 Aug 2024 09:27:53 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/3] fs: add STATX_DIO_READ_ALIGN
-Message-ID: <20240828162401.GM1977952@frogsfrogsfrogs>
-References: <20240828051149.1897291-1-hch@lst.de>
- <20240828051149.1897291-3-hch@lst.de>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: linux-doc@vger.kernel.org, corbet@lwn.net,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	kernel-dev@igalia.com, kernel@gpiccoli.net,
+	Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH V5] Documentation: Document the kernel flag
+ bdev_allow_write_mounted
+Message-ID: <20240828162753.GO6043@frogsfrogsfrogs>
+References: <20240828145045.309835-1-gpiccoli@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,78 +61,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828051149.1897291-3-hch@lst.de>
+In-Reply-To: <20240828145045.309835-1-gpiccoli@igalia.com>
 
-On Wed, Aug 28, 2024 at 08:11:02AM +0300, Christoph Hellwig wrote:
-> Add a separate dio read align field, as many out of place write
-> file systems can easily do reads aligned to the device sector size,
-> but require bigger alignment for writes.
+On Wed, Aug 28, 2024 at 11:48:58AM -0300, Guilherme G. Piccoli wrote:
+> Commit ed5cc702d311 ("block: Add config option to not allow writing to mounted
+> devices") added a Kconfig option along with a kernel command-line tuning to
+> control writes to mounted block devices, as a means to deal with fuzzers like
+> Syzkaller, that provokes kernel crashes by directly writing on block devices
+> bypassing the filesystem (so the FS has no awareness and cannot cope with that).
 > 
-> This is usually papered over by falling back to buffered I/O for smaller
-> writes and doing read-modify-write cycles, but performance for this
-> sucks, so applications benefit from knowing the actual write alignment.
+> The patch just missed adding such kernel command-line option to the kernel
+> documentation, so let's fix that.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Cc: Bart Van Assche <bvanassche@acm.org>
+> Cc: Darrick J. Wong <djwong@kernel.org>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 
-Looks fine to me...
+Looks good to me now,
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+Fun unrelated question: do we want to turn on bdev_allow_write_mounted
+if lockdown is enabled?  In that kind of environment, we don't want to
+allow random people to scribble, given how many weird ext4 bugs we've
+had to fix due to syzbot.
 
 --D
 
 > ---
->  fs/stat.c                 | 1 +
->  include/linux/stat.h      | 1 +
->  include/uapi/linux/stat.h | 4 +++-
->  3 files changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 89ce1be563108c..044e7ad9f3abc2 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -700,6 +700,7 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
->  	tmp.stx_mnt_id = stat->mnt_id;
->  	tmp.stx_dio_mem_align = stat->dio_mem_align;
->  	tmp.stx_dio_offset_align = stat->dio_offset_align;
-> +	tmp.stx_dio_read_offset_align = stat->dio_read_offset_align;
->  	tmp.stx_subvol = stat->subvol;
->  	tmp.stx_atomic_write_unit_min = stat->atomic_write_unit_min;
->  	tmp.stx_atomic_write_unit_max = stat->atomic_write_unit_max;
-> diff --git a/include/linux/stat.h b/include/linux/stat.h
-> index 3d900c86981c5b..9d8382e23a9c69 100644
-> --- a/include/linux/stat.h
-> +++ b/include/linux/stat.h
-> @@ -52,6 +52,7 @@ struct kstat {
->  	u64		mnt_id;
->  	u32		dio_mem_align;
->  	u32		dio_offset_align;
-> +	u32		dio_read_offset_align;
->  	u64		change_cookie;
->  	u64		subvol;
->  	u32		atomic_write_unit_min;
-> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-> index 8b35d7d511a287..f78ee3670dd5d7 100644
-> --- a/include/uapi/linux/stat.h
-> +++ b/include/uapi/linux/stat.h
-> @@ -179,7 +179,8 @@ struct statx {
->  	/* Max atomic write segment count */
->  	__u32   stx_atomic_write_segments_max;
+> V5:
+> - s/open a block device/open a mounted block device (thanks Jan!).
+> - Added the Review tag from Jan.
+> 
+> V4 link: https://lore.kernel.org/r/20240826001624.188581-1-gpiccoli@igalia.com
+> 
+> 
+>  Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 09126bb8cc9f..efc52ddc6864 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -517,6 +517,18 @@
+>  			Format: <io>,<irq>,<mode>
+>  			See header of drivers/net/hamradio/baycom_ser_hdx.c.
 >  
-> -	__u32   __spare1[1];
-> +	/* File offset alignment for direct I/O reads */
-> +	__u32	stx_dio_read_offset_align;
->  
->  	/* 0xb8 */
->  	__u64	__spare3[9];	/* Spare space for future expansion */
-> @@ -213,6 +214,7 @@ struct statx {
->  #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
->  #define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
->  #define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
-> +#define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
->  
->  #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+> +	bdev_allow_write_mounted=
+> +			Format: <bool>
+> +			Control the ability to open a mounted block device
+> +			for writing, i.e., allow / disallow writes that bypass
+> +			the FS. This was implemented as a means to prevent
+> +			fuzzers from crashing the kernel by overwriting the
+> +			metadata underneath a mounted FS without its awareness.
+> +			This also prevents destructive formatting of mounted
+> +			filesystems by naive storage tooling that don't use
+> +			O_EXCL. Default is Y and can be changed through the
+> +			Kconfig option CONFIG_BLK_DEV_WRITE_MOUNTED.
+> +
+>  	bert_disable	[ACPI]
+>  			Disable BERT OS support on buggy BIOSes.
 >  
 > -- 
-> 2.43.0
+> 2.46.0
 > 
 > 
 
