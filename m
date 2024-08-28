@@ -1,328 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-27482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5ACD961B61
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:21:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6B7961B66
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6973E1F24876
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 01:21:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AB73B22D30
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 01:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886EB225D6;
-	Wed, 28 Aug 2024 01:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503DB288D1;
+	Wed, 28 Aug 2024 01:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcHT/LHP"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="IiDIPTUX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08A611CA0;
-	Wed, 28 Aug 2024 01:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D26C17C77
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 01:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724808098; cv=none; b=Joi3S/PaArvtqKCWNXZadoKK7Vme4ZkvmR7Juij/fGFz2voLA7csQ9xxossr2Yiz31rGlOYlNabL5IuLB4p4Kj/DoasgFHh/FWkDnQa53GaRTWUqFXvtiX275XnAlvD+TIGm3HHe83ff5D30HGTFqynpua98R12B88aFCIT39JM=
+	t=1724808171; cv=none; b=oKVa/U3W5UTMdDGpY1jjCWzz9KvCWlpJbIs8uhe+j1Xj74KElhOoOqtU17vb1tSP3NpEJj7A3uftFosxIV+bm/hUWy9IMtxny1EoRx/zGuXUfJ2pk57BjuFCv0+UWMAaRDiULDyb6oOL3VXwlLu9NzXgimd6UmMmB4k6sCnVYas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724808098; c=relaxed/simple;
-	bh=4LN/Km+EfvQOVLr9BjgfNavvXCC/cTwWSej7GwdvX8g=;
+	s=arc-20240116; t=1724808171; c=relaxed/simple;
+	bh=t/8mdTh6gdtbt01wuMO64yJM+L3ypGJ5d06cOzYjrwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPtKkrpZa9LbLH2vtr3DWNxVmPHeg+Sz7fK5D30qqxVrj43gSuyrQ1XR49QPVAzw2a8kyn26mXIsuhF2P6CToPt5UA7IT/jkpSU4Mi2ObjL8OFRC4wz/Nr3W7CaRfowmwSNG7u5DJogam2lejN2C6+wJH5cE8rNsssF2L70pSdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcHT/LHP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C1BEC4AF0C;
-	Wed, 28 Aug 2024 01:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724808097;
-	bh=4LN/Km+EfvQOVLr9BjgfNavvXCC/cTwWSej7GwdvX8g=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=gcHT/LHPoHdoDyp8jRwQ/4K1j964dZEaDeDNaT/2FsZal+t2HNobgTyea136iD00R
-	 ggicnRTmD1dTgNx9Olr4gvX0F170v7uRTgpNtoBqfw/2w6BJi1TTaMO9qCgoV2SkA6
-	 rIeTqY41pPXkLCnsJBDlHPnYeFS5mSRH3v7wUN/G1hv7EgOVTtFz/Tp42hqBZKDYVJ
-	 hTK1N/G+2rVACyV8MgsJTQm9duYIFyysB9Q3FzujxiuW+y5GZDsJAXtyL5XbqNZ8Z9
-	 tHBmCvPjfzMlTmkjKqgLNPYN5q+s+ABZZKrABrNsWVe8kNTPyWOmR6MZ22+Dw441G/
-	 b/5hOxYE8m6Tw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0939ACE0D9B; Tue, 27 Aug 2024 18:21:37 -0700 (PDT)
-Date: Tue, 27 Aug 2024 18:21:37 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jon Kohler <jon@nutanix.com>
-Cc: "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
-	"jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-	"josh@joshtriplett.org" <josh@joshtriplett.org>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	Z qiang <qiang.zhang1211@gmail.com>
-Subject: Re: SRCU hung task on 5.10.y on synchronize_srcu(&fsnotify_mark_srcu)
-Message-ID: <2701726a-4552-4f63-9a75-3a7c93571072@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <1E829024-48BF-4647-A1DD-AC7E8BFA0FA2@nutanix.com>
- <95fbe7cc-8752-4e38-8c2e-5df5e544a3cc@paulmck-laptop>
- <C8864F22-A875-41B1-8293-9EF0D8495E12@nutanix.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPcXCVrQReWAj/MQ//oABkZtKeWWFsx3RFR6jIIRLgW9UG5QKleONgM6S6UYQ3p/22kQg4jZFqm66ubAW47HMypAoTD7neCRn3d/dS7pE4Q9hgIGtHjwW88TaT6nMzMLMTEDQc13zAnbL2nccdav2zaaXTfuIfRRSSW90Zth24E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=IiDIPTUX; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201ee6b084bso52924385ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 18:22:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724808168; x=1725412968; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vpOrSNCAb7kibKZbP8DZeqVzpgFFh0MSLO6ZCvDwN3Q=;
+        b=IiDIPTUXT8CV0k2yW4/Vhm6TbIvdfB8rm0dBtM3LPx3GHsRp7oOWRlIojp7EZe5i1U
+         qhnqEqI7Z70BiaX/1enKfjnxfrgygZZaNtMOmZERAIRyGgcWifSjpr0AfBBUKkt5977b
+         q76zjivgAe8jSYxfs/uRydcFobldMUd+H69PhEAni9twhQQZ6F36ha8NFDQDRqWW29D5
+         YG/eHDbt7aW4myetEvJFlOZiamkuPPJeQcdouW/dnMDWpbIaWMERC2RMVSUFt6/tFz85
+         zneWsp/xMQdc+M4KJlW16Gt7RsDtBAAKg2tfxMRjs71sQmi1zWgNZ7UhpGMGlzqSGCK0
+         yTFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724808168; x=1725412968;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vpOrSNCAb7kibKZbP8DZeqVzpgFFh0MSLO6ZCvDwN3Q=;
+        b=XesgcvCtPFVFMaBNXKrtQwMajmtBBpf8NeaaaNNsmZWbJnxF0IYit2avIY5dTrxXCx
+         m1kkGih33SRjfT1Xx72KxR61smPBKlGJGb2FS7GU1tWUNE7OeWnQMeMKhCPKPEo2KcaZ
+         dZqwtQEWFWLTWUQ8i0pskneYMzTyP1HJ3j33iINLRxdtcSSmtqfte9Afus+TX6QXvC6h
+         eUTN0+lB/DM/GXW+cHde4nRxXezq5HpivcolSvA1wFv8JCfSyfXBFYIqgIq5xRrvDdhK
+         8Dj09xuWxkZHKfutQwL2E+pY9mHKpTtDXIy3VYgawlhkxQsQWm+rGtEYjdT8S9LkEXfU
+         pjuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsjKh4LAAwqXJa2kpwzjv50BdY0wlrC6/nuuMGkSLF0F1W+PtsdsH9daP33287TzlfNXzlqWn7v9+8HK5+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhLbzW6wIho57O+SK5TxSDcsYjWz+zPtPxyegT6eaVHeFpxjI0
+	0oZCBlGjtjV+EeFM8HiJGeJNTCJehn3u86vvOAsTnUaDfPsEs7CZeLnkO8VRT6s=
+X-Google-Smtp-Source: AGHT+IH7D8Ktnmir4wr3BnYlf5JWxP3XKSCuqAE4RMd6h0PAjv0p8Hq4vlEgPVz6XOAWv5QS6i9H3g==
+X-Received: by 2002:a17:902:ec8e:b0:1fd:9e6e:7c1f with SMTP id d9443c01a7336-204f9c4fa77mr6223265ad.56.1724808168314;
+        Tue, 27 Aug 2024 18:22:48 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385567912sm88940755ad.33.2024.08.27.18.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 18:22:47 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sj7OX-00FBJf-0L;
+	Wed, 28 Aug 2024 11:22:45 +1000
+Date: Wed, 28 Aug 2024 11:22:45 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: NeilBrown <neilb@suse.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/9] Block: switch bd_prepare_to_claim to use
+ ___wait_var_event()
+Message-ID: <Zs575QSPazeJRzAy@dread.disaster.area>
+References: <>
+ <ZsQZHZ0y6qMJGaLQ@dread.disaster.area>
+ <172419075958.6062.14405334545688254538@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <C8864F22-A875-41B1-8293-9EF0D8495E12@nutanix.com>
+In-Reply-To: <172419075958.6062.14405334545688254538@noble.neil.brown.name>
 
-On Tue, Aug 27, 2024 at 11:33:32PM +0000, Jon Kohler wrote:
-> 
-> 
-> > On Aug 27, 2024, at 4:34 PM, Paul E. McKenney <paulmck@kernel.org> wrote:
+On Wed, Aug 21, 2024 at 07:52:39AM +1000, NeilBrown wrote:
+> On Tue, 20 Aug 2024, Dave Chinner wrote:
+> > On Mon, Aug 19, 2024 at 03:20:39PM +1000, NeilBrown wrote:
+> > > bd_prepare_to_claim() current uses a bit waitqueue with a matching
+> > > wake_up_bit() in bd_clear_claiming().  However it is really waiting on a
+> > > "var", not a "bit".
+> > > 
+> > > So change to wake_up_var(), and use ___wait_var_event() for the waiting.
+> > > Using the triple-underscore version allows us to drop the mutex across
+> > > the schedule() call.
+> > ....
+> > > @@ -535,33 +535,23 @@ int bd_prepare_to_claim(struct block_device *bdev, void *holder,
+> > >  		const struct blk_holder_ops *hops)
+> > >  {
+> > >  	struct block_device *whole = bdev_whole(bdev);
+> > > +	int err = 0;
+> > >  
+> > >  	if (WARN_ON_ONCE(!holder))
+> > >  		return -EINVAL;
+> > > -retry:
+> > > -	mutex_lock(&bdev_lock);
+> > > -	/* if someone else claimed, fail */
+> > > -	if (!bd_may_claim(bdev, holder, hops)) {
+> > > -		mutex_unlock(&bdev_lock);
+> > > -		return -EBUSY;
+> > > -	}
+> > > -
+> > > -	/* if claiming is already in progress, wait for it to finish */
+> > > -	if (whole->bd_claiming) {
+> > > -		wait_queue_head_t *wq = bit_waitqueue(&whole->bd_claiming, 0);
+> > > -		DEFINE_WAIT(wait);
+> > >  
+> > > -		prepare_to_wait(wq, &wait, TASK_UNINTERRUPTIBLE);
+> > > -		mutex_unlock(&bdev_lock);
+> > > -		schedule();
+> > > -		finish_wait(wq, &wait);
+> > > -		goto retry;
+> > > -	}
+> > > +	mutex_lock(&bdev_lock);
+> > > +	___wait_var_event(&whole->bd_claiming,
+> > > +			  (err = bd_may_claim(bdev, holder, hops)) != 0 || !whole->bd_claiming,
+> > > +			  TASK_UNINTERRUPTIBLE, 0, 0,
+> > > +			  mutex_unlock(&bdev_lock); schedule(); mutex_lock(&bdev_lock));
 > > 
-> > On Tue, Aug 27, 2024 at 08:01:27PM +0000, Jon Kohler wrote:
-> >> Hey Paul, Lai, Josh, and the RCU list and Jan/FS list -
-> >> Reaching out about a tricky hung task issue that I'm running into. I've
-> >> got a virtualized Linux guest on top of a KVM based platform, running
-> >> a 5.10.y based kernel. The issue we're running into is a hung task that
-> >> *only* happens on shutdown/reboot of this particular VM once every 
-> >> 20-50 times.
-> >> 
-> >> The signature of the hung task is always similar to the output below,
-> >> where we appear to hang on the call to 
-> >>    synchronize_srcu(&fsnotify_mark_srcu)
-> > 
-> > One thing to try would be to add trace_printk() or similar to the SRCU
-> > readers, just in case someone was using srcu_read_lock_notrace() on
-> > fsnotify_mark_srcu, which I see no trace of in current mainline.
-> > 
-> > Alternatively, if there is a version where this does not happen, try
-> > bisecting.  Each bisection step would require something like 400-500
-> > shutdown/reboots to prove the commit good.  (Obviously, the first failure
-> > proves the commit bad, which for one-out-of-50 failures will take on
-> > average about 35 shutdown/reboots.)
-> > 
-> > There could also be a bad SRCU backport from mainline, so please check
-> > what SRCU backports you have in your 5.10.y stable release.  (Though
-> > maybe Jack has already done this?)
-> > 
-> > Thanx, Paul
+> > That's not an improvement. Instead of nice, obvious, readable code,
+> > I now have to go look at a macro and manually substitute the
+> > parameters to work out what this abomination actually does.
 > 
-> Thanks, Paul
+> Interesting - I thought the function as a whole was more readable this
+> way.
+> I agree that the ___wait_var_event macro isn't the best part.
+> Is your dislike simply that it isn't a macro that you are familar with,
+> or is there something specific that you don't like?
+
+It's the encoding of non-trivial logic and code into the macro
+parameters that is the problem....
+
+> Suppose we could add a new macro so that it read:
 > 
-> For posterity, this kernel is just built off of the regular ole stable tree, and here’s
-> All of the backports to kernel/rcu are below.
-> 
-> Stepping through this more, since we’re stalling at wait_for_completion,
-> that must mean that wakeme_after_rcu() ... complete(&rcu->completion)
-> is not happening, right?
-> 
-> That or somehow wakeme_after_rcu() fires *before* wait_for_completion()
-> is setup, causing the wait to hang forever?
+>      wait_var_event_mutex(&whole->bd_claiming,
+> 			  (err = bd_may_claim(bdev, holder, hops)) != 0 || !whole->bd_claiming,
+> 			  &bdev_lock);
 
-There is no problem with that misordering -- in that case, the call to
-wait_for_completion() simply won't wait.
+.... and this still does it. 
 
-But that would be a good path to trace.  After all, you might have
-noticed that what we believe software will do does not always match what
-it actually does.
+In fact, it's worse, because now I have -zero idea- of what locking
+is being performed in this case, and so now I definitely have to go
+pull that macro apart to understand what this is actually doing.
 
+Complex macros don't make understanding the code easier - they may
+make writing the code faster, but that comes at the expense of
+clarity and obviousness of the logic flow of the code...
 
-> Is it possible for wakeme_after_rcu() to race, such that it fires somewhere
-> else *before* wait_for_completion gets all the way to schedule()?
+-Dave.
 
-That should also work just fine, but it is still a good assumption to
-check.
-
-Good list below, but I must focus on mainline.  Apologies!
-
-Plus this assumes that v5.10 worked for you -- has that been tested?
-So again, what version has worked for you?
-
-							Thanx, Paul
-
-> [rcu]$ pwd
-> /kernel/kernel/rcu
-> [rcu]$ git remote -v
-> origin https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git (fetch)
-> origin https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git (push)
-> [rcu]$ git log --oneline 2c85ebc57b3e..HEAD .
-> ca4427ebc626 (HEAD, tag: v5.10.205) Linux 5.10.205 <<<< this is the base commit for 5.10.205 >>>>
-> ...
-> 175f4b062f69 rcu: kmemleak: Ignore kmemleak false positives when RCU-freeing objects <<<< this is the most recent backport commit to kernel/rcu >>>>
-> 55887adc76e1 rcuscale: Move rcu_scale_writer() schedule_timeout_uninterruptible() to _idle()
-> 066fbd8bc981 refscale: Fix uninitalized use of wait_queue_head_t
-> d93ba6e46e5f rcu-tasks: Add trc_inspect_reader() checks for exiting critical section
-> 3e22624f8fd3 rcu-tasks: Wait for trc_read_check_handler() IPIs
-> 9190c1f0aed1 rcu-tasks: Fix IPI failure handling in trc_wait_for_one_reader
-> ad4f8c117b8b rcu: Prevent expedited GP from enabling tick on offline CPU
-> 4f91de9a81bd rcu-tasks: Simplify trc_read_check_handler() atomic operations
-> 3a64cd01cdd6 rcu-tasks: Mark ->trc_reader_special.b.need_qs data races
-> 058f077d09ba rcu-tasks: Mark ->trc_reader_nesting data races
-> 604d6a5ff718 rcu/rcuscale: Stop kfree_scale_thread thread(s) after unloading rcuscale
-> d414e24d1509 rcu/rcuscale: Move rcu_scale_*() after kfree_scale_cleanup()
-> ecc5e6dbc269 rcuscale: Move shutdown from wait_event() to wait_event_idle()
-> b62c816bdb5e rcuscale: Always log error message
-> 8cd9917c13a7 rcuscale: Console output claims too few grace periods
-> 7230a9e599d3 rcu/kvfree: Avoid freeing new kfree_rcu() memory after old grace period
-> a7d21b858589 rcu: Protect rcu_print_task_exp_stall() ->exp_tasks access
-> e4842de4ec13 refscale: Move shutdown from wait_event() to wait_event_idle()
-> eb18bc5a8678 rcu: Avoid stack overflow due to __rcu_irq_enter_check_tick() being kprobe-ed
-> d99d194e2f8c rcu-tasks: Make rude RCU-Tasks work well with CPU hotplug
-> 2bf501f1bc78 rcu: Suppress smp_processor_id() complaint in synchronize_rcu_expedited_wait()
-> 1c37e86a78c2 rcu-tasks: Fix synchronize_rcu_tasks() VS zap_pid_ns_processes()
-> ad410f64f7ab rcu-tasks: Remove preemption disablement around srcu_read_[un]lock() calls
-> b02b6bb83c68 rcu-tasks: Improve comments explaining tasks_rcu_exit_srcu purpose
-> 7c15d7ecce00 rcu: Prevent lockdep-RCU splats on lock acquisition/release
-> 5a52380b8193 rcu: Fix __this_cpu_read() lockdep warning in rcu_force_quiescent_state()
-> 0dd025483f15 rcu-tasks: Convert RCU_LOCKDEP_WARN() to WARN_ONCE()
-> 36d4ffbedff7 rcu: Back off upon fill_page_cache_func() allocation failure
-> 10f30cba8f6c rcu: Make TASKS_RUDE_RCU select IRQ_WORK
-> 1c6c3f233664 rcu-tasks: Fix race in schedule and flush work
-> a22d66eb518f rcu: Apply callbacks processing time limit only on softirq
-> 40fb3812d997 rcu: Fix callbacks processing time limit retaining cond_resched()
-> fcc9797d0d13 rcu: Don't deboost before reporting expedited quiescent state
-> 0c145262ac99 rcu/nocb: Fix missed nocb_timer requeue
-> 657991fb06a4 rcu: Do not report strict GPs for outgoing CPUs
-> 12d3389b7af6 rcu: Tighten rcu_advance_cbs_nowake() checks
-> 0836f9404017 rcu/exp: Mark current CPU as exp-QS in IPI loop second pass
-> 70692b06208c rcu: Mark accesses to rcu_state.n_force_qs
-> af756be29c82 rcu: Always inline rcu_dynticks_task*_{enter,exit}()
-> 226d68fb6c0a rcu: Fix existing exp request check in sync_sched_exp_online_cleanup()
-> 02ddf26d849d rcu-tasks: Move RTGS_WAIT_CBS to beginning of rcu_tasks_kthread() loop
-> 7f43cda650d5 rcutorture: Avoid problematic critical section nesting on PREEMPT_RT
-> d3ca78775db4 rcu: Fix macro name CONFIG_TASKS_RCU_TRACE
-> 497f3d9c3f58 rcu: Fix stall-warning deadlock due to non-release of rcu_node ->lock
-> ea5e5bc881a4 rcu: Add lockdep_assert_irqs_disabled() to rcu_sched_clock_irq() and callees
-> 527b56d7856f rcu: Fix to include first blocked task in stall warning
-> 4b680b3fc6f3 rcu/tree: Handle VM stoppage in stall detection
-> b6ae3854075e srcu: Provide polling interfaces for Tiny SRCU grace periods
-> 450948b06ce8 srcu: Make Tiny SRCU use multi-bit grace-period counter
-> 641e1d88404a srcu: Provide internal interface to start a Tiny SRCU grace period
-> f789de3be808 srcu: Provide polling interfaces for Tree SRCU grace periods
-> fdf66e5a7fc8 srcu: Provide internal interface to start a Tree SRCU grace period
-> 86cb49e7314e rcu-tasks: Don't delete holdouts within trc_wait_for_one_reader()
-> 55ddab2bfd70 rcu-tasks: Don't delete holdouts within trc_inspect_reader()
-> 35a35909ec19 rcu: Reject RCU_LOCKDEP_WARN() false positives
-> 23597afbe096 srcu: Fix broken node geometry after early ssp init
-> 728f23e53c65 rcu: Invoke rcu_spawn_core_kthreads() from rcu_spawn_gp_kthread()
-> 7d81aff28953 rcu: Remove spurious instrumentation_end() in rcu_nmi_enter()
-> 09a27d662006 kvfree_rcu: Use same set of GFP flags as does single-argument
-> e713bdd791ba rcu/nocb: Perform deferred wake up before last idle's need_resched() check
-> 20b7669fa3f0 rcu: Pull deferred rcuog wake up to rcu_eqs_enter() callers
-> 30b491e2b6cc rcu-tasks: Move RCU-tasks initialization to before early_initcall()
-> 9b81af9c8455 rcu/tree: Defer kvfree_rcu() allocation to a clean context
-> 5cacd18c5207 rcu,ftrace: Fix ftrace recursion
-> 4540e84bd8a9 rcu: Allow rcu_irq_enter_check_tick() from NMI <<<< this is the first kernel/rcu backport for 5.10.y branch >>>>
-> ...
-> 2c85ebc57b3e (tag: v5.10) Linux 5.10 <<<< this is the divergence point from mainline to 5.10.y >>>> 
-> 
-> > 
-> >> in fsnotify_connector_destroy_workfn / fsnotify_mark_destroy_workfn,
-> >> where two kernel threads are both calling synchronize_srcu, then
-> >> scheduling out in wait_for_completion, and completely going out to
-> >> lunch for over 4 minutes. This then triggers the hung task timeout and
-> >> things blow up.
-> >> 
-> >> We are running audit=1 for this system and are using an el8 based
-> >> userspace.
-> >> 
-> >> I've flipped through the fs/notify code base for both 5.10 as well as
-> >> upstream mainline to see if something jumped off the page, and I
-> >> haven't yet spotted any particular suspect code from the caller side.
-> >> 
-> >> This hang appears to come up at the very end of the shutdown/reboot
-> >> process, seemingly after the system starts to unwind through initrd.
-> >> 
-> >> What I'm working on now is adding some instrumentation to the dracut
-> >> shutdown initrd scripts to see if I can how far we get down that path
-> >> before the system fails to make forward progress, which may give some
-> >> hints. TBD on that. I've also enabled lockdep with CONFIG_PROVE_RCU and
-> >> a plethora of DEBUG options [2], and didn't get anything interesting.
-> >> To be clear, we haven't seen lockdep spit out any complaints as of yet.
-> >> 
-> >> Reaching out to see if this sounds familar to anyone on the list, or if
-> >> there are any particular areas of the RCU code base that might be
-> >> suspect for this kind of issue. I'm happy to provide more information,
-> >> as frankly, I'm quite stumped at the moment.
-> >> 
-> >> Thanks all,
-> >> Jon
-> >> 
-> >> [1] panic trace
-> >>    Normal shutdown process, then hangs on the following:
-> >>    ...
-> >>    dracut Warning: Killing all remaining processes
-> >>    ...
-> >>    INFO: task kworker/u20:7:1200701 blocked for more than 241 seconds.
-> >>          Tainted: G           O      5.10.205-2.el8.x86_64 #1
-> >>    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> >>    task:kworker/u20:7   state:D stack:    0 pid:1200701 ppid:     2 flags:0x00004080
-> >>    Workqueue: events_unbound fsnotify_connector_destroy_workfn
-> >>    Call Trace:
-> >>     __schedule+0x267/0x790
-> >>     schedule+0x3c/0xb0
-> >>     schedule_timeout+0x219/0x2b0
-> >>     wait_for_completion+0x9e/0x100
-> >>     __synchronize_srcu.part.24+0x83/0xb0
-> >>     ? __bpf_trace_rcu_utilization+0x10/0x10
-> >>     ? synchronize_srcu+0x5d/0xf0
-> >>     fsnotify_connector_destroy_workfn+0x46/0x80
-> >>     process_one_work+0x1fc/0x390
-> >>     worker_thread+0x2d/0x3e0
-> >>     ? process_one_work+0x390/0x390
-> >>     kthread+0x114/0x130
-> >>     ? kthread_park+0x80/0x80
-> >>     ret_from_fork+0x1f/0x30
-> >>    INFO: task kworker/u20:8:1287360 blocked for more than 241 seconds.
-> >>          Tainted: G           O      5.10.205-2.el8.x86_64 #1
-> >>    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> >>    task:kworker/u20:8   state:D stack:    0 pid:1287360 ppid:     2 flags:0x00004080
-> >>    Workqueue: events_unbound fsnotify_mark_destroy_workfn
-> >>    Call Trace:
-> >>     __schedule+0x267/0x790
-> >>     schedule+0x3c/0xb0
-> >>     schedule_timeout+0x219/0x2b0
-> >>     ? add_timer+0x14a/0x200
-> >>     wait_for_completion+0x9e/0x100
-> >>     __synchronize_srcu.part.24+0x83/0xb0
-> >>     ? __bpf_trace_rcu_utilization+0x10/0x10
-> >>     fsnotify_mark_destroy_workfn+0x77/0xe0
-> >>     process_one_work+0x1fc/0x390
-> >>     ? process_one_work+0x390/0x390
-> >>     worker_thread+0x2d/0x3e0
-> >>     ? process_one_work+0x390/0x390
-> >>     kthread+0x114/0x130
-> >>     ? kthread_park+0x80/0x80
-> >>     ret_from_fork+0x1f/0x30
-> >>    Kernel panic - not syncing: hung_task: blocked tasks
-> >>    CPU: 1 PID: 64 Comm: khungtaskd Kdump: loaded Tainted: G           O      5.10.205-2.el8.x86_64 #1
-> >>    Hardware name: Red Hat KVM, BIOS 20230302.1.2662.el8 04/01/2014
-> >>    Call Trace:
-> >>     dump_stack+0x6d/0x8c
-> >>     panic+0x114/0x2ea
-> >>     watchdog.cold.8+0xb5/0xb5
-> >>     ? hungtask_pm_notify+0x50/0x50
-> >>     kthread+0x114/0x130
-> >>     ? kthread_park+0x80/0x80
-> >>     ret_from_fork+0x1f/0x30
-> >> 
-> >> [2] additional debugging config knobs turned up.
-> >>    CONFIG_PROVE_LOCKING=y
-> >>    CONFIG_LOCK_STAT=y
-> >>    CONFIG_DEBUG_RT_MUTEXES=y
-> >>    CONFIG_DEBUG_SPINLOCK=y
-> >>    CONFIG_DEBUG_MUTEXES=y
-> >>    CONFIG_DEBUG_WW_MUTEX_SLOWPATH=y
-> >>    CONFIG_DEBUG_RWSEMS=y
-> >>    CONFIG_DEBUG_LOCK_ALLOC=y
-> >>    CONFIG_LOCKDEP=y
-> >>    CONFIG_LOCKDEP_BITS=15
-> >>    CONFIG_LOCKDEP_CHAINS_BITS=16
-> >>    CONFIG_LOCKDEP_STACK_TRACE_BITS=19
-> >>    CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=14
-> >>    CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=12
-> >>    CONFIG_DEBUG_SHIRQ=y
-> >>    CONFIG_WQ_WATCHDOG=y
-> >>    CONFIG_DEBUG_ATOMIC_SLEEP=y
-> >>    CONFIG_DEBUG_LIST=y
-> >>    CONFIG_DEBUG_PLIST=y
-> >>    CONFIG_DEBUG_SG=y
-> >>    CONFIG_DEBUG_NOTIFIERS=y
-> >>    CONFIG_BUG_ON_DATA_CORRUPTION=y
-> 
+-- 
+Dave Chinner
+david@fromorbit.com
 
