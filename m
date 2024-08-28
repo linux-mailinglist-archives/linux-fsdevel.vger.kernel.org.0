@@ -1,87 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-27483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6B7961B66
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:23:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FEE961B9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 03:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AB73B22D30
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 01:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1E91F247FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 01:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503DB288D1;
-	Wed, 28 Aug 2024 01:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8814437A;
+	Wed, 28 Aug 2024 01:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="IiDIPTUX"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="lF1fxSlR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D26C17C77
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 01:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055D7433C5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 01:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724808171; cv=none; b=oKVa/U3W5UTMdDGpY1jjCWzz9KvCWlpJbIs8uhe+j1Xj74KElhOoOqtU17vb1tSP3NpEJj7A3uftFosxIV+bm/hUWy9IMtxny1EoRx/zGuXUfJ2pk57BjuFCv0+UWMAaRDiULDyb6oOL3VXwlLu9NzXgimd6UmMmB4k6sCnVYas=
+	t=1724809899; cv=none; b=aag8RFDqfADJsh65Z1sdwbkcckwy+uyQbfhMPwrpuC8Qa8LGJi7nbhp4Gu/hFoH4JTUe8btSiDGzRinsfW2lZl8XyBFrE9jPnHh0ojI6iHZxdLkuzmp/7LgLtf8kWhtvDb68fIGqYFw/qvqp8HjWk6jrSghaokHlFpz7T6KkU/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724808171; c=relaxed/simple;
-	bh=t/8mdTh6gdtbt01wuMO64yJM+L3ypGJ5d06cOzYjrwE=;
+	s=arc-20240116; t=1724809899; c=relaxed/simple;
+	bh=0IABELUBrCoqtvyj6WsUbNrKASt2xt2Pz8zddR7BCKM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPcXCVrQReWAj/MQ//oABkZtKeWWFsx3RFR6jIIRLgW9UG5QKleONgM6S6UYQ3p/22kQg4jZFqm66ubAW47HMypAoTD7neCRn3d/dS7pE4Q9hgIGtHjwW88TaT6nMzMLMTEDQc13zAnbL2nccdav2zaaXTfuIfRRSSW90Zth24E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=IiDIPTUX; arc=none smtp.client-ip=209.85.214.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmqQNSDz8uSsnHVF3y3Ykzvy0Z2IJOzTluSWfp4AlNLqkAMbZXtEkaMAKlUXN+U23FXKW/r0GsKrq3Zm98PhhryPVPd5Ma+tvMIOpPFC35igpwCRsUkVnUFBOA9CQHenxU5j5q8zhJpz16/cIE32XSpd8+iZfr7xcLVzJpuzvA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=lF1fxSlR; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201ee6b084bso52924385ad.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 18:22:48 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-201e52ca0caso43810675ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2024 18:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724808168; x=1725412968; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724809897; x=1725414697; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vpOrSNCAb7kibKZbP8DZeqVzpgFFh0MSLO6ZCvDwN3Q=;
-        b=IiDIPTUXT8CV0k2yW4/Vhm6TbIvdfB8rm0dBtM3LPx3GHsRp7oOWRlIojp7EZe5i1U
-         qhnqEqI7Z70BiaX/1enKfjnxfrgygZZaNtMOmZERAIRyGgcWifSjpr0AfBBUKkt5977b
-         q76zjivgAe8jSYxfs/uRydcFobldMUd+H69PhEAni9twhQQZ6F36ha8NFDQDRqWW29D5
-         YG/eHDbt7aW4myetEvJFlOZiamkuPPJeQcdouW/dnMDWpbIaWMERC2RMVSUFt6/tFz85
-         zneWsp/xMQdc+M4KJlW16Gt7RsDtBAAKg2tfxMRjs71sQmi1zWgNZ7UhpGMGlzqSGCK0
-         yTFQ==
+        bh=dg16HTJIuxUxeZFB6lANrVka5umay8oo1lrEFIAx4zY=;
+        b=lF1fxSlRAdBggrgiUQGrvXoDV8ioSygAsejgjplFb7ElTPWHw2IVeKO1ek+mcJ12tM
+         MQibssocrX1ce3xT8HXIvEmTBpFV2DGnEs41YU4nx46ne8CilL9Iu5dSD22FEav/i3xM
+         QWqcKJCyKQZIldsW/8gutJJJ9mRSg2KIrq8YL9qY3N/tnT35xfA+DKqUN0BIPTr9j7/W
+         ta8akICwPFv706MJgHSD7Th3NpJ2bOiQqsOQ+zoPico0UXRBD0KkmqGx0HHWMZ6qlRdp
+         rzT3T4n6eFrpIkkmUrJW61MfrII0jnSANI2bztdY+W2D8dT/73gQEdcmFzHRSEkbh4vj
+         J7vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724808168; x=1725412968;
+        d=1e100.net; s=20230601; t=1724809897; x=1725414697;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vpOrSNCAb7kibKZbP8DZeqVzpgFFh0MSLO6ZCvDwN3Q=;
-        b=XesgcvCtPFVFMaBNXKrtQwMajmtBBpf8NeaaaNNsmZWbJnxF0IYit2avIY5dTrxXCx
-         m1kkGih33SRjfT1Xx72KxR61smPBKlGJGb2FS7GU1tWUNE7OeWnQMeMKhCPKPEo2KcaZ
-         dZqwtQEWFWLTWUQ8i0pskneYMzTyP1HJ3j33iINLRxdtcSSmtqfte9Afus+TX6QXvC6h
-         eUTN0+lB/DM/GXW+cHde4nRxXezq5HpivcolSvA1wFv8JCfSyfXBFYIqgIq5xRrvDdhK
-         8Dj09xuWxkZHKfutQwL2E+pY9mHKpTtDXIy3VYgawlhkxQsQWm+rGtEYjdT8S9LkEXfU
-         pjuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsjKh4LAAwqXJa2kpwzjv50BdY0wlrC6/nuuMGkSLF0F1W+PtsdsH9daP33287TzlfNXzlqWn7v9+8HK5+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhLbzW6wIho57O+SK5TxSDcsYjWz+zPtPxyegT6eaVHeFpxjI0
-	0oZCBlGjtjV+EeFM8HiJGeJNTCJehn3u86vvOAsTnUaDfPsEs7CZeLnkO8VRT6s=
-X-Google-Smtp-Source: AGHT+IH7D8Ktnmir4wr3BnYlf5JWxP3XKSCuqAE4RMd6h0PAjv0p8Hq4vlEgPVz6XOAWv5QS6i9H3g==
-X-Received: by 2002:a17:902:ec8e:b0:1fd:9e6e:7c1f with SMTP id d9443c01a7336-204f9c4fa77mr6223265ad.56.1724808168314;
-        Tue, 27 Aug 2024 18:22:48 -0700 (PDT)
+        bh=dg16HTJIuxUxeZFB6lANrVka5umay8oo1lrEFIAx4zY=;
+        b=RoDquyP5bK1Hw003e069n5ouoCuuXqmHIug7GFQqbecxfPNpygZYi/PomsxNrgAqtp
+         +K6wNjGXlj/zDIx3gnrxw3vwNrvJKpuOPpmWvvaLKRQl5R8rJdDQNZNCTqpyQp7YN1a3
+         BwpKB1FAhGY9X8T9EhS42vgwg8bj/PoMrxhX8yu786eqZP6e+2otu10Y2VnCGc4wdrt6
+         sWcdcMwqCVLrH93yqTRRV/haGsEFHfRdRmdewkZIsdTGvArAznkkwOCLeSxofi1tQQdq
+         x9U6BqmAfRn+jEVfqDoiw51cnbpcJ7L/4MRexm1Ykg6p5eliPirvlmzYsDewpur/EkmN
+         lWqA==
+X-Gm-Message-State: AOJu0Yxc4dt5GLjk/GQueGugfh6X6QAHOPkDoiwmMebvJR4Vyo0vb7tF
+	wFH3bTheucwb3x7TCEqbG7Qgov88Rvi6dSD90lNG7u/Py+JUK2uXmSMJwHyYxbs=
+X-Google-Smtp-Source: AGHT+IEfC193fqIMIitUEchQXs/RFwmGOV2MQoAepWV6XSF4FBDn4QTFrBw48RFtnUv8ZgSJjFjYHA==
+X-Received: by 2002:a17:903:1d1:b0:1fc:6a13:a394 with SMTP id d9443c01a7336-2039e485a29mr173831215ad.23.1724809897040;
+        Tue, 27 Aug 2024 18:51:37 -0700 (PDT)
 Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385567912sm88940755ad.33.2024.08.27.18.22.47
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385ae7b1bsm88565145ad.262.2024.08.27.18.51.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 18:22:47 -0700 (PDT)
+        Tue, 27 Aug 2024 18:51:36 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1sj7OX-00FBJf-0L;
-	Wed, 28 Aug 2024 11:22:45 +1000
-Date: Wed, 28 Aug 2024 11:22:45 +1000
+	id 1sj7qQ-00FCnG-05;
+	Wed, 28 Aug 2024 11:51:34 +1000
+Date: Wed, 28 Aug 2024 11:51:34 +1000
 From: Dave Chinner <david@fromorbit.com>
-To: NeilBrown <neilb@suse.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/9] Block: switch bd_prepare_to_claim to use
- ___wait_var_event()
-Message-ID: <Zs575QSPazeJRzAy@dread.disaster.area>
-References: <>
- <ZsQZHZ0y6qMJGaLQ@dread.disaster.area>
- <172419075958.6062.14405334545688254538@noble.neil.brown.name>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 00/10] shrinker debugging, .to_text() report (resend)
+Message-ID: <Zs6CpsYtsL4mtoSN@dread.disaster.area>
+References: <20240824191020.3170516-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,83 +84,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <172419075958.6062.14405334545688254538@noble.neil.brown.name>
+In-Reply-To: <20240824191020.3170516-1-kent.overstreet@linux.dev>
 
-On Wed, Aug 21, 2024 at 07:52:39AM +1000, NeilBrown wrote:
-> On Tue, 20 Aug 2024, Dave Chinner wrote:
-> > On Mon, Aug 19, 2024 at 03:20:39PM +1000, NeilBrown wrote:
-> > > bd_prepare_to_claim() current uses a bit waitqueue with a matching
-> > > wake_up_bit() in bd_clear_claiming().  However it is really waiting on a
-> > > "var", not a "bit".
-> > > 
-> > > So change to wake_up_var(), and use ___wait_var_event() for the waiting.
-> > > Using the triple-underscore version allows us to drop the mutex across
-> > > the schedule() call.
-> > ....
-> > > @@ -535,33 +535,23 @@ int bd_prepare_to_claim(struct block_device *bdev, void *holder,
-> > >  		const struct blk_holder_ops *hops)
-> > >  {
-> > >  	struct block_device *whole = bdev_whole(bdev);
-> > > +	int err = 0;
-> > >  
-> > >  	if (WARN_ON_ONCE(!holder))
-> > >  		return -EINVAL;
-> > > -retry:
-> > > -	mutex_lock(&bdev_lock);
-> > > -	/* if someone else claimed, fail */
-> > > -	if (!bd_may_claim(bdev, holder, hops)) {
-> > > -		mutex_unlock(&bdev_lock);
-> > > -		return -EBUSY;
-> > > -	}
-> > > -
-> > > -	/* if claiming is already in progress, wait for it to finish */
-> > > -	if (whole->bd_claiming) {
-> > > -		wait_queue_head_t *wq = bit_waitqueue(&whole->bd_claiming, 0);
-> > > -		DEFINE_WAIT(wait);
-> > >  
-> > > -		prepare_to_wait(wq, &wait, TASK_UNINTERRUPTIBLE);
-> > > -		mutex_unlock(&bdev_lock);
-> > > -		schedule();
-> > > -		finish_wait(wq, &wait);
-> > > -		goto retry;
-> > > -	}
-> > > +	mutex_lock(&bdev_lock);
-> > > +	___wait_var_event(&whole->bd_claiming,
-> > > +			  (err = bd_may_claim(bdev, holder, hops)) != 0 || !whole->bd_claiming,
-> > > +			  TASK_UNINTERRUPTIBLE, 0, 0,
-> > > +			  mutex_unlock(&bdev_lock); schedule(); mutex_lock(&bdev_lock));
-> > 
-> > That's not an improvement. Instead of nice, obvious, readable code,
-> > I now have to go look at a macro and manually substitute the
-> > parameters to work out what this abomination actually does.
+On Sat, Aug 24, 2024 at 03:10:07PM -0400, Kent Overstreet wrote:
+> recently new OOMs have been cropping up, and reclaim is implicated, so
+> I've had to dust off these patches.
 > 
-> Interesting - I thought the function as a whole was more readable this
-> way.
-> I agree that the ___wait_var_event macro isn't the best part.
-> Is your dislike simply that it isn't a macro that you are familar with,
-> or is there something specific that you don't like?
+> nothing significant has changed since the last time I posted, and they
+> have been valuable - Dave, think we can get them in?
 
-It's the encoding of non-trivial logic and code into the macro
-parameters that is the problem....
-
-> Suppose we could add a new macro so that it read:
-> 
->      wait_var_event_mutex(&whole->bd_claiming,
-> 			  (err = bd_may_claim(bdev, holder, hops)) != 0 || !whole->bd_claiming,
-> 			  &bdev_lock);
-
-.... and this still does it. 
-
-In fact, it's worse, because now I have -zero idea- of what locking
-is being performed in this case, and so now I definitely have to go
-pull that macro apart to understand what this is actually doing.
-
-Complex macros don't make understanding the code easier - they may
-make writing the code faster, but that comes at the expense of
-clarity and obviousness of the logic flow of the code...
+You need to describe what this does. What does the output look like?
+Where does it go (console, dmesg, etc). When is it called, etc.
+Links to previous review threads so people can get back up to speed
+on what was discussed last time and determine whether issues raised
+were solved. A changelog since the last posting is helpful, too...
 
 -Dave.
-
 -- 
 Dave Chinner
 david@fromorbit.com
