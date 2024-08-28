@@ -1,101 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-27601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BA2962C4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:28:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D54962C64
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891841C20944
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103861F24B82
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8C11A4F10;
-	Wed, 28 Aug 2024 15:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE3D1A38EF;
+	Wed, 28 Aug 2024 15:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cV8Jjz+a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pUPa7gh3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cV8Jjz+a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pUPa7gh3"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eQSIr+9y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="McydTb1b";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qafg0vVc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D3mwNydd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF76B1A4B9F;
-	Wed, 28 Aug 2024 15:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED58913D8B4;
+	Wed, 28 Aug 2024 15:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858810; cv=none; b=t/1IRu2P+20QqpvH2k7AKsZ58Y7ZVFbRZkgh/HJPFI5stNyQlBqPjpXAfEkiAXzuV7SHnxrcy9uYtb1od8+4+zCj93ifTDVHzOTJR44JQ6PBDijYqOfJu9owSPYtz+HO3MWz6hCepayrBT2qpok/vP76UJSp7Lcf5Un2K1rvJng=
+	t=1724859069; cv=none; b=GbCtdNBkWg7uVLQbkeZ7X+U/dj7fBJqiLFBUMNb+6kkX7gE74mkccvx72ZhiAJ9Km8gs1nj+ce4fVufXzX5D73ozoVtbLT1hmnF6KEW7XffycisPYbEPtZbqEAQLwCCCwppS2cR+8lZdcBooeycMnx/EFIzB4ZOMef6tiosiCTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858810; c=relaxed/simple;
-	bh=rxlkV+j+vdfUqHQYjq6CHRf43Bcc0FuNBBYeeRY83yA=;
+	s=arc-20240116; t=1724859069; c=relaxed/simple;
+	bh=b+k29GysQ7R3bruZV4HT9pMcZKn6eKuFi5vbwqLjxyQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYhMj0scBGl9usfYYTgJNartAIp9GFy6hJ6jnXkyoc1PjwA+tBkXx1m8GAkN2KA8PL0rue/xfwASSs9D/RJVrCq97if2pTUatBjTNADJvF3UVXwp2QhKL0mlgBLOSj8ZVan/C9bAquIWV8WC/Lu8x+FJZMUPDiRuzPUBK/Mf9/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cV8Jjz+a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pUPa7gh3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cV8Jjz+a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pUPa7gh3; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1d5Wb3oSsOGCVqyZN49hMjMv09YoHGkeCuMo6Qs7jRgduELQIiR0YpCJs4Ym2WM0RCWOSeV3jLhXeHBXuv/AL6m+fcks3EEXeENI8T4x7zQbb3EEAbPJxumJns0iDIId6Ro5LBwvBIaWe8vdOtHtTN8v+p8mOCVJo+dEP5fqaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eQSIr+9y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=McydTb1b; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qafg0vVc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D3mwNydd; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0BE1421996;
-	Wed, 28 Aug 2024 15:26:47 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EDE921FC31;
+	Wed, 28 Aug 2024 15:31:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724858807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724859066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7R+jbn/uYuS/hedGxq+PA41+J5CeshsqeGYUde3wyXM=;
-	b=cV8Jjz+aSrsW3SGsjwExBvTATv5H2kppAa38oeoyFfaSVr7ELWwNcO+h2NUym7XAAQYwdK
-	sMg8+zPVpiJ7O40NGhe1crQp2KwCYwE9xdlYISZbxTnWM4i0nD0NAUYjp9YoDRlTekHBFc
-	3zoTEyW05W1xGj7SuEs6vRQ1POoEa2o=
+	bh=8GllTruHW3XoQ0H3fzpZDxViaLpqzGacRC6r1YXyznc=;
+	b=eQSIr+9yRwKF/L1QWf9YwxWbDj7H4NAbo7ZfMaCMaKJV56uOmXxSSDPJuGyUh1+hgxK+4o
+	TXgeAeBTcc80bO6nBkdM3R54PLXU5KSqWICikz+vgvL+d0G63YdVVqmdJSs9eGewNT0Ew+
+	95GBsVCJ6SmEkKUHgZOmT2XP2fUEq0o=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724858807;
+	s=susede2_ed25519; t=1724859066;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7R+jbn/uYuS/hedGxq+PA41+J5CeshsqeGYUde3wyXM=;
-	b=pUPa7gh3H7yi3MuVuHOrXnwoIz5V947U19JEMsYyVPJm+E2VKhFyGezz87hfp/wsDRllT/
-	UlLPShQXkYMPoXCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
+	bh=8GllTruHW3XoQ0H3fzpZDxViaLpqzGacRC6r1YXyznc=;
+	b=McydTb1bSyyIVr1158BSJOoylK6SPD+pilFZteRTR/Icx0VAlunDKdyDMnUtdNud/v86nA
+	MG922/QJIO25hIDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qafg0vVc;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=D3mwNydd
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724858807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724859065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7R+jbn/uYuS/hedGxq+PA41+J5CeshsqeGYUde3wyXM=;
-	b=cV8Jjz+aSrsW3SGsjwExBvTATv5H2kppAa38oeoyFfaSVr7ELWwNcO+h2NUym7XAAQYwdK
-	sMg8+zPVpiJ7O40NGhe1crQp2KwCYwE9xdlYISZbxTnWM4i0nD0NAUYjp9YoDRlTekHBFc
-	3zoTEyW05W1xGj7SuEs6vRQ1POoEa2o=
+	bh=8GllTruHW3XoQ0H3fzpZDxViaLpqzGacRC6r1YXyznc=;
+	b=qafg0vVcekSAf7iJlLFNknjS4SejN5uv7eJA8jLdyq3YD31zFgY+Ry5n8k7eLdrMxBO10P
+	MwHoLj3olsP+ofnQejgrSTSu2xwvL57kCKhrsDF08y//pcMLBZEhK4V60lnAblzSJ9eNSB
+	j7mZcdG3WZb0x72y2wV57KIIObU/9uY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724858807;
+	s=susede2_ed25519; t=1724859065;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7R+jbn/uYuS/hedGxq+PA41+J5CeshsqeGYUde3wyXM=;
-	b=pUPa7gh3H7yi3MuVuHOrXnwoIz5V947U19JEMsYyVPJm+E2VKhFyGezz87hfp/wsDRllT/
-	UlLPShQXkYMPoXCw==
+	bh=8GllTruHW3XoQ0H3fzpZDxViaLpqzGacRC6r1YXyznc=;
+	b=D3mwNyddM6osPBA5WP/7nl7dvRAWJ2NQNNb3QnIXJ5KsJ5sX83BjNsy5j/thFrj07NIgKz
+	7QgnpAzd4NvmMUBA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00C20138D2;
-	Wed, 28 Aug 2024 15:26:47 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E24DA138D2;
+	Wed, 28 Aug 2024 15:31:05 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Xz8pALdBz2ZFUAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 15:26:47 +0000
+	id cO83N7lCz2a9UQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 15:31:05 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A05DBA0965; Wed, 28 Aug 2024 17:26:38 +0200 (CEST)
-Date: Wed, 28 Aug 2024 17:26:38 +0200
+	id 78644A0965; Wed, 28 Aug 2024 17:31:05 +0200 (CEST)
+Date: Wed, 28 Aug 2024 17:31:05 +0200
 From: Jan Kara <jack@suse.cz>
-To: David Howells <dhowells@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-	Steve French <sfrench@samba.org>, netfs@lists.linux.dev,
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: The mapping->invalidate_lock, copy-offload and cifs
-Message-ID: <20240828152638.iv7v5rj23n7mi73h@quack3>
-References: <774275.1724770015@warthog.procyon.org.uk>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Brian Foster <bfoster@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 2/6] ext4: remove tracing for FALLOC_FL_NO_HIDE_STALE
+Message-ID: <20240828153105.ccvfoppoljdyowry@quack3>
+References: <20240827065123.1762168-1-hch@lst.de>
+ <20240827065123.1762168-3-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,61 +110,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <774275.1724770015@warthog.procyon.org.uk>
+In-Reply-To: <20240827065123.1762168-3-hch@lst.de>
+X-Rspamd-Queue-Id: EDE921FC31
 X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	MX_GOOD(-0.01)[];
 	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 X-Spam-Flag: NO
 
-Hi David!
-
-On Tue 27-08-24 15:46:55, David Howells wrote:
-> I'm looking at trying to fix cifs_file_copychunk_range().  Currently, it
-> invalidates the destination range, apart from a partial folio at either end
-> which will be flushed, and then tries the copy.  But if the copy fails or can
-> only be partially completed (eg. ENOSPC), we lose any data in the destination
-> region, so I think it needs to be flushed and invalidated rather than just
-> being invalidated.
+On Tue 27-08-24 08:50:46, Christoph Hellwig wrote:
+> FALLOC_FL_NO_HIDE_STALE can't make it past vfs_fallocate (and if the
+> flag does what the name implies that's a good thing as it would be
+> highly dangerous).  Remove the dead tracing code for it.
 > 
-> Now, we have filemap_invalidate_inode() which I can use to flush back and
-> invalidate the folios under the invalidate_lock (thereby avoiding the need for
-> launder_folio).  However, that doesn't prevent mmap from reinstating the
-> destination folios with modifications whilst the copy is ongoing the moment
-> the invalidate_lock is dropped.
-> 
-> Question is: would it be reasonable to do the copy offload whilst holding the
-> invalidate_lock for the duration?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-FWIW yes, I'd expect cifs_file_copychunk_range() to take invalidate_lock on
-the target file to avoid possible races with page faults. We do it this
-already for similar operations such as reflink or various fallocate
-operations...
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
+> ---
+>  include/trace/events/ext4.h | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> Thanks,
-> David
+> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
+> index cc5e9b7b2b44e7..156908641e68f1 100644
+> --- a/include/trace/events/ext4.h
+> +++ b/include/trace/events/ext4.h
+> @@ -91,7 +91,6 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
+>  #define show_falloc_mode(mode) __print_flags(mode, "|",		\
+>  	{ FALLOC_FL_KEEP_SIZE,		"KEEP_SIZE"},		\
+>  	{ FALLOC_FL_PUNCH_HOLE,		"PUNCH_HOLE"},		\
+> -	{ FALLOC_FL_NO_HIDE_STALE,	"NO_HIDE_STALE"},	\
+>  	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
+>  	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
+>  
+> -- 
+> 2.43.0
 > 
 -- 
 Jan Kara <jack@suse.com>
