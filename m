@@ -1,145 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-27606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE80962C99
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:40:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62BB962CFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 17:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91169287652
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FBCC282261
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 15:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7ECB1A2C0A;
-	Wed, 28 Aug 2024 15:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E8F1A2C32;
+	Wed, 28 Aug 2024 15:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDdad5/I"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IN3m+9vT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0430114831D;
-	Wed, 28 Aug 2024 15:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F86583A18
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 15:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724859638; cv=none; b=rdTunW4YN6UjEgrj0fswHayCuUacgWq9q/7Bplk9WwrcJdnofyzf5whkBP+PWpq5hDqBZVvLmMflJ/qkanLxaU7Ybxy7p2wtRtrjQ/YWgaHbdLBBQ7mxKeVyU6KrUowgUl1eD6eVxY3BUPmIP6rI1H9vJ5KBg8pRMAjOT5B4Ae4=
+	t=1724860296; cv=none; b=XHeTeLrOyjvOaohXITZlCbAfpoPDRYBJPRuZ/4LIQg9rMpUOuq+5ryqYfnrJwXozPz2CS2XgtDdk4Xr0FltadmeJFseK/1gnsNdVr6vwFfpsqgRI1KRTjjl7HLmLHWnfbaa5CUMBoj1tNfXVWCDT6y375h9ZLzntPRhxC+C4fpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724859638; c=relaxed/simple;
-	bh=+z7/VLAc5zAKqxwt9kQI0vxm8x7sulgvUDeMTRfB+wo=;
+	s=arc-20240116; t=1724860296; c=relaxed/simple;
+	bh=OFFj1NEy5g3i6vGCQ/1G2WW7fCe1HDsr1xX6gfPYgSM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PRedaW+VPkSXEZiXQm/b7MiqpdY6PJQpleAa0t0DXb44Xms0VE2kBJv/v4oDujlSejYTT0oShgIalDrWiTSryjKxtsxt90pz97jPaMiAwT3lvkaOAWSWqhGOI/Dp+IUta4NdauZr6VsIqC0tazew2hsdaLctPgO+a6G1JBtb4OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDdad5/I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781E7C4CEC9;
-	Wed, 28 Aug 2024 15:40:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724859637;
-	bh=+z7/VLAc5zAKqxwt9kQI0vxm8x7sulgvUDeMTRfB+wo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hDdad5/IY68zkrft/92YWfFtjDz6TFndSmnpp5pqAtaDdhgaQHXnMYujF2CwZtAvo
-	 s1dVBctohqByWUo15KsHC1yXOsb3CsxrVYgXiTlMrxSNBqKSRHb2u/dgFnWDlyP45P
-	 kmzBzCQlLYmgzPMvmTlIEcYXhkLufuTJDpchreYUAd0yoHp8hJGCENnAbHqZR1NUMB
-	 63ZyNil+E22vWl4w+ZhugE7V8Y5RiBnHkIJ248WfFc80AZtPJMZpvtsLhvJEQmQQ7b
-	 rjS4mie2g2VPxttgup163SLxFXlpDbWSy4ple6kkn/VZnDNkSEFpYi5cJmSqRwT5Qa
-	 F/BVlj/jrU5iw==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so94243731fa.1;
-        Wed, 28 Aug 2024 08:40:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV05xct5gfUJ2WZGILTjXAdPU1k8W3sJVDHX0yp56hujCJuB0om51JlDpME3pndc1JSGNNhTppmsXal/h0gRg==@vger.kernel.org, AJvYcCWCZcSHufCGoUAdCMPQp0fRVxzYrmJVjlDzwf0cxRS/AVusgr5YsPCWVlftT7yGyfOU/wqCrlcjbhFN6Cmn@vger.kernel.org, AJvYcCWJc0C107/wSVlSw7lu1Aj6ndpsarTY6yOGjRRO4HE/t98Ijb6jv9LZCMI7jFCd7FcjbgtKAFMoWKnBMAHGhHxd@vger.kernel.org, AJvYcCWjqeQIr7Tp60H/3mg3ypNTH87qpaqx7Qo/ZbC9RsxV1WEmgE6ye0ccCcN7C8UoAVsL5VQxbixOBVqhyYtSNozUr6l3@vger.kernel.org, AJvYcCXXwvItc36YPp8dou+RaeRRAFMMDrdJ/AutmCKqlkH8WFKpoWipIYNKclPx/lM6JATUIbrBztf3eUOk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdD0WqGot810jQ21YEOxntFmOYzJGRAgRGKnttnKWwoA4o9Ruq
-	remfgM00GECRUV8PLUP2W7qAfs+qOrF6p2t/1b537Jptf0jXTwVFEddbyUz0ByKKmqRPPkNMiJR
-	cm0v6Z7nuSvrjE8S7emkgFHCZQ7k=
-X-Google-Smtp-Source: AGHT+IHIXIHDcxvkoioWarqDfEAwvoOHHvvDveL69dLtIdivksLO7ybL0XqtoFeExKbS+796rHsbT/SXItR1tBLUGxI=
-X-Received: by 2002:a2e:461a:0:b0:2f3:f182:49f3 with SMTP id
- 38308e7fff4ca-2f6106e36e6mr594741fa.22.1724859635743; Wed, 28 Aug 2024
- 08:40:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=I9o8nWHGPLGVJMeE4Qv3NAY+2qhpjvbVPpueaH9DKJe021hD24e33lt7TedaL/n8wCc3jHs9lMOtwxWsmV6X3iIw4sTBPsj7FZ3+sYBiW3KUmJcGt6Zc2q7zWjiLueHuaZLrFSI2CTgm4DV8At4NMOJID3EGkstN1zS6/jJueSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IN3m+9vT; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4567edb7dceso220621cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 08:51:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724860294; x=1725465094; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I7ms7TuhcUGP2Kd6Iyh+E63IDbeeFTrHgWyCubmUSMg=;
+        b=IN3m+9vT6u83cfoedtTrw9F5vjROOZrtJ7p5UB5qqihQ/Rgm51Xf8iOgmJTV0CwpfG
+         rKUPqEMrpEOfYHj1M0vUE9fMqrkxCtXCIwyaWg2fyrd+dFAxk9cstrB3u1OEKLQEgWQp
+         jHAXh86T62rw4IFsLR9uBAgZb6iN0JroW6UPy/dFLIfdmPaeDXOQzT1F9SYIaawzUt+W
+         /N6PL5LFTh/i5+ZkKKsVNqgRRA8eF3Fi5WitOqAWzcDR7ifcIciI4lEVbAquaCl7GwYX
+         UvN6gpGj76Os9T+3iPGXUkOJs2m97PTjqJqFis38Y4y0bLKIVd4D4cyN6XzkbTsDM/pc
+         1q9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724860294; x=1725465094;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I7ms7TuhcUGP2Kd6Iyh+E63IDbeeFTrHgWyCubmUSMg=;
+        b=GLZ0PJ1MGHMGsGeRywt+QcOxzA1T7A750ljklVZoBuHG8ljiJ5HwbHgkxBaeHrRhar
+         nRHxpmof2GVwcvpdoOLjP0d5TV9ZM0z5C7lmgDYBuVh1cW0tuCf1lmbsDRV6B3bQhStg
+         aF2kOLcnlvHFhWudGH/WgeHaX2+UmFjfjm5hooa/Owpj9ufag13hpdu12xiKnYIshPHL
+         56VFukVszgfzS/8o06IQ08aqdvSEjIK0mb6A48zEltiGZUzKm+Qv+XVKp8iW9+QAAAkh
+         hDrZP+8WNUNIPHXgV+rUxTMmeONGeM50t3HEo4YMR3KLb01tTRH7Us5zOsChl1+jczVL
+         /fUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF3KJ2Bg8eTqXmY5gnIacndGjgsO/hC2Zg9/J9R2yrV1/nvAqXOMiC0SJUiccCIsTonLCDMgZmdCkuF3UB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8Y3/k8lGBZUeuwQADnPNMpzqzleXH6qsZ2dxX76u5VvICMb5/
+	FQ4F1GVM9wRIfk/ms/rzECXzIIs8Lm0EgnTXOK6jigb5AUQr/+STtFW5eNj1xjoQ8AvdawIeJPo
+	K+V0wErTvInVFfkIbkVfLyQmgzsU=
+X-Google-Smtp-Source: AGHT+IEGoKWC4F/OJCQkBY+n2LoGZU9WkWOA8kAbisIXzU03+K4zrmT76a+W6VlyWt3PPU/6qDA5iMrh5CsysucEsn4=
+X-Received: by 2002:a05:622a:17ca:b0:450:3eb:cb30 with SMTP id
+ d75a77b69052e-4566e6a81f2mr27575271cf.42.1724860293793; Wed, 28 Aug 2024
+ 08:51:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu>
- <20240827180819.GB2049@sol.localdomain> <20240827225330.GC29862@gate.crashing.org>
- <Zs8HirKLk-SrwTIu@zx2c4.com> <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com>
- <20240828124519.GE29862@gate.crashing.org>
-In-Reply-To: <20240828124519.GE29862@gate.crashing.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 28 Aug 2024 17:40:23 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGmDmxy75eP=rf_fzKmg0g_FeKV43jk2G_gibnKZBtVww@mail.gmail.com>
-Message-ID: <CAMj1kXGmDmxy75eP=rf_fzKmg0g_FeKV43jk2G_gibnKZBtVww@mail.gmail.com>
-Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, "Jason A . Donenfeld" <Jason@zx2c4.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>, Andrew Morton <akpm@linux-foundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>, 
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
+References: <20240826203234.4079338-3-joannelkoong@gmail.com> <202408280419.yuu33o7t-lkp@intel.com>
+In-Reply-To: <202408280419.yuu33o7t-lkp@intel.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 28 Aug 2024 08:51:22 -0700
+Message-ID: <CAJnrk1Y3piNWm3482N1QcasAmmUMYk1KkoO9TyupaJDBM8jW9A@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] fuse: add default_request_timeout and
+ max_request_timeout sysctls
+To: kernel test robot <lkp@intel.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	oe-kbuild-all@lists.linux.dev, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	kernel-team@meta.com, Bernd Schubert <bschubert@ddn.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 28 Aug 2024 at 14:57, Segher Boessenkool
-<segher@kernel.crashing.org> wrote:
+On Tue, Aug 27, 2024 at 2:52=E2=80=AFPM kernel test robot <lkp@intel.com> w=
+rote:
 >
-> On Wed, Aug 28, 2024 at 12:24:12PM +0000, Arnd Bergmann wrote:
-> > On Wed, Aug 28, 2024, at 11:18, Jason A. Donenfeld wrote:
-> > > On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
-> > >> On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
-> > >> >
-> > >> > Is there a compiler flag that could be used to disable the generation of calls
-> > >> > to memset?
-> > >>
-> > >> -fno-tree-loop-distribute-patterns .  But, as always, read up on it, see
-> > >> what it actually does (and how it avoids your problem, and mostly: learn
-> > >> what the actual problem *was*!)
-> > >
-> > > This might help with various loops, but it doesn't help with the matter
-> > > that this patch fixes, which is struct initialization. I just tried it
-> > > with the arm64 patch to no avail.
-> >
-> > Maybe -ffreestanding can help here? That should cause the vdso to be built
-> > with the assumption that there is no libc, so it would neither add nor
-> > remove standard library calls. Not sure if that causes other problems,
-> > e.g. if the calling conventions are different.
+> Hi Joanne,
 >
-> "GCC requires the freestanding
-> environment provide 'memcpy', 'memmove', 'memset' and 'memcmp'."
+> kernel test robot noticed the following build errors:
 >
-> This is precisely to implement things like struct initialisation.  Maybe
-> we should have a "-ffreeerstanding" or "-ffreefloating" or think of
-> something funnier still environment as well, this problem has been there
-> since the -ffreestanding flag has existed, but the problem is as old as
-> the night.
+> [auto build test ERROR on mszeredi-fuse/for-next]
+> [also build test ERROR on linus/master v6.11-rc5 next-20240827]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 >
-> -fno-builtin might help a bit more, but just attack the problem at
-> its root, like I suggested?
+> url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/fuse-=
+add-optional-kernel-enforced-timeout-for-requests/20240827-043354
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git=
+ for-next
+> patch link:    https://lore.kernel.org/r/20240826203234.4079338-3-joannel=
+koong%40gmail.com
+> patch subject: [PATCH v5 2/2] fuse: add default_request_timeout and max_r=
+equest_timeout sysctls
+> config: arc-randconfig-002-20240827 (https://download.01.org/0day-ci/arch=
+ive/20240828/202408280419.yuu33o7t-lkp@intel.com/config)
+> compiler: arceb-elf-gcc (GCC) 13.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20240828/202408280419.yuu33o7t-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408280419.yuu33o7t-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+> >> fs/fuse/sysctl.c:30:5: error: redefinition of 'fuse_sysctl_register'
+>       30 | int fuse_sysctl_register(void)
+>          |     ^~~~~~~~~~~~~~~~~~~~
+>    In file included from fs/fuse/sysctl.c:9:
+>    fs/fuse/fuse_i.h:1495:19: note: previous definition of 'fuse_sysctl_re=
+gister' with type 'int(void)'
+>     1495 | static inline int fuse_sysctl_register(void) { return 0; }
+>          |                   ^~~~~~~~~~~~~~~~~~~~
+> >> fs/fuse/sysctl.c:38:6: error: redefinition of 'fuse_sysctl_unregister'
+>       38 | void fuse_sysctl_unregister(void)
+>          |      ^~~~~~~~~~~~~~~~~~~~~~
+>    fs/fuse/fuse_i.h:1496:20: note: previous definition of 'fuse_sysctl_un=
+register' with type 'void(void)'
+>     1496 | static inline void fuse_sysctl_unregister(void) { return; }
+>          |                    ^~~~~~~~~~~~~~~~~~~~~~
 >
 
-In my experience, this is likely to do the opposite: it causes the
-compiler to 'forget' the semantics of memcpy() and memset(), so that
-explicit trivial calls will no longer be elided and replaced with
-plain loads and stores (as it can no longer guarantee the equivalence)
+I see. In the Makefile, the sysctl.o needs to be gated by CONFIG_SYSCTL
+eg
+fuse-$(CONFIG_SYSCTL) +=3D sysctl.o
 
-> (This isn't a new problem, originally it showed up as "GCC replaces
-> (part of) my memcpy() implementation by a (recursive) call to memcpy()"
-> and, well, that doesn't quite work!)
+I'll wait a bit to see if there are more comments on this patchset
+before submitting v6.
+
 >
-
-This needs to be fixed for Clang as well, so throwing GCC specific
-flags at it will at best be a partial solution.
-
-Omitting the struct assignment is a reasonable way to reduce the
-likelihood that a memset() will be emitted, so for this patch
-
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-
-It is not a complete solution, unfortunately, and I guess there may be
-other situations (compiler/arch combinations) where this might pop up
-again.
+> vim +/fuse_sysctl_register +30 fs/fuse/sysctl.c
+>
+>     29
+>   > 30  int fuse_sysctl_register(void)
+>     31  {
+>     32          fuse_table_header =3D register_sysctl("fs/fuse", fuse_sys=
+ctl_table);
+>     33          if (!fuse_table_header)
+>     34                  return -ENOMEM;
+>     35          return 0;
+>     36  }
+>     37
+>   > 38  void fuse_sysctl_unregister(void)
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
