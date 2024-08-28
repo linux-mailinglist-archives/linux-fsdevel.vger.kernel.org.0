@@ -1,116 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-27555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B625096256E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 023C19625D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 13:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84C81C2174C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:02:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353061C220CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 11:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4AF16BE29;
-	Wed, 28 Aug 2024 11:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC56F16D4CD;
+	Wed, 28 Aug 2024 11:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0KrvSvO"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ie1ZgaJb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBF0537F5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 11:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C024D108;
+	Wed, 28 Aug 2024 11:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724842939; cv=none; b=hLu2wFreFYJiGdO43JNmQ3rZh2BqKIcw5xQvhY6+o6sROXHh7aXxdRBImvsrkCa160kb7v28w0im9gazP3Appj+MfJKqpNwuDOY0W4r9c3kuwx865/lnDgW53mfxlijhNEGb+Gz4n2UDTEMLWUivZ0gelf8PNiyC6ulEFMbJFpo=
+	t=1724843921; cv=none; b=Oqgj5/ACQ7Fvv6r7pu3kkW66XXUBu1rjYJJpougXBsixisMN9Tee01pdzgJHwqDV0llaqr4TcBjh+X1nugzuAHbZQddLHJqBSgZciYjW3WAzCrUkMHIJtjRosLTDEqhgf5fr0WTPnCkK29ufnkFSkMnsHLaUQff1hMOTC6zjtP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724842939; c=relaxed/simple;
-	bh=oC40dDaCHkTS72c+DC2OxD+YIlXdBb46QF3ohLunLS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=saksLPP3gF+YUx38xGSvhbqkuhsUd9CsqITOF/niTLvUDQ4NRda3AmZ+HtdfYq4UhcrAnKnG+AOkWCc0/W9zgLcjhmC5BV+UtrMV+2ywJUQaiFld69YkazA8VBMQP3aXCocoW0Clm93Bp6eWER/OI02a7SlhMXoR1/HPC/9S5fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0KrvSvO; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7bb75419123so4175192a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 04:02:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724842937; x=1725447737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cMQUho8c873CgcndsYLNW0w29zjZ6+0m3FnwgA4bMBo=;
-        b=L0KrvSvOa5AAQ4uwoGpNPxZ3cRN0ebbUzgvcXi5q4ZCa7QqwIZkQgqIh16MLANRUrC
-         9zJMBlc9lFMgY0le8cEpipHNZijc9pVhjOAqH3aHTky9SlqqD6lR1RuKqf2cZRCzvJXg
-         hPedsi6dcMEOi59OLvHnFH1AdyuFWgd4fCRG3GNaHry3WotxjfAXS/UwQreav4lJDcrd
-         Tf+bf3KP1MkN1oXPvVWsw3dR/P2pkORL1lCD9EB2F/cn6VTCbUR2iK280OxUepRdxEyH
-         coB/+e54wnq5eoIHdiCP2p2dhgiQ5UmHKyhEJG1EkkA9QxHaBmowri2Xq7z/Gj3AlSi7
-         BoMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724842937; x=1725447737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cMQUho8c873CgcndsYLNW0w29zjZ6+0m3FnwgA4bMBo=;
-        b=Ku3ePtEPNVSMi87qFHQjK/iccBgArMa749aBFwy7uBI18d4MbO7m0eyORP2V/KpWZ5
-         usNJ96zxL9WA4AUNBGB7EuB68w8kq/jMbO8n6HOwjc+NNEWnU2u3U8rfJyNzIEmUKgCm
-         YA9dvnADPXk0VhBMCuzGGnvT96sn8jQzwVSk3WgOyrlxnRN/yhsqyVeGI1o82Whry9rV
-         2TOBNCXtD08LdH1l4/gz/wHhVqPGnH1+0ydBh5CBiVYamZ+UbpSxCB9xpvk8rGDm8vqa
-         gFywI4k5ffUKIrn7LnWvIM4RCTBhfdZxZ+nnKt/r6T0cCJxbnu/qiTpPHEOuDeKMe1GT
-         D5Dw==
-X-Gm-Message-State: AOJu0YxCxKezZnGzUR8TqsRP3VCDAnl9IrP3fHFOBsBKdJLhtT1QIMFQ
-	Ce5pZMk5t1bMKKNLyb6M6endoJSdkMsPzh1harpFZSCkFNsOkM0PCmfdaU0Ji7oO3uO20uOlHRH
-	w2qVIzVcvtTWubJT7HfBH1+TO9Gi3MyNv
-X-Google-Smtp-Source: AGHT+IH6gt0gp8T8nyj1DHO0h1bXpnrt/MPDM1P6UlZfru4gYFNSMbQw/fhUD3sPhpOmYN2P3OWMfiT6fP/d9jke6Rs=
-X-Received: by 2002:a17:90b:38d1:b0:2d3:bb9b:ce64 with SMTP id
- 98e67ed59e1d1-2d646d0c4e2mr15526395a91.30.1724842937159; Wed, 28 Aug 2024
- 04:02:17 -0700 (PDT)
+	s=arc-20240116; t=1724843921; c=relaxed/simple;
+	bh=K4ffkU1d24Lo6Vpr60xC27K+SzTzNldohctsI0B5LAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NvqefsuWo035y194PtUONVMgnmYQJAH3ApfPJuBS5KIXz14Q5YZsoz6upH3K6vGG76QAvoit8P4dmU+R/O/3qu94ODB+6KMJUrG0uO6FVhkVadeIN3IGEknS6btoUUPNZkM2Wo3v2vMX63WD6hR0g+K5AqyYvv9BsFvT5CUSL+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ie1ZgaJb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F77C98EC1;
+	Wed, 28 Aug 2024 11:18:37 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ie1ZgaJb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724843916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TaIlxacxM0cvax8nGT0Wo3sn3OzyvoPLEHrLd84XeNU=;
+	b=ie1ZgaJbmdO0NFZiWnbQxMHvES+WVoJwzMG9ptpU3Emt2rn3BokeH+49oxcj4dV6dn2A7R
+	OZIoYXalY4Ws4iv74BUjZGRKqr/jYLeyEjR6fhELEgh04xz8/D5eJuiLFmdCA7UTqCRd8K
+	hMYFoVGZZlHMLnB3FsT4kBzzeg3/4HU=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8e8b7172 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 28 Aug 2024 11:18:35 +0000 (UTC)
+Date: Wed, 28 Aug 2024 13:18:34 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
+Message-ID: <Zs8HirKLk-SrwTIu@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu>
+ <20240827180819.GB2049@sol.localdomain>
+ <20240827225330.GC29862@gate.crashing.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOw_e7bB3C_zbpq6U+FdrjbwJAOKFJk1ZLLETrR+5xqRmv44SQ@mail.gmail.com>
- <CAOQ4uxi=9WpKFb24=Hha_mwj9=bsj9qxiv0f0Z-FMfuBRCvdJA@mail.gmail.com>
- <CAOw_e7YnJwTioM-98CoXWf7AOmTcY29Jgtqz4uTGQFQgY+b1kg@mail.gmail.com>
- <CAOQ4uxhApT09b45snk=ssgrfUU4UOimRH+3xTeA5FJyX6qL07w@mail.gmail.com>
- <CAOw_e7axjatL=dwd2HAVcgC4j8_6A393kBj7kL_VHPUKfZJaqg@mail.gmail.com> <CAOQ4uxgFbBCRLFM4QdQYK3xESMixWqxtC1Q9Hk4p=bjWeWk1ZQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgFbBCRLFM4QdQYK3xESMixWqxtC1Q9Hk4p=bjWeWk1ZQ@mail.gmail.com>
-From: Han-Wen Nienhuys <hanwenn@gmail.com>
-Date: Wed, 28 Aug 2024 13:02:05 +0200
-Message-ID: <CAOw_e7YD6f4aOAr6cuOGQOzhPtOwsNWv7-CqTE1iaF8qq-eR4w@mail.gmail.com>
-Subject: Re: FUSE passthrough: fd lifetime?
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240827225330.GC29862@gate.crashing.org>
 
-On Wed, Aug 28, 2024 at 12:48=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
-> wrote:
+On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
+> On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
+> > On Thu, Aug 22, 2024 at 09:13:13AM +0200, Christophe Leroy wrote:
+> > > With the current implementation, __cvdso_getrandom_data() calls
+> > > memset(), which is unexpected in the VDSO.
+> > > 
+> > > Rewrite opaque data initialisation to avoid memset().
+> > > 
+> > > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > > ---
+> > >  lib/vdso/getrandom.c | 15 ++++++++++-----
+> > >  1 file changed, 10 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
+> > > index cab153c5f9be..4a56f45141b4 100644
+> > > --- a/lib/vdso/getrandom.c
+> > > +++ b/lib/vdso/getrandom.c
+> > > @@ -4,6 +4,7 @@
+> > >   */
+> > >  
+> > >  #include <linux/minmax.h>
+> > > +#include <linux/array_size.h>
+> > >  #include <vdso/datapage.h>
+> > >  #include <vdso/getrandom.h>
+> > >  #include <vdso/unaligned.h>
+> > > @@ -74,11 +75,15 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
+> > >  	u32 counter[2] = { 0 };
+> > >  
+> > >  	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags)) {
+> > > -		*(struct vgetrandom_opaque_params *)opaque_state = (struct vgetrandom_opaque_params) {
+> > > -			.size_of_opaque_state = sizeof(*state),
+> > > -			.mmap_prot = PROT_READ | PROT_WRITE,
+> > > -			.mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS
+> > > -		};
+> > > +		struct vgetrandom_opaque_params *params = opaque_state;
+> > > +		int i;
+> > > +
+> > > +		params->size_of_opaque_state = sizeof(*state);
+> > > +		params->mmap_prot = PROT_READ | PROT_WRITE;
+> > > +		params->mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS;
+> > > +		for (i = 0; i < ARRAY_SIZE(params->reserved); i++)
+> > > +			params->reserved[i] = 0;
+> > > +
+> > >  		return 0;
+> > >  	}
+> > 
+> > Is there a compiler flag that could be used to disable the generation of calls
+> > to memset?
+> 
+> -fno-tree-loop-distribute-patterns .  But, as always, read up on it, see
+> what it actually does (and how it avoids your problem, and mostly: learn
+> what the actual problem *was*!)
 
-> > Similarly, it looks like the first backing ID is usually 1. Is it
-> > guaranteed that 0 is never a valid backing ID? I am not sure, and it
-> > would certainly help implementation on my side.
->
-> No guarantee.
-> There was some suggestion about special use for value 0,
-> but I don't remember what it was right now.
-
-In a file system, not all inodes are backed by a file. If 0 would not
-be handed out as an ID, then backing ID=3D0 could mean: this node is not
-backed by a file (and doesn't need to unregister the ID on
-forget/release). If 0 is a valid ID, I either have to add another
-boolean to the inode, or keep calling the ioctl until I get a non-zero
-value.
-
-Reading, the code, the call is
-
-        id =3D idr_alloc_cyclic(&fc->backing_files_map, fb, 1, 0, GFP_ATOMI=
-C);
-
-ie. start=3D1. In other words, if the counter wraps, it will start at 1
-again, and 0 is not handed out.
-
---=20
-Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
+This might help with various loops, but it doesn't help with the matter
+that this patch fixes, which is struct initialization. I just tried it
+with the arm64 patch to no avail.
 
