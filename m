@@ -1,106 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-27638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DD39632DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 22:50:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D735996335E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D97A2859BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 20:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 635821F2463A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 21:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E4C1B012B;
-	Wed, 28 Aug 2024 20:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1410E1AC89F;
+	Wed, 28 Aug 2024 21:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="A5OPOK3u"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HixHXkVq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA081A76B5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 20:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F402158538
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 21:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724877859; cv=none; b=kqSM5c+SLdCkD/BbzSWshFIgBHcASt5Ij2wXPGubdthVVLA+ElmjfJ3USf67wO/sO3EPIDipMWZyOzQYIbp5Yk7a/cx7/20xqaPk7qsR8re7YnZNck3zUOu0tmv3WL6AZyx2OXds86au0THU3b3HCnyB7VHq4aCV+TcbjbbGvd4=
+	t=1724878989; cv=none; b=Lft+eYYkHVcDyodcXe3wNImXlPJ/r0MEyaPLajhCL5444TXcSMjWZT1QxhE8a+IAyLCiE36Ww65kPRQckyT9Yl0pY2MMf2Cbs6sQdY49/FHRqRteuqGWPCMqyk2ON/Ulp9dG3km+hPsVvtdwXXBRfmLG/dCROxEVizD95d5Ncsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724877859; c=relaxed/simple;
-	bh=NOTT8tmQkGjOLEJiU0mtzQPp7eM+TLxM5wbO/HWBxA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TXwYAlX4Ph1QNJUrZrGF53C228nca8g1RgvJPgFhl9pOLEK5EkiD7iyvoj/z4rzp9F2wKlOskYwm6R4HZjCv+rxjPvi8j63prFfhJ+YO2jIdCqw2nf5Unm/WTqO8ZnWAsvLIybd1WHNcuG2VWIpqJCDP9Wh3Qo6UJWNKYA3SKQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=A5OPOK3u; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a7d7ec7395so198652485a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 13:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724877856; x=1725482656; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTmq2Kjl3J1CBYIG7oCGRuwVGDfx+TeLm+Z7747lKq0=;
-        b=A5OPOK3uWZJji1nYhTVUq6MhrfEFjwx/4OZfTRcOxbAlkTSEuTOY0weXtIrCH+ymCC
-         0yEpD87jVynaA4ZkdbkQuc+lc5FPhDasqDjMa8v12rUjxZ8bwZRz/YHrotiN8ZSamAX/
-         8wGBsvtpyhlJQho+NnUJosJFXlIl87VRKIilr5+aNnGOrpTr6piFhMJSP0l+vagv7DOq
-         0UXyhph7ELab792wF3wrXdTYdtNYvB3YdfO+5S2qcyyV5CydlrXOjBaKJR1UNSVyGgnq
-         B8DV4TBrMg497g8XyKoNJLJ9nZsYyLj7IeQelV1fxu1FLDr9I4WgjBCuwg7EhQ1t1S4A
-         fKvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724877856; x=1725482656;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TTmq2Kjl3J1CBYIG7oCGRuwVGDfx+TeLm+Z7747lKq0=;
-        b=gpPCIQnRvyW9pI3eupdf+M1X0xtB6PBsBhCXYE1z95293vrC9yksJaFegihDEPKHBF
-         JFmCv+Pjx7N/hvK3dP1HKrcVo5D68/zg8C1sEUUAvQ0+j+rNqr4RoyZQg3xx7olf0ZqM
-         flCZr2EDvVXvHcdYQMZczSv1tn4AYGR5vA7OABOkQaY+otpKx05wPLd97dZzmgWw/D9w
-         D3Ey+VjMTbNeYUr4vyXIIEs2Pf0sH5ZqL3ZjQ+3S8yU27YbayshArwS1O/4HtgUAe3Q0
-         5TdSJiOVPq3ImLQSo3WiL1BMLh1Tf+GPSj5M4StCdb5mtoHQWUUvkFbkUA7Nwj/6SyFs
-         x3sw==
-X-Gm-Message-State: AOJu0Yzgxpl2Gj/i4/7k0nEMpFrnP7I5yGdEZ11bW5Wb8VuCOgbY4cw+
-	H/RT4y9eX1LTf94zP6xV8PwNLtHk9fC80p2ywwiduZbUr3gncuXu1iXPBuz7+pg=
-X-Google-Smtp-Source: AGHT+IFLbeNbhXPkGYOfWhqGJaAZwCh1ltke2SjMTXGvB0pfIrWn+ukMPp0XnCOt6dd9J9BRi0Sj4Q==
-X-Received: by 2002:a05:620a:371b:b0:7a7:f8aa:4837 with SMTP id af79cd13be357-7a8041b53d8mr63206685a.22.1724877856333;
-        Wed, 28 Aug 2024 13:44:16 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f34233csm669769485a.35.2024.08.28.13.44.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:44:15 -0700 (PDT)
-Date: Wed, 28 Aug 2024 16:44:14 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	djwong@kernel.org, david@fromorbit.com
-Subject: Re: [PATCH v2 0/2] iomap: flush dirty cache over unwritten mappings
- on zero range
-Message-ID: <20240828204414.GB2974106@perftesting>
-References: <20240828181912.41517-1-bfoster@redhat.com>
+	s=arc-20240116; t=1724878989; c=relaxed/simple;
+	bh=VV17+nS8C1q2KfvL5zDpbmlRmgEDHZV0Gqx+Dv4LhVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nbSAqlOLLpIVp6Zw9Xih/r8zf/VdKVJRxOoIPVdnhqXj8nWiCgjneja4hi8fZCnsMXUIfi8zHgOxZvSBGLU/n88DVl+0hixr8lK4xw73x542/pxCbkjNBd0a6HX8PRC24h54uvRxZBi7R5QK/13NuE79OHarG5JvBW1eYBbCtGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HixHXkVq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724878986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XFobmMcyik8XghRtkh2gK9+MeaxVAEEC6pZ/c4IMu/w=;
+	b=HixHXkVqXn6Dv8+fehBRxGX358/MginE6wuIXx+406atIgiRQWjAYYTaiJApRbeQcNFABm
+	13v2Go3wIC8tq0VsBCQ/X+M0LBSNHfpBxa9UfQrQKKW5cz7k9v1Il1yXCeEJ8YXQddLDuu
+	p4AAcUFmh9VH3jbu8jYiUJGTh7avdsU=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-pWU2m7E2O3W_VVpN-j_iRQ-1; Wed,
+ 28 Aug 2024 17:03:04 -0400
+X-MC-Unique: pWU2m7E2O3W_VVpN-j_iRQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 413511955D47;
+	Wed, 28 Aug 2024 21:03:00 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.30])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8C48D1955BED;
+	Wed, 28 Aug 2024 21:02:53 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+	Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Tom Talpey <tom@talpey.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] mm, netfs, cifs: Miscellaneous fixes
+Date: Wed, 28 Aug 2024 22:02:41 +0100
+Message-ID: <20240828210249.1078637-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828181912.41517-1-bfoster@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Aug 28, 2024 at 02:19:09PM -0400, Brian Foster wrote:
-> Hi all,
-> 
-> Here's v2 of the iomap zero range flush fixes. No real changes here
-> other than a comment update to better explain a subtle corner case. The
-> latest version of corresponding test support is posted here [1].
-> Thoughts, reviews, flames appreciated.
-> 
-> Brian
-> 
+Hi Christian, Steve,
 
-Took me a second to grok what you were doing in the second patch, mostly because
-I'm not as familiar with the iomap code, so with that caveat you can add
+Firstly, here are some fixes to DIO read handling and the retrying of
+reads, particularly in relation to cifs:
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+ (1) Fix the missing credit renegotiation in cifs on the retrying of reads.
+     The credits we had ended with the original read (or the last retry)
+     and to perform a new read we need more credits otherwise the server
+     can reject our read with EINVAL.
+
+ (2) Fix the handling of short DIO reads to avoid ENODATA when the read
+     retry tries to access a portion of the file after the EOF.
+
+Secondly, some patches fixing cifs copy and zero offload:
+
+ (3) Fix cifs_file_copychunk_range() to not try to partially invalidate
+     folios that are only partly covered by the range, but rather flush
+     them back and invalidate them.
+
+ (4) Fix filemap_invalidate_inode() to use the correct invalidation
+     function so that it doesn't leave partially invalidated folios hanging
+     around (which may hide part of the result of an offloaded copy).
+
+ (5) Fix smb3_zero_data() to correctly handle zeroing of data that's
+     buffered locally but not yet written back and with the EOF position on
+     the server short of the local EOF position.
+
+     Note that this will also affect afs and 9p, particularly with regard
+     to direct I/O writes.
+
+And finally, here's an adjustment to debugging statements:
+
+ (6) Adjust three debugging output statements.  Not strictly a fix, so
+     could be dropped.  Including the subreq ID in some extra debug lines
+     helps a bit, though.
+
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
 
 Thanks,
+David
 
-Josef
+David Howells (6):
+  cifs: Fix lack of credit renegotiation on read retry
+  netfs, cifs: Fix handling of short DIO read
+  cifs: Fix copy offload to flush destination region
+  mm: Fix filemap_invalidate_inode() to use
+    invalidate_inode_pages2_range()
+  cifs: Fix FALLOC_FL_ZERO_RANGE to preflush buffered part of target
+    region
+  netfs, cifs: Improve some debugging bits
+
+ fs/netfs/io.c            | 21 +++++++++++++-------
+ fs/smb/client/cifsfs.c   | 21 ++++----------------
+ fs/smb/client/cifsglob.h |  1 +
+ fs/smb/client/file.c     | 37 ++++++++++++++++++++++++++++++++----
+ fs/smb/client/smb2ops.c  | 26 +++++++++++++++++++------
+ fs/smb/client/smb2pdu.c  | 41 +++++++++++++++++++++++++---------------
+ fs/smb/client/trace.h    |  1 +
+ include/linux/netfs.h    |  1 +
+ mm/filemap.c             |  2 +-
+ 9 files changed, 101 insertions(+), 50 deletions(-)
+
 
