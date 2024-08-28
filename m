@@ -1,121 +1,399 @@
-Return-Path: <linux-fsdevel+bounces-27621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DEB962DCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 18:36:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27706962DCF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 18:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F651F22215
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:36:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA611F23C10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 16:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5431A3BBB;
-	Wed, 28 Aug 2024 16:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8363D1A38D5;
+	Wed, 28 Aug 2024 16:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmMHLi0D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B157836130;
-	Wed, 28 Aug 2024 16:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44CF158DB9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 16:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724863001; cv=none; b=s7nKCCoZwqO1WINq9aredUS2XrUOzvduKhlek406bdgcwoTjkCjgZSm2rCFJaInCuI9mo6bkWq2RZ4e3+Yxbm723c/9PF1lT/UEyhSH6VN0mTNhOJM/COfR5mxbENA02BZvc+A2OIl3nv/hltBZpwiI/9VEteHVKnpu1Kye4APg=
+	t=1724863178; cv=none; b=d0sQMFtLYYSZjJx4iZMqextQGiz8otdsgTDql771dFl/PI5DWQr3ITaoVAhmNdZm/SYAXGlAiuKDoNcYT1oz4f5ZU8G6ZvKqGRYK4AOtTKJFFsVOOHvbSpK+Xxq3HMiCNkV+yzOcOcgMpuuVtsW7INyEC5XjV+3G/fBh15TtXLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724863001; c=relaxed/simple;
-	bh=BI4boLvkYhdBiX2NYg+StuUOJ2NruKhdBY2j/SKS3Ww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eMX2/woK2hpkbbqGk9bu03g5t1rxsC/vtrsCnN3w/yLmYvs0+SZlqyPPAorbqj//r8AfIXhvV1AURYTQMMAKVf/iC+dRYA+Q0j9HFuSAg7gk+QwXqBohjTu/4E2oApdIswqZx+QfdVhtAHBYl+qjyHknvkfSKo8hSrUI6jikj14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5d5b22f97b7so7006526eaf.2;
-        Wed, 28 Aug 2024 09:36:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724862999; x=1725467799;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BnPR6A7kMsAB/qzHhmhyNP2hIbWj5sPUdSJEAh4TSw4=;
-        b=AvC8Gptzge9se8P5zJgVDlYK3r/QBBXnWpNZr2XMkf5cq4pd5M++YvI0TlRTPqj9LM
-         Cw5T6wCHu03ow2MbnyYTaF/l60u3Uz/5GqTO56DnhrNGcNUVaCPDjFMw7kRLgOYkSNhY
-         xvfTxEQYwiGSsjRP5dV/Mus06Sulo30CFIC7utm8K+H1rX9fj0iaFCy8iuOTnmJuqcUq
-         +ckn+cSDPY39AIpmaE6pv1pmROxzMElmiEwLRUC7y3xpP/d63o5SEE3nlFgEjsYWcu44
-         93AMsFx0Vn/cwKpZWCAeLSsMkMmpooMhS38+LvSCqxWENzf8Xob472SlZ16kQOs1dkFY
-         X62A==
-X-Forwarded-Encrypted: i=1; AJvYcCV+8jpeq6kI/EG2CAeBWIRQK84tCAWAD8gm4EaCan9aGcAwhj77PGAVTK6yNm9Bv7JNsn57ZskITPvN1/XJ@vger.kernel.org, AJvYcCWN4RXDCfr9xg5j2JbWnQh2yIDxAS7PC76Hlfn+1gTNcLiVr7PpwYa3vyg51uzlWOGohBWXub9oeZXQi04Jzb4rjUMoLo3j@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5MAWtWSRzj0FVc57m8OurVkOWnb873WLUyOLCZkP50QRcPAJ6
-	FbCurgS8FYyJFffAhVyUrXQW1Q3jiysWw2X0uoeX4Ztgwxochrfv
-X-Google-Smtp-Source: AGHT+IGdRrlSxrygiDaJfhUdUXWHKiub8mle3Y49ZZmtQ3zDPqU+W9871M7/FI52F+hz2slKiEy1DQ==
-X-Received: by 2002:a05:6870:c0c4:b0:25e:940:e934 with SMTP id 586e51a60fabf-27790321256mr133140fac.47.1724862998608;
-        Wed, 28 Aug 2024 09:36:38 -0700 (PDT)
-Received: from tachyon.tail92c87.ts.net ([192.159.180.233])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3bb381sm653705285a.85.2024.08.28.09.36.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 09:36:38 -0700 (PDT)
-From: Tavian Barnes <tavianator@tavianator.com>
-To: lihongbo22@huawei.com
-Cc: brauner@kernel.org,
-	gnoack@google.com,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	mic@digikod.net,
-	viro@zeniv.linux.org.uk
-Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs directly
-Date: Wed, 28 Aug 2024 12:36:37 -0400
-Message-ID: <20240828163637.637445-1-tavianator@tavianator.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240827014108.222719-1-lihongbo22@huawei.com>
-References: <20240827014108.222719-1-lihongbo22@huawei.com>
+	s=arc-20240116; t=1724863178; c=relaxed/simple;
+	bh=sKd3MAJUIWV0izDkwy3rlfoQJLP3bBGBIEOWuDDUU+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCVAzZ+Arp7UfvuOL3sHgpMZy+i7nlfajChXKC5pP5wLr+ki9BLNpRCN0p2Slo2Rj5ptdM2lXAo1LVa9gsILtKITTwbI34w3xXOGqfZlOiPJefm4D24Jh3I7LAyMXHH3eVLYts8izOAI5Q7oEwZuVWyCbHdyhkevxADbja3byzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmMHLi0D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20EEDC55DF1;
+	Wed, 28 Aug 2024 16:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724863177;
+	bh=sKd3MAJUIWV0izDkwy3rlfoQJLP3bBGBIEOWuDDUU+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cmMHLi0D9bdKiaaAdYZUxS/yaMUG2ICJyKy76qtuvzGXLV0vpKqXhMvvtOJE61Xmy
+	 fpmYE8gCgHT1C0CNV3CQqsfsdynECBVfNbo5d9bNVOm0Hx5Ebuq3vo8J0noyIqGexS
+	 Tfpq6seX89HsEUPhV+pPtD+khkPsqOPQXKTc8cdcm76z6ukwN6Za4Yo8mkGnAWcLsT
+	 s4TPQCoSI9j3j5LxbMPPp6UYorgDpU4uOgicfb8xDdyuPIYYM+H1By8WgYrNQKF3yA
+	 sklpWfATpvgI6rQp5FfJ4HAyf2HeCfmeQ41MlNBnnruj4fGWSDTNkawHxGBj/op5S4
+	 xnJ06bIwkmMfA==
+Date: Wed, 28 Aug 2024 19:36:56 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] mm: add kmem_cache_create_rcu()
+Message-ID: <Zs9SKFVtFloCQHlB@kernel.org>
+References: <20240828-work-kmem_cache-rcu-v3-0-5460bc1f09f6@kernel.org>
+ <20240828-work-kmem_cache-rcu-v3-2-5460bc1f09f6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828-work-kmem_cache-rcu-v3-2-5460bc1f09f6@kernel.org>
 
-On Tue, 27 Aug 2024 01:41:08 +0000, Hongbo Li wrote:
-> Many mainstream file systems already support the GETVERSION ioctl,
-> and their implementations are completely the same, essentially
-> just obtain the value of i_generation. We think this ioctl can be
-> implemented at the VFS layer, so the file systems do not need to
-> implement it individually.
->
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+On Wed, Aug 28, 2024 at 12:56:24PM +0200, Christian Brauner wrote:
+> When a kmem cache is created with SLAB_TYPESAFE_BY_RCU the free pointer
+> must be located outside of the object because we don't know what part of
+> the memory can safely be overwritten as it may be needed to prevent
+> object recycling.
+> 
+> That has the consequence that SLAB_TYPESAFE_BY_RCU may end up adding a
+> new cacheline. This is the case for e.g., struct file. After having it
+> shrunk down by 40 bytes and having it fit in three cachelines we still
+> have SLAB_TYPESAFE_BY_RCU adding a fourth cacheline because it needs to
+> accommodate the free pointer.
+> 
+> Add a new kmem_cache_create_rcu() function that allows the caller to
+> specify an offset where the free pointer is supposed to be placed.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+FWIW
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
 > ---
->  fs/ioctl.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 64776891120c..dff887ec52c4 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -878,6 +878,9 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
->  	case FS_IOC_GETFSUUID:
->  		return ioctl_getfsuuid(filp, argp);
+>  include/linux/slab.h |   9 ++++
+>  mm/slab.h            |   2 +
+>  mm/slab_common.c     | 136 ++++++++++++++++++++++++++++++++++++---------------
+>  mm/slub.c            |  20 +++++---
+>  4 files changed, 121 insertions(+), 46 deletions(-)
+> 
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index eb2bf4629157..5b2da2cf31a8 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -212,6 +212,12 @@ enum _slab_flag_bits {
+>  #define SLAB_NO_OBJ_EXT		__SLAB_FLAG_UNUSED
+>  #endif
 >  
-> +	case FS_IOC_GETVERSION:
-> +		return put_user(inode->i_generation, (int __user *)argp);
+> +/*
+> + * freeptr_t represents a SLUB freelist pointer, which might be encoded
+> + * and not dereferenceable if CONFIG_SLAB_FREELIST_HARDENED is enabled.
+> + */
+> +typedef struct { unsigned long v; } freeptr_t;
 > +
->  	case FS_IOC_GETFSSYSFSPATH:
->  		return ioctl_get_fs_sysfs_path(filp, argp);
+>  /*
+>   * ZERO_SIZE_PTR will be returned for zero sized kmalloc requests.
+>   *
+> @@ -242,6 +248,9 @@ struct kmem_cache *kmem_cache_create_usercopy(const char *name,
+>  			slab_flags_t flags,
+>  			unsigned int useroffset, unsigned int usersize,
+>  			void (*ctor)(void *));
+> +struct kmem_cache *kmem_cache_create_rcu(const char *name, unsigned int size,
+> +					 unsigned int freeptr_offset,
+> +					 slab_flags_t flags);
+>  void kmem_cache_destroy(struct kmem_cache *s);
+>  int kmem_cache_shrink(struct kmem_cache *s);
 >  
-> @@ -992,6 +995,9 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
->  		cmd = (cmd == FS_IOC32_GETFLAGS) ?
->  			FS_IOC_GETFLAGS : FS_IOC_SETFLAGS;
->  		fallthrough;
+> diff --git a/mm/slab.h b/mm/slab.h
+> index dcdb56b8e7f5..a6051385186e 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -261,6 +261,8 @@ struct kmem_cache {
+>  	unsigned int object_size;	/* Object size without metadata */
+>  	struct reciprocal_value reciprocal_size;
+>  	unsigned int offset;		/* Free pointer offset */
+> +	/* Specific free pointer requested (if not UINT_MAX) */
+> +	unsigned int rcu_freeptr_offset;
+>  #ifdef CONFIG_SLUB_CPU_PARTIAL
+>  	/* Number of per cpu partial objects to keep around */
+>  	unsigned int cpu_partial;
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index c8dd7e08c5f6..887f6b9855dd 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -202,9 +202,10 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
+>  }
+>  
+>  static struct kmem_cache *create_cache(const char *name,
+> -		unsigned int object_size, unsigned int align,
+> -		slab_flags_t flags, unsigned int useroffset,
+> -		unsigned int usersize, void (*ctor)(void *))
+> +		unsigned int object_size, unsigned int freeptr_offset,
+> +		unsigned int align, slab_flags_t flags,
+> +		unsigned int useroffset, unsigned int usersize,
+> +		void (*ctor)(void *))
+>  {
+>  	struct kmem_cache *s;
+>  	int err;
+> @@ -212,6 +213,13 @@ static struct kmem_cache *create_cache(const char *name,
+>  	if (WARN_ON(useroffset + usersize > object_size))
+>  		useroffset = usersize = 0;
+>  
+> +	/* If a custom freelist pointer is requested make sure it's sane. */
+> +	err = -EINVAL;
+> +	if (freeptr_offset != UINT_MAX &&
+> +	    (freeptr_offset >= object_size || !(flags & SLAB_TYPESAFE_BY_RCU) ||
+> +	     !IS_ALIGNED(freeptr_offset, sizeof(freeptr_t))))
+> +		goto out;
+> +
+>  	err = -ENOMEM;
+>  	s = kmem_cache_zalloc(kmem_cache, GFP_KERNEL);
+>  	if (!s)
+> @@ -219,13 +227,13 @@ static struct kmem_cache *create_cache(const char *name,
+>  
+>  	s->name = name;
+>  	s->size = s->object_size = object_size;
+> +	s->rcu_freeptr_offset = freeptr_offset;
+>  	s->align = align;
+>  	s->ctor = ctor;
+>  #ifdef CONFIG_HARDENED_USERCOPY
+>  	s->useroffset = useroffset;
+>  	s->usersize = usersize;
+>  #endif
+> -
+>  	err = __kmem_cache_create(s, flags);
+>  	if (err)
+>  		goto out_free_cache;
+> @@ -240,38 +248,10 @@ static struct kmem_cache *create_cache(const char *name,
+>  	return ERR_PTR(err);
+>  }
+>  
+> -/**
+> - * kmem_cache_create_usercopy - Create a cache with a region suitable
+> - * for copying to userspace
+> - * @name: A string which is used in /proc/slabinfo to identify this cache.
+> - * @size: The size of objects to be created in this cache.
+> - * @align: The required alignment for the objects.
+> - * @flags: SLAB flags
+> - * @useroffset: Usercopy region offset
+> - * @usersize: Usercopy region size
+> - * @ctor: A constructor for the objects.
+> - *
+> - * Cannot be called within a interrupt, but can be interrupted.
+> - * The @ctor is run when new pages are allocated by the cache.
+> - *
+> - * The flags are
+> - *
+> - * %SLAB_POISON - Poison the slab with a known test pattern (a5a5a5a5)
+> - * to catch references to uninitialised memory.
+> - *
+> - * %SLAB_RED_ZONE - Insert `Red` zones around the allocated memory to check
+> - * for buffer overruns.
+> - *
+> - * %SLAB_HWCACHE_ALIGN - Align the objects in this cache to a hardware
+> - * cacheline.  This can be beneficial if you're counting cycles as closely
+> - * as davem.
+> - *
+> - * Return: a pointer to the cache on success, NULL on failure.
+> - */
+> -struct kmem_cache *
+> -kmem_cache_create_usercopy(const char *name,
+> -		  unsigned int size, unsigned int align,
+> -		  slab_flags_t flags,
+> +static struct kmem_cache *
+> +do_kmem_cache_create_usercopy(const char *name,
+> +		  unsigned int size, unsigned int freeptr_offset,
+> +		  unsigned int align, slab_flags_t flags,
+>  		  unsigned int useroffset, unsigned int usersize,
+>  		  void (*ctor)(void *))
+>  {
+> @@ -331,7 +311,7 @@ kmem_cache_create_usercopy(const char *name,
+>  		goto out_unlock;
+>  	}
+>  
+> -	s = create_cache(cache_name, size,
+> +	s = create_cache(cache_name, size, freeptr_offset,
+>  			 calculate_alignment(flags, align, size),
+>  			 flags, useroffset, usersize, ctor);
+>  	if (IS_ERR(s)) {
+> @@ -355,6 +335,45 @@ kmem_cache_create_usercopy(const char *name,
+>  	}
+>  	return s;
+>  }
+> +
+> +/**
+> + * kmem_cache_create_usercopy - Create a cache with a region suitable
+> + * for copying to userspace
+> + * @name: A string which is used in /proc/slabinfo to identify this cache.
+> + * @size: The size of objects to be created in this cache.
+> + * @freeptr_offset: Custom offset for the free pointer in RCU caches
+> + * @align: The required alignment for the objects.
+> + * @flags: SLAB flags
+> + * @useroffset: Usercopy region offset
+> + * @usersize: Usercopy region size
+> + * @ctor: A constructor for the objects.
+> + *
+> + * Cannot be called within a interrupt, but can be interrupted.
+> + * The @ctor is run when new pages are allocated by the cache.
+> + *
+> + * The flags are
+> + *
+> + * %SLAB_POISON - Poison the slab with a known test pattern (a5a5a5a5)
+> + * to catch references to uninitialised memory.
+> + *
+> + * %SLAB_RED_ZONE - Insert `Red` zones around the allocated memory to check
+> + * for buffer overruns.
+> + *
+> + * %SLAB_HWCACHE_ALIGN - Align the objects in this cache to a hardware
+> + * cacheline.  This can be beneficial if you're counting cycles as closely
+> + * as davem.
+> + *
+> + * Return: a pointer to the cache on success, NULL on failure.
+> + */
+> +struct kmem_cache *
+> +kmem_cache_create_usercopy(const char *name, unsigned int size,
+> +			   unsigned int align, slab_flags_t flags,
+> +			   unsigned int useroffset, unsigned int usersize,
+> +			   void (*ctor)(void *))
+> +{
+> +	return do_kmem_cache_create_usercopy(name, size, UINT_MAX, align, flags,
+> +					     useroffset, usersize, ctor);
+> +}
+>  EXPORT_SYMBOL(kmem_cache_create_usercopy);
+>  
+>  /**
+> @@ -386,11 +405,50 @@ struct kmem_cache *
+>  kmem_cache_create(const char *name, unsigned int size, unsigned int align,
+>  		slab_flags_t flags, void (*ctor)(void *))
+>  {
+> -	return kmem_cache_create_usercopy(name, size, align, flags, 0, 0,
+> -					  ctor);
+> +	return do_kmem_cache_create_usercopy(name, size, UINT_MAX, align, flags,
+> +					     0, 0, ctor);
+>  }
+>  EXPORT_SYMBOL(kmem_cache_create);
+>  
+> +/**
+> + * kmem_cache_create_rcu - Create a SLAB_TYPESAFE_BY_RCU cache.
+> + * @name: A string which is used in /proc/slabinfo to identify this cache.
+> + * @size: The size of objects to be created in this cache.
+> + * @freeptr_offset: The offset into the memory to the free pointer
+> + * @flags: SLAB flags
+> + *
+> + * Cannot be called within an interrupt, but can be interrupted.
+> + *
+> + * See kmem_cache_create() for an explanation of possible @flags.
+> + *
+> + * By default SLAB_TYPESAFE_BY_RCU caches place the free pointer outside
+> + * of the object. This might cause the object to grow in size. Callers
+> + * that have a reason to avoid this can specify a custom free pointer
+> + * offset in their struct where the free pointer will be placed.
+> + *
+> + * Note that placing the free pointer inside the object requires the
+> + * caller to ensure that no fields are invalidated that are required to
+> + * guard against object recycling (See SLAB_TYPESAFE_BY_RCU for
+> + * details.).
+> + *
+> + * Using zero as a value for @freeptr_offset is valid. To request no
+> + * offset UINT_MAX must be specified.
+> + *
+> + * Note that @ctor isn't supported with custom free pointers as a @ctor
+> + * requires an external free pointer.
+> + *
+> + * Return: a pointer to the cache on success, NULL on failure.
+> + */
+> +struct kmem_cache *kmem_cache_create_rcu(const char *name, unsigned int size,
+> +					 unsigned int freeptr_offset,
+> +					 slab_flags_t flags)
+> +{
+> +	return do_kmem_cache_create_usercopy(name, size, freeptr_offset, 0,
+> +					     flags | SLAB_TYPESAFE_BY_RCU, 0, 0,
+> +					     NULL);
+> +}
+> +EXPORT_SYMBOL(kmem_cache_create_rcu);
+> +
+>  static struct kmem_cache *kmem_buckets_cache __ro_after_init;
+>  
+>  /**
+> diff --git a/mm/slub.c b/mm/slub.c
+> index c9d8a2497fd6..9aa5da1e8e27 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -465,12 +465,6 @@ static struct workqueue_struct *flushwq;
+>   * 			Core slab cache functions
+>   *******************************************************************/
+>  
+> -/*
+> - * freeptr_t represents a SLUB freelist pointer, which might be encoded
+> - * and not dereferenceable if CONFIG_SLAB_FREELIST_HARDENED is enabled.
+> - */
+> -typedef struct { unsigned long v; } freeptr_t;
+> -
+>  /*
+>   * Returns freelist pointer (ptr). With hardening, this is obfuscated
+>   * with an XOR of the address where the pointer is held and a per-cache
+> @@ -3921,6 +3915,9 @@ static void *__slab_alloc_node(struct kmem_cache *s,
+>  /*
+>   * If the object has been wiped upon free, make sure it's fully initialized by
+>   * zeroing out freelist pointer.
+> + *
+> + * Note that we also wipe custom freelist pointers specified via
+> + * s->rcu_freeptr_offset.
+>   */
+>  static __always_inline void maybe_wipe_obj_freeptr(struct kmem_cache *s,
+>  						   void *obj)
+> @@ -5144,6 +5141,12 @@ static void set_cpu_partial(struct kmem_cache *s)
+>  #endif
+>  }
+>  
+> +/* Was a valid freeptr offset requested? */
+> +static inline bool has_freeptr_offset(const struct kmem_cache *s)
+> +{
+> +	return s->rcu_freeptr_offset != UINT_MAX;
+> +}
+> +
+>  /*
+>   * calculate_sizes() determines the order and the distribution of data within
+>   * a slab object.
+> @@ -5189,7 +5192,8 @@ static int calculate_sizes(struct kmem_cache *s)
+>  	 */
+>  	s->inuse = size;
+>  
+> -	if ((flags & (SLAB_TYPESAFE_BY_RCU | SLAB_POISON)) || s->ctor ||
+> +	if (((flags & SLAB_TYPESAFE_BY_RCU) && !has_freeptr_offset(s)) ||
+> +	    (flags & SLAB_POISON) || s->ctor ||
+>  	    ((flags & SLAB_RED_ZONE) &&
+>  	     (s->object_size < sizeof(void *) || slub_debug_orig_size(s)))) {
+>  		/*
+> @@ -5210,6 +5214,8 @@ static int calculate_sizes(struct kmem_cache *s)
+>  		 */
+>  		s->offset = size;
+>  		size += sizeof(void *);
+> +	} else if ((flags & SLAB_TYPESAFE_BY_RCU) && has_freeptr_offset(s)) {
+> +		s->offset = s->rcu_freeptr_offset;
+>  	} else {
+>  		/*
+>  		 * Store freelist pointer near middle of object to keep
+> 
+> -- 
+> 2.45.2
+> 
 
-The above case falls through...
-
-> +	case FS_IOC32_GETVERSION:
-> +		cmd = FS_IOC_GETVERSION;
-
-... to this new case, which clobbers cmd, breaking FS_IOC32_[GS]ETFLAGS.
-
-> +		fallthrough;
->  	/*
->  	 * everything else in do_vfs_ioctl() takes either a compatible
->  	 * pointer argument or no argument -- call it with a modified
+-- 
+Sincerely yours,
+Mike.
 
