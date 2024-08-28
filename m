@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-27672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91953963597
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 01:32:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86D796359D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 01:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC0828642E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:32:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D69AB25646
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2024 23:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494EE1AE035;
-	Wed, 28 Aug 2024 23:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC7F1AED54;
+	Wed, 28 Aug 2024 23:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQCBLNOT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTt5Z5R9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934651AE034;
-	Wed, 28 Aug 2024 23:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43181AE034;
+	Wed, 28 Aug 2024 23:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724887777; cv=none; b=aPFkirRgI9REMgBbuwd+YVPwT5M4fC1zHInc+sOVHcnTSAayMpLcDaWr3piqIoS5S0BBjVBK3+vDiATG+5oG3iPdG7QnNEwLk7tanwSjcorhgr05rpeBXv+zcx+Z6cghEMO2jrx2gqnMB1fxE4iZ3TKgvPFV3RMXVWzvsU3bg7g=
+	t=1724887784; cv=none; b=U6cdl4eXx/tefVyNOGUTtSUUHlF56Nv7FlqfY8WU+1NE78N0x8fwgKrYTV7seGtjGxQ2/VUjvKV/XHHQD2OUMr5+YQVz2e87hZvH+8rw1p1V9sKqYBnaxQ1wWBnvdnJr7FcJR2ImaOul2cWGcSBqO0/kTabizJDwkVN9OMJRzlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724887777; c=relaxed/simple;
-	bh=0WRESyvBFvhlHiGA4Y8lOQoOddezzHHj49JAXCWn5As=;
+	s=arc-20240116; t=1724887784; c=relaxed/simple;
+	bh=3PCkZcUSj968cQtTDjlzona7eSoMlRvIMvYTHUlF5zg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QOlUW0C+6vbGI2ZYTF+DT7sJG6VqLxTrFolJrf+g9Lj1291MBbRmYPtHr2hTBSGjoakVVmCaOPSx48pmu4nAljGbPdGoYteTznz4JBpv/+ulcmStVOM6MOtUGb5QZLLW2HdhVTOgNviggwN5K+XjpMmI8Hy2kFNPA1WdNxMApew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQCBLNOT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509A0C4CEC5;
-	Wed, 28 Aug 2024 23:29:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rkXrtgWC8s4442KybPnUcEJoVCriC4dU8irUfA42j9fzeb/xzXgGysLmR4nrL05cmeICxfDQ+P8VECeygw6Me3Pyw/Sh8bXCuDJHHvxsVE1tPGFy5g5yJEPZWjb8EmD/jr2TUxrIj3oTSrED2aVy7Eq1+c4M5WV8mrzsTxDuREo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTt5Z5R9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C41C4CEC4;
+	Wed, 28 Aug 2024 23:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724887777;
-	bh=0WRESyvBFvhlHiGA4Y8lOQoOddezzHHj49JAXCWn5As=;
+	s=k20201202; t=1724887784;
+	bh=3PCkZcUSj968cQtTDjlzona7eSoMlRvIMvYTHUlF5zg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=TQCBLNOTt4uPoil78DH70AOWVpIT6LIQ5JGnF8pCl9Kwb2+T2aoH8vA75dLA88j4y
-	 KzL26gabHDxytCwlUFatG6fR1Zvr5uTqt2pShr3pPCTMn33PxgrgHv/pPqIxtTLFnQ
-	 Ey1twIbnnj5qLHrSSrYYGfsUjFldPiC+SUfCZAAFNmNW+3Xa3o4eriYNIwXnPNhtWI
-	 1ohkI3dobfcvnJLKqjUPXbtK1H5vOU58SMjFghxknNoLATb+4juyD5w/c/Ag8Wp2Ci
-	 OtqF9pP5xADxmHSkNwnT2wu9pMyM7UgrrXlopqBfP7xPJ5s52DOIQb4ZQoKDa55z6X
-	 6aqd4cZGM2Mdg==
+	b=UTt5Z5R9O9L3+/5QwmzXLa0NZOyyFfOJvNEjdjsou5sYGYQDRTvuWaDX1alKAOM3r
+	 PlKZvIQsEyXMPw14zormLU4udP4t90TY41lquo/Zt2XZzvTiEF5gjVphHd8EJLzRLC
+	 P+j2++1e9WN6x2mQmznqNIwtsbdv55cIDxKpuSBIPiQBJhaGwvKJk7vFWk9VoLtfO1
+	 iQ4uNzq0QjpqxWA0pLbpi4l9Uzg6snFZfoNbr/XjnMQEheyhlfOY5Q5pebN4ELHSCN
+	 a3gyN8SMoG2g2U7qkibyWiBE5onpK6paLCCsZiYsY3GokgRP7lgu4Zvfv2ZXwMOvog
+	 eMFKSeRr8WCuQ==
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 29 Aug 2024 00:27:25 +0100
-Subject: [PATCH v12 09/39] arm64/gcs: Provide put_user_gcs()
+Date: Thu, 29 Aug 2024 00:27:26 +0100
+Subject: [PATCH v12 10/39] arm64/gcs: Provide basic EL2 setup to allow GCS
+ usage at EL0 and EL1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-arm64-gcs-v12-9-42fec947436a@kernel.org>
+Message-Id: <20240829-arm64-gcs-v12-10-42fec947436a@kernel.org>
 References: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
 In-Reply-To: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -79,57 +80,95 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1159; i=broonie@kernel.org;
- h=from:subject:message-id; bh=0WRESyvBFvhlHiGA4Y8lOQoOddezzHHj49JAXCWn5As=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmz7J/KST71VyjmixMxH0mLOiq0X9OEBGYvS8Br+Qk
- rapbHhCJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZs+yfwAKCRAk1otyXVSH0IEyB/
- 9dPMuvqOeex4MLAMJJV3WaYG8PgSfjupmm2EgWeN3PodFZUAH1v2ObWF8R8GWSN47b867WTbPrnUK2
- E/z43W2Ch+wVpTSLr0+bF7FvoXBo0Zw+4qi29psoG61NIvksaICvPytuz4veHug8g84QxMfdgBrQJB
- waIKJHxR3e1CluOtD4ERbimgFq6MquNG+8P0BrwkJc8CIWY4jiqKIf2vNmE2qBHtCKZ2jw8/yPZqzU
- UMi4CggPBy3S2pqqaubqBzuXEUqXzrbZc2hnNo2XHtn6LVzbBO0JtSHb03LM2SRFNANo/InJvS0Net
- +SJZZSugc6TOvTjh1Xb/ZHbpGii1jW
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2350; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=3PCkZcUSj968cQtTDjlzona7eSoMlRvIMvYTHUlF5zg=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmz7KANWZG2hh16VubTD5fO6Rw8TQa6E+JpUOJeRjf
+ o/z2jmaJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZs+ygAAKCRAk1otyXVSH0BStB/
+ 9JzYqvtihAZIiZE0UehfqFnvL+Y7P5f/SIYrMDhXoNsieqAPH5A7T5d8Y1bIohg98VNwdg5w4oSCiW
+ IvqTzCS7J122yXyYslDcQpnpWDID1OF4fKKO3ctjEkmGQAKDimom7bPTI8CmN9SRcJjQ6MrUDDI1/2
+ NlkwdJFRKuqy9Ktus3cxRtOwnCM3oAys0EXB2tKsO02QinWHdzMze5hnM/eR7rdP6knSPR+iV92uSf
+ FbbV4o2RswyXeZwGtddcBmDTDmG7C3KCNsn/C41uHvNHavqMOspSJMyqZy6kQUJqezSFaqovv4yZb4
+ EWd0RMJuEI1s5UNCl6/d+NUL5sxNZq
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-In order for EL1 to write to an EL0 GCS it must use the GCSSTTR instruction
-rather than a normal STTR. Provide a put_user_gcs() which does this.
+There is a control HCRX_EL2.GCSEn which must be set to allow GCS
+features to take effect at lower ELs and also fine grained traps for GCS
+usage at EL0 and EL1.  Configure all these to allow GCS usage by EL0 and
+EL1.
+
+We also initialise GCSCR_EL1 and GCSCRE0_EL1 to ensure that we can
+execute function call instructions without faulting regardless of the
+state when the kernel is started.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/uaccess.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/include/asm/el2_setup.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 6aba10e38d1c..ecdd47cf1d01 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -522,6 +522,24 @@ static inline int gcssttr(unsigned long __user *addr, unsigned long val)
- 	return err;
- }
+diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+index fd87c4b8f984..09211aebcf03 100644
+--- a/arch/arm64/include/asm/el2_setup.h
++++ b/arch/arm64/include/asm/el2_setup.h
+@@ -27,6 +27,14 @@
+ 	ubfx	x0, x0, #ID_AA64MMFR1_EL1_HCX_SHIFT, #4
+ 	cbz	x0, .Lskip_hcrx_\@
+ 	mov_q	x0, HCRX_HOST_FLAGS
++
++        /* Enable GCS if supported */
++	mrs_s	x1, SYS_ID_AA64PFR1_EL1
++	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
++	cbz	x1, .Lset_hcrx_\@
++	orr	x0, x0, #HCRX_EL2_GCSEn
++
++.Lset_hcrx_\@:
+ 	msr_s	SYS_HCRX_EL2, x0
+ .Lskip_hcrx_\@:
+ .endm
+@@ -191,6 +199,15 @@
+ 	orr	x0, x0, #HFGxTR_EL2_nPIR_EL1
+ 	orr	x0, x0, #HFGxTR_EL2_nPIRE0_EL1
  
-+static inline void put_user_gcs(unsigned long val, unsigned long __user *addr,
-+				int *err)
-+{
-+	int ret;
++	/* GCS depends on PIE so we don't check it if PIE is absent */
++	mrs_s	x1, SYS_ID_AA64PFR1_EL1
++	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
++	cbz	x1, .Lset_fgt_\@
 +
-+	if (!access_ok((char __user *)addr, sizeof(u64))) {
-+		*err = -EFAULT;
-+		return;
-+	}
++	/* Disable traps of access to GCS registers at EL0 and EL1 */
++	orr	x0, x0, #HFGxTR_EL2_nGCS_EL1_MASK
++	orr	x0, x0, #HFGxTR_EL2_nGCS_EL0_MASK
 +
-+	uaccess_ttbr0_enable();
-+	ret = gcssttr(addr, val);
-+	if (ret != 0)
-+		*err = ret;
-+	uaccess_ttbr0_disable();
-+}
-+
-+
- #endif /* CONFIG_ARM64_GCS */
+ .Lset_fgt_\@:
+ 	msr_s	SYS_HFGRTR_EL2, x0
+ 	msr_s	SYS_HFGWTR_EL2, x0
+@@ -204,6 +221,17 @@
+ .Lskip_fgt_\@:
+ .endm
  
- #endif /* __ASM_UACCESS_H */
++.macro __init_el2_gcs
++	mrs_s	x1, SYS_ID_AA64PFR1_EL1
++	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
++	cbz	x1, .Lskip_gcs_\@
++
++	/* Ensure GCS is not enabled when we start trying to do BLs */
++	msr_s	SYS_GCSCR_EL1, xzr
++	msr_s	SYS_GCSCRE0_EL1, xzr
++.Lskip_gcs_\@:
++.endm
++
+ .macro __init_el2_nvhe_prepare_eret
+ 	mov	x0, #INIT_PSTATE_EL1
+ 	msr	spsr_el2, x0
+@@ -229,6 +257,7 @@
+ 	__init_el2_nvhe_idregs
+ 	__init_el2_cptr
+ 	__init_el2_fgt
++        __init_el2_gcs
+ .endm
+ 
+ #ifndef __KVM_NVHE_HYPERVISOR__
 
 -- 
 2.39.2
