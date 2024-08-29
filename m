@@ -1,79 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-27814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3659696445A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:25:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9306196446F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12B72813FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:25:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2D361C228C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656BF18D63A;
-	Thu, 29 Aug 2024 12:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7499C197A6B;
+	Thu, 29 Aug 2024 12:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VosTZRuL"
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="U0VrUGvi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8082B18F2F7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414EB196455
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724934340; cv=none; b=tA57TJG41rSfU/hle87AdksPtFNwwMYZWYh6/3fcbIgSf9m8EXNf+ZeHf6Z7zhhrg2Dgdwvc0zBuWfZulG9663tVdCfZYR2LfqnHdRLBNGWEu3oNWH/DkK1t5VFCtaYWbVWg6Th8wrOhcvpB3p2Lyn3vwSZleCTEJnPfF8BIBfA=
+	t=1724934589; cv=none; b=hV52tb/xIwJcA8KdMnJsgcg4xdB/fERPlHbIAU5w3QUyXj60mGVDA3TEDQmvjpIe3gefJvtev5lfFxli6g6G5YiwoCRTaXj3RKoTc2mlwBRNH17TgP8Bqo+2vmoEVz9zWAt1vCU7okHOmGIa+7CKzJWsR3jZdNFvhU9mDfcygFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724934340; c=relaxed/simple;
-	bh=7CXvtXHwO0028/VdHCk+FBpUlRfs1h+HrgKjZj2uM+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeeX0b3iCdgVced/Dcwn9kV+H/2rNP1NEMs0pnKtmwaNpSDgldcC7kVrJiM2AjEtZ97yusa0pf8JJY5sXqYj3X6kSq+2wdFLSJQOMmC8GKmBHLV4B725A0FE/Fh+SO5S5KSG2E+gDyWYDxNBX4eQAkt9cgSHyxwlVFn5JeASkrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VosTZRuL; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 29 Aug 2024 08:25:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724934336;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5KQbrmkoQxoBGxp8VqgXK/PzFblLA70k6UhDahc0x+s=;
-	b=VosTZRuLYIhjCzW4dw8M4AIVk9wylQd/Xi6e3ZgWL09LPf86eexNwFiDfq5qnKq4NkmU11
-	EamWJxzFBcYJ0bazN67NpumycNQctdwTa0nGE0xg7iyj7Dfk1XQPRoM04ggdlUFKI/cg5d
-	qirs+ymRfZtXqvbFsD7sHJGiUhCkRxU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, 
-	linux-fsdevel@vger.kernel.org, amir73il@gmail.com, brauner@kernel.org, 
-	linux-xfs@vger.kernel.org, gfs2@lists.linux.dev, linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v4 14/16] bcachefs: add pre-content fsnotify hook to fault
-Message-ID: <y2734c2a3gfavo737s3vzdj7xxx2atvqsffh6nkdha77bz5kyb@uhgeiwrd75eu>
-References: <cover.1723670362.git.josef@toxicpanda.com>
- <9627e80117638745c2f4341eb8ac94f63ea9acee.1723670362.git.josef@toxicpanda.com>
- <20240829111055.hyc4eke7a5e26z7r@quack3>
+	s=arc-20240116; t=1724934589; c=relaxed/simple;
+	bh=FGHM4XNfa/cVlTtzzUXPSLt9FVuJ0sM45yJhXV9JDCI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=igP8k3WavbmpKWOOdWVPuLOnvO7FGMfUbKQA8OIK2ClmR7LG2nGFG5UqykD5Dm853FatbN/UrCut9XDZhTkVQwTQuzNM3kHN2bVoNPdnbkgFpEslE/5xMkhjoATTmvK/Iff1RK8sXqMgoTxDBKa5I4EV2e5nKSdXtBKj99Cf9jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=U0VrUGvi; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a866966ffceso3143466b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 05:29:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724934586; x=1725539386; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yi9q0gAo3pbGHakMMQ1qlw9QBFV5RKXeNwADykw9ibU=;
+        b=U0VrUGviA78NIc/Ny3WC9WDWYTagQ4y7ygBmpezMpJ++bPGjwm532NF5Nh15Ui3hgn
+         sFLeUqDVMqdgRqQGY1XKfPCsckeYQJvP4ud+nl9GVNrTUo8xgfT+/jM8Y3R9pjfWM+Jw
+         K4f6r0E2/KbE/Ut8EDsDw5xF0zPs0tsx7Rh1yVlAYwiuYWDtv5MJmWvp8mdbEzV1RiAl
+         bqhHHFRH/9kZDUzjFktg7GlrrAItQG5UVuYI4okwbXSvNSBKZZjRE/maGUY8P9mF/MY6
+         wxdZfYRu0diPFHbEfjmfDEnYIafGEuI1o0s2nKZxxBJgLJy5UC5cZ4EE69jHyP1nLYXE
+         F5Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724934586; x=1725539386;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yi9q0gAo3pbGHakMMQ1qlw9QBFV5RKXeNwADykw9ibU=;
+        b=pXJUd+l+M0JWGF+BNHP52NUnZkI6CikiC2glqKfSc5ri1e1nggkHFPBSrQQoNc/D4p
+         aJYRKeTxsa+1/5BNTmSAm/M+Wsuos+SoeFh88Z9BFnqXa9cn2aluG3LsKX0fvTtlLL2Y
+         Mhj1ZDf5x/UGU2XUAwvZAPdpgPjb2OliDlBx/tgTGAGONh2TrVI0zTVE76YxKKzECztd
+         H/8j0oPKVTvC5wlwNJ4HiQFTF6dYNJ0zJ7d6Md70Kd1+8B18lFAOolPZ7fpBpS/wVI1f
+         sEoc9756mLTp+QnY7Ap9DgMdgJo8lYzwvNZanxIJOPfUJ8H0qoHfRWQLeBfivlt5kj2J
+         TS5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXfhg5gXi76ve64pC1ttO/cJcjgFDaV2tUIxv6q5UKV0HQTrl7kZZKNWuEFVDKtRHoA4qnE8ITDZzLS0cH7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSwuj8HI0huTY2eCxBZUDMpdKj2s7R0wWwBynD//xtG8IFBqNl
+	5p5JbEiCVBA+VzbSWyADbBWrkuSDKY4rmj1J4SQh4AknzkhT0fMEOsDnPJwkpTw=
+X-Google-Smtp-Source: AGHT+IGC9nmjU8Jg5RFOgij0MQ/hzj3G8U3KttB3SuxCDoCApdLe6XuQc8iokX8LRBfJC/kKOpynpQ==
+X-Received: by 2002:a17:907:3d88:b0:a80:79ff:6aa9 with SMTP id a640c23a62f3a-a897fb15d30mr118842766b.8.1724934586358;
+        Thu, 29 Aug 2024 05:29:46 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:1050:bb01:2965:1b4:50ce:19ef])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb0f0sm73372866b.20.2024.08.29.05.29.45
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2024 05:29:45 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829111055.hyc4eke7a5e26z7r@quack3>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [RESEND PATCH] fscache: Remove duplicate included header
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <20240628-dingfest-gemessen-756a29e9af0b@brauner>
+Date: Thu, 29 Aug 2024 14:29:34 +0200
+Cc: netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Simon Horman <horms@kernel.org>,
+ dhowells@redhat.com,
+ jlayton@kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <4A2EAFA2-842F-46EF-995E-7843937E8CD5@toblux.com>
+References: <20240628062329.321162-2-thorsten.blum@toblux.com>
+ <20240628-dingfest-gemessen-756a29e9af0b@brauner>
+To: Christian Brauner <brauner@kernel.org>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Thu, Aug 29, 2024 at 01:10:55PM GMT, Jan Kara wrote:
-> On Wed 14-08-24 17:25:32, Josef Bacik wrote:
-> > bcachefs has its own locking around filemap_fault, so we have to make
-> > sure we do the fsnotify hook before the locking.  Add the check to emit
-> > the event before the locking and return VM_FAULT_RETRY to retrigger the
-> > fault once the event has been emitted.
-> > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+On 28. Jun 2024, at 10:44, Christian Brauner <brauner@kernel.org> wrote:
+> On Fri, 28 Jun 2024 08:23:30 +0200, Thorsten Blum wrote:
+>> Remove duplicate included header file linux/uio.h
+>> 
+>> 
 > 
-> Looks good to me. Would be nice to get ack from bcachefs guys. Kent?
+> Applied to the vfs.netfs branch of the vfs/vfs.git tree.
+> Patches in the vfs.netfs branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.netfs
+> 
+> [1/1] fscache: Remove duplicate included header
+>      https://git.kernel.org/vfs/vfs/c/5094b901bedc
 
-btw, happy to give you a CI account as well: just need username and ssh
-pubkey
+Hi Christian,
+
+I just noticed that this patch never made it into linux-next and I 
+can't find it in the vfs.netfs branch either. Any ideas?
+
+Thanks,
+Thorsten
 
