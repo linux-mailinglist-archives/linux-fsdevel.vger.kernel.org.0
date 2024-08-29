@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-27855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6632A964814
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:23:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939D696481E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7C7282E84
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A871C23AEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983E01B4C41;
-	Thu, 29 Aug 2024 14:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BBD1B1514;
+	Thu, 29 Aug 2024 14:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQpZqQL/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FW2whR78"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3821AD9E9;
-	Thu, 29 Aug 2024 14:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7172A1AE86C;
+	Thu, 29 Aug 2024 14:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941154; cv=none; b=KzAICqa0YhgGpXwhYmjNzvVRkRltaLqYbMeRVNb8FBKO28Lply+w5U+uU5YdI24pXOb/TtbgjZerUcqjRCDUnw2u0qhQxfLuXpdMGclKaCJKlF/SB4Qe1V3e/tHhd6rrCVhxfp6HA6TK37HIZ4sJHSxbCjjLJxpgKnNBMJ/VGxc=
+	t=1724941233; cv=none; b=N/7IGY3JXiA89tDGJFxvc5lU2B2g7DzFnrdTQ4DJF3ENFb0cH/1jO04VYDmtM9ylKSKUqwA78gTVpG6q2mSowruL95PJkC0W3Kt+TWLg9kwn1ZMOrE2lR5jSp1ZcSl3HOLOaCO01SmgM1SK/hmSQwIYBDd+LATt2L1Q3ACFVaCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941154; c=relaxed/simple;
-	bh=rjgc6Bs369wMAg2wnrNd9Gd4fhnuNlHFhQwkwtp8LaM=;
+	s=arc-20240116; t=1724941233; c=relaxed/simple;
+	bh=IhF8LOTok7AJg7fDGyOEdjc+YReDMzOgCiFw97+LmHM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Bu0GBeKDGZ/Sa/4q181yoMjX/B8kVEgLR0BAG0TLrsEWwxhIjjaPagksWjrtIQL3fMOCbg9+EwVwTqSJkRzJ4I8I1YfNLym7FXcD1TvshE+nlLOgLjvHyI+lLxNdnlD60BoSQ4mt55s/SXDRFoiAUJq39pOErQpRI64dnsPBKr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQpZqQL/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4846C4CEC1;
-	Thu, 29 Aug 2024 14:19:12 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Rtva8EMtC2ZO6o69IyRMHkuBww5HliEoH+8EG3Nby6k/KJOMb9p6b9eCHLNIjR5d9unrw/Bb53C10fBH8kIAmQhlCXYMKGhgov+Xyf+O+KfVUS7QDJsL0AxRyhKFDhGxui8ZY1Y+8LECDY3/IJDHv+3yprNAFC5jvjcBOZF55Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FW2whR78; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A5E1C4CEC1;
+	Thu, 29 Aug 2024 14:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724941153;
-	bh=rjgc6Bs369wMAg2wnrNd9Gd4fhnuNlHFhQwkwtp8LaM=;
+	s=k20201202; t=1724941232;
+	bh=IhF8LOTok7AJg7fDGyOEdjc+YReDMzOgCiFw97+LmHM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JQpZqQL/0KjNnDQHM1rFZK6wUI5ppTyHE1vFJkr+qr4e9yxJ+mQFPZSscxU+I9YYn
-	 Bh+xazHtpBar3/xMq3YDng1tNa5neklxp6nzF2DO7t2fZVxpVkPMKslFYfWkXkylWE
-	 0rmV+dF7UmloErqH+viHZRLS8rPYujV5uSfKk06j0XK8DXhr5BCvzLqjDxnwXRWWKo
-	 ZjWxd1SIMScIYIE60rA2u3CQWlOfPd1t8QaU7kryTCXQ5VbdWmmN3iq3C//WipGyFl
-	 MgamA19/9gIyLAJ/+uiKliR7wgULfgEkARq2rQYRDIFVrwo7ccBbezWSyiyCgYeJd5
-	 o5xIknw2+UXAw==
-Message-ID: <381e250748e5e5a8b3552fa195f9320b4920d0ff.camel@kernel.org>
-Subject: Re: [PATCH v14 03/25] nfs: factor out {encode,decode}_opaque_fixed
- to nfs_xdr.h
+	b=FW2whR78W0yrtXvQVGKaNjKMkLginqWWO7gxMaV2ls2D/aeUfusLzCU7qbtkw5Okl
+	 LIjF3XQCdLm/48Y9dZoVkkg4KJilMm+xAT5TM3Qq9Tcxiu2Q0LF2mqWREmhQIMwfYh
+	 6QOiYHQSZtE8xF8d/OB50OqPAFYsnwDiP2O7KlcdH/135bVh8IaeMmbuOG1WWxftEB
+	 QfEFerY2cnMe6JYXxxFwHxErHz3neSLWZkuBubGOuulsbUSZowsc5nQAPY/CUcXsfR
+	 77GDGacS4X18kEBaMsdWYOetMx3KISgB95/6eEUn0Um/x327kgRG7LB8es9KHEeTkp
+	 XBnTkg1chDk1A==
+Message-ID: <d5f673d4c809a48465b5fadea57d9d1fccaffe8a.camel@kernel.org>
+Subject: Re: [PATCH v14 04/25] NFSD: Handle @rqstp == NULL in
+ check_nfsd_access()
 From: Jeff Layton <jlayton@kernel.org>
 To: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org
 Cc: Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <anna@kernel.org>, 
  Trond Myklebust <trondmy@hammerspace.com>, NeilBrown <neilb@suse.de>,
  linux-fsdevel@vger.kernel.org
-Date: Thu, 29 Aug 2024 10:19:11 -0400
-In-Reply-To: <20240829010424.83693-4-snitzer@kernel.org>
+Date: Thu, 29 Aug 2024 10:20:31 -0400
+In-Reply-To: <20240829010424.83693-5-snitzer@kernel.org>
 References: <20240829010424.83693-1-snitzer@kernel.org>
-	 <20240829010424.83693-4-snitzer@kernel.org>
+	 <20240829010424.83693-5-snitzer@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,107 +138,89 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Wed, 2024-08-28 at 21:03 -0400, Mike Snitzer wrote:
-> Eliminates duplicate functions in various files to allow for
-> additional callers.
+> From: NeilBrown <neilb@suse.de>
 >=20
-> Reviewed-by: NeilBrown <neilb@suse.de>
+> LOCALIO-initiated open operations are not running in an nfsd thread
+> and thus do not have an associated svc_rqst context.
+>=20
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> Co-developed-by: Mike Snitzer <snitzer@kernel.org>
 > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 > ---
->  fs/nfs/flexfilelayout/flexfilelayout.c |  6 ------
->  fs/nfs/nfs4xdr.c                       | 13 -------------
->  include/linux/nfs_xdr.h                | 20 +++++++++++++++++++-
->  3 files changed, 19 insertions(+), 20 deletions(-)
+>  fs/nfsd/export.c | 30 +++++++++++++++++++++++++-----
+>  1 file changed, 25 insertions(+), 5 deletions(-)
 >=20
-> diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c b/fs/nfs/flexfilelayo=
-ut/flexfilelayout.c
-> index 39ba9f4208aa..d4d551ffea7b 100644
-> --- a/fs/nfs/flexfilelayout/flexfilelayout.c
-> +++ b/fs/nfs/flexfilelayout/flexfilelayout.c
-> @@ -2086,12 +2086,6 @@ static int ff_layout_encode_ioerr(struct xdr_strea=
-m *xdr,
->  	return ff_layout_encode_ds_ioerr(xdr, &ff_args->errors);
+> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> index 7bb4f2075ac5..c82d8e3e0d4f 100644
+> --- a/fs/nfsd/export.c
+> +++ b/fs/nfsd/export.c
+> @@ -1074,10 +1074,30 @@ static struct svc_export *exp_find(struct cache_d=
+etail *cd,
+>  	return exp;
 >  }
 > =20
-> -static void
-> -encode_opaque_fixed(struct xdr_stream *xdr, const void *buf, size_t len)
-> -{
-> -	WARN_ON_ONCE(xdr_stream_encode_opaque_fixed(xdr, buf, len) < 0);
-> -}
-> -
->  static void
->  ff_layout_encode_ff_iostat_head(struct xdr_stream *xdr,
->  			    const nfs4_stateid *stateid,
-> diff --git a/fs/nfs/nfs4xdr.c b/fs/nfs/nfs4xdr.c
-> index 971305bdaecb..6bf2d44e5d4e 100644
-> --- a/fs/nfs/nfs4xdr.c
-> +++ b/fs/nfs/nfs4xdr.c
-> @@ -972,11 +972,6 @@ static __be32 *reserve_space(struct xdr_stream *xdr,=
- size_t nbytes)
->  	return p;
->  }
-> =20
-> -static void encode_opaque_fixed(struct xdr_stream *xdr, const void *buf,=
- size_t len)
-> -{
-> -	WARN_ON_ONCE(xdr_stream_encode_opaque_fixed(xdr, buf, len) < 0);
-> -}
-> -
->  static void encode_string(struct xdr_stream *xdr, unsigned int len, cons=
-t char *str)
->  {
->  	WARN_ON_ONCE(xdr_stream_encode_opaque(xdr, str, len) < 0);
-> @@ -4406,14 +4401,6 @@ static int decode_access(struct xdr_stream *xdr, u=
-32 *supported, u32 *access)
->  	return 0;
->  }
-> =20
-> -static int decode_opaque_fixed(struct xdr_stream *xdr, void *buf, size_t=
- len)
-> -{
-> -	ssize_t ret =3D xdr_stream_decode_opaque_fixed(xdr, buf, len);
-> -	if (unlikely(ret < 0))
-> -		return -EIO;
-> -	return 0;
-> -}
-> -
->  static int decode_stateid(struct xdr_stream *xdr, nfs4_stateid *stateid)
->  {
->  	return decode_opaque_fixed(xdr, stateid, NFS4_STATEID_SIZE);
-> diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
-> index 45623af3e7b8..5e93fbfb785a 100644
-> --- a/include/linux/nfs_xdr.h
-> +++ b/include/linux/nfs_xdr.h
-> @@ -1853,6 +1853,24 @@ struct nfs_rpc_ops {
->  	void	(*disable_swap)(struct inode *inode);
->  };
-> =20
-> +/*
-> + * Helper functions used by NFS client and/or server
+> +/**
+> + * check_nfsd_access - check if access to export is allowed.
+> + * @exp: svc_export that is being accessed.
+> + * @rqstp: svc_rqst attempting to access @exp (will be NULL for LOCALIO)=
+.
+> + *
+> + * Return values:
+> + *   %nfs_ok if access is granted, or
+> + *   %nfserr_wrongsec if access is denied
 > + */
-> +static inline void encode_opaque_fixed(struct xdr_stream *xdr,
-> +				       const void *buf, size_t len)
-> +{
-> +	WARN_ON_ONCE(xdr_stream_encode_opaque_fixed(xdr, buf, len) < 0);
-> +}
+>  __be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp)
+>  {
+>  	struct exp_flavor_info *f, *end =3D exp->ex_flavors + exp->ex_nflavors;
+> -	struct svc_xprt *xprt =3D rqstp->rq_xprt;
+> +	struct svc_xprt *xprt;
 > +
-> +static inline int decode_opaque_fixed(struct xdr_stream *xdr,
-> +				      void *buf, size_t len)
-> +{
-> +	ssize_t ret =3D xdr_stream_decode_opaque_fixed(xdr, buf, len);
-> +	if (unlikely(ret < 0))
-> +		return -EIO;
-> +	return 0;
-> +}
+> +	/*
+> +	 * If rqstp is NULL, this is a LOCALIO request which will only
+> +	 * ever use a filehandle/credential pair for which access has
+> +	 * been affirmed (by ACCESS or OPEN NFS requests) over the
+> +	 * wire. So there is no need for further checks here.
+> +	 */
+> +	if (!rqstp)
+> +		return nfs_ok;
 > +
->  /*
->   * Function vectors etc. for the NFS client
->   */
-> @@ -1866,4 +1884,4 @@ extern const struct rpc_version nfs_version4;
->  extern const struct rpc_version nfsacl_version3;
->  extern const struct rpc_program nfsacl_program;
+> +	xprt =3D rqstp->rq_xprt;
 > =20
-> -#endif
-> +#endif /* _LINUX_NFS_XDR_H */
+>  	if (exp->ex_xprtsec_modes & NFSEXP_XPRTSEC_NONE) {
+>  		if (!test_bit(XPT_TLS_SESSION, &xprt->xpt_flags))
+> @@ -1098,17 +1118,17 @@ __be32 check_nfsd_access(struct svc_export *exp, =
+struct svc_rqst *rqstp)
+>  ok:
+>  	/* legacy gss-only clients are always OK: */
+>  	if (exp->ex_client =3D=3D rqstp->rq_gssclient)
+> -		return 0;
+> +		return nfs_ok;
+>  	/* ip-address based client; check sec=3D export option: */
+>  	for (f =3D exp->ex_flavors; f < end; f++) {
+>  		if (f->pseudoflavor =3D=3D rqstp->rq_cred.cr_flavor)
+> -			return 0;
+> +			return nfs_ok;
+>  	}
+>  	/* defaults in absence of sec=3D options: */
+>  	if (exp->ex_nflavors =3D=3D 0) {
+>  		if (rqstp->rq_cred.cr_flavor =3D=3D RPC_AUTH_NULL ||
+>  		    rqstp->rq_cred.cr_flavor =3D=3D RPC_AUTH_UNIX)
+> -			return 0;
+> +			return nfs_ok;
+>  	}
+> =20
+>  	/* If the compound op contains a spo_must_allowed op,
+> @@ -1118,7 +1138,7 @@ __be32 check_nfsd_access(struct svc_export *exp, st=
+ruct svc_rqst *rqstp)
+>  	 */
+> =20
+>  	if (nfsd4_spo_must_allow(rqstp))
+> -		return 0;
+> +		return nfs_ok;
+> =20
+>  denied:
+>  	return nfserr_wrongsec;
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
