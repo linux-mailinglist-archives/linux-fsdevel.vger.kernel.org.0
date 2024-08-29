@@ -1,115 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-27787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC1796405F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 11:39:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76445964077
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 11:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25D61F228FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 09:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A987B1C238CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 09:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9470B18E34D;
-	Thu, 29 Aug 2024 09:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B6C18CC1A;
+	Thu, 29 Aug 2024 09:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="pmHloTNA"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ouPYeu28"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F5318E04E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 09:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838CB18C90B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 09:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924326; cv=none; b=gmZVDbHbBsha4CMM2bvlTy7bNDZz1d/n2xuTljI4HxqGYZQPL3170UbeUQmFfX+Uv+WIBwgtJdx/7dmok2pDE7V07KGyEnONH5HXYfjtm/xqpZlE4pqnvHrbHu28S46BYzPxW4srlQdtugiGG6xwAqy2zK0CGxwNkCG/tQLprfI=
+	t=1724924637; cv=none; b=APmGV5XhYz95nAlH8r4iUIdH8LRWiBu9ws0qGRR3WUyGJ2maSUXniNlgQ5T13tgMZ5WB4t6FjrTqnv9ygqC7cKuJoDJtlZZNctiNBeCjjjFmsrEaeEtxKChr7MRqKVWrsrI1k5Fy9j3n78HqAWUXeBj6zLB3ur1jM1B6yCEJXJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924326; c=relaxed/simple;
-	bh=qLAKXH0be/Y9ZXuwwK8d4cy3M8dryqS76vMl11rfg3s=;
+	s=arc-20240116; t=1724924637; c=relaxed/simple;
+	bh=6WGtKULhO7NtT1xQq49oRvr+3cJhPPCbH0/ItdgppYc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C3fasPUd7Cu+eUJxG6k9aNsERHDMIuw8oqgmXfcVzFW8lS4FasuydpWlExxwCPrw/Vvy5bRy0G3lFECCMSPIN7rBcPg28rSpJc2dNDXDIujJtTRDlK8Cp0ch9d6386IlZSer8XUtyW71hLF/hY0nytQnU5iz/bTeIJcWK+S873k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=pmHloTNA; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=BT5TT/Ciu/i2UlLOCg/F3L7uMseeP58QIXFEwSj4KzW1MfGdhn2ahwcehkf/J+kfEnz/BhlEBX5eRCCGgqGTa91ob0rMQQZeh8jiZt9+0eVgcHhAty5hUQPGvtxxbZVDe8o5ieWIqH1bMDWzQ2MnzhFk0F2MX1z0U1SGBeWUNRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ouPYeu28; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a868b739cd9so43694666b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 02:38:43 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a86b46c4831so43032266b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 02:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724924322; x=1725529122; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1724924634; x=1725529434; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qLAKXH0be/Y9ZXuwwK8d4cy3M8dryqS76vMl11rfg3s=;
-        b=pmHloTNACfenOwQn3yuzHUsq7SlnaAfXlh922xBQ95aAaaOpuQYcRtQqvAxuEWHy5J
-         VkmM1egODqPGq/2xZaOcxsDAs0gzogW8YPrQB68XS+/LMaM/7y+X9g8IqWrXjSgO1QYr
-         d0LpfdulUa3sqRmpIj3QnMampSxByO+vPHNfk=
+        bh=6WGtKULhO7NtT1xQq49oRvr+3cJhPPCbH0/ItdgppYc=;
+        b=ouPYeu28QfmfP8rZfXqgKAOzq4gi1aF/Mxbiyd9Vm6hBQcWsuq8KotSXL+e6+Y6uKh
+         kd98Rr/8kRSNZBkINQ6FiOs98oS2Y0PaFonpPBEBP4/97ICpjP4FmTXXRO7nHuH277G9
+         kNfabgksSs1hZdmXh61HTh95WIw4z0V296QnE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724924322; x=1725529122;
+        d=1e100.net; s=20230601; t=1724924634; x=1725529434;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qLAKXH0be/Y9ZXuwwK8d4cy3M8dryqS76vMl11rfg3s=;
-        b=gpeRytgiYxUdnvMlAiIQCcJo8pYmQLMxOXuZQua5ZUpyo9a3E4qCEsWqwztJ0+cfLP
-         j3ylWCJuLxq1mFw/WlqjiUwRQDwyh487yI/QRJqZq/LJY0Ke5hKAuW24Pq2Pbot0KEo1
-         qR/mgsNwUIKNZW/4hZE6t6sVMvqUUT5oZ3HjLI3hXVVdUrY9Fbu0btEdd9vn3CBOc+9F
-         yS0cu1IBTaUqLlUIR+bbVplbKI2+lqzVzp3gGyoU35+8P0Pfhp6czmgny05VdTNcJKlf
-         3H6XirAFG22ah1P0ktK+6Q+c619G4XB9uX14lgctqZZ75DZ+fg5BuQinI8Ku+AM/BkDs
-         0HPA==
-X-Gm-Message-State: AOJu0YxvIsieyGo4zPg4MWQRiEATRCaSgHQNMx0f/7jBI7H4Utx4ibXz
-	4LhKxWta2zSDOvFSleYU4DM3sGtbZRUkZJr/O+iagaaJSZ/caS0DV+/sBjGhWGBPK43wXZwG1G9
-	mjljk1V4Z5KRYmXIdyY2TMDHaliEZFdbz7RHRpQ==
-X-Google-Smtp-Source: AGHT+IEr1JaH7YSc4mlCnJjI1fudB4hsjo4BP9ZM6wvHEil1DeMhIXW1Yb0nuiAJCyZvpdxhQAPWJ/vGYERxTfHtH00=
-X-Received: by 2002:a17:907:7e8c:b0:a7a:ab1a:2d71 with SMTP id
- a640c23a62f3a-a897fad365amr162492166b.59.1724924322357; Thu, 29 Aug 2024
- 02:38:42 -0700 (PDT)
+        bh=6WGtKULhO7NtT1xQq49oRvr+3cJhPPCbH0/ItdgppYc=;
+        b=RLX1FOFUq/qa/80iSOsPjguNzrOCwoQF64iSmAigYiX3bJ2MEBr6SDfp+4vHx5/vcv
+         7aJZiDrGmLgSPSYPz7DXoSoFaMuTx65DKW2n0xmShylLLqDPtFZdiCx9epFZ3BS2foOd
+         Jk80r71HRmcjuNtW6XLKfdkWKIe0k8WI8MSQ6zKo3CeT3Zcx+9bkxCEzf/Yo3LWKRL9Z
+         if7dB2R0brnMjN7I0GHCt7H4DlCe5kmOy2VuofMpcRdHknt+7pCGYDh6V2vxUBau6yEL
+         turqAL0LZ+lU3eu9Jogf/Ya+nw1UYKIzrlRH2EK2xp9/gnMtz9fOyT8RrPAWU0ByxWNx
+         rLww==
+X-Gm-Message-State: AOJu0YyPC1Kno8cqgaR7Ur05PPw1XNK8AAkvjN5cyUNamO8L5z1yxJnu
+	q7ywU2gud8jWXOHjhXMiyGizD7jJxY/Gg/AmynpEr9PVl/SGm0X29qbbKGXtiBeNGsjf2MaM0Sh
+	ZWQCH2aPJfNJcKyje5XmbmsEgCU6JRN+8AcdRog==
+X-Google-Smtp-Source: AGHT+IHsNUkYXjfU1oM+c5YkSz3TMi9+2UKHgA3/7MACl7eKulH+vN+TQMlnBEik3EWNhJiL3d5fjhwJ5AyvhnwieYQ=
+X-Received: by 2002:a17:906:794c:b0:a80:bf0f:2256 with SMTP id
+ a640c23a62f3a-a897f7821d9mr162353766b.8.1724924633804; Thu, 29 Aug 2024
+ 02:43:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9fb28d29-d566-4d96-a491-8f0fbe2e853b@yandex.ru>
-In-Reply-To: <9fb28d29-d566-4d96-a491-8f0fbe2e853b@yandex.ru>
+References: <20240517161028.7046-1-aaptel@nvidia.com>
+In-Reply-To: <20240517161028.7046-1-aaptel@nvidia.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 29 Aug 2024 11:38:31 +0200
-Message-ID: <CAJfpegsbZScBZbN+iaydOD2SKPgfnfj4t=EJz8KyMBX5X3yJWQ@mail.gmail.com>
-Subject: Re: permission problems with fuse
-To: stsp <stsp2@yandex.ru>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Dave Marchevsky <davemarchevsky@fb.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Andy Lutomirski <luto@kernel.org>
+Date: Thu, 29 Aug 2024 11:43:42 +0200
+Message-ID: <CAJfpegtBjy+ns4e73B3qB2_U82wwuq33LNcFuHtfMy9agncaHw@mail.gmail.com>
+Subject: Re: [PATCH] fs/fuse: use correct name fuse_conn_list in docstring
+To: Aurelien Aptel <aaptel@nvidia.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 10 Jul 2024 at 21:55, stsp <stsp2@yandex.ru> wrote:
+On Fri, 17 May 2024 at 18:10, Aurelien Aptel <aaptel@nvidia.com> wrote:
 >
-> Hi guys!
+> fuse_mount_list doesn't exist, use fuse_conn_list.
 >
-> I started to try my app with fuse, and
-> faced 2 problems that are not present
-> with other FSes.
->
-> 1. fuse insists on saved-UID to match owner UID.
-> In fact, fuse_permissible_uidgid() in fs/fuse/dir.c
-> checks everything but fsuid, whereas other
-> FSes seem to check fsuid.
-> Can fuse change that and allow saved-UID
-> to mismatch? Perhaps by just checking fsuid
-> instead?
+> Signed-off-by: Aurelien Aptel <aaptel@nvidia.com>
 
-Use the "allow_other" mount option.
+Applied, thanks.
 
-> 2. My app uses the "file server" which passes
-> the opened fds to the less-privileged process.
-> This doesn't work with fuse: the passed fd
-> gives EACCES on eg fstat() (and likely also on
-> all other syscalls, haven't checked further),
-> while with other FSes, most operations succeed.
-> Some are failing on other FSes as well, like
-> eg fsetxattr(). I moved them to the FS server
-> by the trial-and-error rounds, but they are very few.
-> Would it be possible for fuse to allow as much
-> operations on an open fd, as the other FSes do?
-> Otherwise the priv separation seems impossible.
-
-See above.
-
-Thanks,
 Miklos
 
