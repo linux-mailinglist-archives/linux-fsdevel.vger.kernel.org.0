@@ -1,185 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-27795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EB696422F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40459964240
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD0E282A82
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3E78284D84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AA818E370;
-	Thu, 29 Aug 2024 10:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5623618FC68;
+	Thu, 29 Aug 2024 10:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qim55DdY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9xXFTZs4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rLjqS3Ov";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gieVXgay"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mc7Hr06e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C91314B950;
-	Thu, 29 Aug 2024 10:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928027E59A;
+	Thu, 29 Aug 2024 10:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724928492; cv=none; b=dZVPqMwoCRxbYRu4Mc61Fk2q85LCQ0c8rUoXu9jG0FMQ+/t0KNDqfAnBrrmKifBC+M/QTxUFIqp6RPH4TYGm1vQuSazV2uzuXOqN3baPUaKwCGHzKa+G+9xnd/GxY06MRuN407m3RmLwht6AKVH2L4+MlXL5JsqhvCCnlAkET+M=
+	t=1724928744; cv=none; b=dH2nbO9Nl6aNLx3k2ZuqPvGQLR0i45MLRnoPnBK8LpIxTC8MjjfhCGmFDIFxnzh3iWSfdn16pR9HgPlIH05YJ20yTFOyOjjvC52rq1o+W/kpcyBtzDjN1nzL+Qwh5OQcBqCPkMqOm4dqW9FbYleBeAmRvow9ewWbeekRRK33HKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724928492; c=relaxed/simple;
-	bh=vuJHAnJgqAzc6OocswqQsMXxp93fDT5iaJNUt46Rkv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hKerYXMt0y3SpeU701MqhyWjSzLFRJ8HOKVDiPwswJCzLasFaL9bi4TJAuF2zlFuYB20cPMR8m5BdknddHCUw2xWWv52T5FfztpfhJix/FQOTHK2HSAjlY8XhZkaXc8eBJd0cPQlDknm2MQWca/Onu1DHD7BeF1s2hjOA2zXpx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qim55DdY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9xXFTZs4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rLjqS3Ov; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gieVXgay; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 029DF1F45E;
-	Thu, 29 Aug 2024 10:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724928487; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IYshNOA125TAq+wwYlbfMDtD7jQaRDujc9AboFKKLPM=;
-	b=qim55DdYitf3H3MHYaWbW05FnClviBJ6ATBpRqLFUWk48nGk0PBzyAc2WQn10BIgLSGrH2
-	g64PqahIQfo3JSxF1RNfof4PdY5+IfmPRaDNFSiN6m4/N/B5eqT/s9lEMb6PNd3P2YLGaN
-	w2GVUV3If+ubg19dLioqI+O9B14Zvns=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724928487;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IYshNOA125TAq+wwYlbfMDtD7jQaRDujc9AboFKKLPM=;
-	b=9xXFTZs4mG6AFPRwv5pR2rgfrxgmHub4ikn1hK0J6MculsEXOAVG/gC24Jmlbpwp5EXhee
-	SG7xJS9j4fct3bCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rLjqS3Ov;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=gieVXgay
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724928486; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IYshNOA125TAq+wwYlbfMDtD7jQaRDujc9AboFKKLPM=;
-	b=rLjqS3OvCY9IxdTS3AyQPiM43CrzOT8uK2HgrdvRumyqou4aPw8refUghxFTEVXK6P7XCx
-	PJxJ9QJED5Ze9r2AacSgS/fENqOtLGCZ7rJ2lUsWGUoucezQPe6GO2CYKBF4sLcQDo/Kfo
-	gDeon9Jjy4Ai9hw3FtI+m5t89bmbq6Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724928486;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IYshNOA125TAq+wwYlbfMDtD7jQaRDujc9AboFKKLPM=;
-	b=gieVXgaybs7KsI52JK2WhMwXjnb2bKDzWUlQSfKwuO+7dIWZIyPLqdqlWy7Es4XT9HMitN
-	nFaqiSbd5K0Y9IAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E701A13B01;
-	Thu, 29 Aug 2024 10:48:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id i8BlOOVR0GZUDAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 29 Aug 2024 10:48:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 65FA2A0965; Thu, 29 Aug 2024 12:48:05 +0200 (CEST)
-Date: Thu, 29 Aug 2024 12:48:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	amir73il@gmail.com, brauner@kernel.org, linux-xfs@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v4 11/16] fanotify: disable readahead if we have
- pre-content watches
-Message-ID: <20240829104805.gu5xt2nruupzt2jm@quack3>
-References: <cover.1723670362.git.josef@toxicpanda.com>
- <9a458c9c553c6a8d5416c91650a9b152458459d0.1723670362.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1724928744; c=relaxed/simple;
+	bh=zpPVtYuB9DrL9/jh8DS8DKJOq8AJxMegCXbtHWAlVxc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=jNefc97OmA669N7CrBjKnvyMalzTIM6ZgnMSSGLFr/Fagco7V/JtyBRYKn3ShB6KXq0Yh39PcpOnvP/nhWkbFsGqL72oT7HAujFMjdeBkTVg6zNJwF1BUc9CQr5pCFh/EeA61vbL1qdr0tkXzaE6j//xw9iOaguXqSz7ST1MtR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mc7Hr06e; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SN9IxN011867;
+	Thu, 29 Aug 2024 10:51:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:content-type:mime-version; s=pp1; bh=tZ2m6cGbssb2eQQxLLr4pHVO8a
+	FtJWY9zGD9aFKJ+40=; b=mc7Hr06et4TSHDvOJVR5+HxC8tqhAWgLD2WVAH4+YH
+	PQa7gjRHCcb+rRJt8aIZCGvDd1AHxzzjCIW66Oshl6+1rD+t17vQgXXZR8PFtLH/
+	tCns0c6NxBzX4CPNIGXd5QCBXh68NESDALPB6YTKmS7yOWBBUc9xYKXjRkVBVugx
+	85nhxky6Megy/evWNdkh5mCdj/hdx+DHgGUbEcWrfbHEHTM1FYbkiAdPOqMNT3Up
+	QW5askDzs303YoBHvtdN+pgBaklYrIffm+G1RNYAcJkf0aAcqF00GmOejcqh8o1y
+	2pdJrGw/4QXeSFwImYE0CbcxvBJBYLNXcA7O9KJY+auQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8nys9b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 10:51:30 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47TApTYp022391;
+	Thu, 29 Aug 2024 10:51:29 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8nys98-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 10:51:29 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47T7dKkm024604;
+	Thu, 29 Aug 2024 10:51:28 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 417vj3kyk1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 10:51:28 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47TApQsh57344330
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 29 Aug 2024 10:51:26 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A6EF22004B;
+	Thu, 29 Aug 2024 10:51:26 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2133C20043;
+	Thu, 29 Aug 2024 10:51:26 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 29 Aug 2024 10:51:26 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
+        gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
+        david@fromorbit.com, Zi Yan
+ <ziy@nvidia.com>,
+        yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
+        cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+        ryan.roberts@arm.com, David
+ Howells <dhowells@redhat.com>,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order chunks
+In-Reply-To: <20240822135018.1931258-5-kernel@pankajraghav.com> (Pankaj
+	Raghav's message of "Thu, 22 Aug 2024 15:50:12 +0200")
+References: <20240822135018.1931258-1-kernel@pankajraghav.com>
+	<20240822135018.1931258-5-kernel@pankajraghav.com>
+Date: Thu, 29 Aug 2024 12:51:25 +0200
+Message-ID: <yt9dttf3r49e.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ehVx0YOFUOxlgx-cd_uCO2KSV4ZsDkMy
+X-Proofpoint-ORIG-GUID: s5_o5-fSOlfuvzo-R9J6nU0ZVke-kGcX
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a458c9c553c6a8d5416c91650a9b152458459d0.1723670362.git.josef@toxicpanda.com>
-X-Rspamd-Queue-Id: 029DF1F45E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[fb.com,vger.kernel.org,suse.cz,gmail.com,kernel.org,lists.linux.dev];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,toxicpanda.com:email,suse.com:email,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_02,2024-08-29_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 lowpriorityscore=0 clxscore=1011
+ spamscore=0 impostorscore=0 phishscore=0 suspectscore=0 mlxlogscore=954
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408290076
 
-On Wed 14-08-24 17:25:29, Josef Bacik wrote:
-> With page faults we can trigger readahead on the file, and then
-> subsequent faults can find these pages and insert them into the file
-> without emitting an fanotify event.  To avoid this case, disable
-> readahead if we have pre-content watches on the file.  This way we are
-> guaranteed to get an event for every range we attempt to access on a
-> pre-content watched file.
-> 
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Hi,
 
-...
+"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
 
-> @@ -674,6 +675,14 @@ void page_cache_sync_ra(struct readahead_control *ractl,
->  {
->  	bool do_forced_ra = ractl->file && (ractl->file->f_mode & FMODE_RANDOM);
->  
-> +	/*
-> +	 * If we have pre-content watches we need to disable readahead to make
-> +	 * sure that we don't find 0 filled pages in cache that we never emitted
-> +	 * events for.
-> +	 */
-> +	if (ractl->file && fsnotify_file_has_pre_content_watches(ractl->file))
-> +		return;
-> +
+> From: Luis Chamberlain <mcgrof@kernel.org>
+>
+> split_folio() and split_folio_to_list() assume order 0, to support
+> minorder for non-anonymous folios, we must expand these to check the
+> folio mapping order and use that.
+>
+> Set new_order to be at least minimum folio order if it is set in
+> split_huge_page_to_list() so that we can maintain minimum folio order
+> requirement in the page cache.
+>
+> Update the debugfs write files used for testing to ensure the order
+> is respected as well. We simply enforce the min order when a file
+> mapping is used.
+>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Tested-by: David Howells <dhowells@redhat.com>
 
-There are callers which don't pass struct file to readahead (either to
-page_cache_sync_ra() or page_cache_async_ra()). Luckily these are very few
-- cramfs for a block device (we don't care) and btrfs from code paths like
-send-receive or defrag. Now if you tell me you're fine breaking these
-corner cases for btrfs, I'll take your word for it but it looks like a
-nasty trap to me. Now doing things like defrag or send-receive on offline
-files on HSM managed filesystem doesn't look like a terribly good idea
-anyway so perhaps we just want btrfs to check and refuse such things?
+This causes the following warning on s390 with linux-next starting from
+next-20240827:
 
-								Honza
+[  112.690518] BUG: Bad page map in process ksm01  pte:a5801317 pmd:99054000
+[  112.690531] page: refcount:0 mapcount:-1 mapping:0000000000000000 index:0x3ff86102 pfn:0xa5801
+[  112.690536] flags: 0x3ffff00000000004(referenced|node=0|zone=1|lastcpupid=0x1ffff)
+[  112.690543] raw: 3ffff00000000004 0000001d47439e30 0000001d47439e30 0000000000000000
+[  112.690546] raw: 000000003ff86102 0000000000000000 fffffffe00000000 0000000000000000
+[  112.690548] page dumped because: bad pte
+[  112.690549] addr:000003ff86102000 vm_flags:88100073 anon_vma:000000008c8e46e8 mapping:0000000000000000 index:3ff86102
+[  112.690553] file:(null) fault:0x0 mmap:0x0 read_folio:0x0
+[  112.690561] CPU: 1 UID: 0 PID: 604 Comm: ksm01 Not tainted 6.11.0-rc5-next-20240827-dirty #1441
+[  112.690565] Hardware name: IBM 3931 A01 704 (z/VM 7.3.0)
+[  112.690568] Call Trace:
+[  112.690571]  [<000003ffe0eb77fe>] dump_stack_lvl+0x76/0xa0
+[  112.690579]  [<000003ffe03f4a90>] print_bad_pte+0x280/0x2d0
+[  112.690584]  [<000003ffe03f7654>] zap_present_ptes.isra.0+0x5c4/0x870
+[  112.690598]  [<000003ffe03f7a46>] zap_pte_range+0x146/0x3d0
+[  112.690601]  [<000003ffe03f7f1c>] zap_p4d_range+0x24c/0x4b0
+[  112.690603]  [<000003ffe03f84ea>] unmap_page_range+0xea/0x2c0
+[  112.690605]  [<000003ffe03f8754>] unmap_single_vma.isra.0+0x94/0xf0
+[  112.690607]  [<000003ffe03f8866>] unmap_vmas+0xb6/0x1a0
+[  112.690609]  [<000003ffe0405724>] exit_mmap+0xc4/0x3e0
+[  112.690613]  [<000003ffe0154aa2>] mmput+0x72/0x170
+[  112.690616]  [<000003ffe015e2c6>] exit_mm+0xd6/0x150
+[  112.690618]  [<000003ffe015e52c>] do_exit+0x1ec/0x490
+[  112.690620]  [<000003ffe015e9a4>] do_group_exit+0x44/0xc0
+[  112.690621]  [<000003ffe016f000>] get_signal+0x7f0/0x800
+[  112.690624]  [<000003ffe0108614>] arch_do_signal_or_restart+0x74/0x320
+[  112.690628]  [<000003ffe020c876>] syscall_exit_to_user_mode_work+0xe6/0x170
+[  112.690632]  [<000003ffe0eb7c04>] __do_syscall+0xd4/0x1c0
+[  112.690634]  [<000003ffe0ec303c>] system_call+0x74/0x98
+[  112.690638] Disabling lock debugging due to kernel taint
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+To reproduce, running the ksm01 testsuite from ltp seems to be
+enough. The splat is always triggered immediately. The output from ksm01
+is:
+
+tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+tst_test.c:1809: TINFO: LTP version: 20240524-208-g6c3293c6f
+tst_test.c:1813: TINFO: Tested kernel: 6.11.0-rc5-next-20240827 #1440 SMP Thu Aug 29 12:13:28 CEST 2024 s390x
+tst_test.c:1652: TINFO: Timeout per run is 0h 00m 30s
+mem.c:422: TINFO: wait for all children to stop.
+mem.c:388: TINFO: child 0 stops.
+mem.c:388: TINFO: child 1 stops.
+mem.c:388: TINFO: child 2 stops.
+mem.c:495: TINFO: KSM merging...
+mem.c:434: TINFO: resume all children.
+mem.c:422: TINFO: wait for all children to stop.
+mem.c:344: TINFO: child 0 continues...
+mem.c:347: TINFO: child 0 allocates 128 MB filled with 'c'
+mem.c:344: TINFO: child 1 continues...
+mem.c:347: TINFO: child 1 allocates 128 MB filled with 'a'
+mem.c:344: TINFO: child 2 continues...
+mem.c:347: TINFO: child 2 allocates 128 MB filled with 'a'
+mem.c:400: TINFO: child 1 stops.
+mem.c:400: TINFO: child 2 stops.
+mem.c:400: TINFO: child 0 stops.
+Test timeouted, sending SIGKILL!
+tst_test.c:1700: TINFO: Killed the leftover descendant processes
+tst_test.c:1706: TINFO: If you are running on slow machine, try exporting LTP_TIMEOUT_MUL > 1
+tst_test.c:1708: TBROK: Test killed! (timeout?)
+
+Thanks
+Sven
 
