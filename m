@@ -1,81 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-27859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4841D964832
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:25:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131B196483C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C95F6282B02
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC87C281C4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FF91B14F9;
-	Thu, 29 Aug 2024 14:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EBA1AE850;
+	Thu, 29 Aug 2024 14:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="qOF3cyOD"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="QMC9OYz5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3351B011C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 14:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F8E18A923
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 14:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941441; cv=none; b=lhAqPbyecRVX3OWPiLl/3G0YItcqooWbmpKg0R5nOwAUfF+gWfJBZjgW7EsZdAFkbVaS1eWE09RvTU3TK8qID2wVTiswz+OjZsQIoIFln3t2WXmnRqe8AC3UD3rlCPqdSOMwhOdOaBBYJKnJLikeaTwZvthuRLwNGVs2OgxYOM0=
+	t=1724941636; cv=none; b=K1Lc2F60Ef9DgdjDHJx3JyONpn7CgYBvuQJzJZ5qBKp5fR/c9YXxJGHoZ0WsrXyCzBKGle8tlreNiCzalndl+yYNOH5JD752v4WVPPR2pipZDZDkrlsr+eBcCy23NwkXSCEJxwpFFYE3qrfsC1BGy79AdeRE7fhEW8mZGN8edAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941441; c=relaxed/simple;
-	bh=pF+jckgfWxXjBF58d4ruGjDrRaSQOzkK820+kNTHd0o=;
+	s=arc-20240116; t=1724941636; c=relaxed/simple;
+	bh=Dzf6d2bdjoD0B5OMUYmUjZooF47c2Vi6q7JwFihNdf8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYhvygj9jyh0mfubiNq5QqoaCW72mlxGkGy9KtmiymjIWDWkXdboUYghFS1Mt8HtT13B53pbNeck5Qb+ihHsR7AcALMKyRkieKAAmmBixTbKR4mDxvlgi97bvDBvSMoCXVqexfAtf4KaXXUkxVWeKulhX8k2TM2coBQrecqchbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=qOF3cyOD; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6bf705959f1so6654116d6.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 07:23:59 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uS/3HVhJWmmuUcO8zN09iQRVrvawusu7h/ttYPuQUMbkx/Oq3WWSLaoIN+l6OEpOxL6mChCLIcLD16fA0LI5OUb6Ch9TyTeGLgex3iECzhnIv/sC3MGuN9tZ+F1LT0NHUEqiff/dHttRqLG01XPTyEYdZr5iPApN9yr60EC6MOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=QMC9OYz5; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6bce380eb96so388101a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 07:27:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724941438; x=1725546238; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724941634; x=1725546434; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zxLNqFqcBieEGqB+ANG8Whw6ucOXPrch4XINB9sUGKc=;
-        b=qOF3cyOD0i0xZrPK8aLB6/Ac4olj/80csKvF6sltLZzgs5KawknHC8LxQbb6cAQ2eN
-         mwY0fAfwjlPnFPesHE7bunkN7YxmuECFdsT5tkhUma2WGIFE7xBc4wSry1ajNtuPz5A/
-         Fk66YV2qFEghABy/pom/pMVWnT0fSvx+CB+YyGYh2SMC+aD6zwKvldc4wgn6zjSTUHLg
-         28fOqvy6TB9L5U5cybMRFZbQUyW/h5k8MXBNIg4kZuiGrp7bS8Nj12hw0fq+jjnp6Oth
-         N8cBsF47Jzc/EpD32gJultB/7bOFAz0q0dlsPLF3NNacPkGyyxvCr/WQ4FXReHcXC+Dn
-         +IGg==
+        bh=n2OOh+VCVK5/2MQz7ooKTOwltB8S/8ZEKBIDSHGLnlw=;
+        b=QMC9OYz5hN9il5eClrXtjTvnvpLDVILkrsMYKQRFxYjmWRi4IyVuPAydr9n5Q2/8w2
+         mWtjAthCw0NGApZ7StvJHmP9ADNN/Q/lw8l1zMEKxhkoOAqrpIar+Rq+LX2HEfsVMugS
+         WCSlntNjjhi6oojStJPyVw62h7HXlIF9B1bzNFzYBRRrYtLxj5uOM9MJhv8bth3RnUcL
+         grUoTwzAOQBvWLlxR+bwWWBugUFxE98zY6D26IXxw/Ff5afLHKYWMU7zEvi9WZKx+Hmh
+         u7+NW9hQ9GsMRVwBiDqENYr0yd2d5Xuyn+cN/mU/tm+kfsec+dsFIvYp8dAGcuBwjukS
+         QEUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724941438; x=1725546238;
+        d=1e100.net; s=20230601; t=1724941634; x=1725546434;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zxLNqFqcBieEGqB+ANG8Whw6ucOXPrch4XINB9sUGKc=;
-        b=grT6ca2IWgu6Rw6tyesYn2v/ZpHsQRBpDOay9yXFsrcO/HboqIb1mfc19eZzcE/uiC
-         oZ6OMQYmNo9W9+mvmJb1rccpgF2H5hP1gVloSf3tt/2yfI2TkeIcGsedX5fKqqsZug44
-         AG0auqLq95FKJ9Edt+4Wn4KMzXNuj3gBHTG04GKhf877ZbJaseD0xpEN38L2vTAcKwPG
-         rT9gmOum0Ur6y0RLY3WoDELwBlS8BpUQmo4CqytPplOHUcsJzeBj4O+Wighj/WanwkLB
-         pMyuvPsjxXasWAkZszuUSDkHcibYBXIH+dGVPdCqkKIC1AEKo0B5eHGEqnD4x1sj0NVw
-         9F+w==
-X-Gm-Message-State: AOJu0YzewoaIkOUgO40AGvvkp2/0Gy1KkbnV58l8l5QxCrwViBpAiFr9
-	Xa2ovaJBFtfkFQhR8zQnx/JQJA1jk7sY09d8YbL8UVDFSmxERzGiPSugl6MvwE4=
-X-Google-Smtp-Source: AGHT+IFneAKEY1qnAxkMEPgn0jsbaInFC3LMq/jU76tMk/poSBAffhsmVsOLwAJVKNqD5Kw0ouej0g==
-X-Received: by 2002:a05:6214:411c:b0:6c3:2e4e:2a49 with SMTP id 6a1803df08f44-6c33f33cb57mr35110746d6.10.1724941438130;
-        Thu, 29 Aug 2024 07:23:58 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340bff5ccsm5544506d6.38.2024.08.29.07.23.57
+        bh=n2OOh+VCVK5/2MQz7ooKTOwltB8S/8ZEKBIDSHGLnlw=;
+        b=rMVwJHBl6iJ+ZReQYcbF1g4edcKSCdwFrJMP8K7MjivW0H1v073FRkoPKs/GHKjkcw
+         WHRK4v2+PpgLbq7jdg1W9yDVvHMyoE9LzsvOZ8jugMbXXOH4ES0mroUFWAafJa1BQf60
+         mHUVWISqwNQlJZ47iDPQQcn+1SCXqh6A2ahrfq0yktigoLEyYWiCRjp3HI1NBUxeXtPd
+         IoCniPSh5hAL7+YtvcV8y1f5iqP+uSiKdf7uWD2q7BFhLEBG5K9aYLtsgUlDfUZaXz2z
+         UeWTiOaaCVUGtSB483DerWfltor2T2c7gMhyIWCzWyYwA55wTYdQSbQTG948mX0FuSHu
+         fdxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmPQZIKb4K0a0dSVfJvmoRXjhCreffmxWdJlvLNYB+un/OjeYK3tOEaws6RKrATG5WEfIUmOKdNiO/b2dH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhrkV5tUBpvR48iOHSz2ZcBvpufuH4k0UpVBi+EsNKgTD98UUm
+	sfn+3S7IMhEtwB/W+AWSjUYLPzgcJ7G52FBeBF8oJ1Xs/O36TxGT5N/34S7dC64=
+X-Google-Smtp-Source: AGHT+IHoOtZbO6aG3P1JZ9jG7nfRTKU3cDhAQsdkX112QyeI5JUZTX3EuDxdBLxMn0khFhYGynskaQ==
+X-Received: by 2002:a05:6a20:e196:b0:1c4:c1cd:a29d with SMTP id adf61e73a8af0-1cce101c8fdmr2841575637.28.1724941634275;
+        Thu, 29 Aug 2024 07:27:14 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d4df4sm1270220a12.82.2024.08.29.07.27.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 07:23:57 -0700 (PDT)
-Date: Thu, 29 Aug 2024 10:23:56 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, miklos@szeredi.hu,
-	joannelkoong@gmail.com, bschubert@ddn.com, willy@infradead.org
-Subject: Re: [PATCH v2 06/11] fuse: use iomap for writeback cache buffered
- writes
-Message-ID: <20240829142356.GA3067112@perftesting>
-References: <cover.1724879414.git.josef@toxicpanda.com>
- <dc1e8cd7300e1b76ae2fe77755acaf216571153b.1724879414.git.josef@toxicpanda.com>
- <Zs/wI17fs4qHoFOF@dread.disaster.area>
+        Thu, 29 Aug 2024 07:27:13 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sjg7D-00H16b-0t;
+	Fri, 30 Aug 2024 00:27:11 +1000
+Date: Fri, 30 Aug 2024 00:27:11 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <ZtCFP5w6yv/aykui@dread.disaster.area>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka>
+ <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+ <ZtBWxWunhXTh0bhS@tiehlicka>
+ <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,152 +94,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zs/wI17fs4qHoFOF@dread.disaster.area>
+In-Reply-To: <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
 
-On Thu, Aug 29, 2024 at 01:50:59PM +1000, Dave Chinner wrote:
-> On Wed, Aug 28, 2024 at 05:13:56PM -0400, Josef Bacik wrote:
-> > We're currently using the old ->write_begin()/->write_end() method of
-> > doing buffered writes.  This isn't a huge deal for fuse since we
-> > basically just want to copy the pages and move on, but the iomap
-> > infrastructure gives us access to having huge folios.  Rework the
-> > buffered write path when we have writeback cache to use the iomap
-> > buffered write code, the ->get_folio() callback now handles the work
-> > that we did in ->write_begin(), the rest of the work is handled inside
-> > of iomap so we don't need a replacement for ->write_end.
-> > 
-> > This does bring BLOCK as a dependency, as the buffered write part of
-> > iomap requires CONFIG_BLOCK.  This could be shed if we reworked the file
-> > write iter portion of the buffered write path was separated out to not
-> > need BLOCK.
-> > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > ---
-> >  fs/fuse/Kconfig |   2 +
-> >  fs/fuse/file.c  | 154 +++++++++++++++++++++---------------------------
-> >  2 files changed, 68 insertions(+), 88 deletions(-)
-> > 
-> > diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-> > index 8674dbfbe59d..8a799324d7bd 100644
-> > --- a/fs/fuse/Kconfig
-> > +++ b/fs/fuse/Kconfig
-> > @@ -1,7 +1,9 @@
-> >  # SPDX-License-Identifier: GPL-2.0-only
-> >  config FUSE_FS
-> >  	tristate "FUSE (Filesystem in Userspace) support"
-> > +	depends on BLOCK
-> >  	select FS_POSIX_ACL
-> > +	select FS_IOMAP
-> >  	help
-> >  	  With FUSE it is possible to implement a fully functional filesystem
-> >  	  in a userspace program.
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index ab531a4694b3..af91043b44d7 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -21,6 +21,7 @@
-> >  #include <linux/filelock.h>
-> >  #include <linux/splice.h>
-> >  #include <linux/task_io_accounting_ops.h>
-> > +#include <linux/iomap.h>
-> >  
-> >  static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
-> >  			  unsigned int open_flags, int opcode,
-> > @@ -1420,6 +1421,63 @@ static void fuse_dio_unlock(struct kiocb *iocb, bool exclusive)
-> >  	}
-> >  }
-> >  
-> > +static struct folio *fuse_iomap_get_folio(struct iomap_iter *iter,
-> > +					  loff_t pos, unsigned len)
-> > +{
-> > +	struct file *file = (struct file *)iter->private;
-> > +	struct inode *inode = iter->inode;
-> > +	struct folio *folio;
-> > +	loff_t fsize;
-> > +
-> > +	folio = iomap_get_folio(iter, pos, len);
-> > +	if (IS_ERR(folio))
-> > +		return folio;
-> > +
-> > +	fuse_wait_on_folio_writeback(inode, folio);
-> > +
-> > +	if (folio_test_uptodate(folio))
-> > +		return folio;
-> > +
-> > +	/*
-> > +	 * If we're going to write past EOF then avoid the read, but zero the
-> > +	 * whole thing and mark it uptodate so that if we get a short write we
-> > +	 * don't try to re-read this page, we just carry on.
-> > +	 */
-> > +	fsize = i_size_read(inode);
-> > +	if (fsize <= folio_pos(folio)) {
-> > +		folio_zero_range(folio, 0, folio_size(folio));
-> 
-> The comment doesn't match what this does - the folio is not marked
-> uptodate at all.
+On Thu, Aug 29, 2024 at 07:55:08AM -0400, Kent Overstreet wrote:
+> Ergo, if you're not absolutely sure that a GFP_NOFAIL use is safe
+> according to call path and allocation size, you still need to be
+> checking for failure - in the same way that you shouldn't be using
+> BUG_ON() if you cannot prove that the condition won't occur in real wold
+> usage.
 
-I'll update the comment, it gets marked uptodate in __iomap_write_end() once the
-write is complete.
+We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
+now. This was the default Irix kernel allocator behaviour (it had a
+forwards progress guarantee and would never fail allocation unless
+told it could do so). We've been using the same "guaranteed not to
+fail" semantics on Linux since the original port started 25 years
+ago via open-coded loops.
 
-> 
-> > +	} else {
-> > +		int err = fuse_do_readpage(file, &folio->page);
-> 
-> readpage on a large folio? does that work?
+IOWs, __GFP_NOFAIL semantics have been production tested for a
+couple of decades on Linux via XFS, and nobody here can argue that
+XFS is unreliable or crashes in low memory scenarios. __GFP_NOFAIL
+as it is used by XFS is reliable and lives up to the "will not fail"
+guarantee that it is supposed to have.
 
-I haven't done the work to enable large folios yet, this is just the prep stuff.
-Supporting large folios is going to take a fair bit of work, so I'm getting the
-ball rolling with this prep series.
+Fundamentally, __GFP_NOFAIL came about to replace the callers doing
 
-> 
-> > +		if (err) {
-> > +			folio_unlock(folio);
-> > +			folio_put(folio);
-> > +			return ERR_PTR(err);
-> > +		}
-> > +	}
-> 
-> Also, why do this here when __iomap_write_begin() will do all the
-> sub-folio zeroing and read IO on the folio?
-> 
+	do {
+		p = kmalloc(size);
+	while (!p);
 
-I looked long and hard at iomap because I thought it would, but it turns out it
-won't work for fuse.  I could be totally wrong, but looking at iomap it will
-allocate an ifs because it assumes this is sub-folio blocksize, but we aren't,
-and don't really want to incur that pain.  Additionally it does
-iomap_read_folio_sync() to read in the folio, which just does a bio, which
-obviously doesn't work on fuse.  Again totally expecting to be told I'm stupid
-in some way that I missed, but it seemed like iomap won't do what we need it to
-do here, and it's simple enough to handle the zeroing here for ourselves.
+so that they blocked until memory allocation succeeded. The call
+sites do not check for failure, because -failure never occurs-.
 
-> > +
-> > +	return folio;
-> > +}
-> > +
-> > +static const struct iomap_folio_ops fuse_iomap_folio_ops = {
-> > +	.get_folio = fuse_iomap_get_folio,
-> > +};
-> > +
-> > +static int fuse_iomap_begin_write(struct inode *inode, loff_t pos, loff_t length,
-> > +				  unsigned flags, struct iomap *iomap,
-> > +				  struct iomap *srcmap)
-> > +{
-> > +	iomap->type = IOMAP_DELALLOC;
-> > +	iomap->addr = IOMAP_NULL_ADDR;
-> > +	iomap->offset = pos;
-> > +	iomap->length = length;
-> > +	iomap->folio_ops = &fuse_iomap_folio_ops;
-> > +	return 0;
-> > +}
-> 
-> What's the reason for using IOMAP_DELALLOC for these mappings? I'm
-> not saying it is wrong, I just don't know enough about fuse to
-> understand is this is valid or not because there are no iomap-based
-> writeback hooks being added here....
+The MM devs want to have visibility of these allocations - they may
+not like them, but having __GFP_NOFAIL means it's trivial to audit
+all the allocations that use these semantics.  IOWs, __GFP_NOFAIL
+was created with an explicit guarantee that it -will not fail- for
+normal allocation contexts so it could replace all the open-coded
+will-not-fail allocation loops..
 
-At the time it was "oh we're doing what equates to delalloc, clearly this should
-be marked as delalloc".  Now that I have been in this code longer I realize this
-is supposed to be "what does this range look like now", so I suppose the "right"
-thing to do here is use IOMAP_HOLE?  Thanks,
+Given this guarantee, we recently removed these historic allocation
+wrapper loops from XFS, and replaced them with __GFP_NOFAIL at the
+allocation call sites. There's nearly a hundred memory allocation
+locations in XFS that are tagged with __GFP_NOFAIL.
 
-Josef
+If we're now going to have the "will not fail" guarantee taken away
+from __GFP_NOFAIL, then we cannot use __GFP_NOFAIL in XFS. Nor can
+it be used anywhere else that a "will not fail" guarantee it
+required.
+
+Put simply: __GFP_NOFAIL will be rendered completely useless if it
+can fail due to external scoped memory allocation contexts.  This
+will force us to revert all __GFP_NOFAIL allocations back to
+open-coded will-not-fail loops.
+
+This is not a step forwards for anyone.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
