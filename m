@@ -1,78 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-27893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DD1964B90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 18:22:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA52964B93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 18:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A211F21BA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:22:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 126D5B24DA5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E161B6540;
-	Thu, 29 Aug 2024 16:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028BB1922FE;
+	Thu, 29 Aug 2024 16:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CoARXOaD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNvmlwvP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DAF1B5325;
-	Thu, 29 Aug 2024 16:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E27C195FD5;
+	Thu, 29 Aug 2024 16:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948495; cv=none; b=BLye7u37lMJ1Fhs5Zjg6/lnotqpXJm2PX2E/KdNYW2+SP+lhKEN+fIa6Lz1yrhKUdW7sjp4zXSu2xqgRgcraXYVWQ6H9n601UMQSE6M6nPfN3kd6TaN3nG0pMkMW0u0lF80LrdJo9RR/ypGHpCVb87PAn27d/617bi2e5014Ip8=
+	t=1724948528; cv=none; b=QbnVPG5mvicIdROXq2mR33svZYkv0eYSpnehm1qC6gXLJ9/xY539zGkU23UMwjDbEgsNsaPcSIdhPUKP18VwJmhEDjavmIQwnbUdydsD0Y1THHU3WoD898bEgy4CrRVSGISwj7BkDeFM80nNOqdE0I1aK19IA4Zwo1J0bNP0KCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948495; c=relaxed/simple;
-	bh=QSD0KfHL5nBVjCs5CyKPuF0Hu/LItF1ebis/Y0+ARtE=;
+	s=arc-20240116; t=1724948528; c=relaxed/simple;
+	bh=Q0Owz95Y13iUYjfu3dmujKQngYspzij/0DjXNE3KPU0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HREtMqugwx1znK7376Rs0BY5cDsNHw3BXgKCGUxExXPdc75QnU0MvL9coYezjgOr7aaYVwLdR6PXZX+jDWiYoatO69JF2MsNt70OmFM5hEkezSvFtGL/WzQXEYYzFzeLscSCM6sbHREqlWBuFq+UB4M5YY+nxS9laqP+P/F9fbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CoARXOaD; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724948493; x=1756484493;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QSD0KfHL5nBVjCs5CyKPuF0Hu/LItF1ebis/Y0+ARtE=;
-  b=CoARXOaDXvSxzo5PFlyYg6jyW5xR47lo+6Da/LT7bPo8kyF+dc1vAnHR
-   m8RauvLq0C0Owqo210V3hw948HykysylRgRdUc8/8fPxoCn3pcmlGkuKF
-   NU+wDpJxynLnEFzjhpzQhACjdKdiKWiit80loWmE010eXip9DM8jw8Mbj
-   35W1W2g7TVj7btBBWowhYakfLwkE7lMYibkgAgEuLFk82lD4AfgjGB66S
-   rcoGE49Z92WBBw4aCcuofvp1XHo/BwM9jRL3e2G4Vj5cngxyWebv7Q/ZG
-   E2kDzUtmvmMOqHSpOwQZujzILKSNwfjPnqunQSxXw2Fh/wqN4bDyX+Mim
-   g==;
-X-CSE-ConnectionGUID: KeyKL/QhQbaVHwapqPTZ+A==
-X-CSE-MsgGUID: a5J9g5BGTgOJguCRlRoaIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23725567"
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="23725567"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 09:21:32 -0700
-X-CSE-ConnectionGUID: baVme5SvQhCgxvjuylVrYg==
-X-CSE-MsgGUID: SRL9VVpyRRKKuQttzYY6tg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="94368725"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 29 Aug 2024 09:21:30 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sjhtm-0000So-29;
-	Thu, 29 Aug 2024 16:21:26 +0000
-Date: Fri, 30 Aug 2024 00:20:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Haifeng Xu <haifeng.xu@shopee.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz
-Cc: oe-kbuild-all@lists.linux.dev, tytso@mit.edu, yi.zhang@huaweicloud.com,
-	yukuai1@huaweicloud.com, tj@kernel.org, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Haifeng Xu <haifeng.xu@shopee.com>
-Subject: Re: [PATCH] buffer: Associate the meta bio with blkg from buffer page
-Message-ID: <202408300007.m9sHEOXo-lkp@intel.com>
-References: <20240828033224.146584-1-haifeng.xu@shopee.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vb97nvYAl/UTCR2TtwUKkEmH2i/QF6xwGpDhhQq80DAezpTRQEp/owy3jfo+b5MHpokN28P+hTZd2nC7vSoO44c9XR/gLZz9hDbYUPNJQiOBG2gVh1/4UCY1l6ozzCw74/fujxLK8LqdHJqBlEIBIAFTIIRyH1wzyUZWHr95IPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNvmlwvP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926E2C4CEC1;
+	Thu, 29 Aug 2024 16:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724948527;
+	bh=Q0Owz95Y13iUYjfu3dmujKQngYspzij/0DjXNE3KPU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZNvmlwvPris7BDZ7I0YiuLufSn8cJeF3Ah0VjzqO7QHZfLhrBeefZtVK9wMp9j7p4
+	 GMv6fncJ0yl86HLdKfEzgkGxYm6GeHnOpjEc6L7ZIrxRrZq5yVwha80eL71FHXD+nO
+	 o1KO7uEWmHJFifQEDoZepGlCvIl8zlaJ9Lfup0B2F67LJrP91T1IAPNMOyayobsGQd
+	 jJpTQNoK+dG1RRncSLY+62L0UzEmKMzNJlSWKsfOiwktGbuwvhP0F75WdlnoUs88W0
+	 PX0M+NY4I6eg3eDjLM5hZwupcoK03YCXpCd+f0qhOC9aheUDOPPJoVVP8dz0wI+ge9
+	 OScwSQ8QT74ig==
+Date: Thu, 29 Aug 2024 12:22:06 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v14 14/25] nfs_common: add NFS LOCALIO auxiliary protocol
+ enablement
+Message-ID: <ZtCgLvrUfz9VzyL3@kernel.org>
+References: <20240829010424.83693-1-snitzer@kernel.org>
+ <20240829010424.83693-15-snitzer@kernel.org>
+ <6ecd19ff0c70d6d93e473d958a210dd131b665c0.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,124 +62,171 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828033224.146584-1-haifeng.xu@shopee.com>
+In-Reply-To: <6ecd19ff0c70d6d93e473d958a210dd131b665c0.camel@kernel.org>
 
-Hi Haifeng,
+On Thu, Aug 29, 2024 at 12:07:06PM -0400, Jeff Layton wrote:
+> On Wed, 2024-08-28 at 21:04 -0400, Mike Snitzer wrote:
+> > fs/nfs_common/nfslocalio.c provides interfaces that enable an NFS
+> > client to generate a nonce (single-use UUID) and associated
+> > short-lived nfs_uuid_t struct, register it with nfs_common for
+> > subsequent lookup and verification by the NFS server and if matched
+> > the NFS server populates members in the nfs_uuid_t struct.
+> > 
+> > nfs_common's nfs_uuids list is the basis for localio enablement, as
+> > such it has members that point to nfsd memory for direct use by the
+> > client (e.g. 'net' is the server's network namespace, through it the
+> > client can access nn->nfsd_serv with proper rcu read access).
+> > 
+> > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+> > ---
+> >  fs/nfs_common/Makefile     |  3 ++
+> >  fs/nfs_common/nfslocalio.c | 74 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/nfslocalio.h | 31 ++++++++++++++++
+> >  3 files changed, 108 insertions(+)
+> >  create mode 100644 fs/nfs_common/nfslocalio.c
+> >  create mode 100644 include/linux/nfslocalio.h
+> > 
+> > diff --git a/fs/nfs_common/Makefile b/fs/nfs_common/Makefile
+> > index e58b01bb8dda..a5e54809701e 100644
+> > --- a/fs/nfs_common/Makefile
+> > +++ b/fs/nfs_common/Makefile
+> > @@ -6,6 +6,9 @@
+> >  obj-$(CONFIG_NFS_ACL_SUPPORT) += nfs_acl.o
+> >  nfs_acl-objs := nfsacl.o
+> >  
+> > +obj-$(CONFIG_NFS_COMMON_LOCALIO_SUPPORT) += nfs_localio.o
+> > +nfs_localio-objs := nfslocalio.o
+> > +
+> >  obj-$(CONFIG_GRACE_PERIOD) += grace.o
+> >  obj-$(CONFIG_NFS_V4_2_SSC_HELPER) += nfs_ssc.o
+> >  
+> > diff --git a/fs/nfs_common/nfslocalio.c b/fs/nfs_common/nfslocalio.c
+> > new file mode 100644
+> > index 000000000000..1a35a4a6dbe0
+> > --- /dev/null
+> > +++ b/fs/nfs_common/nfslocalio.c
+> > @@ -0,0 +1,74 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (C) 2024 Mike Snitzer <snitzer@hammerspace.com>
+> > + */
+> > +
+> > +#include <linux/module.h>
+> > +#include <linux/rculist.h>
+> > +#include <linux/nfslocalio.h>
+> > +#include <net/netns/generic.h>
+> > +
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_DESCRIPTION("NFS localio protocol bypass support");
+> > +
+> > +DEFINE_MUTEX(nfs_uuid_mutex);
+> 
+> Why a mutex here? AFAICT, you're just using this to protect the list. A
+> spinlock would probably be more efficient.
 
-kernel test robot noticed the following build errors:
+Yeah, will do, I meant to revisit (when Neil suggested the same for
+the lock that is added in 15/25).
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.11-rc5 next-20240829]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Haifeng-Xu/buffer-Associate-the-meta-bio-with-blkg-from-buffer-page/20240828-113409
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240828033224.146584-1-haifeng.xu%40shopee.com
-patch subject: [PATCH] buffer: Associate the meta bio with blkg from buffer page
-config: alpha-defconfig (https://download.01.org/0day-ci/archive/20240830/202408300007.m9sHEOXo-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408300007.m9sHEOXo-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408300007.m9sHEOXo-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   fs/buffer.c: In function 'submit_bh_wbc':
-   fs/buffer.c:2826:29: error: implicit declaration of function 'mem_cgroup_css_from_folio'; did you mean 'mem_cgroup_from_obj'? [-Werror=implicit-function-declaration]
-    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
-         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
-         |                             mem_cgroup_from_obj
-   fs/buffer.c:2826:27: warning: assignment to 'struct cgroup_subsys_state *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
-         |                           ^
->> fs/buffer.c:2827:21: error: implicit declaration of function 'cgroup_subsys_on_dfl' [-Werror=implicit-function-declaration]
-    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-         |                     ^~~~~~~~~~~~~~~~~~~~
->> fs/buffer.c:2827:42: error: 'memory_cgrp_subsys' undeclared (first use in this function)
-    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-         |                                          ^~~~~~~~~~~~~~~~~~
-   fs/buffer.c:2827:42: note: each undeclared identifier is reported only once for each function it appears in
-   fs/buffer.c:2828:42: error: 'io_cgrp_subsys' undeclared (first use in this function)
-    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
-         |                                          ^~~~~~~~~~~~~~
->> fs/buffer.c:2829:37: error: implicit declaration of function 'cgroup_e_css'; did you mean 'cgroup_exit'? [-Werror=implicit-function-declaration]
-    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
-         |                                     ^~~~~~~~~~~~
-         |                                     cgroup_exit
->> fs/buffer.c:2829:59: error: invalid use of undefined type 'struct cgroup_subsys_state'
-    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
-         |                                                           ^~
-   cc1: some warnings being treated as errors
-
-
-vim +/cgroup_subsys_on_dfl +2827 fs/buffer.c
-
-  2778	
-  2779	static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
-  2780				  enum rw_hint write_hint,
-  2781				  struct writeback_control *wbc)
-  2782	{
-  2783		const enum req_op op = opf & REQ_OP_MASK;
-  2784		struct bio *bio;
-  2785	
-  2786		BUG_ON(!buffer_locked(bh));
-  2787		BUG_ON(!buffer_mapped(bh));
-  2788		BUG_ON(!bh->b_end_io);
-  2789		BUG_ON(buffer_delay(bh));
-  2790		BUG_ON(buffer_unwritten(bh));
-  2791	
-  2792		/*
-  2793		 * Only clear out a write error when rewriting
-  2794		 */
-  2795		if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
-  2796			clear_buffer_write_io_error(bh);
-  2797	
-  2798		if (buffer_meta(bh))
-  2799			opf |= REQ_META;
-  2800		if (buffer_prio(bh))
-  2801			opf |= REQ_PRIO;
-  2802	
-  2803		bio = bio_alloc(bh->b_bdev, 1, opf, GFP_NOIO);
-  2804	
-  2805		fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
-  2806	
-  2807		bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
-  2808		bio->bi_write_hint = write_hint;
-  2809	
-  2810		__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
-  2811	
-  2812		bio->bi_end_io = end_bio_bh_io_sync;
-  2813		bio->bi_private = bh;
-  2814	
-  2815		/* Take care of bh's that straddle the end of the device */
-  2816		guard_bio_eod(bio);
-  2817	
-  2818		if (wbc) {
-  2819			wbc_init_bio(wbc, bio);
-  2820			wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
-  2821		} else if (buffer_meta(bh)) {
-  2822			struct folio *folio;
-  2823			struct cgroup_subsys_state *memcg_css, *blkcg_css;
-  2824	
-  2825			folio = page_folio(bh->b_page);
-  2826			memcg_css = mem_cgroup_css_from_folio(folio);
-> 2827			if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-  2828			    cgroup_subsys_on_dfl(io_cgrp_subsys)) {
-> 2829				blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
-  2830				bio_associate_blkg_from_css(bio, blkcg_css);
-  2831			}
-  2832		}
-  2833	
-  2834		submit_bio(bio);
-  2835	}
-  2836	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > +
+> > +/*
+> > + * Global list of nfs_uuid_t instances, add/remove
+> > + * is protected by nfs_uuid_mutex.
+> > + * Reads are protected by RCU read lock (see below).
+> > + */
+> > +LIST_HEAD(nfs_uuids);
+> > +
+> > +void nfs_uuid_begin(nfs_uuid_t *nfs_uuid)
+> > +{
+> > +	nfs_uuid->net = NULL;
+> > +	nfs_uuid->dom = NULL;
+> > +	uuid_gen(&nfs_uuid->uuid);
+> > +
+> > +	mutex_lock(&nfs_uuid_mutex);
+> > +	list_add_tail_rcu(&nfs_uuid->list, &nfs_uuids);
+> > +	mutex_unlock(&nfs_uuid_mutex);
+> > +}
+> > +EXPORT_SYMBOL_GPL(nfs_uuid_begin);
+> > +
+> > +void nfs_uuid_end(nfs_uuid_t *nfs_uuid)
+> > +{
+> > +	mutex_lock(&nfs_uuid_mutex);
+> > +	list_del_rcu(&nfs_uuid->list);
+> > +	mutex_unlock(&nfs_uuid_mutex);
+> > +}
+> > +EXPORT_SYMBOL_GPL(nfs_uuid_end);
+> > +
+> > +/* Must be called with RCU read lock held. */
+> > +static nfs_uuid_t * nfs_uuid_lookup(const uuid_t *uuid)
+> > +{
+> > +	nfs_uuid_t *nfs_uuid;
+> > +
+> > +	list_for_each_entry_rcu(nfs_uuid, &nfs_uuids, list)
+> > +		if (uuid_equal(&nfs_uuid->uuid, uuid))
+> > +			return nfs_uuid;
+> > +
+> > +	return NULL;
+> > +}
+> > +
+> > +bool nfs_uuid_is_local(const uuid_t *uuid, struct net *net, struct auth_domain *dom)
+> > +{
+> > +	bool is_local = false;
+> > +	nfs_uuid_t *nfs_uuid;
+> > +
+> > +	rcu_read_lock();
+> > +	nfs_uuid = nfs_uuid_lookup(uuid);
+> > +	if (nfs_uuid) {
+> > +		nfs_uuid->net = maybe_get_net(net);
+> > +		if (nfs_uuid->net) {
+> > +			is_local = true;
+> > +			kref_get(&dom->ref);
+> > +			nfs_uuid->dom = dom;
+> > +		}
+> > +	}
+> > +	rcu_read_unlock();
+> > +
+> > +	return is_local;
+> > +}
+> > +EXPORT_SYMBOL_GPL(nfs_uuid_is_local);
+> > diff --git a/include/linux/nfslocalio.h b/include/linux/nfslocalio.h
+> > new file mode 100644
+> > index 000000000000..9735ae8d3e5e
+> > --- /dev/null
+> > +++ b/include/linux/nfslocalio.h
+> > @@ -0,0 +1,31 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (C) 2024 Mike Snitzer <snitzer@hammerspace.com>
+> > + */
+> > +#ifndef __LINUX_NFSLOCALIO_H
+> > +#define __LINUX_NFSLOCALIO_H
+> > +
+> > +#include <linux/list.h>
+> > +#include <linux/uuid.h>
+> > +#include <linux/sunrpc/svcauth.h>
+> > +#include <linux/nfs.h>
+> > +#include <net/net_namespace.h>
+> > +
+> > +/*
+> > + * Useful to allow a client to negotiate if localio
+> > + * possible with its server.
+> > + *
+> > + * See Documentation/filesystems/nfs/localio.rst for more detail.
+> > + */
+> > +typedef struct {
+> > +	uuid_t uuid;
+> > +	struct list_head list;
+> > +	struct net *net; /* nfsd's network namespace */
+> > +	struct auth_domain *dom; /* auth_domain for localio */
+> > +} nfs_uuid_t;
+> > +
+> > +void nfs_uuid_begin(nfs_uuid_t *);
+> > +void nfs_uuid_end(nfs_uuid_t *);
+> > +bool nfs_uuid_is_local(const uuid_t *, struct net *, struct auth_domain *);
+> > +
+> > +#endif  /* __LINUX_NFSLOCALIO_H */
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
 
