@@ -1,103 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-27799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7519642B4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 13:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF519642B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 13:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4BAE1C22505
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 11:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C8C41F25FCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 11:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AF6192B8E;
-	Thu, 29 Aug 2024 11:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5EB191478;
+	Thu, 29 Aug 2024 11:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HsxGaqxd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JICkBGpj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HsxGaqxd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JICkBGpj"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="awP7wa9H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB271922FB;
-	Thu, 29 Aug 2024 11:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E12B18E373
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 11:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929658; cv=none; b=Dgin/8DX7jRfHYbGcA7R39vUWPD9H3Fgus4I48TZEVyZY6Nb8/AN88Ctf6rKgKZOKJ9mAMtsUDNCm9r0Yhh3MlmypDGCtjenr/76FtoEpivlmSy0u8IbQhkP8DzM7PnpcThvFO1NStvK17gFV/PU5LbLT6xjI2iti8g9reQ17mQ=
+	t=1724929738; cv=none; b=DxwuUGj3lsrvkFXRqZuXlq2jC5d+bVIfegKV9k/xe0OpEBjnrxv881y6pah0gvpJeaVbh5kTv8mfCreqYj0OGvjaisKOU4s95urxtkZ0fHRrpofmborX1oqWdj9c6SKH5Lpadmka5Jbxvh7eLbvhdCqyGdAdU82nCMSt0xLLWiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929658; c=relaxed/simple;
-	bh=uDHrzrQj80ggYnOXBF07oAszTvjUsuReRiw3VbirHDs=;
+	s=arc-20240116; t=1724929738; c=relaxed/simple;
+	bh=6gcX3UzsjDY3Cccp5eZL+uE4FKOxL+J94MPBBQuh3/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JP31BtRHF00JAXWcrGsNN1kam+xCYs5SMbPL4shQvPlpX63n+gl24c+KmbIw7sGzXmwJwDjZGwHlIEKrhp2IO6k9cMNJYfksJxYQUpXDsgIYuUcssg8pYVFN7/EjezpCYBKzO3RY6H8mVpPMBBU1/hE4Q32FElUUdgiijh5ZA20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HsxGaqxd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JICkBGpj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HsxGaqxd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JICkBGpj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0B82E21B3F;
-	Thu, 29 Aug 2024 11:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724929654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGQyecD4Fs4QjNPzlLpf3/Z6m6nnwdjllpvvpDrD1u0=;
-	b=HsxGaqxdDcxgyrnkxL6HX06Fir1irthGucVgnz5B9VzDbNR5pdPXUaP9Y/9Y5Z9QjH+FNa
-	Hmcum8vUX9w9i6Y9pXI00RVHgrjqd21RtdP/JSyTcEVEFSsBeUVvtaQ/jFYdFX1JCYGkDh
-	5X4jzf34QFxfXx8tEW1N7uOeku80JC0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724929654;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGQyecD4Fs4QjNPzlLpf3/Z6m6nnwdjllpvvpDrD1u0=;
-	b=JICkBGpjNsqvf87Tce++GMEjC7W8trbJ/NunTCHlxpT4alrm+g+O0FMwvBMnN+0dZN0fyQ
-	JFpYQi61M0aWh2BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724929654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGQyecD4Fs4QjNPzlLpf3/Z6m6nnwdjllpvvpDrD1u0=;
-	b=HsxGaqxdDcxgyrnkxL6HX06Fir1irthGucVgnz5B9VzDbNR5pdPXUaP9Y/9Y5Z9QjH+FNa
-	Hmcum8vUX9w9i6Y9pXI00RVHgrjqd21RtdP/JSyTcEVEFSsBeUVvtaQ/jFYdFX1JCYGkDh
-	5X4jzf34QFxfXx8tEW1N7uOeku80JC0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724929654;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGQyecD4Fs4QjNPzlLpf3/Z6m6nnwdjllpvvpDrD1u0=;
-	b=JICkBGpjNsqvf87Tce++GMEjC7W8trbJ/NunTCHlxpT4alrm+g+O0FMwvBMnN+0dZN0fyQ
-	JFpYQi61M0aWh2BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF8E6139B0;
-	Thu, 29 Aug 2024 11:07:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id brMkOnVW0GYIEwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 29 Aug 2024 11:07:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8CB35A0965; Thu, 29 Aug 2024 13:07:18 +0200 (CEST)
-Date: Thu, 29 Aug 2024 13:07:18 +0200
-From: Jan Kara <jack@suse.cz>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	amir73il@gmail.com, brauner@kernel.org, linux-xfs@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v4 13/16] fsnotify: generate pre-content permission event
- on page fault
-Message-ID: <20240829110718.tyhbodz5i6jx7gcr@quack3>
-References: <cover.1723670362.git.josef@toxicpanda.com>
- <4be573448ff9f15e6fb55e41fa6453b655d8a467.1723670362.git.josef@toxicpanda.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kxt1RqLOKAdvT/wxJiN6w9kJ1S/QQQM4ABp4/6llGW6pJGJQ9vBCYc1WEHwm9vOXllutvxdwcOY9QA3EUuqm8fgz/1q/RsX0AOCCOTpwB5SncKTqhefQaC4Thiwoz1cnsHczpCHAKbxgdiVwMp1c+D+TSKrVoaiLNdF4XBWtsSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=awP7wa9H; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4280ee5f1e3so4945705e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 04:08:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724929734; x=1725534534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHWgXXg7l/fVXrIi7EOmqx3KL96WeyQfolynqyBIiyM=;
+        b=awP7wa9HGAocV2DBUEkrCM2BGsCCppdL5LkVHGAl5LDA5C6kqispVi27h0s7SNsmYf
+         /SkUT7HTxWKpJ9WuQtUbVNFY6XoF3YsMxlzXEYV75lPJdKpaiEal5ebBg3iKhRDl/jVP
+         5NJLaC8yH47NHGdfzjL51+eh2Um9pXtjexrBqn7YiNOOJfVQjfJIBhvoLqFPEJ7qyG1f
+         fN3X2vFImzX44oK73oiK++EwOXngw0hp4FVFv1/7vEXlWa7l/tXSUzMNknq/GfbAl+k0
+         BtTIKuHKejomKL1cdjO4vbuBFYmbX0F6HJ8loOYtQskk6ATDFMhUM40yDhRf6VVedDUc
+         yJWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724929734; x=1725534534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tHWgXXg7l/fVXrIi7EOmqx3KL96WeyQfolynqyBIiyM=;
+        b=GETj3XLt45EhGsT7D21Fz+n1VW7qqQ1e0XSU2jtDIgpgBzbNR/rWF4ooz4RmMeDQgd
+         W79WZKzS1MbMQww4w2VBtcaPqQhzbX01OXEBFtLqKHszqGSu7S2Nnp+1+VXPJUDxIjul
+         jIHSNHn/iNAaNQdIg1vS/j1j8kzwVIvlg7QB/5qOhRY2cLqrirJF2v0v8bn7DYyWVtxQ
+         NvyjIEHOyeglNrSqWrbsNv8MQhMLIOw9u57NzpFbVD5WgSoX5MklcqV8wMVKxRHYbiZS
+         HYwjcSwtOGy9v1dSYhfGajYKYLcmWVWGcfiptwr3CnIS16BGjN85W3p4LyUG4cN0hAGV
+         sS4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhSFgjolZHEPqGxWNQtcNkSTLx9xnbmVdv2hcluaO1254R7WJ8dxAg0Cky26P8EWmdOlI+1iajmtu0pUbx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVzHhHlS7cignFPnb9+PQvSq4zqLEz0F1W32iXWIs3yXqZW6ua
+	0Nw3MZBYhg3wnvX8wMstomc7wwQLGibZEqLr2V4Bq87/8SjyNZlHudv1bztnReU=
+X-Google-Smtp-Source: AGHT+IFu5KZqvebb/Rgm2t93l+uZ71HKcObnBSTt523ilS4l+nccDCBApQWByso4xCKbk6PBDWSSKg==
+X-Received: by 2002:a05:600c:3c93:b0:426:62c5:4742 with SMTP id 5b1f17b1804b1-42bb02c1d88mr16490455e9.7.1724929734254;
+        Thu, 29 Aug 2024 04:08:54 -0700 (PDT)
+Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ef7e109sm1108794f8f.67.2024.08.29.04.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 04:08:54 -0700 (PDT)
+Date: Thu, 29 Aug 2024 13:08:53 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <ZtBWxWunhXTh0bhS@tiehlicka>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka>
+ <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,254 +88,113 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4be573448ff9f15e6fb55e41fa6453b655d8a467.1723670362.git.josef@toxicpanda.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[fb.com,vger.kernel.org,suse.cz,gmail.com,kernel.org,lists.linux.dev,kvack.org];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,toxicpanda.com:email,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+In-Reply-To: <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
 
-On Wed 14-08-24 17:25:31, Josef Bacik wrote:
-> FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on page fault depending
-> on the faulting method.
+On Wed 28-08-24 18:58:43, Kent Overstreet wrote:
+> On Wed, Aug 28, 2024 at 09:26:44PM GMT, Michal Hocko wrote:
+> > On Wed 28-08-24 15:11:19, Kent Overstreet wrote:
+[...]
+> > > It was decided _years_ ago that PF_MEMALLOC flags were how this was
+> > > going to be addressed.
+> > 
+> > Nope! It has been decided that _some_ gfp flags are acceptable to be used
+> > by scoped APIs. Most notably NOFS and NOIO are compatible with reclaim
+> > modifiers and other flags so these are indeed safe to be used that way.
 > 
-> This pre-content event is meant to be used by hierarchical storage
-> managers that want to fill in the file content on first read access.
-> 
-> Export a simple helper that file systems that have their own ->fault()
-> will use, and have a more complicated helper to be do fancy things with
-> in filemap_fault.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> Decided by who?
 
-Looks good to me. Just let's CC MM guys for awareness about changes to
-filemap_fault().
-								Honza
+Decides semantic of respective GFP flags and their compatibility with
+others that could be nested in the scope.
 
-> ---
->  include/linux/mm.h |   1 +
->  mm/filemap.c       | 116 ++++++++++++++++++++++++++++++++++++++++++---
->  2 files changed, 110 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ab3d78116043..3e190f0a0997 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3503,6 +3503,7 @@ extern vm_fault_t filemap_fault(struct vm_fault *vmf);
->  extern vm_fault_t filemap_map_pages(struct vm_fault *vmf,
->  		pgoff_t start_pgoff, pgoff_t end_pgoff);
->  extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
-> +extern vm_fault_t filemap_maybe_emit_fsnotify_event(struct vm_fault *vmf);
->  
->  extern unsigned long stack_guard_gap;
->  /* Generic expand stack which grows the stack according to GROWS{UP,DOWN} */
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 8b1684b62177..50e88e47dff3 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -46,6 +46,7 @@
->  #include <linux/pipe_fs_i.h>
->  #include <linux/splice.h>
->  #include <linux/rcupdate_wait.h>
-> +#include <linux/fsnotify.h>
->  #include <asm/pgalloc.h>
->  #include <asm/tlbflush.h>
->  #include "internal.h"
-> @@ -3112,13 +3113,13 @@ static int lock_folio_maybe_drop_mmap(struct vm_fault *vmf, struct folio *folio,
->   * that.  If we didn't pin a file then we return NULL.  The file that is
->   * returned needs to be fput()'ed when we're done with it.
->   */
-> -static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
-> +static struct file *do_sync_mmap_readahead(struct vm_fault *vmf,
-> +					   struct file *fpin)
->  {
->  	struct file *file = vmf->vma->vm_file;
->  	struct file_ra_state *ra = &file->f_ra;
->  	struct address_space *mapping = file->f_mapping;
->  	DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
-> -	struct file *fpin = NULL;
->  	unsigned long vm_flags = vmf->vma->vm_flags;
->  	unsigned int mmap_miss;
->  
-> @@ -3190,12 +3191,12 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->   * was pinned if we have to drop the mmap_lock in order to do IO.
->   */
->  static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
-> -					    struct folio *folio)
-> +					    struct folio *folio,
-> +					    struct file *fpin)
->  {
->  	struct file *file = vmf->vma->vm_file;
->  	struct file_ra_state *ra = &file->f_ra;
->  	DEFINE_READAHEAD(ractl, file, ra, file->f_mapping, vmf->pgoff);
-> -	struct file *fpin = NULL;
->  	unsigned int mmap_miss;
->  
->  	/* See comment in do_sync_mmap_readahead. */
-> @@ -3260,6 +3261,93 @@ static vm_fault_t filemap_fault_recheck_pte_none(struct vm_fault *vmf)
->  	return ret;
->  }
->  
-> +/*
-> + * If we have pre-content watches on this file we will need to emit an event for
-> + * this range.  We will handle dropping the lock and emitting the event.
-> + *
-> + * If FAULT_FLAG_RETRY_NOWAIT is set then we'll return VM_FAULT_RETRY.
-> + *
-> + * If no event was emitted then *fpin will be NULL and we will return 0.
-> + *
-> + * If any error occurred we will return VM_FAULT_SIGBUS, *fpin could still be
-> + * set and will need to have fput() called on it.
-> + *
-> + * If we emitted the event then we will return 0 and *fpin will be set, this
-> + * must have fput() called on it, and the caller must call VM_FAULT_RETRY after
-> + * any other operations it does in order to re-fault the page and make sure the
-> + * appropriate locking is maintained.
-> + *
-> + * Return: the appropriate vm_fault_t return code, 0 on success.
-> + */
-> +static vm_fault_t __filemap_maybe_emit_fsnotify_event(struct vm_fault *vmf,
-> +						      struct file **fpin)
-> +{
-> +	struct file *file = vmf->vma->vm_file;
-> +	loff_t pos = vmf->pgoff << PAGE_SHIFT;
-> +	int mask = (vmf->flags & FAULT_FLAG_WRITE) ? MAY_WRITE : MAY_ACCESS;
-> +	int ret;
-> +
-> +	/*
-> +	 * We already did this and now we're retrying with everything locked,
-> +	 * don't emit the event and continue.
-> +	 */
-> +	if (vmf->flags & FAULT_FLAG_TRIED)
-> +		return 0;
-> +
-> +	/* No watches, return NULL. */
-> +	if (!fsnotify_file_has_pre_content_watches(file))
-> +		return 0;
-> +
-> +	/* We are NOWAIT, we can't wait, just return EAGAIN. */
-> +	if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
-> +		return VM_FAULT_RETRY;
-> +
-> +	/*
-> +	 * If this fails then we're not allowed to drop the fault lock, return a
-> +	 * SIGBUS so we don't errantly populate pagecache with bogus data for
-> +	 * this file.
-> +	 */
-> +	*fpin = maybe_unlock_mmap_for_io(vmf, *fpin);
-> +	if (*fpin == NULL)
-> +		return VM_FAULT_SIGBUS;
-> +
-> +	/*
-> +	 * We can't fput(*fpin) at this point because we could have been passed
-> +	 * in fpin from a previous call.
-> +	 */
-> +	ret = fsnotify_file_area_perm(*fpin, mask, &pos, PAGE_SIZE);
-> +	if (ret)
-> +		return VM_FAULT_SIGBUS;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * filemap_maybe_emit_fsnotify_event - maybe emit a pre-content event.
-> + * @vmf:	struct vm_fault containing details of the fault.
-> + *
-> + * If we have a pre-content watch on this file we will emit an event for this
-> + * range.  If we return anything the fault caller should return immediately, we
-> + * will return VM_FAULT_RETRY if we had to emit an event, which will trigger the
-> + * fault again and then the fault handler will run the second time through.
-> + *
-> + * Return: a bitwise-OR of %VM_FAULT_ codes, 0 if nothing happened.
-> + */
-> +vm_fault_t filemap_maybe_emit_fsnotify_event(struct vm_fault *vmf)
-> +{
-> +	struct file *fpin = NULL;
-> +	vm_fault_t ret;
-> +
-> +	ret = __filemap_maybe_emit_fsnotify_event(vmf, &fpin);
-> +	if (fpin) {
-> +		fput(fpin);
-> +		if (!ret)
-> +			ret = VM_FAULT_RETRY;
-> +	}
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(filemap_maybe_emit_fsnotify_event);
-> +
->  /**
->   * filemap_fault - read in file data for page fault handling
->   * @vmf:	struct vm_fault containing details of the fault
-> @@ -3299,6 +3387,17 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  	if (unlikely(index >= max_idx))
->  		return VM_FAULT_SIGBUS;
->  
-> +	/*
-> +	 * If we have pre-content watchers then we need to generate events on
-> +	 * page fault so that we can populate any data before the fault.
-> +	 */
-> +	ret = __filemap_maybe_emit_fsnotify_event(vmf, &fpin);
-> +	if (unlikely(ret)) {
-> +		if (fpin)
-> +			fput(fpin);
-> +		return ret;
-> +	}
-> +
->  	/*
->  	 * Do we have something in the page cache already?
->  	 */
-> @@ -3309,21 +3408,24 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  		 * the lock.
->  		 */
->  		if (!(vmf->flags & FAULT_FLAG_TRIED))
-> -			fpin = do_async_mmap_readahead(vmf, folio);
-> +			fpin = do_async_mmap_readahead(vmf, folio, fpin);
->  		if (unlikely(!folio_test_uptodate(folio))) {
->  			filemap_invalidate_lock_shared(mapping);
->  			mapping_locked = true;
->  		}
->  	} else {
->  		ret = filemap_fault_recheck_pte_none(vmf);
-> -		if (unlikely(ret))
-> +		if (unlikely(ret)) {
-> +			if (fpin)
-> +				goto out_retry;
->  			return ret;
-> +		}
->  
->  		/* No page in the page cache at all */
->  		count_vm_event(PGMAJFAULT);
->  		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
->  		ret = VM_FAULT_MAJOR;
-> -		fpin = do_sync_mmap_readahead(vmf);
-> +		fpin = do_sync_mmap_readahead(vmf, fpin);
->  retry_find:
->  		/*
->  		 * See comment in filemap_create_folio() why we need
-> -- 
-> 2.43.0
-> 
+Zone modifiers __GFP_DMA, __GFP_HIGHMEM, __GFP_DMA32 and __GFP_MOVABLE
+would allow only __GFP_DMA to have scoped semantic because it is the
+most restrictive of all of them (i.e. __GFP_DMA32 can be served from
+__GFP_DMA but not other way around) but nobody really requested that.
+
+__GFP_RECLAIMABLE is slab allocator specific and nested allocations
+cannot be assumed they have shrinkers so this cannot really have scoped
+semantic.
+
+__GFP_WRITE only implies node spreading. Likely OK for scope interface,
+nobody requested that.
+
+__GFP_HARDWALL only to be used for user space allocations. Wouldn't break
+anything if it had scoped interface but nobody requested that.
+
+__GFP_THISNODE only to be used by allocators internally to define NUMA
+placement strategy. Not safe for scoped interface as it changes the
+failure semantic
+
+__GFP_ACCOUNT defines memcg accounting. Generally usable from user
+context and safe for scope interface in that context as it doesn't
+change the failure nor reclaim semantic
+
+__GFP_NO_OBJ_EXT internal flag not to be used outside of mm.
+
+__GFP_HIGH gives access to memory reserves. It could be used for scope
+interface but nobody requested that.
+
+__GFP_MEMALLOC - already has a scope interface PF_MEMALLOC. This is not
+really great though because it grants unbounded access to memory
+reserves and that means that it isreally tricky to see how many
+allocations really can use reserves. It has been added because swap over
+NFS had to guarantee forward progress and networking layer was not
+prepared for that. Fundamentally this doesn't change the allocation nor
+reclaim semantic so it is safe for a scope API.
+
+__GFP_NOMEMALLOC used to override PF_MEMALLOC so a scoped interface
+doesn't make much sense
+
+__GFP_IO already has scope interface to drop this flag. It is safe
+because it doesn't change failure semantic and it makes the reclaim
+context more constrained so it is compatible with other reclaim
+modifiers. Contrary it would be unsafe to have a scope interface to add
+this flag because all GFP_NOIO nested allocations could deadlock
+
+__GFP_FS. Similar to __GFP_IO.
+
+__GFP_DIRECT_RECLAIM allows allocation to sleep. Scoped interface to set
+the flag is unsafe for any nested GFP_NOWAIT/GFP_ATOMIC requests which
+might be called from withing atomic contexts. Scope interface to clear
+the flag is unsafe for scoped interface because __GFP_NOFAIL
+allocation mode doesn't support requests without this flag so any nested
+NOFAIL allocation would break and see unexpected and potentially
+unhandled failure mode.
+
+__GFP_KSWAPD_RECLAIM controls whether kswapd is woken up. Doesn't change
+the failure nor direct reclaim behavior. Scoped interface to set the
+flag seems rather pointless and one to clear the bit dangerous because
+it could put MM into unbalanced state as kswapd wouldn't wake up.
+
+__GFP_RETRY_MAYFAIL - changes the failure mode so it is fundamentally
+incompatible with nested __GFP_NOFAIL allocations. Scoped interface to
+clear the flag would be safe but probably pointless.
+
+__GFP_NORETRY - same as above
+
+__GFP_NOFAIL - incompatible with any nested GFP_NOWAIT/GFP_ATOMIC
+allocations. One could argue that those are fine to see allocation
+failure so this will not create any unexpected failure mode which is a
+fair argument but what would be the actual usecase for setting all
+nested allocations to NOFAIL mode when they likely have a failure mode?
+Interface to clear the flag for the scope would be unsafe because all
+nested NOFAIL allocations would get an unexpected failure mode.
+
+__GFP_NOWARN safe to have scope interface both to set and clear the
+flag. 
+
+__GFP_COMP only to be used for high order allocations and changes the
+tail pages tracking which would break any nested high order
+request without the flag. So unsafe for the scope interface both to set
+and clear the flag.
+
+__GFP_ZERO changes the initialization and safe for scope interface. We
+even have a global switch to do that for all allocations init_on_alloc
+
+__GFP_NOLOCKDEP disables lockdep reclaim recursion detection. Safe for
+scope interface AFAICS.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Michal Hocko
+SUSE Labs
 
