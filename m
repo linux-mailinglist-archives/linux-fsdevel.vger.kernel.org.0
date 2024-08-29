@@ -1,368 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-27934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5174964D1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 19:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F333964D26
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 19:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B845282F33
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0362812CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500711B81D7;
-	Thu, 29 Aug 2024 17:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A141B81AE;
+	Thu, 29 Aug 2024 17:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCQ/coWl"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aIJKuEHl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4801B5808;
-	Thu, 29 Aug 2024 17:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661BE1B5EA1;
+	Thu, 29 Aug 2024 17:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724953387; cv=none; b=OLq89i8I9967JWERRMbJ8j5nvcgtzO8G6yFRNqXwYfVN+nsdufCBnh6as+QLm4htChd2Wz7Sis/J236kNZyisvygiWBbDLpkvPgEmDSvcbo1T1SIpLu1cxrIrGt+37OTYfbPGJphpICBOH52BxJDBLt/komnrQzcCmxfrQCewbs=
+	t=1724953479; cv=none; b=RkHz/Flp2Czd/2oveq835W2xDM9JVusKouhJ3XB0+xjYSDE7S83obHR3mlozEWwVHaJTdQRcjuTzS769oiZM0iukW+qi7bgycQ7Mj835zKLcIVwJVLiXQIoLeVVfAFNt9qar9P3wYHTLF1jj3RJkeTeXHkOSiXubBTDCgWpfG6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724953387; c=relaxed/simple;
-	bh=X97j92yUSN/YIJFWooWtS6FnLn2/foHfKK8DgE5pkPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=okue9ppsqm1ro7SSC3D2qVV89SBy9tILFSl0gOp6qrnqp/My5YOSTmAH9uX5FALWRwunZbErPAhNuEEgUrUUgG5XAWrGBtQvn8K38IYXA8rESie987hPwsiM1jrLTtl8K0qDC/xFfrHr6DtzGOXBMJrPaWvx3FagpU5UatIA3pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCQ/coWl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D9EBC4CEC1;
-	Thu, 29 Aug 2024 17:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724953387;
-	bh=X97j92yUSN/YIJFWooWtS6FnLn2/foHfKK8DgE5pkPM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pCQ/coWlxELV2e9dG7DPTFDkSYBOCl764rRVpgXaomvACgIEgQLQ1I+HSWLCvbP3j
-	 buvAtEDakO9xIZ7ovIhxaSxf98o97QsyJ0gDB8kII0tjRGpWlbUpJFAY4rD3TiO5u5
-	 1sI9b6y30lbZscxftSg3sk4TF7YaberGU32Xi2YeQF88aMEgB7B6t3UT910+p31/HI
-	 q+vRTmkWfnNwojKGeKDdmTXh05T57BKtEE9Xf9AA0XtPSYaeksZNPJDaKZrxv9pdT0
-	 5ljSREa6FbOv1qFsJiv+4JLMB7KebgayPM3cUlQEZHYpudK7ZpsR4/Jmh0I4C/wvTr
-	 Wq7vI1f3cZFzA==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: bpf@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	adobriyan@gmail.com,
-	shakeel.butt@linux.dev,
-	hannes@cmpxchg.org,
-	ak@linux.intel.com,
-	osandov@osandov.com,
-	song@kernel.org,
-	jannh@google.com,
-	linux-fsdevel@vger.kernel.org,
-	willy@infradead.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>
-Subject: [PATCH v7 bpf-next 10/10] selftests/bpf: add build ID tests
-Date: Thu, 29 Aug 2024 10:42:32 -0700
-Message-ID: <20240829174232.3133883-11-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240829174232.3133883-1-andrii@kernel.org>
-References: <20240829174232.3133883-1-andrii@kernel.org>
+	s=arc-20240116; t=1724953479; c=relaxed/simple;
+	bh=OeICkt69Q7l7jMzcCZkaAIW3lOqEG7Hp8jq5sAQ3Q0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCzoCQNLJyD7i4oX+Nb3XEm4/iaiW0hCmYjexJDlkaw5NP0t8cjQWzsFSPsRiomsmegc77MssTn287de9JXf8xKGhEyXIEW4AqrCVuVy1co9e20S0X8Y+dLvsO9fpHUtDK4ny6TgpvXVnhg72diFaD+WrHV3sAeVxm2n9//6iog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aIJKuEHl; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724953478; x=1756489478;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OeICkt69Q7l7jMzcCZkaAIW3lOqEG7Hp8jq5sAQ3Q0g=;
+  b=aIJKuEHlGePEh/WUPVpKR1z8IW+QdFC86WhgSinMfPC5BiFcVGrfWDgc
+   1vAlR7RzFZnD75zz4SquKveED7XSC+9aRasJ/KgLPILZRoIMEpCaTcKVK
+   0n9oEQOYXaKXaMFtqjzcxht4JeNfyBPEj85lhJSmOpauMWu/5Pd9KPeuZ
+   /pqqVg/xmlGsUWOzNaw7PLmps0biV7PTLF/ceCA81URMEw9fWNz00hlF6
+   qk6MtT9WpCplG+bZuO5cMjkFNzwblAkRP1YN93K4KUMsg7Co9dfAFQKI5
+   EOtcQF+RVKX0BjVE8tZtwRgp8gGC2xE52v7HTc4Dxlzq3caUqdR0MadDO
+   g==;
+X-CSE-ConnectionGUID: 2WNe8LJJQRiDzTyQqAa9Ww==
+X-CSE-MsgGUID: mwllGqfYQDy8bjB+Cp92Xg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34232538"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="34232538"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 10:44:36 -0700
+X-CSE-ConnectionGUID: FxpRN4OETXa62Xjcxo95RA==
+X-CSE-MsgGUID: 1G6AMos7TaKBcxMKjbSvHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="63844429"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 29 Aug 2024 10:44:34 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjjCB-0000ZO-0k;
+	Thu, 29 Aug 2024 17:44:31 +0000
+Date: Fri, 30 Aug 2024 01:43:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Haifeng Xu <haifeng.xu@shopee.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz
+Cc: oe-kbuild-all@lists.linux.dev, tytso@mit.edu, yi.zhang@huaweicloud.com,
+	yukuai1@huaweicloud.com, tj@kernel.org, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Haifeng Xu <haifeng.xu@shopee.com>
+Subject: Re: [PATCH] buffer: Associate the meta bio with blkg from buffer page
+Message-ID: <202408300119.UQ0zNU1f-lkp@intel.com>
+References: <20240828033224.146584-1-haifeng.xu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828033224.146584-1-haifeng.xu@shopee.com>
 
-Add a new set of tests validating behavior of capturing stack traces
-with build ID. We extend uprobe_multi target binary with ability to
-trigger uprobe (so that we can capture stack traces from it), but also
-we allow to force build ID data to be either resident or non-resident in
-memory (see also a comment about quirks of MADV_PAGEOUT).
+Hi Haifeng,
 
-That way we can validate that in non-sleepable context we won't get
-build ID (as expected), but with sleepable uprobes we will get that
-build ID regardless of it being physically present in memory.
+kernel test robot noticed the following build errors:
 
-Also, we add a small add-on linker script which reorders
-.note.gnu.build-id section and puts it after (big) .text section,
-putting build ID data outside of the very first page of ELF file. This
-will test all the relaxations we did in build ID parsing logic in kernel
-thanks to freader abstraction.
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.11-rc5 next-20240829]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- tools/testing/selftests/bpf/Makefile          |   5 +-
- .../selftests/bpf/prog_tests/build_id.c       | 118 ++++++++++++++++++
- .../selftests/bpf/progs/test_build_id.c       |  31 +++++
- tools/testing/selftests/bpf/uprobe_multi.c    |  41 ++++++
- tools/testing/selftests/bpf/uprobe_multi.ld   |  11 ++
- 5 files changed, 204 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/build_id.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_build_id.c
- create mode 100644 tools/testing/selftests/bpf/uprobe_multi.ld
+url:    https://github.com/intel-lab-lkp/linux/commits/Haifeng-Xu/buffer-Associate-the-meta-bio-with-blkg-from-buffer-page/20240828-113409
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20240828033224.146584-1-haifeng.xu%40shopee.com
+patch subject: [PATCH] buffer: Associate the meta bio with blkg from buffer page
+config: x86_64-buildonly-randconfig-002-20240829 (https://download.01.org/0day-ci/archive/20240830/202408300119.UQ0zNU1f-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408300119.UQ0zNU1f-lkp@intel.com/reproduce)
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index c120617b64ad..4c021eb2e857 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -832,9 +832,10 @@ $(OUTPUT)/veristat: $(OUTPUT)/veristat.o
- 
- # Linking uprobe_multi can fail due to relocation overflows on mips.
- $(OUTPUT)/uprobe_multi: CFLAGS += $(if $(filter mips, $(ARCH)),-mxgot)
--$(OUTPUT)/uprobe_multi: uprobe_multi.c
-+$(OUTPUT)/uprobe_multi: uprobe_multi.c uprobe_multi.ld
- 	$(call msg,BINARY,,$@)
--	$(Q)$(CC) $(CFLAGS) -O0 $(LDFLAGS) $^ $(LDLIBS) -o $@
-+	$(Q)$(CC) $(CFLAGS) -Wl,-T,uprobe_multi.ld -O0 $(LDFLAGS) 	\
-+		$(filter-out %.ld,$^) $(LDLIBS) -o $@
- 
- EXTRA_CLEAN := $(SCRATCH_DIR) $(HOST_SCRATCH_DIR)			\
- 	prog_tests/tests.h map_tests/tests.h verifier/tests.h		\
-diff --git a/tools/testing/selftests/bpf/prog_tests/build_id.c b/tools/testing/selftests/bpf/prog_tests/build_id.c
-new file mode 100644
-index 000000000000..aec9c8d6bc96
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/build_id.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+#include <test_progs.h>
-+
-+#include "test_build_id.skel.h"
-+
-+static char build_id[BPF_BUILD_ID_SIZE];
-+static int build_id_sz;
-+
-+static void print_stack(struct bpf_stack_build_id *stack, int frame_cnt)
-+{
-+	int i, j;
-+
-+	for (i = 0; i < frame_cnt; i++) {
-+		printf("FRAME #%02d: ", i);
-+		switch (stack[i].status) {
-+		case BPF_STACK_BUILD_ID_EMPTY:
-+			printf("<EMPTY>\n");
-+			break;
-+		case BPF_STACK_BUILD_ID_VALID:
-+			printf("BUILD ID = ");
-+			for (j = 0; j < BPF_BUILD_ID_SIZE; j++)
-+				printf("%02hhx", (unsigned)stack[i].build_id[j]);
-+			printf(" OFFSET = %llx", (unsigned long long)stack[i].offset);
-+			break;
-+		case BPF_STACK_BUILD_ID_IP:
-+			printf("IP = %llx", (unsigned long long)stack[i].ip);
-+			break;
-+		default:
-+			printf("UNEXPECTED STATUS %d ", stack[i].status);
-+			break;
-+		}
-+		printf("\n");
-+	}
-+}
-+
-+static void subtest_nofault(bool build_id_resident)
-+{
-+	struct test_build_id *skel;
-+	struct bpf_stack_build_id *stack;
-+	int frame_cnt;
-+
-+	skel = test_build_id__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open"))
-+		return;
-+
-+	skel->links.uprobe_nofault = bpf_program__attach(skel->progs.uprobe_nofault);
-+	if (!ASSERT_OK_PTR(skel->links.uprobe_nofault, "link"))
-+		goto cleanup;
-+
-+	if (build_id_resident)
-+		ASSERT_OK(system("./uprobe_multi uprobe-paged-in"), "trigger_uprobe");
-+	else
-+		ASSERT_OK(system("./uprobe_multi uprobe-paged-out"), "trigger_uprobe");
-+
-+	if (!ASSERT_GT(skel->bss->res_nofault, 0, "res"))
-+		goto cleanup;
-+
-+	stack = skel->bss->stack_nofault;
-+	frame_cnt = skel->bss->res_nofault / sizeof(struct bpf_stack_build_id);
-+	if (env.verbosity >= VERBOSE_NORMAL)
-+		print_stack(stack, frame_cnt);
-+
-+	if (build_id_resident) {
-+		ASSERT_EQ(stack[0].status, BPF_STACK_BUILD_ID_VALID, "build_id_status");
-+		ASSERT_EQ(memcmp(stack[0].build_id, build_id, build_id_sz), 0, "build_id_match");
-+	} else {
-+		ASSERT_EQ(stack[0].status, BPF_STACK_BUILD_ID_IP, "build_id_status");
-+	}
-+
-+cleanup:
-+	test_build_id__destroy(skel);
-+}
-+
-+static void subtest_sleepable(void)
-+{
-+	struct test_build_id *skel;
-+	struct bpf_stack_build_id *stack;
-+	int frame_cnt;
-+
-+	skel = test_build_id__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open"))
-+		return;
-+
-+	skel->links.uprobe_sleepable = bpf_program__attach(skel->progs.uprobe_sleepable);
-+	if (!ASSERT_OK_PTR(skel->links.uprobe_sleepable, "link"))
-+		goto cleanup;
-+
-+	/* force build ID to not be paged in */
-+	ASSERT_OK(system("./uprobe_multi uprobe-paged-out"), "trigger_uprobe");
-+
-+	if (!ASSERT_GT(skel->bss->res_sleepable, 0, "res"))
-+		goto cleanup;
-+
-+	stack = skel->bss->stack_sleepable;
-+	frame_cnt = skel->bss->res_sleepable / sizeof(struct bpf_stack_build_id);
-+	if (env.verbosity >= VERBOSE_NORMAL)
-+		print_stack(stack, frame_cnt);
-+
-+	ASSERT_EQ(stack[0].status, BPF_STACK_BUILD_ID_VALID, "build_id_status");
-+	ASSERT_EQ(memcmp(stack[0].build_id, build_id, build_id_sz), 0, "build_id_match");
-+
-+cleanup:
-+	test_build_id__destroy(skel);
-+}
-+
-+void serial_test_build_id(void)
-+{
-+	build_id_sz = read_build_id("uprobe_multi", build_id, sizeof(build_id));
-+	ASSERT_EQ(build_id_sz, BPF_BUILD_ID_SIZE, "parse_build_id");
-+
-+	if (test__start_subtest("nofault-paged-out"))
-+		subtest_nofault(false /* not resident */);
-+	if (test__start_subtest("nofault-paged-in"))
-+		subtest_nofault(true /* resident */);
-+	if (test__start_subtest("sleepable"))
-+		subtest_sleepable();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_build_id.c b/tools/testing/selftests/bpf/progs/test_build_id.c
-new file mode 100644
-index 000000000000..32ce59f9aa27
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_build_id.c
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+
-+struct bpf_stack_build_id stack_sleepable[128];
-+int res_sleepable;
-+
-+struct bpf_stack_build_id stack_nofault[128];
-+int res_nofault;
-+
-+SEC("uprobe.multi/./uprobe_multi:uprobe")
-+int uprobe_nofault(struct pt_regs *ctx)
-+{
-+	res_nofault = bpf_get_stack(ctx, stack_nofault, sizeof(stack_nofault),
-+				    BPF_F_USER_STACK | BPF_F_USER_BUILD_ID);
-+
-+	return 0;
-+}
-+
-+SEC("uprobe.multi.s/./uprobe_multi:uprobe")
-+int uprobe_sleepable(struct pt_regs *ctx)
-+{
-+	res_sleepable = bpf_get_stack(ctx, stack_sleepable, sizeof(stack_sleepable),
-+				      BPF_F_USER_STACK | BPF_F_USER_BUILD_ID);
-+
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/uprobe_multi.c b/tools/testing/selftests/bpf/uprobe_multi.c
-index 7ffa563ffeba..c7828b13e5ff 100644
---- a/tools/testing/selftests/bpf/uprobe_multi.c
-+++ b/tools/testing/selftests/bpf/uprobe_multi.c
-@@ -2,8 +2,21 @@
- 
- #include <stdio.h>
- #include <string.h>
-+#include <stdbool.h>
-+#include <stdint.h>
-+#include <sys/mman.h>
-+#include <unistd.h>
- #include <sdt.h>
- 
-+#ifndef MADV_POPULATE_READ
-+#define MADV_POPULATE_READ 22
-+#endif
-+
-+int __attribute__((weak)) uprobe(void)
-+{
-+	return 0;
-+}
-+
- #define __PASTE(a, b) a##b
- #define PASTE(a, b) __PASTE(a, b)
- 
-@@ -75,6 +88,30 @@ static int usdt(void)
- 	return 0;
- }
- 
-+extern char build_id_start[];
-+extern char build_id_end[];
-+
-+int __attribute__((weak)) trigger_uprobe(bool build_id_resident)
-+{
-+	int page_sz = sysconf(_SC_PAGESIZE);
-+	void *addr;
-+
-+	/* page-align build ID start */
-+	addr = (void *)((uintptr_t)&build_id_start & ~(page_sz - 1));
-+
-+	/* to guarantee MADV_PAGEOUT work reliably, we need to ensure that
-+	 * memory range is mapped into current process, so we unconditionally
-+	 * do MADV_POPULATE_READ, and then MADV_PAGEOUT, if necessary
-+	 */
-+	madvise(addr, page_sz, MADV_POPULATE_READ);
-+	if (!build_id_resident)
-+		madvise(addr, page_sz, MADV_PAGEOUT);
-+
-+	(void)uprobe();
-+
-+	return 0;
-+}
-+
- int main(int argc, char **argv)
- {
- 	if (argc != 2)
-@@ -84,6 +121,10 @@ int main(int argc, char **argv)
- 		return bench();
- 	if (!strcmp("usdt", argv[1]))
- 		return usdt();
-+	if (!strcmp("uprobe-paged-out", argv[1]))
-+		return trigger_uprobe(false /* page-out build ID */);
-+	if (!strcmp("uprobe-paged-in", argv[1]))
-+		return trigger_uprobe(true /* page-in build ID */);
- 
- error:
- 	fprintf(stderr, "usage: %s <bench|usdt>\n", argv[0]);
-diff --git a/tools/testing/selftests/bpf/uprobe_multi.ld b/tools/testing/selftests/bpf/uprobe_multi.ld
-new file mode 100644
-index 000000000000..a2e94828bc8c
---- /dev/null
-+++ b/tools/testing/selftests/bpf/uprobe_multi.ld
-@@ -0,0 +1,11 @@
-+SECTIONS
-+{
-+	. = ALIGN(4096);
-+	.note.gnu.build-id : { *(.note.gnu.build-id) }
-+	. = ALIGN(4096);
-+}
-+INSERT AFTER .text;
-+
-+build_id_start = ADDR(.note.gnu.build-id);
-+build_id_end = ADDR(.note.gnu.build-id) + SIZEOF(.note.gnu.build-id);
-+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408300119.UQ0zNU1f-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   fs/buffer.c: In function 'submit_bh_wbc':
+>> fs/buffer.c:2826:29: error: implicit declaration of function 'mem_cgroup_css_from_folio'; did you mean 'mem_cgroup_from_obj'? [-Werror=implicit-function-declaration]
+    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
+         |                             mem_cgroup_from_obj
+>> fs/buffer.c:2826:27: warning: assignment to 'struct cgroup_subsys_state *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
+         |                           ^
+   In file included from include/linux/array_size.h:5,
+                    from include/linux/kernel.h:16,
+                    from fs/buffer.c:22:
+>> fs/buffer.c:2827:42: error: 'memory_cgrp_subsys_on_dfl_key' undeclared (first use in this function); did you mean 'misc_cgrp_subsys_on_dfl_key'?
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                                          ^~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
+      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
+         |                                                     ^
+   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
+     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
+         |                                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
+      95 |         static_branch_likely(&ss ## _on_dfl_key)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2827:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                     ^~~~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2827:42: note: each undeclared identifier is reported only once for each function it appears in
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                                          ^~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
+      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
+         |                                                     ^
+   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
+     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
+         |                                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
+      95 |         static_branch_likely(&ss ## _on_dfl_key)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2827:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                     ^~~~~~~~~~~~~~~~~~~~
+>> fs/buffer.c:2828:42: error: 'io_cgrp_subsys_on_dfl_key' undeclared (first use in this function); did you mean 'misc_cgrp_subsys_on_dfl_key'?
+    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
+         |                                          ^~~~~~~~~~~~~~
+   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
+      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
+         |                                                     ^
+   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
+     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
+         |                                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
+      95 |         static_branch_likely(&ss ## _on_dfl_key)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2828:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
+    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
+         |                     ^~~~~~~~~~~~~~~~~~~~
+>> fs/buffer.c:2829:70: error: 'io_cgrp_subsys' undeclared (first use in this function); did you mean 'misc_cgrp_subsys'?
+    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+         |                                                                      ^~~~~~~~~~~~~~
+         |                                                                      misc_cgrp_subsys
+   cc1: some warnings being treated as errors
+
+
+vim +2826 fs/buffer.c
+
+  2778	
+  2779	static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
+  2780				  enum rw_hint write_hint,
+  2781				  struct writeback_control *wbc)
+  2782	{
+  2783		const enum req_op op = opf & REQ_OP_MASK;
+  2784		struct bio *bio;
+  2785	
+  2786		BUG_ON(!buffer_locked(bh));
+  2787		BUG_ON(!buffer_mapped(bh));
+  2788		BUG_ON(!bh->b_end_io);
+  2789		BUG_ON(buffer_delay(bh));
+  2790		BUG_ON(buffer_unwritten(bh));
+  2791	
+  2792		/*
+  2793		 * Only clear out a write error when rewriting
+  2794		 */
+  2795		if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
+  2796			clear_buffer_write_io_error(bh);
+  2797	
+  2798		if (buffer_meta(bh))
+  2799			opf |= REQ_META;
+  2800		if (buffer_prio(bh))
+  2801			opf |= REQ_PRIO;
+  2802	
+  2803		bio = bio_alloc(bh->b_bdev, 1, opf, GFP_NOIO);
+  2804	
+  2805		fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+  2806	
+  2807		bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+  2808		bio->bi_write_hint = write_hint;
+  2809	
+  2810		__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
+  2811	
+  2812		bio->bi_end_io = end_bio_bh_io_sync;
+  2813		bio->bi_private = bh;
+  2814	
+  2815		/* Take care of bh's that straddle the end of the device */
+  2816		guard_bio_eod(bio);
+  2817	
+  2818		if (wbc) {
+  2819			wbc_init_bio(wbc, bio);
+  2820			wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
+  2821		} else if (buffer_meta(bh)) {
+  2822			struct folio *folio;
+  2823			struct cgroup_subsys_state *memcg_css, *blkcg_css;
+  2824	
+  2825			folio = page_folio(bh->b_page);
+> 2826			memcg_css = mem_cgroup_css_from_folio(folio);
+> 2827			if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+> 2828			    cgroup_subsys_on_dfl(io_cgrp_subsys)) {
+> 2829				blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+  2830				bio_associate_blkg_from_css(bio, blkcg_css);
+  2831			}
+  2832		}
+  2833	
+  2834		submit_bio(bio);
+  2835	}
+  2836	
+
 -- 
-2.43.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
