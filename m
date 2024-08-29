@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-27854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B81964818
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:23:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6632A964814
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5281DB282FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7C7282E84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BABC1AE87B;
-	Thu, 29 Aug 2024 14:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983E01B4C41;
+	Thu, 29 Aug 2024 14:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XV7dV8L5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQpZqQL/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D351AD9E0;
-	Thu, 29 Aug 2024 14:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3821AD9E9;
+	Thu, 29 Aug 2024 14:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941079; cv=none; b=M/oXkiO/6BFgD5NIghibSBOxSewXPRDjKv0cIQNqCH+g7CFVz/GEpCS12Qz0nNt1rno6xnVRqwihcNxPQRBjAKbCZ6y2TVFur+locO7W2qYYQpfDNBQMhq4C3YAL/Fs0pWrth+ISthqoV+IoxYBzB+XBo/X01PIPSLB/0g5AqUc=
+	t=1724941154; cv=none; b=KzAICqa0YhgGpXwhYmjNzvVRkRltaLqYbMeRVNb8FBKO28Lply+w5U+uU5YdI24pXOb/TtbgjZerUcqjRCDUnw2u0qhQxfLuXpdMGclKaCJKlF/SB4Qe1V3e/tHhd6rrCVhxfp6HA6TK37HIZ4sJHSxbCjjLJxpgKnNBMJ/VGxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941079; c=relaxed/simple;
-	bh=BUgGsbvIBDNDaN6wbOzZSpODOFDYjenHhKrfXF2U9oo=;
+	s=arc-20240116; t=1724941154; c=relaxed/simple;
+	bh=rjgc6Bs369wMAg2wnrNd9Gd4fhnuNlHFhQwkwtp8LaM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IsG4H/ms60CBqaYmWwmNUNzsnLbHFkoQoNQVtSZX9FDH7KjpDyKGY+GCunDxatot9HfXve6B5X2MVmBTagaGExEioNOsJmgVTOS5dLaphFbGH0L6LSn26cai7txBbB8i/qp+k7jKi/YVf7tNaO1Ed8rZdIAHxEn7nvFwGZfUNAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XV7dV8L5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E47FC4CEC8;
-	Thu, 29 Aug 2024 14:17:57 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Bu0GBeKDGZ/Sa/4q181yoMjX/B8kVEgLR0BAG0TLrsEWwxhIjjaPagksWjrtIQL3fMOCbg9+EwVwTqSJkRzJ4I8I1YfNLym7FXcD1TvshE+nlLOgLjvHyI+lLxNdnlD60BoSQ4mt55s/SXDRFoiAUJq39pOErQpRI64dnsPBKr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQpZqQL/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4846C4CEC1;
+	Thu, 29 Aug 2024 14:19:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724941079;
-	bh=BUgGsbvIBDNDaN6wbOzZSpODOFDYjenHhKrfXF2U9oo=;
+	s=k20201202; t=1724941153;
+	bh=rjgc6Bs369wMAg2wnrNd9Gd4fhnuNlHFhQwkwtp8LaM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=XV7dV8L5199M8+fPzUSlDmlOxTlfDvNkxl541eP2x700AHjkfM+qYefe4I1Lcaagw
-	 Pg89vkZeazASO1tYUVpw6QNBebzyMw2zgL9j75yBdzUYGJks9jdGksZJXkMEOP2W40
-	 Rmr5jpzRMg8OA1ttRECxYLzqWe30z2ejmqbimxIlI4MvNZR2B7JZYhhHeJCODLB8p7
-	 rBE1l8fmdJEIAhp0h4MduuMgYsC/t3mhnbgoUR2HZn3gCxp5yFKrFVMa1DCq41DT7K
-	 PuVny/9Gvmh0N4DSdIBSIjT9HpLhKsJ2feKezE35UzkV8PXWKDyydaACUcdxjiGi/k
-	 BAYQctp5Ue3xA==
-Message-ID: <9246925ad716d8bb96a45bf831caec13c833c660.camel@kernel.org>
-Subject: Re: [PATCH v14 02/25] nfs_common: factor out nfs4_errtbl and
- nfs4_stat_to_errno
+	b=JQpZqQL/0KjNnDQHM1rFZK6wUI5ppTyHE1vFJkr+qr4e9yxJ+mQFPZSscxU+I9YYn
+	 Bh+xazHtpBar3/xMq3YDng1tNa5neklxp6nzF2DO7t2fZVxpVkPMKslFYfWkXkylWE
+	 0rmV+dF7UmloErqH+viHZRLS8rPYujV5uSfKk06j0XK8DXhr5BCvzLqjDxnwXRWWKo
+	 ZjWxd1SIMScIYIE60rA2u3CQWlOfPd1t8QaU7kryTCXQ5VbdWmmN3iq3C//WipGyFl
+	 MgamA19/9gIyLAJ/+uiKliR7wgULfgEkARq2rQYRDIFVrwo7ccBbezWSyiyCgYeJd5
+	 o5xIknw2+UXAw==
+Message-ID: <381e250748e5e5a8b3552fa195f9320b4920d0ff.camel@kernel.org>
+Subject: Re: [PATCH v14 03/25] nfs: factor out {encode,decode}_opaque_fixed
+ to nfs_xdr.h
 From: Jeff Layton <jlayton@kernel.org>
 To: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org
 Cc: Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <anna@kernel.org>, 
  Trond Myklebust <trondmy@hammerspace.com>, NeilBrown <neilb@suse.de>,
  linux-fsdevel@vger.kernel.org
-Date: Thu, 29 Aug 2024 10:17:56 -0400
-In-Reply-To: <20240829010424.83693-3-snitzer@kernel.org>
+Date: Thu, 29 Aug 2024 10:19:11 -0400
+In-Reply-To: <20240829010424.83693-4-snitzer@kernel.org>
 References: <20240829010424.83693-1-snitzer@kernel.org>
-	 <20240829010424.83693-3-snitzer@kernel.org>
+	 <20240829010424.83693-4-snitzer@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,197 +138,107 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Wed, 2024-08-28 at 21:03 -0400, Mike Snitzer wrote:
-> Common nfs4_stat_to_errno() is used by fs/nfs/nfs4xdr.c and will be
-> used by fs/nfs/localio.c
+> Eliminates duplicate functions in various files to allow for
+> additional callers.
 >=20
+> Reviewed-by: NeilBrown <neilb@suse.de>
 > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
 > ---
-> =C2=A0fs/nfs/nfs4xdr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 67 --------------------------------------
-> =C2=A0fs/nfs_common/common.c=C2=A0=C2=A0=C2=A0=C2=A0 | 67 +++++++++++++++=
-+++++++++++++++++++++++
-> =C2=A0include/linux/nfs_common.h |=C2=A0 1 +
-> =C2=A03 files changed, 68 insertions(+), 67 deletions(-)
+>  fs/nfs/flexfilelayout/flexfilelayout.c |  6 ------
+>  fs/nfs/nfs4xdr.c                       | 13 -------------
+>  include/linux/nfs_xdr.h                | 20 +++++++++++++++++++-
+>  3 files changed, 19 insertions(+), 20 deletions(-)
 >=20
-> diff --git a/fs/nfs/nfs4xdr.c b/fs/nfs/nfs4xdr.c
-> index b4091af1a60d..971305bdaecb 100644
-> --- a/fs/nfs/nfs4xdr.c
-> +++ b/fs/nfs/nfs4xdr.c
-> @@ -65,7 +65,6 @@
-> =C2=A0#define NFSDBG_FACILITY		NFSDBG_XDR
-> =C2=A0
-> =C2=A0struct compound_hdr;
-> -static int nfs4_stat_to_errno(int);
-> =C2=A0static void encode_layoutget(struct xdr_stream *xdr,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 const struct nfs4_layoutget_args *args,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 struct compound_hdr *hdr);
-> @@ -7619,72 +7618,6 @@ int nfs4_decode_dirent(struct xdr_stream *xdr, str=
-uct nfs_entry *entry,
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> -/*
-> - * We need to translate between nfs status return values and
-> - * the local errno values which may not be the same.
-> - */
-> -static struct {
-> -	int stat;
-> -	int errno;
-> -} nfs_errtbl[] =3D {
-> -	{ NFS4_OK,		0		},
-> -	{ NFS4ERR_PERM,		-EPERM		},
-> -	{ NFS4ERR_NOENT,	-ENOENT		},
-> -	{ NFS4ERR_IO,		-errno_NFSERR_IO},
-> -	{ NFS4ERR_NXIO,		-ENXIO		},
-> -	{ NFS4ERR_ACCESS,	-EACCES		},
-> -	{ NFS4ERR_EXIST,	-EEXIST		},
-> -	{ NFS4ERR_XDEV,		-EXDEV		},
-> -	{ NFS4ERR_NOTDIR,	-ENOTDIR	},
-> -	{ NFS4ERR_ISDIR,	-EISDIR		},
-> -	{ NFS4ERR_INVAL,	-EINVAL		},
-> -	{ NFS4ERR_FBIG,		-EFBIG		},
-> -	{ NFS4ERR_NOSPC,	-ENOSPC		},
-> -	{ NFS4ERR_ROFS,		-EROFS		},
-> -	{ NFS4ERR_MLINK,	-EMLINK		},
-> -	{ NFS4ERR_NAMETOOLONG,	-ENAMETOOLONG	},
-> -	{ NFS4ERR_NOTEMPTY,	-ENOTEMPTY	},
-> -	{ NFS4ERR_DQUOT,	-EDQUOT		},
-> -	{ NFS4ERR_STALE,	-ESTALE		},
-> -	{ NFS4ERR_BADHANDLE,	-EBADHANDLE	},
-> -	{ NFS4ERR_BAD_COOKIE,	-EBADCOOKIE	},
-> -	{ NFS4ERR_NOTSUPP,	-ENOTSUPP	},
-> -	{ NFS4ERR_TOOSMALL,	-ETOOSMALL	},
-> -	{ NFS4ERR_SERVERFAULT,	-EREMOTEIO	},
-> -	{ NFS4ERR_BADTYPE,	-EBADTYPE	},
-> -	{ NFS4ERR_LOCKED,	-EAGAIN		},
-> -	{ NFS4ERR_SYMLINK,	-ELOOP		},
-> -	{ NFS4ERR_OP_ILLEGAL,	-EOPNOTSUPP	},
-> -	{ NFS4ERR_DEADLOCK,	-EDEADLK	},
-> -	{ NFS4ERR_NOXATTR,	-ENODATA	},
-> -	{ NFS4ERR_XATTR2BIG,	-E2BIG		},
-> -	{ -1,			-EIO		}
-> -};
-> -
-> -/*
-> - * Convert an NFS error code to a local one.
-> - * This one is used jointly by NFSv2 and NFSv3.
-> - */
-> -static int
-> -nfs4_stat_to_errno(int stat)
+> diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c b/fs/nfs/flexfilelayo=
+ut/flexfilelayout.c
+> index 39ba9f4208aa..d4d551ffea7b 100644
+> --- a/fs/nfs/flexfilelayout/flexfilelayout.c
+> +++ b/fs/nfs/flexfilelayout/flexfilelayout.c
+> @@ -2086,12 +2086,6 @@ static int ff_layout_encode_ioerr(struct xdr_strea=
+m *xdr,
+>  	return ff_layout_encode_ds_ioerr(xdr, &ff_args->errors);
+>  }
+> =20
+> -static void
+> -encode_opaque_fixed(struct xdr_stream *xdr, const void *buf, size_t len)
 > -{
-> -	int i;
-> -	for (i =3D 0; nfs_errtbl[i].stat !=3D -1; i++) {
-> -		if (nfs_errtbl[i].stat =3D=3D stat)
-> -			return nfs_errtbl[i].errno;
-> -	}
-> -	if (stat <=3D 10000 || stat > 10100) {
-> -		/* The server is looney tunes. */
-> -		return -EREMOTEIO;
-> -	}
-> -	/* If we cannot translate the error, the recovery routines should
-> -	 * handle it.
-> -	 * Note: remaining NFSv4 error codes have values > 10000, so should
-> -	 * not conflict with native Linux error codes.
-> -	 */
-> -	return -stat;
+> -	WARN_ON_ONCE(xdr_stream_encode_opaque_fixed(xdr, buf, len) < 0);
 > -}
 > -
-> =C2=A0#ifdef CONFIG_NFS_V4_2
-> =C2=A0#include "nfs42xdr.c"
-> =C2=A0#endif /* CONFIG_NFS_V4_2 */
-> diff --git a/fs/nfs_common/common.c b/fs/nfs_common/common.c
-> index a4ee95da2174..34a115176f97 100644
-> --- a/fs/nfs_common/common.c
-> +++ b/fs/nfs_common/common.c
-> @@ -2,6 +2,7 @@
-> =C2=A0
-> =C2=A0#include <linux/module.h>
-> =C2=A0#include <linux/nfs_common.h>
-> +#include <linux/nfs4.h>
-> =C2=A0
-> =C2=A0/*
-> =C2=A0 * We need to translate between nfs status return values and
-> @@ -65,3 +66,69 @@ int nfs_stat_to_errno(enum nfs_stat status)
-> =C2=A0	return nfs_errtbl[i].errno;
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_GPL(nfs_stat_to_errno);
-> +
+>  static void
+>  ff_layout_encode_ff_iostat_head(struct xdr_stream *xdr,
+>  			    const nfs4_stateid *stateid,
+> diff --git a/fs/nfs/nfs4xdr.c b/fs/nfs/nfs4xdr.c
+> index 971305bdaecb..6bf2d44e5d4e 100644
+> --- a/fs/nfs/nfs4xdr.c
+> +++ b/fs/nfs/nfs4xdr.c
+> @@ -972,11 +972,6 @@ static __be32 *reserve_space(struct xdr_stream *xdr,=
+ size_t nbytes)
+>  	return p;
+>  }
+> =20
+> -static void encode_opaque_fixed(struct xdr_stream *xdr, const void *buf,=
+ size_t len)
+> -{
+> -	WARN_ON_ONCE(xdr_stream_encode_opaque_fixed(xdr, buf, len) < 0);
+> -}
+> -
+>  static void encode_string(struct xdr_stream *xdr, unsigned int len, cons=
+t char *str)
+>  {
+>  	WARN_ON_ONCE(xdr_stream_encode_opaque(xdr, str, len) < 0);
+> @@ -4406,14 +4401,6 @@ static int decode_access(struct xdr_stream *xdr, u=
+32 *supported, u32 *access)
+>  	return 0;
+>  }
+> =20
+> -static int decode_opaque_fixed(struct xdr_stream *xdr, void *buf, size_t=
+ len)
+> -{
+> -	ssize_t ret =3D xdr_stream_decode_opaque_fixed(xdr, buf, len);
+> -	if (unlikely(ret < 0))
+> -		return -EIO;
+> -	return 0;
+> -}
+> -
+>  static int decode_stateid(struct xdr_stream *xdr, nfs4_stateid *stateid)
+>  {
+>  	return decode_opaque_fixed(xdr, stateid, NFS4_STATEID_SIZE);
+> diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
+> index 45623af3e7b8..5e93fbfb785a 100644
+> --- a/include/linux/nfs_xdr.h
+> +++ b/include/linux/nfs_xdr.h
+> @@ -1853,6 +1853,24 @@ struct nfs_rpc_ops {
+>  	void	(*disable_swap)(struct inode *inode);
+>  };
+> =20
 > +/*
-> + * We need to translate between nfs v4 status return values and
-> + * the local errno values which may not be the same.
+> + * Helper functions used by NFS client and/or server
 > + */
-> +static const struct {
-> +	int stat;
-> +	int errno;
-> +} nfs4_errtbl[] =3D {
-> +	{ NFS4_OK,		0		},
-> +	{ NFS4ERR_PERM,		-EPERM		},
-> +	{ NFS4ERR_NOENT,	-ENOENT		},
-> +	{ NFS4ERR_IO,		-errno_NFSERR_IO},
-> +	{ NFS4ERR_NXIO,		-ENXIO		},
-> +	{ NFS4ERR_ACCESS,	-EACCES		},
-> +	{ NFS4ERR_EXIST,	-EEXIST		},
-> +	{ NFS4ERR_XDEV,		-EXDEV		},
-> +	{ NFS4ERR_NOTDIR,	-ENOTDIR	},
-> +	{ NFS4ERR_ISDIR,	-EISDIR		},
-> +	{ NFS4ERR_INVAL,	-EINVAL		},
-> +	{ NFS4ERR_FBIG,		-EFBIG		},
-> +	{ NFS4ERR_NOSPC,	-ENOSPC		},
-> +	{ NFS4ERR_ROFS,		-EROFS		},
-> +	{ NFS4ERR_MLINK,	-EMLINK		},
-> +	{ NFS4ERR_NAMETOOLONG,	-ENAMETOOLONG	},
-> +	{ NFS4ERR_NOTEMPTY,	-ENOTEMPTY	},
-> +	{ NFS4ERR_DQUOT,	-EDQUOT		},
-> +	{ NFS4ERR_STALE,	-ESTALE		},
-> +	{ NFS4ERR_BADHANDLE,	-EBADHANDLE	},
-> +	{ NFS4ERR_BAD_COOKIE,	-EBADCOOKIE	},
-> +	{ NFS4ERR_NOTSUPP,	-ENOTSUPP	},
-> +	{ NFS4ERR_TOOSMALL,	-ETOOSMALL	},
-> +	{ NFS4ERR_SERVERFAULT,	-EREMOTEIO	},
-> +	{ NFS4ERR_BADTYPE,	-EBADTYPE	},
-> +	{ NFS4ERR_LOCKED,	-EAGAIN		},
-> +	{ NFS4ERR_SYMLINK,	-ELOOP		},
-> +	{ NFS4ERR_OP_ILLEGAL,	-EOPNOTSUPP	},
-> +	{ NFS4ERR_DEADLOCK,	-EDEADLK	},
-> +	{ NFS4ERR_NOXATTR,	-ENODATA	},
-> +	{ NFS4ERR_XATTR2BIG,	-E2BIG		},
-> +	{ -1,			-EIO		}
-> +};
-> +
-> +/*
-> + * Convert an NFS error code to a local one.
-> + * This one is used by NFSv4.
-> + */
-> +int nfs4_stat_to_errno(int stat)
+> +static inline void encode_opaque_fixed(struct xdr_stream *xdr,
+> +				       const void *buf, size_t len)
 > +{
-> +	int i;
-> +	for (i =3D 0; nfs4_errtbl[i].stat !=3D -1; i++) {
-> +		if (nfs4_errtbl[i].stat =3D=3D stat)
-> +			return nfs4_errtbl[i].errno;
-> +	}
-> +	if (stat <=3D 10000 || stat > 10100) {
-> +		/* The server is looney tunes. */
-> +		return -EREMOTEIO;
-> +	}
-> +	/* If we cannot translate the error, the recovery routines should
-> +	 * handle it.
-> +	 * Note: remaining NFSv4 error codes have values > 10000, so should
-> +	 * not conflict with native Linux error codes.
-> +	 */
-> +	return -stat;
+> +	WARN_ON_ONCE(xdr_stream_encode_opaque_fixed(xdr, buf, len) < 0);
 > +}
-> +EXPORT_SYMBOL_GPL(nfs4_stat_to_errno);
-> diff --git a/include/linux/nfs_common.h b/include/linux/nfs_common.h
-> index 3395c4a4d372..5fc02df88252 100644
-> --- a/include/linux/nfs_common.h
-> +++ b/include/linux/nfs_common.h
-> @@ -12,5 +12,6 @@
-> =C2=A0#define errno_NFSERR_IO EIO
-> =C2=A0
-> =C2=A0int nfs_stat_to_errno(enum nfs_stat status);
-> +int nfs4_stat_to_errno(int stat);
-> =C2=A0
-> =C2=A0#endif /* _LINUX_NFS_COMMON_H */
+> +
+> +static inline int decode_opaque_fixed(struct xdr_stream *xdr,
+> +				      void *buf, size_t len)
+> +{
+> +	ssize_t ret =3D xdr_stream_decode_opaque_fixed(xdr, buf, len);
+> +	if (unlikely(ret < 0))
+> +		return -EIO;
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Function vectors etc. for the NFS client
+>   */
+> @@ -1866,4 +1884,4 @@ extern const struct rpc_version nfs_version4;
+>  extern const struct rpc_version nfsacl_version3;
+>  extern const struct rpc_program nfsacl_program;
+> =20
+> -#endif
+> +#endif /* _LINUX_NFS_XDR_H */
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
