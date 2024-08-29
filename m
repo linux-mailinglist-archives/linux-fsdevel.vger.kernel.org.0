@@ -1,45 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-27924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F8B964D08
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 19:42:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE1E964D0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 19:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A589C1F21B98
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:42:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74FE528345F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183AC1B7902;
-	Thu, 29 Aug 2024 17:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD2F1B81AA;
+	Thu, 29 Aug 2024 17:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXxDx64F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urHzLm72"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7AE1B78FB;
-	Thu, 29 Aug 2024 17:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F9F1B78FB;
+	Thu, 29 Aug 2024 17:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724953355; cv=none; b=GTt7fmqg7SZi5PZIp4akCZKEpq3GpOl2SlsXfhdaGxjcS+cYBIicprasmMnBMblrItyeRq0zMXBFLs/j2VgKY4OSt2rs7FKXg1/VtGOuv6WvxgtKZPrb2uvvDV6u4EmTh641MeD/FQckFYKEaAdPGOlnqReEsbAUKonsuzYmGEI=
+	t=1724953358; cv=none; b=gwKb0ddLF9ZB9xXK11vDSdE4n7tTf46jnA6FGf1C/uszGPGoYScnAg8vu3C12D/fNF4Zir9GeswxYRtBluCdG+u2z6grg13uLCNetGvFzqkWYgQB99g8vP8m9V/3va+WGlm9Jh1LflK/itmruTD08slUTEYtQG1Rt9VObQs9Kx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724953355; c=relaxed/simple;
-	bh=4nRg3RUz99sC+bTAc3chTieWxnU9HfYtyRRpqpRzGvU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DppkmdHFdwSYS2DWv9H6Yz4eikQjH+DoJIgkQrLm5Ied2h1tavsButMRXMCV6v8mS11wh9v5qs+flz2PIPDVZ13jlOuCqacL5XPOcaa9N+hj6pxXQxgW1/xaCPGNYNJH3OVQXD/z+eZP6wlPe9pSfLxgPgqaetjraW7MKF4ocrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXxDx64F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBEDEC4CEC1;
-	Thu, 29 Aug 2024 17:42:34 +0000 (UTC)
+	s=arc-20240116; t=1724953358; c=relaxed/simple;
+	bh=wR1R0e1Zi9YKCuyt9M3VgHLYSWK2su/QlRrjtoWcppc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KsKHIHBQdM7ibiwPH/pSL9k/WcfTuxOsuXkuq9z1cWNc4okq2tQRcUQKTTIplYHshWnMVaHUoLuyGlbqXMRqlnDc4lHFKcl1CSmbgH+CWV2w4dpXyXNQMOAkBvPLcqtZ/iFsiRj+AHlteG9jtrsQIL1aWLEGiNj1/uMg44KfjzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urHzLm72; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D37AC4CEC1;
+	Thu, 29 Aug 2024 17:42:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724953355;
-	bh=4nRg3RUz99sC+bTAc3chTieWxnU9HfYtyRRpqpRzGvU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sXxDx64F2XQO2t8V77kyt59L27JoWD8GMWr61BdbjjrAZZGYGgaqHh6fx2PpwQ3d1
-	 E4t+y1ltBEWWFYrmF91WTaWN38IUlWaKWfMrjVQE3h3oRrWkO3ij4/L6MeJrkKOQzZ
-	 fUVNo6HRhxPSrVqEi7+2XRLg6NK/Q+AFMVxzsuVqnyP4qX1d3wsCgSaXV5crNgIRF6
-	 04IyWUz7zEh3E0dXQSbr/N30uIldZNt+01v2zjUfZQ6ZJsCSbPSbNGgLqnLamddWil
-	 D8atG92lLn/sfdaunkbjhIwBtDuYrNFs4Tv12hbWy6+zLl91F2stOF9urQBP+Uv6xo
-	 /gPwqpmb9F21Q==
+	s=k20201202; t=1724953358;
+	bh=wR1R0e1Zi9YKCuyt9M3VgHLYSWK2su/QlRrjtoWcppc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=urHzLm72UFR1B7nmShcEOGVpnFSl6PfYIqK/V3jPtWPlpy89zKCsy7GLfVrcobWIz
+	 v+SiX1zosX/t0XpzBqYd3GWtGMK/EIya1ThmeOfj0M6glnTzk7+kAkNx8RSOaj40uK
+	 8JUhVdJ6aQXkI9PMwpCar36PnUqK9xO1DZhGZJu+Rckc+hzbbibh0u1qrhDyl9BUa9
+	 yN0psa9zIYwkb4dM9OHFRbabe+b0TnxKHuBpFHUb0sfHJZWXtnEcLzRcozVjQ8LIVY
+	 dCkTmULMjQmi4oDOxE85M6i0Qapac8t3NfxCI+ZYHk3gqYu9A/PQQKx4N5uvzOE7dm
+	 +y1Dl1GOIDpHA==
 From: Andrii Nakryiko <andrii@kernel.org>
 To: bpf@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -53,11 +54,15 @@ Cc: linux-mm@kvack.org,
 	jannh@google.com,
 	linux-fsdevel@vger.kernel.org,
 	willy@infradead.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v7 bpf-next 00/10] Harden and extend ELF build ID parsing logic
-Date: Thu, 29 Aug 2024 10:42:22 -0700
-Message-ID: <20240829174232.3133883-1-andrii@kernel.org>
+	Andrii Nakryiko <andrii@kernel.org>,
+	stable@vger.kernel.org,
+	Eduard Zingerman <eddyz87@gmail.com>
+Subject: [PATCH v7 bpf-next 01/10] lib/buildid: harden build ID parsing logic
+Date: Thu, 29 Aug 2024 10:42:23 -0700
+Message-ID: <20240829174232.3133883-2-andrii@kernel.org>
 X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20240829174232.3133883-1-andrii@kernel.org>
+References: <20240829174232.3133883-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,89 +71,168 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The goal of this patch set is to extend existing ELF build ID parsing logic,
-currently mostly used by BPF subsystem, with support for working in sleepable
-mode in which memory faults are allowed and can be relied upon to fetch
-relevant parts of ELF file to find and fetch .note.gnu.build-id information.
+Harden build ID parsing logic, adding explicit READ_ONCE() where it's
+important to have a consistent value read and validated just once.
 
-This is useful and important for BPF subsystem itself, but also for
-PROCMAP_QUERY ioctl(), built atop of /proc/<pid>/maps functionality (see [0]),
-which makes use of the same build_id_parse() functionality. PROCMAP_QUERY is
-always called from sleepable user process context, so it doesn't have to
-suffer from current restrictions of build_id_parse() which are due to the NMI
-context assumption.
+Also, as pointed out by Andi Kleen, we need to make sure that entire ELF
+note is within a page bounds, so move the overflow check up and add an
+extra note_size boundaries validation.
 
-Along the way, we harden the logic to avoid TOCTOU, overflow, out-of-bounds
-access problems.  This is the very first patch, which can be backported to
-older releases, if necessary.
+Fixes tag below points to the code that moved this code into
+lib/buildid.c, and then subsequently was used in perf subsystem, making
+this code exposed to perf_event_open() users in v5.12+.
 
-We also lift existing limitations of only working as long as ELF program
-headers and build ID note section is contained strictly within the very first
-page of ELF file.
+Cc: stable@vger.kernel.org
+Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+Reviewed-by: Jann Horn <jannh@google.com>
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Fixes: bd7525dacd7e ("bpf: Move stack_map_get_build_id into lib")
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ lib/buildid.c | 76 +++++++++++++++++++++++++++++----------------------
+ 1 file changed, 44 insertions(+), 32 deletions(-)
 
-We achieve all of the above without duplication of logic between sleepable and
-non-sleepable modes through freader abstraction that manages underlying folio
-from page cache (on demand) and gives a simple to use direct memory access
-interface. With that, single page restrictions and adding sleepable mode
-support is rather straightforward.
-
-We also extend existing set of BPF selftests with a few tests targeting build
-ID logic across sleepable and non-sleepabe contexts (we utilize sleepable and
-non-sleepable uprobes for that).
-
-   [0] https://lore.kernel.org/linux-mm/20240627170900.1672542-4-andrii@kernel.org/
-
-v6->v7:
-  - added filemap_invalidate_{lock,unlock}_shared() around read_cache_folio
-    and kept Eduard's Reviewed-by (Eduard);
-v5->v6:
-  - use local phnum variable in get_build_id_32() (Jann);
-  - switch memcmp() instead of strcmp() in parse_build_id() (Jann);
-v4->v5:
-  - pass proper file reference to read_cache_folio() (Shakeel);
-  - fix another potential overflow due to two u32 additions (Andi);
-  - add PageUptodate() check to patch #1 (Jann);
-v3->v4:
-  - fix few more potential overflow and out-of-bounds access issues (Andi);
-  - use purely folio-based implementation for freader (Matthew);
-v2->v3:
-  - remove unneeded READ_ONCE()s and force phoff to u64 for 32-bit mode (Andi);
-  - moved hardening fixes to the front for easier backporting (Jann);
-  - call freader_cleanup() from build_id_parse_buf() for consistency (Jiri);
-v1->v2:
-  - ensure MADV_PAGEOUT works reliably by paging data in first (Shakeel);
-  - to fix BPF CI build optionally define MADV_POPULATE_READ in selftest.
-
-Andrii Nakryiko (10):
-  lib/buildid: harden build ID parsing logic
-  lib/buildid: add single folio-based file reader abstraction
-  lib/buildid: take into account e_phoff when fetching program headers
-  lib/buildid: remove single-page limit for PHDR search
-  lib/buildid: rename build_id_parse() into build_id_parse_nofault()
-  lib/buildid: implement sleepable build_id_parse() API
-  lib/buildid: don't limit .note.gnu.build-id to the first page in ELF
-  bpf: decouple stack_map_get_build_id_offset() from
-    perf_callchain_entry
-  bpf: wire up sleepable bpf_get_stack() and bpf_get_task_stack()
-    helpers
-  selftests/bpf: add build ID tests
-
- include/linux/bpf.h                           |   2 +
- include/linux/buildid.h                       |   4 +-
- kernel/bpf/stackmap.c                         | 131 ++++--
- kernel/events/core.c                          |   2 +-
- kernel/trace/bpf_trace.c                      |   5 +-
- lib/buildid.c                                 | 397 +++++++++++++-----
- tools/testing/selftests/bpf/Makefile          |   5 +-
- .../selftests/bpf/prog_tests/build_id.c       | 118 ++++++
- .../selftests/bpf/progs/test_build_id.c       |  31 ++
- tools/testing/selftests/bpf/uprobe_multi.c    |  41 ++
- tools/testing/selftests/bpf/uprobe_multi.ld   |  11 +
- 11 files changed, 605 insertions(+), 142 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/build_id.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_build_id.c
- create mode 100644 tools/testing/selftests/bpf/uprobe_multi.ld
-
+diff --git a/lib/buildid.c b/lib/buildid.c
+index e02b5507418b..26007cc99a38 100644
+--- a/lib/buildid.c
++++ b/lib/buildid.c
+@@ -18,31 +18,37 @@ static int parse_build_id_buf(unsigned char *build_id,
+ 			      const void *note_start,
+ 			      Elf32_Word note_size)
+ {
+-	Elf32_Word note_offs = 0, new_offs;
+-
+-	while (note_offs + sizeof(Elf32_Nhdr) < note_size) {
+-		Elf32_Nhdr *nhdr = (Elf32_Nhdr *)(note_start + note_offs);
++	const char note_name[] = "GNU";
++	const size_t note_name_sz = sizeof(note_name);
++	u64 note_off = 0, new_off, name_sz, desc_sz;
++	const char *data;
++
++	while (note_off + sizeof(Elf32_Nhdr) < note_size &&
++	       note_off + sizeof(Elf32_Nhdr) > note_off /* overflow */) {
++		Elf32_Nhdr *nhdr = (Elf32_Nhdr *)(note_start + note_off);
++
++		name_sz = READ_ONCE(nhdr->n_namesz);
++		desc_sz = READ_ONCE(nhdr->n_descsz);
++
++		new_off = note_off + sizeof(Elf32_Nhdr);
++		if (check_add_overflow(new_off, ALIGN(name_sz, 4), &new_off) ||
++		    check_add_overflow(new_off, ALIGN(desc_sz, 4), &new_off) ||
++		    new_off > note_size)
++			break;
+ 
+ 		if (nhdr->n_type == BUILD_ID &&
+-		    nhdr->n_namesz == sizeof("GNU") &&
+-		    !strcmp((char *)(nhdr + 1), "GNU") &&
+-		    nhdr->n_descsz > 0 &&
+-		    nhdr->n_descsz <= BUILD_ID_SIZE_MAX) {
+-			memcpy(build_id,
+-			       note_start + note_offs +
+-			       ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhdr),
+-			       nhdr->n_descsz);
+-			memset(build_id + nhdr->n_descsz, 0,
+-			       BUILD_ID_SIZE_MAX - nhdr->n_descsz);
++		    name_sz == note_name_sz &&
++		    memcmp(nhdr + 1, note_name, note_name_sz) == 0 &&
++		    desc_sz > 0 && desc_sz <= BUILD_ID_SIZE_MAX) {
++			data = note_start + note_off + ALIGN(note_name_sz, 4);
++			memcpy(build_id, data, desc_sz);
++			memset(build_id + desc_sz, 0, BUILD_ID_SIZE_MAX - desc_sz);
+ 			if (size)
+-				*size = nhdr->n_descsz;
++				*size = desc_sz;
+ 			return 0;
+ 		}
+-		new_offs = note_offs + sizeof(Elf32_Nhdr) +
+-			ALIGN(nhdr->n_namesz, 4) + ALIGN(nhdr->n_descsz, 4);
+-		if (new_offs <= note_offs)  /* overflow */
+-			break;
+-		note_offs = new_offs;
++
++		note_off = new_off;
+ 	}
+ 
+ 	return -EINVAL;
+@@ -71,7 +77,7 @@ static int get_build_id_32(const void *page_addr, unsigned char *build_id,
+ {
+ 	Elf32_Ehdr *ehdr = (Elf32_Ehdr *)page_addr;
+ 	Elf32_Phdr *phdr;
+-	int i;
++	__u32 i, phnum;
+ 
+ 	/*
+ 	 * FIXME
+@@ -80,18 +86,19 @@ static int get_build_id_32(const void *page_addr, unsigned char *build_id,
+ 	 */
+ 	if (ehdr->e_phoff != sizeof(Elf32_Ehdr))
+ 		return -EINVAL;
++
++	phnum = READ_ONCE(ehdr->e_phnum);
+ 	/* only supports phdr that fits in one page */
+-	if (ehdr->e_phnum >
+-	    (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
++	if (phnum > (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
+ 		return -EINVAL;
+ 
+ 	phdr = (Elf32_Phdr *)(page_addr + sizeof(Elf32_Ehdr));
+ 
+-	for (i = 0; i < ehdr->e_phnum; ++i) {
++	for (i = 0; i < phnum; ++i) {
+ 		if (phdr[i].p_type == PT_NOTE &&
+ 		    !parse_build_id(page_addr, build_id, size,
+-				    page_addr + phdr[i].p_offset,
+-				    phdr[i].p_filesz))
++				    page_addr + READ_ONCE(phdr[i].p_offset),
++				    READ_ONCE(phdr[i].p_filesz)))
+ 			return 0;
+ 	}
+ 	return -EINVAL;
+@@ -103,7 +110,7 @@ static int get_build_id_64(const void *page_addr, unsigned char *build_id,
+ {
+ 	Elf64_Ehdr *ehdr = (Elf64_Ehdr *)page_addr;
+ 	Elf64_Phdr *phdr;
+-	int i;
++	__u32 i, phnum;
+ 
+ 	/*
+ 	 * FIXME
+@@ -112,18 +119,19 @@ static int get_build_id_64(const void *page_addr, unsigned char *build_id,
+ 	 */
+ 	if (ehdr->e_phoff != sizeof(Elf64_Ehdr))
+ 		return -EINVAL;
++
++	phnum = READ_ONCE(ehdr->e_phnum);
+ 	/* only supports phdr that fits in one page */
+-	if (ehdr->e_phnum >
+-	    (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
++	if (phnum > (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
+ 		return -EINVAL;
+ 
+ 	phdr = (Elf64_Phdr *)(page_addr + sizeof(Elf64_Ehdr));
+ 
+-	for (i = 0; i < ehdr->e_phnum; ++i) {
++	for (i = 0; i < phnum; ++i) {
+ 		if (phdr[i].p_type == PT_NOTE &&
+ 		    !parse_build_id(page_addr, build_id, size,
+-				    page_addr + phdr[i].p_offset,
+-				    phdr[i].p_filesz))
++				    page_addr + READ_ONCE(phdr[i].p_offset),
++				    READ_ONCE(phdr[i].p_filesz)))
+ 			return 0;
+ 	}
+ 	return -EINVAL;
+@@ -152,6 +160,10 @@ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+ 	page = find_get_page(vma->vm_file->f_mapping, 0);
+ 	if (!page)
+ 		return -EFAULT;	/* page not mapped */
++	if (!PageUptodate(page)) {
++		put_page(page);
++		return -EFAULT;
++	}
+ 
+ 	ret = -EINVAL;
+ 	page_addr = kmap_local_page(page);
 -- 
 2.43.5
 
