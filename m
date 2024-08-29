@@ -1,181 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-27844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A9C96469B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 15:32:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F6896474F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 15:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53721F2214E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 13:32:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7CBB2DCDC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 13:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E38D1B5332;
-	Thu, 29 Aug 2024 13:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373ED1B3F00;
+	Thu, 29 Aug 2024 13:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpjaACkc"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T6TED+FM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A525F1B5319;
-	Thu, 29 Aug 2024 13:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0331AC891
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 13:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938032; cv=none; b=kKEKrmTPgSwjXR7KMR64MyMyfhYrioXmQpNBOa7gR30ruQSCXiurl/teZVgDooBPWGl2rmjqZYYmWyVNvwcwYTfgThN4m0nW1UY3Ova5gbS4woIzT6AcwkDGoI2ilb/bwzisHlrLLH11Gbvf3XHihgQKiJxZHwGUcktOngSmXew=
+	t=1724938382; cv=none; b=AP5wQjYd1KPDSOHcL8fEM8ACDpsuLdzhsXGHJg/Vtev2NSp+47rowsHAkWutc/yEswBw59NwIlvBJSJr69COgfPQa44VYWXJC2hvOFO7kGT3B2qzhSnSESOirLJt0Po/7JfwupYbcNC6FiBfoDXg24scQn9vnv8ZbiuTIYVsdbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938032; c=relaxed/simple;
-	bh=a/6GHoinSuuHqpamKEatlNRJQO7PI65R0nWt2LL7iyQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qf6fVMutOVgGGte76VoPKKRWDaLyKf1PjH341Zn7q3tPnPs2eFx2TS8/KPGuDF9UDxLpjHjdY73V9N6CQH4yg6py4Ag1YA8ULQixSXAmyuUCiJRBZyem9IDqqk1o4lfnA44BnLeS2+LiRiZPgPRgO5u27WvdbwSfFKDONX/bmvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpjaACkc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69A6C4CEC9;
-	Thu, 29 Aug 2024 13:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724938032;
-	bh=a/6GHoinSuuHqpamKEatlNRJQO7PI65R0nWt2LL7iyQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HpjaACkc603d9161YTH7Z8dnRAdC6Vz2cZaoqyMJIrDkuypGWGW2FXPU0avcY1qkF
-	 cq2r4vIBSpH5+fPg4A8r0bNI+POc1st5LY/BFFo3Ya3hMdlCYS3iSs+Hy0JHjsOkTb
-	 8dBqrlQMVaG3BUJFjbE1LdITL35+7H8fV0hbFMx/vCveKsbJteyaX9YJlVyBQ9ebfs
-	 H9mt7jdUfe8u3uR6aFhix+qRymJcXr3mk27NDMM9NyzkTcX+rQt1LUFm59fEFB3ccB
-	 iAIBCOkAVOoY5TTW1TPAUww4sHHirYBjbJv1rK4BhY01NYvqc/2drZO79J2Ba4TZ7C
-	 IA9rODlr45Gcg==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 29 Aug 2024 09:26:51 -0400
-Subject: [PATCH v3 13/13] nfsd: handle delegated timestamps in SETATTR
+	s=arc-20240116; t=1724938382; c=relaxed/simple;
+	bh=Ei5nGh3aP7XlmeeonQ5fBYgrdr2m+tmjjLP1aSXD12Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNh/rRFPt3/Kav1mPMgdr55k4Q7RUeaV37OdXGkRrT4TlLu5IqkzAXQ4dbmzhaP5wtSO1hTDMhlOnorSR0+yUC7dmLOsbfTHAczYppywwmmdt84xlOxMBu10suny+Uak3gYPXltf29LDnwyCC9QbAAHnJoa9XNTlZnVbyTrbKZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T6TED+FM; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 29 Aug 2024 09:32:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724938377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FMYh2t/Xz06IccaIYuj8PThdY4q4wdLBkOxrHA87gG0=;
+	b=T6TED+FMht0q0Dk5tidPaathkn2+ohL6nI1MGeFi5us1haLo+ggRUNhu0qAUGwtH9Hp5rB
+	eblF+eWaDFMMxxJhCwe7KQxVGHZu9wXtip0wmFtBgOyjN5F06V9a+PM/SQlwjlcOeId2Ek
+	UUUYcOya0qr4wKo+OFZ0keJMADwF7dg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Michal Hocko <mhocko@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+References: <20240826085347.1152675-2-mhocko@kernel.org>
+ <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
+ <ZtBzstXltxowPOhR@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-delstid-v3-13-271c60806c5d@kernel.org>
-References: <20240829-delstid-v3-0-271c60806c5d@kernel.org>
-In-Reply-To: <20240829-delstid-v3-0-271c60806c5d@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3155; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=a/6GHoinSuuHqpamKEatlNRJQO7PI65R0nWt2LL7iyQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm0HcY9eVwk975rjF/C75K4qCFyhZtQjmbn7Zpo
- 8QiJ5ZX9bGJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZtB3GAAKCRAADmhBGVaC
- FbUWEAC55y2Xah4VYLt/PzlskKD9lXUM+0OdWE1lc2rFqtFHwRZUfLHWtB4rqsmu4YhCCvW0SFi
- cLgA3NFhXBfSuOC4mJ8643YAQ45qR3+klyBeaAICoOatoO8Hjfx1XxtsV/dvTt6a+wZzwp1pngt
- zGyV3dSL1ZDCEbspBu1PfB3nzI0sMZEZ33nU5+0vqE7Lv0ug/GK34sVST+BmZhCgFCXdy2UTwC9
- eocPmpO5ou/DfocbXSg0wJ1DqrsYqpZedL3Pkw5Hbxg1JNp6ZEzW4gLhjJz5SoAFuaT2s+Z2Mgq
- +62EqImb/bGPefUK1fxa5lX/M96/dKV5/OKUGtwej0ZGBip6aQtWkg6L3jQxQjaE2ajW5QchSHC
- jaDbaiWd9bcYIbK9/vpvnsiLA61q/JtlR0wWwSN8noqci4ElAf1jSZSBuQaVY9vhj2Id53hYk12
- nI1HPvBLgaH3EemJUEIhZ9VKC8nJiLu2RAurJYePAJWi5CQjInY/jJ58+ZlGzUgFbrMGnsfSzs9
- aCcUPF60OKT7ZFMSZu3YqSKBihyFgr2bFiZHUu7IzDNWVj016AE/1ch5BA7GY/lQRIvJ9JXIEmx
- C0vQ1E9tiRZT1khgp+QwF5+bksFbeeKy6t9XDnty+xB1EnX84Tj8rEznyjzsc7bZqjtYexCAmam
- DaYhyt7l8/GmCJA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtBzstXltxowPOhR@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
-Allow SETATTR to handle delegated timestamps. This patch assumes that
-only the delegation holder has the ability to set the timestamps in this
-way, so we only allow this if the SETATTR stateid refers to the
-delegation.
+On Thu, Aug 29, 2024 at 11:12:18PM GMT, Dave Chinner wrote:
+> On Thu, Aug 29, 2024 at 06:02:32AM -0400, Kent Overstreet wrote:
+> > On Wed, Aug 28, 2024 at 02:09:57PM GMT, Dave Chinner wrote:
+> > > On Tue, Aug 27, 2024 at 08:15:43AM +0200, Michal Hocko wrote:
+> > > > From: Michal Hocko <mhocko@suse.com>
+> > > > 
+> > > > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+> > > > inode to achieve GFP_NOWAIT semantic while holding locks. If this
+> > > > allocation fails it will drop locks and use GFP_NOFS allocation context.
+> > > > 
+> > > > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+> > > > dangerous to use if the caller doesn't control the full call chain with
+> > > > this flag set. E.g. if any of the function down the chain needed
+> > > > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+> > > > cause unexpected failure.
+> > > > 
+> > > > While this is not the case in this particular case using the scoped gfp
+> > > > semantic is not really needed bacause we can easily pus the allocation
+> > > > context down the chain without too much clutter.
+> > > > 
+> > > > Acked-by: Christoph Hellwig <hch@lst.de>
+> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > Looks good to me.
+> > > 
+> > > Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> > 
+> > Reposting what I wrote in the other thread:
+> 
+> I've read the thread. I've heard what you have had to say. Like
+> several other people, I think your position is just not practical or
+> reasonable.
+> 
+> I don't care about the purity or the safety of the API - the
+> practical result of PF_MEMALLOC_NORECLAIM is that __GFP_NOFAIL
+> allocation can now fail and that will cause unexpected kernel
+> crashes.  Keeping existing code and API semantics working correctly
+> (i.e. regression free) takes precedence over new functionality or
+> API features that people want to introduce.
+> 
+> That's all there is to it. This is not a hill you need to die on.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/nfs4proc.c | 29 ++++++++++++++++++++++++++---
- fs/nfsd/nfs4xdr.c  | 20 ++++++++++++++++++++
- 2 files changed, 46 insertions(+), 3 deletions(-)
+And more than that, this is coming from you saying "We didn't have to
+handle memory allocation failures in IRIX, why can't we be like IRIX?
+All those error paths are a pain to test, why can't we get rid of them?"
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index 963a02e179a0..f715dd29de60 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1142,18 +1142,41 @@ nfsd4_setattr(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 		.na_iattr	= &setattr->sa_iattr,
- 		.na_seclabel	= &setattr->sa_label,
- 	};
-+	struct nfs4_stid *st = NULL;
- 	struct inode *inode;
- 	__be32 status = nfs_ok;
--	bool save_no_wcc;
-+	bool save_no_wcc, deleg_attrs;
- 	int err;
- 
--	if (setattr->sa_iattr.ia_valid & ATTR_SIZE) {
-+	deleg_attrs = setattr->sa_bmval[2] & (FATTR4_WORD2_TIME_DELEG_ACCESS |
-+					      FATTR4_WORD2_TIME_DELEG_MODIFY);
-+
-+	if (deleg_attrs || (setattr->sa_iattr.ia_valid & ATTR_SIZE)) {
- 		status = nfs4_preprocess_stateid_op(rqstp, cstate,
- 				&cstate->current_fh, &setattr->sa_stateid,
--				WR_STATE, NULL, NULL);
-+				WR_STATE, NULL, &st);
- 		if (status)
- 			return status;
- 	}
-+
-+	/*
-+	 * If client is trying to set delegated timestamps, ensure that the
-+	 * stateid refers to a write delegation.
-+	 */
-+	if (deleg_attrs) {
-+		status = nfserr_bad_stateid;
-+		if (st->sc_type & SC_TYPE_DELEG) {
-+			struct nfs4_delegation *dp = delegstateid(st);
-+
-+			if (dp->dl_type == NFS4_OPEN_DELEGATE_WRITE)
-+				status = nfs_ok;
-+		}
-+	}
-+	if (st)
-+		nfs4_put_stid(st);
-+	if (status)
-+		return status;
-+
- 	err = fh_want_write(&cstate->current_fh);
- 	if (err)
- 		return nfserrno(err);
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 557f4c8767ff..3b46014f911b 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -520,6 +520,26 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 		*umask = mask & S_IRWXUGO;
- 		iattr->ia_valid |= ATTR_MODE;
- 	}
-+	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_ACCESS) {
-+		fattr4_time_deleg_access access;
-+
-+		if (!xdrgen_decode_fattr4_time_deleg_access(argp->xdr, &access))
-+			return nfserr_bad_xdr;
-+		iattr->ia_atime.tv_sec = access.seconds;
-+		iattr->ia_atime.tv_nsec = access.nseconds;
-+		iattr->ia_valid |= ATTR_ATIME | ATTR_ATIME_SET | ATTR_DELEG;
-+	}
-+	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_MODIFY) {
-+		fattr4_time_deleg_modify modify;
-+
-+		if (!xdrgen_decode_fattr4_time_deleg_modify(argp->xdr, &modify))
-+			return nfserr_bad_xdr;
-+		iattr->ia_mtime.tv_sec = modify.seconds;
-+		iattr->ia_mtime.tv_nsec = modify.nseconds;
-+		iattr->ia_ctime.tv_sec = modify.seconds;
-+		iattr->ia_ctime.tv_nsec = modify.seconds;
-+		iattr->ia_valid |= ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
-+	}
- 
- 	/* request sanity: did attrlist4 contain the expected number of words? */
- 	if (attrlist4_count != xdr_stream_pos(argp->xdr) - starting_pos)
+Except that's bullshit; at the very least any dynamically sized
+allocation _definitely_ has to have an error path that's tested, and if
+there's questions about the context a code path might run in, that
+that's another reason.
 
--- 
-2.46.0
+GFP_NOFAIL is the problem here, and if it's encouraging this brain
+damaged "why can't we just get rid of error paths?" thinking, then it
+should be removed.
 
+Error paths have to exist, and they have to be tested.
 
