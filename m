@@ -1,90 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-27751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD3C9638AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 05:11:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B12B96390A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 05:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF781C24C50
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 03:11:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8481F2595F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 03:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356247581F;
-	Thu, 29 Aug 2024 03:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="NnVcdPwC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23E013634C;
+	Thu, 29 Aug 2024 03:52:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278FC487A7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 03:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA0D4CB36;
+	Thu, 29 Aug 2024 03:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724901078; cv=none; b=UdRt3VLyZICJwaw0XytkQpUwyiBYogTgFsjibTc1+FlTyBk6DZ3+FuIIWhOZ1SJqiPtz72crIbAWUGqg7z6XdSr6Wp+GWsM+6CxFC8OW9giCSMsXD1i5SMuun9vDZvPKJZubrlOP2VIBLcdrbFjnQpdQp82cS4nb1/CiOzyizqM=
+	t=1724903568; cv=none; b=KV8EiEdqqOvk46+eCKhyJr7H78fS8fqP4wAw0bz51Ta+0BBO3Uxy9VaamJ5/PlOxY7PL8HatnxqJDygapv0kDcwAbdM3jF/W7aQvpzvm8vu256fwKsgRuAQILDp0mC72FjNcm5umuxoAAiJgcTZV0/TUuwfTS+Hll7rDCpDXdDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724901078; c=relaxed/simple;
-	bh=8vNd7eJk+7BqiWgLOIf5f94ZTL26wZSzW4bJHu9N4ng=;
+	s=arc-20240116; t=1724903568; c=relaxed/simple;
+	bh=ajsYe1bvalPfkROPql2EFfKGi+n1wIpOjIa06f29fEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYyXMrRMwysd/HcB9KC4S4CbEcLqRV+0dEdju1ZwgjRAUgbRBYBO08jCS/hW7u/oWAsWTkABNDojmWtwAGyGzVS4ZpxavvRvkSCqNyt5inx+23oU/L/24/vnydO9YX4bBf6eRxon4FP5Geqr+72L7UKXOFL4ZLusHfhfn04ZTqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=NnVcdPwC; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-201f7fb09f6so1348735ad.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 20:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724901076; x=1725505876; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7LFPcUrRfm2Rty5fGa9femgiXFTLjsc0Q2+FGvRfHxc=;
-        b=NnVcdPwCPJ+F/K6ZdXqa3P4AIPR7qWdLDjmO+gZRziGpzrbOfsX48/n0df36mcgmgC
-         FFy+A72zMXwTJ5ycDm2izsdrVJvZtlnwDGujkBoDHbWkWeEEOgNgu+IarPTucRz24vL3
-         ItlYWCvPwDfmp5YTZTC3hK8OEsb9NGGqqRcGDX9Br0GS5+nxnFDLT5BDTIpodLx2Hlzc
-         S8q1ZnwZDN/PfrhC8gb0/AsFu1RQYRBuPo+fJwZoDA5RnUkzhoaCyxq/b5LAtIeVnING
-         ywpdP+P5CkNeozbh9ybEWKbwOYqPYNAodsbPrz56uOQO7C9cb9csOvqTgxgF+GTCUI52
-         WyKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724901076; x=1725505876;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7LFPcUrRfm2Rty5fGa9femgiXFTLjsc0Q2+FGvRfHxc=;
-        b=G+cZWm8TLYTsnx7UGYI1RRzwMtBS2itd8vthpmgw/5nyYnueuoE3Jl1ornxeIIy+ep
-         MFm80kXPdb9HKN3CSqOOOJiNgZrEaMcGebBHhhJFdbdcNPzIUi/xkzMdCqk74uJxuV77
-         vEu+UAmGCx4L8hrRVMy7tW4wnoL5NUhVfxR9zJFWBV0CrC0feFr9PirXjGRJ2ACPZg9W
-         y9qEme1YoN8FdW+d/bDyFn68STjvu8JMXwuPH9DjrN245babEvOn7Qo8V5q6uBPpyb5S
-         xAwGjYXCrshG46ePX9pRT/M0IHzyIPfMcT1J/Cq2cW730nAkQBgHbQGwVWFngLiZhL9N
-         5yyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqP/4kOB6zuGdkhS6yfkNtWuJrxTCk3/1SEcl1nRBrBKEvH2VEb/DpB2GY5X3XaZXCXeYZ6ugmu2+fbIZ6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt7oVPyREESh2Vi1DTxUhel78gMT4fUQQo+qHqpqF1lUnAohAi
-	FKyiUlx8BbMls0TPOjOFzAs/rb8W5wEDLlS6Xf1LFVYGS9CNr4VL9ZG461+506Y=
-X-Google-Smtp-Source: AGHT+IF0HizZIxQmIfTO5RgF8t2VuMPRsNbwH/RaEtTlxkHAdS4UOzOzAb8NSNSIxINZnhLS8ywk4g==
-X-Received: by 2002:a17:902:d48b:b0:203:a046:d687 with SMTP id d9443c01a7336-2050c2159a0mr19130725ad.7.1724901076201;
-        Wed, 28 Aug 2024 20:11:16 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515537a2csm1806355ad.176.2024.08.28.20.11.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 20:11:15 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sjVZ1-00GSSL-15;
-	Thu, 29 Aug 2024 13:11:11 +1000
-Date: Thu, 29 Aug 2024 13:11:11 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRKwT+EMvfTA+DatR3RA3BwOSHNMbI2Vg2ng0R94bhvHrXOSU0S1wpYiBPNjy+jZcrF6FhdyAoj/5hn2ag9ecL4XSd+wPZpqB0NJHzZ8zJBdJ07nSK4AkP5X5uAb+CBsv3lLaNKgxOfXVF4DFWKlcvqZl3ojIdZmQmMfXW267nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C076568AA6; Thu, 29 Aug 2024 05:44:26 +0200 (CEST)
+Date: Thu, 29 Aug 2024 05:44:26 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	Chandan Babu R <chandan.babu@oracle.com>,
-	Brian Foster <bfoster@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 6/6] xfs: refactor xfs_file_fallocate
-Message-ID: <Zs/mz4Gve+znep2M@dread.disaster.area>
-References: <20240827065123.1762168-1-hch@lst.de>
- <20240827065123.1762168-7-hch@lst.de>
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 2/3] fs: add STATX_DIO_READ_ALIGN
+Message-ID: <20240829034426.GA3854@lst.de>
+References: <20240828051149.1897291-1-hch@lst.de> <20240828051149.1897291-3-hch@lst.de> <20240828235227.GB558903@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,89 +54,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827065123.1762168-7-hch@lst.de>
+In-Reply-To: <20240828235227.GB558903@google.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Aug 27, 2024 at 08:50:50AM +0200, Christoph Hellwig wrote:
-> Refactor xfs_file_fallocate into separate helpers for each mode,
-> two factors for i_size handling and a single switch statement over the
-> supported modes.
+On Wed, Aug 28, 2024 at 11:52:27PM +0000, Eric Biggers wrote:
+> Thanks.  We maybe should have included read/write separation in STATX_DIOALIGN,
+> but at the time the only case that was brought up was "DIO reads are supported
+> but DIO writes are not" which people had argued was not useful.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_file.c | 330 +++++++++++++++++++++++++++++-----------------
->  1 file changed, 208 insertions(+), 122 deletions(-)
+> Is this patch meant to support that case,
 
-Much nicer. :)
+Why would anyone support direct I/O reads but not writes?  That seems
+really weird, but maybe I'm missing something important.
 
-And it made an existing issue in the code quite obvious, too:
+> or just the case where DIO in both
+> directions is supported but with different alignments?  Is that different file
+> offset alignments, different memory alignments, or both?  This patch doesn't add
+> a stx_dio_read_mem_align field, so it's still assumed that both directions share
+> the existing stx_dio_mem_align property, including whether DIO is supported at
+> all (0 vs. nonzero).
 
-> +/*
-> + * Punch a hole and prealloc the range.  We use a hole punch rather than
-> + * unwritten extent conversion for two reasons:
-> + *
-> + *   1.) Hole punch handles partial block zeroing for us.
-> + *   2.) If prealloc returns ENOSPC, the file range is still zero-valued by
-> + *	 virtue of the hole punch.
-> + */
-> +static int
-> +xfs_falloc_zero_range(
-> +	struct file		*file,
-> +	int			mode,
-> +	loff_t			offset,
-> +	loff_t			len)
-> +{
-> +	struct inode		*inode = file_inode(file);
-> +	unsigned int		blksize = i_blocksize(inode);
-> +	loff_t			new_size = 0;
-> +	int			error;
-> +
-> +	trace_xfs_zero_file_space(XFS_I(inode));
-> +
-> +	error = xfs_falloc_newsize(file, mode, offset, len, &new_size);
-> +	if (error)
-> +		return error;
-> +
-> +	error = xfs_free_file_space(XFS_I(inode), offset, len);
-> +	if (error)
-> +		return error;
-> +
-> +	len = round_up(offset + len, blksize) - round_down(offset, blksize);
-> +	offset = round_down(offset, blksize);
-> +	error = xfs_alloc_file_space(XFS_I(inode), offset, len);
-> +	if (error)
-> +		return error;
-> +	return xfs_falloc_setsize(file, new_size);
-> +}
+Yes.  The memory alignment really is dependent on the underlying storage
+hardware DMA engine, which doesn't distinguish between reads and writes.
 
-Our zeroing operation always does preallocation, but....
+> So as proposed, the only case it helps with is where DIO
+> in both directions is supported with the same memory alignment but different
+> file offset alignments.
 
+Yes.
 
-> +static int
-> +xfs_falloc_allocate_range(
-> +	struct file		*file,
-> +	int			mode,
-> +	loff_t			offset,
-> +	loff_t			len)
-> +{
-> +	struct inode		*inode = file_inode(file);
-> +	loff_t			new_size = 0;
-> +	int			error;
-> +
-> +	/*
-> +	 * If always_cow mode we can't use preallocations and thus should not
-> +	 * create them.
-> +	 */
-> +	if (xfs_is_always_cow_inode(XFS_I(inode)))
-> +		return -EOPNOTSUPP;
+> Maybe that is intended, but it's not clear to me.
 
-... our preallocation operation always returns -EOPNOTSUPP for
-COW mode.
+Well, that's good feedback to make it more clear.
 
-Should the zeroing code also have this COW mode check in it after
-the hole punch has run so we don't do unnecessary prealloc there?
+> Are there specific userspace applications that would like to take advantage of a
+> smaller value of stx_dio_read_offset_align compared to the existing
+> stx_dio_offset_align?
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+There are a lot of read-heavy workloads where smaller reads do make
+a difference.
+
 
