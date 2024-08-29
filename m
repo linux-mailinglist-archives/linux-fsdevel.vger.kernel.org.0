@@ -1,116 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-27790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D271C9640D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:02:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56EF9640E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC8D1C22314
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:02:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1D81F227AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A92718E026;
-	Thu, 29 Aug 2024 10:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3AE18DF72;
+	Thu, 29 Aug 2024 10:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dBfg8s78"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="I+JoqGn0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683EC18C90F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 10:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F8E4A00
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 10:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724925763; cv=none; b=u9wyy7W3tMerzrxFKpSeG50kz1k7+CgNbtdLGVSuZdWFhAByVoOVTS8XtkLBXq0icZWH39lx2feDa6AZlPD/9Vsmi0FLLTBf//NqqJfcKf6RI/xs11iloxh3EM1c/jYsry+FkMdpowLlJ7IRz6LfB2MczgqhI5p7fDGh9N7BTds=
+	t=1724926070; cv=none; b=YN1sabLGetalmvksfEYYVIHSnlBPHl9VlUiRIc/ifIs0D0RO1v/Aprxv6OmvJDl2ZuDmO0z5nPp4CVah5VA3+jyDKy2HY00h7vHy9rd1oCmSoo8p9EbJqUMhftkFFCC9RVhybk2DDFChoJbypOeM1AoAD2lIzXAEyN46D3n4/Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724925763; c=relaxed/simple;
-	bh=n5jwzTlQBzJwUMoT60JpIvPeggiARsC0Q1xJHRBuss4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uO59PrITudqjfUcpfPZKbB09V6pCfPqi0JOcwrv/okid/YQVr8yxUp0CjF5bU3II3Tpeqm3Oy6uzyiHVVhVE1Q9HSwDIqwHsdGCeHu5YlWESBjZUYOTlW7J+NDC/Oqk7siooX7qIc1/hLYjIiGWwBeI4/Fep+VrZigTDPgNKVhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dBfg8s78; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 29 Aug 2024 06:02:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724925759;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCHet4RZcs0kzetPKYvg5pHpi0wGxVpQFJgUua5GPMM=;
-	b=dBfg8s78XD0nKKh3fhBzSsLjvpxP0HZmNBFpY8rQfHhOjWt9wcWxj5eRjCuMaRb4l/mbX1
-	fOrnuwxhjP1j+pTPiTiS684piwt/S1W69rAJ7g5aESrwkXPWBZrRaeO1AIPwJs0mFQAAlr
-	brODC8Os+KdfdyG0h5OGTXWwEUS07JQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
-References: <20240826085347.1152675-2-mhocko@kernel.org>
- <20240827061543.1235703-1-mhocko@kernel.org>
- <Zs6jFb953AR2Raec@dread.disaster.area>
+	s=arc-20240116; t=1724926070; c=relaxed/simple;
+	bh=U/FCuHSqtRxLMfoBSwyur36Pgij51DYPVICKqmVnlkw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lxirVaeTmF+5wyDhjLvz8nAGY2hkJ9yyY3gfwAFxtfAbVMshWP6dtSeXL38akQB+OC25VxEuglZfwbsGfxiqZT31j3QCfqEkNgfOWg/g8t6Ml44XSvLL0rc0baIFRYxwnsJEHQ775hHW679oTvmIo/IkiMh2ta2PPhbez4kMQvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=I+JoqGn0; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f3f07ac2dcso5269651fa.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 03:07:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724926067; x=1725530867; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ynBksYt4qQvy+LiJsvlVMlSTXOsdHldotN+DaOYfEJ4=;
+        b=I+JoqGn0Hu04K2RxeGWFkHkommrWNu9ckumXi9MNxE+Uog8cxYRabT90aU6iqu6FFs
+         SlI5ZiqCOf8dSDg2nn2HA7ap6bzxLTvlhs1+nESdelzPy/xZkS2E2AdXJ1WrJVfGT04J
+         GTTypYPdtWiOiexHclTLh0o7iJe5nNP2RsIFI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724926067; x=1725530867;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ynBksYt4qQvy+LiJsvlVMlSTXOsdHldotN+DaOYfEJ4=;
+        b=XRPDRbAFTxQbjiSleAITxNPI0fAspb8hzFyiHHGNJi5esCziUItzZ9KI4eQZSbyZy5
+         LM6fmVSh7PXAPtNfTVSPHQCDS39dsuoS7n5IHFGXP30LeIhGMIFRhxU7Y3QXvPM2Azo6
+         KH1/yTTY4dVMHAKbnFOpgIANXcWIMWRAlwlXOpjVDEsPtnk1nWEhgbd2qLglnASkP+B/
+         7jhnaMOkdrogwKWozlozX6CjEzhULiycuTYMKrO5udWrlvC0nMk9NqRyRyXuG4WBCR+V
+         6LHg3DBHcjtQo68uD3q8rJDYp0kdAQ91BEL6GuSJ7ZROpQYmQ30yeLm+VA4s/eWrv3q1
+         cVMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGFVC+sNWqHrV7m4HL+C+w75Y57DUrY3sw6+G7Bj11SNe/HONZO2OJUKQuCWm1Bf8DiDTJSc0ovWseMm/o@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVeE7TQl0BcP05ExFloJ1CgJucoYGes4+nAwk8b82vuNrWwhgz
+	oWRT5fACcpYSLguHwFzyT9KfCFtzuD7Gwiv1HmtfljufFJ2+FTk5pOfzRvR6Cu0FfVqinzQ+rSe
+	ROB4NzhES6LuF+0gE0BhvspNHdEXUtIBxRc330g==
+X-Google-Smtp-Source: AGHT+IEiBDRWTKw3anfpskoKQcsxG3210yWZ6VCCrxJlB8sSej4+JbJ3PuESeecUtBRzNpTPOLJOJG2n1sxnWbWdpRE=
+X-Received: by 2002:a05:6512:398b:b0:533:47ca:974f with SMTP id
+ 2adb3069b0e04-5353e5786aemr1343918e87.27.1724926066920; Thu, 29 Aug 2024
+ 03:07:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs6jFb953AR2Raec@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+References: <9fb28d29-d566-4d96-a491-8f0fbe2e853b@yandex.ru>
+ <CAJfpegsbZScBZbN+iaydOD2SKPgfnfj4t=EJz8KyMBX5X3yJWQ@mail.gmail.com> <28f37d0d-6262-4620-af89-b70ab982f592@fastmail.fm>
+In-Reply-To: <28f37d0d-6262-4620-af89-b70ab982f592@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 29 Aug 2024 12:07:35 +0200
+Message-ID: <CAJfpegtjZ_iE4bemsVJbxucsMitVZV25JAmno7x+z0YfKYQfdw@mail.gmail.com>
+Subject: Re: permission problems with fuse
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: stsp <stsp2@yandex.ru>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Dave Marchevsky <davemarchevsky@fb.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 28, 2024 at 02:09:57PM GMT, Dave Chinner wrote:
-> On Tue, Aug 27, 2024 at 08:15:43AM +0200, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
-> > inode to achieve GFP_NOWAIT semantic while holding locks. If this
-> > allocation fails it will drop locks and use GFP_NOFS allocation context.
-> > 
-> > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
-> > dangerous to use if the caller doesn't control the full call chain with
-> > this flag set. E.g. if any of the function down the chain needed
-> > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
-> > cause unexpected failure.
-> > 
-> > While this is not the case in this particular case using the scoped gfp
-> > semantic is not really needed bacause we can easily pus the allocation
-> > context down the chain without too much clutter.
-> > 
-> > Acked-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+On Thu, 29 Aug 2024 at 11:49, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 8/29/24 11:38, Miklos Szeredi wrote:
+> > On Wed, 10 Jul 2024 at 21:55, stsp <stsp2@yandex.ru> wrote:
+> >>
+> >> Hi guys!
+> >>
+> >> I started to try my app with fuse, and
+> >> faced 2 problems that are not present
+> >> with other FSes.
+> >>
+> >> 1. fuse insists on saved-UID to match owner UID.
+> >> In fact, fuse_permissible_uidgid() in fs/fuse/dir.c
+> >> checks everything but fsuid, whereas other
+> >> FSes seem to check fsuid.
+> >> Can fuse change that and allow saved-UID
+> >> to mismatch? Perhaps by just checking fsuid
+> >> instead?
+> >
+> > Use the "allow_other" mount option.
+> >
+>
+> Yeah, we had a long discussion here
+> https://github.com/libfuse/libfuse/discussions/991
 
-Reposting what I wrote in the other thread:
+Just one note: "allow_other" doesn't require root, it just requires
+ability create a new mount.  That works fine without superuser
+privileges in a user namespace.
 
-This series is based on a fundamental misunderstanding of what a safe
-API is: a safe API is not one that doesn't return errors, it's one that
-never invokes undefined behaviour.
-
-It was decided years ago that the scoped APIs were the better
-replacement for the gfp APIs, and they need to exist.
-
-This "GFP_NOFAIL exists therefore we can't tell the memory allocator
-about situations wehre it would have to fail" is utter insanity - it's
-the exact opposite of defining a safe API.
-
-A safe API would be one where we /did/ always tell the memory allocator
-when we're in non-sleepable context, and the allocator always returned
-failure instead of context switching.
-
-This is utter brain damage; rule #1 of kernel programming is that _you
-check for errors_. If you don't know that your GFP_NOFAIL usage is in a
-safe context (and that's not just memory reclaim context, it's also the
-size of your alloction) then you have to check for errors.
+Thanks,
+Miklos
 
