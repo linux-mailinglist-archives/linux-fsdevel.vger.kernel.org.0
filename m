@@ -1,220 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-27708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989AB9636DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 02:25:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2B59636E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 02:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE2B1C215DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 00:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30FD51F236F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 00:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75655E57D;
-	Thu, 29 Aug 2024 00:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915FEC8E9;
+	Thu, 29 Aug 2024 00:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4lHRAJg"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="fea1I5SS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0099474;
-	Thu, 29 Aug 2024 00:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86081A95E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 00:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724891107; cv=none; b=uKy12cj72ZObc5AXxE2CknTLbrALmshn/1xpOh8XvDZ+1x2RqNn8mAtslBUJq6BWkX+AuyuHDmzgvgMBXFE8WnkuifbIbRWPkzLD7c7lArm90iB5ZEIQ+ookc7HYwjU6t68UaatoXdr24QsFt89Rwcd9CCOltEAz7rtq43h8bA4=
+	t=1724891173; cv=none; b=HLlnvDTvqad0B+koT492qdSjEx6fI6y7g1EeKdMzju5Fluwy8PZxQmmNbzigrAfcrHpIyBexkn/Hlp2P0OyNEOSdAfqvhqcpGju0mmwWNJQzNo/UNDaFGKT1c/dBP9z9Z1JvFEhYCQBh2fm+JhVCG39bSCAchjD+F7qta7T1SMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724891107; c=relaxed/simple;
-	bh=nCM8XvqCff53EEr64RnHMSHTUq4K5/SJ/d7fShpXRWA=;
+	s=arc-20240116; t=1724891173; c=relaxed/simple;
+	bh=K1d/WUZ4pOKxANz0DULKzq+kcV63Y4w1/msuGSDcIVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aeya4sFpWSYXo65Huz9yXThz9K943E000DOU76vXAxhMojMRKC7EQGWm8EY6IgOxM908Achf6eY41dFlivI7chHFlOvOVU0A830s5wiutWxYi7DhV/JMxcwRtNyajp96HUFuQyAh7goBmQbufcILa/8CT6jxlGuntFvWE3JPRqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4lHRAJg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C767C4CEC0;
-	Thu, 29 Aug 2024 00:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724891107;
-	bh=nCM8XvqCff53EEr64RnHMSHTUq4K5/SJ/d7fShpXRWA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B4lHRAJg6X7XqkRKlrJ+YCiTKqMVqdBCKwXygNvBCntYpT5Vq6fZbbC+Nl0QovgDE
-	 BFcwORztl1ocSysdnEElSTbXDVJQ9CxTFxF+BSpUYXYJtMKiShrT5IEZ1V38H8RA6N
-	 Hf/pEQMJVXY5VRKwDto8lQoZMKdmlkI5keOQcIeRZZGqi8FY16e8TvC2FYJQmAJuYW
-	 yf/9525rDiO7baZJw4ny+zdrGylPp6H1khY2PrsBSc200YRIlkH5k14t2QGtrQI5BA
-	 HkIXGqgoBXNSYKoma2iEL73nWmWUkWMtVdW2JxHb5ffcxRp0a7mDeklktF8oiSQ0S3
-	 MQmp6Wq+CgrJQ==
-Date: Thu, 29 Aug 2024 02:25:00 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
-	torvalds@linux-foundation.org, justinstitt@google.com, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matus Jokay <matus.jokay@stuba.sk>, 
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v8 1/8] Get rid of __get_task_comm()
-Message-ID: <q6xvpwqj7dkgu2cay5mgahscfgdwu2ohzxs7xd3nw3xa622sh4@u35topnxx36b>
-References: <20240828030321.20688-1-laoar.shao@gmail.com>
- <20240828030321.20688-2-laoar.shao@gmail.com>
- <lql4y2nvs3ewadszhmv4m6fnqja4ff4ymuurpidlwvgf4twvru@esnh37a2jxbd>
- <n2fxqs3tekvljezaqpfnwhsmjymch4vb47y744zwmy7urf3flv@zvjtepkem4l7>
- <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
- <7839453E-CA06-430A-A198-92EB906F94D9@kernel.org>
- <ynrircglkinhherehtjz7woq55te55y4ol4rtxhfh75pvle3d5@uxp5esxt4slq>
- <202408281712.F78440FF@keescook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4bXg3iJnbTOgpST6EgsAEuBRwCjCPf+vwLYa27hNWteQzn3DHqiaZLAhGQVWPEiPVmulwTWFOyMdidmvjTfyt0ByqQADQCv7Fy3wpmIvFeD8/aLWsfPPz60T4vCp7n/2y3Tx8Kr+DkUQpeX/GrUmD2DHdscnKSOOvQo8NMA2o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=fea1I5SS; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7d1fa104851so26015a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2024 17:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724891171; x=1725495971; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aDl7WV9PIU1Ylz3knVbmxW+WadHaiTsg11xyR01+C6A=;
+        b=fea1I5SSqpGQPN5BA7t2+LdQvtOwNxZEtU5bSdOsdOTXX6LrA14C2YbheU3qy0b2vr
+         CeB7QJfNdjVR7blrrTX4S74n+3m72BrekKMM+BD01AF1Eq/V1dFcht+XjVKx1gnkOa0b
+         M8KvIgzOfxZ6+QiDaFFNNTXsokLl+ap+GCDe6r6EXUXUel4NKSM3xr64TpoaHExi8hdC
+         l9qZJPs1SxH0HZWfzk7Jwcdp6ovxdUaWrruQLk8Yc6fSzzt24BS8AsvxHfz45lsJ1XiY
+         EXhew/K6TH08IAWQOJpyER7r/oBtWGAsg8KzR8dFddb8l2W1zoId5kIEYvsJ4RnCfmIz
+         pb+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724891171; x=1725495971;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aDl7WV9PIU1Ylz3knVbmxW+WadHaiTsg11xyR01+C6A=;
+        b=xP2yJZ/6LRAbiko+lGo7smZKVazMrrFOHjLmMxBZRnyPxovyKx3VIhsL+Mx6qcdq04
+         mvOzlCnuTxC5CrVCYYrptcXi5hdHIQCo2C5kKvcEJDGb6Ufd4Jz9SVFUHZq6vaD9iAcP
+         6RhnCN89AehyRTqnYM0sRkbw1IZ/JlsT/Ug2X+8ydVCcn96D7WxXFaQoBkFnVs+aiGEH
+         zthj6RBvL0L77u6mZwjeaLQwDYQ+jwF4klNJmFHhcxo2c6thHb9bQmLw9pOM0NkCMmZ0
+         UwWF4Zaz7DRWwgWmV7Hqs3NxJz7Vm9HoTVt1nfzUeNd4qtXID7Pr+lqd15zKMIoqI6GV
+         WuyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAWbFBqeGtW+p9VEByvgXJ5GXiX8jirCey5O020NsYvD/KX/fmkTnp0H551W0K8UCJI84xW71NGtnU+DZf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWddiTlrljXyXj8UGEpx0ss4mmEJfBb8H4PteS6p1kqVHTFeFO
+	MjW70axH1PwDoiAdPj3GtNrIW2NsGeGU8CTuVHkVejRpEH1SlXUG8JkGOYY2jP8=
+X-Google-Smtp-Source: AGHT+IHtMGZ5dwq/G++8goWGSggK8qMkgd1A7WBvV0JXwQNpPjeIAgv7hDatqCac3ZndUFp7PBvzRg==
+X-Received: by 2002:a05:6a21:8cc8:b0:1c6:9e5e:2ec4 with SMTP id adf61e73a8af0-1cce10fe522mr1117151637.50.1724891170770;
+        Wed, 28 Aug 2024 17:26:10 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e569ecc8sm55098b3a.140.2024.08.28.17.26.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 17:26:10 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sjSzH-00GK6O-01;
+	Thu, 29 Aug 2024 10:26:07 +1000
+Date: Thu, 29 Aug 2024 10:26:06 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, josef@toxicpanda.com
+Subject: Re: [PATCH v2 2/2] iomap: make zero range flush conditional on
+ unwritten mappings
+Message-ID: <Zs/AHi/UwAQ1zVdj@dread.disaster.area>
+References: <20240828181912.41517-1-bfoster@redhat.com>
+ <20240828181912.41517-3-bfoster@redhat.com>
+ <20240828224420.GC6224@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o6w5uwkuyqtfps7p"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202408281712.F78440FF@keescook>
+In-Reply-To: <20240828224420.GC6224@frogsfrogsfrogs>
 
+On Wed, Aug 28, 2024 at 03:44:20PM -0700, Darrick J. Wong wrote:
+> On Wed, Aug 28, 2024 at 02:19:11PM -0400, Brian Foster wrote:
+> > @@ -1450,19 +1481,27 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+> >  		.flags		= IOMAP_ZERO,
+> >  	};
+> >  	int ret;
+> > +	bool range_dirty;
+> >  
+> >  	/*
+> >  	 * Zero range wants to skip pre-zeroed (i.e. unwritten) mappings, but
+> >  	 * pagecache must be flushed to ensure stale data from previous
+> > -	 * buffered writes is not exposed.
+> > +	 * buffered writes is not exposed. A flush is only required for certain
+> > +	 * types of mappings, but checking pagecache after mapping lookup is
+> > +	 * racy with writeback and reclaim.
+> > +	 *
+> > +	 * Therefore, check the entire range first and pass along whether any
+> > +	 * part of it is dirty. If so and an underlying mapping warrants it,
+> > +	 * flush the cache at that point. This trades off the occasional false
+> > +	 * positive (and spurious flush, if the dirty data and mapping don't
+> > +	 * happen to overlap) for simplicity in handling a relatively uncommon
+> > +	 * situation.
+> >  	 */
+> > -	ret = filemap_write_and_wait_range(inode->i_mapping,
+> > -			pos, pos + len - 1);
+> > -	if (ret)
+> > -		return ret;
+> > +	range_dirty = filemap_range_needs_writeback(inode->i_mapping,
+> > +					pos, pos + len - 1);
+> >  
+> >  	while ((ret = iomap_iter(&iter, ops)) > 0)
+> > -		iter.processed = iomap_zero_iter(&iter, did_zero);
+> > +		iter.processed = iomap_zero_iter(&iter, did_zero, &range_dirty);
+> 
+> Style nit: Could we do this flush-and-stale from the loop body instead
+> of passing pointers around?  e.g.
+> 
+> static inline bool iomap_zero_need_flush(const struct iomap_iter *i)
+> {
+> 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> 
+> 	return srcmap->type == IOMAP_HOLE ||
+> 	       srcmap->type == IOMAP_UNWRITTEN;
+> }
+> 
+> static inline int iomap_zero_iter_flush(struct iomap_iter *i)
+> {
+> 	struct address_space *mapping = i->inode->i_mapping;
+> 	loff_t end = i->pos + i->len - 1;
+> 
+> 	i->iomap.flags |= IOMAP_F_STALE;
+> 	return filemap_write_and_wait_range(mapping, i->pos, end);
+> }
+> 
+> and then:
+> 
+> 	range_dirty = filemap_range_needs_writeback(...);
+> 
+> 	while ((ret = iomap_iter(&iter, ops)) > 0) {
+> 		if (range_dirty && iomap_zero_need_flush(&iter)) {
+> 			/*
+> 			 * Zero range wants to skip pre-zeroed (i.e.
+> 			 * unwritten) mappings, but...
+> 			 */
+> 			range_dirty = false;
+> 			iter.processed = iomap_zero_iter_flush(&iter);
+> 		} else {
+> 			iter.processed = iomap_zero_iter(&iter, did_zero);
+> 		}
+> 	}
+> 
+> The logic looks correct and sensible. :)
 
---o6w5uwkuyqtfps7p
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
-	torvalds@linux-foundation.org, justinstitt@google.com, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matus Jokay <matus.jokay@stuba.sk>, 
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v8 1/8] Get rid of __get_task_comm()
-References: <20240828030321.20688-1-laoar.shao@gmail.com>
- <20240828030321.20688-2-laoar.shao@gmail.com>
- <lql4y2nvs3ewadszhmv4m6fnqja4ff4ymuurpidlwvgf4twvru@esnh37a2jxbd>
- <n2fxqs3tekvljezaqpfnwhsmjymch4vb47y744zwmy7urf3flv@zvjtepkem4l7>
- <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
- <7839453E-CA06-430A-A198-92EB906F94D9@kernel.org>
- <ynrircglkinhherehtjz7woq55te55y4ol4rtxhfh75pvle3d5@uxp5esxt4slq>
- <202408281712.F78440FF@keescook>
-MIME-Version: 1.0
-In-Reply-To: <202408281712.F78440FF@keescook>
+Yeah, I think this is better.
 
-Hi Kees,
+However, the one thing that both versions have in common is that
+they don't explain -why- the iomap needs to be marked stale.
+So, something like:
 
-On Wed, Aug 28, 2024 at 05:17:55PM GMT, Kees Cook wrote:
-> On Wed, Aug 28, 2024 at 05:09:08PM +0200, Alejandro Colomar wrote:
-> > Hi Kees,
-> >=20
-> > On Wed, Aug 28, 2024 at 06:48:39AM GMT, Kees Cook wrote:
-> >=20
-> > [...]
-> >=20
-> > > >Thank you for your suggestion. How does the following commit log look
-> > > >to you? Does it meet your expectations?
-> > > >
-> > > >    string: Use ARRAY_SIZE() in strscpy()
-> > > >
-> > > >    We can use ARRAY_SIZE() instead to clarify that they are regular=
- characters.
-> > > >
-> > > >    Co-developed-by: Alejandro Colomar <alx@kernel.org>
-> > > >    Signed-off-by: Alejandro Colomar <alx@kernel.org>
-> > > >    Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > >
-> > > >diff --git a/arch/um/include/shared/user.h b/arch/um/include/shared/=
-user.h
-> > > >index bbab79c0c074..07216996e3a9 100644
-> > > >--- a/arch/um/include/shared/user.h
-> > > >+++ b/arch/um/include/shared/user.h
-> > > >@@ -14,7 +14,7 @@
-> > > >  * copying too much infrastructure for my taste, so userspace files
-> > > >  * get less checking than kernel files.
-> > > >  */
-> > > >-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-> > > >+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]) + __must_be_array=
-(x))
-> > > >
-> > > > /* This is to get size_t and NULL */
-> > > > #ifndef __UM_HOST__
-> > > >@@ -60,7 +60,7 @@ static inline void print_hex_dump(const char *leve=
-l,
-> > > >const char *prefix_str,
-> > > > extern int in_aton(char *str);
-> > > > extern size_t strlcat(char *, const char *, size_t);
-> > > > extern size_t sized_strscpy(char *, const char *, size_t);
-> > > >-#define strscpy(dst, src)      sized_strscpy(dst, src, sizeof(dst))
-> > > >+#define strscpy(dst, src)      sized_strscpy(dst, src, ARRAY_SIZE(d=
-st))
-> > >=20
-> > > Uh, but why? strscpy() copies bytes, not array elements. Using sizeof=
-() is already correct and using ARRAY_SIZE() could lead to unexpectedly sma=
-ll counts (in admittedly odd situations).
-> > >=20
-> > > What is the problem you're trying to solve here?
-> >=20
-> > I suggested that here:
-> > <https://lore.kernel.org/all/2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5=
-wdo65dk4@srb3hsk72zwq/>
-> >=20
-> > There, you'll find the rationale (and also for avoiding the _pad calls
-> > where not necessary --I ignore if it's necessary here--).
->=20
-> Right, so we only use byte strings for strscpy(), so sizeof() is
-> sufficient. There's no technical need to switch to ARRAY_SIZE(), and I'd
-> like to minimize any changes to such core APIs without a good reason.
+"When we flush the dirty data over the range, the extent state for
+the range will change. We need to to know that new state before
+performing any zeroing operations on the range.  Hence we mark the
+iomap stale so that the iterator will remap this range and the next
+ieration pass will see the new extent state and perform the correct
+zeroing operation for the range."
 
-Makes sense.  My original proposal was ignoring that the wrapper was
-already using __must_be_array().  Having already sizeof() +
-__must_be_array(), I'd leave it like that, since both do effectively the
-same.
+-Dave.
 
-> And for the _pad change, we are also doing strncpy() replacement via
-> case-by-case analysis, but with a common function like get_task_comm(),
-> I don't want to change the behavior without a complete audit of the
-> padding needs of every caller.
-
-Agree.  I had the same problem with shadow.  Removing padding was the
-worst part, because it was hard to justify that nothing was relying on
-the padding.
-
-> Since that's rather a lot for this series,
-> I'd rather we just leave the existing behavior as-is, and if padding
-> removal is wanted after that, we can do it on a case-by-case basis then.
->=20
-> -Kees
-
-Have a lovely night!
-Alex
-
->=20
-> --=20
-> Kees Cook
-
---=20
-<https://www.alejandro-colomar.es/>
-
---o6w5uwkuyqtfps7p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbPv9wACgkQnowa+77/
-2zLmfhAAqsMngDf8es0F6qRd7cwzD5RwLYJ8tk1KfFfVJjLJN6kb3mV29YiA0pl7
-LsZlkqQ/rmDcqE2Ex9UoiAlIrJw154+Dg63MqkrOYnXf3vDpMopi4jtGlBSG3cJn
-Jm9toPA7lNWwiDe6q19RzLraVFl4+t2ik2wUWtC+SYxBN/vFkU0CRQqwbSg78DMJ
-S3ZIJfLKdkkSeSV9wbddJTwtolje98WEKLtGxbnc7urnmtlvIFqcYACYe9MGVeqf
-kuq//H0SGfCjVEpzizecG93wlp5B2q1Q1sulb1l7mj5rfgaaNE/NilFGv7y/+GwY
-zEyhm6rEjbWZjsh1PxuofuN4ftlJyqlpioondQryrcE370W1Ugfcac6oP5t8ornD
-pdjU1JgIVwY+3Nug3vBKggFwOuy3aQOYP2s6E06KnDEP7GYY1xpzVE6WRbPPzO/T
-FNisBNfvY1FE9M09QiaSkbbePpvTbvYK3RSR7goiKWRMj7gB5NyTuimpZX4Z3Hxa
-y190DotOM8xuALV0EQnx/2quq2+GgT0+N2Et4UdB0U9ENq0X8hAcYYtF1MGnOsCj
-cn3A+JU5VJjLEkFyLF9g9j2dimru4mnxyT7IKtO0NqPjEb7R7TLQPWA1yqwt0Sfm
-pf5ipWUVNTfZ/CEKirXNhGKFwGyva449J3Pu8od1GEbyS8yEj7Q=
-=UqVz
------END PGP SIGNATURE-----
-
---o6w5uwkuyqtfps7p--
+-- 
+Dave Chinner
+david@fromorbit.com
 
