@@ -1,168 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-27964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1BD96538D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 01:39:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3600B96539A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 01:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA941F22E81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 23:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD061C21E4E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 23:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE17518FDBC;
-	Thu, 29 Aug 2024 23:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F1D18F2DF;
+	Thu, 29 Aug 2024 23:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UcRCZy1c";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6Xuq9z9s";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UcRCZy1c";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6Xuq9z9s"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gr8cjZsD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC994187843;
-	Thu, 29 Aug 2024 23:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F59187843;
+	Thu, 29 Aug 2024 23:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724974763; cv=none; b=XXdjJLELGsFxWrTRluP5BDVR8TND0QjeuBjY7gf4I1D+3gNwq8nCX8/rEqj/Hsb1bhrRWXe9LgPOn3QJoJfFNJEpmjcgyLs+898BO4UpD7wa2fgorP27ohmDfQCDhdVPEqdm2lHMrHigAAs2ncN7JksjuRl3ABgszQB7aOQ4oHU=
+	t=1724974918; cv=none; b=puAGi6bqNSWWJv0AjImKnLark2yA+Yn8avnWUA0FvACs5ZV+34iG+pWnrJk1uQBZfkJc77V5gTM4d1WhQMxzM8xysN00jW9sgtouYkCftyS8Mitp+Op7rLtoOfwesV98z3BcZMJRwgqrOHPFSX26EiSjFyq6yAcevkOht+cgyLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724974763; c=relaxed/simple;
-	bh=LRaKIqDoRDPDZ8NKeNexQ95zEmfySlzu7wUO4rfvlWA=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=pMm31pduSwuRuuNu4AIGP3qalUkcXLhsu6WOP7tOixokSSNRd5E47ptk/Hkx4d3rCgbtglgYwPpqppsWmMaoPj2LtvxhV2I2zM5VBQns7HMu+CBOlEpggVgewgZYQWL+HYokf7xukBofbIPl3HyXsfZEcgF4j5JXBR3TQoJ8zmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UcRCZy1c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6Xuq9z9s; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UcRCZy1c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6Xuq9z9s; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E04601F787;
-	Thu, 29 Aug 2024 23:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724974759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e9ME5gDooW2WAf1bctjtnxLbFxwn+6oro4LBqf1xTw4=;
-	b=UcRCZy1ciYD8k1/ZzlEpa3pycoMRp3wogZ/s6u5ABXCg3Pco6fvJhjR1qIVBROv4KeJK+6
-	CgnYbwgXXtoIp/fLkywegvF16rLUb7EqCwWhcXR2okjRavIXgJVI/pPstWbwJQZ2jTzhGs
-	OmhBC+8PY+nWO/diFWTjZp2RoUI/VGA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724974759;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e9ME5gDooW2WAf1bctjtnxLbFxwn+6oro4LBqf1xTw4=;
-	b=6Xuq9z9sG5kVKuDbC9aRwUeE4jNlgClenqNlZf8JgfSAoCrTu+/qZQzwJupiS6AGymkGah
-	1/+hqiJcq/Z1UnBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724974759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e9ME5gDooW2WAf1bctjtnxLbFxwn+6oro4LBqf1xTw4=;
-	b=UcRCZy1ciYD8k1/ZzlEpa3pycoMRp3wogZ/s6u5ABXCg3Pco6fvJhjR1qIVBROv4KeJK+6
-	CgnYbwgXXtoIp/fLkywegvF16rLUb7EqCwWhcXR2okjRavIXgJVI/pPstWbwJQZ2jTzhGs
-	OmhBC+8PY+nWO/diFWTjZp2RoUI/VGA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724974759;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e9ME5gDooW2WAf1bctjtnxLbFxwn+6oro4LBqf1xTw4=;
-	b=6Xuq9z9sG5kVKuDbC9aRwUeE4jNlgClenqNlZf8JgfSAoCrTu+/qZQzwJupiS6AGymkGah
-	1/+hqiJcq/Z1UnBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C913139B0;
-	Thu, 29 Aug 2024 23:39:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BUE4DKUG0Wa7aQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 29 Aug 2024 23:39:17 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1724974918; c=relaxed/simple;
+	bh=J3YOD9SmiXvPuVJha+NIKySYKVlWlu10qdB6t3EKd7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2n77OPpATYFx5gmTZ3BiX93CDi19tXNdzwNbgnIqGnDDMfofARNud5Q+obKtqlQ2xsXYljbhJgM0oPJe+jIRZ2oTjfqOr8hG2JiA+dLywpiKxtoP8zxpibVHhMDWM3c/BXJLw8xr02zhwXmpOsA5SG5fJx5qYuhkCv1LiRHg30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Gr8cjZsD; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=ybJSaS8XOS7QsdfbQRICGW0IbfDKuXL+/iCoPAdx+KY=; b=Gr8cjZsDERIV8FeBImsAYONIfE
+	Ik/7Ze1hHVdNPBXXLv1TvWeGIsiBY8jb6g9XsyHEPq3qXcBbP5rtGFjMhM3ZSALp3ErHqE5ATFH6b
+	Y4QXmq0oioCRmpW+BnqhpSLuM2NoAy31dhv2n3U2qf2MnL9Ntc4bI+5SEFcuCKkVP8SlG3QWadWqc
+	xVvDL467Sq/1Q0XioN6DrbmFpDWo131QwtfPG0Qlwxkiqm18oQx2Fu+h/yVPjpCR2mX6bxNE5LfkF
+	TgZA9go07M6fgmvh0rQuOwJfoCSxgkbDbbCyJJza3RHBIMvnqaaFQXeJBjdspOLhejlRp/tW0o75q
+	GcK9Qdqg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sjolw-000000043rD-23DS;
+	Thu, 29 Aug 2024 23:41:48 +0000
+Date: Thu, 29 Aug 2024 16:41:48 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	cl@os.amperecomputing.com, p.raghav@samsung.com,
+	ryan.roberts@arm.com, David Howells <dhowells@redhat.com>,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order chunks
+Message-ID: <ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
+References: <20240822135018.1931258-1-kernel@pankajraghav.com>
+ <20240822135018.1931258-5-kernel@pankajraghav.com>
+ <yt9dttf3r49e.fsf@linux.ibm.com>
+ <ZtDCErRjh8bC5Y1r@bombadil.infradead.org>
+ <ZtDSJuI2hYniMAzv@casper.infradead.org>
+ <221FAE59-097C-4D31-A500-B09EDB07C285@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Mike Snitzer" <snitzer@kernel.org>
-Cc: linux-nfs@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Anna Schumaker" <anna@kernel.org>,
- "Trond Myklebust" <trondmy@hammerspace.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 14/25] nfs_common: add NFS LOCALIO auxiliary protocol
- enablement
-In-reply-to: <20240829010424.83693-15-snitzer@kernel.org>
-References: <20240829010424.83693-1-snitzer@kernel.org>,
- <20240829010424.83693-15-snitzer@kernel.org>
-Date: Fri, 30 Aug 2024 09:39:10 +1000
-Message-id: <172497475053.4433.8625349705350143756@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <221FAE59-097C-4D31-A500-B09EDB07C285@nvidia.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Thu, 29 Aug 2024, Mike Snitzer wrote:
-
-> +
-> +bool nfs_uuid_is_local(const uuid_t *uuid, struct net *net, struct auth_do=
-main *dom)
+On Thu, Aug 29, 2024 at 06:12:26PM -0400, Zi Yan wrote:
+> The issue is that the change to split_huge_page() makes split_huge_page_t=
+o_list_to_order()
+> unlocks the wrong subpage. split_huge_page() used to pass the =E2=80=9Cpa=
+ge=E2=80=9D pointer
+> to split_huge_page_to_list_to_order(), which keeps that =E2=80=9Cpage=E2=
+=80=9D still locked.
+> But this patch changes the =E2=80=9Cpage=E2=80=9D passed into split_huge_=
+page_to_list_to_order()
+> always to the head page.
+>=20
+> This fixes the crash on my x86 VM, but it can be improved:
+>=20
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 7c50aeed0522..eff5d2fb5d4e 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -320,10 +320,7 @@ bool can_split_folio(struct folio *folio, int *pextr=
+a_pins);
+>  int split_huge_page_to_list_to_order(struct page *page, struct list_head=
+ *list,
+>                 unsigned int new_order);
+>  int split_folio_to_list(struct folio *folio, struct list_head *list);
+> -static inline int split_huge_page(struct page *page)
+> -{
+> -       return split_folio(page_folio(page));
+> -}
+> +int split_huge_page(struct page *page);
+>  void deferred_split_folio(struct folio *folio);
+>=20
+>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index c29af9451d92..4d723dab4336 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3297,6 +3297,25 @@ int split_huge_page_to_list_to_order(struct page *=
+page, struct list_head *list,
+>         return ret;
+>  }
+>=20
+> +int split_huge_page(struct page *page)
 > +{
-> +	bool is_local =3D false;
-> +	nfs_uuid_t *nfs_uuid;
+> +       unsigned int min_order =3D 0;
+> +       struct folio *folio =3D page_folio(page);
 > +
-> +	rcu_read_lock();
-> +	nfs_uuid =3D nfs_uuid_lookup(uuid);
-> +	if (nfs_uuid) {
-> +		nfs_uuid->net =3D maybe_get_net(net);
+> +       if (folio_test_anon(folio))
+> +               goto out;
+> +
+> +       if (!folio->mapping) {
+> +               if (folio_test_pmd_mappable(folio))
+> +                       count_vm_event(THP_SPLIT_PAGE_FAILED);
+> +               return -EBUSY;
+> +       }
+> +
+> +       min_order =3D mapping_min_folio_order(folio->mapping);
+> +out:
+> +       return split_huge_page_to_list_to_order(page, NULL, min_order);
+> +}
+> +
+>  int split_folio_to_list(struct folio *folio, struct list_head *list)
+>  {
+>         unsigned int min_order =3D 0;
 
-I know I said it looked wrong to be getting a ref for the domain but not
-the net - and it did.  But that doesn't mean the fix was to get a ref
-for the net and to hold it indefinitely.
 
-This ref is now held until the client happens to notice that localio
-doesn't work any more (because nfsd_serv_try_get() fails).  So the
-shutdown of a net namespace will be delayed indefinitely if the NFS
-filesystem isn't being actively used.
+Confirmed, and also although you suggest it can be improved, I thought
+that we could do that by sharing more code and putting things in the
+headers, the below also fixes this but tries to share more code, but
+I think it is perhaps less easier to understand than your patch.
 
-I would prefer that there were a way for the net namespace to reach back
-into the client and disconnect itself.  Probably this would be a
-linked-list in struct nfsd_net which linked list_heads in struct
-nfs_client.  This list would need to be protected by a spinlock -
-probably global in nfs_common so client could remove itself and server
-could remove all clients after clearing their net pointers.
+So I think your patch is cleaner and easier as a fix.
 
-It is probably best if I explain all of what I am thinking as a patch.
-
-Stay tuned.
-
-NeilBrown
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index c275aa9cc105..99cd9c7bf55b 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -97,6 +97,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
+ 	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
+=20
+ #define split_folio(f) split_folio_to_list(f, NULL)
++#define split_folio_to_list(f, list) split_page_folio_to_list(&f->page, f,=
+ list)
+=20
+ #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
+ #define HPAGE_PMD_SHIFT PMD_SHIFT
+@@ -331,10 +332,11 @@ unsigned long thp_get_unmapped_area_vmflags(struct fi=
+le *filp, unsigned long add
+ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pin=
+s);
+ int split_huge_page_to_list_to_order(struct page *page, struct list_head *=
+list,
+ 		unsigned int new_order);
+-int split_folio_to_list(struct folio *folio, struct list_head *list);
++int split_page_folio_to_list(struct page *page, struct folio *folio,
++			     struct list_head *list);
+ static inline int split_huge_page(struct page *page)
+ {
+-	return split_folio(page_folio(page));
++	return split_page_folio_to_list(page, page_folio(page), NULL);
+ }
+ void deferred_split_folio(struct folio *folio);
+=20
+@@ -511,7 +513,9 @@ static inline int split_huge_page(struct page *page)
+ 	return 0;
+ }
+=20
+-static inline int split_folio_to_list(struct folio *folio, struct list_hea=
+d *list)
++static inline int split_page_folio_to_list(struct page *page,
++					   struct folio *folio,
++					   struct list_head *list)
+ {
+ 	return 0;
+ }
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 169f1a71c95d..b115bfe63b52 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3529,7 +3529,8 @@ int split_huge_page_to_list_to_order(struct page *pag=
+e, struct list_head *list,
+ 	return ret;
+ }
+=20
+-int split_folio_to_list(struct folio *folio, struct list_head *list)
++int split_page_folio_to_list(struct page *page, struct folio *folio,
++			     struct list_head *list)
+ {
+ 	unsigned int min_order =3D 0;
+=20
+@@ -3544,8 +3545,7 @@ int split_folio_to_list(struct folio *folio, struct l=
+ist_head *list)
+=20
+ 	min_order =3D mapping_min_folio_order(folio->mapping);
+ out:
+-	return split_huge_page_to_list_to_order(&folio->page, list,
+-							min_order);
++	return split_huge_page_to_list_to_order(page, list, min_order);
+ }
+=20
+ void __folio_undo_large_rmappable(struct folio *folio)
 
