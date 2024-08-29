@@ -1,139 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-27826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA269645C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 15:07:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28149645CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 15:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682E21F26BD4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 13:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA40286F16
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 13:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37A81AAE1A;
-	Thu, 29 Aug 2024 13:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209441AAE1E;
+	Thu, 29 Aug 2024 13:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JukeghlL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B9D18E025;
-	Thu, 29 Aug 2024 13:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137D11946CA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 13:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724936814; cv=none; b=C+n/1QyewJsRqJv0w3zqz0BqZEN1RYTqXzob1MCE0oUO4anp+atzmGI6E8+oeP03F/2dlCoqr62whg8zA44rj0KUqAMx+ztLjblvWdfJizyA/oGaOehDqiPcQwzTJ84+CVjKQZURRPvSPX5MVL9Mtz3UHfvQan6D9+/z96WYV04=
+	t=1724936842; cv=none; b=f8yFYt75nffv1CsjZCOJAek9uI4kvqWmf0U78glQAuH/rm+DQeLUxnQ7SjY/iTQZ1r1aji4Kc7xURSrscq+hxyUWuJyUIjqvI3VcqiuoJ+pyj1KgZvvzwnTUHAqo28HsLv8mg1qiVR+SuMKjeQa8q/NrOnQMU0+iBHgROtZRt4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724936814; c=relaxed/simple;
-	bh=sCExCUfHMdEGWx2OjrtVjO6q8U6FER4U1oOTYm/bWCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GROZVogEH9kOSyf8sTX91wk0NnGnrNjoE89Sk0c6o1M7YiOzt4s1ItWSUHxP4HHpeEn6Tw6YeT2tJFz0zeqFH9YX7K30q8JiFi/+eK1zyZCfwykynGulu/8eI/HrDGaKSKTovfaxVgboPpvNqs63WoMlHNKlVzjKhZSDEWAEhFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42bac9469e8so5595095e9.3;
-        Thu, 29 Aug 2024 06:06:52 -0700 (PDT)
+	s=arc-20240116; t=1724936842; c=relaxed/simple;
+	bh=vhpdpTfvOWpq4BkpAeiQWNqUpz5BcVonWLnhkaxRaQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DqMLDOa53C0LJF2G+We/c9TFBdMOFFSYftNjsAUks2H2xEr6+MDglJa/xXmzfoA4+T3Q5rHhGmAoLPKQsMvOpW/DEnP5BmaOxk87yipwpEITs54qliHTeVi5WYft2UL1bHDEx072rLxknbIp37EWP5K2We/r61k0bYtNvGOi1rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JukeghlL; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so7717911fa.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 06:07:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724936839; x=1725541639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y0TbsUu6WIFtUI0I/cmrO4B5vqQGbNpEnL8oQNR8OvE=;
+        b=JukeghlLBK/lzpMdmTmuX0QRHVNvXFFbvE1U9X4DdctwndIWNfKsPJ7RcRRXTm1fFQ
+         9zSqUWJuIoiQTWXn69t1NvhjTYIEmq1LYIDAiObJuQRerDSCPXsoprl3E8i5G5UZSR4l
+         pNkcrCCVehg+uobEn5JdIjRNz0c/vb5CAOcfA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724936811; x=1725541611;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Na+pfHlILNHK+EXFKBw4Ty4J48ZbVmHFdbNMmjF4Iuk=;
-        b=GBkbt+Uke1AlMc86OitjNrgQ53+lw1pghQt4uZnc89qW7fNG3glafGuIvfSBmHxg4Q
-         wggB/y1w8YDreq4IGXoebeNP8uUlvi8s79pbbhRUr6ZF3MR7OqfxSfiTBaomL9J1IGoC
-         dYee8fQC1bzbKF4b7x+hHeAkJGdH2iemLPONdAun/pGuXsQh5pjvatzxllz4DNtJGIe5
-         xW2c4OELFJJpTq4FwJWzJvQysl8L326XrWOTlyxKjjaaNJjM/k5IN2zXzxR243za8xWV
-         FEZOeuFm2fvHoTOPSVT9QwLRlDU1URLp/y0wjWsq2O7CGfpMsp3lLEj3SzNPygsVYd04
-         lPIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIUQaZtckiGh/AB7+C/OZCGODqdocgQm6JTxuv10c1FyKsw4ap5WHbaaI15DwGmby53FdHzw+BmWvs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS4V5Qn571WQDYm2vME18s8sDfso/rpiUNK7tyFHZfDLk/2z8L
-	SHL752fbJOl5cQFVFs9dllP3DhFcdKlrUbWjvUbV5aLcw7uTBzei3HXv+A==
-X-Google-Smtp-Source: AGHT+IGQmQ0uYKWJeLBuzzbNV7xa+1/fgPAfaaVLvtbeq7rB6vK7sXMofMLU7ErAroX/3dT4ZDN+mg==
-X-Received: by 2002:a05:600c:474c:b0:426:61ef:ec36 with SMTP id 5b1f17b1804b1-42bb01ca00bmr23806595e9.0.1724936810229;
-        Thu, 29 Aug 2024 06:06:50 -0700 (PDT)
-Received: from localhost.localdomain (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42baa08d9f9sm39006215e9.32.2024.08.29.06.06.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 06:06:49 -0700 (PDT)
-From: Michal Hocko <mhocko@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-raid@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
-Date: Thu, 29 Aug 2024 15:06:40 +0200
-Message-ID: <20240829130640.1397970-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1724936839; x=1725541639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y0TbsUu6WIFtUI0I/cmrO4B5vqQGbNpEnL8oQNR8OvE=;
+        b=dfp261+puC5tmHKD6xuOaFslQDhDz0AqU8hNPyR8WkIxn5SrMLaBD4wgWrAmZcju9d
+         BkrJNS73J/pckf8JcOF+AnLZKTTOEwmK2JF3lFWaTPLVMfuazKxSvh76nHlAFRh/24sL
+         WliSIkm67c9Uaf9ulL1X7/URq1IOdISGkK5/dwAojeJ8jxfudp4R4etHMYVu1wQIUeOx
+         wn0duhDkBQl1TSwjISYu7tSPam38wxMZFAbALEnvj4zrdP5kKbaNXhO3ZdTGYPMWxi0X
+         XoSR+0mngePjToGmZDfc0IwB8NeJ8OylqOQb+jRuztvPESrW9/jjl9QA5gf/K07QlNgW
+         v9NA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCEA+fcp1SdZKjVZRZWdQkJo12ruTvO8oW1DDEBuEhZtBig3pGaoF/F+a4Vxm3hr4obawi3CS5NoZcLvCw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtoYhmDFIjjFWlSRTkaHvJ5N2XjmHHByVPZHuYUD9AknpGCfP3
+	sFz3EgIXv9K7zPBhfGJWqOr6H9xB/zQSbO+f2l4790YYtfIViurrbs3owsnYjao4iTdRAMy4M8K
+	HVniFTiWH1nZx8OpteHF/KYGWnz2DrxSvH6DR0A==
+X-Google-Smtp-Source: AGHT+IGSRqyXut7tytiqq+Fv/FSdxZOLBx6kvkri+Nl7nKT6LJzc0hkeK3IT0QDDU6jjqcTAQkTG+kIWkupBmiQV4tM=
+X-Received: by 2002:a05:6512:4003:b0:533:4620:ebec with SMTP id
+ 2adb3069b0e04-5353e543459mr2692053e87.3.1724936838878; Thu, 29 Aug 2024
+ 06:07:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240709111918.31233-1-hreitz@redhat.com> <CAJfpegv6T_5fFCEMcHWgLQy5xT8Dp-O5KVOXiKsh2Gd-AJHwcg@mail.gmail.com>
+ <19017a78-b14a-4998-8ebb-f3ffdbfae5b8@redhat.com>
+In-Reply-To: <19017a78-b14a-4998-8ebb-f3ffdbfae5b8@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 29 Aug 2024 15:07:05 +0200
+Message-ID: <CAJfpegs0Y3bmsw3jThaV+PboQEsWWoQYBLZwkqx9sLMAdqCa6Q@mail.gmail.com>
+Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
+To: Hanna Czenczek <hreitz@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
+	Miklos Szeredi <mszeredi@redhat.com>, German Maglione <gmaglione@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Michal Hocko <mhocko@suse.com>
+On Thu, 29 Aug 2024 at 14:37, Hanna Czenczek <hreitz@redhat.com> wrote:
 
-There is only one called of alloc_page_buffers and it doesn't require
-__GFP_NOFAIL so drop this allocation mode.
+> I honestly have no idea how to go about it on a technical level,
+> though.  Na=C3=AFvely, I think we=E2=80=99d need to split off the tail of
+> fuse_fill_super_common() (everything starting from the
+> fuse_get_root_inode() call) into a separate function, which in case of
+> virtio-fs we=E2=80=99d call once we get the FUSE_INIT reply.  (For
+> non-virtio-fs, we could just call it immediately after
+> fuse_fill_super_common().)
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- drivers/md/md-bitmap.c      | 2 +-
- fs/buffer.c                 | 5 +----
- include/linux/buffer_head.h | 3 +--
- 3 files changed, 3 insertions(+), 7 deletions(-)
+Yes, except I'm not sure it needs to be split, that depends on whether
+sending a request relies on any initialization in that function or
+not.
 
-while looking at GFP_NOFAIL users I have encountered this left over.
+> But we can=E2=80=99t return from fuse_fill_super() until that root node i=
+s set
+> up, can we?  If so, we=E2=80=98d need to await that FUSE_INIT reply in th=
+at
+> function.  Can we do that?
 
-diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-index 08232d8dc815..db5330d97348 100644
---- a/drivers/md/md-bitmap.c
-+++ b/drivers/md/md-bitmap.c
-@@ -360,7 +360,7 @@ static int read_file_page(struct file *file, unsigned long index,
- 	pr_debug("read bitmap file (%dB @ %llu)\n", (int)PAGE_SIZE,
- 		 (unsigned long long)index << PAGE_SHIFT);
- 
--	bh = alloc_page_buffers(page, blocksize, false);
-+	bh = alloc_page_buffers(page, blocksize);
- 	if (!bh) {
- 		ret = -ENOMEM;
- 		goto out;
-diff --git a/fs/buffer.c b/fs/buffer.c
-index e55ad471c530..f1381686d325 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -958,12 +958,9 @@ struct buffer_head *folio_alloc_buffers(struct folio *folio, unsigned long size,
- }
- EXPORT_SYMBOL_GPL(folio_alloc_buffers);
- 
--struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
--				       bool retry)
-+struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size)
- {
- 	gfp_t gfp = GFP_NOFS | __GFP_ACCOUNT;
--	if (retry)
--		gfp |= __GFP_NOFAIL;
- 
- 	return folio_alloc_buffers(page_folio(page), size, gfp);
- }
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 14acf1bbe0ce..7e903457967a 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -199,8 +199,7 @@ void folio_set_bh(struct buffer_head *bh, struct folio *folio,
- 		  unsigned long offset);
- struct buffer_head *folio_alloc_buffers(struct folio *folio, unsigned long size,
- 					gfp_t gfp);
--struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
--		bool retry);
-+struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size);
- struct buffer_head *create_empty_buffers(struct folio *folio,
- 		unsigned long blocksize, unsigned long b_state);
- void end_buffer_read_sync(struct buffer_head *bh, int uptodate);
--- 
-2.46.0
+Sure, just need to send FUSE_INIT with fuse_simple_request() instead
+of fuse_simple_background().
 
+Thanks,
+Miklos
 
