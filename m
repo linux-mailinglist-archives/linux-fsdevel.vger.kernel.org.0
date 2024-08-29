@@ -1,379 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-27868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773AF964902
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 276B2964963
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D021F218D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00DA1F218EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 15:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7971B140A;
-	Thu, 29 Aug 2024 14:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0910F1B29BF;
+	Thu, 29 Aug 2024 15:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pI71RdFk"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="INg6GXIl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD631AED38;
-	Thu, 29 Aug 2024 14:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6921AD3F0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 15:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724942950; cv=none; b=nRScNRbPQTkpaAu5bbXJhdQT1XiDeYdQtH7NJ/7k3CtVNSu2baOHtW0TfqziNu705nzrs8m16SNnzmvvE9OpG3FKnjS64IP0M1ggDW3XanYkVd0idSVqLzXYN+3I/e6+PpDo+BxNtP+9gUG9EwXNsdv+T7dSAR3P+kKpcTi1lJM=
+	t=1724943788; cv=none; b=DlCa0XcBVToPT+YpxIC1XG3HWsN/wO+WVjwATDQzI9x9RzKxATcHMltn4nZPRc2eEEO3eyYRMfxlOoJncCEYUjT70iHXHOz8fiOdOjACQtPBn036ZOjXrgvKwup+Jr5t9mpI4PLkqKvA/NuBh6zS3OGQo94q1KsRDo7brleD/gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724942950; c=relaxed/simple;
-	bh=P6LSYolCmWbwlJC9EuWxIaAA/mvYhHG1w5mu6bJF5bg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z/eK7o3j8uQeJZ+O6QhHStKpkPnZxlc3pvEamK5q8cvBpIbam+7RiqlN6QfC4WIOibZKLfycSs3PCUykWF8KTNpQCMWE4RG1ryVZA+DmidyYzkhsZXIhDsr67ZOHcGXKgQtmNl31t2FtW22jX1b5e/ERkUWrCIsKzJfBh26HOHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pI71RdFk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49588C4CEC1;
-	Thu, 29 Aug 2024 14:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724942950;
-	bh=P6LSYolCmWbwlJC9EuWxIaAA/mvYhHG1w5mu6bJF5bg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=pI71RdFkw/6UpMkuKOVTRhWryaQBHCydsuSgikmScV5cax12u/J9LwQgkKkCR7w4L
-	 2uHbsQkJmA8N8I0kUOVI4GAk+nQtAnndBMkdQXl62RAVfNJrWAMXnkqj0FHqBRJW01
-	 OzXirRsPXu/Tl06436If9UjfxEwnINuVAjEEd3RTgKdrT3/1PXDxwEPRnPKlKeB6I/
-	 AHBlpF02Jvq5MR/ANq7Aq0AfDadhhMWy11XP4kvpuXWFixJgumCzDOz7FetgwRpsHz
-	 YRqQy0FXs+z65C9O09Xx5o1+96bkO8HhcYkQWGb4J5sd91bx/V6sKhVkpS+AtZcER6
-	 n2vZ6cJ1VHSPw==
-Message-ID: <3b6491dfc9dec7e4c3b63cce7e2d6a09675654fa.camel@kernel.org>
-Subject: Re: [PATCH v14 09/25] nfsd: add nfsd_file_acquire_local()
-From: Jeff Layton <jlayton@kernel.org>
-To: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org
-Cc: Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <anna@kernel.org>, 
- Trond Myklebust <trondmy@hammerspace.com>, NeilBrown <neilb@suse.de>,
- linux-fsdevel@vger.kernel.org
-Date: Thu, 29 Aug 2024 10:49:08 -0400
-In-Reply-To: <20240829010424.83693-10-snitzer@kernel.org>
-References: <20240829010424.83693-1-snitzer@kernel.org>
-	 <20240829010424.83693-10-snitzer@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1724943788; c=relaxed/simple;
+	bh=Su37WdSXZefK7lybg23yQI5BUlaTKfEYK/MQXT2Gwnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VHq8ouYjHQpEXiFA85m6RFCfVsQteRoLmPu5xPQF0t8Q5EabVlY9CKoX+XcZ9kK54WiBuB4Kh1UBqDU8LBD7/Yru+Z0Hh6e+bOBPcgTSa07A1QywRHT1ZW3HiLmpL4ReUlBICPfdWYjeweAkKdxs7Yto7Gpzyhigt8aZt+A5NLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=INg6GXIl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724943785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YPSzNiSpRHJnfZEPhzuMTDxUaixBWilqMZZYXlgepPc=;
+	b=INg6GXIlOnCgeWO3uY/QgPPRDGTIZU/swIWHtDZNDeJ2R2Csdl10CywIbuYxYNKA74WnF2
+	TZXBJGLNpbBHqSwzyZMl9v7IyH+MByar0dpUFP+iWChHHDwa0N63ZTtubD6Q7tvTR0VOQd
+	9OZr+Q1z3KbCvSw28ixK03IjJ5BD4G4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-X8n308IyPC6IHh9XMTICow-1; Thu,
+ 29 Aug 2024 11:03:00 -0400
+X-MC-Unique: X8n308IyPC6IHh9XMTICow-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 71F6F1955BEF;
+	Thu, 29 Aug 2024 15:02:59 +0000 (UTC)
+Received: from bfoster (unknown [10.22.16.95])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0980819560A3;
+	Thu, 29 Aug 2024 15:02:57 +0000 (UTC)
+Date: Thu, 29 Aug 2024 11:03:57 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	josef@toxicpanda.com, david@fromorbit.com
+Subject: Re: [PATCH v2 2/2] iomap: make zero range flush conditional on
+ unwritten mappings
+Message-ID: <ZtCN3Q0r4kIOPYkx@bfoster>
+References: <20240828181912.41517-1-bfoster@redhat.com>
+ <20240828181912.41517-3-bfoster@redhat.com>
+ <20240828224420.GC6224@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828224420.GC6224@frogsfrogsfrogs>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, 2024-08-28 at 21:04 -0400, Mike Snitzer wrote:
-> From: NeilBrown <neilb@suse.de>
->=20
-> nfsd_file_acquire_local() can be used to look up a file by filehandle
-> without having a struct svc_rqst.  This can be used by NFS LOCALIO to
-> allow the NFS client to bypass the NFS protocol to directly access a
-> file provided by the NFS server which is running in the same kernel.
->=20
-> In nfsd_file_do_acquire() care is taken to always use fh_verify() if
-> rqstp is not NULL (as is the case for non-LOCALIO callers).  Otherwise
-> the non-LOCALIO callers will not supply the correct and required
-> arguments to __fh_verify (e.g. gssclient isn't passed).
->=20
-> Introduce fh_verify_local() wrapper around __fh_verify to make it
-> clear that LOCALIO is intended caller.
->=20
-> Also, use GC for nfsd_file returned by nfsd_file_acquire_local.  GC
-> offers performance improvements if/when a file is reopened before
-> launderette cleans it from the filecache's LRU.
->=20
-> Suggested-by: Jeff Layton <jlayton@kernel.org> # use filecache's GC
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> Co-developed-by: Mike Snitzer <snitzer@kernel.org>
-> Signed-off-by: Mike Snitzer <snitzer@kernel.org>
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
->  fs/nfsd/filecache.c | 71 ++++++++++++++++++++++++++++++++++++++++-----
->  fs/nfsd/filecache.h |  3 ++
->  fs/nfsd/nfsfh.c     | 39 +++++++++++++++++++++++++
->  fs/nfsd/nfsfh.h     |  2 ++
->  4 files changed, 108 insertions(+), 7 deletions(-)
->=20
-> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-> index 9e9d246f993c..2dc72de31f61 100644
-> --- a/fs/nfsd/filecache.c
-> +++ b/fs/nfsd/filecache.c
-> @@ -982,12 +982,14 @@ nfsd_file_is_cached(struct inode *inode)
->  }
-> =20
->  static __be32
-> -nfsd_file_do_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
-> +nfsd_file_do_acquire(struct svc_rqst *rqstp, struct net *net,
-> +		     struct svc_cred *cred,
-> +		     struct auth_domain *client,
-> +		     struct svc_fh *fhp,
->  		     unsigned int may_flags, struct file *file,
->  		     struct nfsd_file **pnf, bool want_gc)
->  {
->  	unsigned char need =3D may_flags & NFSD_FILE_MAY_MASK;
-> -	struct net *net =3D SVC_NET(rqstp);
->  	struct nfsd_file *new, *nf;
->  	bool stale_retry =3D true;
->  	bool open_retry =3D true;
-> @@ -996,8 +998,13 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct =
-svc_fh *fhp,
->  	int ret;
-> =20
->  retry:
-> -	status =3D fh_verify(rqstp, fhp, S_IFREG,
-> -				may_flags|NFSD_MAY_OWNER_OVERRIDE);
-> +	if (rqstp) {
-> +		status =3D fh_verify(rqstp, fhp, S_IFREG,
-> +				   may_flags|NFSD_MAY_OWNER_OVERRIDE);
-> +	} else {
-> +		status =3D fh_verify_local(net, cred, client, fhp, S_IFREG,
-> +					 may_flags|NFSD_MAY_OWNER_OVERRIDE);
-> +	}
->  	if (status !=3D nfs_ok)
->  		return status;
->  	inode =3D d_inode(fhp->fh_dentry);
-> @@ -1143,7 +1150,8 @@ __be32
->  nfsd_file_acquire_gc(struct svc_rqst *rqstp, struct svc_fh *fhp,
->  		     unsigned int may_flags, struct nfsd_file **pnf)
->  {
-> -	return nfsd_file_do_acquire(rqstp, fhp, may_flags, NULL, pnf, true);
-> +	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
-> +				    fhp, may_flags, NULL, pnf, true);
->  }
-> =20
->  /**
-> @@ -1167,7 +1175,55 @@ __be32
->  nfsd_file_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
->  		  unsigned int may_flags, struct nfsd_file **pnf)
->  {
-> -	return nfsd_file_do_acquire(rqstp, fhp, may_flags, NULL, pnf, false);
-> +	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
-> +				    fhp, may_flags, NULL, pnf, false);
-> +}
-> +
-> +/**
-> + * nfsd_file_acquire_local - Get a struct nfsd_file with an open file fo=
-r localio
-> + * @net: The network namespace in which to perform a lookup
-> + * @cred: the user credential with which to validate access
-> + * @client: the auth_domain for LOCALIO lookup
-> + * @fhp: the NFS filehandle of the file to be opened
-> + * @may_flags: NFSD_MAY_ settings for the file
-> + * @pnf: OUT: new or found "struct nfsd_file" object
-> + *
-> + * This file lookup interface provide access to a file given the
-> + * filehandle and credential.  No connection-based authorisation
-> + * is performed and in that way it is quite different to other
-> + * file access mediated by nfsd.  It allows a kernel module such as the =
-NFS
-> + * client to reach across network and filesystem namespaces to access
-> + * a file.  The security implications of this should be carefully
-> + * considered before use.
-> + *
-> + * The nfsd_file object returned by this API is reference-counted
-> + * and garbage-collected. The object is retained for a few
-> + * seconds after the final nfsd_file_put() in case the caller
-> + * wants to re-use it.
-> + *
-> + * Return values:
-> + *   %nfs_ok - @pnf points to an nfsd_file with its reference
-> + *   count boosted.
-> + *
-> + * On error, an nfsstat value in network byte order is returned.
-> + */
-> +__be32
-> +nfsd_file_acquire_local(struct net *net, struct svc_cred *cred,
-> +			struct auth_domain *client, struct svc_fh *fhp,
-> +			unsigned int may_flags, struct nfsd_file **pnf)
-> +{
-> +	/*
-> +	 * Save creds before calling nfsd_file_do_acquire() (which calls
-> +	 * nfsd_setuser). Important because caller (LOCALIO) is from
-> +	 * client context.
-> +	 */
-> +	const struct cred *save_cred =3D get_current_cred();
-> +	__be32 beres;
-> +
-> +	beres =3D nfsd_file_do_acquire(NULL, net, cred, client,
-> +				     fhp, may_flags, NULL, pnf, true);
-> +	revert_creds(save_cred);
-> +	return beres;
->  }
-> =20
->  /**
-> @@ -1193,7 +1249,8 @@ nfsd_file_acquire_opened(struct svc_rqst *rqstp, st=
-ruct svc_fh *fhp,
->  			 unsigned int may_flags, struct file *file,
->  			 struct nfsd_file **pnf)
->  {
-> -	return nfsd_file_do_acquire(rqstp, fhp, may_flags, file, pnf, false);
-> +	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
-> +				    fhp, may_flags, file, pnf, false);
->  }
-> =20
->  /*
-> diff --git a/fs/nfsd/filecache.h b/fs/nfsd/filecache.h
-> index 3fbec24eea6c..26ada78b8c1e 100644
-> --- a/fs/nfsd/filecache.h
-> +++ b/fs/nfsd/filecache.h
-> @@ -66,5 +66,8 @@ __be32 nfsd_file_acquire(struct svc_rqst *rqstp, struct=
- svc_fh *fhp,
->  __be32 nfsd_file_acquire_opened(struct svc_rqst *rqstp, struct svc_fh *f=
-hp,
->  		  unsigned int may_flags, struct file *file,
->  		  struct nfsd_file **nfp);
-> +__be32 nfsd_file_acquire_local(struct net *net, struct svc_cred *cred,
-> +			       struct auth_domain *client, struct svc_fh *fhp,
-> +			       unsigned int may_flags, struct nfsd_file **pnf);
->  int nfsd_file_cache_stats_show(struct seq_file *m, void *v);
->  #endif /* _FS_NFSD_FILECACHE_H */
-> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> index 80c06e170e9a..49468e478d23 100644
-> --- a/fs/nfsd/nfsfh.c
-> +++ b/fs/nfsd/nfsfh.c
-> @@ -301,6 +301,22 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rq=
-stp, struct net *net,
->  	return error;
->  }
-> =20
-> +/**
-> + * __fh_verify - filehandle lookup and access checking
-> + * @rqstp: RPC transaction context, or NULL
-> + * @net: net namespace in which to perform the export lookup
-> + * @cred: RPC user credential
-> + * @client: RPC auth domain
-> + * @gssclient: RPC GSS auth domain, or NULL
-> + * @fhp: filehandle to be verified
-> + * @type: expected type of object pointed to by filehandle
-> + * @access: type of access needed to object
-> + *
-> + * This internal API can be used by callers who do not have an RPC
-> + * transaction context (ie are not running in an nfsd thread).
-> + *
-> + * See fh_verify() for further descriptions of @fhp, @type, and @access.
-> + */
->  static __be32
->  __fh_verify(struct svc_rqst *rqstp,
->  	    struct net *net, struct svc_cred *cred,
-> @@ -382,6 +398,29 @@ __fh_verify(struct svc_rqst *rqstp,
->  	return error;
->  }
-> =20
-> +/**
-> + * fh_verify_local - filehandle lookup and access checking
-> + * @net: net namespace in which to perform the export lookup
-> + * @cred: RPC user credential
-> + * @client: RPC auth domain
-> + * @fhp: filehandle to be verified
-> + * @type: expected type of object pointed to by filehandle
-> + * @access: type of access needed to object
-> + *
-> + * This API can be used by callers who do not have an RPC
-> + * transaction context (ie are not running in an nfsd thread).
-> + *
-> + * See fh_verify() for further descriptions of @fhp, @type, and @access.
-> + */
-> +__be32
-> +fh_verify_local(struct net *net, struct svc_cred *cred,
-> +		struct auth_domain *client, struct svc_fh *fhp,
-> +		umode_t type, int access)
-> +{
-> +	return __fh_verify(NULL, net, cred, client, NULL,
-> +			   fhp, type, access);
-> +}
-> +
->  /**
->   * fh_verify - filehandle lookup and access checking
->   * @rqstp: pointer to current rpc request
-> diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
-> index 8d46e203d139..5b7394801dc4 100644
-> --- a/fs/nfsd/nfsfh.h
-> +++ b/fs/nfsd/nfsfh.h
-> @@ -217,6 +217,8 @@ extern char * SVCFH_fmt(struct svc_fh *fhp);
->   * Function prototypes
->   */
->  __be32	fh_verify(struct svc_rqst *, struct svc_fh *, umode_t, int);
-> +__be32	fh_verify_local(struct net *, struct svc_cred *, struct auth_doma=
-in *,
-> +			struct svc_fh *, umode_t, int);
->  __be32	fh_compose(struct svc_fh *, struct svc_export *, struct dentry *,=
- struct svc_fh *);
->  __be32	fh_update(struct svc_fh *);
->  void	fh_put(struct svc_fh *);
+On Wed, Aug 28, 2024 at 03:44:20PM -0700, Darrick J. Wong wrote:
+> On Wed, Aug 28, 2024 at 02:19:11PM -0400, Brian Foster wrote:
+> > iomap_zero_range() flushes pagecache to mitigate consistency
+> > problems with dirty pagecache and unwritten mappings. The flush is
+> > unconditional over the entire range because checking pagecache state
+> > after mapping lookup is racy with writeback and reclaim. There are
+> > ways around this using iomap's mapping revalidation mechanism, but
+> > this is not supported by all iomap based filesystems and so is not a
+> > generic solution.
+> > 
+> > There is another way around this limitation that is good enough to
+> > filter the flush for most cases in practice. If we check for dirty
+> > pagecache over the target range (instead of unconditionally flush),
+> > we can keep track of whether the range was dirty before lookup and
+> > defer the flush until/unless we see a combination of dirty cache
+> > backed by an unwritten mapping. We don't necessarily know whether
+> > the dirty cache was backed by the unwritten maping or some other
+> > (written) part of the range, but the impliciation of a false
+> > positive here is a spurious flush and thus relatively harmless.
+> > 
+> > Note that we also flush for hole mappings because iomap_zero_range()
+> > is used for partial folio zeroing in some cases. For example, if a
+> > folio straddles EOF on a sub-page FSB size fs, the post-eof portion
+> > is hole-backed and dirtied/written via mapped write, and then i_size
+> > increases before writeback can occur (which otherwise zeroes the
+> > post-eof portion of the EOF folio), then the folio becomes
+> > inconsistent with disk until reclaimed. A flush in this case
+> > executes partial zeroing from writeback, and iomap knows that there
+> > is otherwise no I/O to submit for hole backed mappings.
+> > 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 57 +++++++++++++++++++++++++++++++++++-------
+> >  1 file changed, 48 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 3e846f43ff48..a6e897e6e303 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1393,16 +1393,47 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+> >  }
+> >  EXPORT_SYMBOL_GPL(iomap_file_unshare);
+> >  
+> > -static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+> > +/*
+> > + * Flush the remaining range of the iter and mark the current mapping stale.
+> > + * This is used when zero range sees an unwritten mapping that may have had
+> > + * dirty pagecache over it.
+> > + */
+> > +static inline int iomap_zero_iter_flush_and_stale(struct iomap_iter *i)
+> > +{
+> > +	struct address_space *mapping = i->inode->i_mapping;
+> > +	loff_t end = i->pos + i->len - 1;
+> > +
+> > +	i->iomap.flags |= IOMAP_F_STALE;
+> > +	return filemap_write_and_wait_range(mapping, i->pos, end);
+> > +}
+> > +
+> > +static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
+> > +		bool *range_dirty)
+> >  {
+> >  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> >  	loff_t pos = iter->pos;
+> >  	loff_t length = iomap_length(iter);
+> >  	loff_t written = 0;
+> >  
+> > -	/* already zeroed?  we're done. */
+> > -	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
+> > +	/*
+> > +	 * We can skip pre-zeroed mappings so long as either the mapping was
+> > +	 * clean before we started or we've flushed at least once since.
+> > +	 * Otherwise we don't know whether the current mapping had dirty
+> > +	 * pagecache, so flush it now, stale the current mapping, and proceed
+> > +	 * from there.
+> > +	 *
+> > +	 * The hole case is intentionally included because this is (ab)used to
+> > +	 * handle partial folio zeroing in some cases. Hole backed post-eof
+> > +	 * ranges can be dirtied via mapped write and the flush triggers
+> > +	 * writeback time post-eof zeroing.
+> > +	 */
+> > +	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN) {
+> > +		if (*range_dirty) {
+> > +			*range_dirty = false;
+> > +			return iomap_zero_iter_flush_and_stale(iter);
+> > +		}
+> >  		return length;
+> > +	}
+> >  
+> >  	do {
+> >  		struct folio *folio;
+> > @@ -1450,19 +1481,27 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+> >  		.flags		= IOMAP_ZERO,
+> >  	};
+> >  	int ret;
+> > +	bool range_dirty;
+> >  
+> >  	/*
+> >  	 * Zero range wants to skip pre-zeroed (i.e. unwritten) mappings, but
+> >  	 * pagecache must be flushed to ensure stale data from previous
+> > -	 * buffered writes is not exposed.
+> > +	 * buffered writes is not exposed. A flush is only required for certain
+> > +	 * types of mappings, but checking pagecache after mapping lookup is
+> > +	 * racy with writeback and reclaim.
+> > +	 *
+> > +	 * Therefore, check the entire range first and pass along whether any
+> > +	 * part of it is dirty. If so and an underlying mapping warrants it,
+> > +	 * flush the cache at that point. This trades off the occasional false
+> > +	 * positive (and spurious flush, if the dirty data and mapping don't
+> > +	 * happen to overlap) for simplicity in handling a relatively uncommon
+> > +	 * situation.
+> >  	 */
+> > -	ret = filemap_write_and_wait_range(inode->i_mapping,
+> > -			pos, pos + len - 1);
+> > -	if (ret)
+> > -		return ret;
+> > +	range_dirty = filemap_range_needs_writeback(inode->i_mapping,
+> > +					pos, pos + len - 1);
+> >  
+> >  	while ((ret = iomap_iter(&iter, ops)) > 0)
+> > -		iter.processed = iomap_zero_iter(&iter, did_zero);
+> > +		iter.processed = iomap_zero_iter(&iter, did_zero, &range_dirty);
+> 
+> Style nit: Could we do this flush-and-stale from the loop body instead
+> of passing pointers around?  e.g.
+> 
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+So FWIW, I had multiple other variations of this that used an
+IOMAP_DIRTY_CACHE flag on the iomap to track dirty pagecache for
+arbitrary operations. The flag could be set and cleared at the
+appropriate points as expected (for ops that care).
+
+To me, that's how I'd prefer to avoid just passing a pointer, but I
+intentionally factored that out to avoid using a flag for something that
+(for now) could be simplified to a local variable. OTOH, it is something
+that might be useful for the iomap seek data/hole implementations down
+the road.
+
+I've played with that a bit, but also have been trying to avoid getting
+too much into that rabbit hole for zero range. My thought was I'd
+reintroduce it and replace the range_dirty thing if/when it proved
+useful for multiple operations.
+
+> static inline bool iomap_zero_need_flush(const struct iomap_iter *i)
+> {
+> 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> 
+> 	return srcmap->type == IOMAP_HOLE ||
+> 	       srcmap->type == IOMAP_UNWRITTEN;
+> }
+
+The factoring looks mostly reasonable, but a couple things bug me that
+I'd like to see if we can resolve..
+
+One is that this doesn't really indicate whether a flush is needed,
+because the dirty cache state is a critical part of that logic. I
+suppose we could rename it (to what?), but it also seems a little odd to
+have a helper just for mapping type checks.
+
+> 
+> static inline int iomap_zero_iter_flush(struct iomap_iter *i)
+> {
+> 	struct address_space *mapping = i->inode->i_mapping;
+> 	loff_t end = i->pos + i->len - 1;
+> 
+> 	i->iomap.flags |= IOMAP_F_STALE;
+> 	return filemap_write_and_wait_range(mapping, i->pos, end);
+> }
+> 
+> and then:
+> 
+> 	range_dirty = filemap_range_needs_writeback(...);
+> 
+> 	while ((ret = iomap_iter(&iter, ops)) > 0) {
+> 		if (range_dirty && iomap_zero_need_flush(&iter)) {
+> 			/*
+> 			 * Zero range wants to skip pre-zeroed (i.e.
+> 			 * unwritten) mappings, but...
+> 			 */
+> 			range_dirty = false;
+> 			iter.processed = iomap_zero_iter_flush(&iter);
+> 		} else {
+> 			iter.processed = iomap_zero_iter(&iter, did_zero);
+> 		}
+
+The other is that the optimization logic is now split across multiple
+functions. I.e., iomap_zero_iter() has a landmine if ever called without
+doing the flush_and_stale() part first (a consideration if
+truncate_page() were ever open coded, for example).
+
+I wonder if a compromise might be to factor out the whole optimization
+into a separate helper rather than just the flush part (first via a prep
+patch), then the higher level loop ends up looking almost the same:
+
+	while ((ret = iomap_iter(&iter, ops)) > 0) {
+		/* special handling for already zeroed mappings */
+		if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
+			iter.processed = iomap_zero_mapping_iter(&iter, &range_dirty);
+		else
+			iter.processed = iomap_zero_iter(&iter, did_zero);
+		}
+
+That doesn't avoid passing the range_dirty pointer, but we just end up
+passing that instead of did_zero. Also as noted above, it could still be
+made to go away if the range_dirty check gets pushed down into the
+iomap_iter() path for more general use.
+
+Anyways those are just my thoughts. I'm of the mind that whatever
+factoring we do here may have to change if Dave's batched folio
+lookup/iteration idea pans out for fs' with validation support, so at
+the end of the day I'll change this to look exactly like you wrote it if
+it means the zeroing problem gets fixed. Thoughts or preference?
+
+Brian
+
+> 	}
+> 
+> The logic looks correct and sensible. :)
+> 
+> --D
+> 
+> >  	return ret;
+> >  }
+> >  EXPORT_SYMBOL_GPL(iomap_zero_range);
+> > -- 
+> > 2.45.0
+> > 
+> > 
+> 
+
 
