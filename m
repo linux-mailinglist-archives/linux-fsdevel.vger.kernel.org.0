@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-27835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808E99646AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 15:33:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DFD96467E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 15:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 064AAB2B164
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 13:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8DA1F200F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 13:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185101B012C;
-	Thu, 29 Aug 2024 13:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05781B1435;
+	Thu, 29 Aug 2024 13:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cb4KzafM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6SiqbJQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6895C1B010C;
-	Thu, 29 Aug 2024 13:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330F11B1414;
+	Thu, 29 Aug 2024 13:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938017; cv=none; b=DyAzbkax+MYpSIXMOjHhd4g1+0Y368ZwbHP7vTP5STLCJO5xTq92vvqeiLmxzZkIKohxn81VEGgT6p2pKc//3d/Owfy3iuEEU2XMd8BXiPVQQ+hJrJ/wpyzLCz4X2Qz6g0E1knZ+gjedyaohl752rSDnOnRIYJnIptAUxZFJVO8=
+	t=1724938019; cv=none; b=Hchz0Yf9eMAxet6HxzeazHGFvUNQJofeQSbZOBOQnR7eUElquHG8Q4Y62PSId/fg7QKLubiIPcoEwM0sExdL7J72YUYm+CS7LGs3exBEB9ului1WQd0Q+bzo2JQLJIky6Hl9U9v9ltMP8okGinPv2EUgO5SCTrv7fNZlRJk1Uoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938017; c=relaxed/simple;
-	bh=MaWMQrP354gSUdJLpaSky0LlkGF4b0/cV4bjc3uboH8=;
+	s=arc-20240116; t=1724938019; c=relaxed/simple;
+	bh=Py7V2TezOV5i6M8TumjM3litrx+m92p6vW6sSsvwfIo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eE0/sP3hm7nFCkZ5YBgu8vJ/6xIBunmjxHPseLWDQOwmqip4rKwejSwqjy0nB9qHmiOrsUTS/dBzsOPnorPHShQRtcLu5jC5vMNwNb6HrJLLSPQto0lhe+wY5AbBwhKWMUtM5MnxRZ7p/mUK6rrx7je+LRK/pBjwiDDEb4Yk3mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cb4KzafM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88830C4CECA;
-	Thu, 29 Aug 2024 13:26:55 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=nYcEIrKLxnseVvg0/XMDV0Z7qWm8nNCBFe/dc5QsKGlFQm/UIAljpfhibdgFkfxNu398Xms0XSppWTh27eVqjhyPvv9Bi4V742bVfXF/h44LhUUbxExnxjNyyCXSDO9r7Tr8pXX/SLgn/U1NaYw2Aee+c8Wb3b0HtvIrVA/owJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6SiqbJQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ABD1C4CEC7;
+	Thu, 29 Aug 2024 13:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724938017;
-	bh=MaWMQrP354gSUdJLpaSky0LlkGF4b0/cV4bjc3uboH8=;
+	s=k20201202; t=1724938018;
+	bh=Py7V2TezOV5i6M8TumjM3litrx+m92p6vW6sSsvwfIo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Cb4KzafM1tnmU6Ky3PFc2+nIpGAdE1MvHF2vQ+j+5WcfTWGqTAGWhWZtWowNB4Ppt
-	 pkWPC6OspqF9KRBoofvpxTX9bXeipHwVGrXMa4HIU4wmMCoknZSLQZx6TuUxzSOGhG
-	 uIdc4VhpK8mpM/reWzOCn9trqw18TlGyaAotYKLc/f+k2QmdLk4zv3GscCLZ9Vu71p
-	 iEe5wDPW6mjIgnQD/ewbU4myD4q3x7dVjcM0LXFvieKHRgjOjYwk01vf+d1Z4hVATj
-	 0bVNpaI+itQoYGgqaQk15xS4CvSKM3f6+B88llEz7C/LsHuapHQ8hLYW00/g/KHDfp
-	 IGhgr47y06/qQ==
+	b=r6SiqbJQL7SkEqYpuWjRzKn/O2DSMVJbbB9oY62C7V92HXE+ZJELLqMmdahqdmPHw
+	 LYpDEqLR0riplZjvfMFPf2os875uNgQQsDpsJb/tjbF+N1LmYz4MDUeYYKrI9DEAJl
+	 pLbn4FyO8ChVPjC1eVTnPYpHmDhV1+KuRRqs8Cym0yHAJBP0x4y+u/2NsNnAqxgwBt
+	 7wVKXQ1d9rS9+k+2hmvxoFW5l3Hq5B5PaY8GhS73jf8y2HZWd2vQ+ovJEVCpnnvIgn
+	 QQMJsBWzJebum4Cn8U1WH3OmE1LFxd6Hm0lbCcpXwIwpyJJS0DPBNhkHEaqrwI0Zv7
+	 rNCcllj12UQrQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 29 Aug 2024 09:26:42 -0400
-Subject: [PATCH v3 04/13] nfsd: drop the nfsd4_fattr_args "size" field
+Date: Thu, 29 Aug 2024 09:26:43 -0400
+Subject: [PATCH v3 05/13] nfsd: have nfsd4_deleg_getattr_conflict pass back
+ write deleg pointer
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-delstid-v3-4-271c60806c5d@kernel.org>
+Message-Id: <20240829-delstid-v3-5-271c60806c5d@kernel.org>
 References: <20240829-delstid-v3-0-271c60806c5d@kernel.org>
 In-Reply-To: <20240829-delstid-v3-0-271c60806c5d@kernel.org>
 To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
@@ -66,71 +67,152 @@ Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org,
  linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1658; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=MaWMQrP354gSUdJLpaSky0LlkGF4b0/cV4bjc3uboH8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm0HcXp7eEVqWw9rNJfgR+aDv5hXH8B/9mDXh6+
- GpPWUAxqSKJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZtB3FwAKCRAADmhBGVaC
- Fa/JD/4r7w+jyYm3ge5G+roPkaKwtSgsDJi5/mlsIaKhiNYLCHgoKaK5qC+lG2OPxwrBLUmj689
- gQHeG9BRI8bhsMw+PnMgT5DFfo3v4w2R2jZv2tKzL+fravAb8HiHWhqOmj6ZsJBEI+knRG1ZGAf
- iY2+74GUt1x1QEgg6o2WXfVY6p4GHFk6SpFaiRhKBKNiyPfyQNToRIQNi5IOkKj3W4+3s8aGHq0
- Fhy7HSgijngT+Tav/s3DcSjFojVWfCkKgikguD6Pqb4d/lMStDu/bVfH1PhnyHCDKHbZIDPKI7k
- PngKpQ/Ho08iveBrf1fc8z38vmbeIVCcuBs5d+6oqN65DFuF+OcPZRHkIWvG8qtrJqp34rON70x
- uD+emCOXX6quaB1qy6WqdR/e/lhCRB7+N7oqHmKTohNVqz9f/pNVrOr/HBoY098s6gqf93P53lH
- 4aBYkQUi5sl/P9ElqBpVJM9uFI0VqzccdZxMXcOFtbzRbpeUy+4eF+k9xxWdQHQ8gaKcAiXrSte
- N3C2ob/fcWY4vkcnGInykKYtiEOlvhoYyRRArQ0bfRE5X2o3PLlNMlzs1BSDWAEBEbbFJ64wvUa
- fmQaevKnxYQhGxFkLjfmNmFj/nGKHN/Q8aNU/a70PWIDGrbyWroO7arEu5MpeZPRYkx/vIQ4xqJ
- rlm2gtkIjIuYxPQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4705; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Py7V2TezOV5i6M8TumjM3litrx+m92p6vW6sSsvwfIo=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm0HcXBGB3QGlLF9cFPT1o9pNMsrfkB0OE+86Ox
+ A4X/QMlageJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZtB3FwAKCRAADmhBGVaC
+ FQjdD/9TBRqObrgimJSopCjAxnb7v+ULm6jz2S0ugsqFUpVp2OPSs5q1cN77YDlGzKiN8wJfuxR
+ XuNz8kHIGAeZN8N7eDOs1EHKfVHKlphgCjnIp+I0irx51rN576iEVVyiFi2pOI5uzbvpEQotxO+
+ Fnl7zJwd51w+x4+iOLWc9hwPxY30foguvSW2PQ9DsMlEqeqblt4uFxYZ/6PRu1x5DUpfHi/VLBW
+ JYsJJAKdus6BVQtM9EUAxleBQ/1wgPTceGomR6fhJtOu9Pd2YZgBZsbnwu9sUAhgqjJQldGdMYB
+ liDk9+3UsLs24XHZo/4funvj7qwe8os1KOCncL4osoWPc0OrTSD0QQhtZTmZd4et5xv08XIX3X2
+ W0T9B4Rvoro3rC1utwgLyL9yGSXI2ZslYiutBauiLULk78IuHAfLdTeVvBOnSTs10TM4utHMY/l
+ wLCPebf7PncXheUeT0VN9TEKbnmcwthOknccYcGiLATBu+h50/hugJ1bTok31m58QIuozuXmxzx
+ s/tc3fW/8XHyX2uKG9xgcIhjAseNVDwPQrNzihKjuh4nu7qg4y6hs67wWNbMB8ElKsvCtrw3V0H
+ pLo2lKAigTtAVS/fdsf513xLpWGVyqispqp32l9nvIBN40SDgPVTYVTL9hL3WuZYP5HPANHDZnP
+ vkXfqjX57VNNtpQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-We already have a slot for this in the kstat structure. Just overwrite
-that instead of keeping a copy.
+Currently we pass back the size and whether it has been modified, but
+those just mirror values tracked inside the delegation. In a later
+patch, we'll need to get at the timestamps in the delegation too, so
+just pass back a reference to the write delegation, and use that to
+properly override values in the iattr.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4xdr.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ fs/nfsd/nfs4state.c | 17 ++++++++---------
+ fs/nfsd/nfs4xdr.c   | 16 ++++++++++------
+ fs/nfsd/state.h     |  2 +-
+ 3 files changed, 19 insertions(+), 16 deletions(-)
 
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 6844ae9ea350..dce27420ae31 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -8810,8 +8810,7 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
+  * nfsd4_deleg_getattr_conflict - Recall if GETATTR causes conflict
+  * @rqstp: RPC transaction context
+  * @dentry: dentry of inode to be checked for a conflict
+- * @modified: return true if file was modified
+- * @size: new size of file if modified is true
++ * @pdp: returned WRITE delegation, if one was found
+  *
+  * This function is called when there is a conflict between a write
+  * delegation and a change/size GETATTR from another client. The server
+@@ -8821,11 +8820,12 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
+  * 18.7.4.
+  *
+  * Returns 0 if there is no conflict; otherwise an nfs_stat
+- * code is returned.
++ * code is returned. If @pdp is set to a non-NULL value, then the
++ * caller must put the reference.
+  */
+ __be32
+ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
+-				bool *modified, u64 *size)
++			     struct nfs4_delegation **pdp)
+ {
+ 	__be32 status;
+ 	struct nfsd_net *nn = net_generic(SVC_NET(rqstp), nfsd_net_id);
+@@ -8836,10 +8836,9 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
+ 	struct nfs4_cb_fattr *ncf;
+ 	struct inode *inode = d_inode(dentry);
+ 
+-	*modified = false;
+ 	ctx = locks_inode_context(inode);
+ 	if (!ctx)
+-		return 0;
++		return nfs_ok;
+ 
+ #define NON_NFSD_LEASE ((void *)1)
+ 
+@@ -8905,10 +8904,10 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
+ 			goto out_status;
+ 		}
+ 		ncf->ncf_cur_fsize = ncf->ncf_cb_fsize;
+-		*size = ncf->ncf_cur_fsize;
+-		*modified = true;
++		*pdp = dp;
++		return nfs_ok;
+ 	}
+-	status = 0;
++	status = nfs_ok;
+ out_status:
+ 	nfs4_put_stid(&dp->dl_stid);
+ 	return status;
 diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index f118921250c3..d028daf77549 100644
+index d028daf77549..ccaee73de72b 100644
 --- a/fs/nfsd/nfs4xdr.c
 +++ b/fs/nfsd/nfs4xdr.c
-@@ -2928,7 +2928,6 @@ struct nfsd4_fattr_args {
- 	struct kstat		stat;
- 	struct kstatfs		statfs;
- 	struct nfs4_acl		*acl;
--	u64			size;
- #ifdef CONFIG_NFSD_V4_SECURITY_LABEL
- 	void			*context;
- 	int			contextlen;
-@@ -3047,7 +3046,7 @@ static __be32 nfsd4_encode_fattr4_change(struct xdr_stream *xdr,
- static __be32 nfsd4_encode_fattr4_size(struct xdr_stream *xdr,
- 				       const struct nfsd4_fattr_args *args)
+@@ -3511,6 +3511,7 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 		    int ignore_crossmnt)
  {
--	return nfsd4_encode_uint64_t(xdr, args->size);
-+	return nfsd4_encode_uint64_t(xdr, args->stat.size);
- }
+ 	DECLARE_BITMAP(attr_bitmap, ARRAY_SIZE(nfsd4_enc_fattr4_encode_ops));
++	struct nfs4_delegation *dp = NULL;
+ 	struct nfsd4_fattr_args args;
+ 	struct svc_fh *tempfh = NULL;
+ 	int starting_len = xdr->buf->len;
+@@ -3525,8 +3526,6 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 		.dentry	= dentry,
+ 	};
+ 	unsigned long bit;
+-	bool file_modified = false;
+-	u64 size = 0;
  
- static __be32 nfsd4_encode_fattr4_fsid(struct xdr_stream *xdr,
-@@ -3555,7 +3554,6 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 	WARN_ON_ONCE(bmval[1] & NFSD_WRITEONLY_ATTRS_WORD1);
+ 	WARN_ON_ONCE(!nfsd_attrs_supported(minorversion, bmval));
+@@ -3555,8 +3554,7 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 			goto out;
+ 	}
+ 	if (attrmask[0] & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
+-		status = nfsd4_deleg_getattr_conflict(rqstp, dentry,
+-					&file_modified, &size);
++		status = nfsd4_deleg_getattr_conflict(rqstp, dentry, &dp);
  		if (status)
  			goto out;
  	}
--	args.size = 0;
- 	if (attrmask[0] & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
- 		status = nfsd4_deleg_getattr_conflict(rqstp, dentry,
- 					&file_modified, &size);
-@@ -3569,9 +3567,7 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+@@ -3564,10 +3562,16 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 	err = vfs_getattr(&path, &args.stat,
+ 			  STATX_BASIC_STATS | STATX_BTIME | STATX_CHANGE_COOKIE,
+ 			  AT_STATX_SYNC_AS_STAT);
++	if (dp) {
++		struct nfs4_cb_fattr *ncf = &dp->dl_cb_fattr;
++
++		if (ncf->ncf_file_modified)
++			args.stat.size = ncf->ncf_cur_fsize;
++
++		nfs4_put_stid(&dp->dl_stid);
++	}
  	if (err)
  		goto out_nfserr;
- 	if (file_modified)
--		args.size = size;
--	else
--		args.size = args.stat.size;
-+		args.stat.size = size;
+-	if (file_modified)
+-		args.stat.size = size;
  
  	if (!(args.stat.result_mask & STATX_BTIME))
  		/* underlying FS does not offer btime so we can't share it */
+diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+index ac3a29224806..c7c7ec21e510 100644
+--- a/fs/nfsd/state.h
++++ b/fs/nfsd/state.h
+@@ -781,5 +781,5 @@ static inline bool try_to_expire_client(struct nfs4_client *clp)
+ }
+ 
+ extern __be32 nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp,
+-		struct dentry *dentry, bool *file_modified, u64 *size);
++		struct dentry *dentry, struct nfs4_delegation **pdp);
+ #endif   /* NFSD4_STATE_H */
 
 -- 
 2.46.0
