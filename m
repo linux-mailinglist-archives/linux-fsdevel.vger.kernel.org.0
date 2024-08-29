@@ -1,143 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-27773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2EB963C9D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 09:19:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B164963DAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 09:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC1D4B228BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 07:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B5C1F235B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 07:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9005A16D9BA;
-	Thu, 29 Aug 2024 07:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64697189F31;
+	Thu, 29 Aug 2024 07:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JxEVMcCN"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="nuh3tOkf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F581537D8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 07:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4732F15821A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 07:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724915959; cv=none; b=N9Ev4BfXymAXMKMP8OYdxCmvmUFl1APtVcsMBdL4nrsMXL87TlRCwXNO76yrVouPRWsf4GFQTaSyrUihA1A6434EVdHBhsNn707gbl9zCt+C3f9oqd1c2dpoB+5zzyGnkf/9VCuNkz38zp2ta70axvywAu1OeK24k3j5bznSnu0=
+	t=1724917901; cv=none; b=h5CJZECd3grGVLohhULth097UXi7KtWb0EyEJYQwc/ydr7vj2ozWZYhihFDP+qqXIP53hEG6M0RkSy+QU3gaQQlXr6hQ1byDH9U5sSvdrX5FwqZtBt9KojG2Y1BIXMCXXy5r9UNBJxbAHKM8YJD+vzusDdxciv/0kbfXnqsOYdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724915959; c=relaxed/simple;
-	bh=TISxj6nsuiWrdhbb47Ec6ZP2r5NbItH83bfghYORogE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MsQYILtVONbyV8/z6e6Q8tshxGjeXt6wJioSFqi9ksRD6ipELo1RPBJV7gTIxbX92Gw5VfR1tATiu2z3582IaveeMDWQvXx7XYgfnaHhAFFk2bWBycG+LM1UpooO3XXRmwk6cOELTbSVZn8SpoEfXF0GUUsoXhH5COMZNf8u6mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JxEVMcCN; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42ab880b73eso2984865e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 00:19:16 -0700 (PDT)
+	s=arc-20240116; t=1724917901; c=relaxed/simple;
+	bh=arR/sffRsobr9Borj4X8VYDf7KRXtoIkqMFf8ghs5Os=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6JmJURjmtu64YViViN7qICkUZBjySxquW5yEJ54Kc5mNgaFcyxtBlKoJ+qGzXUWWKmLMGPTJdMSW6lQjDOm/uBTV7HpLVBPl8UT/8Ls2uPHMfpHwf8xNhB1dRd53F0OMzzR0igxD6rskLlPesOXZC9iGQlR7vzR96dZBeoYlAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=nuh3tOkf; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5334879ba28so488513e87.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 00:51:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724915955; x=1725520755; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cZZ5Dfz1N7noCUMuVJV0Kdu8cyfE+FvZY+c2JPzrzUQ=;
-        b=JxEVMcCNMVnAsfgSK8HAvKnOH1CQBceoxZehw7bB7oXPtVjQoui8R/tEuMyLdbRhEY
-         BDiL39AeCL+8LLMjU9hFG0F/m2Gn1UZUQGc1flmkw1TWy1Rc676YFfZu76phiGcupGfN
-         CUxX4VKfza71DKDeRBnmclH3YWjGAwnztlBCWBVcmWdMa3atoBfSxKN6w/6kDGSNZB2B
-         6G2mxB0uk7rXQUJFVm6jEWycLi5jznTLAT8BjiCbpkyq39NE2pUNyfNZ9y9QMV4Wb6kG
-         xGCeuyq1sDQHyojVadNI2kGTUfYHmA5VO4qR7rw4w+9TRKqPxGhw++dA5EHq4KE9JJVp
-         Z30g==
+        d=szeredi.hu; s=google; t=1724917897; x=1725522697; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=E88LT5D74HyhmMarxCefY4oc65GfE3ptwLbyJI7Amzc=;
+        b=nuh3tOkfsSCfXgq3Ojf/0G4fK2WdPToFj5cFVB61CgF2AkF3cFbmOwvZNnztBQtZiY
+         j2IZCzNLvKZoHKuV+Ev4Qn3e3h/YlQ3kNmxQdBOtzVyOjvz3BGHgRxjxiqWVQ9XdbXqp
+         MQEHRqudPqtnBUGIAgnvtTEcW/qWuWTKk4NJ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724915955; x=1725520755;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cZZ5Dfz1N7noCUMuVJV0Kdu8cyfE+FvZY+c2JPzrzUQ=;
-        b=Y3P2MW1Lllbr4CeaRJ2zxpv+VeZyc9U4PppqhhHvGNVq6bqUbOzWoVg0GjJlRbbmC4
-         2Ul2cgpwfg7kkpymc0bU6GZBj5i0MPbN/ukI5uD5RMo9JX0Q6LlJydUym9ptF+yShqUb
-         2Nu1fhbkygc2RZ+1teNP4SdNIFJlT2ismP/41zsBzrS/Q89Ut2IKC9R7HD7CegOJZe2X
-         HCeqGQuRTQZ/fXABeUPZGZodPuPSvgD5Q+yN14f4NhO2fOsYkLVZpiYQcBbB+S/kI/XX
-         hFPiGAQQBwBS5PvGd84H0g4SXvaUZ9h7ek+Dly+FRPRup0ZkQigVmTXpIUKpn3NL5T9m
-         JZ2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXkMNegulmP/gi1gtQyofodVFiPg2Hcqy+asn0uQlGIPauZwq9a2GPT296i5jTJEpFseYSkoND0Yh4eQupv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmfQVnfUEYKU8xqZjJfP0jEEUINEMIHYGr8jC+XK77kE70KwPL
-	CasGhpsSNFltAok6n/Sp8tuufH/6IDBgIDtpLFY+QjxrP0knn1KE74v4mhy3tbI=
-X-Google-Smtp-Source: AGHT+IGWX48blvuHIVWdw3Bdns41uj8z9ckLX+g7N99SFM42wMeFHQFkVqKqWrh8ih/Ez3xgeQ7kyg==
-X-Received: by 2002:adf:b312:0:b0:371:82bc:7d93 with SMTP id ffacd0b85a97d-3749b526ec0mr1284850f8f.12.1724915955164;
-        Thu, 29 Aug 2024 00:19:15 -0700 (PDT)
-Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee9ba83sm665280f8f.54.2024.08.29.00.19.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 00:19:14 -0700 (PDT)
-Date: Thu, 29 Aug 2024 09:19:13 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Message-ID: <ZtAg8Slmclt8jm4a@tiehlicka>
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org>
- <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
- <Zs959Pa5H5WeY5_i@tiehlicka>
- <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+        d=1e100.net; s=20230601; t=1724917897; x=1725522697;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E88LT5D74HyhmMarxCefY4oc65GfE3ptwLbyJI7Amzc=;
+        b=kJd23gJ5MKbMf9NVELxXv0nIw4D6o/SdSUBGMCmaTeRSp/RLfYGi792OEgSM/gM6KY
+         OGIn04qdt50T4IP16sA0h3G6KKhjqcTb8fPv2fAf+bbKYyTKwRsjDOXLfjX26/QzyXBl
+         2H4Qs4l9/BncX7/Ko+7HJnGzzlpZBY1iJtDvoQ6UqKXC83Mluw4S/fJCGC8kXdEBMUuO
+         3WDUptN4uVWBEt6lCYHp0fOqWh6ABH9z2t2KfDFoGsbWGrLWaO5Wg2zaUz0GqRNYYnOU
+         eQaZzjG7DJ1cKiNwU81X6/gxphUtFVCcPMtfTpLQDpA8sv/+gmvYkiAmyhEAOvw5Z6Zd
+         +b8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVzQ+NuISZfODne97XrBuPgQA5jCimU7pOkplKFfLEsnF2tuNd5bkI/QoNStLU6ZXTalbQeCtoMWUYDUy8W@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYwUY7BKCSvkEGHcKS8NDWVsjLCWvnbOmPhMzFunHsCo1YjJDm
+	bRHCLHNlr4pq5LHXrxMD4obj+tML/vhXSY43oGutjkcAczCfRRzfpd7+eX4FHXxe8651pJfWVIP
+	yLvpVkiG6WarZZjYDD3xNR6H9VLVp5Is7QHasOs8zWW58cgtw
+X-Google-Smtp-Source: AGHT+IEWGAYWw/fSwcJOQ+/o+9pIqQrvIPE/w5ugEv+xbpFYiBYNMLRLtLp/5DzAZKrFPIlkHWk6IKYg42J6jWYWDkc=
+X-Received: by 2002:a05:6512:10c4:b0:52c:d5b3:1a6a with SMTP id
+ 2adb3069b0e04-5353e57fc94mr1225703e87.28.1724917896827; Thu, 29 Aug 2024
+ 00:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+References: <20240705100449.60891-1-jefflexu@linux.alibaba.com>
+ <ca86fc29-b0fe-4e23-94b3-76015a95b64f@fastmail.fm> <8fd07d19-b7eb-4ae6-becc-08e6e1502fc8@linux.alibaba.com>
+In-Reply-To: <8fd07d19-b7eb-4ae6-becc-08e6e1502fc8@linux.alibaba.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 29 Aug 2024 09:51:25 +0200
+Message-ID: <CAJfpegsgCJEv=XxuHgo+Qn-3y8Rc_Bsmt2YKTHn4XaBqvgshew@mail.gmail.com>
+Subject: Re: [PATCH] fuse: make foffset alignment opt-in for optimum backend performance
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 28-08-24 18:58:43, Kent Overstreet wrote:
-> On Wed, Aug 28, 2024 at 09:26:44PM GMT, Michal Hocko wrote:
-> > On Wed 28-08-24 15:11:19, Kent Overstreet wrote:
-> > > On Wed, Aug 28, 2024 at 07:48:43PM GMT, Matthew Wilcox wrote:
-> > > > On Wed, Aug 28, 2024 at 10:06:36AM -0400, Kent Overstreet wrote:
-> > > > > vmalloc doesn't correctly respect gfp flags - gfp flags aren't used for
-> > > > > pte allocation, so doing vmalloc/kvmalloc allocations with reclaim
-> > > > > unsafe locks is a potential deadlock.
-> > > > 
-> > > > Kent, the approach you've taken with this was NACKed.  You merged it
-> > > > anyway (!).  Now you're spreading this crap further, presumably in an effort
-> > > > to make it harder to remove.
-> > > 
-> > > Excuse me? This is fixing a real issue which has been known for years.
-> > 
-> > If you mean a lack of GFP_NOWAIT support in vmalloc then this is not a
-> > bug but a lack of feature. vmalloc has never promissed to support this
-> > allocation mode and a scoped gfp flag will not magically make it work
-> > because there is a sleeping lock involved in an allocation path in some
-> > cases.
-> > 
-> > If you really need this feature to be added then you should clearly
-> > describe your usecase and listen to people who are familiar with the
-> > vmalloc internals rather than heavily pushing your direction which
-> > doesn't work anyway.
-> 
-> Michal, I'm plenty familiar with the vmalloc internals. Given that you
-> didn't even seem to be aware of how it doesn't respect gfp flags, you
-> seem to be the person who hasn't been up to speed in this discussion.
+On Fri, 5 Jul 2024 at 14:00, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+> I'm okay with resuing max_pages as the alignment constraint.  They are
+> the same in our internal scenarios.  But I'm not sure if it is the case
+> in other scenarios.
 
-GFP_NOWAIT is explicitly documented as unsupported
-(__vmalloc_node_range_noprof). vmalloc internals are using
-vmap_purge_lock and blocking notifiers (vmap_notify_list) in rare cases
-so PF_MEMALLOC_NORECLAIM is not really sufficient to provide NOWAIT
-semantic (this is really not just about page tables allocations). There
-might be other places that require blocking - I do not claim to be an
-expert on the vmalloc allocator.
+max_pages < alignment makes little sense.
 
-Just my 2 cents do whatever you want with this information. 
+max_pages = n * alignment could make sense, i.e. allow writes that are
+whole multiples of the alignment.
 
-It seems that this discussion is not going to be really productive so I
-will leave you here.
+I'm not against adding a separate alignment, but it could be just
+uint8_t to take up less space in init_out.   We could have done that
+with max_stack_depth too.   Oh well...
 
-If you reconsider and realize that a productive discussion realy
-requires also listening and respect then get back and we can try again.
-
-Good luck!
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Miklos
 
