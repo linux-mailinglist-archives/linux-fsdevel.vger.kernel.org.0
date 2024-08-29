@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-27812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3CF596443B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:18:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2EF2964448
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F004DB26991
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:18:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7E42820D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3215F196C67;
-	Thu, 29 Aug 2024 12:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D34195F17;
+	Thu, 29 Aug 2024 12:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Q89Cjwd9"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Fp+90MHl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F5619408D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FB422097
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724933898; cv=none; b=ofTVAx8/p77NyUXW8XGqfSUQDKD9NuJgKhyPI/XAYX7Uk3mImLO35r6m9ARV7O8JaUGtaKO+aJOE/NWdTZbGGNXTA2eypDbnPND8oIwb5ksOh3E1KT+OtlTvHwTW1EckJeCr38nyLMQt6sJaRrt+Tp2jFzKT0T7EvftEQnnBXJI=
+	t=1724934124; cv=none; b=aRxNYXAGzlBplk++19UMFNuhCainatbw5k7jmQoZz6OCY3c7n7C0oOjtHCTUYzn7OOijSfUrepuFnqFl9l/1aNoj/8Ye1adVJOLIoi4Ru8/T5k2D6mhhj6KzJ6Am25ThdKqWfOQbFiNmRVoga5PK6pT2/zwey0dTvDFHgusDYvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724933898; c=relaxed/simple;
-	bh=nPbtzIWPtGgZ8ddKgweGtAo97LnSRzhBtcpnzjo9y6I=;
+	s=arc-20240116; t=1724934124; c=relaxed/simple;
+	bh=h7IDSYAQydykreAp3+pvcbQEF5019MRHNEBnjuv11fM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lbK7qwoux6FuT60OSrSBUc2tI/4FBSSy9ek6d/PQiY3aUX+h1MgRKL4BpACH8oWQUogTy8kbdvXeXxtlYpb4IjaN2vTkAjlDcXKS6wl1m46rzt91bqW72qZQ4GcRbqOiy8Yhoj+uAu6VVS8qLV6wYfY7/I6cw4RrdWKGtyhdjA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Q89Cjwd9; arc=none smtp.client-ip=185.125.188.122
+	 To:Cc:Content-Type; b=RN1vHrhCW4ILt7FbuNjQ+KVn2/QKZSIenTzl+ve2zxZ0GTkk1qcvQThshPKOj9KbNd+IZjFQ5hLFPmGaAiEAH9+tMqbkUrMidsDTh9CyNF/n4+NuQ7kLeEYR/bZQ5rjWKiWDDr5u0UVIhESAmHEB55FvWuPjAKDLYIuPlSCGB6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Fp+90MHl; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 24EB83F2B5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:18:08 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 31F8B3F287
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:22:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724933888;
-	bh=agyuHbgeN5G+Glllc9xwF5iz8tsF/j2Kakno2rsBnCU=;
+	s=20210705; t=1724934121;
+	bh=7qlMKnlG19yoapUMIHs1PTakDfSSoLT1Ahia2jJ2HUU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
 	 To:Cc:Content-Type;
-	b=Q89Cjwd9UEkV2vBPQIVfAPD2T/0vHSPCJMuj8bd1H7/Yh7KaQu9XssPRKrHTNI6JM
-	 qzYw5A9IiSkUJzxKEAMUPCEA3veAvNPdXAAsAtBQX+R2nv7/0DF8Iy6tA5I3UC2f5x
-	 2dsqq9ht5C2YQ36A2UFcF9UkjDsOj1nXZRqT4XulH8Ye1UhtBxn4l31mUAMy/nwTni
-	 MnOOvSmlLwQy9kHkwWr0M58sAbhwOvPkH5m+/Kj8ZTaiwWWjMt+dt8M3hdr07aRgp1
-	 sALjFP2cwZHMJY2iVVZIZuiiI8ZtsUzEm5xBWSZkt239ha2S0HAh45sVS7j6dW+J8l
-	 pBZ7U64i2w5tw==
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3df0df238b2so90309b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 05:18:08 -0700 (PDT)
+	b=Fp+90MHljlyrjse5qZxaaQvfTmmN7WprbDXYyUtLbaY7TTFTq8sE0WzHq04M7TvKH
+	 PdkfWnN7TQSfB3kDzMYNF2i/l2dNYCW++JSR7/x7n/wW0JJX28Tq104S+s/Bx8NGld
+	 TUSqOh7xaw8GhHUBQk9vXcR90SngOdU/514FIT2NMbw1MfHNredkNFt7NS9K0nZoTe
+	 WUwXGiucyjAktyilo67whhVJEKKxJgtxKlC95PzVvBSvGwNx4rJ7Ky63Oc5f+f8ryJ
+	 wAoLI+bvVV9hE0Zbmdf1kePAGc/9SS+JuB066lCkAmmtO2CV6P8Jtcn/WFaCSkf9dE
+	 SSRFdFGjDPAOg==
+Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-498e2521c72so317267137.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 05:22:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724933887; x=1725538687;
+        d=1e100.net; s=20230601; t=1724934120; x=1725538920;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=agyuHbgeN5G+Glllc9xwF5iz8tsF/j2Kakno2rsBnCU=;
-        b=d9JBfcaBQhK54FqYQQyXqaTtuoVEgdEf7ey7r5A2GcWp5hwrgLX+V1RpMdXdaZEImj
-         3RNNex8pERKHdA5CDlhduvoq0cYnApumYcMnvnCgQPWQIPA5SQPw31bmoMuhRFjbIIRu
-         n0Ar32fbnP4c4nVDO14SucUYFeyYG/sVV0+gTEEcwIza4etx4KBz6GvkMf3rfavWNPCq
-         FRm6A9Sx0iVU4staKkUexRD2rP5OK7Io4WKB5SHDFqegu99fO5vnuyYnfAdrgnHUbL68
-         ZKi1bctewSJ+w6an634DNvqHeqkKyaxd1uGVYSZOoiUP9QWwPXlLsbCaDj5hBwBhhgIA
-         GO0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUYuIcwi4WuZYUPjiydO5ZNwUM0blihxs5uGXXoHGZMpgcLjOOGcjx4ezf6BfEvulIekb6AORtoOhxGg7OU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy76Q+zDMUFhvwCxRxuPld1SaA4jwgqY2ePiO+GT5mEV8JtvcTD
-	DxggJEGgbxl7o8hkHab9DRhWOd86w1kyqp6X+dhlW1ygRZJXv6hVswBdev6yWDkxQDfjrD8s0BH
-	0jydYEWY6WAaqxLvSDiZGNYq16FjnSsTvcHOr+f5KmQ3S0NGQ+cbnQXJx2YdtjfYZla398uKJsD
-	ijOHlCnxUx8GSj/c8AMvPNfXvw1lwNkK8Mt2YsHI9eGb1NoWGfWSeX1T+c0Eq6azFr
-X-Received: by 2002:a05:6808:3a0d:b0:3df:dad:10e1 with SMTP id 5614622812f47-3df0dad14b9mr387493b6e.13.1724933886882;
-        Thu, 29 Aug 2024 05:18:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGhWDrBHdruJc4RhJ06FsFQi5d5GDa/1GlsVFtFype7PVLTCKgslSYz+vhfd3O4egbh57iMWClm03kaSZZmS8=
-X-Received: by 2002:a05:6808:3a0d:b0:3df:dad:10e1 with SMTP id
- 5614622812f47-3df0dad14b9mr387457b6e.13.1724933886565; Thu, 29 Aug 2024
- 05:18:06 -0700 (PDT)
+        bh=7qlMKnlG19yoapUMIHs1PTakDfSSoLT1Ahia2jJ2HUU=;
+        b=l6yJ7ayj6Rm2bZGGwpZrTeLMD97JMgdoOogz+mRhKH4VVxpQZ9kFKUkdRkUzNSM9bG
+         A7fsGu0Wk17V9lhBOyvmEo4GFGxnVp7oD2F+CLub2pSNjQoCOIHIYy6IqO1Mzist0kEW
+         Sc8Q503DkVESCRnb3ffrQDdWgxhFW30DzCI+aP0/kSgf85oRNIUlsjecsMNehvOb4Y1j
+         jbuJswRumm/KkPaJBIboM0UpslC5v1+Jm4COoIoDoZioTmuljaxzAjEEA3NrVWEGl0A4
+         N7H9UsG7Qq8BlA3HgaMiFHpkPKsBBsSOvpUpuR/fVF8ltAY63htamiw6E+FNl7M3LHuE
+         7dIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/o5jf7SkfDTSgZGf7vj/D9jVinX0427KhLjViMzQgsYMDGw5k6IZytEC2bSwOxErRKO4AzI8YyiyAw1i8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwafvCld4tUuKi0FvgiDZ+z5xuzt1bs/rj5/i2oNAWIn2lYB/Ef
+	CjIgR2zwOoxWwTLGEY6mAMyMj0SqYcnqUAhju+F8cn6NoLAL5i06WDeKrX41R1i8hbQOjxTkcjA
+	+MLvUb0gWaWMj+4K2jECuc5N9GXQezSs1ZoDtGScUZlXCw/y7gYMEGzZFxssKS8U+716ATlnd1a
+	sBieSsm6kb9KIABrNqFqc3AmgP6iFdrgjriRNfj0Vj/NfRO/woBZnNEg==
+X-Received: by 2002:a05:6102:942:b0:494:5b9d:529e with SMTP id ada2fe7eead31-49a5af76165mr3157205137.26.1724934120068;
+        Thu, 29 Aug 2024 05:22:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6PMGmdgrxq/HwjXlsfmlr6/NtQqSnyVyF+AnqA/n4ibuUaSLZ6cLPzJWT+cYm7FXkrCaRFiSeKqKlaRrHODQ=
+X-Received: by 2002:a05:6102:942:b0:494:5b9d:529e with SMTP id
+ ada2fe7eead31-49a5af76165mr3157182137.26.1724934119701; Thu, 29 Aug 2024
+ 05:21:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,11 +83,12 @@ References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
  <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
  <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
  <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
- <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com> <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
-In-Reply-To: <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
+ <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
+ <20240829-hurtig-vakuum-5011fdeca0ed@brauner> <CAEivzxf1TLUeR_j8h5LfkmLOAKzrenK55bw9Qj4OV0=7Dkx9=w@mail.gmail.com>
+In-Reply-To: <CAEivzxf1TLUeR_j8h5LfkmLOAKzrenK55bw9Qj4OV0=7Dkx9=w@mail.gmail.com>
 From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Thu, 29 Aug 2024 14:17:55 +0200
-Message-ID: <CAEivzxf1TLUeR_j8h5LfkmLOAKzrenK55bw9Qj4OV0=7Dkx9=w@mail.gmail.com>
+Date: Thu, 29 Aug 2024 14:21:48 +0200
+Message-ID: <CAEivzxeSmWPiAHbPoXZWhfavKOoX4vp8VPrPs8uNh-P_ux0-0w@mail.gmail.com>
 Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
 To: Christian Brauner <brauner@kernel.org>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, mszeredi@redhat.com, stgraber@stgraber.org, 
@@ -96,75 +97,87 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>, mszeredi@redhat.com, stgraber@stgraber.o
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 2:08=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+On Thu, Aug 29, 2024 at 2:17=E2=80=AFPM Aleksandr Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
 >
-> On Thu, Aug 29, 2024 at 10:24:42AM GMT, Miklos Szeredi wrote:
-> > On Thu, 18 Jul 2024 at 21:12, Aleksandr Mikhalitsyn
-> > <aleksandr.mikhalitsyn@canonical.com> wrote:
+> On Thu, Aug 29, 2024 at 2:08=E2=80=AFPM Christian Brauner <brauner@kernel=
+.org> wrote:
 > >
-> > > This was a first Christian's idea when he originally proposed a
-> > > patchset for cephfs [2]. The problem with this
-> > > approach is that we don't have an idmapping provided in all
-> > > inode_operations, we only have it where it is supposed to be.
-> > > To workaround that, Christian suggested applying a mapping only when
-> > > we have mnt_idmap, but if not just leave uid/gid as it is.
-> > > This, of course, leads to inconsistencies between different
-> > > inode_operations, for example ->lookup (idmapping is not applied) and
-> > > ->symlink (idmapping is applied).
-> > > This inconsistency, really, is not a big deal usually, but... what if
-> > > a server does UID/GID-based permission checks? Then it is a problem,
-> > > obviously.
+> > On Thu, Aug 29, 2024 at 10:24:42AM GMT, Miklos Szeredi wrote:
+> > > On Thu, 18 Jul 2024 at 21:12, Aleksandr Mikhalitsyn
+> > > <aleksandr.mikhalitsyn@canonical.com> wrote:
+> > >
+> > > > This was a first Christian's idea when he originally proposed a
+> > > > patchset for cephfs [2]. The problem with this
+> > > > approach is that we don't have an idmapping provided in all
+> > > > inode_operations, we only have it where it is supposed to be.
+> > > > To workaround that, Christian suggested applying a mapping only whe=
+n
+> > > > we have mnt_idmap, but if not just leave uid/gid as it is.
+> > > > This, of course, leads to inconsistencies between different
+> > > > inode_operations, for example ->lookup (idmapping is not applied) a=
+nd
+> > > > ->symlink (idmapping is applied).
+> > > > This inconsistency, really, is not a big deal usually, but... what =
+if
+> > > > a server does UID/GID-based permission checks? Then it is a problem=
+,
+> > > > obviously.
+> > >
+> > > Is it even sensible to do UID/GID-based permission checks in the
+> > > server if idmapping is enabled?
+>
+> Dear friends,
+>
 > >
-> > Is it even sensible to do UID/GID-based permission checks in the
-> > server if idmapping is enabled?
-
-Dear friends,
-
+> > It really makes no sense.
 >
-> It really makes no sense.
-
-+
-
+> +
 >
 > >
-> > If not, then we should just somehow disable that configuration (i.e.
-> > by the server having to opt into idmapping), and then we can just use
-> > the in_h.[ugi]d for creates, no?
+> > >
+> > > If not, then we should just somehow disable that configuration (i.e.
+> > > by the server having to opt into idmapping), and then we can just use
+> > > the in_h.[ugi]d for creates, no?
+> >
+> > Fwiw, that's what the patchset is doing. It's only supported if the
+> > server sets "default_permissions".
 >
-> Fwiw, that's what the patchset is doing. It's only supported if the
-> server sets "default_permissions".
+> Yeah. Thanks, Christian!
+>
+> That's what we have:
+>
+> +++ b/fs/fuse/inode.c
+> @@ -1345,6 +1345,12 @@ static void process_init_reply(struct
+> fuse_mount *fm, struct fuse_args *args,
+>                  fm->sb->s_export_op =3D &fuse_export_fid_operations;
+>              if (flags & FUSE_OWNER_UID_GID_EXT)
+>                  fc->owner_uid_gid_ext =3D 1;
+> +            if (flags & FUSE_ALLOW_IDMAP) {
+> +                if (fc->owner_uid_gid_ext && fc->default_permissions)
+> +                    fm->sb->s_iflags &=3D ~SB_I_NOIDMAP;
+> +                else
+> +                    ok =3D false;
+> +            }
+>          } else {
+>              ra_pages =3D fc->max_read / PAGE_SIZE;
+>
+> So idmapped mounts can be enabled ONLY if "default_permissions" mode
+> is set. At the same time,
+> some fuse servers (glusterfs), even when "default_permissions" is set,
+> still have some UID/GID-based checks.
+> So, they effectively duplicate permission checking logic in the
+> userspace. We can not do anything with that, but only
+> fix fuse servers to stop doing so. See also my PoC for glusterfs-fuse
+> idmapped mounts support:
+> https://github.com/mihalicyn/glusterfs/commit/ab3ec2c7cbe22618cba9cc94a52=
+a492b1904d0b2
 
-Yeah. Thanks, Christian!
+and yes, latest patchset (v3) is here:
+https://lore.kernel.org/all/20240815092429.103356-1-aleksandr.mikhalitsyn@c=
+anonical.com/#t
 
-That's what we have:
-
-+++ b/fs/fuse/inode.c
-@@ -1345,6 +1345,12 @@ static void process_init_reply(struct
-fuse_mount *fm, struct fuse_args *args,
-                 fm->sb->s_export_op =3D &fuse_export_fid_operations;
-             if (flags & FUSE_OWNER_UID_GID_EXT)
-                 fc->owner_uid_gid_ext =3D 1;
-+            if (flags & FUSE_ALLOW_IDMAP) {
-+                if (fc->owner_uid_gid_ext && fc->default_permissions)
-+                    fm->sb->s_iflags &=3D ~SB_I_NOIDMAP;
-+                else
-+                    ok =3D false;
-+            }
-         } else {
-             ra_pages =3D fc->max_read / PAGE_SIZE;
-
-So idmapped mounts can be enabled ONLY if "default_permissions" mode
-is set. At the same time,
-some fuse servers (glusterfs), even when "default_permissions" is set,
-still have some UID/GID-based checks.
-So, they effectively duplicate permission checking logic in the
-userspace. We can not do anything with that, but only
-fix fuse servers to stop doing so. See also my PoC for glusterfs-fuse
-idmapped mounts support:
-https://github.com/mihalicyn/glusterfs/commit/ab3ec2c7cbe22618cba9cc94a52a4=
-92b1904d0b2
-
-Kind regards,
-Alex
+>
+> Kind regards,
+> Alex
 
