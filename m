@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-27757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070EA963914
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 05:54:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B4D963920
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 05:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7FD1C24973
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 03:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2631F2634E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 03:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E40C12D766;
-	Thu, 29 Aug 2024 03:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AA712D766;
+	Thu, 29 Aug 2024 03:56:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0A547A62;
-	Thu, 29 Aug 2024 03:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F8D8BE0;
+	Thu, 29 Aug 2024 03:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724903652; cv=none; b=fdQjd+B6e+9nBviqzXnUzgHHWvhMe5/xd9+mbZX1tgoqyqmsIQ7Sd/M1B1OqjbLucny7nn0nacmDx5egpfZy3N0HhJWKIeooJKAJL/kCkhVRKijamREj/nPKrJENBaOltmQXXfWuGsxePUJIMBzlV/yk/cqG4lXLqJZ16ZUWIWE=
+	t=1724903793; cv=none; b=DZMQ/mVs0UX+iUTSfu7PpzYAh0UCeINwZqW1ZhfxeBJ6vNj6sPgWXLvG/XB2jkEvrMmgcq7TI0C1WkA6xQOToH1TQVCYKpS135p7/sn9DhNGXeLOkP46cFJqp0rEvaxNkkZ3s5nq/Prf/r9yN0HyyTPM4Jub7+HbocTIS8Z4TT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724903652; c=relaxed/simple;
-	bh=qu4NduUQBplLke25mz1v3+IjcMSiAuCcWapGX5opDxI=;
+	s=arc-20240116; t=1724903793; c=relaxed/simple;
+	bh=dZ25Vu5Hqd04Jii1Sws+QHe2wmoP+MbYjGN7CrTqR5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUE28Wa6+Yf52ckPmC6t5lJSRDPXaXB40IaBXJ9SjBnjf2ozvZ3iHne3sEA08rRJcXDES05RksX2xKEse5kaEhb+kBxDpCiTOTOnrvCCZ3GMqhtt25jvuXLWqlr3JwqhVMWa+hYUpVByKWCRWbc0c8OXlG43E0CybS7wPk0m35Y=
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4ClHuTnLCRlz2YjFDTxIICKJxeqlCQ7ODAwhe3sVQe4K3z8cmIXU8bjc9bMRGMoNR4yFtBedbYWM8qhpKOCWeE2bRjKYx3zJ7mzhayd0vUlRGtR4VxlONRnrdyvBbD/L5n2rgvCWghYVpFVYKs8TCZuZSx5UQ8sx6SXteURqTE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 0987968AA6; Thu, 29 Aug 2024 05:54:07 +0200 (CEST)
-Date: Thu, 29 Aug 2024 05:54:06 +0200
+	id 97EBA68AA6; Thu, 29 Aug 2024 05:56:27 +0200 (CEST)
+Date: Thu, 29 Aug 2024 05:56:27 +0200
 From: Christoph Hellwig <hch@lst.de>
 To: Dave Chinner <david@fromorbit.com>
 Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
@@ -42,10 +42,9 @@ Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
 	Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
 	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 4/6] xfs: call xfs_flush_unmap_range from
- xfs_free_file_space
-Message-ID: <20240829035406.GB4023@lst.de>
-References: <20240827065123.1762168-1-hch@lst.de> <20240827065123.1762168-5-hch@lst.de> <Zs/lA5FJoF0Zd9Ip@dread.disaster.area>
+Subject: Re: [PATCH 6/6] xfs: refactor xfs_file_fallocate
+Message-ID: <20240829035627.GC4023@lst.de>
+References: <20240827065123.1762168-1-hch@lst.de> <20240827065123.1762168-7-hch@lst.de> <Zs/mz4Gve+znep2M@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,33 +53,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zs/lA5FJoF0Zd9Ip@dread.disaster.area>
+In-Reply-To: <Zs/mz4Gve+znep2M@dread.disaster.area>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Aug 29, 2024 at 01:03:31PM +1000, Dave Chinner wrote:
-> > @@ -848,6 +848,14 @@ xfs_free_file_space(
-> >  	if (len <= 0)	/* if nothing being freed */
-> >  		return 0;
-> >  
-> > +	/*
-> > +	 * Now AIO and DIO has drained we flush and (if necessary) invalidate
-> > +	 * the cached range over the first operation we are about to run.
-> > +	 */
-> > +	error = xfs_flush_unmap_range(ip, offset, len);
-> > +	if (error)
-> > +		return error;
+On Thu, Aug 29, 2024 at 01:11:11PM +1000, Dave Chinner wrote:
+> > +xfs_falloc_allocate_range(
+> > +	struct file		*file,
+> > +	int			mode,
+> > +	loff_t			offset,
+> > +	loff_t			len)
+> > +{
+> > +	struct inode		*inode = file_inode(file);
+> > +	loff_t			new_size = 0;
+> > +	int			error;
 > > +
-> >  	startoffset_fsb = XFS_B_TO_FSB(mp, offset);
-> >  	endoffset_fsb = XFS_B_TO_FSBT(mp, offset + len);
+> > +	/*
+> > +	 * If always_cow mode we can't use preallocations and thus should not
+> > +	 * create them.
+> > +	 */
+> > +	if (xfs_is_always_cow_inode(XFS_I(inode)))
+> > +		return -EOPNOTSUPP;
 > 
-> Ok, so if we ever change the zeroing implementation to not punch a
-> hole first, we're going to have to make sure we add this to whatever
-> new zeroing implementation we have.
+> ... our preallocation operation always returns -EOPNOTSUPP for
+> COW mode.
 > 
-> Can you leave a comment in the FALLOC_FL_ZERO_RANGE implementation
-> code that notes it currently relies on the xfs_flush_unmap_range()
-> in xfs_free_file_space() for correct operation?
+> Should the zeroing code also have this COW mode check in it after
+> the hole punch has run so we don't do unnecessary prealloc there?
 
-Sure.
+The low-level block allocation helper just returns early without
+doing work (move a bit, but not changed in behavior earlier in the
+series).  So it won't actually do the prealloc.
 
+> 
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+---end quoted text---
 
