@@ -1,198 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-27775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0885963DFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:06:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D6A963E02
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72BE71F21A3D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 08:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB04A28513A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 08:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09121189F54;
-	Thu, 29 Aug 2024 08:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F390218A6D2;
+	Thu, 29 Aug 2024 08:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2JFWQB/"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="B2ztr2RN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAB4189F31
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 08:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8BE15FA93
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 08:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724918774; cv=none; b=EGN283Hu7wZLe2WPATOXQT2q7veKjww2jNoR6i/01rWvbq1n+GJcJ1KqNv6g632IXUe3t0RVSSXdaZj1sEdJumrKF349u0nC4Agg1FgGuqeE1JuZEru12L3DsX5kKuPtLaRyCtg3nDXWF7xjIUBFldUZQbfA1xi4cn2jP9/Vjb0=
+	t=1724918845; cv=none; b=MziuDzP97/Qpegq1sFYNddaPM4yaQefixdn2ViBiucITt9Tqc/HQRBmKbQV1DVVtCETXRIPZQ1j6iFqoqmDIb9Z4j4iwgplXzBQWUAiZAEPEcUT0Ql9GegA+kgx58glluVON9jvnI2CFYGyvzihNHxxUNIA9P/KYgHPpLyWbPNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724918774; c=relaxed/simple;
-	bh=WADVHpmrppU9JtnOjIwY5J7I644fptX9Ii69q7ozQjY=;
+	s=arc-20240116; t=1724918845; c=relaxed/simple;
+	bh=auFqkUNyv2Fd/0ioi9ZUc3h7ws94RlEFh6JNyRARyKY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F1y5c0tEoiFjWF3z2KfQXExU1vYSa5iUQ58XOg18VomnaAuW7DIciKv7cj7POzboyxx/1Gm8mkIRAS/sgJsX3qCoM+XgkvrQV8Cyz50LGJceQm1AGvsEIH8qCKeIShKBSoPb46VjWr/5Izhjjjt4TijiP17kq5oEf9LcHT9XA0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2JFWQB/; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a806b967afso34421585a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 01:06:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=TE1eesM8s42ifGMQoFh9rCws0kJuyxIx3STJ6AWz5t394F/AlnwDONKawRddk455islHDhNSeSZFyua/1bOXrLGmyQtD4NrUBHSJctM1jqv4t/i+sozqh8NgOK0+Z5TGmCcsydJZYKmN1sQ+BRPHQZthTSVvltwvciklgpjM99M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=B2ztr2RN; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53345604960so362299e87.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 01:07:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724918771; x=1725523571; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OYgvuKqZcmRq3AS2Q5lvhT3PiVjGn2/fDZSyjmpEqyA=;
-        b=I2JFWQB/uSOM3IWwt4eyuupR0fa6qI53oLBOJzD0/AgL0K95EneiJdnBWT8RGVvZXr
-         VgsadWtelA0Oq9QF0ZDj2MDZnReg3WQU3i6cGmjPrQ/PpP5Xsodbk7za5t2p5fWYZakQ
-         RAoKAxac2IOz0gVZAUchsTqFislhOfJnypP+Je2mApsFv0MaEOOaUHG9QF2F11f12XM1
-         3TjdzvsYy8qKRA5a1gDfeFTt3YlyKoH/IHlCPtt6MXzxd66gHpIwhFlLAK2kp5zQZ5UE
-         JrdinzrQ8fMSk8wKcA1bMVC7QtInSwoPXBT3wnAai8f05KsrcS1ZpkfEFl6+iKICCQ/6
-         SnhQ==
+        d=szeredi.hu; s=google; t=1724918842; x=1725523642; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rWHF4NxXib0BaVbETNyvLLP+DsSB41nEJXFZk7mMGog=;
+        b=B2ztr2RNb1FOIIFk5ylbH/TWX/1Dz7k0DJGuomatkMfKZmeVQimHbB/+7mtji6pdFN
+         smmiFiDsyozV9HyfoTfklN/Cr2sfFtQy+vTi9OfAPm2gHBJm04rVh714oCbrnZHPh4+D
+         cZTxXMyVrQbqtWrz+ueHBogQzo+pL+QLp+9RI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724918771; x=1725523571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OYgvuKqZcmRq3AS2Q5lvhT3PiVjGn2/fDZSyjmpEqyA=;
-        b=H0Ij7T3c5G/bSB4tiO+zbDXj+XGzowvgdMimHLLTk4L/3pIlzLxC4ozegD+YjikvzA
-         63DXZCWPgBbyHVBcXo26Z9QTX47JvPH2ccR1p2i8f3VA+9KU5u+MZdS+MPYk1k1+XHSq
-         tVdvcLB6tdZffFcbqVxlBaEmJubXpleo8NkNIioN2EkOzMaf0Wuczr1bPO4QntXi5v9B
-         Xhleuv/v7Ia19WHcB+0Ku4xo8bOUfZBFEp3BtJWLFJk5KXlWqXMDN5A5bJIm+I5OO3Rp
-         oJ9TraPeQ1P20lefHBer3g49bFeIK+cfqxUA2i66zluJ0ltvzhazWvMkYeQLgp2SE5ZE
-         kopg==
-X-Forwarded-Encrypted: i=1; AJvYcCWA/kS283NMPV/e+0AhbGhlrwL97YTjWFk2TEPlPlf4wFF2KTLoBJkW74IBfwDmhc1hjuyWT4bqRdZDcNRo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2T6Rt69AxcjDPcR/DtRNr05ApdYZ/DVcUBJShfeit/wO4mPJX
-	oYBGlSCGxxfzkGFUCR33rYzQRCCN6pxSyB0ew3/vnldf6OC8soif6ZZ6BHNTH4wjQ1nK//oa1eh
-	68ORCCoxFJ8wRO1FhE6/hmPu64fg=
-X-Google-Smtp-Source: AGHT+IHwQM3l4fVs0TLwgaw6UHwDGfa/YXuKNhg+OUIL0VUZl1cZkhKDOS6yggUL3zwoxQnVYEECNFei/Mcz3cb5XKw=
-X-Received: by 2002:a05:6214:f69:b0:6b5:2062:dd5c with SMTP id
- 6a1803df08f44-6c33f33be5fmr35504506d6.8.1724918771539; Thu, 29 Aug 2024
- 01:06:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724918842; x=1725523642;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rWHF4NxXib0BaVbETNyvLLP+DsSB41nEJXFZk7mMGog=;
+        b=hcGCw8gIBuuFGQk3fRdPpir0lm8xS2O3Af1tTNMeaCs9Xm+qa9IZO/AwXR3M+AcnLf
+         /yN0MAlY8a4rH5uH4pe6Q38wieuxe7ydShy/HtD5xMTZ5IQGs1w68IwOcsOvq4qRB0tO
+         MqklSwLEswk+NCOCkpWdariDktNQyLUtEWD0q+gdubkJWx9CuMocHRUv+TOQkHaHaUXK
+         Z4Spt1MT7TGGgVUxRlyX8eaZPn9ShxNFsMHPQMHyGbuW8tHUnVyYwN0atAZ7YQU104HN
+         zyJpfxsoL7aIHty3bSaTYuIzTe0MHrdS9Ep2M79gavm5ghKMz4/rSm8VQWMU+0xBRwIJ
+         rxwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWy7DCa82MA2q2w1MuAhfKyhuZRWp7+Jt+kkGH9Gbn4m9C+f3CoFqWL7VTVVN/1u1+rSdhhUmi2i9KYCUzN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqD5BkgddVpnPaovvb0b35uls73w+rbr08Q2LaTiBJA0a7szTi
+	LyxozThPKlry1+W+biMJpYA563VjcwebjbYFts3+gUl7vlR7NBn6ichqayD79fAApgoU5DlRYb6
+	tl0NIGkSkWGAw8/7cDWDCiMCoOgmZxiLU0m2cZg==
+X-Google-Smtp-Source: AGHT+IGNbDJ14S2lYWoqQ5dAM0S0xuzu3UKx1UZtVenRD205hOgag/lAWnB20MTVkCtylH29xVj9OadK/FnKaKfGoUk=
+X-Received: by 2002:a05:6512:6c7:b0:533:4676:c21c with SMTP id
+ 2adb3069b0e04-5353e5ae666mr1221299e87.44.1724918841596; Thu, 29 Aug 2024
+ 01:07:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826203234.4079338-3-joannelkoong@gmail.com>
- <202408280419.yuu33o7t-lkp@intel.com> <CAJnrk1Y3piNWm3482N1QcasAmmUMYk1KkoO9TyupaJDBM8jW9A@mail.gmail.com>
- <CALOAHbC9a-U+Gk53bxo1=X4nMQng8TSUWo7B=TZVN-f=Y4JeUg@mail.gmail.com> <c6b851b4-57ba-4ad3-9a52-c5509ffb08b3@linux.alibaba.com>
-In-Reply-To: <c6b851b4-57ba-4ad3-9a52-c5509ffb08b3@linux.alibaba.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 29 Aug 2024 16:05:35 +0800
-Message-ID: <CALOAHbCOgxWXojuyzyGVLdrG_=XW2HBhr9Oj=KxfpgJNvAusRA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] fuse: add default_request_timeout and
- max_request_timeout sysctls
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, kernel test robot <lkp@intel.com>, miklos@szeredi.hu, 
-	linux-fsdevel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
-	josef@toxicpanda.com, bernd.schubert@fastmail.fm, kernel-team@meta.com, 
-	Bernd Schubert <bschubert@ddn.com>
+References: <20240709111918.31233-1-hreitz@redhat.com>
+In-Reply-To: <20240709111918.31233-1-hreitz@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 29 Aug 2024 10:07:10 +0200
+Message-ID: <CAJfpegv6T_5fFCEMcHWgLQy5xT8Dp-O5KVOXiKsh2Gd-AJHwcg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
+To: Hanna Czenczek <hreitz@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
+	Miklos Szeredi <mszeredi@redhat.com>, German Maglione <gmaglione@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 2:38=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
+On Tue, 9 Jul 2024 at 13:19, Hanna Czenczek <hreitz@redhat.com> wrote:
 >
-> Hi, Yafang,
+> Hi,
 >
-> On 8/29/24 11:58 AM, Yafang Shao wrote:
-> > On Wed, Aug 28, 2024 at 11:51=E2=80=AFPM Joanne Koong <joannelkoong@gma=
-il.com> wrote:
-> >>
-> >> On Tue, Aug 27, 2024 at 2:52=E2=80=AFPM kernel test robot <lkp@intel.c=
-om> wrote:
-> >>>
-> >>> Hi Joanne,
-> >>>
-> >>> kernel test robot noticed the following build errors:
-> >>>
-> >>> [auto build test ERROR on mszeredi-fuse/for-next]
-> >>> [also build test ERROR on linus/master v6.11-rc5 next-20240827]
-> >>> [If your patch is applied to the wrong git tree, kindly drop us a not=
-e.
-> >>> And when submitting patch, we suggest to use '--base' as documented i=
-n
-> >>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >>>
-> >>> url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/f=
-use-add-optional-kernel-enforced-timeout-for-requests/20240827-043354
-> >>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse=
-.git for-next
-> >>> patch link:    https://lore.kernel.org/r/20240826203234.4079338-3-joa=
-nnelkoong%40gmail.com
-> >>> patch subject: [PATCH v5 2/2] fuse: add default_request_timeout and m=
-ax_request_timeout sysctls
-> >>> config: arc-randconfig-002-20240827 (https://download.01.org/0day-ci/=
-archive/20240828/202408280419.yuu33o7t-lkp@intel.com/config)
-> >>> compiler: arceb-elf-gcc (GCC) 13.2.0
-> >>> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/a=
-rchive/20240828/202408280419.yuu33o7t-lkp@intel.com/reproduce)
-> >>>
-> >>> If you fix the issue in a separate patch/commit (i.e. not just a new =
-version of
-> >>> the same patch/commit), kindly add following tags
-> >>> | Reported-by: kernel test robot <lkp@intel.com>
-> >>> | Closes: https://lore.kernel.org/oe-kbuild-all/202408280419.yuu33o7t=
--lkp@intel.com/
-> >>>
-> >>> All errors (new ones prefixed by >>):
-> >>>
-> >>>>> fs/fuse/sysctl.c:30:5: error: redefinition of 'fuse_sysctl_register=
-'
-> >>>       30 | int fuse_sysctl_register(void)
-> >>>          |     ^~~~~~~~~~~~~~~~~~~~
-> >>>    In file included from fs/fuse/sysctl.c:9:
-> >>>    fs/fuse/fuse_i.h:1495:19: note: previous definition of 'fuse_sysct=
-l_register' with type 'int(void)'
-> >>>     1495 | static inline int fuse_sysctl_register(void) { return 0; }
-> >>>          |                   ^~~~~~~~~~~~~~~~~~~~
-> >>>>> fs/fuse/sysctl.c:38:6: error: redefinition of 'fuse_sysctl_unregist=
-er'
-> >>>       38 | void fuse_sysctl_unregister(void)
-> >>>          |      ^~~~~~~~~~~~~~~~~~~~~~
-> >>>    fs/fuse/fuse_i.h:1496:20: note: previous definition of 'fuse_sysct=
-l_unregister' with type 'void(void)'
-> >>>     1496 | static inline void fuse_sysctl_unregister(void) { return; =
-}
-> >>>          |                    ^~~~~~~~~~~~~~~~~~~~~~
-> >>>
-> >>
-> >> I see. In the Makefile, the sysctl.o needs to be gated by CONFIG_SYSCT=
-L
-> >> eg
-> >> fuse-$(CONFIG_SYSCTL) +=3D sysctl.o
-> >>
-> >> I'll wait a bit to see if there are more comments on this patchset
-> >> before submitting v6.
-> >
-> > Hello Joanne,
-> >
-> > I noticed a change in behavior between versions v5 and v4 during my
-> > hellofuse test.
-> >
-> > - Setup:
-> >   1. Set fs.fuse.default_request_timeout to 10.
-> >   2. Start the hellofuse daemon, with FUSE mounted on /tmp/fuse/.
-> >   3. Run `cat /tmp/fuse/hello` and kill it within 10 seconds to
-> > trigger a Timer expired event.
-> >   4. Run `cat /tmp/fuse/hello` again.
-> >
-> > - v4:
-> >   After the Timer expired event occurs, running `cat /tmp/fuse/hello`
-> > again is successful.
-> >
-> > - v5:
-> >   Running `cat /tmp/fuse/hello` fails with the error: "Transport
-> > endpoint is not connected."
-> >
-> > I believe this behavior in v5 is unintended, correct?
-> >
+> We want to be able to mount filesystems that just consist of one regular
+> file via virtio-fs, i.e. no root directory, just a file as the root
+> node.
 >
-> I think v5 has changed the per-request timeout to per-connection timeout
-> according to Miklos's suggestion.  That is, once timedout, the whole
-> connection will be aborted.
+> While that is possible via FUSE itself (through the 'rootmode' mount
+> option, which is automatically set by the fusermount help program to
+> match the mount point's inode mode), there is no virtio-fs option yet
+> that would allow changing the rootmode from S_IFDIR to S_IFREG.
+>
+> To do that, this series introduces a new 'file' mount option that does
+> precisely that.  Alternatively, we could provide the same 'rootmode'
+> option that FUSE has, but as laid out in patch 1's commit description,
+> that option is a bit cumbersome for virtio-fs (in a way that it is not
+> for FUSE), and its usefulness as a more general option is limited.
 
-Understood. Thanks for your explanation.
+I wonder if this is needed at all for virtiofs, which could easily do
+the FUSE_INIT request synchronously with mount(2) and the server could
+just tell the client the root mode explicitly in the FUSE_INIT reply,
+or could just fetch it with a separate FUSE_GETATTR.
 
---=20
-Regards
-Yafang
+Why regular fuse doesn't do this?  That's because a single threaded
+server can only be supported if the mount(2) syscall returns before
+any request need processing.  Virtiofs doesn't suffer from this at
+all, AFAICS.
+
+Does this make sense?
+
+Thanks,
+Miklos
 
