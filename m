@@ -1,137 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-27789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B012C964084
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 11:49:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D271C9640D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C7BEB21749
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 09:49:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC8D1C22314
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C6A18DF6D;
-	Thu, 29 Aug 2024 09:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A92718E026;
+	Thu, 29 Aug 2024 10:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="CGUJEOXp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Orpmas84"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dBfg8s78"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDC5148FF2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 09:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683EC18C90F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 10:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924984; cv=none; b=GrbnimFtUmyqKviJARDaN5RZt2G5eao5sbnCdkHxFl+5L82HyxhxdIxd9wbZ+V/G+M9/UuYQiUhIy8yubS+RbvXHsEQW+Ala6sj8U17iN+6Nci8Ph8P9kJi64jt6FnnpOqcYAp7piBjf4WZmkn6AaLA1gR3rc+WyPP+gWlFKdkE=
+	t=1724925763; cv=none; b=u9wyy7W3tMerzrxFKpSeG50kz1k7+CgNbtdLGVSuZdWFhAByVoOVTS8XtkLBXq0icZWH39lx2feDa6AZlPD/9Vsmi0FLLTBf//NqqJfcKf6RI/xs11iloxh3EM1c/jYsry+FkMdpowLlJ7IRz6LfB2MczgqhI5p7fDGh9N7BTds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924984; c=relaxed/simple;
-	bh=+kYfoOFxM8O9BXRsL+ZUQgPZVCaeHuT/oa1HWjlIo7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uenc6Yez49sPPglJWVZ/x4GP3hCj/8IhTqYUXbmdfCVsFiudMsFej23pzsiAZAOX5o9S9WBP1hoYMT/h0S2aDkhK1qxOUYyuCZZI0AkwyqFPQEFE78xrwzOR1TzIpiYRK0u9FpJyaF8D7UlkRzWD3wcIoLqG3Xi+4M2+CuX1mMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=CGUJEOXp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Orpmas84; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 63AE31151C00;
-	Thu, 29 Aug 2024 05:49:41 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Thu, 29 Aug 2024 05:49:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1724924981;
-	 x=1725011381; bh=HeHift2BYC4X4UUYSnmoYk3MTX1Cv8O1uxt+++btpcA=; b=
-	CGUJEOXpmR2CkF46PuZgWU7Af2Yk90f3V3wrEqTTiu9Xw2K4AySqWC9SGo7009Lg
-	aLoNaxAqEMkJl7fkDRJRx+SUm5jkxDy/C+SEJoJvGHcaXeIbpkoGJkkMJNoFf2kN
-	doLA6fi4g0LfV7/gnjaxSUkNlbMemDfn+ERH0EpiIb/wnqrJitMGEuhGwwrToAxB
-	G/JRqhQXi+7ML4BZp8OeowMPx1wUCEbl5PIDwA1NkQMXDZG+AuU/MNWhWcrsHT0s
-	b+DpK2IJQ8XKQR6f2oxa7OwPe++gYfAAcg1FoYrtNOZugbmB8fwrFr96azvCQ5/E
-	NPAsxpaeF+O79ueqiwRy6g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724924981; x=
-	1725011381; bh=HeHift2BYC4X4UUYSnmoYk3MTX1Cv8O1uxt+++btpcA=; b=O
-	rpmas84gze8j8GimaF80pgY2vQSF22VziNXa0HfOKuxdvfWMFVs67qgJjqDFTKbG
-	+8Lmcx++VzgJI4P9RQcYXqYZgozCt2dgFLnddCufcOpE9/zrG3/Gk4S8GokjaEnL
-	y9X1NyrLu1G8CZrsKZXLtk4Au+oHALBiB0QUjKu37P+Q1+ZlOOc/+b0Q6aXb4ycV
-	aQGMBgJE+X+rZUaYteCNbmyRQk8zp01faD7xRkCkB6UKc58dS05RxYS4fncolbyJ
-	e8M2OQWiAliGsnCizVi0ZzpWtyRdNgHXCW7inpOJEu/jfhV4iRtxfHthgToSW++p
-	NqFtBARkohBvAExaaIERg==
-X-ME-Sender: <xms:NUTQZo98IZraGWQ-ZJpYoSARiZjd88wPa2l25mvC9eGjJKy4LmZLyg>
-    <xme:NUTQZguf9NMRwUzsKfJTuGlFNIqTWoREa8J-mQpzFj_dZKjR9IiNGglAQK284ncRE
-    88a6v2Xx46wTu-N>
-X-ME-Received: <xmr:NUTQZuDxjyUpwvNoZkbJCANbhk-FYEhMIdhJjNuDVGxvKJ77he7fu2auQFWfupo5jXot1QQTb3dVAsR0spNVdsaVgAEyil4iO1LLfg7V27WLsyhxtfyz>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedgvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnheptddugefgjeefkedt
-    gefhheegvddtfeejheehueeufffhfeelfeeuheetfedutdeinecuffhomhgrihhnpehgih
-    hthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnhgspg
-    hrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhikhhlohhs
-    sehsiigvrhgvughirdhhuhdprhgtphhtthhopehsthhsphdvseihrghnuggvgidrrhhupd
-    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopegurghvvghmrghrtghhvghvshhkhiesfhgsrdgtohhmpdhrtghpth
-    htohepmhhsiigvrhgvughisehrvgguhhgrthdrtghomhdprhgtphhtthhopehluhhtohes
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:NUTQZoeo_NC7S7v5BodfNDaN4KtZ0bil1Tt2ZFX9wkdzZkhUZRvQ4A>
-    <xmx:NUTQZtPPtKX9JllKm51AzXGVUQaA4NULfWvnKes_THrwfwNlSrZ2mA>
-    <xmx:NUTQZimrHhIyHnJxIDbJsy_l3nmPgBRya_CeqaoxTQKg85JzPkVDng>
-    <xmx:NUTQZvtHPw8hYMfJ325ruuce1-HjVPXYgPMZ7gjrZDVmxF8E4xGo6A>
-    <xmx:NUTQZpAjsyHlKsMJwS5d_uOiwkrECACpLLMUnATsPT452zTSkNXw77Yo>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 29 Aug 2024 05:49:40 -0400 (EDT)
-Message-ID: <28f37d0d-6262-4620-af89-b70ab982f592@fastmail.fm>
-Date: Thu, 29 Aug 2024 11:49:39 +0200
+	s=arc-20240116; t=1724925763; c=relaxed/simple;
+	bh=n5jwzTlQBzJwUMoT60JpIvPeggiARsC0Q1xJHRBuss4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uO59PrITudqjfUcpfPZKbB09V6pCfPqi0JOcwrv/okid/YQVr8yxUp0CjF5bU3II3Tpeqm3Oy6uzyiHVVhVE1Q9HSwDIqwHsdGCeHu5YlWESBjZUYOTlW7J+NDC/Oqk7siooX7qIc1/hLYjIiGWwBeI4/Fep+VrZigTDPgNKVhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dBfg8s78; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 29 Aug 2024 06:02:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724925759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vCHet4RZcs0kzetPKYvg5pHpi0wGxVpQFJgUua5GPMM=;
+	b=dBfg8s78XD0nKKh3fhBzSsLjvpxP0HZmNBFpY8rQfHhOjWt9wcWxj5eRjCuMaRb4l/mbX1
+	fOrnuwxhjP1j+pTPiTiS684piwt/S1W69rAJ7g5aESrwkXPWBZrRaeO1AIPwJs0mFQAAlr
+	brODC8Os+KdfdyG0h5OGTXWwEUS07JQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Michal Hocko <mhocko@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
+References: <20240826085347.1152675-2-mhocko@kernel.org>
+ <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: permission problems with fuse
-To: Miklos Szeredi <miklos@szeredi.hu>, stsp <stsp2@yandex.ru>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Dave Marchevsky <davemarchevsky@fb.com>, Miklos Szeredi
- <mszeredi@redhat.com>, Andy Lutomirski <luto@kernel.org>
-References: <9fb28d29-d566-4d96-a491-8f0fbe2e853b@yandex.ru>
- <CAJfpegsbZScBZbN+iaydOD2SKPgfnfj4t=EJz8KyMBX5X3yJWQ@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegsbZScBZbN+iaydOD2SKPgfnfj4t=EJz8KyMBX5X3yJWQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs6jFb953AR2Raec@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 8/29/24 11:38, Miklos Szeredi wrote:
-> On Wed, 10 Jul 2024 at 21:55, stsp <stsp2@yandex.ru> wrote:
->>
->> Hi guys!
->>
->> I started to try my app with fuse, and
->> faced 2 problems that are not present
->> with other FSes.
->>
->> 1. fuse insists on saved-UID to match owner UID.
->> In fact, fuse_permissible_uidgid() in fs/fuse/dir.c
->> checks everything but fsuid, whereas other
->> FSes seem to check fsuid.
->> Can fuse change that and allow saved-UID
->> to mismatch? Perhaps by just checking fsuid
->> instead?
+On Wed, Aug 28, 2024 at 02:09:57PM GMT, Dave Chinner wrote:
+> On Tue, Aug 27, 2024 at 08:15:43AM +0200, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+> > inode to achieve GFP_NOWAIT semantic while holding locks. If this
+> > allocation fails it will drop locks and use GFP_NOFS allocation context.
+> > 
+> > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+> > dangerous to use if the caller doesn't control the full call chain with
+> > this flag set. E.g. if any of the function down the chain needed
+> > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+> > cause unexpected failure.
+> > 
+> > While this is not the case in this particular case using the scoped gfp
+> > semantic is not really needed bacause we can easily pus the allocation
+> > context down the chain without too much clutter.
+> > 
+> > Acked-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
 > 
-> Use the "allow_other" mount option.
+> Looks good to me.
 > 
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
 
-Yeah, we had a long discussion here
-https://github.com/libfuse/libfuse/discussions/991
+Reposting what I wrote in the other thread:
+
+This series is based on a fundamental misunderstanding of what a safe
+API is: a safe API is not one that doesn't return errors, it's one that
+never invokes undefined behaviour.
+
+It was decided years ago that the scoped APIs were the better
+replacement for the gfp APIs, and they need to exist.
+
+This "GFP_NOFAIL exists therefore we can't tell the memory allocator
+about situations wehre it would have to fail" is utter insanity - it's
+the exact opposite of defining a safe API.
+
+A safe API would be one where we /did/ always tell the memory allocator
+when we're in non-sleepable context, and the allocator always returned
+failure instead of context switching.
+
+This is utter brain damage; rule #1 of kernel programming is that _you
+check for errors_. If you don't know that your GFP_NOFAIL usage is in a
+safe context (and that's not just memory reclaim context, it's also the
+size of your alloction) then you have to check for errors.
 
