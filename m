@@ -1,145 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-27817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D136F9644B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:37:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68148964508
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114501C249B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:37:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B11C289537
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB231AC429;
-	Thu, 29 Aug 2024 12:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0327B1A76BE;
+	Thu, 29 Aug 2024 12:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gvCWoDi2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DWWwkAHq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4212B1A76D1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E271991A3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724934853; cv=none; b=JRTPUUlN6lH2FE/FLUjO297mAJhQOqYAExXeFS5Y6kuP+7O8xSAn/k+MY+6l1Bf6lKNpUNKf6SwxqetibOaj2URLJRvDk+7mF9R/LgtjGBrA3+UgVPUoXp/z2pOUvMgb8BPvuujnZiCK1yww5nMBt7Vh85QIoHDowMav6Ge8eGs=
+	t=1724935047; cv=none; b=MDlx0+2QHBYT1KWnpfckB4Ku2/I6w5KMqfhPOrtY9WmqhUFkJbfbBqYpOXIU0KZgSYbsz5DoZHOP/vkHtme+tQVw1UmfSI7/+aDeMSCEE4yj/pqrC9z7VsIhIt/zTScfkcqcYOGb7acfqZf7uEcyqg2ApYDfujibzsp3ShsEA74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724934853; c=relaxed/simple;
-	bh=q2fjH+xqpJJgikvVYldH+MUiIa8nCfGUAkjhB4cVhFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AG0UN4fBhCr6Nr2iVrfGffLQ6L0xWL8uxGMqoPGhTrFu5r5VXwamC40GtBFUgfeTYYu/1OX55OwefMZ8JPswPh8RK6y6KyHDW/uxpLqMVGkUz75MTvobcDpORzGGsoxlIhcFgUEhssrRWS/mRs4+XRbdlYtg73NM9LkpWVGC4Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gvCWoDi2; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37182eee02dso364969f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 05:34:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724934849; x=1725539649; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0omIxXdZ2Z1z0cHN/bNiykvs++kigV/Ublbt82Yn504=;
-        b=gvCWoDi25Mvaoy2N6Gc/1/b5rXP7LbRjKV2vtasdp7IDIHB8PjH6q7U1KQsmObwzKh
-         s9uNe8S99HsagtVNxkvtr9GAwYJkhjC6L4B+t1TmbOxzPSEwmERCmsbivfaraJKUxyaZ
-         GW9vK2g0LjXPHqD8Z4sCHwS1H94K/4nZn5WTFHKl2boKrdA6Zi58ioB2YER5bittg+zG
-         baYs1J44rUsw2//ORnWeBk+FR08tDkcGigxusP5GiyitK4EP7L6ID3hygat1CoCIhkjz
-         T89uCvtTnN/fwDfN98kYac3zAIfNsbUvex8n9J1sgoabdQ7+lv0B5O4RetXpNy5hscVt
-         qXyg==
+	s=arc-20240116; t=1724935047; c=relaxed/simple;
+	bh=X+w1PbvGz2LDLEeHz1yYzn6VqcBjoLRL+LJ7y270rXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nScHv7y0cMzmhNeCsY3hNYek/tt7nR3+ttzQd8SBuOIwZmJLfA2yUeCgZlvQzmkQceDeTP2c6a1DEti8e8f7RmUMtEDuud4Yb/BYpCxP96+bwSviI/l8S7kW6/vtOO7l3w4Ox+OkHFMNTGJCKBOytU2JFc97ToPrOZlHRvgpR70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DWWwkAHq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724935044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uCZcbBXJUr2ekikCjElYG6Jp9gfYESYYzpjLYXs3oq8=;
+	b=DWWwkAHqVMyl+YZp9KCE/LVxUYF69ujdUC76vqqmv2uyFignQtcj8zIXthf7D7K6cLc8TH
+	LmHz1wkht59RJElqfosS9UnNQ5k1lAdzwoAwp12guALoashVxUzxUycqH7WR4zuAZc33Rq
+	wDQrjZzOAhLIYgxKb9odGjMjsdOqTXo=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-497-pXwF1MDNPgqs7PrcZeO3Rw-1; Thu, 29 Aug 2024 08:37:23 -0400
+X-MC-Unique: pXwF1MDNPgqs7PrcZeO3Rw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-428040f49f9so6338535e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 05:37:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724934849; x=1725539649;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0omIxXdZ2Z1z0cHN/bNiykvs++kigV/Ublbt82Yn504=;
-        b=uM8k6dbmJxD/4N/HB1MXmZxxLXpAs19bPCGZtH/sjq+Y0LYF94OV6faVE8zfgQbaKg
-         s3oT3EYznFq/D7an+PuzoqgsLe9btH/eate1oB+r4lx9t/YrIZOMU5yIGiQoeF8l/Z8l
-         QypU2E6a5aKcVnNmHZRTLPFHDEsArrFZoJAz+XvFQL1OJZwLzEI3BHL+lyH0+FEHFZ6G
-         /WVSFsIWqPJ3V5j2Wa87ASZnF56SAIbTgcHzNCZT0xicAOWRLMzZ9CHpdqe3N06giWaE
-         s5SyF5afp61BlU+0gwz8F+3YYs4zmOc/BfSD0h2v22R69Zm99LnaSiyBw2UZsL4QN9mu
-         I0Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVyMw8qDekAt2o8pImZ4Vhqi7Ye1JBK6WlUo6rc7rpmy2BqhaEbcAuSg3KA77cA76ymbYeK7D+saasLkkj@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt9x50LPTsn4A5uSvsnaro5t0p5Y6wx23SxQdNuwXiyERGpaZf
-	hEUtoPuGaC7ljvTcCqBNmcFo42rhC7mnbnoE/rJblLBnpzjTfRk7v9Bftn462YM=
-X-Google-Smtp-Source: AGHT+IHgfsIGgJ6Yfaz6Z5p0OF76oo2Tcpl57sbIiw84kU1rMt9PHEtlVdPlKeTiXsqZV5kEsxLlmw==
-X-Received: by 2002:adf:fd0a:0:b0:371:6fcf:5256 with SMTP id ffacd0b85a97d-3749c1de10fmr1399945f8f.18.1724934849494;
-        Thu, 29 Aug 2024 05:34:09 -0700 (PDT)
-Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df0a0asm16231425e9.13.2024.08.29.05.34.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 05:34:09 -0700 (PDT)
-Date: Thu, 29 Aug 2024 14:34:08 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Message-ID: <ZtBqwOiBThqxzckc@tiehlicka>
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org>
- <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
- <Zs959Pa5H5WeY5_i@tiehlicka>
- <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
- <ZtBWxWunhXTh0bhS@tiehlicka>
- <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+        d=1e100.net; s=20230601; t=1724935042; x=1725539842;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCZcbBXJUr2ekikCjElYG6Jp9gfYESYYzpjLYXs3oq8=;
+        b=duj2C0X8HFk9bmEmxrCyqHFwFUizACd+aVCf+l4vKutbOBiltWYWcNBT3S0ZdVzXAp
+         aPH03uZ6aTFXDYy18k5SCBhntoWs7kG4BH9QbcJX0oJX3y31dpJ2gEZexeJGw+ia53Lh
+         H2IWiFkicrYOqwpVfjbfu/rTeNHaPrvSLYUwzzB6wSN+axOLy4i1shhsXXHdqkcCwl8Y
+         3Y5niBaB1Eq+yIE/9TWUmcGBw/km8fQiCliKbyeP5TWNgs9S1WASI2BxdPUg9MCe1225
+         Cs7teIRkO90qRjDITHlOAb/tI7KkFFbFGFzc1YjXXIpQ6KRlTiNev30tGP1GOCvcqyAJ
+         tDGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtY/SsV1Fcaht9RlqcbBrkxlAqAlfXZCuuiV65fgAVlZwtq9PzzgR7bfIeK+uYcjP6x1MRQ/EHfUb3RpLW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBFEjgw6LJjt68uHtYBPsmb9xA0tEX0BrHF20SqNgeuuVhj6Yt
+	xPOrHr1uPKmanQ6IvPd0R3/MIU3+pzkiBuHGysH7OH62z4TL25sSqBGEYR4kDgPYnUnqQwXmZzC
+	ZzV+fNGq1fRSNZBilRVvECdu32Bv7fzhZwRqQyHYu3e8+mWCNfz6TGEQ95M8zOjo=
+X-Received: by 2002:a05:600c:3c93:b0:426:62c5:4742 with SMTP id 5b1f17b1804b1-42bb02c1d88mr19356675e9.7.1724935042306;
+        Thu, 29 Aug 2024 05:37:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGunOLc7wncLVW9NHj7TP05XL8kLxSvLATcR5zU9zChtnQhOsW19BuJPFjBdEullMdhF6/2Pg==
+X-Received: by 2002:a05:600c:3c93:b0:426:62c5:4742 with SMTP id 5b1f17b1804b1-42bb02c1d88mr19355785e9.7.1724935041470;
+        Thu, 29 Aug 2024 05:37:21 -0700 (PDT)
+Received: from ?IPV6:2003:cf:d748:138d:7ea9:6713:593a:3e11? (p200300cfd748138d7ea96713593a3e11.dip0.t-ipconnect.de. [2003:cf:d748:138d:7ea9:6713:593a:3e11])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee9ba8esm1326628f8f.50.2024.08.29.05.37.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 05:37:20 -0700 (PDT)
+Message-ID: <19017a78-b14a-4998-8ebb-f3ffdbfae5b8@redhat.com>
+Date: Thu, 29 Aug 2024 14:37:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
+ Miklos Szeredi <mszeredi@redhat.com>, German Maglione
+ <gmaglione@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>
+References: <20240709111918.31233-1-hreitz@redhat.com>
+ <CAJfpegv6T_5fFCEMcHWgLQy5xT8Dp-O5KVOXiKsh2Gd-AJHwcg@mail.gmail.com>
+Content-Language: en-US
+From: Hanna Czenczek <hreitz@redhat.com>
+In-Reply-To: <CAJfpegv6T_5fFCEMcHWgLQy5xT8Dp-O5KVOXiKsh2Gd-AJHwcg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu 29-08-24 07:55:08, Kent Overstreet wrote:
-> On Thu, Aug 29, 2024 at 01:08:53PM GMT, Michal Hocko wrote:
-> > On Wed 28-08-24 18:58:43, Kent Overstreet wrote:
-> > > On Wed, Aug 28, 2024 at 09:26:44PM GMT, Michal Hocko wrote:
-> > > > On Wed 28-08-24 15:11:19, Kent Overstreet wrote:
-> > [...]
-> > > > > It was decided _years_ ago that PF_MEMALLOC flags were how this was
-> > > > > going to be addressed.
-> > > > 
-> > > > Nope! It has been decided that _some_ gfp flags are acceptable to be used
-> > > > by scoped APIs. Most notably NOFS and NOIO are compatible with reclaim
-> > > > modifiers and other flags so these are indeed safe to be used that way.
-> > > 
-> > > Decided by who?
-> > 
-> > Decides semantic of respective GFP flags and their compatibility with
-> > others that could be nested in the scope.
-> 
-> Well, that's a bit of commentary, at least.
-> 
-> The question is which of those could properly apply to a section, not a
-> callsite, and a PF_MEMALLOC_NOWAIT (similar to but not exactly the same
-> as PF_MEMALLOC_NORECLAIM) would be at the top of that list since we
-> already have a clear concept of sections where we're not allowed to
-> sleep.
+On 29.08.24 10:07, Miklos Szeredi wrote:
+> On Tue, 9 Jul 2024 at 13:19, Hanna Czenczek <hreitz@redhat.com> wrote:
+>> Hi,
+>>
+>> We want to be able to mount filesystems that just consist of one regular
+>> file via virtio-fs, i.e. no root directory, just a file as the root
+>> node.
+>>
+>> While that is possible via FUSE itself (through the 'rootmode' mount
+>> option, which is automatically set by the fusermount help program to
+>> match the mount point's inode mode), there is no virtio-fs option yet
+>> that would allow changing the rootmode from S_IFDIR to S_IFREG.
+>>
+>> To do that, this series introduces a new 'file' mount option that does
+>> precisely that.  Alternatively, we could provide the same 'rootmode'
+>> option that FUSE has, but as laid out in patch 1's commit description,
+>> that option is a bit cumbersome for virtio-fs (in a way that it is not
+>> for FUSE), and its usefulness as a more general option is limited.
+> I wonder if this is needed at all for virtiofs, which could easily do
+> the FUSE_INIT request synchronously with mount(2) and the server could
+> just tell the client the root mode explicitly in the FUSE_INIT reply,
+> or could just fetch it with a separate FUSE_GETATTR.
 
-Unfortunately a lack of __GFP_DIRECT_RECLAIM means both no reclaim and
-no sleeping allowed for historical reasons. GFP_NOWAIT is both used from
-atomic contexts and as an optimistic allocation attempt with a heavier
-fallback allocation strategy. If you want NORECLAIM semantic then this
-would need to be represented by different means than __GFP_DIRECT_RECLAIM
-alone.
+That would be great.  I thought it would be necessary to install the 
+superblock before sending FUSE_INIT, so I thought this wasn’t possible.
 
-> And that tells us how to resolve GFP_NOFAIL with other conflicting
-> PF_MEMALLOC flags: GFP_NOFAIL loses.
-> 
-> It is a _bug_ if GFP_NOFAIL is accidentally used in a non sleepable
-> context, and properly labelling those sections to the allocator would
-> allow us to turn undefined behaviour into an error - _that_ would be
-> turning kmalloc() into a safe interface.
+I honestly have no idea how to go about it on a technical level, 
+though.  Naïvely, I think we’d need to split off the tail of 
+fuse_fill_super_common() (everything starting from the 
+fuse_get_root_inode() call) into a separate function, which in case of 
+virtio-fs we’d call once we get the FUSE_INIT reply.  (For 
+non-virtio-fs, we could just call it immediately after 
+fuse_fill_super_common().)
 
-If your definition of safe includes an oops or worse silent failure
-then yes. Not really safe interface in my book though. E.g. (just
-randomly looking at GFP_NOFAIL users) btree_paths_realloc doesn't check
-the return value and if it happened to be called from such a scope it
-would have blown up. That code is safe without the scope though. There
-are many other callsites which do not have failure paths.
--- 
-Michal Hocko
-SUSE Labs
+But we can’t return from fuse_fill_super() until that root node is set 
+up, can we?  If so, we‘d need to await that FUSE_INIT reply in that 
+function.  Can we do that?
+
+> Why regular fuse doesn't do this?  That's because a single threaded
+> server can only be supported if the mount(2) syscall returns before
+> any request need processing.  Virtiofs doesn't suffer from this at
+> all, AFAICS.
+>
+> Does this make sense?
+
+It does!
+
+Hanna
+
 
