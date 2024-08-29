@@ -1,83 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-27819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A50796452B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF28596453C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6880B28513
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:49:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23A70B27E6E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2791B3738;
-	Thu, 29 Aug 2024 12:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353BC1B5EBC;
+	Thu, 29 Aug 2024 12:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Rg2iW+We"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d9wkAv5S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2061AED22
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4851B583E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935326; cv=none; b=Ru6ULNWi1QwNLzAKATXSMAM8HfL6ryGCfHZbS9DQSx14saXQIz5LSoLAXy17kS4qdgBjH3u5oUcse+oUqnz7YnT7gc2hLqSH9Mupbb5s4zaUdgNRC8PgehRKKjCDNrox6uzihW6UNNj2oIceDezcL1ffmezK5DqbgcL06F85sBg=
+	t=1724935373; cv=none; b=toAnrxzoDoMV0YG1fjFPgay58LlLcDZ4MVZHTRzXzihvmJVGvZbxyVfwkIqKFeXEui9u8zIWlR+DtTO3zBuDzBgsgkmGbWmbO9+DJtcmaWWzXoUOyOuYw7XnoIS5lEJ77NwAq2h16v0zowbgSb7XYGuOfzK8NKdk/uudJMzhOKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935326; c=relaxed/simple;
-	bh=rPTzSrrL44gBi+TXZ2hY1ABQe2FEI7q+NKSsoU3u77o=;
+	s=arc-20240116; t=1724935373; c=relaxed/simple;
+	bh=ADwLGNGiaK3lns2GUXiZI6S4bjiJhuc+TKq6YqqSCk8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJQ64GWLzUqAB8IPGjRfTSnhylmjwK9W/OSoVX7bwfGtj5YqEQ0xJ46g8Ohp2pMKYxbgnzdqz1N2/sfeKkCf2vzdGwiofmx5t1RPoSij34pZrNXU7XuqoEGDrCaxfxwnWj9mH+rkk5FbiXNzcCAELnTUEWtTqESssFp3HIgLqPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Rg2iW+We; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-70f6118f1b5so304827a34.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 05:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724935324; x=1725540124; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FVPDR0EpectGlXjsBS1JG87x2k26ixV87HJkZnRLrOE=;
-        b=Rg2iW+WeOk3dyEMoUEBAZrlngLG6MQB7ShlrwSyWUlDCi+yE8JTaGrS1s1ViY6CMmz
-         mkzi5f6vnfm+BoOMV22cSwoeY+89/9YmfzaeK9WMmtK4dwlXn5Qi1hmGKRC+LprrWAM0
-         KQNqjwPH8q5vFDyTG75AIwCi3UQRvxN0TR3V8ic7Oq333HmInhrWCz0dmFGjukOEq+8O
-         SO6h+C7KSNNRJv3Fv+wwv8RD+MWibpksu0GtS6v/f07k7mHO4HBG+JgzeMTJLdKS8oDC
-         Lkac+eRF/uVx3hv7AoyfQCV1vZY2PbfVG4XLILri6uCJFKOm6t8TqswwHc5jFbXyfhCN
-         1/0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724935324; x=1725540124;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FVPDR0EpectGlXjsBS1JG87x2k26ixV87HJkZnRLrOE=;
-        b=CGf4QYrMYdJsHQp0JC14n268DglfWpiLcOBV8D/oYCE+sTV5YLwx9W8fURRklg+JGg
-         hcRFOXQFSy3mPTJLOhnJelRzzGnMdoZNSxDVKnfu6RC3Ijl3SdVCkNlgXWci4+JKLrFm
-         57VvZNZe5aBJ+6SiBQ2yDbWEtuDV7JYgiHe4Y8vu9STD9GDP/Jda/raJmGjx1S9Tu45x
-         igGLTC4bozd2iaL+HMVTinWEFwc4ae/hn4lMSwTDLdIxa8bs2+zcpp6Vn9+v0hld18JI
-         aICwu27vjwgSAxGqome1nDyWUtHOVQmLkG3G+CzL/GaGtdLmsB9mrZFMuC5LBm3FWR5f
-         Tf+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWy5TENaKyedXc59ATT6ATmU0RKNI+YSjA1NSsvLgWusv09mlt9JREee2ToV3VvMvCGtC3Dgd6wpALAMi7/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzodr6lrvJGN0OzfDqDzVE/mXKD6DFgnABG9YNqqbd0R0SvLyTF
-	kRsUYVEVp6SENaJOPTinqbllK37YUI2JjqtV4vo3O1jyOlv4oWvRFlkbqQ+aI2Y=
-X-Google-Smtp-Source: AGHT+IERjQ2135hGQyZwiYosgx5A9+JFDCAJw4M5MqUbqQEwCfNN1chSfcV3K03nBIADv4Tc9PUPIw==
-X-Received: by 2002:a05:6830:4985:b0:703:7a17:f24a with SMTP id 46e09a7af769-70f5c21d1c5mr3939782a34.0.1724935324156;
-        Thu, 29 Aug 2024 05:42:04 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a806d3a047sm47621985a.98.2024.08.29.05.42.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 05:42:03 -0700 (PDT)
-Date: Thu, 29 Aug 2024 08:42:02 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Jan Kara <jack@suse.cz>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
-	brauner@kernel.org, linux-xfs@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: [PATCH v4 15/16] gfs2: add pre-content fsnotify hook to fault
-Message-ID: <20240829124202.GA2995802@perftesting>
-References: <cover.1723670362.git.josef@toxicpanda.com>
- <2bd333be8352f31163eac7528fdcb8b47a1f97b4.1723670362.git.josef@toxicpanda.com>
- <20240829111510.dfyqczbyzefqzdtx@quack3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOOlNZUB3AzfyzRrsw7MNHKyAV1lhGGg7xZQEGcNct8iKf2hpDZC5IC+o3uAsDwhSsz9cPGvibcHow/EeQ6K7w++rXXWEYo1/YGwp0uXWo0WCGClgV3bbGMqQqM2NhthqD+UkrJgihLigTRq2HcoD5L88Kg/CffucuhogTV4wEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d9wkAv5S; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 29 Aug 2024 08:42:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724935369;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tNwHoeoh/+wF32dV32WxYpQ/YVsPYMrSItFbwY6BfW0=;
+	b=d9wkAv5SG8C9ESy/IzIJVu675IQ2gFGCDH5HGa/p1MhQWtHdRWCyssPcIJXad0jP1TV/Gh
+	nPXEbSSrSAjb9e8Dm9WDgpg9yv7oFgCIG5WDqZW+aswtTdzVe4B9/J4+BmQIMtgI0CUYH3
+	e18O0ZfrWXr7tU024NNjA2YNEHXFWuA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <eatlt3lugcodzlef54xsxdm7w5o3gwtreyf3qvuhq3ebpi3bas@zt6isukikuvw>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka>
+ <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+ <ZtBWxWunhXTh0bhS@tiehlicka>
+ <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+ <ZtBqwOiBThqxzckc@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,24 +65,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829111510.dfyqczbyzefqzdtx@quack3>
+In-Reply-To: <ZtBqwOiBThqxzckc@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 29, 2024 at 01:15:10PM +0200, Jan Kara wrote:
-> On Wed 14-08-24 17:25:33, Josef Bacik wrote:
-> > gfs2 takes the glock before calling into filemap fault, so add the
-> > fsnotify hook for ->fault before we take the glock in order to avoid any
-> > possible deadlock with the HSM.
+On Thu, Aug 29, 2024 at 02:34:08PM GMT, Michal Hocko wrote:
+> On Thu 29-08-24 07:55:08, Kent Overstreet wrote:
+> > On Thu, Aug 29, 2024 at 01:08:53PM GMT, Michal Hocko wrote:
+> > > On Wed 28-08-24 18:58:43, Kent Overstreet wrote:
+> > > > On Wed, Aug 28, 2024 at 09:26:44PM GMT, Michal Hocko wrote:
+> > > > > On Wed 28-08-24 15:11:19, Kent Overstreet wrote:
+> > > [...]
+> > > > > > It was decided _years_ ago that PF_MEMALLOC flags were how this was
+> > > > > > going to be addressed.
+> > > > > 
+> > > > > Nope! It has been decided that _some_ gfp flags are acceptable to be used
+> > > > > by scoped APIs. Most notably NOFS and NOIO are compatible with reclaim
+> > > > > modifiers and other flags so these are indeed safe to be used that way.
+> > > > 
+> > > > Decided by who?
+> > > 
+> > > Decides semantic of respective GFP flags and their compatibility with
+> > > others that could be nested in the scope.
 > > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > Well, that's a bit of commentary, at least.
+> > 
+> > The question is which of those could properly apply to a section, not a
+> > callsite, and a PF_MEMALLOC_NOWAIT (similar to but not exactly the same
+> > as PF_MEMALLOC_NORECLAIM) would be at the top of that list since we
+> > already have a clear concept of sections where we're not allowed to
+> > sleep.
 > 
-> The idea of interactions between GFS2 cluster locking and HSM gives me
-> creeps. But yes, this patch looks good to me. Would be nice to get ack from
-> GFS2 guys. Andreas?
+> Unfortunately a lack of __GFP_DIRECT_RECLAIM means both no reclaim and
+> no sleeping allowed for historical reasons. GFP_NOWAIT is both used from
+> atomic contexts and as an optimistic allocation attempt with a heavier
+> fallback allocation strategy. If you want NORECLAIM semantic then this
+> would need to be represented by different means than __GFP_DIRECT_RECLAIM
+> alone.
 
-I did a lot of gfs2 work originally so I'm familiar with how it works, otherwise
-I definitely would have just left it off.
+I don't see it as particularly needed - the vmalloc locks you mentioned
+previously just mean it's something worth considering. In my usage I
+probably wouldn't care about those locks, but for keeping the API simple
+we probably want just PF_MEMALLOC_NOWAIT (where those locks become
+trylock).
 
-That being said I'd also be fine with just gating it at an FS level.  Thanks,
+> > And that tells us how to resolve GFP_NOFAIL with other conflicting
+> > PF_MEMALLOC flags: GFP_NOFAIL loses.
+> > 
+> > It is a _bug_ if GFP_NOFAIL is accidentally used in a non sleepable
+> > context, and properly labelling those sections to the allocator would
+> > allow us to turn undefined behaviour into an error - _that_ would be
+> > turning kmalloc() into a safe interface.
+> 
+> If your definition of safe includes an oops or worse silent failure
+> then yes. Not really safe interface in my book though. E.g. (just
+> randomly looking at GFP_NOFAIL users) btree_paths_realloc doesn't check
+> the return value and if it happened to be called from such a scope it
+> would have blown up. That code is safe without the scope though. There
+> are many other callsites which do not have failure paths.
 
-Josef
+Yes, but that's unsafe anyways due to the max allocation size of
+GFP_NOFAIL - I'll have to fix that.
+
+Note that even if we got rid of the smaller max allocation size of
+GFP_NOFAIL allocations we'd _still_ generally need error paths due to
+the hard limit of INT_MAX, and integer overflow checking for array
+allocations.
 
