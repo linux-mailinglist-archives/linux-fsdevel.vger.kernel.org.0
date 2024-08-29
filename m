@@ -1,111 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-27822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C2C96455D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:53:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4410C964562
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4431F28BA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:53:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B7828875C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 12:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C997519885D;
-	Thu, 29 Aug 2024 12:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654C01ABEAD;
+	Thu, 29 Aug 2024 12:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="QXfutRLZ"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="MvUV5Avt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D719218C90F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAAA1A76CA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 12:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935571; cv=none; b=NusG3OgwK/jZhEQxhl6xD3AUdit4Ee7SPMowsxAGV8HFxrGwB/X3vhR8ukX2eMhULGQPEnUQq1MKOkKhVT95e021ZE/MVa90ihf0aVzAAVX9TeHdIuqLRuKo5zgqoCtWbL3EnIGe2qEp+MrD8xjaOWpjF3nZF+CyiS6JRZm5xv0=
+	t=1724935617; cv=none; b=T6awZPVMKmLdZqcA+pxFWSSmq8+/RnT6wS6LZNiNLyEJd25SURJbOUlWDvWWiT+T63uBoTeR7vzH71axUTG4DyGEaAAk4Vtr14KrFUfPmewc6eJ5wBUtX0NqUvutAA8K5yMwzkwWK9QzfFUg1MJEC2s3ubg81iaS8zh0OiYWBOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935571; c=relaxed/simple;
-	bh=AgFY0CuJppxazQdPyDFglzw3FHBPTJ3pB1JFaFZV/QA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1HtIJLnng7m1quLqiROM4D38MAsV85D/+KX4taTy3SdQP14Bi/XaWw/VryGB2IXgXCXdx9VuoJr1BwjVXLNeXj5LSDtYCCmTSRbtmO9AZeagSk4gT89CeV90ArUfHE2Fm3DcL1u0B2Kq2U+PzABfT6Kge7ypUUa3v1Zo0xweYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=QXfutRLZ; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4568780a168so1112111cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 05:46:09 -0700 (PDT)
+	s=arc-20240116; t=1724935617; c=relaxed/simple;
+	bh=igX6Wh4XlFExrXo//X5SQBXhZ/x7xczYlusp/hlvba0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PzzQJH+Vaw8VjA/xBqkRQqBrgXQdz0YWgi/f3OYVJL8eoGQ0ml838AZo98ufbqRuIpzzmbvhvUZrO8ztOAPeVN6rHRavPnaoD+Qt4iFNxrjFquE4iPFFf6G7EriuJdBkCYBnh00n30clyM46dr6WEOF++CGzVFR6ankw9f/HPpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=MvUV5Avt; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c0ba23a5abso653966a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 05:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724935569; x=1725540369; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7JkW1kGW/foMeqY4idmoG+qoBfKoOOnmzhQ4sgndEI=;
-        b=QXfutRLZ75HtYhDo1cGFXD1XI2IsHKLvW1ezPLBZHhy7zaEyw+2ILE0xvl+HWgFVrI
-         Epc8MMqoYq0Ay+c6t32NnTxDXOH8T3nKtKzrgp9OaGtiuTCzF6hL6AF8Hc69eOvDqgdn
-         3gHwo9bTzU8ahGE2c3NZDf9ymZlO1gSahGioS/I7gzTmH4Kx5Ij/FtfTHZYifzum+s+a
-         eqy4/1VW4/DZKY9k+n1J9DJXuK5Pk4581iFGPyEGg5EDl45DnMalctqwABQUDVBq1etr
-         ZSyMzwnhbyr+NhWXHE2PwnkTaHpYAMUWvSXVP8itoAxts+F7reXzfKNWMme6pzsWS6rV
-         EZQw==
+        d=szeredi.hu; s=google; t=1724935614; x=1725540414; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=igX6Wh4XlFExrXo//X5SQBXhZ/x7xczYlusp/hlvba0=;
+        b=MvUV5AvtTAme01GMxmQE5T/C+Nxmsavwr+ejDf9GrChD9iX5XtINmX1Fb2JS8zk4gx
+         phZOiGgfiiYAJJHbpyzK+SM5B314rZuU/w7SpYDBvGZz+LlpbWfAw8TN/iCrELNx3CXO
+         0ACwjphHf1+LfzoVIu8p54xSL/u7bEIA2jcrw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724935569; x=1725540369;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r7JkW1kGW/foMeqY4idmoG+qoBfKoOOnmzhQ4sgndEI=;
-        b=uyNlQdyI4ndKeXidQr2OtfN/h9WilqEbQfZHi4jST2+nPoI2we9slWV85V/DWc3Au9
-         UrZFdMH6/UqEEJotE+MYW0l0kp2pfu1xxHrnmFBHTrzMF9BmRb8V9QW56gaOf2K/WdkU
-         b6rxATKIM8M1FpnYM515OZvoFFmeHSzV0Pmt1K1SC6zrR4EY+TZ4FsGA189DC4+1A/Na
-         MeL/hujtpMXlkyFsrQgHH3vdffi0lmHK1Ks9PeFxCpAHEzkAo8ejxRQW9vg4q6eKmfta
-         HTiAAiu6ZejfStp2ANuwpHlomHxgt/1Fugkj/hEYI1dFEU92+5lnf1T6/p0I49MODmKG
-         OgHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOPrF+Y6R7D+49rZLxDRX5Q2iXlxnh5AKWUJQ74R61gpYPbrnBa0wCs6aRrZRwCOiaV7c48IHRcW6BvLL1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJfzyI49iYro5A03T7ODHX6RdIlxpocy0dK9K0kuwxM2SiGuK5
-	486EmOyf3a3E+3ztebj9nd+Bnu9LjTxB0Ayde2Tk8lcZAVeM6S6r5GhPf6psB3Q=
-X-Google-Smtp-Source: AGHT+IEjg71/rsVeutV6nh+K7FzjMZMNrg7qdXnGqs9sjXtDgQQ0paOoCdMyiPmGsrXRfVqUngI+Xw==
-X-Received: by 2002:a05:622a:5585:b0:44f:fef0:70c7 with SMTP id d75a77b69052e-4567f710518mr29246131cf.44.1724935568801;
-        Thu, 29 Aug 2024 05:46:08 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682c98196sm4526271cf.31.2024.08.29.05.46.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 05:46:08 -0700 (PDT)
-Date: Thu, 29 Aug 2024 08:46:07 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Jan Kara <jack@suse.cz>, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
-	brauner@kernel.org, linux-xfs@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v4 14/16] bcachefs: add pre-content fsnotify hook to fault
-Message-ID: <20240829124607.GC2995802@perftesting>
-References: <cover.1723670362.git.josef@toxicpanda.com>
- <9627e80117638745c2f4341eb8ac94f63ea9acee.1723670362.git.josef@toxicpanda.com>
- <20240829111055.hyc4eke7a5e26z7r@quack3>
- <zzlv7xb76hkojmilxsvrsrhsh7yzglvrwofxcavjo4nluhjbdu@cl2c4iscmfg2>
+        d=1e100.net; s=20230601; t=1724935614; x=1725540414;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=igX6Wh4XlFExrXo//X5SQBXhZ/x7xczYlusp/hlvba0=;
+        b=M+mQQGV6Y/K77iOQcidIW6hasxYJXiDrB4tb6u8AxuQYgDKjOEo2Xv4ZVaszjyuKaX
+         F5xvp+kFT7IqVlmlblWKPgS4X/+b9Ii9ZT6/m67KEwxmoNK9XF3Go0PhuTaVQkAoi8Im
+         d0KGKuKnnXdZ6KwltlD58MDuBPCmC/e7BiMrXdZtUtK7W58leMM5FLcuYH9VcXIbFNu8
+         axRlSDdAup5PAcPj6qmtEkEifAeyxXz7S3ug43LNVpbdh/1KsfiHvr8otA8jOPHMaPvi
+         QK15Wsc6vUH4wIiWsLMx/orikVZjzMDOeZJ1xIs4OPWiFOFeAla69XLnbjXW5JvbRlNY
+         avmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXD/887THMBu3PcNO2rzT0dUjGlOxYsIccI5FPFvYaHkVM9hq9vuwlS7EYFYwDk0CWSJjoG8avWxEMtMAxR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAXxFtYAE6KwIDhMMWX/PEqc7HNokJeUVQcsCvj9AqNfztFbq8
+	TC98gVPVpKjkjO9LMRZeE6Sxc4o8rPbO21voq/UMf1FLyf6Wl/vQ9qTE7OSgkgqTKgVP/L23wj9
+	acGchxJr+E4UP+cvAKiNO9azDiIKU2HWzBgrDeIVSQeYJk4iIUxw=
+X-Google-Smtp-Source: AGHT+IFGZcKXXv8UPPEj6YYt3MsBrBoWmLP19Y9PoQwcaXWWQthx1swXsieyVu3f23Vm9EJ4JCwlPio4loTIgJrSetk=
+X-Received: by 2002:a17:907:1c1b:b0:a86:8ec7:11b2 with SMTP id
+ a640c23a62f3a-a897fad4f02mr214750466b.59.1724935613923; Thu, 29 Aug 2024
+ 05:46:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zzlv7xb76hkojmilxsvrsrhsh7yzglvrwofxcavjo4nluhjbdu@cl2c4iscmfg2>
+References: <20240812161839.1961311-1-bschubert@ddn.com> <a71d9bc4-fa6f-4cfd-bd96-e1001c3061fe@fastmail.fm>
+In-Reply-To: <a71d9bc4-fa6f-4cfd-bd96-e1001c3061fe@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 29 Aug 2024 14:46:42 +0200
+Message-ID: <CAJfpegt1yY+mHWan6h_B20-i-pbmNSLEu7Fg_MsMo-cB_hFe_w@mail.gmail.com>
+Subject: Re: [PATCH v3] fuse: Allow page aligned writes
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	joannelkoong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 29, 2024 at 07:26:42AM -0400, Kent Overstreet wrote:
-> On Thu, Aug 29, 2024 at 01:10:55PM GMT, Jan Kara wrote:
-> > On Wed 14-08-24 17:25:32, Josef Bacik wrote:
-> > > bcachefs has its own locking around filemap_fault, so we have to make
-> > > sure we do the fsnotify hook before the locking.  Add the check to emit
-> > > the event before the locking and return VM_FAULT_RETRY to retrigger the
-> > > fault once the event has been emitted.
-> > > 
-> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > 
-> > Looks good to me. Would be nice to get ack from bcachefs guys. Kent?
-> 
-> I said I wanted the bcachefs side tested, and offered Josef CI access
-> for that - still waiting to hear from him.
+On Mon, 12 Aug 2024 at 18:37, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>
+> Sorry, I had sent out the wrong/old patch file - it doesn't have one change
+> (handling of already aligned buffers).
+> Shall I sent v4? The correct version is below
+>
+> ---
+>
+> From: Bernd Schubert <bschubert@ddn.com>
+> Date: Fri, 21 Jun 2024 11:51:23 +0200
+> Subject: [PATCH v3] fuse: Allow page aligned writes
+>
+> Write IOs should be page aligned as fuse server
+> might need to copy data to another buffer otherwise in
+> order to fulfill network or device storage requirements.
 
-My bad I thought I had responded.  I tested bcachefs, xfs, ext4, and btrfs with
-my tests.  I'll get those turned into fstests today/tomorrow.  Thanks,
+Okay.
 
-Josef
+So why not align the buffer in userspace so the payload of the write
+request lands on a page boundary?
+
+Just the case that you have noted in the fuse_copy_align() function.
+
+Thanks,
+Miklos
 
