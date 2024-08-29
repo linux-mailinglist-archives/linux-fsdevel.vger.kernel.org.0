@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-27927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8B9964D0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 19:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB750964D11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 19:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A04FD1F22E68
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4A41F215B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD531B81C7;
-	Thu, 29 Aug 2024 17:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D601B81A1;
+	Thu, 29 Aug 2024 17:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9S7C4y+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y13JdG8x"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6641B7902;
-	Thu, 29 Aug 2024 17:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBD21B6555;
+	Thu, 29 Aug 2024 17:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724953365; cv=none; b=cddj6lw6NbSWN3qV6uIxAXcn7grrxPHMoMeIn5ou+SvcLM/FVKoG0Vhi58VG5XlUXj/TVI0AXobJlgD5lbwhkBDAaMYxnaQ18adgtJ8EA0vfb3DTQiN8+DnYvWmASrSSMcBp08QhEO6XQWVzQKrmhQ4gxT2BngepUzr6OHbofX8=
+	t=1724953368; cv=none; b=F/4glUtgGjWi++kUrvRJBNfD5xNJsW7JMpFso2bO0Wf8uJQxXcXdYaLHjvEo/VJePi4LU6ZwkZBuC8h3jL5vd5/uybMUt5t/qIggdWHqjJsbgHCWouqsCjSd52mgyn73M0FRRUhrJDrEObW1uoaQ3tST0gKaguxa4lUFR100S0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724953365; c=relaxed/simple;
-	bh=Rp6otyrq1s70AfuJSm1rv8h2cgFz+vWWyi+WpWNJo0k=;
+	s=arc-20240116; t=1724953368; c=relaxed/simple;
+	bh=5CLcAmrYIJlnXm0mQvpn/y1HhZ+JoZho6ovLxlNSww4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HyQWoSrwFaDsjpqFj5w05+zb7uD0LDyYLab/KZaLWXdfrMwl/Lr8zL457KlIFin+XAn6pFAV9y6RmNROyI3+HZgUJqphLFNEIw+HWhakbyr01+fwWedzt1qCu7VOTeDncJd/EX7b5MKkkMCb3riRg7ty1RzPkNtHr1fioaNOVoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9S7C4y+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C3DCC4CEC1;
-	Thu, 29 Aug 2024 17:42:44 +0000 (UTC)
+	 MIME-Version; b=ot27Uc05hPLiqnz8l+5j3/SuBLZ/dwZltm0bp4wDBQUUDfAkvtszHdvhOpk08swfcrlur8DcTTq2e3uRTONSboG+M8NVwWOgFhQOZ7gAcxjgQHGrMwgv98QOon0UZdHKT0NkFNURZCM9nLu2IWw/q3RH88c5sAZQ+lqvqIeSt5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y13JdG8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC5C9C4CEC1;
+	Thu, 29 Aug 2024 17:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724953364;
-	bh=Rp6otyrq1s70AfuJSm1rv8h2cgFz+vWWyi+WpWNJo0k=;
+	s=k20201202; t=1724953367;
+	bh=5CLcAmrYIJlnXm0mQvpn/y1HhZ+JoZho6ovLxlNSww4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h9S7C4y+C06tQyD+Sl51neSMfzNbO3H7+XqTB+9IpLWNA5lP+7o39gvHMaHYMTSM1
-	 NOme1U8VxqRTfLT9XS/9uBRx6l7NB72LK9SCN1+L+uvRjNIyIAZAFWeULC4Hz2BJm7
-	 qfp5elwqfey2Rzwir5hsz1BcEG4n4MeOej78lpi6juzXR7URC5jNrQNEPXgOQ7fhif
-	 rTKpnnCjGuyYxfLhZecA2brCZkio51MjpJbulavW8CtHl3fiwLCJxk1z/jqJgwJGEy
-	 UXSe7/zUDwVUrveZGzktpl0G1JOYrU7B+QGYubKYXXQyOdSc6vsex6cDe+5LPPE7cw
-	 ol9ipOaSf/sig==
+	b=Y13JdG8xb8iuDxI4s46rTFLZcD10pfqV7vza38UzKeRzQoCwxEVNo8hA2eTGhuETW
+	 Hyaadvu2kZkMMtxCumBkixN0Xvv5Y9MbdYW8QWzqfeg8ltNMJoiz/vf94PsTyv8uAC
+	 oneOA1xwnIxNnE+vQFX01ZZQjSWinI6oygsunq7alY+uWLbMljQTmMdnde3Edi4a1I
+	 vYivD6IyJT7izocTWPg65srGF6Py9G66+mTfeexfdBLnjehN5cj+lktTmyamZTWuhU
+	 /98hLgNJGq6USK0h7pkav5KZ6OCiM901bnwTnvOWgCbFm51BIy/pG8ht7rZrKJkbXk
+	 EDBG8rM8TzYAA==
 From: Andrii Nakryiko <andrii@kernel.org>
 To: bpf@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -56,9 +56,9 @@ Cc: linux-mm@kvack.org,
 	willy@infradead.org,
 	Andrii Nakryiko <andrii@kernel.org>,
 	Eduard Zingerman <eddyz87@gmail.com>
-Subject: [PATCH v7 bpf-next 03/10] lib/buildid: take into account e_phoff when fetching program headers
-Date: Thu, 29 Aug 2024 10:42:25 -0700
-Message-ID: <20240829174232.3133883-4-andrii@kernel.org>
+Subject: [PATCH v7 bpf-next 04/10] lib/buildid: remove single-page limit for PHDR search
+Date: Thu, 29 Aug 2024 10:42:26 -0700
+Message-ID: <20240829174232.3133883-5-andrii@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20240829174232.3133883-1-andrii@kernel.org>
 References: <20240829174232.3133883-1-andrii@kernel.org>
@@ -70,95 +70,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Current code assumption is that program (segment) headers are following
-ELF header immediately. This is a common case, but is not guaranteed. So
-take into account e_phoff field of the ELF header when accessing program
-headers.
+Now that freader allows to access multiple pages transparently, there is
+no need to limit program headers to the very first ELF file page. Remove
+this limitation, but still put some sane limit on amount of program
+headers that we are willing to iterate over (set arbitrarily to 256).
 
 Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
-Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- lib/buildid.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+ lib/buildid.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/lib/buildid.c b/lib/buildid.c
-index bfe00b66b1e8..7fb08a1d98bd 100644
+index 7fb08a1d98bd..e8fc4aeb01f2 100644
 --- a/lib/buildid.c
 +++ b/lib/buildid.c
-@@ -213,28 +213,26 @@ static int get_build_id_32(struct freader *r, unsigned char *build_id, __u32 *si
- {
- 	const Elf32_Ehdr *ehdr;
- 	const Elf32_Phdr *phdr;
--	__u32 phnum, i;
-+	__u32 phnum, phoff, i;
+@@ -8,6 +8,8 @@
  
- 	ehdr = freader_fetch(r, 0, sizeof(Elf32_Ehdr));
- 	if (!ehdr)
- 		return r->err;
+ #define BUILD_ID 3
  
--	/*
--	 * FIXME
--	 * Neither ELF spec nor ELF loader require that program headers
--	 * start immediately after ELF header.
--	 */
--	if (ehdr->e_phoff != sizeof(Elf32_Ehdr))
--		return -EINVAL;
--
- 	/* subsequent freader_fetch() calls invalidate pointers, so remember locally */
++#define MAX_PHDR_CNT 256
++
+ struct freader {
+ 	void *buf;
+ 	u32 buf_sz;
+@@ -223,9 +225,9 @@ static int get_build_id_32(struct freader *r, unsigned char *build_id, __u32 *si
  	phnum = READ_ONCE(ehdr->e_phnum);
-+	phoff = READ_ONCE(ehdr->e_phoff);
-+
- 	/* only supports phdr that fits in one page */
- 	if (phnum > (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
- 		return -EINVAL;
+ 	phoff = READ_ONCE(ehdr->e_phoff);
  
-+	/* check that phoff is not large enough to cause an overflow */
-+	if (phoff + phnum * sizeof(Elf32_Phdr) < phoff)
-+		return -EINVAL;
-+
- 	for (i = 0; i < phnum; ++i) {
--		phdr = freader_fetch(r, i * sizeof(Elf32_Phdr), sizeof(Elf32_Phdr));
-+		phdr = freader_fetch(r, phoff + i * sizeof(Elf32_Phdr), sizeof(Elf32_Phdr));
- 		if (!phdr)
- 			return r->err;
- 
-@@ -252,27 +250,26 @@ static int get_build_id_64(struct freader *r, unsigned char *build_id, __u32 *si
- 	const Elf64_Ehdr *ehdr;
- 	const Elf64_Phdr *phdr;
- 	__u32 phnum, i;
-+	__u64 phoff;
- 
- 	ehdr = freader_fetch(r, 0, sizeof(Elf64_Ehdr));
- 	if (!ehdr)
- 		return r->err;
- 
--	/*
--	 * FIXME
--	 * Neither ELF spec nor ELF loader require that program headers
--	 * start immediately after ELF header.
--	 */
--	if (ehdr->e_phoff != sizeof(Elf64_Ehdr))
+-	/* only supports phdr that fits in one page */
+-	if (phnum > (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
 -		return -EINVAL;
--
- 	/* subsequent freader_fetch() calls invalidate pointers, so remember locally */
++	/* set upper bound on amount of segments (phdrs) we iterate */
++	if (phnum > MAX_PHDR_CNT)
++		phnum = MAX_PHDR_CNT;
+ 
+ 	/* check that phoff is not large enough to cause an overflow */
+ 	if (phoff + phnum * sizeof(Elf32_Phdr) < phoff)
+@@ -260,9 +262,9 @@ static int get_build_id_64(struct freader *r, unsigned char *build_id, __u32 *si
  	phnum = READ_ONCE(ehdr->e_phnum);
-+	phoff = READ_ONCE(ehdr->e_phoff);
-+
- 	/* only supports phdr that fits in one page */
- 	if (phnum > (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
- 		return -EINVAL;
+ 	phoff = READ_ONCE(ehdr->e_phoff);
  
-+	/* check that phoff is not large enough to cause an overflow */
-+	if (phoff + phnum * sizeof(Elf64_Phdr) < phoff)
-+		return -EINVAL;
-+
- 	for (i = 0; i < phnum; ++i) {
--		phdr = freader_fetch(r, i * sizeof(Elf64_Phdr), sizeof(Elf64_Phdr));
-+		phdr = freader_fetch(r, phoff + i * sizeof(Elf64_Phdr), sizeof(Elf64_Phdr));
- 		if (!phdr)
- 			return r->err;
+-	/* only supports phdr that fits in one page */
+-	if (phnum > (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
+-		return -EINVAL;
++	/* set upper bound on amount of segments (phdrs) we iterate */
++	if (phnum > MAX_PHDR_CNT)
++		phnum = MAX_PHDR_CNT;
  
+ 	/* check that phoff is not large enough to cause an overflow */
+ 	if (phoff + phnum * sizeof(Elf64_Phdr) < phoff)
 -- 
 2.43.5
 
