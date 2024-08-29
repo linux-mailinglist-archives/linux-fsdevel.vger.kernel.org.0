@@ -1,95 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-27778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35114963E2E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:16:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F080A963E4E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 10:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF7811F215F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 08:16:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A559B22C12
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 08:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8017C18A92C;
-	Thu, 29 Aug 2024 08:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67336171E73;
+	Thu, 29 Aug 2024 08:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="aqQsQk0p"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Lh/hvZ0s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571B8189B82
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 08:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A0D18C027
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 08:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724919363; cv=none; b=JLtrKinTufUbJEBXNay5lUOr8N3ZTPQDYjBKdTLN9vioo7+kmr6Zl3rV21rgh556LVXzJwygEcpU4WGMFEG7JX9NqDEIkDdyo2r6FCgH0dCz3svAKRwCF/C40HYVQNavKYXoJOscwcNWSa3bEElZo9Br7ZFHURFm7Obc6xQy2N8=
+	t=1724919896; cv=none; b=iDhLMEyn9kIi0QUxuk4O1QAQUEMFM66/+tO2qr0AFGubcbQ0PJHzLQTO76JxMPjEZImJvfQMvah/Eq4ho82x2DcSEMoSDNv2YWyUr9eTeR7PZuTHGEkOv7y8PL5qjLnKysnyDa7V3o9jMd0MVMSaSJNK43GkT5rTJRRKtbt62L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724919363; c=relaxed/simple;
-	bh=hgfPFlygVsmSFU8MWVbrkM+wiYsy1kjSdCReS4KohoQ=;
+	s=arc-20240116; t=1724919896; c=relaxed/simple;
+	bh=3w766+HcCKSDYIdv+dG3eTKeIXTUGtDIeXWuYIwhAqs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dafwmh94AkFMOQTncJY8HjUnKGFx8dhFRWgH6MEzEF9cMHKar6vDMDud5DYURv82cXlmMPkySa6RWAj7TvecmCv/ckCxQFRxOppj7FmAoL2sHDMSZ+Vek3Z0lPUfy7NonFJd3LRqzp7jbV24TxDWCuRgWH1xbHgSkZUXluc5coc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=aqQsQk0p; arc=none smtp.client-ip=209.85.167.53
+	 To:Cc:Content-Type; b=A8c1Lz1Eb4bsrcNu6B3kbxn7Ae+UCrt6Udo8roaWDhqdn4PrVsJIk3JbssQfUB1BFn78z+Nn0C44u+ZtOjRMG+4grTV81/qKNJAMzGVwfZLW4lKfpsnM+DhCvjHxeOJkq/esUch95SKjIQTUaI0XnqTlrZAwGSDJSj4rKJqbpng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Lh/hvZ0s; arc=none smtp.client-ip=209.85.219.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53345dcd377so484584e87.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 01:16:02 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e115ef5740dso414884276.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 01:24:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724919360; x=1725524160; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1724919894; x=1725524694; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hgfPFlygVsmSFU8MWVbrkM+wiYsy1kjSdCReS4KohoQ=;
-        b=aqQsQk0p9Nab8BUKB75HE+esk41HM5t2XSaJumkuHRagsJCuwC1wty3l2nZYo0RGQh
-         EkdyWy1j5nbcuGWm3jIugjK3xce7gPlKBe4zootSVCLUN6RSNzx7J7bCL24lABWoAQ1j
-         xc6y0iYsxE2UMMNRXMTSJfkr6O5vb9zTVu/L0=
+        bh=3w766+HcCKSDYIdv+dG3eTKeIXTUGtDIeXWuYIwhAqs=;
+        b=Lh/hvZ0szLIBCYADRr2XdtMuB6j15PRmZoJ+HZ99O7wrNeOLiao/mAKwxLZrQcyvn2
+         cZg6VDBf436s9RS3FvDyI2whxnwCy/w3L+9+Bgyoo2cu+alidER3NXBFaK3q/Pu26B7W
+         QwMoZqV16UUiNvdNgBMrrSqZWf6oRa6WmM4qE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724919360; x=1725524160;
+        d=1e100.net; s=20230601; t=1724919894; x=1725524694;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hgfPFlygVsmSFU8MWVbrkM+wiYsy1kjSdCReS4KohoQ=;
-        b=URGQqTZMaTw68bV76MzioTyta7AE7/p6xNJKpJlE6quKHCulgBzSGQuxxM1nVnGkO3
-         L3BuAN7wHJKAO5soGK7Ao5bUkAulMEuHdpFj3gu5GuExDmtmcdQE1RujD6ccABnaElAj
-         biqkHQY36ZBLaEVTCIR6qjaB9rtM6QcJHHQ0vFXTRnV5yLlQldZJ4iVazMYDFVGafJgs
-         XTlOqiR9/87WddEvbLguTD6mqsdOjis+8aOFCbR8O9Iz177N9MbZviMCl9Jg3s+dX21b
-         eow6tPgTJQPm5Py7HLWFzVv40eCtK3nmE3pbku7Ug5y3563DBQ8cDJZpTQUe/z7bBrYN
-         DMdg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/8yk0/3DyVF8eDEKlUpF+IXqOTcyZNNDWVdiMfuk6xKeFreg8aSuCEs9XcNqUsfS1D3LZC1sZ9HM/L40E@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9Mya9DnhYKznwFA8SmI1OMA4EoMOo2AQBmkumt0BmFUDffHBj
-	DlblQqDbStS7e26UlwBaiwmOAwSp2L30X3OJzTWmFGppjnsfXg2QxXP8U/vLqfriIHdi6UAsjAm
-	4kOlgvxroJg6sFjd+HtN/rkZAuedC50J3NtZ1mQ==
-X-Google-Smtp-Source: AGHT+IGWS0LzVgGYASD5Jl73txQdZXI+e7fJCODjI9BM0dxAVFMbrbV6HBv0du/zkBXGadfSyri58PzSUbwtmzXp02k=
-X-Received: by 2002:a05:6512:b06:b0:533:4b38:3983 with SMTP id
- 2adb3069b0e04-5353e54d9bamr1037899e87.20.1724919360260; Thu, 29 Aug 2024
- 01:16:00 -0700 (PDT)
+        bh=3w766+HcCKSDYIdv+dG3eTKeIXTUGtDIeXWuYIwhAqs=;
+        b=BUrZX8C0EDuQbBurAkZ122RPHj5seIb7eLQlACsXV7Db6iJRdXNfFgTtA0fwxoANEc
+         HwmMPu56G6RP65sHFANNZDFBqN6awdk3BgkZxIkqvDlqxYijBm7qN22z2Tk8+QVUnpD3
+         1ManA7getdq+WMGQaNHmoPgqPWQqIIGPaS6k/VGwlOyaEc3q491focXdX1q4kRA9+fF+
+         c60nSSjXbl3U3DBq/TSmCG5QiGoIPj5DkXVH0z1Td9g5nlWTNXdrNL/mL7ZTSJ8Mynht
+         W/CgexscfHBQIvrZOK0BHinnQbvTTYK04FyvmIUh6tZ7jqdeGNCTv07XdClZxsppHJ7I
+         vD/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXfYRX8jKi57K0M8NVzB4AogyDMsm+reqUuwwrmCMVgHbpBg2da7EEZZ2VJAtbEe7hS/w0nzVJ7pZ3VJmm9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmUpf6TTjuNx0nk4d7Zygc4cJlc+05ffHcEZT1SLBR0iJwwlLb
+	tg2xgiZceecIbE2s0o9EKRut3yelaQ1ShhZEVr7tIPSodlX1ObMGwMYdn6vSGcy/b8wnl1uDOvO
+	yZpV+61+Yp2CbCpcNSyIGQKx61iEdpWBhsb0HAg==
+X-Google-Smtp-Source: AGHT+IG47dSTLUJKOxckDP0cvBvcSU1zeI0pBYa76Pq5u1sId6PvgzMME+2Ls5N3IO9y/mR9iy/0sXuMxEi09poq5Ew=
+X-Received: by 2002:a05:6902:2291:b0:e1a:50e7:abe9 with SMTP id
+ 3f1490d57ef6-e1a5ac8687cmr2277947276.34.1724919894406; Thu, 29 Aug 2024
+ 01:24:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240105152129.196824-1-aleksandr.mikhalitsyn@canonical.com>
- <20240105152129.196824-3-aleksandr.mikhalitsyn@canonical.com>
- <CAJfpegsttFdeZnahAFQS=jG_uaw6XMHFfw7WKgAhujLaNszcsw@mail.gmail.com> <CAEivzxc4=p63Wgp_i+J7YVw=LrKTt_HfC5fAL=vGT9AXjUgqaw@mail.gmail.com>
-In-Reply-To: <CAEivzxc4=p63Wgp_i+J7YVw=LrKTt_HfC5fAL=vGT9AXjUgqaw@mail.gmail.com>
+References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
+ <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com> <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
+In-Reply-To: <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 29 Aug 2024 10:15:48 +0200
-Message-ID: <CAJfpegu2=ozU9LdceA+NP9gmaLFdx9TbhOAqAsN=1SNihu=PyA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] fuse: use GFP_KERNEL_ACCOUNT for allocations in fuse_dev_alloc
+Date: Thu, 29 Aug 2024 10:24:42 +0200
+Message-ID: <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
 To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: mszeredi@redhat.com, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>
+Cc: mszeredi@redhat.com, brauner@kernel.org, stgraber@stgraber.org, 
+	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 18 Jul 2024 at 12:01, Aleksandr Mikhalitsyn
+On Thu, 18 Jul 2024 at 21:12, Aleksandr Mikhalitsyn
 <aleksandr.mikhalitsyn@canonical.com> wrote:
 
-> I have also added Christian because he might be interested in
-> accounting for struct super_block.
+> This was a first Christian's idea when he originally proposed a
+> patchset for cephfs [2]. The problem with this
+> approach is that we don't have an idmapping provided in all
+> inode_operations, we only have it where it is supposed to be.
+> To workaround that, Christian suggested applying a mapping only when
+> we have mnt_idmap, but if not just leave uid/gid as it is.
+> This, of course, leads to inconsistencies between different
+> inode_operations, for example ->lookup (idmapping is not applied) and
+> ->symlink (idmapping is applied).
+> This inconsistency, really, is not a big deal usually, but... what if
+> a server does UID/GID-based permission checks? Then it is a problem,
+> obviously.
 
-IMO doing it in the VFS as well makes much more sense than just the
-fuse specific parts.
+Is it even sensible to do UID/GID-based permission checks in the
+server if idmapping is enabled?
+
+If not, then we should just somehow disable that configuration (i.e.
+by the server having to opt into idmapping), and then we can just use
+the in_h.[ugi]d for creates, no?
 
 Thanks,
 Miklos
