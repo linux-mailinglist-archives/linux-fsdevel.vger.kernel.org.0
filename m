@@ -1,172 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-27745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C6A9637F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 03:46:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B40FD9637F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 03:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CBF61C21C4D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 01:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E71AF1C21D51
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 01:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F70124B28;
-	Thu, 29 Aug 2024 01:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901E02BAEB;
+	Thu, 29 Aug 2024 01:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqvKCwvC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXBQ4p3k"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0841D8814;
-	Thu, 29 Aug 2024 01:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E879F25777;
+	Thu, 29 Aug 2024 01:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724895999; cv=none; b=VJnrqloohcqMNozCP3NKpR9wjoERWqN3N4Y87Ghh5vd+TDgWpwlzsatmvZ8MVcPMDjbJ9QKgGBvFcxdKKqOStAMXrM3K2ChoF6MDaRDtbq1LHFATjNMeb/BXvgM7EZhutwqr87+e+EeAKuxA7xU8nS2fn9ngSu9S/33FsqMuoPQ=
+	t=1724896031; cv=none; b=P9GiCFNueNT7cdatel4DXh46zGU0nh01TAoBccF60luxw/ze2mk/EuYL3fbauaAIoQGc1MCDtnG/0kiv5T49RAaDtLKr7x1iufjQF+fFVSR/fZGJxdamU0Bj0zUwFBCFT1+fkGvICOx1fQBKur4JhUEpQ1OrEYhtldc6WedNWl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724895999; c=relaxed/simple;
-	bh=LBGvbU9Ahk60LnwOybNrMK4GrZQInCZs70x5HnonAfA=;
+	s=arc-20240116; t=1724896031; c=relaxed/simple;
+	bh=rX03S+qYQPU1f9W/MD3wNiLX4lQKlgxcmGgXmzT6Ne0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jFDQdyPoynUSJb6oYr2oqokaK8z8amzXGtAqCaDg3yDlskLPAN11tDkI9u9QNpsBWbt3/Md6TlMbK7a8U8NC2M2IBmxfnsZ1fBd/+JexB8yekuVsgJTjGWdn20YrtrkgCLQNXyx3mjVA6n8ReW1Ut6rdBobsQhpslqI2MbM+Fno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqvKCwvC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68373C4CEC0;
-	Thu, 29 Aug 2024 01:46:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GIWESaFxfrTUNoSNix7ZZbaGwIIKFcbQD88tDuNBP4fWKWaaGluE7s01F8yRJYSOXFMhyzii4fr9qW7uqZBZ3dcozrOXV2O7Vb5m0NWDmFByp0JZZ8CKX2q1MGVaCC6uutOH+ZuKQfDc//5rUUMCuaqEmpYKf79vf0vCv4hVSxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXBQ4p3k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DD4BC4CEC0;
+	Thu, 29 Aug 2024 01:47:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724895998;
-	bh=LBGvbU9Ahk60LnwOybNrMK4GrZQInCZs70x5HnonAfA=;
+	s=k20201202; t=1724896030;
+	bh=rX03S+qYQPU1f9W/MD3wNiLX4lQKlgxcmGgXmzT6Ne0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qqvKCwvC0zFHQSXoPyvNGaYcw2isNVHsbXu0whX1qATt7PLF1vTDHK7uM15j2bnCB
-	 VOPTBM2QTWtZO+FNc/Nty3TjVKwPvwBOq1myGSAH1555GEm/5NvH9+JwL9tl3zXYOf
-	 PzzXLHgpDls/ZDAXRyNmnshuWSHJLtLXory8t3cZyQzmJ/fUyJb3uArJvBGlbTvdvx
-	 5XeCXOY7zHWsLrw/kv9FHssSpuOMKCTpLUvRoCigTDHat8HohZeZeSRG6vsx7vRWWf
-	 hSKJb+rCW2cKHTJU3g284Bw2DM/IT2MAYDK53+9TuufLLcrC5ZFTSM11DHBPwa10lT
-	 gKvosfxxT7vfA==
-Date: Wed, 28 Aug 2024 18:46:37 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Hongbo Li <lihongbo22@huawei.com>, viro@zeniv.linux.org.uk,
-	gnoack@google.com, mic@digikod.net, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
- directly
-Message-ID: <20240829014637.GA6216@frogsfrogsfrogs>
-References: <20240827014108.222719-1-lihongbo22@huawei.com>
- <20240827021300.GK6043@frogsfrogsfrogs>
- <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
- <20240827053712.GL6043@frogsfrogsfrogs>
- <20240827-abmelden-erbarmen-775c12ce2ae5@brauner>
- <20240827171148.GN6043@frogsfrogsfrogs>
- <Zs636Wi+UKAEU2F4@dread.disaster.area>
- <20240828155528.77lz5l7pmwj5sgsc@quack3>
+	b=fXBQ4p3ktBRLq7SEpdbXhGgT7GPvyh1zLlAwqR4UvEI86b6ibrG72EUyGX2HkyCp3
+	 BFK/kAboOP/JXM4GXm/0keHm4S40ouDBFRwBpLJ8xwXbk5HnwnkygPC16uH8iBVD/t
+	 BsMBsUKtLuaj1ykoojBb/2WMe+FstGQAhNpSN935VEK5y+fIh+xKjYS3dcWWGofeP5
+	 ULm1WkUrVDmEFVexFQri3Q9w+GukdXWxkLNnXJWHO/9R4uidYi6J5QycarXaIEm3Ic
+	 +TdaSrcKy6tYZBR70hhcFail28FM8LNoqUl2mIzaES+B2+Tp/OzUfr4/QUY+bbWLlp
+	 x/gwAS5YWqmtQ==
+Date: Wed, 28 Aug 2024 21:47:09 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: linux-nfs@vger.kernel.org
+Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v14.5 25/25] nfs: add FAQ section to
+ Documentation/filesystems/nfs/localio.rst
+Message-ID: <Zs_THTtfEsY8Pcya@kernel.org>
+References: <20240829010424.83693-1-snitzer@kernel.org>
+ <20240829010424.83693-26-snitzer@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240828155528.77lz5l7pmwj5sgsc@quack3>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240829010424.83693-26-snitzer@kernel.org>
 
-On Wed, Aug 28, 2024 at 05:55:28PM +0200, Jan Kara wrote:
-> On Wed 28-08-24 15:38:49, Dave Chinner wrote:
-> > On Tue, Aug 27, 2024 at 10:11:48AM -0700, Darrick J. Wong wrote:
-> > > On Tue, Aug 27, 2024 at 11:22:17AM +0200, Christian Brauner wrote:
-> > > > On Mon, Aug 26, 2024 at 10:37:12PM GMT, Darrick J. Wong wrote:
-> > > > > On Tue, Aug 27, 2024 at 10:32:38AM +0800, Hongbo Li wrote:
-> > > > > > 
-> > > > > > 
-> > > > > > On 2024/8/27 10:13, Darrick J. Wong wrote:
-> > > > > > > On Tue, Aug 27, 2024 at 01:41:08AM +0000, Hongbo Li wrote:
-> > > > > > > > Many mainstream file systems already support the GETVERSION ioctl,
-> > > > > > > > and their implementations are completely the same, essentially
-> > > > > > > > just obtain the value of i_generation. We think this ioctl can be
-> > > > > > > > implemented at the VFS layer, so the file systems do not need to
-> > > > > > > > implement it individually.
-> > > > > > > 
-> > > > > > > What if a filesystem never touches i_generation?  Is it ok to advertise
-> > > > > > > a generation number of zero when that's really meaningless?  Or should
-> > > > > > > we gate the generic ioctl on (say) whether or not the fs implements file
-> > > > > > > handles and/or supports nfs?
-> > > > > > 
-> > > > > > This ioctl mainly returns the i_generation, and whether it has meaning is up
-> > > > > > to the specific file system. Some tools will invoke IOC_GETVERSION, such as
-> > > > > > `lsattr -v`(but if it's lattr, it won't), but users may not necessarily
-> > > > > > actually use this value.
-> > > > > 
-> > > > > That's not how that works.  If the kernel starts exporting a datum,
-> > > > > people will start using it, and then the expectation that it will
-> > > > > *continue* to work becomes ingrained in the userspace ABI forever.
-> > > > > Be careful about establishing new behaviors for vfat.
-> > > > 
-> > > > Is the meaning even the same across all filesystems? And what is the
-> > > > meaning of this anyway? Is this described/defined for userspace
-> > > > anywhere?
-> > > 
-> > > AFAICT there's no manpage so I guess we could return getrandom32() if we
-> > > wanted to. ;)
-> > > 
-> > > But in seriousness, the usual four filesystems return i_generation.
-> > 
-> > We do? 
-> > 
-> > I thought we didn't expose it except via bulkstat (which requires
-> > CAP_SYS_ADMIN in the initns).
-> > 
-> > /me goes looking
-> > 
-> > Ugh. Well, there you go. I've been living a lie for 20 years.
-> > 
-> > > That is changed every time an inumber gets reused so that anyone with an
-> > > old file handle cannot accidentally open the wrong file.  In theory one
-> > > could use GETVERSION to construct file handles
-> > 
-> > Not theory. We've been constructing XFS filehandles in -privileged-
-> > userspace applications since the late 90s. Both DMAPI applications
-> > (HSMs) and xfsdump do this in combination with bulkstat to retreive
-> > the generation to enable full filesystem access without directory
-> > traversal being necessary.
-> > 
-> > I was completely unaware that FS_IOC_GETVERSION was implemented by
-> > XFS and so this information is available to unprivileged users...
-> > 
-> > > (if you do, UHLHAND!)
-> > Not familiar with that acronym.
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-U Have Lost, Have A Nice Day!
+Add a FAQ section to give answers to questions that have been raised
+during review of the localio feature.
 
-> > 
-> > > instead of using name_to_handle_at, which is why it's dangerous to
-> > > implement GETVERSION for everyone without checking if i_generation makes
-> > > sense.
-> > 
-> > Yup. If you have predictable generation numbers then it's trivial to
-> > guess filehandles once you know the inode number. Exposing
-> > generation numbers to unprivileged users allows them to determine if
-> > the generation numbers are predictable. Determining patterns is
-> > often as simple as a loop doing open(create); get inode number +
-> > generation; unlink().
-> 
-> As far as VFS goes, we have always assumed that a valid file handles can be
-> easily forged by unpriviledged userspace and hence all syscalls taking file
-> handle are gated by CAP_DAC_READ_SEARCH capability check. That means
-> userspace can indeed create a valid file handle but unless the process has
-> sufficient priviledges to crawl the whole filesystem, VFS will not allow it
-> to do anything special with it.
-> 
-> I don't know what XFS interfaces use file handles and what are the
-> permission requirements there but effectively relying on a 32-bit cookie
-> value for security seems like a rather weak security these days to me...
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Co-developed-by: Mike Snitzer <snitzer@kernel.org>
+Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+---
+ Documentation/filesystems/nfs/localio.rst | 78 +++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-CAP_SYS_ADMIN.
+diff --git a/Documentation/filesystems/nfs/localio.rst b/Documentation/filesystems/nfs/localio.rst
+index 8cceb3db386a..5d652f637a97 100644
+--- a/Documentation/filesystems/nfs/localio.rst
++++ b/Documentation/filesystems/nfs/localio.rst
+@@ -61,6 +61,84 @@ fio for 20 secs with directio, qd of 8, 1 libaio thread:
+   128K read:  IOPS=24.4k, BW=3050MiB/s (3198MB/s)(59.6GiB/20001msec)
+   128K write: IOPS=11.4k, BW=1430MiB/s (1500MB/s)(27.9GiB/20001msec)
+ 
++FAQ
++===
++
++1. What are the use cases for LOCALIO?
++
++   a. Workloads where the NFS client and server are on the same host
++      realize improved IO performance. In particular, it is common when
++      running containerised workloads for jobs to find themselves
++      running on the same host as the knfsd server being used for
++      storage.
++
++2. What are the requirements for LOCALIO?
++
++   a. Bypass use of the network RPC protocol as much as possible. This
++      includes bypassing XDR and RPC for open, read, write and commit
++      operations.
++   b. Allow client and server to autonomously discover if they are
++      running local to each other without making any assumptions about
++      the local network topology.
++   c. Support the use of containers by being compatible with relevant
++      namespaces (e.g. network, user, mount).
++   d. Support all versions of NFS. NFSv3 is of particular importance
++      because it has wide enterprise usage and pNFS flexfiles makes use
++      of it for the data path.
++
++3. Why doesn´t LOCALIO just compare IP addresses or hostnames when
++   deciding if the NFS client and server are co-located on the same
++   host?
++
++   Since one of the main use cases is containerised workloads, we cannot
++   assume that IP addresses will be shared between the client and
++   server. This sets up a requirement for a handshake protocol that
++   needs to go over the same connection as the NFS traffic in order to
++   identify that the client and the server really are running on the
++   same host. The handshake uses a secret that is sent over the wire,
++   and can be verified by both parties by comparing with a value stored
++   in shared kernel memory if they are truly co-located.
++
++4. Does LOCALIO improve pNFS flexfiles?
++
++   Yes, LOCALIO complements pNFS flexfiles by allowing it to take
++   advantage of NFS client and server locality.  Policy that initiates
++   client IO as closely to the server where the data is stored naturally
++   benefits from the data path optimization LOCALIO provides.
++
++5. Why not develop a new pNFS layout to enable LOCALIO?
++
++   A new pNFS layout could be developed, but doing so would put the
++   onus on the server to somehow discover that the client is co-located
++   when deciding to hand out the layout.
++   There is value in a simpler approach (as provided by LOCALIO) that
++   allows the NFS client to negotiate and leverage locality without
++   requiring more elaborate modeling and discovery of such locality in a
++   more centralized manner.
++
++6. Why is having the client perform a server-side file OPEN, without
++   using RPC, beneficial?  Is the benefit pNFS specific?
++
++   Avoiding the use of XDR and RPC for file opens is beneficial to
++   performance regardless of whether pNFS is used. Especially when
++   dealing with small files its best to avoid going over the wire
++   whenever possible, otherwise it could reduce or even negate the
++   benefits of avoiding the wire for doing the small file I/O itself.
++   Given LOCALIO's requirements the current approach of having the
++   client perform a server-side file open, without using RPC, is ideal.
++   If in the future requirements change then we can adapt accordingly.
++
++7. Why is LOCALIO only supported with UNIX Authentication (AUTH_UNIX)?
++
++   Strong authentication is usually tied to the connection itself. It
++   works by establishing a context that is cached by the server, and
++   that acts as the key for discovering the authorisation token, which
++   can then be passed to rpc.mountd to complete the authentication
++   process. On the other hand, in the case of AUTH_UNIX, the credential
++   that was passed over the wire is used directly as the key in the
++   upcall to rpc.mountd. This simplifies the authentication process, and
++   so makes AUTH_UNIX easier to support.
++
+ RPC
+ ===
+ 
+-- 
+2.44.0
 
---D
-
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-> 
 
