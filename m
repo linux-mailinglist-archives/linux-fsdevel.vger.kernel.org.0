@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-27915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C94BF964C6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 19:02:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF58A964C6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 19:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDE8F1C22A38
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:02:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BD12B241E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 17:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCD41BA86E;
-	Thu, 29 Aug 2024 16:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0661B86DA;
+	Thu, 29 Aug 2024 16:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UGlITaHl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JlaYG4gg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FF51B86D1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 16:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B8B1B86D7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 16:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950749; cv=none; b=qpf7P2aFBpekw1n/ZuJX9N5aL6ArTlK2coWBhVdhsS92CDvXbgAOJJjwiVneY+LXxVl9qwcPbZMYSf5erSiyVJzNtBP1M2DAJdQn0vR7kTZ/k3eTbh9sOzO1Boj8fC1QmZi1WyePTTzBTzaF1HrR9cnbX9FrDpv60JTyc020hIo=
+	t=1724950757; cv=none; b=DqzOh60eQ7nBkid7xTpfSSW11Pk+xRKR+sCy6ktB5lT3dDZduobV+cOzB3rxcgT8blB5PZ1oTiB9j6R91NXHe8P9FA8ssXmrwNcIee5vH0pvgs8OksbtC4psBcF3If7q/jB/mgANUC5mB8uaygLn4pThy2KRW567SxMiGk4PtmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950749; c=relaxed/simple;
-	bh=K+woEaTnjUmqkdB8pKxZ/xg0ooE3m8DTsy83tmmcGy4=;
+	s=arc-20240116; t=1724950757; c=relaxed/simple;
+	bh=/4f3liGgTHCSBxlNCkznXeziGc69WaWwlAw0W8Tv14I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PJAdGciBvKLY2tqaxGPLLzOoZhdZi1vhLW6twJC2uOeM1tJKf80jwGPA4dePkS8cgEvcZWjHZ2cL0W/lHtvpKQZARLjTlAYWSIzn5/72ptnBoqITpqGuLfqVHJqRzkBb+GXS25oMK8f3afd0SGv+v9L40polrk+03gh7AUWpGB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UGlITaHl; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=iboz/eg2I5jGmiBxWF76C8/IubZcxHKRfRwDKAkOxe+Q8sfFHvCMdifz4JOmNWbR2+9VjnUFLr37/xHe/Iz9CIdhwOD1AS45y7PCtPKaZUMYV/a3ak/gwueQaY+s4+nQljmbkj+VHQjUB0o9VjtSYVqBzBm8wlWRbbFw03bhveM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JlaYG4gg; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724950746;
+	s=mimecast20190719; t=1724950755;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cKf6dQguD8Od23K0wDaepWW4S0v2e9lLNnYaNj5b1cU=;
-	b=UGlITaHltMNzqQGpq8hJ+HSNs/wIhFYff+GPM6DsjJSSUoDNSthFXNT19D2aibOOKc5MHL
-	Wt9MMlY8+mURMGvFByu3iSBZTDhHLa7MlGG+PvMUxt0alA+X6sPUzCZy6UHdGgizhGIu7k
-	OLGJqYJLXe8gLt3yoJDwP/ZKsiZnGs4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=MiGCooKskvY1haSoDErYW63CNhCWGlypowkYLoi/78c=;
+	b=JlaYG4ggMiutZJ6H3Un4SXHxPC9ict6ee9mC22M+8KWxaa/pT67o/trsfeaWk9dm5XRAip
+	q+1f9iqMmcR2SU5/840eeFcbWnQGBCoVo+/ZQVH5mtZUNA9r/iqBJ3Q8/QsZmMMVI8UnTz
+	p2l0peQtI3hsgdMb7iAc0N7MLor8Ed8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-541-ui0rW_eRM6iDl2qZZuTgKA-1; Thu,
- 29 Aug 2024 12:59:02 -0400
-X-MC-Unique: ui0rW_eRM6iDl2qZZuTgKA-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-169-8aXbFsVPOVG-1DFlGxFIdw-1; Thu,
+ 29 Aug 2024 12:59:11 -0400
+X-MC-Unique: 8aXbFsVPOVG-1DFlGxFIdw-1
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3AA1D18F498B;
-	Thu, 29 Aug 2024 16:59:00 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6AE9218BC2D7;
+	Thu, 29 Aug 2024 16:59:08 +0000 (UTC)
 Received: from t14s.redhat.com (unknown [10.39.193.245])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6ACD61955F66;
-	Thu, 29 Aug 2024 16:58:51 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A5CBF1955F21;
+	Thu, 29 Aug 2024 16:59:00 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -75,9 +75,9 @@ Cc: linux-mm@kvack.org,
 	Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH v1 14/17] fs/proc/task_mmu: remove per-page mapcount dependency for PM_MMAP_EXCLUSIVE (CONFIG_NO_PAGE_MAPCOUNT)
-Date: Thu, 29 Aug 2024 18:56:17 +0200
-Message-ID: <20240829165627.2256514-15-david@redhat.com>
+Subject: [PATCH v1 15/17] fs/proc/task_mmu: remove per-page mapcount dependency for "mapmax" (CONFIG_NO_PAGE_MAPCOUNT)
+Date: Thu, 29 Aug 2024 18:56:18 +0200
+Message-ID: <20240829165627.2256514-16-david@redhat.com>
 In-Reply-To: <20240829165627.2256514-1-david@redhat.com>
 References: <20240829165627.2256514-1-david@redhat.com>
 Precedence: bulk
@@ -92,85 +92,58 @@ X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 Let's implement an alternative when per-page mapcounts in large folios are
 no longer maintained -- soon with CONFIG_NO_PAGE_MAPCOUNT.
 
-PM_MMAP_EXCLUSIVE will now be set if folio_likely_mapped_shared() is
-true -- when the folio is considered "mapped shared", including when
-it once was "mapped shared" but no longer is, as documented.
+For calculating "mapmax", we now use the average per-page mapcount in
+a large folio instead of the per-page mapcount.
 
-This might result in and under-indication of "exclusively mapped", which
-is considered better than over-indicating it: under-estimating the USS
-(Unique Set Size) is better than over-estimating it.
+For hugetlb folios and folios that are not partially mapped into MMs,
+there is no change.
 
-As an alternative, we could simply remove that flag with
-CONFIG_NO_PAGE_MAPCOUNT completely, but there might be value to it. So,
-let's keep it like that and document the behavior.
+Likely, this change will not matter much in practice, and an alternative
+might be to simple remove this stat with CONFIG_NO_PAGE_MAPCOUNT.
+However, there might be value to it, so let's keep it like that and
+document the behavior.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- Documentation/admin-guide/mm/pagemap.rst |  9 +++++++++
- fs/proc/task_mmu.c                       | 16 ++++++++++++++--
- 2 files changed, 23 insertions(+), 2 deletions(-)
+ Documentation/filesystems/proc.rst | 5 +++++
+ fs/proc/task_mmu.c                 | 8 +++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-index 49590306c61a0..131c86574c39a 100644
---- a/Documentation/admin-guide/mm/pagemap.rst
-+++ b/Documentation/admin-guide/mm/pagemap.rst
-@@ -37,6 +37,15 @@ There are four components to pagemap:
-    precisely which pages are mapped (or in swap) and comparing mapped
-    pages between processes.
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index e834779d96115..bed03e77c0f91 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -684,6 +684,11 @@ Where:
+ node locality page counters (N0 == node0, N1 == node1, ...) and the kernel page
+ size, in KB, that is backing the mapping up.
  
-+   Note that in some kernel configurations, all pages part of a larger
-+   allocation (e.g., THP) might be considered "mapped shared" if the large
-+   allocation is considered "mapped shared": if not all pages are exclusive to
-+   the same process. Further, some kernel configurations might consider larger
-+   allocations "mapped shared", if they were at one point considered
-+   "mapped shared", even if they would now be considered "exclusively mapped".
-+   Consequently, in these kernel configurations, bit 56 might be set although
-+   the page is actually "exclusively mapped"
++Note that some kernel configurations do not track the precise number of times
++a page part of a larger allocation (e.g., THP) is mapped. In these
++configurations, "mapmax" might corresponds to the average number of mappings
++per page in such a larger allocation instead.
 +
-    Efficient users of this interface will use ``/proc/pid/maps`` to
-    determine which areas of memory are actually mapped and llseek to
-    skip over unmapped regions.
+ 1.2 Kernel data
+ ---------------
+ 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 5f171ad7b436b..f35a63c4b7c7a 100644
+index f35a63c4b7c7a..3d9fe99346478 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -29,6 +29,18 @@
- #include <asm/tlbflush.h>
- #include "internal.h"
- 
-+#ifdef CONFIG_PAGE_MAPCOUNT
-+static bool __folio_page_mapped_exclusively(struct folio *folio, struct page *page)
-+{
-+	return folio_precise_page_mapcount(folio, page) == 1;
-+}
-+#else /* !CONFIG_PAGE_MAPCOUNT */
-+static bool __folio_page_mapped_exclusively(struct folio *folio, struct page *page)
-+{
-+	return !folio_likely_mapped_shared(folio);
-+}
-+#endif /* CONFIG_PAGE_MAPCOUNT */
+@@ -2872,7 +2872,13 @@ static void gather_stats(struct page *page, struct numa_maps *md, int pte_dirty,
+ 			unsigned long nr_pages)
+ {
+ 	struct folio *folio = page_folio(page);
+-	int count = folio_precise_page_mapcount(folio, page);
++	int count;
 +
- #define SEQ_PUT_DEC(str, val) \
- 		seq_put_decimal_ull_width(m, str, (val) << (PAGE_SHIFT-10), 8)
- void task_mem(struct seq_file *m, struct mm_struct *mm)
-@@ -1746,7 +1758,7 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
- 		if (!folio_test_anon(folio))
- 			flags |= PM_FILE;
- 		if ((flags & PM_PRESENT) &&
--		    folio_precise_page_mapcount(folio, page) == 1)
-+		    __folio_page_mapped_exclusively(folio, page))
- 			flags |= PM_MMAP_EXCLUSIVE;
- 	}
- 	if (vma->vm_flags & VM_SOFTDIRTY)
-@@ -1821,7 +1833,7 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
- 			pagemap_entry_t pme;
++#ifdef CONFIG_PAGE_MAPCOUNT
++	count = folio_precise_page_mapcount(folio, page);
++#else
++	count = min_t(int, folio_average_page_mapcount(folio), 1);
++#endif
  
- 			if (folio && (flags & PM_PRESENT) &&
--			    folio_precise_page_mapcount(folio, page + idx) == 1)
-+			    __folio_page_mapped_exclusively(folio, page))
- 				cur_flags |= PM_MMAP_EXCLUSIVE;
- 
- 			pme = make_pme(frame, cur_flags);
+ 	md->pages += nr_pages;
+ 	if (pte_dirty || folio_test_dirty(folio))
 -- 
 2.46.0
 
