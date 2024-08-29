@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-27865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501659648B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:39:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773AF964902
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 070B12814F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:39:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D021F218D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE32D1B0126;
-	Thu, 29 Aug 2024 14:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7971B140A;
+	Thu, 29 Aug 2024 14:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebVYy2rp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pI71RdFk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C7B19049D;
-	Thu, 29 Aug 2024 14:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD631AED38;
+	Thu, 29 Aug 2024 14:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724942376; cv=none; b=VmAk0f9wqyQVpTtHON0bkKzStidDBeyynwoXOXjiNbT+lyxiagDR778y9iK1qlPiwyBTEsWvGLlqAxXGp81AlKFqJy5iEpYl9fACEIE9G4gBZ/9cTxroM/vW5l6tt4B9N6fBW0+CRuiOI9J598wdCkryjVaSZEMlw0ZjaGf9wrk=
+	t=1724942950; cv=none; b=nRScNRbPQTkpaAu5bbXJhdQT1XiDeYdQtH7NJ/7k3CtVNSu2baOHtW0TfqziNu705nzrs8m16SNnzmvvE9OpG3FKnjS64IP0M1ggDW3XanYkVd0idSVqLzXYN+3I/e6+PpDo+BxNtP+9gUG9EwXNsdv+T7dSAR3P+kKpcTi1lJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724942376; c=relaxed/simple;
-	bh=p1qoXZpaW+FhF17jy99cY4YeL9te/bL8/jkPp+7Yt/4=;
+	s=arc-20240116; t=1724942950; c=relaxed/simple;
+	bh=P6LSYolCmWbwlJC9EuWxIaAA/mvYhHG1w5mu6bJF5bg=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sGWsLa90N3LOfkPlp4P2EqJwmWTafkjKsQ81yssfsm1qgBDercrl/gT8EYIw0xJHqq2WCWuTzlBgLK356jR0uBntlwK1lpe9uFlZYXIVAgvRnJaukBp+ybGG6RVTj3FM70UdH86Ccx7iYiZRVNUAqLx6c9Tu5xnPAxvzJjcukTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebVYy2rp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8BCDC4CEC1;
-	Thu, 29 Aug 2024 14:39:34 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Z/eK7o3j8uQeJZ+O6QhHStKpkPnZxlc3pvEamK5q8cvBpIbam+7RiqlN6QfC4WIOibZKLfycSs3PCUykWF8KTNpQCMWE4RG1ryVZA+DmidyYzkhsZXIhDsr67ZOHcGXKgQtmNl31t2FtW22jX1b5e/ERkUWrCIsKzJfBh26HOHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pI71RdFk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49588C4CEC1;
+	Thu, 29 Aug 2024 14:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724942375;
-	bh=p1qoXZpaW+FhF17jy99cY4YeL9te/bL8/jkPp+7Yt/4=;
+	s=k20201202; t=1724942950;
+	bh=P6LSYolCmWbwlJC9EuWxIaAA/mvYhHG1w5mu6bJF5bg=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ebVYy2rpUkULO7q5YfxuHQNjNoDbezlaSBgk031Rai3mB43I/lNpfUa3xLd+eXy/7
-	 FG++NDJqwmJ+dh6KhJl9Zk/UAW5YL0g6QSI1wLCrtVYUi9jCgSu0dzyek+O90zbqLH
-	 DxJ33pqyc5XaLnq5Mwb2KjEH17FDdU+NQC9ott+KNiIqJxxCpngumOHmz4Me01+O4F
-	 8CbRCSvMOkg4sFoQirlWJo10lf5ohu7nb+T8ebPGTFh6ZshO15cXNmIbBSbuGecOtf
-	 NZbvacw/53RVl6y0PJ45JlfW0MG7iXPq4ZgROifjzdcurnl/1IhmUYQrU0vGXus/K+
-	 DAJj0rrV/f12A==
-Message-ID: <1dbdcefe983509154cb32b4cbce088b6b78c300a.camel@kernel.org>
-Subject: Re: [PATCH v14 08/25] nfsd: factor out __fh_verify to allow NULL
- rqstp to be passed
+	b=pI71RdFkw/6UpMkuKOVTRhWryaQBHCydsuSgikmScV5cax12u/J9LwQgkKkCR7w4L
+	 2uHbsQkJmA8N8I0kUOVI4GAk+nQtAnndBMkdQXl62RAVfNJrWAMXnkqj0FHqBRJW01
+	 OzXirRsPXu/Tl06436If9UjfxEwnINuVAjEEd3RTgKdrT3/1PXDxwEPRnPKlKeB6I/
+	 AHBlpF02Jvq5MR/ANq7Aq0AfDadhhMWy11XP4kvpuXWFixJgumCzDOz7FetgwRpsHz
+	 YRqQy0FXs+z65C9O09Xx5o1+96bkO8HhcYkQWGb4J5sd91bx/V6sKhVkpS+AtZcER6
+	 n2vZ6cJ1VHSPw==
+Message-ID: <3b6491dfc9dec7e4c3b63cce7e2d6a09675654fa.camel@kernel.org>
+Subject: Re: [PATCH v14 09/25] nfsd: add nfsd_file_acquire_local()
 From: Jeff Layton <jlayton@kernel.org>
 To: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org
 Cc: Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <anna@kernel.org>, 
  Trond Myklebust <trondmy@hammerspace.com>, NeilBrown <neilb@suse.de>,
  linux-fsdevel@vger.kernel.org
-Date: Thu, 29 Aug 2024 10:39:33 -0400
-In-Reply-To: <20240829010424.83693-9-snitzer@kernel.org>
+Date: Thu, 29 Aug 2024 10:49:08 -0400
+In-Reply-To: <20240829010424.83693-10-snitzer@kernel.org>
 References: <20240829010424.83693-1-snitzer@kernel.org>
-	 <20240829010424.83693-9-snitzer@kernel.org>
+	 <20240829010424.83693-10-snitzer@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -140,200 +139,241 @@ MIME-Version: 1.0
 On Wed, 2024-08-28 at 21:04 -0400, Mike Snitzer wrote:
 > From: NeilBrown <neilb@suse.de>
 >=20
-> __fh_verify() offers an interface like fh_verify() but doesn't require
-> a struct svc_rqst *, instead it also takes the specific parts as
-> explicit required arguments.  So it is safe to call __fh_verify() with
-> a NULL rqstp, but the net, cred, and client args must not be NULL.
+> nfsd_file_acquire_local() can be used to look up a file by filehandle
+> without having a struct svc_rqst.  This can be used by NFS LOCALIO to
+> allow the NFS client to bypass the NFS protocol to directly access a
+> file provided by the NFS server which is running in the same kernel.
 >=20
-> __fh_verify() does not use SVC_NET(), nor does the functions it calls.
+> In nfsd_file_do_acquire() care is taken to always use fh_verify() if
+> rqstp is not NULL (as is the case for non-LOCALIO callers).  Otherwise
+> the non-LOCALIO callers will not supply the correct and required
+> arguments to __fh_verify (e.g. gssclient isn't passed).
 >=20
-> Rather than using rqstp->rq_client pass the client and gssclient
-> explicitly to __fh_verify and then to nfsd_set_fh_dentry().
+> Introduce fh_verify_local() wrapper around __fh_verify to make it
+> clear that LOCALIO is intended caller.
 >=20
-> Lastly, 4 associated tracepoints are only used if rqstp is not NULL
-> (this is a stop-gap that should be properly fixed so localio also
-> benefits from the utility these tracepoints provide when debugging
-> fh_verify issues).
+> Also, use GC for nfsd_file returned by nfsd_file_acquire_local.  GC
+> offers performance improvements if/when a file is reopened before
+> launderette cleans it from the filecache's LRU.
 >=20
-
-nit: this last paragraph doesn't apply anymore with the inclusion of
-the previous patch
-
+> Suggested-by: Jeff Layton <jlayton@kernel.org> # use filecache's GC
 > Signed-off-by: NeilBrown <neilb@suse.de>
 > Co-developed-by: Mike Snitzer <snitzer@kernel.org>
 > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
 > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 > ---
->  fs/nfsd/nfsfh.c | 90 +++++++++++++++++++++++++++++--------------------
->  1 file changed, 53 insertions(+), 37 deletions(-)
+>  fs/nfsd/filecache.c | 71 ++++++++++++++++++++++++++++++++++++++++-----
+>  fs/nfsd/filecache.h |  3 ++
+>  fs/nfsd/nfsfh.c     | 39 +++++++++++++++++++++++++
+>  fs/nfsd/nfsfh.h     |  2 ++
+>  4 files changed, 108 insertions(+), 7 deletions(-)
 >=20
-> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> index 77acc26e8b02..80c06e170e9a 100644
-> --- a/fs/nfsd/nfsfh.c
-> +++ b/fs/nfsd/nfsfh.c
-> @@ -142,7 +142,11 @@ static inline __be32 check_pseudo_root(struct dentry=
- *dentry,
->   * dentry.  On success, the results are used to set fh_export and
->   * fh_dentry.
->   */
-> -static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqstp, struct svc_fh *=
-fhp)
-> +static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqstp, struct net *net=
-,
-> +				 struct svc_cred *cred,
-> +				 struct auth_domain *client,
-> +				 struct auth_domain *gssclient,
-> +				 struct svc_fh *fhp)
->  {
->  	struct knfsd_fh	*fh =3D &fhp->fh_handle;
->  	struct fid *fid =3D NULL;
-> @@ -184,8 +188,8 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqs=
-tp, struct svc_fh *fhp)
->  	data_left -=3D len;
->  	if (data_left < 0)
->  		return error;
-> -	exp =3D rqst_exp_find(&rqstp->rq_chandle, SVC_NET(rqstp),
-> -			    rqstp->rq_client, rqstp->rq_gssclient,
-> +	exp =3D rqst_exp_find(rqstp ? &rqstp->rq_chandle : NULL,
-> +			    net, client, gssclient,
->  			    fh->fh_fsid_type, fh->fh_fsid);
->  	fid =3D (struct fid *)(fh->fh_fsid + len);
-> =20
-> @@ -220,7 +224,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqs=
-tp, struct svc_fh *fhp)
->  		put_cred(override_creds(new));
->  		put_cred(new);
->  	} else {
-> -		error =3D nfsd_setuser_and_check_port(rqstp, &rqstp->rq_cred, exp);
-> +		error =3D nfsd_setuser_and_check_port(rqstp, cred, exp);
->  		if (error)
->  			goto out;
->  	}
-> @@ -297,43 +301,21 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *r=
-qstp, struct svc_fh *fhp)
->  	return error;
+> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+> index 9e9d246f993c..2dc72de31f61 100644
+> --- a/fs/nfsd/filecache.c
+> +++ b/fs/nfsd/filecache.c
+> @@ -982,12 +982,14 @@ nfsd_file_is_cached(struct inode *inode)
 >  }
 > =20
-> -/**
-> - * fh_verify - filehandle lookup and access checking
-> - * @rqstp: pointer to current rpc request
-> - * @fhp: filehandle to be verified
-> - * @type: expected type of object pointed to by filehandle
-> - * @access: type of access needed to object
-> - *
-> - * Look up a dentry from the on-the-wire filehandle, check the client's
-> - * access to the export, and set the current task's credentials.
-> - *
-> - * Regardless of success or failure of fh_verify(), fh_put() should be
-> - * called on @fhp when the caller is finished with the filehandle.
-> - *
-> - * fh_verify() may be called multiple times on a given filehandle, for
-> - * example, when processing an NFSv4 compound.  The first call will look
-> - * up a dentry using the on-the-wire filehandle.  Subsequent calls will
-> - * skip the lookup and just perform the other checks and possibly change
-> - * the current task's credentials.
-> - *
-> - * @type specifies the type of object expected using one of the S_IF*
-> - * constants defined in include/linux/stat.h.  The caller may use zero
-> - * to indicate that it doesn't care, or a negative integer to indicate
-> - * that it expects something not of the given type.
-> - *
-> - * @access is formed from the NFSD_MAY_* constants defined in
-> - * fs/nfsd/vfs.h.
-> - */
-> -__be32
-> -fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int =
-access)
-> +static __be32
-> +__fh_verify(struct svc_rqst *rqstp,
-> +	    struct net *net, struct svc_cred *cred,
-> +	    struct auth_domain *client,
-> +	    struct auth_domain *gssclient,
-> +	    struct svc_fh *fhp, umode_t type, int access)
-
-I don't consider is a show-stopper, but it might be good to have a
-kerneldoc header on this, just because it has so many parameters.
-Having them clearly spelled out, and the rules around what must be set
-when rqstp is NULL would make it less likely we'll break those
-assumptions in the future.
-
+>  static __be32
+> -nfsd_file_do_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
+> +nfsd_file_do_acquire(struct svc_rqst *rqstp, struct net *net,
+> +		     struct svc_cred *cred,
+> +		     struct auth_domain *client,
+> +		     struct svc_fh *fhp,
+>  		     unsigned int may_flags, struct file *file,
+>  		     struct nfsd_file **pnf, bool want_gc)
 >  {
-> -	struct nfsd_net *nn =3D net_generic(SVC_NET(rqstp), nfsd_net_id);
-> +	struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
->  	struct svc_export *exp =3D NULL;
->  	struct dentry	*dentry;
->  	__be32		error;
+>  	unsigned char need =3D may_flags & NFSD_FILE_MAY_MASK;
+> -	struct net *net =3D SVC_NET(rqstp);
+>  	struct nfsd_file *new, *nf;
+>  	bool stale_retry =3D true;
+>  	bool open_retry =3D true;
+> @@ -996,8 +998,13 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct =
+svc_fh *fhp,
+>  	int ret;
 > =20
->  	if (!fhp->fh_dentry) {
-> -		error =3D nfsd_set_fh_dentry(rqstp, fhp);
-> +		error =3D nfsd_set_fh_dentry(rqstp, net, cred, client,
-> +					   gssclient, fhp);
->  		if (error)
->  			goto out;
->  	}
-> @@ -362,7 +344,7 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp,=
- umode_t type, int access)
->  	if (error)
->  		goto out;
+>  retry:
+> -	status =3D fh_verify(rqstp, fhp, S_IFREG,
+> -				may_flags|NFSD_MAY_OWNER_OVERRIDE);
+> +	if (rqstp) {
+> +		status =3D fh_verify(rqstp, fhp, S_IFREG,
+> +				   may_flags|NFSD_MAY_OWNER_OVERRIDE);
+> +	} else {
+> +		status =3D fh_verify_local(net, cred, client, fhp, S_IFREG,
+> +					 may_flags|NFSD_MAY_OWNER_OVERRIDE);
+> +	}
+>  	if (status !=3D nfs_ok)
+>  		return status;
+>  	inode =3D d_inode(fhp->fh_dentry);
+> @@ -1143,7 +1150,8 @@ __be32
+>  nfsd_file_acquire_gc(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  		     unsigned int may_flags, struct nfsd_file **pnf)
+>  {
+> -	return nfsd_file_do_acquire(rqstp, fhp, may_flags, NULL, pnf, true);
+> +	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
+> +				    fhp, may_flags, NULL, pnf, true);
+>  }
 > =20
-> -	error =3D nfsd_setuser_and_check_port(rqstp, &rqstp->rq_cred, exp);
-> +	error =3D nfsd_setuser_and_check_port(rqstp, cred, exp);
->  	if (error)
->  		goto out;
+>  /**
+> @@ -1167,7 +1175,55 @@ __be32
+>  nfsd_file_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  		  unsigned int may_flags, struct nfsd_file **pnf)
+>  {
+> -	return nfsd_file_do_acquire(rqstp, fhp, may_flags, NULL, pnf, false);
+> +	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
+> +				    fhp, may_flags, NULL, pnf, false);
+> +}
+> +
+> +/**
+> + * nfsd_file_acquire_local - Get a struct nfsd_file with an open file fo=
+r localio
+> + * @net: The network namespace in which to perform a lookup
+> + * @cred: the user credential with which to validate access
+> + * @client: the auth_domain for LOCALIO lookup
+> + * @fhp: the NFS filehandle of the file to be opened
+> + * @may_flags: NFSD_MAY_ settings for the file
+> + * @pnf: OUT: new or found "struct nfsd_file" object
+> + *
+> + * This file lookup interface provide access to a file given the
+> + * filehandle and credential.  No connection-based authorisation
+> + * is performed and in that way it is quite different to other
+> + * file access mediated by nfsd.  It allows a kernel module such as the =
+NFS
+> + * client to reach across network and filesystem namespaces to access
+> + * a file.  The security implications of this should be carefully
+> + * considered before use.
+> + *
+> + * The nfsd_file object returned by this API is reference-counted
+> + * and garbage-collected. The object is retained for a few
+> + * seconds after the final nfsd_file_put() in case the caller
+> + * wants to re-use it.
+> + *
+> + * Return values:
+> + *   %nfs_ok - @pnf points to an nfsd_file with its reference
+> + *   count boosted.
+> + *
+> + * On error, an nfsstat value in network byte order is returned.
+> + */
+> +__be32
+> +nfsd_file_acquire_local(struct net *net, struct svc_cred *cred,
+> +			struct auth_domain *client, struct svc_fh *fhp,
+> +			unsigned int may_flags, struct nfsd_file **pnf)
+> +{
+> +	/*
+> +	 * Save creds before calling nfsd_file_do_acquire() (which calls
+> +	 * nfsd_setuser). Important because caller (LOCALIO) is from
+> +	 * client context.
+> +	 */
+> +	const struct cred *save_cred =3D get_current_cred();
+> +	__be32 beres;
+> +
+> +	beres =3D nfsd_file_do_acquire(NULL, net, cred, client,
+> +				     fhp, may_flags, NULL, pnf, true);
+> +	revert_creds(save_cred);
+> +	return beres;
+>  }
 > =20
-> @@ -392,7 +374,7 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp,=
- umode_t type, int access)
+>  /**
+> @@ -1193,7 +1249,8 @@ nfsd_file_acquire_opened(struct svc_rqst *rqstp, st=
+ruct svc_fh *fhp,
+>  			 unsigned int may_flags, struct file *file,
+>  			 struct nfsd_file **pnf)
+>  {
+> -	return nfsd_file_do_acquire(rqstp, fhp, may_flags, file, pnf, false);
+> +	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
+> +				    fhp, may_flags, file, pnf, false);
+>  }
 > =20
->  skip_pseudoflavor_check:
->  	/* Finally, check access permissions. */
-> -	error =3D nfsd_permission(&rqstp->rq_cred, exp, dentry, access);
-> +	error =3D nfsd_permission(cred, exp, dentry, access);
->  out:
->  	trace_nfsd_fh_verify_err(rqstp, fhp, type, access, error);
->  	if (error =3D=3D nfserr_stale)
-> @@ -400,6 +382,40 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp=
-, umode_t type, int access)
+>  /*
+> diff --git a/fs/nfsd/filecache.h b/fs/nfsd/filecache.h
+> index 3fbec24eea6c..26ada78b8c1e 100644
+> --- a/fs/nfsd/filecache.h
+> +++ b/fs/nfsd/filecache.h
+> @@ -66,5 +66,8 @@ __be32 nfsd_file_acquire(struct svc_rqst *rqstp, struct=
+ svc_fh *fhp,
+>  __be32 nfsd_file_acquire_opened(struct svc_rqst *rqstp, struct svc_fh *f=
+hp,
+>  		  unsigned int may_flags, struct file *file,
+>  		  struct nfsd_file **nfp);
+> +__be32 nfsd_file_acquire_local(struct net *net, struct svc_cred *cred,
+> +			       struct auth_domain *client, struct svc_fh *fhp,
+> +			       unsigned int may_flags, struct nfsd_file **pnf);
+>  int nfsd_file_cache_stats_show(struct seq_file *m, void *v);
+>  #endif /* _FS_NFSD_FILECACHE_H */
+> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> index 80c06e170e9a..49468e478d23 100644
+> --- a/fs/nfsd/nfsfh.c
+> +++ b/fs/nfsd/nfsfh.c
+> @@ -301,6 +301,22 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rq=
+stp, struct net *net,
 >  	return error;
 >  }
 > =20
 > +/**
-> + * fh_verify - filehandle lookup and access checking
-> + * @rqstp: pointer to current rpc request
+> + * __fh_verify - filehandle lookup and access checking
+> + * @rqstp: RPC transaction context, or NULL
+> + * @net: net namespace in which to perform the export lookup
+> + * @cred: RPC user credential
+> + * @client: RPC auth domain
+> + * @gssclient: RPC GSS auth domain, or NULL
 > + * @fhp: filehandle to be verified
 > + * @type: expected type of object pointed to by filehandle
 > + * @access: type of access needed to object
 > + *
-> + * Look up a dentry from the on-the-wire filehandle, check the client's
-> + * access to the export, and set the current task's credentials.
+> + * This internal API can be used by callers who do not have an RPC
+> + * transaction context (ie are not running in an nfsd thread).
 > + *
-> + * Regardless of success or failure of fh_verify(), fh_put() should be
-> + * called on @fhp when the caller is finished with the filehandle.
+> + * See fh_verify() for further descriptions of @fhp, @type, and @access.
+> + */
+>  static __be32
+>  __fh_verify(struct svc_rqst *rqstp,
+>  	    struct net *net, struct svc_cred *cred,
+> @@ -382,6 +398,29 @@ __fh_verify(struct svc_rqst *rqstp,
+>  	return error;
+>  }
+> =20
+> +/**
+> + * fh_verify_local - filehandle lookup and access checking
+> + * @net: net namespace in which to perform the export lookup
+> + * @cred: RPC user credential
+> + * @client: RPC auth domain
+> + * @fhp: filehandle to be verified
+> + * @type: expected type of object pointed to by filehandle
+> + * @access: type of access needed to object
 > + *
-> + * fh_verify() may be called multiple times on a given filehandle, for
-> + * example, when processing an NFSv4 compound.  The first call will look
-> + * up a dentry using the on-the-wire filehandle.  Subsequent calls will
-> + * skip the lookup and just perform the other checks and possibly change
-> + * the current task's credentials.
+> + * This API can be used by callers who do not have an RPC
+> + * transaction context (ie are not running in an nfsd thread).
 > + *
-> + * @type specifies the type of object expected using one of the S_IF*
-> + * constants defined in include/linux/stat.h.  The caller may use zero
-> + * to indicate that it doesn't care, or a negative integer to indicate
-> + * that it expects something not of the given type.
-> + *
-> + * @access is formed from the NFSD_MAY_* constants defined in
-> + * fs/nfsd/vfs.h.
+> + * See fh_verify() for further descriptions of @fhp, @type, and @access.
 > + */
 > +__be32
-> +fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int =
-access)
+> +fh_verify_local(struct net *net, struct svc_cred *cred,
+> +		struct auth_domain *client, struct svc_fh *fhp,
+> +		umode_t type, int access)
 > +{
-> +	return __fh_verify(rqstp, SVC_NET(rqstp), &rqstp->rq_cred,
-> +			   rqstp->rq_client, rqstp->rq_gssclient,
+> +	return __fh_verify(NULL, net, cred, client, NULL,
 > +			   fhp, type, access);
 > +}
-> =20
->  /*
->   * Compose a file handle for an NFS reply.
+> +
+>  /**
+>   * fh_verify - filehandle lookup and access checking
+>   * @rqstp: pointer to current rpc request
+> diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
+> index 8d46e203d139..5b7394801dc4 100644
+> --- a/fs/nfsd/nfsfh.h
+> +++ b/fs/nfsd/nfsfh.h
+> @@ -217,6 +217,8 @@ extern char * SVCFH_fmt(struct svc_fh *fhp);
+>   * Function prototypes
+>   */
+>  __be32	fh_verify(struct svc_rqst *, struct svc_fh *, umode_t, int);
+> +__be32	fh_verify_local(struct net *, struct svc_cred *, struct auth_doma=
+in *,
+> +			struct svc_fh *, umode_t, int);
+>  __be32	fh_compose(struct svc_fh *, struct svc_export *, struct dentry *,=
+ struct svc_fh *);
+>  __be32	fh_update(struct svc_fh *);
+>  void	fh_put(struct svc_fh *);
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
