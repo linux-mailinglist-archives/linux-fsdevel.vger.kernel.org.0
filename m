@@ -1,284 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-27768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9EE963BB2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 08:31:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E08963BC2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 08:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75EAE282711
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 06:31:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7019FB21108
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 06:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601D15E5D2;
-	Thu, 29 Aug 2024 06:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85AA158208;
+	Thu, 29 Aug 2024 06:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQv4ALTN"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JHybwRc0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDDD647;
-	Thu, 29 Aug 2024 06:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE3212F399
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2024 06:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724913056; cv=none; b=W615srnP7XCCmvElREWxVcFRWkLDLFHUnaEJlWwLpJY0svfX2VZwR5/PHpOfGw/SXKYb5CS5IdcGJAEP5ESZvoEQDRP5sMAyRWsB8wP9ibGgMzVuKtvJZqDZwvxEwWnYqWOzSwUYV5kuViO+6zaXeAyAWCTWTmE4akfVOwvbsFA=
+	t=1724913536; cv=none; b=dznJUI6A1Ru+YnJDsY/vkADnln5lTjNyDpsY6WUYaAUvgy7u86HLTjBZP3FJ40dfOTKlDUCrhG7S+U7B06ac7W05iket3YPmdV5WxxwnstB24uXXt2D2ITEdHYywT644e0K/FheyaHCWUE9qzYqVfjvEVjNoBofmXxxuQtiH7aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724913056; c=relaxed/simple;
-	bh=VU81vUW30AdKSehoqmKNMJjqyl1FXmEDl82UsAHavbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q0SrFH3Cv14xKqPksSSqH0yBkDniHHZZnM6frt2dSRUCxy6BJOW/jKXtYqUBSoG699ON439aTPeNTR42SwO5S9g6VJgXvjtY0HIZu93evYAuIG7vJpBtUUMHn8VYWeuITmMf9m997gcGFa1huJ7EVgd1pPNXJC0p7FOmRlSyF6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQv4ALTN; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6bf6721aae5so1799416d6.2;
-        Wed, 28 Aug 2024 23:30:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724913053; x=1725517853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DVHRuwAUcEYymH+J/b0R0e+3iNvUH3y6v7Jow7lKvQY=;
-        b=IQv4ALTNbagKhB9j7itvHwIIkGqofLGBzd79YMXXMEwC1Yw7WwdTRVSXeMkP4DeSkc
-         /IuiHm67ZsrFHtIr4UypKhSPEb9POhGqWdGgkeeyG7HW1hj0ga3l5ukaxBTXp/LtLL64
-         k5a1PPRmBK/rNk9u0o3J90AdjTsZ8UkB7k2YNjnVhU7C1BI/H+EzN/z/oKbH2UBl6p9o
-         yZ20YoKSaZlbAu94E5HOMpa4qlTQJjmBnDyq+Hli7otP9rwnlUTr+PRouxB23RZZFCw2
-         fvmtGt/IPxF6RDWtWlTqxLzV5nb0HXazT8EeW/kKUeWz0sZEhvmIS/x96TJVTNMwF6Av
-         LkUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724913053; x=1725517853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DVHRuwAUcEYymH+J/b0R0e+3iNvUH3y6v7Jow7lKvQY=;
-        b=LOY0j4oE/SFjSGK9ZEl9BMT4iyugdu4FxYLyW4RssjZdYzI+lxKQxa3QGOj9PRRqHw
-         /i1xzr9KH9zzaUT6xBNMHyUYItl0DUuDmE0gfNtVdZ+yerzHS7RpHX+FaoYlJzHuGGTj
-         VigLZ8Z4hWepzX/8odQdnK27nZeZul98WPlk5FFo6yfNkdY6mY2/ESrF1iU27NAYGOZJ
-         f0d++ie0TzoHedRF5ivRuxqOf/Bw8CaR5Tx1SotcJrAR5+JSMnKkgnpUoW4Hcq62jKaF
-         tADYxX0hZzltl3VCQJYxd/rJX6tJR3ugJwZIZz8dey0u+ZB8wEmQbm//N42UdZstNplN
-         6xeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+oKcHJ5hLkGYF8vGNk+Bkpv8kp6ykGtBDGki5ywYznpPJ9JnbpT7uNqNST6PFlNLpSe3Q@vger.kernel.org, AJvYcCUxEmRud/VXlQh2jBQmgid4q1y4BV8dldleKMhi9LGjDMglWHG2OsokkahXat5VEwljukfzoqvn@vger.kernel.org, AJvYcCVJ2u3AjBDE+2B8dttndSQUoN5m6IyALKtiD7QiRnC/N18ovWfJG+Lw7fnd3dgCc4fdIj5b4+gAC/e1JkgZxf5MfyuV@vger.kernel.org, AJvYcCVdLb5DCwfa+X0mHSN36xRVWdvNka9UTlVCrtW8Ya2WHXlBiXUvlSgHAM2by8imG5KO262fe20GmA==@vger.kernel.org, AJvYcCWr0sAomN/TTFcQwYaMLZ2oRORiCTsqa5zX3H5i46OL5jqHh8g89qPkD0C/qU7hJSQQ5fSlUg==@vger.kernel.org, AJvYcCXZFSSEmlwEEIHdfBhJKHRtydO3OXab6KK6MHgi9iejM0e0tCCgib3vVZdFsXL+llrao78hSag5Gjlz/HkkF5fUUFPWr4V/@vger.kernel.org, AJvYcCXcWQzTS2sD4TRytLiQp9/k4wtKu19lPiXpl58+KZBvaTtrEW6awb9ZgAti6DI/sx00fW2Y9jeyljH2o6Kjdw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxayWA/FlzvSvQYLc/4m4rkF0HMPrWLsIwRK0tH3i/sL6c9LRm6
-	Zsejs6QN8A1ORtzPw9wsdqL8TM8fSBjC29Ysixrc0a2x9j80wZdjpPtxmk8uASh0FvzORoZ/fYR
-	E4iUSdZ8dS7fwvEcp0+Lp9cOv2HA=
-X-Google-Smtp-Source: AGHT+IHAaYj3VKJPFC+rsCIttyDdBV4rNcUvYcw6ZzQZduvgmQVvDq94rvCCqajdqQxNsCbTeYDYWfFYA4N5Ml43Gtc=
-X-Received: by 2002:a05:6214:2d4a:b0:6bb:ab4a:dbdb with SMTP id
- 6a1803df08f44-6c33e5e7de8mr21034396d6.1.1724913053063; Wed, 28 Aug 2024
- 23:30:53 -0700 (PDT)
+	s=arc-20240116; t=1724913536; c=relaxed/simple;
+	bh=IRTKibgtAnhRT230n0IdApnI3of5TnaokNyimXTB3Tw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mqFnkfB0FDb94/bZrpfVNS9fTNmYyqCZF4mSpac6/IiAy9QEALZvi/niZr51fXN/8C2z8lHO5LCe2ilmXqtKXNdV+N5dXd22hJ3D48vBCtjbHx+kassTBtFCUV6CbFqmkkedWJtGOxPZ7FSKiKJ4D3iFgX+YGiuBbAiINkHJra4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JHybwRc0; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724913525; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=+QdHDLtyL8p4G0URTlJWQbxLz0+tzutez+LES2PWA6A=;
+	b=JHybwRc0x5lszaLHSAR3A/z6Ov5WRDMv52fUBQo+WS6+DUy6rthCb8KTSgNgpIPSn9SWCsXg3+kgui6LntSPxuPQ25d1sg7wcYdhnMsOTaZb8rrgF7+N3XkBBuzvgnw0RL336CmG5NrE4hctTgPmbtHrybGwKEcxzp6OzNTNLuY=
+Received: from 30.221.146.47(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WDs6CHT_1724913524)
+          by smtp.aliyun-inc.com;
+          Thu, 29 Aug 2024 14:38:45 +0800
+Message-ID: <c6b851b4-57ba-4ad3-9a52-c5509ffb08b3@linux.alibaba.com>
+Date: Thu, 29 Aug 2024 14:38:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828030321.20688-1-laoar.shao@gmail.com> <20240828030321.20688-2-laoar.shao@gmail.com>
- <8A36564D-56E3-469B-B201-0BD7C11D6EFC@kernel.org>
-In-Reply-To: <8A36564D-56E3-469B-B201-0BD7C11D6EFC@kernel.org>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 29 Aug 2024 14:30:14 +0800
-Message-ID: <CALOAHbBHkS=J8Bv+XsoWvwdfG7fGFg0eVw9PhOVWVbJ1ebrr1w@mail.gmail.com>
-Subject: Re: [PATCH v8 1/8] Get rid of __get_task_comm()
-To: Kees Cook <kees@kernel.org>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, alx@kernel.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>, 
-	Matus Jokay <matus.jokay@stuba.sk>, "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] fuse: add default_request_timeout and
+ max_request_timeout sysctls
+To: Yafang Shao <laoar.shao@gmail.com>, Joanne Koong <joannelkoong@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
+ josef@toxicpanda.com, bernd.schubert@fastmail.fm, kernel-team@meta.com,
+ Bernd Schubert <bschubert@ddn.com>
+References: <20240826203234.4079338-3-joannelkoong@gmail.com>
+ <202408280419.yuu33o7t-lkp@intel.com>
+ <CAJnrk1Y3piNWm3482N1QcasAmmUMYk1KkoO9TyupaJDBM8jW9A@mail.gmail.com>
+ <CALOAHbC9a-U+Gk53bxo1=X4nMQng8TSUWo7B=TZVN-f=Y4JeUg@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CALOAHbC9a-U+Gk53bxo1=X4nMQng8TSUWo7B=TZVN-f=Y4JeUg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 10:04=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
->
->
-> On August 27, 2024 8:03:14 PM PDT, Yafang Shao <laoar.shao@gmail.com> wro=
-te:
-> >We want to eliminate the use of __get_task_comm() for the following
-> >reasons:
-> >
-> >- The task_lock() is unnecessary
-> >  Quoted from Linus [0]:
-> >  : Since user space can randomly change their names anyway, using locki=
-ng
-> >  : was always wrong for readers (for writers it probably does make sens=
-e
-> >  : to have some lock - although practically speaking nobody cares there
-> >  : either, but at least for a writer some kind of race could have
-> >  : long-term mixed results
-> >
-> >- The BUILD_BUG_ON() doesn't add any value
-> >  The only requirement is to ensure that the destination buffer is a val=
-id
-> >  array.
->
-> Sorry, that's not a correct evaluation. See below.
->
-> >
-> >- Zeroing is not necessary in current use cases
-> >  To avoid confusion, we should remove it. Moreover, not zeroing could
-> >  potentially make it easier to uncover bugs. If the caller needs a
-> >  zero-padded task name, it should be explicitly handled at the call sit=
-e.
->
-> This is also not an appropriate rationale. We don't make the kernel "more=
- buggy" not purpose. ;) See below.
->
-> >
-> >Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> >Link: https://lore.kernel.org/all/CAHk-=3DwivfrF0_zvf+oj6=3D=3DSh=3D-npJ=
-ooP8chLPEfaFV0oNYTTBA@mail.gmail.com [0]
-> >Link: https://lore.kernel.org/all/CAHk-=3DwhWtUC-AjmGJveAETKOMeMFSTwKwu9=
-9v7+b6AyHMmaDFA@mail.gmail.com/
-> >Suggested-by: Alejandro Colomar <alx@kernel.org>
-> >Link: https://lore.kernel.org/all/2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfb=
-osf5wdo65dk4@srb3hsk72zwq
-> >Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> >Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> >Cc: Christian Brauner <brauner@kernel.org>
-> >Cc: Jan Kara <jack@suse.cz>
-> >Cc: Eric Biederman <ebiederm@xmission.com>
-> >Cc: Kees Cook <keescook@chromium.org>
-> >Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-> >Cc: Matus Jokay <matus.jokay@stuba.sk>
-> >Cc: Alejandro Colomar <alx@kernel.org>
-> >Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> >---
-> > fs/exec.c             | 10 ----------
-> > fs/proc/array.c       |  2 +-
-> > include/linux/sched.h | 32 ++++++++++++++++++++++++++------
-> > kernel/kthread.c      |  2 +-
-> > 4 files changed, 28 insertions(+), 18 deletions(-)
-> >
-> >diff --git a/fs/exec.c b/fs/exec.c
-> >index 50e76cc633c4..8a23171bc3c3 100644
-> >--- a/fs/exec.c
-> >+++ b/fs/exec.c
-> >@@ -1264,16 +1264,6 @@ static int unshare_sighand(struct task_struct *me=
-)
-> >       return 0;
-> > }
-> >
-> >-char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *t=
-sk)
-> >-{
-> >-      task_lock(tsk);
-> >-      /* Always NUL terminated and zero-padded */
-> >-      strscpy_pad(buf, tsk->comm, buf_size);
-> >-      task_unlock(tsk);
-> >-      return buf;
-> >-}
-> >-EXPORT_SYMBOL_GPL(__get_task_comm);
-> >-
-> > /*
-> >  * These functions flushes out all traces of the currently running exec=
-utable
-> >  * so that a new one can be started
-> >diff --git a/fs/proc/array.c b/fs/proc/array.c
-> >index 34a47fb0c57f..55ed3510d2bb 100644
-> >--- a/fs/proc/array.c
-> >+++ b/fs/proc/array.c
-> >@@ -109,7 +109,7 @@ void proc_task_name(struct seq_file *m, struct task_=
-struct *p, bool escape)
-> >       else if (p->flags & PF_KTHREAD)
-> >               get_kthread_comm(tcomm, sizeof(tcomm), p);
-> >       else
-> >-              __get_task_comm(tcomm, sizeof(tcomm), p);
-> >+              get_task_comm(tcomm, p);
-> >
-> >       if (escape)
-> >               seq_escape_str(m, tcomm, ESCAPE_SPACE | ESCAPE_SPECIAL, "=
-\n\\");
-> >diff --git a/include/linux/sched.h b/include/linux/sched.h
-> >index f8d150343d42..c40b95a79d80 100644
-> >--- a/include/linux/sched.h
-> >+++ b/include/linux/sched.h
-> >@@ -1096,9 +1096,12 @@ struct task_struct {
-> >       /*
-> >        * executable name, excluding path.
-> >        *
-> >-       * - normally initialized setup_new_exec()
-> >-       * - access it with [gs]et_task_comm()
-> >-       * - lock it with task_lock()
-> >+       * - normally initialized begin_new_exec()
-> >+       * - set it with set_task_comm()
-> >+       *   - strscpy_pad() to ensure it is always NUL-terminated and
-> >+       *     zero-padded
-> >+       *   - task_lock() to ensure the operation is atomic and the name=
- is
-> >+       *     fully updated.
-> >        */
-> >       char                            comm[TASK_COMM_LEN];
-> >
-> >@@ -1914,10 +1917,27 @@ static inline void set_task_comm(struct task_str=
-uct *tsk, const char *from)
-> >       __set_task_comm(tsk, from, false);
-> > }
-> >
-> >-extern char *__get_task_comm(char *to, size_t len, struct task_struct *=
-tsk);
-> >+/*
-> >+ * - Why not use task_lock()?
-> >+ *   User space can randomly change their names anyway, so locking for =
-readers
-> >+ *   doesn't make sense. For writers, locking is probably necessary, as=
- a race
-> >+ *   condition could lead to long-term mixed results.
-> >+ *   The strscpy_pad() in __set_task_comm() can ensure that the task co=
-mm is
-> >+ *   always NUL-terminated and zero-padded. Therefore the race conditio=
-n between
-> >+ *   reader and writer is not an issue.
-> >+ *
-> >+ * - Why not use strscpy_pad()?
-> >+ *   While strscpy_pad() prevents writing garbage past the NUL terminat=
-or, which
-> >+ *   is useful when using the task name as a key in a hash map, most us=
-e cases
-> >+ *   don't require this. Zero-padding might confuse users if it=E2=80=
-=99s unnecessary,
-> >+ *   and not zeroing might even make it easier to expose bugs. If you n=
-eed a
-> >+ *   zero-padded task name, please handle that explicitly at the call s=
-ite.
->
-> I really don't like this part of the change. You don't know that existing=
- callers don't depend on the padding. Please invert this logic: get_task_co=
-mm() must use strscpy_pad(). Calls NOT wanting padding can call strscpy() t=
-hemselves.
->
-> >+ *
-> >+ * - ARRAY_SIZE() can help ensure that @buf is indeed an array.
->
-> This doesn't need checking here; strscpy() will already do that.
->
-> >+ */
-> > #define get_task_comm(buf, tsk) ({                    \
-> >-      BUILD_BUG_ON(sizeof(buf) !=3D TASK_COMM_LEN);     \
->
-> Also, please leave the TASK_COMM_LEN test so that destination buffers con=
-tinue to be the correct size: current callers do not perform any return val=
-ue analysis, so they cannot accidentally start having situations where the =
-destination string might be truncated. Again, anyone wanting to avoid that =
-restriction can use strscpy() directly and check the return value.
+Hi, Yafang,
 
-Hello Kees,
+On 8/29/24 11:58 AM, Yafang Shao wrote:
+> On Wed, Aug 28, 2024 at 11:51 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+>>
+>> On Tue, Aug 27, 2024 at 2:52 PM kernel test robot <lkp@intel.com> wrote:
+>>>
+>>> Hi Joanne,
+>>>
+>>> kernel test robot noticed the following build errors:
+>>>
+>>> [auto build test ERROR on mszeredi-fuse/for-next]
+>>> [also build test ERROR on linus/master v6.11-rc5 next-20240827]
+>>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>>> And when submitting patch, we suggest to use '--base' as documented in
+>>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>>
+>>> url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/fuse-add-optional-kernel-enforced-timeout-for-requests/20240827-043354
+>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
+>>> patch link:    https://lore.kernel.org/r/20240826203234.4079338-3-joannelkoong%40gmail.com
+>>> patch subject: [PATCH v5 2/2] fuse: add default_request_timeout and max_request_timeout sysctls
+>>> config: arc-randconfig-002-20240827 (https://download.01.org/0day-ci/archive/20240828/202408280419.yuu33o7t-lkp@intel.com/config)
+>>> compiler: arceb-elf-gcc (GCC) 13.2.0
+>>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408280419.yuu33o7t-lkp@intel.com/reproduce)
+>>>
+>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>>> the same patch/commit), kindly add following tags
+>>> | Reported-by: kernel test robot <lkp@intel.com>
+>>> | Closes: https://lore.kernel.org/oe-kbuild-all/202408280419.yuu33o7t-lkp@intel.com/
+>>>
+>>> All errors (new ones prefixed by >>):
+>>>
+>>>>> fs/fuse/sysctl.c:30:5: error: redefinition of 'fuse_sysctl_register'
+>>>       30 | int fuse_sysctl_register(void)
+>>>          |     ^~~~~~~~~~~~~~~~~~~~
+>>>    In file included from fs/fuse/sysctl.c:9:
+>>>    fs/fuse/fuse_i.h:1495:19: note: previous definition of 'fuse_sysctl_register' with type 'int(void)'
+>>>     1495 | static inline int fuse_sysctl_register(void) { return 0; }
+>>>          |                   ^~~~~~~~~~~~~~~~~~~~
+>>>>> fs/fuse/sysctl.c:38:6: error: redefinition of 'fuse_sysctl_unregister'
+>>>       38 | void fuse_sysctl_unregister(void)
+>>>          |      ^~~~~~~~~~~~~~~~~~~~~~
+>>>    fs/fuse/fuse_i.h:1496:20: note: previous definition of 'fuse_sysctl_unregister' with type 'void(void)'
+>>>     1496 | static inline void fuse_sysctl_unregister(void) { return; }
+>>>          |                    ^~~~~~~~~~~~~~~~~~~~~~
+>>>
+>>
+>> I see. In the Makefile, the sysctl.o needs to be gated by CONFIG_SYSCTL
+>> eg
+>> fuse-$(CONFIG_SYSCTL) += sysctl.o
+>>
+>> I'll wait a bit to see if there are more comments on this patchset
+>> before submitting v6.
+> 
+> Hello Joanne,
+> 
+> I noticed a change in behavior between versions v5 and v4 during my
+> hellofuse test.
+> 
+> - Setup:
+>   1. Set fs.fuse.default_request_timeout to 10.
+>   2. Start the hellofuse daemon, with FUSE mounted on /tmp/fuse/.
+>   3. Run `cat /tmp/fuse/hello` and kill it within 10 seconds to
+> trigger a Timer expired event.
+>   4. Run `cat /tmp/fuse/hello` again.
+> 
+> - v4:
+>   After the Timer expired event occurs, running `cat /tmp/fuse/hello`
+> again is successful.
+> 
+> - v5:
+>   Running `cat /tmp/fuse/hello` fails with the error: "Transport
+> endpoint is not connected."
+> 
+> I believe this behavior in v5 is unintended, correct?
+> 
 
-Thanks for your input.
+I think v5 has changed the per-request timeout to per-connection timeout
+according to Miklos's suggestion.  That is, once timedout, the whole
+connection will be aborted.
 
-Alejandro has addressed all the other changes except for the removal
-of BUILD_BUG_ON(). I have a question regarding this: if we're using it
-to avoid truncation, why not write it like this?
 
-    BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);
-
-This way, it ensures that the size is at least as large as TASK_COMM_LEN.
-
---
-Regards
-Yafang
+-- 
+Thanks,
+Jingbo
 
