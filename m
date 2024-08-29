@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-27861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9937D964852
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:28:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38055964889
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 16:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 507A4286F0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:28:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D5CF1C22959
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2024 14:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198001AED49;
-	Thu, 29 Aug 2024 14:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6391B0110;
+	Thu, 29 Aug 2024 14:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nswG5a7U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKvcpgj+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750FB1A76D2;
-	Thu, 29 Aug 2024 14:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8A21AED4D;
+	Thu, 29 Aug 2024 14:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941700; cv=none; b=ZBf71rBzv/zJw74e4R4WjIJ1nWUiGVcINBbbmBVa/UZ+stDffnRBSFTI52ejwTBCIafWSi8bhV8zulV/UI4RkTlk2QRzG0T4ZM34IOv8MSnUNCtPAO2u2wFXc7X7glre8ta6jMQW0Xs6lxwWQzlXcC2BuAFSQ/X3uPrEU8S7MVI=
+	t=1724942001; cv=none; b=ZDxt0SS2r77MautLv0fhWxabJR+JAwvgEMN5KgF5jWRcsae5MFpH7JMug2pa6dcDUwljGYll0nzgxfbvV5fWsbmd7qCZwhrwV4TqasFD6fD/9bILKp0LpCfsM7yks8UcGLB0QTtWtMfWKQk3iZLyc4CZ360lHv5k019hJPrxKOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941700; c=relaxed/simple;
-	bh=AdjjXxDIIQiLX1lisVdPxLKumPWnuNzIibshIza6NzM=;
+	s=arc-20240116; t=1724942001; c=relaxed/simple;
+	bh=RbUmVsgzgHtlsiYQXS1ROYEF9NkQsAW7wBcAMIRMtxk=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NPvFrjW73oJIf8p+jXR2FBeGPMBgTFbGe+qFSw2/hXhE7M8NhWERennxgIcDJL7eG46iiLchSDsQDQsEZ26tT6yiX4AZQQ454/d7NWoOk3fz8UPmNJVAjM2CB7q3ha4F2+sJEmUCDQWXDJE7gURjme3/GfpKYWx5w4pOpaLP+Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nswG5a7U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CCC7C4CEC1;
-	Thu, 29 Aug 2024 14:28:19 +0000 (UTC)
+	 Content-Type:MIME-Version; b=ItJALX8nmNWM4izHWURD/StRYVwAhZosoiSKd5VhI0SkntGCCG7Nu3v7fX0V3+DLIScR62xvS0eWOumXFUwoYFVHwMQQiRoETLHEYYSKHgcKQtmKbYuhazMADRx7sRqEKOpVhg2T2Yt8W2LmAtGVx/TspHvpI/xb9dQj6dTHZ7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKvcpgj+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CAFC4CEC1;
+	Thu, 29 Aug 2024 14:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724941700;
-	bh=AdjjXxDIIQiLX1lisVdPxLKumPWnuNzIibshIza6NzM=;
+	s=k20201202; t=1724942000;
+	bh=RbUmVsgzgHtlsiYQXS1ROYEF9NkQsAW7wBcAMIRMtxk=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=nswG5a7UXb9n9xVWW5bWIDSYshM5s+9viowU1sKQktRZVHgUD5AvDLKO9XEzzrwBT
-	 c40C0HWL+dzrthP5PTpiVYEjAHdNtR1jZWgiOOiKnhU2aIqvbqb/+R1x2YXzcl36N0
-	 pMvTWV0EGILHW3a379pG+Jmg/j2Qn6UM1d4IjCio+PMnzPY5uOKhrIbi4+ojNy5mN2
-	 Vi69NwW5bGWT5NVNWpF2METmFQWZ3UAup7KjQ6oFLz7YsH9DOkNBwGpiY8M8yaELcT
-	 es9b0vbFr7LZ5mbUKlzqtLTLwpF8BgZH0Qmnlq4hhDSnJkHW838QBe8WL8tcJB3Wd+
-	 kHE6x68ybPfDQ==
-Message-ID: <f8dd318fba4ece7b4b8e37fe785a3842d668125c.camel@kernel.org>
-Subject: Re: [PATCH v14 06/25] NFSD: Avoid using rqstp->rq_vers in
- nfsd_set_fh_dentry()
+	b=UKvcpgj+qjCwQsNsPik6MQuY43M+JbEB5OBM4r1Mbbk8MUo9k00OoDxLGTTOvlBI1
+	 UlcccmkLyRuKrZj10lJezVT3/J4exOmr7IgEnogEeKPj+Seax7LKlxFeRPTbdeT6V5
+	 3289UcbzSnlYz3KjF44DZAdL+6dMEA/q97mtqiSO6AhL/ZPwysytUQJD6hgcoFfZaY
+	 /94wuw77RXMtfVK39S3vmD+5mG+pQtoaMcUMmUNyq0wsmeGUJSwOVGTRLPYLIzwOuO
+	 ZjVQCR6sGstCwqJze2HVnfdwpCVfGrp0Vf+fQQGCmC3nL2Q1ghFRxAJyOQwqK66csM
+	 JRlvp+7145Qhg==
+Message-ID: <53b4d01faa49f2785f8f2ccd014fd8af9f634986.camel@kernel.org>
+Subject: Re: [PATCH v14 07/25] NFSD: Short-circuit fh_verify tracepoints for
+ LOCALIO
 From: Jeff Layton <jlayton@kernel.org>
 To: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org
 Cc: Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <anna@kernel.org>, 
  Trond Myklebust <trondmy@hammerspace.com>, NeilBrown <neilb@suse.de>,
  linux-fsdevel@vger.kernel.org
-Date: Thu, 29 Aug 2024 10:28:18 -0400
-In-Reply-To: <20240829010424.83693-7-snitzer@kernel.org>
+Date: Thu, 29 Aug 2024 10:33:18 -0400
+In-Reply-To: <20240829010424.83693-8-snitzer@kernel.org>
 References: <20240829010424.83693-1-snitzer@kernel.org>
-	 <20240829010424.83693-7-snitzer@kernel.org>
+	 <20240829010424.83693-8-snitzer@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -140,85 +140,74 @@ MIME-Version: 1.0
 On Wed, 2024-08-28 at 21:04 -0400, Mike Snitzer wrote:
 > From: Chuck Lever <chuck.lever@oracle.com>
 >=20
-> Currently, fh_verify() makes some daring assumptions about which
-> version of file handle the caller wants, based on the things it can
-> find in the passed-in rqstp. The about-to-be-introduced LOCALIO use
-> case sometimes has no svc_rqst context, so this logic won't work in
-> that case.
+> LOCALIO will be able to call fh_verify() with a NULL rqstp. In this
+> case, the existing trace points need to be skipped because they
+> want to dereference the address fields in the passed-in rqstp.
 >=20
-> Instead, examine the passed-in file handle. It's .max_size field
-> should carry information to allow nfsd_set_fh_dentry() to initialize
-> the file handle appropriately.
->=20
-> lockd appears to be the only kernel consumer that does not set the
-> file handle .max_size during initialization.
->=20
-> write_filehandle() is the other question mark, as it looks possible
-> to specify a maxsize between NFS_FHSIZE and NFS3_FHSIZE here.
+> Temporarily make these trace points conditional to avoid a seg
+> fault in this case. Putting the "rqstp !=3D NULL" check in the trace
+> points themselves makes the check more efficient.
 >=20
 > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
 > ---
->  fs/nfsd/lockd.c |  6 ++++--
->  fs/nfsd/nfsfh.c | 11 +++++++----
->  2 files changed, 11 insertions(+), 6 deletions(-)
+>  fs/nfsd/trace.h | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
 >=20
-> diff --git a/fs/nfsd/lockd.c b/fs/nfsd/lockd.c
-> index 46a7f9b813e5..e636d2a1e664 100644
-> --- a/fs/nfsd/lockd.c
-> +++ b/fs/nfsd/lockd.c
-> @@ -32,8 +32,10 @@ nlm_fopen(struct svc_rqst *rqstp, struct nfs_fh *f, st=
-ruct file **filp,
->  	int		access;
->  	struct svc_fh	fh;
+> diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
+> index 77bbd23aa150..d22027e23761 100644
+> --- a/fs/nfsd/trace.h
+> +++ b/fs/nfsd/trace.h
+> @@ -193,7 +193,7 @@ TRACE_EVENT(nfsd_compound_encode_err,
+>  		{ S_IFIFO,		"FIFO" }, \
+>  		{ S_IFSOCK,		"SOCK" })
 > =20
-> -	/* must initialize before using! but maxsize doesn't matter */
-> -	fh_init(&fh,0);
-> +	if (rqstp->rq_vers =3D=3D 4)
-> +		fh_init(&fh, NFS3_FHSIZE);
-> +	else
-> +		fh_init(&fh, NFS_FHSIZE);
->  	fh.fh_handle.fh_size =3D f->size;
->  	memcpy(&fh.fh_handle.fh_raw, f->data, f->size);
->  	fh.fh_export =3D NULL;
-> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> index 4b964a71a504..77acc26e8b02 100644
-> --- a/fs/nfsd/nfsfh.c
-> +++ b/fs/nfsd/nfsfh.c
-> @@ -267,25 +267,28 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *r=
-qstp, struct svc_fh *fhp)
->  	fhp->fh_dentry =3D dentry;
->  	fhp->fh_export =3D exp;
+> -TRACE_EVENT(nfsd_fh_verify,
+> +TRACE_EVENT_CONDITION(nfsd_fh_verify,
+>  	TP_PROTO(
+>  		const struct svc_rqst *rqstp,
+>  		const struct svc_fh *fhp,
+> @@ -201,6 +201,7 @@ TRACE_EVENT(nfsd_fh_verify,
+>  		int access
+>  	),
+>  	TP_ARGS(rqstp, fhp, type, access),
+> +	TP_CONDITION(rqstp !=3D NULL),
+>  	TP_STRUCT__entry(
+>  		__field(unsigned int, netns_ino)
+>  		__sockaddr(server, rqstp->rq_xprt->xpt_remotelen)
+> @@ -239,7 +240,7 @@ TRACE_EVENT_CONDITION(nfsd_fh_verify_err,
+>  		__be32 error
+>  	),
+>  	TP_ARGS(rqstp, fhp, type, access, error),
+> -	TP_CONDITION(error),
+> +	TP_CONDITION(rqstp !=3D NULL && error),
+>  	TP_STRUCT__entry(
+>  		__field(unsigned int, netns_ino)
+>  		__sockaddr(server, rqstp->rq_xprt->xpt_remotelen)
+> @@ -295,12 +296,13 @@ DECLARE_EVENT_CLASS(nfsd_fh_err_class,
+>  		  __entry->status)
+>  )
 > =20
-> -	switch (rqstp->rq_vers) {
-> -	case 4:
-> +	switch (fhp->fh_maxsize) {
-> +	case NFS4_FHSIZE:
->  		if (dentry->d_sb->s_export_op->flags & EXPORT_OP_NOATOMIC_ATTR)
->  			fhp->fh_no_atomic_attr =3D true;
->  		fhp->fh_64bit_cookies =3D true;
->  		break;
-> -	case 3:
-> +	case NFS3_FHSIZE:
->  		if (dentry->d_sb->s_export_op->flags & EXPORT_OP_NOWCC)
->  			fhp->fh_no_wcc =3D true;
->  		fhp->fh_64bit_cookies =3D true;
->  		if (exp->ex_flags & NFSEXP_V4ROOT)
->  			goto out;
->  		break;
-> -	case 2:
-> +	case NFS_FHSIZE:
->  		fhp->fh_no_wcc =3D true;
->  		if (EX_WGATHER(exp))
->  			fhp->fh_use_wgather =3D true;
->  		if (exp->ex_flags & NFSEXP_V4ROOT)
->  			goto out;
-> +		break;
-> +	case 0:
-> +		WARN_ONCE(1, "Uninitialized file handle");
->  	}
+> -#define DEFINE_NFSD_FH_ERR_EVENT(name)		\
+> -DEFINE_EVENT(nfsd_fh_err_class, nfsd_##name,	\
+> -	TP_PROTO(struct svc_rqst *rqstp,	\
+> -		 struct svc_fh	*fhp,		\
+> -		 int		status),	\
+> -	TP_ARGS(rqstp, fhp, status))
+> +#define DEFINE_NFSD_FH_ERR_EVENT(name)			\
+> +DEFINE_EVENT_CONDITION(nfsd_fh_err_class, nfsd_##name,	\
+> +	TP_PROTO(struct svc_rqst *rqstp,		\
+> +		 struct svc_fh	*fhp,			\
+> +		 int		status),		\
+> +	TP_ARGS(rqstp, fhp, status),			\
+> +	TP_CONDITION(rqstp !=3D NULL))
 > =20
->  	return 0;
+>  DEFINE_NFSD_FH_ERR_EVENT(set_fh_dentry_badexport);
+>  DEFINE_NFSD_FH_ERR_EVENT(set_fh_dentry_badhandle);
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+A bit ugly. We really only want the rqstp here to get at the socket
+structures. I'm still looking at the rest of the set, so I'll assume
+that this gets cleaned up later.
+
+Acked-by: Jeff Layton <jlayton@kernel.org>
 
