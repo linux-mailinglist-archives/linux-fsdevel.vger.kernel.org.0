@@ -1,287 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-28059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BFF9664D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 17:00:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7C2966505
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 17:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FDF288D65
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:00:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2825B2143D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2251B5313;
-	Fri, 30 Aug 2024 15:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C8B1B3B2F;
+	Fri, 30 Aug 2024 15:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="va46Gk3u"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="MbfFkce7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LtOZjFJH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B251B3B26;
-	Fri, 30 Aug 2024 15:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9C91DA26;
+	Fri, 30 Aug 2024 15:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725030017; cv=none; b=RpE/8Xw4OMoPLXLj9K9O9En1aU1JEKK49cD+wIfMcIjZ6beO7EJotbZLklpTCXbeA1nNVFaTQ85KqmJRZtuJX73pNSw2CFZpMwnDYuxKaqFMfSzJBGgspglyw0eYGZBCU255JrUV768449tVJxxM2zVfPRArk8Q2tllrG0i1BAU=
+	t=1725030613; cv=none; b=DN5sj6SRhxaHwXiSbKp3l9pzr3mxd9IGJliAMJVwSpIfFjRdiE76CLttqo4P4P1a9YnajTVvGj3NBPMSUXPr+K2ajuLYmyP0m2jCq2/xmt0H3mBB9ogwGTB9NXM7oaVIeK4oqHf0qcZgCOjovNRmhSvNK2uyalrbWgMfhek7hIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725030017; c=relaxed/simple;
-	bh=aJCHJj7F4yJudNln15m+N2CXk++Y3uyJTjRDdigtxmQ=;
+	s=arc-20240116; t=1725030613; c=relaxed/simple;
+	bh=gylQFwSOuPgdIo7gfs1X4zej315PIvycv1R1t2oJ6SQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yodcwfmesk1DOPi2eXsJBpl2gWx5/2MirR28WABPbXx6XmIeIHgWyLr07yNbGRdlTXuXaFYtbXDA8Uu0Kt4MrC9f7Hoxonf7tIQSSu/fX0HMGnUrM6ml/QjQE4te+qKQAX2gwejDW81RYXyT1tOgPtG2OJacLJfZtorgChlIXPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=va46Gk3u; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WwLsy0nx7z9scM;
-	Fri, 30 Aug 2024 17:00:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1725030006;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uSe2WIIADtHW0OxB1UXZsiUdfZiRjBZGocb5aTsJciI=;
-	b=va46Gk3u6PyxNBujpeH70lN5Ye/FJog7YLsIMawnr4bzneiKXMTARkqve4g9gFstPG2dNs
-	DbM0qbI79lFdbTY/0vx2jIq9MkzJfV8Qt5d5k0GQWh2c+4I87EfgqipWKAEQErMysEMwt6
-	qlCh5hjYi8aFrJ0AFIfwdrxrAmiGyUfAuICDSjm+Wt63BeowiBNUoAhMuZ3UBJ/Tu39w7n
-	0uPigJg238xnS4tzMxkXRqugVN6Q3QBZT1UWR9j0S8RUmKEnM4q/+OIisVgz9DG+aM1roa
-	hcGfMee4kQTPKgd5EoLs7i7DHw3tHEKxU1lQbctckc0QUlXhFFyqUQNyODNs0A==
-Message-ID: <2477a817-b482-43ed-9fd3-a7f8f948495f@pankajraghav.com>
-Date: Fri, 30 Aug 2024 16:59:57 +0200
+	 In-Reply-To:Content-Type; b=Y34d2FWd8kc2eKROIDop3AdJ0Eaj2vaMX/zBb8JmAEptJ+WJKrp5FXrhrMb0rPnxNDd//K6yuYeX1fFUMDtEfx5QaUwzmwyu3Ju3lxBgXsrmU4AZ9PGbOxA0f3/XAcf03Ovt1xu9G1PZXq08kJnSjyrztUQKtpTDcoRmZbbZ9A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=MbfFkce7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LtOZjFJH; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 9AC0D138024B;
+	Fri, 30 Aug 2024 11:10:10 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Fri, 30 Aug 2024 11:10:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1725030610;
+	 x=1725117010; bh=1nTHDYISJLjRnDgQP0SklgcZi9Cu04kWvom3gwsPERA=; b=
+	MbfFkce75Ict5zN5BAXYvgENELxcHpv2wDH4pfzlJnu8F/EPsZivnhLM82zGCr3L
+	oMN75i+lNq9BkFgU+AEHqrBgfW3C50c3AoFDrKfON5sW3CvnPjeiBQzZL/OD0uvm
+	tVc+jWYMO/iGq0NWj8iKw8g05atUD5qqCjnwjEswYHnow4GCYoeZeIsZrM8HZ9nf
+	1vZQO2+pTF+EZaxkNt2P7CPmUkeqsPPMF5l1XTcJSLcM5GuELv/lVCx1LMsVZlr7
+	YRQKsp1WFyT12rT8KSvqpTK5V5A8MFrZvSBYDZwaLBedAmDvjzc0Q0FyfALCxRDO
+	Orp2cTXo4f5S4Ppxi+FalA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725030610; x=
+	1725117010; bh=1nTHDYISJLjRnDgQP0SklgcZi9Cu04kWvom3gwsPERA=; b=L
+	tOZjFJHNLeFDzUg9ypQ/0CrjOmYIm2T4nzb35b9JNgdmpYzs9bMhr9WXxAl8tSyw
+	Aa/ePAyzHHi568rFDMMsrWi+yeTtfGV71ERfILG89CjOY6CM8x1HjVoF4YbfaNx/
+	CTQJdi6KVLnw1IXc9jgkShkkcXryMPDxMTo689Evmd0/41vkEjXv2sH3oZtSltnz
+	032uv0r5Np+34aEfUErjK53C/abl+hExzOryJgiqd/c5T401RaFKO4RdwygxcPeG
+	Qg1t9hX9y/DaIWqqG4h7xImihcK2hGL6MNtifSkTUrx3nUMd+LwgxK+GvkyRnvPS
+	3bFvvLCkqU0c7HQEBHXtw==
+X-ME-Sender: <xms:0uDRZhWpk9eE0MxJCJoCjMMYWaNUWUJOv9IMM_1BqTWhNF2Kv13Xxg>
+    <xme:0uDRZhn4GdGcd51NEP2AOfF9ALrVum7ciClb8wLaCJ_7bbjPugx1iqbBuVXJB-BWz
+    osnbOPeQ4-uGEOq>
+X-ME-Received: <xmr:0uDRZtZwYbmvD-s09r7RT7cMolnalLFQpDZBZl2jLob3tmsfeUVF5DUqmrskh4qrlzJz41a0wvZLlwLQPtP-mgLGW7lS7kZtaMsK66wtMnx4wgJgrmha>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefiedgkeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
+    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopegsshgthhhusg
+    gvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhh
+    uhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhope
+    hlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkh
+    gvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhopehjohhs
+    vghfsehtohigihgtphgrnhgurgdrtghomh
+X-ME-Proxy: <xmx:0uDRZkW7CFiPuF_8Cai2Z7BVxJOZOuqdTG7Y6fxW6yYCwSnOLp1Zqg>
+    <xmx:0uDRZrl-1wngArOvhWeWcagG0hziCj1hfeXO5wxVdV4nTFeHgEiTKQ>
+    <xmx:0uDRZhfHDY53zb_btHui2MKfAVW6q_7yYZPz5Izu8QUGF_xloaPyIQ>
+    <xmx:0uDRZlEAjsrxZvzLVYqJd_LhFgKuoD2Gjy3lxg3UXZ-373bFsl0nSA>
+    <xmx:0uDRZkcx74r6yiYVBKhKAMUlCdl9x7i87BESeERTM4ssj87xh0ZhnDz0>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 30 Aug 2024 11:10:08 -0400 (EDT)
+Message-ID: <fffadaad-266e-4167-ba79-e46ffaa5597d@fastmail.fm>
+Date: Fri, 30 Aug 2024 17:10:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order chunks
-To: Luis Chamberlain <mcgrof@kernel.org>, Zi Yan <ziy@nvidia.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Sven Schnelle
- <svens@linux.ibm.com>, brauner@kernel.org, akpm@linux-foundation.org,
- chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org, djwong@kernel.org,
- hare@suse.de, gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
- david@fromorbit.com, yang@os.amperecomputing.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, john.g.garry@oracle.com,
- cl@os.amperecomputing.com, p.raghav@samsung.com, ryan.roberts@arm.com,
- David Howells <dhowells@redhat.com>, linux-s390@vger.kernel.org
-References: <20240822135018.1931258-1-kernel@pankajraghav.com>
- <20240822135018.1931258-5-kernel@pankajraghav.com>
- <yt9dttf3r49e.fsf@linux.ibm.com> <ZtDCErRjh8bC5Y1r@bombadil.infradead.org>
- <ZtDSJuI2hYniMAzv@casper.infradead.org>
- <221FAE59-097C-4D31-A500-B09EDB07C285@nvidia.com>
- <ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
-Content-Language: en-US
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Josef Bacik <josef@toxicpanda.com>, Joanne Koong <joannelkoong@gmail.com>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+ <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
+ <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
+ <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
+ <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
+ <CAJfpegsq06UZSPCDB=0Q3OPoH+c3is4A_d2oFven3Ebou8XPOw@mail.gmail.com>
+ <0615e79d-9397-48eb-b89e-f0be1d814baf@ddn.com>
+ <CAJfpeguMmTXJPzdnxe87hSBPO_Y8s33eCc_H5fEaznZYC-D8HA@mail.gmail.com>
+ <3b74f850-c74c-49d0-be63-a806119cbfbd@ddn.com>
+ <7d42edd3-3e3b-452b-b3bf-fb8179858e48@fastmail.fm>
+ <093a3498-5558-4c65-84b0-2a046c1db72e@kernel.dk>
+ <f5d10363-9ba0-4a1a-8aed-cad7adf59cd4@ddn.com>
+ <3ca0e7d1-bb86-4963-aab7-6fc24950fe84@kernel.dk>
+ <d2528a1c-3d7c-4124-953c-02e8e415529e@gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <d2528a1c-3d7c-4124-953c-02e8e415529e@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 30/08/2024 01:41, Luis Chamberlain wrote:
-> On Thu, Aug 29, 2024 at 06:12:26PM -0400, Zi Yan wrote:
->> The issue is that the change to split_huge_page() makes split_huge_page_to_list_to_order()
->> unlocks the wrong subpage. split_huge_page() used to pass the “page” pointer
->> to split_huge_page_to_list_to_order(), which keeps that “page” still locked.
->> But this patch changes the “page” passed into split_huge_page_to_list_to_order()
->> always to the head page.
+
+
+On 8/30/24 16:55, Pavel Begunkov wrote:
+> On 8/30/24 14:33, Jens Axboe wrote:
+>> On 8/30/24 7:28 AM, Bernd Schubert wrote:
+>>> On 8/30/24 15:12, Jens Axboe wrote:
+>>>> On 8/29/24 4:32 PM, Bernd Schubert wrote:
+>>>>> We probably need to call iov_iter_get_pages2() immediately
+>>>>> on submitting the buffer from fuse server and not only when needed.
+>>>>> I had planned to do that as optimization later on, I think
+>>>>> it is also needed to avoid io_uring_cmd_complete_in_task().
+>>>>
+>>>> I think you do, but it's not really what's wrong here - fallback
+>>>> work is
+>>>> being invoked as the ring is being torn down, either directly or
+>>>> because
+>>>> the task is exiting. Your task_work should check if this is the case,
+>>>> and just do -ECANCELED for this case rather than attempt to execute the
+>>>> work. Most task_work doesn't do much outside of post a completion, but
+>>>> yours seems complex in that attempts to map pages as well, for example.
+>>>> In any case, regardless of whether you move the gup to the actual issue
+>>>> side of things (which I think you should), then you'd want something
+>>>> ala:
+>>>>
+>>>> if (req->task != current)
+>>>>     don't issue, -ECANCELED
+>>>>
+>>>> in your task_work.nvme_uring_task_cb
+>>>
+>>> Thanks a lot for your help Jens! I'm a bit confused, doesn't this belong
+>>> into __io_uring_cmd_do_in_task then? Because my task_work_cb function
+>>> (passed to io_uring_cmd_complete_in_task) doesn't even have the request.
 >>
->> This fixes the crash on my x86 VM, but it can be improved:
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index 7c50aeed0522..eff5d2fb5d4e 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -320,10 +320,7 @@ bool can_split_folio(struct folio *folio, int *pextra_pins);
->>  int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>                 unsigned int new_order);
->>  int split_folio_to_list(struct folio *folio, struct list_head *list);
->> -static inline int split_huge_page(struct page *page)
->> -{
->> -       return split_folio(page_folio(page));
->> -}
->> +int split_huge_page(struct page *page);
->>  void deferred_split_folio(struct folio *folio);
->>
->>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index c29af9451d92..4d723dab4336 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -3297,6 +3297,25 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>         return ret;
->>  }
->>
->> +int split_huge_page(struct page *page)
->> +{
->> +       unsigned int min_order = 0;
->> +       struct folio *folio = page_folio(page);
->> +
->> +       if (folio_test_anon(folio))
->> +               goto out;
->> +
->> +       if (!folio->mapping) {
->> +               if (folio_test_pmd_mappable(folio))
->> +                       count_vm_event(THP_SPLIT_PAGE_FAILED);
->> +               return -EBUSY;
->> +       }
->> +
->> +       min_order = mapping_min_folio_order(folio->mapping);
->> +out:
->> +       return split_huge_page_to_list_to_order(page, NULL, min_order);
->> +}
->> +
->>  int split_folio_to_list(struct folio *folio, struct list_head *list)
->>  {
->>         unsigned int min_order = 0;
+>> Yeah it probably does, the uring_cmd case is a bit special is that it's
+>> a set of helpers around task_work that can be consumed by eg fuse and
+>> ublk. The existing users don't really do anything complicated on that
+>> side, hence there's no real need to check. But since the ring/task is
+>> going away, we should be able to generically do it in the helpers like
+>> you did below.
 > 
+> That won't work, we should give commands an opportunity to clean up
+> after themselves. I'm pretty sure it will break existing users.
+> For now we can pass a flag to the callback, fuse would need to
+> check it and fail. Compile tested only
 > 
-> Confirmed, and also although you suggest it can be improved, I thought
-> that we could do that by sharing more code and putting things in the
-> headers, the below also fixes this but tries to share more code, but
-> I think it is perhaps less easier to understand than your patch.
+> commit a5b382f150b44476ccfa84cefdb22ce2ceeb12f1
+> Author: Pavel Begunkov <asml.silence@gmail.com>
+> Date:   Fri Aug 30 15:43:32 2024 +0100
 > 
-It feels a bit weird to pass both folio and the page in `split_page_folio_to_list()`.
-
-How about we extract the code that returns the min order so that we don't repeat.
-
-Something like this:
-
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index c275aa9cc105..d27febd5c639 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -331,10 +331,24 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
- bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
- int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-                unsigned int new_order);
-+int min_order_for_split(struct folio *folio);
- int split_folio_to_list(struct folio *folio, struct list_head *list);
- static inline int split_huge_page(struct page *page)
- {
--       return split_folio(page_folio(page));
-+       struct folio *folio = page_folio(page);
-+       int ret = min_order_for_split(folio);
-+
-+       if (ret)
-+               return ret;
-+
-+       /*
-+        * split_huge_page() locks the page before splitting and
-+        * expects the same page that has been split to be locked when
-+        * returned. split_folio_to_list() cannot be used here because
-+        * it converts the page to folio and passes the head page to be
-+        * split.
-+        */
-+       return split_huge_page_to_list_to_order(page, NULL, ret);
- }
- void deferred_split_folio(struct folio *folio);
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 169f1a71c95d..b167e036d01b 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3529,12 +3529,10 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-        return ret;
- }
-
--int split_folio_to_list(struct folio *folio, struct list_head *list)
-+int min_order_for_split(struct folio *folio)
- {
--       unsigned int min_order = 0;
--
-        if (folio_test_anon(folio))
--               goto out;
-+               return 0;
-
-        if (!folio->mapping) {
-                if (folio_test_pmd_mappable(folio))
-@@ -3542,10 +3540,17 @@ int split_folio_to_list(struct folio *folio, struct list_head *list)
-                return -EBUSY;
-        }
-
--       min_order = mapping_min_folio_order(folio->mapping);
--out:
--       return split_huge_page_to_list_to_order(&folio->page, list,
--                                                       min_order);
-+       return mapping_min_folio_order(folio->mapping);
-+}
-+
-+int split_folio_to_list(struct folio *folio, struct list_head *list)
-+{
-+       int ret = min_order_for_split(folio);
-+
-+       if (ret)
-+               return ret;
-+
-+       return split_huge_page_to_list_to_order(&folio->page, list, ret);
- }
-
- void __folio_undo_large_rmappable(struct folio *folio)
-
-> So I think your patch is cleaner and easier as a fix.
+>     io_uring/cmd: let cmds tw know about dying task
+>         When the taks that submitted a request is dying, a task work for
+> that
+>     request might get run by a kernel thread or even worse by a half
+>     dismantled task. We can't just cancel the task work without running the
+>     callback as the cmd might need to do some clean up, so pass a flag
+>     instead. If set, it's not safe to access any task resources and the
+>     callback is expected to cancel the cmd ASAP.
+>         Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 > 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index c275aa9cc105..99cd9c7bf55b 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -97,6 +97,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
->  	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
->  
->  #define split_folio(f) split_folio_to_list(f, NULL)
-> +#define split_folio_to_list(f, list) split_page_folio_to_list(&f->page, f, list)
->  
->  #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
->  #define HPAGE_PMD_SHIFT PMD_SHIFT
-> @@ -331,10 +332,11 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
->  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
->  int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->  		unsigned int new_order);
-> -int split_folio_to_list(struct folio *folio, struct list_head *list);
-> +int split_page_folio_to_list(struct page *page, struct folio *folio,
-> +			     struct list_head *list);
->  static inline int split_huge_page(struct page *page)
->  {
-> -	return split_folio(page_folio(page));
-> +	return split_page_folio_to_list(page, page_folio(page), NULL);
->  }
->  void deferred_split_folio(struct folio *folio);
->  
-> @@ -511,7 +513,9 @@ static inline int split_huge_page(struct page *page)
->  	return 0;
->  }
->  
-> -static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
-> +static inline int split_page_folio_to_list(struct page *page,
-> +					   struct folio *folio,
-> +					   struct list_head *list)
->  {
->  	return 0;
->  }
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 169f1a71c95d..b115bfe63b52 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3529,7 +3529,8 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->  	return ret;
->  }
->  
-> -int split_folio_to_list(struct folio *folio, struct list_head *list)
-> +int split_page_folio_to_list(struct page *page, struct folio *folio,
-> +			     struct list_head *list)
->  {
->  	unsigned int min_order = 0;
->  
-> @@ -3544,8 +3545,7 @@ int split_folio_to_list(struct folio *folio, struct list_head *list)
->  
->  	min_order = mapping_min_folio_order(folio->mapping);
->  out:
-> -	return split_huge_page_to_list_to_order(&folio->page, list,
-> -							min_order);
-> +	return split_huge_page_to_list_to_order(page, list, min_order);
->  }
->  
->  void __folio_undo_large_rmappable(struct folio *folio)
+> diff --git a/include/linux/io_uring_types.h
+> b/include/linux/io_uring_types.h
+> index ace7ac056d51..a89abec98832 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -37,6 +37,7 @@ enum io_uring_cmd_flags {
+>      /* set when uring wants to cancel a previously issued command */
+>      IO_URING_F_CANCEL        = (1 << 11),
+>      IO_URING_F_COMPAT        = (1 << 12),
+> +    IO_URING_F_TASK_DEAD        = (1 << 13),
+>  };
+>  
+>  struct io_zcrx_ifq;
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index 8391c7c7c1ec..55bdcb4b63b3 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -119,9 +119,13 @@ EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
+>  static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state
+> *ts)
+>  {
+>      struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct
+> io_uring_cmd);
+> +    unsigned flags = IO_URING_F_COMPLETE_DEFER;
+> +
+> +    if (req->task->flags & PF_EXITING)
+> +        flags |= IO_URING_F_TASK_DEAD;
+>  
+>      /* task_work executor checks the deffered list completion */
+> -    ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
+> +    ioucmd->task_work_cb(ioucmd, flags);
+>  }
+>  
+>  void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+> 
+
+
+Thanks and yeah you are right, the previous patch would have missed an
+io_uring_cmd_done for fuse-uring as well.
+
+
+Thanks,
+Bernd
 
