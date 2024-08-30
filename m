@@ -1,347 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-27981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B1096574B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 08:03:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEB3965761
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 08:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229081C22F8B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 06:03:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2BAE1C23114
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 06:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEB91531C2;
-	Fri, 30 Aug 2024 06:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7D853389;
+	Fri, 30 Aug 2024 06:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAccZObW"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JDfMqMoD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zUVLLfle";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JDfMqMoD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zUVLLfle"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E9E3C0B;
-	Fri, 30 Aug 2024 06:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137E714C596;
+	Fri, 30 Aug 2024 06:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724997780; cv=none; b=fwmLI17+VTX0X6GuV1UftaxxAD4UUIQT87ruX6gjiA6eUmoAYP9Oqfli8vb+FZROZhElhWiahQsqZM+GSStGnpEcyY7z++0jYPZY5RDtu1BrlplWIqMBgx2coQrVUVH5Ok39861IjtWyM9vTX6qhST+sFqo0tvZ+/zlC0/1on7c=
+	t=1724998264; cv=none; b=grx4TdPsfhVI40vFJ2aXRI4hFbr3E5pjeY3GzjRNykes/yBTsnMdZrJHZM8Wspb5uaUGwlYHyBn4dWi+731WGWwc+b5vMLCovHUDbVafHNxX/7AB4x44ihJrZ24I+nHsiyKJQDzIDRU5Lv1cltFBQV8dFS6oMws3g3jn6Hi3TCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724997780; c=relaxed/simple;
-	bh=HZXJvIsfWAPP4UGKbvXRp25W1mbQHDnOyqQzvMUNUnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eq6+e2fs3H20ASO70YsHYBNrwfrqoZ7ppcuhbv7C449UoMM4ZubSuUMYobh9kVhd9kXbytJfJgGqH6AVKqffMPmi0Usv2E89KWEEgtBB19o0gwm0tH2JxcAbu42qBajSt9eET2oomMfD1YRloILwXUuxAb+IIu8ZnoKeDq2M3lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAccZObW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34201C4CEC4;
-	Fri, 30 Aug 2024 06:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724997779;
-	bh=HZXJvIsfWAPP4UGKbvXRp25W1mbQHDnOyqQzvMUNUnQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sAccZObWLXlPyvF5Z+J7nw7H/uXMliCvpGcSH24ysVqezKKxCC/amA5Mm5Bhg9GL9
-	 ic9TuHyWgH0i7H5Hfiri6rNE84D+0MtKvYanQWXpzAk4JjVR7W1P39lQ72Ug43ogSl
-	 pm2EJJa/HATN/HJnShIdOb57GcaL/QAjsI3Ut+ZY0QZAYSWPdDYE3AoiiUrO6Vb/in
-	 8oftkLOtGzQFicdOY39/WkX3wp6vT/QDo667Rwl2B1wiUU4xOkuoYlXmUFNmeNZBRE
-	 4qMv6r8xJ6/dUlnyRN7n2xND+Jhr7waicplA6wfUA5NG013B49SRZ473HhqW7jxMP7
-	 1w+Aj4twdiY/g==
-Date: Fri, 30 Aug 2024 02:02:58 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Anna Schumaker <anna@kernel.org>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 15/25] nfs_common: introduce nfs_localio_ctx struct
- and interfaces
-Message-ID: <ZtFgkg1Cpy0QcevV@kernel.org>
-References: <>
- <ZtFSQz8YaD3A4r3Y@kernel.org>
- <172499604207.4433.12271165205569396628@noble.neil.brown.name>
+	s=arc-20240116; t=1724998264; c=relaxed/simple;
+	bh=g5qiXH6/WtVjU3jF2wRxOveJ9MIcV4A0/6sKE7TEqiM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UA0Y0vdKDYFNHNG0Kh1jCSlA9KQAgh2aAFiqVLO6cRkYZs3JsvzN5CTcpRwePIq21oPB+gsamMfn9pOC8PsXR1ISn4Ne5oysBXa7rpmwGVs75WyhmJAleNzOYg+DZeXuZJIDpOdQ/JUjTerhzu8a8dtDsF4eLMPvzZyO22ml9JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JDfMqMoD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zUVLLfle; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JDfMqMoD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zUVLLfle; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E5AB1F7A0;
+	Fri, 30 Aug 2024 06:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724998261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
+	b=JDfMqMoDN3c6QjxNybEbVOAxAyTIMbjnFSsak255GdZM+fsIXxggkCrMx5NOn/tq8LIrM9
+	H7BRPyZkKBfhWMMhTHMZOrRoLFf0iNYNnrS4j8wtHS73lbW54I23fkhc5aa1Lf28aiCIQE
+	bHW6GRFwLfibWZkVHGJnsz/uj7wkgkQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724998261;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
+	b=zUVLLfleivqOuGeSvJTH7GvjB4icviBsxydl1mNXu1N+xYMn48Amd+PjTIgLVBQYFC1zHF
+	PucOn+V7bEmJ5OAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724998261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
+	b=JDfMqMoDN3c6QjxNybEbVOAxAyTIMbjnFSsak255GdZM+fsIXxggkCrMx5NOn/tq8LIrM9
+	H7BRPyZkKBfhWMMhTHMZOrRoLFf0iNYNnrS4j8wtHS73lbW54I23fkhc5aa1Lf28aiCIQE
+	bHW6GRFwLfibWZkVHGJnsz/uj7wkgkQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724998261;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
+	b=zUVLLfleivqOuGeSvJTH7GvjB4icviBsxydl1mNXu1N+xYMn48Amd+PjTIgLVBQYFC1zHF
+	PucOn+V7bEmJ5OAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C905513A3D;
+	Fri, 30 Aug 2024 06:11:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xq8TL3Ri0WYoTQAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 30 Aug 2024 06:11:00 +0000
+Message-ID: <4dfed593-5b0c-4565-a6dd-108f1b1fe961@suse.de>
+Date: Fri, 30 Aug 2024 08:11:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172499604207.4433.12271165205569396628@noble.neil.brown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
+Content-Language: en-US
+To: Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Song Liu <song@kernel.org>,
+ Yu Kuai <yukuai3@huawei.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Michal Hocko <mhocko@suse.com>
+References: <20240829130640.1397970-1-mhocko@kernel.org>
+ <20240829191746.tsrojxj3kntt4jhp@quack3>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240829191746.tsrojxj3kntt4jhp@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Fri, Aug 30, 2024 at 03:34:02PM +1000, NeilBrown wrote:
-> On Fri, 30 Aug 2024, Mike Snitzer wrote:
-> > On Fri, Aug 30, 2024 at 02:36:13PM +1000, NeilBrown wrote:
-> > > On Fri, 30 Aug 2024, Jeff Layton wrote:
+On 8/29/24 21:17, Jan Kara wrote:
+> On Thu 29-08-24 15:06:40, Michal Hocko wrote:
+>> From: Michal Hocko <mhocko@suse.com>
+>>
+>> There is only one called of alloc_page_buffers and it doesn't require
+>> __GFP_NOFAIL so drop this allocation mode.
+>>
+>> Signed-off-by: Michal Hocko <mhocko@suse.com>
 > 
-> > > > Have a pointer to a struct nfsd_localio_ops or something in the
-> > > > nfs_common module. That's initially set to NULL. Then, have a static
-> > > > structure of that type in nfsd.ko, and have its __init routine set the
-> > > > pointer in nfs_common to point to the right structure. The __exit
-> > > > routine will later set it to NULL.
-> > > > 
-> > > > > I really don't want all calls in NFS client (or nfs_common) to have to
-> > > > > first check if nfs_common's 'nfs_to' ops structure is NULL or not.
-> > > > 
-> > > > Neil seems to think that's not necessary:
-> > > > 
-> > > > "If nfs/localio holds an auth_domain, then it implicitly holds a
-> > > > reference to the nfsd module and the functions cannot disappear."
-> > > 
-> > > On reflection that isn't quite right, but it is the sort of approach
-> > > that I think we need to take.
-> > > There are several things that the NFS client needs to hold one to.
-> > > 
-> > > 1/ It needs a reference to the nfsd module (or symbols in the module).
-> > >    I think this can be held long term but we need a clear mechanism for
-> > >    it to be dropped.
-> > > 2/ It needs a reference to the nfsd_serv which it gets through the
-> > >    'struct net' pointer.  I've posted patches to handle that better.
-> > > 3/ It needs a reference to an auth_domain.  This can safely be a long
-> > >    term reference.  It can already be invalidated and the code to free
-> > >    it is in sunrpc which nfs already pins.  Any delay in freeing it only
-> > >    wastes memory (not much), it doesn't impact anything else.
-> > > 4/ It needs a reference to the nfsd_file and/or file.  This is currently
-> > >    done only while the ref to the nfsd_serv is held, so I think there is
-> > >    no problem there.
-> > > 
-> > > So possibly we could take a reference to the nfsd module whenever we
-> > > store a net in nfs_uuid. and drop the ref whenever we clear that.
-> > > 
-> > > That means we cannot call nfsd_open_local_fh() without first getting a
-> > > ref on the nfsd_serv which my latest code doesn't do.  That is easily
-> > > fixed.  I'll send a patch for consideration...
-> > 
-> > I already implemented 2 different versions today, meant for v15.
-> > 
-> > First is a relaxed version of the v14 code (less code, only using
-> > symbol_request on nfsd_open_local_fh.
-> > 
-> > Second is much more relaxed, because it leverages your original
-> > assumption that the auth_domain ref sufficient.
-> > 
-> > I'll reply twice to this mail with each each respective patch.
+> Looks good. Feel free to add:
 > 
-> Thanks... Unfortunately auth_domain isn't sufficient.
+> Reviewed-by: Jan Kara <jack@suse.cz>
 > 
-> This is my version.  It should folded back into one or more earlier
-> patches.   I think it is simpler.
+> Although even better fix would be to convert the last remaining caller of
+> alloc_page_buffers() to folio_alloc_buffers()... But that may be more
+> difficult.
 > 
-> It is against your v15 but with my 6 nfs_uuid patches replaces your
-> equivalents.
-> 
-> Thanks,
-> NeilBrown
+Already done by Pankajs large-block patchset, currently staged in vfs.git.
 
-Looks good!  But I noticed you are still using the v14
-DEFINE_NFS_TO_NFSD_SYMBOL (just implies that nfs_to is getting setup
-using symbol_request) so your refcounting via __module_get is
-redundant.  But I see your intent, and I can combine what you provided
-below with the v15.option2 that I emailed earlier (lean on your
-__module_get rather than the insufficnet auth_domain ref).
+Cheers,
 
-Thanks.
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
-> 
-> diff --git a/fs/nfs/localio.c b/fs/nfs/localio.c
-> index 55622084d5c2..18b7554ec516 100644
-> --- a/fs/nfs/localio.c
-> +++ b/fs/nfs/localio.c
-> @@ -235,8 +235,8 @@ nfs_local_open_fh(struct nfs_client *clp, const struct cred *cred,
->  	if (mode & ~(FMODE_READ | FMODE_WRITE))
->  		return NULL;
->  
-> -	localio = nfs_to.nfsd_open_local_fh(&clp->cl_uuid,
-> -					    clp->cl_rpcclient, cred, fh, mode);
-> +	localio = nfs_open_local_fh(&clp->cl_uuid,
-> +				    clp->cl_rpcclient, cred, fh, mode);
->  	if (IS_ERR(localio)) {
->  		status = PTR_ERR(localio);
->  		trace_nfs_local_open_fh(fh, mode, status);
-> diff --git a/fs/nfs_common/nfslocalio.c b/fs/nfs_common/nfslocalio.c
-> index 8545ee75f756..cd9733eb3e4f 100644
-> --- a/fs/nfs_common/nfslocalio.c
-> +++ b/fs/nfs_common/nfslocalio.c
-> @@ -54,8 +54,11 @@ static nfs_uuid_t * nfs_uuid_lookup(const uuid_t *uuid)
->  	return NULL;
->  }
->  
-> +struct module *nfsd_mod;
-> +
->  void nfs_uuid_is_local(const uuid_t *uuid, struct list_head *list,
-> -		       struct net *net, struct auth_domain *dom)
-> +		       struct net *net, struct auth_domain *dom,
-> +		       struct module *mod)
->  {
->  	nfs_uuid_t *nfs_uuid;
->  
-> @@ -70,6 +73,9 @@ void nfs_uuid_is_local(const uuid_t *uuid, struct list_head *list,
->  		 */
->  		list_move(&nfs_uuid->list, list);
->  		nfs_uuid->net = net;
-> +
-> +		__module_get(mod);
-> +		nfsd_mod = mod;
->  	}
->  	spin_unlock(&nfs_uuid_lock);
->  }
-> @@ -77,8 +83,10 @@ EXPORT_SYMBOL_GPL(nfs_uuid_is_local);
->  
->  static void nfs_uuid_put_locked(nfs_uuid_t *nfs_uuid)
->  {
-> -	if (nfs_uuid->net)
-> +	if (nfs_uuid->net) {
->  		put_net(nfs_uuid->net);
-> +		module_put(nfsd_mod);
-> +	}
->  	nfs_uuid->net = NULL;
->  	if (nfs_uuid->dom)
->  		auth_domain_put(nfs_uuid->dom);
-> @@ -107,6 +115,26 @@ void nfs_uuid_invalidate_one_client(nfs_uuid_t *nfs_uuid)
->  }
->  EXPORT_SYMBOL_GPL(nfs_uuid_invalidate_one_client);
->  
-> +struct nfs_localio_ctx *nfs_open_local_fh(nfs_uuid_t *uuid,
-> +		   struct rpc_clnt *rpc_clnt, const struct cred *cred,
-> +		   const struct nfs_fh *nfs_fh, const fmode_t fmode)
-> +{
-> +	struct nfs_localio_ctx *localio;
-> +
-> +	rcu_read_lock();
-> +	if (!READ_ONCE(uuid->net)) {
-> +		rcu_read_unlock();
-> +		return ERR_PTR(-ENXIO);
-> +	}
-> +	localio = nfs_to.nfsd_open_local_fh(uuid, rpc_clnt, cred,
-> +					    nfs_fh, fmode);
-> +	rcu_read_unlock();
-> +	if (IS_ERR(localio))
-> +		nfs_to.nfsd_serv_put(localio->nn);
-> +	return localio;
-> +}
-> +EXPORT_SYMBOL_GPL(nfs_open_local_fh);
-> +
->  /*
->   * The nfs localio code needs to call into nfsd using various symbols (below),
->   * but cannot be statically linked, because that will make the nfs module
-> @@ -135,7 +163,8 @@ static void put_##NFSD_SYMBOL(void)			\
->  /* The nfs localio code needs to call into nfsd to map filehandle -> struct nfsd_file */
->  extern struct nfs_localio_ctx *
->  nfsd_open_local_fh(nfs_uuid_t *, struct rpc_clnt *,
-> -		   const struct cred *, const struct nfs_fh *, const fmode_t);
-> +		   const struct cred *, const struct nfs_fh *, const fmode_t)
-> +	__must_hold(rcu);
->  DEFINE_NFS_TO_NFSD_SYMBOL(nfsd_open_local_fh);
->  
->  /* The nfs localio code needs to call into nfsd to acquire the nfsd_file */
-> diff --git a/fs/nfsd/localio.c b/fs/nfsd/localio.c
-> index 491bf5017d34..d50e54406914 100644
-> --- a/fs/nfsd/localio.c
-> +++ b/fs/nfsd/localio.c
-> @@ -45,6 +45,7 @@ struct nfs_localio_ctx *
->  nfsd_open_local_fh(nfs_uuid_t *uuid,
->  		   struct rpc_clnt *rpc_clnt, const struct cred *cred,
->  		   const struct nfs_fh *nfs_fh, const fmode_t fmode)
-> +	__must_hold(rcu)
->  {
->  	int mayflags = NFSD_MAY_LOCALIO;
->  	int status = 0;
-> @@ -58,10 +59,6 @@ nfsd_open_local_fh(nfs_uuid_t *uuid,
->  	if (nfs_fh->size > NFS4_FHSIZE)
->  		return ERR_PTR(-EINVAL);
->  
-> -	localio = nfs_localio_ctx_alloc();
-> -	if (!localio)
-> -		return ERR_PTR(-ENOMEM);
-> -
->  	/*
->  	 * Not running in nfsd context, so must safely get reference on nfsd_serv.
->  	 * But the server may already be shutting down, if so disallow new localio.
-> @@ -69,17 +66,22 @@ nfsd_open_local_fh(nfs_uuid_t *uuid,
->  	 * uuid->net is not NULL, then nfsd_serv_try_get() is safe and if that succeeds
->  	 * we will have an implied reference to the net.
->  	 */
-> -	rcu_read_lock();
->  	net = READ_ONCE(uuid->net);
->  	if (net)
->  		nn = net_generic(net, nfsd_net_id);
-> -	if (unlikely(!nn || !nfsd_serv_try_get(nn))) {
-> -		rcu_read_unlock();
-> -		status = -ENXIO;
-> -		goto out_nfsd_serv;
-> -	}
-> +	if (unlikely(!nn || !nfsd_serv_try_get(nn)))
-> +		return -ENXIO;
-> +
-> +	/* Drop the rcu lock for alloc and nfsd_file_acquire_local() */
->  	rcu_read_unlock();
->  
-> +	localio = nfs_localio_ctx_alloc();
-> +	if (!localio) {
-> +		localio = ERR_PTR(-ENOMEM);
-> +		nfsd_serv_put(nn);
-> +		goto out_localio;
-> +	}
-> +
->  	/* nfs_fh -> svc_fh */
->  	fh_init(&fh, NFS4_FHSIZE);
->  	fh.fh_handle.fh_size = nfs_fh->size;
-> @@ -104,11 +106,13 @@ nfsd_open_local_fh(nfs_uuid_t *uuid,
->  	fh_put(&fh);
->  	if (rq_cred.cr_group_info)
->  		put_group_info(rq_cred.cr_group_info);
-> -out_nfsd_serv:
-> +
->  	if (status) {
->  		nfs_localio_ctx_free(localio);
-> -		return ERR_PTR(status);
-> +		localio = ERR_PTR(status);
->  	}
-> +out_localio:
-> +	rcu_read_lock();
->  	return localio;
->  }
->  EXPORT_SYMBOL_GPL(nfsd_open_local_fh);
-> @@ -136,7 +140,7 @@ static __be32 localio_proc_uuid_is_local(struct svc_rqst *rqstp)
->  	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
->  
->  	nfs_uuid_is_local(&argp->uuid, &nn->local_clients,
-> -			  net, rqstp->rq_client);
-> +			  net, rqstp->rq_client, THIS_MODULE);
->  
->  	return rpc_success;
->  }
-> diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-> index 2ecceb8b9d3d..c73633120997 100644
-> --- a/fs/nfsd/vfs.h
-> +++ b/fs/nfsd/vfs.h
-> @@ -164,7 +164,8 @@ void		nfsd_filp_close(struct file *fp);
->  struct nfs_localio_ctx *
->  nfsd_open_local_fh(nfs_uuid_t *,
->  		   struct rpc_clnt *, const struct cred *,
-> -		   const struct nfs_fh *, const fmode_t);
-> +		   const struct nfs_fh *, const fmode_t)
-> +	__must_hold(rcu);
->  
->  static inline int fh_want_write(struct svc_fh *fh)
->  {
-> diff --git a/include/linux/nfslocalio.h b/include/linux/nfslocalio.h
-> index e196f716a2f5..303e82e75b9e 100644
-> --- a/include/linux/nfslocalio.h
-> +++ b/include/linux/nfslocalio.h
-> @@ -29,7 +29,7 @@ typedef struct {
->  void nfs_uuid_begin(nfs_uuid_t *);
->  void nfs_uuid_end(nfs_uuid_t *);
->  void nfs_uuid_is_local(const uuid_t *, struct list_head *,
-> -		       struct net *, struct auth_domain *);
-> +		       struct net *, struct auth_domain *, struct module *);
->  void nfs_uuid_invalidate_clients(struct list_head *list);
->  void nfs_uuid_invalidate_one_client(nfs_uuid_t *nfs_uuid);
->  
-> @@ -69,4 +69,8 @@ void put_nfs_to_nfsd_symbols(void);
->  struct nfs_localio_ctx *nfs_localio_ctx_alloc(void);
->  void nfs_localio_ctx_free(struct nfs_localio_ctx *);
->  
-> +struct nfs_localio_ctx *nfs_open_local_fh(nfs_uuid_t *uuid,
-> +		   struct rpc_clnt *rpc_clnt, const struct cred *cred,
-> +		   const struct nfs_fh *nfs_fh, const fmode_t fmode);
-> +
->  #endif  /* __LINUX_NFSLOCALIO_H */
-> 
 
