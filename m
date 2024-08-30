@@ -1,186 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-28061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F8B96654E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 17:25:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37788966565
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 17:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6514B285446
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE02E1F251AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368E21B530A;
-	Fri, 30 Aug 2024 15:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43B91B5EA2;
+	Fri, 30 Aug 2024 15:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjJ/GGJz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R/iTWHJh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b3LaU4/L";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVhVRxbY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHadyWyn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8635DEACD;
-	Fri, 30 Aug 2024 15:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242A3EACD;
+	Fri, 30 Aug 2024 15:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725031543; cv=none; b=cFjsDT2tRJADkBWaFIcGGHO4KFMmLzPOFVsagpnOk6nZK3SUOQTXYEsZZ3KY39LC786Ltn3Az2vcq2xIOqMG5K9C8/jIcDFw9Yta1GjgiRZOtLuu0ZXEohcBFZ6WnemVuM7dNOzyUhthnsLJ7QcFrrhbv5l4zpTM2cmSFyZaiWM=
+	t=1725031609; cv=none; b=a36Ca15eBWfmfkPpYDBpmfIyKNHimkH0+kPXwEp0POTsqN54ouMc3x69jyB1GX5Ac5gkL8ow1Q2m5BDmZkkq6n81osEGnN6L88e0ac+Y3hPOxY640IHBqSIrG4QsHHBzB+IsVYMihsjf1EwCxhyotQrTAzcNb/nA0VbUu1UaIiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725031543; c=relaxed/simple;
-	bh=iNp6n/jsH71QB5oDAhRZb0TAOpaKlbAuJNW//GZ1g44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tKVAhg5BhvoAfPBUzuqK62hgY4rFWxIixqtt0TurYeqo0rkazw/Jl06d7puzoI3Pp8vdxA84s9zaGmFfOGTKcMzktGtQaTUHwHWXtqVIhPUocNAP2+aLWwOITaCGEWENbebH0o3jcNkx+elitUIqizxJkOnhZkgnNakXsd4tZrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjJ/GGJz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R/iTWHJh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b3LaU4/L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVhVRxbY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E5831F7D7;
-	Fri, 30 Aug 2024 15:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725031539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
-	b=PjJ/GGJz/HPNIwxTYmQLnQVqQhnIPSG5hlOD15O3/cEExasyt6JbkegPLNQ0fbj5WSw+CA
-	eq1IuQ13AFR/ZTev6jiyB9ka2u9/5wE+C05Vj6+Km5UkBQ8PZrFMqGRbvTyKJpBG8UGEQ7
-	GvCgHC6Ned/EgsVo/g47UCNnQGTRCE0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725031539;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
-	b=R/iTWHJhvXOWOm35QXFdoQpgreMc3S3+OkDUaQofGb/WV0ZFjE9srlc4cmqFZwOHvbEb4+
-	9ed+5RAwYGom3pBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725031538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
-	b=b3LaU4/LNz2Ztgx6PoNo9qffokU3etG2y3fudDe+hX+OCc67YBzyQllbrGViRips59msZa
-	DHJVxMosYBjjnlQlnapOJS4DPBryhJeq1X4lLqkVVDGjJHyrAirM81Sn6Z8J88uwvB5+Jm
-	jTaV/UiHtK4IpyWY0016sQObLswCrlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725031538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
-	b=kVhVRxbY+uTv1eXdfW7326R2MlZWqBxgd9tjLG1jLWYqGVysANrvajdy953rh0Lil5O97a
-	JAMAWHQD5V5JSnBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 24D0A13A3D;
-	Fri, 30 Aug 2024 15:25:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Dx0vCHLk0WZ+ewAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 30 Aug 2024 15:25:38 +0000
-Message-ID: <f62e400e-49ab-4d0a-b2e2-c3bbb66c2ab1@suse.cz>
-Date: Fri, 30 Aug 2024 17:25:37 +0200
+	s=arc-20240116; t=1725031609; c=relaxed/simple;
+	bh=J0mPR+VW0Y6u0fxLb3eD+gu7vmEOkEYsR8GhSlx6/hM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJE65WgulL3dhrp38M9z2ChBuZ8PaywJM5Mub728DSn8BHXN+ZYBlzFSZ6eeA2F3ttd8QbvOdaybfAWjg8XBb2hlQbli6Dl2R3bYsYHiUfZgYbRGEpVTMaAzZUgdFcQJWOMKI2um4pt53YCt5gq8ko2kaG9B591QsFiCHQQBB2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHadyWyn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4B3C4CEC2;
+	Fri, 30 Aug 2024 15:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725031608;
+	bh=J0mPR+VW0Y6u0fxLb3eD+gu7vmEOkEYsR8GhSlx6/hM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tHadyWynpBuA2wxOEKHJ/ao2N1vhVavyWR5bkd3PexLJ1n8+uv4/tJjfLo8uluHt6
+	 YzFJpV+aWC0MXw/rL1isPdUYpOKJ+gi3/ugaZq3RBMwmqctgvMdx59LzByBnFnrq3L
+	 y/rxnw7643ELQrv0agtAQCQaq6bO0BZufZKMpA3afh57E1fDUxZsblXkZUwf7WUDzZ
+	 kpB9N5+meldL0EGc7y2xAza7plbnpdMt2YARsPumibxw6xXFfn5iKpn9cwsgRyHFl8
+	 6DS4khO/YrRvnzDlGlKvWOmmpnJGzzPTZUldQzwBtoymELjY7Bn5SXa429ASO397JT
+	 DosHSgrBbYNtA==
+Date: Fri, 30 Aug 2024 08:26:48 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Haifeng Xu <haifeng.xu@shopee.com>, Jeff Layton <jlayton@kernel.org>,
+	Theodore Tso <tytso@mit.edu>, miklos@szeredi.hu,
+	linux-unionfs@vger.kernel.org,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Ext4 <linux-ext4@vger.kernel.org>,
+	fstests <fstests@vger.kernel.org>
+Subject: Re: [PATCH v2] ovl: don't set the superblock's errseq_t manually
+Message-ID: <20240830152648.GE6216@frogsfrogsfrogs>
+References: <CAOQ4uxi4B8JHYHF=yn6OrRZCdkoPUj3-+PuZTZy6iJR7RNWcbA@mail.gmail.com>
+ <20240730042008.395716-1-haifeng.xu@shopee.com>
+ <CAOQ4uxhs==_-EM+VyJRRCX_NPmYybPDBW2v7cXz33Qt2RMaPnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Content-Language: en-US
-To: Yafang Shao <laoar.shao@gmail.com>, Dave Chinner <david@fromorbit.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org>
- <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
- <Zs959Pa5H5WeY5_i@tiehlicka>
- <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
- <ZtBWxWunhXTh0bhS@tiehlicka>
- <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
- <ZtCFP5w6yv/aykui@dread.disaster.area>
- <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	URIBL_BLOCKED(0.00)[suse.cz:mid,fromorbit.com:email,imap1.dmz-prg2.suse.org:helo];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,fromorbit.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,fromorbit.com:email,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <CAOQ4uxhs==_-EM+VyJRRCX_NPmYybPDBW2v7cXz33Qt2RMaPnQ@mail.gmail.com>
 
-On 8/30/24 11:14, Yafang Shao wrote:
-> On Thu, Aug 29, 2024 at 10:29 PM Dave Chinner <david@fromorbit.com> wrote:
+On Fri, Aug 30, 2024 at 03:27:35PM +0200, Amir Goldstein wrote:
+> On Tue, Jul 30, 2024 at 6:20 AM Haifeng Xu <haifeng.xu@shopee.com> wrote:
+> >
+> > Since commit 5679897eb104 ("vfs: make sync_filesystem return errors from
+> > ->sync_fs"), the return value from sync_fs callback can be seen in
+> > sync_filesystem(). Thus the errseq_set opreation can be removed here.
+> >
+> > Depends-on: commit 5679897eb104 ("vfs: make sync_filesystem return errors from ->sync_fs")
+> > Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> > Changes since v1:
+> > - Add Depends-on and Reviewed-by tags.
+> > ---
+> >  fs/overlayfs/super.c | 10 ++--------
+> >  1 file changed, 2 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> > index 06a231970cb5..fe511192f83c 100644
+> > --- a/fs/overlayfs/super.c
+> > +++ b/fs/overlayfs/super.c
+> > @@ -202,15 +202,9 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
+> >         int ret;
+> >
+> >         ret = ovl_sync_status(ofs);
+> > -       /*
+> > -        * We have to always set the err, because the return value isn't
+> > -        * checked in syncfs, and instead indirectly return an error via
+> > -        * the sb's writeback errseq, which VFS inspects after this call.
+> > -        */
+> > -       if (ret < 0) {
+> > -               errseq_set(&sb->s_wb_err, -EIO);
+> > +
+> > +       if (ret < 0)
+> >                 return -EIO;
+> > -       }
+> >
+> >         if (!ret)
+> >                 return ret;
+> > --
+> > 2.25.1
+> >
 > 
-> Hello Dave,
+> FYI, this change is queued in overlayfs-next.
 > 
-> I've noticed that XFS has increasingly replaced kmem_alloc() with
-> __GFP_NOFAIL. For example, in kernel 4.19.y, there are 0 instances of
-> __GFP_NOFAIL under fs/xfs, but in kernel 6.1.y, there are 41
-> occurrences. In kmem_alloc(), there's an explicit
-> memalloc_retry_wait() to throttle the allocator under heavy memory
-> pressure, which aligns with your filesystem design. However, using
-> __GFP_NOFAIL removes this throttling mechanism, potentially causing
-> issues when the system is under heavy memory load. I'm concerned that
-> this shift might not be a beneficial trend.
+> However, I went to see if overlayfs has test coverage for this and it does not.
 > 
-> We have been using XFS for our big data servers for years, and it has
-> consistently performed well with older kernels like 4.19.y. However,
-> after upgrading all our servers from 4.19.y to 6.1.y over the past two
-> years, we have frequently encountered livelock issues caused by memory
-> exhaustion. To mitigate this, we've had to limit the RSS of
-> applications, which isn't an ideal solution and represents a worrying
-> trend.
+> The test coverage added by Darrick to the mentioned vfs commit is test xfs/546,
+> so it does not run on other fs, although it is quite generic.
+> 
+> I fixed this test so it could run on overlayfs (like this):
+> # This command is complicated a bit because in the case of overlayfs the
+> # syncfs fd needs to be opened before shutdown and it is different from the
+> # shutdown fd, so we cannot use the _scratch_shutdown() helper.
+> # Filter out xfs_io output of active fds.
+> $XFS_IO_PROG -x -c "open $(_scratch_shutdown_handle)" -c 'shutdown -f
+> ' -c close -c syncfs $SCRATCH_MNT | \
+>         grep -vF '[00'
+> 
+> and it passes on both xfs and overlayfs (over xfs), but if I try to
+> make it "generic"
+> it fails on ext4, which explicitly allows syncfs after shutdown:
+> 
+>         if (unlikely(ext4_forced_shutdown(sb)))
+>                 return 0;
+> 
+> Ted, Darrick,
+> 
+> Do you have any insight as to why this ext4 behavior differs from xfs
+> or another idea how to exercise the syncfs error in a generic test?
+> 
+> I could fork an overlay/* test from the xfs/* test and require that
+> underlying fs is xfs, but that would be ugly.
+> 
+> Any ideas?
 
-By "livelock issues caused by memory exhaustion" you mean the long-standing
-infamous issue that the system might become thrashing for the remaining
-small amount of page cache, and anonymous memory being swapped out/in,
-instead of issuing OOM, because there's always just enough progress of the
-reclaim to keep going, but the system isn't basically doing anything else?
+That should be:
 
-I think that's related to near-exhausted memory by userspace, so I'm not
-sure why XFS would be to blame here.
+	if (unlikely(ext4_forced_shutdown(sb)))
+		return -EIO;
 
-That said, if memalloc_retry_wait() is indeed a useful mechanism, maybe we
-could perform it inside the page allocator itself for __GFP_NOFAIL?
+no?  The fs is dead and cannot persist anything, so we should fling that
+back to the calling program.
 
+--D
 
-
+> Thanks,
+> Amir.
+> 
 
