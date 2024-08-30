@@ -1,98 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-27969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A5496558D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 05:08:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC599655BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 05:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F251F23B2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 03:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A351F23948
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 03:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA3B13777E;
-	Fri, 30 Aug 2024 03:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B862136326;
+	Fri, 30 Aug 2024 03:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="kKyaOBzY"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LzS0ZQ6o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F95481AB;
-	Fri, 30 Aug 2024 03:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F096236B0D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 03:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724987306; cv=none; b=AuCE6C94DLlTJzFctEchmx+kmC4dcg0plStIQLjt/6+h6LlpUC1Sb3Qk20W48y/BGCD9bj4Jxbg9nznK5c+3jY/5tPxHaoKC+7x+Uhl6Ldsn8F4oVbyeYC7XkgepzxN9fSI7/zFry9pxTIJy10ildjBfLnlGe8dMKAwbMSwaojI=
+	t=1724989182; cv=none; b=BdowCLjaujl0gGtoWl7bVICRy0mRXVxRikwEj8ZGn+Uq78G/h2WWR7wKnAQ9PDWfxcLkQ4IVhr3atNmO/RluaAsXebJFzCbAfdTJB+7fOPyHKj1AreDOtikeyvBlfL+fQg8xZu3CakeBr5dSIWSgFq6Bz/K1jB8ac/L5EcSQnP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724987306; c=relaxed/simple;
-	bh=5ixJunBE8y+Kj6i0hhw2cohe7nD9zRu7+vWcZYif9aE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Olm5WSlpu22w3lFAZ/ljPFiwNYkCUdEFocAYqNKga0ufEpJH4z1gSCakYse/Yx2K9Pl2hwzpaSprT8J1F26j0g7SEwVfzuMMR52CmKLtf8W/0TvUhWGLW/MPefsGKXPNF5HTh0mJXB7/ePuWSgLOtpTM8iMoYEjY09XWTinxB+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=kKyaOBzY reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=9MmQwQUdKpfDgkcA2ZVUpT1iPlD+2kyrSpDicx4p2XY=; b=k
-	KyaOBzYjECnaq5WD6UFIriD46uoAz7pwBXhNRy/qu6Fvz06AcaYtbGlQlGUOV7eH
-	19t/SSBbWaO7Y3BO5w2OYApiB52kkAc3R3Kx5T5m/t0NnBfJioHOWbB2mhNl6ZTa
-	oqbYETBHosmFy9Lw/XmTTZzpRB/yBmA880eenFPhyQ=
-Received: from 00107082$163.com ( [111.35.190.113] ) by
- ajax-webmail-wmsvr-40-114 (Coremail) ; Fri, 30 Aug 2024 11:08:10 +0800
- (CST)
-Date: Fri, 30 Aug 2024 11:08:10 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Kent Overstreet" <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re:Re: [BUG?] bcachefs: keep writing to device when there is no
- high-level I/O activity.
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <y336p7vehwl6rpi5lfht6znaosnaqk3tvigzxcda7oi6ukk3o4@p4imj4wzcxjb>
-References: <20240827094933.6363-1-00107082@163.com>
- <y336p7vehwl6rpi5lfht6znaosnaqk3tvigzxcda7oi6ukk3o4@p4imj4wzcxjb>
-X-NTES-SC: AL_Qu2ZBvWTuEoi5iGcZekXn0oTju85XMCzuv8j3YJeN500oyTy/xAkZW9eNkPH+ceVNiCjoAiXQClr+vR3Z7lHQq1UOAHQbzjInozLXdfo8g3o
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1724989182; c=relaxed/simple;
+	bh=9g+fkzgNiLmkzb8kJYA3wu4o17li5UlZA5Js0dxJiRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lddTrgzUIyFYilJtZueOfUSlBJGAlr6rqAVGKDwR013vf9O2YTJFIxo8DxSeVyQRGvl3t3nQlnXwfhxXtD3HeIMwSx7MhtpaYP7CUWd4FQ1lq5OY369IBZnLZQiVloKHPxu7x8s5fsqRBeqh5AFJanZjbPDr6H1SXY5JL1bTIKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=LzS0ZQ6o; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47U3d6d9028280
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 23:39:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1724989148; bh=iBN1OqKISlzImerjylAD7DIlwprKTEvfPiiXXj/dLaQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=LzS0ZQ6obZmSSsyjaPriURvOuAoToFy5I4SVjGhUGdpCwKSIXBwt3LZQJrgW740CJ
+	 dGEwODnZCAyJ3lxGE+mn0WiD5tg+uRkVnfRYWXLozyKP18C+ODYuYythaN6+xaxz+t
+	 T4lyl4FHjRVGVUKlVOCnTyQPjV59vymE0AlJP6uON6/0OsI8iCWuYLNW3D70vqgOm7
+	 qtW7ZUA6diTVtP2gWnXCOEelkxj4N3xzrXFPs4cg3FHB+1SeNUvAvAvF/rrOd4IdXU
+	 LohFASq22zl8qk2Yqh2KA26DCP9izryo8n3t5HLL4AxxV1HqAvwxPDx7qw8Ewvct1r
+	 e3YMRiCA0OFug==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id B367C15C02C1; Thu, 29 Aug 2024 23:39:05 -0400 (EDT)
+Date: Thu, 29 Aug 2024 23:39:05 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+        Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <20240830033905.GC9627@mit.edu>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka>
+ <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+ <ZtBWxWunhXTh0bhS@tiehlicka>
+ <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+ <ZtCFP5w6yv/aykui@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <51c30c17.3440.191a141321f.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD33yabN9FmVrdOAA--.58957W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQxKqmVOCh0U0wAGs4
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtCFP5w6yv/aykui@dread.disaster.area>
 
-SGksIApBdCAyMDI0LTA4LTI4IDAwOjE3OjEyLCAiS2VudCBPdmVyc3RyZWV0IiA8a2VudC5vdmVy
-c3RyZWV0QGxpbnV4LmRldj4gd3JvdGU6Cj5PbiBUdWUsIEF1ZyAyNywgMjAyNCBhdCAwNTo0OToz
-M1BNIEdNVCwgRGF2aWQgV2FuZyB3cm90ZToKPj4gSGksCj4+IAo+PiBJIHdhcyB1c2luZyB0d28g
-cGFydGl0aW9ucyBvbiBzYW1lIG52bWUgZGV2aWNlIHRvIGNvbXBhcmUgZmlsZXN5c3RlbSBwZXJm
-b3JtYW5jZSwKPj4gYW5kIEkgY29uc2lzdGFudGx5IG9ic2VydmVkIGEgc3RyYW5nZSBiZWhhdmlv
-cjoKPj4gCj4+IEFmdGVyIDEwIG1pbnV0ZXMgZmlvIHRlc3Qgd2l0aCBiY2FjaGVmcyBvbiBvbmUg
-cGFydGl0aW9uLCBwZXJmb3JtYW5jZSBkZWdyYWRlCj4+IHNpZ25pZmljYW50bHkgZm9yIG90aGVy
-IGZpbGVzeXN0ZW1zIG9uIG90aGVyIHBhcnRpdGlvbiAoc2FtZSBkZXZpY2UpLgo+PiAKPj4gCWV4
-dDQgIDE1ME0vcyAtLT4gMTQzTS9zCj4+IAl4ZnMgICAxNTBNL3MgLS0+IDEzNE0vcwo+PiAJYnRy
-ZnMgMTI3TS9zIC0tPiAxMDhNL3MKPj4gCj4+IFNldmVyYWwgcm91bmQgdGVzdHMgc2hvdyB0aGUg
-c2FtZSBwYXR0ZXJuIHRoYXQgYmNhY2hlZnMgc2VlbXMgb2NjdXB5IHNvbWUgZGV2aWNlIHJlc291
-cmNlCj4+IGV2ZW4gd2hlbiB0aGVyZSBpcyBubyBoaWdoLWxldmVsIEkvTy4KPgo+VGhpcyBpcyBp
-cyBhIGtub3duIGlzc3VlLCBpdCBzaG91bGQgYmUgZWl0aGVyIGpvdXJuYWwgcmVjbGFpbSBvcgo+
-cmViYWxhbmNlLgo+Cj4oV2UgY291bGQgdXNlIHNvbWUgYmV0dGVyIHN0YXRzIHRvIHNlZSBleGFj
-dGx5IHdoaWNoIGl0IGlzKQo+CgoKSSBrcHJvYmUgYmNoMl9zdWJtaXRfd2Jpb19yZXBsaWNhcyBh
-bmQgdGhlbiBiY2gyX2J0cmVlX25vZGVfd3JpdGUsIGNvbmZpcm1lZCB0aGF0CnRoZSBiYWNrZ3Jv
-dW5kIHdyaXRlcyB3ZXJlIGZyb20gYmNoMl9qb3VybmFsX3JlY2xhaW1fdGhyZWFkLgooQW5kIHRo
-ZW4sIGJ5IHNraW1taW5nIHRoZSBjb2RlIGluIF9fYmNoMl9qb3VybmFsX3JlY2xhaW0sIEkgbm90
-aWNlZCB0aG9zZSB0cmFjZV9hbmRfY291bnQgc3RhdHMpCgoKCj5UaGUgYWxnb3JpdGhtIGZvciBo
-b3cgd2UgZG8gYmFja2dyb3VuZCB3b3JrIG5lZWRzIHRvIGNoYW5nZTsgSSd2ZQo+d3JpdHRlbiB1
-cCBhIG5ldyBvbmUgYnV0IEknbSBhIHdheXMgb2ZmIGZyb20gaGF2aW5nIHRpbWUgdG8gaW1wbGVt
-ZW50IGl0Cj4KPmh0dHBzOi8vZXZpbHBpZXBpcmF0ZS5vcmcvZ2l0L2JjYWNoZWZzLmdpdC9jb21t
-aXQvP2g9YmNhY2hlZnMtZ2FyYmFnZSZpZD00N2E0YjU3NGZiNDIwYWE4MjRhYWQyMjI0MzZmNGMy
-OTRkYWY2NmFlCj4KPkNvdWxkIGJlIGEgZnVuIG9uZSBmb3Igc29tZW9uZSBuZXcgdG8gdGFrZSBv
-bi4KPgo+PiAKCkEgRnVuIGFuZCBzY2FyeSBvbmUuLi4uCkZvciB0aGUgaXNzdWUgaW4gdGhpcyB0
-aHJlYWQsIApJIHRoaW5rICppZGxlKiBzaG91bGQgYmUgZGVmaW5lZCB0byBiZSBkZXZpY2Ugd2lk
-ZToKd2hlbiBiY2FjaGVmcyBpcyBpZGxlIHdoaWxlIG90aGVyIEZTIG9uIHRoZSBzYW1lIGJsb2Nr
-IGRldmljZSBpcyBidXN5LCB0aG9zZSBiYWNrZ3JvdW5kIHRocmVhZHMgc2hvdWxkIGJlIHRocm90
-dGxlZCB0byBzb21lIGRlZ3JlZS4KCgpUaGFua3MKRGF2aWQKCgoK
+On Fri, Aug 30, 2024 at 12:27:11AM +1000, Dave Chinner wrote:
+> 
+> We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
+> now. This was the default Irix kernel allocator behaviour (it had a
+> forwards progress guarantee and would never fail allocation unless
+> told it could do so). We've been using the same "guaranteed not to
+> fail" semantics on Linux since the original port started 25 years
+> ago via open-coded loops.
+
+Ext3/ext4 doesn't have quite the history as XFS --- it's only been
+around for 23 years --- but we've also used __GFP_NOFAIL or its
+moral equivalent, e.g.:
+
+> 	do {
+> 		p = kmalloc(size);
+> 	while (!p);
+
+For the entire existence of ext3.
+
+> Put simply: __GFP_NOFAIL will be rendered completely useless if it
+> can fail due to external scoped memory allocation contexts.  This
+> will force us to revert all __GFP_NOFAIL allocations back to
+> open-coded will-not-fail loops.
+
+The same will be true for ext4.  And as Dave has said, the MM
+developers want to have visibility to when file systems have basically
+said, "if you can't allow us to allocate memory, our only alternative
+is to cause user data loss, crash the kernel, or loop forever; we will
+choose the latter".  The MM developers tried to make __GFP_NOFAIL go
+away several years ago, and ext4 put the retry loop back, As a result,
+the compromise was that the MM developers restored __GFP_NOFAIL, and
+the file systems developers have done their best to reduce the use of
+__GFP_NOFAIL as much as possible.
+
+So if you try to break the GFP_NOFAIL promise, both xfs and ext4 will
+back to the retry loop.  And the MM devs will be sad, and they will
+forcibly revert your change to *ther* code, even if that means
+breaking bcachefs.  Becuase otherwise, you will be breaking ext4 and
+xfs, and so we will go back to using a retry loop, which will be worse
+for Linux users.
+
+Cheers,
+
+					- Ted
 
