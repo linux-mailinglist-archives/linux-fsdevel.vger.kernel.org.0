@@ -1,92 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-28008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37498965FE1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:02:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078E8966086
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A3F28475F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 11:02:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD3BF1F28D5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 11:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F50318C35A;
-	Fri, 30 Aug 2024 11:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A363118F2D5;
+	Fri, 30 Aug 2024 11:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1vVcUTP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfV/DDyU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46E3190671;
-	Fri, 30 Aug 2024 11:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A7A1D1312;
+	Fri, 30 Aug 2024 11:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015694; cv=none; b=EfJPRXQAHQ6otj2KNCrMoHG1GBaZgsiqzn/nrI0xolxoninTggGo8pKHvktoROC7wGsbAzJLiLkRz8ZhM4uplUyHyt+eElVHQP5FYzoUy87iePylUn2oebMplPkLLZUjdOejbD3xt5CYmNWbfYgk9m2YmBJ7DeeqXK1/Jfjd3+g=
+	t=1725017017; cv=none; b=QQDW/ritHxk+YKlnZZ6iDCvyrMOOX6kBnDHDl/INRh6OkacL611IcOYWjgmxgzu5gRVDKCek7r1zEGGzmVNhLMDa5Tne48e4QkrnA846vpRPdGwFKGWCjugEF4bQ8MgnY5+Hl9VkRYudMfXnelEJidUp3QM67JVf8RbKrPDAliY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015694; c=relaxed/simple;
-	bh=yaJeRuRQQyP3DjjG5GehxvL4FJ/rh3ymGrsYnYVWGWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HKhp2Yg8S3/khR/vktAgI6byVhANYQKjbPYm/h4b247IylKP6oEOdXsjI8tRPSoUsaODSaiEVGwIbTTRpPbXOp9HDtP0m8SNU3lENJm8RHFzh7v+geK2yrY6QWIYEM9GQsTII2XgbIhwIqydKppmxysyb2CUKCWbkJvNrA2h37g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1vVcUTP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08586C4CEC2;
-	Fri, 30 Aug 2024 11:01:31 +0000 (UTC)
+	s=arc-20240116; t=1725017017; c=relaxed/simple;
+	bh=AGgg9f2fB958U4x1s+dxT22RX9ukSLHU6cLpkIryQgg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=osVgXKeR321jnhkHbhq7GoRdXunlQCsIrcxawoKYv81LGdF8bsMqUPmx0WlogqjD5jRQLA72psxm8LdLW2ykVx4pIp4cW41e1IK+nV+rJb+d4irIxO7wv3vP94OZYkeddrXz/hjIPoVDVeapo7wsp6XhcJOxL+adWLYJjYzLVFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfV/DDyU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE0FC4CEC2;
+	Fri, 30 Aug 2024 11:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725015694;
-	bh=yaJeRuRQQyP3DjjG5GehxvL4FJ/rh3ymGrsYnYVWGWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R1vVcUTPNlaGZHDGvi2Nt85L2PWpInQ4x7SCqtbYI8QXiJIiGSB0NTqfd86BDtpRK
-	 ytCRgtIjNZQz4SjhimshFoVSoS+xP1I6aH1wmFX7WUpL78vaE4dEdr5viiGYgjYXTz
-	 XOwM6VfshXyman8p+I9Y5yecMdCGl4yIhkIZC+BhP6F0wPw6TjSLnFaKh/Ox/WFDkh
-	 FE4HIfgWGVZxEeSrro0sY/JDmpWO8xNttg5H8Sd3OGyJFLW+bYu0U0AkSqipbtxOPp
-	 qhuGoaxk+WYdRbog0Fa/YAqXBybSjTJoNPhw7r1FW+8Nhw1EfOO1xnwHPVIn2/09so
-	 azX6KHQq0x6LQ==
-Date: Fri, 30 Aug 2024 13:01:29 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
-Message-ID: <20240830-formel-abklopfen-fa1249f5904d@brauner>
-References: <20240829130640.1397970-1-mhocko@kernel.org>
- <20240829191746.tsrojxj3kntt4jhp@quack3>
- <4dfed593-5b0c-4565-a6dd-108f1b1fe961@suse.de>
- <ZtGTEOEgf4XuUu7F@tiehlicka>
+	s=k20201202; t=1725017016;
+	bh=AGgg9f2fB958U4x1s+dxT22RX9ukSLHU6cLpkIryQgg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FfV/DDyUHB/hVYd02Y6J9oRYH1/FQDQpAGF2WZWZcK1XYRSxlprKai7lONZjR2c7J
+	 /Dex9/hW6AiFpZdIUF9XtPRzMSPhOF1ECWz927kRLIpnqj0wlikp1WkW+DBCmg155L
+	 2Orx5Q48y0RPWknrfRx6q1K23VADyciCgMyVUQmlAT20BudJ/gQd8HQIJXHwGrZlJb
+	 b9qzhlwYnCTjDzmZPNI2NI6zSLm5om4L2755PBZpZaC/Rf0brciIGb01ARqWb8Tpj3
+	 gJ/dbjZhda7+5hLd24VnhzQVls4NVre2rek0cry2IffuYxE7oEd3YP+KJWMSUzJT+V
+	 74eEWcuUjsKNw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sjzj3-008DQD-JN;
+	Fri, 30 Aug 2024 12:23:33 +0100
+Date: Fri, 30 Aug 2024 12:23:33 +0100
+Message-ID: <86bk1aw8y2.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	nd@arm.com,
+	akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com,
+	anshuman.khandual@arm.com,
+	bp@alien8.de,
+	broonie@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org,
+	mingo@redhat.com,
+	mpe@ellerman.id.au,
+	naveen.n.rao@linux.ibm.com,
+	npiggin@gmail.com,
+	oliver.upton@linux.dev,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	szabolcs.nagy@arm.com,
+	tglx@linutronix.de,
+	x86@kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 08/30] KVM: arm64: make kvm_at() take an OP_AT_*
+In-Reply-To: <20240830092527.GB7678@willie-the-truck>
+References: <20240822151113.1479789-1-joey.gouly@arm.com>
+	<20240822151113.1479789-9-joey.gouly@arm.com>
+	<20240830092527.GB7678@willie-the-truck>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZtGTEOEgf4XuUu7F@tiehlicka>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: will@kernel.org, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, nd@arm.com, akpm@linux-foundation.org, aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de, broonie@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org, szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Aug 30, 2024 at 11:38:24AM GMT, Michal Hocko wrote:
-> On Fri 30-08-24 08:11:00, Hannes Reinecke wrote:
-> > On 8/29/24 21:17, Jan Kara wrote:
-> > > On Thu 29-08-24 15:06:40, Michal Hocko wrote:
-> > > > From: Michal Hocko <mhocko@suse.com>
-> > > > 
-> > > > There is only one called of alloc_page_buffers and it doesn't require
-> > > > __GFP_NOFAIL so drop this allocation mode.
-> > > > 
-> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > Looks good. Feel free to add:
-> > > 
-> > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > 
-> > > Although even better fix would be to convert the last remaining caller of
-> > > alloc_page_buffers() to folio_alloc_buffers()... But that may be more
-> > > difficult.
-> > > 
-> > Already done by Pankajs large-block patchset, currently staged in vfs.git.
+On Fri, 30 Aug 2024 10:25:27 +0100,
+Will Deacon <will@kernel.org> wrote:
 > 
-> Which branch should I be looking at?
+> On Thu, Aug 22, 2024 at 04:10:51PM +0100, Joey Gouly wrote:
+> > To allow using newer instructions that current assemblers don't know about,
+> > replace the `at` instruction with the underlying SYS instruction.
+> > 
+> > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > Cc: Oliver Upton <oliver.upton@linux.dev>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Reviewed-by: Marc Zyngier <maz@kernel.org>
+> > ---
+> >  arch/arm64/include/asm/kvm_asm.h       | 3 ++-
+> >  arch/arm64/kvm/hyp/include/hyp/fault.h | 2 +-
+> >  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> Acked-by: Will Deacon <will@kernel.org>
+> 
+> > diff --git arch/arm64/include/asm/kvm_asm.h arch/arm64/include/asm/kvm_asm.h
+> > index 2181a11b9d92..38d7bfa3966a 100644
+> > --- arch/arm64/include/asm/kvm_asm.h
+> > +++ arch/arm64/include/asm/kvm_asm.h
+> 
+> FWIW (mainly for Marc): you seem to be missing the 'a/' and 'b/'
+> prefixes here, so my git would't accept the change when I tried to
+> apply locally for testing.
 
-Hi Michal, Hannes should be referring to:
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.blocksize
+Seems like a spurious '--no-prefix' was added at patch formatting
+time, That clashes with git-apply's default '-p1', which strips the
+first component of the path.
+
+There's probably a way to pass '-p0' to 'git am', but I don't feel
+like trawling the git documentation by such a temperature...
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
