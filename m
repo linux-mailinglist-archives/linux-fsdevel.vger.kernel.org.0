@@ -1,49 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-28042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F53D96629B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:08:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BFD9662AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61BAC1C239B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:08:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FF7281451
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B621B530A;
-	Fri, 30 Aug 2024 13:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F691AD5EB;
+	Fri, 30 Aug 2024 13:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQJb2tQS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ty5bAm6t"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626F31AE056
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 13:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35861509BF;
+	Fri, 30 Aug 2024 13:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725023189; cv=none; b=j+NAr7eppqHvrmo6Tvm+9zrUjdejJV4/dwTL/njv7MUwZ/XWVvBM0ZgYRbb3yCtAcw7B1Q67IvYuAi036zl5sk1EGgA0datKNh0msCmfz4qgo3dX8WC/7CoBV9HfsHRbNxlc/VtUP+nCadi8lV2YV1A2EG5TqzuzwYc2jWJ9NKk=
+	t=1725023545; cv=none; b=tZhIi89nC4kZzkx9UYNeiADPGulmpKVTxzyDFay9iPtJokwS+lq8e2fspG+A9wEGYlbnB6BXuZQmBtIzGSR7r9U88IECc4htqMSO96lF5gGMc6QjCIos2KcxNfoLuuhv28GHM1ge/ueTbdouzr7E9e7b0qjkis3bi3o426LTbjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725023189; c=relaxed/simple;
-	bh=3woYN5gWU2ZxDLzsw5HkcAJ38mFoKEtN6YbTejqApNY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oG104G5Ngvk6yonEo2R6bXSdllP1yB88bqOx8O4sjRChCobGMIyVqNddjnqE8LvrkYQNznfMEFEfGYgSI8xJQqrX/Cd+FJRw7Ux5MntKXk5kHSeYeHOxNZeSJXrnuHW8Jw0gySWT/W5rzsb2HRCjZiw7BiPZX7nCdrgdJ17TBLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQJb2tQS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F794C4CEC2;
-	Fri, 30 Aug 2024 13:06:27 +0000 (UTC)
+	s=arc-20240116; t=1725023545; c=relaxed/simple;
+	bh=WndIbO8xrC2aIrGdqBcilJuDXzO/BXzIA8VlzOJWcDo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mc5Ianf6Qbk43jxiIjfMDTV5/OIoagTHVTLJQK/MkOc8h9JP8kO3u5zcEPHYsLPyUhTM93LZPXFS61TADHOHjEa7Ra0SoPwaQWYIYvcngVy3iOI7/Nzp67Ky518HGyaimIOd0q8lcd+EoXiFi6rUfqreFIBcCmPF8yq/FUrp4qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ty5bAm6t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D2B4C4CEC2;
+	Fri, 30 Aug 2024 13:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725023189;
-	bh=3woYN5gWU2ZxDLzsw5HkcAJ38mFoKEtN6YbTejqApNY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=nQJb2tQSevZ38AR9LiZroCs39xOoE5faSvjTZ4aOcokUnSHmH3om9i058KPyw+qnR
-	 l/g4MPjV/NsYFDZY00gHPyJx4LMFjETr4xTUSHlnwPKVAXm26oCFW1gVJvjUnrLJqx
-	 rouvFP/md1KQgW3tus43QojV2h5Pbal02ZTTYRgehEfXYffFeTVRzXBKbA/CMpHCVB
-	 9KUeXomfx2NylzxzH7WSHbyMJ6v+81/l3xmn49BUn5WaQV/Irpg3nJQ51E98+V8MW0
-	 ex2+hjDWHg6BSYkHwK6r4nQbsxNB1K8LxxZoVUyxABqr3ErcGTX3hEW6MnuRZX21Ed
-	 Y8wAGuEvH2AMA==
+	s=k20201202; t=1725023543;
+	bh=WndIbO8xrC2aIrGdqBcilJuDXzO/BXzIA8VlzOJWcDo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Ty5bAm6tFv6bg4YA3HAyot4VdLW2RJKGdG1xvdXVogremu8LD3BqEh4VHwGPQbh1p
+	 g5wB6d5xMedceeupVFRBiOJF2X1RQbXR7I/eTH3weokE6ad0t6Ezo6vHjcDKPVbTlB
+	 Z3S4gJVFjrB6hycktKp1ueGv6wungGZ3cKnt0wXInlgTLGxuCAHj3w8ZYHqjF+GFUB
+	 QTyvsjOBPVrVpsZuumcYH8TAjCVp5l1eYu4rXoVRWjPjq8sCLqJLVtHIh6i3fVU/nI
+	 SVYRAvH1Ts46AhfsHIwkNzc0SvAJDkfT/NWnyDPoWUXLCHntm7LX/eW8iyDDIh7MGs
+	 GI0a1819kd2HQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 30 Aug 2024 15:05:01 +0200
-Subject: [PATCH RFC 20/20] fs: remove f_version
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Tom Talpey <tom@talpey.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	devel@lists.orangefs.org,
+	Steve French <sfrench@samba.org>
+Subject: Re: (subset) [PATCH 4/6] mm: Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
+Date: Fri, 30 Aug 2024 15:12:02 +0200
+Message-ID: <20240830-anteil-haarfarbe-d11935ac1017@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240828210249.1078637-5-dhowells@redhat.com>
+References: <20240828210249.1078637-1-dhowells@redhat.com> <20240828210249.1078637-5-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,97 +79,35 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240830-vfs-file-f_version-v1-20-6d3e4816aa7b@kernel.org>
-References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
-In-Reply-To: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Jan Kara <jack@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, 
- Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2184; i=brauner@kernel.org;
- h=from:subject:message-id; bh=3woYN5gWU2ZxDLzsw5HkcAJ38mFoKEtN6YbTejqApNY=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdPDx3fdhqu2knbJnnmIc+WsTdeH9SZL/K9jcFrw4Gz
- yy7d8BhX0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEBJ8z/OH93VJRsJuru22y
- juXCdPbNsg8eGLmrOPwTdi44JOsh1sDwz5pP+XFn652M5TOW/2Nfavx+7pEL8WrlzouV3lTN5+V
- dzwoA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1253; i=brauner@kernel.org; h=from:subject:message-id; bh=WndIbO8xrC2aIrGdqBcilJuDXzO/BXzIA8VlzOJWcDo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdPKr76Dezq5ehzM4jKYrG1ftWrXx6vvm+7LaNC7uZV E+srfHd1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRR5oM/1T7Tb2YfR5sYXnu FDtjHaviHxfHAmW1+apKn47PLwxJcWBkWDj/YHmXY6+ZxwZFZ420TYu1Jiiw5DG/WmQs9an18sQ 6HgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Now that detecting concurrent seeks is done by the filesystems that
-require it we can remove f_version and free up 8 bytes for future
-extensions.
+On Wed, 28 Aug 2024 22:02:45 +0100, David Howells wrote:
+> Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
+> rather than truncate_inode_pages_range().  The latter clears the
+> invalidated bit of a partial pages rather than discarding it entirely.
+> This causes copy_file_range() to fail on cifs because the partial pages at
+> either end of the destination range aren't evicted and reread, but rather
+> just partly cleared.
+> 
+> [...]
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/read_write.c    | 9 ++++-----
- include/linux/fs.h | 4 +---
- 2 files changed, 5 insertions(+), 8 deletions(-)
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 47f7b4e32a53..981146f50568 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -62,7 +62,8 @@ static loff_t vfs_setpos_cookie(struct file *file, loff_t offset,
- 
- 	if (offset != file->f_pos) {
- 		file->f_pos = offset;
--		*cookie = 0;
-+		if (cookie)
-+			*cookie = 0;
- 	}
- 	return offset;
- }
-@@ -81,7 +82,7 @@ static loff_t vfs_setpos_cookie(struct file *file, loff_t offset,
-  */
- loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize)
- {
--	return vfs_setpos_cookie(file, offset, maxsize, &file->f_version);
-+	return vfs_setpos_cookie(file, offset, maxsize, NULL);
- }
- EXPORT_SYMBOL(vfs_setpos);
- 
-@@ -362,10 +363,8 @@ loff_t default_llseek(struct file *file, loff_t offset, int whence)
- 	}
- 	retval = -EINVAL;
- 	if (offset >= 0 || unsigned_offsets(file)) {
--		if (offset != file->f_pos) {
-+		if (offset != file->f_pos)
- 			file->f_pos = offset;
--			file->f_version = 0;
--		}
- 		retval = offset;
- 	}
- out:
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ca4925008244..7e11ce172140 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1003,7 +1003,6 @@ static inline int ra_has_index(struct file_ra_state *ra, pgoff_t index)
-  * @f_pos_lock: lock protecting file position
-  * @f_pipe: specific to pipes
-  * @f_pos: file position
-- * @f_version: file version
-  * @f_security: LSM security context of this file
-  * @f_owner: file owner
-  * @f_wb_err: writeback error
-@@ -1034,11 +1033,10 @@ struct file {
- 		u64			f_pipe;
- 	};
- 	loff_t				f_pos;
--	u64				f_version;
--	/* --- cacheline 2 boundary (128 bytes) --- */
- #ifdef CONFIG_SECURITY
- 	void				*f_security;
- #endif
-+	/* --- cacheline 2 boundary (128 bytes) --- */
- 	struct fown_struct		*f_owner;
- 	errseq_t			f_wb_err;
- 	errseq_t			f_sb_err;
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
--- 
-2.45.2
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[4/6] mm: Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
+      https://git.kernel.org/vfs/vfs/c/c26096ee0278
 
