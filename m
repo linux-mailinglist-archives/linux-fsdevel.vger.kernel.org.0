@@ -1,153 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-27967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D139654D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 03:45:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33EB396551E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 04:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DED8A1F2460B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 01:45:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49E1282A9C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 02:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AD354F95;
-	Fri, 30 Aug 2024 01:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C5071742;
+	Fri, 30 Aug 2024 02:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BD3BmvoS"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZOHFfZJc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CADD3398A;
-	Fri, 30 Aug 2024 01:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E785D1D131C;
+	Fri, 30 Aug 2024 02:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724982332; cv=none; b=YDFxj5RN+Doqx4c7TRTNPst25rxkVlrlNiX11ooI9Lt4F6Kn66tHPI3HnDLxu09WO5xUB/YmaCxnj/YbOnkjKIIofqBzYvy+HtptAib05hD6/W/+xkELp6HfHvY1xqd5Dsw8MB+pC/pwq9tFIvASEjaVtzPCdAQLjY4E8bUJMSM=
+	t=1724983834; cv=none; b=pzK2OdgB3TpdCgxkpCdjvcV3t3sbSiHKcczX2GQoktFkwoH7VjEA4zdLK0uDIfDBcqvtMXbEZNhTW9+LTzeOHGoUD0KUJaEX9CeI490dtwuwkyHOwN+NwMVZzhZBhCadVdj394wlRL75UKN3Vazh47ZOn8ttK3pxAgOi795o4dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724982332; c=relaxed/simple;
-	bh=Fdjffkj4EWGbECXKl+lw8/wyl4zTJ9WG3F9bhpbz06Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A/MPu2M/avd+ceoyv+altwcYIDT89Q8cHvGIdSqokWXApxk3hjSTIvCV5s0QLXLJ8QxvjiCx05ysuSEWXxstCth5L+a8lr5m1utGuoqlQ+g1m6WJuqHMjp/kt4/raUhG9dKG7Lwklo9Sj+1vdR3DEQm9s63eY64DGTPVavrfcrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BD3BmvoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A9BC4CEC1;
-	Fri, 30 Aug 2024 01:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724982331;
-	bh=Fdjffkj4EWGbECXKl+lw8/wyl4zTJ9WG3F9bhpbz06Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BD3BmvoSb6CFb2a2CK84ZGEyFMUaMVVB7eiS5DUaCPHKw/F3HKbNzhJtU4/BypR2z
-	 IE7AUAgyFKfCDz7+9jgogr0r/9YFUqnMrFjXDB2IayDqq2nQOoT2vwNJLsQpI+32N0
-	 oIExy4BYtqrRcmcI80HDgdajdAhTnI53mg6UVNjJHlHTfhXgB2mJj28EsUoreSCruS
-	 zOWK2ftQgzgJ4bbLqiNpyYzvkwRypCdUpbEfbCErhJwNGzVj3V/WNuLS+b5xPTgnxJ
-	 e3xCQ9gpRdBbTI5gjD/XRLlYGxgEMJoL/mdhZ2OCTc9omQwIbaAvAFIHCV2n5c6srH
-	 PU09wsURGjOkg==
-Date: Thu, 29 Aug 2024 21:45:30 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Anna Schumaker <anna@kernel.org>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 14/25] nfs_common: add NFS LOCALIO auxiliary protocol
- enablement
-Message-ID: <ZtEkOsoDgfeQSSjp@kernel.org>
-References: <20240829010424.83693-1-snitzer@kernel.org>
- <20240829010424.83693-15-snitzer@kernel.org>
- <172497475053.4433.8625349705350143756@noble.neil.brown.name>
+	s=arc-20240116; t=1724983834; c=relaxed/simple;
+	bh=G15KnXW8AjYXE6Rb/jrWfl5W+S5jOUrSI0bR7qHqY5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VFz/LC7SLQPQ7Q7InZ6tK+mZ023fFu3QBE4ioQ4KlT5AKNN4MlCQr5uHEf7ZfHdKvX/Ovq//3hfQUxvIUmGd7o3dfkiww/ZGUuTb555K5uXKHommgYERiiZB41gibr8sgJ9g8BJKU57cBdBpQo/Ylnwz0+i7uk/MFw3exiQpSVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZOHFfZJc; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724983822; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=CUhaHXVQH1bsT+53nrrH4/g48t++P31ZwVXwMhP2Jks=;
+	b=ZOHFfZJct9JBFfYLP+aTi99TD9wyWc1hCbnuc2PSEd6E2D1I/HP7hew32NwKB0grzkyGq1UpFT6FyrrSErPhoIfVvA/G4OTJtc6jVTKEiDo376sri3zT38zgrSB4OauIzSaiLkMPw43upIQ0oQ4dcOLoN8W9DYKG+z/yytlBBis=
+Received: from 30.221.145.153(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WDuezWF_1724983821)
+          by smtp.aliyun-inc.com;
+          Fri, 30 Aug 2024 10:10:22 +0800
+Message-ID: <09c09a93-d3c3-45c6-bc6a-780423e07b5c@linux.alibaba.com>
+Date: Fri, 30 Aug 2024 10:10:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172497475053.4433.8625349705350143756@noble.neil.brown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: make foffset alignment opt-in for optimum backend
+ performance
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240705100449.60891-1-jefflexu@linux.alibaba.com>
+ <ca86fc29-b0fe-4e23-94b3-76015a95b64f@fastmail.fm>
+ <8fd07d19-b7eb-4ae6-becc-08e6e1502fc8@linux.alibaba.com>
+ <CAJfpegsgCJEv=XxuHgo+Qn-3y8Rc_Bsmt2YKTHn4XaBqvgshew@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAJfpegsgCJEv=XxuHgo+Qn-3y8Rc_Bsmt2YKTHn4XaBqvgshew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 30, 2024 at 09:39:10AM +1000, NeilBrown wrote:
-> On Thu, 29 Aug 2024, Mike Snitzer wrote:
+
+
+On 8/29/24 3:51 PM, Miklos Szeredi wrote:
+> On Fri, 5 Jul 2024 at 14:00, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>> I'm okay with resuing max_pages as the alignment constraint.  They are
+>> the same in our internal scenarios.  But I'm not sure if it is the case
+>> in other scenarios.
 > 
-> > +
-> > +bool nfs_uuid_is_local(const uuid_t *uuid, struct net *net, struct auth_domain *dom)
-> > +{
-> > +	bool is_local = false;
-> > +	nfs_uuid_t *nfs_uuid;
-> > +
-> > +	rcu_read_lock();
-> > +	nfs_uuid = nfs_uuid_lookup(uuid);
-> > +	if (nfs_uuid) {
-> > +		nfs_uuid->net = maybe_get_net(net);
+> max_pages < alignment makes little sense.
 > 
-> I know I said it looked wrong to be getting a ref for the domain but not
-> the net - and it did.  But that doesn't mean the fix was to get a ref
-> for the net and to hold it indefinitely.
->
-> This ref is now held until the client happens to notice that localio
-> doesn't work any more (because nfsd_serv_try_get() fails).  So the
-> shutdown of a net namespace will be delayed indefinitely if the NFS
-> filesystem isn't being actively used.
+> max_pages = n * alignment could make sense, i.e. allow writes that are
+> whole multiples of the alignment.
+
+Agreed.
+
 > 
-> I would prefer that there were a way for the net namespace to reach back
-> into the client and disconnect itself.  Probably this would be a
-> linked-list in struct nfsd_net which linked list_heads in struct
-> nfs_client.  This list would need to be protected by a spinlock -
-> probably global in nfs_common so client could remove itself and server
-> could remove all clients after clearing their net pointers.
-> 
-> It is probably best if I explain all of what I am thinking as a patch.
-> 
-> Stay tuned.
+> I'm not against adding a separate alignment, but it could be just
+> uint8_t to take up less space in init_out.   We could have done that
+> with max_stack_depth too.   Oh well...
 
-OK, a mechanism to have the net namespace disconnect itself sounds neat.
+Make sense, as the new added fuse_init_out.opt_alignment is already
+log2(byte alignment).  I think uint8_t is already adequate in this case.
+(Actually I'm going to rename @opt_alignment field of fuse_init_out to
+something like @log_opt_align to indicate it's actually a log2() value
+as Berned previously suggested)
 
-Or alternatively we could do what I was doing:
+Besides, I'm not sure if it's worth adding a new init flag, i.e.
+FUSE_OPT_ALIGNMENT, as the init flag bits are continually consumed.
+Maybe we could stipulate that a zero log_opt_align indicates no
+alignment constraint (the default behavior), while a non-zero
+log_opt_align indicates an alignment constraint.  However IIUC the user
+daemon may or may not zero the unused fields of fuse_init_out.  Thus if
+a fuse server not supporting opt_alignment doesn't zero
+fuse_init_out.unused, then the kernel side will enforce an alignment
+constraint unexpectedly.
 
-        /* Not running in nfsd context, must safely get reference on nfsd_serv */
-        cl_nfssvc_net = maybe_get_net(cl_nfssvc_net);
-        if (!cl_nfssvc_net)
-                return -ENXIO;
 
-        nn = net_generic(cl_nfssvc_net, nfsd_net_id);
-
-        /* The server may already be shutting down, disallow new localio */
-        if (unlikely(!nfsd_serv_try_get(nn))) {
-
-But only if maybe_get_net() will always fail safely...
-
-I feel like we talked about the relative safety of maybe_get_net()
-before (but I'm coming up short searching my email):
-
-static inline struct net *maybe_get_net(struct net *net)
-{
-        /* Used when we know struct net exists but we
-         * aren't guaranteed a previous reference count
-         * exists.  If the reference count is zero this
-         * function fails and returns NULL.
-         */
-        if (!refcount_inc_not_zero(&net->ns.count))
-                net = NULL;
-        return net;
-}
-
-So you have doubts the struct net will always still exist because I
-didn't take a reference? (from fs/nfsd/localio.c):
-
-static __be32 localio_proc_uuid_is_local(struct svc_rqst *rqstp)
-{
-        struct localio_uuidarg *argp = rqstp->rq_argp;
-
-        (void) nfs_uuid_is_local(&argp->uuid, SVC_NET(rqstp),
-                                 rqstp->rq_client);
-
-        return rpc_success;
-}
-
-I think that's a fair concern (despite it working fine in practice
-with destructive container testing, I cannot say there won't ever be a
-use-after-free bug).
-
-So all said: consider me staying tuned ;)
-
-Thanks
+-- 
+Thanks,
+Jingbo
 
