@@ -1,71 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-27970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC599655BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 05:39:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6454B9655D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 05:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A351F23948
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 03:39:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20373284364
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 03:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B862136326;
-	Fri, 30 Aug 2024 03:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LzS0ZQ6o"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC6413B28D;
+	Fri, 30 Aug 2024 03:42:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F096236B0D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 03:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D192667A0D;
+	Fri, 30 Aug 2024 03:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724989182; cv=none; b=BdowCLjaujl0gGtoWl7bVICRy0mRXVxRikwEj8ZGn+Uq78G/h2WWR7wKnAQ9PDWfxcLkQ4IVhr3atNmO/RluaAsXebJFzCbAfdTJB+7fOPyHKj1AreDOtikeyvBlfL+fQg8xZu3CakeBr5dSIWSgFq6Bz/K1jB8ac/L5EcSQnP8=
+	t=1724989373; cv=none; b=Rm8B5I91LjJYpIzHQsm81qrK7pRud95u7cReMF0LcCNFCmuZLvkWtH0HUvDPmtihNVQlb/iZuFClb82KdQjbPK8cWMFp8zQwic008BKGt8TwPvCyFNSBNqO881mDk36PMKj2u6j/ri/wKO5WklgQzz6CP58j9KWW922mTVPNEG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724989182; c=relaxed/simple;
-	bh=9g+fkzgNiLmkzb8kJYA3wu4o17li5UlZA5Js0dxJiRg=;
+	s=arc-20240116; t=1724989373; c=relaxed/simple;
+	bh=ehxqUB7kvoK91VInz+QmJlkor1XBmBtzAfDdGaV47pM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lddTrgzUIyFYilJtZueOfUSlBJGAlr6rqAVGKDwR013vf9O2YTJFIxo8DxSeVyQRGvl3t3nQlnXwfhxXtD3HeIMwSx7MhtpaYP7CUWd4FQ1lq5OY369IBZnLZQiVloKHPxu7x8s5fsqRBeqh5AFJanZjbPDr6H1SXY5JL1bTIKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=LzS0ZQ6o; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47U3d6d9028280
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 23:39:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1724989148; bh=iBN1OqKISlzImerjylAD7DIlwprKTEvfPiiXXj/dLaQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=LzS0ZQ6obZmSSsyjaPriURvOuAoToFy5I4SVjGhUGdpCwKSIXBwt3LZQJrgW740CJ
-	 dGEwODnZCAyJ3lxGE+mn0WiD5tg+uRkVnfRYWXLozyKP18C+ODYuYythaN6+xaxz+t
-	 T4lyl4FHjRVGVUKlVOCnTyQPjV59vymE0AlJP6uON6/0OsI8iCWuYLNW3D70vqgOm7
-	 qtW7ZUA6diTVtP2gWnXCOEelkxj4N3xzrXFPs4cg3FHB+1SeNUvAvAvF/rrOd4IdXU
-	 LohFASq22zl8qk2Yqh2KA26DCP9izryo8n3t5HLL4AxxV1HqAvwxPDx7qw8Ewvct1r
-	 e3YMRiCA0OFug==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id B367C15C02C1; Thu, 29 Aug 2024 23:39:05 -0400 (EDT)
-Date: Thu, 29 Aug 2024 23:39:05 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-        Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Message-ID: <20240830033905.GC9627@mit.edu>
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org>
- <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
- <Zs959Pa5H5WeY5_i@tiehlicka>
- <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
- <ZtBWxWunhXTh0bhS@tiehlicka>
- <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
- <ZtCFP5w6yv/aykui@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sv1xodBe8Oh9R6+1nz81RgeVXGXrnZIJijxVmOJQ5+i5ZlprtJ+IMYHlxROJ1XRDM3xYrwvx8EGU1tzHGWfYBRXO2S4kW2dQXWXhToGNAYaPcv3dftcOBjUYJ5f0LtD3hQM3eU1vPpT7NeMMK9zB7OgoAu47y2fle4YNoLI/yDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 9F63B227A88; Fri, 30 Aug 2024 05:42:41 +0200 (CEST)
+Date: Fri, 30 Aug 2024 05:42:41 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/10] iomap: handle a post-direct I/O invalidate race
+ in iomap_write_delalloc_release
+Message-ID: <20240830034241.GA25633@lst.de>
+References: <20240827051028.1751933-1-hch@lst.de> <20240827051028.1751933-2-hch@lst.de> <20240827161416.GV865349@frogsfrogsfrogs> <20240828044848.GA31463@lst.de> <20240828161338.GH1977952@frogsfrogsfrogs> <20240829034626.GB3854@lst.de> <20240829142219.GC6216@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,50 +50,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZtCFP5w6yv/aykui@dread.disaster.area>
+In-Reply-To: <20240829142219.GC6216@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Aug 30, 2024 at 12:27:11AM +1000, Dave Chinner wrote:
+On Thu, Aug 29, 2024 at 07:22:19AM -0700, Darrick J. Wong wrote:
+> On Thu, Aug 29, 2024 at 05:46:26AM +0200, Christoph Hellwig wrote:
+> > On Wed, Aug 28, 2024 at 09:13:38AM -0700, Darrick J. Wong wrote:
+> > > Though we might have to revisit this for filesystems that don't take
+> > > i_rwsem exclusively when writing -- is that a problem?  I guess if you
+> > > had two threads both writing and punching the pagecache they could get
+> > > into trouble, but that might be a case of "if it hurts don't do that".
+> > 
+> > No i_rwsem for buffered writes?  You can't really do that without hell
+> > breaking lose.  At least not without another exclusive lock.
 > 
-> We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
-> now. This was the default Irix kernel allocator behaviour (it had a
-> forwards progress guarantee and would never fail allocation unless
-> told it could do so). We've been using the same "guaranteed not to
-> fail" semantics on Linux since the original port started 25 years
-> ago via open-coded loops.
+> Well, i_rwsem in shared mode.  ISTR ext4 does inode_lock_shared and
+> serializes on the folio lock, at least for non extending writes.
 
-Ext3/ext4 doesn't have quite the history as XFS --- it's only been
-around for 23 years --- but we've also used __GFP_NOFAIL or its
-moral equivalent, e.g.:
+ext4 uses plain inode lock/unlock which is an exclusive i_rwsem.
+Given that Posix requires the entire write to synchronized vs other
+writes applications would break otherwise.
 
-> 	do {
-> 		p = kmalloc(size);
-> 	while (!p);
-
-For the entire existence of ext3.
-
-> Put simply: __GFP_NOFAIL will be rendered completely useless if it
-> can fail due to external scoped memory allocation contexts.  This
-> will force us to revert all __GFP_NOFAIL allocations back to
-> open-coded will-not-fail loops.
-
-The same will be true for ext4.  And as Dave has said, the MM
-developers want to have visibility to when file systems have basically
-said, "if you can't allow us to allocate memory, our only alternative
-is to cause user data loss, crash the kernel, or loop forever; we will
-choose the latter".  The MM developers tried to make __GFP_NOFAIL go
-away several years ago, and ext4 put the retry loop back, As a result,
-the compromise was that the MM developers restored __GFP_NOFAIL, and
-the file systems developers have done their best to reduce the use of
-__GFP_NOFAIL as much as possible.
-
-So if you try to break the GFP_NOFAIL promise, both xfs and ext4 will
-back to the retry loop.  And the MM devs will be sad, and they will
-forcibly revert your change to *ther* code, even if that means
-breaking bcachefs.  Becuase otherwise, you will be breaking ext4 and
-xfs, and so we will go back to using a retry loop, which will be worse
-for Linux users.
-
-Cheers,
-
-					- Ted
 
