@@ -1,205 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-28092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79009966CC9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2024 01:03:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F017B966CD7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2024 01:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D7A9284C35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 23:02:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F194B21339
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 23:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01B1188A38;
-	Fri, 30 Aug 2024 23:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4016D18E344;
+	Fri, 30 Aug 2024 23:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYaF3q4Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpKWq3HA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475AF1531D0;
-	Fri, 30 Aug 2024 23:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B4C14AD38;
+	Fri, 30 Aug 2024 23:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725058973; cv=none; b=ZwgAA/Gf4mXABnWCf5uZQfS86hKmUnRfQV876IPabXO9qziueAV28dFW4lJUFEt8gIo6egU9ByqRkbz8Qx9ax04Ly91ZJh/b6oQfW2itvaaBoQx9rOopHrzENWaA8gTpYHRxtuST0tn2m7CygoPnzwcrrKSB4aYLZtnR9M6+aZ8=
+	t=1725060166; cv=none; b=RJBx12E2svO7EQ76mJE1SL0BSQ6UPKmiQTjusaLUIoUVmxvwcxePQBJF4IU5EBy2sTMoGTiDO8rjbqj1hdoNWah01ZfoNViElLxhzkZEuPeKS2A1iwfFqQW6XCtdFLJ7Wyuu4SRUhQ2RSe1MCBTiaf0cPI3awXCX8zqGJvjSlxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725058973; c=relaxed/simple;
-	bh=UCvtDNWCmCB2enzsjyhNwb221teRJYmMnJgO0fw7YQ0=;
+	s=arc-20240116; t=1725060166; c=relaxed/simple;
+	bh=TwY5ILjzFeVouNSp+613u9t1eDYzDUrQdpJ4Gct+aXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlbFfcKGKj6lweDRvXcMMJr5hZ21UeVu3AqsOu/3J7PQaCY5qX3Acdw2UY5yvOcXng1nCXwsVSEm7mrCTLxkPLdvvv428y8B+ldOX6aFrhFIlIMpe250Z2GyCskOjWwNd5vmNhN55SeazzVH/Ky777ahtWxMKpjpOjh0wtQgtTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYaF3q4Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C1DC4CEC2;
-	Fri, 30 Aug 2024 23:02:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qRBQ85SeDTggo/ovKOtN2VO5923IQuaZWXbDEbVsp1QARvR4oIMiYWbsR4C+0C3GrCmyxRFMft3U2cG5Oywx5fpCxwaOkKIvfJOTc12P1uBdIwitNlM/DAfsyxWcEF/HxKCFJ6CA1hSAUSpROrB88uwSh+MGp+c2D3aD6DLKZ3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpKWq3HA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F6FC4CEC7;
+	Fri, 30 Aug 2024 23:22:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725058972;
-	bh=UCvtDNWCmCB2enzsjyhNwb221teRJYmMnJgO0fw7YQ0=;
+	s=k20201202; t=1725060166;
+	bh=TwY5ILjzFeVouNSp+613u9t1eDYzDUrQdpJ4Gct+aXc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CYaF3q4QbLyR6EftDMW1GxR9wP1fQrrpV6taHy+djKQrw5WEPOKMsh/viuNNgaFYE
-	 h+m0qwWWu+6FsMmZUm+22AwysCw1hpOhNBfTya8Q4TucufQdNG24oT9aGRogpxgxow
-	 onvhxgZAjNvZy5SklWBSsgnGOcDnxaiY7L8fE7ADGPW8yNjZBEQMSGC4pCtNtZ1kgt
-	 35LlVSeG/ECqpCa2dzV+0be+APRnJfvnoJsaWgg/rxpVwDvmLAyC8cLGKSVgaWSddb
-	 B7mCrqZkzndVAgUkwRGUi54M/8fPz7ONFCcCqBlWpl0O/X+0NqZGUGBG0soWY38dT/
-	 YmDfPgPL7aV5Q==
-Date: Fri, 30 Aug 2024 16:02:52 -0700
+	b=lpKWq3HAj56ksCfHR38Bi3eDO6Ee+X8RBtOCvZAQI6lwW6Zk5R8/jKvEGW+mcADSe
+	 dQZqbW3iCbkEe/GNt10E66YbDbut/JNUIBO/8J/MhntT72CcqFAVDye1pvD8FFe6br
+	 yDy9tm4cy2k4xmJbjD/1Xjb+HBGYdu7qcKw9yP3vFfv5yAOI8T6Dtm1ZQuf/2Dm74l
+	 vI5JLFgbWUxbZ+gvRBy/GOpkd6n4ZUiDyzMAhP/PJKtOwBcptLvVIceGk2qWIBT9wk
+	 be26yPelEFuI6LUpj1f9spWblmGXfWbq45wZQKf1MPBN8Vmpmv/dF08FKyguZlX3DH
+	 09OQBRvz9bcOA==
+Date: Fri, 30 Aug 2024 16:22:45 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, josef@toxicpanda.com,
-	david@fromorbit.com
-Subject: Re: [PATCH 2/2] iomap: make zero range flush conditional on
- unwritten mappings
-Message-ID: <20240830230252.GW6224@frogsfrogsfrogs>
-References: <20240822145910.188974-1-bfoster@redhat.com>
- <20240822145910.188974-3-bfoster@redhat.com>
- <Zs1uHoemE7jHQ2bw@infradead.org>
- <Zs3hTiXLtuwXkYgU@bfoster>
- <Zs6oY91eFfaFVrMw@infradead.org>
- <Zs8Zo3V1G3NAQEnK@bfoster>
- <ZtAKJH_NGhjxFQHa@infradead.org>
- <ZtCOVzK4KlPbcnk_@bfoster>
- <20240829214800.GQ6224@frogsfrogsfrogs>
- <ZtGztWILZPlU6Gxo@bfoster>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org,
+	linux-xfs@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org
+Subject: Re: [PATCH v4 00/16] fanotify: add pre-content hooks
+Message-ID: <20240830232245.GQ6216@frogsfrogsfrogs>
+References: <cover.1723670362.git.josef@toxicpanda.com>
+ <20240829214153.GP6224@frogsfrogsfrogs>
+ <CAOQ4uxh+zD1A18VPyoRHeaBt+XCpt2LB18K6ZHQJR-VqdGrCVw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZtGztWILZPlU6Gxo@bfoster>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxh+zD1A18VPyoRHeaBt+XCpt2LB18K6ZHQJR-VqdGrCVw@mail.gmail.com>
 
-On Fri, Aug 30, 2024 at 07:57:41AM -0400, Brian Foster wrote:
-> On Thu, Aug 29, 2024 at 02:48:00PM -0700, Darrick J. Wong wrote:
-> > On Thu, Aug 29, 2024 at 11:05:59AM -0400, Brian Foster wrote:
-> > > On Wed, Aug 28, 2024 at 10:41:56PM -0700, Christoph Hellwig wrote:
-> > > > On Wed, Aug 28, 2024 at 08:35:47AM -0400, Brian Foster wrote:
-> > > > > Yeah, it was buried in a separate review around potentially killing off
-> > > > > iomap_truncate_page():
-> > > > > 
-> > > > > https://lore.kernel.org/linux-fsdevel/ZlxUpYvb9dlOHFR3@bfoster/
-> > > > > 
-> > > > > The idea is pretty simple.. use the same kind of check this patch does
-> > > > > for doing a flush, but instead open code and isolate it to
-> > > > > iomap_truncate_page() so we can just default to doing the buffered write
-> > > > > instead.
-> > > > > 
-> > > > > Note that I don't think this replaces the need for patch 1, but it might
-> > > > > arguably make further optimization of the flush kind of pointless
-> > > > > because I'm not sure zero range would ever be called from somewhere that
-> > > > > doesn't flush already.
-> > > > > 
-> > > > > The tradeoffs I can think of are this might introduce some false
-> > > > > positives where an EOF folio might be dirty but a sub-folio size block
-> > > > > backing EOF might be clean, and again that callers like truncate and
-> > > > > write extension would need to both truncate the eof page and zero the
-> > > > > broader post-eof range. Neither of those seem all that significant to
-> > > > > me, but just my .02.
-> > > > 
-> > > > Looking at that patch and your current series I kinda like not having
-> > > > to deal with the dirty caches in the loop, and in fact I'd also prefer
-> > > > to not do any writeback from the low-level zero helpers if we can.
-> > > > That is not doing your patch 1 but instead auditing the callers if
-> > > > any of them needs them and documenting the expectation.
-> > 
-> > I looked, and was pretty sure that XFS is the only one that has that
-> > expectation.
-> > 
-> > > I agree this seems better in some ways, but I don't like complicating or
-> > > putting more responsibility on the callers. I think if we had a high
-> > > level iomap function that wrapped a combination of this proposed variant
-> > > of truncate_page() and zero_range() for general inode size changes, that
-> > > might alleviate that concern.
-> > > 
-> > > Otherwise IME even if we audited and fixed all callers today, over time
-> > > we'll just reintroduce the same sorts of errors if the low level
-> > > mechanisms aren't made to function correctly.
-> > 
-> > Yeah.  What /are/ the criteria for needing the flush and wait?  AFAICT,
-> > a filesystem only needs the flush if it's possible to have dirty
-> > pagecache backed either by a hole or an unwritten extent, right?
-> > 
+On Fri, Aug 30, 2024 at 10:55:10AM +0200, Amir Goldstein wrote:
+> On Thu, Aug 29, 2024 at 11:41 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Wed, Aug 14, 2024 at 05:25:18PM -0400, Josef Bacik wrote:
+> > > v3: https://lore.kernel.org/linux-fsdevel/cover.1723228772.git.josef@toxicpanda.com/
+> > > v2: https://lore.kernel.org/linux-fsdevel/cover.1723144881.git.josef@toxicpanda.com/
+> > > v1: https://lore.kernel.org/linux-fsdevel/cover.1721931241.git.josef@toxicpanda.com/
+> > >
+> > > v3->v4:
+> > > - Trying to send a final verson Friday at 5pm before you go on vacation is a
+> > >   recipe for silly mistakes, fixed the xfs handling yet again, per Christoph's
+> > >   review.
+> > > - Reworked the file system helper so it's handling of fpin was a little less
+> > >   silly, per Chinner's suggestion.
+> > > - Updated the return values to not or in VM_FAULT_RETRY, as we have a comment
+> > >   in filemap_fault that says if VM_FAULT_ERROR is set we won't have
+> > >   VM_FAULT_RETRY set.
+> > >
+> > > v2->v3:
+> > > - Fix the pagefault path to do MAY_ACCESS instead, updated the perm handler to
+> > >   emit PRE_ACCESS in this case, so we can avoid the extraneous perm event as per
+> > >   Amir's suggestion.
+> > > - Reworked the exported helper so the per-filesystem changes are much smaller,
+> > >   per Amir's suggestion.
+> > > - Fixed the screwup for DAX writes per Chinner's suggestion.
+> > > - Added Christian's reviewed-by's where appropriate.
+> > >
+> > > v1->v2:
+> > > - reworked the page fault logic based on Jan's suggestion and turned it into a
+> > >   helper.
+> > > - Added 3 patches per-fs where we need to call the fsnotify helper from their
+> > >   ->fault handlers.
+> > > - Disabled readahead in the case that there's a pre-content watch in place.
+> > > - Disabled huge faults when there's a pre-content watch in place (entirely
+> > >   because it's untested, theoretically it should be straightforward to do).
+> > > - Updated the command numbers.
+> > > - Addressed the random spelling/grammer mistakes that Jan pointed out.
+> > > - Addressed the other random nits from Jan.
+> > >
+> > > --- Original email ---
+> > >
+> > > Hello,
+> > >
+> > > These are the patches for the bare bones pre-content fanotify support.  The
+> > > majority of this work is Amir's, my contribution to this has solely been around
+> > > adding the page fault hooks, testing and validating everything.  I'm sending it
+> > > because Amir is traveling a bunch, and I touched it last so I'm going to take
+> > > all the hate and he can take all the credit.
+> > >
+> > > There is a PoC that I've been using to validate this work, you can find the git
+> > > repo here
+> > >
+> > > https://github.com/josefbacik/remote-fetch
+> > >
+> > > This consists of 3 different tools.
+> > >
+> > > 1. populate.  This just creates all the stub files in the directory from the
+> > >    source directory.  Just run ./populate ~/linux ~/hsm-linux and it'll
+> > >    recursively create all of the stub files and directories.
+> > > 2. remote-fetch.  This is the actual PoC, you just point it at the source and
+> > >    destination directory and then you can do whatever.  ./remote-fetch ~/linux
+> > >    ~/hsm-linux.
+> > > 3. mmap-validate.  This was to validate the pagefault thing, this is likely what
+> > >    will be turned into the selftest with remote-fetch.  It creates a file and
+> > >    then you can validate the file matches the right pattern with both normal
+> > >    reads and mmap.  Normally I do something like
+> > >
+> > >    ./mmap-validate create ~/src/foo
+> > >    ./populate ~/src ~/dst
+> > >    ./rmeote-fetch ~/src ~/dst
+> > >    ./mmap-validate validate ~/dst/foo
+> > >
+> > > I did a bunch of testing, I also got some performance numbers.  I copied a
+> > > kernel tree, and then did remote-fetch, and then make -j4
+> > >
+> > > Normal
+> > > real    9m49.709s
+> > > user    28m11.372s
+> > > sys     4m57.304s
+> > >
+> > > HSM
+> > > real    10m6.454s
+> > > user    29m10.517s
+> > > sys     5m2.617s
+> > >
+> > > So ~17 seconds more to build with HSM.  I then did a make mrproper on both trees
+> > > to see the size
+> > >
+> > > [root@fedora ~]# du -hs /src/linux
+> > > 1.6G    /src/linux
+> > > [root@fedora ~]# du -hs dst
+> > > 125M    dst
+> > >
+> > > This mirrors the sort of savings we've seen in production.
+> > >
+> > > Meta has had these patches (minus the page fault patch) deployed in production
+> > > for almost a year with our own utility for doing on-demand package fetching.
+> > > The savings from this has been pretty significant.
+> > >
+> > > The page-fault hooks are necessary for the last thing we need, which is
+> > > on-demand range fetching of executables.  Some of our binaries are several gigs
+> > > large, having the ability to remote fetch them on demand is a huge win for us
+> > > not only with space savings, but with startup time of containers.
+> >
+> > So... does this pre-content fetcher already work for regular reads and
+> > writes, and now you're looking to wire up page faults?  Or does it only
+> > handle page faults?  Judging from Amir's patches I'm guessing the
+> > FAN_PRE_{ACCESS,MODIFY} events are new, so this only sends notifications
+> > prior to read and write page faults?  The XFS change looks reasonable to
+> > me, but I'm left wondering "what does this shiny /do/?"
+> >
 > 
-> Yeah, but this flush behavior shouldn't be a caller consideration at
-> all. It's just an implementation detail. All the caller should care
-> about is that zero range works As Expected (tm).
+> I *think* I understand the confusion.
 > 
-> The pre-iomap way of doing this in XFS was xfs_zero_eof() ->
-> xfs_iozero(), which was an internally coded buffered write loop that
-> wrote zeroes into pagecache. That was ultimately replaced with
-> iomap_zero_range() with the same sort of usage expectations, but
-> iomap_zero_range() just didn't work quite correctly in all cases.
+> Let me try to sort it out.
 > 
-> > I suppose we could amend the iomap ops so that filesystems could signal
-> > that they allow either of those things, and then we wouldn't have to
-> > query the mapping for filesystems that don't, right?  IOWs, one can opt
-> > out of safety features if there's no risk of a garbage, right?
-> > 
+> This patch set collaboration aims to add the functionality of HSM
+> service by adding events FS_PRE_{ACCESS,MODIFY} prior to
+> read/write and page faults.
 > 
-> Not sure I parse.. In general I think we could let ops signal whether
-> they want certain checks. This is how I used the IOMAP_F_DIRTY_CACHE
-> flag mentioned in the other thread. If the operation handler is
-> interested in pagecache state, set an IOMAP_DIRTY_CACHE flag in ops to
-> trigger a pre iomap_begin() check and then set the corresponding
-> _F_DIRTY_CACHE flag on the mapping if dirty, but I'm not sure if that's
-> the same concept you're alluding to here.
-
-Nope.  I was thinking about adding a field to iomap_ops so that
-filesystems could declare which types of mappings they could return:
-
-const struct iomap_ops xfs_buffered_write_iomap_ops = {
-	.iomap_begin		= xfs_buffered_write_iomap_begin,
-	.iomap_end		= xfs_buffered_write_iomap_end,
-
-	/* xfs allows sparse holes and unwritten extents */
-	.iomap_types = (1U << IOMAP_UNWRITTEN) | (1U << IOMAP_HOLE),
-};
-
-But given your statement below about dirtying a post-eof region for
-which the filesystem does not allocate a block, I suspect we just have
-to enable the flush thing for everyone and don't need the flags thing.
-
-> > (Also: does xfs allow dirty page cache backed by a hole?  I didn't think
-> > that was possible.)
-> > 
+> Maybe you are puzzled by not seeing any new read/write hooks?
+> This is because the HSM events utilize the existing fsnotify_file_*perm()
+> hooks that are in place for the legacy FS_ACCESS_PERM event.
 > 
-> It's a corner case. A mapped write can write to any portion of a folio
-> so long as it starts within eof. So if you have a mapped write that
-> writes past EOF, there's no guarantee that range of the folio is mapped
-> by blocks.
+> So why is a new FS_PRE_ACCESS needed?
+> Let me first quote commit message of patch 2/16 [1]:
+> ---
+> The new FS_PRE_ACCESS permission event is similar to FS_ACCESS_PERM,
+> but it meant for a different use case of filling file content before
+> access to a file range, so it has slightly different semantics.
 > 
-> That post-eof part of the folio would be zeroed at writeback time, but
-> that assumes i_size doesn't change before writeback. If it does and the
-> size change operation doesn't do the zeroing itself (enter zero range
-> via write extension), then we end up with a dirty folio at least
-> partially backed by a hole with non-zero data within EOF. There's
-> nothing written back to disk in this hole backed example, but the
-> pagecache is still inconsistent with what's on disk and therefore I
-> suspect data corruption is possible if the folio is redirtied before
-> reclaimed.
+> Generate FS_PRE_ACCESS/FS_ACCESS_PERM as two seperate events, same as
+> we did for FS_OPEN_PERM/FS_OPEN_EXEC_PERM.
+> 
+> FS_PRE_MODIFY is a new permission event, with similar semantics as
+> FS_PRE_ACCESS, which is called before a file is modified.
+> 
+> FS_ACCESS_PERM is reported also on blockdev and pipes, but the new
+> pre-content events are only reported for regular files and dirs.
+> 
+> The pre-content events are meant to be used by hierarchical storage
+> managers that want to fill the content of files on first access.
+> ---
+> 
+> And from my man page draft [2]:
+> ---
+>        FAN_PRE_ACCESS (since Linux 6.x)
+>               Create  an  event before a read from a directory or a file range,
+>               that provides an opportunity for the event listener to
+> modify the content of the object
+>               before the reader is going to access the content in the
+> specified range.
+>               An additional information record of type
+> FAN_EVENT_INFO_TYPE_RANGE is returned
+>              for each event in the read buffer.
+> ...
+> ---
+> 
+> So the semantics of the two events is slightly different, but also the
+> meaning of "an opportunity for the event listener to modify the content".
+> 
+> FS_ACCESS_PERM already provided this opportunity on old kernels,
+> but prior to "Tidy up file permission hooks" series [3] in v6.8, writing
+> file content in FS_ACCESS_PERM event context was prone to deadlocks.
+> 
+> Therefore, an application using FS_ACCESS_PERM may be prone
+> for deadlocks, while an application using FAN_PRE_ACCESS should
+> be safe in that regard.
 
-Ah.  Yikes.
+Ah, ok, that's where the missing pieces are. :)
 
 --D
 
-> Brian
+> Thanks,
+> Amir.
 > 
-> > > > But please let Dave and Darrick chime in first before investing any
-> > > > work into this.
-> > > > 
-> > > > 
-> > > 
-> > > Based on the feedback to v2, it sounds like there's general consensus on
-> > > the approach modulo some code factoring discussion. Unless there is
-> > > objection, I think I'll stick with that for now for the sake of progress
-> > > and keep this option in mind on the back burner. None of this is really
-> > > that hard to change if we come up with something better.
-> > > 
-> > > Brian
-> > > 
-> > > 
-> > 
-> 
+> [1] https://lore.kernel.org/all/a96217d84dfebb15582a04524dc9821ba3ea1406.1723670362.git.josef@toxicpanda.com/
+> [2] https://github.com/amir73il/man-pages/commits/fan_pre_path
+> [3] https://lore.kernel.org/all/20231122122715.2561213-1-amir73il@gmail.com/
 > 
 
