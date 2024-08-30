@@ -1,279 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-28016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08513966133
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:59:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2A3966136
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5E51288D62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 11:59:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE44B1F26332
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 11:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F73E199934;
-	Fri, 30 Aug 2024 11:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A75219993F;
+	Fri, 30 Aug 2024 11:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bco1LBrB"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gbYUKLEu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3A91917C8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 11:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF53B19992C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 11:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725019151; cv=none; b=TFXicvFbFdpFzLsN2xhAiwjcJUKhF+i71ZeJJbKm7Waz0WCy1dFcUWEKjXFqWyaU/xsL5ssYoU4N1xKYmXgRf9CiRnmt3yWFgLnapZSK8ZQwduUuyj0a2x9pAJ20YuPf37sQV6zOCAABeBd1fUmirwlYqrJHi4IMIOzJHGZbLVk=
+	t=1725019159; cv=none; b=ruvJbIxmsWM1lWCWcryEID3L9f5Nr3mTHLccKOLBuaxXq13pBzDESAkFoApekpok2GIfo2lSJIC7m9lI1OAzDT/eIAbYz79TxpRiwjwfTZVOvs+Ag9TZWQaAP9z6k5ZB/EtJaZqRGfAEUINj6zMp18dIotJ+pKD1vr3+6Haqbwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725019151; c=relaxed/simple;
-	bh=Do/dKTgzKyjKV3wG/nTXEGEsup4OPV6FVk1d8aqBgs0=;
+	s=arc-20240116; t=1725019159; c=relaxed/simple;
+	bh=6OgZ8ZtxXt7quQNbv+3H6Meh4CQOGZxgszGMT+sAe0w=;
 	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=EGCyiwzt0CFCqHj1+RFGiM2vp7qhCdD3xnnEWCaHE+mxFJ2pjQOcZzBipEVqHvzyoQwTz5ZppbK8mPNQoosA/gV93oPggtOepBP/IxaBoGG+n+qpPMZdPLRxsT6C+K7oxzNa3Fe1EtKSV9xtNgD6zcTiXFITDSGWNq3GaNu7J+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bco1LBrB; arc=none smtp.client-ip=210.118.77.12
+	 Content-Disposition:In-Reply-To:References; b=p/zWhIuAMVct+uvVlPuh58qzfTsPycrziqdH/GDh+Qa/VnMWZtGdhKAjAcaYQPsPqgPmCDJPuA+tdG7bSrwwxDx986hEX9Xv0EiAzApOk2kpmTA1wofremeNtxOEYo4UYFGTnCX7/b6/tDSEQ6Wc+sI9G1PG0aSUzyvSdIMoErQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gbYUKLEu; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240830115901euoutp02deb8fe275fca7fd9beab0755789f7e34~wf8TuM0gb2915529155euoutp02g
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 11:59:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240830115901euoutp02deb8fe275fca7fd9beab0755789f7e34~wf8TuM0gb2915529155euoutp02g
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240830115916euoutp01789927fd9bb5856f46959ab69b7eef38~wf8h1Gw1a2511225112euoutp01a
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 11:59:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240830115916euoutp01789927fd9bb5856f46959ab69b7eef38~wf8h1Gw1a2511225112euoutp01a
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725019141;
-	bh=8HWjlCk36MrIJSrgWwx1NmtEBTy4vjMaSH0kx3VdLd0=;
+	s=mail20170921; t=1725019156;
+	bh=DHfHERZ6en3013iCiK+PboFb1SXkYatz5nFnB7G0GlY=;
 	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=bco1LBrBZupyWRz52Pcm5M6dAIAykk31d/RkDfQNKXJ7uayVO6zP95i/US3ZvPNGI
-	 UGcD3Hb7EtaAZ61gBAczrPe3HG1lme8djLaUgcpFQbjGc1kc3m6p8fCgY8VdxPAd5F
-	 uWasUKsIotVxKNri48tHnu8pTSjE7jEwXA92xc4A=
+	b=gbYUKLEuEwKPI68ulqU/oAR4XTO9SPNEkHPy+P2ywlsjfpkAsGn/NOSwG6vv6E+5S
+	 fNASe1qmB/Y5wYMQZQhUjIQDaXrDJyxdSgON44sS5dJW6Dg7L93dKioAx6i79uIFEs
+	 qY/n5ZTa0YeeoVjAxhcq+NCleVZf5lL4ynjng54Y=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240830115900eucas1p1904693aec6c26d37328f2ce5ba0b66ee~wf8TPibCT2191621916eucas1p1Q;
-	Fri, 30 Aug 2024 11:59:00 +0000 (GMT)
+	20240830115915eucas1p1ec9aa5512061fffdee90f1cdc93ec447~wf8hdiS0U2675426754eucas1p1o;
+	Fri, 30 Aug 2024 11:59:15 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 5C.35.09624.404B1D66; Fri, 30
-	Aug 2024 12:59:00 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240830115859eucas1p2e384f48594d104a5fc9fb24e87c6fd24~wf8SlIV_t0820908209eucas1p2L;
-	Fri, 30 Aug 2024 11:58:59 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240830115859eusmtrp18799b0ad847be3279ca20891fbd4c7ad~wf8SkCqRi2130721307eusmtrp1n;
-	Fri, 30 Aug 2024 11:58:59 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-d3-66d1b404249a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id D2.B8.19096.304B1D66; Fri, 30
-	Aug 2024 12:58:59 +0100 (BST)
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 1D.45.09624.314B1D66; Fri, 30
+	Aug 2024 12:59:15 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240830115915eucas1p122027e15f14938de31489f75c174b1fd~wf8g84L7A1990419904eucas1p1Y;
+	Fri, 30 Aug 2024 11:59:15 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240830115915eusmtrp22562364f0592658a6eaf77b9fcae9cad~wf8g6O6Qc3191831918eusmtrp2T;
+	Fri, 30 Aug 2024 11:59:15 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-02-66d1b41327b7
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 45.87.14621.314B1D66; Fri, 30
+	Aug 2024 12:59:15 +0100 (BST)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240830115859eusmtip155b93040a53676de393ba4eb081c20f4~wf8SPiRhu1205512055eusmtip1b;
-	Fri, 30 Aug 2024 11:58:59 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240830115914eusmtip2c32ae4bfe73d445aa2fd37cd74966ac0~wf8gp-A_b0276402764eusmtip2F;
+	Fri, 30 Aug 2024 11:59:14 +0000 (GMT)
+Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
 	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 30 Aug 2024 12:58:58 +0100
-Date: Fri, 30 Aug 2024 13:58:58 +0200
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-CC: Zi Yan <ziy@nvidia.com>, Matthew Wilcox <willy@infradead.org>, "Sven
- Schnelle" <svens@linux.ibm.com>, "Pankaj Raghav (Samsung)"
-	<kernel@pankajraghav.com>, <brauner@kernel.org>,
-	<akpm@linux-foundation.org>, <chandan.babu@oracle.com>,
-	<linux-fsdevel@vger.kernel.org>, <djwong@kernel.org>, <hare@suse.de>,
-	<gost.dev@samsung.com>, <linux-xfs@vger.kernel.org>, <hch@lst.de>,
-	<david@fromorbit.com>, <yang@os.amperecomputing.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<john.g.garry@oracle.com>, <cl@os.amperecomputing.com>,
-	<p.raghav@samsung.com>, <ryan.roberts@arm.com>, David Howells
-	<dhowells@redhat.com>, <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order
- chunks
-Message-ID: <20240830115858.fzsmindasycwphkv@AALNPWDAGOMEZ1.aal.scsc.local>
+	Fri, 30 Aug 2024 12:59:14 +0100
+Date: Fri, 30 Aug 2024 13:59:13 +0200
+From: Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
+To: Kanchan Joshi <joshi.k@samsung.com>
+CC: <axboe@kernel.dk>, <kbusch@kernel.org>, <hch@lst.de>,
+	<sagi@grimberg.me>, <martin.petersen@oracle.com>,
+	<James.Bottomley@HansenPartnership.com>, <brauner@kernel.org>,
+	<jack@suse.cz>, <jaegeuk@kernel.org>, <jlayton@kernel.org>,
+	<chuck.lever@oracle.com>, <bvanassche@acm.org>,
+	<linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-f2fs-devel@lists.sourceforge.net>, <linux-block@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <gost.dev@samsung.com>, <vishak.g@samsung.com>
+Subject: Re: [PATCH v4 0/5] Write-placement hints and FDP
+Message-ID: <20240830115913.b5pcs7bo26wkj2it@ArmHalley.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
+In-Reply-To: <20240826170606.255718-1-joshi.k@samsung.com>
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
 	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7djP87osWy6mGbx9ImExZ/0aNovXhz8x
-	Wlw6Kmexbu1DJostx+4xWrxr+s1icfkJn8WeRZOYLFauPspkceHXDkaLMy8/s1js2XsSKLlr
-	DpvFvTX/WS0mLGxmttj1Zwe7xY0JTxktenZPZbRYtn4tu8XvH0AlvUtOslvMPnqP3UHMY828
-	NYwepxZJeGxeoeWxaVUnm8emT5PYPU7M+M3iMWHRAUaP3Tcb2Dx6m9+xeXx8eovFo/vyDXaP
-	sysdPd7vu8rmsfl0tcfnTXIB/FFcNimpOZllqUX6dglcGRuutzIVdGpVbLj2iLWB8YxiFyMn
-	h4SAicS/iz9Yuxi5OIQEVjBK3G5+yQ7hfGGU+HPvDCOE85lR4nrTUjaYlqdf30MlljNK9B17
-	jlB1qG0h1LDNjBI3Nj4Ga2ERUJWYuGAXM4jNJqApse/kJnYQW0RAQ2LfhF4mkAZmgfmsElPX
-	nQdLCAsESOx6+5ERxOYV8Ja4PfcYC4QtKHFy5hMgmwOoQVNi/S59CFNaYvk/DpAKZgF5ieat
-	s8FWcQqYSXzceZ8R4mpFiRkTV7JA2LUSp7bcAlsrIbCSS+LEvw4miISLxN/V16EahCVeHd/C
-	DmHLSJye3APVnC6xZN0sKLtAYs/tWawgN0gIWEv0ncmBCDtK7HqzlRkizCdx460gxGl8EpO2
-	TYcK80p0tAlNYFSZheStWQhvzUJ4axaStxYwsqxiFE8tLc5NTy02zEst1ytOzC0uzUvXS87P
-	3cQITLen/x3/tINx7quPeocYmTgYDzFKcDArifCeOH42TYg3JbGyKrUoP76oNCe1+BCjNAeL
-	kjivaop8qpBAemJJanZqakFqEUyWiYNTqoFpaqeqgMClu6Eugf+M4xhXf5myljlTZ6ehL7v9
-	Ut8ptisPvuCyncrcsTB/8eSmml3p27tePVx55NNyu0MNB+Tq2R1vexgHuxYuVvHfL8V1LF96
-	nfEDXpmfguWTsnKdT0Uk6WcmV7v1xUe1lTI07JAt2X3lyPqqwtWN+Syx332MVvJJxN1x2GdX
-	VlC5oMg+2O+U1Pf2Pl97Tm13FVad7S35MbUnK90zdjz60v6r9nVM9Lxc61M7FP+6WXgcPXd1
-	s/YVEdljLz/OUdXjvLg291lyDpfA+eKvy3b4e+lMTpAWmHuZ3+DuZx/VCW95+s+KzOybV2Cq
-	X+h81m0+t2iHP3eG0fvVx33CRO5dOxRyWomlOCPRUIu5qDgRAJcpHyAmBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsVy+t/xu7rMWy6mGbzboGoxZ/0aNovXhz8x
-	Wlw6Kmexbu1DJostx+4xWrxr+s1icfkJn8WeRZOYLFauPspkceHXDkaLMy8/s1js2XsSKLlr
-	DpvFvTX/WS0mLGxmttj1Zwe7xY0JTxktenZPZbRYtn4tu8XvH0AlvUtOslvMPnqP3UHMY828
-	NYwepxZJeGxeoeWxaVUnm8emT5PYPU7M+M3iMWHRAUaP3Tcb2Dx6m9+xeXx8eovFo/vyDXaP
-	sysdPd7vu8rmsfl0tcfnTXIB/FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkam
-	Svp2NimpOZllqUX6dgl6GRuutzIVdGpVbLj2iLWB8YxiFyMnh4SAicTTr+8Zuxi5OIQEljJK
-	XLi/kgkiISOx8ctVVghbWOLPtS42iKKPjBK9s/8yQzibGSX2bf/DDlLFIqAqMXHBLmYQm01A
-	U2LfyU1gcREBDYl9E3qZQBqYBeayShz8OQFshbCAn8TC1dvZQGxeAW+J23OPsUBMXcAs8fX0
-	HUaIhKDEyZlPgBIcQN2aEut36UOY0hLL/3GAVDALyEs0b50NtpdTwEzi4877jBBXK0rMmLiS
-	BcKulfj89xnjBEaRWUiGzkIYOgth6CwkQxcwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQI
-	TEjbjv3csoNx5auPeocYmTgYDzFKcDArifCeOH42TYg3JbGyKrUoP76oNCe1+BCjKTCEJjJL
-	iSbnA1NiXkm8oZmBqaGJmaWBqaWZsZI4L9uV82lCAumJJanZqakFqUUwfUwcnFINTEWW07fe
-	CSyVS+H43la/5eLmTg9/k0keUiuVs60YCl3Fr/rMc9uzqP51+vq+gp/NXx+YTeP5/ds9za3d
-	q3Img+La86F3lle8uLliwcXNcX7ab9ktmeIOLF70+l26bVrzeSfNYpWqNS86+/dafp1su7Ph
-	qvdV61TTVTs1GG5a1yU8Eny47Y6rUt+NBdsiZ1vv41rx9GLYx9+Rew3XiOckCF4oWnfnHNuf
-	tvMqj36aLNr+/fG2iD0XlHXV/zJNlCqzvbhQSkfuGoMy/7JMh7kWK10Tlb7f187ZFbzyoouk
-	peb91uMqsnwLsu7td2k5Lreia+WPZbtPcm00vOR/hWH201kHf27sXZX3bPqCisMnH3srsRRn
-	JBpqMRcVJwIAFUFGDdEDAAA=
-X-CMS-MailID: 20240830115859eucas1p2e384f48594d104a5fc9fb24e87c6fd24
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDKsWRmVeSWpSXmKPExsWy7djP87rCWy6mGcz4qGOx+m4/m8Xrw58Y
+	LaZ9+Mls8f/ucyaLlauPMlnMnt7MZPFk/Sxmi439HBY/l61it5h06Bqjxd5b2haXFrlb7Nl7
+	ksVi/rKn7Bbd13ewWSw//o/JYt3r9ywOgh6Xr3h7nL+3kcVj2qRTbB6Xz5Z6bFrVyeaxeUm9
+	x+4Fn5k8dt9sYPP4+PQWi8eZBUfYPT5vkgvgjuKySUnNySxLLdK3S+DKeLrkA2PBD+GK1nst
+	TA2MZ/i7GDk5JARMJJ62/mHrYuTiEBJYwSjx7ehlVgjnC6PE8hsTmSCcz4wSby5OYYFpOXV+
+	AlRiOaPE0Ts/WeCqll7ZCzVsC6PE3r71QBkODhYBVYknu7NButkE7CUuLbvFDGKLCKhLdEw/
+	BzaJWeAvs0TL9DPsIAlhAUuJQ2ffsoLYvAK2EtMnbGCGsAUlTs58AnYGs4CVROeHJlaQ+cwC
+	0hLL/3GAhDmBwv8/vGeHuFRJ4vGLt4wQdq3EqS23wHZJCNzilFh29wYbRMJF4tzU98wQtrDE
+	q+NboJplJP7vnM8EYVdLNJw8AdXcwijR2rEVbLGEgLVE35kciBpHiYlLD0OF+SRuvBWEOJNP
+	YtK26cwQYV6JjjYhiGo1idX33rBMYFSeheSxWUgem4Xw2AJG5lWM4qmlxbnpqcWGeanlesWJ
+	ucWleel6yfm5mxiBCfD0v+OfdjDOffVR7xAjEwfjIUYJDmYlEd4Tx8+mCfGmJFZWpRblxxeV
+	5qQWH2KU5mBREudVTZFPFRJITyxJzU5NLUgtgskycXBKNTD57XcxmrmxRlF3Cm/bdym9K5xx
+	uyZczfgV9ccp+eL9x+bby0zf75Gp12M1DN4+O8zgo2Ng+qNP9XU7ZztL/HP5fv6zXtLPRXNN
+	3ypUOgpsvnl/p7Z5s5h/2ZQDfj9SN07UVCjfsTFn0tLTPVNzS/lFvaw6cu2dz6d/Z3Q9e83t
+	qOfnVWt1Gxyl/h3/EyQ1vYPli3x7bNRTlciyt4nz3EyMg5YrKX7317jKKKJ2oDe8QnjPqXiD
+	o+ma2zi5849aJTo4+5/7riei+Wb6iymKjT940hPfxD9tOn1O999y8xWyIg0PJt3aUMvXr2M9
+	5XD9B/sf+6tSC5MEfur2l5UUiqc789i+vdDILXwtRVtHVImlOCPRUIu5qDgRAOixgofvAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFIsWRmVeSWpSXmKPExsVy+t/xe7rCWy6mGbSvZrNYfbefzeL14U+M
+	FtM+/GS2+H/3OZPFytVHmSxmT29msniyfhazxcZ+Doufy1axW0w6dI3RYu8tbYtLi9wt9uw9
+	yWIxf9lTdovu6zvYLJYf/8dkse71exYHQY/LV7w9zt/byOIxbdIpNo/LZ0s9Nq3qZPPYvKTe
+	Y/eCz0weu282sHl8fHqLxePMgiPsHp83yQVwR+nZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY
+	6hkam8daGZkq6dvZpKTmZJalFunbJehlPF3ygbHgh3BF670WpgbGM/xdjJwcEgImEqfOT2Dq
+	YuTiEBJYyigx4cY0doiEjMTGL1dZIWxhiT/Xutggij4ySryfdI0FwtnCKPF2/lqgKg4OFgFV
+	iSe7s0Ea2ATsJS4tu8UMYosIqEt0TD8HtoFZ4DezxO7pa1lAEsIClhKHzr4F28ArYCsxfcIG
+	ZoihvYwSq4/3s0EkBCVOznwC1sAsYCExc/55RpBlzALSEsv/cYCEOQWsJP5/eA91tZLE4xdv
+	GSHsWonPf58xTmAUnoVk0iwkk2YhTFrAyLyKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMBFs
+	O/Zz8w7Gea8+6h1iZOJgPMQowcGsJMJ74vjZNCHelMTKqtSi/Pii0pzU4kOMpsCgmMgsJZqc
+	D0xFeSXxhmYGpoYmZpYGppZmxkrivG6Xz6cJCaQnlqRmp6YWpBbB9DFxcEo1MB1ab56TYjb3
+	p9L1OboiyyKulM9afpV97sojyRqSmy8HbrEyfy1pHK/5+Itk7enID9uaWgr8VZdf3KT703S6
+	snSV6Zk7Bw/UzZwhIzDP9uc85vXXvm/Xy1z2+k/axeXd/32VV1zkO6/P+tltbmLK0VMt21IL
+	FFjk/SJOV0hUclknNC7u/mGmsGCS+RuO3s0+rAt0hHnXX2WzyZl/f7dc56oND3dPUK6Q+jpx
+	rvKlNxEqx63ys9a9Kjjnv2OSYK+OVpOWW18QV3UIU4ELb4eDiubMafu+JoofXtHtqLLuaoKZ
+	hqWSRf2v/qatHY1iz+cLPH33uHD25/LDyyr1fxVvZ6+r2rx+65l/P3Pm+HxcFqTEUpyRaKjF
+	XFScCAAvKmsHjQMAAA==
+X-CMS-MailID: 20240830115915eucas1p122027e15f14938de31489f75c174b1fd
 X-Msg-Generator: CA
-X-RootMTR: 20240829234204eucas1p26c2785f434a9355a4b20ac3499e9c0f2
+X-RootMTR: 20240826171409epcas5p306ba210a9815e202556778a4c105b440
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20240829234204eucas1p26c2785f434a9355a4b20ac3499e9c0f2
-References: <20240822135018.1931258-1-kernel@pankajraghav.com>
-	<20240822135018.1931258-5-kernel@pankajraghav.com>
-	<yt9dttf3r49e.fsf@linux.ibm.com> <ZtDCErRjh8bC5Y1r@bombadil.infradead.org>
-	<ZtDSJuI2hYniMAzv@casper.infradead.org>
-	<221FAE59-097C-4D31-A500-B09EDB07C285@nvidia.com>
-	<CGME20240829234204eucas1p26c2785f434a9355a4b20ac3499e9c0f2@eucas1p2.samsung.com>
-	<ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
+X-CMS-RootMailID: 20240826171409epcas5p306ba210a9815e202556778a4c105b440
+References: <CGME20240826171409epcas5p306ba210a9815e202556778a4c105b440@epcas5p3.samsung.com>
+	<20240826170606.255718-1-joshi.k@samsung.com>
 
-On Thu, Aug 29, 2024 at 04:41:48PM -0700, Luis Chamberlain wrote:
-> On Thu, Aug 29, 2024 at 06:12:26PM -0400, Zi Yan wrote:
-> > The issue is that the change to split_huge_page() makes split_huge_page_to_list_to_order()
-> > unlocks the wrong subpage. split_huge_page() used to pass the “page” pointer
-> > to split_huge_page_to_list_to_order(), which keeps that “page” still locked.
-> > But this patch changes the “page” passed into split_huge_page_to_list_to_order()
-> > always to the head page.
-> > 
-> > This fixes the crash on my x86 VM, but it can be improved:
-> > 
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 7c50aeed0522..eff5d2fb5d4e 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -320,10 +320,7 @@ bool can_split_folio(struct folio *folio, int *pextra_pins);
-> >  int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-> >                 unsigned int new_order);
-> >  int split_folio_to_list(struct folio *folio, struct list_head *list);
-> > -static inline int split_huge_page(struct page *page)
-> > -{
-> > -       return split_folio(page_folio(page));
-> > -}
-> > +int split_huge_page(struct page *page);
-> >  void deferred_split_folio(struct folio *folio);
-> > 
-> >  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index c29af9451d92..4d723dab4336 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -3297,6 +3297,25 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-> >         return ret;
-> >  }
-> > 
-> > +int split_huge_page(struct page *page)
-> > +{
-> > +       unsigned int min_order = 0;
-> > +       struct folio *folio = page_folio(page);
-> > +
-> > +       if (folio_test_anon(folio))
-> > +               goto out;
-> > +
-> > +       if (!folio->mapping) {
-> > +               if (folio_test_pmd_mappable(folio))
-> > +                       count_vm_event(THP_SPLIT_PAGE_FAILED);
-> > +               return -EBUSY;
-> > +       }
-> > +
-> > +       min_order = mapping_min_folio_order(folio->mapping);
-> > +out:
-> > +       return split_huge_page_to_list_to_order(page, NULL, min_order);
-> > +}
-> > +
-> >  int split_folio_to_list(struct folio *folio, struct list_head *list)
-> >  {
-> >         unsigned int min_order = 0;
-> 
-> 
-> Confirmed, and also although you suggest it can be improved, I thought
-> that we could do that by sharing more code and putting things in the
-> headers, the below also fixes this but tries to share more code, but
-> I think it is perhaps less easier to understand than your patch.
-> 
-> So I think your patch is cleaner and easier as a fix.
+On 26.08.2024 22:36, Kanchan Joshi wrote:
+>Current write-hint infrastructure supports 6 temperature-based data life
+>hints.
+>The series extends the infrastructure with a new temperature-agnostic
+>placement-type hint. New fcntl codes F_{SET/GET}_RW_HINT_EX allow to
+>send the hint type/value on file. See patch #3 commit description for
+>the details.
+>
+>Overall this creates 128 placement hint values [*] that users can pass.
+>Patch #5 adds the ability to map these new hint values to nvme-specific
+>placement-identifiers.
+>Patch #4 restricts SCSI to use only life hint values.
+>Patch #1 and #2 are simple prep patches.
+>
+>[*] While the user-interface can support more, this limit is due to the
+>in-kernel plumbing consideration of the inode size. Pahole showed 32-bit
+>hole in the inode, but the code had this comment too:
+>
+>/* 32-bit hole reserved for expanding i_fsnotify_mask */
+>
+>Not must, but it will be good to know if a byte (or two) can be used
+>here.
+>
+>Changes since v3:
+>- 4 new patches to introduce write-placement hints
+>- Make nvme patch use the placement hints rather than write-life hints
+>
+>Changes since v2:
+>- Base it on nvme-6.11 and resolve a merge conflict
+>
+>Changes since v1:
+>- Reduce the fetched plids from 128 to 6 (Keith)
+>- Use struct_size for a calculation (Keith)
+>- Handle robot/sparse warning
+>
+>Kanchan Joshi (4):
+>  fs, block: refactor enum rw_hint
+>  fcntl: rename rw_hint_* to rw_life_hint_*
+>  fcntl: add F_{SET/GET}_RW_HINT_EX
+>  nvme: enable FDP support
+>
+>Nitesh Shetty (1):
+>  sd: limit to use write life hints
+>
+> drivers/nvme/host/core.c   | 81 ++++++++++++++++++++++++++++++++++++++
+> drivers/nvme/host/nvme.h   |  4 ++
+> drivers/scsi/sd.c          |  7 ++--
+> fs/buffer.c                |  4 +-
+> fs/f2fs/f2fs.h             |  4 +-
+> fs/f2fs/segment.c          |  4 +-
+> fs/fcntl.c                 | 79 ++++++++++++++++++++++++++++++++++---
+> include/linux/blk-mq.h     |  2 +-
+> include/linux/blk_types.h  |  2 +-
+> include/linux/fs.h         |  2 +-
+> include/linux/nvme.h       | 19 +++++++++
+> include/linux/rw_hint.h    | 20 +++++++---
+> include/uapi/linux/fcntl.h | 14 +++++++
+> 13 files changed, 218 insertions(+), 24 deletions(-)
+>
+>-- 
+>2.25.1
+>
 
-I reproduced it in arm64 as well. And both fixes provided solved the issue.
+Keith, Christoph, Martin
 
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index c275aa9cc105..99cd9c7bf55b 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -97,6 +97,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
->  	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
->  
->  #define split_folio(f) split_folio_to_list(f, NULL)
-> +#define split_folio_to_list(f, list) split_page_folio_to_list(&f->page, f, list)
->  
->  #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
->  #define HPAGE_PMD_SHIFT PMD_SHIFT
-> @@ -331,10 +332,11 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
->  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
->  int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->  		unsigned int new_order);
-> -int split_folio_to_list(struct folio *folio, struct list_head *list);
-> +int split_page_folio_to_list(struct page *page, struct folio *folio,
-> +			     struct list_head *list);
->  static inline int split_huge_page(struct page *page)
->  {
-> -	return split_folio(page_folio(page));
-> +	return split_page_folio_to_list(page, page_folio(page), NULL);
->  }
->  void deferred_split_folio(struct folio *folio);
->  
-> @@ -511,7 +513,9 @@ static inline int split_huge_page(struct page *page)
->  	return 0;
->  }
->  
-> -static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
-> +static inline int split_page_folio_to_list(struct page *page,
-> +					   struct folio *folio,
-> +					   struct list_head *list)
->  {
->  	return 0;
->  }
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 169f1a71c95d..b115bfe63b52 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3529,7 +3529,8 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->  	return ret;
->  }
->  
-> -int split_folio_to_list(struct folio *folio, struct list_head *list)
-> +int split_page_folio_to_list(struct page *page, struct folio *folio,
-> +			     struct list_head *list)
->  {
->  	unsigned int min_order = 0;
->  
-> @@ -3544,8 +3545,7 @@ int split_folio_to_list(struct folio *folio, struct list_head *list)
->  
->  	min_order = mapping_min_folio_order(folio->mapping);
->  out:
-> -	return split_huge_page_to_list_to_order(&folio->page, list,
-> -							min_order);
-> +	return split_huge_page_to_list_to_order(page, list, min_order);
->  }
->  
->  void __folio_undo_large_rmappable(struct folio *folio)
+Does this approach align with the offline conversation we had arund FMS?
+Comments on the list would help us move forward with this series.
+
+We would like to move the folks that are using off-tree patches for FDP
+to mainline support.
+
+Thanks,
+Javier
 
