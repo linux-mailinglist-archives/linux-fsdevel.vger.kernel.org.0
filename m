@@ -1,243 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-28050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36BBA9662FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:33:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51240966365
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78F21F25057
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:33:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 500B61C23167
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD05C1ACDE8;
-	Fri, 30 Aug 2024 13:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611B31B013F;
+	Fri, 30 Aug 2024 13:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QlnQdefH"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gBs1Lhfs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842F91AD5DE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 13:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F76171E65
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 13:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725024807; cv=none; b=VrPqIe9bfKZziejaMRgBvxxWl4nrgRGtSdZli7jADIos6U0abAvhu9CD8rC9677/6kIGZloxlL30eRtDbvZ+r7Y68Qh0dxBdOJUIWvkstlI+4d+WWxjInU7J+brs8Qv1uWIXfuUrHCm9MgzISyStojj9KeSyoP28sB/4SuONkRM=
+	t=1725025767; cv=none; b=FAUkZXiRwzNd2J259Nm+0kbGCxIdkc2BF0PaFB9VbOhtCBhPCRjENP5BvOPaPfw+RsFqDj7snulvcoo1gk1xGmU+Kytk5DhzfAQqVJZahzrrlUzT8s6G70Fe4vph0VZh6inToamZGXJwYKkNvZQGVCJVbb1jIOfPwefTLMJlfCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725024807; c=relaxed/simple;
-	bh=0jVFYzBH9Hdz61Rn549YKK6jieADES5owZKhcJMx/6Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TGweu+kizkDfXnU90+LkY6LSd3owsPsZR+X3zidt7EthQu919Vw5VG6OlSKCI5nIc7iALDBJ7Z8ixPptXHVCDBHJQt5//gUP15AoUZKqcojBxNuN+LyTBBKyzseb0TiN8GzKbN20f6XgDBXwGucedJl3tMPUNZzs6UmmwzBVDC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QlnQdefH; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82a151ac935so80026439f.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 06:33:24 -0700 (PDT)
+	s=arc-20240116; t=1725025767; c=relaxed/simple;
+	bh=WhYAWmuPfLB9PmCrki5QGrdb0P+ECZUwzsPzbKY/HTc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oGDXRLRFCNAQIiqPksr6j5fKowGMSxmmTLb8Ih7Ypxylket7eRDZXxYmaNjSj/cXTvPVLBL/HRtcqV4bdCBG5RgeSJbhECLlDzenUVp61sqStK/VtqT6JC2UnVy2ljt8ws4Iau4G8VVNCWgGqrXnMXtZNGpLjw2dVddJ34whn6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gBs1Lhfs; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso3070115e87.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 06:49:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725024803; x=1725629603; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KEnpMpTM6G1CN+8e+lzCtFBJLDVYfIcnOQr5ol3rSBY=;
-        b=QlnQdefHyTf67I2l/QVuHOjHvkSO2LOgmnjO7xDwaLYengSYvG7/b5vkiquEsHKVq7
-         BX8DWYp0x66eGppZEOl0LqsX16mW2x34X0EilmQGkDjUAha0H/g0tzyn2/tqrjbALdZG
-         d/vlbbYTn7sJux2K73mG3HPPwZ3HjQP5b1y9YU0lT7PDdZ8PRGzYDtZ9ut8hrzfZAXfo
-         OReF9smkA1RI/ZOQNNtxSuTaQAl4xiA/C1YnDUYkTv3u2DEswW/1oqd6NE1oYng9oxnT
-         Zmyx0Cr7gL3Ko34o2KShSw+CDFeyb0asohjfrv9j8+VntwSW0Bh4Ig79f/N9sXwa2w9T
-         jGzg==
+        d=szeredi.hu; s=google; t=1725025763; x=1725630563; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WhYAWmuPfLB9PmCrki5QGrdb0P+ECZUwzsPzbKY/HTc=;
+        b=gBs1LhfshF/wrp8ofKgQFC6bLyjONGrzAVAMfh9VaUKC2OfSLT02K0BKHsLKcTT3lt
+         QWJrc3qrVCkvHtYpW6+ZckR7fn81kL5GKfnlGAWyMd6Bip5jJ7UR5L94aAsH+zSp5yBu
+         4kma/0wEjUpHipHkaMO6UKQSbOeQ/dPUECmbA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725024803; x=1725629603;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KEnpMpTM6G1CN+8e+lzCtFBJLDVYfIcnOQr5ol3rSBY=;
-        b=n+DIlf+Xq7xHVYAJQ5zqSdTwbE29N9DDJNHngIcLPh7molYVuO1okKL0oDhemg2MFC
-         WSjONPUtd7/xoeXn8o43MU0xnyqhXVV/EIGrEC/xXbOLxuKoRzLDyPNCevWuUWLnY6mO
-         9EwhCPYvr7CSG6goO1QJOa0GJp7hUEzzMV9ZHod+LOx3ceM7rlYkcj3rtaCtiEMnVAMm
-         pSdAXVf8BYNag1tTblfEjJGXLcsZKFh4VGfSsJt0h/AD2YHx6HF/2RmrZXYMZX7nl42U
-         8CFMxNdm5vVw1oNpB+GTVoVf6l1FTzJzS2cRILQkmmG4waZ2cak0W6WctJ3JYJSJKOtK
-         VB/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWg3SZuKBPJ7ipvtmf7hI0F3ZPt+lvst64/4eBl/YsXdRDcS1BTzjvwEQMqJzEkZdfEEmshQ09VXjWLFhOS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD0Vyl/F4yEmybBy1+vxqftYvspoqZ1tZVaL/c2Yaw/VokEB1A
-	PYiQ50BX/NjjXc53wdqDLXH2fnqhh062J2tXdp/vfyvjm3Met627w+xh9MHapag=
-X-Google-Smtp-Source: AGHT+IHzMPfqUHOnEpSQY6wr4omk8okeRBDPm8PK2zVH1oLsXh2w+rcIi988+fGRfFdIWjMn7+8sNQ==
-X-Received: by 2002:a05:6602:6d17:b0:82a:2cd4:a788 with SMTP id ca18e2360f4ac-82a2cd4add5mr116095639f.15.1725024803545;
-        Fri, 30 Aug 2024 06:33:23 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2ead2d6sm743421173.146.2024.08.30.06.33.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 06:33:23 -0700 (PDT)
-Message-ID: <3ca0e7d1-bb86-4963-aab7-6fc24950fe84@kernel.dk>
-Date: Fri, 30 Aug 2024 07:33:22 -0600
+        d=1e100.net; s=20230601; t=1725025763; x=1725630563;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WhYAWmuPfLB9PmCrki5QGrdb0P+ECZUwzsPzbKY/HTc=;
+        b=EnuJLxxuIJ4TouMkii/s7HODb8LUERrnhiMDWui1c3QhTR8+0HFhpsNFYqSpjKFuqg
+         T66D/h15BJRnwrAwDWLKB2XILBnzLyY3MmQq6fN/eu29YL75Xh6A9Sx/qR8rvahFHnts
+         nVd8TD+oCnr4r/aYU8nPAoPqDQRmP8kI6y9tBTqYNMPK6I4BjMdsZRFr4udaowCxHVF6
+         gVFIbFomGPj/byCeo+0IHQD8yNelm0xEUmiEHMHEbIX/WQzJ0+rPGQTPGOfL7pg4hvGf
+         8G9NHF3DWctftXX2gLLJwtOtGHpowpTXPxvQMderZqAFi2NjRnHeOmbjA6/35klheb1Z
+         EJ8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU5sKUkRcWfdtjsJUSm02DPrLVVg6Xe7RnMNdBm9GnoQo99c3EW4gfkghaeQI4fqIvfWtO/PNiD+c6OTgXk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa6BvG3nHYjvIvlGb7jo4Gm1wH4Nab4vdxAPThk6ccNRfrBz+l
+	495+0wfqb7krC5sUFnW2xH+EKAdj4V3K3Xj2/7XzMdrQ3nzm6Gghf7aPTwJtWjaSOusL1rm6A7Z
+	G0ZRh+XrsAv5QHnd8Q0yZUOuvYVje7I2RGijKEQ==
+X-Google-Smtp-Source: AGHT+IEYlE1kO529OqCb/ytUCO+2Rn5C5BH7HWGq3NbEl9O6Qe0vW+2kBduHAZgJUDbzAqocL3b6DkJF0W+5GkYMnGU=
+X-Received: by 2002:a05:6512:b0e:b0:52e:be1f:bf7f with SMTP id
+ 2adb3069b0e04-53546b2dfc1mr1557562e87.27.1725025762474; Fri, 30 Aug 2024
+ 06:49:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Bernd Schubert <bschubert@ddn.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>,
- Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Josef Bacik <josef@toxicpanda.com>, Joanne Koong <joannelkoong@gmail.com>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
- <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
- <CAJfpegsq06UZSPCDB=0Q3OPoH+c3is4A_d2oFven3Ebou8XPOw@mail.gmail.com>
- <0615e79d-9397-48eb-b89e-f0be1d814baf@ddn.com>
- <CAJfpeguMmTXJPzdnxe87hSBPO_Y8s33eCc_H5fEaznZYC-D8HA@mail.gmail.com>
- <3b74f850-c74c-49d0-be63-a806119cbfbd@ddn.com>
- <7d42edd3-3e3b-452b-b3bf-fb8179858e48@fastmail.fm>
- <093a3498-5558-4c65-84b0-2a046c1db72e@kernel.dk>
- <f5d10363-9ba0-4a1a-8aed-cad7adf59cd4@ddn.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <f5d10363-9ba0-4a1a-8aed-cad7adf59cd4@ddn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
+ <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
+ <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
+ <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
+ <20240829-hurtig-vakuum-5011fdeca0ed@brauner> <CAJfpegsVY97_5mHSc06mSw79FehFWtoXT=hhTUK_E-Yhr7OAuQ@mail.gmail.com>
+ <CAEivzxdPmLZ7rW1aUtqxzJEP0_ScGTnP2oRhJO2CRWS8fb3OLQ@mail.gmail.com>
+ <CAJfpegvC9Ekp7+PUpmkTRsAvUq2pH2UMAHc7dOOCXAdbfHPvwg@mail.gmail.com>
+ <CAEivzxd1NtpY_GNnN2=bzwoejn7uUK6Quj_f0_LnnJTBxkE8zQ@mail.gmail.com>
+ <CAJfpegtHQsEUuFq1k4ZbTD3E1h-GsrN3PWyv7X8cg6sfU_W2Yw@mail.gmail.com> <20240830-quantenphysik-kraulen-6ca8cfcaed70@brauner>
+In-Reply-To: <20240830-quantenphysik-kraulen-6ca8cfcaed70@brauner>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 30 Aug 2024 15:49:11 +0200
+Message-ID: <CAJfpegvFdGWuBnJzM9R_R1vrZbVE=8CcnEq4ZLmR5V6iR0vROg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+To: Christian Brauner <brauner@kernel.org>
+Cc: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, mszeredi@redhat.com, 
+	stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
+	Seth Forshee <sforshee@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/30/24 7:28 AM, Bernd Schubert wrote:
-> On 8/30/24 15:12, Jens Axboe wrote:
->> On 8/29/24 4:32 PM, Bernd Schubert wrote:
->>> Wanted to send out a new series today, 
->>>
->>> https://github.com/bsbernd/linux/tree/fuse-uring-for-6.10-rfc3-without-mmap
->>>
->>> but then just noticed a tear down issue.
->>>
->>>  1525.905504] KASAN: null-ptr-deref in range [0x00000000000001a0-0x00000000000001a7]
->>> [ 1525.910431] CPU: 15 PID: 183 Comm: kworker/15:1 Tainted: G           O       6.10.0+ #48
->>> [ 1525.916449] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
->>> [ 1525.922470] Workqueue: events io_fallback_req_func
->>> [ 1525.925840] RIP: 0010:__lock_acquire+0x74/0x7b80
->>> [ 1525.929010] Code: 89 bc 24 80 00 00 00 0f 85 1c 5f 00 00 83 3d 6e 80 b0 02 00 0f 84 1d 12 00 00 83 3d 65 c7 67 02 00 74 27 48 89 f8 48 c1 e8 03 <42> 80 3c 30 00 74 0d e8 50 44 42 00 48 8b bc 24 80 00 00 00 48 c7
->>> [ 1525.942211] RSP: 0018:ffff88810b2af490 EFLAGS: 00010002
->>> [ 1525.945672] RAX: 0000000000000034 RBX: 0000000000000000 RCX: 0000000000000001
->>> [ 1525.950421] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000001a0
->>> [ 1525.955200] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
->>> [ 1525.959979] R10: dffffc0000000000 R11: fffffbfff07b1cbe R12: 0000000000000000
->>> [ 1525.964252] R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000000000001
->>> [ 1525.968225] FS:  0000000000000000(0000) GS:ffff88875b200000(0000) knlGS:0000000000000000
->>> [ 1525.973932] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [ 1525.976694] CR2: 00005555b6a381f0 CR3: 000000012f5f1000 CR4: 00000000000006f0
->>> [ 1525.980030] Call Trace:
->>> [ 1525.981371]  <TASK>
->>> [ 1525.982567]  ? __die_body+0x66/0xb0
->>> [ 1525.984376]  ? die_addr+0xc1/0x100
->>> [ 1525.986111]  ? exc_general_protection+0x1c6/0x330
->>> [ 1525.988401]  ? asm_exc_general_protection+0x22/0x30
->>> [ 1525.990864]  ? __lock_acquire+0x74/0x7b80
->>> [ 1525.992901]  ? mark_lock+0x9f/0x360
->>> [ 1525.994635]  ? __lock_acquire+0x1420/0x7b80
->>> [ 1525.996629]  ? attach_entity_load_avg+0x47d/0x550
->>> [ 1525.998765]  ? hlock_conflict+0x5a/0x1f0
->>> [ 1526.000515]  ? __bfs+0x2dc/0x5a0
->>> [ 1526.001993]  lock_acquire+0x1fb/0x3d0
->>> [ 1526.004727]  ? gup_fast_fallback+0x13f/0x1d80
->>> [ 1526.006586]  ? gup_fast_fallback+0x13f/0x1d80
->>> [ 1526.008412]  gup_fast_fallback+0x158/0x1d80
->>> [ 1526.010170]  ? gup_fast_fallback+0x13f/0x1d80
->>> [ 1526.011999]  ? __lock_acquire+0x2b07/0x7b80
->>> [ 1526.013793]  __iov_iter_get_pages_alloc+0x36e/0x980
->>> [ 1526.015876]  ? do_raw_spin_unlock+0x5a/0x8a0
->>> [ 1526.017734]  iov_iter_get_pages2+0x56/0x70
->>> [ 1526.019491]  fuse_copy_fill+0x48e/0x980 [fuse]
->>> [ 1526.021400]  fuse_copy_args+0x174/0x6a0 [fuse]
->>> [ 1526.023199]  fuse_uring_prepare_send+0x319/0x6c0 [fuse]
->>> [ 1526.025178]  fuse_uring_send_req_in_task+0x42/0x100 [fuse]
->>> [ 1526.027163]  io_fallback_req_func+0xb4/0x170
->>> [ 1526.028737]  ? process_scheduled_works+0x75b/0x1160
->>> [ 1526.030445]  process_scheduled_works+0x85c/0x1160
->>> [ 1526.032073]  worker_thread+0x8ba/0xce0
->>> [ 1526.033388]  kthread+0x23e/0x2b0
->>> [ 1526.035404]  ? pr_cont_work_flush+0x290/0x290
->>> [ 1526.036958]  ? kthread_blkcg+0xa0/0xa0
->>> [ 1526.038321]  ret_from_fork+0x30/0x60
->>> [ 1526.039600]  ? kthread_blkcg+0xa0/0xa0
->>> [ 1526.040942]  ret_from_fork_asm+0x11/0x20
->>> [ 1526.042353]  </TASK>
->>>
->>>
->>> We probably need to call iov_iter_get_pages2() immediately
->>> on submitting the buffer from fuse server and not only when needed.
->>> I had planned to do that as optimization later on, I think
->>> it is also needed to avoid io_uring_cmd_complete_in_task().
->>
->> I think you do, but it's not really what's wrong here - fallback work is
->> being invoked as the ring is being torn down, either directly or because
->> the task is exiting. Your task_work should check if this is the case,
->> and just do -ECANCELED for this case rather than attempt to execute the
->> work. Most task_work doesn't do much outside of post a completion, but
->> yours seems complex in that attempts to map pages as well, for example.
->> In any case, regardless of whether you move the gup to the actual issue
->> side of things (which I think you should), then you'd want something
->> ala:
->>
->> if (req->task != current)
->> 	don't issue, -ECANCELED
->>
->> in your task_work.
-> 
-> Thanks a lot for your help Jens! I'm a bit confused, doesn't this belong 
-> into __io_uring_cmd_do_in_task then? Because my task_work_cb function 
-> (passed to io_uring_cmd_complete_in_task) doesn't even have the request.
+On Fri, 30 Aug 2024 at 12:57, Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Thu, Aug 29, 2024 at 08:58:55PM GMT, Miklos Szeredi wrote:
+> > On Thu, 29 Aug 2024 at 19:41, Aleksandr Mikhalitsyn
+> > <aleksandr.mikhalitsyn@canonical.com> wrote:
+> >
+> > > Let's think about it a bit more and if you confirm that we want to go
+> > > this way, then I'll rework my patches.
+> >
+> > And ACK from Christian would be good.
+>
+> Yeah, that all sounds good to me. I think Alex just followed the
+> cephfs precedent.
 
-Yeah it probably does, the uring_cmd case is a bit special is that it's
-a set of helpers around task_work that can be consumed by eg fuse and
-ublk. The existing users don't really do anything complicated on that
-side, hence there's no real need to check. But since the ring/task is
-going away, we should be able to generically do it in the helpers like
-you did below.
+Okay, so please drop this patchset from your tree, then I'll have a
+chance to review when Alex resends it.
 
-> I'm going to test this in a bit
-> 
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 21ac5fb2d5f0..c06b9fcff48f 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -120,6 +120,11 @@ static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state *ts)
->  {
->         struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
->  
-> +       if (req->task != current) {
-> +               /* don't issue, -ECANCELED */
-> +               return;
-> +       }
-> +
->         /* task_work executor checks the deffered list completion */
->         ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
->  }
-> 
-> 
-> 
->>
->>> The part I don't like here is that with mmap we had a complex
->>> initialization - but then either it worked or did not. No exceptions
->>> at IO time. And run time was just a copy into the buffer. 
->>> Without mmap initialization is much simpler, but now complexity shifts
->>> to IO time.
->>
->> I'll take a look at your code. But I'd say just fix the missing check
->> above and send out what you have, it's much easier to iterate on the
->> list rather than poking at patches in some git branch somewhere.
->>
-> 
-> I'm almost through updating it, will send something out definitely
-> today. I will just keep the last patch that pins user buffer pages on
-> top of the series - will avoid all the rebasing.
-
-Excellent! Would be great if you can include how to test it as well, as
-then I can give it a spin as well and test any potential code changes
-proposed.
-
--- 
-Jens Axboe
-
+Thanks,
+Miklos
 
