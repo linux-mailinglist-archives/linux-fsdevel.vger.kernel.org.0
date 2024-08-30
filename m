@@ -1,97 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-28060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7C2966505
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 17:10:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F8B96654E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 17:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2825B2143D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:10:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6514B285446
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C8B1B3B2F;
-	Fri, 30 Aug 2024 15:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368E21B530A;
+	Fri, 30 Aug 2024 15:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="MbfFkce7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LtOZjFJH"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjJ/GGJz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R/iTWHJh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b3LaU4/L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVhVRxbY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9C91DA26;
-	Fri, 30 Aug 2024 15:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8635DEACD;
+	Fri, 30 Aug 2024 15:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725030613; cv=none; b=DN5sj6SRhxaHwXiSbKp3l9pzr3mxd9IGJliAMJVwSpIfFjRdiE76CLttqo4P4P1a9YnajTVvGj3NBPMSUXPr+K2ajuLYmyP0m2jCq2/xmt0H3mBB9ogwGTB9NXM7oaVIeK4oqHf0qcZgCOjovNRmhSvNK2uyalrbWgMfhek7hIQ=
+	t=1725031543; cv=none; b=cFjsDT2tRJADkBWaFIcGGHO4KFMmLzPOFVsagpnOk6nZK3SUOQTXYEsZZ3KY39LC786Ltn3Az2vcq2xIOqMG5K9C8/jIcDFw9Yta1GjgiRZOtLuu0ZXEohcBFZ6WnemVuM7dNOzyUhthnsLJ7QcFrrhbv5l4zpTM2cmSFyZaiWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725030613; c=relaxed/simple;
-	bh=gylQFwSOuPgdIo7gfs1X4zej315PIvycv1R1t2oJ6SQ=;
+	s=arc-20240116; t=1725031543; c=relaxed/simple;
+	bh=iNp6n/jsH71QB5oDAhRZb0TAOpaKlbAuJNW//GZ1g44=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y34d2FWd8kc2eKROIDop3AdJ0Eaj2vaMX/zBb8JmAEptJ+WJKrp5FXrhrMb0rPnxNDd//K6yuYeX1fFUMDtEfx5QaUwzmwyu3Ju3lxBgXsrmU4AZ9PGbOxA0f3/XAcf03Ovt1xu9G1PZXq08kJnSjyrztUQKtpTDcoRmZbbZ9A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=MbfFkce7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LtOZjFJH; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 9AC0D138024B;
-	Fri, 30 Aug 2024 11:10:10 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Fri, 30 Aug 2024 11:10:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725030610;
-	 x=1725117010; bh=1nTHDYISJLjRnDgQP0SklgcZi9Cu04kWvom3gwsPERA=; b=
-	MbfFkce75Ict5zN5BAXYvgENELxcHpv2wDH4pfzlJnu8F/EPsZivnhLM82zGCr3L
-	oMN75i+lNq9BkFgU+AEHqrBgfW3C50c3AoFDrKfON5sW3CvnPjeiBQzZL/OD0uvm
-	tVc+jWYMO/iGq0NWj8iKw8g05atUD5qqCjnwjEswYHnow4GCYoeZeIsZrM8HZ9nf
-	1vZQO2+pTF+EZaxkNt2P7CPmUkeqsPPMF5l1XTcJSLcM5GuELv/lVCx1LMsVZlr7
-	YRQKsp1WFyT12rT8KSvqpTK5V5A8MFrZvSBYDZwaLBedAmDvjzc0Q0FyfALCxRDO
-	Orp2cTXo4f5S4Ppxi+FalA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725030610; x=
-	1725117010; bh=1nTHDYISJLjRnDgQP0SklgcZi9Cu04kWvom3gwsPERA=; b=L
-	tOZjFJHNLeFDzUg9ypQ/0CrjOmYIm2T4nzb35b9JNgdmpYzs9bMhr9WXxAl8tSyw
-	Aa/ePAyzHHi568rFDMMsrWi+yeTtfGV71ERfILG89CjOY6CM8x1HjVoF4YbfaNx/
-	CTQJdi6KVLnw1IXc9jgkShkkcXryMPDxMTo689Evmd0/41vkEjXv2sH3oZtSltnz
-	032uv0r5Np+34aEfUErjK53C/abl+hExzOryJgiqd/c5T401RaFKO4RdwygxcPeG
-	Qg1t9hX9y/DaIWqqG4h7xImihcK2hGL6MNtifSkTUrx3nUMd+LwgxK+GvkyRnvPS
-	3bFvvLCkqU0c7HQEBHXtw==
-X-ME-Sender: <xms:0uDRZhWpk9eE0MxJCJoCjMMYWaNUWUJOv9IMM_1BqTWhNF2Kv13Xxg>
-    <xme:0uDRZhn4GdGcd51NEP2AOfF9ALrVum7ciClb8wLaCJ_7bbjPugx1iqbBuVXJB-BWz
-    osnbOPeQ4-uGEOq>
-X-ME-Received: <xmr:0uDRZtZwYbmvD-s09r7RT7cMolnalLFQpDZBZl2jLob3tmsfeUVF5DUqmrskh4qrlzJz41a0wvZLlwLQPtP-mgLGW7lS7kZtaMsK66wtMnx4wgJgrmha>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefiedgkeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
-    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopegsshgthhhusg
-    gvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhh
-    uhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhope
-    hlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkh
-    gvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhopehjohhs
-    vghfsehtohigihgtphgrnhgurgdrtghomh
-X-ME-Proxy: <xmx:0uDRZkW7CFiPuF_8Cai2Z7BVxJOZOuqdTG7Y6fxW6yYCwSnOLp1Zqg>
-    <xmx:0uDRZrl-1wngArOvhWeWcagG0hziCj1hfeXO5wxVdV4nTFeHgEiTKQ>
-    <xmx:0uDRZhfHDY53zb_btHui2MKfAVW6q_7yYZPz5Izu8QUGF_xloaPyIQ>
-    <xmx:0uDRZlEAjsrxZvzLVYqJd_LhFgKuoD2Gjy3lxg3UXZ-373bFsl0nSA>
-    <xmx:0uDRZkcx74r6yiYVBKhKAMUlCdl9x7i87BESeERTM4ssj87xh0ZhnDz0>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 30 Aug 2024 11:10:08 -0400 (EDT)
-Message-ID: <fffadaad-266e-4167-ba79-e46ffaa5597d@fastmail.fm>
-Date: Fri, 30 Aug 2024 17:10:07 +0200
+	 In-Reply-To:Content-Type; b=tKVAhg5BhvoAfPBUzuqK62hgY4rFWxIixqtt0TurYeqo0rkazw/Jl06d7puzoI3Pp8vdxA84s9zaGmFfOGTKcMzktGtQaTUHwHWXtqVIhPUocNAP2+aLWwOITaCGEWENbebH0o3jcNkx+elitUIqizxJkOnhZkgnNakXsd4tZrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjJ/GGJz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R/iTWHJh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b3LaU4/L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVhVRxbY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E5831F7D7;
+	Fri, 30 Aug 2024 15:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725031539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
+	b=PjJ/GGJz/HPNIwxTYmQLnQVqQhnIPSG5hlOD15O3/cEExasyt6JbkegPLNQ0fbj5WSw+CA
+	eq1IuQ13AFR/ZTev6jiyB9ka2u9/5wE+C05Vj6+Km5UkBQ8PZrFMqGRbvTyKJpBG8UGEQ7
+	GvCgHC6Ned/EgsVo/g47UCNnQGTRCE0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725031539;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
+	b=R/iTWHJhvXOWOm35QXFdoQpgreMc3S3+OkDUaQofGb/WV0ZFjE9srlc4cmqFZwOHvbEb4+
+	9ed+5RAwYGom3pBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725031538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
+	b=b3LaU4/LNz2Ztgx6PoNo9qffokU3etG2y3fudDe+hX+OCc67YBzyQllbrGViRips59msZa
+	DHJVxMosYBjjnlQlnapOJS4DPBryhJeq1X4lLqkVVDGjJHyrAirM81Sn6Z8J88uwvB5+Jm
+	jTaV/UiHtK4IpyWY0016sQObLswCrlQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725031538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
+	b=kVhVRxbY+uTv1eXdfW7326R2MlZWqBxgd9tjLG1jLWYqGVysANrvajdy953rh0Lil5O97a
+	JAMAWHQD5V5JSnBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 24D0A13A3D;
+	Fri, 30 Aug 2024 15:25:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Dx0vCHLk0WZ+ewAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 30 Aug 2024 15:25:38 +0000
+Message-ID: <f62e400e-49ab-4d0a-b2e2-c3bbb66c2ab1@suse.cz>
+Date: Fri, 30 Aug 2024 17:25:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,134 +97,90 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Josef Bacik <josef@toxicpanda.com>, Joanne Koong <joannelkoong@gmail.com>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
- <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
- <CAJfpegsq06UZSPCDB=0Q3OPoH+c3is4A_d2oFven3Ebou8XPOw@mail.gmail.com>
- <0615e79d-9397-48eb-b89e-f0be1d814baf@ddn.com>
- <CAJfpeguMmTXJPzdnxe87hSBPO_Y8s33eCc_H5fEaznZYC-D8HA@mail.gmail.com>
- <3b74f850-c74c-49d0-be63-a806119cbfbd@ddn.com>
- <7d42edd3-3e3b-452b-b3bf-fb8179858e48@fastmail.fm>
- <093a3498-5558-4c65-84b0-2a046c1db72e@kernel.dk>
- <f5d10363-9ba0-4a1a-8aed-cad7adf59cd4@ddn.com>
- <3ca0e7d1-bb86-4963-aab7-6fc24950fe84@kernel.dk>
- <d2528a1c-3d7c-4124-953c-02e8e415529e@gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <d2528a1c-3d7c-4124-953c-02e8e415529e@gmail.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Content-Language: en-US
+To: Yafang Shao <laoar.shao@gmail.com>, Dave Chinner <david@fromorbit.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka>
+ <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+ <ZtBWxWunhXTh0bhS@tiehlicka>
+ <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+ <ZtCFP5w6yv/aykui@dread.disaster.area>
+ <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	URIBL_BLOCKED(0.00)[suse.cz:mid,fromorbit.com:email,imap1.dmz-prg2.suse.org:helo];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,fromorbit.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,fromorbit.com:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-On 8/30/24 16:55, Pavel Begunkov wrote:
-> On 8/30/24 14:33, Jens Axboe wrote:
->> On 8/30/24 7:28 AM, Bernd Schubert wrote:
->>> On 8/30/24 15:12, Jens Axboe wrote:
->>>> On 8/29/24 4:32 PM, Bernd Schubert wrote:
->>>>> We probably need to call iov_iter_get_pages2() immediately
->>>>> on submitting the buffer from fuse server and not only when needed.
->>>>> I had planned to do that as optimization later on, I think
->>>>> it is also needed to avoid io_uring_cmd_complete_in_task().
->>>>
->>>> I think you do, but it's not really what's wrong here - fallback
->>>> work is
->>>> being invoked as the ring is being torn down, either directly or
->>>> because
->>>> the task is exiting. Your task_work should check if this is the case,
->>>> and just do -ECANCELED for this case rather than attempt to execute the
->>>> work. Most task_work doesn't do much outside of post a completion, but
->>>> yours seems complex in that attempts to map pages as well, for example.
->>>> In any case, regardless of whether you move the gup to the actual issue
->>>> side of things (which I think you should), then you'd want something
->>>> ala:
->>>>
->>>> if (req->task != current)
->>>>     don't issue, -ECANCELED
->>>>
->>>> in your task_work.nvme_uring_task_cb
->>>
->>> Thanks a lot for your help Jens! I'm a bit confused, doesn't this belong
->>> into __io_uring_cmd_do_in_task then? Because my task_work_cb function
->>> (passed to io_uring_cmd_complete_in_task) doesn't even have the request.
->>
->> Yeah it probably does, the uring_cmd case is a bit special is that it's
->> a set of helpers around task_work that can be consumed by eg fuse and
->> ublk. The existing users don't really do anything complicated on that
->> side, hence there's no real need to check. But since the ring/task is
->> going away, we should be able to generically do it in the helpers like
->> you did below.
+On 8/30/24 11:14, Yafang Shao wrote:
+> On Thu, Aug 29, 2024 at 10:29 PM Dave Chinner <david@fromorbit.com> wrote:
 > 
-> That won't work, we should give commands an opportunity to clean up
-> after themselves. I'm pretty sure it will break existing users.
-> For now we can pass a flag to the callback, fuse would need to
-> check it and fail. Compile tested only
+> Hello Dave,
 > 
-> commit a5b382f150b44476ccfa84cefdb22ce2ceeb12f1
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Fri Aug 30 15:43:32 2024 +0100
+> I've noticed that XFS has increasingly replaced kmem_alloc() with
+> __GFP_NOFAIL. For example, in kernel 4.19.y, there are 0 instances of
+> __GFP_NOFAIL under fs/xfs, but in kernel 6.1.y, there are 41
+> occurrences. In kmem_alloc(), there's an explicit
+> memalloc_retry_wait() to throttle the allocator under heavy memory
+> pressure, which aligns with your filesystem design. However, using
+> __GFP_NOFAIL removes this throttling mechanism, potentially causing
+> issues when the system is under heavy memory load. I'm concerned that
+> this shift might not be a beneficial trend.
 > 
->     io_uring/cmd: let cmds tw know about dying task
->         When the taks that submitted a request is dying, a task work for
-> that
->     request might get run by a kernel thread or even worse by a half
->     dismantled task. We can't just cancel the task work without running the
->     callback as the cmd might need to do some clean up, so pass a flag
->     instead. If set, it's not safe to access any task resources and the
->     callback is expected to cancel the cmd ASAP.
->         Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> diff --git a/include/linux/io_uring_types.h
-> b/include/linux/io_uring_types.h
-> index ace7ac056d51..a89abec98832 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -37,6 +37,7 @@ enum io_uring_cmd_flags {
->      /* set when uring wants to cancel a previously issued command */
->      IO_URING_F_CANCEL        = (1 << 11),
->      IO_URING_F_COMPAT        = (1 << 12),
-> +    IO_URING_F_TASK_DEAD        = (1 << 13),
->  };
->  
->  struct io_zcrx_ifq;
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 8391c7c7c1ec..55bdcb4b63b3 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -119,9 +119,13 @@ EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
->  static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state
-> *ts)
->  {
->      struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct
-> io_uring_cmd);
-> +    unsigned flags = IO_URING_F_COMPLETE_DEFER;
-> +
-> +    if (req->task->flags & PF_EXITING)
-> +        flags |= IO_URING_F_TASK_DEAD;
->  
->      /* task_work executor checks the deffered list completion */
-> -    ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
-> +    ioucmd->task_work_cb(ioucmd, flags);
->  }
->  
->  void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
-> 
+> We have been using XFS for our big data servers for years, and it has
+> consistently performed well with older kernels like 4.19.y. However,
+> after upgrading all our servers from 4.19.y to 6.1.y over the past two
+> years, we have frequently encountered livelock issues caused by memory
+> exhaustion. To mitigate this, we've had to limit the RSS of
+> applications, which isn't an ideal solution and represents a worrying
+> trend.
+
+By "livelock issues caused by memory exhaustion" you mean the long-standing
+infamous issue that the system might become thrashing for the remaining
+small amount of page cache, and anonymous memory being swapped out/in,
+instead of issuing OOM, because there's always just enough progress of the
+reclaim to keep going, but the system isn't basically doing anything else?
+
+I think that's related to near-exhausted memory by userspace, so I'm not
+sure why XFS would be to blame here.
+
+That said, if memalloc_retry_wait() is indeed a useful mechanism, maybe we
+could perform it inside the page allocator itself for __GFP_NOFAIL?
 
 
-Thanks and yeah you are right, the previous patch would have missed an
-io_uring_cmd_done for fuse-uring as well.
 
-
-Thanks,
-Bernd
 
