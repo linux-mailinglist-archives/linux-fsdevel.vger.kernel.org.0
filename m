@@ -1,158 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-28062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37788966565
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 17:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525D3966573
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 17:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE02E1F251AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074901F23C6F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43B91B5EA2;
-	Fri, 30 Aug 2024 15:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE86A1B5ED6;
+	Fri, 30 Aug 2024 15:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHadyWyn"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OZ5J/hWe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GDjSQVuM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242A3EACD;
-	Fri, 30 Aug 2024 15:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EA71B2EC2;
+	Fri, 30 Aug 2024 15:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725031609; cv=none; b=a36Ca15eBWfmfkPpYDBpmfIyKNHimkH0+kPXwEp0POTsqN54ouMc3x69jyB1GX5Ac5gkL8ow1Q2m5BDmZkkq6n81osEGnN6L88e0ac+Y3hPOxY640IHBqSIrG4QsHHBzB+IsVYMihsjf1EwCxhyotQrTAzcNb/nA0VbUu1UaIiA=
+	t=1725031766; cv=none; b=abCDhbGHEQJkYEfELBmSE/DSaxLhCWtc3yy2Jd52U0V4GcJqW/jKUhPGXZEHjJ8hWIYcNLoE6XwH7tR2+th4XsBxhG9UhXqv+ObN3OG9TxMtCXgnzuJcGRGjk8tI+nS5tJ4SuntyIy+mvmOYRK+wdgiRbmlGqexiQy0tbug3POw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725031609; c=relaxed/simple;
-	bh=J0mPR+VW0Y6u0fxLb3eD+gu7vmEOkEYsR8GhSlx6/hM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJE65WgulL3dhrp38M9z2ChBuZ8PaywJM5Mub728DSn8BHXN+ZYBlzFSZ6eeA2F3ttd8QbvOdaybfAWjg8XBb2hlQbli6Dl2R3bYsYHiUfZgYbRGEpVTMaAzZUgdFcQJWOMKI2um4pt53YCt5gq8ko2kaG9B591QsFiCHQQBB2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHadyWyn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4B3C4CEC2;
-	Fri, 30 Aug 2024 15:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725031608;
-	bh=J0mPR+VW0Y6u0fxLb3eD+gu7vmEOkEYsR8GhSlx6/hM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tHadyWynpBuA2wxOEKHJ/ao2N1vhVavyWR5bkd3PexLJ1n8+uv4/tJjfLo8uluHt6
-	 YzFJpV+aWC0MXw/rL1isPdUYpOKJ+gi3/ugaZq3RBMwmqctgvMdx59LzByBnFnrq3L
-	 y/rxnw7643ELQrv0agtAQCQaq6bO0BZufZKMpA3afh57E1fDUxZsblXkZUwf7WUDzZ
-	 kpB9N5+meldL0EGc7y2xAza7plbnpdMt2YARsPumibxw6xXFfn5iKpn9cwsgRyHFl8
-	 6DS4khO/YrRvnzDlGlKvWOmmpnJGzzPTZUldQzwBtoymELjY7Bn5SXa429ASO397JT
-	 DosHSgrBbYNtA==
-Date: Fri, 30 Aug 2024 08:26:48 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Haifeng Xu <haifeng.xu@shopee.com>, Jeff Layton <jlayton@kernel.org>,
-	Theodore Tso <tytso@mit.edu>, miklos@szeredi.hu,
-	linux-unionfs@vger.kernel.org,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	Ext4 <linux-ext4@vger.kernel.org>,
-	fstests <fstests@vger.kernel.org>
-Subject: Re: [PATCH v2] ovl: don't set the superblock's errseq_t manually
-Message-ID: <20240830152648.GE6216@frogsfrogsfrogs>
-References: <CAOQ4uxi4B8JHYHF=yn6OrRZCdkoPUj3-+PuZTZy6iJR7RNWcbA@mail.gmail.com>
- <20240730042008.395716-1-haifeng.xu@shopee.com>
- <CAOQ4uxhs==_-EM+VyJRRCX_NPmYybPDBW2v7cXz33Qt2RMaPnQ@mail.gmail.com>
+	s=arc-20240116; t=1725031766; c=relaxed/simple;
+	bh=L65dIVCQsA3YEQ+epYP0GMz7az8+WBN2eBvhQlPRoEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J5685xWVoHowa51dUQ3MKkiSWZG32wtF6e16xc7+lRQy72APk7rcPObxgy77MwZ5UEvj6bzJU6wEf59N013N9CW2ONPNPXvXERDmNDGT9wpvXqEIStF9/10HRFTUhLjDEw0ueVQXK0hE24heiXZ0wzLJteSOVVBH8wZ2aQ/Zllc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OZ5J/hWe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GDjSQVuM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725031756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vR1IcGcO4X3GJ9y3yerSnFs54fwhhftvCVldJT0Dsjg=;
+	b=OZ5J/hWeqzI9/J/suXmCtftj2bkJmgZkjDA3MqC//S8rWbw04Gx2hlCGlnowxuAZJKBKDo
+	bRfO76Lv/tMjhSmh1Q/UdLTs2lW4DaU2xB0DTpL0bB/FZJoDL/rrrl5xSFiO34cE2xoI4w
+	GN/ie92RNdNL/F71FtZjFCaKeU/oTIbSaS/nLqESqFFPX/aj2Bzwspdh+LN77qLrdHD9Zy
+	a0HTgs6WAbvvLbvfaPGv6n76Tmu6NHdNLOUx76I9gVozn7tIqVG6yA9hTc92IQJQoqBUm0
+	sEoY05zvnfHTJrzwDHuTskm5bInID+bCSmAqxlclwU1PHgV1rhsBtPB8yFPKvQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725031756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vR1IcGcO4X3GJ9y3yerSnFs54fwhhftvCVldJT0Dsjg=;
+	b=GDjSQVuMlXT6r0Miwt04f1N7brPYutKIY9enj6pwc1BrXCPA8i+Wlqi7PAAw5mPpdF/nAM
+	KdT7U7BmDx/mhvCw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org
+Subject: [PATCH printk v5 00/17] add threaded printing + the rest
+Date: Fri, 30 Aug 2024 17:34:59 +0206
+Message-Id: <20240830152916.10136-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhs==_-EM+VyJRRCX_NPmYybPDBW2v7cXz33Qt2RMaPnQ@mail.gmail.com>
 
-On Fri, Aug 30, 2024 at 03:27:35PM +0200, Amir Goldstein wrote:
-> On Tue, Jul 30, 2024 at 6:20 AM Haifeng Xu <haifeng.xu@shopee.com> wrote:
-> >
-> > Since commit 5679897eb104 ("vfs: make sync_filesystem return errors from
-> > ->sync_fs"), the return value from sync_fs callback can be seen in
-> > sync_filesystem(). Thus the errseq_set opreation can be removed here.
-> >
-> > Depends-on: commit 5679897eb104 ("vfs: make sync_filesystem return errors from ->sync_fs")
-> > Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> > Changes since v1:
-> > - Add Depends-on and Reviewed-by tags.
-> > ---
-> >  fs/overlayfs/super.c | 10 ++--------
-> >  1 file changed, 2 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index 06a231970cb5..fe511192f83c 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -202,15 +202,9 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
-> >         int ret;
-> >
-> >         ret = ovl_sync_status(ofs);
-> > -       /*
-> > -        * We have to always set the err, because the return value isn't
-> > -        * checked in syncfs, and instead indirectly return an error via
-> > -        * the sb's writeback errseq, which VFS inspects after this call.
-> > -        */
-> > -       if (ret < 0) {
-> > -               errseq_set(&sb->s_wb_err, -EIO);
-> > +
-> > +       if (ret < 0)
-> >                 return -EIO;
-> > -       }
-> >
-> >         if (!ret)
-> >                 return ret;
-> > --
-> > 2.25.1
-> >
-> 
-> FYI, this change is queued in overlayfs-next.
-> 
-> However, I went to see if overlayfs has test coverage for this and it does not.
-> 
-> The test coverage added by Darrick to the mentioned vfs commit is test xfs/546,
-> so it does not run on other fs, although it is quite generic.
-> 
-> I fixed this test so it could run on overlayfs (like this):
-> # This command is complicated a bit because in the case of overlayfs the
-> # syncfs fd needs to be opened before shutdown and it is different from the
-> # shutdown fd, so we cannot use the _scratch_shutdown() helper.
-> # Filter out xfs_io output of active fds.
-> $XFS_IO_PROG -x -c "open $(_scratch_shutdown_handle)" -c 'shutdown -f
-> ' -c close -c syncfs $SCRATCH_MNT | \
->         grep -vF '[00'
-> 
-> and it passes on both xfs and overlayfs (over xfs), but if I try to
-> make it "generic"
-> it fails on ext4, which explicitly allows syncfs after shutdown:
-> 
->         if (unlikely(ext4_forced_shutdown(sb)))
->                 return 0;
-> 
-> Ted, Darrick,
-> 
-> Do you have any insight as to why this ext4 behavior differs from xfs
-> or another idea how to exercise the syncfs error in a generic test?
-> 
-> I could fork an overlay/* test from the xfs/* test and require that
-> underlying fs is xfs, but that would be ugly.
-> 
-> Any ideas?
+Hi,
 
-That should be:
+This is v5 of a series to implement threaded console printing
+as well as some other minor pieces (such as proc and sysfs
+recognition of nbcon consoles). v4 is here [0].
 
-	if (unlikely(ext4_forced_shutdown(sb)))
-		return -EIO;
+For information about the motivation of the nbcon consoles,
+please read the cover letter of the original v1 [1].
 
-no?  The fs is dead and cannot persist anything, so we should fling that
-back to the calling program.
+This series provides the remaining pieces of the printk
+rework. All other components are either already mainline or are
+currently in linux-next. In particular this series does:
 
---D
+- Implement dedicated printing threads per nbcon console.
 
-> Thanks,
-> Amir.
-> 
+- Implement forced threading of legacy consoles for PREEMPT_RT.
+
+- Implement nbcon support for proc and sysfs console-related
+  files.
+
+- Provide a new helper function nbcon_reacquire_nobuf() to
+  allow nbcon console drivers to reacquire ownership.
+
+Note that this series does *not* provide an nbcon console
+driver. That will come in a follow-up series.
+
+Here are the changes since v4:
+
+- For nbcon_kthread_create(), add more explanations about the
+  context and rules to the kerneldoc.
+
+- In nbcon_alloc(), clear con->pbufs on failure.
+
+- Remove legacy_kthread_wake() and add its functionality to
+  wake_up_klogd_work_func() since it was the only call site.
+
+- In console_start(), allow triggering the legacy loop if it is
+  an nbcon. There might be a registered boot console.
+
+- In __pr_flush(), add atomic flushing before wait loop.
+
+- In console_try_replay_all(), add atomic flushing.
+
+John Ogness
+
+[0] https://lore.kernel.org/lkml/20240827044333.88596-1-john.ogness@linutronix.de
+
+[1] https://lore.kernel.org/lkml/20230302195618.156940-1-john.ogness@linutronix.de
+
+John Ogness (16):
+  printk: nbcon: Add function for printers to reacquire ownership
+  printk: Fail pr_flush() if before SYSTEM_SCHEDULING
+  printk: Flush console on unregister_console()
+  printk: nbcon: Add context to usable() and emit()
+  printk: nbcon: Init @nbcon_seq to highest possible
+  printk: nbcon: Relocate nbcon_atomic_emit_one()
+  printk: nbcon: Use thread callback if in task context for legacy
+  printk: nbcon: Rely on kthreads for normal operation
+  printk: Provide helper for message prepending
+  printk: nbcon: Show replay message on takeover
+  proc: consoles: Add notation to c_start/c_stop
+  proc: Add nbcon support for /proc/consoles
+  tty: sysfs: Add nbcon support for 'active'
+  printk: Implement legacy printer kthread for PREEMPT_RT
+  printk: nbcon: Assign nice -20 for printing threads
+  printk: Avoid false positive lockdep report for legacy printing
+
+Thomas Gleixner (1):
+  printk: nbcon: Introduce printer kthreads
+
+ drivers/tty/tty_io.c              |   2 +-
+ fs/proc/consoles.c                |   7 +-
+ include/linux/console.h           |  48 +++
+ kernel/printk/internal.h          |  82 ++++-
+ kernel/printk/nbcon.c             | 504 +++++++++++++++++++++++++-----
+ kernel/printk/printk.c            | 465 ++++++++++++++++++++++++---
+ kernel/printk/printk_ringbuffer.h |   2 +
+ kernel/printk/printk_safe.c       |   4 +-
+ 8 files changed, 981 insertions(+), 133 deletions(-)
+
+
+base-commit: 59cd94ef80094857f0d0085daa2e32badc4cddf4
+-- 
+2.39.2
+
 
