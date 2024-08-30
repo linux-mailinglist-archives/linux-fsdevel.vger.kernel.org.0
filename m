@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-28026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06A4966289
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:07:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592D596628A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 15:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8D31F20EE7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C69A1C24359
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF41B1AF4C8;
-	Fri, 30 Aug 2024 13:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3751B1D7F;
+	Fri, 30 Aug 2024 13:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvLkQt0C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezuQJQxu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0D91A7AC6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 13:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BE21AF4D5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2024 13:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725023147; cv=none; b=Lcge3JEO70587t/tt4aMqli6PSuzQ3Nulqpk7ykkh8DBV0F+A5CUj/CG9s/Q7jq7cho6EdClkf5BRZOfZnZYT2JAaXT1PUqB04ztrOF892xygNbnEsh24JtBuG7TD6G20tG/iIii0iGW/0GsAJI/kHid91JJvYk3J+V7ErxDcdc=
+	t=1725023150; cv=none; b=a5IMYICfzGbSwAOhMNFHt9krFidpRzcW4iF7LRAvdr7q1avIHUUCSCOAzKzr0gF1Y87o5vOU2TOYSGKCkb9nzLvaJC05AzpT8HQIWZ3HdcriYi3wPj/iyLA1sScaERBt3drviakjd7zThLtMMtZtdmHwVeNVCwITdr9v6aEU0Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725023147; c=relaxed/simple;
-	bh=GCB9+S862ME+HCXFAL4isX9ZuNjSsK5z1qW2TPkA7g0=;
+	s=arc-20240116; t=1725023150; c=relaxed/simple;
+	bh=pZf6+t/viyHgiwzusJ9PMI1aFRzOx2txikjpQentD+A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VXfS3ePNSLovwt3Lbps/vyrjDY8WDnjaF/KyXnQPZJOurUthg/ZCUhE113KPFjM5S9mR4ijfA7Kkji5efCeL2QbhR+y/W5kcwHJIJJHCRwErnywdrtjDR4YAgQHunG5G+zrGX2vgckn5PV3vYxRQT1I2HKpfX3zDCPm28fx6Ugo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvLkQt0C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1F93C4CEC5;
-	Fri, 30 Aug 2024 13:05:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=T50gQfRvRQjHhxVqmPqUPSh14WGFHgzMslGS2p2afPCoDTYFlQYsQRDE9xlen4Jl3a4YDMMO+4hbZ5YOh8/w/tIKYbygGfb6ylaxSwnesfj8BpNKmhetJqTAfRT2ZniJTlGU/6C2xAJ+AzphaFnNzlGzfN1dIF9w4NxYDAAAzCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezuQJQxu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C174C4CEC8;
+	Fri, 30 Aug 2024 13:05:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725023147;
-	bh=GCB9+S862ME+HCXFAL4isX9ZuNjSsK5z1qW2TPkA7g0=;
+	s=k20201202; t=1725023149;
+	bh=pZf6+t/viyHgiwzusJ9PMI1aFRzOx2txikjpQentD+A=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=nvLkQt0CvSU13CzkMO2uh86xTBtgAFTzGYingKua0eAi9b1rZX5XecAUyjRLQzqrB
-	 JYDZvh5KgNOKJDKujvfdP7ZBI5+KzYk+AoK5rskm/+DCvmaFRXF/q9prs1mI9g9FP9
-	 ICivmqsOEX12a7ZZ9+uHnRpJWrr8va33THPPxdbd6fV6psmSYA0G+v/VjWIodJd4Ri
-	 7mkxkoNo/88AqrVqqOGV4Yn4w9/egdckZ/rQ7VKjkrZaGRIHDL74+IDr97SZOfZOW+
-	 SrgWgO+yBJ3wjpX5BXTa2ELQfUI40UkMebodPWwvyxM2+CQuw5ihVlQebYF9FZJfZl
-	 AAyUj6PvVczVA==
+	b=ezuQJQxuY7H0u4OlCwMqi0dheDdx8O1RbcMqUFNb+saCl9CaZNlmi1FMFH5LWIpWx
+	 hDlQpPteGlL3BWg/8Id+ErxWXoeqKXQFh0YM8Gsv6zxt6JXuGeI0d0fih1PX1dKgfK
+	 sfLlVVDlqf/nL12VQhegsHEjBrqShG3lCB+O4mMnQihqDQQDbzHdqXdGiWvgolRF8o
+	 TXMw8pOc17VLujFXY2T0g9xth/1JAoxv067gg0wzuXI7uBfBsDPR+27yTZ4niVysMx
+	 Iq/3JSHv7NtQnTTcROa30sNXLRECMTf4qWtA2M6SaOvhQ5LtIwfhe0iB8hZ91snnqT
+	 iFGB1HMFtx/rQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 30 Aug 2024 15:04:45 +0200
-Subject: [PATCH RFC 04/20] s390: remove unused f_version
+Date: Fri, 30 Aug 2024 15:04:46 +0200
+Subject: [PATCH RFC 05/20] fs: add vfs_setpos_cookie()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240830-vfs-file-f_version-v1-4-6d3e4816aa7b@kernel.org>
+Message-Id: <20240830-vfs-file-f_version-v1-5-6d3e4816aa7b@kernel.org>
 References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
 In-Reply-To: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -61,36 +61,82 @@ Cc: Jan Kara <jack@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
  Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=614; i=brauner@kernel.org;
- h=from:subject:message-id; bh=GCB9+S862ME+HCXFAL4isX9ZuNjSsK5z1qW2TPkA7g0=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdPDz7n3C33jytnbfs7LYIt53e+pJB3K977d/ks1Zi0
- 54u2Bkh3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRjCaG/1V/7Z/luhw+lGNa
- xyKWFLH6cLJJ8PLORaar3b4u4L7F2s3w30lhb1V1atjdY89nSoXcCOyqeaSeozu98a/dylvHdfS
- V2AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2359; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=pZf6+t/viyHgiwzusJ9PMI1aFRzOx2txikjpQentD+A=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdPDyHs8lp5e6m4m2KFjYqxcv3b+96mGN8O0LyINPFd
+ tVoxs+OHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNp2cLwTzH2SaKI7P+vX3ii
+ XMOPHUgI2uRnxhc9yUxOoIQxM+qQO8M/+7Tghs18XnVTj7z28dCSnnP7lAnH5j89Ex8665Z9XTC
+ XFQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-It's not used so don't bother with it at all.
+Add a new helper and make vfs_setpos() call it. We will use it in
+follow-up patches.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/s390/char/hmcdrv_dev.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/read_write.c | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/s390/char/hmcdrv_dev.c b/drivers/s390/char/hmcdrv_dev.c
-index 8d50c894711f..e069dd685899 100644
---- a/drivers/s390/char/hmcdrv_dev.c
-+++ b/drivers/s390/char/hmcdrv_dev.c
-@@ -186,9 +186,6 @@ static loff_t hmcdrv_dev_seek(struct file *fp, loff_t pos, int whence)
- 	if (pos < 0)
- 		return -EINVAL;
- 
--	if (fp->f_pos != pos)
--		++fp->f_version;
--
- 	fp->f_pos = pos;
- 	return pos;
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 90e283b31ca1..66ff52860496 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -40,18 +40,20 @@ static inline bool unsigned_offsets(struct file *file)
  }
+ 
+ /**
+- * vfs_setpos - update the file offset for lseek
++ * vfs_setpos_cookie - update the file offset for lseek and reset cookie
+  * @file:	file structure in question
+  * @offset:	file offset to seek to
+  * @maxsize:	maximum file size
++ * @cookie:	cookie to reset
+  *
+- * This is a low-level filesystem helper for updating the file offset to
+- * the value specified by @offset if the given offset is valid and it is
+- * not equal to the current file offset.
++ * Update the file offset to the value specified by @offset if the given
++ * offset is valid and it is not equal to the current file offset and
++ * reset the specified cookie to indicate that a seek happened.
+  *
+  * Return the specified offset on success and -EINVAL on invalid offset.
+  */
+-loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize)
++static loff_t vfs_setpos_cookie(struct file *file, loff_t offset,
++				loff_t maxsize, u64 *cookie)
+ {
+ 	if (offset < 0 && !unsigned_offsets(file))
+ 		return -EINVAL;
+@@ -60,10 +62,27 @@ loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize)
+ 
+ 	if (offset != file->f_pos) {
+ 		file->f_pos = offset;
+-		file->f_version = 0;
++		*cookie = 0;
+ 	}
+ 	return offset;
+ }
++
++/**
++ * vfs_setpos - update the file offset for lseek
++ * @file:	file structure in question
++ * @offset:	file offset to seek to
++ * @maxsize:	maximum file size
++ *
++ * This is a low-level filesystem helper for updating the file offset to
++ * the value specified by @offset if the given offset is valid and it is
++ * not equal to the current file offset.
++ *
++ * Return the specified offset on success and -EINVAL on invalid offset.
++ */
++loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize)
++{
++	return vfs_setpos_cookie(file, offset, maxsize, &file->f_version);
++}
+ EXPORT_SYMBOL(vfs_setpos);
+ 
+ /**
 
 -- 
 2.45.2
