@@ -1,65 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-28007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E71965FBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 12:57:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37498965FE1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 13:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22A201C23430
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 10:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A3F28475F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2024 11:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37E718FDD7;
-	Fri, 30 Aug 2024 10:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F50318C35A;
+	Fri, 30 Aug 2024 11:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gt3qmPvY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1vVcUTP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196B815C147;
-	Fri, 30 Aug 2024 10:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46E3190671;
+	Fri, 30 Aug 2024 11:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015455; cv=none; b=ECO5Cf56Pqy1IC9AXRzUat/LACnjnsm4R29tpfdK14Sem8vKi0cpeD+PGUk4yaYKqlOUc7ePxt06eo5HodI7eM61bPCLDdzrWUrL8lw6dxPDa1Lw07ZBLbm0qyqZYGih67/VrPgyoesPJTpryE+Dt5I//N3d5CIZnNerRdD4I80=
+	t=1725015694; cv=none; b=EfJPRXQAHQ6otj2KNCrMoHG1GBaZgsiqzn/nrI0xolxoninTggGo8pKHvktoROC7wGsbAzJLiLkRz8ZhM4uplUyHyt+eElVHQP5FYzoUy87iePylUn2oebMplPkLLZUjdOejbD3xt5CYmNWbfYgk9m2YmBJ7DeeqXK1/Jfjd3+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015455; c=relaxed/simple;
-	bh=ynbAFWuspTvAxIDVBDSLIUOKEfrOG3Reb+vJBsOmIOs=;
+	s=arc-20240116; t=1725015694; c=relaxed/simple;
+	bh=yaJeRuRQQyP3DjjG5GehxvL4FJ/rh3ymGrsYnYVWGWc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZfHIeWKVmx4Vlp5jO3+2oFi7r01esf+TcECRHwwxhfh3yE7q082YjDl9z5x7x36bClo2FST55/9v9HYiasPlj/wwvvNhXHt5bMZgHmwWBGI9SvtBYC0l00DxiNISTT4fqk0jRYvb4IgiSaZn1CkvA/FKN6HjvgZzIDsW1ZuBrpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gt3qmPvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6412DC4CEC2;
-	Fri, 30 Aug 2024 10:57:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKhp2Yg8S3/khR/vktAgI6byVhANYQKjbPYm/h4b247IylKP6oEOdXsjI8tRPSoUsaODSaiEVGwIbTTRpPbXOp9HDtP0m8SNU3lENJm8RHFzh7v+geK2yrY6QWIYEM9GQsTII2XgbIhwIqydKppmxysyb2CUKCWbkJvNrA2h37g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1vVcUTP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08586C4CEC2;
+	Fri, 30 Aug 2024 11:01:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725015454;
-	bh=ynbAFWuspTvAxIDVBDSLIUOKEfrOG3Reb+vJBsOmIOs=;
+	s=k20201202; t=1725015694;
+	bh=yaJeRuRQQyP3DjjG5GehxvL4FJ/rh3ymGrsYnYVWGWc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gt3qmPvYnzBpq92O2vv2AFYzVeAgpZuLM8K3hqdYn4yraRrB6l20Kxhsbgky5VAtJ
-	 NPj7e1ZqaWNpV0kBRtrVwZ5dSW4B413dERpWJ0HNbpxQ1BRPxhRyO4dO8xNITwLCHQ
-	 R/2ff/N00Qji+Om1Hu6ALgvFXPiyqhWAa5YmkhJifzqxCyka8Gn2UXey36UDbXMlyk
-	 u1m/2+2FZUGEsnII9cPy+Sb+d5zqJETSNomvGady6ugv7UODnaynOwZ/aP2klSSeE9
-	 Mci2uP7xUT2kjs29cU9/cAiI355Eh5Cau1ZGDoWbHK6T9ZBfwIK/e9xP1RICOmKmel
-	 jKYJBZsJxPd3w==
-Date: Fri, 30 Aug 2024 12:57:29 +0200
+	b=R1vVcUTPNlaGZHDGvi2Nt85L2PWpInQ4x7SCqtbYI8QXiJIiGSB0NTqfd86BDtpRK
+	 ytCRgtIjNZQz4SjhimshFoVSoS+xP1I6aH1wmFX7WUpL78vaE4dEdr5viiGYgjYXTz
+	 XOwM6VfshXyman8p+I9Y5yecMdCGl4yIhkIZC+BhP6F0wPw6TjSLnFaKh/Ox/WFDkh
+	 FE4HIfgWGVZxEeSrro0sY/JDmpWO8xNttg5H8Sd3OGyJFLW+bYu0U0AkSqipbtxOPp
+	 qhuGoaxk+WYdRbog0Fa/YAqXBybSjTJoNPhw7r1FW+8Nhw1EfOO1xnwHPVIn2/09so
+	 azX6KHQq0x6LQ==
+Date: Fri, 30 Aug 2024 13:01:29 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, 
-	mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
-	Seth Forshee <sforshee@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
-Message-ID: <20240830-quantenphysik-kraulen-6ca8cfcaed70@brauner>
-References: <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
- <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
- <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
- <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
- <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
- <CAJfpegsVY97_5mHSc06mSw79FehFWtoXT=hhTUK_E-Yhr7OAuQ@mail.gmail.com>
- <CAEivzxdPmLZ7rW1aUtqxzJEP0_ScGTnP2oRhJO2CRWS8fb3OLQ@mail.gmail.com>
- <CAJfpegvC9Ekp7+PUpmkTRsAvUq2pH2UMAHc7dOOCXAdbfHPvwg@mail.gmail.com>
- <CAEivzxd1NtpY_GNnN2=bzwoejn7uUK6Quj_f0_LnnJTBxkE8zQ@mail.gmail.com>
- <CAJfpegtHQsEUuFq1k4ZbTD3E1h-GsrN3PWyv7X8cg6sfU_W2Yw@mail.gmail.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
+Message-ID: <20240830-formel-abklopfen-fa1249f5904d@brauner>
+References: <20240829130640.1397970-1-mhocko@kernel.org>
+ <20240829191746.tsrojxj3kntt4jhp@quack3>
+ <4dfed593-5b0c-4565-a6dd-108f1b1fe961@suse.de>
+ <ZtGTEOEgf4XuUu7F@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,17 +62,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtHQsEUuFq1k4ZbTD3E1h-GsrN3PWyv7X8cg6sfU_W2Yw@mail.gmail.com>
+In-Reply-To: <ZtGTEOEgf4XuUu7F@tiehlicka>
 
-On Thu, Aug 29, 2024 at 08:58:55PM GMT, Miklos Szeredi wrote:
-> On Thu, 29 Aug 2024 at 19:41, Aleksandr Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
+On Fri, Aug 30, 2024 at 11:38:24AM GMT, Michal Hocko wrote:
+> On Fri 30-08-24 08:11:00, Hannes Reinecke wrote:
+> > On 8/29/24 21:17, Jan Kara wrote:
+> > > On Thu 29-08-24 15:06:40, Michal Hocko wrote:
+> > > > From: Michal Hocko <mhocko@suse.com>
+> > > > 
+> > > > There is only one called of alloc_page_buffers and it doesn't require
+> > > > __GFP_NOFAIL so drop this allocation mode.
+> > > > 
+> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > Looks good. Feel free to add:
+> > > 
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > 
+> > > Although even better fix would be to convert the last remaining caller of
+> > > alloc_page_buffers() to folio_alloc_buffers()... But that may be more
+> > > difficult.
+> > > 
+> > Already done by Pankajs large-block patchset, currently staged in vfs.git.
 > 
-> > Let's think about it a bit more and if you confirm that we want to go
-> > this way, then I'll rework my patches.
-> 
-> And ACK from Christian would be good.
+> Which branch should I be looking at?
 
-Yeah, that all sounds good to me. I think Alex just followed the
-cephfs precedent.
+Hi Michal, Hannes should be referring to:
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.blocksize
 
