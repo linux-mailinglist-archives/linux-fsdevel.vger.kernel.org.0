@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-28132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661D49673C8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 00:40:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 520499673C9
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 00:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB00DB21164
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2024 22:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774781C210D9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2024 22:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103EE1922CD;
-	Sat, 31 Aug 2024 22:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B6E192D78;
+	Sat, 31 Aug 2024 22:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIcBWwU6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="My/wPpXF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0A11917E8;
-	Sat, 31 Aug 2024 22:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7839184522;
+	Sat, 31 Aug 2024 22:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725143906; cv=none; b=PdA3ofd8A8tfOaH5uamPtEVlu6Bc4LAq1CkwgSoW+jDfJfFJ0OjNYikjyj6h6ulL6GYmwWqj3wHC796bjgAuH2ugiDFt8jvHxqD6fzd2iyQfEhhRL1bR3pZJ0O7W2MCnWQ7gh72eP+d8sKKew3BKXww0uz/mVaGVZg72MDSnca4=
+	t=1725143907; cv=none; b=nM9IsnJ9BXk44Cj+ZR/JrXjYe7GH4BjJ5ZzP6va3dQws2HnMg4keIRwjYxTwqrwzQk7XoBQ6oyS9aBWt2/PfO5Rn3KsGDRgHQt/OGEH9cR/kXri/eC8WLf9bdELA1S+hGl5qrc/eOWFAockjXM2H5sO66LG/UPFSjJeU5DKlq0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725143906; c=relaxed/simple;
-	bh=CTTBKGvq579qWcNYs4yUiVKS7/HbSVhudz61YJVG/8Y=;
+	s=arc-20240116; t=1725143907; c=relaxed/simple;
+	bh=BMRaeGlKitl3/xp3O0Tgd6IU0hEyJ+MdqDYKBbUJOwg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aPVC+Niu+fhrcqMsfCeEV6125z057Wz3AOP5Sf7iLdS40ENxcBiPEONslj87sxbWROeII0Nre6AOoo1l8gylUMDSpGBW2IY6gDlLz51sAUBs6LTzOcdQjh3KLCH0912gUkBKspCixI5Jqo/N34tG96ads54uy5GpKT6pM+xVdE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIcBWwU6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1727EC4CECA;
-	Sat, 31 Aug 2024 22:38:26 +0000 (UTC)
+	 MIME-Version; b=RCI0afuzgxRepgV6pzTJk0CYcVbGp9Kr7f+2uW7GDPWhw16n7ehYVUnsYz6TAWqGjh1CeMEQ6vHrPq1FJz1ly1Y+xlkIgwQANxw7a5z66svL9XCgIcL1wUHEbTGNhcs7Pvnr9cyzSeL3A4JXupOpWRSSd+5e9tTUtaOY2ectQk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=My/wPpXF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70BA1C4CEC7;
+	Sat, 31 Aug 2024 22:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725143906;
-	bh=CTTBKGvq579qWcNYs4yUiVKS7/HbSVhudz61YJVG/8Y=;
+	s=k20201202; t=1725143907;
+	bh=BMRaeGlKitl3/xp3O0Tgd6IU0hEyJ+MdqDYKBbUJOwg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NIcBWwU6JhbmbngNFcB2WX51nciWBZQPQLAF5zc5hK6dS017TTO6pb13Uc8M9Z6tb
-	 tBxlULcdM7SwfKI1oEv6xDaUhpsOK8Q1ARt0PbRYm+/qOHw7nIP+Kgj/fahEJ8w1XD
-	 UweP+xOBZrdfovUIW1LKGu9f2jsXskm9UacqUmA9hlBJm8r470G2ltwd5ySubfSTHd
-	 mr335Gudj3WmyXnnwSPdBPF7c+iLQOUW2L4AdpZJ5htNxQA4pJFGEPU37v/zLVoyuT
-	 oqFybYvTILzsaRwih/PekzEr7eZG9BBpUklO7dK0l6AWFyvZ4IrHyRwZFHgVW+nv/m
-	 gw1fjlxM8sv4g==
+	b=My/wPpXFoy+zv7juVJzjdHFI8MnUWvNcwBxhxaz9JRKx0t6aCR7S4Utmx6XdEwbmQ
+	 e48hMz4xyYb3/mBWt+8lyNKbfA9GCqxcSfu8g7tzSaFACGiE137+nxqwKFqcvGlK83
+	 FwYf+Kf/JirFcC9+Hi5wHhCbXoAuu3rABX9cH0WxKsu7opnmsKykrSNjbPlMcVZ1x7
+	 jpYVJYMiRWSiqOFGo8f99+1xV2FqirpmNwM3HMRb/qVFcCP4azNvBK5fUbUs5k/CWo
+	 KLxcBAziSDJ1S2jo2twDtPkuIWdk/7TV5kxkmqO0rGE7dIz9T52JKtFs9JfeVAZJJt
+	 JiTMdRox55hPA==
 From: Mike Snitzer <snitzer@kernel.org>
 To: linux-nfs@vger.kernel.org
 Cc: Jeff Layton <jlayton@kernel.org>,
@@ -49,9 +49,9 @@ Cc: Jeff Layton <jlayton@kernel.org>,
 	Trond Myklebust <trondmy@hammerspace.com>,
 	NeilBrown <neilb@suse.de>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v15 22/26] nfs/localio: use dedicated workqueues for filesystem read and write
-Date: Sat, 31 Aug 2024 18:37:42 -0400
-Message-ID: <20240831223755.8569-23-snitzer@kernel.org>
+Subject: [PATCH v15 23/26] nfs: implement client support for NFS_LOCALIO_PROGRAM
+Date: Sat, 31 Aug 2024 18:37:43 -0400
+Message-ID: <20240831223755.8569-24-snitzer@kernel.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240831223755.8569-1-snitzer@kernel.org>
 References: <20240831223755.8569-1-snitzer@kernel.org>
@@ -63,321 +63,229 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+The LOCALIO auxiliary RPC protocol consists of a single "UUID_IS_LOCAL"
+RPC method that allows the Linux NFS client to verify the local Linux
+NFS server can see the nonce (single-use UUID) the client generated and
+made available in nfs_common for subsequent lookup and verification
+by the NFS server.  If matched, the NFS server populates members in the
+nfs_uuid_t struct.  The NFS client then transfers these nfs_uuid_t
+struct member pointers to the nfs_client struct and cleans up the
+nfs_uuid_t struct.  See: fs/nfs/localio.c:nfs_local_probe()
 
-For localio access, don't call filesystem read() and write() routines
-directly.  This solves two problems:
+This protocol isn't part of an IETF standard, nor does it need to be
+considering it is Linux-to-Linux auxiliary RPC protocol that amounts
+to an implementation detail.
 
-1) localio writes need to use a normal (non-memreclaim) unbound
-   workqueue.  This avoids imposing new requirements on how underlying
-   filesystems process frontend IO, which would cause a large amount
-   of work to update all filesystems.  Without this change, when XFS
-   starts getting low on space, XFS flushes work on a non-memreclaim
-   work queue, which causes a priority inversion problem:
+Localio is only supported when UNIX-style authentication (AUTH_UNIX, aka
+AUTH_SYS) is used (enforced by fs/nfs/localio.c:nfs_local_probe()).
 
-00573 workqueue: WQ_MEM_RECLAIM writeback:wb_workfn is flushing !WQ_MEM_RECLAIM xfs-sync/vdc:xfs_flush_inodes_worker
-00573 WARNING: CPU: 6 PID: 8525 at kernel/workqueue.c:3706 check_flush_dependency+0x2a4/0x328
-00573 Modules linked in:
-00573 CPU: 6 PID: 8525 Comm: kworker/u71:5 Not tainted 6.10.0-rc3-ktest-00032-g2b0a133403ab #18502
-00573 Hardware name: linux,dummy-virt (DT)
-00573 Workqueue: writeback wb_workfn (flush-0:33)
-00573 pstate: 400010c5 (nZcv daIF -PAN -UAO -TCO -DIT +SSBS BTYPE=--)
-00573 pc : check_flush_dependency+0x2a4/0x328
-00573 lr : check_flush_dependency+0x2a4/0x328
-00573 sp : ffff0000c5f06bb0
-00573 x29: ffff0000c5f06bb0 x28: ffff0000c998a908 x27: 1fffe00019331521
-00573 x26: ffff0000d0620900 x25: ffff0000c5f06ca0 x24: ffff8000828848c0
-00573 x23: 1fffe00018be0d8e x22: ffff0000c1210000 x21: ffff0000c75fde00
-00573 x20: ffff800080bfd258 x19: ffff0000cad63400 x18: ffff0000cd3a4810
-00573 x17: 0000000000000000 x16: 0000000000000000 x15: ffff800080508d98
-00573 x14: 0000000000000000 x13: 204d49414c434552 x12: 1fffe0001b6eeab2
-00573 x11: ffff60001b6eeab2 x10: dfff800000000000 x9 : ffff60001b6eeab3
-00573 x8 : 0000000000000001 x7 : 00009fffe491154e x6 : ffff0000db775593
-00573 x5 : ffff0000db775590 x4 : ffff0000db775590 x3 : 0000000000000000
-00573 x2 : 0000000000000027 x1 : ffff600018be0d62 x0 : dfff800000000000
-00573 Call trace:
-00573  check_flush_dependency+0x2a4/0x328
-00573  __flush_work+0x184/0x5c8
-00573  flush_work+0x18/0x28
-00573  xfs_flush_inodes+0x68/0x88
-00573  xfs_file_buffered_write+0x128/0x6f0
-00573  xfs_file_write_iter+0x358/0x448
-00573  nfs_local_doio+0x854/0x1568
-00573  nfs_initiate_pgio+0x214/0x418
-00573  nfs_generic_pg_pgios+0x304/0x480
-00573  nfs_pageio_doio+0xe8/0x240
-00573  nfs_pageio_complete+0x160/0x480
-00573  nfs_writepages+0x300/0x4f0
-00573  do_writepages+0x12c/0x4a0
-00573  __writeback_single_inode+0xd4/0xa68
-00573  writeback_sb_inodes+0x470/0xcb0
-00573  __writeback_inodes_wb+0xb0/0x1d0
-00573  wb_writeback+0x594/0x808
-00573  wb_workfn+0x5e8/0x9e0
-00573  process_scheduled_works+0x53c/0xd90
-00573  worker_thread+0x370/0x8c8
-00573  kthread+0x258/0x2e8
-00573  ret_from_fork+0x10/0x20
+The UUID_IS_LOCAL method encodes the client generated uuid_t in terms of
+the fixed UUID_SIZE (16 bytes).  The fixed size opaque encode and decode
+XDR methods are used instead of the less efficient variable sized
+methods.
 
-2) Some filesystem writeback routines can end up taking up a lot of
-   stack space (particularly XFS).  Instead of risking running over
-   due to the extra overhead from the NFS stack, we should just call
-   these routines from a workqueue job.  Since we need to do this to
-   address 1) above we're able to avoid possibly blowing the stack
-   "for free".
+Having a nonce (single-use uuid) is better than using the same uuid
+for the life of the server, and sending it proactively by client
+rather than reactively by the server is also safer.
 
-Use of dedicated workqueues improves performance over using the
-system_unbound_wq.
+[NeilBrown factored out and simplified a single localio protocol and
+proposed making the uuid short-lived]
 
-Also, the creds used to open the file are used to override_creds() in
-both nfs_local_call_read() and nfs_local_call_write() -- otherwise the
-workqueue could have elevated capabilities (which the caller may not).
-
-Lastly, care is taken to set PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO in
-nfs_do_local_write() to avoid writeback deadlocks.
-
-The PF_LOCAL_THROTTLE flag prevents deadlocks in balance_dirty_pages()
-by causing writes to only be throttled against other writes to the
-same bdi (it keeps the throttling local).  Normally all writes to
-bdi(s) are throttled equally (after throughput factors are allowed
-for).
-
-The PF_MEMALLOC_NOIO flag prevents the lower filesystem IO from
-causing memory reclaim to re-enter filesystems or IO devices and so
-prevents deadlocks from occuring where IO that cleans pages is
-waiting on IO to complete.
-
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Co-developed-by: Mike Snitzer <snitzer@kernel.org>
 Signed-off-by: Mike Snitzer <snitzer@kernel.org>
 Co-developed-by: NeilBrown <neilb@suse.de>
-Signed-off-by: NeilBrown <neilb@suse.de> # eliminated wait_for_completion
+Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/nfs/inode.c    | 57 +++++++++++++++++++++++------------
- fs/nfs/internal.h |  1 +
- fs/nfs/localio.c  | 75 ++++++++++++++++++++++++++++++++++-------------
- 3 files changed, 93 insertions(+), 40 deletions(-)
+ fs/nfs/client.c  |   6 ++-
+ fs/nfs/localio.c | 132 +++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 132 insertions(+), 6 deletions(-)
 
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index b4914a11c3c2..542c7d97b235 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -2461,35 +2461,54 @@ static void nfs_destroy_inodecache(void)
- 	kmem_cache_destroy(nfs_inode_cachep);
- }
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 0d307878b9aa..e17cab45fc4a 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -434,8 +434,10 @@ struct nfs_client *nfs_get_client(const struct nfs_client_initdata *cl_init)
+ 			list_add_tail(&new->cl_share_link,
+ 					&nn->nfs_client_list);
+ 			spin_unlock(&nn->nfs_client_lock);
+-			nfs_local_probe(new);
+-			return rpc_ops->init_client(new, cl_init);
++			new = rpc_ops->init_client(new, cl_init);
++			if (!IS_ERR(new))
++				 nfs_local_probe(new);
++			return new;
+ 		}
  
-+struct workqueue_struct *nfslocaliod_workqueue;
- struct workqueue_struct *nfsiod_workqueue;
- EXPORT_SYMBOL_GPL(nfsiod_workqueue);
- 
- /*
-- * start up the nfsiod workqueue
-- */
--static int nfsiod_start(void)
--{
--	struct workqueue_struct *wq;
--	dprintk("RPC:       creating workqueue nfsiod\n");
--	wq = alloc_workqueue("nfsiod", WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
--	if (wq == NULL)
--		return -ENOMEM;
--	nfsiod_workqueue = wq;
--	return 0;
--}
--
--/*
-- * Destroy the nfsiod workqueue
-+ * Destroy the nfsiod workqueues
-  */
- static void nfsiod_stop(void)
- {
- 	struct workqueue_struct *wq;
- 
- 	wq = nfsiod_workqueue;
--	if (wq == NULL)
--		return;
--	nfsiod_workqueue = NULL;
--	destroy_workqueue(wq);
-+	if (wq != NULL) {
-+		nfsiod_workqueue = NULL;
-+		destroy_workqueue(wq);
-+	}
-+#if IS_ENABLED(CONFIG_NFS_LOCALIO)
-+	wq = nfslocaliod_workqueue;
-+	if (wq != NULL) {
-+		nfslocaliod_workqueue = NULL;
-+		destroy_workqueue(wq);
-+	}
-+#endif /* CONFIG_NFS_LOCALIO */
-+}
-+
-+/*
-+ * Start the nfsiod workqueues
-+ */
-+static int nfsiod_start(void)
-+{
-+	dprintk("RPC:       creating workqueue nfsiod\n");
-+	nfsiod_workqueue = alloc_workqueue("nfsiod", WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
-+	if (nfsiod_workqueue == NULL)
-+		return -ENOMEM;
-+#if IS_ENABLED(CONFIG_NFS_LOCALIO)
-+	/*
-+	 * localio writes need to use a normal (non-memreclaim) workqueue.
-+	 * When we start getting low on space, XFS goes and calls flush_work() on
-+	 * a non-memreclaim work queue, which causes a priority inversion problem.
-+	 */
-+	dprintk("RPC:       creating workqueue nfslocaliod\n");
-+	nfslocaliod_workqueue = alloc_workqueue("nfslocaliod", WQ_UNBOUND, 0);
-+	if (unlikely(nfslocaliod_workqueue == NULL)) {
-+		nfsiod_stop();
-+		return -ENOMEM;
-+	}
-+#endif /* CONFIG_NFS_LOCALIO */
-+	return 0;
- }
- 
- unsigned int nfs_net_id;
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 9707b5a3a44a..ec66a9ffac78 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -440,6 +440,7 @@ int nfs_check_flags(int);
- 
- /* inode.c */
- extern struct workqueue_struct *nfsiod_workqueue;
-+extern struct workqueue_struct *nfslocaliod_workqueue;
- extern struct inode *nfs_alloc_inode(struct super_block *sb);
- extern void nfs_free_inode(struct inode *);
- extern int nfs_write_inode(struct inode *, struct writeback_control *);
+ 		spin_unlock(&nn->nfs_client_lock);
 diff --git a/fs/nfs/localio.c b/fs/nfs/localio.c
-index c79ef15ba83b..31783e2bf206 100644
+index 31783e2bf206..08727cbb994b 100644
 --- a/fs/nfs/localio.c
 +++ b/fs/nfs/localio.c
-@@ -238,15 +238,34 @@ nfs_local_read_done(struct nfs_local_kiocb *iocb, long status)
- 			status > 0 ? status : 0, hdr->res.eof);
- }
+@@ -51,17 +51,77 @@ static void nfs_local_fsync_work(struct work_struct *work);
+ static bool localio_enabled __read_mostly = true;
+ module_param(localio_enabled, bool, 0644);
  
-+static void nfs_local_call_read(struct work_struct *work)
++static inline bool nfs_client_is_local(const struct nfs_client *clp)
 +{
-+	struct nfs_local_kiocb *iocb =
-+		container_of(work, struct nfs_local_kiocb, work);
-+	struct file *filp = iocb->kiocb.ki_filp;
-+	const struct cred *save_cred;
-+	struct iov_iter iter;
-+	ssize_t status;
-+
-+	save_cred = override_creds(filp->f_cred);
-+
-+	nfs_local_iter_init(&iter, iocb, READ);
-+
-+	status = filp->f_op->read_iter(&iocb->kiocb, &iter);
-+	WARN_ON_ONCE(status == -EIOCBQUEUED);
-+
-+	nfs_local_read_done(iocb, status);
-+	nfs_local_pgio_release(iocb);
-+
-+	revert_creds(save_cred);
++	return !!test_bit(NFS_CS_LOCAL_IO, &clp->cl_flags);
 +}
 +
- static int
- nfs_do_local_read(struct nfs_pgio_header *hdr,
- 		  struct nfsd_file *localio,
- 		  const struct rpc_call_ops *call_ops)
+ bool nfs_server_is_local(const struct nfs_client *clp)
  {
--	struct file *filp = nfs_to.nfsd_file_file(localio);
- 	struct nfs_local_kiocb *iocb;
--	struct iov_iter iter;
--	ssize_t status;
- 
- 	dprintk("%s: vfs_read count=%u pos=%llu\n",
- 		__func__, hdr->args.count, hdr->args.offset);
-@@ -254,16 +273,12 @@ nfs_do_local_read(struct nfs_pgio_header *hdr,
- 	iocb = nfs_local_iocb_alloc(hdr, localio, GFP_KERNEL);
- 	if (iocb == NULL)
- 		return -ENOMEM;
--	nfs_local_iter_init(&iter, iocb, READ);
- 
- 	nfs_local_pgio_init(hdr, call_ops);
- 	hdr->res.eof = false;
- 
--	status = filp->f_op->read_iter(&iocb->kiocb, &iter);
--	WARN_ON_ONCE(status == -EIOCBQUEUED);
--
--	nfs_local_read_done(iocb, status);
--	nfs_local_pgio_release(iocb);
-+	INIT_WORK(&iocb->work, nfs_local_call_read);
-+	queue_work(nfslocaliod_workqueue, &iocb->work);
- 
- 	return 0;
+-	return test_bit(NFS_CS_LOCAL_IO, &clp->cl_flags) != 0 &&
+-		localio_enabled;
++	return nfs_client_is_local(clp) && localio_enabled;
  }
-@@ -391,15 +406,40 @@ nfs_local_write_done(struct nfs_local_kiocb *iocb, long status)
- 	nfs_local_pgio_done(hdr, status);
- }
+ EXPORT_SYMBOL_GPL(nfs_server_is_local);
  
-+static void nfs_local_call_write(struct work_struct *work)
++/*
++ * UUID_IS_LOCAL XDR functions
++ */
++
++static void localio_xdr_enc_uuidargs(struct rpc_rqst *req,
++				     struct xdr_stream *xdr,
++				     const void *data)
 +{
-+	struct nfs_local_kiocb *iocb =
-+		container_of(work, struct nfs_local_kiocb, work);
-+	struct file *filp = iocb->kiocb.ki_filp;
-+	unsigned long old_flags = current->flags;
-+	const struct cred *save_cred;
-+	struct iov_iter iter;
-+	ssize_t status;
++	const u8 *uuid = data;
 +
-+	current->flags |= PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO;
-+	save_cred = override_creds(filp->f_cred);
-+
-+	nfs_local_iter_init(&iter, iocb, WRITE);
-+
-+	file_start_write(filp);
-+	status = filp->f_op->write_iter(&iocb->kiocb, &iter);
-+	file_end_write(filp);
-+	WARN_ON_ONCE(status == -EIOCBQUEUED);
-+
-+	nfs_local_write_done(iocb, status);
-+	nfs_local_vfs_getattr(iocb);
-+	nfs_local_pgio_release(iocb);
-+
-+	revert_creds(save_cred);
-+	current->flags = old_flags;
++	encode_opaque_fixed(xdr, uuid, UUID_SIZE);
 +}
 +
- static int
- nfs_do_local_write(struct nfs_pgio_header *hdr,
- 		   struct nfsd_file *localio,
- 		   const struct rpc_call_ops *call_ops)
++static int localio_xdr_dec_uuidres(struct rpc_rqst *req,
++				   struct xdr_stream *xdr,
++				   void *result)
++{
++	/* void return */
++	return 0;
++}
++
++static const struct rpc_procinfo nfs_localio_procedures[] = {
++	[LOCALIOPROC_UUID_IS_LOCAL] = {
++		.p_proc = LOCALIOPROC_UUID_IS_LOCAL,
++		.p_encode = localio_xdr_enc_uuidargs,
++		.p_decode = localio_xdr_dec_uuidres,
++		.p_arglen = XDR_QUADLEN(UUID_SIZE),
++		.p_replen = 0,
++		.p_statidx = LOCALIOPROC_UUID_IS_LOCAL,
++		.p_name = "UUID_IS_LOCAL",
++	},
++};
++
++static unsigned int nfs_localio_counts[ARRAY_SIZE(nfs_localio_procedures)];
++static const struct rpc_version nfslocalio_version1 = {
++	.number			= 1,
++	.nrprocs		= ARRAY_SIZE(nfs_localio_procedures),
++	.procs			= nfs_localio_procedures,
++	.counts			= nfs_localio_counts,
++};
++
++static const struct rpc_version *nfslocalio_version[] = {
++       [1]			= &nfslocalio_version1,
++};
++
++extern const struct rpc_program nfslocalio_program;
++static struct rpc_stat		nfslocalio_rpcstat = { &nfslocalio_program };
++
++const struct rpc_program nfslocalio_program = {
++	.name			= "nfslocalio",
++	.number			= NFS_LOCALIO_PROGRAM,
++	.nrvers			= ARRAY_SIZE(nfslocalio_version),
++	.version		= nfslocalio_version,
++	.stats			= &nfslocalio_rpcstat,
++};
++
+ /*
+  * nfs_local_enable - enable local i/o for an nfs_client
+  */
+-static __maybe_unused void nfs_local_enable(struct nfs_client *clp)
++static void nfs_local_enable(struct nfs_client *clp)
  {
--	struct file *filp = nfs_to.nfsd_file_file(localio);
- 	struct nfs_local_kiocb *iocb;
--	struct iov_iter iter;
--	ssize_t status;
- 
- 	dprintk("%s: vfs_write count=%u pos=%llu %s\n",
- 		__func__, hdr->args.count, hdr->args.offset,
-@@ -408,7 +448,6 @@ nfs_do_local_write(struct nfs_pgio_header *hdr,
- 	iocb = nfs_local_iocb_alloc(hdr, localio, GFP_NOIO);
- 	if (iocb == NULL)
- 		return -ENOMEM;
--	nfs_local_iter_init(&iter, iocb, WRITE);
- 
- 	switch (hdr->args.stable) {
- 	default:
-@@ -423,14 +462,8 @@ nfs_do_local_write(struct nfs_pgio_header *hdr,
- 
- 	nfs_set_local_verifier(hdr->inode, hdr->res.verf, hdr->args.stable);
- 
--	file_start_write(filp);
--	status = filp->f_op->write_iter(&iocb->kiocb, &iter);
--	file_end_write(filp);
--	WARN_ON_ONCE(status == -EIOCBQUEUED);
--
--	nfs_local_write_done(iocb, status);
--	nfs_local_vfs_getattr(iocb);
--	nfs_local_pgio_release(iocb);
-+	INIT_WORK(&iocb->work, nfs_local_call_write);
-+	queue_work(nfslocaliod_workqueue, &iocb->work);
- 
- 	return 0;
+ 	spin_lock(&clp->cl_localio_lock);
+ 	set_bit(NFS_CS_LOCAL_IO, &clp->cl_flags);
+@@ -82,11 +142,74 @@ void nfs_local_disable(struct nfs_client *clp)
+ 	spin_unlock(&clp->cl_localio_lock);
  }
+ 
++/*
++ * nfs_init_localioclient - Initialise an NFS localio client connection
++ */
++static struct rpc_clnt *nfs_init_localioclient(struct nfs_client *clp)
++{
++	struct rpc_clnt *rpcclient_localio;
++
++	rpcclient_localio = rpc_bind_new_program(clp->cl_rpcclient,
++						 &nfslocalio_program, 1);
++
++	dprintk_rcu("%s: server (%s) %s NFS LOCALIO.\n",
++		__func__, rpc_peeraddr2str(clp->cl_rpcclient, RPC_DISPLAY_ADDR),
++		(IS_ERR(rpcclient_localio) ? "does not support" : "supports"));
++
++	return rpcclient_localio;
++}
++
++static bool nfs_server_uuid_is_local(struct nfs_client *clp)
++{
++	u8 uuid[UUID_SIZE];
++	struct rpc_message msg = {
++		.rpc_argp = &uuid,
++	};
++	struct rpc_clnt *rpcclient_localio;
++	int status;
++
++	rpcclient_localio = nfs_init_localioclient(clp);
++	if (IS_ERR(rpcclient_localio))
++		return false;
++
++	export_uuid(uuid, &clp->cl_uuid.uuid);
++
++	msg.rpc_proc = &nfs_localio_procedures[LOCALIOPROC_UUID_IS_LOCAL];
++	status = rpc_call_sync(rpcclient_localio, &msg, 0);
++	dprintk("%s: NFS reply UUID_IS_LOCAL: status=%d\n",
++		__func__, status);
++	rpc_shutdown_client(rpcclient_localio);
++
++	/* Server is only local if it initialized required struct members */
++	if (status || !clp->cl_uuid.net || !clp->cl_uuid.dom)
++		return false;
++
++	return true;
++}
++
+ /*
+  * nfs_local_probe - probe local i/o support for an nfs_server and nfs_client
++ * - called after alloc_client and init_client (so cl_rpcclient exists)
++ * - this function is idempotent, it can be called for old or new clients
+  */
+ void nfs_local_probe(struct nfs_client *clp)
+ {
++	/* Disallow localio if disabled via sysfs or AUTH_SYS isn't used */
++	if (!localio_enabled ||
++	    clp->cl_rpcclient->cl_auth->au_flavor != RPC_AUTH_UNIX) {
++		nfs_local_disable(clp);
++		return;
++	}
++
++	if (nfs_client_is_local(clp)) {
++		/* If already enabled, disable and re-enable */
++		nfs_local_disable(clp);
++	}
++
++	nfs_uuid_begin(&clp->cl_uuid);
++	if (nfs_server_uuid_is_local(clp))
++		nfs_local_enable(clp);
++	nfs_uuid_end(&clp->cl_uuid);
+ }
+ EXPORT_SYMBOL_GPL(nfs_local_probe);
+ 
+@@ -116,7 +239,8 @@ nfs_local_open_fh(struct nfs_client *clp, const struct cred *cred,
+ 		case -ENOMEM:
+ 		case -ENXIO:
+ 		case -ENOENT:
+-			nfs_local_disable(clp);
++			/* Revalidate localio, will disable if unsupported */
++			nfs_local_probe(clp);
+ 		}
+ 		return NULL;
+ 	}
 -- 
 2.44.0
 
