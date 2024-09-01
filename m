@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-28171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42B09677A5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85C5967AB8
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 19:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2841A1F218DD
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:22:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8EEA1C21558
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 17:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D96F183CB1;
-	Sun,  1 Sep 2024 16:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FC5183CA7;
+	Sun,  1 Sep 2024 16:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vn4ZBvVJ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KHKYYzIT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9766F16EB4B;
-	Sun,  1 Sep 2024 16:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DCE1E87B;
+	Sun,  1 Sep 2024 16:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725207737; cv=none; b=AqKDBzrS2Hu6PS3XCObAwX+mWbp5y/NkfZ3Q6seOxT1Lu7sNOi1O3YrIpdP2WgVDUnsmob/PsnPtFCnS0KdxcqNXYghvXFOKbD+LRj8AnrIAKF6/G/wrsKk5UKtTCESgJzK9yCZSdJjxdtB10A2WYK4FK4QSyV134fZIq0IIMXk=
+	t=1725209997; cv=none; b=lOxoMDYbWpGKcFfXYIHGX17do7KIl/aEP6L0S3NZ7pQpjCohZSc9pum9GcBzZ12A3g8q4HWmHjL/lQiqpBoovtS5DPxQeM7msvO+6h8HW5Mbiwl5cRU0s9qcg4ztZa8n48bwdJI0LRabSacVT3T8ALv/25gN29UCx/za2eDGmA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725207737; c=relaxed/simple;
-	bh=YIyI7uvX8abnkqYkCtaYIqyNevOuCWQU2U4yqSSdaRc=;
+	s=arc-20240116; t=1725209997; c=relaxed/simple;
+	bh=izZ1ec5klmxAIyfTF7UeLX+1W/2uO8Jf7WMrM+ULPfY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Fq/LQgELLy1t+a/7XYmEgawGt9bhOsn9nA9uoiv/URhCPdrH68N73MXb8jtziIpz13O4x9SbFgxHE9CCqImUrTry8ReC1SDiGUdNo3jdPSHbMJBHnDVpOsWJrFXV5SlcChBhTLsvleZE2AolnOIrIYt33SNHwenABDtHsq4+3Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vn4ZBvVJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD4EC4CEC3;
-	Sun,  1 Sep 2024 16:22:16 +0000 (UTC)
+	 MIME-Version; b=nFMiwxF6QPntP0yXlKSNoLgn2b7x70RgKdllsfj4DKAMIhvmPGIet3P81zdeupADW6ywJ0vp4iCmAsZUbDvnwozK6ih/1wdMgZ6ZlythZO17A3JVCy3QRG4m934+e9qBwHMl+xb7UDi1hRuJ4RC320porslZ+UjWKWx9LcPuG/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KHKYYzIT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9290BC4CEC3;
+	Sun,  1 Sep 2024 16:59:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725207737;
-	bh=YIyI7uvX8abnkqYkCtaYIqyNevOuCWQU2U4yqSSdaRc=;
+	s=korg; t=1725209997;
+	bh=izZ1ec5klmxAIyfTF7UeLX+1W/2uO8Jf7WMrM+ULPfY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vn4ZBvVJb7F59u6JHOIz/Pn6iR8CnmR++JcXQ5tXDRMzgi9ZjaEwp+10p/KYoL58J
-	 /HPVS73of79qvZLw8PsxJPxJyTFpE59QucVN5yyj1EV3D4ae12jMR4EGEGfEmKBdUL
-	 AN3g2C4JOA1S7vH6/HA0wo65m9IJjuKZ4aVWhel8=
+	b=KHKYYzITSW84ITSKGvH1EZOQItKkzMhOGNXX+J98+OxRaGZV7H3Wlcn11URDZsbTK
+	 /O5zUbnW36hyotWkyljXJ2u26di8tsq3R87rRUQLX7+37VgtYpeaLQ8/Lpr5vfXQ02
+	 Akzaxmi7UliTvPD79Ny6gjJs+jgRbT0CnFYNqRKw=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -54,12 +54,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Christian Brauner <brauner@kernel.org>,
 	Kees Cook <keescook@chromium.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/98] binfmt_misc: cleanup on filesystem umount
-Date: Sun,  1 Sep 2024 18:15:51 +0200
-Message-ID: <20240901160804.491356366@linuxfoundation.org>
+Subject: [PATCH 5.15 056/215] binfmt_misc: cleanup on filesystem umount
+Date: Sun,  1 Sep 2024 18:16:08 +0200
+Message-ID: <20240901160825.468680351@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240901160803.673617007@linuxfoundation.org>
-References: <20240901160803.673617007@linuxfoundation.org>
+In-Reply-To: <20240901160823.230213148@linuxfoundation.org>
+References: <20240901160823.230213148@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+5.15-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -163,10 +163,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 168 insertions(+), 48 deletions(-)
 
 diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index 8fe7edd2b001f..2df8d2bd1153e 100644
+index bb202ad369d53..740dac1012ae8 100644
 --- a/fs/binfmt_misc.c
 +++ b/fs/binfmt_misc.c
-@@ -58,12 +58,11 @@ typedef struct {
+@@ -60,12 +60,11 @@ typedef struct {
  	char *name;
  	struct dentry *dentry;
  	struct file *interp_file;
@@ -180,7 +180,7 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  
  /*
   * Max length of the register string.  Determined by:
-@@ -80,19 +79,23 @@ static int entry_count;
+@@ -82,19 +81,23 @@ static int entry_count;
   */
  #define MAX_REGISTER_LENGTH 1920
  
@@ -212,7 +212,7 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  		char *s;
  		int j;
  
-@@ -121,9 +124,49 @@ static Node *check_file(struct linux_binprm *bprm)
+@@ -123,9 +126,49 @@ static Node *check_file(struct linux_binprm *bprm)
  		if (j == e->size)
  			return e;
  	}
@@ -262,7 +262,7 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  /*
   * the loader itself
   */
-@@ -138,12 +181,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
+@@ -139,12 +182,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
  	if (!enabled)
  		return retval;
  
@@ -276,9 +276,9 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  	if (!fmt)
  		return retval;
  
-@@ -237,7 +275,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 		goto error;
+@@ -198,7 +236,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
  
+ 	retval = 0;
  ret:
 -	dput(fmt->dentry);
 +
@@ -292,9 +292,9 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
 +	put_binfmt_handler(fmt);
 +
  	return retval;
- error:
- 	if (fd_binary > 0)
-@@ -598,30 +645,90 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
+ }
+ 
+@@ -553,30 +600,90 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
  	return inode;
  }
  
@@ -397,7 +397,7 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  }
  
  /* /<entry> */
-@@ -648,8 +755,8 @@ bm_entry_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+@@ -603,8 +710,8 @@ bm_entry_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
  static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
  				size_t count, loff_t *ppos)
  {
@@ -408,7 +408,7 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  	int res = parse_command(buffer, count);
  
  	switch (res) {
-@@ -663,13 +770,22 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+@@ -618,13 +725,22 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
  		break;
  	case 3:
  		/* Delete this handler. */
@@ -435,7 +435,7 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  		break;
  	default:
  		return res;
-@@ -728,13 +844,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+@@ -683,13 +799,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
  	if (!inode)
  		goto out2;
  
@@ -450,7 +450,7 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  	e->dentry = dget(dentry);
  	inode->i_private = e;
  	inode->i_fop = &bm_entry_operations;
-@@ -778,7 +888,8 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+@@ -733,7 +843,8 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
  		size_t count, loff_t *ppos)
  {
  	int res = parse_command(buffer, count);
@@ -460,7 +460,7 @@ index 8fe7edd2b001f..2df8d2bd1153e 100644
  
  	switch (res) {
  	case 1:
-@@ -791,13 +902,22 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+@@ -746,13 +857,22 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
  		break;
  	case 3:
  		/* Delete all handlers. */
