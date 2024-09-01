@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-28149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35FE967650
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 13:57:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8867967655
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 14:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C918281DAD
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 11:57:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E445AB21290
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 12:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205AE16F27D;
-	Sun,  1 Sep 2024 11:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE2A16EC1B;
+	Sun,  1 Sep 2024 12:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="y+NY11Ya";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k24vSfx2"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="A+8wLkgO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ggsk/X2b"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0D314E2D6
-	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Sep 2024 11:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0758156C69
+	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Sep 2024 12:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725191824; cv=none; b=b/LfVNEY0rnZYqpb74p/yG9CF88IRz6aOwquDmfzxWSux9eB2aoaHP04Zh4gG5Hz8fSnimnpUxykTO9YxBYHzcKZsD747sC4SpDRQ5BkYrqvE0SWUwJZCEvNNgI86a+tidz+8bHyAn6IVn+/vdD8SKvGPTh9m1QQOdrt3z3RyKg=
+	t=1725192438; cv=none; b=UdWoG93qofDEZi3W2110q6FEM9q9A/eAFwbHUxEb+ChYjrz+vapaBiIcyqMcl2pQNpu7FzBJS7AA7CaJbon5CKhcws/I9/ZJwJZS5Fo7vodBFb90wqckM8v2KwR5IsrH/Wp8ZkoUOLaY9Po96RYQnhAq7exdg4PzPsjph96HbGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725191824; c=relaxed/simple;
-	bh=QQt2WjOYRFh8gZnsjXn23CjQrX0MPNIlR+zVSL6NzAQ=;
+	s=arc-20240116; t=1725192438; c=relaxed/simple;
+	bh=LEUekiBkZYVAqVnzfyUD5JwIN4lgmJ5FoakhGwMjbOA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LHaum4zhigJfdeRyTchNPTmN36TBk3sduhmtzwa9nczJIr3+4IicaYATwUCj5CEdhwn7VmtH4znlcXshVP+C4SVqVdlY7YpUsYuJ5mluDGKUh2CBJ9nKrz2IhiaTdCczsZibVrFWSTBGAvMIrDbQ4pSDH+BwnZJmDZgG/J8XLRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=y+NY11Ya; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k24vSfx2; arc=none smtp.client-ip=103.168.172.150
+	 In-Reply-To:Content-Type; b=V9DE0hpd31kN6sjpLk7kZPycJAiDdeO3fyZifqYRA/DowfVmAHyVZuCX9AQOM8KaAluqT1SSNEC5UFQGfblNViBq9glVl3UXZQY1C23hriC5FS42uoHH2a2lSUUdBwIFCkwCEx23ascphMzoY63kEh91uKXdv4y4GT0YXnjXsII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=A+8wLkgO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ggsk/X2b; arc=none smtp.client-ip=103.168.172.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 88CD91380302;
-	Sun,  1 Sep 2024 07:57:01 -0400 (EDT)
+Received: from phl-compute-08.internal (phl-compute-08.nyi.internal [10.202.2.48])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 1B83A1380338;
+	Sun,  1 Sep 2024 08:07:16 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sun, 01 Sep 2024 07:57:01 -0400
+  by phl-compute-08.internal (MEProxy); Sun, 01 Sep 2024 08:07:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725191821;
-	 x=1725278221; bh=/n79tFT80YWexs+8RdZJi4AvyFkh48JAmuCiU6gZbLk=; b=
-	y+NY11YaPnTZGr+2hy3ZmQ/W1hiSNY7LTZwmtdM4Ag7h07fc0mP23jh+PE3FJ2bF
-	ffEedAx7B9lngqgsjxXYOSWtrpxEzEJsLiJnsxuld/fvJc+P/syb+b+3rb16iBGu
-	Qf20EP0pY4rsk3ztLhfaGcuVw1EYsqhaIhKEQwxOIZIB/Ugwmb8n9YEIjgQG870K
-	lPfcZxSPd1l41vP2RDCoXgoyC8jSvUMjwgjGGfSvOoo2McFI0x4QRfgJZWFp69nF
-	O+r8hUSJzKB6NJ9DA/cP4PMPle9mdNDDduFtcTFSHrVTeq/M+oncC0zbBMu62L4W
-	zWspXGXRFmdmd8KPoW9OVQ==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1725192436;
+	 x=1725278836; bh=Odk7x3xnwsxL+OJKkYWwHro+TFycjC10g7sjDo6WbIc=; b=
+	A+8wLkgOG8TPQxREfQbq64NUGojQLmRj+S0uOLFnIYzJfzIyOryGHmihCbWfL00k
+	883HyjF8NVOD1nsavDrIQ4Nf51p4MaLpBPfRXKQUGroHc1Ig+J9peW/tPgwOhaq7
+	tsbk7qRIa9pWJsWvDeA/l6Hc6JRx1IKmz91D1zg9TXoXjBIdGUi2NbQpJtaAVNLU
+	MhmNLFn5jywAdPHOKg59rcWUYYMr6J/8DgWPLDjHAiIcvcTWHk49Uh56Tq3hBS+W
+	jhga29gJNXzBlfHL67/9ZF5xgBWhxmNonpDPJvRly5pggJtkGrrgTGmZYavUwitZ
+	ABZTahnZd+epdq6JYugyVw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725191821; x=
-	1725278221; bh=/n79tFT80YWexs+8RdZJi4AvyFkh48JAmuCiU6gZbLk=; b=k
-	24vSfx2wfj3orb1WOTZUqerpJYT1pmOtLl6B4VR06U1prIGflgcrNZu7uQkv7Egg
-	QM7Wn7XsyaTsUnpSzFI9uUY/s7bn+vYUdVWU1SXfEkZI0O4vH2Ax3DFbuW/lG0LV
-	wKgauo++Sfo6rsLxH7Us0ojmvut88zEAlsK6kE0yRkpCr3jkR66fUQzuf2TWoAS5
-	vmauLPT6C+Ssw2ioloo4YrvZdhuBIXwhhygyYLWB+TyDb30Bzl1SgYkjN8SBZn0j
-	tMLdWTCDSOohC0OLsGJMqbe+ipM72MxBZVYHVXaMq3a/RTTRmPctvFDG+WY09mof
-	XUvzMoBahKq2n7vYOo9SQ==
-X-ME-Sender: <xms:jVbUZj_uk6nUABsf1hiVTvTUyW_2RlqTal_ezK2wl4_UKZrPs5sHDg>
-    <xme:jVbUZvsmE6jkG0QJsaf267Z4MzgJp3vaciUiGC6KOa9YPbeBM22fDjH6oaY0MbuW5
-    ODdufAso_uPGjvC>
-X-ME-Received: <xmr:jVbUZhBz8VXXbtTVs58BKPNiLUh53QhUswNZtawYIF2AJp9tl0QdZCcenwr-N6wzI2Ibzyew57mNRgfIYwEvkocAfDLyKbVMIFVmyA7qqJZcqqySRxSd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeghedgvdefucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725192436; x=
+	1725278836; bh=Odk7x3xnwsxL+OJKkYWwHro+TFycjC10g7sjDo6WbIc=; b=G
+	gsk/X2b1FLBXwBvW/qgxPs4Dhd0I+j/Z/IUDq6e+IfnZS3gk1OHWBWXr+TNwyQ2Z
+	92hCCp0NEvKcRgyHkvaIms5JsJBQDL0rYVI5Dw//oj1G5S9nGgg10lt8m6RkG1jp
+	bb9QiAP+hODQEIEtZOdbzQ4QTmA74C6HB3d3AV47cabFBiARMbVulq49Cu2qzIzh
+	+1wCO6/M+JOJypAu2hdNpJL6glJqS8EL2mpj/vthzsuqk1W1lTznFAOFpoe5uOgc
+	RRJAhJtyBVqer/+VPuC/JNV2cOG1DtPn8a+iJxVEpbI5Zy7E2Fk9MI1dsPBnoIUl
+	WEzsuolPkUBrwFMyaCISw==
+X-ME-Sender: <xms:81jUZmc6g27B2kJYxLORP7PBe4jjLWti1qTOp83FUbYJtYJXMbSJ-A>
+    <xme:81jUZgOEQmXXPTlQ_HmfdCE1rGMVnt5ucLN6VQDN4r23YHf09gXoWPQ1gt39BJ5X4
+    PpSFxKx-T9RSrdd>
+X-ME-Received: <xmr:81jUZng_ESTbBXrMq9f5K8-uRpkvuWkuOGpR_KghAnoj5JDr4THahULYgkg0d9Aiw1saawoeyLbQcBKeNtF0G4icj9lzjjBhFu8IFoav8smER2IIoDa8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeghedgvdegucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
     htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
@@ -73,22 +73,24 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeghedgvdefucetufdoteggod
     hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
     tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
     iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphht
-    thhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhsse
-    hsiigvrhgvughirdhhuhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtgho
-    mhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrd
-    horhhg
-X-ME-Proxy: <xmx:jVbUZvfJ0bzXcdBMlJG0c3WWQkgFoAJ7I7Szg-KLg33hgpPvJGt22A>
-    <xmx:jVbUZoOsvn5VUx0LpY4AYrgmqzylRcSuQCkRimoT7lpG3DsUyEvAsQ>
-    <xmx:jVbUZhnC12kcyDMUCni2OkQSI5p8_VN6VbK4G9DVruk0wiGyllzPWA>
-    <xmx:jVbUZius6fg5LO_5630WOBI1DX5EGzcAG2TQXrhojHMIdXYR6HvslQ>
-    <xmx:jVbUZn3J38dE2cVOPseyl2VSL_ihLVoEVN-FM31KKiIzkoAvV56saL0J>
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphht
+    thhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepjhhoshgvfhesth
+    hogihitghprghnuggrrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughi
+    rdhhuhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtth
+    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghvrghgihhnse
+    hgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:81jUZj9C4bFKGj3NkZZOzQs2xJ4aNPovTbORQQmgF5dSqRHxcZD_0g>
+    <xmx:81jUZiuTxQ5sp74Nfzkj9r-tTyNl4voeHbtGvfedXvwYtZ0qduVFog>
+    <xmx:81jUZqHn4kKRMnPziB3AuHDDQzw8LErEnuIgDGgwndnIk7z2QgWw-w>
+    <xmx:81jUZhPXwO-vIdxLf1LQbKY2eQREr2x7ERFjM-d0ALlb-_n29CR1eg>
+    <xmx:9FjUZgD27kTBIpHJeV9DJMCaeEnowZsbAjJ03nnb7U7iAa2oL57aAxQI>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Sep 2024 07:57:00 -0400 (EDT)
-Message-ID: <4f2d9c60-eca3-41a8-98af-381fae413bf6@fastmail.fm>
-Date: Sun, 1 Sep 2024 13:56:59 +0200
+ 1 Sep 2024 08:07:14 -0400 (EDT)
+Message-ID: <e58a3506-3b61-4449-9877-de9440b7e379@fastmail.fm>
+Date: Sun, 1 Sep 2024 14:07:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -96,130 +98,91 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 11/19] fuse: Add support to copy from/to the ring
- buffer
-To: Josef Bacik <josef@toxicpanda.com>, Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 15/19] export __wake_on_current_cpu
+To: Peter Zijlstra <peterz@infradead.org>, Bernd Schubert <bschubert@ddn.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Andrei Vagin <avagin@google.com>
 References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-11-d149476b1d65@ddn.com>
- <20240530195920.GC2210558@perftesting>
+ <20240529-fuse-uring-for-6-9-rfc2-out-v1-15-d149476b1d65@ddn.com>
+ <20240530203729.GG2210558@perftesting>
+ <20240604092635.GN26599@noisy.programming.kicks-ass.net>
+ <f1989554-35f2-4f42-af98-69521f620143@ddn.com>
+ <20240604192752.GQ40213@noisy.programming.kicks-ass.net>
 From: Bernd Schubert <bernd.schubert@fastmail.fm>
 Content-Language: en-US, de-DE, fr
-In-Reply-To: <20240530195920.GC2210558@perftesting>
+In-Reply-To: <20240604192752.GQ40213@noisy.programming.kicks-ass.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 5/30/24 21:59, Josef Bacik wrote:
-> On Wed, May 29, 2024 at 08:00:46PM +0200, Bernd Schubert wrote:
->> This adds support to existing fuse copy code to copy
->> from/to the ring buffer. The ring buffer is here mmaped
->> shared between kernel and userspace.
+On 6/4/24 21:27, Peter Zijlstra wrote:
+> On Tue, Jun 04, 2024 at 09:36:08AM +0000, Bernd Schubert wrote:
+>> On 6/4/24 11:26, Peter Zijlstra wrote:
+>>> On Thu, May 30, 2024 at 04:37:29PM -0400, Josef Bacik wrote:
+>>>> On Wed, May 29, 2024 at 08:00:50PM +0200, Bernd Schubert wrote:
+>>>>> This is needed by fuse-over-io-uring to wake up the waiting
+>>>>> application thread on the core it was submitted from.
+>>>>> Avoiding core switching is actually a major factor for
+>>>>> fuse performance improvements of fuse-over-io-uring.
+>>>>>
+>>>>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>>>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>>>> Cc: Andrei Vagin <avagin@google.com>
+>>>>
+>>>> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+>>>>
+>>>> Probably best to submit this as a one-off so the sched guys can take it and it's
+>>>> not in the middle of a fuse patchset they may be ignoring.  Thanks,
+>>>
+>>> On its own its going to not be applied. Never merge an EXPORT without a
+>>> user.
+>>>
+>>> As is, I don't have enough of the series to even see the user, so yeah,
+>>> not happy :/
+>>>
+>>> And as hch said, this very much needs to be a GPL export.
 >>
->> This also fuse_ prefixes the copy_out_args function
->>
->> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
->> ---
->>  fs/fuse/dev.c        | 60 ++++++++++++++++++++++++++++++----------------------
->>  fs/fuse/fuse_dev_i.h | 38 +++++++++++++++++++++++++++++++++
->>  2 files changed, 73 insertions(+), 25 deletions(-)
+>> Sorry, accidentally done without the _GPL. What is the right way to get this merged? 
+>> First merge the entire fuse-io-uring series and then add on this? I already have these 
+>> optimization patches at the end of the series... The user for this is in the next patch
+> 
+> Yeah, but you didn't send me the next patch, did you? So I have no
+> clue.. :-)
+> 
+> Anyway, if you could add a wee comment to __wake_up_con_current_cpu()
+> along with the EXPORT_SYMBOL_GPL() that might be nice. I suppose you can
+> copy paste from __wake_up() and then edit a wee bit.
+> 
+>> [PATCH RFC v2 16/19] fuse: {uring} Wake requests on the the current cpu
 >>
 >> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->> index 05a87731b5c3..a7d26440de39 100644
+>> index c7fd3849a105..851c5fa99946 100644
 >> --- a/fs/fuse/dev.c
 >> +++ b/fs/fuse/dev.c
->> @@ -637,21 +637,7 @@ static int unlock_request(struct fuse_req *req)
->>  	return err;
->>  }
->>  
->> -struct fuse_copy_state {
->> -	int write;
->> -	struct fuse_req *req;
->> -	struct iov_iter *iter;
->> -	struct pipe_buffer *pipebufs;
->> -	struct pipe_buffer *currbuf;
->> -	struct pipe_inode_info *pipe;
->> -	unsigned long nr_segs;
->> -	struct page *pg;
->> -	unsigned len;
->> -	unsigned offset;
->> -	unsigned move_pages:1;
->> -};
->> -
->> -static void fuse_copy_init(struct fuse_copy_state *cs, int write,
->> +void fuse_copy_init(struct fuse_copy_state *cs, int write,
->>  			   struct iov_iter *iter)
->>  {
->>  	memset(cs, 0, sizeof(*cs));
->> @@ -662,6 +648,7 @@ static void fuse_copy_init(struct fuse_copy_state *cs, int write,
->>  /* Unmap and put previous page of userspace buffer */
->>  static void fuse_copy_finish(struct fuse_copy_state *cs)
->>  {
->> +
+>> @@ -333,7 +333,10 @@ void fuse_request_end(struct fuse_req *req)
+>>                 spin_unlock(&fc->bg_lock);
+>>         } else {
+>>                 /* Wake up waiter sleeping in request_wait_answer() */
+>> -               wake_up(&req->waitq);
+>> +               if (fuse_per_core_queue(fc))
+>> +                       __wake_up_on_current_cpu(&req->waitq, TASK_NORMAL, NULL);
+>> +               else
+>> +                       wake_up(&req->waitq);
+>>         }
+>>
+>>         if (test_bit(FR_ASYNC, &req->flags))
 > 
-> Extraneous newline.
-> 
->>  	if (cs->currbuf) {
->>  		struct pipe_buffer *buf = cs->currbuf;
->>  
->> @@ -726,6 +713,10 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
->>  			cs->pipebufs++;
->>  			cs->nr_segs++;
->>  		}
->> +	} else if (cs->is_uring) {
->> +		if (cs->ring.offset > cs->ring.buf_sz)
->> +			return -ERANGE;
->> +		cs->len = cs->ring.buf_sz - cs->ring.offset;
->>  	} else {
->>  		size_t off;
->>  		err = iov_iter_get_pages2(cs->iter, &page, PAGE_SIZE, 1, &off);
->> @@ -744,21 +735,35 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
->>  static int fuse_copy_do(struct fuse_copy_state *cs, void **val, unsigned *size)
->>  {
->>  	unsigned ncpy = min(*size, cs->len);
->> +
->>  	if (val) {
->> -		void *pgaddr = kmap_local_page(cs->pg);
->> -		void *buf = pgaddr + cs->offset;
->> +
->> +		void *pgaddr = NULL;
->> +		void *buf;
->> +
->> +		if (cs->is_uring) {
->> +			buf = cs->ring.buf + cs->ring.offset;
->> +			cs->ring.offset += ncpy;
->> +
->> +		} else {
->> +			pgaddr = kmap_local_page(cs->pg);
->> +			buf = pgaddr + cs->offset;
->> +		}
->>  
->>  		if (cs->write)
->>  			memcpy(buf, *val, ncpy);
->>  		else
->>  			memcpy(*val, buf, ncpy);
->>  
->> -		kunmap_local(pgaddr);
->> +		if (pgaddr)
->> +			kunmap_local(pgaddr);
->> +
->>  		*val += ncpy;
->>  	}
->>  	*size -= ncpy;
->>  	cs->len -= ncpy;
->>  	cs->offset += ncpy;
->> +
-> 
-> Extraneous newline.
-> 
-> Once those nits are fixed you can add
-> 
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Fair enough, although do we want a helper like wake_up() -- something
+> like wake_up_on_current_cpu() ?
 
-Thanks again for your reviews! I won't add this for now, as there are
-too many changes after removing mmap.
+Thank you and yes sure!
+I remove the patch and optimization from RFCv3, we first need to agree
+on the taken approach and get that merged. Will send submit this
+optimization immediately after.
 
 
 Thanks,
