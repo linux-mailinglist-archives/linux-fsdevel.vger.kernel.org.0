@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-28178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D613A967894
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:33:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE4E2967897
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1369F1C21123
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA62828071E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4445817F389;
-	Sun,  1 Sep 2024 16:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EECE18452E;
+	Sun,  1 Sep 2024 16:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JyfZ53OU"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kuBrMipr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A057217E46E;
-	Sun,  1 Sep 2024 16:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B11181B87;
+	Sun,  1 Sep 2024 16:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725208392; cv=none; b=KyFsSZylVDiWF5z6MqvDZfMZd6fz3+24LNfNhCtJMOmYeM44x73EA4IKS0kt51r3Lao9EQX8o8fYD37TAGDTUIXUytuTx9nDC/bW3fpKBu0GVhedCJ2mBT68oxPq1d+SNuxZipwS3D0iLsb6554enrE837+MMLW0W5CzkZZv0XA=
+	t=1725208396; cv=none; b=VRCOx4BW1owEvLilBm9tQvQIbK0ah/kk66R7vDUqS/ER6VdjHaNIWsiqb6L9Ra+Grmh8qoY8TYyb12Urwld4c9mV0MvIdcGTi0FwL6z83ElE65nZYZ12jaBtFb3rvzHfuvuU6sK/yBXZqQdTH8sI4p1MjJQYswgzbR4sWACtzaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725208392; c=relaxed/simple;
-	bh=v4Ur4u1Bj8s/ckHrunGoQMCP28DvkrdDH3ttcxoBy74=;
+	s=arc-20240116; t=1725208396; c=relaxed/simple;
+	bh=mL4t1330ZVJydAYtzT9QEIsfT+natLABjBqOK5ayafU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c9WcjKsIQe8gsAOemQHsytDNMZRNA1+L3OyUq5JHvr99QyRoiOrNnkB4Fv6YiepHtIYU6FecNuyIwFYNmXL6G2STrOt5yU0fMnfwWZSaZzy5VDSazcEsmDunTi9heKV06IksDANsB7FbSJlDMZE17kJy0UH5FtFaqmT4P5+0u8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JyfZ53OU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126E5C4CEC3;
-	Sun,  1 Sep 2024 16:33:11 +0000 (UTC)
+	 MIME-Version; b=BgtFww8K7A4eC/Q3Ya/fQf6lc3Cjomo0/vEH1oedA/QHPlQ+R5EOueD5kL4jyovQshchQFqisfSTA8X3smI75cnxb1n4XLtery8SpqnFYBuxpEiJjAo22II56pxC7NxU6rwc894K1zPLNmXI/pr760ELiMdgEqIPF4hkhofDPKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kuBrMipr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0F0C4CEC3;
+	Sun,  1 Sep 2024 16:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725208392;
-	bh=v4Ur4u1Bj8s/ckHrunGoQMCP28DvkrdDH3ttcxoBy74=;
+	s=korg; t=1725208395;
+	bh=mL4t1330ZVJydAYtzT9QEIsfT+natLABjBqOK5ayafU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JyfZ53OUvOIBY7zEvF63nqKPHdR0JzJ5zEt/GWzcYShPvQmAklLDBLfjgyEiicUWD
-	 6sSLuniyg40s/6J0++fa47lCKorA0M25eRqQNHlZVAUjuoQOvllrhePAQdBDIjUekM
-	 n/RbuQfA+Xe3jUOHGhK80yj8jMCuqdw392GLzdnc=
+	b=kuBrMipr2QUZ++oX9/HkbCpJppkHrJt51yyYVGF3YO1VM3ozXLCoB/dlYpA5Oe3wn
+	 Qey7TXBkxDYKEVIJKwPx1U9JyPPOK3fHVziVOM7R3T3XFlax1hDpkpEiFK8esogK9w
+	 W9p7Wz6ge9AxkGVLt5UR1fM+gD3GU+8jt0NpX7uw=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -51,9 +51,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.10 069/149] netfs: Fix missing iterator reset on retry of short read
-Date: Sun,  1 Sep 2024 18:16:20 +0200
-Message-ID: <20240901160820.061147257@linuxfoundation.org>
+Subject: [PATCH 6.10 070/149] netfs: Fix interaction of streaming writes with zero-point tracker
+Date: Sun,  1 Sep 2024 18:16:21 +0200
+Message-ID: <20240901160820.098239104@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240901160817.461957599@linuxfoundation.org>
 References: <20240901160817.461957599@linuxfoundation.org>
@@ -74,14 +74,29 @@ Content-Transfer-Encoding: 8bit
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 950b03d0f664a54389a555d79215348ed413161f ]
+[ Upstream commit e00e99ba6c6b8e5239e75cd6684a6827d93c39a2 ]
 
-Fix netfs_rreq_perform_resubmissions() to reset before retrying a short
-read, otherwise the wrong part of the output buffer will be used.
+When a folio that is marked for streaming write (dirty, but not uptodate,
+with partial content specified in the private data) is written back, the
+folio is effectively switched to the blank state upon completion of the
+write.  This means that if we want to read it in future, we need to reread
+the whole folio.
 
-Fixes: 92b6cc5d1e7c ("netfs: Add iov_iters to (sub)requests to describe various buffers")
+However, if the folio is above the zero_point position, when it is read
+back, it will just be cleared and the read skipped, leading to apparent
+local corruption.
+
+Fix this by increasing the zero_point to the end of the dirty data in the
+folio when clearing the folio state after writeback.  This is analogous to
+the folio having ->release_folio() called upon it.
+
+This was causing the config.log generated by configuring a cpython tree on
+a cifs share to get corrupted because the scripts involved were appending
+text to the file in small pieces.
+
+Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
 Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/20240823200819.532106-6-dhowells@redhat.com
+Link: https://lore.kernel.org/r/563286.1724500613@warthog.procyon.org.uk
 cc: Steve French <sfrench@samba.org>
 cc: Paulo Alcantara <pc@manguebit.com>
 cc: Jeff Layton <jlayton@kernel.org>
@@ -91,21 +106,34 @@ cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/io.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/netfs/write_collect.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index f3abc5dfdbc0c..c96431d3da6d8 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -313,6 +313,7 @@ static bool netfs_rreq_perform_resubmissions(struct netfs_io_request *rreq)
- 			netfs_reset_subreq_iter(rreq, subreq);
- 			netfs_read_from_server(rreq, subreq);
- 		} else if (test_bit(NETFS_SREQ_SHORT_IO, &subreq->flags)) {
-+			netfs_reset_subreq_iter(rreq, subreq);
- 			netfs_rreq_short_read(rreq, subreq);
- 		}
- 	}
+diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
+index 488147439fe0f..a2b697b4aa401 100644
+--- a/fs/netfs/write_collect.c
++++ b/fs/netfs/write_collect.c
+@@ -33,6 +33,7 @@
+ int netfs_folio_written_back(struct folio *folio)
+ {
+ 	enum netfs_folio_trace why = netfs_folio_trace_clear;
++	struct netfs_inode *ictx = netfs_inode(folio->mapping->host);
+ 	struct netfs_folio *finfo;
+ 	struct netfs_group *group = NULL;
+ 	int gcount = 0;
+@@ -41,6 +42,12 @@ int netfs_folio_written_back(struct folio *folio)
+ 		/* Streaming writes cannot be redirtied whilst under writeback,
+ 		 * so discard the streaming record.
+ 		 */
++		unsigned long long fend;
++
++		fend = folio_pos(folio) + finfo->dirty_offset + finfo->dirty_len;
++		if (fend > ictx->zero_point)
++			ictx->zero_point = fend;
++
+ 		folio_detach_private(folio);
+ 		group = finfo->netfs_group;
+ 		gcount++;
 -- 
 2.43.0
 
