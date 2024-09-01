@@ -1,140 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-28181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E96C9679B7
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A41A967BF3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 21:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C89D280DD6
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABBA4281CA3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 19:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1A5186E5A;
-	Sun,  1 Sep 2024 16:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1F25B05E;
+	Sun,  1 Sep 2024 19:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Imy2Wl0n"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Z+aeCJIJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D425F184523;
-	Sun,  1 Sep 2024 16:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613783BB48
+	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Sep 2024 19:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725209205; cv=none; b=phlnsNFNZAoU3hpHI1I3gLwXnGdaeuBTK95Jmb/A7RBTKhllgiBgNIzmQf7q1gFWQh15fVUsTvtTo05aR1Tw70pqoB3cyqaAe42YZkHZvNEGOgXNx6MaC2SrRvA87YNRnFtR/P1oEciemjECyVl5Q8sxB1w9m67+dJi4pPVAkpw=
+	t=1725219437; cv=none; b=D/wX9CnXBnvZ12T+Bd1+BM/GEkoFaXc84T8E6BPMafw1mu9TtTvGnGvfB2i/J4hv9gaMpM58ogHDCCQdNFIuPiirK3I8NvzuK29u2YqyDvnAaFcQ0W45JbfK9SOCEA5TvKGcburCX4T7V9uWWlI8wpdqXCbxu8/PPeqnUsn7ynI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725209205; c=relaxed/simple;
-	bh=AIWuaP0FrBoeDCiIM5y4X1hGyiKLwvSYT7PGUP6W5LY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k28z0teWuPhbTeOzbcYJrr73ToD/imV68lqRUbRtieJM/N5R2cmzA50HLGXaKjc4LfwpugUztFC47DgAULOROERcsm+gaIGEFxPtSCtE1TbSIbsof2eQRFC787KuR7giq1KVf5RYpIByvoV9NVYPnwm9qEx/MVoZgTh4e+NbIGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Imy2Wl0n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E4ADC4CEC3;
-	Sun,  1 Sep 2024 16:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725209205;
-	bh=AIWuaP0FrBoeDCiIM5y4X1hGyiKLwvSYT7PGUP6W5LY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Imy2Wl0nLS+aV7rfxa/mSNv8i98KwDbV5dx5BMC02KXgPs4E3x68OvwwOSWPsMPNm
-	 4tkJIN8HvOnrykoBCHHVJGyTmfPDyhvyc1VJaVYkb/R4XHARd82h5zkRYkRYJC3Pn4
-	 56U6W/+QhjblfzHGy9YLowZX3IaUTNsV9tzW1IF8=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	David Howells <dhowells@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	linux-afs@lists.infradead.org,
-	netfs@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 34/71] mm: Fix missing folio invalidation calls during truncation
-Date: Sun,  1 Sep 2024 18:17:39 +0200
-Message-ID: <20240901160803.179512721@linuxfoundation.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240901160801.879647959@linuxfoundation.org>
-References: <20240901160801.879647959@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1725219437; c=relaxed/simple;
+	bh=BwxkkNeZZumbw1DZeW6BsFY5zqCC0Swu1a2MG21LVlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZswuEO4N2e9KYpHVyA2fzWw4ZWpjPqpSKp/JhGkEG6fWEQMfBQK9nj+Mw5ZYzfUg21g6aRtF1i86ifBl2dujBCE2rNnO6gPFKnT7qY435jED9aOhY+lq73z+ze0Sk6r3sW45cBlST8YshgNnY6InTKZ8Wpcb51aAL2XRCQLsyyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Z+aeCJIJ; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 481JaioL027304
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 1 Sep 2024 15:36:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1725219407; bh=7JurVhov2U4ESFGHcMM5LmqLQ3P6SExXTWSzJuUX/rY=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Z+aeCJIJk+QF7JdpZCHcYL2zyBd/UdpuFu18Co3SU46OwGNvGNjQMyG3yCUrYdGyt
+	 SYOzP7OF2IlI9GKpG2DRhh3lzzuqyIdz7WW2/rFrisp6k0gp39fSyYTEM9YBrN1sC7
+	 v2V0kn3f1p7gtnJs5PpGwQ/2dxa3LdZsQVVHy2eBs1V0aq6QXhRGKUkruqfkD5KsQT
+	 EaJmFezEYUUbDzNcf5O0+0fSdhPMkTY9iJxcnH8+C1peYFyGmFx2Y7gZU0LOHVWB2v
+	 1XEJfnro2YvkuT6WcGumh+KcUWOY8Dc6XVRn1r7/GOMM9MsuiypQHaR6kZZ9NuCTRu
+	 h9P+wVLvyHT8A==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id CE9C815C02C3; Sun, 01 Sep 2024 15:36:43 -0400 (EDT)
+Date: Sun, 1 Sep 2024 15:36:43 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH RFC 11/20] ext4: store cookie in private data
+Message-ID: <20240901193643.GG9627@mit.edu>
+References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
+ <20240830-vfs-file-f_version-v1-11-6d3e4816aa7b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830-vfs-file-f_version-v1-11-6d3e4816aa7b@kernel.org>
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+On Fri, Aug 30, 2024 at 03:04:52PM +0200, Christian Brauner wrote:
+> Store the cookie to detect concurrent seeks on directories in
+> file->private_data.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-------------------
-
-From: David Howells <dhowells@redhat.com>
-
-[ Upstream commit 0aa2e1b2fb7a75aa4b5b4347055ccfea6f091769 ]
-
-When AS_RELEASE_ALWAYS is set on a mapping, the ->release_folio() and
-->invalidate_folio() calls should be invoked even if PG_private and
-PG_private_2 aren't set.  This is used by netfslib to keep track of the
-point above which reads can be skipped in favour of just zeroing pagecache
-locally.
-
-There are a couple of places in truncation in which invalidation is only
-called when folio_has_private() is true.  Fix these to check
-folio_needs_release() instead.
-
-Without this, the generic/075 and generic/112 xfstests (both fsx-based
-tests) fail with minimum folio size patches applied[1].
-
-Fixes: b4fa966f03b7 ("mm, netfs, fscache: stop read optimisation when folio removed from pagecache")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/20240815090849.972355-1-kernel@pankajraghav.com/ [1]
-Link: https://lore.kernel.org/r/20240823200819.532106-2-dhowells@redhat.com
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-cc: Pankaj Raghav <p.raghav@samsung.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: netfs@lists.linux.dev
-cc: linux-mm@kvack.org
-cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- mm/truncate.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 0d4dd233f5187..96e9812667db2 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -174,7 +174,7 @@ static void truncate_cleanup_folio(struct folio *folio)
- 	if (folio_mapped(folio))
- 		unmap_mapping_folio(folio);
- 
--	if (folio_has_private(folio))
-+	if (folio_needs_release(folio))
- 		folio_invalidate(folio, 0, folio_size(folio));
- 
- 	/*
-@@ -235,7 +235,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 	 */
- 	folio_zero_range(folio, offset, length);
- 
--	if (folio_has_private(folio))
-+	if (folio_needs_release(folio))
- 		folio_invalidate(folio, offset, length);
- 	if (!folio_test_large(folio))
- 		return true;
--- 
-2.43.0
-
-
-
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 
