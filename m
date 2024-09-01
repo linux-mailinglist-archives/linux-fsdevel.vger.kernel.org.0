@@ -1,190 +1,411 @@
-Return-Path: <linux-fsdevel+bounces-28150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8867967655
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 14:07:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB861967687
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 14:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E445AB21290
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 12:07:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFC51F219A8
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 12:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE2A16EC1B;
-	Sun,  1 Sep 2024 12:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB0217E00C;
+	Sun,  1 Sep 2024 12:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="A+8wLkgO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ggsk/X2b"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="PojFBLF2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0758156C69
-	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Sep 2024 12:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DBE156F33;
+	Sun,  1 Sep 2024 12:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725192438; cv=none; b=UdWoG93qofDEZi3W2110q6FEM9q9A/eAFwbHUxEb+ChYjrz+vapaBiIcyqMcl2pQNpu7FzBJS7AA7CaJbon5CKhcws/I9/ZJwJZS5Fo7vodBFb90wqckM8v2KwR5IsrH/Wp8ZkoUOLaY9Po96RYQnhAq7exdg4PzPsjph96HbGE=
+	t=1725195497; cv=none; b=sZgUv8v3PZbPD322DMfIkbrFj2oexUoliRrvJnQR7YycqiV5hGr48wEfXIm/PLtzX+bkIcCl1j8YU59oBjkfeQnmDMM/1PAZxj5HQq4kyP2AGOYuUfYsaUQxTjkpV0jRpVq2y3AJaiOs5a+irBcqrdof9joF9j+AatEehn3ZDFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725192438; c=relaxed/simple;
-	bh=LEUekiBkZYVAqVnzfyUD5JwIN4lgmJ5FoakhGwMjbOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V9DE0hpd31kN6sjpLk7kZPycJAiDdeO3fyZifqYRA/DowfVmAHyVZuCX9AQOM8KaAluqT1SSNEC5UFQGfblNViBq9glVl3UXZQY1C23hriC5FS42uoHH2a2lSUUdBwIFCkwCEx23ascphMzoY63kEh91uKXdv4y4GT0YXnjXsII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=A+8wLkgO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ggsk/X2b; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-08.internal (phl-compute-08.nyi.internal [10.202.2.48])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 1B83A1380338;
-	Sun,  1 Sep 2024 08:07:16 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Sun, 01 Sep 2024 08:07:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725192436;
-	 x=1725278836; bh=Odk7x3xnwsxL+OJKkYWwHro+TFycjC10g7sjDo6WbIc=; b=
-	A+8wLkgOG8TPQxREfQbq64NUGojQLmRj+S0uOLFnIYzJfzIyOryGHmihCbWfL00k
-	883HyjF8NVOD1nsavDrIQ4Nf51p4MaLpBPfRXKQUGroHc1Ig+J9peW/tPgwOhaq7
-	tsbk7qRIa9pWJsWvDeA/l6Hc6JRx1IKmz91D1zg9TXoXjBIdGUi2NbQpJtaAVNLU
-	MhmNLFn5jywAdPHOKg59rcWUYYMr6J/8DgWPLDjHAiIcvcTWHk49Uh56Tq3hBS+W
-	jhga29gJNXzBlfHL67/9ZF5xgBWhxmNonpDPJvRly5pggJtkGrrgTGmZYavUwitZ
-	ABZTahnZd+epdq6JYugyVw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725192436; x=
-	1725278836; bh=Odk7x3xnwsxL+OJKkYWwHro+TFycjC10g7sjDo6WbIc=; b=G
-	gsk/X2b1FLBXwBvW/qgxPs4Dhd0I+j/Z/IUDq6e+IfnZS3gk1OHWBWXr+TNwyQ2Z
-	92hCCp0NEvKcRgyHkvaIms5JsJBQDL0rYVI5Dw//oj1G5S9nGgg10lt8m6RkG1jp
-	bb9QiAP+hODQEIEtZOdbzQ4QTmA74C6HB3d3AV47cabFBiARMbVulq49Cu2qzIzh
-	+1wCO6/M+JOJypAu2hdNpJL6glJqS8EL2mpj/vthzsuqk1W1lTznFAOFpoe5uOgc
-	RRJAhJtyBVqer/+VPuC/JNV2cOG1DtPn8a+iJxVEpbI5Zy7E2Fk9MI1dsPBnoIUl
-	WEzsuolPkUBrwFMyaCISw==
-X-ME-Sender: <xms:81jUZmc6g27B2kJYxLORP7PBe4jjLWti1qTOp83FUbYJtYJXMbSJ-A>
-    <xme:81jUZgOEQmXXPTlQ_HmfdCE1rGMVnt5ucLN6VQDN4r23YHf09gXoWPQ1gt39BJ5X4
-    PpSFxKx-T9RSrdd>
-X-ME-Received: <xmr:81jUZng_ESTbBXrMq9f5K8-uRpkvuWkuOGpR_KghAnoj5JDr4THahULYgkg0d9Aiw1saawoeyLbQcBKeNtF0G4icj9lzjjBhFu8IFoav8smER2IIoDa8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeghedgvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
-    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphht
-    thhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepjhhoshgvfhesth
-    hogihitghprghnuggrrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughi
-    rdhhuhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtth
-    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghvrghgihhnse
-    hgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:81jUZj9C4bFKGj3NkZZOzQs2xJ4aNPovTbORQQmgF5dSqRHxcZD_0g>
-    <xmx:81jUZiuTxQ5sp74Nfzkj9r-tTyNl4voeHbtGvfedXvwYtZ0qduVFog>
-    <xmx:81jUZqHn4kKRMnPziB3AuHDDQzw8LErEnuIgDGgwndnIk7z2QgWw-w>
-    <xmx:81jUZhPXwO-vIdxLf1LQbKY2eQREr2x7ERFjM-d0ALlb-_n29CR1eg>
-    <xmx:9FjUZgD27kTBIpHJeV9DJMCaeEnowZsbAjJ03nnb7U7iAa2oL57aAxQI>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Sep 2024 08:07:14 -0400 (EDT)
-Message-ID: <e58a3506-3b61-4449-9877-de9440b7e379@fastmail.fm>
-Date: Sun, 1 Sep 2024 14:07:13 +0200
+	s=arc-20240116; t=1725195497; c=relaxed/simple;
+	bh=AmSHOswEuFz5AIfVdzUvt9B7esvFWuhuC3Je1yQe2Cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TF/T2MPMsqGjcVDHD4g2fLdGH+Tm2o7o0QKcDvbNnSNiKnwozDuicoe3R2ydclHUJqdULaECHZlwK7PqBicH0KYYW9+8vOvvcbMXf3yz5ccUA30DDKZ5/xTSP6e9BmpwntJdfKZLQ0gqF1XgoDHLIHG5k98fFQ0ckJtHhE7c8jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=PojFBLF2; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WxX4D4LQfz9sj1;
+	Sun,  1 Sep 2024 14:58:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1725195484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yOScvoXCs6hG9agGvhvqU7BV4yKsTY9quz5vL2xOB3o=;
+	b=PojFBLF27YYcqgKaEDOkXX3/sOqWa3bZxcomY1hspQhBgaacrfHLheOFTmRRPEkED5fpf4
+	Ors+OrglH/3dYoiAi9K6TYpa5P3LJRtVo0zITsXRt8Z3Pg2/AsnfwKcoji27nK065QUIr0
+	chugfQT+udTGEugsyabQpqlcDXrNhwbbFWZ15y7ZejoDdKG352SDG9E6rM5ibYuNf8l0hu
+	EEOiIX7w3VdmaZga+T3KZ6rlkZ2rswoROhhdUbSafLB/K7bfpXDsWb8SKlk0uVhvZClCmG
+	qj3FawBylBuJfd2WQQaJgN/sTZAha1BabBD/7sHYfvB/FOJ9/myW5EgzT9tk6g==
+Date: Sun, 1 Sep 2024 22:57:45 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: fstests@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Alexander Aring <alex.aring@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Christoph Hellwig <hch@infradead.org>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH xfstests v1 2/2] open_by_handle: add tests for u64 mount
+ ID
+Message-ID: <20240901.025307-rougher.varmint.brutal.prayers-rgvz8za91M@cyphar.com>
+References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
+ <20240828103706.2393267-1-cyphar@cyphar.com>
+ <20240828103706.2393267-2-cyphar@cyphar.com>
+ <CAOQ4uxjzpoUtH9OGYmj8K4FF0V4J8vi1W6Ry0Po1RoZ70vQ_fA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 15/19] export __wake_on_current_cpu
-To: Peter Zijlstra <peterz@infradead.org>, Bernd Schubert <bschubert@ddn.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Andrei Vagin <avagin@google.com>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-15-d149476b1d65@ddn.com>
- <20240530203729.GG2210558@perftesting>
- <20240604092635.GN26599@noisy.programming.kicks-ass.net>
- <f1989554-35f2-4f42-af98-69521f620143@ddn.com>
- <20240604192752.GQ40213@noisy.programming.kicks-ass.net>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20240604192752.GQ40213@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xoabik3li3lkaf4u"
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjzpoUtH9OGYmj8K4FF0V4J8vi1W6Ry0Po1RoZ70vQ_fA@mail.gmail.com>
 
 
+--xoabik3li3lkaf4u
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/4/24 21:27, Peter Zijlstra wrote:
-> On Tue, Jun 04, 2024 at 09:36:08AM +0000, Bernd Schubert wrote:
->> On 6/4/24 11:26, Peter Zijlstra wrote:
->>> On Thu, May 30, 2024 at 04:37:29PM -0400, Josef Bacik wrote:
->>>> On Wed, May 29, 2024 at 08:00:50PM +0200, Bernd Schubert wrote:
->>>>> This is needed by fuse-over-io-uring to wake up the waiting
->>>>> application thread on the core it was submitted from.
->>>>> Avoiding core switching is actually a major factor for
->>>>> fuse performance improvements of fuse-over-io-uring.
->>>>>
->>>>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
->>>>> Cc: Ingo Molnar <mingo@redhat.com>
->>>>> Cc: Peter Zijlstra <peterz@infradead.org>
->>>>> Cc: Andrei Vagin <avagin@google.com>
->>>>
->>>> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
->>>>
->>>> Probably best to submit this as a one-off so the sched guys can take it and it's
->>>> not in the middle of a fuse patchset they may be ignoring.  Thanks,
->>>
->>> On its own its going to not be applied. Never merge an EXPORT without a
->>> user.
->>>
->>> As is, I don't have enough of the series to even see the user, so yeah,
->>> not happy :/
->>>
->>> And as hch said, this very much needs to be a GPL export.
->>
->> Sorry, accidentally done without the _GPL. What is the right way to get this merged? 
->> First merge the entire fuse-io-uring series and then add on this? I already have these 
->> optimization patches at the end of the series... The user for this is in the next patch
-> 
-> Yeah, but you didn't send me the next patch, did you? So I have no
-> clue.. :-)
-> 
-> Anyway, if you could add a wee comment to __wake_up_con_current_cpu()
-> along with the EXPORT_SYMBOL_GPL() that might be nice. I suppose you can
-> copy paste from __wake_up() and then edit a wee bit.
-> 
->> [PATCH RFC v2 16/19] fuse: {uring} Wake requests on the the current cpu
->>
->> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->> index c7fd3849a105..851c5fa99946 100644
->> --- a/fs/fuse/dev.c
->> +++ b/fs/fuse/dev.c
->> @@ -333,7 +333,10 @@ void fuse_request_end(struct fuse_req *req)
->>                 spin_unlock(&fc->bg_lock);
->>         } else {
->>                 /* Wake up waiter sleeping in request_wait_answer() */
->> -               wake_up(&req->waitq);
->> +               if (fuse_per_core_queue(fc))
->> +                       __wake_up_on_current_cpu(&req->waitq, TASK_NORMAL, NULL);
->> +               else
->> +                       wake_up(&req->waitq);
->>         }
->>
->>         if (test_bit(FR_ASYNC, &req->flags))
-> 
-> Fair enough, although do we want a helper like wake_up() -- something
-> like wake_up_on_current_cpu() ?
+On 2024-08-30, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Wed, Aug 28, 2024 at 12:37=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com>=
+ wrote:
+> >
+> > Now that open_by_handle_at(2) can return u64 mount IDs, do some tests to
+> > make sure they match properly as part of the regular open_by_handle
+> > tests.
+> >
+> > Link: https://lore.kernel.org/all/20240801-exportfs-u64-mount-id-v3-0-b=
+e5d6283144a@cyphar.com/
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> >  src/open_by_handle.c | 123 ++++++++++++++++++++++++++++++++-----------
+> >  tests/generic/426    |   1 +
+> >  2 files changed, 93 insertions(+), 31 deletions(-)
+> >
+> > diff --git a/src/open_by_handle.c b/src/open_by_handle.c
+> > index d9c802ca9bd1..cbd68aeadac1 100644
+> > --- a/src/open_by_handle.c
+> > +++ b/src/open_by_handle.c
+> > @@ -86,10 +86,15 @@ Examples:
+> >  #include <errno.h>
+> >  #include <linux/limits.h>
+> >  #include <libgen.h>
+> > +#include <stdint.h>
+> >
+> >  #include <sys/stat.h>
+> >  #include "statx.h"
+> >
+> > +#ifndef AT_HANDLE_MNT_ID_UNIQUE
+> > +#      define AT_HANDLE_MNT_ID_UNIQUE 0x001
+> > +#endif
+> > +
+> >  #define MAXFILES 1024
+> >
+> >  struct handle {
+> > @@ -99,7 +104,7 @@ struct handle {
+> >
+> >  void usage(void)
+> >  {
+> > -       fprintf(stderr, "usage: open_by_handle [-cludmrwapknhs] [<-i|-o=
+> <handles_file>] <test_dir> [num_files]\n");
+> > +       fprintf(stderr, "usage: open_by_handle [-cludMmrwapknhs] [<-i|-=
+o> <handles_file>] <test_dir> [num_files]\n");
+> >         fprintf(stderr, "\n");
+> >         fprintf(stderr, "open_by_handle -c <test_dir> [N] - create N te=
+st files under test_dir, try to get file handles and exit\n");
+> >         fprintf(stderr, "open_by_handle    <test_dir> [N] - get file ha=
+ndles of test files, drop caches and try to open by handle\n");
+> > @@ -111,6 +116,7 @@ void usage(void)
+> >         fprintf(stderr, "open_by_handle -l <test_dir> [N] - create hard=
+links to test files, drop caches and try to open by handle\n");
+> >         fprintf(stderr, "open_by_handle -u <test_dir> [N] - unlink (har=
+dlinked) test files, drop caches and try to open by handle\n");
+> >         fprintf(stderr, "open_by_handle -d <test_dir> [N] - unlink test=
+ files and hardlinks, drop caches and try to open by handle\n");
+> > +       fprintf(stderr, "open_by_handle -M <test_dir> [N] - confirm tha=
+t the mount id returned by name_to_handle_at matches the mount id in statx\=
+n");
+> >         fprintf(stderr, "open_by_handle -m <test_dir> [N] - rename test=
+ files, drop caches and try to open by handle\n");
+> >         fprintf(stderr, "open_by_handle -p <test_dir>     - create/dele=
+te and try to open by handle also test_dir itself\n");
+> >         fprintf(stderr, "open_by_handle -i <handles_file> <test_dir> [N=
+] - read test files handles from file and try to open by handle\n");
+> > @@ -120,6 +126,81 @@ void usage(void)
+> >         exit(EXIT_FAILURE);
+> >  }
+> >
+> > +int do_name_to_handle_at(const char *fname, struct file_handle *fh, in=
+t bufsz,
+> > +                        int checkmountid)
+> > +{
+> > +       int ret;
+> > +       int mntid_short;
+> > +
+> > +       uint64_t mntid_unique;
+> > +       uint64_t statx_mntid_short =3D 0, statx_mntid_unique =3D 0;
+> > +       struct handle dummy_fh;
+> > +
+> > +       if (checkmountid) {
+> > +               struct statx statxbuf;
+> > +
+> > +               /* Get both the short and unique mount id. */
+> > +               if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID, &statxbuf) =
+< 0) {
+> > +                       fprintf(stderr, "%s: statx(STATX_MNT_ID): %m\n"=
+, fname);
+> > +                       return EXIT_FAILURE;
+> > +               }
+> > +               if (!(statxbuf.stx_mask & STATX_MNT_ID)) {
+> > +                       fprintf(stderr, "%s: no STATX_MNT_ID in stx_mas=
+k\n", fname);
+> > +                       return EXIT_FAILURE;
+> > +               }
+> > +               statx_mntid_short =3D statxbuf.stx_mnt_id;
+> > +
+> > +               if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID_UNIQUE, &sta=
+txbuf) < 0) {
+> > +                       fprintf(stderr, "%s: statx(STATX_MNT_ID_UNIQUE)=
+: %m\n", fname);
+> > +                       return EXIT_FAILURE;
+>=20
+> This failure will break the test on LTS kernels  - we don't want that.
+> Instead I think you should:
+> - drop the -M option
+> - get statx_mntid_unique here IF kernel supports STATX_MNT_ID_UNIQUE
+> and then...
 
-Thank you and yes sure!
-I remove the patch and optimization from RFCv3, we first need to agree
-on the taken approach and get that merged. Will send submit this
-optimization immediately after.
+Ah okay, I wasn't sure if the xfstests policy was like selftests where
+only the latest kernel matters. I'll send a v2 with the suggestions you
+mentioned.
 
+However, presumably this means we would also not do the
+STATX_MNT_ID_UNIQUE check if name_to_handle_at(AT_HANDLE_MNT_ID_UNIQUE)
+returns -EINVAL, right?
 
-Thanks,
-Bernd
+> > +               }
+> > +               if (!(statxbuf.stx_mask & STATX_MNT_ID_UNIQUE)) {
+> > +                       fprintf(stderr, "%s: no STATX_MNT_ID_UNIQUE in =
+stx_mask\n", fname);
+> > +                       return EXIT_FAILURE;
+> > +               }
+> > +               statx_mntid_unique =3D statxbuf.stx_mnt_id;
+> > +       }
+> > +
+> > +       fh->handle_bytes =3D bufsz;
+> > +       ret =3D name_to_handle_at(AT_FDCWD, fname, fh, &mntid_short, 0);
+> > +       if (bufsz < fh->handle_bytes) {
+> > +               /* Query the filesystem required bufsz and the file han=
+dle */
+> > +               if (ret !=3D -1 || errno !=3D EOVERFLOW) {
+> > +                       fprintf(stderr, "%s: unexpected result from nam=
+e_to_handle_at: %d (%m)\n", fname, ret);
+> > +                       return EXIT_FAILURE;
+> > +               }
+> > +               ret =3D name_to_handle_at(AT_FDCWD, fname, fh, &mntid_s=
+hort, 0);
+> > +       }
+> > +       if (ret < 0) {
+> > +               fprintf(stderr, "%s: name_to_handle: %m\n", fname);
+> > +               return EXIT_FAILURE;
+> > +       }
+> > +
+> > +       if (checkmountid) {
+> > +               if (mntid_short !=3D (int) statx_mntid_short) {
+> > +                       fprintf(stderr, "%s: name_to_handle_at returned=
+ a different mount ID to STATX_MNT_ID: %u !=3D %lu\n", fname, mntid_short, =
+statx_mntid_short);
+> > +                       return EXIT_FAILURE;
+> > +               }
+> > +
+> > +               /*
+> > +                * Get the unique mount ID. We don't need to get anothe=
+r copy of the
+> > +                * handle so store it in a dummy struct.
+> > +                */
+> > +               dummy_fh.fh.handle_bytes =3D fh->handle_bytes;
+> > +               if (name_to_handle_at(AT_FDCWD, fname, &dummy_fh.fh, (i=
+nt *) &mntid_unique, AT_HANDLE_MNT_ID_UNIQUE) < 0) {
+> > +                       fprintf(stderr, "%s: name_to_handle_at(AT_HANDL=
+E_MNT_ID_UNIQUE): %m\n", fname);
+> > +                       return EXIT_FAILURE;
+> > +               }
+> > +
+> > +               if (mntid_unique !=3D statx_mntid_unique) {
+> > +                       fprintf(stderr, "%s: name_to_handle_at(AT_HANDL=
+E_MNT_ID_UNIQUE) returned a different mount ID to STATX_MNT_ID_UNIQUE: %lu =
+!=3D %lu\n", fname, mntid_unique, statx_mntid_unique);
+> > +                       return EXIT_FAILURE;
+> > +               }
+>=20
+> - check statx_mntid_unique here IFF statx_mntid_unique is set
+> - always check statx_mntid_short (what could be a reason to not check it?)
+>=20
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> >  int main(int argc, char **argv)
+> >  {
+> >         int     i, c;
+> > @@ -132,19 +213,20 @@ int main(int argc, char **argv)
+> >         char    fname2[PATH_MAX];
+> >         char    *test_dir;
+> >         char    *mount_dir;
+> > -       int     mount_fd, mount_id;
+> > +       int     mount_fd;
+> >         char    *infile =3D NULL, *outfile =3D NULL;
+> >         int     in_fd =3D 0, out_fd =3D 0;
+> >         int     numfiles =3D 1;
+> >         int     create =3D 0, delete =3D 0, nlink =3D 1, move =3D 0;
+> >         int     rd =3D 0, wr =3D 0, wrafter =3D 0, parent =3D 0;
+> >         int     keepopen =3D 0, drop_caches =3D 1, sleep_loop =3D 0;
+> > +       int     checkmountid =3D 0;
+> >         int     bufsz =3D MAX_HANDLE_SZ;
+> >
+> >         if (argc < 2)
+> >                 usage();
+> >
+> > -       while ((c =3D getopt(argc, argv, "cludmrwapknhi:o:sz")) !=3D -1=
+) {
+> > +       while ((c =3D getopt(argc, argv, "cludMmrwapknhi:o:sz")) !=3D -=
+1) {
+> >                 switch (c) {
+> >                 case 'c':
+> >                         create =3D 1;
+> > @@ -172,6 +254,9 @@ int main(int argc, char **argv)
+> >                         delete =3D 1;
+> >                         nlink =3D 0;
+> >                         break;
+> > +               case 'M':
+> > +                       checkmountid =3D 1;
+> > +                       break;
+> >                 case 'm':
+> >                         move =3D 1;
+> >                         break;
+> > @@ -307,21 +392,9 @@ int main(int argc, char **argv)
+> >                                 return EXIT_FAILURE;
+> >                         }
+> >                 } else {
+> > -                       handle[i].fh.handle_bytes =3D bufsz;
+> > -                       ret =3D name_to_handle_at(AT_FDCWD, fname, &han=
+dle[i].fh, &mount_id, 0);
+> > -                       if (bufsz < handle[i].fh.handle_bytes) {
+> > -                               /* Query the filesystem required bufsz =
+and the file handle */
+> > -                               if (ret !=3D -1 || errno !=3D EOVERFLOW=
+) {
+> > -                                       fprintf(stderr, "Unexpected res=
+ult from name_to_handle_at(%s)\n", fname);
+> > -                                       return EXIT_FAILURE;
+> > -                               }
+> > -                               ret =3D name_to_handle_at(AT_FDCWD, fna=
+me, &handle[i].fh, &mount_id, 0);
+> > -                       }
+> > -                       if (ret < 0) {
+> > -                               strcat(fname, ": name_to_handle");
+> > -                               perror(fname);
+> > +                       ret =3D do_name_to_handle_at(fname, &handle[i].=
+fh, bufsz, checkmountid);
+> > +                       if (ret < 0)
+> >                                 return EXIT_FAILURE;
+> > -                       }
+> >                 }
+> >                 if (keepopen) {
+> >                         /* Open without close to keep unlinked files ar=
+ound */
+> > @@ -349,21 +422,9 @@ int main(int argc, char **argv)
+> >                                 return EXIT_FAILURE;
+> >                         }
+> >                 } else {
+> > -                       dir_handle.fh.handle_bytes =3D bufsz;
+> > -                       ret =3D name_to_handle_at(AT_FDCWD, test_dir, &=
+dir_handle.fh, &mount_id, 0);
+> > -                       if (bufsz < dir_handle.fh.handle_bytes) {
+> > -                               /* Query the filesystem required bufsz =
+and the file handle */
+> > -                               if (ret !=3D -1 || errno !=3D EOVERFLOW=
+) {
+> > -                                       fprintf(stderr, "Unexpected res=
+ult from name_to_handle_at(%s)\n", dname);
+> > -                                       return EXIT_FAILURE;
+> > -                               }
+> > -                               ret =3D name_to_handle_at(AT_FDCWD, tes=
+t_dir, &dir_handle.fh, &mount_id, 0);
+> > -                       }
+> > -                       if (ret < 0) {
+> > -                               strcat(dname, ": name_to_handle");
+> > -                               perror(dname);
+> > +                       ret =3D do_name_to_handle_at(test_dir, &dir_han=
+dle.fh, bufsz, checkmountid);
+> > +                       if (ret < 0)
+> >                                 return EXIT_FAILURE;
+> > -                       }
+> >                 }
+> >                 if (out_fd) {
+> >                         ret =3D write(out_fd, (char *)&dir_handle, size=
+of(*handle));
+> > diff --git a/tests/generic/426 b/tests/generic/426
+> > index 25909f220e1e..df481c58562c 100755
+> > --- a/tests/generic/426
+> > +++ b/tests/generic/426
+> > @@ -51,6 +51,7 @@ test_file_handles $testdir -d
+> >  # Check non-stale handles to linked files
+> >  create_test_files $testdir
+> >  test_file_handles $testdir
+> > +test_file_handles $testdir -M
+>=20
+> I see no reason to add option -M and add a second invocation.
+>=20
+> Something I am missing?
+
+Given how many other custom modes there were, I assumed that providing
+it as an additional flag would've been preferred. I'll just make it
+automatic.
+
+Thanks!
+
+>=20
+> Thanks,
+> Amir.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--xoabik3li3lkaf4u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZtRkyQAKCRAol/rSt+lE
+b8iFAP9ronjM390q9EgpPrLva5FQeA5PzBtRCCzWqWo7ot0Z8wEAph1HLsbxE73f
+69d3VKHugyM5PhH45ZqRqbUQR8AOEwY=
+=DF4l
+-----END PGP SIGNATURE-----
+
+--xoabik3li3lkaf4u--
 
