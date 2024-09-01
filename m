@@ -1,64 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-28173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD9D96784D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A42B09677A5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A511F216A4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2841A1F218DD
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9E9184531;
-	Sun,  1 Sep 2024 16:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D96F183CB1;
+	Sun,  1 Sep 2024 16:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2V5O9nqs"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vn4ZBvVJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA018537FF;
-	Sun,  1 Sep 2024 16:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9766F16EB4B;
+	Sun,  1 Sep 2024 16:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725208215; cv=none; b=dQiGZmQJbvUcIxdGz9wfBYzteXAwrU0iVoiCb/42O8hWzpAS35fy727IE2XoXHbDNO21sJuDHV/jCpyFhOVAgEwEGUT/T5Fo1GUkhAy9Uft7eRFbfWzSdEJxqOEUlQc01duJylFFIrLBSTqrnZ2/2NB04GzlSKiL+aCktqIT13Q=
+	t=1725207737; cv=none; b=AqKDBzrS2Hu6PS3XCObAwX+mWbp5y/NkfZ3Q6seOxT1Lu7sNOi1O3YrIpdP2WgVDUnsmob/PsnPtFCnS0KdxcqNXYghvXFOKbD+LRj8AnrIAKF6/G/wrsKk5UKtTCESgJzK9yCZSdJjxdtB10A2WYK4FK4QSyV134fZIq0IIMXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725208215; c=relaxed/simple;
-	bh=xhn+MF3hqGrLXb1LRI3b0c5JVKjjLvNvVZqlphT19lI=;
+	s=arc-20240116; t=1725207737; c=relaxed/simple;
+	bh=YIyI7uvX8abnkqYkCtaYIqyNevOuCWQU2U4yqSSdaRc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oSyeIomYRCk2C4X6h+JJsIcoX+pV9ljv0iA7FBoJDS07qwuNdKQGlgjsfV21zD6qviY/TtTbpmKBtmW12WB7DKMBNL+uzI/EWYXE+EFwx+HNeH2ejxDZehL16PsewYRubibysdtr7e8VKEU8Dy0TpeOLiQhn6Cii4SwNJYRvq+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2V5O9nqs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31360C4CEC3;
-	Sun,  1 Sep 2024 16:30:14 +0000 (UTC)
+	 MIME-Version; b=Fq/LQgELLy1t+a/7XYmEgawGt9bhOsn9nA9uoiv/URhCPdrH68N73MXb8jtziIpz13O4x9SbFgxHE9CCqImUrTry8ReC1SDiGUdNo3jdPSHbMJBHnDVpOsWJrFXV5SlcChBhTLsvleZE2AolnOIrIYt33SNHwenABDtHsq4+3Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vn4ZBvVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD4EC4CEC3;
+	Sun,  1 Sep 2024 16:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725208214;
-	bh=xhn+MF3hqGrLXb1LRI3b0c5JVKjjLvNvVZqlphT19lI=;
+	s=korg; t=1725207737;
+	bh=YIyI7uvX8abnkqYkCtaYIqyNevOuCWQU2U4yqSSdaRc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=2V5O9nqsFDR57FvnegInxeAuc83cHU0ZNA4UjPv3TDvSaxBQXOJL5oCBdZE8MzIJI
-	 KV6BtVKD9PM/Zn1St6GUfqCAQ+per85uqgYUzh+2ZTIVlK/RJLGb4UeQA5tepxGe+M
-	 y0Py8J/fmH4h9iCzTfDqJkr8iH/u87y2rEojN2Hw=
+	b=vn4ZBvVJb7F59u6JHOIz/Pn6iR8CnmR++JcXQ5tXDRMzgi9ZjaEwp+10p/KYoL58J
+	 /HPVS73of79qvZLw8PsxJPxJyTFpE59QucVN5yyj1EV3D4ae12jMR4EGEGfEmKBdUL
+	 AN3g2C4JOA1S7vH6/HA0wo65m9IJjuKZ4aVWhel8=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	David Howells <dhowells@redhat.com>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	ceph-devel@vger.kernel.org,
-	netfs@lists.linux.dev,
+	Sargun Dhillon <sargun@sargun.me>,
+	Serge Hallyn <serge@hallyn.com>,
+	Jann Horn <jannh@google.com>,
+	Henning Schild <henning.schild@siemens.com>,
+	Andrei Vagin <avagin@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Laurent Vivier <laurent@vivier.eu>,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 6.10 014/149] netfs, ceph: Partially revert "netfs: Replace PG_fscache by setting folio->private and marking dirty"
-Date: Sun,  1 Sep 2024 18:15:25 +0200
-Message-ID: <20240901160818.003327412@linuxfoundation.org>
+	Christian Brauner <christian.brauner@ubuntu.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 21/98] binfmt_misc: cleanup on filesystem umount
+Date: Sun,  1 Sep 2024 18:15:51 +0200
+Message-ID: <20240901160804.491356366@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240901160817.461957599@linuxfoundation.org>
-References: <20240901160817.461957599@linuxfoundation.org>
+In-Reply-To: <20240901160803.673617007@linuxfoundation.org>
+References: <20240901160803.673617007@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -70,77 +71,426 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.10-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-commit 92764e8822d4e7f8efb5ad959fac195a7f8ea0c6 upstream.
+[ Upstream commit 1c5976ef0f7ad76319df748ccb99a4c7ba2ba464 ]
 
-This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
+Currently, registering a new binary type pins the binfmt_misc
+filesystem. Specifically, this means that as long as there is at least
+one binary type registered the binfmt_misc filesystem survives all
+umounts, i.e. the superblock is not destroyed. Meaning that a umount
+followed by another mount will end up with the same superblock and the
+same binary type handlers. This is a behavior we tend to discourage for
+any new filesystems (apart from a few special filesystems such as e.g.
+configfs or debugfs). A umount operation without the filesystem being
+pinned - by e.g. someone holding a file descriptor to an open file -
+should usually result in the destruction of the superblock and all
+associated resources. This makes introspection easier and leads to
+clearly defined, simple and clean semantics. An administrator can rely
+on the fact that a umount will guarantee a clean slate making it
+possible to reinitialize a filesystem. Right now all binary types would
+need to be explicitly deleted before that can happen.
 
-In addition to reverting the removal of PG_private_2 wrangling from the
-buffered read code[1][2], the removal of the waits for PG_private_2 from
-netfs_release_folio() and netfs_invalidate_folio() need reverting too.
+This allows us to remove the heavy-handed calls to simple_pin_fs() and
+simple_release_fs() when creating and deleting binary types. This in
+turn allows us to replace the current brittle pinning mechanism abusing
+dget() which has caused a range of bugs judging from prior fixes in [2]
+and [3]. The additional dget() in load_misc_binary() pins the dentry but
+only does so for the sake to prevent ->evict_inode() from freeing the
+node when a user removes the binary type and kill_node() is run. Which
+would mean ->interpreter and ->interp_file would be freed causing a UAF.
 
-It also adds a wait into ceph_evict_inode() to wait for netfs read and
-copy-to-cache ops to complete.
+This isn't really nicely documented nor is it very clean because it
+relies on simple_pin_fs() pinning the filesystem as long as at least one
+binary type exists. Otherwise it would cause load_misc_binary() to hold
+on to a dentry belonging to a superblock that has been shutdown.
+Replace that implicit pinning with a clean and simple per-node refcount
+and get rid of the ugly dget() pinning. A similar mechanism exists for
+e.g. binderfs (cf. [4]). All the cleanup work can now be done in
+->evict_inode().
 
-Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private and marking dirty")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk [1]
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e5ced7804cb9184c4a23f8054551240562a8eda [2]
-Link: https://lore.kernel.org/r/20240814203850.2240469-2-dhowells@redhat.com
-cc: Max Kellermann <max.kellermann@ionos.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Xiubo Li <xiubli@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: ceph-devel@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
+In a follow-up patch we will make it possible to use binfmt_misc in
+sandboxes. We will use the cleaner semantics where a umount for the
+filesystem will cause the superblock and all resources to be
+deallocated. In preparation for this apply the same semantics to the
+initial binfmt_misc mount. Note, that this is a user-visible change and
+as such a uapi change but one that we can reasonably risk. We've
+discussed this in earlier versions of this patchset (cf. [1]).
+
+The main user and provider of binfmt_misc is systemd. Systemd provides
+binfmt_misc via autofs since it is configurable as a kernel module and
+is used by a few exotic packages and users. As such a binfmt_misc mount
+is triggered when /proc/sys/fs/binfmt_misc is accessed and is only
+provided on demand. Other autofs on demand filesystems include EFI ESP
+which systemd umounts if the mountpoint stays idle for a certain amount
+of time. This doesn't apply to the binfmt_misc autofs mount which isn't
+touched once it is mounted meaning this change can't accidently wipe
+binary type handlers without someone having explicitly unmounted
+binfmt_misc. After speaking to systemd folks they don't expect this
+change to affect them.
+
+In line with our general policy, if we see a regression for systemd or
+other users with this change we will switch back to the old behavior for
+the initial binfmt_misc mount and have binary types pin the filesystem
+again. But while we touch this code let's take the chance and let's
+improve on the status quo.
+
+[1]: https://lore.kernel.org/r/20191216091220.465626-2-laurent@vivier.eu
+[2]: commit 43a4f2619038 ("exec: binfmt_misc: fix race between load_misc_binary() and kill_node()"
+[3]: commit 83f918274e4b ("exec: binfmt_misc: shift filp_close(interp_file) from kill_node() to bm_evict_inode()")
+[4]: commit f0fe2c0f050d ("binder: prevent UAF for binderfs devices II")
+
+Link: https://lore.kernel.org/r/20211028103114.2849140-1-brauner@kernel.org (v1)
+Cc: Sargun Dhillon <sargun@sargun.me>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Henning Schild <henning.schild@siemens.com>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Laurent Vivier <laurent@vivier.eu>
+Cc: linux-fsdevel@vger.kernel.org
+Acked-by: Serge Hallyn <serge@hallyn.com>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/inode.c |    1 +
- fs/netfs/misc.c |    7 +++++++
- 2 files changed, 8 insertions(+)
+ fs/binfmt_misc.c | 216 ++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 168 insertions(+), 48 deletions(-)
 
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -697,6 +697,7 @@ void ceph_evict_inode(struct inode *inod
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index 8fe7edd2b001f..2df8d2bd1153e 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -58,12 +58,11 @@ typedef struct {
+ 	char *name;
+ 	struct dentry *dentry;
+ 	struct file *interp_file;
++	refcount_t users;		/* sync removal with load_misc_binary() */
+ } Node;
  
- 	percpu_counter_dec(&mdsc->metric.total_inodes);
+ static DEFINE_RWLOCK(entries_lock);
+ static struct file_system_type bm_fs_type;
+-static struct vfsmount *bm_mnt;
+-static int entry_count;
  
-+	netfs_wait_for_outstanding_io(inode);
- 	truncate_inode_pages_final(&inode->i_data);
- 	if (inode->i_state & I_PINNING_NETFS_WB)
- 		ceph_fscache_unuse_cookie(inode, true);
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -101,6 +101,8 @@ void netfs_invalidate_folio(struct folio
+ /*
+  * Max length of the register string.  Determined by:
+@@ -80,19 +79,23 @@ static int entry_count;
+  */
+ #define MAX_REGISTER_LENGTH 1920
  
- 	kenter("{%lx},%zx,%zx", folio->index, offset, length);
+-/*
+- * Check if we support the binfmt
+- * if we do, return the node, else NULL
+- * locking is done in load_misc_binary
++/**
++ * search_binfmt_handler - search for a binary handler for @bprm
++ * @misc: handle to binfmt_misc instance
++ * @bprm: binary for which we are looking for a handler
++ *
++ * Search for a binary type handler for @bprm in the list of registered binary
++ * type handlers.
++ *
++ * Return: binary type list entry on success, NULL on failure
+  */
+-static Node *check_file(struct linux_binprm *bprm)
++static Node *search_binfmt_handler(struct linux_binprm *bprm)
+ {
+ 	char *p = strrchr(bprm->interp, '.');
+-	struct list_head *l;
++	Node *e;
  
-+	folio_wait_private_2(folio); /* [DEPRECATED] */
+ 	/* Walk all the registered handlers. */
+-	list_for_each(l, &entries) {
+-		Node *e = list_entry(l, Node, list);
++	list_for_each_entry(e, &entries, list) {
+ 		char *s;
+ 		int j;
+ 
+@@ -121,9 +124,49 @@ static Node *check_file(struct linux_binprm *bprm)
+ 		if (j == e->size)
+ 			return e;
+ 	}
 +
- 	if (!folio_test_private(folio))
- 		return;
- 
-@@ -165,6 +167,11 @@ bool netfs_release_folio(struct folio *f
- 
- 	if (folio_test_private(folio))
- 		return false;
-+	if (unlikely(folio_test_private_2(folio))) { /* [DEPRECATED] */
-+		if (current_is_kswapd() || !(gfp & __GFP_FS))
-+			return false;
-+		folio_wait_private_2(folio);
-+	}
- 	fscache_note_page_release(netfs_i_cookie(ctx));
- 	return true;
+ 	return NULL;
  }
+ 
++/**
++ * get_binfmt_handler - try to find a binary type handler
++ * @misc: handle to binfmt_misc instance
++ * @bprm: binary for which we are looking for a handler
++ *
++ * Try to find a binfmt handler for the binary type. If one is found take a
++ * reference to protect against removal via bm_{entry,status}_write().
++ *
++ * Return: binary type list entry on success, NULL on failure
++ */
++static Node *get_binfmt_handler(struct linux_binprm *bprm)
++{
++	Node *e;
++
++	read_lock(&entries_lock);
++	e = search_binfmt_handler(bprm);
++	if (e)
++		refcount_inc(&e->users);
++	read_unlock(&entries_lock);
++	return e;
++}
++
++/**
++ * put_binfmt_handler - put binary handler node
++ * @e: node to put
++ *
++ * Free node syncing with load_misc_binary() and defer final free to
++ * load_misc_binary() in case it is using the binary type handler we were
++ * requested to remove.
++ */
++static void put_binfmt_handler(Node *e)
++{
++	if (refcount_dec_and_test(&e->users)) {
++		if (e->flags & MISC_FMT_OPEN_FILE)
++			filp_close(e->interp_file, NULL);
++		kfree(e);
++	}
++}
++
+ /*
+  * the loader itself
+  */
+@@ -138,12 +181,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
+ 	if (!enabled)
+ 		return retval;
+ 
+-	/* to keep locking time low, we copy the interpreter string */
+-	read_lock(&entries_lock);
+-	fmt = check_file(bprm);
+-	if (fmt)
+-		dget(fmt->dentry);
+-	read_unlock(&entries_lock);
++	fmt = get_binfmt_handler(bprm);
+ 	if (!fmt)
+ 		return retval;
+ 
+@@ -237,7 +275,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
+ 		goto error;
+ 
+ ret:
+-	dput(fmt->dentry);
++
++	/*
++	 * If we actually put the node here all concurrent calls to
++	 * load_misc_binary() will have finished. We also know
++	 * that for the refcount to be zero ->evict_inode() must have removed
++	 * the node to be deleted from the list. All that is left for us is to
++	 * close and free.
++	 */
++	put_binfmt_handler(fmt);
++
+ 	return retval;
+ error:
+ 	if (fd_binary > 0)
+@@ -598,30 +645,90 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
+ 	return inode;
+ }
+ 
++/**
++ * bm_evict_inode - cleanup data associated with @inode
++ * @inode: inode to which the data is attached
++ *
++ * Cleanup the binary type handler data associated with @inode if a binary type
++ * entry is removed or the filesystem is unmounted and the super block is
++ * shutdown.
++ *
++ * If the ->evict call was not caused by a super block shutdown but by a write
++ * to remove the entry or all entries via bm_{entry,status}_write() the entry
++ * will have already been removed from the list. We keep the list_empty() check
++ * to make that explicit.
++*/
+ static void bm_evict_inode(struct inode *inode)
+ {
+ 	Node *e = inode->i_private;
+ 
+-	if (e && e->flags & MISC_FMT_OPEN_FILE)
+-		filp_close(e->interp_file, NULL);
+-
+ 	clear_inode(inode);
+-	kfree(e);
++
++	if (e) {
++		write_lock(&entries_lock);
++		if (!list_empty(&e->list))
++			list_del_init(&e->list);
++		write_unlock(&entries_lock);
++		put_binfmt_handler(e);
++	}
+ }
+ 
+-static void kill_node(Node *e)
++/**
++ * unlink_binfmt_dentry - remove the dentry for the binary type handler
++ * @dentry: dentry associated with the binary type handler
++ *
++ * Do the actual filesystem work to remove a dentry for a registered binary
++ * type handler. Since binfmt_misc only allows simple files to be created
++ * directly under the root dentry of the filesystem we ensure that we are
++ * indeed passed a dentry directly beneath the root dentry, that the inode
++ * associated with the root dentry is locked, and that it is a regular file we
++ * are asked to remove.
++ */
++static void unlink_binfmt_dentry(struct dentry *dentry)
+ {
+-	struct dentry *dentry;
++	struct dentry *parent = dentry->d_parent;
++	struct inode *inode, *parent_inode;
++
++	/* All entries are immediate descendants of the root dentry. */
++	if (WARN_ON_ONCE(dentry->d_sb->s_root != parent))
++		return;
+ 
++	/* We only expect to be called on regular files. */
++	inode = d_inode(dentry);
++	if (WARN_ON_ONCE(!S_ISREG(inode->i_mode)))
++		return;
++
++	/* The parent inode must be locked. */
++	parent_inode = d_inode(parent);
++	if (WARN_ON_ONCE(!inode_is_locked(parent_inode)))
++		return;
++
++	if (simple_positive(dentry)) {
++		dget(dentry);
++		simple_unlink(parent_inode, dentry);
++		d_delete(dentry);
++		dput(dentry);
++	}
++}
++
++/**
++ * remove_binfmt_handler - remove a binary type handler
++ * @misc: handle to binfmt_misc instance
++ * @e: binary type handler to remove
++ *
++ * Remove a binary type handler from the list of binary type handlers and
++ * remove its associated dentry. This is called from
++ * binfmt_{entry,status}_write(). In the future, we might want to think about
++ * adding a proper ->unlink() method to binfmt_misc instead of forcing caller's
++ * to use writes to files in order to delete binary type handlers. But it has
++ * worked for so long that it's not a pressing issue.
++ */
++static void remove_binfmt_handler(Node *e)
++{
+ 	write_lock(&entries_lock);
+ 	list_del_init(&e->list);
+ 	write_unlock(&entries_lock);
+-
+-	dentry = e->dentry;
+-	drop_nlink(d_inode(dentry));
+-	d_drop(dentry);
+-	dput(dentry);
+-	simple_release_fs(&bm_mnt, &entry_count);
++	unlink_binfmt_dentry(e->dentry);
+ }
+ 
+ /* /<entry> */
+@@ -648,8 +755,8 @@ bm_entry_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+ 				size_t count, loff_t *ppos)
+ {
+-	struct dentry *root;
+-	Node *e = file_inode(file)->i_private;
++	struct inode *inode = file_inode(file);
++	Node *e = inode->i_private;
+ 	int res = parse_command(buffer, count);
+ 
+ 	switch (res) {
+@@ -663,13 +770,22 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+ 		break;
+ 	case 3:
+ 		/* Delete this handler. */
+-		root = file_inode(file)->i_sb->s_root;
+-		inode_lock(d_inode(root));
++		inode = d_inode(inode->i_sb->s_root);
++		inode_lock(inode);
+ 
++		/*
++		 * In order to add new element or remove elements from the list
++		 * via bm_{entry,register,status}_write() inode_lock() on the
++		 * root inode must be held.
++		 * The lock is exclusive ensuring that the list can't be
++		 * modified. Only load_misc_binary() can access but does so
++		 * read-only. So we only need to take the write lock when we
++		 * actually remove the entry from the list.
++		 */
+ 		if (!list_empty(&e->list))
+-			kill_node(e);
++			remove_binfmt_handler(e);
+ 
+-		inode_unlock(d_inode(root));
++		inode_unlock(inode);
+ 		break;
+ 	default:
+ 		return res;
+@@ -728,13 +844,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+ 	if (!inode)
+ 		goto out2;
+ 
+-	err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
+-	if (err) {
+-		iput(inode);
+-		inode = NULL;
+-		goto out2;
+-	}
+-
++	refcount_set(&e->users, 1);
+ 	e->dentry = dget(dentry);
+ 	inode->i_private = e;
+ 	inode->i_fop = &bm_entry_operations;
+@@ -778,7 +888,8 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+ 		size_t count, loff_t *ppos)
+ {
+ 	int res = parse_command(buffer, count);
+-	struct dentry *root;
++	Node *e, *next;
++	struct inode *inode;
+ 
+ 	switch (res) {
+ 	case 1:
+@@ -791,13 +902,22 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+ 		break;
+ 	case 3:
+ 		/* Delete all handlers. */
+-		root = file_inode(file)->i_sb->s_root;
+-		inode_lock(d_inode(root));
++		inode = d_inode(file_inode(file)->i_sb->s_root);
++		inode_lock(inode);
+ 
+-		while (!list_empty(&entries))
+-			kill_node(list_first_entry(&entries, Node, list));
++		/*
++		 * In order to add new element or remove elements from the list
++		 * via bm_{entry,register,status}_write() inode_lock() on the
++		 * root inode must be held.
++		 * The lock is exclusive ensuring that the list can't be
++		 * modified. Only load_misc_binary() can access but does so
++		 * read-only. So we only need to take the write lock when we
++		 * actually remove the entry from the list.
++		 */
++		list_for_each_entry_safe(e, next, &entries, list)
++			remove_binfmt_handler(e);
+ 
+-		inode_unlock(d_inode(root));
++		inode_unlock(inode);
+ 		break;
+ 	default:
+ 		return res;
+-- 
+2.43.0
+
 
 
 
