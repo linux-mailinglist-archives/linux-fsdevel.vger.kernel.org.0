@@ -1,65 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-28170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB17967731
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 17:27:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD9D96784D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E0A281E81
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 15:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A511F216A4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9526D183088;
-	Sun,  1 Sep 2024 15:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9E9184531;
+	Sun,  1 Sep 2024 16:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lEXqHMKr"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2V5O9nqs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCDE17DFE9;
-	Sun,  1 Sep 2024 15:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA018537FF;
+	Sun,  1 Sep 2024 16:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725204411; cv=none; b=VMoEKQ5lwTJRODGdPtBcFeGnK0mCMROegamFGQL/MTSm4h18bdFADX4bYNl/VrxJY91Yl12QleFxInhEpwqCed/ebeDZE4Xnt9tXAAEmy7t4s9EjVJpSemhm7TtJfio+UyfXXDaS0ZSa9P5T58EsDMDgVqDOkkPXSVvFYZyFIB0=
+	t=1725208215; cv=none; b=dQiGZmQJbvUcIxdGz9wfBYzteXAwrU0iVoiCb/42O8hWzpAS35fy727IE2XoXHbDNO21sJuDHV/jCpyFhOVAgEwEGUT/T5Fo1GUkhAy9Uft7eRFbfWzSdEJxqOEUlQc01duJylFFIrLBSTqrnZ2/2NB04GzlSKiL+aCktqIT13Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725204411; c=relaxed/simple;
-	bh=+oifxVqYLcNvH3TFN5BAAGfli+t14t1naa2f/ObStAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=shAApzKfrbfXfMOGHjI8istTUzHit7F6tsOlkruVYVd64SMrLqlYbJWDWQ1ztFvVFzZm4mPor3r1ooii+Rll6q2lklLD6Jbf7uyk/s7VUJJExwPRuqFP2ksVAPcED5RvXImKDoXJMIqB2GVselMrzM/dEYlPAH3v4pEkIORfHck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lEXqHMKr; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id kmKIsidNBCul1kmKIssdEm; Sun, 01 Sep 2024 17:17:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725203836;
-	bh=yMZLdMo/JqwLkmyPxql8GWXtKMmhtxUaz8IUp+tEwGw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lEXqHMKrvk3EmUMskjBe4akGxwLbP0rxLetnREdXUjVchWkcVt+83IY6Di9th7+/W
-	 hmdKIN1km+D8RNlUTl+s6bKTWzkFDHdJ/XUSYg0X9FNkryptbUV1hK0gCBqDwKOZyQ
-	 UcgGwWi2EUyAEbncUgpZeePcvOzXZi6gpFJq/h3dJEGxzD/+K7pKiA1sNy7AIDHyNm
-	 lJL8lP/ogPji4OfRZ5ufIj4fz5zCjrF/VH0fcbBTPeuy0sNHDrdeTCeEozw6SIjV6h
-	 0opMTXGzRDc4FmZTv4E3+6fgmErNWl1LawAN5I5hLMkrYL9Mgmmzv4r3XloyK5QMnv
-	 8ElmmS7NxMoFw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 01 Sep 2024 17:17:16 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dan Williams <dan.j.williams@intel.com>,
+	s=arc-20240116; t=1725208215; c=relaxed/simple;
+	bh=xhn+MF3hqGrLXb1LRI3b0c5JVKjjLvNvVZqlphT19lI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oSyeIomYRCk2C4X6h+JJsIcoX+pV9ljv0iA7FBoJDS07qwuNdKQGlgjsfV21zD6qviY/TtTbpmKBtmW12WB7DKMBNL+uzI/EWYXE+EFwx+HNeH2ejxDZehL16PsewYRubibysdtr7e8VKEU8Dy0TpeOLiQhn6Cii4SwNJYRvq+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2V5O9nqs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31360C4CEC3;
+	Sun,  1 Sep 2024 16:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725208214;
+	bh=xhn+MF3hqGrLXb1LRI3b0c5JVKjjLvNvVZqlphT19lI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=2V5O9nqsFDR57FvnegInxeAuc83cHU0ZNA4UjPv3TDvSaxBQXOJL5oCBdZE8MzIJI
+	 KV6BtVKD9PM/Zn1St6GUfqCAQ+per85uqgYUzh+2ZTIVlK/RJLGb4UeQA5tepxGe+M
+	 y0Py8J/fmH4h9iCzTfDqJkr8iH/u87y2rEojN2Hw=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	David Howells <dhowells@redhat.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	ceph-devel@vger.kernel.org,
+	netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: [PATCH] dax: Remove an unused field in struct dax_operations
-Date: Sun,  1 Sep 2024 17:17:09 +0200
-Message-ID: <56b92b722ca0a6fd1387c871a6ec01bcb9bd525e.1725203804.git.christophe.jaillet@wanadoo.fr>
+	linux-mm@kvack.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 6.10 014/149] netfs, ceph: Partially revert "netfs: Replace PG_fscache by setting folio->private and marking dirty"
+Date: Sun,  1 Sep 2024 18:15:25 +0200
+Message-ID: <20240901160818.003327412@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240901160817.461957599@linuxfoundation.org>
+References: <20240901160817.461957599@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,37 +70,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-.dax_supported() was apparently removed by commit 7b0800d00dae ("dax:
-remove dax_capable") on 2021-11.
+6.10-stable review patch.  If anyone has any objections, please let me know.
 
-Remove the now unused function pointer from the struct dax_operations.
+------------------
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: David Howells <dhowells@redhat.com>
+
+commit 92764e8822d4e7f8efb5ad959fac195a7f8ea0c6 upstream.
+
+This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
+
+In addition to reverting the removal of PG_private_2 wrangling from the
+buffered read code[1][2], the removal of the waits for PG_private_2 from
+netfs_release_folio() and netfs_invalidate_folio() need reverting too.
+
+It also adds a wait into ceph_evict_inode() to wait for netfs read and
+copy-to-cache ops to complete.
+
+Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private and marking dirty")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk [1]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e5ced7804cb9184c4a23f8054551240562a8eda [2]
+Link: https://lore.kernel.org/r/20240814203850.2240469-2-dhowells@redhat.com
+cc: Max Kellermann <max.kellermann@ionos.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Xiubo Li <xiubli@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: ceph-devel@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-Slightly compile tested only, but "git grep dax_supported" now returns
-nothing.
----
- include/linux/dax.h | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/ceph/inode.c |    1 +
+ fs/netfs/misc.c |    7 +++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 9d3e3327af4c..df41a0017b31 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -27,12 +27,6 @@ struct dax_operations {
- 	 */
- 	long (*direct_access)(struct dax_device *, pgoff_t, long,
- 			enum dax_access_mode, void **, pfn_t *);
--	/*
--	 * Validate whether this device is usable as an fsdax backing
--	 * device.
--	 */
--	bool (*dax_supported)(struct dax_device *, struct block_device *, int,
--			sector_t, sector_t);
- 	/* zero_page_range: required operation. Zero page range   */
- 	int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
- 	/*
--- 
-2.46.0
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -697,6 +697,7 @@ void ceph_evict_inode(struct inode *inod
+ 
+ 	percpu_counter_dec(&mdsc->metric.total_inodes);
+ 
++	netfs_wait_for_outstanding_io(inode);
+ 	truncate_inode_pages_final(&inode->i_data);
+ 	if (inode->i_state & I_PINNING_NETFS_WB)
+ 		ceph_fscache_unuse_cookie(inode, true);
+--- a/fs/netfs/misc.c
++++ b/fs/netfs/misc.c
+@@ -101,6 +101,8 @@ void netfs_invalidate_folio(struct folio
+ 
+ 	kenter("{%lx},%zx,%zx", folio->index, offset, length);
+ 
++	folio_wait_private_2(folio); /* [DEPRECATED] */
++
+ 	if (!folio_test_private(folio))
+ 		return;
+ 
+@@ -165,6 +167,11 @@ bool netfs_release_folio(struct folio *f
+ 
+ 	if (folio_test_private(folio))
+ 		return false;
++	if (unlikely(folio_test_private_2(folio))) { /* [DEPRECATED] */
++		if (current_is_kswapd() || !(gfp & __GFP_FS))
++			return false;
++		folio_wait_private_2(folio);
++	}
+ 	fscache_note_page_release(netfs_i_cookie(ctx));
+ 	return true;
+ }
+
 
 
