@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-28176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E569496788F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6561D967891
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 18:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8365DB21A4E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:33:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDDBEB21AFB
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2024 16:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ABD1822F8;
-	Sun,  1 Sep 2024 16:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87FE184554;
+	Sun,  1 Sep 2024 16:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uBovR2h7"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c5Ijillm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C569518453F;
-	Sun,  1 Sep 2024 16:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6CB183CA7;
+	Sun,  1 Sep 2024 16:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725208385; cv=none; b=gPfZrn4p9VUpPAq0mr9VM9ScfyCpPF+GwVlTDWg67Hg+jOFiOaNdvz0+gAaaUF5/cjh0WlUDCSj9uIN++oNHelau+6nuZ/YblNxBI1mwG3hwQ5Ls1u9uGMhOKbeB49BpliIUoHsyDs5arWDsljUALEML+syJYAXzFh+gMcUjyXg=
+	t=1725208389; cv=none; b=YVGLhEiCOM6HtQcxqIpBFx+RjZHDo7Fn9Rn0JebhWn2Qo0Ou0oKs7TMnSRn+25wl5ZAdTAtoA63F7fWyaO9iRgmZF0EBUQfPAVe7nP23X5+olEvXq3HO6lgbcPfem2Z5TufblkXmxpOPbkYubKRyoW40c3OsO+UMK0pDmJ+jILQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725208385; c=relaxed/simple;
-	bh=oMm9PBHYo4bF6r1c1EIdWZn1Vu/P8ue46SnQKcPFL3Y=;
+	s=arc-20240116; t=1725208389; c=relaxed/simple;
+	bh=gQwvkLOGUYQCnKHMNODQw/TU80tKioex5elMQ2uHBk8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EhZFq6cNdnkPit5MT4ucZNzreDR1g0aGtZF6pdByK8SIvfE1RVvn58WiO1jf+YotkfaVLC5OG0M1CWOb3RJbn8Bs381KSljJCakx9ZyGqWh3AJLeWBmBV6Yqs/2I2Gl4NqB2mYGRpdXmUCTnqoRYNJE5u5t6gIDSe3TaxVDDbU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uBovR2h7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19A19C4CEC9;
-	Sun,  1 Sep 2024 16:33:05 +0000 (UTC)
+	 MIME-Version; b=r2MGmEjVCDe3AwLcKyoI5Y7HcCx8a/iGO8k2+vwmUA74YXcs4L6+hzRJXNaT86vsBvSiHKWBnD4stnVO+NXlsHAtQoWvyEiTlEynQTnXCyzCN5BilUpxTNKSw0M+DyGCaWJ8EOmWprfUpX6qiQDfNOwyJcaKxaIu16kDywf23Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c5Ijillm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53329C4CEC4;
+	Sun,  1 Sep 2024 16:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725208385;
-	bh=oMm9PBHYo4bF6r1c1EIdWZn1Vu/P8ue46SnQKcPFL3Y=;
+	s=korg; t=1725208389;
+	bh=gQwvkLOGUYQCnKHMNODQw/TU80tKioex5elMQ2uHBk8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uBovR2h7eTc61ch1Qu4mYBjE96/qLoE3/ezQLNe25KQ8U6k+1FAmeRyHXlmDMw28z
-	 On+E5ABS/fZiYqo/oBUsD64HzPq3WE0DmjC6Xa0O8CRkrx4ChLkXmqPD7V/XTz7UsL
-	 QOYo8kkpVLtgYl3MJpd4PUIObDiFs9RHmmiK6zoM=
+	b=c5IjillmxmcJHedTQA0h+atYXCW3k+p0AH8e95jtmbHnTq2RSoZVx7DJ04jk/MBOu
+	 alBse+nnC13Pj2WgcgbM842Oe131vTxsCB/vNH8hBDQKfJ1LaQHBXK1rR+3iHfD7p2
+	 xwqK9Kc0MJjeKBLJVNc5qmy0q7pLOntxkGrcynhE=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -53,9 +53,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.10 067/149] netfs: Fix netfs_release_folio() to say no if folio dirty
-Date: Sun,  1 Sep 2024 18:16:18 +0200
-Message-ID: <20240901160819.986674115@linuxfoundation.org>
+Subject: [PATCH 6.10 068/149] netfs: Fix trimming of streaming-write folios in netfs_inval_folio()
+Date: Sun,  1 Sep 2024 18:16:19 +0200
+Message-ID: <20240901160820.023814450@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240901160817.461957599@linuxfoundation.org>
 References: <20240901160817.461957599@linuxfoundation.org>
@@ -76,20 +76,27 @@ Content-Transfer-Encoding: 8bit
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 7dfc8f0c6144c290dbeb01835a67e81b34dda8cd ]
+[ Upstream commit cce6bfa6ca0e30af9927b0074c97fe6a92f28092 ]
 
-Fix netfs_release_folio() to say no (ie. return false) if the folio is
-dirty (analogous with iomap's behaviour).  Without this, it will say yes to
-the release of a dirty page by split_huge_page_to_list_to_order(), which
-will result in the loss of untruncated data in the folio.
+When netfslib writes to a folio that it doesn't have data for, but that
+data exists on the server, it will make a 'streaming write' whereby it
+stores data in a folio that is marked dirty, but not uptodate.  When it
+does this, it attaches a record to folio->private to track the dirty
+region.
 
-Without this, the generic/075 and generic/112 xfstests (both fsx-based
-tests) fail with minimum folio size patches applied[1].
+When truncate() or fallocate() wants to invalidate part of such a folio, it
+will call into ->invalidate_folio(), specifying the part of the folio that
+is to be invalidated.  netfs_invalidate_folio(), on behalf of the
+filesystem, must then determine how to trim the streaming write record.  In
+a couple of cases, however, it does this incorrectly (the reduce-length and
+move-start cases are switched over and don't, in any case, calculate the
+value correctly).
 
-Fixes: c1ec4d7c2e13 ("netfs: Provide invalidate_folio and release_folio calls")
+Fix this by making the logic tree more obvious and fixing the cases.
+
+Fixes: 9ebff83e6481 ("netfs: Prep to use folio->private for write grouping and streaming write")
 Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/20240815090849.972355-1-kernel@pankajraghav.com/ [1]
-Link: https://lore.kernel.org/r/20240823200819.532106-4-dhowells@redhat.com
+Link: https://lore.kernel.org/r/20240823200819.532106-5-dhowells@redhat.com
 cc: Matthew Wilcox (Oracle) <willy@infradead.org>
 cc: Pankaj Raghav <p.raghav@samsung.com>
 cc: Jeff Layton <jlayton@kernel.org>
@@ -101,23 +108,99 @@ cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/misc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/netfs/misc.c | 50 ++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 35 insertions(+), 15 deletions(-)
 
 diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 607a1972f4563..21acf4b092a46 100644
+index 21acf4b092a46..a46bf569303fc 100644
 --- a/fs/netfs/misc.c
 +++ b/fs/netfs/misc.c
-@@ -161,6 +161,9 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
- 	struct netfs_inode *ctx = netfs_inode(folio_inode(folio));
- 	unsigned long long end;
+@@ -97,10 +97,20 @@ EXPORT_SYMBOL(netfs_clear_inode_writeback);
+ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
+ {
+ 	struct netfs_folio *finfo;
++	struct netfs_inode *ctx = netfs_inode(folio_inode(folio));
+ 	size_t flen = folio_size(folio);
  
-+	if (folio_test_dirty(folio))
-+		return false;
+ 	kenter("{%lx},%zx,%zx", folio->index, offset, length);
+ 
++	if (offset == 0 && length == flen) {
++		unsigned long long i_size = i_size_read(&ctx->inode);
++		unsigned long long fpos = folio_pos(folio), end;
 +
- 	end = folio_pos(folio) + folio_size(folio);
++		end = umin(fpos + flen, i_size);
++		if (fpos < i_size && end > ctx->zero_point)
++			ctx->zero_point = end;
++	}
++
+ 	folio_wait_private_2(folio); /* [DEPRECATED] */
+ 
+ 	if (!folio_test_private(folio))
+@@ -115,18 +125,34 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
+ 		/* We have a partially uptodate page from a streaming write. */
+ 		unsigned int fstart = finfo->dirty_offset;
+ 		unsigned int fend = fstart + finfo->dirty_len;
+-		unsigned int end = offset + length;
++		unsigned int iend = offset + length;
+ 
+ 		if (offset >= fend)
+ 			return;
+-		if (end <= fstart)
++		if (iend <= fstart)
++			return;
++
++		/* The invalidation region overlaps the data.  If the region
++		 * covers the start of the data, we either move along the start
++		 * or just erase the data entirely.
++		 */
++		if (offset <= fstart) {
++			if (iend >= fend)
++				goto erase_completely;
++			/* Move the start of the data. */
++			finfo->dirty_len = fend - iend;
++			finfo->dirty_offset = offset;
++			return;
++		}
++
++		/* Reduce the length of the data if the invalidation region
++		 * covers the tail part.
++		 */
++		if (iend >= fend) {
++			finfo->dirty_len = offset - fstart;
+ 			return;
+-		if (offset <= fstart && end >= fend)
+-			goto erase_completely;
+-		if (offset <= fstart && end > fstart)
+-			goto reduce_len;
+-		if (offset > fstart && end >= fend)
+-			goto move_start;
++		}
++
+ 		/* A partial write was split.  The caller has already zeroed
+ 		 * it, so just absorb the hole.
+ 		 */
+@@ -139,12 +165,6 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
+ 	folio_clear_uptodate(folio);
+ 	kfree(finfo);
+ 	return;
+-reduce_len:
+-	finfo->dirty_len = offset + length - finfo->dirty_offset;
+-	return;
+-move_start:
+-	finfo->dirty_len -= offset - finfo->dirty_offset;
+-	finfo->dirty_offset = offset;
+ }
+ EXPORT_SYMBOL(netfs_invalidate_folio);
+ 
+@@ -164,7 +184,7 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
+ 	if (folio_test_dirty(folio))
+ 		return false;
+ 
+-	end = folio_pos(folio) + folio_size(folio);
++	end = umin(folio_pos(folio) + folio_size(folio), i_size_read(&ctx->inode));
  	if (end > ctx->zero_point)
  		ctx->zero_point = end;
+ 
 -- 
 2.43.0
 
