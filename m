@@ -1,111 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-28229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6205F9684EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 12:39:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D916D968546
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 12:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E061C22C72
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 10:39:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8961F25775
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 10:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010E7184556;
-	Mon,  2 Sep 2024 10:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19751185925;
+	Mon,  2 Sep 2024 10:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="F6x3k4p1"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="ZbFbwmMy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mWVfPogu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A2818452E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 10:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ECD15FD13
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 10:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725273486; cv=none; b=EfSRhuKer1UEMEMwfZW6NlluERo8GcSChZp3cknNK7qFDaR+Pgdn4Ai9kUZ3xGYwjNkqzLteojGJurqhoFSulAYC1P+VsnZ9a64yMqWoH959z/GUp7B/9JX5MqYw91uezoYyBLR/NAjeckKE7Ug8zY22P0inEyGgIokQUB7FQsc=
+	t=1725274207; cv=none; b=eDZ5OqqE3BXq56l9J+BHR70hUHcfrpC2AyyK7o9NJYAHNICt/gHPvZNdq0B1ILYZgokAlLnmIgocKZOGck1HMbJLVcTwJHnyDWrupDjAfHnY/SgPGZ38liociQ9wn10ffwYexvPI6/r6tgNbj0zTzFSCgpTv/zBYhHijyF4+we8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725273486; c=relaxed/simple;
-	bh=nTg6Yk8Aso23PWEE0lJbIFpXJ/ymTU9reUYS8XbxRpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZUxAKfyzGNe6zwRk6u2C9SSQVYfKrfqruJtxuYfRkiMw0SuuV3ujycfpILG9KFdj6XkH1YSleHDvc3ByOyho+qciywDyT5KX31+F0T+6vY/Nm0S74mxMFbUvoM6k91fWGb2TycgpI3Pc10HySKXJ99ppCAS25LHaHp+C7PQ+2Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=F6x3k4p1; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a868b739cd9so482294966b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Sep 2024 03:38:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1725273481; x=1725878281; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3mRqj5E97LVLk6bKGRMGIUJzGP6e26pZm4U9abWJFs4=;
-        b=F6x3k4p1VMc0hkORHQuNgXw7+CesamsxJV1Ydapn1h6S7C1IJ/AhHzJLMzOirR0Ayd
-         nOuGk7to5xayoL13NqoMSkIyjfeC0saG0Vr6FBRvc2lPii+oV3Ufj1DI8wGy0aMXiqGj
-         0FYoVh/cl5ZjU5rkrOcHZldzTMk4qt86aY3cM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725273481; x=1725878281;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3mRqj5E97LVLk6bKGRMGIUJzGP6e26pZm4U9abWJFs4=;
-        b=j967a36JH2+8YZ6ZU7vbHyaVbmX7S0Poogru7XlT1ejj82tyqL8a7OkF8EbCuGp1z8
-         KfmJ/4lciwjE0IIDMuIab7eAnsI+bzVvUQlN3oWCBwm7mgUkCTn80J4ZIyst7vPu4UXd
-         0p1DZwfva7Bq61+RhyBabVVcDtAauV1ZJxWuAwYUnXBhV0yQS9IJK9ZOZaOPKcDif+R1
-         pr0cvhD4zD2bBhmeKKMYUZ6D0TpP7WTESM9q40hNOYyWfT/5Q6Q40egjNH8JPUXbmJfV
-         3PJSpWFC+FUKGllDnUwb3G03aLh1ze+MwYEZvwjreL0ok3VfZM6s4AhsxRvmcpXiBb6g
-         dv4A==
-X-Gm-Message-State: AOJu0YzUKDMOfLm4LSnyBkrpP2H1mb826iWFeobElicKe+6M4Nw2dUmz
-	laLlAJZRc44wtktBaX2ecMKU0u+MRn+vhPbJ23APJ4LUYKcMi5b/NnyjsOqPpuTs160ZyqN6Tyj
-	B6drKK5sxmJa8ia9AgPCLApygemIRo4EwFbMljDsWmsQjIxJLS9M=
-X-Google-Smtp-Source: AGHT+IHn4AOvu0nqUJLjxj5oaqASti/RRT0RNuWr4hQw+CNJFnnmqSizKmVleIi9hCZOcTfvWI8Wag1N1JixIZCYzgA=
-X-Received: by 2002:a17:907:7203:b0:a86:96f5:fa81 with SMTP id
- a640c23a62f3a-a897f920068mr1066918366b.32.1725273480978; Mon, 02 Sep 2024
- 03:38:00 -0700 (PDT)
+	s=arc-20240116; t=1725274207; c=relaxed/simple;
+	bh=+HYWz7WMe+5bH1E2zo2wyZlCOTuFH1sg50d11qkeeU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CA8byHDFgDq+QiqohoCgcuF+BVFNUAndaWpYkL1h20hWzAjYTAHihVZKjovTAC5tk2dn93+d9D218AM9xnxmQ3NLHJN3Q4KujeUukq2Zgu07MCH939UQEoFtFw+aqssKyoHFqaF4nR76J9Y5Vbh1Ice3gNtXQxtK9i7tXeNkKEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=ZbFbwmMy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mWVfPogu; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 45C9C11402BE;
+	Mon,  2 Sep 2024 06:50:04 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 02 Sep 2024 06:50:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1725274204;
+	 x=1725360604; bh=cb0UrlQ2WWt7WybCGn/PMpJrbs54XmF0t0BQYslKS2c=; b=
+	ZbFbwmMybhkjI559UtARAHq5TV1okojnMasv5etsjmmAmKE2Rj6plzlrr9W3wvqT
+	lDZIojwE7iYi5VwLwldO8tBJEBHVZQGCkIU7gmrV9JLwf2qWO1TmytZGu9i1wtlm
+	9kj8oyRLI3s/VSxdPAC0xoXv+Z0t9lbFTlPImIba7UlGQ5vi8+9RH9gf2NXJvXFt
+	MDpRnnRn2Hg08jNRXtiPjdJ2+npBekMpi1kUXNxjzdt4ytFRfM5Ov+CsVyv4bMFV
+	TmzyPItFo2myI33zP0zvlYva7xw1aIKE+Lo+3oyqCJzwzNYlewh95QeoZ7J2sEJB
+	AHZCQpVnC1jr2GAs06JmQg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725274204; x=
+	1725360604; bh=cb0UrlQ2WWt7WybCGn/PMpJrbs54XmF0t0BQYslKS2c=; b=m
+	WVfPogurwDa62Jji3ialMPODXBeltg++/u7EJnDIHr4FXYI8njfuIgqHBKmDlzT0
+	+OAX4FPTV9LT4W5Ht3VsBCmQeETsaMupANqu2cnvCfCMzqjJlnJMKb1D5V5d/+FF
+	f4MvEKE4ukYAFV632WRBtzDbXVhEDNGPlB3axJKBWZ3dzLJguIbFWn5YSVOOt74o
+	O3FClTSPbyRL7zYb7323fzxvHsMG5FqM2XHXGrZREHNLVO8CgSerGoZ58U0GGttV
+	GDPqfNvO+o88FuQRlcLQo3N2LXdy+/rKp5fFXCoE1HHJvXOn4z0JWzRdP8URs11J
+	USAGfSJslnQI3sW9uiOTg==
+X-ME-Sender: <xms:W5jVZg0swuu_4pSQ8iTNuyuDP3u_lFH2eaHKNMVrNjIeQvYLlxBbqA>
+    <xme:W5jVZrGLMv-eRBXeZvvhxqNW_ozpv5DDHVH5iXkltmZgLx6eZC17uUVVvSn1viOk7
+    2UpPcjrFsxODtH9>
+X-ME-Received: <xmr:W5jVZo7Ykk7RTpaepwW4Lfzf2lqYaySbB_pT5-n6C2AwoYWbW_UDEM1hFEvD0M_P8ZgQagoofsiiKc76enhZNIgRRcsXkx7i0VmpCrOEJuKtRMAskA0M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehfedgfedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
+    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
+    jhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugi
+    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhs
+    vghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehjvghffhhlvgiguheslh
+    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlrghorghrrdhshhgrohes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtg
+    homh
+X-ME-Proxy: <xmx:W5jVZp004W5xkpGW2-ckUhIFsaZdjvzTyLY0LKdWp2gLmzywYrpQcw>
+    <xmx:W5jVZjE5KG4umP5oe_E1K7y3m5gLbbt0336M5xCcrtKKK2j1zIjTMw>
+    <xmx:W5jVZi_8lMIbRT2V9dW6_HQ1_12CGTUCv8yg3sU8MsomtKgnZ0qLYg>
+    <xmx:W5jVZokr82NaDZmbvbN-0rLdKYRPw9z8BaW-utItqo0sML-H0zV0AQ>
+    <xmx:XJjVZi1kis9e0bxSNnLyZ5NvqHEpTdXZr6RW3GbMirEHNCk2ZMyIqvbC>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 2 Sep 2024 06:50:02 -0400 (EDT)
+Message-ID: <1c7c9f00-8e94-4a98-a3d4-a3610d35e744@fastmail.fm>
+Date: Mon, 2 Sep 2024 12:50:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830162649.3849586-1-joannelkoong@gmail.com> <20240830162649.3849586-2-joannelkoong@gmail.com>
-In-Reply-To: <20240830162649.3849586-2-joannelkoong@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 2 Sep 2024 12:37:49 +0200
-Message-ID: <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] fuse: add optional kernel-enforced timeout for requests
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] fuse: add optional kernel-enforced timeout for
+ requests
+To: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+ jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com
+References: <20240830162649.3849586-1-joannelkoong@gmail.com>
+ <20240830162649.3849586-2-joannelkoong@gmail.com>
+ <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 30 Aug 2024 at 18:27, Joanne Koong <joannelkoong@gmail.com> wrote:
->
-> There are situations where fuse servers can become unresponsive or
-> stuck, for example if the server is in a deadlock. Currently, there's
-> no good way to detect if a server is stuck and needs to be killed
-> manually.
->
-> This commit adds an option for enforcing a timeout (in seconds) on
-> requests where if the timeout elapses without a reply from the server,
-> the connection will be automatically aborted.
 
-Okay.
 
-I'm not sure what the overhead (scheduling and memory) of timers, but
-starting one for each request seems excessive.
+On 9/2/24 12:37, Miklos Szeredi wrote:
+> On Fri, 30 Aug 2024 at 18:27, Joanne Koong <joannelkoong@gmail.com> wrote:
+>>
+>> There are situations where fuse servers can become unresponsive or
+>> stuck, for example if the server is in a deadlock. Currently, there's
+>> no good way to detect if a server is stuck and needs to be killed
+>> manually.
+>>
+>> This commit adds an option for enforcing a timeout (in seconds) on
+>> requests where if the timeout elapses without a reply from the server,
+>> the connection will be automatically aborted.
+> 
+> Okay.
+> 
+> I'm not sure what the overhead (scheduling and memory) of timers, but
+> starting one for each request seems excessive.
+> 
+> Can we make the timeout per-connection instead of per request?
+> 
+> I.e. When the first request is sent, the timer is started. When a
+> reply is received but there are still outstanding requests, the timer
+> is reset.  When the last reply is received, the timer is stopped.
+> 
+> This should handle the frozen server case just as well.  It may not
+> perfectly handle the case when the server is still alive but for some
+> reason one or more requests get stuck, while others are still being
+> processed.   The latter case is unlikely to be an issue in practice,
+> IMO.
 
-Can we make the timeout per-connection instead of per request?
+In case of distributed servers, it can easily happen that one server has
+an issue, while other servers still process requests. Especially when
+these are just requests that read/getattr/etc and do not write, i.e.
+accessing the stuck server is not needed by other servers. So in my
+opinion not so unlikely. Although for such cases not difficult to
+timeout within the fuse server.
 
-I.e. When the first request is sent, the timer is started. When a
-reply is received but there are still outstanding requests, the timer
-is reset.  When the last reply is received, the timer is stopped.
-
-This should handle the frozen server case just as well.  It may not
-perfectly handle the case when the server is still alive but for some
-reason one or more requests get stuck, while others are still being
-processed.   The latter case is unlikely to be an issue in practice,
-IMO.
 
 Thanks,
-Miklos
+Bernd
 
