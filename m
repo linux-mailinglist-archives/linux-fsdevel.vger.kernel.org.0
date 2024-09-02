@@ -1,79 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-28262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3EA9689C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 16:20:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509BF9689CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 16:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5941C22B2F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 14:20:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C5B1C229A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 14:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9D51E49F;
-	Mon,  2 Sep 2024 14:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A4D19E97C;
+	Mon,  2 Sep 2024 14:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="KeV5OogA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jd7uHjY0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A4219F139;
-	Mon,  2 Sep 2024 14:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4451E179AA;
+	Mon,  2 Sep 2024 14:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286792; cv=none; b=f8P3PywGiQ44Kx3muRqUFjwN4c1sgbxGNa59MDJ2atpCH+WRkGxN2g+Fq3o0hRbY7jP2vel+DunotSp1IVTgp41C0HiAGs6aJzlyGG8n+iW0EIypAqpbPfaBCW7yLMAFgPCV0TNqo9T20hivtQXZDnfLGOwz59jpJ38wY3dpf30=
+	t=1725286875; cv=none; b=tweNjAOWIfTjJVFLFIYHyA7CxvAhF7ca/j0VoQ8mqS1GHyDftPfapoSY+fCf9K81CSEm/IK0BeMdRuBOod4DHA5eGJttJ9v27kjfAZVOCwORVYiC1ycE1629CtcPUi5cGaGPmtR0qTxQg5OaBDBFVQ4nrYy1bGNuC5bsMgeUEpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286792; c=relaxed/simple;
-	bh=k61ZjOC1ybeCJrLZm4+RQOKp9zNpJr6PNFSFYlIpUZI=;
+	s=arc-20240116; t=1725286875; c=relaxed/simple;
+	bh=Rf8IRDfTz4kH7RDQ5fkcSZ15ZZH4xdrWwGbRA5GROZ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKvZYrqvwxcFbsKuVTYibR7WK3DHzxNhJVUV9PUnoUWyX5zdumaXT8ZpuDmDAy4zQwnPV+tcFXiY3SpGgECSQB1yl8SpMzY3MgvTzR6++ZUkedj6jQ/wuPDAaqmaFCpTkcwJavK1pKrSl+hcwb5XLEsnH1nysqXrIlg3c3d8m60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=KeV5OogA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9739EC4CEC2;
-	Mon,  2 Sep 2024 14:19:49 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="KeV5OogA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725286788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdelkNQNEJ/x7d6HdhvWfHMFNgEcvt0QuA/u9U3RtjY=;
-	b=KeV5OogAbTBAMOtuoki3DgeJqyVvllDRgndH2dkze3yJLmaacKcbExWRMITKy5or0SV258
-	x4gQsu2kUb+oZQiOAJEgQaamdG25Rb8FTyy7E8qPs0Lh1OU6kkbcfMQTYpVqXGsBV9qP8K
-	jOeTQOwZFwE9yTVHoh1o8Hd59SW8oSE=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 5527ce07 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 2 Sep 2024 14:19:47 +0000 (UTC)
-Date: Mon, 2 Sep 2024 16:19:42 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v4 5/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on PPC64
-Message-ID: <ZtXJfiA1lU55JLMM@zx2c4.com>
-References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
- <27de70dcc356e56754a03a2887a97597f5e840a4.1725278148.git.christophe.leroy@csgroup.eu>
- <ZtWyeuCfzZ66fVsg@zx2c4.com>
- <bdf1a515-b3d0-471d-89ee-989ae0d63202@csgroup.eu>
- <ZtXE-AISB4w9U9Yc@zx2c4.com>
- <c411b0c6-1806-4e4d-8bcf-51f0747fcd19@csgroup.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NvpghyOjIp0ophXf8+8sIfPp+tmM2BVTzNkUau83rZcDUbHDa+fXZZeVAcrLWtK4B3kpd2BI4mpj/t/ckk5WzPbMewzh76fpya0rDmE6Gib3rSfxjI8N2tqjupAZmhfY2rKbryrK5sAuWjACHTNUhVPEfVRdizF5KCyyti5NHHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jd7uHjY0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BE19C4CEC2;
+	Mon,  2 Sep 2024 14:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725286874;
+	bh=Rf8IRDfTz4kH7RDQ5fkcSZ15ZZH4xdrWwGbRA5GROZ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jd7uHjY0rT97aWkhW+uvWagPzLhpTIpnVX1P+4zXYSoEihJj3TO4Su2GB/OJtkGts
+	 I5aBvcoEgPpu/ylyHr+CAy8qEEcPbPClOMLu4kVj+1+66PFzaM5cLG++HybBUE5k9S
+	 V4NWqpLFpCqSyCrXpwBIS2oM/DBGGf30pxQosp8oVMDgbAAYvFmHctdnquJ5+mRMUy
+	 Jd5OSloYqUa5Q5PQBsw97UWA2WG7xOhEuoH+gKGWgbVrj0HtKkgvAIcT+FtrnzSBWT
+	 /F34102/l6pDKi8ZgrEI5Z4cVDSmOXXB5LBq7S03Z9bCesj6IrDVpcRaaJCju4jg95
+	 6sfIT4CJrh+XA==
+Date: Mon, 2 Sep 2024 16:21:09 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>, 
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: sfr@canb.auug.org.au, akpm@linux-foundation.org, 
+	linux-next@vger.kernel.org, mcgrof@kernel.org, ziy@nvidia.com, da.gomez@samsung.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Pankaj Raghav <p.raghav@samsung.com>, 
+	Sven Schnelle <svens@linux.ibm.com>
+Subject: Re: [PATCH] mm: don't convert the page to folio before splitting in
+ split_huge_page()
+Message-ID: <20240902-wovor-knurren-01ba56e0460e@brauner>
+References: <20240902124931.506061-2-kernel@pankajraghav.com>
+ <ZtXFBTgLz3YFHk9T@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,17 +62,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c411b0c6-1806-4e4d-8bcf-51f0747fcd19@csgroup.eu>
+In-Reply-To: <ZtXFBTgLz3YFHk9T@casper.infradead.org>
 
-On Mon, Sep 02, 2024 at 04:16:48PM +0200, Christophe Leroy wrote:
-> Can do that, but there will still be a problem with chacha selftests if 
-> I don't opt-out the entire function content when it is ppc64. It will 
-> build properly but if someone runs it on a ppc64 it will likely crash 
-> because only the low 32 bits of registers will be saved.
+On Mon, Sep 02, 2024 at 03:00:37PM GMT, Matthew Wilcox wrote:
+> On Mon, Sep 02, 2024 at 02:49:32PM +0200, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
+> > 
+> > Sven reported that a commit from bs > ps series was breaking the ksm ltp
+> > test[1].
+> > 
+> > split_huge_page() takes precisely a page that is locked, and it also
+> > expects the folio that contains that page to be locked after that
+> > huge page has been split. The changes introduced converted the page to
+> > folio, and passed the head page to be split, which might not be locked,
+> > resulting in a kernel panic.
+> > 
+> > This commit fixes it by always passing the correct page to be split from
+> > split_huge_page() with the appropriate minimum order for splitting.
+> 
+> This should be folded into the patch that is broken, not be a separate
+> fix commit, otherwise it introduces a bisection hazard which are to be
+> avoided when possible.
 
-What if you don't wire up the selftests _at all_ until the ppc64 commit?
-Then there'll be no risk.
-
-(And I think I would prefer to see the 32-bit code all in the 32-bit
-commit; that'd make it more straight forward to review too.)
+Patch folded into "mm: split a folio in minimum folio order chunks"
+with the Link to this patch. Please double-check.
 
