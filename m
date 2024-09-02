@@ -1,156 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-28230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D916D968546
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 12:51:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 423C396855F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 12:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8961F25775
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 10:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDE371F22E56
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 10:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19751185925;
-	Mon,  2 Sep 2024 10:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="ZbFbwmMy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mWVfPogu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B3F183CA5;
+	Mon,  2 Sep 2024 10:55:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ECD15FD13
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E730A7347B;
+	Mon,  2 Sep 2024 10:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725274207; cv=none; b=eDZ5OqqE3BXq56l9J+BHR70hUHcfrpC2AyyK7o9NJYAHNICt/gHPvZNdq0B1ILYZgokAlLnmIgocKZOGck1HMbJLVcTwJHnyDWrupDjAfHnY/SgPGZ38liociQ9wn10ffwYexvPI6/r6tgNbj0zTzFSCgpTv/zBYhHijyF4+we8=
+	t=1725274535; cv=none; b=bbN/cHXsqBk4MBKDaEYfyDnQsPxuZZ7L8rfu0Dsdbv++4/A4aQGMBEi+UQXjfQk4B+3QmQa00E93JtEvFpdtfeJTwvxdlX0VZVbgkzhvPezSqxEZGkW1WdCWdZCDBgd/ko3/DCbVURvy3m60cPPJEG/kRP49Z0zMUkrLd1CJO70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725274207; c=relaxed/simple;
-	bh=+HYWz7WMe+5bH1E2zo2wyZlCOTuFH1sg50d11qkeeU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CA8byHDFgDq+QiqohoCgcuF+BVFNUAndaWpYkL1h20hWzAjYTAHihVZKjovTAC5tk2dn93+d9D218AM9xnxmQ3NLHJN3Q4KujeUukq2Zgu07MCH939UQEoFtFw+aqssKyoHFqaF4nR76J9Y5Vbh1Ice3gNtXQxtK9i7tXeNkKEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=ZbFbwmMy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mWVfPogu; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 45C9C11402BE;
-	Mon,  2 Sep 2024 06:50:04 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 02 Sep 2024 06:50:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725274204;
-	 x=1725360604; bh=cb0UrlQ2WWt7WybCGn/PMpJrbs54XmF0t0BQYslKS2c=; b=
-	ZbFbwmMybhkjI559UtARAHq5TV1okojnMasv5etsjmmAmKE2Rj6plzlrr9W3wvqT
-	lDZIojwE7iYi5VwLwldO8tBJEBHVZQGCkIU7gmrV9JLwf2qWO1TmytZGu9i1wtlm
-	9kj8oyRLI3s/VSxdPAC0xoXv+Z0t9lbFTlPImIba7UlGQ5vi8+9RH9gf2NXJvXFt
-	MDpRnnRn2Hg08jNRXtiPjdJ2+npBekMpi1kUXNxjzdt4ytFRfM5Ov+CsVyv4bMFV
-	TmzyPItFo2myI33zP0zvlYva7xw1aIKE+Lo+3oyqCJzwzNYlewh95QeoZ7J2sEJB
-	AHZCQpVnC1jr2GAs06JmQg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725274204; x=
-	1725360604; bh=cb0UrlQ2WWt7WybCGn/PMpJrbs54XmF0t0BQYslKS2c=; b=m
-	WVfPogurwDa62Jji3ialMPODXBeltg++/u7EJnDIHr4FXYI8njfuIgqHBKmDlzT0
-	+OAX4FPTV9LT4W5Ht3VsBCmQeETsaMupANqu2cnvCfCMzqjJlnJMKb1D5V5d/+FF
-	f4MvEKE4ukYAFV632WRBtzDbXVhEDNGPlB3axJKBWZ3dzLJguIbFWn5YSVOOt74o
-	O3FClTSPbyRL7zYb7323fzxvHsMG5FqM2XHXGrZREHNLVO8CgSerGoZ58U0GGttV
-	GDPqfNvO+o88FuQRlcLQo3N2LXdy+/rKp5fFXCoE1HHJvXOn4z0JWzRdP8URs11J
-	USAGfSJslnQI3sW9uiOTg==
-X-ME-Sender: <xms:W5jVZg0swuu_4pSQ8iTNuyuDP3u_lFH2eaHKNMVrNjIeQvYLlxBbqA>
-    <xme:W5jVZrGLMv-eRBXeZvvhxqNW_ozpv5DDHVH5iXkltmZgLx6eZC17uUVVvSn1viOk7
-    2UpPcjrFsxODtH9>
-X-ME-Received: <xmr:W5jVZo7Ykk7RTpaepwW4Lfzf2lqYaySbB_pT5-n6C2AwoYWbW_UDEM1hFEvD0M_P8ZgQagoofsiiKc76enhZNIgRRcsXkx7i0VmpCrOEJuKtRMAskA0M>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehfedgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
-    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
-    jhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugi
-    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhs
-    vghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehjvghffhhlvgiguheslh
-    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlrghorghrrdhshhgrohes
-    ghhmrghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtg
-    homh
-X-ME-Proxy: <xmx:W5jVZp004W5xkpGW2-ckUhIFsaZdjvzTyLY0LKdWp2gLmzywYrpQcw>
-    <xmx:W5jVZjE5KG4umP5oe_E1K7y3m5gLbbt0336M5xCcrtKKK2j1zIjTMw>
-    <xmx:W5jVZi_8lMIbRT2V9dW6_HQ1_12CGTUCv8yg3sU8MsomtKgnZ0qLYg>
-    <xmx:W5jVZokr82NaDZmbvbN-0rLdKYRPw9z8BaW-utItqo0sML-H0zV0AQ>
-    <xmx:XJjVZi1kis9e0bxSNnLyZ5NvqHEpTdXZr6RW3GbMirEHNCk2ZMyIqvbC>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 2 Sep 2024 06:50:02 -0400 (EDT)
-Message-ID: <1c7c9f00-8e94-4a98-a3d4-a3610d35e744@fastmail.fm>
-Date: Mon, 2 Sep 2024 12:50:01 +0200
+	s=arc-20240116; t=1725274535; c=relaxed/simple;
+	bh=/ZnDWgOWryVILcL4vVPJWm3z55PNypoxLjeVJcXAz5Y=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=qo77AkXr3gQQFpoHq0HpoAs54egzlJovKrd+ARLC4gKQWwSqD2eCTRu0McFkXcuascQLpiETmnBs+FKHINK0ECvNDkVo1lZOFAOnq1ocpCMf1s8DMjAxC2y95Sgd8TpM7mfEMMlY2YtgM3DkxrRQAL7AEVvH5OMmurE32sEqzh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wy5Bd2g8rz69Qt;
+	Mon,  2 Sep 2024 18:50:33 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id A2AB51800A7;
+	Mon,  2 Sep 2024 18:55:28 +0800 (CST)
+Received: from [10.174.178.75] (10.174.178.75) by
+ kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 2 Sep 2024 18:55:25 +0800
+Subject: Re: [PATCH -next 00/15] sysctl: move sysctls from vm_table into its
+ own files
+To: Joel Granados <j.granados@samsung.com>
+References: <CGME20240826120559eucas1p1a1517b9f4dbeeae893fd2fa770b47232@eucas1p1.samsung.com>
+ <20240826120449.1666461-1-yukaixiong@huawei.com>
+ <20240902071752.5ieq3khrnpjqq6qv@joelS2.panther.com>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
+	<dalias@libc.org>, <glaubitz@physik.fu-berlin.de>, <luto@kernel.org>,
+	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <willy@infradead.org>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>,
+	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
+	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
+	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <linux-sh@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+From: yukaixiong <yukaixiong@huawei.com>
+Message-ID: <003ce112-d895-5f1d-d034-b61b7f68cebd@huawei.com>
+Date: Mon, 2 Sep 2024 18:55:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] fuse: add optional kernel-enforced timeout for
- requests
-To: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
- jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com
-References: <20240830162649.3849586-1-joannelkoong@gmail.com>
- <20240830162649.3849586-2-joannelkoong@gmail.com>
- <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20240902071752.5ieq3khrnpjqq6qv@joelS2.panther.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpeml500014.china.huawei.com (7.185.36.63) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
 
 
-On 9/2/24 12:37, Miklos Szeredi wrote:
-> On Fri, 30 Aug 2024 at 18:27, Joanne Koong <joannelkoong@gmail.com> wrote:
+On 2024/9/2 15:17, Joel Granados wrote:
+> On Mon, Aug 26, 2024 at 08:04:34PM +0800, Kaixiong Yu wrote:
+>> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+>> places where they actually belong, and do some related code clean-ups.
+>> After this patch series, all sysctls in vm_table have been moved into its
+>> own files, meanwhile, delete vm_table.
 >>
->> There are situations where fuse servers can become unresponsive or
->> stuck, for example if the server is in a deadlock. Currently, there's
->> no good way to detect if a server is stuck and needs to be killed
->> manually.
+>> All the modifications of this patch series base on
+>> linux-next(tags/next-20240823). To test this patch series, the code was
+>> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+>> x86_64 architectures. After this patch series is applied, all files
+>> under /proc/sys/vm can be read or written normally.
 >>
->> This commit adds an option for enforcing a timeout (in seconds) on
->> requests where if the timeout elapses without a reply from the server,
->> the connection will be automatically aborted.
-> 
-> Okay.
-> 
-> I'm not sure what the overhead (scheduling and memory) of timers, but
-> starting one for each request seems excessive.
-> 
-> Can we make the timeout per-connection instead of per request?
-> 
-> I.e. When the first request is sent, the timer is started. When a
-> reply is received but there are still outstanding requests, the timer
-> is reset.  When the last reply is received, the timer is stopped.
-> 
-> This should handle the frozen server case just as well.  It may not
-> perfectly handle the case when the server is still alive but for some
-> reason one or more requests get stuck, while others are still being
-> processed.   The latter case is unlikely to be an issue in practice,
-> IMO.
+>> Kaixiong Yu (15):
+>>    mm: vmstat: move sysctls to its own files
+>>    mm: filemap: move sysctl to its own file
+>>    mm: swap: move sysctl to its own file
+>>    mm: vmscan: move vmscan sysctls to its own file
+>>    mm: util: move sysctls into it own files
+>>    mm: mmap: move sysctl into its own file
+>>    security: min_addr: move sysctl into its own file
+>>    mm: nommu: move sysctl to its own file
+>>    fs: fs-writeback: move sysctl to its own file
+>>    fs: drop_caches: move sysctl to its own file
+>>    sunrpc: use vfs_pressure_ratio() helper
+>>    fs: dcache: move the sysctl into its own file
+>>    x86: vdso: move the sysctl into its own file
+>>    sh: vdso: move the sysctl into its own file
+>>    sysctl: remove unneeded include
+>>
+> Thx for this.
+>
+> I passed this through 0-day testing and it return some errors. Please
+> address those build errors/regrssions before you send V2.
+>
+> Best
 
-In case of distributed servers, it can easily happen that one server has
-an issue, while other servers still process requests. Especially when
-these are just requests that read/getattr/etc and do not write, i.e.
-accessing the stuck server is not needed by other servers. So in my
-opinion not so unlikely. Although for such cases not difficult to
-timeout within the fuse server.
+ok，I will fix those  errors/warnings in v2
 
-
-Thanks,
-Bernd
 
