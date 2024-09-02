@@ -1,107 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-28233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21FCB9685DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 13:13:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93EFF9685FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 13:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 330D4B214E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:11:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C42881C208FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41376181CE1;
-	Mon,  2 Sep 2024 11:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA83C184554;
+	Mon,  2 Sep 2024 11:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OnCmY1mq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oa2OVFDE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A20175A5
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 11:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EC5175A5;
+	Mon,  2 Sep 2024 11:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725275508; cv=none; b=oPtEN1wUI9SUEs7Njrm+DpS2VMcePi2DdAWEioWks24h5i0MgqzHGFcueEAJUxEj0XhqeYr6HuotA/rVjPzdlle/1i99OL8aSdHN1v4CXgdoFU0tGNGqhhuVqKsx1nZQhH6/zbjJVcx82uixsqTtLx2h0syvjOoqYV2OifE3NJk=
+	t=1725275837; cv=none; b=uvMvtEii36tBGGF9aafbyhDye1nX/nHAjUaySoZSsaeIlOpYgRpuerAKhqRWqkV6fo+DVvPgxngsGGSgc3q5at/ABHFDrkJQCSPxMVd/YaL2mkjysdX5zEc5TRTxKd20M+dQpA1IhUEd6HFuhLuNy4WEjE0MUW/N8MHcK0wxl2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725275508; c=relaxed/simple;
-	bh=ACYti0hxKYVlzkz96GHvJe0UCYPSKaa4OxF8s/gep5I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GHrP/LMGw7DiUyKKpS3eAB400V1xzDC1I9FMGE2Xq5fhaos2ELH7DN7YLgZHDuYk6O+1QyusGo28vmofbJ7dS+37m9hNfR3TZx+NJ8VeVz9ii7Vzv6DubkSmZxMl62aRBfrtlalXIfyXJUYpTEO+G5naEQidCN+hs/B1XqfrLDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OnCmY1mq; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a869332c2c2so812961066b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Sep 2024 04:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1725275504; x=1725880304; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kuph0+9o4A1RPBphrgMO3PL8jFdGA5zKpiVVErC0F/k=;
-        b=OnCmY1mqmtxMVFTFjLXpy3zZigFu0OOki2+j5xPTGH0X0rEfdXSfa+MiNxF82m2xNB
-         N/0AGia4jUlm07ScatBxnkXDeN/4ooekEEnc8Fn4ypZHwZG6H016TcixqxEjlv5qIpJd
-         DmM0RG40rCJnbfXTatNOK37TeNw91gTvRInag=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725275504; x=1725880304;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kuph0+9o4A1RPBphrgMO3PL8jFdGA5zKpiVVErC0F/k=;
-        b=CtiFK/KipPwFTeYBJ7LDzQGCVV0lKwebCEXLjqS2vDMAvxOYNHXjyzyyzmMdn/gpwo
-         BMOHbrK0XgHVjmphhTF2wwHFpqHMA2HPG2q8Jm1PITSwrIAAd5F1Quxy/DFb0w0EVbkU
-         1ofEQIrIpLorhtd42Jbsq0ULrwvHgmvW8c1hl8qPz4CominN9mxQcXGNJWAPuAUC+EfH
-         9mNnXNK6HPZo/uyL6p3GIoY8KXsKec6Is6wc9cERigZwqk05KE+W2jvGHKhv0WrPFcV2
-         hhqx+0woDAVn75fnEQz0yFehY9Yo0REEFzQ1ACrTEC2N07hYfm9SI6Mb+m2K//Ask0dZ
-         4bwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY7LbLidmyCXRybpp7XVHkeDrJxWSbEWqV/Jv+BiDSK1ZBrBFrylyFfv0C0xzGF808bWAFTnNkD2rJaDAS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAvChY01FxV1a4DF5MNZ+clp/Y0Y4J32/I2OvacdLZ5xbVkI6y
-	AaZaArN/ZPTlVAG4/I8LXzdtGoWJfroCWOFVTafMbYP1MVX7XM0bE51xbkxUvJwFOhHnHqLMSHn
-	Z5B3XOjKNjbKVA1i0eLQchOkBCqUxonJklGd5d5RRdrgF4wSXkaA=
-X-Google-Smtp-Source: AGHT+IFBxYjxkpMm6qbV9fEsZkagQqPFpQha8XkxW51P/F5oJ/Yydy83LAC9tU2cSwhRYQpNxEurFqLkG3Jmy8LaC6g=
-X-Received: by 2002:a17:907:3da0:b0:a86:a6ee:7d92 with SMTP id
- a640c23a62f3a-a89825a4390mr1484060166b.18.1725275504209; Mon, 02 Sep 2024
- 04:11:44 -0700 (PDT)
+	s=arc-20240116; t=1725275837; c=relaxed/simple;
+	bh=wvzCQzSMfpZbVTjDOjDI58dr9I+13/EP2jjJQtbCpbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7Auwty0o/0ndTjweHvgYJ27ehMatNqSZI5BfcLKfLeThfYYQ2ClHNQ+6hVH9gwOd4ANkU6cOuPE7jLD9NcHq7P9VZnEIqyRqIEMOwkijQdwPOlukybsIR5aGpDr21aX+FyHqTAS1JfyCCY3gqRzSNqUv7QPLNKKt+w75nZOcV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oa2OVFDE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB8FFC4CEC2;
+	Mon,  2 Sep 2024 11:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725275836;
+	bh=wvzCQzSMfpZbVTjDOjDI58dr9I+13/EP2jjJQtbCpbA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oa2OVFDEmQ8slnIh2J9t1nbdAZtj/jaNpeRqN3adjCVUCV3T6V/uaPIDmhZgUrwB8
+	 MB3FRYqqbg61MJJx7GlSM7kpPcQEiw5H9LuvvSWzpIAgYfCqjI0t/orYLvZc46S9LE
+	 Q3UOQGd7QnKGVyF7l1ZRvIQid57rRSw2XDZWzF2jLHVttAyz0JkSzMjAwDyzmnBAty
+	 fCMW5ZeQzSpNzcG9wIA4VymXSquTCBhEqfJcmXGZ/0BMnX5kN+l3mdJn3gyudBURAn
+	 Xe896b74pRHiYGt5Fop6S/z9uYWqk9giPcrO3WisOsf4LTqqV4DBsM1D3/MUstgbrv
+	 hdYqne0LiItig==
+Date: Mon, 2 Sep 2024 13:17:05 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Kaixiong Yu <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
+	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, kees@kernel.org, j.granados@samsung.com, 
+	willy@infradead.org, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	lorenzo.stoakes@oracle.com, trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com, 
+	jlayton@kernel.org, neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, 
+	tom@talpey.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, paul@paul-moore.com, jmorris@namei.org, linux-sh@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	wangkefeng.wang@huawei.com
+Subject: Re: [PATCH -next 12/15] fs: dcache: move the sysctl into its own file
+Message-ID: <20240902-kumpan-phosphor-439fd7ceecda@brauner>
+References: <20240826120449.1666461-1-yukaixiong@huawei.com>
+ <20240826120449.1666461-13-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830162649.3849586-1-joannelkoong@gmail.com>
- <20240830162649.3849586-2-joannelkoong@gmail.com> <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
- <1c7c9f00-8e94-4a98-a3d4-a3610d35e744@fastmail.fm>
-In-Reply-To: <1c7c9f00-8e94-4a98-a3d4-a3610d35e744@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 2 Sep 2024 13:11:31 +0200
-Message-ID: <CAJfpegsGH06H1tEbV3TDFiwC2d9Kfr-da288mqT83yo85naqGg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] fuse: add optional kernel-enforced timeout for requests
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	josef@toxicpanda.com, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240826120449.1666461-13-yukaixiong@huawei.com>
 
-On Mon, 2 Sept 2024 at 12:50, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+On Mon, Aug 26, 2024 at 08:04:46PM GMT, Kaixiong Yu wrote:
+> The sysctl_vfs_cache_pressure belongs to fs/dcache.c, move it to
+> its own file from kernel/sysctl.c. As a part of fs/dcache.c cleaning,
+> sysctl_vfs_cache_pressure is changed to a static variable, and export
+> vfs_pressure_ratio with EXPORT_SYMBOL_GPL to be used by other files.
+> And move the unneeded include(linux/dcache.h).
+> 
+> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+> ---
 
-> In case of distributed servers, it can easily happen that one server has
-> an issue, while other servers still process requests. Especially when
-> these are just requests that read/getattr/etc and do not write, i.e.
-> accessing the stuck server is not needed by other servers. So in my
-> opinion not so unlikely. Although for such cases not difficult to
-> timeout within the fuse server.
-
-Exactly.  Normally the kernel should not need to time out fuse
-requests, and it might be actively detrimental to do so.
-
-The main case this wants to solve is a deadlocked server due to
-programming error, AFAICS.   And this would only work in environments
-where requests are  guaranteed to complete within some time period.
-
-So if the server needs to handle request timeouts, then it should
-*not* rely on the kernel timeout.   The kernel timeout should be a
-safeguard against broken or malicious servers, not an aid to implement
-request timeouts.
-
-Thanks,
-Miklos
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
