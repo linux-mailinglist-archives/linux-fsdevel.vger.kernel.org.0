@@ -1,139 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-28214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B2A968203
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 10:33:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E710968236
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 10:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6DC9B21E73
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 08:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E6F81C2074A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 08:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB11186E38;
-	Mon,  2 Sep 2024 08:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5161865F6;
+	Mon,  2 Sep 2024 08:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhf0CwZI"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GO/WB/vC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC7018660A;
-	Mon,  2 Sep 2024 08:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F9E16EB76
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 08:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266009; cv=none; b=uSMgxGlutMulljBFoLImzboEDGzN3nkv5mDq5enkcyycidvr0cgW7pIDZ/++E72kPqpiMrxDFYjBTUP8bHsuy5JJWqkX26/dWkq7FgpMntW95uN53NKGlhc0wXZN1tPwQuoTc9x0GeB86ruiWuEXKNo4O+riiHCExn2dyrVJzkg=
+	t=1725266496; cv=none; b=RZnCsMb2xUcMwZ4g1te0s059Go6jhZD0tIVGM5w0hpGpI5H1pfLwokE71IqHstqI0C9+PxcxlTSo7mCgCNsCUtVAw13O3IupfxMpC6EGyeqfrq30s7uah0IxQ3zcFO/SqIFEFYtAJ6nFm8YuQZ1ZZXdVOkIOSGue0OEzVgYm84Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266009; c=relaxed/simple;
-	bh=xVjeuEAK/3aM0vsGYPY4dUHOj95o8OgLHPHyeTgQBDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o2CqVj3iyIWYW248ytBCnZbQbftR5bDPqIEUXALHrtA4w0njhq0MXNOn+Rg4XwbueREVP9mFL7bSBZvDGBy3e/QxNdA2Hurkghim94g6X6tPMVJzm9GjcE2675V2oV1DTXKn5BD2ye9XscXeJLGZRCjshnWStyrhuuY5GMYNY6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhf0CwZI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93BD7C4CEC2;
-	Mon,  2 Sep 2024 08:33:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725266009;
-	bh=xVjeuEAK/3aM0vsGYPY4dUHOj95o8OgLHPHyeTgQBDc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dhf0CwZILv2FE3RAkA+PMGNIxZiLaJ/IVq8TExQUefYmf+cEPh741TudQROZG687t
-	 a7/kiWXGQptaaCXFdAu92XYaQbA5/vqeCSw+pj1tecKorXSka3TinTFN49IBcL3Xhq
-	 cOLs4r/ZnCNdW533F8t1rgsNhYCNSa1aTjOfX7FYX0F9DjJzHYr97pKu6Dd3dKqQXf
-	 4JYBaZbbl7lSG5oaNc9m45BpGlTuHDo7c1CXcWIy8wZiIkeOHd/IzS2kkggZJKPnBq
-	 9Ze5OaxyuVA4Vk/pkpu1yLunrB2n+raJNSos3VE+uLS9LusBLX7w8xKjfZ/LqWQgvh
-	 nwFjO0huovE0A==
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Bjoern Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
+	s=arc-20240116; t=1725266496; c=relaxed/simple;
+	bh=U4pH9n5opeXrTqy96OEvKqqGlgFtHFsAUi+KLg73r+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FcpnvTCHy62y55kGQFSSF7LiE3hMyNnrwlPuC46e0mpxT/MovDC+5oT9401K+Z0Pj36Gkb5w8nzytuDd0eKdQnmu6vpcmVSJ9EwpTuIAJ2RGebUVMKKbb+ayUOau9TLlzIrnP53s8dwS+EOv7zXDtOk5JrDos5QQQAi4vvCPTBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GO/WB/vC; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a866cea40c4so451187466b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Sep 2024 01:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725266493; x=1725871293; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Utp1RoWfhaGakPbnKMVk3xSbFrGMSY4DPD6Mxcnr7vM=;
+        b=GO/WB/vCGGjNzm79oYQK5rjK14AoxVVXyRbSHsv+UDfpqclVn2OXYVfU0mT4Un6ATu
+         E9ikzfDEiM8/b60Rxp5ByyPv8kMv+1tAQCf2do9qpF8MoXa9Ks4W/wQQcYE9gjO/8pI2
+         HI2p7tCZTrXM9OGLI8UGhkaMj9zHjEg99SDnQy8sj+2RRswxa7RE7ny3pMBAebsza0fa
+         q3OFXxILxNuRgK2Ldqbj56nCd0qbsaSivRp1Ut/K1o6XE6u3sDBUatpBGHd4SrAz3Aa6
+         i0VnIziTb/CP4w6oSKlMCILJexkykGQf7VbCJIieezvN9x78c81dUFlcZGMYlxOq+lpi
+         nZyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725266493; x=1725871293;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Utp1RoWfhaGakPbnKMVk3xSbFrGMSY4DPD6Mxcnr7vM=;
+        b=suq0gcX0iik7unhqSZT5XeX8orHU9F1TT+JrqHN18Eo0veFQgVBapGWG/J0RwyDEeq
+         KTY/8sfZ23TZ1F3awhnpIfhjJpYmX8DvdkVomby6krc4YN+tkB37wfVIRGnuNljV1gsz
+         8UM4Sq+2b/JjH7m4dCAnz6mX4atzfmPmOr04MtsL5gpf3e+JbyN9p5zS3RhAxaltFPCt
+         RQ8ArUYr3PpxL8yCmOZDfBb2Pp6PACjHmLcL3+sTUfFdvEeAjiz/Z1WthSK8049pul6j
+         +hmmBKeNNujZfMgukoaoidDSy2cM38mPKz2QEIBtXLIhdQotv9q0QoH3UGWrphA3KOCb
+         nhlg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/j1rY9LsvN7PBWsV51yn4vqivhuxv3c2OvP28l8qiN/yOTYZDvavsULmEz5//jOXcbmBj6aXPMFq2Hufs@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT5CEK0HrKIPdzCxmhlOW+b68eamf83hqjMaWbzCfmzxqOk0nG
+	Df5XTcMxq2s0A9i7a4DY1lEZptPgYBfXJhLROOxeOha7TRhvEgosI65xLTjjVP8=
+X-Google-Smtp-Source: AGHT+IH0oa4HGDBaWmEW2YFqYs/c/VIYcD3KLgtz3Ns27MTTgp0m3AKBLw/5R/bF6mlCHND1zKa/NA==
+X-Received: by 2002:a17:907:60cb:b0:a86:8169:f3d6 with SMTP id a640c23a62f3a-a897fa6bb2fmr1161343566b.49.1725266493202;
+        Mon, 02 Sep 2024 01:41:33 -0700 (PDT)
+Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d6d36sm535496866b.149.2024.09.02.01.41.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 01:41:32 -0700 (PDT)
+Date: Mon, 2 Sep 2024 10:41:31 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve Hjonnevag <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v9 0/8] File abstractions needed by Rust Binder
-Date: Mon,  2 Sep 2024 10:33:11 +0200
-Message-ID: <20240902-ofenfrisch-deretwegen-52d00d98ba90@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
-References: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <ZtV6OwlFRu4ZEuSG@tiehlicka>
+References: <20240826085347.1152675-2-mhocko@kernel.org>
+ <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
+ <ZtBzstXltxowPOhR@dread.disaster.area>
+ <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+ <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+ <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2031; i=brauner@kernel.org; h=from:subject:message-id; bh=xVjeuEAK/3aM0vsGYPY4dUHOj95o8OgLHPHyeTgQBDc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdrfDYXlD4Pr09UPbZvNiej/kCIrPdvs1qqBPVbef0a ttx1LOio5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCLcKgz/A/cKqed7TPqcZLI5 ruUGn1zohQ2R4Vq7rRbv/vDD/s3Nrwz/HV1PMx1hki09fkvb+O++g5c3TnONOTT3v/9qrr4ZdnP PcQMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
 
-On Thu, 08 Aug 2024 16:15:43 +0000, Alice Ryhl wrote:
-> This patchset contains the file abstractions needed by the Rust
-> implementation of the Binder driver.
-> 
-> Please see the Rust Binder RFC for usage examples:
-> https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/
-> 
-> Users of "rust: types: add `NotThreadSafe`":
-> 	[PATCH 5/9] rust: file: add `FileDescriptorReservation`
-> 
-> [...]
+On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+[...]
+> But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+> in the case of bugs, because that's going to be an improvement w.r.t.
+> system robustness, in exactly the same way we don't use BUG_ON() if it's
+> something that we can't guarantee won't happen in the wild - we WARN()
+> and try to handle the error as best we can.
 
-Moving this to vfs.rust.file. This won't show up in -next for quite a while
-(until v6.12-rc1 is out).
+We have discussed that in a different email thread. And I have to say
+that I am not convinced that returning NULL makes a broken code much
+better. Why? Because we can expect that broken NOFAIL users will not have a
+error checking path. Even valid NOFAIL users will not have one because
+they _know_ they do not have a different than retry for ever recovery
+path. 
 
----
+That means that an unexpected NULL return either means OOPS or a subtle
+silent error - e.g. memory corruption. The former is a actually a saner
+recovery model because the execution is stopped before more harm can be
+done. I suspect most of those buggy users will simply OOPS but
+systematically checking for latter is a lot of work and needs to be
+constantly because code evolves...
 
-Applied to the vfs.rust.file branch of the vfs/vfs.git tree.
-Patches in the vfs.rust.file branch should appear in linux-next soon.
+I have tried to argue that if allocator cannot or refuse to satisfy
+GFP_NOFAIL request because it is trying to use unsupported allocation
+mode or size then we should terminate the allocation context. That would
+make the API more predictable and therefore safer to use.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+This is not what the allocator does today though. Atomic NOFAIL
+allocations fail same as kvmalloc requests which are clearly overflows.
+Especially the later could become a risk if they are reachable from the
+userspace with controlable allocation size.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.rust.file
-
-[1/8] rust: types: add `NotThreadSafe`
-      https://git.kernel.org/vfs/vfs/c/1fc5fbeff010
-[2/8] rust: task: add `Task::current_raw`
-      https://git.kernel.org/vfs/vfs/c/dff63ff65920
-[3/8] rust: file: add Rust abstraction for `struct file`
-      https://git.kernel.org/vfs/vfs/c/3d52041c524e
-[4/8] rust: cred: add Rust abstraction for `struct cred`
-      https://git.kernel.org/vfs/vfs/c/bd5715551277
-[5/8] rust: security: add abstraction for secctx
-      https://git.kernel.org/vfs/vfs/c/b94bf604a856
-[6/8] rust: file: add `FileDescriptorReservation`
-      https://git.kernel.org/vfs/vfs/c/b7af88a7d25d
-[7/8] rust: file: add `Kuid` wrapper
-      https://git.kernel.org/vfs/vfs/c/73cd06e92529
-[8/8] rust: file: add abstraction for `poll_table`
-      https://git.kernel.org/vfs/vfs/c/891ad53c3c62
+-- 
+Michal Hocko
+SUSE Labs
 
