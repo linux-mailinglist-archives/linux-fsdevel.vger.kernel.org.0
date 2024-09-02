@@ -1,65 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-28234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EFF9685FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 13:17:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D2A968604
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 13:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C42881C208FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:17:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD714283185
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA83C184554;
-	Mon,  2 Sep 2024 11:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3438184548;
+	Mon,  2 Sep 2024 11:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oa2OVFDE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhXEWN2E"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EC5175A5;
-	Mon,  2 Sep 2024 11:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E48183CA6;
+	Mon,  2 Sep 2024 11:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725275837; cv=none; b=uvMvtEii36tBGGF9aafbyhDye1nX/nHAjUaySoZSsaeIlOpYgRpuerAKhqRWqkV6fo+DVvPgxngsGGSgc3q5at/ABHFDrkJQCSPxMVd/YaL2mkjysdX5zEc5TRTxKd20M+dQpA1IhUEd6HFuhLuNy4WEjE0MUW/N8MHcK0wxl2E=
+	t=1725275975; cv=none; b=O6Ivxl/fqbSi7IDZE8M63vBZmY0gMRd0d83OaL4qGVjnMbNHeibPWqJgSuhR0IJ0+LHYIz2Lzdh8QXIyA/tqMqYRg6hBCr5l2t2lo4Ar6+koYM3Pq5BNmCVbdmIGyVbqtB4q1lkm8eoWwohjOwRdKWTbmhHKz4dVjamDvslBtWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725275837; c=relaxed/simple;
-	bh=wvzCQzSMfpZbVTjDOjDI58dr9I+13/EP2jjJQtbCpbA=;
+	s=arc-20240116; t=1725275975; c=relaxed/simple;
+	bh=jZSPsbRDeYfAIjFSccAJD5W2bOgGFFO+iX0qP5NmWsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7Auwty0o/0ndTjweHvgYJ27ehMatNqSZI5BfcLKfLeThfYYQ2ClHNQ+6hVH9gwOd4ANkU6cOuPE7jLD9NcHq7P9VZnEIqyRqIEMOwkijQdwPOlukybsIR5aGpDr21aX+FyHqTAS1JfyCCY3gqRzSNqUv7QPLNKKt+w75nZOcV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oa2OVFDE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB8FFC4CEC2;
-	Mon,  2 Sep 2024 11:17:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ngm8Hy9HICsUr0pjXpfj6LsvXZmUjOkXvAahAJobHfAWjVCNtuGugesYXauANd/2mNLBxSuYpKzg+WhlMWVdA/nM8XWmLk3HZbW7Q8aL5cI5rTru6jQy9usL/lFoZrH9GusSRn92GuSvlAshZjHK4KvVRKj8TRZdSP1RPTd1gHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhXEWN2E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B508C4CEC2;
+	Mon,  2 Sep 2024 11:19:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725275836;
-	bh=wvzCQzSMfpZbVTjDOjDI58dr9I+13/EP2jjJQtbCpbA=;
+	s=k20201202; t=1725275974;
+	bh=jZSPsbRDeYfAIjFSccAJD5W2bOgGFFO+iX0qP5NmWsU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oa2OVFDEmQ8slnIh2J9t1nbdAZtj/jaNpeRqN3adjCVUCV3T6V/uaPIDmhZgUrwB8
-	 MB3FRYqqbg61MJJx7GlSM7kpPcQEiw5H9LuvvSWzpIAgYfCqjI0t/orYLvZc46S9LE
-	 Q3UOQGd7QnKGVyF7l1ZRvIQid57rRSw2XDZWzF2jLHVttAyz0JkSzMjAwDyzmnBAty
-	 fCMW5ZeQzSpNzcG9wIA4VymXSquTCBhEqfJcmXGZ/0BMnX5kN+l3mdJn3gyudBURAn
-	 Xe896b74pRHiYGt5Fop6S/z9uYWqk9giPcrO3WisOsf4LTqqV4DBsM1D3/MUstgbrv
-	 hdYqne0LiItig==
-Date: Mon, 2 Sep 2024 13:17:05 +0200
+	b=VhXEWN2E9SZrEYGDgIOUaT6c13AO0YRmKmHoqVijmCSyZ8uqynj5AEHoRptLZb12b
+	 pbR8f9WKDnb/cL4nuK7thjEmvBWtX2QHgL1zJgPivib3zS6qzKEU5S3CoLPB8t/qK0
+	 T/B6XRjOKcpHehkTYh6xEA9pZDOI6sVufsQUKfJ6+SiEN1Wnj7E9fW/ccF3jyzczyz
+	 uI7PPmsaEhEIeGSQfc+XzDNRU34GYY281uCtHBY/dbL+yXo+bgUue2+nUqPkaHFsLH
+	 riu7ESgI1nbpMVMDUV2/2yQW3N1iAfrvJUhTSLlfVPj8SCkbjmKQL5RYsDZ/SJ/LPh
+	 NPe8lBliBijxA==
+Date: Mon, 2 Sep 2024 13:19:29 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, kees@kernel.org, j.granados@samsung.com, 
-	willy@infradead.org, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	lorenzo.stoakes@oracle.com, trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com, 
-	jlayton@kernel.org, neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, 
-	tom@talpey.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, paul@paul-moore.com, jmorris@namei.org, linux-sh@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH -next 12/15] fs: dcache: move the sysctl into its own file
-Message-ID: <20240902-kumpan-phosphor-439fd7ceecda@brauner>
-References: <20240826120449.1666461-1-yukaixiong@huawei.com>
- <20240826120449.1666461-13-yukaixiong@huawei.com>
+To: Jan Kara <jack@suse.cz>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
+	amir73il@gmail.com, linux-xfs@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-bcachefs@vger.kernel.org, Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v4 16/16] xfs: add pre-content fsnotify hook for write
+ faults
+Message-ID: <20240902-kollidieren-geldbeschaffung-ba4bb1b038d0@brauner>
+References: <cover.1723670362.git.josef@toxicpanda.com>
+ <631039816bbac737db351e3067520e85a8774ba1.1723670362.git.josef@toxicpanda.com>
+ <20240829111753.3znmdajndwwfwh6n@quack3>
+ <20240830232833.GR6216@frogsfrogsfrogs>
+ <20240902102344.evvpipetu6zghrwz@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,17 +65,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240826120449.1666461-13-yukaixiong@huawei.com>
+In-Reply-To: <20240902102344.evvpipetu6zghrwz@quack3>
 
-On Mon, Aug 26, 2024 at 08:04:46PM GMT, Kaixiong Yu wrote:
-> The sysctl_vfs_cache_pressure belongs to fs/dcache.c, move it to
-> its own file from kernel/sysctl.c. As a part of fs/dcache.c cleaning,
-> sysctl_vfs_cache_pressure is changed to a static variable, and export
-> vfs_pressure_ratio with EXPORT_SYMBOL_GPL to be used by other files.
-> And move the unneeded include(linux/dcache.h).
+On Mon, Sep 02, 2024 at 12:23:44PM GMT, Jan Kara wrote:
+> On Fri 30-08-24 16:28:33, Darrick J. Wong wrote:
+> > On Thu, Aug 29, 2024 at 01:17:53PM +0200, Jan Kara wrote:
+> > > On Wed 14-08-24 17:25:34, Josef Bacik wrote:
+> > > > xfs has it's own handling for write faults, so we need to add the
+> > > > pre-content fsnotify hook for this case.  Reads go through filemap_fault
+> > > > so they're handled properly there.
+> > > > 
+> > > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > > 
+> > > Looks good to me but it would be great to get explicit ack from some XFS
+> > > guy...  Some selection CCed :)
+> > 
+> > Looks decent to me, but I wonder why xfs_write_fault has to invoke
+> > filemap_maybe_emit_fsnotify_event itself?  Can that be done from
+> > whatever calls ->page_mkwrite and friends?
 > 
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> ---
+> So we were discussing this already here [1]. The options we have:
+> 
+> 1) Call filemap_maybe_emit_fsnotify_event() from filesystem hooks
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Sidenote: Can that be renamed to filemap_fsnotify() or something
+similar. Especially that "maybe" in there really doesn't add value imho.
 
