@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-28203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258E3967FFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 09:08:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA6A968007
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 09:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2463B223B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 07:08:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66F93B228A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 07:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132DE185921;
-	Mon,  2 Sep 2024 07:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF00185B6F;
+	Mon,  2 Sep 2024 07:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="eX+FSbVj"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Hy2StFKc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F2D15D5D9;
-	Mon,  2 Sep 2024 07:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82216149E03;
+	Mon,  2 Sep 2024 07:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725260841; cv=none; b=VijHLiZYl1kJ/Dc7btMnRJIksuGqMXd75iQ2BK3mWKmwMgyQkP1Eg3V0NRm3RXiI+Ls5x8b5fJjV92qwHVFAf15a89OWcl1FJaS+9zBKFyHelWT4NYCTeCYhkvMYy4YLMpXDzgj3H2/Ol1hsBmE4jao3PWjeVSkALc0tEdBAgCE=
+	t=1725260856; cv=none; b=e/qH7KrLaLIezwxx6ULsF95TYvf53UltAcL+4V5ZrR1lvp5z1svw8Bc6XgyDvjgFt+3G50ZAQVTDw8N54orucIoJ22+QdwmU1BGLyWFBRJnpt41RA6TRpKP8pBdmVX8xVSd+uJLyFmmLfwkHObJyz3xDb+oRbJ7PRgncXjo+97k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725260841; c=relaxed/simple;
-	bh=CJyjA4gBjrQqcN7SKwV2ogAyG7zP2fvwlMbtl9Q/2/0=;
+	s=arc-20240116; t=1725260856; c=relaxed/simple;
+	bh=c4dE2X3D8jNW7VIHknDX4GKLOebCJIX98K1SweWgq9g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RkAqGwodIAVUbST2zuU5looRSor3BvvPriAsElNd4xWQS90wP1o9CbiaBzXXEF+yOKd4Rs9zsyFlNKtPsc7mMnhEshHL5KPmHSQ2OkEVIqKre0igja0YFYgM2OknC8W3tjLVR7n9SgauXnxzGPu3DCqAwRsHTffVVVxA635wt2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=eX+FSbVj; arc=none smtp.client-ip=80.241.56.171
+	 In-Reply-To:To:Cc; b=TdjkqVyORhfmDhC8y7QShOSkR+L/Sf1bL7FTDEXH7lKXg5lE3tKPMQgdvhtx+E5P6BSdOttIFN9CgrsfBy8bBzB7WnSOECaoL1nPmktCVGH6ZRUYMoz21RH2LAHmmvghy+Q++rCeBmwywwiblx7W7nzbx8WUK9Lrjgu4pHVzXeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Hy2StFKc; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Wy0Dz6sqdz9skM;
-	Mon,  2 Sep 2024 09:07:15 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wy0F94X8Lz9scM;
+	Mon,  2 Sep 2024 09:07:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1725260836;
+	t=1725260845;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=T7VuFq93k4shWsKttYPQiSWTE6fbnrqrqnw6DhIiaGM=;
-	b=eX+FSbVjkVuBs1CE53MmEviWKOmjR8b3uXAAg1c4bo6j+myhrUYPhyXVsTIgdgwpCaqzPd
-	8R/b+sZTRmToGqapYu293nY5wDGDZxeICV49jowhRYIb1lcaEIA9uxkpWRNOfmR2l8qjIK
-	1/IMlhkZnMloIiJ9ToNiV1IDQg8vjRqtYPDcbK34/1+jcYU/eSs+vx9+M44rK9JA6lTWK2
-	bRtFQFdkk0ME/j51vJ3Juw8jJhW/2C5L1jcclacsB/j8NzzSsw3WcnkZqCXeeN1MWeuDu7
-	zfFJFsIqEWyJuv4lUCL0cutlD3ttYOomutyYC1ViwSV7G29WigtEdA0f3MeZBg==
+	bh=YeczAUMJPFpgcChSC2NOpYh4duarO6U/B6665/OuVEY=;
+	b=Hy2StFKc/4fKf2gCKEaSL7UxDpWJxwxLk2pIp3OJ2n0a8eq6IW3vyQEhkRp9UJOLiTiunW
+	YVTgg2HXuIfJngk+nyBMbisgCqKp0kocbdERctb3CL37YgSXM/OKuHCK11SCUJi+Rm+DHr
+	d/RS7NpLLmiXwVHtJr1MG9rUNGeOyL4iPgnzY+CHiPuHVq8ooP/7CH8HAR9k3bDkr4U+R+
+	MJuJVkrkZ0uI4B5q/enV9pEvNdplFH8PT1Tox0tMbtr48T4Ewf1d5fyeUq0xy+talR9bzS
+	oiAEfpPnttmh/2ruGnsLF7CYK1q1QPyMWhX5xUUMPN3y3Qg7LIXZKDqCID++eA==
 From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Mon, 02 Sep 2024 17:06:24 +1000
-Subject: [PATCH RFC 2/8] sched_getattr: port to copy_struct_to_user
+Date: Mon, 02 Sep 2024 17:06:25 +1000
+Subject: [PATCH RFC 3/8] openat2: explicitly return -E2BIG for (usize >
+ PAGE_SIZE)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,7 +61,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240902-extensible-structs-check_fields-v1-2-545e93ede2f2@cyphar.com>
+Message-Id: <20240902-extensible-structs-check_fields-v1-3-545e93ede2f2@cyphar.com>
 References: <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
 In-Reply-To: <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
@@ -76,86 +77,42 @@ Cc: Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>,
  Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, 
  linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
  linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2389; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=CJyjA4gBjrQqcN7SKwV2ogAyG7zP2fvwlMbtl9Q/2/0=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaRdTWHWbbc+l+FmL2+3K3T9tA9ldWoXnfYF75SQfvlkf
- rB++tqZHaUsDGJcDLJiiizb/DxDN81ffCX500o2mDmsTCBDGLg4BWAiRr6MDH1F6wLmM4RyCDxy
- 3PwjKr9FZv3518uv3EldtefUtbK7qTkMf7ivBy3Qfdl2pTeEM9JBupnd7+HGX/qhnTbdBX59m3/
- tZgYA
+ linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>, 
+ stable@vger.kernel.org
+X-Developer-Signature: v=1; a=openpgp-sha256; l=891; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=c4dE2X3D8jNW7VIHknDX4GKLOebCJIX98K1SweWgq9g=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaRdTWGRbE3TnMVyMdt3/7qP1bN/2Gyw2jHlR07LlQNPj
+ xpsTOPk6yhlYRDjYpAVU2TZ5ucZumn+4ivJn1aywcxhZQIZwsDFKQATmS3OyHBd5dLj/ifJLEc2
+ z/o4p+HyZJ/uo1XTcvh+nt7n8dBBxFmU4b/b7UkqGo/ddocHbXU6cMVNSOsM471neR8eL2uIuvH
+ zuRQXAA==
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4Wy0Dz6sqdz9skM
 
-sched_getattr(2) doesn't care about trailing non-zero bytes in the
-(ksize > usize) case, so just use copy_struct_to_user() without checking
-ignored_trailing.
+While we do currently return -EFAULT in this case, it seems prudent to
+follow the behaviour of other syscalls like clone3. It seems quite
+unlikely that anyone depends on this error code being EFAULT, but we can
+always revert this if it turns out to be an issue.
 
+Cc: <stable@vger.kernel.org> # v5.6+
+Fixes: fddb5d430ad9 ("open: introduce openat2(2) syscall")
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- kernel/sched/syscalls.c | 42 ++----------------------------------------
- 1 file changed, 2 insertions(+), 40 deletions(-)
+ fs/open.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index ae1b42775ef9..4ccc058bae16 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -1147,45 +1147,6 @@ SYSCALL_DEFINE2(sched_getparam, pid_t, pid, struct sched_param __user *, param)
- 	return copy_to_user(param, &lp, sizeof(*param)) ? -EFAULT : 0;
- }
+diff --git a/fs/open.c b/fs/open.c
+index 22adbef7ecc2..30bfcddd505d 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1458,6 +1458,8 @@ SYSCALL_DEFINE4(openat2, int, dfd, const char __user *, filename,
  
--/*
-- * Copy the kernel size attribute structure (which might be larger
-- * than what user-space knows about) to user-space.
-- *
-- * Note that all cases are valid: user-space buffer can be larger or
-- * smaller than the kernel-space buffer. The usual case is that both
-- * have the same size.
-- */
--static int
--sched_attr_copy_to_user(struct sched_attr __user *uattr,
--			struct sched_attr *kattr,
--			unsigned int usize)
--{
--	unsigned int ksize = sizeof(*kattr);
--
--	if (!access_ok(uattr, usize))
--		return -EFAULT;
--
--	/*
--	 * sched_getattr() ABI forwards and backwards compatibility:
--	 *
--	 * If usize == ksize then we just copy everything to user-space and all is good.
--	 *
--	 * If usize < ksize then we only copy as much as user-space has space for,
--	 * this keeps ABI compatibility as well. We skip the rest.
--	 *
--	 * If usize > ksize then user-space is using a newer version of the ABI,
--	 * which part the kernel doesn't know about. Just ignore it - tooling can
--	 * detect the kernel's knowledge of attributes from the attr->size value
--	 * which is set to ksize in this case.
--	 */
--	kattr->size = min(usize, ksize);
--
--	if (copy_to_user(uattr, kattr, kattr->size))
--		return -EFAULT;
--
--	return 0;
--}
--
- /**
-  * sys_sched_getattr - similar to sched_getparam, but with sched_attr
-  * @pid: the pid in question.
-@@ -1230,7 +1191,8 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
- #endif
- 	}
+ 	if (unlikely(usize < OPEN_HOW_SIZE_VER0))
+ 		return -EINVAL;
++	if (unlikely(usize > PAGE_SIZE))
++		return -E2BIG;
  
--	return sched_attr_copy_to_user(uattr, &kattr, usize);
-+	kattr.size = min(usize, sizeof(kattr));
-+	return copy_struct_to_user(uattr, usize, &kattr, sizeof(kattr), NULL);
- }
- 
- #ifdef CONFIG_SMP
+ 	err = copy_struct_from_user(&tmp, sizeof(tmp), how, usize);
+ 	if (err)
 
 -- 
 2.46.0
