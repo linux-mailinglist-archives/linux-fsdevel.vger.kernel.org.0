@@ -1,208 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-28232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952859685B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 13:07:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FCB9685DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 13:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C9DB2822A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:06:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 330D4B214E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9730186E5B;
-	Mon,  2 Sep 2024 11:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41376181CE1;
+	Mon,  2 Sep 2024 11:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hI6RQIWC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fzhotnCT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SB/dkSu3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kwxmk9pL"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OnCmY1mq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700EF184530;
-	Mon,  2 Sep 2024 11:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A20175A5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 11:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725275088; cv=none; b=kJL8CxLGDTUyE+JqEpHJmSsa4DmI+gKxqXujpbpXgR+QLujJNZr97cpIx709u1fyG0s2YVvACaryyBlVbYUAEiBt5yYEOWNcS0glmLP2QUzjKcaVG9VHgI4YR3ZUKT4cta6Oxf40Nm9mc2MtTFS3rOZ5TDv/d11vjyyUvby5pU0=
+	t=1725275508; cv=none; b=oPtEN1wUI9SUEs7Njrm+DpS2VMcePi2DdAWEioWks24h5i0MgqzHGFcueEAJUxEj0XhqeYr6HuotA/rVjPzdlle/1i99OL8aSdHN1v4CXgdoFU0tGNGqhhuVqKsx1nZQhH6/zbjJVcx82uixsqTtLx2h0syvjOoqYV2OifE3NJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725275088; c=relaxed/simple;
-	bh=iw2MVwhX51dJhWKxubjYLfJi88FIn5V4riiOr6+qcOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nagJJmHXDWALIpx6kZKDybFModkJ2+6Y7Y01JJPBry2QxkTbkL+qfzoV0SNvQCKK+7XdY2ZVtcxjFnRZeypUEoRRyKrHuR4OOfNZV9ab7qCzQt3bktq0ik5uJmAksEt0y8xdprvJoPlPlXtNLTBUbaxhO7UC7pVN6xugYPphB1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hI6RQIWC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fzhotnCT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SB/dkSu3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kwxmk9pL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7D31D1FBA6;
-	Mon,  2 Sep 2024 11:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725275084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LrwrQnk3AUWu3toRtwqVBHqDGPavhHbdLcu1XMq0qOs=;
-	b=hI6RQIWCMmhPKWpe6o9I9QXZIyKLX6nWwWERaF7rK0FX8gm7K4+VUeqm/gFHwJBmh8ZpTC
-	N116j6rdT4K+BTuz7Z9A53qZSjmFH15sKy5bgWIRjmG8sLatsYFBzdpdNRTgSVXvMUO/4z
-	lVrGKOkxI+zsCsPmoMXcvFGzHJGHLcM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725275084;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LrwrQnk3AUWu3toRtwqVBHqDGPavhHbdLcu1XMq0qOs=;
-	b=fzhotnCTLWLF4CazDLISpd0l0merMT3jIRmD475OHBF3W/wb4SdZkLUwSiLaH5yoZB77A7
-	hV9pNWjqdDeRMhAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="SB/dkSu3";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Kwxmk9pL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725275083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LrwrQnk3AUWu3toRtwqVBHqDGPavhHbdLcu1XMq0qOs=;
-	b=SB/dkSu3SP2u2hBSzXm6S9gz7Spy5gi22kJpDyJ52c71E7p6DO8AlWmq6zyQ0pVQ9G9Uhn
-	2pFLu2+HoeeP/nKHNnsHmIDGpO6u4B5XSwKuLfQknyqk7TByYid/m80rz/ABTvePGVGXJ2
-	WaiGtSCgxKRWIag/SHT6W4usWrRFiAo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725275083;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LrwrQnk3AUWu3toRtwqVBHqDGPavhHbdLcu1XMq0qOs=;
-	b=Kwxmk9pLByDZhraqS548Om7S4OJTeE0qbNRB5Q+QkqOnXvG1vuRf3Ro2cc3zr2feQ9z2yX
-	AdMOesNtHuAjMwBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D4B113A7C;
-	Mon,  2 Sep 2024 11:04:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HruoGsub1WYKcwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 02 Sep 2024 11:04:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1FCC7A0965; Mon,  2 Sep 2024 13:04:28 +0200 (CEST)
-Date: Mon, 2 Sep 2024 13:04:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kees Cook <kees@kernel.org>
-Cc: Kaixiong Yu <yukaixiong@huawei.com>, akpm@linux-foundation.org,
-	mcgrof@kernel.org, ysato@users.sourceforge.jp, dalias@libc.org,
-	glaubitz@physik.fu-berlin.de, luto@kernel.org, tglx@linutronix.de,
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	j.granados@samsung.com, willy@infradead.org,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com,
-	trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com,
-	jlayton@kernel.org, neilb@suse.de, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	paul@paul-moore.com, jmorris@namei.org, linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH -next 12/15] fs: dcache: move the sysctl into its own file
-Message-ID: <20240902110428.os726rhlt6y5i4ak@quack3>
-References: <20240826120449.1666461-1-yukaixiong@huawei.com>
- <20240826120449.1666461-13-yukaixiong@huawei.com>
- <202408261253.D155EA0@keescook>
+	s=arc-20240116; t=1725275508; c=relaxed/simple;
+	bh=ACYti0hxKYVlzkz96GHvJe0UCYPSKaa4OxF8s/gep5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GHrP/LMGw7DiUyKKpS3eAB400V1xzDC1I9FMGE2Xq5fhaos2ELH7DN7YLgZHDuYk6O+1QyusGo28vmofbJ7dS+37m9hNfR3TZx+NJ8VeVz9ii7Vzv6DubkSmZxMl62aRBfrtlalXIfyXJUYpTEO+G5naEQidCN+hs/B1XqfrLDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OnCmY1mq; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a869332c2c2so812961066b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Sep 2024 04:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1725275504; x=1725880304; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kuph0+9o4A1RPBphrgMO3PL8jFdGA5zKpiVVErC0F/k=;
+        b=OnCmY1mqmtxMVFTFjLXpy3zZigFu0OOki2+j5xPTGH0X0rEfdXSfa+MiNxF82m2xNB
+         N/0AGia4jUlm07ScatBxnkXDeN/4ooekEEnc8Fn4ypZHwZG6H016TcixqxEjlv5qIpJd
+         DmM0RG40rCJnbfXTatNOK37TeNw91gTvRInag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725275504; x=1725880304;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kuph0+9o4A1RPBphrgMO3PL8jFdGA5zKpiVVErC0F/k=;
+        b=CtiFK/KipPwFTeYBJ7LDzQGCVV0lKwebCEXLjqS2vDMAvxOYNHXjyzyyzmMdn/gpwo
+         BMOHbrK0XgHVjmphhTF2wwHFpqHMA2HPG2q8Jm1PITSwrIAAd5F1Quxy/DFb0w0EVbkU
+         1ofEQIrIpLorhtd42Jbsq0ULrwvHgmvW8c1hl8qPz4CominN9mxQcXGNJWAPuAUC+EfH
+         9mNnXNK6HPZo/uyL6p3GIoY8KXsKec6Is6wc9cERigZwqk05KE+W2jvGHKhv0WrPFcV2
+         hhqx+0woDAVn75fnEQz0yFehY9Yo0REEFzQ1ACrTEC2N07hYfm9SI6Mb+m2K//Ask0dZ
+         4bwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUY7LbLidmyCXRybpp7XVHkeDrJxWSbEWqV/Jv+BiDSK1ZBrBFrylyFfv0C0xzGF808bWAFTnNkD2rJaDAS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAvChY01FxV1a4DF5MNZ+clp/Y0Y4J32/I2OvacdLZ5xbVkI6y
+	AaZaArN/ZPTlVAG4/I8LXzdtGoWJfroCWOFVTafMbYP1MVX7XM0bE51xbkxUvJwFOhHnHqLMSHn
+	Z5B3XOjKNjbKVA1i0eLQchOkBCqUxonJklGd5d5RRdrgF4wSXkaA=
+X-Google-Smtp-Source: AGHT+IFBxYjxkpMm6qbV9fEsZkagQqPFpQha8XkxW51P/F5oJ/Yydy83LAC9tU2cSwhRYQpNxEurFqLkG3Jmy8LaC6g=
+X-Received: by 2002:a17:907:3da0:b0:a86:a6ee:7d92 with SMTP id
+ a640c23a62f3a-a89825a4390mr1484060166b.18.1725275504209; Mon, 02 Sep 2024
+ 04:11:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202408261253.D155EA0@keescook>
-X-Rspamd-Queue-Id: 7D31D1FBA6
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[42];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLdxgs459xdbsauns6rcjztsec)];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+References: <20240830162649.3849586-1-joannelkoong@gmail.com>
+ <20240830162649.3849586-2-joannelkoong@gmail.com> <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
+ <1c7c9f00-8e94-4a98-a3d4-a3610d35e744@fastmail.fm>
+In-Reply-To: <1c7c9f00-8e94-4a98-a3d4-a3610d35e744@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 2 Sep 2024 13:11:31 +0200
+Message-ID: <CAJfpegsGH06H1tEbV3TDFiwC2d9Kfr-da288mqT83yo85naqGg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] fuse: add optional kernel-enforced timeout for requests
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	josef@toxicpanda.com, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon 26-08-24 12:56:00, Kees Cook wrote:
-> On Mon, Aug 26, 2024 at 08:04:46PM +0800, Kaixiong Yu wrote:
-> > The sysctl_vfs_cache_pressure belongs to fs/dcache.c, move it to
-> > its own file from kernel/sysctl.c. As a part of fs/dcache.c cleaning,
-> > sysctl_vfs_cache_pressure is changed to a static variable, and export
-> > vfs_pressure_ratio with EXPORT_SYMBOL_GPL to be used by other files.
-> > And move the unneeded include(linux/dcache.h).
-> > 
-> > Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> > ---
-> >  fs/dcache.c            | 21 +++++++++++++++++++--
-> >  include/linux/dcache.h |  7 +------
-> >  kernel/sysctl.c        |  9 ---------
-> >  3 files changed, 20 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/fs/dcache.c b/fs/dcache.c
-> > index 1af75fa68638..8717d5026cda 100644
-> > --- a/fs/dcache.c
-> > +++ b/fs/dcache.c
-> > @@ -73,8 +73,13 @@
-> >   * If no ancestor relationship:
-> >   * arbitrary, since it's serialized on rename_lock
-> >   */
-> > -int sysctl_vfs_cache_pressure __read_mostly = 100;
-> > -EXPORT_SYMBOL_GPL(sysctl_vfs_cache_pressure);
-> > +static int sysctl_vfs_cache_pressure __read_mostly = 100;
-> > +
-> > +unsigned long vfs_pressure_ratio(unsigned long val)
-> > +{
-> > +	return mult_frac(val, sysctl_vfs_cache_pressure, 100);
-> > +}
-> > +EXPORT_SYMBOL_GPL(vfs_pressure_ratio);
-> 
-> This was a static inline, but AFAICT it's only called through
-> alloc_super() which is hardly "fast path". If this series gets another
-> version it may be worth calling out this inline->out-of-line change in
-> the commit log.
-> 
-> I don't think it's a blocker, but I'm not a VFS maintainer. :)
+On Mon, 2 Sept 2024 at 12:50, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
 
-It's actually called from about 7 shrinkers of filesystem objects. They get
-called relatively frequently during memory reclaim but I don't think a
-function call is *that* expensive to matter in this case. Feel free to add:
+> In case of distributed servers, it can easily happen that one server has
+> an issue, while other servers still process requests. Especially when
+> these are just requests that read/getattr/etc and do not write, i.e.
+> accessing the stuck server is not needed by other servers. So in my
+> opinion not so unlikely. Although for such cases not difficult to
+> timeout within the fuse server.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Exactly.  Normally the kernel should not need to time out fuse
+requests, and it might be actively detrimental to do so.
 
+The main case this wants to solve is a deadlocked server due to
+programming error, AFAICS.   And this would only work in environments
+where requests are  guaranteed to complete within some time period.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So if the server needs to handle request timeouts, then it should
+*not* rely on the kernel timeout.   The kernel timeout should be a
+safeguard against broken or malicious servers, not an aid to implement
+request timeouts.
+
+Thanks,
+Miklos
 
