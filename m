@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-28195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F27967E09
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 05:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A1B967E0B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 05:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F41B51C21C77
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 03:01:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39A9281B8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 03:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831516F2F3;
-	Mon,  2 Sep 2024 03:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B143A8CB;
+	Mon,  2 Sep 2024 03:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="corBn7BM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IB1TYKzl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CA256455;
-	Mon,  2 Sep 2024 03:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BB779C0;
+	Mon,  2 Sep 2024 03:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725246060; cv=none; b=VvWOWcjgyZWe3paDii7igwARxsPgOWf07vvJ5/2Y7w4Wh3/6gOQIA0isOkO9yFlwDuaVhsVpFgImxITjDZGshGVdT7Vf0JEh38AutB9UsrjFqtbMX0TMJO5MWqjs7TDULjDJitnrTXdejEsBcGrmB5wesoASi4Xp0pjWBfHgDgA=
+	t=1725246208; cv=none; b=fcPWa1t2DMEe0+0eBpJc81cFw3yGmiP1hC6HnY2nGBGDa6cqgRdZjn9bTwlKMXXfvYTpG2bxHLjLeZWrWVLY+E4GtE3RIc1tX8qSL1rtV4Ho2DNsRiRWiWVc2keQjpmEjZwQ6+Pq9/UnH0xLo8x3hxPzPqIdURJShgSaGFrzAMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725246060; c=relaxed/simple;
-	bh=edAOJAmsZw3975fOsodLPJi2UQo+cY3XRH19urTIDbY=;
+	s=arc-20240116; t=1725246208; c=relaxed/simple;
+	bh=FD5QgdU1llmtdefhiBbMEIfOQBm1h7zqqXMxz0ZmR/o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GuSLmuNOUDxnuY6ofX5k2cIMVW9VdmECJKCbHFDyjKQffbabHXZOi69CS2Y260AhJJGhB3eXDIxIMCJu/dCie/r4iNzezadQAGirQFEQX90u3xwJlkyGrhWmiQA0XI4KYV70W0Bfkedp9sPbLDEdupYTkImJeYXWd9zdeh/FeVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=corBn7BM; arc=none smtp.client-ip=209.85.219.182
+	 To:Cc:Content-Type; b=ZToB/GSOwfZ28SfZ4npbTnWy8jrMMeDjixto3l1gpUFnyeGG0yZg/5aUdXaVSJD/AOSIz52PhjqoCjE+hbeG7L/b3mkgozWi+5r1TbotFXexbR7nfXTLKzCudzJaMO4pFPwOZ2MAB7BNM80xPu7Oj/0HY9rhQpU54IKpRKUEecA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IB1TYKzl; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e1a819488e3so2415884276.3;
-        Sun, 01 Sep 2024 20:00:58 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-456774a0fe7so20936731cf.0;
+        Sun, 01 Sep 2024 20:03:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725246057; x=1725850857; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725246205; x=1725851005; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=edAOJAmsZw3975fOsodLPJi2UQo+cY3XRH19urTIDbY=;
-        b=corBn7BM0pl+b3HhcWruOEgag+46o6dAbkqiQTuMPG6fpgVn79XHKENBl2P1dJ1VJa
-         OjUnrWa7xoYC/iroOf7FSEWU7tJt/C4oBperUjPeumoyWK4Wg5o7oFut+Q0PHmE24eFZ
-         9f4L+gwx/qa2h1cLVAGsJBUl59MGWQWQLqmbB3NXf883upRJyGfB70mbVpv6YIXBtDCO
-         I59+HiZ1NwsqqIt9SH1sOez7PRDRKXfPN+ayyiNTm0YDYkq78GWhZCoSt1mjz8NGL2NA
-         B+BN5tFnM33/ACRWFzJ61Pp9HjX+FaPE3KFMjwRRNkd3WklqPXhLxIxix1+uCDcEzeyq
-         Hb4Q==
+        bh=LZxvKASLeQPhlUeFrFQCFSS8riyVWdaWYAqCbhxuJ7E=;
+        b=IB1TYKzlH9sImKgOSZYRddp4GTCOiaEXLoPrQ9/zwVBVJ7sE4PQY0N7Xh26qinXuC0
+         7IxH94OJh0KdRJ5HlSmp1eE8EfgVwRkPs/noZFZObdIvcBqp2cRTNUpUDJnM9NjW5Pt2
+         Y2SvcRXUJODoy1scdLYv79uQJQ+a8cDWAcf42CiaemCROqEGQczy2j/AfyEpb6fZaCg+
+         wcMRb5biDMOdG+X/GQJi0rUOcQ58WMrYshrPj/J6WPcHeinGDHUcsZgY+QEesp76Hrql
+         gQN4992Cpm/sur82ADvRGicvi7CSwv+h2oanimtO5EbqzumPjBZYggzOP1F6pT3tlfW4
+         BqiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725246057; x=1725850857;
+        d=1e100.net; s=20230601; t=1725246205; x=1725851005;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=edAOJAmsZw3975fOsodLPJi2UQo+cY3XRH19urTIDbY=;
-        b=G7fBl9+yQL/Ift8T+yduAyj/Vi+ocSsolFry1kgpkeEzT+XY9t4J+sSC9sRLnMMCrq
-         dEQS3xLkyyRs3Dw3x03XWSR3O9W+MTiwfvkDweGVUqX7kfpkSCT9NYw1Omtp1OKNiZKK
-         bxXaqL7qeQOw48gfilXkjJBd2vvCQQCtGDPTPgNZUMRIwO1P1csf6yEnA3hwWK4rpayv
-         7oZfPllGpfr2BKnsQbCIXdTqoQijxFs2Cy++DZLmWPy2zbjwOhSGrexHX4ChTdY5SaLV
-         SpOLavXrOABjpIdw4NbgtooLQKswudFEd85aTtoMHVIVQfZ2es2RHN8vbmxcY5bDrb/r
-         b8Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/q3f8dcZl0VXcbpEHFhN7VNOx4fwGegCKNSfdakPovVeRGCO6xiUO0u0w9qJpZ2J0K4OUFC8D2qwETiqs@vger.kernel.org, AJvYcCXo1+LLQdYX+k9z0RRb0QTT4w9/uYo95iqaVm6zMRr28B551VubaTrx6RDgfCvkza2GLTl5YOq4i2+jbq70@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrGE84fkIxWbfYgSaFZuga9cq44XeKjLnXJMRM7vob/S5/ppQs
-	zpFWb1uCkK5JC/0cSEUmlNHCtltlJj+7gu4kH+G8+gqLgFGYGVTtqkbTHBCOX1ubG97mh3styZ+
-	d8hFz9W9YeUaZrfEQ1cJ6wODaz+E=
-X-Google-Smtp-Source: AGHT+IF5Cjbyc1u2E5YIqEaXq1jH6gbFBHgZFuhUPu8+BRfDQXy8bRu8L1XCnhFIKLjj0jYfWHQ9t9TKxlFN9rT5L8o=
-X-Received: by 2002:a05:6902:c06:b0:e16:19f7:9702 with SMTP id
- 3f1490d57ef6-e1a7a01cc00mr10955110276.24.1725246057273; Sun, 01 Sep 2024
- 20:00:57 -0700 (PDT)
+        bh=LZxvKASLeQPhlUeFrFQCFSS8riyVWdaWYAqCbhxuJ7E=;
+        b=DgmTeCQeIISBFWAPBKmJHM4ptkaST8TsPRgXF0UvgFkoweYu/9LHfxkDDiJ2b52NpW
+         ZwQMj+v6BdaxLGrg3AJ8q6/YoQQnotG3I94HCtFijK92Khgw70bGuQ6mAAzZDB3E2LM/
+         D1965SaMeajsjAu/ILSMDSrHNlVbHq4nBCCfZg5D9FX2pkwNfmPHY7vUCo1/AW7DfyDF
+         +rV6QSALCnZaRuh9nN3EhEeJV911ZRS3ggzcOaSpyNolyfnWPsW7XNX1RB50QIfUKL1R
+         soHLGPGpU5mBiQ1IUiKt6mWMh2IOLg6KZZq/LGculnEv2VbvJVbNhVm55p68i6xcN2Y6
+         xXVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAmK7wP22U5+dd4DsW7pcWz9MTXuHd1yLIKzZ7wrP+fpLm4G8HcRbNpmF4Pu5oG6DeXgekddyb/Cn0ob36@vger.kernel.org, AJvYcCWxbXtO1R4qMn7b7eyFJg8xbVyEzX7jcSTfk7JdQSU3nT27SlV/p/XA0oe7avOTnhlx3cCkfHR064MP/m+t@vger.kernel.org
+X-Gm-Message-State: AOJu0YynH/+hX9Ef0SqppkC43nPBTtifo6t2f9tZUsEqHG7x3PrtCJ3/
+	I2ATnE5tOAaV396wPbrlBwp+AwZsyuN99qDGbqAucrQWfbcPdL4/54YHvEc/nyETCg86L/HwiKC
+	MDlisSwPyHJy3ovzfs8QFhUImfkc=
+X-Google-Smtp-Source: AGHT+IGQT0cG/HgGQSVHmz2EXEuhrSnKMDbqLSUVFa8dO6+VBSLmM6ZI7QgskC6mcN/cUUG56353wFfp/xkzaJSVjf4=
+X-Received: by 2002:a05:6214:468e:b0:6c3:5a86:6a2e with SMTP id
+ 6a1803df08f44-6c35a867552mr66716106d6.50.1725246205287; Sun, 01 Sep 2024
+ 20:03:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,26 +76,79 @@ References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
  <Zs959Pa5H5WeY5_i@tiehlicka> <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
  <ZtBWxWunhXTh0bhS@tiehlicka> <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
  <ZtCFP5w6yv/aykui@dread.disaster.area> <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
- <f62e400e-49ab-4d0a-b2e2-c3bbb66c2ab1@suse.cz>
-In-Reply-To: <f62e400e-49ab-4d0a-b2e2-c3bbb66c2ab1@suse.cz>
+ <ZtPhAdqZgq6s4zmk@dread.disaster.area>
+In-Reply-To: <ZtPhAdqZgq6s4zmk@dread.disaster.area>
 From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon, 2 Sep 2024 11:00:22 +0800
-Message-ID: <CALOAHbCPiDbQuSzZE-9VuHwkjX-UfXsHPMfdowdG31KhTPMXPQ@mail.gmail.com>
+Date: Mon, 2 Sep 2024 11:02:50 +0800
+Message-ID: <CALOAHbBEF=i7e+Zet-L3vEyQRcwmOn7b6vmut0-ae8_DQipOAw@mail.gmail.com>
 Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc allocations
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Dave Chinner <dchinner@redhat.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 11:25=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> w=
-rote:
+On Sun, Sep 1, 2024 at 11:35=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
+wrote:
 >
-> On 8/30/24 11:14, Yafang Shao wrote:
+> On Fri, Aug 30, 2024 at 05:14:28PM +0800, Yafang Shao wrote:
 > > On Thu, Aug 29, 2024 at 10:29=E2=80=AFPM Dave Chinner <david@fromorbit.=
 com> wrote:
+> > >
+> > > On Thu, Aug 29, 2024 at 07:55:08AM -0400, Kent Overstreet wrote:
+> > > > Ergo, if you're not absolutely sure that a GFP_NOFAIL use is safe
+> > > > according to call path and allocation size, you still need to be
+> > > > checking for failure - in the same way that you shouldn't be using
+> > > > BUG_ON() if you cannot prove that the condition won't occur in real=
+ wold
+> > > > usage.
+> > >
+> > > We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
+> > > now. This was the default Irix kernel allocator behaviour (it had a
+> > > forwards progress guarantee and would never fail allocation unless
+> > > told it could do so). We've been using the same "guaranteed not to
+> > > fail" semantics on Linux since the original port started 25 years
+> > > ago via open-coded loops.
+> > >
+> > > IOWs, __GFP_NOFAIL semantics have been production tested for a
+> > > couple of decades on Linux via XFS, and nobody here can argue that
+> > > XFS is unreliable or crashes in low memory scenarios. __GFP_NOFAIL
+> > > as it is used by XFS is reliable and lives up to the "will not fail"
+> > > guarantee that it is supposed to have.
+> > >
+> > > Fundamentally, __GFP_NOFAIL came about to replace the callers doing
+> > >
+> > >         do {
+> > >                 p =3D kmalloc(size);
+> > >         while (!p);
+> > >
+> > > so that they blocked until memory allocation succeeded. The call
+> > > sites do not check for failure, because -failure never occurs-.
+> > >
+> > > The MM devs want to have visibility of these allocations - they may
+> > > not like them, but having __GFP_NOFAIL means it's trivial to audit
+> > > all the allocations that use these semantics.  IOWs, __GFP_NOFAIL
+> > > was created with an explicit guarantee that it -will not fail- for
+> > > normal allocation contexts so it could replace all the open-coded
+> > > will-not-fail allocation loops..
+> > >
+> > > Given this guarantee, we recently removed these historic allocation
+> > > wrapper loops from XFS, and replaced them with __GFP_NOFAIL at the
+> > > allocation call sites. There's nearly a hundred memory allocation
+> > > locations in XFS that are tagged with __GFP_NOFAIL.
+> > >
+> > > If we're now going to have the "will not fail" guarantee taken away
+> > > from __GFP_NOFAIL, then we cannot use __GFP_NOFAIL in XFS. Nor can
+> > > it be used anywhere else that a "will not fail" guarantee it
+> > > required.
+> > >
+> > > Put simply: __GFP_NOFAIL will be rendered completely useless if it
+> > > can fail due to external scoped memory allocation contexts.  This
+> > > will force us to revert all __GFP_NOFAIL allocations back to
+> > > open-coded will-not-fail loops.
+> > >
+> > > This is not a step forwards for anyone.
 > >
 > > Hello Dave,
 > >
@@ -108,7 +161,30 @@ com> wrote:
 > > __GFP_NOFAIL removes this throttling mechanism, potentially causing
 > > issues when the system is under heavy memory load. I'm concerned that
 > > this shift might not be a beneficial trend.
-> >
+>
+> AIUI, the memory allocation looping has back-offs already built in
+> to it when memory reserves are exhausted and/or reclaim is
+> congested.
+>
+> e.g:
+>
+> get_page_from_freelist()
+>   (zone below watermark)
+>   node_reclaim()
+>     __node_reclaim()
+>       shrink_node()
+>         reclaim_throttle()
+
+It applies to all kinds of allocations.
+
+>
+> And the call to recalim_throttle() will do the equivalent of
+> memalloc_retry_wait() (a 2ms sleep).
+
+I'm wondering if we should take special action for __GFP_NOFAIL, as
+currently, it only results in an endless loop with no intervention.
+
+>
 > > We have been using XFS for our big data servers for years, and it has
 > > consistently performed well with older kernels like 4.19.y. However,
 > > after upgrading all our servers from 4.19.y to 6.1.y over the past two
@@ -117,41 +193,17 @@ com> wrote:
 > > applications, which isn't an ideal solution and represents a worrying
 > > trend.
 >
-> By "livelock issues caused by memory exhaustion" you mean the long-standi=
-ng
-> infamous issue that the system might become thrashing for the remaining
-> small amount of page cache, and anonymous memory being swapped out/in,
-> instead of issuing OOM, because there's always just enough progress of th=
-e
-> reclaim to keep going, but the system isn't basically doing anything else=
-?
->
+> If userspace uses all of memory all the time, then the best the
+> kernel can do is slowly limp along. Preventing userspace from
+> overcommitting memory to the point of OOM is the only way to avoid
+> these "userspace space wants more memory than the machine physically
+> has" sorts of issues. i.e. this is not a problem that the kernel
+> code can solve short of randomly killing userspace applications...
 
-Exactly
-
-> I think that's related to near-exhausted memory by userspace,
-
-If user space is the root cause, the appropriate response should be to
-terminate the offending user tasks. However, this doesn't happen at
-all.
-
-> so I'm not
-> sure why XFS would be to blame here.
-
-Honestly, I'm not sure what to blame, as I don't have a clear
-understanding of what's happening during memory allocation. One server
-among tens of thousands in production randomly experiences a livelock
-within days, making it extremely difficult to pinpoint the root cause.
-
->
-> That said, if memalloc_retry_wait() is indeed a useful mechanism, maybe w=
-e
-> could perform it inside the page allocator itself for __GFP_NOFAIL?
-
-Perhaps an additional wait or exit mechanism should be implemented
-specifically for __GFP_NOFAIL.
+We expect an OOM event, but it never occurs, which is a problem.
 
 --
 Regards
+
 Yafang
 
