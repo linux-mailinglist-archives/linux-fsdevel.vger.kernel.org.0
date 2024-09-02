@@ -1,148 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-28269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CFD968BA1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 18:09:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C01B968C5C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 18:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42B9CB229DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 16:09:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03FE1C20B44
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 16:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E4D1A3041;
-	Mon,  2 Sep 2024 16:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881891AB6F6;
+	Mon,  2 Sep 2024 16:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="cNNUa0S3"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="oPQnB+hq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27221A3023;
-	Mon,  2 Sep 2024 16:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E1D1AB6D0;
+	Mon,  2 Sep 2024 16:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725293328; cv=none; b=CNy9z/tA1r3kJcJS6m28Yxm9qQG257u0TJNugY3e1TwF29S7Q8aQ/7A0eJ8omVFpP/GypbbvNVRq2TZlGCYfwXNI1bYF3WRptEv0hG/OQ/2OESBx/jCRENzmqkz9vSEm+FG2IKxVSSYYW4K8i9K9QMwXZhu/X2NmgXtyghsSZOQ=
+	t=1725295601; cv=none; b=ArYdKjRtG8Gc+BPizAjm7yZ6NpG4Q8xRLsk9owLXRmCZPnZewPC+/fgDqUtRkgXtjDWfizDtQEzm5daAbGCibcx4raSbal6ROrMPXSgGon0Cd7TVeDV1zCF6kFTxaU5w7EZ6Xr7e4hFLe94ZD2JWLbPDAeHyEZr/GXvsGbtZ6EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725293328; c=relaxed/simple;
-	bh=udCLYS03vFzY0pDP0VXNCARsSZDvZr7IQUhpJq1Ey+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=onEpcdftinpaHWC3P4qCUBC+xIZNIgJx8GfFplOR+2F3I6qeYpx1xMCHMPoJw5K/w50qZfeJyR9mKFo24qMRD1p8xLWyq1k0q7dxyDTA4cW7H9GJuWiXhfaZidooy+NXF/xq69mtlkKKWkSknwZ4lJ8Sqv//mhXtPHne9fRlEYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=cNNUa0S3; arc=none smtp.client-ip=80.241.56.151
+	s=arc-20240116; t=1725295601; c=relaxed/simple;
+	bh=2JEtkyYBzbNUNWYD6K3reCmf/PfliNsGWxt62ICcuOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VcdnAuD9ZWoiPALu6yGmuctzK3/nU0UWigeP5xHSdK4nk+1g7+cVpcKe/VWdnbltmHVRethqlbu0axhtUZk1/YNl05xcfY7xnVP5S0SmNcEw2eiufxvJ2GtBgunx51dd7ySxdw+wnwlx3pOZ0MNpXX+9ptRfN0OafYHhBjP9ToI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=oPQnB+hq; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WyDFj5pVYz9t1t;
-	Mon,  2 Sep 2024 18:08:41 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WyF5L1kQqz9tqL;
+	Mon,  2 Sep 2024 18:46:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1725293321;
+	t=1725295590;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bnehve9VjMnII0s4fDhfCcbW2zyjJe5jdh+Zfgbp8WE=;
-	b=cNNUa0S3Iq182pJH+ahbE5zzdZTntjXR7caJZLh8wQQK2pMWA6nS8n0jBn0sakWP6e24vw
-	kMyOlQqR1AxWzazQMHSjUF9doKKXWRwz+IPz2sGzN7DGBIJeXXfdFWb08AQ258ZuzGVxSu
-	LXj+t+WneeeH68MNhgSIWKr6buPAbu1oOas4jIHbs3z0YfK2pWm7Qq2XTxwRSrSOmJguNE
-	MsJF+6bK8BpckmA6qEi0k+NY/ft5i1QVgD4PPuwH0jflDz5he3FpP1GP9xto7ln1lyc6OH
-	XSKAzWs8jgM0FzNrXYZFk7E1i0JDtXbXUSB+OU3vohpz0STXzPCQx2Oqly+/7g==
-Date: Tue, 3 Sep 2024 02:08:26 +1000
+	bh=DYW8e2RAgi5MkOkqfurv6e1luZxwkEFySGMNtg8Nzlo=;
+	b=oPQnB+hqa7XH5g9+gr6LNTU20LJqEkqpeyTK30MGGwRdEzKbVOpOAmNhhxrqJbO/UyXT2P
+	GDQSz1ZtpmPJAQSbpR6gsfBGdGnenHUxjxCTIMn+dkByq8f8I2iITdoR6L8oJn9ReDYrij
+	jg5HW040NxkE3/t5/p68SIPlJ8arf5Iut5uoBZnho3NCut3SZvYZ/xs6ZqqDQ30KuCPqAV
+	cZsRtiHdPXMFu5dkGfuqT4Hp4mzYM+sAOadY2yHJLjB0kwllmri5HCSwioall5AH+LIlzq
+	pcGEsJFvlFRgcSNiInvFTo1VZhXZ9C1A+dTjE7xTLKVW8xEgxtsj53YyVPf10w==
 From: Aleksa Sarai <cyphar@cyphar.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, shuah <shuah@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
-	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH RFC 3/8] openat2: explicitly return -E2BIG for (usize >
- PAGE_SIZE)
-Message-ID: <20240902.160305-cuddly.doc.quaint.provider-RsRaXpw78cll@cyphar.com>
-References: <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
- <20240902-extensible-structs-check_fields-v1-3-545e93ede2f2@cyphar.com>
- <63193b87-7057-4ad0-aef2-fdb5d15138c3@app.fastmail.com>
+To: fstests@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH xfstests v2 1/2] statx: update headers to include newer statx fields
+Date: Tue,  3 Sep 2024 02:45:53 +1000
+Message-ID: <20240902164554.928371-1-cyphar@cyphar.com>
+In-Reply-To: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
+References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3itig22h2tekijst"
-Content-Disposition: inline
-In-Reply-To: <63193b87-7057-4ad0-aef2-fdb5d15138c3@app.fastmail.com>
-X-Rspamd-Queue-Id: 4WyDFj5pVYz9t1t
+Content-Transfer-Encoding: 8bit
 
+These come from Linux v6.11-rc5.
 
---3itig22h2tekijst
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ src/open_by_handle.c |  4 +++-
+ src/statx.h          | 22 ++++++++++++++++++++--
+ 2 files changed, 23 insertions(+), 3 deletions(-)
 
-On 2024-09-02, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Sep 2, 2024, at 07:06, Aleksa Sarai wrote:
-> > While we do currently return -EFAULT in this case, it seems prudent to
-> > follow the behaviour of other syscalls like clone3. It seems quite
-> > unlikely that anyone depends on this error code being EFAULT, but we can
-> > always revert this if it turns out to be an issue.
->=20
-> Right, it's probably a good idea to have a limit there rather than
-> having a busy loop with a user-provided length when the only bound is
-> the available virtual memory.
->=20
-> >  	if (unlikely(usize < OPEN_HOW_SIZE_VER0))
-> >  		return -EINVAL;
-> > +	if (unlikely(usize > PAGE_SIZE))
-> > +		return -E2BIG;
-> >=20
->=20
-> Is PAGE_SIZE significant here? If there is a need to enforce a limit,
-> I would expect this to be the same regardless of kernel configuration,
-> since the structure layout is also independent of the configuration.
+diff --git a/src/open_by_handle.c b/src/open_by_handle.c
+index 0f74ed08b1f0..d9c802ca9bd1 100644
+--- a/src/open_by_handle.c
++++ b/src/open_by_handle.c
+@@ -82,12 +82,14 @@ Examples:
+ #include <string.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+-#include <sys/stat.h>
+ #include <sys/types.h>
+ #include <errno.h>
+ #include <linux/limits.h>
+ #include <libgen.h>
+ 
++#include <sys/stat.h>
++#include "statx.h"
++
+ #define MAXFILES 1024
+ 
+ struct handle {
+diff --git a/src/statx.h b/src/statx.h
+index 3f239d791dfe..935cb2ed415e 100644
+--- a/src/statx.h
++++ b/src/statx.h
+@@ -102,7 +102,7 @@ struct statx {
+ 	__u64	stx_ino;	/* Inode number */
+ 	__u64	stx_size;	/* File size */
+ 	__u64	stx_blocks;	/* Number of 512-byte blocks allocated */
+-	__u64	__spare1[1];
++	__u64	stx_attributes_mask; /* Mask to show what's supported in stx_attributes */
+ 	/* 0x40 */
+ 	struct statx_timestamp	stx_atime;	/* Last access time */
+ 	struct statx_timestamp	stx_btime;	/* File creation time */
+@@ -114,7 +114,18 @@ struct statx {
+ 	__u32	stx_dev_major;	/* ID of device containing file [uncond] */
+ 	__u32	stx_dev_minor;
+ 	/* 0x90 */
+-	__u64	__spare2[14];	/* Spare space for future expansion */
++	__u64	stx_mnt_id;
++	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
++	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
++	/* 0xa0 */
++	__u64	stx_subvol;	/* Subvolume identifier */
++	__u32	stx_atomic_write_unit_min;	/* Min atomic write unit in bytes */
++	__u32	stx_atomic_write_unit_max;	/* Max atomic write unit in bytes */
++	/* 0xb0 */
++	__u32   stx_atomic_write_segments_max;	/* Max atomic write segment count */
++	__u32   __spare1[1];
++	/* 0xb8 */
++	__u64	__spare3[9];	/* Spare space for future expansion */
+ 	/* 0x100 */
+ };
+ 
+@@ -139,6 +150,13 @@ struct statx {
+ #define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
+ #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
++#define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
++#define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
++#define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
++#define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
++#define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
++
++#define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+ #define STATX_ALL		0x00000fffU	/* All currently supported flags */
+ 
+ /*
+-- 
+2.46.0
 
-PAGE_SIZE is what clone3, perf_event_open, sched_setattr, bpf, etc all
-use. The idea was that PAGE_SIZE is the absolute limit of any reasonable
-extensible structure size because we are never going to have argument
-structures that are larger than a page (I think this was discussed in
-the original copy_struct_from_user() patchset thread in late 2019, but I
-can't find the reference at the moment.)
-
-I simply forgot to add this when I first submitted openat2, the original
-intention was to just match the other syscalls.
-
-> Where is the current -EFAULT for users passing more than a page?
-> I only see it for reads beyond the VMA, but not e.g. when checking
-> terabytes of zero pages from an anonymous mapping.
-
-I meant that we in practice return -EFAULT if you pass a really large
-size (because you end up running off the end of mapped memory). There is
-no explicit -EFAULT for large sizes, which is exactly the problem. :P
-
->=20
->     Arnd
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---3itig22h2tekijst
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZtXi+gAKCRAol/rSt+lE
-b/CVAP4/UIPzUm7VHMdeZy4qfDO8V7V0ojxi/W5gHbAzDDpC9AEA+OOBAKvxJ0NQ
-ghIM9lErOJb+9JyKInzhgYT3v5S9KQ4=
-=pzTi
------END PGP SIGNATURE-----
-
---3itig22h2tekijst--
 
