@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-28273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849DB968D43
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 20:21:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CC6968D4F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 20:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8C82836BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 18:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EA661F22FE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 18:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD9019CC17;
-	Mon,  2 Sep 2024 18:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD59E19CC16;
+	Mon,  2 Sep 2024 18:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPez0+7Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6wtlSb+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F222119CC0D;
-	Mon,  2 Sep 2024 18:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F1119CC03;
+	Mon,  2 Sep 2024 18:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725301264; cv=none; b=EprPlC5eQ6fTREatmeVLtVej481xgho+fAvOf31HJhpnQcLa7Y2i3AL/+M2cbjrr7WolPgZCjtrCcFYFjmGHfwUIcczTByDLHVK2PkLtmWAsBRxHKDea0FIZKyXgFiyyd092Hc726f/LWiNf8GJOAjD8s5qYaQ32xui1Drlt5mc=
+	t=1725301388; cv=none; b=lCW4kuyXrgQ+GuUb9T3vMoAuGl8Le7up62DRNionHnXpMh3lR71iz9K6BIOxw0u1LJXHUInnbH1mtInbAKjJrVpAIs1Ex7TSzjMGN9mfxC9dyX5O3BFZ9f26obtNkYbTs26IXN6kDzD5eQIbGaruABrxTdapm+2yWGN4o2cPh88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725301264; c=relaxed/simple;
-	bh=UQb78IUG5K+QDAYhpqvuqRCRIFhalOVn5kSAF+h2aQM=;
+	s=arc-20240116; t=1725301388; c=relaxed/simple;
+	bh=YURZ/FbTJJfo3ENCvqdtcpAaXznnQ4g0Gp1cFn0EwOI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DLrhueDzbLRX1Zuy03F3yjZnGpZfgwa645dZzEaFZQLH/mbXFfcCFIWF/bx/ZJUfDsM1vhAFVxx/aHguOaw/7Y0GCcJnoJ/UFa75u4dZZ9aVxS8OWdcBBTcpfjZQ0NcARmZ3ldVLHR6DtuixIHukkZ1zTFn0+xV6zwqGwOC/3Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPez0+7Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6281FC4CEC2;
-	Mon,  2 Sep 2024 18:21:02 +0000 (UTC)
+	 MIME-Version:Content-Type; b=kYr5T6rVzGYfN+mBi4xfXhuayxdHAiFlMe+l9XZRooljlsj2gtMxAzU+u14iNIxHSNfh+UvcLzhW4PIqZ2tH2SatYO9WT7FmVQUujG115IFoe/xzsoTjni5wTrsQ8pGa/jx/LVqppI/WzEy1UABOSi7UI7hRNpA7i9nSCjAYzqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6wtlSb+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F09C4CEC2;
+	Mon,  2 Sep 2024 18:23:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725301262;
-	bh=UQb78IUG5K+QDAYhpqvuqRCRIFhalOVn5kSAF+h2aQM=;
+	s=k20201202; t=1725301387;
+	bh=YURZ/FbTJJfo3ENCvqdtcpAaXznnQ4g0Gp1cFn0EwOI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=nPez0+7ZiFzYr9A9ZDP17bnBYVqWJ6fTNYCOPVji6JLlGHHE9atRjnPwlmDkAQRr4
-	 4/zM9sNzivjC6d/X7O4H1Q+l61vZoO6nU83bjuL3lzW156fLvjk+ngwA1viaE7Tess
-	 pAIqNM6BNsZibcAezjB3fWfsKtNv0Pm56g+Iz0meYPNFdvDQ5gvqa4h7vFX9pxOwcV
-	 SmdWTb5wW7Ssa5bRueKb87oImizuzgqky9yCtWsQXWvMujkUud0jmeHKTgq2SVFw8K
-	 ySm+LeAMM0+05fE7L+4/kggRqQOre5ntqerAlHIOULWZowUQPX8Hn2SA4//HAxV/18
-	 s673ur6YuMgyQ==
-Date: Mon, 02 Sep 2024 11:21:01 -0700
-Subject: [PATCHSET v31.1 1/8] xfs: atomic file content commits
+	b=Z6wtlSb+GOKDpjWt+cgJ27xs0JXD2HPmC4WEy8KLrOYj6zgKal5cKPTNBUkX6LWwW
+	 6GoOTaVLy/SsAoFZPTx3Rpc63jicnQUmobmptO0mEsMl10piUvN8vCcPI+Q/FqEYG6
+	 N67shQeYmh8x0cM3CxghhITMdP+QOSX9uYNMm/hTYOJKJsZJ5BZyZ9wBhuFhxL+LPm
+	 xW+WM+px85mWwmtqFNJdyVerJ2IY1W+uSGCzPihNQMsdEvKZ7jTOgmzxqW7Q0Onl7p
+	 qsHojLSSw97Cx7kXKFlj3cAI9DqtKJPMV2Yn7uxr36C1YVHf9SDRWavHgx/alcZcIM
+	 hbnGDAr/kpkIA==
+Date: Mon, 02 Sep 2024 11:23:07 -0700
+Subject: [PATCH 1/1] xfs: introduce new file range commit ioctls
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: chandanbabu@kernel.org, djwong@kernel.org
 Cc: Jeff Layton <jlayton@kernel.org>, Christoph Hellwig <hch@lst.de>,
  linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Message-ID: <172530104958.3324894.994059142950589764.stgit@frogsfrogsfrogs>
-In-Reply-To: <20240902181606.GX6224@frogsfrogsfrogs>
-References: <20240902181606.GX6224@frogsfrogsfrogs>
+Message-ID: <172530104976.3324894.7457187634523547516.stgit@frogsfrogsfrogs>
+In-Reply-To: <172530104958.3324894.994059142950589764.stgit@frogsfrogsfrogs>
+References: <172530104958.3324894.994059142950589764.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -58,275 +58,30 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+From: Darrick J. Wong <djwong@kernel.org>
 
-This series creates XFS_IOC_START_COMMIT and XFS_IOC_COMMIT_RANGE ioctls
-to perform the exchange only if the target file has not been changed
-since a given sampling point.
+This patch introduces two more new ioctls to manage atomic updates to
+file contents -- XFS_IOC_START_COMMIT and XFS_IOC_COMMIT_RANGE.  The
+commit mechanism here is exactly the same as what XFS_IOC_EXCHANGE_RANGE
+does, but with the additional requirement that file2 cannot have changed
+since some sampling point.  The start-commit ioctl performs the sampling
+of file attributes.
 
-This new functionality uses the mechanism underlying EXCHANGE_RANGE to
-stage and commit file updates such that reader programs will see either
-the old contents or the new contents in their entirety, with no chance
-of torn writes.  A successful call completion guarantees that the new
-contents will be seen even if the system fails.  The pair of ioctls
-allows userspace to perform what amounts to a compare and exchange
-operation on entire file contents.
+Note: This patch currently samples i_ctime during START_COMMIT and
+checks that it hasn't changed during COMMIT_RANGE.  This isn't entirely
+safe in kernels prior to 6.12 because ctime only had coarse grained
+granularity and very fast updates could collide with a COMMIT_RANGE.
+With the multi-granularity ctime introduced by Jeff Layton, it's now
+possible to update ctime such that this does not happen.
 
-Note that there are ongoing arguments in the community about how best to
-implement some sort of file data write counter that nfsd could also use
-to signal invalidations to clients.  Until such a thing is implemented,
-this patch will rely on ctime/mtime updates.
+It is critical, then, that this patch must not be backported to any
+kernel that does not support fine-grained file change timestamps.
 
-Here are the proposed manual pages:
-
-IOCTL-XFS-COMMIT-RANGE(2) System Calls ManualIOCTL-XFS-COMMIT-RANGE(2)
-
-NAME
-       ioctl_xfs_start_commit  -  prepare  to exchange the contents of
-       two files ioctl_xfs_commit_range - conditionally  exchange  the
-       contents of parts of two files
-
-SYNOPSIS
-       #include <sys/ioctl.h>
-       #include <xfs/xfs_fs.h>
-
-       int  ioctl(int  file2_fd, XFS_IOC_START_COMMIT, struct xfs_com‐
-       mit_range *arg);
-
-       int ioctl(int file2_fd, XFS_IOC_COMMIT_RANGE,  struct  xfs_com‐
-       mit_range *arg);
-
-DESCRIPTION
-       Given  a  range  of bytes in a first file file1_fd and a second
-       range of bytes in a second file  file2_fd,  this  ioctl(2)  ex‐
-       changes  the contents of the two ranges if file2_fd passes cer‐
-       tain freshness criteria.
-
-       Before exchanging the  contents,  the  program  must  call  the
-       XFS_IOC_START_COMMIT   ioctl   to  sample  freshness  data  for
-       file2_fd.  If the sampled metadata  does  not  match  the  file
-       metadata  at  commit  time,  XFS_IOC_COMMIT_RANGE  will  return
-       EBUSY.
-
-       Exchanges are atomic with regards  to  concurrent  file  opera‐
-       tions.   Implementations must guarantee that readers see either
-       the old contents or the new contents in their entirety, even if
-       the system fails.
-
-       The  system  call  parameters are conveyed in structures of the
-       following form:
-
-           struct xfs_commit_range {
-               __s32    file1_fd;
-               __u32    pad;
-               __u64    file1_offset;
-               __u64    file2_offset;
-               __u64    length;
-               __u64    flags;
-               __u64    file2_freshness[5];
-           };
-
-       The field pad must be zero.
-
-       The fields file1_fd, file1_offset, and length define the  first
-       range of bytes to be exchanged.
-
-       The fields file2_fd, file2_offset, and length define the second
-       range of bytes to be exchanged.
-
-       The field file2_freshness is an opaque field whose contents are
-       determined  by  the  kernel.  These file attributes are used to
-       confirm that file2_fd has not changed by another  thread  since
-       the current thread began staging its own update.
-
-       Both  files must be from the same filesystem mount.  If the two
-       file descriptors represent the same file, the byte ranges  must
-       not  overlap.   Most  disk-based  filesystems  require that the
-       starts of both ranges must be aligned to the file  block  size.
-       If  this  is  the  case, the ends of the ranges must also be so
-       aligned unless the XFS_EXCHANGE_RANGE_TO_EOF flag is set.
-
-       The field flags control the behavior of the exchange operation.
-
-           XFS_EXCHANGE_RANGE_TO_EOF
-                  Ignore the length parameter.  All bytes in  file1_fd
-                  from  file1_offset to EOF are moved to file2_fd, and
-                  file2's size is set to  (file2_offset+(file1_length-
-                  file1_offset)).   Meanwhile, all bytes in file2 from
-                  file2_offset to EOF are moved to file1  and  file1's
-                  size    is   set   to   (file1_offset+(file2_length-
-                  file2_offset)).
-
-           XFS_EXCHANGE_RANGE_DSYNC
-                  Ensure that all modified in-core data in  both  file
-                  ranges  and  all  metadata updates pertaining to the
-                  exchange operation are flushed to persistent storage
-                  before  the  call  returns.  Opening either file de‐
-                  scriptor with O_SYNC or O_DSYNC will have  the  same
-                  effect.
-
-           XFS_EXCHANGE_RANGE_FILE1_WRITTEN
-                  Only  exchange sub-ranges of file1_fd that are known
-                  to contain data  written  by  application  software.
-                  Each  sub-range  may  be  expanded (both upwards and
-                  downwards) to align with the file  allocation  unit.
-                  For files on the data device, this is one filesystem
-                  block.  For files on the realtime  device,  this  is
-                  the realtime extent size.  This facility can be used
-                  to implement fast atomic  scatter-gather  writes  of
-                  any  complexity for software-defined storage targets
-                  if all writes are aligned  to  the  file  allocation
-                  unit.
-
-           XFS_EXCHANGE_RANGE_DRY_RUN
-                  Check  the parameters and the feasibility of the op‐
-                  eration, but do not change anything.
-
-RETURN VALUE
-       On error, -1 is returned, and errno is set to indicate the  er‐
-       ror.
-
-ERRORS
-       Error  codes can be one of, but are not limited to, the follow‐
-       ing:
-
-       EBADF  file1_fd is not open for reading and writing or is  open
-              for  append-only  writes;  or  file2_fd  is not open for
-              reading and writing or is open for append-only writes.
-
-       EBUSY  The file2 inode number and timestamps  supplied  do  not
-              match file2_fd.
-
-       EINVAL The  parameters  are  not correct for these files.  This
-              error can also appear if either file  descriptor  repre‐
-              sents  a device, FIFO, or socket.  Disk filesystems gen‐
-              erally require the offset and  length  arguments  to  be
-              aligned to the fundamental block sizes of both files.
-
-       EIO    An I/O error occurred.
-
-       EISDIR One of the files is a directory.
-
-       ENOMEM The  kernel  was unable to allocate sufficient memory to
-              perform the operation.
-
-       ENOSPC There is not enough free space  in  the  filesystem  ex‐
-              change the contents safely.
-
-       EOPNOTSUPP
-              The filesystem does not support exchanging bytes between
-              the two files.
-
-       EPERM  file1_fd or file2_fd are immutable.
-
-       ETXTBSY
-              One of the files is a swap file.
-
-       EUCLEAN
-              The filesystem is corrupt.
-
-       EXDEV  file1_fd and  file2_fd  are  not  on  the  same  mounted
-              filesystem.
-
-CONFORMING TO
-       This API is XFS-specific.
-
-USE CASES
-       Several use cases are imagined for this system call.  Coordina‐
-       tion between multiple threads is performed by the kernel.
-
-       The first is a filesystem defragmenter, which copies  the  con‐
-       tents  of  a  file into another file and wishes to exchange the
-       space mappings of the two files,  provided  that  the  original
-       file has not changed.
-
-       An example program might look like this:
-
-           int fd = open("/some/file", O_RDWR);
-           int temp_fd = open("/some", O_TMPFILE | O_RDWR);
-           struct stat sb;
-           struct xfs_commit_range args = {
-               .flags = XFS_EXCHANGE_RANGE_TO_EOF,
-           };
-
-           /* gather file2's freshness information */
-           ioctl(fd, XFS_IOC_START_COMMIT, &args);
-           fstat(fd, &sb);
-
-           /* make a fresh copy of the file with terrible alignment to avoid reflink */
-           clone_file_range(fd, NULL, temp_fd, NULL, 1, 0);
-           clone_file_range(fd, NULL, temp_fd, NULL, sb.st_size - 1, 0);
-
-           /* commit the entire update */
-           args.file1_fd = temp_fd;
-           ret = ioctl(fd, XFS_IOC_COMMIT_RANGE, &args);
-           if (ret && errno == EBUSY)
-               printf("file changed while defrag was underway
-");
-
-       The  second is a data storage program that wants to commit non-
-       contiguous updates to a file atomically.  This  program  cannot
-       coordinate updates to the file and therefore relies on the ker‐
-       nel to reject the COMMIT_RANGE command if the file has been up‐
-       dated  by  someone else.  This can be done by creating a tempo‐
-       rary file, calling FICLONE(2) to share the contents, and  stag‐
-       ing  the  updates into the temporary file.  The FULL_FILES flag
-       is recommended for this purpose.  The  temporary  file  can  be
-       deleted or punched out afterwards.
-
-       An example program might look like this:
-
-           int fd = open("/some/file", O_RDWR);
-           int temp_fd = open("/some", O_TMPFILE | O_RDWR);
-           struct xfs_commit_range args = {
-               .flags = XFS_EXCHANGE_RANGE_TO_EOF,
-           };
-
-           /* gather file2's freshness information */
-           ioctl(fd, XFS_IOC_START_COMMIT, &args);
-
-           ioctl(temp_fd, FICLONE, fd);
-
-           /* append 1MB of records */
-           lseek(temp_fd, 0, SEEK_END);
-           write(temp_fd, data1, 1000000);
-
-           /* update record index */
-           pwrite(temp_fd, data1, 600, 98765);
-           pwrite(temp_fd, data2, 320, 54321);
-           pwrite(temp_fd, data2, 15, 0);
-
-           /* commit the entire update */
-           args.file1_fd = temp_fd;
-           ret = ioctl(fd, XFS_IOC_COMMIT_RANGE, &args);
-           if (ret && errno == EBUSY)
-               printf("file changed before commit; will roll back
-");
-
-NOTES
-       Some  filesystems may limit the amount of data or the number of
-       extents that can be exchanged in a single call.
-
-SEE ALSO
-       ioctl(2)
-
-XFS                           2024-02-18     IOCTL-XFS-COMMIT-RANGE(2)
-
-If you're going to start using this code, I strongly recommend pulling
-from my git trees, which are linked below.
-
-With a bit of luck, this should all go splendidly.
-Comments and questions are, as always, welcome.
-
---D
-
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=atomic-file-commits-6.12
----
-Commits in this patchset:
- * xfs: introduce new file range commit ioctls
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Acked-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
  fs/xfs/libxfs/xfs_fs.h |   26 +++++++++
  fs/xfs/xfs_exchrange.c |  143 ++++++++++++++++++++++++++++++++++++++++++++++++
@@ -334,5 +89,352 @@ Commits in this patchset:
  fs/xfs/xfs_ioctl.c     |    4 +
  fs/xfs/xfs_trace.h     |   57 +++++++++++++++++++
  5 files changed, 243 insertions(+), 3 deletions(-)
+
+
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index 454b63ef7201..c85c8077fac3 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -825,6 +825,30 @@ struct xfs_exchange_range {
+ 	__u64		flags;		/* see XFS_EXCHANGE_RANGE_* below */
+ };
+ 
++/*
++ * Using the same definition of file2 as struct xfs_exchange_range, commit the
++ * contents of file1 into file2 if file2 has the same inode number, mtime, and
++ * ctime as the arguments provided to the call.  The old contents of file2 will
++ * be moved to file1.
++ *
++ * Returns -EBUSY if there isn't an exact match for the file2 fields.
++ *
++ * Filesystems must be able to restart and complete the operation even after
++ * the system goes down.
++ */
++struct xfs_commit_range {
++	__s32		file1_fd;
++	__u32		pad;		/* must be zeroes */
++	__u64		file1_offset;	/* file1 offset, bytes */
++	__u64		file2_offset;	/* file2 offset, bytes */
++	__u64		length;		/* bytes to exchange */
++
++	__u64		flags;		/* see XFS_EXCHANGE_RANGE_* below */
++
++	/* opaque file2 metadata for freshness checks */
++	__u64		file2_freshness[6];
++};
++
+ /*
+  * Exchange file data all the way to the ends of both files, and then exchange
+  * the file sizes.  This flag can be used to replace a file's contents with a
+@@ -997,6 +1021,8 @@ struct xfs_getparents_by_handle {
+ #define XFS_IOC_BULKSTAT	     _IOR ('X', 127, struct xfs_bulkstat_req)
+ #define XFS_IOC_INUMBERS	     _IOR ('X', 128, struct xfs_inumbers_req)
+ #define XFS_IOC_EXCHANGE_RANGE	     _IOW ('X', 129, struct xfs_exchange_range)
++#define XFS_IOC_START_COMMIT	     _IOR ('X', 130, struct xfs_commit_range)
++#define XFS_IOC_COMMIT_RANGE	     _IOW ('X', 131, struct xfs_commit_range)
+ /*	XFS_IOC_GETFSUUID ---------- deprecated 140	 */
+ 
+ 
+diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
+index c8a655c92c92..d0889190ab7f 100644
+--- a/fs/xfs/xfs_exchrange.c
++++ b/fs/xfs/xfs_exchrange.c
+@@ -72,6 +72,34 @@ xfs_exchrange_estimate(
+ 	return error;
+ }
+ 
++/*
++ * Check that file2's metadata agree with the snapshot that we took for the
++ * range commit request.
++ *
++ * This should be called after the filesystem has locked /all/ inode metadata
++ * against modification.
++ */
++STATIC int
++xfs_exchrange_check_freshness(
++	const struct xfs_exchrange	*fxr,
++	struct xfs_inode		*ip2)
++{
++	struct inode			*inode2 = VFS_I(ip2);
++	struct timespec64		ctime = inode_get_ctime(inode2);
++	struct timespec64		mtime = inode_get_mtime(inode2);
++
++	trace_xfs_exchrange_freshness(fxr, ip2);
++
++	/* Check that file2 hasn't otherwise been modified. */
++	if (fxr->file2_ino != ip2->i_ino ||
++	    fxr->file2_gen != inode2->i_generation ||
++	    !timespec64_equal(&fxr->file2_ctime, &ctime) ||
++	    !timespec64_equal(&fxr->file2_mtime, &mtime))
++		return -EBUSY;
++
++	return 0;
++}
++
+ #define QRETRY_IP1	(0x1)
+ #define QRETRY_IP2	(0x2)
+ 
+@@ -607,6 +635,12 @@ xfs_exchrange_prep(
+ 	if (error || fxr->length == 0)
+ 		return error;
+ 
++	if (fxr->flags & __XFS_EXCHANGE_RANGE_CHECK_FRESH2) {
++		error = xfs_exchrange_check_freshness(fxr, ip2);
++		if (error)
++			return error;
++	}
++
+ 	/* Attach dquots to both inodes before changing block maps. */
+ 	error = xfs_qm_dqattach(ip2);
+ 	if (error)
+@@ -719,7 +753,8 @@ xfs_exchange_range(
+ 	if (fxr->file1->f_path.mnt != fxr->file2->f_path.mnt)
+ 		return -EXDEV;
+ 
+-	if (fxr->flags & ~XFS_EXCHANGE_RANGE_ALL_FLAGS)
++	if (fxr->flags & ~(XFS_EXCHANGE_RANGE_ALL_FLAGS |
++			 __XFS_EXCHANGE_RANGE_CHECK_FRESH2))
+ 		return -EINVAL;
+ 
+ 	/* Userspace requests only honored for regular files. */
+@@ -802,3 +837,109 @@ xfs_ioc_exchange_range(
+ 	fdput(file1);
+ 	return error;
+ }
++
++/* Opaque freshness blob for XFS_IOC_COMMIT_RANGE */
++struct xfs_commit_range_fresh {
++	xfs_fsid_t	fsid;		/* m_fixedfsid */
++	__u64		file2_ino;	/* inode number */
++	__s64		file2_mtime;	/* modification time */
++	__s64		file2_ctime;	/* change time */
++	__s32		file2_mtime_nsec; /* mod time, nsec */
++	__s32		file2_ctime_nsec; /* change time, nsec */
++	__u32		file2_gen;	/* inode generation */
++	__u32		magic;		/* zero */
++};
++#define XCR_FRESH_MAGIC	0x444F524B	/* DORK */
++
++/* Set up a commitrange operation by sampling file2's write-related attrs */
++long
++xfs_ioc_start_commit(
++	struct file			*file,
++	struct xfs_commit_range __user	*argp)
++{
++	struct xfs_commit_range		args = { };
++	struct timespec64		ts;
++	struct xfs_commit_range_fresh	*kern_f;
++	struct xfs_commit_range_fresh	__user *user_f;
++	struct inode			*inode2 = file_inode(file);
++	struct xfs_inode		*ip2 = XFS_I(inode2);
++	const unsigned int		lockflags = XFS_IOLOCK_SHARED |
++						    XFS_MMAPLOCK_SHARED |
++						    XFS_ILOCK_SHARED;
++
++	BUILD_BUG_ON(sizeof(struct xfs_commit_range_fresh) !=
++		     sizeof(args.file2_freshness));
++
++	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
++
++	memcpy(&kern_f->fsid, ip2->i_mount->m_fixedfsid, sizeof(xfs_fsid_t));
++
++	xfs_ilock(ip2, lockflags);
++	ts = inode_get_ctime(inode2);
++	kern_f->file2_ctime		= ts.tv_sec;
++	kern_f->file2_ctime_nsec	= ts.tv_nsec;
++	ts = inode_get_mtime(inode2);
++	kern_f->file2_mtime		= ts.tv_sec;
++	kern_f->file2_mtime_nsec	= ts.tv_nsec;
++	kern_f->file2_ino		= ip2->i_ino;
++	kern_f->file2_gen		= inode2->i_generation;
++	kern_f->magic			= XCR_FRESH_MAGIC;
++	xfs_iunlock(ip2, lockflags);
++
++	user_f = (struct xfs_commit_range_fresh __user *)&argp->file2_freshness;
++	if (copy_to_user(user_f, kern_f, sizeof(*kern_f)))
++		return -EFAULT;
++
++	return 0;
++}
++
++/*
++ * Exchange file1 and file2 contents if file2 has not been written since the
++ * start commit operation.
++ */
++long
++xfs_ioc_commit_range(
++	struct file			*file,
++	struct xfs_commit_range __user	*argp)
++{
++	struct xfs_exchrange		fxr = {
++		.file2			= file,
++	};
++	struct xfs_commit_range		args;
++	struct xfs_commit_range_fresh	*kern_f;
++	struct xfs_inode		*ip2 = XFS_I(file_inode(file));
++	struct xfs_mount		*mp = ip2->i_mount;
++	struct fd			file1;
++	int				error;
++
++	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
++
++	if (copy_from_user(&args, argp, sizeof(args)))
++		return -EFAULT;
++	if (args.flags & ~XFS_EXCHANGE_RANGE_ALL_FLAGS)
++		return -EINVAL;
++	if (kern_f->magic != XCR_FRESH_MAGIC)
++		return -EBUSY;
++	if (memcmp(&kern_f->fsid, mp->m_fixedfsid, sizeof(xfs_fsid_t)))
++		return -EBUSY;
++
++	fxr.file1_offset	= args.file1_offset;
++	fxr.file2_offset	= args.file2_offset;
++	fxr.length		= args.length;
++	fxr.flags		= args.flags | __XFS_EXCHANGE_RANGE_CHECK_FRESH2;
++	fxr.file2_ino		= kern_f->file2_ino;
++	fxr.file2_gen		= kern_f->file2_gen;
++	fxr.file2_mtime.tv_sec	= kern_f->file2_mtime;
++	fxr.file2_mtime.tv_nsec	= kern_f->file2_mtime_nsec;
++	fxr.file2_ctime.tv_sec	= kern_f->file2_ctime;
++	fxr.file2_ctime.tv_nsec	= kern_f->file2_ctime_nsec;
++
++	file1 = fdget(args.file1_fd);
++	if (!file1.file)
++		return -EBADF;
++	fxr.file1 = file1.file;
++
++	error = xfs_exchange_range(&fxr);
++	fdput(file1);
++	return error;
++}
+diff --git a/fs/xfs/xfs_exchrange.h b/fs/xfs/xfs_exchrange.h
+index 039abcca546e..bc1298aba806 100644
+--- a/fs/xfs/xfs_exchrange.h
++++ b/fs/xfs/xfs_exchrange.h
+@@ -10,8 +10,12 @@
+ #define __XFS_EXCHANGE_RANGE_UPD_CMTIME1	(1ULL << 63)
+ #define __XFS_EXCHANGE_RANGE_UPD_CMTIME2	(1ULL << 62)
+ 
++/* Freshness check required */
++#define __XFS_EXCHANGE_RANGE_CHECK_FRESH2	(1ULL << 61)
++
+ #define XFS_EXCHANGE_RANGE_PRIV_FLAGS	(__XFS_EXCHANGE_RANGE_UPD_CMTIME1 | \
+-					 __XFS_EXCHANGE_RANGE_UPD_CMTIME2)
++					 __XFS_EXCHANGE_RANGE_UPD_CMTIME2 | \
++					 __XFS_EXCHANGE_RANGE_CHECK_FRESH2)
+ 
+ struct xfs_exchrange {
+ 	struct file		*file1;
+@@ -22,10 +26,20 @@ struct xfs_exchrange {
+ 	u64			length;
+ 
+ 	u64			flags;	/* XFS_EXCHANGE_RANGE flags */
++
++	/* file2 metadata for freshness checks */
++	u64			file2_ino;
++	struct timespec64	file2_mtime;
++	struct timespec64	file2_ctime;
++	u32			file2_gen;
+ };
+ 
+ long xfs_ioc_exchange_range(struct file *file,
+ 		struct xfs_exchange_range __user *argp);
++long xfs_ioc_start_commit(struct file *file,
++		struct xfs_commit_range __user *argp);
++long xfs_ioc_commit_range(struct file *file,
++		struct xfs_commit_range __user	*argp);
+ 
+ struct xfs_exchmaps_req;
+ 
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 6b13666d4e96..90b3ee21e7fe 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1518,6 +1518,10 @@ xfs_file_ioctl(
+ 
+ 	case XFS_IOC_EXCHANGE_RANGE:
+ 		return xfs_ioc_exchange_range(filp, arg);
++	case XFS_IOC_START_COMMIT:
++		return xfs_ioc_start_commit(filp, arg);
++	case XFS_IOC_COMMIT_RANGE:
++		return xfs_ioc_commit_range(filp, arg);
+ 
+ 	default:
+ 		return -ENOTTY;
+diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+index 180ce697305a..4cf0fa71ba9c 100644
+--- a/fs/xfs/xfs_trace.h
++++ b/fs/xfs/xfs_trace.h
+@@ -4926,7 +4926,8 @@ DEFINE_INODE_ERROR_EVENT(xfs_exchrange_error);
+ 	{ XFS_EXCHANGE_RANGE_DRY_RUN,		"DRY_RUN" }, \
+ 	{ XFS_EXCHANGE_RANGE_FILE1_WRITTEN,	"F1_WRITTEN" }, \
+ 	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME1,	"CMTIME1" }, \
+-	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME2,	"CMTIME2" }
++	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME2,	"CMTIME2" }, \
++	{ __XFS_EXCHANGE_RANGE_CHECK_FRESH2,	"FRESH2" }
+ 
+ /* file exchange-range tracepoint class */
+ DECLARE_EVENT_CLASS(xfs_exchrange_class,
+@@ -4986,6 +4987,60 @@ DEFINE_EXCHRANGE_EVENT(xfs_exchrange_prep);
+ DEFINE_EXCHRANGE_EVENT(xfs_exchrange_flush);
+ DEFINE_EXCHRANGE_EVENT(xfs_exchrange_mappings);
+ 
++TRACE_EVENT(xfs_exchrange_freshness,
++	TP_PROTO(const struct xfs_exchrange *fxr, struct xfs_inode *ip2),
++	TP_ARGS(fxr, ip2),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(xfs_ino_t, ip2_ino)
++		__field(long long, ip2_mtime)
++		__field(long long, ip2_ctime)
++		__field(int, ip2_mtime_nsec)
++		__field(int, ip2_ctime_nsec)
++
++		__field(xfs_ino_t, file2_ino)
++		__field(long long, file2_mtime)
++		__field(long long, file2_ctime)
++		__field(int, file2_mtime_nsec)
++		__field(int, file2_ctime_nsec)
++	),
++	TP_fast_assign(
++		struct timespec64	ts64;
++		struct inode		*inode2 = VFS_I(ip2);
++
++		__entry->dev = inode2->i_sb->s_dev;
++		__entry->ip2_ino = ip2->i_ino;
++
++		ts64 = inode_get_ctime(inode2);
++		__entry->ip2_ctime = ts64.tv_sec;
++		__entry->ip2_ctime_nsec = ts64.tv_nsec;
++
++		ts64 = inode_get_mtime(inode2);
++		__entry->ip2_mtime = ts64.tv_sec;
++		__entry->ip2_mtime_nsec = ts64.tv_nsec;
++
++		__entry->file2_ino = fxr->file2_ino;
++		__entry->file2_mtime = fxr->file2_mtime.tv_sec;
++		__entry->file2_ctime = fxr->file2_ctime.tv_sec;
++		__entry->file2_mtime_nsec = fxr->file2_mtime.tv_nsec;
++		__entry->file2_ctime_nsec = fxr->file2_ctime.tv_nsec;
++	),
++	TP_printk("dev %d:%d "
++		  "ino 0x%llx mtime %lld:%d ctime %lld:%d -> "
++		  "file 0x%llx mtime %lld:%d ctime %lld:%d",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __entry->ip2_ino,
++		  __entry->ip2_mtime,
++		  __entry->ip2_mtime_nsec,
++		  __entry->ip2_ctime,
++		  __entry->ip2_ctime_nsec,
++		  __entry->file2_ino,
++		  __entry->file2_mtime,
++		  __entry->file2_mtime_nsec,
++		  __entry->file2_ctime,
++		  __entry->file2_ctime_nsec)
++);
++
+ TRACE_EVENT(xfs_exchmaps_overhead,
+ 	TP_PROTO(struct xfs_mount *mp, unsigned long long bmbt_blocks,
+ 		 unsigned long long rmapbt_blocks),
 
 
