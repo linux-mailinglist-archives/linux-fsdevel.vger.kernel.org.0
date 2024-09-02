@@ -1,122 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-28223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE87C9683A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:51:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E679683AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0491C2213F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 09:51:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6587CB242CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 09:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A2F1D2F6A;
-	Mon,  2 Sep 2024 09:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t4kJaVlk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A230B1D2F5F;
+	Mon,  2 Sep 2024 09:52:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC68C44C76;
-	Mon,  2 Sep 2024 09:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F4D15C15E;
+	Mon,  2 Sep 2024 09:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725270668; cv=none; b=R8BBoKjoSdlUc8W1yr4LNXASN5K1qzASZmy1dVY3Z+XZVKl5/J4aDhSI1L0HJlSKXd0rZ6ldy1r0aoDiGJ72KTnRc4JMDrgOmGpq9sYwg3mbmbAMsZ7QxA0q59O62rWLWsJDKOFhAuNF+XwiYl34WJ30cgoYQsz/H4Yv3kP3t20=
+	t=1725270733; cv=none; b=gsZRvxcKggIUBkaGE1km02PxGCX8tWoE2fqyK0CH0TWc4HgfCJhjpqokKXyDuA27q4seXrZLacnJ7fk8TAJuDZdy71lh+z+xwDgPlAblIC/IJC5H4wZo6qYvvGopl8Zof9MeAultfWOL34sAJ5sMGccnUaYJeIENHvltjB3IkKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725270668; c=relaxed/simple;
-	bh=9tLygEonqQuh5/Rv5N0mZI5qLJAe4uxmz33mLjhIoFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXv7kChQXp4tBciOE10hYjNssYJ6ifmdWG3sB8+EO17sZqcupKa3WTVRRNfr7Uxxtnpl9xQi0E1UajniRBITokhPfu+d91NFlEyq3Y+TGoMMImHus4xvLJu5NdhnZkyaenQJpKFglinsQBsZxDXSEVhlkC9IH9AoxfLqGwLlpbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t4kJaVlk; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 2 Sep 2024 05:51:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725270664;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DvuMnP7w3vffI0/vSAapeokE9ygqz+HaF9Aaksx9bG0=;
-	b=t4kJaVlksiM0tu/pUBiVqQp9VLGLKhZPpdN7t2/SB/xvRgFXnXRsI+xDpSUxzy5vNaUjwB
-	bEtiuKt04EZCy8z1mcA0Ur4IRUnUToZF2dHRiVEaI1uOxk5vOv8bdGPkTJc5R4bzFgYA8p
-	E7OmBCq/V5DXQYOdk9eM0B/H2vlv3zo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
-References: <20240827061543.1235703-1-mhocko@kernel.org>
- <Zs6jFb953AR2Raec@dread.disaster.area>
- <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
- <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
- <ZtUFaq3vD+zo0gfC@dread.disaster.area>
- <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
- <ZtV6OwlFRu4ZEuSG@tiehlicka>
- <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
+	s=arc-20240116; t=1725270733; c=relaxed/simple;
+	bh=VDV9Anucc7U9411QCjC+of6tnH6n+vj8XFAfe6/rSoU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K5xqQo3kQpUII5aVi2jLw3uyCfZLSwTvJvu87wEHhzauivdZPg3f5C1WSLuQFk7Ygsu11BwOaq8sCNuu2vOSCeWEzZ2jJ4aaZSNez1yyPJfOe5cPD6Efqjqac9NBbw+1MW9pNfsajafgk+VavarCm8/EfJQzyXlcWvx60MY2MLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a83562f9be9so370919966b.0;
+        Mon, 02 Sep 2024 02:52:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725270730; x=1725875530;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MPFmSaj7coQSAttoxzj1vOhb9+pMv8Cg49O405sE8AU=;
+        b=JygyRWtriK1gicObtWzHVfzpMB6Yqn3s4xo3vlN8RJxTrahgkPL1aBIeurVdkjbxUf
+         z169wcNuxHAVJOFhxoQXM75wcwAQQ0rPZp82gj+v6GgURqp+zP2q1nrXoCbP+vausX0r
+         x91P2I+xFogZMI/dT8pfGAEOUiYAZHWp1ixRwl2+D9r3j0Vp0omAne0BH7ONoLu+N6Tn
+         xQQWSL8AlqyczsgKpoT+vPJ/+A6SKTw2WHmB+i9IA069WN0cK/dh3LYg0ZSWsSyI6v+Z
+         59WdmLKoY2bOgcAjHeMSuNQCEdv4kkdkHXxIA7KY5G4gA+hN87D7ZDFQHef7Z6C2xV+D
+         Rn/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUzioORS2jZr3keX0ptJEBfDEJVCDiwECReYLKxQrHjZVnL8At2XyVicVMWH/0SIahOO1ZGXI5J46Z9OaozBw==@vger.kernel.org, AJvYcCVDHAYf05Co08rMvyiI5cVqJQeQjS4CoOToYiz/LrDFOM6OvcasCuLYL3agWUiUWbZztTyY8xsqZ2ghFY3a@vger.kernel.org, AJvYcCVQl6Kl4qDLBHQYk7xRQREABPSeYuUATLyoiYuz2bNqRCJzpF+Q0UE6xUU9hYf1Oecv484coJJoZ4fF4si+dhWZ3TMTdBI+@vger.kernel.org, AJvYcCVtMlnBTWP0vMa16MM5UifxMTsfEw1g38TDepTM6ZVo3XYFjXZnY2l6+PHohXKPH/ai8QGUq9PI5xDyuBfEag==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1FdIo4vgZsS/GR9eXN4Td9LLXcCviiy2hLVyqHUBnYt2b/xkk
+	j1/I1yhnsXXROlSpWKTUbk2JOjpGb9iIJTYe5+yaR8zFWGV6I5zu
+X-Google-Smtp-Source: AGHT+IFbXdsiiimIB03yggYoUOmWewJuFdD/owb35ZfSrgCsdk1w2zDvpPNMYffgXHvHFcnvX01leg==
+X-Received: by 2002:a17:907:9488:b0:a7a:9ca6:528 with SMTP id a640c23a62f3a-a89b93c7cdfmr438069766b.11.1725270729071;
+        Mon, 02 Sep 2024 02:52:09 -0700 (PDT)
+Received: from localhost.localdomain (109-81-82-19.rct.o2.cz. [109.81.82.19])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900f079sm535327166b.66.2024.09.02.02.52.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 02:52:08 -0700 (PDT)
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	jack@suse.cz,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Dave Chinner <dchinner@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Date: Mon,  2 Sep 2024 11:51:48 +0200
+Message-ID: <20240902095203.1559361-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtWH3SkiIEed4NDc@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
-> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
-> > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-> > > [...]
-> > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
-> > > > in the case of bugs, because that's going to be an improvement w.r.t.
-> > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
-> > > > something that we can't guarantee won't happen in the wild - we WARN()
-> > > > and try to handle the error as best we can.
-> > > 
-> > > We have discussed that in a different email thread. And I have to say
-> > > that I am not convinced that returning NULL makes a broken code much
-> > > better. Why? Because we can expect that broken NOFAIL users will not have a
-> > > error checking path. Even valid NOFAIL users will not have one because
-> > > they _know_ they do not have a different than retry for ever recovery
-> > > path. 
-> > 
-> > You mean where I asked you for a link to the discussion and rationale
-> > you claimed had happened? Still waiting on that
-> 
-> I am not your assistent to be tasked and search through lore archives.
-> Find one if you need that.
-> 
-> Anyway, if you read the email and even tried to understand what is
-> written there rather than immediately started shouting a response then
-> you would have noticed I have put actual arguments here. You are free to
-> disagree with them and lay down your arguments. You have decided to
-> 
-> [...]
-> 
-> > Yeah, enough of this insanity.
-> 
-> so I do not think you are able to do that. Again...
+The previous version has been posted in [1]. Based on the review feedback
+I have sent v2 of patches in the same threat but it seems that the
+review has mostly settled on these patches. There is still an open
+discussion on whether having a NORECLAIM allocator semantic (compare to
+atomic) is worthwhile or how to deal with broken GFP_NOFAIL users but
+those are not really relevant to this particular patchset as it 1)
+doesn't aim to implement either of the two and 2) it aims at spreading
+PF_MEMALLOC_NORECLAIM use while it doesn't have a properly defined
+semantic now that it is not widely used and much harder to fix.
 
-Michal, if you think crashing processes is an acceptable alternative to
-error handling _you have no business writing kernel code_.
+I have collected Reviewed-bys and reposting here. These patches are
+touching bcachefs, VFS and core MM so I am not sure which tree to merge
+this through but I guess going through Andrew makes the most sense.
 
-You have been stridently arguing for one bad idea after another, and
-it's an insult to those of us who do give a shit about writing reliable
-software.
+Changes since v1;
+- compile fixes
+- rather than dropping PF_MEMALLOC_NORECLAIM alone reverted eab0af905bfc
+  ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") suggested
+  by Matthew.
 
-You're arguing against basic precepts of kernel programming.
 
-Get your head examined. And get the fuck out of here with this shit.
 
