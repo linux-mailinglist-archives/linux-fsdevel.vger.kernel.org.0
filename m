@@ -1,151 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-28220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2AC9682C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:10:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65CC9682F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 11:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0651C22399
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 09:10:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025251C2096C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 09:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35666187552;
-	Mon,  2 Sep 2024 09:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D398A1C2DCF;
+	Mon,  2 Sep 2024 09:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GvS4fPt+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iGX83XVz"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Z/jGXbD2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3BC2D7B8;
-	Mon,  2 Sep 2024 09:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421EB1C0DEA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 09:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268220; cv=none; b=re4K1CO/tAeMTaHVHdxzhd/St42SnX+mgRRWVkIRZ0GngK9XLOhaGQtcW4mMpv1aGDd+GhuD97BQPeNHamcm0P9fK4GoYutAYWrdSLpmdv12nRAThYqofNwOJUUqqiR6VQo9sSakDh6hfl8Hwt0N9niTbYDhUXwgnLhlhSKFA7k=
+	t=1725268816; cv=none; b=LY1kwuvohDVpluYB8mWDHWkDb2zN5ekynqvgbOmUHpAa+pY/rg3dwVUJE90K070pGxySy2IR9c8u6PDIL7NgVF97UQqCIHxaY2XeLjLedfw3ezcSxGbN3hDKNo6Rh4IYCs0QAVPOqEo3pBQ7K58Skjq/AZdG6dX02LaeV7/Pas4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268220; c=relaxed/simple;
-	bh=6j0Oy77vc3k7Bm97cy+0sWSoGWBccV07dWxxIiN5yTg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Zqp0Fzo+ZLv20DTDKqr3aqKRm2M049hrznqUNCujMSTzUVBg938+4vbjfThCo3hGIRG6U12XAckqzNmEPom5y597Q+2CQmKclKqxr7Ffi3xC6BrR/lJXooQ7aSBRCuVpMS1s/MGt/rUlg/0KzsIKDN5qKMkdCubrolhYXjBvI4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GvS4fPt+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iGX83XVz; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id DA62111402A6;
-	Mon,  2 Sep 2024 05:10:17 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Mon, 02 Sep 2024 05:10:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1725268217;
-	 x=1725354617; bh=bzaUZvBR6GY2fVCjdmz9wFgI6HiU4z7HCwf2miDnwYA=; b=
-	GvS4fPt+9jtPThPXCzHUZbVhVte9hekuZsxDuetitVoYOHcXDzlGMvxagUBSBs+Y
-	gWO1ZjbblIjtYEFSzM7Cy6+3L7hgXo2jSMqusFnu1BWonO9x7qPADYCEKnUiJqg8
-	KNNnmP0fgYOin2LxZCw1SkZl2oUV+V/R2Sd493BivMAq6H9fWoXXtGYBojuGgZkr
-	uYIskeOO645P/8et/V11ne5V6yr7YeLuBLTQ3j75wuQDyLmeiCSwexNxN6UXZmiY
-	l9lPBSCFOV3FuLJEC7N1RcdAijZtipDtn9e0lCcVwlBM7asEO+Bh+D2wNUBC1lKE
-	p39I8IBv/2JrfjzHNrLFfA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725268217; x=
-	1725354617; bh=bzaUZvBR6GY2fVCjdmz9wFgI6HiU4z7HCwf2miDnwYA=; b=i
-	GX83XVzAoGLYdZx2vbv5UP4w29BGMp9szfjvexA7zY/zvv+cpwxcXp7HTdXqLgCK
-	a1Sl5CVaCmF6wjx/PS54odSwp6n5VOPgXNcjOHESt20QrGIJygkBGYCoBbnbpc6W
-	pZx2qTIpy5Rzg5rICCypPmIftKnFC4RqDdAa6u9q+ug40IYF5a/lRHQnfE4TKTHg
-	Rmf2v1CxAnNAyXxenNYkpAQkjb8ajh6+SHVY027B4IPDGxM7D/Q1nNKU4Vnh8zgh
-	mnFceguqwrlh3qtBiAcCCwT5DqqgI+s6l29Vym8SH29NrBWxvm7yYIv5MEuS6BdW
-	pjMrWBntCChPZvy7fExgA==
-X-ME-Sender: <xms:-YDVZoJtGIfQ-SaB70EHDJmU1AS_aHtyq9G07YCD9ka7SFfK2G7jUQ>
-    <xme:-YDVZoKIl28I_f7LJnmk0YVmkDyO2srCnsC_PVxPIidohgDF3H5AmAGZGc6xQIXmv
-    FK-qmbi5j7ms_BiG_w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehfedguddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdef
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguihgvthhmrghrrdgvghhgvghmrg
-    hnnhesrghrmhdrtghomhdprhgtphhtthhopehmrghrkhdrrhhuthhlrghnugesrghrmhdr
-    tghomhdprhgtphhtthhopegthihphhgrrhestgihphhhrghrrdgtohhmpdhrtghpthhtoh
-    eprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopegsshgvghgrlhhl
-    sehgohhoghhlvgdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrh
-    hnvghlrdhorhhg
-X-ME-Proxy: <xmx:-YDVZotDYjNwOLmbepGuzRbve8dpg4PUkv-Z3Z5HZ4thEqpif7IOFw>
-    <xmx:-YDVZlYQjTxLpm4yBsjpAQNUQK56ngTLtrSpT_4M6EI8MfCOstHtAg>
-    <xmx:-YDVZvb8SGQi2U9tYXOv94ItwL-JifN3KKNb6FctzcRFlq2JVp6zow>
-    <xmx:-YDVZhBVB07Hh6OWpB_irfc3Q8tn58t4BJbVaJHchXxoOgq9Jz6ecQ>
-    <xmx:-YDVZsJwLH0OCSZIqhg0QIi80Ml9hJvUQLfbZ2iagsSkpsES3sM5MBEJ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 3C9DA2220083; Mon,  2 Sep 2024 05:10:17 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725268816; c=relaxed/simple;
+	bh=JvMM200wwmg0a0pA6z93JHpy14mApdoUVfxh1+uRqug=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=ig1TG3tu4tuny7pRSwAW1rHezG8hmEVuUZtiSe/CcuxL1LzBSuDemT3tPqXdHGrxYQSerj49PkkmToiDLNt+8WrmmcKk2PUcukTKUljY5jyeaGC9Yp1t/rGbD3CoJLW/D7Jis0z80+mI7I3L8SswoOISD5KUg9Cqn5Xh+EJLo5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Z/jGXbD2; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240902092012euoutp02a9f2cba2f270c3a548e1cb0642c5bf3a~xYtgZXzjv0917609176euoutp024
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 09:20:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240902092012euoutp02a9f2cba2f270c3a548e1cb0642c5bf3a~xYtgZXzjv0917609176euoutp024
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725268812;
+	bh=m5ERDXvm/e0P42wGNCE+IJxiECsJwJfb5bILlAF1580=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Z/jGXbD2guPZBKvuyb7kmz31IZWg8eBtREHjck868C/jMfNUJ96vufx5nz93oXQ0B
+	 h+D2oCV8VsCoWNg+fCtapeqgZZ8xxysNpvhUrkPTeiRvPxd/Tcrm39rLxJyPrTxxOe
+	 Xh6BBDDsKz7vFGmZQR0tBgUbBRMGu0RsNl2oqPb4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240902092011eucas1p1bc93717556550f3a8439e52dc81c23d6~xYtf3vgS21567115671eucas1p1K;
+	Mon,  2 Sep 2024 09:20:11 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 75.8D.09620.B4385D66; Mon,  2
+	Sep 2024 10:20:11 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240902092011eucas1p183edada5872e19c71d9fdfd49b752499~xYtfYUgio1814718147eucas1p1E;
+	Mon,  2 Sep 2024 09:20:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240902092011eusmtrp2cad280d647787b5ebda5f44e4dd4da3e~xYtfXUCCJ2554725547eusmtrp2J;
+	Mon,  2 Sep 2024 09:20:11 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-42-66d5834b95ab
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id AB.D6.14621.B4385D66; Mon,  2
+	Sep 2024 10:20:11 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240902092011eusmtip124d5cdec17832e5753681f0ef970cf48~xYtfG7wjI1102011020eusmtip1S;
+	Mon,  2 Sep 2024 09:20:11 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Mon, 2 Sep 2024 10:20:09 +0100
+Date: Mon, 2 Sep 2024 11:19:31 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+	<martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+	<song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+	<john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+	Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+	<jolsa@kernel.org>, <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v2 1/6] sysctl: avoid spurious permanent empty tables
+Message-ID: <20240902091931.7al44ccdbbez2v3q@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 02 Sep 2024 09:09:55 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Aleksa Sarai" <cyphar@cyphar.com>, "Ingo Molnar" <mingo@redhat.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Juri Lelli" <juri.lelli@redhat.com>,
- "Vincent Guittot" <vincent.guittot@linaro.org>,
- "Dietmar Eggemann" <dietmar.eggemann@arm.com>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Benjamin Segall" <bsegall@google.com>, "Mel Gorman" <mgorman@suse.de>,
- "Valentin Schneider" <vschneid@redhat.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- shuah <shuah@kernel.org>
-Cc: "Kees Cook" <kees@kernel.org>, "Florian Weimer" <fweimer@redhat.com>,
- "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kselftest@vger.kernel.org,
- stable@vger.kernel.org
-Message-Id: <63193b87-7057-4ad0-aef2-fdb5d15138c3@app.fastmail.com>
-In-Reply-To: 
- <20240902-extensible-structs-check_fields-v1-3-545e93ede2f2@cyphar.com>
-References: 
- <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
- <20240902-extensible-structs-check_fields-v1-3-545e93ede2f2@cyphar.com>
-Subject: Re: [PATCH RFC 3/8] openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef0dd949-e8a3-4b61-9d2d-3593b139cc4f@t-8ch.de>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJKsWRmVeSWpSXmKPExsWy7djPc7rezVfTDC6+MLH4/ns2s8WXn7fZ
+	LT4fOc5msXjhN2aLGytmMFscOr6f3aJpxwomiyNTZjFbrHt7ntXi+b5eJos9e0+yWFzeNYfN
+	4vePZ0wWazpXslrcmPCU0eLqzF1MFseX/2WzWLDxEaPFg9XbWB2EPW7sO8XksXPWXXaPBZtK
+	PbpuXGL22LSqk81jYcNUZo/Pm+Q8+ruPsQdwRHHZpKTmZJalFunbJXBlPJ86l7FgMW9Fy/uL
+	rA2MB7i6GDk5JARMJJ71XGMHsYUEVjBKrFqp2MXIBWR/YZS4u2QHC4TzmVHix7YZrDAdjzdc
+	ZIJILAfqmLSHDa7q5u3v7BDOJkaJZY/vsoG0sAioSJybvQvMZhPQkTj/5g4ziC0iYCOx8ttn
+	sAZmgR8sEj+fLwbawcEhLOApsfu6KEgNr4CDxNqLy9kgbEGJkzOfsIDYzAJ6EjemTmEDKWcW
+	kJZY/o8DIiwv0bx1Nth4TqDxz9Y+ZYO4WlHi6+J7LBB2rcSpLbfAPpAQeMUp0X/sEjtEwkVi
+	a/dHqDeFJV4d3wIVl5H4v3M+VMNkRon9/z6wQzirgb5s/MoEUWUt0XLlCVSHo0Tr8auMINdJ
+	CPBJ3HgrCHEdn8SkbdOZIcK8Eh1tQhMYVWYheW0WktdmIbw2C8lrCxhZVjGKp5YW56anFhvn
+	pZbrFSfmFpfmpesl5+duYgSmxtP/jn/dwbji1Ue9Q4xMHIyHGCU4mJVEeJfuuZgmxJuSWFmV
+	WpQfX1Sak1p8iFGag0VJnFc1RT5VSCA9sSQ1OzW1ILUIJsvEwSnVwLT2uXGRUKXj/U/cfZpr
+	hXcmWE7fXnIg7o5fmfURl9RXdvzvNa7Gvbq84UfZWavfrmu3Z3y98ESNbbHX0j2Wq+/0xpwJ
+	MXvkznyG7eeNwNfKV/8ceBf6Q815bdKDvOOe9ZcfrOnUTArecGC5/NL1d7L2OPLPSbvL/WKJ
+	D5fH/oJYIQ+pN5lfphs3qom1bvi2OMHhu/lppheTQsMyzkq7vXv16nvGqs8FggdezfaUT434
+	nM3y4vC5+Ik5i7d+F9iavvHFqrfRIXqcd102aM/+H9LWK7NIcccS0zLbhxxv5WSN7nC1uJ54
+	NN3z01Wxg+ot9sHPvoXtSTdu3/zUmtOoV2bvOltGw9elnRXJYjs0emyVWIozEg21mIuKEwHd
+	go4U/AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRmVeSWpSXmKPExsVy+t/xu7rezVfTDBbvE7H4/ns2s8WXn7fZ
+	LT4fOc5msXjhN2aLGytmMFscOr6f3aJpxwomiyNTZjFbrHt7ntXi+b5eJos9e0+yWFzeNYfN
+	4vePZ0wWazpXslrcmPCU0eLqzF1MFseX/2WzWLDxEaPFg9XbWB2EPW7sO8XksXPWXXaPBZtK
+	PbpuXGL22LSqk81jYcNUZo/Pm+Q8+ruPsQdwROnZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY
+	6hkam8daGZkq6dvZpKTmZJalFunbJehlPJ86l7FgMW9Fy/uLrA2MB7i6GDk5JARMJB5vuMjU
+	xcjFISSwlFFiybqd7BAJGYmNX66yQtjCEn+udbFBFH1klNg1/QA7hLOJUaJl5QEmkCoWARWJ
+	c7N3sYHYbAI6Euff3GEGsUUEbCRWfvsM1sAs8INFYm7PRpYuRg4OYQFPid3XRUFqeAUcJNZe
+	XA61oZdJ4k93LxNEQlDi5MwnLCA2s4CexI2pU9hAepkFpCWW/+OACMtLNG+dDbaLE2jXs7VP
+	2SCuVpT4uvgeC4RdK/H57zPGCYwis5BMnYVk6iyEqbOQTF3AyLKKUSS1tDg3PbfYUK84Mbe4
+	NC9dLzk/dxMjMHFsO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMK7dM/FNCHelMTKqtSi/Pii0pzU
+	4kOMpsAgmsgsJZqcD0xdeSXxhmYGpoYmZpYGppZmxkrivG6Xz6cJCaQnlqRmp6YWpBbB9DFx
+	cEo1MBWzlnxXne1vvXnjNe4vRRU/D7hJrU6LEI72fp6n+Xddw4bn7h3lDxgOuB3bxeRamC++
+	caYlW8PZuQqR+XyzznYecAgTeqSpWSWRZnXg4uZT5be/bnee+u7ez2/byx9GzZSVV9p3fAfL
+	/QrTPRMi/y47b7mes/zMJNHqTUn+BfOMTdl3S6l/WZw9rWLGvTqpAPvJp15MiHoRJNuVtzxk
+	/uVHClUSr6JOLDZJ/yNpFTZT83zvZPuJE8I8v24Qa6jdbp+cN3H6FWarOvUN71/YyfI/c7u6
+	fXP3C5UwDZtZQc99XzrciL62v7bwjumu2iP/Q78s+dD96u9j10eMLjpr8raHbZtbk2U0R0x6
+	7YVfq/4osRRnJBpqMRcVJwIAGePB7aUDAAA=
+X-CMS-MailID: 20240902092011eucas1p183edada5872e19c71d9fdfd49b752499
+X-Msg-Generator: CA
+X-RootMTR: 20240824180517eucas1p1534e7cc27c4b7f5fdfe76313e2a12cf4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240824180517eucas1p1534e7cc27c4b7f5fdfe76313e2a12cf4
+References: <20240805-sysctl-const-api-v2-0-52c85f02ee5e@weissschuh.net>
+	<20240805-sysctl-const-api-v2-1-52c85f02ee5e@weissschuh.net>
+	<CGME20240824180517eucas1p1534e7cc27c4b7f5fdfe76313e2a12cf4@eucas1p1.samsung.com>
+	<ef0dd949-e8a3-4b61-9d2d-3593b139cc4f@t-8ch.de>
 
-On Mon, Sep 2, 2024, at 07:06, Aleksa Sarai wrote:
-> While we do currently return -EFAULT in this case, it seems prudent to
-> follow the behaviour of other syscalls like clone3. It seems quite
-> unlikely that anyone depends on this error code being EFAULT, but we can
-> always revert this if it turns out to be an issue.
-
-Right, it's probably a good idea to have a limit there rather than
-having a busy loop with a user-provided length when the only bound is
-the available virtual memory.
-
->  	if (unlikely(usize < OPEN_HOW_SIZE_VER0))
->  		return -EINVAL;
-> +	if (unlikely(usize > PAGE_SIZE))
-> +		return -E2BIG;
+On Sat, Aug 24, 2024 at 08:05:08PM +0200, Thomas Weiﬂschuh wrote:
+> Hi Joel,
 > 
+> On 2024-08-05 11:39:35+0000, Thomas Weiﬂschuh wrote:
+> > The test if a table is a permanently empty one, inspects the address of
+> > the registered ctl_table argument.
+> > However as sysctl_mount_point is an empty array and does not occupy and
+> > space it can end up sharing an address with another object in memory.
+> > If that other object itself is a "struct ctl_table" then registering
+> > that table will fail as it's incorrectly recognized as permanently empty.
+> > 
+> > Avoid this issue by adding a dummy element to the array so that is not
+> > empty anymore.
+> > Explicitly register the table with zero elements as otherwise the dummy
+> > element would be recognized as a sentinel element which would lead to a
+> > runtime warning from the sysctl core.
+> > 
+> > While the issue seems not being encountered at this time, this seems
+> > mostly to be due to luck.
+> > Also a future change, constifying sysctl_mount_point and root_table, can
+> > reliably trigger this issue on clang 18.
+> > 
+> > Given that empty arrays are non-standard in the first place it seems
+> > prudent to avoid them if possible.
+> > 
+> > Fixes: 4a7b29f65094 ("sysctl: move sysctl type to ctl_table_header")
+> > Fixes: a35dd3a786f5 ("sysctl: drop now unnecessary out-of-bounds check")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> 
+> Any updates on this?
+> I fear it can theoretically also happen on v6.11.
+> 
+This is already in next and will probably make it for v6.11. The "fixed"
+tag will make is so it is ported to 6.10.
 
-Is PAGE_SIZE significant here? If there is a need to enforce a limit,
-I would expect this to be the same regardless of kernel configuration,
-since the structure layout is also independent of the configuration.
+Best
 
-Where is the current -EFAULT for users passing more than a page?
-I only see it for reads beyond the VMA, but not e.g. when checking
-terabytes of zero pages from an anonymous mapping.
+-- 
 
-    Arnd
+Joel Granados
 
