@@ -1,159 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-28290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B77F968EFB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 22:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF2A968F3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 23:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 733E5B21F7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 20:59:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24412B22543
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 21:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4311819CC04;
-	Mon,  2 Sep 2024 20:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A774B187344;
+	Mon,  2 Sep 2024 21:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="mVIFU2q5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IFCTB721"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="xyjS5qj+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132B71A4E6C
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 20:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00A2154C1D;
+	Mon,  2 Sep 2024 21:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725310766; cv=none; b=hufVS4ETBnMK6ax/YRfgxwPT6M/zzhLul48qm62BPvVgsqfotvVPC/bPu7LUglr37zFJjhHIHkxPsdCKSFe8Mdc/99DXqqXr/AG86DvNguKkFBP4HCmNKGZfQyIrB5cEpGZKVxEd07BqgKBddZY+65po+xa0XUIeuhMaTFvoBnA=
+	t=1725313973; cv=none; b=oFkVuFUZr+99XdDiOGmnrYwMwuqcNq9cD3B59AgMRKUmDgRZ6Lfd/XB05K4DkPC2eWueR3Gf5gGrNvI8I2cRJRq03eGKJmRjQfIE81+Wenu8eJqGl5udYO38ced2x5G5d5SErdbIfMRTpu6FNXjMEw7P+5/KfzvgMg360dZ+WoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725310766; c=relaxed/simple;
-	bh=OvS0zpknVCqpP7ppEOoNgu7bAYG2lh/b1ZaQ6zch0Ko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smqSdpgAAN8gs6p423fT6ai9YXawJypMTFwjdIT0StMzXt7lJrp62jV0wN9zMJGK90hdhmODKaC/n6F9s4yf364Lhdz1zgwJWRb8TG3//o60NPeZ8ca5jQb3b9ttlGZscnvGAVP6HAcPKSfVLt5JcGiWFUSyrqsnkbrLy9KwC0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=mVIFU2q5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IFCTB721; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 2F5DB1380283;
-	Mon,  2 Sep 2024 16:59:23 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 02 Sep 2024 16:59:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725310763;
-	 x=1725397163; bh=4fwCqiuMA/EooJe/suSWzJKFTWw3JfamxPeHdCLn8dQ=; b=
-	mVIFU2q55lrMbZyai5p534NBV1czAreDqZyYCF3BzqtrNJM1bn5FvXkexuNd8f0o
-	jb8vY5VLkXV0O/ZHDoWWTU/Pd/rcxPHZMA1YsXI7gyGPQuj9cG2rKsPXnSMm1P6b
-	OQabOpI+cAd5+dJWbdCaQbsDwpQk3b5m+O4nNWRxmsrzAmL8iUn1ADiAlNFBf1XN
-	AucDK6Ua2R2vwMTN+MOa5dKr64XXtApzfiWMYkHqbxa78shKJrK9jKITdU7TSdGT
-	g3IRZDy7AK1K4Xp7VjKBVzvculw8/7EiI9KFCGg4D19u0wuhCmiiptldFwQ9ZxJ2
-	2dTVy/F5IFn5tGS8gkuHWw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725310763; x=
-	1725397163; bh=4fwCqiuMA/EooJe/suSWzJKFTWw3JfamxPeHdCLn8dQ=; b=I
-	FCTB721ApM+xisQ3iCuDlqbpgODoVPB4dOKsApWFkA8MY4kIIviMIpMkGlsIyh/A
-	iXC2x6HzAIliPUTryt2EyIDwqXaCJHm35UgtmyMOxJhzCNjpmiTibo1ybIgwg/ow
-	vpNdoVNSHvKUXuW/tQG9TffFF3k0h8Kw/nXfeIG6341x5TA29pSmeEKS9jB7tDhy
-	668cpWxBzHAJgVhH39MxFs0bTpz5idfNZMK7G93yzOD+M2ZMAbPfMUghP3L9LQ0k
-	/aC4rzfiUttuIE1Q1DZdmCCQZ3H4IaQO3YaVNWy+3jGlgO3Z82s14DCZ/4xWqVca
-	sInZ/25RynfOtKMDdmARg==
-X-ME-Sender: <xms:KifWZh-Z_69AMCY9GxALf3u5nGJ7uFPZIC2msU55ZpngM_jdTQ5_xA>
-    <xme:KifWZlso8OWzBCHcHoaW4Y_WkjiS6DrmIfWSeSv233R76RMFxYQSSpHupxCzaIuAd
-    XMyz3hg8aLxVbOl>
-X-ME-Received: <xmr:KifWZvBIx8Boqz9O9zAAWqhkPad0HZlDnetXcttsh1kqVLMjwzW9tTg_UNOhdAZEsb611dUTVTiyqDyQaDIQmlmAj8kX7Jwpobx9RLOjeaQi0dFxE6QC>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehfedgudehiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
-    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddu
-    gfdtgfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
-    thesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthho
-    pegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsug
-    gvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhsvghfseht
-    ohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesgh
-    hmrghilhdrtghomh
-X-ME-Proxy: <xmx:KifWZlcahcJMocWuka6BA3rxnZQCGpUltaYp_xi4YcjTd414xdUahA>
-    <xmx:KifWZmMlzl5qRLj-syXpYKc-4sSM2137ZGqxquC0y_c-CilhWOzukQ>
-    <xmx:KifWZnl5h2We6IEy8_d2YqjRsXqvuDe8_BQ78yGi1rj_l73sXpoLWg>
-    <xmx:KifWZgsA-02X-E4IP8rKSB-PGN2oyCfo4dZuyMeAHdLaYjyobQDeLw>
-    <xmx:KyfWZt0rgCWYki4tH0vOHzOWcTMczL5-MsZsaCjKVp-eTuH-LTx9TLWC>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 2 Sep 2024 16:59:22 -0400 (EDT)
-Message-ID: <d50e64d1-8af2-4150-8291-dfc5ff720120@fastmail.fm>
-Date: Mon, 2 Sep 2024 22:59:21 +0200
+	s=arc-20240116; t=1725313973; c=relaxed/simple;
+	bh=24vqQSqoLckxgOVc8ARaONcxfqOIrm8KRgBa6hQ2Oqo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=TO82/ICMSC2Fy/te6l9xsF08/JMU7vV5XvXmt0jix0avewPNEMp92cef2wpLDMVV7KPk4Zasw3vzjFdtBJJLAQ5UZ8m7xjJz9SbA6CONhamKym0so3idMs7EfDEMo4FrvSEQDY4e5teKdEi0GfnWfUZ52Rsq6MU9U7/eK7Sl2Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=xyjS5qj+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BB1C4CEC2;
+	Mon,  2 Sep 2024 21:52:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725313973;
+	bh=24vqQSqoLckxgOVc8ARaONcxfqOIrm8KRgBa6hQ2Oqo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=xyjS5qj+O9H9mLCb46Pxw6v5dZusoW34qbCw/sihCiKqAsUL8CD2fpVpRkZ4B5exf
+	 TIcWChX6RQMCiyuwVSR4QE+JBJo+XmSmQjLte2kb4ldiKto3+o+GhC+dkb5TDCTGXd
+	 zJzlQKETOLTZt7dM7CSNCxppvoXXsQICuD4u/IwE=
+Date: Mon, 2 Sep 2024 14:52:52 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@lst.de>, Yafang
+ Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka
+ <vbabka@suse.cz>, Dave Chinner <dchinner@redhat.com>, Christian Brauner
+ <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-Id: <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+In-Reply-To: <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+	<ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] fuse: Allow page aligned writes
-To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "josef@toxicpanda.com" <josef@toxicpanda.com>,
- "joannelkoong@gmail.com" <joannelkoong@gmail.com>
-References: <20240812161839.1961311-1-bschubert@ddn.com>
- <a71d9bc4-fa6f-4cfd-bd96-e1001c3061fe@fastmail.fm>
- <CAJfpegt1yY+mHWan6h_B20-i-pbmNSLEu7Fg_MsMo-cB_hFe_w@mail.gmail.com>
- <b3b64839-edab-4253-9300-7a12151815a5@ddn.com>
- <CAJfpegvOvv=LvjSoHJGSBr4_abh4DrP0=2=o6uovnvsUbzPJ8Q@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegvOvv=LvjSoHJGSBr4_abh4DrP0=2=o6uovnvsUbzPJ8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Mon, 2 Sep 2024 05:53:59 -0400 Kent Overstreet <kent.overstreet@linux.dev> wrote:
 
-
-On 8/29/24 15:39, Miklos Szeredi wrote:
-> On Thu, 29 Aug 2024 at 15:05, Bernd Schubert <bschubert@ddn.com> wrote:
->>
->> On 8/29/24 14:46, Miklos Szeredi wrote:
->>> On Mon, 12 Aug 2024 at 18:37, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->>>>
->>>> Sorry, I had sent out the wrong/old patch file - it doesn't have one change
->>>> (handling of already aligned buffers).
->>>> Shall I sent v4? The correct version is below
->>>>
->>>> ---
->>>>
->>>> From: Bernd Schubert <bschubert@ddn.com>
->>>> Date: Fri, 21 Jun 2024 11:51:23 +0200
->>>> Subject: [PATCH v3] fuse: Allow page aligned writes
->>>>
->>>> Write IOs should be page aligned as fuse server
->>>> might need to copy data to another buffer otherwise in
->>>> order to fulfill network or device storage requirements.
->>>
->>> Okay.
->>>
->>> So why not align the buffer in userspace so the payload of the write
->>> request lands on a page boundary?
->>>
->>> Just the case that you have noted in the fuse_copy_align() function.
->>
->> How would you do that with splice?
+> On Mon, Sep 02, 2024 at 11:51:48AM GMT, Michal Hocko wrote:
+> > The previous version has been posted in [1]. Based on the review feedback
+> > I have sent v2 of patches in the same threat but it seems that the
+> > review has mostly settled on these patches. There is still an open
+> > discussion on whether having a NORECLAIM allocator semantic (compare to
+> > atomic) is worthwhile or how to deal with broken GFP_NOFAIL users but
+> > those are not really relevant to this particular patchset as it 1)
+> > doesn't aim to implement either of the two and 2) it aims at spreading
+> > PF_MEMALLOC_NORECLAIM use while it doesn't have a properly defined
+> > semantic now that it is not widely used and much harder to fix.
+> > 
+> > I have collected Reviewed-bys and reposting here. These patches are
+> > touching bcachefs, VFS and core MM so I am not sure which tree to merge
+> > this through but I guess going through Andrew makes the most sense.
+> > 
+> > Changes since v1;
+> > - compile fixes
+> > - rather than dropping PF_MEMALLOC_NORECLAIM alone reverted eab0af905bfc
+> >   ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") suggested
+> >   by Matthew.
 > 
-> I would have thought that splice already honored page boundaries, but
-> maybe commit 0c4bcfdecb1a ("fuse: fix pipe buffer lifetime for
-> direct_io") broke something there.  Should be fixable easily without
-> need to change the interface, because splice is free to start a new
-> buffer at any point.
+> To reiterate:
+> 
 
-Actually my mistake, I had thought that splice has the same issue and I
-really thought I had tested it, but actually splice works fine and has
-aligned pages.
+It would be helpful to summarize your concerns.
 
-
-Thanks,
-Bernd
+What runtime impact do you expect this change will have upon bcachefs?
 
