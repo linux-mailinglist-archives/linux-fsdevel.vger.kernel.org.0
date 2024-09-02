@@ -1,156 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-28198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465EB967EBA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 07:18:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB47967EC4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 07:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A34BCB2161B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 05:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5773A1F22275
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 05:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4060A14F9E6;
-	Mon,  2 Sep 2024 05:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rCxTO0L7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E2914D6EE;
+	Mon,  2 Sep 2024 05:28:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C20382
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 05:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD9C179AA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 05:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725254324; cv=none; b=Tt2EGGIlyRAZ27Vvyf8Tke8Rr3bTzwaF+xPRql0adpFuFHQ27J7rD2cJEHUawEgzD2fJWOFSvecGDxWA/avUoN+tdvICrcqbt79FfXqn7/Rj2ZJqHTdScqLv4ADIUwfZwHrcagjZfh3rwuqM8Fxety8hXFysSpqtCfsbX5riOgQ=
+	t=1725254884; cv=none; b=C4LPTnaqXAmhIYMhH4DJ8qCAE38YkdbkqofPIpE4weADKKXLZ0UIMDjjU1f9Lp/Uzv6tqfx+TOjN8feub0knCfgbnzNZpqcBqYHJthXqwo0kh1M/ZpzVsjRYA8uEBoiP4zwiYVWT0wd3Vm1+7TX4tZRyNlLAz4/AIMVEhlHHwHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725254324; c=relaxed/simple;
-	bh=BdjiREE7l/FNldSgz5AseM3MCJoVK1RmC4kNMgchFtQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=V+anZk1SgVii3ae0vuDxYDyemrDllUCsuG5nEB/SB2ltdnR+ZKL63D8gUMFjTbFn/2l8x+3AS02ern4eW1r0s2397Emuj5yp46h8ExmByJDC5xXm/WSh9vHruAR0pUo00WO4ucitQGBkqn3F6/uaWKWQLXWsMOYs3auLNscSZIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rCxTO0L7; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240902051839epoutp03708ba210224b8a184335695016b30f52~xVamo_CjH2537125371epoutp03V
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Sep 2024 05:18:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240902051839epoutp03708ba210224b8a184335695016b30f52~xVamo_CjH2537125371epoutp03V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725254319;
-	bh=j48tXrfPFLQpQy7ehDudz1ll+W1pF1dhPhX8Mc3nQqc=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=rCxTO0L7UCcIFdxMmHf8dasIruE4sJkM+JTXoq/XbLrVESVOyEPP+7n3PKTNHm4WZ
-	 0713y22C6yeaHHrPuO8vWOATp40SD7nEf9uYWaqiMMbtQl6QPNzwnUAqVYVJ3l9FOx
-	 PM6QWs84fHlHYtYIYutJWszH4avkYyo/HMS1QNMs=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240902051838epcas5p14c257efc542d4b9a274b9dc4c277d225~xVal_rM6o1678716787epcas5p1Q;
-	Mon,  2 Sep 2024 05:18:38 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Wxxqc65zdz4x9Pq; Mon,  2 Sep
-	2024 05:18:36 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	89.2C.09743.CAA45D66; Mon,  2 Sep 2024 14:18:36 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240902051836epcas5p39b730254365bd2c759417178d2f6da95~xVajpRyl00854708547epcas5p3D;
-	Mon,  2 Sep 2024 05:18:36 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240902051836epsmtrp1da38afc11821c9b95fb4d33e235eb199~xVajoayr80087300873epsmtrp1j;
-	Mon,  2 Sep 2024 05:18:36 +0000 (GMT)
-X-AuditID: b6c32a4a-3b1fa7000000260f-46-66d54aacd6fd
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DF.E4.07567.CAA45D66; Mon,  2 Sep 2024 14:18:36 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240902051833epsmtip1f4f6ade22e4a2ede413b18d72ce57cef~xVagrBjGC2920229202epsmtip1s;
-	Mon,  2 Sep 2024 05:18:32 +0000 (GMT)
-Message-ID: <3343ecc2-6c19-e509-5f17-ceaa4f88efae@samsung.com>
-Date: Mon, 2 Sep 2024 10:48:31 +0530
+	s=arc-20240116; t=1725254884; c=relaxed/simple;
+	bh=PIWg1kV2O8zg6jx9p3Pbr33e5KlEZhEQxtJASrgjHpk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HpDb3fAUUOgoW2QKkx86lnYGB6aE3BZiWomW+sCPAz7A/kITgDjCB1pgrOAI6INAJsUBGsyoSNHn16Z2QQZSwoSHx6YgpTr1Z635bcs1QHojGbHKvjYkvlZuJohtRUfrfA2ezh3g8LHf2RYv8bWqmGnf23a0tiKfm8by/UB55Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a3fa4ecd3so185342639f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Sep 2024 22:28:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725254882; x=1725859682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z6/R7U0VqDiPHR7JhVGpk+mBdbkz6KtFGSnvxfDuXFI=;
+        b=bYFzSfX1l/Zoy7QH3+/aJCanvcW36kIvBmluKo3k+DssL59mCDlMzu7zwdMizAmmt9
+         UEBSLtUnO0CJQ2ORooAUKPzZHD9N0hEzUijGdrPgqIOUsazZL/ZwYsXGGjQdsy65lk53
+         HwcULA1Ulb8E2aPoBErWkPh/IECKo53T5xnwrwD19p/thhCucCp5liZFt3ElCjHS2+oh
+         qUH01nA8cJ6VEF0fPFqbnGcOkQsQH/wC6FgyhKRJhHtNCv4tiCB0SWRCL7elLpK9zPae
+         WIeOPueIyZNpWvCh6OeKTvKTLD5by0M428xQR88QwnlMNp+lkhn67yzbgLJUSkuWSwlf
+         ioYg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3f2/VMYme5dRJiecoshhavBOoe59jpS45Wu0GivJfUn6IzJUM95q1ZSjFtIpUajs93CREI7rj+q7v3p7Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxIyxX4XIs0Cb/0cq9PEhIHYCnGguvtr7Kk+o250b9Mu3jVISB
+	M9wXwTlExOg+xkUBiUMEnmGI3k7rjjHqmhIcfWphJoXnOb5D+cK5IWAdN3JqF7fhyA12gTZTpuf
+	xmGk6KuuFagwDLQxma7fq8LJEOu6+8YhWiUgMwz7i81dkLzeVO3U1Bwc=
+X-Google-Smtp-Source: AGHT+IEGJzdjUqwdJUazymn+LrA+gjDAEdrAgDe9ts5jMjlBpRNDON9BwywuQpAbcrk21B2MMgOldPJZdwVKYwxr8wfyfW8BymTa
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v4 1/5] fs, block: refactor enum rw_hint
-Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>, axboe@kernel.dk,
-	kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, martin.petersen@oracle.com,
-	James.Bottomley@HansenPartnership.com, brauner@kernel.org, jack@suse.cz,
-	jaegeuk@kernel.org, jlayton@kernel.org, chuck.lever@oracle.com
-Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
-	linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
-	javier.gonz@samsung.com
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <0cfd7841-ea11-48c6-93fb-7817236c81c8@acm.org>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJJsWRmVeSWpSXmKPExsWy7bCmpu4ar6tpBnv6tS1W3+1ns3h9+BOj
-	xbQPP5kt/t99zmRx88BOJouVq48yWcye3sxk8WT9LGaLjf0cFo/vfGa3+LlsFbvFpEPXGC32
-	3tK2uLTI3WLP3pMsFvOXPWW36L6+g81i+fF/TBbrXr9nsTg/aw67g4jH5SveHufvbWTxmDbp
-	FJvH5bOlHptWdbJ5bF5S77F7wWcmj903G9g8Pj69xeLRt2UVo8eZBUfYPT5vkgvgicq2yUhN
-	TEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAF6UkmhLDGnFCgU
-	kFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFKgV5yYW1yal66Xl1piZWhgYGQKVJiQnfHl3yH2
-	gpksFWeu32JsYFzB3MXIySEhYCJx8sUC9i5GLg4hgd2MEv/W3GKCcD4xSnTPmMcG4XxjlPh4
-	ajUjTEvLn5ksEIm9jBLHV39gA0kICbxllPjfGwti8wrYSWz6shWogYODRUBF4uvVIIiwoMTJ
-	mU9YQGxRgSSJX1fngM0UFrCR2Ph7FdhJzALiEreezAe7QkRgKpPEgT8tYMuYQea/nrWAGWQo
-	m4CmxIXJpSANnALWEsdOvYJqlpdo3jqbGaReQmA6p8TPG90sEFe7SDxfuR/qaWGJV8e3sEPY
-	UhIv+9ug7GyJB48eQNXXSOzY3McKYdtLNPy5wQqylxlo7/pd+hC7+CR6fz9hAglLCPBKdLQJ
-	QVQrStyb9BSqU1zi4YwlULaHxOVfy6Hh9o5Rov3JTpYJjAqzkMJlFpL/ZyF5ZxbC5gWMLKsY
-	JVMLinPTU4tNC4zyUsvhEZ6cn7uJEZwHtLx2MD588EHvECMTB+MhRgkOZiUR3qV7LqYJ8aYk
-	VlalFuXHF5XmpBYfYjQFxs9EZinR5HxgJsoriTc0sTQwMTMzM7E0NjNUEud93To3RUggPbEk
-	NTs1tSC1CKaPiYNTqoEp6mTPe+2fi6JPnXmmNNljf2fPniXNGsF3aq47fS5suD9pN89n723b
-	f4Qcm/nK1G1TVAdv7Xf5QNeOjWJXmU7vj+qRdXc+0PK67ahJyl6R/20t/noT1eq829cKm6bs
-	Pyr4UGsbt96CwJ99kQ1BsycZ7XhSw7ND4RNrd3s7T9jGOfkJp55t/R7GtZstWkZHJfv/coMb
-	e7Qu8PGazFH88kn2xa+3ry+eLnK/Oc3+QLuOm0iO6/WCf75lfEv3dVyekvn2wmv+72+nWMjJ
-	6J7nNGIoDefh2a9usO+e2YbFAk96Mk+/5J3ReNUrY5rsnWzDAoH9q/aLcl33+DflvM06n4XG
-	adzqGywf5CzJaW/JNRdVYinOSDTUYi4qTgQAYNIahYwEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsWy7bCSnO4ar6tpBtc3s1usvtvPZvH68CdG
-	i2kffjJb/L/7nMni5oGdTBYrVx9lspg9vZnJ4sn6WcwWG/s5LB7f+cxu8XPZKnaLSYeuMVrs
-	vaVtcWmRu8WevSdZLOYve8pu0X19B5vF8uP/mCzWvX7PYnF+1hx2BxGPy1e8Pc7f28jiMW3S
-	KTaPy2dLPTat6mTz2Lyk3mP3gs9MHrtvNrB5fHx6i8Wjb8sqRo8zC46we3zeJBfAE8Vlk5Ka
-	k1mWWqRvl8CV8eXfIfaCmSwVZ67fYmxgXMHcxcjJISFgItHyZyYLiC0ksJtRomu1GURcXKL5
-	2g92CFtYYuW/50A2F1DNa0aJxw3nmUASvAJ2Epu+bGXsYuTgYBFQkfh6NQgiLChxcuYTsJmi
-	AkkSe+43gpULC9hIbPy9CmwvM9D8W0/mM4HMFBGYyiSx8sVVsAXMAm8ZJVoPHGGB2PaOUeLy
-	wVvMIBvYBDQlLkwuBenmFLCWOHbqFdQkM4murV2MELa8RPPW2cwTGIVmITlkFpKFs5C0zELS
-	soCRZRWjZGpBcW56brJhgWFearlecWJucWleul5yfu4mRnDMa2nsYLw3/5/eIUYmDsZDjBIc
-	zEoivEv3XEwT4k1JrKxKLcqPLyrNSS0+xCjNwaIkzms4Y3aKkEB6YklqdmpqQWoRTJaJg1Oq
-	gSm31EDtqie79SJx27+567d0x+9nKnY855R8YEvz7Hseq70UJ0ml5ziZuu0SnpNrPfXgBOfY
-	LWxiR5buDf64VVOqaJfudYtyw3YRn0MvUrZdfd5QnqZoZKOx9tTO6jgRfrsTCoLc/30kC2Kj
-	GE6daZyyTjBaufXrlDJVLY87HXMvFaYs5rasuTztfn7XxYy6U9E584RnnY1l67h5eYve9G5L
-	ruZFPsHKPd+Pnjfbvia2VKvKxPzE7MINluWvvT5v235pwm+uHkd1C+GI18o37f4+UVln9se8
-	4Ne7L3G6lq/dJH8+feC7Kd1umvu2svO/YmZ2RpzheNdpGve5ZmHVht0r2/znrDgX767Bz/tx
-	hRJLcUaioRZzUXEiAMk9H9loAwAA
-X-CMS-MailID: 20240902051836epcas5p39b730254365bd2c759417178d2f6da95
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240826171413epcas5p3f62c2cc57b50d6df8fa66af5fe5996c5
-References: <20240826170606.255718-1-joshi.k@samsung.com>
-	<CGME20240826171413epcas5p3f62c2cc57b50d6df8fa66af5fe5996c5@epcas5p3.samsung.com>
-	<20240826170606.255718-2-joshi.k@samsung.com>
-	<0cfd7841-ea11-48c6-93fb-7817236c81c8@acm.org>
+X-Received: by 2002:a05:6638:13c3:b0:4c2:9573:49af with SMTP id
+ 8926c6da1cb9f-4d017f12e62mr647003173.6.1725254881854; Sun, 01 Sep 2024
+ 22:28:01 -0700 (PDT)
+Date: Sun, 01 Sep 2024 22:28:01 -0700
+In-Reply-To: <20240902050455.474396-1-sunjunchao2870@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006156d606211c3444@google.com>
+Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+From: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, sunjunchao2870@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/30/2024 5:47 PM, Bart Van Assche wrote:
-> On 8/26/24 1:06 PM, Kanchan Joshi wrote:
->>   /* Block storage write lifetime hint values. */
->> -enum rw_hint {
->> +enum rw_life_hint {
-> 
-> The name "rw_life_hint" seems confusing to me. I think that the
-> name "rw_lifetime_hint" would be a better name.
-> 
+Hello,
 
-I can change to that in next iteration.
-This change needs to be consistent in all the places. But more important 
-in patch #3 (as we expose TYPE_RW_LIFE_HINT to userspace). Do you have 
-comments on the other parts?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+Tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         ee9a43b7 Merge tag 'net-6.11-rc3' of git://git.kernel...
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1710c453980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9358cc4a2e37fd30
+dashboard link: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14f2e529980000
+
+Note: testing is done by a robot and is best-effort only.
 
