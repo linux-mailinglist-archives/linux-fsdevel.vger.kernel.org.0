@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-28423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A9496A211
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 17:21:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2908F96A214
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 17:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CDB71C23672
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:21:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14EA1F23944
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51014192B8C;
-	Tue,  3 Sep 2024 15:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE27118BC2F;
+	Tue,  3 Sep 2024 15:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vYYS8ckV"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Q/Y5sx7H"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118F11922F8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BBC1925AA
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376635; cv=none; b=MwzLotu5OBsQxj45D7fDtHP5PF7z1ABXGVUHYMae2m4qI3KhKKWCq+2KpqDeM+6FD4q/LkX1zlBSu4VgCXLTTLdkrPC7Yl6Y4Xw4oHTu4zsadCOj1vhDiuMnl6M9AwQpIip7jeaukwywKHbyWXmtGlhoYur5JEFtQIPYOhH/60o=
+	t=1725376637; cv=none; b=WMJT7ZVayDkp383t8SzDBDW4uYQ0Y174QTnuO0801bAh0t8fuEv8Ivmxa1IxPXlXIeSkkKLggGJTbuDo3BsNZy39eIN6yF62m5Wcuxj9/fEtbdZxsuJ6Ghx/tyTvUvXRJDeFaTuUjgdOCuxU0qTpXG3kOeZ2le//OVj+kI9Hv94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376635; c=relaxed/simple;
-	bh=zCrcaSPlVef9fMgj6fnLuhDo1m+kzv16tHWQShTiBI4=;
+	s=arc-20240116; t=1725376637; c=relaxed/simple;
+	bh=ezrwIWPEtkVKsO2BZ8GHjfDUp3paNgF+C0sOeuA/x40=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M9Gr48LnY9x7hqScN5fcTV1GLDxMHJPCVL0WfGoXsFB5WK3RZa0CYC4KBx6BEJMPVU4ccktjeT1lnNIH2QAC4tpbF0GUnRKUA6HQkkWmv36eikSQBYMyhnQ8nL2/9SisZIH44G4coP9NglouUKHRi+aLyXXkdeQO2KdDKD3yrnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vYYS8ckV; arc=none smtp.client-ip=185.125.188.122
+	 MIME-Version; b=lA+4UFpKKBi4ABdQmrjhLs/6DakUJqwYL4Y+pd2eCqK7qlsGNZl9lmX7JvqBRz1o7TAGvcawQcfXbiiSQnk7WlYdSA3tIE3VB4AwyAOdNJXKJB+lXFN/3XMZtv50odi60vZBR92QQpojkIyfW3PY00H4cKpNFyBbulz3pU0b5iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Q/Y5sx7H; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6AF9E3FC04
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:11 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BA36D3FADB
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725376631;
-	bh=btta7JvkwVu4o++SpqzGVQUNPal7Y+ZsmtoSEosWuhw=;
+	s=20210705; t=1725376633;
+	bh=UlVqr8qfq0zm4LadiFaTT35TCbrEM7DrGylkId+7er0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=vYYS8ckVqaTMWNJBCPphlcouEvbpQ2KhpU/o3bXj7JehDaFasNpBRRcwslGJytNXP
-	 G68b3Wgtu8Oz//s9oxjH65eYh0YWsNkLsa1e9PbHfiO1v8XbhcQj+QeklBAjzFxspI
-	 Gc6ZdOic9CaCy3KpF+nUVTKjMJHu0JrQC2Xvy9fVqHZudyLFdRLblMG5T+qTrZP8Ya
-	 VsISIcnC5UQrMuWdPPOoD3ZcwVjjjWoQq5sefhc0s6DyVXPfTM/feNuf/kM2yTNufo
-	 3ptaApsEM5/Px+NIxZulySycVhrslzeams5WVkfjGE6cNKfLN5HfAu5G2cUvj52Psi
-	 3tOiPI8mGXedA==
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-5343808962cso6211042e87.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 08:17:11 -0700 (PDT)
+	b=Q/Y5sx7Hjj9AbUArEUlD5AOtdoWF3y4v3vXtcfd6nk7K8F9zM0xym8Zp7m4taBnI8
+	 JVdquzhnM0MWeDE+S3T29vJJgT0tz+3eXd66a/DkGIRr+vB13t1BYeSc7uiRzpxOKb
+	 6oeGYseQgLT7TahKYdTt1Je21izR/Ohy0lNF2pejpwyO3Lb7wChyz09w4snQwKIw3T
+	 KeSCwy1Sp2wEop2DTQALtgOpaWqe2q1wZmXC3HzARLQqkl2cvIipjlxbGIdEB2zMO1
+	 btU6gfUX0sIyyjIPU6280CIoXvR1seSYXUgiyncTNV6QxZrck/TWegXOEdNaupB1f0
+	 y2FDagf6g+gxw==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a870cad2633so477433966b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 08:17:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725376631; x=1725981431;
+        d=1e100.net; s=20230601; t=1725376633; x=1725981433;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=btta7JvkwVu4o++SpqzGVQUNPal7Y+ZsmtoSEosWuhw=;
-        b=l9rh+iHn07GVLJOZZSluZGbHP1TSFsa1vTtgupjoSEE/XxoVjiYJf7bqjMCw4nQsBj
-         K2DDbTsp98lzCn5RodmGsyLYXVMQULq3VMoFyHGu1VGXUrR4fN+1ZlvxZ+UG9TXOO011
-         79MXQZ9tNNxS7BZFlkqI1XO4beu3g1Nv2F7tX64h1os+sz/gq0r49vcj2FgGD4s2N7uv
-         QUFVk3SUPiza/reTZSUvuXiTaSN4Bq5jiBblsQX9AHDWNWeLAuVrVs0ub42KlzKn3kY8
-         3DFKjNsCkmfxSBFlIgmrIOtr9EmgIxMqDzvf+8ep4tBg5ielPqhBQjVe9/NB1SM2W2ML
-         hMWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdxk1j9EfVnenDI36go+jbJXzODKSgaCY5roXenkXRt+l3nJ4z8WGNX0N5DJvylWLPqY6xNQ9QM3dUL59A@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaDiYwtPBqUg6e6nXTpBswTxNBOWHsRP/JJWFeaB6wCCAdjbT2
-	r5RQkUMYkxKq2Ja0wpQjDPIflkldRGadD+GHyWdbODUldFlOWFymtWRTraHqXUhRQfO7ZQM+Jbw
-	WJoPuXx+dNN7sGdl3qfkYy2VaP0FLN6pTvYuOx27dpH5RXdVqB6I77BfSx0Dj0hxet8IJFf618G
-	b9AOo=
-X-Received: by 2002:a05:6512:2215:b0:533:4676:c218 with SMTP id 2adb3069b0e04-53546b191c1mr10714026e87.8.1725376630617;
-        Tue, 03 Sep 2024 08:17:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9/hcou3cmyT9HFV+yv/KjP2e+D8E+jeLocrBSGTUTM5RMK5sgega+1/hOouRDW8vLnMtf4A==
-X-Received: by 2002:a05:6512:2215:b0:533:4676:c218 with SMTP id 2adb3069b0e04-53546b191c1mr10713999e87.8.1725376630113;
-        Tue, 03 Sep 2024 08:17:10 -0700 (PDT)
+        bh=UlVqr8qfq0zm4LadiFaTT35TCbrEM7DrGylkId+7er0=;
+        b=SGKN3N1zwQjLEPCZxyZJBuBXmfxuf8FLcNyk9a77/ttj/G8Xx4eUhkWVNyV6qEI9oO
+         R32XNnKK5Sg6nu8XosUEuIrjhurAYAByxTAJRvWiaRPg8SVi/lmxwp0tSdq5cRw8WMza
+         UDSlkydnAKC0iieON6/kPulfJSwFyQJ1YJ+HEvPUVk2itAbXgdv3UAiEBtsfd5mLOstn
+         Hx6ntAfQBUxOBD8MQZFndwE/9PL2F96B9VsP1DyepCZTfxtZewParLc5uDbZ56ROyfnb
+         r9z9ZcLo7lZwqfs9NCt2wpQkMfskQRTQXLJ3HsHJS1QFMwiwWTqXN+i32lCjs4yK7lkG
+         o/KA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHKSOlZ1f83nDom+5bHM7jmiaNQk4fHsZ9Zqo1wR3j3zeqx7DBhxKWJGqYjmRuZ29wMCzAOevxMnWA6Prm@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQJ/VaRPNauLvVTX/aRx6NemWIZmh6hpKpflr/QZotWE4CLjmn
+	RZ3usYW2C3+1Q+KmFh4rTkakLTnqmbxm+SQz0he/cN2T1/1pwMB4fMvE+lDX3LJCoI3hel4npkU
+	tkkPp3OnZiNwtM5/nFCsQXWZHi2q1K5lmtyjSn/KnRkwKU6tlc4r7ibIt1bx6VHOERwh73/gwNY
+	y0e8I=
+X-Received: by 2002:a17:907:9487:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a897f1c3e3dmr1290755866b.0.1725376633315;
+        Tue, 03 Sep 2024 08:17:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGL2gL9kVUAD7c/U4EREwo/0f6jUYuTiYlOJEoA7Rsdp22DZQmd9M2c7KMwQk3rXunkx2Y1ag==
+X-Received: by 2002:a17:907:9487:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a897f1c3e3dmr1290754566b.0.1725376632859;
+        Tue, 03 Sep 2024 08:17:12 -0700 (PDT)
 Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.17.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.17.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 08:17:09 -0700 (PDT)
+        Tue, 03 Sep 2024 08:17:12 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -87,9 +87,9 @@ Cc: brauner@kernel.org,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/15] fs/fuse: support idmapped ->set_acl
-Date: Tue,  3 Sep 2024 17:16:21 +0200
-Message-Id: <20240903151626.264609-11-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v4 11/15] fs/fuse: support idmapped ->rename op
+Date: Tue,  3 Sep 2024 17:16:22 +0200
+Message-Id: <20240903151626.264609-12-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
@@ -101,17 +101,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It's just a matter of adjusting a permission check condition
-for S_ISGID flag. All the rest is already handled in the generic
-VFS code.
-
-Notice that this permission check is the analog of what
-we have in posix_acl_update_mode() generic helper, but
-fuse doesn't use this helper as on the kernel side we don't
-care about ensuring that POSIX ACL and CHMOD permissions are in sync
-as it is a responsibility of a userspace daemon to handle that.
-For the same reason we don't have a calls to posix_acl_chmod(),
-while most of other filesystem do.
+RENAME_WHITEOUT is a special case of ->rename
+and we need to take idmappings into account there.
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
@@ -120,26 +111,56 @@ Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: Bernd Schubert <bschubert@ddn.com>
 Cc: <linux-fsdevel@vger.kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/fuse/acl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2:
+	- this commit added
+v4:
+	- support idmapped ->rename for RENAME_WHITEOUT
+---
+ fs/fuse/dir.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-index 897d813c5e92..8f484b105f13 100644
---- a/fs/fuse/acl.c
-+++ b/fs/fuse/acl.c
-@@ -144,8 +144,8 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 * be stripped.
- 		 */
- 		if (fc->posix_acl &&
--		    !in_group_or_capable(&nop_mnt_idmap, inode,
--					 i_gid_into_vfsgid(&nop_mnt_idmap, inode)))
-+		    !in_group_or_capable(idmap, inode,
-+					 i_gid_into_vfsgid(idmap, inode)))
- 			extra_flags |= FUSE_SETXATTR_ACL_KILL_SGID;
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 08bf9cc51a65..d316223bd00b 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1025,7 +1025,7 @@ static int fuse_rmdir(struct inode *dir, struct dentry *entry)
+ 	return err;
+ }
  
- 		ret = fuse_setxattr(inode, name, value, size, 0, extra_flags);
+-static int fuse_rename_common(struct inode *olddir, struct dentry *oldent,
++static int fuse_rename_common(struct mnt_idmap *idmap, struct inode *olddir, struct dentry *oldent,
+ 			      struct inode *newdir, struct dentry *newent,
+ 			      unsigned int flags, int opcode, size_t argsize)
+ {
+@@ -1046,7 +1046,7 @@ static int fuse_rename_common(struct inode *olddir, struct dentry *oldent,
+ 	args.in_args[1].value = oldent->d_name.name;
+ 	args.in_args[2].size = newent->d_name.len + 1;
+ 	args.in_args[2].value = newent->d_name.name;
+-	err = fuse_simple_request(NULL, fm, &args);
++	err = fuse_simple_request(idmap, fm, &args);
+ 	if (!err) {
+ 		/* ctime changes */
+ 		fuse_update_ctime(d_inode(oldent));
+@@ -1092,7 +1092,8 @@ static int fuse_rename2(struct mnt_idmap *idmap, struct inode *olddir,
+ 		if (fc->no_rename2 || fc->minor < 23)
+ 			return -EINVAL;
+ 
+-		err = fuse_rename_common(olddir, oldent, newdir, newent, flags,
++		err = fuse_rename_common((flags & RENAME_WHITEOUT) ? idmap : NULL,
++					 olddir, oldent, newdir, newent, flags,
+ 					 FUSE_RENAME2,
+ 					 sizeof(struct fuse_rename2_in));
+ 		if (err == -ENOSYS) {
+@@ -1100,7 +1101,7 @@ static int fuse_rename2(struct mnt_idmap *idmap, struct inode *olddir,
+ 			err = -EINVAL;
+ 		}
+ 	} else {
+-		err = fuse_rename_common(olddir, oldent, newdir, newent, 0,
++		err = fuse_rename_common(NULL, olddir, oldent, newdir, newent, 0,
+ 					 FUSE_RENAME,
+ 					 sizeof(struct fuse_rename_in));
+ 	}
 -- 
 2.34.1
 
