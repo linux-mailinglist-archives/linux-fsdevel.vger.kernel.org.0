@@ -1,288 +1,267 @@
-Return-Path: <linux-fsdevel+bounces-28412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBE796A177
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 17:00:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EEE96A1F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 17:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19F1C1F26104
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:00:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA031C24474
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B8E12B94;
-	Tue,  3 Sep 2024 15:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D36E18890C;
+	Tue,  3 Sep 2024 15:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EH0UW/9Z"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PmnC5BTp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1256216F0D0;
-	Tue,  3 Sep 2024 15:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580E6188581
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375608; cv=none; b=iDier0K2gCthK08QTlBB3IUKgzaFTvdTv7eKNN2N/aseBF/CWZXWUIfbE83GydQqJVAPw+l8nFgaH2N/LlxF2Ie7I2W8eSmv4vnaYq0nnIkUk4yfsT+bgqe1Bnvw+ZZjb36xlZMt5npboN7jHywGIXK4AYoAw0CyRdjXvw48vAA=
+	t=1725376613; cv=none; b=eABnQZn5KSDLuEtVFs6y6aljMp2JfG6ibvpyaoII27SK8j4Zd73zldNcONcH4DNhWiR9fb2z+88z/JE8toL2xU6HJEnxuXLK2uZOZFqqgHI8b07M/s6vU4gdg2Z8RQZYIid49OhH/vKW4LN50Q4/fV6gapUk3+FXuw4z1dNX5eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375608; c=relaxed/simple;
-	bh=R5XiZuiRdMRoAx0ed2jLR34djSeA0ECqYKdldFsKt+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QF3EwY31cocwKIbhO1dfpzgD79egBuaZIVGA+JGvhJBN+1g6nGkTHGrJBljvDh1wE6vJveNWza4j0p8svRyi4krPIt+vAgP69/Ot/EacFP1pltcqwhjMdyQ0xQzMcBS1Br4+fKmX4MDFoYUfnGTCH2WjA2sYhrt6VM+s9mLNXuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EH0UW/9Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD2E6C4CEC4;
-	Tue,  3 Sep 2024 15:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725375607;
-	bh=R5XiZuiRdMRoAx0ed2jLR34djSeA0ECqYKdldFsKt+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EH0UW/9ZwKLeBZkerCnI9iNZn3fH1IhWJslXvZ+pDQclIKMTzsrrbnHjCjRxP0cVr
-	 l1wwHIO8My6dIKbaGtfwXjnt7cvUJw8J82QIvVhgV48BXEbjZLIN2mcwT5Fa4J1vto
-	 Nfz6n8G+tKRIsjItrJnwqZq1uiLcS+7PQRIJkpbvvuNwDnfA6YLteSZ1Wins3OkZ8Y
-	 ZO8+2RUFx+Cx+lq7g3LG8LuWhkT8k87tT7chR1PzEgDmSQYlUKvkD4bVTJLZGymjmi
-	 rBl3BUXTxt+eWuF/OXG6vojKb+p6C+4O8O9rveqwXV31XuihzI1KpBQj6VBrxJOCCp
-	 NpRFmsGdpsOLQ==
-Date: Tue, 3 Sep 2024 11:00:05 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
-	Anna Schumaker <anna@kernel.org>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v15 16/26] nfsd: add LOCALIO support
-Message-ID: <ZtckdSIT6a3N-VTU@kernel.org>
-References: <20240831223755.8569-1-snitzer@kernel.org>
- <20240831223755.8569-17-snitzer@kernel.org>
- <ZtceWJE5mJ9ayf2y@tissot.1015granger.net>
- <cd02bbdc0059afaff52d0aab1da0ecf91d101a0a.camel@kernel.org>
+	s=arc-20240116; t=1725376613; c=relaxed/simple;
+	bh=UlpGC9zVwuoHnxSR8q1ybWfU6/jvFzxK9E2P8BAoIT4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d7DK0/UW6Xgf7ujA/AFRdh/rtfMsRvTyX9KerVV4jqD4iIoFHUvaj01JwQ9QFisXDC4HTjtvwjodeCE62n/OpY515iaSHeGbqXE1HjBn3AqitRPeQ2TkuDDJL2JQaCvN9yHHsSJXOgJD6YhTvheRsUKiyHwcO2fCG8Q0/KmDD8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PmnC5BTp; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0754B3F323
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1725376603;
+	bh=nptWKDBJUxg4A7YgqhOZ9Q+wwJnHV+u8b7QNvbLZJgw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=PmnC5BTpvCtvqGqa90I2RGlJ+4xJmOZ+JTmNYDq2Ljk4gYm43jGPs8JrNgwUlJR9p
+	 50EYVE+42xQ3xQ9NFPvOusGi6mZ3GHUYJF3sukrryWokxjXxYf2mIrf10sgcH5Bp9U
+	 hWJ1leb8fjy8SMsYBMJlcuJCJc8t8zdsysecod8KVQ6FtdCnIf2Ht4A75suI3bh5n+
+	 nCqMFVsq8lxmjqg3O/LnrzNzXlAQl2JJiqj2wqatfqyBKpdixbY1vmHWBt12SWQQOA
+	 gun24ye/9AYG3U3YD3bzy2OcGsqFEnSPmyI9Ef+uNcMFZ11gWKzwUWRAjVOoMrQWrc
+	 LcGBO/X4KICTw==
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-53349c739d0so1051559e87.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 08:16:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725376601; x=1725981401;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nptWKDBJUxg4A7YgqhOZ9Q+wwJnHV+u8b7QNvbLZJgw=;
+        b=OzhqXsI+LahBaWYspRh/XdALOgFpw+2m5gPS3IJ9GBVgUOFaPnWbD0XBPgsHCSUxxt
+         RJMNvn7KLEPlT4UOzQ4iojyTunXgN+hfiDHukCDeQ7M7aILQzhD9KZrMjjSvBVdLTrZ8
+         b3CEhZ8IYE8lQez9LsVrLegwPaFz3RxrogaYM4pH9ZsvfkG/CHuxgJnIak/hLdvJsfkx
+         B77Wcsxt+3KsJwKQG/L0EzLMMYILU96oOriu1CjN82GfWrqAvAyr22ZjEqYGR3zrr51b
+         uQvHrVuJbh+cv3IELQkjbjvireVxgXhBODDuK+T16JLr2y+7waLwLfzFIxJawfR/Lq82
+         NrbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCRSEc1Kb2pRI/Of49p5Bbz7KCYw5Xpm70yN2mYZ1GuMriahMkbyvuq7EOMsdFU/+xytf+bCmQGsmLdHmD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzr6eBrnfBBJE0RyvNccOlv7xAwbuf5TnxIJAtHZG6P4HUtTN5
+	7E4yhokov9m/rHQStzXzn0/Sax+C8kOQSC5kqXZKd1vESPXv+4hiYn/jW9K5keMzFD0Yh4or5Ts
+	V0Jv77Wtqd2ToCdtjG2Xfm9wQ4YxG3BDG1jzKD6F9C25uCN3nUd1vBIl3vGmuILHZUPSPq6GM5R
+	GAi6QZUYRIyQ8=
+X-Received: by 2002:a05:6512:238b:b0:533:4668:8b86 with SMTP id 2adb3069b0e04-53546b69204mr10048106e87.41.1725376601255;
+        Tue, 03 Sep 2024 08:16:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErx5r9OfXJe2paALnE06F+/BE9qyLVvSQQb0WsDu9BtQ+UGoNq8rRFc4NriT8PguTFoLyxlA==
+X-Received: by 2002:a05:6512:238b:b0:533:4668:8b86 with SMTP id 2adb3069b0e04-53546b69204mr10048070e87.41.1725376600594;
+        Tue, 03 Sep 2024 08:16:40 -0700 (PDT)
+Received: from amikhalitsyn.. ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 08:16:40 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: mszeredi@redhat.com
+Cc: brauner@kernel.org,
+	stgraber@stgraber.org,
+	linux-fsdevel@vger.kernel.org,
+	Seth Forshee <sforshee@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	German Maglione <gmaglione@redhat.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/15] fuse: basic support for idmapped mounts
+Date: Tue,  3 Sep 2024 17:16:11 +0200
+Message-Id: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd02bbdc0059afaff52d0aab1da0ecf91d101a0a.camel@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 10:40:28AM -0400, Jeff Layton wrote:
-> On Tue, 2024-09-03 at 10:34 -0400, Chuck Lever wrote:
-> > On Sat, Aug 31, 2024 at 06:37:36PM -0400, Mike Snitzer wrote:
-> > > From: Weston Andros Adamson <dros@primarydata.com>
-> > > 
-> > > Add server support for bypassing NFS for localhost reads, writes, and
-> > > commits. This is only useful when both the client and server are
-> > > running on the same host.
-> > > 
-> > > If nfsd_open_local_fh() fails then the NFS client will both retry and
-> > > fallback to normal network-based read, write and commit operations if
-> > > localio is no longer supported.
-> > > 
-> > > Care is taken to ensure the same NFS security mechanisms are used
-> > > (authentication, etc) regardless of whether localio or regular NFS
-> > > access is used.  The auth_domain established as part of the traditional
-> > > NFS client access to the NFS server is also used for localio.  Store
-> > > auth_domain for localio in nfsd_uuid_t and transfer it to the client
-> > > if it is local to the server.
-> > > 
-> > > Relative to containers, localio gives the client access to the network
-> > > namespace the server has.  This is required to allow the client to
-> > > access the server's per-namespace nfsd_net struct.
-> > > 
-> > > This commit also introduces the use of NFSD's percpu_ref to interlock
-> > > nfsd_destroy_serv and nfsd_open_local_fh, to ensure nn->nfsd_serv is
-> > > not destroyed while in use by nfsd_open_local_fh and other LOCALIO
-> > > client code.
-> > > 
-> > > CONFIG_NFS_LOCALIO enables NFS server support for LOCALIO.
-> > > 
-> > > Signed-off-by: Weston Andros Adamson <dros@primarydata.com>
-> > > Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > > Co-developed-by: Mike Snitzer <snitzer@kernel.org>
-> > > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
-> > > Co-developed-by: NeilBrown <neilb@suse.de>
-> > > Signed-off-by: NeilBrown <neilb@suse.de>
-> > > 
-> > > Not-Acked-by: Chuck Lever <chuck.lever@oracle.com>
-> > > Not-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/nfsd/Makefile           |   1 +
-> > >  fs/nfsd/filecache.c        |   2 +-
-> > >  fs/nfsd/localio.c          | 112 +++++++++++++++++++++++++++++++++++++
-> > >  fs/nfsd/netns.h            |   4 ++
-> > >  fs/nfsd/nfsctl.c           |  25 ++++++++-
-> > >  fs/nfsd/trace.h            |   3 +-
-> > >  fs/nfsd/vfs.h              |   2 +
-> > >  include/linux/nfslocalio.h |   8 +++
-> > >  8 files changed, 154 insertions(+), 3 deletions(-)
-> > >  create mode 100644 fs/nfsd/localio.c
-> > > 
-> > > diff --git a/fs/nfsd/Makefile b/fs/nfsd/Makefile
-> > > index b8736a82e57c..18cbd3fa7691 100644
-> > > --- a/fs/nfsd/Makefile
-> > > +++ b/fs/nfsd/Makefile
-> > > @@ -23,3 +23,4 @@ nfsd-$(CONFIG_NFSD_PNFS) += nfs4layouts.o
-> > >  nfsd-$(CONFIG_NFSD_BLOCKLAYOUT) += blocklayout.o blocklayoutxdr.o
-> > >  nfsd-$(CONFIG_NFSD_SCSILAYOUT) += blocklayout.o blocklayoutxdr.o
-> > >  nfsd-$(CONFIG_NFSD_FLEXFILELAYOUT) += flexfilelayout.o flexfilelayoutxdr.o
-> > > +nfsd-$(CONFIG_NFS_LOCALIO) += localio.o
-> > > diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-> > > index 89ff380ec31e..348c1b97092e 100644
-> > > --- a/fs/nfsd/filecache.c
-> > > +++ b/fs/nfsd/filecache.c
-> > > @@ -52,7 +52,7 @@
-> > >  #define NFSD_FILE_CACHE_UP		     (0)
-> > >  
-> > >  /* We only care about NFSD_MAY_READ/WRITE for this cache */
-> > > -#define NFSD_FILE_MAY_MASK	(NFSD_MAY_READ|NFSD_MAY_WRITE)
-> > > +#define NFSD_FILE_MAY_MASK	(NFSD_MAY_READ|NFSD_MAY_WRITE|NFSD_MAY_LOCALIO)
-> > >  
-> > >  static DEFINE_PER_CPU(unsigned long, nfsd_file_cache_hits);
-> > >  static DEFINE_PER_CPU(unsigned long, nfsd_file_acquisitions);
-> > > diff --git a/fs/nfsd/localio.c b/fs/nfsd/localio.c
-> > > new file mode 100644
-> > > index 000000000000..75df709c6903
-> > > --- /dev/null
-> > > +++ b/fs/nfsd/localio.c
-> > > @@ -0,0 +1,112 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * NFS server support for local clients to bypass network stack
-> > > + *
-> > > + * Copyright (C) 2014 Weston Andros Adamson <dros@primarydata.com>
-> > > + * Copyright (C) 2019 Trond Myklebust <trond.myklebust@hammerspace.com>
-> > > + * Copyright (C) 2024 Mike Snitzer <snitzer@hammerspace.com>
-> > > + * Copyright (C) 2024 NeilBrown <neilb@suse.de>
-> > > + */
-> > > +
-> > > +#include <linux/exportfs.h>
-> > > +#include <linux/sunrpc/svcauth.h>
-> > > +#include <linux/sunrpc/clnt.h>
-> > > +#include <linux/nfs.h>
-> > > +#include <linux/nfs_common.h>
-> > > +#include <linux/nfslocalio.h>
-> > > +#include <linux/string.h>
-> > > +
-> > > +#include "nfsd.h"
-> > > +#include "vfs.h"
-> > > +#include "netns.h"
-> > > +#include "filecache.h"
-> > > +
-> > > +static const struct nfsd_localio_operations nfsd_localio_ops = {
-> > > +	.nfsd_open_local_fh = nfsd_open_local_fh,
-> > > +	.nfsd_file_put_local = nfsd_file_put_local,
-> > > +	.nfsd_file_file = nfsd_file_file,
-> > > +};
-> > > +
-> > > +void nfsd_localio_ops_init(void)
-> > > +{
-> > > +	memcpy(&nfs_to, &nfsd_localio_ops, sizeof(nfsd_localio_ops));
-> > > +}
-> > 
-> > Same comment as Neil: this should surface a pointer to the
-> > localio_ops struct. Copying the whole set of function pointers is
-> > generally unnecessary.
-> > 
-> > 
-> > > +
-> > > +/**
-> > > + * nfsd_open_local_fh - lookup a local filehandle @nfs_fh and map to nfsd_file
-> > > + *
-> > > + * @uuid: nfs_uuid_t which provides the 'struct net' to get the proper nfsd_net
-> > > + *        and the 'struct auth_domain' required for LOCALIO access
-> > > + * @rpc_clnt: rpc_clnt that the client established, used for sockaddr and cred
-> > > + * @cred: cred that the client established
-> > > + * @nfs_fh: filehandle to lookup
-> > > + * @fmode: fmode_t to use for open
-> > > + *
-> > > + * This function maps a local fh to a path on a local filesystem.
-> > > + * This is useful when the nfs client has the local server mounted - it can
-> > > + * avoid all the NFS overhead with reads, writes and commits.
-> > > + *
-> > > + * On successful return, returned nfsd_file will have its nf_net member
-> > > + * set. Caller (NFS client) is responsible for calling nfsd_serv_put and
-> > > + * nfsd_file_put (via nfs_to.nfsd_file_put_local).
-> > > + */
-> > > +struct nfsd_file *
-> > > +nfsd_open_local_fh(nfs_uuid_t *uuid,
-> > > +		   struct rpc_clnt *rpc_clnt, const struct cred *cred,
-> > > +		   const struct nfs_fh *nfs_fh, const fmode_t fmode)
-> > > +	__must_hold(rcu)
-> > > +{
-> > > +	int mayflags = NFSD_MAY_LOCALIO;
-> > > +	struct nfsd_net *nn = NULL;
-> > > +	struct net *net;
-> > > +	struct svc_cred rq_cred;
-> > > +	struct svc_fh fh;
-> > > +	struct nfsd_file *localio;
-> > > +	__be32 beres;
-> > > +
-> > > +	if (nfs_fh->size > NFS4_FHSIZE)
-> > > +		return ERR_PTR(-EINVAL);
-> > > +
-> > > +	/*
-> > > +	 * Not running in nfsd context, so must safely get reference on nfsd_serv.
-> > > +	 * But the server may already be shutting down, if so disallow new localio.
-> > > +	 * uuid->net is NOT a counted reference, but caller's rcu_read_lock() ensures
-> > > +	 * that if uuid->net is not NULL, then calling nfsd_serv_try_get() is safe
-> > > +	 * and if it succeeds we will have an implied reference to the net.
-> > > +	 */
-> > > +	net = rcu_dereference(uuid->net);
-> > > +	if (net)
-> > > +		nn = net_generic(net, nfsd_net_id);
-> > > +	if (unlikely(!nn || !nfsd_serv_try_get(nn)))
-> > > +		return ERR_PTR(-ENXIO);
-> > > +
-> > > +	/* Drop the rcu lock for nfsd_file_acquire_local() */
-> > > +	rcu_read_unlock();
-> > 
-> > I'm struggling with the locking logistics. Caller takes the RCU read
-> > lock, this function drops the lock, then takes it again. So:
-> > 
-> >  - A caller might rely on the lock being held continuously, but
-> >  - The API contract documented above doesn't indicate that this
-> >    function drops that lock
-> >  - The __must_hold(rcu) annotation doesn't indicate that this
-> >    function drops that lock, IIUC
-> > 
-> > Dropping and retaking the lock in here is an anti-pattern that
-> > should be avoided. I suggest we are better off in the long run if
-> > the caller does not need to take the RCU read lock, but instead,
-> > nfsd_open_local_fh takes it right here just for the rcu_dereference.
+Dear friends,
 
-I thought so too when I first saw how Neil approached fixing this to
-be safe.  It was only after putting further time to it (and having the
-benefit of being so close to all this) that I realized the nuance at
-play (please see my reply to Jeff below for the nuance I'm speaking
-of). 
+This patch series aimed to provide support for idmapped mounts
+for fuse & virtiofs. We already have idmapped mounts support for almost all
+widely-used filesystems:
+* local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
+* network (ceph)
 
-> > 
-> > OTOH, Why drop the lock before calling nfsd_file_acquire_local()?
-> > The RCU read lock can safely be taken more than once in succession.
-> > 
-> > Let's rethink the locking strategy.
-> > 
+Git tree (based on torvalds/master):
+v4: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v4
+current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts
 
-Yes, _that_ is a very valid point.  I did wonder the same: it seems
-perfectly fine to simply retain the RCU throughout the entirety of
-nfsd_open_local_fh().
+Changelog for version 4:
+- heavily reworked to comply with Miklos's suggestion to start sending idmapped uid/gid
+  just in fuse header instead of adding a new FUSE_OWNER_UID_GID_EXT extension (please, refer to [6], [7])
+- added ("fs/fuse: handle idmappings properly in ->write_iter")
+- added ("fs/fuse: warn if fuse_access is called when idmapped mounts are allowed")
+- added handling for idmapped mounts in FUSE_EXT_GROUPS extension
+- now RENAME_WHITEOUT can be (and is) supported
 
-> Agreed. The only caller does this:
-> 
->         rcu_read_lock();
->         if (!rcu_access_pointer(uuid->net)) {
->                 rcu_read_unlock();
->                 return ERR_PTR(-ENXIO);
->         }
->         localio = nfs_to.nfsd_open_local_fh(uuid, rpc_clnt, cred,
->                                             nfs_fh, fmode);
->         rcu_read_unlock();
-> 
-> Maybe just move the check for uuid->net down into nfsd_open_local_fh,
-> and it can acquire the rcu_read_lock for itself?
+Changelog for version 3:
+- introduce and use a new SB_I_NOIDMAP flag (suggested by Christian)
+- add support for virtiofs (+user space virtiofsd conversion)
 
-No, sorry we cannot.  The call to nfs_to.nfsd_open_local_fh (which is
-a symbol provided by nfsd) is only safe if the RCU protected pre-check
-shows the uuid->net valid.
+Changelog for version 2:
+- removed "fs/namespace: introduce fs_type->allow_idmap hook" and simplified logic
+to return -EIO if a fuse daemon does not support idmapped mounts (suggested
+by Christian Brauner)
+- passed an "idmap" in more cases even when it's not necessary to simplify things (suggested
+by Christian Brauner)
+- take ->rename() RENAME_WHITEOUT into account and forbid it for idmapped mount case
 
-Mike
+Links to previous versions:
+v3: https://lore.kernel.org/all/20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com
+tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v3
+v2: https://lore.kernel.org/linux-fsdevel/20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com
+tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v2
+v1: https://lore.kernel.org/all/20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com/#r
+tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v1
+
+Having fuse (+virtiofs) supported looks like a good next step. At the same time
+fuse conceptually close to the network filesystems and supporting it is
+a quite challenging task.
+
+Let me briefly explain what was done in this series and which obstacles we have.
+
+With this series, you can use idmapped mounts with fuse if the following
+conditions are met:
+1. The filesystem daemon declares idmap support (new FUSE_INIT response feature
+flag FUSE_ALLOW_IDMAP)
+2. The filesystem superblock was mounted with the "default_permissions" parameter
+3. The filesystem fuse daemon does not perform any UID/GID-based checks internally
+and fully trusts the kernel to do that (yes, it's almost the same as 2.)
+
+I have prepared a bunch of real-world examples of the user space modifications
+that can be done to use this extension:
+- libfuse support
+https://github.com/mihalicyn/libfuse/commits/idmap_support
+- fuse-overlayfs support:
+https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
+- cephfs-fuse conversion example
+https://github.com/mihalicyn/ceph/commits/fuse_idmap
+- glusterfs conversion example (there is a conceptual issue)
+https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
+- virtiofsd conversion example
+https://gitlab.com/virtio-fs/virtiofsd/-/merge_requests/245
+
+The glusterfs is a bit problematic, unfortunately, because even if the glusterfs
+superblock was mounted with the "default_permissions" parameter (1 and 2 conditions
+are satisfied), it fails to satisfy the 3rd condition. The glusterfs fuse daemon sends
+caller UIDs/GIDs over the wire and all the permission checks are done twice (first
+on the client side (in the fuse kernel module) and second on the glusterfs server side).
+Just for demonstration's sake, I found a hacky (but working) solution for glusterfs
+that disables these server-side permission checks (see [1]). This allows you to play
+with the filesystem and idmapped mounts and it works just fine.
+
+The problem described above is the main problem that we can meet when
+working on idmapped mounts support for network-based filesystems (or network-like filesystems
+like fuse). When people look at the idmapped mounts feature at first they tend to think
+that idmaps are for faking caller UIDs/GIDs, but that's not the case. There was a big
+discussion about this in the "ceph: support idmapped mounts" patch series [2], [3].
+The brief outcome from this discussion is that we don't want and don't have to fool
+filesystem code and map a caller's UID/GID everywhere, but only in VFS i_op's
+which are provided with a "struct mnt_idmap *idmap"). For example ->lookup()
+callback is not provided with it and that's on purpose! We don't expect the low-level
+filesystem code to do any permissions checks inside this callback because everything
+was already checked on the higher level (see may_lookup() helper). For local filesystems
+this assumption works like a charm, but for network-based, unfortunately, not.
+For example, the cephfs kernel client *always* send called UID/GID with *any* request
+(->lookup included!) and then *may* (depending on the MDS configuration) perform any
+permissions checks on the server side based on these values, which obviously leads
+to issues/inconsistencies if VFS idmaps are involved.
+
+Fuse filesystem very-very close to cephfs example, because we have req->in.h.uid/req->in.h.gid
+and these values are present in all fuse requests and userspace may use them as it wants.
+
+All of the above explains why we have a "default_permissions" requirement. If filesystem
+does not use it, then permission checks will be widespread across all the i_op's like
+->lookup, ->unlink, ->readlink instead of being consolidated in the one place (->permission callback).
+
+How to play with it:
+1. take any patched filesystem from the list (fuse-overlayfs, cephfs-fuse, glusterfs) and mount it
+2. ./mount-idmapped --map-mount b:1000:0:2 /mnt/my_fuse_mount /mnt/my_fuse_mount_idmapped
+(maps UID/GIDs as 1000 -> 0, 1001 -> 1)
+[ taken from https://raw.githubusercontent.com/brauner/mount-idmapped/master/mount-idmapped.c ]
+
+[1] https://github.com/mihalicyn/glusterfs/commit/ab3ec2c7cbe22618cba9cc94a52a492b1904d0b2
+[2] https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com/
+[3] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
+[4] https://github.com/ceph/ceph/pull/52575
+[5] https://lore.kernel.org/all/20230807132626.182101-4-aleksandr.mikhalitsyn@canonical.com/
+[6] https://lore.kernel.org/all/CAJfpegsVY97_5mHSc06mSw79FehFWtoXT=hhTUK_E-Yhr7OAuQ@mail.gmail.com/
+[7] https://lore.kernel.org/all/CAJfpegtHQsEUuFq1k4ZbTD3E1h-GsrN3PWyv7X8cg6sfU_W2Yw@mail.gmail.com/
+
+
+Thanks!
+Alex
+
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Seth Forshee <sforshee@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: German Maglione <gmaglione@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>
+Cc: <linux-fsdevel@vger.kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+
+Alexander Mikhalitsyn (15):
+  fs/namespace: introduce SB_I_NOIDMAP flag
+  fs/fuse: add basic infrastructure to support idmappings
+  fs/fuse: add an idmap argument to fuse_simple_request
+  fs/fuse: support idmapped FUSE_EXT_GROUPS
+  fs/fuse: support idmap for mkdir/mknod/symlink/create/tmpfile
+  fs/fuse: support idmapped getattr inode op
+  fs/fuse: support idmapped ->permission inode op
+  fs/fuse: support idmapped ->setattr op
+  fs/fuse: drop idmap argument from __fuse_get_acl
+  fs/fuse: support idmapped ->set_acl
+  fs/fuse: support idmapped ->rename op
+  fs/fuse: handle idmappings properly in ->write_iter
+  fs/fuse: warn if fuse_access is called when idmapped mounts are
+    allowed
+  fs/fuse: allow idmapped mounts
+  fs/fuse/virtio_fs: allow idmapped mounts
+
+ fs/fuse/acl.c             |  10 +--
+ fs/fuse/dax.c             |   4 +-
+ fs/fuse/dev.c             |  54 +++++++++---
+ fs/fuse/dir.c             | 169 ++++++++++++++++++++++----------------
+ fs/fuse/file.c            |  37 +++++----
+ fs/fuse/fuse_i.h          |   7 +-
+ fs/fuse/inode.c           |  19 +++--
+ fs/fuse/ioctl.c           |   2 +-
+ fs/fuse/readdir.c         |   4 +-
+ fs/fuse/virtio_fs.c       |   1 +
+ fs/fuse/xattr.c           |   8 +-
+ fs/namespace.c            |   4 +
+ include/linux/fs.h        |   1 +
+ include/uapi/linux/fuse.h |  22 ++++-
+ 14 files changed, 216 insertions(+), 126 deletions(-)
+
+-- 
+2.34.1
+
 
