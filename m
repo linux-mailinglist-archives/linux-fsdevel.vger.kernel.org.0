@@ -1,92 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-28359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44920969C2F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 13:41:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1F1969C34
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 13:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74B11F24CC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 11:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603E41F24140
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 11:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB361A42D1;
-	Tue,  3 Sep 2024 11:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5D21A42DF;
+	Tue,  3 Sep 2024 11:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9aekxIN"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="gKOAHiKu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF1D19F422
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 11:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C961A42C2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 11:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725363667; cv=none; b=dgpjz31SpAdFW9gHpMnBNgPk0KWMCqcGzacAO8whfvPwzWnuID8s8i3gZr+A0in9QC8nFXrEOjm6clIM8ytp8QDmo5ZjaW5z3f6Uuolp90fOon1Dp8RNRUPSdM7mkJqe3hwRkODuqU2/WDL251OrNtnpU8Fy2oQk7yCRumriA9k=
+	t=1725363728; cv=none; b=MqgM4mAOzwzyvsv3L4lr5LoQDgnJUk+rLBwYbDcCK87jt0PO+xLHFF8ZMhMu5PO6IpoXyBooiq7APWjXWjTZVUL1o+IDIysZvBiyoh3YcZP+fh2/0D1brR02QblBs2TsDWQ5zXTSwkD1wVlqNY7sYw89JSDx3SyjUxxrZW7d2IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725363667; c=relaxed/simple;
-	bh=FnNGbnPFqrqYnt32j99x3y4UkgPymQz7PPBh9apRHQ8=;
+	s=arc-20240116; t=1725363728; c=relaxed/simple;
+	bh=e6pTgwoO6d0zsvht0XdWQe5baWFg+LRWuD9+jzB8cJQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTlFmutyuLF4ge4z7CKHqlhpwT8oGy2kpzlaoV7CdVKM6LRogAQRE2U+WTnY920x4Yv29FSpvpS7fBcfxn/p67h8+zF3eLnoUxKuR8wLQ7XUik5ep4cTtG3DQw/1QYHmUFsyag02TBJ3i2jm3PsxhXRqpaP4/5dG9QZ27AVARWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9aekxIN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73724C4CEC5;
-	Tue,  3 Sep 2024 11:41:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725363666;
-	bh=FnNGbnPFqrqYnt32j99x3y4UkgPymQz7PPBh9apRHQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g9aekxIN4awt1y+4hBCOLlJgEH/q8t0ArRWkDdWB+KUcUwil2Top0HsPaKLlnSPkz
-	 w5YpJDoPGhbtl0kadjVLY/pweHV8wkkbwUHMQcwcsaJXX7rROiDPH0DTYiu9MeLXup
-	 enD0szAY6X8QIUr5ssxORkjCVxZwoXtAUbudDsbDHd4RXSdtq0+1qtZJZ/tWJ8NIap
-	 00YqyuSC7as72B4o4iNTXjYYskfEI5ZhcLqG7WUizky0/4UzqGiqlSo6OBxZTtCqlR
-	 bZVaVeeKY2XbanB3qzRoJBHwZQLzqgyic9C2Vi3xMdXg+T6AET5+o7puipcmNGmY7T
-	 B/X3VnDi1qxwA==
-Date: Tue, 3 Sep 2024 13:41:01 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, 
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH RFC 07/20] fs: use must_set_pos()
-Message-ID: <20240903-hausrat-gesehen-a36e1e732903@brauner>
-References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
- <20240830-vfs-file-f_version-v1-7-6d3e4816aa7b@kernel.org>
- <20240903113010.atz4odkdmsl7oc2w@quack3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ezE5I/QBUtM0xSvq8+iwFLDHXl+i7ZhFnz89bfkwuC1zC70dSiE+AwFhZOI12lBA15yVN+hDcoNorvNmxt/nnPzQwveWzXG5F6dpfTY4zEGPmh34OUY+gbPdS1+EytpH2yCPbh3AV/a1YNExGUQTBqtn14cDy5uGPi6ExKLJYlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=gKOAHiKu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-102-194.bstnma.fios.verizon.net [173.48.102.194])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 483BfYcr027588
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 07:41:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1725363697; bh=iPRB6Gjttbol0VPss5oDVUKbvsURabvFSdzfOBAOXLU=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=gKOAHiKukciM+tUHrN97FNg0iXtWFrqusqNTFuReprnTbms3cz90E20lbdF37oP8U
+	 7CT6koE9sbMCV3f8g6Qbaqtzcd7kLTQWFA9D7ZRKDrkXAGLQ4LdwQUlPHHGmaYsYEN
+	 pqFXmP3GubHDmDbKllEt5g3ro+SGet4fsDTn2jNrPd0im83A+cr+/LE5Vd6eUWWd98
+	 dzJI4rZOFlIEuJncqq/5UKbTzWQw89O49UWBQ1SwkDr7Jz8PaRRCepDKDlDjLwfsrz
+	 Nms759MQBFA/mn50xfBuUCtzZdXZMG6SMT/RT4hM+uTlEw+X9C8GQhcyyejwncQzYO
+	 J/qr5fgrWF6KQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 81CD915C02C4; Tue, 03 Sep 2024 07:41:34 -0400 (EDT)
+Date: Tue, 3 Sep 2024 07:41:34 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        krisman@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
+        Daniel Rosenberg <drosen@google.com>, smcv@collabora.com,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2 4/8] unicode: Recreate utf8_parse_version()
+Message-ID: <20240903114134.GD1002375@mit.edu>
+References: <20240902225511.757831-1-andrealmeid@igalia.com>
+ <20240902225511.757831-5-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240903113010.atz4odkdmsl7oc2w@quack3>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240902225511.757831-5-andrealmeid@igalia.com>
 
-On Tue, Sep 03, 2024 at 01:30:10PM GMT, Jan Kara wrote:
-> On Fri 30-08-24 15:04:48, Christian Brauner wrote:
-> > Make generic_file_llseek_size() use must_set_pos(). We'll use
-> > must_set_pos() in another helper in a minutes. Remove __maybe_unused
-> > from must_set_pos() now that it's used.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Mon, Sep 02, 2024 at 07:55:06PM -0300, André Almeida wrote:
+> All filesystems that currently support UTF-8 casefold can fetch the
+> UTF-8 version from the filesystem metadata stored on disk. They can get
+> the data stored and directly match it to a integer, so they can skip the
+> string parsing step, which motivated the removal of this function in the
+> first place.
 > 
-> Frankly, it would have been a bit easier to review for me if 6 & 7 patches
-> were together as one code refactoring patch...
-
-Yeah, I had it that way but the resulting diff was really difficult to read.
-I could've probably tried to use a different diff algorithm but this way
-was easier.
-
+> However, for tmpfs, the only way to tell the kernel which UTF-8 version
+> we are about to use is via mount options, using a string. Re-introduce
+> utf8_parse_version() to be used by tmpfs.
 > 
-> > +		guard(spinlock)(&file->f_lock);
+> This version differs from the original by skipping the intermediate step
+> of copying the version string to an auxiliary string before calling
+> match_token(). This versions calls match_token() in the argument string.
 > 
-> You really love guards, don't you? :) Frankly, in this case I don't see the
+> utf8_parse_version() was created by 9d53690f0d4 ("unicode: implement
+> higher level API for string handling") and later removed by 49bd03cc7e9
+> ("unicode: pass a UNICODE_AGE() tripple to utf8_load").
+> 
+> Signed-off-by: André Almeida <andrealmeid@igalia.com>
 
-Yes. :)
-
-> point and it makes my visual pattern matching fail but I guess I'll get
-> used to it. Feel free to add:
-
-I can remove it. I don't mind.
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
