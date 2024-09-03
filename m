@@ -1,178 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-28369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A94969ED7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:16:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0239D969EFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0191F23E44
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 13:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275031C22FA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 13:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B481A7258;
-	Tue,  3 Sep 2024 13:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42761A7270;
+	Tue,  3 Sep 2024 13:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1yvX8C7"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s9J6B0aw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="np5v9vPm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s9J6B0aw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="np5v9vPm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C46A1CA690;
-	Tue,  3 Sep 2024 13:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806341CA6AF
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 13:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725369399; cv=none; b=j1nMQ2OBhleKq+RfEvaqoNrqtd2sGXMa4zz1uQL/e4kVuRu308nw22CXTmduJL3u9wXed3ebO2uiylF21O/AiJnhKWI198LvNJQN7ZucT4z5Bgqf7+ry+sllalpAtQcsKwTHKN+zpceQyhMNO2UveiP3ua6aRrQXUp8FS+D8td8=
+	t=1725370018; cv=none; b=gOzb65Y40Z2osuAbZMgpLMcKOhc6ZtK7LvztxNL4uu+4y3/G4pNGKtH5xHAZF5zkEDHlHd7JofnJeGaZ51nS5+7p+F5uvX4XzD4n94iixmxGak2tyeAoQBItG+amkrP1He9f90VPMIGFN2za0tvksz15bKaZpwTPYQBMt+rkpVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725369399; c=relaxed/simple;
-	bh=psMiyvsynfGq6Oa1EbpLT4L9TZqEPting41YVwRcD3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=THvF5rgrRLrHFE6pI5IKvBjLK8bcYcei4kYgdzAEYATOizzStz33BUWi/PRFMYgOfmzUNLR0ZmRk9c0QTz2U2GMCaisPhsv+t/7s4/hxIkzejaAETuvbQieeJgn8STu7eCX+fpUu+qYdqdp5NAM/weZYGpdldIRoEPipEpzYJC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a1yvX8C7; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6c34c02ff1cso21486196d6.2;
-        Tue, 03 Sep 2024 06:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725369397; x=1725974197; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pGIgWA+Z6lZNw0/44TLTAh5+lMfGacrdZzpuKxzMwJk=;
-        b=a1yvX8C7xYbBxDEeF3pe0jW927BzJ+fVQSDsFmWBfINd+QrUxuupw+XWXpmNSPgWNr
-         +uqpf6I8NgKVGC9w0AD02cNMMI+z8N4tKZCJNYVNv8PKEYCtZZiuP83NrOLCnOOqGu03
-         l7qXc9F58e+Lm/t76HCsWu/Eb5qXhpcBNfSo432Sac4tkimkIZtDXnmtAA+O1TQ6mIYu
-         lZ3I411+vnpnkBZ350f0DbAHeMOj56hkvXOv+KeVgidolxV5YgjVwZoy1IO0eHAh45LA
-         0bO9JTsczDFOO44VV9tXEj4H9CuGt/XdoZyuvyc6iXughA+f1Z2Frp2a+/pTXk3RjRm6
-         Dg/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725369397; x=1725974197;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pGIgWA+Z6lZNw0/44TLTAh5+lMfGacrdZzpuKxzMwJk=;
-        b=UL3I44GwGL1zZekYNW/ZRb/QDgGcmWjytu+yYLlaVWOxD2UbWz9Ge/o8qJ1WhQprgK
-         mbgMIQYadN02fhBtBB6T8EeU+q/7ZUgcYKSZy2J1jJHhoMIAAdoBVXos9CKoACQGo/dE
-         5R/BsnfCatjcZHdv6Xie1lzBm1DfcIrEgYDC3opMKw/XniuO1OrmEhAn8vZRptAf57Er
-         vBxclX0+D7d8/eW5tE11VWzUOEVQfBIG3llg40fGKiGxh1Hw0jirRHKKJbDKo7gddQnL
-         WOfyQClznwCn1M1w/cpSdxJzyEEq8zJ8i3PFFfalUea3X2cOghmhp9TcycZMeGtzrr1K
-         GVDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUREh8uXrOOkZImOz13dIZaHWlPDDH9t+XpFR0rEytcOEdfCReMVsQnUw7l61xL/fqHca8KYnzRfkZGuBP9@vger.kernel.org, AJvYcCUgc4FMYRnFc0ndyz6VWD+/mw4KGSsX0HUcN9C2I8VdnPbwCrCU93Mjo59Btwb6o5IZHd3cuFAih0xtYe39@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9kxuD6u7nUJAxB5Wqe8RD/1JC3z2kr+leSN5pUsOF3rIGPEo3
-	8CoxEPnyqiT/0waAi/fqk+LJLN1WwMO6ti+ggkYYAtHROAVpy7HItLqGQbJv7L32O94nX/yBJoU
-	O4SqfDZQ0V9PRE93L3U3pzepQAyg=
-X-Google-Smtp-Source: AGHT+IH6xv/ihNNRfXoP5NW1PSMYDKkOs322EqcazacXLKGTZDpA+iegLV9xf3ZOwqnW2xoHN9i400zDIGtzUo49i9Q=
-X-Received: by 2002:a05:6214:3109:b0:6c3:657b:4111 with SMTP id
- 6a1803df08f44-6c3657b43e7mr73942296d6.52.1725369396843; Tue, 03 Sep 2024
- 06:16:36 -0700 (PDT)
+	s=arc-20240116; t=1725370018; c=relaxed/simple;
+	bh=wm1DDu8fSYVfZudNCBrFOjD12i38yrH1ajRUVr6DvYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rq3Z+47HCd4Y0etW9Vhe25Rhs+1dBWvLNtWWVlZC2HFyizrR8QGE77PvT9xBP9wySLVdMPRP9e4m6Nons1+EjvMBQ4Vt2i/gS0c06LqKsisGRhBr0s0UFNvQNA/uA0qxfBte4/SQaEa+bF8HL0ijvilEHgmDEiSY85b9Rcp8MXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s9J6B0aw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=np5v9vPm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s9J6B0aw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=np5v9vPm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 99E7C1F385;
+	Tue,  3 Sep 2024 13:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725370014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aD+R6ECMuyl6qcNI165/k3hCY2Qq3I3Y2YL4rYmFz5I=;
+	b=s9J6B0awV+1DkCnqHJfryoHqrTwQ8VFXTpltFuJWBcoFkCTq6zPaVlt3GH5vyqq7AkG+D4
+	GLHRR2Y9RHnEkwlcBslUh8x7vxoNIgdHDMFkpGwq00xXorje5evykkpGTdbWYXwXy95HV8
+	+qrj9StNTJg5O4AHGCuclAgZ18RPEtY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725370014;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aD+R6ECMuyl6qcNI165/k3hCY2Qq3I3Y2YL4rYmFz5I=;
+	b=np5v9vPmyX1DcVrZcDEmidvp7l32ITfmND/WiGHbCGHLzNObh3LpEia6w+3wgnlAfDYymr
+	gm1OZL6WEGUUbDDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=s9J6B0aw;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=np5v9vPm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725370014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aD+R6ECMuyl6qcNI165/k3hCY2Qq3I3Y2YL4rYmFz5I=;
+	b=s9J6B0awV+1DkCnqHJfryoHqrTwQ8VFXTpltFuJWBcoFkCTq6zPaVlt3GH5vyqq7AkG+D4
+	GLHRR2Y9RHnEkwlcBslUh8x7vxoNIgdHDMFkpGwq00xXorje5evykkpGTdbWYXwXy95HV8
+	+qrj9StNTJg5O4AHGCuclAgZ18RPEtY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725370014;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aD+R6ECMuyl6qcNI165/k3hCY2Qq3I3Y2YL4rYmFz5I=;
+	b=np5v9vPmyX1DcVrZcDEmidvp7l32ITfmND/WiGHbCGHLzNObh3LpEia6w+3wgnlAfDYymr
+	gm1OZL6WEGUUbDDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7F7AB13A52;
+	Tue,  3 Sep 2024 13:26:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZsAZH54O12YYRwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 03 Sep 2024 13:26:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 19E65A096C; Tue,  3 Sep 2024 15:26:39 +0200 (CEST)
+Date: Tue, 3 Sep 2024 15:26:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH RFC 09/20] affs: store cookie in private data
+Message-ID: <20240903132639.o2gvza4tfuy7i5tb@quack3>
+References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
+ <20240830-vfs-file-f_version-v1-9-6d3e4816aa7b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZtBWxWunhXTh0bhS@tiehlicka> <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
- <ZtCFP5w6yv/aykui@dread.disaster.area> <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
- <ZtPhAdqZgq6s4zmk@dread.disaster.area> <CALOAHbBEF=i7e+Zet-L3vEyQRcwmOn7b6vmut0-ae8_DQipOAw@mail.gmail.com>
- <ZtVzP2wfQoJrBXjF@tiehlicka> <CALOAHbAbzJL31jeGfXnbXmbXMpPv-Ak3o3t0tusjs-N-NHisiQ@mail.gmail.com>
- <ZtWArlHgX8JnZjFm@tiehlicka> <CALOAHbD=mzSBoNqCVf5TTOge4oTZq7Foxdv4H2U1zfBwjNoVKA@mail.gmail.com>
- <20240903124416.GE424729@mit.edu>
-In-Reply-To: <20240903124416.GE424729@mit.edu>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 3 Sep 2024 21:15:59 +0800
-Message-ID: <CALOAHbCAN8KwgxoSw4Rg2Uuwp0=LcGY8WRMqLbpEP5MkW4H_XQ@mail.gmail.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc allocations
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Matthew Wilcox <willy@infradead.org>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830-vfs-file-f_version-v1-9-6d3e4816aa7b@kernel.org>
+X-Rspamd-Queue-Id: 99E7C1F385
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Sep 3, 2024 at 8:44=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wrote:
->
-> On Tue, Sep 03, 2024 at 02:34:05PM +0800, Yafang Shao wrote:
-> >
-> > When setting GFP_NOFAIL, it's important to not only enable direct
-> > reclaim but also the OOM killer. In scenarios where swap is off and
-> > there is minimal page cache, setting GFP_NOFAIL without __GFP_FS can
-> > result in an infinite loop. In other words, GFP_NOFAIL should not be
-> > used with GFP_NOFS. Unfortunately, many call sites do combine them.
-> > For example:
-> >
-> > XFS:
-> >
-> > fs/xfs/libxfs/xfs_exchmaps.c: GFP_NOFS | __GFP_NOFAIL
-> > fs/xfs/xfs_attr_item.c: GFP_NOFS | __GFP_NOFAIL
-> >
-> > EXT4:
-> >
-> > fs/ext4/mballoc.c: GFP_NOFS | __GFP_NOFAIL
-> > fs/ext4/extents.c: GFP_NOFS | __GFP_NOFAIL
-> >
-> > This seems problematic, but I'm not an FS expert. Perhaps Dave or Ted
-> > could provide further insight.
->
-> GFP_NOFS is needed because we need to signal to the mm layer to avoid
-> recursing into file system layer --- for example, to clean a page by
-> writing it back to the FS.  Since we may have taken various file
-> system locks, recursing could lead to deadlock, which would make the
-> system (and the user) sad.
->
-> If the mm layer wants to OOM kill a process, that should be fine as
-> far as the file system is concerned --- this could reclaim anonymous
-> pages that don't need to be written back, for example.  And we don't
-> need to write back dirty pages before the process killed.  So I'm a
-> bit puzzled why (as you imply; I haven't dug into the mm code in
-> question) GFP_NOFS implies disabling the OOM killer?
+On Fri 30-08-24 15:04:50, Christian Brauner wrote:
+> Store the cookie to detect concurrent seeks on directories in
+> file->private_data.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Refer to the out_of_memory() function [0]:
+Looks good. Feel free to add:
 
-    if (!(oc->gfp_mask & __GFP_FS) && !is_memcg_oom(oc))
-        return true;
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-[0]. https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/mm/oom_kill.c#n1137
+								Honza
 
-Is it possible that this check can be removed?
-
->
-> Regards,
->
->                                         - Ted
->
-> P.S.  Note that this is a fairly simplistic, very conservative set of
-> constraints.  If you have several dozen file sysetems mounted, and
-> we're deep in the guts of file system A, it might be *fine* to clean
-> pages associated with file system B or file system C.  Unless of
-> course, file system A is a loop-back mount onto a file located in file
-> system B, in which case writing into file system A might require
-> taking locks related to file system B.  But that aside, in theory we
-> could allow certain types of page reclaim if we were willing to track
-> which file systems are busy.
->
-> On the other hand, if the system is allowed to get that busy,
-> performance is going to be *terrible*, and so perhaps the better thing
-> to do is to teach the container manager not to schedule so many jobs
-> on the server in the first place, or having the mobile OS kill off
-> applications that aren't in the foreground, or giving the OOM killer
-> license to kill off jobs much earlier, etc.  By the time we get to the
-> point where we are trying to use these last dozen or so pages, the
-> system is going to be thrashing super-badly, and the user is going to
-> be *quite* unhappy.  So arguably these problems should be solved much
-> higher up the software stack, by not letting the system get into such
-> a condition in the first place.
-
-I completely agree with your point. However, in the real world, things
-don't always work as expected, which is why it's crucial to ensure the
-OOM killer is effective during system thrashing. Unfortunately, the
-kernel's OOM killer doesn't always perform as expected, particularly
-under heavy thrashing. This is one reason why user-space OOM killers
-like oomd exist.
-
-
---
-Regards
-Yafang
+> ---
+>  fs/affs/dir.c | 44 ++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 38 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/affs/dir.c b/fs/affs/dir.c
+> index b2bf7016e1b3..bd40d5f08810 100644
+> --- a/fs/affs/dir.c
+> +++ b/fs/affs/dir.c
+> @@ -17,13 +17,44 @@
+>  #include <linux/iversion.h>
+>  #include "affs.h"
+>  
+> +struct affs_dir_data {
+> +	unsigned long ino;
+> +	u64 cookie;
+> +};
+> +
+>  static int affs_readdir(struct file *, struct dir_context *);
+>  
+> +static loff_t affs_dir_llseek(struct file *file, loff_t offset, int whence)
+> +{
+> +	struct affs_dir_data *data = file->private_data;
+> +
+> +	return generic_llseek_cookie(file, offset, whence, &data->cookie);
+> +}
+> +
+> +static int affs_dir_open(struct inode *inode, struct file *file)
+> +{
+> +	struct affs_dir_data	*data;
+> +
+> +	data = kzalloc(sizeof(struct affs_dir_data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +	file->private_data = data;
+> +	return 0;
+> +}
+> +
+> +static int affs_dir_release(struct inode *inode, struct file *file)
+> +{
+> +	kfree(file->private_data);
+> +	return 0;
+> +}
+> +
+>  const struct file_operations affs_dir_operations = {
+> +	.open		= affs_dir_open,
+>  	.read		= generic_read_dir,
+> -	.llseek		= generic_file_llseek,
+> +	.llseek		= affs_dir_llseek,
+>  	.iterate_shared	= affs_readdir,
+>  	.fsync		= affs_file_fsync,
+> +	.release	= affs_dir_release,
+>  };
+>  
+>  /*
+> @@ -45,6 +76,7 @@ static int
+>  affs_readdir(struct file *file, struct dir_context *ctx)
+>  {
+>  	struct inode		*inode = file_inode(file);
+> +	struct affs_dir_data	*data = file->private_data;
+>  	struct super_block	*sb = inode->i_sb;
+>  	struct buffer_head	*dir_bh = NULL;
+>  	struct buffer_head	*fh_bh = NULL;
+> @@ -59,7 +91,7 @@ affs_readdir(struct file *file, struct dir_context *ctx)
+>  	pr_debug("%s(ino=%lu,f_pos=%llx)\n", __func__, inode->i_ino, ctx->pos);
+>  
+>  	if (ctx->pos < 2) {
+> -		file->private_data = (void *)0;
+> +		data->ino = 0;
+>  		if (!dir_emit_dots(file, ctx))
+>  			return 0;
+>  	}
+> @@ -80,8 +112,8 @@ affs_readdir(struct file *file, struct dir_context *ctx)
+>  	/* If the directory hasn't changed since the last call to readdir(),
+>  	 * we can jump directly to where we left off.
+>  	 */
+> -	ino = (u32)(long)file->private_data;
+> -	if (ino && inode_eq_iversion(inode, file->f_version)) {
+> +	ino = data->ino;
+> +	if (ino && inode_eq_iversion(inode, data->cookie)) {
+>  		pr_debug("readdir() left off=%d\n", ino);
+>  		goto inside;
+>  	}
+> @@ -131,8 +163,8 @@ affs_readdir(struct file *file, struct dir_context *ctx)
+>  		} while (ino);
+>  	}
+>  done:
+> -	file->f_version = inode_query_iversion(inode);
+> -	file->private_data = (void *)(long)ino;
+> +	data->cookie = inode_query_iversion(inode);
+> +	data->ino = ino;
+>  	affs_brelse(fh_bh);
+>  
+>  out_brelse_dir:
+> 
+> -- 
+> 2.45.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
