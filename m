@@ -1,102 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-28349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01976969BC9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 13:30:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2503C969BE5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 13:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D6B1F2574C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 11:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78535284B70
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 11:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AC91A0BD8;
-	Tue,  3 Sep 2024 11:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE24C1A42B9;
+	Tue,  3 Sep 2024 11:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PXeZmT3L";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7WDOv1sp";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PXeZmT3L";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7WDOv1sp"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ilG0e6H2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XrYmZe0M";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ilG0e6H2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XrYmZe0M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E081B12E8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 11:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B0815382F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 11:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725363018; cv=none; b=Mxayux6E2kwiVEunatkKSUa7jGyl8iU+LbjKky+bnYTLFTMtSlzgSUIxmUNUWMe/WLgsFdhYTe1OKXSdtNxG7FycBZUT3bHwvGCM8mYgU/V33gNrCINirVTBtiKhbaeIKuguLqRRg/zNFwAtINcWrj0g/PepmpOZhAfF5NZ8pnA=
+	t=1725363149; cv=none; b=Rq8k23wawhWhXpoTbGUg3tVcR1YOoXlPKd0RYGquMnf4jfrKTsXJafxb3FRzG83WL+Q62bYGUqGEDTGChyMzV1Oxw1jb72aX/9ZkOL4VRMcWwCfjeE3nZe30rvtw9yY3fruXSpOt1Mit8dDwRRA7jHLFeQVzrB3aYZerRzU3lGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725363018; c=relaxed/simple;
-	bh=J1CeELRsvPhpop/MRRVixHu7FLGsSz67Lgaj4vXFujI=;
+	s=arc-20240116; t=1725363149; c=relaxed/simple;
+	bh=8sogvgm8rmII+uOcZ/46EWKdAwIqXXXXinSPj0k6LIE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bai3a2RmZUQgbGpfVrJyx1GzRsL2N5xAns6xrqehiKpJDzDaC8vGfLiHnNHwsUFraYOXraTp/djymOysn+q8I45UVhUoMTVgsCrTs2lz+XlKsyPpvb2s2W0+kJGpurVcXsEhm2se6OPiE9oHCfV64RJ0dIICRTl7VTfZDJ441zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PXeZmT3L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7WDOv1sp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PXeZmT3L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7WDOv1sp; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=FnvoPPTGBaZuWbz5P/AbxJopxUfh+RBzMIFIbHtDw4K5bQEa0HIzUJ6DxIacTBQL2Ak3NqewAnmefRGB7QKwXqePU+YSJq/JowhNxvRUF4FW2wtQBrFkBLHociuLMCB1/rSCaTEnEphWXTPzdMIUT1CdUCTB6yriBvUu3yyZhj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ilG0e6H2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XrYmZe0M; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ilG0e6H2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XrYmZe0M; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A1AA61FD0C;
-	Tue,  3 Sep 2024 11:30:14 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A8AF321986;
+	Tue,  3 Sep 2024 11:32:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725363014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725363145; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4c3Q0IEK6tkLSDg6A85qcXp9G7RoQAGIPuZ6QJH91Ww=;
-	b=PXeZmT3LDJRQ5k7pN/g0Q9eCF5VrSWJ4m4hk5udp51iewhvrGDTV8zsSA6qeS4JVqYgi2g
-	JI5A5F5Zn1qGU2fRLG1B3Uk6klepN3BtTB+LYNtQ39zxi3PfPHi2iN2r6eA1iwXz1on7ui
-	to3JzqYT8BePA52I1x492udDnk/Bauc=
+	bh=JRKJkKZzodTVWNHy7SvxAwOwhTSFqz3AUCjW+c8KbjI=;
+	b=ilG0e6H2CKpmp357tf9nyaaTMaOdDopt1fSgT88jsQS75o5rae+saCa3xeutLqiH+vz5GE
+	xxYhbeOYz1FWyeSRreWYP3gT1O/cyawJDtrL4Me5AhoxiKNWd1GECxXMZiltlhYr1jrJUO
+	ntupuEA52IUwxN2uwKUEHxvOzl05wdQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725363014;
+	s=susede2_ed25519; t=1725363145;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4c3Q0IEK6tkLSDg6A85qcXp9G7RoQAGIPuZ6QJH91Ww=;
-	b=7WDOv1sp1Bpy7FsoIJHBmGtFd5Fp7bYEkpBp68A3W6RYKsGgDt9rfFHaf4mVugHBX7oF7k
-	xm0uyuyrko66oNBQ==
-Authentication-Results: smtp-out2.suse.de;
+	bh=JRKJkKZzodTVWNHy7SvxAwOwhTSFqz3AUCjW+c8KbjI=;
+	b=XrYmZe0M0ZHR2+pVugsdvQNVS1CVZCE3cXowy3/qo9m706VSEGLHlMrs9hjd2eaAvUC4hX
+	/s5/krdyXf7AmcDQ==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725363014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725363145; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4c3Q0IEK6tkLSDg6A85qcXp9G7RoQAGIPuZ6QJH91Ww=;
-	b=PXeZmT3LDJRQ5k7pN/g0Q9eCF5VrSWJ4m4hk5udp51iewhvrGDTV8zsSA6qeS4JVqYgi2g
-	JI5A5F5Zn1qGU2fRLG1B3Uk6klepN3BtTB+LYNtQ39zxi3PfPHi2iN2r6eA1iwXz1on7ui
-	to3JzqYT8BePA52I1x492udDnk/Bauc=
+	bh=JRKJkKZzodTVWNHy7SvxAwOwhTSFqz3AUCjW+c8KbjI=;
+	b=ilG0e6H2CKpmp357tf9nyaaTMaOdDopt1fSgT88jsQS75o5rae+saCa3xeutLqiH+vz5GE
+	xxYhbeOYz1FWyeSRreWYP3gT1O/cyawJDtrL4Me5AhoxiKNWd1GECxXMZiltlhYr1jrJUO
+	ntupuEA52IUwxN2uwKUEHxvOzl05wdQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725363014;
+	s=susede2_ed25519; t=1725363145;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4c3Q0IEK6tkLSDg6A85qcXp9G7RoQAGIPuZ6QJH91Ww=;
-	b=7WDOv1sp1Bpy7FsoIJHBmGtFd5Fp7bYEkpBp68A3W6RYKsGgDt9rfFHaf4mVugHBX7oF7k
-	xm0uyuyrko66oNBQ==
+	bh=JRKJkKZzodTVWNHy7SvxAwOwhTSFqz3AUCjW+c8KbjI=;
+	b=XrYmZe0M0ZHR2+pVugsdvQNVS1CVZCE3cXowy3/qo9m706VSEGLHlMrs9hjd2eaAvUC4hX
+	/s5/krdyXf7AmcDQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9592813A52;
-	Tue,  3 Sep 2024 11:30:14 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9ED4513A52;
+	Tue,  3 Sep 2024 11:32:25 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MAV+JEbz1ma0IQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 03 Sep 2024 11:30:14 +0000
+	id KKjFJsnz1mZbIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 03 Sep 2024 11:32:25 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 410C9A096C; Tue,  3 Sep 2024 13:30:10 +0200 (CEST)
-Date: Tue, 3 Sep 2024 13:30:10 +0200
+	id 5B442A096C; Tue,  3 Sep 2024 13:32:21 +0200 (CEST)
+Date: Tue, 3 Sep 2024 13:32:21 +0200
 From: Jan Kara <jack@suse.cz>
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
 	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
 	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
 	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH RFC 07/20] fs: use must_set_pos()
-Message-ID: <20240903113010.atz4odkdmsl7oc2w@quack3>
+Subject: Re: [PATCH RFC 06/20] fs: add must_set_pos()
+Message-ID: <20240903113221.yy4opukwk2ayee5o@quack3>
 References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
- <20240830-vfs-file-f_version-v1-7-6d3e4816aa7b@kernel.org>
+ <20240830-vfs-file-f_version-v1-6-6d3e4816aa7b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,7 +105,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240830-vfs-file-f_version-v1-7-6d3e4816aa7b@kernel.org>
+In-Reply-To: <20240830-vfs-file-f_version-v1-6-6d3e4816aa7b@kernel.org>
 X-Spam-Level: 
 X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
@@ -130,30 +130,90 @@ X-Spamd-Result: default: False [-3.80 / 50.00];
 X-Spam-Score: -3.80
 X-Spam-Flag: NO
 
-On Fri 30-08-24 15:04:48, Christian Brauner wrote:
-> Make generic_file_llseek_size() use must_set_pos(). We'll use
-> must_set_pos() in another helper in a minutes. Remove __maybe_unused
-> from must_set_pos() now that it's used.
+On Fri 30-08-24 15:04:47, Christian Brauner wrote:
+> Add a new must_set_pos() helper. We will use it in follow-up patches.
+> Temporarily mark it as unused. This is only done to keep the diff small
+> and reviewable.
 > 
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Frankly, it would have been a bit easier to review for me if 6 & 7 patches
-were together as one code refactoring patch...
-
-> +		guard(spinlock)(&file->f_lock);
-
-You really love guards, don't you? :) Frankly, in this case I don't see the
-point and it makes my visual pattern matching fail but I guess I'll get
-used to it. Feel free to add:
+Looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
-> +		return vfs_setpos(file, file->f_pos + offset, maxsize);
->  	}
->  
->  	return vfs_setpos(file, offset, maxsize);
-
 								Honza
+
+> ---
+>  fs/read_write.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 66ff52860496..acee26989d95 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -85,6 +85,58 @@ loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize)
+>  }
+>  EXPORT_SYMBOL(vfs_setpos);
+>  
+> +/**
+> + * must_set_pos - check whether f_pos has to be updated
+> + * @offset: offset to use
+> + * @whence: type of seek operation
+> + * @eof: end of file
+> + *
+> + * Check whether f_pos needs to be updated and update @offset according
+> + * to @whence.
+> + *
+> + * Return: 0 if f_pos doesn't need to be updated, 1 if f_pos has to be
+> + * updated, and negative error code on failure.
+> + */
+> +static __maybe_unused int must_set_pos(struct file *file, loff_t *offset, int whence, loff_t eof)
+> +{
+> +	switch (whence) {
+> +	case SEEK_END:
+> +		*offset += eof;
+> +		break;
+> +	case SEEK_CUR:
+> +		/*
+> +		 * Here we special-case the lseek(fd, 0, SEEK_CUR)
+> +		 * position-querying operation.  Avoid rewriting the "same"
+> +		 * f_pos value back to the file because a concurrent read(),
+> +		 * write() or lseek() might have altered it
+> +		 */
+> +		if (*offset == 0) {
+> +			*offset = file->f_pos;
+> +			return 0;
+> +		}
+> +		break;
+> +	case SEEK_DATA:
+> +		/*
+> +		 * In the generic case the entire file is data, so as long as
+> +		 * offset isn't at the end of the file then the offset is data.
+> +		 */
+> +		if ((unsigned long long)*offset >= eof)
+> +			return -ENXIO;
+> +		break;
+> +	case SEEK_HOLE:
+> +		/*
+> +		 * There is a virtual hole at the end of the file, so as long as
+> +		 * offset isn't i_size or larger, return i_size.
+> +		 */
+> +		if ((unsigned long long)*offset >= eof)
+> +			return -ENXIO;
+> +		*offset = eof;
+> +		break;
+> +	}
+> +
+> +	return 1;
+> +}
+> +
+>  /**
+>   * generic_file_llseek_size - generic llseek implementation for regular files
+>   * @file:	file structure to seek on
+> 
+> -- 
+> 2.45.2
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
