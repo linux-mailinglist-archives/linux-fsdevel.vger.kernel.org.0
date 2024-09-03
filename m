@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-28417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274DB96A1FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 17:19:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DA896A201
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 17:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3FD1F24B24
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:19:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 373DEB276FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D24E18BBA1;
-	Tue,  3 Sep 2024 15:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DA018EFDC;
+	Tue,  3 Sep 2024 15:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="g+ofcIm+"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Hmozy3iG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D9318BB8E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C5818BBAF
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376621; cv=none; b=BiRxEI53s2+zmc/MBmVJwhHPZLyZC4nBGISirb+qFW8xBsQbMcZRxH1BwujVFQoY2kXi2TzwXd8OrqoIM6nQSxTHZN7DyorMGG+awOKQ29qYA912jS6v8sM8lmASgb/jMGSu+OVn61DbdDDpdZ5OrWxL8LbW66cMj1XZpuH5gJo=
+	t=1725376622; cv=none; b=tRM9e1yB00+dDKr/8y42e/wYMDqwIDHzjZIN55dozC1HMzFTszDht/RuEaz+CJiaQITVqinwciMdoV/yNah1JebsvNMM3YOokgOk7R1YD8WJDyaLfzKbYuI8y+rI4hd/DyCMGKV8VAGLhgBIojdLX15OYLPUS4fkBuqMm7Qh12s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376621; c=relaxed/simple;
-	bh=+0zwTUGo6+RzPqyLPLoGhao9V7bGVcfHhuOQ58510LE=;
+	s=arc-20240116; t=1725376622; c=relaxed/simple;
+	bh=Yr7wQhBs5pebMPkKqO5eqjjytj+7qxLU8ExEBWlCpb0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=er858B00057PCf+9Q8T1BAU4DIoVDjvBx3LqWfZGK9N/8UXYkN1k4OJ48HQU5TaxJaHy6PrsIfq+PIG6HnzdpAkFphhEoiH6jRot+oOaY8izlGOpdD+ZBg2Ek9Y+0B6Yp4c95Us9j4C5lRWTIpTX9Lg2jU+ku81W/YDQle5FKfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=g+ofcIm+; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=SV9HYnyV+vvTnc0fxaq2v7c3GYy8558kw8zO8HVOzrN/VV2XBZlR+AiIo709j9/IizAUMHoWjxIDJrh3jdOA/r5CtcLA+QgqH7+9+wkTKv5mZJrOx5OOsR+xgPYi4RaBznpTgBQybN/tX8CGcGd8dSVfXRZX2/rm4SSL2NZvVVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Hmozy3iG; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0B8AE3FE1F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:56 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 94F93400E1
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725376616;
-	bh=JC0kbEJjIhY7PwaINGFTAAblNYwex3Ap6OFdo5D4DqU=;
+	s=20210705; t=1725376619;
+	bh=BpXAW2lUVronVaNHhSb0yzusLu0aiPuPE022IFBzXL8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=g+ofcIm+rqDR6dWLcimaW9z0m2Ifg9eK0bJtFN2JHnGERtxRkruqxNfejY80PyShu
-	 oxseGvVNdE530qtdnGTlWe/oD4bR9w32Dxw3ftgptwWYrJyfYB6ILOuSdEqOPmudsM
-	 WCvd1t7M0Nv/niZXSLwUJ/2CKKffWVSE31HB86MniORNWIfp8ZCd8lyQRYLjTCDLS+
-	 sUSIZeWl1zTeElmaGkgDkE0JUz/MWleR2NVuaUAs9JARzTz2UHfli2LyJwkXXpzwlJ
-	 B0XWtF/P1U4p59sLgA8e/16rD5Gkzj5d+qE1GAz1Va1GUH5naG+cDiN7AMwvwXUhZu
-	 o6DDCK0ssBVNg==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c244732fe0so2932332a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 08:16:56 -0700 (PDT)
+	b=Hmozy3iGov6XJmRVuFVAN7TpJSUnoa0IsAhpyeIaYCtPh1Kw7lJ5AGaTIiw8RNWQa
+	 1kWVSIRDwpAa/XeKb9FrlzArfvK0VLpctMjuBGzxS9lWq6FMQVoz37aZlTTE63bGUC
+	 XaK3k8bA9ODLHcbaVun5AmXaC+4cNrxhqC/88L/3XZCJ5BEDgIrcDK7R0qdHcXkQQU
+	 HAIgP4mCaSScZThGU3eQMBjCIRIMxW8Xb4xcx41MTh5Bth615HMm1mkwJiyC1aYh5M
+	 KA7tCcVSUb9RbaU6oEwNQ4EQUTseZruT64ze6JygVqTPIfyDNMpsdcOQj8+xT4stTR
+	 NBs5eKFszjyjQ==
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-53440ff1ecfso5784011e87.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 08:16:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725376615; x=1725981415;
+        d=1e100.net; s=20230601; t=1725376618; x=1725981418;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JC0kbEJjIhY7PwaINGFTAAblNYwex3Ap6OFdo5D4DqU=;
-        b=q7lJrWwmaJC9lbK959WlsEJBn6TUF64SS/vgcGgSzRRtpFtePa8W6oP27vSRKB1T5H
-         A0x6MpJDd0s/3854cw8nNtpccQZgnpiuOh6ENCTeqN4DyCUUiNYmIwIxB6edbZP98XEc
-         cKorMuKTr02oIsTxK0z7AjGP9G3TM6FKy+wIyO6prCb2tr3znWPHp+oDx8inWfIYKblk
-         rEPtIOaOE1qkej41Y/odBnbccweR7HLZjjugcf9FX7LJPbt7kamkCko8LbvM47DiVC3C
-         lUXPboeE99Ql/6ERMz4HrrUdcqMNIQ3s03Yqr6azlFc817yS4TD3o1mmzd+Fzw9xzpD3
-         6O0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQf0crpJKTjuyOYeMaM7F1EfgSBkSxn2NgILAElQMXNDAyC0TEWwROX2DyvsHfb2MBKONXnUcmSerEadip@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqrpmRGjv4qkfSJ+TnaDE+13girh6E4B1bAQ9n3qVqLTNHHqYL
-	5U/Y3Sue2YrTEwMLiqva6osl7MuUfNKBXEBTqcjUad5WEmG6xKg2BLQpNSUlDzUYhlYH1SyMCdf
-	EP2vA2GBmZOD65yj5j+OCY2Bcu5VXVijC+U4e07F48ZVqpsHaJOydlnkEEprTbfGn5L7s377vJN
-	S2VUM=
-X-Received: by 2002:a17:907:7f22:b0:a7a:8586:d36b with SMTP id a640c23a62f3a-a8a32df201amr77097766b.3.1725376615495;
-        Tue, 03 Sep 2024 08:16:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF6yFu1Bsw3W/nZaOc47kv/qKH1mcQ+bQ3WmyZBHT/KsKGUKlObSlloDjZT275IsdiJSzRa3A==
-X-Received: by 2002:a17:907:7f22:b0:a7a:8586:d36b with SMTP id a640c23a62f3a-a8a32df201amr77095866b.3.1725376614995;
-        Tue, 03 Sep 2024 08:16:54 -0700 (PDT)
+        bh=BpXAW2lUVronVaNHhSb0yzusLu0aiPuPE022IFBzXL8=;
+        b=dNsu2WoXUFTYkAhXJsXWFdo8Y0zAmgR7h6DeNJejEEkY0D/bP+8SnRclIjuqu9cwq2
+         5cITTgr1sU1XttzV7NrdjShb0K5Bo9mZP0i5UOXLQQtPpHKFYdK92/z2SFoUdMH2b8Iz
+         HdNpYqxviQj7IWYe/i2kYJUaqXKv9Sm3jGTFtZrCWI9mCxdGd4JNee0m4U5c4+dWJCcW
+         WoJjCoOGgy8CoIGT3FtFRRGZ4QloGLYULUPnUxxRxYXGMSVU6VyDAJ8jV3MI9Kg+EGZo
+         PUKwBw3j8oVkC1bMMbLxO72TdjR/fHz1+l+HhulvZ/rjpPhztXOm+0rYkhkpB+KpzRvM
+         qqag==
+X-Forwarded-Encrypted: i=1; AJvYcCXTeSC+3tZx+Yr6kIrawEtmc2UUCiGGGod6GdQuvD3BUWjN4C1uu8UQWAfSlgOIMr3khVuCKsI/bnb7Sw/i@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkmPZ0h/CuGbqRPhQuw91lnXuVrbNznvnC0uvVb8aLoGBI84wm
+	qrq/9G4UFROqy4MtSzV0xqdEsYWvqdjfjgClDzjP279AlENMdotqiq5/nNEox4S07UcCVnFCWRq
+	nJKqPnxMtpKZHdfCKTuFLh9a4JdrukCrmtA8kQclgIRFOTroQ4mUBwFBofKM6CTwnglEHg8UAhR
+	89pfY=
+X-Received: by 2002:a05:6512:3b2b:b0:533:71f:3a53 with SMTP id 2adb3069b0e04-53546b053admr12510697e87.19.1725376618032;
+        Tue, 03 Sep 2024 08:16:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdwhaHs8FzcWgy+bcSv/A5Fb3K4tgSBYe1Zj63ijkeXEFavmBE5n3V1565EXlaJFFrj2Oa4g==
+X-Received: by 2002:a05:6512:3b2b:b0:533:71f:3a53 with SMTP id 2adb3069b0e04-53546b053admr12510667e87.19.1725376617503;
+        Tue, 03 Sep 2024 08:16:57 -0700 (PDT)
 Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.16.54
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.16.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 08:16:54 -0700 (PDT)
+        Tue, 03 Sep 2024 08:16:57 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -87,9 +87,9 @@ Cc: brauner@kernel.org,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 04/15] fs/fuse: support idmapped FUSE_EXT_GROUPS
-Date: Tue,  3 Sep 2024 17:16:15 +0200
-Message-Id: <20240903151626.264609-5-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v4 05/15] fs/fuse: support idmap for mkdir/mknod/symlink/create/tmpfile
+Date: Tue,  3 Sep 2024 17:16:16 +0200
+Message-Id: <20240903151626.264609-6-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
@@ -101,8 +101,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We don't need to remap parent_gid, but have to adjust
-group membership checks and take idmapping into account.
+We have all the infrastructure in place, we just need
+to pass an idmapping here.
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
@@ -111,79 +111,151 @@ Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: Bernd Schubert <bschubert@ddn.com>
 Cc: <linux-fsdevel@vger.kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
 v4:
-	- this commit added
+	- pass idmapping to fuse_simple_request()
 ---
- fs/fuse/dir.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ fs/fuse/dir.c | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 2a8344776350..b0b57f383889 100644
+index b0b57f383889..19538b1c12e2 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -545,17 +545,21 @@ static u32 fuse_ext_size(size_t size)
- /*
-  * This adds just a single supplementary group that matches the parent's group.
+@@ -614,9 +614,9 @@ static void free_ext_value(struct fuse_args *args)
+  * If the filesystem doesn't support this, then fall back to separate
+  * 'mknod' + 'open' requests.
   */
--static int get_create_supp_group(struct inode *dir, struct fuse_in_arg *ext)
-+static int get_create_supp_group(struct mnt_idmap *idmap,
-+				 struct inode *dir,
-+				 struct fuse_in_arg *ext)
+-static int fuse_create_open(struct inode *dir, struct dentry *entry,
+-			    struct file *file, unsigned int flags,
+-			    umode_t mode, u32 opcode)
++static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
++			    struct dentry *entry, struct file *file,
++			    unsigned int flags, umode_t mode, u32 opcode)
  {
- 	struct fuse_conn *fc = get_fuse_conn(dir);
- 	struct fuse_ext_header *xh;
- 	struct fuse_supp_groups *sg;
- 	kgid_t kgid = dir->i_gid;
-+	vfsgid_t vfsgid = make_vfsgid(idmap, fc->user_ns, kgid);
- 	gid_t parent_gid = from_kgid(fc->user_ns, kgid);
-+
- 	u32 sg_len = fuse_ext_size(sizeof(*sg) + sizeof(sg->groups[0]));
- 
--	if (parent_gid == (gid_t) -1 || gid_eq(kgid, current_fsgid()) ||
--	    !in_group_p(kgid))
-+	if (parent_gid == (gid_t) -1 || vfsgid_eq_kgid(vfsgid, current_fsgid()) ||
-+	    !vfsgid_in_group_p(vfsgid))
- 		return 0;
- 
- 	xh = extend_arg(ext, sg_len);
-@@ -572,7 +576,8 @@ static int get_create_supp_group(struct inode *dir, struct fuse_in_arg *ext)
- 	return 0;
- }
- 
--static int get_create_ext(struct fuse_args *args,
-+static int get_create_ext(struct mnt_idmap *idmap,
-+			  struct fuse_args *args,
- 			  struct inode *dir, struct dentry *dentry,
- 			  umode_t mode)
- {
-@@ -583,7 +588,7 @@ static int get_create_ext(struct fuse_args *args,
- 	if (fc->init_security)
- 		err = get_security_context(dentry, mode, &ext);
- 	if (!err && fc->create_supp_group)
--		err = get_create_supp_group(dir, &ext);
-+		err = get_create_supp_group(idmap, dir, &ext);
- 
- 	if (!err && ext.size) {
- 		WARN_ON(args->in_numargs >= ARRAY_SIZE(args->in_args));
-@@ -668,7 +673,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	int err;
+ 	struct inode *inode;
+@@ -673,11 +673,11 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
  	args.out_args[1].size = sizeof(*outopenp);
  	args.out_args[1].value = outopenp;
  
--	err = get_create_ext(&args, dir, entry, mode);
-+	err = get_create_ext(&nop_mnt_idmap, &args, dir, entry, mode);
+-	err = get_create_ext(&nop_mnt_idmap, &args, dir, entry, mode);
++	err = get_create_ext(idmap, &args, dir, entry, mode);
  	if (err)
  		goto out_put_forget_req;
  
-@@ -798,7 +803,7 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+-	err = fuse_simple_request(NULL, fm, &args);
++	err = fuse_simple_request(idmap, fm, &args);
+ 	free_ext_value(&args);
+ 	if (err)
+ 		goto out_free_ff;
+@@ -734,6 +734,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ 			    umode_t mode)
+ {
+ 	int err;
++	struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 	struct fuse_conn *fc = get_fuse_conn(dir);
+ 	struct dentry *res = NULL;
+ 
+@@ -758,7 +759,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ 	if (fc->no_create)
+ 		goto mknod;
+ 
+-	err = fuse_create_open(dir, entry, file, flags, mode, FUSE_CREATE);
++	err = fuse_create_open(idmap, dir, entry, file, flags, mode, FUSE_CREATE);
+ 	if (err == -ENOSYS) {
+ 		fc->no_create = 1;
+ 		goto mknod;
+@@ -769,7 +770,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ 	return err;
+ 
+ mknod:
+-	err = fuse_mknod(&nop_mnt_idmap, dir, entry, mode, 0);
++	err = fuse_mknod(idmap, dir, entry, mode, 0);
+ 	if (err)
+ 		goto out_dput;
+ no_open:
+@@ -779,9 +780,9 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ /*
+  * Code shared between mknod, mkdir, symlink and link
+  */
+-static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+-			    struct inode *dir, struct dentry *entry,
+-			    umode_t mode)
++static int create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *fm,
++			    struct fuse_args *args, struct inode *dir,
++			    struct dentry *entry, umode_t mode)
+ {
+ 	struct fuse_entry_out outarg;
+ 	struct inode *inode;
+@@ -803,12 +804,12 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
  	args->out_args[0].value = &outarg;
  
  	if (args->opcode != FUSE_LINK) {
--		err = get_create_ext(args, dir, entry, mode);
-+		err = get_create_ext(&nop_mnt_idmap, args, dir, entry, mode);
+-		err = get_create_ext(&nop_mnt_idmap, args, dir, entry, mode);
++		err = get_create_ext(idmap, args, dir, entry, mode);
  		if (err)
  			goto out_put_forget_req;
  	}
+ 
+-	err = fuse_simple_request(NULL, fm, args);
++	err = fuse_simple_request(idmap, fm, args);
+ 	free_ext_value(args);
+ 	if (err)
+ 		goto out_put_forget_req;
+@@ -869,13 +870,13 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	args.in_args[0].value = &inarg;
+ 	args.in_args[1].size = entry->d_name.len + 1;
+ 	args.in_args[1].value = entry->d_name.name;
+-	return create_new_entry(fm, &args, dir, entry, mode);
++	return create_new_entry(idmap, fm, &args, dir, entry, mode);
+ }
+ 
+ static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
+ 		       struct dentry *entry, umode_t mode, bool excl)
+ {
+-	return fuse_mknod(&nop_mnt_idmap, dir, entry, mode, 0);
++	return fuse_mknod(idmap, dir, entry, mode, 0);
+ }
+ 
+ static int fuse_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+@@ -887,7 +888,7 @@ static int fuse_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (fc->no_tmpfile)
+ 		return -EOPNOTSUPP;
+ 
+-	err = fuse_create_open(dir, file->f_path.dentry, file, file->f_flags, mode, FUSE_TMPFILE);
++	err = fuse_create_open(idmap, dir, file->f_path.dentry, file, file->f_flags, mode, FUSE_TMPFILE);
+ 	if (err == -ENOSYS) {
+ 		fc->no_tmpfile = 1;
+ 		err = -EOPNOTSUPP;
+@@ -914,7 +915,7 @@ static int fuse_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	args.in_args[0].value = &inarg;
+ 	args.in_args[1].size = entry->d_name.len + 1;
+ 	args.in_args[1].value = entry->d_name.name;
+-	return create_new_entry(fm, &args, dir, entry, S_IFDIR);
++	return create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR);
+ }
+ 
+ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+@@ -930,7 +931,7 @@ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	args.in_args[0].value = entry->d_name.name;
+ 	args.in_args[1].size = len;
+ 	args.in_args[1].value = link;
+-	return create_new_entry(fm, &args, dir, entry, S_IFLNK);
++	return create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
+ }
+ 
+ void fuse_flush_time_update(struct inode *inode)
+@@ -1124,7 +1125,7 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
+ 	args.in_args[0].value = &inarg;
+ 	args.in_args[1].size = newent->d_name.len + 1;
+ 	args.in_args[1].value = newent->d_name.name;
+-	err = create_new_entry(fm, &args, newdir, newent, inode->i_mode);
++	err = create_new_entry(NULL, fm, &args, newdir, newent, inode->i_mode);
+ 	if (!err)
+ 		fuse_update_ctime_in_cache(inode);
+ 	else if (err == -EINTR)
 -- 
 2.34.1
 
