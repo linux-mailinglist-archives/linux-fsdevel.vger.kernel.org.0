@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-28311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FE4969232
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 05:34:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CD1969229
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 05:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1C962854FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 03:34:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 908941F243D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 03:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4345E1CDFB5;
-	Tue,  3 Sep 2024 03:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DD11CDFD3;
+	Tue,  3 Sep 2024 03:31:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98161D4143;
-	Tue,  3 Sep 2024 03:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65221CDA1F;
+	Tue,  3 Sep 2024 03:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725334288; cv=none; b=XhyvnZw3AwZQT8bzL7giDD/llwa/l/+pB7VQ9VN56HdVepr8fFf0QhlNIpQOYm80kxbdnz5Qdi+dCQOT9zuHbY3JskuJCkVRDV45mNjdHUtySgv9mm9HdRSeSho+6d82KS1hufvTv8T/3LX1IJtFLspDsfbDgfisUwKf536LLvw=
+	t=1725334285; cv=none; b=FZwF81Hn53A6VI7Z4SlH/xkz+Hyh2eC7E9Rd3bX1acBZ24HcDjmLZKyPbWm6KKU2CEjOg03YQ4jWUiuBZks22MZvvZ1Zro+TbbymNuuGxo2u+pZeK7fGpivV+umZmUnSutiku8MYZpY8JYGsTRU7yyNzmnCXDCyYT51IXdXxf/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725334288; c=relaxed/simple;
-	bh=76EGB/zuzjrhvSuYXXgC8l/jce6JiJeI80JGNqaxSJY=;
+	s=arc-20240116; t=1725334285; c=relaxed/simple;
+	bh=3eyFF1LrTtWMqy6wT0ABHL0HM48CW1MZ33XuvhnhRdY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=meFxv+15rHGkZDe1ZkHU8vF/pXJT8yPbn46CQkWcOXvU+PfCnFuMYMh1q5o3RDW8pw27AUKbjftgVPEhvtgN5uEmhjrwBDquuG1j9l67Fcic2Y4mMzRWJ0zKckG05yIe4t9Hswkos4FNWbOwFoJwBTQIF9KadH2NlPYTaWHjbrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	 MIME-Version:Content-Type; b=pd7JbNis2orG4zRSBkrjonpma26Sk/uQWPFIL1FZP5y/BwO4m9xcIXik/jxwjY/lr0mNjyTiUmsTDsjwhX3vjthNZuRZKZ5UUI+ZeTi9MmBTsh+6kKtSGvD2nDiH8jYjf0HrWb+NKok2zFKqDE5wqVIyxnhUdIx3jd1cBc8sCxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WyWNG5PdYz14GB1;
-	Tue,  3 Sep 2024 11:30:22 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WyWLy2TBxzgYTY;
+	Tue,  3 Sep 2024 11:29:14 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6917F1402D0;
-	Tue,  3 Sep 2024 11:31:18 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id E61DD180087;
+	Tue,  3 Sep 2024 11:31:20 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
- 2024 11:31:15 +0800
+ 2024 11:31:18 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -55,9 +55,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
 	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-Subject: [PATCH v2 -next 07/15] security: min_addr: move sysctl into its own file
-Date: Tue, 3 Sep 2024 11:30:03 +0800
-Message-ID: <20240903033011.2870608-8-yukaixiong@huawei.com>
+Subject: [PATCH v2 -next 08/15] mm: nommu: move sysctl to its own file
+Date: Tue, 3 Sep 2024 11:30:04 +0800
+Message-ID: <20240903033011.2870608-9-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240903033011.2870608-1-yukaixiong@huawei.com>
 References: <20240903033011.2870608-1-yukaixiong@huawei.com>
@@ -72,72 +72,96 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-The dac_mmap_min_addr belongs to min_addr.c, move it into
-its own file from /kernel/sysctl.c. In the previous Linux kernel
-boot process, sysctl_init_bases needs to be executed before
-init_mmap_min_addr, So, register_sysctl_init should be executed
-before update_mmap_min_addr in init_mmap_min_addr. And according
-to the compilation condition in security/Makefile:
-
-      obj-$(CONFIG_MMU)            += min_addr.o
-
-if CONFIG_MMU is not defined, min_addr.c would not be included in the
-compilation process. So, drop the CONFIG_MMU check.
+The sysctl_nr_trim_pages belongs to nommu.c, move it into its own file
+from /kernel/sysctl.c. And remove the useless extern variable declaration
+from include/linux/mm.h
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
 ---
 v2:
- - update the changelog to explain why drop CONFIG_MMU check.
+ - fix the build error: expected ';' after top level declarator
+ - fix the build error: call to undeclared function 'register_syscall_init',
+   use 'register_sysctl_init' to replace it.
 ---
- kernel/sysctl.c     |  9 ---------
- security/min_addr.c | 11 +++++++++++
- 2 files changed, 11 insertions(+), 9 deletions(-)
+ include/linux/mm.h |  2 --
+ kernel/sysctl.c    | 10 ----------
+ mm/nommu.c         | 15 ++++++++++++++-
+ 3 files changed, 14 insertions(+), 13 deletions(-)
 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 93ae80146ee2..b7f12988237a 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -4044,8 +4044,6 @@ unsigned long wp_shared_mapping_range(struct address_space *mapping,
+ 				      pgoff_t first_index, pgoff_t nr);
+ #endif
+ 
+-extern int sysctl_nr_trim_pages;
+-
+ #ifdef CONFIG_PRINTK
+ void mem_dump_obj(void *object);
+ #else
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 41d4afc978e6..0c0bab3dad7d 100644
+index 0c0bab3dad7d..d3de31ec74bf 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2059,15 +2059,6 @@ static struct ctl_table vm_table[] = {
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
+@@ -2041,16 +2041,6 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ONE,
+ 		.extra2		= SYSCTL_FOUR,
  	},
--#ifdef CONFIG_MMU
+-#ifndef CONFIG_MMU
 -	{
--		.procname	= "mmap_min_addr",
--		.data		= &dac_mmap_min_addr,
--		.maxlen		= sizeof(unsigned long),
+-		.procname	= "nr_trim_pages",
+-		.data		= &sysctl_nr_trim_pages,
+-		.maxlen		= sizeof(sysctl_nr_trim_pages),
 -		.mode		= 0644,
--		.proc_handler	= mmap_min_addr_handler,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
 -	},
 -#endif
- #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
-    (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
  	{
-diff --git a/security/min_addr.c b/security/min_addr.c
-index 0ce267c041ab..b2f61649e110 100644
---- a/security/min_addr.c
-+++ b/security/min_addr.c
-@@ -44,8 +44,19 @@ int mmap_min_addr_handler(const struct ctl_table *table, int write,
- 	return ret;
+ 		.procname	= "vfs_cache_pressure",
+ 		.data		= &sysctl_vfs_cache_pressure,
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 385b0c15add8..48b2812f492a 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -48,7 +48,6 @@ struct page *mem_map;
+ unsigned long max_mapnr;
+ EXPORT_SYMBOL(max_mapnr);
+ unsigned long highest_memmap_pfn;
+-int sysctl_nr_trim_pages = CONFIG_NOMMU_INITIAL_TRIM_EXCESS;
+ int heap_stack_gap = 0;
+ 
+ atomic_long_t mmap_pages_allocated;
+@@ -392,6 +391,19 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
+ 	return mm->brk = brk;
  }
  
-+static struct ctl_table min_addr_sysctl_table[] = {
++static int sysctl_nr_trim_pages = CONFIG_NOMMU_INITIAL_TRIM_EXCESS;
++
++static struct ctl_table nommu_table[] = {
 +	{
-+		.procname	= "mmap_min_addr",
-+		.data		= &dac_mmap_min_addr,
-+		.maxlen		= sizeof(unsigned long),
++		.procname	= "nr_trim_pages",
++		.data		= &sysctl_nr_trim_pages,
++		.maxlen		= sizeof(sysctl_nr_trim_pages),
 +		.mode		= 0644,
-+		.proc_handler	= mmap_min_addr_handler,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
 +	},
 +};
 +
- static int __init init_mmap_min_addr(void)
- {
-+	register_sysctl_init("vm", min_addr_sysctl_table);
- 	update_mmap_min_addr();
+ /*
+  * initialise the percpu counter for VM and region record slabs
+  */
+@@ -402,6 +414,7 @@ void __init mmap_init(void)
+ 	ret = percpu_counter_init(&vm_committed_as, 0, GFP_KERNEL);
+ 	VM_BUG_ON(ret);
+ 	vm_region_jar = KMEM_CACHE(vm_region, SLAB_PANIC|SLAB_ACCOUNT);
++	register_sysctl_init("vm", nommu_table);
+ }
  
- 	return 0;
+ /*
 -- 
 2.25.1
 
