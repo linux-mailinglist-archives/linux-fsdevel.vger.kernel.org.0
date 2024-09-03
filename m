@@ -1,199 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-28454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9432296AC48
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 00:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E58F296AC52
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 00:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBE27B2130B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 22:38:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F30CB216AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 22:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86C91B9827;
-	Tue,  3 Sep 2024 22:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99BA1D58AC;
+	Tue,  3 Sep 2024 22:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="bLmc0mm9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JwniJ5ae"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhAAp5yj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pfhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BA7186E30
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 22:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B82168D0;
+	Tue,  3 Sep 2024 22:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725403084; cv=none; b=PP9z6fXggzPKSJRPQ1SlO7ATBlV5mkjlhdzWv0OycO133sXzFRZZCDDD8qUVYjU9nrQWLk2xpSXjQOASAxYsmjexHD8/c9bH+2SvwX+bUoAbqE1ivxCTZ5OE5m83ZX1XAcaRoF5jiAHmCI5NAPIBk84IjOj/Teiqk7nQy+A4nQs=
+	t=1725403152; cv=none; b=USB+bXbFavLdxwA0oWOY1JntAMxcBoP5b+RWMIJ3nRzjLYTIXTWDSL7WtqnIE0Kf3Q+jMyMBPPcN18leDjfpeypyE2WMEaMsDv/o9Yf5CQ/iz23C31aPPkUs/hMEq97eT1ceoGznJDT/ezJfNR4DDlrRmdUZSzr3QAUVH8FLgic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725403084; c=relaxed/simple;
-	bh=Hp8vADAbPCgyRaWXVX8BFmsT7qu+mGbjJdIXw46+zRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HCKgjbSCI1pzmN8xl7Cx9JH8mVl3pd38SBrGWUB+67t7aIQJXutOTLDuATuRuA2zL0nEQ0yt+24AN60X0GleGV3TYqziqOoU0IJJvmLXPKULaizE7lJaqiPcYH6F/toBYuPuLK7GbyJdqUEWr3pwasDGA2Mr+FnHF7Yz0zOLOiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=bLmc0mm9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JwniJ5ae; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A6DE5114047E;
-	Tue,  3 Sep 2024 18:38:01 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 03 Sep 2024 18:38:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725403081;
-	 x=1725489481; bh=FT6/ws71RbBv93Q+ptc7Na+/5wr0QnoILTYalU2ouOQ=; b=
-	bLmc0mm9nxsIhcXgAVMCwOKAta9xmv0XHNuPa8i5UAwjsU+4CDPiTlpRvuZmIoGx
-	Vt09RN9Efc9N1mOR4Sg/e5XJPnbsV/WXsvWx3/Mfdjlyd81Xn7/mpUbjV/tmmHUd
-	t82sSanYJQvOB9KYLCFfOyXrMJkW5CKjYa0okSEVihFqExlKlNUfItAUWlBcGms2
-	lgXoRCJC4m8LmYVJOZ9cAw644jxr5SSDFnFpPdszbc7vGr4WszZYnLyrhGVBwGc2
-	Tgn1rPvOfMk94P5Ppc25J88m5m3hTOcwTDIjs//+/tlEmYiZw5FubpZ75Bo5S/fa
-	jJUAZUxURn0JL8EAeame5g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725403081; x=
-	1725489481; bh=FT6/ws71RbBv93Q+ptc7Na+/5wr0QnoILTYalU2ouOQ=; b=J
-	wniJ5ae8v2lwWDs5TK0FNJa67hdQBj3BImKHOaby0GwhL+gj9nngyQr8e44DWmbg
-	iE+BKTI6xxROsjNlKhmTSYJ9oyMvfq+wtxv0LSVxUJ0ht2A9sB3WL3m/oNzaLs3M
-	sOmAzbUFjGeJEwTDK6zH/5QhvM7ePXcELBLDILu9EQpQrtiaJeonUWAAcnFm6ZC1
-	jx+obmS+/wHBpF96xFWYHS374y7qngX5mgPizdXI8wGN4r2jzFoFKU6lKsLZirxn
-	0Yxm7KM+zxuSANJIY4eq5/vuupL8qC/l0QK+biNwXtQcy+fLn2+QoU0roubndVU3
-	odtSPtkCoiCjCTbfN/qkA==
-X-ME-Sender: <xms:yI_XZh-0i2FaGUBFW675r8q7YQhpvc6OJejcmkP_0sYym1ZyTJoTww>
-    <xme:yI_XZlun2UIM1RqivbEx38YgxSBFTS3voZFbB5TgJVuFYfB5EPwzCJeJRs1dAQGWs
-    XRLMdwefbAaWDwp>
-X-ME-Received: <xmr:yI_XZvBbTCw4xabhnjxG-HQ0AutRV-Wfqv0a5omMr1V9wxIKW7LqzNfrhYbKFPYmG3moRlDxR1LP83vn4Q9VPFA_GELpOJBaD-C-OkQMUiAvak_7VLPy>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehiedgudduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
-    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
-    phhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugi
-    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhs
-    vghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehjvghffhhlvgiguheslh
-    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlrghorghrrdhshhgrohes
-    ghhmrghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtg
-    homh
-X-ME-Proxy: <xmx:yI_XZlcxQJ3fWQQ-F_aRCVAZL4qJhysHpfrfHtU7h0GpuuQywaB9iQ>
-    <xmx:yI_XZmPwIMtf4CPni9k73msh26cfNMPA4Pwgd61PV-7yV57LQ9BiRQ>
-    <xmx:yI_XZnnoKQvnMCIuqm1TuJ3hBH-FKOnDdONR6pFDMGwKEWR446SudQ>
-    <xmx:yI_XZgtD3hc1KCtL8FVJWz69xeR4YdKZ0DNbfJKhfHEsuPD-82YqLA>
-    <xmx:yY_XZle-N5T9RROXNye3fIZONEWL5y_TQ5qquFwex4WCCNOs6bosTB62>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Sep 2024 18:37:59 -0400 (EDT)
-Message-ID: <02b45c36-b64c-4b7c-9148-55cbd06cc07b@fastmail.fm>
-Date: Wed, 4 Sep 2024 00:37:58 +0200
+	s=arc-20240116; t=1725403152; c=relaxed/simple;
+	bh=Lpdiqv7U5WH0lEr8Eh3/GAkbxcCXk70iOpTe0x22h38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G7iFDu1z5fkTItIghOWZe55/KzmjaKq/XSS+RBDTUQTIYaKMDngwJb3RZ3CPTDy+o5JLVqeJ1tEtzk5EbDDP4dML7ZUwzKVohIvw25f+2Dxw3I0g/GbCAOmPKApcE8CccNEfQ7PpSA9EP6MvhZSQzBJs75TtketrTVWI2R11Clo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhAAp5yj; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d86f713557so3196006a91.2;
+        Tue, 03 Sep 2024 15:39:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725403149; x=1726007949; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i2PtT26YRiaBYasNug4rMtQJAR6q3w0Bv3mtkz5A7vg=;
+        b=KhAAp5yjpS8GwpurkUNJFsOVpx2PJP8ZvIer7qhOyAo71o7wgXrmB1qhPCW41sKK3y
+         yRmB4seXMfkR2yML9hajm1ONoGgZN26wR049LEMALnGB/PjrJ+X9gItYb7Z8OzInAbMj
+         7a2cgfkyuDR+a3H7COCIu6Up5i5egvpM0NiUw6suVorA895aTMdJoLKQptYW3r2nAGXR
+         XluZfY1nT5JWoHkc3woWw3ypSB8N4W+fqp8jtc6g4+3nHZYdolwvN5xlX2NLA98aQxzy
+         EXxvZAGABdw9k+WJFjGusI32t7mtYQ4HBrHSuQyAZsNfRhslmvMXmGlL4KIVC5oBIWvL
+         T2YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725403149; x=1726007949;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i2PtT26YRiaBYasNug4rMtQJAR6q3w0Bv3mtkz5A7vg=;
+        b=wfokXaFGVeBLb3iAg50nKaJj5ang0DUP+I0CkEVGWwYCnkBIvC8ZmurITLavGfbRDy
+         OpkUen5jP6r2/QK/HEpt2zPRK/nsVArhPIg4gh21TDddlr05AcY4mCYQb2C09PQOmTS+
+         7K4+rtXQvNF8cXh+YyDKqhN9mW/ft6auIkMPg4qXK3pUBG8SPeHfq+iSLuGeS9Ppr8Qh
+         4Nho1D+T9YJZ4BtsghZRVHqzmUBlh3+uhVBMljj4spxS1uD5jvswmqGCw1oQv4D5PwZx
+         zPHxMlr4sfP9tu+WLPUtC1yPbuX2L1c21SHCExUWOR5zD6Caj4PPfFPxRytkqFzf+pAA
+         4/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo1IIACMyWbjyHl2AY+/9kpCMvHEXD0HVGtnnVX1AmDBP22hlRrLyxtA6Di819bi7jSVXqfthcZ9p7yST8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx3m+Ju1Ll/HHXUwc6Jol6q4onqaHp9IXdhsrFBTllZP+vOtMs
+	wwtvqlwbRZJfibaRqY82DyLp3m/3CpiWxEJBIFS068xVT5ispzTOicHzrJ3Tj0XPjGAoFi+XZPH
+	JfYN8W5C+XDyIJH2MifkgkYtGw6U=
+X-Google-Smtp-Source: AGHT+IHqfBfyIi1sY/xSA1xbdpPbbWvmy5eqvGxffWVsRA5cwcYDa75eASwd10hegsqh0goLCXgFxIVazxTlOxZ30R8=
+X-Received: by 2002:a17:90a:bd91:b0:2cc:ef14:89e3 with SMTP id
+ 98e67ed59e1d1-2d8904ee82emr11225806a91.15.1725403149223; Tue, 03 Sep 2024
+ 15:39:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] fuse: add optional kernel-enforced timeout for
- requests
-To: Joanne Koong <joannelkoong@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
- jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com
-References: <20240830162649.3849586-1-joannelkoong@gmail.com>
- <20240830162649.3849586-2-joannelkoong@gmail.com>
- <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
- <CAJnrk1ZSEk+GuC1kvNS_Cu9u7UsoFW+vd2xOsrbL5i_GNAoEkQ@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1ZSEk+GuC1kvNS_Cu9u7UsoFW+vd2xOsrbL5i_GNAoEkQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240829174232.3133883-1-andrii@kernel.org>
+In-Reply-To: <20240829174232.3133883-1-andrii@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 3 Sep 2024 15:38:57 -0700
+Message-ID: <CAEf4BzYdP_6L1bT5bEwp5GAwM-rKOA36C-Cwv4i8h-3pKp-nkQ@mail.gmail.com>
+Subject: Re: [PATCH v7 bpf-next 00/10] Harden and extend ELF build ID parsing logic
+To: willy@infradead.org, linux-mm@kvack.org, akpm@linux-foundation.org
+Cc: bpf@vger.kernel.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
+	jannh@google.com, linux-fsdevel@vger.kernel.org, 
+	Andrii Nakryiko <andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 29, 2024 at 10:42=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
+>
+> The goal of this patch set is to extend existing ELF build ID parsing log=
+ic,
+> currently mostly used by BPF subsystem, with support for working in sleep=
+able
+> mode in which memory faults are allowed and can be relied upon to fetch
+> relevant parts of ELF file to find and fetch .note.gnu.build-id informati=
+on.
+>
+> This is useful and important for BPF subsystem itself, but also for
+> PROCMAP_QUERY ioctl(), built atop of /proc/<pid>/maps functionality (see =
+[0]),
+> which makes use of the same build_id_parse() functionality. PROCMAP_QUERY=
+ is
+> always called from sleepable user process context, so it doesn't have to
+> suffer from current restrictions of build_id_parse() which are due to the=
+ NMI
+> context assumption.
+>
+> Along the way, we harden the logic to avoid TOCTOU, overflow, out-of-boun=
+ds
+> access problems.  This is the very first patch, which can be backported t=
+o
+> older releases, if necessary.
+>
+> We also lift existing limitations of only working as long as ELF program
+> headers and build ID note section is contained strictly within the very f=
+irst
+> page of ELF file.
+>
+> We achieve all of the above without duplication of logic between sleepabl=
+e and
+> non-sleepable modes through freader abstraction that manages underlying f=
+olio
+> from page cache (on demand) and gives a simple to use direct memory acces=
+s
+> interface. With that, single page restrictions and adding sleepable mode
+> support is rather straightforward.
+>
+> We also extend existing set of BPF selftests with a few tests targeting b=
+uild
+> ID logic across sleepable and non-sleepabe contexts (we utilize sleepable=
+ and
+> non-sleepable uprobes for that).
+>
+>    [0] https://lore.kernel.org/linux-mm/20240627170900.1672542-4-andrii@k=
+ernel.org/
+>
+> v6->v7:
+>   - added filemap_invalidate_{lock,unlock}_shared() around read_cache_fol=
+io
+>     and kept Eduard's Reviewed-by (Eduard);
+> v5->v6:
+>   - use local phnum variable in get_build_id_32() (Jann);
+>   - switch memcmp() instead of strcmp() in parse_build_id() (Jann);
+> v4->v5:
+>   - pass proper file reference to read_cache_folio() (Shakeel);
+>   - fix another potential overflow due to two u32 additions (Andi);
+>   - add PageUptodate() check to patch #1 (Jann);
+> v3->v4:
+>   - fix few more potential overflow and out-of-bounds access issues (Andi=
+);
+>   - use purely folio-based implementation for freader (Matthew);
 
+Ok, so I'm not sure what one needs to do to get Matthew's attention
+nowadays, but hopefully yet another ping might do the trick.
 
-On 9/3/24 19:25, Joanne Koong wrote:
-> On Mon, Sep 2, 2024 at 3:38 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->>
->> On Fri, 30 Aug 2024 at 18:27, Joanne Koong <joannelkoong@gmail.com> wrote:
->>>
->>> There are situations where fuse servers can become unresponsive or
->>> stuck, for example if the server is in a deadlock. Currently, there's
->>> no good way to detect if a server is stuck and needs to be killed
->>> manually.
->>>
->>> This commit adds an option for enforcing a timeout (in seconds) on
->>> requests where if the timeout elapses without a reply from the server,
->>> the connection will be automatically aborted.
->>
->> Okay.
->>
->> I'm not sure what the overhead (scheduling and memory) of timers, but
->> starting one for each request seems excessive.
->>
->> Can we make the timeout per-connection instead of per request?
->>
->> I.e. When the first request is sent, the timer is started. When a
->> reply is received but there are still outstanding requests, the timer
->> is reset.  When the last reply is received, the timer is stopped.
->>
->> This should handle the frozen server case just as well.  It may not
->> perfectly handle the case when the server is still alive but for some
->> reason one or more requests get stuck, while others are still being
->> processed.   The latter case is unlikely to be an issue in practice,
->> IMO.
-> 
-> In that case, if the timeout is per-connection instead of per-request
-> and we're not stringent about some requests getting stuck, maybe it
-> makes more sense to just do this in userspace (libfuse) then? That
-> seems pretty simple with having a watchdog thread that periodically
-> (according to whatever specified timeout) checks if the number of
-> requests serviced is increasing when
-> /sys/fs/fuse/connections/*/waiting is non-zero.
-> 
-> If there are multiple server threads (eg libfuse's fuse_loop_mt
-> interface) and say, all of them are deadlocked except for 1 that is
-> actively servicing requests, then this wouldn't catch that case, but
-> even if this per-connection timeout was enforced in the kernel
-> instead, it wouldn't catch that case either.
-> 
-> So maybe this logic should just be moved to libfuse then? For this
-> we'd need to pass the connection's device id (fc->dev) to userspace
-> which i don't think we currently do, but that seems pretty simple. The
-> one downside I see is that this doesn't let sysadmins enforce an
-> automatic system-wide "max timeout" against malicious fuse servers but
-> if we are having the timeout be per-connection instead of per-request,
-> then a malicious server could still be malicious anyways (eg
-> deadlocking all threads except for 1).
-> 
-> Curious to hear what your and Bernrd's thoughts on this are.
+Matthew,
 
+Can you please take another look and provide your ack or nack? I did
+the conversion to folio as you requested. It would be nice if you can
+give me a courtesy of acking my patch set, if there is nothing wrong
+with it, so it can finally go in.
 
-I have question here, does it need to be an exact timeout or could it be
-an interval/epoch? Let's say you timeout based on epoch lists? Example
+Thank you.
 
-1) epoch-a starts, requests are added to epoch-a list.
-2) epoch-b starts, epoch-a list should get empty
-3) epoch-c starts, epoch-b list should get empty, kill the connection if
-epoch-a list is not empty (epoch-c list should not be needed, as epoch-a
-list can be used, once confirmed it is empty.)
-
-
-Here timeout would be epoch-a + epoch-b, i.e.
-max-timeout <= 2 * epoch-time.
-We could have more epochs/list-heads to make it more fine grained.
-
-
-From my point of view that should be a rather cheap, as it just
-adding/removing requests from list and checking for timeout if a list is
-empty. With the caveat that it is not precise anymore.
-
-That could be implemented in kernel and/or libfuse?
-
-
-Thanks,
-Bernd
+> v2->v3:
+>   - remove unneeded READ_ONCE()s and force phoff to u64 for 32-bit mode (=
+Andi);
+>   - moved hardening fixes to the front for easier backporting (Jann);
+>   - call freader_cleanup() from build_id_parse_buf() for consistency (Jir=
+i);
+> v1->v2:
+>   - ensure MADV_PAGEOUT works reliably by paging data in first (Shakeel);
+>   - to fix BPF CI build optionally define MADV_POPULATE_READ in selftest.
+>
+> Andrii Nakryiko (10):
+>   lib/buildid: harden build ID parsing logic
+>   lib/buildid: add single folio-based file reader abstraction
+>   lib/buildid: take into account e_phoff when fetching program headers
+>   lib/buildid: remove single-page limit for PHDR search
+>   lib/buildid: rename build_id_parse() into build_id_parse_nofault()
+>   lib/buildid: implement sleepable build_id_parse() API
+>   lib/buildid: don't limit .note.gnu.build-id to the first page in ELF
+>   bpf: decouple stack_map_get_build_id_offset() from
+>     perf_callchain_entry
+>   bpf: wire up sleepable bpf_get_stack() and bpf_get_task_stack()
+>     helpers
+>   selftests/bpf: add build ID tests
+>
+>  include/linux/bpf.h                           |   2 +
+>  include/linux/buildid.h                       |   4 +-
+>  kernel/bpf/stackmap.c                         | 131 ++++--
+>  kernel/events/core.c                          |   2 +-
+>  kernel/trace/bpf_trace.c                      |   5 +-
+>  lib/buildid.c                                 | 397 +++++++++++++-----
+>  tools/testing/selftests/bpf/Makefile          |   5 +-
+>  .../selftests/bpf/prog_tests/build_id.c       | 118 ++++++
+>  .../selftests/bpf/progs/test_build_id.c       |  31 ++
+>  tools/testing/selftests/bpf/uprobe_multi.c    |  41 ++
+>  tools/testing/selftests/bpf/uprobe_multi.ld   |  11 +
+>  11 files changed, 605 insertions(+), 142 deletions(-)
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/build_id.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/test_build_id.c
+>  create mode 100644 tools/testing/selftests/bpf/uprobe_multi.ld
+>
+> --
+> 2.43.5
+>
 
