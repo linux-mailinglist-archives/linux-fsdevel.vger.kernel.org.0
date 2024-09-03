@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-28394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D6096A044
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 16:22:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06B796A045
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 16:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 197D01C22FCA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 14:22:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41D85B23EF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 14:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20E413D245;
-	Tue,  3 Sep 2024 14:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07AB13D518;
+	Tue,  3 Sep 2024 14:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HU3gT6w0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iC8yw4Sz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A39626CB
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 14:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613AF626CB
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 14:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373357; cv=none; b=O5Tx4ya9zhz88Wmulhh/0Qr17paWDjuO/meqd3/qj0JY9vC6ZA2pisexaW4j9d+kLOBm5lKf89dj1ubkDk7/aUrJWoLidHqmqPAURZBd1NC0P1esAp1wMjZia0aD6VRVkiunIbye6gv/xA4l9GPrjUbeQAtivMY2XPwk3VzezFU=
+	t=1725373359; cv=none; b=lwtVd7tXT/bMu277+hIvYpJvGfgUGbTIl1yl0WEEZZCiQtJcR+7RrVW/IFYmUIy6Sc1CYBREy+g2fsAH/EToZ74OY/cRANb49ppblTVnK4G9fvsWswlKdMh++CSdTdnxMpekhUzbaxgQK4J49X1a8ZMOZpVtPdfQ7TRfQpuL5DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373357; c=relaxed/simple;
-	bh=Kwi+I1VrtzNjFT2qOG43GSdAkcM45KGq+XLRDdRsBW4=;
+	s=arc-20240116; t=1725373359; c=relaxed/simple;
+	bh=NICKa5KUOQG+AjRPua/q+Zy7rozMk7chEiygU85Xzfw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=phG79IvGbLQX9/ksKVg6C9tnVPddGJNy5dO2wau0/dIxc78bzCzbfN0S5STA6A9CZRr4xA1Y8ErDxRBcT2UYmTrWKBoTV3ZW+befaAYDZFSoAVFsE2IPUhmoyFSveBfyv00j9rlDP/X1UIBSAZrLKW+cmpZRw0yhAIEGzXmXr/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HU3gT6w0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6A06C4CEC9;
-	Tue,  3 Sep 2024 14:22:34 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=LtfzUarwoMsLIIQvTI0Nf9GCvFWsZEp4MkUtbkUD4hNaidaAnNitUuf7SHMQYAfGHgAeadl5593S+/mwNGqeRWeFjk2nE5u5DsvJSAZsLDSejBcFLk8LA9d+HZSOTUhoZ9iVLLtBcY5gHaRxViiiWQyx0E91pYlUo6szSD82Qw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iC8yw4Sz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F9BDC4CECA;
+	Tue,  3 Sep 2024 14:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725373356;
-	bh=Kwi+I1VrtzNjFT2qOG43GSdAkcM45KGq+XLRDdRsBW4=;
+	s=k20201202; t=1725373359;
+	bh=NICKa5KUOQG+AjRPua/q+Zy7rozMk7chEiygU85Xzfw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HU3gT6w0kxMRCh5cjqQ6GVZT9zHNO+tW5OEaJBvo0wqjvITuNxXJnWE0javyOTqvr
-	 FQwWfOYB3XwW8uiTGL2BRtw0FoBY4nIFYHGzhueA7CW6+ZyWob9/v19WpyvgykMF4F
-	 0P5Y++52gJVpGcEw0uSSOQl7l/1cihjlemmOLneEIhFzMqJeYJJTjt7Sh9wrB3qQZL
-	 zetPgbUDZvBTIRqtEdsoFD8Ulima2cMJVWDVNxfp/B1qF2Xnx2SVhJALGh05CPWFwm
-	 6zvELTznDpr/2y7c4+PII7Y1eE8bujIG2SPWHhcRfP6+MLYRrjAPDYDXSFPKDYKOUF
-	 OXufpqNfUg41g==
+	b=iC8yw4SzaTmXOI0hC0s8OsuBU5aCzpjtbsOXChYJgSb+rOOw8TJqTrZReqPkClcGK
+	 ZNgy01bxU/uKUhxj7oMkaQhQAQx/3DyNu5CeaR/EV1moRwRvMHEMwMUAnyjEI/TDMW
+	 skD2yBxQE+vFthDy+IfReCtlevTldr3uCMhDIvE8Z+T4hQhePNd2ER/HHlrrFD/4JJ
+	 0kGkpS2svFTSfpQC/Q40LPhG3ke3P4HRh3ee0tF902OveKbf7i3QXXtYpW3TGeBec6
+	 Vrza4B7lPz457uYQqrZhBLocJthwFr5XglrmZMgfN9bATDcthv/vrHLusm04OqJSJH
+	 +goSwi9E619bA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 03 Sep 2024 16:20:47 +0200
-Subject: [PATCH v2 06/15] slab: pass struct kmem_cache_args to
- create_cache()
+Date: Tue, 03 Sep 2024 16:20:48 +0200
+Subject: [PATCH v2 07/15] slub: pull kmem_cache_open() into
+ do_kmem_cache_create()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240903-work-kmem_cache_args-v2-6-76f97e9a4560@kernel.org>
+Message-Id: <20240903-work-kmem_cache_args-v2-7-76f97e9a4560@kernel.org>
 References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
 In-Reply-To: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
@@ -63,102 +63,182 @@ To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3048; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Kwi+I1VrtzNjFT2qOG43GSdAkcM45KGq+XLRDdRsBW4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdl54t6HCjduvW5zuL87Xma60vmixz2EVi+v1EUzOu/
- KIdp1n2dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkdTcjw1bOm71eDxO4vzrM
- tfp8IvronE09clPakure3Xb5PMPU4hQjw+M3m9gORTG+O3BeYtH19PclB7bZnHnHsN+5Xm53kE4
- CIzsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4182; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=NICKa5KUOQG+AjRPua/q+Zy7rozMk7chEiygU85Xzfw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdl55TEKXz8vYFK94ZvtNPxHhluBqE8J9eprm0vqG4t
+ aFTqWhWRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETUFzAyHK382DX77OSW782/
+ Tyb0tolO+W8Z9G1hP99sobz366eZKTP8L/Lb0Wjtcnz14nu562PZJ+ZXWnRa+BqwelZ9XbLf9vo
+ 9VgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Pass struct kmem_cache_args to create_cache() so that we can later
-simplify further helpers.
+do_kmem_cache_create() is the only caller and we're going to pass down
+struct kmem_cache_args in a follow-up patch.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- mm/slab_common.c | 39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ mm/slub.c | 132 +++++++++++++++++++++++++++++---------------------------------
+ 1 file changed, 62 insertions(+), 70 deletions(-)
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 16c36a946135..9baa61c9c670 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -202,22 +202,22 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
+diff --git a/mm/slub.c b/mm/slub.c
+index 23d9d783ff26..30f4ca6335c7 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -5290,65 +5290,6 @@ static int calculate_sizes(struct kmem_cache *s)
+ 	return !!oo_objects(s->oo);
  }
  
- static struct kmem_cache *create_cache(const char *name,
--		unsigned int object_size, unsigned int freeptr_offset,
--		unsigned int align, slab_flags_t flags,
--		unsigned int useroffset, unsigned int usersize,
--		void (*ctor)(void *))
-+				       unsigned int object_size,
-+				       struct kmem_cache_args *args,
-+				       slab_flags_t flags)
+-static int kmem_cache_open(struct kmem_cache *s, slab_flags_t flags)
+-{
+-	s->flags = kmem_cache_flags(flags, s->name);
+-#ifdef CONFIG_SLAB_FREELIST_HARDENED
+-	s->random = get_random_long();
+-#endif
+-
+-	if (!calculate_sizes(s))
+-		goto error;
+-	if (disable_higher_order_debug) {
+-		/*
+-		 * Disable debugging flags that store metadata if the min slab
+-		 * order increased.
+-		 */
+-		if (get_order(s->size) > get_order(s->object_size)) {
+-			s->flags &= ~DEBUG_METADATA_FLAGS;
+-			s->offset = 0;
+-			if (!calculate_sizes(s))
+-				goto error;
+-		}
+-	}
+-
+-#ifdef system_has_freelist_aba
+-	if (system_has_freelist_aba() && !(s->flags & SLAB_NO_CMPXCHG)) {
+-		/* Enable fast mode */
+-		s->flags |= __CMPXCHG_DOUBLE;
+-	}
+-#endif
+-
+-	/*
+-	 * The larger the object size is, the more slabs we want on the partial
+-	 * list to avoid pounding the page allocator excessively.
+-	 */
+-	s->min_partial = min_t(unsigned long, MAX_PARTIAL, ilog2(s->size) / 2);
+-	s->min_partial = max_t(unsigned long, MIN_PARTIAL, s->min_partial);
+-
+-	set_cpu_partial(s);
+-
+-#ifdef CONFIG_NUMA
+-	s->remote_node_defrag_ratio = 1000;
+-#endif
+-
+-	/* Initialize the pre-computed randomized freelist if slab is up */
+-	if (slab_state >= UP) {
+-		if (init_cache_random_seq(s))
+-			goto error;
+-	}
+-
+-	if (!init_kmem_cache_nodes(s))
+-		goto error;
+-
+-	if (alloc_kmem_cache_cpus(s))
+-		return 0;
+-
+-error:
+-	__kmem_cache_release(s);
+-	return -EINVAL;
+-}
+-
+ static void list_slab_objects(struct kmem_cache *s, struct slab *slab,
+ 			      const char *text)
  {
- 	struct kmem_cache *s;
- 	int err;
+@@ -5904,26 +5845,77 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
  
--	if (WARN_ON(useroffset + usersize > object_size))
--		useroffset = usersize = 0;
-+	if (WARN_ON(args->useroffset + args->usersize > object_size))
-+		args->useroffset = args->usersize = 0;
- 
- 	/* If a custom freelist pointer is requested make sure it's sane. */
- 	err = -EINVAL;
--	if (freeptr_offset != UINT_MAX &&
--	    (freeptr_offset >= object_size || !(flags & SLAB_TYPESAFE_BY_RCU) ||
--	     !IS_ALIGNED(freeptr_offset, sizeof(freeptr_t))))
-+	if (args->use_freeptr_offset &&
-+	    (args->freeptr_offset >= object_size ||
-+	     !(flags & SLAB_TYPESAFE_BY_RCU) ||
-+	     !IS_ALIGNED(args->freeptr_offset, sizeof(freeptr_t))))
- 		goto out;
- 
- 	err = -ENOMEM;
-@@ -227,12 +227,15 @@ static struct kmem_cache *create_cache(const char *name,
- 
- 	s->name = name;
- 	s->size = s->object_size = object_size;
--	s->rcu_freeptr_offset = freeptr_offset;
--	s->align = align;
--	s->ctor = ctor;
-+	if (args->use_freeptr_offset)
-+		s->rcu_freeptr_offset = args->freeptr_offset;
-+	else
-+		s->rcu_freeptr_offset = UINT_MAX;
-+	s->align = args->align;
-+	s->ctor = args->ctor;
- #ifdef CONFIG_HARDENED_USERCOPY
--	s->useroffset = useroffset;
--	s->usersize = usersize;
-+	s->useroffset = args->useroffset;
-+	s->usersize = args->usersize;
- #endif
- 	err = do_kmem_cache_create(s, flags);
- 	if (err)
-@@ -265,7 +268,6 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
- 					    slab_flags_t flags)
+ int do_kmem_cache_create(struct kmem_cache *s, slab_flags_t flags)
  {
- 	struct kmem_cache *s = NULL;
--	unsigned int freeptr_offset = UINT_MAX;
- 	const char *cache_name;
- 	int err;
+-	int err;
++	int err = -EINVAL;
  
-@@ -323,11 +325,8 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
- 		goto out_unlock;
- 	}
+-	err = kmem_cache_open(s, flags);
+-	if (err)
+-		return err;
++	s->flags = kmem_cache_flags(flags, s->name);
++#ifdef CONFIG_SLAB_FREELIST_HARDENED
++	s->random = get_random_long();
++#endif
++
++	if (!calculate_sizes(s))
++		goto out;
++	if (disable_higher_order_debug) {
++		/*
++		 * Disable debugging flags that store metadata if the min slab
++		 * order increased.
++		 */
++		if (get_order(s->size) > get_order(s->object_size)) {
++			s->flags &= ~DEBUG_METADATA_FLAGS;
++			s->offset = 0;
++			if (!calculate_sizes(s))
++				goto out;
++		}
++	}
++
++#ifdef system_has_freelist_aba
++	if (system_has_freelist_aba() && !(s->flags & SLAB_NO_CMPXCHG)) {
++		/* Enable fast mode */
++		s->flags |= __CMPXCHG_DOUBLE;
++	}
++#endif
++
++	/*
++	 * The larger the object size is, the more slabs we want on the partial
++	 * list to avoid pounding the page allocator excessively.
++	 */
++	s->min_partial = min_t(unsigned long, MAX_PARTIAL, ilog2(s->size) / 2);
++	s->min_partial = max_t(unsigned long, MIN_PARTIAL, s->min_partial);
++
++	set_cpu_partial(s);
++
++#ifdef CONFIG_NUMA
++	s->remote_node_defrag_ratio = 1000;
++#endif
++
++	/* Initialize the pre-computed randomized freelist if slab is up */
++	if (slab_state >= UP) {
++		if (init_cache_random_seq(s))
++			goto out;
++	}
++
++	if (!init_kmem_cache_nodes(s))
++		goto out;
++
++	if (!alloc_kmem_cache_cpus(s))
++		goto out;
  
--	if (args->use_freeptr_offset)
--		freeptr_offset = args->freeptr_offset;
--	s = create_cache(cache_name, object_size, freeptr_offset,
--			 calculate_alignment(flags, args->align, object_size),
--			 flags, args->useroffset, args->usersize, args->ctor);
-+	args->align = calculate_alignment(flags, args->align, object_size);
-+	s = create_cache(cache_name, object_size, args, flags);
- 	if (IS_ERR(s)) {
- 		err = PTR_ERR(s);
- 		kfree_const(cache_name);
+ 	/* Mutex is not taken during early boot */
+-	if (slab_state <= UP)
+-		return 0;
++	if (slab_state <= UP) {
++		err = 0;
++		goto out;
++	}
+ 
+ 	err = sysfs_slab_add(s);
+-	if (err) {
+-		__kmem_cache_release(s);
+-		return err;
+-	}
++	if (err)
++		goto out;
+ 
+ 	if (s->flags & SLAB_STORE_USER)
+ 		debugfs_slab_add(s);
+ 
+-	return 0;
++out:
++	if (err)
++		__kmem_cache_release(s);
++	return err;
+ }
+ 
+ #ifdef SLAB_SUPPORTS_SYSFS
 
 -- 
 2.45.2
