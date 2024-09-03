@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-28424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2908F96A214
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 17:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B6096A216
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 17:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14EA1F23944
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 482291F2219E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 15:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE27118BC2F;
-	Tue,  3 Sep 2024 15:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8088192B70;
+	Tue,  3 Sep 2024 15:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Q/Y5sx7H"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="H4ZFARnH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BBC1925AA
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DC518BC36
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376637; cv=none; b=WMJT7ZVayDkp383t8SzDBDW4uYQ0Y174QTnuO0801bAh0t8fuEv8Ivmxa1IxPXlXIeSkkKLggGJTbuDo3BsNZy39eIN6yF62m5Wcuxj9/fEtbdZxsuJ6Ghx/tyTvUvXRJDeFaTuUjgdOCuxU0qTpXG3kOeZ2le//OVj+kI9Hv94=
+	t=1725376640; cv=none; b=H+lOiEB+8NyDYqJRb/PBfxC95UeTIWu22Py5GaWncUMYOzJGD5B8LxH0ea+Fuc/f2ok80Yx/WjY1BNofEHAwEGzyNKv3LL41m546Y4JdACmNwJO2emNUvl0l0WWNRLL6ybkNQIwIVWEKU9l7aEBs5GguTWIGHuzpPe3IxoPxVi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376637; c=relaxed/simple;
-	bh=ezrwIWPEtkVKsO2BZ8GHjfDUp3paNgF+C0sOeuA/x40=;
+	s=arc-20240116; t=1725376640; c=relaxed/simple;
+	bh=fapDmbcyv3OV3L5MVJ0ESyKv76DKH2gIdDF3OBkCKmU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lA+4UFpKKBi4ABdQmrjhLs/6DakUJqwYL4Y+pd2eCqK7qlsGNZl9lmX7JvqBRz1o7TAGvcawQcfXbiiSQnk7WlYdSA3tIE3VB4AwyAOdNJXKJB+lXFN/3XMZtv50odi60vZBR92QQpojkIyfW3PY00H4cKpNFyBbulz3pU0b5iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Q/Y5sx7H; arc=none smtp.client-ip=185.125.188.122
+	 MIME-Version; b=l+rMk+IOmdObYZfOrxIa9Weupnc404tO+2a5Cf3+h8kjD8YGsTMqJE2TSzhlBbZoFiyeZBBDeEq8zhm1lzMwyAqizevat/1JbW1uidcE7pUpxV4EiR38JTQTFffikBMcwfs3wS90weFYkXH8NP2HbhRyMvH1RJktWs3CA5wPM10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=H4ZFARnH; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BA36D3FADB
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:13 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A863E3F17E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 15:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725376633;
-	bh=UlVqr8qfq0zm4LadiFaTT35TCbrEM7DrGylkId+7er0=;
+	s=20210705; t=1725376636;
+	bh=GKlPAS/yke2oPrCeB1Al+EppMQBQKIKtDOu8hv7kn/0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=Q/Y5sx7Hjj9AbUArEUlD5AOtdoWF3y4v3vXtcfd6nk7K8F9zM0xym8Zp7m4taBnI8
-	 JVdquzhnM0MWeDE+S3T29vJJgT0tz+3eXd66a/DkGIRr+vB13t1BYeSc7uiRzpxOKb
-	 6oeGYseQgLT7TahKYdTt1Je21izR/Ohy0lNF2pejpwyO3Lb7wChyz09w4snQwKIw3T
-	 KeSCwy1Sp2wEop2DTQALtgOpaWqe2q1wZmXC3HzARLQqkl2cvIipjlxbGIdEB2zMO1
-	 btU6gfUX0sIyyjIPU6280CIoXvR1seSYXUgiyncTNV6QxZrck/TWegXOEdNaupB1f0
-	 y2FDagf6g+gxw==
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a870cad2633so477433966b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 08:17:13 -0700 (PDT)
+	b=H4ZFARnHvMUb3znZMjPpYmHQhTNQaF7qfl89vPcE1bVCOdNWksqhpeHu979HCgLa3
+	 hhTkEBfRhJ12wtq4csPXmJx1zFFXDdNGeYXoAXhthw7rFOZ4ciXrbRYElocZmloApG
+	 9JDcrIKVywSuV6ZA6YegcYEjQjNTFYB7PBB2IZtWllnSq9za9YktNuGwdqR9mvHlwR
+	 shhrQ8pZJNPIi9kXLlrR+z+q3FAoYUKkMpGfWF34vLWi9IkJ0LCrd/Ec3M+zWwlDcS
+	 nTaQl8LQtzTdNDmR9EB6N84SFUdhywXq0Et343T9JE9gIqrXyMA4d/WZbLLGX28j6K
+	 LgDvqMzIDZMpg==
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-5334af2a84fso5906489e87.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 08:17:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725376633; x=1725981433;
+        d=1e100.net; s=20230601; t=1725376636; x=1725981436;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UlVqr8qfq0zm4LadiFaTT35TCbrEM7DrGylkId+7er0=;
-        b=SGKN3N1zwQjLEPCZxyZJBuBXmfxuf8FLcNyk9a77/ttj/G8Xx4eUhkWVNyV6qEI9oO
-         R32XNnKK5Sg6nu8XosUEuIrjhurAYAByxTAJRvWiaRPg8SVi/lmxwp0tSdq5cRw8WMza
-         UDSlkydnAKC0iieON6/kPulfJSwFyQJ1YJ+HEvPUVk2itAbXgdv3UAiEBtsfd5mLOstn
-         Hx6ntAfQBUxOBD8MQZFndwE/9PL2F96B9VsP1DyepCZTfxtZewParLc5uDbZ56ROyfnb
-         r9z9ZcLo7lZwqfs9NCt2wpQkMfskQRTQXLJ3HsHJS1QFMwiwWTqXN+i32lCjs4yK7lkG
-         o/KA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHKSOlZ1f83nDom+5bHM7jmiaNQk4fHsZ9Zqo1wR3j3zeqx7DBhxKWJGqYjmRuZ29wMCzAOevxMnWA6Prm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQJ/VaRPNauLvVTX/aRx6NemWIZmh6hpKpflr/QZotWE4CLjmn
-	RZ3usYW2C3+1Q+KmFh4rTkakLTnqmbxm+SQz0he/cN2T1/1pwMB4fMvE+lDX3LJCoI3hel4npkU
-	tkkPp3OnZiNwtM5/nFCsQXWZHi2q1K5lmtyjSn/KnRkwKU6tlc4r7ibIt1bx6VHOERwh73/gwNY
-	y0e8I=
-X-Received: by 2002:a17:907:9487:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a897f1c3e3dmr1290755866b.0.1725376633315;
-        Tue, 03 Sep 2024 08:17:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGL2gL9kVUAD7c/U4EREwo/0f6jUYuTiYlOJEoA7Rsdp22DZQmd9M2c7KMwQk3rXunkx2Y1ag==
-X-Received: by 2002:a17:907:9487:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a897f1c3e3dmr1290754566b.0.1725376632859;
-        Tue, 03 Sep 2024 08:17:12 -0700 (PDT)
+        bh=GKlPAS/yke2oPrCeB1Al+EppMQBQKIKtDOu8hv7kn/0=;
+        b=CAOeQH/wmhCAWP1yzH9Blqn32KcqBxF5+1qZEMZS4vRBgI10BX73ToPIj0T1lcpJfw
+         TMQP/ShrO+0Br0FFwVAMRRqJV2PeYAaYP9npPRbzJP+0qBQ1caQyeWyzZxeieR+6+8f1
+         Y8WWjMl8RXNYu+wztm2xFK7hbArkOXo88ovZn5p6BmervLYVRe/toJwkTmEeyUxo85hb
+         JzGOcrZLpmwWC98H8ijP3qOIPVTKMIeyd6159gmptWFUx2bAsOK7OA83ggPTW6kyLNzM
+         dmVinJ1GYJDx+6COY1lMpdMlWA9mL14YmUgzg6nMaMw2YyA5c1ijp9F4Mq2ETJMv/UZa
+         m5EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpDcXeDFGcrjWBfv2xcEwWURdf/HFyuha1103kJl3WB7DGfr26Gt4I3GasdwcTtUeJKuXjd4MRFXaV3m6+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmQQk65QhmIZVLrPnY9/l4Azrt+1RpN2BFyXcETlzSdVxATwMd
+	try/Dt/u+MYJ54BPl5USPXvSuhZ4EezfIsbkXtqXghpOfb2MZpfSzp5jZQzQ4dBP8D6k7YfTccQ
+	p29LGZweQZzkLnwnVhcQnyNRgSu5jFxw4Tr3058t6kLgYXmGTeGFRPQilh3OOW2HdTKDA4gUY3O
+	VSsDo=
+X-Received: by 2002:a05:6512:238a:b0:52c:e1cd:39b7 with SMTP id 2adb3069b0e04-53546afd6d3mr9430364e87.5.1725376635828;
+        Tue, 03 Sep 2024 08:17:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7xyi4/WNe4j3fu5EFB8IE3ilwNISUZWJq2BDcXmtXsVDh9f1cWld/tjAcEfAzJ5I9AOVJcA==
+X-Received: by 2002:a05:6512:238a:b0:52c:e1cd:39b7 with SMTP id 2adb3069b0e04-53546afd6d3mr9430338e87.5.1725376635314;
+        Tue, 03 Sep 2024 08:17:15 -0700 (PDT)
 Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.17.12
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.17.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 08:17:12 -0700 (PDT)
+        Tue, 03 Sep 2024 08:17:14 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -87,9 +87,9 @@ Cc: brauner@kernel.org,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 11/15] fs/fuse: support idmapped ->rename op
-Date: Tue,  3 Sep 2024 17:16:22 +0200
-Message-Id: <20240903151626.264609-12-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v4 12/15] fs/fuse: handle idmappings properly in ->write_iter
+Date: Tue,  3 Sep 2024 17:16:23 +0200
+Message-Id: <20240903151626.264609-13-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
@@ -101,9 +101,6 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-RENAME_WHITEOUT is a special case of ->rename
-and we need to take idmappings into account there.
-
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
@@ -112,55 +109,33 @@ Cc: Bernd Schubert <bschubert@ddn.com>
 Cc: <linux-fsdevel@vger.kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 ---
-v2:
-	- this commit added
 v4:
-	- support idmapped ->rename for RENAME_WHITEOUT
+	- this commit added
 ---
- fs/fuse/dir.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/fuse/file.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 08bf9cc51a65..d316223bd00b 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1025,7 +1025,7 @@ static int fuse_rmdir(struct inode *dir, struct dentry *entry)
- 	return err;
- }
- 
--static int fuse_rename_common(struct inode *olddir, struct dentry *oldent,
-+static int fuse_rename_common(struct mnt_idmap *idmap, struct inode *olddir, struct dentry *oldent,
- 			      struct inode *newdir, struct dentry *newent,
- 			      unsigned int flags, int opcode, size_t argsize)
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 06ff4742ab08..dffc476f0bf2 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1398,6 +1398,7 @@ static void fuse_dio_unlock(struct kiocb *iocb, bool exclusive)
+ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
  {
-@@ -1046,7 +1046,7 @@ static int fuse_rename_common(struct inode *olddir, struct dentry *oldent,
- 	args.in_args[1].value = oldent->d_name.name;
- 	args.in_args[2].size = newent->d_name.len + 1;
- 	args.in_args[2].value = newent->d_name.name;
--	err = fuse_simple_request(NULL, fm, &args);
-+	err = fuse_simple_request(idmap, fm, &args);
- 	if (!err) {
- 		/* ctime changes */
- 		fuse_update_ctime(d_inode(oldent));
-@@ -1092,7 +1092,8 @@ static int fuse_rename2(struct mnt_idmap *idmap, struct inode *olddir,
- 		if (fc->no_rename2 || fc->minor < 23)
- 			return -EINVAL;
+ 	struct file *file = iocb->ki_filp;
++	struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 	struct address_space *mapping = file->f_mapping;
+ 	ssize_t written = 0;
+ 	struct inode *inode = mapping->host;
+@@ -1412,7 +1413,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			return err;
  
--		err = fuse_rename_common(olddir, oldent, newdir, newent, flags,
-+		err = fuse_rename_common((flags & RENAME_WHITEOUT) ? idmap : NULL,
-+					 olddir, oldent, newdir, newent, flags,
- 					 FUSE_RENAME2,
- 					 sizeof(struct fuse_rename2_in));
- 		if (err == -ENOSYS) {
-@@ -1100,7 +1101,7 @@ static int fuse_rename2(struct mnt_idmap *idmap, struct inode *olddir,
- 			err = -EINVAL;
+ 		if (fc->handle_killpriv_v2 &&
+-		    setattr_should_drop_suidgid(&nop_mnt_idmap,
++		    setattr_should_drop_suidgid(idmap,
+ 						file_inode(file))) {
+ 			goto writethrough;
  		}
- 	} else {
--		err = fuse_rename_common(olddir, oldent, newdir, newent, 0,
-+		err = fuse_rename_common(NULL, olddir, oldent, newdir, newent, 0,
- 					 FUSE_RENAME,
- 					 sizeof(struct fuse_rename_in));
- 	}
 -- 
 2.34.1
 
