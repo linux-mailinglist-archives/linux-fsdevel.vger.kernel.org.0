@@ -1,209 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-28455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E58F296AC52
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 00:39:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9587396AD1C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 01:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F30CB216AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 22:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177131F25486
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 23:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99BA1D58AC;
-	Tue,  3 Sep 2024 22:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1A51D79A6;
+	Tue,  3 Sep 2024 23:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhAAp5yj"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hrUItIpq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B82168D0;
-	Tue,  3 Sep 2024 22:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E259B647
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 23:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725403152; cv=none; b=USB+bXbFavLdxwA0oWOY1JntAMxcBoP5b+RWMIJ3nRzjLYTIXTWDSL7WtqnIE0Kf3Q+jMyMBPPcN18leDjfpeypyE2WMEaMsDv/o9Yf5CQ/iz23C31aPPkUs/hMEq97eT1ceoGznJDT/ezJfNR4DDlrRmdUZSzr3QAUVH8FLgic=
+	t=1725407631; cv=none; b=YFKxJoIk7Nq2ViDr7o/4frV2RI/APpJdOAaSVwi8bX8VD/b9YCGDweXOJagopUims3Q34jQ5hW+p2veLOEiHYiW6A/B9etxV/gh0h8AAeU9gkelnd5syLofebZoLfU00mulFjSOwGwjC/wXp+Nspzh07UcQFm7iExfCbqiSiICo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725403152; c=relaxed/simple;
-	bh=Lpdiqv7U5WH0lEr8Eh3/GAkbxcCXk70iOpTe0x22h38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G7iFDu1z5fkTItIghOWZe55/KzmjaKq/XSS+RBDTUQTIYaKMDngwJb3RZ3CPTDy+o5JLVqeJ1tEtzk5EbDDP4dML7ZUwzKVohIvw25f+2Dxw3I0g/GbCAOmPKApcE8CccNEfQ7PpSA9EP6MvhZSQzBJs75TtketrTVWI2R11Clo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhAAp5yj; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d86f713557so3196006a91.2;
-        Tue, 03 Sep 2024 15:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725403149; x=1726007949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i2PtT26YRiaBYasNug4rMtQJAR6q3w0Bv3mtkz5A7vg=;
-        b=KhAAp5yjpS8GwpurkUNJFsOVpx2PJP8ZvIer7qhOyAo71o7wgXrmB1qhPCW41sKK3y
-         yRmB4seXMfkR2yML9hajm1ONoGgZN26wR049LEMALnGB/PjrJ+X9gItYb7Z8OzInAbMj
-         7a2cgfkyuDR+a3H7COCIu6Up5i5egvpM0NiUw6suVorA895aTMdJoLKQptYW3r2nAGXR
-         XluZfY1nT5JWoHkc3woWw3ypSB8N4W+fqp8jtc6g4+3nHZYdolwvN5xlX2NLA98aQxzy
-         EXxvZAGABdw9k+WJFjGusI32t7mtYQ4HBrHSuQyAZsNfRhslmvMXmGlL4KIVC5oBIWvL
-         T2YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725403149; x=1726007949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i2PtT26YRiaBYasNug4rMtQJAR6q3w0Bv3mtkz5A7vg=;
-        b=wfokXaFGVeBLb3iAg50nKaJj5ang0DUP+I0CkEVGWwYCnkBIvC8ZmurITLavGfbRDy
-         OpkUen5jP6r2/QK/HEpt2zPRK/nsVArhPIg4gh21TDddlr05AcY4mCYQb2C09PQOmTS+
-         7K4+rtXQvNF8cXh+YyDKqhN9mW/ft6auIkMPg4qXK3pUBG8SPeHfq+iSLuGeS9Ppr8Qh
-         4Nho1D+T9YJZ4BtsghZRVHqzmUBlh3+uhVBMljj4spxS1uD5jvswmqGCw1oQv4D5PwZx
-         zPHxMlr4sfP9tu+WLPUtC1yPbuX2L1c21SHCExUWOR5zD6Caj4PPfFPxRytkqFzf+pAA
-         4/OA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo1IIACMyWbjyHl2AY+/9kpCMvHEXD0HVGtnnVX1AmDBP22hlRrLyxtA6Di819bi7jSVXqfthcZ9p7yST8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx3m+Ju1Ll/HHXUwc6Jol6q4onqaHp9IXdhsrFBTllZP+vOtMs
-	wwtvqlwbRZJfibaRqY82DyLp3m/3CpiWxEJBIFS068xVT5ispzTOicHzrJ3Tj0XPjGAoFi+XZPH
-	JfYN8W5C+XDyIJH2MifkgkYtGw6U=
-X-Google-Smtp-Source: AGHT+IHqfBfyIi1sY/xSA1xbdpPbbWvmy5eqvGxffWVsRA5cwcYDa75eASwd10hegsqh0goLCXgFxIVazxTlOxZ30R8=
-X-Received: by 2002:a17:90a:bd91:b0:2cc:ef14:89e3 with SMTP id
- 98e67ed59e1d1-2d8904ee82emr11225806a91.15.1725403149223; Tue, 03 Sep 2024
- 15:39:09 -0700 (PDT)
+	s=arc-20240116; t=1725407631; c=relaxed/simple;
+	bh=X3asc9AUtZ5RGKcxdf+XMkzOIMZf7QXdviF+ggzC3Ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DiWH/OKD0PxgTxl0mYbgh+n8Tzl+7bnm+zpEuOv7ldOGXT6UybzSBpioQgw/bsm72WpIiooy749zNkZBvTe4m1upoVASy6yM0SDKlhcM/QqrmuRUD/K3Zm9ghZF5dKjJtZQ9mYJWGVlZSz7hKd4R3uBcNZI4mK94zRBmXdcZQbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hrUItIpq; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 3 Sep 2024 19:53:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725407627;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X6EYjF5RW8jhRsqnvywWRVkgXq/RsPBX3XbDK1ZCeIo=;
+	b=hrUItIpqCMHs0ZwSqX3d6Cog07XIbIbkabXOH6dINQk1DaIRS0cqUjk2LcYTcQ9qhghNMI
+	pfSq8RJ946z7zYHtCAu2ETRyKQcjOivZjXmPIRYpapN7IILKqa6n/qvdTqqPSJUoSU5+m0
+	g2BkWPLHOIAw4m+r2z2gO0We1OQUXPs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
+	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-ID: <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+ <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+ <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+ <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829174232.3133883-1-andrii@kernel.org>
-In-Reply-To: <20240829174232.3133883-1-andrii@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 3 Sep 2024 15:38:57 -0700
-Message-ID: <CAEf4BzYdP_6L1bT5bEwp5GAwM-rKOA36C-Cwv4i8h-3pKp-nkQ@mail.gmail.com>
-Subject: Re: [PATCH v7 bpf-next 00/10] Harden and extend ELF build ID parsing logic
-To: willy@infradead.org, linux-mm@kvack.org, akpm@linux-foundation.org
-Cc: bpf@vger.kernel.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
-	jannh@google.com, linux-fsdevel@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 29, 2024 at 10:42=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org=
-> wrote:
->
-> The goal of this patch set is to extend existing ELF build ID parsing log=
-ic,
-> currently mostly used by BPF subsystem, with support for working in sleep=
-able
-> mode in which memory faults are allowed and can be relied upon to fetch
-> relevant parts of ELF file to find and fetch .note.gnu.build-id informati=
-on.
->
-> This is useful and important for BPF subsystem itself, but also for
-> PROCMAP_QUERY ioctl(), built atop of /proc/<pid>/maps functionality (see =
-[0]),
-> which makes use of the same build_id_parse() functionality. PROCMAP_QUERY=
- is
-> always called from sleepable user process context, so it doesn't have to
-> suffer from current restrictions of build_id_parse() which are due to the=
- NMI
-> context assumption.
->
-> Along the way, we harden the logic to avoid TOCTOU, overflow, out-of-boun=
-ds
-> access problems.  This is the very first patch, which can be backported t=
-o
-> older releases, if necessary.
->
-> We also lift existing limitations of only working as long as ELF program
-> headers and build ID note section is contained strictly within the very f=
-irst
-> page of ELF file.
->
-> We achieve all of the above without duplication of logic between sleepabl=
-e and
-> non-sleepable modes through freader abstraction that manages underlying f=
-olio
-> from page cache (on demand) and gives a simple to use direct memory acces=
-s
-> interface. With that, single page restrictions and adding sleepable mode
-> support is rather straightforward.
->
-> We also extend existing set of BPF selftests with a few tests targeting b=
-uild
-> ID logic across sleepable and non-sleepabe contexts (we utilize sleepable=
- and
-> non-sleepable uprobes for that).
->
->    [0] https://lore.kernel.org/linux-mm/20240627170900.1672542-4-andrii@k=
-ernel.org/
->
-> v6->v7:
->   - added filemap_invalidate_{lock,unlock}_shared() around read_cache_fol=
-io
->     and kept Eduard's Reviewed-by (Eduard);
-> v5->v6:
->   - use local phnum variable in get_build_id_32() (Jann);
->   - switch memcmp() instead of strcmp() in parse_build_id() (Jann);
-> v4->v5:
->   - pass proper file reference to read_cache_folio() (Shakeel);
->   - fix another potential overflow due to two u32 additions (Andi);
->   - add PageUptodate() check to patch #1 (Jann);
-> v3->v4:
->   - fix few more potential overflow and out-of-bounds access issues (Andi=
-);
->   - use purely folio-based implementation for freader (Matthew);
+On Mon, Sep 02, 2024 at 06:32:40PM GMT, Kent Overstreet wrote:
+> On Mon, Sep 02, 2024 at 02:52:52PM GMT, Andrew Morton wrote:
+> > On Mon, 2 Sep 2024 05:53:59 -0400 Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > 
+> > > On Mon, Sep 02, 2024 at 11:51:48AM GMT, Michal Hocko wrote:
+> > > > The previous version has been posted in [1]. Based on the review feedback
+> > > > I have sent v2 of patches in the same threat but it seems that the
+> > > > review has mostly settled on these patches. There is still an open
+> > > > discussion on whether having a NORECLAIM allocator semantic (compare to
+> > > > atomic) is worthwhile or how to deal with broken GFP_NOFAIL users but
+> > > > those are not really relevant to this particular patchset as it 1)
+> > > > doesn't aim to implement either of the two and 2) it aims at spreading
+> > > > PF_MEMALLOC_NORECLAIM use while it doesn't have a properly defined
+> > > > semantic now that it is not widely used and much harder to fix.
+> > > > 
+> > > > I have collected Reviewed-bys and reposting here. These patches are
+> > > > touching bcachefs, VFS and core MM so I am not sure which tree to merge
+> > > > this through but I guess going through Andrew makes the most sense.
+> > > > 
+> > > > Changes since v1;
+> > > > - compile fixes
+> > > > - rather than dropping PF_MEMALLOC_NORECLAIM alone reverted eab0af905bfc
+> > > >   ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") suggested
+> > > >   by Matthew.
+> > > 
+> > > To reiterate:
+> > > 
+> > 
+> > It would be helpful to summarize your concerns.
+> > 
+> > What runtime impact do you expect this change will have upon bcachefs?
+> 
+> For bcachefs: I try really hard to minimize tail latency and make
+> performance robust in extreme scenarios - thrashing. A large part of
+> that is that btree locks must be held for no longer than necessary.
+> 
+> We definitely don't want to recurse into other parts of the kernel,
+> taking other locks (i.e. in memory reclaim) while holding btree locks;
+> that's a great way to stack up (and potentially multiply) latencies.
+> 
+> But gfp flags don't work with vmalloc allocations (and that's unlikely
+> to change), and we require vmalloc fallbacks for e.g. btree node
+> allocation. That's the big reason we want MEMALLOC_PF_NORECLAIM.
+> 
+> Besides that, it's just cleaner, memalloc flags are the direction we
+> want to be moving in, and it's going to be necessary if we ever want to
+> do a malloc() that doesn't require a gfp flags parameter. That would be
+> a win for safety and correctness in the kernel, and it's also likely
+> required for proper Rust support.
+> 
+> And the "GFP_NOFAIL must not fail" argument makes no sense, because a
+> failing a GFP_NOFAIL allocation is the only sane thing to do if the
+> allocation is buggy (too big, i.e. resulting from an integer overflow
+> bug, or wrong context). The alternatives are at best never returning
+> (stuck unkillable process), or a scheduling while atomic bug, or Michal
+> was even proposing killing the process (handling it like a BUG()!).
+> 
+> But we don't use BUG_ON() for things that we can't prove won't happen in
+> the wild if we can write an error path.
+> 
+> That is, PF_MEMALLOC_NORECLAIM lets us turn bugs into runtime errors.
 
-Ok, so I'm not sure what one needs to do to get Matthew's attention
-nowadays, but hopefully yet another ping might do the trick.
+BTW, one of the reasons I've been giving this issue so much attention is
+because of filesystem folks mentioning that they want GFP_NOFAIL
+semantics more widely, and I actually _don't_ think that's a crazy idea,
+provided we go about it the right way.
 
-Matthew,
+Not having error paths is right out; many allocations when you start to
+look through more obscure code have sizes that are controlled by
+userspace, so we'd be opening ourselves up to trivially expoitable
+security bugs.
 
-Can you please take another look and provide your ack or nack? I did
-the conversion to folio as you requested. It would be nice if you can
-give me a courtesy of acking my patch set, if there is nothing wrong
-with it, so it can finally go in.
+However, if we agreed that GFP_NOFAIL meant "only fail if it is not
+possible to satisfy this allocation" (and I have been arguing that that
+is the only sane meaning) - then that could lead to a lot of error paths
+getting simpler.
 
-Thank you.
+Because there are a lot of places where there's essentially no good
+reason to bubble up an -ENOMEM to userspace; if we're actually out of
+memory the current allocation is just one out of many and not
+particularly special, better to let the oom killer handle it...
 
-> v2->v3:
->   - remove unneeded READ_ONCE()s and force phoff to u64 for 32-bit mode (=
-Andi);
->   - moved hardening fixes to the front for easier backporting (Jann);
->   - call freader_cleanup() from build_id_parse_buf() for consistency (Jir=
-i);
-> v1->v2:
->   - ensure MADV_PAGEOUT works reliably by paging data in first (Shakeel);
->   - to fix BPF CI build optionally define MADV_POPULATE_READ in selftest.
->
-> Andrii Nakryiko (10):
->   lib/buildid: harden build ID parsing logic
->   lib/buildid: add single folio-based file reader abstraction
->   lib/buildid: take into account e_phoff when fetching program headers
->   lib/buildid: remove single-page limit for PHDR search
->   lib/buildid: rename build_id_parse() into build_id_parse_nofault()
->   lib/buildid: implement sleepable build_id_parse() API
->   lib/buildid: don't limit .note.gnu.build-id to the first page in ELF
->   bpf: decouple stack_map_get_build_id_offset() from
->     perf_callchain_entry
->   bpf: wire up sleepable bpf_get_stack() and bpf_get_task_stack()
->     helpers
->   selftests/bpf: add build ID tests
->
->  include/linux/bpf.h                           |   2 +
->  include/linux/buildid.h                       |   4 +-
->  kernel/bpf/stackmap.c                         | 131 ++++--
->  kernel/events/core.c                          |   2 +-
->  kernel/trace/bpf_trace.c                      |   5 +-
->  lib/buildid.c                                 | 397 +++++++++++++-----
->  tools/testing/selftests/bpf/Makefile          |   5 +-
->  .../selftests/bpf/prog_tests/build_id.c       | 118 ++++++
->  .../selftests/bpf/progs/test_build_id.c       |  31 ++
->  tools/testing/selftests/bpf/uprobe_multi.c    |  41 ++
->  tools/testing/selftests/bpf/uprobe_multi.ld   |  11 +
->  11 files changed, 605 insertions(+), 142 deletions(-)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/build_id.c
->  create mode 100644 tools/testing/selftests/bpf/progs/test_build_id.c
->  create mode 100644 tools/testing/selftests/bpf/uprobe_multi.ld
->
-> --
-> 2.43.5
->
+So the error paths would be more along the lines of "there's a bug, or
+userspace has requested something crazy, just shut down gracefully".
+
+While we're at it, the definition of what allocation size is "too big"
+is something we'd want to look at. Right now it's hardcoded to INT_MAX
+for non GFP_NOFAIL and (I believe) 2 pages for GFP_NOFAL, we might want
+to consider doing something based on total memory in the machine and
+have the same limit apply to both...
+
+
 
