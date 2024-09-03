@@ -1,110 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-28435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE2F96A3A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 18:09:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE2996A3C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 18:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B331F25A38
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 16:09:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9623CB28EA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 16:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD15189BB0;
-	Tue,  3 Sep 2024 16:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E0B18A94E;
+	Tue,  3 Sep 2024 16:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Yjho3fbp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zyRKotJ9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Yjho3fbp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zyRKotJ9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMBSnFH0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA56188598;
-	Tue,  3 Sep 2024 16:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D915F17DFF4;
+	Tue,  3 Sep 2024 16:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379734; cv=none; b=tvitu6dh5ZNpkG1UAQkJ9ULwyrgnrdnF0GrKvp9HKlfZUIfKw5sQdJwOO5P8FjOJ15rarPLIInzs4nLTKS+60B4aYGIzt9o+idL5HsPYwYeRTeAYU5ROlpSiEuBJcDC6H1V5bl0zT+nPPnRSrRaed4r7ieW4NzIWWv9fQAk0HsY=
+	t=1725379782; cv=none; b=fwh4T5JqoIV63sak/FA6NdN1TJ9bjGLNrJa9onXR2oajfko7yTIJr5PUn5STJnZopvbRAGxaplu29cmt+V7IBnP4+MNhrv4nbXP0bHIfdzZDps+b1YKy9LuN6s35/OtnSjodDRJfC1eG9TVz1l7qgz0PJylzyq7/L0Rgz610YpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379734; c=relaxed/simple;
-	bh=iaobbTQWL7UO7EQFOVRk8/iFL1TTm5ZoIsUzq5M2wJk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=T9EYcJEOGYaUoS9bcKPf8qb/1HgRHZepYg/OPH6V8wd/1z+Jwv9zzpknp8C6yuhAFyFuFv8ZkdiW/yP5jK4pBq/LKcLuYDizLulg1O+F8CjXISlPlaT6CgPCoAJ3ZkNGcDiLzNS6P3waLkLqp43gXgJQwehCxCU/Mtm1UE1GOyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Yjho3fbp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zyRKotJ9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Yjho3fbp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zyRKotJ9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 861F01F397;
-	Tue,  3 Sep 2024 16:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725379730; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AoFSrWjdDNy22qcLidqFmCW1sMDZc4/A6zH8LeBwn6k=;
-	b=Yjho3fbpkR4IMGgIED7Wouh0+C2fmvIbh0q/cF7h4fBuh1aRQkT07PlSUZKTbA/GK93vPC
-	+H13hk6ZBVtD2YY59UoKnKcmNSmQkICqqwX+14Q3NGczb2IJF1hzDTeDyHSMnlTeRLJVgj
-	1NK0+u1tptSZw//ePc5B9ubNyHrXTlI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725379730;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AoFSrWjdDNy22qcLidqFmCW1sMDZc4/A6zH8LeBwn6k=;
-	b=zyRKotJ99/NKMgexny5KAWN2jJD5EQjT7CfPtJjxyzhdiOrPSVMZ8Lirlsu1b0srlHiUEt
-	d5MKIzrNruTNNMDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725379730; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AoFSrWjdDNy22qcLidqFmCW1sMDZc4/A6zH8LeBwn6k=;
-	b=Yjho3fbpkR4IMGgIED7Wouh0+C2fmvIbh0q/cF7h4fBuh1aRQkT07PlSUZKTbA/GK93vPC
-	+H13hk6ZBVtD2YY59UoKnKcmNSmQkICqqwX+14Q3NGczb2IJF1hzDTeDyHSMnlTeRLJVgj
-	1NK0+u1tptSZw//ePc5B9ubNyHrXTlI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725379730;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AoFSrWjdDNy22qcLidqFmCW1sMDZc4/A6zH8LeBwn6k=;
-	b=zyRKotJ99/NKMgexny5KAWN2jJD5EQjT7CfPtJjxyzhdiOrPSVMZ8Lirlsu1b0srlHiUEt
-	d5MKIzrNruTNNMDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 455E713A52;
-	Tue,  3 Sep 2024 16:08:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aaYIC5I012ZUewAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 03 Sep 2024 16:08:50 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  krisman@kernel.org,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 5/8] tmpfs: Add casefold lookup support
-In-Reply-To: <20240902225511.757831-6-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Mon, 2 Sep 2024 19:55:07 -0300")
-References: <20240902225511.757831-1-andrealmeid@igalia.com>
-	<20240902225511.757831-6-andrealmeid@igalia.com>
-Date: Tue, 03 Sep 2024 12:08:41 -0400
-Message-ID: <87plpkhg8m.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725379782; c=relaxed/simple;
+	bh=vYJtB38KfqMpyiiNsCqZ2bLfUekv+uksBu8saIUJLcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2coLy11vVAKVAQKff024P9vKefB4lmbgArOy5cSUOnHV9DhP9cWwGa3NQ9vhbeyOolG5StUKzBU1nxWZLw3oy13io+1GtPrKDX4YnoXwHQq9UChRrHNfre0x5x90qrILFmEO46L4+eDHyxmWkQyzpkue7jYutZY4j1KsIVewL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMBSnFH0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D95C4CEC8;
+	Tue,  3 Sep 2024 16:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725379782;
+	bh=vYJtB38KfqMpyiiNsCqZ2bLfUekv+uksBu8saIUJLcM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gMBSnFH0To8XaDcRAu0SkAkjEPgmv/NxT65KyCWB1Hwk7k8hda57EFsfKtHfU59sc
+	 ar8KKeOJNfbRpm9tob7rpmTm+W9bV3O1nQXOWqG6aL9UTwkPA9RgF/ct3lk2BIWnYW
+	 lhHKJWmDM95iuooMYTeCz1wGml1mBWEJLGG6NlW6WjLqF6yHif5GzXNsNUGRczeC31
+	 cflqVhjKpeQV2j3bLBftMIbSNYg8BBYleVpRImgoWVn/eWDDjD0JbTy0Koa+8bdOiR
+	 ksEY9U1hWMMqOVyvhWXfZiWzg+QHnfQEw/sfcSACwerVISW87XtZAZG6c2Xi+a0ZCU
+	 8rAMMNDY4uxBg==
+Date: Tue, 3 Sep 2024 12:09:41 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>,
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	Neil Brown <neilb@suse.de>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v15 16/26] nfsd: add LOCALIO support
+Message-ID: <Ztc0xZIrAtZszJNf@kernel.org>
+References: <20240831223755.8569-1-snitzer@kernel.org>
+ <20240831223755.8569-17-snitzer@kernel.org>
+ <ZtceWJE5mJ9ayf2y@tissot.1015granger.net>
+ <cd02bbdc0059afaff52d0aab1da0ecf91d101a0a.camel@kernel.org>
+ <ZtckdSIT6a3N-VTU@kernel.org>
+ <981320f318d23fe02ed7597a56d13227f7cea31e.camel@kernel.org>
+ <ZtcrTYLq90xIt4UK@kernel.org>
+ <67405117-1C08-4CA9-B0CE-743DFC7BCE3F@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -112,367 +67,283 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <67405117-1C08-4CA9-B0CE-743DFC7BCE3F@oracle.com>
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+On Tue, Sep 03, 2024 at 03:59:31PM +0000, Chuck Lever III wrote:
+> 
+> 
+> > On Sep 3, 2024, at 11:29 AM, Mike Snitzer <snitzer@kernel.org> wrote:
+> > 
+> > On Tue, Sep 03, 2024 at 11:19:45AM -0400, Jeff Layton wrote:
+> >> On Tue, 2024-09-03 at 11:00 -0400, Mike Snitzer wrote:
+> >>> On Tue, Sep 03, 2024 at 10:40:28AM -0400, Jeff Layton wrote:
+> >>>> On Tue, 2024-09-03 at 10:34 -0400, Chuck Lever wrote:
+> >>>>> On Sat, Aug 31, 2024 at 06:37:36PM -0400, Mike Snitzer wrote:
+> >>>>>> From: Weston Andros Adamson <dros@primarydata.com>
+> >>>>>> 
+> >>>>>> Add server support for bypassing NFS for localhost reads, writes, and
+> >>>>>> commits. This is only useful when both the client and server are
+> >>>>>> running on the same host.
+> >>>>>> 
+> >>>>>> If nfsd_open_local_fh() fails then the NFS client will both retry and
+> >>>>>> fallback to normal network-based read, write and commit operations if
+> >>>>>> localio is no longer supported.
+> >>>>>> 
+> >>>>>> Care is taken to ensure the same NFS security mechanisms are used
+> >>>>>> (authentication, etc) regardless of whether localio or regular NFS
+> >>>>>> access is used.  The auth_domain established as part of the traditional
+> >>>>>> NFS client access to the NFS server is also used for localio.  Store
+> >>>>>> auth_domain for localio in nfsd_uuid_t and transfer it to the client
+> >>>>>> if it is local to the server.
+> >>>>>> 
+> >>>>>> Relative to containers, localio gives the client access to the network
+> >>>>>> namespace the server has.  This is required to allow the client to
+> >>>>>> access the server's per-namespace nfsd_net struct.
+> >>>>>> 
+> >>>>>> This commit also introduces the use of NFSD's percpu_ref to interlock
+> >>>>>> nfsd_destroy_serv and nfsd_open_local_fh, to ensure nn->nfsd_serv is
+> >>>>>> not destroyed while in use by nfsd_open_local_fh and other LOCALIO
+> >>>>>> client code.
+> >>>>>> 
+> >>>>>> CONFIG_NFS_LOCALIO enables NFS server support for LOCALIO.
+> >>>>>> 
+> >>>>>> Signed-off-by: Weston Andros Adamson <dros@primarydata.com>
+> >>>>>> Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+> >>>>>> Co-developed-by: Mike Snitzer <snitzer@kernel.org>
+> >>>>>> Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+> >>>>>> Co-developed-by: NeilBrown <neilb@suse.de>
+> >>>>>> Signed-off-by: NeilBrown <neilb@suse.de>
+> >>>>>> 
+> >>>>>> Not-Acked-by: Chuck Lever <chuck.lever@oracle.com>
+> >>>>>> Not-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> >>>>>> ---
+> >>>>>> fs/nfsd/Makefile           |   1 +
+> >>>>>> fs/nfsd/filecache.c        |   2 +-
+> >>>>>> fs/nfsd/localio.c          | 112 +++++++++++++++++++++++++++++++++++++
+> >>>>>> fs/nfsd/netns.h            |   4 ++
+> >>>>>> fs/nfsd/nfsctl.c           |  25 ++++++++-
+> >>>>>> fs/nfsd/trace.h            |   3 +-
+> >>>>>> fs/nfsd/vfs.h              |   2 +
+> >>>>>> include/linux/nfslocalio.h |   8 +++
+> >>>>>> 8 files changed, 154 insertions(+), 3 deletions(-)
+> >>>>>> create mode 100644 fs/nfsd/localio.c
+> >>>>>> 
+> >>>>>> diff --git a/fs/nfsd/Makefile b/fs/nfsd/Makefile
+> >>>>>> index b8736a82e57c..18cbd3fa7691 100644
+> >>>>>> --- a/fs/nfsd/Makefile
+> >>>>>> +++ b/fs/nfsd/Makefile
+> >>>>>> @@ -23,3 +23,4 @@ nfsd-$(CONFIG_NFSD_PNFS) += nfs4layouts.o
+> >>>>>> nfsd-$(CONFIG_NFSD_BLOCKLAYOUT) += blocklayout.o blocklayoutxdr.o
+> >>>>>> nfsd-$(CONFIG_NFSD_SCSILAYOUT) += blocklayout.o blocklayoutxdr.o
+> >>>>>> nfsd-$(CONFIG_NFSD_FLEXFILELAYOUT) += flexfilelayout.o flexfilelayoutxdr.o
+> >>>>>> +nfsd-$(CONFIG_NFS_LOCALIO) += localio.o
+> >>>>>> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+> >>>>>> index 89ff380ec31e..348c1b97092e 100644
+> >>>>>> --- a/fs/nfsd/filecache.c
+> >>>>>> +++ b/fs/nfsd/filecache.c
+> >>>>>> @@ -52,7 +52,7 @@
+> >>>>>> #define NFSD_FILE_CACHE_UP      (0)
+> >>>>>> 
+> >>>>>> /* We only care about NFSD_MAY_READ/WRITE for this cache */
+> >>>>>> -#define NFSD_FILE_MAY_MASK (NFSD_MAY_READ|NFSD_MAY_WRITE)
+> >>>>>> +#define NFSD_FILE_MAY_MASK (NFSD_MAY_READ|NFSD_MAY_WRITE|NFSD_MAY_LOCALIO)
+> >>>>>> 
+> >>>>>> static DEFINE_PER_CPU(unsigned long, nfsd_file_cache_hits);
+> >>>>>> static DEFINE_PER_CPU(unsigned long, nfsd_file_acquisitions);
+> >>>>>> diff --git a/fs/nfsd/localio.c b/fs/nfsd/localio.c
+> >>>>>> new file mode 100644
+> >>>>>> index 000000000000..75df709c6903
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/fs/nfsd/localio.c
+> >>>>>> @@ -0,0 +1,112 @@
+> >>>>>> +// SPDX-License-Identifier: GPL-2.0-only
+> >>>>>> +/*
+> >>>>>> + * NFS server support for local clients to bypass network stack
+> >>>>>> + *
+> >>>>>> + * Copyright (C) 2014 Weston Andros Adamson <dros@primarydata.com>
+> >>>>>> + * Copyright (C) 2019 Trond Myklebust <trond.myklebust@hammerspace.com>
+> >>>>>> + * Copyright (C) 2024 Mike Snitzer <snitzer@hammerspace.com>
+> >>>>>> + * Copyright (C) 2024 NeilBrown <neilb@suse.de>
+> >>>>>> + */
+> >>>>>> +
+> >>>>>> +#include <linux/exportfs.h>
+> >>>>>> +#include <linux/sunrpc/svcauth.h>
+> >>>>>> +#include <linux/sunrpc/clnt.h>
+> >>>>>> +#include <linux/nfs.h>
+> >>>>>> +#include <linux/nfs_common.h>
+> >>>>>> +#include <linux/nfslocalio.h>
+> >>>>>> +#include <linux/string.h>
+> >>>>>> +
+> >>>>>> +#include "nfsd.h"
+> >>>>>> +#include "vfs.h"
+> >>>>>> +#include "netns.h"
+> >>>>>> +#include "filecache.h"
+> >>>>>> +
+> >>>>>> +static const struct nfsd_localio_operations nfsd_localio_ops = {
+> >>>>>> + .nfsd_open_local_fh = nfsd_open_local_fh,
+> >>>>>> + .nfsd_file_put_local = nfsd_file_put_local,
+> >>>>>> + .nfsd_file_file = nfsd_file_file,
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +void nfsd_localio_ops_init(void)
+> >>>>>> +{
+> >>>>>> + memcpy(&nfs_to, &nfsd_localio_ops, sizeof(nfsd_localio_ops));
+> >>>>>> +}
+> >>>>> 
+> >>>>> Same comment as Neil: this should surface a pointer to the
+> >>>>> localio_ops struct. Copying the whole set of function pointers is
+> >>>>> generally unnecessary.
+> >>>>> 
+> >>>>> 
+> >>>>>> +
+> >>>>>> +/**
+> >>>>>> + * nfsd_open_local_fh - lookup a local filehandle @nfs_fh and map to nfsd_file
+> >>>>>> + *
+> >>>>>> + * @uuid: nfs_uuid_t which provides the 'struct net' to get the proper nfsd_net
+> >>>>>> + *        and the 'struct auth_domain' required for LOCALIO access
+> >>>>>> + * @rpc_clnt: rpc_clnt that the client established, used for sockaddr and cred
+> >>>>>> + * @cred: cred that the client established
+> >>>>>> + * @nfs_fh: filehandle to lookup
+> >>>>>> + * @fmode: fmode_t to use for open
+> >>>>>> + *
+> >>>>>> + * This function maps a local fh to a path on a local filesystem.
+> >>>>>> + * This is useful when the nfs client has the local server mounted - it can
+> >>>>>> + * avoid all the NFS overhead with reads, writes and commits.
+> >>>>>> + *
+> >>>>>> + * On successful return, returned nfsd_file will have its nf_net member
+> >>>>>> + * set. Caller (NFS client) is responsible for calling nfsd_serv_put and
+> >>>>>> + * nfsd_file_put (via nfs_to.nfsd_file_put_local).
+> >>>>>> + */
+> >>>>>> +struct nfsd_file *
+> >>>>>> +nfsd_open_local_fh(nfs_uuid_t *uuid,
+> >>>>>> +    struct rpc_clnt *rpc_clnt, const struct cred *cred,
+> >>>>>> +    const struct nfs_fh *nfs_fh, const fmode_t fmode)
+> >>>>>> + __must_hold(rcu)
+> >>>>>> +{
+> >>>>>> + int mayflags = NFSD_MAY_LOCALIO;
+> >>>>>> + struct nfsd_net *nn = NULL;
+> >>>>>> + struct net *net;
+> >>>>>> + struct svc_cred rq_cred;
+> >>>>>> + struct svc_fh fh;
+> >>>>>> + struct nfsd_file *localio;
+> >>>>>> + __be32 beres;
+> >>>>>> +
+> >>>>>> + if (nfs_fh->size > NFS4_FHSIZE)
+> >>>>>> + return ERR_PTR(-EINVAL);
+> >>>>>> +
+> >>>>>> + /*
+> >>>>>> +  * Not running in nfsd context, so must safely get reference on nfsd_serv.
+> >>>>>> +  * But the server may already be shutting down, if so disallow new localio.
+> >>>>>> +  * uuid->net is NOT a counted reference, but caller's rcu_read_lock() ensures
+> >>>>>> +  * that if uuid->net is not NULL, then calling nfsd_serv_try_get() is safe
+> >>>>>> +  * and if it succeeds we will have an implied reference to the net.
+> >>>>>> +  */
+> >>>>>> + net = rcu_dereference(uuid->net);
+> >>>>>> + if (net)
+> >>>>>> + nn = net_generic(net, nfsd_net_id);
+> >>>>>> + if (unlikely(!nn || !nfsd_serv_try_get(nn)))
+> >>>>>> + return ERR_PTR(-ENXIO);
+> >>>>>> +
+> >>>>>> + /* Drop the rcu lock for nfsd_file_acquire_local() */
+> >>>>>> + rcu_read_unlock();
+> >>>>> 
+> >>>>> I'm struggling with the locking logistics. Caller takes the RCU read
+> >>>>> lock, this function drops the lock, then takes it again. So:
+> >>>>> 
+> >>>>> - A caller might rely on the lock being held continuously, but
+> >>>>> - The API contract documented above doesn't indicate that this
+> >>>>>   function drops that lock
+> >>>>> - The __must_hold(rcu) annotation doesn't indicate that this
+> >>>>>   function drops that lock, IIUC
+> >>>>> 
+> >>>>> Dropping and retaking the lock in here is an anti-pattern that
+> >>>>> should be avoided. I suggest we are better off in the long run if
+> >>>>> the caller does not need to take the RCU read lock, but instead,
+> >>>>> nfsd_open_local_fh takes it right here just for the rcu_dereference.
+> >>> 
+> >>> I thought so too when I first saw how Neil approached fixing this to
+> >>> be safe.  It was only after putting further time to it (and having the
+> >>> benefit of being so close to all this) that I realized the nuance at
+> >>> play (please see my reply to Jeff below for the nuance I'm speaking
+> >>> of). 
+> >>> 
+> >>>>> 
+> >>>>> OTOH, Why drop the lock before calling nfsd_file_acquire_local()?
+> >>>>> The RCU read lock can safely be taken more than once in succession.
+> >>>>> 
+> >>>>> Let's rethink the locking strategy.
+> >>>>> 
+> >>> 
+> >>> Yes, _that_ is a very valid point.  I did wonder the same: it seems
+> >>> perfectly fine to simply retain the RCU throughout the entirety of
+> >>> nfsd_open_local_fh().
+> >>> 
+> >> 
+> >> Nope. nfsd_file_do_acquire can allocate, so you can't hold the
+> >> rcu_read_lock over the whole thing.
+> > 
+> > Ah, yeap.. sorry, I knew that ;)
+> > 
+> >>>> Agreed. The only caller does this:
+> >>>> 
+> >>>>        rcu_read_lock();
+> >>>>        if (!rcu_access_pointer(uuid->net)) {
+> >>>>                rcu_read_unlock();
+> >>>>                return ERR_PTR(-ENXIO);
+> >>>>        }
+> >>>>        localio = nfs_to.nfsd_open_local_fh(uuid, rpc_clnt, cred,
+> >>>>                                            nfs_fh, fmode);
+> >>>>        rcu_read_unlock();
+> >>>> 
+> >>>> Maybe just move the check for uuid->net down into nfsd_open_local_fh,
+> >>>> and it can acquire the rcu_read_lock for itself?
+> >>> 
+> >>> No, sorry we cannot.  The call to nfs_to.nfsd_open_local_fh (which is
+> >>> a symbol provided by nfsd) is only safe if the RCU protected pre-check
+> >>> shows the uuid->net valid.
+> >> 
+> >> Ouch, ok.
+> > 
+> > I had to double check but I did add a comment that speaks directly to
+> > this "nuance" above the code you quoted:
+> > 
+> >        /*
+> >         * uuid->net must not be NULL, otherwise NFS may not have ref
+> >         * on NFSD and therefore cannot safely make 'nfs_to' calls.
+> >         */
+> > 
+> > So yeah, this code needs to stay like this.  The __must_hold(rcu) just
+> > ensures the RCU is held on entry and exit.. the bouncing of RCU
+> > (dropping and retaking) isn't of immediate concern is it?  While I
+> > agree it isn't ideal, it is what it is given:
+> > 1) NFS caller of NFSD symbol is only safe if it has RCU amd verified
+> >   uuid->net valid
+> > 2) nfsd_file_do_acquire() can allocate.
+> 
+> OK, understood, but the annotation is still wrong. The lock
+> is dropped here so I think you need __releases and __acquires
+> in that case. However...
 
-> Enable casefold lookup in tmpfs, based on the enconding defined by
-> userspace. That means that instead of comparing byte per byte a file
-> name, it compares to a case-insensitive equivalent of the Unicode
-> string.
->
-> * Dcache handling
->
-> There's a special need when dealing with case-insensitive dentries.
-> First of all, we currently invalidated every negative casefold dentries.
-> That happens because currently VFS code has no proper support to deal
-> with that, giving that it could incorrectly reuse a previous filename
-> for a new file that has a casefold match. For instance, this could
-> happen:
->
-> $ mkdir DIR
-> $ rm -r DIR
-> $ mkdir dir
-> $ ls
-> DIR/
->
-> And would be perceived as inconsistency from userspace point of view,
-> because even that we match files in a case-insensitive manner, we still
-> honor whatever is the initial filename.
->
-> Along with that, tmpfs stores only the first equivalent name dentry used
-> in the dcache, preventing duplications of dentries in the dcache. The
-> d_compare() version for casefold files uses a normalized string, so the
-> filename under lookup will be compared to another normalized string for
-> the existing file, achieving a casefolded lookup.
->
-> * Enabling casefold via mount options
->
-> Most filesystems have their data stored in disk, so casefold option need
-> to be enabled when building a filesystem on a device (via mkfs).
-> However, as tmpfs is a RAM backed filesystem, there's no disk
-> information and thus no mkfs to store information about casefold.
->
-> For tmpfs, create casefold options for mounting. Userspace can then
-> enable casefold support for a mount point using:
->
-> $ mount -t tmpfs -o casefold=3Dutf8-12.1.0 fs_name mount_dir/
->
-> Userspace must set what Unicode standard is aiming to. The available
-> options depends on what the kernel Unicode subsystem supports.
->
-> And for strict encoding:
->
-> $ mount -t tmpfs -o casefold=3Dutf8-12.1.0,strict_encoding fs_name mount_=
-dir/
->
-> Strict encoding means that tmpfs will refuse to create invalid UTF-8
-> sequences. When this option is not enabled, any invalid sequence will be
-> treated as an opaque byte sequence, ignoring the encoding thus not being
-> able to be looked up in a case-insensitive way.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
->  mm/shmem.c | 115 +++++++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 111 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 5a77acf6ac6a..0f918010bc54 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -40,6 +40,8 @@
->  #include <linux/fs_parser.h>
->  #include <linux/swapfile.h>
->  #include <linux/iversion.h>
-> +#include <linux/unicode.h>
-> +#include <linux/parser.h>
->  #include "swap.h"
->=20=20
->  static struct vfsmount *shm_mnt __ro_after_init;
-> @@ -123,6 +125,8 @@ struct shmem_options {
->  	bool noswap;
->  	unsigned short quota_types;
->  	struct shmem_quota_limits qlimits;
-> +	struct unicode_map *encoding;
-> +	bool strict_encoding;
->  #define SHMEM_SEEN_BLOCKS 1
->  #define SHMEM_SEEN_INODES 2
->  #define SHMEM_SEEN_HUGE 4
-> @@ -3427,6 +3431,11 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode =
-*dir,
->  	if (IS_ERR(inode))
->  		return PTR_ERR(inode);
->=20=20
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (!utf8_check_strict_name(dir, &dentry->d_name))
-> +		return -EINVAL;
-> +#endif
+Sure, that seems like more precise context with which to train
+lockdep.
 
-Please, fold it into the code when possible:
+> Let's wait for Neil's comments, but I think this needs to be
+> properly addressed before merging. The comments are not going
+> to be enough IMO.
 
-if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+I obviously have no issues with Neil confirming/expanding what I
+shared about the need for checking uuid->net with RCU held to ensure
+it safe to call this nfs_to method.  Without it we cannot make the
+call, which happens to then take other references (nfsd_serv and
+nfsd_file) that we can then lean on for the duration of the NFS client
+issuing IO and then dropping the references/interlock when completing
+the IO.
 
-> +
->  	error =3D simple_acl_create(dir, inode);
->  	if (error)
->  		goto out_iput;
-> @@ -3442,7 +3451,12 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode =
-*dir,
->  	dir->i_size +=3D BOGO_DIRENT_SIZE;
->  	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
->  	inode_inc_iversion(dir);
-> -	d_instantiate(dentry, inode);
-> +
-> +	if (IS_CASEFOLDED(dir))
+The NFS client maintainers need to give a good review anyway, so
+plenty of time for Neil to weigh in.
 
-If you have if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-
-It can be  optimized out when CONFIG_UNICODE=3Dn.
-
-> +		d_add(dentry, inode);
-> +	else
-> +		d_instantiate(dentry, inode);
->  	dget(dentry); /* Extra count - pin the dentry in core */
->  	return error;
->=20=20
-> @@ -3533,7 +3547,10 @@ static int shmem_link(struct dentry *old_dentry, s=
-truct inode *dir,
->  	inc_nlink(inode);
->  	ihold(inode);	/* New dentry reference */
->  	dget(dentry);	/* Extra pinning count for the created dentry */
-> -	d_instantiate(dentry, inode);
-> +	if (IS_CASEFOLDED(dir))
-> +		d_add(dentry, inode);
-> +	else
-> +		d_instantiate(dentry, inode);
->  out:
->  	return ret;
->  }
-> @@ -3553,6 +3570,14 @@ static int shmem_unlink(struct inode *dir, struct =
-dentry *dentry)
->  	inode_inc_iversion(dir);
->  	drop_nlink(inode);
->  	dput(dentry);	/* Undo the count from "create" - does all the work */
-> +
-> +	/*
-> +	 * For now, VFS can't deal with case-insensitive negative dentries, so
-> +	 * we invalidate them
-> +	 */
-> +	if (IS_CASEFOLDED(dir))
-> +		d_invalidate(dentry);
-> +
-
-likewise and also below.
-
->  	return 0;
->  }
->=20=20
-> @@ -3697,7 +3722,10 @@ static int shmem_symlink(struct mnt_idmap *idmap, =
-struct inode *dir,
->  	dir->i_size +=3D BOGO_DIRENT_SIZE;
->  	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
->  	inode_inc_iversion(dir);
-> -	d_instantiate(dentry, inode);
-> +	if (IS_CASEFOLDED(dir))
-> +		d_add(dentry, inode);
-> +	else
-> +		d_instantiate(dentry, inode);
->  	dget(dentry);
->  	return 0;
->=20=20
-> @@ -4050,6 +4078,8 @@ enum shmem_param {
->  	Opt_usrquota_inode_hardlimit,
->  	Opt_grpquota_block_hardlimit,
->  	Opt_grpquota_inode_hardlimit,
-> +	Opt_casefold,
-> +	Opt_strict_encoding,
->  };
->=20=20
->  static const struct constant_table shmem_param_enums_huge[] =3D {
-> @@ -4081,9 +4111,47 @@ const struct fs_parameter_spec shmem_fs_parameters=
-[] =3D {
->  	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit=
-),
->  	fsparam_string("grpquota_inode_hardlimit", Opt_grpquota_inode_hardlimit=
-),
->  #endif
-> +	fsparam_string("casefold",	Opt_casefold),
-> +	fsparam_flag  ("strict_encoding", Opt_strict_encoding),
->  	{}
->  };
->=20=20
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_par=
-ameter *param)
-> +{
-> +	struct shmem_options *ctx =3D fc->fs_private;
-> +	unsigned int maj =3D 0, min =3D 0, rev =3D 0, version_number;
-> +	char version[10];
-> +	int ret;
-> +	struct unicode_map *encoding;
-> +
-> +	if (strncmp(param->string, "utf8-", 5))
-> +		return invalfc(fc, "Only utf8 encondings are supported");
-> +	ret =3D strscpy(version, param->string + 5, sizeof(version));
-
-the extra buffer and the copy seem unnecessary.  It won't live past this
-function anyway. Can you just pass the offseted param->string to
-utf8_parse_version?
-
-> +	if (ret < 0)
-> +		return invalfc(fc, "Invalid enconding argument: %s",
-> +			       param->string);
-
-enconding=3D>encoding
-
-> +
-> +	ret =3D utf8_parse_version(version, &maj, &min, &rev);
-> +	if (ret)
-> +		return invalfc(fc, "Invalid utf8 version: %s", version);
-> +	version_number =3D UNICODE_AGE(maj, min, rev);
-> +	encoding =3D utf8_load(version_number);
-
-utf8_load(UNICODE_AGE(maj, min, rev));
-
-and drop version_number.
-
-> +	if (IS_ERR(encoding))
-> +		return invalfc(fc, "Invalid utf8 version: %s", version);
-> +	pr_info("tmpfs: Using encoding provided by mount options: %s\n",
-> +		param->string);
-> +	ctx->encoding =3D encoding;
-> +
-> +	return 0;
-> +}
-> +#else
-> +static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_par=
-ameter *param)
-> +{
-> +	return invalfc(fc, "tmpfs: No kernel support for casefold filesystems\n=
-");
-> +}
-> +#endif
-> +
->  static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *p=
-aram)
->  {
->  	struct shmem_options *ctx =3D fc->fs_private;
-> @@ -4242,6 +4310,11 @@ static int shmem_parse_one(struct fs_context *fc, =
-struct fs_parameter *param)
->  				       "Group quota inode hardlimit too large.");
->  		ctx->qlimits.grpquota_ihardlimit =3D size;
->  		break;
-> +	case Opt_casefold:
-> +		return shmem_parse_opt_casefold(fc, param);
-> +	case Opt_strict_encoding:
-> +		ctx->strict_encoding =3D true;
-> +		break;
->  	}
->  	return 0;
->=20=20
-> @@ -4471,6 +4544,11 @@ static void shmem_put_super(struct super_block *sb)
->  {
->  	struct shmem_sb_info *sbinfo =3D SHMEM_SB(sb);
->=20=20
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (sb->s_encoding)
-> +		utf8_unload(sb->s_encoding);
-> +#endif
-> +
->  #ifdef CONFIG_TMPFS_QUOTA
->  	shmem_disable_quotas(sb);
->  #endif
-> @@ -4515,6 +4593,16 @@ static int shmem_fill_super(struct super_block *sb=
-, struct fs_context *fc)
->  	}
->  	sb->s_export_op =3D &shmem_export_ops;
->  	sb->s_flags |=3D SB_NOSEC | SB_I_VERSION;
-> +
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (ctx->encoding) {
-> +		sb->s_encoding =3D ctx->encoding;
-> +		generic_set_sb_d_ops(sb);
-> +		if (ctx->strict_encoding)
-> +			sb->s_encoding_flags =3D SB_ENC_STRICT_MODE_FL;
-> +	}
-> +#endif
-> +
->  #else
->  	sb->s_flags |=3D SB_NOUSER;
->  #endif
-> @@ -4704,11 +4792,28 @@ static const struct inode_operations shmem_inode_=
-operations =3D {
->  #endif
->  };
->=20=20
-> +static struct dentry *shmem_lookup(struct inode *dir, struct dentry *den=
-try, unsigned int flags)
-> +{
-> +	if (dentry->d_name.len > NAME_MAX)
-> +		return ERR_PTR(-ENAMETOOLONG);
-> +
-> +	/*
-> +	 * For now, VFS can't deal with case-insensitive negative dentries, so
-> +	 * we prevent them from being created
-> +	 */
-> +	if (IS_CASEFOLDED(dir))
-> +		return NULL;
-> +
-> +	d_add(dentry, NULL);
-> +
-> +	return NULL;
-> +}
-> +
->  static const struct inode_operations shmem_dir_inode_operations =3D {
->  #ifdef CONFIG_TMPFS
->  	.getattr	=3D shmem_getattr,
->  	.create		=3D shmem_create,
-> -	.lookup		=3D simple_lookup,
-> +	.lookup		=3D shmem_lookup,
-
-simple_lookup sets the dentry operations to enable a custom d_delete,
-but this disables that. Without it, negative dentries will linger after
-the filesystem is gone.
-
-We want to preserve the current behavior both for normal and casefolding
-directories.  You need a new flavor of generic_ci_dentry_ops with that
-hook for casefolding shmem, as well as ensure &simple_dentry_operations
-is still set for every dentry in non-casefolding volumes.
-
->  	.link		=3D shmem_link,
->  	.unlink		=3D shmem_unlink,
->  	.symlink	=3D shmem_symlink,
-> @@ -4791,6 +4896,8 @@ int shmem_init_fs_context(struct fs_context *fc)
->  	ctx->uid =3D current_fsuid();
->  	ctx->gid =3D current_fsgid();
->=20=20
-> +	ctx->encoding =3D NULL;
-> +
->  	fc->fs_private =3D ctx;
->  	fc->ops =3D &shmem_fs_context_ops;
->  	return 0;
-
---=20
-Gabriel Krisman Bertazi
+Thanks,
+Mike
 
