@@ -1,447 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-28453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2BF96AC3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 00:32:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9432296AC48
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 00:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2001E1F24E3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 22:32:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBE27B2130B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 22:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3878B1B9827;
-	Tue,  3 Sep 2024 22:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86C91B9827;
+	Tue,  3 Sep 2024 22:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sB55t5a5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PUj7Hs/z";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sB55t5a5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PUj7Hs/z"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="bLmc0mm9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JwniJ5ae"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pfhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28271186E30;
-	Tue,  3 Sep 2024 22:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BA7186E30
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 22:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725402716; cv=none; b=PaR3tsE0hLJhWbrUKCehfRLSmswz9WNXzw8pU8yf4SnvkKNTS223N3t250QuMCrPA1GRn84iXFBvbey86Yi8tbPgKLm5+bR8harnVQTceyzujxd/YWAe8cZrmnqAHmElHQPpYlCpg4ShjrQMuWMsD0q5pH4NaFB5py79g2auHqQ=
+	t=1725403084; cv=none; b=PP9z6fXggzPKSJRPQ1SlO7ATBlV5mkjlhdzWv0OycO133sXzFRZZCDDD8qUVYjU9nrQWLk2xpSXjQOASAxYsmjexHD8/c9bH+2SvwX+bUoAbqE1ivxCTZ5OE5m83ZX1XAcaRoF5jiAHmCI5NAPIBk84IjOj/Teiqk7nQy+A4nQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725402716; c=relaxed/simple;
-	bh=tZRii2t15TCwzU2o1OeoZFDuiKLfEaCqU2xlDnpUKq4=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=LUMkHPgH5IkLw4mU1N/hloG3YaNexafKw5BspG0Iy4jBSN8qF+Xk3rgB2YdnsDAE4cyr+mOl8+SVoZIuv0LdEuJ+UQ1kWyymejwxNaxPsJorWEqz4PLF3oLuzDpRXUi+7KpaRNQacRcf8zc7O/uc8fOGPT13ptSdtufKBM1inE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sB55t5a5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PUj7Hs/z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sB55t5a5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PUj7Hs/z; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3DF9521A14;
-	Tue,  3 Sep 2024 22:31:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725402712; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ep78Toqo+zCMq74UO3n8I1Kl0N5WozDFqpve9fvywnM=;
-	b=sB55t5a5bUo6cqnxmIQzvkmUEylhsbY0SQhdlabAo8H4m7dHm/06trnlWARLN2YhIUOgT6
-	hrs9BjSr9BwI2YNPEtkhstSkbBvdEKk6CyMm5BfEssprk0A3gwEd03Oxz9gupSCAWymXpo
-	U/ucuOQW9wUuV5g6aR9i4r06g4RltMM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725402712;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ep78Toqo+zCMq74UO3n8I1Kl0N5WozDFqpve9fvywnM=;
-	b=PUj7Hs/z2Ql6KZ4sdYSJjICVTcQWrKMnfHWQoHnk0WbrC0SVMIaz9Yng0jeFVq+/PavTpe
-	ozNGaVDoC3iXN4AA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=sB55t5a5;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="PUj7Hs/z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725402712; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ep78Toqo+zCMq74UO3n8I1Kl0N5WozDFqpve9fvywnM=;
-	b=sB55t5a5bUo6cqnxmIQzvkmUEylhsbY0SQhdlabAo8H4m7dHm/06trnlWARLN2YhIUOgT6
-	hrs9BjSr9BwI2YNPEtkhstSkbBvdEKk6CyMm5BfEssprk0A3gwEd03Oxz9gupSCAWymXpo
-	U/ucuOQW9wUuV5g6aR9i4r06g4RltMM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725402712;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ep78Toqo+zCMq74UO3n8I1Kl0N5WozDFqpve9fvywnM=;
-	b=PUj7Hs/z2Ql6KZ4sdYSJjICVTcQWrKMnfHWQoHnk0WbrC0SVMIaz9Yng0jeFVq+/PavTpe
-	ozNGaVDoC3iXN4AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44FCC139D5;
-	Tue,  3 Sep 2024 22:31:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mwWWNlSO12b8YAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 03 Sep 2024 22:31:48 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1725403084; c=relaxed/simple;
+	bh=Hp8vADAbPCgyRaWXVX8BFmsT7qu+mGbjJdIXw46+zRE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HCKgjbSCI1pzmN8xl7Cx9JH8mVl3pd38SBrGWUB+67t7aIQJXutOTLDuATuRuA2zL0nEQ0yt+24AN60X0GleGV3TYqziqOoU0IJJvmLXPKULaizE7lJaqiPcYH6F/toBYuPuLK7GbyJdqUEWr3pwasDGA2Mr+FnHF7Yz0zOLOiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=bLmc0mm9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JwniJ5ae; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A6DE5114047E;
+	Tue,  3 Sep 2024 18:38:01 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 03 Sep 2024 18:38:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1725403081;
+	 x=1725489481; bh=FT6/ws71RbBv93Q+ptc7Na+/5wr0QnoILTYalU2ouOQ=; b=
+	bLmc0mm9nxsIhcXgAVMCwOKAta9xmv0XHNuPa8i5UAwjsU+4CDPiTlpRvuZmIoGx
+	Vt09RN9Efc9N1mOR4Sg/e5XJPnbsV/WXsvWx3/Mfdjlyd81Xn7/mpUbjV/tmmHUd
+	t82sSanYJQvOB9KYLCFfOyXrMJkW5CKjYa0okSEVihFqExlKlNUfItAUWlBcGms2
+	lgXoRCJC4m8LmYVJOZ9cAw644jxr5SSDFnFpPdszbc7vGr4WszZYnLyrhGVBwGc2
+	Tgn1rPvOfMk94P5Ppc25J88m5m3hTOcwTDIjs//+/tlEmYiZw5FubpZ75Bo5S/fa
+	jJUAZUxURn0JL8EAeame5g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725403081; x=
+	1725489481; bh=FT6/ws71RbBv93Q+ptc7Na+/5wr0QnoILTYalU2ouOQ=; b=J
+	wniJ5ae8v2lwWDs5TK0FNJa67hdQBj3BImKHOaby0GwhL+gj9nngyQr8e44DWmbg
+	iE+BKTI6xxROsjNlKhmTSYJ9oyMvfq+wtxv0LSVxUJ0ht2A9sB3WL3m/oNzaLs3M
+	sOmAzbUFjGeJEwTDK6zH/5QhvM7ePXcELBLDILu9EQpQrtiaJeonUWAAcnFm6ZC1
+	jx+obmS+/wHBpF96xFWYHS374y7qngX5mgPizdXI8wGN4r2jzFoFKU6lKsLZirxn
+	0Yxm7KM+zxuSANJIY4eq5/vuupL8qC/l0QK+biNwXtQcy+fLn2+QoU0roubndVU3
+	odtSPtkCoiCjCTbfN/qkA==
+X-ME-Sender: <xms:yI_XZh-0i2FaGUBFW675r8q7YQhpvc6OJejcmkP_0sYym1ZyTJoTww>
+    <xme:yI_XZlun2UIM1RqivbEx38YgxSBFTS3voZFbB5TgJVuFYfB5EPwzCJeJRs1dAQGWs
+    XRLMdwefbAaWDwp>
+X-ME-Received: <xmr:yI_XZvBbTCw4xabhnjxG-HQ0AutRV-Wfqv0a5omMr1V9wxIKW7LqzNfrhYbKFPYmG3moRlDxR1LP83vn4Q9VPFA_GELpOJBaD-C-OkQMUiAvak_7VLPy>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehiedgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
+    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
+    phhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugi
+    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhs
+    vghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehjvghffhhlvgiguheslh
+    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlrghorghrrdhshhgrohes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtg
+    homh
+X-ME-Proxy: <xmx:yI_XZlcxQJ3fWQQ-F_aRCVAZL4qJhysHpfrfHtU7h0GpuuQywaB9iQ>
+    <xmx:yI_XZmPwIMtf4CPni9k73msh26cfNMPA4Pwgd61PV-7yV57LQ9BiRQ>
+    <xmx:yI_XZnnoKQvnMCIuqm1TuJ3hBH-FKOnDdONR6pFDMGwKEWR446SudQ>
+    <xmx:yI_XZgtD3hc1KCtL8FVJWz69xeR4YdKZ0DNbfJKhfHEsuPD-82YqLA>
+    <xmx:yY_XZle-N5T9RROXNye3fIZONEWL5y_TQ5qquFwex4WCCNOs6bosTB62>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 Sep 2024 18:37:59 -0400 (EDT)
+Message-ID: <02b45c36-b64c-4b7c-9148-55cbd06cc07b@fastmail.fm>
+Date: Wed, 4 Sep 2024 00:37:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever III" <chuck.lever@oracle.com>
-Cc: "Mike Snitzer" <snitzer@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
- "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
- "Anna Schumaker" <anna@kernel.org>,
- "Trond Myklebust" <trondmy@hammerspace.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v15 16/26] nfsd: add LOCALIO support
-In-reply-to: <67405117-1C08-4CA9-B0CE-743DFC7BCE3F@oracle.com>
-References: <>, <67405117-1C08-4CA9-B0CE-743DFC7BCE3F@oracle.com>
-Date: Wed, 04 Sep 2024 08:31:41 +1000
-Message-id: <172540270112.4433.6741926579586461095@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 3DF9521A14
-X-Spam-Score: -6.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] fuse: add optional kernel-enforced timeout for
+ requests
+To: Joanne Koong <joannelkoong@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+ jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com
+References: <20240830162649.3849586-1-joannelkoong@gmail.com>
+ <20240830162649.3849586-2-joannelkoong@gmail.com>
+ <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
+ <CAJnrk1ZSEk+GuC1kvNS_Cu9u7UsoFW+vd2xOsrbL5i_GNAoEkQ@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1ZSEk+GuC1kvNS_Cu9u7UsoFW+vd2xOsrbL5i_GNAoEkQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 04 Sep 2024, Chuck Lever III wrote:
->=20
->=20
-> > On Sep 3, 2024, at 11:29=E2=80=AFAM, Mike Snitzer <snitzer@kernel.org> wr=
-ote:
-> >=20
-> > On Tue, Sep 03, 2024 at 11:19:45AM -0400, Jeff Layton wrote:
-> >> On Tue, 2024-09-03 at 11:00 -0400, Mike Snitzer wrote:
-> >>> On Tue, Sep 03, 2024 at 10:40:28AM -0400, Jeff Layton wrote:
-> >>>> On Tue, 2024-09-03 at 10:34 -0400, Chuck Lever wrote:
-> >>>>> On Sat, Aug 31, 2024 at 06:37:36PM -0400, Mike Snitzer wrote:
-> >>>>>> From: Weston Andros Adamson <dros@primarydata.com>
-> >>>>>>=20
-> >>>>>> Add server support for bypassing NFS for localhost reads, writes, and
-> >>>>>> commits. This is only useful when both the client and server are
-> >>>>>> running on the same host.
-> >>>>>>=20
-> >>>>>> If nfsd_open_local_fh() fails then the NFS client will both retry and
-> >>>>>> fallback to normal network-based read, write and commit operations if
-> >>>>>> localio is no longer supported.
-> >>>>>>=20
-> >>>>>> Care is taken to ensure the same NFS security mechanisms are used
-> >>>>>> (authentication, etc) regardless of whether localio or regular NFS
-> >>>>>> access is used.  The auth_domain established as part of the traditio=
-nal
-> >>>>>> NFS client access to the NFS server is also used for localio.  Store
-> >>>>>> auth_domain for localio in nfsd_uuid_t and transfer it to the client
-> >>>>>> if it is local to the server.
-> >>>>>>=20
-> >>>>>> Relative to containers, localio gives the client access to the netwo=
-rk
-> >>>>>> namespace the server has.  This is required to allow the client to
-> >>>>>> access the server's per-namespace nfsd_net struct.
-> >>>>>>=20
-> >>>>>> This commit also introduces the use of NFSD's percpu_ref to interlock
-> >>>>>> nfsd_destroy_serv and nfsd_open_local_fh, to ensure nn->nfsd_serv is
-> >>>>>> not destroyed while in use by nfsd_open_local_fh and other LOCALIO
-> >>>>>> client code.
-> >>>>>>=20
-> >>>>>> CONFIG_NFS_LOCALIO enables NFS server support for LOCALIO.
-> >>>>>>=20
-> >>>>>> Signed-off-by: Weston Andros Adamson <dros@primarydata.com>
-> >>>>>> Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-> >>>>>> Co-developed-by: Mike Snitzer <snitzer@kernel.org>
-> >>>>>> Signed-off-by: Mike Snitzer <snitzer@kernel.org>
-> >>>>>> Co-developed-by: NeilBrown <neilb@suse.de>
-> >>>>>> Signed-off-by: NeilBrown <neilb@suse.de>
-> >>>>>>=20
-> >>>>>> Not-Acked-by: Chuck Lever <chuck.lever@oracle.com>
-> >>>>>> Not-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> >>>>>> ---
-> >>>>>> fs/nfsd/Makefile           |   1 +
-> >>>>>> fs/nfsd/filecache.c        |   2 +-
-> >>>>>> fs/nfsd/localio.c          | 112 +++++++++++++++++++++++++++++++++++=
-++
-> >>>>>> fs/nfsd/netns.h            |   4 ++
-> >>>>>> fs/nfsd/nfsctl.c           |  25 ++++++++-
-> >>>>>> fs/nfsd/trace.h            |   3 +-
-> >>>>>> fs/nfsd/vfs.h              |   2 +
-> >>>>>> include/linux/nfslocalio.h |   8 +++
-> >>>>>> 8 files changed, 154 insertions(+), 3 deletions(-)
-> >>>>>> create mode 100644 fs/nfsd/localio.c
-> >>>>>>=20
-> >>>>>> diff --git a/fs/nfsd/Makefile b/fs/nfsd/Makefile
-> >>>>>> index b8736a82e57c..18cbd3fa7691 100644
-> >>>>>> --- a/fs/nfsd/Makefile
-> >>>>>> +++ b/fs/nfsd/Makefile
-> >>>>>> @@ -23,3 +23,4 @@ nfsd-$(CONFIG_NFSD_PNFS) +=3D nfs4layouts.o
-> >>>>>> nfsd-$(CONFIG_NFSD_BLOCKLAYOUT) +=3D blocklayout.o blocklayoutxdr.o
-> >>>>>> nfsd-$(CONFIG_NFSD_SCSILAYOUT) +=3D blocklayout.o blocklayoutxdr.o
-> >>>>>> nfsd-$(CONFIG_NFSD_FLEXFILELAYOUT) +=3D flexfilelayout.o flexfilelay=
-outxdr.o
-> >>>>>> +nfsd-$(CONFIG_NFS_LOCALIO) +=3D localio.o
-> >>>>>> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-> >>>>>> index 89ff380ec31e..348c1b97092e 100644
-> >>>>>> --- a/fs/nfsd/filecache.c
-> >>>>>> +++ b/fs/nfsd/filecache.c
-> >>>>>> @@ -52,7 +52,7 @@
-> >>>>>> #define NFSD_FILE_CACHE_UP      (0)
-> >>>>>>=20
-> >>>>>> /* We only care about NFSD_MAY_READ/WRITE for this cache */
-> >>>>>> -#define NFSD_FILE_MAY_MASK (NFSD_MAY_READ|NFSD_MAY_WRITE)
-> >>>>>> +#define NFSD_FILE_MAY_MASK (NFSD_MAY_READ|NFSD_MAY_WRITE|NFSD_MAY_L=
-OCALIO)
-> >>>>>>=20
-> >>>>>> static DEFINE_PER_CPU(unsigned long, nfsd_file_cache_hits);
-> >>>>>> static DEFINE_PER_CPU(unsigned long, nfsd_file_acquisitions);
-> >>>>>> diff --git a/fs/nfsd/localio.c b/fs/nfsd/localio.c
-> >>>>>> new file mode 100644
-> >>>>>> index 000000000000..75df709c6903
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/fs/nfsd/localio.c
-> >>>>>> @@ -0,0 +1,112 @@
-> >>>>>> +// SPDX-License-Identifier: GPL-2.0-only
-> >>>>>> +/*
-> >>>>>> + * NFS server support for local clients to bypass network stack
-> >>>>>> + *
-> >>>>>> + * Copyright (C) 2014 Weston Andros Adamson <dros@primarydata.com>
-> >>>>>> + * Copyright (C) 2019 Trond Myklebust <trond.myklebust@hammerspace.=
-com>
-> >>>>>> + * Copyright (C) 2024 Mike Snitzer <snitzer@hammerspace.com>
-> >>>>>> + * Copyright (C) 2024 NeilBrown <neilb@suse.de>
-> >>>>>> + */
-> >>>>>> +
-> >>>>>> +#include <linux/exportfs.h>
-> >>>>>> +#include <linux/sunrpc/svcauth.h>
-> >>>>>> +#include <linux/sunrpc/clnt.h>
-> >>>>>> +#include <linux/nfs.h>
-> >>>>>> +#include <linux/nfs_common.h>
-> >>>>>> +#include <linux/nfslocalio.h>
-> >>>>>> +#include <linux/string.h>
-> >>>>>> +
-> >>>>>> +#include "nfsd.h"
-> >>>>>> +#include "vfs.h"
-> >>>>>> +#include "netns.h"
-> >>>>>> +#include "filecache.h"
-> >>>>>> +
-> >>>>>> +static const struct nfsd_localio_operations nfsd_localio_ops =3D {
-> >>>>>> + .nfsd_open_local_fh =3D nfsd_open_local_fh,
-> >>>>>> + .nfsd_file_put_local =3D nfsd_file_put_local,
-> >>>>>> + .nfsd_file_file =3D nfsd_file_file,
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +void nfsd_localio_ops_init(void)
-> >>>>>> +{
-> >>>>>> + memcpy(&nfs_to, &nfsd_localio_ops, sizeof(nfsd_localio_ops));
-> >>>>>> +}
-> >>>>>=20
-> >>>>> Same comment as Neil: this should surface a pointer to the
-> >>>>> localio_ops struct. Copying the whole set of function pointers is
-> >>>>> generally unnecessary.
-> >>>>>=20
-> >>>>>=20
-> >>>>>> +
-> >>>>>> +/**
-> >>>>>> + * nfsd_open_local_fh - lookup a local filehandle @nfs_fh and map t=
-o nfsd_file
-> >>>>>> + *
-> >>>>>> + * @uuid: nfs_uuid_t which provides the 'struct net' to get the pro=
-per nfsd_net
-> >>>>>> + *        and the 'struct auth_domain' required for LOCALIO access
-> >>>>>> + * @rpc_clnt: rpc_clnt that the client established, used for sockad=
-dr and cred
-> >>>>>> + * @cred: cred that the client established
-> >>>>>> + * @nfs_fh: filehandle to lookup
-> >>>>>> + * @fmode: fmode_t to use for open
-> >>>>>> + *
-> >>>>>> + * This function maps a local fh to a path on a local filesystem.
-> >>>>>> + * This is useful when the nfs client has the local server mounted =
-- it can
-> >>>>>> + * avoid all the NFS overhead with reads, writes and commits.
-> >>>>>> + *
-> >>>>>> + * On successful return, returned nfsd_file will have its nf_net me=
-mber
-> >>>>>> + * set. Caller (NFS client) is responsible for calling nfsd_serv_pu=
-t and
-> >>>>>> + * nfsd_file_put (via nfs_to.nfsd_file_put_local).
-> >>>>>> + */
-> >>>>>> +struct nfsd_file *
-> >>>>>> +nfsd_open_local_fh(nfs_uuid_t *uuid,
-> >>>>>> +    struct rpc_clnt *rpc_clnt, const struct cred *cred,
-> >>>>>> +    const struct nfs_fh *nfs_fh, const fmode_t fmode)
-> >>>>>> + __must_hold(rcu)
-> >>>>>> +{
-> >>>>>> + int mayflags =3D NFSD_MAY_LOCALIO;
-> >>>>>> + struct nfsd_net *nn =3D NULL;
-> >>>>>> + struct net *net;
-> >>>>>> + struct svc_cred rq_cred;
-> >>>>>> + struct svc_fh fh;
-> >>>>>> + struct nfsd_file *localio;
-> >>>>>> + __be32 beres;
-> >>>>>> +
-> >>>>>> + if (nfs_fh->size > NFS4_FHSIZE)
-> >>>>>> + return ERR_PTR(-EINVAL);
-> >>>>>> +
-> >>>>>> + /*
-> >>>>>> +  * Not running in nfsd context, so must safely get reference on nf=
-sd_serv.
-> >>>>>> +  * But the server may already be shutting down, if so disallow new=
- localio.
-> >>>>>> +  * uuid->net is NOT a counted reference, but caller's rcu_read_loc=
-k() ensures
-> >>>>>> +  * that if uuid->net is not NULL, then calling nfsd_serv_try_get()=
- is safe
-> >>>>>> +  * and if it succeeds we will have an implied reference to the net.
-> >>>>>> +  */
-> >>>>>> + net =3D rcu_dereference(uuid->net);
-> >>>>>> + if (net)
-> >>>>>> + nn =3D net_generic(net, nfsd_net_id);
-> >>>>>> + if (unlikely(!nn || !nfsd_serv_try_get(nn)))
-> >>>>>> + return ERR_PTR(-ENXIO);
-> >>>>>> +
-> >>>>>> + /* Drop the rcu lock for nfsd_file_acquire_local() */
-> >>>>>> + rcu_read_unlock();
-> >>>>>=20
-> >>>>> I'm struggling with the locking logistics. Caller takes the RCU read
-> >>>>> lock, this function drops the lock, then takes it again. So:
-> >>>>>=20
-> >>>>> - A caller might rely on the lock being held continuously, but
-> >>>>> - The API contract documented above doesn't indicate that this
-> >>>>>   function drops that lock
-> >>>>> - The __must_hold(rcu) annotation doesn't indicate that this
-> >>>>>   function drops that lock, IIUC
-> >>>>>=20
-> >>>>> Dropping and retaking the lock in here is an anti-pattern that
-> >>>>> should be avoided. I suggest we are better off in the long run if
-> >>>>> the caller does not need to take the RCU read lock, but instead,
-> >>>>> nfsd_open_local_fh takes it right here just for the rcu_dereference.
-> >>>=20
-> >>> I thought so too when I first saw how Neil approached fixing this to
-> >>> be safe.  It was only after putting further time to it (and having the
-> >>> benefit of being so close to all this) that I realized the nuance at
-> >>> play (please see my reply to Jeff below for the nuance I'm speaking
-> >>> of).=20
-> >>>=20
-> >>>>>=20
-> >>>>> OTOH, Why drop the lock before calling nfsd_file_acquire_local()?
-> >>>>> The RCU read lock can safely be taken more than once in succession.
-> >>>>>=20
-> >>>>> Let's rethink the locking strategy.
-> >>>>>=20
-> >>>=20
-> >>> Yes, _that_ is a very valid point.  I did wonder the same: it seems
-> >>> perfectly fine to simply retain the RCU throughout the entirety of
-> >>> nfsd_open_local_fh().
-> >>>=20
-> >>=20
-> >> Nope. nfsd_file_do_acquire can allocate, so you can't hold the
-> >> rcu_read_lock over the whole thing.
-> >=20
-> > Ah, yeap.. sorry, I knew that ;)
-> >=20
-> >>>> Agreed. The only caller does this:
-> >>>>=20
-> >>>>        rcu_read_lock();
-> >>>>        if (!rcu_access_pointer(uuid->net)) {
-> >>>>                rcu_read_unlock();
-> >>>>                return ERR_PTR(-ENXIO);
-> >>>>        }
-> >>>>        localio =3D nfs_to.nfsd_open_local_fh(uuid, rpc_clnt, cred,
-> >>>>                                            nfs_fh, fmode);
-> >>>>        rcu_read_unlock();
-> >>>>=20
-> >>>> Maybe just move the check for uuid->net down into nfsd_open_local_fh,
-> >>>> and it can acquire the rcu_read_lock for itself?
-> >>>=20
-> >>> No, sorry we cannot.  The call to nfs_to.nfsd_open_local_fh (which is
-> >>> a symbol provided by nfsd) is only safe if the RCU protected pre-check
-> >>> shows the uuid->net valid.
-> >>=20
-> >> Ouch, ok.
-> >=20
-> > I had to double check but I did add a comment that speaks directly to
-> > this "nuance" above the code you quoted:
-> >=20
-> >        /*
-> >         * uuid->net must not be NULL, otherwise NFS may not have ref
-> >         * on NFSD and therefore cannot safely make 'nfs_to' calls.
-> >         */
-> >=20
-> > So yeah, this code needs to stay like this.  The __must_hold(rcu) just
-> > ensures the RCU is held on entry and exit.. the bouncing of RCU
-> > (dropping and retaking) isn't of immediate concern is it?  While I
-> > agree it isn't ideal, it is what it is given:
-> > 1) NFS caller of NFSD symbol is only safe if it has RCU amd verified
-> >   uuid->net valid
-> > 2) nfsd_file_do_acquire() can allocate.
->=20
-> OK, understood, but the annotation is still wrong. The lock
-> is dropped here so I think you need __releases and __acquires
-> in that case. However...
->=20
-> Let's wait for Neil's comments, but I think this needs to be
-> properly addressed before merging. The comments are not going
-> to be enough IMO.
 
-I don't have much to add.  Mike's description of the locking requirement
-(nfs.to.foo need to be safe) and Jeff's confirmation that we cannot hold
-rcu across getting the nfsd_file are exactly what I would have said.
 
-I agree that dropping and reclaiming a lock is an anti-pattern and in
-best avoided in general.  I cannot see a better alternative in this
-case.
+On 9/3/24 19:25, Joanne Koong wrote:
+> On Mon, Sep 2, 2024 at 3:38 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>
+>> On Fri, 30 Aug 2024 at 18:27, Joanne Koong <joannelkoong@gmail.com> wrote:
+>>>
+>>> There are situations where fuse servers can become unresponsive or
+>>> stuck, for example if the server is in a deadlock. Currently, there's
+>>> no good way to detect if a server is stuck and needs to be killed
+>>> manually.
+>>>
+>>> This commit adds an option for enforcing a timeout (in seconds) on
+>>> requests where if the timeout elapses without a reply from the server,
+>>> the connection will be automatically aborted.
+>>
+>> Okay.
+>>
+>> I'm not sure what the overhead (scheduling and memory) of timers, but
+>> starting one for each request seems excessive.
+>>
+>> Can we make the timeout per-connection instead of per request?
+>>
+>> I.e. When the first request is sent, the timer is started. When a
+>> reply is received but there are still outstanding requests, the timer
+>> is reset.  When the last reply is received, the timer is stopped.
+>>
+>> This should handle the frozen server case just as well.  It may not
+>> perfectly handle the case when the server is still alive but for some
+>> reason one or more requests get stuck, while others are still being
+>> processed.   The latter case is unlikely to be an issue in practice,
+>> IMO.
+> 
+> In that case, if the timeout is per-connection instead of per-request
+> and we're not stringent about some requests getting stuck, maybe it
+> makes more sense to just do this in userspace (libfuse) then? That
+> seems pretty simple with having a watchdog thread that periodically
+> (according to whatever specified timeout) checks if the number of
+> requests serviced is increasing when
+> /sys/fs/fuse/connections/*/waiting is non-zero.
+> 
+> If there are multiple server threads (eg libfuse's fuse_loop_mt
+> interface) and say, all of them are deadlocked except for 1 that is
+> actively servicing requests, then this wouldn't catch that case, but
+> even if this per-connection timeout was enforced in the kernel
+> instead, it wouldn't catch that case either.
+> 
+> So maybe this logic should just be moved to libfuse then? For this
+> we'd need to pass the connection's device id (fc->dev) to userspace
+> which i don't think we currently do, but that seems pretty simple. The
+> one downside I see is that this doesn't let sysadmins enforce an
+> automatic system-wide "max timeout" against malicious fuse servers but
+> if we are having the timeout be per-connection instead of per-request,
+> then a malicious server could still be malicious anyways (eg
+> deadlocking all threads except for 1).
+> 
+> Curious to hear what your and Bernrd's thoughts on this are.
 
-According to Documentation/dev-tools/sparse.txt:
 
-__must_hold - The specified lock is held on function entry and exit.
+I have question here, does it need to be an exact timeout or could it be
+an interval/epoch? Let's say you timeout based on epoch lists? Example
 
-__acquires - The specified lock is held on function exit, but not entry.
+1) epoch-a starts, requests are added to epoch-a list.
+2) epoch-b starts, epoch-a list should get empty
+3) epoch-c starts, epoch-b list should get empty, kill the connection if
+epoch-a list is not empty (epoch-c list should not be needed, as epoch-a
+list can be used, once confirmed it is empty.)
 
-__releases - The specified lock is held on function entry, but not exit.
 
-only __must_hold applies.  But maybe sparse.txt is wrong.
+Here timeout would be epoch-a + epoch-b, i.e.
+max-timeout <= 2 * epoch-time.
+We could have more epochs/list-heads to make it more fine grained.
 
-static struct bpf_local_storage_elem *
-bpf_sk_storage_map_seq_find_next(struct bpf_iter_seq_sk_storage_map_info *inf=
-o,
-				 struct bpf_local_storage_elem *prev_selem)
-	__acquires(RCU) __releases(RCU)
 
-gives a counter example.  Maybe we should copy that as you say.  Maybe
-we should fix sparse.txt too.
+From my point of view that should be a rather cheap, as it just
+adding/removing requests from list and checking for timeout if a list is
+empty. With the caveat that it is not precise anymore.
 
-NeilBrown
+That could be implemented in kernel and/or libfuse?
+
+
+Thanks,
+Bernd
 
