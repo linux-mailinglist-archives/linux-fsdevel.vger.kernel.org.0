@@ -1,212 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-28328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B78969636
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 09:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDEC96965C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 10:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBD981F23DF4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 07:54:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C611F24C2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 08:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BD6200116;
-	Tue,  3 Sep 2024 07:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347A9200129;
+	Tue,  3 Sep 2024 08:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hP4JbxC5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wtpnu6oF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94441CCEF9;
-	Tue,  3 Sep 2024 07:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A3120012B;
+	Tue,  3 Sep 2024 08:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725350076; cv=none; b=ujysdYb+kZqlqGWg+wQz2h5fMwS9aUVUkxCtM59s0uyJ6ZL6vHOgizCPIdxY5aJ24u2v+5z+U6a82ptVTCcPR8T4MwA6hE8/7cyNM8BAi7S77j+4DyS5ZC3Vohrcrb1ZN1NB2+R+e5cfehP/yuqOO1PHlxEh5xcdldYqUO1uRA0=
+	t=1725350406; cv=none; b=AuQFJI4G3MBTRXHQ+lw9sh2XPWkxcU95jhpa5HdYeApEUTV1A9sC9j5z6Mb52ZtvrHVs8nCU0Hu0lU9PXfvQrp6h5npT0oMw7JNTIs7iGRLLujPpKiepI0Sbws72JShq0rasALnpyXneyYQ5GSyCY00I+JQSPJwVQzTL+eEunTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725350076; c=relaxed/simple;
-	bh=8d5alI3TLhOYwnx2NrP9LQS/Df3yxkjn+fz4hxc7LrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R/7opzf6ntf6mKBp1Sem8B0e2wPFZ1gerZ6HXREOSv71EW8t25SxOuFuNnLACqWL2wnFCf7YGb04JIlBmJieMcUxMNkq7EyPip0R5IVGzwF6+HFXhE9tnrKYwkBV4szocWwcavUmgE6y12YyCn6CrOQ1gaNQ3W/RmZXKqErQrwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hP4JbxC5; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6c35b545b41so18137166d6.1;
-        Tue, 03 Sep 2024 00:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725350072; x=1725954872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fomXVmXiFKhcu/vzfVM0LdMGqu50I/F26QA2OqSH32Y=;
-        b=hP4JbxC5Ycq1GVbDjVrWoXIx6z/HIdIH3T8XX3OZ+jDGivCfVE/vm3miUz0Hi6S9WC
-         M79M4wAmb4E9ZDOKMs9hR/hqhhd3Xd91HfhcEfX2mSx0Y9l5E/TucXcxLnVwsfP0WMxz
-         CAZxmVGfmt3IezhnURkR2nH4zGp+wvC2AOgUnBmtbQb2qjnVgpCxVPdknFIiUc6GGhqd
-         S4vpwLTh1/wJHke+dL8dSxwA7iQUsZidUZbNc8q9gn3Pzoq7tvGD9+k9Y1lDF1uAsEQd
-         6NCGD9WNRwHTdbI5KHky31eAdKROfv6pE70NX95mcbIS8UQX6ATGDnxJpz5GmRZzgllR
-         M7aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725350072; x=1725954872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fomXVmXiFKhcu/vzfVM0LdMGqu50I/F26QA2OqSH32Y=;
-        b=HDnntTG/yWYpjTSC7hlqsiiupF+CZnDSY+oz+d+Ih3SWmw/4CPhiviDk6Wyru+SHOg
-         JeEOH77UNVIqZYxFQ79i0riWiCWqNkmlCXw4njxkrF08yOFtO/j5BiUVGqHQ5bHDcdD4
-         tK+hmrkpVbLYFNznZEiXNSNk0wNZ7eFDFk9sDZyyH0Avz6lK+7L6+8sW+068E/IgY4L8
-         wWoJ0xjv//TTOQxNVB4zoC617VBGEPc7wEMWagS6g8H90Z60AHB0fY5VE8O0mm7aUMAF
-         E8k6NKfcA/aphbMsmjoEgxjnXff8gq44lNnG6zdqKz1SB6py0IIh3FurtyXrEVal2Se4
-         JprA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5/HXY9px2xuBMniqB8Pfm5SKV3VHUt6lm97aZrG45obrrik+Nqyh5tfwqFxynWbJecTZ81SqLBNfsraPgMA==@vger.kernel.org, AJvYcCVc+6fo1TOu++Forq8dtgeKTgNeMMOSQ/+jX6+VGkaLaVD5kDsSyuX3+yVJCSWqU8V1ya3bhZU1hYk=@vger.kernel.org, AJvYcCWJJ1VRZVJK0EO3Ohq/hDTjHbQ/xqSMZjhe6pAOSESQ61L45Tj8aA9R4oJcFgdVDpMXwxuWJigUbKm/@vger.kernel.org, AJvYcCWR5G/TtVtp6yXZjgp+Tv4RZxxkOsM+qMezAlqrPxDEpOzEdXnVHrPHjh6z1rnK6fc4Eg8xuV8aWTb0uZDmV4FnOg==@vger.kernel.org, AJvYcCWhT6mf63TYwxuNe9Uf7sskPJQzoMOnAkZ8wb5Goh67d2Zrouvf1eJa2nzcVIM7rylv02vwGdw/zCQR8qhZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhG6nfVwp6EjlifJX0gmN8Nm8VICRogGI3LF5pxO2ooOCjEsNs
-	nxSjzwHA3RxrJKJPAlTqhwDwk9h7GS4s5Fylv0Okq3f5fsSJLM+3MOgWcBg8LmkP3jFyFV6GkEs
-	5jXs81FvZU2od7HlcdZYETkesHyYWYIfYqQOiLw==
-X-Google-Smtp-Source: AGHT+IGzXLsIEHDbgMyGT+A08yC4JUWzWxGh88B25wAb1Ou+JNdpZ2wR9VfJec6imJMUOtwHITpi+KkYncaNWiMSjmY=
-X-Received: by 2002:a05:6214:4a81:b0:6c3:6b35:ac73 with SMTP id
- 6a1803df08f44-6c36b35ad26mr91108986d6.11.1725350071854; Tue, 03 Sep 2024
- 00:54:31 -0700 (PDT)
+	s=arc-20240116; t=1725350406; c=relaxed/simple;
+	bh=wtGUBh7+vRyF3Qzz5jXS/rYRIj3aB+9qZydwKTmZN9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k9gb/xI1wdxLlLKb2hC12yU27qg2GrZ06OOx5yMcz0pZ0FM8Qa8Uomei8nzG240UCHYG9ppP+bTgte/ChyVESl3zgnJ8jcEEG26wKuO3C8Exm4bQyEqaAVXekbDR6a0vl4RM1UIZsq1yF35+HFjwovVrkjBd0JMe3fSjgDqW91w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wtpnu6oF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736CCC4CEC5;
+	Tue,  3 Sep 2024 08:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725350406;
+	bh=wtGUBh7+vRyF3Qzz5jXS/rYRIj3aB+9qZydwKTmZN9g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Wtpnu6oFmwNEPKyPcgSdfLb/VWWqjRS9chiz3gomDWZtJLWKEguJaWkuov68VCDGx
+	 EBvBIrgsD/fPgBP0LyKnW0PI9N6Ef3s9nuhPLrgL3qwogAgQtfzKj+WXJtGilx10q3
+	 vwz9tMDI4Wl7V6QYJ2EcQ34ta2qF+WVxWGz6iSSXreH2FVcQHZHGR5TznnYCZPHKnF
+	 oKEd25oj4+gZ5RrhQzk8eNyXwb+vjei9EP6vvcoTP4+HZxUdg7eAbnCcj/YKdaUr99
+	 HIpWpM05A0VwCH4EldFn5NIXbIzWtT3Icy8qWk5IPp2+cAEdz5coxQD8ogQmnx7BTe
+	 rfaAPRu2Lc9+g==
+From: Christian Brauner <brauner@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-xfs@vger.kernel.org,
+	djwong@kernel.org,
+	josef@toxicpanda.com,
+	david@fromorbit.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] iomap: flush dirty cache over unwritten mappings on zero range
+Date: Tue,  3 Sep 2024 09:59:50 +0200
+Message-ID: <20240903-gentherapie-flirten-dcb64096c837@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240830145634.138439-1-bfoster@redhat.com>
+References: <20240830145634.138439-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
- <20240902164554.928371-1-cyphar@cyphar.com> <20240902164554.928371-2-cyphar@cyphar.com>
-In-Reply-To: <20240902164554.928371-2-cyphar@cyphar.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 3 Sep 2024 09:54:20 +0200
-Message-ID: <CAOQ4uxi291jBJ5ycZgiicVebjkcRQjhXJRgOgvSPBV4-TOcQvA@mail.gmail.com>
-Subject: Re: [PATCH xfstests v2 2/2] open_by_handle: add tests for u64 mount ID
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: fstests@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Alexander Aring <alex.aring@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Christoph Hellwig <hch@infradead.org>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1717; i=brauner@kernel.org; h=from:subject:message-id; bh=wtGUBh7+vRyF3Qzz5jXS/rYRIj3aB+9qZydwKTmZN9g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdO/j34PeFPRz+d27vfrxzWfS3W05qjFM7o5J+OE+vP /f0z/sy1Y5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJKLYw/PdaJ/KSV826gGtv 8YLLIndY3LuEjC9L7uMznLXq3q99dxIZGWaHdAddt3Gd5+PkwnhfTlVYrHda+uInuQ9Ef7cdTvj 9mx8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 2, 2024 at 6:46=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> wro=
-te:
->
-> Now that open_by_handle_at(2) can return u64 mount IDs, do some tests to
-> make sure they match properly as part of the regular open_by_handle
-> tests.
->
-> Link: https://lore.kernel.org/all/20240828-exportfs-u64-mount-id-v3-0-10c=
-2c4c16708@cyphar.com/
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
-> v2:
-> - Remove -M argument and always do the mount ID tests. [Amir Goldstein]
-> - Do not error out if the kernel doesn't support STATX_MNT_ID_UNIQUE
->   or AT_HANDLE_MNT_ID_UNIQUE. [Amir Goldstein]
-> - v1: <https://lore.kernel.org/all/20240828103706.2393267-1-cyphar@cyphar=
-.com/>
->
->  src/open_by_handle.c | 128 +++++++++++++++++++++++++++++++++----------
->  1 file changed, 99 insertions(+), 29 deletions(-)
->
-> diff --git a/src/open_by_handle.c b/src/open_by_handle.c
-> index d9c802ca9bd1..0ad591da632e 100644
-> --- a/src/open_by_handle.c
-> +++ b/src/open_by_handle.c
-> @@ -86,10 +86,16 @@ Examples:
->  #include <errno.h>
->  #include <linux/limits.h>
->  #include <libgen.h>
-> +#include <stdint.h>
-> +#include <stdbool.h>
->
->  #include <sys/stat.h>
->  #include "statx.h"
->
-> +#ifndef AT_HANDLE_MNT_ID_UNIQUE
-> +#      define AT_HANDLE_MNT_ID_UNIQUE 0x001
-> +#endif
-> +
->  #define MAXFILES 1024
->
->  struct handle {
-> @@ -120,6 +126,94 @@ void usage(void)
->         exit(EXIT_FAILURE);
->  }
->
-> +int do_name_to_handle_at(const char *fname, struct file_handle *fh, int =
-bufsz)
-> +{
-> +       int ret;
-> +       int mntid_short;
-> +
-> +       static bool skip_mntid_unique;
-> +
-> +       uint64_t statx_mntid_short =3D 0, statx_mntid_unique =3D 0;
-> +       struct statx statxbuf;
-> +
-> +       /* Get both the short and unique mount id. */
-> +       if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID, &statxbuf) < 0) {
+On Fri, 30 Aug 2024 10:56:32 -0400, Brian Foster wrote:
+> Here's v3 of the iomap zero range flush fixes. No real changes here
+> other than comment updates to better explain the flush and stale logic.
+> The latest version of corresponding test support is posted here [1].
+> Thoughts, reviews, flames appreciated.
+> 
+> v3:
+> - Rework comment(s) in patch 2 to explain marking the mapping stale.
+> - Added R-b tags.
+> v2: https://lore.kernel.org/linux-fsdevel/20240828181912.41517-1-bfoster@redhat.com/
+> - Update comment in patch 2 to explain hole case.
+> v1: https://lore.kernel.org/linux-fsdevel/20240822145910.188974-1-bfoster@redhat.com/
+> - Alternative approach, flush instead of revalidate.
+> rfc: https://lore.kernel.org/linux-fsdevel/20240718130212.23905-1-bfoster@redhat.com/
+> 
+> [...]
 
-This fails build on top of latest for-next branch with commit
-873e36c9 - statx.h: update to latest kernel UAPI
+Applied to the vfs.blocksize branch of the vfs/vfs.git tree.
+Patches in the vfs.blocksize branch should appear in linux-next soon.
 
-It can be fixed by changing to use the private xfstests_statx()
-implementation, same as in stat_test.c.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-I am not sure how elegant this is, but that's the easy fix.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> +               fprintf(stderr, "%s: statx(STATX_MNT_ID): %m\n", fname);
-> +               return EXIT_FAILURE;
-> +       }
-> +       if (!(statxbuf.stx_mask & STATX_MNT_ID)) {
-> +               fprintf(stderr, "%s: no STATX_MNT_ID in stx_mask\n", fnam=
-e);
-> +               return EXIT_FAILURE;
-> +       }
-> +       statx_mntid_short =3D statxbuf.stx_mnt_id;
-> +
-> +       if (!skip_mntid_unique) {
-> +               if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID_UNIQUE, &statx=
-buf) < 0) {
-> +                       fprintf(stderr, "%s: statx(STATX_MNT_ID_UNIQUE): =
-%m\n", fname);
-> +                       return EXIT_FAILURE;
-> +               }
-> +               /*
-> +                * STATX_MNT_ID_UNIQUE was added fairly recently in Linux=
- 6.8, so if the
-> +                * kernel doesn't give us a unique mount ID just skip it.
-> +                */
-> +               if ((skip_mntid_unique |=3D !(statxbuf.stx_mask & STATX_M=
-NT_ID_UNIQUE)))
-> +                       printf("statx(STATX_MNT_ID_UNIQUE) not supported =
-by running kernel -- skipping unique mount ID test\n");
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-This verbose print breaks all existing "exportfs" tests which do not
-expect it in the golden output.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.blocksize
 
-I understand that silently ignoring the failure is not good, but I also
-would like to add this test coverage to all the existing tests.
-
-One solution is to resurrect the command line option -M from v1,
-but instead of meaning "test unique mount id" let it mean
-"do not allow to skip unique mount id" test.
-
-Then you can add a new test that runs open_by_handle -M, but also
-implement a helper _require_unique_mntid similar to _require_btime
-which is needed for the new test to run only on new kernels.
-
-I'm sorry for this complication, but fstest is a testsuite that runs on
-disto and stable kernels as well and we need to allow test coverage
-of new features along with stability of the test env.
-
-Thanks,
-Amir.
+[1/2] iomap: fix handling of dirty folios over unwritten extents
+      https://git.kernel.org/vfs/vfs/c/e19d398f4eb8
+[2/2] iomap: make zero range flush conditional on unwritten mappings
+      https://git.kernel.org/vfs/vfs/c/2dbdb9dbad46
 
