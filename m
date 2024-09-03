@@ -1,102 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-28362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9909B969C36
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 13:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015A5969D04
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 14:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 515DD2859AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 11:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF611F25DD1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 12:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E7E1A42A5;
-	Tue,  3 Sep 2024 11:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539481C9857;
+	Tue,  3 Sep 2024 12:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YG0M8Hwn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pahrHPGM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YG0M8Hwn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pahrHPGM"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="PsMcUtNh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA3D1A42C2
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 11:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0581C984C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 12:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725363765; cv=none; b=t7WfDBmpyNYO2rd00f8bB/TpB92tqNPzDXZ8XYE79/XVsYKbYdVXNVCQ+hQMkOKGo4teQtcb7BbqfUaiyM+TUnrKw31CvoUm155k9FlOKRMIUc94zxdxf3kbmufN8s5V1kWIkI7gJTRsxlksgey0f5/N2T8rhO9skLqbkG/QvdY=
+	t=1725365355; cv=none; b=B2quEqgbCF7PtS6hzIEjn1evhTa3PDaxfRzBBFG/Ho7l6nnh9VEXXVFoKmTVad/xm5ofUBxUMayBZHoOcij3MQcv5Nx6wAJ+CPu5LBB4cFL0fz3lJpWHrFux92P7Tn4je0gduNwWPMdshDpl+gBaEoh1HpziIeBuCnw3HsCAgpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725363765; c=relaxed/simple;
-	bh=t8hIi1s0rcKm0MP/2W9g/Jtc73c3vxFgJpE4RUP4LpE=;
+	s=arc-20240116; t=1725365355; c=relaxed/simple;
+	bh=FuldmmtFdPC+wAYHdv/1mRuo2K3eRTALSRwCK32AJ/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XqYWtk4F54EMaRN9udXLfo38g97Ovrn0r5HdGm8/6TI9fqbmdcD/32CSGDZwjf3adl+K7ssR60XRdelmqqaEVixozyxX/MHYt+qQHdMzl3PxS9ZSIwBjS/qVtWr0d29LxDD94uqJX2QSRR1vqzuPrHGkxRzevmL658jeJSA9orM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YG0M8Hwn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pahrHPGM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YG0M8Hwn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pahrHPGM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 94E921F444;
-	Tue,  3 Sep 2024 11:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725363761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BL+DiX1NzlLrA8jVkcSnWxDKDascSP+D5ktjsfiIXe8=;
-	b=YG0M8HwnNZOHR5Phzfq1lmYQo5HBXEAjCsuOucHuYBc4RjR9XhG4BoWOnkO/SGarV7IqyP
-	ThRbLbKM+YmwPqA1X8f2vyxGkx/QaDRIONSFcKssChALXiWq3DDS6mRISnHNQvYrFhl9zr
-	IsT3PensNPGTAm6Sry1H0X/sxI3bN+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725363761;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BL+DiX1NzlLrA8jVkcSnWxDKDascSP+D5ktjsfiIXe8=;
-	b=pahrHPGMsgjlRxA0RnAZFHXxzHAfhZ8fxLIxCkoFotcn0jYaxlyDwtx7XR6P1uomudO2rI
-	esoAwvF4Hvybt/DA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725363761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BL+DiX1NzlLrA8jVkcSnWxDKDascSP+D5ktjsfiIXe8=;
-	b=YG0M8HwnNZOHR5Phzfq1lmYQo5HBXEAjCsuOucHuYBc4RjR9XhG4BoWOnkO/SGarV7IqyP
-	ThRbLbKM+YmwPqA1X8f2vyxGkx/QaDRIONSFcKssChALXiWq3DDS6mRISnHNQvYrFhl9zr
-	IsT3PensNPGTAm6Sry1H0X/sxI3bN+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725363761;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BL+DiX1NzlLrA8jVkcSnWxDKDascSP+D5ktjsfiIXe8=;
-	b=pahrHPGMsgjlRxA0RnAZFHXxzHAfhZ8fxLIxCkoFotcn0jYaxlyDwtx7XR6P1uomudO2rI
-	esoAwvF4Hvybt/DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 894F513A52;
-	Tue,  3 Sep 2024 11:42:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Sxx/ITH21ma3JQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 03 Sep 2024 11:42:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4C5D9A096C; Tue,  3 Sep 2024 13:42:41 +0200 (CEST)
-Date: Tue, 3 Sep 2024 13:42:41 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH RFC 10/20] ext2: store cookie in private data
-Message-ID: <20240903114241.4hr7ffb75epgerl6@quack3>
-References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
- <20240830-vfs-file-f_version-v1-10-6d3e4816aa7b@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c6y+9BPzBiqBbGmHXPSi6i58zx9n4gQNpuMI0GQkuoj9WLBKq/n1c07V2sNjnUGKg9SVuauBKoYl/ynULr0ICC3qnyNub152T5ssWkXIKkcSiQSgmJHWiqgFxoI8ai1E9xBAuEYJQ14D5u1h8be2WAOH+3rKP6rdkIsfj7pPoXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=PsMcUtNh; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-102-194.bstnma.fios.verizon.net [173.48.102.194])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 483C8eJg010291
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 08:08:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1725365324; bh=wvFsCU0TSej2kLdx1KJ3MyVCSDOw5N9vk9JSJj72amI=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=PsMcUtNhHJdT1ZIcuDY36+q+TRDoNJYV78+ps5hfNiXONgLYuWJOkNOPvgf35wZsc
+	 c85V7ZQR74NYWPf2Rfo2Cy2OqEZw0QxFKs3sUXMju6idz+eEt+s2BOgHRzelrndypR
+	 l56J/8Q68uvE0ayMT8pLnp21py8P/RaIx31PZ9NuP9LsdbdmXmTjYVU4B4U4R5Z9c+
+	 vw8l8rm5eEGfaZmd8dLc4buAw14uLMCtNxgLOtAGcCbwhyzrvw9d35LzaE/l3b+dZd
+	 S9q1iR+Guqv3te4pJG+jCwWtF+smy/Ujj4gk5vyw6hwNg2Wuy91KgG8dukz/z/rsFq
+	 PbAHuGq64kmrA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 5CD2215C02C4; Tue, 03 Sep 2024 08:08:40 -0400 (EDT)
+Date: Tue, 3 Sep 2024 08:08:40 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        steve.kang@unisoc.com
+Subject: Re: [RFC PATCHv2 1/1] fs: ext4: Don't use CMA for buffer_head
+Message-ID: <20240903120840.GD424729@mit.edu>
+References: <20240823082237.713543-1-zhaoyang.huang@unisoc.com>
+ <20240903022902.GP9627@mit.edu>
+ <CAGWkznEv+F1A878Nw0=di02DHyKxWCvK0B=93o1xjXK6nUyQ3Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,44 +69,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240830-vfs-file-f_version-v1-10-6d3e4816aa7b@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+In-Reply-To: <CAGWkznEv+F1A878Nw0=di02DHyKxWCvK0B=93o1xjXK6nUyQ3Q@mail.gmail.com>
 
-On Fri 30-08-24 15:04:51, Christian Brauner wrote:
-> Store the cookie to detect concurrent seeks on directories in
-> file->private_data.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Tue, Sep 03, 2024 at 04:50:46PM +0800, Zhaoyang Huang wrote:
+> > I'd also sugest only trying to use this is the file system has
+> > journaling enabled.  If the file system is an ext2 file system without
+> > a journal, there's no reason avoid using the CMA region
+> agree.
+> > assume the reason why the buffer cache is trying to use the moveable
+> > flag is because the amount of non-CMA memory might be a precious
+> > resource in some systems.
+>  
+> I don't think so. All migrate type page blocks possess the same
+> position as each other as they could fallback to all migrate types
+> when current fails. I guess the purpose could be to enlarge the scope
+> of available memory as __GFP_MOVEABLE has the capability of recruiting
+> CMA.
 
-Looks good to me. Feel free to add:
+Well, I guess I'm a bit confused why the buffer cache is trying to use
+__GFP_MOVEABLE in the first place.  In general CMA is to allow systems
+to be able to allocate big chunks of memory which have to be
+physically contiguous because the I/O device(s) are too primitive to
+be able to do scatter-gather, right?  So why are we trying to use CMA
+eligible memory for 4k buffer cache pages?  Presumably, because
+there's not enough non-CMA eligible memory?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+After all, using GFP_MOVEABLE memory seems to mean that the buffer
+cache might get thrashed a lot by having a lot of cached disk buffers
+getting ejected from memory to try to make room for some contiguous
+frame buffer memory, which means extra I/O overhead.  So what's the
+upside of using GFP_MOVEABLE for the buffer cache?
 
-								Honza
+Just curious, because in general I'm blessed by not having to use CMA
+in the first place (not having I/O devices too primitive so they can't
+do scatter-gather :-).  So I don't tend to use CMA, and obviously I'm
+missing some of the design considerations behind CMA.  I thought in
+general CMA tends to used in early boot to allocate things like frame
+buffers, and after that CMA doesn't tend to get used at all?  That's
+clearly not the case for you, apparently?
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+
+							- Ted
 
