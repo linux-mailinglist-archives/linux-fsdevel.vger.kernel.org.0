@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-28306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE270969211
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 05:32:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FC4969217
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 05:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 399811F23C28
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 03:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 404ED1C22FFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 03:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDC01CF2B9;
-	Tue,  3 Sep 2024 03:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514881D048F;
+	Tue,  3 Sep 2024 03:31:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6519419F132;
-	Tue,  3 Sep 2024 03:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E601CDA1F;
+	Tue,  3 Sep 2024 03:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725334275; cv=none; b=ewaXts2RW2etAKIoJ2VWt1cG0RcmaqmT4r5ICMlaUXroX0BPnz+/S2bpI/NNfql7PpNIg8aPk9abTJ5daAdNjwQgjWgr0iEg1b5Edathps35xr2yPA5xuf5V527JP1A1VdFo1scUWDDMJ4iRNx/ogJl1T3FOJveQehBpVkYHffU=
+	t=1725334277; cv=none; b=OeIL/3zmiCaUo/weFA9fO60jNQY8x2S/aR2Eyw0NS3FCN6FPasUrHdtxlrjfSCnEFgJ28SHeWVL4NWsmvRU8j9eOx/EPsv+xvMeQiAZXibsL7qigRsVAm/oNt1pNKeC2EOUbSlFWpkho/lJ/m8u6gUDvAeqGsIO4bdlXPTCa63E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725334275; c=relaxed/simple;
-	bh=slnFuklj6lj1tE29VUSBhO4n/LV5KN6v7E73aKWC0t8=;
+	s=arc-20240116; t=1725334277; c=relaxed/simple;
+	bh=OZ4v8NSQCQQc1aKvMrg4KdEa1TOUPGUStht/1nrH7FE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XxN5/EZyMYddum1cRFoLhM82rKAT8d0dphBaqVP9yAIktYFJDS7eLZQUALQW60pXH4qRspR+MTv0RZ+ewtIuo1T7yVovwmjxkmjzI/zfCEuEFwjr5TXC64SG2GnA/wwrzaFeOyUPIFz4OgZlJ8UZ2fnLhSF9d1H2Hz4PW6FKwIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+	 MIME-Version:Content-Type; b=S+9jwZp0bDPQ4mPDOkxPduj0aKBBFigotNVdFq4Tg2Eycyj/Gb67/ZNpNHTkJvLuDml94edzmjZk+0ESXEZUUx3scGhQ6YcetR3ivEK+ZsknOS/6YWDxYVSPdfbAmvrK2nWcwWo7xtBzEfouTUEiCzmp0wzSjdQCRC5TLZ/6z3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WyWNr1FM9z2DbjD;
-	Tue,  3 Sep 2024 11:30:52 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WyWLx1BsCz1xwrl;
+	Tue,  3 Sep 2024 11:29:13 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id CAF761400D7;
-	Tue,  3 Sep 2024 11:31:10 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 55E8A1402C6;
+	Tue,  3 Sep 2024 11:31:13 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
- 2024 11:31:08 +0800
+ 2024 11:31:10 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -55,9 +55,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
 	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-Subject: [PATCH v2 -next 04/15] mm: vmscan: move vmscan sysctls to its own file
-Date: Tue, 3 Sep 2024 11:30:00 +0800
-Message-ID: <20240903033011.2870608-5-yukaixiong@huawei.com>
+Subject: [PATCH v2 -next 05/15] mm: util: move sysctls into it own files
+Date: Tue, 3 Sep 2024 11:30:01 +0800
+Message-ID: <20240903033011.2870608-6-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240903033011.2870608-1-yukaixiong@huawei.com>
 References: <20240903033011.2870608-1-yukaixiong@huawei.com>
@@ -72,153 +72,219 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-This moves vm_swappiness and zone_reclaim_mode to its own file,
-as part of the kernel/sysctl.c cleaning, also moves some external
-variable declarations and function declarations from include/linux/swap.h
-into mm/internal.h.
+This moves all util related sysctls to its own file, as part of the
+kernel/sysctl.c cleaning, also removes redundant external
+variable declarations and function declarations.
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 Reviewed-by: Kees Cook <kees@kernel.org>
 ---
- include/linux/swap.h |  9 ---------
- kernel/sysctl.c      | 19 -------------------
- mm/internal.h        | 10 ++++++++++
- mm/vmscan.c          | 23 +++++++++++++++++++++++
- 4 files changed, 33 insertions(+), 28 deletions(-)
+ include/linux/mm.h   | 11 --------
+ include/linux/mman.h |  2 --
+ kernel/sysctl.c      | 37 ------------------------
+ mm/util.c            | 67 ++++++++++++++++++++++++++++++++++++++------
+ 4 files changed, 59 insertions(+), 58 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index ca533b478c21..c95fb8d87b05 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -425,19 +425,10 @@ extern int vm_swappiness;
- long remove_mapping(struct address_space *mapping, struct folio *folio);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 99f3c84652d8..93ae80146ee2 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -200,17 +200,6 @@ extern int sysctl_max_map_count;
+ extern unsigned long sysctl_user_reserve_kbytes;
+ extern unsigned long sysctl_admin_reserve_kbytes;
  
- #ifdef CONFIG_NUMA
--extern int node_reclaim_mode;
- extern int sysctl_min_unmapped_ratio;
- extern int sysctl_min_slab_ratio;
--#else
--#define node_reclaim_mode 0
- #endif
- 
--static inline bool node_reclaim_enabled(void)
--{
--	/* Is any node_reclaim_mode bit set? */
--	return node_reclaim_mode & (RECLAIM_ZONE|RECLAIM_WRITE|RECLAIM_UNMAP);
--}
+-extern int sysctl_overcommit_memory;
+-extern int sysctl_overcommit_ratio;
+-extern unsigned long sysctl_overcommit_kbytes;
 -
- void check_move_unevictable_folios(struct folio_batch *fbatch);
+-int overcommit_ratio_handler(const struct ctl_table *, int, void *, size_t *,
+-		loff_t *);
+-int overcommit_kbytes_handler(const struct ctl_table *, int, void *, size_t *,
+-		loff_t *);
+-int overcommit_policy_handler(const struct ctl_table *, int, void *, size_t *,
+-		loff_t *);
+-
+ #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
+ #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
+ #define folio_page_idx(folio, p)	(page_to_pfn(p) - folio_pfn(folio))
+diff --git a/include/linux/mman.h b/include/linux/mman.h
+index bcb201ab7a41..e62ef272d140 100644
+--- a/include/linux/mman.h
++++ b/include/linux/mman.h
+@@ -58,8 +58,6 @@
+ 		| MAP_HUGE_1GB)
  
- extern void __meminit kswapd_run(int nid);
+ extern int sysctl_overcommit_memory;
+-extern int sysctl_overcommit_ratio;
+-extern unsigned long sysctl_overcommit_kbytes;
+ extern struct percpu_counter vm_committed_as;
+ 
+ #ifdef CONFIG_SMP
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 9fad501311a1..184d39944e16 100644
+index 184d39944e16..ad3ac6f6c808 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2061,15 +2061,6 @@ static struct ctl_table vm_table[] = {
- 		.proc_handler	= dirtytime_interval_handler,
- 		.extra1		= SYSCTL_ZERO,
- 	},
+@@ -2030,29 +2030,6 @@ static struct ctl_table kern_table[] = {
+ };
+ 
+ static struct ctl_table vm_table[] = {
 -	{
--		.procname	= "swappiness",
--		.data		= &vm_swappiness,
--		.maxlen		= sizeof(vm_swappiness),
+-		.procname	= "overcommit_memory",
+-		.data		= &sysctl_overcommit_memory,
+-		.maxlen		= sizeof(sysctl_overcommit_memory),
 -		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
+-		.proc_handler	= overcommit_policy_handler,
 -		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_TWO_HUNDRED,
+-		.extra2		= SYSCTL_TWO,
+-	},
+-	{
+-		.procname	= "overcommit_ratio",
+-		.data		= &sysctl_overcommit_ratio,
+-		.maxlen		= sizeof(sysctl_overcommit_ratio),
+-		.mode		= 0644,
+-		.proc_handler	= overcommit_ratio_handler,
+-	},
+-	{
+-		.procname	= "overcommit_kbytes",
+-		.data		= &sysctl_overcommit_kbytes,
+-		.maxlen		= sizeof(sysctl_overcommit_kbytes),
+-		.mode		= 0644,
+-		.proc_handler	= overcommit_kbytes_handler,
 -	},
  	{
- 		.procname	= "drop_caches",
- 		.data		= &sysctl_drop_caches,
-@@ -2117,16 +2108,6 @@ static struct ctl_table vm_table[] = {
+ 		.procname	= "dirtytime_expire_seconds",
+ 		.data		= &dirtytime_expire_interval,
+@@ -2133,20 +2110,6 @@ static struct ctl_table vm_table[] = {
  		.extra1		= SYSCTL_ZERO,
  	},
  #endif
--#ifdef CONFIG_NUMA
 -	{
--		.procname	= "zone_reclaim_mode",
--		.data		= &node_reclaim_mode,
--		.maxlen		= sizeof(node_reclaim_mode),
+-		.procname	= "user_reserve_kbytes",
+-		.data		= &sysctl_user_reserve_kbytes,
+-		.maxlen		= sizeof(sysctl_user_reserve_kbytes),
 -		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
+-		.proc_handler	= proc_doulongvec_minmax,
 -	},
--#endif
- #ifdef CONFIG_MMU
+-	{
+-		.procname	= "admin_reserve_kbytes",
+-		.data		= &sysctl_admin_reserve_kbytes,
+-		.maxlen		= sizeof(sysctl_admin_reserve_kbytes),
+-		.mode		= 0644,
+-		.proc_handler	= proc_doulongvec_minmax,
+-	},
+ #ifdef CONFIG_HAVE_ARCH_MMAP_RND_BITS
  	{
- 		.procname	= "mmap_min_addr",
-diff --git a/mm/internal.h b/mm/internal.h
-index 44c8dec1f0d7..482e63d70d96 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1029,9 +1029,13 @@ static inline void mminit_verify_zonelist(void)
- #define NODE_RECLAIM_SUCCESS	1
+ 		.procname	= "mmap_rnd_bits",
+diff --git a/mm/util.c b/mm/util.c
+index 4f1275023eb7..27ae0365f5f7 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -12,6 +12,7 @@
+ #include <linux/security.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
++#include <linux/sysctl.h>
+ #include <linux/mman.h>
+ #include <linux/hugetlb.h>
+ #include <linux/vmalloc.h>
+@@ -902,14 +903,16 @@ int folio_mc_copy(struct folio *dst, struct folio *src)
+ EXPORT_SYMBOL(folio_mc_copy);
  
- #ifdef CONFIG_NUMA
-+extern int node_reclaim_mode;
+ int sysctl_overcommit_memory __read_mostly = OVERCOMMIT_GUESS;
+-int sysctl_overcommit_ratio __read_mostly = 50;
+-unsigned long sysctl_overcommit_kbytes __read_mostly;
++static int sysctl_overcommit_ratio __read_mostly = 50;
++static unsigned long sysctl_overcommit_kbytes __read_mostly;
+ int sysctl_max_map_count __read_mostly = DEFAULT_MAX_MAP_COUNT;
+ unsigned long sysctl_user_reserve_kbytes __read_mostly = 1UL << 17; /* 128MB */
+ unsigned long sysctl_admin_reserve_kbytes __read_mostly = 1UL << 13; /* 8MB */
+ 
+-int overcommit_ratio_handler(const struct ctl_table *table, int write, void *buffer,
+-		size_t *lenp, loff_t *ppos)
++#ifdef CONFIG_SYSCTL
 +
- extern int node_reclaim(struct pglist_data *, gfp_t, unsigned int);
- extern int find_next_best_node(int node, nodemask_t *used_node_mask);
- #else
-+#define node_reclaim_mode 0
-+
- static inline int node_reclaim(struct pglist_data *pgdat, gfp_t mask,
- 				unsigned int order)
++static int overcommit_ratio_handler(const struct ctl_table *table, int write,
++				void *buffer, size_t *lenp, loff_t *ppos)
  {
-@@ -1043,6 +1047,12 @@ static inline int find_next_best_node(int node, nodemask_t *used_node_mask)
- }
- #endif
+ 	int ret;
  
-+static inline bool node_reclaim_enabled(void)
-+{
-+	/* Is any node_reclaim_mode bit set? */
-+	return node_reclaim_mode & (RECLAIM_ZONE|RECLAIM_WRITE|RECLAIM_UNMAP);
-+}
-+
- /*
-  * mm/memory-failure.c
-  */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a9b6a8196f95..b736fa322935 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -7373,6 +7373,28 @@ void __meminit kswapd_stop(int nid)
- 	pgdat_kswapd_unlock(pgdat);
+@@ -924,8 +927,8 @@ static void sync_overcommit_as(struct work_struct *dummy)
+ 	percpu_counter_sync(&vm_committed_as);
  }
  
-+static struct ctl_table vmscan_sysctl_table[] = {
+-int overcommit_policy_handler(const struct ctl_table *table, int write, void *buffer,
+-		size_t *lenp, loff_t *ppos)
++static int overcommit_policy_handler(const struct ctl_table *table, int write,
++				void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	struct ctl_table t;
+ 	int new_policy = -1;
+@@ -960,8 +963,8 @@ int overcommit_policy_handler(const struct ctl_table *table, int write, void *bu
+ 	return ret;
+ }
+ 
+-int overcommit_kbytes_handler(const struct ctl_table *table, int write, void *buffer,
+-		size_t *lenp, loff_t *ppos)
++static int overcommit_kbytes_handler(const struct ctl_table *table, int write,
++				void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	int ret;
+ 
+@@ -971,6 +974,54 @@ int overcommit_kbytes_handler(const struct ctl_table *table, int write, void *bu
+ 	return ret;
+ }
+ 
++static struct ctl_table util_sysctl_table[] = {
 +	{
-+		.procname	= "swappiness",
-+		.data		= &vm_swappiness,
-+		.maxlen		= sizeof(vm_swappiness),
++		.procname	= "overcommit_memory",
++		.data		= &sysctl_overcommit_memory,
++		.maxlen		= sizeof(sysctl_overcommit_memory),
 +		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
++		.proc_handler	= overcommit_policy_handler,
 +		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_TWO_HUNDRED,
++		.extra2		= SYSCTL_TWO,
 +	},
-+#ifdef CONFIG_NUMA
 +	{
-+		.procname	= "zone_reclaim_mode",
-+		.data		= &node_reclaim_mode,
-+		.maxlen		= sizeof(node_reclaim_mode),
++		.procname	= "overcommit_ratio",
++		.data		= &sysctl_overcommit_ratio,
++		.maxlen		= sizeof(sysctl_overcommit_ratio),
 +		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+	}
-+#endif
++		.proc_handler	= overcommit_ratio_handler,
++	},
++	{
++		.procname	= "overcommit_kbytes",
++		.data		= &sysctl_overcommit_kbytes,
++		.maxlen		= sizeof(sysctl_overcommit_kbytes),
++		.mode		= 0644,
++		.proc_handler	= overcommit_kbytes_handler,
++	},
++	{
++		.procname	= "user_reserve_kbytes",
++		.data		= &sysctl_user_reserve_kbytes,
++		.maxlen		= sizeof(sysctl_user_reserve_kbytes),
++		.mode		= 0644,
++		.proc_handler	= proc_doulongvec_minmax,
++	},
++	{
++		.procname	= "admin_reserve_kbytes",
++		.data		= &sysctl_admin_reserve_kbytes,
++		.maxlen		= sizeof(sysctl_admin_reserve_kbytes),
++		.mode		= 0644,
++		.proc_handler	= proc_doulongvec_minmax,
++	},
 +};
 +
- static int __init kswapd_init(void)
- {
- 	int nid;
-@@ -7380,6 +7402,7 @@ static int __init kswapd_init(void)
- 	swap_setup();
- 	for_each_node_state(nid, N_MEMORY)
-  		kswapd_run(nid);
-+	register_sysctl_init("vm", vmscan_sysctl_table);
- 	return 0;
- }
- 
++static int __init init_vm_util_sysctls(void)
++{
++	register_sysctl_init("vm", util_sysctl_table);
++	return 0;
++}
++subsys_initcall(init_vm_util_sysctls);
++#endif /* CONFIG_SYSCTL */
++
+ /*
+  * Committed memory limit enforced when OVERCOMMIT_NEVER policy is used
+  */
 -- 
 2.25.1
 
