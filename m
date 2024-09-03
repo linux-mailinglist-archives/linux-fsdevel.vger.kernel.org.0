@@ -1,142 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-28301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3B63969040
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 01:01:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED93C969172
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 04:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41699B26483
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2024 23:01:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768B3B21B74
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 02:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6322E19341B;
-	Mon,  2 Sep 2024 22:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC961CDA2A;
+	Tue,  3 Sep 2024 02:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="b4153IEy"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Pq+oxpwE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56906193404;
-	Mon,  2 Sep 2024 22:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9121CDA1E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 02:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725317761; cv=none; b=ITcCw6A9GCM6ssPgZKPGlbcubwlGLVAOGqnOu3eYKJ+oIqARBzNrn6MlwYHPPI/iAiwgrHB2cfCP0A3JB8CkPSOnEB9wbcZz2mm1o0tS8mDGQDi6o1Z+L8W7XblFlnLq4qb+/XbIRglHwOHP88M8Sqlgw9oflN+6UX90oy8gvIM=
+	t=1725330583; cv=none; b=CGUU4DDv4HsBbiRwMs5MKj6/fGNdqsAmWFGj7lF9WC9cV85/k9/n9abzqVQDsKYd532n7ClhTcAcwR7QH7Rd89ziUe5IRG1LGzG/+6y2sQC3wkrFdnMjf+6Bvi4/OZXRYvBqK0xwk6XoqPgzeBJKezfUKThMCENzga6+B8lTwp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725317761; c=relaxed/simple;
-	bh=SGEJQAX7zN+2ZikPoQ/1/lVDHKXUFqezT0IpKco/jLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YppVpw0hHo7fQ0SbFMWkLZfPl9exx2GKvAuPLZ8WeVHe9fmSP36asfPaTpVwFzsGNUhyEIcC6PkyM3ZqBFJ9lap6mxr1ZsXqpTmvzqAluUwcdqqNu0L3mj9NDnd/FQxfY6I9uT/PwL3+shp6gURJXyODJ8V241NdFBxrxkM8JsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=b4153IEy; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2uckVKN0pdzCghR0p6/g82d2/8anRVmY8PvlKYt2nuo=; b=b4153IEyOlT24sPlLCTltO9k17
-	8ORGs8pUbsZjsP8G/G7rTOVrboU7vVIZneJ8WVG/79knVk9jBbZVADQQB9xZ0+HNLJ6zNE+AJloa3
-	PzYgotO6CNgL/5xQHs65xcK9qG4aDJXgP3vQiRQgSqUDm4kSCZPpRjEkgGosgomMKpsSp/rAt+sLx
-	dNhEyyZ5vXhUHhbeICkiJlGkoJJ7dvij0gzxUPN98AoIcZgUhtSkxTe3cOBhZJVkr/hvSL4/H53/Q
-	yyu6BowILx2MdeuMEF45JsXlZjoCPhaXUvslbUt7A0BEuA0KJRYHMOU2FokYx1/TWh/02jvYm/pPJ
-	S24Apbjw==;
-Received: from [177.172.122.98] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1slFxg-008VrL-3m; Tue, 03 Sep 2024 00:55:52 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com,
-	Christoph Hellwig <hch@lst.de>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v2 8/8] docs: tmpfs: Add casefold options
-Date: Mon,  2 Sep 2024 19:55:10 -0300
-Message-ID: <20240902225511.757831-9-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240902225511.757831-1-andrealmeid@igalia.com>
-References: <20240902225511.757831-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1725330583; c=relaxed/simple;
+	bh=0ApxJd+RU8PA+dLnmn7VPvgJs4YfdR2HY5d6tUj+Se8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRQIB+IyiyYfHWznqD8eupAuijh8mUm9CtkkL2BfuofziFHq2gVm0uvSko9YI9y3laREvY+RGvrJsgVpqZbEI8x5f0bOsb4ChozGcGvrYOqg5BX9fzqqbHOha7XXh1Q9O3UBFXU3DvcBWnsbD/gi/2V6z1G9u0thlky1YU4sf+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Pq+oxpwE; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4832T3h7012080
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Sep 2024 22:29:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1725330547; bh=5gGppsPkg9B+A5bJqi2mrS/omhc43hirzEp0aJT7iFM=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Pq+oxpwEw3KXFUdm/coi7wcIyjfh8fgNzoh6HL2121zcJu26Y05SYlIfqL4lWB+HG
+	 yhj2ipCFNYA6WWuDemyefpHVhgbTrfn16TV0IUG/29IFKydtNpeRI7JLMjDcHHIG7b
+	 QKA/68VeWvQMluvZhdArlG/ox6Grr5/AxL3ipCxH5al6kVrOt+SkVgMlqYGul5+w3u
+	 wKm11GLpq/NCfpvgcEncK5ly3Me87u875dNxDhzU02EystI8SF37IsvzVxlRG5PVQO
+	 wIc5E9sDh3tdBgVT6FPXKIsfhKxwIjgnM9fIBmPVdPjWxYdlVaI0eTw0cIFtEG9TJM
+	 bA2p/upTKAVyw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 03DBF15C02C4; Mon, 02 Sep 2024 22:29:02 -0400 (EDT)
+Date: Mon, 2 Sep 2024 22:29:02 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
+Subject: Re: [RFC PATCHv2 1/1] fs: ext4: Don't use CMA for buffer_head
+Message-ID: <20240903022902.GP9627@mit.edu>
+References: <20240823082237.713543-1-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823082237.713543-1-zhaoyang.huang@unisoc.com>
 
-Document mounting options for casefold support in tmpfs.
+On Fri, Aug 23, 2024 at 04:22:37PM +0800, zhaoyang.huang wrote:
+>  
+> +#ifndef CONFIG_CMA
+>  	bh = sb_getblk(inode->i_sb, map.m_pblk);
+> +#else
+> +	bh = sb_getblk_gfp(inode->i_sb, map.m_pblk, 0);
+> +#endif
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- Documentation/filesystems/tmpfs.rst | 37 +++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+So all of these patches to try to work around your issue with CMA are
+a bit ugly.  But passing in a GFP mask of zero is definitely not the
+right way to go about thing, since there might be certain GFP masks
+that are required by a particular block device.  What I think you are
+trying to do is to avoid setting the __GFP_MOVEABLE flag.  So in that
+case, in the CMA path something like this is what you want:
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 56a26c843dbe..ce24fb16979a 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -241,6 +241,41 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
- will give you tmpfs instance on /mytmpfs which can allocate 10GB
- RAM/SWAP in 10240 inodes and it is only accessible by root.
- 
-+tmpfs has the following mounting options for case-insesitive lookups support:
-+
-+================= ==============================================================
-+casefold          Enable casefold support at this mount point using the given
-+                  argument as the encoding standard. Currently only utf8
-+                  encodings are supported.
-+strict_encoding   Enable strict encoding at this mount point (disabled by
-+                  default). This means that invalid sequences will be rejected
-+                  by the file system.
-+================= ==============================================================
-+
-+Note that this option doesn't enable casefold by default; one needs to set
-+casefold flag per directory, setting the +F attribute in an empty directory. New
-+directories within a casefolded one will inherit the flag.
-+
-+Example::
-+
-+    $ mount -t tmpfs -o casefold=utf8-12.1.0,cf_strict fs_name /mytmpfs
-+    $ cd /mytmpfs # case-sensitive by default
-+    $ touch a; touch A
-+    $ ls
-+    A  a
-+    $ mkdir B
-+    $ cd b
-+    cd: The directory 'b' does not exist
-+    $ mkdir casefold_dir
-+    $ chattr +F casefold_dir/ # marking it as case-insensitive
-+    $ cd
-+    $ touch dir/a; touch dir/A
-+    $ ls dir
-+    a
-+    $ mkdir B
-+    $ cd b
-+    $ pwd
-+    /home/user/mytmpfs/casefold_dir/B
- 
- :Author:
-    Christoph Rohland <cr@sap.com>, 1.12.01
-@@ -250,3 +285,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by root.
-    KOSAKI Motohiro, 16 Mar 2010
- :Updated:
-    Chris Down, 13 July 2020
-+:Updated:
-+   André Almeida, 23 Aug 2024
--- 
-2.46.0
+	bh = getblk_unmoveable(sb->s_bdev, map.m_pblk, sb->s_blocksize);
 
+I'd also sugest only trying to use this is the file system has
+journaling enabled.  If the file system is an ext2 file system without
+a journal, there's no reason avoid using the CMA region --- and I
+assume the reason why the buffer cache is trying to use the moveable
+flag is because the amount of non-CMA memory might be a precious
+resource in some systems.
+
+				- Ted
 
