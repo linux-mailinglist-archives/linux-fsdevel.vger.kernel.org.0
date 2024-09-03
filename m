@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-28389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3FD96A03F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 16:22:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7859896A040
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 16:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC1F1C22F4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 14:22:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD1C5B23AF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 14:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C914AEE5;
-	Tue,  3 Sep 2024 14:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9731A80C02;
+	Tue,  3 Sep 2024 14:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7WjnjG6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQJr2KSY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E736F315
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 14:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047186F315
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 14:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373345; cv=none; b=XgGJdaay4bwvWj27kWV8mgfMdFvmEJ2qwocLRS9tSkpHSpmvF6ZrCdEPq0c2Bk751dXSAHQ/HRLik6Pb29wy5XfWVAYUmtER50ciPltGmfpF3TxN8j2gzRRo1XBbFwOMchhJ8K2mE65NtpMV8HymHxvh2p3GIGzXUAmkUinZGrQ=
+	t=1725373348; cv=none; b=nyCnJZziJAYiq1y8ZT2KhFf4xjfPXUsyvmJFmrM/i7IidppEusKsRkxmax9Kuyp779N1MFYjAgdO7GoZtL1MlMbPJYauzKRoGmnSI7IQYKxUY4VuMWSroJK0PEn2TaNcGW7TzQxGibp/+KDX5Pd8lrmSZbqfVTumEqp6E38BqKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373345; c=relaxed/simple;
-	bh=aQiIKK7aypFaSSN7lgRJDvRI7/Ip5hPvhqIbIRsPc90=;
+	s=arc-20240116; t=1725373348; c=relaxed/simple;
+	bh=2h5DOrmEliYOEskMyLdOlS+a422lNEm7iLYnRuCn078=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nMtsxvdnndDLfZff0ypP9IzQsj1VuEjfb6sGMB1QNyWUROF//UXV8uLrr2ATtcLHCrA/r4bATvIhlQeMKOGP/Wb21Bf778sHHw4MzJdSIhM0IEi7t90hqujLnUT7Wrsd57WUKOYyKTc7d4QIXbmI1VVVS/JEAMwR0SFQH3XZoaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7WjnjG6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA9EC4CEC8;
-	Tue,  3 Sep 2024 14:22:23 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=QEs10oCvu6StLC8czoUi8Aif5yMdRqqN6mIraI4sFJLw4HOa/Ai6GhLkatiEMzbr5zCszJJz3RHTFyAmi0gZzBqAUFUuthg/TGaL+EWXZeMKnC6cxIyTwQPc37iXqRCGQM/42H+SzpcwO9pZpjR1Dhu5Dden0P/wqiUjc9a+d/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQJr2KSY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D032DC4CEC7;
+	Tue,  3 Sep 2024 14:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725373345;
-	bh=aQiIKK7aypFaSSN7lgRJDvRI7/Ip5hPvhqIbIRsPc90=;
+	s=k20201202; t=1725373347;
+	bh=2h5DOrmEliYOEskMyLdOlS+a422lNEm7iLYnRuCn078=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=j7WjnjG6DU4tzE1BuBWHzDqxuj8IxdxSm8g0U15AEnbMBM8wttB1Y3G09ev5GLai5
-	 W2xu715Lw9oCHM2xxc3zKsxgwCJlvcnbklI8orrNlXFMpmDE+/+EIkXe2HdsgB2AUw
-	 7w5NIffNI05CLpefEIII4pV9TAVZt8+LH7bvSgW2lsoZFWpV/vjxSr8pH3VqHi15qD
-	 cQeUJebohkTHwEIHi5xUjNX8zFobHPdwFYu42KnOQBePw5MBtvUmDOOV8oi62Mo/Vk
-	 oziANUL3cw4Sh1Czk/9uSWtD9W51cHqOWLNO+FLe98JB/bZZtu4tHx/HPWN5Wnm3XP
-	 LAQw2zTFSQMBQ==
+	b=iQJr2KSYx/rknS/FfpX+JxiEROKLTM5PnAYZ+o7XEVv6NgP3Ss7tjJhNVLJDjAYmg
+	 V1w3/5f+g0CdyNTOTYOk+MyMT016PpeTQSQ9CVWlQjEmYiiidRhd5oBc/sSsG1zBIa
+	 e2QfgbzfX02r9yFo7QRX2G58gqj7RaPb+Tur00aybamWoo1hRqz8NyWQLbQXnL5bTq
+	 9TJ8oEHrOK+F3C/N/OCCnqLEonwIvdHgPRKO+9swiWGr5ikMlWxa7lOaY4WvE2YHLg
+	 NAXHIZBEH3+euJk3IsDszxZJDMupI0XClXyaDEV4YW6f5o0YzZ0GNF3IuO1vHXJZhy
+	 CdnYHOYX2nb8w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 03 Sep 2024 16:20:42 +0200
-Subject: [PATCH v2 01/15] sl*b:
- s/__kmem_cache_create/do_kmem_cache_create/g
+Date: Tue, 03 Sep 2024 16:20:43 +0200
+Subject: [PATCH v2 02/15] slab: add struct kmem_cache_args
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240903-work-kmem_cache_args-v2-1-76f97e9a4560@kernel.org>
+Message-Id: <20240903-work-kmem_cache_args-v2-2-76f97e9a4560@kernel.org>
 References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
 In-Reply-To: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
@@ -63,72 +62,161 @@ To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1917; i=brauner@kernel.org;
- h=from:subject:message-id; bh=aQiIKK7aypFaSSN7lgRJDvRI7/Ip5hPvhqIbIRsPc90=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdl55994PxvuwGq4XPVzybc53nc+GFXI8vs3/9VhDNM
- exdODGMt6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAidu8Z/mn7pr9d4vP/0D4O
- ibK9/vqX9kjKvtg1wTfqWyoXZ/XLma6MDPcTjRjfBf0+qqr9bb7gudfOv1ayefxlvdyk9OXzX5W
- HSWwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5053; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=2h5DOrmEliYOEskMyLdOlS+a422lNEm7iLYnRuCn078=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdl559e5Opz1zVj/eFzHY8dLq47YuR2uY7dlX5wfVT8
+ wO/B7+80lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRgrmMDJvP/rf4f7iw78yF
+ f8xdB6L/NnxZxs9957/CyR9zXj9dJerAyDC/eIqDhMKq5ZGlvj+2LF9+QOFBocTslZo74hdGpq9
+ /+YcBAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Free up reusing the double-underscore variant for follow-up patches.
-
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- mm/slab.h        | 2 +-
- mm/slab_common.c | 4 ++--
- mm/slub.c        | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/slab.h | 21 ++++++++++++++++
+ mm/slab_common.c     | 67 +++++++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 72 insertions(+), 16 deletions(-)
 
-diff --git a/mm/slab.h b/mm/slab.h
-index a6051385186e..684bb48c4f39 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -424,7 +424,7 @@ kmalloc_slab(size_t size, kmem_buckets *b, gfp_t flags, unsigned long caller)
- gfp_t kmalloc_fix_flags(gfp_t flags);
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 5b2da2cf31a8..79d8c8bca4a4 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -240,6 +240,27 @@ struct mem_cgroup;
+  */
+ bool slab_is_available(void);
  
- /* Functions provided by the slab allocators */
--int __kmem_cache_create(struct kmem_cache *, slab_flags_t flags);
-+int do_kmem_cache_create(struct kmem_cache *, slab_flags_t flags);
- 
- void __init kmem_cache_init(void);
- extern void create_boot_cache(struct kmem_cache *, const char *name,
++/**
++ * @align: The required alignment for the objects.
++ * @useroffset: Usercopy region offset
++ * @usersize: Usercopy region size
++ * @freeptr_offset: Custom offset for the free pointer in RCU caches
++ * @use_freeptr_offset: Whether a @freeptr_offset is used
++ * @ctor: A constructor for the objects.
++ */
++struct kmem_cache_args {
++	unsigned int align;
++	unsigned int useroffset;
++	unsigned int usersize;
++	unsigned int freeptr_offset;
++	bool use_freeptr_offset;
++	void (*ctor)(void *);
++};
++
++struct kmem_cache *__kmem_cache_create_args(const char *name,
++					    unsigned int object_size,
++					    struct kmem_cache_args *args,
++					    slab_flags_t flags);
+ struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+ 			unsigned int align, slab_flags_t flags,
+ 			void (*ctor)(void *));
 diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 95db3702f8d6..91e0e36e4379 100644
+index 91e0e36e4379..0f13c045b8d1 100644
 --- a/mm/slab_common.c
 +++ b/mm/slab_common.c
-@@ -234,7 +234,7 @@ static struct kmem_cache *create_cache(const char *name,
- 	s->useroffset = useroffset;
- 	s->usersize = usersize;
- #endif
--	err = __kmem_cache_create(s, flags);
-+	err = do_kmem_cache_create(s, flags);
- 	if (err)
- 		goto out_free_cache;
- 
-@@ -778,7 +778,7 @@ void __init create_boot_cache(struct kmem_cache *s, const char *name,
- 	s->usersize = usersize;
- #endif
- 
--	err = __kmem_cache_create(s, flags);
-+	err = do_kmem_cache_create(s, flags);
- 
- 	if (err)
- 		panic("Creation of kmalloc slab %s size=%u failed. Reason %d\n",
-diff --git a/mm/slub.c b/mm/slub.c
-index 9aa5da1e8e27..23d9d783ff26 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -5902,7 +5902,7 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
- 	return s;
+@@ -248,14 +248,24 @@ static struct kmem_cache *create_cache(const char *name,
+ 	return ERR_PTR(err);
  }
  
--int __kmem_cache_create(struct kmem_cache *s, slab_flags_t flags)
-+int do_kmem_cache_create(struct kmem_cache *s, slab_flags_t flags)
+-static struct kmem_cache *
+-do_kmem_cache_create_usercopy(const char *name,
+-		  unsigned int size, unsigned int freeptr_offset,
+-		  unsigned int align, slab_flags_t flags,
+-		  unsigned int useroffset, unsigned int usersize,
+-		  void (*ctor)(void *))
++/**
++ * __kmem_cache_create_args - Create a kmem cache
++ * @name: A string which is used in /proc/slabinfo to identify this cache.
++ * @object_size: The size of objects to be created in this cache.
++ * @args: Arguments for the cache creation (see struct kmem_cache_args).
++ * @flags: See %SLAB_* flags for an explanation of individual @flags.
++ *
++ * Cannot be called within a interrupt, but can be interrupted.
++ *
++ * Return: a pointer to the cache on success, NULL on failure.
++ */
++struct kmem_cache *__kmem_cache_create_args(const char *name,
++					    unsigned int object_size,
++					    struct kmem_cache_args *args,
++					    slab_flags_t flags)
  {
+ 	struct kmem_cache *s = NULL;
++	unsigned int freeptr_offset = UINT_MAX;
+ 	const char *cache_name;
  	int err;
  
+@@ -275,7 +285,7 @@ do_kmem_cache_create_usercopy(const char *name,
+ 
+ 	mutex_lock(&slab_mutex);
+ 
+-	err = kmem_cache_sanity_check(name, size);
++	err = kmem_cache_sanity_check(name, object_size);
+ 	if (err) {
+ 		goto out_unlock;
+ 	}
+@@ -296,12 +306,14 @@ do_kmem_cache_create_usercopy(const char *name,
+ 
+ 	/* Fail closed on bad usersize of useroffset values. */
+ 	if (!IS_ENABLED(CONFIG_HARDENED_USERCOPY) ||
+-	    WARN_ON(!usersize && useroffset) ||
+-	    WARN_ON(size < usersize || size - usersize < useroffset))
+-		usersize = useroffset = 0;
+-
+-	if (!usersize)
+-		s = __kmem_cache_alias(name, size, align, flags, ctor);
++	    WARN_ON(!args->usersize && args->useroffset) ||
++	    WARN_ON(object_size < args->usersize ||
++		    object_size - args->usersize < args->useroffset))
++		args->usersize = args->useroffset = 0;
++
++	if (!args->usersize)
++		s = __kmem_cache_alias(name, object_size, args->align, flags,
++				       args->ctor);
+ 	if (s)
+ 		goto out_unlock;
+ 
+@@ -311,9 +323,11 @@ do_kmem_cache_create_usercopy(const char *name,
+ 		goto out_unlock;
+ 	}
+ 
+-	s = create_cache(cache_name, size, freeptr_offset,
+-			 calculate_alignment(flags, align, size),
+-			 flags, useroffset, usersize, ctor);
++	if (args->use_freeptr_offset)
++		freeptr_offset = args->freeptr_offset;
++	s = create_cache(cache_name, object_size, freeptr_offset,
++			 calculate_alignment(flags, args->align, object_size),
++			 flags, args->useroffset, args->usersize, args->ctor);
+ 	if (IS_ERR(s)) {
+ 		err = PTR_ERR(s);
+ 		kfree_const(cache_name);
+@@ -335,6 +349,27 @@ do_kmem_cache_create_usercopy(const char *name,
+ 	}
+ 	return s;
+ }
++EXPORT_SYMBOL(__kmem_cache_create_args);
++
++static struct kmem_cache *
++do_kmem_cache_create_usercopy(const char *name,
++                 unsigned int size, unsigned int freeptr_offset,
++                 unsigned int align, slab_flags_t flags,
++                 unsigned int useroffset, unsigned int usersize,
++                 void (*ctor)(void *))
++{
++	struct kmem_cache_args kmem_args = {
++		.align			= align,
++		.use_freeptr_offset	= freeptr_offset != UINT_MAX,
++		.freeptr_offset		= freeptr_offset,
++		.useroffset		= useroffset,
++		.usersize		= usersize,
++		.ctor			= ctor,
++	};
++
++	return __kmem_cache_create_args(name, size, &kmem_args, flags);
++}
++
+ 
+ /**
+  * kmem_cache_create_usercopy - Create a cache with a region suitable
 
 -- 
 2.45.2
