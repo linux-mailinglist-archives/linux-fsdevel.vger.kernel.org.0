@@ -1,170 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-28320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F13969352
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 07:48:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D319693C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 08:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B550B23174
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 05:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 357CF286193
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 06:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFFA1CEABC;
-	Tue,  3 Sep 2024 05:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0091D54CB;
+	Tue,  3 Sep 2024 06:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsLnkosh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGnz37Ym"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E91C36;
-	Tue,  3 Sep 2024 05:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491A01CEAD4;
+	Tue,  3 Sep 2024 06:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725342496; cv=none; b=SvXGuN3OV/aFqoF67qQXzNb/QJg4aqtLt2m99QQdE4QApSPCUhebuioZEgMCCq5iGj/vkgnicjf8xdc0hPDmwMJ49a/8Y2N60oebyKH+EJP4c2qQ60kS53IcJPbfwEVvlwBSVM+Ia/DULLaB7ngYNHJ3HlTs17cvGla3rfL4n5c=
+	t=1725345284; cv=none; b=XSKxI0mQGVChBtiI5K+0VCtl+7bn5+9KaTnt41iYFiqNDL70pSnRd3Q7qLlidqgbd0tw2Wf5X+3iqKxr/CGehmFDY7AM0uoZpjOHscfCRjEeMpDIJMS8CufNXYjLp2VQhayxsiNl6QWj3YzKwME36dMQnMVq5scmeKiVGHSo0vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725342496; c=relaxed/simple;
-	bh=thvWb6/FcNkw42kpdYrjOO/9GBTLKOCi2h+FLP38Z9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q2pKKG0Uw7UQp4RbvXM7/NfUmZ60tW8+YGDQiRMOMY2kuzfJ/524DK0mjk2b26KZkLF8Jj0plJrbbuM/KN2y45z56+bIPds9AFfMrADcW58vkR0jHvBzOILC9RWbYKC4oSQyxtRn9oK/KmUE9bjNwLuRrMfgF1+N2rsrr7SibQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsLnkosh; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1725345284; c=relaxed/simple;
+	bh=Wv8Ur0Meq6UKefyBdzxbNxw7WEZwm6adxFTh2bzlHe4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Aoa1h9Jo/KHeyy/uGJO/CBegYm+c4cXN1lSwgKWRWmWitedI5srd/UH/qIxQkjooZYMzkZ2SIHAP8eXgDllNdvlvB+aemiVp2VPtxgyWUAfTqpZjwwj7rK4ees7aMEB5JjQ8fAJ222L8C5H0GRdRp+2f2aOE6B2tF0NsGezfu5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGnz37Ym; arc=none smtp.client-ip=209.85.219.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71433096e89so3788348b3a.3;
-        Mon, 02 Sep 2024 22:48:14 -0700 (PDT)
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6c3551ce5c9so23375876d6.0;
+        Mon, 02 Sep 2024 23:34:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725342493; x=1725947293; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wddDtgNRo6H+L5O7VjLJSxivaqF2zLC8e/VyYLHeRM=;
-        b=CsLnkoshFdxKKuT9ksAlDyrsVwa5l0yxFmbw6y+uVqEuPnNehB3XcquhxXs3xiEVwR
-         IxOCO9epmCj2rWR2OLZdfLE1Ueom3/eXBjNVdKsU1aYVpu6qRDeZRWFnEgp9Wpf2xbNV
-         RTs7HdGp24dIRNKqZB2hZ4UVpsZUlGB+aL47ola5m29yWQaAUocBZ9L6GUv9cHEafy3p
-         FJouLDwLPLe58AEFr4+8FT4NmqBP+apI8YW4H2dwmGP/fBxb2lVH1oUwmhRm7TePQdbH
-         k19hfahdH4lW+pWIj5SD031bSFGeIS/E2oL0kKXX5OBkbUKN5qPYBDsnkSVJnkfbicKL
-         wmvg==
+        d=gmail.com; s=20230601; t=1725345282; x=1725950082; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wv8Ur0Meq6UKefyBdzxbNxw7WEZwm6adxFTh2bzlHe4=;
+        b=FGnz37Ym83SSh+xXFSWYgmezi8MN1ws2SQiCgIcUjmodCwbdnu5bCMRk3lkN1M+SjP
+         HDV7i1dDiPQiHNBsfMO32ylnu2KmqKrAFqFsosTZ97EFaxmr0x4RvU8/eJhpi0TheT81
+         soqpC37Z05p01H2GGFwkThgC+62xCzPMwbdMN9Hn0blScyhMnvlxDNlcw1cQqSjLUos9
+         +6ICSjsMxzvwUuU2b+T3etdrbW+PQH0RXttU7i2R/IDLgK5uN91y3gpNlwK/sAd+X8MN
+         IemUXc+4t3LWvlJdPUy3zhcFla23o0T0SZK9VA5eM7M1ffFjfNgIIk86iZQ+sKNbXNSY
+         t4Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725342493; x=1725947293;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2wddDtgNRo6H+L5O7VjLJSxivaqF2zLC8e/VyYLHeRM=;
-        b=hO5p54k0T+VWPLVXZWdzM3wHpw+nKwcdvPx3nJhJuqDDtD7Kj+kJLII1oYLgt94cIt
-         gW5H438u5NncqjPccCVrzjOlO7ItO6KDuxaAGEYM1ZDvGIEsHxRoe55o4hlNN6ouocIT
-         gj4wEu5A8diHt4mGSQvMTuLjBnJ65hYEKVxecN3MuaKDMm5TFxmfxGEoKqPEuVhwqRGk
-         URNxUai9jy4emarmMA3JyzjqT7TxEYSVHYwl8HCM1W6c5DNHviyNnu1CyMuPLGp6SJ35
-         IbQqWSol5M0/DnaH8kHdGvB57DbaNxBXZsUrl4zuKem5MJqumI4czrFJTy4/m5N7cYjo
-         S0Og==
-X-Forwarded-Encrypted: i=1; AJvYcCUNK6Qqp0bB0YjrMr6rDQ1zdxkqVcscKyDrQW7THOeVYZqsJg2fJYIiNEyUNFys5HY8tVu/rUgIQYvZ@vger.kernel.org, AJvYcCUwHwbueaxuVRPErVNX++tkgqprZ+0/8l+e9KLB6IzhS77U4nZbPVqW8wh1+uofqOVwtneew55xicG4+EFLOw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcmOWQc+UNax6ra6XHqL+H/PNIBikQwMyjh+rDG+LnlQt/7bt6
-	vxcLA2V6Ud7sMZIN8LFpsaqs4G6J19aPpyFl+sk6F/7Dhl7oDGBWPJmrvg==
-X-Google-Smtp-Source: AGHT+IHNIiVRhe866pxn7l8CEtRiXBoW/hHx+m6dOWzSojMn41HgSvRb1iDivSrUDTA4IcDjCmqJhw==
-X-Received: by 2002:a05:6a21:670b:b0:1c0:f648:8574 with SMTP id adf61e73a8af0-1cece520865mr9338847637.29.1725342492990;
-        Mon, 02 Sep 2024 22:48:12 -0700 (PDT)
-Received: from localhost ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152cd57dsm74140175ad.93.2024.09.02.22.48.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 22:48:12 -0700 (PDT)
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	hch@lst.de,
-	Julian Sun <sunjunchao2870@gmail.com>,
-	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-Subject: [PATCH] iomap: clean preallocated blocks in iomap_end() when 0 bytes was written.
-Date: Tue,  3 Sep 2024 13:48:08 +0800
-Message-Id: <20240903054808.126799-1-sunjunchao2870@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1725345282; x=1725950082;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wv8Ur0Meq6UKefyBdzxbNxw7WEZwm6adxFTh2bzlHe4=;
+        b=leUjCHareQfXKdOqpUGkdwZE6zo5FWMiaHW42jPs+A4AHTo2nVSNFhjsWpqzNDZ5Hc
+         OoOSKZASF9SnrulqgM6zlbsmk4PToKGrMxCpQ15vCU8ff0h8BH3vfm2b6KTvtQMMYQM0
+         lwSjy6qOkRIjbbM7HOWPp0VmfAMvAyVGY4l24g1iNXf+nZC0IUFksACZOdAM6wiuKr9y
+         kA+7zcTPoRG+ZCc0P8rgun1SlaoAvuClL5maxR+qAfxREjOHIkS6z2yYfYUODuVBkQxF
+         DGdGuq58cO6jZ8yvSW5IqpWKRiw3dbB7PP86FVOGmAT29Y3hF7LED90H6nkn5RhuWiAq
+         hctA==
+X-Forwarded-Encrypted: i=1; AJvYcCULqNf0xpXBedJTEvEWFQXzk1tBkoZ7ANwcxzUSXncSr4JqnvS0VdnotStYQK2sijX8FVydPPjYG8pytmYQ@vger.kernel.org, AJvYcCVBOtBmzCG/kzi8HHdbA83Twv2P+29BX/sNf+wDbvDiO2fNmQius7rUixBak7ijtj8zSrRorWk/ykpO8rkd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8W6P1MgMFHxnI64WZgAz08e+d3bfG5EnANuQo+czAYwMb4vT1
+	AXl3r0B7Kc2WpMXfZOVVU1TzMZ6S2si0MMooMMhT2+iI496s98LkGBCC9vROWNLNR29hORumgL/
+	6To8MezpTg7SjzsGF/kga2jjpN3c=
+X-Google-Smtp-Source: AGHT+IHv9LNrpQ60gaO44a46ARNnM3HvLJvdxYBhL9WZNaj42n0QReJ1qZyueALt1fVevYfJBw8qoHdjPn97268yrQg=
+X-Received: by 2002:a05:6214:19e1:b0:6c3:69f9:fb49 with SMTP id
+ 6a1803df08f44-6c369fa03d8mr67547076d6.16.1725345282103; Mon, 02 Sep 2024
+ 23:34:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <Zs959Pa5H5WeY5_i@tiehlicka> <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+ <ZtBWxWunhXTh0bhS@tiehlicka> <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+ <ZtCFP5w6yv/aykui@dread.disaster.area> <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
+ <ZtPhAdqZgq6s4zmk@dread.disaster.area> <CALOAHbBEF=i7e+Zet-L3vEyQRcwmOn7b6vmut0-ae8_DQipOAw@mail.gmail.com>
+ <ZtVzP2wfQoJrBXjF@tiehlicka> <CALOAHbAbzJL31jeGfXnbXmbXMpPv-Ak3o3t0tusjs-N-NHisiQ@mail.gmail.com>
+ <ZtWArlHgX8JnZjFm@tiehlicka>
+In-Reply-To: <ZtWArlHgX8JnZjFm@tiehlicka>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 3 Sep 2024 14:34:05 +0800
+Message-ID: <CALOAHbD=mzSBoNqCVf5TTOge4oTZq7Foxdv4H2U1zfBwjNoVKA@mail.gmail.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc allocations
+To: Michal Hocko <mhocko@suse.com>
+Cc: Dave Chinner <david@fromorbit.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, all.
+On Mon, Sep 2, 2024 at 5:09=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrote=
+:
+>
+> On Mon 02-09-24 17:01:12, Yafang Shao wrote:
+> > > I really do not see why GFP_NOFAIL should be any special in this
+> > > specific case.
+> >
+> > I believe there's no way to stop it from looping, even if you
+> > implement a sophisticated user space OOM killer. ;)
+>
+> User space OOM killer should be helping to replenish a free memory and
+> we have some heuristics to help NOFAIL users out with some portion of
+> memory reserves already IIRC. So we do already give them some special
+> treatment in the page allocator path. Not so much in the reclaim path.
 
-Recently, syzbot reported a issue as following:
+When setting GFP_NOFAIL, it's important to not only enable direct
+reclaim but also the OOM killer. In scenarios where swap is off and
+there is minimal page cache, setting GFP_NOFAIL without __GFP_FS can
+result in an infinite loop. In other words, GFP_NOFAIL should not be
+used with GFP_NOFS. Unfortunately, many call sites do combine them.
+For example:
 
-WARNING: CPU: 1 PID: 5222 at fs/iomap/buffered-io.c:727 __iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-WARNING: CPU: 1 PID: 5222 at fs/iomap/buffered-io.c:727 iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-CPU: 1 UID: 0 PID: 5222 Comm: syz-executor247 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2 #0
-RIP: 0010:__iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-RIP: 0010:iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-Call Trace:
- <TASK>
- iomap_unshare_iter fs/iomap/buffered-io.c:1351 [inline]
- iomap_file_unshare+0x460/0x780 fs/iomap/buffered-io.c:1391
- xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
- xfs_file_fallocate+0x6be/0xa50 fs/xfs/xfs_file.c:997
- vfs_fallocate+0x553/0x6c0 fs/open.c:334
- ksys_fallocate fs/open.c:357 [inline]
- __do_sys_fallocate fs/open.c:365 [inline]
- __se_sys_fallocate fs/open.c:363 [inline]
- __x64_sys_fallocate+0xbd/0x110 fs/open.c:363
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2d716a6899
+XFS:
 
-syzbot constructed the following scenario: syzbot called the write()
-system call, passed an illegal pointer, and attempted to write 0x1017
-bytes, resulting in 0 bytes written and returning EFAULT to user
-space. Then, it called the write() system call again, passed another
-illegal pointer, and attempted to write 0xfea7 bytes, resulting in
-0xe00 bytes written. Finally called copy_file_range() sys call and
-fallocate() sys call with FALLOC_FL_UNSHARE_RANGE flag.
+fs/xfs/libxfs/xfs_exchmaps.c: GFP_NOFS | __GFP_NOFAIL
+fs/xfs/xfs_attr_item.c: GFP_NOFS | __GFP_NOFAIL
 
-What happened here is: during the first write, xfs_buffered_write_iomap_begin()
-used preallocated 512 blocks, inserted an extent with a length of 512 and
-reserved 512 blocks in the quota, with the iomap length being 1M.
-However, when the write failed(0 byte was written), only 0x1017 bytes were
-passed to iomap_end() instead of the preallocated 1M bytes/512 blocks.
-This caused only 3 blocks to be unreserved for the quota in iomap_end(),
-instead of 512, and the corresponding extent information also only removed
-3 blocks instead of 512.
+EXT4:
 
-As a result, during the second write, the iomap length was 3 blocks
-instead of the expected 512 blocks, which ultimately triggered the
-issue reported by syzbot in the fallocate() system call.
+fs/ext4/mballoc.c: GFP_NOFS | __GFP_NOFAIL
+fs/ext4/extents.c: GFP_NOFS | __GFP_NOFAIL
 
-To resolve this issue, when a write fails, we should pass
-iomap.length to iomap_end() to indicate it to clean up all
-the resources, rather than just the length requested by the user.
+This seems problematic, but I'm not an FS expert. Perhaps Dave or Ted
+could provide further insight.
 
-This patch has already passed xfstests -g quick test on both xfs
-and ext4 without causing additional failures.
+--
+Regards
 
-Reported-and-tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
-Fixes: f4b896c213f0 ("iomap: add the new iomap_iter model")
-Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
----
- fs/iomap/iter.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-index 79a0614eaab7..6e3f6109cac5 100644
---- a/fs/iomap/iter.c
-+++ b/fs/iomap/iter.c
-@@ -76,7 +76,8 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
- 	int ret;
- 
- 	if (iter->iomap.length && ops->iomap_end) {
--		ret = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
-+		ret = ops->iomap_end(iter->inode, iter->pos,
-+				iter->processed > 0 ? iomap_length(iter) : iter->iomap.length,
- 				iter->processed > 0 ? iter->processed : 0,
- 				iter->flags, &iter->iomap);
- 		if (ret < 0 && !iter->processed)
--- 
-2.39.2
-
+Yafang
 
