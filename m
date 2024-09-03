@@ -1,179 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-28347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BAA8969A3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 12:32:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51941969A51
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 12:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBF5EB23FBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 10:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB631F240CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2024 10:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A661B984F;
-	Tue,  3 Sep 2024 10:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EDD1B984C;
+	Tue,  3 Sep 2024 10:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HoBNECNb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oB2JvQ8i";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HoBNECNb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oB2JvQ8i"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Tzkqhswi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE0D45003
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 10:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B461A0BEC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2024 10:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359515; cv=none; b=Y5HyIrbdVHN3Ri49kwUFidEMjwMBPiHL1WfWeZXiUQvFw7SdS1yG6QfWL4ptskD+4bo8v0FT/7nvJ8PUndBpYpevoJy5DBfscXxQ4RuiVTEiewpKE5YDFbhbBFtUOEME46Nhi12i+pPlCcMBZx6tyb/pQuc4ymBfFDm7ZkDMkvc=
+	t=1725359909; cv=none; b=PxRGbavOAHoNbrIPxyVMRZgk1ZOM3fJcKHW31OUcGZqAyBnmv8Izrviz3Ni3JB3UTj5Wcfn8Aun4xUjU+jFqQu+YGp/jY+J+BidC4k5F/q9xOwZ68qDgyiyiKtT32ZRxNKH/97W2gEGZ1Ypk7XoOQXrqH/M/uhgZ7914KKzrzqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359515; c=relaxed/simple;
-	bh=ue4lHlQbu6NPGIN+OUHYcbpiHD2nv3vQYTYa3E0EqzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B5K9G9cdfgGGg6PYpW6Jb5gZWfR1faV+WcUG2zcYHAsyYI3OfJRgG71AZW2oZDXes+0YN5yZVjX10fEF+ppoxEGZnc5fLPLxaPDZ3cNvGTmjUDCALQeifrktwMEMRgX3Kh/dUBHgALidGBMmSAnchewoDNnRVM3kg21IXhJ7IeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HoBNECNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oB2JvQ8i; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HoBNECNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oB2JvQ8i; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 116F81FD66;
-	Tue,  3 Sep 2024 10:31:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725359512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VJKwVJGIH1mhp83Qaz6K58stiBO3QUnfWfrX2YI77Lg=;
-	b=HoBNECNbwL0qldaEjrtRzvDNkOPIAl+IaU3NfDJz70ulrKT9lZYa2lYBYdHehlN974FIpv
-	bFjLDiwyiYQ1hJKI+R3mgIPMXOfl4H3MPx2HxxViR/oO8qYloY47qFaZ89CmU3ovdlKzD/
-	22LqeH7GJ7qdsJM7+wfRKaervVuMMI4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725359512;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VJKwVJGIH1mhp83Qaz6K58stiBO3QUnfWfrX2YI77Lg=;
-	b=oB2JvQ8iJ5W9zrN1dXAKZwH7qw3O8Bpu+EGbQfJjs4rFEdlFVoDQ2FMJFrHDRmbfKwrChs
-	U3p6nU1ImfhuKbDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=HoBNECNb;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=oB2JvQ8i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725359512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VJKwVJGIH1mhp83Qaz6K58stiBO3QUnfWfrX2YI77Lg=;
-	b=HoBNECNbwL0qldaEjrtRzvDNkOPIAl+IaU3NfDJz70ulrKT9lZYa2lYBYdHehlN974FIpv
-	bFjLDiwyiYQ1hJKI+R3mgIPMXOfl4H3MPx2HxxViR/oO8qYloY47qFaZ89CmU3ovdlKzD/
-	22LqeH7GJ7qdsJM7+wfRKaervVuMMI4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725359512;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VJKwVJGIH1mhp83Qaz6K58stiBO3QUnfWfrX2YI77Lg=;
-	b=oB2JvQ8iJ5W9zrN1dXAKZwH7qw3O8Bpu+EGbQfJjs4rFEdlFVoDQ2FMJFrHDRmbfKwrChs
-	U3p6nU1ImfhuKbDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F388D13A80;
-	Tue,  3 Sep 2024 10:31:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1rtwO5fl1mYODwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 03 Sep 2024 10:31:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8D7AFA096C; Tue,  3 Sep 2024 12:31:51 +0200 (CEST)
-Date: Tue, 3 Sep 2024 12:31:51 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH RFC 04/20] s390: remove unused f_version
-Message-ID: <20240903103151.ztdnlkbkd5pvfcxe@quack3>
-References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
- <20240830-vfs-file-f_version-v1-4-6d3e4816aa7b@kernel.org>
+	s=arc-20240116; t=1725359909; c=relaxed/simple;
+	bh=IpGzSwq01bG+uYW7sy64WUAjjUCeEmCuQYp+d2Un/3g=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=adXT/s2gB+s17ro3Q1/BRzFdGO/yCxkldtS47diVaSJfN5ApiUyEmO4pLrADllFap6lzdU0XzFiuS8LtjI9beXO42aQ8tOMYfwHbqMRV48fS4OvsmBBqXxbrkXWBfDEAcdpiEb35Kaq6I1Mxsu5jhOdEFa0VrWC8+/Na4VqY1UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Tzkqhswi; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so567497866b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 03:38:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1725359905; x=1725964705; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=x6Q3eYsITfxnypFGe3Fw8XAGNfc1A4gIAvgZwhL1hhM=;
+        b=TzkqhswiJyPfyWbn17cwB069DGFnsjSBtKg8sadpF9TKTq6Ckj9poG6UTDt3+j0j8p
+         MduwXVv4ChD6/QgIYaZLPuxLmR2qSA4YiwrXWMB7iss7D6Xv9DHXi6moZJbokt6CDvtv
+         wk8C0xNM3U5qMX7Aw6gqAkkKizYwfhJ7VO7fk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725359905; x=1725964705;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x6Q3eYsITfxnypFGe3Fw8XAGNfc1A4gIAvgZwhL1hhM=;
+        b=aNqo0dK0hBHw/CvUtx/vDsOJyJhkZ6JglHaXL8VDf9A6FXxSgvAoaabGBvC36+EWBH
+         jgAh+OLZlZTJJThLGF2BN0B1UWW9J1WWUstZTOlogzOnQs0KB4wwvPXWijJh9BESP8BV
+         rPBFC5uz+DY15l9Z6W3o5SZZdddZ+44ZSe6RaAPJ+EGylkebX95jWH29kaA2ngGcpBAc
+         KwHm8/eVMheLbpTpQkTcn0LozBiB2Z3P3ype0KVwJUGwxFU70ff7XzGgzVw2p2xksb/Z
+         lbk1yAby57qerYiJeuMVdJGuqE3xNPAMypQxZL7SrZWVbEDCBL5LAV27WXzBnN6Tl5hi
+         zQ2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUK15h4ThgGIjKD8TFfCPAo/zS5GFWGABGHq+c6MXefVWIhB7NCD5pVlWagXqAR6/t3zC8srcWeMr77pRf9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLZcJL9zm5dmBEQuAo3axwUiS3fmrq4dcx/mfuOlm1a+mLCJTP
+	4JR2Ly3EoL3iTKPnwE2l9Pl5svndHVkZLzkok2kA9s73+RU3X1NtdyLy7mvLzD6C1W91pSd+M6q
+	s3szr4uZDA8dT9VtI23zgZfs/EDso9qam2D2ZTw==
+X-Google-Smtp-Source: AGHT+IFyKzm67wu/yuibz5w2254/bwCWTDvbeXT90It4zB3i/dkPa2pncQBbDsLbh40dWyLfuTt29muGncb2pj61WDo=
+X-Received: by 2002:a17:907:3e0f:b0:a7a:a5ae:11b7 with SMTP id
+ a640c23a62f3a-a89faf995b5mr469332766b.49.1725359904279; Tue, 03 Sep 2024
+ 03:38:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830-vfs-file-f_version-v1-4-6d3e4816aa7b@kernel.org>
-X-Rspamd-Queue-Id: 116F81FD66
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email,suse.com:email];
-	MISSING_XM_UA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 3 Sep 2024 12:38:12 +0200
+Message-ID: <CAJfpeguT0XBxBCzBrJqS1LLCLmEahVT3FF0NZ1nkAKMRKWpyfw@mail.gmail.com>
+Subject: [GIT PULL] fuse fixes for 6.11-rc7
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri 30-08-24 15:04:45, Christian Brauner wrote:
-> It's not used so don't bother with it at all.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Hi Linus,
 
-Looks good. Feel free to add:
+Please pull from:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+tags/fuse-fixes-6.11-rc7
 
-								Honza
+- Fix EIO if splice and page stealing are enabled on the fuse device
 
-> ---
->  drivers/s390/char/hmcdrv_dev.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/s390/char/hmcdrv_dev.c b/drivers/s390/char/hmcdrv_dev.c
-> index 8d50c894711f..e069dd685899 100644
-> --- a/drivers/s390/char/hmcdrv_dev.c
-> +++ b/drivers/s390/char/hmcdrv_dev.c
-> @@ -186,9 +186,6 @@ static loff_t hmcdrv_dev_seek(struct file *fp, loff_t pos, int whence)
->  	if (pos < 0)
->  		return -EINVAL;
->  
-> -	if (fp->f_pos != pos)
-> -		++fp->f_version;
-> -
->  	fp->f_pos = pos;
->  	return pos;
->  }
-> 
-> -- 
-> 2.45.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+- Disable problematic combination of passthrough and writeback-cache
+
+- Other bug fixes found by code review
+
+Thanks,
+Miklos
+
+---
+Bernd Schubert (1):
+      fuse: disable the combination of passthrough and writeback cache
+
+Jann Horn (1):
+      fuse: use unsigned type for getxattr/listxattr size truncation
+
+Joanne Koong (2):
+      fuse: check aborted connection before adding requests to pending
+list for resending
+      fuse: update stats for pages in dropped aux writeback list
+
+Miklos Szeredi (1):
+      fuse: clear PG_uptodate when using a stolen page
+
+yangyun (1):
+      fuse: fix memory leak in fuse_create_open
+
+---
+ fs/fuse/dev.c   | 14 ++++++++++----
+ fs/fuse/dir.c   |  2 +-
+ fs/fuse/file.c  |  8 +++++++-
+ fs/fuse/inode.c |  7 ++++++-
+ fs/fuse/xattr.c |  4 ++--
+ 5 files changed, 26 insertions(+), 9 deletions(-)
 
