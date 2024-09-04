@@ -1,118 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-28542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCBD096BAF3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 13:39:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A0396BB23
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 13:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBE41C208B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 11:39:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A86C282D56
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 11:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4F81D0152;
-	Wed,  4 Sep 2024 11:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E52E1D3658;
+	Wed,  4 Sep 2024 11:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEXC1Eiv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDOCm13e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3980A1CF5F6
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 11:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77BE1D2237;
+	Wed,  4 Sep 2024 11:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725449942; cv=none; b=MsgZiS22I7khyN7TSV9Tepn4q1ziqUBEbefGYE0LUTskkmQacSWrqleKyU+LqqBHUVb96w8l24485tuvbyogPYLlvsYywtyACvy2InhNGJ1bPUNnSuJ2de6s/21IEJ1kmDWkXnlrex6QZiSaYJabfarP22O+6ZURB5ZopB/kkRM=
+	t=1725450190; cv=none; b=giMzWq4ewh2p1WL+vwmbw8rtla9WscZVticSGjvydjYARzziElMS4oN36nuXMadQxAaBpnrgSbkiMwCAG4r13wTyoJ48GgMwVBcP6dDi560BhscZ0mlHjFAGWOE2g5yB924AIZCQHKCffoDWwOUJuwVPwplV0/yWAR4wDrhwJaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725449942; c=relaxed/simple;
-	bh=+w0xFoTV0Lh4uapfvz5wp1iY4crS8ZjQkBVqDb/Sj5c=;
+	s=arc-20240116; t=1725450190; c=relaxed/simple;
+	bh=1R47JLECqfMcUivgiQR6XDvQF6Jb0RlGzKzhZ5bCKsk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvzJaliIuv7NEMQecPZKZjpIHmfrCnaWKjIVUTNOJk5XaMABlBwmlVId51/zbXXMZZusRd0iCscgiKcSQNEWxr15/d7DcwypmURxKhgJF7RAezp+aaTSCyQ4l+p91gyY2n03Qu3H8kwQ+Js4d17aeWGyPBJ36z40AHlDSBO/vqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEXC1Eiv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39423C4CEC2;
-	Wed,  4 Sep 2024 11:39:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pTThaGy3eXkcnipP0ChqXd+RxjWvYdYTB17y5CiFyiEHdOAp7IHLxo5e7IxmIi2oK+Bg8QWQMRLcfKymUsyD3XrwgXcZT3KRPK5fjUUZEdVUOTFxe9xcG2VJS54B9HVt9+7Hb/0Zx3PKFmy+xySZdQqAxBi4Su4p3xKQtjhYzKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDOCm13e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2318C4CEC2;
+	Wed,  4 Sep 2024 11:43:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725449942;
-	bh=+w0xFoTV0Lh4uapfvz5wp1iY4crS8ZjQkBVqDb/Sj5c=;
+	s=k20201202; t=1725450190;
+	bh=1R47JLECqfMcUivgiQR6XDvQF6Jb0RlGzKzhZ5bCKsk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FEXC1Eiv8SQnU2Vu7kYshplTkF4FdzhAl+YEhVvcaqm1UqSYNNn8VwmBBjvDCAUZF
-	 coVR0WmfSKTc9SDCfNtlDghkwaEGrlbDJ03DpMj8C+X3vXkoPG5bO8TeaA9ArYlpfM
-	 /UxiPQ9732dLzjoJTA+g1FRePlw22E/TxKCjqj7EsFylUXmcX5FnbE/Gktnw+8tSeA
-	 EGq6EjLBqK0PjAJMw3MBJI97WnDshAojp5cV4EBcS2OrwMre6KXx8oRcIvEQL4LEf2
-	 XNkLzwBg6HgTGjIchWJhXP3VkrM95VGHXEN+kuySXEhqqFTa0h4pyXGCeQibei0D3N
-	 Sz/XfJi95VW1A==
-Date: Wed, 4 Sep 2024 13:38:57 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mike Rapoport <rppt@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 12/15] slab: create kmem_cache_create() compatibility
- layer
-Message-ID: <20240904-absuchen-gockel-8246820867b4@brauner>
-References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-12-76f97e9a4560@kernel.org>
- <ZtfssAqDeyd_-4MJ@kernel.org>
- <20240904-storch-worin-32db25e60f32@brauner>
- <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
+	b=kDOCm13euF7DxBt8JcfDA8RsjG4MZJhZ27+NJPvRYOHFOIFVEJc0l6JGicavkhqFp
+	 ocM/Hc7Ei/JeuUSqdamuIxsSmM5JmLH2Z52OgD5iztKVCIjp7sX8PLLUEu9j6MPmCH
+	 BYX7tb0KyzLaSS647l0ocymi+ZWWv+J7JXsEwNWQp+rJTW0T0DXaaa93jW3QN9FGLb
+	 biQUrzgmKdTHsim1RB78jWVNvmDQb4gv4JOoem65A64jZ/hpremFoloDb9L+1PbLXL
+	 pOr5XcN9nzcv5FCk0AbNAEX4DfKr02w9IdPgHqDsgUC/Z58ctJv9XU8IOftgkkb4Yv
+	 RQfwAY8aQDCkA==
+Date: Wed, 4 Sep 2024 12:43:02 +0100
+From: Will Deacon <will@kernel.org>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, nd@arm.com,
+	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
+	broonie@kernel.org, christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
+	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 06/30] arm64: context switch POR_EL0 register
+Message-ID: <20240904114301.GA13550@willie-the-truck>
+References: <20240822151113.1479789-7-joey.gouly@arm.com>
+ <20240823144531.GH32156@willie-the-truck>
+ <Zsi7ovLOfuFdfuuz@arm.com>
+ <20240823170835.GA1181@willie-the-truck>
+ <ZsjXtE7Kg0LQwNAL@arm.com>
+ <20240827113803.GB4318@willie-the-truck>
+ <ZtYNGBrcE-j35fpw@arm.com>
+ <20240903145413.GB3669886@e124191.cambridge.arm.com>
+ <20240904102254.GA13280@willie-the-truck>
+ <20240904113221.GA3891700@e124191.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
+In-Reply-To: <20240904113221.GA3891700@e124191.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Sep 04, 2024 at 12:50:28PM GMT, Vlastimil Babka wrote:
-> On 9/4/24 11:45, Christian Brauner wrote:
-> > On Wed, Sep 04, 2024 at 08:14:24AM GMT, Mike Rapoport wrote:
-> >> On Tue, Sep 03, 2024 at 04:20:53PM +0200, Christian Brauner wrote:
-> >> > Use _Generic() to create a compatibility layer that type switches on the
-> >> > third argument to either call __kmem_cache_create() or
-> >> > __kmem_cache_create_args(). This can be kept in place until all callers
-> >> > have been ported to struct kmem_cache_args.
-> >> > 
-> >> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> >> 
-> >> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> >> 
-> >> > ---
-> >> >  include/linux/slab.h | 13 ++++++++++---
-> >> >  mm/slab_common.c     | 10 +++++-----
-> >> >  2 files changed, 15 insertions(+), 8 deletions(-)
-> >> > 
-> >> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> >> > index aced16a08700..4292d67094c3 100644
-> >> > --- a/include/linux/slab.h
-> >> > +++ b/include/linux/slab.h
-> >> > @@ -261,9 +261,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
-> >> >  					    unsigned int object_size,
-> >> >  					    struct kmem_cache_args *args,
-> >> >  					    slab_flags_t flags);
-> >> > -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
-> >> > -			unsigned int align, slab_flags_t flags,
-> >> > -			void (*ctor)(void *));
-> >> > +
-> >> > +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
-> >> > +				       unsigned int align, slab_flags_t flags,
-> >> > +				       void (*ctor)(void *));
-> >> 
-> >> As I said earlier, this can become _kmem_cache_create and
-> >> __kmem_cache_create_args can be __kmem_cache_create from the beginning.
-> 
-> I didn't notice an answer to this suggestion? Even if it's just that you
-> don't think it's worth the rewrite, or it's not possible because X Y Z.
-> Thanks.
-
-I'm confused. I sent two patches as a reply to the thread plus the
-answer below and there's two patches in v3 that you can use or drop.
-
-> 
-> >> And as a followup cleanup both kmem_cache_create_usercopy() and
-> >> kmem_cache_create() can be made static inlines.
+On Wed, Sep 04, 2024 at 12:32:21PM +0100, Joey Gouly wrote:
+> On Wed, Sep 04, 2024 at 11:22:54AM +0100, Will Deacon wrote:
+> > On Tue, Sep 03, 2024 at 03:54:13PM +0100, Joey Gouly wrote:
+> > > On Mon, Sep 02, 2024 at 08:08:08PM +0100, Catalin Marinas wrote:
+> > > > On Tue, Aug 27, 2024 at 12:38:04PM +0100, Will Deacon wrote:
+> > > > > On Fri, Aug 23, 2024 at 07:40:52PM +0100, Catalin Marinas wrote:
+> > > > > > On Fri, Aug 23, 2024 at 06:08:36PM +0100, Will Deacon wrote:
+> > > > > > > On Fri, Aug 23, 2024 at 05:41:06PM +0100, Catalin Marinas wrote:
+> > > > > > > > On Fri, Aug 23, 2024 at 03:45:32PM +0100, Will Deacon wrote:
+> > > > > > > > > On Thu, Aug 22, 2024 at 04:10:49PM +0100, Joey Gouly wrote:
+> > > > > > > > > > +static void permission_overlay_switch(struct task_struct *next)
+> > > > > > > > > > +{
+> > > > > > > > > > +	if (!system_supports_poe())
+> > > > > > > > > > +		return;
+> > > > > > > > > > +
+> > > > > > > > > > +	current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
+> > > > > > > > > > +	if (current->thread.por_el0 != next->thread.por_el0) {
+> > > > > > > > > > +		write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
+> > > > > > > > > > +		/* ISB required for kernel uaccess routines when chaning POR_EL0 */
+> > > > > > > > >
+> > > > > > > > > nit: typo "chaning".
+> > > > > > > > >
+> > > > > > > > > But more substantially, is this just to prevent spurious faults in the
+> > > > > > > > > context of a new thread using a stale value for POR_EL0?
+> > > > > > > >
+> > > > > > > > Not just prevent faults but enforce the permissions from the new
+> > > > > > > > thread's POR_EL0. The kernel may continue with a uaccess routine from
+> > > > > > > > here, we can't tell.
+> > > > [...]
+> > > > > > > So what do we actually gain by having the uaccess routines honour this?
+> > > > > >
+> > > > > > I guess where it matters is more like not accidentally faulting because
+> > > > > > the previous thread had more restrictive permissions.
+> > > > >
+> > > > > That's what I wondered initially, but won't the fault handler retry in
+> > > > > that case?
+> > > >
+> > > > Yes, it will retry and this should be fine (I assume you are only
+> > > > talking about the dropping ISB in the context switch).
+> > > >
+> > > > For the case of running with a more permissive stale POR_EL0, arguably it's
+> > > > slightly more predictable for the user but, OTOH, some syscalls like
+> > > > readv() could be routed through GUP with no checks. As with MTE, we
+> > > > don't guarantee uaccesses honour the user permissions.
+> > > >
+> > > > That said, at some point we should sanitise this path anyway and have a
+> > > > single ISB at the end. In the meantime, I'm fine with dropping the ISB
+> > > > here.
+> > > >
+> > > 
+> > > commit 3141fb86bee8d48ae47cab1594dad54f974a8899
+> > > Author: Joey Gouly <joey.gouly@arm.com>
+> > > Date:   Tue Sep 3 15:47:26 2024 +0100
+> > > 
+> > >     fixup! arm64: context switch POR_EL0 register
+> > > 
+> > > diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> > > index a3a61ecdb165..c224b0955f1a 100644
+> > > --- a/arch/arm64/kernel/process.c
+> > > +++ b/arch/arm64/kernel/process.c
+> > > @@ -515,11 +515,8 @@ static void permission_overlay_switch(struct task_struct *next)
+> > >                 return;
+> > > 
+> > >         current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
+> > > -       if (current->thread.por_el0 != next->thread.por_el0) {
+> > > +       if (current->thread.por_el0 != next->thread.por_el0)
+> > >                 write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
+> > > -               /* ISB required for kernel uaccess routines when chaning POR_EL0 */
+> > > -               isb();
+> > > -       }
+> > >  }
 > > 
-> > Seems an ok suggestion to me. See the two patches I sent out now.
+> > What about the one in flush_poe()? I'm inclined to drop that as well.
 > 
+> Yes I guess that one can be removed too. Catalin any comments?
+> 
+> > 
+> > > Will, do you want me to re-send the series with this and the permissions
+> > > diff from the other thread [1],
+> > > or you ok with applying them when you pull it in?
+> > 
+> > I'll have a crack now, but if it fails miserably then I'll let you know.
+> 
+> Thanks! Just to make sure, you should pick the patch up from
+> 
+> 	https://lore.kernel.org/linux-arm-kernel/20240903152937.GA3768522@e124191.cambridge.arm.com/
+> 
+> Not the one I linked to in [1] in my previous e-mail.
+
+Right, there's quite a lot I need to do:
+
+- Uncorrupt your patches
+- Fix the conflict in the kvm selftests
+- Drop the unnecessary ISBs
+- Fix the ESR checking
+- Fix the el2_setup labels
+- Reorder the patches
+- Drop the patch that is already in kvmarm
+
+Working on it...
+
+Will
 
