@@ -1,181 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-28567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134E396C1A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 17:03:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7170196C1EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 17:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 565EEB294EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:58:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9C81C2307A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 15:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1211DEFC7;
-	Wed,  4 Sep 2024 14:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B06F1DCB10;
+	Wed,  4 Sep 2024 15:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EUf67+UR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtFNBJ9A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEC11DC1BB
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 14:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCB81DA61A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 15:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461842; cv=none; b=gsuxcC2/8B+64iASeVIWZtZq5Hsixi4G7Liz3WjKQOIOmzbq3ojTDeOXAWg0k40YjJBtN7Or4xMktEssAfOap1cTcKPg/roUX28h/ylrG03YIVAS6WqSKZXvFUYX+CB9ny21l3eHWqXY2wMhixWJfBKWLDT2z/78UScHbk9TbU0=
+	t=1725462838; cv=none; b=kypfuXvNqSZo9sEIo5DmtWGImwQ9RACIxv6fHSj36gDZEG2htbeDVkD8gGIjk89A4gVsqjt54Ty1VxH3WBesCAHu+dYv6c/k+oP5rAOsrZddIdlP8cLcqKHO49MbZPsefX1SevzZcULFTpZ08cTtrKML98vdoW7H4za43bEyyWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461842; c=relaxed/simple;
-	bh=2MNDvJdAuFrKPaz7AKdeoAkNagaHCANVw+2OvyTUO+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=RlDSll3qviZEIBP7UZEBlGmijK9cAIcYNI+FQxh3CGASfwspkRiLy2cvEHOQiBJo7TA3bGLe/PjIN06I5S2EUgr+jQvXVxve+zSYpZTbX+DuJPSxbuvOGfGgXF4XKI/j7hYM1wzkYnYZC8Mi/u1aWKMkJwrvSc0SdQ1eh6cKrXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EUf67+UR; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240904145713epoutp04ab9429e29e6390818bf1cfc29f1d9c41~yEmUtzBWr3173331733epoutp04T
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 14:57:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240904145713epoutp04ab9429e29e6390818bf1cfc29f1d9c41~yEmUtzBWr3173331733epoutp04T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725461833;
-	bh=/XD9MSPm2ieh7tYbx02NG5OSwwR0Rs4WQ1DiKKxiIlc=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=EUf67+URh8alb88VzEor2UaIXgBKZJ3acZSCFSzN0ajwhhA7QkOFZtCdaeIskpcuR
-	 wRu1fhD1aqucHaI7z4cHdrQ91wnczWbg25yFwUaV/mEvpzxIUmSBRnuMa4o96qM2NH
-	 sfAyEQBbq9D76aGyzOfHnWQwDpUc/aWu5EOxF3Jw=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240904145712epcas5p16b1e59b36b65364e750ad6186f3c40c0~yEmT86gsc0537605376epcas5p1a;
-	Wed,  4 Sep 2024 14:57:12 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4WzQZG2H28z4x9Pt; Wed,  4 Sep
-	2024 14:57:10 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	02.09.09743.64578D66; Wed,  4 Sep 2024 23:57:10 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240904145709epcas5p1500f0810833c70c779c5b5d911fa7842~yEmRhvbRj0635006350epcas5p1x;
-	Wed,  4 Sep 2024 14:57:09 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240904145709epsmtrp2579123e002487ee76c7e08d31d1d3da9~yEmRfmIxb0123901239epsmtrp25;
-	Wed,  4 Sep 2024 14:57:09 +0000 (GMT)
-X-AuditID: b6c32a4a-14fff7000000260f-69-66d875463bee
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8A.1B.08964.54578D66; Wed,  4 Sep 2024 23:57:09 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240904145705epsmtip23467e1ecdd38069c57e5f46971b556e1~yEmN4AJW22167321673epsmtip2W;
-	Wed,  4 Sep 2024 14:57:05 +0000 (GMT)
-Message-ID: <cd7fa0b4-9f85-a73c-3f28-baa234a2ae7c@samsung.com>
-Date: Wed, 4 Sep 2024 20:27:04 +0530
+	s=arc-20240116; t=1725462838; c=relaxed/simple;
+	bh=rX0vS1zR5X7dTFyMgPdiMHFhqaGeKMhYHOljR2dXDA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpsLn9H6vKUQR6uERZdUvceohGO4h5sqedQMR6HuorLg9CJTAwX94PPntw40Bp2m/D/vbOb0wyQEOGp/R5qH/bogExlLQsavR2DUWIPdiYMqcDTaJhzwtwIj8epv1LBXm8068eqYYQt7K4b9mE2AqfI33O/neTgUQnm6Du+ir5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtFNBJ9A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54D51C4CEC2;
+	Wed,  4 Sep 2024 15:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725462838;
+	bh=rX0vS1zR5X7dTFyMgPdiMHFhqaGeKMhYHOljR2dXDA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CtFNBJ9AwQe6ozrVAAu6Gv0mBSh1UeN347L+FByBeT7DFYXbXBgkLXQ2xq3ZKRLva
+	 xlPbWd2Mj+tVnhN+kDGr0UvIVT1qzALnKCTOxNh357NVg6NFVBAfSk7zgBSFbeS0Ne
+	 IS49rNakaIyhirV4GyV/LJ24E9E1IJZJOUCWeR750RY8sLR9t9dE8aC4pKtu8pshXo
+	 MjgIxwVZ5IJpvTnT77ngWCjM/ObgJ1aUj5imsR+SYllXc9MxkoIY7IHOXTlB+40zLk
+	 dUCEHUUlWUyM9ptqqoYMcyReF4EIPabXIj5vXaFTKclIH+hhXGZjio2mkzJCR9m95D
+	 ZzwDDJAShVnvA==
+Date: Wed, 4 Sep 2024 18:11:10 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 12/15] slab: create kmem_cache_create() compatibility
+ layer
+Message-ID: <Zth4jqJQJAXdSLzE@kernel.org>
+References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-12-76f97e9a4560@kernel.org>
+ <ZtfssAqDeyd_-4MJ@kernel.org>
+ <20240904-storch-worin-32db25e60f32@brauner>
+ <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
+ <20240904-absuchen-gockel-8246820867b4@brauner>
+ <24717bab-7d5d-4ed1-a17d-65d4676e22a9@suse.cz>
+ <20240904-gegessen-kalziumreich-2817b07433b7@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v4 0/5] Write-placement hints and FDP
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>
-Cc: amir73il@gmail.com, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	martin.petersen@oracle.com, James.Bottomley@hansenpartnership.com,
-	jack@suse.cz, jaegeuk@kernel.org, jlayton@kernel.org,
-	chuck.lever@oracle.com, bvanassche@acm.org, "axboe@kernel.dk"
-	<axboe@kernel.dk>, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20240903-erfassen-bandmitglieder-32dfaeee66b2@brauner>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxbZRTOe3t7e8HUXAvIa1VgjSyOCaN8eVkATSRwwyASly3zI0IHF1pb
-	2q63ZRshSmCbfGyjsIXOgqFWBAfKhCLjYxhSRLYJgiKDEj5dEUcFxrqgSHW2tFP+Pe85z3Oe
-	95yTg7N4xRw+LpGraZVcJBNg3mjnwL4XQ5M0UznhzZtPkGOtLYBsma3ESNvAA0DW3N9ikY9m
-	lxHS0t+NkFdbBhGyVleCkNZrehbZVomTd2fsHHKrsZlDVpvvALJvej/5kzGZvNF3CyXrG5c4
-	ZMVkF0Y2Df2DkK22dZQc1ddxXvWjxn8+RHXrZznU6FwbStVU38ao8REN1d5chlGmhg+oXoMd
-	oXotRRi1sTSNUhc7mgE1bPiWQ9nbA9K5b0njxLQom1YF0fIsRbZEnhsvOHQ447WM6JhwYagw
-	lnxZECQX5dHxgsTU9NAkiczZriAoXyTTOEPpIoYRHEiIUyk0ajpIrGDU8QJamS1TRinDGFEe
-	o5Hnhslp9UFheHhEtJOYKRU3XOhnK+9wT63rv+cUgS3vcuCFQyIKNn1twMqBN84jegFcrqpl
-	ux8PABzsn/VkNgEc0J5FH0t05j/ZLswj+gC0lu5xk1YBvFSxDlwJLpEAtyoaEBdGiRfgRslV
-	zB1/Ct76yLpTyI84Dv+aqNvh+xCx0DyyulOURfjDaWv9jtaXCIHFxg3EZcAizqBwcGnQKcZx
-	jNgHxy5pXBwvIhFum2qBWxsIr6/WsdwfbfGCcyMenAgbOwc82AeuDHVw3JgP7Wt9mBtL4cIv
-	C54mC2GX6SLbjV+BRY4ptsuW5bS91nPAbfUkvLBtRVxhSHBh6Tmem70HzlUveZT+cPFKgwdT
-	cLr3oWeeDgA7iu2YFgTpd01Fv6t7/a5u9P87GwDaDJ6hlUxeLs1EKyPk9Mn/9p2lyGsHO8cQ
-	ktIFFhfuh5kBggMzgDhL4Mu1+U7l8LjZotMFtEqRodLIaMYMop3rqWLx/bIUzmuSqzOEUbHh
-	UTExMVGxkTFCgT/XdvbjbB6RK1LTUppW0qrHOgT34hchpWud22cqr0Re/+Z3m3g+2Jb54f76
-	ma5yn758B2bybtWl/j3En3y/pyAt2cGSls3mrCSuWy3lPZZPPv2uKha3J6T98NXEwFYE9D4f
-	vfcLo3Av89x4sOmuJjOsxP6bXOvz9POfl1UP30OffVsrLnovdLgqYDMwLuKNxgWLNrf04GGk
-	Lcl4cuadJot48VFAaq3jS/m9eYZjHGXePZ0amaK1JktsOq3pMuEjeZN/vubEPHX7ZuCNieCM
-	14/4F56SGT+bV9q7jdMpSYWyo8cHj92sEOjW08YWj76UuiwzGDIfsn/0uzxH/SopXJtcmbKd
-	qP7jXE1nfzKhc9gix6X5aIH0yDEByohFwhCWihH9CwmGeIWVBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUhTYRTGe++9u/c6Wt2my9eKglVURqtByJvZB1R6Q4miKChKV7up6Nba
-	dX2IpLagmpRl6GpqmpjiBopOs1qWrSxsibOFTmuWH2FlpmZRyz7nCvzvx3me5zznj0Pj4tfE
-	LDpRncJp1YpkKSkkbjyQzlu2Sec+uML4LAQ5Ky0AWTzZJBp88AmgvBEvjn57BjDU2XgLQxWW
-	JgzlG/UY6q8y4ag6m0Z9L8co5C0zUyjH3g5QQ9dS9KwkCt1paCZQUdkbCmV13CRR+eNfGKoc
-	HCZQq6mAWi9hXc+j2VsmD8W2dlcTbF7OE5J1tejYGvNZkrWWprO24jGMtXVmkOzomy6CPV9r
-	BuzT4ocUO1Yzd6totzBCySUnHuG0y9fGCRNKzzUKNO2iY8MmB5UBvEIDCKAhsxIa7d8EBiCk
-	xYwNwAbLEPALwVDf/o3ycyCs+DVA+U2DAL7/XkL4BBGzFnqzSjEfE8wCOKqvIP3zGbD5Sv+E
-	R8Lsh3deZU54AplV0N4yJPAx/regq79oYh7EhMKTJaOYrwBnThEwx/0B+Nt+AHjdmocbAE2T
-	zBLovKTzBQKYjXDcmg/8i8Kgoc7wj+fB+qEC/AIQmybdYZrUZ5oUMU2KFAPCDEI4Da+KV/Fy
-	jVzNHZXxChWvU8fLDhxS1YCJJwhdchPUm0dkdoDRwA4gjUuDRINB7oNikVJxPJXTHorV6pI5
-	3g5m04Q0WBT89pxSzMQrUrgkjtNw2v8qRgfMysCqe2tdsUXpIRG32zq2P9m7hVg4jM/cU5f/
-	YqSAbw3sHs09XaHMSx2XGLqd5Wme9A5bHAqumytI3loVkdiWVt4bHv6ZkU8p5GXrbs+Rvj9l
-	bUtyhCo2riiINTocmS/LUmZ2ZjkCjx/uK3Qr+/L3/6RrW5oGUmOqOu/NftrWWuy0hGfre6bm
-	bvsJG5qiKunp042wzpzpuh81vu/utU3yMG/KvmnubEnMaiqs0XC954dG4tx2JGDDu2jiBHkt
-	4Wjkh8j1MfMvZ3icqp5HH/HwpLfrdgltO3ecWdT7pVym33zP+jVy+buuV2sWH96hXnqsPlJg
-	i84dm9bc7Sq9mhYH0i5SUoJPUMhDcS2v+AN9Se0qcwMAAA==
-X-CMS-MailID: 20240904145709epcas5p1500f0810833c70c779c5b5d911fa7842
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240826171409epcas5p306ba210a9815e202556778a4c105b440
-References: <CGME20240826171409epcas5p306ba210a9815e202556778a4c105b440@epcas5p3.samsung.com>
-	<20240826170606.255718-1-joshi.k@samsung.com>
-	<20a9df07-f49e-ee58-3d0b-b0209e29c6af@samsung.com>
-	<20240903-erfassen-bandmitglieder-32dfaeee66b2@brauner>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904-gegessen-kalziumreich-2817b07433b7@brauner>
 
-On 9/3/2024 8:05 PM, Christian Brauner wrote:
-> On Tue, Sep 03, 2024 at 07:58:46PM GMT, Kanchan Joshi wrote:
->> Hi Amir,
->>
->>
->> On 8/26/2024 10:36 PM, Kanchan Joshi wrote:
->>> Current write-hint infrastructure supports 6 temperature-based data life
->>> hints.
->>> The series extends the infrastructure with a new temperature-agnostic
->>> placement-type hint. New fcntl codes F_{SET/GET}_RW_HINT_EX allow to
->>> send the hint type/value on file. See patch #3 commit description for
->>> the details.
->>>
->>> Overall this creates 128 placement hint values [*] that users can pass.
->>> Patch #5 adds the ability to map these new hint values to nvme-specific
->>> placement-identifiers.
->>> Patch #4 restricts SCSI to use only life hint values.
->>> Patch #1 and #2 are simple prep patches.
->>>
->>> [*] While the user-interface can support more, this limit is due to the
->>> in-kernel plumbing consideration of the inode size. Pahole showed 32-bit
->>> hole in the inode, but the code had this comment too:
->>>
->>> /* 32-bit hole reserved for expanding i_fsnotify_mask */
->>>
->>> Not must, but it will be good to know if a byte (or two) can be used
->>> here.
->>
->> Since having one extra byte will simplify things, I can't help but ask -
->> do you still have the plans to use this space (in entirety) within inode?
+On Wed, Sep 04, 2024 at 04:44:03PM +0200, Christian Brauner wrote:
+> On Wed, Sep 04, 2024 at 03:33:30PM GMT, Vlastimil Babka wrote:
+> > On 9/4/24 13:38, Christian Brauner wrote:
+> > > On Wed, Sep 04, 2024 at 12:50:28PM GMT, Vlastimil Babka wrote:
+> > >> On 9/4/24 11:45, Christian Brauner wrote:
+> > >> > On Wed, Sep 04, 2024 at 08:14:24AM GMT, Mike Rapoport wrote:
+> > >> >> On Tue, Sep 03, 2024 at 04:20:53PM +0200, Christian Brauner wrote:
+> > >> >> > Use _Generic() to create a compatibility layer that type switches on the
+> > >> >> > third argument to either call __kmem_cache_create() or
+> > >> >> > __kmem_cache_create_args(). This can be kept in place until all callers
+> > >> >> > have been ported to struct kmem_cache_args.
+> > >> >> > 
+> > >> >> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > >> >> 
+> > >> >> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > >> >> 
+> > >> >> > ---
+> > >> >> >  include/linux/slab.h | 13 ++++++++++---
+> > >> >> >  mm/slab_common.c     | 10 +++++-----
+> > >> >> >  2 files changed, 15 insertions(+), 8 deletions(-)
+> > >> >> > 
+> > >> >> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+> > >> >> > index aced16a08700..4292d67094c3 100644
+> > >> >> > --- a/include/linux/slab.h
+> > >> >> > +++ b/include/linux/slab.h
+> > >> >> > @@ -261,9 +261,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
+> > >> >> >  					    unsigned int object_size,
+> > >> >> >  					    struct kmem_cache_args *args,
+> > >> >> >  					    slab_flags_t flags);
+> > >> >> > -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+> > >> >> > -			unsigned int align, slab_flags_t flags,
+> > >> >> > -			void (*ctor)(void *));
+> > >> >> > +
+> > >> >> > +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
+> > >> >> > +				       unsigned int align, slab_flags_t flags,
+> > >> >> > +				       void (*ctor)(void *));
+> > >> >> 
+> > >> >> As I said earlier, this can become _kmem_cache_create and
+> > >> >> __kmem_cache_create_args can be __kmem_cache_create from the beginning.
+> > >> 
+> > >> I didn't notice an answer to this suggestion? Even if it's just that you
+> > >> don't think it's worth the rewrite, or it's not possible because X Y Z.
+> > >> Thanks.
+> > > 
+> > > I'm confused. I sent two patches as a reply to the thread plus the
+> > > answer below and there's two patches in v3 that you can use or drop.
+> > 
+> > Right, that's the part below. But the suggestion above, and also in Mike's
+> > reply to 02/12 was AFAICS to rename __kmem_cache_create_args to
+> > __kmem_cache_create (since patch 02) and here __kmem_cache_create to
+> > _kmem_cache_create. It just seemed odd to see no reaction to that (did I
+> > miss or not receive it?).
 > 
-> I just freed up 8 bytes in struct inode with what's currently in -next.
-> There will be no using up those 8 bytes unless it's for a good reason
-> and something that is very widely useful.
+> Oh, I see. I read it as a expressing taste and so I didn't bother
+> replying. And I really dislike single underscore function names so I
+> would like to avoid it and it also seems more confusing to me.
 
-I see, so now there are two holes. Seems the plan is to co-locate these 
-and reduce the size by 8 bytes. Thanks for the pointer. Primary reason 
-is a bit cleaner plumbing, but I'll manage without extra space.
+Heh, not quite. I don't like kmem_cache_create_args essentially becoming a
+replacement for kmem_cache_create* and I'd prefer __kmem_cache_create
+naming.
+
+As for the single underscore, I don't have strong feelings about it, but I
+do think that it should be renamed to something else than
+__kmem_cache_create to leave __kmem_cache_create for the core function.
+
+-- 
+Sincerely yours,
+Mike.
 
