@@ -1,132 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-28561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CC096C08A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:31:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4299D96C0C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D282896D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15E31F222F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D1A1DB93C;
-	Wed,  4 Sep 2024 14:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EK6m47HZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB89A1DB548;
+	Wed,  4 Sep 2024 14:36:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C941DA609
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 14:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B116463D;
+	Wed,  4 Sep 2024 14:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725460255; cv=none; b=r6cyEd747ap5JmZB7n3i9spgCcwzEthTuIXay3kN4TRdKzBphHaLBr87Wa4PQ7KYhMVmFYbRtJEjrV5KO4L77rfFJSWH1agriZRL1NSm+5fYdIfClQ/QllVtu8r6//HR52tc8rzWdm7b+dq1mikb6iK/h8Tj4CxnL6tq2zt9xO0=
+	t=1725460580; cv=none; b=muypwSm+brZ9JrwQMIq4YXmcro1U0MQ+ujmTmy9ergt/b2+vdZOCRnyDsfDqwzvQdMGK3sKs4lRcC7ZwQ+NZzvJHQnj+/28lGx7nYEPG0vo066wtQrJKhY40qwf2ZAer7i2OJ6tODlwLNe2HwRoq9GmnotkCeveATH0GvHOg0iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725460255; c=relaxed/simple;
-	bh=+ZXu6meYUp2emnk1pUEFpHVRsMcDsWR9d9edP3JL+tI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlF7Ubf2qetELejTPJUx5vmCETLXBTrXXs5Y/MOUC97tIimmO5bJbl7j2bV5vam1geeHJRQ2InPp5+lvnOS6G4o0bJHz8h+qrXRBA3ZVNbEvuqa5irUt44kClAqbUnrhpoMEAETOGRp14xX1IVIT9iKGFao72KDe0DTF7bzx78g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EK6m47HZ; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a866cea40c4so776297766b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 07:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725460252; x=1726065052; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4mj+3ddf2T3OL11MVG0wgLWW55Rk8MJvA3KeiKNlFbs=;
-        b=EK6m47HZAyHgIrhryObg0UtFiQrm6tdnwPgHZ5pMSgAmtRt3Pt7IBgyJ5zD31UMF6T
-         7qLWVlQ1PUobHBeqlhByfSoZ1ps4Zzhve0rsDaOTcJKq8wuodsLqUUfb9jDJwbO7KxDO
-         MkiV78wAQHf5p0+oqa00nbHa1N+zmmXBBRdCjTQ34f7J+2TAeiHi36RnJ82VbhOKBXLa
-         8kNJC5wssnJFt+ZgRIbyAX0GFyRlmimAMnuKjGeOeMGzmua+cm5VlSt8NmDkWXu7oCeY
-         gleAH4VphEPkctfggHZVn3FRuxK4yHtOiUMcJw/2cBZG41sfK2TVUAYuo/5Z1z1Ii1Bb
-         kc6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725460252; x=1726065052;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4mj+3ddf2T3OL11MVG0wgLWW55Rk8MJvA3KeiKNlFbs=;
-        b=ilpcJlQANwynSPeODhOo9CO1LVf0KfBMCooZvWJ78BOpgZ2kMWsVme+VnR1OEeF0FM
-         7ozOjdR3gYMBvDc89TcfBH+Aet5v62KmShytxD6H/ZVvDjH5AeO9JUUxcqXeHsiPYN6y
-         m/7E/YCsfQh4ratGohR3M9wjh2Z4h5BEj/XgW3AubCQEwNWIOfjr+daPP+1m3gy3LCyp
-         OGLChSETbou8lw7OVB2FtGUgoru9G97/3rZnmVBcwxwxHSY5cKKSjvsu20hD8EP6CpDT
-         NCVYHQrUcKXLZH9r7xnDh1ekFOSl0tN37yiSx0vi6MktYwDTtGck+A+SW903Gf3pykMW
-         hH8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXYqLwnmqk7ktWb16ynliMH7pssnNvXs8PmF1kRbVXt7e6wxDejyazgienjer+oC1TEwtgL8lZP8LH2sUwG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkQ4Weq7ThasyfDNiChIEPB6Hv48ZUFk8uh9hyJALUd4jplKyo
-	q9hfr/3xb5ndZlnfyP4qxzIFNZB3rVm1lcpU0sOxYfGoXrQ0Ge++NcfVrYuZ8dE=
-X-Google-Smtp-Source: AGHT+IFMOIxyP6G+sV9SFwQbLa7RzZxnlSRsBYqqYkhtUdWNAPfVNmkYr+B0Ioi6gh+avo5V5Q6aYQ==
-X-Received: by 2002:a17:907:7206:b0:a89:9a9d:4e13 with SMTP id a640c23a62f3a-a8a1d56efbdmr693848266b.56.1725460251935;
-        Wed, 04 Sep 2024 07:30:51 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3ceasm810608566b.115.2024.09.04.07.30.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 07:30:51 -0700 (PDT)
-Date: Wed, 4 Sep 2024 16:30:50 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH printk v6 00/17] add threaded printing + the rest
-Message-ID: <ZthvGoJE26dOtsLm@pathway.suse.cz>
-References: <20240904120536.115780-1-john.ogness@linutronix.de>
+	s=arc-20240116; t=1725460580; c=relaxed/simple;
+	bh=mrcpBZCNCDHUN8s1jct5aPcG3/C9zlzErsh6HAxxzVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BU8tYwZgM1wUklcuv3/A8c4VzhyITPhDrbfGyCFB6rjXSk2/5T0+SqM91zUFZzrJEIR5yik7+v2B0WuSlygJFNmEsPMmo5iXXvLsIAJpyYaQV14Xv4/k+lyhZye3Rh079MiM3yFr4flWFvtPl5K9qVNv7viXyVY+aBq6JHOkMqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WzQ685Z1lz9sS7;
+	Wed,  4 Sep 2024 16:36:16 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id j3Oi0qoOC3QN; Wed,  4 Sep 2024 16:36:16 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzQ684j7Sz9sRy;
+	Wed,  4 Sep 2024 16:36:16 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8DE208B77A;
+	Wed,  4 Sep 2024 16:36:16 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id MDg64KpQGgK2; Wed,  4 Sep 2024 16:36:16 +0200 (CEST)
+Received: from [192.168.234.246] (unknown [192.168.234.246])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9D5618B778;
+	Wed,  4 Sep 2024 16:36:15 +0200 (CEST)
+Message-ID: <070a2aa1-a804-4124-ad89-c43e09dc3ded@csgroup.eu>
+Date: Wed, 4 Sep 2024 16:36:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904120536.115780-1-john.ogness@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Wire up getrandom() vDSO implementation on powerpc
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+ llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org,
+ Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+ Xi Ruoyao <xry111@xry111.site>
+References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
+ <Zthr1nB_RJ56YD3O@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Zthr1nB_RJ56YD3O@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed 2024-09-04 14:11:19, John Ogness wrote:
-> Hi,
-> 
-> This is v6 of a series to implement threaded console printing
-> as well as some other minor pieces (such as proc and sysfs
-> recognition of nbcon consoles). v5 is here [0].
-> 
-> For information about the motivation of the nbcon consoles,
-> please read the cover letter of the original v1 [1].
-> 
-> This series provides the remaining pieces of the printk
-> rework. All other components are either already mainline or are
-> currently in linux-next. In particular this series does:
-> 
-> - Implement dedicated printing threads per nbcon console.
-> 
-> - Implement forced threading of legacy consoles for PREEMPT_RT.
-> 
-> - Implement nbcon support for proc and sysfs console-related
->   files.
-> 
-> - Provide a new helper function nbcon_reacquire_nobuf() to
->   allow nbcon console drivers to reacquire ownership.
-> 
-> Note that this series does *not* provide an nbcon console
-> driver. That will come in a follow-up series.
 
-JFYI, the patchset has been committed into printk/linux.git,
-branch rework/threaded-printk.
 
-I am not completely sure if we add this early enough for 6.12.
-On one hand, the patchset should not change the handling of legacy
-consoles and it does not add any nbcon console. But it touches
-many code paths where we decide how to flush the consoles
-and could imagine doing "ugly" mistakes there.
+Le 04/09/2024 à 16:16, Jason A. Donenfeld a écrit :
+> Hi Christophe, Michael,
+> 
+> On Mon, Sep 02, 2024 at 09:17:17PM +0200, Christophe Leroy wrote:
+>> This series wires up getrandom() vDSO implementation on powerpc.
+>>
+>> Tested on PPC32 on real hardware.
+>> Tested on PPC64 (both BE and LE) on QEMU:
+>>
+>> Performance on powerpc 885:
+>> 	~# ./vdso_test_getrandom bench-single
+>> 	   vdso: 25000000 times in 62.938002291 seconds
+>> 	   libc: 25000000 times in 535.581916866 seconds
+>> 	syscall: 25000000 times in 531.525042806 seconds
+>>
+>> Performance on powerpc 8321:
+>> 	~# ./vdso_test_getrandom bench-single
+>> 	   vdso: 25000000 times in 16.899318858 seconds
+>> 	   libc: 25000000 times in 131.050596522 seconds
+>> 	syscall: 25000000 times in 129.794790389 seconds
+>>
+>> Performance on QEMU pseries:
+>> 	~ # ./vdso_test_getrandom bench-single
+>> 	   vdso: 25000000 times in 4.977777162 seconds
+>> 	   libc: 25000000 times in 75.516749981 seconds
+>> 	syscall: 25000000 times in 86.842242014 seconds
+> 
+> Looking good. I have no remaining nits on this patchset; it looks good
+> to me.
+> 
+> A review from Michael would be nice though (in addition to the necessary
+> "Ack" I need to commit this to my tree), because there are a lot of PPC
+> particulars that I don't know enough about to review properly. For
+> example, you use -ffixed-r30 on PPC64. I'm sure there's a good reason
+> for this, but I don't know enough to assess it. And cvdso_call I have no
+> idea what's going on. Etc.
 
-OK, let's see how it works in linux-next in the following days.
-There is still time to catch problems and make the decision.
+You can learn a bit more about cvdso_call in commit ce7d8056e38b 
+("powerpc/vdso: Prepare for switching VDSO to generic C implementation.")
 
-Best Regards,
-Petr
+About the fixed-r30, you can learn more in commit a88603f4b92e 
+("powerpc/vdso: Don't use r30 to avoid breaking Go lang")
+
+
+> 
+> But anyway, awesome work, and I look forward to the final stretches.
+
+Thanks, looking forward to getting this series applied.
+
+Christophe
 
