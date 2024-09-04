@@ -1,197 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-28469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC1B96B03D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 07:02:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D16196B042
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 07:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8899B21659
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 05:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B9F1F2547F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 05:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4386782488;
-	Wed,  4 Sep 2024 05:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E80502B5;
+	Wed,  4 Sep 2024 05:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uD8Dl0ez";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uiSdU6EO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uD8Dl0ez";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uiSdU6EO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzksLJpy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC3D26AC3;
-	Wed,  4 Sep 2024 05:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9579D2A1BF
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 05:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725426119; cv=none; b=iZg2OxSH0t6NVYSHM1KQOclQAr0cy0xOR/sUU6YrR9LBC8mRj4vAe7JF3dVTjan9Ir8gRcqzbh9IZpXAzUaMJHdH0rhTxmW6SPb35pNDQTudOwz3q6khAiAYdNdJ7WPt5r0/QFPQgYB2TauvXrK9aRtSd1SEXb9KvTTBMk2OJz8=
+	t=1725426324; cv=none; b=ZcLYSar251okCZXojrMZ+HjOMuKQZCVGC1j9FYviOU4qO9nUmgJLwsswUrsUMvGkT2z3hZQR/EH3ux9qP5uW8akDmxYP1iTz317g8+RGlCYhaV/B78geEw2tkWhMS9YUIebFQNYX7lpTzGD07h9+vsYl5MARX1JgtoTlhH/rPkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725426119; c=relaxed/simple;
-	bh=L4SmsfdSbQ/CACxT4/EzbAti9/EvpVqhJ5WjEBj6Wgg=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=euW+AcaduP3ZnE17jwCf3Zwugoxr1pIM9TtiIv9KKkQBaNrGWyDl39xF+ICJyHDGdyo92D2K59egO8Hl4zpGCdB7oXNbN/JUehVq9bWMSNmMAo6pN1C+il8jcsr9pSx54qQdOS7AuRcCPKLmwB3vMIwjRbe0UYCDUBk681Uzbo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uD8Dl0ez; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uiSdU6EO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uD8Dl0ez; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uiSdU6EO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B1B1B21B3F;
-	Wed,  4 Sep 2024 05:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725426115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+DCKC1vUzbjPxbcJMU8GVyjZBWkNGVKM+7nqGXZ5ObE=;
-	b=uD8Dl0ezRJuSwshFo/w0zUb7yRkwldC8PMoKjOGNqEFvo2iqQ3083yRE8MmZPWyD/cIkCF
-	t55FrJBVq7N9oY3laMwWHaEBfMbno+CgXmY2HrDfOym581IH1A9UrDpiUDctOZBOB75rcH
-	Wl8pZ3AW4CjkPbzOc9+qjg/w7kee6pI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725426115;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+DCKC1vUzbjPxbcJMU8GVyjZBWkNGVKM+7nqGXZ5ObE=;
-	b=uiSdU6EOjnOqJVQ31s6uAncFVAfJCKTo7ahCDVsXZGxXO2k6JzkGkPS4r6ezubj+4PZg5l
-	h/n+p1XFDlnNfuBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=uD8Dl0ez;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=uiSdU6EO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725426115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+DCKC1vUzbjPxbcJMU8GVyjZBWkNGVKM+7nqGXZ5ObE=;
-	b=uD8Dl0ezRJuSwshFo/w0zUb7yRkwldC8PMoKjOGNqEFvo2iqQ3083yRE8MmZPWyD/cIkCF
-	t55FrJBVq7N9oY3laMwWHaEBfMbno+CgXmY2HrDfOym581IH1A9UrDpiUDctOZBOB75rcH
-	Wl8pZ3AW4CjkPbzOc9+qjg/w7kee6pI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725426115;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+DCKC1vUzbjPxbcJMU8GVyjZBWkNGVKM+7nqGXZ5ObE=;
-	b=uiSdU6EOjnOqJVQ31s6uAncFVAfJCKTo7ahCDVsXZGxXO2k6JzkGkPS4r6ezubj+4PZg5l
-	h/n+p1XFDlnNfuBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5A8B7139E2;
-	Wed,  4 Sep 2024 05:01:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QUq2BMHp12ZhRQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 04 Sep 2024 05:01:53 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1725426324; c=relaxed/simple;
+	bh=hYYe/f3Heq7cL4pkEkMqVo9uukiq3LWgcMvvuf73EzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggkZnNOxRhEgD65R+cKPVB4yokZb8k72gIb4lpvGZ6MedB0FOEg0vx/fFmuqlFj6xkrh/7pDtb6umEvyPQ1xWg2vPWhM1XIR7YNAqV/tp6KoyH6JLbyRb1DvRjVJi6LpRsikSs6qkW7XtnKYqRlguxbrmTug53EmL2qiy4qGRrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzksLJpy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80FDCC4CEC3;
+	Wed,  4 Sep 2024 05:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725426324;
+	bh=hYYe/f3Heq7cL4pkEkMqVo9uukiq3LWgcMvvuf73EzI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CzksLJpyMDutTGERgh2LGapeYK0k/1/Si86MKcPc+MS1RCwiis3kv6glhhmhcs1C8
+	 u+FeRZSJ6xGTrv/k3bipSpZMDJ7ijphZVEuATZC6hnsF9DfnXToF4Obv/1L8VixsOW
+	 nuzj1LLF1Vz0HLp45gPj0Zc2AWEBiU7YTZAJ0fqDlQw9kx5pFxdGG5QxXrDR+Ykq66
+	 kY3XjBEQ9lRtRxOw6IkgzpVzgrZWlSE6V9j4BeusYJdA0qM5tp5DtFXWWXr4rFSFdS
+	 d5DinNiXeQguXXi3uCuNpNyAYh2UxYzNAIq2bX+nwnkmaBGN/QfUyWtj3PLJcD5d8N
+	 BPbhH4GASpodw==
+Date: Wed, 4 Sep 2024 08:02:37 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 07/15] slub: pull kmem_cache_open() into
+ do_kmem_cache_create()
+Message-ID: <Ztfp7e4CkTnSNzra@kernel.org>
+References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-7-76f97e9a4560@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever III" <chuck.lever@oracle.com>
-Cc: "Mike Snitzer" <snitzer@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
- "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
- "Anna Schumaker" <anna@kernel.org>,
- "Trond Myklebust" <trondmy@hammerspace.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v15 16/26] nfsd: add LOCALIO support
-In-reply-to: <172540270112.4433.6741926579586461095@noble.neil.brown.name>
-References: <>, <67405117-1C08-4CA9-B0CE-743DFC7BCE3F@oracle.com>,
- <172540270112.4433.6741926579586461095@noble.neil.brown.name>
-Date: Wed, 04 Sep 2024 15:01:46 +1000
-Message-id: <172542610641.4433.9213915589635956986@noble.neil.brown.name>
-X-Rspamd-Queue-Id: B1B1B21B3F
-X-Spam-Score: -6.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,noble.neil.brown.name:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903-work-kmem_cache_args-v2-7-76f97e9a4560@kernel.org>
 
-On Wed, 04 Sep 2024, NeilBrown wrote:
+On Tue, Sep 03, 2024 at 04:20:48PM +0200, Christian Brauner wrote:
+> do_kmem_cache_create() is the only caller and we're going to pass down
+> struct kmem_cache_args in a follow-up patch.
 > 
-> I agree that dropping and reclaiming a lock is an anti-pattern and in
-> best avoided in general.  I cannot see a better alternative in this
-> case.
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-It occurred to me what I should spell out the alternate that I DO see so
-you have the option of disagreeing with my assessment that it isn't
-"better".
+Error handling in kmem_cache_open begs for improvement, but that's not
+related to this patch.
 
-We need RCU to call into nfsd, we need a per-cpu ref on the net (which
-we can only get inside nfsd) and NOT RCU to call
-nfsd_file_acquire_local().
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-The current code combines these (because they are only used together)
-and so the need to drop rcu. 
+> ---
+>  mm/slub.c | 132 +++++++++++++++++++++++++++++---------------------------------
+>  1 file changed, 62 insertions(+), 70 deletions(-)
+> 
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 23d9d783ff26..30f4ca6335c7 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -5290,65 +5290,6 @@ static int calculate_sizes(struct kmem_cache *s)
+>  	return !!oo_objects(s->oo);
+>  }
+>  
+> -static int kmem_cache_open(struct kmem_cache *s, slab_flags_t flags)
+> -{
+> -	s->flags = kmem_cache_flags(flags, s->name);
+> -#ifdef CONFIG_SLAB_FREELIST_HARDENED
+> -	s->random = get_random_long();
+> -#endif
+> -
+> -	if (!calculate_sizes(s))
+> -		goto error;
+> -	if (disable_higher_order_debug) {
+> -		/*
+> -		 * Disable debugging flags that store metadata if the min slab
+> -		 * order increased.
+> -		 */
+> -		if (get_order(s->size) > get_order(s->object_size)) {
+> -			s->flags &= ~DEBUG_METADATA_FLAGS;
+> -			s->offset = 0;
+> -			if (!calculate_sizes(s))
+> -				goto error;
+> -		}
+> -	}
+> -
+> -#ifdef system_has_freelist_aba
+> -	if (system_has_freelist_aba() && !(s->flags & SLAB_NO_CMPXCHG)) {
+> -		/* Enable fast mode */
+> -		s->flags |= __CMPXCHG_DOUBLE;
+> -	}
+> -#endif
+> -
+> -	/*
+> -	 * The larger the object size is, the more slabs we want on the partial
+> -	 * list to avoid pounding the page allocator excessively.
+> -	 */
+> -	s->min_partial = min_t(unsigned long, MAX_PARTIAL, ilog2(s->size) / 2);
+> -	s->min_partial = max_t(unsigned long, MIN_PARTIAL, s->min_partial);
+> -
+> -	set_cpu_partial(s);
+> -
+> -#ifdef CONFIG_NUMA
+> -	s->remote_node_defrag_ratio = 1000;
+> -#endif
+> -
+> -	/* Initialize the pre-computed randomized freelist if slab is up */
+> -	if (slab_state >= UP) {
+> -		if (init_cache_random_seq(s))
+> -			goto error;
+> -	}
+> -
+> -	if (!init_kmem_cache_nodes(s))
+> -		goto error;
+> -
+> -	if (alloc_kmem_cache_cpus(s))
+> -		return 0;
+> -
+> -error:
+> -	__kmem_cache_release(s);
+> -	return -EINVAL;
+> -}
+> -
+>  static void list_slab_objects(struct kmem_cache *s, struct slab *slab,
+>  			      const char *text)
+>  {
+> @@ -5904,26 +5845,77 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+>  
+>  int do_kmem_cache_create(struct kmem_cache *s, slab_flags_t flags)
+>  {
+> -	int err;
+> +	int err = -EINVAL;
+>  
+> -	err = kmem_cache_open(s, flags);
+> -	if (err)
+> -		return err;
+> +	s->flags = kmem_cache_flags(flags, s->name);
+> +#ifdef CONFIG_SLAB_FREELIST_HARDENED
+> +	s->random = get_random_long();
+> +#endif
+> +
+> +	if (!calculate_sizes(s))
+> +		goto out;
+> +	if (disable_higher_order_debug) {
+> +		/*
+> +		 * Disable debugging flags that store metadata if the min slab
+> +		 * order increased.
+> +		 */
+> +		if (get_order(s->size) > get_order(s->object_size)) {
+> +			s->flags &= ~DEBUG_METADATA_FLAGS;
+> +			s->offset = 0;
+> +			if (!calculate_sizes(s))
+> +				goto out;
+> +		}
+> +	}
+> +
+> +#ifdef system_has_freelist_aba
+> +	if (system_has_freelist_aba() && !(s->flags & SLAB_NO_CMPXCHG)) {
+> +		/* Enable fast mode */
+> +		s->flags |= __CMPXCHG_DOUBLE;
+> +	}
+> +#endif
+> +
+> +	/*
+> +	 * The larger the object size is, the more slabs we want on the partial
+> +	 * list to avoid pounding the page allocator excessively.
+> +	 */
+> +	s->min_partial = min_t(unsigned long, MAX_PARTIAL, ilog2(s->size) / 2);
+> +	s->min_partial = max_t(unsigned long, MIN_PARTIAL, s->min_partial);
+> +
+> +	set_cpu_partial(s);
+> +
+> +#ifdef CONFIG_NUMA
+> +	s->remote_node_defrag_ratio = 1000;
+> +#endif
+> +
+> +	/* Initialize the pre-computed randomized freelist if slab is up */
+> +	if (slab_state >= UP) {
+> +		if (init_cache_random_seq(s))
+> +			goto out;
+> +	}
+> +
+> +	if (!init_kmem_cache_nodes(s))
+> +		goto out;
+> +
+> +	if (!alloc_kmem_cache_cpus(s))
+> +		goto out;
+>  
+>  	/* Mutex is not taken during early boot */
+> -	if (slab_state <= UP)
+> -		return 0;
+> +	if (slab_state <= UP) {
+> +		err = 0;
+> +		goto out;
+> +	}
+>  
+>  	err = sysfs_slab_add(s);
+> -	if (err) {
+> -		__kmem_cache_release(s);
+> -		return err;
+> -	}
+> +	if (err)
+> +		goto out;
+>  
+>  	if (s->flags & SLAB_STORE_USER)
+>  		debugfs_slab_add(s);
+>  
+> -	return 0;
+> +out:
+> +	if (err)
+> +		__kmem_cache_release(s);
+> +	return err;
+>  }
+>  
+>  #ifdef SLAB_SUPPORTS_SYSFS
+> 
+> -- 
+> 2.45.2
+> 
 
-I thought briefly that it could simply drop rcu and leave it dropped
-(__releases(rcu)) but not only do I generally like that LESS than
-dropping and reclaiming, I think it would be buggy.  While in the nfsd
-module code we need to be holding either rcu or a ref on the server else
-the code could disappear out from under the CPU.  So if we exit without
-a ref on the server - which we do if nfsd_file_acquire_local() fails -
-then we need to reclaim RCU *before* dropping the ref.  So the current
-code is slightly buggy.
-
-We could instead split the combined call into multiple nfs_to
-interfaces.
-
-So nfs_open_local_fh() in nfs_common/nfslocalio.c would be something
-like:
-
- rcu_read_lock();
- net = READ_ONCE(uuid->net);
- if (!net || !nfs_to.get_net(net)) {
-       rcu_read_unlock();
-       return ERR_PTR(-ENXIO);
- }
- rcu_read_unlock();
- localio = nfs_to.nfsd_open_local_fh(....);
- if (IS_ERR(localio))
-       nfs_to.put_net(net);
- return localio;
-
-So we have 3 interfaces instead of 1, but no hidden unlock/lock.
-
-As I said, I don't think this is a net win, but reasonable people might
-disagree with me.
-
-NeilBrown
+-- 
+Sincerely yours,
+Mike.
 
