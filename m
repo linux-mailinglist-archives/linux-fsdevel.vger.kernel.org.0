@@ -1,95 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-28497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B51296B462
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D45196B468
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD3C1C20B03
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 08:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73DD28288B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 08:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB7018C902;
-	Wed,  4 Sep 2024 08:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E4B1898F0;
+	Wed,  4 Sep 2024 08:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yd5Rv6QQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aUA6nJP3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yd5Rv6QQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aUA6nJP3"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OAtwqqaw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9GmKonCH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eKRgG+NZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8jykDmv6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B78818593C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 08:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C706117C9B0
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 08:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725437923; cv=none; b=Yd2b4imENA0GX5JVnmv7nwIxflzD4lcUK/3zuSd8SueV6fsMsyEoXJ09npYHfxyNLRvaG7o4s1FAD+dYNbN8YwHSEnJU8BSTnztqeUxkBvBj8rnmyMyq+FUbrVCLX3IbxDDQpFskuEES8/6ClAMfkorcg/wupYf2Y7LoM/9oan4=
+	t=1725438035; cv=none; b=LpZrfNnPpjL9BTitGDBlw6VjMH51m0o/EKA1yiAnhITV5mMarz/uN65FYkE7m2yMupqNdkbaTXFSNNegFBVru8c8Sz/eftwWyT7X5nQDnSDrwXZb4eRYts6h5CsvyrWcbzZryJR6mJyLlNbYgqwgJQrUdx1lrPf907FYaqa4DEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725437923; c=relaxed/simple;
-	bh=1kSnO0RUXdUKcBktlsp0uqeMqVWhCPSK957oV7XMpZc=;
+	s=arc-20240116; t=1725438035; c=relaxed/simple;
+	bh=pddFCF1ZAjAgi4YHbvVfPFDRlQSBplryGkMvsNbor74=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D1oxqqQQvYWNjTGNB4wUbBJTSSX8SuenhhRjX+pzEgyGMwzOkYOOl2b4+WzvWDR0WYN2ErW/0HzA1/w+uTdHXo3LodHWjBNROPO5vuH07TXAR8CZ3N4Yye/VpP9nzzmFxVgIoUqgWjTBgc2LZKv5480nogM0iFRg640o2OMPYuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yd5Rv6QQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aUA6nJP3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yd5Rv6QQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aUA6nJP3; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=NCzwymtPJ3J/SHfz//+3R0eL9VaErzQnSNBm2VIKhGcIwzq0uCIfBJF7GYn/wdGvRTU2ISw0pkahalGyTEtMlaz6xatqsxA6e5RFjNnw7dtxlHXT+5chxoE/ItbdnPczG+mpReeJT+WuUgTFMNzWfL4ntAraaqkPGejBRqTvfG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OAtwqqaw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9GmKonCH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eKRgG+NZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8jykDmv6; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 460021F7A6;
-	Wed,  4 Sep 2024 08:18:40 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DD8E31F7A6;
+	Wed,  4 Sep 2024 08:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725437920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725438032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1kSnO0RUXdUKcBktlsp0uqeMqVWhCPSK957oV7XMpZc=;
-	b=yd5Rv6QQUejg6HoOPuvrzblhkxKyH31P0SZlsyhIyzHbw69S+RyVx9ttpe1tOU9f1C9qP5
-	52eJ6/309E2jPF7cCG+qkTV8nAhlJSAicKvldjLaSALaFcMs8FdvckYR+eD2E3BGw34VBf
-	qB7FQIzY5hHmyPNJ2Ceyxf+sPGFKPB0=
+	bh=SqYnct0LSqRngHGJk0Qq4Uk/Skvt4li6oCkptSllDus=;
+	b=OAtwqqawSRDvsDE/XGHigw0Uy4la7DOMhtYRBjOVgm77YiQKwAcKV/J5JhBJMWNJjlaT7D
+	+iKpwwMLKuLomIzDqGMUzRucE5pEgoJespye3paNfw8ThxRwumB0+4kM2axr7RXDpUwBgJ
+	Fa5wdMwhtYa3KdxmfI4QQIh99d2A7kM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725437920;
+	s=susede2_ed25519; t=1725438032;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1kSnO0RUXdUKcBktlsp0uqeMqVWhCPSK957oV7XMpZc=;
-	b=aUA6nJP3vOOUBOL/6Hz25POS6o4t9jgrXtBEtAYsjlqaqaTBsSkXDM5mbJlm/wsP+JDumr
-	YVb9dj76cTeip3Cg==
+	bh=SqYnct0LSqRngHGJk0Qq4Uk/Skvt4li6oCkptSllDus=;
+	b=9GmKonCHYw1xzLry9lqs5UFAWZOpAE+p3mJtcg6+eFoqDBO6HjcYKheJbcGbsAg91u3O0e
+	wxGNE2mdxWAamfBQ==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725437920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725438031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1kSnO0RUXdUKcBktlsp0uqeMqVWhCPSK957oV7XMpZc=;
-	b=yd5Rv6QQUejg6HoOPuvrzblhkxKyH31P0SZlsyhIyzHbw69S+RyVx9ttpe1tOU9f1C9qP5
-	52eJ6/309E2jPF7cCG+qkTV8nAhlJSAicKvldjLaSALaFcMs8FdvckYR+eD2E3BGw34VBf
-	qB7FQIzY5hHmyPNJ2Ceyxf+sPGFKPB0=
+	bh=SqYnct0LSqRngHGJk0Qq4Uk/Skvt4li6oCkptSllDus=;
+	b=eKRgG+NZg5ataYi40LjOxL/SQKPry1JOlMCVC5QAr3gh4vcZ/OmnZgT4fgxAWpsJIKSwhZ
+	Z9GAGGu+Bp3WwfR7qkiCYNBLPOezRXMEqXUd5gaodEfy84uYCyVo5xfNrebneSnAvysfvh
+	oE8VK5Ye+ENCnRt1pUZjHnasly1J9ag=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725437920;
+	s=susede2_ed25519; t=1725438031;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1kSnO0RUXdUKcBktlsp0uqeMqVWhCPSK957oV7XMpZc=;
-	b=aUA6nJP3vOOUBOL/6Hz25POS6o4t9jgrXtBEtAYsjlqaqaTBsSkXDM5mbJlm/wsP+JDumr
-	YVb9dj76cTeip3Cg==
+	bh=SqYnct0LSqRngHGJk0Qq4Uk/Skvt4li6oCkptSllDus=;
+	b=8jykDmv6VbJvtGvKj2GmKsA/5Xmk0M8aXPbAz7JUBzONdBg+Pv6By5QtxrhrHBlXuEGHoS
+	vlrL1zMDegYOlgDg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33EA5139D2;
-	Wed,  4 Sep 2024 08:18:40 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA678139D2;
+	Wed,  4 Sep 2024 08:20:31 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TC9LDOAX2GazfgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 04 Sep 2024 08:18:40 +0000
-Message-ID: <f0000af0-99aa-4b10-8d56-da1cc13c445c@suse.cz>
-Date: Wed, 4 Sep 2024 10:18:39 +0200
+	id xxUVMU8Y2GZJfwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 04 Sep 2024 08:20:31 +0000
+Message-ID: <40b37458-5f75-40c1-b07a-529072e4c4a1@suse.cz>
+Date: Wed, 4 Sep 2024 10:20:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,14 +97,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/15] slab: remove kmem_cache_create_rcu()
+Subject: Re: [PATCH v2 15/15] io_uring: port to struct kmem_cache_args
 Content-Language: en-US
 To: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
  Jann Horn <jannh@google.com>, Linus Torvalds
  <torvalds@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-14-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-15-76f97e9a4560@kernel.org>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -145,10 +145,10 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
  1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
  EP+ylKVEKb0Q2A==
-In-Reply-To: <20240903-work-kmem_cache_args-v2-14-76f97e9a4560@kernel.org>
+In-Reply-To: <20240903-work-kmem_cache_args-v2-15-76f97e9a4560@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
+X-Spam-Score: -4.30
 X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -168,14 +168,52 @@ X-Spamd-Result: default: False [-4.30 / 50.00];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
 X-Spam-Flag: NO
+X-Spam-Level: 
 
 On 9/3/24 16:20, Christian Brauner wrote:
-> Since we have kmem_cache_setup() and have ported kmem_cache_create_rcu()
+> Port req_cachep to struct kmem_cache_args.
 
-Nit: it's now kmem_cache_create() variant with kmem_cacheargs, not
-kmem_cache_setup()
+Fine but doesn't bring anything on its own, wouldn't Jens want to supply the
+freeptr_offset at the same time to benefit from it?
 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  io_uring/io_uring.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 3942db160f18..d9d721d1424e 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -3638,6 +3638,11 @@ SYSCALL_DEFINE2(io_uring_setup, u32, entries,
+>  
+>  static int __init io_uring_init(void)
+>  {
+> +	struct kmem_cache_args kmem_args = {
+> +		.useroffset = offsetof(struct io_kiocb, cmd.data),
+> +		.usersize = sizeof_field(struct io_kiocb, cmd.data),
+> +	};
+> +
+>  #define __BUILD_BUG_VERIFY_OFFSET_SIZE(stype, eoffset, esize, ename) do { \
+>  	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
+>  	BUILD_BUG_ON(sizeof_field(stype, ename) != esize); \
+> @@ -3722,12 +3727,9 @@ static int __init io_uring_init(void)
+>  	 * range, and HARDENED_USERCOPY will complain if we haven't
+>  	 * correctly annotated this range.
+>  	 */
+> -	req_cachep = kmem_cache_create_usercopy("io_kiocb",
+> -				sizeof(struct io_kiocb), 0,
+> -				SLAB_HWCACHE_ALIGN | SLAB_PANIC |
+> -				SLAB_ACCOUNT | SLAB_TYPESAFE_BY_RCU,
+> -				offsetof(struct io_kiocb, cmd.data),
+> -				sizeof_field(struct io_kiocb, cmd.data), NULL);
+> +	req_cachep = kmem_cache_create("io_kiocb", sizeof(struct io_kiocb), &kmem_args,
+> +				SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT |
+> +				SLAB_TYPESAFE_BY_RCU);
+>  	io_buf_cachep = KMEM_CACHE(io_buffer,
+>  					  SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
+>  
+> 
 
 
