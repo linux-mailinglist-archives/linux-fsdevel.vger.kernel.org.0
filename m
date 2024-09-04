@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-28572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3604796C239
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 17:26:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F022C96C25C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 17:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695321C22DCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 15:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88AC28C09C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 15:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A041DFE2A;
-	Wed,  4 Sep 2024 15:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C381DEFC7;
+	Wed,  4 Sep 2024 15:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJH/ko3e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEWCH9L9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CB91DCB30;
-	Wed,  4 Sep 2024 15:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6141EC017;
+	Wed,  4 Sep 2024 15:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725463546; cv=none; b=BEym181IFUYcxuMt+/wjh/vmqCsiaykHf7jXn0E5rmocE6INDqMkSbJ5ny6kyhAjqJurHpPDuh3hyF/JUHXFS60+zNGC4jkklkeiPklYNlCYq7t0eD+dpw8MXwPHd2qZespia0zO6weyk/eZME9z+iVB3pswc0P2s8hu8wrEfU0=
+	t=1725463762; cv=none; b=EiKFvJ6vOfzqDI0h4FkiLnFKUk/t20eo/KPov4clsvq7L3QW0fVNrc0TiR2eZH8grCTumVnSz7W/MEa0Uzr7mQWGHfEjPsv4letiw1Z6IszFZ7XMod6jn5RjUITMGjW28KypiladN01Czl2WMu1XLb28WnLJBSd6QvT5gI/tohc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725463546; c=relaxed/simple;
-	bh=ifvQS6G1EICry98rRpOIIWpo6JM1GsNIyrDXmXGmB7g=;
+	s=arc-20240116; t=1725463762; c=relaxed/simple;
+	bh=D6HI9Mwch4F78XaYWMZF+PV3MdD/2wFCpUYz7uq7YDM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q5Hu3v1hg6oBmh72NMi1e9YOcTtDyzOx7vcGOrTBfo4iAf0iwECyPgIQbO4/AX44iytEy6ntvPSkLvYGH2zV1+sFg6rP+HXn1A64anFvPT5s0NRb79FWV3+34u/9/cWIAP8ByRCLXjk2QYOq+YNaulc7+9P9klGcZV3scMpoqMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJH/ko3e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC5FC4CEC6;
-	Wed,  4 Sep 2024 15:25:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r63MKVVq2+TVK2uzXzvZ6EDWDInHDBJHrfwNADu23rSqlw/bhyhLBh6+N26xeNxPq1qWEcccoew6yrQSxIqIOI3msRH5f/7j6lpVU2UWmlstJhvlETSePMDYv5v+pQL2B/bHKi4ezSEkKeQULqWe+HvbnSy5/poPaDVSropFLJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEWCH9L9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0505C4CEC2;
+	Wed,  4 Sep 2024 15:29:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725463546;
-	bh=ifvQS6G1EICry98rRpOIIWpo6JM1GsNIyrDXmXGmB7g=;
+	s=k20201202; t=1725463762;
+	bh=D6HI9Mwch4F78XaYWMZF+PV3MdD/2wFCpUYz7uq7YDM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kJH/ko3eSn4Jkm5EpAuvSE+lBftKVXkuM+j2GAKVHixUgGcFmlnQZNb63JkRludgy
-	 pHa/A5e7OXa4A7tpc3UILJ6ONcfihtJOeVEZTvRFuznrMxmoeqdBMF5WmSEdOpybyc
-	 toAXZrqn8Yme2RCgRki8WIPUnTX1JdgHaOumi46jCVt0BAqNTPpx9/AYDd1Bi4qIal
-	 X/ujgeJK5K06cHnXZISuLTbGR4+QzXTa8psr92qduulT57ZIkzgSqVCmLer3H9pn9W
-	 uQvPbyp8WSyr63rn++n6eOvnERWD3Qc0wrWrLrMCCoBKZsJOPwK0bjV6S+p+9FBqT+
-	 XFsiQsSBwJn6w==
-Date: Wed, 4 Sep 2024 17:25:40 +0200
+	b=OEWCH9L9XWmP4pcznNFj5wNA/VGOk0YU8B5xZjetrPXVg6QqAospEtlLW8rnQhVQB
+	 qRKSuSPtiX039AZnws9VieP0/1AZirOycrFv69cwp7/lnP0oRAk1WxCQeylcq0avTa
+	 URtNzwi8JI2i68isen3BlDvDQVVPEP3K1SuLZzefCmHGNFgQBoKS46zPl2HK+sTaOJ
+	 TEjDPqmUeijv3HdBBVYKFXrTi7oHamQeVdaGIrPYQG5F4/JXuwlKRJd3nBdSvPzYG5
+	 wItEN/rJBaRxjgrNGtK6qgOfkaylNWScb86Np4Hd0NScchnejenMvLWO30al8xeAlK
+	 Cxvq6iw6BZDew==
+Date: Wed, 4 Sep 2024 17:29:16 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: mszeredi@redhat.com, stgraber@stgraber.org, 
-	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, 
+	mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
+	Seth Forshee <sforshee@kernel.org>, Vivek Goyal <vgoyal@redhat.com>, 
+	German Maglione <gmaglione@redhat.com>, Amir Goldstein <amir73il@gmail.com>, 
 	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 03/15] fs/fuse: add an idmap argument to
- fuse_simple_request
-Message-ID: <20240904-baugrube-erhoben-b3c1c49a2645@brauner>
+Subject: Re: [PATCH v4 00/15] fuse: basic support for idmapped mounts
+Message-ID: <20240904-kehren-umzug-4dbff956b47e@brauner>
 References: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
- <20240903151626.264609-4-aleksandr.mikhalitsyn@canonical.com>
+ <CAJfpegsouKySsJpYHetSPj2G5oca8Ujxuv+7jpvmF57zYztbZw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,45 +61,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240903151626.264609-4-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <CAJfpegsouKySsJpYHetSPj2G5oca8Ujxuv+7jpvmF57zYztbZw@mail.gmail.com>
 
-On Tue, Sep 03, 2024 at 05:16:14PM GMT, Alexander Mikhalitsyn wrote:
-> If idmap == NULL *and* filesystem daemon declared idmapped mounts
-> support, then uid/gid values in a fuse header will be -1.
+On Wed, Sep 04, 2024 at 05:15:40PM GMT, Miklos Szeredi wrote:
+> On Tue, 3 Sept 2024 at 17:16, Alexander Mikhalitsyn
+> <aleksandr.mikhalitsyn@canonical.com> wrote:
+> >
+> > Dear friends,
+> >
+> > This patch series aimed to provide support for idmapped mounts
+> > for fuse & virtiofs. We already have idmapped mounts support for almost all
+> > widely-used filesystems:
+> > * local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
+> > * network (ceph)
 > 
-> No functional changes intended.
+> Looks good.
 > 
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Seth Forshee <sforshee@kernel.org>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Bernd Schubert <bschubert@ddn.com>
-> Cc: <linux-fsdevel@vger.kernel.org>
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> ---
+> Applied with some tweaks and pushed.
 
-Huha, you end up extending fuse_simple_request() with an idmap argument
-and passing NULL 38 times and non-NULL only 4 times at the end of this
-patch series. That's not pretty. Also, I really dislike passing NULL as
-an argument to the idmap helpers. All of the idmapping code uses
-nop_mnt_idmap for this case and I think we should the same just with
-invalid_mnt_idmap constant.
-
-So I would propose two changes:
-
-(1) Add an extern invalid_mnt_idmap into mnt_idmapping.h and
-    define it in fs/mnt_idmapping.c so that will always yield
-    INVALID_VFSUID/INVALID_VFSGID. Basically, it's the same definition
-    as for nop_mnt_idmap.
-
-(2) Instead of extending fuse_simple_request() with an additional
-    argument rename fuse_simple_request() to __fuse_simple_request()
-    and extend __fuse_simple_request() with a struct mnt_idmap argument.
-
-    * make fuse_simple_request() a static inline helper that calls
-      __fuse_simple_request() with invalid_mnt_idmap in the fuse_i.h
-      header.
-
-    * add fuse_idmap_request() that also calls __fuse_simple_request()
-      but just passes through the idmap argument.
+Ah, I didn't see your reply. Fwiw, if you agree with my suggestion then
+Alex can just put that patch on top of the series or do it after we
+landed it. I just think passing NULL 38 times is a bit ugly.
 
