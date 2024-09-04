@@ -1,116 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-28479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F43F96B06A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 07:19:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5278E96B19A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 08:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CDB6B2344B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 05:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DEB1F21755
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 06:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE97982899;
-	Wed,  4 Sep 2024 05:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0UuoRft"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34A11384B9;
+	Wed,  4 Sep 2024 06:31:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E59C823C3
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 05:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61ED7D2FB;
+	Wed,  4 Sep 2024 06:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725427136; cv=none; b=j6PjjATLsaFsUbTmtS7ADcS/uOK3ryHQgTdTp+kqfncSEx4gjStotKMe1j2MpYjKGZ9oW+lde6MYvGtx34FExeFzEEFgvCpKUC4cJt0+OK+OFmB4Vk0qQVGk57Ahag2LUCtHz8hyb2fH2P8QOGlMJf9bKdpuA+0QShid27MflMU=
+	t=1725431476; cv=none; b=rICjKGxkJN4fmlXPKFi/cTZYozaZS1GOR5CRjI8lntQNzAe9MQVhibQy7xSfRHlTeZPAOrYY5pIqZh5DhzgZUdzHpp2i5jQSc+opZ7Qslv4miOaI2/4/dM28Mf0B7vQDoXyUytNgqXC9m//DA7HXF4ZEbTJJqXEHoZ7HJlnx7D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725427136; c=relaxed/simple;
-	bh=oSa5MkUfVUGc4lGYcNLkbNhyI4gxtWrjnDAQ5Dr6a2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnoaR1M2qKToqu4ChdVRuukvysIZ8ET9cIs4ZA2e3EhRRmNT5CXxCt+kRMwaMA5gYM84D64c8ZKfUQPl7YmT/hvmybEHHfaS1AdRCfD2eQLjJobak/Uop7l8nVnwmZHLjHOjjcniC91gCO/H3+zXvTp3B622E1YciRrZS8w80Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0UuoRft; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36314C4CEC2;
-	Wed,  4 Sep 2024 05:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725427135;
-	bh=oSa5MkUfVUGc4lGYcNLkbNhyI4gxtWrjnDAQ5Dr6a2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s0UuoRftw6qb1bDtSkV2PDdIJNLfWztU6J7s4OTaJnC+J+5YqXk4gwOP11Qhr3fJY
-	 WrfYyZIKanqWQQWZO7Ck+NyKxXye1z7OjVWduMxDugHVb21S8h93xDa6CFEataHSMH
-	 afrF4tdWfvlAZyUh+rBcWgxwMggo/2mL5nlbFYT/l0emLjAPEga72vtFpvHLPPtoXV
-	 7n8pKYN8VDkASTToTV2dTpwhU/2ilI3PedRO40a32nNk+XUH0ULmAHEX2EZoB52XY/
-	 4ZGTiQgPgNps+mQIHUUppVEw1PsSWH3Lv/P4wwVPcoW+8mr7ULMs4ITGh77/2l78WX
-	 gmFWWo5VdGOTg==
-Date: Wed, 4 Sep 2024 08:16:09 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-	Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 15/15] io_uring: port to struct kmem_cache_args
-Message-ID: <ZtftGVxxKqb3F4uU@kernel.org>
-References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-15-76f97e9a4560@kernel.org>
+	s=arc-20240116; t=1725431476; c=relaxed/simple;
+	bh=ymxE/mFIEEcQfGhvoEMdefF73lJUke8MMEv/Pug4dfE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D99tRe9TyIt/29aOJEygIpBgXc1NSRp9dWbL9pRlQZsgBp/h3BmP0+q0fmcbU9U7SjOuK5gVH/BuxDXfzkXgc1yESe/AAVeD+xOrIZ4ny5+vjjzNLQPHNhzAaoXd3PeiXcqf3I6/vKsyXCZbh+0+wQNQlH53UtWqUWLIZYR3240=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WzCL66nQnz4f3jMD;
+	Wed,  4 Sep 2024 14:30:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E868E1A0359;
+	Wed,  4 Sep 2024 14:31:09 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAnXMif_tdmjKtlAQ--.29879S4;
+	Wed, 04 Sep 2024 14:31:09 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v2 00/10] ext4: clean up and refactor fallocate
+Date: Wed,  4 Sep 2024 14:29:15 +0800
+Message-Id: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903-work-kmem_cache_args-v2-15-76f97e9a4560@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAnXMif_tdmjKtlAQ--.29879S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF45ZrW7Cr17Gr15tF4DXFb_yoW8AFWrpF
+	WfWwnaqr4jg3sruws3Zw4xXF4xKw4rAw47JFWIgw4vgrn5uF109F4Uta40kFWxAFWfJa47
+	XFWjvrnru3Wjka7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Tue, Sep 03, 2024 at 04:20:56PM +0200, Christian Brauner wrote:
-> Port req_cachep to struct kmem_cache_args.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Changes since v1:
+ - Fix an using uninitialized variable problem in the error out path in
+   ext4_do_fallocate() in patch 08.
 
-> ---
->  io_uring/io_uring.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 3942db160f18..d9d721d1424e 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -3638,6 +3638,11 @@ SYSCALL_DEFINE2(io_uring_setup, u32, entries,
->  
->  static int __init io_uring_init(void)
->  {
-> +	struct kmem_cache_args kmem_args = {
-> +		.useroffset = offsetof(struct io_kiocb, cmd.data),
-> +		.usersize = sizeof_field(struct io_kiocb, cmd.data),
-> +	};
-> +
->  #define __BUILD_BUG_VERIFY_OFFSET_SIZE(stype, eoffset, esize, ename) do { \
->  	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
->  	BUILD_BUG_ON(sizeof_field(stype, ename) != esize); \
-> @@ -3722,12 +3727,9 @@ static int __init io_uring_init(void)
->  	 * range, and HARDENED_USERCOPY will complain if we haven't
->  	 * correctly annotated this range.
->  	 */
-> -	req_cachep = kmem_cache_create_usercopy("io_kiocb",
-> -				sizeof(struct io_kiocb), 0,
-> -				SLAB_HWCACHE_ALIGN | SLAB_PANIC |
-> -				SLAB_ACCOUNT | SLAB_TYPESAFE_BY_RCU,
-> -				offsetof(struct io_kiocb, cmd.data),
-> -				sizeof_field(struct io_kiocb, cmd.data), NULL);
-> +	req_cachep = kmem_cache_create("io_kiocb", sizeof(struct io_kiocb), &kmem_args,
-> +				SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT |
-> +				SLAB_TYPESAFE_BY_RCU);
->  	io_buf_cachep = KMEM_CACHE(io_buffer,
->  					  SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
->  
-> 
-> -- 
-> 2.45.2
-> 
+Current ext4 fallocate code is mess with mode checking, locking, input
+parameter checking, position calculation, and having some stale code.
+Almost all of the five sub-functions have the same preparation, it
+deserve a clean up now.
+
+This series tries to clean this up by refactor all fallocate related
+operations, it unify variable naming, reduce some unnecessary position
+calculation, factor out one common helper to check input parameters, and
+also foctor out one common helper to wait for the dios to finish, hold
+filemap invalidate lock, write back dirty data and drop page cache.
+
+The first patch fix a potential data loss problem when punch hole, zero
+range and collapse range by always write back dirty pages. Later patchs
+do cleanup and refactor work, please see them for details. After this
+series, we can reduce a lot of redundant code and make it more clear
+than before.
+
+Thanks,
+Yi.
+
+Zhang Yi (10):
+  ext4: write out dirty data before dropping pages
+  ext4: don't explicit update times in ext4_fallocate()
+  ext4: drop ext4_update_disksize_before_punch()
+  ext4: refactor ext4_zero_range()
+  ext4: refactor ext4_punch_hole()
+  ext4: refactor ext4_collapse_range()
+  ext4: refactor ext4_insert_range()
+  ext4: factor out ext4_do_fallocate()
+  ext4: factor out the common checking part of all fallocate operations
+  ext4: factor out a common helper to lock and flush data before
+    fallocate
+
+ fs/ext4/ext4.h    |   5 +-
+ fs/ext4/extents.c | 566 +++++++++++++++++++---------------------------
+ fs/ext4/inode.c   | 173 ++++----------
+ 3 files changed, 278 insertions(+), 466 deletions(-)
 
 -- 
-Sincerely yours,
-Mike.
+2.39.2
+
 
