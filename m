@@ -1,266 +1,817 @@
-Return-Path: <linux-fsdevel+bounces-28457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3CA96AD68
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 02:36:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7D396AD71
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 02:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A570B286ABD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 00:36:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 304A0B23748
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 00:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBA920ED;
-	Wed,  4 Sep 2024 00:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFE510F9;
+	Wed,  4 Sep 2024 00:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bcLOmTWQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CuFb51Jy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317AE63D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 00:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB80563D;
+	Wed,  4 Sep 2024 00:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725410148; cv=none; b=L7VFVlD0j2H7iIDlfqsIdCzIV6KElWr2r7NOsu+xaOb0zJi+WgitlPhf/Sk1hGhmqe7i3MvhXa0rLsp0KLjbn9GrKookXFGHq0uRsIghN9dqoSL8oD9J/OMZ2w/DHHfdOFfI/uo+0bbQ+IssfsWr8zbPCymncVMGLeeTQMRMv+g=
+	t=1725410642; cv=none; b=XgLQ37TY9yLItmFZFHN2O621bAyZrY6ardFW4H5qDy/1061CDLuvUatTI9XbNwbR1APK1OS6XYAnqCQVG4ZonUx2tmvREmBK84GWi5oBESEL2f+TJW5oc45Zphtwsp1mJ4UAoOmOJv3ZQGWzb7/5hJRFE1v4fY6mBxLqUX9bgjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725410148; c=relaxed/simple;
-	bh=EcEry7sj4uZHIlU9bQDtUoL7z30Ue66a1E6WzjoTlBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8RPvUKaqcDQCtdlxpg3qRSKQ9ZPPajzePIeGCg6Rbpui+0JZxHrWKdQlhAE2z3o7fQMk0LTmP4nCrmS0NiOZAv+5S5Epw6UBzr4rgwEv9j9pIk7OftN+1R1wQDoVQt6du0vSwc9b1uXTH7xW6g4CvpaN4sgQtOTgLRLCh5SUT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bcLOmTWQ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2da4e84c198so184789a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2024 17:35:46 -0700 (PDT)
+	s=arc-20240116; t=1725410642; c=relaxed/simple;
+	bh=xMheCBJq1iVIAGoZDiI6b/7UtinRWkuIhNKgOeu4bfw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CQ832aPD7Ljhmxtm7p9x+okoAbdtH9OW0Js18J6feaAASSmT1QXQdTHEOoaD3NHlGUFsq3rZA0rvyJastwoA05PpFy9mtxmLCHxu/4g2Dnay1HQwfd7p78uNKpC8qT9vu1H6MhBaE69bCGUB9A92STZ9yh7UvK9ekJaQ1pw3gx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CuFb51Jy; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-457e2537611so10497351cf.0;
+        Tue, 03 Sep 2024 17:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725410146; x=1726014946; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X09FZcsXHq5FRxLqb6QpBy2WSWRNXIIXcEnLXxsbJbE=;
-        b=bcLOmTWQWzs2tkZjfFPS1dANwr2pwA3kcOtrB4xUzaWuJZgGX4djEurhO3/1zKINU+
-         FymqsSD5NKmjyhqMH8+fzMQInWc9EJY/ewRuoVmUG+kCk4D+AYgtyEfl4lu6cjDJ9AEc
-         j46OcWbrdqaboYL4jqSK2aV2X9ZoDpB6/3DcD+YuD9r0YklWfmaFJscAfrffqS4FPVha
-         015LJ2hDB0ayp/Isbw9kAYxfCdVxHcApxgJbmm952PsBpo+Rv0KJulAsM4HkvN4OACAG
-         jliqsrVlH8Eu793YRhGKJJ7hM4onNBGb0JQ5SqpjBOmw/NU3DwKX6bkbX+DJIp2TPa9f
-         oAiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725410146; x=1726014946;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1725410640; x=1726015440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X09FZcsXHq5FRxLqb6QpBy2WSWRNXIIXcEnLXxsbJbE=;
-        b=qL3teuHb93bcfIhMUsl5ijXl2o0rN4vhjgamw/lSgYDd+qeu9Uvs60XMM7QsPMwkcn
-         QChMnuIlktFJPZMk1KnhocCW5BQz8DeCaYRO9FdrqC4eEtL/UKgnpGNn5vyplieiRsOg
-         qoMGf5BtvZz+haMaeFAJck6HYWlnOEuUqKefQA77y1NohnEfpYOvt5dv3J8efjW4PCo+
-         SgA7TZAPA5uHOEjfuLAW9zLxl11iHfBJi+mnAyO4c9xbla8pO2+qg9g1nta1i5DkmEB6
-         Rdd9JSch97rOxv5FLcmkTigdPj92BfLAp44y3Zu4OjyimkCWgypDyaBIl7pf/Pua+gyD
-         L3Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIK2gJLgn2kqwXkGvuUmAmgNNR6QK97Asf1oL96+8AG52qlK2HIVBNoB574xfId8O3ZebwJXwBiXhebl1B@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFeNyU99bRDHtd5ltV+hvrZCIUrXDeqk0XSLspgi1umq/fz3pm
-	M+0ID7XnzVfdTjvjtgRd5lEcZ6/izHx8xyMf+NHrPYK50P1Usmc+NdV+41HpUDI=
-X-Google-Smtp-Source: AGHT+IGVEY+9Dzsox6IDnQN6NMlVkr8M2M+by+5f76aPgUPj7uhILidXLiNGspq3pJuPnevQJPy1NQ==
-X-Received: by 2002:a17:90a:3486:b0:2da:89ac:75b9 with SMTP id 98e67ed59e1d1-2da89ac7679mr897727a91.11.1725410146249;
-        Tue, 03 Sep 2024 17:35:46 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8ebdf56c0sm4508476a91.23.2024.09.03.17.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 17:35:45 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sldzq-000Ueb-0E;
-	Wed, 04 Sep 2024 10:35:42 +1000
-Date: Wed, 4 Sep 2024 10:35:42 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Julian Sun <sunjunchao2870@gmail.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, brauner@kernel.org, djwong@kernel.org, hch@lst.de,
-	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-Subject: Re: [PATCH] iomap: clean preallocated blocks in iomap_end() when 0
- bytes was written.
-Message-ID: <ZterXrqAFi9knEbD@dread.disaster.area>
-References: <20240903054808.126799-1-sunjunchao2870@gmail.com>
+        bh=OFx8LsBVxTFMHP02PY2VCbFPhgSta6r+g9d0+VkRJ7I=;
+        b=CuFb51JyhAIuRrvHUd2HeuI76V1Xr3K7wHiJMI4T0i/08ZzoiqVem4ckV1M1AGie+v
+         aWt9icJnirxLjmuKXtLVjYv39wnwPKiVvWnXUJmDcGvRawS8iysNEHvlbl0+XP5paMwn
+         Ka755oGEF7JNT+QfBgaHFE3rUPc2ghUaAh3CyDRHKwD6Ax5ES6hvqx13ICSSoI3h5xL0
+         9SY3vmAsBo5zocMP8qK+mfVW9lnwgjMuZqzu5ThGTqkxMCnmdvzFyA9zYihEBHuPp2H0
+         MdoEhkn6X3d8ecT9Q3FpD2h5EPd7czqtamuB6r0bNc7yHQ9niIMUvKe3NzvNJeNhWCg/
+         9uDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725410640; x=1726015440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OFx8LsBVxTFMHP02PY2VCbFPhgSta6r+g9d0+VkRJ7I=;
+        b=FvTObM4s1mk0BWIQUvySwKBybRrBGCE349YLpCL7kwmDAk2XGVs/iy815Fq3Syleb7
+         y76cB0mrBiejku1wS8zxPBDobeXmPMt5AGLl+2mTnTChpc/FwuByzuqdBnlL8GPqjAeh
+         Ua4ri+DL7ZC+MRt/or+c/kaNHa/Py0q38WusVHb00Vw7Ef46qI/Wrn3y/Pw6LeHKzM1h
+         VWSz+rQuUIDi3ULgZ6TZnbAxsZ2Pf3D1BXQdzrmY/waiJZx8Rl1Z7XuwQqdv1/2WoveD
+         UGP6vP/L45RYK6Jy+mbvEJWOxmj3y01upSd566ZGok7mHVyqaJUYV/X9qam0eVrd2gN6
+         R2/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWzT4dkc5fMx8v3QSMiqnY3eUZNyo0mJWpUsl85TehVJx2ytuw9McTpI/ys1zwedsCJ9hdRpHxVp70blri3SQ==@vger.kernel.org, AJvYcCXe20M3Xj8SqWWB+yfDcwu9jR7qE+/GxOgg5doaFy/Y48+0oHM3KfaOTgoMXEMx7sHgGpFeVNCdnA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyON9PPXwGLSOFikCTKiWyVOm9ZWExxpdwsnDzJ11nLMwS078tM
+	140mF1ioNAs+52cw1nB0qMzjPuFKXFZWwAxkApXuIOwFeBw1IkMAPhpmuhpd6Ebc/mYSsKIDZxg
+	Z/B9jDXak8rl4qBexTcdNQYq8dmM=
+X-Google-Smtp-Source: AGHT+IF4yQqXQTC5zB+aE0NMBMLMNdyYL5pjvGEVvTcC4gif0bjzU4WKEKMrvY5oCLHmKDJjdDMJBItMjavu2eh3HKE=
+X-Received: by 2002:a05:622a:5987:b0:457:cfae:5a84 with SMTP id
+ d75a77b69052e-457cfae5bc0mr99032111cf.55.1725410639534; Tue, 03 Sep 2024
+ 17:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903054808.126799-1-sunjunchao2870@gmail.com>
+References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
+ <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-5-9207f7391444@ddn.com>
+In-Reply-To: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-5-9207f7391444@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 3 Sep 2024 17:43:48 -0700
+Message-ID: <CAJnrk1am+s=z2iDcdQ9vXrTvo3wAXH9UE57BpXAovOqdNdYKHg@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 05/17] fuse: Add a uring config ioctl
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, bernd@fastmail.fm, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 03, 2024 at 01:48:08PM +0800, Julian Sun wrote:
-> Hi, all.
-> 
-> Recently, syzbot reported a issue as following:
-> 
-> WARNING: CPU: 1 PID: 5222 at fs/iomap/buffered-io.c:727 __iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-> WARNING: CPU: 1 PID: 5222 at fs/iomap/buffered-io.c:727 iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-> CPU: 1 UID: 0 PID: 5222 Comm: syz-executor247 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2 #0
-> RIP: 0010:__iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-> RIP: 0010:iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-> Call Trace:
->  <TASK>
->  iomap_unshare_iter fs/iomap/buffered-io.c:1351 [inline]
->  iomap_file_unshare+0x460/0x780 fs/iomap/buffered-io.c:1391
->  xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
->  xfs_file_fallocate+0x6be/0xa50 fs/xfs/xfs_file.c:997
->  vfs_fallocate+0x553/0x6c0 fs/open.c:334
->  ksys_fallocate fs/open.c:357 [inline]
->  __do_sys_fallocate fs/open.c:365 [inline]
->  __se_sys_fallocate fs/open.c:363 [inline]
->  __x64_sys_fallocate+0xbd/0x110 fs/open.c:363
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f2d716a6899
-> 
-> syzbot constructed the following scenario: syzbot called the write()
-> system call, passed an illegal pointer, and attempted to write 0x1017
-> bytes, resulting in 0 bytes written and returning EFAULT to user
-> space. Then, it called the write() system call again, passed another
-> illegal pointer, and attempted to write 0xfea7 bytes, resulting in
-> 0xe00 bytes written. Finally called copy_file_range() sys call and
-> fallocate() sys call with FALLOC_FL_UNSHARE_RANGE flag.
-> 
-> What happened here is: during the first write, xfs_buffered_write_iomap_begin()
-> used preallocated 512 blocks, inserted an extent with a length of 512 and
-> reserved 512 blocks in the quota, with the iomap length being 1M.
+On Sun, Sep 1, 2024 at 6:37=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> w=
+rote:
+>
+> This only adds the initial ioctl for basic fuse-uring initialization.
+> More ioctl types will be added later to initialize queues.
+>
+> This also adds data structures needed or initialized by the ioctl
+> command and that will be used later.
+>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 
-Why did XFS preallocate 512 blocks? The file was opened O_TRUNC, so
-it should be zero length and a write of just over 4100 bytes will
-not trigger speculative prealloc on a zero length file (threshold is
-64kB). Indeed, the first speculative prealloc will only be 64kB in
-size...
+Exciting to read through the work in this patchset!
 
-Hence it's not immediately obvious what precondition is causing this
-behaviour to occur.
+I left some comments, lots of which are more granular / implementation
+details than high-level design, in case that would be helpful to you
+in reducing the turnaround time for this patchset. Let me know if
+you'd prefer a hold-off on that though, if your intention with the RFC
+is more to get high-level feedback.
 
-> However, when the write failed(0 byte was written), only 0x1017 bytes were
-> passed to iomap_end() instead of the preallocated 1M bytes/512 blocks.
-> This caused only 3 blocks to be unreserved for the quota in iomap_end(),
-> instead of 512, and the corresponding extent information also only removed
-> 3 blocks instead of 512.
 
-Why 3 blocks? what was the filesystem block size? 2kB?
+Thanks,
+Joanne
 
-This also smells of delayed allocation, because if it were
--preallocation- it would be unwritten extents and we don't punch
-them out on write failures. See my first question....
+> ---
+>  fs/fuse/Kconfig           |  12 ++++
+>  fs/fuse/Makefile          |   1 +
+>  fs/fuse/dev.c             |  33 ++++++++---
+>  fs/fuse/dev_uring.c       | 141 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  fs/fuse/dev_uring_i.h     | 113 +++++++++++++++++++++++++++++++++++++
+>  fs/fuse/fuse_dev_i.h      |   1 +
+>  fs/fuse/fuse_i.h          |   5 ++
+>  fs/fuse/inode.c           |   3 +
+>  include/uapi/linux/fuse.h |  47 ++++++++++++++++
+>  9 files changed, 349 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+> index 8674dbfbe59d..11f37cefc94b 100644
+> --- a/fs/fuse/Kconfig
+> +++ b/fs/fuse/Kconfig
+> @@ -63,3 +63,15 @@ config FUSE_PASSTHROUGH
+>           to be performed directly on a backing file.
+>
+>           If you want to allow passthrough operations, answer Y.
+> +
+> +config FUSE_IO_URING
+> +       bool "FUSE communication over io-uring"
+> +       default y
+> +       depends on FUSE_FS
+> +       depends on IO_URING
+> +       help
+> +         This allows sending FUSE requests over the IO uring interface a=
+nd
+> +          also adds request core affinity.
 
-Regardless, the behaviour is perfectly fine. The remainder of the
-blocks are beyond EOF, and so have no impact on anything at this
-point in time.
+nit: this wording is a little bit awkward imo. Maybe something like
+"... over the IO uring interface and enables core affinity for each
+request" or "... over the IO uring interface and pins each request to
+a specific core"?
+I think there's an extra whitespace here in front of "also".
 
-> As a result, during the second write, the iomap length was 3 blocks
-> instead of the expected 512 blocks,
+> +
+> +         If you want to allow fuse server/client communication through i=
+o-uring,
+> +         answer Y
 
-What was the mapping? A new delalloc extent from 0 to 6kB? If so,
-that is exactly as expected, because there's a hole in the file
-there.
+super nit: missing a period at the end of Y.
 
-> which ultimately triggered the
-> issue reported by syzbot in the fallocate() system call.
+> diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+> index 6e0228c6d0cb..7193a14374fd 100644
+> --- a/fs/fuse/Makefile
+> +++ b/fs/fuse/Makefile
+> @@ -11,5 +11,6 @@ fuse-y :=3D dev.o dir.o file.o inode.o control.o xattr.=
+o acl.o readdir.o ioctl.o
+>  fuse-y +=3D iomode.o
+>  fuse-$(CONFIG_FUSE_DAX) +=3D dax.o
+>  fuse-$(CONFIG_FUSE_PASSTHROUGH) +=3D passthrough.o
+> +fuse-$(CONFIG_FUSE_IO_URING) +=3D dev_uring.o
+>
+>  virtiofs-y :=3D virtio_fs.o
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index dbc222f9b0f0..6489179e7260 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -8,6 +8,7 @@
+>
+>  #include "fuse_i.h"
+>  #include "fuse_dev_i.h"
+> +#include "dev_uring_i.h"
+>
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+> @@ -26,6 +27,13 @@
+>  MODULE_ALIAS_MISCDEV(FUSE_MINOR);
+>  MODULE_ALIAS("devname:fuse");
+>
+> +#ifdef CONFIG_FUSE_IO_URING
+> +static bool __read_mostly enable_uring;
 
-How? We wrote 3584 bytes, which means the first 2 blocks were
-written and marked dirty, and the third block should have been
-punched out by the same process that punched the delalloc blocks in
-the first write. We end up with a file size of 3584 bytes, and
-a delalloc mapping for those first two blocks followed by a hole,
-followed by another delalloc extent beyond EOF.
+I don't see where enable_uring gets used in this patchset, are you
+planning to use this in a separate future patchset?
 
-There is absolutely nothing incorrect about this state - this is
-exactly how we want delalloc beyond EOF to be handled. i.e. it
-remains in place until it is explicitly removed. An normal
-application would fix the write buffer and rewrite the data, thereby
-using the space beyond EOF that we've already preallocated.
+> +module_param(enable_uring, bool, 0644);
+> +MODULE_PARM_DESC(enable_uring,
+> +                "Enable uring userspace communication through uring.");
+                                     ^^^ extra "uring" here?
 
-IOWs, this change in this patch is papering over the issue by
-preventing short writes from leaving extents beyond EOF, rather than
-working out why either CFR or UNSHARE is going wrong when there are
-extents beyond EOF.
+> +#endif
+> +
+>  static struct kmem_cache *fuse_req_cachep;
+>
+>  static void fuse_request_init(struct fuse_mount *fm, struct fuse_req *re=
+q)
+> @@ -2298,16 +2306,12 @@ static int fuse_device_clone(struct fuse_conn *fc=
+, struct file *new)
+>         return 0;
+>  }
+>
+> -static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+> +static long _fuse_dev_ioctl_clone(struct file *file, int oldfd)
 
-So, onto the copy_file_range() bit.
+I think it'd be a bit clearer if this change was moved to patch 06/17
+"Add the queue configuration ioctl" where it gets used
 
-Then CFR was called with a length of 0xffffffffa003e45bul, which is
-almost 16EB in size. This should result in -EOVERFLOW, because that
-is out of the range that an loff_t can represent.
+>  {
+>         int res;
+> -       int oldfd;
+>         struct fuse_dev *fud =3D NULL;
+>         struct fd f;
+>
+> -       if (get_user(oldfd, argp))
+> -               return -EFAULT;
+> -
+>         f =3D fdget(oldfd);
+>         if (!f.file)
+>                 return -EINVAL;
+> @@ -2330,6 +2334,16 @@ static long fuse_dev_ioctl_clone(struct file *file=
+, __u32 __user *argp)
+>         return res;
+>  }
+>
+> +static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+> +{
+> +       int oldfd;
+> +
+> +       if (get_user(oldfd, argp))
+> +               return -EFAULT;
+> +
+> +       return _fuse_dev_ioctl_clone(file, oldfd);
+> +}
+> +
+>  static long fuse_dev_ioctl_backing_open(struct file *file,
+>                                         struct fuse_backing_map __user *a=
+rgp)
+>  {
+> @@ -2365,8 +2379,9 @@ static long fuse_dev_ioctl_backing_close(struct fil=
+e *file, __u32 __user *argp)
+>         return fuse_backing_close(fud->fc, backing_id);
+>  }
+>
+> -static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+> -                          unsigned long arg)
+> +static long
+> +fuse_dev_ioctl(struct file *file, unsigned int cmd,
+> +              unsigned long arg)
 
-i.e. generic_copy_file_checks() does this:
+I think you accidentally added this line break here?
 
-	if (pos_in + count < pos_in || pos_out + count < pos_out)
-                return -EOVERFLOW;
+>  {
+>         void __user *argp =3D (void __user *)arg;
+>
+> @@ -2380,6 +2395,10 @@ static long fuse_dev_ioctl(struct file *file, unsi=
+gned int cmd,
+>         case FUSE_DEV_IOC_BACKING_CLOSE:
+>                 return fuse_dev_ioctl_backing_close(file, argp);
+>
+> +#ifdef CONFIG_FUSE_IO_URING
+> +       case FUSE_DEV_IOC_URING_CFG:
+> +               return fuse_uring_conn_cfg(file, argp);
+> +#endif
+>         default:
+>                 return -ENOTTY;
+>         }
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> new file mode 100644
+> index 000000000000..4e7518ef6527
+> --- /dev/null
+> +++ b/fs/fuse/dev_uring.c
+> @@ -0,0 +1,141 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * FUSE: Filesystem in Userspace
+> + * Copyright (c) 2023-2024 DataDirect Networks.
+> + */
+> +
+> +#include "fuse_dev_i.h"
+> +#include "fuse_i.h"
+> +#include "dev_uring_i.h"
+> +
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/poll.h>
+> +#include <linux/sched/signal.h>
+> +#include <linux/uio.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/pagemap.h>
+> +#include <linux/file.h>
+> +#include <linux/slab.h>
+> +#include <linux/pipe_fs_i.h>
+> +#include <linux/swap.h>
+> +#include <linux/splice.h>
+> +#include <linux/sched.h>
+> +#include <linux/io_uring.h>
+> +#include <linux/mm.h>
+> +#include <linux/io.h>
+> +#include <linux/io_uring.h>
+> +#include <linux/io_uring/cmd.h>
+> +#include <linux/topology.h>
+> +#include <linux/io_uring/cmd.h>
 
-and pos_in is a loff_t which is signed. Hence (0 + 15EB) should
-overflow to a large negative offset and be less than 0. Implicit
-type casting rules always break my brain - this looks like it is
-casting everything to unsigned, thereby not actually checking if
-we're overflowing the max offset the kernel can operate on.
+Are all of these headers (eg miscdevice.h, pipe_fs_i.h, topology.h) needed?
 
-This oversize length is not caught by a check against max file size
-supported by the superblock, either,, because the count gets
-truncated to EOF before the generic checks against supported maximum
-file sizes are done.
+> +
+> +static void fuse_uring_queue_cfg(struct fuse_ring_queue *queue, int qid,
+> +                                struct fuse_ring *ring)
+> +{
+> +       int tag;
+> +
+> +       queue->qid =3D qid;
+> +       queue->ring =3D ring;
+> +
+> +       for (tag =3D 0; tag < ring->queue_depth; tag++) {
+> +               struct fuse_ring_ent *ent =3D &queue->ring_ent[tag];
+> +
+> +               ent->queue =3D queue;
+> +               ent->tag =3D tag;
+> +       }
+> +}
+> +
+> +static int _fuse_uring_conn_cfg(struct fuse_ring_config *rcfg,
+> +                               struct fuse_conn *fc, struct fuse_ring *r=
+ing,
+> +                               size_t queue_sz)
 
-That seems ... wrong. Look at fallocate() - after checking for
-overflow, it checks offset + len against inode->i_sb->s_maxbytes and
-returns -EFBIG at that point.
+Should this function just be marked "void" as the return type?
 
-IOWs, I think CFR should be doing nothing but returning either
--EOVERFLOW of -EFBIG here because the length is way longer than
-maximum supported file offset for any file operation in Linux.  Then
-unshare should do nothing because the file is not shared and should
-not have the reflink flag set on it.....
+> +{
+> +       ring->numa_aware =3D rcfg->numa_aware;
+> +       ring->nr_queues =3D rcfg->nr_queues;
+> +       ring->per_core_queue =3D rcfg->nr_queues > 1;
+> +
+> +       ring->max_nr_sync =3D rcfg->sync_queue_depth;
+> +       ring->max_nr_async =3D rcfg->async_queue_depth;
+> +       ring->queue_depth =3D ring->max_nr_sync + ring->max_nr_async;
+> +
+> +       ring->req_buf_sz =3D rcfg->user_req_buf_sz;
+> +
+> +       ring->queue_size =3D queue_sz;
+> +
+> +       fc->ring =3D ring;
+> +       ring->fc =3D fc;
+> +
+> +       return 0;
+> +}
+> +
+> +static int fuse_uring_cfg_sanity(struct fuse_ring_config *rcfg)
+> +{
+> +       if (rcfg->nr_queues =3D=3D 0) {
+> +               pr_info("zero number of queues is invalid.\n");
 
-However, the strace indicates that:
+I think this might get misinterpreted as "zero queues are invalid" -
+maybe something like: "fuse_ring_config nr_queues=3D0 is invalid arg"
+might be clearer?
 
-copy_file_range(6, [0], 5, NULL, 18446744072099193947, 0) = 3584
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (rcfg->nr_queues > 1 && rcfg->nr_queues !=3D num_present_cpus(=
+)) {
 
-That it is copying 3584 bytes. i.e. the overflow check is broken.
-It indicates, however, that the file size is as expected from the
-the short writes that occurred.
+Will it always be that nr_queues must be the number of CPUs on the
+system or will that constraint be relaxed in the future?
 
-Hence the unshare operation should only be operating on the range of
-0-3584 bytes because that is the only possible range of the file
-that is shared.
+> +               pr_info("nr-queues (%d) does not match nr-cores (%d).\n",
 
-However, the fallocate() call is for offset 0, length 0x2000 bytes
-(8kB), and these ranges are passed directly from XFS to
-iomap_file_unshare().  iomap_file_unshare() never checks the range
-against EOF, either, and so we've passed a range beyond EOF to
-iomap_file_unshare() for it to process. That seems ... wrong.
+nit: %u for nr_queues,  s/nr-queues/nr_queues
+It might be useful here to specify "uring nr_queues" as well to make
+it more obvious
 
-Hence the unshare does:
+> +                       rcfg->nr_queues, num_present_cpus());
+> +               return -EINVAL;
+> +       }
+> +
 
-first map:	 0 - 4k - unshare successfully.
-second map:	4k - 6k - hole, skip. Beyond EOF.
-third map:	6k - 8k - delalloc, beyond EOF so needs zeroing.
-			  Fires warnings because UNSHARE.
+Should this function also sanity check that the queue depth is <=3D
+FUSE_URING_MAX_QUEUE_DEPTH?
 
-IOWs, iomap_file_unshare() will walk beyond EOF blissfully unaware
-it is trying to unshare blocks that cannot ever be shared first
-place because reflink will not share blocks beyond EOF. And because
-those blocks are beyond EOF, they will always trigger the "need
-zeroing" case in __iomap_write_begin() and fire warnings.
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Basic ring setup for this connection based on the provided configurat=
+ion
+> + */
+> +int fuse_uring_conn_cfg(struct file *file, void __user *argp)
 
-So, yeah, either xfs_file_fallocate() or iomap_file_unshare() need
-to clamp the range being unshared to EOF.
+Is there a reason we pass in "void __user *argp" instead of "struct
+fuse_ring_config __user *argp"?
 
-Hence this looks like a couple of contributing issues that need to
-be fixed:
+> +{
+> +       struct fuse_ring_config rcfg;
+> +       int res;
+> +       struct fuse_dev *fud;
+> +       struct fuse_conn *fc;
+> +       struct fuse_ring *ring =3D NULL;
+> +       struct fuse_ring_queue *queue;
+> +       int qid;
+> +
+> +       res =3D copy_from_user(&rcfg, (void *)argp, sizeof(rcfg));
 
-- The CFR overflow checks look broken.
-- The unshare range is never trimmed to EOF.
+I don't think we need this "(void *)" cast here
 
-but it's definitely not a bug caused by short writes leaving
-delalloc extents beyond EOF. There are many, many ways that
-we can create delalloc extents beyond EOF before running an UNSHARE
-operation that can trip over them like this.
+> +       if (res !=3D 0)
+> +               return -EFAULT;
+> +       res =3D fuse_uring_cfg_sanity(&rcfg);
+> +       if (res !=3D 0)
+> +               return res;
+> +
+> +       fud =3D fuse_get_dev(file);
+> +       if (fud =3D=3D NULL)
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+nit: if (!fud)
+
+> +               return -ENODEV;
+
+Should this be -ENODEV or -EPERM? -ENODEV makes sense to me but I'm
+seeing other callers of fuse_get_dev() in fuse/dev.c return -EPERM
+when fud is NULL.
+
+> +       fc =3D fud->fc;
+> +
+
+Should we add a check
+if (fc->ring)
+   return -EINVAL (or -EALREADY);
+
+if not, then i think we need to move the "for (qid =3D 0; ...)" logic
+below to be within the "if (fc->ring =3D=3D NULL)" check
+
+> +       if (fc->ring =3D=3D NULL) {
+
+nit: if (!fc->ring)
+
+> +               size_t queue_depth =3D rcfg.async_queue_depth +
+> +                                    rcfg.sync_queue_depth;
+> +               size_t queue_sz =3D sizeof(struct fuse_ring_queue) +
+> +                                 sizeof(struct fuse_ring_ent) * queue_de=
+pth;
+> +
+> +               ring =3D kvzalloc(sizeof(*fc->ring) + queue_sz * rcfg.nr_=
+queues,
+> +                               GFP_KERNEL_ACCOUNT);
+> +               if (ring =3D=3D NULL)
+
+nit: if (!ring)
+
+> +                       return -ENOMEM;
+> +
+> +               spin_lock(&fc->lock);
+> +               if (fc->ring =3D=3D NULL)
+
+if (!fc->ring)
+
+> +                       res =3D _fuse_uring_conn_cfg(&rcfg, fc, ring, que=
+ue_sz);
+> +               else
+> +                       res =3D -EALREADY;
+> +               spin_unlock(&fc->lock);
+> +               if (res !=3D 0)
+
+nit: if (res)
+
+> +                       goto err;
+> +       }
+> +
+> +       for (qid =3D 0; qid < ring->nr_queues; qid++) {
+> +               queue =3D fuse_uring_get_queue(ring, qid);
+> +               fuse_uring_queue_cfg(queue, qid, ring);
+> +       }
+> +
+> +       return 0;
+> +err:
+> +       kvfree(ring);
+> +       return res;
+> +}
+> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+> new file mode 100644
+> index 000000000000..d4eff87bcd1f
+> --- /dev/null
+> +++ b/fs/fuse/dev_uring_i.h
+> @@ -0,0 +1,113 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * FUSE: Filesystem in Userspace
+> + * Copyright (c) 2023-2024 DataDirect Networks.
+> + */
+> +
+> +#ifndef _FS_FUSE_DEV_URING_I_H
+> +#define _FS_FUSE_DEV_URING_I_H
+> +
+> +#include "fuse_i.h"
+> +
+> +#ifdef CONFIG_FUSE_IO_URING
+> +
+> +/* IORING_MAX_ENTRIES */
+
+nit: I'm not sure this comment is that helpful. The
+"FUSE_URING_MAX_QUEUE_DEPTH" name is clear enough, I think.
+
+> +#define FUSE_URING_MAX_QUEUE_DEPTH 32768
+> +
+> +/* A fuse ring entry, part of the ring queue */
+> +struct fuse_ring_ent {
+> +       /* back pointer */
+> +       struct fuse_ring_queue *queue;
+
+Do you think it's worth using the tag to find the queue (i think we
+can just use some containerof magic to get the queue backpointer here
+since ring_ent is embedded within struct fuse_ring_queue?) instead of
+having this be an explicit 8 byte pointer? I'm thinking about the case
+where the user sets a queue depth of 32k (eg
+FUSE_URING_MAX_QUEUE_DEPTH) and is on an 8-core system where they set
+nr_queues to 8. This would end up in 8 * 32k * 8 =3D 2 MiB extra memory
+allocated which seems non-trivial (but I guess this is also an extreme
+case). Curious what your thoughts on this are.
+
+> +
+> +       /* array index in the ring-queue */
+> +       unsigned int tag;
+
+Just wondering, is this called "tag" instead of "index" to be
+consistent with an io-ring naming convention?
+
+> +};
+> +
+> +struct fuse_ring_queue {
+> +       /*
+> +        * back pointer to the main fuse uring structure that holds this
+> +        * queue
+> +        */
+> +       struct fuse_ring *ring;
+> +
+> +       /* queue id, typically also corresponds to the cpu core */
+> +       unsigned int qid;
+> +
+> +       /* size depends on queue depth */
+> +       struct fuse_ring_ent ring_ent[] ____cacheline_aligned_in_smp;
+> +};
+> +
+> +/**
+> + * Describes if uring is for communication and holds alls the data neede=
+d
+
+nit: maybe this should just be "Holds all the data needed for uring
+communication"?
+
+nit: s/alls/all
+
+> + * for uring communication
+> + */
+> +struct fuse_ring {
+> +       /* back pointer */
+> +       struct fuse_conn *fc;
+> +
+> +       /* number of ring queues */
+
+I think it's worth calling out here too that this must be the number
+of CPUs on the system and that each CPU operates its own ring queue.
+
+> +       size_t nr_queues;
+> +
+> +       /* number of entries per queue */
+> +       size_t queue_depth;
+> +
+> +       /* req_arg_len + sizeof(struct fuse_req) */
+
+What is req_arg_len? In _fuse_uring_conn_cfg(), it looks like this
+gets set to rcfg->user_req_buf_sz which is passed in from userspace,
+but from what I understand, "struct fuse_req" is a kernel-defined
+struct? I'm a bit confused overall what the comment refers to, but I
+also haven't yet looked through the libfuse change yet for this
+patchset.
+
+> +       size_t req_buf_sz;
+> +
+> +       /* max number of background requests per queue */
+> +       size_t max_nr_async;
+> +
+> +       /* max number of foreground requests */
+
+nit: for consistency with the comment for max_nr_async,
+s/requests/"requests per queue"
+
+> +       size_t max_nr_sync;
+
+It's interesting to me that this can get configured by userspace for
+background requests vs foreground requests. My perspective was that
+from the userspace POV, there's no differentiation between background
+vs foreground requests. Personally, I'm still not really even sure yet
+which of the read requests are async vs sync when I do a 8 MiB read
+call for example (iirc, I was seeing both, when it first tried the
+readahead path). It seems a bit like overkill to me but maybe there
+are some servers that actually do care a lot about this.
+
+> +
+> +       /* size of struct fuse_ring_queue + queue-depth * entry-size */
+> +       size_t queue_size;
+> +
+> +       /* one queue per core or a single queue only ? */
+> +       unsigned int per_core_queue : 1;
+> +
+> +       /* numa aware memory allocation */
+> +       unsigned int numa_aware : 1;
+> +
+> +       struct fuse_ring_queue queues[] ____cacheline_aligned_in_smp;
+> +};
+> +
+> +void fuse_uring_abort_end_requests(struct fuse_ring *ring);
+
+nit: I think it'd be a bit cleaner if this got moved to patch 12/17
+(fuse: {uring} Handle teardown of ring entries) when it gets used
+
+> +int fuse_uring_conn_cfg(struct file *file, void __user *argp);
+> +
+> +static inline void fuse_uring_conn_destruct(struct fuse_conn *fc)
+> +{
+> +       if (fc->ring =3D=3D NULL)
+
+nit: if (!fc->ring)
+
+> +               return;
+> +
+> +       kvfree(fc->ring);
+> +       fc->ring =3D NULL;
+> +}
+> +
+> +static inline struct fuse_ring_queue *
+> +fuse_uring_get_queue(struct fuse_ring *ring, int qid)
+> +{
+> +       char *ptr =3D (char *)ring->queues;
+
+Do we need to cast this to char * or can we just do the math below as
+return ring->queues + qid;
+
+> +
+> +       if (WARN_ON(qid > ring->nr_queues))
+
+Should this be >=3D since qid is 0-indexed?
+
+we should never reach here, but it feels like if we do, we should just
+automatically return NULL.
+
+> +               qid =3D 0;
+> +
+> +       return (struct fuse_ring_queue *)(ptr + qid * ring->queue_size);
+> +}
+> +
+> +#else /* CONFIG_FUSE_IO_URING */
+> +
+> +struct fuse_ring;
+> +
+> +static inline void fuse_uring_conn_init(struct fuse_ring *ring,
+> +                                       struct fuse_conn *fc)
+> +{
+> +}
+> +
+> +static inline void fuse_uring_conn_destruct(struct fuse_conn *fc)
+> +{
+> +}
+> +
+> +#endif /* CONFIG_FUSE_IO_URING */
+> +
+> +#endif /* _FS_FUSE_DEV_URING_I_H */
+> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> index 6c506f040d5f..e6289bafb788 100644
+> --- a/fs/fuse/fuse_dev_i.h
+> +++ b/fs/fuse/fuse_dev_i.h
+> @@ -7,6 +7,7 @@
+>  #define _FS_FUSE_DEV_I_H
+>
+>  #include <linux/types.h>
+> +#include <linux/fs.h>
+
+I think you accidentally included this.
+
+>
+>  /* Ordinary requests have even IDs, while interrupts IDs are odd */
+>  #define FUSE_INT_REQ_BIT (1ULL << 0)
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index f23919610313..33e81b895fee 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -917,6 +917,11 @@ struct fuse_conn {
+>         /** IDR for backing files ids */
+>         struct idr backing_files_map;
+>  #endif
+> +
+> +#ifdef CONFIG_FUSE_IO_URING
+> +       /**  uring connection information*/
+nit: need extra space between information and */
+> +       struct fuse_ring *ring;
+> +#endif
+>  };
+>
+>  /*
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 99e44ea7d875..33a080b24d65 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -7,6 +7,7 @@
+>  */
+>
+>  #include "fuse_i.h"
+> +#include "dev_uring_i.h"
+>
+>  #include <linux/pagemap.h>
+>  #include <linux/slab.h>
+> @@ -947,6 +948,8 @@ static void delayed_release(struct rcu_head *p)
+>  {
+>         struct fuse_conn *fc =3D container_of(p, struct fuse_conn, rcu);
+>
+> +       fuse_uring_conn_destruct(fc);
+
+I think it's cleaner if this is moved to fuse_free_conn than here.
+
+> +
+>         put_user_ns(fc->user_ns);
+>         fc->release(fc);
+>  }
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index d08b99d60f6f..a1c35e0338f0 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -1079,12 +1079,53 @@ struct fuse_backing_map {
+>         uint64_t        padding;
+>  };
+>
+> +enum fuse_uring_ioctl_cmd {
+
+Do you have a link to the libfuse side? I'm not seeing these get used
+in the patchset - I'm curious how libfuse will be using these then?
+
+> +       /* not correctly initialized when set */
+> +       FUSE_URING_IOCTL_CMD_INVALID    =3D 0,
+> +
+> +       /* Ioctl to prepare communucation with io-uring */
+
+nit: communication spelling
+
+> +       FUSE_URING_IOCTL_CMD_RING_CFG   =3D 1,
+> +
+> +       /* Ring queue configuration ioctl */
+> +       FUSE_URING_IOCTL_CMD_QUEUE_CFG  =3D 2,
+> +};
+> +
+> +enum fuse_uring_cfg_flags {
+> +       /* server/daemon side requests numa awareness */
+> +       FUSE_URING_WANT_NUMA =3D 1ul << 0,
+
+nit: 1UL for consistency
+
+> +};
+> +
+> +struct fuse_ring_config {
+> +       /* number of queues */
+> +       uint32_t nr_queues;
+> +
+> +       /* number of foreground entries per queue */
+> +       uint32_t sync_queue_depth;
+> +
+> +       /* number of background entries per queue */
+> +       uint32_t async_queue_depth;
+> +
+> +       /*
+> +        * buffer size userspace allocated per request buffer
+> +        * from the mmaped queue buffer
+> +        */
+> +       uint32_t user_req_buf_sz;
+> +
+> +       /* ring config flags */
+> +       uint64_t numa_aware:1;
+> +
+> +       /* for future extensions */
+> +       uint8_t padding[64];
+> +};
+> +
+>  /* Device ioctls: */
+>  #define FUSE_DEV_IOC_MAGIC             229
+>  #define FUSE_DEV_IOC_CLONE             _IOR(FUSE_DEV_IOC_MAGIC, 0, uint3=
+2_t)
+>  #define FUSE_DEV_IOC_BACKING_OPEN      _IOW(FUSE_DEV_IOC_MAGIC, 1, \
+>                                              struct fuse_backing_map)
+>  #define FUSE_DEV_IOC_BACKING_CLOSE     _IOW(FUSE_DEV_IOC_MAGIC, 2, uint3=
+2_t)
+> +#define FUSE_DEV_IOC_URING_CFG         _IOR(FUSE_DEV_IOC_MAGIC, 3, \
+> +                                            struct fuse_ring_config)
+>
+>  struct fuse_lseek_in {
+>         uint64_t        fh;
+> @@ -1186,4 +1227,10 @@ struct fuse_supp_groups {
+>         uint32_t        groups[];
+>  };
+>
+> +/**
+> + * Size of the ring buffer header
+> + */
+> +#define FUSE_RING_HEADER_BUF_SIZE 4096
+> +#define FUSE_RING_MIN_IN_OUT_ARG_SIZE 4096
+
+I think this'd be cleaner to review if this got moved to the patch
+where this gets used
+
+> +
+>  #endif /* _LINUX_FUSE_H */
+>
+> --
+> 2.43.0
+>
 
