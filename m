@@ -1,185 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-28660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9692996CA72
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 00:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C958B96CA7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 00:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DBE21F2310B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 22:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B21284317
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 22:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D6317C9AA;
-	Wed,  4 Sep 2024 22:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5784317A599;
+	Wed,  4 Sep 2024 22:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jafjgz/d"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="E7WNbKTs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B20F17B4E5;
-	Wed,  4 Sep 2024 22:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A282154458
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 22:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725488925; cv=none; b=IqlW4oXwlkkFyo7seq2PuhehMuY7lCdo8uYrSFYTo5bi7egHKvT3Is6SKXFdbap5+iNVXRVKkOrLcIjIlfv6Di2dMLLNtjAM3051yQW8C+CWlnPWtzcdnNzKY8OBvHdi82V3wji3EUyr+bSJU9IddszezmOCIglsCrKP6pZ5lH0=
+	t=1725489284; cv=none; b=YFN7u0ylZlviJIphlxRmFs3oi8YihXYAjuA2lBgXLNoJi1Sw4jxHYfw6vrUZpoSqcSGBwcFDcjnT+OMgaLeTSV883y/lhrY9XbBAt4nqqGBxtVpEyADyOVyHuNLxlLDGRzec7y8utJukINxMFUWgrrU/bBgqSVqJ+G+p2AbPd1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725488925; c=relaxed/simple;
-	bh=rkuS0CNBwRkRGF+lfyerI7rntJEW3arkWBmA4TUMIcg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cLgPdCooNlP13AJYZ3QwvNo8JSt2ZZKVEL1G97vvoNxUpVbM8R/cigJot2k5K3kzyvlo6x18ypFQhSt82GG3jrxp5iKd4OzqIsjyvDSBme/PIXSFPA6Zd8vjf1pwERfn/n70YS4MGOSMPeY3f4TyDXBD4Eb7WCjkvEtsgP9eDYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jafjgz/d; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=KSjAivHlg5cFDajG1oCwI0Dhjh9+yTX2k4XmuHn6kME=; b=jafjgz/dLo82epmN2dJPeOiiG2
-	S9q6xwR+XDVUJAQoJ87qvKHMUjIEm5BDmnQc/YkzJP9/UK7FEH7EpbsI7i/Og36lPlL8x9VVC5PoZ
-	25Jp+BBDYwTkkip9tOAov17p3TmijF66rH0kipfw/1ioGR0MD7xCCSx2kHHXdbtsURt4kv8ZO5q02
-	KiyI+RVd0BDewsoyhHsErN99jwRwB1KhLaIb7+M2NEHeHZT5pOWf7dpt5RQMpjS47SFS1QelI0W1V
-	dpJy4avtnYK2KJSuWt4oO/5Iyvruh7XOuLbn+F+MabcxJ1wGjjBZ1KdjSUt5zigJaE7FzF+QS6r2r
-	EaG/x3WA==;
-Received: from [177.172.122.98] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1slyUB-009gve-2F; Thu, 05 Sep 2024 00:28:22 +0200
-Message-ID: <500ff1ba-d8db-4f4d-9084-6d59401992da@igalia.com>
-Date: Wed, 4 Sep 2024 19:28:16 -0300
+	s=arc-20240116; t=1725489284; c=relaxed/simple;
+	bh=azNdSubL/Np7rjlyzstSXo50QK9v1c6dCaOiUjTAdec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sLbhy2o9Dapp2wam4B0PzswHFyRRVTiBHsVVgeMANsoV8t35DGb6G1D4IUgTK6IdwkTvOQb2wnkgrTJkjnWdY6L+kdl9zUEn+wFlxbcK6xeOhyq8WG1u7uUwJyAojeKjqaP1506rM4AKwQgxiXzMZJvTkz+yZgWnh7wZdmFiwPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=E7WNbKTs; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20570b42f24so2080765ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 15:34:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725489282; x=1726094082; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WyO77SPTX9aXQDMtbIN6DxC5ZyN7lMLaLLUCQ5eXYrk=;
+        b=E7WNbKTs4JxJo1MMAfhzzJrvcBfpWzZkQPIsKx/nbaOW90cPsqOJxCi6ur5obuYqKb
+         pI2JVy18sRsboGfciA1ncu0Zx32TfTuswu1PAJOSgX1pfdn7+6uHqUouQs35btQ1qf5J
+         AmqIer4O8zLHwi6bOjtgK1kR4U2fGY28QzThbrY/rmjLdaaeXN0W5iH0Ls7LgRf9e41V
+         2Ck0l55dFHeNBvCoeZiot1M/90HIL3ki7vgWdqKvFV/PZNJ9edeqrUpvnqhRWYzBzIEA
+         podSwNjgK1uObHw5rUTuDJK5RiTjeTG7Ct3frDGy5+CM9XN5ZzrXKt9owdnEl5H72ub5
+         fZfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725489282; x=1726094082;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WyO77SPTX9aXQDMtbIN6DxC5ZyN7lMLaLLUCQ5eXYrk=;
+        b=GIqt82tJiEK8XGID5fi6F3SPF01KN25RV6PCbthqGFY4nfIKzwfOVNjZrx8zKZ89XH
+         uPh8126EX4BA3cIPM3KQ9GPzFDcjUsmWDAgNPhdMgUy1XWd7H/gTvX+BSyiUwmbLqE2v
+         Mx39ic7fBocPwEHBKdh0gNr7UZTChtfxEWpdGzFxZSPoOByGKqKop20C3ukQtqykV2DI
+         J5ags9PMalZGv7wklNRqW2OIxWp8y7sVY5GnGJ1kZ9ZDvOqUzA2t7mj/j1mZhjuwQzLF
+         2dbPzKSk+rRet4XRA5NzvVqFm+6j+lfErffCN2G793VHqXpPFRZtpBFxRMqWKSY8Nn73
+         +i7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUhK19Z6oLOCrG5RlVuzS004u8Y9B6wE0WgukQ03V0miqb38dhn1BpTolRBuj6uhyEegqi1xO4CAMwzk2Z1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJdvNQayi2kZTibUQk7fK4smIV3MvHd5rdX6CoMCeO/N7Ap3h7
+	vf9SdTHhUCJo6383AIiZ7pd4vEIW/Lgbh2Np57UO30z5FaveDYwaPrE/G/HF9OA=
+X-Google-Smtp-Source: AGHT+IEa7j7zwgb9tFFz5fxY6zFlznbHmhxEaWFrBcv9Z9lGCysxf/bgq/9UC3jOBUkEX0m0MasoXw==
+X-Received: by 2002:a17:902:f682:b0:206:9640:e747 with SMTP id d9443c01a7336-20699b21af3mr79663415ad.43.1725489282411;
+        Wed, 04 Sep 2024 15:34:42 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea582f4sm18038375ad.233.2024.09.04.15.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 15:34:41 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1slyaF-000tWk-0T;
+	Thu, 05 Sep 2024 08:34:39 +1000
+Date: Thu, 5 Sep 2024 08:34:39 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
+	Dave Chinner <dchinner@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-ID: <Ztjgf/mzdnhj/szl@dread.disaster.area>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+ <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+ <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+ <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
+ <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
+ <ZtgI1bKhE3imqE5s@tiehlicka>
+ <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
+ <ZtiOyJ1vjY3OjAUv@tiehlicka>
+ <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Subject: Re: [PATCH v2 6/8] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs
- dirs
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: Hugh Dickins <hughd@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- krisman@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
- Daniel Rosenberg <drosen@google.com>, smcv@collabora.com,
- Christoph Hellwig <hch@lst.de>
-References: <20240902225511.757831-1-andrealmeid@igalia.com>
- <20240902225511.757831-7-andrealmeid@igalia.com>
- <87jzfshfwn.fsf@mailhost.krisman.be>
-Content-Language: en-US
-In-Reply-To: <87jzfshfwn.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
 
-Hi Krisman,
-
-Thanks for the feedback!
-
-Em 03/09/2024 13:15, Gabriel Krisman Bertazi escreveu:
-> André Almeida <andrealmeid@igalia.com> writes:
+On Wed, Sep 04, 2024 at 02:03:13PM -0400, Kent Overstreet wrote:
+> On Wed, Sep 04, 2024 at 06:46:00PM GMT, Michal Hocko wrote:
+> > On Wed 04-09-24 12:05:56, Kent Overstreet wrote:
+> > > But it seems to me that the limit should be lower if you're on e.g. a 2
+> > > GB machine (not failing with a warning, just failing immediately rather
+> > > than oom killing a bunch of stuff first) - and it's going to need to be
+> > > raised above INT_MAX as large memory machines keep growing, I keep
+> > > hitting it in bcachefs fsck code.
+> > 
+> > Do we actual usecase that would require more than couple of MB? The
+> > amount of memory wouldn't play any actual role then.
 > 
->> Enable setting flag FS_CASEFOLD_FL for tmpfs directories, when tmpfs is
->> mounted with casefold support. A special check is need for this flag,
->> since it can't be set for non-empty directories.
->>
->> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-
-[...]
-
->> +
->> +	if (fsflags & FS_CASEFOLD_FL) {
->> +		if (!sb->s_encoding)
->> +			return -EOPNOTSUPP;
->> +
->> +		if (!S_ISDIR(inode->i_mode))
->> +			return -ENOTDIR;
->> +
->> +		if (dentry && !simple_empty(dentry))
->> +			return -ENOTEMPTY;
->> +
->> +		i_flags |= S_CASEFOLD;
->> +	} else if (old & S_CASEFOLD) {
->> +		if (dentry && !simple_empty(dentry))
->> +			return -ENOTEMPTY;
+> Which "amount of memory?" - not parsing that.
 > 
-> We don't want to fail if a directory already has the S_CASEFOLD
-> flag and we are not flipping it in the current operation.  Something like:
+> For large allocations in bcachefs: in journal replay we read all the
+> keys in the journal, and then we create a big flat array with references
+> to all of those keys to sort and dedup them.
 > 
-> if ((fsflags ^ old) & S_CASEFOLD) {
-> 	if (!sb->s_encoding)
-> 		return -EOPNOTSUPP;
+> We haven't hit the INT_MAX size limit there yet, but filesystem sizes
+> being what they are, we will soon. I've heard of users with 150 TB
+> filesystems, and once the fsck scalability issues are sorted we'll be
+> aiming for petabytes. Dirty keys in the journal scales more with system
+> memory, but I'm leasing machines right now with a quarter terabyte of
+> ram.
+
+I've seen xfs_repair require a couple of TB of RAM to repair
+metadata heavy filesystems of relatively small size (sub-20TB).
+Once you get about a few hundred GB of metadata in the filesystem,
+the fsck cross-reference data set size can easily run into the TBs.
+
+So 256GB might *seem* like a lot of memory, but we were seeing
+xfs_repair exceed that amount of RAM for metadata heavy filesystems
+at least a decade ago...
+
+Indeed, we recently heard about a 6TB filesystem with 15 *billion*
+hardlinks in it.  The cross reference for resolving all those
+hardlinks would require somewhere in the order of 1.5TB of RAM to
+hold. The only way to reliably handle random access data sets this
+large is with pageable memory....
+
+> Another more pressing one is the extents -> backpointers and
+> backpointers -> extents passes of fsck; we do a linear scan through one
+> btree checking references to another btree. For the btree we're checking
+> references to the lookups are random, so we need to cache and pin the
+> entire btree in ram if possible, or if not whatever will fit and we run
+> in multiple passes.
 > 
-> 	if (!S_ISDIR(inode->i_mode))
-> 		return -ENOTDIR;
-> 
-> 	if (dentry && !simple_empty(dentry))
-> 		return -ENOTEMPTY;
->          i_flags |= fsflags & S_CASEFOLD;
-> }
-> 
+> This is the #1 scalability issue hitting a number of users right now, so
+> I may need to rewrite it to pull backpointers into an eytzinger array
+> and do our random lookups for backpointers on that - but that will be
+> "the biggest vmalloc array we can possible allocate", so the INT_MAX
+> size limit is clearly an issue there...
 
-You are right, it's broken and failing for directories with S_CASEFOLD. 
-Here's a small test showing that we can't add the +d attribute to a 
-non-empty CI folder (+d doesn't require the directory to be empty):
+Given my above comments, I think you are approaching this problem
+the wrong way. It is known that the data set that can exceed
+physical kernel memory size, hence it needs to be swappable. That
+way users can extend the kernel memory capacity via swapfiles when
+bcachefs.fsck needs more memory than the system has physical RAM.
 
-folder ) mkdir A
-folder ) mkdir A/B
-folder ) chattr +d A/B
-folder ) chattr +d A
-chattr: Directory not empty while setting flags on A
+This is a problem Darrick had to address for the XFS online repair
+code - we've known for a long time that repair needs to hold a data
+set larger than physical memory to complete successfully. Hence for
+online repair we needed a mechanism that provided us with pagable
+kernel memory. vmalloc() is not an option - it has hard size limits
+(both API based and physical capacity based).
 
-However, FS_CASEFOLD_FL != S_CASEFOLD and the set of values for 
-inode->i_flags (var old) and fsflags aren't the same, so your proposed 
-snippet didn't work. I see that ext4 has a very similar code as your 
-proposal, but I think they do something different with the flag values.
+Hence Darrick designed and implemented pageable shmem backed memory
+files (xfiles) to hold these data sets. Hence the size limit of the
+online repair data set is physical RAM + swap space, same as it is
+for offline repair. You can find the xfile code in
+fs/xfs/scrub/xfile.[ch].
 
-I rewrote my code separating the three possible paths and it worked:
+Support for large, sortable arrays of fixed size records built on
+xfiles can be found in xfarray.[ch], and blob storage in
+xfblob.[ch].
 
-/* inheritance from parent dir/keeping the same flags path */
-if ((fsflags & FS_CASEFOLD_FL) && (old & S_CASEFOLD))
-	i_flags |= S_CASEFOLD;
+vmalloc() is really not a good solution for holding arbitrary sized
+data sets in kernel memory....
 
-/* removing flag path */
-if (!(fsflags & FS_CASEFOLD_FL) && (old & S_CASEFOLD))
-	if (dentry && !simple_empty(dentry))
-		return -ENOTEMPTY;
-
-/* adding flag path */
-if ((fsflags & FS_CASEFOLD_FL) && !(old & S_CASEFOLD)) {
-	if (!sb->s_encoding)
-		return -EOPNOTSUPP;
-
-	if (!S_ISDIR(inode->i_mode))
-		return -ENOTDIR;
-
-	if (dentry && !simple_empty(dentry))
-		return -ENOTEMPTY;
-
-	i_flags |= S_CASEFOLD;
-}
-
-In that way, the `chattr +d` call doesn't fall into the simple_empty() 
-check. I simplified the code like this for the v3:
-
-if (fsflags & FS_CASEFOLD_FL) {
-	if (!(old & S_CASEFOLD)) {
-		if (!sb->s_encoding)
-			return -EOPNOTSUPP;
-
-		if (!S_ISDIR(inode->i_mode))
-			return -ENOTDIR;
-
-		if (dentry && !simple_empty(dentry))
-			return -ENOTEMPTY;
-	}
-
-	i_flags |= S_CASEFOLD;
-} else if (old & S_CASEFOLD) {
-	if (dentry && !simple_empty(dentry))
-		return -ENOTEMPTY;
-}
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
