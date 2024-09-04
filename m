@@ -1,106 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-28550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7F096BBBE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983B496BD3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290341C21300
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55070280E3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B97F1D799B;
-	Wed,  4 Sep 2024 12:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MenJUkoG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD011DB539;
+	Wed,  4 Sep 2024 12:55:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E83D1D2F73;
-	Wed,  4 Sep 2024 12:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461681DA0E1;
+	Wed,  4 Sep 2024 12:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451946; cv=none; b=L8VeefT0EExoZwd9qLcWNSr7PCtBSoMonvhZXMxqqdNr4RQypzSYKzzF+81JYLlt+KEHl1kszIuLyVS/RgjjAVp04+zCVBDhJVcuN8VEZPv/aPtDT7rg7OcreEuUeNlzxhtkw4DFxrQ4Zfsu+YU2rHaCm3XT/YDsMRaMzrpruQs=
+	t=1725454514; cv=none; b=pisRobpP/PCiYaBV2N5jXJi0rRYrsdHnb4jsfuqXlC1J83ExNS2yCY1641RJi9+be0D7Tuj7KU1TL5AIrHxf6gMJJp1h/K8/+zp09RGSijiPFiAFQFVOUJhBxB0/tPtMpuSRoR714zjgQbPHvDy6IB2LE8i/NjjZHykYI0r1elw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451946; c=relaxed/simple;
-	bh=bhMwT3aNve1Sa2O5I5pi9juMgaZOG8OpMmVR6nCCi4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NiggXLlQKoJpHop8ykp8Vv7xgP4eQE83L9mamVjvmKlYsXcynMINOVkQbdGBicibOIpvH7+3IjsOKmu+RfxHeSbWXvNE6bo5NW+7V3YUr58yw26SvewH4eGpO4JS7T0ugPhhIQgWEtD96Jcf43pSZlY1qREtS5shJUp7rq2Tu6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MenJUkoG; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725451935; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=v0DthQyFZgbl+wIxLBCPl1i9Aa9+jT9oqkUW1rb5jvU=;
-	b=MenJUkoGUYNtqxLVaIvOMYlr7mauEZscrMwXKy6EuHqqH7E61xbyzakVct2L7dllolL67xIX/LtD4zSaln9/Odc77xQ2MZu9e1qqpiiFENdh6M1qTPlBiR5XHF0mlAmuk3m3itIjTtx54FTIguqW7ms6IITgqFl/OxGqC1+MhV4=
-Received: from 30.221.147.91(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WEHimvR_1725451933)
-          by smtp.aliyun-inc.com;
-          Wed, 04 Sep 2024 20:12:14 +0800
-Message-ID: <8264705a-1dc0-45a7-92d9-7395e1aa99db@linux.alibaba.com>
-Date: Wed, 4 Sep 2024 20:12:11 +0800
+	s=arc-20240116; t=1725454514; c=relaxed/simple;
+	bh=qMejZA9PsIbPUUClShG+nT87oLFIDssyt2kEGog2XX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Er2pdJWtC+ljxN7VLGmZQoEMDg1BaisJYArx2hXHAUXfXVGyV8ny0vRlix5JzAwR5SP9Opan5HtgIc5M3j2jjx22OgpKamAXgQ9WERnnaOZauiyU6yfEKpojMc7roPNqC3+h6z+j3f6GAEIZkezaBKR5TytfG8P7r8hNqN0jV+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FBD8FEC;
+	Wed,  4 Sep 2024 05:55:37 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 369393F73B;
+	Wed,  4 Sep 2024 05:55:08 -0700 (PDT)
+Date: Wed, 4 Sep 2024 13:55:03 +0100
+From: Joey Gouly <joey.gouly@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, nd@arm.com,
+	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
+	broonie@kernel.org, christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
+	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 06/30] arm64: context switch POR_EL0 register
+Message-ID: <20240904125503.GA3901671@e124191.cambridge.arm.com>
+References: <20240823144531.GH32156@willie-the-truck>
+ <Zsi7ovLOfuFdfuuz@arm.com>
+ <20240823170835.GA1181@willie-the-truck>
+ <ZsjXtE7Kg0LQwNAL@arm.com>
+ <20240827113803.GB4318@willie-the-truck>
+ <ZtYNGBrcE-j35fpw@arm.com>
+ <20240903145413.GB3669886@e124191.cambridge.arm.com>
+ <20240904102254.GA13280@willie-the-truck>
+ <20240904113221.GA3891700@e124191.cambridge.arm.com>
+ <20240904114301.GA13550@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] virtiofs: use GFP_NOFS when enqueuing request
- through kworker
-To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
- Stefan Hajnoczi <stefanha@redhat.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>,
- "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- houtao1@huawei.com
-References: <20240831093750.1593871-1-houtao@huaweicloud.com>
- <20240831093750.1593871-3-houtao@huaweicloud.com>
- <5769af42-e4dd-4535-9432-f149b8c17af5@linux.alibaba.com>
- <815f6c3d-bb8a-1a23-72dd-cd7b1f5f06d0@huaweicloud.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <815f6c3d-bb8a-1a23-72dd-cd7b1f5f06d0@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904114301.GA13550@willie-the-truck>
 
-
-
-On 9/4/24 11:53 AM, Hou Tao wrote:
+On Wed, Sep 04, 2024 at 12:43:02PM +0100, Will Deacon wrote:
+> On Wed, Sep 04, 2024 at 12:32:21PM +0100, Joey Gouly wrote:
+> > On Wed, Sep 04, 2024 at 11:22:54AM +0100, Will Deacon wrote:
+> > > On Tue, Sep 03, 2024 at 03:54:13PM +0100, Joey Gouly wrote:
+> > > > On Mon, Sep 02, 2024 at 08:08:08PM +0100, Catalin Marinas wrote:
+> > > > > On Tue, Aug 27, 2024 at 12:38:04PM +0100, Will Deacon wrote:
+> > > > > > On Fri, Aug 23, 2024 at 07:40:52PM +0100, Catalin Marinas wrote:
+> > > > > > > On Fri, Aug 23, 2024 at 06:08:36PM +0100, Will Deacon wrote:
+> > > > > > > > On Fri, Aug 23, 2024 at 05:41:06PM +0100, Catalin Marinas wrote:
+> > > > > > > > > On Fri, Aug 23, 2024 at 03:45:32PM +0100, Will Deacon wrote:
+> > > > > > > > > > On Thu, Aug 22, 2024 at 04:10:49PM +0100, Joey Gouly wrote:
+> > > > > > > > > > > +static void permission_overlay_switch(struct task_struct *next)
+> > > > > > > > > > > +{
+> > > > > > > > > > > +	if (!system_supports_poe())
+> > > > > > > > > > > +		return;
+> > > > > > > > > > > +
+> > > > > > > > > > > +	current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
+> > > > > > > > > > > +	if (current->thread.por_el0 != next->thread.por_el0) {
+> > > > > > > > > > > +		write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
+> > > > > > > > > > > +		/* ISB required for kernel uaccess routines when chaning POR_EL0 */
+> > > > > > > > > >
+> > > > > > > > > > nit: typo "chaning".
+> > > > > > > > > >
+> > > > > > > > > > But more substantially, is this just to prevent spurious faults in the
+> > > > > > > > > > context of a new thread using a stale value for POR_EL0?
+> > > > > > > > >
+> > > > > > > > > Not just prevent faults but enforce the permissions from the new
+> > > > > > > > > thread's POR_EL0. The kernel may continue with a uaccess routine from
+> > > > > > > > > here, we can't tell.
+> > > > > [...]
+> > > > > > > > So what do we actually gain by having the uaccess routines honour this?
+> > > > > > >
+> > > > > > > I guess where it matters is more like not accidentally faulting because
+> > > > > > > the previous thread had more restrictive permissions.
+> > > > > >
+> > > > > > That's what I wondered initially, but won't the fault handler retry in
+> > > > > > that case?
+> > > > >
+> > > > > Yes, it will retry and this should be fine (I assume you are only
+> > > > > talking about the dropping ISB in the context switch).
+> > > > >
+> > > > > For the case of running with a more permissive stale POR_EL0, arguably it's
+> > > > > slightly more predictable for the user but, OTOH, some syscalls like
+> > > > > readv() could be routed through GUP with no checks. As with MTE, we
+> > > > > don't guarantee uaccesses honour the user permissions.
+> > > > >
+> > > > > That said, at some point we should sanitise this path anyway and have a
+> > > > > single ISB at the end. In the meantime, I'm fine with dropping the ISB
+> > > > > here.
+> > > > >
+> > > > 
+> > > > commit 3141fb86bee8d48ae47cab1594dad54f974a8899
+> > > > Author: Joey Gouly <joey.gouly@arm.com>
+> > > > Date:   Tue Sep 3 15:47:26 2024 +0100
+> > > > 
+> > > >     fixup! arm64: context switch POR_EL0 register
+> > > > 
+> > > > diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> > > > index a3a61ecdb165..c224b0955f1a 100644
+> > > > --- a/arch/arm64/kernel/process.c
+> > > > +++ b/arch/arm64/kernel/process.c
+> > > > @@ -515,11 +515,8 @@ static void permission_overlay_switch(struct task_struct *next)
+> > > >                 return;
+> > > > 
+> > > >         current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
+> > > > -       if (current->thread.por_el0 != next->thread.por_el0) {
+> > > > +       if (current->thread.por_el0 != next->thread.por_el0)
+> > > >                 write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
+> > > > -               /* ISB required for kernel uaccess routines when chaning POR_EL0 */
+> > > > -               isb();
+> > > > -       }
+> > > >  }
+> > > 
+> > > What about the one in flush_poe()? I'm inclined to drop that as well.
+> > 
+> > Yes I guess that one can be removed too. Catalin any comments?
+> > 
+> > > 
+> > > > Will, do you want me to re-send the series with this and the permissions
+> > > > diff from the other thread [1],
+> > > > or you ok with applying them when you pull it in?
+> > > 
+> > > I'll have a crack now, but if it fails miserably then I'll let you know.
+> > 
+> > Thanks! Just to make sure, you should pick the patch up from
+> > 
+> > 	https://lore.kernel.org/linux-arm-kernel/20240903152937.GA3768522@e124191.cambridge.arm.com/
+> > 
+> > Not the one I linked to in [1] in my previous e-mail.
 > 
+> Right, there's quite a lot I need to do:
 > 
-> On 9/3/2024 5:34 PM, Jingbo Xu wrote:
->>
->> On 8/31/24 5:37 PM, Hou Tao wrote:
->>> From: Hou Tao <houtao1@huawei.com>
->>>
->>> When invoking virtio_fs_enqueue_req() through kworker, both the
->>> allocation of the sg array and the bounce buffer still use GFP_ATOMIC.
->>> Considering the size of the sg array may be greater than PAGE_SIZE, use
->>> GFP_NOFS instead of GFP_ATOMIC to lower the possibility of memory
->>> allocation failure and to avoid unnecessarily depleting the atomic
->>> reserves. GFP_NOFS is not passed to virtio_fs_enqueue_req() directly,
->>> GFP_KERNEL and memalloc_nofs_{save|restore} helpers are used instead.
->>>
->>> It may seem OK to pass GFP_NOFS to virtio_fs_enqueue_req() as well when
->>> queuing the request for the first time, but this is not the case. The
->>> reason is that fuse_request_queue_background() may call
->>> ->queue_request_and_unlock() while holding fc->bg_lock, which is a
->>> spin-lock. Therefore, still use GFP_ATOMIC for it.
->> Actually, .wake_pending_and_unlock() is called under fiq->lock and
->> GFP_ATOMIC is requisite.
+> - Uncorrupt your patches
+> - Fix the conflict in the kvm selftests
+> - Drop the unnecessary ISBs
+> - Fix the ESR checking
+> - Fix the el2_setup labels
+> - Reorder the patches
+> - Drop the patch that is already in kvmarm
 > 
-> Er, but virtio_fs_wake_pending_and_unlock() unlocks fiq->lock before
-> queuing the request.
+> Working on it...
 
-Alright, I missed that :(
+Sorry! I'm happy to rebase onto some arm64 branch if that will help, just let me know.
 
-
--- 
-Thanks,
-Jingbo
+> 
+> Will
+> 
 
