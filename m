@@ -1,140 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-28568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7170196C1EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 17:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C2E96C1F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 17:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9C81C2307A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 15:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 251B41C22DA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 15:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B06F1DCB10;
-	Wed,  4 Sep 2024 15:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3901DCB28;
+	Wed,  4 Sep 2024 15:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtFNBJ9A"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="mckSfOwm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCB81DA61A
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 15:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16991D47CA
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 15:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725462838; cv=none; b=kypfuXvNqSZo9sEIo5DmtWGImwQ9RACIxv6fHSj36gDZEG2htbeDVkD8gGIjk89A4gVsqjt54Ty1VxH3WBesCAHu+dYv6c/k+oP5rAOsrZddIdlP8cLcqKHO49MbZPsefX1SevzZcULFTpZ08cTtrKML98vdoW7H4za43bEyyWw=
+	t=1725462956; cv=none; b=qCWZwrC0su4GayJJU1PlC9q6zO7Oaw+ejG5p4Q1xtS2aQuhF68MYtEk4Y59UNMVpiKq06lYZLeLZtfPPqyceMU2TlhozXh4nQG1pXC2UV8AGNovia34+n+J0vhPtUaFqrN+KpIY5yqXg0WUVy9tJvn7tVEjvOaLyZP1ukB8VG9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725462838; c=relaxed/simple;
-	bh=rX0vS1zR5X7dTFyMgPdiMHFhqaGeKMhYHOljR2dXDA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YpsLn9H6vKUQR6uERZdUvceohGO4h5sqedQMR6HuorLg9CJTAwX94PPntw40Bp2m/D/vbOb0wyQEOGp/R5qH/bogExlLQsavR2DUWIPdiYMqcDTaJhzwtwIj8epv1LBXm8068eqYYQt7K4b9mE2AqfI33O/neTgUQnm6Du+ir5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtFNBJ9A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54D51C4CEC2;
-	Wed,  4 Sep 2024 15:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725462838;
-	bh=rX0vS1zR5X7dTFyMgPdiMHFhqaGeKMhYHOljR2dXDA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CtFNBJ9AwQe6ozrVAAu6Gv0mBSh1UeN347L+FByBeT7DFYXbXBgkLXQ2xq3ZKRLva
-	 xlPbWd2Mj+tVnhN+kDGr0UvIVT1qzALnKCTOxNh357NVg6NFVBAfSk7zgBSFbeS0Ne
-	 IS49rNakaIyhirV4GyV/LJ24E9E1IJZJOUCWeR750RY8sLR9t9dE8aC4pKtu8pshXo
-	 MjgIxwVZ5IJpvTnT77ngWCjM/ObgJ1aUj5imsR+SYllXc9MxkoIY7IHOXTlB+40zLk
-	 dUCEHUUlWUyM9ptqqoYMcyReF4EIPabXIj5vXaFTKclIH+hhXGZjio2mkzJCR9m95D
-	 ZzwDDJAShVnvA==
-Date: Wed, 4 Sep 2024 18:11:10 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-	Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 12/15] slab: create kmem_cache_create() compatibility
- layer
-Message-ID: <Zth4jqJQJAXdSLzE@kernel.org>
-References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-12-76f97e9a4560@kernel.org>
- <ZtfssAqDeyd_-4MJ@kernel.org>
- <20240904-storch-worin-32db25e60f32@brauner>
- <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
- <20240904-absuchen-gockel-8246820867b4@brauner>
- <24717bab-7d5d-4ed1-a17d-65d4676e22a9@suse.cz>
- <20240904-gegessen-kalziumreich-2817b07433b7@brauner>
+	s=arc-20240116; t=1725462956; c=relaxed/simple;
+	bh=44VIprjCYxhe78ahmsvk5iQ53uqpSS391gbqLmt67fk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BXH/xeuO1+1xYmIWhtZIlk/MmFhRqcLn3y2WQVJQH8oZFEWhvVCHoo5v65U8sgWNW98jE4GK3ZLCEaWRa0UnRU5tZZNx7XYgV6rVfzoTaRxG7P8V6e7497XvgDLZSCVooMthwraQdEUfMfQVIBuTB4pRmLihEc6OkfmE+UmK/RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=mckSfOwm; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5353d0b7463so11421449e87.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 08:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1725462953; x=1726067753; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=44VIprjCYxhe78ahmsvk5iQ53uqpSS391gbqLmt67fk=;
+        b=mckSfOwmfpzwG96GIHoZuDMoR3aGdJm6E4mEUBITRwesUSlz++yQ/gOc+vLPAuklRx
+         lmt+2XFc9ahczwVmAJKyqf/68dp9VdarRNgVjZTz2iS61PKia0HM7wUQLpVEp21t6oen
+         oehyw9pIW0iIjfNOSecMz2bXnUgKo1yJwUkrQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725462953; x=1726067753;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=44VIprjCYxhe78ahmsvk5iQ53uqpSS391gbqLmt67fk=;
+        b=Htn9DFrbVgPJSZwdVPxUbYU3k3cMDGVJ/LZNIQwjLnicZqFldy9AP3c8HHKcubwIxy
+         CbIpnMXUMwRsL+o7npnL8rOkvfuVKlP5LLt6+vQ4I92bTuJKTVzubZm+UrAvLXthuOtr
+         /copH6+goRoBAPe4g0nOCSQBs5pT+23mVaRiv4bUYvhSf+p615+Kp7/J5BrKDa0o9Lnk
+         sZMo7tFUzHnN19AhpYZufOj82TytinUCfcPXI8MnyNHxky5LIwP5UZ8VgUhXs9AU9VEP
+         Nj40Q/6Qab+69r1kCZ6Ed1V+/VwHJiRZZT+bXxJLzqjRfZYM2pDlDvoxJZ1GArDWnd0U
+         Ts/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWccUcHWvTb7jHkksLdNut2B/fNREnju5FA0dtbEZLhgkC/kGMsLGB6irWaBlqqbvD5I8ICsYOrfcoSbe+V@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6bjndKXo2Eo0xrF/17e79F6cArKXxUc6x6t+Ljvg9Kdtltgwa
+	TMK6R+BpHvhC6+Q0W5kKZYDsVjFgxrJflyeJXTv98B9CyAJzgL8sWvfunBsbGkltMKwzPnIkAf/
+	1EVl5T9ppIuUdlCeVXejkNklJUpOTfrJFOxnN8Q==
+X-Google-Smtp-Source: AGHT+IFd5AubgTZT1sWImGPdUe0O91LhcQhJNlWdLwiS1Elxh07YXmiWxiKAx2HMXiZMG4se8lmRg7tLpoCug8mkE20=
+X-Received: by 2002:a05:6512:b1d:b0:52f:d17e:46b with SMTP id
+ 2adb3069b0e04-53546bfc7f6mr15804416e87.54.1725462952496; Wed, 04 Sep 2024
+ 08:15:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904-gegessen-kalziumreich-2817b07433b7@brauner>
+References: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 4 Sep 2024 17:15:40 +0200
+Message-ID: <CAJfpegsouKySsJpYHetSPj2G5oca8Ujxuv+7jpvmF57zYztbZw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/15] fuse: basic support for idmapped mounts
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: mszeredi@redhat.com, brauner@kernel.org, stgraber@stgraber.org, 
+	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Vivek Goyal <vgoyal@redhat.com>, German Maglione <gmaglione@redhat.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 04, 2024 at 04:44:03PM +0200, Christian Brauner wrote:
-> On Wed, Sep 04, 2024 at 03:33:30PM GMT, Vlastimil Babka wrote:
-> > On 9/4/24 13:38, Christian Brauner wrote:
-> > > On Wed, Sep 04, 2024 at 12:50:28PM GMT, Vlastimil Babka wrote:
-> > >> On 9/4/24 11:45, Christian Brauner wrote:
-> > >> > On Wed, Sep 04, 2024 at 08:14:24AM GMT, Mike Rapoport wrote:
-> > >> >> On Tue, Sep 03, 2024 at 04:20:53PM +0200, Christian Brauner wrote:
-> > >> >> > Use _Generic() to create a compatibility layer that type switches on the
-> > >> >> > third argument to either call __kmem_cache_create() or
-> > >> >> > __kmem_cache_create_args(). This can be kept in place until all callers
-> > >> >> > have been ported to struct kmem_cache_args.
-> > >> >> > 
-> > >> >> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > >> >> 
-> > >> >> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > >> >> 
-> > >> >> > ---
-> > >> >> >  include/linux/slab.h | 13 ++++++++++---
-> > >> >> >  mm/slab_common.c     | 10 +++++-----
-> > >> >> >  2 files changed, 15 insertions(+), 8 deletions(-)
-> > >> >> > 
-> > >> >> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> > >> >> > index aced16a08700..4292d67094c3 100644
-> > >> >> > --- a/include/linux/slab.h
-> > >> >> > +++ b/include/linux/slab.h
-> > >> >> > @@ -261,9 +261,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
-> > >> >> >  					    unsigned int object_size,
-> > >> >> >  					    struct kmem_cache_args *args,
-> > >> >> >  					    slab_flags_t flags);
-> > >> >> > -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
-> > >> >> > -			unsigned int align, slab_flags_t flags,
-> > >> >> > -			void (*ctor)(void *));
-> > >> >> > +
-> > >> >> > +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
-> > >> >> > +				       unsigned int align, slab_flags_t flags,
-> > >> >> > +				       void (*ctor)(void *));
-> > >> >> 
-> > >> >> As I said earlier, this can become _kmem_cache_create and
-> > >> >> __kmem_cache_create_args can be __kmem_cache_create from the beginning.
-> > >> 
-> > >> I didn't notice an answer to this suggestion? Even if it's just that you
-> > >> don't think it's worth the rewrite, or it's not possible because X Y Z.
-> > >> Thanks.
-> > > 
-> > > I'm confused. I sent two patches as a reply to the thread plus the
-> > > answer below and there's two patches in v3 that you can use or drop.
-> > 
-> > Right, that's the part below. But the suggestion above, and also in Mike's
-> > reply to 02/12 was AFAICS to rename __kmem_cache_create_args to
-> > __kmem_cache_create (since patch 02) and here __kmem_cache_create to
-> > _kmem_cache_create. It just seemed odd to see no reaction to that (did I
-> > miss or not receive it?).
-> 
-> Oh, I see. I read it as a expressing taste and so I didn't bother
-> replying. And I really dislike single underscore function names so I
-> would like to avoid it and it also seems more confusing to me.
+On Tue, 3 Sept 2024 at 17:16, Alexander Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
+>
+> Dear friends,
+>
+> This patch series aimed to provide support for idmapped mounts
+> for fuse & virtiofs. We already have idmapped mounts support for almost all
+> widely-used filesystems:
+> * local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
+> * network (ceph)
 
-Heh, not quite. I don't like kmem_cache_create_args essentially becoming a
-replacement for kmem_cache_create* and I'd prefer __kmem_cache_create
-naming.
+Looks good.
 
-As for the single underscore, I don't have strong feelings about it, but I
-do think that it should be renamed to something else than
-__kmem_cache_create to leave __kmem_cache_create for the core function.
+Applied with some tweaks and pushed.
 
--- 
-Sincerely yours,
-Mike.
+Thanks,
+Miklos
 
