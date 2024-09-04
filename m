@@ -1,69 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-28664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268F496CAA9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 01:05:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB7F96CABE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 01:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4626F1C22709
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 23:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96151F2853D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 23:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6B417B4FA;
-	Wed,  4 Sep 2024 23:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC3617BEA0;
+	Wed,  4 Sep 2024 23:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qldlD+ML"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="M5NBdb9Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C881372
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 23:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985215B0FF
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 23:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725491137; cv=none; b=IoNiIgCcI+dx0jRZ1NRPPqToQ4bw0bMQrrxE25eDzfVQo2yTG65pv/nibpquxWSJIteRZIj24dUtkoIXiAwX1dg39iWB8mRYNL5snI54LvHypCU4gQ1GWL7cSngRqb4YNIlAIuNR8Sg9e2gOYhOFvivsGce3a0UkttePLVpOtnk=
+	t=1725492053; cv=none; b=UgxPaqVjQxbxAPvuf/3kGGSNNLQY3T5jEWLcGYW0rvsqikUlnEMcpKZycvnbn2aGKL0aZzULmZqSO9Dly/MkiBcpQjM2yRINy1f9pK6HqeiO/n1xOeTy4dOgEzAe7VEZV1eonz/d5lneg5Xd90RnFrFiJVhDFScMn2oPLPSxf/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725491137; c=relaxed/simple;
-	bh=AL7jBf/oj0Cd/KEMZtrNE6Gk35+GwCCya7UV9FRkstA=;
+	s=arc-20240116; t=1725492053; c=relaxed/simple;
+	bh=HcFDd0H7LbXYeh37GMtCsBrIu9ps3lCC8dBP2ltvvaM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n15CxvIkiSmNQWlb/GeAzinyypJMZkbfURZphMlKp3ZL3vJq3jJuIH1Fc+Jhit00nkdCVf3uGmyMuXJ221Pjgv4yH4OpHfB7W60xiajkmSJKs6ITiCuiOQkd0Z1okUYwNxRSgzX0RhlqcGf0ROo7mCkgRjvcQDVONa3t00VfJik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qldlD+ML; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 4 Sep 2024 19:05:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725491134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KcVsx2vDwlHG4tKH3VNsA9AGL8ypQbgKqlGsi88qPzs=;
-	b=qldlD+MLY/awoHP6h9eDQb6YaviSGzhThCweSL040WEvRSqzzpwPqgx4HAaievFjLWZKJt
-	nQkeee2r7E5VxY5DhvIDWaXMdorCngIxHzEpFVSmRe+B0DEzFquLXaGVZsRk0xBPM5/Bz8
-	Nd8G9AiWuM4qKc/av28TbAlF1hyYCF0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@suse.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
-	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <hebnghkaytxb5djjsh6w7eddl7czrbnd7duobwisauffs5ax2q@4itp76zkzsf7>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
- <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
- <ZtgI1bKhE3imqE5s@tiehlicka>
- <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
- <ZtiOyJ1vjY3OjAUv@tiehlicka>
- <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
- <Ztjgf/mzdnhj/szl@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuTKDdMqit3sfuScmAScL8KA163fTy1upvrSS8b3gluQKRhORGtySBYwcVi24n/oLP7mhkF2F8qFge6XGRJHkUTj6yN6wJl9HY7oe+1LBn6G8dmF6qsplufE7560CdWyIlquKRKyoKVxPyUKDf6lCx6KPzY1ke04kldIHFOXtuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=M5NBdb9Z; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2068a7c9286so1712245ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 16:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725492051; x=1726096851; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=do2YRTOoj9GnwWoBDgk0QrUSNsuLuq0vS4jyF1HXMKE=;
+        b=M5NBdb9ZRMVOuNdm1cYWlIuWFNz2HjY1Niy778nwKHMGzF7Z3Gnl0WAuqfe0TiUDYk
+         8FPfgrwkzS4aUYys9V/buq4fnLizE8agDhv724tTOxI8lZdl5LMoRSBS5GLwNJUQxKC/
+         9l6zeO8l6hDUCbnDnVnqy1Azsyii9VfF3N+oAI6RZ73RfL+wZJ3Ye5CAUMR104Rj+on/
+         MaN/eUft78Me+0VGq6doiZTglZGrI6YQ72QwbqRYb5J8vxfdmhUuW9xnw4dByK9D9XlS
+         G5GwhHlv3uecQHeT+HqOeOyqbNrIqA8zFyjt16z1RncXiy2WUq4ux+rZNEFhdboWF7qT
+         nHeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725492051; x=1726096851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=do2YRTOoj9GnwWoBDgk0QrUSNsuLuq0vS4jyF1HXMKE=;
+        b=K1NcCCPzBKSt1Mh2mlzL0PrrpkvFQMReu+icfXXNjAsWjTLgjJN0K/JOQ5ZgYeia6g
+         Z1YWhWgHPQIDUgtpFfIT65/5FtRmil4DZVWywjtg57EJWM3ngUCLYTD1p39cKHuHUPiW
+         +IbQ1aI6N5Ywh0lD9dIKlL6b3DhZkUR6WX26s90PIfruQzPDZm/VPaBiZw6vcbTXNEQn
+         ZYX90zynhD5p0DdxJtM6ns6VOklhEm1on0paclrr/o6ybeXIH6W4ZamzghRxwQgCgmeL
+         ocQroBu+h0f6UrZuvAQevxoCG5VAfXu3Ls9ydKfmdHGj6MtlJ4N22NYN/RILjrL/QcvF
+         OO+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVpEWqHuN+phwxpuOHHwYsGZIzQsTFcncbPOfisqfG7DeWksXA0/ONt9xONL320O9u/n2uepo+zLGFisGJZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbxxGtFIlVI+0Bam4FRM5YMaPlvKSsPD5gi4NY6HRpCmpYzRF2
+	WYMWPSb3hHhjnUnwUC9Mjx4DcHOhspWihNfxI04WfC/5orYsX9VekC3FVVzhvIE=
+X-Google-Smtp-Source: AGHT+IHuT2/JPIf3XtWre+GFOUJzFurrIT8snqejnQfLJC9H3VrO6JyW0vpwKFJUAdmNu27h3XvCUQ==
+X-Received: by 2002:a17:902:e752:b0:1fb:701b:7298 with SMTP id d9443c01a7336-205841ba17emr139292085ad.32.1725492051426;
+        Wed, 04 Sep 2024 16:20:51 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206b2147b49sm16857895ad.251.2024.09.04.16.20.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 16:20:50 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1slzIu-000uGZ-1V;
+	Thu, 05 Sep 2024 09:20:48 +1000
+Date: Thu, 5 Sep 2024 09:20:48 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <ZtjrUI+oqqABJL2j@dread.disaster.area>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <87frqf2smy.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,90 +91,135 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Ztjgf/mzdnhj/szl@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <87frqf2smy.fsf@gmail.com>
 
-On Thu, Sep 05, 2024 at 08:34:39AM GMT, Dave Chinner wrote:
-> I've seen xfs_repair require a couple of TB of RAM to repair
-> metadata heavy filesystems of relatively small size (sub-20TB).
-> Once you get about a few hundred GB of metadata in the filesystem,
-> the fsck cross-reference data set size can easily run into the TBs.
+On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
+> John Garry <john.g.garry@oracle.com> writes:
 > 
-> So 256GB might *seem* like a lot of memory, but we were seeing
-> xfs_repair exceed that amount of RAM for metadata heavy filesystems
-> at least a decade ago...
+> > This series is being spun off the block atomic writes for xfs
+> > series at [0].
+> >
+> > That series got too big.
+> >
+> > The actual forcealign patches are roughly the same in this
+> > series.
+> >
+> > Why forcealign?  In some scenarios to may be required to
+> > guarantee extent alignment and granularity.
+> >
+> > For example, for atomic writes, the maximum atomic write unit
+> > size would be limited at the extent alignment and granularity,
+> > guaranteeing that an atomic write would not span data present in
+> > multiple extents.
+> >
+> > forcealign may be useful as a performance tuning optimization in
+> > other scenarios.
+> >
+> > I decided not to support forcealign for RT devices here.
+> > Initially I thought that it would be quite simple of implement.
+> > However, I discovered through much testing and subsequent debug
+> > that this was not true, so I decided to defer support to
+> > later.
+> >
+> > Early development xfsprogs support is at:
+> > https://github.com/johnpgarry/xfsprogs-dev/commits/atomic-writes/
+> >
 > 
-> Indeed, we recently heard about a 6TB filesystem with 15 *billion*
-> hardlinks in it.  The cross reference for resolving all those
-> hardlinks would require somewhere in the order of 1.5TB of RAM to
-> hold. The only way to reliably handle random access data sets this
-> large is with pageable memory....
-
-Christ...
-
-This is also where space efficiency of metadata starts to really matter. 
-
-Of course you store full backreferences for every hardlink, which is
-nice in some ways and a pain in others.
-
-> > Another more pressing one is the extents -> backpointers and
-> > backpointers -> extents passes of fsck; we do a linear scan through one
-> > btree checking references to another btree. For the btree we're checking
-> > references to the lookups are random, so we need to cache and pin the
-> > entire btree in ram if possible, or if not whatever will fit and we run
-> > in multiple passes.
-> > 
-> > This is the #1 scalability issue hitting a number of users right now, so
-> > I may need to rewrite it to pull backpointers into an eytzinger array
-> > and do our random lookups for backpointers on that - but that will be
-> > "the biggest vmalloc array we can possible allocate", so the INT_MAX
-> > size limit is clearly an issue there...
+> Hi John,
 > 
-> Given my above comments, I think you are approaching this problem
-> the wrong way. It is known that the data set that can exceed
-> physical kernel memory size, hence it needs to be swappable. That
-> way users can extend the kernel memory capacity via swapfiles when
-> bcachefs.fsck needs more memory than the system has physical RAM.
+> Thanks for your continued work on atomic write.  I went over the
+> XFS patch series and this is my understanding + some queries.
+> Could you please help with these.
 
-Well, it depends on the locality of the cross references - I don't think
-we want to go that route here, because if there isn't any locality in
-the cross references we'll just be thrashing; better to run in multiple
-passes, constraining each pass to what _will_ fit in ram...
+Hi Ritesh - to make it easier for everyone to read and reply to you
+emails, can you please word wrap the text at 72 columns?
 
-It would be nice if we had a way to guesstimate locality in extents <->
-backpointers references - if there is locality, then it's better to just
-run in one pass - and we wouldn't bother with building up new tables,
-we'd just rely on the btree node cache.
+> 1. As I understand XFS untorn atomic write support is built on top
+> of FORCEALIGN feature (which this series is adding) which in turn
+> uses extsize hint feature underneath.
 
-Perhaps that's what we'll do when online fsck is finished and we're
-optimizing more for "don't disturb the rest of the system too much" than
-"get it done as quick as possible".
+Yes.
 
-I do need to start making use of Darrick's swappable memory code in at
-least one other place though - the bucket tables when we're checking
-basic allocation info. That one just exceeded the INT_MAX limit for a
-user with a 30 TB hard drive, so I switched it to a radix tree for now,
-but it really should be swappable memory.
+>    Now extsize hint mainly controls the alignment of both
+>    "physical start" & "logical start" offset and extent length,
+>    correct?
 
-Fortunately there's more locality in the accesses there.
+Yes.
 
-> Hence Darrick designed and implemented pageable shmem backed memory
-> files (xfiles) to hold these data sets. Hence the size limit of the
-> online repair data set is physical RAM + swap space, same as it is
-> for offline repair. You can find the xfile code in
-> fs/xfs/scrub/xfile.[ch].
+>    This is done using args->alignment for start aand
+>    args->prod/mode variables for extent length. Correct?
+
+Yes.
+
+>    - If say we are not able to allocate an aligned physical start?
+>    Then since extsize is just a hint we go ahead with whatever
+>    best available extent is right?
+
+No. The definition of "forced alignment" is that we guarantee
+aligned allocation to the extent size hint. i.e the extent size hint
+is not a hint anymore - it defines the alignment we are guaranteeing
+allocation will achieve.
+
+hence if we can't align the extent to the alignment provided, we
+fail the alignment.
+
+>    - also extsize looks to be only providing allocation side of hints. (not de-allocation). Correct?
+
+No. See the use of xfs_inode_alloc_unitsize() in all the places
+where we free space. Forced alignment extends this function to
+return the extent size, not the block size.
+
+> 2. If say there is an append write i.e. the allocation is needed
+> to be done at EOF. Then we try for an exact bno (from eof block)
+> and aligned extent length, right?
+
+Yes. This works because the previous extent is exactly aligned,
+hence a contiguous allocation will continue to be correctly aligned
+due to the forced alignment constraints.
+
+>    i.e. xfs_bmap_btalloc_filestreams() ->
+>    xfs_bmap_btalloc_at_eof(ap, args); If it is not available then
+>    we try for nearby bno xfs_alloc_vextent_near_bno(args, target)
+>    and similar...
+
+yes, that's just the normal aligned allocation fallback path when
+exact allocation fails.
+
+> 3. It is the FORCEALIGN feature which _mandates_ both allocation
+> (by using extsize hint) and de-allocation to happen _only_ in
+> extsize chunks.
+>
+>    i.e. forcealign mandates -
+>    - the logical and physical start offset should be aligned as
+>    per args->alignment
+>    - extent length be aligned as per args->prod/mod.
+>      If above two cannot be satisfied then return -ENOSPC.
+
+Yes.
+
 > 
-> Support for large, sortable arrays of fixed size records built on
-> xfiles can be found in xfarray.[ch], and blob storage in
-> xfblob.[ch].
+>    - Does the unmapping of extents also only happens in extsize
+>    chunks (with forcealign)?
 
-*nod*
+Yes, via use of xfs_inode_alloc_unitsize() in the high level code
+aligning the fsbno ranges to be unmapped.
 
-I do wish we had normal virtually mapped swappable memory though - the
-thing I don't like about xfarray is that it requires a radix tree walk
-on every access, and we have _hardware_ that's meant to do that for
-us.
+Remember, force align requires both logical file offset and
+physical block number to be correctly aligned, so unmap alignment
+has to be set up correctly at file offset level before we even know
+what extents underly the file range we need to unmap....
 
-But if you still care about 32 bit then that does necessitate Darrick's
-approach. I'm willing to consider 32 bit legacy for bcachefs, though.
+>      If the start or end of the extent which needs unmapping is
+>      unaligned then we convert that extent to unwritten and skip,
+>      is it? (__xfs_bunmapi())
+
+The high level code should be aligning the start and end of the
+file range to be removed via xfs_inode_alloc_unitsize(). Hence 
+the low level __xfs_bunmapi() code shouldn't ever be encountering
+unaligned unmaps on force-aligned inodes.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
