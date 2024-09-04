@@ -1,242 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-28506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F67196B5FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 11:07:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921B896B654
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 11:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265472867DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 09:07:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F6F287F95
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 09:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE491A3032;
-	Wed,  4 Sep 2024 09:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41151CCECB;
+	Wed,  4 Sep 2024 09:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuG1Q/25"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z+++KBV6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dIp/U31u";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z+++KBV6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dIp/U31u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E021146A7B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 09:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD7E1CC8AD;
+	Wed,  4 Sep 2024 09:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725440816; cv=none; b=iag4Jxdw3W0UwLniM92UucsygBcszAzUgemBtu6UY6bMCChOitN8qciy3PHlIhWVYHic5wzvTE4NPUKLQWotJ2TAFQQgdTWMYc97YrjrBKkoNWPhMkzWst/xGn81i4sHY82A0iS2366P+eSdixNkg0wvr4irI2AaYTOb6VC6tqU=
+	t=1725441557; cv=none; b=TX/xeLQUMPIGZQ1MHKsR5LaB7JrfEKg+X2zKrY8dd+5U9ddDm28ZAtsqw7Npb2+mVfEzcip0qQBpvwGN01HyYxMW/psPUH/qPLKje/fYK7unRYkL8jESxzjS3Ljh+B/4MVkHTeiG1n2kgZOSdLWo5bmoFeHDGwVvXO3ff+HthiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725440816; c=relaxed/simple;
-	bh=8pXHE83HSgNwFHSJezj0X5u1fo8c8fnfaOMKDRq/dGA=;
+	s=arc-20240116; t=1725441557; c=relaxed/simple;
+	bh=rYhibeLToLXao14siX2jw/NrLhl3ubJwHIS7KjZoSAs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f48WkqxQMV1Cb+CK/38SV2d3EaK78dT/+WBHXphijy+WO/gTppdTvuW6mCgzGCqcVpx5f547vkJB99yowHwBTseeiPuLp8asB2rYPDTHqI4pm/nFyaQrppIkrirS4fyvUed19mxWcaDkoVDRI0PX5N5popN5a7P4058anGwuldE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuG1Q/25; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15895C4CEC2;
-	Wed,  4 Sep 2024 09:06:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725440815;
-	bh=8pXHE83HSgNwFHSJezj0X5u1fo8c8fnfaOMKDRq/dGA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PuG1Q/252JCVeDWOig9aL6xZcgQP62JDdfn6J5sJ91mmt//4+mVtwo4L7fEilCwcd
-	 gTE42WmDbjOmSUIch+9232b/zyR93NHEFKtcyStQN+ltsL8h1MYnIKlHJWk4Pr4TPp
-	 xW9Y67S5Ljg5PqWAbRelQ58HybRnNomyhOSIOjkBp8fU9MJG2qkUmedklL3fhDN9ss
-	 r+oSJmAboOu2NQ9zcjKVY6YRPP6UDU4qFSp/Cz7R5ygEovY3WA4B9W1QzZsBwQnSor
-	 5RW22RtdWQWkrqWriWkRi9CPUnTOiEBH6n4qH7bylRhZY11ufsi+MqHEtOjQ5A1lRl
-	 +Nt0mdkVeXEtw==
-Date: Wed, 4 Sep 2024 11:06:51 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 02/15] slab: add struct kmem_cache_args
-Message-ID: <20240904-trieb-waran-bcca80d7e223@brauner>
-References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-2-76f97e9a4560@kernel.org>
- <c3b8a4e6-42ac-411a-ae0d-cd3aa5f1be50@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hODfrYWOq9He4XKtUSuWts5SnBPR6mnch6uMUbj2e5kdO33vwu5sf9Ef8wfYV5ucuFMdmuKRcA/ex+Uh1pJH4gUWrCCiuKSWIGJw5soLrJkYpw4bhqdeWuwBfWoaiGseihn39zQY5zt/RHQcLjBc2iQhQODcGDi7Rqj9M5TZVww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z+++KBV6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dIp/U31u; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z+++KBV6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dIp/U31u; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 92602219FF;
+	Wed,  4 Sep 2024 09:19:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725441553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+X4CE5OLGkYKJigdScpNImAF/U5YbkQWvOcK47dWD28=;
+	b=Z+++KBV6oe73P/joFHjRfqqh4k6JMx/N8SOWkWyK9jL5GWhQMDSsr4mhZdvwuU0RtK7UFF
+	lwDFYFWrezFgxtQrOnOXg6522NQgU4FJECHq8YXTPjcyg34uniKqN07z39uXYVGOkkqZ8X
+	Od08T8NDOhFKZJ2FojmP95oxJXHy5OM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725441553;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+X4CE5OLGkYKJigdScpNImAF/U5YbkQWvOcK47dWD28=;
+	b=dIp/U31u/wEjs3Es1kWHBKqwqFHyoNzaQSmvzOqhYbMYNMvLNeWAzSfWLsx5mKAdiO3GPT
+	yKMVQohw3gfzukBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725441553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+X4CE5OLGkYKJigdScpNImAF/U5YbkQWvOcK47dWD28=;
+	b=Z+++KBV6oe73P/joFHjRfqqh4k6JMx/N8SOWkWyK9jL5GWhQMDSsr4mhZdvwuU0RtK7UFF
+	lwDFYFWrezFgxtQrOnOXg6522NQgU4FJECHq8YXTPjcyg34uniKqN07z39uXYVGOkkqZ8X
+	Od08T8NDOhFKZJ2FojmP95oxJXHy5OM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725441553;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+X4CE5OLGkYKJigdScpNImAF/U5YbkQWvOcK47dWD28=;
+	b=dIp/U31u/wEjs3Es1kWHBKqwqFHyoNzaQSmvzOqhYbMYNMvLNeWAzSfWLsx5mKAdiO3GPT
+	yKMVQohw3gfzukBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84CB0139E2;
+	Wed,  4 Sep 2024 09:19:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YsyDHxEm2GbXEgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 09:19:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0397BA0962; Wed,  4 Sep 2024 11:19:12 +0200 (CEST)
+Date: Wed, 4 Sep 2024 11:19:12 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jon Kohler <jon@nutanix.com>
+Cc: "paulmck@kernel.org" <paulmck@kernel.org>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+	"jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+	"josh@joshtriplett.org" <josh@joshtriplett.org>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: SRCU hung task on 5.10.y on synchronize_srcu(&fsnotify_mark_srcu)
+Message-ID: <20240904091912.orpkwemgpsgcongo@quack3>
+References: <1E829024-48BF-4647-A1DD-AC7E8BFA0FA2@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c3b8a4e6-42ac-411a-ae0d-cd3aa5f1be50@suse.cz>
+In-Reply-To: <1E829024-48BF-4647-A1DD-AC7E8BFA0FA2@nutanix.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,gmail.com,joshtriplett.org,suse.cz];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Sep 04, 2024 at 10:13:11AM GMT, Vlastimil Babka wrote:
-> On 9/3/24 16:20, Christian Brauner wrote:
+On Tue 27-08-24 20:01:27, Jon Kohler wrote:
+> Hey Paul, Lai, Josh, and the RCU list and Jan/FS list -
+> Reaching out about a tricky hung task issue that I'm running into. I've
+> got a virtualized Linux guest on top of a KVM based platform, running
+> a 5.10.y based kernel. The issue we're running into is a hung task that
+> *only* happens on shutdown/reboot of this particular VM once every 
+> 20-50 times.
 > 
-> You could describe that it's to hold less common args and there's
-> __kmem_cache_create_args() that takes it, and
-> do_kmem_cache_create_usercopy() is converted to it? Otherwise LGTM.
+> The signature of the hung task is always similar to the output below,
+> where we appear to hang on the call to 
+>     synchronize_srcu(&fsnotify_mark_srcu)
+> in fsnotify_connector_destroy_workfn / fsnotify_mark_destroy_workfn,
+> where two kernel threads are both calling synchronize_srcu, then
+> scheduling out in wait_for_completion, and completely going out to
+> lunch for over 4 minutes. This then triggers the hung task timeout and
+> things blow up.
 
-Hm, I seem to have dropped the contents of the commit message when I
-split it into multiple individual commits. I've now added:
+Well, the most obvious reason for this would be that some process is
+hanging somewhere with fsnotify_mark_srcu held. When this happens, can you
+trigger sysrq-w in the VM and send here its output?
 
-"Currently we have multiple kmem_cache_create*() variants that take up to
-seven separate parameters with one of the functions having to grow an
-eigth parameter in the future to handle both usercopy and a custom
-freelist pointer.
-
-Add a struct kmem_cache_args structure and move less common parameters
-into it. Core parameters such as name, object size, and flags continue
-to be passed separately.
-
-Add a new function __kmem_cache_create_args() that takes a struct
-kmem_cache_args pointer and port do_kmem_cache_create_usercopy() over to
-it.
-
-In follow-up patches we will port the other kmem_cache_create*()
-variants over to it as well."
-
-to the work.kmem_cache_args branch.
-
+> We are running audit=1 for this system and are using an el8 based
+> userspace.
 > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  include/linux/slab.h | 21 ++++++++++++++++
-> >  mm/slab_common.c     | 67 +++++++++++++++++++++++++++++++++++++++-------------
-> >  2 files changed, 72 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> > index 5b2da2cf31a8..79d8c8bca4a4 100644
-> > --- a/include/linux/slab.h
-> > +++ b/include/linux/slab.h
-> > @@ -240,6 +240,27 @@ struct mem_cgroup;
-> >   */
-> >  bool slab_is_available(void);
-> >  
-> > +/**
-> > + * @align: The required alignment for the objects.
-> > + * @useroffset: Usercopy region offset
-> > + * @usersize: Usercopy region size
-> > + * @freeptr_offset: Custom offset for the free pointer in RCU caches
-> > + * @use_freeptr_offset: Whether a @freeptr_offset is used
-> > + * @ctor: A constructor for the objects.
-> > + */
-> > +struct kmem_cache_args {
-> > +	unsigned int align;
-> > +	unsigned int useroffset;
-> > +	unsigned int usersize;
-> > +	unsigned int freeptr_offset;
-> > +	bool use_freeptr_offset;
-> > +	void (*ctor)(void *);
-> > +};
-> > +
-> > +struct kmem_cache *__kmem_cache_create_args(const char *name,
-> > +					    unsigned int object_size,
-> > +					    struct kmem_cache_args *args,
-> > +					    slab_flags_t flags);
-> >  struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
-> >  			unsigned int align, slab_flags_t flags,
-> >  			void (*ctor)(void *));
-> > diff --git a/mm/slab_common.c b/mm/slab_common.c
-> > index 91e0e36e4379..0f13c045b8d1 100644
-> > --- a/mm/slab_common.c
-> > +++ b/mm/slab_common.c
-> > @@ -248,14 +248,24 @@ static struct kmem_cache *create_cache(const char *name,
-> >  	return ERR_PTR(err);
-> >  }
-> >  
-> > -static struct kmem_cache *
-> > -do_kmem_cache_create_usercopy(const char *name,
-> > -		  unsigned int size, unsigned int freeptr_offset,
-> > -		  unsigned int align, slab_flags_t flags,
-> > -		  unsigned int useroffset, unsigned int usersize,
-> > -		  void (*ctor)(void *))
-> > +/**
-> > + * __kmem_cache_create_args - Create a kmem cache
-> > + * @name: A string which is used in /proc/slabinfo to identify this cache.
-> > + * @object_size: The size of objects to be created in this cache.
-> > + * @args: Arguments for the cache creation (see struct kmem_cache_args).
-> > + * @flags: See %SLAB_* flags for an explanation of individual @flags.
-> > + *
-> > + * Cannot be called within a interrupt, but can be interrupted.
-> > + *
-> > + * Return: a pointer to the cache on success, NULL on failure.
-> > + */
-> > +struct kmem_cache *__kmem_cache_create_args(const char *name,
-> > +					    unsigned int object_size,
-> > +					    struct kmem_cache_args *args,
-> > +					    slab_flags_t flags)
-> >  {
-> >  	struct kmem_cache *s = NULL;
-> > +	unsigned int freeptr_offset = UINT_MAX;
-> >  	const char *cache_name;
-> >  	int err;
-> >  
-> > @@ -275,7 +285,7 @@ do_kmem_cache_create_usercopy(const char *name,
-> >  
-> >  	mutex_lock(&slab_mutex);
-> >  
-> > -	err = kmem_cache_sanity_check(name, size);
-> > +	err = kmem_cache_sanity_check(name, object_size);
-> >  	if (err) {
-> >  		goto out_unlock;
-> >  	}
-> > @@ -296,12 +306,14 @@ do_kmem_cache_create_usercopy(const char *name,
-> >  
-> >  	/* Fail closed on bad usersize of useroffset values. */
-> >  	if (!IS_ENABLED(CONFIG_HARDENED_USERCOPY) ||
-> > -	    WARN_ON(!usersize && useroffset) ||
-> > -	    WARN_ON(size < usersize || size - usersize < useroffset))
-> > -		usersize = useroffset = 0;
-> > -
-> > -	if (!usersize)
-> > -		s = __kmem_cache_alias(name, size, align, flags, ctor);
-> > +	    WARN_ON(!args->usersize && args->useroffset) ||
-> > +	    WARN_ON(object_size < args->usersize ||
-> > +		    object_size - args->usersize < args->useroffset))
-> > +		args->usersize = args->useroffset = 0;
-> > +
-> > +	if (!args->usersize)
-> > +		s = __kmem_cache_alias(name, object_size, args->align, flags,
-> > +				       args->ctor);
-> >  	if (s)
-> >  		goto out_unlock;
-> >  
-> > @@ -311,9 +323,11 @@ do_kmem_cache_create_usercopy(const char *name,
-> >  		goto out_unlock;
-> >  	}
-> >  
-> > -	s = create_cache(cache_name, size, freeptr_offset,
-> > -			 calculate_alignment(flags, align, size),
-> > -			 flags, useroffset, usersize, ctor);
-> > +	if (args->use_freeptr_offset)
-> > +		freeptr_offset = args->freeptr_offset;
-> > +	s = create_cache(cache_name, object_size, freeptr_offset,
-> > +			 calculate_alignment(flags, args->align, object_size),
-> > +			 flags, args->useroffset, args->usersize, args->ctor);
-> >  	if (IS_ERR(s)) {
-> >  		err = PTR_ERR(s);
-> >  		kfree_const(cache_name);
-> > @@ -335,6 +349,27 @@ do_kmem_cache_create_usercopy(const char *name,
-> >  	}
-> >  	return s;
-> >  }
-> > +EXPORT_SYMBOL(__kmem_cache_create_args);
-> > +
-> > +static struct kmem_cache *
-> > +do_kmem_cache_create_usercopy(const char *name,
-> > +                 unsigned int size, unsigned int freeptr_offset,
-> > +                 unsigned int align, slab_flags_t flags,
-> > +                 unsigned int useroffset, unsigned int usersize,
-> > +                 void (*ctor)(void *))
-> > +{
-> > +	struct kmem_cache_args kmem_args = {
-> > +		.align			= align,
-> > +		.use_freeptr_offset	= freeptr_offset != UINT_MAX,
-> > +		.freeptr_offset		= freeptr_offset,
-> > +		.useroffset		= useroffset,
-> > +		.usersize		= usersize,
-> > +		.ctor			= ctor,
-> > +	};
-> > +
-> > +	return __kmem_cache_create_args(name, size, &kmem_args, flags);
-> > +}
-> > +
-> >  
-> >  /**
-> >   * kmem_cache_create_usercopy - Create a cache with a region suitable
-> > 
+> I've flipped through the fs/notify code base for both 5.10 as well as
+> upstream mainline to see if something jumped off the page, and I
+> haven't yet spotted any particular suspect code from the caller side.
 > 
+> This hang appears to come up at the very end of the shutdown/reboot
+> process, seemingly after the system starts to unwind through initrd.
+> 
+> What I'm working on now is adding some instrumentation to the dracut
+> shutdown initrd scripts to see if I can how far we get down that path
+> before the system fails to make forward progress, which may give some
+> hints. TBD on that. I've also enabled lockdep with CONFIG_PROVE_RCU and
+> a plethora of DEBUG options [2], and didn't get anything interesting.
+> To be clear, we haven't seen lockdep spit out any complaints as of yet.
+
+The fact that lockdep doesn't report anything is interesting but then
+lockdep doesn't track everything. In particular I think SRCU itself isn't
+tracked by lockdep.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
