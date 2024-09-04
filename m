@@ -1,95 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-28495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3427296B452
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:21:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E3F96B45C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 586421C20B4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 08:21:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E615D1C21948
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 08:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A22E187FF5;
-	Wed,  4 Sep 2024 08:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056B418A6B0;
+	Wed,  4 Sep 2024 08:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TEqAGXrx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mQxOFzR0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TEqAGXrx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mQxOFzR0"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AydY2+TJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uh0EEPfL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AydY2+TJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uh0EEPfL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EDB155735
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 08:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8237B188A2A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 08:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725437680; cv=none; b=oKIloi68k9gpt1O+KgYkwrZszA9uAsOAbJoLu1giNPscNrPr/NaCdz7+TNTsOl9FBtLVAkbBOtne9oRQahNBD5q4fhNe9uMqOywnXkdchO+smtFrhA8loHbmVZn3Go1fepsPKg8q6F09DkZpEvb8uuK0AiCRrILbptGwFJivS3o=
+	t=1725437781; cv=none; b=UO+jHXaQg8FmxqnugpG33Gks+cdcjSSbMGuMZ+oe5MWNwmRSsfeULSjv2Zf9GY4CKkJLFAU5iszhcCoW4Dxq0/mG3ubuRvKIADEXSJgnUfgcSQypTppgiSwsn0vK2/CKjqrffwoKdGiqYNXbVhQLriHwp6aw+4mEwaBygfp3uBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725437680; c=relaxed/simple;
-	bh=x3lVJ2+xmmk4ceLuUX7SQnOvAk3YPgEj+U6Aj3YhtBQ=;
+	s=arc-20240116; t=1725437781; c=relaxed/simple;
+	bh=E/M0tf36Z1yw5PczLLbTkOcP7vU0VLPG25P5V2lselo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tf6hjFThZrxzkNj9JVxM79ZHVusBHT3JT2jnvyLiQomyTs/aNc/hsxxIkB9sSeq5JTv7xSUD4u58h3NLxJUvLK4Uajj5faCbf/IoKM9YWzjc2ycZtRta3RfZ1Vk2dpOuIBxRA4du+T4oJS6xy8JLFH5KKTMHBru/Lhi/gCLJ0UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TEqAGXrx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mQxOFzR0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TEqAGXrx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mQxOFzR0; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=OG/UtDdUUO697b6nRUp5f14fc7oAHeYIfjoXomBeu0T5vIKIZulfuuq+YY9EB3nuVhuFatPfhOOZCP/SAg2yjHmzk8KHCsR10j/295bQmKqlrkHWQiob5RRK7oZu5sOfItRJOd6Puih6sFo9oF28SrbzT+ozg0yhyhqCjXsye0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AydY2+TJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uh0EEPfL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AydY2+TJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uh0EEPfL; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6CF20219F9;
-	Wed,  4 Sep 2024 08:14:37 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C021F219F3;
+	Wed,  4 Sep 2024 08:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725437677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725437777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VLiPbVYKmQ0b+1MOELAMx/PhGTBcH7hBgQmyGtsLgT0=;
-	b=TEqAGXrxb2QIhI9BHLe4Niaq7MHf8XyoyBvBY7h/CPYxOjLYElEmZXO6d+DZfBSgSibOjQ
-	roFghqOx8uA2U9tyl5bE6Lr1RfZ2/I0Eojoy9LMcE1xHg0XG4dJwrwcndhb+/REXG0NqEu
-	S76P8L9SckL0LuWXm2RkJ/aX5QxwdtA=
+	bh=/RixQvdJJgKlJ1BO6wHZyp+f/Qsn2l3Pj+xoq/d+w2g=;
+	b=AydY2+TJyWh3jQIn9uoXWyHePvtQzUYAQzoQzrA4I8IEE43Zwxx5MwjMl/bEwx+9biWiOk
+	szfIYWMktmbEO2qa4tXTclYB/O1Oq0028FIBUThegdAt6BLwAg4DGilcNXUI1DY8fZdXaw
+	GoRKsAJrU3ypNUVpPMQljT9PLvhNlag=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725437677;
+	s=susede2_ed25519; t=1725437777;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VLiPbVYKmQ0b+1MOELAMx/PhGTBcH7hBgQmyGtsLgT0=;
-	b=mQxOFzR0T/aW0s1LU6IqL8kAcRkxc1YCfFKpfGyP/JgKIwCmeIw+9JwIhwewexImR9YxDy
-	h6sdBvh0bIZVeXBw==
+	bh=/RixQvdJJgKlJ1BO6wHZyp+f/Qsn2l3Pj+xoq/d+w2g=;
+	b=uh0EEPfLW0wPHeZgzzTnFsDoevNjbineW1p20nZPDq6arivG8FuX/BJcHiM+FQ7bLvfgpo
+	j233WwLojdTyvPAg==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725437677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725437777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VLiPbVYKmQ0b+1MOELAMx/PhGTBcH7hBgQmyGtsLgT0=;
-	b=TEqAGXrxb2QIhI9BHLe4Niaq7MHf8XyoyBvBY7h/CPYxOjLYElEmZXO6d+DZfBSgSibOjQ
-	roFghqOx8uA2U9tyl5bE6Lr1RfZ2/I0Eojoy9LMcE1xHg0XG4dJwrwcndhb+/REXG0NqEu
-	S76P8L9SckL0LuWXm2RkJ/aX5QxwdtA=
+	bh=/RixQvdJJgKlJ1BO6wHZyp+f/Qsn2l3Pj+xoq/d+w2g=;
+	b=AydY2+TJyWh3jQIn9uoXWyHePvtQzUYAQzoQzrA4I8IEE43Zwxx5MwjMl/bEwx+9biWiOk
+	szfIYWMktmbEO2qa4tXTclYB/O1Oq0028FIBUThegdAt6BLwAg4DGilcNXUI1DY8fZdXaw
+	GoRKsAJrU3ypNUVpPMQljT9PLvhNlag=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725437677;
+	s=susede2_ed25519; t=1725437777;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VLiPbVYKmQ0b+1MOELAMx/PhGTBcH7hBgQmyGtsLgT0=;
-	b=mQxOFzR0T/aW0s1LU6IqL8kAcRkxc1YCfFKpfGyP/JgKIwCmeIw+9JwIhwewexImR9YxDy
-	h6sdBvh0bIZVeXBw==
+	bh=/RixQvdJJgKlJ1BO6wHZyp+f/Qsn2l3Pj+xoq/d+w2g=;
+	b=uh0EEPfLW0wPHeZgzzTnFsDoevNjbineW1p20nZPDq6arivG8FuX/BJcHiM+FQ7bLvfgpo
+	j233WwLojdTyvPAg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58BC3139D2;
-	Wed,  4 Sep 2024 08:14:37 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B0395139D2;
+	Wed,  4 Sep 2024 08:16:17 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7bRQFe0W2GZJfQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 04 Sep 2024 08:14:37 +0000
-Message-ID: <44c51c2b-957c-4bb6-bade-fb202dbd07ce@suse.cz>
-Date: Wed, 4 Sep 2024 10:14:37 +0200
+	id D5anKlEX2Gb1fQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 04 Sep 2024 08:16:17 +0000
+Message-ID: <79eb89f6-1e19-4785-b807-1e0459b6011b@suse.cz>
+Date: Wed, 4 Sep 2024 10:16:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,15 +97,15 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/15] slab: port kmem_cache_create_usercopy() to
- struct kmem_cache_args
+Subject: Re: [PATCH v2 09/15] sl*b: remove rcu_freeptr_offset from struct
+ kmem_cache
 Content-Language: en-US
 To: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
  Jann Horn <jannh@google.com>, Linus Torvalds
  <torvalds@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-5-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-9-76f97e9a4560@kernel.org>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -146,7 +146,7 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
  1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
  EP+ylKVEKb0Q2A==
-In-Reply-To: <20240903-work-kmem_cache_args-v2-5-76f97e9a4560@kernel.org>
+In-Reply-To: <20240903-work-kmem_cache_args-v2-9-76f97e9a4560@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Score: -4.30
@@ -173,65 +173,114 @@ X-Spam-Flag: NO
 X-Spam-Level: 
 
 On 9/3/24 16:20, Christian Brauner wrote:
-> Pprt kmem_cache_create_usercopy() to struct kmem_cache_args and remove
+> Now that we pass down struct kmem_cache_args to calculate_sizes() we
+> don't need it anymore.
 
-Typo
+Nit: that sounds like a previous patch did the "pass down" part? Fine to do
+both at once but maybe adjust description that we do both here?
 
-> the now unused do_kmem_cache_create_usercopy() helper.
 > 
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  mm/slab_common.c | 30 ++++++++----------------------
->  1 file changed, 8 insertions(+), 22 deletions(-)
+>  mm/slab.h |  2 --
+>  mm/slub.c | 25 +++++++------------------
+>  2 files changed, 7 insertions(+), 20 deletions(-)
 > 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index da62ed30f95d..16c36a946135 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -351,26 +351,6 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
+> diff --git a/mm/slab.h b/mm/slab.h
+> index c7a4e0fc3cf1..36ac38e21fcb 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -261,8 +261,6 @@ struct kmem_cache {
+>  	unsigned int object_size;	/* Object size without metadata */
+>  	struct reciprocal_value reciprocal_size;
+>  	unsigned int offset;		/* Free pointer offset */
+> -	/* Specific free pointer requested (if not UINT_MAX) */
+> -	unsigned int rcu_freeptr_offset;
+>  #ifdef CONFIG_SLUB_CPU_PARTIAL
+>  	/* Number of per cpu partial objects to keep around */
+>  	unsigned int cpu_partial;
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 4719b60215b8..a23c7036cd61 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -3916,8 +3916,7 @@ static void *__slab_alloc_node(struct kmem_cache *s,
+>   * If the object has been wiped upon free, make sure it's fully initialized by
+>   * zeroing out freelist pointer.
+>   *
+> - * Note that we also wipe custom freelist pointers specified via
+> - * s->rcu_freeptr_offset.
+> + * Note that we also wipe custom freelist pointers.
+>   */
+>  static __always_inline void maybe_wipe_obj_freeptr(struct kmem_cache *s,
+>  						   void *obj)
+> @@ -5141,17 +5140,11 @@ static void set_cpu_partial(struct kmem_cache *s)
+>  #endif
 >  }
->  EXPORT_SYMBOL(__kmem_cache_create_args);
 >  
-> -static struct kmem_cache *
-> -do_kmem_cache_create_usercopy(const char *name,
-> -                 unsigned int size, unsigned int freeptr_offset,
-> -                 unsigned int align, slab_flags_t flags,
-> -                 unsigned int useroffset, unsigned int usersize,
-> -                 void (*ctor)(void *))
+> -/* Was a valid freeptr offset requested? */
+> -static inline bool has_freeptr_offset(const struct kmem_cache *s)
 > -{
-> -	struct kmem_cache_args kmem_args = {
-> -		.align			= align,
-> -		.use_freeptr_offset	= freeptr_offset != UINT_MAX,
-> -		.freeptr_offset		= freeptr_offset,
-> -		.useroffset		= useroffset,
-> -		.usersize		= usersize,
-> -		.ctor			= ctor,
-> -	};
-> -
-> -	return __kmem_cache_create_args(name, size, &kmem_args, flags);
+> -	return s->rcu_freeptr_offset != UINT_MAX;
 > -}
 > -
-> -
->  /**
->   * kmem_cache_create_usercopy - Create a cache with a region suitable
->   * for copying to userspace
-> @@ -405,8 +385,14 @@ kmem_cache_create_usercopy(const char *name, unsigned int size,
->  			   unsigned int useroffset, unsigned int usersize,
->  			   void (*ctor)(void *))
+>  /*
+>   * calculate_sizes() determines the order and the distribution of data within
+>   * a slab object.
+>   */
+> -static int calculate_sizes(struct kmem_cache *s)
+> +static int calculate_sizes(struct kmem_cache_args *args, struct kmem_cache *s)
 >  {
-> -	return do_kmem_cache_create_usercopy(name, size, UINT_MAX, align, flags,
-> -					     useroffset, usersize, ctor);
-> +	struct kmem_cache_args kmem_args = {
-> +		.align		= align,
-> +		.ctor		= ctor,
-> +		.useroffset	= useroffset,
-> +		.usersize	= usersize,
-> +	};
-> +
-> +	return __kmem_cache_create_args(name, size, &kmem_args, flags);
->  }
->  EXPORT_SYMBOL(kmem_cache_create_usercopy);
+>  	slab_flags_t flags = s->flags;
+>  	unsigned int size = s->object_size;
+> @@ -5192,7 +5185,7 @@ static int calculate_sizes(struct kmem_cache *s)
+>  	 */
+>  	s->inuse = size;
 >  
+> -	if (((flags & SLAB_TYPESAFE_BY_RCU) && !has_freeptr_offset(s)) ||
+> +	if (((flags & SLAB_TYPESAFE_BY_RCU) && !args->use_freeptr_offset) ||
+>  	    (flags & SLAB_POISON) || s->ctor ||
+>  	    ((flags & SLAB_RED_ZONE) &&
+>  	     (s->object_size < sizeof(void *) || slub_debug_orig_size(s)))) {
+> @@ -5214,8 +5207,8 @@ static int calculate_sizes(struct kmem_cache *s)
+>  		 */
+>  		s->offset = size;
+>  		size += sizeof(void *);
+> -	} else if ((flags & SLAB_TYPESAFE_BY_RCU) && has_freeptr_offset(s)) {
+> -		s->offset = s->rcu_freeptr_offset;
+> +	} else if ((flags & SLAB_TYPESAFE_BY_RCU) && args->use_freeptr_offset) {
+> +		s->offset = args->freeptr_offset;
+>  	} else {
+>  		/*
+>  		 * Store freelist pointer near middle of object to keep
+> @@ -5856,10 +5849,6 @@ int do_kmem_cache_create(struct kmem_cache *s, const char *name,
+>  #ifdef CONFIG_SLAB_FREELIST_HARDENED
+>  	s->random = get_random_long();
+>  #endif
+> -	if (args->use_freeptr_offset)
+> -		s->rcu_freeptr_offset = args->freeptr_offset;
+> -	else
+> -		s->rcu_freeptr_offset = UINT_MAX;
+>  	s->align = args->align;
+>  	s->ctor = args->ctor;
+>  #ifdef CONFIG_HARDENED_USERCOPY
+> @@ -5867,7 +5856,7 @@ int do_kmem_cache_create(struct kmem_cache *s, const char *name,
+>  	s->usersize = args->usersize;
+>  #endif
+>  
+> -	if (!calculate_sizes(s))
+> +	if (!calculate_sizes(args, s))
+>  		goto out;
+>  	if (disable_higher_order_debug) {
+>  		/*
+> @@ -5877,7 +5866,7 @@ int do_kmem_cache_create(struct kmem_cache *s, const char *name,
+>  		if (get_order(s->size) > get_order(s->object_size)) {
+>  			s->flags &= ~DEBUG_METADATA_FLAGS;
+>  			s->offset = 0;
+> -			if (!calculate_sizes(s))
+> +			if (!calculate_sizes(args, s))
+>  				goto out;
+>  		}
+>  	}
 > 
 
 
