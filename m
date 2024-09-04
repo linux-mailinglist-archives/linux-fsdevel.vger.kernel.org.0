@@ -1,177 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-28663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E001196CA92
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 00:42:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268F496CAA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 01:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7D1285982
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 22:42:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4626F1C22709
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 23:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B071714D8;
-	Wed,  4 Sep 2024 22:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6B417B4FA;
+	Wed,  4 Sep 2024 23:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmZCB/GL"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qldlD+ML"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8439B146D7F;
-	Wed,  4 Sep 2024 22:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C881372
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 23:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725489763; cv=none; b=rejoWBuIUIjUXqgP0wSxk2jrnFHAg4D49HpLEfmsJaOtWixXULarJMYt0FEMfo895J19g63P77UXX/OqT7ZS4wNCQw3cj6jnQIbCr3pK2TJovwBcAilLiaGv/v7hQi8ouAxSb3aG/dmfetmU1xG+T3Xzdd0NI8X9Af4KkViwpkA=
+	t=1725491137; cv=none; b=IoNiIgCcI+dx0jRZ1NRPPqToQ4bw0bMQrrxE25eDzfVQo2yTG65pv/nibpquxWSJIteRZIj24dUtkoIXiAwX1dg39iWB8mRYNL5snI54LvHypCU4gQ1GWL7cSngRqb4YNIlAIuNR8Sg9e2gOYhOFvivsGce3a0UkttePLVpOtnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725489763; c=relaxed/simple;
-	bh=BaQB16NB/k9Tiie9stwiXzFIzg7qOr3xb+0kCHiNJSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=THFnubVvCV/U54Dv3na6YrdL2UcFAuaCucqPKyPG7idgpNY2blhg+dLGCNqPUAcQZu/sRwNfwQfRPbTN8IO/9ckcEu2bWXmASEehnTvOtDqI3P3yn5nNeZSahhsRsTtijGRDPjG2jffn6F/YihX+f3aMMIRI8D0QGuK4ndNDatE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dmZCB/GL; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-70f660d2250so113637a34.2;
-        Wed, 04 Sep 2024 15:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725489760; x=1726094560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+mektUzQBdm6uPClAx253nsA9fFydOLeVVxOQq508B0=;
-        b=dmZCB/GLbfWzeySuVgFSPys8eJoxka1kOolnl+MGa7F6EvBkAJDJbnxZ8CYoODu52Z
-         P3G3Z9sVbtA/2M0cqZ2BVlB/G4s3SDvdimm03UHwM4fjTdzQAGEBphgyfRWkpG9TrA0V
-         P2nQRvV1PXxl1oI3XfOiyNr73LU2N3AR+MRxP4fjmBATtdWoJE8OFwQrWNMQE/rdUnB4
-         lkJR+/mVWH4XoCL/Lr58ORmkBU8ARamo6birBrtWTa3O8qDnxF1Lpfc9vNPKCFpg0pmi
-         +K9CNJg2CkramaNJKg05jyont2AMJn7m7FRyvCQGzLgHidoiYRBelYUZruSbRl92h1o2
-         2cGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725489760; x=1726094560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+mektUzQBdm6uPClAx253nsA9fFydOLeVVxOQq508B0=;
-        b=A8PloCFmVVw9DpiVD3lwjxLztT240qiD6OMczQpiKKY4P48mWP48u5V2T9YGNyNw6h
-         3WpoE71NLPWgpswcp+4C3g4BsljuGDRUJ6udEuwPWUWLRQvpdqp7jYjj+Czi/KbXfz8d
-         qIrTdvYrFyCAqIN4w3z5ifoHWS2UbEudO6UvCWEWyO2uSLJYQgt6Xcn5rmuMBcA1DEI0
-         KsuJm8Km4WiMjtsWj/7WYNVRTu0JbxjBCPAJ/tH0BcoWYtsNviD6+KWoXY/TOXqc71G/
-         tWdQDmsXIwxDsjZCabLwHodJTG6rGQHAs5/S0cOQXyU1skJPNsfxw8Hxr7M0sUVxleOn
-         nGAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPWpWTiz+cVvmMDD2ltrW4SYAKsejUS3k0XO7gfKKFI5yUrm4WZri1+c+zy+go2SE9GL91Uig9zB511vDA/w==@vger.kernel.org, AJvYcCWCIAftR5qDpeRUCGEX08UStueV6BJOnhhHLHpdYwXe7hcq3mnzQ64Svtc2Q7MC5lKdNydkRq/IRQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjxoTNC/Yrja6tnphQbhatVGu4wEmVevvy6ngfnvxNdDG7uEAY
-	hv3FgGBjDnliVdOXm+bE1UVB0j3/KPNUoZn5yuUWFswYZXou6v2121aKG53r65Sn37Uy7zNOdiw
-	QzVYktlX7+4K1OHsQc7ESXx2FIqU=
-X-Google-Smtp-Source: AGHT+IHAlsNxdiNNIyhc2IMbBF4c9+XJ4kSYdKYkM8KfJRsXlT+I04Rh1bNA7mq0Uao3qEeUlPcvMUVsfsxFzKa41po=
-X-Received: by 2002:a05:6830:919:b0:710:a5e7:7ed7 with SMTP id
- 46e09a7af769-710a5e78162mr10807452a34.32.1725489760595; Wed, 04 Sep 2024
- 15:42:40 -0700 (PDT)
+	s=arc-20240116; t=1725491137; c=relaxed/simple;
+	bh=AL7jBf/oj0Cd/KEMZtrNE6Gk35+GwCCya7UV9FRkstA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n15CxvIkiSmNQWlb/GeAzinyypJMZkbfURZphMlKp3ZL3vJq3jJuIH1Fc+Jhit00nkdCVf3uGmyMuXJ221Pjgv4yH4OpHfB7W60xiajkmSJKs6ITiCuiOQkd0Z1okUYwNxRSgzX0RhlqcGf0ROo7mCkgRjvcQDVONa3t00VfJik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qldlD+ML; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 4 Sep 2024 19:05:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725491134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KcVsx2vDwlHG4tKH3VNsA9AGL8ypQbgKqlGsi88qPzs=;
+	b=qldlD+MLY/awoHP6h9eDQb6YaviSGzhThCweSL040WEvRSqzzpwPqgx4HAaievFjLWZKJt
+	nQkeee2r7E5VxY5DhvIDWaXMdorCngIxHzEpFVSmRe+B0DEzFquLXaGVZsRk0xBPM5/Bz8
+	Nd8G9AiWuM4qKc/av28TbAlF1hyYCF0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Michal Hocko <mhocko@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
+	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-ID: <hebnghkaytxb5djjsh6w7eddl7czrbnd7duobwisauffs5ax2q@4itp76zkzsf7>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+ <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+ <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+ <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
+ <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
+ <ZtgI1bKhE3imqE5s@tiehlicka>
+ <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
+ <ZtiOyJ1vjY3OjAUv@tiehlicka>
+ <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
+ <Ztjgf/mzdnhj/szl@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
- <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-6-9207f7391444@ddn.com>
- <CAJnrk1aFcDyJJ5rP1LFkpyUPHkzDv_bcOMPW2m28ZBS8T+WmUA@mail.gmail.com> <b1e2d60b-477a-4320-acea-df83eec21b77@fastmail.fm>
-In-Reply-To: <b1e2d60b-477a-4320-acea-df83eec21b77@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 4 Sep 2024 15:42:29 -0700
-Message-ID: <CAJnrk1b8dSf3RagLZ3NnKRs6CJTB1zr0ZdAPwJLkKnQ_qPU+TA@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 06/17] fuse: Add the queue configuration ioctl
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, bernd@fastmail.fm, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ztjgf/mzdnhj/szl@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 4, 2024 at 3:38=E2=80=AFPM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
-> On 9/5/24 00:23, Joanne Koong wrote:
-> > On Sun, Sep 1, 2024 at 6:37=E2=80=AFAM Bernd Schubert <bschubert@ddn.co=
-m> wrote:
-> >>
-> >> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> >> ---
-> >>  fs/fuse/dev.c             | 30 ++++++++++++++++++++++++++++++
-> >>  fs/fuse/dev_uring.c       |  2 ++
-> >>  fs/fuse/dev_uring_i.h     | 13 +++++++++++++
-> >>  fs/fuse/fuse_i.h          |  4 ++++
-> >>  include/uapi/linux/fuse.h | 39 ++++++++++++++++++++++++++++++++++++++=
-+
-> >>  5 files changed, 88 insertions(+)
-> >>
-> >> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> >> index 6489179e7260..06ea4dc5ffe1 100644
-> >> --- a/fs/fuse/dev.c
-> >> +++ b/fs/fuse/dev.c
-> >> @@ -2379,6 +2379,33 @@ static long fuse_dev_ioctl_backing_close(struct=
- file *file, __u32 __user *argp)
-> >>         return fuse_backing_close(fud->fc, backing_id);
-> >>  }
-> >>
-> >> +#ifdef CONFIG_FUSE_IO_URING
-> >> +static long fuse_uring_queue_ioc(struct file *file, __u32 __user *arg=
-p)
-> >> +{
-> >> +       int res =3D 0;
-> >> +       struct fuse_dev *fud;
-> >> +       struct fuse_conn *fc;
-> >> +       struct fuse_ring_queue_config qcfg;
-> >> +
-> >> +       res =3D copy_from_user(&qcfg, (void *)argp, sizeof(qcfg));
-> >> +       if (res !=3D 0)
-> >> +               return -EFAULT;
-> >> +
-> >> +       res =3D _fuse_dev_ioctl_clone(file, qcfg.control_fd);
-> >
-> > I'm confused how this works for > 1 queues. If I'm understanding this
-> > correctly, if a system has multiple cores and the server would like
-> > multi-queues, then the server needs to call the ioctl
-> > FUSE_DEV_IOC_URING_QUEUE_CFG multiple times (each with a different
-> > qid).
-> >
-> > In this handler, when we get to _fuse_dev_ioctl_clone() ->
-> > fuse_device_clone(), it allocates and installs a new fud and then sets
-> > file->private_data to fud, but isn't this underlying file the same for
-> > all of the queues since they are using the same fd for the ioctl
-> > calls? It seems like every queue after the 1st would fail with -EINVAL
-> > from the "if (new->private_data)" check in fuse_device_clone()?
->
-> Each queue is using it's own fd - this works exactly the same as
-> a existing FUSE_DEV_IOC_CLONE - each clone has to open /dev/fuse on its
+On Thu, Sep 05, 2024 at 08:34:39AM GMT, Dave Chinner wrote:
+> I've seen xfs_repair require a couple of TB of RAM to repair
+> metadata heavy filesystems of relatively small size (sub-20TB).
+> Once you get about a few hundred GB of metadata in the filesystem,
+> the fsck cross-reference data set size can easily run into the TBs.
+> 
+> So 256GB might *seem* like a lot of memory, but we were seeing
+> xfs_repair exceed that amount of RAM for metadata heavy filesystems
+> at least a decade ago...
+> 
+> Indeed, we recently heard about a 6TB filesystem with 15 *billion*
+> hardlinks in it.  The cross reference for resolving all those
+> hardlinks would require somewhere in the order of 1.5TB of RAM to
+> hold. The only way to reliably handle random access data sets this
+> large is with pageable memory....
 
-Ah gotcha, this is the part I was missing. I didn't realize the
-expectation is that the server needs to open a new /dev/fuse for each
-queue. This makes more sense to me now, thanks.
+Christ...
 
-> own. A bit a pity that dup() isn't sufficient. Only difference to
-> FUSE_DEV_IOC_CLONE is the additional qid.
->
-> >
-> > Not sure if I'm missing something or if this intentionally doesn't
-> > support multi-queue yet. If the latter, then I'm curious how you're
-> > planning to get the fud for a specific queue given that
-> > file->private_data and fuse_get_dev() only can support the single
-> > queue case.
->
->
-> Strictly in the current patch set, the clone is only needed in the
-> next patch
-> "07/17] fuse: {uring} Add a dev_release exception for fuse-over-io-uring"
-> Though, since we have the fud anyway and link to the ring-queue, it makes
-> use of it in
-> 08/17] fuse: {uring} Handle SQEs - register commands
->
-> in fuse_uring_cmd().
->
->
-> I hope I understood your question right.
->
->
-> Thanks,
-> Bernd
+This is also where space efficiency of metadata starts to really matter. 
+
+Of course you store full backreferences for every hardlink, which is
+nice in some ways and a pain in others.
+
+> > Another more pressing one is the extents -> backpointers and
+> > backpointers -> extents passes of fsck; we do a linear scan through one
+> > btree checking references to another btree. For the btree we're checking
+> > references to the lookups are random, so we need to cache and pin the
+> > entire btree in ram if possible, or if not whatever will fit and we run
+> > in multiple passes.
+> > 
+> > This is the #1 scalability issue hitting a number of users right now, so
+> > I may need to rewrite it to pull backpointers into an eytzinger array
+> > and do our random lookups for backpointers on that - but that will be
+> > "the biggest vmalloc array we can possible allocate", so the INT_MAX
+> > size limit is clearly an issue there...
+> 
+> Given my above comments, I think you are approaching this problem
+> the wrong way. It is known that the data set that can exceed
+> physical kernel memory size, hence it needs to be swappable. That
+> way users can extend the kernel memory capacity via swapfiles when
+> bcachefs.fsck needs more memory than the system has physical RAM.
+
+Well, it depends on the locality of the cross references - I don't think
+we want to go that route here, because if there isn't any locality in
+the cross references we'll just be thrashing; better to run in multiple
+passes, constraining each pass to what _will_ fit in ram...
+
+It would be nice if we had a way to guesstimate locality in extents <->
+backpointers references - if there is locality, then it's better to just
+run in one pass - and we wouldn't bother with building up new tables,
+we'd just rely on the btree node cache.
+
+Perhaps that's what we'll do when online fsck is finished and we're
+optimizing more for "don't disturb the rest of the system too much" than
+"get it done as quick as possible".
+
+I do need to start making use of Darrick's swappable memory code in at
+least one other place though - the bucket tables when we're checking
+basic allocation info. That one just exceeded the INT_MAX limit for a
+user with a 30 TB hard drive, so I switched it to a radix tree for now,
+but it really should be swappable memory.
+
+Fortunately there's more locality in the accesses there.
+
+> Hence Darrick designed and implemented pageable shmem backed memory
+> files (xfiles) to hold these data sets. Hence the size limit of the
+> online repair data set is physical RAM + swap space, same as it is
+> for offline repair. You can find the xfile code in
+> fs/xfs/scrub/xfile.[ch].
+> 
+> Support for large, sortable arrays of fixed size records built on
+> xfiles can be found in xfarray.[ch], and blob storage in
+> xfblob.[ch].
+
+*nod*
+
+I do wish we had normal virtually mapped swappable memory though - the
+thing I don't like about xfarray is that it requires a radix tree walk
+on every access, and we have _hardware_ that's meant to do that for
+us.
+
+But if you still care about 32 bit then that does necessitate Darrick's
+approach. I'm willing to consider 32 bit legacy for bcachefs, though.
 
