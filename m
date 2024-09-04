@@ -1,172 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-28512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD5296B82E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:21:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C15296B830
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 912CCB256C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:21:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4481F21677
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEE41CF7B7;
-	Wed,  4 Sep 2024 10:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBBB1CCB24;
+	Wed,  4 Sep 2024 10:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ltiFGBtl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fJY2n5VT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VeSx0szL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5/kEvgzO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwZWd2oK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A471CF5F4;
-	Wed,  4 Sep 2024 10:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11AA198825
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 10:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445267; cv=none; b=XzWGzOrrvcn5TcavGAAc49lapQZtYH3uEmlwnQYGTKH5vqOW78Kprwu6M7golGUYd/toi0Wa7Ymf9jKDSbcG03yp3O4EbaNpbzvpbx37YmYiyI00Sd05QUs1EWz3nK6kuzQ/JJa/suDlililJ5rLAC3b/JrK8cckAaQ+PNdytAY=
+	t=1725445311; cv=none; b=qxfL2TEggkhdKsOohgVLTO0O0QdnaxPnoy+9YY5ASjYYNLZvo+4w1Mb/HERemE2bjpnBKmDCYybdbwrX3SKOw9OREBDi4kpnhdbXwv2iwDY6WA/eFspAKvUxrUzYedW5aZzWgdqU5YSAMUR6aTSPwtv4OkgI5NNGNGmdL1fqdjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445267; c=relaxed/simple;
-	bh=QXGchwXHXE5193TvoORSwDV3lTt5vdf4As4ycADyV/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kn4Ss59P9oO0xxjyvD9htKdqU66yWD/H0xF6hrUE697oJUUGGYMO5dhHs0Qb/FNxh26+Jwh8W9wywyUeiGoZlPvnE7FhibbyyfSe1e+udKb0VM98yedq4bohbYfpNau9DS9P4yCpkIt2/4PwBqfeC2fjJ9C1ogI0xActTi3hdK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ltiFGBtl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fJY2n5VT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VeSx0szL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5/kEvgzO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ECC0F21A08;
-	Wed,  4 Sep 2024 10:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725445264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PGIias3wEFd2drZsmekiW4yI0CWUsTQUKkrhMikaxEc=;
-	b=ltiFGBtlV/ezAl0hOWATRn3FD3Y+lee/VhfMXiIsDpPwjchs48zioLZbirzAPPGjpG13wP
-	3NPaThtJGpz6OU8cZjk79cTKmE1xNBdTG7Z4asehxgqsn+yoCjV+4mrWHVWc0mFCZ2nIht
-	K2x2bx1AqmUm9ScxhNRib5PGs/ZkWjc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725445264;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PGIias3wEFd2drZsmekiW4yI0CWUsTQUKkrhMikaxEc=;
-	b=fJY2n5VTDGs+nvNy74oOnbewz6R7ZmMIvIdcxPUX/4UbKr5oropVDt+tpsREqFYWixVtTV
-	tOYR5BklDeGURiAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725445263; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PGIias3wEFd2drZsmekiW4yI0CWUsTQUKkrhMikaxEc=;
-	b=VeSx0szLzOiO7OKrEG5j3YwBH7QYu2tdGvCIArmfBRM9rCC74i5/L0JPwGL7fjHAtR/GqP
-	b1piDtFPxTaRdHRiz5KT3CI1rzcdlCbFeo5mXDXmm0WMcB+dVNPH+vrZjcGjMYVPXLZ9pn
-	06oFzUqL+0EJV548tbYb6/pCEFhZf24=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725445263;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PGIias3wEFd2drZsmekiW4yI0CWUsTQUKkrhMikaxEc=;
-	b=5/kEvgzOUK5ZDSCA7ujh2S8rfj8QxkA0vhsvlPUgHcZo5vTwtdPM2/cMzNwTUaJ61adkPJ
-	Ca8LBVk4ARK0a8DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E0E74139D2;
-	Wed,  4 Sep 2024 10:21:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 90DgNo802GYOJwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 10:21:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 92034A0968; Wed,  4 Sep 2024 12:21:03 +0200 (CEST)
-Date: Wed, 4 Sep 2024 12:21:03 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v3 05/12] ext4: passing block allocation information to
- ext4_es_insert_extent()
-Message-ID: <20240904102103.3lss7s5yxavcnjwm@quack3>
-References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
- <20240813123452.2824659-6-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1725445311; c=relaxed/simple;
+	bh=qpIaXZ9wpnw8HqkV16+tOm664xAQ9ILaft0Wsy1nwYA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rJfByD/rMSGWSzaNGriH4U7kQi8QhJTnlaIs3p2//FZp93WeHHOmbO1EyynvO/mK8KijdHe0lBkvgio6HtMuobuMqoWoFyfyddbJpuDG8oDrJ8F7wpmaSb4XOp/RJSqvnEXMXDELkZCDOEaTa2Gc3zaGIOcDsDhU1TYfCraVb9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwZWd2oK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E095AC4CEC8;
+	Wed,  4 Sep 2024 10:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725445311;
+	bh=qpIaXZ9wpnw8HqkV16+tOm664xAQ9ILaft0Wsy1nwYA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=iwZWd2oKEolnEt3tXTv1Dn5n2m5rHaf5jeju8Z8DJElivkZtOJPAQGkRGhZ8OY6Pv
+	 SkHv3TaWERBrAO0uNAxUI2jrS6IJFzh6mlYTX0oCBEQp7cxmKFty2uM1eFZ2QZcWi4
+	 SB6urPwuWsqRu5l3qOr8mXNsokVhuHg5RRdvqWcH/zGypWmFHB6OxgKgebbR9+c5pX
+	 u+7cSQx5rK0HsDdIps/a411Q1/ngnNMn4wii7gmrnOT7+KD8tdnhPP0kG4kXqIjLFv
+	 /SMf8r7ZytrIK77ldRiFjdIw7TtcDvobUdx2YcZdPKDAHuv9fh30wuzl4e1Q2F+whp
+	 cmHoLeK4U3COg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v3 00/17] slab: add struct kmem_cache_args
+Date: Wed, 04 Sep 2024 12:21:05 +0200
+Message-Id: <20240904-work-kmem_cache_args-v3-0-05db2179a8c2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813123452.2824659-6-yi.zhang@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJE02GYC/4XOyw7CIBAF0F9pWEtD6QNx5X8Y01A6tKQvMxjUN
+ P13oStdGJc3mXvurMQBWnDklKwEwVtnlzmE/JAQ3au5A2rbkAlnvGCScfpYcKDDBFOtle6hVtg
+ 5ClJUTAquRVuQUL0hGPvc2cs15EY5oA2qWfcR88alxo4QT3vr7gu+9gd8Fgt/tnxGGeWiZWWjW
+ Znx43kAnGFMF+xIHPP8U8l/KDwoojJSgFRFWbEvZdu2N8aVVMYaAQAA
+To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
+ Jann Horn <jannh@google.com>, 
+ Linus Torvalds <torvalds@linux-foundation.org>, 
+ Mike Rapoport <rppt@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Christoph Lameter <cl@linux.com>, 
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, 
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+ linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4620; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=qpIaXZ9wpnw8HqkV16+tOm664xAQ9ILaft0Wsy1nwYA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdMNnJ3HaRT2CXsmvP111VPlJ7X6VsVNB4c7rge/bnm
+ 4cvJVTLd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk0W6GvxJv/PTnZVuoCQRd
+ L1i4e2/YhXk/tV32dB4+Xnzm172S7I2MDEuTznDemXEsOld9/5mJ86/KcTEyFTsd7HBlb97UUDZ
+ fgh0A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Tue 13-08-24 20:34:45, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Just pass the block allocation flag to ext4_es_insert_extent() when we
-> replacing a current extent after an actually block allocation or extent
-> status conversion, this flag will be used by later changes.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Hey,
 
-Looks good. Just one suggestion below. With that feel free to add:
+No meaningful changes in v3. This is mostly to make it easy for
+Vlastimil to pull.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+---
+As discussed last week the various kmem_cache_*() functions should be
+replaced by a unified function that is based around a struct, with only
+the basic parameters passed separately.
 
-> @@ -848,7 +848,7 @@ static int __es_insert_extent(struct inode *inode, struct extent_status *newes,
->   */
->  void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->  			   ext4_lblk_t len, ext4_fsblk_t pblk,
-> -			   unsigned int status)
-> +			   unsigned int status, int flags)
+Vlastimil already said that he would like to keep core parameters out
+of the struct: name, object size, and flags. I personally don't care
+much and would not object to moving everything into the struct but
+that's a matter of taste and I yield that decision power to the
+maintainer.
 
-Since you pass flags to ext4_es_insert_extent() only from one place, let's
-not pretend these are always full mapping flags and just make this new
-argument:
+In the first version I pointed out that the choice of name is somewhat
+forced as kmem_cache_create() is taken and the only way to reuse it
+would be to replace all users in one go. Or to do a global
+sed/kmem_cache_create()/kmem_cache_create2()/g. And then introduce
+kmem_cache_setup(). That doesn't strike me as a viable option.
 
-bool delalloc_reserve_used
+If we really cared about the *_create() suffix then an alternative might
+be to do a sed/kmem_cache_setup()/kmem_cache_create()/g after every user
+in the kernel is ported. I honestly don't think that's worth it but I
+wanted to at least mention it to highlight the fact that this might lead
+to a naming compromise.
 
-and from ext4_map_blocks_create() you can pass flags &
-EXT4_GET_BLOCKS_DELALLOC_RESERVE.
+However, I came up with an alternative using _Generic() to create a
+compatibility layer that will call the correct variant of
+kmem_cache_create() depending on whether struct kmem_cache_args is
+passed or not. That compatibility layer can stay in place until we
+updated all calls to be based on struct kmem_cache_args.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+From a cursory grep (and not excluding Documentation mentions) we will
+have to replace 44 kmem_cache_create_usercopy() calls and about 463
+kmem_cache_create() calls which makes for a bit above 500 calls to port
+to kmem_cache_setup(). That'll probably be good work for people getting
+into kernel development.
+
+To: Vlastimil Babka <vbabka@suse.cz>
+To: Jens Axboe <axboe@kernel.dk>
+To: Jann Horn <jannh@google.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+---
+Changes in v3:
+- Reworded some commit messages.
+- Picked up various RvBs.
+- Added two patches to make two functions static inline.
+- Link to v2: https://lore.kernel.org/r/20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org
+
+Changes in v2:
+- Remove kmem_cache_setup() and add a compatibility layer built around
+  _Generic() so that we can keep the kmem_cache_create() name and type
+  switch on the third argument to either call __kmem_cache_create() or
+  __kmem_cache_create_args().
+- Link to v1: https://lore.kernel.org/r/20240902-work-kmem_cache_args-v1-0-27d05bc05128@kernel.org
+
+---
+Christian Brauner (17):
+      slab: s/__kmem_cache_create/do_kmem_cache_create/g
+      slab: add struct kmem_cache_args
+      slab: port kmem_cache_create() to struct kmem_cache_args
+      slab: port kmem_cache_create_rcu() to struct kmem_cache_args
+      slab: port kmem_cache_create_usercopy() to struct kmem_cache_args
+      slab: pass struct kmem_cache_args to create_cache()
+      slab: pull kmem_cache_open() into do_kmem_cache_create()
+      slab: pass struct kmem_cache_args to do_kmem_cache_create()
+      slab: remove rcu_freeptr_offset from struct kmem_cache
+      slab: port KMEM_CACHE() to struct kmem_cache_args
+      slab: port KMEM_CACHE_USERCOPY() to struct kmem_cache_args
+      slab: create kmem_cache_create() compatibility layer
+      file: port to struct kmem_cache_args
+      slab: remove kmem_cache_create_rcu()
+      slab: make kmem_cache_create_usercopy() static inline
+      slab: make __kmem_cache_create() static inline
+      io_uring: port to struct kmem_cache_args
+
+ fs/file_table.c      |  11 ++-
+ include/linux/slab.h | 116 ++++++++++++++++++++++++------
+ io_uring/io_uring.c  |  14 ++--
+ mm/slab.h            |   6 +-
+ mm/slab_common.c     | 197 +++++++++++----------------------------------------
+ mm/slub.c            | 162 +++++++++++++++++++++---------------------
+ 6 files changed, 236 insertions(+), 270 deletions(-)
+---
+base-commit: 6e016babce7c845ed015da25c7a097fa3482d95a
+change-id: 20240902-work-kmem_cache_args-e9760972c7d4
+
 
