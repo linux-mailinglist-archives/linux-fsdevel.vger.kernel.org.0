@@ -1,149 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-28582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DBD96C367
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 18:06:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBC396C382
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 18:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083881F21ADE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:06:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 755EDB241D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE0A1DFE09;
-	Wed,  4 Sep 2024 16:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E1E1DEFFB;
+	Wed,  4 Sep 2024 16:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YTpVAvFL"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="DWVmQR83";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iJ97beP1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995101DC053
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 16:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48131DB55E;
+	Wed,  4 Sep 2024 16:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725465965; cv=none; b=FXf9Cf3PN2m7eLXq30x0OydMe8XbdqP2+0Y5wP+Q/q4vVhkmqA3Wv3vJnvdjpU2NW+3gz77Y546Lwi7JNllC/olY1TzWHe1C4/0XsNXUiswokJ4Hp5Dcx6OVkUsr5GVxg+YnpuEsEk8MzoUxlQyFTi7WiXK1x43JMmFdskjSiBA=
+	t=1725466091; cv=none; b=ktIuw8SxmUCoGXR7AOmAJy9JC7Tk+iq8K+Ak2xV8Q9JjQfOtbBhxNSSK+hbKlrRkbbEYJVQhZJZZiU7EJyKJmLFbfo9OJbYmbB9kgLhHLWQVO/Nwrl4o8YJxTTVLhny46T9qA15iio1O4FofWQm8eHhMSeRQR4xCDdwNgDvZMHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725465965; c=relaxed/simple;
-	bh=QIflG+i8erExsjaJTRapdmZ9iJ5ADKBmshHOtaz9yhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZR338BxHjFQROCbjCOa2bcNlR2l+yqaAecC1WI2gf6365AnpBb1feovBTMmVfnaA3AP0GzPhSLp+YjErUnueKnuX5N/A/tKhbTPHiJ6FQpG6vLe+7YzhwgEq+vs/yJn+acy2PMLa121Cwb55UAKbVDKFsBEgvv6Qka8ptqGaDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YTpVAvFL; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 4 Sep 2024 12:05:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725465961;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ip+NUzeK1lPkO63WxoY3xZeS3dUaxlsqa4wf8CU79LU=;
-	b=YTpVAvFLLAL9Kaycf2+c0fuJYxA48DNH0nyRJqZurESU3J6LejkXX7JVSTATMlGJHqO6Ou
-	97Z3YC0DUd44mJfdGzvqnH0PNE9X0qDygOkNCwrMuxh1lR7CQoPBIwvDW9APfu2shQXRvQ
-	hCv6X8qdcMIc+uFjtqUGIAOPtqldyAM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
-	Vlastimil Babka <vbabka@suse.cz>, Dave Chinner <dchinner@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
- <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
- <ZtgI1bKhE3imqE5s@tiehlicka>
+	s=arc-20240116; t=1725466091; c=relaxed/simple;
+	bh=mqU0wF5x4Asb6zGKmK2MBm9ykcSSYEZAfEuMzJa7vmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A+WkI9bDOplEjuTphaDuEwNXutQIn338ybFHH5ES7pQGqWGDfkzLCaYEpWz3WiWOwFHfezxDhSJ+tCbAzCAw1uHQqXJVzXRXB6BlpTIeI49RNeCgvIg6LA+CuT0tug7YX17ynTW/uNCuV1UqorjQBd9f+d6YF6mlpuxidcjyZTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=DWVmQR83; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iJ97beP1; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E9BB311402C6;
+	Wed,  4 Sep 2024 12:08:08 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Wed, 04 Sep 2024 12:08:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1725466088;
+	 x=1725552488; bh=n0W37qWyz7MJwPJYHL6XymDwMhVHA7PKKa5tkGUWzrc=; b=
+	DWVmQR83zM+D+eICIpxk+85l+cpvS5GgkHd+GNruLBEnEk6VTh2XUsfKVW9k6DLv
+	9dsOd/AFc1f+rduhpjCjil3yGxlhRZ49J6CcS3vYWZfEv+6VyUXWqy6QuLc9iSS1
+	gd9C03e0sAEg+A6bYyHqzCv1m2rsCkRhYj93dJBvmtdOnIUmOef9AUTzkrsjbGmr
+	dwq2ql7RuaKJkcz0L8Zm2dlphNpQIOFH0LsvSWZ7P1EhQUdePnQxACMIWjugmmOc
+	wPTUHbj1Y7CmcCeVFgf9jeWFjouTy3HY8MqSNEdonoMZoonL63yzrR5Qhvc971k8
+	tVPOwA2gNnMuET5exAJCrA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725466088; x=
+	1725552488; bh=n0W37qWyz7MJwPJYHL6XymDwMhVHA7PKKa5tkGUWzrc=; b=i
+	J97beP1Fh/wC+JezgCQpiV1DFGriXcUZEVGcvJU2kJ0U2D7IwsnFPrCt3GvSEWI4
+	zfWylgcu4+U/RR2XqNMJTVUuDIxssYtbPAhfznTOwtWw+I/JPKCwoKY/MrNQi0No
+	8AwNeirt98RaOtn/Q6+Ed+xumoBR7pi8Vf7UHCBJr8E3iR2hXf2qTKSQwDQdGaT2
+	oJlZRkHQN7eW0YXI/cg04HupTda8DRrtSg+tj0rvy7Gbhc7/nphcvDbUTdHGgQ0/
+	GQTFuKjt5Kp4vymP9RFY6aEuMlsyl7vpf1mSFH9P+fHu0C7PYsjKYVRB0mnKyox9
+	W1uNto9OubTukhFPBKfPA==
+X-ME-Sender: <xms:6IXYZrFsF6EP0gTyBqEJUfUfWAYAZfixMQySvLsuneyhb223S9q1iA>
+    <xme:6IXYZoVpwpvFiVE5_9Y2le8om1k26x5yTtJ5PcsjSp-3j0QE2pGePBcmy1jnM0ZiS
+    KRcxtcbiadMMjED>
+X-ME-Received: <xmr:6IXYZtLDkJD8aMsQvyVdoWdu6LDTxnS_8Mc9g-ifeWp61xhQ8jLi9Cih3RJJ8_vWnC1RVC0hdjAi4LkchcoxvPGuU2Olg8bL6XZnXBd0HrlQKirxphxn>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehjedgleeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
+    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopegs
+    shgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
+    gvughirdhhuhdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtgho
+    mhdprhgtphhtthhopegsvghrnhgusehfrghsthhmrghilhdrfhhmpdhrtghpthhtoheplh
+    hinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjoh
+    grnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhsvghfseht
+    ohigihgtphgrnhgurgdrtghomh
+X-ME-Proxy: <xmx:6IXYZpF4DYR_R5G28uqokhSr-9fe_qGm1zpNwBCk_im2_ZnOyFY-ng>
+    <xmx:6IXYZhVg_nPQrBVjeVpATBzAsnjlxSCF7hVofu9T-DbSFIGHMC6iYA>
+    <xmx:6IXYZkNj5DdgoF_14EV4bgAwOraJkiFhaJ7L-h8fqqW63MnmpL5v7g>
+    <xmx:6IXYZg0HzgtDXeWBwHb0dnf3wlj5zU2BWEP6l_5DqOcAS0McMjFebA>
+    <xmx:6IXYZqMhQWpdoqnTGOsMJb_ip7DyZeTxz2ZbudHF10Lp23oCLWkimgiy>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Sep 2024 12:08:07 -0400 (EDT)
+Message-ID: <6c336a8f-4a91-4236-9431-9d0123b38796@fastmail.fm>
+Date: Wed, 4 Sep 2024 18:08:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtgI1bKhE3imqE5s@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 17/17] fuse: {uring} Pin the user buffer
+To: Jens Axboe <axboe@kernel.dk>, Bernd Schubert <bschubert@ddn.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Pavel Begunkov <asml.silence@gmail.com>,
+ bernd@fastmail.fm
+Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Amir Goldstein <amir73il@gmail.com>
+References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
+ <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-17-9207f7391444@ddn.com>
+ <9a0e31ff-06ad-4065-8218-84b9206fc8a5@kernel.dk>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <9a0e31ff-06ad-4065-8218-84b9206fc8a5@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 04, 2024 at 09:14:29AM GMT, Michal Hocko wrote:
-> On Tue 03-09-24 19:53:41, Kent Overstreet wrote:
-> [...]
-> > However, if we agreed that GFP_NOFAIL meant "only fail if it is not
-> > possible to satisfy this allocation" (and I have been arguing that that
-> > is the only sane meaning) - then that could lead to a lot of error paths
-> > getting simpler.
-> >
-> > Because there are a lot of places where there's essentially no good
-> > reason to bubble up an -ENOMEM to userspace; if we're actually out of
-> > memory the current allocation is just one out of many and not
-> > particularly special, better to let the oom killer handle it...
+Hi Jens,
+
+thanks for your help.
+
+On 9/4/24 17:47, Jens Axboe wrote:
+> On 9/1/24 7:37 AM, Bernd Schubert wrote:
+>> This is to allow copying into the buffer from the application
+>> without the need to copy in ring context (and with that,
+>> the need that the ring task is active in kernel space).
+>>
+>> Also absolutely needed for now to avoid this teardown issue
 > 
-> This is exactly GFP_KERNEL semantic for low order allocations or
-> kvmalloc for that matter. They simply never fail unless couple of corner
-> cases - e.g. the allocating task is an oom victim and all of the oom
-> memory reserves have been consumed. This is where we call "not possible
-> to allocate".
+> I'm fine using these helpers, but they are absolutely not needed to
+> avoid that teardown issue - well they may help because it's already
+> mapped, but it's really the fault of your handler from attempting to map
+> in user pages from when it's teardown/fallback task_work. If invoked and
+> the ring is dying or not in the right task (as per the patch from
+> Pavel), then just cleanup and return -ECANCELED.
 
-*nod*
+As I had posted on Friday/Saturday, it didn't work. I had added a 
+debug pr_info into Pavels patch, somehow it didn't trigger on PF_EXITING 
+and I didn't further debug it yet as I was working on the pin anyway.
+And since Monday occupied with other work...
 
-Which does beg the question of why GFP_NOFAIL exists.
+For this series it is needed to avoid kernel crashes. If we can can fix 
+patch 15 and 16, the better. Although we will still later on need it as
+optimization.
 
-> > So the error paths would be more along the lines of "there's a bug, or
-> > userspace has requested something crazy, just shut down gracefully".
+
+
 > 
-> How do you expect that to be done? Who is going to go over all those
-> GFP_NOFAIL users? And what kind of guide lines should they follow? It is
-> clear that they believe they cannot handle the failure gracefully
-> therefore they have requested GFP_NOFAIL. Many of them do not have
-> return value to return.
+>> +/*
+>> + * Copy from memmap.c, should be exported
+>> + */
+>> +static void io_pages_free(struct page ***pages, int npages)
+>> +{
+>> +	struct page **page_array = *pages;
+>> +
+>> +	if (!page_array)
+>> +		return;
+>> +
+>> +	unpin_user_pages(page_array, npages);
+>> +	kvfree(page_array);
+>> +	*pages = NULL;
+>> +}
+> 
+> I noticed this and the mapping helper being copied before seeing the
+> comments - just export them from memmap.c and use those rather than
+> copying in the code. Add that as a prep patch.
 
-They can't handle the allocatian failure and continue normal operation,
-but that's entirely different from not being able to handle the
-allocation failure at all - it's not hard to do an emergency shutdown,
-that's a normal thing for filesystems to do.
+No issue to do that either. The hard part is then to get it through
+different branches. I had removed the big optimization of 
+__wake_up_on_current_cpu in this series, because it needs another
+export.
 
-And if you scan for GFP_NOFAIL uses in the kernel, a decent number
-already do just that.
 
-> So really what do you expect proper GFP_NOFAIL users to do and what
-> should happen to those that are requesting unsupported size or
-> allocation mode?
+> 
+>> @@ -417,6 +437,7 @@ static int fuse_uring_out_header_has_err(struct fuse_out_header *oh,
+>>  		goto seterr;
+>>  	}
+>>  
+>> +	/* FIXME copied from dev.c, check what 512 means  */
+>>  	if (oh->error <= -512 || oh->error > 0) {
+>>  		err = -EINVAL;
+>>  		goto seterr;
+> 
+> -512 is -ERESTARTSYS
+> 
 
-Emergency shutdwon.
+Ah thank you! I'm going to add separate patch for dev.c, as I wrote, this was
+just a copy-and-paste.
 
-And I'm not saying we have to rush to fix all the existing callers;
-they're clearly in existing well tested code, there's not much point to
-that.
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 592d0d96a106..779b23fa01c2 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2028,7 +2028,7 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+        }
+ 
+        err = -EINVAL;
+-       if (oh.error <= -512 || oh.error > 0)
++       if (oh.error <= -ERESTARTSYS || oh.error > 0)
+                goto copy_finish;
+ 
+        spin_lock(&fpq->lock);
 
-Additionally most of them are deep in the guts of filesystem transaction
-code where call paths to that site are limited - they're not library
-code that gets called by anything.
 
-But as a matter of policy going forward, yes we should be saying that
-even GFP_NOFAIL allocations should be checking for -ENOMEM.
-
-> Yes, we need to define some reasonable maximum supported sizes. For the
-> page allocator this has been order > 1 and we considering we have a
-> warning about those requests for years without a single report then we
-> can assume we do not have such abusers. for kvmalloc to story is
-> different. Current INT_MAX is just not any practical limit. Past
-> experience says that anything based on the amount of memory just doesn't
-> work (e.g. hash table sizes that used to that scaling and there are
-> other examples). So we should be practical here and look at existing
-> users and see what they really need and put a cap above that.
-
-Not following what you're saying about hash tables? Hash tables scale
-roughly with the amount of system memory/workingset.
-
-But it seems to me that the limit should be lower if you're on e.g. a 2
-GB machine (not failing with a warning, just failing immediately rather
-than oom killing a bunch of stuff first) - and it's going to need to be
-raised above INT_MAX as large memory machines keep growing, I keep
-hitting it in bcachefs fsck code.
+Thanks,
+Bernd
 
