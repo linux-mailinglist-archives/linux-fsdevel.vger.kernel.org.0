@@ -1,59 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-28588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B66796C3E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 18:19:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A910496C3D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 18:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 786F11C21409
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1A91F26D6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494DD1DEFDF;
-	Wed,  4 Sep 2024 16:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96841DEFDC;
+	Wed,  4 Sep 2024 16:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+qjX0/q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKFvAnS4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4EE1DA635
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 16:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCE817FD;
+	Wed,  4 Sep 2024 16:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725466771; cv=none; b=iyiSeEknsA6eboR/vkDGXIQjq2qrMAL2xHW7NnGkrv5u7zUFlurRGx66cG27Q06Ls66WeTORaFx8lZx5/cjvawPQYtJl29xDaVx4JadMFfdYk+VuZVY1hJu5aT6uBtoyPjX+o1hH43/2+lg4Dx9XDgY1PlPeY2icduSeV5ikiH0=
+	t=1725466687; cv=none; b=mlrsApggNnqwVouldleV94qhs+yR/pj/6kooORQnpALqEnZOAstidps7VDrFyGX6E92Oe7xp9AYPvR9I5pFbAzR/0cTOZhs0eeYILZfzNoSMoMjHyGeebOsUrwqeDimqYd8zQQQQn96U/q71B9sZSIjxNvRWpycPKSp7EyxLcPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725466771; c=relaxed/simple;
-	bh=zux/Q6f4GHCljD7witUCfRLF6iwgNCywYMqZ73GamjQ=;
+	s=arc-20240116; t=1725466687; c=relaxed/simple;
+	bh=DWcEOGL96hUD6X+485HhnxfMINMh+YmkfVOIwpbbpYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTQN5aWr5dqTZq/5Hybe3vhHyN/oQjkw9mibP0aXgmlOnrqCxjEhvcuV5FGuglPPEWP8/tupaCEW4o5LITJDvYogUsyH7s4K5XpQJ2rrgqnMBvAvqVI7SdWhR8LhLRhVOhbNxDK9tVM5rbgBTb3HUzeEyVfR+KS+x20Ujq3s+aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+qjX0/q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4010C4CEC6;
-	Wed,  4 Sep 2024 16:19:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NEzBesD4da6MjhKEk09zvgt2oNDYUO1UNQb9LLZFNZVRVp69Ks3UMFhEn/f2HJw6bN70SUn/zAK+FvURXZjSFtUpGGJwjVMS9nwmnvNk2qYgwNF0mBvnUPlGwiwj5I/52UAthPU9egTj4qBeUJmyfQbKCcPY7wDATH8XpeyadbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKFvAnS4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12FC5C4CEC5;
+	Wed,  4 Sep 2024 16:18:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725466771;
-	bh=zux/Q6f4GHCljD7witUCfRLF6iwgNCywYMqZ73GamjQ=;
+	s=k20201202; t=1725466686;
+	bh=DWcEOGL96hUD6X+485HhnxfMINMh+YmkfVOIwpbbpYk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B+qjX0/qWy9hx1FU2ZjCAbOeZiD8kg3OkHuZIckSG3Ymj2TJ1jGOvKtlNGvtZfQ4p
-	 DxC9UZfJ5J3szU1/4b26OjSINeWohL1S3X18fvStMLE2wPxDSfQdm8rPeaBQiPGtEY
-	 h0YmCPq+3ClvU/HjjV5IKiItJjqQPpSO2ZhVnb1P0svz7A9TquHlYW46hhgbj/+6Ez
-	 uLbQl2su/gCeZxRGtkNcipMBrpUfljeuM7qr56DARJJ1eY6b/5pY9bogzpP6NFirkI
-	 3djAvqKxIAOQda/XHzunCtW+cBsE6xwKmlGBxp0xvgTYObkmhbB1rI548bnWabDryf
-	 tJJZ4kr4zSQCQ==
-Date: Wed, 4 Sep 2024 19:16:45 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 02/15] slab: add struct kmem_cache_args
-Message-ID: <ZtiH7UNQ7Rnftr0o@kernel.org>
-References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-2-76f97e9a4560@kernel.org>
- <Zth5wHtDkX78gl1l@kernel.org>
- <9303896a-e3c8-4dc3-926b-c7e8fc75cf6b@suse.cz>
+	b=AKFvAnS4VzVPVcU0kTh73wMC4toZ01I4tyglrkwgCzoFCMyaU94FmsNPifaeDTq/e
+	 /S9R4xJgHIzXEVb0dN86Z3aQS7irvg749YZlYq8JOFAF/GznaVa5Q3h8zP0BjAWTb+
+	 S/dKvplcQ1CIJZbyFNY3IwgngrcKjH8xrR8+HzIRsr2gxTsDWGKLGAmXxZXHY9i47J
+	 ugMn7HhA4o5dtzevsYYMhsnKNl/qLFMhf6V9y8FdJUr6Tyd6V/udO1l07rxZuaRtcg
+	 SBRjqfWbZWJL4fgF6Pi4WYENijZrH6NFX7AGuT0PeGN9VILf5Xpdb5kRDldsz2EOGt
+	 y4578KvQYJzFA==
+Date: Wed, 4 Sep 2024 17:17:58 +0100
+From: Will Deacon <will@kernel.org>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, nd@arm.com,
+	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
+	broonie@kernel.org, christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
+	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 06/30] arm64: context switch POR_EL0 register
+Message-ID: <20240904161758.GA14323@willie-the-truck>
+References: <Zsi7ovLOfuFdfuuz@arm.com>
+ <20240823170835.GA1181@willie-the-truck>
+ <ZsjXtE7Kg0LQwNAL@arm.com>
+ <20240827113803.GB4318@willie-the-truck>
+ <ZtYNGBrcE-j35fpw@arm.com>
+ <20240903145413.GB3669886@e124191.cambridge.arm.com>
+ <20240904102254.GA13280@willie-the-truck>
+ <20240904113221.GA3891700@e124191.cambridge.arm.com>
+ <20240904114301.GA13550@willie-the-truck>
+ <20240904125503.GA3901671@e124191.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,64 +76,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9303896a-e3c8-4dc3-926b-c7e8fc75cf6b@suse.cz>
+In-Reply-To: <20240904125503.GA3901671@e124191.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Sep 04, 2024 at 05:49:15PM +0200, Vlastimil Babka wrote:
-> On 9/4/24 17:16, Mike Rapoport wrote:
-> > On Tue, Sep 03, 2024 at 04:20:43PM +0200, Christian Brauner wrote:
-> >> @@ -275,7 +285,7 @@ do_kmem_cache_create_usercopy(const char *name,
-> >>  
-> >>  	mutex_lock(&slab_mutex);
-> >>  
-> >> -	err = kmem_cache_sanity_check(name, size);
-> >> +	err = kmem_cache_sanity_check(name, object_size);
-> >>  	if (err) {
-> >>  		goto out_unlock;
-> >>  	}
-> >> @@ -296,12 +306,14 @@ do_kmem_cache_create_usercopy(const char *name,
-> >>  
-> >>  	/* Fail closed on bad usersize of useroffset values. */
-> >>  	if (!IS_ENABLED(CONFIG_HARDENED_USERCOPY) ||
-> >> -	    WARN_ON(!usersize && useroffset) ||
-> >> -	    WARN_ON(size < usersize || size - usersize < useroffset))
-> >> -		usersize = useroffset = 0;
-> >> -
-> >> -	if (!usersize)
-> >> -		s = __kmem_cache_alias(name, size, align, flags, ctor);
-> >> +	    WARN_ON(!args->usersize && args->useroffset) ||
-> >> +	    WARN_ON(object_size < args->usersize ||
-> >> +		    object_size - args->usersize < args->useroffset))
-> >> +		args->usersize = args->useroffset = 0;
-> >> +
-> >> +	if (!args->usersize)
-> >> +		s = __kmem_cache_alias(name, object_size, args->align, flags,
-> >> +				       args->ctor);
+On Wed, Sep 04, 2024 at 01:55:03PM +0100, Joey Gouly wrote:
+> On Wed, Sep 04, 2024 at 12:43:02PM +0100, Will Deacon wrote:
+> > Right, there's quite a lot I need to do:
 > > 
-> > Sorry I missed it in the previous review, but nothing guaranties that
-> > nobody will call kmem_cache_create_args with args != NULL.
+> > - Uncorrupt your patches
+> > - Fix the conflict in the kvm selftests
+> > - Drop the unnecessary ISBs
+> > - Fix the ESR checking
+> > - Fix the el2_setup labels
+> > - Reorder the patches
+> > - Drop the patch that is already in kvmarm
 > > 
-> > I think there should be a check for args != NULL and a substitution of args
-> > with defaults if it actually was NULL.
+> > Working on it...
 > 
-> Hm there might be a bigger problem with this? If we wanted to do a
-> (non-flag-day) conversion to the new kmem_cache_create() for some callers
-> that need none of the extra args, passing NULL wouldn't work for the
-> _Generic((__args) looking for "struct kmem_cache_args *" as NULL is not of
-> that type, right?
-> 
-> I tried and it really errors out.
+> Sorry! I'm happy to rebase onto some arm64 branch if that will help, just let me know.
 
-How about
+Please have a look at for-next/poe (also merged into for-next/core and
+for-kernelci) and let me know what I got wrong!
 
-#define kmem_cache_create(__name, __object_size, __args, ...)           \
-	_Generic((__args),                                              \
-		struct kmem_cache_args *: __kmem_cache_create_args,	\
-		void *: __kmem_cache_create_args,			\
-		default: __kmem_cache_create)(__name, __object_size, __args, __VA_ARGS__)
+For Marc: I reordered the series so the KVM bits (and deps) are all the
+beginning, should you need them. The branch is based on a merge of the
+shared branch you created previously.
 
- 
+Cheers,
 
--- 
-Sincerely yours,
-Mike.
+Will
 
