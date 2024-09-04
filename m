@@ -1,165 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-28470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2393D96B03E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 07:02:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC1B96B03D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 07:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3AF284738
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 05:02:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8899B21659
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 05:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BD682D7F;
-	Wed,  4 Sep 2024 05:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVD3dP/r"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2649926AC3
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 05:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725426124; cv=none; b=jiQWaU83E9trSj+BCzKrkiI2wmkyaiXJpNtYSvTttnI6i8Mop0czZdl9BJ3e0b1dCaMCXZsujLMpmq2eP0KxPN4F7Gtf7n9BQyloaGRRVzHP6fRdtABGNkzMolfMffmdoKTpWxy6ITOcR1Z+Sp7FAntRt+/6MExMYvM443nYWww=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725426124; c=relaxed/simple;
-	bh=9otNc/1h7eEutY4XYROpqf51IkwtHGhWF+hLMr+BPZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4EJ2FW0M5NXG3D/FaQ12C0jgwG7VQWEADpf2GmBGyyABgx2YS3q7Xd6XC18SkmgseEbY7nyq0Jff5J1KGq+T4fL1QRtVGdxFxFafbwebwlZr3mhthtV3QGx6j6wBEFu1dQKpQmgHGye0vI+O26CzzpxwP4BxK1IbZMd/89DY9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVD3dP/r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30CF1C4CEC2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4386782488;
 	Wed,  4 Sep 2024 05:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725426123;
-	bh=9otNc/1h7eEutY4XYROpqf51IkwtHGhWF+hLMr+BPZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RVD3dP/rGqLVme3d+wrVXAGwYA1QlAWUq7whQWTEltOmQ8LsqYknCJ0/CexsS2MMY
-	 cjR87li2ptpCdCUzLkTFVpPZOSFuZ5PVZXzuhvV/YhxOGb/6AcnyPZp3JCROSa/X3t
-	 Ll+Qmq68YLzhcQZzZC0x5Rcm9WpqmM1WDKeNjIE57SyVth4fVxoycr39QXumbBy4M/
-	 UPk5q2c43LafDg2hbb2XHPNXgeU2jzqyiZqKb2mXpSwEtKzXU3dPsyhguCSUYpYmyP
-	 reIeZjP0Cpek25+jnCvKy6kip9S1K1g9H0oiOKGEbeW/OIwL6jYTmhlNT+jfbkF1Mb
-	 4odTGNauLTjIw==
-Date: Wed, 4 Sep 2024 07:59:17 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-	Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 06/15] slab: pass struct kmem_cache_args to
- create_cache()
-Message-ID: <ZtfpJUYYGMATiMtA@kernel.org>
-References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-6-76f97e9a4560@kernel.org>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uD8Dl0ez";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uiSdU6EO";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uD8Dl0ez";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uiSdU6EO"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC3D26AC3;
+	Wed,  4 Sep 2024 05:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725426119; cv=none; b=iZg2OxSH0t6NVYSHM1KQOclQAr0cy0xOR/sUU6YrR9LBC8mRj4vAe7JF3dVTjan9Ir8gRcqzbh9IZpXAzUaMJHdH0rhTxmW6SPb35pNDQTudOwz3q6khAiAYdNdJ7WPt5r0/QFPQgYB2TauvXrK9aRtSd1SEXb9KvTTBMk2OJz8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725426119; c=relaxed/simple;
+	bh=L4SmsfdSbQ/CACxT4/EzbAti9/EvpVqhJ5WjEBj6Wgg=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=euW+AcaduP3ZnE17jwCf3Zwugoxr1pIM9TtiIv9KKkQBaNrGWyDl39xF+ICJyHDGdyo92D2K59egO8Hl4zpGCdB7oXNbN/JUehVq9bWMSNmMAo6pN1C+il8jcsr9pSx54qQdOS7AuRcCPKLmwB3vMIwjRbe0UYCDUBk681Uzbo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uD8Dl0ez; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uiSdU6EO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uD8Dl0ez; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uiSdU6EO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B1B1B21B3F;
+	Wed,  4 Sep 2024 05:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725426115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+DCKC1vUzbjPxbcJMU8GVyjZBWkNGVKM+7nqGXZ5ObE=;
+	b=uD8Dl0ezRJuSwshFo/w0zUb7yRkwldC8PMoKjOGNqEFvo2iqQ3083yRE8MmZPWyD/cIkCF
+	t55FrJBVq7N9oY3laMwWHaEBfMbno+CgXmY2HrDfOym581IH1A9UrDpiUDctOZBOB75rcH
+	Wl8pZ3AW4CjkPbzOc9+qjg/w7kee6pI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725426115;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+DCKC1vUzbjPxbcJMU8GVyjZBWkNGVKM+7nqGXZ5ObE=;
+	b=uiSdU6EOjnOqJVQ31s6uAncFVAfJCKTo7ahCDVsXZGxXO2k6JzkGkPS4r6ezubj+4PZg5l
+	h/n+p1XFDlnNfuBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=uD8Dl0ez;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=uiSdU6EO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725426115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+DCKC1vUzbjPxbcJMU8GVyjZBWkNGVKM+7nqGXZ5ObE=;
+	b=uD8Dl0ezRJuSwshFo/w0zUb7yRkwldC8PMoKjOGNqEFvo2iqQ3083yRE8MmZPWyD/cIkCF
+	t55FrJBVq7N9oY3laMwWHaEBfMbno+CgXmY2HrDfOym581IH1A9UrDpiUDctOZBOB75rcH
+	Wl8pZ3AW4CjkPbzOc9+qjg/w7kee6pI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725426115;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+DCKC1vUzbjPxbcJMU8GVyjZBWkNGVKM+7nqGXZ5ObE=;
+	b=uiSdU6EOjnOqJVQ31s6uAncFVAfJCKTo7ahCDVsXZGxXO2k6JzkGkPS4r6ezubj+4PZg5l
+	h/n+p1XFDlnNfuBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5A8B7139E2;
+	Wed,  4 Sep 2024 05:01:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QUq2BMHp12ZhRQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 04 Sep 2024 05:01:53 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903-work-kmem_cache_args-v2-6-76f97e9a4560@kernel.org>
+From: "NeilBrown" <neilb@suse.de>
+To: "Chuck Lever III" <chuck.lever@oracle.com>
+Cc: "Mike Snitzer" <snitzer@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
+ "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>,
+ "Trond Myklebust" <trondmy@hammerspace.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v15 16/26] nfsd: add LOCALIO support
+In-reply-to: <172540270112.4433.6741926579586461095@noble.neil.brown.name>
+References: <>, <67405117-1C08-4CA9-B0CE-743DFC7BCE3F@oracle.com>,
+ <172540270112.4433.6741926579586461095@noble.neil.brown.name>
+Date: Wed, 04 Sep 2024 15:01:46 +1000
+Message-id: <172542610641.4433.9213915589635956986@noble.neil.brown.name>
+X-Rspamd-Queue-Id: B1B1B21B3F
+X-Spam-Score: -6.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,noble.neil.brown.name:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Sep 03, 2024 at 04:20:47PM +0200, Christian Brauner wrote:
-> Pass struct kmem_cache_args to create_cache() so that we can later
-> simplify further helpers.
+On Wed, 04 Sep 2024, NeilBrown wrote:
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> I agree that dropping and reclaiming a lock is an anti-pattern and in
+> best avoided in general.  I cannot see a better alternative in this
+> case.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+It occurred to me what I should spell out the alternate that I DO see so
+you have the option of disagreeing with my assessment that it isn't
+"better".
 
-> ---
->  mm/slab_common.c | 39 +++++++++++++++++++--------------------
->  1 file changed, 19 insertions(+), 20 deletions(-)
-> 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 16c36a946135..9baa61c9c670 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -202,22 +202,22 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
->  }
->  
->  static struct kmem_cache *create_cache(const char *name,
-> -		unsigned int object_size, unsigned int freeptr_offset,
-> -		unsigned int align, slab_flags_t flags,
-> -		unsigned int useroffset, unsigned int usersize,
-> -		void (*ctor)(void *))
-> +				       unsigned int object_size,
-> +				       struct kmem_cache_args *args,
-> +				       slab_flags_t flags)
->  {
->  	struct kmem_cache *s;
->  	int err;
->  
-> -	if (WARN_ON(useroffset + usersize > object_size))
-> -		useroffset = usersize = 0;
-> +	if (WARN_ON(args->useroffset + args->usersize > object_size))
-> +		args->useroffset = args->usersize = 0;
->  
->  	/* If a custom freelist pointer is requested make sure it's sane. */
->  	err = -EINVAL;
-> -	if (freeptr_offset != UINT_MAX &&
-> -	    (freeptr_offset >= object_size || !(flags & SLAB_TYPESAFE_BY_RCU) ||
-> -	     !IS_ALIGNED(freeptr_offset, sizeof(freeptr_t))))
-> +	if (args->use_freeptr_offset &&
-> +	    (args->freeptr_offset >= object_size ||
-> +	     !(flags & SLAB_TYPESAFE_BY_RCU) ||
-> +	     !IS_ALIGNED(args->freeptr_offset, sizeof(freeptr_t))))
->  		goto out;
->  
->  	err = -ENOMEM;
-> @@ -227,12 +227,15 @@ static struct kmem_cache *create_cache(const char *name,
->  
->  	s->name = name;
->  	s->size = s->object_size = object_size;
-> -	s->rcu_freeptr_offset = freeptr_offset;
-> -	s->align = align;
-> -	s->ctor = ctor;
-> +	if (args->use_freeptr_offset)
-> +		s->rcu_freeptr_offset = args->freeptr_offset;
-> +	else
-> +		s->rcu_freeptr_offset = UINT_MAX;
-> +	s->align = args->align;
-> +	s->ctor = args->ctor;
->  #ifdef CONFIG_HARDENED_USERCOPY
-> -	s->useroffset = useroffset;
-> -	s->usersize = usersize;
-> +	s->useroffset = args->useroffset;
-> +	s->usersize = args->usersize;
->  #endif
->  	err = do_kmem_cache_create(s, flags);
->  	if (err)
-> @@ -265,7 +268,6 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
->  					    slab_flags_t flags)
->  {
->  	struct kmem_cache *s = NULL;
-> -	unsigned int freeptr_offset = UINT_MAX;
->  	const char *cache_name;
->  	int err;
->  
-> @@ -323,11 +325,8 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
->  		goto out_unlock;
->  	}
->  
-> -	if (args->use_freeptr_offset)
-> -		freeptr_offset = args->freeptr_offset;
-> -	s = create_cache(cache_name, object_size, freeptr_offset,
-> -			 calculate_alignment(flags, args->align, object_size),
-> -			 flags, args->useroffset, args->usersize, args->ctor);
-> +	args->align = calculate_alignment(flags, args->align, object_size);
-> +	s = create_cache(cache_name, object_size, args, flags);
->  	if (IS_ERR(s)) {
->  		err = PTR_ERR(s);
->  		kfree_const(cache_name);
-> 
-> -- 
-> 2.45.2
-> 
+We need RCU to call into nfsd, we need a per-cpu ref on the net (which
+we can only get inside nfsd) and NOT RCU to call
+nfsd_file_acquire_local().
 
--- 
-Sincerely yours,
-Mike.
+The current code combines these (because they are only used together)
+and so the need to drop rcu. 
+
+I thought briefly that it could simply drop rcu and leave it dropped
+(__releases(rcu)) but not only do I generally like that LESS than
+dropping and reclaiming, I think it would be buggy.  While in the nfsd
+module code we need to be holding either rcu or a ref on the server else
+the code could disappear out from under the CPU.  So if we exit without
+a ref on the server - which we do if nfsd_file_acquire_local() fails -
+then we need to reclaim RCU *before* dropping the ref.  So the current
+code is slightly buggy.
+
+We could instead split the combined call into multiple nfs_to
+interfaces.
+
+So nfs_open_local_fh() in nfs_common/nfslocalio.c would be something
+like:
+
+ rcu_read_lock();
+ net = READ_ONCE(uuid->net);
+ if (!net || !nfs_to.get_net(net)) {
+       rcu_read_unlock();
+       return ERR_PTR(-ENXIO);
+ }
+ rcu_read_unlock();
+ localio = nfs_to.nfsd_open_local_fh(....);
+ if (IS_ERR(localio))
+       nfs_to.put_net(net);
+ return localio;
+
+So we have 3 interfaces instead of 1, but no hidden unlock/lock.
+
+As I said, I don't think this is a net win, but reasonable people might
+disagree with me.
+
+NeilBrown
 
