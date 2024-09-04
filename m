@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-28513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C15296B830
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:21:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC57696B831
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4481F21677
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2BA61C2036F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBBB1CCB24;
-	Wed,  4 Sep 2024 10:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F9C1CF5DE;
+	Wed,  4 Sep 2024 10:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwZWd2oK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVRvFeeI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11AA198825
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 10:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7472198825
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 10:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445311; cv=none; b=qxfL2TEggkhdKsOohgVLTO0O0QdnaxPnoy+9YY5ASjYYNLZvo+4w1Mb/HERemE2bjpnBKmDCYybdbwrX3SKOw9OREBDi4kpnhdbXwv2iwDY6WA/eFspAKvUxrUzYedW5aZzWgdqU5YSAMUR6aTSPwtv4OkgI5NNGNGmdL1fqdjY=
+	t=1725445315; cv=none; b=L5DyyJFHqoOhrJbpDmh31rMxuIIvQ0oOdMGriP0eT9nLEU7kgIQcjm6qnISbI+KoqOd4iFmNpCx6WSF/8hnjDd/+dCcy621+kILhJB1XH8BNSpWE3t6KjHM2hxw7ckTu1WeUIotaUPsAqQIHZ0MVCwWG+Qzxwyzwr4aFQ+ehMPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445311; c=relaxed/simple;
-	bh=qpIaXZ9wpnw8HqkV16+tOm664xAQ9ILaft0Wsy1nwYA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rJfByD/rMSGWSzaNGriH4U7kQi8QhJTnlaIs3p2//FZp93WeHHOmbO1EyynvO/mK8KijdHe0lBkvgio6HtMuobuMqoWoFyfyddbJpuDG8oDrJ8F7wpmaSb4XOp/RJSqvnEXMXDELkZCDOEaTa2Gc3zaGIOcDsDhU1TYfCraVb9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwZWd2oK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E095AC4CEC8;
-	Wed,  4 Sep 2024 10:21:47 +0000 (UTC)
+	s=arc-20240116; t=1725445315; c=relaxed/simple;
+	bh=aZEAASsBiFk/RgRLba541LPDxJ17oriKgsD3TIAIOy8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=C/sqVIE+2bjtMF7MlPBiIRly2J/3+3m2/4/TK0j9SFZn3O8JpqVzIWR8+WOWoYuOCM/bIQtiOCTJDCOvU29A/bJ/Y+qKJSUk0XKwqsfrQU+cdzcY8MuSA1moHtLuQ4N5rMX+NBC3IpRLBL7oXBjOok6+TtY/HV4D16D9yLqKxvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVRvFeeI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0CC5C4CEC2;
+	Wed,  4 Sep 2024 10:21:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725445311;
-	bh=qpIaXZ9wpnw8HqkV16+tOm664xAQ9ILaft0Wsy1nwYA=;
-	h=From:Subject:Date:To:Cc:From;
-	b=iwZWd2oKEolnEt3tXTv1Dn5n2m5rHaf5jeju8Z8DJElivkZtOJPAQGkRGhZ8OY6Pv
-	 SkHv3TaWERBrAO0uNAxUI2jrS6IJFzh6mlYTX0oCBEQp7cxmKFty2uM1eFZ2QZcWi4
-	 SB6urPwuWsqRu5l3qOr8mXNsokVhuHg5RRdvqWcH/zGypWmFHB6OxgKgebbR9+c5pX
-	 u+7cSQx5rK0HsDdIps/a411Q1/ngnNMn4wii7gmrnOT7+KD8tdnhPP0kG4kXqIjLFv
-	 /SMf8r7ZytrIK77ldRiFjdIw7TtcDvobUdx2YcZdPKDAHuv9fh30wuzl4e1Q2F+whp
-	 cmHoLeK4U3COg==
+	s=k20201202; t=1725445315;
+	bh=aZEAASsBiFk/RgRLba541LPDxJ17oriKgsD3TIAIOy8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=pVRvFeeIXH04mtBi0pL304wNLzScNm6KRBcMNa+Kk3rJjFcQUjqct+CJhwG66KIy5
+	 MzkAx0bUoO3qqI85wSK+22x/YC0YPxsIIS4OrO7zFh5MgezfDiawCwkChw8Mn57Orf
+	 aOmdR4bdcn2J0YD/lY6MIbAP76giGif1VTmMlO65s77Z25UQ3eMrUb6jE8Z0SL1H1l
+	 Oc9LHKBhX5vamFvnc/buanj7jLBG4pMRdENbAkzyWqWkeYy7kLrjmiDvc90WqZpeGB
+	 a5XITsPViOqtbzhFKuIOgNpN7kfd1fvQhpIcYhQigq7u81tCFyq281BXUhqi8zMhoU
+	 MkMdBVI9gWAQg==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v3 00/17] slab: add struct kmem_cache_args
-Date: Wed, 04 Sep 2024 12:21:05 +0200
-Message-Id: <20240904-work-kmem_cache_args-v3-0-05db2179a8c2@kernel.org>
+Date: Wed, 04 Sep 2024 12:21:06 +0200
+Subject: [PATCH v3 01/17] slab:
+ s/__kmem_cache_create/do_kmem_cache_create/g
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +53,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJE02GYC/4XOyw7CIBAF0F9pWEtD6QNx5X8Y01A6tKQvMxjUN
- P13oStdGJc3mXvurMQBWnDklKwEwVtnlzmE/JAQ3au5A2rbkAlnvGCScfpYcKDDBFOtle6hVtg
- 5ClJUTAquRVuQUL0hGPvc2cs15EY5oA2qWfcR88alxo4QT3vr7gu+9gd8Fgt/tnxGGeWiZWWjW
- Znx43kAnGFMF+xIHPP8U8l/KDwoojJSgFRFWbEvZdu2N8aVVMYaAQAA
+Message-Id: <20240904-work-kmem_cache_args-v3-1-05db2179a8c2@kernel.org>
+References: <20240904-work-kmem_cache_args-v3-0-05db2179a8c2@kernel.org>
+In-Reply-To: <20240904-work-kmem_cache_args-v3-0-05db2179a8c2@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
  Jann Horn <jannh@google.com>, 
  Linus Torvalds <torvalds@linux-foundation.org>, 
@@ -68,115 +68,76 @@ Cc: Kees Cook <kees@kernel.org>, Christoph Lameter <cl@linux.com>,
  Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4620; i=brauner@kernel.org;
- h=from:subject:message-id; bh=qpIaXZ9wpnw8HqkV16+tOm664xAQ9ILaft0Wsy1nwYA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdMNnJ3HaRT2CXsmvP111VPlJ7X6VsVNB4c7rge/bnm
- 4cvJVTLd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk0W6GvxJv/PTnZVuoCQRd
- L1i4e2/YhXk/tV32dB4+Xnzm172S7I2MDEuTznDemXEsOld9/5mJ86/KcTEyFTsd7HBlb97UUDZ
- fgh0A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2022; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=aZEAASsBiFk/RgRLba541LPDxJ17oriKgsD3TIAIOy8=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdMNm5xyytO7rTxql9L3d59dyG0jNp6epyKrNMn79vu
+ jrrKGNWRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwES6Whj+e89ZwziJweJX1ePQ
+ /xlPfa8++PKG5Sfj1j8JW+PFfyYIrWNkuPyp5eJFc4m2ZcpXXhxkPDL3fYi/R09dzyxzxQZ+7eR
+ gDgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hey,
+Free up reusing the double-underscore variant for follow-up patches.
 
-No meaningful changes in v3. This is mostly to make it easy for
-Vlastimil to pull.
-
----
-As discussed last week the various kmem_cache_*() functions should be
-replaced by a unified function that is based around a struct, with only
-the basic parameters passed separately.
-
-Vlastimil already said that he would like to keep core parameters out
-of the struct: name, object size, and flags. I personally don't care
-much and would not object to moving everything into the struct but
-that's a matter of taste and I yield that decision power to the
-maintainer.
-
-In the first version I pointed out that the choice of name is somewhat
-forced as kmem_cache_create() is taken and the only way to reuse it
-would be to replace all users in one go. Or to do a global
-sed/kmem_cache_create()/kmem_cache_create2()/g. And then introduce
-kmem_cache_setup(). That doesn't strike me as a viable option.
-
-If we really cared about the *_create() suffix then an alternative might
-be to do a sed/kmem_cache_setup()/kmem_cache_create()/g after every user
-in the kernel is ported. I honestly don't think that's worth it but I
-wanted to at least mention it to highlight the fact that this might lead
-to a naming compromise.
-
-However, I came up with an alternative using _Generic() to create a
-compatibility layer that will call the correct variant of
-kmem_cache_create() depending on whether struct kmem_cache_args is
-passed or not. That compatibility layer can stay in place until we
-updated all calls to be based on struct kmem_cache_args.
-
-From a cursory grep (and not excluding Documentation mentions) we will
-have to replace 44 kmem_cache_create_usercopy() calls and about 463
-kmem_cache_create() calls which makes for a bit above 500 calls to port
-to kmem_cache_setup(). That'll probably be good work for people getting
-into kernel development.
-
-To: Vlastimil Babka <vbabka@suse.cz>
-To: Jens Axboe <axboe@kernel.dk>
-To: Jann Horn <jannh@google.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Cc: linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
-
 ---
-Changes in v3:
-- Reworded some commit messages.
-- Picked up various RvBs.
-- Added two patches to make two functions static inline.
-- Link to v2: https://lore.kernel.org/r/20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org
+ mm/slab.h        | 2 +-
+ mm/slab_common.c | 4 ++--
+ mm/slub.c        | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-Changes in v2:
-- Remove kmem_cache_setup() and add a compatibility layer built around
-  _Generic() so that we can keep the kmem_cache_create() name and type
-  switch on the third argument to either call __kmem_cache_create() or
-  __kmem_cache_create_args().
-- Link to v1: https://lore.kernel.org/r/20240902-work-kmem_cache_args-v1-0-27d05bc05128@kernel.org
+diff --git a/mm/slab.h b/mm/slab.h
+index a6051385186e..684bb48c4f39 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -424,7 +424,7 @@ kmalloc_slab(size_t size, kmem_buckets *b, gfp_t flags, unsigned long caller)
+ gfp_t kmalloc_fix_flags(gfp_t flags);
+ 
+ /* Functions provided by the slab allocators */
+-int __kmem_cache_create(struct kmem_cache *, slab_flags_t flags);
++int do_kmem_cache_create(struct kmem_cache *, slab_flags_t flags);
+ 
+ void __init kmem_cache_init(void);
+ extern void create_boot_cache(struct kmem_cache *, const char *name,
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 95db3702f8d6..91e0e36e4379 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -234,7 +234,7 @@ static struct kmem_cache *create_cache(const char *name,
+ 	s->useroffset = useroffset;
+ 	s->usersize = usersize;
+ #endif
+-	err = __kmem_cache_create(s, flags);
++	err = do_kmem_cache_create(s, flags);
+ 	if (err)
+ 		goto out_free_cache;
+ 
+@@ -778,7 +778,7 @@ void __init create_boot_cache(struct kmem_cache *s, const char *name,
+ 	s->usersize = usersize;
+ #endif
+ 
+-	err = __kmem_cache_create(s, flags);
++	err = do_kmem_cache_create(s, flags);
+ 
+ 	if (err)
+ 		panic("Creation of kmalloc slab %s size=%u failed. Reason %d\n",
+diff --git a/mm/slub.c b/mm/slub.c
+index 9aa5da1e8e27..23d9d783ff26 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -5902,7 +5902,7 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+ 	return s;
+ }
+ 
+-int __kmem_cache_create(struct kmem_cache *s, slab_flags_t flags)
++int do_kmem_cache_create(struct kmem_cache *s, slab_flags_t flags)
+ {
+ 	int err;
+ 
 
----
-Christian Brauner (17):
-      slab: s/__kmem_cache_create/do_kmem_cache_create/g
-      slab: add struct kmem_cache_args
-      slab: port kmem_cache_create() to struct kmem_cache_args
-      slab: port kmem_cache_create_rcu() to struct kmem_cache_args
-      slab: port kmem_cache_create_usercopy() to struct kmem_cache_args
-      slab: pass struct kmem_cache_args to create_cache()
-      slab: pull kmem_cache_open() into do_kmem_cache_create()
-      slab: pass struct kmem_cache_args to do_kmem_cache_create()
-      slab: remove rcu_freeptr_offset from struct kmem_cache
-      slab: port KMEM_CACHE() to struct kmem_cache_args
-      slab: port KMEM_CACHE_USERCOPY() to struct kmem_cache_args
-      slab: create kmem_cache_create() compatibility layer
-      file: port to struct kmem_cache_args
-      slab: remove kmem_cache_create_rcu()
-      slab: make kmem_cache_create_usercopy() static inline
-      slab: make __kmem_cache_create() static inline
-      io_uring: port to struct kmem_cache_args
-
- fs/file_table.c      |  11 ++-
- include/linux/slab.h | 116 ++++++++++++++++++++++++------
- io_uring/io_uring.c  |  14 ++--
- mm/slab.h            |   6 +-
- mm/slab_common.c     | 197 +++++++++++----------------------------------------
- mm/slub.c            | 162 +++++++++++++++++++++---------------------
- 6 files changed, 236 insertions(+), 270 deletions(-)
----
-base-commit: 6e016babce7c845ed015da25c7a097fa3482d95a
-change-id: 20240902-work-kmem_cache_args-e9760972c7d4
+-- 
+2.45.2
 
 
