@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-28503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CC896B5AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:59:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042CE96B5AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DE502825E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 08:59:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 379B81C20A41
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 08:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1331CC888;
-	Wed,  4 Sep 2024 08:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D32198E7F;
+	Wed,  4 Sep 2024 08:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNc+4Fm5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzA+w/9S"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4B11CC144
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 08:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DAABA27
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 08:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725440328; cv=none; b=i/7mifV8y7yFDSdPWTziJ4vfjNESJ3UCU/G0+L0mmgTPuGB0COIeWRavIaDs0ePsKOV+SjS7ONYYNdx6hejiwFUvFNE1hx5Wky8hdQxSm9LAbUyrSIubCPor043izY+lRQs3ae+NMqEZeeVz28CWQ9OFldUgQk47W4TSFc3PnnU=
+	t=1725440384; cv=none; b=XSglGzBR252hzOlRPQAWf9mBeIMuAMuFs74oit6Kt7ZPUPzfOnEQs1rM3HwXSdT8BgLKmJNaDNuth6KE08u+7TJFUaqkt5dyvhdtv+60dif0fW7hhCk2Q0TZF7NCVdIUvXrjrDoKW/o2DM0YQ9YFfOK5+01pYJIXq2/wFx3E038=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725440328; c=relaxed/simple;
-	bh=EtqRKArhzC9Y2UBCDEv3yc4n6+elGDXQTlG0Qw3Q5O4=;
+	s=arc-20240116; t=1725440384; c=relaxed/simple;
+	bh=JG2C8PCn2ZCFQ9y3w8TIcFxPHogTETPZAyI+23L3I8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEIpNYO3djTQWBDdF4jXRohcuEWpqUG2ADRb867H0DbLGgEcbg/zExCj+WJzpZiarp2voFXOMkK60RKmfps6gzVdJQ46Jn9ac5JOv5Kq94nzSJFTZGSh+hkbRa3Fo/mthp7fjccU+YKv50OXAHs835545dMG/vAfgpy759EQpZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNc+4Fm5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE2EC4CEC5;
-	Wed,  4 Sep 2024 08:58:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZ96Y/9+KaCPjrRF8Ig73rpTtuRRgblkYih48jUu62ALjOBfPejH4sA3GjNvPvSDHhJEqI8HO1xFnVwddtekZGk0FSGoERMBPcu9qZtR7zMzZCxOvyW7HQ7HvUjmtz3qf756/Dfv2FWGe4YMpNjbQn874tH4ZSCfN+BLOaF1I5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzA+w/9S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0892DC4CEC2;
+	Wed,  4 Sep 2024 08:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725440327;
-	bh=EtqRKArhzC9Y2UBCDEv3yc4n6+elGDXQTlG0Qw3Q5O4=;
+	s=k20201202; t=1725440383;
+	bh=JG2C8PCn2ZCFQ9y3w8TIcFxPHogTETPZAyI+23L3I8o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VNc+4Fm53vgHPTWcFUca263vDcKYtSTlqrOnVIiYGIgsASPppHCj5sEBjmKChKq0i
-	 d3Q2l+oaT+OTkgKGfn4PvnPfPhq2+aLG85HwJMYQw9Tr5n/6cBbMiAaIX8q7BAMtcD
-	 WVSg+8uyg2bNbIxdgA2d1AzVygqUYyJjm9VRi6Kw5scChZad/gUl/JC8u+o4SFZt0N
-	 cu/avGNdr7VwLCqE6dZRdKsCsmlcOl44O7amgqMt9uTPrwkBJCkTTZzeAlkERd5Kk1
-	 lrj5lOirxbil68kgaxWSxR2kT2WoTpbCBeuqmiuMu66EQRmfTsuUg8+JfFYFn38OqG
-	 hB+Fsw3P21cvA==
-Date: Wed, 4 Sep 2024 10:58:43 +0200
+	b=dzA+w/9SlfcfKTct0Qs+OAz/0fbxblVqseqAi0ihPEXv2oy+LC88uXTop+Z+/6iMi
+	 Z0qRKoYq5eawy8q5sq2Y/Ucqny/t0/nPicmvSZD1hyjuJlMlDdZemDn+AUz0oaVKQA
+	 LgNY14sXSpnN5go6X4eN0AKuI05AJN6jqp24DdaGsgE8D8Kyp1mIaTbKw9tLcx2H2O
+	 UDqQtgwh4AAK3xALkw9RIdhzhz9XLGsPouP4uIj4TCeN3jvJSnHoPqmnvpjQNwkTFM
+	 ybeOKBLViy+wzWdun2vKBNgKKa5QOHdiE3CKzZH01+RyCMXEDGWZUbEy3aORbzE84N
+	 tdY42b6or37dw==
+Date: Wed, 4 Sep 2024 10:59:38 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>
 Cc: Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>, 
 	Linus Torvalds <torvalds@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, 
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 09/15] sl*b: remove rcu_freeptr_offset from struct
- kmem_cache
-Message-ID: <20240904-quallen-stuben-2fefcb33e6b5@brauner>
+Subject: Re: [PATCH v2 05/15] slab: port kmem_cache_create_usercopy() to
+ struct kmem_cache_args
+Message-ID: <20240904-augen-befallen-f759c30c7b07@brauner>
 References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-9-76f97e9a4560@kernel.org>
- <79eb89f6-1e19-4785-b807-1e0459b6011b@suse.cz>
+ <20240903-work-kmem_cache_args-v2-5-76f97e9a4560@kernel.org>
+ <44c51c2b-957c-4bb6-bade-fb202dbd07ce@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,23 +61,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <79eb89f6-1e19-4785-b807-1e0459b6011b@suse.cz>
+In-Reply-To: <44c51c2b-957c-4bb6-bade-fb202dbd07ce@suse.cz>
 
-On Wed, Sep 04, 2024 at 10:16:17AM GMT, Vlastimil Babka wrote:
+On Wed, Sep 04, 2024 at 10:14:37AM GMT, Vlastimil Babka wrote:
 > On 9/3/24 16:20, Christian Brauner wrote:
-> > Now that we pass down struct kmem_cache_args to calculate_sizes() we
-> > don't need it anymore.
+> > Pprt kmem_cache_create_usercopy() to struct kmem_cache_args and remove
 > 
-> Nit: that sounds like a previous patch did the "pass down" part? Fine to do
-> both at once but maybe adjust description that we do both here?
+> Typo
 
-Hm, maybe that was misleadingly phrased but my intention was to express
-that this patch passes it down and removes the now unneeded member from
-struct kmem_cache. I've rephrased this to:
-
-"Pass down struct kmem_cache_args to calculate_sizes() so we can use
-args->{use}_freeptr_offset directly. This allows us to remove
-->rcu_freeptr_offset from struct kmem_cache."
-
-on the work.kmem_cache_args branch.
+Fixed on the work.kmem_cache_args branch.
 
