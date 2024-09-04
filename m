@@ -1,377 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-28538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D69096B897
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:31:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2927196B940
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4711F25AAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:31:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 651FCB2553B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 10:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DEA1D0141;
-	Wed,  4 Sep 2024 10:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EB91CFECB;
+	Wed,  4 Sep 2024 10:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z3typWsL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k089uiug";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z3typWsL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k089uiug"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OC5U0q24";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s5jQCAhk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Csnp/LoY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cOrIWI0b"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5910A1CF7D2;
-	Wed,  4 Sep 2024 10:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415961D04B7
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 10:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445873; cv=none; b=QxBmjYSq4R0tsYDOtu3C8AA9bL7mR16NjN3lSdSQ20gqHXCFfmnxVeVOPIFB7S1rPfWwuRC9ENqbhBz2ZCtf9FtJwuunhSlaziChoNX4woUwbSIBNubmjSwnGGh7SijgaCoNg/qM3FUZHfIekHZzjbMXKYO24sPPTPjQow3fhxA=
+	t=1725447033; cv=none; b=PuX1bZdC4s3wD7x8DlE5b8uPsyKsKz2M+IrMkkQ2NZkzARbxsNfbDqu+Bc0DztZ8P48LXJMd1Gi5Ez7ovxhN34EGMupWF73trWOXwaOuQQxEzZ/LzlXN2RliH+kI+sQI3TU58iAp9JlyTO6V2ZAADl0MbLXnh+cDWM1DQEkhj8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445873; c=relaxed/simple;
-	bh=Vt19YejQLGkjUqvrVVyG50PQ4PxNu45Gl66ScVUOt8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqNReZVuIwssLvr7OJ6gxuUe60LYLfH52AtyopvuSfXs3ZRLbMUS6TyF/8f+EBNeNSj07EhfoLj4GgxN8w9h7MVt6xI+bIK2Hrj4uadAo1r0dc0wUItZIOxAIllq19SyMGYh0UEUl0DLxwsMAYoox4vYj08oN6Sc5g3fzSkwiio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z3typWsL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k089uiug; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z3typWsL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k089uiug; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1725447033; c=relaxed/simple;
+	bh=BKE+ierhkz+/Px+ZvDBACRJcczQHaqrvcaExxKWvGtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TM53yn8KwsRhUoh6894FUj34I8T6X5hLpjGR6jr2DLa3Yxgg100/EESx2scGyf33sFYvQxMgGk8Bet0dOEqPISdIVAPlXcoXCClgIPL8I3WLIbvaz4c2XrT705NjDQix7cG6WyGMYa6jSkcvPa5KYRPJfrM7MUdkHmb/U75LOSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OC5U0q24; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s5jQCAhk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Csnp/LoY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cOrIWI0b; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7493F219E7;
-	Wed,  4 Sep 2024 10:31:09 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7E71C219F3;
+	Wed,  4 Sep 2024 10:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725445869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725447029; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twXWpsZnz0cylI2dcNgo3imh3jWjDml5cL3Iwux1DfA=;
-	b=z3typWsLQx+9c2vA0Fpp5KkN0PY3WPWPloH1jKtXs13Z8Dg/G4jbMRL2m8hbQ/98OrcQ3K
-	l7EBoFEWeWJtJgpocdOaKt+xBR2cLmlGwH9ro6TQyWjLqPbG/VqbTFT9m7xERlQrtYZ1cV
-	OEYWfqtdFWfA62P8P+NBJeFZIyaWV98=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=toDg4FGAE3+xoGHYWixBm2HnGerhdjQnP1cxFZ8dy6w=;
+	b=OC5U0q244j97LNLndlEFWfCCxpXCW8VheGVS0/JdwVyGCzXXT3GvjMOf3kFN/RoFnsLqQz
+	G6UAxLBHFoJi4dtY2Ya8zWMlkx/uDCOXgCVlFREiD34FuGfsLdkIR76Fvo6uoKmQIDrHpY
+	YWn31UxHlgV4AbT1RLVCkMfj1ew6saQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725445869;
+	s=susede2_ed25519; t=1725447029;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twXWpsZnz0cylI2dcNgo3imh3jWjDml5cL3Iwux1DfA=;
-	b=k089uiugmHUj0KJJC9NmlWNkkmhS4f+YmXkRRWW7gg0vSakYkdH41DZ29dbwJq1qSyUssX
-	93OQ9tIbAye9wbDA==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=toDg4FGAE3+xoGHYWixBm2HnGerhdjQnP1cxFZ8dy6w=;
+	b=s5jQCAhkjsRmdsaDc8DPLsFMSLJO07mi6FSjxyVM92n24Bndl5rhWgtuG4xp/FO2mBgvAJ
+	HBPjIwP7gt6TW+Dg==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725445869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725447028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twXWpsZnz0cylI2dcNgo3imh3jWjDml5cL3Iwux1DfA=;
-	b=z3typWsLQx+9c2vA0Fpp5KkN0PY3WPWPloH1jKtXs13Z8Dg/G4jbMRL2m8hbQ/98OrcQ3K
-	l7EBoFEWeWJtJgpocdOaKt+xBR2cLmlGwH9ro6TQyWjLqPbG/VqbTFT9m7xERlQrtYZ1cV
-	OEYWfqtdFWfA62P8P+NBJeFZIyaWV98=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=toDg4FGAE3+xoGHYWixBm2HnGerhdjQnP1cxFZ8dy6w=;
+	b=Csnp/LoYFwcXpkBwwgSrnw4X/S0b+sHD3i6yUBs8/6bcz3VNeGZ08OyBHk5HaXGzjgYJ8Y
+	ZCH+7cqga7l5miKSREYg1Fpxtb/WB6uwwMDXNYnJKYojVieXoxUWUArgJRSOTAd+bXwSJr
+	vLgO30OmOzZziWESuaLxQqJxUBuPP84=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725445869;
+	s=susede2_ed25519; t=1725447028;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twXWpsZnz0cylI2dcNgo3imh3jWjDml5cL3Iwux1DfA=;
-	b=k089uiugmHUj0KJJC9NmlWNkkmhS4f+YmXkRRWW7gg0vSakYkdH41DZ29dbwJq1qSyUssX
-	93OQ9tIbAye9wbDA==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=toDg4FGAE3+xoGHYWixBm2HnGerhdjQnP1cxFZ8dy6w=;
+	b=cOrIWI0bL23bqAfqUCE1qNkRyo9ljjqgdlPICt7Mo9bU9OjgqC00dxxcD3OlfUix+yH29I
+	ALi31bcCFmcVKTAg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 538E2139D2;
-	Wed,  4 Sep 2024 10:31:09 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A768139E2;
+	Wed,  4 Sep 2024 10:50:28 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OhRkFO022GY9KgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 10:31:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F0695A0968; Wed,  4 Sep 2024 12:31:04 +0200 (CEST)
-Date: Wed, 4 Sep 2024 12:31:04 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v3 12/12] ext4: drop all delonly descriptions
-Message-ID: <20240904103104.a5oxkkbqpgu6uoms@quack3>
-References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
- <20240813123452.2824659-13-yi.zhang@huaweicloud.com>
+	id lQibGXQ72GYYMAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 04 Sep 2024 10:50:28 +0000
+Message-ID: <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
+Date: Wed, 4 Sep 2024 12:50:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813123452.2824659-13-yi.zhang@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/15] slab: create kmem_cache_create() compatibility
+ layer
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>, Mike Rapoport <rppt@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-12-76f97e9a4560@kernel.org>
+ <ZtfssAqDeyd_-4MJ@kernel.org> <20240904-storch-worin-32db25e60f32@brauner>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240904-storch-worin-32db25e60f32@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
+X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
 	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -2.30
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
+X-Spam-Score: -4.30
 X-Spam-Flag: NO
 
-On Tue 13-08-24 20:34:52, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> When counting reserved clusters, delayed type is always equal to delonly
-> type now, hence drop all delonly descriptions in parameters and
-> comments.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On 9/4/24 11:45, Christian Brauner wrote:
+> On Wed, Sep 04, 2024 at 08:14:24AM GMT, Mike Rapoport wrote:
+>> On Tue, Sep 03, 2024 at 04:20:53PM +0200, Christian Brauner wrote:
+>> > Use _Generic() to create a compatibility layer that type switches on the
+>> > third argument to either call __kmem_cache_create() or
+>> > __kmem_cache_create_args(). This can be kept in place until all callers
+>> > have been ported to struct kmem_cache_args.
+>> > 
+>> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+>> 
+>> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+>> 
+>> > ---
+>> >  include/linux/slab.h | 13 ++++++++++---
+>> >  mm/slab_common.c     | 10 +++++-----
+>> >  2 files changed, 15 insertions(+), 8 deletions(-)
+>> > 
+>> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+>> > index aced16a08700..4292d67094c3 100644
+>> > --- a/include/linux/slab.h
+>> > +++ b/include/linux/slab.h
+>> > @@ -261,9 +261,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
+>> >  					    unsigned int object_size,
+>> >  					    struct kmem_cache_args *args,
+>> >  					    slab_flags_t flags);
+>> > -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+>> > -			unsigned int align, slab_flags_t flags,
+>> > -			void (*ctor)(void *));
+>> > +
+>> > +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
+>> > +				       unsigned int align, slab_flags_t flags,
+>> > +				       void (*ctor)(void *));
+>> 
+>> As I said earlier, this can become _kmem_cache_create and
+>> __kmem_cache_create_args can be __kmem_cache_create from the beginning.
 
-Looks good. Feel free to add:
+I didn't notice an answer to this suggestion? Even if it's just that you
+don't think it's worth the rewrite, or it's not possible because X Y Z.
+Thanks.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/extents_status.c | 66 +++++++++++++++++++---------------------
->  1 file changed, 32 insertions(+), 34 deletions(-)
+>> And as a followup cleanup both kmem_cache_create_usercopy() and
+>> kmem_cache_create() can be made static inlines.
 > 
-> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-> index 68c47ecc01a5..c786691dabd3 100644
-> --- a/fs/ext4/extents_status.c
-> +++ b/fs/ext4/extents_status.c
-> @@ -1067,7 +1067,7 @@ int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
->  }
->  
->  struct rsvd_count {
-> -	int ndelonly;
-> +	int ndelayed;
->  	bool first_do_lblk_found;
->  	ext4_lblk_t first_do_lblk;
->  	ext4_lblk_t last_do_lblk;
-> @@ -1093,10 +1093,10 @@ static void init_rsvd(struct inode *inode, ext4_lblk_t lblk,
->  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->  	struct rb_node *node;
->  
-> -	rc->ndelonly = 0;
-> +	rc->ndelayed = 0;
->  
->  	/*
-> -	 * for bigalloc, note the first delonly block in the range has not
-> +	 * for bigalloc, note the first delayed block in the range has not
->  	 * been found, record the extent containing the block to the left of
->  	 * the region to be removed, if any, and note that there's no partial
->  	 * cluster to track
-> @@ -1116,9 +1116,8 @@ static void init_rsvd(struct inode *inode, ext4_lblk_t lblk,
->  }
->  
->  /*
-> - * count_rsvd - count the clusters containing delayed and not unwritten
-> - *		(delonly) blocks in a range within an extent and add to
-> - *	        the running tally in rsvd_count
-> + * count_rsvd - count the clusters containing delayed blocks in a range
-> + *	        within an extent and add to the running tally in rsvd_count
->   *
->   * @inode - file containing extent
->   * @lblk - first block in range
-> @@ -1141,7 +1140,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
->  	WARN_ON(len <= 0);
->  
->  	if (sbi->s_cluster_ratio == 1) {
-> -		rc->ndelonly += (int) len;
-> +		rc->ndelayed += (int) len;
->  		return;
->  	}
->  
-> @@ -1151,7 +1150,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
->  	end = lblk + (ext4_lblk_t) len - 1;
->  	end = (end > ext4_es_end(es)) ? ext4_es_end(es) : end;
->  
-> -	/* record the first block of the first delonly extent seen */
-> +	/* record the first block of the first delayed extent seen */
->  	if (!rc->first_do_lblk_found) {
->  		rc->first_do_lblk = i;
->  		rc->first_do_lblk_found = true;
-> @@ -1165,7 +1164,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
->  	 * doesn't start with it, count it and stop tracking
->  	 */
->  	if (rc->partial && (rc->lclu != EXT4_B2C(sbi, i))) {
-> -		rc->ndelonly++;
-> +		rc->ndelayed++;
->  		rc->partial = false;
->  	}
->  
-> @@ -1175,7 +1174,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
->  	 */
->  	if (EXT4_LBLK_COFF(sbi, i) != 0) {
->  		if (end >= EXT4_LBLK_CFILL(sbi, i)) {
-> -			rc->ndelonly++;
-> +			rc->ndelayed++;
->  			rc->partial = false;
->  			i = EXT4_LBLK_CFILL(sbi, i) + 1;
->  		}
-> @@ -1183,11 +1182,11 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
->  
->  	/*
->  	 * if the current cluster starts on a cluster boundary, count the
-> -	 * number of whole delonly clusters in the extent
-> +	 * number of whole delayed clusters in the extent
->  	 */
->  	if ((i + sbi->s_cluster_ratio - 1) <= end) {
->  		nclu = (end - i + 1) >> sbi->s_cluster_bits;
-> -		rc->ndelonly += nclu;
-> +		rc->ndelayed += nclu;
->  		i += nclu << sbi->s_cluster_bits;
->  	}
->  
-> @@ -1247,10 +1246,9 @@ static struct pending_reservation *__pr_tree_search(struct rb_root *root,
->   * @rc - pointer to reserved count data
->   *
->   * The number of reservations to be released is equal to the number of
-> - * clusters containing delayed and not unwritten (delonly) blocks within
-> - * the range, minus the number of clusters still containing delonly blocks
-> - * at the ends of the range, and minus the number of pending reservations
-> - * within the range.
-> + * clusters containing delayed blocks within the range, minus the number of
-> + * clusters still containing delayed blocks at the ends of the range, and
-> + * minus the number of pending reservations within the range.
->   */
->  static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  			     struct extent_status *right_es,
-> @@ -1261,33 +1259,33 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  	struct ext4_pending_tree *tree = &EXT4_I(inode)->i_pending_tree;
->  	struct rb_node *node;
->  	ext4_lblk_t first_lclu, last_lclu;
-> -	bool left_delonly, right_delonly, count_pending;
-> +	bool left_delayed, right_delayed, count_pending;
->  	struct extent_status *es;
->  
->  	if (sbi->s_cluster_ratio > 1) {
->  		/* count any remaining partial cluster */
->  		if (rc->partial)
-> -			rc->ndelonly++;
-> +			rc->ndelayed++;
->  
-> -		if (rc->ndelonly == 0)
-> +		if (rc->ndelayed == 0)
->  			return 0;
->  
->  		first_lclu = EXT4_B2C(sbi, rc->first_do_lblk);
->  		last_lclu = EXT4_B2C(sbi, rc->last_do_lblk);
->  
->  		/*
-> -		 * decrease the delonly count by the number of clusters at the
-> -		 * ends of the range that still contain delonly blocks -
-> +		 * decrease the delayed count by the number of clusters at the
-> +		 * ends of the range that still contain delayed blocks -
->  		 * these clusters still need to be reserved
->  		 */
-> -		left_delonly = right_delonly = false;
-> +		left_delayed = right_delayed = false;
->  
->  		es = rc->left_es;
->  		while (es && ext4_es_end(es) >=
->  		       EXT4_LBLK_CMASK(sbi, rc->first_do_lblk)) {
->  			if (ext4_es_is_delayed(es)) {
-> -				rc->ndelonly--;
-> -				left_delonly = true;
-> +				rc->ndelayed--;
-> +				left_delayed = true;
->  				break;
->  			}
->  			node = rb_prev(&es->rb_node);
-> @@ -1295,7 +1293,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  				break;
->  			es = rb_entry(node, struct extent_status, rb_node);
->  		}
-> -		if (right_es && (!left_delonly || first_lclu != last_lclu)) {
-> +		if (right_es && (!left_delayed || first_lclu != last_lclu)) {
->  			if (end < ext4_es_end(right_es)) {
->  				es = right_es;
->  			} else {
-> @@ -1306,8 +1304,8 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  			while (es && es->es_lblk <=
->  			       EXT4_LBLK_CFILL(sbi, rc->last_do_lblk)) {
->  				if (ext4_es_is_delayed(es)) {
-> -					rc->ndelonly--;
-> -					right_delonly = true;
-> +					rc->ndelayed--;
-> +					right_delayed = true;
->  					break;
->  				}
->  				node = rb_next(&es->rb_node);
-> @@ -1321,21 +1319,21 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  		/*
->  		 * Determine the block range that should be searched for
->  		 * pending reservations, if any.  Clusters on the ends of the
-> -		 * original removed range containing delonly blocks are
-> +		 * original removed range containing delayed blocks are
->  		 * excluded.  They've already been accounted for and it's not
->  		 * possible to determine if an associated pending reservation
->  		 * should be released with the information available in the
->  		 * extents status tree.
->  		 */
->  		if (first_lclu == last_lclu) {
-> -			if (left_delonly | right_delonly)
-> +			if (left_delayed | right_delayed)
->  				count_pending = false;
->  			else
->  				count_pending = true;
->  		} else {
-> -			if (left_delonly)
-> +			if (left_delayed)
->  				first_lclu++;
-> -			if (right_delonly)
-> +			if (right_delayed)
->  				last_lclu--;
->  			if (first_lclu <= last_lclu)
->  				count_pending = true;
-> @@ -1346,13 +1344,13 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  		/*
->  		 * a pending reservation found between first_lclu and last_lclu
->  		 * represents an allocated cluster that contained at least one
-> -		 * delonly block, so the delonly total must be reduced by one
-> +		 * delayed block, so the delayed total must be reduced by one
->  		 * for each pending reservation found and released
->  		 */
->  		if (count_pending) {
->  			pr = __pr_tree_search(&tree->root, first_lclu);
->  			while (pr && pr->lclu <= last_lclu) {
-> -				rc->ndelonly--;
-> +				rc->ndelayed--;
->  				node = rb_next(&pr->rb_node);
->  				rb_erase(&pr->rb_node, &tree->root);
->  				__free_pending(pr);
-> @@ -1363,7 +1361,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  			}
->  		}
->  	}
-> -	return rc->ndelonly;
-> +	return rc->ndelayed;
->  }
->  
->  
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Seems an ok suggestion to me. See the two patches I sent out now.
+
 
