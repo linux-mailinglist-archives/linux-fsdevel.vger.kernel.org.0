@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-28466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EC996B034
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 06:58:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0490796B037
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 06:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2FDD2830BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 04:58:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94436B23538
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 04:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC579823AC;
-	Wed,  4 Sep 2024 04:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5410783CC1;
+	Wed,  4 Sep 2024 04:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBVRJ2hw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPHeJ14O"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19656635
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 04:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B691081AB6
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 04:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725425889; cv=none; b=jFPTg6i1Ark99PI78UETqADeTMqkalscMbmyLFlBDu0baNIuDsoLNpRgoY2q0vwWU775XdUDvKx14d0fU8NnlT4b2KvGJ2WjXNA+hp7tQjHgcqag4qVyP4hKzT43r7rrp7DbPX3B2H1MinKxeJyryAWaKLEOiT/ZoR0/+8iCB+U=
+	t=1725425914; cv=none; b=e5bu+p8Zvi9MhXqsWf79mq0zg8gP5fhdjfc9UTdPyaJeomFbntGX0s1P9mrYUHrCg5C1U7EKZ6yHW9ObIYg4wCKinqU2Jb4AQyiTcqIUegXdcxGiXoFRefK3LvU1Adtjjdob3ytO+0/4VQdq4lm0sA/1e3CVaNTWLYqX8OWyAAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725425889; c=relaxed/simple;
-	bh=H33YrW/3/bNdTRoqJM5b0XGVNgXJhzcB8gderaNSFck=;
+	s=arc-20240116; t=1725425914; c=relaxed/simple;
+	bh=WHcb9EzuvBLgowDYaNy5EbNrAQVJ55Twf/5kTivsSjU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DKmlGyVVlGOoYN79j/kTXpFvm5S0Prq/rpO64Grd7ArGo9DlVRzzBZAiWp/T0bLSLKQDmQc2fiUbJ20qBG5xQP2j5E7NZj4gGOTXYvrK/0PVb4zxhGFyrVR4J2ZfYQvchlchBCOoVLy7qXMybreNVubFqe8hzT2LEdzpi+WFiis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBVRJ2hw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5503C4CEC2;
-	Wed,  4 Sep 2024 04:58:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=adV9HXcJ8zIRNhI2L1OY7fFXxcAD8n7LY0nODi01qUN2dn94ekErqg7wUW/dbvinfORy0L+w9a6O5kvCPLiXcToKCRPu0XaU27nLCbaDNpbafgzjJPRyMJjjXjaMjLhN9XpXt8qfGtwQ3gbcEoeNG1n8Yr/IXqcOitVSaVmTHdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPHeJ14O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11595C4CEC2;
+	Wed,  4 Sep 2024 04:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725425888;
-	bh=H33YrW/3/bNdTRoqJM5b0XGVNgXJhzcB8gderaNSFck=;
+	s=k20201202; t=1725425914;
+	bh=WHcb9EzuvBLgowDYaNy5EbNrAQVJ55Twf/5kTivsSjU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cBVRJ2hwr0XLnXDFe0cqY9kIuuhpitenSQgacbMySvMlSNk4yOMlwcbFrZIV0UWeP
-	 O0CEARxylYUxHwkkAQDVYh8pfIqQ+DOpOLeDLCYHY0Pt6Rkp2TBj3GhLW0zLUi04RX
-	 t/YA5iHYZL1WHNgDAC9uWifBL7lYAakTBbS+aMtlfiHGpGbsJV4gwqvzlX/4SSNEHM
-	 5qeg2hADXofYqDeBzCPDktcQJ/CtxooIfbEv6qPxzQUnIzYrSD4ekvxaJTNT2b+XWa
-	 6Yk4xN4uo9WrOblQJoMTtFGpi6VYdLqACGJUE9SkM/uIXEcdMriG7rWna+TM0BG7th
-	 OeRF6Omrssvdw==
-Date: Wed, 4 Sep 2024 07:55:20 +0300
+	b=oPHeJ14OxBR+9GwTsUuPU5o72QTm+7Z9vmZjLP+Ju2fYRvJHLFAqw7q0x9moGOrOU
+	 Xhe24R5S83jxOMpTLOCKUzfL6ythgcMVPtdbP9lnq4A+O7CfuiPaa+i3pjrqU6ptjQ
+	 22Umch8ThXQDlcwMQAF2eKfHZRK5yrA5cUTiBqk9xhsWp8UsjYtFBkzzmJ0dXhsmwZ
+	 Xj67ngPF2xf2lIFhIhN2lPXNfltUHcoqgtuucoLAm0kIdsgqzz/3xM6tWbgQscE84+
+	 dPRJetwsWJiSKVkDmHFqXrQa3fyR6xHSJ9T8SlrL8Mg1l8RcaPb9I9bqxEx8qRnOti
+	 yUOJL3DQwkxzg==
+Date: Wed, 4 Sep 2024 07:55:48 +0300
 From: Mike Rapoport <rppt@kernel.org>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
 	Jann Horn <jannh@google.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 03/15] slab: port kmem_cache_create() to struct
+Subject: Re: [PATCH v2 04/15] slab: port kmem_cache_create_rcu() to struct
  kmem_cache_args
-Message-ID: <ZtfoOG2b1H8ttWRL@kernel.org>
+Message-ID: <ZtfoVBL1fERjdl06@kernel.org>
 References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-3-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-4-76f97e9a4560@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,37 +61,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903-work-kmem_cache_args-v2-3-76f97e9a4560@kernel.org>
+In-Reply-To: <20240903-work-kmem_cache_args-v2-4-76f97e9a4560@kernel.org>
 
-On Tue, Sep 03, 2024 at 04:20:44PM +0200, Christian Brauner wrote:
-> Port kmem_cache_create() to struct kmem_cache_args.
+On Tue, Sep 03, 2024 at 04:20:45PM +0200, Christian Brauner wrote:
+> Port kmem_cache_create_rcu() to struct kmem_cache_args.
 > 
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
 > ---
->  mm/slab_common.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  mm/slab_common.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
 > diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 0f13c045b8d1..ac0832dac01e 100644
+> index ac0832dac01e..da62ed30f95d 100644
 > --- a/mm/slab_common.c
 > +++ b/mm/slab_common.c
-> @@ -439,8 +439,12 @@ struct kmem_cache *
->  kmem_cache_create(const char *name, unsigned int size, unsigned int align,
->  		slab_flags_t flags, void (*ctor)(void *))
+> @@ -481,9 +481,13 @@ struct kmem_cache *kmem_cache_create_rcu(const char *name, unsigned int size,
+>  					 unsigned int freeptr_offset,
+>  					 slab_flags_t flags)
 >  {
-> -	return do_kmem_cache_create_usercopy(name, size, UINT_MAX, align, flags,
-> -					     0, 0, ctor);
+> -	return do_kmem_cache_create_usercopy(name, size, freeptr_offset, 0,
+> -					     flags | SLAB_TYPESAFE_BY_RCU, 0, 0,
+> -					     NULL);
 > +	struct kmem_cache_args kmem_args = {
-> +		.align	= align,
-> +		.ctor	= ctor,
+> +		.freeptr_offset		= freeptr_offset,
+> +		.use_freeptr_offset	= true,
 > +	};
 > +
-> +	return __kmem_cache_create_args(name, size, &kmem_args, flags);
+> +	return __kmem_cache_create_args(name, size, &kmem_args,
+> +					flags | SLAB_TYPESAFE_BY_RCU);
 >  }
->  EXPORT_SYMBOL(kmem_cache_create);
+>  EXPORT_SYMBOL(kmem_cache_create_rcu);
 >  
 > 
 > -- 
