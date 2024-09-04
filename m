@@ -1,180 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-28551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983B496BD3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:56:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD82896BE92
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 15:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55070280E3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:56:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D454282D40
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 13:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD011DB539;
-	Wed,  4 Sep 2024 12:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBEC1D9D79;
+	Wed,  4 Sep 2024 13:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BbEMDXTn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ns4WjIcP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BbEMDXTn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ns4WjIcP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461681DA0E1;
-	Wed,  4 Sep 2024 12:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F95433BB
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 13:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454514; cv=none; b=pisRobpP/PCiYaBV2N5jXJi0rRYrsdHnb4jsfuqXlC1J83ExNS2yCY1641RJi9+be0D7Tuj7KU1TL5AIrHxf6gMJJp1h/K8/+zp09RGSijiPFiAFQFVOUJhBxB0/tPtMpuSRoR714zjgQbPHvDy6IB2LE8i/NjjZHykYI0r1elw=
+	t=1725456815; cv=none; b=UrXvOy5nRap0t15JRglbaDYe7nLHhJJv5Pt4DPUv5VOAkLzc5Qsn9WtFmLckvqxgFzpo8KgUvVXACF+Kno63d4oI4O1i63G5eMoXDp/Pxxv+0O+po4rJaViVXDjYihrte4VmyWt5IWvLV2/RHWZHcsjaW8BXwFOTSuPXPm193J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454514; c=relaxed/simple;
-	bh=qMejZA9PsIbPUUClShG+nT87oLFIDssyt2kEGog2XX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Er2pdJWtC+ljxN7VLGmZQoEMDg1BaisJYArx2hXHAUXfXVGyV8ny0vRlix5JzAwR5SP9Opan5HtgIc5M3j2jjx22OgpKamAXgQ9WERnnaOZauiyU6yfEKpojMc7roPNqC3+h6z+j3f6GAEIZkezaBKR5TytfG8P7r8hNqN0jV+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FBD8FEC;
-	Wed,  4 Sep 2024 05:55:37 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 369393F73B;
-	Wed,  4 Sep 2024 05:55:08 -0700 (PDT)
-Date: Wed, 4 Sep 2024 13:55:03 +0100
-From: Joey Gouly <joey.gouly@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org, nd@arm.com,
-	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
-	broonie@kernel.org, christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 06/30] arm64: context switch POR_EL0 register
-Message-ID: <20240904125503.GA3901671@e124191.cambridge.arm.com>
-References: <20240823144531.GH32156@willie-the-truck>
- <Zsi7ovLOfuFdfuuz@arm.com>
- <20240823170835.GA1181@willie-the-truck>
- <ZsjXtE7Kg0LQwNAL@arm.com>
- <20240827113803.GB4318@willie-the-truck>
- <ZtYNGBrcE-j35fpw@arm.com>
- <20240903145413.GB3669886@e124191.cambridge.arm.com>
- <20240904102254.GA13280@willie-the-truck>
- <20240904113221.GA3891700@e124191.cambridge.arm.com>
- <20240904114301.GA13550@willie-the-truck>
+	s=arc-20240116; t=1725456815; c=relaxed/simple;
+	bh=bFhGSc36GVekpcTDzUT32SxVENv3yZabXSb/ynvz4Nk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q/0CNLX5GIWt+gFgbIhvUycppqL5cTqE0Na5tyAX2qX0w3rDPOQe0DPblHZxAmNeC/rHrzUJuLPa9Pv8Y0uCELlG40LNG9gTsV+NjS1fdwuCm6ZWjwRlUjuVcGSN9iFpIjM4XCAF8leFZJVkl34gRBQl4CkkJZDrEs8DjN6BQ78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BbEMDXTn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ns4WjIcP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BbEMDXTn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ns4WjIcP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 647FB1F7C1;
+	Wed,  4 Sep 2024 13:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725456811; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Xo3bl7lGh/dhzDujakQFQJnzPs8JEyUC7jjOQMu7dao=;
+	b=BbEMDXTn9Qpqra0JGjD0ivxqdWpq69mAegH7K8r5dHp90ipsFBQ/5jLlMlvZyJI3C89L1x
+	nMCc+bIzrJ8y1o5Ocg3Uzv76S2qC93g8VSTOgGWv3IiYqwUJPZtNChqm8FypkSCOC36Oc6
+	/4sUgHZM1OWujOlnryjKvb5NWA7FjU8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725456811;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Xo3bl7lGh/dhzDujakQFQJnzPs8JEyUC7jjOQMu7dao=;
+	b=Ns4WjIcPxMmtTATwDqT/SBhHOfuPYoxi0gxpw0NZkvTZSJ6CXVBM/50T/WYs+dsR/SOJZE
+	VhU1Tp+FHMstiHCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725456811; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Xo3bl7lGh/dhzDujakQFQJnzPs8JEyUC7jjOQMu7dao=;
+	b=BbEMDXTn9Qpqra0JGjD0ivxqdWpq69mAegH7K8r5dHp90ipsFBQ/5jLlMlvZyJI3C89L1x
+	nMCc+bIzrJ8y1o5Ocg3Uzv76S2qC93g8VSTOgGWv3IiYqwUJPZtNChqm8FypkSCOC36Oc6
+	/4sUgHZM1OWujOlnryjKvb5NWA7FjU8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725456811;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Xo3bl7lGh/dhzDujakQFQJnzPs8JEyUC7jjOQMu7dao=;
+	b=Ns4WjIcPxMmtTATwDqT/SBhHOfuPYoxi0gxpw0NZkvTZSJ6CXVBM/50T/WYs+dsR/SOJZE
+	VhU1Tp+FHMstiHCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 514C4139E2;
+	Wed,  4 Sep 2024 13:33:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HSwCEath2GZQZQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 04 Sep 2024 13:33:31 +0000
+Message-ID: <24717bab-7d5d-4ed1-a17d-65d4676e22a9@suse.cz>
+Date: Wed, 4 Sep 2024 15:33:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904114301.GA13550@willie-the-truck>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/15] slab: create kmem_cache_create() compatibility
+ layer
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Jann Horn <jannh@google.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-12-76f97e9a4560@kernel.org>
+ <ZtfssAqDeyd_-4MJ@kernel.org> <20240904-storch-worin-32db25e60f32@brauner>
+ <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
+ <20240904-absuchen-gockel-8246820867b4@brauner>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240904-absuchen-gockel-8246820867b4@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Wed, Sep 04, 2024 at 12:43:02PM +0100, Will Deacon wrote:
-> On Wed, Sep 04, 2024 at 12:32:21PM +0100, Joey Gouly wrote:
-> > On Wed, Sep 04, 2024 at 11:22:54AM +0100, Will Deacon wrote:
-> > > On Tue, Sep 03, 2024 at 03:54:13PM +0100, Joey Gouly wrote:
-> > > > On Mon, Sep 02, 2024 at 08:08:08PM +0100, Catalin Marinas wrote:
-> > > > > On Tue, Aug 27, 2024 at 12:38:04PM +0100, Will Deacon wrote:
-> > > > > > On Fri, Aug 23, 2024 at 07:40:52PM +0100, Catalin Marinas wrote:
-> > > > > > > On Fri, Aug 23, 2024 at 06:08:36PM +0100, Will Deacon wrote:
-> > > > > > > > On Fri, Aug 23, 2024 at 05:41:06PM +0100, Catalin Marinas wrote:
-> > > > > > > > > On Fri, Aug 23, 2024 at 03:45:32PM +0100, Will Deacon wrote:
-> > > > > > > > > > On Thu, Aug 22, 2024 at 04:10:49PM +0100, Joey Gouly wrote:
-> > > > > > > > > > > +static void permission_overlay_switch(struct task_struct *next)
-> > > > > > > > > > > +{
-> > > > > > > > > > > +	if (!system_supports_poe())
-> > > > > > > > > > > +		return;
-> > > > > > > > > > > +
-> > > > > > > > > > > +	current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
-> > > > > > > > > > > +	if (current->thread.por_el0 != next->thread.por_el0) {
-> > > > > > > > > > > +		write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
-> > > > > > > > > > > +		/* ISB required for kernel uaccess routines when chaning POR_EL0 */
-> > > > > > > > > >
-> > > > > > > > > > nit: typo "chaning".
-> > > > > > > > > >
-> > > > > > > > > > But more substantially, is this just to prevent spurious faults in the
-> > > > > > > > > > context of a new thread using a stale value for POR_EL0?
-> > > > > > > > >
-> > > > > > > > > Not just prevent faults but enforce the permissions from the new
-> > > > > > > > > thread's POR_EL0. The kernel may continue with a uaccess routine from
-> > > > > > > > > here, we can't tell.
-> > > > > [...]
-> > > > > > > > So what do we actually gain by having the uaccess routines honour this?
-> > > > > > >
-> > > > > > > I guess where it matters is more like not accidentally faulting because
-> > > > > > > the previous thread had more restrictive permissions.
-> > > > > >
-> > > > > > That's what I wondered initially, but won't the fault handler retry in
-> > > > > > that case?
-> > > > >
-> > > > > Yes, it will retry and this should be fine (I assume you are only
-> > > > > talking about the dropping ISB in the context switch).
-> > > > >
-> > > > > For the case of running with a more permissive stale POR_EL0, arguably it's
-> > > > > slightly more predictable for the user but, OTOH, some syscalls like
-> > > > > readv() could be routed through GUP with no checks. As with MTE, we
-> > > > > don't guarantee uaccesses honour the user permissions.
-> > > > >
-> > > > > That said, at some point we should sanitise this path anyway and have a
-> > > > > single ISB at the end. In the meantime, I'm fine with dropping the ISB
-> > > > > here.
-> > > > >
-> > > > 
-> > > > commit 3141fb86bee8d48ae47cab1594dad54f974a8899
-> > > > Author: Joey Gouly <joey.gouly@arm.com>
-> > > > Date:   Tue Sep 3 15:47:26 2024 +0100
-> > > > 
-> > > >     fixup! arm64: context switch POR_EL0 register
-> > > > 
-> > > > diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> > > > index a3a61ecdb165..c224b0955f1a 100644
-> > > > --- a/arch/arm64/kernel/process.c
-> > > > +++ b/arch/arm64/kernel/process.c
-> > > > @@ -515,11 +515,8 @@ static void permission_overlay_switch(struct task_struct *next)
-> > > >                 return;
-> > > > 
-> > > >         current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
-> > > > -       if (current->thread.por_el0 != next->thread.por_el0) {
-> > > > +       if (current->thread.por_el0 != next->thread.por_el0)
-> > > >                 write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
-> > > > -               /* ISB required for kernel uaccess routines when chaning POR_EL0 */
-> > > > -               isb();
-> > > > -       }
-> > > >  }
-> > > 
-> > > What about the one in flush_poe()? I'm inclined to drop that as well.
-> > 
-> > Yes I guess that one can be removed too. Catalin any comments?
-> > 
-> > > 
-> > > > Will, do you want me to re-send the series with this and the permissions
-> > > > diff from the other thread [1],
-> > > > or you ok with applying them when you pull it in?
-> > > 
-> > > I'll have a crack now, but if it fails miserably then I'll let you know.
-> > 
-> > Thanks! Just to make sure, you should pick the patch up from
-> > 
-> > 	https://lore.kernel.org/linux-arm-kernel/20240903152937.GA3768522@e124191.cambridge.arm.com/
-> > 
-> > Not the one I linked to in [1] in my previous e-mail.
+On 9/4/24 13:38, Christian Brauner wrote:
+> On Wed, Sep 04, 2024 at 12:50:28PM GMT, Vlastimil Babka wrote:
+>> On 9/4/24 11:45, Christian Brauner wrote:
+>> > On Wed, Sep 04, 2024 at 08:14:24AM GMT, Mike Rapoport wrote:
+>> >> On Tue, Sep 03, 2024 at 04:20:53PM +0200, Christian Brauner wrote:
+>> >> > Use _Generic() to create a compatibility layer that type switches on the
+>> >> > third argument to either call __kmem_cache_create() or
+>> >> > __kmem_cache_create_args(). This can be kept in place until all callers
+>> >> > have been ported to struct kmem_cache_args.
+>> >> > 
+>> >> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+>> >> 
+>> >> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+>> >> 
+>> >> > ---
+>> >> >  include/linux/slab.h | 13 ++++++++++---
+>> >> >  mm/slab_common.c     | 10 +++++-----
+>> >> >  2 files changed, 15 insertions(+), 8 deletions(-)
+>> >> > 
+>> >> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+>> >> > index aced16a08700..4292d67094c3 100644
+>> >> > --- a/include/linux/slab.h
+>> >> > +++ b/include/linux/slab.h
+>> >> > @@ -261,9 +261,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
+>> >> >  					    unsigned int object_size,
+>> >> >  					    struct kmem_cache_args *args,
+>> >> >  					    slab_flags_t flags);
+>> >> > -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+>> >> > -			unsigned int align, slab_flags_t flags,
+>> >> > -			void (*ctor)(void *));
+>> >> > +
+>> >> > +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
+>> >> > +				       unsigned int align, slab_flags_t flags,
+>> >> > +				       void (*ctor)(void *));
+>> >> 
+>> >> As I said earlier, this can become _kmem_cache_create and
+>> >> __kmem_cache_create_args can be __kmem_cache_create from the beginning.
+>> 
+>> I didn't notice an answer to this suggestion? Even if it's just that you
+>> don't think it's worth the rewrite, or it's not possible because X Y Z.
+>> Thanks.
 > 
-> Right, there's quite a lot I need to do:
-> 
-> - Uncorrupt your patches
-> - Fix the conflict in the kvm selftests
-> - Drop the unnecessary ISBs
-> - Fix the ESR checking
-> - Fix the el2_setup labels
-> - Reorder the patches
-> - Drop the patch that is already in kvmarm
-> 
-> Working on it...
+> I'm confused. I sent two patches as a reply to the thread plus the
+> answer below and there's two patches in v3 that you can use or drop.
 
-Sorry! I'm happy to rebase onto some arm64 branch if that will help, just let me know.
+Right, that's the part below. But the suggestion above, and also in Mike's
+reply to 02/12 was AFAICS to rename __kmem_cache_create_args to
+__kmem_cache_create (since patch 02) and here __kmem_cache_create to
+_kmem_cache_create. It just seemed odd to see no reaction to that (did I
+miss or not receive it?).
 
-> 
-> Will
-> 
+>> 
+>> >> And as a followup cleanup both kmem_cache_create_usercopy() and
+>> >> kmem_cache_create() can be made static inlines.
+>> > 
+>> > Seems an ok suggestion to me. See the two patches I sent out now.
+>> 
+
 
