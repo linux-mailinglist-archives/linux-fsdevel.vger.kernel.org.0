@@ -1,60 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-28560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C646096C03B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:24:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CC096C08A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0532E1C250FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D282896D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8973E1DC07E;
-	Wed,  4 Sep 2024 14:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D1A1DB93C;
+	Wed,  4 Sep 2024 14:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WRhMVlz2"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EK6m47HZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7177A1DB53F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 14:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C941DA609
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 14:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459705; cv=none; b=a53q6NIsc3xdvuqai5p/kA2Awd40faJewRU2nAQgCjeZtCuaEG8X9sXaOm7f560+9bD2UI03p7uuYdiiTtF5fuFiqDJ8YkH08nhFV4VbKQwRjHWpRA9fTKp+WnRoEMFz8wHQGAjOIAVpFjl1/y9+DewVfBgnVqq29s90EZOeUWA=
+	t=1725460255; cv=none; b=r6cyEd747ap5JmZB7n3i9spgCcwzEthTuIXay3kN4TRdKzBphHaLBr87Wa4PQ7KYhMVmFYbRtJEjrV5KO4L77rfFJSWH1agriZRL1NSm+5fYdIfClQ/QllVtu8r6//HR52tc8rzWdm7b+dq1mikb6iK/h8Tj4CxnL6tq2zt9xO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459705; c=relaxed/simple;
-	bh=Ee4vo7PZM3Zk3hQK1lgw3YXZiVApTWr43sJz+jlUqO8=;
+	s=arc-20240116; t=1725460255; c=relaxed/simple;
+	bh=+ZXu6meYUp2emnk1pUEFpHVRsMcDsWR9d9edP3JL+tI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dn97J9K7xXGlCixHZTtwWRA4VuyDuFdizh/fYcLmvydw9OUysxvjWy0q4Kcxp9nlbLxE0QObm0AJ4GycLPwWGDRhP+ehzxf8/Fl8Gv8fVCgE1rbN59/xnHq2nEKyonIvC7I8ChyvPr6sU0EarzTf1OkYj+yCsCrJd9+5c1T+HE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WRhMVlz2; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7gk9ph82tBMzr0ozd/7pGq+2UgzGgtuUo8/UrCsf/NA=; b=WRhMVlz2qBa/XtyHxA4enVXKjF
-	QqprPEqK9xj/khuOBDR/lDr6YwI0pBvryZxlIiVFrM8tb90edcce5SZCmXQq7A1z3lPPyfreqwHi6
-	nVXGS4yUnycwZththKlD2oQ/POJc9B9l0Ur2p2EGE9/6j96Wfc26NmnTEAJ9q39dVtGbb3Ocwkal6
-	FSE5pqnYQvrBbXv2sm9xTkOgR7XRgM8AR5/jN0umuBZ5EL9uUkUloumIBEfLzlp7LmwaR3nGhoyTw
-	iE5UtU1ggD1Wrj2ctdbycXfsmFBpY+wgjNXtdq/i3PF4ZacEoT2M3GPtiKxXYE4rzy7SOe+EtgCxa
-	BHxBJrJQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1slqtA-000000095ki-1EjE;
-	Wed, 04 Sep 2024 14:21:40 +0000
-Date: Wed, 4 Sep 2024 15:21:40 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH RFC 18/20] fs: add f_pipe
-Message-ID: <20240904142140.GH1049718@ZenIV>
-References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
- <20240830-vfs-file-f_version-v1-18-6d3e4816aa7b@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XlF7Ubf2qetELejTPJUx5vmCETLXBTrXXs5Y/MOUC97tIimmO5bJbl7j2bV5vam1geeHJRQ2InPp5+lvnOS6G4o0bJHz8h+qrXRBA3ZVNbEvuqa5irUt44kClAqbUnrhpoMEAETOGRp14xX1IVIT9iKGFao72KDe0DTF7bzx78g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EK6m47HZ; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a866cea40c4so776297766b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 07:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725460252; x=1726065052; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mj+3ddf2T3OL11MVG0wgLWW55Rk8MJvA3KeiKNlFbs=;
+        b=EK6m47HZAyHgIrhryObg0UtFiQrm6tdnwPgHZ5pMSgAmtRt3Pt7IBgyJ5zD31UMF6T
+         7qLWVlQ1PUobHBeqlhByfSoZ1ps4Zzhve0rsDaOTcJKq8wuodsLqUUfb9jDJwbO7KxDO
+         MkiV78wAQHf5p0+oqa00nbHa1N+zmmXBBRdCjTQ34f7J+2TAeiHi36RnJ82VbhOKBXLa
+         8kNJC5wssnJFt+ZgRIbyAX0GFyRlmimAMnuKjGeOeMGzmua+cm5VlSt8NmDkWXu7oCeY
+         gleAH4VphEPkctfggHZVn3FRuxK4yHtOiUMcJw/2cBZG41sfK2TVUAYuo/5Z1z1Ii1Bb
+         kc6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725460252; x=1726065052;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4mj+3ddf2T3OL11MVG0wgLWW55Rk8MJvA3KeiKNlFbs=;
+        b=ilpcJlQANwynSPeODhOo9CO1LVf0KfBMCooZvWJ78BOpgZ2kMWsVme+VnR1OEeF0FM
+         7ozOjdR3gYMBvDc89TcfBH+Aet5v62KmShytxD6H/ZVvDjH5AeO9JUUxcqXeHsiPYN6y
+         m/7E/YCsfQh4ratGohR3M9wjh2Z4h5BEj/XgW3AubCQEwNWIOfjr+daPP+1m3gy3LCyp
+         OGLChSETbou8lw7OVB2FtGUgoru9G97/3rZnmVBcwxwxHSY5cKKSjvsu20hD8EP6CpDT
+         NCVYHQrUcKXLZH9r7xnDh1ekFOSl0tN37yiSx0vi6MktYwDTtGck+A+SW903Gf3pykMW
+         hH8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXYqLwnmqk7ktWb16ynliMH7pssnNvXs8PmF1kRbVXt7e6wxDejyazgienjer+oC1TEwtgL8lZP8LH2sUwG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkQ4Weq7ThasyfDNiChIEPB6Hv48ZUFk8uh9hyJALUd4jplKyo
+	q9hfr/3xb5ndZlnfyP4qxzIFNZB3rVm1lcpU0sOxYfGoXrQ0Ge++NcfVrYuZ8dE=
+X-Google-Smtp-Source: AGHT+IFMOIxyP6G+sV9SFwQbLa7RzZxnlSRsBYqqYkhtUdWNAPfVNmkYr+B0Ioi6gh+avo5V5Q6aYQ==
+X-Received: by 2002:a17:907:7206:b0:a89:9a9d:4e13 with SMTP id a640c23a62f3a-a8a1d56efbdmr693848266b.56.1725460251935;
+        Wed, 04 Sep 2024 07:30:51 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3ceasm810608566b.115.2024.09.04.07.30.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 07:30:51 -0700 (PDT)
+Date: Wed, 4 Sep 2024 16:30:50 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH printk v6 00/17] add threaded printing + the rest
+Message-ID: <ZthvGoJE26dOtsLm@pathway.suse.cz>
+References: <20240904120536.115780-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,23 +86,47 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240830-vfs-file-f_version-v1-18-6d3e4816aa7b@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20240904120536.115780-1-john.ogness@linutronix.de>
 
-On Fri, Aug 30, 2024 at 03:04:59PM +0200, Christian Brauner wrote:
-> Only regular files with FMODE_ATOMIC_POS and directories need
-> f_pos_lock. Place a new f_pipe member in a union with f_pos_lock
-> that they can use and make them stop abusing f_version in follow-up
-> patches.
+On Wed 2024-09-04 14:11:19, John Ogness wrote:
+> Hi,
+> 
+> This is v6 of a series to implement threaded console printing
+> as well as some other minor pieces (such as proc and sysfs
+> recognition of nbcon consoles). v5 is here [0].
+> 
+> For information about the motivation of the nbcon consoles,
+> please read the cover letter of the original v1 [1].
+> 
+> This series provides the remaining pieces of the printk
+> rework. All other components are either already mainline or are
+> currently in linux-next. In particular this series does:
+> 
+> - Implement dedicated printing threads per nbcon console.
+> 
+> - Implement forced threading of legacy consoles for PREEMPT_RT.
+> 
+> - Implement nbcon support for proc and sysfs console-related
+>   files.
+> 
+> - Provide a new helper function nbcon_reacquire_nobuf() to
+>   allow nbcon console drivers to reacquire ownership.
+> 
+> Note that this series does *not* provide an nbcon console
+> driver. That will come in a follow-up series.
 
-Not sure I like that - having lseek(2) use a separate primitive
-instead of fdget_pos(), grabbing ->f_pos_lock for _everything_ that
-has FMODE_LSEEK, directory or no directory, would simplify quite
-a few things.  OTOH, that will affect only the explanation of validity -
-pipes do *not* have FMODE_LSEEK, so it becomes "fdget_pos() and
-fdget_seek() are the only things that might want ->f_pos_lock, and
-neither touch it for pipes - fdget_pos() because FMODE_ATOMIC_POS
-is not there and fdget_seek() because FMODE_LSEEK isn't".
+JFYI, the patchset has been committed into printk/linux.git,
+branch rework/threaded-printk.
 
-Oh, well...
+I am not completely sure if we add this early enough for 6.12.
+On one hand, the patchset should not change the handling of legacy
+consoles and it does not add any nbcon console. But it touches
+many code paths where we decide how to flush the consoles
+and could imagine doing "ugly" mistakes there.
+
+OK, let's see how it works in linux-next in the following days.
+There is still time to catch problems and make the decision.
+
+Best Regards,
+Petr
 
