@@ -1,64 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-28584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F4696C3B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 18:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34C796C3E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 18:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A150B24B24
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:15:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5457C1F22E7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A399940C03;
-	Wed,  4 Sep 2024 16:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B471DEFD8;
+	Wed,  4 Sep 2024 16:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OSWlWl0y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jr0W+cR8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238996E619
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 16:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5901DA635
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 16:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725466526; cv=none; b=DhaLj4L3tbdDbKuJUL6uyCuf3wHVee/PRMiKWQ4lEvAF+9jAgvVRnB3bOZ3QGuW7k32T+s8aR90qKwnGRpFWDWt47z4gCYa70dWHEbyDkJEh7W1l2DP3i1anBuq599VbXN/d8Z3Vi7Ku3YTKKJcN0wCfYXlrLT4Nd73sFzFJl88=
+	t=1725466734; cv=none; b=ifPTgUhxdlswf9wV+D53EcblMqXuuRbiOtunrHQfXLGm68PqaTt3OCG4iW6zKt0hm3znxLtnBjnzvq4p2yrqdyICCTmJONwcdt3JAvTKtzplmYqiTlh006DHFy/C/WZKARpuQVIGif2+bzMDCQnOONe8uD1XW/6SmB1sbfsvo10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725466526; c=relaxed/simple;
-	bh=i24P1pP2DSRPvREOe+kgy1xDpWGvVqGe7mo8BMTbudg=;
+	s=arc-20240116; t=1725466734; c=relaxed/simple;
+	bh=tesxBCfwTg/kuycru8Mg8u33/AsWOez2Oe+2bc/mUpc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8uXxu5w67wO+BHimbE5Lx2VkahN3PFYZPK1XyAwu64t2Qgpax8ErQhnm6SPmJevrFHa2q8WmTPu7SEnsMtzqjWsWHJ2sEB3aytxQhxufpQTpJ0Fqm2eytSplxPyoXKrq26gj85EpD0LfBZC5bbsxZ9jm/k41czcnYAl5X+uefY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OSWlWl0y; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 4 Sep 2024 12:15:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725466521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFEcuTW9GDd5R6/s9Ksgowfe9BJ1JWP/ZMXulaxqbcg=;
-	b=OSWlWl0yQRlbiZ0Q2PnP/1MUfPHPqQY2Vtmznt8DU97IsUs2JjjIyV45FCjfImOpyIQECz
-	F+8Qul2/k8BAWHy8aJ1wqdv5cDJOXlXprRVoO4U7WY+VlIRCxyuwZJmUVVN+bH99o0dT9s
-	0z1NTY1JvtiD6Q/WC4XdwboIullwJAc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
-	Vlastimil Babka <vbabka@suse.cz>, Dave Chinner <dchinner@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <zdrwzpzbe5oqawyklyb4gmdf6evhvmw3on5w2ewjyqfmdv2ndy@w7kdgpakbqv3>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
- <Zta1aZA4u8PCHQae@tiehlicka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GrfBTc02xEdYY0WS990uYpr2A6WORlKmiNqluUTRTe8nKhx6Haj31szOy8NTmC1iZMmaibzHJxtLIQJ218PX/e4vwdyI7hhIJW+v8Dvu4jN4k7IiausInqIth2Pfi+vG4TW8m+DvTrCPMOZpRud9xCpJ3AgdNm9E6hfOX5GrpZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jr0W+cR8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3286C4CEC2;
+	Wed,  4 Sep 2024 16:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725466734;
+	bh=tesxBCfwTg/kuycru8Mg8u33/AsWOez2Oe+2bc/mUpc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jr0W+cR8hIUdNwmqShiz1t9o+WnBH+SKdPQBjMZobL8IaSZmfyg16ByWaUSNmn3az
+	 eQ2V7PjXigS7rWNXM3TDxuIM4nNMT1Z2K2AGImWSjnP3HEVpjQTCUWLaBsaMu0bDJH
+	 SWKOTJFC1Ha7BQo4fOCsrVooZL3wUiTkI10L69koN8q7dRUG5PX4Yzd6NvQeAW89sE
+	 4lM6KUoGKB2xgkW6DQ/VR1jLlqh5oQJDz/gz09dcshIHHIqdP6nqK06BaAmW4bSl1I
+	 GPqCiXVnPV7eKuWETTIHoJN2sSvh86xKDJt3Oq7aLImNtI2gyXcCjU0p76x1qBv+HB
+	 rquw64gZAScWQ==
+Date: Wed, 4 Sep 2024 19:16:07 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 02/15] slab: add struct kmem_cache_args
+Message-ID: <ZtiHxywbBG38cciA@kernel.org>
+References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-2-76f97e9a4560@kernel.org>
+ <Zth5wHtDkX78gl1l@kernel.org>
+ <20240904-bauaufsicht-gewohnheit-a70bd9266986@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,67 +62,133 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zta1aZA4u8PCHQae@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240904-bauaufsicht-gewohnheit-a70bd9266986@brauner>
 
-On Tue, Sep 03, 2024 at 09:06:17AM GMT, Michal Hocko wrote:
-> On Mon 02-09-24 18:32:33, Kent Overstreet wrote:
-> > On Mon, Sep 02, 2024 at 02:52:52PM GMT, Andrew Morton wrote:
-> > > On Mon, 2 Sep 2024 05:53:59 -0400 Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On Wed, Sep 04, 2024 at 05:48:31PM +0200, Christian Brauner wrote:
+> On Wed, Sep 04, 2024 at 06:16:16PM GMT, Mike Rapoport wrote:
+> > On Tue, Sep 03, 2024 at 04:20:43PM +0200, Christian Brauner wrote:
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > ---
+> > >  include/linux/slab.h | 21 ++++++++++++++++
+> > >  mm/slab_common.c     | 67 +++++++++++++++++++++++++++++++++++++++-------------
+> > >  2 files changed, 72 insertions(+), 16 deletions(-)
 > > > 
-> > > > On Mon, Sep 02, 2024 at 11:51:48AM GMT, Michal Hocko wrote:
-> > > > > The previous version has been posted in [1]. Based on the review feedback
-> > > > > I have sent v2 of patches in the same threat but it seems that the
-> > > > > review has mostly settled on these patches. There is still an open
-> > > > > discussion on whether having a NORECLAIM allocator semantic (compare to
-> > > > > atomic) is worthwhile or how to deal with broken GFP_NOFAIL users but
-> > > > > those are not really relevant to this particular patchset as it 1)
-> > > > > doesn't aim to implement either of the two and 2) it aims at spreading
-> > > > > PF_MEMALLOC_NORECLAIM use while it doesn't have a properly defined
-> > > > > semantic now that it is not widely used and much harder to fix.
-> > > > > 
-> > > > > I have collected Reviewed-bys and reposting here. These patches are
-> > > > > touching bcachefs, VFS and core MM so I am not sure which tree to merge
-> > > > > this through but I guess going through Andrew makes the most sense.
-> > > > > 
-> > > > > Changes since v1;
-> > > > > - compile fixes
-> > > > > - rather than dropping PF_MEMALLOC_NORECLAIM alone reverted eab0af905bfc
-> > > > >   ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") suggested
-> > > > >   by Matthew.
-> > > > 
-> > > > To reiterate:
-> > > > 
-> > > 
-> > > It would be helpful to summarize your concerns.
-> > > 
-> > > What runtime impact do you expect this change will have upon bcachefs?
+> > > diff --git a/include/linux/slab.h b/include/linux/slab.h
+> > > index 5b2da2cf31a8..79d8c8bca4a4 100644
+> > > --- a/include/linux/slab.h
+> > > +++ b/include/linux/slab.h
+> > > @@ -240,6 +240,27 @@ struct mem_cgroup;
+> > >   */
+> > >  bool slab_is_available(void);
+> > >  
+> > > +/**
+> > > + * @align: The required alignment for the objects.
+> > > + * @useroffset: Usercopy region offset
+> > > + * @usersize: Usercopy region size
+> > > + * @freeptr_offset: Custom offset for the free pointer in RCU caches
+> > > + * @use_freeptr_offset: Whether a @freeptr_offset is used
+> > > + * @ctor: A constructor for the objects.
+> > > + */
+> > > +struct kmem_cache_args {
+> > > +	unsigned int align;
+> > > +	unsigned int useroffset;
+> > > +	unsigned int usersize;
+> > > +	unsigned int freeptr_offset;
+> > > +	bool use_freeptr_offset;
+> > > +	void (*ctor)(void *);
+> > > +};
+> > > +
+> > > +struct kmem_cache *__kmem_cache_create_args(const char *name,
+> > > +					    unsigned int object_size,
+> > > +					    struct kmem_cache_args *args,
+> > > +					    slab_flags_t flags);
+> > >  struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+> > >  			unsigned int align, slab_flags_t flags,
+> > >  			void (*ctor)(void *));
+> > > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > > index 91e0e36e4379..0f13c045b8d1 100644
+> > > --- a/mm/slab_common.c
+> > > +++ b/mm/slab_common.c
+> > > @@ -248,14 +248,24 @@ static struct kmem_cache *create_cache(const char *name,
+> > >  	return ERR_PTR(err);
+> > >  }
+> > >  
+> > > -static struct kmem_cache *
+> > > -do_kmem_cache_create_usercopy(const char *name,
+> > > -		  unsigned int size, unsigned int freeptr_offset,
+> > > -		  unsigned int align, slab_flags_t flags,
+> > > -		  unsigned int useroffset, unsigned int usersize,
+> > > -		  void (*ctor)(void *))
+> > > +/**
+> > > + * __kmem_cache_create_args - Create a kmem cache
+> > > + * @name: A string which is used in /proc/slabinfo to identify this cache.
+> > > + * @object_size: The size of objects to be created in this cache.
+> > > + * @args: Arguments for the cache creation (see struct kmem_cache_args).
+> > > + * @flags: See %SLAB_* flags for an explanation of individual @flags.
+> > > + *
+> > > + * Cannot be called within a interrupt, but can be interrupted.
+> > > + *
+> > > + * Return: a pointer to the cache on success, NULL on failure.
+> > > + */
+> > > +struct kmem_cache *__kmem_cache_create_args(const char *name,
+> > > +					    unsigned int object_size,
+> > > +					    struct kmem_cache_args *args,
+> > > +					    slab_flags_t flags)
+> > >  {
+> > >  	struct kmem_cache *s = NULL;
+> > > +	unsigned int freeptr_offset = UINT_MAX;
+> > >  	const char *cache_name;
+> > >  	int err;
+> > >  
+> > > @@ -275,7 +285,7 @@ do_kmem_cache_create_usercopy(const char *name,
+> > >  
+> > >  	mutex_lock(&slab_mutex);
+> > >  
+> > > -	err = kmem_cache_sanity_check(name, size);
+> > > +	err = kmem_cache_sanity_check(name, object_size);
+> > >  	if (err) {
+> > >  		goto out_unlock;
+> > >  	}
+> > > @@ -296,12 +306,14 @@ do_kmem_cache_create_usercopy(const char *name,
+> > >  
+> > >  	/* Fail closed on bad usersize of useroffset values. */
+> > >  	if (!IS_ENABLED(CONFIG_HARDENED_USERCOPY) ||
+> > > -	    WARN_ON(!usersize && useroffset) ||
+> > > -	    WARN_ON(size < usersize || size - usersize < useroffset))
+> > > -		usersize = useroffset = 0;
+> > > -
+> > > -	if (!usersize)
+> > > -		s = __kmem_cache_alias(name, size, align, flags, ctor);
+> > > +	    WARN_ON(!args->usersize && args->useroffset) ||
+> > > +	    WARN_ON(object_size < args->usersize ||
+> > > +		    object_size - args->usersize < args->useroffset))
+> > > +		args->usersize = args->useroffset = 0;
+> > > +
+> > > +	if (!args->usersize)
+> > > +		s = __kmem_cache_alias(name, object_size, args->align, flags,
+> > > +				       args->ctor);
 > > 
-> > For bcachefs: I try really hard to minimize tail latency and make
-> > performance robust in extreme scenarios - thrashing. A large part of
-> > that is that btree locks must be held for no longer than necessary.
+> > Sorry I missed it in the previous review, but nothing guaranties that
+> > nobody will call kmem_cache_create_args with args != NULL.
 > > 
-> > We definitely don't want to recurse into other parts of the kernel,
-> > taking other locks (i.e. in memory reclaim) while holding btree locks;
-> > that's a great way to stack up (and potentially multiply) latencies.
+> > I think there should be a check for args != NULL and a substitution of args
+> > with defaults if it actually was NULL.
 > 
-> OK, these two patches do not fail to do that. The only existing user is
-> turned into GFP_NOWAIT so the final code works the same way. Right?
+> I think that callers that pass NULL should all be switched to
+> KMEM_CACHE() and passing NULL should simply not be supported. And the
+> few callers that need some very special alignment need to pass struct
+> kmem_cache_args anyway. So there should never be a need to pass NULL.
 
-https://lore.kernel.org/linux-mm/20240828140638.3204253-1-kent.overstreet@linux.dev/
+But you can't guarantee that some random driver won't call
 
-> > But gfp flags don't work with vmalloc allocations (and that's unlikely
-> > to change), and we require vmalloc fallbacks for e.g. btree node
-> > allocation. That's the big reason we want MEMALLOC_PF_NORECLAIM.
-> 
-> Have you even tried to reach out to vmalloc maintainers and asked for
-> GFP_NOWAIT support for vmalloc? Because I do not remember that. Sure
-> kernel page tables are have hardcoded GFP_KERNEL context which slightly
-> complicates that but that doesn't really mean the only potential
-> solution is to use a per task flag to override that. Just from top of my
-> head we can consider pre-allocating virtual address space for
-> non-sleeping allocations. Maybe there are other options that only people
-> deeply familiar with the vmalloc internals can see.
+	__kmem_cache_create_args("name", size, NULL, flags);
 
-That sounds really overly complicated.
+At least we'd need
+	
+	if (!args)
+		return -EINVAL;
+
+-- 
+Sincerely yours,
+Mike.
 
