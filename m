@@ -1,98 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-28541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A288596BAEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 13:38:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBD096BAF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 13:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D341289C1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 11:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBE41C208B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 11:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A98B522F;
-	Wed,  4 Sep 2024 11:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4F81D0152;
+	Wed,  4 Sep 2024 11:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEXC1Eiv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1809D146A7A;
-	Wed,  4 Sep 2024 11:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3980A1CF5F6
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 11:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725449893; cv=none; b=CM9z+3ykBJRr+DfNkHiu7ssR+qX7YYI3uHwsTjhkLomaMFNq6hs8dVkvyOvynbwuHws93Djf/SixtS6J9BzaGR7JKqJIiGOArPOwtpvisuboI+OyYufKYI0dJmp4+Q/iapMhroL61k7+NiRGlEw/45JzDh0G9wSpneADrZFeqkw=
+	t=1725449942; cv=none; b=MsgZiS22I7khyN7TSV9Tepn4q1ziqUBEbefGYE0LUTskkmQacSWrqleKyU+LqqBHUVb96w8l24485tuvbyogPYLlvsYywtyACvy2InhNGJ1bPUNnSuJ2de6s/21IEJ1kmDWkXnlrex6QZiSaYJabfarP22O+6ZURB5ZopB/kkRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725449893; c=relaxed/simple;
-	bh=dGZ5cpThAXtBsU03hSCLVoS4EpyGsm5b2NBao6fU/CE=;
+	s=arc-20240116; t=1725449942; c=relaxed/simple;
+	bh=+w0xFoTV0Lh4uapfvz5wp1iY4crS8ZjQkBVqDb/Sj5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZoRPzuIGoANGd03hLQ2XkuPMzwlSjWYj75uGJ4ISdvZQGSt+o5f69tGDcoSkkMuC4hMHBRCAvD4ktuxJYcdSq4f6SaMXbnmt7raKl7dcYrBMe7YtsLirmHuC0prsRgY4GG5ooCDDPypAajSctACqkNPfZTch/TT8p4XjWQj4Bcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4212C4CEC2;
-	Wed,  4 Sep 2024 11:38:07 +0000 (UTC)
-Date: Wed, 4 Sep 2024 12:38:05 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org,
-	nd@arm.com, akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
-	broonie@kernel.org, christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 06/30] arm64: context switch POR_EL0 register
-Message-ID: <ZthGnTz8wlcy4ncK@arm.com>
-References: <20240822151113.1479789-1-joey.gouly@arm.com>
- <20240822151113.1479789-7-joey.gouly@arm.com>
- <20240823144531.GH32156@willie-the-truck>
- <Zsi7ovLOfuFdfuuz@arm.com>
- <20240823170835.GA1181@willie-the-truck>
- <ZsjXtE7Kg0LQwNAL@arm.com>
- <20240827113803.GB4318@willie-the-truck>
- <ZtYNGBrcE-j35fpw@arm.com>
- <20240903145413.GB3669886@e124191.cambridge.arm.com>
- <20240904102254.GA13280@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XvzJaliIuv7NEMQecPZKZjpIHmfrCnaWKjIVUTNOJk5XaMABlBwmlVId51/zbXXMZZusRd0iCscgiKcSQNEWxr15/d7DcwypmURxKhgJF7RAezp+aaTSCyQ4l+p91gyY2n03Qu3H8kwQ+Js4d17aeWGyPBJ36z40AHlDSBO/vqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEXC1Eiv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39423C4CEC2;
+	Wed,  4 Sep 2024 11:39:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725449942;
+	bh=+w0xFoTV0Lh4uapfvz5wp1iY4crS8ZjQkBVqDb/Sj5c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FEXC1Eiv8SQnU2Vu7kYshplTkF4FdzhAl+YEhVvcaqm1UqSYNNn8VwmBBjvDCAUZF
+	 coVR0WmfSKTc9SDCfNtlDghkwaEGrlbDJ03DpMj8C+X3vXkoPG5bO8TeaA9ArYlpfM
+	 /UxiPQ9732dLzjoJTA+g1FRePlw22E/TxKCjqj7EsFylUXmcX5FnbE/Gktnw+8tSeA
+	 EGq6EjLBqK0PjAJMw3MBJI97WnDshAojp5cV4EBcS2OrwMre6KXx8oRcIvEQL4LEf2
+	 XNkLzwBg6HgTGjIchWJhXP3VkrM95VGHXEN+kuySXEhqqFTa0h4pyXGCeQibei0D3N
+	 Sz/XfJi95VW1A==
+Date: Wed, 4 Sep 2024 13:38:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mike Rapoport <rppt@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 12/15] slab: create kmem_cache_create() compatibility
+ layer
+Message-ID: <20240904-absuchen-gockel-8246820867b4@brauner>
+References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
+ <20240903-work-kmem_cache_args-v2-12-76f97e9a4560@kernel.org>
+ <ZtfssAqDeyd_-4MJ@kernel.org>
+ <20240904-storch-worin-32db25e60f32@brauner>
+ <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240904102254.GA13280@willie-the-truck>
+In-Reply-To: <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
 
-On Wed, Sep 04, 2024 at 11:22:54AM +0100, Will Deacon wrote:
-> On Tue, Sep 03, 2024 at 03:54:13PM +0100, Joey Gouly wrote:
-> > commit 3141fb86bee8d48ae47cab1594dad54f974a8899
-> > Author: Joey Gouly <joey.gouly@arm.com>
-> > Date:   Tue Sep 3 15:47:26 2024 +0100
-> > 
-> >     fixup! arm64: context switch POR_EL0 register
-> > 
-> > diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> > index a3a61ecdb165..c224b0955f1a 100644
-> > --- a/arch/arm64/kernel/process.c
-> > +++ b/arch/arm64/kernel/process.c
-> > @@ -515,11 +515,8 @@ static void permission_overlay_switch(struct task_struct *next)
-> >                 return;
-> > 
-> >         current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
-> > -       if (current->thread.por_el0 != next->thread.por_el0) {
-> > +       if (current->thread.por_el0 != next->thread.por_el0)
-> >                 write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
-> > -               /* ISB required for kernel uaccess routines when chaning POR_EL0 */
-> > -               isb();
-> > -       }
-> >  }
+On Wed, Sep 04, 2024 at 12:50:28PM GMT, Vlastimil Babka wrote:
+> On 9/4/24 11:45, Christian Brauner wrote:
+> > On Wed, Sep 04, 2024 at 08:14:24AM GMT, Mike Rapoport wrote:
+> >> On Tue, Sep 03, 2024 at 04:20:53PM +0200, Christian Brauner wrote:
+> >> > Use _Generic() to create a compatibility layer that type switches on the
+> >> > third argument to either call __kmem_cache_create() or
+> >> > __kmem_cache_create_args(). This can be kept in place until all callers
+> >> > have been ported to struct kmem_cache_args.
+> >> > 
+> >> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> >> 
+> >> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> >> 
+> >> > ---
+> >> >  include/linux/slab.h | 13 ++++++++++---
+> >> >  mm/slab_common.c     | 10 +++++-----
+> >> >  2 files changed, 15 insertions(+), 8 deletions(-)
+> >> > 
+> >> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+> >> > index aced16a08700..4292d67094c3 100644
+> >> > --- a/include/linux/slab.h
+> >> > +++ b/include/linux/slab.h
+> >> > @@ -261,9 +261,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
+> >> >  					    unsigned int object_size,
+> >> >  					    struct kmem_cache_args *args,
+> >> >  					    slab_flags_t flags);
+> >> > -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+> >> > -			unsigned int align, slab_flags_t flags,
+> >> > -			void (*ctor)(void *));
+> >> > +
+> >> > +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
+> >> > +				       unsigned int align, slab_flags_t flags,
+> >> > +				       void (*ctor)(void *));
+> >> 
+> >> As I said earlier, this can become _kmem_cache_create and
+> >> __kmem_cache_create_args can be __kmem_cache_create from the beginning.
 > 
-> What about the one in flush_poe()? I'm inclined to drop that as well.
+> I didn't notice an answer to this suggestion? Even if it's just that you
+> don't think it's worth the rewrite, or it's not possible because X Y Z.
+> Thanks.
 
-Yes, that's a similar thing.
+I'm confused. I sent two patches as a reply to the thread plus the
+answer below and there's two patches in v3 that you can use or drop.
 
--- 
-Catalin
+> 
+> >> And as a followup cleanup both kmem_cache_create_usercopy() and
+> >> kmem_cache_create() can be made static inlines.
+> > 
+> > Seems an ok suggestion to me. See the two patches I sent out now.
+> 
 
