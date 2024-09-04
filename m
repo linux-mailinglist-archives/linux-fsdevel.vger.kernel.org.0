@@ -1,125 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-28601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3BA896C4DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 19:05:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2525496C4DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 19:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1197E1C25007
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 17:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA2A1F25905
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 17:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3782F1E0B7E;
-	Wed,  4 Sep 2024 17:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645AC1E0B83;
+	Wed,  4 Sep 2024 17:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c27obQdQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKlqsYDL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261D81DC079
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 17:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BC143152;
+	Wed,  4 Sep 2024 17:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725469511; cv=none; b=V/k0jrfZALFVmNN78d/gdxj/WlaXMwZPJcEb5sEfvkZeniZmiRjoHKth2Gv7K8r5nY2Q0w9RWc4MpHSwvPo411AIuluc7/GzsjPzftgG2byceRGQYr+IxHYdkh8PtQY8eWFncr7FldUq+azKRgkuNLtlCxftGMkz/3ZlWVhPTC0=
+	t=1725469529; cv=none; b=fNtjL8OhhNUb/pjq3OqKPjV/QVQwDH7DKXOB/JOEK3qsHhqdVPLgpch/DX9Z5vZd4DHeZGr/gASaA6rplH+UGOT10BzD+/eCP1Lmf7hlxedALJdssR3CGP1XF1UT5tuuRPWgvf0a/Q72QoGBdjjPJQw7Cfouk4Waj/oEG4mlmnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725469511; c=relaxed/simple;
-	bh=eEbMR5sJOGHdR4hsg+rR8Tn3NsZZ3ta4DvPKuylS9G0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UUO9YACxKBHRybnO2F57Hulloh2NWbTr7p6KF8pzBsqhS07WDunFcNYvXk8OcEZon0jOGZGt4If8tJGfF12u5lTgxTdReIvI/kuj4/o0bXLkLCaaMyXjvGAmTTHDyIYE0DL2QXxd/wyVohipgFDfug5zyCXGL1PIJGc1B62oFFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c27obQdQ; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c2460e885dso944a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 10:05:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725469508; x=1726074308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BGKKwnKBtULPKByPd0VuQJbNaazKa6p+MrDbswg8Z2Y=;
-        b=c27obQdQd+5XMfpDdZ7YY0BSfkZp1LWwDtnbct2HAw3ZH6Nk6o8RZqHw85qKuTKsp6
-         Z3bdAuSSlHcDgr0vmfKXCjRl11YUlN8TqBKQ8x3t6wm4InQf2OGAopGwu/XVwGeORMSY
-         7QT9dkQ8M5l9p4dACf7mhIan0TcFDFZaNifuMN8tpGR/5t+k5q2rZwo+dkBZYQJKbSPn
-         Uk05FeJOzTfDsKdHQ4ntuwtUomAkyf57qvxyEN5Tl02wjqg4vdtCXeVjSfSspzfeK3qH
-         8a7Sj31jW/9bt8WiytWSBO3txdEzOCGatxzQXA0fGsTctGJGHc/LoiHRK1V/Y9j6Itxv
-         9sBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725469508; x=1726074308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BGKKwnKBtULPKByPd0VuQJbNaazKa6p+MrDbswg8Z2Y=;
-        b=s7VEYyeI8dv5ca6pryGEV1Oq5ijKc9OvA9SXOrcS1OPys+TPd3mCyg8bujrhuqlKEC
-         5r+ofB9NaGcXdwNg2+6hy6BgU9w5NaH38xS5LBW6mANrdsyMxcd9bi/fW61bNWgCXsyF
-         2XXM2zRl+LZLirD8r4qh75fGpnXwY/FI3A4zD9QkYcaCo3r3Qob06dzwCicTP2nJpBlU
-         HOWPGiznlM1ZAQinD708vdwztu0zTvtUn6Ua2o1KnzSVH1dh9iIiNfoOiLOFnZteiDaO
-         sdUWYY4lklSy53G4y9ib0V57jpVr80vCZQ0T8SyZlEt8KwEzWnvRoQumpeo7a19Dz/rh
-         8ggg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzAOGO+sxJHHTQ0fZ1xmIEjR1UGDHn/Bck0jBVelYidwRSUguZI0eV5R1Dk72L+xq/1kpLdwpFyP+LVKSB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCjzbL6NueZz1nsJ1XkLezLpGJ+Qne9eQSMhpsvcgA5G3Hneb8
-	nUjRpUBatrUhOV7iX2KvW2toDd5Axj2N2Jo2PwVksh6oFTikm0y3TfRRljY58IxWAJjE/sASfrw
-	llXe5uCMa5V9zALFj3bCPCBUYNw14jP89pZWe
-X-Google-Smtp-Source: AGHT+IGwiTvv8JFtAD7mnwNOHhZO0XjtuxjpCwJ+dxu+zMx8RmL9UkSfEcQZfUTGg8ykX+529d60DH1wVsGqIQ9TssY=
-X-Received: by 2002:a05:6402:50d2:b0:5c2:2d47:2868 with SMTP id
- 4fb4d7f45d1cf-5c278557341mr201680a12.6.1725469507249; Wed, 04 Sep 2024
- 10:05:07 -0700 (PDT)
+	s=arc-20240116; t=1725469529; c=relaxed/simple;
+	bh=0gw45QxN3fNUQlIV0l0iCm8GEARvkwPgJdU3FZfLCE4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E+KYAIllFAcHPAsYLhHCZcfofc+x21Sa3ZtTe3GbTFe2+I0MTba2OCzcv2ip0fqNLhmyS9G9W2x0feH5RYV9quA3iGjZvv4lYmwuFX38nYA0Hn6ea1f6oU7OA2eR1n4HYonECAy8jWl5nL1Oh35o+z5tEzSblCx7IvTDQVWA+MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKlqsYDL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40408C4CEC5;
+	Wed,  4 Sep 2024 17:05:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725469529;
+	bh=0gw45QxN3fNUQlIV0l0iCm8GEARvkwPgJdU3FZfLCE4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qKlqsYDLXHs0iW3ETzrWnTRx/FFUL3jDSU4JY29c9EYYGmqlPmyUvUnkw7/SWH2G3
+	 VdNQNSRW6//Mm1pBsOORRXDfmjRazMqR1R/JqgZ2Zss1tL4l5Y7tLElrzXRanury9D
+	 CeiQfmDFIxVzSo3roysBXKD6LYAXHzaV1WfP4ykVbE+8snaRnTD70u0d4y9cmZgNqB
+	 LJYwhAn+SIMVfd0rHI3ly9q54Fa9Fcp/5aK0UtTYmnIHcRcr+pxha1T+d4XjGGGB2N
+	 J6QtFp1RDFErkjMpK/FgI4UTUf/i9lpDKzMpYNBold6zhiVaRdpsn8KF7CHLvC0vq2
+	 y5vpwwebK2gwA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sltRe-009hKx-M3;
+	Wed, 04 Sep 2024 18:05:26 +0100
+Date: Wed, 04 Sep 2024 18:05:26 +0100
+Message-ID: <86plpjuz6x.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Joey Gouly <joey.gouly@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	nd@arm.com,
+	akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com,
+	anshuman.khandual@arm.com,
+	bp@alien8.de,
+	broonie@kernel.org,
+	christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org,
+	mingo@redhat.com,
+	mpe@ellerman.id.au,
+	naveen.n.rao@linux.ibm.com,
+	npiggin@gmail.com,
+	oliver.upton@linux.dev,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	szabolcs.nagy@arm.com,
+	tglx@linutronix.de,
+	x86@kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 06/30] arm64: context switch POR_EL0 register
+In-Reply-To: <20240904161758.GA14323@willie-the-truck>
+References: <Zsi7ovLOfuFdfuuz@arm.com>
+	<20240823170835.GA1181@willie-the-truck>
+	<ZsjXtE7Kg0LQwNAL@arm.com>
+	<20240827113803.GB4318@willie-the-truck>
+	<ZtYNGBrcE-j35fpw@arm.com>
+	<20240903145413.GB3669886@e124191.cambridge.arm.com>
+	<20240904102254.GA13280@willie-the-truck>
+	<20240904113221.GA3891700@e124191.cambridge.arm.com>
+	<20240904114301.GA13550@willie-the-truck>
+	<20240904125503.GA3901671@e124191.cambridge.arm.com>
+	<20240904161758.GA14323@willie-the-truck>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240531-beheben-panzerglas-5ba2472a3330@brauner> <20240531-vfs-i_writecount-v1-1-a17bea7ee36b@kernel.org>
-In-Reply-To: <20240531-vfs-i_writecount-v1-1-a17bea7ee36b@kernel.org>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 4 Sep 2024 19:04:29 +0200
-Message-ID: <CAG48ez2Vv8Z8nmn=mRwQ3_5azksszwoc+8UJgo3nh2uk-VwYXQ@mail.gmail.com>
-Subject: Re: [PATCH] fs: don't block i_writecount during exec
-To: Christian Brauner <brauner@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	amir73il@gmail.com, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, 
-	jack@suse.cz, david@fromorbit.com, hch@lst.de, 
-	linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: will@kernel.org, joey.gouly@arm.com, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, nd@arm.com, akpm@linux-foundation.org, aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de, broonie@kernel.org, christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org, szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-[necrothreading...]
-[+IMA folks]
+On Wed, 04 Sep 2024 17:17:58 +0100,
+Will Deacon <will@kernel.org> wrote:
+> 
+> On Wed, Sep 04, 2024 at 01:55:03PM +0100, Joey Gouly wrote:
+> > On Wed, Sep 04, 2024 at 12:43:02PM +0100, Will Deacon wrote:
+> > > Right, there's quite a lot I need to do:
+> > > 
+> > > - Uncorrupt your patches
+> > > - Fix the conflict in the kvm selftests
+> > > - Drop the unnecessary ISBs
+> > > - Fix the ESR checking
+> > > - Fix the el2_setup labels
+> > > - Reorder the patches
+> > > - Drop the patch that is already in kvmarm
+> > > 
+> > > Working on it...
+> > 
+> > Sorry! I'm happy to rebase onto some arm64 branch if that will help, just let me know.
+> 
+> Please have a look at for-next/poe (also merged into for-next/core and
+> for-kernelci) and let me know what I got wrong!
+> 
+> For Marc: I reordered the series so the KVM bits (and deps) are all the
+> beginning, should you need them. The branch is based on a merge of the
+> shared branch you created previously.
 
-On Fri, May 31, 2024 at 3:01=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> Back in 2021 we already discussed removing deny_write_access() for
-> executables. Back then I was hesistant because I thought that this might
-> cause issues in userspace. But even back then I had started taking some
-> notes on what could potentially depend on this and I didn't come up with
-> a lot so I've changed my mind and I would like to try this.
-[snip]
-> Yes, someone in userspace could potentially be relying on this. It's not
-> completely out of the realm of possibility but let's find out if that's
-> actually the case and not guess.
+I just had a quick check, and while there is a small conflict with
+kvmarm/next, it is extremely minor (small clash in the vcpu_sysreg,
+for which the resolving order doesn't matter), and not worth dragging
+additional patches in the shared branch.
 
-FYI, ima_bprm_check() still has a comment that claims that executables
-use deny_write_access():
+However, if KVM's own S1PIE series [1] ends up being merged (which I'd
+really like), I will definitely have to pull the prefix in, as this is
+a bit more involved conflict wise.
 
-/**
- * ima_bprm_check - based on policy, collect/store measurement.
- * @bprm: contains the linux_binprm structure
- *
- * The OS protects against an executable file, already open for write,
- * from being executed in deny_write_access() and an executable file,
- * already open for execute, from being modified in get_write_access().
- * So we can be certain that what we verify and measure here is actually
- * what is being executed.
- *
- * On success return 0.  On integrity appraisal error, assuming the file
- * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
- */
+Thanks,
 
-But what actually happens in there is not so different from what
-happens in ima_file_mmap(), so I think probably the only change
-required here is to fix up the comment...
+	M.
+
+[1] http://lore.kernel.org/all/20240903153834.1909472-1-maz@kernel.org
+
+-- 
+Without deviation from the norm, progress is not possible.
 
