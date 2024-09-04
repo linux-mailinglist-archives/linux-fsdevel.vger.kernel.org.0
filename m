@@ -1,115 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-28549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AE996BBA3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:08:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7F096BBBE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33523B20AE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:07:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290341C21300
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 12:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CF31D9D6D;
-	Wed,  4 Sep 2024 12:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B97F1D799B;
+	Wed,  4 Sep 2024 12:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="puXW/aJj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fr0Hu5fD"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MenJUkoG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C107D1D88B1;
-	Wed,  4 Sep 2024 12:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E83D1D2F73;
+	Wed,  4 Sep 2024 12:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451545; cv=none; b=m6ixx33Jo+0AAGJUXOFkM7wkzy1VLZ5Xv/0vvBJY3zCHyGOjnLwFTnMSkhQelp+uHwXTMfXIHKcOJ+o38YNW1SsbQi2U/4EQn4YVvbisV6D0duqnSGeoMDRCRdy10var7uv/r+ymYgK1bYppeo4+8HXiONZsYxvmm9iUqHNGtM0=
+	t=1725451946; cv=none; b=L8VeefT0EExoZwd9qLcWNSr7PCtBSoMonvhZXMxqqdNr4RQypzSYKzzF+81JYLlt+KEHl1kszIuLyVS/RgjjAVp04+zCVBDhJVcuN8VEZPv/aPtDT7rg7OcreEuUeNlzxhtkw4DFxrQ4Zfsu+YU2rHaCm3XT/YDsMRaMzrpruQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451545; c=relaxed/simple;
-	bh=RuhFMyH0buaWaNTtg4qur9A9+lQbBJQXU2dz3dvH8mI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fzx+1pfoRmDJ73T9q5gUQtEvx+DZRHZFVm31b1YnKBIak/vDnQuD4byEdJl6LLlUUKutYHTxgfuG8H/oHkQRpwgob16nRty5+Y2Ad3VCtgyXghQUBB7dv3RqmSrvBbE239nJQ41Mn5ULFxaldxU7eezWUEnvKEaJcdGd7ld9Rrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=puXW/aJj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fr0Hu5fD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725451541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SlCaONAJqxgKpAXbE82io/gLxoDWz0lN5rgg6CE37cM=;
-	b=puXW/aJjvKQzJz4B+AhMOEu3xwNnuLX+i4E9FhjF5YaQMz/klqdle61r27LKbzt19t2isA
-	N4hMFxZfAxt6bf4GT0yxxnc3HAMzgEO4Y2NAiqB6IFkO+2Cpvs54FxdyrJZxfTAIlJWv/M
-	NCKe74h6D6oRqy8KgVMpjfc4WH/bz1ribycT3c5dqkdzEqgswOXxymFQBIyBoV8TRe0vjz
-	HsOe7A0vVC8nOesVYIFrCGNpyOK0Ur088eHlGRzr9tN1CF2Xl/W+3ZXhJDKiOgooqq2m5S
-	QzHcKmo9LEVBNUUEomnNkSE2ARdUW/wQWNgrDAdBq2npH9qZuwzR6Ok4Z3+4/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725451541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SlCaONAJqxgKpAXbE82io/gLxoDWz0lN5rgg6CE37cM=;
-	b=Fr0Hu5fDe+isW5N7CbZuRbpWFte7IqWoF68DG9ZwJg4b4jCbeqZTNETmcMcE7GIm6Z/s4B
-	MZ8Su6RioGS44qDQ==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH printk v6 13/17] proc: Add nbcon support for /proc/consoles
-Date: Wed,  4 Sep 2024 14:11:32 +0206
-Message-Id: <20240904120536.115780-14-john.ogness@linutronix.de>
-In-Reply-To: <20240904120536.115780-1-john.ogness@linutronix.de>
-References: <20240904120536.115780-1-john.ogness@linutronix.de>
+	s=arc-20240116; t=1725451946; c=relaxed/simple;
+	bh=bhMwT3aNve1Sa2O5I5pi9juMgaZOG8OpMmVR6nCCi4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NiggXLlQKoJpHop8ykp8Vv7xgP4eQE83L9mamVjvmKlYsXcynMINOVkQbdGBicibOIpvH7+3IjsOKmu+RfxHeSbWXvNE6bo5NW+7V3YUr58yw26SvewH4eGpO4JS7T0ugPhhIQgWEtD96Jcf43pSZlY1qREtS5shJUp7rq2Tu6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MenJUkoG; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725451935; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=v0DthQyFZgbl+wIxLBCPl1i9Aa9+jT9oqkUW1rb5jvU=;
+	b=MenJUkoGUYNtqxLVaIvOMYlr7mauEZscrMwXKy6EuHqqH7E61xbyzakVct2L7dllolL67xIX/LtD4zSaln9/Odc77xQ2MZu9e1qqpiiFENdh6M1qTPlBiR5XHF0mlAmuk3m3itIjTtx54FTIguqW7ms6IITgqFl/OxGqC1+MhV4=
+Received: from 30.221.147.91(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WEHimvR_1725451933)
+          by smtp.aliyun-inc.com;
+          Wed, 04 Sep 2024 20:12:14 +0800
+Message-ID: <8264705a-1dc0-45a7-92d9-7395e1aa99db@linux.alibaba.com>
+Date: Wed, 4 Sep 2024 20:12:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] virtiofs: use GFP_NOFS when enqueuing request
+ through kworker
+To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>,
+ "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ houtao1@huawei.com
+References: <20240831093750.1593871-1-houtao@huaweicloud.com>
+ <20240831093750.1593871-3-houtao@huaweicloud.com>
+ <5769af42-e4dd-4535-9432-f149b8c17af5@linux.alibaba.com>
+ <815f6c3d-bb8a-1a23-72dd-cd7b1f5f06d0@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <815f6c3d-bb8a-1a23-72dd-cd7b1f5f06d0@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Update /proc/consoles output to show 'W' if an nbcon console is
-registered. Since the write_thread() callback is mandatory, it
-enough just to check if it is an nbcon console.
 
-Also update /proc/consoles output to show 'N' if it is an
-nbcon console.
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
----
- fs/proc/consoles.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On 9/4/24 11:53 AM, Hou Tao wrote:
+> 
+> 
+> On 9/3/2024 5:34 PM, Jingbo Xu wrote:
+>>
+>> On 8/31/24 5:37 PM, Hou Tao wrote:
+>>> From: Hou Tao <houtao1@huawei.com>
+>>>
+>>> When invoking virtio_fs_enqueue_req() through kworker, both the
+>>> allocation of the sg array and the bounce buffer still use GFP_ATOMIC.
+>>> Considering the size of the sg array may be greater than PAGE_SIZE, use
+>>> GFP_NOFS instead of GFP_ATOMIC to lower the possibility of memory
+>>> allocation failure and to avoid unnecessarily depleting the atomic
+>>> reserves. GFP_NOFS is not passed to virtio_fs_enqueue_req() directly,
+>>> GFP_KERNEL and memalloc_nofs_{save|restore} helpers are used instead.
+>>>
+>>> It may seem OK to pass GFP_NOFS to virtio_fs_enqueue_req() as well when
+>>> queuing the request for the first time, but this is not the case. The
+>>> reason is that fuse_request_queue_background() may call
+>>> ->queue_request_and_unlock() while holding fc->bg_lock, which is a
+>>> spin-lock. Therefore, still use GFP_ATOMIC for it.
+>> Actually, .wake_pending_and_unlock() is called under fiq->lock and
+>> GFP_ATOMIC is requisite.
+> 
+> Er, but virtio_fs_wake_pending_and_unlock() unlocks fiq->lock before
+> queuing the request.
 
-diff --git a/fs/proc/consoles.c b/fs/proc/consoles.c
-index 7036fdfa0bec..b7cab1ad990d 100644
---- a/fs/proc/consoles.c
-+++ b/fs/proc/consoles.c
-@@ -21,6 +21,7 @@ static int show_console_dev(struct seq_file *m, void *v)
- 		{ CON_ENABLED,		'E' },
- 		{ CON_CONSDEV,		'C' },
- 		{ CON_BOOT,		'B' },
-+		{ CON_NBCON,		'N' },
- 		{ CON_PRINTBUFFER,	'p' },
- 		{ CON_BRL,		'b' },
- 		{ CON_ANYTIME,		'a' },
-@@ -58,8 +59,8 @@ static int show_console_dev(struct seq_file *m, void *v)
- 	seq_printf(m, "%s%d", con->name, con->index);
- 	seq_pad(m, ' ');
- 	seq_printf(m, "%c%c%c (%s)", con->read ? 'R' : '-',
--			con->write ? 'W' : '-', con->unblank ? 'U' : '-',
--			flags);
-+		   ((con->flags & CON_NBCON) || con->write) ? 'W' : '-',
-+		   con->unblank ? 'U' : '-', flags);
- 	if (dev)
- 		seq_printf(m, " %4d:%d", MAJOR(dev), MINOR(dev));
- 
+Alright, I missed that :(
+
+
 -- 
-2.39.2
-
+Thanks,
+Jingbo
 
