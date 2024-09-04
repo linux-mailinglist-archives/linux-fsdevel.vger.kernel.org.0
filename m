@@ -1,217 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-28593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA48096C454
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 18:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 073B996C459
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 18:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE90C1C22B71
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:45:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF941C24414
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F681E0B9B;
-	Wed,  4 Sep 2024 16:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DA61E1312;
+	Wed,  4 Sep 2024 16:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IR1369uG"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TWW6zgwB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67411E0B79;
-	Wed,  4 Sep 2024 16:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E67D84A21
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 16:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725468309; cv=none; b=M9unZloHLuHy24u+9+JUECtqWI7i6yXc1/lY/JdzYv4p8Y5RzRObq5J6LcU05WQ6+hZ5oO1LRh/7Hh3Oiy2mdYC4JI2C07gXdb+AAvMJKA2TaaX4MzUHcS475RnYhwMLw0bAriEtfQqAZ4XVBPgmpa/8TeuyFIVpI41ACWz+IB4=
+	t=1725468365; cv=none; b=hA229Vzn9TvHCWtuJHjQe1VDQy7WqPfGvBYmTszEAW8I+zBfLO9BzYHKLuRnENXYu5NL29Vs5QI7+mPHxvZKHw4XVqGFZxpVLxgPBasndk+eOboYcc3WnPkC0psLO7KThqQgysB1daU8KVEndsL7h3uuu/atNbMOCulw+3R4LpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725468309; c=relaxed/simple;
-	bh=sZq5Sl4k2Ja4Iix3tKV1PrlAHf29Z7WsTqEoXj5tVQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u+HwOzlYGRh3C9q3M4d0jkXo+5HlqrtAEHl5rJptspQD7GUetJf+4cy/9IC0eBjgHHUGJwKY8UeiWs7TjE19sOprUeMKoOaUNAE2PN/9XTy+LkNhwNqKOSi8XzpUmgarQGT9SfVd2VAnn3B+j9jEihAyDo0GIKL5t4u7UjgqNXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IR1369uG; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a966f0a985so229488385a.3;
-        Wed, 04 Sep 2024 09:45:07 -0700 (PDT)
+	s=arc-20240116; t=1725468365; c=relaxed/simple;
+	bh=dFhS4dE8uedw1cXPhdYDcbjHlnz46XsrbzBFKCVKkYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlGivrTn4cmegvjKZQJ7fQMCqGl/TCqwClaa7SDDXn283NRdlBi462PBxopTLnAoZeouBCCymr8uphOWkylAO0Nhl0ABVG9ztL7z4HrgEW6w5GbEdsXbLfFbQkHJSrS2BzaFriJjPVU6nX/GSV/6sv/SLNwQu05iucvecGVecBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TWW6zgwB; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a86859e2fc0so783024566b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 09:46:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725468307; x=1726073107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+97pJzC0UZCf1ZhPCVqbpyHvcwl1EJo2MBdOEN/H1ic=;
-        b=IR1369uGtBbt9dKcMhpmWAUuZp+guqPjlL51piSQ8AZLwTFStz0om/XwsW05chB1lq
-         RCnqHkIjX84iiZKirnNBb442JSheoxuXk8fHTwXTMwcVFd3tAAzl9oZ4Xn+Ha5MrsEL6
-         UneKlC4UOICUccxSeBqe8W6FdeNP4hwN0n0b2fWY+DEo7wGSXFRY8MMu2JMCfi4b8uc6
-         /KY8/DcrbJxDou0f7QMbU6H/hMF8G3Vdge90l2RxFc38v+j2vQhMHG1lbXrHsB9uOb8E
-         b9NsMMYiCan/c5fPaRbNae1X356AK7Qwip2WSmHdGmXfNCgKz1CA/QyRM0qXdTiFN4Pd
-         YLkw==
+        d=suse.com; s=google; t=1725468362; x=1726073162; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mxgCn6iAecAxYp2unFwUyhJKU6UBoBh4bFD7TaZBxYs=;
+        b=TWW6zgwBjAkSrMpnh2tC2DA8pXNlBIl5ImbCm0HixiGW0LSK0/ePsjK34+k3kNPLIx
+         qmdOq7fo6xPkfjz+0kJvYpq603enrd6lGHSkb52B4tWIL33Wa12RZV5GXFssroLcNF7A
+         AswvnzWcsNTCIuThAyTSkYPc62FQ4Ec4jKp2KbqJ1DsxBy03qhKb+y5Cw2Vb9hD6easL
+         /BLj88kZc4EJJcK4cfS+Gdiylm0utojsHa450/7f53op865vprXI7mQHzEkyKhZicuDc
+         E6BdOSrvqSSlxAJ4sOguEC9zGma5Hp9jBu7055eKjt+LU94PzdtWu53Levq99C0CX9aY
+         O+kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725468307; x=1726073107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+97pJzC0UZCf1ZhPCVqbpyHvcwl1EJo2MBdOEN/H1ic=;
-        b=rUrYoq7lY0FOjcMXa6ws/yxw/+Iu8IAPXDEFjw6+XFfqXJl/DFYrFVhN/Ll3S1FYxl
-         u9M6yxe9GN8ch/tLyIn699ZX4rdLREijSfY1ofxl5IEDSBKN7eSCa/Lgp1q/15e/e5Gk
-         nTc7aEWSaU6cRqob4nrs7aQujWVw7L4BUsUlZyhsVVESp1tDOG2Svmf21fHFM1Y4sXaG
-         RLCJ1vxXLP1XNyh5qoWMWrcPfi1sC7RAZmxFUqdu4Hu2uO3uh1yxrrZ6i1UYBhru/h2z
-         zVVZhRiH9fwG/bLoSjOpoxayDhdn4GZO6uNhMzNkmerUpsVoReUs6WCgW/lWCiu1I09h
-         fqEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnMuKbbzHp9S8VxqXCWj68JvMYIIlBsS7a5nB993bK4qwk5To5jEskcCJ/Xdvw3U8itCl1tliEw0aSvV9Q@vger.kernel.org, AJvYcCWEZujhdhuaz7/2fco5Kgv9miHfTE5QJuYkh5rEvpAywqDDHCBw3FeA6YX1zubhhQb+3tM12A7F/xwnsEZ0QQ==@vger.kernel.org, AJvYcCWT6LSKJkYzdbatc8CSbgHOhyXUKYKuZ3+rwHE9BU/vYm751vHIMeevFBB95K5nWB5Ei9a1qunkU53oBjEym9hz/w==@vger.kernel.org, AJvYcCXg2sHBzf3AtNT5la8Qk5kF/BXJteJqqjaPJXAbCcOEZIFKQGAA5HVzJLPVP6oN002Hri/Q1z4c2UTj@vger.kernel.org, AJvYcCXobRTOdMhT1l3AhY96W6st+wGMvJKLiXkap8Ci+RxlPi0Rqtpq0L4mNw9XgP0qjCUEL+FtVlHzJMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3aIP2hDpu5pAwOYV4odlpGEMgxgWx7/r1RDDoxEYoIQiLRAg5
-	3XNonhUxezmhRBZYEFvrXNfFjILYbbYk18EXyY/IB4LIE/O6kluy5lrN+cCmtvrX+LdN5aCF57R
-	IfCdOb3RJQoW2FeaqYFz9BcvSkYQ=
-X-Google-Smtp-Source: AGHT+IHD6Iid1+jIY94q827mn0wAxNIGb4Ddfn+R1FjJ3Lmqs8Ms1ALLX6rxYcRkKbf8M3uW4zlsaVK9UmneTxAURK0=
-X-Received: by 2002:a05:620a:4708:b0:79f:4f3:88f5 with SMTP id
- af79cd13be357-7a97bc78e88mr707414585a.15.1725468306494; Wed, 04 Sep 2024
- 09:45:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725468362; x=1726073162;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mxgCn6iAecAxYp2unFwUyhJKU6UBoBh4bFD7TaZBxYs=;
+        b=kIe3E0Czn8UP4RBdPQotub/cEOiG9Qb1xRk6SSXf73X8dOlrgJWxUVo+KdJMRehHYa
+         nszJQgYt+3n8mbijwomQqVkR+vRxfYGDhMnPECs4upY9MBRwZnqTmynr4E5u44ODidj5
+         OMfh0Y+eyNCHOlmeBKxqPbddQac2Ff24ST0RRafvXNbCHVjLQytBDd6u14uD4aYj5vRu
+         3rTbRzyNvWK4EUqd7eJm0QJyKcu1eJlcObCf/ul4uvrl4WZ4khm0f/cBmGuZwonzh4Od
+         bzzIWnGWer4C+YPMtjAraRztmwlkEbw+Fm1Mef6v7nAh4bCzvZe0zAenF9+vVdcD+bLQ
+         vzAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWY6jlBfy+7CEPjJY0S4mXy26UjtfywvB5TTTcRDUcBcrmiKt1cLFECeNZDYfT8dkG0mXeN48d/3Xvjt9pB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQtd49XxUU9HZojJ3z5Rmmq+wZZ3Xvlgy1uwmN7BmaT7fM/kF3
+	isUp2m7KPHs8pd9JpzDq8cVWY1vU0qa6nkF79mmTM7SrWU4j7sEMlQgVUZDqLeE=
+X-Google-Smtp-Source: AGHT+IGRz0ziFAeppg2o5paJw6XE1KSt3WjvRwb7zjZiymqFUfXvnLBXV+d9kgfP3Swh5wb5XF0BCg==
+X-Received: by 2002:a17:907:e8d:b0:a86:899d:6459 with SMTP id a640c23a62f3a-a8a32eda727mr377230566b.38.1725468361792;
+        Wed, 04 Sep 2024 09:46:01 -0700 (PDT)
+Received: from localhost (109-81-94-33.rct.o2.cz. [109.81.94.33])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a61fbaf5bsm13498066b.23.2024.09.04.09.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 09:46:01 -0700 (PDT)
+Date: Wed, 4 Sep 2024 18:46:00 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
+	Dave Chinner <dchinner@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-ID: <ZtiOyJ1vjY3OjAUv@tiehlicka>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+ <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+ <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+ <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
+ <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
+ <ZtgI1bKhE3imqE5s@tiehlicka>
+ <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
- <20240902164554.928371-1-cyphar@cyphar.com> <20240902164554.928371-2-cyphar@cyphar.com>
- <CAOQ4uxgS6DvsbUsEoM1Vr2wcd_7Bj=xFXMAy4z9PphTu+G6RaQ@mail.gmail.com>
- <20240903.044647-some.sprint.silent.snacks-jdKnAVp7XuBZ@cyphar.com>
- <CAOQ4uxhXa-1Xjd58p8oGd9Q4hgfDtGnae1YrmDWwQp3t5uGHeg@mail.gmail.com> <20240904.162424-novel.fangs.vital.nursery-BQvjXGlIi7vb@cyphar.com>
-In-Reply-To: <20240904.162424-novel.fangs.vital.nursery-BQvjXGlIi7vb@cyphar.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 4 Sep 2024 18:44:54 +0200
-Message-ID: <CAOQ4uxg7EgOH5s_RZz27XpVSwgWu9bROT9JRzTycxi8D2_3d3A@mail.gmail.com>
-Subject: Re: [PATCH xfstests v2 2/2] open_by_handle: add tests for u64 mount ID
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: fstests@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Alexander Aring <alex.aring@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Christoph Hellwig <hch@infradead.org>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
 
-On Wed, Sep 4, 2024 at 6:31=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> wro=
-te:
->
-> On 2024-09-03, Amir Goldstein <amir73il@gmail.com> wrote:
-> > On Tue, Sep 3, 2024 at 8:41=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com>=
- wrote:
+On Wed 04-09-24 12:05:56, Kent Overstreet wrote:
+> On Wed, Sep 04, 2024 at 09:14:29AM GMT, Michal Hocko wrote:
+> > On Tue 03-09-24 19:53:41, Kent Overstreet wrote:
+> > [...]
+> > > However, if we agreed that GFP_NOFAIL meant "only fail if it is not
+> > > possible to satisfy this allocation" (and I have been arguing that that
+> > > is the only sane meaning) - then that could lead to a lot of error paths
+> > > getting simpler.
 > > >
-> > > On 2024-09-02, Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > On Mon, Sep 2, 2024 at 6:46=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.=
-com> wrote:
-> > > > >
-> > > > > Now that open_by_handle_at(2) can return u64 mount IDs, do some t=
-ests to
-> > > > > make sure they match properly as part of the regular open_by_hand=
-le
-> > > > > tests.
-> > > > >
-> > > > > Link: https://lore.kernel.org/all/20240828-exportfs-u64-mount-id-=
-v3-0-10c2c4c16708@cyphar.com/
-> > > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > > > > ---
-> > > > > v2:
-> > > > > - Remove -M argument and always do the mount ID tests. [Amir Gold=
-stein]
-> > > > > - Do not error out if the kernel doesn't support STATX_MNT_ID_UNI=
-QUE
-> > > > >   or AT_HANDLE_MNT_ID_UNIQUE. [Amir Goldstein]
-> > > > > - v1: <https://lore.kernel.org/all/20240828103706.2393267-1-cypha=
-r@cyphar.com/>
-> > > >
-> > > > Looks good.
-> > > >
-> > > > You may add:
-> > > >
-> > > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > > >
-> > > > It'd be nice to get a verification that this is indeed tested on th=
-e latest
-> > > > upstream and does not regress the tests that run the open_by_handle=
- program.
-> > >
-> > > I've tested that the fallback works on mainline and correctly does th=
-e
-> > > test on patched kernels (by running open_by_handle directly) but I
-> > > haven't run the suite yet (still getting my mkosi testing setup worki=
-ng
-> > > to run fstests...).
-> >
-> > I am afraid this has to be tested.
-> > I started testing myself and found that it breaks existing tests.
-> > Even if you make the test completely opt-in as in v1 it need to be
-> > tested and _notrun on old kernels.
-> >
-> > If you have a new version, I can test it until you get your fstests set=
-up
-> > ready, because anyway I would want to check that your test also
-> > works with overlayfs which has some specialized exportfs tests.
-> > Test by running ./check -overlay -g exportfs, but I can also do that fo=
-r you.
->
-> I managed to get fstests running, sorry about that...
->
-> For the v3 I have ready (which includes a new test using -M), the
-> following runs work in my VM:
->
->  - ./check -g exportfs
->  - ./check -overlay -g exportfs
->
-> Should I check anything else before sending it?
->
+> > > Because there are a lot of places where there's essentially no good
+> > > reason to bubble up an -ENOMEM to userspace; if we're actually out of
+> > > memory the current allocation is just one out of many and not
+> > > particularly special, better to let the oom killer handle it...
+> > 
+> > This is exactly GFP_KERNEL semantic for low order allocations or
+> > kvmalloc for that matter. They simply never fail unless couple of corner
+> > cases - e.g. the allocating task is an oom victim and all of the oom
+> > memory reserves have been consumed. This is where we call "not possible
+> > to allocate".
+> 
+> *nod*
+> 
+> Which does beg the question of why GFP_NOFAIL exists.
 
-That should be enough.
-So you have one new test that does not run on upstream kernel
-and runs and passes on patched kernel?
+Exactly for the reason that even rare failure is not acceptable and
+there is no way to handle it other than keep retrying. Typical code was 
+	while (!(ptr = kmalloc()))
+		;
 
-> Also, when running the tests I think I may have found a bug? Using
-> overlayfs+xfs leads to the following error when doing ./check -overlay
-> if the scratch device is XFS:
->
->   ./common/rc: line 299: _xfs_has_feature: command not found
->     not run: upper fs needs to support d_type
->
-> The fix I applied was simply:
->
-> diff --git a/common/rc b/common/rc
-> index 0beaf2ff1126..e6af1b16918f 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -296,6 +296,7 @@ _supports_filetype()
->         local fstyp=3D`$DF_PROG $dir | tail -1 | $AWK_PROG '{print $2}'`
->         case "$fstyp" in
->         xfs)
-> +               . common/xfs
->                 _xfs_has_feature $dir ftype
->                 ;;
->         ext2|ext3|ext4)
->
-> Should I include this patch as well, or did I make a mistake somewhere?
-> (I could add the import to the top instead if you'd prefer that.)
+Or the failure would be much more catastrophic than the retry loop
+taking unbound amount of time.
 
-This should already be handled by
-if [ -n "$OVL_BASE_FSTYP" ];then
-        _source_specific_fs $OVL_BASE_FSTYP
-fi
+> > > So the error paths would be more along the lines of "there's a bug, or
+> > > userspace has requested something crazy, just shut down gracefully".
+> > 
+> > How do you expect that to be done? Who is going to go over all those
+> > GFP_NOFAIL users? And what kind of guide lines should they follow? It is
+> > clear that they believe they cannot handle the failure gracefully
+> > therefore they have requested GFP_NOFAIL. Many of them do not have
+> > return value to return.
+> 
+> They can't handle the allocatian failure and continue normal operation,
+> but that's entirely different from not being able to handle the
+> allocation failure at all - it's not hard to do an emergency shutdown,
+> that's a normal thing for filesystems to do.
+> 
+> And if you scan for GFP_NOFAIL uses in the kernel, a decent number
+> already do just that.
 
-in common/overlay
+It's been quite some time since I've looked the last time. And I am not
+saying all the existing ones really require something as strong as
+GFP_NOFAIL semantic. If they could be dropped then great! The fewer we
+have the better.
 
-I think what you are missing is to
-export FSTYP=3Dxfs
-as README.overlay suggests.
+But the point is there are some which _do_ need this. We have discussed
+that in other email thread where you have heard why XFS and EXT4 does
+that and why they are not going to change that model. 
 
-It's true that ./check does not *require* defining FSTYP
-and can auto detect the test filesystem, but for running -overlay
-is it a requirement to define the base FSTYP.
+For those users we absolutely need a predictable and well defined
+behavior because they know what they are doing.
 
-Thanks,
-Amir.
+[...]
+
+> But as a matter of policy going forward, yes we should be saying that
+> even GFP_NOFAIL allocations should be checking for -ENOMEM.
+
+I argue that such NOFAIL semantic has no well defined semantic and legit
+users are forced to do
+	while (!(ptr = kmalloc(GFP_NOFAIL))) ;
+or
+	BUG_ON(!(ptr = kmalloc(GFP_NOFAIL)));
+
+So it has no real reason to exist.
+
+We at the allocator level have 2 choices.  Either we tell users they
+will not get GFP_NOFAIL and you just do the above or we provide NOFAIL
+which really guarantees that there is no failure even if that means the
+allocation gets unbounded amount of time. The latter have a slight
+advantage because a) you can identify those callers more easily and b)
+the allocator can do some heuristics to help those allocations.
+
+We can still discuss how to handle unsupported cases (like GFP_ATOMIC |
+__GFP_NOFAIL or kmalloc($UNCHECKED_USER_INPUT_THAT_IS_TOO_LARGE, __GFP_NOFAIL))
+but the fact of the Linux kernel is that we have legit users and we need
+to optimize for them.
+
+> > Yes, we need to define some reasonable maximum supported sizes. For the
+> > page allocator this has been order > 1 and we considering we have a
+> > warning about those requests for years without a single report then we
+> > can assume we do not have such abusers. for kvmalloc to story is
+> > different. Current INT_MAX is just not any practical limit. Past
+> > experience says that anything based on the amount of memory just doesn't
+> > work (e.g. hash table sizes that used to that scaling and there are
+> > other examples). So we should be practical here and look at existing
+> > users and see what they really need and put a cap above that.
+> 
+> Not following what you're saying about hash tables? Hash tables scale
+> roughly with the amount of system memory/workingset.
+
+I do not have sha handy but I do remember dcache hashtable scaling with
+the amount of memory in the past and that led to GBs of memory allocated
+on TB systems. This is not the case anymore I just wanted to mention
+that scaling with the amount of memory can get really wrong easily.
+
+> But it seems to me that the limit should be lower if you're on e.g. a 2
+> GB machine (not failing with a warning, just failing immediately rather
+> than oom killing a bunch of stuff first) - and it's going to need to be
+> raised above INT_MAX as large memory machines keep growing, I keep
+> hitting it in bcachefs fsck code.
+
+Do we actual usecase that would require more than couple of MB? The
+amount of memory wouldn't play any actual role then.
+
+-- 
+Michal Hocko
+SUSE Labs
 
