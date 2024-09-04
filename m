@@ -1,191 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-28661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C958B96CA7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 00:34:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DCA96CA8E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 00:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B21284317
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 22:34:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A44028441E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 22:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5784317A599;
-	Wed,  4 Sep 2024 22:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02351714B5;
+	Wed,  4 Sep 2024 22:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="E7WNbKTs"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="uSmW0HUf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hLeSLy0r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A282154458
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 22:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400F9146D7F;
+	Wed,  4 Sep 2024 22:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725489284; cv=none; b=YFN7u0ylZlviJIphlxRmFs3oi8YihXYAjuA2lBgXLNoJi1Sw4jxHYfw6vrUZpoSqcSGBwcFDcjnT+OMgaLeTSV883y/lhrY9XbBAt4nqqGBxtVpEyADyOVyHuNLxlLDGRzec7y8utJukINxMFUWgrrU/bBgqSVqJ+G+p2AbPd1w=
+	t=1725489495; cv=none; b=V41tGX7bm9yL3EfxSBXUbi/fBFHK4mLPQfZcT62q+0OXmov3F1UxaEAj/SkTA6aBpVHPQl5HOs0uO5GhlcgThiSr0pNRw+iMSstoQ5yoM40rYRyGZSgmLE2NL20Fs8H1CIiajxc/Nu3MQAksYTe4Isggz8eEPrUkmMNBP6dxvlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725489284; c=relaxed/simple;
-	bh=azNdSubL/Np7rjlyzstSXo50QK9v1c6dCaOiUjTAdec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sLbhy2o9Dapp2wam4B0PzswHFyRRVTiBHsVVgeMANsoV8t35DGb6G1D4IUgTK6IdwkTvOQb2wnkgrTJkjnWdY6L+kdl9zUEn+wFlxbcK6xeOhyq8WG1u7uUwJyAojeKjqaP1506rM4AKwQgxiXzMZJvTkz+yZgWnh7wZdmFiwPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=E7WNbKTs; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20570b42f24so2080765ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 15:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725489282; x=1726094082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WyO77SPTX9aXQDMtbIN6DxC5ZyN7lMLaLLUCQ5eXYrk=;
-        b=E7WNbKTs4JxJo1MMAfhzzJrvcBfpWzZkQPIsKx/nbaOW90cPsqOJxCi6ur5obuYqKb
-         pI2JVy18sRsboGfciA1ncu0Zx32TfTuswu1PAJOSgX1pfdn7+6uHqUouQs35btQ1qf5J
-         AmqIer4O8zLHwi6bOjtgK1kR4U2fGY28QzThbrY/rmjLdaaeXN0W5iH0Ls7LgRf9e41V
-         2Ck0l55dFHeNBvCoeZiot1M/90HIL3ki7vgWdqKvFV/PZNJ9edeqrUpvnqhRWYzBzIEA
-         podSwNjgK1uObHw5rUTuDJK5RiTjeTG7Ct3frDGy5+CM9XN5ZzrXKt9owdnEl5H72ub5
-         fZfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725489282; x=1726094082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WyO77SPTX9aXQDMtbIN6DxC5ZyN7lMLaLLUCQ5eXYrk=;
-        b=GIqt82tJiEK8XGID5fi6F3SPF01KN25RV6PCbthqGFY4nfIKzwfOVNjZrx8zKZ89XH
-         uPh8126EX4BA3cIPM3KQ9GPzFDcjUsmWDAgNPhdMgUy1XWd7H/gTvX+BSyiUwmbLqE2v
-         Mx39ic7fBocPwEHBKdh0gNr7UZTChtfxEWpdGzFxZSPoOByGKqKop20C3ukQtqykV2DI
-         J5ags9PMalZGv7wklNRqW2OIxWp8y7sVY5GnGJ1kZ9ZDvOqUzA2t7mj/j1mZhjuwQzLF
-         2dbPzKSk+rRet4XRA5NzvVqFm+6j+lfErffCN2G793VHqXpPFRZtpBFxRMqWKSY8Nn73
-         +i7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUhK19Z6oLOCrG5RlVuzS004u8Y9B6wE0WgukQ03V0miqb38dhn1BpTolRBuj6uhyEegqi1xO4CAMwzk2Z1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJdvNQayi2kZTibUQk7fK4smIV3MvHd5rdX6CoMCeO/N7Ap3h7
-	vf9SdTHhUCJo6383AIiZ7pd4vEIW/Lgbh2Np57UO30z5FaveDYwaPrE/G/HF9OA=
-X-Google-Smtp-Source: AGHT+IEa7j7zwgb9tFFz5fxY6zFlznbHmhxEaWFrBcv9Z9lGCysxf/bgq/9UC3jOBUkEX0m0MasoXw==
-X-Received: by 2002:a17:902:f682:b0:206:9640:e747 with SMTP id d9443c01a7336-20699b21af3mr79663415ad.43.1725489282411;
-        Wed, 04 Sep 2024 15:34:42 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea582f4sm18038375ad.233.2024.09.04.15.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 15:34:41 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1slyaF-000tWk-0T;
-	Thu, 05 Sep 2024 08:34:39 +1000
-Date: Thu, 5 Sep 2024 08:34:39 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Michal Hocko <mhocko@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
-	Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <Ztjgf/mzdnhj/szl@dread.disaster.area>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
- <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
- <ZtgI1bKhE3imqE5s@tiehlicka>
- <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
- <ZtiOyJ1vjY3OjAUv@tiehlicka>
- <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
+	s=arc-20240116; t=1725489495; c=relaxed/simple;
+	bh=zOrzkwkrL2FiQb39I6v00dC6/o8CoGeJCNXH8tHo1jY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ihA3nFbqQ+zNUzvVr4vGMu1ORHRRMffTNaIZJ7/LOGaEdBJnl4E/3OXzww1K3Cmjv1qJicUcdmJVOecTqg0Q3srTDY4GUlJE3ffEOkt5cfUKdlx2PyjTi39zg1dBWh/oMTjMe23Hfsiup1sTFceSyVl0vqGxa4oWAyIer9Nutdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=uSmW0HUf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hLeSLy0r; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4E1AC1380292;
+	Wed,  4 Sep 2024 18:38:12 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Wed, 04 Sep 2024 18:38:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1725489492;
+	 x=1725575892; bh=xHegw4sYSlFGD8akLyekuaei9/GMNn7KZdfZY+GAzE0=; b=
+	uSmW0HUfadoNfChB/vcYBaAf0miIqWFIand6kzxkOo2dzopDLrdUAhuxlQuuUch2
+	FMQtt2H28NWrmMIcfzzJUUl3WuBMH5fzOrPlfZSlaCbzeoBDwSOUCS/oFpzBAmQO
+	T0dXmxcbpMsRxEGBpjkhk9RVeR5H0dqOA950uLUGheJQb5awVUGF0Yj5XMFibRc7
+	08E9GqrlqtDTQTeOWDXzACIcztirpqGbz2SlNmAwxhwfNVTErp6/kizJmoDfG2bE
+	7Y/7GWrXFDPt++4Nf8duDUX5m7vZheYuXwwwWlVwSubLkHRmhCevjpvF0sKdyXHA
+	MNZg3i8izN0xEkYaTM32yQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725489492; x=
+	1725575892; bh=xHegw4sYSlFGD8akLyekuaei9/GMNn7KZdfZY+GAzE0=; b=h
+	LeSLy0reeDKnwaLr1gsNkWMxmbald0FwDMy3PHfkiz/JMSuu9UY3o87Md3yaBfGu
+	qfKK0F4LWuqIyP5zlKS82mSnPeT8ybUBbz+JHkSBqcvjzkKVk/zPO8yv5BDw3eN1
+	6mfqSd2sobC2Jwv5pOycWKsswr9Tteah75EIBZvlTV/5Ln7aWVZgAoS6+PhA31/s
+	C6Ok3Z2G+AQBn5Jqwkb4A2M7oE+H2kl6/AZHkl4F85eX0K9rfV+RurltcYg+Fjm6
+	O5kQANy/QXihpZKKDqd+q7XkIvIQSNIBuobFF3j7rLpXtZwyRrMfvIP7ho2bxI84
+	5hBuzoBsk/+7CbnhPL4NQ==
+X-ME-Sender: <xms:VOHYZrblTvP4FhZhsP8zwrEByeXt6wnPtVvZ_3_vDpBW0ITN6LFVag>
+    <xme:VOHYZqZut1qLc609I0QX8y4bsAEOuISEBjjOpMErwokQ3zp1QZgW2_1pkm3jF6tSf
+    mRer8wDK2HwqHyI>
+X-ME-Received: <xmr:VOHYZt-Y61n88Dp6Q7l_P1a3JwhDJRYh0LiXLXt2gwoKNf9boTYAGo7VomWP_Y77e7_PYjmZv95zgctMDe-aHDM_exfpldxeDe8Yv_oTZCsOQuF3KH8X>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehkedguddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
+    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopehmihhklh
+    hoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgu
+    khdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtph
+    htthhopegsvghrnhgusehfrghsthhmrghilhdrfhhmpdhrtghpthhtoheplhhinhhugidq
+    fhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohdquh
+    hrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhsvghfseht
+    ohigihgtphgrnhgurgdrtghomh
+X-ME-Proxy: <xmx:VOHYZhrdH4nHrLWKAYk-aRXQA_O20FjNwD4B027a1sPOoLho0GRBXg>
+    <xmx:VOHYZmpEcp9jTZR2mS7drznlLxWrqAjdxsS2PpOZBvQCjI5XeQGE4A>
+    <xmx:VOHYZnT5vAtiLK6gpPOIBm8fSibhsyqBlP_dCS40qCRSoJrZa0PjxQ>
+    <xmx:VOHYZur_IcnwRLpiz93XfmhjNKi0IuVZQbAWnl4v-TTzBaqe18_czA>
+    <xmx:VOHYZjjF-rCxBBWoiZtJujL-K6q3rL6UWNT8qj4x9HO9Y1_0eRJlptMw>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Sep 2024 18:38:10 -0400 (EDT)
+Message-ID: <b1e2d60b-477a-4320-acea-df83eec21b77@fastmail.fm>
+Date: Thu, 5 Sep 2024 00:38:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 06/17] fuse: Add the queue configuration ioctl
+To: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>, bernd@fastmail.fm,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>
+References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
+ <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-6-9207f7391444@ddn.com>
+ <CAJnrk1aFcDyJJ5rP1LFkpyUPHkzDv_bcOMPW2m28ZBS8T+WmUA@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1aFcDyJJ5rP1LFkpyUPHkzDv_bcOMPW2m28ZBS8T+WmUA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 02:03:13PM -0400, Kent Overstreet wrote:
-> On Wed, Sep 04, 2024 at 06:46:00PM GMT, Michal Hocko wrote:
-> > On Wed 04-09-24 12:05:56, Kent Overstreet wrote:
-> > > But it seems to me that the limit should be lower if you're on e.g. a 2
-> > > GB machine (not failing with a warning, just failing immediately rather
-> > > than oom killing a bunch of stuff first) - and it's going to need to be
-> > > raised above INT_MAX as large memory machines keep growing, I keep
-> > > hitting it in bcachefs fsck code.
-> > 
-> > Do we actual usecase that would require more than couple of MB? The
-> > amount of memory wouldn't play any actual role then.
+
+
+On 9/5/24 00:23, Joanne Koong wrote:
+> On Sun, Sep 1, 2024 at 6:37 AM Bernd Schubert <bschubert@ddn.com> wrote:
+>>
+>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>> ---
+>>  fs/fuse/dev.c             | 30 ++++++++++++++++++++++++++++++
+>>  fs/fuse/dev_uring.c       |  2 ++
+>>  fs/fuse/dev_uring_i.h     | 13 +++++++++++++
+>>  fs/fuse/fuse_i.h          |  4 ++++
+>>  include/uapi/linux/fuse.h | 39 +++++++++++++++++++++++++++++++++++++++
+>>  5 files changed, 88 insertions(+)
+>>
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index 6489179e7260..06ea4dc5ffe1 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -2379,6 +2379,33 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+>>         return fuse_backing_close(fud->fc, backing_id);
+>>  }
+>>
+>> +#ifdef CONFIG_FUSE_IO_URING
+>> +static long fuse_uring_queue_ioc(struct file *file, __u32 __user *argp)
+>> +{
+>> +       int res = 0;
+>> +       struct fuse_dev *fud;
+>> +       struct fuse_conn *fc;
+>> +       struct fuse_ring_queue_config qcfg;
+>> +
+>> +       res = copy_from_user(&qcfg, (void *)argp, sizeof(qcfg));
+>> +       if (res != 0)
+>> +               return -EFAULT;
+>> +
+>> +       res = _fuse_dev_ioctl_clone(file, qcfg.control_fd);
 > 
-> Which "amount of memory?" - not parsing that.
+> I'm confused how this works for > 1 queues. If I'm understanding this
+> correctly, if a system has multiple cores and the server would like
+> multi-queues, then the server needs to call the ioctl
+> FUSE_DEV_IOC_URING_QUEUE_CFG multiple times (each with a different
+> qid).
 > 
-> For large allocations in bcachefs: in journal replay we read all the
-> keys in the journal, and then we create a big flat array with references
-> to all of those keys to sort and dedup them.
+> In this handler, when we get to _fuse_dev_ioctl_clone() ->
+> fuse_device_clone(), it allocates and installs a new fud and then sets
+> file->private_data to fud, but isn't this underlying file the same for
+> all of the queues since they are using the same fd for the ioctl
+> calls? It seems like every queue after the 1st would fail with -EINVAL
+> from the "if (new->private_data)" check in fuse_device_clone()?
+
+Each queue is using it's own fd - this works exactly the same as
+a existing FUSE_DEV_IOC_CLONE - each clone has to open /dev/fuse on its
+own. A bit a pity that dup() isn't sufficient. Only difference to 
+FUSE_DEV_IOC_CLONE is the additional qid.
+
 > 
-> We haven't hit the INT_MAX size limit there yet, but filesystem sizes
-> being what they are, we will soon. I've heard of users with 150 TB
-> filesystems, and once the fsck scalability issues are sorted we'll be
-> aiming for petabytes. Dirty keys in the journal scales more with system
-> memory, but I'm leasing machines right now with a quarter terabyte of
-> ram.
+> Not sure if I'm missing something or if this intentionally doesn't
+> support multi-queue yet. If the latter, then I'm curious how you're
+> planning to get the fud for a specific queue given that
+> file->private_data and fuse_get_dev() only can support the single
+> queue case.
 
-I've seen xfs_repair require a couple of TB of RAM to repair
-metadata heavy filesystems of relatively small size (sub-20TB).
-Once you get about a few hundred GB of metadata in the filesystem,
-the fsck cross-reference data set size can easily run into the TBs.
 
-So 256GB might *seem* like a lot of memory, but we were seeing
-xfs_repair exceed that amount of RAM for metadata heavy filesystems
-at least a decade ago...
+Strictly in the current patch set, the clone is only needed in the 
+next patch  
+"07/17] fuse: {uring} Add a dev_release exception for fuse-over-io-uring"
+Though, since we have the fud anyway and link to the ring-queue, it makes
+use of it in 
+08/17] fuse: {uring} Handle SQEs - register commands
 
-Indeed, we recently heard about a 6TB filesystem with 15 *billion*
-hardlinks in it.  The cross reference for resolving all those
-hardlinks would require somewhere in the order of 1.5TB of RAM to
-hold. The only way to reliably handle random access data sets this
-large is with pageable memory....
+in fuse_uring_cmd(). 
 
-> Another more pressing one is the extents -> backpointers and
-> backpointers -> extents passes of fsck; we do a linear scan through one
-> btree checking references to another btree. For the btree we're checking
-> references to the lookups are random, so we need to cache and pin the
-> entire btree in ram if possible, or if not whatever will fit and we run
-> in multiple passes.
-> 
-> This is the #1 scalability issue hitting a number of users right now, so
-> I may need to rewrite it to pull backpointers into an eytzinger array
-> and do our random lookups for backpointers on that - but that will be
-> "the biggest vmalloc array we can possible allocate", so the INT_MAX
-> size limit is clearly an issue there...
 
-Given my above comments, I think you are approaching this problem
-the wrong way. It is known that the data set that can exceed
-physical kernel memory size, hence it needs to be swappable. That
-way users can extend the kernel memory capacity via swapfiles when
-bcachefs.fsck needs more memory than the system has physical RAM.
+I hope I understood your question right.
 
-This is a problem Darrick had to address for the XFS online repair
-code - we've known for a long time that repair needs to hold a data
-set larger than physical memory to complete successfully. Hence for
-online repair we needed a mechanism that provided us with pagable
-kernel memory. vmalloc() is not an option - it has hard size limits
-(both API based and physical capacity based).
 
-Hence Darrick designed and implemented pageable shmem backed memory
-files (xfiles) to hold these data sets. Hence the size limit of the
-online repair data set is physical RAM + swap space, same as it is
-for offline repair. You can find the xfile code in
-fs/xfs/scrub/xfile.[ch].
-
-Support for large, sortable arrays of fixed size records built on
-xfiles can be found in xfarray.[ch], and blob storage in
-xfblob.[ch].
-
-vmalloc() is really not a good solution for holding arbitrary sized
-data sets in kernel memory....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Bernd
 
