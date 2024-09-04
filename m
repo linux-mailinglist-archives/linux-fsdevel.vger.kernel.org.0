@@ -1,125 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-28564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D19B96C102
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:44:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6115B96C156
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 16:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FBF31C2283F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:44:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 161371F23D88
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 14:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CDA1DB55A;
-	Wed,  4 Sep 2024 14:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39DB1DCB1B;
+	Wed,  4 Sep 2024 14:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwAqlyvI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIM02c+Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3C963D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 14:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369321DC18E;
+	Wed,  4 Sep 2024 14:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461048; cv=none; b=Pj9LZFq6lL7p3zszpkQ/k2cK02q1kxv+ZVJoPYfe3MTejXEVmz+vlygTJUXkF0loMRhU1HUfNgQM16f4/3rioCkaOJlMXVBfB5x/anzvplrz5Bue4BMHj/etBI01ov97n0cS+Ofv0vQk3CyOPQp6ZVeCQm9+BzGTMULOHlfiMBI=
+	t=1725461684; cv=none; b=ewyPBjwyYLvkgRNxy5oZ987EFGz9x5m/u+l3UfbKKXoeo0KK5UFbOguHknwy/EShgrMn4unKB8kkwx7aSE0NAH/NubA5zGjxccadxFyPy//vGQVjdcaDN1LycVQOPB2XP7v0YAYiFlrVwOo+qjoP6zdjqMtb0KNsKJl4nNJ4OmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461048; c=relaxed/simple;
-	bh=3h2/8kiGs8hQepiNOVw377i6agmyGFWtRxl9uQnfOXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RCQrrwaIf/3GOAOxVKpuUdoLcOLl0Yt/CHM8R2Yl6YOJD3pgKgfRXPs7buV16Azv1vOOz7xoxD2ExSGgG6e4qEdG4iH7uI5ZdakdlD8wQ/r7QeVvHuo9lId33hx1IktuLslYTeGyeTf31LTp8iA2rAIYpk3yWt5Rt5KQHnV4QzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwAqlyvI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC36CC4CEC2;
-	Wed,  4 Sep 2024 14:44:05 +0000 (UTC)
+	s=arc-20240116; t=1725461684; c=relaxed/simple;
+	bh=FPWWWeiqddbX8V80B1GjjqkJtba0qhCIKlsrh8+3VUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rc3vAyl0nQZIbcmhFhxKg0WQkxm1r63SHhaDLcRuVUlTu/e9qqsY6sQOURnZ0DlV9mMptyL7xCbtV/V83LCT/68iLYNDwBWiAabUu0v3NSM8JJ++CmMqRAhTgcrxOTpqDM1+lGgArmFCjIUX3YQRaZGKZENTI0jYRvneKiWfFb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIM02c+Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADA4C4CEC6;
+	Wed,  4 Sep 2024 14:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725461047;
-	bh=3h2/8kiGs8hQepiNOVw377i6agmyGFWtRxl9uQnfOXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uwAqlyvIn4eDqRM7LT+9spYpM65FWgAdjy8PXvfNTTu5OwqvCE2ADdFPDNe+0+8iP
-	 Uv6rEOBKP7z3RmymOrUed2d+kiMTO47uPSu4CkJQNu1ZHVduLlFGGWwxA1GJA5RXFc
-	 B2b8CyCO10IRKSrVzn84FbtfHB4obKFJvtI60ywgO1T4xcOWDax7UvJgUpV3dl2mI2
-	 UaBx0YsdoKUWRqshw5x+Ox7iqHVZgaeuNO7pXgdZkSclHc6BYI368j48ajRPET56a0
-	 YTyI/7pyWz3xJ1iGzHSbSsEY2uMICWexSJGfny4HR75qMPe2nEcu+sOrCLlB3pbP27
-	 qPBfmNlm/sHPg==
-Date: Wed, 4 Sep 2024 16:44:03 +0200
+	s=k20201202; t=1725461683;
+	bh=FPWWWeiqddbX8V80B1GjjqkJtba0qhCIKlsrh8+3VUM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SIM02c+ZBrKPgtMglUBQCyc9HE8+0OPGJTPLhpXiFito0zDhVV5lqu4WkCeMZ40+d
+	 L2UWqfruC4dFAhrq3y2640w5dVWDEj1uZtkyis4RFcD0M5E4mgf+EIjYiQohnFB4Zi
+	 5UVuSZsSGns/tUB17cL8Y81CKD9HplT0flbPJ07jFmovPj5snyaulmyoqesrgtl9vM
+	 U7a40SoeQ8KYpHhlp5hmf3/voqse9XOdic7rbKKBovJlagt9Rg/qPOdL63diz20WbT
+	 52OapMKWXJA3Fa1N/VVLcev3OX8fQPco+3wdqgJBT3CLzf2OzZFzGHiqM9IqWhznAd
+	 FOrsh9fM3HKnw==
 From: Christian Brauner <brauner@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mike Rapoport <rppt@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 12/15] slab: create kmem_cache_create() compatibility
- layer
-Message-ID: <20240904-gegessen-kalziumreich-2817b07433b7@brauner>
-References: <20240903-work-kmem_cache_args-v2-0-76f97e9a4560@kernel.org>
- <20240903-work-kmem_cache_args-v2-12-76f97e9a4560@kernel.org>
- <ZtfssAqDeyd_-4MJ@kernel.org>
- <20240904-storch-worin-32db25e60f32@brauner>
- <23eb55c3-0a8c-404b-b787-9f21c2739c4e@suse.cz>
- <20240904-absuchen-gockel-8246820867b4@brauner>
- <24717bab-7d5d-4ed1-a17d-65d4676e22a9@suse.cz>
+To: Kienan Stewart <kstewart@efficios.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-janitors@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs/pipe: Correct imprecise wording in comment
+Date: Wed,  4 Sep 2024 16:54:25 +0200
+Message-ID: <20240904-achtsamkeit-wahrnehmen-5bafe6cd3727@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To:  <20240904-pipe-correct_imprecise_wording-v1-1-2b07843472c2@efficios.com>
+References:  <20240904-pipe-correct_imprecise_wording-v1-1-2b07843472c2@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <24717bab-7d5d-4ed1-a17d-65d4676e22a9@suse.cz>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=906; i=brauner@kernel.org; h=from:subject:message-id; bh=FPWWWeiqddbX8V80B1GjjqkJtba0qhCIKlsrh8+3VUM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdKFkxyUV+3byduokXv9x4knNrTfRv1gWzzjXmzdTat GvuyZfHmTtKWRjEuBhkxRRZHNpNwuWW81RsNsrUgJnDygQyhIGLUwAmcmAhw28213dlv9oNwoOl t5VdYsjMWvmHT+Evi+L/18xTDkyW8tjJ8L98vnC/HlfljSqlZ1vFVJcz/StXWruk5OtEyyfB8pc NNzEDAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 03:33:30PM GMT, Vlastimil Babka wrote:
-> On 9/4/24 13:38, Christian Brauner wrote:
-> > On Wed, Sep 04, 2024 at 12:50:28PM GMT, Vlastimil Babka wrote:
-> >> On 9/4/24 11:45, Christian Brauner wrote:
-> >> > On Wed, Sep 04, 2024 at 08:14:24AM GMT, Mike Rapoport wrote:
-> >> >> On Tue, Sep 03, 2024 at 04:20:53PM +0200, Christian Brauner wrote:
-> >> >> > Use _Generic() to create a compatibility layer that type switches on the
-> >> >> > third argument to either call __kmem_cache_create() or
-> >> >> > __kmem_cache_create_args(). This can be kept in place until all callers
-> >> >> > have been ported to struct kmem_cache_args.
-> >> >> > 
-> >> >> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> >> >> 
-> >> >> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> >> >> 
-> >> >> > ---
-> >> >> >  include/linux/slab.h | 13 ++++++++++---
-> >> >> >  mm/slab_common.c     | 10 +++++-----
-> >> >> >  2 files changed, 15 insertions(+), 8 deletions(-)
-> >> >> > 
-> >> >> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> >> >> > index aced16a08700..4292d67094c3 100644
-> >> >> > --- a/include/linux/slab.h
-> >> >> > +++ b/include/linux/slab.h
-> >> >> > @@ -261,9 +261,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
-> >> >> >  					    unsigned int object_size,
-> >> >> >  					    struct kmem_cache_args *args,
-> >> >> >  					    slab_flags_t flags);
-> >> >> > -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
-> >> >> > -			unsigned int align, slab_flags_t flags,
-> >> >> > -			void (*ctor)(void *));
-> >> >> > +
-> >> >> > +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
-> >> >> > +				       unsigned int align, slab_flags_t flags,
-> >> >> > +				       void (*ctor)(void *));
-> >> >> 
-> >> >> As I said earlier, this can become _kmem_cache_create and
-> >> >> __kmem_cache_create_args can be __kmem_cache_create from the beginning.
-> >> 
-> >> I didn't notice an answer to this suggestion? Even if it's just that you
-> >> don't think it's worth the rewrite, or it's not possible because X Y Z.
-> >> Thanks.
-> > 
-> > I'm confused. I sent two patches as a reply to the thread plus the
-> > answer below and there's two patches in v3 that you can use or drop.
+On Wed, 04 Sep 2024 10:13:29 -0400, Kienan Stewart wrote:
+> The comment inaccurately describes what pipefs is - that is, a file
+> system.
 > 
-> Right, that's the part below. But the suggestion above, and also in Mike's
-> reply to 02/12 was AFAICS to rename __kmem_cache_create_args to
-> __kmem_cache_create (since patch 02) and here __kmem_cache_create to
-> _kmem_cache_create. It just seemed odd to see no reaction to that (did I
-> miss or not receive it?).
+> 
 
-Oh, I see. I read it as a expressing taste and so I didn't bother
-replying. And I really dislike single underscore function names so I
-would like to avoid it and it also seems more confusing to me.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/pipe: Correct imprecise wording in comment
+      https://git.kernel.org/vfs/vfs/c/a5796d69bf18
 
