@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-28800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CD796E610
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 01:07:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F9596E612
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 01:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17194B2380A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 23:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8605C1F2468A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 23:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372C41B81DE;
-	Thu,  5 Sep 2024 23:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6DF1BA86A;
+	Thu,  5 Sep 2024 23:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvcd7lyX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhPgpfKb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EB313D638;
-	Thu,  5 Sep 2024 23:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F9B1B9B4A;
+	Thu,  5 Sep 2024 23:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725577616; cv=none; b=DFh70B2C8I68JsHOAbGN/WeaJzTTY7P8Qs9v9bVRll2mA3FuBaCWzxLm/XmA0qHelj4kPoWUifoPB8ZL9kAKPC2bVYQKWJVoTl+/NRwScILXcCOv/WCtlJDVOYjq/WiAL2RNVPlyn09T3vYKT90er1pmmaZ2GbC6JKGqeu/sxLk=
+	t=1725577620; cv=none; b=E+GX7Wa85CZlwY0Pbm75Xuws17p5JScmx3jeziOffMCz5waiygMrFQh4nEqt6DZXIdtrPs/BiDjuSENj/dAtXYCVw1i8McR9EZhLWOVrCNNuGacQB5XGnZltn3d7xR/46SqUijckWkEuDB9pmplA3vT8Bb2BSpcXoQ5liaRLasc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725577616; c=relaxed/simple;
-	bh=1CvHL3X1djqDDP3CHNqU2LnQvflMkgfKJ74BejW/qME=;
+	s=arc-20240116; t=1725577620; c=relaxed/simple;
+	bh=A1MsCyDJgEsRX6kQKLK9eRLTDyJrgk7l7bzvGIADznQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e1xDdtuXAxJ7yIX3Ko7Rt3M7XmFgq9QFxNO3f69QE2jM0482RXcW1BLPEARFeP2UQOSbQNoxVDC0YBujjHxs1UykVaEYkEPfKRZvWRWoV4x8vR7r5HOqFuzqRUGB4MlNJt+JS3HkQvSSoIUrDlxIpiNCKzMAQnhR57xFA8hb/K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvcd7lyX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C961C4CECB;
-	Thu,  5 Sep 2024 23:06:53 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=sndAzn9dakoJ5EB9m7tPl/wWX7eQLhkBx2Z4a5+UWGr2BC6SVddJKVmTPJtUsQQ0kuWGN3cwybhFO+eFajFkcLM0/Tk9JlMf6KkPQPeB6L2PTxkxfLzxoCKpyQB3sDhaQQlXsTCLY0Q6S7IoWL8mkFJiT2HOLflh0UVC+zEM5cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhPgpfKb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9469AC4CEC4;
+	Thu,  5 Sep 2024 23:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725577616;
-	bh=1CvHL3X1djqDDP3CHNqU2LnQvflMkgfKJ74BejW/qME=;
+	s=k20201202; t=1725577619;
+	bh=A1MsCyDJgEsRX6kQKLK9eRLTDyJrgk7l7bzvGIADznQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pvcd7lyX1KomLXt/dqsCYSLKNtxZbL34j7YsWjdm+D58Rn3qDSfmpe3xAEOq/2xey
-	 UKXPAVFb/SaeC7C6QJQEitBfhd/0CCKh1HRQ3H+PX9RfTmuXPE1RbiTNgEkD+1NuZJ
-	 Qa/6sFKvp8ax8EQHXPhtQ6TDtDiXR4zsheMiSmsPfSEFF0+RcQb59CdfOqwbQtOzut
-	 VIsnHQ6jAOYujY7P4/hISWe5GmHGSmkcm1ue+l05+sU+Kb7ipZmuj8AVkJiil4FokG
-	 I8v2OVLoOvJ8oECDILspnAfWKWvAtP9+u8iRL1Rw8dVm2U3UwTfgGvUbSuNZ4aOn97
-	 zxMSKXrNT9Z+w==
+	b=GhPgpfKb5XecmsryPGqjtx250G+lHVlFC4InO3RdPZcoD042V6UNbwQvKhp8HWjDL
+	 405lCJ2+pKEhgEgHItQ1CzvzdJHWrF9CsVVLAFVNP85qSJIYbACUW7jzLlhipJfysf
+	 hOJhCzJVdm+YbUquMIwd54Q8dksbeZAzTajmvRbnEEfks54KIRg8aV//0dhV9U5ia2
+	 0nRkbWhpSK0+pxVRqYvd6EDYK5UzMuJ7tI4JNElz7RIC3Tce4hcohkbBd+7y8ptcQ7
+	 EQs6XiZCAbU4I9xSlfvO1v7RN35XZkI4hW6zafmkZ7pImt6ET/WcsmYUcG61emsXd4
+	 hwop67+Fc4LBw==
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 06 Sep 2024 00:05:24 +0100
-Subject: [PATCH RFC 1/2] binfmt_elf: Wire up AT_HWCAP3 at AT_HWCAP4
+Date: Fri, 06 Sep 2024 00:05:25 +0100
+Subject: [PATCH RFC 2/2] arm64: Support AT_HWCAP3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240906-arm64-elf-hwcap3-v1-1-8df1a5e63508@kernel.org>
+Message-Id: <20240906-arm64-elf-hwcap3-v1-2-8df1a5e63508@kernel.org>
 References: <20240906-arm64-elf-hwcap3-v1-0-8df1a5e63508@kernel.org>
 In-Reply-To: <20240906-arm64-elf-hwcap3-v1-0-8df1a5e63508@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -66,90 +66,133 @@ Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
  linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
  Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2249; i=broonie@kernel.org;
- h=from:subject:message-id; bh=1CvHL3X1djqDDP3CHNqU2LnQvflMkgfKJ74BejW/qME=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm2jmHlUSCTyEan9xj94QRH1fAPoiO8sniob91kWqs
- wH6MgeeJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZto5hwAKCRAk1otyXVSH0DGUB/
- sFykES43Vs38+h/g2aRkA7jtFVqXh7lOkhSkwiC5Rr4cxo6nLWNN46KSAenJ8uhtF62W+4pUoxtqnI
- r/MAM5CrzP9nw5o7N58DXaqk6uu4Aycy28541fxl8CfoyxPbS0fI1+pxzoIJ2+xTLs8fsalDNl7INS
- QjY4YmTG1HUSjFhZWRD3D3jDYEYafz0KSJh/im4w994yOuWHrRzuW5pM5GQv17vsFmtiCo1DnuxPZS
- dpljF575hDc2xKb/MGfNkqgr//E9dy/pvF6YAg7d9flsPxHyF5INnnzXYKdt1ebM6nEhFzT1OTBdFZ
- hJAgfovynsR+qGSYI5lCrPuvhN9rZ+
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4418; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=A1MsCyDJgEsRX6kQKLK9eRLTDyJrgk7l7bzvGIADznQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm2jmIf3KlTF3HuICSRK2swFAoI5TkoKodbSQSwtH2
+ eOden2uJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZto5iAAKCRAk1otyXVSH0JhuB/
+ 42nAbDepwuWS2bMb3uWSgS9OHa4Ly3xMqGKhQKJqXvqevtltxck+8dXjok7eAUJ+8xSKRPw72njBZq
+ KA4OUWQragIfeidoQKApKZpih0twdUPs/d+yVmUHUHedClUN/jbIgyd/HUgUGr8pt34UT+KTaK/LYs
+ d/bbD655MWElOWiowvYs/iXX8GOPWs0NnTa30pP9NvOp2SzkyqfPcbSk3d7q5ONRaZKjhZZUK4LmEY
+ Ug2VjEvJ9l7KkbevX4lts5DLJsFwZqVLUnn/EN+mwW3hUvaCjqgOVM4xUKiR1uNjM4cv+tmBkP+G+J
+ 7l4k82NXS0/cr/as7YI3eLuqmQfYuq
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-AT_HWCAP3 and AT_HWCAP4 were recently defined for use on PowerPC in commit
-3281366a8e79 ("uapi/auxvec: Define AT_HWCAP3 and AT_HWCAP4 aux vector,
-entries"). Since we want to start using AT_HWCAP3 on arm64 add support for
-exposing both these new hwcaps via binfmt_elf.
+We have filled all 64 bits of AT_HWCAP2 so in order to support discovery of
+further features provide the framework to use the already defined AT_HWCAP3
+for further CPU features.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/binfmt_elf.c        |  6 ++++++
- fs/binfmt_elf_fdpic.c  |  6 ++++++
- fs/compat_binfmt_elf.c | 15 +++++++++++++++
- 3 files changed, 27 insertions(+)
+ Documentation/arch/arm64/elf_hwcaps.rst | 6 +++---
+ arch/arm64/include/asm/cpufeature.h     | 3 ++-
+ arch/arm64/include/asm/hwcap.h          | 6 +++++-
+ arch/arm64/include/uapi/asm/hwcap.h     | 4 ++++
+ arch/arm64/kernel/cpufeature.c          | 6 ++++++
+ 5 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 19fa49cd9907..32e45e65de8f 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -257,6 +257,12 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
- #ifdef ELF_HWCAP2
- 	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-+#endif
-+#ifdef ELF_HWCAP3
-+	NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP3);
-+#endif
-+#ifdef ELF_HWCAP4
-+	NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP4);
- #endif
- 	NEW_AUX_ENT(AT_EXECFN, bprm->exec);
- 	if (k_platform) {
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index 28a3439f163a..9365f48598a1 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -620,6 +620,12 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_HWCAP,	ELF_HWCAP);
- #ifdef ELF_HWCAP2
- 	NEW_AUX_ENT(AT_HWCAP2,	ELF_HWCAP2);
-+#endif
-+#ifdef ELF_HWCAP3
-+	NEW_AUX_ENT(AT_HWCAP3,	ELF_HWCAP3);
-+#endif
-+#ifdef ELF_HWCAP3
-+	NEW_AUX_ENT(AT_HWCAP4,	ELF_HWCAP4);
- #endif
- 	NEW_AUX_ENT(AT_PAGESZ,	PAGE_SIZE);
- 	NEW_AUX_ENT(AT_CLKTCK,	CLOCKS_PER_SEC);
-diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
-index 8f0af4f62631..0a219e26692a 100644
---- a/fs/compat_binfmt_elf.c
-+++ b/fs/compat_binfmt_elf.c
-@@ -80,6 +80,21 @@
- #define	ELF_HWCAP2		COMPAT_ELF_HWCAP2
+diff --git a/Documentation/arch/arm64/elf_hwcaps.rst b/Documentation/arch/arm64/elf_hwcaps.rst
+index 448c1664879b..36530d613adb 100644
+--- a/Documentation/arch/arm64/elf_hwcaps.rst
++++ b/Documentation/arch/arm64/elf_hwcaps.rst
+@@ -16,9 +16,9 @@ architected discovery mechanism available to userspace code at EL0. The
+ kernel exposes the presence of these features to userspace through a set
+ of flags called hwcaps, exposed in the auxiliary vector.
+ 
+-Userspace software can test for features by acquiring the AT_HWCAP or
+-AT_HWCAP2 entry of the auxiliary vector, and testing whether the relevant
+-flags are set, e.g.::
++Userspace software can test for features by acquiring the AT_HWCAP,
++AT_HWCAP2 or AT_HWCAP3 entry of the auxiliary vector, and testing
++whether the relevant flags are set, e.g.::
+ 
+ 	bool floating_point_is_present(void)
+ 	{
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index 558434267271..0a999a45ce02 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -12,7 +12,7 @@
+ #include <asm/hwcap.h>
+ #include <asm/sysreg.h>
+ 
+-#define MAX_CPU_FEATURES	128
++#define MAX_CPU_FEATURES	192
+ #define cpu_feature(x)		KERNEL_HWCAP_ ## x
+ 
+ #define ARM64_SW_FEATURE_OVERRIDE_NOKASLR	0
+@@ -438,6 +438,7 @@ void cpu_set_feature(unsigned int num);
+ bool cpu_have_feature(unsigned int num);
+ unsigned long cpu_get_elf_hwcap(void);
+ unsigned long cpu_get_elf_hwcap2(void);
++unsigned long cpu_get_elf_hwcap3(void);
+ 
+ #define cpu_set_named_feature(name) cpu_set_feature(cpu_feature(name))
+ #define cpu_have_named_feature(name) cpu_have_feature(cpu_feature(name))
+diff --git a/arch/arm64/include/asm/hwcap.h b/arch/arm64/include/asm/hwcap.h
+index 4edd3b61df11..c1107456cb81 100644
+--- a/arch/arm64/include/asm/hwcap.h
++++ b/arch/arm64/include/asm/hwcap.h
+@@ -158,17 +158,21 @@
+ #define KERNEL_HWCAP_SME_SF8DP4		__khwcap2_feature(SME_SF8DP4)
+ #define KERNEL_HWCAP_SME_SF8DP2		__khwcap2_feature(SME_SF8DP2)
+ 
++#define __khwcap3_feature(x)		(const_ilog2(HWCAP3_ ## x) + 128)
++
+ /*
+  * This yields a mask that user programs can use to figure out what
+  * instruction set this cpu supports.
+  */
+ #define ELF_HWCAP		cpu_get_elf_hwcap()
+ #define ELF_HWCAP2		cpu_get_elf_hwcap2()
++#define ELF_HWCAP3		cpu_get_elf_hwcap3()
+ 
+ #ifdef CONFIG_COMPAT
+ #define COMPAT_ELF_HWCAP	(compat_elf_hwcap)
+ #define COMPAT_ELF_HWCAP2	(compat_elf_hwcap2)
+-extern unsigned int compat_elf_hwcap, compat_elf_hwcap2;
++#define COMPAT_ELF_HWCAP3	(compat_elf_hwcap3)
++extern unsigned int compat_elf_hwcap, compat_elf_hwcap2, compat_elf_hwcap3;
  #endif
  
-+#ifdef	COMPAT_ELF_HWCAP3
-+#undef	ELF_HWCAP3
-+#define	ELF_HWCAP3		COMPAT_ELF_HWCAP3
-+#endif
+ enum {
+diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
+index 285610e626f5..170eac371991 100644
+--- a/arch/arm64/include/uapi/asm/hwcap.h
++++ b/arch/arm64/include/uapi/asm/hwcap.h
+@@ -123,4 +123,8 @@
+ #define HWCAP2_SME_SF8DP4	(1UL << 61)
+ #define HWCAP2_SME_SF8DP2	(1UL << 62)
+ 
++/*
++ * HWCAP3 flags - for AT_HWCAP3
++ */
 +
-+#ifdef	COMPAT_ELF_HWCAP3
-+#undef	ELF_HWCAP3
-+#define	ELF_HWCAP3		COMPAT_ELF_HWCAP3
-+#endif
+ #endif /* _UAPI__ASM_HWCAP_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 646ecd3069fd..77d6a84e27e5 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -103,6 +103,7 @@ static DECLARE_BITMAP(elf_hwcap, MAX_CPU_FEATURES) __read_mostly;
+ 				 COMPAT_HWCAP_LPAE)
+ unsigned int compat_elf_hwcap __read_mostly = COMPAT_ELF_HWCAP_DEFAULT;
+ unsigned int compat_elf_hwcap2 __read_mostly;
++unsigned int compat_elf_hwcap3 __read_mostly;
+ #endif
+ 
+ DECLARE_BITMAP(system_cpucaps, ARM64_NCAPS);
+@@ -3476,6 +3477,11 @@ unsigned long cpu_get_elf_hwcap2(void)
+ 	return elf_hwcap[1];
+ }
+ 
++unsigned long cpu_get_elf_hwcap3(void)
++{
++	return elf_hwcap[2];
++}
 +
-+#ifdef	COMPAT_ELF_HWCAP4
-+#undef	ELF_HWCAP4
-+#define	ELF_HWCAP4		COMPAT_ELF_HWCAP4
-+#endif
-+
- #ifdef	COMPAT_ARCH_DLINFO
- #undef	ARCH_DLINFO
- #define	ARCH_DLINFO		COMPAT_ARCH_DLINFO
+ static void __init setup_boot_cpu_capabilities(void)
+ {
+ 	/*
 
 -- 
 2.39.2
