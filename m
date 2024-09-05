@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-28745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9BD96DCD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 16:58:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B88F96DCD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 16:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C2121C22F10
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 14:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27A61F230E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 14:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2150519E80F;
-	Thu,  5 Sep 2024 14:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E77B19F43D;
+	Thu,  5 Sep 2024 14:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="WfzWC0uI"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="SofAB/7g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAD119E7D3;
-	Thu,  5 Sep 2024 14:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FFF19EEB1;
+	Thu,  5 Sep 2024 14:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548233; cv=none; b=XW+UWpeM6gHL2OSQJmXWsZIWCtpxDtosuh7Ay4JVvUEb1MO+9sT+h02OqMelqtiNpl7gcjU83bMZ814I9yfup2dMgdwo2g2uvwBojq7O6YJ71dtT2iqfjmFt7DkzJauu0Tu4kinp/sA+dq4atjOA8iqH8QtZISL/M3S44uaZlfQ=
+	t=1725548241; cv=none; b=QHW3y1m8ztzSVwI6Dep0szwGvmfPK9qMclJMIu3lGsNt4uWQgBo+KMdVHXf48vkgnbB1iETM/it+M+PEtG74CjVaeItzHzDkTaoz26rbmbFH4NP7PT9sxjOI7TeHxJOdjWUMxdWAPbbr5Oic9PpGBYxTAIhkm8aVuaR7SNlkd4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548233; c=relaxed/simple;
-	bh=S6nSjvgrgeostwnVEtga16zxIZfik5+Z3rFWT7sLalI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OF3lL/j8LztsJOiTdEUbJzA6JT9uC1Q429AGy7dPppnRfcsbRXQHej2ZfsWrCCAZRM3COAalsripdHwdg4GLFwotMtxtk3by3815MR7EoUnU7pGAOBCME556AbZBm8VYFUluN0VZd5C1SR0dfQhavqz1YANGNTN85OFfz9Fa+dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=WfzWC0uI; arc=none smtp.client-ip=80.241.56.161
+	s=arc-20240116; t=1725548241; c=relaxed/simple;
+	bh=RHuQH37fa1aCHevS8Rp4DmyNPF3QBfkxOH5ERfeCQRY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LbJ9D8lfaTT9WEtVvzdQY+n11paDy175lLCjz+oMG1zob5C+A0kUojUI7tNsEvwqJrqNOGTdlKD3Tw1aOwAvqHNhzXKi6vKEBi/0+klA3tJd0abZHBiDOJT+WVz/zZh/ICXN7w67vPidp6jdfG4Oy3MMvXlhzJlgCCYVkhgqN14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=SofAB/7g; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4X02Wk0R7Jz9sjG;
-	Thu,  5 Sep 2024 16:57:06 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4X02Wv31gXz9smK;
+	Thu,  5 Sep 2024 16:57:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1725548226;
+	t=1725548235;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=theZEgnObKA5o5sa8iv8/5VUkQlNdUgbzqyzOWK7yC8=;
-	b=WfzWC0uI7P1gv/cBAXBe6DUxyILtnG8Rw6T2tWiDn4ib8iCVuyj58PnigX32Nop0SPlA45
-	8pFU6SieyP7o05N9Ai8qhZNOcKgNUJp5sWhgstNp62xDH+LXpCZ2kC0hHtIH0MqmgFCMw7
-	5JveM5tm0GZ/Wj/4IpM12qCatx0hSv1RpDgA5uijf+EqoJf4pSYW3YwpagRTEAcm2mB+lp
-	vO4ThklXM5uqS7u7/JzGWKuG1Puu4HjVxZEMunWsCZwqfQ/DK1th6pfbpbAwPXBfIb5IF5
-	pbZmom6KJCPrv+bxUV0uwSYePsel5pwumdroQA7NQ1HrRRkRs/YDL6MOVnUxcA==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=35gDDvLQFm6Wi82gl7IXq7L8XXDc6npzVovXGFIyqFM=;
+	b=SofAB/7gxxU1YrFa4YK+T0B8nA7QFBCSaKHdW1RLXhYluBbY2qGvagTCD6BQ9+k1ngmiZk
+	d6/ujWKvQTSZHhovZrBoEaV6p/MrXS6HW36pRke7l06oW55c3zRwIysY08OY/ayzo+M1JW
+	gj8SSJEa+v1WfGbGTJo2VaHNokP+PIMimzemBvV9PV20WdWjOnqw04WJH2LZ4gDmGd4wD4
+	aKy0RUZsjsBfV5gKLGvIdgKN9/ivkV0pAiA/YaaGF2z/ZHmCs1QyfaAYr1xdi3e5gg6C0R
+	oEw6bjHdhJJeLxOcaCR2+JMiZayT+YOuVrUyfrBWQi8eqs66Qdkh+5v5YZ+YGA==
 From: Aleksa Sarai <cyphar@cyphar.com>
-Subject: [PATCH RFC v2 00/10] extensible syscalls: CHECK_FIELDS to allow
- for easier feature detection
-Date: Fri, 06 Sep 2024 00:56:32 +1000
-Message-Id: <20240906-extensible-structs-check_fields-v2-0-0f46d2de9bad@cyphar.com>
+Date: Fri, 06 Sep 2024 00:56:33 +1000
+Subject: [PATCH RFC v2 01/10] uaccess: add copy_struct_to_user helper
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,10 +60,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKDG2WYC/4XNQQrCMBAF0KvIrI2kaarGlSB4ALdSpKZTM1jbk
- omlpfTuhlzA5f8f/luA0RMynDYLeByJqe9iUNsNWFd1LxRUxwxKKi2PMhc4BeyYni0KDv5rAwv
- r0L4fDWFbs6j0AY222OxNBvFl8NjQlIQ73K4XKGPpiEPv56SOWZoSYKT6C4yZkKLQBZoca1SNO
- tt5cJXf2f4D5bquPw4Wv57UAAAA
+Message-Id: <20240906-extensible-structs-check_fields-v2-1-0f46d2de9bad@cyphar.com>
+References: <20240906-extensible-structs-check_fields-v2-0-0f46d2de9bad@cyphar.com>
+In-Reply-To: <20240906-extensible-structs-check_fields-v2-0-0f46d2de9bad@cyphar.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
  Juri Lelli <juri.lelli@redhat.com>, 
  Vincent Guittot <vincent.guittot@linaro.org>, 
@@ -77,176 +76,184 @@ Cc: Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>,
  Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, 
  linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
  linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>, 
- stable@vger.kernel.org
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7270; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=S6nSjvgrgeostwnVEtga16zxIZfik5+Z3rFWT7sLalI=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaTdPLb5kvLOxoytZu0mtzlZ7affWXGK4xIL48Kq6twnl
- S0lTcVqHaUsDGJcDLJiiizb/DxDN81ffCX500o2mDmsTCBDGLg4BWAiBzcw/I+0PXTgd4RChfYU
- oTVxVTK1wj+D+3a+m++YsK5k6a9bm+8wMtxUeHu7wIapeoO1WgNLfq1FfnKQ9stOhl6DmT92Hd5
- eygEA
+ linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7231; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=RHuQH37fa1aCHevS8Rp4DmyNPF3QBfkxOH5ERfeCQRY=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaTdPLa5ZbFuyBb7B0+jO6M0aqXjD+deP2fecfLNabdj9
+ 6ymblyg31HKwiDGxSArpsiyzc8zdNP8xVeSP61kg5nDygQyhIGLUwAmcqiJkeGJ5Mw3Vf/fWc5u
+ uuC7j630YHZU+hOLlACWPYs1I2PVlq1n+MXE2SIVr/zrSWri1OtBQisC40TuHloh8FYsVGjezB5
+ Jfz4A
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4X02Wk0R7Jz9sjG
+X-Rspamd-Queue-Id: 4X02Wv31gXz9smK
 
-This is something that I've been thinking about for a while. We had a
-discussion at LPC 2020 about this[1] but the proposals suggested there
-never materialised.
+This is based on copy_struct_from_user(), but there is one additional
+case to consider when creating a syscall that returns an
+extensible-struct to userspace -- how should data in the struct that
+cannot fit into the userspace struct be handled (ksize > usize)?
 
-In short, it is quite difficult for userspace to detect the feature
-capability of syscalls at runtime. This is something a lot of programs
-want to do, but they are forced to create elaborate scenarios to try to
-figure out if a feature is supported without causing damage to the
-system. For the vast majority of cases, each individual feature also
-needs to be tested individually (because syscall results are
-all-or-nothing), so testing even a single syscall's feature set can
-easily inflate the startup time of programs.
+There are three possibilies:
 
-This patchset implements the fairly minimal design I proposed in this
-talk[2] and in some old LKML threads (though I can't find the exact
-references ATM). The general flow looks like:
+ 1. The interface is like sched_getattr(2), where new information will
+    be silently not provided to userspace. This is probably what most
+    interfaces will want to do, as it provides the most possible
+    backwards-compatibility.
 
- 1. Userspace will indicate to the kernel that a syscall should a be
-    no-op by setting the top bit of the extensible struct size argument.
+ 2. The interface is like lsm_list_modules(2), where you want to return
+    an error like -EMSGSIZE if not providing information could result in
+    the userspace program making a serious mistake (such as one that
+    could lead to a security problem) or if you want to provide some
+    flag to userspace so they know that they are missing some
+    information.
 
-    We will almost certainly never support exabyte sized structs, so the
-    top bits are free for us to use as makeshift flag bits. This is
-    preferable to using the per-syscall flag field inside the structure
-    because seccomp can easily detect the bit in the flag and allow the
-    probe or forcefully return -EEXTSYS_NOOP.
+ 3. The interface is like statx(2), where there some kind of a request
+    mask that indicates what data userspace would like. One could
+    imagine that statx2(2) (using extensible structs) would want to
+    return -EMSGSIZE if the user explicitly requested a field that their
+    structure is too small to fit, but not return an error if the field
+    was not explicitly requested. This is kind of a mix between (1) and
+    (2) based on the requested mask.
 
- 2. The kernel will then fill the provided structure with every valid
-    bit pattern that the current kernel understands.
+The copy_struct_to_user() helper includes a an extra argument that is
+used to return a boolean flag indicating whether there was a non-zero
+byte in the trailing bytes that were not copied to userspace. This can
+be used in the following ways to handle all three cases, respectively:
 
-    For flags or other bitflag-like fields, this is the set of valid
-    flags or bits. For pointer fields or fields that take an arbitrary
-    value, the field has every bit set (0xFF... to fill the field) to
-    indicate that any value is valid in the field.
+ 1. Just pass NULL, as you don't care about this case.
 
- 3. The syscall then returns -EEXTSYS_NOOP which is an errno that will
-    only ever be used for this purpose (so userspace can be sure that
-    the request succeeded).
+ 2. Return an error (say -EMSGSIZE) if the argument was set to true by
+    copy_struct_to_user().
 
-    On older kernels, the syscall will return a different error (usually
-    -E2BIG or -EFAULT) and userspace can do their old-fashioned checks.
+ 3. If the argument was set to true by copy_struct_to_user(), check if
+    there is a flag that implies a field larger than usize.
 
- 4. Userspace can then check which flags and fields are supported by
-    looking at the fields in the returned structure. Flags are checked
-    by doing an AND with the flags field, and field support can checked
-    by comparing to 0. In principle you could just AND the entire
-    structure if you wanted to do this check generically without caring
-    about the structure contents (this is what libraries might consider
-    doing).
+    This is the only case where callers of copy_struct_to_user() should
+    check usize themselves. This will probably require scanning an array
+    that specifies what flags were added for each version of the flags
+    struct and returning an error if the request mask matches any of the
+    flags that were added in versions of the struct that are larger than
+    usize.
 
-    Userspace can even find out the internal kernel structure size by
-    passing a PAGE_SIZE buffer and seeing how many bytes are non-zero.
-
-    As with copy_struct_from_user(), this is designed to be forward- and
-    backwards- compatible.
-
-This allows programas to get a one-shot understanding of what features a
-syscall supports without having to do any elaborate setups or tricks to
-detect support for destructive features. Flags can simply be ANDed to
-check if they are in the supported set, and fields can just be checked
-to see if they are non-zero.
-
-This patchset is IMHO the simplest way we can add the ability to
-introspect the feature set of extensible struct (copy_struct_from_user)
-syscalls. It doesn't preclude the chance of a more generic mechanism
-being added later.
-
-The intended way of using this interface to get feature information
-looks something like the following (imagine that openat2 has gained a
-new field and a new flag in the future):
-
-  static bool openat2_no_automount_supported;
-  static bool openat2_cwd_fd_supported;
-
-  int check_openat2_support(void)
-  {
-      int err;
-      struct open_how how = {};
-
-      err = openat2(AT_FDCWD, ".", &how, CHECK_FIELDS | sizeof(how));
-      assert(err < 0);
-      switch (errno) {
-      case EFAULT: case E2BIG:
-          /* Old kernel... */
-          check_support_the_old_way();
-          break;
-      case EEXTSYS_NOOP:
-          openat2_no_automount_supported = (how.flags & RESOLVE_NO_AUTOMOUNT);
-          openat2_cwd_fd_supported = (how.cwd_fd != 0);
-          break;
-      }
-  }
-
-This series adds CHECK_FIELDS support for the following extensible
-struct syscalls, as they are quite likely to grow flags in the near
-future:
-
- * openat2
- * clone3
- * mount_setattr
-
-[1]: https://lwn.net/Articles/830666/
-[2]: https://youtu.be/ggD-eb3yPVs
+At the moment we don't have any users of (3), so this patch doesn't
+include any helpers to make the necessary scanning easier, but it should
+be fairly easy to add some if necessary.
 
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
-Changes in v2:
-- Add CHECK_FIELDS support to mount_setattr(2).
-- Fix build failure on architectures with custom errno values.
-- Rework selftests to use the tools/ uAPI headers rather than custom
-  defining EEXTSYS_NOOP.
-- Make sure we return -EINVAL and -E2BIG for invalid sizes even if
-  CHECK_FIELDS is set, and add some tests for that.
-- v1: <https://lore.kernel.org/r/20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
+ include/linux/uaccess.h | 98 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
----
-Aleksa Sarai (10):
-      uaccess: add copy_struct_to_user helper
-      sched_getattr: port to copy_struct_to_user
-      openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
-      openat2: add CHECK_FIELDS flag to usize argument
-      selftests: openat2: add 0xFF poisoned data after misaligned struct
-      selftests: openat2: add CHECK_FIELDS selftests
-      clone3: add CHECK_FIELDS flag to usize argument
-      selftests: clone3: add CHECK_FIELDS selftests
-      mount_setattr: add CHECK_FIELDS flag to usize argument
-      selftests: mount_setattr: add CHECK_FIELDS selftest
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index d8e4105a2f21..5d0a590ef65d 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -387,6 +387,104 @@ copy_struct_from_user(void *dst, size_t ksize, const void __user *src,
+ 	return 0;
+ }
+ 
++/**
++ * copy_struct_to_user: copy a struct to userspace
++ * @dst:   Destination address, in userspace. This buffer must be @ksize
++ *         bytes long.
++ * @usize: (Alleged) size of @dst struct.
++ * @src:   Source address, in kernel space.
++ * @ksize: Size of @src struct.
++ * @ignored_trailing: Set to %true if there was a non-zero byte in @src that
++ * userspace cannot see because they are using an smaller struct.
++ *
++ * Copies a struct from kernel space to userspace, in a way that guarantees
++ * backwards-compatibility for struct syscall arguments (as long as future
++ * struct extensions are made such that all new fields are *appended* to the
++ * old struct, and zeroed-out new fields have the same meaning as the old
++ * struct).
++ *
++ * Some syscalls may wish to make sure that userspace knows about everything in
++ * the struct, and if there is a non-zero value that userspce doesn't know
++ * about, they want to return an error (such as -EMSGSIZE) or have some other
++ * fallback (such as adding a "you're missing some information" flag). If
++ * @ignored_trailing is non-%NULL, it will be set to %true if there was a
++ * non-zero byte that could not be copied to userspace (ie. was past @usize).
++ *
++ * While unconditionally returning an error in this case is the simplest
++ * solution, for maximum backward compatibility you should try to only return
++ * -EMSGSIZE if the user explicitly requested the data that couldn't be copied.
++ * Note that structure sizes can change due to header changes and simple
++ * recompilations without code changes(!), so if you care about
++ * @ignored_trailing you probably want to make sure that any new field data is
++ * associated with a flag. Otherwise you might assume that a program knows
++ * about data it does not.
++ *
++ * @ksize is just sizeof(*src), and @usize should've been passed by userspace.
++ * The recommended usage is something like the following:
++ *
++ *   SYSCALL_DEFINE2(foobar, struct foo __user *, uarg, size_t, usize)
++ *   {
++ *      int err;
++ *      bool ignored_trailing;
++ *      struct foo karg = {};
++ *
++ *      if (usize > PAGE_SIZE)
++ *		return -E2BIG;
++ *      if (usize < FOO_SIZE_VER0)
++ *		return -EINVAL;
++ *
++ *      // ... modify karg somehow ...
++ *
++ *      err = copy_struct_to_user(uarg, usize, &karg, sizeof(karg),
++ *				  &ignored_trailing);
++ *      if (err)
++ *		return err;
++ *      if (ignored_trailing)
++ *		return -EMSGSIZE:
++ *
++ *      // ...
++ *   }
++ *
++ * There are three cases to consider:
++ *  * If @usize == @ksize, then it's copied verbatim.
++ *  * If @usize < @ksize, then the kernel is trying to pass userspace a newer
++ *    struct than it supports. Thus we only copy the interoperable portions
++ *    (@usize) and ignore the rest (but @ignored_trailing is set to %true if
++ *    any of the trailing (@ksize - @usize) bytes are non-zero).
++ *  * If @usize > @ksize, then the kernel is trying to pass userspace an older
++ *    struct than userspace supports. In order to make sure the
++ *    unknown-to-the-kernel fields don't contain garbage values, we zero the
++ *    trailing (@usize - @ksize) bytes.
++ *
++ * Returns (in all cases, some data may have been copied):
++ *  * -EFAULT: access to userspace failed.
++ */
++static __always_inline __must_check int
++copy_struct_to_user(void __user *dst, size_t usize, const void *src,
++		    size_t ksize, bool *ignored_trailing)
++{
++	size_t size = min(ksize, usize);
++	size_t rest = max(ksize, usize) - size;
++
++	/* Double check if ksize is larger than a known object size. */
++	if (WARN_ON_ONCE(ksize > __builtin_object_size(src, 1)))
++		return -E2BIG;
++
++	/* Deal with trailing bytes. */
++	if (usize > ksize) {
++		int ret = clear_user(dst + size, rest);
++		if (ret)
++			return ret;
++	}
++	if (ignored_trailing)
++		*ignored_trailing = ksize < usize &&
++			memchr_inv(src + size, 0, rest) != NULL;
++	/* Copy the interoperable parts of the struct. */
++	if (copy_to_user(dst, src, size))
++		return -EFAULT;
++	return 0;
++}
++
+ bool copy_from_kernel_nofault_allowed(const void *unsafe_src, size_t size);
+ 
+ long copy_from_kernel_nofault(void *dst, const void *src, size_t size);
 
- arch/alpha/include/uapi/asm/errno.h                |   3 +
- arch/mips/include/uapi/asm/errno.h                 |   3 +
- arch/parisc/include/uapi/asm/errno.h               |   3 +
- arch/sparc/include/uapi/asm/errno.h                |   3 +
- fs/namespace.c                                     |  17 ++
- fs/open.c                                          |  18 ++
- include/linux/uaccess.h                            |  98 ++++++++
- include/uapi/asm-generic/errno.h                   |   3 +
- include/uapi/linux/openat2.h                       |   2 +
- kernel/fork.c                                      |  30 ++-
- kernel/sched/syscalls.c                            |  42 +---
- tools/arch/alpha/include/uapi/asm/errno.h          |   3 +
- tools/arch/mips/include/uapi/asm/errno.h           |   3 +
- tools/arch/parisc/include/uapi/asm/errno.h         |   3 +
- tools/arch/sparc/include/uapi/asm/errno.h          |   3 +
- tools/include/uapi/asm-generic/errno.h             |   3 +
- tools/include/uapi/asm-generic/posix_types.h       | 101 ++++++++
- tools/testing/selftests/clone3/.gitignore          |   1 +
- tools/testing/selftests/clone3/Makefile            |   4 +-
- .../testing/selftests/clone3/clone3_check_fields.c | 264 +++++++++++++++++++++
- tools/testing/selftests/mount_setattr/Makefile     |   2 +-
- .../selftests/mount_setattr/mount_setattr_test.c   |  53 ++++-
- tools/testing/selftests/openat2/Makefile           |   2 +
- tools/testing/selftests/openat2/openat2_test.c     | 165 ++++++++++++-
- 24 files changed, 778 insertions(+), 51 deletions(-)
----
-base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
-change-id: 20240803-extensible-structs-check_fields-a47e94cef691
-
-Best regards,
 -- 
-Aleksa Sarai <cyphar@cyphar.com>
+2.46.0
 
 
