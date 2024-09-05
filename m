@@ -1,84 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-28786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E31996E33C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 21:31:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B42D96E350
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 21:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159AB1F276F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 19:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CFB1C23FD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 19:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D2C18EFF8;
-	Thu,  5 Sep 2024 19:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EE218FDDC;
+	Thu,  5 Sep 2024 19:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="LXImTKbv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bzyzhkte"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D500C15574D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 19:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747FF18A6B0;
+	Thu,  5 Sep 2024 19:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725564661; cv=none; b=tvaPu159AxoMKV/f1ZIgePJEUovPqXS+A/5nVp2Ximfwyk4RYYuBffMXv1+4x/dyXR+qG/lluLFQpMBk0BrzdXhcqSJpJ9zSnYgJpoxU5PwjpUkyxBakTsnsrnVaI9co88YykTlGoldn0YoiCd6OyxDW8u1tMXsZ3mVUBctM3j8=
+	t=1725565083; cv=none; b=V1/hXLm2FwqEakd32GSoprYoIEygz7jhJgdQrnW4Vl74BRWiSEEeunuYi5fnZJPel/2hT84aIPW5n7T106YIoZfdB57Dcl1fB9FSIXCjeI1PDAytwCtKTQHtetMb6gX+XAI0Ymt1gmAPNN/YLkiNJ7ZEi9KYVf1bLlVTt8kcjCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725564661; c=relaxed/simple;
-	bh=aJZ8bQSkUIVqDFRiCuFHGmMzhivAESBpCNJ0n0n+DEk=;
+	s=arc-20240116; t=1725565083; c=relaxed/simple;
+	bh=lVx2FJzKGyCjMvdz8i5WRQMWkAvE1xq/AnkA2cTn4nU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3krujEt+HXzxAy8YXkzspEF6BkUe2vHcnGy4gbl1OJt04URQB+cU0vXzZ/GpzZRW3xSb2+4m4OG72FzlQ0oJyf3Y0+/rp0lH7sM0c2N9Zsn7vmbwvXUJoOz7nDkmnbqGbZ5CV9oX3MXib/gUafX1tiZOO6NG1rV1M+s2pXpRbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=LXImTKbv; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5df9433ac0cso803217eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2024 12:30:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1725564659; x=1726169459; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XWzsnrKOmtVghAOq6+Gelxt9/1OrdoNtOgO3/1pVemw=;
-        b=LXImTKbv5+Ty10V4xWlmNZvDYRJgeXcvbNG0XEy+AUshlKSj/VCj3tueGQLTl4NKyh
-         FVP6/nSCKWNv8x/l9vJLBO2JR2US1VrS7C0xa6EwBKiz68IV3KpuWYR8CXnQvtE5YJ5j
-         ZKPhKepuqtlU38a2dfiWzoN+UNPC80S7qCnhXhD/pugOJtIK5n9zOz9AG9WVclfwYUOe
-         GsABP1R6vzGbn5im88Eu6AP8YFeCxknFIH7DZyCaIVksygkhHamL8Q2vtE+yWGSeDdjf
-         iDcsihPp17TXBdA4YpuvNfqLrouorWMD81JWAEwsfESTEiRmKsxLhKRSokTAK5sG+qz1
-         eZBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725564659; x=1726169459;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XWzsnrKOmtVghAOq6+Gelxt9/1OrdoNtOgO3/1pVemw=;
-        b=Mt/nYU5R2VgG5gkU/hUQoAOoveXjleAeclGSbxVinH6DGpCvA7i165y8YL7VLKsR8S
-         Kv+leQPPup8urNrLDwimnU2390o+CdeDL6wMDwFVq0agJGtEl3zNL7bj9TNtSQ2xHQB5
-         LnMdd+VnYjrnN0ZzvLNp2uYrMfYqqlZ5p/KgY8cuPUpJfWDoT15As3aI3iRy52jTwiox
-         bmgxrXgi/lM8HtzMEV81MWdzkDj7VaV+4INN9CpbR30bLf6uLx5Np0f86yKjgOhh0WVE
-         KmQQ45uBGd/dLpiXfYt8jvRYaTw9MBG7bR8NFxU8rCN7xIX/Vbw+W7LvMp7Zz9hJPbL9
-         l5SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtgiz9JSsfWKDYAw7NkidY0RuGXroUV8sGqgcOGUtnxWBDiOWfWA2hRwoq0cePQpma6vyP1EkAsF6tsZ16@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9n6dFIjvBAHsjUkXCbVMsjwrBMVCcEf+lYR0Rpqjj2by5dAX7
-	cF1Z43IrkW99/fz6DHxLfguucG1DMy1+RZPNLP6EBQn2/oxJoRPx67fzqgDo22UZy8qZ1LU9ids
-	G
-X-Google-Smtp-Source: AGHT+IFXdd+03g78Al1lMAeKqgNUOu/nJpHoXFDkr25DBgvdfGzY+Xz0bdnePSiuP1u3rPhxKsaK6A==
-X-Received: by 2002:a05:6870:6111:b0:277:f301:40ce with SMTP id 586e51a60fabf-27b82e6745bmr338204fac.20.1725564659009;
-        Thu, 05 Sep 2024 12:30:59 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a98efeb945sm100782485a.98.2024.09.05.12.30.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 12:30:58 -0700 (PDT)
-Date: Thu, 5 Sep 2024 15:30:57 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: jack@suse.cz, kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org, linux-xfs@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v5 00/18] fanotify: add pre-content hooks
-Message-ID: <20240905193057.GB3710628@perftesting>
-References: <cover.1725481503.git.josef@toxicpanda.com>
- <CAOQ4uxikusW_q=zdqDKCHz8kGoTyUg1htWhPR1OFAFGHdj-vcQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+QxJenP/bk0LqvFfgR6JGtna5TZxuYIOl4wwA+Z/ZoOr3wBpWb+EC5E+wuxaPb712MD1X+gs7KRm1JcpjwCGg2zw668AraRw+ybwTeUQOLkYMFvvjgu70LiqyKHjoeMMUHUTLF7OBdEbGYVwHNlFo37FlUzU1jmFDnMeLvFQCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bzyzhkte; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE9AC4CEC3;
+	Thu,  5 Sep 2024 19:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725565083;
+	bh=lVx2FJzKGyCjMvdz8i5WRQMWkAvE1xq/AnkA2cTn4nU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bzyzhktefi/fppyPGoJRwD/yFYBzCDvaNf/zgFK3Gldq4o8uiWDErOe9twJ2ORFrz
+	 nCjpx0EC8/cSq4xybK7DL2xeQvy59PEOKcnXIJ5/tvVM5Qlj7fCD949z+9BPwC/RKV
+	 IhseQNph/Ieq3gGS3lwxnpf5X/yQtIiZgHjzDZBeGSMb5p3JYOEweqz2pR8Sjkgpbl
+	 lTD11lKuVvIVhSzxx0+ZLnT1atS0b9Tpp387ibTEn69Cvi7jBzwoCw7yOuYmbkG0Nv
+	 Xfx1lvyV3MleMKsaVTzxCEcGNPSbL5+2GJOJKqQoe2e9BmEem7pJcvKZtevjp/BOZX
+	 5CVaQlPHKfRRQ==
+Date: Thu, 5 Sep 2024 15:38:01 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v15 14/26] nfs_common: add NFS LOCALIO auxiliary protocol
+ enablement
+Message-ID: <ZtoImdAHDdm6PQ-v@kernel.org>
+References: <20240831223755.8569-1-snitzer@kernel.org>
+ <20240831223755.8569-15-snitzer@kernel.org>
+ <CAFX2Jf=chLdC-eip0JFbtjE+2pDq7G1vbRunB4OD2ZRd2=sDVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,38 +63,87 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxikusW_q=zdqDKCHz8kGoTyUg1htWhPR1OFAFGHdj-vcQ@mail.gmail.com>
+In-Reply-To: <CAFX2Jf=chLdC-eip0JFbtjE+2pDq7G1vbRunB4OD2ZRd2=sDVQ@mail.gmail.com>
 
-On Thu, Sep 05, 2024 at 10:33:07AM +0200, Amir Goldstein wrote:
-> On Wed, Sep 4, 2024 at 10:29 PM Josef Bacik <josef@toxicpanda.com> wrote:
+On Thu, Sep 05, 2024 at 03:24:06PM -0400, Anna Schumaker wrote:
+> On Sat, Aug 31, 2024 at 6:38 PM Mike Snitzer <snitzer@kernel.org> wrote:
 > >
-> > v4: https://lore.kernel.org/linux-fsdevel/cover.1723670362.git.josef@toxicpanda.com/
-> > v3: https://lore.kernel.org/linux-fsdevel/cover.1723228772.git.josef@toxicpanda.com/
-> > v2: https://lore.kernel.org/linux-fsdevel/cover.1723144881.git.josef@toxicpanda.com/
-> > v1: https://lore.kernel.org/linux-fsdevel/cover.1721931241.git.josef@toxicpanda.com/
+> > fs/nfs_common/nfslocalio.c provides interfaces that enable an NFS
+> > client to generate a nonce (single-use UUID) and associated
+> > short-lived nfs_uuid_t struct, register it with nfs_common for
+> > subsequent lookup and verification by the NFS server and if matched
+> > the NFS server populates members in the nfs_uuid_t struct.
 > >
-> > v4->v5:
-> > - Cleaned up the various "I'll fix it on commit" notes that Jan made since I had
-> >   to respin the series anyway.
-> > - Renamed the filemap pagefault helper for fsnotify per Christians suggestion.
-> > - Added a FS_ALLOW_HSM flag per Jan's comments, based on Amir's rough sketch.
-> > - Added a patch to disable btrfs defrag on pre-content watched files.
-> > - Added a patch to turn on FS_ALLOW_HSM for all the file systems that I tested.
+> > nfs_common's nfs_uuids list is the basis for localio enablement, as
+> > such it has members that point to nfsd memory for direct use by the
+> > client (e.g. 'net' is the server's network namespace, through it the
+> > client can access nn->nfsd_serv).
+> >
+> > This commit also provides the base nfs_uuid_t interfaces to allow
+> > proper net namespace refcounting for the LOCALIO use case.
+> >
+> > CONFIG_NFS_LOCALIO controls the nfs_common, NFS server and NFS client
+> > enablement for LOCALIO. If both NFS_FS=m and NFSD=m then
+> > NFS_COMMON_LOCALIO_SUPPORT=m and nfs_localio.ko is built (and provides
+> > nfs_common's LOCALIO support).
+> >
+> >   # lsmod | grep nfs_localio
+> >   nfs_localio            12288  2 nfsd,nfs
+> >   sunrpc                745472  35 nfs_localio,nfsd,auth_rpcgss,lockd,nfsv3,nfs
+> >
+> > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+> > Co-developed-by: NeilBrown <neilb@suse.de>
+> > Signed-off-by: NeilBrown <neilb@suse.de>
+> > ---
+> >  fs/Kconfig                 |  23 ++++++++
+> >  fs/nfs_common/Makefile     |   3 +
+> >  fs/nfs_common/nfslocalio.c | 116 +++++++++++++++++++++++++++++++++++++
+> >  include/linux/nfslocalio.h |  36 ++++++++++++
+> >  4 files changed, 178 insertions(+)
+> >  create mode 100644 fs/nfs_common/nfslocalio.c
+> >  create mode 100644 include/linux/nfslocalio.h
+> >
+> > diff --git a/fs/Kconfig b/fs/Kconfig
+> > index a46b0cbc4d8f..24d4e4b419d1 100644
+> > --- a/fs/Kconfig
+> > +++ b/fs/Kconfig
+> > @@ -382,6 +382,29 @@ config NFS_COMMON
+> >         depends on NFSD || NFS_FS || LOCKD
+> >         default y
+> >
+> > +config NFS_COMMON_LOCALIO_SUPPORT
+> > +       tristate
+> > +       default n
+> > +       default y if NFSD=y || NFS_FS=y
+> > +       default m if NFSD=m && NFS_FS=m
+> > +       select SUNRPC
+> > +
+> > +config NFS_LOCALIO
+> > +       bool "NFS client and server support for LOCALIO auxiliary protocol"
+> > +       depends on NFSD && NFS_FS
+> > +       select NFS_COMMON_LOCALIO_SUPPORT
+> > +       default n
+> > +       help
+> > +         Some NFS servers support an auxiliary NFS LOCALIO protocol
+> > +         that is not an official part of the NFS protocol.
+> > +
+> > +         This option enables support for the LOCALIO protocol in the
+> > +         kernel's NFS server and client. Enable this to permit local
+> > +         NFS clients to bypass the network when issuing reads and
+> > +         writes to the local NFS server.
+> > +
+> > +         If unsure, say N.
+> > +
 > 
-> My only nits are about different ordering of the FS_ALLOW_HSM patches
-> I guess as the merge window is closing in, Jan could do these trivial
-> reorders on commit, based on his preference (?).
+> I'm wondering if it would make sense to create a fs/nfs_common/Kconfig
+> file at some point (not as part of this patchset!) to hold this group
+> of nfs_common options and to tidy up this section of the fs/Kconfig
+> file.
 > 
-> > - Added two fstests (which will be posted separately) to validate everything,
-> >   re-validated the series with btrfs, xfs, ext4, and bcachefs to make sure I
-> >   didn't break anything.
-> 
-> Very cool!
-> 
-> Thanks again for the "productization" of my patches :)
+> Thoughts?
+> Anna
 
-Thanks for doing all the heavy lifting in the first place! Glad we can move on
-to other things from here,
+Yes, I think that makes sense.
 
-Josef
+Mike
 
