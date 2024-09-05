@@ -1,169 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-28792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD4396E447
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 22:42:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19FD96E49A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 23:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1392D1C23CCF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 20:42:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A861F20C20
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 21:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63021A76B0;
-	Thu,  5 Sep 2024 20:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE9419FA81;
+	Thu,  5 Sep 2024 21:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vmhr4xm1"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="n5rn2X4w";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GsKRD1wo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D024A1A3BB9;
-	Thu,  5 Sep 2024 20:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9537A188A16;
+	Thu,  5 Sep 2024 21:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725568909; cv=none; b=qCaQkczc8dLk7XAiLFbV90s8/8Xx2M3kKWQc+AFrtnBLDdlumIvQ0YWLllGAul258iuiVQCd5t68Ap4y7FJpCT3/KATXmdTiAEw+9j2S5aaZOwu2uc7rpZLm363shHjbaE8LgeCqCT5vDKp/PSwIyjbEalA8oyS6+X6RvfuALQo=
+	t=1725570287; cv=none; b=KNcYVigvF4WofGOncnYPR+FBTrbx2YwWxQC+D2gaRTSTU0PMQ7mXR/k/cQoOkPQRrQut3A2tONrFxvkTKp0FpM+hjLhuEbsgc/b84vpyR/QTf1KNdMFUHfc3UxEIyf56vYS8llvSifQAXvzA9zp15FdPZzOMJDUHNk8oGjfTxAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725568909; c=relaxed/simple;
-	bh=1pTKkK+g3LwaTtJ584c38j5d6WNE2g/owBxKg20Z/ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZSKdCkfOWoYR+LV2AP2Al3M++Ij2ln0XHwZ0TTJt7QspiFhWN/1b47S8r06OgXO1X2stTG+oxD8iLDQ2QMdo86EYPupFyrzoY5D4IW9z1qx9v3B95OcD0InISzZLYCtNw+B9HHO/rbRcXqxMhjr4+MHb5DdepuKin62dDbnktk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Vmhr4xm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398A0C4CEC3;
-	Thu,  5 Sep 2024 20:41:46 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vmhr4xm1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725568904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IeN0hion7E5T8bnC9bEQSPstkGSkSwCA9M/4YZOxoLs=;
-	b=Vmhr4xm1Wp03ugcdrYba3ciO2c/OQp0oQM3tMCUeyv/y6IZN4vNwmCaOuwFQTFlZjTxzGh
-	vyDmKYOWlgz6gVR/SY11McK85Ld05NIERlGr0h62hGj7fSc/8dsPEgJIDmwgO9QkzhtMl2
-	G9lC+jvPOPB9VCi02VaBflNkREEbT7Y=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 48b42c3c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 5 Sep 2024 20:41:44 +0000 (UTC)
-Date: Thu, 5 Sep 2024 22:41:40 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v5 4/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on VDSO32
-Message-ID: <ZtoXhGYflBNR74g0@zx2c4.com>
-References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
- <1f49c2ce009f8b007ab0676fb41187b2d54f28b2.1725304404.git.christophe.leroy@csgroup.eu>
- <ZtnYqZI-nrsNslwy@zx2c4.com>
+	s=arc-20240116; t=1725570287; c=relaxed/simple;
+	bh=pnJo8BCK/P3cWwmcQ6XRvES4TVu/0JjX0mA0+astEaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ItI63lqvVRz32BjPzNn+8XspazAxzsQxABbciS+1uqxpZP68aucEtLRysrNLCe9iW7oPwfKSSKHCYmxLE360L1lsj7myDoMuJ82BesX/op6AkqaPkLidBcCgCaT1Hzeq2lV2dx5IW6Lk7xwp8xOmETFhftsnAhouAqdnKaUW1DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=n5rn2X4w; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GsKRD1wo; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id C1EA9138039E;
+	Thu,  5 Sep 2024 17:04:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Thu, 05 Sep 2024 17:04:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1725570283;
+	 x=1725656683; bh=3p4qQr07PkgRUdo6X+f/Vcy9Vgd92TzGan6BdMlGZSA=; b=
+	n5rn2X4wYl1TyLsAnA917oyGgO6kS+okmdrN4rEwKPpA37wFNWU/prCR/oKDn+Xp
+	ZUNfjg0tDxYnlk/rKBUJh7tnSIU+q63re90RU7kuXjwUQqX9zAxPbBtRDXi3YbPS
+	+iymIAYpoEmYS4m9ZrgJj8K4g9m9ib4RvEmB0noFDgFlwr5bLjfTFabbnuCGr4YV
+	D6oCpvOBF6BT6cJnSRsHiyCb7iKPUGhQ7JUcTGNtboq5AtNSwGDz9hyHBcDVtwyk
+	2SYYWekm4eyv2qDZV0x7IBLJXcZ03f2pD8qitx+0V9Q9KVPxqZKwI8YbwC+X+6vM
+	0oebiP8SGuoxt1FUkvvXoQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725570283; x=
+	1725656683; bh=3p4qQr07PkgRUdo6X+f/Vcy9Vgd92TzGan6BdMlGZSA=; b=G
+	sKRD1woO2VGLChwZ6LwaA+IDjdiEEymqxVeEHfCnR0Q0CgaCZDUvrFM9KhjWBDjG
+	9SwOQk9N1dSmxj9/qwaZjU4uW+bpbC08s9UNaQYV6GMLvuOJpCBWEdQrUIfOKb6/
+	lTFquKr2h91RQCV69vDGNRZmKhTHLFh7JMFVZpEEt5V9Yw8rXRNVU2dU8RwYNwtS
+	yMmoDq6U0VBnrkYQAVCeTWLVms2+m9UFEX01twTtP3AkDy7Zhj931QQT/psAGVJn
+	uGNTUavOAHNo6/gQezrhHqce2n0udOvW0jE+MalwIRcbdvEZLouUtIir2E2Z/vdB
+	jbnXnbpf9PPtqXWulgGaQ==
+X-ME-Sender: <xms:6xzaZmpaB2MnswIVgAhCpHPYGOFiEK953Ru0O77uV5bu_KkpPR9f9Q>
+    <xme:6xzaZkrXClOXZYXJAGXOK8MgxbvlDz3Jxzao8alAdexJoZQEph8m2P7YiW5MXyLiX
+    MjNebmzZI6HRoS7>
+X-ME-Received: <xmr:6xzaZrN-orTj8_9wkHLZqHYycZxk4w4AolPsTPz4fNWuUm-Ki_hK9V45jdlazJFg3XEU_YW1qISNxhJJuOvXYO661uVJQb_pwRYWx37-3IiNYPrz5xiC>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehledgudehiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
+    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddu
+    gfdtgfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
+    thesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohep
+    sghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivg
+    hrvgguihdrhhhupdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgt
+    ohhmpdhrtghpthhtohepsggvrhhnugesfhgrshhtmhgrihhlrdhfmhdprhgtphhtthhope
+    hlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjh
+    horghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhoshgvfhes
+    thhogihitghprghnuggrrdgtohhm
+X-ME-Proxy: <xmx:6xzaZl4w7DIrGyEBUu0d5LG7yDa7rW6FrAOUrHTYgFV5kTwZMmZSrw>
+    <xmx:6xzaZl7Q8Di8Yo8P0PH1R09znJ22CsBOui7z99P8PbTLeMFkn9bgdw>
+    <xmx:6xzaZljIS7V4pMS7MW8sYnZXjoiunE82wMXDtkkARRwQuM6Dtudnpg>
+    <xmx:6xzaZv7uALud-pV_2gzyE26bk4WscUVk-mQqzWBwMBfPuL9_ledDQg>
+    <xmx:6xzaZiw2xJHxMV74mxdS3EjNnLjuzOMJGx9tjKZGPSeWm4vFRKWf93fy>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Sep 2024 17:04:41 -0400 (EDT)
+Message-ID: <3ec40e7a-8600-4aec-af57-7f65126c78eb@fastmail.fm>
+Date: Thu, 5 Sep 2024 23:04:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZtnYqZI-nrsNslwy@zx2c4.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 17/17] fuse: {uring} Pin the user buffer
+To: Jens Axboe <axboe@kernel.dk>, Bernd Schubert <bschubert@ddn.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Pavel Begunkov <asml.silence@gmail.com>,
+ bernd@fastmail.fm
+Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Amir Goldstein <amir73il@gmail.com>
+References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
+ <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-17-9207f7391444@ddn.com>
+ <9a0e31ff-06ad-4065-8218-84b9206fc8a5@kernel.dk>
+ <6c336a8f-4a91-4236-9431-9d0123b38796@fastmail.fm>
+ <cd1e8d26-a0f0-49f2-ac27-428d26713cc1@kernel.dk>
+ <26c96371-a113-4384-b97b-cf4913cdf8b5@fastmail.fm>
+ <20342352-773c-4fb1-ac66-bcc6cf45d577@kernel.dk>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20342352-773c-4fb1-ac66-bcc6cf45d577@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 05, 2024 at 06:13:29PM +0200, Jason A. Donenfeld wrote:
-> > +/*
-> > + * The macro sets two stack frames, one for the caller and one for the callee
-> > + * because there are no requirement for the caller to set a stack frame when
-> > + * calling VDSO so it may have omitted to set one, especially on PPC64
-> > + */
-> > +
-> > +.macro cvdso_call funct
-> > +  .cfi_startproc
-> > +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
-> > +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
-> > +	mflr		r0
-> > +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
-> > +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
-> > +	PPC_STL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-> > +  .cfi_rel_offset lr, PPC_MIN_STKFRM + PPC_LR_STKOFF
-> > +	get_datapage	r8
-> > +	addi		r8, r8, VDSO_RNG_DATA_OFFSET
-> > +	bl		CFUNC(DOTSYM(\funct))
-> > +	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-> > +	cmpwi		r3, 0
-> > +	mtlr		r0
-> > +	addi		r1, r1, 2 * PPC_MIN_STKFRM
-> > +  .cfi_restore lr
-> > +  .cfi_def_cfa_offset 0
-> > +	crclr		so
-> > +	bgelr+
-> > +	crset		so
-> > +	neg		r3, r3
-> > +	blr
-> > +  .cfi_endproc
-> > +.endm
+
+
+On 9/4/24 21:40, Jens Axboe wrote:
+> On 9/4/24 1:25 PM, Bernd Schubert wrote:
+>>
+>>
+>> On 9/4/24 18:16, Jens Axboe wrote:
+>>> On 9/4/24 10:08 AM, Bernd Schubert wrote:
+>>>> Hi Jens,
+>>>>
+>>>> thanks for your help.
+>>>>
+>>>> On 9/4/24 17:47, Jens Axboe wrote:
+>>>>> On 9/1/24 7:37 AM, Bernd Schubert wrote:
+>>>>>> This is to allow copying into the buffer from the application
+>>>>>> without the need to copy in ring context (and with that,
+>>>>>> the need that the ring task is active in kernel space).
+>>>>>>
+>>>>>> Also absolutely needed for now to avoid this teardown issue
+>>>>>
+>>>>> I'm fine using these helpers, but they are absolutely not needed to
+>>>>> avoid that teardown issue - well they may help because it's already
+>>>>> mapped, but it's really the fault of your handler from attempting to map
+>>>>> in user pages from when it's teardown/fallback task_work. If invoked and
+>>>>> the ring is dying or not in the right task (as per the patch from
+>>>>> Pavel), then just cleanup and return -ECANCELED.
+>>>>
+>>>> As I had posted on Friday/Saturday, it didn't work. I had added a 
+>>>> debug pr_info into Pavels patch, somehow it didn't trigger on PF_EXITING 
+>>>> and I didn't further debug it yet as I was working on the pin anyway.
+>>>> And since Monday occupied with other work...
+>>>
+>>> Then there's something wrong with that patch, as it definitely should
+>>> work. How did you reproduce the teardown crash? I'll take a look here.
+>>
+>> Thank you! In this specific case
+>>
+>> 1) Run passthrough_hp with --debug-fuse
+>>
+>> 2) dd if=/dev/zero of=/scratch/test/testfile bs=1M count=1
+>>
+>> Then on the console that has passthrough_hp output and runs slow with my
+>> ASAN/etc kernel: ctrl-z and kill -9 %
+>> I guess a pkill -9 passthrough_hp should also work
 > 
-> Can you figure out what's going on and send a fix, which I'll squash
-> into this commit?
+> Eerily similar to what I tried, but I managed to get it to trigger.
+> Should work what's in there, but I think checking for task != current is
+> better and not race prone like PF_EXITING is. So maybe? Try with the
+> below incremental.
+> 
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index 55bdcb4b63b3..fa5a0f724a84 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -121,7 +121,8 @@ static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state *ts)
+>  	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+>  	unsigned flags = IO_URING_F_COMPLETE_DEFER;
+>  
+> -	if (req->task->flags & PF_EXITING)
+> +	/* Different task should only happen if the original is going away */
+> +	if (req->task != current)
+>  		flags |= IO_URING_F_TASK_DEAD;
+>  
+>  	/* task_work executor checks the deffered list completion */
+> 
 
-This doesn't work, but I wonder if something like it is what we want. I
-need to head out for the day, but here's what I've got. It's all wrong
-but might be of interest.
+Thanks, just tested this version works fine!
+My user of that (patch 16/17) left the fuse ring entry in bad state -
+fixed in my v4 branch.
 
-diff --git a/arch/powerpc/include/asm/vdso/getrandom.h b/arch/powerpc/include/asm/vdso/getrandom.h
-index 501d6bb14e8a..acb271709d30 100644
---- a/arch/powerpc/include/asm/vdso/getrandom.h
-+++ b/arch/powerpc/include/asm/vdso/getrandom.h
-@@ -47,7 +47,8 @@ static __always_inline struct vdso_rng_data *__arch_get_vdso_rng_data(void)
- }
-
- ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state,
--			     size_t opaque_len, const struct vdso_rng_data *vd);
-+			     size_t opaque_len, const struct vdso_data *vd,
-+			     const struct vdso_rng_data *vrd);
-
- #endif /* !__ASSEMBLY__ */
-
-diff --git a/arch/powerpc/kernel/vdso/getrandom.S b/arch/powerpc/kernel/vdso/getrandom.S
-index a957cd2b2b03..bc49eb87cfd1 100644
---- a/arch/powerpc/kernel/vdso/getrandom.S
-+++ b/arch/powerpc/kernel/vdso/getrandom.S
-@@ -32,7 +32,7 @@
-   .cfi_rel_offset r2, PPC_MIN_STKFRM + STK_GOT
- #endif
- 	get_datapage	r8
--	addi		r8, r8, VDSO_RNG_DATA_OFFSET
-+	addi		r9, r8, VDSO_RNG_DATA_OFFSET
- 	bl		CFUNC(DOTSYM(\funct))
- 	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
- #ifdef __powerpc64__
-diff --git a/arch/powerpc/kernel/vdso/vgetrandom.c b/arch/powerpc/kernel/vdso/vgetrandom.c
-index 5f855d45fb7b..408c76036868 100644
---- a/arch/powerpc/kernel/vdso/vgetrandom.c
-+++ b/arch/powerpc/kernel/vdso/vgetrandom.c
-@@ -8,7 +8,10 @@
- #include <linux/types.h>
-
- ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state,
--			     size_t opaque_len, const struct vdso_rng_data *vd)
-+			     size_t opaque_len, const struct vdso_data *vd,
-+			     const struct vdso_rng_data *vrd)
- {
--	return __cvdso_getrandom_data(vd, buffer, len, flags, opaque_state, opaque_len);
-+	if (IS_ENABLED(CONFIG_TIME_NS) && vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
-+		vrd = (void *)vrd + (1UL << CONFIG_PAGE_SHIFT);
-+	return __cvdso_getrandom_data(vrd, buffer, len, flags, opaque_state, opaque_len);
- }
-
+Thanks,
+Bernd
 
