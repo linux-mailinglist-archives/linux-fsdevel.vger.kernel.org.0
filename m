@@ -1,198 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-28698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 595ED96D1C3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 10:18:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF29D96D1D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 10:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC707B251FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 08:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B8DD281EDB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 08:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF91E194C6E;
-	Thu,  5 Sep 2024 08:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1A6194A60;
+	Thu,  5 Sep 2024 08:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQC5wxj+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtSTKHg5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47F9193079;
-	Thu,  5 Sep 2024 08:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9531946B9
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 08:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524057; cv=none; b=pPDJGmlWwJsRx2Tb/1BvCH5rnOULT9KW+CrJM1xUn+pkaMsWck9U4bbeggYSmovzdXoXwQ3cgsjRuRYb6Pdx3byNwhRngx7gvdCaFE3zEB8SVsArPNsksukWc19bqPrtFU6FflCRxzgNm2bg/swfyeAWiuVVApLu/HHoAV+phyY=
+	t=1725524277; cv=none; b=XN41JADCLxoTMY51kcQLaKLwuG8MKPCnd5m0MNUAqPc4YcQkpSowQ4w4vtNIR/8lsBJiY4QLy+0aO8WICjMw/WgQNxgByOfbCzqf9Z6Z2G90dyhFbesDMMEVe8bIFxHuzdv81ys+SWyXkad0lh661n7dxy0hsqfI5PTMPrDXfmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524057; c=relaxed/simple;
-	bh=0Vw11TeXJsR1xXlzKl9emuyRB2EMghGKDWUx1W7c1cY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LEA+YQVp/yErRpHYcZD05mZfctbT9ZS3PdBLjs8DpJDBu+kIFO3fGZjwLVt+9FFt25Vu2EeVGWWOhrj9mlLqIfEf8T3TWro9k1byPQv+QUM6Nl3NlLKJPS1WNUzl0LIIQeHyHJ4fiL9DiVkoO48Hjgv7Kj4Z/Zj8UbtCqVGFaBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQC5wxj+; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a80511d124so31050385a.1;
-        Thu, 05 Sep 2024 01:14:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725524054; x=1726128854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GyBCK9InRyMt0WInCHwzobA7WWqSCgMtXck53xCZvD4=;
-        b=OQC5wxj+rRDpgOvzvYeRmfsz0Afzz+uG30toJmHRSW/vWUNSsBoTg1lagmn9hRC2yw
-         eof1txJ2oeqerhW8AYw/FPiRJ5XY+cO6ns8YAf3JEU1cFQw9OTbXDoqLiDPqWj1RGyTq
-         8CJAtyw1XkbfKy14aP7RgFWjvU3DnJl2WANr6VawLO0xGT4OX0mJO+gacui1GJM2MCWv
-         NNsC9kGce4qSCwqf1ExmqUnuqVpoyiCAwJGu4+KLEyQlTjSjkiJAzaD39VKXAsj19WeC
-         bWAYy0/x3aeF3NCTiVxoNslwZRvx5bqxeZ5eLO2iBoeh4C+3wHuKy2IO0W29PgEa3JR6
-         nU/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725524054; x=1726128854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GyBCK9InRyMt0WInCHwzobA7WWqSCgMtXck53xCZvD4=;
-        b=KBb8jcAhUCQ+KlqUBmZ/cRIcBnKOzTMqODeaUUgiiPZQCYYs2HPBpYZnLADf+ub0e0
-         S5UQiB6c04+ukt6oBo4cmPYfQdokrcaAYZAu+1k7QMhK9s7rjq3j7o4y+vtsMFvVWzJv
-         alUm7r48f6/C+SUDdoHic3fGN9symr9s5ul8qU/DNsWqyB9lTjT3ImGKmepnsj1R6PIA
-         Yjf6qa3V+D1gT46ZzewPoiOj503yCHbLWDxu6Gu8M8kAvYrPmS35uuNuLmNJ/Ge3hVHI
-         sJhJXwkMg/YquEKY1HjfyHtdUtp+Ei5Oy1sks/ZtvYNzi7eWNbk3n1dlAXoSBKiw2ftP
-         SgDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKzSkurYibhiULEMkPvb5SnEEQqdwB3GrYQG9DAp3tojRFR/wMb4W1JkMaSgLMMSrvI9qdElzDRPqyWUY=@vger.kernel.org, AJvYcCVE9FFiJeCuamgjHReFMcyUaqf6T4/rlIwfkq5XmJ780QGlXHxyPbwl68wPRdN9oPpNxZW8isJ5chovqUn8vw==@vger.kernel.org, AJvYcCX+5Mgx7X380yVRPxFG7WhDa03PTb24yOJHtrWwWABRn4ZQoI8xM2Q47Knq0QpjdA8/QaCdOUr88kDz@vger.kernel.org, AJvYcCXe9BNjfbeAC0MjEZurjZ+HOrB6ssGVptA/yfKFk2/XdAFnxPRyhhlYZAQrn93TYd0DwQksdT3AQN+Pj3uOsQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYT55TPDRoqCQeOtCBBgHTIvqb67lgRWoQ0lNjieAvQ3HsfnIB
-	iVVkeAoZ4bgz9zpuJ0vyXeXapDkXkOUFxs48PNor6DEM4O14tH14T3bUgcCHxSvclD0K4mDfiUK
-	5++oUdmtkraHd759w2FPhEe3zUXZZWBVH2dQFcg==
-X-Google-Smtp-Source: AGHT+IHioFe00Pp0XmEgOtQZaGDRJoBV57MAuA+hhUGAaxnDLKex7wtypkjrpGpwlYIqGtL5aAZry+TjLKdJIPcbpZ8=
-X-Received: by 2002:a05:620a:190d:b0:79f:78a:f7b4 with SMTP id
- af79cd13be357-7a902e90175mr1780961985a.42.1725524054468; Thu, 05 Sep 2024
- 01:14:14 -0700 (PDT)
+	s=arc-20240116; t=1725524277; c=relaxed/simple;
+	bh=5TgCuB2LLe9eQrdVm1yMGNqreXfg9pwWN4AzFS2fvb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEHTPqr5JfZOgTvs8/VzUq2ONpqLp4Byk6sI8UHsN5vH7kuTZFRfvfWHzU8rv+hGpn6tFgx5EtCWTSrDPKOe4UOfIgtgGdjBh0VnMPi/UlDd4+z3zkRCrFAw/9XhvlXFRRlBeQ2dRurQQN0IYAKkL1Ls5ZysX7oweS+SA2vMz+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtSTKHg5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F584C4CEC7;
+	Thu,  5 Sep 2024 08:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725524277;
+	bh=5TgCuB2LLe9eQrdVm1yMGNqreXfg9pwWN4AzFS2fvb4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UtSTKHg5Q6X+udB4GEEpwMf+I11xNOyg5uF1MvPWJTcIk07gM2iv+Pm/N60btv+fv
+	 hs1DfCN5GoXRDpn/+qu2QBuEAQ0syor9uC3j4czyn42vrf3lG7KpaHxe21hzwGcAfs
+	 tAAmGd1RL4lOg/P2B4hfR3ZUT1zhrLijDO/W95sKPIHD1iGtqJuy/7FJalpXJgMfiu
+	 g/WsqfJsCTKRM4ihaiXUiZYEsl3/Y2QG++WF6RR3Y+8XXLYXZ+FcgTS/oSJ/45LIFd
+	 xwgHnjEtUt1TEQY9aPZZft4Tg4gZAwrnQS//ldRSZNdaYv49tm+x5NGBZUXRiHIEBS
+	 8ZbFh/AxHCkwA==
+Date: Thu, 5 Sep 2024 11:15:05 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>, Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 12/17] slab: create kmem_cache_create() compatibility
+ layer
+Message-ID: <ZtloidQLbHVgrkF8@kernel.org>
+References: <20240905-work-kmem_cache_args-v4-0-ed45d5380679@kernel.org>
+ <20240905-work-kmem_cache_args-v4-12-ed45d5380679@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1725481503.git.josef@toxicpanda.com> <80e7221d9679032c2d5affc317957114e5d77657.1725481503.git.josef@toxicpanda.com>
-In-Reply-To: <80e7221d9679032c2d5affc317957114e5d77657.1725481503.git.josef@toxicpanda.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 5 Sep 2024 10:14:03 +0200
-Message-ID: <CAOQ4uxiOvuVFp7ivBoXC-GygDcQ_m3-un1x_jgg1gWNqzddgVg@mail.gmail.com>
-Subject: Re: [PATCH v5 13/18] mm: don't allow huge faults for files with pre
- content watches
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	brauner@kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905-work-kmem_cache_args-v4-12-ed45d5380679@kernel.org>
 
-On Wed, Sep 4, 2024 at 10:29=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
-wrote:
->
-> There's nothing stopping us from supporting this, we could simply pass
-> the order into the helper and emit the proper length.  However currently
-> there's no tests to validate this works properly, so disable it until
-> there's a desire to support this along with the appropriate tests.
->
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+On Thu, Sep 05, 2024 at 09:56:55AM +0200, Christian Brauner wrote:
+> Use _Generic() to create a compatibility layer that type switches on the
+> third argument to either call __kmem_cache_create() or
+> __kmem_cache_create_args(). If NULL is passed for the struct
+> kmem_cache_args argument use default args making porting for callers
+> that don't care about additional arguments easy.
+> 
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks,
-Amir.
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
 > ---
->  mm/memory.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index d10e616d7389..3010bcc5e4f9 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -78,6 +78,7 @@
->  #include <linux/ptrace.h>
->  #include <linux/vmalloc.h>
->  #include <linux/sched/sysctl.h>
-> +#include <linux/fsnotify.h>
->
->  #include <trace/events/kmem.h>
->
-> @@ -5252,8 +5253,17 @@ static vm_fault_t do_numa_page(struct vm_fault *vm=
-f)
->  static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
+>  include/linux/slab.h | 29 ++++++++++++++++++++++++++---
+>  mm/slab_common.c     | 10 +++++-----
+>  2 files changed, 31 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index cb264dded324..f74ceb788ac1 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -261,9 +261,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
+>  					    unsigned int object_size,
+>  					    struct kmem_cache_args *args,
+>  					    slab_flags_t flags);
+> -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+> -			unsigned int align, slab_flags_t flags,
+> -			void (*ctor)(void *));
+> +
+> +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
+> +				       unsigned int align, slab_flags_t flags,
+> +				       void (*ctor)(void *));
+>  struct kmem_cache *kmem_cache_create_usercopy(const char *name,
+>  			unsigned int size, unsigned int align,
+>  			slab_flags_t flags,
+> @@ -272,6 +273,28 @@ struct kmem_cache *kmem_cache_create_usercopy(const char *name,
+>  struct kmem_cache *kmem_cache_create_rcu(const char *name, unsigned int size,
+>  					 unsigned int freeptr_offset,
+>  					 slab_flags_t flags);
+> +
+> +/* If NULL is passed for @args, use this variant with default arguments. */
+> +static inline struct kmem_cache *
+> +__kmem_cache_default_args(const char *name, unsigned int size,
+> +			  struct kmem_cache_args *args,
+> +			  slab_flags_t flags)
+> +{
+> +	struct kmem_cache_args kmem_default_args = {};
+> +
+> +	/* Make sure we don't get passed garbage. */
+> +	if (WARN_ON_ONCE(args))
+> +		return NULL;
+> +
+> +	return __kmem_cache_create_args(name, size, &kmem_default_args, flags);
+> +}
+> +
+> +#define kmem_cache_create(__name, __object_size, __args, ...)           \
+> +	_Generic((__args),                                              \
+> +		struct kmem_cache_args *: __kmem_cache_create_args,	\
+> +		void *: __kmem_cache_default_args,			\
+> +		default: __kmem_cache_create)(__name, __object_size, __args, __VA_ARGS__)
+> +
+>  void kmem_cache_destroy(struct kmem_cache *s);
+>  int kmem_cache_shrink(struct kmem_cache *s);
+>  
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 19ae3dd6e36f..418459927670 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -383,7 +383,7 @@ kmem_cache_create_usercopy(const char *name, unsigned int size,
+>  EXPORT_SYMBOL(kmem_cache_create_usercopy);
+>  
+>  /**
+> - * kmem_cache_create - Create a cache.
+> + * __kmem_cache_create - Create a cache.
+>   * @name: A string which is used in /proc/slabinfo to identify this cache.
+>   * @size: The size of objects to be created in this cache.
+>   * @align: The required alignment for the objects.
+> @@ -407,9 +407,9 @@ EXPORT_SYMBOL(kmem_cache_create_usercopy);
+>   *
+>   * Return: a pointer to the cache on success, NULL on failure.
+>   */
+> -struct kmem_cache *
+> -kmem_cache_create(const char *name, unsigned int size, unsigned int align,
+> -		slab_flags_t flags, void (*ctor)(void *))
+> +struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
+> +				       unsigned int align, slab_flags_t flags,
+> +				       void (*ctor)(void *))
 >  {
->         struct vm_area_struct *vma =3D vmf->vma;
-> +       struct file *file =3D vma->vm_file;
->         if (vma_is_anonymous(vma))
->                 return do_huge_pmd_anonymous_page(vmf);
-> +       /*
-> +        * Currently we just emit PAGE_SIZE for our fault events, so don'=
-t allow
-> +        * a huge fault if we have a pre content watch on this file.  Thi=
-s would
-> +        * be trivial to support, but there would need to be tests to ens=
-ure
-> +        * this works properly and those don't exist currently.
-> +        */
-> +       if (file && fsnotify_file_has_pre_content_watches(file))
-> +               return VM_FAULT_FALLBACK;
->         if (vma->vm_ops->huge_fault)
->                 return vma->vm_ops->huge_fault(vmf, PMD_ORDER);
->         return VM_FAULT_FALLBACK;
-> @@ -5263,6 +5273,7 @@ static inline vm_fault_t create_huge_pmd(struct vm_=
-fault *vmf)
->  static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
->  {
->         struct vm_area_struct *vma =3D vmf->vma;
-> +       struct file *file =3D vma->vm_file;
->         const bool unshare =3D vmf->flags & FAULT_FLAG_UNSHARE;
->         vm_fault_t ret;
->
-> @@ -5277,6 +5288,9 @@ static inline vm_fault_t wp_huge_pmd(struct vm_faul=
-t *vmf)
->         }
->
->         if (vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
-> +               /* See comment in create_huge_pmd. */
-> +               if (file && fsnotify_file_has_pre_content_watches(file))
-> +                       goto split;
->                 if (vma->vm_ops->huge_fault) {
->                         ret =3D vma->vm_ops->huge_fault(vmf, PMD_ORDER);
->                         if (!(ret & VM_FAULT_FALLBACK))
-> @@ -5296,9 +5310,13 @@ static vm_fault_t create_huge_pud(struct vm_fault =
-*vmf)
->  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&                    \
->         defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
->         struct vm_area_struct *vma =3D vmf->vma;
-> +       struct file *file =3D vma->vm_file;
->         /* No support for anonymous transparent PUD pages yet */
->         if (vma_is_anonymous(vma))
->                 return VM_FAULT_FALLBACK;
-> +       /* See comment in create_huge_pmd. */
-> +       if (file && fsnotify_file_has_pre_content_watches(file))
-> +               return VM_FAULT_FALLBACK;
->         if (vma->vm_ops->huge_fault)
->                 return vma->vm_ops->huge_fault(vmf, PUD_ORDER);
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-> @@ -5310,12 +5328,16 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vm=
-f, pud_t orig_pud)
->  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&                    \
->         defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
->         struct vm_area_struct *vma =3D vmf->vma;
-> +       struct file *file =3D vma->vm_file;
->         vm_fault_t ret;
->
->         /* No support for anonymous transparent PUD pages yet */
->         if (vma_is_anonymous(vma))
->                 goto split;
->         if (vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
-> +               /* See comment in create_huge_pmd. */
-> +               if (file && fsnotify_file_has_pre_content_watches(file))
-> +                       goto split;
->                 if (vma->vm_ops->huge_fault) {
->                         ret =3D vma->vm_ops->huge_fault(vmf, PUD_ORDER);
->                         if (!(ret & VM_FAULT_FALLBACK))
-> --
-> 2.43.0
->
+>  	struct kmem_cache_args kmem_args = {
+>  		.align	= align,
+> @@ -418,7 +418,7 @@ kmem_cache_create(const char *name, unsigned int size, unsigned int align,
+>  
+>  	return __kmem_cache_create_args(name, size, &kmem_args, flags);
+>  }
+> -EXPORT_SYMBOL(kmem_cache_create);
+> +EXPORT_SYMBOL(__kmem_cache_create);
+>  
+>  /**
+>   * kmem_cache_create_rcu - Create a SLAB_TYPESAFE_BY_RCU cache.
+> 
+> -- 
+> 2.45.2
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
