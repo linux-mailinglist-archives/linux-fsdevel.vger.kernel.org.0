@@ -1,225 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-28665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB7F96CABE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 01:21:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0B996CC58
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 03:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96151F2853D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2024 23:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDEE31F26A30
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 01:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC3617BEA0;
-	Wed,  4 Sep 2024 23:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C90BCA64;
+	Thu,  5 Sep 2024 01:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="M5NBdb9Z"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="M2o8Q8rD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cymQDEGW";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="M2o8Q8rD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cymQDEGW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985215B0FF
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2024 23:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C185D635;
+	Thu,  5 Sep 2024 01:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725492053; cv=none; b=UgxPaqVjQxbxAPvuf/3kGGSNNLQY3T5jEWLcGYW0rvsqikUlnEMcpKZycvnbn2aGKL0aZzULmZqSO9Dly/MkiBcpQjM2yRINy1f9pK6HqeiO/n1xOeTy4dOgEzAe7VEZV1eonz/d5lneg5Xd90RnFrFiJVhDFScMn2oPLPSxf/c=
+	t=1725500678; cv=none; b=c1ZrFuOpQxe+ot39ojq8Hs9W7wGUMgc4BhLoGPuW3aqBJj5MdQfE+YNvMM3dJeS4nDpKFgD9Ju7Cr/4yPEhr+SOJnEzoBPrkLNtG0B+9aYZlun1APYmlTBHgYI6qdrEsnded1jzDGc//LLqLP3azl3HtJCWFZkcAVuEIM+4or8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725492053; c=relaxed/simple;
-	bh=HcFDd0H7LbXYeh37GMtCsBrIu9ps3lCC8dBP2ltvvaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BuTKDdMqit3sfuScmAScL8KA163fTy1upvrSS8b3gluQKRhORGtySBYwcVi24n/oLP7mhkF2F8qFge6XGRJHkUTj6yN6wJl9HY7oe+1LBn6G8dmF6qsplufE7560CdWyIlquKRKyoKVxPyUKDf6lCx6KPzY1ke04kldIHFOXtuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=M5NBdb9Z; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2068a7c9286so1712245ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2024 16:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725492051; x=1726096851; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=do2YRTOoj9GnwWoBDgk0QrUSNsuLuq0vS4jyF1HXMKE=;
-        b=M5NBdb9ZRMVOuNdm1cYWlIuWFNz2HjY1Niy778nwKHMGzF7Z3Gnl0WAuqfe0TiUDYk
-         8FPfgrwkzS4aUYys9V/buq4fnLizE8agDhv724tTOxI8lZdl5LMoRSBS5GLwNJUQxKC/
-         9l6zeO8l6hDUCbnDnVnqy1Azsyii9VfF3N+oAI6RZ73RfL+wZJ3Ye5CAUMR104Rj+on/
-         MaN/eUft78Me+0VGq6doiZTglZGrI6YQ72QwbqRYb5J8vxfdmhUuW9xnw4dByK9D9XlS
-         G5GwhHlv3uecQHeT+HqOeOyqbNrIqA8zFyjt16z1RncXiy2WUq4ux+rZNEFhdboWF7qT
-         nHeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725492051; x=1726096851;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=do2YRTOoj9GnwWoBDgk0QrUSNsuLuq0vS4jyF1HXMKE=;
-        b=K1NcCCPzBKSt1Mh2mlzL0PrrpkvFQMReu+icfXXNjAsWjTLgjJN0K/JOQ5ZgYeia6g
-         Z1YWhWgHPQIDUgtpFfIT65/5FtRmil4DZVWywjtg57EJWM3ngUCLYTD1p39cKHuHUPiW
-         +IbQ1aI6N5Ywh0lD9dIKlL6b3DhZkUR6WX26s90PIfruQzPDZm/VPaBiZw6vcbTXNEQn
-         ZYX90zynhD5p0DdxJtM6ns6VOklhEm1on0paclrr/o6ybeXIH6W4ZamzghRxwQgCgmeL
-         ocQroBu+h0f6UrZuvAQevxoCG5VAfXu3Ls9ydKfmdHGj6MtlJ4N22NYN/RILjrL/QcvF
-         OO+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVpEWqHuN+phwxpuOHHwYsGZIzQsTFcncbPOfisqfG7DeWksXA0/ONt9xONL320O9u/n2uepo+zLGFisGJZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbxxGtFIlVI+0Bam4FRM5YMaPlvKSsPD5gi4NY6HRpCmpYzRF2
-	WYMWPSb3hHhjnUnwUC9Mjx4DcHOhspWihNfxI04WfC/5orYsX9VekC3FVVzhvIE=
-X-Google-Smtp-Source: AGHT+IHuT2/JPIf3XtWre+GFOUJzFurrIT8snqejnQfLJC9H3VrO6JyW0vpwKFJUAdmNu27h3XvCUQ==
-X-Received: by 2002:a17:902:e752:b0:1fb:701b:7298 with SMTP id d9443c01a7336-205841ba17emr139292085ad.32.1725492051426;
-        Wed, 04 Sep 2024 16:20:51 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206b2147b49sm16857895ad.251.2024.09.04.16.20.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 16:20:50 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1slzIu-000uGZ-1V;
-	Thu, 05 Sep 2024 09:20:48 +1000
-Date: Thu, 5 Sep 2024 09:20:48 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZtjrUI+oqqABJL2j@dread.disaster.area>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com>
+	s=arc-20240116; t=1725500678; c=relaxed/simple;
+	bh=4i2uC5hyOgFUSDqHUCGYYwvnxKpRZHOaOW//nRc2gEw=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=cIYLHrsKnOFMPS+gSvCiPuWoDoMY5HWBxD2IsHItVPSMAWeomyzBE/v4zTSfXtXuxSKyFAO+qhE6KUJqMxnDuqpGU4MIAWYhURw46DOQR89SV/RINQ0YUMUIUYxLXz1bQqvgIcUr1Xk9LGiWjpRnlZlwjC9PUd+X4Jc/96vqiFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=M2o8Q8rD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cymQDEGW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=M2o8Q8rD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cymQDEGW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BFB9221A61;
+	Thu,  5 Sep 2024 01:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725500674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dTi9sXVnnFjpBjJesi3UR5hVhx3v23LG1PtFEXVp71M=;
+	b=M2o8Q8rDpHawI0s0xyHhyMrU/jTAeOpjnySxF2k+3kObyLvGCj1hHYvz9OSNzhHsqHtWZJ
+	LBabVtViKA+9jI1QYjkgg9AjGPKO5nkSu/hmZEd3JP/HxGi9ioVCJ4HC6z1JGSDWLPZBrJ
+	xVO9I3Wk0miDpAUPMLNwbV2eDIWvHAc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725500674;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dTi9sXVnnFjpBjJesi3UR5hVhx3v23LG1PtFEXVp71M=;
+	b=cymQDEGWOADoKN1LyZ03d1GlVDNw0dRcXfrSODgwuzUAHuPCr3kGQ1Ns9kUzE3kITnGhjo
+	Iq7YTdPKKll+VAAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=M2o8Q8rD;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cymQDEGW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725500674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dTi9sXVnnFjpBjJesi3UR5hVhx3v23LG1PtFEXVp71M=;
+	b=M2o8Q8rDpHawI0s0xyHhyMrU/jTAeOpjnySxF2k+3kObyLvGCj1hHYvz9OSNzhHsqHtWZJ
+	LBabVtViKA+9jI1QYjkgg9AjGPKO5nkSu/hmZEd3JP/HxGi9ioVCJ4HC6z1JGSDWLPZBrJ
+	xVO9I3Wk0miDpAUPMLNwbV2eDIWvHAc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725500674;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dTi9sXVnnFjpBjJesi3UR5hVhx3v23LG1PtFEXVp71M=;
+	b=cymQDEGWOADoKN1LyZ03d1GlVDNw0dRcXfrSODgwuzUAHuPCr3kGQ1Ns9kUzE3kITnGhjo
+	Iq7YTdPKKll+VAAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B39E1398F;
+	Thu,  5 Sep 2024 01:44:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QhGVCP0M2WY7MwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 05 Sep 2024 01:44:29 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87frqf2smy.fsf@gmail.com>
+From: "NeilBrown" <neilb@suse.de>
+To: "Chuck Lever III" <chuck.lever@oracle.com>
+Cc: "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <kolga@netapp.com>,
+ "Dai Ngo" <dai.ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Al Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>,
+ "Jan Kara" <jack@suse.cz>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Tom Haynes" <loghyr@gmail.com>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
+ "Linux FS Devel" <linux-fsdevel@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v3 03/13] nfsd: drop the ncf_cb_bmap field
+In-reply-to: <59DF9B68-4D5F-4E2D-A208-B8EE86D61A85@oracle.com>
+References: <>, <59DF9B68-4D5F-4E2D-A208-B8EE86D61A85@oracle.com>
+Date: Thu, 05 Sep 2024 11:44:21 +1000
+Message-id: <172550066195.4433.11555037330378400882@noble.neil.brown.name>
+X-Rspamd-Queue-Id: BFB9221A61
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,netapp.com,oracle.com,talpey.com,redhat.com,zeniv.linux.org.uk,suse.cz,lwn.net,gmail.com,vger.kernel.org];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
-> John Garry <john.g.garry@oracle.com> writes:
-> 
-> > This series is being spun off the block atomic writes for xfs
-> > series at [0].
-> >
-> > That series got too big.
-> >
-> > The actual forcealign patches are roughly the same in this
-> > series.
-> >
-> > Why forcealign?  In some scenarios to may be required to
-> > guarantee extent alignment and granularity.
-> >
-> > For example, for atomic writes, the maximum atomic write unit
-> > size would be limited at the extent alignment and granularity,
-> > guaranteeing that an atomic write would not span data present in
-> > multiple extents.
-> >
-> > forcealign may be useful as a performance tuning optimization in
-> > other scenarios.
-> >
-> > I decided not to support forcealign for RT devices here.
-> > Initially I thought that it would be quite simple of implement.
-> > However, I discovered through much testing and subsequent debug
-> > that this was not true, so I decided to defer support to
-> > later.
-> >
-> > Early development xfsprogs support is at:
-> > https://github.com/johnpgarry/xfsprogs-dev/commits/atomic-writes/
-> >
-> 
-> Hi John,
-> 
-> Thanks for your continued work on atomic write.  I went over the
-> XFS patch series and this is my understanding + some queries.
-> Could you please help with these.
+On Thu, 05 Sep 2024, Chuck Lever III wrote:
+>=20
+>=20
+> > On Sep 4, 2024, at 1:39=E2=80=AFPM, Jeff Layton <jlayton@kernel.org> wrot=
+e:
+> >=20
+> > On Wed, 2024-09-04 at 17:28 +0000, Chuck Lever III wrote:
+> >>=20
+> >>> On Sep 4, 2024, at 12:58=E2=80=AFPM, Jeff Layton <jlayton@kernel.org> w=
+rote:
+> >>>=20
+> >>> On Wed, 2024-09-04 at 11:20 -0400, Chuck Lever wrote:
+> >>>> On Thu, Aug 29, 2024 at 09:26:41AM -0400, Jeff Layton wrote:
+> >>>>> This is always the same value, and in a later patch we're going to ne=
+ed
+> >>>>> to set bits in WORD2. We can simplify this code and save a little spa=
+ce
+> >>>>> in the delegation too. Just hardcode the bitmap in the callback encode
+> >>>>> function.
+> >>>>>=20
+> >>>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> >>>>=20
+> >>>> OK, lurching forward on this ;-)
+> >>>>=20
+> >>>> - The first patch in v3 was applied to v6.11-rc.
+> >>>> - The second patch is now in nfsd-next.
+> >>>> - I've squashed the sixth and eighth patches into nfsd-next.
+> >>>>=20
+> >>>> I'm replying to this patch because this one seems like a step
+> >>>> backwards to me: the bitmap values are implementation-dependent,
+> >>>> and this code will eventually be automatically generated based only
+> >>>> on the protocol, not the local implementation. IMO, architecturally,
+> >>>> bitmap values should be set at the proc layer, not in the encoders.
+> >>>>=20
+> >>>> I've gone back and forth on whether to just go with it for now, but
+> >>>> I thought I'd mention it here to see if this change is truly
+> >>>> necessary for what follows. If it can't be replaced, I will suck it
+> >>>> up and fix it up later when this encoder is converted to an xdrgen-
+> >>>> manufactured one.
+> >>>=20
+> >>> It's not truly necessary, but I don't see why it's important that we
+> >>> keep a record of the full-blown bitmap here. The ncf_cb_bmap field is a
+> >>> field in the delegation record, and it has to be carried around in
+> >>> perpetuity. This value is always set by the server and there are only a
+> >>> few legit bit combinations that can be set in it.
+> >>>=20
+> >>> We certainly can keep this bitmap around, but as I said in the
+> >>> description, the delstid draft grows this bitmap to 3 words, and if we
+> >>> want to be a purists about storing a bitmap,
+> >>=20
+> >> Fwiw, it isn't purism about storing the bitmap, it's
+> >> purism about adopting machine-generated XDR marshaling/
+> >> unmarshaling code. The patch adds non-marshaling logic
+> >> in the encoder. Either we'll have to add a way to handle
+> >> that in xdrgen eventually, or we'll have to exclude this
+> >> encoder from machine generation. (This is a ways down the
+> >> road, of course)
+> >>=20
+> >=20
+> > Understood. I'll note that this function works with a nfs4_delegation
+> > pointer too, which is not part of the protocol spec.
+> >=20
+> > Once we move to autogenerated code, we will always have a hand-rolled
+> > "glue" layer that morphs our internal representation of these sorts of
+> > objects into a form that the xdrgen code requires. Storing this info as
+> > a flag in the delegation makes more sense to me, as the glue layer
+> > should massage that into the needed form.
+>=20
+> My thought was the existing proc functions would do
+> the massaging for us. But that's an abstract,
+> architectural kind of thought. I'm just starting to
+> integrate this idea into lockd.
 
-Hi Ritesh - to make it easier for everyone to read and reply to you
-emails, can you please word wrap the text at 72 columns?
+So presumably xdrgen defines a bunch of structs.  The proc code fills
+those in (on the stack?) and passes them to the generated xdr code which
+encodes them to the network stream??  That seems reasonable.
 
-> 1. As I understand XFS untorn atomic write support is built on top
-> of FORCEALIGN feature (which this series is adding) which in turn
-> uses extsize hint feature underneath.
+We still don't want ncf_cb_bmap in struct nfs4_cb_fattr, we only need it
+in the generated struct.
 
-Yes.
+Thanks,
+NeilBrown
 
->    Now extsize hint mainly controls the alignment of both
->    "physical start" & "logical start" offset and extent length,
->    correct?
-
-Yes.
-
->    This is done using args->alignment for start aand
->    args->prod/mode variables for extent length. Correct?
-
-Yes.
-
->    - If say we are not able to allocate an aligned physical start?
->    Then since extsize is just a hint we go ahead with whatever
->    best available extent is right?
-
-No. The definition of "forced alignment" is that we guarantee
-aligned allocation to the extent size hint. i.e the extent size hint
-is not a hint anymore - it defines the alignment we are guaranteeing
-allocation will achieve.
-
-hence if we can't align the extent to the alignment provided, we
-fail the alignment.
-
->    - also extsize looks to be only providing allocation side of hints. (not de-allocation). Correct?
-
-No. See the use of xfs_inode_alloc_unitsize() in all the places
-where we free space. Forced alignment extends this function to
-return the extent size, not the block size.
-
-> 2. If say there is an append write i.e. the allocation is needed
-> to be done at EOF. Then we try for an exact bno (from eof block)
-> and aligned extent length, right?
-
-Yes. This works because the previous extent is exactly aligned,
-hence a contiguous allocation will continue to be correctly aligned
-due to the forced alignment constraints.
-
->    i.e. xfs_bmap_btalloc_filestreams() ->
->    xfs_bmap_btalloc_at_eof(ap, args); If it is not available then
->    we try for nearby bno xfs_alloc_vextent_near_bno(args, target)
->    and similar...
-
-yes, that's just the normal aligned allocation fallback path when
-exact allocation fails.
-
-> 3. It is the FORCEALIGN feature which _mandates_ both allocation
-> (by using extsize hint) and de-allocation to happen _only_ in
-> extsize chunks.
->
->    i.e. forcealign mandates -
->    - the logical and physical start offset should be aligned as
->    per args->alignment
->    - extent length be aligned as per args->prod/mod.
->      If above two cannot be satisfied then return -ENOSPC.
-
-Yes.
-
-> 
->    - Does the unmapping of extents also only happens in extsize
->    chunks (with forcealign)?
-
-Yes, via use of xfs_inode_alloc_unitsize() in the high level code
-aligning the fsbno ranges to be unmapped.
-
-Remember, force align requires both logical file offset and
-physical block number to be correctly aligned, so unmap alignment
-has to be set up correctly at file offset level before we even know
-what extents underly the file range we need to unmap....
-
->      If the start or end of the extent which needs unmapping is
->      unaligned then we convert that extent to unwritten and skip,
->      is it? (__xfs_bunmapi())
-
-The high level code should be aligning the start and end of the
-file range to be removed via xfs_inode_alloc_unitsize(). Hence 
-the low level __xfs_bunmapi() code shouldn't ever be encountering
-unaligned unmaps on force-aligned inodes.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
