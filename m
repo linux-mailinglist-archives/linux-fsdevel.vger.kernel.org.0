@@ -1,241 +1,332 @@
-Return-Path: <linux-fsdevel+bounces-28769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5332D96E140
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 19:37:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380B296E153
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 19:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749CF1C21A4D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 17:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532851C23775
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 17:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DC81A3AAE;
-	Thu,  5 Sep 2024 17:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80954315D;
+	Thu,  5 Sep 2024 17:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYCKTIwy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUjtE9KZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D6019D06D;
-	Thu,  5 Sep 2024 17:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9DF1C2E
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 17:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725557837; cv=none; b=Cx8TKVVD6grjS8qOjZwlMrdrmBDKvbiPP46krc7l54LkiTOSpMnwKSPV2bKqqF1wUoCx0rnU3e9exehC4kxAqg+MRwE8R96QNjK3qLbPZPJ+AQX66JwVra6UPU9OnzKlSkGz8cn/7gkAJNxJ7VFL2lgK81/9UbbotaeWGystp1U=
+	t=1725558374; cv=none; b=f0eX9hxYZQZ97il16SR8ydYkxSAABqCbJqber4sJJ4cO+l16F/6xPXSFLGK4+QEXexqnuhIdKU+9eC0uXJhQ1OD6L8VXpPf8igdU0GaSziYkA1xxo71HNernKhDP3tJBWSxJ/6ysLtcVkU/GO2d8WDXrhaNz4AZpeZDXHyCt9Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725557837; c=relaxed/simple;
-	bh=bejJ4vSToGwBdPP8dH2azGOUII6BnjtpEd9Ic6/LbEE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sv+jLrqgcCJ/vHmhx8/zhauMa/H3Pt4yEmrI5NUjUrv7roJrYeqJf8J38GZjxG4kFd+pQgTe6mFpnvqWM1UxuGAgF7unUul9cJXPjCovHISBqAJLJmTCncooADFmLGI81h6Qt02mm5LNjOQBhUKuGpOUVaSChosN5qpm5DZkS7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYCKTIwy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2171CC4CEC3;
-	Thu,  5 Sep 2024 17:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725557837;
-	bh=bejJ4vSToGwBdPP8dH2azGOUII6BnjtpEd9Ic6/LbEE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VYCKTIwyqscaxTc1ajExtddNpa2GT5qTMu76DGZQNsEwXkXb31bCXQ7N9HfkeWndK
-	 2mKI4m3QBuUkZScUqcuj86w4Ht61hX/6w0XUWU49279BT2pNhzJz2EF9uvqBL+5i+8
-	 k35I/6egVaRNmZ96DvE11C872FpxH7KLbsWdkaIO8vw0T5L5P70hPzvV9gA4dyXXQT
-	 NQN4uk0tsvdTCXzjtNtTmV9vv3CB7hc1nJsGP31EM6TW/VOTsnh96HF1jhj4x+5MDC
-	 HgwhZPsQaOfhrUq4RbC3o7ELyY0473CwHpErqKpqV3U1Z3ylN1bO6zzIpiWptAbDUE
-	 Du7NI9QLw/HaQ==
-Message-ID: <ee7462f74ecb1bc2148d45758d2410533651072c.camel@kernel.org>
-Subject: Re: [PATCH v4 01/11] nfsd: fix initial getattr on write delegation
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Dai
- Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Trond Myklebust
- <trondmy@kernel.org>,  Anna Schumaker <anna@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Tom Haynes <loghyr@gmail.com>,  linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org
-Date: Thu, 05 Sep 2024 13:37:14 -0400
-In-Reply-To: <ZtnSUWai8kB8gZIO@tissot.1015granger.net>
-References: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
-	 <20240905-delstid-v4-1-d3e5fd34d107@kernel.org>
-	 <ZtnSUWai8kB8gZIO@tissot.1015granger.net>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
+	s=arc-20240116; t=1725558374; c=relaxed/simple;
+	bh=bFjl/xS0VXt3NhNjqiWWhFd0Bp2MxdEBaTZXdfi8Hlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ui37QzvIo/TpPmFtTP2R9v/FAYCBYTMbdOcaduIIQKmea0Yf+LSXLSZVJNhSN9knzadoPer4dvvaSJI8oUB0ZZHnF32UVa5KF+J4p2uCREVX8nRn0AfVolscp9EeoF19NH3i34ujsbU9rsmvxBHTvBlf7ua/umMuLGRtnpVr7Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUjtE9KZ; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e026a2238d8so1143645276.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2024 10:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725558371; x=1726163171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c4R+P/kIseeUV8zyn+elml3vf9PTAwWkool/9LfBfTw=;
+        b=HUjtE9KZD4/bVHnLAba3VOglVzhiLOODEN6fww6eRh4flF/IddD6y90j/omqk2mlXz
+         yX+qVErsIhOlQhpLNKVSgcoSYUz3YAHGZA/lHytB3GVJaeXkfIGnPTvX5iMMD+15XyhJ
+         qYrI5GeXRmeMNIVG/YnMa2yykh1eQ7v+SBwEm/g3EpaDKz7lnFUJc0+F0K7XwaMst2QV
+         7Xqzb1vT7uTvthIw4anKBLIISllPPwCXGBlbDy6jAsn8vLF8mv/mmKPLMT9JiLxqlC2L
+         N450EgwJnAjctB9nx/U6bAT+rkfS64pBTs0KwzO1RFDFCxNwtl7lvXmtrqBzMP7IOY+9
+         D35w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725558371; x=1726163171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c4R+P/kIseeUV8zyn+elml3vf9PTAwWkool/9LfBfTw=;
+        b=tEhARCDK7Q1TJeG32fgxfuEvtRaQZRzRYa0lRWIGsP4O2J/D0h2zDgtM4eW+fy9c66
+         CYh5RYsvE6IGz/GFfsrlb2sZq9rgp/L7OMYllgPPgi/cSR8mBmAzdJqg0SUaTSvTuIIM
+         1IJYmjW676HVsUke5MfZ3B3xqw03NcYAtyXqUTCurJ1PDb/+IaNsrwQIumX9FXHFaexs
+         Y67BZ1NFkTUD1T34m6IuKsgpIPw+oBFuv44JuoEvloP2W2wjiLietCo0U+mA+L5O87e1
+         tU8K+BE5Bzd3x/QztZTNyPEua04blBN8gbcTgpZjkZ4ANno9Zmd1VJkgJqHM47Hycz0Z
+         jXag==
+X-Forwarded-Encrypted: i=1; AJvYcCWEtMQbWcjNvq5ysXmDZVs/pm2iWHDhPsYoAig89aoII5yyeLfyMuI2oTnlym08ZkPuspr/Tkt2ggHk0MBS@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMc2YLSWn3WT1FdyokRSucl5/Lt/fB5peOicXg1UHw26i+PwqI
+	o1zFs3QwJldkXZTygVvOaeXwG9S5CZSxP9MOQOzmN72Y8qJz2Sbr
+X-Google-Smtp-Source: AGHT+IH6tVMBHUcareANjwKQMXcukblBzYtMNJmRMrmiu9uFYodJCMnd6HWU6p9HU4mATF2TfZnybw==
+X-Received: by 2002:a05:6902:f82:b0:e1d:150c:18e4 with SMTP id 3f1490d57ef6-e1d3488d69bmr19602276.19.1725558371211;
+        Thu, 05 Sep 2024 10:46:11 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-112.fbsv.net. [2a03:2880:25ff:70::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1a6266f406sm3071576276.23.2024.09.05.10.46.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 10:46:10 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com,
+	bernd.schubert@fastmail.fm,
+	sweettea-kernel@dorminy.me,
+	kernel-team@meta.com
+Subject: [PATCH v2 RESEND] fuse: Enable dynamic configuration of fuse max pages limit (FUSE_MAX_MAX_PAGES)
+Date: Thu,  5 Sep 2024 10:45:41 -0700
+Message-ID: <20240905174541.392785-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-09-05 at 11:46 -0400, Chuck Lever wrote:
-> On Thu, Sep 05, 2024 at 08:41:45AM -0400, Jeff Layton wrote:
-> > At this point in compound processing, currentfh refers to the parent of
-> > the file, not the file itself. Get the correct dentry from the delegati=
-on
-> > stateid instead.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> Subject says "fixes ..." so IMO a Fixes: tag is warranted.
-> Suggestions welcome.
->=20
->=20
+Introduce the capability to dynamically configure the fuse max pages
+limit (formerly #defined as FUSE_MAX_MAX_PAGES) through a sysctl.
+This enhancement allows system administrators to adjust the value
+based on system-specific requirements.
 
-Yes, sorry. I think we want:
+This removes the previous static limit of 256 max pages, which limits
+the max write size of a request to 1 MiB (on 4096 pagesize systems).
+Having the ability to up the max write size beyond 1 MiB allows for the
+perf improvements detailed in this thread [1].
 
-Fixes: c5967721e106 ("NFSD: handle GETATTR conflict with write delegation")
+$ sysctl -a | grep max_pages_limit
+fs.fuse.max_pages_limit = 256
 
-> > ---
-> >  fs/nfsd/nfs4state.c | 31 +++++++++++++++++++++++--------
-> >  1 file changed, 23 insertions(+), 8 deletions(-)
-> >=20
-> > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> > index df69dc6af467..db90677fc016 100644
-> > --- a/fs/nfsd/nfs4state.c
-> > +++ b/fs/nfsd/nfs4state.c
-> > @@ -5914,6 +5914,26 @@ static void nfsd4_open_deleg_none_ext(struct nfs=
-d4_open *open, int status)
-> >  	}
-> >  }
-> > =20
-> > +static bool
-> > +nfs4_delegation_stat(struct nfs4_delegation *dp, struct svc_fh *curren=
-tfh,
-> > +		     struct kstat *stat)
-> > +{
-> > +	struct nfsd_file *nf =3D find_rw_file(dp->dl_stid.sc_file);
-> > +	struct path path;
-> > +
-> > +	if (!nf)
-> > +		return false;
-> > +
-> > +	path.mnt =3D currentfh->fh_export->ex_path.mnt;
-> > +	path.dentry =3D file_dentry(nf->nf_file);
-> > +
-> > +	if (vfs_getattr(&path, stat,
-> > +			(STATX_INO | STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
-> > +			AT_STATX_SYNC_AS_STAT))
-> > +		return false;
-> > +	return true;
-> > +}
-> > +
-> >  /*
-> >   * The Linux NFS server does not offer write delegations to NFSv4.0
-> >   * clients in order to avoid conflicts between write delegations and
-> > @@ -5949,7 +5969,6 @@ nfs4_open_delegation(struct nfsd4_open *open, str=
-uct nfs4_ol_stateid *stp,
-> >  	int cb_up;
-> >  	int status =3D 0;
-> >  	struct kstat stat;
-> > -	struct path path;
-> > =20
-> >  	cb_up =3D nfsd4_cb_channel_good(oo->oo_owner.so_client);
-> >  	open->op_recall =3D false;
-> > @@ -5985,20 +6004,16 @@ nfs4_open_delegation(struct nfsd4_open *open, s=
-truct nfs4_ol_stateid *stp,
-> >  	memcpy(&open->op_delegate_stateid, &dp->dl_stid.sc_stateid, sizeof(dp=
-->dl_stid.sc_stateid));
-> > =20
-> >  	if (open->op_share_access & NFS4_SHARE_ACCESS_WRITE) {
-> > -		open->op_delegate_type =3D NFS4_OPEN_DELEGATE_WRITE;
-> > -		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
-> > -		path.mnt =3D currentfh->fh_export->ex_path.mnt;
-> > -		path.dentry =3D currentfh->fh_dentry;
-> > -		if (vfs_getattr(&path, &stat,
-> > -				(STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
-> > -				AT_STATX_SYNC_AS_STAT)) {
-> > +		if (!nfs4_delegation_stat(dp, currentfh, &stat)) {
-> >  			nfs4_put_stid(&dp->dl_stid);
-> >  			destroy_delegation(dp);
-> >  			goto out_no_deleg;
-> >  		}
-> > +		open->op_delegate_type =3D NFS4_OPEN_DELEGATE_WRITE;
-> >  		dp->dl_cb_fattr.ncf_cur_fsize =3D stat.size;
-> >  		dp->dl_cb_fattr.ncf_initial_cinfo =3D
-> >  			nfsd4_change_attribute(&stat, d_inode(currentfh->fh_dentry));
-> > +		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
-> >  	} else {
-> >  		open->op_delegate_type =3D NFS4_OPEN_DELEGATE_READ;
-> >  		trace_nfsd_deleg_read(&dp->dl_stid.sc_stateid);
-> >=20
-> > --=20
-> > 2.46.0
-> >=20
->=20
+$ sysctl -n fs.fuse.max_pages_limit
+256
 
---=20
-Jeff Layton <jlayton@kernel.org>
+$ echo 1024 | sudo tee /proc/sys/fs/fuse/max_pages_limit
+1024
+
+$ sysctl -n fs.fuse.max_pages_limit
+1024
+
+$ echo 65536 | sudo tee /proc/sys/fs/fuse/max_pages_limit
+tee: /proc/sys/fs/fuse/max_pages_limit: Invalid argument
+
+$ echo 0 | sudo tee /proc/sys/fs/fuse/max_pages_limit
+tee: /proc/sys/fs/fuse/max_pages_limit: Invalid argument
+
+$ echo 65535 | sudo tee /proc/sys/fs/fuse/max_pages_limit
+65535
+
+$ sysctl -n fs.fuse.max_pages_limit
+65535
+
+v2 (original):
+https://lore.kernel.org/linux-fsdevel/20240702014627.4068146-1-joannelkoong@gmail.com/
+
+v1:
+https://lore.kernel.org/linux-fsdevel/20240628001355.243805-1-joannelkoong@gmail.com/
+
+Changes from v1:
+- Rename fuse_max_max_pages to fuse_max_pages_limit internally
+- Rename /proc/sys/fs/fuse/fuse_max_max_pages to
+  /proc/sys/fs/fuse/max_pages_limit
+- Restrict fuse max_pages_limit sysctl values to between 1 and 65535
+  (inclusive)
+
+[1] https://lore.kernel.org/linux-fsdevel/20240124070512.52207-1-jefflexu@linux.alibaba.com/T/#u
+
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+---
+ Documentation/admin-guide/sysctl/fs.rst | 10 +++++++
+ fs/fuse/Makefile                        |  2 +-
+ fs/fuse/fuse_i.h                        | 14 +++++++--
+ fs/fuse/inode.c                         | 11 ++++++-
+ fs/fuse/ioctl.c                         |  4 ++-
+ fs/fuse/sysctl.c                        | 40 +++++++++++++++++++++++++
+ 6 files changed, 75 insertions(+), 6 deletions(-)
+ create mode 100644 fs/fuse/sysctl.c
+
+diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+index 47499a1742bd..fa25d7e718b3 100644
+--- a/Documentation/admin-guide/sysctl/fs.rst
++++ b/Documentation/admin-guide/sysctl/fs.rst
+@@ -332,3 +332,13 @@ Each "watch" costs roughly 90 bytes on a 32-bit kernel, and roughly 160 bytes
+ on a 64-bit one.
+ The current default value for ``max_user_watches`` is 4% of the
+ available low memory, divided by the "watch" cost in bytes.
++
++5. /proc/sys/fs/fuse - Configuration options for FUSE filesystems
++=====================================================================
++
++This directory contains the following configuration options for FUSE
++filesystems:
++
++``/proc/sys/fs/fuse/max_pages_limit`` is a read/write file for
++setting/getting the maximum number of pages that can be used for servicing
++requests in FUSE.
+diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+index 6e0228c6d0cb..cd4ef3e08ebf 100644
+--- a/fs/fuse/Makefile
++++ b/fs/fuse/Makefile
+@@ -7,7 +7,7 @@ obj-$(CONFIG_FUSE_FS) += fuse.o
+ obj-$(CONFIG_CUSE) += cuse.o
+ obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
+ 
+-fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
++fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o sysctl.o
+ fuse-y += iomode.o
+ fuse-$(CONFIG_FUSE_DAX) += dax.o
+ fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index f23919610313..bb252a3ea37b 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -35,9 +35,6 @@
+ /** Default max number of pages that can be used in a single read request */
+ #define FUSE_DEFAULT_MAX_PAGES_PER_REQ 32
+ 
+-/** Maximum of max_pages received in init_out */
+-#define FUSE_MAX_MAX_PAGES 256
+-
+ /** Bias for fi->writectr, meaning new writepages must not be sent */
+ #define FUSE_NOWRITE INT_MIN
+ 
+@@ -47,6 +44,9 @@
+ /** Number of dentries for each connection in the control filesystem */
+ #define FUSE_CTL_NUM_DENTRIES 5
+ 
++/** Maximum of max_pages received in init_out */
++extern unsigned int fuse_max_pages_limit;
++
+ /** List of active connections */
+ extern struct list_head fuse_conn_list;
+ 
+@@ -1472,4 +1472,12 @@ ssize_t fuse_passthrough_splice_write(struct pipe_inode_info *pipe,
+ 				      size_t len, unsigned int flags);
+ ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma);
+ 
++#ifdef CONFIG_SYSCTL
++extern int fuse_sysctl_register(void);
++extern void fuse_sysctl_unregister(void);
++#else
++#define fuse_sysctl_register()		(0)
++#define fuse_sysctl_unregister()	do { } while (0)
++#endif /* CONFIG_SYSCTL */
++
+ #endif /* _FS_FUSE_I_H */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 99e44ea7d875..973e58df816a 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -35,6 +35,8 @@ DEFINE_MUTEX(fuse_mutex);
+ 
+ static int set_global_limit(const char *val, const struct kernel_param *kp);
+ 
++unsigned int fuse_max_pages_limit = 256;
++
+ unsigned max_user_bgreq;
+ module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
+ 		  &max_user_bgreq, 0644);
+@@ -932,7 +934,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
+ 	fc->user_ns = get_user_ns(user_ns);
+ 	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
+-	fc->max_pages_limit = FUSE_MAX_MAX_PAGES;
++	fc->max_pages_limit = fuse_max_pages_limit;
+ 
+ 	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+ 		fuse_backing_files_init(fc);
+@@ -2039,8 +2041,14 @@ static int __init fuse_fs_init(void)
+ 	if (err)
+ 		goto out3;
+ 
++	err = fuse_sysctl_register();
++	if (err)
++		goto out4;
++
+ 	return 0;
+ 
++ out4:
++	unregister_filesystem(&fuse_fs_type);
+  out3:
+ 	unregister_fuseblk();
+  out2:
+@@ -2053,6 +2061,7 @@ static void fuse_fs_cleanup(void)
+ {
+ 	unregister_filesystem(&fuse_fs_type);
+ 	unregister_fuseblk();
++	fuse_sysctl_unregister();
+ 
+ 	/*
+ 	 * Make sure all delayed rcu free inodes are flushed before we
+diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
+index 572ce8a82ceb..a6c8ee551635 100644
+--- a/fs/fuse/ioctl.c
++++ b/fs/fuse/ioctl.c
+@@ -10,6 +10,8 @@
+ #include <linux/fileattr.h>
+ #include <linux/fsverity.h>
+ 
++#define FUSE_VERITY_ENABLE_ARG_MAX_PAGES 256
++
+ static ssize_t fuse_send_ioctl(struct fuse_mount *fm, struct fuse_args *args,
+ 			       struct fuse_ioctl_out *outarg)
+ {
+@@ -140,7 +142,7 @@ static int fuse_setup_enable_verity(unsigned long arg, struct iovec *iov,
+ {
+ 	struct fsverity_enable_arg enable;
+ 	struct fsverity_enable_arg __user *uarg = (void __user *)arg;
+-	const __u32 max_buffer_len = FUSE_MAX_MAX_PAGES * PAGE_SIZE;
++	const __u32 max_buffer_len = FUSE_VERITY_ENABLE_ARG_MAX_PAGES * PAGE_SIZE;
+ 
+ 	if (copy_from_user(&enable, uarg, sizeof(enable)))
+ 		return -EFAULT;
+diff --git a/fs/fuse/sysctl.c b/fs/fuse/sysctl.c
+new file mode 100644
+index 000000000000..b272bb333005
+--- /dev/null
++++ b/fs/fuse/sysctl.c
+@@ -0,0 +1,40 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * linux/fs/fuse/fuse_sysctl.c
++ *
++ * Sysctl interface to fuse parameters
++ */
++#include <linux/sysctl.h>
++
++#include "fuse_i.h"
++
++static struct ctl_table_header *fuse_table_header;
++
++/* Bound by fuse_init_out max_pages, which is a u16 */
++static unsigned int sysctl_fuse_max_pages_limit = 65535;
++
++static struct ctl_table fuse_sysctl_table[] = {
++	{
++		.procname	= "max_pages_limit",
++		.data		= &fuse_max_pages_limit,
++		.maxlen		= sizeof(fuse_max_pages_limit),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= SYSCTL_ONE,
++		.extra2		= &sysctl_fuse_max_pages_limit,
++	},
++};
++
++int fuse_sysctl_register(void)
++{
++	fuse_table_header = register_sysctl("fs/fuse", fuse_sysctl_table);
++	if (!fuse_table_header)
++		return -ENOMEM;
++	return 0;
++}
++
++void fuse_sysctl_unregister(void)
++{
++	unregister_sysctl_table(fuse_table_header);
++	fuse_table_header = NULL;
++}
+-- 
+2.43.5
+
 
