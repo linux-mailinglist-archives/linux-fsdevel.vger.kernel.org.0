@@ -1,166 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-28701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B4E96D1E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 10:21:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797E196D1ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 10:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9F01F2C24D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 08:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 421C6286ED5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 08:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC018194C73;
-	Thu,  5 Sep 2024 08:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E6C193422;
+	Thu,  5 Sep 2024 08:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaTH0Fv0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwu9wWq0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFE119341D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 08:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159338F66;
+	Thu,  5 Sep 2024 08:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524353; cv=none; b=ZqPsMBbQMXfO9KLAAQTuXHwMXb1fx5jLXxpyxZ+Tjsr7Hd5XFMrcV8nYWfpQo0ICuHpM3r6Co8fj0IsS4/bhd+EjX3NWHvUTBfruDvONUhdvmrFIGKMcjEqrth8PmOUFki89jOy6Wx9X+Ws6uPFmJ85/Z8U4A0izN2O5gBGv5/U=
+	t=1725524636; cv=none; b=Ag3P/BYUcOy2PYgjwUWg5MWVwYRjkRWx05N3IDovhZNriJhL3zcSaCf14QcKPjFd4xJHTBD+5+gxu/DeG6XfvyWANpnsFhimaiovRp/n6FAK5wZn4uU4mZnLw2CCpYzg+MXJdlK1le1nGNr/k/h/kwWILFp9q/iC4673Djsq3m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524353; c=relaxed/simple;
-	bh=sv2gQtQX2pmJd2dgqLsOPXPgZNnpjXpyckrdF9ZT0Mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwuKeg8bzkJbHJWlbE77OqjGzBKM8At6iVPzfhBvogjTsvzd7mSG7HqsCN7/Ml8AsAMdB8vyL06wGJEir5VkTiyzdmynWaV4g0ATWv4IoGnRObVhKhdrx7BsdZW4XpY2TiLScI7Ts6XucRfs0oQFvgM3JK8pwKh4BlVCESHjTDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaTH0Fv0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C173C4CEC3;
-	Thu,  5 Sep 2024 08:19:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725524353;
-	bh=sv2gQtQX2pmJd2dgqLsOPXPgZNnpjXpyckrdF9ZT0Mw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EaTH0Fv0RzPdsLBgnK8ihQjwMRHr8XojIf86cTHdtVv38M6wQJZsrOwy18iBPeVHl
-	 9c6zyuWAIimBf2npB5AW9ji76uQHC2rhnPBrpxKsGKRRTofWQLKa+oQQ7+YyP1LEqR
-	 oOaV6q4vEFQ1W8eknqyWb/UBsKlBKxCPr2VLA0+iqnPyLWcunskoHjcUmF0vWSpc5N
-	 FLr1aOonTzDNTqjCa3BZbotQlOscTOPPYIFu75SBpHhQ4fD3Ux1kn1ATmmDISCGSYS
-	 q8dM1W0w/u40L+0b19R/voQJrdcEuh1v1JgeadPx6Oqw6BK9OAiLnKN1scXQfFM0eZ
-	 yb8pYmgB5kjQA==
-Date: Thu, 5 Sep 2024 11:16:22 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-	Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 16/17] slab: make __kmem_cache_create() static inline
-Message-ID: <Ztlo1sZfIpJ_wNG4@kernel.org>
-References: <20240905-work-kmem_cache_args-v4-0-ed45d5380679@kernel.org>
- <20240905-work-kmem_cache_args-v4-16-ed45d5380679@kernel.org>
+	s=arc-20240116; t=1725524636; c=relaxed/simple;
+	bh=TwKwteQ9GQakcBA9WOXf4pXII2GxlwD14AaG4Apu1qs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OVNOTblPSQqEgkHfSY4h8OOc/esL570UwhBA2fYeEzhDWWafAOihPlCsRBq2AFjnEtw4tJWKezhBYk2cWDrBsLIvNA54U0LGgRjVe98Bm+gDJpvD3dcUEO1Xk8CYFy2++hDQdfxyBSjPQOkze3nPKi0tSadFr2QGRVFj+zGLCtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lwu9wWq0; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-70f6a7c4dcdso350164a34.1;
+        Thu, 05 Sep 2024 01:23:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725524634; x=1726129434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=chdOXpxl19grJ0lyYlh2nBdFQ3cbblx2XVMM1r+6Sk0=;
+        b=lwu9wWq0aJ2UPjSKmpRbRbrLaswasJVCK7vAg0qUHECkgLJr/DJHwm6mMHzzCE1c1X
+         QVFiM8+m2QI+E5lsVMnQ/MqDbFNX0b9h6vE3b1TkpS9cz6R5FlVC+nnGavo5EETxyNy+
+         AreFyON2YSn2mwz6Ob295QZGvj0j8TPR+vpg2jxmSbt40MNMPH1MLeq0ygq5OXNv2rP1
+         WVpytv6o4WT4VndDB4RAzmX1LtDOEsrJJhjVtw/G6yOjIgwC/u21I/P8lA1G1WBS+fGt
+         HCRndgm0KaEG0WP8FJvyNqkDVblZgJI6nuB2war4k1+TuzB6D2k4ObuRcCn1VRPZFr6n
+         ZHdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725524634; x=1726129434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=chdOXpxl19grJ0lyYlh2nBdFQ3cbblx2XVMM1r+6Sk0=;
+        b=mC8ePawcEfqP0casCM7liDj3AWnM08ZHhdwHgkmaL59o7U3/tzECaDqaXF2McJXubv
+         M99ERKvqr3NHlxzP39TiBGUv603cjkH20KrWoCRjHm1wS4fcyq8tA9JWwWAwy+9Z3KVD
+         CC6LOgk+n3MQyHwdmWseJzykyUcPgHqSS1qeKTdBRKKjC8IRG8ewX2OOBny7NXUXFADK
+         kz0hp0lShE9KvDVJ/nDcq3uOB6CT9LnqpZdVLl+jUATzrAE7HbJGswbzkqazOgngS4y/
+         Q4xooDR/xNVcp0/Tm4i8StDS7WmjpLG+vMl08kR/N9K/XTx+UQpKpPncI1gehd5AwZxV
+         /rew==
+X-Forwarded-Encrypted: i=1; AJvYcCVrKe6iqbkiWzIXRmQV+xzruAe+ljrePSVKPSUjsivpU8yZU/KBh7OGxACU3KS5Y0SGuXPYLXO3pb56NYnV4Q==@vger.kernel.org, AJvYcCVwrjo+pEmZZUd3pEY/yHnSsxZPkUPTcc7mz/ETvXLyE6XKSCpzN1YmlXDAX0OwFLS4/RrDyG+rZ87eb4M=@vger.kernel.org, AJvYcCWD1swA//Fht3X7P1h+uHaeqLkJU1Lfk1/fLKLkWqBORza3sAe85Fx5qTzqaF1NfEsYiWONH/tC2aVHVum4+Q==@vger.kernel.org, AJvYcCXlmYpPsTjUy3Holan15xs8HOfJORUkHu6npTtoWIEPyxu53r1vdfTicNDliV3AuleH1TP8VZjXQy0g@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeJC6apvWMKREGy20rDZBkdnuYI1zeVLblHtKILrJZXDV0MShr
+	88s5UXrCCo2R27ZPhSldQi75JJfVHp6XTY243Hw9/ceXtqQSfwhQdfgSU8rl3iUIjKD64bw9dP1
+	Bp69NRIkKJQzoyj9MQH7JIcgBR0Q=
+X-Google-Smtp-Source: AGHT+IE6p7wq/aGZc71KmWg1q+RkZP/2KfOy+tFjCt8EugCjNDM0MIPDzBeTnbCvcWLRpy4UVsXFGx3EjMXkydC/8RI=
+X-Received: by 2002:a05:6830:90e:b0:710:adbb:ff33 with SMTP id
+ 46e09a7af769-710af69eae6mr7229761a34.10.1725524633873; Thu, 05 Sep 2024
+ 01:23:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905-work-kmem_cache_args-v4-16-ed45d5380679@kernel.org>
+References: <cover.1725481503.git.josef@toxicpanda.com> <367fe83ae53839b1e88dc00b5b420035496d28ff.1725481503.git.josef@toxicpanda.com>
+In-Reply-To: <367fe83ae53839b1e88dc00b5b420035496d28ff.1725481503.git.josef@toxicpanda.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 5 Sep 2024 10:23:41 +0200
+Message-ID: <CAOQ4uxjteVH2kX2zORBaudu-EVLQRWxVjHvdgoXhR=ji8yZwDg@mail.gmail.com>
+Subject: Re: [PATCH v5 17/18] btrfs: disable defrag on pre-content watched files
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	brauner@kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 05, 2024 at 09:56:59AM +0200, Christian Brauner wrote:
-> Make __kmem_cache_create() a static inline function.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Wed, Sep 4, 2024 at 10:29=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
+wrote:
+>
+> We queue up inodes to be defrag'ed asynchronously, which means we do not
+> have their original file for readahead.  This means that the code to
+> skip readahead on pre-content watched files will not run, and we could
+> potentially read in empty pages.
+>
+> Handle this corner case by disabling defrag on files that are currently
+> being watched for pre-content events.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+IIUC, you are disabling the *start* of async defrag.
+What happens if defrag has already started and then a pre-content
+watch is set up?
 
+Do we care about this corner of a corner case?
+
+Thanks,
+Amir.
+
+>
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > ---
->  include/linux/slab.h | 13 ++++++++++---
->  mm/slab_common.c     | 38 --------------------------------------
->  2 files changed, 10 insertions(+), 41 deletions(-)
-> 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index d744397aa46f..597f6913cc0f 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -261,10 +261,17 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
->  					    unsigned int object_size,
->  					    struct kmem_cache_args *args,
->  					    slab_flags_t flags);
-> +static inline struct kmem_cache *
-> +__kmem_cache_create(const char *name, unsigned int size, unsigned int align,
-> +		    slab_flags_t flags, void (*ctor)(void *))
-> +{
-> +	struct kmem_cache_args kmem_args = {
-> +		.align	= align,
-> +		.ctor	= ctor,
-> +	};
->  
-> -struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
-> -				       unsigned int align, slab_flags_t flags,
-> -				       void (*ctor)(void *));
-> +	return __kmem_cache_create_args(name, size, &kmem_args, flags);
-> +}
->  
->  /**
->   * kmem_cache_create_usercopy - Create a cache with a region suitable
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 3477a3918afd..30000dcf0736 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -337,44 +337,6 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
->  }
->  EXPORT_SYMBOL(__kmem_cache_create_args);
->  
-> -/**
-> - * __kmem_cache_create - Create a cache.
-> - * @name: A string which is used in /proc/slabinfo to identify this cache.
-> - * @size: The size of objects to be created in this cache.
-> - * @align: The required alignment for the objects.
-> - * @flags: SLAB flags
-> - * @ctor: A constructor for the objects.
-> - *
-> - * Cannot be called within a interrupt, but can be interrupted.
-> - * The @ctor is run when new pages are allocated by the cache.
-> - *
-> - * The flags are
-> - *
-> - * %SLAB_POISON - Poison the slab with a known test pattern (a5a5a5a5)
-> - * to catch references to uninitialised memory.
-> - *
-> - * %SLAB_RED_ZONE - Insert `Red` zones around the allocated memory to check
-> - * for buffer overruns.
-> - *
-> - * %SLAB_HWCACHE_ALIGN - Align the objects in this cache to a hardware
-> - * cacheline.  This can be beneficial if you're counting cycles as closely
-> - * as davem.
-> - *
-> - * Return: a pointer to the cache on success, NULL on failure.
-> - */
-> -struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
-> -				       unsigned int align, slab_flags_t flags,
-> -				       void (*ctor)(void *))
-> -{
-> -	struct kmem_cache_args kmem_args = {
-> -		.align	= align,
-> -		.ctor	= ctor,
-> -	};
-> -
-> -	return __kmem_cache_create_args(name, size, &kmem_args, flags);
-> -}
-> -EXPORT_SYMBOL(__kmem_cache_create);
-> -
->  static struct kmem_cache *kmem_buckets_cache __ro_after_init;
->  
->  /**
-> 
-> -- 
-> 2.45.2
-> 
-
--- 
-Sincerely yours,
-Mike.
+>  fs/btrfs/ioctl.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index e0a664b8a46a..529f7416814f 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -2640,6 +2640,15 @@ static int btrfs_ioctl_defrag(struct file *file, v=
+oid __user *argp)
+>                         goto out;
+>                 }
+>
+> +               /*
+> +                * Don't allow defrag on pre-content watched files, as it=
+ could
+> +                * populate the page cache with 0's via readahead.
+> +                */
+> +               if (fsnotify_file_has_pre_content_watches(file)) {
+> +                       ret =3D -EINVAL;
+> +                       goto out;
+> +               }
+> +
+>                 if (argp) {
+>                         if (copy_from_user(&range, argp, sizeof(range))) =
+{
+>                                 ret =3D -EFAULT;
+> --
+> 2.43.0
+>
 
