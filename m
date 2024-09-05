@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-28725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3053496D8EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 14:42:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FB396D8F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 14:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDD0B28CCD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 12:42:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90A1AB236BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 12:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F70419D082;
-	Thu,  5 Sep 2024 12:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0A619D8A9;
+	Thu,  5 Sep 2024 12:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfSQySjM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTYGGTAx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40B119B5B4;
-	Thu,  5 Sep 2024 12:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B4619D880;
+	Thu,  5 Sep 2024 12:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725540119; cv=none; b=aRxXVtxmtca6cBY1XLHgjrFtjqYk3zYYtfC7znk7LBaMGu/1G69X/jz+lFWdYwfS7kntL7F4mOiLYDIWVnMZudDWN2yIaYg41Q6+l2cu/pIiwaf6EC9T5zuxMeCjQPZj+FxiP2zalDzI2QFQYaJW/0q+5uhdwkea4DLvQWnotUA=
+	t=1725540121; cv=none; b=TUvX+y2hgQ3z4njAgOdCFzRIDAxrz4Io1m3G/nAVgxaeggCgA4+pLzBviJ/0G9q7ZEhDdqHtNOZsDh4/kDvlya2ikwM82v5mUW2jgTurjfCl5f/G5sIPIBBdAonzeVp9bFKyCEKDGKgyntGsJHPU3nosOeBAl3362/D2noYQ/E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725540119; c=relaxed/simple;
-	bh=WOMPM4a6cFQUhOu0UuUBlXpQMEvZe7jPE4ipDUDHdio=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jiUjjxYDHcZYPkKzHcJJpZ5xIXCkGtezZC+u1c/4VwjPfihlIP7EM5i/BeLVGLVjN2XFFqDmjlwl8pNmx18GhJhZ/tAnvb6Gflq1pJEtLbhRXx0n6EdqBbFTWiUD/xLg1GMaUykQIW+cUXcMEyj4arQo0/iEEYiTzUriz+mkPn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfSQySjM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DDE9C4CEC3;
-	Thu,  5 Sep 2024 12:41:58 +0000 (UTC)
+	s=arc-20240116; t=1725540121; c=relaxed/simple;
+	bh=lo5fg8EfTLkVA9DYVM0X/8i1HjBrQtIclBbgHsn2k30=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=up945z83ueGEs7rM9wTQASWEyNExEBebNiG/bv2hS/uqX9qVZ4Ln4W0tMh1KhP43GuB7UZigFjbX9NdIu2sCTsc3c6Fk3wTmwy9Px6Tki4STnE8AaVcAKkAVAzhfU0e1EfqufiWA9HFyVPD2CJYqoqJyV+wlfDFc65YDuU37LIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTYGGTAx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6303C4CECB;
+	Thu,  5 Sep 2024 12:41:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725540119;
-	bh=WOMPM4a6cFQUhOu0UuUBlXpQMEvZe7jPE4ipDUDHdio=;
-	h=From:Subject:Date:To:Cc:From;
-	b=AfSQySjMMqxvkfA4RHKY7VpISPW4Gd8Eb/1gLYyXYKY/zLpmHH+dnNae6wCqipbVK
-	 TqyvfL/97pznEmkXU0ohgZZgOKB3rwOJJX7SbNe3SchFYBN+eY7bXPlBnhGH4j3Hhq
-	 b83Q92gHKf8gIfkRDnZNJt+mYbtpvD9tcwgBHO9RiUzLrM60xZ+JLxqofcsfdCHWuq
-	 2U8gUSrOMm9NRiHvdL/pMmxdetYwC4fdKmPEg+kPL7zMX+yRHQo1uw5qHke1/QKSCF
-	 FUlGkcuz7phRZFM7KqCzS0nv2oiK1+9yoW0tEbXI563JFKau/E4PlkOIj0AKG0RBcU
-	 jNSsaWGOZaigg==
+	s=k20201202; t=1725540121;
+	bh=lo5fg8EfTLkVA9DYVM0X/8i1HjBrQtIclBbgHsn2k30=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=FTYGGTAxoHoCPEIC3ePPUEzzHO2Uz46fygxHTjufpZC1lLgdvmbf8OsOmkYYsYHGQ
+	 F0ny3dBRAgrPyCCfWXrwNPX3Gt0Suz4GuKvdkaDzfBy0t9L0whhhuQ8n9AGDDERiGw
+	 9BO/AuXnJq8+5p02v8KAei3jw67B/TpkkV1L+Sr904eIFIWwNeXjyspSSkB0YBdZZE
+	 dL8dTuhlMmjqWf7nmy3j/iiasOhZxbXEy5n7LnjcRQOtr4wtKO73on5gZUnoas77fK
+	 4U7ovlW9vauRquFbIIUC7orLMu9U/wtNPXQfiu/KLb0KrdRLBGxXwaUT5/JYC1MDtz
+	 uv0D+wJnyTomg==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v4 00/11] nfsd: implement the "delstid" draft
-Date: Thu, 05 Sep 2024 08:41:44 -0400
-Message-Id: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
+Date: Thu, 05 Sep 2024 08:41:45 -0400
+Subject: [PATCH v4 01/11] nfsd: fix initial getattr on write delegation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +52,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAin2WYC/2XNQQ6CMBCF4auYrq3pTAGpK+9hXOB0hEYCpiWNh
- nB3C4mKcfkm/f6OIrB3HMRhMwrP0QXXd2lk242gpupqls6mLVBhpkrIpeU2DM5Ko9GowkBlAUR
- 6ffd8dY+ldDqn3bgw9P65hCPM13ej+DQiSCUJEUhbgozs8ca+43bX+1rMkYgriCuICXJZXXJSr
- A3RH9RraL5QJ4h7oEKVqqD898dpml4y4gBEEQEAAA==
+Message-Id: <20240905-delstid-v4-1-d3e5fd34d107@kernel.org>
+References: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
+In-Reply-To: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
 To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
  Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
  Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
@@ -65,99 +64,97 @@ Cc: Tom Haynes <loghyr@gmail.com>, linux-nfs@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3453; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=WOMPM4a6cFQUhOu0UuUBlXpQMEvZe7jPE4ipDUDHdio=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm2acNs8R8E6M66FIHRLbLZiujzfupJXyFbUvLz
- xzBODJNYUSJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZtmnDQAKCRAADmhBGVaC
- FaqrEACh4TwDS6buQftt4M0YLMY/fErr7N0hlcZWn7yDrUi1D6zKIc5+U2i3AhKWXQ9yXmdac9u
- Ec2ucSUSzjgv0gZStj5abQbd5PvADzAheZqFPpMhlR7uyfnuxshmv3DNn/5wVJbxTe38DHruHuJ
- U9ExWsOLLXAJORJ4XdJUkWMHfM5n9g3vCaQTzUNAkO3Xi9wsF8sOisWGO7xTFR6Qe9AT0apJzCg
- uVfAJ2BZIs0+0QRqu5q2u4Sd0sZbrHF3BUOoDW4H+31RfyDtAtWzSPhSk3tkkTLkfMX8ppHC5A4
- fwBn4Q82cNFTW9RKvPhKz5tIQYW8rHFOohSU2PDBM7YbEiu3Xr2IpJ3//xGd6YjWJ4o032vP+aZ
- V4Jb9UnEs/dGAfTo8DiwHRxLXwMjtO5WCGY1JoPpOtBT6apFVaMuG+6mya+5WdlhEvvRG78zeyg
- EAexGbR3dnBVnlSnQtOQ8XQJla1oXS2wrTW0L5u6pcWHt9hk5p/fsLQ1GIILxY9mYR0wc+wATHI
- yeTNaariVjEj3jfwv/WJyq17VgSSL7D73ABFhqjxLtUwBrn6lx+W3bZW74tmVnPpcgoE9p+soYR
- w5S1DopD0uKjXn/8HDAxhBhz6YzG/HAb0a5ZrQLftY42gSCIs6hyCaFHxJ4iuhWpoMYEime+ZIh
- vbm8atLM4B1OdVg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2631; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=lo5fg8EfTLkVA9DYVM0X/8i1HjBrQtIclBbgHsn2k30=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm2acUUInFhjUD9KJZQi9BTLZT2glTH01mvschh
+ E0kto7gztiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZtmnFAAKCRAADmhBGVaC
+ Fb94D/9bRFaO0c1Pv0U2QXAo1IrMLijhH3a4gFrX2/7fILEoXRqSCp5u00vJs02OjB7pQlWENpC
+ zB2a1yr/nSuxqgZn4hazwnliWMsFAq7butwQSha7iTO526Za6gvWsdTPHwltBD+v5Z8EL1oAG2o
+ 7eKHOu6GsaKMrghUpnu9QWaMAsXfjQyvz2ghIHbI8YcHG/KAkPuD0PMHQb+Mf9xL3zi3VQr0XnY
+ bvrqMa4q23E9V8gtMxyQsQSYpltEvV41h1S/p96bv13zGV+mspbf70Z4h/8ERh5DbJpb/jOagIW
+ n1kZLtiwfEIQ5FAItYNdmjGi9Wbw88uiwr1SAbcXRMhQk8cO3fTEWcGnAWps4Z10+gUM4vy4fUq
+ Ne1YFrodG0ksrSt2wX0vaLk11FHy429m7yP67YTAsgBwlqVS8mj/51uAy8s9KKbBtbv7Ff5JC04
+ ugu7N24+X3RHcTujJKYJjnrQYJZc+9gutCFW57cGD5ztSApL2H4yx8ESly4QataTAnpNWLnpTEn
+ /FwKVmnRES3JrzBqNOzR6uwoqerm/fZjq3sbBGjdmS41j48HESbXnH62K0PVPBS0EsO+QjoSlST
+ oP/8q8w+Vh9ggcOxJ1r4/LCTFFztljl8wU2k0mdm3MGFad1+TtO2MJqnN0B1VJvVXjBYcnGWH1l
+ 5+2wtdja4lT5/rg==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Sorry this has taken me a bit to re-post. I've been working on some
-pynfs testcases for CB_GETATTR, and have found more bugs in our
-implementation.
-
-This repost is based on top of Chuck's nfsd-next branch. The first two
-patches fix a couple of different bugs in how we handle the change attr.
-
-I also dropped one of the patches from the last series that tried to
-correct how we were handling the change attr.  After going over RFC8881
-section 10.4.3 a few times, I think the existing code in this respect is
-actually correct. We advance the change attr in the inode on every
-CB_GETATTR, which follows the guidance in the spec.
-
-The rest of the series is more or less the same as the last one.
+At this point in compound processing, currentfh refers to the parent of
+the file, not the file itself. Get the correct dentry from the delegation
+stateid instead.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v4:
-- get attrs from correct inode when issuing write deleg
-- dropped some change attr handling patches that were incorrect
-- only request FATTR4_CHANGE in CB_GETATTR if the file isn't modified
-- Link to v3: https://lore.kernel.org/r/20240829-delstid-v3-0-271c60806c5d@kernel.org
+ fs/nfsd/nfs4state.c | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
-Changes in v3:
-- fix includes in nfs4xdr_gen.c
-- drop ATTR_CTIME_DLG flag (just use ATTR_DELEG instead)
-- proper handling for SETATTR (maybe? Outstanding q about stateid here)
-- incorporate Neil's patches for handling non-delegation leases
-- always return times from CB_GETATTR instead of from local vfs_getattr
-- fix potential races vs. mgtimes by moving ctime handling into VFS layer
-- Link to v2: https://lore.kernel.org/r/20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index df69dc6af467..db90677fc016 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -5914,6 +5914,26 @@ static void nfsd4_open_deleg_none_ext(struct nfsd4_open *open, int status)
+ 	}
+ }
+ 
++static bool
++nfs4_delegation_stat(struct nfs4_delegation *dp, struct svc_fh *currentfh,
++		     struct kstat *stat)
++{
++	struct nfsd_file *nf = find_rw_file(dp->dl_stid.sc_file);
++	struct path path;
++
++	if (!nf)
++		return false;
++
++	path.mnt = currentfh->fh_export->ex_path.mnt;
++	path.dentry = file_dentry(nf->nf_file);
++
++	if (vfs_getattr(&path, stat,
++			(STATX_INO | STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
++			AT_STATX_SYNC_AS_STAT))
++		return false;
++	return true;
++}
++
+ /*
+  * The Linux NFS server does not offer write delegations to NFSv4.0
+  * clients in order to avoid conflicts between write delegations and
+@@ -5949,7 +5969,6 @@ nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
+ 	int cb_up;
+ 	int status = 0;
+ 	struct kstat stat;
+-	struct path path;
+ 
+ 	cb_up = nfsd4_cb_channel_good(oo->oo_owner.so_client);
+ 	open->op_recall = false;
+@@ -5985,20 +6004,16 @@ nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
+ 	memcpy(&open->op_delegate_stateid, &dp->dl_stid.sc_stateid, sizeof(dp->dl_stid.sc_stateid));
+ 
+ 	if (open->op_share_access & NFS4_SHARE_ACCESS_WRITE) {
+-		open->op_delegate_type = NFS4_OPEN_DELEGATE_WRITE;
+-		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
+-		path.mnt = currentfh->fh_export->ex_path.mnt;
+-		path.dentry = currentfh->fh_dentry;
+-		if (vfs_getattr(&path, &stat,
+-				(STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
+-				AT_STATX_SYNC_AS_STAT)) {
++		if (!nfs4_delegation_stat(dp, currentfh, &stat)) {
+ 			nfs4_put_stid(&dp->dl_stid);
+ 			destroy_delegation(dp);
+ 			goto out_no_deleg;
+ 		}
++		open->op_delegate_type = NFS4_OPEN_DELEGATE_WRITE;
+ 		dp->dl_cb_fattr.ncf_cur_fsize = stat.size;
+ 		dp->dl_cb_fattr.ncf_initial_cinfo =
+ 			nfsd4_change_attribute(&stat, d_inode(currentfh->fh_dentry));
++		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
+ 	} else {
+ 		open->op_delegate_type = NFS4_OPEN_DELEGATE_READ;
+ 		trace_nfsd_deleg_read(&dp->dl_stid.sc_stateid);
 
-Changes in v2:
-- rebase onto Chuck's lkxdrgen branch, and reworked how autogenerated
-  code is included
-- declare nfsd_open_arguments as a global, so it doesn't have to be
-  set up on the stack each time
-- delegated timestamp support has been added
-- Link to v1: https://lore.kernel.org/r/20240816-delstid-v1-0-c221c3dc14cd@kernel.org
-
----
-Jeff Layton (11):
-      nfsd: fix initial getattr on write delegation
-      nfsd: drop the ncf_cb_bmap field
-      nfsd: don't request change attr in CB_GETATTR once file is modified
-      nfsd: drop the nfsd4_fattr_args "size" field
-      nfsd: have nfsd4_deleg_getattr_conflict pass back write deleg pointer
-      nfs_common: make include/linux/nfs4.h include generated nfs4.h
-      nfsd: add support for FATTR4_OPEN_ARGUMENTS
-      nfsd: implement OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION
-      fs: handle delegated timestamps in setattr_copy_mgtime
-      nfsd: add support for delegated timestamps
-      nfsd: handle delegated timestamps in SETATTR
-
- fs/attr.c                 |  28 +++++---
- fs/inode.c                |  74 ++++++++++++++++++++++
- fs/nfsd/Makefile          |   2 +-
- fs/nfsd/nfs4callback.c    |  50 +++++++++++++--
- fs/nfsd/nfs4proc.c        |  29 ++++++++-
- fs/nfsd/nfs4state.c       | 158 ++++++++++++++++++++++++++++++++++++++--------
- fs/nfsd/nfs4xdr.c         | 108 +++++++++++++++++++++++++++----
- fs/nfsd/nfsd.h            |   5 +-
- fs/nfsd/state.h           |   6 +-
- fs/nfsd/xdr4cb.h          |  10 ++-
- include/linux/fs.h        |   2 +
- include/linux/nfs4.h      |   7 +-
- include/linux/nfs_xdr.h   |   5 --
- include/linux/time64.h    |   5 ++
- include/uapi/linux/nfs4.h |   7 +-
- 15 files changed, 416 insertions(+), 80 deletions(-)
----
-base-commit: 5cd183a621de1d76daeb58379d7a2c2f8dc1143f
-change-id: 20240815-delstid-93290691ad11
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.46.0
 
 
