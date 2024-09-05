@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-28689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E9996D10B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 09:59:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D9496D10C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 09:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B971C22EE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 07:58:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6DDDB25A26
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 07:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D862B195809;
-	Thu,  5 Sep 2024 07:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6A5194A6B;
+	Thu,  5 Sep 2024 07:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYkXOr7x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cm9Sd2Di"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468CD1946C3
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 07:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0976193422
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 07:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523075; cv=none; b=qCgSgS8TK14F5K30YzcBnnBMSSaLzr2UiqQk4s+XF6HlZsoBj76bdLD0ZbMoiWakvD75gxXsVZkjwQm1xyjwBAJ89uUeMYZhlWhLFb+aZiGdTX2xItBNShRdJ4Wcw+az3tcRZuKEPGt5a9xrNBl63Q7VtgZOaHTjMjItQs7ILdA=
+	t=1725523079; cv=none; b=aDCxXSOw8E4TQqw5yoaO95SH6MfBLv63RbwqJFZvbnPq32TEZ9qWcfKrXnVEUaW0VfMkgKi2B98jMQxeF6xGFCDJQfD5Nxu+ym7BDo7S5B+20+B9oNAHguYXfhtBVvWoX4sgB9fonA6nRrrSWbFslrjQklHyye0rjH7uUmz1mDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523075; c=relaxed/simple;
-	bh=i+qfsAgWogADWXKIX6Ox+SamBJe0NAxzXt2tozWQS4Y=;
+	s=arc-20240116; t=1725523079; c=relaxed/simple;
+	bh=c9WyXR3UutI5YuOZDzru6g9A7doJ0To6Z/yCENECssA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r/n+EY552TcYuluq7oTE6G/TJXz+kHxBvIsuQ8YEngwNRQ2MaTX6ukzt5zI9Ka7Y1+2Kuxz26NIz3LS4HqNhP8fMS/GyaH6J22nxYUDlU8YQfxXZG8z/dKl7CG7SD7x+pcJSsTCSrE+izTRPsz8PddkXd/+iHSh7E5srfSYpmcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYkXOr7x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B1F7C4AF09;
-	Thu,  5 Sep 2024 07:57:51 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=HnYXOZOhTS6+C3FffjFXG22S+K1gwU27j5uB5yyGc9zt4gQ9LON16PUmro3J6d8OIhQAMtXEyMxSf1rOfB9YUjqj7WslNa03nxGLe5/9qpFBiBekiiX6qX4PNoqSHYyO+WmLS9mxonLRLt3DQb7F0t5lVDLF8ea5CbJwjDw8CT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cm9Sd2Di; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9920BC4CEC4;
+	Thu,  5 Sep 2024 07:57:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725523075;
-	bh=i+qfsAgWogADWXKIX6Ox+SamBJe0NAxzXt2tozWQS4Y=;
+	s=k20201202; t=1725523079;
+	bh=c9WyXR3UutI5YuOZDzru6g9A7doJ0To6Z/yCENECssA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mYkXOr7xS4Z4mkCbI0v9BXGFcdBL//failIOy4yeoCV0iFHDbwEGNpZ5lUT96/2rM
-	 FzuwjOabbXeq4zn+r6w1OuIBW8p/DnVBT7j6rukPS3OyCyC6AN3aWf49VSYSpI0VML
-	 2UJwPFaz4/GJtXg4EXkPaof4zAh7spKsPz8nMcqahR/WVWwLm8l8FFx+JZP5Lh/HoQ
-	 24x+U2rzZbmqfLeIKcCBfI3DZenROsICqGWZKO5nWoZIuP2vAt3nRO1ffbjo2ZXPYA
-	 MR/QICqC6xGnAAmxZyKiOcMTZ+C0BBDqJXU9I69e63Eh/30cpfHZvxcjNz43rgheQ3
-	 CgE25VlJ6vPAQ==
+	b=Cm9Sd2DiCmnN0M4VfGZk7Ktm5XhL7pstZXSAV2/tXTU0vjUTxs17RLf9hjLGtOvjr
+	 aJuzjiNbaXAw0LLzOGR4Kkckwn0fnE09r3ZmDZ/kHmLqzpeCr1buh5ukhX4ArhnWrg
+	 PUQIGMuRq8rnFXLrp2CEa8HmM52xfYv66EJKiCyh1q3wy8/FOiQXi7vs9Tah2zsODe
+	 CosxMcX8TUjUa8lTOHalsD5psOIeXV3QgYlKjByOBrBU7LF4R/gPR00gARG+pwrohn
+	 DDHKwylYuoaxckibZsHQvhMGDCp7+cnBl1N65RZblKCkMhS8juxVlCdR9cqGkOs/5Y
+	 AZuImLS0sp9dg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 05 Sep 2024 09:56:56 +0200
-Subject: [PATCH v4 13/17] file: port to struct kmem_cache_args
+Date: Thu, 05 Sep 2024 09:56:57 +0200
+Subject: [PATCH v4 14/17] slab: remove kmem_cache_create_rcu()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-work-kmem_cache_args-v4-13-ed45d5380679@kernel.org>
+Message-Id: <20240905-work-kmem_cache_args-v4-14-ed45d5380679@kernel.org>
 References: <20240905-work-kmem_cache_args-v4-0-ed45d5380679@kernel.org>
 In-Reply-To: <20240905-work-kmem_cache_args-v4-0-ed45d5380679@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
@@ -67,16 +67,17 @@ Cc: Kees Cook <kees@kernel.org>, Christoph Lameter <cl@linux.com>,
  Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1128; i=brauner@kernel.org;
- h=from:subject:message-id; bh=i+qfsAgWogADWXKIX6Ox+SamBJe0NAxzXt2tozWQS4Y=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdTPFeMkFxdeKVKz5uTZv//oozC6j/eSV1QtD8yNSbF
- 3dazFPS6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIawrDPzX+vdEdqptkD+78
- 32r3fWVw3YzH7oZLj54zjVh1yzvumwnDP+UO2TWtxg38Rrvuz43yCxZ9w/I3XOsE35Oppb7yIhl
- /+QE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3200; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=c9WyXR3UutI5YuOZDzru6g9A7doJ0To6Z/yCENECssA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdTPG+F8+58dldnj9qzNtvnnm8aYfemt7vfz66bb2oG
+ iHMce3Hwo5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJxGsy/M/5INce7OTJUvjF
+ Z33SiZQN9YV1DbtmHLIulz2wyily3XOGf/aFNUbt6q4vZqyd+vP26xvmEqsurtf8Lms8z/OtwNX
+ yg+wA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Port filp_cache to struct kmem_cache_args.
+Now that we have ported all users of kmem_cache_create_rcu() to struct
+kmem_cache_args the function is unused and can be removed.
 
 Reviewed-by: Kees Cook <kees@kernel.org>
 Reviewed-by: Jens Axboe <axboe@kernel.dk>
@@ -84,31 +85,78 @@ Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/file_table.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ include/linux/slab.h |  3 ---
+ mm/slab_common.c     | 43 -------------------------------------------
+ 2 files changed, 46 deletions(-)
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 3ef558f27a1c..861c03608e83 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -511,9 +511,14 @@ EXPORT_SYMBOL(__fput_sync);
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index f74ceb788ac1..8246f9b28f43 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -270,9 +270,6 @@ struct kmem_cache *kmem_cache_create_usercopy(const char *name,
+ 			slab_flags_t flags,
+ 			unsigned int useroffset, unsigned int usersize,
+ 			void (*ctor)(void *));
+-struct kmem_cache *kmem_cache_create_rcu(const char *name, unsigned int size,
+-					 unsigned int freeptr_offset,
+-					 slab_flags_t flags);
  
- void __init files_init(void)
- {
--	filp_cachep = kmem_cache_create_rcu("filp", sizeof(struct file),
--				offsetof(struct file, f_freeptr),
--				SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
-+	struct kmem_cache_args args = {
-+		.use_freeptr_offset = true,
-+		.freeptr_offset = offsetof(struct file, f_freeptr),
-+	};
-+
-+	filp_cachep = kmem_cache_create("filp", sizeof(struct file), &args,
-+				SLAB_HWCACHE_ALIGN | SLAB_PANIC |
-+				SLAB_ACCOUNT | SLAB_TYPESAFE_BY_RCU);
- 	percpu_counter_init(&nr_files, 0, GFP_KERNEL);
+ /* If NULL is passed for @args, use this variant with default arguments. */
+ static inline struct kmem_cache *
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 418459927670..9133b9fafcb1 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -420,49 +420,6 @@ struct kmem_cache *__kmem_cache_create(const char *name, unsigned int size,
  }
+ EXPORT_SYMBOL(__kmem_cache_create);
  
+-/**
+- * kmem_cache_create_rcu - Create a SLAB_TYPESAFE_BY_RCU cache.
+- * @name: A string which is used in /proc/slabinfo to identify this cache.
+- * @size: The size of objects to be created in this cache.
+- * @freeptr_offset: The offset into the memory to the free pointer
+- * @flags: SLAB flags
+- *
+- * Cannot be called within an interrupt, but can be interrupted.
+- *
+- * See kmem_cache_create() for an explanation of possible @flags.
+- *
+- * By default SLAB_TYPESAFE_BY_RCU caches place the free pointer outside
+- * of the object. This might cause the object to grow in size. Callers
+- * that have a reason to avoid this can specify a custom free pointer
+- * offset in their struct where the free pointer will be placed.
+- *
+- * Note that placing the free pointer inside the object requires the
+- * caller to ensure that no fields are invalidated that are required to
+- * guard against object recycling (See SLAB_TYPESAFE_BY_RCU for
+- * details.).
+- *
+- * Using zero as a value for @freeptr_offset is valid. To request no
+- * offset UINT_MAX must be specified.
+- *
+- * Note that @ctor isn't supported with custom free pointers as a @ctor
+- * requires an external free pointer.
+- *
+- * Return: a pointer to the cache on success, NULL on failure.
+- */
+-struct kmem_cache *kmem_cache_create_rcu(const char *name, unsigned int size,
+-					 unsigned int freeptr_offset,
+-					 slab_flags_t flags)
+-{
+-	struct kmem_cache_args kmem_args = {
+-		.freeptr_offset		= freeptr_offset,
+-		.use_freeptr_offset	= true,
+-	};
+-
+-	return __kmem_cache_create_args(name, size, &kmem_args,
+-					flags | SLAB_TYPESAFE_BY_RCU);
+-}
+-EXPORT_SYMBOL(kmem_cache_create_rcu);
+-
+ static struct kmem_cache *kmem_buckets_cache __ro_after_init;
+ 
+ /**
 
 -- 
 2.45.2
