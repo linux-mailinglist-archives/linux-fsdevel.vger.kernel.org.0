@@ -1,97 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-28742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D2F96DB46
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 16:13:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5D696DBA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 16:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E7B1F29692
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 14:13:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA19E28D095
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 14:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD05319D082;
-	Thu,  5 Sep 2024 14:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FCBC8C7;
+	Thu,  5 Sep 2024 14:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fzkBDS/8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJERgEi9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8892AE96
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 14:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8234ACA64;
+	Thu,  5 Sep 2024 14:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545578; cv=none; b=DcXbhZAYvRmhvHH1HGOqV/o80hX9M77RyCm4VM6fVc+gXLaGJucso3550QymBrEez+IYh4AVpw+ji8hCONF6IjAu+lxHiuZQhD1wtrb2yh6w21XosBD9I07FCqfEDzBCezhbVV9f/XgXRTXYPJxKk81uQGCe3PJGntUmN7/nn00=
+	t=1725546063; cv=none; b=qDt1TSVV0z7p61SzgcmjSfMwNs8Vx4SSuw5htvZcKTXq8bI5ae++BfXHzU6w5RjST5/F59nvMXEcWSlG1EVOkAWiHTped+F3ttVqEl0vQe+dh9L34qoA2QMm2on5eEs7C3EZJ4rWO1uy6w6Q0NoC51O/NUQdhNGkaCFyvazMkyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545578; c=relaxed/simple;
-	bh=gIpwCb6OV6UwPMTwnRjpauWp1JHz59zzWwEgm74aOlM=;
+	s=arc-20240116; t=1725546063; c=relaxed/simple;
+	bh=Na1GNfhq1VkT2SlIbInYpjSqIASnAc/oc5DJoxzyCxg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKP0v7Fe+R/2fj3FHjCGL02015C9OmUkZwbnCaBfqx91X+cMVH9g2Mm+QDLJmlw/hmWQwp+uw7MfYvF7Tl8gWPV9KSG2UoJS8iowSQ8t8DRyC3EIpOF7lDUxBJptE7IPclJD3Z7z6sqvEN56OXwRGpdpBk5s0T+Q7tu/+5/t+qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fzkBDS/8; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5343617fdddso1289367e87.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2024 07:12:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725545574; x=1726150374; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwYsBihYTyfOkMwcrQ2PgVwPBmg+Ta54Eew3ioB7SiQ=;
-        b=fzkBDS/8pvFq4Xc8f/Fa2RY3BiXmomhg0qoazjTcSjQXm/YO48sC4nMS+/dZJmrFbM
-         Yhd4jGUFonnzfk1cWfmKUILW7d9OwsbSSvnb0AA44rNsdcEAg/IvdfB5zJmR0bS45+Bw
-         27FsoiC9HRTJth/KITNi8Dq9n1kx/ueWUdninPQfhhj00Po/QviTMSO2+o4ttYItdreV
-         uxQjUDzofWmqJ6+hoArSW6TSQZt+XzVBU6maC2kUohbxWsBDX27DbKFIIPMr5kSGmZw7
-         zL18ZVt3lzrXxfmHnnz3V6F8bWLA+/e1MXul+HWl9OlOIXADIdXF4Mxs9JttIKeaWdLK
-         06zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725545574; x=1726150374;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gwYsBihYTyfOkMwcrQ2PgVwPBmg+Ta54Eew3ioB7SiQ=;
-        b=GIK1ip5PwPfkwp0UrADdnevPv8vVqy1JZvmkA89c9PSez3FER7WUHeKzvMn3zhbx72
-         lLn/uZobdrpn1ofwdnxuHy3zsg929/jMdSXn+oz+/oFfQ16Wd6qLVlMBLblw8RfqL8zu
-         fwBLGj3EFBxnFfkly4ZR6bdbNuD+zSoX5q/VkzSoxlarxDgnlLmbMcNmnmgLL6JICbZ4
-         c4IPeufv0/nqmr5Bxg6NfbIE6vvvTfKo54DwE35xg3eWNHxwnPItOC5xF6qvZmSOgHle
-         NJslAzOGLQrlCnRJXEKr7Di7kHYX2tJjNlwixnbZkheHFiUH0roUToSlOYy07pzL0Tl5
-         hGHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqNeJUrWH0EDZCWI+ZT3/wW0fNgvW5UE/DcJvTTJ46O3Eh+EthxzE3XtxugH73vH/TeGIZkl4zvm7CfEbO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvR8PzuVvd28pptlbNtvUU3bhagepi9BvXxk9P518wb2NpnPVU
-	3B6vUONKp9Hkxh7KtLqOcMOKSAoad5l+rkgtfDl9+M4ipGC+5JQTXzZ5WIuUcGY=
-X-Google-Smtp-Source: AGHT+IGsTyoQo5r21FHK64nbduDdB0RMk5Y4ciVDsCqSQ9O4YP1mPL/j+bbkh4RnUZCAoKKWGupTJg==
-X-Received: by 2002:a05:6512:a8b:b0:536:54ff:51c8 with SMTP id 2adb3069b0e04-53654ff53dbmr1077754e87.17.1725545574270;
-        Thu, 05 Sep 2024 07:12:54 -0700 (PDT)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623c2fa2sm142182366b.183.2024.09.05.07.12.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 07:12:54 -0700 (PDT)
-Date: Thu, 5 Sep 2024 16:12:53 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
-	Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <Ztm8ZY0kXWLFspYJ@tiehlicka>
-References: <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
- <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
- <ZtgI1bKhE3imqE5s@tiehlicka>
- <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
- <ZtiOyJ1vjY3OjAUv@tiehlicka>
- <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
- <ZtmVej0fbVxrGPVz@tiehlicka>
- <20240905135326.GU9627@mit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cMt9zU9UxJ5wfbfnm5tWMFvUveG22Gylnxt3KPEaksl3hrimkCwoHHIoJ7GV2v3+ocUkE4Oix2xtNWs/zitWh7gbKhYG7sKCMi934m1iWfrcXXpslbF6sesMkamX+lnZeiwu8uB0z1UySPAxI8JynP8DV2/U1B5taUpg2P7j9V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJERgEi9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D70EBC4CEC3;
+	Thu,  5 Sep 2024 14:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725546063;
+	bh=Na1GNfhq1VkT2SlIbInYpjSqIASnAc/oc5DJoxzyCxg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BJERgEi9LeJR70JAP4N+aLs0yNMw/wfC6NoGwiDcly4gL8iCksfi+Y6cNbP+oNCDI
+	 K1tdZ5pbaO8OsGefi1ymSM9O6Adt3rVOR5fB29vCSfAJsUmI5EbhakwJY7NrUhzAA8
+	 lC+7jxwaJ6FUt5MIKBKdm3r8FI/5l9e3fln0qOaN2nd7qZ4kM73QDOureW+mBewtsD
+	 JpmHLGobrKfpcI64FdoNcXYLQ1PIYVzQK4jivkXOIWBhBI4HobySUkYenN9X4tCAbg
+	 A6fTMYIetsa5pN4GBQCoZGDFw/hwhTJHx3k5Z6ZMyi82pMdUpvAakeQ7t1ix/h6vzr
+	 pNNElT/goYTQw==
+Date: Thu, 5 Sep 2024 10:21:01 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: NeilBrown <neilb@suse.de>, Jeff Layton <jlayton@kernel.org>,
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v15 16/26] nfsd: add LOCALIO support
+Message-ID: <Ztm-TbSdXOkx3IHn@kernel.org>
+References: <>
+ <67405117-1C08-4CA9-B0CE-743DFC7BCE3F@oracle.com>
+ <172540270112.4433.6741926579586461095@noble.neil.brown.name>
+ <172542610641.4433.9213915589635956986@noble.neil.brown.name>
+ <Zthk29iSYQs6J8NX@tissot.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,52 +64,129 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240905135326.GU9627@mit.edu>
+In-Reply-To: <Zthk29iSYQs6J8NX@tissot.1015granger.net>
 
-On Thu 05-09-24 09:53:26, Theodore Ts'o wrote:
-> On Thu, Sep 05, 2024 at 01:26:50PM +0200, Michal Hocko wrote:
-> > > > > > This is exactly GFP_KERNEL semantic for low order allocations or
-> > > > > > kvmalloc for that matter. They simply never fail unless couple of corner
-> > > > > > cases - e.g. the allocating task is an oom victim and all of the oom
-> > > > > > memory reserves have been consumed. This is where we call "not possible
-> > > > > > to allocate".
-> > > > > 
-> > > > > Which does beg the question of why GFP_NOFAIL exists.
-> > > > 
-> > > > Exactly for the reason that even rare failure is not acceptable and
-> > > > there is no way to handle it other than keep retrying. Typical code was 
-> > > > 	while (!(ptr = kmalloc()))
-> > > > 		;
+On Wed, Sep 04, 2024 at 09:47:07AM -0400, Chuck Lever wrote:
+> On Wed, Sep 04, 2024 at 03:01:46PM +1000, NeilBrown wrote:
+> > On Wed, 04 Sep 2024, NeilBrown wrote:
 > > > 
-> > > But is it _rare_ failure, or _no_ failure?
-> > >
-> > > You seem to be saying (and I just reviewed the code, it looks like
-> > > you're right) that there is essentially no difference in behaviour
-> > > between GFP_KERNEL and GFP_NOFAIL.
+> > > I agree that dropping and reclaiming a lock is an anti-pattern and in
+> > > best avoided in general.  I cannot see a better alternative in this
+> > > case.
+> > 
+> > It occurred to me what I should spell out the alternate that I DO see so
+> > you have the option of disagreeing with my assessment that it isn't
+> > "better".
+> > 
+> > We need RCU to call into nfsd, we need a per-cpu ref on the net (which
+> > we can only get inside nfsd) and NOT RCU to call
+> > nfsd_file_acquire_local().
+> > 
+> > The current code combines these (because they are only used together)
+> > and so the need to drop rcu. 
+> > 
+> > I thought briefly that it could simply drop rcu and leave it dropped
+> > (__releases(rcu)) but not only do I generally like that LESS than
+> > dropping and reclaiming, I think it would be buggy.  While in the nfsd
+> > module code we need to be holding either rcu or a ref on the server else
+> > the code could disappear out from under the CPU.  So if we exit without
+> > a ref on the server - which we do if nfsd_file_acquire_local() fails -
+> > then we need to reclaim RCU *before* dropping the ref.  So the current
+> > code is slightly buggy.
+> > 
+> > We could instead split the combined call into multiple nfs_to
+> > interfaces.
+> > 
+> > So nfs_open_local_fh() in nfs_common/nfslocalio.c would be something
+> > like:
+> > 
+> >  rcu_read_lock();
+> >  net = READ_ONCE(uuid->net);
+> >  if (!net || !nfs_to.get_net(net)) {
+> >        rcu_read_unlock();
+> >        return ERR_PTR(-ENXIO);
+> >  }
+> >  rcu_read_unlock();
+> >  localio = nfs_to.nfsd_open_local_fh(....);
+> >  if (IS_ERR(localio))
+> >        nfs_to.put_net(net);
+> >  return localio;
+> > 
+> > So we have 3 interfaces instead of 1, but no hidden unlock/lock.
 > 
-> That may be the currrent state of affiars; but is it
-> ****guaranteed**** forever and ever, amen, that GFP_KERNEL will never
-> fail if the amount of memory allocated was lower than a particular
-> multiple of the page size?
+> Splitting up the function call occurred to me as well, but I didn't
+> come up with a specific bit of surgery. Thanks for the suggestion.
+> 
+> At this point, my concern is that we will lose your cogent
+> explanation of why the release/lock is done. Having it in email is
+> great, but email is more ephemeral than actually putting it in the
+> code.
+> 
+> 
+> > As I said, I don't think this is a net win, but reasonable people might
+> > disagree with me.
+> 
+> The "win" here is that it makes this code self-documenting and
+> somewhat less likely to be broken down the road by changes in and
+> around this area. Since I'm more forgetful these days I lean towards
+> the more obvious kinds of coding solutions. ;-)
+> 
+> Mike, how do you feel about the 3-interface suggestion?
 
-No, GFP_KERNEL is not guaranteed. Allocator tries as hard as it can to
-satisfy those allocations for order <= PAGE_ALLOC_COSTLY_ORDER.
+I dislike expanding from 1 indirect function call to 2 in rapid
+succession (3 for the error path, not a problem, just being precise.
+But I otherwise like it.. maybe.. heh.
 
-GFP_NOFAIL is guaranteed for order <= 1 for page allocator and there is
-no practical limit for vmalloc currently. This is what our documentation
-says
- * The default allocator behavior depends on the request size. We have a concept
- * of so-called costly allocations (with order > %PAGE_ALLOC_COSTLY_ORDER).
- * !costly allocations are too essential to fail so they are implicitly
- * non-failing by default (with some exceptions like OOM victims might fail so
- * the caller still has to check for failures) while costly requests try to be
- * not disruptive and back off even without invoking the OOM killer.
- * The following three modifiers might be used to override some of these
- * implicit rules.
+FYI, I did run with the suggestion to make nfs_to a pointer that just
+needs a simple assignment rather than memcpy to initialize.  So Neil's
+above code becames:
 
-There is no guarantee this will be that way for ever. This is unlikely
-to change though.
--- 
-Michal Hocko
-SUSE Labs
+        rcu_read_lock();
+        net = rcu_dereference(uuid->net);
+        if (!net || !nfs_to->nfsd_serv_try_get(net)) {
+                rcu_read_unlock();
+                return ERR_PTR(-ENXIO);
+        }
+        rcu_read_unlock();
+        /* We have an implied reference to net thanks to nfsd_serv_try_get */
+        localio = nfs_to->nfsd_open_local_fh(net, uuid->dom, rpc_clnt,
+                                             cred, nfs_fh, fmode);
+        if (IS_ERR(localio))
+                nfs_to->nfsd_serv_put(net);
+        return localio;
+
+I do think it cleans the code up... full patch is here:
+https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/commit/?h=nfs-localio-for-next.v15-with-fixups&id=e85306941878a87070176702de687f2779436061
+
+But I'm still on the fence.. someone help push me over!
+
+Tangent, but in the related business of "what are next steps?":
+
+I updated headers with various provided Reviewed-by:s and Acked-by:s,
+fixed at least 1 commit header, fixed some sparse issues, various
+fixes to nfs_to patch (removed EXPORT_SYMBOL_GPL, switched to using
+pointer, updated nfs_to callers). Etc...
+
+But if I fold those changes in I compromise the provided Reviewed-by
+and Acked-by.. so I'm leaning toward posting a v16 that has
+these incremental fixes/improvements, see the 3 topmost commits here:
+https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/log/?h=nfs-localio-for-next.v15-with-fixups
+
+Or if you can review the incremental patches I can fold them in and
+preserve the various Reviewed-by and Acked-by...
+
+You can also see incremental diff from .v15 to .v15-with-fixups with:
+git remote update snitzer
+git diff snitzer/nfs-localio-for-next.v15 snitzer/nfs-localio-for-next.v15-with-fixups
+
+Either way, I should post a v16 right?  SO question is: should I fold
+these incremental changes in to the original or keep them split out?
+
+I'm good with whatever you guys think.  But whatever is decided: this
+needs to be the handoff point to focused NFS client review and hopeful
+staging for 6.12 inclusion, I've pivoted to working with Trond to
+make certain he is good with everything.
+
+Thanks,
+Mike
 
