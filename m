@@ -1,96 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-28790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84FF96E391
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 21:58:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07CCD96E3F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 22:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA48B1C227C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 19:58:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89D23B234EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 20:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C44819007F;
-	Thu,  5 Sep 2024 19:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A51D1A01AD;
+	Thu,  5 Sep 2024 20:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="gIlGp+xX"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="BPJP4AOp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFB343AD7;
-	Thu,  5 Sep 2024 19:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4EE175BF;
+	Thu,  5 Sep 2024 20:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725566284; cv=none; b=F0wiMOrsHJ9IRWnxM6RBrfJSgZg5VU1W6BVPx2GjXYapEBJdYVRhr3Hd8TgvEYT/uL0Vpk8ZXdggcW11KMB7mxH4coqSVMJgZs41Y/LsrhBzwgi5CONPGi1e1UuE1gakDaTQZH+TXLdahLL5GZtqSVlAaK1E7S3v43l2zP5rljw=
+	t=1725567549; cv=none; b=mPVkOQtAsmkhCzmxMvfNAoqTy7IDnWGRYBnB5G5wQFGPFy499e9bKdjDSzEia0XTult00TseaJYkeFi8cvSdsQc8F3DfKMpp6sX6Zq4BBILlA2gu2WigWSvldNOQjmmXX/eJkvEAyMn1tVa8UWlX5EKXmZcjuQ8TQneQkPrWORY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725566284; c=relaxed/simple;
-	bh=uEWuHStiwdJiMQ6RIuH8fXo5EJOuK/FBAH3xcmLzihU=;
+	s=arc-20240116; t=1725567549; c=relaxed/simple;
+	bh=dSxDom7EipPIlOqbePYFsJJ9UrMmg2qtFlqtq0cX7vk=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hrTMZtvHac4BxKnpCKWJIMFQahTAY2DnblmlX72PwctCPwFUN3HYQyLKsRDPsfw1aycdrsaTbSO1RS6QAKMNujYFBZUsc4Fid9b0tixG+Q0I4b2wR7Pw3N3Btp5L6W9HJ6ZqkB7WQ8TrswXsS4lNoXQY6mB9Oy4onR37Hj+JYgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=gIlGp+xX; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 74A751C0003;
-	Thu,  5 Sep 2024 19:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1725566280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uEWuHStiwdJiMQ6RIuH8fXo5EJOuK/FBAH3xcmLzihU=;
-	b=gIlGp+xX889blHM+Bq9R5Os/vg0UKY1Z6DPqflBrW4wG5UCvn2XVBma8k2P7qjCknxgov8
-	Ul/Xws0fEmZI9C48xkvQU2pcU5JaoBdH0LfBCKDcGnwOKEVYNt0Az3gzFomhtzYcMvvllX
-	fIoSv52BsfEF9esCfaP7BKtw3I8ukh8mbA1azUKerFyQIQ8QfuMU+CeeY2WG7osAKO6eXK
-	mvjIkFh7EEswDxl4B82tpWzrGO+Uf5KS6OGO2Fv95ZEgciBf+rRaAod5OcNKvwiBUN93WK
-	cW02gS0IAYHz4EejehV0EjxXayLYhwUccNCmXFTdrRb03e7jle329i1z6E3tWQ==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  krisman@kernel.org,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
-  Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3 4/9] unicode: Export latest available UTF-8 version
- number
-In-Reply-To: <20240905190252.461639-5-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Thu, 5 Sep 2024 16:02:47 -0300")
-References: <20240905190252.461639-1-andrealmeid@igalia.com>
-	<20240905190252.461639-5-andrealmeid@igalia.com>
-Date: Thu, 05 Sep 2024 15:57:51 -0400
-Message-ID: <87o751oou8.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	 MIME-Version:Content-Type; b=N0BeqxuyEu9RL0CyGYPc5AR9GIdRKy4lU7w6UOZJKaqPjIBfShShAIYAYfwl6kHsiWl7r+EGbbUu6ncjjjuD2Obb+tUoESttw/+uQGPQbdgtOhkep/fROfqq1c5zlCWUz4kLWIuZeNST7DpdVHDvWFLZGdF775+iOahU2mlS2dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=BPJP4AOp; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BF1A742B25
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1725567546; bh=dSxDom7EipPIlOqbePYFsJJ9UrMmg2qtFlqtq0cX7vk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=BPJP4AOploLiilgYBNEBBlMlzee7P8adCjbZxYhNyytj8CV60RYbsOPkNZZZuzywD
+	 2ae38vkyZ4dc4hLiLNL4qT18rk7fiirq9k6p7fe5etg9pnpMpNErRXBSCfqICD0T1X
+	 b6C55Ca/EUTYnNv1HZZ7CQfzMlF4dj02YBoyOeRQo0BFL3Fyu6yfxlcJ6iov3PcunY
+	 xPFJrf8aHnBh4o8ONGwZARndutcO2bPkCfLR1CTVVXIXv1C3hQBqe3sjV8lL3lcG+m
+	 xgqwC+FFMUgF087TzEtivWIxeWHGLvbutROZW5yX5Y8GqRsVCi89HqGgTD8FpOB4Os
+	 hzsqiztR6E9tg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id BF1A742B25;
+	Thu,  5 Sep 2024 20:19:06 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-doc@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ kernel-dev@igalia.com, kernel@gpiccoli.net, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Bart Van Assche <bvanassche@acm.org>, "Darrick J.
+ Wong" <djwong@kernel.org>, Jens Axboe <axboe@kernel.dk>, Jan Kara
+ <jack@suse.cz>
+Subject: Re: [PATCH V5] Documentation: Document the kernel flag
+ bdev_allow_write_mounted
+In-Reply-To: <20240828145045.309835-1-gpiccoli@igalia.com>
+References: <20240828145045.309835-1-gpiccoli@igalia.com>
+Date: Thu, 05 Sep 2024 14:19:05 -0600
+Message-ID: <87cylhhn0m.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+"Guilherme G. Piccoli" <gpiccoli@igalia.com> writes:
 
-> Export latest available UTF-8 version number so filesystems can easily
-> load the newest one.
+> Commit ed5cc702d311 ("block: Add config option to not allow writing to mounted
+> devices") added a Kconfig option along with a kernel command-line tuning to
+> control writes to mounted block devices, as a means to deal with fuzzers like
+> Syzkaller, that provokes kernel crashes by directly writing on block devices
+> bypassing the filesystem (so the FS has no awareness and cannot cope with that).
 >
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> The patch just missed adding such kernel command-line option to the kernel
+> documentation, so let's fix that.
+>
+> Cc: Bart Van Assche <bvanassche@acm.org>
+> Cc: Darrick J. Wong <djwong@kernel.org>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 > ---
->
-> If this is the accepted way of doing that, I will also add something to
-> checkpatch to warn that modifications at fs/unicode/utf8data.c likely
-> need to change this define.
 
-I'd do it by special casing version =3D=3D 0 or -1 to utf8_load. But the
-way you've done is just fine.
+Applied, thanks.
 
-Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
-
---=20
-Gabriel Krisman Bertazi
+jon
 
