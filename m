@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-28758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3011396DEB3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 17:45:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C8196DEBE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 17:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF371C23365
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 15:45:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C102842AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 15:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0E719D8A3;
-	Thu,  5 Sep 2024 15:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FE619DF77;
+	Thu,  5 Sep 2024 15:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SGJ6/6/8";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MLlHox5k"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T0o7Q19m";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="F/mo7ReF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEC5101DE;
-	Thu,  5 Sep 2024 15:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CDB101DE;
+	Thu,  5 Sep 2024 15:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725551128; cv=fail; b=d3CY7tK06EgvPlDGTPJX8U3Ge5QELxh8yqONIxyXkSKk3AMAciC1KhOXB0dYW7MZCifvz4HGVVi+q7sU0sKzMu0tJ2gssukCMAr5YvNLU9x7hlj94oQBCcW8QNI8fm+HFcuSX8rNfvPnMi4u9PQNapGWd2Jdh7j99sjaAbvOZwU=
+	t=1725551208; cv=fail; b=V9eDAUQBZj9/7hTKJUWbQkioVR0xhARQFY8ep5pgpw+hBERWG751dfG9equ5/WEIwgBEFMjeRnVi22+bqRVqgrXunm4nusFrigQudVzYKSc287BMiA0h+BeyB/frx19T8cjm7x0FDlmfFIc3l4rRZBtX0Mc0Zp2w7wjZSSItGsI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725551128; c=relaxed/simple;
-	bh=uG6x0tk+6GIwMIaDnSwyR65fv+GkRIl6mjHN+FiKHfo=;
+	s=arc-20240116; t=1725551208; c=relaxed/simple;
+	bh=aaP7Q3XRQTJ16q2h7UpcgtRzxZcr5ylu/oo0rGtyB04=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=N/rLs9RQIe0vG8P3Bfm7gJRSGSzTsZ1qKLRFP4dQoElC3zifb/TYnBJaMiHotjvTgMJzRO0smIfdypsFaaH1V8LxLBZEIfRtQJ9RxDVYNhaSpBtQMeqO3GIPPxdbOdk3GwGCEVrdARNX85qpdxEdMz7J3AwQ7/SO2s+2x7KI/lk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SGJ6/6/8; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MLlHox5k; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ewgx1PQjAEAT4MmDpgWM6uGQSqgI5+UTB//4vLKLfeCSYjCA3gKfPUZFjKz+B0IQir7fxO+FjLtuuRZAqOvOTrieW8HT3hXBDJ0BRePUAtaMAvHv1HiqZ74P0QpqUH2I8HJhaTHyxWMCHQ/20Q+nz3/PE3GDv4CZK/2SfHL5UPA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T0o7Q19m; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=F/mo7ReF; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485EtWod031730;
-	Thu, 5 Sep 2024 15:45:04 GMT
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485EtWkf027280;
+	Thu, 5 Sep 2024 15:46:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
 	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=8LITyOXAbycoHNP
-	U1anm2HDYha0rYZGoB0zsvSWq+Ts=; b=SGJ6/6/8nudZvw5nHmPMQU8fZ0BqSmn
-	QgU3B3XEaJrs95MdOT3VUWhrl++KGYTsTrbpmC8M0PCHDnZuHC4VhqbgA/MGqUGL
-	RGVwyynH5JkYpKTMsHcqIYRheNorsL+aGrfla4elG24OdGBAAkGvl0KjLBiw/Tl4
-	SDDIsquGZiJiXmoBLVzpwpdqBXOOeeDGjzapforuV7UEcef4MXTTxyYJ+xZqc7i1
-	TDhFaAgU3zj0ISaVmE5h7Gx0MkSnvXbsyaFXZxJbJYu7s0pkLZ0IU1bwGvPyVN0X
-	KE2lKfBxPtybMVvviwnLY5lGQ2GmidIRVeNgrSDcVDzQNtl6hU6JGgw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41dvu7e5tb-1
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=iCgOpP6/dDjNapV
+	XUiCJrrjymBkWDkd34TChSXOgfnw=; b=T0o7Q19m2BVDZd5U5fjlYN9KlH+pbTW
+	FC5GtShe1ZF7iSVB55Hc6imibAIgxN9SOWgxlRLwy9se4oGR7MVb0T1Ka3jM9qL5
+	62xf4b2BlMGFghY12R+pwz/0MqJOMBE61Cz8ltAj7OCEVbp1zor8yuRcGnImKaFO
+	SOQ7+UrY8mCEQ6/h76chuX+W8+ZHKRC4e7qr2NIJIxTDR/pNrgOB1BBGpC9dLY3f
+	BgQRKnhn166iTj/ijYWNP5XsS2QgSqqafhRoxfZFHqHcRKbw/eiO1htk63hH+Nf9
+	N++n4QODVn3VuYRRyVWbvkHE2JeOdHHbjLLmQ+JfVLJ9b2Rpgxvvuhw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41dw51xbr4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Sep 2024 15:45:03 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 485FRT9R001737;
-	Thu, 5 Sep 2024 15:44:54 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2047.outbound.protection.outlook.com [104.47.56.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41bsmhy2f2-1
+	Thu, 05 Sep 2024 15:46:34 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 485FJS0W023678;
+	Thu, 5 Sep 2024 15:46:33 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2045.outbound.protection.outlook.com [104.47.66.45])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41bsmb4q4y-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Sep 2024 15:44:54 +0000
+	Thu, 05 Sep 2024 15:46:33 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hz+4pc7CAX573x6V67E84z4KlIvZ8p/MnFUeLl2i0gF59w/Y0zLe9pbSrj3TTfSBUCKVIYNnvKNhluliWSRH81QsvIFlKEWQPYWpdy8jhk+7qW9FXl46/Iy9dAcHui1Ucb7lsiVRhpkq949mDBp5pqQdodZMqfPxmw0hcic/j8Uf/UMLxVsrrCe1rImvP2cBslRj92qKgmgN4U/Tk6weQfaa3/HLzyeeqvBtRnRAg+6+4TL4tCcgYvQn3c/FK+M6nTzjTkfQtQbaUaGI+ErCOI8eJQZ4iN41zp6BRDg9Ovp9V7V5O8qR8kMz43qbOy79Ta2vYl68jVhd9IReFTbu1Q==
+ b=Ue8MHqs32HcuBUEG1hsbgB3MYgEpTo0RgFOzhd23DLoJ01F0nC/JOrJCZlKQmYvOk55F9e0l6Htaabsa99fyUI98EVGYbKAsh1FI2FM0WPriQh1JLzBKX7h+pgxb28I1detIBwN1MZiPbA6X/P778qYFgiG0azNgiXCItbXUMApz3QRf9FxBe7li0hSTwJwS/uWLJ3TFwn7BpC/urQG+D5X4rbd9TpDmTwd1zNElbbqrQdEkeIxw3GOyILEG2Bj+48ElwMflGeWpD6EFhUvSNOS9AcY+pAGiCx+s5Tn/aSBi+ehW+8WO4Bm3GezvK3HozsvKRsz0MZILcFvK/P5FsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8LITyOXAbycoHNPU1anm2HDYha0rYZGoB0zsvSWq+Ts=;
- b=lisXOzNTGxdybjGVlAbrvarIuANfleR9Gbj9RgolYGh+AjPBC6c/xuYJYYLXAVcoMTtw8GgHR17S0Tgc/no+MPvfcHHVZUEDoA+HIx2r6CsHEV7egi5ZOx+a/r+fcISSBauOOEFpOJBGCVD8BxrzL0P0nbLG6SuuejMU/1/hJhKmq19WdoUWotWdB0f1QKiVC9CY9YrIJq6O/UuIFQCIhQb8X/ET4z/UrRfauQN0VOsII+xLbJ7SaoConzsrS24vZWUFu2sxQQ4kVpnPLTn/Qj2MwgicDTp6/ugMuT11CKvdheBydvBo/wRz0v9tqIwWpts3Vq09Qywfm4mp+mq/qQ==
+ bh=iCgOpP6/dDjNapVXUiCJrrjymBkWDkd34TChSXOgfnw=;
+ b=Ovu1k/QtGkpUJ5cuL+Nm1UzY3ZSzF/IvVxT40q9U72m1EjYXT5n/Vlf7yr4wQGI7PKYoVvMSYUrBJ2oQlGXKsNcbzaaFq4K3ttA4F/eJeN8zz1nOjyOWZBoyrxd8cDfCCnbI5Oqbb3tc9xCRl+08FwdONSdMlWRVvEQol5ucSQM/pFSWDmR1XALzlVS0uElPWLc9/pKJwOKVRql24BNilfmHokDzJc0qIwYYY3sxyFh5jndDzg4dcY4UelbrkPDGNiDxTbRDmaCIB/iBms5iEg+POCR/BezGCt+0XNOCj7iMJ4jO9tYY0neBPUBxJOXfdAs3f99mqNBLh2EtTX6DNQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8LITyOXAbycoHNPU1anm2HDYha0rYZGoB0zsvSWq+Ts=;
- b=MLlHox5khbDlfyC2urM5wuuooHqT/fdHQ1ncCtCVV8oxhJf2XSieIeh58M24ZNS7akNeTZCRGQLJKxdfJoNz5om2T/ouE8suxXlQ+ToeC4BYhBcQEjxtPTFJoIWR2PnUf+baWfqaI8wZKy6zDzibwR/9Ej+fhTv+u8K/3GfTaEc=
+ bh=iCgOpP6/dDjNapVXUiCJrrjymBkWDkd34TChSXOgfnw=;
+ b=F/mo7ReFvU+eu290l8IxhsOl0Hd9pKoOzqRAHjHytrnrXP2Tql3w5yMayDKmrSH/DScOeE30cz2JJN/kOgpFm/buKmnDj08r2HmB5HePxzQTZdeCDVw3xL/XB8lZ9310GZkXlfgRqICdHo0h9Gtk1s4IVvX3iZQv6YmKD6sbDB4=
 Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by BY5PR10MB4243.namprd10.prod.outlook.com (2603:10b6:a03:210::23) with
+ by CH2PR10MB4389.namprd10.prod.outlook.com (2603:10b6:610:a9::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Thu, 5 Sep
- 2024 15:44:51 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.22; Thu, 5 Sep
+ 2024 15:46:28 +0000
 Received: from BN0PR10MB5128.namprd10.prod.outlook.com
  ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
  ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7939.010; Thu, 5 Sep 2024
- 15:44:51 +0000
-Date: Thu, 5 Sep 2024 11:44:47 -0400
+ 15:46:28 +0000
+Date: Thu, 5 Sep 2024 11:46:25 -0400
 From: Chuck Lever <chuck.lever@oracle.com>
 To: Jeff Layton <jlayton@kernel.org>
 Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>,
@@ -89,16 +89,15 @@ Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>,
         Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
         Tom Haynes <loghyr@gmail.com>, linux-nfs@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 09/11] fs: handle delegated timestamps in
- setattr_copy_mgtime
-Message-ID: <ZtnR7x6pYz1x7LvK@tissot.1015granger.net>
+Subject: Re: [PATCH v4 01/11] nfsd: fix initial getattr on write delegation
+Message-ID: <ZtnSUWai8kB8gZIO@tissot.1015granger.net>
 References: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
- <20240905-delstid-v4-9-d3e5fd34d107@kernel.org>
+ <20240905-delstid-v4-1-d3e5fd34d107@kernel.org>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240905-delstid-v4-9-d3e5fd34d107@kernel.org>
-X-ClientProxiedBy: CH5PR02CA0004.namprd02.prod.outlook.com
- (2603:10b6:610:1ed::21) To BN0PR10MB5128.namprd10.prod.outlook.com
+In-Reply-To: <20240905-delstid-v4-1-d3e5fd34d107@kernel.org>
+X-ClientProxiedBy: CH2PR17CA0016.namprd17.prod.outlook.com
+ (2603:10b6:610:53::26) To BN0PR10MB5128.namprd10.prod.outlook.com
  (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -107,276 +106,168 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|BY5PR10MB4243:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75b7c191-6025-4726-1e01-08dccdc1adeb
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|CH2PR10MB4389:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0efa7337-f24f-4fbd-3039-08dccdc1e7ed
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5bjShqZxRUWthwYOkgDHwgqpaPJlWNlAY8ZlZZeUPNH1Pqz7m2Y9MgHV+wry?=
- =?us-ascii?Q?3ztPgvR0CunlqBueVnYBPlTP2qJSDghb2dOfis0PMmVKBrziEH/vh/oXTaft?=
- =?us-ascii?Q?J4RJpCaFSjgskvjJcKDcIciSb0pHOFjfuHtRtCCgMzPoCybdnGryy7vmElhV?=
- =?us-ascii?Q?V+IvR2dGQQela2N38w6yof1PcSlgkDBfZ82wXkt6HW2hNNA/9p9yVG+YlpOH?=
- =?us-ascii?Q?lZvMaK1DO5kZlXFnJoLaS0I18lIKrLfP1sZ4VL6Cwcwzf9PqFtbxplzXqePh?=
- =?us-ascii?Q?G6/r+Jt40umVtOHRotm+p7wHy7qfT0zdGZmPcTp4BSczRn9rI2CviAP//5tN?=
- =?us-ascii?Q?pLQ41w3+jH3mGM1eaACvskemXqJhJqp2tsTCw4oykhPfKifJPm2iVSCoeQvt?=
- =?us-ascii?Q?l5YCnPhcS/FhR4FHvp/1Xn48AQ4MnT8bZM4gu7fGKSpeaLJKLyQGlgSA+deB?=
- =?us-ascii?Q?VMu69bJxGiNbZs+wDss5aY26n+Og0pZeufvmODK+AoH5AYCgH6pTgQtI8HcA?=
- =?us-ascii?Q?QBhwrustCxeydB10nbJibee9ozRIEaybXOWVscMIKbfZWNlwxD/AOjziaP+2?=
- =?us-ascii?Q?LORmvpgKoTdxfsV4s4JDYlaq2Egw4/x6r89WONQvKBD7Ls4zqNOQv40/Uiqw?=
- =?us-ascii?Q?vuRwwAZo8eaoGabVxgWzSmsbPQ/aeSikC4ltsYyuL52/2BXbU6c7QKWT7xOu?=
- =?us-ascii?Q?T7BzkKV/YaQgQRX3qodVxz5SvMANHI2jMpTKJxXrl+BHcJVMJODnyadkaqz9?=
- =?us-ascii?Q?KjFM47gDZFY0sLijU5pAr+WKOY0Th1ZFKRnF/hSoaRxqGiKGqWhO9/u9CDHy?=
- =?us-ascii?Q?e4KIIefnwNToENSGWUxqflgCf6NiQJgVAzK+sKaUHD7SK+zcQifZEmxVKn1p?=
- =?us-ascii?Q?WlBUeTuqytwEberIlzlyKA4ArunaoJXvlxtQ1dLLvu31qr7i7BHNCwsIpTgi?=
- =?us-ascii?Q?IJSe309T+7tsr3ELzh3HK2Lk8fSHF2HX9StR2Jt09AUveUZc0Mf3/mhLE7Z/?=
- =?us-ascii?Q?/ss6v+Bigwldvr6qv+qToO1iOeqDObsmFIofSJjwjD8HnFu+WWgsHH1GJhTB?=
- =?us-ascii?Q?WqpSqKYxKFTfOtDltN5DqP9gocDcWUWEp3rqJctDvyZ7HBqdVhuT96CFg7zb?=
- =?us-ascii?Q?e8gwotAXNDHXxW41sGqkLw05fRWvidvSDe+nLepCvlLuWB1SubtRHB5jHRxy?=
- =?us-ascii?Q?DLdrnJvNsZcdKYuEy7OMVQujShQQfLyvCq+S0aJ+NsWAUGl1BHqUgur194Kf?=
- =?us-ascii?Q?HDzgumxyKl8DAVvY7bwvXe4OpLNAKifpHZ/uxqT9I6d8qFrEHzj/jPMntqHk?=
- =?us-ascii?Q?7QyRZaZyb2DFNuAGYZYdP8LWp8lSy3KI/XAtUHYUAcM/Qw=3D=3D?=
+	=?us-ascii?Q?63Rp8xa6nrH64TbF3xvTcSyCdn4PEftHn7T4eHIebTkbgtMcY8OEDo+OjX9f?=
+ =?us-ascii?Q?ZtBhYiQf5ZZzrkANgVSuuhjDZ8pA2k2rcn3TOCeTDGAwNLHxDNrLKCyuaTBd?=
+ =?us-ascii?Q?C0s9g6QcbEi+XALmzg3hEr4gffFZyneUD7jlNaMHIuxshZy1gzpD5Lyp3yJg?=
+ =?us-ascii?Q?JLbfR3lQaydQaECy0hG+YrARHr8yXIQXSedYRO1Nag77aORwM1Nu86+bJGa+?=
+ =?us-ascii?Q?pIEGG/MJcSa69CTLZSlxeA4MN79QOprqpomYcOu24DtG8ML5hnZVDvStuVLk?=
+ =?us-ascii?Q?QEPDK62BwPjKsQEgOJ9gr7EhA2hs78tSRAbe/oUJNSHP2ZjzVlKnOZvyH6Lk?=
+ =?us-ascii?Q?R3uOV4ehQfQgIknibbxoslLBWwCmjAga1/zr4XSPU040mw5QAXIKEYSugKJ2?=
+ =?us-ascii?Q?IxljM1rMWxQin6uvmXCih8XQgtVPDeRqHwjsIya6HYJ7lx2LfNSYVkB7w0J9?=
+ =?us-ascii?Q?EOnyV+RMGh2k/wFRrGwa461+R3zZ0DEZTY/yJnN+oSOdbxK8lAFK6aHYFHwz?=
+ =?us-ascii?Q?ylFNljAcrEYx4XbgJC+EC1U+IFA81PU2aNrTyJsodvdC98SQ0LOSfuIW7OYn?=
+ =?us-ascii?Q?6rX7C+ZsxfdH3wNHei8B4xsr93Ft1dAoEyN3otFFeC38cNdYTzr2gWU9POB/?=
+ =?us-ascii?Q?MbgWMuWrOxR6VAACIYsu5U3wnkZRDwHbUBprzLIXq7znV6Vh15NDtEjivUv/?=
+ =?us-ascii?Q?cFe0uq3xSCy+s6nYkRYSyQdcXcx6uhEitthAWDOU2bjpZvP2Sh6CJ+Y2OHWH?=
+ =?us-ascii?Q?Cf5CYDujrWmDXaWm0VYd4TN/M6MiOghaJvQV2D+zyDrPeM3qetoRWM+ZtaPq?=
+ =?us-ascii?Q?Zj2NdNlJupfP5YsjTTuJGRknj8KcvMwMj99e35UrnueSOGYSmU91glGLDAyw?=
+ =?us-ascii?Q?m28AlXxpqJA0OkKKLJz1HzK0n1ZL3nbEkagP9Q84E0Jqb4PeyYU9kNSAKMkg?=
+ =?us-ascii?Q?piKFtic4MP3jiCZoUnF4uQWao/YffpO8J0I3jufQ5d9MpHCLOEJVYu5PhUlD?=
+ =?us-ascii?Q?e5FjAYPchsnYCa9LaRNIo6pPwUV11W7bGlEdlhbm1CJ/eFGmo5ZcxmqQT6PR?=
+ =?us-ascii?Q?oQqP8EGHH12ZniRPNLO2SqMc4lD0w9u4lhrxb12UN1s+6JIRxCvMxMHeoMGP?=
+ =?us-ascii?Q?qkhHQ1+GqwJi9tig0ZM6RQ/Sbxluvb3RD0yx2tEdzZYCSW0z7NTAPR/D/dcV?=
+ =?us-ascii?Q?909/6aUX6oRDhzyIa2KwZ5VCY32Zgmgs7fOGIBe4LkNYMgQWz3dy8LCurksR?=
+ =?us-ascii?Q?1j3ll75DDtXE+RX7EdakyxMChS5rPT4c6Ld5aFnwBJ77W+IZsSmaR+RKAV+r?=
+ =?us-ascii?Q?/3qR1MMcCy22FmIjuxiRWDTIn39FQpX9rs6/yHcftSWvNw=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yH9QnBkEFLvz3HbRNVk+IL9/44fVXe6Uys7C46qufZQpFOqwxTpUR+xn4NOi?=
- =?us-ascii?Q?MJkEH7mAxGfQ2oS1AzbtBj6pkz265JCjjz4HVbJQB8PcTBnk8RrNkPdcCC6S?=
- =?us-ascii?Q?PDpLjCS6DzdwJmbtiS7450fa2Ay3HvWS+a3T2Vj78Slgp8xz2ceR2450jMsd?=
- =?us-ascii?Q?EM8c+Wbp7icEeYQAyymuoHry4T8QxvPEPWq4rzkFJgKvlb/GBJWtxULSgHx/?=
- =?us-ascii?Q?1LX9fiJplefoMcyE6se3VqHxaaqOTWF+SiF99XzItYrea6gboDWpXDKzoCSf?=
- =?us-ascii?Q?E+mSZD8A+hITJwGqbLhqAAOFQUhMZe806PiqS3cwzYrExLBloqoL+cTkdBIL?=
- =?us-ascii?Q?zh7nCKg6DppbQx7Ee0SCjRPXlG0gIkmevrnu9A6pz1HLbiokWqTaP375djWK?=
- =?us-ascii?Q?JgTvixk3ZcOyumj+jOPt0QZ57WjOISKvN0PdYlGP6sgCCh9xu6VElr5K6hgM?=
- =?us-ascii?Q?FyoPMDbZbsR6KwYj17F4Hm0eSKUciwE2whSbLmVBBtOiiZE7YLUPuz9sqBgU?=
- =?us-ascii?Q?82eJ50fgZCD4T+OUSk0O47121Bj0WSMY2Cx8vhaWewP8ag2BFu/GDE5rqiww?=
- =?us-ascii?Q?BGAJDuisnn/oJ1qj9+8iM61Rt7Ve4u+d1XL8Of3vFq6Iv+40JU+ZBb31RqSd?=
- =?us-ascii?Q?Zyci+3vW2TayKaoTL3Rrv4dXk/wiYemYS6XIzHymbI4gVfEYWUVGfA5ozM1q?=
- =?us-ascii?Q?f34jWbCsVqi4PEcTVJvvd/5vyLuogZvDlSj+5Xpc6C9/3GzZNGmnXrvONFJR?=
- =?us-ascii?Q?L+ZgvX0aAcz3xCLaeo2YPwe25g7SmfqUhioPZfycnvxqxc6PaSWsBJqtu4qy?=
- =?us-ascii?Q?nKmt0fDk+0Q+sTGjsoV7U50Tb2Q983y+fwQjKk9AmFm/7nZ5ejj2fY0WaCC9?=
- =?us-ascii?Q?5k+qK66hzzJN/oSAs8336v9SbebjBmZSYTJG1+TOzNxLT9ac27sQ6tsIbh5P?=
- =?us-ascii?Q?nRma+b6ic2ZYPpnEyyM19mRNOy35yRJE0i8oAvs05MNxZPTBbS9M4YmQ/dot?=
- =?us-ascii?Q?j2Y/nbBCrFF58rQ0lr+yLeB0zCNj7zC6FNwg2vc8LrC8umjBTu6zMdvAX2Zu?=
- =?us-ascii?Q?+qNNHCZsXw40cwootEHGnmkgvWY6PzCVEEjgbRaBGUTz5qpAO9SlSCpSjIW+?=
- =?us-ascii?Q?40MFg7rXkZwC0GWdt+ez/jC0HSpsm/pMwlli5+b+cYTLg06d2U/F4FQesu0W?=
- =?us-ascii?Q?PT7Bq0DQBUchx8dOkVLTqCLb4hj44NtyE8olFW610s7s24BegPHCB9x6An/p?=
- =?us-ascii?Q?p/Y2Ym/JpBpFZviYO958caq220U/INvy9cy/MQyx5V6JY37ysvvNAWH+E2RL?=
- =?us-ascii?Q?DaSD63EYtv+gmGR91LFj3TqtJ9lOwWEm26pm1cnCSylEqNcjvQEEojgKh3Ky?=
- =?us-ascii?Q?MWVBxnU9WqnR0e1HHvtJUqLrEfMMLEPksUIJH0TAUPhOjTuUVMIn3QpsYwqm?=
- =?us-ascii?Q?OVy7sbK6l/18US6krd0z0XcNLdZr+QmXDSbA/2jQyC1l5i7Hg4XpCAQFGqYw?=
- =?us-ascii?Q?o/n4c0DobW56/VpTPWQByQIIZDELKUhIUf0iJVUVJgvsGJV8oZleiuWIRSUU?=
- =?us-ascii?Q?ulwi9IothK3sYzRtPpI68n3LT5JJdhC/Jlppc+yNJ7y8+mvxk7OFWgNramWs?=
- =?us-ascii?Q?rw=3D=3D?=
+	=?us-ascii?Q?TP9C23INqwphDbzlfVwOnhkM88bpgRMnfBN13K7Fa4vAEiXDafZM6VAeMZhK?=
+ =?us-ascii?Q?vhs6EFfc9wJtF/sVSs8wkm8eqvOnSBfcP8fdPTJvsFXNNFfIIDeS/fJbq0zl?=
+ =?us-ascii?Q?5m1wAcJZ7RKJPl3NPNUTFJotGSLEivePesq6SHL0tjSKrlHh0NCzDsMYs6/S?=
+ =?us-ascii?Q?9tgassl8V1OySiBPfkAAy4WwiEeAKNgJlk4RRtBtkXN0VYXjxJPt5AqRy1CK?=
+ =?us-ascii?Q?rT2vWv8xFx64PM/78eDEcArBh4E1VF7Hmkso1u6Q5Wy0E4Cqi8e0IguzB5UH?=
+ =?us-ascii?Q?1g+Zy71wkdEKxBlijfjPQBLO1hNb39s3D8Z/rSThdw5NMUJrya+c0bZwMj7X?=
+ =?us-ascii?Q?HmAH0Z6eMIOI1BDRgCOlXlFufrwHbkEtVr0bdhdMrXGN52iTblVEJc2EIliN?=
+ =?us-ascii?Q?dWa8MvOd8pmi49+/fuq4vzLZDMHXjlu5W+xjhqxlakUG1LuX9bDHYi5Yl08g?=
+ =?us-ascii?Q?UcxMOK5o0qyRGOgNGUbFh/iZ3cAhYWylN+dx8u27RlkAe/KjwdWb8BSHjWlB?=
+ =?us-ascii?Q?zEHxFP6zuNEIio64dMPVR1llCZnNR9NEoI9X1gT9zyy4jAdshdxJ0lVtF7Mc?=
+ =?us-ascii?Q?PXysAzwAV3MOR9PxKL7HDV6H6Q6wqL8JATn3/4ogXU3rIjLo5C0bP0JYd3Gy?=
+ =?us-ascii?Q?k6F/yUUjrtYf7LHsyF9BkndnHwlj0ro29XUBQnpk1smRlJKG0yy5JYJvpput?=
+ =?us-ascii?Q?3rr47BGVVS/6Z6qug3Jsw3QOfg5KrTxHipJDpkKZ4snsLEn2jPVx4eBnJRNl?=
+ =?us-ascii?Q?sisHk6EOFZBEA8l6xNbGJnfMT6XgfRxchwaUyzS2JKjhH51GvRvTwGAuhi5Q?=
+ =?us-ascii?Q?Ad2O10l7JREg8kvez9rKvUhpgwdgdSMX/hqBRlxHn9TrMUD+xUbSvxbIkGRY?=
+ =?us-ascii?Q?8tTak2sHOhkXJf7vWWYvm8+3CZIwT9f8wLoGR2OQ/k+rr4GLP4qxHN0D6iM1?=
+ =?us-ascii?Q?Ofgg7m6FBuVQgip8YBpUBJr1rYXaxWZM57xMozOOmxffhB3BAWxTPgVfRJvk?=
+ =?us-ascii?Q?3jjJ+pj+hYgyScNFFaa3TY7dldqrrH5DivXyVD/rMJT8VdDFX0zLuiwMeD73?=
+ =?us-ascii?Q?7SDZ7w0C9obQTT0yoIcyItdw/6QmLMVtJPZCWWVpGaeFBuCNELoa05DG4mji?=
+ =?us-ascii?Q?KsvprDA4FHoTgEWBPk9xcC16zK4UAW7687u0+b2sTRi+tydBTq+SUKVk7/iK?=
+ =?us-ascii?Q?MZOGVOb6EgL0mQLFkUJ0lgtBdUmjRjDyNKxD4l6JIw7CpLkcK6iWPDmWtkkv?=
+ =?us-ascii?Q?DGRtzB/iwGxTrKsawigL9AkDBLf1vTH1iTK0hzkv6LD+7OcVSMg45x06q7nc?=
+ =?us-ascii?Q?92XxsDVrGOQUDzqjktn7dnfInvRM15hBgnFu0ctPZYQMnEE9/XmNi9DYhGQl?=
+ =?us-ascii?Q?yYnMmNumWEJEw4CGGjDpI+avwssSyugp0qrGpWB/8EBzH8ucCAeqW3RxHSyv?=
+ =?us-ascii?Q?ixKQkrY9Ly2Sj5vzOmcM/Mtvlo5J9unPy9mECrb0gkStOzuyksoNErUHsTiz?=
+ =?us-ascii?Q?qF4q6f5yGcdk+bLbgpmZ13tMfK8OUVtaIxLRz9dOsiveeDbo+RZ3Xya3fJZr?=
+ =?us-ascii?Q?MpdAmCvUFarMmf+DQGSFLVIHOwDAOJTbnjToFjEq?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	1paerz/rZqkjfiu1kij7ERH3NEL+OzpSfFTnbo4V7SwvnEIZad4TW7aGWGD3ZMpkzGzSlYETE0HFhJDFaHrQxOwFjO0Ank0n58s3sjbRO2Rn5QoPOucu71VQ7sI3c+Ez91y8dxmjFDyDDOnQwl7vqGIQxUvS6iXsJRk5Arm+ldjCPmSqpGkZl8TcDe18Hb03XzDv/S/nNySTUWVomsselq6raXZgC9ck0TTh9f+VTwcRAtcocnTpOuo532jyfIAiw2X1UmBYDpcG/PPWTGrWolh1l3YCpx5Mq8N1pXGJc05q5mf0JLSm0LUgOMb+FbiXTG8lkdLf407L+utMFnyGqu2A7jnWJCcd4U+6v+ph7ILPzYh9BL+AbFIwOh4e5Knl4itmYxFKcOOMdwebsWJ6y9ub4jidJ9wPNlbRor7EjLm3YL55FeKWdWZel/RoEpm0QH0/Pg8amguK2pKO8sQoHMgGo9twou5bQivn46EsGXlWb8fwPiqSPh5qDEEY1JabcDpvpvIQwB6iyanx66HaXyjHq5DLk2l/RmxZnlAUF+kicegSBnwXVNZ6i4fy0h9oNgGhLRSLu1H25V53gqDfY5mLsjRQgcIkNB7zTmJ+HMk=
+	W0b+akQNhCAyNXP4wxEuBMppkNJM1fbmtdreDb3MNXzpMZnCgf+IDqZVFRnyCt8HGfUl9QoCOezvm5FB5v4nSdK5pHKojF9mu+ayNrxkGqEzPuSBwJesIYrP3E487Wo+aQ4nzKanBk+6vPKWb/7ElVJmN82VCf36jW3e/ggyKmWpEcx3z5E0VK5mN3TTWAYSruLbSCVR0wucVN/dq4TGZ1x24kSweeigGhXW6bfR0lHn0ARAXYWPK/EQ+osCJLjPirarcapyG2hIVlmZmWO5tfwCu2xX28tPe95+MGH2Gg9mjSwYz/pPmEdRu74eOJrRybbmOo4LBF4jDY1tP50f8ejPTzJP/dQv02gLKapssS+4xJ+bBtWwvo3SviN8Q8e1ztqt4Eb2YQXJQ18E8lLqDijvP4XTwGi6WtAq+I5kHNduqk5uRbI53Y3EFFWUmrUbiEkNzOcNMwQmuBEzYJF+6aVBTbLQqeY5Q8mQFRd4X8EL9b6/w1dYOO+bHTkXvSS4hwRpTk58uhp0nV4KdmOru75Es9Djjpuu7ksr0IZMVuBARYV1E/XgvNLWh5FOWmyCIkPnAJma5Wro3pDm8fNh79BcW8c34bc5eyplOukiqJk=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75b7c191-6025-4726-1e01-08dccdc1adeb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0efa7337-f24f-4fbd-3039-08dccdc1e7ed
 X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 15:44:51.1572
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 15:46:28.4783
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yd5tdF7Oj8AN4jjpWT3k21KzzKufQUYuqVVSbxASoC+mBtK4g0Y/dMNi9Yzgcskl7gxQg57ZX/JzTjrVXmIRjw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4243
+X-MS-Exchange-CrossTenant-UserPrincipalName: wvgZ3uyf0zsyA5Fg+XtS2ThPzXn8P0V4mHFP/aOFSh2IOoGbSGhBJqRycHIicb/RKMcTRonJSjS78NuS9wMqcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4389
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-05_10,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 bulkscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
+ mlxscore=0 spamscore=0 adultscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2407110000 definitions=main-2409050116
-X-Proofpoint-ORIG-GUID: QAcsNukFIijBXzm8xBxp3CwjuFtrbu8I
-X-Proofpoint-GUID: QAcsNukFIijBXzm8xBxp3CwjuFtrbu8I
+X-Proofpoint-ORIG-GUID: 3_hNOn1eDtnM3ACRkqvv4_GFRL8EeKP7
+X-Proofpoint-GUID: 3_hNOn1eDtnM3ACRkqvv4_GFRL8EeKP7
 
-On Thu, Sep 05, 2024 at 08:41:53AM -0400, Jeff Layton wrote:
-> When updating the ctime on an inode for a SETATTR with a multigrain
-> filesystem, we usually want to take the latest time we can get for the
-> ctime. The exception to this rule is when there is a nfsd write
-> delegation and the server is proxying timestamps from the client.
-> 
-> When nfsd gets a CB_GETATTR response, we want to update the timestamp
-> value in the inode to the values that the client is tracking. The client
-> doesn't send a ctime value (since that's always determined by the
-> exported filesystem), but it can send a mtime value. In the case where
-> it does, then we may need to update the ctime to a value commensurate
-> with that instead of the current time.
-> 
-> If ATTR_DELEG is set, then use ia_ctime value instead of setting the
-> timestamp to the current time.
-> 
-> With the addition of delegated timestamps we can also receive a request
-> to update only the atime, but we may not need to set the ctime. Trust
-> the ATTR_CTIME flag in the update and only update the ctime when it's
-> set.
+On Thu, Sep 05, 2024 at 08:41:45AM -0400, Jeff Layton wrote:
+> At this point in compound processing, currentfh refers to the parent of
+> the file, not the file itself. Get the correct dentry from the delegation
+> stateid instead.
 > 
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+
+Subject says "fixes ..." so IMO a Fixes: tag is warranted.
+Suggestions welcome.
+
+
 > ---
->  fs/attr.c          | 28 +++++++++++++--------
->  fs/inode.c         | 74 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h |  2 ++
->  3 files changed, 94 insertions(+), 10 deletions(-)
+>  fs/nfsd/nfs4state.c | 31 +++++++++++++++++++++++--------
+>  1 file changed, 23 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 3bcbc45708a3..392eb62aa609 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -286,16 +286,20 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
->  	unsigned int ia_valid = attr->ia_valid;
->  	struct timespec64 now;
->  
-> -	/*
-> -	 * If the ctime isn't being updated then nothing else should be
-> -	 * either.
-> -	 */
-> -	if (!(ia_valid & ATTR_CTIME)) {
-> -		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
-> -		return;
-> +	if (ia_valid & ATTR_CTIME) {
-> +		/*
-> +		 * In the case of an update for a write delegation, we must respect
-> +		 * the value in ia_ctime and not use the current time.
-> +		 */
-> +		if (ia_valid & ATTR_DELEG)
-> +			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
-> +		else
-> +			now = inode_set_ctime_current(inode);
-> +	} else {
-> +		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
-> +		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index df69dc6af467..db90677fc016 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -5914,6 +5914,26 @@ static void nfsd4_open_deleg_none_ext(struct nfsd4_open *open, int status)
 >  	}
->  
-> -	now = inode_set_ctime_current(inode);
->  	if (ia_valid & ATTR_ATIME_SET)
->  		inode_set_atime_to_ts(inode, attr->ia_atime);
->  	else if (ia_valid & ATTR_ATIME)
-> @@ -354,8 +358,12 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
->  		inode_set_atime_to_ts(inode, attr->ia_atime);
->  	if (ia_valid & ATTR_MTIME)
->  		inode_set_mtime_to_ts(inode, attr->ia_mtime);
-> -	if (ia_valid & ATTR_CTIME)
-> -		inode_set_ctime_to_ts(inode, attr->ia_ctime);
-> +	if (ia_valid & ATTR_CTIME) {
-> +		if (ia_valid & ATTR_DELEG)
-> +			inode_set_ctime_deleg(inode, attr->ia_ctime);
-> +		else
-> +			inode_set_ctime_to_ts(inode, attr->ia_ctime);
-> +	}
 >  }
->  EXPORT_SYMBOL(setattr_copy);
 >  
-
-This patch fails to apply cleanly to my copy of nfsd-next:
-
-  error: `git apply --index`: error: patch failed: fs/attr.c:286
-  error: fs/attr.c: patch does not apply
-
-Before I try jiggling this to get it to apply, is there anything
-I should know? I worry about a potential merge conflict here,
-hopefully it will be no more complicated than that.
-
-
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 01f7df1973bd..f0fbfd470d8e 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2835,6 +2835,80 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
->  }
->  EXPORT_SYMBOL(inode_set_ctime_current);
->  
-> +/**
-> + * inode_set_ctime_deleg - try to update the ctime on a delegated inode
-> + * @inode: inode to update
-> + * @update: timespec64 to set the ctime
-> + *
-> + * Attempt to atomically update the ctime on behalf of a delegation holder.
-> + *
-> + * The nfs server can call back the holder of a delegation to get updated
-> + * inode attributes, including the mtime. When updating the mtime we may
-> + * need to update the ctime to a value at least equal to that.
-> + *
-> + * This can race with concurrent updates to the inode, in which
-> + * case we just don't do the update.
-> + *
-> + * Note that this works even when multigrain timestamps are not enabled,
-> + * so use it in either case.
-> + */
-> +struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 update)
+> +static bool
+> +nfs4_delegation_stat(struct nfs4_delegation *dp, struct svc_fh *currentfh,
+> +		     struct kstat *stat)
 > +{
-> +	ktime_t now, floor = atomic64_read(&ctime_floor);
-> +	struct timespec64 now_ts, cur_ts;
-> +	u32 cur, old;
+> +	struct nfsd_file *nf = find_rw_file(dp->dl_stid.sc_file);
+> +	struct path path;
 > +
-> +	/* pairs with try_cmpxchg below */
-> +	cur = smp_load_acquire(&inode->i_ctime_nsec);
-> +	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
-> +	cur_ts.tv_sec = inode->i_ctime_sec;
+> +	if (!nf)
+> +		return false;
 > +
-> +	/* If the update is older than the existing value, skip it. */
-> +	if (timespec64_compare(&update, &cur_ts) <= 0)
-> +		return cur_ts;
+> +	path.mnt = currentfh->fh_export->ex_path.mnt;
+> +	path.dentry = file_dentry(nf->nf_file);
 > +
-> +	now = coarse_ctime(floor);
-> +	now_ts = ktime_to_timespec64(now);
-> +
-> +	/* Clamp the update to "now" if it's in the future */
-> +	if (timespec64_compare(&update, &now_ts) > 0)
-> +		update = now_ts;
-> +
-> +	update = timestamp_truncate(update, inode);
-> +
-> +	/* No need to update if the values are already the same */
-> +	if (timespec64_equal(&update, &cur_ts))
-> +		return cur_ts;
-> +
-> +	/*
-> +	 * Try to swap the nsec value into place. If it fails, that means
-> +	 * we raced with an update due to a write or similar activity. That
-> +	 * stamp takes precedence, so just skip the update.
-> +	 */
-> +retry:
-> +	old = cur;
-> +	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, update.tv_nsec)) {
-> +		inode->i_ctime_sec = update.tv_sec;
-> +		mgtime_counter_inc(mg_ctime_swaps);
-> +		return update;
-> +	}
-> +
-> +	/*
-> +	 * Was the change due to someone marking the old ctime QUERIED?
-> +	 * If so then retry the swap. This can only happen once since
-> +	 * the only way to clear I_CTIME_QUERIED is to stamp the inode
-> +	 * with a new ctime.
-> +	 */
-> +	if (!(old & I_CTIME_QUERIED) && (cur == (old | I_CTIME_QUERIED)))
-> +		goto retry;
-> +
-> +	/* Otherwise, it was a new timestamp. */
-> +	cur_ts.tv_sec = inode->i_ctime_sec;
-> +	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
-> +	return cur_ts;
+> +	if (vfs_getattr(&path, stat,
+> +			(STATX_INO | STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
+> +			AT_STATX_SYNC_AS_STAT))
+> +		return false;
+> +	return true;
 > +}
-> +EXPORT_SYMBOL(inode_set_ctime_deleg);
 > +
->  /**
->   * in_group_or_capable - check whether caller is CAP_FSETID privileged
->   * @idmap:	idmap of the mount @inode was found from
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index eff688e75f2f..ea7ed437d2b1 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1544,6 +1544,8 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
+>  /*
+>   * The Linux NFS server does not offer write delegations to NFSv4.0
+>   * clients in order to avoid conflicts between write delegations and
+> @@ -5949,7 +5969,6 @@ nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
+>  	int cb_up;
+>  	int status = 0;
+>  	struct kstat stat;
+> -	struct path path;
 >  
->  struct timespec64 current_time(struct inode *inode);
->  struct timespec64 inode_set_ctime_current(struct inode *inode);
-> +struct timespec64 inode_set_ctime_deleg(struct inode *inode,
-> +					struct timespec64 update);
+>  	cb_up = nfsd4_cb_channel_good(oo->oo_owner.so_client);
+>  	open->op_recall = false;
+> @@ -5985,20 +6004,16 @@ nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
+>  	memcpy(&open->op_delegate_stateid, &dp->dl_stid.sc_stateid, sizeof(dp->dl_stid.sc_stateid));
 >  
->  static inline time64_t inode_get_atime_sec(const struct inode *inode)
->  {
+>  	if (open->op_share_access & NFS4_SHARE_ACCESS_WRITE) {
+> -		open->op_delegate_type = NFS4_OPEN_DELEGATE_WRITE;
+> -		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
+> -		path.mnt = currentfh->fh_export->ex_path.mnt;
+> -		path.dentry = currentfh->fh_dentry;
+> -		if (vfs_getattr(&path, &stat,
+> -				(STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
+> -				AT_STATX_SYNC_AS_STAT)) {
+> +		if (!nfs4_delegation_stat(dp, currentfh, &stat)) {
+>  			nfs4_put_stid(&dp->dl_stid);
+>  			destroy_delegation(dp);
+>  			goto out_no_deleg;
+>  		}
+> +		open->op_delegate_type = NFS4_OPEN_DELEGATE_WRITE;
+>  		dp->dl_cb_fattr.ncf_cur_fsize = stat.size;
+>  		dp->dl_cb_fattr.ncf_initial_cinfo =
+>  			nfsd4_change_attribute(&stat, d_inode(currentfh->fh_dentry));
+> +		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
+>  	} else {
+>  		open->op_delegate_type = NFS4_OPEN_DELEGATE_READ;
+>  		trace_nfsd_deleg_read(&dp->dl_stid.sc_stateid);
 > 
 > -- 
 > 2.46.0
