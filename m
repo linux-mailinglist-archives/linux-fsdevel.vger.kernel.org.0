@@ -1,285 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-28795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD4996E515
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 23:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E2396E545
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 23:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025FC1F2561E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 21:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108DE1F27A0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 21:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9B814F121;
-	Thu,  5 Sep 2024 21:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA10B1AD9FA;
+	Thu,  5 Sep 2024 21:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="mzg3OvN7"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="AM/3Te74"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3F21A3026;
-	Thu,  5 Sep 2024 21:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFBE1922FD
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 21:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725571748; cv=none; b=etTR398/v5EU2X53G7MWG1uGJkcHWwb9ClBppYmi8Lq4vrFX/zlpahk57twGNqK0qTh1SFN+S77qbwYBhTShjgbo45k+4HPsX1OlfPH++R07In2NF/7NZVZ5uONeCo0OVkQsatMoWm4E7PU7sqEtYnBuMBjkeqbgVHi12iM+TXU=
+	t=1725572851; cv=none; b=II24MkEIRTbUJ49tMlaHOslVLnqla4Y1cT3n0PE1IOd0yVnXVt62q9NU9EeMku+uksU8MR7RyV775EdesE6c/8bko5ohAa6wgT9hWX4jzV0YbQgHVzoA3L5Ow5+3NbbZf5uohy9nMUIZvuc1A9bU92EYhRo/Z3SoeAij8/JHxIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725571748; c=relaxed/simple;
-	bh=Fzm9rG8J5EQG45EuA0XlCocu1pSDrtGSnpx8iPULDYM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=td/RAZC19aIzQJwawEvMa9471baoAviZ0D4v8BGaKQIoLWWNIX8uhGqEFZ0odaWg9qY56hqftwNsXfcM4gBnczgs4ah05m3KaBfEUfMLbFeBJYBfLFkk7e/VtwBP27W6acOV3trLaNnM3wllhCIGZaFPWiYzw791WcK2UBmFFGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=mzg3OvN7; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 31B5420003;
-	Thu,  5 Sep 2024 21:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1725571743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NDsRbYbLqFB4B0nmxpbXiNrnJ8uSYv3Op+Q13MZehUY=;
-	b=mzg3OvN7W/aRpX/2o+c4lwP7zBzhXom27cj4rmDf6Pi74rJ5rDXKgJTZ/OGHbBiPeZnUD2
-	3KJFgrPHOVjusMtEjE601spTHSvPvXrhk7gOB1ylro5zBQ4XKkbr1wjzRoG6ZsH9FVxPLy
-	ll6Hsn7V/2/5R8WnMcc4hF2uil5Xi+ldFPp48Pe9HGhOKbuu0Esc+NhoPcYJcKYi5GoVaM
-	jCsrw9RS+Zvoq2Dl9Gp7VmfryRD7he4O+np1qSqvu89fLcAu4Z+CP4bouaABEGKSjYyVJI
-	EWsHMBRoFdgJbC+SPJmuXI7qd0jH23nniOzI8MPgQ/VbG1zIXwadqLVFfFTV6A==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  krisman@kernel.org,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
-  Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3 6/9] tmpfs: Add casefold lookup support
-In-Reply-To: <20240905190252.461639-7-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Thu, 5 Sep 2024 16:02:49 -0300")
-References: <20240905190252.461639-1-andrealmeid@igalia.com>
-	<20240905190252.461639-7-andrealmeid@igalia.com>
-Date: Thu, 05 Sep 2024 17:28:53 -0400
-Message-ID: <87zfoln622.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725572851; c=relaxed/simple;
+	bh=i0UOLszZ08xbkKnNss4rxGidGxMtshSELEYiMtpJsAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m10axYCS+jrS2PRcN4XtuDmuOaMhua0l7Y88m/O7N5NKqZdbcMqT31G1JHMPLXkoeyAJVRlBrpTFm5J8fB/kF5PfeFqqg4XoRLR6zqUajShoSxVLPuXzS/Se0HnXa+QjXxxvLu8dzMNIxCQ8z50v0VTwNOGbAraJk8kXEhOldFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=AM/3Te74; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2059112f0a7so13295745ad.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2024 14:47:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725572849; x=1726177649; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hB1tfzvGqDohT1t5kqG0/BoXV4hNHXK08f2dliq9E5c=;
+        b=AM/3Te74MfuKJtGMpXeBv585oyw355qnw1uuAo+L2GK6X+Ed5uO1Fcl3cwGC0rwmGa
+         9IYl3D8QJJr1hsWO3WvGks3a/TnGnH5u4hfqHuH25wG6M7DEYXFr6Zj4Ztf/gSLPVKFy
+         abfL4qLMQHWk1AlU/BLFRpu17n1dIppwHyesa//myALWY51V7kLiqpFDL02c5nvTewy9
+         cdsNbllhlepOTHn1Xenp6QUGuvUY9WKsVtZ8QbFIR4QHFzGeYRYdZ8EjzfEsMX5FzdVJ
+         TqOXXERoEF4Ta34OPs/Ha9x0xo6q7AtajV5jEt68rSs6E8qlKufHz5X4feRfxUzhLNx/
+         VFMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725572849; x=1726177649;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hB1tfzvGqDohT1t5kqG0/BoXV4hNHXK08f2dliq9E5c=;
+        b=UbKa7EFEv9LwhoyQ4po3OzgvCQtuiBGX4Zkr3x7I6l3S4JcMxlz12ztJkvrvdhjZ1a
+         h32dLpzxkJ/p2GIh3TSc32hXr2xT6fB+Ns6XeTjMUvGYpzYjd9McrikyjMbIX4wPfSO0
+         Y7uXqWYIBK+n/l36ZZSVrnVrXvqDpf+ATDkUqxU/KTeXWtHGWIFzIzUJyrh9cF3C0Lje
+         P2eJ/5bnMzycFA3MHyMp0Z3Jamcj2BwhxnbinR8PcsPlzJwBHwNI8kiMqghKNFniU7GK
+         fDW225Gwj9tn9KhONF6fkRitvwlm6ojLQR5QOZDa0hFCwf/OD+im+ZceXOgaYdEkJTTu
+         UFzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYuWTw/Eax5v9T+Y6hAks1rVAw622oAXz1HDZANWxHtSR77lEu37z1We94IS4wJtnE+tSkOKJ0Tl1LQpTi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC4BD0ttzGjRjC6CJGTUbRXiqBUKPhRftgcu/pEU/SLURedHug
+	g8y4jxS2dM5GxqZhXN4+rMgqRkxOs5qSSypZ3y3AB5b+ANZLE8zL3cSR/HcoUjM=
+X-Google-Smtp-Source: AGHT+IHW1qkkMGd7aAakdsHaXQLUN2sqd1dppj81Yx0AkFn4FNYXzftRyCfRbZSCa5Eh4tky41vb6w==
+X-Received: by 2002:a17:902:c40e:b0:202:4640:cc68 with SMTP id d9443c01a7336-2050c48fb65mr250217535ad.59.1725572848921;
+        Thu, 05 Sep 2024 14:47:28 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea94b99sm32720895ad.279.2024.09.05.14.47.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 14:47:27 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1smKK2-001Ja3-2r;
+	Fri, 06 Sep 2024 07:47:22 +1000
+Date: Fri, 6 Sep 2024 07:47:22 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <Ztom6uI0L4uEmDjT@dread.disaster.area>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <87frqf2smy.fsf@gmail.com>
+ <ZtjrUI+oqqABJL2j@dread.disaster.area>
+ <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
 
+On Thu, Sep 05, 2024 at 11:15:41AM +0100, John Garry wrote:
+> > >     - Does the unmapping of extents also only happens in extsize
+> > >     chunks (with forcealign)?
+> > 
+> > Yes, via use of xfs_inode_alloc_unitsize() in the high level code
+> > aligning the fsbno ranges to be unmapped.
+> > 
+> > Remember, force align requires both logical file offset and
+> > physical block number to be correctly aligned, so unmap alignment
+> > has to be set up correctly at file offset level before we even know
+> > what extents underly the file range we need to unmap....
+> > 
+> > >       If the start or end of the extent which needs unmapping is
+> > >       unaligned then we convert that extent to unwritten and skip,
+> > >       is it? (__xfs_bunmapi())
+> > 
+> > The high level code should be aligning the start and end of the
+> > file range to be removed via xfs_inode_alloc_unitsize().
+> 
+> Is that the case for something like truncate? There we just say what is the
+> end block which we want to truncate to in
+> xfs_itruncate_extents_flags(new_size)  ->
+> xfs_bunmapi_range(XFS_B_TO_FSB(new_size)), and that may not be alloc unit
+> aligned.
 
-Hi,
+Ah, I thought we had that alignment in xfs_itruncate_extents_flags()
+already, but if we don't then that's a bug that needs to be fixed.
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
-> @@ -3427,6 +3431,10 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode =
-*dir,
->  	if (IS_ERR(inode))
->  		return PTR_ERR(inode);
->=20=20
-> +	if (IS_ENABLED(CONFIG_UNICODE))
-> +		if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
-> +			return -EINVAL;
-> +
+We change the space reservation in xfs-setattr_size() for this case
+(patch 9) but then don't do any alignment there - it relies on
+xfs_itruncate_extents_flags() to do the right thing w.r.t. extent
+removal alignment w.r.t. the new EOF.
 
-if (IS_ENABLED(CONFIG_UNICODE) &&
-    generic_ci_validate_strict_name(dir, &dentry->d_name))
+i.e. The xfs_setattr_size() code takes care of EOF block zeroing and
+page cache removal so the user doesn't see old data beyond EOF,
+whilst xfs_itruncate_extents_flags() is supposed to take care of the
+extent removal and the details of that operation (e.g. alignment).
 
->  static const struct constant_table shmem_param_enums_huge[] =3D {
-> @@ -4081,9 +4111,62 @@ const struct fs_parameter_spec shmem_fs_parameters=
-[] =3D {
->  	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit=
-),
->  	fsparam_string("grpquota_inode_hardlimit", Opt_grpquota_inode_hardlimit=
-),
->  #endif
-> +	fsparam_string("casefold",	Opt_casefold_version),
-> +	fsparam_flag  ("casefold",	Opt_casefold),
-> +	fsparam_flag  ("strict_encoding", Opt_strict_encoding),
+Patch 10 also modifies xfs_can_free_eofblocks() to take alignment
+into account for the post-eof block removal, but doesn't change
+xfs_free_eofblocks() at all. i.e  it also relies on
+xfs_itruncate_extents_flags() to do the right thing for force
+aligned inodes.
 
-I don't know if it is possible, but can we do it with a single parameter?
+In this case, we are removing post-eof speculative preallocation
+that that has been allocated by delalloc conversion during
+writeback.  These post-eof extents will already be unwritten extents
+because delalloc conversion uses unwritten extents to avoid
+stale data exposure if we crash between allocation and the data
+being written to the extents. Hence there should be no extents to
+convert to unwritten in the majority of cases here.
 
-> +static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_par=
-ameter *param,
-> +				    bool latest_version)
+The only case where we might get written extents beyond EOF is if
+the file has been truncated down, but in that case we don't really
+care because truncate should have already taken care of post-eof
+extent alignment for us. xfs_can_free_eofblocks() will see this
+extent alignment and so we'll skip xfs_free_eofblocks() in this case
+altogether....
 
-Instead of the boolean, can't you check if param->string !=3D NULL? (real
-question, I never used fs_parameter.
+Hence xfs_free_eofblocks() should never need to convert a partial
+unaligned extent range to unwritten when force-align is enabled
+because the post-eof extents should already be unwritten. We also
+want to leave the inode in the most optimal state for future
+extension, which means we want the post-eof extent to be correctly
+aligned.
 
-> +{
-> +	struct shmem_options *ctx =3D fc->fs_private;
-> +	unsigned int maj =3D 0, min =3D 0, rev =3D 0, version =3D 0;
-> +	struct unicode_map *encoding;
-> +	char *version_str =3D param->string + 5;
-> +	int ret;
+Hence there are multiple reasons that xfs_itruncate_extents_flags()
+should be aligning the post-EOF block it is starting the unmapping
+at for force aligned allocation contexts. And in doing so, we remove
+the weird corner case where we can have an unaligned extent state
+boundary at EOF for atomic writes....
 
-unsigned int version =3D UTF8_LATEST;
-
-and kill the if/else below:
-> +
-> +	if (latest_version) {
-> +		version =3D UTF8_LATEST;
-> +	} else {
-> +		if (strncmp(param->string, "utf8-", 5))
-> +			return invalfc(fc, "Only UTF-8 encodings are supported "
-> +				       "in the format: utf8-<version number>");
-> +
-> +		ret =3D utf8_parse_version(version_str, &maj, &min, &rev);
-
-utf8_parse_version interface could return UNICODE_AGE() already, so we hide=
- the details
-from the caller. wdyt?
-
-> +		if (ret)
-> +			return invalfc(fc, "Invalid UTF-8 version: %s", version_str);
-> +
-> +		version =3D UNICODE_AGE(maj, min, rev);
-> +	}
-> +
-> +	encoding =3D utf8_load(version);
-> +
-> +	if (IS_ERR(encoding)) {
-> +		if (latest_version)
-> +			return invalfc(fc, "Failed loading latest UTF-8 version");
-> +		else
-> +			return invalfc(fc, "Failed loading UTF-8 version: %s", version_str);
-
-The following covers both legs (untested):
-
-if (IS_ERR(encoding))
-  return invalfc(fc, "Failed loading UTF-8 version: utf8-%u.%u.%u\n"",
-	           unicode_maj(version), unicode_min(version), unicode_rev(version=
-));
-
-> +	if (latest_version)
-> +		pr_info("tmpfs: Using the latest UTF-8 version available");
-> +	else
-> +		pr_info("tmpfs: Using encoding provided by mount
-> options: %s\n", param->string);
-
-The following covers both legs (untested):
-
-pr_info (fc, "tmpfs: Using encoding : utf8-%u.%u.%u\n"
-         unicode_maj(version), unicode_min(version), unicode_rev(version));
-
-> +
-> +	ctx->encoding =3D encoding;
-> +
-> +	return 0;
-> +}
-> +#else
-> +static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_par=
-ameter *param,
-> +				    bool latest_version)
-> +{
-> +	return invalfc(fc, "tmpfs: No kernel support for casefold filesystems\n=
-");
-> +}
-
-A message like "Kernel not built with CONFIG_UNICODE" immediately tells
-you how to fix it.
-
-> @@ -4515,6 +4610,16 @@ static int shmem_fill_super(struct super_block *sb=
-, struct fs_context *fc)
->  	}
->  	sb->s_export_op =3D &shmem_export_ops;
->  	sb->s_flags |=3D SB_NOSEC | SB_I_VERSION;
-> +
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (ctx->encoding) {
-> +		sb->s_encoding =3D ctx->encoding;
-> +		generic_set_sb_d_ops(sb);
-
-This is the right place for setting d_ops (see the next comment), but you
-should be loading generic_ci_always_del_dentry_ops, right?
-
-Also, since generic_ci_always_del_dentry_ops is only used by this one,
-can you move it to this file?
-
-> +static struct dentry *shmem_lookup(struct inode *dir, struct dentry *den=
-try, unsigned int flags)
-> +{
-> +	const struct dentry_operations *d_ops =3D &simple_dentry_operations;
-> +
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (dentry->d_sb->s_encoding)
-> +		d_ops =3D &generic_ci_always_del_dentry_ops;
-> +#endif
-
-This needs to be done at mount time through sb->s_d_op. See
-
-https://lore.kernel.org/all/20240221171412.10710-1-krisman@suse.de/
-
-I suppose we can do it at mount-time for
-generic_ci_always_del_dentry_ops and simple_dentry_operations.
-
-> +
-> +	if (dentry->d_name.len > NAME_MAX)
-> +		return ERR_PTR(-ENAMETOOLONG);
-> +
-> +	if (!dentry->d_sb->s_d_op)
-> +		d_set_d_op(dentry, d_ops);
-> +
-> +	/*
-> +	 * For now, VFS can't deal with case-insensitive negative dentries, so
-> +	 * we prevent them from being created
-> +	 */
-> +	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-> +		return NULL;
-
-Thinking out loud:
-
-I misunderstood always_delete_dentry before.  It removes negative
-dentries right after the lookup, since ->d_delete is called on dput.
-
-But you still need this check here, IMO, to prevent the negative dentry
-from ever being hashed. Otherwise it can be found by a concurrent
-lookup.  And you cannot drop ->d_delete from the case-insensitive
-operations too, because we still wants it for !IS_CASEFOLDED(dir).
-
-The window is that, without this code, the negative dentry dentry would
-be hashed in d_add() and a concurrent lookup might find it between that
-time and the d_put, where it is removed at the end of the concurrent
-lookup.
-
-All of this would hopefully go away with the negative dentry for
-casefolded directories.
-
-> +
-> +	d_add(dentry, NULL);
-> +
-> +	return NULL;
-> +}
-
-The sole reason you are doing this custom function is to exclude negative
-dentries from casefolded directories. I doubt we care about the extra
-check being done.  Can we just do it in simple_lookup?
-
-> +
->  static const struct inode_operations shmem_dir_inode_operations =3D {
->  #ifdef CONFIG_TMPFS
->  	.getattr	=3D shmem_getattr,
->  	.create		=3D shmem_create,
-> -	.lookup		=3D simple_lookup,
-> +	.lookup		=3D shmem_lookup,
->  	.link		=3D shmem_link,
->  	.unlink		=3D shmem_unlink,
->  	.symlink	=3D shmem_symlink,
-> @@ -4791,6 +4923,8 @@ int shmem_init_fs_context(struct fs_context *fc)
->  	ctx->uid =3D current_fsuid();
->  	ctx->gid =3D current_fsgid();
->=20=20
-> +	ctx->encoding =3D NULL;
-> +
->  	fc->fs_private =3D ctx;
->  	fc->ops =3D &shmem_fs_context_ops;
->  	return 0;
-
---=20
-Gabriel Krisman Bertazi
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
