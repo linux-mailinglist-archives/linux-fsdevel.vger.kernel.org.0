@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-28733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C189B96D90A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 14:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BE996D90F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 14:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2AD286FE0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 12:45:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7E51C22F6E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 12:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E6E1A0700;
-	Thu,  5 Sep 2024 12:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E914619C574;
+	Thu,  5 Sep 2024 12:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcJyyKC1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPjMfY4g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723691A01B8;
-	Thu,  5 Sep 2024 12:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477171A071A;
+	Thu,  5 Sep 2024 12:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725540131; cv=none; b=AO6ax2MRCRXu8fEFBMwgTBMaXrTuFSnVhf3goB8ga+xwYX9iskImrit6n6GUUz9AvlfJxhpot9O1FoI+e0K6QUn767ou4DuiXr+3sAiuxaqBzMjFjGbHPL9mWQbkr77KVO3qpbFIvqPdyLzBnIuGl5yFwmHKjiNbQX9CRBcPC7Q=
+	t=1725540133; cv=none; b=ehQXQ6VuQJ3Vg65v76gpGazQEptX6/HAPzR3GtQ8192qcrJDtSNMJI0azOvUVdXn13uKXpO0NksIvpPBeIejnLqwKjPmMUeORLyHZIrI3ymgqNulgiRzu15CbAXjpT9ZcRKUPSUO7KAz0g/SRwh6i1d+UUwMdK2d9xqV34TlC+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725540131; c=relaxed/simple;
-	bh=MxOPfiLDr3waUK1Qzm+p8NQ94i5UzU3rpW+2ExXilF8=;
+	s=arc-20240116; t=1725540133; c=relaxed/simple;
+	bh=LiV0clf9L6NQX5LxYkFyOmngi4CQOovdgBWSLgxIFp8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LytsNbDBYG0RUMAmtcc/eFbycZRzB5uKtyV20iLC/ZUYvUPsDYuOcSyT2IsLwncRvEZ9Y3GoGdMeHiQEUvBkA6df5+cWFi+bxubROiikmCj8AbML7A7I9kbn7kqu8xSLJZPrDOmLfAhBes3S/wq4FYSBGM79ZYi7xZ/TybX918o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcJyyKC1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C88EC4CEC3;
-	Thu,  5 Sep 2024 12:42:10 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=qXeboa+1lC0oylwTKnSnIgCyMevuZpRVDzDUkDQbHs+CUV5giNh8QUWG0MEj5atETpW5ymXxiNcWnzi4mGncS7mVkMQzhgcQ2R4TKjyeTQZuM9TU9W5q/FrDXLI9I54iuZgv6a4bbZgKTOmXZwFEcx438K9rdZt8yj+7GrIzL2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPjMfY4g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9012CC4CECA;
+	Thu,  5 Sep 2024 12:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725540131;
-	bh=MxOPfiLDr3waUK1Qzm+p8NQ94i5UzU3rpW+2ExXilF8=;
+	s=k20201202; t=1725540132;
+	bh=LiV0clf9L6NQX5LxYkFyOmngi4CQOovdgBWSLgxIFp8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=bcJyyKC17cH20bvo3xTK5rLqOsEb+ikyYZk/2aQPYZkiLH8ELq37IIb42+Br8FtcK
-	 zZTRf0g2sYPpx49B3MXRtxvfOyJSvfYTwjbio/sYoPA1H5qw8C3taCxNbQoYAzDO0X
-	 hAvkIAifuir8TU/sfcZMeWeT1uQ16PUUURN53BA8DLJlMbOuJTdo6Z9bqvnudl4+TB
-	 FINDc+Ki2e6TmC2ybFV3/6CegbXUFqSQZUb5frGqHzr5r/1oIw7T49pbR4+dXWhxOj
-	 J2JCUJXDJt8nM+T4QK3IkiiI9eUxv63DRnXBq2DUHxxt1ZvpPphaDPPjMWjxdQzsKN
-	 AAr4o9o7bFISg==
+	b=UPjMfY4gBQ/Lin4WBYi6iW0UAHBMLJR8ncqfrru1kIVeUrRrUc5W/YmR5He6AJlkO
+	 mWvSs/3eqCj35ZGATV2+ZbGPRWQ5kmz7cMtSu9JXi05iVr0VImA4csIPE+uw4r3mj/
+	 C94K3P9zTOjATkx1FraBiQVqqK1/eiAkK2GyLmRNW+zsMqR9kSrR7992j30EtxLAfI
+	 0s8evmCwq7tykl3DFnuVJtzglv1OaAwxc8TF8fES57agPlnrzHUIrSqCGbGMCTIIdq
+	 uqkOKbaCrrAjTU0kS2S+Hge4ROvRtkv4dr5y+4Iaixld/z41Bsv0XF9lPXwsnzaaRl
+	 awe1Rusp+Y9ZA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 05 Sep 2024 08:41:52 -0400
-Subject: [PATCH v4 08/11] nfsd: implement
- OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION
+Date: Thu, 05 Sep 2024 08:41:53 -0400
+Subject: [PATCH v4 09/11] fs: handle delegated timestamps in
+ setattr_copy_mgtime
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-delstid-v4-8-d3e5fd34d107@kernel.org>
+Message-Id: <20240905-delstid-v4-9-d3e5fd34d107@kernel.org>
 References: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
 In-Reply-To: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
 To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
@@ -65,166 +65,196 @@ Cc: Tom Haynes <loghyr@gmail.com>, linux-nfs@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5596; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=MxOPfiLDr3waUK1Qzm+p8NQ94i5UzU3rpW+2ExXilF8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm2acVsF3KFmSerRwJYZKYFXS+1VmFkJASg1rHi
- 6uXtNokxLeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZtmnFQAKCRAADmhBGVaC
- FWxaEACvl/RbPhKbYcEzlFxvODRVPKn8fErUduxQjgFFnTBXV1MSqm22ONNttxoZDXryxw5AFVL
- IBMdO6OKS7NTdOjxg5hLiujBJKxjJ9yM/mOJkZOBgfhGhkHRjyR6U0b5362cvcLajzNGAORhhuq
- ZAxk47csBq27hbQentyysUXICE1ax5qRfYRabUINvaNFiSByg+tdOeNpkIqxwjpkGaKYAg1t1Es
- 4v5wrDM4zGA9QWf/tLnmU2auyXkRdBxgiRQLW/RsQpVryU2fUcYEbdP+5RG1vX7UwuUCydxQvzc
- QVIbtw9eClz4kuKoLugsecHsHC5AKnNDGcJy9C5GM9yILKizak9T1M7EEMOr3cociF0HrH0hA6z
- OQCCUwL93RjWfhO6+nHhbddeu4HTBLcwVYN1CQXmXXietO/C7uHVju9TuPUkHIMIrvT3DQ+lsfn
- WHlT4d3y7acM3hkiHWt3+tqRew2YXzE9Cw6po/yappffVJreHdw3Jm+AsmTeeKLkpWNotIj+LMu
- esOQeFNAv3vuGLbkC8uTKc6pgIHiU1YLuI9XUliwQcxBE0KIpemtSrk65ihnxf/drOfHDRBmONT
- RASx7hMe1E21YAiVZoHmmnxDxlLOToRSw+Lj7jOaGjyj9Ag1muc4xGCWkdpUL42YzSaq0MVCeUQ
- bAsn75R8mNFNTXA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6296; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=LiV0clf9L6NQX5LxYkFyOmngi4CQOovdgBWSLgxIFp8=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm2acVxmRxlKc2nczzBdKjuAeqrBthaSyeahB9x
+ 280UJXE10uJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZtmnFQAKCRAADmhBGVaC
+ FX/gD/4rFScHDd8r5gSdDDT0ZDTLV05DTPvMrlTsWFJuiY13NJi7q7W3bRue8E/842HppVyuihQ
+ 9/rCf/vakl1qhiK4CjkE1DDwaUJP/vHUbU6lLe7MHSKqrTrZuiicTZqAMfw/ciex8tBBTDIy6hs
+ h56ryuSIoAkqz9z1CUxh4qloQX6NZ/qPDLEoafQ/0d/hDhyQGyfxuJr2NF+dvbLQg04fyWAbayp
+ h798dWgfzuCOeYSNtYQfdQQbLZUR0drBQi8gPz6s+jscaMXZ/4FS0ZJhpWpnTQNIugIMrfvSCD6
+ reNRBRrDuJg5y61PJn3E0GSioVik+99YIy3AFobq/CP8nvAX7qwt2VyX+26qytIZpg1Z15wFFlO
+ BVBEbQfJUaV9/7ksV8Mm7EY6AEqfomqcEMEHI7BEnxoKTwbdK28i6x8E9s/CS2ynJ10kKwaMd3g
+ +MlXfOfp3kuxwmeS6u8T5Eyr/tM+o4HFdiKhqZD5OiRAFq+xAi4csuf2oPdrC5/sNLCgsM/eozZ
+ hUxWpZX2MiIewYoNgvsbi/RhqEBGYrJjAO638SFKG068dANiVmlqnVU5as2lJoI/O7yFyB2YxWz
+ igs9kkMmqnNuaGv0aBT/4lUyM1BQg1uzruGUkJuluudhheq5zjW4LZZrhuCzTBJK2qthIkVq5Ds
+ vbDmgCPYVmy4MAQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Allow clients to request getting a delegation xor an open stateid if a
-delegation isn't available. This allows the client to avoid sending a
-final CLOSE for the (useless) open stateid, when it is granted a
-delegation.
+When updating the ctime on an inode for a SETATTR with a multigrain
+filesystem, we usually want to take the latest time we can get for the
+ctime. The exception to this rule is when there is a nfsd write
+delegation and the server is proxying timestamps from the client.
 
-This is done by moving the increment of the open stateid and unlocking
-of the st_mutex until after we acquire a delegation. If we get a
-delegation, we zero out the op_stateid field and set the NO_OPEN_STATEID
-flag. If the open stateid was brand new, then unhash it too in this case
-since it won't be needed.
+When nfsd gets a CB_GETATTR response, we want to update the timestamp
+value in the inode to the values that the client is tracking. The client
+doesn't send a ctime value (since that's always determined by the
+exported filesystem), but it can send a mtime value. In the case where
+it does, then we may need to update the ctime to a value commensurate
+with that instead of the current time.
 
-If we can't get a delegation or the new flag wasn't requested, then just
-increment and copy the open stateid as usual.
+If ATTR_DELEG is set, then use ia_ctime value instead of setting the
+timestamp to the current time.
+
+With the addition of delegated timestamps we can also receive a request
+to update only the atime, but we may not need to set the ctime. Trust
+the ATTR_CTIME flag in the update and only update the ctime when it's
+set.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4state.c       | 28 ++++++++++++++++++++++++----
- fs/nfsd/nfs4xdr.c         |  5 +++--
- include/uapi/linux/nfs4.h |  7 +++++--
- 3 files changed, 32 insertions(+), 8 deletions(-)
+ fs/attr.c          | 28 +++++++++++++--------
+ fs/inode.c         | 74 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  2 ++
+ 3 files changed, 94 insertions(+), 10 deletions(-)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 8851fc69f5c6..40e0c9b0ef71 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -6051,6 +6051,17 @@ static void nfsd4_deleg_xgrade_none_ext(struct nfsd4_open *open,
- 	 */
- }
+diff --git a/fs/attr.c b/fs/attr.c
+index 3bcbc45708a3..392eb62aa609 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -286,16 +286,20 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
+ 	unsigned int ia_valid = attr->ia_valid;
+ 	struct timespec64 now;
  
-+/* Are we only returning a delegation stateid? */
-+static bool open_xor_delegation(struct nfsd4_open *open)
-+{
-+	if (!(open->op_deleg_want & OPEN4_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION))
-+		return false;
-+	if (open->op_delegate_type != NFS4_OPEN_DELEGATE_READ &&
-+	    open->op_delegate_type != NFS4_OPEN_DELEGATE_WRITE)
-+		return false;
-+	return true;
-+}
-+
- /**
-  * nfsd4_process_open2 - finish open processing
-  * @rqstp: the RPC transaction being executed
-@@ -6073,6 +6084,7 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 	struct nfs4_delegation *dp = NULL;
- 	__be32 status;
- 	bool new_stp = false;
-+	bool deleg_only = false;
- 
- 	/*
- 	 * Lookup file; if found, lookup stateid and check open request,
-@@ -6127,9 +6139,6 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 			open->op_odstate = NULL;
+-	/*
+-	 * If the ctime isn't being updated then nothing else should be
+-	 * either.
+-	 */
+-	if (!(ia_valid & ATTR_CTIME)) {
+-		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
+-		return;
++	if (ia_valid & ATTR_CTIME) {
++		/*
++		 * In the case of an update for a write delegation, we must respect
++		 * the value in ia_ctime and not use the current time.
++		 */
++		if (ia_valid & ATTR_DELEG)
++			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
++		else
++			now = inode_set_ctime_current(inode);
++	} else {
++		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
++		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
  	}
  
--	nfs4_inc_and_copy_stateid(&open->op_stateid, &stp->st_stid);
--	mutex_unlock(&stp->st_mutex);
--
- 	if (nfsd4_has_session(&resp->cstate)) {
- 		if (open->op_deleg_want & NFS4_SHARE_WANT_NO_DELEG) {
- 			open->op_delegate_type = NFS4_OPEN_DELEGATE_NONE_EXT;
-@@ -6143,7 +6152,18 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 	* OPEN succeeds even if we fail.
- 	*/
- 	nfs4_open_delegation(open, stp, &resp->cstate.current_fh);
-+	deleg_only = open_xor_delegation(open);
- nodeleg:
-+	if (deleg_only) {
-+		memcpy(&open->op_stateid, &zero_stateid, sizeof(open->op_stateid));
-+		open->op_rflags |= OPEN4_RESULT_NO_OPEN_STATEID;
-+		if (new_stp)
-+			release_open_stateid(stp);
-+	} else {
-+		nfs4_inc_and_copy_stateid(&open->op_stateid, &stp->st_stid);
+-	now = inode_set_ctime_current(inode);
+ 	if (ia_valid & ATTR_ATIME_SET)
+ 		inode_set_atime_to_ts(inode, attr->ia_atime);
+ 	else if (ia_valid & ATTR_ATIME)
+@@ -354,8 +358,12 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 		inode_set_atime_to_ts(inode, attr->ia_atime);
+ 	if (ia_valid & ATTR_MTIME)
+ 		inode_set_mtime_to_ts(inode, attr->ia_mtime);
+-	if (ia_valid & ATTR_CTIME)
+-		inode_set_ctime_to_ts(inode, attr->ia_ctime);
++	if (ia_valid & ATTR_CTIME) {
++		if (ia_valid & ATTR_DELEG)
++			inode_set_ctime_deleg(inode, attr->ia_ctime);
++		else
++			inode_set_ctime_to_ts(inode, attr->ia_ctime);
 +	}
-+	mutex_unlock(&stp->st_mutex);
+ }
+ EXPORT_SYMBOL(setattr_copy);
+ 
+diff --git a/fs/inode.c b/fs/inode.c
+index 01f7df1973bd..f0fbfd470d8e 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2835,6 +2835,80 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ }
+ EXPORT_SYMBOL(inode_set_ctime_current);
+ 
++/**
++ * inode_set_ctime_deleg - try to update the ctime on a delegated inode
++ * @inode: inode to update
++ * @update: timespec64 to set the ctime
++ *
++ * Attempt to atomically update the ctime on behalf of a delegation holder.
++ *
++ * The nfs server can call back the holder of a delegation to get updated
++ * inode attributes, including the mtime. When updating the mtime we may
++ * need to update the ctime to a value at least equal to that.
++ *
++ * This can race with concurrent updates to the inode, in which
++ * case we just don't do the update.
++ *
++ * Note that this works even when multigrain timestamps are not enabled,
++ * so use it in either case.
++ */
++struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 update)
++{
++	ktime_t now, floor = atomic64_read(&ctime_floor);
++	struct timespec64 now_ts, cur_ts;
++	u32 cur, old;
 +
- 	status = nfs_ok;
- 	trace_nfsd_open(&stp->st_stid.sc_stateid);
- out:
-@@ -6159,7 +6179,7 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 	/*
- 	* To finish the open response, we just need to set the rflags.
- 	*/
--	open->op_rflags = NFS4_OPEN_RESULT_LOCKTYPE_POSIX;
-+	open->op_rflags |= NFS4_OPEN_RESULT_LOCKTYPE_POSIX;
- 	if (nfsd4_has_session(&resp->cstate))
- 		open->op_rflags |= NFS4_OPEN_RESULT_MAY_NOTIFY_LOCK;
- 	else if (!(open->op_openowner->oo_flags & NFS4_OO_CONFIRMED))
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 4cedcb252aa1..08d9421cd90e 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -1067,7 +1067,7 @@ static __be32 nfsd4_decode_share_access(struct nfsd4_compoundargs *argp, u32 *sh
- 		return nfs_ok;
- 	if (!argp->minorversion)
- 		return nfserr_bad_xdr;
--	switch (w & NFS4_SHARE_WANT_MASK) {
-+	switch (w & NFS4_SHARE_WANT_TYPE_MASK) {
- 	case NFS4_SHARE_WANT_NO_PREFERENCE:
- 	case NFS4_SHARE_WANT_READ_DELEG:
- 	case NFS4_SHARE_WANT_WRITE_DELEG:
-@@ -3410,7 +3410,8 @@ static __be32 nfsd4_encode_fattr4_xattr_support(struct xdr_stream *xdr,
- 
- #define NFSD_OA_SHARE_ACCESS_WANT	(BIT(OPEN_ARGS_SHARE_ACCESS_WANT_ANY_DELEG)		| \
- 					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_NO_DELEG)		| \
--					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_CANCEL))
-+					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_CANCEL)		| \
-+					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION))
- 
- #define NFSD_OA_OPEN_CLAIM	(BIT(OPEN_ARGS_OPEN_CLAIM_NULL)		| \
- 				 BIT(OPEN_ARGS_OPEN_CLAIM_PREVIOUS)	| \
-diff --git a/include/uapi/linux/nfs4.h b/include/uapi/linux/nfs4.h
-index caf4db2fcbb9..4273e0249fcb 100644
---- a/include/uapi/linux/nfs4.h
-+++ b/include/uapi/linux/nfs4.h
-@@ -58,7 +58,7 @@
- #define NFS4_SHARE_DENY_BOTH	0x0003
- 
- /* nfs41 */
--#define NFS4_SHARE_WANT_MASK		0xFF00
-+#define NFS4_SHARE_WANT_TYPE_MASK	0xFF00
- #define NFS4_SHARE_WANT_NO_PREFERENCE	0x0000
- #define NFS4_SHARE_WANT_READ_DELEG	0x0100
- #define NFS4_SHARE_WANT_WRITE_DELEG	0x0200
-@@ -66,13 +66,16 @@
- #define NFS4_SHARE_WANT_NO_DELEG	0x0400
- #define NFS4_SHARE_WANT_CANCEL		0x0500
- 
--#define NFS4_SHARE_WHEN_MASK		0xF0000
-+#define NFS4_SHARE_WHEN_MASK				0xF0000
- #define NFS4_SHARE_SIGNAL_DELEG_WHEN_RESRC_AVAIL	0x10000
- #define NFS4_SHARE_PUSH_DELEG_WHEN_UNCONTENDED		0x20000
- 
-+#define NFS4_SHARE_WANT_MOD_MASK			0xF00000
- #define NFS4_SHARE_WANT_DELEG_TIMESTAMPS		0x100000
- #define NFS4_SHARE_WANT_OPEN_XOR_DELEGATION		0x200000
- 
-+#define NFS4_SHARE_WANT_MASK	(NFS4_SHARE_WANT_TYPE_MASK | NFS4_SHARE_WANT_MOD_MASK)
++	/* pairs with try_cmpxchg below */
++	cur = smp_load_acquire(&inode->i_ctime_nsec);
++	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
++	cur_ts.tv_sec = inode->i_ctime_sec;
 +
- #define NFS4_CDFC4_FORE	0x1
- #define NFS4_CDFC4_BACK 0x2
- #define NFS4_CDFC4_BOTH 0x3
++	/* If the update is older than the existing value, skip it. */
++	if (timespec64_compare(&update, &cur_ts) <= 0)
++		return cur_ts;
++
++	now = coarse_ctime(floor);
++	now_ts = ktime_to_timespec64(now);
++
++	/* Clamp the update to "now" if it's in the future */
++	if (timespec64_compare(&update, &now_ts) > 0)
++		update = now_ts;
++
++	update = timestamp_truncate(update, inode);
++
++	/* No need to update if the values are already the same */
++	if (timespec64_equal(&update, &cur_ts))
++		return cur_ts;
++
++	/*
++	 * Try to swap the nsec value into place. If it fails, that means
++	 * we raced with an update due to a write or similar activity. That
++	 * stamp takes precedence, so just skip the update.
++	 */
++retry:
++	old = cur;
++	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, update.tv_nsec)) {
++		inode->i_ctime_sec = update.tv_sec;
++		mgtime_counter_inc(mg_ctime_swaps);
++		return update;
++	}
++
++	/*
++	 * Was the change due to someone marking the old ctime QUERIED?
++	 * If so then retry the swap. This can only happen once since
++	 * the only way to clear I_CTIME_QUERIED is to stamp the inode
++	 * with a new ctime.
++	 */
++	if (!(old & I_CTIME_QUERIED) && (cur == (old | I_CTIME_QUERIED)))
++		goto retry;
++
++	/* Otherwise, it was a new timestamp. */
++	cur_ts.tv_sec = inode->i_ctime_sec;
++	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
++	return cur_ts;
++}
++EXPORT_SYMBOL(inode_set_ctime_deleg);
++
+ /**
+  * in_group_or_capable - check whether caller is CAP_FSETID privileged
+  * @idmap:	idmap of the mount @inode was found from
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index eff688e75f2f..ea7ed437d2b1 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1544,6 +1544,8 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
+ 
+ struct timespec64 current_time(struct inode *inode);
+ struct timespec64 inode_set_ctime_current(struct inode *inode);
++struct timespec64 inode_set_ctime_deleg(struct inode *inode,
++					struct timespec64 update);
+ 
+ static inline time64_t inode_get_atime_sec(const struct inode *inode)
+ {
 
 -- 
 2.46.0
