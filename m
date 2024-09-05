@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-28789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54B396E375
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 21:49:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84FF96E391
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 21:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F750B23AC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 19:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA48B1C227C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 19:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89471194AD9;
-	Thu,  5 Sep 2024 19:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C44819007F;
+	Thu,  5 Sep 2024 19:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="CB27434c"
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="gIlGp+xX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF818F54;
-	Thu,  5 Sep 2024 19:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFB343AD7;
+	Thu,  5 Sep 2024 19:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725565760; cv=none; b=QWxWbC64CtsBMXA0cwklnrkTmUXXjhk61KSAYWxHgrx4GfWVJZOmr7czpKMefENROR6wuNDzjJLe0T85hyh8CyuxrUvDcdTNw5z4hHbhATjIgyiuag/JzGn9cVqGr+Mz1ZtVbVDtmFlySXyu6KXUo/+M+bUctsgcEwaefGsG3yg=
+	t=1725566284; cv=none; b=F0wiMOrsHJ9IRWnxM6RBrfJSgZg5VU1W6BVPx2GjXYapEBJdYVRhr3Hd8TgvEYT/uL0Vpk8ZXdggcW11KMB7mxH4coqSVMJgZs41Y/LsrhBzwgi5CONPGi1e1UuE1gakDaTQZH+TXLdahLL5GZtqSVlAaK1E7S3v43l2zP5rljw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725565760; c=relaxed/simple;
-	bh=R9jV6c9DzRXAzNDj79bLWCXmbUh1PrgeFsfybKFv1S0=;
+	s=arc-20240116; t=1725566284; c=relaxed/simple;
+	bh=uEWuHStiwdJiMQ6RIuH8fXo5EJOuK/FBAH3xcmLzihU=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n8fccZophL6/woql93iSoUo/JCgAUSEEBtcdcRlZDH2XBFl+jumKHmOapd/En1ZMQREItHoKE+1fQrhm0e7dMGN7XlSGzTnFOH6ndrIKRWCeQVKEdLS1XiSyAJuxOu/Iad8SOBcaTj2QKVh4naqIytnq+dN9txpuOf8v3/YENVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=CB27434c; arc=none smtp.client-ip=217.70.183.201
+	 MIME-Version:Content-Type; b=hrTMZtvHac4BxKnpCKWJIMFQahTAY2DnblmlX72PwctCPwFUN3HYQyLKsRDPsfw1aycdrsaTbSO1RS6QAKMNujYFBZUsc4Fid9b0tixG+Q0I4b2wR7Pw3N3Btp5L6W9HJ6ZqkB7WQ8TrswXsS4lNoXQY6mB9Oy4onR37Hj+JYgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=gIlGp+xX; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6353B1BF204;
-	Thu,  5 Sep 2024 19:49:07 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 74A751C0003;
+	Thu,  5 Sep 2024 19:57:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1725565749;
+	t=1725566280;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yAoDvWukowI9z/kaauSz2C4OPYFuBGznaXYdYnzAxxw=;
-	b=CB27434cmHsdWUgJWz+Ozodm3QtL+hlSan+xCDkrbQ+UjpkbeXKqXsa1bJjTbxFbx+xmRR
-	l2VyU/J6gXN/Af5REgs6lO4lr/AXYxUiH7VeONgAwmhlTlMPGyExR0gSeH2PqEG7hh4NB3
-	t/QJCx4TjfKHgXEixjv/DtyxCph+SlPkUBoxyq5YjNMs6Q8MCnmwCY1UvUHDsm14wj+jyI
-	I6COMk0SNFPgO/BOykMuiWPM2MFu5rfQb4YUpyE/hIy8ZMgGG1nIv5wpJuNkQIoccFFo0K
-	smVi3rU406EsAxDD76YmBF8RYWLjLEHkbvwediwvlVM9i2hYMn60qFZrXiXmPQ==
+	bh=uEWuHStiwdJiMQ6RIuH8fXo5EJOuK/FBAH3xcmLzihU=;
+	b=gIlGp+xX889blHM+Bq9R5Os/vg0UKY1Z6DPqflBrW4wG5UCvn2XVBma8k2P7qjCknxgov8
+	Ul/Xws0fEmZI9C48xkvQU2pcU5JaoBdH0LfBCKDcGnwOKEVYNt0Az3gzFomhtzYcMvvllX
+	fIoSv52BsfEF9esCfaP7BKtw3I8ukh8mbA1azUKerFyQIQ8QfuMU+CeeY2WG7osAKO6eXK
+	mvjIkFh7EEswDxl4B82tpWzrGO+Uf5KS6OGO2Fv95ZEgciBf+rRaAod5OcNKvwiBUN93WK
+	cW02gS0IAYHz4EejehV0EjxXayLYhwUccNCmXFTdrRb03e7jle329i1z6E3tWQ==
 From: Gabriel Krisman Bertazi <gabriel@krisman.be>
 To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
 Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
@@ -54,14 +54,15 @@ Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
   linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
  <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
   Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3 9/9] docs: tmpfs: Add casefold options
-In-Reply-To: <20240905190252.461639-10-andrealmeid@igalia.com>
+Subject: Re: [PATCH v3 4/9] unicode: Export latest available UTF-8 version
+ number
+In-Reply-To: <20240905190252.461639-5-andrealmeid@igalia.com>
  (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Thu, 5 Sep 2024 16:02:52 -0300")
+	Almeida"'s message of "Thu, 5 Sep 2024 16:02:47 -0300")
 References: <20240905190252.461639-1-andrealmeid@igalia.com>
-	<20240905190252.461639-10-andrealmeid@igalia.com>
-Date: Thu, 05 Sep 2024 15:48:59 -0400
-Message-ID: <87v7z9op90.fsf@mailhost.krisman.be>
+	<20240905190252.461639-5-andrealmeid@igalia.com>
+Date: Thu, 05 Sep 2024 15:57:51 -0400
+Message-ID: <87o751oou8.fsf@mailhost.krisman.be>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -75,80 +76,20 @@ X-GND-Sasl: gabriel@krisman.be
 
 Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-> Document mounting options for casefold support in tmpfs.
+> Export latest available UTF-8 version number so filesystems can easily
+> load the newest one.
 >
 > Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 > ---
->  Documentation/filesystems/tmpfs.rst | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
 >
-> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesyst=
-ems/tmpfs.rst
-> index 56a26c843dbe..636afd3eaf48 100644
-> --- a/Documentation/filesystems/tmpfs.rst
-> +++ b/Documentation/filesystems/tmpfs.rst
-> @@ -241,6 +241,27 @@ So 'mount -t tmpfs -o size=3D10G,nr_inodes=3D10k,mod=
-e=3D700 tmpfs /mytmpfs'
->  will give you tmpfs instance on /mytmpfs which can allocate 10GB
->  RAM/SWAP in 10240 inodes and it is only accessible by root.
->=20=20
-> +tmpfs has the following mounting options for case-insensitive lookups
-> support:
+> If this is the accepted way of doing that, I will also add something to
+> checkpatch to warn that modifications at fs/unicode/utf8data.c likely
+> need to change this define.
 
-lookups->lookup
+I'd do it by special casing version =3D=3D 0 or -1 to utf8_load. But the
+way you've done is just fine.
 
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> +casefold          Enable casefold support at this mount point using the =
-given
-> +                  argument as the encoding standard. Currently only UTF-8
-> +                  encodings are supported. If no argument is used, it wi=
-ll load
-> +                  the latest UTF-8 encoding available.
-> +strict_encoding   Enable strict encoding at this mount point (disabled by
-> +                  default). In this mode, the filesystem refuses to crea=
-te file
-> +                  and directory with names containing invalid UTF-8 char=
-acters.
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> +
-> +Note that this option doesn't enable casefold by default;=20
-
-I think this is fine as is. but if we need a new iteration, could you
-perhaps rephrase this to something like:
-
-This option doesn't render the entire filesystem case-insensitive.
-One needs to still set the casefold flag per directory, by flipping +F
-attribute in an empty directory. Nevertheless, new directories will
-inherit the attribute.  The mountpoint itself will cannot be made
-case-insensitive.
-
-> +
-> +Example::
-> +
-> +    $ mount -t tmpfs -o casefold=3Dutf8-12.1.0,strict_enconding fs_name =
-/mytmpfs
-
-strict_encoding
-
-> +    $ mount -t tmpfs -o casefold fs_name /mytmpfs
-> +
->=20=20
->  :Author:
->     Christoph Rohland <cr@sap.com>, 1.12.01
-> @@ -250,3 +271,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by=
- root.
->     KOSAKI Motohiro, 16 Mar 2010
->  :Updated:
->     Chris Down, 13 July 2020
-> +:Updated:
-> +   Andr=C3=A9 Almeida, 23 Aug 2024
+Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
 
 --=20
 Gabriel Krisman Bertazi
