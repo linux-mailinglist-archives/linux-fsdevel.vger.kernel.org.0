@@ -1,134 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-28673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A2996D08F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 09:38:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD5096D0C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 09:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A337B1C246EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 07:38:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77E21B25A78
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 07:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751AD193411;
-	Thu,  5 Sep 2024 07:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD24194085;
+	Thu,  5 Sep 2024 07:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4Py8miF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB32618A94F;
-	Thu,  5 Sep 2024 07:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F1F18A94F;
+	Thu,  5 Sep 2024 07:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725521931; cv=none; b=ihAAH1emDn1TjVXXwtCp4KgOP9KJWT2TJBrJ/qTZdZjZTd34OYgBHRzjSHqqj2WU67BofgUsQiLTKyMdlN2wx8M2NuFzCDtZq7pf4bL6CoDznhD3lPFR3T5G6wvashHaGgx55FF3zkKgJOolkBrh3zhK4EYq/ZupNqPuQFxAPG0=
+	t=1725522606; cv=none; b=AxK+RbP7R/MkMKe5ZYVbBNQwj8/rWuSf2g1o4tDjPvY1gV2dosNIO2WZxkqUOWNCFJyCgKjNZbwQOGZhM/nyqAFxD4WTlsu6B9dcbDsW/KqLLuQXoOSlgpXYzEfs0+T/qOF5Gkyy3K3QyCQvMzIre5rBT67ZZBe0kxEi2yTTp2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725521931; c=relaxed/simple;
-	bh=UcPQ7Y+HapU5hGxQZmDDlvpby0t5vrQQOGsZY9029D8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y3UxHg2zAuPUqRr7lsYNkkXmVAmVOdtUTuRkaEp/95wMnhYdqmMK0/ETiPX5v9IUi9fNFvJIR2hf8DO2FxdbYKK5VFGbiFZtDFixhsIt70zl9JjQxiFvVmBAchDUrIFD77d3Qc1sMCPO9il3iEZ6ZZVbDt+R4EgRYA17xHs/W+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4WzrMS5kZ1z9v7Hq;
-	Thu,  5 Sep 2024 15:19:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 75486140419;
-	Thu,  5 Sep 2024 15:38:33 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAnazLvX9lmyhpPAA--.17844S2;
-	Thu, 05 Sep 2024 08:38:32 +0100 (CET)
-Message-ID: <88d5a92379755413e1ec3c981d9a04e6796da110.camel@huaweicloud.com>
-Subject: Re: [PATCH] fs: don't block i_writecount during exec
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
- <eric.snowberg@oracle.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Linus Torvalds
-	 <torvalds@linux-foundation.org>, amir73il@gmail.com, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	david@fromorbit.com, hch@lst.de, linux-integrity@vger.kernel.org
-Date: Thu, 05 Sep 2024 09:38:19 +0200
-In-Reply-To: <CAG48ez2Vv8Z8nmn=mRwQ3_5azksszwoc+8UJgo3nh2uk-VwYXQ@mail.gmail.com>
-References: <20240531-beheben-panzerglas-5ba2472a3330@brauner>
-	 <20240531-vfs-i_writecount-v1-1-a17bea7ee36b@kernel.org>
-	 <CAG48ez2Vv8Z8nmn=mRwQ3_5azksszwoc+8UJgo3nh2uk-VwYXQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1725522606; c=relaxed/simple;
+	bh=V0dpBrY34w1of9Wfd593x+2vtoJgckPvvU/iE312/ZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M6O+QXZ9cIBi0m4eQ/LnMZflK3oyznwGuUS8JpEZOj9XLM3kwRc8deUfQIrieAYrrTYoj6QYWllSbMlSaj9RfFlqeHyVfn/cBLaiDjRafWI/K0EXQ/+OLIfwrlXB5E+4fXr/+P4/ACAdM57/VrZBLTUOcIhynSm+saIjztjKFho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4Py8miF; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a86e9db75b9so69946266b.1;
+        Thu, 05 Sep 2024 00:50:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725522603; x=1726127403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=obKZt04JKsvNVi6u0/skPlG2/rQwZ50vJNCGCR1ZGE8=;
+        b=V4Py8miFX0bajZNnezn1IOa2t/oBdXqNFEKI5xjcRS9g74wF/pEawqHD7S2xN3CUFZ
+         ZZ1ZkUKIxEby5JfFSOtiQiTEXzM73yTFqg3mfXwWAhuw0MkeUCcVNpkOScl5F4BrVBgw
+         dTChKme9ArR/2G+3tda7Ib4MGI1uMYGXRzPwS5UUBN6Q+jJ6ISi29X8AqIgJoRCJR316
+         GObepzvAANnveOL3DCiWb0nziNZmuenaESQ+cMXHj2jZpn5AdSdgc0go+1+Me5KZCzZJ
+         p3HzSuTTEcnQxKJZhxLuFGRIRYhr8KVO/WfuBHYlBRSDXTyPpItt+Hp02pX+NLyJ8Ola
+         zX+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725522603; x=1726127403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=obKZt04JKsvNVi6u0/skPlG2/rQwZ50vJNCGCR1ZGE8=;
+        b=Ohb9fyz3MJW7E1fhpVvOoAzUJPk58aYgzQkv5VIHzKuNMLXOXXqoPWnLhdqhI7u+md
+         ETTy7NryjZtauDbCADS3lCN8OFbkhQIi/E/XvN6XSUT0AoB51wVT2w1dUHMTfnGNtcRj
+         ZOdaXo8BPIBO4YslYhdyi9HL/dkryqt1GKSgaGeu2URnJUyaVlZFx1+mHN1PkBDr0nfK
+         idxeJj+856n8rXqeGXl+adpyVTEEXdTmRqMQ82unl69p9iFILsI8dOJGDhTQbs27EofT
+         QRaOPCEW50z5eYqA+7dcYhCaCqSeTd8pvPZMisCLw9AdVcWhnGh1FvnnSok01idGZujP
+         +b+A==
+X-Forwarded-Encrypted: i=1; AJvYcCV6kRSjXWwUUEZi3EHTyHz99kLhhTpgojQX9EJu23HyERVoAvXLENHdjUYC6IdgleAYYkaeUtTjLHty@vger.kernel.org, AJvYcCWfzuTm+yLq3k5VuLJFQx+UlatxTQwE1dxy5ELh2GngJmvIyC/hSaBS07vn6ltK4Vbe/h68BvvW1dbHq+4=@vger.kernel.org, AJvYcCWxIAVyyYIUCkPGDh6TkXVw9sjUMGe4Xt6TuwmaMc9kMnl260pGxa3+jZ4OwS6MCGdemgMLcJjQAYKYP0ca/A==@vger.kernel.org, AJvYcCXTdIRaRUFXTndFEzdcbRmMNdAP/K7uKAqYkaNyDmQxm+nrxhAdiNLdpQVHg0B/uRhbc38ZQffzTGsR/3MF8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnscabWce0Z3FfSr3BaYYq1rBUwXl0/HNdvYeCXhC8X4a2FAKi
+	UXSGzK7VATPKvmuDAuLHJtUH9tfHYaaMUT5z6Wm508zzGIpJVMZ4LJfpyNz3JShqLXXltjgW6zI
+	GU/eSQ/48w9EkuFSZCtdktadoC5U=
+X-Google-Smtp-Source: AGHT+IEHSNTpPFHkq0s7FK0k8QmUuli6ehAfPoksbiKPJcO4py5ijgctkPnEzs8y3xVPK4dpbF+h/76wGWLYfWSrqls=
+X-Received: by 2002:a17:907:7ea3:b0:a86:82da:2c3c with SMTP id
+ a640c23a62f3a-a8a1d32e2femr750791266b.40.1725522602045; Thu, 05 Sep 2024
+ 00:50:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAnazLvX9lmyhpPAA--.17844S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1rZF4xJr4DWFWkArW5KFg_yoW8Aw4rpr
-	yfG398Crs5CF18CF97G39IvFWavw1rZFW3JrZ8Kr93Za4kur1xWF4YqF1F9FykArsrCasr
-	Xw429348Ar1jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQARBGbZE3MD1gAAse
+References: <cover.1725481503.git.josef@toxicpanda.com> <6a659625a0d08fae894cc47352453a6be2579788.1725481503.git.josef@toxicpanda.com>
+In-Reply-To: <6a659625a0d08fae894cc47352453a6be2579788.1725481503.git.josef@toxicpanda.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 5 Sep 2024 09:49:38 +0200
+Message-ID: <CAOQ4uxjZy3paDxQ9=ME=9ukHYwpq6CRJtZ3BN=2wwa6YFtBTGg@mail.gmail.com>
+Subject: Re: [PATCH v5 01/18] fanotify: don't skip extra event info if no
+ info_mode is set
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	brauner@kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-09-04 at 19:04 +0200, Jann Horn wrote:
-> [necrothreading...]
-> [+IMA folks]
->=20
-> On Fri, May 31, 2024 at 3:01=E2=80=AFPM Christian Brauner <brauner@kernel=
-.org> wrote:
-> > Back in 2021 we already discussed removing deny_write_access() for
-> > executables. Back then I was hesistant because I thought that this migh=
-t
-> > cause issues in userspace. But even back then I had started taking some
-> > notes on what could potentially depend on this and I didn't come up wit=
-h
-> > a lot so I've changed my mind and I would like to try this.
-> [snip]
-> > Yes, someone in userspace could potentially be relying on this. It's no=
-t
-> > completely out of the realm of possibility but let's find out if that's
-> > actually the case and not guess.
->=20
-> FYI, ima_bprm_check() still has a comment that claims that executables
-> use deny_write_access():
->=20
-> /**
->  * ima_bprm_check - based on policy, collect/store measurement.
->  * @bprm: contains the linux_binprm structure
->  *
->  * The OS protects against an executable file, already open for write,
->  * from being executed in deny_write_access() and an executable file,
->  * already open for execute, from being modified in get_write_access().
->  * So we can be certain that what we verify and measure here is actually
->  * what is being executed.
->  *
->  * On success return 0.  On integrity appraisal error, assuming the file
->  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
->  */
->=20
-> But what actually happens in there is not so different from what
-> happens in ima_file_mmap(), so I think probably the only change
-> required here is to fix up the comment...
+On Wed, Sep 4, 2024 at 10:29=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
+wrote:
+>
+> New pre-content events will be path events but they will also carry
+> additional range information. Remove the optimization to skip checking
+> whether info structures need to be generated for path events. This
+> results in no change in generated info structures for existing events.
+>
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
-We need to do the violation check for the BPRM_CHECK IMA hook too:
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-	violation_check =3D ((func =3D=3D FILE_CHECK || func =3D=3D MMAP_CHECK
-||
-			    func =3D=3D MMAP_CHECK_REQPROT) &&
-			   (ima_policy_flag & IMA_MEASURE));
-
-Roberto
-
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
+tify_user.c
+> index 9ec313e9f6e1..2e2fba8a9d20 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -160,9 +160,6 @@ static size_t fanotify_event_len(unsigned int info_mo=
+de,
+>         int fh_len;
+>         int dot_len =3D 0;
+>
+> -       if (!info_mode)
+> -               return event_len;
+> -
+>         if (fanotify_is_error_event(event->mask))
+>                 event_len +=3D FANOTIFY_ERROR_INFO_LEN;
+>
+> @@ -740,12 +737,10 @@ static ssize_t copy_event_to_user(struct fsnotify_g=
+roup *group,
+>         if (fanotify_is_perm_event(event->mask))
+>                 FANOTIFY_PERM(event)->fd =3D fd;
+>
+> -       if (info_mode) {
+> -               ret =3D copy_info_records_to_user(event, info, info_mode,=
+ pidfd,
+> -                                               buf, count);
+> -               if (ret < 0)
+> -                       goto out_close_fd;
+> -       }
+> +       ret =3D copy_info_records_to_user(event, info, info_mode, pidfd,
+> +                                       buf, count);
+> +       if (ret < 0)
+> +               goto out_close_fd;
+>
+>         if (f)
+>                 fd_install(fd, f);
+> --
+> 2.43.0
+>
 
