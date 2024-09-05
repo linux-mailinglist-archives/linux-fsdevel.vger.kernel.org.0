@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-28702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797E196D1ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 10:24:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F5796D219
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 10:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 421C6286ED5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 08:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955361F229D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 08:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E6C193422;
-	Thu,  5 Sep 2024 08:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF086194ACB;
+	Thu,  5 Sep 2024 08:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwu9wWq0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGALHYmp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159338F66;
-	Thu,  5 Sep 2024 08:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DDF15B541;
+	Thu,  5 Sep 2024 08:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524636; cv=none; b=Ag3P/BYUcOy2PYgjwUWg5MWVwYRjkRWx05N3IDovhZNriJhL3zcSaCf14QcKPjFd4xJHTBD+5+gxu/DeG6XfvyWANpnsFhimaiovRp/n6FAK5wZn4uU4mZnLw2CCpYzg+MXJdlK1le1nGNr/k/h/kwWILFp9q/iC4673Djsq3m0=
+	t=1725524886; cv=none; b=n9Dko9X8rwWF0bIpCL7FTZ3KxL8uRimbWxsAbzs3wnv4saVxQl5gg1oLfOQASjRIqoj0WcQCrgTID2GQ/bfju7uPrVyMM4zYzASNzTdSrXaKSHW5sCtkjaeIkKcQoHgWjdx3vw2I1ERWqbASdL3yXxdgEsLK6ZyrTzXe/xzppTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524636; c=relaxed/simple;
-	bh=TwKwteQ9GQakcBA9WOXf4pXII2GxlwD14AaG4Apu1qs=;
+	s=arc-20240116; t=1725524886; c=relaxed/simple;
+	bh=19hdA0KbLgqzrvahYEcdnPKJkiK1OSKjVMvVjB4oYZI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OVNOTblPSQqEgkHfSY4h8OOc/esL570UwhBA2fYeEzhDWWafAOihPlCsRBq2AFjnEtw4tJWKezhBYk2cWDrBsLIvNA54U0LGgRjVe98Bm+gDJpvD3dcUEO1Xk8CYFy2++hDQdfxyBSjPQOkze3nPKi0tSadFr2QGRVFj+zGLCtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lwu9wWq0; arc=none smtp.client-ip=209.85.210.44
+	 To:Cc:Content-Type; b=ffFRtSGBXNqfHjfjaJoTMFrKokdkAn31SPG1Ihmyxe/YoM5cdltu2d73UoWkQujciOlf+4rVfImjkbI5MciZku+KJLZhbLkc3ugNOHZ72WOVvPShe2i3EHo7SpXL0O73oLxO8CXgedBay6GDAeLohbVisEqiKfTXBmax8pRCkqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGALHYmp; arc=none smtp.client-ip=209.85.217.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-70f6a7c4dcdso350164a34.1;
-        Thu, 05 Sep 2024 01:23:54 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-49bc44e51bcso160738137.2;
+        Thu, 05 Sep 2024 01:28:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725524634; x=1726129434; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725524883; x=1726129683; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=chdOXpxl19grJ0lyYlh2nBdFQ3cbblx2XVMM1r+6Sk0=;
-        b=lwu9wWq0aJ2UPjSKmpRbRbrLaswasJVCK7vAg0qUHECkgLJr/DJHwm6mMHzzCE1c1X
-         QVFiM8+m2QI+E5lsVMnQ/MqDbFNX0b9h6vE3b1TkpS9cz6R5FlVC+nnGavo5EETxyNy+
-         AreFyON2YSn2mwz6Ob295QZGvj0j8TPR+vpg2jxmSbt40MNMPH1MLeq0ygq5OXNv2rP1
-         WVpytv6o4WT4VndDB4RAzmX1LtDOEsrJJhjVtw/G6yOjIgwC/u21I/P8lA1G1WBS+fGt
-         HCRndgm0KaEG0WP8FJvyNqkDVblZgJI6nuB2war4k1+TuzB6D2k4ObuRcCn1VRPZFr6n
-         ZHdw==
+        bh=sVZvaQEpRVT3r0fm528EiKgjdfIwrSP8yDYuzflRklo=;
+        b=AGALHYmpWTX0K28TVD+DyD/HaTlKVVahYFew5VYv218Y7j18+bdIcxJu4DbfpI8HcV
+         9wDZjA2RZ/mijnyvz214SgOUCgDrLx0LR7ZxmHOZJ82rzhzJt2ORGFqe/JoZIG3BwDCN
+         zTUveTdTy2vcxdAI822Ym89L+K1TwlGD1uLHuPonBRtRkv8WohjiV2DmFlcgPQbcwNVT
+         Myfjl35pQWXS6mdnZk5s01DU9s2v0/O+vd1nUhqzAYnvSl2lH9/KqkWMlsCDSD3IIAnQ
+         MyCOOuRV65FORGVa8wF3gq2lirxHCJeOPRIv0r2kx3dqCHk87ljDOXqv1oLPr39ecpZm
+         O81g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725524634; x=1726129434;
+        d=1e100.net; s=20230601; t=1725524883; x=1726129683;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=chdOXpxl19grJ0lyYlh2nBdFQ3cbblx2XVMM1r+6Sk0=;
-        b=mC8ePawcEfqP0casCM7liDj3AWnM08ZHhdwHgkmaL59o7U3/tzECaDqaXF2McJXubv
-         M99ERKvqr3NHlxzP39TiBGUv603cjkH20KrWoCRjHm1wS4fcyq8tA9JWwWAwy+9Z3KVD
-         CC6LOgk+n3MQyHwdmWseJzykyUcPgHqSS1qeKTdBRKKjC8IRG8ewX2OOBny7NXUXFADK
-         kz0hp0lShE9KvDVJ/nDcq3uOB6CT9LnqpZdVLl+jUATzrAE7HbJGswbzkqazOgngS4y/
-         Q4xooDR/xNVcp0/Tm4i8StDS7WmjpLG+vMl08kR/N9K/XTx+UQpKpPncI1gehd5AwZxV
-         /rew==
-X-Forwarded-Encrypted: i=1; AJvYcCVrKe6iqbkiWzIXRmQV+xzruAe+ljrePSVKPSUjsivpU8yZU/KBh7OGxACU3KS5Y0SGuXPYLXO3pb56NYnV4Q==@vger.kernel.org, AJvYcCVwrjo+pEmZZUd3pEY/yHnSsxZPkUPTcc7mz/ETvXLyE6XKSCpzN1YmlXDAX0OwFLS4/RrDyG+rZ87eb4M=@vger.kernel.org, AJvYcCWD1swA//Fht3X7P1h+uHaeqLkJU1Lfk1/fLKLkWqBORza3sAe85Fx5qTzqaF1NfEsYiWONH/tC2aVHVum4+Q==@vger.kernel.org, AJvYcCXlmYpPsTjUy3Holan15xs8HOfJORUkHu6npTtoWIEPyxu53r1vdfTicNDliV3AuleH1TP8VZjXQy0g@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeJC6apvWMKREGy20rDZBkdnuYI1zeVLblHtKILrJZXDV0MShr
-	88s5UXrCCo2R27ZPhSldQi75JJfVHp6XTY243Hw9/ceXtqQSfwhQdfgSU8rl3iUIjKD64bw9dP1
-	Bp69NRIkKJQzoyj9MQH7JIcgBR0Q=
-X-Google-Smtp-Source: AGHT+IE6p7wq/aGZc71KmWg1q+RkZP/2KfOy+tFjCt8EugCjNDM0MIPDzBeTnbCvcWLRpy4UVsXFGx3EjMXkydC/8RI=
-X-Received: by 2002:a05:6830:90e:b0:710:adbb:ff33 with SMTP id
- 46e09a7af769-710af69eae6mr7229761a34.10.1725524633873; Thu, 05 Sep 2024
- 01:23:53 -0700 (PDT)
+        bh=sVZvaQEpRVT3r0fm528EiKgjdfIwrSP8yDYuzflRklo=;
+        b=f9aXyBiXbRGnBPcnHqg3Zfb0R6ccgPi+Px7vgjOIa9S9HtphjEKAQIhEVaDYAgJYRc
+         bJAAH3WEz5b5ny7M7Igf9Jngf74cvksXzA4/Kn/AAJbioUB+uUMer19NnVafhrA36b2I
+         PGqz1Cu67/PQTyxzTzPInA0nknBDZai3uhWr8AqAkMD+WX3E95oIwUp2fE7qZwhSFP2g
+         vRVb5eSXftcVu6Fnib0XgMRiWTMM4XhtiTO8i4HZ307nlxlsb8l8sb/NAz6iSJGfOiSz
+         alcr70+QwJ78XAAl87k88mguyWUZ8Fjl8tHnAgEfcsxRQ3cmQcobLk+HBaVG/OKbG+FL
+         VwFg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0TdQ44JqDjSTv4TlQHmAtfT91PbE50Wgfv3el/7IcGU8JPK2sgnGM3q5cJWInJbJu8ucEsyaZNLYC@vger.kernel.org, AJvYcCW4XGG3nyb78zisKp4vC+Up23dLkZr50t7HPEYKoIm6oZiicNywGY2qlMXc8ITI/j7/895DOCckXWziWmA=@vger.kernel.org, AJvYcCWmczi44W8WJDVSAS/clidY6vS5KnPQwUBPxihOfOiVNXPY72dHNdseA8vgLD9GdMMyCi/ZkRbd/3Qr50x9tA==@vger.kernel.org, AJvYcCXBhBXoWNPG12ArZc78QSKVYPlpnON9DYWyp1Bbrlzq5aLruSqjIWzKydd/6BhKT8P9dXE0NqxPamGrTlNdWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdDdn7ep6yfOgFPFoEXAbhjlmlWx9gI8ktwVEOaKunYYjpEKYB
+	diAfJbVkccH1ALTLazF+LqUY5wmS62Ogz4jGCOFN2M/76cFN7biYMOkCods6V0SWsLRRVU7taWT
+	1pKc1XHcr0pfhjSoCF8QA7ZxVQwltCutQ+/U=
+X-Google-Smtp-Source: AGHT+IGoNU1jZY6A/h1Uf8w7In4vXi6AGkhvNM/ehWlkjdTlkw88exnYqYilHPuSRQLA2qLVcYdAIC9XX74OtFoPjeU=
+X-Received: by 2002:a05:6102:2ac2:b0:492:a883:e1d with SMTP id
+ ada2fe7eead31-49a7775732amr18840231137.11.1725524883402; Thu, 05 Sep 2024
+ 01:28:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1725481503.git.josef@toxicpanda.com> <367fe83ae53839b1e88dc00b5b420035496d28ff.1725481503.git.josef@toxicpanda.com>
-In-Reply-To: <367fe83ae53839b1e88dc00b5b420035496d28ff.1725481503.git.josef@toxicpanda.com>
+References: <cover.1725481503.git.josef@toxicpanda.com> <33151057684a62a89b45466d53671c6232c34a68.1725481503.git.josef@toxicpanda.com>
+In-Reply-To: <33151057684a62a89b45466d53671c6232c34a68.1725481503.git.josef@toxicpanda.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 5 Sep 2024 10:23:41 +0200
-Message-ID: <CAOQ4uxjteVH2kX2zORBaudu-EVLQRWxVjHvdgoXhR=ji8yZwDg@mail.gmail.com>
-Subject: Re: [PATCH v5 17/18] btrfs: disable defrag on pre-content watched files
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	brauner@kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+Date: Thu, 5 Sep 2024 10:27:52 +0200
+Message-ID: <CAOQ4uxgaLY+EQCdGqr+yPsBuRh3uMe2DGLqXrBmC=hvDYBo23A@mail.gmail.com>
+Subject: Re: [PATCH v5 18/18] fs: enable pre-content events on supported file systems
+To: Josef Bacik <josef@toxicpanda.com>, jack@suse.cz
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
 	linux-btrfs@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -87,52 +87,103 @@ Content-Transfer-Encoding: quoted-printable
 On Wed, Sep 4, 2024 at 10:29=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
 wrote:
 >
-> We queue up inodes to be defrag'ed asynchronously, which means we do not
-> have their original file for readahead.  This means that the code to
-> skip readahead on pre-content watched files will not run, and we could
-> potentially read in empty pages.
+> Now that all the code has been added for pre-content events, and the
+> various file systems that need the page fault hooks for fsnotify have
+> been updated, add FS_ALLOW_HSM to the currently tested file systems.
 >
-> Handle this corner case by disabling defrag on files that are currently
-> being watched for pre-content events.
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
-IIUC, you are disabling the *start* of async defrag.
-What happens if defrag has already started and then a pre-content
-watch is set up?
-
-Do we care about this corner of a corner case?
+I would not be devastated if this patch remains as is,
+but I think it would be nicer to:
+1. Move it before the fs specific patches
+2. Set the HSM flag only on ext*
+3. Add the HSM flag in other fs specific patches
 
 Thanks,
 Amir.
 
->
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > ---
->  fs/btrfs/ioctl.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  fs/bcachefs/fs.c   | 2 +-
+>  fs/btrfs/super.c   | 3 ++-
+>  fs/ext4/super.c    | 6 +++---
+>  fs/xfs/xfs_super.c | 2 +-
+>  4 files changed, 7 insertions(+), 6 deletions(-)
 >
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index e0a664b8a46a..529f7416814f 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -2640,6 +2640,15 @@ static int btrfs_ioctl_defrag(struct file *file, v=
-oid __user *argp)
->                         goto out;
->                 }
+> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> index 3a5f49affa0a..f889a105643b 100644
+> --- a/fs/bcachefs/fs.c
+> +++ b/fs/bcachefs/fs.c
+> @@ -2124,7 +2124,7 @@ static struct file_system_type bcache_fs_type =3D {
+>         .name                   =3D "bcachefs",
+>         .init_fs_context        =3D bch2_init_fs_context,
+>         .kill_sb                =3D bch2_kill_sb,
+> -       .fs_flags               =3D FS_REQUIRES_DEV,
+> +       .fs_flags               =3D FS_REQUIRES_DEV | FS_ALLOW_HSM,
+>  };
 >
-> +               /*
-> +                * Don't allow defrag on pre-content watched files, as it=
- could
-> +                * populate the page cache with 0's via readahead.
-> +                */
-> +               if (fsnotify_file_has_pre_content_watches(file)) {
-> +                       ret =3D -EINVAL;
-> +                       goto out;
-> +               }
-> +
->                 if (argp) {
->                         if (copy_from_user(&range, argp, sizeof(range))) =
-{
->                                 ret =3D -EFAULT;
+>  MODULE_ALIAS_FS("bcachefs");
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 0eda8c21d861..201ed90a6083 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -2193,7 +2193,8 @@ static struct file_system_type btrfs_fs_type =3D {
+>         .init_fs_context        =3D btrfs_init_fs_context,
+>         .parameters             =3D btrfs_fs_parameters,
+>         .kill_sb                =3D btrfs_kill_super,
+> -       .fs_flags               =3D FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA=
+ | FS_ALLOW_IDMAP,
+> +       .fs_flags               =3D FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA=
+ |
+> +                                 FS_ALLOW_IDMAP | FS_ALLOW_HSM,
+>   };
+>
+>  MODULE_ALIAS_FS("btrfs");
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index e72145c4ae5a..a042216fb370 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -137,7 +137,7 @@ static struct file_system_type ext2_fs_type =3D {
+>         .init_fs_context        =3D ext4_init_fs_context,
+>         .parameters             =3D ext4_param_specs,
+>         .kill_sb                =3D ext4_kill_sb,
+> -       .fs_flags               =3D FS_REQUIRES_DEV,
+> +       .fs_flags               =3D FS_REQUIRES_DEV | FS_ALLOW_HSM,
+>  };
+>  MODULE_ALIAS_FS("ext2");
+>  MODULE_ALIAS("ext2");
+> @@ -153,7 +153,7 @@ static struct file_system_type ext3_fs_type =3D {
+>         .init_fs_context        =3D ext4_init_fs_context,
+>         .parameters             =3D ext4_param_specs,
+>         .kill_sb                =3D ext4_kill_sb,
+> -       .fs_flags               =3D FS_REQUIRES_DEV,
+> +       .fs_flags               =3D FS_REQUIRES_DEV | FS_ALLOW_HSM,
+>  };
+>  MODULE_ALIAS_FS("ext3");
+>  MODULE_ALIAS("ext3");
+> @@ -7298,7 +7298,7 @@ static struct file_system_type ext4_fs_type =3D {
+>         .init_fs_context        =3D ext4_init_fs_context,
+>         .parameters             =3D ext4_param_specs,
+>         .kill_sb                =3D ext4_kill_sb,
+> -       .fs_flags               =3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> +       .fs_flags               =3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS=
+_ALLOW_HSM,
+>  };
+>  MODULE_ALIAS_FS("ext4");
+>
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 27e9f749c4c7..04a6ec7bc2ae 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type =3D {
+>         .init_fs_context        =3D xfs_init_fs_context,
+>         .parameters             =3D xfs_fs_parameters,
+>         .kill_sb                =3D xfs_kill_sb,
+> -       .fs_flags               =3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> +       .fs_flags               =3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS=
+_ALLOW_HSM,
+>  };
+>  MODULE_ALIAS_FS("xfs");
+>
 > --
 > 2.43.0
 >
