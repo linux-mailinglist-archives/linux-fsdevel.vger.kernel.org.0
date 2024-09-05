@@ -1,126 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-28693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A048296D10F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 09:59:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BE896D17B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 10:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FFD62884D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 07:59:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013331F27727
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 08:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D178D192D8F;
-	Thu,  5 Sep 2024 07:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C1D199EA8;
+	Thu,  5 Sep 2024 08:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/cii1Y9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0Zk+mpe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B7D193422
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 07:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936D818FDB4;
+	Thu,  5 Sep 2024 08:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523091; cv=none; b=cELPeyIlcFEqZ+PeQN7X7Joqm2L8cdsDXH1aS/Tf8wD5PJJ10sL/ZqQP6xG77ZAHs70HVyMwAFTXo6vK8OssqO6DFDNMEuXJXwX5BueGJIhLyw0Hh0FgdR/bTQ8olPYrstn1rCXGe9QAcXYp3WADCzNbSmuQ8fkQ8lBhP53B84U=
+	t=1725523681; cv=none; b=i3D+Ti1M7o8wfGS4AUcbE4ht76tVZjQOPEsae6cRAabWm+8HFjktksoLqFToxzuDYy0f+i8nxkt3ueKMzOn7ldZ+oVKkRHZLxwO8esTJyYzPCaatk8WBnVEwSTgZ4p2wjhRhNFgAzAKfINasjljfAw2bWrkDY6wgZ3fVnU3natU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523091; c=relaxed/simple;
-	bh=EjTjGH3N7I+He4i3zTdEnIsNUEnQ9qSuzD1HUDVnA88=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kTfwcAzmZzirQrp8DmjkmsL9KlvxMzqOAzFBv4N+O7J1jubsKJxO84Cgw/kLdyKjDjdqjkaWAbSlD8n2/fW48rt86iByPBZbabTkDAkvOwBQR6YjVALjybzmfwzS+TJ0puyJ0WFAUZ5U47zq+/Zk2LjYw4ESY0M2W5kY5Wn0yRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/cii1Y9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6815AC4CEC3;
-	Thu,  5 Sep 2024 07:58:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725523090;
-	bh=EjTjGH3N7I+He4i3zTdEnIsNUEnQ9qSuzD1HUDVnA88=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=n/cii1Y9UaMO6oLLzq+PA4Vy0/MwZIQeJ9yLODD3MvOMqqhPRxWm1x7GIX25GI/qp
-	 G690aWfdS5p10x5FCW5PqvhbTqhZefA0icmgivaU150EthEStFU1AgYtFd3GeaOJQy
-	 U4EScFhr20WPqHmcHBwGz1opcb326Vs6aCqxqTaMdv5qaB+uU16A1bpHtGHEOJoNG8
-	 cG/Y6jAnwZWHfrKLMKWP4gsjwHZdhNZHV1UgcQkVza8kALbZknFpAhxn9Vbp65HgHn
-	 YDHbbJ5pm08OwI8mAypTWkqRLG7PQy+k8l1qGm1E1kBRtOq1owOgJziQNM69rdMVQo
-	 PdkjcvlwIrOyg==
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 05 Sep 2024 09:57:00 +0200
-Subject: [PATCH v4 17/17] io_uring: port to struct kmem_cache_args
+	s=arc-20240116; t=1725523681; c=relaxed/simple;
+	bh=raImueNqfWWkqLnLxEGY+/4FKgyLlGv/zGZT7NbbBAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SZEgOJ1S4VyXhoYwdq/qsbxrM0lPtGVsFHHvvJSXl0TbWhcc4641ZolT86MEUlYZ11UMg4qpGLwdiEu/FUCVGvhzEhjZ9HzdX7LTbPEUMtMCB7yt+qhwx8Iejy4SOQYBnfjdfeZdJ/AeH1CT5qmySARch9LAIJGyYXM9Nh2DiFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0Zk+mpe; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a8130906faso34341585a.0;
+        Thu, 05 Sep 2024 01:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725523678; x=1726128478; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q9evaM+/i7nGyrRogDxvgPy1n3dS/KfQS+d0VRsLRTo=;
+        b=F0Zk+mpe9Bh0oVcS7S/ctBwrwfvdOLz6HFswTfo4e1IwFNU7hZkq3BxUMGJHcRgFc8
+         DVV6oegF3cJN/h5O2ITgcFCoNu+Js0+ECSulWOhI0EIe5ToFuat9k08M1FcnzXEbyyJr
+         LEl0xB9rkN5yGe1nxQMMQTTBBlsgObQOx+ls4rHzAOSgxVfZq4wgNvPq2NigyKXzM/d1
+         LFtLL7Q1BbP7m6hV5XpAXXZmLlIK4ZNXdeuzLXtwcrx36nvcGIMRbE4c+L+BEmLmnCAS
+         MUQ2CK+XTB/7O0soVR71t8RoH3oR7mSX5aRV4FkRzMFIwNqNYt6nNartZUI1FFm9gck1
+         3hpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725523678; x=1726128478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q9evaM+/i7nGyrRogDxvgPy1n3dS/KfQS+d0VRsLRTo=;
+        b=MyPZdl9GJ7IJz5FQ0iYQZDUsm1nomsoI+5gtnjCuxD5rr88BuunJijXLhWMz5Fky6G
+         YlTx6gbGStqiWy3zhbDp39J2kyDTxxHP9EsjHNfM3WeLxM4FIz2GAk1nR2lToa4qdWhA
+         5kqJWLyMOxs2gwxWZqVuwUJuKQ8hEp09mXiMaJ0q+slrg+aRRgh7b+Cr770RLQinJujj
+         cjxhhw4rngvnSu+WaEahYXmm/mrWAgnjqJ9l0C3d4wJD/jN3QOAMsMD1+j+Ij6FT2i35
+         hqMnBPHz1L3qvu37LrcPkrHDuirErMg/5BqNv5DoRVFIPjp8qsKQ4V42+reKlIx0WK5C
+         W4QA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXE5VMJusR0HgRK3bIASJx7EoK3XsyvDzozSZ8dBJZBN95DI8U0leGeleyUPA60LJ21bISoCx9LejrYrM=@vger.kernel.org, AJvYcCWj/pOsz+S6ZT4kOmp6W/MBmq6mVzvlmIj4srUCM7noOjP2rBvIOcxFGra3TAeNiOr9nZ1lcl9coHIRHm0ZgA==@vger.kernel.org, AJvYcCWop6l0lSYg5r6DtxvPVQkKJjH/7b1XXj+az3ygRkPWAUUGMTfr6ThqPvUZIDLJIDwmwBrqIwMiXrJRGkxMLQ==@vger.kernel.org, AJvYcCX4np6yiq0d1L/wtx+ntE+dWoH79Cw2glJP4cYxojqKUnl/EGDEZK2lKwLud+uwRgJTiQQtR2TKyR0z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGrD3IYgYrIUrixrmyFnVOP3u2tRYU53xWAIB439wVKQEs3Tj3
+	FAEQF11VaQTAY4I4papfV1PmLFRQL41uY/ijuVC4z6E00+kP4Qne/wJKehmBH0fyzMfhcbcl9Tk
+	dr+Eo0xsdus12Pj/hXaMLmYb+lDw=
+X-Google-Smtp-Source: AGHT+IH1V7cjY3UVK2E999mAtRxtZnv2ifLJeXP6Pbb6prHkryHmT1Xk5RpQhKkwMl11HK2Cz/GJl+Mgv/3CUTLzcQ0=
+X-Received: by 2002:a05:6214:5902:b0:6bf:7c44:f7b4 with SMTP id
+ 6a1803df08f44-6c3556d2f6cmr218344006d6.31.1725523678325; Thu, 05 Sep 2024
+ 01:07:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-work-kmem_cache_args-v4-17-ed45d5380679@kernel.org>
-References: <20240905-work-kmem_cache_args-v4-0-ed45d5380679@kernel.org>
-In-Reply-To: <20240905-work-kmem_cache_args-v4-0-ed45d5380679@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
- Jann Horn <jannh@google.com>, 
- Linus Torvalds <torvalds@linux-foundation.org>, 
- Mike Rapoport <rppt@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Christoph Lameter <cl@linux.com>, 
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
- Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Roman Gushchin <roman.gushchin@linux.dev>, 
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
- linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1730; i=brauner@kernel.org;
- h=from:subject:message-id; bh=EjTjGH3N7I+He4i3zTdEnIsNUEnQ9qSuzD1HUDVnA88=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdTPHhj1L7r/Bk2qwz7j/NNA3ZPkds8Gb9+f4l61uHu
- nD93VXpHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPxOc/wV4Cf57l0b/FcH1+T
- VFkn/6fcDXo3btpERvZv8f637gjjBob/SW8yPtZ1fvr0p+QH91+O+GOvnQR7eBceb745USDVSoK
- VDQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+References: <cover.1725481503.git.josef@toxicpanda.com> <f5dd14c65fe3911706be652833f179465188fe08.1725481503.git.josef@toxicpanda.com>
+In-Reply-To: <f5dd14c65fe3911706be652833f179465188fe08.1725481503.git.josef@toxicpanda.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 5 Sep 2024 10:07:46 +0200
+Message-ID: <CAOQ4uxjBFWLh7eDbeygiy_PsA4bks2z+ak1wQsn=Rp0s82vqSA@mail.gmail.com>
+Subject: Re: [PATCH v5 10/18] fs: add a flag to indicate the fs supports
+ pre-content events
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	brauner@kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Port req_cachep to struct kmem_cache_args.
+On Wed, Sep 4, 2024 at 10:29=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
+wrote:
+>
+> The pre-content events require some extra thinking, especially around
+> page faults.  In order to make sure we don't advertise a feature working
+> that doesn't actually work, add a flag to allow file systems to opt-in
+> to this behavior.
+>
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
-Reviewed-by: Kees Cook <kees@kernel.org>
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- io_uring/io_uring.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Better squash this patch to FAN_PRE_ACCESS patch, so it will
+not be allowed to mark with FAN_PRE_ACCESS on unsupported fs
+mid series.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3942db160f18..d9d721d1424e 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3638,6 +3638,11 @@ SYSCALL_DEFINE2(io_uring_setup, u32, entries,
- 
- static int __init io_uring_init(void)
- {
-+	struct kmem_cache_args kmem_args = {
-+		.useroffset = offsetof(struct io_kiocb, cmd.data),
-+		.usersize = sizeof_field(struct io_kiocb, cmd.data),
-+	};
-+
- #define __BUILD_BUG_VERIFY_OFFSET_SIZE(stype, eoffset, esize, ename) do { \
- 	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
- 	BUILD_BUG_ON(sizeof_field(stype, ename) != esize); \
-@@ -3722,12 +3727,9 @@ static int __init io_uring_init(void)
- 	 * range, and HARDENED_USERCOPY will complain if we haven't
- 	 * correctly annotated this range.
- 	 */
--	req_cachep = kmem_cache_create_usercopy("io_kiocb",
--				sizeof(struct io_kiocb), 0,
--				SLAB_HWCACHE_ALIGN | SLAB_PANIC |
--				SLAB_ACCOUNT | SLAB_TYPESAFE_BY_RCU,
--				offsetof(struct io_kiocb, cmd.data),
--				sizeof_field(struct io_kiocb, cmd.data), NULL);
-+	req_cachep = kmem_cache_create("io_kiocb", sizeof(struct io_kiocb), &kmem_args,
-+				SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT |
-+				SLAB_TYPESAFE_BY_RCU);
- 	io_buf_cachep = KMEM_CACHE(io_buffer,
- 					  SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
- 
+OR - move this patch before the FAN_PRE_ACCESS patch and pre-define
+FANOTIFY_PRE_CONTENT_EVENTS to 0.
 
--- 
-2.45.2
+Apart from that, you may add:
 
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
+Thanks,
+Amir.
+
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 2 ++
+>  include/linux/fs.h                 | 1 +
+>  include/linux/fsnotify.h           | 4 ++++
+>  3 files changed, 7 insertions(+)
+>
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
+tify_user.c
+> index 53eee8af34a0..936e9f9e0cbc 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1736,6 +1736,8 @@ static int fanotify_events_supported(struct fsnotif=
+y_group *group,
+>
+>         /* Pre-content events are only supported on regular files and dir=
+s */
+>         if (mask & FANOTIFY_PRE_CONTENT_EVENTS) {
+> +               if (!(path->mnt->mnt_sb->s_type->fs_flags & FS_ALLOW_HSM)=
+)
+> +                       return -EINVAL;
+>                 if (!is_dir && !d_is_reg(path->dentry))
+>                         return -EINVAL;
+>                 if (is_dir && mask & FAN_PRE_MODIFY)
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index fd34b5755c0b..5708e91d3625 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2494,6 +2494,7 @@ struct file_system_type {
+>  #define FS_USERNS_MOUNT                8       /* Can be mounted by user=
+ns root */
+>  #define FS_DISALLOW_NOTIFY_PERM        16      /* Disable fanotify permi=
+ssion events */
+>  #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle =
+vfs idmappings. */
+> +#define FS_ALLOW_HSM           64      /* FS can handle fanotify pre-con=
+tent events. */
+>  #define FS_RENAME_DOES_D_MOVE  32768   /* FS will handle d_move() during=
+ rename() internally. */
+>         int (*init_fs_context)(struct fs_context *);
+>         const struct fs_parameter_spec *parameters;
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index 9d001d328619..27992b548f0c 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -179,6 +179,10 @@ static inline int fsnotify_file_area_perm(struct fil=
+e *file, int perm_mask,
+>         if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode))
+>                 return 0;
+>
+> +       /* The fs doesn't support pre-content events. */
+> +       if (!(inode->i_sb->s_type->fs_flags & FS_ALLOW_HSM))
+> +               return 0;
+> +
+>         if (perm_mask & MAY_WRITE)
+>                 fsnotify_mask =3D FS_PRE_MODIFY;
+>         else if (perm_mask & (MAY_READ | MAY_ACCESS))
+> --
+> 2.43.0
+>
 
