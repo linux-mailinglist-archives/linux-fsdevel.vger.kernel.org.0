@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-28684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF3D96D103
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 09:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1677B96D106
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 09:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B9721F2685C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 07:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983B91F25E48
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2024 07:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527F5194C8F;
-	Thu,  5 Sep 2024 07:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7581946A2;
+	Thu,  5 Sep 2024 07:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCMJJsA2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pT0XIJG5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02EC1940BC
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 07:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A12194123
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Sep 2024 07:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523055; cv=none; b=SF37XR1oSqip3fsZw7skTSroNNN8iybAcuUSShjoXjJ4vWKInyoBjtpVrAXtQnjOMe9y8VBmrwzj2EPJC3UEbAEpzP6EcqfE4ZLlnZJmxG8p14cgjq7JdYEjHcHpi6dc5tEKrrJhpLdWLkysye3ACHmx0XhODMdiqV24FUJGqNY=
+	t=1725523059; cv=none; b=SIeAahyWWP3mO5IfwosioiggKZAV27v4s8h5TyXbdR313NQyCCAAicEwqLYs03sMmGsGrvt+nPVM2QFTFTcB+amIuC2UoZDaP5qlif9gr+ggO/GzH685bLPJrdtzvm+CPLvUjsnJoFHmo0REMeOEnZjrF7eSMGd0spHcH7pCVs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523055; c=relaxed/simple;
-	bh=68ks3+RK7luxREXLt0gNfsWbQ+8I8NfI8y27/qM8GTo=;
+	s=arc-20240116; t=1725523059; c=relaxed/simple;
+	bh=Zf6O0R24GKVW0QtPgh/qra6wApA/id2hJZ9TPx/ME9U=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HGqnz/J9zTWoqRYAHr6iumLlhWtR2vo/RYrj4Vg4fIUY8a0m25kjSbOdvpsqvM1rzPjb5TglfrA098JWKFkgcnwvhON37ps2/z0TZT1RXUGsa8OqoQzquykDnUOW5+lfBtsfSsUDCP3txUraAN48VsKt5GwfN5mxtzSFicdszl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCMJJsA2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28B9FC4CEC3;
-	Thu,  5 Sep 2024 07:57:31 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=h38/Hwh//3ZqLiqLCUuTvyp8u8Yh9pdUO7nqxzmOTqQ+aQFJ2DJRSYHOikD6cOPo+v8CBR1cMPfnu4eJdFDIPbMKOJc0hLNEtA+e6n7gH5krTSssB+S0aq4lJ9ynqsi2NgBrDV1f9WP7VNSuYzPTPjO9vYwYsU8sfalhLaD6lcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pT0XIJG5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E0B0C4CEC3;
+	Thu,  5 Sep 2024 07:57:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725523055;
-	bh=68ks3+RK7luxREXLt0gNfsWbQ+8I8NfI8y27/qM8GTo=;
+	s=k20201202; t=1725523059;
+	bh=Zf6O0R24GKVW0QtPgh/qra6wApA/id2hJZ9TPx/ME9U=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=lCMJJsA2FYQgZ241Y/sVm4oECKak0msryTpe6Sxy0xhPqrJ4bz+KhoUhxL14XWa1c
-	 7E+aemB9oTGTfc5vf7ZjV6+34ksKJNjfyrwdWGGVBINGAM5bGQEHyfHw0aanRFgDfr
-	 95fU5OABVDgKWclGHd20xyuZDsq+ffWmV7zDnzjhyo5D2a+9PoWQZhHl9tt8+dkT7Q
-	 UJVo/ISOhmxyzB8f/ZerRvzWyNLDq9UE4WkJcK7GI/AN2FVNQ96k1gBj2pqV6egzIm
-	 iGbxOz4BJ5tXpM1QhItXBzVswa4b1k2vJkjww2yuXsrYFWrJ7pQlGvB8rpGUrNO8TA
-	 TsQJqs2fi09KQ==
+	b=pT0XIJG5jf6UweHnX3PnusUh7KGghRnwnSRbHnn3xA4ShIU+NmamAtaK6vBrYk2mi
+	 H6So88w+HbyvPAA6PDRnnFNIX0mSLfAAN1ytfggZbn5Czz9MLNbo0wEr/26NW+zctS
+	 NbjwmB9y12/NwWbSHwQ95npLdiS3NL9NjuEc79Da+qVyQ3KrGqzzXIuDfMpyu6Z60L
+	 90wpyQFvLYUI15pVE3ZdqZtstQx6165hHWkrJaTTk9Y1v70sc8xzly8D/iwtpDHXlq
+	 FrL8ueGzjJSOMor9BAJg0BpmFwFpTKugigsDRLEcIUjr0aax7uYvEm1co7kpgV+KT8
+	 qFafnPFKwZwwQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 05 Sep 2024 09:56:51 +0200
-Subject: [PATCH v4 08/17] slab: pass struct kmem_cache_args to
- do_kmem_cache_create()
+Date: Thu, 05 Sep 2024 09:56:52 +0200
+Subject: [PATCH v4 09/17] slab: remove rcu_freeptr_offset from struct
+ kmem_cache
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-work-kmem_cache_args-v4-8-ed45d5380679@kernel.org>
+Message-Id: <20240905-work-kmem_cache_args-v4-9-ed45d5380679@kernel.org>
 References: <20240905-work-kmem_cache_args-v4-0-ed45d5380679@kernel.org>
 In-Reply-To: <20240905-work-kmem_cache_args-v4-0-ed45d5380679@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
@@ -68,17 +68,18 @@ Cc: Kees Cook <kees@kernel.org>, Christoph Lameter <cl@linux.com>,
  Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4004; i=brauner@kernel.org;
- h=from:subject:message-id; bh=68ks3+RK7luxREXLt0gNfsWbQ+8I8NfI8y27/qM8GTo=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdTPHe0MpoGSi7d66U3P/akqWzzBdPLC8ol1nexlAr+
- ncn67pdHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOZeoPhf8l6tcjWzRWT1WbF
- 3H4W5XN1Ert36Ee5VbJvw3KvM/h5v2P4xbzkMcfhuDniFefderU3aERvNT+tKWEXWZq1K9iyqaC
- YBwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3996; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=Zf6O0R24GKVW0QtPgh/qra6wApA/id2hJZ9TPx/ME9U=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdTPG+VWf2/MDpjftOT9Dq6BX8s4SRRaTC3vkMS+kit
+ vQu1Ze/OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCEsjwh2d513G2xGq1PKvE
+ d3ETuZ0Wbma+rL342ZUPPB2sn12X2jD8L0n7/Zo7ePHZ5tUKqYdmx3dnZx0WiJ1mnrW6d0fuGlM
+ dbgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-and initialize most things in do_kmem_cache_create(). In a follow-up
-patch we'll remove rcu_freeptr_offset from struct kmem_cache.
+Pass down struct kmem_cache_args to calculate_sizes() so we can use
+args->{use}_freeptr_offset directly. This allows us to remove
+->rcu_freeptr_offset from struct kmem_cache.
 
 Reviewed-by: Kees Cook <kees@kernel.org>
 Reviewed-by: Jens Axboe <axboe@kernel.dk>
@@ -86,117 +87,105 @@ Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- mm/slab.h        |  4 +++-
- mm/slab_common.c | 27 ++++++---------------------
- mm/slub.c        | 17 ++++++++++++++++-
- 3 files changed, 25 insertions(+), 23 deletions(-)
+ mm/slab.h |  2 --
+ mm/slub.c | 25 +++++++------------------
+ 2 files changed, 7 insertions(+), 20 deletions(-)
 
 diff --git a/mm/slab.h b/mm/slab.h
-index 684bb48c4f39..c7a4e0fc3cf1 100644
+index c7a4e0fc3cf1..36ac38e21fcb 100644
 --- a/mm/slab.h
 +++ b/mm/slab.h
-@@ -424,7 +424,9 @@ kmalloc_slab(size_t size, kmem_buckets *b, gfp_t flags, unsigned long caller)
- gfp_t kmalloc_fix_flags(gfp_t flags);
+@@ -261,8 +261,6 @@ struct kmem_cache {
+ 	unsigned int object_size;	/* Object size without metadata */
+ 	struct reciprocal_value reciprocal_size;
+ 	unsigned int offset;		/* Free pointer offset */
+-	/* Specific free pointer requested (if not UINT_MAX) */
+-	unsigned int rcu_freeptr_offset;
+ #ifdef CONFIG_SLUB_CPU_PARTIAL
+ 	/* Number of per cpu partial objects to keep around */
+ 	unsigned int cpu_partial;
+diff --git a/mm/slub.c b/mm/slub.c
+index 4719b60215b8..a23c7036cd61 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -3916,8 +3916,7 @@ static void *__slab_alloc_node(struct kmem_cache *s,
+  * If the object has been wiped upon free, make sure it's fully initialized by
+  * zeroing out freelist pointer.
+  *
+- * Note that we also wipe custom freelist pointers specified via
+- * s->rcu_freeptr_offset.
++ * Note that we also wipe custom freelist pointers.
+  */
+ static __always_inline void maybe_wipe_obj_freeptr(struct kmem_cache *s,
+ 						   void *obj)
+@@ -5141,17 +5140,11 @@ static void set_cpu_partial(struct kmem_cache *s)
+ #endif
+ }
  
- /* Functions provided by the slab allocators */
--int do_kmem_cache_create(struct kmem_cache *, slab_flags_t flags);
-+int do_kmem_cache_create(struct kmem_cache *s, const char *name,
-+			 unsigned int size, struct kmem_cache_args *args,
-+			 slab_flags_t flags);
- 
- void __init kmem_cache_init(void);
- extern void create_boot_cache(struct kmem_cache *, const char *name,
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 9baa61c9c670..19ae3dd6e36f 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -224,20 +224,7 @@ static struct kmem_cache *create_cache(const char *name,
- 	s = kmem_cache_zalloc(kmem_cache, GFP_KERNEL);
- 	if (!s)
- 		goto out;
+-/* Was a valid freeptr offset requested? */
+-static inline bool has_freeptr_offset(const struct kmem_cache *s)
+-{
+-	return s->rcu_freeptr_offset != UINT_MAX;
+-}
 -
--	s->name = name;
--	s->size = s->object_size = object_size;
+ /*
+  * calculate_sizes() determines the order and the distribution of data within
+  * a slab object.
+  */
+-static int calculate_sizes(struct kmem_cache *s)
++static int calculate_sizes(struct kmem_cache_args *args, struct kmem_cache *s)
+ {
+ 	slab_flags_t flags = s->flags;
+ 	unsigned int size = s->object_size;
+@@ -5192,7 +5185,7 @@ static int calculate_sizes(struct kmem_cache *s)
+ 	 */
+ 	s->inuse = size;
+ 
+-	if (((flags & SLAB_TYPESAFE_BY_RCU) && !has_freeptr_offset(s)) ||
++	if (((flags & SLAB_TYPESAFE_BY_RCU) && !args->use_freeptr_offset) ||
+ 	    (flags & SLAB_POISON) || s->ctor ||
+ 	    ((flags & SLAB_RED_ZONE) &&
+ 	     (s->object_size < sizeof(void *) || slub_debug_orig_size(s)))) {
+@@ -5214,8 +5207,8 @@ static int calculate_sizes(struct kmem_cache *s)
+ 		 */
+ 		s->offset = size;
+ 		size += sizeof(void *);
+-	} else if ((flags & SLAB_TYPESAFE_BY_RCU) && has_freeptr_offset(s)) {
+-		s->offset = s->rcu_freeptr_offset;
++	} else if ((flags & SLAB_TYPESAFE_BY_RCU) && args->use_freeptr_offset) {
++		s->offset = args->freeptr_offset;
+ 	} else {
+ 		/*
+ 		 * Store freelist pointer near middle of object to keep
+@@ -5856,10 +5849,6 @@ int do_kmem_cache_create(struct kmem_cache *s, const char *name,
+ #ifdef CONFIG_SLAB_FREELIST_HARDENED
+ 	s->random = get_random_long();
+ #endif
 -	if (args->use_freeptr_offset)
 -		s->rcu_freeptr_offset = args->freeptr_offset;
 -	else
 -		s->rcu_freeptr_offset = UINT_MAX;
--	s->align = args->align;
--	s->ctor = args->ctor;
--#ifdef CONFIG_HARDENED_USERCOPY
--	s->useroffset = args->useroffset;
--	s->usersize = args->usersize;
--#endif
--	err = do_kmem_cache_create(s, flags);
-+	err = do_kmem_cache_create(s, name, object_size, args, flags);
- 	if (err)
- 		goto out_free_cache;
- 
-@@ -788,9 +775,7 @@ void __init create_boot_cache(struct kmem_cache *s, const char *name,
- {
- 	int err;
- 	unsigned int align = ARCH_KMALLOC_MINALIGN;
--
--	s->name = name;
--	s->size = s->object_size = size;
-+	struct kmem_cache_args kmem_args = {};
- 
- 	/*
- 	 * kmalloc caches guarantee alignment of at least the largest
-@@ -799,14 +784,14 @@ void __init create_boot_cache(struct kmem_cache *s, const char *name,
- 	 */
- 	if (flags & SLAB_KMALLOC)
- 		align = max(align, 1U << (ffs(size) - 1));
--	s->align = calculate_alignment(flags, align, size);
-+	kmem_args.align = calculate_alignment(flags, align, size);
- 
+ 	s->align = args->align;
+ 	s->ctor = args->ctor;
  #ifdef CONFIG_HARDENED_USERCOPY
--	s->useroffset = useroffset;
--	s->usersize = usersize;
-+	kmem_args.useroffset = useroffset;
-+	kmem_args.usersize = usersize;
+@@ -5867,7 +5856,7 @@ int do_kmem_cache_create(struct kmem_cache *s, const char *name,
+ 	s->usersize = args->usersize;
  #endif
  
--	err = do_kmem_cache_create(s, flags);
-+	err = do_kmem_cache_create(s, name, size, &kmem_args, flags);
- 
- 	if (err)
- 		panic("Creation of kmalloc slab %s size=%u failed. Reason %d\n",
-diff --git a/mm/slub.c b/mm/slub.c
-index 30f4ca6335c7..4719b60215b8 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -5843,14 +5843,29 @@ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
- 	return s;
- }
- 
--int do_kmem_cache_create(struct kmem_cache *s, slab_flags_t flags)
-+int do_kmem_cache_create(struct kmem_cache *s, const char *name,
-+			 unsigned int size, struct kmem_cache_args *args,
-+			 slab_flags_t flags)
- {
- 	int err = -EINVAL;
- 
-+	s->name = name;
-+	s->size = s->object_size = size;
-+
- 	s->flags = kmem_cache_flags(flags, s->name);
- #ifdef CONFIG_SLAB_FREELIST_HARDENED
- 	s->random = get_random_long();
- #endif
-+	if (args->use_freeptr_offset)
-+		s->rcu_freeptr_offset = args->freeptr_offset;
-+	else
-+		s->rcu_freeptr_offset = UINT_MAX;
-+	s->align = args->align;
-+	s->ctor = args->ctor;
-+#ifdef CONFIG_HARDENED_USERCOPY
-+	s->useroffset = args->useroffset;
-+	s->usersize = args->usersize;
-+#endif
- 
- 	if (!calculate_sizes(s))
+-	if (!calculate_sizes(s))
++	if (!calculate_sizes(args, s))
  		goto out;
+ 	if (disable_higher_order_debug) {
+ 		/*
+@@ -5877,7 +5866,7 @@ int do_kmem_cache_create(struct kmem_cache *s, const char *name,
+ 		if (get_order(s->size) > get_order(s->object_size)) {
+ 			s->flags &= ~DEBUG_METADATA_FLAGS;
+ 			s->offset = 0;
+-			if (!calculate_sizes(s))
++			if (!calculate_sizes(args, s))
+ 				goto out;
+ 		}
+ 	}
 
 -- 
 2.45.2
