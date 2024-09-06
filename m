@@ -1,160 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-28833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB9696ED05
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 10:02:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F3396ED1A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 10:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57A41F277F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 08:01:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91A04B249B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 08:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FC9156C6F;
-	Fri,  6 Sep 2024 08:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD2D14BF8A;
+	Fri,  6 Sep 2024 08:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="qS8uuxYi"
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="VwT3cBJR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2087.outbound.protection.outlook.com [40.107.117.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87011A28C;
-	Fri,  6 Sep 2024 08:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609703; cv=none; b=mBv12nwAigauxcEyogv7ktfsts5ClaS6zSbgXfttG7lGgNDs6IOB8agwTqG2f80C/+1+9P9I9QJaN2movrCovqQpaAKW1XEhQ7WM877uRlQC9A9XGe2Q0pkVQwIOH/uEVFGsvULpXyJuTmTLdmqQVCeqNJx3eCV2X0OEs1vt9qQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609703; c=relaxed/simple;
-	bh=GGW2mP0FOw5e7YTZk5o31AtnAUs24hgfzJgcmoV/maU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwXF7fWh9sqhr44KTa2exQR88VW988G0J5t01ghqt1DwA0yqJshcJU7pClX6KZONlRwqmASyrHvw7qkiQRPrm40bKomivhCnrU/qPkfgxYKU0HtZjU7zOhb4UurwzGCsMdfa1A0HhAfiQ6tWynI1NntgeUFWaN140QpkDoH0So0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=qS8uuxYi; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4X0TFk0k78z9sn8;
-	Fri,  6 Sep 2024 10:01:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1725609690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=txiTk9IGx6J3KSO7NujdzBabpDFq03RzqiY0DDy6h34=;
-	b=qS8uuxYixNti8tE7TN9MLXvUBgPDjjlh9aTJdMkk3SurmVQjB6IIh/4l2iXjxLgrv0h9vr
-	5TMmBe6fZTNwOIMXy88Czf0WzZAEb+pV9BXgh7OBbJ+Gb17IrhY2JjvM44y1MRfvr73RnV
-	5mAk456khuBRrN/tNg5y458EixvqWWZ4Lh0DR3z0wJ5k2ScCtQhL9gakI4vOB9SMSXh3ah
-	JEGczHKtCLcQBlq+yoVbWxcp/PQqGoNs1jxRURY5jwO/zYt/WmJpXyMQB6ERcCziUmXLuh
-	19OBukBK+v0mnjJUROFZ2M6jz7ErfMNKPIPPlwH21umlNcYrxdjTLtFMlNN5XA==
-Date: Fri, 6 Sep 2024 08:01:20 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
-	gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
-	cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-	ryan.roberts@arm.com, David Howells <dhowells@redhat.com>,
-	pengfei.xu@intel.com
-Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order chunks
-Message-ID: <20240906080120.q6xff2odea3ay4k7@quentin>
-References: <20240822135018.1931258-1-kernel@pankajraghav.com>
- <20240822135018.1931258-5-kernel@pankajraghav.com>
- <ZtqmtjZ+mVTDx208@ly-workstation>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0452714A61A;
+	Fri,  6 Sep 2024 08:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725609955; cv=fail; b=ZxPy4Zm+woIw6hO2LWjDLWPSLRpuHyCAl9izb7xr/ImsKKzvD/qGAFYXwZLm0ejGIrUVcv4cKvP9lkTGBpK8u9frMPiU1vzz7aHrH1yYkr6+IUq4Y1T4ljjstZDGDFxCiDhOqfg0eEC56ctuZUnOwzfThpCCuDLDRPIcvAU8MZ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725609955; c=relaxed/simple;
+	bh=a0wmq2SAWRehjq0Wt7wJMLdsH0h0Ii1CuPoFRCKB09Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ACdmyiFd1syIzUq/njOzXi7yQfovtsGY6uGpP+4OlCVJP3B74Pfj8rKVA5cA8CJFUS5RqWOh6HvgSZ0Xm4dOz0VgEqzZrIyj4yb5ptrhB5Yqkd9apnWOAvsXdhnP4dm+xBXOGi88Jg/VypFpgADAHykoKnqdSUFo2Pal4YhylGA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=VwT3cBJR; arc=fail smtp.client-ip=40.107.117.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sD4+QTDmhR7dk1RJaGqwzr0r6QHbX5GJF6aVjDUqJeGf9NM4Llkrt5f+a0klRUQ8qYxaav8ijdbT2ey6h+eFrnM2hXg1G9mlrMZHIT4O7dI4KIytcw5ncxjzXzzHX+xCxKREYKtCkw0gk4cyPadwxDH19zd2laOlMbiwvPMWDJxvI0bVs2hLcH1PVpgdPAtvZWUr0FRtS9kQ+iEbNyRURvVADBaq4wQHTnfP/QjaHkeGKhqA3qoLcKBkmrHNwy7dCZhRlYovqyVtnnVMgX94sIbm56RgH/INcgsCBLPKs6MPDKaodKdv5dfU56+kmlXqo+rQHra8y5EYfU0X2BW7bQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q+OIR6AWe8p2W2fsUfWGLOPJMYgugfQ+9Xs8aBn3Nw8=;
+ b=Ju250GVDQjtCwmnq2ht3M70ZD3OJgHiCuaf8krGdGhPBLCB+9xAfJ7E69bYWIt4EukWvKhzwnowdJr/Lih+1sNByPP5Bwmeovvi16A62j8uliiJLkzSYUMT8EYS1hWZ7I6XRiYH5qOBloKIysr1uB+3aqDAauNzeB5/KnQB88AtetbThiIuLAU8UHCREPRQBz1f/iZd5y9NmBlcY8E9+T8ujB0bozqjFUBRKx+q/8DCqooPuxEevC/OMq967OIcAseIAQqIem5VakGo4zQT6IE1sbomUVfVAomlcgf1+G3Kfwc8MoAEh/JyvT/sa0RFoNudVLx/raAJ1SUlL/n37Ug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=zeniv.linux.org.uk smtp.mailfrom=oppo.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=oppo.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q+OIR6AWe8p2W2fsUfWGLOPJMYgugfQ+9Xs8aBn3Nw8=;
+ b=VwT3cBJRv4v2q1xO5jmYW+ShIiZMjdoNfFLmSFyOx9LTiT/HZBomkXUelsP1jHDxH2tika5Sn1AXm3KLuKxKqBWzvZq6gRwpSbtpCtfJsDLKt5pdntOFSUvBIYVnZXmVI7RkBAF//fDjB+iaLRrCehMzZCXCBGrbbt1KHJ1X41I=
+Received: from KL1PR01CA0088.apcprd01.prod.exchangelabs.com
+ (2603:1096:820:2::28) by SEZPR02MB6988.apcprd02.prod.outlook.com
+ (2603:1096:101:19e::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 6 Sep
+ 2024 08:05:50 +0000
+Received: from HK3PEPF0000021B.apcprd03.prod.outlook.com
+ (2603:1096:820:2:cafe::87) by KL1PR01CA0088.outlook.office365.com
+ (2603:1096:820:2::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17 via Frontend
+ Transport; Fri, 6 Sep 2024 08:05:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ HK3PEPF0000021B.mail.protection.outlook.com (10.167.8.37) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 08:05:49 +0000
+Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
+ (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Sep
+ 2024 16:05:48 +0800
+From: Hailong Liu <hailong.liu@oppo.com>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>
+CC: <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, Hailong Liu
+	<hailong.liu@oppo.com>
+Subject: [PATCH] seq_file: replace kzalloc() with kvzalloc()
+Date: Fri, 6 Sep 2024 16:00:47 +0800
+Message-ID: <20240906080047.21409-1-hailong.liu@oppo.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtqmtjZ+mVTDx208@ly-workstation>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK3PEPF0000021B:EE_|SEZPR02MB6988:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6f6c97c-eed7-4d98-b988-08dcce4ab849
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5B7ri+O0h9RgcKjdKhRfsgqVQGT6SaoUsxohL8TpHrmVTRNYhVQwBdJuqaWU?=
+ =?us-ascii?Q?S2okn0n3lTb/VfCdn4BHv92sRZhZaiis7W30/YDI8/lgMguU9S6tymD0Jva2?=
+ =?us-ascii?Q?s845G/gqbngDmkLiewPiaZ/vaiDNmK9G7Wf4C00xUuE5tj9FShNJSpEtRAtY?=
+ =?us-ascii?Q?RxZ0ntZFLLYGjxCtnJeyUY3bwkf8lA73FVcFuIwNa6Ri6TknfFOfq52Syp+r?=
+ =?us-ascii?Q?YNtaekpJyUCONki8eUumQzyZjx3MAOuqnAIF3WT3XtSeAmzKww2Br9Qo/hys?=
+ =?us-ascii?Q?ICTb6O0g+tuPyWK0jjYkAAYbSP5tT8Ytk5Mjn/xyEjiK6Axmhll7ipr9QrvF?=
+ =?us-ascii?Q?PiOKknG6Wy73Bg1AKIjZ1Au1hK4fAHbCOhgzy48StoyTWeB2YrLOuuHYaNQT?=
+ =?us-ascii?Q?xDWp4MGT+nacKMJ5PDmz5DzwjtqsSwsXzIgF1KZiz9Zw1YrWpfHxQVHnIkUL?=
+ =?us-ascii?Q?RPP9BmbKFSv2k1TziHHFaSv84+jgRqbqTNly5h6Xx5h8hcXUYvE/AV2zwwVL?=
+ =?us-ascii?Q?GVz295y6cRVOUZfMRfdNyWgg507y9lp9h3zOl+tDyP7Spu6ATXhz7j5MLR1X?=
+ =?us-ascii?Q?RyGZz5rtAqubLMCJO7lPoo3406nB/S6Sh/rK/1ABMavQZKgu3irCMaq8x/Ys?=
+ =?us-ascii?Q?kd+kzLeB427xR8x2c0M65WljcAU60/oV+8rya4tTArAxhSbwtzlIKp+qHSo9?=
+ =?us-ascii?Q?Xqp/VfjCzjd54oeFWB68Hjw8yCQkRLg22TBHzZOHnfiOpgIBQ4fuFGAR3Q0n?=
+ =?us-ascii?Q?3ZkaeHO5oQDHyP2IuAQ+Rg7LHWyoHfOZBQ/Mnbl7yZz75UtlcGSilHogOUSv?=
+ =?us-ascii?Q?oyu0JGYmzgqh62iKKwUfNd/tN4N2srPtiUTK42PQH7NmQ+YMg1gi7VFt5Eqa?=
+ =?us-ascii?Q?T4Oq4rLDuQn7cRPjRQQau8T2RnQ6P0lwQlvn+wYTkr+JjMS2sOlU3exww/P9?=
+ =?us-ascii?Q?wglDmGMw1Vxp/pp7IFhiHCyxs3wWOu3vuWZtBCZNy+4jd+l9QRhHzFZZr9g9?=
+ =?us-ascii?Q?bn4UBiqkcBeNkgkd07uTw5ZV80yffS7jdzc38KjkBuzS26H2OzmcXd7+6qt4?=
+ =?us-ascii?Q?KN5CR+tNjaFlXWnATq3YxfolDw3NmqaNSdJCiqNRjSjxH+RA0RA1SO9lDTA7?=
+ =?us-ascii?Q?z+0BkqQO2uBx7L7R3Lo8Eb/oHH3AFeJDSAbrNr3qAOLS8rN3xBnksdCMUwPr?=
+ =?us-ascii?Q?xK3YboS2HlHk+pBi9MipJISN6JkUOvTmIn1ZhBVO160XNL8ykEqncGubCsdL?=
+ =?us-ascii?Q?tNfuTlXPOOpTisVXDY1oGrMgYdKWIELo4/Bmol2sFBiFatrFKZhsWz0JH0pM?=
+ =?us-ascii?Q?ocPGGGWk7x6SVkyxw/qxtl17KcZARgjvi9pTxKnDIty8M5Kx4MY5N/Z9zSV2?=
+ =?us-ascii?Q?29ccLLXW0dt8fhl0HWYwpX8gO6/97ggz4mJ5+BWEHj2rx/oTEnSu5cGqiUnW?=
+ =?us-ascii?Q?slemgs/tYStvne4BHxhyOmJ1sbUXrtym?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 08:05:49.2946
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6f6c97c-eed7-4d98-b988-08dcce4ab849
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK3PEPF0000021B.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB6988
 
-On Fri, Sep 06, 2024 at 02:52:38PM +0800, Lai, Yi wrote:
-Hi Yi,
+__seq_open_private() uses kzalloc() to allocate a private buffer. However,
+the size of the buffer might be greater than order-3, which may cause
+allocation failure. To address this issue, use kvzalloc instead.
 
-> 
-> I used Syzkaller and found that there is task hang in soft_offline_page in Linux-next tree - next-20240902.
+Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
+---
+ fs/seq_file.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I don't know if it is related, but we had a fix for this commit for a
-ltp failure due to locking issues that is there in next-20240905 but not
-in next-20240902.
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index e676c8b0cf5d..cf23143bbb65 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -621,7 +621,7 @@ int seq_release_private(struct inode *inode, struct file *file)
+ {
+ 	struct seq_file *seq = file->private_data;
+ 
+-	kfree(seq->private);
++	kvfree(seq->private);
+ 	seq->private = NULL;
+ 	return seq_release(inode, file);
+ }
+@@ -634,7 +634,7 @@ void *__seq_open_private(struct file *f, const struct seq_operations *ops,
+ 	void *private;
+ 	struct seq_file *seq;
+ 
+-	private = kzalloc(psize, GFP_KERNEL_ACCOUNT);
++	private = kvzalloc(psize, GFP_KERNEL_ACCOUNT);
+ 	if (private == NULL)
+ 		goto out;
+ 
+@@ -647,7 +647,7 @@ void *__seq_open_private(struct file *f, const struct seq_operations *ops,
+ 	return private;
+ 
+ out_free:
+-	kfree(private);
++	kvfree(private);
+ out:
+ 	return NULL;
+ }
+-- 
+2.30.0
 
-Fix: https://lore.kernel.org/linux-next/20240902124931.506061-2-kernel@pankajraghav.com/
-
-Is this reproducible also on next-20240905?
-
-> 
-> After bisection and the first bad commit is:
-> "
-> fd031210c9ce mm: split a folio in minimum folio order chunks
-> "
-> 
-> All detailed into can be found at:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page
-> Syzkaller repro code:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.c
-> Syzkaller repro syscall steps:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.prog
-> Syzkaller report:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.report
-> Kconfig(make olddefconfig):
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/kconfig_origin
-> Bisect info:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/bisect_info.log
-> bzImage:
-> https://github.com/laifryiee/syzkaller_logs/raw/f633dcbc3a8e4ca5f52f0110bc75ff17d9885db4/240904_155526_soft_offline_page/bzImage_ecc768a84f0b8e631986f9ade3118fa37852fef0
-> Issue dmesg:
-> https://github.com/laifryiee/syzkaller_logs/blob/main/240904_155526_soft_offline_page/ecc768a84f0b8e631986f9ade3118fa37852fef0_dmesg.log
-> 
-> "
-> [  447.976688]  ? __pfx_soft_offline_page.part.0+0x10/0x10
-> [  447.977255]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
-> [  447.977858]  soft_offline_page+0x97/0xc0
-> [  447.978281]  do_madvise.part.0+0x1a45/0x2a30
-> [  447.978742]  ? __pfx___lock_acquire+0x10/0x10
-> [  447.979227]  ? __pfx_do_madvise.part.0+0x10/0x10
-> [  447.979716]  ? __this_cpu_preempt_check+0x21/0x30
-> [  447.980225]  ? __this_cpu_preempt_check+0x21/0x30
-> [  447.980729]  ? lock_release+0x441/0x870
-> [  447.981160]  ? __this_cpu_preempt_check+0x21/0x30
-> [  447.981656]  ? seqcount_lockdep_reader_access.constprop.0+0xb4/0xd0
-> [  447.982321]  ? lockdep_hardirqs_on+0x89/0x110
-> [  447.982771]  ? trace_hardirqs_on+0x51/0x60
-> [  447.983191]  ? seqcount_lockdep_reader_access.constprop.0+0xc0/0xd0
-> [  447.983819]  ? __sanitizer_cov_trace_cmp4+0x1a/0x20
-> [  447.984282]  ? ktime_get_coarse_real_ts64+0xbf/0xf0
-> [  447.984673]  __x64_sys_madvise+0x139/0x180
-> [  447.984997]  x64_sys_call+0x19a5/0x2140
-> [  447.985307]  do_syscall_64+0x6d/0x140
-> [  447.985600]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  447.986011] RIP: 0033:0x7f782623ee5d
-> [  447.986248] RSP: 002b:00007fff9ddaffb8 EFLAGS: 00000217 ORIG_RAX: 000000000000001c
-> [  447.986709] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f782623ee5d
-> [  447.987147] RDX: 0000000000000065 RSI: 0000000000003000 RDI: 0000000020d51000
-> [  447.987584] RBP: 00007fff9ddaffc0 R08: 00007fff9ddafff0 R09: 00007fff9ddafff0
-> [  447.988022] R10: 00007fff9ddafff0 R11: 0000000000000217 R12: 00007fff9ddb0118
-> [  447.988428] R13: 0000000000401716 R14: 0000000000403e08 R15: 00007f782645d000
-> [  447.988799]  </TASK>
-> [  447.988921]
-> [  447.988921] Showing all locks held in the system:
-> [  447.989237] 1 lock held by khungtaskd/33:
-> [  447.989447]  #0: ffffffff8705c500 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x73/0x3c0
-> [  447.989947] 1 lock held by repro/628:
-> [  447.990144]  #0: ffffffff87258a28 (mf_mutex){+.+.}-{3:3}, at: soft_offline_page.part.0+0xda/0xf40
-> [  447.990611]
-> [  447.990701] =============================================
-> 
-> "
-> 
-> I hope you find it useful.
-> 
-> Regards,
-> Yi Lai
-> 
 
