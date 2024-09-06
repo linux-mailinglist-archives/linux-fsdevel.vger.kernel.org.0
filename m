@@ -1,195 +1,275 @@
-Return-Path: <linux-fsdevel+bounces-28828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B3496E9F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 08:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434DE96EA1E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 08:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD0528A1AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 06:16:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616591C23314
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 06:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6508914BF87;
-	Fri,  6 Sep 2024 06:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1C613BC0D;
+	Fri,  6 Sep 2024 06:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l2wdSrAl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E81214A4C1;
-	Fri,  6 Sep 2024 06:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725603357; cv=none; b=GihTuCZ7ibiz66rV0FU+hHdh/lQvuCRkuQRkCfaL23/WEF+WvUtCq1jFm0SkvgnTqUeGurzBc2fW9+lLmHDif5GA0tCUirJkYAa//R8P57V740L3whLDx7cdQHnjpnRxdiac7NoARpwX0DiCtOuG9eaTQzfW6VdUV/AIj0eY+tA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725603357; c=relaxed/simple;
-	bh=DGiN00MEFZb29//k0HhtpU7XT9RPs4nXcpaAdtQZRAk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YW+yS1p/532wTlbvgtnpCUY48+oIx8a3V51tnPVQIvu1+KjABJFlXDbgh6qCv0o/mEWSDF0mChKtBfrkXQgXr/QMumDKpCnA635S5r5l4bAKe1MbnSnk1ZyGxwvjSFZHwT8yt4KCmKhR4T9Lf+WoUgK8dqlOFmQShUCfACSg8SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X0QvZ5hgYz4f3jkc;
-	Fri,  6 Sep 2024 14:15:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 28AB51A0568;
-	Fri,  6 Sep 2024 14:15:49 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgCH2oYLntpmsS4SAg--.27881S4;
-	Fri, 06 Sep 2024 14:15:48 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH -next] ext4: don't pass full mapping flags to ext4_es_insert_extent()
-Date: Fri,  6 Sep 2024 14:14:01 +0800
-Message-Id: <20240906061401.2980330-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F2327450;
+	Fri,  6 Sep 2024 06:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725603959; cv=fail; b=hDxvA8H1HPv+YoLkcIh8LjeAgtTjBPp4Z9P451XaNtmjDBZQoBCnPQ/mhV5QXThlG/x8d3XQGjz2brs0oOZXwKF7KCOjr4kKrA8E3LZzw3kxFfAOrHh6XCOEQKnIXGw2l5An46OonRzGu6EhrkhDF7HFFRZtrWN6odzY2zo58go=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725603959; c=relaxed/simple;
+	bh=Gv53wYvcgEdApdjwhKnz+T59tYpyYUtENz6vyriFHIU=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=rThPZEdnQ1oX2+EjL2erkzgwWkKN1lu2nRk0mhbvBnOUmFiHCGPf+PNGx63n+tPzgp4ikWhMgM/wZWr0p6Fx645JGD0q5LhnkI954Hyuk/M+WXc+L1RABG14mo5GL5zJ3/hmYqQG2mDaSMNGuCshB/SJGBIml/TkTb13NZZX+I8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l2wdSrAl; arc=fail smtp.client-ip=40.107.244.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=frBlN4lIKwr0sTea2C9PIWE7ggpGCoa1t6aJIXQDzETEZJfm68tSD8fIC0EyVwtumw8qZrKfBdj2LJRKzd1RHUmcWypQbwbx3BXlcqtpq640VSg/sXPexlwCxvyaXy6KJgN7o9x7mocgVpGUn6i34UE+BMBzg5PwHIN8obVEAOQ1HPXcE6D6AHZeHvcn24+lo+ngQntgQWzErxOgReV+PiqTtyFpKhZT1ujnsq2jr6WXDJdKQEn+odmu8D9HfOOixuqSnxBo8NcLlBaB8lC6+lsV+D/tyEYfO3uHEwr5FiQ2k4wWV5DRWzHznWqVFuFbNh4GlmmQ1ISVkyIIiIi6ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5yoTby9ct0vxVKAUMvwbhURvMRMtDZTCIToUhzGW0YM=;
+ b=FduCfRaija00nJHm0D0EPSlQ9rW+yCfuTcuIEtudr2m6CXXK3JXBlyZE38jWt/zYRgaOgxYUS6PVpQwJdTdZzvEp1LZmpQb0qjN1Cb5lYNzWJU7M6T5m/tgH8SYEIMcyLiXOMkV+muZbYpOXAZunH1wqvDdHJAh/lCbB/5VFGK84n3Hfgy4q4r1KFW15M8d0ZlG10Y85R0FA7BQHoO1qWDbbrMWAcu8Pko5kNRS2EZ+V1ySmSnwOJ64JInk5qmBf/jJv/Xcak3odp1IsZ3Yg0ZXYJSj0hmcgFRhBRn7vzZ67WRBAv69kcZNY9GTMZktxiyqbcJhuwRAdCRlxAM3xHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5yoTby9ct0vxVKAUMvwbhURvMRMtDZTCIToUhzGW0YM=;
+ b=l2wdSrAlU/FIKYuVfapFH0x+wgyF7aREg08YlaafPP5QP/9Gc4Rg9UGtgbp0kkXIAmkcoQ7uBhzeJpUktY7r4C8r+uDB3IlfV0Mfy3CgEbtOHjROfI4G5bg7Y8vj1zcn0RQPCrr4PRT+UPomCxOkoSQoCh+sWdkBZVLzB+u/nlsaCF21a0g8Jc+3fbiskhQYX6SyeHetiWS5FaNvFaxYGmsSopUON4ak6gQ4+TzYPIEmDhImeNz5gRuEsVDGtpL3qHk9S9gkThUAMRfdWX9wXJXw1oee7IX/LwTsN5CsTodYMJpRp+cgi0g/Vyy7YhiQ8vfSOkDgxkcj2IKA82nPCg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ DS0PR12MB8815.namprd12.prod.outlook.com (2603:10b6:8:14f::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.27; Fri, 6 Sep 2024 06:25:55 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
+ 06:25:55 +0000
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <50013c1ee52b5bb1213571bff66780568455f54c.1719386613.git-series.apopple@nvidia.com>
+ <20240627113328.ozqkzhloufrpsdcr@quack3>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Jan Kara <jack@suse.cz>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+ dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+ jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
+ mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
+ ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
+ tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+ jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
+Subject: Re: [PATCH 06/13] mm/memory: Add dax_insert_pfn
+Date: Fri, 06 Sep 2024 16:21:53 +1000
+In-reply-to: <20240627113328.ozqkzhloufrpsdcr@quack3>
+Message-ID: <87seudb8nm.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY8P282CA0021.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:29b::34) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCH2oYLntpmsS4SAg--.27881S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxWryxXFy8JFWxCFyUCry5XFb_yoWrZFyxp3
-	9xCF18Gr4rWw409ayIyr4UXr15Ka47KrW7ArZakr1SgFW3JrySyF1UKFyYvFySqFW8Xr1Y
-	vFWFk34UCay3Ga7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|DS0PR12MB8815:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1de8f71-9409-408a-0f4b-08dcce3cc320
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7tOlp9WHQB+SRopOWA1znLKekTVpxl1+0qy/BNtXEJ9XDOfHKUMH7zynvu/Q?=
+ =?us-ascii?Q?50Mcygz/PTpkQR08YjUHKpEXia60P8QdQitKZ4eeoBDFi40eHC/ttgw0oHSb?=
+ =?us-ascii?Q?/9ggp9Oq6bDek1rP0TN9KRnTVjBsFLSkKytgW32n/n4f+bSy4XKCWboMgb5p?=
+ =?us-ascii?Q?ouK9netXEel2AW4ViSTO3Rm9OItA/kften8CWhY+t9f6TpqIWz4fSulNYp5O?=
+ =?us-ascii?Q?qeJQp38NnZoGalWR7014UPjzEdzOkRf+oVLL6JvXZHzDF97iVsPi9zriwEct?=
+ =?us-ascii?Q?XGHBs/bY64Y6gQweDbrgarg7BJrXpv6pWUu/n5gQ5nXUr9gwt0iCL+bDmSHK?=
+ =?us-ascii?Q?B8jC8bp2UxBkWGBfA3D3WcqXEyYH6g2fZqPL71mr/xani/gOh3mYI6KYTxB1?=
+ =?us-ascii?Q?307xuXNJExlbO7YM5gshdmX6epZfFAbyNhMkwRQoPAB/ZJ0XRukV1LIAby3k?=
+ =?us-ascii?Q?NgjfKqP7y+wWX2pMg3Rz0S8OKeCGabBQcsndNgnSSFGM+yJknMz8L5vKHTvp?=
+ =?us-ascii?Q?9h/zaB4HEzC+4y0ZMEDhJcRioMDnrlzoqyYvBPbjyy5pmFAg5n9eAB2Owxlo?=
+ =?us-ascii?Q?nFsgDRKaEUdFXka5y8jT5fKq5csHygKXKwEFBDEqSS2QTs2Go048REhbthid?=
+ =?us-ascii?Q?WMOcl0NDxGeU8QoYIqRoHh6jvtAlYw4MHA2pFH6kb2HDaXxeAIVHZq4ZQj3C?=
+ =?us-ascii?Q?vh/gMeZY6SOw0aA/trOPod2kO8wDT2v9W4ONJZUz7lnQipOXA9aegDifJNCx?=
+ =?us-ascii?Q?ZtPXXu3MAhbCHWRcuxZ5MoSsAzHy7S9k3uELbh8oScwiszl1BujyJOePlGCU?=
+ =?us-ascii?Q?uXzOMc6CTbctHJgVUhRh8FeMYnQWTVdVn8nFeyAipcAtrLIyUlx63qrZWsjD?=
+ =?us-ascii?Q?kyRmo8+AmZuveSj8bGkkhBciGGnLFg3HQjIb7Ool7DaWjBRPhmuxjJNPWUPV?=
+ =?us-ascii?Q?MrNnik3GsyIc1n1jKBxU54oyuvwk2lrAdLWG6ltnoDqVAhjmhD0turmt7eT5?=
+ =?us-ascii?Q?4eBFQ6QqXtj5VWzafnj43XbDeyS/cYDvCfzF/MCkZOGJmzGj91BPajMqxjB6?=
+ =?us-ascii?Q?mrGh/+73tDvcuTzn6ESz2IPaTpgs/LcpjiXxXd/U23coEWXkWMOqP2TlB75a?=
+ =?us-ascii?Q?fojTqfUXaUkJI82SFqHo5A2MoaRhYMuYIuZKoBDwrIqpPhCKTCcCX/DW4y00?=
+ =?us-ascii?Q?h7Wu2RYzLi1BERBQHJp3jEL8sW2VYl/aXfa2ENKdF2D+Lw/QO2dzqwbR8vWW?=
+ =?us-ascii?Q?SKWJ1RVPxUnOKHvAMIkRB+UOH1r2yIjaWRQVk+0gjNfod6sYhtOyStJAgbxo?=
+ =?us-ascii?Q?+4I3Kx9Xc87ah6dsT+h26nWp5o1K4A/Uy9eP9SEXY1bhqw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?v5re1mP/kGCdhCmJabWt2lZoVI4qc2rueOJciGra+YBTCenLV9nBpRwR1RC3?=
+ =?us-ascii?Q?MJrvZQs09ied6+J0iKzgnhKh2ovopftWp1KRdf2oBlj706eghm9Ro8DZkSgT?=
+ =?us-ascii?Q?SYmQgVvWsUbZ/CbNZ3kQNCixhDTcQhaMPdjPP+DkvTUz/92bAbjsZFZ0tJJ+?=
+ =?us-ascii?Q?08iQtOtNySu878H/YyXUlTwyKqJNspFe0pm7lo3lrZBA0ekKXO0g3DqQh7Pf?=
+ =?us-ascii?Q?T4Y0seetLSsrBXRECIsSN/oMFZ0gR/XR9TuU/6dP3UwfcCJE8s/WnupP6KxA?=
+ =?us-ascii?Q?EWi8PDbyKSPEJ9Ego1MgV31E4Je6K3FXjnO1d23wqqtjXaneH/9G3Ja6UPg5?=
+ =?us-ascii?Q?/AWibFuLU/dPHUogy3bc6Wol1OzMG2SQjtX7PYV0ZaB2OLgtCH0pF9k2TGhC?=
+ =?us-ascii?Q?aqpOVszXZo9DfDLzKHrZC988LZa5U4ne0FbDAubKZ3h0qDkymcWsjpcMvLx+?=
+ =?us-ascii?Q?gBbTeJIUON89Q/9NfVoV20awkbmufkZRKvZUoO/6epEez/8R0+1GC29gjvoX?=
+ =?us-ascii?Q?oQKMEUCtz9avbVk2mbWo80Vx4q6qOakUUeoaulBnVNc/vQFnv/sU5Wdvsrcs?=
+ =?us-ascii?Q?dW9f8BLTajRt1LI/HOWVFbpJnZPClPiPLFfTlce7rcSlx9wXXsbtOb7z7I11?=
+ =?us-ascii?Q?U6juQc67I/jIsnPt7XoKxc/i4SU130Sxq8j5U8ITXZ9CgWJ4bpFra0syFnd5?=
+ =?us-ascii?Q?TZFrBVt29nfWoKUOY9IQYcgi3xFKKTjta2djJLMw6L/iEYyKok0F/QuCn2eM?=
+ =?us-ascii?Q?8/qhiY7qRT7oK/+ndgF0QWn3UYjVg/THE2vpIrN3iCvcfr5CvAEFjDLiOmvw?=
+ =?us-ascii?Q?iPnHFsrz/YrenIVS5FXykAN2U+9L6gn/GTUlmN8XL36Rp2jJZcynsLi7wyto?=
+ =?us-ascii?Q?HUAzGLn2YC3LRQY7xKiny+oIjVQ7SwYs6pFVAs+udzdHmhjmlzRLxocR+NRg?=
+ =?us-ascii?Q?R20LbDITiiFG9OLb4g8dP+s6gBgkMuaP2wClJwtLPyN4kzTEl1t0kEvO18XJ?=
+ =?us-ascii?Q?H62BvTQQkfRCT6XsEAJnlpPoIjLIbVUVtePmcsmSGJDFE4XWGj7vJ2ZkhoHD?=
+ =?us-ascii?Q?dC/MXcHdQKBFavVM5C+60OrGD9SpAhW/rIfLXV3qKCcQGvFvB+m6y67kJxGz?=
+ =?us-ascii?Q?ZXPklaqAj6VTcf+l8xOsa6O1/+OrWmDHJxD21H3aPzeCkDTGTmq3Tz+enDp1?=
+ =?us-ascii?Q?dHyQSqZw5wYrIaflUd3awxp+w6PxkvPR4nQYcWPpZ/lOwaav7dusbPkdiDn7?=
+ =?us-ascii?Q?nHvlkR/m/DSYUIr1iX6N6b89QCgxw9l9IOC4kW8kd1YTk70D2TMXW5JI8t0t?=
+ =?us-ascii?Q?EpAn+DnEVFoFDDK5vXCu6J0UvGtylPJDLbjdhtLYow83REcLJLNT7Gci/Do8?=
+ =?us-ascii?Q?OSbWoRjx8AAssnmOCgIebiHMce6hHstneD3EqBTl39HNH2ZIaFpOFXLKtSfr?=
+ =?us-ascii?Q?WyPoFfaYa5lBhAbDrwIwdf1VxE6l5Hae6D3sS3TgZ7VWnihV8Bo2TNcA1q17?=
+ =?us-ascii?Q?b/tFpmLwi60h37d3dn7c41jTN6FuyLcWYai1SZaYPUV68vRVoVcL0jS89Z9j?=
+ =?us-ascii?Q?VnJxyaXARoRK2W3Eh8VUJ5qHB1EBFV4SoxJhKYrg?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1de8f71-9409-408a-0f4b-08dcce3cc320
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 06:25:54.9695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jWWF6kKX3e17lDUexyK5K3VWsHWh6s5wuAQONjytzomouWbo2hW1wZtSa53qWwo1/Oq8GG/krsEFCz9+cj/a3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8815
 
-From: Zhang Yi <yi.zhang@huawei.com>
 
-When converting a delalloc extent in ext4_es_insert_extent(), since we
-only want to pass the info of whether the quota has already been claimed
-if the allocation is a direct allocation from ext4_map_create_blocks(),
-there is no need to pass full mapping flags, so changes to just pass
-whether the EXT4_GET_BLOCKS_DELALLOC_RESERVE bit is set.
+Jan Kara <jack@suse.cz> writes:
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/extents.c        | 4 ++--
- fs/ext4/extents_status.c | 8 ++++----
- fs/ext4/extents_status.h | 3 ++-
- fs/ext4/inode.c          | 6 +++---
- 4 files changed, 11 insertions(+), 10 deletions(-)
+> On Thu 27-06-24 10:54:21, Alistair Popple wrote:
+>> Currently to map a DAX page the DAX driver calls vmf_insert_pfn. This
+>> creates a special devmap PTE entry for the pfn but does not take a
+>> reference on the underlying struct page for the mapping. This is
+>> because DAX page refcounts are treated specially, as indicated by the
+>> presence of a devmap entry.
+>> 
+>> To allow DAX page refcounts to be managed the same as normal page
+>> refcounts introduce dax_insert_pfn. This will take a reference on the
+>> underlying page much the same as vmf_insert_page, except it also
+>> permits upgrading an existing mapping to be writable if
+>> requested/possible.
+>> 
+>> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>
+> Overall this looks good to me. Some comments below.
+>
+>> ---
+>>  include/linux/mm.h |  4 ++-
+>>  mm/memory.c        | 79 ++++++++++++++++++++++++++++++++++++++++++-----
+>>  2 files changed, 76 insertions(+), 7 deletions(-)
+>> 
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index 9a5652c..b84368b 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -1080,6 +1080,8 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
+>>  struct mmu_gather;
+>>  struct inode;
+>>  
+>> +extern void prep_compound_page(struct page *page, unsigned int order);
+>> +
+>
+> You don't seem to use this function in this patch?
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 34e25eee6521..c144fe43a29f 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -3138,7 +3138,7 @@ static void ext4_zeroout_es(struct inode *inode, struct ext4_extent *ex)
- 		return;
- 
- 	ext4_es_insert_extent(inode, ee_block, ee_len, ee_pblock,
--			      EXTENT_STATUS_WRITTEN, 0);
-+			      EXTENT_STATUS_WRITTEN, false);
- }
- 
- /* FIXME!! we need to try to merge to left or right after zero-out  */
-@@ -4158,7 +4158,7 @@ static ext4_lblk_t ext4_ext_determine_insert_hole(struct inode *inode,
- 	/* Put just found gap into cache to speed up subsequent requests */
- 	ext_debug(inode, " -> %u:%u\n", hole_start, len);
- 	ext4_es_insert_extent(inode, hole_start, len, ~0,
--			      EXTENT_STATUS_HOLE, 0);
-+			      EXTENT_STATUS_HOLE, false);
- 
- 	/* Update hole_len to reflect hole size after lblk */
- 	if (hole_start != lblk)
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index c786691dabd3..ae29832aab1e 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -848,7 +848,7 @@ static int __es_insert_extent(struct inode *inode, struct extent_status *newes,
-  */
- void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 			   ext4_lblk_t len, ext4_fsblk_t pblk,
--			   unsigned int status, int flags)
-+			   unsigned int status, bool delalloc_reserve_used)
- {
- 	struct extent_status newes;
- 	ext4_lblk_t end = lblk + len - 1;
-@@ -863,8 +863,8 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
- 		return;
- 
--	es_debug("add [%u/%u) %llu %x %x to extent status tree of inode %lu\n",
--		 lblk, len, pblk, status, flags, inode->i_ino);
-+	es_debug("add [%u/%u) %llu %x %d to extent status tree of inode %lu\n",
-+		 lblk, len, pblk, status, delalloc_reserve_used, inode->i_ino);
- 
- 	if (!len)
- 		return;
-@@ -945,7 +945,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 	resv_used += pending;
- 	if (resv_used)
- 		ext4_da_update_reserve_space(inode, resv_used,
--				flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE);
-+					     delalloc_reserve_used);
- 
- 	if (err1 || err2 || err3 < 0)
- 		goto retry;
-diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
-index 4424232de298..8f9c008d11e8 100644
---- a/fs/ext4/extents_status.h
-+++ b/fs/ext4/extents_status.h
-@@ -135,7 +135,8 @@ extern void ext4_es_init_tree(struct ext4_es_tree *tree);
- 
- extern void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 				  ext4_lblk_t len, ext4_fsblk_t pblk,
--				  unsigned int status, int flags);
-+				  unsigned int status,
-+				  bool delalloc_reserve_used);
- extern void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
- 				 ext4_lblk_t len, ext4_fsblk_t pblk,
- 				 unsigned int status);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 54bdd4884fe6..599190d7ddf4 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -483,7 +483,7 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
- 	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
- 			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
- 	ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
--			      map->m_pblk, status, 0);
-+			      map->m_pblk, status, false);
- 	return retval;
- }
- 
-@@ -563,8 +563,8 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
- 
- 	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
- 			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
--	ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
--			      map->m_pblk, status, flags);
-+	ext4_es_insert_extent(inode, map->m_lblk, map->m_len, map->m_pblk,
-+			      status, flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE);
- 
- 	return retval;
- }
--- 
-2.39.2
+Thanks, bad rebase splitting this up. It belongs later in the series.
+
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index ce48a05..4f26a1f 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -1989,14 +1989,42 @@ static int validate_page_before_insert(struct page *page)
+>>  }
+>>  
+>>  static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
+>> -			unsigned long addr, struct page *page, pgprot_t prot)
+>> +			unsigned long addr, struct page *page, pgprot_t prot, bool mkwrite)
+>>  {
+>>  	struct folio *folio = page_folio(page);
+>> +	pte_t entry = ptep_get(pte);
+>>  
+>> -	if (!pte_none(ptep_get(pte)))
+>> +	if (!pte_none(entry)) {
+>> +		if (mkwrite) {
+>> +			/*
+>> +			 * For read faults on private mappings the PFN passed
+>> +			 * in may not match the PFN we have mapped if the
+>> +			 * mapped PFN is a writeable COW page.  In the mkwrite
+>> +			 * case we are creating a writable PTE for a shared
+>> +			 * mapping and we expect the PFNs to match. If they
+>> +			 * don't match, we are likely racing with block
+>> +			 * allocation and mapping invalidation so just skip the
+>> +			 * update.
+>> +			 */
+>> +			if (pte_pfn(entry) != page_to_pfn(page)) {
+>> +				WARN_ON_ONCE(!is_zero_pfn(pte_pfn(entry)));
+>> +				return -EFAULT;
+>> +			}
+>> +			entry = maybe_mkwrite(entry, vma);
+>> +			entry = pte_mkyoung(entry);
+>> +			if (ptep_set_access_flags(vma, addr, pte, entry, 1))
+>> +				update_mmu_cache(vma, addr, pte);
+>> +			return 0;
+>> +		}
+>>  		return -EBUSY;
+>
+> If you do this like:
+>
+> 		if (!mkwrite)
+> 			return -EBUSY;
+>
+> You can reduce indentation of the big block and also making the flow more
+> obvious...
+
+Good idea.
+
+>> +	}
+>> +
+>>  	/* Ok, finally just insert the thing.. */
+>>  	folio_get(folio);
+>> +	if (mkwrite)
+>> +		entry = maybe_mkwrite(mk_pte(page, prot), vma);
+>> +	else
+>> +		entry = mk_pte(page, prot);
+>
+> I'd prefer:
+>
+> 	entry = mk_pte(page, prot);
+> 	if (mkwrite)
+> 		entry = maybe_mkwrite(entry, vma);
+>
+> but I don't insist. Also insert_pfn() additionally has pte_mkyoung() and
+> pte_mkdirty(). Why was it left out here?
+
+An oversight by me, thanks for pointing it out!
+
+> 								Honza
 
 
