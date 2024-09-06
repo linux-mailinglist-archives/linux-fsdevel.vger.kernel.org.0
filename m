@@ -1,239 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-28850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B472696F6FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 16:36:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A66D996F708
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 16:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB8F9B26C1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 14:36:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247F0B223FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 14:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DD81D31A9;
-	Fri,  6 Sep 2024 14:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36001D0494;
+	Fri,  6 Sep 2024 14:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="hoeKX/32"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fnguzOGr";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GoQ0ryLQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427001D3189
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Sep 2024 14:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633314; cv=none; b=e8oKRrxlgMCm3a60KCfSAmJcw3JZzHjYg02etlqMnfOF8GkGJKbD4QN38le0+KahFGwrTuNwEDSqreIyT0mYXBv/mnsN7DRqO55qp9GwE2Yf7k8tpz09Lo+fHC+bPjFuF87VvmwXCSGy2Vyidl/5mgJL/L7Kv21iCbsN4ZrlDjc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633314; c=relaxed/simple;
-	bh=534DgAJ0D8qJtVjjpSo8v98NEf5nHaEOPP1nax1XHpw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e3aocwNrmi8tQoRXBw1Uws1ogjoOWNQrt+UzbK6cgstR8RpeV8N1ya/tD50VzHEDrdd+8dyb14+ZLiDWan873GUi8o8Sru09YbksGTsljO1Ne3Z7dmr3hblMVRQ4v1LNiF3fPZX2olCYcGk4Klg4Hh2SRcLsV6cFtRGq/hYXnBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=hoeKX/32; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 507B93F5B8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Sep 2024 14:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725633310;
-	bh=RmZbkiefQJov/K5sBneAkkza7xrJwBfUJ2uOjsmm8Fs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version;
-	b=hoeKX/323CqPQQ2u/lrIILaw/IjqF0Pr7zDE2C+TkcoXvr6apnBLievrdHYFw6Uc+
-	 or06a3xua/eBV1/Pn2WS7YSy7qsSn7Yn2sxuq4/9iScANvnczYDH+HXdVL4G3GUiM0
-	 VlXfwEhjsv8jEMGESE7QneKwdXrpwy116EzkSc12aNWKPLooC7ieQoZl/hUMEI3HsV
-	 J75my+V2XGuZKHDgg+orG34XUO6FQv0DM1sLlvhjKQci70iCv4y7MpwHhNDCSmncxa
-	 zU1Gl31bMWj2GLPXe8wyH0o9W2JPoV9LnToZCHuUJoqcchJHGHmnL5KBcYLxlu0PgI
-	 /iG6N5GQJovWg==
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-5343a54e108so2090113e87.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2024 07:35:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725633309; x=1726238109;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RmZbkiefQJov/K5sBneAkkza7xrJwBfUJ2uOjsmm8Fs=;
-        b=aLaxNUsSdAnS3l7utB88GhdrUx0NEFEeAD3v0GuI0mr0dJxMHHnJ+SnZ7BLcJnddj+
-         mIubagTQka7J5BZgsZ+ZWd6vTYdPvvB71T2MO9hM4x/vLpuh5mmptdwJXBG5acdDAdYr
-         WBu3rtf7j3Xp3VkkBHasFJp+s1ouneq3Oucxq5y9C2lmkj6fN7sXGGW9OziAD5QLmDqL
-         QeZXh9lOw8IPA4lzy3ThCUx0gUnDD7c5GmyPhIce1Xoi8aNNW828BXAjPuV6rqPqnKQo
-         ZZPKV3sCSGW1gAqkRmYczYmvXxCxS/cwYulvjWRS1E5UjGda4kG8ePZ2UFWkb+ooYYB4
-         YDyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzod/NE87eeoaKTnkjWycBx8u0oMjTxFD2NXP3yJg4I3BfRhL76LbJNMv1EkBi5kktdcxH/NpnEbmPszFp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgBu5yxVk8EHH4QHD9aCCURrhaoj7sr8ouBE8N3D9JCO8TzIpl
-	GryizBn/VkV2uLBMFCAtJe7PLh6+4BDanVqXA8bmGllMPRgsQfTfVwXbeOmt80gAdz0N0XotZXu
-	5RcjZ//Ne0RvtE0Q9XDN0HH2tMeNacKdsHcDRgrJlA0HRL1YIy7PtgJ7Xlae1QkWol4n105IZJs
-	Tx9bA=
-X-Received: by 2002:a05:6512:3d09:b0:530:b871:eb9a with SMTP id 2adb3069b0e04-536588067b5mr2251701e87.47.1725633308741;
-        Fri, 06 Sep 2024 07:35:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG83mvznC7hs+nx8gK/BrkaCD9AoiB5al3t+MVykimwEDs6U9Y3xZBKl0YrkESBcyajurROkg==
-X-Received: by 2002:a05:6512:3d09:b0:530:b871:eb9a with SMTP id 2adb3069b0e04-536588067b5mr2251678e87.47.1725633308238;
-        Fri, 06 Sep 2024 07:35:08 -0700 (PDT)
-Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236cee0sm281787466b.101.2024.09.06.07.35.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 07:35:07 -0700 (PDT)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: mszeredi@redhat.com
-Cc: brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] fs/fuse: convert to use invalid_mnt_idmap
-Date: Fri,  6 Sep 2024 16:34:53 +0200
-Message-Id: <20240906143453.179506-3-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240906143453.179506-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20240906143453.179506-1-aleksandr.mikhalitsyn@canonical.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBDB1CEAC9;
+	Fri,  6 Sep 2024 14:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725633425; cv=fail; b=G0+y2LRm9vM3/az2cPJEeBPnT7g5mJIiF2zHr90M2/7w30QjRt+fNDzW6ntZm3Zj6RxESW/Lnjt4Xyldren5G1U8tICPfxpkTqZbfA8+PSccuuyXphMqKw/JXVCyfFpamvhJayv/87gnPjDbKLMWxYxZbSpwhBIbCmOlLCSAFOs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725633425; c=relaxed/simple;
+	bh=p+MC9DfEh83cSNsU/OkIiYyaqD5+WDbz/0lOilwCYPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lDJH1i8DCkmRRZXcw2HFO4/gi9b0qDVMYhDkq53lI/T26zvw0XuCRyeMtdWXcc0RcUuInhaK9zU3/FCSB42OauBn3Tn91hw5AH6joR1p1N9UeEcKSRu+y5qGCuj+at/yc8JyMW4ZwW6reHmtyj4nrUi7JIdwidyjxEkNUN+9ORY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fnguzOGr; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GoQ0ryLQ; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 486Cs5nm012991;
+	Fri, 6 Sep 2024 14:36:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=/gi6Z1MNJwP8AHt
+	BYN/JM5R9jgHYDXmC4wqe03TyEhQ=; b=fnguzOGrw1NwwfOg+ZuWzPJuqyLcm2z
+	rOt3keKW/jPzYl988uaq1OUbr/BIOPnM0lg2mg1ng662W/gIzSzBXUPkaeJV0/wH
+	KcHZoLDKeQVcdzFLw+UxvD2zxgHRQin0JlQ/QkmuigRYa3kmxd4pqgUv4ydEfNEI
+	4jPZdOB29nBwoLNc7qO1F2IIVy+ZKBBQ9cFYifMk5LmI1ecM7rLeVLQ/TDfahRga
+	fn8Lp5cSctERsjbKyrcdJIUOo5m6nH+iA88jHU4B+oH4Z3hu3gh49VolZMJ2WBwz
+	Ll7xCkwXk5ViXp9bVlIEZQcwGzk04RLvOA/ybhs1djtOhskDlyWvYXQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41fhwhhsqa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 06 Sep 2024 14:36:51 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 486EXpa7036884;
+	Fri, 6 Sep 2024 14:36:50 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2047.outbound.protection.outlook.com [104.47.70.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41fhyg0yke-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 06 Sep 2024 14:36:50 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m3hH38PPaYIrSbqJktqgEcTcSgkrG5oG76GtXaXMJKA9hlYbYxW9mCoIVqyN+GCqSdQqWWgl9vjDm4+zRs9Tvf6e751DPwB2ac6gvNPp7ZniUrdpNMhNvtPY8kZcfiRYsTaz7PbotPcVcKsi7nmkDsgLWtn3bEkDvL5JQqhoMOUfEkA9hb9qtAmYHI7JDwIpVUw2QdQPkJHdY4BUY+OYoHvER54wRhQp669uuLHesc0F4o0HB/pagU8GvsenCt5DAeF5q62cu0XX1hBJezKHhXJyF36VNnf9ywqPM+Pe3xTEg5ftOs0roohsEqcHLLo71TfKeUajRPqzfAVbxPtNDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/gi6Z1MNJwP8AHtBYN/JM5R9jgHYDXmC4wqe03TyEhQ=;
+ b=trUP0Pz+2PU2Q07w4Pe8mNTY2F9NiffQ++8Kde9rocGHygD6xgVYqcFw2NVf3WngoPSan8fhGOO4i3o/974fbS+yQSVVByew9Drz04pi+Gc6vaHUMnF2oHtvKshMzle/Vqz6Bd9M9491fdljBcY5UHFo05xTiheCDv9rxLdk4EQi3YvMhf38XmuvIOmqZZ2LLQCTYQp2FWIxpVffh2/kSVFSzUKlHrjX6OyYTqx+oBKqnggTWzyhFxTiHnXrWhblwQCHwDucGIu61/5yjjcJs5gQRimS5OaURZBAaEyF+CccdLo5GCUtyuYTkIqy+2dJBlacwhSoMbswIHiwrcWzAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/gi6Z1MNJwP8AHtBYN/JM5R9jgHYDXmC4wqe03TyEhQ=;
+ b=GoQ0ryLQt2rctMP7nU7pvSwyDi7UNKEal7wqrMGCmnCywSTW0sWQTHSxSy6WhMDr6mdP/wk2X46d/mVXJ+JFODVqDfJQECsIyXtPHG2HMCk1Ko1cIxKOKpa1tK7Ao9QFTmNvwpLbJ1j3thdmgilnJUGL5qJJtVS1LWVplqs4B2I=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by SA1PR10MB5686.namprd10.prod.outlook.com (2603:10b6:806:236::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.14; Fri, 6 Sep
+ 2024 14:36:47 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7939.010; Fri, 6 Sep 2024
+ 14:36:47 +0000
+Date: Fri, 6 Sep 2024 10:36:43 -0400
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Tom Haynes <loghyr@gmail.com>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 01/11] nfsd: fix initial getattr on write delegation
+Message-ID: <ZtsTe1Cv7B3uLpVm@tissot.1015granger.net>
+References: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
+ <20240905-delstid-v4-1-d3e5fd34d107@kernel.org>
+ <f20e49db181de1152ffb1b102450963937b4ec4f.camel@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f20e49db181de1152ffb1b102450963937b4ec4f.camel@kernel.org>
+X-ClientProxiedBy: CH2PR14CA0048.namprd14.prod.outlook.com
+ (2603:10b6:610:56::28) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SA1PR10MB5686:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4ec9340-e8b6-4434-bba7-08dcce815642
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FBpxCdmI74aqzQ4lWT+Ru2TY7mLKCEKugYwTMHwgyyvV22yuijwkHLedvcme?=
+ =?us-ascii?Q?p63n/e81CeFgflWRwMAMVkADtke96hvdnk6+jszfw+wNc2VRaVAKhNCve1Go?=
+ =?us-ascii?Q?xphzuCKzsFOSshusrnVLisd67otihpb9kos1/2hb/pShZZGaGdCRei332Wm2?=
+ =?us-ascii?Q?H1vJlDTb1aKTa/p9jJDJWHGSOsX7wEUayBSJ+KV4A2TWq+Qeh70RUUW5fkiq?=
+ =?us-ascii?Q?iC2sm95I4vqzCPPRBA//lFG9QfLsHDfbLkrfGK3utwcANLyoobTgfnN/Jwcc?=
+ =?us-ascii?Q?S0V0PPEtQs1oG7w8khQfgSTIKWH3itLCCtm6AdEO3Q6CAuZrkpGeftuvYxIf?=
+ =?us-ascii?Q?/r0c8esvHSb7w4+0kJ3Z2U06ejywLeAGGHBSFvb7rceRif9khlChFQ53kZe6?=
+ =?us-ascii?Q?iIhYNFtsh6jNmfZMLZEpZejkb5uS7z/F/TczisnTzywPA9IuXXnnPNsXLp3N?=
+ =?us-ascii?Q?uTI8kgIPGnzDOTZLP+XUii9HtUX5VJ+aqG+mJebhdn/AVxR4nM48bJGTeR1g?=
+ =?us-ascii?Q?vbx7/miGHPlFnAc11YtAWabuWW5ywZ+uRxgX8QxiDd6oUwfGqMuP+N0HrETN?=
+ =?us-ascii?Q?kXdaJoZJ+cnNfSsCa+Eeh0WjJv6XB26k494sfxC7LiJ2AretDzytQuKqI7Zu?=
+ =?us-ascii?Q?SFN4l7vIn7G7hCqohq/3mdgW3vg7KVsAJfS5FGYh4Y4OlwvfXaAa6FbFmGUP?=
+ =?us-ascii?Q?55NNY5ATt7quWnpp0kOTuLvbrIp4Gfqgjd8P/h46RDN5SIUkMX8RSiYcVzeH?=
+ =?us-ascii?Q?vPZwHL3Fc2duVCnUjREZjmS/4GWKNoiJ6xD+M5LCQ8cO21A52k47yltiP5tq?=
+ =?us-ascii?Q?6qkpFRTM6T7QtyDNUT/o0vT5i0an1bviKLzTr6zsbatb/0K5NJRRbSRnWc/j?=
+ =?us-ascii?Q?ZuR2eteHQ2e+Ght7IS3H/HDmTEDKi2sf9a63UPhWyoAAo9CPY2fGbdCsYoE3?=
+ =?us-ascii?Q?n+fg7Ykt/4SaHN8gCbuarM/Gt52dKwafHdRZzZ4W0F7MZl5A8ZRH5EwA+JbS?=
+ =?us-ascii?Q?2DL0Iqx8VOqiSO80EaYHpItmY3bgjt9UYWuJVpOfk21Kn0pVL15PxlRkysm/?=
+ =?us-ascii?Q?ck95yKmXuh8AuQwAOLBaVUFjAgmqNOE+aN8q9jFutkcbaYQbD0yfbghvZtQ3?=
+ =?us-ascii?Q?FtIgvqyNlCLL4/K2j5KFdCJI+EamP0bUWb62nqXik+tzYOA3soMXW9AXg4Jz?=
+ =?us-ascii?Q?7FMhulmvN+KTxD931E5yJQUg5tOLE5X/eiZS5puJp1dYoh6cy2GLXJUXRRE0?=
+ =?us-ascii?Q?o2EvGb9eFlt/WFo8fPx3YTpdkUpRUNG1su2OmmNEd2pW9cxcKtZ+2AKOJhj6?=
+ =?us-ascii?Q?MveJGT0Wu/QxDfDknuGrLA12p9r0SWnIWarPkawRH64/8A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?cQfDadSw2n4ARljRwjGCtC+GTNc5jq2j9L4nGa09qqNuiFiBY80sZ91YI+iK?=
+ =?us-ascii?Q?pb1FsNoOqxbZSWC/36jm/1oLVxfWB0INhL8Q3MKZ12pRvfoKWILueo+yPTpI?=
+ =?us-ascii?Q?DmpnMsaBtXo5aoD7ZkL6ARFK9slLd54rMzfB/cnge6n9Zp118ebZpM9aeYou?=
+ =?us-ascii?Q?srEMNYY5hSF0r8Q+QZndTghl8KfQdXcH1tBeKtJOOzYcxdqOYwu4bcjdV1ge?=
+ =?us-ascii?Q?+BSg3ametNfg0c/rBADcRr5lZHAsR+nfwcWAS0eyK/ltTJRryQqTDDetibrO?=
+ =?us-ascii?Q?CJ33K3RW3rea0lf62wQbKPqH77gs6msUbEqt/nASvxkCeeFBZswaWcYC18vK?=
+ =?us-ascii?Q?HHxKa1AsS20x7uzJcJizbtKmuy3ZXDKsmGcD7HNVfcgMfKn4rGNVqkjQj1Kk?=
+ =?us-ascii?Q?q+0POyua/jYBEsj4vnpkT3ikpDr3KiHCKrCf50YRkebP9oxtqeSoBIkBoDlL?=
+ =?us-ascii?Q?phnVBAKVpaMCtHaxqYb6vaVBjmYR4GKWv/fXmE8AhczhMhDomx7FV2b73+za?=
+ =?us-ascii?Q?zQftK00hyPhiU+XNyMJsewkHfctvflMZ6Ez9TE02HwGC5dqGAqse74IiMM69?=
+ =?us-ascii?Q?rdgLPv+DTVRZmEMuDNtL4++MfFVhw3IHsvi97uKy0r6C0aAFboB5QzTkHFeb?=
+ =?us-ascii?Q?XbwfCgWbr4F2zpCNaHiya0jQzL7vnPCchUirm3JsINImrxs/66dC/62nkhoG?=
+ =?us-ascii?Q?RTfToxJQDoAaEWXB6kmCKBYjYv6N15KcQBDllugs0BQyCqapv3/StRxjxZlL?=
+ =?us-ascii?Q?41Sns3RpZUHbxe/KAqd2Z5uZn0aEO4Y2+BnDTkofZGhzYN8TzewDIMvo432l?=
+ =?us-ascii?Q?W72HeLQrCDQ5l9a7AX+Po2OS+RWHlY5Gj1vaCHFfm/1AMWqQNTI4Sr9pO7xi?=
+ =?us-ascii?Q?uxM85X4RIva2ESgPSql8ablnc4FHhGcmfq+6eJvg9J9QJgTZnkkrRCsT/p0L?=
+ =?us-ascii?Q?kuj515QfJ+9Is6MKeWZtqzkPv1b1UwtrP41uiyBHNfzbuEBhcH2TsCoi48KI?=
+ =?us-ascii?Q?vbcu7ODcb5/1nlEbK8y27zunVU0wvw3ZwUA3p4BeE4sQhUqiyWOsNxTzKQej?=
+ =?us-ascii?Q?zcpe45h2hAlSmqnDuo2cMWeeYEWb9t5vOL1sCZttZ0i053jBKoomloHL8yza?=
+ =?us-ascii?Q?HvCyfunFimThNdfRILXPiQeFxoLS/+uXJLak39iZOU9OAp/yoMV3F5XR+Zd3?=
+ =?us-ascii?Q?C3ldBvQGzbYUkXHqYpufC2wfn7/d88doTXUoaQuBbrk3FM+SRhqi+awPD/Mj?=
+ =?us-ascii?Q?YMFWqO5jiOIZLYFCA2PzstMvU8V+xOzKb82t2f2uqfgkHsjD9D8UM8xv0ZvL?=
+ =?us-ascii?Q?AJJhwFGG7bVxPeKAUSagF3OSSrerYCfLXy2K69UHuBbj1Sagnjkh66Fg2Hwr?=
+ =?us-ascii?Q?B6Dpro8Oe/ABsZPtS8tOuxz4Nkx+P3EwXqE8/Fh0NTdROWEne6c8iltVIXcT?=
+ =?us-ascii?Q?RoCWPBsW/X4j6nYhlhvFmgRfbetSGeYyAI5O9Z7cGXunHC4vAzQCRTdROl7r?=
+ =?us-ascii?Q?IC4eyEsLsuqTcVvA6LmqzGVNCeBQq1IjcgESn5sIYNpPflP8YMMX1x+xrdfm?=
+ =?us-ascii?Q?GbIJLLyMLYWxnVgRxgvgdSfIOPAyPAs+qCRdj79e?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Ci5OFamx0ED3N16zUZQsLJ8SaIeoNQyhemh48J43AIuKOUZkcWG5YweRLyS+Dh3qL7Yf3TvY5l/ilYSIARKYYcB9JvihaoO2ciEiHSMIc17b6ouROTPgeLXpqNfy5K5t2bpGyqsIU2Jucjc827bFSfxlzP0LzaM4N20cH4Z13akThEfO1eBUPaOE/CgqycZM4IAHBfo+w0kafZwcGBohx6B63VurWsahh7YN7IVSKsNXlxvrXbkOMr8cgM77dYZ/cp/iGRbiKSyPlpIVJO5ONRykIGc7mJc6yuO3mHC4xzOdmHGZiAHlBoW+AruyXrMcNv+qWcJ67lY6A6klQHvGtDt0R0UpZ8fWCk9jmmqFAUX4fEA+y8DX/kds7IQzv6ckoUSwZ1ShQYqvhK1tAisiXnfxek4sMImmXmErZx//+k9aTQrL7uaY5I6/573SpxBub4N1V199pPSrVZLRck6ZYhLtK7SltX5OTLIbNpl3QTcTPRZ+XgxY1Q84c/JXiTsX9E5d5hqoz5ASwSub302Tf2wO+N1jOoKs6Q4m2cQg2TDZ1bg6bmhxOnhVx9Oq/nx8g/0lyxom/Wi4UFLNrAfJ3dmaqNbWMb0JceNEq5+Ici8=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4ec9340-e8b6-4434-bba7-08dcce815642
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 14:36:47.4686
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9kLclcNCpHl7YfHwEkmrKvLukQylrXkJkx9LFCLMgZh/XXOprh1QwTdMVFDsa17zICxJjjg8Aa7CHdRhGf8SpQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB5686
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_03,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 mlxlogscore=999 adultscore=0 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2409060107
+X-Proofpoint-ORIG-GUID: 9r25i5PXN80_q_CSB7ly6Zzgzc11ZWgE
+X-Proofpoint-GUID: 9r25i5PXN80_q_CSB7ly6Zzgzc11ZWgE
 
-We should convert fs/fuse code to use a newly introduced
-invalid_mnt_idmap instead of passing a NULL as idmap pointer.
+On Fri, Sep 06, 2024 at 10:08:29AM -0400, Jeff Layton wrote:
+> On Thu, 2024-09-05 at 08:41 -0400, Jeff Layton wrote:
+> > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> > index df69dc6af467..db90677fc016 100644
+> > --- a/fs/nfsd/nfs4state.c
+> > +++ b/fs/nfsd/nfs4state.c
+> > @@ -5914,6 +5914,26 @@ static void nfsd4_open_deleg_none_ext(struct nfsd4_open *open, int status)
+> >  	}
+> >  }
+> >  
+> > +static bool
+> > +nfs4_delegation_stat(struct nfs4_delegation *dp, struct svc_fh *currentfh,
+> > +		     struct kstat *stat)
+> > +{
+> > +	struct nfsd_file *nf = find_rw_file(dp->dl_stid.sc_file);
+> > +	struct path path;
+> > +
+> > +	if (!nf)
+> > +		return false;
+> > +
+> > +	path.mnt = currentfh->fh_export->ex_path.mnt;
+> > +	path.dentry = file_dentry(nf->nf_file);
+> > +
+> > +	if (vfs_getattr(&path, stat,
+> > +			(STATX_INO | STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
+> 
+> Minor oversight here.
+> 
+> I added STATX_INO when I was debugging, but we don't need it here. We
+> should probably drop that flag (though it's mostly harmless). Chuck,
+> would you be ok with fixing that up?
 
-Suggested-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- fs/fuse/dev.c    | 47 +++++++++++++++++++++++------------------------
- fs/fuse/dir.c    |  6 +++---
- fs/fuse/fuse_i.h |  2 +-
- 3 files changed, 27 insertions(+), 28 deletions(-)
+Fixed and squashed into nfsd-next.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 04a6490a587c..e42b2f38d35f 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -114,7 +114,11 @@ static struct fuse_req *fuse_get_req(struct mnt_idmap *idmap,
- {
- 	struct fuse_conn *fc = fm->fc;
- 	struct fuse_req *req;
-+	bool no_idmap = (fm->sb->s_iflags & SB_I_NOIDMAP);
-+	kuid_t fsuid;
-+	kgid_t fsgid;
- 	int err;
-+
- 	atomic_inc(&fc->num_waiting);
- 
- 	if (fuse_block_alloc(fc, for_background)) {
-@@ -148,29 +152,24 @@ static struct fuse_req *fuse_get_req(struct mnt_idmap *idmap,
- 	if (for_background)
- 		__set_bit(FR_BACKGROUND, &req->flags);
- 
--	if ((fm->sb->s_iflags & SB_I_NOIDMAP) || idmap) {
--		kuid_t idmapped_fsuid;
--		kgid_t idmapped_fsgid;
-+	/*
-+	 * Keep the old behavior when idmappings support was not
-+	 * declared by a FUSE server.
-+	 *
-+	 * For those FUSE servers who support idmapped mounts,
-+	 * we send UID/GID only along with "inode creation"
-+	 * fuse requests, otherwise idmap == &invalid_mnt_idmap and
-+	 * req->in.h.{u,g}id will be equal to FUSE_INVALID_UIDGID.
-+	 */
-+	fsuid = no_idmap ? current_fsuid() : mapped_fsuid(idmap, fc->user_ns);
-+	fsgid = no_idmap ? current_fsgid() : mapped_fsgid(idmap, fc->user_ns);
-+	req->in.h.uid = from_kuid(fc->user_ns, fsuid);
-+	req->in.h.gid = from_kgid(fc->user_ns, fsgid);
- 
--		/*
--		 * Note, that when
--		 * (fm->sb->s_iflags & SB_I_NOIDMAP) is true, then
--		 * (idmap == &nop_mnt_idmap) is always true and therefore,
--		 * mapped_fsuid(idmap, fc->user_ns) == current_fsuid().
--		 */
--		idmapped_fsuid = idmap ? mapped_fsuid(idmap, fc->user_ns) : current_fsuid();
--		idmapped_fsgid = idmap ? mapped_fsgid(idmap, fc->user_ns) : current_fsgid();
--		req->in.h.uid = from_kuid(fc->user_ns, idmapped_fsuid);
--		req->in.h.gid = from_kgid(fc->user_ns, idmapped_fsgid);
--
--		if (unlikely(req->in.h.uid == ((uid_t)-1) ||
--			     req->in.h.gid == ((gid_t)-1))) {
--			fuse_put_request(req);
--			return ERR_PTR(-EOVERFLOW);
--		}
--	} else {
--		req->in.h.uid = FUSE_INVALID_UIDGID;
--		req->in.h.gid = FUSE_INVALID_UIDGID;
-+	if (no_idmap && unlikely(req->in.h.uid == ((uid_t)-1) ||
-+				 req->in.h.gid == ((gid_t)-1))) {
-+		fuse_put_request(req);
-+		return ERR_PTR(-EOVERFLOW);
- 	}
- 
- 	return req;
-@@ -619,7 +618,7 @@ int fuse_simple_background(struct fuse_mount *fm, struct fuse_args *args,
- 		__set_bit(FR_BACKGROUND, &req->flags);
- 	} else {
- 		WARN_ON(args->nocreds);
--		req = fuse_get_req(NULL, fm, true);
-+		req = fuse_get_req(&invalid_mnt_idmap, fm, true);
- 		if (IS_ERR(req))
- 			return PTR_ERR(req);
- 	}
-@@ -641,7 +640,7 @@ static int fuse_simple_notify_reply(struct fuse_mount *fm,
- 	struct fuse_req *req;
- 	struct fuse_iqueue *fiq = &fm->fc->iq;
- 
--	req = fuse_get_req(NULL, fm, false);
-+	req = fuse_get_req(&invalid_mnt_idmap, fm, false);
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 491e112819be..54104dd48af7 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1093,7 +1093,7 @@ static int fuse_rename2(struct mnt_idmap *idmap, struct inode *olddir,
- 		if (fc->no_rename2 || fc->minor < 23)
- 			return -EINVAL;
- 
--		err = fuse_rename_common((flags & RENAME_WHITEOUT) ? idmap : NULL,
-+		err = fuse_rename_common((flags & RENAME_WHITEOUT) ? idmap : &invalid_mnt_idmap,
- 					 olddir, oldent, newdir, newent, flags,
- 					 FUSE_RENAME2,
- 					 sizeof(struct fuse_rename2_in));
-@@ -1102,7 +1102,7 @@ static int fuse_rename2(struct mnt_idmap *idmap, struct inode *olddir,
- 			err = -EINVAL;
- 		}
- 	} else {
--		err = fuse_rename_common(NULL, olddir, oldent, newdir, newent, 0,
-+		err = fuse_rename_common(&invalid_mnt_idmap, olddir, oldent, newdir, newent, 0,
- 					 FUSE_RENAME,
- 					 sizeof(struct fuse_rename_in));
- 	}
-@@ -1127,7 +1127,7 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
- 	args.in_args[0].value = &inarg;
- 	args.in_args[1].size = newent->d_name.len + 1;
- 	args.in_args[1].value = newent->d_name.name;
--	err = create_new_entry(NULL, fm, &args, newdir, newent, inode->i_mode);
-+	err = create_new_entry(&invalid_mnt_idmap, fm, &args, newdir, newent, inode->i_mode);
- 	if (!err)
- 		fuse_update_ctime_in_cache(inode);
- 	else if (err == -EINTR)
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index b2c7834f21b5..e6cc3d552b13 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1153,7 +1153,7 @@ ssize_t __fuse_simple_request(struct mnt_idmap *idmap,
- 
- static inline ssize_t fuse_simple_request(struct fuse_mount *fm, struct fuse_args *args)
- {
--	return __fuse_simple_request(NULL, fm, args);
-+	return __fuse_simple_request(&invalid_mnt_idmap, fm, args);
- }
- 
- static inline ssize_t fuse_simple_idmap_request(struct mnt_idmap *idmap,
 -- 
-2.34.1
-
+Chuck Lever
 
