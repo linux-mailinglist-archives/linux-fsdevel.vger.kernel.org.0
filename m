@@ -1,78 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-28882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4205596FC79
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 22:01:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75AB96FCCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 22:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE601C24944
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 20:01:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11AB01C20DF5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 20:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6081D4618;
-	Fri,  6 Sep 2024 20:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086E215696E;
+	Fri,  6 Sep 2024 20:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NiOKecal"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpNW5VxL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BF91B85E2
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Sep 2024 20:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625621B85DA;
+	Fri,  6 Sep 2024 20:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725652857; cv=none; b=CiijhZ+Xq2Z8KYJfb3CY3AomhqkK96nTEaqI4GTPDUvJvkT73j9n9OFjl4xoRqHZhAw1AqS7fbocR979RrROPPWHqdX07GeOStE9hIY7zWEj/pbuPlFI+AZD/0414Oi7/TdRYt9eX/lKT3Refaow5+u3M5yD/UBd6nmOJXKt/b4=
+	t=1725654860; cv=none; b=rqiZ3AsMubSpIUM6SZHAwRhEkYhEjIP1efih0S8IZweGgqA5GkV8FDcq4Rmg4HsJFyuncfhhADikaYz/vy4G61WRe99hOrSWIOT+3ILN9DUflHiKIdBPVn+8TyPuEW4d8Iq0IhAG8p5PI0yMWZalrMqghN/y2EBazNJkVdJhs+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725652857; c=relaxed/simple;
-	bh=yZP4dvb3C45vzv22TJtPlhgJ5+geg7Fn+Of9k7kZUfQ=;
+	s=arc-20240116; t=1725654860; c=relaxed/simple;
+	bh=OA+plJjbIuTluWg8HviPAdglf+Aase4YARd8oSWvq94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvkG/hFPNbS7QKM8OkrkaNUEA0IlPZ2VP6Ek86c1cHnsgjcM4AQ7+zvqJJtd87DJhi8RInHES//gYCrQQRPgWL+gGfx3ObsEOrn05cQ1tIYgGD3azBv+1elrrM2F0wmr5Bw43hJVXPzoDbFC/kSJqkIgdyhizRriOTtwlBwQo80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NiOKecal; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725652855; x=1757188855;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yZP4dvb3C45vzv22TJtPlhgJ5+geg7Fn+Of9k7kZUfQ=;
-  b=NiOKecalKsHvgev4yY/ehYzRbcTilZszJIRpGMteCUkcIs5aE6G00cHZ
-   LB9H6+DWXt7011He6uEdR+UZUinIGyVZ5+eqHM7fvUVpSqEW29gY86zhz
-   fOzUG7UTZZT90ctUDS+q5am9s1KtMenI2ofivpf7G+DcF+7axvkbhalRt
-   0w5zKFjKcW4vmFHCA3KamxWtssSq5YlByqYbzEH/yqIJGhRFgKFdywuho
-   SyVJugdkpiTExMxogrVGYxAFSVJzruILdgTLQhyfliw4cmdLUfxi+2+YT
-   qrV1SdtYfOOQOSHS6muaAWGkjfJTpqaluFd6k1OhogEaUm+sTwwCRa02M
-   A==;
-X-CSE-ConnectionGUID: ytbVgZajQGCQYXvgE7fGpw==
-X-CSE-MsgGUID: oTo0oHRrSnG9IOxffbC9jA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35018782"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="35018782"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 13:00:55 -0700
-X-CSE-ConnectionGUID: frjiE0w/TcSuxjG256Pmjg==
-X-CSE-MsgGUID: FOs/K0u7SOCVf6jBOpa8YQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="66039977"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 06 Sep 2024 13:00:52 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smf8U-000BfW-1s;
-	Fri, 06 Sep 2024 20:00:50 +0000
-Date: Sat, 7 Sep 2024 04:00:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	josef@toxicpanda.com, bernd.schubert@fastmail.fm,
-	sweettea-kernel@dorminy.me, kernel-team@meta.com
-Subject: Re: [PATCH v2 RESEND] fuse: Enable dynamic configuration of fuse max
- pages limit (FUSE_MAX_MAX_PAGES)
-Message-ID: <202409070339.Pg9v3MA4-lkp@intel.com>
-References: <20240905174541.392785-1-joannelkoong@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eGJ1vRS5mP7fBlERH+q3TlqgT3xw9WzABGMvZstxVBvwykwIQTKhz3PBTd0RnJMx1aPzNe+5GIAKSy/rkg0W9FFEYZOoKPi/DGuYhs2ZPxqOsz5REIK7HusvD2auREv+ETU2WV0ReJi0f8yjxq8Rjxwbo7QrEo2lxRrlyddtphQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpNW5VxL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C62EDC4CEC4;
+	Fri,  6 Sep 2024 20:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725654860;
+	bh=OA+plJjbIuTluWg8HviPAdglf+Aase4YARd8oSWvq94=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IpNW5VxL2iURUqFFNmvk/brU6QCCJzfwKsBOI7ZyeLHbi/mYCJnXtfwwgzIn8HuaW
+	 xhIO+Kk3hK2355bO28VmV1qOF4Kb1GMTm9z/cCyHOnvd/A+TCM1bgRjAe3rxGhwrHO
+	 v/aHFPF8qblLZ8ivpPGs0evzWWwbhKmRpw3TWkH40fDrqHiN/1lruyUwkjWr8jrMvo
+	 Scg1mDQ3Aj8PjxVRcxwy5O/CkmMF6y975ekwXRMZQwgiHlubwhySIxJc3wPbr6WDkF
+	 vzPE0VQKAP55bO0Xd0WT7KomSjYayR3HKI+4sJB9NuxQdb1kb/uu3pe2qUkpfHYJq/
+	 eSpaD9kIsA1ow==
+Date: Fri, 6 Sep 2024 16:34:18 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Anna Schumaker <anna.schumaker@oracle.com>
+Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v15 00/26] nfs/nfsd: add support for LOCALIO
+Message-ID: <ZttnSndjMaU1oObp@kernel.org>
+References: <20240831223755.8569-1-snitzer@kernel.org>
+ <66ab4e72-2d6e-4b78-a0ea-168e1617c049@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,65 +61,134 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240905174541.392785-1-joannelkoong@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <66ab4e72-2d6e-4b78-a0ea-168e1617c049@oracle.com>
 
-Hi Joanne,
+On Fri, Sep 06, 2024 at 03:31:41PM -0400, Anna Schumaker wrote:
+> Hi Mike,
+>=20
+> On 8/31/24 6:37 PM, Mike Snitzer wrote:
+> > Hi,
+> >=20
+> > Happy Labor Day weekend (US holiday on Monday)!  Seems apropos to send
+> > what I hope the final LOCALIO patchset this weekend: its my birthday
+> > this coming Tuesday, so _if_ LOCALIO were to get merged for 6.12
+> > inclusion sometime next week: best b-day gift in a while! ;)
+> >=20
+> > Anyway, I've been busy incorporating all the review feedback from v14
+> > _and_ working closely with NeilBrown to address some lingering net-ns
+> > refcounting and nfsd modules refcounting issues, and more (Chnagelog
+> > below):
+> >=20
+>=20
+> I've been running tests on localio this afternoon after finishing up goin=
+g through v15 of the patches (I was most of the way through when you posted=
+ v16, so I haven't updated yet!). Cthon tests passed on all NFS versions, a=
+nd xfstests passed on NFS v4.x. However, I saw this crash from xfstests wit=
+h NFS v3:
+>=20
+> [ 1502.440896] run fstests generic/633 at 2024-09-06 14:04:17
+> [ 1502.694356] process 'vfstest' launched '/dev/fd/4/file1' with NULL arg=
+v: empty string added
+> [ 1502.699514] Oops: general protection fault, probably for non-canonical=
+ address 0x6c616e69665f6140: 0000 [#1] PREEMPT SMP NOPTI
+> [ 1502.700970] CPU: 3 UID: 0 PID: 513 Comm: nfsd Not tainted 6.11.0-rc6-g=
+0c79a48cd64d-dirty+ #42323 70d41673e6cbf8e3437eb227e0a9c3c46ed3b289
+> [ 1502.702506] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS u=
+nknown 2/2/2022
+> [ 1502.703593] RIP: 0010:nfsd_cache_lookup+0x2b3/0x840 [nfsd]
+> [ 1502.704474] Code: 8d bb 30 02 00 00 bb 01 00 00 00 eb 12 49 8d 46 10 4=
+8 8b 08 ff c3 48 85 c9 0f 84 9c 00 00 00 49 89 ce 4c 8d 61 c8 41 8b 45 00 <=
+3b> 41 c8 75 1f 41 8b 45 04 41 3b 46 cc 74 15 8b 15 2c c6 b8 f2 be
+> [ 1502.706931] RSP: 0018:ffffc27ac0a2fd18 EFLAGS: 00010206
+> [ 1502.707547] RAX: 00000000b95691f7 RBX: 0000000000000002 RCX: 6c616e696=
+65f6178
+> [ 1502.708311] RDX: 0000000000000034 RSI: ffffa0f8a652a780 RDI: ffffa0f8c=
+04cfb00
+> [ 1502.709055] RBP: ffffa0f8827b2ba0 R08: 0000000000000000 R09: ffffa0f8c=
+04cfb00
+> [ 1502.709728] R10: 000000000000009c R11: ffffffffc0c77ef0 R12: 6c616e696=
+65f6140
+> [ 1502.710382] R13: ffffa0f8c04cfb00 R14: 6c616e69665f6178 R15: ffffa0f88=
+3d4e230
+> [ 1502.710982] FS:  0000000000000000(0000) GS:ffffa0f8fbd80000(0000) knlG=
+S:0000000000000000
+> [ 1502.711645] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 1502.712087] CR2: 00007f2c4d1ed640 CR3: 0000000117a1e000 CR4: 000000000=
+0750ef0
+> [ 1502.712615] PKRU: 55555554
+> [ 1502.712804] Call Trace:
+> [ 1502.712979]  <TASK>
+> [ 1502.713131]  ? __die_body+0x6a/0xb0
+> [ 1502.713372]  ? die_addr+0xa4/0xd0
+> [ 1502.713583]  ? exc_general_protection+0x16c/0x210
+> [ 1502.713880]  ? asm_exc_general_protection+0x26/0x30
+> [ 1502.714164]  ? __pfx_nfs3svc_decode_sattrargs+0x10/0x10 [nfsd a9c12e0c=
+c9647b021c55f7745e60fc1cbe54674a]
+> [ 1502.714700]  ? nfsd_cache_lookup+0x2b3/0x840 [nfsd a9c12e0cc9647b021c5=
+5f7745e60fc1cbe54674a]
+> [ 1502.715156]  ? nfsd_cache_lookup+0x2e7/0x840 [nfsd a9c12e0cc9647b021c5=
+5f7745e60fc1cbe54674a]
+> [ 1502.715590]  nfsd_dispatch+0x93/0x210 [nfsd a9c12e0cc9647b021c55f7745e=
+60fc1cbe54674a]
+> [ 1502.715997]  svc_process_common+0x324/0x680 [sunrpc 2f7328527f188558de=
+a7880294960ba75bb09c81]
+> [ 1502.716439]  ? __pfx_nfsd_dispatch+0x10/0x10 [nfsd a9c12e0cc9647b021c5=
+5f7745e60fc1cbe54674a]
+> [ 1502.716873]  svc_process+0x117/0x1c0 [sunrpc 2f7328527f188558dea788029=
+4960ba75bb09c81]
+> [ 1502.717276]  svc_recv+0xabf/0xc00 [sunrpc 2f7328527f188558dea788029496=
+0ba75bb09c81]
+> [ 1502.717674]  nfsd+0xc5/0x100 [nfsd a9c12e0cc9647b021c55f7745e60fc1cbe5=
+4674a]
+> [ 1502.718225]  ? __pfx_nfsd+0x10/0x10 [nfsd a9c12e0cc9647b021c55f7745e60=
+fc1cbe54674a]
+> [ 1502.718641]  kthread+0xe9/0x110
+> [ 1502.718798]  ? __pfx_kthread+0x10/0x10
+> [ 1502.718979]  ret_from_fork+0x37/0x50
+> [ 1502.719154]  ? __pfx_kthread+0x10/0x10
+> [ 1502.719335]  ret_from_fork_asm+0x1a/0x30
+> [ 1502.719525]  </TASK>
+> [ 1502.719636] Modules linked in: nfsv3 overlay cbc cts rpcsec_gss_krb5 n=
+fsv4 nfs rpcrdma rdma_cm iw_cm ib_cm cfg80211 ib_core rfkill 8021q garp stp=
+ mrp llc vfat fat intel_rapl_msr intel_rapl_common intel_uncore_frequency_c=
+ommon intel_pmc_core intel_vsec pmt_telemetry pmt_class kvm_intel kvm snd_h=
+da_codec_generic snd_hda_intel snd_intel_dspcfg crct10dif_pclmul crc32_pclm=
+ul snd_hda_codec polyval_clmulni polyval_generic ghash_clmulni_intel snd_hw=
+dep sha512_ssse3 snd_hda_core sha256_ssse3 sha1_ssse3 iTCO_wdt snd_pcm inte=
+l_pmc_bxt iTCO_vendor_support aesni_intel snd_timer gf128mul snd psmouse cr=
+ypto_simd i2c_i801 cryptd joydev pcspkr rapl lpc_ich i2c_smbus soundcore mo=
+usedev mac_hid nfsd nfs_acl lockd auth_rpcgss grace nfs_localio sunrpc usbi=
+p_host dm_mod usbip_core loop nfnetlink vsock_loopback vmw_vsock_virtio_tra=
+nsport_common vmw_vsock_vmci_transport vmw_vmci vsock qemu_fw_cfg ip_tables=
+ x_tables hid_generic usbhid xfs libcrc32c crc32c_generic serio_raw atkbd l=
+ibps2 virtio_net vivaldi_fmap virtio_gpu virtio_console
+> [ 1502.719684]  net_failover virtio_blk crc32c_intel i8042 failover virti=
+o_rng xhci_pci intel_agp virtio_balloon xhci_pci_renesas virtio_dma_buf ser=
+io intel_gtt
+> [ 1502.724436] ---[ end trace 0000000000000000 ]---
+>=20
+> Please let me know if there are any other details you need about my setup=
+ to help debug this!
 
-kernel test robot noticed the following build errors:
+Hmm, I haven't seen this issue, my runs of xfstests with LOCALIO
+enabled look solid:
+https://evilpiepirate.org/~testdashboard/ci?user=3Dsnitzer&branch=3Dsnitm-n=
+fs-next&test=3D^fs.nfs.fstests.generic.633$
 
-[auto build test ERROR on mszeredi-fuse/for-next]
-[also build test ERROR on linus/master v6.11-rc6 next-20240906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+And I know Chuck has been testing xfstests and more with the patches
+applied but LOCALIO disabled in his kernel config.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/fuse-Enable-dynamic-configuration-of-fuse-max-pages-limit-FUSE_MAX_MAX_PAGES/20240906-014722
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
-patch link:    https://lore.kernel.org/r/20240905174541.392785-1-joannelkoong%40gmail.com
-patch subject: [PATCH v2 RESEND] fuse: Enable dynamic configuration of fuse max pages limit (FUSE_MAX_MAX_PAGES)
-config: arm-randconfig-004-20240907 (https://download.01.org/0day-ci/archive/20240907/202409070339.Pg9v3MA4-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409070339.Pg9v3MA4-lkp@intel.com/reproduce)
+The stack seems to indicate nfsd is just handling a request (so it
+isn't using LOCALIO, at least not for this op).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409070339.Pg9v3MA4-lkp@intel.com/
+Probably best if you do try v16.  v15 has issues v16 addressed.  If
+you can reproduce with v16 please share your kernel .config and
+xfstests config.=20
 
-All errors (new ones prefixed by >>):
+Note that I've only really tested my changes against v6.11-rc4.  But I
+can rebase on v6.11-rc6 if you find v16 still fails for you.
 
->> fs/fuse/sysctl.c:28:26: error: too many arguments provided to function-like macro invocation
-   int fuse_sysctl_register(void)
-                            ^
-   fs/fuse/fuse_i.h:1473:9: note: macro 'fuse_sysctl_register' defined here
-   #define fuse_sysctl_register()          (0)
-           ^
->> fs/fuse/sysctl.c:28:25: error: expected ';' after top level declarator
-   int fuse_sysctl_register(void)
-                           ^
-                           ;
-   fs/fuse/sysctl.c:36:29: error: too many arguments provided to function-like macro invocation
-   void fuse_sysctl_unregister(void)
-                               ^
-   fs/fuse/fuse_i.h:1474:9: note: macro 'fuse_sysctl_unregister' defined here
-   #define fuse_sysctl_unregister()        do { } while (0)
-           ^
-   3 errors generated.
-
-
-vim +28 fs/fuse/sysctl.c
-
-    27	
-  > 28	int fuse_sysctl_register(void)
-    29	{
-    30		fuse_table_header = register_sysctl("fs/fuse", fuse_sysctl_table);
-    31		if (!fuse_table_header)
-    32			return -ENOMEM;
-    33		return 0;
-    34	}
-    35	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Mike
 
