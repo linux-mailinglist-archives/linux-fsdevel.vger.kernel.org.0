@@ -1,103 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-28822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1789396E816
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 05:18:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C341C96E82F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 05:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0BF1C23319
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 03:18:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36AC9B23D64
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 03:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AE036130;
-	Fri,  6 Sep 2024 03:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553F2481B7;
+	Fri,  6 Sep 2024 03:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="McRKcKr8"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="lWXUkZvb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A3A1EB35
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Sep 2024 03:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E764594D;
+	Fri,  6 Sep 2024 03:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725592696; cv=none; b=W+tWocm3dx6i9MqLPdiBiycQCOGn6eW3GjQlO+FOvE5Ktg4H39IfN79mZed7uEg3xbw3+sDy7sSDDThltn4BvzDrmHNgBdieaMYg3oUhAhV7m7LlNhYQp3bAjKZznl12KcNuyHdku/v9M0CDcQGg1CWw2iILPnu1f/Dzhp/TXv0=
+	t=1725593073; cv=none; b=o7ygxrRh8NuIZ6aHsKTI3w7C5p69xe0VBK4T25uLYb9biMKEGQZv7DBd3wG+JEoGMHAPOhv3SsC+fv77K+ZvObjH5qRuu7Zync5X765F/0sEA4/ZOlmaMdPduyjgpDBABY48ijxZXIoxan6ne8vFqh/aJNRI5+AB90YLl+2vVNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725592696; c=relaxed/simple;
-	bh=V0qeoYoaYqYQrWHfFNyDQMNz4I8TIWhdXiPDVH3a4fo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JkTZHhej2qSLi/T+V80A+bZEsemERHWa4X0tzr4yUKpen9uMpCenwjKPsUbw9qBVXgT6h/sYdiEFQ1oGvgpjX4Hb5bX1pnseXwIJMnqvtKYOuD44DK+zw9ikBNijZEZsTQKdyVNYE9GW4tbtbOf4Zxwiv71N8GKPv1hEu1v7z5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=McRKcKr8; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725592686; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=IOH8nVZ7cR1ziSpckgC9zmGTHvdGY5gms9aDGiPCogs=;
-	b=McRKcKr8wNpTNrywYWpacndTzdk5HxAH4W4Qb3m5wgzfNPS4Oc95GVld/wBGCqs7NciQbCFkVLEFoPshMQ0R7K/QeymtAjQ2KHsur4TOyOgOR0LVJ43sMpQ4rOBm5psLexaQ4SSnbZ5eQlfkgMJEzg7USPloIu1bbogLgvx6SXw=
-Received: from 30.221.145.151(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WENuky-_1725592684)
-          by smtp.aliyun-inc.com;
-          Fri, 06 Sep 2024 11:18:05 +0800
-Message-ID: <8fc5fd4f-b466-42b1-af9e-1d9cd63aab62@linux.alibaba.com>
-Date: Fri, 6 Sep 2024 11:18:03 +0800
+	s=arc-20240116; t=1725593073; c=relaxed/simple;
+	bh=wfQzaJMpMaVFDS+iwo6CFaUv6FyRkEZbifJAijJc6BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DnONqEZafn4kSlXlbAx6vD9fz2xR81nWi9vymdfpFuVAK7lyWOzoDNxZyz3+QuXdlDBC2RzyMS9Wg7ecm1sWuHog7Iz4IKM4XNVdXZjxJmwC8USwsmWlxwk5jmHlisoJmkaLjws+ZMFWNRfcTEpRJ2HPnW6gT624joZ5rdGRqhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=lWXUkZvb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC162C4CEC3;
+	Fri,  6 Sep 2024 03:24:30 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="lWXUkZvb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725593069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z2dxDPKKa2YK6AR5mLMyQ8i6dADRrELxYn6efyeudEY=;
+	b=lWXUkZvbvlbUyOMCWA1zuc7ad4c+I0UJcawqwTucUHLSLfjSoDcXGiWc2V7qkYM6p9qDOE
+	xqMX7fe/Xfh9D0076bwd4NPqJu9BUto8QUy3Vo/4JDK4c4+j1HrSQbP9/ilbY+G0btPrj7
+	0Zg0qZDITzK9zGSnoBQ0QQgntbqq/qk=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 182a6eb3 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 6 Sep 2024 03:24:28 +0000 (UTC)
+Date: Fri, 6 Sep 2024 05:24:24 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH v5 4/5] powerpc/vdso: Wire up getrandom() vDSO
+ implementation on VDSO32
+Message-ID: <Ztp16FkqG0ALlXnh@zx2c4.com>
+References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
+ <1f49c2ce009f8b007ab0676fb41187b2d54f28b2.1725304404.git.christophe.leroy@csgroup.eu>
+ <ZtnYqZI-nrsNslwy@zx2c4.com>
+ <ZtoXhGYflBNR74g0@zx2c4.com>
+ <ZtptfOicjZU3k3ZV@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] fuse: Enable dynamic configuration of fuse max
- pages limit (FUSE_MAX_MAX_PAGES)
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com, sweettea-kernel@dorminy.me, kernel-team@meta.com
-References: <20240905174541.392785-1-joannelkoong@gmail.com>
- <27b6ad2f-9a43-4938-9f0d-2d11581e8be7@fastmail.fm>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <27b6ad2f-9a43-4938-9f0d-2d11581e8be7@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZtptfOicjZU3k3ZV@zx2c4.com>
 
-
-
-On 9/6/24 5:16 AM, Bernd Schubert wrote:
-> Hi Joanne,
+On Fri, Sep 06, 2024 at 04:48:28AM +0200, Jason A. Donenfeld wrote:
+> On Thu, Sep 05, 2024 at 10:41:40PM +0200, Jason A. Donenfeld wrote:
+> > On Thu, Sep 05, 2024 at 06:13:29PM +0200, Jason A. Donenfeld wrote:
+> > > > +/*
+> > > > + * The macro sets two stack frames, one for the caller and one for the callee
+> > > > + * because there are no requirement for the caller to set a stack frame when
+> > > > + * calling VDSO so it may have omitted to set one, especially on PPC64
+> > > > + */
+> > > > +
+> > > > +.macro cvdso_call funct
+> > > > +  .cfi_startproc
+> > > > +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
+> > > > +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
+> > > > +	mflr		r0
+> > > > +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
+> > > > +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
+> > > > +	PPC_STL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
+> > > > +  .cfi_rel_offset lr, PPC_MIN_STKFRM + PPC_LR_STKOFF
+> > > > +	get_datapage	r8
+> > > > +	addi		r8, r8, VDSO_RNG_DATA_OFFSET
+> > > > +	bl		CFUNC(DOTSYM(\funct))
+> > > > +	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
+> > > > +	cmpwi		r3, 0
+> > > > +	mtlr		r0
+> > > > +	addi		r1, r1, 2 * PPC_MIN_STKFRM
+> > > > +  .cfi_restore lr
+> > > > +  .cfi_def_cfa_offset 0
+> > > > +	crclr		so
+> > > > +	bgelr+
+> > > > +	crset		so
+> > > > +	neg		r3, r3
+> > > > +	blr
+> > > > +  .cfi_endproc
+> > > > +.endm
+> > > 
+> > > Can you figure out what's going on and send a fix, which I'll squash
+> > > into this commit?
+> > 
+> > This doesn't work, but I wonder if something like it is what we want. I
+> > need to head out for the day, but here's what I've got. It's all wrong
+> > but might be of interest.
 > 
-> On 9/5/24 19:45, Joanne Koong wrote:
->> Introduce the capability to dynamically configure the fuse max pages
->> limit (formerly #defined as FUSE_MAX_MAX_PAGES) through a sysctl.
->> This enhancement allows system administrators to adjust the value
->> based on system-specific requirements.
->>
->> This removes the previous static limit of 256 max pages, which limits
->> the max write size of a request to 1 MiB (on 4096 pagesize systems).
->> Having the ability to up the max write size beyond 1 MiB allows for the
->> perf improvements detailed in this thread [1].
+> Oh, I just got one small detail wrong before. The below actually works,
+> and uses the same strategy as on arm64.
 > 
-> the change itself looks good to me, but have you seen this discussion here?
-> 
-> https://lore.kernel.org/lkml/CAJfpegs10SdtzNXJfj3=vxoAZMhksT5A1u5W5L6nKL-P2UOuLQ@mail.gmail.com/T/
-> 
-> 
-> Miklos is basically worried about page pinning and accounting for that
-> for unprivileged user processes. 
+> Let me know if you'd like me to fix up this commit with the below patch,
+> or if you have another way you'd like to go about it.
 
-Yeah this is the blocking issue here when attempting to increase the max
-pages limit.
+And here's the much shorter version in assembly, which maybe you prefer.
+Also works, and is a bit less invasive than the other thing.
 
-For background requests, maybe this could be fixed by taking the max
-pages limit into account when calculating max_user_bgreq. (currently
-max_user_bgreq is calculated "assuming 392 bytes per request")
+diff --git a/arch/powerpc/kernel/vdso/getrandom.S b/arch/powerpc/kernel/vdso/getrandom.S
+index a957cd2b2b03..070daba2d547 100644
+--- a/arch/powerpc/kernel/vdso/getrandom.S
++++ b/arch/powerpc/kernel/vdso/getrandom.S
+@@ -32,6 +32,14 @@
+   .cfi_rel_offset r2, PPC_MIN_STKFRM + STK_GOT
+ #endif
+ 	get_datapage	r8
++#ifdef CONFIG_TIME_NS
++	lis		r10, 0x7fff
++	ori		r10, r10, 0xffff
++	lwz		r9, VDSO_DATA_OFFSET + 4(r8)
++	cmpw		r9, r10
++	bne		+8
++	addi		r8, r8, (1 << CONFIG_PAGE_SHIFT)
++#endif
+ 	addi		r8, r8, VDSO_RNG_DATA_OFFSET
+ 	bl		CFUNC(DOTSYM(\funct))
+ 	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
 
-While for synchronous requests, I'm not sure if this indeed matters.  Or
-at least it won't be such severe as the pinned memory is limited by the
-number of the user process in this case.
-
--- 
-Thanks,
-Jingbo
 
