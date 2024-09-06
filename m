@@ -1,148 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-28842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4BE96F274
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 13:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD31F96F367
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 13:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4DA61F214E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 11:12:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 847AA1F23570
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 11:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3022E1CB14A;
-	Fri,  6 Sep 2024 11:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6z7fPUX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683611CBE9B;
+	Fri,  6 Sep 2024 11:44:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C3D158866
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Sep 2024 11:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12321CB154;
+	Fri,  6 Sep 2024 11:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725621136; cv=none; b=WzfIbQIoGxOuDw4XKSZyZm72/Q/bVQAQmP2oDGTNOcPk8O8D7KpVh+nR6CIvVRbPkneYVFSKtKgm4MyWa81+ZgiEes5r+QazsiJxEgDWO/SUbl7Nm8LEiGt83Fm92L5H0ucuepQ0BObe2p/ViyxzqhMPHVrUpj8sgGREE3kmg+w=
+	t=1725623076; cv=none; b=Cl53bsFUddDsDAq3tHdUuVUKJNG1oi7S3/y8UIDswmbRC/PQKJzrWwwnlOPhpU9l+f7vh+vljQF6dTSzR193DgGDG0k8/fun14USwElIKhVe8+I8Npkx7o1WItz3YSoXX+Jm45LSPxV0TPIk7YyTjCuD/ZrXYxowMDZ5sYmARZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725621136; c=relaxed/simple;
-	bh=hRnaVYz8xzqMO5nDLoiKpCcHFii7ac1wzji8EZh2C+M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iD22CJgIbzVrIPsn0HaTwFCFJg2L9DgzqDz5afKVH2xbD7RR5tqRu6JZ/FPaoTqY+uZwR7xXjPFNNZO6LEBVE5TWohsvVytumL/VniNfNQ6xJIkun25Emas97NoHRRlPbLpqnVPZRA5rYOuZw/tkLQt4CTgZ/vFegkUOzxPN/+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6z7fPUX; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7178cab62e6so1624490b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2024 04:12:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725621134; x=1726225934; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hRnaVYz8xzqMO5nDLoiKpCcHFii7ac1wzji8EZh2C+M=;
-        b=e6z7fPUXoJyajpjlRC09diTz5qaAXqwp202uKA+4V9qrz/y5de/jPkSEpoS+67/1a1
-         oeUx10pEMJl365amQkxuRIhqVoGSiGmqoBZNDBRoe8dybqn6Y3s67Fnt4f2Vz7Foo9Eu
-         7wb3Kl024DPzqPJ6skACFahEbeV4sn78OfQ1yJ6sKEFQhKWpnAGZTmo/w897fcJyQ74U
-         WLxJ/uOnGqYzH2fmVVA2TaTRR9ndlaiqAHFG9Zu7kTfonqcrU3v0xjcrkLqbmWrDlUkI
-         txHt96PyTmNXd4I9mxi31wFXozSxx58wgab+nmIbsd47cs44HJxoiVl0IQ9XHBP/Z4ue
-         vfiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725621134; x=1726225934;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hRnaVYz8xzqMO5nDLoiKpCcHFii7ac1wzji8EZh2C+M=;
-        b=RsoTkVnUV4Mcd2OUUYojHlrToQx8KgunzVVcPy86P0325fHDY2IM+8GOa9QW2+0olg
-         /yokYDW4IesI2rBY4NE+ijl14gfUl4JNAYbuLXx+9jF83xGmrPRbzD/9qOYNAYEyW3Z5
-         oGvKdVeJjBCEWPz4OAk3J4lxi+bLVC1kUCCigFPvPC6BhTTpHwnrY/lpC4qa+3jRWONf
-         7gGLXLaEHFrtAOL/kMsjmUAPqQqHkRGse0Dn2OCYts6VYGqz1yDrCNfrl1EPaOBKlbUO
-         z5PP+Wi23hPBAEIQwXMv90RHew7QHPcWrCH2Cil+GYMQmgldNhv9cG+/dtW76x6r7zXY
-         cs0w==
-X-Gm-Message-State: AOJu0YzNaVtaxX0PzHLQz7u9Pz8nSZ7axBrW95miT5b0NX7jPe3nM+fs
-	1EQlFACWCY1buEwEVbCfpAOwhHntJVmiIWn0acjwLQzAQEItiw7h
-X-Google-Smtp-Source: AGHT+IGp1GBlqeZ5d464UdJgY83R/T8aRw2bGGtGlE9I920UkHkE4T9ZRHOSTHVIc7fdlsA0k1Wg/w==
-X-Received: by 2002:a05:6a00:94a7:b0:710:591e:b52f with SMTP id d2e1a72fcca58-718d5ded3a6mr2046996b3a.5.1725621134195;
-        Fri, 06 Sep 2024 04:12:14 -0700 (PDT)
-Received: from [127.0.0.1] ([203.175.14.132])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71791fa4889sm2272562b3a.78.2024.09.06.04.12.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 04:12:13 -0700 (PDT)
-Message-ID: <d6ddc03e3aa86af60b13e9ebb81548b18fe6d74c.camel@gmail.com>
-Subject: Re: [PATCH] vfs: return -EOVERFLOW in generic_remap_checks() when
- overflow check fails
-From: Julian Sun <sunjunchao2870@gmail.com>
+	s=arc-20240116; t=1725623076; c=relaxed/simple;
+	bh=pgHZ6pNns/zCb7OwBUYttF56SM01OMsasHc2ufiQzQ4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aTktoDtRfzhDHx/YnTimBhC5eC9za4BSwuwAjjjM2zy9cDB9hyFZiEAOJGh4SRKAlCA0tU+D6mvcXK4pWd6PeN9RNAi/kOsZYvIgcnkZNwPrjRHyNHdbP5EO8xh5i3vKe4T1P+gYHlGIPVk7UemdO2+FEuyxbCmKMK68BQFERt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X0ZBn4qnhz4f3kKD;
+	Fri,  6 Sep 2024 19:44:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 14DF71A058E;
+	Fri,  6 Sep 2024 19:44:28 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAnXMga69pm74M6Ag--.57615S3;
+	Fri, 06 Sep 2024 19:44:27 +0800 (CST)
+Subject: Re: [PATCH -next] ext4: don't pass full mapping flags to
+ ext4_es_insert_extent()
 To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
- brauner@kernel.org
-Date: Fri, 06 Sep 2024 19:12:08 +0800
-In-Reply-To: <20240906102942.egowavntfx6t3z6t@quack3>
-References: <20240906033202.1252195-1-sunjunchao2870@gmail.com>
-	 <20240906102942.egowavntfx6t3z6t@quack3>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240906061401.2980330-1-yi.zhang@huaweicloud.com>
+ <20240906103445.pwdlkivrlqh3redb@quack3>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <742ccba0-6a27-7694-2381-37a70c137ac5@huaweicloud.com>
+Date: Fri, 6 Sep 2024 19:44:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240906103445.pwdlkivrlqh3redb@quack3>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAnXMga69pm74M6Ag--.57615S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw15uw4DZw1DtF4xZw4UXFb_yoW8Jw4fpa
+	9rC3W8JF1rKa4xCFWxta17trW7Ka1UJ3y2vFykuw15ZFZ5Zr93Kr45G3WjgFyIkrWFyr1a
+	vFW8uwnxC3Wjg37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Fri, 2024-09-06 at 12:29 +0200, Jan Kara wrote:
+On 2024/9/6 18:34, Jan Kara wrote:
+> On Fri 06-09-24 14:14:01, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> When converting a delalloc extent in ext4_es_insert_extent(), since we
+>> only want to pass the info of whether the quota has already been claimed
+>> if the allocation is a direct allocation from ext4_map_create_blocks(),
+>> there is no need to pass full mapping flags, so changes to just pass
+>> whether the EXT4_GET_BLOCKS_DELALLOC_RESERVE bit is set.
+>>
+>> Suggested-by: Jan Kara <jack@suse.cz>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Looks good. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+>> @@ -863,8 +863,8 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+>>  	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
+>>  		return;
+>>  
+>> -	es_debug("add [%u/%u) %llu %x %x to extent status tree of inode %lu\n",
+>> -		 lblk, len, pblk, status, flags, inode->i_ino);
+>> +	es_debug("add [%u/%u) %llu %x %d to extent status tree of inode %lu\n",
+>> +		 lblk, len, pblk, status, delalloc_reserve_used, inode->i_ino);
+> 
+> Ah, I didn't know 'bool' gets automatically promoted to 'int' when passed
+> as variadic argument but it seems to be the case from what I've found. One
+> always learns :)
+> 
 
-Sure, I will include this patch in the patch set for the next version.=C2=
-=A0
-But I think it maybe deserves a separate patch, rather than being=C2=A0
-integrated into the original patch?
-
-> On Fri 06-09-24 11:32:02, Julian Sun wrote:
-> > Keep it consistent with the handling of the same check within
-> > generic_copy_file_checks().
-> > Also, returning -EOVERFLOW in this case is more appropriate.
-> >=20
-> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
->=20
-> Well, you were already changing this condition here [1] so maybe just
-> update the errno in that patch as well? No need to generate unnecessary
-> patch conflicts...
->=20
-> [1] https://lore.kernel.org/all/20240905121545.ma6zdnswn5s72byb@quack3
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0Honza
->=20
-> > ---
-> > =C2=A0fs/remap_range.c | 2 +-
-> > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/remap_range.c b/fs/remap_range.c
-> > index 28246dfc8485..97171f2191aa 100644
-> > --- a/fs/remap_range.c
-> > +++ b/fs/remap_range.c
-> > @@ -46,7 +46,7 @@ static int generic_remap_checks(struct file *file_in,=
- loff_t pos_in,
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Ensure offsets don't=
- wrap. */
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (pos_in + count < po=
-s_in || pos_out + count < pos_out)
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0return -EOVERFLOW;
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0size_in =3D i_size_read=
-(inode_in);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0size_out =3D i_size_rea=
-d(inode_out);
-> > --=20
-> > 2.39.2
-> >=20
+Yeah, I'm always learn too. ;)
 
 Thanks,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+Yi.
+
 
