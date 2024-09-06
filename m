@@ -1,120 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-28843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD31F96F367
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 13:44:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7490E96F55F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 15:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 847AA1F23570
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 11:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E80F41F251D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2024 13:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683611CBE9B;
-	Fri,  6 Sep 2024 11:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88E51CEAC9;
+	Fri,  6 Sep 2024 13:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="apLYcQDQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FWDHTDS5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="apLYcQDQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FWDHTDS5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12321CB154;
-	Fri,  6 Sep 2024 11:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B711CE71E
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Sep 2024 13:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623076; cv=none; b=Cl53bsFUddDsDAq3tHdUuVUKJNG1oi7S3/y8UIDswmbRC/PQKJzrWwwnlOPhpU9l+f7vh+vljQF6dTSzR193DgGDG0k8/fun14USwElIKhVe8+I8Npkx7o1WItz3YSoXX+Jm45LSPxV0TPIk7YyTjCuD/ZrXYxowMDZ5sYmARZw=
+	t=1725629436; cv=none; b=kXFdFWjfDb5c0ESj1ZSKpDCAZqKT8wI89JNehujZEg0o0oJPy+fiIGh1GmkQbc+qtt/AvK71Siz+F9JjqQZ4vk5j2L+5AF8NQXM7PveuPn9QB8NzBNtj7i9eM1KkT4NKaP2IouhpF4pzLdU/h9H1+JnWN2+B3WVPfgbKY67tYhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623076; c=relaxed/simple;
-	bh=pgHZ6pNns/zCb7OwBUYttF56SM01OMsasHc2ufiQzQ4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aTktoDtRfzhDHx/YnTimBhC5eC9za4BSwuwAjjjM2zy9cDB9hyFZiEAOJGh4SRKAlCA0tU+D6mvcXK4pWd6PeN9RNAi/kOsZYvIgcnkZNwPrjRHyNHdbP5EO8xh5i3vKe4T1P+gYHlGIPVk7UemdO2+FEuyxbCmKMK68BQFERt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X0ZBn4qnhz4f3kKD;
-	Fri,  6 Sep 2024 19:44:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 14DF71A058E;
-	Fri,  6 Sep 2024 19:44:28 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAnXMga69pm74M6Ag--.57615S3;
-	Fri, 06 Sep 2024 19:44:27 +0800 (CST)
-Subject: Re: [PATCH -next] ext4: don't pass full mapping flags to
- ext4_es_insert_extent()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240906061401.2980330-1-yi.zhang@huaweicloud.com>
- <20240906103445.pwdlkivrlqh3redb@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <742ccba0-6a27-7694-2381-37a70c137ac5@huaweicloud.com>
-Date: Fri, 6 Sep 2024 19:44:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1725629436; c=relaxed/simple;
+	bh=qGHRL9CZwJlyDHmx2Re5mp52FIKoue83XYfO9sD13Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ok/fqc8MSBxd0p7RXfF5/BGkG8wPfI8DfqjwmeSQ2bHX20GKhbE9YT48Qki6WzLc8UGDJv2P0jwQPAvvnxEb3TPEcg6qFdcrICkIWIMb7YJMyz7VO6SqKNED8xFG3erxIgUqQGzcNI2dNsJuaFrlqYNdJhOHzGW2T38TGZu3gNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=apLYcQDQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FWDHTDS5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=apLYcQDQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FWDHTDS5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B774521A57;
+	Fri,  6 Sep 2024 13:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725629430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qKpa2DqlaJExEM8Nhkrlk/E1YK2IvBZi4xJMVAPG++k=;
+	b=apLYcQDQkxfk36idGJG69AKpS4oHPG9mOtRhZMNQpaEsMeG1cXOEGmU0J2i8RKQSQNlyVC
+	KjZaYr9QIMkbzFxbqPbQaDfFKwS+PJV1vbL6fPjpwVRtt+mEmix2iS383vEFCg4DPmiaDX
+	k7OgoOzQZMkYjpM3NwiRqvAh4rw8tnQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725629430;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qKpa2DqlaJExEM8Nhkrlk/E1YK2IvBZi4xJMVAPG++k=;
+	b=FWDHTDS5sX/A7B2Q59NkEez1xcv74NP5Hpvp8Ley1XPFxpGm1LkzJgPdVU5GVwBpo66J83
+	RcptIfzpzCOrj5Bw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725629430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qKpa2DqlaJExEM8Nhkrlk/E1YK2IvBZi4xJMVAPG++k=;
+	b=apLYcQDQkxfk36idGJG69AKpS4oHPG9mOtRhZMNQpaEsMeG1cXOEGmU0J2i8RKQSQNlyVC
+	KjZaYr9QIMkbzFxbqPbQaDfFKwS+PJV1vbL6fPjpwVRtt+mEmix2iS383vEFCg4DPmiaDX
+	k7OgoOzQZMkYjpM3NwiRqvAh4rw8tnQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725629430;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qKpa2DqlaJExEM8Nhkrlk/E1YK2IvBZi4xJMVAPG++k=;
+	b=FWDHTDS5sX/A7B2Q59NkEez1xcv74NP5Hpvp8Ley1XPFxpGm1LkzJgPdVU5GVwBpo66J83
+	RcptIfzpzCOrj5Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA7A01395F;
+	Fri,  6 Sep 2024 13:30:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZWWbKfYD22ZMJAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 06 Sep 2024 13:30:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 47A75A0962; Fri,  6 Sep 2024 15:30:15 +0200 (CEST)
+Date: Fri, 6 Sep 2024 15:30:15 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] inode: port __I_NEW to var event
+Message-ID: <20240906133015.g6rtipl22cajresi@quack3>
+References: <20240823-work-i_state-v3-0-5cd5fd207a57@kernel.org>
+ <20240823-work-i_state-v3-4-5cd5fd207a57@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240906103445.pwdlkivrlqh3redb@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAnXMga69pm74M6Ag--.57615S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw15uw4DZw1DtF4xZw4UXFb_yoW8Jw4fpa
-	9rC3W8JF1rKa4xCFWxta17trW7Ka1UJ3y2vFykuw15ZFZ5Zr93Kr45G3WjgFyIkrWFyr1a
-	vFW8uwnxC3Wjg37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823-work-i_state-v3-4-5cd5fd207a57@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On 2024/9/6 18:34, Jan Kara wrote:
-> On Fri 06-09-24 14:14:01, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When converting a delalloc extent in ext4_es_insert_extent(), since we
->> only want to pass the info of whether the quota has already been claimed
->> if the allocation is a direct allocation from ext4_map_create_blocks(),
->> there is no need to pass full mapping flags, so changes to just pass
->> whether the EXT4_GET_BLOCKS_DELALLOC_RESERVE bit is set.
->>
->> Suggested-by: Jan Kara <jack@suse.cz>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Fri 23-08-24 14:47:38, Christian Brauner wrote:
+> Port the __I_NEW mechanism to use the new var event mechanism.
 > 
-> Looks good. Feel free to add:
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+> I'm not fully convinced that READ_ONCE() in wait_on_inode() is
+> sufficient when combined with smp_mb() before wake_up_var(). Maybe we
+> need smp_store_release() on inode->i_state before smp_mb() and paired
+> with smp_load_acquire() in wait_on_inode().
+> ---
+>  fs/bcachefs/fs.c          | 10 ++++++----
+>  fs/dcache.c               |  7 ++++++-
+>  fs/inode.c                | 32 ++++++++++++++++++++++++--------
+>  include/linux/writeback.h |  3 ++-
+>  4 files changed, 38 insertions(+), 14 deletions(-)
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
->> @@ -863,8 +863,8 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->>  	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
->>  		return;
->>  
->> -	es_debug("add [%u/%u) %llu %x %x to extent status tree of inode %lu\n",
->> -		 lblk, len, pblk, status, flags, inode->i_ino);
->> +	es_debug("add [%u/%u) %llu %x %d to extent status tree of inode %lu\n",
->> +		 lblk, len, pblk, status, delalloc_reserve_used, inode->i_ino);
-> 
-> Ah, I didn't know 'bool' gets automatically promoted to 'int' when passed
-> as variadic argument but it seems to be the case from what I've found. One
-> always learns :)
-> 
+> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> index 94c392abef65..c0900c0c0f8a 100644
+> --- a/fs/bcachefs/fs.c
+> +++ b/fs/bcachefs/fs.c
+> @@ -1644,14 +1644,16 @@ void bch2_evict_subvolume_inodes(struct bch_fs *c, snapshot_id_list *s)
+>  				break;
+>  			}
+>  		} else if (clean_pass && this_pass_clean) {
+> -			wait_queue_head_t *wq = bit_waitqueue(&inode->v.i_state, __I_NEW);
+> -			DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
+> +			struct wait_bit_queue_entry wqe;
+> +			struct wait_queue_head *wq_head;
+>  
+> -			prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
+> +			wq_head = inode_bit_waitqueue(&wqe, &inode->v, __I_NEW);
+> +			prepare_to_wait_event(wq_head, &wqe.wq_entry,
+> +					      TASK_UNINTERRUPTIBLE);
+>  			mutex_unlock(&c->vfs_inodes_lock);
+>  
+>  			schedule();
+> -			finish_wait(wq, &wait.wq_entry);
+> +			finish_wait(wq_head, &wqe.wq_entry);
 
-Yeah, I'm always learn too. ;)
+The opencoded waits are somewhat ugly. I understand this is because of
+c->vfs_inodes_lock but perhaps we could introduce wait_on_inode() with some
+macro magic (to do what we need before going to sleep) to make it easier?
 
-Thanks,
-Yi.
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 877c64a1bf63..37f20c7c2f72 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -734,7 +734,13 @@ static void evict(struct inode *inode)
+>  	 * used as an indicator whether blocking on it is safe.
+>  	 */
+>  	spin_lock(&inode->i_lock);
+> -	wake_up_bit(&inode->i_state, __I_NEW);
+> +	/*
+> +	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+> +	 * ___wait_var_event() either sees the bit cleared or
+> +	 * waitqueue_active() check in wake_up_var() sees the waiter.
+> +	 */
+> +	smp_mb();
 
+Why did you add smp_mb() here? We wake up on inode state change which has
+happened quite some time ago and before several things guaranteeing a
+barrier...
+
+> +	inode_wake_up_bit(inode, __I_NEW);
+>  	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+>  	spin_unlock(&inode->i_lock);
+>  
+...
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index 56b85841ae4c..8f651bb0a1a5 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -200,7 +200,8 @@ void inode_io_list_del(struct inode *inode);
+>  /* writeback.h requires fs.h; it, too, is not included from here. */
+>  static inline void wait_on_inode(struct inode *inode)
+>  {
+> -	wait_on_bit(&inode->i_state, __I_NEW, TASK_UNINTERRUPTIBLE);
+> +	wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> +		       !(READ_ONCE(inode->i_state) & I_NEW));
+>  }
+>  
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+
+As far as memory ordering goes, this looks good to me. But READ_ONCE() is
+not really guaranteed to be enough in terms of what inode state you're
+going to see when racing with i_state updates. i_state updates would have
+to happen through WRITE_ONCE() for this to be safe (wrt insane compiler
+deoptimizations ;)). Now that's not a new problem so I'm not sure we need
+to deal with it in this patch set but it would probably deserve a comment.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
