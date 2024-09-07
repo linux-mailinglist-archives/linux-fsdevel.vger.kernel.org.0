@@ -1,81 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-28904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D20589703CC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2024 21:02:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7829703E0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2024 21:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2381C21043
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2024 19:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7DA61F217F6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2024 19:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AD115E5C8;
-	Sat,  7 Sep 2024 19:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B74316086C;
+	Sat,  7 Sep 2024 19:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JLhl3FMk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpkBLZXx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64FD17FE;
-	Sat,  7 Sep 2024 19:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68434F5FB;
+	Sat,  7 Sep 2024 19:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725735757; cv=none; b=kLnAeclWjcPKDrmx1X82cZouwVBT+s0bcjIQyqTSTPR8602ZaNzwYvJOv3/I1xWOEsi4ez4vFHgAAm/mdJIO52aXHs6QwpM7CekI7OnNXSr27C+iTNu0MJzc728bn4SarX51gZGj+xk2e5HIEvsfcpn4R8lXlEiF/hELTYotV6w=
+	t=1725736084; cv=none; b=lVzYc6BArglb+7tRSK7OIadjXAe2T0VHAlAS6tEu6GUNpkDy6Xs2jQGSFX9QDcmGl/bQa8CQtEQAsh8QpKnwTzlNyNGxPqGeVqqbKHYiKgiVk0LVthV57HulfO+e6LWx91DkS4DeDEfyCtFhlPynGcaS+3Cbqpt4lewF6r09l6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725735757; c=relaxed/simple;
-	bh=8TG9Q9C9WUF4Z26jooEX1NVB5l7ZrAOabJP7qxyldoo=;
+	s=arc-20240116; t=1725736084; c=relaxed/simple;
+	bh=Yg//rdx+arO9wJzw0f1sSxjNdC4DVMoG2gicnEsq0lc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BW5rcw/E+yq7sX/xaNCZMFbugXRoWXcnDur9iuT/Xg8JyEZxhvxspGPg2S16cO/i1kO4MlAMAIBjtadUcwqY4lIETJ1pLycUvsOeck/TEN1z/K6MW0RAd0RLCspA4IfJcKa+/weZqnXVKFjvI044hay//BwRIXQqZuJfs8QlCo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JLhl3FMk; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8TG9Q9C9WUF4Z26jooEX1NVB5l7ZrAOabJP7qxyldoo=; b=JLhl3FMkkgP784HPXWLiR9g12+
-	ppPw2boOxchkJQeOV/2zEHzFvG8lpyzvtyOGmiRNZBLL+qvyxNfq54C2E0/UVaEycEFmWFqdgEBvC
-	ZFPSgzOCualYZ/W8fosy9ZA7RLflLOfOdIiFgZU+DquTRUnvTroE4rQgoRbdwg+p88dyhe4SjJVI4
-	dE4V6UFljxv6x9Wtz4Rsj2w3dHNlqPAY6wM5JeePWW4wz8VYKe3/VaXb9NHHx9O4jnEGO4Biod36K
-	QielkLEBMWNtqD6VOz84F6+31cAI66WWQc9wCJwDAJYotmdDi4JsG4lSv8LjoSa0UbDLu6Uf/B5ie
-	QKr3eNBA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sn0hc-00000009vQe-0REG;
-	Sat, 07 Sep 2024 19:02:32 +0000
-Date: Sat, 7 Sep 2024 20:02:32 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
-Subject: Re: [PATCH] VFS: check i_nlink count before trying to unlink
-Message-ID: <20240907190232.GI1049718@ZenIV>
-References: <20240907172111.127817-1-ghanshyam1898@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AoPJmOo714cIsNbghuz0NbO7j4nzJL0/y3+I5p5b8M12IP48g6cplOiZyTfxSIwvhSt5kFynrHji8NB+wBnH/cLn90asWmx200baFF2EMgja5tXDrAhbVW5LgHn1plwVQoBBYBY1PR2bZVgazhmwxFoLBY1oK2atsC81nNTrPQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpkBLZXx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3120FC4CEC2;
+	Sat,  7 Sep 2024 19:08:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725736084;
+	bh=Yg//rdx+arO9wJzw0f1sSxjNdC4DVMoG2gicnEsq0lc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GpkBLZXxZZHTlaq1Ic7h5XBLzxTfzkMitPX/nUkqsPaifFskl1h8J4VRMaQ9w1ZAk
+	 KxF1db4nY2rMpJJlvnEW7DQb4VW4QVNAqtSdBmXqXoA4x0Ql2216cKKjL7GJord6H0
+	 M7nOC73A0sc29NRqbNJS26ua5KfXl4qeus6oNzeszw7F9lcfLc4VXTpXRFSL9+xzO4
+	 YuhmQ7KB/tfyq4wrM57Bzuf51fTxN5kGynwUPtEIaoK/hh6rcb1Y+Z9F8YUfnk8Wf8
+	 LXW1vxQOqx+aIiI4kR8U4zYzqLOG0UYGnCRxU8MVH5OlVCKBpS4LZ+6LIGV8W9kLYC
+	 rqyGZYhC0D1/w==
+Date: Sat, 7 Sep 2024 15:08:03 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Neil Brown <neilb@suse.de>, Jeff Layton <jlayton@kernel.org>,
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v15 16/26] nfsd: add LOCALIO support
+Message-ID: <Ztykk5A0DbN9KK-7@kernel.org>
+References: <2D4C95CA-3398-4962-AF14-672DEBADD3EE@oracle.com>
+ <172566449714.4433.8514131910352531236@noble.neil.brown.name>
+ <Ztxui0j8-naLrbhV@kernel.org>
+ <3862AF9C-0FCA-4B54-A911-8D211090E0B4@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240907172111.127817-1-ghanshyam1898@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3862AF9C-0FCA-4B54-A911-8D211090E0B4@oracle.com>
 
-On Sat, Sep 07, 2024 at 10:51:10PM +0530, Ghanshyam Agrawal wrote:
-> Reported-by: syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=41b43444de86db4c5ed1
-> Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+On Sat, Sep 07, 2024 at 04:09:33PM +0000, Chuck Lever III wrote:
+> 
+> > On Sep 7, 2024, at 11:17 AM, Mike Snitzer <snitzer@kernel.org> wrote:
+> > 
+> > Rather than have general concern for LOCALIO doing something wrong,
+> > we'd do well to make sure there is proper test coverage for required
+> > shutdown sequences (completely indepent of LOCALIO, maybe that already
+> > exists?).
+> 
+> That is on the to-do list for the NFSD kdevops CI infrastructure,
+> but unfortunately implementation has not been started yet.
 
-As far as I can tell, you have jfs_unlink() find and remove a directory
-entry without any problems, then find that the damn thing had corrupted
-inode link count (presumably due to creatively fucked up image).
+Could be a good project for me to help with.  I'm on the fence between
+kdevops and ktest, ideally I could come up with something that'd
+easily hook into both test harnesses.
 
-IF that's the case, NAK.
+Supporting both would be simple if the new tests were added to a
+popular testsuite that both can run (e.g. xfstests, or any other
+separate nfs/nfsd testsuite you may have?).  Or is "NFSD kdevops CI"
+itself what your tests be engineered with?
 
-vfs_unlink() is *NOT* the place to try and cope with that kind of crap.
-What's more, having unlink(2) quietly succeed and do nothing to directory
-is simply wrong.
+I can contribute anywhere, would just like to kill multiple birds when
+doing so.
+
+Thanks,
+Mike
 
