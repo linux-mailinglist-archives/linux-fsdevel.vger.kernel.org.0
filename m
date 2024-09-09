@@ -1,60 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-28922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A63897104C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 09:52:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2648D971055
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 09:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06771B218B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 07:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60D11F22D86
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 07:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C961B0107;
-	Mon,  9 Sep 2024 07:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13661B1424;
+	Mon,  9 Sep 2024 07:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2gHmBit"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThRjNgdf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E323176237;
-	Mon,  9 Sep 2024 07:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0875A1AF4DC;
+	Mon,  9 Sep 2024 07:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725868316; cv=none; b=YxEPDS2cVaA5fC7NT9WubfF+jnHi78i18JK9mtJEZ6Az6ZpaLSfd5wUpj7LA73058d1qpNWnoHVuJNEum71jUJnLwOyG+Q0iIli9x7m/pgn0ut51FdPCxZAywCTfxzRGDsdKzExHvHSkBOZtzwPbEXrGAD9xcSwsxYCc8RUTlBc=
+	t=1725868368; cv=none; b=baHKIOYopIogjQASMFZSJA5q3bfdiRt5/qmN9FLifDgNi0H5NIvOPZGX150r4LwLZtHbGjWJJocePPG24J6coyTLsNEfrPEQxq8TP9oiR/Dnqc09UBXWSjbKa3vJyQPyxqQKxffZ6XJY+WFRKlhD10SoRl9HweA3wCbKZ0nGdG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725868316; c=relaxed/simple;
-	bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=;
+	s=arc-20240116; t=1725868368; c=relaxed/simple;
+	bh=qOaesh/TAKQrrzKDplHaxB6/8unPc3QHMjB/XOYRlec=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u9bfjlSKuhbn7ZMrmu8E+SiXKqLnJzdWU44c5+VuB1Ms+OCMkERiydc8iMlkpSfNLXRMHLT/1k+80xktfU4hbNgFW3w4+BorVvanovmyTw0+eHbaHjNj3uJ0c860WlFqR9LYEw+Y4R8XJZ0Oqwyu6nnqZkLJrCczd2jwrK4g+Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2gHmBit; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9B8CC4CEC5;
-	Mon,  9 Sep 2024 07:51:53 +0000 (UTC)
+	 MIME-Version:Content-Type; b=oBUOj1c2Vp1qmzxHoLe3N58p9Ir4WBt0M1wjaR9y7scQYZQx+J3Citmq0DGoTdVDdgI8zm0npaUAqYUpAKiW3Uu3WGC00ZTWsAYmdZJjOHqllBxot3QirBE/ifEyIHHEmm8EaO4erm5kbpJYkyWLsUDrI4ODhjAjKDekFtQWN+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThRjNgdf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9F2C4CEC5;
+	Mon,  9 Sep 2024 07:52:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725868315;
-	bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=;
+	s=k20201202; t=1725868367;
+	bh=qOaesh/TAKQrrzKDplHaxB6/8unPc3QHMjB/XOYRlec=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T2gHmBitxf514l0xfai544a0kNK41duKcP83xv4FtdRCGg8wRrnxNNvYex2ydEaaC
-	 u+xt+R0b45iR4iyloAC+HZUJlwfgra15lnqEs5rD8Zcq1duZturu2D6qROAZNeNR6N
-	 ZJJI3pQePpLk9W9KHeXrfb0KedNdk26h13CgwXt2QQVvIFGaHHPX6rcV9CfrjYF03/
-	 pC+vAPq6R+qeMtAIX1rQETwWWWnyoplRaFkq7iUJTYwqQxkwnyS3pMIeD4rRkob218
-	 D83diNnSUfcicIeB6UYxMWVL1nVHfnkcJES0qoz1QrfASfx1rVV2LWrHAs/V9tUKl5
-	 xYiAm1/3+lAHA==
+	b=ThRjNgdfZsk/SqlPY4+gtwcBYkOWhvLjzicDqHP+hacZRi3wO6DkW1Bd5bCMwEfCz
+	 zl0Ukc4YGvII7kh871XU8j2OBKF6oPzYacXr23mXrp6g60PoYisGsmcd3dcx9QlTxy
+	 qZO7BFhr7p+ExjOOh/6xRBHT7eYbN6sFKow+Kcdbo4xqW3xu1VMiciWFZg2bwgIBjw
+	 8IkJ6c7mosalkDKHmdZGQ3ox2w3yWseHaN+2jf5bxysoyYJUUgpYh6i8aBKOLss7kJ
+	 Afpm61Z65OGWvb5WUF9Bn6RzE91tDcnvWJIeQzl5kK2eC0sncyoSWq50NBxkcBkJmk
+	 0PjoqB/TRx4nQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Yan Zhen <yanzhen@vivo.com>
+To: Dennis Lam <dennis.lamerice@gmail.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	sfr@canb.auug.org.au,
-	linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v1] proc: Fix typo in the comment
-Date: Mon,  9 Sep 2024 09:51:41 +0200
-Message-ID: <20240909-frieden-yacht-7b67be6a8a3c@brauner>
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dhowells@redhat.com,
+	jlayton@kernel.org,
+	corbet@lwn.net
+Subject: Re: [PATCH] docs:filesystems: fix spelling and grammar mistakes on netfs library page
+Date: Mon,  9 Sep 2024 09:52:33 +0200
+Message-ID: <20240909-bebte-sonst-e4939ee628df@brauner>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240909063353.2246419-1-yanzhen@vivo.com>
-References: <20240909063353.2246419-1-yanzhen@vivo.com>
+In-Reply-To: <20240908192307.20733-3-dennis.lamerice@gmail.com>
+References: <20240908192307.20733-3-dennis.lamerice@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,23 +64,16 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1087; i=brauner@kernel.org; h=from:subject:message-id; bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdWymy45f8vtzNmd7CGa4m4qsCv4YsnG8fx7XEqF7g7 A851msNHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPxucHIsO70qb12Ql+7HWYd zjfpYJfS2lj3LKF8cnD8D4/5+dd/P2Nk+NThbnX7+cLk+1e2rRX7ESy88jcz6+mvLuUc2xfv50q azQYA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=849; i=brauner@kernel.org; h=from:subject:message-id; bh=qOaesh/TAKQrrzKDplHaxB6/8unPc3QHMjB/XOYRlec=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdW+m+9s36Gd5hDvM32Ezes1pbk/Py1yi3vgMWWiu4Q 2f0b7Ob2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRWdMY/oc1yvLvr4lOYjDk 0jd9kXDl6Tvu1qvuqT7TJv8VPFy6IJnhr9Brx93r6s/HFLcuCDu/re9nhErV3OPmMu9fefxOcdD s5gcA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 09 Sep 2024 14:33:53 +0800, Yan Zhen wrote:
-> The deference here confuses me.
+On Sun, 08 Sep 2024 15:23:09 -0400, Dennis Lam wrote:
 > 
-> Maybe here want to say that because show_fd_locks() does not dereference
-> the files pointer, using the stale value of the files pointer is safe.
-> 
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
-> 
-> [...]
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+
+Applied to the vfs.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs.netfs branch should appear in linux-next soon.
 
 Please report any outstanding bugs that were missed during review in a
 new review to the original patch series allowing us to drop it.
@@ -90,8 +85,8 @@ Note that commit hashes shown below are subject to change due to rebase,
 trailer updates or similar. If in doubt, please check the listed branch.
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+branch: vfs.netfs
 
-[1/1] proc: Fix typo in the comment
-      https://git.kernel.org/vfs/vfs/c/698e7d168054
+[1/1] docs:filesystems: fix spelling and grammar mistakes on netfs library page
+      https://git.kernel.org/vfs/vfs/c/8bec52672c67
 
