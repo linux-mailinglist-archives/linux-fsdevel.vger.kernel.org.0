@@ -1,83 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-28926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC3C97128E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 10:50:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D75A9712A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 10:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6BFD1C22A28
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 08:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D541C2253F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 08:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943041B1D74;
-	Mon,  9 Sep 2024 08:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848011B250C;
+	Mon,  9 Sep 2024 08:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpltrMX7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmGn2G1W"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35AF1AC887
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 08:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E356116631C;
+	Mon,  9 Sep 2024 08:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725871811; cv=none; b=pHXe3HX6G23BYS7mEe4nnzC8xN4l5PrnsQ/dq/WjqMmCKw40kpF+87ClCR8W7VJezSWCC9gglnLTON5nu8QFN4NXOp3wRSAjdt9E6qSY0sSm4DefbRq8xE5ixtWCOQKeSLTYIRhp0VFUnb1+sxzYdz+gy3Yxb5bFXpmYSkct+0g=
+	t=1725871931; cv=none; b=VWSLxAmJV+hOXlaB9K5fKpNPqYZsKU5PrbmjmilCD5MTkXdK2M/jSVqjjHA+v5TFL4lshdZsUpcnC/MMP0SeGc3m4nP15bQrn+lDrTuWg+XS/B+wYMD879GDaLobyvOqlA1RoeX0v5qaJzybUctgHL+nxMIGo4dLTdiJh9UhcpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725871811; c=relaxed/simple;
-	bh=GbSzCxJCbJMFDl5rUHdvmex1Jg8USAutPcaxRfls/kU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ni5v3P5hn8vgRrQuU468haAgwghsQ/LcN9CfI4Fke6F3kdkmPxYkkJtPqrNqfflHhC/Tnk37vpbDB0RlTigIyLavqsiIUyJH4ASB4rXxZrY6g2m+0SDl29AbDBhvsxn2/Aag/d5nhr44OZE6kR77nOf1ResYzNFpCDBwaOd7fHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpltrMX7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2701AC4CEC5;
-	Mon,  9 Sep 2024 08:50:06 +0000 (UTC)
+	s=arc-20240116; t=1725871931; c=relaxed/simple;
+	bh=u9yIhycMRbv+Zz1SiqFnwavJGsdWGzRGAtLbAQfaA1A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VpeSLt4r7ujmkoqBUeT6fGKyDLvhjgn9AX/mCtSe0/yp3B524Aemz8MS04ewA+DfWiU0GRuYq4kdj71GakskqpVzHA43s+6YGsvUUkFQ/AWo7j1+BL9kC6zGkUHqtRJ6c8UYChm+9zBUbHLst0dmD3ypJJmzzp6a0pRaY1ubd54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmGn2G1W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E852EC4CEC5;
+	Mon,  9 Sep 2024 08:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725871809;
-	bh=GbSzCxJCbJMFDl5rUHdvmex1Jg8USAutPcaxRfls/kU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QpltrMX7TNaKUNzt/sFx4JeMN4HLR9AafXtCwKERDLq8HkC/XwnWLjrZ/csJPTWDW
-	 MKAkgQ84Qq5qnzHpcYRtcu5J+QAqNUNtGWZRkeS3rXZkrUrF0gr+PAawnxc8vkVAAs
-	 HZp1vybynQmfhsUaaEdwiIAGoH+Xcgmp4xvjqXGcoskYESouLpgnS3OlcKsA6J5ywT
-	 LjXy0ZFt71ohjLQAGAYL3y3lTLMWxbP7GOKvSxTQMnVeI0huiKDSrvfdYqT1PFFt7s
-	 eCZwwotRhKDPGdLLZXShLn0fYhCGflaSH+agZTiKhJHOb9H+tubHXTzcPJbfyoyyYk
-	 n1AJXbTlhGDBw==
-Date: Mon, 9 Sep 2024 10:50:04 +0200
+	s=k20201202; t=1725871930;
+	bh=u9yIhycMRbv+Zz1SiqFnwavJGsdWGzRGAtLbAQfaA1A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AmGn2G1W/LTzv/GiHaPuvj7VC+D3UqzD8mJHLVg418ginsCoh62XLmjJEOxVhubiy
+	 idIKKsgOq3n8wKE++R0jyNtcdi1HnSvjTHL+cuyAdoNgVZruKrW7WoOw0Lsng5rszE
+	 QNSGogl762PBw+J0rfam9Z02v0qMp1UO5gMKpB32Axl3mReOlc4csOAPZ3KNwuZMev
+	 H5weraRqzoL96+i7YRj0dfnzoQD1RZsKTIC+JuOlylfA1+96ZBYv0bEMZ8YkkuDVyJ
+	 AxFkF5z3k8CZh0XUWELH8gS7ZSjGzj+WD7kmdlVVxomxZHq2BQ2lI7U7Lsq39ZFLHu
+	 BKKtcXrjY6uaA==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Mike Rapoport <rppt@kernel.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: copying from/to user question
-Message-ID: <4psosyj7qxdadmcrt7dpnk4xi2uj2ndhciimqnhzamwwijyxpi@feuo6jqg5y7u>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH] proc: fold kmalloc() + strcpy() into kmemdup()
+Date: Mon,  9 Sep 2024 10:52:01 +0200
+Message-ID: <20240909-gemocht-klubs-0c62b4db29d0@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <90af27c1-0b86-47a6-a6c8-61a58b8aa747@p183>
+References: <90af27c1-0b86-47a6-a6c8-61a58b8aa747@p183>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=925; i=brauner@kernel.org; h=from:subject:message-id; bh=u9yIhycMRbv+Zz1SiqFnwavJGsdWGzRGAtLbAQfaA1A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTd2248o6DBXXSj/aGiEqtIcS/1GW2XS+cE//ts9e1Jw NSioNlfOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZSvY3hf/nbLA6VOVEMgolR 0ed7Mx+42Obt/nPirAln+73MNhfxWIZ/Jj1yRodjMpcL8kVWXL0rYXGjTsxc++xW85buDzuNNHb wAgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hey,
+On Sun, 08 Sep 2024 12:27:45 +0300, Alexey Dobriyan wrote:
+> strcpy() will recalculate string length second time which is
+> unnecessary in this case.
+> 
+> 
 
-This is another round of Christian's asking sus questions about kernel
-apis. I asked them a few people and generally the answers I got was
-"Good question, I don't know." or the reasoning varied a lot. So I take
-it I'm not the only one with that question.
+Applied to the vfs.procfs branch of the vfs/vfs.git tree.
+Patches in the vfs.procfs branch should appear in linux-next soon.
 
-I was looking at a potential epoll() bug and it got me thinking about
-dos & don'ts for put_user()/copy_from_user() and related helpers as
-epoll does acquire the epoll mutex and then goes on to loop over a list
-of ready items and calls __put_user() for each item. Granted, it only
-puts a __u64 and an integer but still that seems adventurous to me and I
-wondered why.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Generally, new vfs apis always try hard to call helpers that copy to or
-from userspace without any locks held as my understanding has been that
-this is best practice as to avoid risking taking page faults while
-holding a mutex or semaphore even though that's supposedly safe.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Is this understanding correct? And aside from best practice is it in
-principle safe to copy to or from userspace with sleeping locks held?
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.procfs
+
+[1/1] proc: fold kmalloc() + strcpy() into kmemdup()
+      https://git.kernel.org/vfs/vfs/c/4ad5f9a021bd
 
