@@ -1,136 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-28939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F559718CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 13:56:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D112797190F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 14:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5898F1F21A8B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 11:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5ADE1C22A88
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 12:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472761B78EB;
-	Mon,  9 Sep 2024 11:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229DC1B6549;
+	Mon,  9 Sep 2024 12:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhHzZQ7n"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YvuDxi42";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fimP6L2u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD2E13BAF1;
-	Mon,  9 Sep 2024 11:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEB51B29A3
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 12:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725882983; cv=none; b=dbPZW1xjenvgofKT8nolDMas8Ipyv0JevhQmo/y8ojnnLeRRdAXzCwRmO4qPOsEx3S348rGodbb+aYlz1SfdJVxa9++ZAlQIw7+VrHi1YkFo4rIxdlDEMOKPLfjcnPbEn7lLrMAFut0UrD4/KxitYz5u0xrRGPlvJEJdTio0OCw=
+	t=1725884121; cv=none; b=dxUS2CJ2HGLbk1UbxfSGZePdzFlq0nSdp+dBu9I4gLQcmXXLhrjIUkTywxZReHFZwrQ46EbI8xzkJkxSwCVCflWwUEAE7hjYRxb/GYJJm0ajWz6m/j2qq6+4wKUZgq1ezk7FdTY11xGxopcf9Evrt2upGjJI2f/IOUwo6sne2MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725882983; c=relaxed/simple;
-	bh=/YtRu2MORuw03OqntPGRgVqgK255CA2LiMaiIADwXrk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UA1F3fDpM6mGTSYs8+SJjrlTzro/O3if+mFyFnEorj2uFOZdxkvT+l1Hdbbdrjq9Ztl1ShRFavsWk363T8B0+/DV670wZq2A3X7lJ1BkYa9L5dyUCKaWMd2Ton37vBGlY7f+zDgy2pUYb0Ala2CenUng2cIxV4erMNUnNsNf6io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhHzZQ7n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF93C4CEC5;
-	Mon,  9 Sep 2024 11:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725882983;
-	bh=/YtRu2MORuw03OqntPGRgVqgK255CA2LiMaiIADwXrk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bhHzZQ7n7PMR2BNbizOYSxL+P4Zy5IkWjJpzjaiNOE1d+Id4GRkgYxIX2MGfzgt6g
-	 48a53xifmqGRExB/4QwUBAy86hBjnHe+VL9RW6fLIJjIPGM5doT7wWYsq/aTQn485F
-	 007XJGBf3SsAHsDESrFeo2UjYBX+vXAkocffLiKGQLcZTMiWItkSLVVpPAXUnlwka7
-	 s+ET6l0Ls0+jcDCsd9txQ5ii3Qir13AWZ1183IQXF9Dz1U2ySN+zRNIHd8SV+a8vYJ
-	 sV3rj/7D0++1O4uBmTRetLtwCfBOlWys5ApTCypm/5Wgve6bSNXEUb3QEsWA9Cfs6J
-	 xVefcKeJVyzzQ==
-Message-ID: <85cb5092-fbc9-4fa7-99ca-e9b26c7a61b6@kernel.org>
-Date: Mon, 9 Sep 2024 13:56:11 +0200
+	s=arc-20240116; t=1725884121; c=relaxed/simple;
+	bh=mZYbixztIViVldWjt5LzJvGGvr4hJlGDLFBJWbWSfaQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CWcqfpV2/CYwHyp9B7RuS1Rfo4P1ssQiWr4Bq8Nvd5pqCFZYjlsr5X7FA4sjkIyvWgNLfgUftE1ZM3SYSfEmR7GgH6YjBZQ9DVIl9IVMr2FpFkkU5niWqwUX2g1+BQ2oi4CBYBpHVqhBrBFb7L+hYtMBuUOiOzngB6yIQhtcjuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YvuDxi42; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fimP6L2u; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 0972313802DC;
+	Mon,  9 Sep 2024 08:15:18 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 09 Sep 2024 08:15:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1725884118;
+	 x=1725970518; bh=CgLgudbLDYfmS+qKBAFvUu698HtGa2VzY0t6nzClv+I=; b=
+	YvuDxi42ZCCkntXgFXcRWVMjSzZva7+zmGR8GolfAe/sZRzItLW7qKfDIMa0y07Z
+	knIt24oWw2p89q1vt/LIGMavSwKEAQkGspQCNkQ9wmtyns4+Ormh0wbNnfigpkpE
+	Yi1PZcmSN086ooQE9aPoi7YXiLH4ZhvCYEAyn4nHLiENHoBK0jmhfO2Sl9VsRVQz
+	WIxn3WgCCl3khBAs7ehKeuB4B3f/fpc+MQ5PM+5Pa7UEg6j3fvN/384ZLfn3ToRc
+	hcHI5EIuoghFouJ9xdHgAV9zBcpl+c//UweY2MyX6b2izfDDYxG95/up5Eqm/sJj
+	rOL2s3bkcF5/sWCJNPsc4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725884118; x=
+	1725970518; bh=CgLgudbLDYfmS+qKBAFvUu698HtGa2VzY0t6nzClv+I=; b=f
+	imP6L2uMw+F+rBzvoPLBANmsy4F4xUq5V1z5KVXxFjNquMbVEQDcDzriw0xagOwg
+	AY8Hnq0f1lBA2tDW7k534kyeSGHuDNWKwK5xsa3ljbFAxzr7s6jJ1RHDH7GqbfGI
+	3LFyILTuHZDojU22l867nka8uRNa79WDUWq9rRQQmw9M1hcAGiz6ZYjnVTLKD3sf
+	oLJdaAzRjAmwibgWpfE2NkNxD+s/E68QAYqIR1tyj9RkfScCdOjmHSD3s1Lp0w5+
+	lCdKUJOCVgG8WUaCX7BqylADzcu36krHHzEBT6RBiap/y3sSeQwZOEvsyzZt/VlN
+	bYjeTupAlDmzp/qvnwybQ==
+X-ME-Sender: <xms:1ebeZn9auBC00cm6x1TH4FYAUudcO9YOTdRDJkfdD1ydZhtvd1Rb4A>
+    <xme:1ebeZju-1pYSQGQHig9MZyb60bq9YaGRDS_XiUxhrQUFG2tyf6BVw9BWZP_fttgkj
+    1nnIAkvsSnzOPeHEGI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeijedgfeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddu
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegthihphhgrrhestgihphhhrghrrd
+    gtohhmpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsrhgruhhnvg
+    hrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrphhptheskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohepth
+    hglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepthhorhhvrghlughssehl
+    ihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehjrggtkhesshhush
+    gvrdgtii
+X-ME-Proxy: <xmx:1ebeZlBZHKgBTHm4vMQaTvmfelcISBKGO0CaHgv8t2grFO6wcsuRMg>
+    <xmx:1ebeZjdT8wbuJxYn6FQrqC8_oeH-L0ol7dEDYWOGNx20lPVnS6frEA>
+    <xmx:1ebeZsOcVTcfTbHDFd9OnJ5pmEJsTlGINPnWIv_jxlEiAU7JwOVLsQ>
+    <xmx:1ebeZlmN9Zi7tO73KmR4Nv61pGOApE_SdCfzwgXJFfYQY16Rh-kFuA>
+    <xmx:1ubeZtHluHDz-q376fTY_96wJMxrM1BhT0F-qaVrSDYb0KqCvWilaXiF>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 891F8222006F; Mon,  9 Sep 2024 08:15:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 16/17] ufs: host: add a callback for deriving software
- secrets and use it
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Gaurav Kashyap <quic_gaurkash@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-16-d59e61bc0cb4@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240906-wrapped-keys-v6-16-d59e61bc0cb4@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Date: Mon, 09 Sep 2024 12:14:57 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christian Brauner" <brauner@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Jan Kara" <jack@suse.cz>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Aleksa Sarai" <cyphar@cyphar.com>,
+ "Mike Rapoport" <rppt@kernel.org>, "Vlastimil Babka" <vbabka@suse.cz>,
+ "Matthew Wilcox" <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Message-Id: <d3b12900-f936-4c94-881d-8679bb8c878e@app.fastmail.com>
+In-Reply-To: <20240909-zutrifft-seetang-ad1079d96d70@brauner>
+References: <4psosyj7qxdadmcrt7dpnk4xi2uj2ndhciimqnhzamwwijyxpi@feuo6jqg5y7u>
+ <20240909-zutrifft-seetang-ad1079d96d70@brauner>
+Subject: Re: copying from/to user question
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
-> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> 
-> Add a new UFS core callback for deriving software secrets from hardware
-> wrapped keys and implement it in QCom UFS.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/ufs/host/ufs-qcom.c | 15 +++++++++++++++
->  include/ufs/ufshcd.h        |  1 +
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 366fd62a951f..77fb5e66e4be 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -182,9 +182,23 @@ static int ufs_qcom_ice_program_key(struct ufs_hba *hba,
->  		return qcom_ice_evict_key(host->ice, slot);
->  }
->  
-> +/*
-> + * Derive a software secret from a hardware wrapped key. The key is unwrapped in
-> + * hardware from trustzone and a software key/secret is then derived from it.
-> + */
-> +static int ufs_qcom_ice_derive_sw_secret(struct ufs_hba *hba, const u8 wkey[],
-> +					 unsigned int wkey_size,
-> +					 u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE])
-> +{
-> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> +
-> +	return qcom_ice_derive_sw_secret(host->ice, wkey, wkey_size, sw_secret);
-> +}
+On Mon, Sep 9, 2024, at 09:18, Christian Brauner wrote:
+> On Mon, Sep 09, 2024 at 10:50:10AM GMT, Christian Brauner wrote:
+>> 
+>> This is another round of Christian's asking sus questions about kernel
+>> apis. I asked them a few people and generally the answers I got was
+>> "Good question, I don't know." or the reasoning varied a lot. So I take
+>> it I'm not the only one with that question.
+>> 
+>> I was looking at a potential epoll() bug and it got me thinking about
+>> dos & don'ts for put_user()/copy_from_user() and related helpers as
+>> epoll does acquire the epoll mutex and then goes on to loop over a list
+>> of ready items and calls __put_user() for each item. Granted, it only
+>> puts a __u64 and an integer but still that seems adventurous to me and I
+>> wondered why.
+>> 
+>> Generally, new vfs apis always try hard to call helpers that copy to or
+>> from userspace without any locks held as my understanding has been that
+>> this is best practice as to avoid risking taking page faults while
+>> holding a mutex or semaphore even though that's supposedly safe.
+>> 
+>> Is this understanding correct? And aside from best practice is it in
+>> principle safe to copy to or from userspace with sleeping locks held?
 
-There's platforms with multiple UFS hosts (e.g. 8280 has one with the
-intention to be used for an onboard flash and one for a UFS card (they're
-like microSD except they're UFS and not MMC).. We need to handle that
-somehow too.
+I would be very suspicious if it's an actual __put_user() rather
+than the normal put_user() since at least on x86 that skips the
+__might_fault() instrumentation.
 
-My uneducated guess would be that the encryption infra is there for the
-primary host only and that it would be the one assumed by SCM calls.
+With the normal put_user() at least I would expect the
+might_lock_read(&current->mm->mmap_lock) instrumentation
+in __might_fault() to cause a lockdep splat if you are holding
+a mutex that is also required during a page fault, which
+in turn would deadlock if your __user pointer is paged out.
 
-I thiiiink it should be enough not to add a `qcom,ice` property in the
-DT for the secondary slot, but please somebody else take another look
-here
+I have not seen that particular lockdep output, but I imagine
+that is why VFS code tends to avoids the put_user() inside
+of a mutex, while code that is nowhere near paging gets away
+with it.
 
-Konrad
+    Arnd
 
