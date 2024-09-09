@@ -1,97 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-28950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C5F6971C37
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 16:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 044FE971CA7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 16:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04FBFB23311
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 14:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8752EB2244B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 14:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF7E1BA26F;
-	Mon,  9 Sep 2024 14:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210731BA28D;
+	Mon,  9 Sep 2024 14:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="LOi+rtgG"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RIB3PDzc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yzwzEdcE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EED11712;
-	Mon,  9 Sep 2024 14:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89031B5EB7
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 14:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725891347; cv=none; b=X76dp+hAUEiWs//Fv/DYcBTpT/OR6hFahYSW07ejBhCTDGHPuRUjVH9VyW3CJLyGHK0XSpqepaMh3LX1dw6mEW20aatw4Weqj07+gRvT4h6jwrFeRXQr0K1dc4WwJwEJvWs0P802fePD78x7EcU/apo8kVo060l9G5yAZ/Ft6Ps=
+	t=1725892294; cv=none; b=f8fBHyHF+3yBgSTxdoISSa4vnbbvj84oswkGmfzu3ncFFkKchE+cV+8oGnlQPGuWEWUM+XchnYwtj7UkC7arngF4VcQcXUbFArE+Zc262NWyKN+yIBEN4M7mseQgRb9ra1YtiLC4/f2uYlDmLcKOFpUKjzpUtXNOid1rtGyf36M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725891347; c=relaxed/simple;
-	bh=SueKp3n1Y013XO+0FQLVymY+507DmQkNubgBS6pfbAY=;
+	s=arc-20240116; t=1725892294; c=relaxed/simple;
+	bh=CuQIm6FLrEA9fua7xpZ69cTS+/Kj/s+Oh71sz7ub44E=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=p1SlKstv2FI/n+Or45kuFWvBtYa78F9H34Z5eE4MI3yso2dkK4JbgooEfeKyiejI2BBlZUgruCpWc8n/PVJHV9kNzPA9O+koecm0UUtC1bt9X/uU8hiZ03oWiXZyNl0n81im9hlSxy1dCwHVTazXWssM2ArdO37kjUtnwjtFF+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=LOi+rtgG; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E9FC7C0004;
-	Mon,  9 Sep 2024 14:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1725891342;
+	 MIME-Version:Content-Type; b=BDv55MBQTVh19MyTnqZLsHOHw3tHQDvOHvFsRA5+KgEbRixlHi2+WHgYyKq7pq6bNV7/SzMDtYbJtzMfWRjTZDnz9bGB8NCLTZi1Lub5o76SAWwn0TN+ECmRhc4cCsbAQqcOu8Asf13u38zqmlTlOwRbD4gFjyOOUAzdICO9sbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RIB3PDzc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yzwzEdcE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725892290;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sWkQECCtCkYRpgRDI91m9jn0h/1pf2RieDIOritsh40=;
-	b=LOi+rtgGnheOXae/d2UEPXvxLV8PMBlILKkTb/9SKlAO+PUk7ffDzbXYTBCrc8G1wl2xhJ
-	4F5mWdSRfmBJrBPjd200i6xtBBcX+/Yx3xHfAZ5RGD47FvIhC4QrQPm8GDSS7L4fL5QGTU
-	yIHPjVdYz/VDNvu42st3oXwqlg8ngAkMB14RSmneUcWH5f1f4KOUkxDLTAo8lNt0DqPrpF
-	eQBSpjlLVj/wsW6rBwEhDbJEyBLkwKiqCT6bREUC0/SY2Kdh0kwdsJDLtHMjXB7EKAfxNA
-	elfekdcP+i9CIjqKOPBQnLzNcIeay9Jxs9RYZvRQS/CV2hvcd/xAIdK8hx3bbw==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,  Hugh Dickins
- <hughd@google.com>,  Andrew Morton <akpm@linux-foundation.org>,  Alexander
- Viro <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,
-  Jan Kara <jack@suse.cz>,  krisman@kernel.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  kernel-dev@igalia.com,  Daniel Rosenberg <drosen@google.com>,
-  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,  Theodore Ts'o
- <tytso@mit.edu>
-Subject: Re: [PATCH v3 6/9] tmpfs: Add casefold lookup support
-In-Reply-To: <956192d3-5fb8-4ecc-8625-a34812df537b@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Fri, 6 Sep 2024 11:59:45 -0300")
-References: <20240905190252.461639-1-andrealmeid@igalia.com>
-	<20240905190252.461639-7-andrealmeid@igalia.com>
-	<87zfoln622.fsf@mailhost.krisman.be>
-	<956192d3-5fb8-4ecc-8625-a34812df537b@igalia.com>
-Date: Mon, 09 Sep 2024 10:15:31 -0400
-Message-ID: <87mskglxq4.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	bh=p2DzKilptjmCGepX1IgkvLR+a5gWmN0aU0k+31PBodc=;
+	b=RIB3PDzcOjbWVApDvjxxJMZ+aOWvLfUui1JhYQ7L+x4T2D8Ct/KNx9YOJBFrBAHiKMi9p8
+	gZqb/O1AhK5eUGoJaADl2M/JvxaQj0WtyBBpQOuTguhcrVWa1y/JUJxqwW3DGk3cJpPWwa
+	jwYLXqyRhS10KIM04WN8bcEHisk3TS5nZ1ankjqTHPeoPE2yyUjI0zGEnH9ROIZyRcKtRL
+	6E27tltmLpmzBFWOaM35J3FthtKrty+WY4O7m0EubmZwpU7N6gqKe4wsjm6goTT16Vfq41
+	zCVMbONPszjUxntPK6vjPCuNiucDrZhWcigqFElQFtgD9PGJSduxdjaQV5gJxg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725892290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p2DzKilptjmCGepX1IgkvLR+a5gWmN0aU0k+31PBodc=;
+	b=yzwzEdcE8zf0zoihvT/bDslO7NDo2F17T3q5Eqlj0FOfxGZlRUGimkx4ICjSePrj3tEBun
+	We9BHmBE4Q1biJBA==
+To: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>,
+ Mike Rapoport <rppt@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Matthew
+ Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: copying from/to user question
+In-Reply-To: <d3b12900-f936-4c94-881d-8679bb8c878e@app.fastmail.com>
+References: <4psosyj7qxdadmcrt7dpnk4xi2uj2ndhciimqnhzamwwijyxpi@feuo6jqg5y7u>
+ <20240909-zutrifft-seetang-ad1079d96d70@brauner>
+ <d3b12900-f936-4c94-881d-8679bb8c878e@app.fastmail.com>
+Date: Mon, 09 Sep 2024 16:31:30 +0200
+Message-ID: <87zfogc30d.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
-
->> The sole reason you are doing this custom function is to exclude negative
->> dentries from casefolded directories. I doubt we care about the extra
->> check being done.  Can we just do it in simple_lookup?
+On Mon, Sep 09 2024 at 12:14, Arnd Bergmann wrote:
+> On Mon, Sep 9, 2024, at 09:18, Christian Brauner wrote:
+>> On Mon, Sep 09, 2024 at 10:50:10AM GMT, Christian Brauner wrote:
+>>> 
+>>> This is another round of Christian's asking sus questions about kernel
+>>> apis. I asked them a few people and generally the answers I got was
+>>> "Good question, I don't know." or the reasoning varied a lot. So I take
+>>> it I'm not the only one with that question.
+>>> 
+>>> I was looking at a potential epoll() bug and it got me thinking about
+>>> dos & don'ts for put_user()/copy_from_user() and related helpers as
+>>> epoll does acquire the epoll mutex and then goes on to loop over a list
+>>> of ready items and calls __put_user() for each item. Granted, it only
+>>> puts a __u64 and an integer but still that seems adventurous to me and I
+>>> wondered why.
+>>> 
+>>> Generally, new vfs apis always try hard to call helpers that copy to or
+>>> from userspace without any locks held as my understanding has been that
+>>> this is best practice as to avoid risking taking page faults while
+>>> holding a mutex or semaphore even though that's supposedly safe.
+>>> 
+>>> Is this understanding correct? And aside from best practice is it in
+>>> principle safe to copy to or from userspace with sleeping locks held?
 >
-> So, in summary:
->
-> * set d_ops at mount time to generic_ci_always_del_dentry_ops
-> * use simple_lookup(), get rid of shmem_lookup()
-> * inside of simple_lookup(), add (IS_CASEFOLDED(dir)) return NULL
->
-> Right?
+> I would be very suspicious if it's an actual __put_user() rather
+> than the normal put_user() since at least on x86 that skips the
+> __might_fault() instrumentation.
 
-Yep, that's my suggestion.
+epoll_put_uevent() uses __put_user(). __put_user() does neither have
+might_fault() nor does it check the destination pointer. It's documented
+that the caller needs to have validated it via access_ok(), which
+happens in do_epoll_wait().
 
---=20
-Gabriel Krisman Bertazi
+> With the normal put_user() at least I would expect the
+> might_lock_read(&current->mm->mmap_lock) instrumentation
+> in __might_fault() to cause a lockdep splat if you are holding
+> a mutex that is also required during a page fault, which
+> in turn would deadlock if your __user pointer is paged out.
+
+Right. But an actual page fault would still trip over that if there is a
+lock dependency chain because pagefaults are enabled.
+
+Coming back to your general question.
+
+It is generally safe to fault with a sleeping lock held when there is no
+invers lock chain vs. mmap_lock.
+
+Whether it's a good idea is a different question, which depends on the
+context of what the mutex is protecting and what consequences result in
+holding it for a extended period of time, e.g. due to a swapped out
+page.
+
+Thanks,
+
+        tglx
 
