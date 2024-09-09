@@ -1,154 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-28940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D112797190F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 14:15:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B71971917
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 14:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5ADE1C22A88
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 12:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633DE1F2348F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 12:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229DC1B6549;
-	Mon,  9 Sep 2024 12:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105FA1B6547;
+	Mon,  9 Sep 2024 12:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YvuDxi42";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fimP6L2u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQVTuznT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEB51B29A3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 12:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45E815EFA1
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 12:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725884121; cv=none; b=dxUS2CJ2HGLbk1UbxfSGZePdzFlq0nSdp+dBu9I4gLQcmXXLhrjIUkTywxZReHFZwrQ46EbI8xzkJkxSwCVCflWwUEAE7hjYRxb/GYJJm0ajWz6m/j2qq6+4wKUZgq1ezk7FdTY11xGxopcf9Evrt2upGjJI2f/IOUwo6sne2MY=
+	t=1725884162; cv=none; b=pB4xd5LhG9LmND5UnPjQODN6n06Q3A6qRunSDyQ0BCejXaIteTJ/JSR34G9HeVwVOZb2uHGgEnEFG1TCiLico2hT8ASaqA5g5vN8HkQCjFhN1cRivDdi8lO5DXKS8frCnTk/kDkjpKlJDZb1SVTC29olyqlyatcJFPsWjTU+cr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725884121; c=relaxed/simple;
-	bh=mZYbixztIViVldWjt5LzJvGGvr4hJlGDLFBJWbWSfaQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=CWcqfpV2/CYwHyp9B7RuS1Rfo4P1ssQiWr4Bq8Nvd5pqCFZYjlsr5X7FA4sjkIyvWgNLfgUftE1ZM3SYSfEmR7GgH6YjBZQ9DVIl9IVMr2FpFkkU5niWqwUX2g1+BQ2oi4CBYBpHVqhBrBFb7L+hYtMBuUOiOzngB6yIQhtcjuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YvuDxi42; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fimP6L2u; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0972313802DC;
-	Mon,  9 Sep 2024 08:15:18 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 09 Sep 2024 08:15:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1725884118;
-	 x=1725970518; bh=CgLgudbLDYfmS+qKBAFvUu698HtGa2VzY0t6nzClv+I=; b=
-	YvuDxi42ZCCkntXgFXcRWVMjSzZva7+zmGR8GolfAe/sZRzItLW7qKfDIMa0y07Z
-	knIt24oWw2p89q1vt/LIGMavSwKEAQkGspQCNkQ9wmtyns4+Ormh0wbNnfigpkpE
-	Yi1PZcmSN086ooQE9aPoi7YXiLH4ZhvCYEAyn4nHLiENHoBK0jmhfO2Sl9VsRVQz
-	WIxn3WgCCl3khBAs7ehKeuB4B3f/fpc+MQ5PM+5Pa7UEg6j3fvN/384ZLfn3ToRc
-	hcHI5EIuoghFouJ9xdHgAV9zBcpl+c//UweY2MyX6b2izfDDYxG95/up5Eqm/sJj
-	rOL2s3bkcF5/sWCJNPsc4w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725884118; x=
-	1725970518; bh=CgLgudbLDYfmS+qKBAFvUu698HtGa2VzY0t6nzClv+I=; b=f
-	imP6L2uMw+F+rBzvoPLBANmsy4F4xUq5V1z5KVXxFjNquMbVEQDcDzriw0xagOwg
-	AY8Hnq0f1lBA2tDW7k534kyeSGHuDNWKwK5xsa3ljbFAxzr7s6jJ1RHDH7GqbfGI
-	3LFyILTuHZDojU22l867nka8uRNa79WDUWq9rRQQmw9M1hcAGiz6ZYjnVTLKD3sf
-	oLJdaAzRjAmwibgWpfE2NkNxD+s/E68QAYqIR1tyj9RkfScCdOjmHSD3s1Lp0w5+
-	lCdKUJOCVgG8WUaCX7BqylADzcu36krHHzEBT6RBiap/y3sSeQwZOEvsyzZt/VlN
-	bYjeTupAlDmzp/qvnwybQ==
-X-ME-Sender: <xms:1ebeZn9auBC00cm6x1TH4FYAUudcO9YOTdRDJkfdD1ydZhtvd1Rb4A>
-    <xme:1ebeZju-1pYSQGQHig9MZyb60bq9YaGRDS_XiUxhrQUFG2tyf6BVw9BWZP_fttgkj
-    1nnIAkvsSnzOPeHEGI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeijedgfeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegthihphhgrrhestgihphhhrghrrd
-    gtohhmpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsrhgruhhnvg
-    hrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrphhptheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohepth
-    hglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepthhorhhvrghlughssehl
-    ihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehjrggtkhesshhush
-    gvrdgtii
-X-ME-Proxy: <xmx:1ebeZlBZHKgBTHm4vMQaTvmfelcISBKGO0CaHgv8t2grFO6wcsuRMg>
-    <xmx:1ebeZjdT8wbuJxYn6FQrqC8_oeH-L0ol7dEDYWOGNx20lPVnS6frEA>
-    <xmx:1ebeZsOcVTcfTbHDFd9OnJ5pmEJsTlGINPnWIv_jxlEiAU7JwOVLsQ>
-    <xmx:1ebeZlmN9Zi7tO73KmR4Nv61pGOApE_SdCfzwgXJFfYQY16Rh-kFuA>
-    <xmx:1ubeZtHluHDz-q376fTY_96wJMxrM1BhT0F-qaVrSDYb0KqCvWilaXiF>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 891F8222006F; Mon,  9 Sep 2024 08:15:17 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725884162; c=relaxed/simple;
+	bh=DhSkJUL8NJrMECGsPnuWPXkR0YqAN5KlJ6wwnrRBv7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BXJlFEGHaJEcBmgozvWWYsCCgnPHovBFWWVGm72HLTiHP65uk5QWEU4EXTIX+fZ/Rb9PzRydDL5n6HsSp18mMgDCcPz8nOwC6j3ev7KPYLhn8G5u8d3r6svQEkXnx3S2Wb3TjuGNBk1FZMfFvqIy4n6b4Jk+8JRo5YX/0hR3YpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EQVTuznT; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so26925981fa.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2024 05:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725884157; x=1726488957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vs1LO9HKjlPki55gvqUejYVqcPzzhxN8fVRp2itascg=;
+        b=EQVTuznT1bchdsb8X3EbDNmRUpNf/LbO+pKPOFmgDU8mludLGRU0/ppYerfuNusurb
+         6irY1oAQ2nek9PIGSdc0ml9lru9ICg541EslasKICnNt1qrqdgdP5vLpD87CLTMcvcvh
+         1NeTq5te2KG7Wg2qWl9qOC/hw2IO+Izc4MUf+Mx43cKiC1VNtclSuYP3FfVd5Oq7io/m
+         5oobCjBxixC9A+ggebPjylzpmL1HjdA1bVT/jIIvJ1ScjF/xTYYryMXfkbG6T3qEXoaQ
+         +TLmR3OS+YwGhptS8wQz2DWptG1rApDEy7NdNdMXgHq123DRG7DEyG0/3i3M9b3ssYrl
+         EQag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725884157; x=1726488957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vs1LO9HKjlPki55gvqUejYVqcPzzhxN8fVRp2itascg=;
+        b=btAZCtzgLAUO22D5TRSWmZhUMX+btDI26EiUPU9+jZ8rFmNECRoH5Avq0PA4p9uIA1
+         UvZxGe77un8GPI9VR+octNs5zMXI8hJDD/TtILn5/yrA6YGspEPvmeAjKSrc9aUpsEal
+         wBrl/SUu675bbdhNeDXhHN3BNMZnlg0JKSdgY0ICCNYD2E0qLSag9ikZDq3F5S4UCZtI
+         d5nFtiReFEImfoh3Sg67iVkEihDNFJ4Zn27zc53EhcEtVssQbHw0A3adDZANwknxK8yh
+         CGAhk0Elw1CRZ3GQyrGaAHTG7fVnyyFCH3RFOlEtTxX48pscf8616EWLALilTN+g1Qt1
+         eOFg==
+X-Gm-Message-State: AOJu0YwTSZ2E+CIaz0wg3j1a0oZFOS6Q4tJJAbOR/+iw7W3yYAgztHat
+	f7fRdqfB7wT1NlmrCBOV7HdQfJkHIyNX+LiBEBrkpXfT8cxb8EvDnZUHN+gh8SHVO34vOZALiQX
+	R/H8FGFpFI/Yeg80v0lHAlKV8XrE=
+X-Google-Smtp-Source: AGHT+IHUGQyHBpG3HRrq902qh9xpO4UnZuCNA35yPaEKv7eiS+ScQjJoWGo3LVsmqEjR34WBg6GG7YoE9lZzGzGY7Ig=
+X-Received: by 2002:a2e:bc15:0:b0:2f6:6198:1cf9 with SMTP id
+ 38308e7fff4ca-2f75aa0a315mr77025411fa.31.1725884155779; Mon, 09 Sep 2024
+ 05:15:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 09 Sep 2024 12:14:57 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christian Brauner" <brauner@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Jan Kara" <jack@suse.cz>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Aleksa Sarai" <cyphar@cyphar.com>,
- "Mike Rapoport" <rppt@kernel.org>, "Vlastimil Babka" <vbabka@suse.cz>,
- "Matthew Wilcox" <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Message-Id: <d3b12900-f936-4c94-881d-8679bb8c878e@app.fastmail.com>
-In-Reply-To: <20240909-zutrifft-seetang-ad1079d96d70@brauner>
-References: <4psosyj7qxdadmcrt7dpnk4xi2uj2ndhciimqnhzamwwijyxpi@feuo6jqg5y7u>
- <20240909-zutrifft-seetang-ad1079d96d70@brauner>
-Subject: Re: copying from/to user question
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240905102425.1106040-1-sunjunchao2870@gmail.com> <ZttT_sHrS5NQPAM9@bfoster>
+In-Reply-To: <ZttT_sHrS5NQPAM9@bfoster>
+From: Julian Sun <sunjunchao2870@gmail.com>
+Date: Mon, 9 Sep 2024 20:15:43 +0800
+Message-ID: <CAHB1Nag5+AEqhd=nDKPg7S4y89CRAZp0mRU4_UHuQ=WnR58WpQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] iomap: Do not unshare exents beyond EOF
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, djwong@kernel.org, david@fromorbit.com, hch@lst.de, 
+	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 9, 2024, at 09:18, Christian Brauner wrote:
-> On Mon, Sep 09, 2024 at 10:50:10AM GMT, Christian Brauner wrote:
->> 
->> This is another round of Christian's asking sus questions about kernel
->> apis. I asked them a few people and generally the answers I got was
->> "Good question, I don't know." or the reasoning varied a lot. So I take
->> it I'm not the only one with that question.
->> 
->> I was looking at a potential epoll() bug and it got me thinking about
->> dos & don'ts for put_user()/copy_from_user() and related helpers as
->> epoll does acquire the epoll mutex and then goes on to loop over a list
->> of ready items and calls __put_user() for each item. Granted, it only
->> puts a __u64 and an integer but still that seems adventurous to me and I
->> wondered why.
->> 
->> Generally, new vfs apis always try hard to call helpers that copy to or
->> from userspace without any locks held as my understanding has been that
->> this is best practice as to avoid risking taking page faults while
->> holding a mutex or semaphore even though that's supposedly safe.
->> 
->> Is this understanding correct? And aside from best practice is it in
->> principle safe to copy to or from userspace with sleeping locks held?
+Hi Brian,
 
-I would be very suspicious if it's an actual __put_user() rather
-than the normal put_user() since at least on x86 that skips the
-__might_fault() instrumentation.
+Brian Foster <bfoster@redhat.com> =E4=BA=8E2024=E5=B9=B49=E6=9C=887=E6=97=
+=A5=E5=91=A8=E5=85=AD 03:11=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Thu, Sep 05, 2024 at 06:24:24PM +0800, Julian Sun wrote:
+> > Attempting to unshare extents beyond EOF will trigger
+> > the need zeroing case, which in turn triggers a warning.
+> > Therefore, let's skip the unshare process if extents are
+> > beyond EOF.
+> >
+> > Reported-and-tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotma=
+il.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D296b1c84b9cbf306e5a0
+> > Fixes: 32a38a499104 ("iomap: use write_begin to read pages to unshare")
+> > Inspired-by: Dave Chinner <david@fromorbit.com>
+> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index f420c53d86ac..8898d5ec606f 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1340,6 +1340,9 @@ static loff_t iomap_unshare_iter(struct iomap_ite=
+r *iter)
+> >       /* don't bother with holes or unwritten extents */
+> >       if (srcmap->type =3D=3D IOMAP_HOLE || srcmap->type =3D=3D IOMAP_U=
+NWRITTEN)
+> >               return length;
+> > +     /* don't try to unshare any extents beyond EOF. */
+> > +     if (pos > i_size_read(iter->inode))
+> > +             return length;
+>
+> Hi Julian,
+>
+>
+> > What about if pos starts within EOF and the operation extends beyond it=
+?
 
-With the normal put_user() at least I would expect the
-might_lock_read(&current->mm->mmap_lock) instrumentation
-in __might_fault() to cause a lockdep splat if you are holding
-a mutex that is also required during a page fault, which
-in turn would deadlock if your __user pointer is paged out.
+Extents within EOF will be unshared as usual. Details are below.
+>
+> > I ask because I think I've reproduced this scenario, though it is a bit
+> > tricky and has dependencies...
+> >
+> > For one, it seems to depend on the cowblocks patch I recently posted
+> > here [1] (though I don't think this is necessarily a problem with the
+> > patch, it just depends on keeping COW fork blocks around after the
+> > unshare). With that, I reproduce via fsx with unshare range support [2]
+> > using the ops file appended below [3] on a -bsize=3D1k XFS fs.
+> >
+> > I haven't quite characterized the full sequence other than it looks lik=
+e
+> > the unshare walks across EOF with a shared data fork block and COW fork
+> > delalloc, presumably finds the post-eof part of the folio !uptodate (so
+> > iomap_adjust_read_range() doesn't skip it), and then trips over the
+> > warning and error return associated with the folio zeroing in
+> > __iomap_write_begin().
 
-I have not seen that particular lockdep output, but I imagine
-that is why VFS code tends to avoids the put_user() inside
-of a mutex, while code that is nowhere near paging gets away
-with it.
+The scenario has already been reproduced by syzbot[1]. The reproducer
+provided by syzbot constructed the following extent maps for a file of
+size 0xE00 before fallocate unshare:
 
-    Arnd
+0 - 4k: shared between two files
+4k - 6k: hole beyond EOF, not shared
+6k - 8k: delalloc extends
+
+Then the reproducer attempted to unshare the extent between 0 and
+0x2000 bytes, but the file size is 0xE00. This is likely the scenario
+you were referring to?
+
+Eventually the unshare code does:
+first map: 0 - 4k - unshare successfully.
+second map: 4k - 6k - hole, skip. Beyond EOF.
+third map: 6k - 8k - delalloc, beyond EOF so needs zeroing.
+Fires warnings because UNSHARE.
+
+During the first call to iomap_unshare_iter(), iomap_length() returned
+4k, so 4k bytes were unshared.
+See discuss here[2] for more details.
+>
+> This all kind of has me wondering.. do we know the purpose of this
+> warning/error in the first place? It seems like it's more of an
+> "unexpected situation" than a specific problem. E.g., assuming the same
+> page were mmap'd, I _think_ the read fault path would do the same sort
+> of zeroing such that the unshare would see a fully uptodate folio and
+> carry on as normal. I added the mapread op to the opsfile below to give
+> that a quick test (remove the "skip" text to enable it), and it seems to
+> prevent the error, but I've not confirmed whether that theory is
+> actually what's happening.
+>
+>
+> > FWIW, I also wonder if another way to handle this would be to just
+> > restrict the range of iomap_file_unshare() to within EOF. IOW if a
+> > caller passes a range beyond EOF, just process whatever part of the
+> > range falls within EOF. It seems iomap isn't responsible for the file
+> > extending aspect of the fallocate unshare command anyways.
+
+It already does 'just process whatever part of the range falls within EOF'.
+Check the above case.
+
+I'm not sure if I fully understand what you mean. This patch does not
+prevent unsharing extents within the EOF. This patch checks if pos is
+beyond EOF, instead of checking if pos + length is beyond EOF. So the
+extents within EOF should be unshared as usual.
+
+BTW, maybe the check here should be
+                  if (pos >=3D i_size_read(iter->inode))
+
+If there is any misunderstanding, please let me know, thanks.
+
+[1]: https://lore.kernel.org/all/0000000000008964f1061f8c32b6@google.com/T/
+[2]: https://lore.kernel.org/all/20240903054808.126799-1-sunjunchao2870@gma=
+il.com/
+
+>
+> Thoughts?
+>
+> Brian
+>
+> [1] https://lore.kernel.org/linux-xfs/20240906114051.120743-1-bfoster@red=
+hat.com/
+> [2] https://lore.kernel.org/fstests/20240906185606.136402-1-bfoster@redha=
+t.com/
+> [3] fsx ops file:
+>
+> fallocate 0x3bc00 0x400 0
+> write 0x3bc00 0x800 0x3c000
+> clone_range 0x3bc00 0x400 0x0 0x3c400
+> skip mapread 0x3c000 0x400 0x3c400
+> fallocate 0x3bc00 0xc00 0x3c400 unshare
+>
+
+
+Thanks,
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
