@@ -1,171 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-28921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA590970FF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 09:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A63897104C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 09:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 546E9B20E24
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 07:36:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06771B218B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 07:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67481B0100;
-	Mon,  9 Sep 2024 07:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C961B0107;
+	Mon,  9 Sep 2024 07:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fkqMdK3p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PTTG0viW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fkqMdK3p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PTTG0viW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2gHmBit"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939CD1AF4FB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 07:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E323176237;
+	Mon,  9 Sep 2024 07:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725867353; cv=none; b=YXjXVd6njMeVZMAURk5uM7kiyTvYkLsIH5J+c8ojNNmfvy8hnUNs1uvb57aYZ35t43VtGD6SIjAt4MM3wZmxsfxRk+eNjsa6US+cfNwbrqEzrrGTB6pYu4gS/yL9mkQaXziCw1PDVSTPE7TfISR6QHmqwZ57qTen/J++7i6SxKs=
+	t=1725868316; cv=none; b=YxEPDS2cVaA5fC7NT9WubfF+jnHi78i18JK9mtJEZ6Az6ZpaLSfd5wUpj7LA73058d1qpNWnoHVuJNEum71jUJnLwOyG+Q0iIli9x7m/pgn0ut51FdPCxZAywCTfxzRGDsdKzExHvHSkBOZtzwPbEXrGAD9xcSwsxYCc8RUTlBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725867353; c=relaxed/simple;
-	bh=AUGZ/nehwMkpWcdcursqLNHDc7HyHvIHCQRPXa1jSYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftXkBvsN3ZEeDcyTpGL84q1+Brm4h23FBmVfuYiREhm21LoQT2VeZ62LXBxOCGvdyDPJb+ll7SxzsPWlGwO+u4kmuyGlz/A0n+cWlv8GBCBUGRCHTY9x7vUhz6oFrS4aekphRn8oYnF6j3qMyW/JfR7QnTj47ibIT0YD//Of7kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fkqMdK3p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PTTG0viW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fkqMdK3p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PTTG0viW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C81A91F796;
-	Mon,  9 Sep 2024 07:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725867349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VjdvzWnFo0sw9Py9keuQCbChIIJcEk0Ik/FVllKA6bs=;
-	b=fkqMdK3ptB8FOHQY8erxxlRaaz7ezKDmlBHDvEGdZYO9jQjolKVvFnbILKTWp9LjVw2bBK
-	CRwZGKWJDaPGLAOiMiE8lKUzAaL7s/cXAKbYA4XLV16O/ZK+m9YHfrbt1X6aPCMMwfGHU3
-	XCoJv5jc3X1Rqwp75k+2CjjKXdxyqIY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725867349;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VjdvzWnFo0sw9Py9keuQCbChIIJcEk0Ik/FVllKA6bs=;
-	b=PTTG0viWpzjS+TZwJdR5Qj4dz/80evnsLhUvE7dSETWPqpFPBdOTROkZG7QJVQI9OmE8FG
-	HHwtU903S5fwO8AQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725867349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VjdvzWnFo0sw9Py9keuQCbChIIJcEk0Ik/FVllKA6bs=;
-	b=fkqMdK3ptB8FOHQY8erxxlRaaz7ezKDmlBHDvEGdZYO9jQjolKVvFnbILKTWp9LjVw2bBK
-	CRwZGKWJDaPGLAOiMiE8lKUzAaL7s/cXAKbYA4XLV16O/ZK+m9YHfrbt1X6aPCMMwfGHU3
-	XCoJv5jc3X1Rqwp75k+2CjjKXdxyqIY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725867349;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VjdvzWnFo0sw9Py9keuQCbChIIJcEk0Ik/FVllKA6bs=;
-	b=PTTG0viWpzjS+TZwJdR5Qj4dz/80evnsLhUvE7dSETWPqpFPBdOTROkZG7QJVQI9OmE8FG
-	HHwtU903S5fwO8AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE4F413312;
-	Mon,  9 Sep 2024 07:35:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UuGLKlWl3mayXgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Sep 2024 07:35:49 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 478D3A095F; Mon,  9 Sep 2024 09:35:45 +0200 (CEST)
-Date: Mon, 9 Sep 2024 09:35:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] inode: make i_state a u32
-Message-ID: <20240909073545.7b6z6rh6gawwu3r2@quack3>
-References: <20240823-work-i_state-v3-0-5cd5fd207a57@kernel.org>
- <20240823-work-i_state-v3-6-5cd5fd207a57@kernel.org>
+	s=arc-20240116; t=1725868316; c=relaxed/simple;
+	bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u9bfjlSKuhbn7ZMrmu8E+SiXKqLnJzdWU44c5+VuB1Ms+OCMkERiydc8iMlkpSfNLXRMHLT/1k+80xktfU4hbNgFW3w4+BorVvanovmyTw0+eHbaHjNj3uJ0c860WlFqR9LYEw+Y4R8XJZ0Oqwyu6nnqZkLJrCczd2jwrK4g+Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2gHmBit; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9B8CC4CEC5;
+	Mon,  9 Sep 2024 07:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725868315;
+	bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=T2gHmBitxf514l0xfai544a0kNK41duKcP83xv4FtdRCGg8wRrnxNNvYex2ydEaaC
+	 u+xt+R0b45iR4iyloAC+HZUJlwfgra15lnqEs5rD8Zcq1duZturu2D6qROAZNeNR6N
+	 ZJJI3pQePpLk9W9KHeXrfb0KedNdk26h13CgwXt2QQVvIFGaHHPX6rcV9CfrjYF03/
+	 pC+vAPq6R+qeMtAIX1rQETwWWWnyoplRaFkq7iUJTYwqQxkwnyS3pMIeD4rRkob218
+	 D83diNnSUfcicIeB6UYxMWVL1nVHfnkcJES0qoz1QrfASfx1rVV2LWrHAs/V9tUKl5
+	 xYiAm1/3+lAHA==
+From: Christian Brauner <brauner@kernel.org>
+To: Yan Zhen <yanzhen@vivo.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	sfr@canb.auug.org.au,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v1] proc: Fix typo in the comment
+Date: Mon,  9 Sep 2024 09:51:41 +0200
+Message-ID: <20240909-frieden-yacht-7b67be6a8a3c@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240909063353.2246419-1-yanzhen@vivo.com>
+References: <20240909063353.2246419-1-yanzhen@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823-work-i_state-v3-6-5cd5fd207a57@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1087; i=brauner@kernel.org; h=from:subject:message-id; bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdWymy45f8vtzNmd7CGa4m4qsCv4YsnG8fx7XEqF7g7 A851msNHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPxucHIsO70qb12Ql+7HWYd zjfpYJfS2lj3LKF8cnD8D4/5+dd/P2Nk+NThbnX7+cLk+1e2rRX7ESy88jcz6+mvLuUc2xfv50q azQYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri 23-08-24 14:47:40, Christian Brauner wrote:
-> Now that we use the wait var event mechanism make i_state a u32 and free
-> up 4 bytes. This means we currently have two 4 byte holes in struct
-> inode which we can pack.
+On Mon, 09 Sep 2024 14:33:53 +0800, Yan Zhen wrote:
+> The deference here confuses me.
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/fs.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Maybe here want to say that because show_fd_locks() does not dereference
+> the files pointer, using the stale value of the files pointer is safe.
 > 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f257f8fad7d0..746ac60cef92 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -681,7 +681,8 @@ struct inode {
->  #endif
->  
->  	/* Misc */
-> -	unsigned long		i_state;
-> +	u32			i_state;
-> +	/* 32-bit hole */
->  	struct rw_semaphore	i_rwsem;
->  
->  	unsigned long		dirtied_when;	/* jiffies of first dirtying */
+> Correctly spelled comments make it easier for the reader to understand
+> the code.
 > 
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> [...]
+
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] proc: Fix typo in the comment
+      https://git.kernel.org/vfs/vfs/c/698e7d168054
 
