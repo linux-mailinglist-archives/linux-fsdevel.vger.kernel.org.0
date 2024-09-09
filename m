@@ -1,159 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-28937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1592B971701
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 13:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C739718B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 13:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B1F1F23148
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 11:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68A91F23D3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 11:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3980E1B3B2B;
-	Mon,  9 Sep 2024 11:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7505A1B81DF;
+	Mon,  9 Sep 2024 11:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ngcmSO97";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a8a+uzad";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ngcmSO97";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a8a+uzad"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDX195re"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FD81B3B06;
-	Mon,  9 Sep 2024 11:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35CB1B6525;
+	Mon,  9 Sep 2024 11:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881744; cv=none; b=VfQ7qS2pB00j1kKPADdKxlfR+8a1d4Bkjk+nFMoqMAvS1mqDk37iSzxd7jC7sj1sLlGv3WCgF0n1c24eAajLDNo0SAmWvqdDtPi6MsguoXDPK3WgJgJh7ytFvW3kF4Hz+EHmMwfcYjQH2ke235n7a6w87s1rH2sKaoPj1pGn0Qk=
+	t=1725882707; cv=none; b=vEkYDnVifbrlJFbFQZ3PaHbo/28viZ2VSvC1gpgfGqCvsjQaI7Q3EhrELd5Yx8kN8kYLXyxJ34XIjJGhfa6rTHT6D/1nX5GL2w/CtiGqMw/FqOJjEmIKnINDzi6iSpqTN+i1b7Ar8nK4zIh5F6cdcpzYeNpeJtQi2QhVzY5z2G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881744; c=relaxed/simple;
-	bh=GVISnP9UsFGbHZp50x0yE7hLzn+QhRqglpi7z7+GiGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n3+1wo4DLbvt1zBa4BPZcZVRjin1hy6IeXutMLpGis8bYsPyrxd/uwa1SE3cP9vFWD+UMrTQvjdVGiXbRTQFtUjINwHVUlEmzzAXxDb06N8d893Mb9j/yv4sn12RlSNCXBXbvHRBwSQubJM9NbsfTS1p+YmzQOnBeh8soMyLRXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ngcmSO97; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a8a+uzad; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ngcmSO97; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a8a+uzad; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B7ABC219A4;
-	Mon,  9 Sep 2024 11:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725881739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ButvdY7F6OPDCmhDFHthu8UyYiCQIjhdHWQ6fSxT09o=;
-	b=ngcmSO97UnLy/4Z5EokpKnCNF6cNyvDYZ/JY78r+cRNrQ6/7abY1sRjF/C3/zqYvwdHrcp
-	Yi/KOwoZoCQ3wgVHjdoUkatOvdcgNIbH/KgmaiUq5s+zBWuFoSEYHVBBUgHk/smX1YbzVN
-	8C9w5sciF4wfphyf4GtdK4FbU5T14Bg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725881739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ButvdY7F6OPDCmhDFHthu8UyYiCQIjhdHWQ6fSxT09o=;
-	b=a8a+uzadRsQzgg7k4+X1mzHv6UXsgPLlNeO+t9GYimVEQU7r1fV44UuBD08HylWdh6hhqh
-	AAJLnNqzyVGJpYDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ngcmSO97;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=a8a+uzad
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725881739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ButvdY7F6OPDCmhDFHthu8UyYiCQIjhdHWQ6fSxT09o=;
-	b=ngcmSO97UnLy/4Z5EokpKnCNF6cNyvDYZ/JY78r+cRNrQ6/7abY1sRjF/C3/zqYvwdHrcp
-	Yi/KOwoZoCQ3wgVHjdoUkatOvdcgNIbH/KgmaiUq5s+zBWuFoSEYHVBBUgHk/smX1YbzVN
-	8C9w5sciF4wfphyf4GtdK4FbU5T14Bg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725881739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ButvdY7F6OPDCmhDFHthu8UyYiCQIjhdHWQ6fSxT09o=;
-	b=a8a+uzadRsQzgg7k4+X1mzHv6UXsgPLlNeO+t9GYimVEQU7r1fV44UuBD08HylWdh6hhqh
-	AAJLnNqzyVGJpYDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC69813312;
-	Mon,  9 Sep 2024 11:35:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ekISKovd3mZJNAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Sep 2024 11:35:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5BB49A095F; Mon,  9 Sep 2024 13:35:35 +0200 (CEST)
-Date: Mon, 9 Sep 2024 13:35:35 +0200
-From: Jan Kara <jack@suse.cz>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	selinux@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: linux-next commit 0855feef5235 ("fsnotify: introduce pre-content
- permission event")
-Message-ID: <20240909113535.vomill5z4v5q47rm@quack3>
-References: <CAHC9VhQvbKsSSfGzUGo3e8ov6p-re_Xn_cEbPK0YJ9VhZXP_Bg@mail.gmail.com>
+	s=arc-20240116; t=1725882707; c=relaxed/simple;
+	bh=0JyaXQcVV7hV6+TsoSX2pVLz4WSNcsP5lbx3ypUfRNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QxN7GDkbeXhxYJddC2LU7A2X58mncQB30ZEtkaPkWIHkW3WpWaBif7/Tv6/JC9uzV3K++BAfdV3XlftxzJ90tmZK81kYjH35JNxQtNwdKwQaYOoiNMaDbhMUc1T1ZnoTsZXkqtaSUNUZzpbcaKcsjOlhm/C/xAFAWDU1Zt2h1RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDX195re; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DBEC4CEC7;
+	Mon,  9 Sep 2024 11:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725882706;
+	bh=0JyaXQcVV7hV6+TsoSX2pVLz4WSNcsP5lbx3ypUfRNY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KDX195re/Wb8hzBE3AWZJzabPkZjsDHLVwHFV0SCsWdSvZr8I2P7USdXFqva9tP9Y
+	 ukl8bMwjb1RQgdwX1h8f5jCiB7Gl6T+yd7oR3iUcsnjaIR0Z4drxbMybUJO954lZTy
+	 NiyiUeAVKW5bG3A9BE/0+X2hlsloMBfpMREn4TK+4OcFXji4mBrky8LZbBp0qsxh6I
+	 ecrhqKiN2qd3shH3eqmj97oR8JOWtnv16BPizbTJ73Qom+N94JsxSvNsEJKpD5jiLV
+	 p/WtDVZEEGCwezhB9sJ7GKRJf0pks9SdEtDG/LhkffmbzxqP7nby/WGd40bl1l5sI5
+	 BufwvRr/w0RCA==
+Message-ID: <88e20936-0400-47a3-8909-24e3609e714e@kernel.org>
+Date: Mon, 9 Sep 2024 13:51:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQvbKsSSfGzUGo3e8ov6p-re_Xn_cEbPK0YJ9VhZXP_Bg@mail.gmail.com>
-X-Rspamd-Queue-Id: B7ABC219A4
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[toxicpanda.com,gmail.com,suse.cz,vger.kernel.org];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 10/17] soc: qcom: ice: add support for hardware wrapped
+ keys
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Asutosh Das <quic_asutoshd@quicinc.com>,
+ Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Om Prakash Singh <quic_omprsing@quicinc.com>
+References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-10-d59e61bc0cb4@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240906-wrapped-keys-v6-10-d59e61bc0cb4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Paul!
+On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
+> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> 
+> Now that HWKM support has been added to ICE, extend the ICE driver to
+> support hardware wrapped keys programming coming in from the storage
+> controllers (UFS and eMMC). This is similar to raw keys where the call is
+> forwarded to Trustzone, however we also need to clear and re-enable
+> CFGE before and after programming the key.
+> 
+> Derive software secret support is also added by forwarding the call to
+> the corresponding SCM API.
+> 
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Reviewed-by: Om Prakash Singh <quic_omprsing@quicinc.com>
+> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-On Fri 06-09-24 10:42:39, Paul Moore wrote:
-> When you are making changes that impact a LSM, or the LSM framework
-> itself, especially if they change the permissions/access-controls in
-> any way, please make sure you CC the relevant mailing lists.  If you
-> are unsure which lists you should CC, please consult MAINTAINERS or
-> use the ./scripts/get_maintainer.pl tool.
+[...]
 
-Well, it didn't occur to me you'd be interested in these changes but you're
-right that we've added the new event to a bitmask in
-security/selinux/hooks.c so strictly speaking I should have notified you.
-I'm sorry for the omission.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +static int qcom_ice_program_wrapped_key(struct qcom_ice *ice,
+> +					const struct blk_crypto_key *key,
+> +					u8 data_unit_size, int slot)
+> +{
+> +	union crypto_cfg cfg;
+> +	int hwkm_slot;
+> +	int err;
+> +
+> +	hwkm_slot = translate_hwkm_slot(ice, slot);
+> +
+> +	memset(&cfg, 0, sizeof(cfg));
+
+union crypto_cfg cfg = { 0 };
+
+?
+
+> +	cfg.dusize = data_unit_size;
+> +	cfg.capidx = QCOM_SCM_ICE_CIPHER_AES_256_XTS;
+> +	cfg.cfge = 0x80;
+
+Or just partially initialize it at declaration time?
+
+Also, what's 0x80?
+
+Konrad
 
