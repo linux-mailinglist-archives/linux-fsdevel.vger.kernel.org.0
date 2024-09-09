@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-28938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C739718B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 13:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F559718CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 13:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68A91F23D3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 11:53:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5898F1F21A8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 11:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7505A1B81DF;
-	Mon,  9 Sep 2024 11:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472761B78EB;
+	Mon,  9 Sep 2024 11:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDX195re"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhHzZQ7n"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35CB1B6525;
-	Mon,  9 Sep 2024 11:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD2E13BAF1;
+	Mon,  9 Sep 2024 11:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725882707; cv=none; b=vEkYDnVifbrlJFbFQZ3PaHbo/28viZ2VSvC1gpgfGqCvsjQaI7Q3EhrELd5Yx8kN8kYLXyxJ34XIjJGhfa6rTHT6D/1nX5GL2w/CtiGqMw/FqOJjEmIKnINDzi6iSpqTN+i1b7Ar8nK4zIh5F6cdcpzYeNpeJtQi2QhVzY5z2G8=
+	t=1725882983; cv=none; b=dbPZW1xjenvgofKT8nolDMas8Ipyv0JevhQmo/y8ojnnLeRRdAXzCwRmO4qPOsEx3S348rGodbb+aYlz1SfdJVxa9++ZAlQIw7+VrHi1YkFo4rIxdlDEMOKPLfjcnPbEn7lLrMAFut0UrD4/KxitYz5u0xrRGPlvJEJdTio0OCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725882707; c=relaxed/simple;
-	bh=0JyaXQcVV7hV6+TsoSX2pVLz4WSNcsP5lbx3ypUfRNY=;
+	s=arc-20240116; t=1725882983; c=relaxed/simple;
+	bh=/YtRu2MORuw03OqntPGRgVqgK255CA2LiMaiIADwXrk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QxN7GDkbeXhxYJddC2LU7A2X58mncQB30ZEtkaPkWIHkW3WpWaBif7/Tv6/JC9uzV3K++BAfdV3XlftxzJ90tmZK81kYjH35JNxQtNwdKwQaYOoiNMaDbhMUc1T1ZnoTsZXkqtaSUNUZzpbcaKcsjOlhm/C/xAFAWDU1Zt2h1RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDX195re; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DBEC4CEC7;
-	Mon,  9 Sep 2024 11:51:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=UA1F3fDpM6mGTSYs8+SJjrlTzro/O3if+mFyFnEorj2uFOZdxkvT+l1Hdbbdrjq9Ztl1ShRFavsWk363T8B0+/DV670wZq2A3X7lJ1BkYa9L5dyUCKaWMd2Ton37vBGlY7f+zDgy2pUYb0Ala2CenUng2cIxV4erMNUnNsNf6io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhHzZQ7n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF93C4CEC5;
+	Mon,  9 Sep 2024 11:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725882706;
-	bh=0JyaXQcVV7hV6+TsoSX2pVLz4WSNcsP5lbx3ypUfRNY=;
+	s=k20201202; t=1725882983;
+	bh=/YtRu2MORuw03OqntPGRgVqgK255CA2LiMaiIADwXrk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KDX195re/Wb8hzBE3AWZJzabPkZjsDHLVwHFV0SCsWdSvZr8I2P7USdXFqva9tP9Y
-	 ukl8bMwjb1RQgdwX1h8f5jCiB7Gl6T+yd7oR3iUcsnjaIR0Z4drxbMybUJO954lZTy
-	 NiyiUeAVKW5bG3A9BE/0+X2hlsloMBfpMREn4TK+4OcFXji4mBrky8LZbBp0qsxh6I
-	 ecrhqKiN2qd3shH3eqmj97oR8JOWtnv16BPizbTJ73Qom+N94JsxSvNsEJKpD5jiLV
-	 p/WtDVZEEGCwezhB9sJ7GKRJf0pks9SdEtDG/LhkffmbzxqP7nby/WGd40bl1l5sI5
-	 BufwvRr/w0RCA==
-Message-ID: <88e20936-0400-47a3-8909-24e3609e714e@kernel.org>
-Date: Mon, 9 Sep 2024 13:51:33 +0200
+	b=bhHzZQ7n7PMR2BNbizOYSxL+P4Zy5IkWjJpzjaiNOE1d+Id4GRkgYxIX2MGfzgt6g
+	 48a53xifmqGRExB/4QwUBAy86hBjnHe+VL9RW6fLIJjIPGM5doT7wWYsq/aTQn485F
+	 007XJGBf3SsAHsDESrFeo2UjYBX+vXAkocffLiKGQLcZTMiWItkSLVVpPAXUnlwka7
+	 s+ET6l0Ls0+jcDCsd9txQ5ii3Qir13AWZ1183IQXF9Dz1U2ySN+zRNIHd8SV+a8vYJ
+	 sV3rj/7D0++1O4uBmTRetLtwCfBOlWys5ApTCypm/5Wgve6bSNXEUb3QEsWA9Cfs6J
+	 xVefcKeJVyzzQ==
+Message-ID: <85cb5092-fbc9-4fa7-99ca-e9b26c7a61b6@kernel.org>
+Date: Mon, 9 Sep 2024 13:56:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/17] soc: qcom: ice: add support for hardware wrapped
- keys
+Subject: Re: [PATCH v6 16/17] ufs: host: add a callback for deriving software
+ secrets and use it
 To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
  Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
  Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
@@ -76,60 +76,61 @@ Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
  linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
  linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Om Prakash Singh <quic_omprsing@quicinc.com>
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-10-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-16-d59e61bc0cb4@linaro.org>
 Content-Language: en-US
 From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240906-wrapped-keys-v6-10-d59e61bc0cb4@linaro.org>
+In-Reply-To: <20240906-wrapped-keys-v6-16-d59e61bc0cb4@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
 > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 > 
-> Now that HWKM support has been added to ICE, extend the ICE driver to
-> support hardware wrapped keys programming coming in from the storage
-> controllers (UFS and eMMC). This is similar to raw keys where the call is
-> forwarded to Trustzone, however we also need to clear and re-enable
-> CFGE before and after programming the key.
-> 
-> Derive software secret support is also added by forwarding the call to
-> the corresponding SCM API.
+> Add a new UFS core callback for deriving software secrets from hardware
+> wrapped keys and implement it in QCom UFS.
 > 
 > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Reviewed-by: Om Prakash Singh <quic_omprsing@quicinc.com>
 > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
-
-[...]
-
-
-> +static int qcom_ice_program_wrapped_key(struct qcom_ice *ice,
-> +					const struct blk_crypto_key *key,
-> +					u8 data_unit_size, int slot)
+>  drivers/ufs/host/ufs-qcom.c | 15 +++++++++++++++
+>  include/ufs/ufshcd.h        |  1 +
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 366fd62a951f..77fb5e66e4be 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -182,9 +182,23 @@ static int ufs_qcom_ice_program_key(struct ufs_hba *hba,
+>  		return qcom_ice_evict_key(host->ice, slot);
+>  }
+>  
+> +/*
+> + * Derive a software secret from a hardware wrapped key. The key is unwrapped in
+> + * hardware from trustzone and a software key/secret is then derived from it.
+> + */
+> +static int ufs_qcom_ice_derive_sw_secret(struct ufs_hba *hba, const u8 wkey[],
+> +					 unsigned int wkey_size,
+> +					 u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE])
 > +{
-> +	union crypto_cfg cfg;
-> +	int hwkm_slot;
-> +	int err;
+> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
 > +
-> +	hwkm_slot = translate_hwkm_slot(ice, slot);
-> +
-> +	memset(&cfg, 0, sizeof(cfg));
+> +	return qcom_ice_derive_sw_secret(host->ice, wkey, wkey_size, sw_secret);
+> +}
 
-union crypto_cfg cfg = { 0 };
+There's platforms with multiple UFS hosts (e.g. 8280 has one with the
+intention to be used for an onboard flash and one for a UFS card (they're
+like microSD except they're UFS and not MMC).. We need to handle that
+somehow too.
 
-?
+My uneducated guess would be that the encryption infra is there for the
+primary host only and that it would be the one assumed by SCM calls.
 
-> +	cfg.dusize = data_unit_size;
-> +	cfg.capidx = QCOM_SCM_ICE_CIPHER_AES_256_XTS;
-> +	cfg.cfge = 0x80;
-
-Or just partially initialize it at declaration time?
-
-Also, what's 0x80?
+I thiiiink it should be enough not to add a `qcom,ice` property in the
+DT for the secondary slot, but please somebody else take another look
+here
 
 Konrad
 
