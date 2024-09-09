@@ -1,65 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-28962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AF9972239
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 21:00:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73EA09722A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 21:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9CA31F24603
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 19:00:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4512B23D37
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 19:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7806017AE0C;
-	Mon,  9 Sep 2024 19:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9534B189F5F;
+	Mon,  9 Sep 2024 19:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HbiHCzBi"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hHV+weBY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695B2188CC8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 19:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220E0189BB6
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 19:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725908419; cv=none; b=NoKP9G6aTdS5GeT5+WA9h16BzlLiM7ZhEjvx7qXLLvthVuGaJm694MnT2BecDeI2673ZWPG+rO+tSSnbuKeGBI2k5piClpzlWiQQ7745Bis33kCJTxrRsPqA0eRtoLV4gJNpXJVCJOkgmFaYY4L4m9UyuQoa6wNWm9WVWp8g0mk=
+	t=1725910140; cv=none; b=g/DZRRqT4XZrzvJug2tqPTnq2rk7gBm2qJOBQ/os6axeFsnZvL5YPSom6QhRGZmbtyMHy6vUyVq0oFTo9ZRgNlfgFmEELwd6DpwlF3DYix6593vWoQwJDyTOK952UQNxn/EFmwNGJyNdZWjj0T1Qo9PmJAfPzRojH7ttYGkaXJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725908419; c=relaxed/simple;
-	bh=iX6x+X+C2KmnTglmajitY2d8V7n/jwEPwVA+GAC6eiY=;
+	s=arc-20240116; t=1725910140; c=relaxed/simple;
+	bh=EPTzssBu3euqgU+LPzw9YWZcFepqaOVwHqsgdWlDgKE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5/HSmLS6HXxw2LaPxnVnPR+A+ueb8q9kVWoXGH6q50dw7Tc+WZMktEWwJzNnl9jBBy8WJcmbdkUs7pqVymzIqYFHSzCesAudzWg85ZBTTi/klvd0GcWcy//kGnXMrlcNZ7LlfTM5r3NpQpRuOm0bCv3zh7rejuQVXzL975j3YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HbiHCzBi; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X2bMc50Nvzqk1;
-	Mon,  9 Sep 2024 20:43:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1725907436;
-	bh=oxG77P3NVtf5xxUT9J4SD9IVKFdgoO+cgYyab1/OTdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HbiHCzBik6ccWXsmUvJQLIqOCgka7Ec894qPRxXTXCbv1YFhdhXr12RHBDKF+f6Nx
-	 qjo2Nl+av5qGDdDVB0Td1Z5NEODrgaFXQ9TP8xDb0lz0870wJJMMElvhHUrhTCjVbk
-	 XFz3brhGV6mpYyowybeg0Qn7/DYLIeQ0hWHoAY/o=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X2bMb0H3gzvVV;
-	Mon,  9 Sep 2024 20:43:54 +0200 (CEST)
-Date: Mon, 9 Sep 2024 20:43:48 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
-Message-ID: <20240909.fea6omu9Ohof@digikod.net>
-References: <20240821095609.365176-1-mic@digikod.net>
- <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
- <20240908.jeim4Aif3Fee@digikod.net>
- <CAHC9VhSGTOv9eiYCvbY67PJwtuBKWtv6nBgy_T=SMr-JPBO+SA@mail.gmail.com>
- <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BEaR2woECTu3ezXJUCZB4jKQBw7GSNVWI8I8ZGKTDM+51fIgrKplpgaYy7zvIDOzHyWsyvuHhqB/OPxzMo1TlUeTkDznRBPsAmjQLxMSRoY3pTAu5p4Y2g73aLAbZFwvPSJTbxxjgyC8WO2kapW5Pmh1vyY/6VshButsPjMtQLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hHV+weBY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725910137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e6oA0bNGRSexdk8YhDjdDq45xDQ+4U7qO6J8BTh0k3g=;
+	b=hHV+weBY6/a3y149wPRDWQuUEbhzavmhTGWnwpXKaZ4HwJePR7xIrYINymzHAOkLxzb7Mv
+	kCcBNx9lOKGBPClOy/16F6ldEiutdypbzzS7KsaG/7xF7QWh4wka2Jb6x1gIxsSl03SKQ4
+	VCHcDksMJHipdv76cPBR3xcGvvo1aAw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-561-IKtnwbWmOPOnaImLKM0Rvw-1; Mon,
+ 09 Sep 2024 15:28:53 -0400
+X-MC-Unique: IKtnwbWmOPOnaImLKM0Rvw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA7A6193E8C8;
+	Mon,  9 Sep 2024 19:28:50 +0000 (UTC)
+Received: from bfoster (unknown [10.22.16.69])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F191B195605A;
+	Mon,  9 Sep 2024 19:28:47 +0000 (UTC)
+Date: Mon, 9 Sep 2024 15:29:50 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, djwong@kernel.org, david@fromorbit.com,
+	hch@lst.de, syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+Subject: Re: [PATCH 1/2] iomap: Do not unshare exents beyond EOF
+Message-ID: <Zt9MrgnBStwlGWpY@bfoster>
+References: <20240905102425.1106040-1-sunjunchao2870@gmail.com>
+ <ZttT_sHrS5NQPAM9@bfoster>
+ <CAHB1Nag5+AEqhd=nDKPg7S4y89CRAZp0mRU4_UHuQ=WnR58WpQ@mail.gmail.com>
+ <Zt74BI7C-ZPn_WV_@bfoster>
+ <CAHB1Nahz2UmrCpqEivV0Dzkt5P=rjbRaBekxtaXeWNraXfvCCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,72 +78,212 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <CAHB1Nahz2UmrCpqEivV0Dzkt5P=rjbRaBekxtaXeWNraXfvCCA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Sep 09, 2024 at 12:44:16PM -0400, Paul Moore wrote:
-> On Mon, Sep 9, 2024 at 12:03 PM Paul Moore <paul@paul-moore.com> wrote:
+On Tue, Sep 10, 2024 at 01:40:24AM +0800, Julian Sun wrote:
+> Brian Foster <bfoster@redhat.com> 于2024年9月9日周一 21:27写道：
 > >
-> > On Sun, Sep 8, 2024 at 2:11 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Mon, Sep 09, 2024 at 08:15:43PM +0800, Julian Sun wrote:
+> > > Hi Brian,
 > > >
-> > > On Wed, Aug 21, 2024 at 12:32:17PM -0400, Paul Moore wrote:
-> > > > On Wed, Aug 21, 2024 at 5:56 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > >
-> > > > > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
-> > > > > for the related file descriptor.  Before this change, the
-> > > > > file_set_fowner LSM hook was always called, ignoring the VFS logic which
-> > > > > may not actually change the process that handles SIGIO (e.g. TUN, TTY,
-> > > > > dnotify), nor update the related UID/EUID.
-> > > > >
-> > > > > Moreover, because security_file_set_fowner() was called without lock
-> > > > > (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
-> > > > > condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
-> > > > > to struct fown_struct's UID/EUID.
-> > > > >
-> > > > > This change makes sure the LSM states are always in sync with the VFS
-> > > > > state by moving the security_file_set_fowner() call close to the
-> > > > > UID/EUID updates and using the same f_owner.lock .
-> > > > >
-> > > > > Rename f_modown() to __f_setown() to simplify code.
-> > > > >
-> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > > Cc: James Morris <jmorris@namei.org>
-> > > > > Cc: Jann Horn <jannh@google.com>
-> > > > > Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> > > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > > > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > > > > ---
-> > > > >
-> > > > > Changes since v2:
-> > > > > https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
-> > > > > - Only keep the LSM hook move.
-> > > > >
-> > > > > Changes since v1:
-> > > > > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
-> > > > > - Add back the file_set_fowner hook (but without user) as
-> > > > >   requested by Paul, but move it for consistency.
-> > > > > ---
-> > > > >  fs/fcntl.c | 14 ++++----------
-> > > > >  1 file changed, 4 insertions(+), 10 deletions(-)
+> > > Brian Foster <bfoster@redhat.com> 于2024年9月7日周六 03:11写道：
 > > > >
-> > > > This looks reasonable to me, and fixes a potential problem with
-> > > > existing LSMs.  Unless I hear any strong objections I'll plan to merge
-> > > > this, and patch 2/2, into the LSM tree tomorrow.
+> > > > On Thu, Sep 05, 2024 at 06:24:24PM +0800, Julian Sun wrote:
+> > > > > Attempting to unshare extents beyond EOF will trigger
+> > > > > the need zeroing case, which in turn triggers a warning.
+> > > > > Therefore, let's skip the unshare process if extents are
+> > > > > beyond EOF.
+> > > > >
+> > > > > Reported-and-tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+> > > > > Closes: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
+> > > > > Fixes: 32a38a499104 ("iomap: use write_begin to read pages to unshare")
+> > > > > Inspired-by: Dave Chinner <david@fromorbit.com>
+> > > > > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> > > > > ---
+> > > > >  fs/iomap/buffered-io.c | 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > > >
+> > > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > > > > index f420c53d86ac..8898d5ec606f 100644
+> > > > > --- a/fs/iomap/buffered-io.c
+> > > > > +++ b/fs/iomap/buffered-io.c
+> > > > > @@ -1340,6 +1340,9 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+> > > > >       /* don't bother with holes or unwritten extents */
+> > > > >       if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
+> > > > >               return length;
+> > > > > +     /* don't try to unshare any extents beyond EOF. */
+> > > > > +     if (pos > i_size_read(iter->inode))
+> > > > > +             return length;
+> > > >
+> > > > Hi Julian,
+> > > >
+> > > >
+> > > > > What about if pos starts within EOF and the operation extends beyond it?
 > > >
-> > > I didn't see these patches in -next, did I miss something?
-> > > Landlock will use this hook really soon and it would make it much easier
-> > > if these patches where upstream before.
+> > > Extents within EOF will be unshared as usual. Details are below.
+> > > >
+> > > > > I ask because I think I've reproduced this scenario, though it is a bit
+> > > > > tricky and has dependencies...
+> > > > >
+> > > > > For one, it seems to depend on the cowblocks patch I recently posted
+> > > > > here [1] (though I don't think this is necessarily a problem with the
+> > > > > patch, it just depends on keeping COW fork blocks around after the
+> > > > > unshare). With that, I reproduce via fsx with unshare range support [2]
+> > > > > using the ops file appended below [3] on a -bsize=1k XFS fs.
+> > > > >
+> > > > > I haven't quite characterized the full sequence other than it looks like
+> > > > > the unshare walks across EOF with a shared data fork block and COW fork
+> > > > > delalloc, presumably finds the post-eof part of the folio !uptodate (so
+> > > > > iomap_adjust_read_range() doesn't skip it), and then trips over the
+> > > > > warning and error return associated with the folio zeroing in
+> > > > > __iomap_write_begin().
+> > >
+> > > The scenario has already been reproduced by syzbot[1]. The reproducer
+> > > provided by syzbot constructed the following extent maps for a file of
+> > > size 0xE00 before fallocate unshare:
+> > >
+> > > 0 - 4k: shared between two files
+> > > 4k - 6k: hole beyond EOF, not shared
+> > > 6k - 8k: delalloc extends
+> > >
+> > > Then the reproducer attempted to unshare the extent between 0 and
+> > > 0x2000 bytes, but the file size is 0xE00. This is likely the scenario
+> > > you were referring to?
+> > >
 > >
-> > Ah!  My apologies, I'll do that right now and send another update once
-> > it's done.  FWIW, I'm going to tag 1/2 for stable, but since we are at
-> > -rc7 presently I'll just plan to send it during the next merge window.
+> > Yes, sort of..
+> >
+> > > Eventually the unshare code does:
+> > > first map: 0 - 4k - unshare successfully.
+> > > second map: 4k - 6k - hole, skip. Beyond EOF.
+> > > third map: 6k - 8k - delalloc, beyond EOF so needs zeroing.
+> > > Fires warnings because UNSHARE.
+> > >
+> > > During the first call to iomap_unshare_iter(), iomap_length() returned
+> > > 4k, so 4k bytes were unshared.
+> > > See discuss here[2] for more details.
+> > > >
+> > > > This all kind of has me wondering.. do we know the purpose of this
+> > > > warning/error in the first place? It seems like it's more of an
+> > > > "unexpected situation" than a specific problem. E.g., assuming the same
+> > > > page were mmap'd, I _think_ the read fault path would do the same sort
+> > > > of zeroing such that the unshare would see a fully uptodate folio and
+> > > > carry on as normal. I added the mapread op to the opsfile below to give
+> > > > that a quick test (remove the "skip" text to enable it), and it seems to
+> > > > prevent the error, but I've not confirmed whether that theory is
+> > > > actually what's happening.
+> > > >
+> > > >
+> > > > > FWIW, I also wonder if another way to handle this would be to just
+> > > > > restrict the range of iomap_file_unshare() to within EOF. IOW if a
+> > > > > caller passes a range beyond EOF, just process whatever part of the
+> > > > > range falls within EOF. It seems iomap isn't responsible for the file
+> > > > > extending aspect of the fallocate unshare command anyways.
+> > >
+> > > It already does 'just process whatever part of the range falls within EOF'.
+> > > Check the above case.
+> > >
+> > > I'm not sure if I fully understand what you mean. This patch does not
+> > > prevent unsharing extents within the EOF. This patch checks if pos is
+> > > beyond EOF, instead of checking if pos + length is beyond EOF. So the
+> > > extents within EOF should be unshared as usual.
+> > >
+> >
+> > I'm not concerned about preventing unsharing. I'm concerned that this
+> > patch doesn't always prevent attempts to unshare post-eof ranges. I
+> > think the difference here is that in the variant I was hitting, we end
+> >
+> > > up with a mapping that starts within EOF and ends beyond EOF, whereas
+> > > the syzbot variant produces a scenario where the problematic mapping
+> > > always starts beyond EOF.
 > 
-> Merged into lsm/dev, thanks for the nudge :)
+> This is not true. In the case above, the syzbot did indeed unshare the
+> extents between 0-4k, which were started within EOF and ended beyond
+> EOF. The specific variants here are: pos:0 len:0x1000 EOF: 0xE00. And
+> the unshare code successfully unshared extents between 0 and 4k.
+> 
+> During the next loop in iomap_file_unshare(), the pos became 0x1000,
+> which is beyond EOF.  What this patch does is to skip the unshare
+> during the second loop.
+> Is there anything I misunderstand？
 
-Thanks!
+Hmm, what block size? Does the associated mapping have at least one full
+block beyond EOF? If you have a map at offset 0, length 0x1000 and EOF
+at 0xE00, then unless you have 512b blocks it sounds like the EOF block
+actually starts within EOF.
+
+The variant I'm seeing is more like this.. consider a -bsize=1k fs, a
+file size of 0x3c400, and an EOF mapping of (offset 0x3c000, length
+0x4000). The EOF folio in this case is 4k in size and starts at the same
+0x3c000 offset as the EOF mapping.
+
+So with 1k blocks, the EOF mapping starts one block before EOF and
+extends well beyond it. What happens in the test case is that
+iomap_unshare_iter() is called with the EOF folio, pos 0x3c000, length
+0x800, and where the block at offset 0x3c400 is not marked uptodate. pos
+is thus within EOF, but the while loop in __iomap_write_begin() walks
+past it and attempts to process one block beyond EOF.
+
+Brian
+
+> >
+> > So IOW, this patch works for the syzbot variant because it happens to
+> > reproduce a situation where pos will be beyond EOF, but that is an
+> >
+> > > assumption that might not always be true. The fsx generated variant runs
+> > > a sequence that produces a mapping that spans across EOF, which means
+> > > that pos is within EOF at the start of unshare, so unshare proceeds to
+> > > walk across the EOF boundary, the corresponding EOF folio is not fully
+> > > uptodate, and thus write begin wants to do partial zeroing and
+> > > fails/warns.
+> 
+> Yeah, it's exactly what the syzbot does.
+> >
+> > I suspect that if the higher level range were trimmed to be within EOF
+> > in iomap_file_unshare(), that would prevent this problem in either case.
+> > Note that this was on a -bsize=1k fs, so what I'm not totally sure about
+> > is whether skipping zeroing as such would be a problem with larger FSBs.
+> > My initial thinking was this might not be possible since the EOF folio
+> > should be fully uptodate in that case, but that probably requires some
+> > thought/review/testing.
+> >
+> > Brian
+> >
+> > > BTW, maybe the check here should be
+> > >                   if (pos >= i_size_read(iter->inode))
+> > >
+> > > If there is any misunderstanding, please let me know, thanks.
+> > >
+> > > [1]: https://lore.kernel.org/all/0000000000008964f1061f8c32b6@google.com/T/
+> > > [2]: https://lore.kernel.org/all/20240903054808.126799-1-sunjunchao2870@gmail.com/
+> > >
+> > > >
+> > > > Thoughts?
+> > > >
+> > > > Brian
+> > > >
+> > > > [1] https://lore.kernel.org/linux-xfs/20240906114051.120743-1-bfoster@redhat.com/
+> > > > [2] https://lore.kernel.org/fstests/20240906185606.136402-1-bfoster@redhat.com/
+> > > > [3] fsx ops file:
+> > > >
+> > > > fallocate 0x3bc00 0x400 0
+> > > > write 0x3bc00 0x800 0x3c000
+> > > > clone_range 0x3bc00 0x400 0x0 0x3c400
+> > > > skip mapread 0x3c000 0x400 0x3c400
+> > > > fallocate 0x3bc00 0xc00 0x3c400 unshare
+> > > >
+> > >
+> > >
+> > > Thanks,
+> > > --
+> > > Julian Sun <sunjunchao2870@gmail.com>
+> > >
+> >
+> 
+> Thanks,
+> -- 
+> Julian Sun <sunjunchao2870@gmail.com>
+> 
+
 
