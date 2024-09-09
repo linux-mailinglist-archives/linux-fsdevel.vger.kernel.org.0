@@ -1,263 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-28928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F789712C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 10:59:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6239712F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 11:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80502847F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 08:59:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3858D1C224C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 09:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937AE1B3726;
-	Mon,  9 Sep 2024 08:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894FD1B2ECF;
+	Mon,  9 Sep 2024 09:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d5MHBE/6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QVUgasGu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83681B29D0
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Sep 2024 08:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622D41B29AA;
+	Mon,  9 Sep 2024 09:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872319; cv=none; b=TmWMLMBm0IixXH1m0KuP7r4nyigE6kuxwHYdoHbn/bJXMEv8JetDL+w8hvG7fHL7poGtzWDCb2iNzQrpF23uYCFu7/3CCmb1byIC1A5amglLWzWkJ5RZd0eGQhy9mvvxVHSHL3UK6ssO0bMSJVzS7B30o2Dz5i7lwVw9k4K//a0=
+	t=1725872876; cv=none; b=QrzaLQAfuaHw7qEEMkgTqiHl0Ip24GLAV6lXDG8h0GoTcnpXy8Y4oyNnY9xjJ9jCK2DjfQlmUS0PMNeg8NeJz6aiP9PXLWuAEViCZiI6O5/jdEOCYlzDvTUkOn+TBjT3aronkOEttcDFMHD4IdbMO1D75DuAlyBT+q/7S2ADGak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872319; c=relaxed/simple;
-	bh=hMgy8bX6Ok+Sly2wQ3k/uCmFxdR1J21buj1Oj+8Tu2k=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ez/8CBFLz4YJ7ufdakaSONeCcLQRTpOa5ZBQfpPza/hA1hDOskO2iMSBUjzvoOSqI0bE2lyNBFILab4PoTkm5o0UTiemuUdSwKrvQc76yOGf0th5B0tsYYa/p7t9IlWHFWDIaPQ8O/gNo87zV/EykcHtm+7PzyiG7qB/k2NcWl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d5MHBE/6; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso14162585e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2024 01:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725872314; x=1726477114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PMvHs5Ab7mHAlvlrWenHe3/+itZxK87jYym+SorE/SA=;
-        b=d5MHBE/6nV+q3S16jwp9mTU0YKD+3PL9RxdDFilnfCN/sOL49WpQqSGFjp9mHijrqZ
-         tUJ6Bqi5A/qSqJMJ9rZAN89zezDJkGTapOpIWrbZekkWsUUEGcuV4lJ3yUmdfu5Nrn3A
-         OuPFDb1O/BCL8Fq09KwiIQXoYHCwWZCAL2Pu8yF1ypVLz8Nf7OgO6+MBiabzU4nTsC4r
-         IdGvmNbwl5Rswb88gxKHjUo+vwYYI/0n6jX9ErZqraaQ96ws/0MOlqybPi8ZWVXFjkiI
-         4HVO6B9QP4pnDVl91nPIk4v7HJwNqIF3qseXJg9mlimPEix/a8XejffrsL/nkMhiG4Ew
-         BMFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725872314; x=1726477114;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PMvHs5Ab7mHAlvlrWenHe3/+itZxK87jYym+SorE/SA=;
-        b=xCc1xGBXjtIVvIX9OX3PLxDK+rpdOs/Fm/rmiiL2tpCwxTOVlguqJWgHQIGBrMJI36
-         WcqTduap14oeydd6NDrbxChO/nfWn2yymAwSuQeiggRY0U8Pi/MIOkcFpW89DsD04GTW
-         0XlLN5ymddsKcfl6WdCL3bj0pS0BckectU2iPz/3oBRPhNEAn8DUyHCDTrUlYPcnUL3f
-         8qW6Dbzos2ygPYkTbPqI6Wl7JZQ/yUiyz6pxCfAEiPWSpJL5Eiq4d/tSp3iSOEr5tftE
-         rA6MiNU9peqZ+9PQw/wgJ3MEr4guBdi9z8Q4NVT7o6NbGRrYSMXZ273jPkmojmAMexJL
-         6xqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuHqBklerCBQTthJwW5VSauHhUgo6QtwlM7dLwOs8HtuMMPA/0DyK3IwZ4beZOfQOTbWFFAakTggbTbva2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlhVfimLVrdKoN4SROmn7/cz2kkeuCV3ygNQ+3YME2Al7pvCgS
-	AZEYepbQR4dGIqK9hbCbLFYq5/oH2c4/ulCPV4Kuc5X3135Upa0GXpbckMSiMTDo8lp14nxIM6V
-	6
-X-Google-Smtp-Source: AGHT+IG6v8/1xNArCrOhm5mi79N9gIxXGtQTCtPLSsLWPvDJATIAkCocS/kMp98RIRO0ro21ssL4Yw==
-X-Received: by 2002:a05:600c:468a:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-42c95be865emr103023695e9.15.1725872313704;
-        Mon, 09 Sep 2024 01:58:33 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:63a3:6883:a358:b850? ([2a01:e0a:982:cbb0:63a3:6883:a358:b850])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956654f4sm5446815f8f.43.2024.09.09.01.58.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 01:58:33 -0700 (PDT)
-Message-ID: <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org>
-Date: Mon, 9 Sep 2024 10:58:30 +0200
+	s=arc-20240116; t=1725872876; c=relaxed/simple;
+	bh=V/slzjxF+QekQUJxEFMYqDh9AUHCyg0pmt1KtMEnvis=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5wwPAnpb1P3bfVja5jW3Pvr4+alqxXlVlbHlxJELQqNsW0u30ruMRNU/NdbN3NU0BkmwnJx0DDvCaae5S4R4BYbRjJwC/Vj41mbLl3b4WM0+UhVreAoqPfv6276bH+Jhhy00pASphEuycxkmvMzsw/kihLPL4efL7TQwKjOYU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QVUgasGu; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725872874; x=1757408874;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=V/slzjxF+QekQUJxEFMYqDh9AUHCyg0pmt1KtMEnvis=;
+  b=QVUgasGulJ8cJ5bIu82Zo7iOqy6LaKju2NjGqim+bfm2soh3GObihLAw
+   s8/D5n2W68PRcs+0Wt4zy6FhatjpBN/Z+MiQ3Cy+L7M2Lxx9rXQibFo8Z
+   xHbSmePniUx7ARKy1U0xvK8NbjO4AZax109QJK77ikT7c+G9xd7i9NeJH
+   o47Ocner/PfVkNfop0VpxLZo+f84AMyLsD3pgPHxpO2856LDOBQNPg4eD
+   NVp27jp3frzpYNaHmJGx3TxU4cN017+NcOSQA1pGNcqoqgfUGmOsJmwBz
+   EbZrhEXHjSWHP628UjOBVtkx/jLKHRZajC8BnU6uL0ZeHKiS6X/M+cJgL
+   Q==;
+X-CSE-ConnectionGUID: cJCDaRU8Tz6k2PqqhepSxw==
+X-CSE-MsgGUID: hWCLrRAqRyu+x6GXQzVr4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="35906721"
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="35906721"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:07:54 -0700
+X-CSE-ConnectionGUID: FdqRaOSaQlOJjszMXka2Lg==
+X-CSE-MsgGUID: YPmk04xxQmWs0pRaAdrmgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="71008760"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.161.23])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:07:49 -0700
+Date: Mon, 9 Sep 2024 17:06:37 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
+	linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
+	gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
+	david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
+	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
+	cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+	ryan.roberts@arm.com, David Howells <dhowells@redhat.com>,
+	pengfei.xu@intel.com
+Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order chunks
+Message-ID: <Zt66nWAon7ue5xnw@ly-workstation>
+References: <20240822135018.1931258-1-kernel@pankajraghav.com>
+ <20240822135018.1931258-5-kernel@pankajraghav.com>
+ <ZtqmtjZ+mVTDx208@ly-workstation>
+ <20240906080120.q6xff2odea3ay4k7@quentin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
- driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Gaurav Kashyap <quic_gaurkash@quicinc.com>, linux-block@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-mmc@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-9-d59e61bc0cb4@linaro.org>
- <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906080120.q6xff2odea3ay4k7@quentin>
 
-On 07/09/2024 00:07, Dmitry Baryshkov wrote:
-> On Fri, Sep 06, 2024 at 08:07:12PM GMT, Bartosz Golaszewski wrote:
->> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
->>
->> Qualcomm's ICE (Inline Crypto Engine) contains a proprietary key
->> management hardware called Hardware Key Manager (HWKM). Add HWKM support
->> to the ICE driver if it is available on the platform. HWKM primarily
->> provides hardware wrapped key support where the ICE (storage) keys are
->> not available in software and instead protected in hardware.
->>
->> When HWKM software support is not fully available (from Trustzone), there
->> can be a scenario where the ICE hardware supports HWKM, but it cannot be
->> used for wrapped keys. In this case, raw keys have to be used without
->> using the HWKM. We query the TZ at run-time to find out whether wrapped
->> keys support is available.
->>
->> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
->> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->> ---
->>   drivers/soc/qcom/ice.c | 152 +++++++++++++++++++++++++++++++++++++++++++++++--
->>   include/soc/qcom/ice.h |   1 +
->>   2 files changed, 149 insertions(+), 4 deletions(-)
->>
->>   int qcom_ice_enable(struct qcom_ice *ice)
->>   {
->> +	int err;
->> +
->>   	qcom_ice_low_power_mode_enable(ice);
->>   	qcom_ice_optimization_enable(ice);
->>   
->> -	return qcom_ice_wait_bist_status(ice);
->> +	if (ice->use_hwkm)
->> +		qcom_ice_enable_standard_mode(ice);
->> +
->> +	err = qcom_ice_wait_bist_status(ice);
->> +	if (err)
->> +		return err;
->> +
->> +	if (ice->use_hwkm)
->> +		qcom_ice_hwkm_init(ice);
->> +
->> +	return err;
->>   }
->>   EXPORT_SYMBOL_GPL(qcom_ice_enable);
->>   
->> @@ -150,6 +282,10 @@ int qcom_ice_resume(struct qcom_ice *ice)
->>   		return err;
->>   	}
->>   
->> +	if (ice->use_hwkm) {
->> +		qcom_ice_enable_standard_mode(ice);
->> +		qcom_ice_hwkm_init(ice);
->> +	}
->>   	return qcom_ice_wait_bist_status(ice);
->>   }
->>   EXPORT_SYMBOL_GPL(qcom_ice_resume);
->> @@ -157,6 +293,7 @@ EXPORT_SYMBOL_GPL(qcom_ice_resume);
->>   int qcom_ice_suspend(struct qcom_ice *ice)
->>   {
->>   	clk_disable_unprepare(ice->core_clk);
->> +	ice->hwkm_init_complete = false;
->>   
->>   	return 0;
->>   }
->> @@ -206,6 +343,12 @@ int qcom_ice_evict_key(struct qcom_ice *ice, int slot)
->>   }
->>   EXPORT_SYMBOL_GPL(qcom_ice_evict_key);
->>   
->> +bool qcom_ice_hwkm_supported(struct qcom_ice *ice)
->> +{
->> +	return ice->use_hwkm;
->> +}
->> +EXPORT_SYMBOL_GPL(qcom_ice_hwkm_supported);
->> +
->>   static struct qcom_ice *qcom_ice_create(struct device *dev,
->>   					void __iomem *base)
->>   {
->> @@ -240,6 +383,7 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
->>   		engine->core_clk = devm_clk_get_enabled(dev, NULL);
->>   	if (IS_ERR(engine->core_clk))
->>   		return ERR_CAST(engine->core_clk);
->> +	engine->use_hwkm = qcom_scm_has_wrapped_key_support();
+Hi,
+
+I have tried running the repro.c for 1 hour using next-20240905 kernel. Issue
+cannot be reproduced.
+
+Thank you.
+
+Regards,
+Yi Lai
+
+On Fri, Sep 06, 2024 at 08:01:20AM +0000, Pankaj Raghav (Samsung) wrote:
+> On Fri, Sep 06, 2024 at 02:52:38PM +0800, Lai, Yi wrote:
+> Hi Yi,
 > 
-> This still makes the decision on whether to use HW-wrapped keys on
-> behalf of a user. I suppose this is incorrect. The user must be able to
-> use raw keys even if HW-wrapped keys are available on the platform. One
-> of the examples for such use-cases is if a user prefers to be able to
-> recover stored information in case of a device failure (such recovery
-> will be impossible if SoC is damaged and HW-wrapped keys are used).
-
-Isn't that already the case ? the BLK_CRYPTO_KEY_TYPE_HW_WRAPPED size is
-here to select HW-wrapped key, otherwise the ol' raw key is passed.
-Just look the next patch.
-
-Or did I miss something ?
-
-Neil
-
+> > 
+> > I used Syzkaller and found that there is task hang in soft_offline_page in Linux-next tree - next-20240902.
 > 
->>   
->>   	if (!qcom_ice_check_supported(engine))
->>   		return ERR_PTR(-EOPNOTSUPP);
->> diff --git a/include/soc/qcom/ice.h b/include/soc/qcom/ice.h
->> index 9dd835dba2a7..1f52e82e3e1c 100644
->> --- a/include/soc/qcom/ice.h
->> +++ b/include/soc/qcom/ice.h
->> @@ -34,5 +34,6 @@ int qcom_ice_program_key(struct qcom_ice *ice,
->>   			 const struct blk_crypto_key *bkey,
->>   			 u8 data_unit_size, int slot);
->>   int qcom_ice_evict_key(struct qcom_ice *ice, int slot);
->> +bool qcom_ice_hwkm_supported(struct qcom_ice *ice);
->>   struct qcom_ice *of_qcom_ice_get(struct device *dev);
->>   #endif /* __QCOM_ICE_H__ */
->>
->> -- 
->> 2.43.0
->>
+> I don't know if it is related, but we had a fix for this commit for a
+> ltp failure due to locking issues that is there in next-20240905 but not
+> in next-20240902.
 > 
-
+> Fix: https://lore.kernel.org/linux-next/20240902124931.506061-2-kernel@pankajraghav.com/
+> 
+> Is this reproducible also on next-20240905?
+> 
+> > 
+> > After bisection and the first bad commit is:
+> > "
+> > fd031210c9ce mm: split a folio in minimum folio order chunks
+> > "
+> > 
+> > All detailed into can be found at:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page
+> > Syzkaller repro code:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.c
+> > Syzkaller repro syscall steps:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.prog
+> > Syzkaller report:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.report
+> > Kconfig(make olddefconfig):
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/kconfig_origin
+> > Bisect info:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/bisect_info.log
+> > bzImage:
+> > https://github.com/laifryiee/syzkaller_logs/raw/f633dcbc3a8e4ca5f52f0110bc75ff17d9885db4/240904_155526_soft_offline_page/bzImage_ecc768a84f0b8e631986f9ade3118fa37852fef0
+> > Issue dmesg:
+> > https://github.com/laifryiee/syzkaller_logs/blob/main/240904_155526_soft_offline_page/ecc768a84f0b8e631986f9ade3118fa37852fef0_dmesg.log
+> > 
+> > "
+> > [  447.976688]  ? __pfx_soft_offline_page.part.0+0x10/0x10
+> > [  447.977255]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
+> > [  447.977858]  soft_offline_page+0x97/0xc0
+> > [  447.978281]  do_madvise.part.0+0x1a45/0x2a30
+> > [  447.978742]  ? __pfx___lock_acquire+0x10/0x10
+> > [  447.979227]  ? __pfx_do_madvise.part.0+0x10/0x10
+> > [  447.979716]  ? __this_cpu_preempt_check+0x21/0x30
+> > [  447.980225]  ? __this_cpu_preempt_check+0x21/0x30
+> > [  447.980729]  ? lock_release+0x441/0x870
+> > [  447.981160]  ? __this_cpu_preempt_check+0x21/0x30
+> > [  447.981656]  ? seqcount_lockdep_reader_access.constprop.0+0xb4/0xd0
+> > [  447.982321]  ? lockdep_hardirqs_on+0x89/0x110
+> > [  447.982771]  ? trace_hardirqs_on+0x51/0x60
+> > [  447.983191]  ? seqcount_lockdep_reader_access.constprop.0+0xc0/0xd0
+> > [  447.983819]  ? __sanitizer_cov_trace_cmp4+0x1a/0x20
+> > [  447.984282]  ? ktime_get_coarse_real_ts64+0xbf/0xf0
+> > [  447.984673]  __x64_sys_madvise+0x139/0x180
+> > [  447.984997]  x64_sys_call+0x19a5/0x2140
+> > [  447.985307]  do_syscall_64+0x6d/0x140
+> > [  447.985600]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  447.986011] RIP: 0033:0x7f782623ee5d
+> > [  447.986248] RSP: 002b:00007fff9ddaffb8 EFLAGS: 00000217 ORIG_RAX: 000000000000001c
+> > [  447.986709] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f782623ee5d
+> > [  447.987147] RDX: 0000000000000065 RSI: 0000000000003000 RDI: 0000000020d51000
+> > [  447.987584] RBP: 00007fff9ddaffc0 R08: 00007fff9ddafff0 R09: 00007fff9ddafff0
+> > [  447.988022] R10: 00007fff9ddafff0 R11: 0000000000000217 R12: 00007fff9ddb0118
+> > [  447.988428] R13: 0000000000401716 R14: 0000000000403e08 R15: 00007f782645d000
+> > [  447.988799]  </TASK>
+> > [  447.988921]
+> > [  447.988921] Showing all locks held in the system:
+> > [  447.989237] 1 lock held by khungtaskd/33:
+> > [  447.989447]  #0: ffffffff8705c500 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x73/0x3c0
+> > [  447.989947] 1 lock held by repro/628:
+> > [  447.990144]  #0: ffffffff87258a28 (mf_mutex){+.+.}-{3:3}, at: soft_offline_page.part.0+0xda/0xf40
+> > [  447.990611]
+> > [  447.990701] =============================================
+> > 
+> > "
+> > 
+> > I hope you find it useful.
+> > 
+> > Regards,
+> > Yi Lai
+> > 
 
