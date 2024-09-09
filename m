@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-28934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADD39716BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 13:24:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ACA59716C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 13:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37BACB21CF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 11:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 316261C23197
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2024 11:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256B71B78F5;
-	Mon,  9 Sep 2024 11:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3388B1B81B3;
+	Mon,  9 Sep 2024 11:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIxa7MfC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKjvFpH9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBF21AF4E4;
-	Mon,  9 Sep 2024 11:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673501B5EC1;
+	Mon,  9 Sep 2024 11:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881033; cv=none; b=aAQnIIIJZzudhpLL1BrY2wHeUFhITBw4JqxxO1z79R1A/C8IHC77QS2poP3Vcuvh2FQW8T3clhbxTfHfU5vxZtkHQIAi1Z4zwS45rRiPyR9RCGPUWvlae8KkGB4BuclkORdG0Myvttx5clDh8Cy0xK+rwi5TYmlWzvNXKNwZUYI=
+	t=1725881068; cv=none; b=qT1EmpALMXIKgqIZfQHQ0doaOMW9uQafSivh77r48WMR4ilH3VUWB3tb5eG3hxqxpjrixxwYBfUB0lUbbd+5/uoGw7FpMFyzI5gWbUCmPOSRcjmPvXyo/W6hedG9Ddt5RMCqN3ANUUMU8b2f9gOK11L8fVw+j+57ruKdmcNgN3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881033; c=relaxed/simple;
-	bh=AQzT3bAV2JDDv98lxn2LYC9mXTmymBsjkG6LCRpyPxU=;
+	s=arc-20240116; t=1725881068; c=relaxed/simple;
+	bh=NOXjUpcY8hYNWLF1WhCDUlTQ0y37JVq1LQvC9dM8LHs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVZttwQ8tMcHh9fKPkulXvK/6ruxXE/VKglyyEKUkAr85jIpNTU1klaEgQDyGt9z/wMCzEE0SEzab4AJA4M44M45T/3IMwMUXxR0RYaoaWvokRBYvsCnpPwwv+iSo/EqPCYeZymUTMZ7GjDdSNtFTGtgK8QOTjqs+vQU507MhaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIxa7MfC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E05C4CEC5;
-	Mon,  9 Sep 2024 11:23:41 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=I8HZrjdyJlceK4KOe6erMNXYh8uQYjmtsZkWmGjW9PZCJb0bp/lFjAEU0K3FbWNyQlRq4qh1gn+fssYsvl/jW1x0/Gm8u13J/qWpdbTlmv5v0YqWyxI8XIxhSC0QGvogr3imiapOw5I/4y2JXxgpx08DDa0wGzxBtqqAg+29RnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKjvFpH9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDF5C4CEC5;
+	Mon,  9 Sep 2024 11:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725881032;
-	bh=AQzT3bAV2JDDv98lxn2LYC9mXTmymBsjkG6LCRpyPxU=;
+	s=k20201202; t=1725881067;
+	bh=NOXjUpcY8hYNWLF1WhCDUlTQ0y37JVq1LQvC9dM8LHs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fIxa7MfCpT2NrhKQOzTCEcsR2Jj//3XNpMa32fzJWiV2Se2PY0rkOeaEEQI9zn5Cd
-	 bVsbJiFRXl6JbG9+j1hSknxLqbm5Igqm0wLyebgDU+ilL1yFpOEshwYSpF8xphZ0fO
-	 pNrGlj1uDMqDVJ2+SwefLeb3jg3dR9LLurP23ztS+FGFZfkneaPXMHZPiagCedVUCM
-	 Bex8xTF362cqZPzzT3DONjUW0lcaPkrjok9ogTrD3B9FWo2oEKB49ixdHuLsEY61OU
-	 Z3O+NUB4VeUdkFz666hVip30pCIEHrNJ0BJcP3eQLCGXlwkvY65VmEio0tued3SUtz
-	 dyippi+O8W0Kg==
-Message-ID: <fc780dc2-5a69-48d8-8caa-ca2ee97d10ef@kernel.org>
-Date: Mon, 9 Sep 2024 13:23:38 +0200
+	b=VKjvFpH9PHRu582HpZ3MNhR/HiW1lNHcyeG+egqQKhQRhFwMFZ7mkzQ3m0pZyMJtN
+	 v0WfQMAk4iHgw3ZgvIEAti7mIQtEsnSBbBC8EUthPwf5rWX0hmNlTm+rCD8zkZ+9dg
+	 +UpcEvfFvJ3UgYZYFiR1bTD7D7AUx9syc8LN/FP9I3pgfCd+/B5ALbOZwqCfPSXKnW
+	 4Ckuh3gV6uidK+H62wvAudqZsFZ2bENjjyvXkbNmfSYw2+wrR6QDpLk80wKejxCiSH
+	 ygDsfHi/Wr/xKSLmyQvsYyz/CJgue4yuOTXev37XuvieL/ZgfP5kdPXGeze8EUJ0jm
+	 ZVJY2fchySb7Q==
+Message-ID: <a79e30d7-1c11-4dc1-bf1a-4a4577b30b0a@kernel.org>
+Date: Mon, 9 Sep 2024 13:24:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/17] firmware: qcom: scm: add a call for deriving the
- software secret
+Subject: Re: [PATCH v6 07/17] firmware: qcom: scm: add calls for creating,
+ preparing and importing keys
 To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
  Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
  Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
@@ -78,110 +78,45 @@ Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
  linux-arm-msm@vger.kernel.org,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-6-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-7-d59e61bc0cb4@linaro.org>
 Content-Language: en-US
 From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240906-wrapped-keys-v6-6-d59e61bc0cb4@linaro.org>
+In-Reply-To: <20240906-wrapped-keys-v6-7-d59e61bc0cb4@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
 > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 > 
-> Inline storage encryption may require deriving a software secret from
-> storage keys added to the kernel.
+> Storage encryption has two IOCTLs for creating, importing and preparing
+> keys for encryption. For wrapped keys, these IOCTLs need to interface
+> with Qualcomm's Trustzone. Add the following keys:
 > 
-> For raw keys, this can be directly done in the kernel as keys are not
-> encrypted in memory.
+> generate_key:
+>   This is used to generate and return a longterm wrapped key. Trustzone
+>   achieves this by generating a key and then wrapping it using the
+>   Hawrdware Key Manager (HWKM), returning a wrapped keyblob.
 > 
-> However, hardware wrapped keys can only be unwrapped by the HW wrapping
-> entity. In case of Qualcomm's wrapped key solution, this is done by the
-> Hardware Key Manager (HWKM) from Trustzone.
+> import_key:
+>   The functionality is similar to generate, but here: a raw key is
+>   imported into the HWKM and a longterm wrapped keyblob is returned.
 > 
-> Add a new SCM call which provides a hook to the software secret crypto
-> profile API provided by the block layer.
+> prepare_key:
+>   The longterm wrapped key from the import or generate calls is made
+>   further secure by rewrapping it with a per-boot, ephemeral wrapped key
+>   before installing it in the kernel for programming into ICE.
 > 
 > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
 > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> [Bartosz:
+>   improve kerneldocs,
+>   fix hex values coding style,
+>   rewrite commit message]
+> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  drivers/firmware/qcom/qcom_scm.c       | 65 ++++++++++++++++++++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.h       |  1 +
->  include/linux/firmware/qcom/qcom_scm.h |  2 ++
->  3 files changed, 68 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 10986cb11ec0..ad3f9e9ed35d 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -1252,6 +1252,71 @@ int qcom_scm_ice_set_key(u32 index, const u8 *key, u32 key_size,
->  }
->  EXPORT_SYMBOL_GPL(qcom_scm_ice_set_key);
->  
-> +/**
-> + * qcom_scm_derive_sw_secret() - Derive software secret from wrapped key
-> + * @wkey: the hardware wrapped key inaccessible to software
-> + * @wkey_size: size of the wrapped key
-> + * @sw_secret: the secret to be derived which is exactly the secret size
-> + * @sw_secret_size: size of the sw_secret
-> + *
-> + * Derive a software secret from a hardware wrapped key for software crypto
-> + * operations.
-> + * For wrapped keys, the key needs to be unwrapped, in order to derive a
-> + * software secret, which can be done in the hardware from a secure execution
-> + * environment.
-> + *
-> + * For more information on sw secret, please refer to "Hardware-wrapped keys"
-> + * section of Documentation/block/inline-encryption.rst.
-> + *
-> + * Return: 0 on success; -errno on failure.
-> + */
-> +int qcom_scm_derive_sw_secret(const u8 *wkey, size_t wkey_size,
-> +			      u8 *sw_secret, size_t sw_secret_size)
-> +{
-> +	struct qcom_scm_desc desc = {
-> +		.svc = QCOM_SCM_SVC_ES,
-> +		.cmd =  QCOM_SCM_ES_DERIVE_SW_SECRET,
-> +		.arginfo = QCOM_SCM_ARGS(4, QCOM_SCM_RW,
-> +					 QCOM_SCM_VAL, QCOM_SCM_RW,
-> +					 QCOM_SCM_VAL),
-> +		.args[1] = wkey_size,
-> +		.args[3] = sw_secret_size,
-> +		.owner = ARM_SMCCC_OWNER_SIP,
-> +	};
-> +
-> +	int ret;
-> +
-> +	void *wkey_buf __free(qcom_tzmem) = qcom_tzmem_alloc(__scm->mempool,
-> +							    wkey_size,
-> +							    GFP_KERNEL);
-> +	if (!wkey_buf)
-> +		return -ENOMEM;
-> +
-> +	void *secret_buf __free(qcom_tzmem) = qcom_tzmem_alloc(__scm->mempool,
-> +							       sw_secret_size,
-> +							       GFP_KERNEL);
-> +	if (!secret_buf) {
-> +		ret = -ENOMEM;
-> +		goto out_free_wrapped;
-> +	}
-> +
-> +	memcpy(wkey_buf, wkey, wkey_size);
-> +	desc.args[0] = qcom_tzmem_to_phys(wkey_buf);
-> +	desc.args[2] = qcom_tzmem_to_phys(secret_buf);
-> +
-> +	ret = qcom_scm_call(__scm->dev, &desc, NULL);
-> +	if (!ret)
-> +		memcpy(sw_secret, secret_buf, sw_secret_size);
-> +
-> +	memzero_explicit(secret_buf, sw_secret_size);
-> +
-> +out_free_wrapped:
 
-Is there a reason to zero out the buffer that's being zero-allocated?
+same question as patch 6, lgtm otherwise
 
 Konrad
-
-> +	memzero_explicit(wkey_buf, wkey_size);
 
