@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-29058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46972974462
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 22:57:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4441974468
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 22:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634A61C25028
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 20:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F8A281EA7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 20:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A95F1AAE27;
-	Tue, 10 Sep 2024 20:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1C31AAE32;
+	Tue, 10 Sep 2024 20:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsQy+O5h"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXT1uW35"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C9A183CA0;
-	Tue, 10 Sep 2024 20:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E85175D4A;
+	Tue, 10 Sep 2024 20:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726001835; cv=none; b=aOuA6enzywln6bxg0IAjoDo20rp4YBVMIjqBK/bjM548yyfPlmcuvVgFbynIxAfVq9Y+W+RjTjebu9zPxvdVoDMyYUb+fN7CWX0SZv4sppSukzPEdxN0ygV+TO1rr7kwiOaAeZR8371pLnHi+eFFIlDuWb94eADSQ2bAazfZcGs=
+	t=1726001906; cv=none; b=omYzom1uCCSgYwc2IIF631Vo5hvEjxYeWD9/UPzJH2OnSVq2bdfiw/+V3a165UI7LtcMm17uL5fkOjpFd3Ys07sBaZJ564inmqWV8LVa4VLgLE6qs7TgR2Zznu8nrbUNarbCFPNqhO4tdevVCtmlWbr03/4S9GAY2DqqX+Lq73I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726001835; c=relaxed/simple;
-	bh=faM/BMQ2vimssAaLBqKtdnKV6Toowm0WUHQfbpSXJgc=;
+	s=arc-20240116; t=1726001906; c=relaxed/simple;
+	bh=0M2cahX01JCcUlUOeIR6y6jKS3Uqr4MlbjeurlmXh9A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fnRucqSMU3jhG5+wnd2spcN6yc8+69S3hbSqARwKuCZO4aCv1cwLy8R/flUl1PW5jcwswmujXUBG0YL3CtunMfRovIiAhRqApJ0vSYIy0fE11OPfw1hql8r6JdFQk5UAfnlr8uAie9jbxUzAgE5asN6iIIrkNS0Xkdknzr1ns0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsQy+O5h; arc=none smtp.client-ip=209.85.216.47
+	 To:Cc:Content-Type; b=RBIC+ZhVO8ERQMimYi9yRf7VA7Ixfm5bLgD2F+QSx5iR1Qy0a9GFjB7i+0pzH/GhoTUd4iIDEb7ZKYoIcziTBgXlt07yZ7h7dI5HPlCq/5sL1gToIPZAKInk8VFL/KM623pDSj8CQneBPUwBU3y2l6JHmwx3TxbrH7KlMpWBK+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXT1uW35; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d87a0bfaa7so4383834a91.2;
-        Tue, 10 Sep 2024 13:57:14 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2daaa9706a9so916215a91.1;
+        Tue, 10 Sep 2024 13:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726001834; x=1726606634; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726001904; x=1726606704; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0na4dQJa2L1cmen5wGJM2Op9qiKCCHHFdeDVlG5p8P0=;
-        b=EsQy+O5hJ9ED6TRAYqTMbd5pP0isz0hG13Qufrk4QtoFM1yXFEI9Nyz8HAf4x8+k9z
-         BebAWxHsheuH/R7bksLwVqjEqCfenChI0uFSjiNp8z17gGdPQTEYxnQdP+dBaFIC6vQS
-         +KvP6TPBXDIgTcxTV7KfyJErD3OdVFj5jVT+6rC3wnh5FOfQzBwVTHVUD9mKEv+xrREJ
-         qU3DlAzt6EW8QdGp4DogCd1fFKq/LIcJt7MDYPuu1DYUHiwtKIbbDo3xw13H/TWwa9yy
-         utgbusWpNe0pmw0wJEff8J44vaFTh0wSBv89brE3/rdxY/pRe6PhsSMpr/q9pHBU8o6v
-         f+vA==
+        bh=RZZkUf2WC6mfIlygG90tFs2dYgOhX5oqJ1ZGT74jCV0=;
+        b=AXT1uW35VpgcmbwflIa/N1Gon2ljboAVmwSJa8Ah2xXEx4T4Osur8tem4EM4jhW214
+         DVQRAzgr127wLXIqCuXje4qhfIo+PuRFEkIqETNMvER8NVbXztEYeBYD4Z42bzcsUNgg
+         TmnOqeI9aHt7JIjLN0lmfgF7TQ/XO+gpYx+jlxKin9eSYF1pPrY4iDSNRD9ciGAf+Pv6
+         Z4Hknw1bHLuFaIroqzL2QFpILfCDC19BgMvZfQY8p6Xs3hGg4lf5QHEJn5IgQEtVV9LB
+         nGHr62+ixBudCboZMWGTXX6bHaPtl+P9vyRYRVRfHfoHnIhNVCzMg+NbYN3+muw8QidM
+         +TQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726001834; x=1726606634;
+        d=1e100.net; s=20230601; t=1726001904; x=1726606704;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0na4dQJa2L1cmen5wGJM2Op9qiKCCHHFdeDVlG5p8P0=;
-        b=UkcKLGKjulyqjOMm++/js4Lt5uma9Ztg41gvjSx0DLC8MxJsFeHz/Hz2fpgLhNU9nk
-         t0EePX+rqKQyVhaVU07Fy6ZX6WAt+NsQU2fohVpw4Y4eVd7oMCPWV+Ec3LTOjjb17/5B
-         lAq/PIgK/U5M0vobnvtm5DhaeLqYlPSLewv1inYqXj1m/TGH6LNk5Pm5uj/Tsx9Tfdrb
-         c6znMTY/wPuSBjP4DdahSeLec6PNE/BfBhRk1RsqvmQHNkAGt08saeZP+D1nUZSoqu0C
-         Ql+kDxVwUhiwJoCd7YGInA1RTRmxSlbXg7n4txr8TFpQgt1WEf1UOO7lc6K5bAqxn58X
-         SqWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURpI0BE+V8Kp7SPZz2IdBsoCgPyEfzO3oJ4vx0yeS4OxzQhZyg3m4Dy4kgSBVUVD4O5b3SfQHOh4cfJnDhyFt5aOV1@vger.kernel.org, AJvYcCWRa4vaR9RbRdIJOtD0/wF5uSpX9/hOy/uHhvjib3AwfgnNEyO2nGQRe9DYY1y9j9KqWDinMFqOIrpsPgFt@vger.kernel.org, AJvYcCX9Mo19U91t1/x6XlisnaPppUpAVqq/Pyyb560svgB7yqlKGBrSg/ydh1gZxb7hYOPxbHKVnB2+MfzYxmNBHA==@vger.kernel.org, AJvYcCXpA7/gkcbsEpmY2XU3s75C7zj+//Fz8Kfg/TS/EVwAr+B1+pxc7J9w2PCKdK+ZYeWfC04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD6SqN5E/zS+XwwiqEVZYap4UW/Bagb0RIC9QX3O4w2gDonPKD
-	wwCWpdL6Lg9ocGkWnD3a292rdnTs3czDV6fpxDW1oE2tt1l7zKi53dk5aKXEzWh6GyW7dtFTk92
-	Estkhx/lyEvRG0nDgmagqwZE6TBE=
-X-Google-Smtp-Source: AGHT+IFIKU8LRNjthnXGWB53ZSi2GAcwL6hTYP36TFmTzguRaNKaVZk5srgulC0aAUobh2XIR0/+fYvfyHAf+lqZzfo=
-X-Received: by 2002:a17:90a:ce81:b0:2c9:1012:b323 with SMTP id
- 98e67ed59e1d1-2dad50cbcf7mr19247342a91.27.1726001833546; Tue, 10 Sep 2024
- 13:57:13 -0700 (PDT)
+        bh=RZZkUf2WC6mfIlygG90tFs2dYgOhX5oqJ1ZGT74jCV0=;
+        b=f8QOeM7puBNqlDmuJW29u63wkPN5opBOsYFIbFp0KZqKsZu8zMlM2nnKtcW7CsOKv9
+         8cbg4PkZT7Xil8d9DulGJ3uIVfP9dnd64UlY/eTBsHFau+YTt8kcwXH0RqR8/fGbH/rC
+         LocShh+B9jjipKY0+KwV3zGhfsiyn5fxplgkmqcagm39vp8iW1PQl1VCT0uJt+yNF253
+         oEJTts824vOsgzmwNHEm1da/Zb48RWgg8FELTLHCbPACtyq9xRPlyzgeAwvGHlcn+z+z
+         UjN3B4cwUX/RJTF1/RQbK42R+bP+l6F7SqMLU306L+vXqVFUSarumXkusqthSm5NsnQZ
+         oE3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVRRipicU+WP5lRciPCtTJ6tV6s4hrC4+rQ2FamFR0nSUuu+iIJ9bywwsOYG9PDouN3nAcYuALYDdT4bbn7Ig==@vger.kernel.org, AJvYcCWB8QQ9QJ4Dm5F8/oVY40wunZiQXzLEKe01AbORnZacUpf8X0sPUJ5T/+37ygUh9BzonB8Q7vsso3qLzyvjL0QZ6Oth@vger.kernel.org, AJvYcCWOyqlQHyfJflt+2XPLCPpojX8sgLU16H25+sk3aIKVL3uIvxvFN1x3mgzZjYp9uXM4WLI=@vger.kernel.org, AJvYcCWeaDFLsVz0fLGut8A/fDa/MKHNaOIlmWnP8rWdJ7KdOhBB/f7FWMdsQt+cRnXGuCze3NBUA2+Sg96cLyoG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz75sAJlVdLTDC6HkOi9B116U8nkKHIEIattEwHTqY02+hDLEdg
+	0chF1TGvow2sQpHAwBItmLN3dtIKc2sKwyTyV7UloG3wC7XOAK/f9HZaPZuKOaQpt3AX83v/k+C
+	AEd4ueShgUs5Oz4OE5ty3i94Hc60=
+X-Google-Smtp-Source: AGHT+IFlYwX3ooMzADHl3WRC56Z25rc41qODOOier4HGtUasmVGD5FRx8r8/jNu4rZMhmraa47eo2BEJ07U35fQBNJg=
+X-Received: by 2002:a17:90a:f004:b0:2d8:d254:6cda with SMTP id
+ 98e67ed59e1d1-2db82fec7admr1019356a91.20.1726001904425; Tue, 10 Sep 2024
+ 13:58:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,33 +73,101 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-3-andrii@kernel.org>
  <CAG48ez2G1Pf_RRRT0av=6r_4HcLZu6QMgveepk-ENo=PkaZC1w@mail.gmail.com>
- <CAEf4Bzb+ShZqcj9EKQB8U9tyaJ1LoOpRxd24v76FuPJP-=dkNg@mail.gmail.com> <CAG48ez1d9tU7-QeRSjRuxovG-jjNAwJ8B_G2jd43_etYMUPV6g@mail.gmail.com>
-In-Reply-To: <CAG48ez1d9tU7-QeRSjRuxovG-jjNAwJ8B_G2jd43_etYMUPV6g@mail.gmail.com>
+ <CAEf4Bzb+ShZqcj9EKQB8U9tyaJ1LoOpRxd24v76FuPJP-=dkNg@mail.gmail.com> <CAJuCfpEhCm3QoZqemO=bX0snO16fxOssMWzLsiewkioiRV_aOA@mail.gmail.com>
+In-Reply-To: <CAJuCfpEhCm3QoZqemO=bX0snO16fxOssMWzLsiewkioiRV_aOA@mail.gmail.com>
 From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 10 Sep 2024 13:56:59 -0700
-Message-ID: <CAEf4Bzb60-PjWXK3apuvxsJh70iXpoBo0WR2R4iXYsXwEChnsA@mail.gmail.com>
+Date: Tue, 10 Sep 2024 13:58:10 -0700
+Message-ID: <CAEf4Bzbh_HWuHEZqHZ7MHFLtp+jFf2yiCWyd-RqY-hvm09d5Ow@mail.gmail.com>
 Subject: Re: [PATCH 2/2] uprobes: add speculative lockless VMA-to-inode-to-uprobe
  resolution
-To: Jann Horn <jannh@google.com>
-Cc: surenb@google.com, Liam Howlett <liam.howlett@oracle.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, brauner@kernel.org, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>, 
+	Liam Howlett <liam.howlett@oracle.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	mjguzik@gmail.com, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
 	linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 8:39=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
+On Tue, Sep 10, 2024 at 9:32=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
 >
-> On Mon, Sep 9, 2024 at 11:29=E2=80=AFPM Andrii Nakryiko
+> On Mon, Sep 9, 2024 at 2:29=E2=80=AFPM Andrii Nakryiko
 > <andrii.nakryiko@gmail.com> wrote:
+> >
 > > On Mon, Sep 9, 2024 at 6:13=E2=80=AFAM Jann Horn <jannh@google.com> wro=
 te:
+> > >
 > > > On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@kernel=
 .org> wrote:
+> > > > Given filp_cachep is already marked SLAB_TYPESAFE_BY_RCU, we can sa=
+fely
+> > > > access vma->vm_file->f_inode field locklessly under just rcu_read_l=
+ock()
+> > >
+> > > No, not every file is SLAB_TYPESAFE_BY_RCU - see for example
+> > > ovl_mmap(), which uses backing_file_mmap(), which does
+> > > vma_set_file(vma, file) where "file" comes from ovl_mmap()'s
+> > > "realfile", which comes from file->private_data, which is set in
+> > > ovl_open() to the return value of ovl_open_realfile(), which comes
+> > > from backing_file_open(), which allocates a file with
+> > > alloc_empty_backing_file(), which uses a normal kzalloc() without any
+> > > RCU stuff, with this comment:
+> > >
+> > >  * This is only for kernel internal use, and the allocate file must n=
+ot be
+> > >  * installed into file tables or such.
+> > >
+> > > And when a backing_file is freed, you can see on the path
+> > > __fput() -> file_free()
+> > > that files with FMODE_BACKING are directly freed with kfree(), no RCU=
+ delay.
+> >
+> > Good catch on FMODE_BACKING, I didn't realize there is this exception, =
+thanks!
+> >
+> > I think the way forward would be to detect that the backing file is in
+> > FMODE_BACKING and fall back to mmap_lock-protected code path.
+> >
+> > I guess I have the question to Liam and Suren, do you think it would
+> > be ok to add another bool after `bool detached` in struct
+> > vm_area_struct (guarded by CONFIG_PER_VMA_LOCK), or should we try to
+> > add an extra bit into vm_flags_t? The latter would work without
+> > CONFIG_PER_VMA_LOCK, but I don't know what's acceptable with mm folks.
+> >
+> > This flag can be set in vma_set_file() when swapping backing file and
+> > wherever else vma->vm_file might be set/updated (I need to audit the
+> > code).
+>
+> I understand that this would work but I'm not very eager to leak
+> vm_file attributes like FMODE_BACKING into vm_area_struct.
+> Instead maybe that exception can be avoided? Treating all vm_files
+
+I agree, that would be best, of course. It seems like [1] was an
+optimization to avoid kfree_rcu() calls, not sure how big of a deal it
+is to undo that, given we do have a use case that calls for it now.
+Let's see what Christian thinks.
+
+> equally as RCU-safe would be a much simpler solution. I see that this
+> exception was introduced in [1] and I don't know if this was done for
+> performance reasons or something else. Christian, CCing you here to
+> please clarify.
+>
+> [1] https://lore.kernel.org/all/20231005-sakralbau-wappnen-f5c31755ed70@b=
+rauner/
+>
+> >
+> > >
+> > > So the RCU-ness of "struct file" is an implementation detail of the
+> > > VFS, and you can't rely on it for ->vm_file unless you get the VFS to
+> > > change how backing file lifetimes work, which might slow down some
+> > > other workload, or you find a way to figure out whether you're dealin=
+g
+> > > with a backing file without actually accessing the file.
+> > >
 > > > > +static struct uprobe *find_active_uprobe_speculative(unsigned long=
  bp_vaddr)
 > > > > +{
@@ -137,24 +205,63 @@ SHARE;
 > > vma->vm_file should be set in VMA before it is installed and is never
 > > modified afterwards, isn't that the case? So maybe no extra barrier
 > > are needed and READ_ONCE() would be enough.
->
-> Ah, right, I'm not sure what I was thinking there.
->
-> I... guess you only _really_ need the READ_ONCE() if something can
-> actually ever change the ->vm_file pointer, otherwise just a plain
-> load with no annotation whatsoever would be good enough? I'm fairly
-
-yep, probably, I was just trying to be cautious :)
-
-> sure nothing can ever change the ->vm_file pointer of a live VMA, and
-> I think _currently_ it looks like nothing will NULL out the ->vm_file
-> pointer on free either... though that last part is probably not
-> something you should rely on...
-
-This seems to be rather important, but similarly to how vm_file can't
-be modified, it seems reasonable to assume that it won't be set to
-NULL (it's a modification to set it to a new NULL value, isn't it?). I
-mean, we can probably just add a NULL check and rely on the atomicity
-of setting a pointer, so not a big deal, but seems like a pretty
-reasonable assumption to make.
+> >
+> > >
+> > > You might want to instead add another recheck of the sequence count
+> > > (which would involve at least a read memory barrier after the
+> > > preceding patch is fixed) after loading the ->vm_file pointer to
+> > > ensure that no one was concurrently changing the ->vm_file pointer
+> > > before you do memory accesses through it.
+> > >
+> > > > +       if (!vm_file || (vma->vm_flags & flags) !=3D VM_MAYEXEC)
+> > > > +               goto bail;
+> > >
+> > > missing data_race() annotation on the vma->vm_flags access
+> >
+> > ack
+> >
+> > >
+> > > > +       vm_inode =3D data_race(vm_file->f_inode);
+> > >
+> > > As noted above, this doesn't work because you can't rely on having RC=
+U
+> > > lifetime for the file. One *very* ugly hack you could do, if you thin=
+k
+> > > this code is so performance-sensitive that you're willing to do fairl=
+y
+> > > atrocious things here, would be to do a "yes I am intentionally doing
+> > > a UAF read and I know the address might not even be mapped at this
+> > > point, it's fine, trust me" pattern, where you use
+> > > copy_from_kernel_nofault(), kind of like in prepend_copy() in
+> > > fs/d_path.c, and then immediately recheck the sequence count before
+> > > doing *anything* with this vm_inode pointer you just loaded.
+> > >
+> > >
+> >
+> > yeah, let's leave it as a very unfortunate plan B and try to solve it
+> > a bit cleaner.
+> >
+> >
+> > >
+> > > > +       vm_pgoff =3D data_race(vma->vm_pgoff);
+> > > > +       vm_start =3D data_race(vma->vm_start);
+> > > > +
+> > > > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - v=
+m_start);
+> > > > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
+> > > > +       if (!uprobe)
+> > > > +               goto bail;
+> > > > +
+> > > > +       /* now double check that nothing about MM changed */
+> > > > +       if (!mmap_lock_speculation_end(mm, seq))
+> > > > +               goto bail;
+> > > > +
+> > > > +       rcu_read_unlock();
+> > > > +
+> > > > +       /* happy case, we speculated successfully */
+> > > > +       return uprobe;
+> > > > +bail:
+> > > > +       rcu_read_unlock();
+> > > > +       return NULL;
+> > > > +}
 
