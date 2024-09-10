@@ -1,220 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-29062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA4D974556
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 00:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837C097456C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 00:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F09DB24905
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 22:04:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480CE28A182
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 22:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A69C1AAE2C;
-	Tue, 10 Sep 2024 22:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7B21ABEAD;
+	Tue, 10 Sep 2024 22:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFkzy2Ol"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqhNnRUl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B1018DF94
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 22:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780D317A924;
+	Tue, 10 Sep 2024 22:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726005843; cv=none; b=DcbEi4JyGLpDcy+k+Jku6tcwBg4XJz1edSALer3aW+z46rOS5o+X2ujk75sly7wS3Fjge4tGnmvraWZCdp1vDsNtP5Bsw/YCUeUgKS8fTAJpk2JKQ3IEsVF3bFKzUKJUUCSqA5Htr2NrY78M5jvHIJx0NLPoFYDkhiG88/lvGPI=
+	t=1726006312; cv=none; b=Q5an5SzM6PXDhoqElpSIR/9i93mgmNOG25UKhNqs4w8ogn7LPjJfhRG3MY556YIsP0f1ar7RK4QTpeWvBhS6ons1Hm6r5FOr5W/1nNba8ZC6L8I/4mrVaDxeirO5itnfFBCPAgNe1f4oFj+AdOMun1jkaVpGxt8F81zl5JMrC+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726005843; c=relaxed/simple;
-	bh=vAgcJrtgoxr5VaJydBiKydO7l3Kq2ukqx+Yg7RtPJlI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eSDZt+Ombh3k6IU9Pdlc5MEI8KgUBI1JmnEZm/JD3LtPedM/kRoEH7zpHWWUZay8XBre9TxxDQc4fqZWHKr3bTXI/mH91p+0qbhf9AL/OM4LjkKxTNa1niPn8WVw+hLEsKD5saHmNi3CmSLjV4PB32B35BpTa+w5vSGFGBBbww4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFkzy2Ol; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-457ce5fda1aso49076401cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 15:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726005841; x=1726610641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fHY1zNhEQXnvSlK41T13VTvywOvMqaARHTfiUMByQUk=;
-        b=DFkzy2OlHiIHVQojVnZU3HSXRzZbY0hhwzXgxfl6H+iZwcvu+DYpqlVCsaNjYnUD51
-         P0lKC/G2OvsPauxALowOWb1KAtL0gDCZ5SK93x9NqJZ9+lRFWtt8JOoq1bvrXZ3fiy1M
-         cokdRTB3iz3Z6eu8fflY7mtbFk7/n/euB9N03wz9qFTUu/N/C6WJ1tQsEi1wx++KUc5T
-         wmPN4ABtX94cu+TojL9ny7fAzG+yaf9SMCmaB5Sfad+wJjgwM4E2L8R1zqIrHWaiqJoL
-         0fr/rEisNi0RYfIjK2kXefJ3b4QM/aBT0xtnmbPeWPSO9sjDJf4CeMwyeLF3fRVIDRIs
-         f9bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726005841; x=1726610641;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fHY1zNhEQXnvSlK41T13VTvywOvMqaARHTfiUMByQUk=;
-        b=oXi/ox9+0vSc5huZHH7eTkAMhmjuKVM46ih9loyAJ7tpOD5g1QUuw5hN16eLTSaq8/
-         dbelY6/NNVZf/vNMwmJRqWfXWXWXdrFDDD/XpUxWU2cuednqVQyKU0SC5oGgGMAZxSkx
-         c4Rq1hGzqw94pveOEbyJO0GtCgq/CCGrjSddLSu/FwORvtgAUTHL5wvxWpn4FzrHcM2C
-         2PiWim6ZgUl3wfooDlhvJhx2XAMuiVUJylOMeCv1OknTuKnc4MJdapCuA+z2pGv00AQW
-         xDyQ/xVDPGURl4qGYN0tHwPDwSO2Uuyv71fWmcZ/J2ybCNTAFN3HwJboPrNitcghr0G6
-         bf1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWMqsng1jYX/keXzjepF5zYL4L0m9q+ULlRjB+sWpN2iF5EeCmtY9HI6grZeeLXD2kQSSTckgcUBIt/kWYi@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrFwK850YVDVhkyzT/bqmka0mhUmMS2cRCLX/+BLKJ13moc9eV
-	2fL1dRB8w/dznyVib+LX7ao5eSJ/BC/CDGksF7Hk9kjLGFBCI/lp3f6XN2rnDF/eexciKYx0YFA
-	Z95bEms0lxLHX7bzThXunOUPfd2o=
-X-Google-Smtp-Source: AGHT+IE7OOjXFVKyPny9seeKARcV+7bRyJ2m2nNPcTdZXIBwkt8tkEEe+8RBiqk66+MWasWwTWKa8nLd+AD9mjxwOQU=
-X-Received: by 2002:ac8:5843:0:b0:458:4b8b:1517 with SMTP id
- d75a77b69052e-4584b8b21a0mr36075431cf.18.1726005841105; Tue, 10 Sep 2024
- 15:04:01 -0700 (PDT)
+	s=arc-20240116; t=1726006312; c=relaxed/simple;
+	bh=vVpp7uHZT4xapYNNyP7BWdaAt7X4JVfow4RERTcPSLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SRiNPD7BAx13oFiVhUuoQqbIZiwXcJHhX6cTkPLu84ma9ZrbBJi3rxHiMOzVzN+AjnAOAy/4TfvKp+8MMUg6slkBEzLzqrIRNIBjz4oJb2PIJSfweKwPEWjjLIhb7M/QBj4Nbv2E8yPclxu1spUDtWUQQIyTf3K9lqKm9VI3Ws4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqhNnRUl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8A6CC4CEC3;
+	Tue, 10 Sep 2024 22:11:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726006312;
+	bh=vVpp7uHZT4xapYNNyP7BWdaAt7X4JVfow4RERTcPSLY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qqhNnRUl5HScrLvQ8lR0VtPDI1EFxIU1VThQ+7DDe4xRw1n9FR0b2JlmLa/Cz/x1I
+	 6JcMTQgC/Dfwdx5voMaGOnJzI4WPL1nPmVyUbKTZ0Wj8DXgDUQaqFK65GUsQmmOa8p
+	 AQVtqflZHPdy4AoZoUzxl6K1IqYWAP5MFUEtHO9iTfG4dNRVdHnwL7GHCKDVRb+BaM
+	 +1fiGzTjXV9FJJ9AHGlfZYyseQXo4H5VCsUYzRh7ZjA4J7W9QAFHUmjMzX0baY41Ma
+	 Zx9fgNy03MkfxK3hjom4xPQQ52Ul8hUorLh3X3ulNHSvo4ltoRc2sJaAECKG64U6p7
+	 iPx5KaqabzAxQ==
+Date: Tue, 10 Sep 2024 18:11:50 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Anna Schumaker <anna.schumaker@oracle.com>
+Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v15 00/26] nfs/nfsd: add support for LOCALIO
+Message-ID: <ZuDEJukUYv3yVSQM@kernel.org>
+References: <20240831223755.8569-1-snitzer@kernel.org>
+ <66ab4e72-2d6e-4b78-a0ea-168e1617c049@oracle.com>
+ <ZttnSndjMaU1oObp@kernel.org>
+ <ZuB3l71L_Gu1Xsrn@kernel.org>
+ <ZuCasKhlB4-eGyg0@kernel.org>
+ <686b4118-0505-4ea5-a2bb-2b16acc33c51@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
- <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm> <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
-In-Reply-To: <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 10 Sep 2024 15:03:49 -0700
-Message-ID: <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
-Subject: Re: Interrupt on readdirplus?
-To: Han-Wen Nienhuys <hanwenn@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <686b4118-0505-4ea5-a2bb-2b16acc33c51@oracle.com>
 
-On Tue, Sep 10, 2024 at 10:44=E2=80=AFAM Han-Wen Nienhuys <hanwenn@gmail.co=
-m> wrote:
->
-> On Tue, Sep 10, 2024 at 5:58=E2=80=AFPM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
-> > > I have noticed Go-FUSE test failures of late, that seem to originate
-> > > in (changed?) kernel behavior. The problems looks like this:
-> > >
-> > > 12:54:13.385435 rx 20: OPENDIR n1  p330882
-> > > 12:54:13.385514 tx 20:     OK, {Fh 1 }
-> > > 12:54:13.385838 rx 22: READDIRPLUS n1 {Fh 1 [0 +4096)  L 0 LARGEFILE}=
-  p330882
-> > > 12:54:13.385844 rx 23: INTERRUPT n0 {ix 22}  p0
-> > > 12:54:13.386114 tx 22:     OK,  4000b data "\x02\x00\x00\x00\x00\x00\=
-x00\x00"...
-> > > 12:54:13.386642 rx 24: READDIRPLUS n1 {Fh 1 [1 +4096)  L 0 LARGEFILE}=
-  p330882
-> > > 12:54:13.386849 tx 24:     95=3Doperation not supported
-> > >
-> > > As you can see, the kernel attempts to interrupt the READDIRPLUS
-> >
-> > do you where the interrupt comes from? Is your test interrupting
-> > interrupting readdir?
->
-> I did not write code to issue interrupts, but it is possible that the
-> Go runtime does something behind my back. The debug output lists "p0";
-> is there a reason that the INTERRUPT opcode does not provide an
-> originating PID ? How would I discover who or what is generating the
-> interrupts? Will they show up if I run strace on the test binary?
->
-> I straced the test binary, below is a section where an interrupt
-> happens just before a directory seek. Could tgkill(SIGURG) cause an
-> interrupt? It happens just before the READDIRPLUS op (',') and the
-> INTERRUPT operation ('$') are read.
->
-> [pid 371933] writev(10,
-> [{iov_base=3D"\260\17\0\0\0\0\0\0\20\0\0\0\0\0\0\0", iov_len=3D16},
-> {iov_base=3D"\2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\0\0\0\0\1\0\0\0\0\
-> 0\0\0"..., iov_len=3D4000}], 2 <unfinished ...>
-> [pid 371931] <... nanosleep resumed>NULL) =3D 0
-> [pid 371933] <... writev resumed>)      =3D 4016
-> [pid 371931] nanosleep({tv_sec=3D0, tv_nsec=3D20000},  <unfinished ...>
-> [pid 371933] read(10,  <unfinished ...>
-> [pid 371934] <... getdents64 resumed>0xc0002ee000 /* 25 entries */, 8192)=
- =3D 800
-> [pid 371931] <... nanosleep resumed>NULL) =3D 0
-> [pid 371934] futex(0xc000059148, FUTEX_WAKE_PRIVATE, 1 <unfinished ...>
-> [pid 371931] getpid( <unfinished ...>
-> [pid 371934] <... futex resumed>)       =3D 1
-> [pid 371932] <... futex resumed>)       =3D 0
-> [pid 371931] <... getpid resumed>)      =3D 371930
-> [pid 371934] getdents64(7,  <unfinished ...>
-> [pid 371932] futex(0xc000059148, FUTEX_WAIT_PRIVATE, 0, NULL <unfinished =
-...>
-> [pid 371931] tgkill(371930, 371934, SIGURG <unfinished ...>
-> [pid 371935] <... read
-> resumed>"P\0\0\0,\0\0\0\22\0\0\0\0\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"=
-...,
-> 131200) =3D 80
->     # , =3D readdirplus
-> [pid 371933] <... read
-> resumed>"0\0\0\0$\0\0\0\23\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"=
-...,
-> 131200) =3D 48
->     # $ =3D interrupt.
-> [pid 371931] <... tgkill resumed>)      =3D 0
-> [pid 371933] futex(0xc000059148, FUTEX_WAKE_PRIVATE, 1 <unfinished ...>
-> [pid 371931] nanosleep({tv_sec=3D0, tv_nsec=3D20000},  <unfinished ...>
-> [pid 371933] <... futex resumed>)       =3D 1
-> [pid 371932] <... futex resumed>)       =3D 0
-> [pid 371933] write(2, "19:24:40.813294 doInterrupt\n", 28 <unfinished ...=
->
-> 19:24:40.813294 doInterrupt
->
-> A bit of browsing through the Go source code suggests that SIGURG is
-> used to preempt long-running goroutines, so it could be issued more or
-> less at random.
->
-> Nevertheless, FUSE should also not be reissuing the reads, even if
-> there were interrupts, right?
+On Tue, Sep 10, 2024 at 04:31:23PM -0400, Anna Schumaker wrote:
+> Hi Mike,
+> 
+> On 9/10/24 3:14 PM, Mike Snitzer wrote:
+> > On Tue, Sep 10, 2024 at 12:45:11PM -0400, Mike Snitzer wrote:
+> >> On Fri, Sep 06, 2024 at 04:34:18PM -0400, Mike Snitzer wrote:
+> >>> On Fri, Sep 06, 2024 at 03:31:41PM -0400, Anna Schumaker wrote:
+> >>>> Hi Mike,
+> >>>>
+> >>>> I've been running tests on localio this afternoon after finishing up going through v15 of the patches (I was most of the way through when you posted v16, so I haven't updated yet!). Cthon tests passed on all NFS versions, and xfstests passed on NFS v4.x. However, I saw this crash from xfstests with NFS v3:
+> >>>>
+> >>>> [ 1502.440896] run fstests generic/633 at 2024-09-06 14:04:17
+> >>>> [ 1502.694356] process 'vfstest' launched '/dev/fd/4/file1' with NULL argv: empty string added
+> >>>> [ 1502.699514] Oops: general protection fault, probably for non-canonical address 0x6c616e69665f6140: 0000 [#1] PREEMPT SMP NOPTI
+> >>>> [ 1502.700970] CPU: 3 UID: 0 PID: 513 Comm: nfsd Not tainted 6.11.0-rc6-g0c79a48cd64d-dirty+ #42323 70d41673e6cbf8e3437eb227e0a9c3c46ed3b289
+> >>>> [ 1502.702506] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 2/2/2022
+> >>>> [ 1502.703593] RIP: 0010:nfsd_cache_lookup+0x2b3/0x840 [nfsd]
+> > 
+> > <snip>
+> > 
+> >>>>
+> >>>> Please let me know if there are any other details you need about my setup to help debug this!
+> >>>
+> >>> Hmm, I haven't seen this issue, my runs of xfstests with LOCALIO
+> >>> enabled look solid:
+> >>> https://evilpiepirate.org/~testdashboard/ci?user=snitzer&branch=snitm-nfs-next&test=^fs.nfs.fstests.generic.633$
+> >>>
+> >>> And I know Chuck has been testing xfstests and more with the patches
+> >>> applied but LOCALIO disabled in his kernel config.
+> >>>
+> >>> The stack seems to indicate nfsd is just handling a request (so it
+> >>> isn't using LOCALIO, at least not for this op).
+> >>>
+> >>> Probably best if you do try v16.  v15 has issues v16 addressed.  If
+> >>> you can reproduce with v16 please share your kernel .config and
+> >>> xfstests config. 
+> >>>
+> >>> Note that I've only really tested my changes against v6.11-rc4.  But I
+> >>> can rebase on v6.11-rc6 if you find v16 still fails for you.
+> >>
+> >> Hi Anna,
+> >>
+> >> Just checking back, how is LOCALIO for you at this point?  Anything
+> >> you're continuing to see as an issue or need from me?
+> > 
+> > In case it helps, I did just rebase LOCALIO (v16 + 1 fix) ontop of
+> > cel/nfsd-next (v6.11-rc6 based), and I've pushed the result here:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/log/?h=nfs-localio-for-next
+> 
+> I'm seeing the same hang on generic/525 with your latest branch.
+> 
+> Anna
 
-Is there a link to the test? Is it easy to repro this issue?
+Interesting, I just looked at ktest and it shows the regression point
+to be this commit:
+   nfs: implement client support for NFS_LOCALIO_PROGRAM
 
-If I'm understanding your post correctly, the issue you are seeing is
-that if your go-fuse server returns 25 entries to an interrupted
-READDIRPLUS request, the kernel's next READDIRPLUS request is at
-offset 1 instead of at offset 25?
+See:
+https://evilpiepirate.org/~testdashboard/ci?user=snitzer&branch=snitm-nfs-next&test=^fs.nfs.fstests.generic.525$
 
+I think 525 has been like this for a while, really not sure why I
+ignored it... will dig deeper!
 
 Thanks,
-Joanne
-
->
-> > > operation, but go-fuse ignores the interrupt and returns 25 entries.
-> > > The kernel somehow thinks that only 1 entry was consumed, and issues
-> > > the next READDIRPLUS at offset 1. If go-fuse ignores the faulty offse=
-t
-> > > and continues the listing (ie. continuing with entry 25), the test
-> > > passes.
-> > >
-> > > Is this behavior of the kernel expected or a bug?
-> > >
-> > > I am redoing the API for directory listing to support cacheable and
-> > > seekable directories, and in the new version, this looks like a
-> > > directory seek. If the file system does not support seekable
-> > > directories, I must return some kind of error (which is the ENOTSUP
-> > > you can see in the log above).
-> >
-> > Is this with or without FOPEN_CACHE_DIR? Would be helpful to know
-> > if FOPEN_CACHE_DIR - fuse kernel code is quite different when this
-> > is set.
->
-> without FOPEN_CACHE_DIR.
->
-> > > I started seeing this after upgrading to Fedora 40. My kernel is
-> > > 6.10.7-200.fc40.x86_64
-> > >
-> >
-> > Would be interesting to know your kernel version before? There is
-> > commit cdf6ac2a03d2, which removes a readdir lock. Although the
-> > commit message explains why it is not needed anymore.
->
-> The failure happens in single threaded loads, so a race condition
-> seems unlikely.
->
-> Let me try with other kernel versions.
->
-> Also, I realize that Fedora 40 also upgraded the Go compiler, and may
-> have made SIGURG be triggered more frequently?
->
-> --
-> Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
->
+Mike
 
