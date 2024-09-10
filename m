@@ -1,178 +1,362 @@
-Return-Path: <linux-fsdevel+bounces-29005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28743972D98
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 11:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79552972F18
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 11:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34461F26430
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 09:27:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5E61F223C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 09:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C35218EFC3;
-	Tue, 10 Sep 2024 09:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D720D18C030;
+	Tue, 10 Sep 2024 09:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qNQu/qqc"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pVVeKoRF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA92F18DF94
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 09:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333EC186E4B;
+	Tue, 10 Sep 2024 09:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725960370; cv=none; b=nDUGEnVO88tzN09YeugBhqu39xHBN3dVCzlCrQR/FDtGIGkZ84WOh65L+Y/oCeiiG0zfGR8h/bvDZVksF10v+DrqIDJ8FHL00T6KO00Wk4yOEqZL1sg+EzNNRUg7aNk1nCnrSW8eIMXLJA0J/DZqdXgwqukr5txgTgrvmJHoI0A=
+	t=1725961694; cv=none; b=tUvCukdI9HfkSb0J0W6TNRJH34a1udwYXv2hlu7Ncu05KGQ4NzII9vI2aTLmp07BJ19sHM8MJ1e5vAr4ksnVsFPrbDODyHADRcF59O064XJu5qB42aVnAnVFGaTfMj1HR2qXj6uVnaZWfs9Q0tW7ckBT3SSeGWWZixirhyvedT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725960370; c=relaxed/simple;
-	bh=D/buzGYQkufERse75SSjj/vuDr0eYjohZXOoq1FQWj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Qmq75TOTK9hSF8Rzzhbc+UaWqrYZysE2YiI0OS+brvgYhpJ2wn/ckH9SxNGe9eNJJysLbjBpMjOM2cK1AKkOsPBmfULGJWR5YuuShQYH8XnbbbcfgdUnNal8VddCEFO6fXtZxmCvG1FBG8oe4frBELMbLYPwrdWLF86zOd8HKcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qNQu/qqc; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240910092606epoutp01492327ea8c011ea657bbb5ffcd220e00~z188YN4Tw2494824948epoutp01i
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 09:26:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240910092606epoutp01492327ea8c011ea657bbb5ffcd220e00~z188YN4Tw2494824948epoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725960366;
-	bh=MtY5qZOPVIGordnCBFvzVrBfTMRjvMNrDfO7tPymv9k=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=qNQu/qqciECo7N+Qr5su9Pn5p1DrkHX7PcmkcbYMNwLTMna70vEU9XE3Oyqru/qv8
-	 wLGPiEhl3CbffRzyva8rLXOQdQBCjh5T2EpVpv24jVCnJfIltYRWDww1UnaakT6aPP
-	 zg+y+20EjuSJC5O9IGKGrQ++WIIIUh71iCixLdx0=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240910092606epcas5p1b482ec48592d08e606bf0c1ad7fb2ce6~z187_8Kmq2995129951epcas5p17;
-	Tue, 10 Sep 2024 09:26:06 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4X2yxS43Btz4x9Pp; Tue, 10 Sep
-	2024 09:26:04 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7D.F0.09640.CA010E66; Tue, 10 Sep 2024 18:26:04 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240910092604epcas5p4d01dec7422c7990882f6453c52a78075~z185-cxiQ0887908879epcas5p42;
-	Tue, 10 Sep 2024 09:26:04 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240910092604epsmtrp2fa22a8c1a088d03d2222bc0993458c5d~z1859dXm12757627576epsmtrp2k;
-	Tue, 10 Sep 2024 09:26:04 +0000 (GMT)
-X-AuditID: b6c32a49-aabb8700000025a8-d8-66e010ac0e90
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	80.E9.19367.BA010E66; Tue, 10 Sep 2024 18:26:03 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240910092559epsmtip21e15ace98c8e2bda39a2dbad69522f80~z182IcM510197501975epsmtip2l;
-	Tue, 10 Sep 2024 09:25:59 +0000 (GMT)
-Message-ID: <c9289a2f-ecb3-7e3e-c5d9-336ce2bc09a7@samsung.com>
-Date: Tue, 10 Sep 2024 14:55:58 +0530
+	s=arc-20240116; t=1725961694; c=relaxed/simple;
+	bh=SsPPc8/ju8UxBgxLMPTlbFOKFK9qbk1Rd0JClPmxdgk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z38F/xnZeRDGA4iCExbWdeXSCPcdKnb+VE/GV0MMX+7O0fOAMFpPdxVBZZYWSpbgVphAD/nIyoI7ufuFFbsRGBgcF7PpUVc8KkcBHkJRmhV2oFDKgIhUPQEV0y7WOgEHkfXLm5My3l0hobWkBkR6u5mbr8PDYixUKjWo0zuBG2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pVVeKoRF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5624BC4CEC3;
+	Tue, 10 Sep 2024 09:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725961693;
+	bh=SsPPc8/ju8UxBgxLMPTlbFOKFK9qbk1Rd0JClPmxdgk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pVVeKoRFQCUAfB14bJUxWc/BWT8fOc3iiFFtUowkPrtmE7k+AWY54HhN5TJpjOqQk
+	 uuNVZ16+Ouy7+Szw14VnburQx6cdkavzVRyxGAry5Rkm1O20EPEKyXMpyT81Oaiy4y
+	 FllbAijjPleU+rxuvx1ooYmUEH/TOVGx468omWhA=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	David Howells <dhowells@redhat.com>,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	linux-cifs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Steve French <stfrench@microsoft.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.10 156/375] cifs: Fix lack of credit renegotiation on read retry
+Date: Tue, 10 Sep 2024 11:29:13 +0200
+Message-ID: <20240910092627.714206606@linuxfoundation.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240910092622.245959861@linuxfoundation.org>
+References: <20240910092622.245959861@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v4 5/5] nvme: enable FDP support
-Content-Language: en-US
-To: Keith Busch <kbusch@kernel.org>
-Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	martin.petersen@oracle.com, James.Bottomley@hansenpartnership.com,
-	brauner@kernel.org, jack@suse.cz, jaegeuk@kernel.org, jlayton@kernel.org,
-	chuck.lever@oracle.com, bvanassche@acm.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com, Nitesh
-	Shetty <nj.shetty@samsung.com>, Hui Qi <hui81.qi@samsung.com>
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <ZtsoGX2QY-TjBolb@kbusch-mbp.mynextlight.net>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTHdx+0hVFzLa8fZBtd2SNgoJSVekHp3GzYZS4Gh0BituAdvTwC
-	fdDbTpxLqKIyMcDEANIhrRQwgBuKhMeQBMsYMmCQIQM72+Eom0gcCFsmoLCWyxj/fc7J+Z5n
-	DgfhnWQHcDKVWkqjJLMFLA+0rTf4zdBr2FRa+JT1JbzJVsLC53oXIbx8YRnB121/wPi9nk4Y
-	b2jqg/HO+q/Z+FcV+TDuaDYg+I0SDj59f4mNL9c3svFSy88Q3m3dhf9U8x5+q3sAxY31M2z8
-	/EQHC7/avwbjbatGBP9mbh7FRwxV7H2+xNjdA8SI/QZKlJf+wCLGhnVES+M5FnGzNo/oMi3B
-	RNc9PYt4MmNFieLWRogYMn3HJpZaXon3PJK1N4Mi5ZSGTylTVfJMZXqM4EBCyv6USEm4KFQU
-	he8W8JWkgooRyD6ID43NzHaOK+B/SmbrnK54kqYFQulejUqnpfgZKlobI6DU8my1WB1Gkwpa
-	p0wPU1LaaFF4eESkM/BoVkb/chtL3eSZe350ma2HTnkUQu4cgIlBa8EcqxDy4PCwLghcrbmL
-	MMYiBEZbpt22jOqyGmcYZ0NSvw4z/k4IrDZc2VQ8hoDd2uTmysvFpOB5tx51CVDsdTDRe4hx
-	7wQDlQ7UxT7YJ2BlvApysZcz58SdecTFCOYHrA4j7GJvLAjYjJUbTSCYGQWPisxurpwsLBiM
-	XtS50B2LBhfOHGakgaD9cdVGOwAzu4PLD6/AzJgyUDfdjjLsBR71t7IZDgBLf3azGM4CU79N
-	bcZ8DjpuFrsx/DbQP5vcKIs4yzZ/K2Rq7QBFqw6YWQkXfHGWx0S/CuylM5tKP/DgUu0mE6C5
-	/nt4a1PdFxeQLyG+YdtWDNumN2wbx/B/ZROENkL+lJpWpFN0pFqkpI5tnTtVpWiBNn4hJK4D
-	sk0thFkgmANZIMBBBN7cEqk9jceVk8c/ozSqFI0um6ItUKTzOheQAJ9UlfOZlNoUkTgqXCyR
-	SMRRb0lEAj/u3JnLch6WTmqpLIpSU5r/dDDHPUAPF/FrM6JNtz3gyhz2eM2Hg++/VpFqNuV4
-	7RdGhvpOJyKZytv5J+IjZMWri4qQuOqRfcefNu9e6zPGkrRF+8vfpqDcPfNnf3VP9JUW+2PU
-	scDFAfmh5GdlUqHu3QTzuI+DJqnTuuv5wbs4CUkVEfOZt+pGhx5U+x+U3RmOO7ocBj/sseZO
-	KJJmV/4C92fLn58IMa69EHXYS2y+jj6VJmi8n9jqftyTY2jP66FnT5+C1Od2SB3J3KDYl6Vl
-	oncC7dcGFiryFtKEicO8Urde2ZEXbQ3W9TH9P5aCWnPL74OKjwomgyYLjXYVKyZp9WRJ8seI
-	4g3P/IMBK8I+yaXBnb1DApTOIEUhiIYm/wVws0vWlAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsWy7bCSvO5qgQdpBvcm2VisvtvPZvH68CdG
-	i2kffjJb/L/7nMni5oGdTBYrVx9lsti5bC27xezpzUwWT9bPYrbY2M9h8fjOZ3aLn8tWsVtM
-	OnSN0WLvLW2LS4vcLfbsPcliMX/ZU3aL7us72CyWH//HZLHt93xmi3Wv37NYnJ81h91BzOPy
-	FW+P8/c2snhMm3SKzePy2VKPTas62Tw2L6n32L3gM5PH7psNbB4fn95i8ejbsorR48yCI+we
-	nzfJBfBEcdmkpOZklqUW6dslcGUc/7mNrWA1T0X3hZ/sDYxNXF2MHBwSAiYSy/4zdTFycQgJ
-	bGeU+Dipn7GLkRMoLi7RfO0HO4QtLLHy33N2iKLXjBLTzv1iBknwCthJ/N3bwAIyiEVAVeL6
-	4UCIsKDEyZlPWEBsUYEkiT33G5lAbGGgXddPvAdrZQaaf+vJfLC4iICyxN35M1lB5jMLLGaR
-	2LRxGxvEsreMElM3XmADWcAmoClxYXIpiMkpYCUxsTUEYo6ZRNfWLkYIW15i+9s5zBMYhWYh
-	OWMWknWzkLTMQtKygJFlFaNoakFxbnpucoGhXnFibnFpXrpecn7uJkZw7GsF7WBctv6v3iFG
-	Jg7GQ4wSHMxKIrz9dvfShHhTEiurUovy44tKc1KLDzFKc7AoifMq53SmCAmkJ5akZqemFqQW
-	wWSZODilGph2m7ya35ot5KP/YYb6hKd5wsctNNOaz+lnb2Fry96Rd13xnb5VcnLw+wM/z7v5
-	3A1z3HYjc+pNA5eOJH/2Lf/+52hUT+BcU2vYlu/xzWyv+SPpcot/k9LZpIzW3dgUfWfbllXV
-	h7rkhSZe10q4duqRRJxgvS0nu9QnEcl7whOL5mpGvLyuUBRw0zzSXPl0RXffckP9/bebOL/e
-	rT6/wu7y7efzNPfkbFqTGCkrfP69UVVQ/svtn79VXG+5kS/Bl5D3RatH21yzzcomI3WOTYtX
-	Lc80q4NXXumcMO1dLn3yPI941ZwV7z+bO52333cieVOjY9+FBw1XHsg55LzT5Tq7YobzRu8X
-	LM6zVcz99iqxFGckGmoxFxUnAgBTa/iJbAMAAA==
-X-CMS-MailID: 20240910092604epcas5p4d01dec7422c7990882f6453c52a78075
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240826171430epcas5p3d8e34a266ced7b3ea0df2a11b83292ae
-References: <20240826170606.255718-1-joshi.k@samsung.com>
-	<CGME20240826171430epcas5p3d8e34a266ced7b3ea0df2a11b83292ae@epcas5p3.samsung.com>
-	<20240826170606.255718-6-joshi.k@samsung.com>
-	<ZtsoGX2QY-TjBolb@kbusch-mbp.mynextlight.net>
+Content-Transfer-Encoding: 8bit
 
-On 9/6/2024 9:34 PM, Keith Busch wrote:
-> On Mon, Aug 26, 2024 at 10:36:06PM +0530, Kanchan Joshi wrote:
->> Flexible Data Placement (FDP), as ratified in TP 4146a, allows the host
->> to control the placement of logical blocks so as to reduce the SSD WAF.
->>
->> Userspace can send the data placement information using the write hints.
->> Fetch the placement-identifiers if the device supports FDP.
->>
->> The incoming placement hint is mapped to a placement-identifier, which
->> in turn is set in the DSPEC field of the write command.
->>
->> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
->> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->> Signed-off-by: Hui Qi <hui81.qi@samsung.com>
-> 
-> I'm still fine with this nvme implementation.
-> 
-> Acked-by: Keith Busch <kbusch@kernel.org>
-> 
-> The reporting via fcntl looks okay to me, but I've never added anything
-> to that interface, so not sure if there's any problem using it for this.
-> 
+6.10-stable review patch.  If anyone has any objections, please let me know.
 
-The difference comes only in the fcntl interface (hint type/value pair 
-rather than just value), otherwise it piggybacks on the same kernel 
-infrastructure that ensures the hint is propagated fine. So I do not 
-foresee problems.
+------------------
 
-And FWIW, we have had precedents when a revamped fcntl was introduced to 
-do what was not possible with the existing fcntl. Like: 
-F_{GET/SET}OWN_EX over F_{GET/SET}OWN.
+From: David Howells <dhowells@redhat.com>
 
-Per-file hinting has its uses, particularly for buffered IO. But the 
-current interface can only do data-lifetime hints. The revamped 
-interface may come handy for other things too (e.g., KPIO).
+[ Upstream commit 6a5dcd487791e0c2d86622064602a5c7459941ed ]
+
+When netfslib asks cifs to issue a read operation, it prefaces this with a
+call to ->clamp_length() which cifs uses to negotiate credits, providing
+receive capacity on the server; however, in the event that a read op needs
+reissuing, netfslib doesn't call ->clamp_length() again as that could
+shorten the subrequest, leaving a gap.
+
+This causes the retried read to be done with zero credits which causes the
+server to reject it with STATUS_INVALID_PARAMETER.  This is a problem for a
+DIO read that is requested that would go over the EOF.  The short read will
+be retried, causing EINVAL to be returned to the user when it fails.
+
+Fix this by making cifs_req_issue_read() negotiate new credits if retrying
+(NETFS_SREQ_RETRYING now gets set in the read side as well as the write
+side in this instance).
+
+This isn't sufficient, however: the new credits might not be sufficient to
+complete the remainder of the read, so also add an additional field,
+rreq->actual_len, that holds the actual size of the op we want to perform
+without having to alter subreq->len.
+
+We then rely on repeated short reads being retried until we finish the read
+or reach the end of file and make a zero-length read.
+
+Also fix a couple of places where the subrequest start and length need to
+be altered by the amount so far transferred when being used.
+
+Fixes: 69c3c023af25 ("cifs: Implement netfslib hooks")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/netfs/io.c            |  2 ++
+ fs/smb/client/cifsglob.h |  1 +
+ fs/smb/client/file.c     | 37 +++++++++++++++++++++++++++++++++----
+ fs/smb/client/smb2ops.c  |  2 +-
+ fs/smb/client/smb2pdu.c  | 28 +++++++++++++++++-----------
+ fs/smb/client/trace.h    |  1 +
+ 6 files changed, 55 insertions(+), 16 deletions(-)
+
+diff --git a/fs/netfs/io.c b/fs/netfs/io.c
+index c96431d3da6d..2a5c22606fb1 100644
+--- a/fs/netfs/io.c
++++ b/fs/netfs/io.c
+@@ -306,6 +306,7 @@ static bool netfs_rreq_perform_resubmissions(struct netfs_io_request *rreq)
+ 				break;
+ 			subreq->source = NETFS_DOWNLOAD_FROM_SERVER;
+ 			subreq->error = 0;
++			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
+ 			netfs_stat(&netfs_n_rh_download_instead);
+ 			trace_netfs_sreq(subreq, netfs_sreq_trace_download_instead);
+ 			netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
+@@ -313,6 +314,7 @@ static bool netfs_rreq_perform_resubmissions(struct netfs_io_request *rreq)
+ 			netfs_reset_subreq_iter(rreq, subreq);
+ 			netfs_read_from_server(rreq, subreq);
+ 		} else if (test_bit(NETFS_SREQ_SHORT_IO, &subreq->flags)) {
++			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
+ 			netfs_reset_subreq_iter(rreq, subreq);
+ 			netfs_rreq_short_read(rreq, subreq);
+ 		}
+diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+index 1e4da268de3b..552792f28122 100644
+--- a/fs/smb/client/cifsglob.h
++++ b/fs/smb/client/cifsglob.h
+@@ -1508,6 +1508,7 @@ struct cifs_io_subrequest {
+ 		struct cifs_io_request *req;
+ 	};
+ 	ssize_t				got_bytes;
++	size_t				actual_len;
+ 	unsigned int			xid;
+ 	int				result;
+ 	bool				have_xid;
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index b202eac6584e..533f76118316 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -111,6 +111,7 @@ static void cifs_issue_write(struct netfs_io_subrequest *subreq)
+ 		goto fail;
+ 	}
+ 
++	wdata->actual_len = wdata->subreq.len;
+ 	rc = adjust_credits(wdata->server, wdata, cifs_trace_rw_credits_issue_write_adjust);
+ 	if (rc)
+ 		goto fail;
+@@ -153,7 +154,7 @@ static bool cifs_clamp_length(struct netfs_io_subrequest *subreq)
+ 	struct cifs_io_request *req = container_of(subreq->rreq, struct cifs_io_request, rreq);
+ 	struct TCP_Server_Info *server = req->server;
+ 	struct cifs_sb_info *cifs_sb = CIFS_SB(rreq->inode->i_sb);
+-	size_t rsize = 0;
++	size_t rsize;
+ 	int rc;
+ 
+ 	rdata->xid = get_xid();
+@@ -166,8 +167,8 @@ static bool cifs_clamp_length(struct netfs_io_subrequest *subreq)
+ 						     cifs_sb->ctx);
+ 
+ 
+-	rc = server->ops->wait_mtu_credits(server, cifs_sb->ctx->rsize, &rsize,
+-					   &rdata->credits);
++	rc = server->ops->wait_mtu_credits(server, cifs_sb->ctx->rsize,
++					   &rsize, &rdata->credits);
+ 	if (rc) {
+ 		subreq->error = rc;
+ 		return false;
+@@ -183,7 +184,8 @@ static bool cifs_clamp_length(struct netfs_io_subrequest *subreq)
+ 			      server->credits, server->in_flight, 0,
+ 			      cifs_trace_rw_credits_read_submit);
+ 
+-	subreq->len = min_t(size_t, subreq->len, rsize);
++	subreq->len = umin(subreq->len, rsize);
++	rdata->actual_len = subreq->len;
+ 
+ #ifdef CONFIG_CIFS_SMB_DIRECT
+ 	if (server->smbd_conn)
+@@ -203,12 +205,39 @@ static void cifs_req_issue_read(struct netfs_io_subrequest *subreq)
+ 	struct netfs_io_request *rreq = subreq->rreq;
+ 	struct cifs_io_subrequest *rdata = container_of(subreq, struct cifs_io_subrequest, subreq);
+ 	struct cifs_io_request *req = container_of(subreq->rreq, struct cifs_io_request, rreq);
++	struct TCP_Server_Info *server = req->server;
++	struct cifs_sb_info *cifs_sb = CIFS_SB(rreq->inode->i_sb);
+ 	int rc = 0;
+ 
+ 	cifs_dbg(FYI, "%s: op=%08x[%x] mapping=%p len=%zu/%zu\n",
+ 		 __func__, rreq->debug_id, subreq->debug_index, rreq->mapping,
+ 		 subreq->transferred, subreq->len);
+ 
++	if (test_bit(NETFS_SREQ_RETRYING, &subreq->flags)) {
++		/*
++		 * As we're issuing a retry, we need to negotiate some new
++		 * credits otherwise the server may reject the op with
++		 * INVALID_PARAMETER.  Note, however, we may get back less
++		 * credit than we need to complete the op, in which case, we
++		 * shorten the op and rely on additional rounds of retry.
++		 */
++		size_t rsize = umin(subreq->len - subreq->transferred,
++				    cifs_sb->ctx->rsize);
++
++		rc = server->ops->wait_mtu_credits(server, rsize, &rdata->actual_len,
++						   &rdata->credits);
++		if (rc)
++			goto out;
++
++		rdata->credits.in_flight_check = 1;
++
++		trace_smb3_rw_credits(rdata->rreq->debug_id,
++				      rdata->subreq.debug_index,
++				      rdata->credits.value,
++				      server->credits, server->in_flight, 0,
++				      cifs_trace_rw_credits_read_resubmit);
++	}
++
+ 	if (req->cfile->invalidHandle) {
+ 		do {
+ 			rc = cifs_reopen_file(req->cfile, true);
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index f44f5f249400..42352f70b01c 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -301,7 +301,7 @@ smb2_adjust_credits(struct TCP_Server_Info *server,
+ 		    unsigned int /*enum smb3_rw_credits_trace*/ trace)
+ {
+ 	struct cifs_credits *credits = &subreq->credits;
+-	int new_val = DIV_ROUND_UP(subreq->subreq.len, SMB2_MAX_BUFFER_SIZE);
++	int new_val = DIV_ROUND_UP(subreq->actual_len, SMB2_MAX_BUFFER_SIZE);
+ 	int scredits, in_flight;
+ 
+ 	if (!credits->value || credits->value == new_val)
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index d262e70100c9..5f5f51bf9850 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -4523,9 +4523,9 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 		  "rdata server %p != mid server %p",
+ 		  rdata->server, mid->server);
+ 
+-	cifs_dbg(FYI, "%s: mid=%llu state=%d result=%d bytes=%zu\n",
++	cifs_dbg(FYI, "%s: mid=%llu state=%d result=%d bytes=%zu/%zu\n",
+ 		 __func__, mid->mid, mid->mid_state, rdata->result,
+-		 rdata->subreq.len);
++		 rdata->actual_len, rdata->subreq.len - rdata->subreq.transferred);
+ 
+ 	switch (mid->mid_state) {
+ 	case MID_RESPONSE_RECEIVED:
+@@ -4579,15 +4579,18 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 				    rdata->subreq.debug_index,
+ 				    rdata->xid,
+ 				    rdata->req->cfile->fid.persistent_fid,
+-				    tcon->tid, tcon->ses->Suid, rdata->subreq.start,
+-				    rdata->subreq.len, rdata->result);
++				    tcon->tid, tcon->ses->Suid,
++				    rdata->subreq.start + rdata->subreq.transferred,
++				    rdata->actual_len,
++				    rdata->result);
+ 	} else
+ 		trace_smb3_read_done(rdata->rreq->debug_id,
+ 				     rdata->subreq.debug_index,
+ 				     rdata->xid,
+ 				     rdata->req->cfile->fid.persistent_fid,
+ 				     tcon->tid, tcon->ses->Suid,
+-				     rdata->subreq.start, rdata->got_bytes);
++				     rdata->subreq.start + rdata->subreq.transferred,
++				     rdata->got_bytes);
+ 
+ 	if (rdata->result == -ENODATA) {
+ 		/* We may have got an EOF error because fallocate
+@@ -4615,6 +4618,7 @@ smb2_async_readv(struct cifs_io_subrequest *rdata)
+ {
+ 	int rc, flags = 0;
+ 	char *buf;
++	struct netfs_io_subrequest *subreq = &rdata->subreq;
+ 	struct smb2_hdr *shdr;
+ 	struct cifs_io_parms io_parms;
+ 	struct smb_rqst rqst = { .rq_iov = rdata->iov,
+@@ -4625,15 +4629,15 @@ smb2_async_readv(struct cifs_io_subrequest *rdata)
+ 	int credit_request;
+ 
+ 	cifs_dbg(FYI, "%s: offset=%llu bytes=%zu\n",
+-		 __func__, rdata->subreq.start, rdata->subreq.len);
++		 __func__, subreq->start, subreq->len);
+ 
+ 	if (!rdata->server)
+ 		rdata->server = cifs_pick_channel(tcon->ses);
+ 
+ 	io_parms.tcon = tlink_tcon(rdata->req->cfile->tlink);
+ 	io_parms.server = server = rdata->server;
+-	io_parms.offset = rdata->subreq.start;
+-	io_parms.length = rdata->subreq.len;
++	io_parms.offset = subreq->start + subreq->transferred;
++	io_parms.length = rdata->actual_len;
+ 	io_parms.persistent_fid = rdata->req->cfile->fid.persistent_fid;
+ 	io_parms.volatile_fid = rdata->req->cfile->fid.volatile_fid;
+ 	io_parms.pid = rdata->req->pid;
+@@ -4648,11 +4652,13 @@ smb2_async_readv(struct cifs_io_subrequest *rdata)
+ 
+ 	rdata->iov[0].iov_base = buf;
+ 	rdata->iov[0].iov_len = total_len;
++	rdata->got_bytes = 0;
++	rdata->result = 0;
+ 
+ 	shdr = (struct smb2_hdr *)buf;
+ 
+ 	if (rdata->credits.value > 0) {
+-		shdr->CreditCharge = cpu_to_le16(DIV_ROUND_UP(rdata->subreq.len,
++		shdr->CreditCharge = cpu_to_le16(DIV_ROUND_UP(rdata->actual_len,
+ 						SMB2_MAX_BUFFER_SIZE));
+ 		credit_request = le16_to_cpu(shdr->CreditCharge) + 8;
+ 		if (server->credits >= server->max_credits)
+@@ -4676,11 +4682,11 @@ smb2_async_readv(struct cifs_io_subrequest *rdata)
+ 	if (rc) {
+ 		cifs_stats_fail_inc(io_parms.tcon, SMB2_READ_HE);
+ 		trace_smb3_read_err(rdata->rreq->debug_id,
+-				    rdata->subreq.debug_index,
++				    subreq->debug_index,
+ 				    rdata->xid, io_parms.persistent_fid,
+ 				    io_parms.tcon->tid,
+ 				    io_parms.tcon->ses->Suid,
+-				    io_parms.offset, io_parms.length, rc);
++				    io_parms.offset, rdata->actual_len, rc);
+ 	}
+ 
+ async_readv_out:
+diff --git a/fs/smb/client/trace.h b/fs/smb/client/trace.h
+index 36d5295c2a6f..13adfe550b99 100644
+--- a/fs/smb/client/trace.h
++++ b/fs/smb/client/trace.h
+@@ -30,6 +30,7 @@
+ 	EM(cifs_trace_rw_credits_old_session,		"old-session") \
+ 	EM(cifs_trace_rw_credits_read_response_add,	"rd-resp-add") \
+ 	EM(cifs_trace_rw_credits_read_response_clear,	"rd-resp-clr") \
++	EM(cifs_trace_rw_credits_read_resubmit,		"rd-resubmit") \
+ 	EM(cifs_trace_rw_credits_read_submit,		"rd-submit  ") \
+ 	EM(cifs_trace_rw_credits_write_prepare,		"wr-prepare ") \
+ 	EM(cifs_trace_rw_credits_write_response_add,	"wr-resp-add") \
+-- 
+2.43.0
+
+
+
 
