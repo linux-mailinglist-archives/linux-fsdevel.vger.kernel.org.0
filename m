@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-28988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1616972869
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 06:40:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CBB97286B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 06:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E9A1F24B16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 04:40:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1B82B2329E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 04:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29925157465;
-	Tue, 10 Sep 2024 04:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B93016B3B7;
+	Tue, 10 Sep 2024 04:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rRIx+7OX"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="20gsku6z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3359320314;
-	Tue, 10 Sep 2024 04:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9490A14387B;
+	Tue, 10 Sep 2024 04:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725943209; cv=none; b=NaYURNet69tyvbMzI8SK1X3W5BIm06lroDQV/Vk1fhWsngjIE6aYkZNVnoWHMkGHIKtrFh8C3iWM7SKJ/gE+AoMBDMhQVbVz9HnPP74w+YQpW+4Ppf4YePxcfn1AQjkBTaAvaGCnu5sdJdbgrB0DmjrQYS1ZV7MqoY+puiId0J4=
+	t=1725943214; cv=none; b=nvjqqbR38Y9S8sQ1XdXsRAWMy/jYrEovN8SQXYyckV+NykQvofnCVA0jQaOJD2RIGjxAFIfuC7UeTlpdtvXhaY5YPGWkARU0BnD+qDVA+zX8sVWaEpMSQcfMusybBqboh61GlCzFZvEHT1JQ1jrtEc6Eo7qNuMILSJ3OfWu48Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725943209; c=relaxed/simple;
-	bh=oB/1fd8M+r3t2Zbeuvxacz6m3X6NY+XqH6Vyt9QgIEQ=;
+	s=arc-20240116; t=1725943214; c=relaxed/simple;
+	bh=szl7PVp7cDvl+wmX0Wc6m7QSsmI81+QrEUkh2NHcoJE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nkkjIptwkgHDqCTQ8aaz1Gp83rQhKyWUxo2jV69+r6IDDA3zoN4gfQDwjdbU28nY6M1s4d9T/gAISYiLlz88ZIVapuJxrCWWKaua3RDvMhkSgxID3USGw00HSzG5GluYAXkJCrrTIfYmsl/k1KgfUwJJmikrW40sA3HUhkkLpyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rRIx+7OX; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=jDIyF+Ynz6nK2id4b85LG+Z1uFNm4U3kqJI6wckMd9f02R6lCCU8vGna/oOQw/gqAGacNQZ214d157ZqHlqI6DBDVgiZ44V7FCAG2I2noNhNbHAoinq3VAzuir0WNKn21WbjEnjS3z7hUTmo4bebGPBD9ze1syGCBo0PkAI9wFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=20gsku6z; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=XLJKw25ZXuXWm5o+qVVpBlurmsLUI1zUegIrA4wy6YQ=; b=rRIx+7OXZpSvQNljgqxkLw6Bwj
-	6QtzEv3pb9cvbVuClqAbZISAAkghwTIKjsXHZFgtqRFGPXsrGZbtt3u3MtHMqlBBZ9Cbwz4wVtvdT
-	sdxtYdyxRDXdMpq2XrFngrzxpWgmQjWAMWaI+bnGHmT4WHwb5rK2z+R6BI93lzeiMVO8XH1P6Tqyx
-	TRB/g/dbnVaKHIV0CugmaU5/CgYGOAwxxNQvzlr7Ly49r0kWi20bOAvhwUxjjqIEcgmwUPvER5ut9
-	kzTlYILjZ+qIOCPsVOdcfLhSXMcImtNR4X9R6CpalfzBPpVx9NLA/5SzLLMF1j5tkDnOyMrqGK4Yx
-	Mlf/YkrQ==;
+	bh=RjmaHn84o+JC/zfYelgZpF4O7kf3xQZtwo2hUPogIsw=; b=20gsku6ziUu0rfxh0JbJR9OmFi
+	hBrUYdbSnVGxoq/oR1UeJORFGJpyOLuh0XUpqkVT5V4JnvzUITZsEIgEbGrNrhmvW9Vx11HZAH1Dj
+	P68vqjDfIqiG5tyT8gLIs/1XH7HVjtEWtRDQfooBb87HJUnVkMeyiICJ6H6nJ1CYskdUSXrl2VyrS
+	NmIcOLQQABurx5ZLjVgD6o8HBA/nZPBoXCcbBS4FkoFIGe1XPMyCUOgIddCVUmjVIvc9FIZ9PvVRY
+	xJS2/Kw3htdM39JInxsm5at0OQcHAgvzjFm+qWYGDqQNII1nQ0pm3lKxNAt6EbXYeA6RXw+dOfmAS
+	3tmeT0/A==;
 Received: from ppp-2-84-49-240.home.otenet.gr ([2.84.49.240] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1snsfe-00000004Ena-3hbF;
-	Tue, 10 Sep 2024 04:40:07 +0000
+	id 1snsfj-00000004Epm-25cJ;
+	Tue, 10 Sep 2024 04:40:12 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Chandan Babu R <chandan.babu@oracle.com>,
 	Christian Brauner <brauner@kernel.org>,
 	"Darrick J. Wong" <djwong@kernel.org>
 Cc: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 03/12] iomap: pass flags to iomap_file_buffered_write_punch_delalloc
-Date: Tue, 10 Sep 2024 07:39:05 +0300
-Message-ID: <20240910043949.3481298-4-hch@lst.de>
+Subject: [PATCH 04/12] iomap: pass the iomap to the punch callback
+Date: Tue, 10 Sep 2024 07:39:06 +0300
+Message-ID: <20240910043949.3481298-5-hch@lst.de>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240910043949.3481298-1-hch@lst.de>
 References: <20240910043949.3481298-1-hch@lst.de>
@@ -66,107 +66,149 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-To fix short write error handling, We'll need to figure out what operation
-iomap_file_buffered_write_punch_delalloc is called for.  Pass the flags
-argument on to it, and reorder the argument list to match that of
-->iomap_end so that the compiler only has to add the new punch argument
-to the end of it instead of reshuffling the registers.
+XFS will need to look at the flags in the iomap structure, so pass it
+down all the way to the callback.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/iomap/buffered-io.c | 11 +++++------
- fs/xfs/xfs_iomap.c     |  5 +++--
- include/linux/iomap.h  | 10 ++++++----
- 3 files changed, 14 insertions(+), 12 deletions(-)
+ fs/iomap/buffered-io.c | 25 +++++++++++++------------
+ fs/xfs/xfs_iomap.c     |  3 ++-
+ include/linux/iomap.h  |  3 ++-
+ 3 files changed, 17 insertions(+), 14 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 737a005082e035..ac4666fede4c18 100644
+index ac4666fede4c18..a0bc7c3654cc36 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -23,7 +23,6 @@
+@@ -1047,7 +1047,7 @@ EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
  
- #define IOEND_BATCH_SIZE	4096
+ static int iomap_write_delalloc_ifs_punch(struct inode *inode,
+ 		struct folio *folio, loff_t start_byte, loff_t end_byte,
+-		iomap_punch_t punch)
++		struct iomap *iomap, iomap_punch_t punch)
+ {
+ 	unsigned int first_blk, last_blk, i;
+ 	loff_t last_byte;
+@@ -1072,7 +1072,7 @@ static int iomap_write_delalloc_ifs_punch(struct inode *inode,
+ 	for (i = first_blk; i <= last_blk; i++) {
+ 		if (!ifs_block_is_dirty(folio, ifs, i)) {
+ 			ret = punch(inode, folio_pos(folio) + (i << blkbits),
+-				    1 << blkbits);
++				    1 << blkbits, iomap);
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -1084,7 +1084,7 @@ static int iomap_write_delalloc_ifs_punch(struct inode *inode,
  
--typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
- /*
-  * Structure allocated for each folio to track per-block uptodate, dirty state
-  * and I/O completions.
-@@ -1199,8 +1198,8 @@ static int iomap_write_delalloc_scan(struct inode *inode,
-  * require sprinkling this code with magic "+ 1" and "- 1" arithmetic and expose
+ static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
+ 		loff_t *punch_start_byte, loff_t start_byte, loff_t end_byte,
+-		iomap_punch_t punch)
++		struct iomap *iomap, iomap_punch_t punch)
+ {
+ 	int ret = 0;
+ 
+@@ -1094,14 +1094,14 @@ static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
+ 	/* if dirty, punch up to offset */
+ 	if (start_byte > *punch_start_byte) {
+ 		ret = punch(inode, *punch_start_byte,
+-				start_byte - *punch_start_byte);
++				start_byte - *punch_start_byte, iomap);
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+ 	/* Punch non-dirty blocks within folio */
+-	ret = iomap_write_delalloc_ifs_punch(inode, folio, start_byte,
+-			end_byte, punch);
++	ret = iomap_write_delalloc_ifs_punch(inode, folio, start_byte, end_byte,
++			iomap, punch);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1134,7 +1134,7 @@ static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
+  */
+ static int iomap_write_delalloc_scan(struct inode *inode,
+ 		loff_t *punch_start_byte, loff_t start_byte, loff_t end_byte,
+-		iomap_punch_t punch)
++		struct iomap *iomap, iomap_punch_t punch)
+ {
+ 	while (start_byte < end_byte) {
+ 		struct folio	*folio;
+@@ -1150,7 +1150,7 @@ static int iomap_write_delalloc_scan(struct inode *inode,
+ 		}
+ 
+ 		ret = iomap_write_delalloc_punch(inode, folio, punch_start_byte,
+-						 start_byte, end_byte, punch);
++				start_byte, end_byte, iomap, punch);
+ 		if (ret) {
+ 			folio_unlock(folio);
+ 			folio_put(folio);
+@@ -1199,7 +1199,8 @@ static int iomap_write_delalloc_scan(struct inode *inode,
   * the code to subtle off-by-one bugs....
   */
--static int iomap_write_delalloc_release(struct inode *inode,
--		loff_t start_byte, loff_t end_byte, iomap_punch_t punch)
-+static int iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
-+		loff_t end_byte, unsigned flags, iomap_punch_t punch)
+ static int iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
+-		loff_t end_byte, unsigned flags, iomap_punch_t punch)
++		loff_t end_byte, unsigned flags, struct iomap *iomap,
++		iomap_punch_t punch)
  {
  	loff_t punch_start_byte = start_byte;
  	loff_t scan_end_byte = min(i_size_read(inode), end_byte);
-@@ -1300,8 +1299,8 @@ static int iomap_write_delalloc_release(struct inode *inode,
-  *         internal filesystem allocation lock
-  */
- int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
--		struct iomap *iomap, loff_t pos, loff_t length,
--		ssize_t written, iomap_punch_t punch)
-+		loff_t pos, loff_t length, ssize_t written, unsigned flags,
-+		struct iomap *iomap, iomap_punch_t punch)
- {
- 	loff_t			start_byte;
- 	loff_t			end_byte;
-@@ -1329,7 +1328,7 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
- 	if (start_byte >= end_byte)
+@@ -1252,7 +1253,7 @@ static int iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
+ 		WARN_ON_ONCE(data_end > scan_end_byte);
+ 
+ 		error = iomap_write_delalloc_scan(inode, &punch_start_byte,
+-				start_byte, data_end, punch);
++				start_byte, data_end, iomap, punch);
+ 		if (error)
+ 			goto out_unlock;
+ 
+@@ -1262,7 +1263,7 @@ static int iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
+ 
+ 	if (punch_start_byte < end_byte)
+ 		error = punch(inode, punch_start_byte,
+-				end_byte - punch_start_byte);
++				end_byte - punch_start_byte, iomap);
+ out_unlock:
+ 	filemap_invalidate_unlock(inode->i_mapping);
+ 	return error;
+@@ -1329,7 +1330,7 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
  		return 0;
  
--	return iomap_write_delalloc_release(inode, start_byte, end_byte,
-+	return iomap_write_delalloc_release(inode, start_byte, end_byte, flags,
- 					punch);
+ 	return iomap_write_delalloc_release(inode, start_byte, end_byte, flags,
+-					punch);
++					iomap, punch);
  }
  EXPORT_SYMBOL_GPL(iomap_file_buffered_write_punch_delalloc);
+ 
 diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 72c981e3dc9211..47b5c83588259e 100644
+index 47b5c83588259e..695e5bee776f94 100644
 --- a/fs/xfs/xfs_iomap.c
 +++ b/fs/xfs/xfs_iomap.c
-@@ -1231,8 +1231,9 @@ xfs_buffered_write_iomap_end(
- 	struct xfs_mount	*mp = XFS_M(inode->i_sb);
- 	int			error;
- 
--	error = iomap_file_buffered_write_punch_delalloc(inode, iomap, offset,
--			length, written, &xfs_buffered_write_delalloc_punch);
-+	error = iomap_file_buffered_write_punch_delalloc(inode, offset, length,
-+			written, flags, iomap,
-+			&xfs_buffered_write_delalloc_punch);
- 	if (error && !xfs_is_shutdown(mp)) {
- 		xfs_alert(mp, "%s: unable to clean up ino 0x%llx",
- 			__func__, XFS_I(inode)->i_ino);
+@@ -1212,7 +1212,8 @@ static int
+ xfs_buffered_write_delalloc_punch(
+ 	struct inode		*inode,
+ 	loff_t			offset,
+-	loff_t			length)
++	loff_t			length,
++	struct iomap		*iomap)
+ {
+ 	xfs_bmap_punch_delalloc_range(XFS_I(inode), offset, offset + length);
+ 	return 0;
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 6fc1c858013d1e..83da37d64d1144 100644
+index 83da37d64d1144..a931190f6d858b 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -258,10 +258,6 @@ static inline const struct iomap *iomap_iter_srcmap(const struct iomap_iter *i)
- 
- ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- 		const struct iomap_ops *ops);
--int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
--		struct iomap *iomap, loff_t pos, loff_t length, ssize_t written,
--		int (*punch)(struct inode *inode, loff_t pos, loff_t length));
--
- int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
- void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
- bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
-@@ -277,6 +273,12 @@ int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
- 		const struct iomap_ops *ops);
+@@ -274,7 +274,8 @@ int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
  vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf,
  			const struct iomap_ops *ops);
-+
-+typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
-+int iomap_file_buffered_write_punch_delalloc(struct inode *inode, loff_t pos,
-+		loff_t length, ssize_t written, unsigned flag,
-+		struct iomap *iomap, iomap_punch_t punch);
-+
- int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		u64 start, u64 len, const struct iomap_ops *ops);
- loff_t iomap_seek_hole(struct inode *inode, loff_t offset,
+ 
+-typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
++typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length,
++		struct iomap *iomap);
+ int iomap_file_buffered_write_punch_delalloc(struct inode *inode, loff_t pos,
+ 		loff_t length, ssize_t written, unsigned flag,
+ 		struct iomap *iomap, iomap_punch_t punch);
 -- 
 2.45.2
 
