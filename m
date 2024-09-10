@@ -1,73 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-29027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE19A973B0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 17:10:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F7F973B14
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 17:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D29111C2411C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 15:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E459928443D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 15:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9533F19993F;
-	Tue, 10 Sep 2024 15:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF41199FD3;
+	Tue, 10 Sep 2024 15:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MR1lVlYz"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="l7UJGCwD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1298B199926
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 15:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA386199E9D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 15:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725981051; cv=none; b=jZIhYo9L1Mpcvdfzv0u8gj7zOqlePu9eMh+n89KOWBuu/k3yeK9Uc8AoddQ2r/uNjbBt94i8/pAxzUF762IKvmLguYdfrwyPKxWlDWkokwHMTbtl/w18i/NXAE5lpbavw+8F/qbhX7Qnc9YIRM54jegnKWoLBTUsEsstK/M4nIM=
+	t=1725981055; cv=none; b=e/dnc0U7iD8SbITJGpSpvpw5u76OsxMvU0ijhjPmtU274Fx0E79uT4yMfWhxr31Y+Wq+7oD0omCYR/pZ9rdOSylk5CKQSqVAMIfFA6KXc8YiZD2jC9mM5PtyiYZ/HWEpChRAOuRtsyPpBeI53vIpzmm6Fs67jHCYlRmiP2hTxaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725981051; c=relaxed/simple;
-	bh=EOmyo3LNS2sTILpDdwkz/wbfnmkFCFhWqsu2zsG1LCY=;
+	s=arc-20240116; t=1725981055; c=relaxed/simple;
+	bh=ov6xA9K9iXGpqQlTQm6tmG7h9eDDCdtk808oP4zJnxE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=TgAXV++8iOVPqXlSE50ppOPjM6x7c6X/RICwTnbpYUENswYTMvH42v1gD8OU3G7z1N4QhDvVbIXhSTcTMhgw90y2AJYWWCh7HeJZkvrvpiM7Ujw6rZYYpMYaZFL5uHJFJKOlUh5OWsyto+K0xv4zPL1wtVkdfAytvQU/JI5StQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MR1lVlYz; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=YuiIDwZ0K1iKQ0jW18K+1OGF7VtToU1gXb+8H+fY0nn4M3hDIVwpQP4cwv7od+Uaq0kUiv2wDUpt/8kS2/eZiPlumvpUeMLZT4ndaPd2LvTc/pEAKYVAuH+9WkPzUSm6FX1ilhug80f60+G61vLoM+svOG51QoMLqUR3lHv/i6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=l7UJGCwD; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240910151047epoutp046dfe93b558130e2d1c8bc0b60283c314~z6p4z0cuN1896018960epoutp04c
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 15:10:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240910151047epoutp046dfe93b558130e2d1c8bc0b60283c314~z6p4z0cuN1896018960epoutp04c
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240910151050epoutp022be3fbde1eba134128e04ab1c1ecfb07~z6p8INdDj2304623046epoutp02B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 15:10:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240910151050epoutp022be3fbde1eba134128e04ab1c1ecfb07~z6p8INdDj2304623046epoutp02B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725981047;
-	bh=/IM9kt/2eCM14q1kv/IUC0Orm6DmaZVmcMJa34MEri8=;
+	s=mail20170921; t=1725981051;
+	bh=pMYjZwpNA2424mhqR5If5Z9/oTINVKlEa7d3jWpwtNg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MR1lVlYzSD30VBZtqx069poLYGBIZLK5q2LoQsmR4/5PjZgQq5XjNcsW6dFHKHZsh
-	 st2K8WomT9u1XxFawNn/w49JQH56GF2fCTbM1dgbPW5G2GWLSmrhyXxbqxC0cKix9i
-	 BILLPEeIseL5wjRSStmAhyp87tallMsNMrxZ6FtM=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240910151046epcas5p2a26321e41189a2f101cae5ce738de816~z6p4O1QG30258802588epcas5p2V;
-	Tue, 10 Sep 2024 15:10:46 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4X36b90Hwwz4x9Pp; Tue, 10 Sep
-	2024 15:10:45 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E8.6F.19863.47160E66; Wed, 11 Sep 2024 00:10:44 +0900 (KST)
+	b=l7UJGCwDN4SiSuTrx6hJPODsaAQgHZlKK4WJMcPNSTRmfusfcAKXPr+G+Nq5jDkex
+	 YSoroUbwMCW4UrBs2VZKpelkX3MIRobVQ8BqDC21P+keybJhHJi+sBHHcRqPREgz93
+	 uqIvu/PNMgjlpFWN0mjPbl0SpZssXTzG3F881AWg=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240910151050epcas5p179ff3d5c1a23344350ef986991a1f492~z6p7VY4Pn0608306083epcas5p1F;
+	Tue, 10 Sep 2024 15:10:50 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4X36bD6pwfz4x9Ps; Tue, 10 Sep
+	2024 15:10:48 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4B.86.09640.87160E66; Wed, 11 Sep 2024 00:10:48 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
 	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240910151044epcas5p37f61bb85ccf8b3eb875e77c3fc260c51~z6p1zgmQ13222332223epcas5p3C;
-	Tue, 10 Sep 2024 15:10:44 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	20240910151048epcas5p3c610d63022362ec5fcc6fc362ad2fb9f~z6p5sWm3Y0202102021epcas5p3K;
+	Tue, 10 Sep 2024 15:10:48 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240910151044epsmtrp12aae38aee9b01960e33fb0a7289f047d~z6p1ylVlM1255512555epsmtrp1i;
-	Tue, 10 Sep 2024 15:10:44 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-3d-66e0617422f1
+	20240910151048epsmtrp1f4f0e75e2c26af28a4bad11e3192301c~z6p5rfzf-1279412794epsmtrp1C;
+	Tue, 10 Sep 2024 15:10:48 +0000 (GMT)
+X-AuditID: b6c32a49-aabb8700000025a8-69-66e06178b9ab
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	06.F3.19367.47160E66; Wed, 11 Sep 2024 00:10:44 +0900 (KST)
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	29.DC.08964.87160E66; Wed, 11 Sep 2024 00:10:48 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.99.41.245]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240910151040epsmtip21920684c4863f20fece9a37c05cd1b85~z6pyAtglJ1772517725epsmtip2M;
-	Tue, 10 Sep 2024 15:10:39 +0000 (GMT)
+	20240910151044epsmtip2969e9e84906072571198d274c61a89e4~z6p19uGJ71712417124epsmtip2t;
+	Tue, 10 Sep 2024 15:10:44 +0000 (GMT)
 From: Kanchan Joshi <joshi.k@samsung.com>
 To: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
 	martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
@@ -78,9 +78,9 @@ Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
 	linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
 	javier.gonz@samsung.com, Kanchan Joshi <joshi.k@samsung.com>
-Subject: [PATCH v5 1/5] fs, block: refactor enum rw_hint
-Date: Tue, 10 Sep 2024 20:31:56 +0530
-Message-Id: <20240910150200.6589-2-joshi.k@samsung.com>
+Subject: [PATCH v5 2/5] fcntl: rename rw_hint_* to rw_lifetime_hint_*
+Date: Tue, 10 Sep 2024 20:31:57 +0530
+Message-Id: <20240910150200.6589-3-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240910150200.6589-1-joshi.k@samsung.com>
 Precedence: bulk
@@ -90,191 +90,117 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxzOubfcFreSawV7LIvWxmWAAVp5eCAgLDPzLoo2OhKzzLGmvVDW
-	0nZ9zI0QKFNRHhOs1kdhjDmUUHwA1YkKwVSww83BRBiSWZEVeQ036CICc6yl1fnf9/v9vu98
-	+X7nHBbOcRM8VrZKT2tVEqWAWMb4/mZ4eKReMpQpPNYrRA0Pygk0eXMGoON/zeFo8cEohu7f
-	uIqh+oZODFWe2Ich10ULjprKWej339xMNHfWykSdi1MEMtn7AWobXI/unt6CWtu6GOibsyNM
-	VPprC4HqHP9i6MLknwzU/dwRgLotVczUlVTvva1Ut7OJQR033Sao3jsGqtlaTFC22gLqeo0b
-	o67fNxLU9Mgggzp8yQqon2o6mJS7eTXV7JrCxOwPFElyWiKjtXxaJVXLslVZyYKtuzLeyYiL
-	F4oiRQloo4CvkuTQyYLN28SR72YrPZkF/M8kSoOnJZbodILoTUlatUFP8+VqnT5ZQGtkSk2s
-	JkonydEZVFlRKlqfKBIKN8R5iB8r5LXDPYTm1lufd1qf4EZwjl8CAlmQjIUDEz/gJWAZi0O2
-	AvjlYmWAr5gB8OFYDfGy6LtgY7yQVNt+9g+uAthlf+yXuAH8buYAVgJYLIIMhz1HDd5+MFmN
-	wVs9ncBb4KQJg9ND5wnvUStIBG/3OzEvZpBvQtu4c6nPJjdCc3WT324NPHV3lunFgR7+aN05
-	zMdZDrtOuZY4uIez73LlUgpIHgyE87NPgU+8GT4rqyJ8eAWccFxi+jAPjpcX+bECDg0P+c3y
-	YIvtcIAPp0DjPwMB3jS4J83Fa9E+ryD41YJrKSQk2fBQEcfHXgudphG/kgsfnaz1Ywr+cszh
-	31YpgB3zpYwKsMbySgTLKxEs/7vVANwKeLRGl5NFS+M0okgVvffl3UrVOc1g6fVHiFtAQ+Pz
-	KDvAWMAOIAsXBLPLNzkzOWyZ5ItcWqvO0BqUtM4O4jxLPoLzQqRqz/dR6TNEsQnC2Pj4+NiE
-	mHiRgMuePPC1jENmSfS0gqY1tPaFDmMF8oxYVlJMcmhwxOPCFG7f3GuFO/A2s3r+jZBdPfnv
-	nwxqtfGi37szMFFo5g4/ETtLdlRVpu80dnPMy18P5n5bX2DQ7F61M/dvTFF4BSgOstc5yLDt
-	4sFPn2nTmFXF6O1mywndU5W7ce0Evy2tdXvBnghLUTdM0Zovh5KNCfLT/VKVlZ9CdMw3aEft
-	HR/G5BdXVGoTU8PmZgT704lcsYtbvLf+2nBiWV1j29hDWXbpqvZ1NTc2tK8/FPpJ6Ef68wlp
-	DLV5gR087kj/MXOxwnh0Nv1M0MT+K3l7Yvoss/mjruLVK03yMuWjBXhPemZ3zMh09EjY1JaU
-	kOh01h+p25Lb88YUAoZOLhFF4Fqd5D+2Jnc3hgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsWy7bCSvG5J4oM0g81nWSxW3+1ns3h9+BOj
-	xbQPP5kt/t99zmRx88BOJouVq48yWcye3sxk8WT9LGaLjf0cFo/vfGa3+LlsFbvF0f9v2Swm
-	HbrGaLH3lrbFpUXuFnv2nmSxmL/sKbtF9/UdbBbLj/9jslj3+j2Lxfm/x1ktzs+aw+4g5nH5
-	irfH+XsbWTymTTrF5nH5bKnHplWdbB6bl9R77F7wmclj980GNo+PT2+xePRtWcXocWbBEXaP
-	z5vkPDY9ecsUwBvFZZOSmpNZllqkb5fAlbHk0QW2gmPqFUdXvWNuYFyj0MXIySEhYCIxb/M5
-	ti5GLg4hge2MElevP2aCSIhLNF/7wQ5hC0us/PecHaLoI6NER/cuoA4ODjYBTYkLk0tBakQE
-	1jFJrJjmA1LDLDCHSWJ553ZmkISwgIXEqWv3wIayCKhKbH55jw3E5hUwl5g6byMLxAJ5iZmX
-	voMt4wSqf758DVi9EFDNh/4FrBD1ghInZz4Bq2cGqm/eOpt5AqPALCSpWUhSCxiZVjGKphYU
-	56bnJhcY6hUn5haX5qXrJefnbmIER6pW0A7GZev/6h1iZOJgPMQowcGsJMLbb3cvTYg3JbGy
-	KrUoP76oNCe1+BCjNAeLkjivck5nipBAemJJanZqakFqEUyWiYNTqoEpWH3BLjfu3fVNtzP5
-	LfcZvZ1sf/ZxD7Pukgv+7AyrZplfkWuV29gVJLP06sYkvzcSh/4f6vmzbmUOr7VZmouS3h2F
-	0CaRhu5NrKUzrjMfVw314J7oMVnueo6E+gs/yVLfqUmHLpqF/Xz3yYZdQeSYbtmVtGVLXhQu
-	lPhhpZc+bUPz5f/c89/Z6V+SiTcJWca+viP5Ye+ZaXohv9PcdsXfMP7ZWcjgYCOxaF2kwOcz
-	/5wt4sXkix5ynXBPCb8uGzBvjeHKsGsMstcU5rzy3BjYq77w66q1IoWS6wN/xxysfPXD97nx
-	T9HvOh55PULfTj7VOp/CG/tio1xa0Jzm9CsbhLJ4Du6VWr7hgNmXjgdKLMUZiYZazEXFiQBZ
-	huDzQwMAAA==
-X-CMS-MailID: 20240910151044epcas5p37f61bb85ccf8b3eb875e77c3fc260c51
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TbUxbVRzGc+4t7WVSvCsTDjVseB1LQF7aCeWgsC3ayTXsA8liTPZBuKOX
+	Qlra2ttuQCRDkCowB2IGo7yIuPE6N3lnQxJlq4gOQTYZMN4FmYOlUAKGDIYtZbpvv/M/z3P+
+	5zkvBC5a4YuJZI2B1WsYNcXfw2u/5R8QlMpMJ0pWCyWocaKAjxZv2QAqXt7A0fbEAoZGf7iB
+	ofpGC4bKSrIxNHfdjKOmAgL9Ob4qQBs1DQJk2X7MR0U9wwB1j72Ghqqj0ffdfTz0Vc28AOXf
+	7+Sj2t6nGLq2aOWhga1eFzRgLhcc86Tv3ouhByabeHRx0S98+m6/kW5uyOXTLZfP0V1Vqxjd
+	NZrJp1fmx3j0hdYGQN+pui2gV5v3081zj7FY4SlVZBLLKFi9L6tJ0CqSNcooKuZk3NtxYTKJ
+	NEgagcIpXw2TwkZR8hOxQe8kq+2ZKd8zjNpoL8UyHEeFHInUa40G1jdJyxmiKFanUOtCdcEc
+	k8IZNcpgDWt4QyqRHA6zC+NVSev5Vlxn2pu6NNgNMsGSMA+4EpAMhTMPanh5YA8hIrsArNn4
+	FXcObABey2oHzsE6gNtN9eCZZfiPqV1VN4CtAw8EjgkRuQpgbtZbeYAg+KQ/HPzS6NDsIysx
+	+NOgZWclnCzC4Mr0t3yHwYM8DhcXnuAO5pF+cOq7xp26kAyH6yPnBc5uB2Dp0D877EoiuFB7
+	FXNq9sK+0jmeg3G7JrutbGdHkMx3hRUdm3ynWQ7LyocwJ3vAR72tu4uK4d8Fpl1WwenZaZ6T
+	P4KdLRdcnHwUZm6OuDjS4PY012+GOHu5w8+fzGGOMiSF8DOTyKl+BU4Wze86veDMpcu7TMNR
+	a6uL87DyAVzbvIEVggPm5yKYn4tg/r9bFcAbgDer41KULBemk2rYs//dbII2pRnsvP2AdzvB
+	xPRycA/ACNADIIFT+4QFRyYTRUIFk5bO6rVxeqOa5XpAmP2Mv8DFLyVo7Z9HY4iThkZIQmUy
+	WWjE6zIp5SVczKlQiEglY2BVLKtj9c98GOEqzsRUlVjCTP7X5vq2p7YrTR5z+005Xvc/MJX6
+	HYJ6t8YraRGBFbk5A1nBzeFpqowtny5Z3FV5fGKfe5r/il+gMrptTXxT5Jls5Sy1jDlx69OM
+	xJplIr3D09ta0GGZfdlN1iaMSU4fzpoypM7aKifbQ3j4nfXAk8d9sjuSvL5ZSZWE/V5+StNy
+	ps5U0uXqc9v9EPUos9H//ItTbLW0YankdGSrUdbGnjt4Qlz6XpFtSz6e+3NK4ObHigrlbwuF
+	n4wDeLpvW+6G8j588+yamBiJj33/4Y/31EOs1dZefdAil/uMHT08lTFV91DFjcZ6C/sv1jfV
+	Hetzf5Uq7o/+a+2FkEsUj0tipAG4nmP+Be3mHYqEBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0hTYQCG/b5zPDsuhqdpedLQNTLsZklRHyEWgXWofnQPup/0aJaba3Pd
+	qJSsSdpcGZnOSovK3MLcskzULluilma10lymlsoslS0NU3Oa04L+PfA88P54SUxYhPuSMdJ4
+	Ti5lY8UEH39kFgfMP8q2Ri1MtXsi/WcNgbrMvQBlOAYxNPrZBlHjsxKI8vUVEGVfSYKo/b4W
+	QwYNidqa+nho8I6OhypGewiUbqoHqNw6F727uRqVlVfjKOdOBw+lNjwmUF7lCEQFXXYc1Tkr
+	3VGd9ipvxVTG8n4tU9dswJmM9JcEY6lVMkbdOYJ5cCuBKc3tg0xpYyLB/Oiw4kxakQ4wNbkv
+	eEyf0Z8xtvfA9YLt/NBILjbmMCdfELaXv78/1Y7JVJOPdr8pB4mgW5ACPEiaWkzXf2jBUgCf
+	FFKlgG64/RZMCB86qX6AN8FedP6IjTcR/QB0R+VTmAJIkqBm028uKV2NN1UA6bsZ61wNRl2F
+	dN65YswlvKhwusv2e5xxKpBuKdQTLhZQS+n+j+f/DgTQWe9+jbMHhWhb3j3oYuFY49Dkuk/0
+	k+nqrHbcxdhYn/QwG7sAKO1/SvufygVQB6ZxMoUkWqIIkYVIuSPBClaiUEqjgyPiJEYwfuyc
+	2Y9Bsc4RbAKQBCZAk5jYW6AJa44SCiLZY8c5edweuTKWU5iAH4mLfQQ+nepIIRXNxnMHOU7G
+	yf9ZSHr4JsLruphiLvzJrCVKa1bmvmai6ROZFK4O3XLJTor2nfb6umF3uuXkW1KFV3Z/GU7I
+	P1R/zSFPmxnkfxH0atb0nM/JvLkyecTk1zYvTbHMd8/mbwMZM7hpjT7uRaraGreHyVb4fJnB
+	4l2SvzyCtULzT/nSRZcvhK72DPogCjLHHfzYuXZ4uv7TrnVemeqN3juPlzhPBW02idU2uG1I
+	pyUWlIXXiCWxFaZW/vdvTqkscJto04Z7hcZU1c7rT8/49kWcMDj9p1iqRC9f2T23vp7kyKqS
+	qg2li7Y4YU4o6Ta4Y+hsbWdUd5tbS3bTiPiax40dB0Q9hasWFpgzVYGCBlZXphfjiv1syBxM
+	rmD/AE2dcMxHAwAA
+X-CMS-MailID: 20240910151048epcas5p3c610d63022362ec5fcc6fc362ad2fb9f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240910151044epcas5p37f61bb85ccf8b3eb875e77c3fc260c51
+X-CMS-RootMailID: 20240910151048epcas5p3c610d63022362ec5fcc6fc362ad2fb9f
 References: <20240910150200.6589-1-joshi.k@samsung.com>
-	<CGME20240910151044epcas5p37f61bb85ccf8b3eb875e77c3fc260c51@epcas5p3.samsung.com>
+	<CGME20240910151048epcas5p3c610d63022362ec5fcc6fc362ad2fb9f@epcas5p3.samsung.com>
 
-Rename enum rw_hint to rw_lifetime_hint.
-Change i_write_hint (in inode), bi_write_hint(in bio), and write_hint
-(in request) to use u8 data-type rather than this enum.
+F_GET/SET_RW_HINT fcntl handlers query/set write life hints.
+Rename the handlers/helpers to be explicit that write life hints are
+being handled.
 
-This is in preparation to introduce a new write hint type.
+This is in preparation to introduce a new interface that supports more
+than one type of write hint.
 
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 ---
- fs/buffer.c               | 4 ++--
- fs/f2fs/f2fs.h            | 5 +++--
- fs/f2fs/segment.c         | 5 +++--
- include/linux/blk-mq.h    | 2 +-
- include/linux/blk_types.h | 2 +-
- include/linux/fs.h        | 2 +-
- include/linux/rw_hint.h   | 4 ++--
- 7 files changed, 13 insertions(+), 11 deletions(-)
+ fs/fcntl.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index e55ad471c530..0c6bc9b7d4ad 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -55,7 +55,7 @@
- 
- static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
- static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
--			  enum rw_hint hint, struct writeback_control *wbc);
-+			  u8 hint, struct writeback_control *wbc);
- 
- #define BH_ENTRY(list) list_entry((list), struct buffer_head, b_assoc_buffers)
- 
-@@ -2778,7 +2778,7 @@ static void end_bio_bh_io_sync(struct bio *bio)
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 300e5d9ad913..9df35e7ff754 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -269,7 +269,7 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
  }
- 
- static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
--			  enum rw_hint write_hint,
-+			  u8 write_hint,
- 			  struct writeback_control *wbc)
- {
- 	const enum req_op op = opf & REQ_OP_MASK;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ac19c61f0c3e..9b843b57dba1 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3756,8 +3756,9 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi);
- void f2fs_destroy_segment_manager(struct f2fs_sb_info *sbi);
- int __init f2fs_create_segment_manager_caches(void);
- void f2fs_destroy_segment_manager_caches(void);
--int f2fs_rw_hint_to_seg_type(struct f2fs_sb_info *sbi, enum rw_hint hint);
--enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
-+int f2fs_rw_hint_to_seg_type(struct f2fs_sb_info *sbi,
-+			enum rw_lifetime_hint hint);
-+enum rw_lifetime_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
- 			enum page_type type, enum temp_type temp);
- unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
- 			unsigned int segno);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 78c3198a6308..6802e82f9ffd 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3381,7 +3381,8 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	return err;
- }
- 
--int f2fs_rw_hint_to_seg_type(struct f2fs_sb_info *sbi, enum rw_hint hint)
-+int f2fs_rw_hint_to_seg_type(struct f2fs_sb_info *sbi,
-+			enum rw_lifetime_hint hint)
- {
- 	if (F2FS_OPTION(sbi).active_logs == 2)
- 		return CURSEG_HOT_DATA;
-@@ -3425,7 +3426,7 @@ int f2fs_rw_hint_to_seg_type(struct f2fs_sb_info *sbi, enum rw_hint hint)
-  * WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
-  * WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
-  */
--enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
-+enum rw_lifetime_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
- 				enum page_type type, enum temp_type temp)
- {
- 	switch (type) {
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 8d304b1d16b1..1e5ce84ccf0a 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -159,7 +159,7 @@ struct request {
- 	struct blk_crypto_keyslot *crypt_keyslot;
  #endif
  
--	enum rw_hint write_hint;
-+	u8 write_hint;
- 	unsigned short ioprio;
+-static bool rw_hint_valid(u64 hint)
++static bool rw_lifetime_hint_valid(u64 hint)
+ {
+ 	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
+ 	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
+@@ -291,7 +291,7 @@ static bool rw_hint_valid(u64 hint)
+ 	}
+ }
  
- 	enum mq_rq_state state;
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 36ed96133217..446c847bb3b3 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -216,7 +216,7 @@ struct bio {
- 						 */
- 	unsigned short		bi_flags;	/* BIO_* below */
- 	unsigned short		bi_ioprio;
--	enum rw_hint		bi_write_hint;
-+	u8			bi_write_hint;
- 	blk_status_t		bi_status;
- 	atomic_t		__bi_remaining;
+-static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
++static long fcntl_get_rw_lifetime_hint(struct file *file, unsigned int cmd,
+ 			      unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(file);
+@@ -303,7 +303,7 @@ static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
+ 	return 0;
+ }
  
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fb0426f349fc..f9a7a2a80661 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -674,7 +674,7 @@ struct inode {
- 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
- 	unsigned short          i_bytes;
- 	u8			i_blkbits;
--	enum rw_hint		i_write_hint;
-+	u8			i_write_hint;
- 	blkcnt_t		i_blocks;
+-static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
++static long fcntl_set_rw_lifetime_hint(struct file *file, unsigned int cmd,
+ 			      unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(file);
+@@ -312,7 +312,7 @@ static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
  
- #ifdef __NEED_I_SIZE_ORDERED
-diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
-index 309ca72f2dfb..b9942f5f13d3 100644
---- a/include/linux/rw_hint.h
-+++ b/include/linux/rw_hint.h
-@@ -7,7 +7,7 @@
- #include <uapi/linux/fcntl.h>
+ 	if (copy_from_user(&hint, argp, sizeof(hint)))
+ 		return -EFAULT;
+-	if (!rw_hint_valid(hint))
++	if (!rw_lifetime_hint_valid(hint))
+ 		return -EINVAL;
  
- /* Block storage write lifetime hint values. */
--enum rw_hint {
-+enum rw_lifetime_hint {
- 	WRITE_LIFE_NOT_SET	= RWH_WRITE_LIFE_NOT_SET,
- 	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
- 	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
-@@ -18,7 +18,7 @@ enum rw_hint {
- 
- /* Sparse ignores __packed annotations on enums, hence the #ifndef below. */
- #ifndef __CHECKER__
--static_assert(sizeof(enum rw_hint) == 1);
-+static_assert(sizeof(enum rw_lifetime_hint) == 1);
- #endif
- 
- #endif /* _LINUX_RW_HINT_H */
+ 	WRITE_ONCE(inode->i_write_hint, hint);
+@@ -449,10 +449,10 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+ 		err = memfd_fcntl(filp, cmd, argi);
+ 		break;
+ 	case F_GET_RW_HINT:
+-		err = fcntl_get_rw_hint(filp, cmd, arg);
++		err = fcntl_get_rw_lifetime_hint(filp, cmd, arg);
+ 		break;
+ 	case F_SET_RW_HINT:
+-		err = fcntl_set_rw_hint(filp, cmd, arg);
++		err = fcntl_set_rw_lifetime_hint(filp, cmd, arg);
+ 		break;
+ 	default:
+ 		break;
 -- 
 2.25.1
 
