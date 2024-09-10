@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-28987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F3D972867
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 06:40:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1616972869
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 06:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51959285476
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 04:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E9A1F24B16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 04:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F64168C20;
-	Tue, 10 Sep 2024 04:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29925157465;
+	Tue, 10 Sep 2024 04:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aUZ1z8ZF"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rRIx+7OX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACB120314;
-	Tue, 10 Sep 2024 04:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3359320314;
+	Tue, 10 Sep 2024 04:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725943204; cv=none; b=q3G1EF61XcTaSrTXdrLw4HYJbBKzN9M3XnJzMWfy+hzuEqgSZafI0mcXGl2uJA5wYe6C/nHhfmQxjy8RAz001SKX3maOLgFCkUl++/OdP7SLaQJetemo18Hm5ZkuwstVNZX+rPJ7LXDQGfZcNzsMBLVLVKa0jefaydSUkPAJMZQ=
+	t=1725943209; cv=none; b=NaYURNet69tyvbMzI8SK1X3W5BIm06lroDQV/Vk1fhWsngjIE6aYkZNVnoWHMkGHIKtrFh8C3iWM7SKJ/gE+AoMBDMhQVbVz9HnPP74w+YQpW+4Ppf4YePxcfn1AQjkBTaAvaGCnu5sdJdbgrB0DmjrQYS1ZV7MqoY+puiId0J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725943204; c=relaxed/simple;
-	bh=CDzp0dMm3xII5YrfwApUJVyNipvJ3ywSLpHm5eqxzvs=;
+	s=arc-20240116; t=1725943209; c=relaxed/simple;
+	bh=oB/1fd8M+r3t2Zbeuvxacz6m3X6NY+XqH6Vyt9QgIEQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fMQNzfvLz4zBZI5m2K2lRt8rKKNSOLy+h0xFN41zEAiTclEKXGPkKDcEqAKkmduwTPsxPCn80jd0OcnfN6+7vm5CK4yEI6VONHOE4fSgJEnSA2bJpyfEDvgPEV4yw7M6Bu7PorKtOsSCui7M8UBk4tVSBU6uhQPw0VIVA7BlHEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aUZ1z8ZF; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=nkkjIptwkgHDqCTQ8aaz1Gp83rQhKyWUxo2jV69+r6IDDA3zoN4gfQDwjdbU28nY6M1s4d9T/gAISYiLlz88ZIVapuJxrCWWKaua3RDvMhkSgxID3USGw00HSzG5GluYAXkJCrrTIfYmsl/k1KgfUwJJmikrW40sA3HUhkkLpyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rRIx+7OX; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=65GMZMNJfA5vB+7N3WUjJmHe5n7XNdxbM1BK8UMavEY=; b=aUZ1z8ZFSwa5AZitnUYduhU+NL
-	osubyDqVRFxcdFEdfop8GsQ92W7ifqPkYgH8T3iLafFqqqhXrOu+K/dwuMjJMQcFaXu8jDwBYaxIQ
-	LmXmHKoHrJeCYyJAS2U/Gufpfrzw17c2hM+XzBoaG0BYa9oOv331vlQjIgKcHA0CQbmj7MHsTTzjl
-	Kffx2tR+VMKgsHN1vo4Bd5IUWckB5dsXMD1kbb1RGeYVpMu7MGpXbdlJuI8LD/6bPdz0yWvpFxp83
-	Ie8hm63mtbcbTH0wScYeP2I8wu0CffiXXT/l/zMz/ehpKrpGsR1f4wf58qbuHsjy9/oHFDnVPAmLt
-	1pzS2C5Q==;
+	bh=XLJKw25ZXuXWm5o+qVVpBlurmsLUI1zUegIrA4wy6YQ=; b=rRIx+7OXZpSvQNljgqxkLw6Bwj
+	6QtzEv3pb9cvbVuClqAbZISAAkghwTIKjsXHZFgtqRFGPXsrGZbtt3u3MtHMqlBBZ9Cbwz4wVtvdT
+	sdxtYdyxRDXdMpq2XrFngrzxpWgmQjWAMWaI+bnGHmT4WHwb5rK2z+R6BI93lzeiMVO8XH1P6Tqyx
+	TRB/g/dbnVaKHIV0CugmaU5/CgYGOAwxxNQvzlr7Ly49r0kWi20bOAvhwUxjjqIEcgmwUPvER5ut9
+	kzTlYILjZ+qIOCPsVOdcfLhSXMcImtNR4X9R6CpalfzBPpVx9NLA/5SzLLMF1j5tkDnOyMrqGK4Yx
+	Mlf/YkrQ==;
 Received: from ppp-2-84-49-240.home.otenet.gr ([2.84.49.240] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1snsfZ-00000004Elj-2NwU;
-	Tue, 10 Sep 2024 04:40:02 +0000
+	id 1snsfe-00000004Ena-3hbF;
+	Tue, 10 Sep 2024 04:40:07 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Chandan Babu R <chandan.babu@oracle.com>,
 	Christian Brauner <brauner@kernel.org>,
 	"Darrick J. Wong" <djwong@kernel.org>
 Cc: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 02/12] iomap: improve shared block detection in iomap_unshare_iter
-Date: Tue, 10 Sep 2024 07:39:04 +0300
-Message-ID: <20240910043949.3481298-3-hch@lst.de>
+Subject: [PATCH 03/12] iomap: pass flags to iomap_file_buffered_write_punch_delalloc
+Date: Tue, 10 Sep 2024 07:39:05 +0300
+Message-ID: <20240910043949.3481298-4-hch@lst.de>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240910043949.3481298-1-hch@lst.de>
 References: <20240910043949.3481298-1-hch@lst.de>
@@ -66,59 +66,107 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Currently iomap_unshare_iter relies on the IOMAP_F_SHARED flag to detect
-blocks to unshare.  This is reasonable, but IOMAP_F_SHARED is also useful
-for the file system to do internal book keeping for out of place writes.
-XFS used to that, until it got removed in commit 72a048c1056a
-("xfs: only set IOMAP_F_SHARED when providing a srcmap to a write")
-because unshare for incorrectly unshare such blocks.
-
-Add an extra safeguard by checking the explicitly provided srcmap instead
-of the fallback to the iomap for valid data, as that catches the case
-where we'd just copy from the same place we'd write to easily, allowing
-to reinstate setting IOMAP_F_SHARED for all XFS writes that go to the
-COW fork.
+To fix short write error handling, We'll need to figure out what operation
+iomap_file_buffered_write_punch_delalloc is called for.  Pass the flags
+argument on to it, and reorder the argument list to match that of
+->iomap_end so that the compiler only has to add the new punch argument
+to the end of it instead of reshuffling the registers.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/iomap/buffered-io.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ fs/iomap/buffered-io.c | 11 +++++------
+ fs/xfs/xfs_iomap.c     |  5 +++--
+ include/linux/iomap.h  | 10 ++++++----
+ 3 files changed, 14 insertions(+), 12 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 69a931de1979b9..737a005082e035 100644
+index 737a005082e035..ac4666fede4c18 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1337,16 +1337,25 @@ EXPORT_SYMBOL_GPL(iomap_file_buffered_write_punch_delalloc);
- static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+@@ -23,7 +23,6 @@
+ 
+ #define IOEND_BATCH_SIZE	4096
+ 
+-typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
+ /*
+  * Structure allocated for each folio to track per-block uptodate, dirty state
+  * and I/O completions.
+@@ -1199,8 +1198,8 @@ static int iomap_write_delalloc_scan(struct inode *inode,
+  * require sprinkling this code with magic "+ 1" and "- 1" arithmetic and expose
+  * the code to subtle off-by-one bugs....
+  */
+-static int iomap_write_delalloc_release(struct inode *inode,
+-		loff_t start_byte, loff_t end_byte, iomap_punch_t punch)
++static int iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
++		loff_t end_byte, unsigned flags, iomap_punch_t punch)
  {
- 	struct iomap *iomap = &iter->iomap;
--	const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 	loff_t pos = iter->pos;
- 	loff_t length = iomap_length(iter);
- 	loff_t written = 0;
+ 	loff_t punch_start_byte = start_byte;
+ 	loff_t scan_end_byte = min(i_size_read(inode), end_byte);
+@@ -1300,8 +1299,8 @@ static int iomap_write_delalloc_release(struct inode *inode,
+  *         internal filesystem allocation lock
+  */
+ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+-		struct iomap *iomap, loff_t pos, loff_t length,
+-		ssize_t written, iomap_punch_t punch)
++		loff_t pos, loff_t length, ssize_t written, unsigned flags,
++		struct iomap *iomap, iomap_punch_t punch)
+ {
+ 	loff_t			start_byte;
+ 	loff_t			end_byte;
+@@ -1329,7 +1328,7 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+ 	if (start_byte >= end_byte)
+ 		return 0;
  
--	/* don't bother with blocks that are not shared to start with */
-+	/* Don't bother with blocks that are not shared to start with. */
- 	if (!(iomap->flags & IOMAP_F_SHARED))
- 		return length;
--	/* don't bother with holes or unwritten extents */
--	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
+-	return iomap_write_delalloc_release(inode, start_byte, end_byte,
++	return iomap_write_delalloc_release(inode, start_byte, end_byte, flags,
+ 					punch);
+ }
+ EXPORT_SYMBOL_GPL(iomap_file_buffered_write_punch_delalloc);
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 72c981e3dc9211..47b5c83588259e 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -1231,8 +1231,9 @@ xfs_buffered_write_iomap_end(
+ 	struct xfs_mount	*mp = XFS_M(inode->i_sb);
+ 	int			error;
+ 
+-	error = iomap_file_buffered_write_punch_delalloc(inode, iomap, offset,
+-			length, written, &xfs_buffered_write_delalloc_punch);
++	error = iomap_file_buffered_write_punch_delalloc(inode, offset, length,
++			written, flags, iomap,
++			&xfs_buffered_write_delalloc_punch);
+ 	if (error && !xfs_is_shutdown(mp)) {
+ 		xfs_alert(mp, "%s: unable to clean up ino 0x%llx",
+ 			__func__, XFS_I(inode)->i_ino);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 6fc1c858013d1e..83da37d64d1144 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -258,10 +258,6 @@ static inline const struct iomap *iomap_iter_srcmap(const struct iomap_iter *i)
+ 
+ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+ 		const struct iomap_ops *ops);
+-int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+-		struct iomap *iomap, loff_t pos, loff_t length, ssize_t written,
+-		int (*punch)(struct inode *inode, loff_t pos, loff_t length));
+-
+ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+ void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+ bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+@@ -277,6 +273,12 @@ int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+ 		const struct iomap_ops *ops);
+ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf,
+ 			const struct iomap_ops *ops);
 +
-+	/*
-+	 * Don't bother with holes or unwritten extents.
-+	 *
-+	 * Note that we use srcmap directly instead of iomap_iter_srcmap as
-+	 * unsharing requires providing a separate source map, and the presence
-+	 * of one is a good indicator that unsharing is needed, unlike
-+	 * IOMAP_F_SHARED which can be set for any data that goes into the COW
-+	 * fork for XFS.
-+	 */
-+	if (iter->srcmap.type == IOMAP_HOLE ||
-+	    iter->srcmap.type == IOMAP_UNWRITTEN)
- 		return length;
- 
- 	do {
++typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
++int iomap_file_buffered_write_punch_delalloc(struct inode *inode, loff_t pos,
++		loff_t length, ssize_t written, unsigned flag,
++		struct iomap *iomap, iomap_punch_t punch);
++
+ int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		u64 start, u64 len, const struct iomap_ops *ops);
+ loff_t iomap_seek_hole(struct inode *inode, loff_t offset,
 -- 
 2.45.2
 
