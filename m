@@ -1,205 +1,376 @@
-Return-Path: <linux-fsdevel+bounces-29000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39AEB9729F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 09:00:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534B8972A23
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 09:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765E1B20EF4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 07:00:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B961C24069
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 07:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BC117BB3E;
-	Tue, 10 Sep 2024 07:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E2217BEBF;
+	Tue, 10 Sep 2024 07:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lv0MtpW0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHxfXH74"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE3017965E;
-	Tue, 10 Sep 2024 07:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725951627; cv=fail; b=qtr0M9FAxRLl43ioK4Gm8GDnAV7XtU2GE58eVfwJNjPK34MZLQWSc1cMyRKqVzlVWvXcj7rSI39qDnpF+CVKZuPwgFqHkQBFQqnxSeOx6C1ZLwzWgKq+tFGUYWR4Nnt4Jc7T+pRiasj1/mJjEkpNmQoyvnU7fIuMmHUQw3/XHX8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725951627; c=relaxed/simple;
-	bh=gWaCYFTaYv+hLmWv98YDYJAWvIbMYWxNF+56kRCafQw=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=WYPfC/CuTmglKpybw8Qs/FjPhJqmHPkmLao3o5a83UHob/0ZTUzb02L/bTdLn/OPb5JBGXqThmOBuUHDxnIqU0DvNvHPJhYr2wGGIoM9LowZ2OGFOk4bkh2LOaGcqqqAe52Id+E8JKTkccF9EjGgF5CMjNalOFb1mefDwbhw19c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lv0MtpW0; arc=fail smtp.client-ip=40.107.93.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FjIv1atPgOuN9JYRsv4j76hlG6XDePUm/5ceMuc2CZ6cTm1iU/gPh9PlRZFRvGnP/V2+bo6tiIxeUlNox3d++ven6COehRRP6DE3hnduugPm1lJun63imkEX09n5GSuEpRr3uF0buUomTCTuTCyhR8IzRmPcnFp6jiTKtlq/JWUesl7XIBL+gT4gE/vsmAHP0GNO3RJAs4FI+DRMmYVJN3jXcPE/cOlLmPjUcIN98f9J2W598zoicq4kIp9iOf9mpRaXo1Od4h6sR8AonVEWyc5IpRhfrymwSeqKA5KDPZai/9Unr9aw1WMUcPCG6Iljxw9jldEofQmDsmM3pQDUNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YhlJWPR7PWN5B2QXCvghlpEJMYvBsVDyvQ2GEk5tto8=;
- b=TPwfWtTEkBw4G9rr0DtnA5aBo722xrycBcdGOFQrT0iYhAC3IhR+uUBWFAYQevRpIjh7h/2IeGeFcvq1vStYxDK5UzN05fw9KrPwKlJ3bryUIQwUwA/EiJPQrd9vM6j814QypraFgMkzmLytj/PPPIo7tN62rahiUNaPk6DxEjIhxGajGT43F4fBg0z9NgU972huiheUI1K34kFxU+RVOeB7kMrqx3ZA+X7inZoNGqL/af3n/fGPXNN00uu3mz4/jKalDdVHHb80RLIlTQ8N0U4EptnV6H2dj9uBIzpwQwkDBrS3fF8ti/6P1i7ATyVb9owfa4iF00CjmM0KSUr7HA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YhlJWPR7PWN5B2QXCvghlpEJMYvBsVDyvQ2GEk5tto8=;
- b=lv0MtpW0ViICxzHddjyL6zIXgpvexMg12Haks8pLVjQ+RWGMzhDv4JGcDlDiBncnoqnpMHzM0fvi0V18WKjWhF141dYs4PaHSScANWZOEe0CSDpC5ScrqEFKw9kGtj/Bjr3naAe6qCc4fFJ0q12RhgyJcf5DKqGe4cW6odPvVe6hjZsJ7exS5gUXbtjG9MkXQ1LSKatulYFN6b+AUqE6U5/uyXRa2T2w/Nq+TJ013MsezjuhfDwqDHVFKmbUCl8RGIE0ZelhoecCtko8e+Dpf79h9f9pGWh0kl+KyfhBpDDc1AoztXXppYfU8g+clzwimGwCuNAHmHa+PFRPnyuGVA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- SA1PR12MB8723.namprd12.prod.outlook.com (2603:10b6:806:385::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 10 Sep
- 2024 07:00:21 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.7918.024; Tue, 10 Sep 2024
- 07:00:21 +0000
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
- <Zt_PbIADa4baLEBw@casper.infradead.org>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com,
- dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
- jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
- mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
- ira.weiny@intel.com, djwong@kernel.org, tytso@mit.edu,
- linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH 04/12] mm: Allow compound zone device pages
-Date: Tue, 10 Sep 2024 16:57:41 +1000
-In-reply-to: <Zt_PbIADa4baLEBw@casper.infradead.org>
-Message-ID: <87v7z4gfi7.fsf@nvdebian.thelocal>
-Content-Type: text/plain
-X-ClientProxiedBy: SY5PR01CA0041.ausprd01.prod.outlook.com
- (2603:10c6:10:1f8::16) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AAE17B50A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 07:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725951807; cv=none; b=b1Sma59G9F30sRqrdWn5VHOZnl41aTN5y2o/gL6QOUumR8k1H8iOEaCq+KsbUkDHFrXPMGE/niwG7KWGeqZa6DXfBpsCAJCcu+xCEc48gT5L5g891lq/Le2keLmos554eu0u7ovr7X9QGtRp+IDR9gtmAFfvyDxZ7aR+Bjh0F6c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725951807; c=relaxed/simple;
+	bh=t5pGYH7M5C9ip7SC1NbPF37re2AZrFNW66tMb7mVbgc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gXVOAoFsIx/fMDQygSVD/jjWgRhiOCSTQsc4/Ua4zq1J7cvpZkL85GAALOfxn9TWQjNiqldU+wcyGUSDiP1hve+eB6uKZsi9Fa6k6KelF842rwfgllsVAfdH/2Ay/6hr93T/XcITONWxxJIUPQ9tLa7GMSW/LTNE2rttzt3d7so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHxfXH74; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2057835395aso4700725ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 00:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725951804; x=1726556604; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=t5pGYH7M5C9ip7SC1NbPF37re2AZrFNW66tMb7mVbgc=;
+        b=nHxfXH7470rW1uc/rkxHrIefv/YhZ4buAK4slG5+09DbGlmwIH1wnM/m6E8Mp2MG9P
+         yLiTFSGsRn8C3A1FAwAJRot5xBdbAS0s9GhimiQl5fNIGGI6xvLPbSKyUmfIjkIqZQ09
+         M60cRjjr48FVVFrGFECXyLrI9VlPouMDdDO/jMcLrIBeWZMZtkiFd6up3QqrX9rfiAIq
+         T2qGJrOgiNxkXAhcmHLZlSPfrGumvMNMCtq0r22s/LSTRGVtAIbVFNPCixe+4DMqpRzT
+         Lg7dPZCuu7VqOY9/gUeIa5eT6yph9h8GZ+xZml66F9xXCe1ujAskA9uzX8FTa9YYmhTe
+         MDLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725951804; x=1726556604;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t5pGYH7M5C9ip7SC1NbPF37re2AZrFNW66tMb7mVbgc=;
+        b=gkMURAF6af53XcXQMKuAn29Gaktsf+bDjOnkbWCLLv6zhoY/zyJnqEtYI1JaBv63eI
+         LzuKLn+FUASwXIsv4PwupYI9FK1OJFKjtWwKvhj+o3lS93RbifRrBCtRYoqRyfJ7LDsl
+         p/UaVCcz90/CD1Nqdta42vmVemYYit2rOP/9C00TVND+qJ8WoRS7NJs884Xrfug2G6Hj
+         BkDGUwauGbBPa9OUA0Bsqe6otUUW5qVPft2JPKpOYB2W4ZB/JOTOH0uHGgjrIgf4Ynav
+         tr0aoCt49/OgRH7NyI9dVvOkkKYbm2fuAua75mA3vANfMRm/xbXgVPOvWHSjmTdS4IV4
+         mdpg==
+X-Gm-Message-State: AOJu0Yw5QVRS3joXGQYudh35vMXgM5i6kEtncIL52bsNiX4xqFPADLSY
+	3B2q61jk7V/1YUl7N/MPN+4CXOXlHJrQKBYn4yCm06O0MexnjHR/
+X-Google-Smtp-Source: AGHT+IHrmVY1yzI29gcTB8fp1Eoy8eCX0o8cp1Y+OD+SdgNV0hk9C6NXZKwudYUlDXTv3ava2RLLUA==
+X-Received: by 2002:a17:90b:295:b0:2d3:c0ea:72b3 with SMTP id 98e67ed59e1d1-2dafd0970f0mr10733860a91.34.1725951804019;
+        Tue, 10 Sep 2024 00:03:24 -0700 (PDT)
+Received: from [10.172.23.42] ([103.172.183.79])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db043c40e6sm5625521a91.30.2024.09.10.00.03.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 00:03:23 -0700 (PDT)
+Message-ID: <767963be0ce83221792d58667afd8b4ccc4f160d.camel@gmail.com>
+Subject: Re: [PATCH 1/2] iomap: Do not unshare exents beyond EOF
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
+ viro@zeniv.linux.org.uk, djwong@kernel.org, david@fromorbit.com,
+ hch@lst.de,  syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+Date: Tue, 10 Sep 2024 15:03:18 +0800
+In-Reply-To: <Zt9MrgnBStwlGWpY@bfoster>
+References: <20240905102425.1106040-1-sunjunchao2870@gmail.com>
+	 <ZttT_sHrS5NQPAM9@bfoster>
+	 <CAHB1Nag5+AEqhd=nDKPg7S4y89CRAZp0mRU4_UHuQ=WnR58WpQ@mail.gmail.com>
+	 <Zt74BI7C-ZPn_WV_@bfoster>
+	 <CAHB1Nahz2UmrCpqEivV0Dzkt5P=rjbRaBekxtaXeWNraXfvCCA@mail.gmail.com>
+	 <Zt9MrgnBStwlGWpY@bfoster>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SA1PR12MB8723:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e2866d1-f5bf-4764-5d3e-08dcd1663c4d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GK3S6c05WdXWcC6vpSt1gGdnJxX/SUz5pFuf36qtkMd9f9xhSSdkcEDn2nyF?=
- =?us-ascii?Q?vXUGCzARlNMCFortE+ZvrurravPQp4R+GNKpwXFfZsE/Mklvf5UTHZcwHoKZ?=
- =?us-ascii?Q?zRJf7NOxSFt25S5j+YlR+xG/+H4ablKz23YEt0+d0cRYiD1r8LLbLDkss6Gb?=
- =?us-ascii?Q?K7P3ujQ+4s8D3S1hY590dymRMCKJyQHIR+gcjaXVtBBfxsKJqLvUkEy9IfXs?=
- =?us-ascii?Q?kqA4VgcgICSgopEJ6y5e9iWdRCSCElQoPdRvV4a9IGgC3dWmXx5i2KcRMmBa?=
- =?us-ascii?Q?AQIY5ktfxV1MZmKpVU4+Dev7tf06MmPbrpZkKIm02CG5ayHlxmCVUaWvJTue?=
- =?us-ascii?Q?LD/V+1UVikeHv6Am3ZxaWxzxoXmXBXIS8Xj0XIUV5Xtbw8Kk2rxS1ylORDqF?=
- =?us-ascii?Q?igSR3GiWBagXfKoSDiMVYPtvo0ejFWVBL/js3n+vBjIFk0lwsAOKvhFwEo/Q?=
- =?us-ascii?Q?21qMFjJ1JyBE2mx/skYWkiczobgKR8IKC7SAiXclo4hvhAq5MCYTTDdl2DKj?=
- =?us-ascii?Q?T5MzXJ6rOD7/wGgLyuTbXMc5ZapBa2mVSygMYxU2OkjzDl3iqb/jDED+ZYdR?=
- =?us-ascii?Q?ldY8vfWs5zNL9FbvGAGZg5Mq3YLeDsnHto1Cf0MPHZuzKUFYJDB8EXVtmbfj?=
- =?us-ascii?Q?52NixDoOBBlVyqfxk4G5qusCrFDB6vn5oOy0dRCFFifewCuaB/+YQht20MIt?=
- =?us-ascii?Q?B1KSQvY74q6i1NvfrWGFHJeZRkARb5Sb14ZuU4uqXf/RsG73Pmx1eLPQ63c0?=
- =?us-ascii?Q?ucUzht4qzjbHPm4+HOU1c5rmqGBJbqJvG0FYKUBWYhbh6Qx76CFMOA6CNgvV?=
- =?us-ascii?Q?QTzRbPqQcjL2I2Ai+xiIm4QgYEmj6AY7Tqmz7V6oia9hZz9JZwfT8avDQU+i?=
- =?us-ascii?Q?iJuPN21G27wSWWOvj3e0PNRuwvXKczthd3dKpWFi1WGNHEG9Qo8iYvYhr5VL?=
- =?us-ascii?Q?vMCshLkGdEW1VgjWgPNmptiHnNmBXyJ95PG/N8pHovsuG30zfU+v1gAZAZsP?=
- =?us-ascii?Q?2aUWSgpUbFAYDr9SpAPRHyBkkwxizysfS1QGstbeugxt6UVHo34KMc71okC6?=
- =?us-ascii?Q?F5yQTrAX9e3VKfSO16j+RxrBc+hPRZ5nQh/JWdkEZw5bQEnHN9zzjibWoIp/?=
- =?us-ascii?Q?tuq5DWvao8MLK2awHqtot30W6WBgWkQvVlxEg2BpBI1r/Fbq1pITba8WSxPY?=
- =?us-ascii?Q?px6hGezYHLhn8m5vLFOedIMPo0+9cfA7prB+pRhiAm8rcOI/kREuEfOIaKKK?=
- =?us-ascii?Q?+kR9uhDsY17TOyYcHMox9arHzvSXyjWyT4KLs7Nf0nGubj6AUEWsBDPOOzoO?=
- =?us-ascii?Q?T09L4o8Mtem5Ekl4KDAy1glotXByBnBIFMfZNF4+xv6d4Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RbzMwQ4fgX9zbEUp5p3cIi8lDRuQVjGhIapR/PCHBl9oCEYkr4FSlRP1Cnno?=
- =?us-ascii?Q?u4JWu+qhYLs++t1kjYEjpL3zXQ3a6t5/nGjtm1LQ97qIIFi8QJA0ImiWeuQV?=
- =?us-ascii?Q?vL3ZTYENjNaYxpcZyUNnLB9MNVpEcKzT2R8f9cWkSCwAuSBcBpgRbJwu+2FW?=
- =?us-ascii?Q?33LzKp/qT3CoKxgal3Dh4RqRjDs8PlZgwrE6HC8Kd1ZIDbhAQbA+uLLZdUq0?=
- =?us-ascii?Q?Ct725HVGpzsj/zKMb2tto5kmZWqEEQPbEvP/BT7uQj07fu8E3oHE3Vl80HFw?=
- =?us-ascii?Q?uugt1kgAiAmedJ3pgVTByWXjXzVBZAajj+UVN7FjssdEM8cN0k9vc5YX0YM1?=
- =?us-ascii?Q?PyN8Fckokf8FIDQIh1gs378o7hg3L+9+QNbyv3PRMg+zrVvqfuMvafwspIGr?=
- =?us-ascii?Q?SQNCSPUI3D/trIHHjVIrItlG49f0jZF6SmwkMyRMvVFVXeqXqtwiOH9O3HAT?=
- =?us-ascii?Q?LWHelp0T/jXN9VnidiMgBgv/2Lp0ES8un6d3EBLg7HAnfySXD5IjIQCD72eg?=
- =?us-ascii?Q?IWil9+NM/STCRxyKcdupEGyiiw9AOFShYj9ufsYMFrJ5wWlmb5F+HjLXPFHU?=
- =?us-ascii?Q?9dF1uV6U52dx1mZJCQlFrNlxuTS0nkH/nuzPd7DBePHzxcCoQ9VOI+BVfcv3?=
- =?us-ascii?Q?RZHe2jliHE1FzVGZ+mO9BCf66e8tzbcKmGZToDfC6aHOn0141+nDkWb5Lo3z?=
- =?us-ascii?Q?ltsiHf52y3a+QB8yoG3PS9LRuO9nBnVpGCHv4CAz2nvDaADO/VIqwMYz1MFU?=
- =?us-ascii?Q?8na102TJ9UHyC/CQoabt8y6StmHCUt4iZvfogcWpRoI3+rO2DMINLQO6ZICd?=
- =?us-ascii?Q?qv3jiMp7aFb7P2hgaC8H6g9ITB5pKiWoBNZK01CT3JhgCMIgT5rH/1oC1N5q?=
- =?us-ascii?Q?0wkAm3A0NOZkD9WBORoJt27Mv9946A5tQVMIOwA3iEMJxnDzUKYSPZQogIDX?=
- =?us-ascii?Q?8VMCvzV/PTkPhvVVc7dB1EjJYqFWsuIrFx2S+ZFi5rQfs7oAV/SVO78VXoEv?=
- =?us-ascii?Q?3Rnclt7fd3+WibvH5igOqFW/EaycVcmUY2m/Arn+Ju7acXjczfv0m+INLtzW?=
- =?us-ascii?Q?stANuW0GFgCRNH0WAtSHqBaSsh1CIzygu58wjwIbf6B1gUeK61fBUD4beC59?=
- =?us-ascii?Q?50xydIEXG9oC66tbn37NrcsJTp8ObqxTbIdPsjFKcHBFkaNjqpiDXYRuYTF1?=
- =?us-ascii?Q?V4WEoFaj1qcOUdjt+jS1awi2Y3R39eBXv74vkREmw4sZTsc0oBszYxI1s9o7?=
- =?us-ascii?Q?Qt75HSRe4+MEeqYhnysYEZx5Ba9PBnb9M/hkfvGRThOraJOo6Fk14QgDDVtN?=
- =?us-ascii?Q?650ITHkS31Ue/P/pb7HWHcP1B17Xs/CGBH0kz46+JnDB22v0chYS8onHPVZk?=
- =?us-ascii?Q?kAaQlUk534xJYbTQZ/iy+yUJAOSj1PN+tBJ8FxKAktXf5gpoD8yBMhUW6EEa?=
- =?us-ascii?Q?s4Uv/3xsGbokpat7q8+mPTxP0BLjcqUTv2P715sadONJRschqz4mCd4CQXcu?=
- =?us-ascii?Q?BMBbJTulsLQgLUta0Ku1VjumkXd6ktF5325T+K3tVdm7yCwR8rSQYTkhQPk6?=
- =?us-ascii?Q?Q08D/3eZF7Vr3ogPPmMLQYC8/G4e8jplGVa7OJBu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e2866d1-f5bf-4764-5d3e-08dcd1663c4d
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 07:00:20.9873
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: j/V7JC0kXdhvLbnZ31MFqxANYOifBRrKxvNvYUPjq7brt1zDmkGe1XdXFrmKY733eZAVjWmvq8WQm5F/T2KROQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8723
 
+On Mon, 2024-09-09 at 15:29 -0400, Brian Foster wrote:
+> On Tue, Sep 10, 2024 at 01:40:24AM +0800, Julian Sun wrote:
+> > Brian Foster <bfoster@redhat.com> =E4=BA=8E2024=E5=B9=B49=E6=9C=889=E6=
+=97=A5=E5=91=A8=E4=B8=80 21:27=E5=86=99=E9=81=93=EF=BC=9A
+> > >=20
+> > > On Mon, Sep 09, 2024 at 08:15:43PM +0800, Julian Sun wrote:
+> > > > Hi Brian,
+> > > >=20
+> > > > Brian Foster <bfoster@redhat.com> =E4=BA=8E2024=E5=B9=B49=E6=9C=887=
+=E6=97=A5=E5=91=A8=E5=85=AD 03:11=E5=86=99=E9=81=93=EF=BC=9A
+> > > > >=20
+> > > > > On Thu, Sep 05, 2024 at 06:24:24PM +0800, Julian Sun wrote:
+> > > > > > Attempting to unshare extents beyond EOF will trigger
+> > > > > > the need zeroing case, which in turn triggers a warning.
+> > > > > > Therefore, let's skip the unshare process if extents are
+> > > > > > beyond EOF.
+> > > > > >=20
+> > > > > > Reported-and-tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.a=
+ppspotmail.com
+> > > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D296b1c84b9cbf=
+306e5a0
+> > > > > > Fixes: 32a38a499104 ("iomap: use write_begin to read pages to u=
+nshare")
+> > > > > > Inspired-by: Dave Chinner <david@fromorbit.com>
+> > > > > > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> > > > > > ---
+> > > > > > =C2=A0fs/iomap/buffered-io.c | 3 +++
+> > > > > > =C2=A01 file changed, 3 insertions(+)
+> > > > > >=20
+> > > > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > > > > > index f420c53d86ac..8898d5ec606f 100644
+> > > > > > --- a/fs/iomap/buffered-io.c
+> > > > > > +++ b/fs/iomap/buffered-io.c
+> > > > > > @@ -1340,6 +1340,9 @@ static loff_t iomap_unshare_iter(struct i=
+omap_iter *iter)
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* don't bother with holes or un=
+written extents */
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (srcmap->type =3D=3D IOMAP_HO=
+LE || srcmap->type =3D=3D IOMAP_UNWRITTEN)
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 return length;
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 /* don't try to unshare any extents b=
+eyond EOF. */
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (pos > i_size_read(iter->inode))
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 return length;
+> > > > >=20
+> > > > > Hi Julian,
+> > > > >=20
+> > > > >=20
+> > > > > > What about if pos starts within EOF and the operation extends b=
+eyond it?
+> > > >=20
+> > > > Extents within EOF will be unshared as usual. Details are below.
+> > > > >=20
+> > > > > > I ask because I think I've reproduced this scenario, though it =
+is a bit
+> > > > > > tricky and has dependencies...
+> > > > > >=20
+> > > > > > For one, it seems to depend on the cowblocks patch I recently p=
+osted
+> > > > > > here [1] (though I don't think this is necessarily a problem wi=
+th the
+> > > > > > patch, it just depends on keeping COW fork blocks around after =
+the
+> > > > > > unshare). With that, I reproduce via fsx with unshare range sup=
+port [2]
+> > > > > > using the ops file appended below [3] on a -bsize=3D1k XFS fs.
+> > > > > >=20
+> > > > > > I haven't quite characterized the full sequence other than it l=
+ooks like
+> > > > > > the unshare walks across EOF with a shared data fork block and =
+COW fork
+> > > > > > delalloc, presumably finds the post-eof part of the folio !upto=
+date (so
+> > > > > > iomap_adjust_read_range() doesn't skip it), and then trips over=
+ the
+> > > > > > warning and error return associated with the folio zeroing in
+> > > > > > __iomap_write_begin().
+> > > >=20
+> > > > The scenario has already been reproduced by syzbot[1]. The reproduc=
+er
+> > > > provided by syzbot constructed the following extent maps for a file=
+ of
+> > > > size 0xE00 before fallocate unshare:
+> > > >=20
+> > > > 0 - 4k: shared between two files
+> > > > 4k - 6k: hole beyond EOF, not shared
+> > > > 6k - 8k: delalloc extends
+> > > >=20
+> > > > Then the reproducer attempted to unshare the extent between 0 and
+> > > > 0x2000 bytes, but the file size is 0xE00. This is likely the scenar=
+io
+> > > > you were referring to?
+> > > >=20
+> > >=20
+> > > Yes, sort of..
+> > >=20
+> > > > Eventually the unshare code does:
+> > > > first map: 0 - 4k - unshare successfully.
+> > > > second map: 4k - 6k - hole, skip. Beyond EOF.
+> > > > third map: 6k - 8k - delalloc, beyond EOF so needs zeroing.
+> > > > Fires warnings because UNSHARE.
+> > > >=20
+> > > > During the first call to iomap_unshare_iter(), iomap_length() retur=
+ned
+> > > > 4k, so 4k bytes were unshared.
+> > > > See discuss here[2] for more details.
+> > > > >=20
+> > > > > This all kind of has me wondering.. do we know the purpose of thi=
+s
+> > > > > warning/error in the first place? It seems like it's more of an
+> > > > > "unexpected situation" than a specific problem. E.g., assuming th=
+e same
+> > > > > page were mmap'd, I _think_ the read fault path would do the same=
+ sort
+> > > > > of zeroing such that the unshare would see a fully uptodate folio=
+ and
+> > > > > carry on as normal. I added the mapread op to the opsfile below t=
+o give
+> > > > > that a quick test (remove the "skip" text to enable it), and it s=
+eems to
+> > > > > prevent the error, but I've not confirmed whether that theory is
+> > > > > actually what's happening.
+> > > > >=20
+> > > > >=20
+> > > > > > FWIW, I also wonder if another way to handle this would be to j=
+ust
+> > > > > > restrict the range of iomap_file_unshare() to within EOF. IOW i=
+f a
+> > > > > > caller passes a range beyond EOF, just process whatever part of=
+ the
+> > > > > > range falls within EOF. It seems iomap isn't responsible for th=
+e file
+> > > > > > extending aspect of the fallocate unshare command anyways.
+> > > >=20
+> > > > It already does 'just process whatever part of the range falls with=
+in EOF'.
+> > > > Check the above case.
+> > > >=20
+> > > > I'm not sure if I fully understand what you mean. This patch does n=
+ot
+> > > > prevent unsharing extents within the EOF. This patch checks if pos =
+is
+> > > > beyond EOF, instead of checking if pos + length is beyond EOF. So t=
+he
+> > > > extents within EOF should be unshared as usual.
+> > > >=20
+> > >=20
+> > > I'm not concerned about preventing unsharing. I'm concerned that this
+> > > patch doesn't always prevent attempts to unshare post-eof ranges. I
+> > > think the difference here is that in the variant I was hitting, we en=
+d
+> > >=20
+> > > > up with a mapping that starts within EOF and ends beyond EOF, where=
+as
+> > > > the syzbot variant produces a scenario where the problematic mappin=
+g
+> > > > always starts beyond EOF.
+> >=20
+> > This is not true. In the case above, the syzbot did indeed unshare the
+> > extents between 0-4k, which were started within EOF and ended beyond
+> > EOF. The specific variants here are: pos:0 len:0x1000 EOF: 0xE00. And
+> > the unshare code successfully unshared extents between 0 and 4k.
+> >=20
+> > During the next loop in iomap_file_unshare(), the pos became 0x1000,
+> > which is beyond EOF.=C2=A0 What this patch does is to skip the unshare
+> > during the second loop.
+> > Is there anything I misunderstand=EF=BC=9F
+>=20
+> Hmm, what block size? Does the associated mapping have at least one full
+> block beyond EOF? If you have a map at offset 0, length 0x1000 and EOF
+> at 0xE00, then unless you have 512b blocks it sounds like the EOF block
+> actually starts within EOF.
 
-Matthew Wilcox <willy@infradead.org> writes:
+The block size here is 2k, and there isn't a full block beyond EOF within=
+=C2=A0
+this extent map.
+>=20
+> The variant I'm seeing is more like this.. consider a -bsize=3D1k fs, a
+> file size of 0x3c400, and an EOF mapping of (offset 0x3c000, length
+> 0x4000). The EOF folio in this case is 4k in size and starts at the same
+> 0x3c000 offset as the EOF mapping.
+>=20
+> So with 1k blocks, the EOF mapping starts one block before EOF and
+> extends well beyond it. What happens in the test case is that
+> iomap_unshare_iter() is called with the EOF folio, pos 0x3c000, length
+> 0x800, and where the block at offset 0x3c400 is not marked uptodate. pos
+> is thus within EOF, but the while loop in __iomap_write_begin() walks
+> past it and attempts to process one block beyond EOF.
 
-> On Tue, Sep 10, 2024 at 02:14:29PM +1000, Alistair Popple wrote:
->> @@ -337,6 +341,7 @@ struct folio {
->>  	/* private: */
->>  				};
->>  	/* public: */
->> +			struct dev_pagemap *pgmap;
->
-> Shouldn't that be indented by one more tab stop?
->
-> And for ease of reading, perhaps it should be placed either immediately
-> before or after 'struct list_head lru;'?
->
->> +++ b/include/linux/mmzone.h
->> @@ -1134,6 +1134,12 @@ static inline bool is_zone_device_page(const struct page *page)
->>  	return page_zonenum(page) == ZONE_DEVICE;
->>  }
->>  
->> +static inline struct dev_pagemap *page_dev_pagemap(const struct page *page)
->> +{
->> +	WARN_ON(!is_zone_device_page(page));
->> +	return page_folio(page)->pgmap;
->> +}
->
-> I haven't read to the end yet, but presumably we'll eventually want:
->
-> static inline struct dev_pagemap *folio_dev_pagemap(const struct folio *folio)
-> {
-> 	WARN_ON(!folio_is_zone_device(folio))
-> 	return folio->pgmap;
-> }
->
-> and since we'll want it eventually, maybe now is the time to add it,
-> and make page_dev_pagemap() simply call it?
+Ok, so the key point here is that there is a full block beyond EOF within
+the associated extent map, which is different with the scenario reproduced=
+=20
+by syzbot.
+According to the Dave's comments, the trimming behavior seems like should=
+=C2=A0
+be done in filesystem(e.g.,xfs), instead of iomap. I will reconsider this s=
+cenario.
 
-Sounds reasonable. I had open-coded folio->pgmap where it's needed
-because at those points it's "obviously" a ZONE_DEVICE folio. Will add
-it.
+Thanks for your comments and review.
+>=20
+> Brian
+>=20
+> > >=20
+> > > So IOW, this patch works for the syzbot variant because it happens to
+> > > reproduce a situation where pos will be beyond EOF, but that is an
+> > >=20
+> > > > assumption that might not always be true. The fsx generated variant=
+ runs
+> > > > a sequence that produces a mapping that spans across EOF, which mea=
+ns
+> > > > that pos is within EOF at the start of unshare, so unshare proceeds=
+ to
+> > > > walk across the EOF boundary, the corresponding EOF folio is not fu=
+lly
+> > > > uptodate, and thus write begin wants to do partial zeroing and
+> > > > fails/warns.
+> >=20
+> > Yeah, it's exactly what the syzbot does.
+> > >=20
+> > > I suspect that if the higher level range were trimmed to be within EO=
+F
+> > > in iomap_file_unshare(), that would prevent this problem in either ca=
+se.
+> > > Note that this was on a -bsize=3D1k fs, so what I'm not totally sure =
+about
+> > > is whether skipping zeroing as such would be a problem with larger FS=
+Bs.
+> > > My initial thinking was this might not be possible since the EOF foli=
+o
+> > > should be fully uptodate in that case, but that probably requires som=
+e
+> > > thought/review/testing.
+> > >=20
+> > > Brian
+> > >=20
+> > > > BTW, maybe the check here should be
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pos >=3D i_size_read(iter->inode))
+> > > >=20
+> > > > If there is any misunderstanding, please let me know, thanks.
+> > > >=20
+> > > > [1]: https://lore.kernel.org/all/0000000000008964f1061f8c32b6@googl=
+e.com/T/
+> > > > [2]: https://lore.kernel.org/all/20240903054808.126799-1-sunjunchao=
+2870@gmail.com/
+> > > >=20
+> > > > >=20
+> > > > > Thoughts?
+> > > > >=20
+> > > > > Brian
+> > > > >=20
+> > > > > [1] https://lore.kernel.org/linux-xfs/20240906114051.120743-1-bfo=
+ster@redhat.com/
+> > > > > [2] https://lore.kernel.org/fstests/20240906185606.136402-1-bfost=
+er@redhat.com/
+> > > > > [3] fsx ops file:
+> > > > >=20
+> > > > > fallocate 0x3bc00 0x400 0
+> > > > > write 0x3bc00 0x800 0x3c000
+> > > > > clone_range 0x3bc00 0x400 0x0 0x3c400
+> > > > > skip mapread 0x3c000 0x400 0x3c400
+> > > > > fallocate 0x3bc00 0xc00 0x3c400 unshare
+> > > > >=20
+> > > >=20
+> > > >=20
+> > > > Thanks,
+> > > > --
+> > > > Julian Sun <sunjunchao2870@gmail.com>
+> > > >=20
+> > >=20
+> >=20
+> > Thanks,
+> > --=20
+> > Julian Sun <sunjunchao2870@gmail.com>
+> >=20
+>=20
+
+Thanks,
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
