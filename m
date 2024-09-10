@@ -1,193 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-29018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7673E973875
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 15:18:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFE59737D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 14:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4BC1F218C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 13:18:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F38286961
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 12:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE671922E1;
-	Tue, 10 Sep 2024 13:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC7D190685;
+	Tue, 10 Sep 2024 12:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaVY7oGn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wac0ExgR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8415674E;
-	Tue, 10 Sep 2024 13:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FB71DFE8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 12:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725974311; cv=none; b=BNzNHpSGkroe7T5ExwcSeDGIQG1+HBwZlsVdHrYf8u9XoxaDHc31ym+xfAq1FDpnvltySiEmEIJ9rFKipdkj0rIEy3bbmVglET9FdtRYF+2eoV+Lht+bMIINzRuKipCLYT/AVHT38L9kaZsllG3y0sOong50xoSGgkUXUQPQRRo=
+	t=1725972361; cv=none; b=o9IdCuc0USn8fydrMMYY/rgoNWpogo2rB6XZk2xsF77TgVllEZ95je/clc9Sq6LvW5I3NMum9lJiHwMrBbcIp3eiWl38XY687NStDQ+OT1bFIHzbQf9fvoL6g9FKyuNJtvQI0tz4KverMQbs3y4NwyIx5pBFiOJ1FKznaevwKyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725974311; c=relaxed/simple;
-	bh=IOI0mwJULIalAjY5tAYle02KG6qoQq1/4/vmstLws20=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=A+Eo/TFu6/nNZTU5+E3bHYHcg5XUD3BE1qvZZQ9w+JchzqMkP7PEjQDgtQ6RCGHbReKtwP4sV1GOdj7iKHUQbS+IvpAccwRRj6dcJVlNZhm/oiHE/a5+iKjfeynUXOZFBP22n7TLpNfwbuP2xyNaBhAaBL44pGAuoM/dSveJnD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaVY7oGn; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1725972361; c=relaxed/simple;
+	bh=sQjXB6cF0d3aURfApCFHLFdHxEPzuZSHM1bWaArfz2A=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WYDmwG99Evj93/sa5mSD0uMxYwANqzkc1lGD9aznbglrDQOP2pygVzkTMANwOPGcBvAGKHgYLHDhiezyc8UBqi3P/Q+KL98ZZWH79H4S2BsMLwYEm4iO4Cosj5/intN0ccC2VQZ0ZcCW/QstfDOlHODfoeYn8exU6VSFHmzMnGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wac0ExgR; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-718d91eef2eso2745787b3a.1;
-        Tue, 10 Sep 2024 06:18:29 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d86f71353dso3679444a91.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 05:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725974309; x=1726579109; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GZSCd6+9c94uE7g9eY8EW7ZyFVJE0bJLRo9INXMYKaY=;
-        b=WaVY7oGnW6j+PBIDcE1wlhAFjNn74kwUAOC3iyfEoq0CakzNovu1c3v1YIbUTog7/w
-         BT0xTb3jH7/pW3y0DYor/wLqMS8xxBj396A4iyBpAQBRxPqQdSqZgzZeimJ9WobXghDR
-         hK6yqp2DsLK8DHUcKXKeABv/d8WY/80ixB0vAmkVHOimXhjoLPo5RKcq40QJTZIkUMVQ
-         nrmueFN0rqZdf7Cr59FxhFoO+5BcFEVPRw7QmWULN4uNthN1g6SK/EwQp79DyNqhR72W
-         wCvq4JHt9gc8wpn2KwcfCHK3NFFS+Yzt30G5TT3sn4ca6X3BiC2kn0ZOk8OBRi8DEDFC
-         puQw==
+        d=gmail.com; s=20230601; t=1725972359; x=1726577159; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dZcuOHeVwpeU+Mqt4HVdAwDmjh6VMI6oc6uTCyhYx4E=;
+        b=Wac0ExgR/9jpenGES723LIV3ntZyICMegHjJcPV4uv1ylvBDzMfuni3vRwBQKufrZ2
+         1ECOQsCnYIgLUusa5I9GhlzRFnMqKV7uiNqduZhaGjPymtfmDhsqerargW1R76gkHEx+
+         DTaY6DFeIjzOLmePxuWnUZcMTd26xc56KmKy2Amuav+ljM5nn85CFAAQ2NLkRp4jSo5o
+         FvonryUR35uU+85AoG9Jm4iRBWm6waZ0lPwtyu4zAkwxh6YpP5JSdf+0dDSlqPDlzWGQ
+         /DUZQPBAcwAxMoRwlrJTxb3JMICRi/YCMo7TIWsytfYF4N7hdwVnDBx8VIFAoOBFb29t
+         6Sgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725974309; x=1726579109;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GZSCd6+9c94uE7g9eY8EW7ZyFVJE0bJLRo9INXMYKaY=;
-        b=LQqXF4feJbRWiXqehli3G0dbu6/BlXBZ43E2OG+dhSVm2kc09fq5AVpneukl+WexFT
-         xZU7zGCkWDOSMQtNpJcCAv3sFl9lYqbdvLM5573pOHaMylCPc83tH2nOzcjVR/H4E30k
-         ukN3EdY4h4DDmDT1qsE6jD8NouHs8PSuDN8HaBK5yCL4m66YlpmF50SZRs7IXwQK6mfZ
-         EgZxCNdL+15oZ5FcYiHObBVnV1NwG3TD1CHJLkKAafJYERIx/aFZpvSpcDKAdjwK6k1J
-         aTOEsQh3hulQLwLpxpAVRIkpap5Y8VSnvB9ecAVMWDr6XTp13KsatckyW9NiqNpYmRDx
-         YUWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU79ejSdV9Q96Wz6bfusorLohEiBpCCTm1BC1WIdGwVkvHND98IujRf/YOV+WzQ/eQ1AoUXPtDeNMAi@vger.kernel.org, AJvYcCVSFnDlXvsWJ3+9E0WfAQRNXetvdcmc/P+rGocVZ5Vc7EKYFhsbSUlr4zCysZzTrh6VrzSguQ3eqBudb/N1@vger.kernel.org, AJvYcCVfeFxQ/bOaXHFFMTGnMXmjHoaX20HhBTDsvo712/OtTUmvGJ60EG2CWuoqGv3OJfguVZuEahnsUePN3cCc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP2u/XKvBiwkbLGeZdKLuGriDKdLaSMMDhLqXmXej8TB5E5g3H
-	HUbWGPURuNp6e7JiF1f3R+0LlDmB/cCc7dAHOxhyb7oxPNMbKHSZ
-X-Google-Smtp-Source: AGHT+IFYMIl2DfFThQL0MS1eR55Gv9drM5or7sHiHBvgh5wilqXFLTjSDanBiPTDBZf4mLOZQUJZQw==
-X-Received: by 2002:a05:6a00:66e4:b0:707:fa61:1c6a with SMTP id d2e1a72fcca58-71907f0f6ddmr4484924b3a.10.1725974308849;
-        Tue, 10 Sep 2024 06:18:28 -0700 (PDT)
-Received: from dw-tp ([171.76.84.199])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8255dc20fsm4784462a12.65.2024.09.10.06.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 06:18:28 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Dave Chinner <david@fromorbit.com>, John Garry <john.g.garry@oracle.com>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-In-Reply-To: <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
-Date: Tue, 10 Sep 2024 18:03:12 +0530
-Message-ID: <8734m7henr.fsf@gmail.com>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com> <87frqf2smy.fsf@gmail.com> <ZtjrUI+oqqABJL2j@dread.disaster.area> <877cbq3g9i.fsf@gmail.com> <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
+        d=1e100.net; s=20230601; t=1725972359; x=1726577159;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dZcuOHeVwpeU+Mqt4HVdAwDmjh6VMI6oc6uTCyhYx4E=;
+        b=osxPpU3fvCXWHHeEfhVItpii67ZieM4cfedBcSEo98CqIqcmp6S2nogJejY/+S2dEe
+         +tdvjsU8rWRpa1WbvjDnGMo2AcRxAbIhwX18CaHaQIddYPdAwxfn4LD+k5cYncWw6GLy
+         4Y3pJw6ZpQA39CUwpB4ofN/stbTZMlj4Y2L+HV+fGYDbS151CbFj8sJl0dNzo5xQuhgW
+         c6XTXEeIahL1uofss4cKmPT40P2qbscNdlYywJBonFOE7o5d/N0+1Lpa18HGBefAR4T8
+         cXeDz0R8Z2GYrGeePwTZksRTw1Sy1JbVqOxfXsLAyBKo6WVJ7luLWswZtcUILvRClPcs
+         sXGw==
+X-Gm-Message-State: AOJu0YxfM9Rq5lV1xh+2IONqm2IznDOUwkgy/W3qE8GmPpKVrztlSTGK
+	Zl/21T3p2SpR81RN6/6NxkwSbMQGxHmoHznskkf6hnmk1+A3T4NlAe/wPOd0jde+0EPvcmXx4v/
+	suAXvu77IHVFHPuTj32SlnFH2aOkjEtJt
+X-Google-Smtp-Source: AGHT+IH4mAqJPz+MUZDBTU0HSbbQguTjI1SGiz3/7k4/MQbq1AjNezRlVERywQzWaiIwYNL3hC+7JZSO97wYsYM6GKo=
+X-Received: by 2002:a17:90b:3943:b0:2d8:b075:7862 with SMTP id
+ 98e67ed59e1d1-2daffa3a79bmr13197763a91.5.1725972358418; Tue, 10 Sep 2024
+ 05:45:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: Han-Wen Nienhuys <hanwenn@gmail.com>
+Date: Tue, 10 Sep 2024 14:45:47 +0200
+Message-ID: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
+Subject: Interrupt on readdirplus?
+To: linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Type: text/plain; charset="UTF-8"
 
-Dave Chinner <david@fromorbit.com> writes:
+Hi there,
 
-> On Thu, Sep 05, 2024 at 09:26:25AM +0530, Ritesh Harjani wrote:
->> Dave Chinner <david@fromorbit.com> writes:
->> > On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
->> >> 3. It is the FORCEALIGN feature which _mandates_ both allocation
->> >> (by using extsize hint) and de-allocation to happen _only_ in
->> >> extsize chunks.
->> >>
->> >>    i.e. forcealign mandates -
->> >>    - the logical and physical start offset should be aligned as
->> >>    per args->alignment
->> >>    - extent length be aligned as per args->prod/mod.
->> >>      If above two cannot be satisfied then return -ENOSPC.
->> >
->> > Yes.
->> >
->> >> 
->> >>    - Does the unmapping of extents also only happens in extsize
->> >>    chunks (with forcealign)?
->> >
->> > Yes, via use of xfs_inode_alloc_unitsize() in the high level code
->> > aligning the fsbno ranges to be unmapped.
->> >
->> > Remember, force align requires both logical file offset and
->> > physical block number to be correctly aligned,
->> 
->> This is where I would like to double confirm it again. Even the
->> extsize hint feature (w/o FORCEALIGN) will try to allocate aligned
->> physical start and logical start file offset and length right?
->
-> No.
->
->> (Or does extsize hint only restricts alignment to logical start file
->> offset + length and not the physical start?)
->
-> Neither.
->
-> extsize hint by itself (i.e. existing behaviour) has no alignment
-> effect at all. All it affects is -size- of the extent. i.e. once
-> the extent start is chosen, extent size hints will trim the length
-> of the extent to a multiple of the extent size hint. Alignment is
-> not considered at all.
->
->> Also it looks like there is no difference with ATOMIC_WRITE AND
->> FORCEALIGN feature with XFS, correct? (except that ATOMIC_WRITE is
->> adding additional natural alignment restrictions on pos and len). 
->
-> Atomic write requires additional hardware support, and it restricts
-> the valid sizes of extent size hints that can be set. Only atomic
-> writes can be done on files marked as configured for atomic writes;
-> force alignment can be done on any file...
->
->> So why maintain 2 separate on disk inode flags for FORCEALIGN AND
->> ATOMIC_WRITE?
->
-> the atomic write flag indicates that a file has been set up
-> correctly for atomic writes to be able to issues reliably. force
-> alignment doesn't guarantee that - it's just a mechanism that tells
-> the allocator to behave a specific way.
->
->> - Do you foresee FORCEALIGN to be also used at other places w/o
->> ATOMIC_WRITE where feature differentiation between the two on an
->> inode is required?
->
-> The already exist. For example, reliably allocating huge page
-> mappings on DAX filesystems requires 2MB forced alignment. 
->
->> - Does the same reasoning will hold for XFS_SB_FEAT_RO_COMPAT_FORCEALIGN
->> & XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES too?
->
-> Same as above.
->
->> - But why ro_compact for ATOMICWRITES? There aren't any on disk metadata
->> changes within XFS filesystem to support atomic writes, right? 
->
-> Because if you downgrade the kernel to something that doesn't
-> support atomic writes, then non-atomic sized/aligned data can be
-> written to the file and/or torn writes can occur.
->
-> Worse, extent size hints that don't match the underlying hardware
-> support could be set up for inodes, and when the kernel is upgraded
-> again then atomic writes will fail on inodes that have atomic write
-> flags set on them....
->
->> Is it something to just prevent users from destroying their own data
->> by not allowing a rw mount from an older kernel where users could do
->> unaligned writes to files marked for atomic writes?
->> Or is there any other reasoning to prevent XFS filesystem from becoming
->> inconsistent if an older kernel does a rw mount here.
->
-> The older kernel does not know what the unknown inode flag means
-> (i.e. atomic writes) and so, by definition, we cannot allow it to
-> modify metadata or file data because it may not modify it in the
-> correct way for that flag being set on the inode.
->
-> Kernels that don't understand feature flags need to treat the
-> filesystem as read-only, no matter how trivial the feature addition
-> might seem.
->
+I have noticed Go-FUSE test failures of late, that seem to originate
+in (changed?) kernel behavior. The problems looks like this:
 
-1. Will it require a fresh formatting of filesystem with mkfs.xfs for
-enabling atomic writes (/forcealign) on XFS?
-  a. Is that because reflink is not support with atomic writes
-  (/forcealign) today?
+12:54:13.385435 rx 20: OPENDIR n1  p330882
+12:54:13.385514 tx 20:     OK, {Fh 1 }
+12:54:13.385838 rx 22: READDIRPLUS n1 {Fh 1 [0 +4096)  L 0 LARGEFILE}  p330882
+12:54:13.385844 rx 23: INTERRUPT n0 {ix 22}  p0
+12:54:13.386114 tx 22:     OK,  4000b data "\x02\x00\x00\x00\x00\x00\x00\x00"...
+12:54:13.386642 rx 24: READDIRPLUS n1 {Fh 1 [1 +4096)  L 0 LARGEFILE}  p330882
+12:54:13.386849 tx 24:     95=operation not supported
 
-As I understand for setting forcealign attr on any inode it checks for
-whether xfs_has_forcealign(mp). That means forcealign can _only_ be
-enabled during mkfs time and it also needs reflink to be disabled with
--m reflink=0. Right?
+As you can see, the kernel attempts to interrupt the READDIRPLUS
+operation, but go-fuse ignores the interrupt and returns 25 entries.
+The kernel somehow thinks that only 1 entry was consumed, and issues
+the next READDIRPLUS at offset 1. If go-fuse ignores the faulty offset
+and continues the listing (ie. continuing with entry 25), the test
+passes.
 
--ritesh
+Is this behavior of the kernel expected or a bug?
+
+I am redoing the API for directory listing to support cacheable and
+seekable directories, and in the new version, this looks like a
+directory seek. If the file system does not support seekable
+directories, I must return some kind of error (which is the ENOTSUP
+you can see in the log above).
+
+I started seeing this after upgrading to Fedora 40. My kernel is
+6.10.7-200.fc40.x86_64
+
+-- 
+Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
 
