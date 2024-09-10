@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-28978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D62A972812
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 06:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F78972817
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 06:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85B16B234AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 04:18:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BC31285CA1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 04:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FBF18D649;
-	Tue, 10 Sep 2024 04:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263AE190485;
+	Tue, 10 Sep 2024 04:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="c+tZEiAz"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RFFG+r3Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2080.outbound.protection.outlook.com [40.107.236.80])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2073.outbound.protection.outlook.com [40.107.244.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40E918EFF1;
-	Tue, 10 Sep 2024 04:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1298190046;
+	Tue, 10 Sep 2024 04:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.73
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725941730; cv=fail; b=tHlMoi7w/u7/g+Z/fJ0R5cBNc4I2X44AgVSV2KsEaTz7P8WRnASfSDMGDyTQtETwCiu6far5HaqNySF7fQ2mJaGD+rDsaBwInlCQjS8ku2hcmX3m9GsI3aQNkGnQQjiqW/FDQZhImsnpal5vVtNc0BsLD9KxrF82znbLw08PlIs=
+	t=1725941735; cv=fail; b=LrSnx5lwW2DasKPfs7gnqAuupdynByvyRu5fxJTWTgQe7g1iGbRzdR1vzjDUrrOv8v9NqsyPXIZWEt1W3ukOp/pBNzqEbZKcQehylxT0qPClvTRdDb7FTNtUimcBCqscOpYcIdH62h7G+2gxtrfZCrxysWDweX59ri7PhMukdcs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725941730; c=relaxed/simple;
-	bh=ppN7AeQ535KjELJTEfxCfPobSJA90d14ZG8egdvqiEs=;
+	s=arc-20240116; t=1725941735; c=relaxed/simple;
+	bh=p0r7xPVvMVqZHyjPXqe3z5FreSJZ/CBWsj9olNpyk1Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ScDFU+8AMmJZuxvc67KpbgyglRWck8aJE+dujpHIT7EJa1ggkQmqtewMSITFJuERG1FFn2zWnhDOpPmqYTcJGJh5KZWzPgJLwTrqGX3zXgu8dLXnFzCWggHgG6N2NntURz2CQyK2jbrZPZwq5KncylKT93i8A5B2GW2jLX71Irs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=c+tZEiAz; arc=fail smtp.client-ip=40.107.236.80
+	 Content-Type:MIME-Version; b=IcxKhj2RFZva1mrzXZurBvguum7OFFhyf/28O0YjxP7BvUzk6tRmxdffLU44XoM1QgUv74ex6GdLH7YRSnqoBzTwjX9Kg78lb1Q8NlLJHUJUMRDjWjQWQNgBpFEXIjfgAKhmGSuJLhXrtSW/81I9KWC+ZguUbJHcRAthcgI39Ck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RFFG+r3Q; arc=fail smtp.client-ip=40.107.244.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L+ZOssOVvz/rCwzeZHQ+U+uSHxq+lSEhcTcLXlFeBMgB5xmln6jLVmvk6gN8Sxu3fGljVMU9SgNATYMKe4xGYBTkNXAVLbPdQ2HYbhNRYovMRSliIkqlbKGbXvqSrmR8TWY/nUrert8KhMQPXZS7BnPJ3UeIhIVeJP7CX/QyM+uDqcTUnkvSNYEW9qK/Neoa4Q57Kr0Zg9Iy3hcLCiJIndZNTcgA2kY1nr2ZKZXzQVR1GjBDKcQ9wWu9H0/ytcP+KyzARpwUYuRXSQaejqM45P/I7kbjDcFBcJcpainAx2hZJEwgaLnD2hIrHjpCz118yCHqiRNgd9CGNoO3h0zAig==
+ b=u9TGGWrJRRAxIUWc0H03/Qy89CiicDsvu8TH5ylhM2nAsQhdSq0shaRdGEa1RbNTHDtCOUT6Ui3SRDYkLRX7chT4PD1xWecND9WtA7aH2DMJbHjO15MR2m/3zAFtGEQ8fF1ieP0uC2Cg+MdwYfVq/7CUUY0jNYkxddp4SXrOPJ7y2eZIB0uUzC93PYiImgVUTS/0l7UF3FqdqHug0YRLcgzmarsmQJ6ohFby9xw/BBpi8BLxk4igIruT67yLnqheESxnEnrld+Lfk97QzMzPDPj0asrlUb0xP6fhXv+I266FuUEDXe84t8za+gMSthovYeWsduNrmPRse6RBxNMtlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Bud1BOoIKrruKCTNC42zk12SQVHnS3DekPle0TBxIs=;
- b=uaRpCH7eE19YvM7Ok/2mao0rNEaVjvkDFnn8dqhyjdxlXiLd02pn7nqi6Q3/+RSx6LzQdcGtqKekmtrBG5fsK/n5QsG8+/SzCu2xu5w4U+oiJGfT2KepU6fU4HwWOdFcOrL7xscoR4MDNKlCJbWPZzvaLE0dGzob+BPPdySgQmdevr23knGoPBPaOEaN3yttmQ7Oo7gNOoh/5P7HpGmmHi6fUieOuYx7OnJun9sS72rQsN8RYL/WZ3Bd6A+zHBhal/TlwxpY7b7hz2jpqyjQTyDMzAOY2hzDlqD2IJyAsPSr+5f6BheqmdbLRHPx4yLKnX1FvsHOLx+kKS8MV1XhkQ==
+ bh=ItcM8EpGZKlhlFXvZ10jl4KAPka0zJ1t+4ANNPAc2z8=;
+ b=haOQQGR3DNshxoUVfQ+PWw1jsQl3eFhYCg1rl1RFqTcXkRaf2fi7WxoadTSBE/uGnMyG5QwUIjrGMs77dkjWMheXfntIae7ccgWOJRs3K983tc4K8GroDwHBJRC8CBpKDKgf+9XdUYjVDdDiOG6992bD9QamMGZC03ITI7JNMcAolOyf9roqLBWAD827xp4JlDxig6p8UQqsqVB9W7PuXEMn2uLG99juV2Q/9NWW8GLZqBPGdwEX/2SPQ+34KR5reZhNNq7GYBdpBEuXat9oqZXlAyadQrY6XfxoXhWcVQKz/JsBrLj2x1hU/X26V5bMLmB7/aDaoqtCJdrYdekgHg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Bud1BOoIKrruKCTNC42zk12SQVHnS3DekPle0TBxIs=;
- b=c+tZEiAzjiLklX/B6fYH1x9f72oqj7xzPw8IYgdctTqzMSGm1me1F6er+CtYrn7Nd3KM+a3v5duYav2DaR4Re+jvD4Z6jsWKgeLRJPcVoiEWjDvWrlY+32ZafUBrCbKElkZBFD8YE1R2Qz4oX7IaEXQq8igDfW1122avvfxZINr1da1LvLXXLlmlQz9qX3zefPsjJdnV12KoIO+w8F8S5sI/jj5DFR8OrDgehgl/8HwBVSTZhF1kWHHJbHG3L+ycwN5Edp4WMA/RLm2cEKCt/vf+HYHNiEe5jpPLcOVzrCQz/SWOzcabfBb091rARlyfD7zOzxiYEexXldFZiKUvaw==
+ bh=ItcM8EpGZKlhlFXvZ10jl4KAPka0zJ1t+4ANNPAc2z8=;
+ b=RFFG+r3QyVbxX0P0Acghf98y1J6eymXn6eiwPD7EhtP+8Oo1/4nZHL3lMD2K5HnoNUKS5Wnhsizbj/sPW1kfFLYOfQktCozwQQRDiXrObbgQdmkcGw9hQXFvEXjlgpmHbE08CSZqiUndVzoicehQD+EjByEOXZUZHgB/4RqyPW5D2dvBD23VltzD0HY4LjmAaeDA1auF+KLZEBW8LBj/dynuYjZRdeWpqChAqPeZI7du757SXM7NHGUJnvp7FDJG/XOxlwiZ/ecveY1fr5mbJomVOq/4S1qJZykTVxK8AVCkfUaCH0B+8+frA0L1Xz6dzOQu0kTiq2ImO3BpK7FZYg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
  BY5PR12MB4148.namprd12.prod.outlook.com (2603:10b6:a03:208::23) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Tue, 10 Sep
- 2024 04:15:24 +0000
+ 2024 04:15:30 +0000
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.7918.024; Tue, 10 Sep 2024
- 04:15:24 +0000
+ 04:15:30 +0000
 From: Alistair Popple <apopple@nvidia.com>
 To: dan.j.williams@intel.com,
 	linux-mm@kvack.org
@@ -91,15 +91,15 @@ Cc: Alistair Popple <apopple@nvidia.com>,
 	jhubbard@nvidia.com,
 	hch@lst.de,
 	david@fromorbit.com
-Subject: [PATCH 06/12] huge_memory: Allow mappings of PUD sized pages
-Date: Tue, 10 Sep 2024 14:14:31 +1000
-Message-ID: <3ce22c7c8f00cb62e68efa5be24137173a97d23c.1725941415.git-series.apopple@nvidia.com>
+Subject: [PATCH 07/12] huge_memory: Allow mappings of PMD sized pages
+Date: Tue, 10 Sep 2024 14:14:32 +1000
+Message-ID: <b63e8b07ceed8cf7b9cd07332132d6713853c777.1725941415.git-series.apopple@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
 References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SYAPR01CA0038.ausprd01.prod.outlook.com (2603:10c6:1:1::26)
+X-ClientProxiedBy: SYAPR01CA0046.ausprd01.prod.outlook.com (2603:10c6:1:1::34)
  To DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -109,435 +109,210 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|BY5PR12MB4148:EE_
-X-MS-Office365-Filtering-Correlation-Id: e252b8ee-a36a-4332-0db6-08dcd14f3189
+X-MS-Office365-Filtering-Correlation-Id: b139175d-3b9e-4e2c-ea1c-08dcd14f3503
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8FLTFF1tbGPHDHObo9x3BBrfgQo0kcQ7btnVJnhqjc7/m3A5yePlGwc2rEZ9?=
- =?us-ascii?Q?aHYERs61AZrby39RJWG93aZIxXbP0YQvFpXC9ecx+1Bsw/y+GJDEQc16ryp3?=
- =?us-ascii?Q?Yvvo61j01Qvg4hjIZmEt3Xb0Tqaf1zw4WQ6j216vHEfawUbB1PEU9U9iONKV?=
- =?us-ascii?Q?Pzj/0DRjOVCoWVKD2fzlrxgsDjSOMVay77Eec2SmSiG78s5+W0nMXzRXGv6k?=
- =?us-ascii?Q?VC4/DwBY6b/q9yXhXpRRM5cKZHZe9gfTXiKgbFFV0EQEIYR4C7dp/di60lWS?=
- =?us-ascii?Q?FtYgYDO/6xI9xwJzIyYDgUkPayMWCDvYq3gWOLaitGyH8g52dwiMPLfqstQQ?=
- =?us-ascii?Q?Z9d52r+XiLLFmvO+HYoWBOcR+TG/h6SMOkkNwuK3FJoHHnQM3xsftPkJ8A5M?=
- =?us-ascii?Q?SCZLQaEwCBHKYChxnFVtlyh4e3xj+BGWOcXtpeXBwy023eo+yh6O9s/fLq24?=
- =?us-ascii?Q?3vGj7H0Of85nfcQB1crzyl0QjoKRjucXMBqKSrNHKjGqcPCEUM/8yLO7jtWo?=
- =?us-ascii?Q?XbRpnz2q5iSSRO11Ew4mmrwzPoxpHqwhX/kCiYNRuwfsvlvI8eBXLrW/nNGK?=
- =?us-ascii?Q?kqPTy/iKkbLDJyulfuFQHnIcGezzSnxsaQ1nkqI23k0Ek6t19kw8fs14y1m4?=
- =?us-ascii?Q?5yomrUH5ju8ROCsZU832JDevfe/MLLfIzUj5JciVPTYHBFb1ABGkqFg/5X4C?=
- =?us-ascii?Q?QXFgtXpwNPIjqfa6am8pJo5H0amUEPCIThrSxC+al1SVm5Lk0Msy7ugWo8P5?=
- =?us-ascii?Q?u1s+Yur7xRbo0wfyRVT8BWdox/Iyp9qHcPxfjVWVCM+loaud1jA1W2+NW3If?=
- =?us-ascii?Q?iLBEphrBjuld/qiyzN74PDRWHiD0SSAnNEfF8gh8BLZ//3sJky4de3IWrQVg?=
- =?us-ascii?Q?IHly0mAB7bIbI2jX5Mr9JvK9pKTZByVhP2FGarIGeabtHrgI0OX3GBpkP323?=
- =?us-ascii?Q?GZrTyYQED+FasdwD8VEW12cB89yed6v7Fe5Mjn77ppp8yWDasxkV0xFGJzM5?=
- =?us-ascii?Q?+H3D0dZQgZKcIQK27vX+RxVLkuVuHPZLdGj2joIAqSoa+l0bWMeJPoSenO/U?=
- =?us-ascii?Q?29xgBmb4JKpRRatVi8mp9AxjnTkWejZRctvDkWpwaA3v3DpWVWi9SVg8ivQr?=
- =?us-ascii?Q?F2DiuyLrE98XO8uR3GobuEZaMiuqZjODaNz3i7v0gBk3f6o0eeCxRpiQ5Vzl?=
- =?us-ascii?Q?WIaaI9o65a7VQo1h+Oiw2lz7+OPHuqbordZPfGhBNSfAJq4OpAg1DGpHdSA4?=
- =?us-ascii?Q?OzgR/cXIWhFCqr/5beOUiSW/0lpyKPxysgRw38AofSrQA0slxVaWzLTnXn8m?=
- =?us-ascii?Q?hESa05EaIGUcNAtVdx7ODjaoV8JWOXQB/WrsRxrhgnerog=3D=3D?=
+	=?us-ascii?Q?qSRf7qDFt8xvMAXNJwCg0p+jjeHoeQN8+Js4UWbPFYDXKXNrSvDaWQXKf8pO?=
+ =?us-ascii?Q?vAGzAFFnJytfOReYi2v+pBJkT3dM+mnSeWe224nTftm0RjFa2MuFPNEiVzLV?=
+ =?us-ascii?Q?lqkEKbBcmr0cbGnR+hEjT2ZaJdQ67ZFi2l/F9wiKPd1apFHc50r8/2LZuvZp?=
+ =?us-ascii?Q?RxbLMq67a3bhqAdYaMXF4zef1izCU5Q4/++ObUH/vZ/+WVJhHtcbsYSuUDAc?=
+ =?us-ascii?Q?H2W91IUIp58pDmZh0AuUBVNlYs/0Ijizp0eu8BLXBHgnivBwHcEfpjDmC6G0?=
+ =?us-ascii?Q?I47vUpxgr+kSCugxmWdiGp9PYEdgkvAQWp6hJuKm5GAwRrqBJpLQGhXwb9Uy?=
+ =?us-ascii?Q?AnGjXWEzALGhfm5cdIod7JKeXTqsOViV4Nxnw5h0hYsslEGbzkJmkmpEpA7p?=
+ =?us-ascii?Q?lm4WESNCmuSti2vda9As+B4v+lYWfEgg9qieb7l7z5ji47z63XsRLy3lSegO?=
+ =?us-ascii?Q?ZLpkavNiBJRg7GuJiAPQvqcbOv/4y8nFiatRRBDtt4IAk6l3JVCr7HEEIXay?=
+ =?us-ascii?Q?DiqaevCOUKYywfmTFddWujjK7W7uUfOCDSQeUO26rQafaPpL6bPOK2LAKLWP?=
+ =?us-ascii?Q?eWK5PIazAvm2oQ8pNJi/mQOtojHDCbdL+32rp6SC4GBHUAkHzsDAfl15VIQA?=
+ =?us-ascii?Q?z2aySUc7BlAmwh6V8d35nRPwNV2ZR/sNRMOl18jSZU3XjDg7xb/7j2pjMEYS?=
+ =?us-ascii?Q?w/3o7vfg3eEv5ojb8CE4DbZewpUj8KW/q5ZByHraiIh2wb7eagTCXAF7aMIC?=
+ =?us-ascii?Q?/iBXv0C7ARrs4g0BZYHT+YU8SH/mVgw1ka0FzPJTo4PbrKWQT0cGA3c9mAxz?=
+ =?us-ascii?Q?ynyMrv41HwPOV3zS76vY5VuCKl57BWNppjN7y/Z9QGpQ5vH5eHxWPhpkiXUy?=
+ =?us-ascii?Q?i2MkqpUmMGxiMf5KSEutv2qu088u6RRLMZW10a9qiYW7xx0Yv32yoAsBLoFe?=
+ =?us-ascii?Q?my7GO5ob54B8QmK2Ahi9+/3guF3202Z/mZ51ZA4DAkoKr39jS4BKXo9mCWKs?=
+ =?us-ascii?Q?4zMxK2yFifQUK9hFJrYEmBLN9/9HU7DnFMm9sYmExGa7QOWToYy5WRI5lEhf?=
+ =?us-ascii?Q?vowjaHlvFM3NvF4RFa0D46MoJFThud0x1qDgKE8OZCLXWqWjQql1sXzgD2mI?=
+ =?us-ascii?Q?30AZZUyNknn7qhN2wTM33sCrtXeBecfRg+fsV+nxh1t3Iw/IuiV90LykxnCF?=
+ =?us-ascii?Q?TfXJwnaVcClx4b6DQvygG7HV6Vc9Vj+y+zA2vShjtf7B4JO3Z38clIVs79BY?=
+ =?us-ascii?Q?/dT0l4kxg5jjIiEvPn62+PDjPm/i5JtMMfNqmZ8QBRZbGYEZO0KaNnEaYFAK?=
+ =?us-ascii?Q?Gfpff+/2NSiTh6+VxNAYap5hBAjpUH24wMSuqVOG+5M3xg=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?O6fAvEy50brguwa6iwu+iZg/Q160isc+uCr2WwThmEWKZ3ThvzTyqK7JuDdC?=
- =?us-ascii?Q?h43H8Jcw9tgeldm/NZO7xHtBG/jJaMqqHZFb88OqhscuGQACw7zfBFLIrznL?=
- =?us-ascii?Q?E0uvBYbe6OC5csAGfyeBdJ8UMXWFVDn8mNfvkAlQEEyTJOcBqU0dA20iP8C1?=
- =?us-ascii?Q?/mJ8iaU8hGGZ3DJWVm9wbNG6XFTieYCe+lA20/T3tULHdEM8/fDoK1W4dYIT?=
- =?us-ascii?Q?oLF/+UYPrnVJcmPRK4wKGZEayE/9AkpvRfhdS+GzGjBfKqFX+kRSF21J+R1o?=
- =?us-ascii?Q?na5/OMZWqjJAih0KfrKiSIGgGzQxuyMF8ln2MIJRy7pfJ2itZf2g/xhntSVZ?=
- =?us-ascii?Q?SsqP8aN/N+0X3A4JVsJ8Bw7T7h0luCZGQAPCMjrqU6iFCtY3vjkTGn0C+2L6?=
- =?us-ascii?Q?YR2jnsF7w6OWhb8FJwjMgq7S08ymIqf3moqKSCle9/L8ffAVLX90kKnP57WK?=
- =?us-ascii?Q?F+KX3UoTnUYWniHxVWLzPTP5vIpF/qaT66tA9lz/a+vtlA2jkUm3Lo5rpaiv?=
- =?us-ascii?Q?J3ebpJ5fWBkHNWZQsx4D+mSwWO3a/DpBrgmlu8KGfNwYlXbzYejwtqskn19I?=
- =?us-ascii?Q?mdgrNBMN4Gh0PkzYgrmtOnwKDOXjDTffJ5gEhbztwSqQw2AOh9I+VD3ZNxCG?=
- =?us-ascii?Q?7tISzTMxFAQDdxMNP8qEQ5/ClltPwfuUwm+faL+uDp5cDfumwhQD3W9SBx0i?=
- =?us-ascii?Q?muUQ1QDpul7RbzLvhdklNLLNyD5mmMd/I5tHorqdZQvz3Vuoi/uOtSZB3A/T?=
- =?us-ascii?Q?Op1RoweBonN+IHAsMO4pVsii1ELp4v3TO1GxuGvQe/bDQqjzwUquKbbHK4cf?=
- =?us-ascii?Q?eO5OI4hwOmuka0GngdcXxfGO5caGN7Hrc3XxszPuKsOIXjVNS9tWVt35Z/CB?=
- =?us-ascii?Q?w/bC0bfTMuFMdo8JeAMAcBb6p88DMkzoY1OKO81uox6QmqN5HaSr2YA8jxJo?=
- =?us-ascii?Q?QYzUF0x9vNxHHJTsdZgW4c6f33tr8qtZZy+gyx0hbRva3YWOu2d+p05sAdfK?=
- =?us-ascii?Q?TeN9M6KYzPtqKDXxPsKkeHxx2jkXCdce0svRKSeFpmerNRw263/3hGnQ5Uos?=
- =?us-ascii?Q?lvxzDGB18PtGaJqBYIfDs+lTVjhJ8ef5vQSGmBY8DchtEY70OljKO5N2If/t?=
- =?us-ascii?Q?JPKMQhBuytB8hdPtVgdvgu+S6YjsQegbayN77foeLz4Y4OgAuACzNZME/Wq/?=
- =?us-ascii?Q?LUAA8p6QI4w/GXm+mRdkrk3Gu1YbNjBPGL0qciLcJQT6Um2x1kC/IxPyEcdK?=
- =?us-ascii?Q?baoOQzRDDwAXv2JQEXH/KaPTk60LsXYVUvCB+hxzcjXsSTKC+HGUMQb7aVJn?=
- =?us-ascii?Q?rWxiIaRAtcU+gyvV5sIZMTCqmkMlp1ZZ1sjwZZcJXK5pLORP58jL0Ojf3sed?=
- =?us-ascii?Q?BfaBprF8GyUArO80WYI7znKjP5T962KlI+7tUA+uAYNnomou/j7//eo4ljRg?=
- =?us-ascii?Q?Hapf69fDLEijAoJCZ9G+0N+Cxh5aYvD8af650rGflL0TutmV2sOB5jJr7+IM?=
- =?us-ascii?Q?pSZaKuKimdSbu+AfEJU4GoZt0jUrSGr/91XRafqOj3QwymtB/R/vZOYHmneg?=
- =?us-ascii?Q?AeOR7gP1OWBvVZXqJA+EHmVtqeiAeORikr3s827p?=
+	=?us-ascii?Q?sFRNX1Sl7EXocfye4Hj2Apxs/vv4ZJvWgo/yDRCnT7968OusMCDwmNborBC+?=
+ =?us-ascii?Q?BuO+69sM6rMkx2cwMkhBeth29XOTZhdn9VVT+oPYhMnRRX1qYZcERUC3AkLd?=
+ =?us-ascii?Q?vFgXzOI7AXTsHuCPV56B39SEVwqk4ALecNiJdoSFv+tECTAOOwCDEWT57mom?=
+ =?us-ascii?Q?tFGhtWxxBPmlBwY+F5cjmz2IBbCWSPnsSaa5iB1IygY4JCaGmeOYrA8p1JSC?=
+ =?us-ascii?Q?f6LWMjZkn1vRCObvOOTZ1eXDy+ZtxSol1hFOBzXK2z7zTpVNj7HoXq9XBr7v?=
+ =?us-ascii?Q?DmhPCp5xqJW+IZdVwpeNmbbFsjq7nodhxuIMY9/E5SmhR9fejB+wEJIgFOrh?=
+ =?us-ascii?Q?O2yk7/EAme9NZxbbPDESxmyms+6ABHOBi+w/lV5yrDQwZqiTn1obTrykHP7y?=
+ =?us-ascii?Q?BXZGpn86Lmsm7ltM87mdUpYJ4dGPPS9V4zvCMP0YPKIvR6ZDhyQVu5sOyKoa?=
+ =?us-ascii?Q?ujxNcQGvw1YhDWnO5Xmkn08MNMvtKaS20cIeWfODvCjR0RAdgOlGxkZXSdop?=
+ =?us-ascii?Q?yNwWG8IKJBq7+xx4GAibq1Rl/vGJAhX5HYFG5eqaAL3y9LY6hm5YiDexW7cL?=
+ =?us-ascii?Q?cyaHZxM5uMqxuxEqAnlpsyxzPCn+YE3DWi+iL29KgeQX26+yaN0Dw/PYjbs7?=
+ =?us-ascii?Q?ihqcLl430pvURMIuVpNB9ZVg1jzh9gCX/SnMyIbJY8GldXWKboWBDCgg+8vQ?=
+ =?us-ascii?Q?8j8pIzVRBj86Xye3H7D6yMJ10xLjY+gyACc42rm0l70GSZbKnvcAfXHJqVgZ?=
+ =?us-ascii?Q?MhQRFHdylrE0LiNpRvimVO/07Y86z3jCtNr1au+LjD4NtTYq+viOS0bWScvg?=
+ =?us-ascii?Q?XvaU8URfUW3i26aZSeIwQCLo8thqgcUI1FuogLGnxEFmrSiDcvGhWUk00/GD?=
+ =?us-ascii?Q?vr+kMxN6qMGLnA/wcJhPe22+TY1kq0zsHPAtgWCR3iKOJ3SA+BUIcbHyt/Dm?=
+ =?us-ascii?Q?z2UjI90s8nmwOUpTHtqDp4Sxk+6tWOCabS0ersx9MGRDVfd+9OuZ68vmH5eW?=
+ =?us-ascii?Q?5tXSQQ1pKbMISSsmrtZsmbzDBRtz5EkuMAMOJXSuRdq0I/zqxZRrjM5FZ0tQ?=
+ =?us-ascii?Q?AgQ0w1nItuVm3kvTvqmBOLThax5qXQI1MePTl25TArSR4hcvTutOc6HyU7mC?=
+ =?us-ascii?Q?pLKVbJCV5P17eyBN6scjtMZfkmupsWxxt4qKA/wd7KuKIi/sjBSZeo43dJrz?=
+ =?us-ascii?Q?MeTkLbxltbcJGt8sPKhCqM8pEXsRfjW1ljwvJu7suS3dAdCnrBpzbKQjwP01?=
+ =?us-ascii?Q?T4fuBV/vVpNZoRHlTuodbwGkLclpROT5P2UYubowf2R13JMIUxi/LdgQ4pdG?=
+ =?us-ascii?Q?UFZpekwZeF2qfiB8IXwOAxyc54DxT+tYwPyCbg+s1poJKGou84jNpJb2f3lp?=
+ =?us-ascii?Q?mOEn1lftNnpg4uzmlICiTS3RSZfSPPQr2LhMJzYE1TCQ8QPHBhLWIECm6Sc7?=
+ =?us-ascii?Q?85prsgnpjKcvXP1LwcJHvQmm3/VZoSteCY5Md8ustIVolIYefGmOS1s1TvLi?=
+ =?us-ascii?Q?ubZ1tDqFD6mQ6oOx/VNEnwjebGYzUO5dV1k87eGnGv6oPvZQYqkY3vKTyOuY?=
+ =?us-ascii?Q?8hRAe66fwiI/WFht8B2LsSBg5YO2edNyHsEawsTs?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e252b8ee-a36a-4332-0db6-08dcd14f3189
+X-MS-Exchange-CrossTenant-Network-Message-Id: b139175d-3b9e-4e2c-ea1c-08dcd14f3503
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 04:15:24.6607
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 04:15:30.4787
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 49ZJzoWF5ufNXqH4Cm0oPh90Eols0q5j5pF+TRPU7EQHNP4NqLmT5ez1M2NT5gSSsCLAd+aKKzzwbhaisvSJ6Q==
+X-MS-Exchange-CrossTenant-UserPrincipalName: hHC8+DlOYjhRod5vWNyyQZeQ67SvJaANrbVN7lz0epJCBkXqP+OcCtofVooBYis+/gswvAOOkb0QI6v/j0Y6Bw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4148
 
 Currently DAX folio/page reference counts are managed differently to
 normal pages. To allow these to be managed the same as normal pages
-introduce dax_insert_pfn_pud. This will map the entire PUD-sized folio
+introduce dax_insert_pfn_pmd. This will map the entire PMD-sized folio
 and take references as it would for a normally mapped page.
 
-This is distinct from the current mechanism, vmf_insert_pfn_pud, which
-simply inserts a special devmap PUD entry into the page table without
+This is distinct from the current mechanism, vmf_insert_pfn_pmd, which
+simply inserts a special devmap PMD entry into the page table without
 holding a reference to the page for the mapping.
 
 Signed-off-by: Alistair Popple <apopple@nvidia.com>
 ---
- include/linux/huge_mm.h |  4 ++-
- include/linux/rmap.h    | 15 +++++++-
- mm/huge_memory.c        | 93 ++++++++++++++++++++++++++++++++++++------
- mm/rmap.c               | 49 ++++++++++++++++++++++-
- 4 files changed, 149 insertions(+), 12 deletions(-)
+ include/linux/huge_mm.h |  1 +-
+ mm/huge_memory.c        | 57 ++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 48 insertions(+), 10 deletions(-)
 
 diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 6370026..d3a1872 100644
+index d3a1872..eaf3f78 100644
 --- a/include/linux/huge_mm.h
 +++ b/include/linux/huge_mm.h
 @@ -40,6 +40,7 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
  
  vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
  vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
-+vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
++vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+ vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
  
  enum transparent_hugepage_flag {
- 	TRANSPARENT_HUGEPAGE_UNSUPPORTED,
-@@ -114,6 +115,9 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- #define HPAGE_PUD_MASK	(~(HPAGE_PUD_SIZE - 1))
- #define HPAGE_PUD_SIZE	((1UL) << HPAGE_PUD_SHIFT)
- 
-+#define HPAGE_PUD_ORDER (HPAGE_PUD_SHIFT-PAGE_SHIFT)
-+#define HPAGE_PUD_NR (1<<HPAGE_PUD_ORDER)
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 
- extern unsigned long transparent_hugepage_flags;
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 91b5935..c465694 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -192,6 +192,7 @@ typedef int __bitwise rmap_t;
- enum rmap_level {
- 	RMAP_LEVEL_PTE = 0,
- 	RMAP_LEVEL_PMD,
-+	RMAP_LEVEL_PUD,
- };
- 
- static inline void __folio_rmap_sanity_checks(struct folio *folio,
-@@ -228,6 +229,14 @@ static inline void __folio_rmap_sanity_checks(struct folio *folio,
- 		VM_WARN_ON_FOLIO(folio_nr_pages(folio) != HPAGE_PMD_NR, folio);
- 		VM_WARN_ON_FOLIO(nr_pages != HPAGE_PMD_NR, folio);
- 		break;
-+	case RMAP_LEVEL_PUD:
-+		/*
-+		 * Asume that we are creating * a single "entire" mapping of the
-+		 * folio.
-+		 */
-+		VM_WARN_ON_FOLIO(folio_nr_pages(folio) != HPAGE_PUD_NR, folio);
-+		VM_WARN_ON_FOLIO(nr_pages != HPAGE_PUD_NR, folio);
-+		break;
- 	default:
- 		VM_WARN_ON_ONCE(true);
- 	}
-@@ -251,12 +260,16 @@ void folio_add_file_rmap_ptes(struct folio *, struct page *, int nr_pages,
- 	folio_add_file_rmap_ptes(folio, page, 1, vma)
- void folio_add_file_rmap_pmd(struct folio *, struct page *,
- 		struct vm_area_struct *);
-+void folio_add_file_rmap_pud(struct folio *, struct page *,
-+		struct vm_area_struct *);
- void folio_remove_rmap_ptes(struct folio *, struct page *, int nr_pages,
- 		struct vm_area_struct *);
- #define folio_remove_rmap_pte(folio, page, vma) \
- 	folio_remove_rmap_ptes(folio, page, 1, vma)
- void folio_remove_rmap_pmd(struct folio *, struct page *,
- 		struct vm_area_struct *);
-+void folio_remove_rmap_pud(struct folio *, struct page *,
-+		struct vm_area_struct *);
- 
- void hugetlb_add_anon_rmap(struct folio *, struct vm_area_struct *,
- 		unsigned long address, rmap_t flags);
-@@ -341,6 +354,7 @@ static __always_inline void __folio_dup_file_rmap(struct folio *folio,
- 		atomic_add(orig_nr_pages, &folio->_large_mapcount);
- 		break;
- 	case RMAP_LEVEL_PMD:
-+	case RMAP_LEVEL_PUD:
- 		atomic_inc(&folio->_entire_mapcount);
- 		atomic_inc(&folio->_large_mapcount);
- 		break;
-@@ -437,6 +451,7 @@ static __always_inline int __folio_try_dup_anon_rmap(struct folio *folio,
- 		atomic_add(orig_nr_pages, &folio->_large_mapcount);
- 		break;
- 	case RMAP_LEVEL_PMD:
-+	case RMAP_LEVEL_PUD:
- 		if (PageAnonExclusive(page)) {
- 			if (unlikely(maybe_pinned))
- 				return -EBUSY;
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index c4b45ad..e8985a4 100644
+index e8985a4..790041e 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -1336,21 +1336,19 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+@@ -1237,14 +1237,12 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+ {
  	struct mm_struct *mm = vma->vm_mm;
- 	pgprot_t prot = vma->vm_page_prot;
- 	pud_t entry;
+ 	pmd_t entry;
 -	spinlock_t *ptl;
  
--	ptl = pud_lock(mm, pud);
- 	if (!pud_none(*pud)) {
+-	ptl = pmd_lock(mm, pmd);
+ 	if (!pmd_none(*pmd)) {
  		if (write) {
- 			if (pud_pfn(*pud) != pfn_t_to_pfn(pfn)) {
- 				WARN_ON_ONCE(!is_huge_zero_pud(*pud));
+ 			if (pmd_pfn(*pmd) != pfn_t_to_pfn(pfn)) {
+ 				WARN_ON_ONCE(!is_huge_zero_pmd(*pmd));
 -				goto out_unlock;
 +				return;
  			}
- 			entry = pud_mkyoung(*pud);
- 			entry = maybe_pud_mkwrite(pud_mkdirty(entry), vma);
- 			if (pudp_set_access_flags(vma, addr, pud, entry, 1))
- 				update_mmu_cache_pud(vma, addr, pud);
+ 			entry = pmd_mkyoung(*pmd);
+ 			entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+@@ -1252,7 +1250,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 				update_mmu_cache_pmd(vma, addr, pmd);
  		}
+ 
 -		goto out_unlock;
 +		return;
  	}
  
- 	entry = pud_mkhuge(pfn_t_pud(pfn, prot));
-@@ -1362,9 +1360,6 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
- 	}
- 	set_pud_at(mm, addr, pud, entry);
- 	update_mmu_cache_pud(vma, addr, pud);
+ 	entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
+@@ -1271,11 +1269,6 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 
+ 	set_pmd_at(mm, addr, pmd, entry);
+ 	update_mmu_cache_pmd(vma, addr, pmd);
 -
 -out_unlock:
 -	spin_unlock(ptl);
+-	if (pgtable)
+-		pte_free(mm, pgtable);
  }
  
  /**
-@@ -1382,6 +1377,7 @@ vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
- 	unsigned long addr = vmf->address & PUD_MASK;
+@@ -1294,6 +1287,7 @@ vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
  	struct vm_area_struct *vma = vmf->vma;
  	pgprot_t pgprot = vma->vm_page_prot;
+ 	pgtable_t pgtable = NULL;
 +	spinlock_t *ptl;
  
  	/*
- 	 * If we had pud_special, we could avoid all these restrictions,
-@@ -1399,10 +1395,52 @@ vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
+ 	 * If we had pmd_special, we could avoid all these restrictions,
+@@ -1316,12 +1310,55 @@ vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
+ 	}
  
  	track_pfn_insert(vma, &pgprot, pfn);
- 
-+	ptl = pud_lock(vma->vm_mm, vmf->pud);
- 	insert_pfn_pud(vma, addr, vmf->pud, pfn, write);
+-
++	ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+ 	insert_pfn_pmd(vma, addr, vmf->pmd, pfn, pgprot, write, pgtable);
 +	spin_unlock(ptl);
++	if (pgtable)
++		pte_free(vma->vm_mm, pgtable);
 +
  	return VM_FAULT_NOPAGE;
  }
- EXPORT_SYMBOL_GPL(vmf_insert_pfn_pud);
-+
-+/**
-+ * dax_insert_pfn_pud - insert a pud size pfn backed by a normal page
-+ * @vmf: Structure describing the fault
-+ * @pfn: pfn of the page to insert
-+ * @write: whether it's a write fault
-+ *
-+ * Return: vm_fault_t value.
-+ */
-+vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
+ EXPORT_SYMBOL_GPL(vmf_insert_pfn_pmd);
+ 
++vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
 +{
 +	struct vm_area_struct *vma = vmf->vma;
-+	unsigned long addr = vmf->address & PUD_MASK;
-+	pud_t *pud = vmf->pud;
-+	pgprot_t prot = vma->vm_page_prot;
++	unsigned long addr = vmf->address & PMD_MASK;
 +	struct mm_struct *mm = vma->vm_mm;
 +	spinlock_t *ptl;
++	pgtable_t pgtable = NULL;
 +	struct folio *folio;
 +	struct page *page;
 +
 +	if (addr < vma->vm_start || addr >= vma->vm_end)
 +		return VM_FAULT_SIGBUS;
 +
-+	track_pfn_insert(vma, &prot, pfn);
++	if (arch_needs_pgtable_deposit()) {
++		pgtable = pte_alloc_one(vma->vm_mm);
++		if (!pgtable)
++			return VM_FAULT_OOM;
++	}
 +
-+	ptl = pud_lock(mm, pud);
-+	if (pud_none(*vmf->pud)) {
++	track_pfn_insert(vma, &vma->vm_page_prot, pfn);
++
++	ptl = pmd_lock(mm, vmf->pmd);
++	if (pmd_none(*vmf->pmd)) {
 +		page = pfn_t_to_page(pfn);
 +		folio = page_folio(page);
 +		folio_get(folio);
-+		folio_add_file_rmap_pud(folio, page, vma);
-+		add_mm_counter(mm, mm_counter_file(folio), HPAGE_PUD_NR);
++		folio_add_file_rmap_pmd(folio, page, vma);
++		add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
 +	}
-+	insert_pfn_pud(vma, addr, vmf->pud, pfn, write);
++	insert_pfn_pmd(vma, addr, vmf->pmd, pfn, vma->vm_page_prot,
++		write, pgtable);
 +	spin_unlock(ptl);
++	if (pgtable)
++		pte_free(mm, pgtable);
 +
 +	return VM_FAULT_NOPAGE;
 +}
-+EXPORT_SYMBOL_GPL(dax_insert_pfn_pud);
- #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
- 
- void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
-@@ -1947,7 +1985,8 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			zap_deposited_table(tlb->mm, pmd);
- 		spin_unlock(ptl);
- 	} else if (is_huge_zero_pmd(orig_pmd)) {
--		zap_deposited_table(tlb->mm, pmd);
-+		if (!vma_is_dax(vma) || arch_needs_pgtable_deposit())
-+			zap_deposited_table(tlb->mm, pmd);
- 		spin_unlock(ptl);
- 	} else {
- 		struct folio *folio = NULL;
-@@ -2435,12 +2474,24 @@ int zap_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	orig_pud = pudp_huge_get_and_clear_full(vma, addr, pud, tlb->fullmm);
- 	arch_check_zapped_pud(vma, orig_pud);
- 	tlb_remove_pud_tlb_entry(tlb, pud, addr);
--	if (vma_is_special_huge(vma)) {
-+	if (!vma_is_dax(vma) && vma_is_special_huge(vma)) {
- 		spin_unlock(ptl);
- 		/* No zero page support yet */
- 	} else {
--		/* No support for anonymous PUD pages yet */
--		BUG();
-+		struct page *page = NULL;
-+		struct folio *folio;
++EXPORT_SYMBOL_GPL(dax_insert_pfn_pmd);
 +
-+		/* No support for anonymous PUD pages or migration yet */
-+		BUG_ON(vma_is_anonymous(vma) || !pud_present(orig_pud));
-+
-+		page = pud_page(orig_pud);
-+		folio = page_folio(page);
-+		folio_remove_rmap_pud(folio, page, vma);
-+		VM_BUG_ON_PAGE(!PageHead(page), page);
-+		add_mm_counter(tlb->mm, mm_counter_file(folio), -HPAGE_PUD_NR);
-+
-+		spin_unlock(ptl);
-+		tlb_remove_page_size(tlb, page, HPAGE_PUD_SIZE);
- 	}
- 	return 1;
- }
-@@ -2448,6 +2499,8 @@ int zap_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
- static void __split_huge_pud_locked(struct vm_area_struct *vma, pud_t *pud,
- 		unsigned long haddr)
+ #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+ static pud_t maybe_pud_mkwrite(pud_t pud, struct vm_area_struct *vma)
  {
-+	pud_t old_pud;
-+
- 	VM_BUG_ON(haddr & ~HPAGE_PUD_MASK);
- 	VM_BUG_ON_VMA(vma->vm_start > haddr, vma);
- 	VM_BUG_ON_VMA(vma->vm_end < haddr + HPAGE_PUD_SIZE, vma);
-@@ -2455,7 +2508,23 @@ static void __split_huge_pud_locked(struct vm_area_struct *vma, pud_t *pud,
- 
- 	count_vm_event(THP_SPLIT_PUD);
- 
--	pudp_huge_clear_flush(vma, haddr, pud);
-+	old_pud = pudp_huge_clear_flush(vma, haddr, pud);
-+	if (is_huge_zero_pud(old_pud))
-+		return;
-+
-+	if (vma_is_dax(vma)) {
-+		struct page *page = pud_page(old_pud);
-+		struct folio *folio = page_folio(page);
-+
-+		if (!folio_test_dirty(folio) && pud_dirty(old_pud))
-+			folio_mark_dirty(folio);
-+		if (!folio_test_referenced(folio) && pud_young(old_pud))
-+			folio_set_referenced(folio);
-+		folio_remove_rmap_pud(folio, page, vma);
-+		folio_put(folio);
-+		add_mm_counter(vma->vm_mm, mm_counter_file(folio),
-+			-HPAGE_PUD_NR);
-+	}
- }
- 
- void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 1103a53..274641c 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1180,6 +1180,7 @@ static __always_inline unsigned int __folio_add_rmap(struct folio *folio,
- 		atomic_add(orig_nr_pages, &folio->_large_mapcount);
- 		break;
- 	case RMAP_LEVEL_PMD:
-+	case RMAP_LEVEL_PUD:
- 		first = atomic_inc_and_test(&folio->_entire_mapcount);
- 		if (first) {
- 			nr = atomic_add_return_relaxed(ENTIRELY_MAPPED, mapped);
-@@ -1330,6 +1331,13 @@ static __always_inline void __folio_add_anon_rmap(struct folio *folio,
- 		case RMAP_LEVEL_PMD:
- 			SetPageAnonExclusive(page);
- 			break;
-+		case RMAP_LEVEL_PUD:
-+			/*
-+			 * Keep the compiler happy, we don't support anonymous
-+			 * PUD mappings.
-+			 */
-+			WARN_ON_ONCE(1);
-+			break;
- 		}
- 	}
- 	for (i = 0; i < nr_pages; i++) {
-@@ -1522,6 +1530,26 @@ void folio_add_file_rmap_pmd(struct folio *folio, struct page *page,
- #endif
- }
- 
-+/**
-+ * folio_add_file_rmap_pud - add a PUD mapping to a page range of a folio
-+ * @folio:	The folio to add the mapping to
-+ * @page:	The first page to add
-+ * @vma:	The vm area in which the mapping is added
-+ *
-+ * The page range of the folio is defined by [page, page + HPAGE_PUD_NR)
-+ *
-+ * The caller needs to hold the page table lock.
-+ */
-+void folio_add_file_rmap_pud(struct folio *folio, struct page *page,
-+		struct vm_area_struct *vma)
-+{
-+#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-+	__folio_add_file_rmap(folio, page, HPAGE_PUD_NR, vma, RMAP_LEVEL_PUD);
-+#else
-+	WARN_ON_ONCE(true);
-+#endif
-+}
-+
- static __always_inline void __folio_remove_rmap(struct folio *folio,
- 		struct page *page, int nr_pages, struct vm_area_struct *vma,
- 		enum rmap_level level)
-@@ -1551,6 +1579,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
- 		partially_mapped = nr && atomic_read(mapped);
- 		break;
- 	case RMAP_LEVEL_PMD:
-+	case RMAP_LEVEL_PUD:
- 		atomic_dec(&folio->_large_mapcount);
- 		last = atomic_add_negative(-1, &folio->_entire_mapcount);
- 		if (last) {
-@@ -1630,6 +1659,26 @@ void folio_remove_rmap_pmd(struct folio *folio, struct page *page,
- #endif
- }
- 
-+/**
-+ * folio_remove_rmap_pud - remove a PUD mapping from a page range of a folio
-+ * @folio:	The folio to remove the mapping from
-+ * @page:	The first page to remove
-+ * @vma:	The vm area from which the mapping is removed
-+ *
-+ * The page range of the folio is defined by [page, page + HPAGE_PUD_NR)
-+ *
-+ * The caller needs to hold the page table lock.
-+ */
-+void folio_remove_rmap_pud(struct folio *folio, struct page *page,
-+		struct vm_area_struct *vma)
-+{
-+#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-+	__folio_remove_rmap(folio, page, HPAGE_PUD_NR, vma, RMAP_LEVEL_PUD);
-+#else
-+	WARN_ON_ONCE(true);
-+#endif
-+}
-+
- /*
-  * @arg: enum ttu_flags will be passed to this argument
-  */
 -- 
 git-series 0.9.1
 
