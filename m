@@ -1,111 +1,263 @@
-Return-Path: <linux-fsdevel+bounces-28998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-28999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E80972891
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 06:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9098972988
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 08:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB4AF1C2390C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 04:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C5F286248
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 06:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA1A16ABC6;
-	Tue, 10 Sep 2024 04:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3CD17B402;
+	Tue, 10 Sep 2024 06:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LCK1EnCF"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dysA5KLm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A4013AA32;
-	Tue, 10 Sep 2024 04:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528BE176FAC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 06:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725943694; cv=none; b=Gly0Lan2Srj+DPVFpfO5pqZ+GChzy42o9M3eQP4VRtB09m+MXKjlAWKDqGK3Jw0ZB/zPYS6DOL4NuRPImBMVdB6d9anY9YhHXGd/fUcVE7xv1zfdJtfYR9GVHilRtNBrwGlQDCBduODBFnjZZn6sf0O7Ig5Ay8KniTpOHvvIT5U=
+	t=1725949752; cv=none; b=tOXtAtu04Y7deqarJVvyazo5dOZt19F+YaBQP9MxsHWwg/V+peaAnlpebHvR5CKMsVH3+8KN5u8kI+lGDBDTzwZGTzbxvlJNCTpWMDDO5Czst3b3C4DxGKTtsMRzlqubnkSsW1fg3nOyAdXzc28S85WevXH80xNZGM9ef7mFF8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725943694; c=relaxed/simple;
-	bh=Lqpkkyp7wuRuCbghjDbuUpHEMw+hIua6js1Gbi52msE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G8z8RxJ4bfRoZ6VhRwDhid8O6ECsTJgpJ1UYbkyiqioUixukqNrsx7o/5M3Qpn5wojDP83+AFQ393cRJzzQeKurwe6cSj2YnHAU1wyGc4TX7pk7IfYLurfBJOIPGqBk9YkduneZCs03Fd0BBNpNGj1kEbzOeeGk/2uX4i5RNjYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LCK1EnCF; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=c0/KMxGI62d39aIfqydXbjcfGL/DQ5/n5haroblqj80=; b=LCK1EnCFN8sE7ipvGAc8UQ2cYA
-	x0qquDQQJXVrrzzdKi4N4M+3xPY367t9udRzgrjwbuaaV/t/EOPA18CtPCtGpeg5g2S6mq9UPTVMY
-	qOorwFK7L+qbEqWzmGd/ADQLtdWzdM2yuTGiVya3mW7Rp1LoTyT26SLecZAa3jYEcBVscKOsE6wjS
-	3fh454fYf5iaCmgBbCxWSvcTMiKeJDd3OLFSSuDCieAc/LX0nhmzj4323V7hPCPHpQUcm57lRkjir
-	ysN1fMLF0KDjVx20FCu9CZ7wGsfxPB18U67jSno24eKa7XBE1NVWnSD08C0xQoywBYznZ7D5X/VkY
-	OG0n4GAQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1snsmy-000000050uo-2esU;
-	Tue, 10 Sep 2024 04:47:40 +0000
-Date: Tue, 10 Sep 2024 05:47:40 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com, djwong@kernel.org,
-	tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
-	peterx@redhat.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH 04/12] mm: Allow compound zone device pages
-Message-ID: <Zt_PbIADa4baLEBw@casper.infradead.org>
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
+	s=arc-20240116; t=1725949752; c=relaxed/simple;
+	bh=XaQZaTfk+la0ZZ6tSTFKn63D4zVyBwKjnuPD291hcIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=drQhBLvmZzXop8rhAKDVfVtuWHeLMLN1QdvJ8opjX5tLVkLRM3dkwvgjjqjjTCfWTGWmyoMH9Cejsf5pqcih7lUP2ImoD4joUhaX9S+dHtYkL6EtVoCjee3MENK4+JkKcvgMKekMi/8n+pMsckl9Ukw+BEcOZITP2tQIkY7Wx2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dysA5KLm; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6db2a9da800so37466677b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2024 23:29:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725949748; x=1726554548; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nEFwTDycDGvgp9HATFRtFGrgCewYQik9kM4B0MY3fOI=;
+        b=dysA5KLmqAyBweRt2T4h621AV13N+MKncHObFdiWm1YdZi7+JmH5gnq2Blo3pA2DMI
+         39YEDpmchH9s67fiW7TC8U72jc7YwvZuwCEu+Yy0wmTYE2M1CgyvvA8mhrBrXwFwI8AK
+         ge7Imj1dMtpZE2G2MoTfvRpV+XaLadSOjT+o0p8qa8+a0QZa2vtzalps9b72G3zxJq7l
+         aB3WUWiraONMVkEDSkSf/6EqH58XMhjNixHnthWdGdov2Fu0fVZ+GUtf3OHbLvjfWiKb
+         4pVuXQwNosjE+Pl3qC0zPhToIJOUlixVcF+6uDEbDRprhxK1+/V5AE9Picv6YGRY062z
+         gqLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725949748; x=1726554548;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nEFwTDycDGvgp9HATFRtFGrgCewYQik9kM4B0MY3fOI=;
+        b=ofNPOPgj39hhcwp3UCMRF60/1AQZsnJDig+/iysyJyHGtpo5qpLcOkQuj46r+eWA3F
+         hWRMswCJQUmXmmgSror3bf1wyiuA/4YWwxKUqpfVlvURnVhjvSK/qMYj8DD6t46GfAQD
+         OdE8MV+aO74UsaYF3hqarBiZWny6lbDg7TYTc36ynrg/bGnCS8akYUmo1rJHOSn0n24W
+         cyZ/43SrqTJZ59pIoE9ge8Zb23HjKOliDG+uLAqme/imvJimiuOIgSGY0C2+UJ9Je1c9
+         G5BiO4DVM/YWpE7+Vv67prSCTKNz4kyMdeThpC8U41ZarA1PB684jEwBJuMakvApKb90
+         3gnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbNYub9yZWa1kFy316EXccb+s+kdBOilqIyhq3SJlmw45gScHcbsx7goGzuqbB6MiVx9oXEuuwr6uLdy8+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw01Ven8BLmNkqH2FGyzHgjsoXxbvBI/pTafUXO3mmwP6OUVcsI
+	B6zXeipam9vwPILFn2JxTlOBsQmNX9eIsqEYWhuQ51F3ROa2m2otgyjXPB3Fb3hlIrc1+KeSVPE
+	iz/ecCl1azXXXGkuHffXWI6ZZkNta2re1PLuMwg==
+X-Google-Smtp-Source: AGHT+IEBZZt2cdxLKZyy+e7siGVV18SEl42Tj+Khn8l0KILxGsWjLsPof0c5bcFrSsgmQWetWJ2qfPyKs0QRrhKeqaY=
+X-Received: by 2002:a05:690c:48c8:b0:6ac:3043:168a with SMTP id
+ 00721157ae682-6db953817a1mr17208177b3.10.1725949748085; Mon, 09 Sep 2024
+ 23:29:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
+References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-9-d59e61bc0cb4@linaro.org> <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
+ <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org> <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
+ <98cc8d71d5d9476297a54774c382030d@quicinc.com>
+In-Reply-To: <98cc8d71d5d9476297a54774c382030d@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 10 Sep 2024 09:28:57 +0300
+Message-ID: <CAA8EJpp_HY+YmMCRwdteeAHnSHtjuHb=nFar60O_PwLwjk0mNA@mail.gmail.com>
+Subject: Re: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE driver
+To: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>, 
+	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Asutosh Das <quic_asutoshd@quicinc.com>, 
+	Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>, 
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, 
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
+	"linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 10, 2024 at 02:14:29PM +1000, Alistair Popple wrote:
-> @@ -337,6 +341,7 @@ struct folio {
->  	/* private: */
->  				};
->  	/* public: */
-> +			struct dev_pagemap *pgmap;
+On Tue, 10 Sept 2024 at 03:51, Gaurav Kashyap (QUIC)
+<quic_gaurkash@quicinc.com> wrote:
+>
+> Hello Dmitry and Neil
+>
+> On Monday, September 9, 2024 2:44 AM PDT, Dmitry Baryshkov wrote:
+> > On Mon, Sep 09, 2024 at 10:58:30AM GMT, Neil Armstrong wrote:
+> > > On 07/09/2024 00:07, Dmitry Baryshkov wrote:
+> > > > On Fri, Sep 06, 2024 at 08:07:12PM GMT, Bartosz Golaszewski wrote:
+> > > > > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> > > > >
+> > > > > Qualcomm's ICE (Inline Crypto Engine) contains a proprietary key
+> > > > > management hardware called Hardware Key Manager (HWKM). Add
+> > HWKM
+> > > > > support to the ICE driver if it is available on the platform. HWKM
+> > > > > primarily provides hardware wrapped key support where the ICE
+> > > > > (storage) keys are not available in software and instead protected in
+> > hardware.
+> > > > >
+> > > > > When HWKM software support is not fully available (from
+> > > > > Trustzone), there can be a scenario where the ICE hardware
+> > > > > supports HWKM, but it cannot be used for wrapped keys. In this
+> > > > > case, raw keys have to be used without using the HWKM. We query
+> > > > > the TZ at run-time to find out whether wrapped keys support is
+> > available.
+> > > > >
+> > > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > > > > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> > > > > Signed-off-by: Bartosz Golaszewski
+> > > > > <bartosz.golaszewski@linaro.org>
+> > > > > ---
+> > > > >   drivers/soc/qcom/ice.c | 152
+> > +++++++++++++++++++++++++++++++++++++++++++++++--
+> > > > >   include/soc/qcom/ice.h |   1 +
+> > > > >   2 files changed, 149 insertions(+), 4 deletions(-)
+> > > > >
+> > > > >   int qcom_ice_enable(struct qcom_ice *ice)
+> > > > >   {
+> > > > > + int err;
+> > > > > +
+> > > > >           qcom_ice_low_power_mode_enable(ice);
+> > > > >           qcom_ice_optimization_enable(ice);
+> > > > > - return qcom_ice_wait_bist_status(ice);
+> > > > > + if (ice->use_hwkm)
+> > > > > +         qcom_ice_enable_standard_mode(ice);
+> > > > > +
+> > > > > + err = qcom_ice_wait_bist_status(ice); if (err)
+> > > > > +         return err;
+> > > > > +
+> > > > > + if (ice->use_hwkm)
+> > > > > +         qcom_ice_hwkm_init(ice);
+> > > > > +
+> > > > > + return err;
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(qcom_ice_enable);
+> > > > > @@ -150,6 +282,10 @@ int qcom_ice_resume(struct qcom_ice *ice)
+> > > > >                   return err;
+> > > > >           }
+> > > > > + if (ice->use_hwkm) {
+> > > > > +         qcom_ice_enable_standard_mode(ice);
+> > > > > +         qcom_ice_hwkm_init(ice); }
+> > > > >           return qcom_ice_wait_bist_status(ice);
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(qcom_ice_resume);
+> > > > > @@ -157,6 +293,7 @@ EXPORT_SYMBOL_GPL(qcom_ice_resume);
+> > > > >   int qcom_ice_suspend(struct qcom_ice *ice)
+> > > > >   {
+> > > > >           clk_disable_unprepare(ice->core_clk);
+> > > > > + ice->hwkm_init_complete = false;
+> > > > >           return 0;
+> > > > >   }
+> > > > > @@ -206,6 +343,12 @@ int qcom_ice_evict_key(struct qcom_ice *ice,
+> > int slot)
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(qcom_ice_evict_key);
+> > > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice) {  return
+> > > > > +ice->use_hwkm; }
+> > EXPORT_SYMBOL_GPL(qcom_ice_hwkm_supported);
+> > > > > +
+> > > > >   static struct qcom_ice *qcom_ice_create(struct device *dev,
+> > > > >                                           void __iomem *base)
+> > > > >   {
+> > > > > @@ -240,6 +383,7 @@ static struct qcom_ice *qcom_ice_create(struct
+> > device *dev,
+> > > > >                   engine->core_clk = devm_clk_get_enabled(dev, NULL);
+> > > > >           if (IS_ERR(engine->core_clk))
+> > > > >                   return ERR_CAST(engine->core_clk);
+> > > > > + engine->use_hwkm = qcom_scm_has_wrapped_key_support();
+> > > >
+> > > > This still makes the decision on whether to use HW-wrapped keys on
+> > > > behalf of a user. I suppose this is incorrect. The user must be able
+> > > > to use raw keys even if HW-wrapped keys are available on the
+> > > > platform. One of the examples for such use-cases is if a user
+> > > > prefers to be able to recover stored information in case of a device
+> > > > failure (such recovery will be impossible if SoC is damaged and HW-
+> > wrapped keys are used).
+> > >
+> > > Isn't that already the case ? the BLK_CRYPTO_KEY_TYPE_HW_WRAPPED
+> > size
+> > > is here to select HW-wrapped key, otherwise the ol' raw key is passed.
+> > > Just look the next patch.
+> > >
+> > > Or did I miss something ?
+> >
+> > That's a good question. If use_hwkm is set, ICE gets programmed to use
+> > hwkm (see qcom_ice_hwkm_init() call above). I'm not sure if it is expected
+> > to work properly if after such a call we pass raw key.
+> >
+>
+> Once ICE has moved to a HWKM mode, the firmware key programming currently does not support raw keys.
+> This support is being added for the next Qualcomm chipset in Trustzone to support both at he same time, but that will take another year or two to hit the market.
+> Until that time, due to TZ (firmware) limitations , the driver can only support one or the other.
+>
+> We also cannot keep moving ICE modes, due to the HWKM enablement being a one-time configurable value at boot.
 
-Shouldn't that be indented by one more tab stop?
+So the init of HWKM should be delayed until the point where the user
+tells if HWKM or raw keys should be used.
 
-And for ease of reading, perhaps it should be placed either immediately
-before or after 'struct list_head lru;'?
+>
+> > >
+> > > Neil
+> > >
+> > > >
+> > > > >           if (!qcom_ice_check_supported(engine))
+> > > > >                   return ERR_PTR(-EOPNOTSUPP); diff --git
+> > > > > a/include/soc/qcom/ice.h b/include/soc/qcom/ice.h index
+> > > > > 9dd835dba2a7..1f52e82e3e1c 100644
+> > > > > --- a/include/soc/qcom/ice.h
+> > > > > +++ b/include/soc/qcom/ice.h
+> > > > > @@ -34,5 +34,6 @@ int qcom_ice_program_key(struct qcom_ice *ice,
+> > > > >                            const struct blk_crypto_key *bkey,
+> > > > >                            u8 data_unit_size, int slot);
+> > > > >   int qcom_ice_evict_key(struct qcom_ice *ice, int slot);
+> > > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice);
+> > > > >   struct qcom_ice *of_qcom_ice_get(struct device *dev);
+> > > > >   #endif /* __QCOM_ICE_H__ */
+> > > > >
+> > > > > --
+> > > > > 2.43.0
+> > > > >
+> > > >
+> > >
+> >
+> > --
+> > With best wishes
+> > Dmitry
+>
+> Regards,
+> Gaurav
 
-> +++ b/include/linux/mmzone.h
-> @@ -1134,6 +1134,12 @@ static inline bool is_zone_device_page(const struct page *page)
->  	return page_zonenum(page) == ZONE_DEVICE;
->  }
->  
-> +static inline struct dev_pagemap *page_dev_pagemap(const struct page *page)
-> +{
-> +	WARN_ON(!is_zone_device_page(page));
-> +	return page_folio(page)->pgmap;
-> +}
 
-I haven't read to the end yet, but presumably we'll eventually want:
 
-static inline struct dev_pagemap *folio_dev_pagemap(const struct folio *folio)
-{
-	WARN_ON(!folio_is_zone_device(folio))
-	return folio->pgmap;
-}
-
-and since we'll want it eventually, maybe now is the time to add it,
-and make page_dev_pagemap() simply call it?
-
+-- 
+With best wishes
+Dmitry
 
