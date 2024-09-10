@@ -1,59 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-29007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F434972F1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 11:49:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BEF972F1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 11:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53EA61C24ACB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 09:49:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2602F1C24AF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 09:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790B418C928;
-	Tue, 10 Sep 2024 09:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6694718DF72;
+	Tue, 10 Sep 2024 09:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1YbDw80B"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q/eP7ODT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC47F186E4B;
-	Tue, 10 Sep 2024 09:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCB2186E4B;
+	Tue, 10 Sep 2024 09:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961696; cv=none; b=sXeZcvs24KumWCnvwDIYhipIs+0wJ9QnoK6i8cophisqz28Px994VdfAd021OrD1kyAd33pgQ8NKaPYj8FiPPy0z0feyYhaxI3MeNrkX/np4vQtWKG5TBlBDg889yCMWN9sp739jYm2KnNW1iwlff2vnCIE4aYdHYQ3Z5wu9hss=
+	t=1725961699; cv=none; b=e/ImgzAh8uSJLnO1hiyzxuAMBFWc6KEUMZWQ1kbnsyb92w1/vBjeQ2DsgIqVEbkcFhnBZyxU2jI4A8hRDjuX85arMWekQVFWzyh8JrQdhwTG/5Nj+ydycPMslBM4yFHIEDouxdNNGTO//g9ORIbHSMY4kq3NMouDsIoQT7ZeszM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961696; c=relaxed/simple;
-	bh=NssVglAnEpOf7wNBYzta/B/OgCViezTjeBIvIZNA6ZM=;
+	s=arc-20240116; t=1725961699; c=relaxed/simple;
+	bh=x1yF9dDZYyeFxRnZxrB0yveG54HcQ45BwuGjyhr4tkk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JhVYh9SGgkLltTcG9hF7XLCgdZ+D3u+lpad4SIwasR9D70zfuXxhVkifygYO1KU+Y2mjm5DnH6NO3CSCozzo/CWCTWSQgKkS+XmZupvaBewsnsI8Hm3tgGekEM3hFfFxcAx+yvGqP4ID608H9zyyCuwu5E6GYjT7gyrv3niUwvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1YbDw80B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA94C4CEC3;
-	Tue, 10 Sep 2024 09:48:16 +0000 (UTC)
+	 MIME-Version; b=JSSeceX7aLpEOJEukaH0epd6sZjzT4iBZF2eNIHwoat+fKmzDBiouFYL/L/FfIZbA4Et2uc1FIsmvfdiRkXWyxMq+io1YUdUFR+4LNjHJ0NZvoYSo8Oxb59O9SVSmeqwbb6/IXfB3+IsPVDaxobo3KvGZZMwu0ijBIM1fPeFIGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=q/eP7ODT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 133BBC4CEC3;
+	Tue, 10 Sep 2024 09:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725961696;
-	bh=NssVglAnEpOf7wNBYzta/B/OgCViezTjeBIvIZNA6ZM=;
+	s=korg; t=1725961699;
+	bh=x1yF9dDZYyeFxRnZxrB0yveG54HcQ45BwuGjyhr4tkk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=1YbDw80Bs9w+k7OA/kG9JH6/3M9FuX9TJ5b8kDQQj9Us46WX5FuLQN/RR1hAwcwbm
-	 udHROjRTHH9afPEbNc46ohPg0fFR5snpCfkR56vGHIuf7YJuXrQcbdKqwW9Wm1Exqr
-	 Tg7+A0f0ZgcN/dNWv0NR1Iu70wKwSu/91ujQwWbU=
+	b=q/eP7ODT7m4Fme3JSZ+nhEnMmlcPL3SsKjux0lBBNC9zCdBWXFglJW5IsxLWQYH6P
+	 5OhF9v+EffpbQMzdPza+qHyzJbeYp1CZtsXzwpaCSf4dGwad3VpE+7IVmVmwSODaki
+	 5hvQFvSJoA2Oe3ZSE3q0mdh3M8eK8pVFd4S6hWKs=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
 	David Howells <dhowells@redhat.com>,
-	Steve French <sfrench@samba.org>,
+	Steve French <stfrench@microsoft.com>,
 	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <nspmangalore@gmail.com>,
+	Rohith Surabattula <rohiths.msft@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
 	Jeff Layton <jlayton@kernel.org>,
 	linux-cifs@vger.kernel.org,
-	netfs@lists.linux.dev,
+	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org,
-	Steve French <stfrench@microsoft.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.10 157/375] netfs, cifs: Fix handling of short DIO read
-Date: Tue, 10 Sep 2024 11:29:14 +0200
-Message-ID: <20240910092627.745601984@linuxfoundation.org>
+Subject: [PATCH 6.10 158/375] cifs: Fix copy offload to flush destination region
+Date: Tue, 10 Sep 2024 11:29:15 +0200
+Message-ID: <20240910092627.781118875@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240910092622.245959861@linuxfoundation.org>
 References: <20240910092622.245959861@linuxfoundation.org>
@@ -74,135 +76,71 @@ Content-Transfer-Encoding: 8bit
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 1da29f2c39b67b846b74205c81bf0ccd96d34727 ]
+[ Upstream commit 8101d6e112e2524e967368f920c404ae445a9757 ]
 
-Short DIO reads, particularly in relation to cifs, are not being handled
-correctly by cifs and netfslib.  This can be tested by doing a DIO read of
-a file where the size of read is larger than the size of the file.  When it
-crosses the EOF, it gets a short read and this gets retried, and in the
-case of cifs, the retry read fails, with the failure being translated to
-ENODATA.
+Fix cifs_file_copychunk_range() to flush the destination region before
+invalidating it to avoid potential loss of data should the copy fail, in
+whole or in part, in some way.
 
-Fix this by the following means:
-
- (1) Add a flag, NETFS_SREQ_HIT_EOF, for the filesystem to set when it
-     detects that the read did hit the EOF.
-
- (2) Make the netfslib read assessment stop processing subrequests when it
-     encounters one with that flag set.
-
- (3) Return rreq->transferred, the accumulated contiguous amount read to
-     that point, to userspace for a DIO read.
-
- (4) Make cifs set the flag and clear the error if the read RPC returned
-     ENODATA.
-
- (5) Make cifs set the flag and clear the error if a short read occurred
-     without error and the read-to file position is now at the remote inode
-     size.
-
-Fixes: 69c3c023af25 ("cifs: Implement netfslib hooks")
+Fixes: 7b2404a886f8 ("cifs: Fix flushing, invalidation and file size with copy_file_range()")
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
+cc: Steve French <stfrench@microsoft.com>
 cc: Paulo Alcantara <pc@manguebit.com>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Matthew Wilcox <willy@infradead.org>
 cc: Jeff Layton <jlayton@kernel.org>
 cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
+cc: linux-mm@kvack.org
 cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/io.c           | 17 +++++++++++------
- fs/smb/client/smb2pdu.c | 13 +++++++++----
- include/linux/netfs.h   |  1 +
- 3 files changed, 21 insertions(+), 10 deletions(-)
+ fs/smb/client/cifsfs.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index 2a5c22606fb1..c91e7b12bbf1 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -368,7 +368,8 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
- 		if (subreq->error || subreq->transferred == 0)
- 			break;
- 		transferred += subreq->transferred;
--		if (subreq->transferred < subreq->len)
-+		if (subreq->transferred < subreq->len ||
-+		    test_bit(NETFS_SREQ_HIT_EOF, &subreq->flags))
- 			break;
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index 2c4b357d85e2..a1acf5bd1e3a 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -1341,7 +1341,6 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+ 	struct cifsFileInfo *smb_file_target;
+ 	struct cifs_tcon *src_tcon;
+ 	struct cifs_tcon *target_tcon;
+-	unsigned long long destend, fstart, fend;
+ 	ssize_t rc;
+ 
+ 	cifs_dbg(FYI, "copychunk range\n");
+@@ -1391,25 +1390,13 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+ 			goto unlock;
  	}
  
-@@ -503,7 +504,8 @@ void netfs_subreq_terminated(struct netfs_io_subrequest *subreq,
+-	destend = destoff + len - 1;
+-
+-	/* Flush the folios at either end of the destination range to prevent
+-	 * accidental loss of dirty data outside of the range.
++	/* Flush and invalidate all the folios in the destination region.  If
++	 * the copy was successful, then some of the flush is extra overhead,
++	 * but we need to allow for the copy failing in some way (eg. ENOSPC).
+ 	 */
+-	fstart = destoff;
+-	fend = destend;
+-
+-	rc = cifs_flush_folio(target_inode, destoff, &fstart, &fend, true);
++	rc = filemap_invalidate_inode(target_inode, true, destoff, destoff + len - 1);
+ 	if (rc)
+ 		goto unlock;
+-	rc = cifs_flush_folio(target_inode, destend, &fstart, &fend, false);
+-	if (rc)
+-		goto unlock;
+-	if (fend > target_cifsi->netfs.zero_point)
+-		target_cifsi->netfs.zero_point = fend + 1;
+-
+-	/* Discard all the folios that overlap the destination region. */
+-	truncate_inode_pages_range(&target_inode->i_data, fstart, fend);
  
- 	subreq->error = 0;
- 	subreq->transferred += transferred_or_error;
--	if (subreq->transferred < subreq->len)
-+	if (subreq->transferred < subreq->len &&
-+	    !test_bit(NETFS_SREQ_HIT_EOF, &subreq->flags))
- 		goto incomplete;
- 
- complete:
-@@ -777,10 +779,13 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
- 			    TASK_UNINTERRUPTIBLE);
- 
- 		ret = rreq->error;
--		if (ret == 0 && rreq->submitted < rreq->len &&
--		    rreq->origin != NETFS_DIO_READ) {
--			trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
--			ret = -EIO;
-+		if (ret == 0) {
-+			if (rreq->origin == NETFS_DIO_READ) {
-+				ret = rreq->transferred;
-+			} else if (rreq->submitted < rreq->len) {
-+				trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
-+				ret = -EIO;
-+			}
- 		}
- 	} else {
- 		/* If we decrement nr_outstanding to 0, the ref belongs to us. */
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 5f5f51bf9850..8e02e9f45e0e 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -4501,6 +4501,7 @@ static void
- smb2_readv_callback(struct mid_q_entry *mid)
- {
- 	struct cifs_io_subrequest *rdata = mid->callback_data;
-+	struct netfs_inode *ictx = netfs_inode(rdata->rreq->inode);
- 	struct cifs_tcon *tcon = tlink_tcon(rdata->req->cfile->tlink);
- 	struct TCP_Server_Info *server = rdata->server;
- 	struct smb2_hdr *shdr =
-@@ -4593,11 +4594,15 @@ smb2_readv_callback(struct mid_q_entry *mid)
- 				     rdata->got_bytes);
- 
- 	if (rdata->result == -ENODATA) {
--		/* We may have got an EOF error because fallocate
--		 * failed to enlarge the file.
--		 */
--		if (rdata->subreq.start < rdata->subreq.rreq->i_size)
-+		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
-+		rdata->result = 0;
-+	} else {
-+		if (rdata->got_bytes < rdata->actual_len &&
-+		    rdata->subreq.start + rdata->subreq.transferred + rdata->got_bytes ==
-+		    ictx->remote_i_size) {
-+			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- 			rdata->result = 0;
-+		}
- 	}
- 	trace_smb3_rw_credits(rreq_debug_id, subreq_debug_index, rdata->credits.value,
- 			      server->credits, server->in_flight,
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 5d0288938cc2..d8892b1a2dd7 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -200,6 +200,7 @@ struct netfs_io_subrequest {
- #define NETFS_SREQ_NEED_RETRY		9	/* Set if the filesystem requests a retry */
- #define NETFS_SREQ_RETRYING		10	/* Set if we're retrying */
- #define NETFS_SREQ_FAILED		11	/* Set if the subreq failed unretryably */
-+#define NETFS_SREQ_HIT_EOF		12	/* Set if we hit the EOF */
- };
- 
- enum netfs_io_origin {
+ 	fscache_invalidate(cifs_inode_cookie(target_inode), NULL,
+ 			   i_size_read(target_inode), 0);
 -- 
 2.43.0
 
