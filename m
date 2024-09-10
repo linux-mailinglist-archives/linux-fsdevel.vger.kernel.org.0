@@ -1,52 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-29050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2948C9742F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 21:06:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B776974344
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 21:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 656ADB257E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 19:06:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A861F26A30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2024 19:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9301A705E;
-	Tue, 10 Sep 2024 19:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD201A727D;
+	Tue, 10 Sep 2024 19:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SnaPKb/1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kr7aCOy0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B58917A922
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Sep 2024 19:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4896B1A38F4;
+	Tue, 10 Sep 2024 19:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725995161; cv=none; b=ArAgMvKmK8Ce8cf9t76g+jsWsbvHWH3AZTjs2z13ooPyWISbe0rrCE3lkIrD7COrQNI0gb4S7HQLdhl9mF1dYlqqxszw9KG9awP3I5ZwyzW3f8ho7b7l8/e6YKH3z+M2b5MfPCSaCVc/BfuoeGPuf+gjVYcnvL/2QLGWj5OpT2k=
+	t=1725995698; cv=none; b=RLVQ+AR5FHTwiSuoxVxExUidikVEV34Xobb4VAQO8IWy06Cbf7DQo/nAzmHJSR1+raPqU+V0uNEYc6Z40ulwi4qrQJFZ0H4ZHzpe+CbsRsjijlIgY621okWikt7ZMoSIXKCZeT1QQrDeFJqQZW60NS2UbKkUJ+SsvwV7tvgv0tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725995161; c=relaxed/simple;
-	bh=SLV+XYn6nBs2t9meQ3KO1h4sWaLFdMza/UJh7pcED8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=II//WW6jfcOizSVI6BOwdwRaGHtng6tdsFBcqHA7pjlorAwy6ZtPRbKYj6lJnNkJsmRNPwYMpflfMLlQOVLEIu0WyIjyqeh8HLJwMfKmQjYBpZZ6o6CNYHmWNclUYrhBUVAmgYPiU68yJ1+5z7Y0rWgeJOutPdEtkSt3r9E2oSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SnaPKb/1; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 10 Sep 2024 15:05:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725995157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=wrDNV0GgXZMc30bnmbuGsHXq9dkPpuKdk+3TqbVzVJw=;
-	b=SnaPKb/1M1LDbQj9Oy4xpNbg56/HJL+GuYsgOQVUV9zp/QNmVP06AmcM1dEnQ11ict1TwJ
-	0IWypLju1KnU6Oz+Omzh2sFb6hXVRXPxfAoQTDcySLhg7eb9PsOIzYfO0RFax+yphra8Gg
-	liS0k0GMITqvpeN/1iyKEqWQGQIRrUg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.10.y
-Message-ID: <6ykag7fdhv7m4hr2urwlhlf2owm3keq7gsiijeiyh6gd45kcxr@jfmqoqrfqqfa>
+	s=arc-20240116; t=1725995698; c=relaxed/simple;
+	bh=Idc2Ar5vVZRGRq/j2AlTG7KVMzvB1NjvNgOUDnyw80Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iL/E7x3k5hw5lJKCGOVUPpKyT9Uyn9IV14JjUgx2K+iOHn2oA7qLjFaITcWw3kfR+oD2UW9YqS4XdwjEUnG+M2KAdcM5RJqIOCDgRCvcq4HQvXdLD6g7c6zF1v1vVqf113AfNgSL4lc5A2D2cEi6yp+SVZsB98XSCnRwqStAC9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kr7aCOy0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 724C0C4CEC3;
+	Tue, 10 Sep 2024 19:14:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725995697;
+	bh=Idc2Ar5vVZRGRq/j2AlTG7KVMzvB1NjvNgOUDnyw80Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kr7aCOy0JAC9pMEEuuBAg/HY8l8P3cbMFM6RxSmIcLsZvbt5GBS3eHfr3PFRfIcMq
+	 F/ZGNbPDfe0/mHAq+n1TN+4HKWWl06d86I002FgWdb1ZVstZlFnTEYHjYSCes67oB4
+	 DA0WVz7njhQ1ktrx1rygC/45F8Y9M7rTav4zfy+l79P9jOQePTw6L0kNmapEOCbP/E
+	 B3q52auHKQbBU+cqAGtQOWjPM2jRGRDWVmRX4Ta8ACY487z0Ay3hZnSnZCqCtY04xB
+	 rMsN8/chuoRBqwLQTAh6qzOKt9b2VBYN4PYJ40vds6JgZR4Qu1oUENWmB8NCNZTmBH
+	 3qSK6qDU+UM6A==
+Date: Tue, 10 Sep 2024 15:14:56 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Anna Schumaker <anna.schumaker@oracle.com>
+Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v15 00/26] nfs/nfsd: add support for LOCALIO
+Message-ID: <ZuCasKhlB4-eGyg0@kernel.org>
+References: <20240831223755.8569-1-snitzer@kernel.org>
+ <66ab4e72-2d6e-4b78-a0ea-168e1617c049@oracle.com>
+ <ZttnSndjMaU1oObp@kernel.org>
+ <ZuB3l71L_Gu1Xsrn@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,35 +63,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ZuB3l71L_Gu1Xsrn@kernel.org>
 
-Hey Greg, couple critical fixes for you:
+On Tue, Sep 10, 2024 at 12:45:11PM -0400, Mike Snitzer wrote:
+> On Fri, Sep 06, 2024 at 04:34:18PM -0400, Mike Snitzer wrote:
+> > On Fri, Sep 06, 2024 at 03:31:41PM -0400, Anna Schumaker wrote:
+> > > Hi Mike,
+> > > 
+> > > I've been running tests on localio this afternoon after finishing up going through v15 of the patches (I was most of the way through when you posted v16, so I haven't updated yet!). Cthon tests passed on all NFS versions, and xfstests passed on NFS v4.x. However, I saw this crash from xfstests with NFS v3:
+> > > 
+> > > [ 1502.440896] run fstests generic/633 at 2024-09-06 14:04:17
+> > > [ 1502.694356] process 'vfstest' launched '/dev/fd/4/file1' with NULL argv: empty string added
+> > > [ 1502.699514] Oops: general protection fault, probably for non-canonical address 0x6c616e69665f6140: 0000 [#1] PREEMPT SMP NOPTI
+> > > [ 1502.700970] CPU: 3 UID: 0 PID: 513 Comm: nfsd Not tainted 6.11.0-rc6-g0c79a48cd64d-dirty+ #42323 70d41673e6cbf8e3437eb227e0a9c3c46ed3b289
+> > > [ 1502.702506] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 2/2/2022
+> > > [ 1502.703593] RIP: 0010:nfsd_cache_lookup+0x2b3/0x840 [nfsd]
 
-The following changes since commit 1611860f184a2c9e74ed593948d43657734a7098:
+<snip>
 
-  Linux 6.10.9 (2024-09-08 07:56:41 +0200)
+> > > 
+> > > Please let me know if there are any other details you need about my setup to help debug this!
+> > 
+> > Hmm, I haven't seen this issue, my runs of xfstests with LOCALIO
+> > enabled look solid:
+> > https://evilpiepirate.org/~testdashboard/ci?user=snitzer&branch=snitm-nfs-next&test=^fs.nfs.fstests.generic.633$
+> > 
+> > And I know Chuck has been testing xfstests and more with the patches
+> > applied but LOCALIO disabled in his kernel config.
+> > 
+> > The stack seems to indicate nfsd is just handling a request (so it
+> > isn't using LOCALIO, at least not for this op).
+> > 
+> > Probably best if you do try v16.  v15 has issues v16 addressed.  If
+> > you can reproduce with v16 please share your kernel .config and
+> > xfstests config. 
+> > 
+> > Note that I've only really tested my changes against v6.11-rc4.  But I
+> > can rebase on v6.11-rc6 if you find v16 still fails for you.
+> 
+> Hi Anna,
+> 
+> Just checking back, how is LOCALIO for you at this point?  Anything
+> you're continuing to see as an issue or need from me?
 
-are available in the Git repository at:
+In case it helps, I did just rebase LOCALIO (v16 + 1 fix) ontop of
+cel/nfsd-next (v6.11-rc6 based), and I've pushed the result here:
+https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/log/?h=nfs-localio-for-next
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-v6.10.9-fixes
+ktest is running xfstests against it (LOCALIO enabled and in use):
+https://evilpiepirate.org/~testdashboard/ci?user=snitzer&branch=snitm-nfs-next
 
-for you to fetch changes up to ee64e00984ec3ea3fbf9b4331cbd073690ff8765:
-
-  bcachefs: Don't delete open files in online fsck (2024-09-10 10:52:16 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.10.10
-
-----------------------------------------------------------------
-Kent Overstreet (3):
-      bcachefs: Fix bch2_extents_match() false positive
-      bcachefs: Revert lockless buffered IO path
-      bcachefs: Don't delete open files in online fsck
-
- fs/bcachefs/extents.c        |  23 ++++++-
- fs/bcachefs/fs-io-buffered.c | 149 ++++++++++++-------------------------------
- fs/bcachefs/fs.c             |   8 +++
- fs/bcachefs/fs.h             |   7 ++
- fs/bcachefs/fsck.c           |  18 ++++++
- 5 files changed, 95 insertions(+), 110 deletions(-)
+And Chuck's kdevops testing should test it tomorrow morning.
 
