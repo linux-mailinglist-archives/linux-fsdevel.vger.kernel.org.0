@@ -1,145 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-29083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D08974E97
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 11:34:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE5B974F05
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 11:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33B751F22135
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 09:34:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6DA8B24C14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 09:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF56A18592A;
-	Wed, 11 Sep 2024 09:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC26D16EB54;
+	Wed, 11 Sep 2024 09:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uK60i7nN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="co4m6GjQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD17417C21B;
-	Wed, 11 Sep 2024 09:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E857614D2A6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 09:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726047173; cv=none; b=Yd9rZNEpqUGvr1TmwBOeuKRRK6FSrSW+LR8vnLZQd8TgPGtoGJqdvT2qNFwkKZpeGkcxqE/G4DdKu6YVXrSHrXJQ531113WYvWqqSH5p7v9ktmCevByWm7b193yBTiRY7XE5E4AI3jq1SEDpDoFUU/B9PifKC4oFzRjjlLSknsU=
+	t=1726048071; cv=none; b=OOv9lgcSoo/HdGpokScElBUO/mzk+ubRNzWlJfbveNJTykM3sjhcEj7jqWr6jfAJkB9qgytGxjPQCN3cMfEw2poHAD5XY3VktBSLwpYIm/HG+oYsJ1hjo0xN+RpU3uHRB0dmmr7z2eepLV7ZT07YUTPxIgFcDOmBTbe+T+VfIXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726047173; c=relaxed/simple;
-	bh=bZ0GiGRefmi0Uyt4MyuRgUCJ9BimgVExP7271wvtOOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jzkHcq+7Kmx8JNAcSt/YZ9002Z31MNCIJDE/WrEP3gSAFG4ySXRdDx0qvBACOsLdornp3rw9AJx/cN8yNqVXD6vT4oLLcJfeMh9jr+CMtLIQqE2M1tZ5+o7FKFJjfJd7annPsrzznp6wJ2fye5H/Qlru1/MkxOj04x8FYPrEqD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uK60i7nN; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726047167; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=YkVOUfuexb9zXWhceRcyWqd+dl3lU8/cr/JNYHTEx/Q=;
-	b=uK60i7nNRO9MbneOiglLLexDze0ZhlfLcsF6SdYZo5q4Kdf9AwOY9h+sZcuHf/UX335CY8GGCyyEV5CJzJajg5LES++b/roRPnYGhUmOJ3MNXxtMffFTT4N87XmrgtHLVFmFt1RFoNOThzI/sqtlyK72U6oxBmZ3IwVW8HVifuY=
-Received: from 30.221.145.65(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WEnSDCq_1726047165)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Sep 2024 17:32:46 +0800
-Message-ID: <19ffac65-8e1f-431e-a6bd-f942a4b908fe@linux.alibaba.com>
-Date: Wed, 11 Sep 2024 17:32:40 +0800
+	s=arc-20240116; t=1726048071; c=relaxed/simple;
+	bh=RGOnbCA7TGIm3Y0iHhNibOMhvZRhRjIpcsbWRpXZrEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JPgLzYaeJF4LvT/gBLmoxBAvAcSkLQDrzFTbs3rvSyqF4+5pHL4l3CtWcA0LLVxkDuQzyOtMJCdddR6IZQitSuR1fka8phBbgnp0PJpEELxYYgsMj3jc2VcXZOZn/v3AWuyhg3d+yicoLiiVadk5Ej7jo6ZLt+auhYiNbwpqezU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=co4m6GjQ; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db0fb03df5so386318a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 02:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726048069; x=1726652869; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UrfMuV8rHJLED3gdYiI0/AM18djPib2R7h5eJVn2UGM=;
+        b=co4m6GjQjp0l3UF0xLBW8QGhaKyD6fLj9T4JW/kvCpw6v/CbVRlDkctSGnTHZ4o8eg
+         HHJ6+OWncaAeaof8hPJkJbnv6+FJHPPmxCJB1zW68k46HLGpCXHE7u3ehsTjPrtNUbdt
+         4UHTzOWB4bHt/2P6/Ui56GfpfsUqoR8D67cVDBt9v10LYh1bbWE9C5tZluaBR6SMzUq+
+         PlVEPeG2nQorClmQfI/scEYLDb9S9TV+fH1/8g/ozolDwDRD1nGzGoPIZO7c3IMkhjhO
+         zNzsa5upW2Vw2bpjh9A+tGABib7J4k9Y6sVTGG5/+w8u+InNq0V38gTvHgXmvjcB5xwH
+         vuuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726048069; x=1726652869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UrfMuV8rHJLED3gdYiI0/AM18djPib2R7h5eJVn2UGM=;
+        b=tRYRxPpA7MmT48rvfwSLtHd9WXCiN3Fhj0zmPoKPcnaRYg7KEiS1vEJSJ8xj/THnr+
+         ZGEVaY7jS69FVl19FsbFyc8H7eeh0KE83NEL68ZsNEuhSetY2yRJZCGHhREfcHQ0awJW
+         RsINZBKhW19AudEqcMmqEI18OntCFfGBG0i/GIp3b7Bh/Vvjr7w+Lc9Iv1djlk8lsOVH
+         fRqNb1tBr4a9+f2cO8w+i3TZSYWy3eeGnvNVPept7Vnu4g9aPLq8kkedaRAu+alGLUcE
+         ajM6QFtl8U/wjcYb8xnSEc4P6PmMmyGjC9H7Nqiy/Qbp6ROjdZ5sb0Y77GdvbDaDGEVB
+         Nx+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Kzpcp++dZHHcM2PKtolhEyevcU3QTJAniAqkfqYg9cPd12SgH//jmcQ+dzAdG2hgZ1T/mil1Op4pkutj@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI96ElEdSeDV0tA5oPax7/fbR5ZQWykfWFewhMYKNyyX/1+Pue
+	KgSJi5O/73iE0bxvuU+9m+mr3tvuKw0hACTws8sFuRvggrVMyaLwK7aMuBz1zhQHjOJyiwloC80
+	lvmzrU5LlWAxx+KH9ldv70HbdDVY=
+X-Google-Smtp-Source: AGHT+IFpQ5B8rzoLTZp8cUiE2CrwiL8b4mnvTOVaADyyU5dQfZt+MaPkeZ+BhA+CbDWC8O56uJHnJcdJLEol1xUw3OA=
+X-Received: by 2002:a17:90b:164e:b0:2d8:97b7:449f with SMTP id
+ 98e67ed59e1d1-2dad50f9a10mr20979858a91.38.1726048068779; Wed, 11 Sep 2024
+ 02:47:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [HELP] FUSE writeback performance bottleneck
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Josef Bacik <josef@toxicpanda.com>, Joanne Koong <joannelkoong@gmail.com>,
- Dave Chinner <david@fromorbit.com>
-References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
- <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
- <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
- <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
- <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
+ <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm> <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
+ <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
+In-Reply-To: <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
+From: Han-Wen Nienhuys <hanwenn@gmail.com>
+Date: Wed, 11 Sep 2024 11:47:37 +0200
+Message-ID: <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com>
+Subject: Re: Interrupt on readdirplus?
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Sep 11, 2024 at 12:04=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
+> > A bit of browsing through the Go source code suggests that SIGURG is
+> > used to preempt long-running goroutines, so it could be issued more or
+> > less at random.
+> >
+> > Nevertheless, FUSE should also not be reissuing the reads, even if
+> > there were interrupts, right?
+>
+> Is there a link to the test? Is it easy to repro this issue?
 
-On 6/4/24 3:27 PM, Miklos Szeredi wrote:
-> On Tue, 4 Jun 2024 at 03:57, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
-> 
->> IIUC, there are two sources that may cause deadlock:
->> 1) the fuse server needs memory allocation when processing FUSE_WRITE
->> requests, which in turn triggers direct memory reclaim, and FUSE
->> writeback then - deadlock here
-> 
-> Yep, see the folio_wait_writeback() call deep in the guts of direct
-> reclaim, which sleeps until the PG_writeback flag is cleared.  If that
-> happens to be triggered by the writeback in question, then that's a
-> deadlock.
+I made an easy repro available over here:
 
-After diving deep into the direct reclaim code, there are some insights
-may be helpful.
+  https://review.gerrithub.io/c/hanwen/go-fuse/+/1200990
 
-Back to the time when the support for fuse writeback is introduced, i.e.
-commit 3be5a52b30aa ("fuse: support writable mmap") since v2.6.26, the
-direct reclaim indeed unconditionally waits for PG_writeback flag being
-cleared.  At that time the direct reclaim is implemented in a two-stage
-style, stage 1) pass over the LRU list to start parallel writeback
-asynchronously, and stage 2) synchronously wait for completion of the
-writeback previously started.
+To repro,
 
-This two-stage design and the unconditionally waiting for PG_writeback
-flag being cleared is removed by commit 41ac199 ("mm: vmscan: do not
-stall on writeback during memory compaction") since v3.5.
+  git init
+  git fetch https://review.gerrithub.io/hanwen/go-fuse
+refs/changes/90/1200990/1 && git checkout FETCH_HEAD
+  go test ./fs -run TestInterruptReaddirplus -count 2000
 
-Though the direct reclaim logic continues to evolve and the waiting is
-added back, now the stall will happen only when the direct reclaim is
-triggered from kswapd or memory cgroup.
+to get debug logs, add -v to the test command. Typical output:
 
-Specifically the stall will only happen in following certain conditions
-(see shrink_folio_list() for details):
-1) kswapd
-2) or it's a user process under a non-root memory cgroup (actually
-cgroup_v1) with GFP_IO permitted
+$ go test ./fs -run TestInterruptReaddirplus -count 2000
+11:42:29.186131 writer: Write/Writev failed, err: 2=3Dno such file or
+directory. opcode: RELEASEDIR
+11:42:30.160136 doInterrupt
+11:42:30.160559 observed seek
+--- FAIL: TestInterruptReaddirplus (0.01s)
+    mem_test.go:301: read back 76 entries, want 100
 
-Thus the potential deadlock does not exist actually (if I'm not wrong) if:
-1) cgroup is not enabled
-2) or cgroup_v2 is actually used
-3) or (memory cgroup is enabled and is attached upon cgroup_v1) the fuse
-server actually resides under the root cgroup
-4) or (the fuse server resides under a non-root memory cgroup_v1), but
-the fuse server advertises itself as a PR_IO_FLUSHER[1]
+I am using
+
+$ uname -a
+Linux fedora 6.10.7-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Aug 30
+00:08:59 UTC 2024 x86_64 GNU/Linux
+$ go version
+go version go1.22.6 linux/amd64
 
 
-Then we could considering adding a new feature bit indicating that any
-one of the above condition is met and thus the fuse server is safe from
-the potential deadlock inside direct reclaim.  When this feature bit is
-set, the kernel side could bypass the temp page copying when doing
-writeback.
+> If I'm understanding your post correctly, the issue you are seeing is
+> that if your go-fuse server returns 25 entries to an interrupted
+> READDIRPLUS request, the kernel's next READDIRPLUS request is at
+> offset 1 instead of at offset 25?
 
+yes. If the offset is ignored (mustSeek =3D false in fs/bridge.go), it
+causes test failures, because of a short read on the readdir result
+there are too few entries.
 
-As for the condition 4 (PR_IO_FLUSHER), there was a concern from
-Miklos[2].  I think the new feature bit could be disabled by default,
-and enabled only when the fuse server itself guarantees that it is in a
-safe distribution condition.  Even when it's enabled either by a mistake
-or a malicious fuse server, and thus causes a deadlock, maybe the
-sysadmin could still abort the connection through the abort sysctl knob?
+If I don't ignore the offset, I have to implement a workaround on my
+side which is expensive and clumsy (which is what the `mustSeek`
+variable controls.)
 
-
-Just some insights and brainstorm here.
-
-
-[1] https://lore.kernel.org/all/Zl4%2FOAsMiqB4LO0e@dread.disaster.area/
-[2]
-https://lore.kernel.org/all/CAJfpegvYpWuTbKOm1hoySHZocY+ki07EzcXBUX8kZx92T8W6uQ@mail.gmail.com/
-
-
-
--- 
-Thanks,
-Jingbo
+--=20
+Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
 
