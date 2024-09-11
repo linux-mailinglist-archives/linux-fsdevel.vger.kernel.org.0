@@ -1,192 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-29119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DED7975996
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 19:39:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5999759C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 19:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E07E1C23111
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 17:39:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D92AB224A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 17:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2AB1B7917;
-	Wed, 11 Sep 2024 17:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACDE1B2EE5;
+	Wed, 11 Sep 2024 17:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rC42Agfr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eO3lclcN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630151B5313
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 17:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54721B9B5E;
+	Wed, 11 Sep 2024 17:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726076317; cv=none; b=nMppshTd+lqgSQ/vtk/7TV0i3OCF4s0TefCxKiaeD7QbrVy5xdXGt/Owj9G+occ/gVnlRCNZBaaXV16KQ8cOtJ3L36jC/f+RYqo7kBzLl5S79PowN7P0k9Bu3cZsvL+I0uhWKoajUK9a69exdHoATCGnw0fFietOoATSUzRX/Y4=
+	t=1726077111; cv=none; b=DRfrs7RXBigVmAeB5OIC12EnrO+bkqXq/PtIO4G32Ax8UWNfOD4tQsiPvQNdEBmqlgtNQjE8Xy04XVamUb8p469P4Pl4gPD9fv0hCY8j8Q01T0rb++cfeccTcyDLCi8Q9nweWn/Bf4NIZBelZlojVfl4/Du84TEZeuRGiJrQWV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726076317; c=relaxed/simple;
-	bh=B3XEJ47A+TN3w7pB/zIoKra4vHtux/OwOB1FhKSv00c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bu4iiwTFbdMPhMaDt9/x7zy5FKI667u4KmdFjbFBzVkoBtgH1UzfzYQPwoQbSW8G1EUWWJEwf4gDmnmtzPISizz2IUHlLWhzPChQEaS9ZhuYSVVY4yZf1okJJ/c3SemNFBFEKQEQUtDvlXH6o6jm30A+LewpFDxwuGJloaoimzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rC42Agfr; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726076313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=blLN8n4flyGWr3hsLAYet7XCBYXkxyU8EtHvF5BdGSk=;
-	b=rC42AgfrSZDE1gM2LisYttlqg2nTsGs+2RjgNNF3idGQLRUNdBK8Q+NACoSlalBr9GJn+J
-	HNqqL0okrp5lCmSo9fNBaap9g+Uzh8N+fu0lAwUU35g5gwJjLCX5M7YEuCdIIFcru0UuLT
-	8PtzQKKlg/S2/F20cK9EeDnKLV8v/MY=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Omar Sandoval <osandov@osandov.com>,
-	Chris Mason <clm@fb.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] mm: optimize invalidation of shadow entries
-Date: Wed, 11 Sep 2024 10:38:01 -0700
-Message-ID: <20240911173801.4025422-3-shakeel.butt@linux.dev>
-In-Reply-To: <20240911173801.4025422-1-shakeel.butt@linux.dev>
-References: <20240911173801.4025422-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1726077111; c=relaxed/simple;
+	bh=xSswVBibcjDEQg2WwGMuh6ZoWg4FGo7fcgKqXzRLGwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FojKhcyHKvVfLggCkwik/buEbYFiZR2mE/+0Ch+vbwitMw5ru6Kn3HOj4W1H+6XCe1zjtVWQmTtHsath6EVBaIDlJUkHGO2C8BaWnD4dAJC40/h9bO8TMPAy9KXlrze+D6xchsO90s1+Row4FOptmpT4sKYplunU786tLRXlY38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eO3lclcN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F45DC4CEC7;
+	Wed, 11 Sep 2024 17:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726077111;
+	bh=xSswVBibcjDEQg2WwGMuh6ZoWg4FGo7fcgKqXzRLGwc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eO3lclcNw586T/x/64jQwyQQm8g4y42Lv3qcWsCtsAFyoLHir8zdJQV5T18CTtg64
+	 H3O0TOnEtPaMFK0wDRETEhzQhA8la6YP5TQjV54B96h5jLK045bwfscM2BoRXXSrYz
+	 FUWTiUAxACz3YrXFncrXO3O+LQovUUYko1EL/ohTKPPOH8BSGLeSKflzKKXjilbrPx
+	 w0GNDgg3AGHeqc475rsTO2PpXnNee9z/ppbr4hJuiW4jpZKXM/PUwq1xzi722TcGTr
+	 RAOykXYUb9+eugKJsTeB14aQLOlq9Z7PASLGzOJ6mDqA8J5FHA29FbmD62am+QVY9I
+	 5WKdDDwRvJCsA==
+Date: Wed, 11 Sep 2024 13:51:50 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Anna Schumaker <anna.schumaker@oracle.com>
+Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v15 00/26] nfs/nfsd: add support for LOCALIO
+Message-ID: <ZuHYtiL1PBr6fG3B@kernel.org>
+References: <20240831223755.8569-1-snitzer@kernel.org>
+ <66ab4e72-2d6e-4b78-a0ea-168e1617c049@oracle.com>
+ <ZttnSndjMaU1oObp@kernel.org>
+ <ZuB3l71L_Gu1Xsrn@kernel.org>
+ <ZuCasKhlB4-eGyg0@kernel.org>
+ <686b4118-0505-4ea5-a2bb-2b16acc33c51@oracle.com>
+ <ZuDEJukUYv3yVSQM@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuDEJukUYv3yVSQM@kernel.org>
 
-The kernel invalidates the page cache in batches of PAGEVEC_SIZE. For
-each batch, it traverses the page cache tree and collects the entries
-(folio and shadow entries) in the struct folio_batch. For the shadow
-entries present in the folio_batch, it has to traverse the page cache
-tree for each individual entry to remove them. This patch optimize this
-by removing them in a single tree traversal.
+On Tue, Sep 10, 2024 at 06:11:50PM -0400, Mike Snitzer wrote:
+> On Tue, Sep 10, 2024 at 04:31:23PM -0400, Anna Schumaker wrote:
+> > Hi Mike,
+> > 
+> > On 9/10/24 3:14 PM, Mike Snitzer wrote:
+> > > 
+> > > In case it helps, I did just rebase LOCALIO (v16 + 1 fix) ontop of
+> > > cel/nfsd-next (v6.11-rc6 based), and I've pushed the result here:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/log/?h=nfs-localio-for-next
+> > 
+> > I'm seeing the same hang on generic/525 with your latest branch.
+> > 
+> > Anna
+> 
+> Interesting, I just looked at ktest and it shows the regression point
+> to be this commit:
+>    nfs: implement client support for NFS_LOCALIO_PROGRAM
+> 
+> See:
+> https://evilpiepirate.org/~testdashboard/ci?user=snitzer&branch=snitm-nfs-next&test=^fs.nfs.fstests.generic.525$
+> 
+> I think 525 has been like this for a while, really not sure why I
+> ignored it... will dig deeper!
 
-To evaluate the changes, we created 200GiB file on a fuse fs and in a
-memcg. We created the shadow entries by triggering reclaim through
-memory.reclaim in that specific memcg and measure the simple
-fadvise(DONTNEED) operation.
+I haven't found/fixed this yet but when LOCALIO is used
+xfs_file_buffered_read calls filemap_get_pages and filemap_get_pages
+livelocks trying to complete.
 
- # time xfs_io -c 'fadvise -d 0 ${file_size}' file
+Here is ftrace of LOCALIO's xfs_file_buffered_read immediately before
+filemap_get_pages never returns (note that for debugging I reverted
+the workqueue patch.. so the IO is issued in xfs_io context):
 
-              time (sec)
-Without       5.12 +- 0.061
-With-patch    4.19 +- 0.086 (18.16% decrease)
+=> entry_SYSCALL_64_after_hwframe
+          xfs_io-5609    [007] .....   211.831093: xfs_file_buffered_read: dev 8:16 ino 0x84 disize 0x7fffffffffffffff pos 0x7ffffffffffff000 bytecount 0x1000
+          xfs_io-5609    [007] ...1.   211.831098: <stack trace>
+ => trace_event_raw_event_xfs_file_class
+ => xfs_file_buffered_read
+ => xfs_file_read_iter
+ => nfs_local_doio
+ => nfs_initiate_pgio
+ => nfs_generic_pg_pgios
+ => nfs_pageio_doio
+ => nfs_pageio_complete
+ => nfs_pageio_complete_read
+ => nfs_readahead
+ => read_pages
+ => page_cache_ra_unbounded
+ => page_cache_sync_ra
+ => filemap_get_pages
+ => filemap_read
+ => generic_file_read_iter
+ => nfs_file_read
+ => vfs_read
+ => __x64_sys_pread64
+ => x64_sys_call
+ => do_syscall_64
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- mm/truncate.c | 46 ++++++++++++++++++----------------------------
- 1 file changed, 18 insertions(+), 28 deletions(-)
+Here is the same when testing only against XFS:
 
-diff --git a/mm/truncate.c b/mm/truncate.c
-index c7c19c816c2e..793c0d17d7b4 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -23,42 +23,28 @@
- #include <linux/rmap.h>
- #include "internal.h"
- 
--/*
-- * Regular page slots are stabilized by the page lock even without the tree
-- * itself locked.  These unlocked entries need verification under the tree
-- * lock.
-- */
--static inline void __clear_shadow_entry(struct address_space *mapping,
--				pgoff_t index, void *entry)
--{
--	XA_STATE(xas, &mapping->i_pages, index);
--
--	xas_set_update(&xas, workingset_update_node);
--	if (xas_load(&xas) != entry)
--		return;
--	xas_store(&xas, NULL);
--}
--
- static void clear_shadow_entries(struct address_space *mapping,
--				 struct folio_batch *fbatch, pgoff_t *indices)
-+				 unsigned long start, unsigned long max)
- {
--	int i;
-+	XA_STATE(xas, &mapping->i_pages, start);
-+	struct folio *folio;
- 
- 	/* Handled by shmem itself, or for DAX we do nothing. */
- 	if (shmem_mapping(mapping) || dax_mapping(mapping))
- 		return;
- 
--	spin_lock(&mapping->host->i_lock);
--	xa_lock_irq(&mapping->i_pages);
-+	xas_set_update(&xas, workingset_update_node);
- 
--	for (i = 0; i < folio_batch_count(fbatch); i++) {
--		struct folio *folio = fbatch->folios[i];
-+	spin_lock(&mapping->host->i_lock);
-+	xas_lock_irq(&xas);
- 
-+	/* Clear all shadow entries from start to max */
-+	xas_for_each(&xas, folio, max) {
- 		if (xa_is_value(folio))
--			__clear_shadow_entry(mapping, indices[i], folio);
-+			xas_store(&xas, NULL);
- 	}
- 
--	xa_unlock_irq(&mapping->i_pages);
-+	xas_unlock_irq(&xas);
- 	if (mapping_shrinkable(mapping))
- 		inode_add_lru(mapping->host);
- 	spin_unlock(&mapping->host->i_lock);
-@@ -478,7 +464,9 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
- 
- 	folio_batch_init(&fbatch);
- 	while (find_lock_entries(mapping, &index, end, &fbatch, indices)) {
--		for (i = 0; i < folio_batch_count(&fbatch); i++) {
-+		int nr = folio_batch_count(&fbatch);
-+
-+		for (i = 0; i < nr; i++) {
- 			struct folio *folio = fbatch.folios[i];
- 
- 			/* We rely upon deletion not changing folio->index */
-@@ -505,7 +493,7 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
- 		}
- 
- 		if (xa_has_values)
--			clear_shadow_entries(mapping, &fbatch, indices);
-+			clear_shadow_entries(mapping, indices[0], indices[nr-1]);
- 
- 		folio_batch_remove_exceptionals(&fbatch);
- 		folio_batch_release(&fbatch);
-@@ -609,7 +597,9 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 	folio_batch_init(&fbatch);
- 	index = start;
- 	while (find_get_entries(mapping, &index, end, &fbatch, indices)) {
--		for (i = 0; i < folio_batch_count(&fbatch); i++) {
-+		int nr = folio_batch_count(&fbatch);
-+
-+		for (i = 0; i < nr; i++) {
- 			struct folio *folio = fbatch.folios[i];
- 
- 			/* We rely upon deletion not changing folio->index */
-@@ -655,7 +645,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 		}
- 
- 		if (xa_has_values)
--			clear_shadow_entries(mapping, &fbatch, indices);
-+			clear_shadow_entries(mapping, indices[0], indices[nr-1]);
- 
- 		folio_batch_remove_exceptionals(&fbatch);
- 		folio_batch_release(&fbatch);
--- 
-2.43.5
+ => entry_SYSCALL_64_after_hwframe
+          xfs_io-3451    [015] .....  1034.767416: xfs_file_buffered_read: dev 8:16 ino 0x84 disize 0x7fffffffffffffff pos 0x7ffffffffffffffe bytecount 0x1
+          xfs_io-3451    [015] ...1.  1034.767418: <stack trace>
+ => trace_event_raw_event_xfs_file_class
+ => xfs_file_buffered_read
+ => xfs_file_read_iter
+ => vfs_read
+ => __x64_sys_pread64
+ => x64_sys_call
+ => do_syscall_64
 
+Will keep after this with urgency, just wanted to let you know what I
+have found so far...
+
+Thanks,
+Mike
 
