@@ -1,166 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-29088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6B8974FB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 12:31:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045A1974FF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 12:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9542628390F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 10:31:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E6061C21623
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 10:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579AD1714A1;
-	Wed, 11 Sep 2024 10:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C694E185954;
+	Wed, 11 Sep 2024 10:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="W0oLynTp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XMJWC/RQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gjztIhMr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293AE39AEB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 10:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9559739AEB;
+	Wed, 11 Sep 2024 10:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726050675; cv=none; b=oXRN6+QL4gpeCbae1AWAr2Ha4/+hfo3QcHr7haE1pYlKzP7CT5IqymhvzpFLLLBjCEAYyT0kXmUJVU+/j9xiett3jHXrBXcflkqPDasddSBdBFXCCkaVxIlgD7blK9zMfvQTKyFhStfZ/I62Y6YVJoWBdmbTaish5NL+aNY+ezM=
+	t=1726051378; cv=none; b=BknYNJX3nrKddhyDvE3Xx2LTvs/S9IWaIgOlMLwmYjDdoH4sNkqropHa3ge4PFvxx8mYV28iGnAjIPlAP1dJF9En+GIxnxCHFwrtW1sQfz6tYc4W4uNnznIosdj4taFT6cfVAwX0X9x2i3/oEP4RX9FOKFuGBRs3u5Zn6ylZ8YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726050675; c=relaxed/simple;
-	bh=4HtMSf90pkWGRf9S127bizU7iKMzn0jEnuM3MA4yZg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AL+YJeAndvL9s5EjAlfArDH9CgnRz84HXW2ZsMcQ/40Yy7kO6M8IMmXmCzEhtntDBGMJkqngD87VorqgZ0sD61HmMpAZotnEky07THidOn52vJDWfpNvRb1zLDZix+TEg6Dc+p8OPe6eH5yv9Dw+Dn+6URn/ciVVTjL/myPO/Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=W0oLynTp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XMJWC/RQ; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 4077013800FA;
-	Wed, 11 Sep 2024 06:31:12 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Wed, 11 Sep 2024 06:31:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726050672;
-	 x=1726137072; bh=Nb4nKR6WT4BOv5UiZhTWIfiWJCloDNufWKEUthUix/w=; b=
-	W0oLynTp9vHEJLcNm02V6c0VwGB1FqjOCyPchXZVzNMyhWdJOvu4Eko5mLewkgfR
-	4e6I8LHc0d0cPtQNGxPkMv/RMRFGJBLQCY9zqyT8WeVkP+TGQk7+dEoCYXkgNmsS
-	opuyEH4luYDyrFoeN3C0phmBU2pFKWV+Wb4F5J5y45j2qbxVe5Dsx/W8/gCBLGtR
-	e2EJ8sNW5KU/WpkFlQ7b1/KMOd2OJqafWhbeZZepCox71NTbkdNj3sc66Fj8s2SN
-	iohG0HS07jrXDBstbd85p3gIzvrwoEXOtBnx8klRIVczr0kTSv0/mfwRp+ANwjjt
-	o9RwRw28uyAzEemXpNT8NQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726050672; x=
-	1726137072; bh=Nb4nKR6WT4BOv5UiZhTWIfiWJCloDNufWKEUthUix/w=; b=X
-	MJWC/RQhM8EYsrvncwc+a5UTgQnp0pT/5GYKkA0O5jZAnMxtTWVVCgHiw02UHxLx
-	9bDzQ9WvmZTARPxBugrHYpv9aO3abmILft3EowiapjzI2J6RgVJRgsa3RlR0YUrW
-	Whewt/I5Z+HRtKRl0j5GwEPKHjKD5XxaCNickHqQfP77pks8WHIhzvNaTEwJOw+Y
-	f4ftXt7ZNivdx2YzDcyDcIEskDcXhmcVi3lF7ntS82boUHNKtH4Aa62OIhBOWoCs
-	q8eplkESwt8d1Ey6niMp0jxJ84vEFS/vjl0oUqbJSxzoIbmRhivppBaX0MP32dL3
-	diQh5jAxnPgx2VFlzL94Q==
-X-ME-Sender: <xms:b3HhZhCxVOp1MNsJhG5vqGQuwsU6chQUk45AbijnpjfA4RwizvzRMg>
-    <xme:b3HhZvjf2T_S-BqQlfweFT83EkMcnD5ZtQ67fP9SV8ak4F_idJmr41fwAUJtAeibM
-    vna-g792LMBVsyv>
-X-ME-Received: <xmr:b3HhZsmE_W4IlEySl8Smu7J0xBGpLStTskhiFr9GCpZ1ihEBXH_mbGpfejZSyy9qu5b-BsM7rFtdduROSs-aVikxzqnTf0FuWGiyemaX00Gx-x941phO>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepleeffeeljeeijeef
-    udehleeltdfgleehueetieetheffjeefvdfghfejfeeiieevnecuffhomhgrihhnpegsoh
-    hothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsg
-    gprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhrghnfigv
-    nhhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmh
-    grihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhu
-X-ME-Proxy: <xmx:b3HhZryLbQMVhPh9XrlsbTTWh7PYEUbYLIXimtIoQGzeT5FzzXnrzg>
-    <xmx:b3HhZmQrw_YBONrOpe-KrSfGoiA1i1sQWeYkggi1tKh4KA7T_fvyUg>
-    <xmx:b3HhZubtK6PNEnQod1-3ryMPufi4lVGkNvzqRFVOzHMBJd1rIArTDA>
-    <xmx:b3HhZnSAFii6oa88VK7sF5IY5YA1S8EkD9Xj54RyihAIDiywLUcFbw>
-    <xmx:cHHhZsMpZBYAket3WS2g-WOxPR2f6woiJY3BzH729TW21xok5xVw2d_D>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Sep 2024 06:31:11 -0400 (EDT)
-Message-ID: <be572f0c-e992-4f3f-8da0-03e0e2fa3b1e@fastmail.fm>
-Date: Wed, 11 Sep 2024 12:31:10 +0200
+	s=arc-20240116; t=1726051378; c=relaxed/simple;
+	bh=UjIF5kbrTpIkipAPLTaQ/D0JgJk9S2ZmSMnNGGdDz7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fIKzm0vBZP29pnIIrgNuG8kanzwQOqGgPUzdaO/qEtsXltU5U+om7P05VMSGoc13XYr2n6ncjdYKhAaiOc4rn6IV9DG+beZaCP0fMEGnnwQE6rWqDjCATGtVx5vQNu8ERAai/bxevv+1KHUxEAy7axGRJJfUgvJQSDtM9WDXexA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gjztIhMr; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d4093722bso131941666b.0;
+        Wed, 11 Sep 2024 03:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726051375; x=1726656175; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=owyJGSNE8ueeogLMpp+B8Z5kapnH06E8CRnXynJs/Yc=;
+        b=gjztIhMrXyuBkV1MYbVrvHCO0Q8WP03vnaYAq2mulePowv40GPuxh4VW935BE8S922
+         aDaEuhPT43qPpUmTRfq2Po4AlvOIaGbdaeBZOQWOw0mU3u6yvPYtU7JyOrpKxIvqpIxW
+         MrbYTHgr5C+zZilToneYa1eVXYS+TIrMiAJ3oZJVWBmaoxIIVSnkLckUstOfR7rtGxRk
+         Mrl2wh5qbwO9monGseT0wIb05ZOdWkdvqJe6rd8QM9J2Nr2vTNr5TAm0sZbrBoq7ap1x
+         i4VwzakzSjZzr2dwejkVHoX0Vho35APSmNDBoH3+TLb+zB+DhTZPcGVhcfcTRQod08js
+         DivQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726051375; x=1726656175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=owyJGSNE8ueeogLMpp+B8Z5kapnH06E8CRnXynJs/Yc=;
+        b=mB0axKqw7rN1uWvytLDaAyGLBQ4ZozwajlBCpzQ9jGMg78bsHQzmw+Anm+sVN9eh/o
+         U27U1KlTNUCgvbq7rM7xZEXg323FgfcB5aJh4RR40aLBij3TCZPXP9TQdauzWpZiyUv+
+         rqMcr/g5k0KL0SrxikiF8MRFf/4qlHKxBThzGn+BWNtntY+QRH3zAB9LLx6ohjLmiTPx
+         G/R4pMzBql8J7W+Hy5lR+5GSWtXiU/1KFr3KdKf6qCbY9S8IDEKOmCjyElFRmym++f0v
+         JYDMVm8W29GydSwDCUaCoQ1A6EOhtcRL8TPrceF4fJAX88MnYs99MHcKaqxYegFGV1z8
+         dBuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoenw0/kV3ZllkoLzCb7RZngIc9flfqpfOR/dXfdSAKRkyZvLylcQAwg4tjZjoYLaDCk0+5LYDApIBVvFd@vger.kernel.org, AJvYcCXzvRGCAYJ7rY5A9sSHJUhPaF6+JFy+09HlSh8dZtpzss0Bi5Ex1H7doq5Z1ET3WSGSKrYntFBDT2zUuSDr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH7Ak5OkXWGyDsRnmXldZieeFuO55SUmYUSGIzfXwNQwjmRXUX
+	eXJ4xFLVyI2BANW/6WHpApCoHg7hSMI0Z3GtQk91PhcTlQxHUQo=
+X-Google-Smtp-Source: AGHT+IElg5h78Cfh2aXkqKlFxKYtDSKoTr/OaJG21TxQTTN0EvJ+1m0kuWoFnuHqAHS+4026OuFbzQ==
+X-Received: by 2002:a17:906:d554:b0:a86:7021:1368 with SMTP id a640c23a62f3a-a8ffab2941fmr361138466b.21.1726051374571;
+        Wed, 11 Sep 2024 03:42:54 -0700 (PDT)
+Received: from p183 ([46.53.252.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d65742sm597215266b.216.2024.09.11.03.42.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 03:42:53 -0700 (PDT)
+Date: Wed, 11 Sep 2024 13:42:52 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: David Laight <David.Laight@aculab.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] proc: fold kmalloc() + strcpy() into kmemdup()
+Message-ID: <f4e215c5-b4d5-4575-8ed5-886bfc8d2dcf@p183>
+References: <90af27c1-0b86-47a6-a6c8-61a58b8aa747@p183>
+ <fd47776572944caf8f720e7d429b5e05@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Interrupt on readdirplus?
-To: Han-Wen Nienhuys <hanwenn@gmail.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
- Miklos Szeredi <miklos@szeredi.hu>
-References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
- <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm>
- <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
- <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
- <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com>
- <0a122714-8835-4658-b364-10f4709456e7@fastmail.fm>
- <CAOw_e7YvF5GVhR1Ozkw18w+kbe6s+Wf8EVCocEbVNh03b23THg@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAOw_e7YvF5GVhR1Ozkw18w+kbe6s+Wf8EVCocEbVNh03b23THg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fd47776572944caf8f720e7d429b5e05@AcuMS.aculab.com>
 
-
-
-On 9/11/24 12:07, Han-Wen Nienhuys wrote:
-> On Wed, Sep 11, 2024 at 11:51 AM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
->>> If I don't ignore the offset, I have to implement a workaround on my
->>> side which is expensive and clumsy (which is what the `mustSeek`
->>> variable controls.)
->>>
->>
->> That is the part I still do not understand - what is the issue if you do
->> not ignore the offset? Is it maybe just the test suite that expects
->> offset 25?
+On Mon, Sep 09, 2024 at 03:13:04PM +0000, David Laight wrote:
+> From: Alexey Dobriyan
+> > Sent: 08 September 2024 10:28
+> > 
+> > strcpy() will recalculate string length second time which is
+> > unnecessary in this case.
 > 
-> Not ignoring the offset means that I have to be prepared to support
-> some form of directory seeks.
+> There is also definitely scope for the string being changed.
+> Maybe you can prove it doesn't happen?
+
+No, no, no. It is caller's responsibility to make sure the symlink
+target stays stable for the duration of the call.
+
+Kernel does it for strncpy_from_user() because userspace, but not here.
+
+> Which also means the code would be better explicitly writing
+> the terminating '\0' rather than relying on the one from the
+> input buffer.
 > 
-> Directory seeking is notoriously difficult to implement in general, so
-> few if any users have actually done this. If you don't have to support
-> directory seeks, a FS can just compile a list of entries on the
-> OPENDIR call, which the library can then return piecewise. This is not
-> correct enough to export the FS over NFS, but this works well enough
-> for almost any other application.
+> 	David
 > 
-> I can probably kludge up something if I remember what I sent in the
-> last readdirplus call, but then I would like to be really sure that I
-> only have to deal with the last READDIRPLUS call (or READDIR as well?
-> not sure.) having to be redone.
-> 
-> Besides being annoying to write, the kludge also takes up memory and
-> time on every call of readdirplus.
-> 
-
-Ok, it was a bit hard to extract that information. Basically kernel
-behavior doesn't match your expectations and causes overhead. As I wrote
-in the evening, I think the behavior comes from static bool filldir64()
-(or other filldir functions) in fs.readdir.c. Oh, I just notice I had
-posted the wrong line, correct one should be here
-
-https://elixir.bootlin.com/linux/v6.10.9/source/fs/readdir.c#L350
-
-
-As you can see, that is fs/readdir.c - not fuse alone. And I guess it is
-right to stop on a pending signal. For me a but surprising that the
-first entry is still accepted and only then the signal is checked.
-One option would be to ignore that signal in userspace before readdir
-and to reset after that?
-
-
-Thanks,
-Bernd
+> > 
+> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> > ---
+> > 
+> >  fs/proc/generic.c |    4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > --- a/fs/proc/generic.c
+> > +++ b/fs/proc/generic.c
+> > @@ -464,9 +464,9 @@ struct proc_dir_entry *proc_symlink(const char *name,
+> >  			  (S_IFLNK | S_IRUGO | S_IWUGO | S_IXUGO),1);
+> > 
+> >  	if (ent) {
+> > -		ent->data = kmalloc((ent->size=strlen(dest))+1, GFP_KERNEL);
+> > +		ent->size = strlen(dest);
+> > +		ent->data = kmemdup(dest, ent->size + 1, GFP_KERNEL);
+> >  		if (ent->data) {
+> > -			strcpy((char*)ent->data,dest);
+> >  			ent->proc_iops = &proc_link_inode_operations;
+> >  			ent = proc_register(parent, ent);
+> >  		} else {
 
