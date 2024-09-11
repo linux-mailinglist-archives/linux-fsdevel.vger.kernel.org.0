@@ -1,165 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-29094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCF1975336
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 15:06:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9779753D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 15:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702331C20A77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 13:06:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92E17B28A90
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 13:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F03189F2D;
-	Wed, 11 Sep 2024 13:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513DA19E987;
+	Wed, 11 Sep 2024 13:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="ztAadXUG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NuNkBj4I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ssp0z6sz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3CE187353
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 13:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BCB1885B0;
+	Wed, 11 Sep 2024 13:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726060011; cv=none; b=gcP8SuE7x7grSTxeMBKgF2ZuCrlo3qB5ydRbjOoddYOJdDC14hd4O/cQSBviP6/akqV5FA+H2Uc2KtvWxsEVX48ID8ap8EYRbNdeAkndWjX/j1lGPf0MVvv3HJkQkhFbh5QGsWGVXiFhOjhBBm0oroD/1Wuy5wASmCZJ1nxQwB0=
+	t=1726061069; cv=none; b=syFSCVUHQirNNLPxuhn+JdkpzWuorweGIISqOoSMRmzaen89IrnPMIhWKFcBYb7Nrt7vx56ayH7INR+RGybrUHV3hQ+Fo/ci3Xl7EjHWeOOV6UUps3ZBpTCdE+RUuZiLGCxv7Yc8+D2tcgJ3kvCt+1ZwZRtdeyKDXJGl8H7aPoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726060011; c=relaxed/simple;
-	bh=nbHSUgw2CFl3g7HmWcANJqDtOhWqYbJkfIKg4pvfHns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WdTOGxCjGwFjkybtsphcKebR5MqvRN2fhzMsu3qnQ6w3hKP5gNDxAwx1fqCqcDizFDgET3vf+p6B07FdeAp17TjWY20fHP1RfMQmrWL+c5gznMUUsKh90B6L1xGpZ2Zhf4mEcTF+npRqIKoVKYD4YDVsMEWLL9ZYApx8aipegrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=ztAadXUG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NuNkBj4I; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 98D1D1380249;
-	Wed, 11 Sep 2024 09:06:48 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Wed, 11 Sep 2024 09:06:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726060008;
-	 x=1726146408; bh=x9wo0z4vFocR7hBvNpt3zt0GEZ7Spka5pEJ4+drPgvw=; b=
-	ztAadXUGF3pJ//2psOYPeSJgEqXOUCGmk4Lo9CyF0QldTU4zSfKusvgWJxpOwFNZ
-	eEdFSODbt12aBJ0UG7c2UYTN04bsCuLz08xsMsiiilGnXGejHJGePZJ1Kq86UzPN
-	T/Ml4szcIafy6/TTzuLGaPdqURP0Uy0jRQ5Io+tXQK/Bzw8I5Eaa6Ba9ii/Zjrli
-	ffcy8aBynxI1M2JdwI57Z0f+WxfdmTqKzEFbzAmO9mmeQQpiYEYDodlHs4ww2kjw
-	Yzd33t3CrQqRwQ67VFsvQct0h3bDkQpCcFnEwGGhNxP7bSo/eiRYhAGtCuKBOv8d
-	7gLs+0VXRPZNrIBEXy3V3g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726060008; x=
-	1726146408; bh=x9wo0z4vFocR7hBvNpt3zt0GEZ7Spka5pEJ4+drPgvw=; b=N
-	uNkBj4I6tlMawDomkatH7ftl5ksRyzvp/5frUdWvtbo3gABLaRBSqkAnLy0b4F8K
-	e6QK8H2owUo69l885CNVKdy5zbkPmCJjShNq1pVMSbqfTytcn4qYICXIf/BatURI
-	NyfUE49l+xwqKqCKuMYVCkNCPb00Et32XAreQYKVfsjHulVYzGQYnFax+mxXFAGF
-	tbecK9FKe5w14vvaJ4gEbkc5wedOqL/mWw3j017rGB5m9FVju1pMIP76YMogvKRR
-	uS4VwLJbTswTiCnTG+6Dv7qHUWjmr7geUrZ7TKEV61vH6mE/qWjP6qgBC9JwMjWA
-	y1WRmrfuB3XfMn+ttNdfg==
-X-ME-Sender: <xms:6JXhZhqphIWctr_8oVex_KtD7o0QPYkvtsUya2SNSf5BwhhGJhD4Rg>
-    <xme:6JXhZjp4V8F2CLxzLjLf6ui8jaVogyxbdQljS2jj3F7PTL7P7UAS4ulKaHcOR1Bh5
-    Jc5nanhiT_mm4x7>
-X-ME-Received: <xmr:6JXhZuOkGgFVZIMtcubauOtOSkzdWGpqPDcHDSN74bFHwKaKy_XPDaqGSQyPEiIVKkSD_aZ5f8ynaGgEXfi9hBngM7o9xUkql2k3rXJ9b7D8YfkJ6lo2>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgheelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepleeffeeljeeijeef
-    udehleeltdfgleehueetieetheffjeefvdfghfejfeeiieevnecuffhomhgrihhnpegsoh
-    hothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsg
-    gprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhrghnfigv
-    nhhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmh
-    grihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhu
-X-ME-Proxy: <xmx:6JXhZs6So4jHDJeZHLlfFS-IdPVCSVtjRVwNOOgLeGAYwGPrc1-mXw>
-    <xmx:6JXhZg5atlki53N3ZLM_3iW_B7KfP6xtSaL9oKUCM94PZFh_uEYLsQ>
-    <xmx:6JXhZkiIW7HafVGH8EYViCKq7ynr6HTgC2PFk9DvVZgFz8m9fESq2Q>
-    <xmx:6JXhZi5IZ0WrrYXaQXb7qYQh8nptmc7x_qEsETULr3g7p99VOSkQCg>
-    <xmx:6JXhZr1uvG3XpaxHe7yD2Ik4xGWxdl72Y20D1uZ0UOzXO3JqAIiklGui>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Sep 2024 09:06:47 -0400 (EDT)
-Message-ID: <4f41ae59-cd54-44b4-a201-30aa898ee7f7@fastmail.fm>
-Date: Wed, 11 Sep 2024 15:06:46 +0200
+	s=arc-20240116; t=1726061069; c=relaxed/simple;
+	bh=rv6KloLUSr3zhNpK24ogyvdvBVM4B5loa/mPlyN4irU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tNxubj03o41zqFWlxZipL1bSMocPtvPPX5jv+F8uuwwat5iN38o5lM4RgTBWdt9QkMPwDVMf/JuaGB5+yNOVyROxbDwcPwLIt8qVRPaIEvadgqr9T6e1klkMj0W6NvX6GnZ+kxpknBExxUtkrdL5vvWoTcyvrFpEXTOsulpYsh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ssp0z6sz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3596FC4CEC7;
+	Wed, 11 Sep 2024 13:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726061069;
+	bh=rv6KloLUSr3zhNpK24ogyvdvBVM4B5loa/mPlyN4irU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Ssp0z6szKOqcYj85s7VN8I6Mw+AY0tK02pAIZjowHzHHUPLxjK5zi+mZArWpnO2Ro
+	 bZ92BqmxQDlOsa4/z4B7pteHHi1i8jsvXtNcJ5EucweyhOMflaNRIfM90mjRW8Uf8D
+	 8PSWRikFrCHFeX2V/7LZ1je7/enk+hlU/wJIavaw+izhH21mGuu26TXzsErXrCF7as
+	 MQfmY1U7sNgBhjWe0D2wMobv2za0DS/EF/Jew6CNo/GXK19v6FlSExLjeUYX6MRcA6
+	 G2C07n2X4q5A/DRqoCb4xnoSZ4kUGs5mMHgfak+1Tue0sgNXDNpVIYjibluWV/jvyk
+	 qS7Upt8LBtVyg==
+Message-ID: <00b44eb3ce8ebdd76bfd81d653967d5e85910e11.camel@kernel.org>
+Subject: Re: [PATCH 1/7] lockd: introduce safe async lock op
+From: Jeff Layton <jlayton@kernel.org>
+To: Benjamin Coddington <bcodding@redhat.com>
+Cc: Alexander Aring <aahringo@redhat.com>, linux-nfs@vger.kernel.org, 
+ ocfs2-devel@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ teigland@redhat.com,  rpeterso@redhat.com, agruenba@redhat.com,
+ trond.myklebust@hammerspace.com,  anna@kernel.org, chuck.lever@oracle.com
+Date: Wed, 11 Sep 2024 09:24:26 -0400
+In-Reply-To: <C158604C-DD07-49C9-8C7B-A9807CD71473@redhat.com>
+References: <20230823213352.1971009-1-aahringo@redhat.com>
+	 <20230823213352.1971009-2-aahringo@redhat.com>
+	 <B38733D3-6F54-42DF-BD5B-716F0200314F@redhat.com>
+	 <1490adc3ae3f82968c6112bb6f9df3c3f2229b04.camel@kernel.org>
+	 <C158604C-DD07-49C9-8C7B-A9807CD71473@redhat.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Interrupt on readdirplus?
-To: Han-Wen Nienhuys <hanwenn@gmail.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
- Miklos Szeredi <miklos@szeredi.hu>
-References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
- <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm>
- <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
- <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
- <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com>
- <0a122714-8835-4658-b364-10f4709456e7@fastmail.fm>
- <CAOw_e7YvF5GVhR1Ozkw18w+kbe6s+Wf8EVCocEbVNh03b23THg@mail.gmail.com>
- <be572f0c-e992-4f3f-8da0-03e0e2fa3b1e@fastmail.fm>
- <CAOw_e7aDMOF7orJ5eaPzNyOH8EmzJCB42GojfZmcSnhg_z2sng@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAOw_e7aDMOF7orJ5eaPzNyOH8EmzJCB42GojfZmcSnhg_z2sng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+On Tue, 2024-09-10 at 12:56 -0400, Benjamin Coddington wrote:
+> On 10 Sep 2024, at 11:45, Jeff Layton wrote:
+>=20
+> > On Tue, 2024-09-10 at 10:18 -0400, Benjamin Coddington wrote:
+> > > On 23 Aug 2023, at 17:33, Alexander Aring wrote:
+> > >=20
+> > > > This patch reverts mostly commit 40595cdc93ed ("nfs: block notifica=
+tion
+> > > > on fs with its own ->lock") and introduces an EXPORT_OP_SAFE_ASYNC_=
+LOCK
+> > > > export flag to signal that the "own ->lock" implementation supports
+> > > > async lock requests. The only main user is DLM that is used by GFS2=
+ and
+> > > > OCFS2 filesystem. Those implement their own lock() implementation a=
+nd
+> > > > return FILE_LOCK_DEFERRED as return value. Since commit 40595cdc93e=
+d
+> > > > ("nfs: block notification on fs with its own ->lock") the DLM
+> > > > implementation were never updated. This patch should prepare for DL=
+M
+> > > > to set the EXPORT_OP_SAFE_ASYNC_LOCK export flag and update the DLM
+> > > > plock implementation regarding to it.
+> > > >=20
+> > > > Acked-by: Jeff Layton <jlayton@kernel.org>
+> > > > Signed-off-by: Alexander Aring <aahringo@redhat.com>
+> > > > ---
+> > > >  fs/lockd/svclock.c       |  5 ++---
+> > > >  fs/nfsd/nfs4state.c      | 13 ++++++++++---
+> > > >  include/linux/exportfs.h |  8 ++++++++
+> > > >  3 files changed, 20 insertions(+), 6 deletions(-)
+> > > >=20
+> > > > diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
+> > > > index c43ccdf28ed9..6e3b230e8317 100644
+> > > > --- a/fs/lockd/svclock.c
+> > > > +++ b/fs/lockd/svclock.c
+> > > > @@ -470,9 +470,7 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_=
+file *file,
+> > > >  	    struct nlm_host *host, struct nlm_lock *lock, int wait,
+> > > >  	    struct nlm_cookie *cookie, int reclaim)
+> > > >  {
+> > > > -#if IS_ENABLED(CONFIG_SUNRPC_DEBUG)
+> > > >  	struct inode		*inode =3D nlmsvc_file_inode(file);
+> > > > -#endif
+> > > >  	struct nlm_block	*block =3D NULL;
+> > > >  	int			error;
+> > > >  	int			mode;
+> > > > @@ -486,7 +484,8 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_=
+file *file,
+> > > >  				(long long)lock->fl.fl_end,
+> > > >  				wait);
+> > > >=20
+> > > > -	if (nlmsvc_file_file(file)->f_op->lock) {
+> > > > +	if (!export_op_support_safe_async_lock(inode->i_sb->s_export_op,
+> > > > +					       nlmsvc_file_file(file)->f_op)) {
+> > >=20
+> > > ... but don't most filesystem use VFS' posix_lock_file(), which does =
+the
+> > > right thing?  I think this patch has broken async lock callbacks for =
+NLM for
+> > > all the other filesystems that just use posix_lock_file().
+> > >=20
+> > > Maybe I'm missing something, but why was that necessary?
+> > >=20
+> >=20
+> > Good catch. Yeah, I think that probably should have been an &&
+> > condition. IOW:
+> >=20
+> > 	if (nlmsvc_file_file(file)->f_op->lock &&
+> >             !export_op_support_safe_async_lock(inode->i_sb->s_export_op=
+,
+> >=20
+>=20
+> Ah Jeff, thanks for confirming - there's been a bunch of changes in there=
+ that
+> made me uncertain.  I can send a patch for this, I'd like to rename
+> export_op_support_safe_async_lock to something like fs_can_defer_lock
+> (suggestions) and put the test in there.
 
-
-On 9/11/24 14:08, Han-Wen Nienhuys wrote:
-> On Wed, Sep 11, 2024 at 12:31 PM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
->> Ok, it was a bit hard to extract that information. Basically kernel
->> behavior doesn't match your expectations and causes overhead. As I wrote
->> in the evening, I think the behavior comes from static bool filldir64()
->> (or other filldir functions) in fs.readdir.c. Oh, I just notice I had
->> posted the wrong line, correct one should be here
->>
->> https://elixir.bootlin.com/linux/v6.10.9/source/fs/readdir.c#L350
-> 
-> Ah, I was already wondering, as I couldn't understand why your
-> previous code link was relevant.
-> 
->> As you can see, that is fs/readdir.c - not fuse alone. And I guess it is
->> right to stop on a pending signal. For me a but surprising that the
->> first entry is still accepted and only then the signal is checked.
-> 
-> Do you know how old this behavior is? It would be great to not have to
-> write the kludge on my side, but if it has been out there for a long
-> time, I can't pretend the problem doesn't exist once it is fixed, as
-> it will still crop up if folks run things on older kernels. The
-> runtime for Go has been issuing SIGURG for preempted goroutines since
-> ~2020.
-
-Following git history, I think introduced here
-
-commit 1f60fbe7274918adb8db2f616e321890730ab7e3
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Sat Apr 23 22:50:07 2016 -0400
-
-    ext4: allow readdir()'s of large empty directories to be interrupted
-
-
-> 
->> One option would be to ignore that signal in userspace before readdir
->> and to reset after that?
-> 
-> I am not sure what change you are suggesting here. Can you clarify?
-> 
-
-I mean SIG_IGN, either at fuse server startup or at set in opendir and
-unset in closedir, the latter is rather ugly for multi threaded fuse server.
-
-
-Bernd
+Actually, I take it back. The only callers that set
+export_op_support_safe_async_lock have ->lock as non-NULL, so that
+won't change anything, in practice.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
