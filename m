@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-29128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBBF975B9C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 22:19:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB4C975BFF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 22:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 349AD1C22640
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 20:19:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E31AA1C227E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 20:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9D71BBBD1;
-	Wed, 11 Sep 2024 20:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18261BB69C;
+	Wed, 11 Sep 2024 20:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dO7A9v5L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUypFd7K"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4534F1BB686;
-	Wed, 11 Sep 2024 20:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C32149C69;
+	Wed, 11 Sep 2024 20:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726085966; cv=none; b=d1Rn1GzBK0eCqXJuE0ts/WjbHmmPMDxHdarsUncrPYOmLeI8sN12LAmhzaHn3i/xXaRYGcEQMFmt44lMBr4k0/LMxaWMqxaDGXGSp8TZuvFAUgsDTg5skaYhdUOJf4GdpQq6RojyNImLUYHvc8Tl8PyrqHOuj+wKhRnMoMauumU=
+	t=1726087385; cv=none; b=XwRO7u2d1wsdT6rz9U89WN5kNWAKpyX3waixGGdyyGD9YzPUbu9NHsK5tSQTiiquYoiqPqK8+iRmrWxtPpCpQXLEjn3PKQ2g9hk9B7mpfQMtyZaIFoilJwQ/ymINhX58kAo8q5bKlNHi8J4EywqNFtVVcHgkT8lWeaHEitKHYSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726085966; c=relaxed/simple;
-	bh=0Ux8q/k/QdWu5oVWHH+EnbylLiwL4RmQm4L57OVzB/8=;
+	s=arc-20240116; t=1726087385; c=relaxed/simple;
+	bh=5hLn/XvbruBIpLM88BBJs1JwaGcVKyKFVbu5lPnzDbA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yi0fnWJrY2OTYEehFEvTaxwEvYXYQWPjGnqdEBlwgBhJGmzoWWbRdnQ93+eydh+fOxKIgeZhH5cjr9nxrSsIhxtf+rmqAgbu6kG0gQFJ7VY3WaffYLxGz3moMYhCHq63RGpo6K0dNOZue3HmvfpXeFQ+7B4XNQdcX9K32Y3S0kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dO7A9v5L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFD1C4CEC0;
-	Wed, 11 Sep 2024 20:19:24 +0000 (UTC)
+	 Content-Type:MIME-Version; b=o1QrnE//qqZ5hsFug1HlPKeL5Pr+sLjU7/JBJtw8qZ6JdeZXYQIX3TyiX3mVfkWkHwDLIzeZpTxmhvmCT86lCLdjMLMthSNQtrMxFKPXpWvopgAYE6+GGuObrQ39jFoYTQ8UhD0awODJszaI7P1TAB/nzpL3zwQgO3L6yqLyRkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUypFd7K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C747CC4CEC0;
+	Wed, 11 Sep 2024 20:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726085965;
-	bh=0Ux8q/k/QdWu5oVWHH+EnbylLiwL4RmQm4L57OVzB/8=;
+	s=k20201202; t=1726087384;
+	bh=5hLn/XvbruBIpLM88BBJs1JwaGcVKyKFVbu5lPnzDbA=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=dO7A9v5LnXSBVtSjWkMWuVclPFZbPCHtzVtmHs/au0+6wlfhBMz4aNYvq+LHRV5q2
-	 gv6KtecQaOhkfJULGMz2+FDZv7VFYUKI5FZ7Zohw3eyHTOSgfYOajOo1zeQg1YCeNJ
-	 T6NPM3G0b14qJRD9zyims+nZnorL+VT42Ods+ugd7rDnac4vBkhEnSKwAbET3unygU
-	 3aG59ZcAJjtSsTCZ0yp4kA4fo/YeRQFvXKhs+sv5nWyk2YbZpr9U9tXZsqAXSLz+kR
-	 eZswZ/Ir2GO5iCwWPEz6oLC6JMoZDGciwyqQ3S++9pp3BayIGL5b2GJOlXbYyhnifP
-	 8BV+Owrpj3JfQ==
-Message-ID: <88c8b17b1fe7db8215ec4a7aebc4893d8c15574b.camel@kernel.org>
+	b=ZUypFd7KoJTt6ciRxtUC9jrczalpgmfkywg78hX/uw70HMOdYRJvi1MrvNaNFtoyQ
+	 SwP1pmC7h0qTG9cflCbihHu3KvE+afk/uMM1uyjwFNn6513WRfY0o+Sw4ygq8697SQ
+	 2CHTRxh/auTatUA1IeFyQHXybPygOaOo3s5Z4gSE2UTCNUSkoV6GeoDaKxQQ07Fe7u
+	 jlq2yEBZD2K5tWKaiklQY10w6caviWlC2LORLpLHGoQ86TwkIvuoEprTl47FaFrSGw
+	 3qrH3nowlU0LmQzbd86Iql/dZPt5xnHhEDiaE9rbC7HjvQZ4aIWnaXiYd6l9HSkbE3
+	 0pYViLBKNVEKA==
+Message-ID: <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
 Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into
  timekeeper
 From: Jeff Layton <jlayton@kernel.org>
-To: John Stultz <jstultz@google.com>
+To: Arnd Bergmann <arnd@kernel.org>, John Stultz <jstultz@google.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
  <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas Gleixner
- <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann
- <arnd@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  kernel test robot <oliver.sang@intel.com>
-Date: Wed, 11 Sep 2024 16:19:23 -0400
-In-Reply-To: <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
+ <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel test
+ robot <oliver.sang@intel.com>
+Date: Wed, 11 Sep 2024 16:43:02 -0400
+In-Reply-To: <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
 References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
 	 <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
+	 <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -139,216 +140,49 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2024-09-11 at 12:55 -0700, John Stultz wrote:
-> On Wed, Sep 11, 2024 at 5:57=E2=80=AFAM Jeff Layton <jlayton@kernel.org> =
-wrote:
-> >=20
-> > The kernel test robot reported a performance regression in some
-> > will-it-scale tests due to the multigrain timestamp patches. The data
-> > showed that coarse_ctime() was slowing down current_time(), which is
-> > called frequently in the I/O path.
+On Wed, 2024-09-11 at 20:19 +0000, Arnd Bergmann wrote:
+> On Wed, Sep 11, 2024, at 19:55, John Stultz wrote:
+> > > diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> > > index 5391e4167d60..56b979471c6a 100644
 >=20
-> Maybe add a link to/sha for multigrain timestamp patches?
+> > My confusion comes from the fact it seems like that would mean you
+> > have to do all your timestamping with CLOCK_MONOTONIC (so you have a
+> > useful floor value that you're keeping), so I'm not sure I understand
+> > the utility of returning CLOCK_REALTIME values. I guess I don't quite
+> > see the logic where the floor value is updated here, so I'm guessing.
 >=20
-
-Sure. This is the latest posting:
-
-https://lore.kernel.org/linux-fsdevel/20240715-mgtime-v6-0-48e5d34bd2ba@ker=
-nel.org/
-
-The patches are in the vfs.mgtime branch of Christian's public tree as
-well.
-
-> It might be helpful as well to further explain the overhead you're
-> seeing in detail?
+> I think we could take this further and store the floor value
+> in the timekeeper itself rather than in a global variable
+> next to the caller.
 >=20
-
-I changed current_time() to call a new coarse_ctime() function. That
-function just calls ktime_* functions, but it makes 2 trips through
-seqcount loops. Each of those implies a smp_mb() call.
-
-This patch gets that down to a single seqcount loop.
-
-> > Add ktime_get_coarse_real_ts64_with_floor(), which returns either the
-> > coarse time or the floor as a realtime value. This avoids some of the
-> > conversion overhead of coarse_ctime(), and recovers some of the
-> > performance in these tests.
-> >=20
-> > The will-it-scale pipe1_threads microbenchmark shows these averages on
-> > my test rig:
-> >=20
-> >         v6.11-rc7:                      83830660 (baseline)
-> >         v6.11-rc7 + mgtime series:      77631748 (93% of baseline)
-> >         v6.11-rc7 + mgtime + this:      81620228 (97% of baseline)
-> >=20
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202409091303.31b2b713-oliver.san=
-g@intel.com
->=20
-> Fixes: ?
-
-Sure. But as I said, this is not in mainline yet:
-
-    Fixes: a037d5e7f81b ("fs: add infrastructure for multigrain timestamps"=
-)
-
->=20
-> > Suggested-by: Arnd Bergmann <arnd@kernel.org>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > Arnd suggested moving this into the timekeeper when reviewing an earlie=
-r
-> > version of this series, and that turns out to be better for performance=
-.
-> >=20
-> > I'm not sure how this should go in (if acceptable). The multigrain
-> > timestamp patches that this would affect are in Christian's tree, so
-> > that may be best if the timekeeper maintainers are OK with this
-> > approach.
-> > ---
-> >  fs/inode.c                  | 35 +++++++++--------------------------
-> >  include/linux/timekeeping.h |  2 ++
-> >  kernel/time/timekeeping.c   | 29 +++++++++++++++++++++++++++++
-> >  3 files changed, 40 insertions(+), 26 deletions(-)
-> >=20
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 01f7df1973bd..47679a054472 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -2255,25 +2255,6 @@ int file_remove_privs(struct file *file)
-> >  }
-> >  EXPORT_SYMBOL(file_remove_privs);
-> >=20
-> > -/**
-> > - * coarse_ctime - return the current coarse-grained time
-> > - * @floor: current (monotonic) ctime_floor value
-> > - *
-> > - * Get the coarse-grained time, and then determine whether to
-> > - * return it or the current floor value. Returns the later of the
-> > - * floor and coarse grained timestamps, converted to realtime
-> > - * clock value.
-> > - */
-> > -static ktime_t coarse_ctime(ktime_t floor)
-> > -{
-> > -       ktime_t coarse =3D ktime_get_coarse();
-> > -
-> > -       /* If coarse time is already newer, return that */
-> > -       if (!ktime_after(floor, coarse))
-> > -               return ktime_get_coarse_real();
-> > -       return ktime_mono_to_real(floor);
-> > -}
->=20
-> I'm guessing this is part of the patch set being worked on, but this
-> is a very unintuitive function.
->=20
-> You give it a CLOCK_MONOTONIC floor value, but it returns
-> CLOCK_REALTIME based time?
->=20
-> It looks like it's asking to be misused.
+> And instead of storing the absolute floor value, it would
+> be enough to store the delta since the previous
+> update_wall_time(), which in turn can get updated by a
+> variant of ktime_get_real_ts64() and reset to zero during
+> update_wall_time().
+>
+> timespec64_add_ns() over the traditional version, and the
+> fine-grained version needs to atomically update that value.
+> If the delta value has to be a 64-bit integer, there also
+> needs to be some serialization of the reader side, but I
+> think that can be done with read_seqcount_begin() .
 >=20
 
-I get your point, but I think it's unavoidable here, unfortunately.
+I think we'd have to track this delta as an atomic value and cmpxchg
+new values into place. The zeroing seems quite tricky to make race-
+free.
 
-> ...
-> > diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> > index 5391e4167d60..56b979471c6a 100644
-> > --- a/kernel/time/timekeeping.c
-> > +++ b/kernel/time/timekeeping.c
-> > @@ -2394,6 +2394,35 @@ void ktime_get_coarse_real_ts64(struct timespec6=
-4 *ts)
-> >  }
-> >  EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
-> >=20
-> > +/**
-> > + * ktime_get_coarse_real_ts64_with_floor - get later of coarse grained=
- time or floor
-> > + * @ts: timespec64 to be filled
-> > + * @floor: monotonic floor value
-> > + *
-> > + * Adjust @floor to realtime and compare that to the coarse time. Fill
-> > + * @ts with the later of the two.
-> > + */
-> > +void ktime_get_coarse_real_ts64_with_floor(struct timespec64 *ts, ktim=
-e_t floor)
->=20
-> Maybe name 'floor' 'mono_floor' so it's very clear?
->=20
+Currently, we fetch the floor value early in the process and if it
+changes before we can swap a new one into place, we just take whatever
+the new value is (since it's just as good). Since these are monotonic
+values, any new value is still newer than the original one, so its
+fine. I'm not sure that still works if we're dealing with a delta that
+is siding upward and downward.
 
-Sure. Will do.
+Maybe it does though. I'll take a stab at this tomorrow and see how it
+looks.
 
-> > +{
-> > +       struct timekeeper *tk =3D &tk_core.timekeeper;
-> > +       unsigned int seq;
-> > +       ktime_t f_real, offset, coarse;
-> > +
-> > +       WARN_ON(timekeeping_suspended);
-> > +
-> > +       do {
-> > +               seq =3D read_seqcount_begin(&tk_core.seq);
-> > +               *ts =3D tk_xtime(tk);
-> > +               offset =3D *offsets[TK_OFFS_REAL];
-> > +       } while (read_seqcount_retry(&tk_core.seq, seq));
-> > +
-> > +       coarse =3D timespec64_to_ktime(*ts);
-> > +       f_real =3D ktime_add(floor, offset);
-> > +       if (ktime_after(f_real, coarse))
-> > +               *ts =3D ktime_to_timespec64(f_real);
->=20
->=20
-> I am still very wary of the function taking a CLOCK_MONOTONIC
-> comparator and returning a REALTIME value.
-> But I think I understand why you might want it: You want a ratchet to
-> filter inconsistencies from mixing fine and coarse (which very quickly
-> return the time in the recent past) grained timestamps, but you want
-> to avoid having a one way ratchet getting stuck if settimeofday() get
-> called.
-> So you implemented the ratchet against CLOCK_MONOTONIC, so
-> settimeofday offsets are ignored.
->=20
-> Is that close?
->=20
-
-Bingo.
-
-> My confusion comes from the fact it seems like that would mean you
-> have to do all your timestamping with CLOCK_MONOTONIC (so you have a
-> useful floor value that you're keeping), so I'm not sure I understand
-> the utility of returning CLOCK_REALTIME values. I guess I don't quite
-> see the logic where the floor value is updated here, so I'm guessing.
->=20
-
-The floor value is updated in inode_set_ctime_current() in the
-multigrain series. The comments over that hopefully describe how it
-works, but basically, once we determine that we need a fine-grained
-timestamp, we fetch a new fine-grained value and try to swap it into
-ctime_floor. After that, we convert it to a realtime value and try to
-swap the nsec field into the inode's ctime.
-
-The conversion is a bit expensive, but the multigrain series takes
-great pains to only update the ctime_floor as a last resort. It's a
-global value, so we _really_ don't want to write to it any more than
-necessary.
-
-> Further, while this change from the earlier method avoids having to
-> make two calls taking the timekeeping seqlock, this still is going
-> from timespec->ktime->timespec still seems a little less than optimal
-> if this is a performance hotpath (the coarse clocks are based on
-> CLOCK_REALTIME timespecs because that was the legacy hotpath being
-> optimized for, so if we have to internalize this odd-seeming reatime
-> against monotonic usage model, we probably should better optimise
-> through the stack there).
->=20
-
-The floor is tracked as a ktime_t, as we need to be able to swap it
-into place with a cmpxchg() operation. I did originally try to use
-timespec64's for everything, but it was too hard to keep everything
-consistent without resorting to locking.
-
-That said, I'm open to suggestions to make this better. I did (briefly)
-look at whether moving the floor tracking into the timekeeper wholesale
-would be better, but it didn't seem to be.
-
-Thanks for taking a look!
+Thanks for the suggestion!
 --=20
 Jeff Layton <jlayton@kernel.org>
 
