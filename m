@@ -1,152 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-29087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9AD974F94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 12:22:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6B8974FB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 12:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168AB1F251A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 10:22:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9542628390F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 10:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F793185929;
-	Wed, 11 Sep 2024 10:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579AD1714A1;
+	Wed, 11 Sep 2024 10:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rsXjj1Q6"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="W0oLynTp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XMJWC/RQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0849F184532
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 10:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293AE39AEB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 10:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726050113; cv=none; b=Xp9qeLtwNiYMoD9pZlVpW1lUxobJGzJaKwTiCYttFBRjzyiJN9AjQRxys3uaiwVRu55ulLeseAgSbtPWkCzVDmBSWcmrnHquAI/y3QNiJhi/JWbFCahAbaKKzsiK5gsfCtmU0hJc0ShqLy0OO5fsqpaI/0H4g7gZ8x1PbhxuukI=
+	t=1726050675; cv=none; b=oXRN6+QL4gpeCbae1AWAr2Ha4/+hfo3QcHr7haE1pYlKzP7CT5IqymhvzpFLLLBjCEAYyT0kXmUJVU+/j9xiett3jHXrBXcflkqPDasddSBdBFXCCkaVxIlgD7blK9zMfvQTKyFhStfZ/I62Y6YVJoWBdmbTaish5NL+aNY+ezM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726050113; c=relaxed/simple;
-	bh=mr0gz1FSc1K2UXU4kEG9zILcUyo3Tq0Kk043zF608MI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AqIvVPxqORYYlQeug1tMKJ1O4wPy0mzsoRbtNrHShx912Lx24/dzc9CNCQMiW2TRddQTHECg3ZUVDZvnzo3m89XvAJsqyhVy5hIcqXPGGtPGxkRPta5cLRosqRe2Mo2ESBsnlzQzaQPEtLWPW/ALV7iYGGr/kEYSpf1fLcMd/5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rsXjj1Q6; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso4603205e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 03:21:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726050110; x=1726654910; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6BuTh53TE9K9HCjvvYs/rolmKouQpt1tPRtQPMElXlo=;
-        b=rsXjj1Q6Y5vW+ja11nv9xa2F3TFE7ZR3QOWS5oheF47Gwkn4Bl+L3lMS9BVi9F8dwp
-         NtuOLfztkK4tfbrJqZs1/wPS1tVeXrHizYSxQh1RDVL7BVZxw8uHbC2sZcezV+oo0x+J
-         J8OUC9/1rUYjznOEJ0UrBnrcr5pwTaj9QbM5Qhz+bDEbSKhONzcml7JWX1s7UqH4PMHS
-         p0DhR/UX4I4q0ksGvcz4R3aT/wiHSczChtRIbtVAMtJlVd2uYwV7GjI7riW8D5efOHPO
-         T2CzowqwRerb6uGTk75bs0D1LtiNKndGrVdZwiif9zjes3RCDMboKRpUFp1qX2iS+c4z
-         hc4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726050110; x=1726654910;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6BuTh53TE9K9HCjvvYs/rolmKouQpt1tPRtQPMElXlo=;
-        b=nUZg2tNsJypOe3Kq694tItj0fguAELBvZzl9k39goPG1kotwFQSy/YUSne5Xi2wV7U
-         FTqOyUxXpkSEKyg2V0V4MXYl33j5TkxWw7hxWyKh0U8bSS/2JQ1ZMJfz9ZJKhpT6s/Gd
-         sPGXo7cW2/JeJlqjPFolzLVzVM7DRd/yXkdRkpq1IfSA3w9aJvEU5ypOX8kEro4N344I
-         CnWNtvXozLssclbzsjyb9QlO9UQCL3ZSH+vC8FN7cW7Di19UAoxjF/Capf4dZbfqOUZY
-         +goJ5LWpsn9p6xthUbs5PbgLR9a10FRWT9GmaB1aRNhJ2bTuFU3HkW8yYZaUBnQ4TEj5
-         xieg==
-X-Gm-Message-State: AOJu0Ywe3L+o85qTg4fnk8uo4OMxPqSFYzfs0M0sNbPUlvp6uKjNWw7T
-	KiyCeSB6oWd1EPhrFd5Bgv2Ep2+E3z/L1CGZWHnx6kGSIdJs/kB982c4MjJm9bU=
-X-Google-Smtp-Source: AGHT+IETZ/bkOH0t8yV6R9XtBPjzeIuwvds/lqaOJNdrRjZxe9OxYZvnt3qYUq8l9sTMRAABmPoXuQ==
-X-Received: by 2002:a05:600c:310e:b0:42c:b68f:38fb with SMTP id 5b1f17b1804b1-42cbddd6d0amr38226705e9.7.1726050110307;
-        Wed, 11 Sep 2024 03:21:50 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb81ac0sm139538645e9.34.2024.09.11.03.21.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 03:21:49 -0700 (PDT)
-Date: Wed, 11 Sep 2024 13:21:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: [bug report] fs/proc/task_mmu: implement IOCTL to get and optionally
- clear info about PTEs
-Message-ID: <3a4e2a3e-b395-41e6-807d-0e6ad8722c7d@stanley.mountain>
+	s=arc-20240116; t=1726050675; c=relaxed/simple;
+	bh=4HtMSf90pkWGRf9S127bizU7iKMzn0jEnuM3MA4yZg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AL+YJeAndvL9s5EjAlfArDH9CgnRz84HXW2ZsMcQ/40Yy7kO6M8IMmXmCzEhtntDBGMJkqngD87VorqgZ0sD61HmMpAZotnEky07THidOn52vJDWfpNvRb1zLDZix+TEg6Dc+p8OPe6eH5yv9Dw+Dn+6URn/ciVVTjL/myPO/Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=W0oLynTp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XMJWC/RQ; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4077013800FA;
+	Wed, 11 Sep 2024 06:31:12 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Wed, 11 Sep 2024 06:31:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1726050672;
+	 x=1726137072; bh=Nb4nKR6WT4BOv5UiZhTWIfiWJCloDNufWKEUthUix/w=; b=
+	W0oLynTp9vHEJLcNm02V6c0VwGB1FqjOCyPchXZVzNMyhWdJOvu4Eko5mLewkgfR
+	4e6I8LHc0d0cPtQNGxPkMv/RMRFGJBLQCY9zqyT8WeVkP+TGQk7+dEoCYXkgNmsS
+	opuyEH4luYDyrFoeN3C0phmBU2pFKWV+Wb4F5J5y45j2qbxVe5Dsx/W8/gCBLGtR
+	e2EJ8sNW5KU/WpkFlQ7b1/KMOd2OJqafWhbeZZepCox71NTbkdNj3sc66Fj8s2SN
+	iohG0HS07jrXDBstbd85p3gIzvrwoEXOtBnx8klRIVczr0kTSv0/mfwRp+ANwjjt
+	o9RwRw28uyAzEemXpNT8NQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726050672; x=
+	1726137072; bh=Nb4nKR6WT4BOv5UiZhTWIfiWJCloDNufWKEUthUix/w=; b=X
+	MJWC/RQhM8EYsrvncwc+a5UTgQnp0pT/5GYKkA0O5jZAnMxtTWVVCgHiw02UHxLx
+	9bDzQ9WvmZTARPxBugrHYpv9aO3abmILft3EowiapjzI2J6RgVJRgsa3RlR0YUrW
+	Whewt/I5Z+HRtKRl0j5GwEPKHjKD5XxaCNickHqQfP77pks8WHIhzvNaTEwJOw+Y
+	f4ftXt7ZNivdx2YzDcyDcIEskDcXhmcVi3lF7ntS82boUHNKtH4Aa62OIhBOWoCs
+	q8eplkESwt8d1Ey6niMp0jxJ84vEFS/vjl0oUqbJSxzoIbmRhivppBaX0MP32dL3
+	diQh5jAxnPgx2VFlzL94Q==
+X-ME-Sender: <xms:b3HhZhCxVOp1MNsJhG5vqGQuwsU6chQUk45AbijnpjfA4RwizvzRMg>
+    <xme:b3HhZvjf2T_S-BqQlfweFT83EkMcnD5ZtQ67fP9SV8ak4F_idJmr41fwAUJtAeibM
+    vna-g792LMBVsyv>
+X-ME-Received: <xmr:b3HhZsmE_W4IlEySl8Smu7J0xBGpLStTskhiFr9GCpZ1ihEBXH_mbGpfejZSyy9qu5b-BsM7rFtdduROSs-aVikxzqnTf0FuWGiyemaX00Gx-x941phO>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepleeffeeljeeijeef
+    udehleeltdfgleehueetieetheffjeefvdfghfejfeeiieevnecuffhomhgrihhnpegsoh
+    hothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsg
+    gprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhrghnfigv
+    nhhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmh
+    grihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhu
+X-ME-Proxy: <xmx:b3HhZryLbQMVhPh9XrlsbTTWh7PYEUbYLIXimtIoQGzeT5FzzXnrzg>
+    <xmx:b3HhZmQrw_YBONrOpe-KrSfGoiA1i1sQWeYkggi1tKh4KA7T_fvyUg>
+    <xmx:b3HhZubtK6PNEnQod1-3ryMPufi4lVGkNvzqRFVOzHMBJd1rIArTDA>
+    <xmx:b3HhZnSAFii6oa88VK7sF5IY5YA1S8EkD9Xj54RyihAIDiywLUcFbw>
+    <xmx:cHHhZsMpZBYAket3WS2g-WOxPR2f6woiJY3BzH729TW21xok5xVw2d_D>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Sep 2024 06:31:11 -0400 (EDT)
+Message-ID: <be572f0c-e992-4f3f-8da0-03e0e2fa3b1e@fastmail.fm>
+Date: Wed, 11 Sep 2024 12:31:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Interrupt on readdirplus?
+To: Han-Wen Nienhuys <hanwenn@gmail.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
+ Miklos Szeredi <miklos@szeredi.hu>
+References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
+ <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm>
+ <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
+ <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
+ <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com>
+ <0a122714-8835-4658-b364-10f4709456e7@fastmail.fm>
+ <CAOw_e7YvF5GVhR1Ozkw18w+kbe6s+Wf8EVCocEbVNh03b23THg@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAOw_e7YvF5GVhR1Ozkw18w+kbe6s+Wf8EVCocEbVNh03b23THg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Muhammad Usama Anjum,
 
-Commit 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and
-optionally clear info about PTEs") from Aug 21, 2023 (linux-next),
-leads to the following Smatch static checker warning:
 
-	fs/proc/task_mmu.c:2664 pagemap_scan_get_args()
-	warn: potential user controlled sizeof overflow 'arg->vec_len * 24' '0-u64max * 24' type='ullong'
+On 9/11/24 12:07, Han-Wen Nienhuys wrote:
+> On Wed, Sep 11, 2024 at 11:51 AM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>> If I don't ignore the offset, I have to implement a workaround on my
+>>> side which is expensive and clumsy (which is what the `mustSeek`
+>>> variable controls.)
+>>>
+>>
+>> That is the part I still do not understand - what is the issue if you do
+>> not ignore the offset? Is it maybe just the test suite that expects
+>> offset 25?
+> 
+> Not ignoring the offset means that I have to be prepared to support
+> some form of directory seeks.
+> 
+> Directory seeking is notoriously difficult to implement in general, so
+> few if any users have actually done this. If you don't have to support
+> directory seeks, a FS can just compile a list of entries on the
+> OPENDIR call, which the library can then return piecewise. This is not
+> correct enough to export the FS over NFS, but this works well enough
+> for almost any other application.
+> 
+> I can probably kludge up something if I remember what I sent in the
+> last readdirplus call, but then I would like to be really sure that I
+> only have to deal with the last READDIRPLUS call (or READDIR as well?
+> not sure.) having to be redone.
+> 
+> Besides being annoying to write, the kludge also takes up memory and
+> time on every call of readdirplus.
+> 
 
-fs/proc/task_mmu.c
-    2637 static int pagemap_scan_get_args(struct pm_scan_arg *arg,
-    2638                                  unsigned long uarg)
-    2639 {
-    2640         if (copy_from_user(arg, (void __user *)uarg, sizeof(*arg)))
+Ok, it was a bit hard to extract that information. Basically kernel
+behavior doesn't match your expectations and causes overhead. As I wrote
+in the evening, I think the behavior comes from static bool filldir64()
+(or other filldir functions) in fs.readdir.c. Oh, I just notice I had
+posted the wrong line, correct one should be here
 
-arg comes from the user
+https://elixir.bootlin.com/linux/v6.10.9/source/fs/readdir.c#L350
 
-    2641                 return -EFAULT;
-    2642 
-    2643         if (arg->size != sizeof(struct pm_scan_arg))
-    2644                 return -EINVAL;
-    2645 
-    2646         /* Validate requested features */
-    2647         if (arg->flags & ~PM_SCAN_FLAGS)
-    2648                 return -EINVAL;
-    2649         if ((arg->category_inverted | arg->category_mask |
-    2650              arg->category_anyof_mask | arg->return_mask) & ~PM_SCAN_CATEGORIES)
-    2651                 return -EINVAL;
-    2652 
-    2653         arg->start = untagged_addr((unsigned long)arg->start);
-    2654         arg->end = untagged_addr((unsigned long)arg->end);
-    2655         arg->vec = untagged_addr((unsigned long)arg->vec);
-    2656 
-    2657         /* Validate memory pointers */
-    2658         if (!IS_ALIGNED(arg->start, PAGE_SIZE))
-    2659                 return -EINVAL;
 
-We should probably check ->end here as well.
+As you can see, that is fs/readdir.c - not fuse alone. And I guess it is
+right to stop on a pending signal. For me a but surprising that the
+first entry is still accepted and only then the signal is checked.
+One option would be to ignore that signal in userspace before readdir
+and to reset after that?
 
-    2660         if (!access_ok((void __user *)(long)arg->start, arg->end - arg->start))
 
-Otherwise we're checking access_ok() and then making ->end larger.  Maybe move
-the arg->end = ALIGN(arg->end, PAGE_SIZE) before the access_ok() check?
-
-    2661                 return -EFAULT;
-    2662         if (!arg->vec && arg->vec_len)
-    2663                 return -EINVAL;
---> 2664         if (arg->vec && !access_ok((void __user *)(long)arg->vec,
-    2665                               arg->vec_len * sizeof(struct page_region)))
-
-This "arg->vec_len * sizeof(struct page_region)" multiply could have an integer
-overflow.
-
-arg->vec_len is a u64 so size_add() won't work on a 32bit system.  I wonder if
-size_add() should check for sizes larger than SIZE_MAX?
-
-    2666                 return -EFAULT;
-    2667 
-    2668         /* Fixup default values */
-    2669         arg->end = ALIGN(arg->end, PAGE_SIZE);
-    2670         arg->walk_end = 0;
-    2671         if (!arg->max_pages)
-    2672                 arg->max_pages = ULONG_MAX;
-    2673 
-    2674         return 0;
-    2675 }
-
-regards,
-dan carpenter
+Thanks,
+Bernd
 
