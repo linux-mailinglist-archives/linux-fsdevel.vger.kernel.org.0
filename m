@@ -1,130 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-29066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5805B974793
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 02:50:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104CA9747A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 03:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01C8C1F25E3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 00:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314121C25ABB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 01:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E0018C3E;
-	Wed, 11 Sep 2024 00:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0332231C;
+	Wed, 11 Sep 2024 01:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="PfU+CRym"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IUymFC0G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE63BBA20;
-	Wed, 11 Sep 2024 00:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726015793; cv=none; b=fGvvG5NDrKrcdBm0kf/6PaYPl9sz3mCHAdMmrLorqBvd8WR4BoGjyce03HQZL78kDunPUGWse8/mzTCmx9Iiw76Q0929HHsk/mw7dWlzknToikwFaFu8VgMSkv5P7CsYwoCI1PifmUAtNXGDQm1iU20xrA8rDtCefutogk8Omk4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726015793; c=relaxed/simple;
-	bh=dH7fv14lgnC0D0A5OnxBGGxWTkAjfmvEzxeklRot7jA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Subject; b=J4urWD9EEVnvFtLwxlG/iRZNMXXEkyRg/u22lGDm0rk43AcI8HcgF7qsOapRqprm5+m3F+YKIG+9VpS/oO7k+GJvxhbm3JePIxFykA11JFRjM/araytNFymkEhfWdH9nIsuaeEcdJnUJUIg90iHi3oL5ORVtm+je8pyOTS4fPC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=PfU+CRym; arc=none smtp.client-ip=204.191.154.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
-	MIME-Version:Date:Message-ID:content-disposition;
-	bh=nTtMb9H3dXUpUSnSef+Be8oMvAgnwIOToyszkwVy8e4=; b=PfU+CRymWcXZGU8mYwkDuJY5Nt
-	KxhnN6hTdnUpKK6c3FLfnreXMcwDl5uXgI0f+QVr9IAL/a7U4alJzvox0Hu/jx8FdVvfCvk6K23RF
-	lK8vn7f2TcsKwePi8XAAm+Do+v3+uwGtpS1ailTPFQB4bfs203NzQnnCCUXb/sMVlet5HU1E6m9vy
-	zcwHt8C4DgCDQe3olE14BG0oSvKMkpTZrdceJIxDReKKpwni+aYI+Z20uWIsMZDYZ8HVFkh+hCtJv
-	YV4oSurTolqbMlZJN15P2PVDkvC2Zg5xnEPszFLT8tR9OOrTm8xYZG/nJd2oKo02MXEmzvmD9xZuB
-	l6TfHBVA==;
-Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
-	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <logang@deltatee.com>)
-	id 1soBXi-000ozM-2O;
-	Tue, 10 Sep 2024 18:49:11 -0600
-Message-ID: <6f3402ae-01ad-4764-8941-f88bc77f5227@deltatee.com>
-Date: Tue, 10 Sep 2024 18:48:48 -0600
-Precedence: bulk
-X-Mailing-List: linux-fsdevel@vger.kernel.org
-List-Id: <linux-fsdevel.vger.kernel.org>
-List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
- linux-mm@kvack.org
-Cc: vishal.l.verma@intel.com, dave.jiang@intel.com, bhelgaas@google.com,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5CD18651;
+	Wed, 11 Sep 2024 01:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726017116; cv=fail; b=VcppMR1Jf/SDM5u6O6VklRL3fBJIiy5Xg2xb44dADtJt18MnM9A1IHGjhpxK7m/l72L0Q3S/JNNYBLgBUChCqUoq52Ryy5n3JxX5IMXue/BlXZX0HKjdi2TcUaqdesf/2gES0ALmpVFhsLaWau2oV29EVlSW44RAfYE8va2Wukc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726017116; c=relaxed/simple;
+	bh=U85KwBnTU9HHu/CcNG5RWLu1N3PWgRAeF9aHSfINjXI=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=TrulhA0Nfh9+oQTG703nQEqPREP77ZH3MEh5SfgCXu87jjvwEtQN/hndxGAbEhL/gJtghPN52hYI5aSTVCaB1XYyDdURnnstCStCTdsPWQkJjs/9zG7WHzjm2GwPxjGJzZMbMGwZ0HPQYI/3LlLZcckCAEMxlrdwllXuRV60mDM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IUymFC0G; arc=fail smtp.client-ip=40.107.237.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HaoR9j25RA3zd89Ta/t8HgRjIcf11Id//ry/WailMwYUndq60whpXiY1ksrthUFBp1Shs5/aQcXTAsp4kSKTVHmd5PyzwIiHXZ+a61mzNSe1MoWU+ITT3L3cx4ZCU/4YF9K/yNYBro3mHSCvfEa2+8UElPpwLYrI5R9spTX4cD4vu/JJcB5jdYFMlyLS0OZfKHetT91i2sKex9eShU6/haV5zkmGXeC0VtMKpliXkUBVercYhKLFLfSphhXFsriL6r3ZNkM3oGDKE4Ly8m7FOl2WXo8iuZBL0kbXhkg/qq5LQCyx3//PTkA1VYFXsdnFtYn+pSWQe51DR4KL5OJkEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LNGFiracZQdbq+3bCmMY9lvhPx98OOObsHzcjX8Os7Y=;
+ b=bKcsVZidMoK9MNYaDvH2J37oSSdjhDG+Z4688ngACjrWDhDdWDtFdgxkWfpbXGxVOZPAj6/9KOKppxHq1BOcvxKSjTJtSSn47Ku8wG4muLDFKHc6dk0yhb8w5LALfhZCgJxxXiT/om9L1RgYezSNWbmXoBHmRGVR75t1OD46rKqrOJsuZRC+VPZJYgzSbza+WB8JkaQfM1s2yhVWlDbF4OjDFDLbTMfgTxykWHQX69ulyD14DHOqCTUnV9U/IzAaxZi2xMPjy40Mr9WxajEzxDFA+5AvfVQo4pWItlJSH73iFAH0AQjOSfonBQKc+fhP3CeCSK0R1iIdcjnKjcwAdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LNGFiracZQdbq+3bCmMY9lvhPx98OOObsHzcjX8Os7Y=;
+ b=IUymFC0G9I1F64I8vQ1UwDMO+Fuw2OZxNI46zUNd66tt7/rHBRKOvLbaLDiEdCzhqzDh4nq9UT6TtDacW/6nRdGfsaYfQ7fvMzvxZp4s6UMiOamrkkQYXhq4FnbrMAVQeVXA9RgBrmfLThWqu64tLMxbduDKRfVgAKrMaA82Efp5ejTmlVKx+8otaxY3Kh0A/aTetzue0d68Uj5InAqJUIhIMTHjkCLIUNRnbKcnti5VKFU86anCagLE96Veb+FzR4ii89VanjMV0vgQS39g1iVGpegLNMrc95+9pRvl+mfzc6JMYEYz5ZUNtTIHYzASMaD+aL2a1Z8o51w5rqKtjw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ PH7PR12MB5734.namprd12.prod.outlook.com (2603:10b6:510:1e1::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7962.17; Wed, 11 Sep 2024 01:11:50 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.7962.016; Wed, 11 Sep 2024
+ 01:11:50 +0000
+References: <4f8326d9d9e81f1cb893c2bd6f17878b138cf93d.1725941415.git-series.apopple@nvidia.com>
+ <20240910134745.GA577955@bhelgaas>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com,
+ dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
  jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
  mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
- ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
- linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+ ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
+ tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
  nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
  david@fromorbit.com
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <4f8326d9d9e81f1cb893c2bd6f17878b138cf93d.1725941415.git-series.apopple@nvidia.com>
-Content-Language: en-CA
-From: Logan Gunthorpe <logang@deltatee.com>
-In-Reply-To: <4f8326d9d9e81f1cb893c2bd6f17878b138cf93d.1725941415.git-series.apopple@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 104.157.31.28
-X-SA-Exim-Rcpt-To: apopple@nvidia.com, dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com, dave.jiang@intel.com, bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Level: 
 Subject: Re: [PATCH 02/12] pci/p2pdma: Don't initialise page refcount to one
-X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Date: Wed, 11 Sep 2024 11:07:51 +1000
+In-reply-to: <20240910134745.GA577955@bhelgaas>
+Message-ID: <87r09rgfjj.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY5P282CA0057.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:20a::9) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
+Precedence: bulk
+X-Mailing-List: linux-fsdevel@vger.kernel.org
+List-Id: <linux-fsdevel.vger.kernel.org>
+List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|PH7PR12MB5734:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ac3c709-a737-40e2-d939-08dcd1feb700
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cBDBIrJ8OrLjAsWuHRNYw2uKW0jIq3VA6xb4XmP6tbTuVxJ3S1bK1hFbMjsK?=
+ =?us-ascii?Q?LMyuzab6b/wDavmzXe2vUXudYsY7cy+WpBf/os8/FuU9j3CsQc1Tf+ZBlHvj?=
+ =?us-ascii?Q?rYgPdoNPxLgw+m0Yjk5cut0A5yb5B8ya4Bjso6WJoAGQ0qfDSq0qzJK6m2oL?=
+ =?us-ascii?Q?jSwNpMfIhK8+vBV/HXPhmqJq99ighx7uBBmZVLY/4b8DucBfiamUYssVjiKS?=
+ =?us-ascii?Q?5RZDWvn35xgWLQDy+QpA4wIzlqiT7/bKWc+jl6SKL8OYmSI7MYp6ffOfGSv0?=
+ =?us-ascii?Q?qH7AhOivR+4nVMwOZ9mk0aYEsKLQMc0AnS9sspb8mTZLdacVuiqmd5Rlmw1l?=
+ =?us-ascii?Q?pwDdt4Od06WhCJ9QtIXaYvLPtFRidS0BFPujnaWjpK5G+X2/IqMnq5S7m8ot?=
+ =?us-ascii?Q?w7QD8NBpOv1RFTm0ktTBP4+wdQfo1OjYe8L57jHTBU6090yoqgIrGns73XEE?=
+ =?us-ascii?Q?Y4Dc1qDnowHp+RTSR43VkxfRxde5pNEobVbxNyAEkU5zE7hm1qfzB0GvZCRj?=
+ =?us-ascii?Q?oa0Xw9XadTTlmZAFkOScMXGuhh3l9k1jn3CEQH13SHi9iRMi2Jt2n/P4akW+?=
+ =?us-ascii?Q?vh6MlZUDI9nDc6q2vKIP7MehPoTV1zjLKCQoS9tAQtQf8Ulop+LCxlPQkHzs?=
+ =?us-ascii?Q?gwuyzKoMw50Iz0HFixDQW48qs90cD1KEdNK5mc1acYlGmchKzlpLMlkbUg6h?=
+ =?us-ascii?Q?I+Wl8L3mRPhPebGJBieDXvbQr5TmVVRyKtQ1vEc+gTkcUVIMV0gBbHkR7cOV?=
+ =?us-ascii?Q?UCMHEerqEULafJyrUonDKKaRWNmzVAl5pnfpYlq3IUHtMMMDYd61/n+R2Ipt?=
+ =?us-ascii?Q?xa9b4pljSDviyaUjYez0XiAY/1H9llUK26zMDe5ZJARFBdYKpaxJtySxzHpP?=
+ =?us-ascii?Q?gKqvbPp49OagAPNBwpWI3qhmDByUWU6R28XECphgIx7YenWXqOoyArvOhaza?=
+ =?us-ascii?Q?b/yt+jWa7c0hQ5puWKV1Tx7LhPdL95jFxvxNN897N8lYIaQHYTmSTmshSGTr?=
+ =?us-ascii?Q?d0v7BhSJwXevGxJD7RYscPFqRj2MbH4d6GpP8+gLqtffPqD87hRUjgJKtSmO?=
+ =?us-ascii?Q?EahuquTAfCWRc6N1r4DbaONgkvazCET5oMhlGvuh2/zR/YMI+/glgwfulB/7?=
+ =?us-ascii?Q?DVCgZODZ4PbQl/sG6MIviaDMAzf+llJtAjQ3xomsDzf3RGlq1n/EgW0ybiRX?=
+ =?us-ascii?Q?wDtnpksb4kF85Bt24vJGKbWDZ81+lVtxKCoz06GjhDY+q9WH8gW/IBQN1Zkl?=
+ =?us-ascii?Q?UhJ6a2DknDpAbT3+CpfdWFLIWFdvMApPuyBFTvIoLlg1vRdDem1f91Ab291W?=
+ =?us-ascii?Q?2v9/pLMiiHYYSu6HO5r5Q280KifVl0trnt09GLniin44OA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vbPvEpJFm4+Qoc5RrhjWhwh2PYX3edGwwOy2CsC28qkO4qePg7ktorQOpMFl?=
+ =?us-ascii?Q?L514MjYJ6catUT9uz8HRLvKHE+UZmDeHKmB5B28Lpv7cX+ltU035Zb9AwA/n?=
+ =?us-ascii?Q?wd8e0f96g1adyl73b6mfnNDwQyWb8IDZL6Ehirfi/sHJdiKzrCXU5203ep+S?=
+ =?us-ascii?Q?RZrXAQJns7z/TZo+Dq36IlsTpY4bVhr40Dq4pSQrGLWe/wQsdx1YqMTJroOe?=
+ =?us-ascii?Q?u7uP+CXlYI+yOsia4lkU4uNJuFw0u+EjBMjynCpPnEPJg1KyyjVdaezw0tU7?=
+ =?us-ascii?Q?GhpY+mj+CGIyb8XFEwg7NNkRJfeFquvc5YrAo6CY2bmwnYuOISqndV4crIVG?=
+ =?us-ascii?Q?Ytmsxm0D98JDEIGZwooXqYBhYfFpzAWC5nOIXrmxfqmkf9x1llttxKLF0q51?=
+ =?us-ascii?Q?ACND6fHmk4oqb/R9Wcb3bnE4R1JAaKv+8SCd2pQdvbhxTArr315PWArjMAdP?=
+ =?us-ascii?Q?unAqQB8369eUKMuzoO5JvLO8w9+e/lDC/Gb3OvqrcDESVKW595zPALS0cBe5?=
+ =?us-ascii?Q?pL7m7ahVgCyfKnmYQLkGKDmZUCcVa7PdjsHLrUwCEWNgFsSz0oHDpKbPH5lS?=
+ =?us-ascii?Q?4d373CxwyuQpZQj+C20RRS7z+BfuHMnlyLp3NyRyMW+IG95oJ5nv1iNPtq3H?=
+ =?us-ascii?Q?OfSSbJmwMNdopIwI9yc53sNlXk11WsxdKMhmTD1rX5QzDuiB3vtVwosBwK5u?=
+ =?us-ascii?Q?6lpC8ygdDUdt1/R+VnvGf/MN1eF/AAfUq3BlHZG/qonCj8TJPmyK6f5PzVLO?=
+ =?us-ascii?Q?hlSLnQAX+Z9jCCS9myAcwQQbNbN1xY2xr59ydHP9a3Fc1eZLGG7ENvtW+vRi?=
+ =?us-ascii?Q?QZZA1Qxzgb45P5XbTiRMwm3EBm74hacFQdnxf0I1yquOAXFXu5ELnDEyL8gp?=
+ =?us-ascii?Q?k6rZnOcFDXoQJOJngholQqdTf2kggSFR3B+jPW6ZkYENpoB3XQrWUaZalkgf?=
+ =?us-ascii?Q?SGcmdhBqyQVLghtG9o67ltHh9JIz+O8A/gmX0M8tgUEGulKC1eiR9Y2mYa8c?=
+ =?us-ascii?Q?LaN1OA9Q6inxSBr1vAvuzTvMUQfsP136oO6q+eljQ8q4c3AiwNzny94Lnc8B?=
+ =?us-ascii?Q?oUh85dseessTzpkcQONtA/UOnYSwYz0fnhySJ5zCJn+SG4lCXAVH+sMCzVos?=
+ =?us-ascii?Q?AP29Cb5WAwjt4c8tJdE690LRawl01NoNuskwuhAkFCAavlD3D/MdV8E5gXM8?=
+ =?us-ascii?Q?7/niNEsO/2qb4BWzZQitFlcgRyQ1mHoZK1AT1GpE1H3Cn3HvTNw1yElKx+2P?=
+ =?us-ascii?Q?quMMX1FATIQZ4lH3D6PXVWdOa26Wz12bT7IRGqO4yPNsBdUiX0pOBHoQegpW?=
+ =?us-ascii?Q?J4SvdtMeek4nMS2m3rPikwhIhUWI3ShMIGTmojGy1TOGLodIQZ7yKgxbzlzL?=
+ =?us-ascii?Q?qsk3kJx/3fZ2vbjozHMmgEHO0d7ihnBQ5oY7bPqYh6CcYZ1L+jI1+X4cDtGe?=
+ =?us-ascii?Q?9hg4b4kXEodRoVg76YVlWXynsrSkDE9jA3vRavyqURYBN538iHOqA7dpYGJI?=
+ =?us-ascii?Q?QVoUNRqFe0R/N5DOrzOY3VZFZUZ6paxvVhRo2QLfZLw462QFcwzmy4l+1cvS?=
+ =?us-ascii?Q?f6sDRRyi4eT/VcWx0jBo4hxzd30T6GU54mT1nCrO?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ac3c709-a737-40e2-d939-08dcd1feb700
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 01:11:50.3499
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4uvWxDbuKK6GcLtDR3Z+yE4WUrUbmD3+tPTS8/xhNg1ZKLnfwnSFswTrRfSaytLxOzv5CDcfAkc5PP6pU38mmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5734
 
 
+>> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+>> index 4f47a13..210b9f4 100644
+>> --- a/drivers/pci/p2pdma.c
+>> +++ b/drivers/pci/p2pdma.c
+>> @@ -129,6 +129,12 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
+>>  	}
+>>  
+>>  	/*
+>> +	 * Initialise the refcount for the freshly allocated page. As we have
+>> +	 * just allocated the page no one else should be using it.
+>> +	 */
+>> +	set_page_count(virt_to_page(kaddr), 1);
+>
+> No doubt the subject line is true in some overall context, but it does
+> seem to say the opposite of what happens here.
 
-On 2024-09-09 22:14, Alistair Popple wrote:
-> The reference counts for ZONE_DEVICE private pages should be
-> initialised by the driver when the page is actually allocated by the
-> driver allocator, not when they are first created. This is currently
-> the case for MEMORY_DEVICE_PRIVATE and MEMORY_DEVICE_COHERENT pages
-> but not MEMORY_DEVICE_PCI_P2PDMA pages so fix that up.
-> 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> ---
->  drivers/pci/p2pdma.c |  6 ++++++
->  mm/memremap.c        | 17 +++++++++++++----
->  mm/mm_init.c         | 22 ++++++++++++++++++----
->  3 files changed, 37 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index 4f47a13..210b9f4 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -129,6 +129,12 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
->  	}
->  
->  	/*
-> +	 * Initialise the refcount for the freshly allocated page. As we have
-> +	 * just allocated the page no one else should be using it.
-> +	 */
-> +	set_page_count(virt_to_page(kaddr), 1);
-> +
-> +	/*
->  	 * vm_insert_page() can sleep, so a reference is taken to mapping
->  	 * such that rcu_read_unlock() can be done before inserting the
->  	 * pages
-This seems to only set reference count to the first page, when there can
-be more than one page referenced by kaddr.
+Fair. It made sense to me from the mm context I was coming from (it was
+being initialised to 1 there) but not overall. Something like "move page
+refcount initialisation to p2pdma driver" would make more sense?
 
-I suspect the page count adjustment should be done in the for loop
-that's a few lines lower than this.
+ - Alistair
 
-I think a similar mistake was made by other recent changes.
-
-Thanks,
-
-Logan
+> Bjorn
 
