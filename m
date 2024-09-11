@@ -1,120 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-29086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E19974F41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 12:07:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9AD974F94
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 12:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D7F1C220AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 10:07:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168AB1F251A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 10:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D369183CBB;
-	Wed, 11 Sep 2024 10:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F793185929;
+	Wed, 11 Sep 2024 10:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXxbHh2T"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rsXjj1Q6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47B7155346
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 10:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0849F184532
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 10:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726049270; cv=none; b=cSetGF7EefBByXL/MnkDyITg8Orzsch5K510z2WhP3V2WaYzUDhOMHSj2n5ZfHiYJQIonmVrjyuWjI3dEwEBPhOO4ekNchlQ839+tzGBVyD3bxTpEmro8srEjY1IdrZAUtAVDMRPfpA9/Ri7+Ih24BnlRC4UOeN4a2PYvDC0C+Q=
+	t=1726050113; cv=none; b=Xp9qeLtwNiYMoD9pZlVpW1lUxobJGzJaKwTiCYttFBRjzyiJN9AjQRxys3uaiwVRu55ulLeseAgSbtPWkCzVDmBSWcmrnHquAI/y3QNiJhi/JWbFCahAbaKKzsiK5gsfCtmU0hJc0ShqLy0OO5fsqpaI/0H4g7gZ8x1PbhxuukI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726049270; c=relaxed/simple;
-	bh=AeiyTSXg+ZT6WEvGKJlx93jiNG03zKUPMRzljOMkJxg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NU5v5AnhHdhMfXkGKkDKum7nhcOdIw0t+1VU1DSO9IWorKsoHgD57uW5fxIpvcqyYyNDzyc7Byv5CpKCDHbB/EkAVarf5Llgar92NeWgSWsOMUtfOcz+p74W18dwIt2+HQP6YeywAXWhwdUTWl6ZE0xFyM3imE3BCdTjdpEBmSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXxbHh2T; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7163489149eso5418622a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 03:07:48 -0700 (PDT)
+	s=arc-20240116; t=1726050113; c=relaxed/simple;
+	bh=mr0gz1FSc1K2UXU4kEG9zILcUyo3Tq0Kk043zF608MI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AqIvVPxqORYYlQeug1tMKJ1O4wPy0mzsoRbtNrHShx912Lx24/dzc9CNCQMiW2TRddQTHECg3ZUVDZvnzo3m89XvAJsqyhVy5hIcqXPGGtPGxkRPta5cLRosqRe2Mo2ESBsnlzQzaQPEtLWPW/ALV7iYGGr/kEYSpf1fLcMd/5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rsXjj1Q6; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso4603205e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 03:21:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726049268; x=1726654068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AeiyTSXg+ZT6WEvGKJlx93jiNG03zKUPMRzljOMkJxg=;
-        b=FXxbHh2TzSFhZHl3UHFCsNMs11vSldLEryPW2vV52hkTOf1bhzXJKIL7miTZeKzqu8
-         LaNOqaRWSDQ7IZkLZABadGRTBjIKa/jK/eCJVc1CsJicg/ucNeeP59tdzHvDrsMxbjrp
-         nfgS5psVKA3SjBP3CLrIT+Nsllw3vLQ29hWYl827ZBDbozk42U9ZKx2fuYok5G9k1+Af
-         t4b7F9i6vqmTiahX0RocpzLAUTyUobY05NMy1GjSpVCePtM/kimpmF3B34cWXJjID+0t
-         qT+0DRuzBGeZPZ0QcuUw8ndd+HGKm+5J9nteQXQi4Lu/gploTPMr6Y7cISVymS0xe6bX
-         Acfg==
+        d=linaro.org; s=google; t=1726050110; x=1726654910; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6BuTh53TE9K9HCjvvYs/rolmKouQpt1tPRtQPMElXlo=;
+        b=rsXjj1Q6Y5vW+ja11nv9xa2F3TFE7ZR3QOWS5oheF47Gwkn4Bl+L3lMS9BVi9F8dwp
+         NtuOLfztkK4tfbrJqZs1/wPS1tVeXrHizYSxQh1RDVL7BVZxw8uHbC2sZcezV+oo0x+J
+         J8OUC9/1rUYjznOEJ0UrBnrcr5pwTaj9QbM5Qhz+bDEbSKhONzcml7JWX1s7UqH4PMHS
+         p0DhR/UX4I4q0ksGvcz4R3aT/wiHSczChtRIbtVAMtJlVd2uYwV7GjI7riW8D5efOHPO
+         T2CzowqwRerb6uGTk75bs0D1LtiNKndGrVdZwiif9zjes3RCDMboKRpUFp1qX2iS+c4z
+         hc4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726049268; x=1726654068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AeiyTSXg+ZT6WEvGKJlx93jiNG03zKUPMRzljOMkJxg=;
-        b=tu76TGFX2vI91RDnDtUU883gUID6c6FFZswt8Embrf9W5nSz61ET5tbp8iAgdsRgKg
-         m7+fwEXfxoIzfHDjQGI/Chlnpl7wV1aZD9Rq5gI2BtEwtTh7UcFSud1TtBEPcMGpQxKu
-         1rZ3X2MHUuK1eR9LW03wIlcqqw2ynBMDXka7VZyDzNCmGlTktflMIMZmny8m6TsDuUHP
-         dj14gmhFvNL2dSIlL/5gdVQTCpqXQgHQTq2lKu0YqRi6k9QC1y0MjDi7oafZcJll2TH7
-         AV/lre96FVkrLnqzq9E9YagRkLbYORstonY/6gtIjWpI3CzoUB4Icahl4X055AaXDLmf
-         OXEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhybzWxVw6D1AGulxjQ1DNTmy6l+YBLxB8zlC+un/KF7v0wRF+m1BLyi1lafeybas8zmhmTM4Crc+ciTm/@vger.kernel.org
-X-Gm-Message-State: AOJu0YweBsJepyqtdHAatCVz/uUJTPNYpcv+yeV/SHzLaScMXr+HSVd5
-	jOxb02Bzz1/btEG4cl9vxblvdwrfSR18+3koRNx0/54VNWsv77XDK+ImHSZeZb2mfz1ThHfBzTo
-	1QzSjJlPB0Vazyhr4zcrP/4rnsQQ=
-X-Google-Smtp-Source: AGHT+IHMCtUVxFz2/+fRpNEwfrwYiP1lQdVnsevqgn1Y5iFQNEHQkjy+E+APhwwlxr8STd3f1ciYXUrKv4yPWzir8ik=
-X-Received: by 2002:a17:90b:4c4a:b0:2d3:bc5f:715f with SMTP id
- 98e67ed59e1d1-2dad4df9581mr21904410a91.10.1726049267956; Wed, 11 Sep 2024
- 03:07:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726050110; x=1726654910;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6BuTh53TE9K9HCjvvYs/rolmKouQpt1tPRtQPMElXlo=;
+        b=nUZg2tNsJypOe3Kq694tItj0fguAELBvZzl9k39goPG1kotwFQSy/YUSne5Xi2wV7U
+         FTqOyUxXpkSEKyg2V0V4MXYl33j5TkxWw7hxWyKh0U8bSS/2JQ1ZMJfz9ZJKhpT6s/Gd
+         sPGXo7cW2/JeJlqjPFolzLVzVM7DRd/yXkdRkpq1IfSA3w9aJvEU5ypOX8kEro4N344I
+         CnWNtvXozLssclbzsjyb9QlO9UQCL3ZSH+vC8FN7cW7Di19UAoxjF/Capf4dZbfqOUZY
+         +goJ5LWpsn9p6xthUbs5PbgLR9a10FRWT9GmaB1aRNhJ2bTuFU3HkW8yYZaUBnQ4TEj5
+         xieg==
+X-Gm-Message-State: AOJu0Ywe3L+o85qTg4fnk8uo4OMxPqSFYzfs0M0sNbPUlvp6uKjNWw7T
+	KiyCeSB6oWd1EPhrFd5Bgv2Ep2+E3z/L1CGZWHnx6kGSIdJs/kB982c4MjJm9bU=
+X-Google-Smtp-Source: AGHT+IETZ/bkOH0t8yV6R9XtBPjzeIuwvds/lqaOJNdrRjZxe9OxYZvnt3qYUq8l9sTMRAABmPoXuQ==
+X-Received: by 2002:a05:600c:310e:b0:42c:b68f:38fb with SMTP id 5b1f17b1804b1-42cbddd6d0amr38226705e9.7.1726050110307;
+        Wed, 11 Sep 2024 03:21:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb81ac0sm139538645e9.34.2024.09.11.03.21.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 03:21:49 -0700 (PDT)
+Date: Wed, 11 Sep 2024 13:21:45 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: [bug report] fs/proc/task_mmu: implement IOCTL to get and optionally
+ clear info about PTEs
+Message-ID: <3a4e2a3e-b395-41e6-807d-0e6ad8722c7d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
- <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm> <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
- <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
- <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com> <0a122714-8835-4658-b364-10f4709456e7@fastmail.fm>
-In-Reply-To: <0a122714-8835-4658-b364-10f4709456e7@fastmail.fm>
-From: Han-Wen Nienhuys <hanwenn@gmail.com>
-Date: Wed, 11 Sep 2024 12:07:36 +0200
-Message-ID: <CAOw_e7YvF5GVhR1Ozkw18w+kbe6s+Wf8EVCocEbVNh03b23THg@mail.gmail.com>
-Subject: Re: Interrupt on readdirplus?
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Sep 11, 2024 at 11:51=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
-> > If I don't ignore the offset, I have to implement a workaround on my
-> > side which is expensive and clumsy (which is what the `mustSeek`
-> > variable controls.)
-> >
->
-> That is the part I still do not understand - what is the issue if you do
-> not ignore the offset? Is it maybe just the test suite that expects
-> offset 25?
+Hello Muhammad Usama Anjum,
 
-Not ignoring the offset means that I have to be prepared to support
-some form of directory seeks.
+Commit 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and
+optionally clear info about PTEs") from Aug 21, 2023 (linux-next),
+leads to the following Smatch static checker warning:
 
-Directory seeking is notoriously difficult to implement in general, so
-few if any users have actually done this. If you don't have to support
-directory seeks, a FS can just compile a list of entries on the
-OPENDIR call, which the library can then return piecewise. This is not
-correct enough to export the FS over NFS, but this works well enough
-for almost any other application.
+	fs/proc/task_mmu.c:2664 pagemap_scan_get_args()
+	warn: potential user controlled sizeof overflow 'arg->vec_len * 24' '0-u64max * 24' type='ullong'
 
-I can probably kludge up something if I remember what I sent in the
-last readdirplus call, but then I would like to be really sure that I
-only have to deal with the last READDIRPLUS call (or READDIR as well?
-not sure.) having to be redone.
+fs/proc/task_mmu.c
+    2637 static int pagemap_scan_get_args(struct pm_scan_arg *arg,
+    2638                                  unsigned long uarg)
+    2639 {
+    2640         if (copy_from_user(arg, (void __user *)uarg, sizeof(*arg)))
 
-Besides being annoying to write, the kludge also takes up memory and
-time on every call of readdirplus.
+arg comes from the user
 
---=20
-Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
+    2641                 return -EFAULT;
+    2642 
+    2643         if (arg->size != sizeof(struct pm_scan_arg))
+    2644                 return -EINVAL;
+    2645 
+    2646         /* Validate requested features */
+    2647         if (arg->flags & ~PM_SCAN_FLAGS)
+    2648                 return -EINVAL;
+    2649         if ((arg->category_inverted | arg->category_mask |
+    2650              arg->category_anyof_mask | arg->return_mask) & ~PM_SCAN_CATEGORIES)
+    2651                 return -EINVAL;
+    2652 
+    2653         arg->start = untagged_addr((unsigned long)arg->start);
+    2654         arg->end = untagged_addr((unsigned long)arg->end);
+    2655         arg->vec = untagged_addr((unsigned long)arg->vec);
+    2656 
+    2657         /* Validate memory pointers */
+    2658         if (!IS_ALIGNED(arg->start, PAGE_SIZE))
+    2659                 return -EINVAL;
+
+We should probably check ->end here as well.
+
+    2660         if (!access_ok((void __user *)(long)arg->start, arg->end - arg->start))
+
+Otherwise we're checking access_ok() and then making ->end larger.  Maybe move
+the arg->end = ALIGN(arg->end, PAGE_SIZE) before the access_ok() check?
+
+    2661                 return -EFAULT;
+    2662         if (!arg->vec && arg->vec_len)
+    2663                 return -EINVAL;
+--> 2664         if (arg->vec && !access_ok((void __user *)(long)arg->vec,
+    2665                               arg->vec_len * sizeof(struct page_region)))
+
+This "arg->vec_len * sizeof(struct page_region)" multiply could have an integer
+overflow.
+
+arg->vec_len is a u64 so size_add() won't work on a 32bit system.  I wonder if
+size_add() should check for sizes larger than SIZE_MAX?
+
+    2666                 return -EFAULT;
+    2667 
+    2668         /* Fixup default values */
+    2669         arg->end = ALIGN(arg->end, PAGE_SIZE);
+    2670         arg->walk_end = 0;
+    2671         if (!arg->max_pages)
+    2672                 arg->max_pages = ULONG_MAX;
+    2673 
+    2674         return 0;
+    2675 }
+
+regards,
+dan carpenter
 
