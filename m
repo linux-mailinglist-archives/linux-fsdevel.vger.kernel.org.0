@@ -1,205 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-29065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8CD97477C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 02:44:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5805B974793
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 02:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624561F267AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 00:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01C8C1F25E3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 00:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EC5182B4;
-	Wed, 11 Sep 2024 00:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E0018C3E;
+	Wed, 11 Sep 2024 00:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b6uD+MqY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RysV6uF0";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gbVQt0rE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5STRkk1E"
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="PfU+CRym"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F56B15E8B;
-	Wed, 11 Sep 2024 00:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE63BBA20;
+	Wed, 11 Sep 2024 00:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726015454; cv=none; b=bZRUvp/YRAHGeIbo+9yuxj4EvzWu5ZG4L5iTnNIzwPhrXg1DhYskiWnR2nnz6b+trStBpbGLwkMBWcVdzH6y/YKhwziWzytKpLyWwCdLOZP1DGInmYW9MKS89Ug8iMnfXvVC+Tl6p9LB++az9Qm2Tv0aSM+JMG1as8g5bz4zBDs=
+	t=1726015793; cv=none; b=fGvvG5NDrKrcdBm0kf/6PaYPl9sz3mCHAdMmrLorqBvd8WR4BoGjyce03HQZL78kDunPUGWse8/mzTCmx9Iiw76Q0929HHsk/mw7dWlzknToikwFaFu8VgMSkv5P7CsYwoCI1PifmUAtNXGDQm1iU20xrA8rDtCefutogk8Omk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726015454; c=relaxed/simple;
-	bh=sHOxuhKGZbvvffatnBLJte+8Z90KsOWt/Q9t0XsOehk=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=QHH3MHDof1ahaPoOmj2l1IshlVdEZnyq66CGiIlkbKUVF+Xh6UlNvGiu9OZsNsY+B7ZXVuevJu6ogeEAlbj6aB7bCP5UwogO52uvNFRwqHfLQxJC1ZWhtn3koXMHkYCEgbLHS+tzYhzP6dsh8/qeGJXR701OBPQAcLlbOAfFTuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b6uD+MqY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RysV6uF0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gbVQt0rE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5STRkk1E; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EDEC321A67;
-	Wed, 11 Sep 2024 00:44:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726015450; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vF9RHeTTFpzNehF/dRzbumcV0675My2JGekvEYQYHcQ=;
-	b=b6uD+MqYd/HELFwSdThee9vOyL7sbu/ZXu6K/7714myaUT5OZS65dmjFMj/UwQrbpNxbQN
-	JUfmf4bYc+Oik/7CHkDiEwopuyJI6B7yv95lvTwB/wanZYGCLoGkBQfzeMAwxaUkwuAnlm
-	aZT9Fq8wr1wtlwQfV6HqikjHsDn6NeA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726015450;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vF9RHeTTFpzNehF/dRzbumcV0675My2JGekvEYQYHcQ=;
-	b=RysV6uF06xlBhl14BUTP1Gi9urZjeSwQzDLn8PrTlgcqYvYn9PbSQoob4zUIEEgYvT1YKX
-	35/5GcpGgjbInbDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gbVQt0rE;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5STRkk1E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726015448; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vF9RHeTTFpzNehF/dRzbumcV0675My2JGekvEYQYHcQ=;
-	b=gbVQt0rEjr1Hhfb9E6wrQeQkAZ3QGhF5yS9G23imNpJDeZvZiYyyxDjqswZMqX6Tdyvr/S
-	VvSNRot+kYrrf+baoQlLF4iLLIbn4exvB2eFSW/PCfZ78NwukkCFFIKffpy/fzDduX/eK5
-	hW0EANkgtAt3jxsSQIAKt7bZRytnx6k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726015448;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vF9RHeTTFpzNehF/dRzbumcV0675My2JGekvEYQYHcQ=;
-	b=5STRkk1ED5aP0AcYkqLwgA3CdTYLsEXTd2Y71cnOPvmBpmA+Rx41iAejJbb4qTinKBIBAV
-	K+YjFiBFjL10+PCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F9F6132CB;
-	Wed, 11 Sep 2024 00:44:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x+8NAtbn4GaUXwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 11 Sep 2024 00:44:06 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1726015793; c=relaxed/simple;
+	bh=dH7fv14lgnC0D0A5OnxBGGxWTkAjfmvEzxeklRot7jA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=J4urWD9EEVnvFtLwxlG/iRZNMXXEkyRg/u22lGDm0rk43AcI8HcgF7qsOapRqprm5+m3F+YKIG+9VpS/oO7k+GJvxhbm3JePIxFykA11JFRjM/araytNFymkEhfWdH9nIsuaeEcdJnUJUIg90iHi3oL5ORVtm+je8pyOTS4fPC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=PfU+CRym; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=nTtMb9H3dXUpUSnSef+Be8oMvAgnwIOToyszkwVy8e4=; b=PfU+CRymWcXZGU8mYwkDuJY5Nt
+	KxhnN6hTdnUpKK6c3FLfnreXMcwDl5uXgI0f+QVr9IAL/a7U4alJzvox0Hu/jx8FdVvfCvk6K23RF
+	lK8vn7f2TcsKwePi8XAAm+Do+v3+uwGtpS1ailTPFQB4bfs203NzQnnCCUXb/sMVlet5HU1E6m9vy
+	zcwHt8C4DgCDQe3olE14BG0oSvKMkpTZrdceJIxDReKKpwni+aYI+Z20uWIsMZDYZ8HVFkh+hCtJv
+	YV4oSurTolqbMlZJN15P2PVDkvC2Zg5xnEPszFLT8tR9OOrTm8xYZG/nJd2oKo02MXEmzvmD9xZuB
+	l6TfHBVA==;
+Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <logang@deltatee.com>)
+	id 1soBXi-000ozM-2O;
+	Tue, 10 Sep 2024 18:49:11 -0600
+Message-ID: <6f3402ae-01ad-4764-8941-f88bc77f5227@deltatee.com>
+Date: Tue, 10 Sep 2024 18:48:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Anna Schumaker" <anna.schumaker@oracle.com>,
- "Chuck Lever" <chuck.lever@oracle.com>,
-Cc: "Mike Snitzer" <snitzer@kernel.org>, linux-nfs@vger.kernel.org,
- "Jeff Layton" <jlayton@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Trond Myklebust" <trondmy@hammerspace.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v15 00/26] nfs/nfsd: add support for LOCALIO
-In-reply-to: <66ab4e72-2d6e-4b78-a0ea-168e1617c049@oracle.com>
-References: <20240831223755.8569-1-snitzer@kernel.org>,
- <66ab4e72-2d6e-4b78-a0ea-168e1617c049@oracle.com>
-Date: Wed, 11 Sep 2024 10:43:59 +1000
-Message-id: <172601543903.4433.11916744141322776500@noble.neil.brown.name>
-X-Rspamd-Queue-Id: EDEC321A67
+User-Agent: Mozilla Thunderbird
+To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
+ linux-mm@kvack.org
+Cc: vishal.l.verma@intel.com, dave.jiang@intel.com, bhelgaas@google.com,
+ jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
+ mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
+ ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+ linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ david@fromorbit.com
+References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
+ <4f8326d9d9e81f1cb893c2bd6f17878b138cf93d.1725941415.git-series.apopple@nvidia.com>
+Content-Language: en-CA
+From: Logan Gunthorpe <logang@deltatee.com>
+In-Reply-To: <4f8326d9d9e81f1cb893c2bd6f17878b138cf93d.1725941415.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 104.157.31.28
+X-SA-Exim-Rcpt-To: apopple@nvidia.com, dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com, dave.jiang@intel.com, bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
+X-SA-Exim-Mail-From: logang@deltatee.com
 X-Spam-Level: 
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[noble.neil.brown.name:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -6.51
-X-Spam-Flag: NO
+Subject: Re: [PATCH 02/12] pci/p2pdma: Don't initialise page refcount to one
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
-On Sat, 07 Sep 2024, Anna Schumaker wrote:
-> Hi Mike,
->=20
-> On 8/31/24 6:37 PM, Mike Snitzer wrote:
-> > Hi,
-> >=20
-> > Happy Labor Day weekend (US holiday on Monday)!  Seems apropos to send
-> > what I hope the final LOCALIO patchset this weekend: its my birthday
-> > this coming Tuesday, so _if_ LOCALIO were to get merged for 6.12
-> > inclusion sometime next week: best b-day gift in a while! ;)
-> >=20
-> > Anyway, I've been busy incorporating all the review feedback from v14
-> > _and_ working closely with NeilBrown to address some lingering net-ns
-> > refcounting and nfsd modules refcounting issues, and more (Chnagelog
-> > below):
-> >=20
->=20
-> I've been running tests on localio this afternoon after finishing up going =
-through v15 of the patches (I was most of the way through when you posted v16=
-, so I haven't updated yet!). Cthon tests passed on all NFS versions, and xfs=
-tests passed on NFS v4.x. However, I saw this crash from xfstests with NFS v3:
->=20
-> [ 1502.440896] run fstests generic/633 at 2024-09-06 14:04:17
-> [ 1502.694356] process 'vfstest' launched '/dev/fd/4/file1' with NULL argv:=
- empty string added
-> [ 1502.699514] Oops: general protection fault, probably for non-canonical a=
-ddress 0x6c616e69665f6140: 0000 [#1] PREEMPT SMP NOPTI
-> [ 1502.700970] CPU: 3 UID: 0 PID: 513 Comm: nfsd Not tainted 6.11.0-rc6-g0c=
-79a48cd64d-dirty+ #42323 70d41673e6cbf8e3437eb227e0a9c3c46ed3b289
-> [ 1502.702506] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unk=
-nown 2/2/2022
-> [ 1502.703593] RIP: 0010:nfsd_cache_lookup+0x2b3/0x840 [nfsd]
-> [ 1502.704474] Code: 8d bb 30 02 00 00 bb 01 00 00 00 eb 12 49 8d 46 10 48 =
-8b 08 ff c3 48 85 c9 0f 84 9c 00 00 00 49 89 ce 4c 8d 61 c8 41 8b 45 00 <3b> =
-41 c8 75 1f 41 8b 45 04 41 3b 46 cc 74 15 8b 15 2c c6 b8 f2 be
-> [ 1502.706931] RSP: 0018:ffffc27ac0a2fd18 EFLAGS: 00010206
-> [ 1502.707547] RAX: 00000000b95691f7 RBX: 0000000000000002 RCX: 6c616e69665=
-f6178
 
-This doesn't look like code anywhere near the changes that LOCALIO
-makes.
 
-I dug around and the faulting instruction is=20
-   cmp    -0x38(%rcx),%eax=09
+On 2024-09-09 22:14, Alistair Popple wrote:
+> The reference counts for ZONE_DEVICE private pages should be
+> initialised by the driver when the page is actually allocated by the
+> driver allocator, not when they are first created. This is currently
+> the case for MEMORY_DEVICE_PRIVATE and MEMORY_DEVICE_COHERENT pages
+> but not MEMORY_DEVICE_PCI_P2PDMA pages so fix that up.
+> 
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> ---
+>  drivers/pci/p2pdma.c |  6 ++++++
+>  mm/memremap.c        | 17 +++++++++++++----
+>  mm/mm_init.c         | 22 ++++++++++++++++++----
+>  3 files changed, 37 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index 4f47a13..210b9f4 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -129,6 +129,12 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
+>  	}
+>  
+>  	/*
+> +	 * Initialise the refcount for the freshly allocated page. As we have
+> +	 * just allocated the page no one else should be using it.
+> +	 */
+> +	set_page_count(virt_to_page(kaddr), 1);
+> +
+> +	/*
+>  	 * vm_insert_page() can sleep, so a reference is taken to mapping
+>  	 * such that rcu_read_unlock() can be done before inserting the
+>  	 * pages
+This seems to only set reference count to the first page, when there can
+be more than one page referenced by kaddr.
 
-The -0x38 points to nfsd_cache_insert().  -0x38 is the index back
-from the rbnode pointer to c_key.k_xid.  So the rbtree is corrupt.
-%rcx is 6c616e69665f6178 which is "xa_final".  So that rbtree node has
-been over-written or freed and re-used.
+I suspect the page count adjustment should be done in the for loop
+that's a few lines lower than this.
 
-It looks like
+I think a similar mistake was made by other recent changes.
 
-Commit add1511c3816 ("NFSD: Streamline the rare "found" case")
+Thanks,
 
-moved a call to nfsd_reply_cache_free_locked() that was inside a region
-locked with ->cache_lock out of that region.
-
-Maybe that is the cause of this crash.
-
-NeilBrown
+Logan
 
