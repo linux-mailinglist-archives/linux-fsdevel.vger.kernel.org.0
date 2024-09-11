@@ -1,144 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-29084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE5B974F05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 11:48:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729C9974F0E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 11:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6DA8B24C14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 09:47:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CCE31F2521B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2024 09:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC26D16EB54;
-	Wed, 11 Sep 2024 09:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DAA15C13F;
+	Wed, 11 Sep 2024 09:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="co4m6GjQ"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="i4wyOMhW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="obcmpIdA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E857614D2A6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 09:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964B5157480
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 09:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726048071; cv=none; b=OOv9lgcSoo/HdGpokScElBUO/mzk+ubRNzWlJfbveNJTykM3sjhcEj7jqWr6jfAJkB9qgytGxjPQCN3cMfEw2poHAD5XY3VktBSLwpYIm/HG+oYsJ1hjo0xN+RpU3uHRB0dmmr7z2eepLV7ZT07YUTPxIgFcDOmBTbe+T+VfIXk=
+	t=1726048285; cv=none; b=BbhYxtSPSRoP2SW3ZLTOo+JOzXzV+NSxhFpbz/dEhU53AvC/gKeHaWDAjwe5aeMBOBLZpjoIv5dSrZgSW04jOorBz1Pucn7T5aHpYYuBIgbasscyK7gbQIEtoqAUNhWQNhSaqe4gxfgTquOXm8ooh9j0o69vA3YbMqzceHEN37Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726048071; c=relaxed/simple;
-	bh=RGOnbCA7TGIm3Y0iHhNibOMhvZRhRjIpcsbWRpXZrEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JPgLzYaeJF4LvT/gBLmoxBAvAcSkLQDrzFTbs3rvSyqF4+5pHL4l3CtWcA0LLVxkDuQzyOtMJCdddR6IZQitSuR1fka8phBbgnp0PJpEELxYYgsMj3jc2VcXZOZn/v3AWuyhg3d+yicoLiiVadk5Ej7jo6ZLt+auhYiNbwpqezU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=co4m6GjQ; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db0fb03df5so386318a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2024 02:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726048069; x=1726652869; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UrfMuV8rHJLED3gdYiI0/AM18djPib2R7h5eJVn2UGM=;
-        b=co4m6GjQjp0l3UF0xLBW8QGhaKyD6fLj9T4JW/kvCpw6v/CbVRlDkctSGnTHZ4o8eg
-         HHJ6+OWncaAeaof8hPJkJbnv6+FJHPPmxCJB1zW68k46HLGpCXHE7u3ehsTjPrtNUbdt
-         4UHTzOWB4bHt/2P6/Ui56GfpfsUqoR8D67cVDBt9v10LYh1bbWE9C5tZluaBR6SMzUq+
-         PlVEPeG2nQorClmQfI/scEYLDb9S9TV+fH1/8g/ozolDwDRD1nGzGoPIZO7c3IMkhjhO
-         zNzsa5upW2Vw2bpjh9A+tGABib7J4k9Y6sVTGG5/+w8u+InNq0V38gTvHgXmvjcB5xwH
-         vuuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726048069; x=1726652869;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UrfMuV8rHJLED3gdYiI0/AM18djPib2R7h5eJVn2UGM=;
-        b=tRYRxPpA7MmT48rvfwSLtHd9WXCiN3Fhj0zmPoKPcnaRYg7KEiS1vEJSJ8xj/THnr+
-         ZGEVaY7jS69FVl19FsbFyc8H7eeh0KE83NEL68ZsNEuhSetY2yRJZCGHhREfcHQ0awJW
-         RsINZBKhW19AudEqcMmqEI18OntCFfGBG0i/GIp3b7Bh/Vvjr7w+Lc9Iv1djlk8lsOVH
-         fRqNb1tBr4a9+f2cO8w+i3TZSYWy3eeGnvNVPept7Vnu4g9aPLq8kkedaRAu+alGLUcE
-         ajM6QFtl8U/wjcYb8xnSEc4P6PmMmyGjC9H7Nqiy/Qbp6ROjdZ5sb0Y77GdvbDaDGEVB
-         Nx+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Kzpcp++dZHHcM2PKtolhEyevcU3QTJAniAqkfqYg9cPd12SgH//jmcQ+dzAdG2hgZ1T/mil1Op4pkutj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI96ElEdSeDV0tA5oPax7/fbR5ZQWykfWFewhMYKNyyX/1+Pue
-	KgSJi5O/73iE0bxvuU+9m+mr3tvuKw0hACTws8sFuRvggrVMyaLwK7aMuBz1zhQHjOJyiwloC80
-	lvmzrU5LlWAxx+KH9ldv70HbdDVY=
-X-Google-Smtp-Source: AGHT+IFpQ5B8rzoLTZp8cUiE2CrwiL8b4mnvTOVaADyyU5dQfZt+MaPkeZ+BhA+CbDWC8O56uJHnJcdJLEol1xUw3OA=
-X-Received: by 2002:a17:90b:164e:b0:2d8:97b7:449f with SMTP id
- 98e67ed59e1d1-2dad50f9a10mr20979858a91.38.1726048068779; Wed, 11 Sep 2024
- 02:47:48 -0700 (PDT)
+	s=arc-20240116; t=1726048285; c=relaxed/simple;
+	bh=uEqqHpfaVt2WOJTA9rCQbe8MYCahEZTdBr2UQ/H8NpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LFsPTtwqxFvK8joTTSkssdeiNQH3L0KgCW6QdWocRPWwpIm3eT6ijoUAhzsP9sKpaQ7+2aV3qEzLzCBkmZbwB+72sYH9T3mB5DSOg8MpWZOcAGppj55m4p5IXkSS4InGmCCsycQmdJx4PB3DLjbSpxZFVSrpsXenPUiPPQl3P1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=i4wyOMhW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=obcmpIdA; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A64711140297;
+	Wed, 11 Sep 2024 05:51:22 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Wed, 11 Sep 2024 05:51:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1726048282;
+	 x=1726134682; bh=VyF/01k+QB6QutyustloSh6o3y/1TLCKWDbyZa6q+HU=; b=
+	i4wyOMhWkXgDFPRHPlqWzgWKjwZtQqfcAv+Kp58nbopio2t+Pkg/j3C8cBYx34rg
+	x6JLcsJ3x4SE46GDYRj1BhchVTaEQqHCJpQUwXIkH0p4xqzNMeheKYdxVt48bc+s
+	EzLfJYbC8hsIlG6ujpWg9RqjgcFb25mo3CFwWz6qTwK8E9IAl77p8wCp9VWaa0DK
+	Wj1DuQt+xqhUXybsSOgC0TbynC+TciXffuMrmNwNL51DzU3XBhRToZ2YpgENIgll
+	86jMcoepsO0gZyHITW0/icgNHLbY/rd2WXqg22qLaJiRGkaWOkUgVWEwGxP0OQ6v
+	9Un6rGicDms8eDQTXslDUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726048282; x=
+	1726134682; bh=VyF/01k+QB6QutyustloSh6o3y/1TLCKWDbyZa6q+HU=; b=o
+	bcmpIdAaDWMQpRolBUq+2s7oTFObdHA+cJtJgcLBwk1fpAqvp9zP1FbzKb26y5+D
+	2RqN0J+s2Dl25Y4alluafe/gWpu8E5z123QKa1yeZ+Tj3uWIykQxZtPrqedlV+x6
+	82FnA8ZGKSnirwYwu5Jv4KzxS9XzXcaZNNQbGuaUGzFQw+5dsjuqe17Ccvmp7OUz
+	yzjNkZWtMelaknstyI1i5MXBKZOKyhajIowhG2y8Xvf2l5Qy2Slv/5KcFneEKKxH
+	iR9g5EiuUvKTA+F9msVoDWdONxtUHW4w8x9Va47U9oleKgQIqqbdKNXRbwxT9iAO
+	UKQZ7dAhEQqX088varYrg==
+X-ME-Sender: <xms:GmjhZpyk_48lLq_o9B5voLUcR0Ns21bo05nbHizE2eEDvLKdJryIsA>
+    <xme:GmjhZpRag01xKdzde8w3pUYf60WXV5zqyBXOGg9rzQLVRvX1V6GpY9QuqC0fBtnOT
+    5mLIP_kqHQnAQUH>
+X-ME-Received: <xmr:GmjhZjXhHtRk5Jmq3m3UyK6XwuK-gOAgt1FQZbOATH4OmIzAz2t-8mTvXaQ1fuFz5f-rSuQLF-5oav0BZ72yCn3gimSM5ryo2xTs4qkfDDlfrgIJ6_Ii>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
+    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehhrghnfigvnhhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    jhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugi
+    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhk
+    lhhoshesshiivghrvgguihdrhhhu
+X-ME-Proxy: <xmx:GmjhZrjtOucI1MBjqZL0f-JFpxD0fVrTMrk56XO30_tcg9XMdmynKQ>
+    <xmx:GmjhZrBLjldrWXagTsTyoaUrHz7HTJpPzYhGDmtfujtV8T4oiqKx3w>
+    <xmx:GmjhZkL2vAZylVCL0VI4cIvGPc8gk-2LTlheS2NECViigjBcD_NTQQ>
+    <xmx:GmjhZqC3KVdpXEZNZfAzw9XtxbtfVc0Ki36IoqLLNIxH648eNXgx8g>
+    <xmx:GmjhZm-afmSupFY7yAnE7Pved5bQ6Ee45-Vw7vDQ2hSTzmNJ0_fSF1Dp>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Sep 2024 05:51:21 -0400 (EDT)
+Message-ID: <0a122714-8835-4658-b364-10f4709456e7@fastmail.fm>
+Date: Wed, 11 Sep 2024 11:51:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
- <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm> <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
- <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
-In-Reply-To: <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
-From: Han-Wen Nienhuys <hanwenn@gmail.com>
-Date: Wed, 11 Sep 2024 11:47:37 +0200
-Message-ID: <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: Interrupt on readdirplus?
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 11, 2024 at 12:04=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
-om> wrote:
-> > A bit of browsing through the Go source code suggests that SIGURG is
-> > used to preempt long-running goroutines, so it could be issued more or
-> > less at random.
-> >
-> > Nevertheless, FUSE should also not be reissuing the reads, even if
-> > there were interrupts, right?
->
-> Is there a link to the test? Is it easy to repro this issue?
-
-I made an easy repro available over here:
-
-  https://review.gerrithub.io/c/hanwen/go-fuse/+/1200990
-
-To repro,
-
-  git init
-  git fetch https://review.gerrithub.io/hanwen/go-fuse
-refs/changes/90/1200990/1 && git checkout FETCH_HEAD
-  go test ./fs -run TestInterruptReaddirplus -count 2000
-
-to get debug logs, add -v to the test command. Typical output:
-
-$ go test ./fs -run TestInterruptReaddirplus -count 2000
-11:42:29.186131 writer: Write/Writev failed, err: 2=3Dno such file or
-directory. opcode: RELEASEDIR
-11:42:30.160136 doInterrupt
-11:42:30.160559 observed seek
---- FAIL: TestInterruptReaddirplus (0.01s)
-    mem_test.go:301: read back 76 entries, want 100
-
-I am using
-
-$ uname -a
-Linux fedora 6.10.7-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Aug 30
-00:08:59 UTC 2024 x86_64 GNU/Linux
-$ go version
-go version go1.22.6 linux/amd64
+To: Han-Wen Nienhuys <hanwenn@gmail.com>,
+ Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
+ <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm>
+ <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
+ <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
+ <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-> If I'm understanding your post correctly, the issue you are seeing is
-> that if your go-fuse server returns 25 entries to an interrupted
-> READDIRPLUS request, the kernel's next READDIRPLUS request is at
-> offset 1 instead of at offset 25?
+> 
+> 
+>> If I'm understanding your post correctly, the issue you are seeing is
+>> that if your go-fuse server returns 25 entries to an interrupted
+>> READDIRPLUS request, the kernel's next READDIRPLUS request is at
+>> offset 1 instead of at offset 25?
+> 
+> yes. If the offset is ignored (mustSeek = false in fs/bridge.go), it
+> causes test failures, because of a short read on the readdir result
+> there are too few entries.
+> 
+> If I don't ignore the offset, I have to implement a workaround on my
+> side which is expensive and clumsy (which is what the `mustSeek`
+> variable controls.)
+> 
 
-yes. If the offset is ignored (mustSeek =3D false in fs/bridge.go), it
-causes test failures, because of a short read on the readdir result
-there are too few entries.
+That is the part I still do not understand - what is the issue if you do
+not ignore the offset? Is it maybe just the test suite that expects
+offset 25?
 
-If I don't ignore the offset, I have to implement a workaround on my
-side which is expensive and clumsy (which is what the `mustSeek`
-variable controls.)
 
---=20
-Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
+Thanks,
+Bernd
 
