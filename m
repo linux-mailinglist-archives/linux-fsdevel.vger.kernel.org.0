@@ -1,323 +1,453 @@
-Return-Path: <linux-fsdevel+bounces-29197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B8D976FD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 19:54:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE97976FEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 20:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648A7285555
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 17:54:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D92BB22B58
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 18:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109851BF7FD;
-	Thu, 12 Sep 2024 17:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165681BE854;
+	Thu, 12 Sep 2024 18:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URDyy9E4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbTJwEN8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BEE189526;
-	Thu, 12 Sep 2024 17:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4FD13A40F;
+	Thu, 12 Sep 2024 18:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726163663; cv=none; b=lkZKOgyagzUPYPhP3wxJErH9XBSzUKrWe+FPUkDErUCKooEv84lCao8rd1aHHzZ5sa7hZuKWZ+zZ/eFAYWTB+Z6X9r/OqoCnHOv63aR4eBr5XTOtaw4yQt0ymAO8q0Q5qBwWDxcZ47J2lK+KtajiyQ/VcBA9eKUR9ohAnd2uToI=
+	t=1726164176; cv=none; b=OEE7NORMyzPlD4Qp/lvc/wQsIMJ2ruM+OiDQ9J3eBg1mwik0fPruTf2EKS1No6WnfgG2mYuL4uxfkuHd8LcbAuuHLhoMmpaYPdaOtc3D6LJPrGWYNFBnanWZycbQbs8lzhgjeOOnAT+Uz2JDxbA9bnDoazJ2eCTG++VRZknn7zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726163663; c=relaxed/simple;
-	bh=ZGpQPaBFuEV+YoNpMCj27zCrCaWjnrStrM1jKZMyO/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NX9Tl63tC9DyuKXSn4k3tQSdP9x/rixfxELdG7DWadpuYsHgTUJByh4OGPB3qyquBONpu2AyzyehuZQXQEwLnvHjYJ3g13NdQnKIUF0nSz+x+LXBNi0hH+plgLx1Lxj+IY/uXd/R27FlFdJqyBGpYsEZ+dbhx4t4Gky3PPZWvHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URDyy9E4; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc47abc040so11944355ad.0;
-        Thu, 12 Sep 2024 10:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726163661; x=1726768461; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pnI/woVTgkNTSrRDHq2roOu8tQNQ4D8UQtZh3Y6WuYw=;
-        b=URDyy9E4jhSxoayM2h6QzUo4PEbQzKr4vgQJFQXns2ik3Zj1S85mQCxwBDETDVINfM
-         IzOyVrmW4ExnHGPD6gzOiayXSp5hGTlPoUM/adlqJpTrjWV3Jz6QSBgcfoZc7mwUJFw5
-         nc0M8wwJWJFNl9aL4QA9w74GnEl1neZdiq4YFQsWGWs7NlcBj8h23OfrRQazbVh6ezi2
-         nuyZg5imlwr3CBSjOWsqWGaINYECAljMGfvzDWDrrvX36BvvInJFlY3g1gXIeCJi/zX0
-         Hr7/P1WSx+BSkEEpmSQS2iX6KZ/ss8TnJl/pNVV9Rhb9OO8JJEk+6TuZBRTh9OFq2DUa
-         gydg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726163661; x=1726768461;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pnI/woVTgkNTSrRDHq2roOu8tQNQ4D8UQtZh3Y6WuYw=;
-        b=kJ4L8LDRZ5KOv6FznRUBvXN2yGGpLa8L26S3tG4W7o2AKJFEG+S3jZUnzqKJ9yy7is
-         uq9ydoNQKMArDnN440xsFNSaDwHRnyUvkUKOZXKEABeEtrAR22uwN6ec/eaDysoAc0YU
-         iPUkDh0CmXhym4LNajI8oyQ3IB9wojJ50w00In2F4jDVcX0XOU9STWsdmyW/ydElqT7n
-         xIBhYkpE5sF8QDIMwjjJwN8ucynSKQ0+Gi9LZJ8Nnzxi1pY4SIsSCD6htOg83Tb4dwJo
-         r6SMpgMK1tOnGvmwqE5Vq5V/23Vdenk9OKuba4c5XQpqw4gXuzbSj7n8PXZaeFPB06X1
-         WCAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIYzqBvk5qbBwfJn20njQkIc/7Zz8u/0SMz9ggUYP7clz+F6l8zzZQRFuvQ+4rduX1Nn+/7g3A5h5+HddbNA==@vger.kernel.org, AJvYcCW6aJExT+KJxvtsNA71iQAZnqZLLB3e/X4kKL1T5GFJ0OcqrHrJtScpxdHPBhkAL2qrBXBJtIOXiot2w7MlQyLPpuCS@vger.kernel.org, AJvYcCWnElpWAsnXg1FOPNrAGqPKstJeAC/vI39uVArCuY2UJQ3/fwBsgI71qlmA45eVKqjRsg3shfphl9sPMQha@vger.kernel.org, AJvYcCXln2qRS1EIwva7m/HGt1pyth9wFctlV1iQx3SW+dXRvvfSeUCTZoVjmJc9BKPNZ4oUWP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAR1rSvIs9m2k330FQawXPaHMwQyPBHVEvujLphv81eZ7Y3gHs
-	7PM5J26TbOuZF8EOJLT4/Sj3mo3oJX/+V5EES2IQhcSj9LW38jRQG8lAQp+wX5CB7WHMUoLPn+k
-	SsdtZKDWh9pqtHLtufme7KjGWAMLMXg==
-X-Google-Smtp-Source: AGHT+IF5Dr9dgApZdKn5lLwhFKi8T2rVtPmatqXg6u6KtfnDgDB7BVjPS6bSH+Hg14686iMVSU6nPTe/fII7VydFM+c=
-X-Received: by 2002:a17:902:f68e:b0:205:7829:9d83 with SMTP id
- d9443c01a7336-2076e412fafmr36150895ad.38.1726163660914; Thu, 12 Sep 2024
- 10:54:20 -0700 (PDT)
+	s=arc-20240116; t=1726164176; c=relaxed/simple;
+	bh=aTQ96XEIsrqaJG45eHdwF72McOz43L38rVYY+vEBb8g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T+hPRrKxgcEXXrDdrROZEzH/TLtkm9JJCEeo/q448JjUfjVKXcT26gLxSdVHp/XCZDYgT+Vh/CqKtc+7OSo2cssoGw1CE2hv3s2MY0+A0x7KsZneYHILs2x2ec5/2r7uA5Kuy1ymPhOgK5Iz3xO8TJPjffp1K8RaSiW6RVkGQVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbTJwEN8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9905C4CEC3;
+	Thu, 12 Sep 2024 18:02:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726164175;
+	bh=aTQ96XEIsrqaJG45eHdwF72McOz43L38rVYY+vEBb8g=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GbTJwEN8ZAIi0WdtIaVZjhfdDQCVKcJp1nNv2dFAnRY7hXbMIavUX43eVK9+XLMsj
+	 f/L76SvB0Dn39nq8d0DjEacRlsgZPple6QZ06o/vtBE3swLKCcoUKX9C242XpWsGZx
+	 VwjOVymEc1gaOkbtS2EUNX+5akVpDgJcmRDarK2nsOZIM8wS9gVGnzqkzLIFsf3ikB
+	 dFhj1KHT/jQ2K39jo4qSrT9o6rX+OlCrEceatC2ZwX7n/UxCxiVlKEylXED5oHITcT
+	 ESyejKrnqFo/QOImTu/BqzhrMcqXwQS5MTSLj/KXldPBa85riXbXuaATBbQbA+Ctf6
+	 ZCcfQKLZJZ6XQ==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Thu, 12 Sep 2024 14:02:52 -0400
+Subject: [PATCH v2] timekeeping: move multigrain timestamp floor handling
+ into timekeeper
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-3-andrii@kernel.org>
- <CAG48ez2G1Pf_RRRT0av=6r_4HcLZu6QMgveepk-ENo=PkaZC1w@mail.gmail.com>
- <CAEf4Bzb+ShZqcj9EKQB8U9tyaJ1LoOpRxd24v76FuPJP-=dkNg@mail.gmail.com>
- <CAJuCfpEhCm3QoZqemO=bX0snO16fxOssMWzLsiewkioiRV_aOA@mail.gmail.com>
- <CAEf4Bzbh_HWuHEZqHZ7MHFLtp+jFf2yiCWyd-RqY-hvm09d5Ow@mail.gmail.com> <20240912-urenkel-umorientieren-c27ce893af09@brauner>
-In-Reply-To: <20240912-urenkel-umorientieren-c27ce893af09@brauner>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 12 Sep 2024 10:54:09 -0700
-Message-ID: <CAEf4BzbMN49GXu3B83=k=4vKpLts9Rk8xt50i_xzQL_Tht4m5g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] uprobes: add speculative lockless VMA-to-inode-to-uprobe
- resolution
-To: Christian Brauner <brauner@kernel.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, Jann Horn <jannh@google.com>, 
-	Liam Howlett <liam.howlett@oracle.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
-	willy@infradead.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	mjguzik@gmail.com, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMss42YC/zXMQQrCMBCF4auUWRvJxCrWlfeQLkIzTQdtIpMSl
+ JK7Gwtd/o/Ht0IiYUpwa1YQypw4hhrm0MAw2eBJsasNRptWd2jU7BeeSQ1orvqite3sCer5LTT
+ yZ4Mefe2J0xLlu7kZ/+tO4E5kVKioteRGdNrh+f4kCfQ6RvHQl1J+WhDCPJ0AAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <oliver.sang@intel.com>, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13069; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=aTQ96XEIsrqaJG45eHdwF72McOz43L38rVYY+vEBb8g=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm4yzOPITeQnROkNg4zZCsWbkOTvbB3AMBFm5aT
+ motkTDru8mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuMszgAKCRAADmhBGVaC
+ FeYyEADPfKdoNaF7jTs7GfvoyzTIZnwxncT73PXgPDwh4kgjc/J23tuLd3JVg/Hg2BHDljj5Pdp
+ kOuvuUryqCA8JJ7zXJwBhaNykF9t9C5xATbBnFhvhgKZLT19gfnGQmHXftj0XNFNqiR29dHjOHq
+ m/mo//qxboHt6siqrj3vKWTF0Hp1URLh3a4PN5tMObrjonlaWLOadiBUE9zNPx6T3zaG7JU/9sO
+ 5L9c0tLabl//TCZYEEbE57Q7aYx6kB/5do4o5VL8Bx9Cck+PCD9nNhrIJudoSL4mCfS/ak1InmT
+ cVA+5rldoF7qbvIJaSxrcH9WleDLP8IPv7f/tzMoV2bjx88EL/Ak2X4f2r9G4AsddnEaEbp3QRh
+ h+PO3geyf8FQhIV1Wjpcbfg0CMgoxcsUOHfyeRPNkg8sfCutr3D5Q4OqK0AhGUiw83nfguslEf9
+ ZZ4sEAIYc9XiU8JqPV01gQ8neAeb4ymfdQYomu9IwjMFXdn2XpROtCA/hZmS66oMpLYFc6Ips/+
+ ehtK9bO0EkzF2NP9beN4LRQ1FXJqeyUFbUTuKDpH9O+asboMbCIV0j0+vYLSm9UvT+I8VfC3Juz
+ liWVdUYhyc6Wf7IQs7LUVw3z/EtBi8UgVZ5DEtcMPkb8yB9jLP0Y+tEaVEO/ToKXUR5oQpjMdCR
+ 54k1l5+e1eUkwCg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Thu, Sep 12, 2024 at 4:17=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, Sep 10, 2024 at 01:58:10PM GMT, Andrii Nakryiko wrote:
-> > On Tue, Sep 10, 2024 at 9:32=E2=80=AFAM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > >
-> > > On Mon, Sep 9, 2024 at 2:29=E2=80=AFPM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
-> > > >
-> > > > On Mon, Sep 9, 2024 at 6:13=E2=80=AFAM Jann Horn <jannh@google.com>=
- wrote:
-> > > > >
-> > > > > On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@ke=
-rnel.org> wrote:
-> > > > > > Given filp_cachep is already marked SLAB_TYPESAFE_BY_RCU, we ca=
-n safely
-> > > > > > access vma->vm_file->f_inode field locklessly under just rcu_re=
-ad_lock()
-> > > > >
-> > > > > No, not every file is SLAB_TYPESAFE_BY_RCU - see for example
-> > > > > ovl_mmap(), which uses backing_file_mmap(), which does
-> > > > > vma_set_file(vma, file) where "file" comes from ovl_mmap()'s
-> > > > > "realfile", which comes from file->private_data, which is set in
-> > > > > ovl_open() to the return value of ovl_open_realfile(), which come=
-s
-> > > > > from backing_file_open(), which allocates a file with
-> > > > > alloc_empty_backing_file(), which uses a normal kzalloc() without=
- any
-> > > > > RCU stuff, with this comment:
-> > > > >
-> > > > >  * This is only for kernel internal use, and the allocate file mu=
-st not be
-> > > > >  * installed into file tables or such.
-> > > > >
-> > > > > And when a backing_file is freed, you can see on the path
-> > > > > __fput() -> file_free()
-> > > > > that files with FMODE_BACKING are directly freed with kfree(), no=
- RCU delay.
-> > > >
-> > > > Good catch on FMODE_BACKING, I didn't realize there is this excepti=
-on, thanks!
-> > > >
-> > > > I think the way forward would be to detect that the backing file is=
- in
-> > > > FMODE_BACKING and fall back to mmap_lock-protected code path.
-> > > >
-> > > > I guess I have the question to Liam and Suren, do you think it woul=
-d
-> > > > be ok to add another bool after `bool detached` in struct
-> > > > vm_area_struct (guarded by CONFIG_PER_VMA_LOCK), or should we try t=
-o
-> > > > add an extra bit into vm_flags_t? The latter would work without
-> > > > CONFIG_PER_VMA_LOCK, but I don't know what's acceptable with mm fol=
-ks.
-> > > >
-> > > > This flag can be set in vma_set_file() when swapping backing file a=
-nd
-> > > > wherever else vma->vm_file might be set/updated (I need to audit th=
-e
-> > > > code).
-> > >
-> > > I understand that this would work but I'm not very eager to leak
-> > > vm_file attributes like FMODE_BACKING into vm_area_struct.
-> > > Instead maybe that exception can be avoided? Treating all vm_files
-> >
-> > I agree, that would be best, of course. It seems like [1] was an
-> > optimization to avoid kfree_rcu() calls, not sure how big of a deal it
-> > is to undo that, given we do have a use case that calls for it now.
-> > Let's see what Christian thinks.
->
-> Do you just mean?
->
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index 7ce4d5dac080..03e58b28e539 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -68,7 +68,7 @@ static inline void file_free(struct file *f)
->         put_cred(f->f_cred);
->         if (unlikely(f->f_mode & FMODE_BACKING)) {
->                 path_put(backing_file_user_path(f));
-> -               kfree(backing_file(f));
-> +               kfree_rcu(backing_file(f));
->         } else {
->                 kmem_cache_free(filp_cachep, f);
->         }
->
-> Then the only thing you can do with FMODE_BACKING is to skip it. I think
-> that should be fine since backing files right now are only used by
-> overlayfs and I don't think the kfree_rcu() will be a performance issue.
+The kernel test robot reported a performance hit in some will-it-scale
+tests due to the multigrain timestamp patches.  My own testing showed
+about a 7% drop in performance on the pipe1_threads test, and the data
+showed that coarse_ctime() was slowing down current_time().
 
-Yes, something along those lines. Ok, great, if it's ok to add back
-kfree_rcu(), then I think that resolves the main problem I was running
-into. I'll incorporate adding back RCU-delated freeing as a separate
-patch into the future patch set, thanks!
+Move the multigrain timestamp floor tracking word into timekeeper.c. Add
+two new public interfaces: The first fills a timespec64 with the later
+of the coarse-grained clock and the floor time, and the second gets a
+fine-grained time and tries to swap it into the floor and fills a
+timespec64 with the result.
 
->
-> >
-> > > equally as RCU-safe would be a much simpler solution. I see that this
-> > > exception was introduced in [1] and I don't know if this was done for
-> > > performance reasons or something else. Christian, CCing you here to
-> > > please clarify.
-> > >
-> > > [1] https://lore.kernel.org/all/20231005-sakralbau-wappnen-f5c31755ed=
-70@brauner/
-> > >
-> > > >
-> > > > >
-> > > > > So the RCU-ness of "struct file" is an implementation detail of t=
-he
-> > > > > VFS, and you can't rely on it for ->vm_file unless you get the VF=
-S to
-> > > > > change how backing file lifetimes work, which might slow down som=
-e
-> > > > > other workload, or you find a way to figure out whether you're de=
-aling
-> > > > > with a backing file without actually accessing the file.
-> > > > >
-> > > > > > +static struct uprobe *find_active_uprobe_speculative(unsigned =
-long bp_vaddr)
-> > > > > > +{
-> > > > > > +       const vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM=
-_MAYSHARE;
-> > > > > > +       struct mm_struct *mm =3D current->mm;
-> > > > > > +       struct uprobe *uprobe;
-> > > > > > +       struct vm_area_struct *vma;
-> > > > > > +       struct file *vm_file;
-> > > > > > +       struct inode *vm_inode;
-> > > > > > +       unsigned long vm_pgoff, vm_start;
-> > > > > > +       int seq;
-> > > > > > +       loff_t offset;
-> > > > > > +
-> > > > > > +       if (!mmap_lock_speculation_start(mm, &seq))
-> > > > > > +               return NULL;
-> > > > > > +
-> > > > > > +       rcu_read_lock();
-> > > > > > +
-> > > > > > +       vma =3D vma_lookup(mm, bp_vaddr);
-> > > > > > +       if (!vma)
-> > > > > > +               goto bail;
-> > > > > > +
-> > > > > > +       vm_file =3D data_race(vma->vm_file);
-> > > > >
-> > > > > A plain "data_race()" says "I'm fine with this load tearing", but
-> > > > > you're relying on this load not tearing (since you access the vm_=
-file
-> > > > > pointer below).
-> > > > > You're also relying on the "struct file" that vma->vm_file points=
- to
-> > > > > being populated at this point, which means you need CONSUME seman=
-tics
-> > > > > here, which READ_ONCE() will give you, and something like RELEASE
-> > > > > semantics on any pairing store that populates vma->vm_file, which
-> > > > > means they'd all have to become something like smp_store_release(=
-)).
-> > > >
-> > > > vma->vm_file should be set in VMA before it is installed and is nev=
-er
-> > > > modified afterwards, isn't that the case? So maybe no extra barrier
-> > > > are needed and READ_ONCE() would be enough.
-> > > >
-> > > > >
-> > > > > You might want to instead add another recheck of the sequence cou=
-nt
-> > > > > (which would involve at least a read memory barrier after the
-> > > > > preceding patch is fixed) after loading the ->vm_file pointer to
-> > > > > ensure that no one was concurrently changing the ->vm_file pointe=
-r
-> > > > > before you do memory accesses through it.
-> > > > >
-> > > > > > +       if (!vm_file || (vma->vm_flags & flags) !=3D VM_MAYEXEC=
-)
-> > > > > > +               goto bail;
-> > > > >
-> > > > > missing data_race() annotation on the vma->vm_flags access
-> > > >
-> > > > ack
-> > > >
-> > > > >
-> > > > > > +       vm_inode =3D data_race(vm_file->f_inode);
-> > > > >
-> > > > > As noted above, this doesn't work because you can't rely on havin=
-g RCU
-> > > > > lifetime for the file. One *very* ugly hack you could do, if you =
-think
-> > > > > this code is so performance-sensitive that you're willing to do f=
-airly
-> > > > > atrocious things here, would be to do a "yes I am intentionally d=
-oing
-> > > > > a UAF read and I know the address might not even be mapped at thi=
-s
-> > > > > point, it's fine, trust me" pattern, where you use
-> > > > > copy_from_kernel_nofault(), kind of like in prepend_copy() in
-> > > > > fs/d_path.c, and then immediately recheck the sequence count befo=
-re
-> > > > > doing *anything* with this vm_inode pointer you just loaded.
-> > > > >
-> > > > >
-> > > >
-> > > > yeah, let's leave it as a very unfortunate plan B and try to solve =
-it
-> > > > a bit cleaner.
-> > > >
-> > > >
-> > > > >
-> > > > > > +       vm_pgoff =3D data_race(vma->vm_pgoff);
-> > > > > > +       vm_start =3D data_race(vma->vm_start);
-> > > > > > +
-> > > > > > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr=
- - vm_start);
-> > > > > > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
-> > > > > > +       if (!uprobe)
-> > > > > > +               goto bail;
-> > > > > > +
-> > > > > > +       /* now double check that nothing about MM changed */
-> > > > > > +       if (!mmap_lock_speculation_end(mm, seq))
-> > > > > > +               goto bail;
-> > > > > > +
-> > > > > > +       rcu_read_unlock();
-> > > > > > +
-> > > > > > +       /* happy case, we speculated successfully */
-> > > > > > +       return uprobe;
-> > > > > > +bail:
-> > > > > > +       rcu_read_unlock();
-> > > > > > +       return NULL;
-> > > > > > +}
+The first function returns an opaque cookie that is suitable for passing
+to the second, which will use it as the "old" value in the cmpxchg.
+
+With this patch on top of the multigrain series, the will-it-scale
+pipe1_threads microbenchmark shows these averages on my test rig:
+
+	v6.11-rc7:			103561295 (baseline)
+	v6.11-rc7 + mgtime + this:	101357203 (~2% performance drop)
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202409091303.31b2b713-oliver.sang@intel.com
+Suggested-by: Arnd Bergmann <arnd@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+This version moves more of the floor handling into the timekeeper code.
+
+Some of the earlier concern was about mixing different time value types
+in the same interface. This sort of still does that, but it does it
+using an opaque cookie value instead, which I'm hoping will make the
+interfaces a little cleaner. Using an opaque cookie also means that we
+can change the underlying implementation at will, without breaking the
+callers.
+
+If this approach looks OK, it's probably best for me to just respin the
+entire series and have Christian drop the old and pick up the new. That
+should reduce some of the unnecessary churn in fs/inode.c.
+---
+Changes in v2:
+- move floor handling completely into timekeeper code
+- add new interfaces for multigrain timestamp handling
+- Link to v1: https://lore.kernel.org/r/20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org
+---
+ fs/inode.c                  | 105 +++++++++++++-------------------------------
+ include/linux/timekeeping.h |   4 ++
+ kernel/time/timekeeping.c   |  77 ++++++++++++++++++++++++++++++++
+ 3 files changed, 111 insertions(+), 75 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index f0fbfd470d8e..3c7e16935bac 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -65,13 +65,6 @@ static unsigned int i_hash_shift __ro_after_init;
+ static struct hlist_head *inode_hashtable __ro_after_init;
+ static __cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_hash_lock);
+ 
+-/*
+- * This represents the latest fine-grained time that we have handed out as a
+- * timestamp on the system. Tracked as a monotonic value, and converted to the
+- * realtime clock on an as-needed basis.
+- */
+-static __cacheline_aligned_in_smp atomic64_t ctime_floor;
+-
+ /*
+  * Empty aops. Can be used for the cases where the user does not
+  * define any of the address_space operations.
+@@ -2255,25 +2248,6 @@ int file_remove_privs(struct file *file)
+ }
+ EXPORT_SYMBOL(file_remove_privs);
+ 
+-/**
+- * coarse_ctime - return the current coarse-grained time
+- * @floor: current (monotonic) ctime_floor value
+- *
+- * Get the coarse-grained time, and then determine whether to
+- * return it or the current floor value. Returns the later of the
+- * floor and coarse grained timestamps, converted to realtime
+- * clock value.
+- */
+-static ktime_t coarse_ctime(ktime_t floor)
+-{
+-	ktime_t coarse = ktime_get_coarse();
+-
+-	/* If coarse time is already newer, return that */
+-	if (!ktime_after(floor, coarse))
+-		return ktime_get_coarse_real();
+-	return ktime_mono_to_real(floor);
+-}
+-
+ /**
+  * current_time - Return FS time (possibly fine-grained)
+  * @inode: inode.
+@@ -2284,11 +2258,11 @@ static ktime_t coarse_ctime(ktime_t floor)
+  */
+ struct timespec64 current_time(struct inode *inode)
+ {
+-	ktime_t floor = atomic64_read(&ctime_floor);
+-	ktime_t now = coarse_ctime(floor);
+-	struct timespec64 now_ts = ktime_to_timespec64(now);
++	struct timespec64 now;
+ 	u32 cns;
+ 
++	ktime_get_coarse_real_ts64_mg(&now);
++
+ 	if (!is_mgtime(inode))
+ 		goto out;
+ 
+@@ -2299,11 +2273,11 @@ struct timespec64 current_time(struct inode *inode)
+ 		 * If there is no apparent change, then
+ 		 * get a fine-grained timestamp.
+ 		 */
+-		if (now_ts.tv_nsec == (cns & ~I_CTIME_QUERIED))
+-			ktime_get_real_ts64(&now_ts);
++		if (now.tv_nsec == (cns & ~I_CTIME_QUERIED))
++			ktime_get_real_ts64(&now);
+ 	}
+ out:
+-	return timestamp_truncate(now_ts, inode);
++	return timestamp_truncate(now, inode);
+ }
+ EXPORT_SYMBOL(current_time);
+ 
+@@ -2745,7 +2719,7 @@ EXPORT_SYMBOL(timestamp_truncate);
+  *
+  * Set the inode's ctime to the current value for the inode. Returns the
+  * current value that was assigned. If this is not a multigrain inode, then we
+- * just set it to whatever the coarse_ctime is.
++ * set it to the later of the coarse time and floor value.
+  *
+  * If it is multigrain, then we first see if the coarse-grained timestamp is
+  * distinct from what we have. If so, then we'll just use that. If we have to
+@@ -2756,16 +2730,16 @@ EXPORT_SYMBOL(timestamp_truncate);
+  */
+ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ {
+-	ktime_t now, floor = atomic64_read(&ctime_floor);
+-	struct timespec64 now_ts;
++	struct timespec64 now;
+ 	u32 cns, cur;
++	u64 cookie;
+ 
+-	now = coarse_ctime(floor);
++	cookie = ktime_get_coarse_real_ts64_mg(&now);
+ 
+ 	/* Just return that if this is not a multigrain fs */
+ 	if (!is_mgtime(inode)) {
+-		now_ts = timestamp_truncate(ktime_to_timespec64(now), inode);
+-		inode_set_ctime_to_ts(inode, now_ts);
++		now = timestamp_truncate(now, inode);
++		inode_set_ctime_to_ts(inode, now);
+ 		goto out;
+ 	}
+ 
+@@ -2776,44 +2750,27 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ 	 */
+ 	cns = smp_load_acquire(&inode->i_ctime_nsec);
+ 	if (cns & I_CTIME_QUERIED) {
+-		ktime_t ctime = ktime_set(inode->i_ctime_sec, cns & ~I_CTIME_QUERIED);
+-
+-		if (!ktime_after(now, ctime)) {
+-			ktime_t old, fine;
++		struct timespec64 ctime = { .tv_sec = inode->i_ctime_sec,
++					    .tv_nsec = cns & ~I_CTIME_QUERIED };
+ 
+-			/* Get a fine-grained time */
+-			fine = ktime_get();
+-			mgtime_counter_inc(mg_fine_stamps);
+-
+-			/*
+-			 * If the cmpxchg works, we take the new floor value. If
+-			 * not, then that means that someone else changed it after we
+-			 * fetched it but before we got here. That value is just
+-			 * as good, so keep it.
+-			 */
+-			old = floor;
+-			if (atomic64_try_cmpxchg(&ctime_floor, &old, fine))
+-				mgtime_counter_inc(mg_floor_swaps);
+-			else
+-				fine = old;
+-			now = ktime_mono_to_real(fine);
+-		}
++		if (timespec64_compare(&now, &ctime) <= 0)
++			ktime_get_real_ts64_mg(&now, cookie);
+ 	}
+ 	mgtime_counter_inc(mg_ctime_updates);
+-	now_ts = timestamp_truncate(ktime_to_timespec64(now), inode);
+-	cur = cns;
++	now = timestamp_truncate(now, inode);
+ 
+ 	/* No need to cmpxchg if it's exactly the same */
+-	if (cns == now_ts.tv_nsec && inode->i_ctime_sec == now_ts.tv_sec) {
+-		trace_ctime_xchg_skip(inode, &now_ts);
++	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec) {
++		trace_ctime_xchg_skip(inode, &now);
+ 		goto out;
+ 	}
++	cur = cns;
+ retry:
+ 	/* Try to swap the nsec value into place. */
+-	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now_ts.tv_nsec)) {
++	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
+ 		/* If swap occurred, then we're (mostly) done */
+-		inode->i_ctime_sec = now_ts.tv_sec;
+-		trace_ctime_ns_xchg(inode, cns, now_ts.tv_nsec, cur);
++		inode->i_ctime_sec = now.tv_sec;
++		trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
+ 		mgtime_counter_inc(mg_ctime_swaps);
+ 	} else {
+ 		/*
+@@ -2827,11 +2784,11 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ 			goto retry;
+ 		}
+ 		/* Otherwise, keep the existing ctime */
+-		now_ts.tv_sec = inode->i_ctime_sec;
+-		now_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
++		now.tv_sec = inode->i_ctime_sec;
++		now.tv_nsec = cur & ~I_CTIME_QUERIED;
+ 	}
+ out:
+-	return now_ts;
++	return now;
+ }
+ EXPORT_SYMBOL(inode_set_ctime_current);
+ 
+@@ -2854,8 +2811,7 @@ EXPORT_SYMBOL(inode_set_ctime_current);
+  */
+ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 update)
+ {
+-	ktime_t now, floor = atomic64_read(&ctime_floor);
+-	struct timespec64 now_ts, cur_ts;
++	struct timespec64 now, cur_ts;
+ 	u32 cur, old;
+ 
+ 	/* pairs with try_cmpxchg below */
+@@ -2867,12 +2823,11 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
+ 	if (timespec64_compare(&update, &cur_ts) <= 0)
+ 		return cur_ts;
+ 
+-	now = coarse_ctime(floor);
+-	now_ts = ktime_to_timespec64(now);
++	ktime_get_coarse_real_ts64_mg(&now);
+ 
+ 	/* Clamp the update to "now" if it's in the future */
+-	if (timespec64_compare(&update, &now_ts) > 0)
+-		update = now_ts;
++	if (timespec64_compare(&update, &now) > 0)
++		update = now;
+ 
+ 	update = timestamp_truncate(update, inode);
+ 
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index fc12a9ba2c88..cf2293158c65 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -45,6 +45,10 @@ extern void ktime_get_real_ts64(struct timespec64 *tv);
+ extern void ktime_get_coarse_ts64(struct timespec64 *ts);
+ extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
+ 
++/* Multigrain timestamp interfaces */
++extern u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
++extern void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie);
++
+ void getboottime64(struct timespec64 *ts);
+ 
+ /*
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 5391e4167d60..bb039c9d525e 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -114,6 +114,13 @@ static struct tk_fast tk_fast_raw  ____cacheline_aligned = {
+ 	.base[1] = FAST_TK_INIT,
+ };
+ 
++/*
++ * This represents the latest fine-grained time that we have handed out as a
++ * timestamp on the system. Tracked as a monotonic ktime_t, and converted to the
++ * realtime clock on an as-needed basis.
++ */
++static __cacheline_aligned_in_smp atomic64_t mg_floor;
++
+ static inline void tk_normalize_xtime(struct timekeeper *tk)
+ {
+ 	while (tk->tkr_mono.xtime_nsec >= ((u64)NSEC_PER_SEC << tk->tkr_mono.shift)) {
+@@ -2394,6 +2401,76 @@ void ktime_get_coarse_real_ts64(struct timespec64 *ts)
+ }
+ EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
+ 
++/**
++ * ktime_get_coarse_real_ts64_mg - get later of coarse grained time or floor
++ * @ts: timespec64 to be filled
++ *
++ * Adjust floor to realtime and compare it to the coarse time. Fill
++ * @ts with the latest one. Returns opaque cookie suitable to pass
++ * to ktime_get_real_ts64_mg.
++ */
++u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
++{
++	struct timekeeper *tk = &tk_core.timekeeper;
++	u64 floor = atomic64_read(&mg_floor);
++	ktime_t f_real, offset, coarse;
++	unsigned int seq;
++
++	WARN_ON(timekeeping_suspended);
++
++	do {
++		seq = read_seqcount_begin(&tk_core.seq);
++		*ts = tk_xtime(tk);
++		offset = *offsets[TK_OFFS_REAL];
++	} while (read_seqcount_retry(&tk_core.seq, seq));
++
++	coarse = timespec64_to_ktime(*ts);
++	f_real = ktime_add(floor, offset);
++	if (ktime_after(f_real, coarse))
++		*ts = ktime_to_timespec64(f_real);
++	return floor;
++}
++EXPORT_SYMBOL_GPL(ktime_get_coarse_real_ts64_mg);
++
++/**
++ * ktime_get_real_ts64_mg - attempt to update floor value and return result
++ * @ts:		pointer to the timespec to be set
++ * @cookie:	opaque cookie from earlier call to ktime_get_coarse_real_ts64_mg()
++ *
++ * Get a current monotonic fine-grained time value and attempt to swap
++ * it into the floor using @cookie as the "old" value. @ts will be
++ * filled with the resulting floor value, regardless of the outcome of
++ * the swap.
++ */
++void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
++{
++	struct timekeeper *tk = &tk_core.timekeeper;
++	ktime_t offset, mono, old = (ktime_t)cookie;
++	unsigned int seq;
++	u64 nsecs;
++
++	WARN_ON(timekeeping_suspended);
++
++	do {
++		seq = read_seqcount_begin(&tk_core.seq);
++
++		ts->tv_sec = tk->xtime_sec;
++		mono = tk->tkr_mono.base;
++		nsecs = timekeeping_get_ns(&tk->tkr_mono);
++		offset = *offsets[TK_OFFS_REAL];
++	} while (read_seqcount_retry(&tk_core.seq, seq));
++
++	mono = ktime_add_ns(mono, nsecs);
++	if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
++		ts->tv_nsec = 0;
++		timespec64_add_ns(ts, nsecs);
++	} else {
++		*ts = ktime_to_timespec64(ktime_add(old, offset));
++	}
++
++}
++EXPORT_SYMBOL(ktime_get_real_ts64_mg);
++
+ void ktime_get_coarse_ts64(struct timespec64 *ts)
+ {
+ 	struct timekeeper *tk = &tk_core.timekeeper;
+
+---
+base-commit: 18348a38102a4efca57186740afb33f08e5f4609
+change-id: 20240912-mgtime-c1280600a9a3
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
