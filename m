@@ -1,249 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-29203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C9C977145
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 21:17:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A821497714C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 21:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AAD9B21F04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 19:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F34E1F24D57
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 19:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D461C1C1ABE;
-	Thu, 12 Sep 2024 19:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466FD1BE85C;
+	Thu, 12 Sep 2024 19:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="hnX0DScJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0+7Y9IY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54671C1AA2;
-	Thu, 12 Sep 2024 19:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949E91BFE02
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 19:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726168238; cv=none; b=RLbHnjNLHYScbLXx9BOhUfFCE30xqJm/3J6KBpCWbbjQwYzmTbG9ezo+Ksk5CeWja+i1oxOmLFeOTT77BlreeTC6qFeUzOIDP90vk2Ai0OpBtt8TakRutktxmV6HLFVH4gDMUl8svWOFkshzaDFTo+MqaA3R+pcwbVpyxkLcF0k=
+	t=1726168332; cv=none; b=HGgk9/SPSqxIoId2znDAL5myOomUZvrcf8xXSUJWTmVgZRIoyTH05O0bQOvX/ZVbAYHPJ7ju2Rd8AEPnm7KsR7hdfrzzR7HpgMTU+rvN8BMPYX6PNzYVwoVeeTmn6RwaqbjKxtDPgt7+ovi8e0JQxyUySEZquNa5WuR9o9uknnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726168238; c=relaxed/simple;
-	bh=b7UOdguusXvpIYtl4ZK9SkS97+KsMc1YfH8xKYakKUs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=undRW8WmyEqyM0YkUaVwFBJANnh5kQbWZeBE7DmJe528cfMTmlqE13JdYUq4H5oE5nQMEMYiUlShx4kQL72C5JvZZflStdVxl1Cww1FwjZVQGqCLY4MOyUfCsBkLSfVTKlrrYC4mmH+xf477UCm1qS3PBZISnmDmlCB1gE2plAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=hnX0DScJ; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3FCB11C0005;
-	Thu, 12 Sep 2024 19:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1726168233;
+	s=arc-20240116; t=1726168332; c=relaxed/simple;
+	bh=/M2IpRl+lu/5oIFubP5jWUgw0bkkbDFTr2zLK16691M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z1hzVdmzMROgQZi+7yRABW6GMpkG16sN5xQFlENFwYIZOm659kfqQp6A7VN8bDmnnOclXmK8uX7Egf4nPuXCeEtqzXSc/HodHtWdAtl2fM6t5zHAfVRurFxU3NVm2y46CwHmtFBTlHh4xnGK/POfFxK6MDiOgHJ7LjcGic+ok9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0+7Y9IY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726168329;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/PfYOgXccETc0xeXGIJ6ax3RKeDSTRkDESxyw9QEpx8=;
-	b=hnX0DScJNYDebHvMBNSv7fKjiJCxlvmQqPFZVpgHi9ak6wdPqR8EhN3TYFy2O90wDvWhsU
-	FrWKJazTv9qPXEmeBOo8FXLpYlw03QHbImpzUE2UdJsBOMHbBP/YLgZRUrYoZgjbGyJQBy
-	/omnXC+Cg7gpBikSuAlxtzo2u43xuVg1PJt21jNJJcVr4bT+7J4DNt+yE75vo67edR4AIW
-	r3mSr5Na0EAQvurEMqlKU0oT4GnTOEdtgp9wz7dWq6ZQ1jRiy7t+tA/mQMvyu87Be+3/KP
-	2DjtYFDlbRgbuHZ39Lxn78wk6wuynoI50YOHrM5InkIleyOqXvefdcvZtIo8hA==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
-  Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v4 08/10] tmpfs: Add flag FS_CASEFOLD_FL support for
- tmpfs dirs
-In-Reply-To: <20240911144502.115260-9-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Wed, 11 Sep 2024 11:45:00 -0300")
-References: <20240911144502.115260-1-andrealmeid@igalia.com>
-	<20240911144502.115260-9-andrealmeid@igalia.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Thu, 12 Sep 2024 15:10:29 -0400
-Message-ID: <87wmjgk7ru.fsf@mailhost.krisman.be>
+	bh=yvbR9pTYN0+0VwKrLy9DuxNd8JvV1gwfKMo7AQzTn/Q=;
+	b=Z0+7Y9IYqU4zn4YW+bSM/Bwiku5ZQkpCaBv84JwGCWk/MUDPB0ET49ulTYizoUtcoxoEwq
+	oZxlsc3xjMKjV+QBEOC0eshKb32NxB7muGDMZZqYgPz2GrX4rlk7kWxwDQS59V8aaP0JDB
+	2A7/1kqRH/9TUvaLoOf9RlAssIFJHY0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-5-BGHi3n3UNGmz565UDixh6w-1; Thu,
+ 12 Sep 2024 15:12:06 -0400
+X-MC-Unique: BGHi3n3UNGmz565UDixh6w-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B41A41955D4E;
+	Thu, 12 Sep 2024 19:12:03 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.48.7])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 217F81955D4C;
+	Thu, 12 Sep 2024 19:11:57 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>, Neil Brown <neilb@suse.de>,
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andreas Gruenbacher <agruenba@redhat.com>,
+ Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Alexander Ahring Oder Aring <aahringo@redhat.com>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+ linux-doc@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ gfs2@lists.linux.dev, ocfs2-devel@lists.linux.dev
+Subject: Re: [PATCH v1 0/4] Fixup NLM and kNFSD file lock callbacks
+Date: Thu, 12 Sep 2024 15:11:55 -0400
+Message-ID: <B51C0776-FF71-4A11-8813-57DD396AF68B@redhat.com>
+In-Reply-To: <D0E3A915-E146-46C9-A64E-1B6CC2C631F4@oracle.com>
+References: <cover.1726083391.git.bcodding@redhat.com>
+ <244954CF-C177-406C-9CAC-6F62D65C94DE@oracle.com>
+ <E2E16098-2A6E-4300-A17A-FA7C2E140B23@redhat.com>
+ <D0E3A915-E146-46C9-A64E-1B6CC2C631F4@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+On 12 Sep 2024, at 14:17, Chuck Lever III wrote:
 
-> Enable setting flag FS_CASEFOLD_FL for tmpfs directories, when tmpfs is
-> mounted with casefold support. A special check is need for this flag,
-> since it can't be set for non-empty directories.
-
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
-
+>> On Sep 12, 2024, at 11:06 AM, Benjamin Coddington <bcodding@redhat.com> wrote:
+>>
+>> On 12 Sep 2024, at 10:01, Chuck Lever III wrote:
+>>
+>>> For the NFSD and exportfs hunks:
+>>>
+>>> Acked-by: Chuck Lever <chuck.lever@oracle.com <mailto:chuck.lever@oracle.com>>
+>>>
+>>> "lockd: introduce safe async lock op" is in v6.10. Does this
+>>> series need to be backported to v6.10.y ? Should the series
+>>> have "Fixes: 2dd10de8e6bc ("lockd: introduce safe async lock
+>>> op")" ?
+>>
+>> Thanks Chuck! Probably yes, if we want notifications fixed up there.  It
+>> should be sufficient to add this to the signoff area for at least the first
+>> three (and fourth for cleanup):
+>>
+>> Cc: <stable@vger.kernel.org> # 6.10.x
 >
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
-> Changes from v2:
-> - Fixed bug when adding a non-casefold flag in a non-empty dir
-> ---
->  include/linux/shmem_fs.h |  6 ++--
->  mm/shmem.c               | 70 ++++++++++++++++++++++++++++++++++++----
->  2 files changed, 67 insertions(+), 9 deletions(-)
+> 2dd10de8e6bc landed in v6.7.
 >
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index 1d06b1e5408a..8367ca2b99d9 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -42,10 +42,10 @@ struct shmem_inode_info {
->  	struct inode		vfs_inode;
->  };
->=20=20
-> -#define SHMEM_FL_USER_VISIBLE		FS_FL_USER_VISIBLE
-> +#define SHMEM_FL_USER_VISIBLE		(FS_FL_USER_VISIBLE | FS_CASEFOLD_FL)
->  #define SHMEM_FL_USER_MODIFIABLE \
-> -	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
-> -#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
-> +	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL | FS_CAS=
-EFOLD_FL)
-> +#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL | FS_CASEFOLD_=
-FL)
->=20=20
->  struct shmem_quota_limits {
->  	qsize_t usrquota_bhardlimit; /* Default user quota block hard limit */
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 4fde63596ab3..fc0e0cd46146 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2613,13 +2613,62 @@ static int shmem_file_open(struct inode *inode, s=
-truct file *file)
->  #ifdef CONFIG_TMPFS_XATTR
->  static int shmem_initxattrs(struct inode *, const struct xattr *, void *=
-);
->=20=20
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +/*
-> + * shmem_inode_casefold_flags - Deal with casefold file attribute flag
-> + *
-> + * The casefold file attribute needs some special checks. I can just be =
-added to
-> + * an empty dir, and can't be removed from a non-empty dir.
-> + */
-> +static int shmem_inode_casefold_flags(struct inode *inode, unsigned int =
-fsflags,
-> +				      struct dentry *dentry, unsigned int *i_flags)
-> +{
-> +	unsigned int old =3D inode->i_flags;
-> +	struct super_block *sb =3D inode->i_sb;
-> +
-> +	if (fsflags & FS_CASEFOLD_FL) {
-> +		if (!(old & S_CASEFOLD)) {
-> +			if (!sb->s_encoding)
-> +				return -EOPNOTSUPP;
-> +
-> +			if (!S_ISDIR(inode->i_mode))
-> +				return -ENOTDIR;
-> +
-> +			if (dentry && !simple_empty(dentry))
-> +				return -ENOTEMPTY;
-> +		}
-> +
-> +		*i_flags =3D *i_flags | S_CASEFOLD;
-> +	} else if (old & S_CASEFOLD) {
-> +		if (dentry && !simple_empty(dentry))
-> +			return -ENOTEMPTY;
-> +	}
-> +
-> +	return 0;
-> +}
-> +#else
-> +static int shmem_inode_casefold_flags(struct inode *inode, unsigned int =
-fsflags,
-> +				      struct dentry *dentry, unsigned int *i_flags)
-> +{
-> +	if (fsflags & FS_CASEFOLD_FL)
-> +		return -EOPNOTSUPP;
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->  /*
->   * chattr's fsflags are unrelated to extended attributes,
->   * but tmpfs has chosen to enable them under the same config option.
->   */
-> -static void shmem_set_inode_flags(struct inode *inode, unsigned int fsfl=
-ags)
-> +static int shmem_set_inode_flags(struct inode *inode, unsigned int fsfla=
-gs, struct dentry *dentry)
->  {
->  	unsigned int i_flags =3D 0;
-> +	int ret;
-> +
-> +	ret =3D shmem_inode_casefold_flags(inode, fsflags, dentry, &i_flags);
-> +	if (ret)
-> +		return ret;
->=20=20
->  	if (fsflags & FS_NOATIME_FL)
->  		i_flags |=3D S_NOATIME;
-> @@ -2630,10 +2679,12 @@ static void shmem_set_inode_flags(struct inode *i=
-node, unsigned int fsflags)
->  	/*
->  	 * But FS_NODUMP_FL does not require any action in i_flags.
->  	 */
-> -	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE);
-> +	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE | S_=
-CASEFOLD);
-> +
-> +	return 0;
->  }
->  #else
-> -static void shmem_set_inode_flags(struct inode *inode, unsigned int fsfl=
-ags)
-> +static void shmem_set_inode_flags(struct inode *inode, unsigned int fsfl=
-ags, struct dentry *dentry)
->  {
->  }
->  #define shmem_initxattrs NULL
-> @@ -2680,7 +2731,7 @@ static struct inode *__shmem_get_inode(struct mnt_i=
-dmap *idmap,
->  	info->fsflags =3D (dir =3D=3D NULL) ? 0 :
->  		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
->  	if (info->fsflags)
-> -		shmem_set_inode_flags(inode, info->fsflags);
-> +		shmem_set_inode_flags(inode, info->fsflags, NULL);
->  	INIT_LIST_HEAD(&info->shrinklist);
->  	INIT_LIST_HEAD(&info->swaplist);
->  	simple_xattrs_init(&info->xattrs);
-> @@ -3789,16 +3840,23 @@ static int shmem_fileattr_set(struct mnt_idmap *i=
-dmap,
->  {
->  	struct inode *inode =3D d_inode(dentry);
->  	struct shmem_inode_info *info =3D SHMEM_I(inode);
-> +	int ret, flags;
->=20=20
->  	if (fileattr_has_fsx(fa))
->  		return -EOPNOTSUPP;
->  	if (fa->flags & ~SHMEM_FL_USER_MODIFIABLE)
->  		return -EOPNOTSUPP;
->=20=20
-> -	info->fsflags =3D (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
-> +	flags =3D (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
->  		(fa->flags & SHMEM_FL_USER_MODIFIABLE);
->=20=20
-> -	shmem_set_inode_flags(inode, info->fsflags);
-> +	ret =3D shmem_set_inode_flags(inode, flags, dentry);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	info->fsflags =3D flags;
-> +
->  	inode_set_ctime_current(inode);
->  	inode_inc_iversion(inode);
->  	return 0;
+> I suppose that since v6.10.y is likely to be closed by
+> the time this series is applied upstream, this tag might
+> be confusing.
+>
+> Thus Fixes: 2dd10de8e6bc and a plain Cc: stable should
+> work best. Then whichever stable kernel is open when your
+> fixes are merged upstream will automatically get fixed.
 
---=20
-Gabriel Krisman Bertazi
+So you want "Fixes: 2dd10de8e6bc" on all these patches?  Fixing the problem
+requires all of the first three patches together.  My worry is that a
+"Fixes" on each implies a complete fix within that patch, so its really not
+appropriate.
+
+The stable-kernel-rules.rst documentation says for a series, the Cc: stable
+tag should be suffient to request dependencies within the series, so that's
+why I suggested it for the version you requested.
+
+What exactly would you like to see?  I am happy to send a 2nd version.
+
+Ben
+
 
