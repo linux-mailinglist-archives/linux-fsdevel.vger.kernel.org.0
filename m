@@ -1,250 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-29179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E923C976C46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 16:37:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F1A976C5E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 16:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A3011C23519
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 14:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF40285C2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 14:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248B41B12F1;
-	Thu, 12 Sep 2024 14:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGpKzVxi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0D41B9852;
+	Thu, 12 Sep 2024 14:43:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC481AD276;
-	Thu, 12 Sep 2024 14:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245C51B12FF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 14:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726151843; cv=none; b=u8EvSYHFbp8biMazIDFnOmcTp/MhDiAONf6A5yHcG3BXHf9wGxTkdjtTHrLWsYk7FziYWvv8+7fSHadlAU8CE0BkdYZ2pg6yBmQRocO+S0DOQvyIWoxrSMbB1hbjFZQIsS+mhfx6vYGc3A8/Pujn7gfeScTylE1QXuueaAFco18=
+	t=1726152203; cv=none; b=QD+PLuZ+hTALtBzFWOd5xSVW2MI2WsfQprECEsWa5L8iqswznlQb0llb0oJsihjW8Vll3lsK9WU8aytFJOb8m3xoaCEI/cbuJ5O85EvDC0nlHUMaS/BGEvfHSf7qgue7iNREwCUXJtDQ4Lt4pZi2zw4v+wvrN+yBPC2nJJ+8fU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726151843; c=relaxed/simple;
-	bh=GXob01pXnf8aK8r4XO0sRlGQrFeQ/G+WjHxjhlCQmjk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OhWgjzHg8U0w9lC70ayNnsVCPNYVT0cWUH1LNkU97L1bs8XUEL87Sa/z9+5sKiK3JvxNeq1P60e9/VFLGR+Uoy8Xgoui2WacqJkttXLZVJfIozn4k3Pw6YCHxewv5duJj5+IzlzfPjbfETb85MhmLkZxcdbNoBUN9Mg3v26g7K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGpKzVxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 656C3C4CEC4;
-	Thu, 12 Sep 2024 14:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726151843;
-	bh=GXob01pXnf8aK8r4XO0sRlGQrFeQ/G+WjHxjhlCQmjk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=gGpKzVxigWb8GyWDjkF7HG1BfRjuEKLDxENBpXWSy15mpWsHdH+LfN0KGawpXx41Y
-	 Ds2NoaOmK+bs/90dJ6jmtKcIM5zuRyevKBzUK4pJ4fLcDnKmI+IuCSgraMDmbU1QGA
-	 zLaBMuzRxn/W35ECfz9CCN8R/UyGfwrtXUXelqA8+ifKh1NVzAhhaQYCphXBPj3/OD
-	 jewyFEhL+nUi3jTw2KXMb8/U6GXmuMhhm0VFTYG/xqJRaHoczWL2SvuMxZ+y2XrV4t
-	 hijKQMUlIcp6jLsWtscA4DM8yWo4LyMe+ZtE772f/BgrBpdI0f/i61+ibV+EMUY7u+
-	 n9WU9wks4vP4g==
-Message-ID: <12577f7d9865ef8fabc7447a23cdfc1674cbe7e8.camel@kernel.org>
-Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into
- timekeeper
-From: Jeff Layton <jlayton@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>, John Stultz <jstultz@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas Gleixner
- <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel test
- robot <oliver.sang@intel.com>
-Date: Thu, 12 Sep 2024 10:37:21 -0400
-In-Reply-To: <284fd6a654eaec5a45b78c9ee88cde7b543e2278.camel@kernel.org>
-References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
-	 <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
-	 <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
-	 <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
-	 <1484d32b-ab0f-48ff-998a-62feada58300@app.fastmail.com>
-	 <c9ed7670a0b35b212991b7ce4735cb3dfaae1fda.camel@kernel.org>
-	 <b71c161a-8b43-400e-8c61-caac80e685a8@app.fastmail.com>
-	 <284fd6a654eaec5a45b78c9ee88cde7b543e2278.camel@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726152203; c=relaxed/simple;
+	bh=44HZROY6hkUjMrwzO00wKvZQN6SjPK5W+mybUxobiB0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=o109EVrNQfZ+pdpTSYw4tQsIcIJeXDhr7qaSDE7/sL469w+Dc9M2jD96uAEf68Ze+ENJcK4YlNS/VqXlHP05UUq2N00YjDQt8KZj3GpA8oIM6g2yHMzzlTrpS29iS42n1SRtocUJs3NogoeACd04TYYdvGLQJtY+JSJutKQwyN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82ce11bc50eso132864239f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 07:43:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726152201; x=1726757001;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ij+GkpxlEVk7Mj41pa+W5MVk69nYLgtiVnFQHtDPlt0=;
+        b=D6nlcS26queYI1yQBL7wzXCmFV8vYQK6mKp+AFQl0GoJGr0a8BMrCmOtfTgy93GhiB
+         ipX0n2tT8IPuagTmLy3DNgY7iFyZT+FK5eRgT+DlYqSfJY6n4Jds4kEKyCFHxhILab+j
+         ZGb6Y8NHOPMTI1FtFYr5bjxhs9E7E/OWI+yKOm+zLsuVqhUstaazdifoq0P1AfC2kN8l
+         gjArh1tDfbe+hCpUcd1OrUl2+oKsz8PIKJd7eSgUsHXHSpCiSJtQy5skvv5SY6jPBMXF
+         Z9I45O+F6z3m1KMM2IT196QOS4VWGx/6+CJ0nUruHjrBxfuRzS1HHnXKyco/uRCzHrPS
+         DayQ==
+X-Gm-Message-State: AOJu0Yz75JqUOZ0oT/sxSRAYePAJMx4xihm1mvUt1wG6caFfiQluBBfy
+	wn5x7m4tNlxgp3SnOrQr4GjlBxmSgVC72tvu5MMgTEgzJqnJOUeqVtKWGKCHHAVuwpmCuly4Q1L
+	L7xbMp15FWejoqUNbJIzMguRT+JfK/qVtmMz3bKyCXx0QQR39G3kF41M=
+X-Google-Smtp-Source: AGHT+IH97IoXQLzlQcGm+nbcLb02E7mifpDJBoHBIkOLOsVm3EGLbq3ZGrIMm0VJb40L/AexNZevqcls3ExKpuwpBjpRGBigDijL
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6602:15cb:b0:82c:d744:2936 with SMTP id
+ ca18e2360f4ac-82d1f80b5demr410511239f.0.1726152201338; Thu, 12 Sep 2024
+ 07:43:21 -0700 (PDT)
+Date: Thu, 12 Sep 2024 07:43:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ca18210621ed20e6@google.com>
+Subject: [syzbot] [fuse?] linux-next test error: general protection fault in fuse_get_req
+From: syzbot <syzbot+20c7e20cc8f5296dca12@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-next@vger.kernel.org, miklos@szeredi.hu, sfr@canb.auug.org.au, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2024-09-12 at 09:26 -0400, Jeff Layton wrote:
-> On Thu, 2024-09-12 at 13:17 +0000, Arnd Bergmann wrote:
-> > On Thu, Sep 12, 2024, at 11:34, Jeff Layton wrote:
-> > > On Thu, 2024-09-12 at 10:01 +0000, Arnd Bergmann wrote:
-> > > > On Wed, Sep 11, 2024, at 20:43, Jeff Layton wrote:
-> > > >=20
-> > > > That way you avoid the atomic64_try_cmpxchg()
-> > > > inode_set_ctime_current(), making that case faster,
-> > > > and avoid all overhead in coarse_ctime() unless you
-> > > > use both types during the same tick.
-> > > >=20
-> > >=20
-> > > With the current code we only get a fine grained timestamp iff:
-> > >=20
-> > > 1/ the timestamps have been queried (a'la I_CTIME_QUERIED)
-> > > 2/ the current coarse-grained or floor time would not show a change i=
-n
-> > > the ctime
-> > >=20
-> > > If we do what you're suggesting above, as soon as one task sets the
-> > > flag, anyone calling current_time() will end up getting a brand new
-> > > fine-grained timestamp, even when the current floor time would have
-> > > been fine.
-> >=20
-> > Right, I forgot about this part of your work, the=20
-> > I_CTIME_QUERIED logic definitely has to stay.
-> >=20
-> > > That means a lot more calls into ktime_get_real_ts64(), at least unti=
-l
-> > > the timer ticks, and would probably mean a lot of extra journal
-> > > transactions, since those timestamps would all be distinct from one
-> > > another and would need to go to disk more often.
-> >=20
-> > I guess some of that overhead would go away if we just treated
-> > tk_xtime() as the floor value without an additional cache,
-> > and did the comparison against inode->i_ctime inside of
-> > a new ktime_get_real_ts64_newer_than(), but there is still the
-> > case of a single inode getting updated a lot, and it would
-> > break the ordering of updates between inodes.
-> >=20
->=20
-> Yes, and the breaking of ordering is why we had to revert the last set,
-> so that's definitely no good.
->=20
-> I think your suggestion about using a tuple of the sequence and the
-> delta should work. The trick is that we need to do the fetch and the
-> cmpxchg of the floor tuple inside the read_seqcount loop. Zeroing it
-> out can be done with write_once(). If we get a spurious update to the
-> floor while zeroing then it's no big deal since everything would just
-> loop and do it again.
->=20
-> I'll plan to hack something together later today and see how it does.
->=20
+Hello,
 
-Ok, already hit a couple of problems:
+syzbot found the following issue on:
 
-First, moving the floor word into struct timekeeper is probably not a
-good idea. This is going to be updated more often than the rest of the
-timekeeper, and so its cacheline will be invalidated more. I think we
-need to keep the floor word on its own cacheline. It can be a static
-u64 though inside timekeeper.c.
+HEAD commit:    57f962b956f1 Add linux-next specific files for 20240912
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1575b100580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3fe5de8661687e85
+dashboard link: https://syzkaller.appspot.com/bug?extid=20c7e20cc8f5296dca12
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Second, the existing code basically does:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/545b0277a56b/disk-57f962b9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2a78e0824c78/vmlinux-57f962b9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0ea0ed7e55f3/bzImage-57f962b9.xz
 
-	get the floor time (tfc =3D max of coarse and ctime_floor)=20
-	if ctime was queried and applying tfc would show no change:
-		get fine time
-		cmpxchg into place and accept the result
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+20c7e20cc8f5296dca12@syzkaller.appspotmail.com
 
-The key there is that if the floor time changes at any point between
-when we first fetch it and the attempted cmpxchg, no update happens
-(which is good).
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
+CPU: 1 UID: 0 PID: 5438 Comm: syz.1.200 Not tainted 6.11.0-rc7-next-20240912-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:fuse_get_req+0x699/0xd40 fs/fuse/dev.c:151
+Code: 24 50 48 83 c3 08 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 f5 d0 e9 fe 48 8b 1b 48 83 c3 58 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 d8 d0 e9 fe 48 8b 1b 81 e3 00 20
+RSP: 0018:ffffc90003fef4c0 EFLAGS: 00010202
+RAX: 000000000000000b RBX: 0000000000000058 RCX: ffffffff83149a52
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888027181030
+RBP: ffffc90003fef5e8 R08: ffff888027181037 R09: 1ffff11004e30206
+R10: dffffc0000000000 R11: ffffed1004e30207 R12: ffff888027181000
+R13: dffffc0000000000 R14: ffff88807b835840 R15: ffff888027181000
+FS:  000055556da20500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff9fa307040 CR3: 0000000079296000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ fuse_simple_background+0x9d/0xb10 fs/fuse/dev.c:622
+ cuse_send_init fs/fuse/cuse.c:469 [inline]
+ cuse_channel_open+0x447/0x670 fs/fuse/cuse.c:526
+ misc_open+0x2cc/0x340 drivers/char/misc.c:165
+ chrdev_open+0x521/0x600 fs/char_dev.c:414
+ do_dentry_open+0x978/0x1460 fs/open.c:958
+ vfs_open+0x3e/0x330 fs/open.c:1088
+ do_open fs/namei.c:3774 [inline]
+ path_openat+0x2cb5/0x3b40 fs/namei.c:3942
+ do_filp_open+0x235/0x490 fs/namei.c:3969
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff9fa37def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffbadbdaa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007ff9fa535f80 RCX: 00007ff9fa37def9
+RDX: 0000000000000002 RSI: 0000000020000040 RDI: ffffffffffffff9c
+RBP: 00007ff9fa3f0b76 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ff9fa535f80 R14: 00007ff9fa535f80 R15: 0000000000000b44
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:fuse_get_req+0x699/0xd40 fs/fuse/dev.c:151
+Code: 24 50 48 83 c3 08 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 f5 d0 e9 fe 48 8b 1b 48 83 c3 58 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 d8 d0 e9 fe 48 8b 1b 81 e3 00 20
+RSP: 0018:ffffc90003fef4c0 EFLAGS: 00010202
+RAX: 000000000000000b RBX: 0000000000000058 RCX: ffffffff83149a52
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888027181030
+RBP: ffffc90003fef5e8 R08: ffff888027181037 R09: 1ffff11004e30206
+R10: dffffc0000000000 R11: ffffed1004e30207 R12: ffff888027181000
+R13: dffffc0000000000 R14: ffff88807b835840 R15: ffff888027181000
+FS:  000055556da20500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055e8d04790b8 CR3: 0000000079296000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	24 50                	and    $0x50,%al
+   2:	48 83 c3 08          	add    $0x8,%rbx
+   6:	48 89 d8             	mov    %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 f5 d0 e9 fe       	call   0xfee9d111
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 58          	add    $0x58,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 d8 d0 e9 fe       	call   0xfee9d111
+  39:	48 8b 1b             	mov    (%rbx),%rbx
+  3c:	81                   	.byte 0x81
+  3d:	e3 00                	jrcxz  0x3f
+  3f:	20                   	.byte 0x20
 
-If we move all of the floor handling into the timekeeper, then I think
-we still need to have some state that we pass back when trying to get
-the floor time initially, so that we keep the race window large (which
-seems weird, but is good in this case).
 
-So, I think that we actually need an API like this:
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-    /* returns opaque cookie value */
-    u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-    /* accepts opaque cookie value from above function */=20
-    void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie);
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-The first function fills in @ts with the max of coarse time and floor,
-and returns an opaque cookie (a copy of the floor word). The second
-fetches a fine-grained timestamp and uses the floor cookie as the "old"
-value when doing the cmpxchg, and then fills in @ts with the result.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Does that sound reasonable? If so, then the next question is around
-what the floor word should hold:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-IMO, just keeping it as a monotonic time value seems simplest. I'm
-struggling to understand where the "delta" portion would come from in
-your earlier proposal, and the fact that that value could overflow
-seems less than ideal.
-
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+If you want to undo deduplication, reply with:
+#syz undup
 
