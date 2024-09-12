@@ -1,200 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-29248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7D597752E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 01:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07EE5977596
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 01:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C9E286054
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 23:23:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E96E1F20EF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 23:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F4F1CE713;
-	Thu, 12 Sep 2024 23:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF561C2DBF;
+	Thu, 12 Sep 2024 23:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8jR+Ff/"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ddltiUOc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LE9pQkc8";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ddltiUOc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LE9pQkc8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512D91CDFD4;
-	Thu, 12 Sep 2024 23:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F316C18DF92;
+	Thu, 12 Sep 2024 23:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726183098; cv=none; b=sHwmVjdmSWS4YAOF5KuhXSO2Q7GmOH16Og8jkroZZ15t0VdHRoFMws//G1ZlF8q3fW1SvAwGRrz8wEBXFBDbbQhluZN7V3KWld6E6V8hH7wufSw5Tl7e2jAUjUpe0T1xRKtyqcLFlZkhW6jGbM0ZUK6uV106OjSY0h3yy1Fn6/o=
+	t=1726183901; cv=none; b=Jkbr4f4Cz31PeQbfImItZ/M758XQGCreHcJ5ijbPfv+ps/VbudMld3dEhXvWleM5GuigAKMx5kMVkFRTLMDW7uMZUmSX34uce4VcJWzDUxwIwMh/TMSekVNcK1sMc7qR7841OgCZeZpb4bdH7BzS/1drSTKJVW4kYKm87eiWBwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726183098; c=relaxed/simple;
-	bh=Ns4lQeNcWSYEbKxbEgvG6kwlvdYFgPjC/A2j0jbzXAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gWEhsKp/xcrmq3G473Uhgtb+FTa+3+NjuKdDACAHeqQ6SHDWUtKo5p9/BzhfsjPc7ZEWlnYApzjyfR4srd6PXrbAKnKZnee4aHMHEJqCgbNhMZsFf/ULcb5ISkmv2oWUSEpcmkNzNi6KTnqQ7Egs1VKGlqqMv9qsksHm8FjlT6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8jR+Ff/; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4582c4aa2c2so9340541cf.0;
-        Thu, 12 Sep 2024 16:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726183096; x=1726787896; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1MPIlYcZWlx3tQ/7cIgcQXejSStNXwDd/F54jH6NnWQ=;
-        b=S8jR+Ff/cT6S8Q9kznZ4ZMpnj1eiLs74aZpml+Qyl5nw2WqtteeRekAwTr9Yd3CyUe
-         TusVAOo/Zn6qdk2a/DybdKiT4Y5UEdINkRvUZtXoyDm4tLdUYnXQ3IDgsl37rcr06JP+
-         Z5RYqC4CrimHN91fklz2A1MKau+K7+tPtu2mVCGdDUp3gJC8W9sy0rd93Nikakyze6Xb
-         B5fSAvl/h3FZ0x29JAt+9EFfExb/UDEnp+yPQ6iEkJMPIV/BYjrkZTW4k/+mwdZUC07l
-         JBZL4tUd0aO/cuBNDC3TSeT/bGWNfUJ8efIeHqClTGbSWCT4IZcj8pjn576bcNRWx7GR
-         oIrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726183096; x=1726787896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1MPIlYcZWlx3tQ/7cIgcQXejSStNXwDd/F54jH6NnWQ=;
-        b=IwohPsZr6cYZwSyCJgi12xp2fKyn2HFXY7Ohfq40sN3mihCujtK/pdYHb4RW8CugGH
-         /IiSUmI6YONY9b3euca+UyvU3wJyQmVopC/+6CyoK1uxDa7RQDUL9dYbq6p5q4JnwDi7
-         QyWXHD+k0aalqpOZbF9t5mG/xZkKT59EAtBDeiAvg0rp2nRXzlTecYtk5d1fBOrtZ9F7
-         Z00UKiui2UG0tfdSrEvEP3DC+dKlKE+wJJHv/NmYxT7sS+1QbOMT8TMa32iHCsSxPgfY
-         qnc1Or/ExKob1URAcHTsudJBJWkrYFDF/zR22YxetmV/Kf5rk9iL9fwYw/6ubwV1ZXlz
-         ly1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGKygLNzvoMYhb6lAQoQuIr76TRCF1H1qODT0AB153ts/36kbHIXznzt7G8+8nRpMflcI8Qo9/UpXcoVI+@vger.kernel.org, AJvYcCWYJOXmzWg8lq+NyyoMikf7twDhKw2825cTghCpe+igJj3ZZzZDE5s2dJA/94ilgUQRRCRRfDva4oTDJ7Yj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU2LGBG1c8dhoY4I2VjApZU/RkJNIrX6Bj6/BNAgDw3KiLpfiZ
-	bluhPQ/CSA6p2YDXQZDYNC5zL61NijGznwY0oLDfnWoxIHhUHJXONJ9bZUg4N2wFR8F21vuVnRI
-	kaRl+5w6yU0P0YoEf+NKRIkwHbhI=
-X-Google-Smtp-Source: AGHT+IEzfEwoEr6zI2D6nZE33iEIs2Q95Yqt/HHjEQE2Y+ReYYQKwFpLUZeTnTWz8NmwJGqU9NsR925L1EYHjaGdMss=
-X-Received: by 2002:a05:622a:7:b0:458:a70:d9bb with SMTP id
- d75a77b69052e-458602dc73amr52386891cf.22.1726183094786; Thu, 12 Sep 2024
- 16:18:14 -0700 (PDT)
+	s=arc-20240116; t=1726183901; c=relaxed/simple;
+	bh=fCL1oN6TMkEAVZcW5Ji3L1L50ch7AisDWGLM88M1/+Q=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=YmWuVk5twasA0sf/zOtGN3WKo5pWWHtDypO6OBgFpvCeihOQx4z98U/BMfq1Asj2UigyEJ6wYQgaQHICYEuCsKIz/PMyMY0yvKqlmEN4mcyXh7FMDAfKdPwh+6o/Rol7vVuvlFmOhgqn6Hrq6g+JhjthljUxVXynIm4vPITcWNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ddltiUOc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LE9pQkc8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ddltiUOc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LE9pQkc8; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3F4262198C;
+	Thu, 12 Sep 2024 23:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726183898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCT3WkFZ4a+bJ6B/FTLwpRuFnnrsntfDKcRHZNEoqCc=;
+	b=ddltiUOczVraT1M29DFv0i17WA4rKoHtvNCvsICzOvaS/QfZwYdWjl8Ul49VZkT4xBD7qG
+	i11AfnVhP0qKzBySSzuIEiaSX6E6bGMmYWh6FhYphCJJ6lmWuyjSexEf+JoCVpArmtI4RH
+	SaQWJEvSk665v/epba9/VOwY1/XLTsU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726183898;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCT3WkFZ4a+bJ6B/FTLwpRuFnnrsntfDKcRHZNEoqCc=;
+	b=LE9pQkc8j2Ofz2LQ6aq3+3ZQU2dbMvQh48i2P7oJslYUM3ERPJ6ym//Gqo/QE1y+flI+C6
+	rb7lbvVBiFbzdGDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726183898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCT3WkFZ4a+bJ6B/FTLwpRuFnnrsntfDKcRHZNEoqCc=;
+	b=ddltiUOczVraT1M29DFv0i17WA4rKoHtvNCvsICzOvaS/QfZwYdWjl8Ul49VZkT4xBD7qG
+	i11AfnVhP0qKzBySSzuIEiaSX6E6bGMmYWh6FhYphCJJ6lmWuyjSexEf+JoCVpArmtI4RH
+	SaQWJEvSk665v/epba9/VOwY1/XLTsU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726183898;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCT3WkFZ4a+bJ6B/FTLwpRuFnnrsntfDKcRHZNEoqCc=;
+	b=LE9pQkc8j2Ofz2LQ6aq3+3ZQU2dbMvQh48i2P7oJslYUM3ERPJ6ym//Gqo/QE1y+flI+C6
+	rb7lbvVBiFbzdGDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8CA9513A56;
+	Thu, 12 Sep 2024 23:31:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id o9mAENd542bXIwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 12 Sep 2024 23:31:35 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
- <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm> <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
- <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com> <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
- <19ffac65-8e1f-431e-a6bd-f942a4b908fe@linux.alibaba.com>
-In-Reply-To: <19ffac65-8e1f-431e-a6bd-f942a4b908fe@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 12 Sep 2024 16:18:03 -0700
-Message-ID: <CAJnrk1bcN4k8Ou6xp20Zd5W3k349T3S=QGmxAVmAkF5=B5bq3w@mail.gmail.com>
-Subject: Re: [HELP] FUSE writeback performance bottleneck
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "NeilBrown" <neilb@suse.de>
+To: "Chuck Lever III" <chuck.lever@oracle.com>
+Cc: "Anna Schumaker" <anna.schumaker@oracle.com>,
+ "Mike Snitzer" <snitzer@kernel.org>,
+ "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
+ "Jeff Layton" <jlayton@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Trond Myklebust" <trondmy@hammerspace.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v15 00/26] nfs/nfsd: add support for LOCALIO
+In-reply-to: <A8A5876A-4C8A-4630-AED3-7AED4FF121AB@oracle.com>
+References: <>, <A8A5876A-4C8A-4630-AED3-7AED4FF121AB@oracle.com>
+Date: Fri, 13 Sep 2024 09:31:24 +1000
+Message-id: <172618388461.17050.3025025482727199332@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,noble.neil.brown.name:mid,suse.de:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Wed, Sep 11, 2024 at 2:32=E2=80=AFAM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
->
-> Hi all,
->
-> On 6/4/24 3:27 PM, Miklos Szeredi wrote:
-> > On Tue, 4 Jun 2024 at 03:57, Jingbo Xu <jefflexu@linux.alibaba.com> wro=
-te:
-> >
-> >> IIUC, there are two sources that may cause deadlock:
-> >> 1) the fuse server needs memory allocation when processing FUSE_WRITE
-> >> requests, which in turn triggers direct memory reclaim, and FUSE
-> >> writeback then - deadlock here
-> >
-> > Yep, see the folio_wait_writeback() call deep in the guts of direct
-> > reclaim, which sleeps until the PG_writeback flag is cleared.  If that
-> > happens to be triggered by the writeback in question, then that's a
-> > deadlock.
->
-> After diving deep into the direct reclaim code, there are some insights
-> may be helpful.
->
-> Back to the time when the support for fuse writeback is introduced, i.e.
-> commit 3be5a52b30aa ("fuse: support writable mmap") since v2.6.26, the
-> direct reclaim indeed unconditionally waits for PG_writeback flag being
-> cleared.  At that time the direct reclaim is implemented in a two-stage
-> style, stage 1) pass over the LRU list to start parallel writeback
-> asynchronously, and stage 2) synchronously wait for completion of the
-> writeback previously started.
->
-> This two-stage design and the unconditionally waiting for PG_writeback
-> flag being cleared is removed by commit 41ac199 ("mm: vmscan: do not
-> stall on writeback during memory compaction") since v3.5.
->
-> Though the direct reclaim logic continues to evolve and the waiting is
-> added back, now the stall will happen only when the direct reclaim is
-> triggered from kswapd or memory cgroup.
->
-> Specifically the stall will only happen in following certain conditions
-> (see shrink_folio_list() for details):
-> 1) kswapd
-> 2) or it's a user process under a non-root memory cgroup (actually
-> cgroup_v1) with GFP_IO permitted
->
-> Thus the potential deadlock does not exist actually (if I'm not wrong) if=
-:
-> 1) cgroup is not enabled
-> 2) or cgroup_v2 is actually used
-> 3) or (memory cgroup is enabled and is attached upon cgroup_v1) the fuse
-> server actually resides under the root cgroup
-> 4) or (the fuse server resides under a non-root memory cgroup_v1), but
-> the fuse server advertises itself as a PR_IO_FLUSHER[1]
->
->
-> Then we could considering adding a new feature bit indicating that any
-> one of the above condition is met and thus the fuse server is safe from
-> the potential deadlock inside direct reclaim.  When this feature bit is
-> set, the kernel side could bypass the temp page copying when doing
-> writeback.
->
+On Thu, 12 Sep 2024, Chuck Lever III wrote:
+>=20
+>=20
+> > On Sep 10, 2024, at 8:43=E2=80=AFPM, NeilBrown <neilb@suse.de> wrote:
+> >=20
+> > On Sat, 07 Sep 2024, Anna Schumaker wrote:
+> >> Hi Mike,
+> >>=20
+> >> On 8/31/24 6:37 PM, Mike Snitzer wrote:
+> >>> Hi,
+> >>>=20
+> >>> Happy Labor Day weekend (US holiday on Monday)!  Seems apropos to send
+> >>> what I hope the final LOCALIO patchset this weekend: its my birthday
+> >>> this coming Tuesday, so _if_ LOCALIO were to get merged for 6.12
+> >>> inclusion sometime next week: best b-day gift in a while! ;)
+> >>>=20
+> >>> Anyway, I've been busy incorporating all the review feedback from v14
+> >>> _and_ working closely with NeilBrown to address some lingering net-ns
+> >>> refcounting and nfsd modules refcounting issues, and more (Chnagelog
+> >>> below):
+> >>>=20
+> >>=20
+> >> I've been running tests on localio this afternoon after finishing up goi=
+ng through v15 of the patches (I was most of the way through when you posted =
+v16, so I haven't updated yet!). Cthon tests passed on all NFS versions, and =
+xfstests passed on NFS v4.x. However, I saw this crash from xfstests with NFS=
+ v3:
+> >>=20
+> >> [ 1502.440896] run fstests generic/633 at 2024-09-06 14:04:17
+> >> [ 1502.694356] process 'vfstest' launched '/dev/fd/4/file1' with NULL ar=
+gv: empty string added
+> >> [ 1502.699514] Oops: general protection fault, probably for non-canonica=
+l address 0x6c616e69665f6140: 0000 [#1] PREEMPT SMP NOPTI
+> >> [ 1502.700970] CPU: 3 UID: 0 PID: 513 Comm: nfsd Not tainted 6.11.0-rc6-=
+g0c79a48cd64d-dirty+ #42323 70d41673e6cbf8e3437eb227e0a9c3c46ed3b289
+> >> [ 1502.702506] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS =
+unknown 2/2/2022
+> >> [ 1502.703593] RIP: 0010:nfsd_cache_lookup+0x2b3/0x840 [nfsd]
+> >> [ 1502.704474] Code: 8d bb 30 02 00 00 bb 01 00 00 00 eb 12 49 8d 46 10 =
+48 8b 08 ff c3 48 85 c9 0f 84 9c 00 00 00 49 89 ce 4c 8d 61 c8 41 8b 45 00 <3=
+b> 41 c8 75 1f 41 8b 45 04 41 3b 46 cc 74 15 8b 15 2c c6 b8 f2 be
+> >> [ 1502.706931] RSP: 0018:ffffc27ac0a2fd18 EFLAGS: 00010206
+> >> [ 1502.707547] RAX: 00000000b95691f7 RBX: 0000000000000002 RCX: 6c616e69=
+665f6178
+> >=20
+> > This doesn't look like code anywhere near the changes that LOCALIO
+> > makes.
+> >=20
+> > I dug around and the faulting instruction is=20
+> >   cmp    -0x38(%rcx),%eax=20
+> >=20
+> > The -0x38 points to nfsd_cache_insert().  -0x38 is the index back
+> > from the rbnode pointer to c_key.k_xid.  So the rbtree is corrupt.
+> > %rcx is 6c616e69665f6178 which is "xa_final".  So that rbtree node has
+> > been over-written or freed and re-used.
+> >=20
+> > It looks like
+> >=20
+> > Commit add1511c3816 ("NFSD: Streamline the rare "found" case")
+> >=20
+> > moved a call to nfsd_reply_cache_free_locked() that was inside a region
+> > locked with ->cache_lock out of that region.
+>=20
+> My reading of the current code is that cache_lock is held
+> during the nfsd_reply_cache_free_locked() call.
+>=20
+> add1511c3816 simply moved the call site from before a "goto"
+> to after the label it branches to. What am I missing?
 
-Hi Jingbo, thanks for sharing your analysis of this.
+Yes, I let myself get confused by the gotos.  As you say that patch
+didn't move the call out of the locked region.  Sorry.
 
-Having the temp page copying gated on the conditions you mentioned
-above seems a bit brittle to me. My understanding is that the mm code
-for when it decides to stall or not stall can change anytime in the
-future, in which case that seems like it could automatically break our
-precondition assumptions. Additionally, if I'm understanding it
-correctly, we also would need to know if the writeback is being
-triggered from reclaim by kswapd - is there even a way in the kernel
-to check that?
+I can't see anything wrong with the locking or tree management in
+nfscache.c, yet this Oops looks a lot like a corrupted rbtree.
+It *could* be something external stomping on the memory but I think
+that is unlikely.  I'd rather have a more direct explanation....  Not
+today though it seems.
 
-I'm wondering if there's some way we could tell if a folio is under
-reclaim when we're writing it back. I'm not familiar yet with the
-reclaim code, but my initial thoughts were whether it'd be possible to
-purpose the PG_reclaim flag or perhaps if the folio is not on any lru
-list, as an indication that it's being reclaimed. We could then just
-use the temp page in those cases, and skip the temp page otherwise.
-
-Could you also point me to where in the reclaim code we end up
-invoking the writeback callback? I see pageout() calls ->writepage()
-but I'm not seeing where we invoke ->writepages().
-
-
-Thanks,
-Joanne
-
->
-> As for the condition 4 (PR_IO_FLUSHER), there was a concern from
-> Miklos[2].  I think the new feature bit could be disabled by default,
-> and enabled only when the fuse server itself guarantees that it is in a
-> safe distribution condition.  Even when it's enabled either by a mistake
-> or a malicious fuse server, and thus causes a deadlock, maybe the
-> sysadmin could still abort the connection through the abort sysctl knob?
->
->
-> Just some insights and brainstorm here.
->
->
-> [1] https://lore.kernel.org/all/Zl4%2FOAsMiqB4LO0e@dread.disaster.area/
-> [2]
-> https://lore.kernel.org/all/CAJfpegvYpWuTbKOm1hoySHZocY+ki07EzcXBUX8kZx92=
-T8W6uQ@mail.gmail.com/
->
->
->
-> --
-> Thanks,
-> Jingbo
+NeilBrown
 
