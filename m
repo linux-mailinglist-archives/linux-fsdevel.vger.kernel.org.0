@@ -1,453 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-29198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE97976FEA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 20:03:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CAC977035
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 20:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D92BB22B58
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 18:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F0B1F22061
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 18:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165681BE854;
-	Thu, 12 Sep 2024 18:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5031BF802;
+	Thu, 12 Sep 2024 18:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbTJwEN8"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OJR1wqmV";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Xr85o9uF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4FD13A40F;
-	Thu, 12 Sep 2024 18:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726164176; cv=none; b=OEE7NORMyzPlD4Qp/lvc/wQsIMJ2ruM+OiDQ9J3eBg1mwik0fPruTf2EKS1No6WnfgG2mYuL4uxfkuHd8LcbAuuHLhoMmpaYPdaOtc3D6LJPrGWYNFBnanWZycbQbs8lzhgjeOOnAT+Uz2JDxbA9bnDoazJ2eCTG++VRZknn7zI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726164176; c=relaxed/simple;
-	bh=aTQ96XEIsrqaJG45eHdwF72McOz43L38rVYY+vEBb8g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T+hPRrKxgcEXXrDdrROZEzH/TLtkm9JJCEeo/q448JjUfjVKXcT26gLxSdVHp/XCZDYgT+Vh/CqKtc+7OSo2cssoGw1CE2hv3s2MY0+A0x7KsZneYHILs2x2ec5/2r7uA5Kuy1ymPhOgK5Iz3xO8TJPjffp1K8RaSiW6RVkGQVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbTJwEN8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9905C4CEC3;
-	Thu, 12 Sep 2024 18:02:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726164175;
-	bh=aTQ96XEIsrqaJG45eHdwF72McOz43L38rVYY+vEBb8g=;
-	h=From:Date:Subject:To:Cc:From;
-	b=GbTJwEN8ZAIi0WdtIaVZjhfdDQCVKcJp1nNv2dFAnRY7hXbMIavUX43eVK9+XLMsj
-	 f/L76SvB0Dn39nq8d0DjEacRlsgZPple6QZ06o/vtBE3swLKCcoUKX9C242XpWsGZx
-	 VwjOVymEc1gaOkbtS2EUNX+5akVpDgJcmRDarK2nsOZIM8wS9gVGnzqkzLIFsf3ikB
-	 dFhj1KHT/jQ2K39jo4qSrT9o6rX+OlCrEceatC2ZwX7n/UxCxiVlKEylXED5oHITcT
-	 ESyejKrnqFo/QOImTu/BqzhrMcqXwQS5MTSLj/KXldPBa85riXbXuaATBbQbA+Ctf6
-	 ZCcfQKLZJZ6XQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 12 Sep 2024 14:02:52 -0400
-Subject: [PATCH v2] timekeeping: move multigrain timestamp floor handling
- into timekeeper
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C045F13D530;
+	Thu, 12 Sep 2024 18:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726165060; cv=fail; b=Vkbp5FpQVrh3y2/pytmWXCEtM+ntVEkXHsZYjR4mxA4lF5VHpp3KeS/7T9k5RdU53yYU29s4BgWLzx2Xn+6ca3vZkrS91wjWbHS84+t6ySHB9HsUW2b7SWk99kSsP9jMEJhPPJp7olFXuD6NIAWqifGvGUKLPEOkUz/X0qqEIps=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726165060; c=relaxed/simple;
+	bh=Y+dyFtY4D5dMAPsKtgidUoa0FExzsZp0Nsgr1s/NjlY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BsTg5mR1s/ONjSrXlfqvnrY+Lk5e37CvVE1E0ifL6ist+uVx9YSHyRha+xNZr0JhVDdmVLO1G4SQtYDJYhNu4CYavA9v3xyzksH9D2RxpRAYiYm4e0NJu7rQ2uVRZkMwS1ylbG8SWj1/pSZ0Zr3F1dcCZG/31ibwiozRNdAKz8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OJR1wqmV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Xr85o9uF; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CDtWaS016492;
+	Thu, 12 Sep 2024 18:17:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:references:in-reply-to
+	:content-type:content-id:content-transfer-encoding:mime-version;
+	 s=corp-2023-11-20; bh=Y+dyFtY4D5dMAPsKtgidUoa0FExzsZp0Nsgr1s/Nj
+	lY=; b=OJR1wqmVupcOy7JvdXGG9N01ld9APGyV+id9iVXWj4snJhwgiQESo/+fq
+	aT9PesmA/65DWbuL94QbnBBlp6Mf5kSfYIng5/C+DYSZgZ2WpNI77D8nna83hFRO
+	NNnNaQc3wYpGk8YpcI86tWl4xQSZRamuP85LzsGjKUtr5KHnG6cdPOhulxpNqjde
+	hhDAgWV6ny9A1I3e8HasBhTcWQFRDLUwfG5T+0Hs5x7h+k8vWNJ6snz0vQHA9rZr
+	3y3jhcXt548ih0c889087SUNRVUdVIC8wUoPG1pmUouDngnBR7U87VD7KEY/vftf
+	iwZuPPEXpKkeuNsSvlpUvB/WZipsw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gjbuud0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Sep 2024 18:17:10 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48CHv0H1033533;
+	Thu, 12 Sep 2024 18:17:09 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9bneb3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Sep 2024 18:17:09 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EvRoBYQQdvops+2QO0k/TuACuJaUZTw012knxaGzU7rDcDuYTrqYnf3QZDysHjOW0sxde4e1FA6vaBf3XXHArW30FqBmXuemKN2rb5IiuqbGQDTwBZ7InrSa2TNbBt5rnVMez6pVzSWtvZHBWbGIe+oy+ulIeDD3OzgnYKfMMSAck/cBk4jtZyQ1x4kfAYIdNX815FJRtKusRYAho6AVTXj4ydYxRH9hFLcnZZSda/O2sKv6owLGureSyY+LibVo53G7O4MCfqWb96jTvU+Pfp34WcdzXBwiZVeo9zlNl94A/SEBSSB2MeuhzLL6MZxSveax2ia7AbNzm83j6dtotg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y+dyFtY4D5dMAPsKtgidUoa0FExzsZp0Nsgr1s/NjlY=;
+ b=EsVbrYfo3RxdoqTogfAEWsLl+MO+NiefDrR9Fo3fXeIVWVy7zWoTECjIvDuuJy5YBRpwuJWonuhMdRcKkDVn2l00G+BIOnw8dWXMQHfcW37ldDQ8mk1wNcYhuCcIpHrRsKZ32u+ylSnbaYhs/ZTEeKh//zlynZUwRG3+QxF6a1wYuyOcXhiAX3/twDhGaayK6LxPJIW88v21qOdeK0YxfLCD72ww8Ulyx/diKQIBoP/AXXTqRsmfD5UTtFBPHwMSo6PfEFFhkZEaPtyll/6uDKyQcMvvNVSFq+eRYx0v9nEiuML6cTD+gKHgnacN2hZKk4DKjg9P7uG5o+kyWxLsQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y+dyFtY4D5dMAPsKtgidUoa0FExzsZp0Nsgr1s/NjlY=;
+ b=Xr85o9uFzZEEc/BtDL7ytq9QYWlyrFEf2KZJ5z/mYx8aMOqtrlBwE8Flkx+Uilv36WxJB+UWe6eZqiXnHbT+jUt7xTfB8E3rf8k8v/xtU5zlNsgK+perP8E50+KpMySSC3P1U7Py/yNAwJ41gN4l5gKt/nTb36mA/BlSCxb/JTc=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by DS7PR10MB5055.namprd10.prod.outlook.com (2603:10b6:5:3a9::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Thu, 12 Sep
+ 2024 18:17:06 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%5]) with mapi id 15.20.7982.003; Thu, 12 Sep 2024
+ 18:17:06 +0000
+From: Chuck Lever III <chuck.lever@oracle.com>
+To: Benjamin Coddington <bcodding@redhat.com>
+CC: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>, Neil Brown <neilb@suse.de>,
+        Trond
+ Myklebust <trondmy@kernel.org>,
+        Anna Schumaker <anna@kernel.org>, Jonathan
+ Corbet <corbet@lwn.net>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Mark
+ Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi
+	<joseph.qi@linux.alibaba.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara
+	<jack@suse.cz>,
+        Alexander Ahring Oder Aring <aahringo@redhat.com>,
+        Linux FS
+ Devel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List
+	<linux-nfs@vger.kernel.org>,
+        "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+        "gfs2@lists.linux.dev"
+	<gfs2@lists.linux.dev>,
+        "ocfs2-devel@lists.linux.dev"
+	<ocfs2-devel@lists.linux.dev>
+Subject: Re: [PATCH v1 0/4] Fixup NLM and kNFSD file lock callbacks
+Thread-Topic: [PATCH v1 0/4] Fixup NLM and kNFSD file lock callbacks
+Thread-Index: AQHbBILbIkQ42h8MOEqBVgYVsg2/vbJUL3IAgAASXICAADURgA==
+Date: Thu, 12 Sep 2024 18:17:06 +0000
+Message-ID: <D0E3A915-E146-46C9-A64E-1B6CC2C631F4@oracle.com>
+References: <cover.1726083391.git.bcodding@redhat.com>
+ <244954CF-C177-406C-9CAC-6F62D65C94DE@oracle.com>
+ <E2E16098-2A6E-4300-A17A-FA7C2E140B23@redhat.com>
+In-Reply-To: <E2E16098-2A6E-4300-A17A-FA7C2E140B23@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Apple Mail (2.3776.700.51)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN0PR10MB5128:EE_|DS7PR10MB5055:EE_
+x-ms-office365-filtering-correlation-id: 2aeeab0b-6a65-47c6-8e78-08dcd3571bfd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?TWxIdVhSMGlUd25ZcG5nK1I1T1N3S2ZzUGZyS1JyZnBjQm05UDJmZ21aQ0xn?=
+ =?utf-8?B?TSs2VUZ4aExVWkxSaVVlWFEwTEtXUXBQcDlXUDRjNUl1QTJQMEIxWU5UZmtz?=
+ =?utf-8?B?ZjZVU0E1aWp6QVR2VDhpckx0NXQ3blNUTXJudzlyZVBNdkR5RG9zR1k0THVG?=
+ =?utf-8?B?RTY0TFhiWWdMY1ZWb05tTWs3dTIzaUFLbXFNb2hRV21kVjJyeVdGM2RDenpU?=
+ =?utf-8?B?eExhZVZPc1F0Zjk3aVdrOWxaWm1QUEJRVk0vQzhGTy9tMU1WSHVITFJ3bk5u?=
+ =?utf-8?B?U2NkaSsxOTJ1Z21lZzhyeC93b3hpelZRalZpdzVHZ0lXNVNBY09RLzBpMzFE?=
+ =?utf-8?B?bFdqbmhGSjdNc3BIa3BFTHBwWEVKbXorM0ZJRmF0VjJDbEZoaFN5bmp4byt1?=
+ =?utf-8?B?dEZvamNZaVVIRmJKMG9QZWhtNGhpUEZWalN5elVLMDZudE9ER0FiNEVJbkR5?=
+ =?utf-8?B?QThqbzJiZnZ5VG9PT1I3c2htN3Y3akNhVkRlS1daZTE3TjhldUZJQmxBVVZ3?=
+ =?utf-8?B?Q3hxelRMNUVqczc3TlVja29LVHJmLzBjWFFJdlBiU3FKR2k3cFhEWldRcXZ5?=
+ =?utf-8?B?a2tjSDkwMlNBaHBVVVlPWlE3RDVlUUE4SEdKcTJOaTVsaEZlYS9GM1FpWXVK?=
+ =?utf-8?B?cHovN2F5T1pQWFVqRHA0aFhwSWJLRDdoQTdEbjJrRHM4WTFtTnpBQmRrNzMz?=
+ =?utf-8?B?UGxZaW9ORXpONUQ4cHlYZlZKUHJ2YU5kd1B3TEV0b0k3UHlGZVpxejlNZDVO?=
+ =?utf-8?B?dlRjOUFya1Z0RmtORWJjb3l3TWFla2lNelBjKzlTZlJRWkMwbXlsVmVYTThJ?=
+ =?utf-8?B?ME9KdmhJNlJjc2Z6ZGp1Qi9pQVE1d2w3WkFna2NpelNPcW1sd3ZxNEo1NkFG?=
+ =?utf-8?B?RE9jUWc4NVJieHV4UXN6SmIvbVlnQkF3aU8rZVVlWEtmQTJ5MVdaOHFyR3Vw?=
+ =?utf-8?B?VlhKbU9EU2dBZmhKcWpYengrWm1uSlNFS1ZmUXgzQzhQdGJtTzdWc3V1b0V2?=
+ =?utf-8?B?bGd4bXFiVC9kY1BIUWhuUGZ6LzJBcDZIWVB2NWZXc0lOYmxxRGI1TSt0R2Nw?=
+ =?utf-8?B?MTRRL2FKcE9pMUFOYldMaUhEbGpiSGZ4aWFtRWVxb2RvTXRGMzJ1ZjZqUE9i?=
+ =?utf-8?B?WG1SZkVkNHNjNkE5bW9ZZS9YTFlrdVQwVFloWHR5dnZ5QkF2TTE5d0FCYzc2?=
+ =?utf-8?B?bm9FRHJ0YWF2U1VOaGtHc3dyL2dSVmtsUm9POHlsQTRQWVMxNHZDcmNxOEpR?=
+ =?utf-8?B?MzN0UTBsREcwY3B0RkgvVTRqbFZKRWttTHRyTzR6RThnTy9kZnU2M04vVDlu?=
+ =?utf-8?B?YmkrSnUyS3dwbStzT0l0NW5ablQwM2ZyM2k4TFMzdUxjS2pQRXlxUTduM1NK?=
+ =?utf-8?B?MFpkSkxaZFZPNVM5V0tvci8xbzdFVHBhbjNIZ0kxSURSc0NpcENUQ3pyeCtt?=
+ =?utf-8?B?NC9sNWlaNU8xN1UxenBqVUVDTVZaMzE1R1NyOC9vb3F6RldjYWdsNTVxaTU2?=
+ =?utf-8?B?Yi9OZmZ1MVpLcUN4OEJlVjlUN0JCU3R0Q0hvZnY4UE9zclc0YVkwWGM5ckNj?=
+ =?utf-8?B?Y2RBZVFpZmdGNzVHWG5jeStjNWxuOElELzRqYTYrb2I4Ry9xd015UnlOZFcy?=
+ =?utf-8?B?b05rb2xWbnJuWityNzlkZTFCdDR5MHN6STdwTE5mU1VpWGRlcVRxR1BJRVdk?=
+ =?utf-8?B?YXhzN0V4M1RBaHhPTXY2clRpcFNhd1diT3ZTTk5nZHROQjZka3RLa1gvd1pv?=
+ =?utf-8?B?ZStYRS9TclBXZzNCZkhETEhwOW5TaURwTlBJMmk3cXYrMXpBc2hIZlZpQXBx?=
+ =?utf-8?B?TnFueDByRmtSV2tPSVNOV293Q0lNK3F2cWRzSFpOQ1lBTXhMcnlkMjFEVWFj?=
+ =?utf-8?B?SENxOHdqdnlvUUxXS2dudUpMMndHYm5Bb1N3KzUrRkxVVnc9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eVlZTFh2OEVQKzIwaFNjRnJRMFNsR3FNb1p4cHdUUGh1bXErZ1BwOUZCQlpP?=
+ =?utf-8?B?YzI2U3FlbDRkcnpEZFFUanBFaXpmNTREV1NsUk9RY0FTaDRCQjB6NEhZVUQ1?=
+ =?utf-8?B?UDdlVlVXVi9Qd20vTnNPandLQnNnNGlPdWxXc1N6NnVWWFl0RGpGSDkvZEJn?=
+ =?utf-8?B?ZFV1RTA1eTZRaUFEZVcrRmVWYk1sS3dhakpGUlgwc0FyNGo3c2lZS1I1T1Fj?=
+ =?utf-8?B?TkVtY3BQNU14NHhic0p2OXJJdFNOeThjKzllakdQSHVZTkFoVlRkbXRTZm9m?=
+ =?utf-8?B?SXJtSTZrNXRqWVBiUjNlKzVybDlKakJNL1FXWWdHK3RwaVBxUjNIOTVaWGht?=
+ =?utf-8?B?Y3NhSWtSZUNGNE5laDh5S1NDaFUwdzN6R3NzeEJmdDc0dXREUVlKVHVpeGdo?=
+ =?utf-8?B?V1ZkKzExdGMxZ3kwRDJsSERPbHVzSHdLekZJM0Q1SlczdnROZTlaVHVoWnlE?=
+ =?utf-8?B?N0cwT3RZZlFNRUtnS0NydDR4MlpVYnREYlEzVHN4ODhQM0RkUDF0ZzdZa1h0?=
+ =?utf-8?B?bkdFUjQ4bHdlWDJlb21KbjZKYytUeWNScFZpTVJsclFlalFvU1BFckZubnh4?=
+ =?utf-8?B?S1puZ2FqR1MyVXVqUitRRCs1SUhNdWcxcHJyUUhWZXFFZ1VDbW1qUjdvNWN3?=
+ =?utf-8?B?Wmo0Wk80VVR1VjAxQS8yWDczbkc0cGFnSEwvZ0Fna3lNOTk5ZFp2NTY4RVdU?=
+ =?utf-8?B?R0RzS3RDWHkwY2U1bXBIUHBhTXdVbUhEUmlRRFQ5aXliMHhVTW93TVNYNkFZ?=
+ =?utf-8?B?UlFnN2t1Vk5IT2dmNHJ1SXNrN2ZvVlJvMG9HV3ZIeU9TRW9rTUNQSnBzZU1Q?=
+ =?utf-8?B?eHNCUDFQeG9CbzRzZ0xHUDJjZnJWR2wxRmVDSHZIQTZIR3czWmI1ZE0zWnV5?=
+ =?utf-8?B?WWYyQmRydVRLZS9pWXFOcWN3YmtGbXIvOUNCc1Z1dGc4NWtUd1lWZlZLZEQ1?=
+ =?utf-8?B?bTJkdDdwV2lVMTR3N29BMEIwTmJ1aStUbFJQa1luSmNxM2FUZEozSjNGdzRk?=
+ =?utf-8?B?cjNqa2t1Q0pHMmxmUjFOa01EQklRMGkxUVZZWHJ3dGZDSWszbnlaelVjOU03?=
+ =?utf-8?B?RC9JS3VXcEdXM3QwYTlMVXFLclVlam5nU21Fei81ZFhtcjM0TW13T1poNExr?=
+ =?utf-8?B?anYzYmRvNWJ2cy9lU0Qybm5kQ3hWaFo1SGh6RU5HWnFtNGtnVVcwK3JVaW9O?=
+ =?utf-8?B?YlpNZUtxTmVuOHRVeTNJMWRLeWNaRUxzWG8xcVMxOTVqZW5DbTFoRkorWVJr?=
+ =?utf-8?B?TFNhNjl2Sy9uMzcxOWVIQmdRK0lyR01zUS9MUTM3Wk9RRGk5S0lMTStlTUJN?=
+ =?utf-8?B?WGIyRGhMVVJzQUh1K0lFMmZaZmpvejBpYzA4ZUVoek1tZ2hCZVovYlJiWVdN?=
+ =?utf-8?B?MjB0SzU3MDNqQi9XTS9Xd2xHWXlFQzFrci81bFRpbEthTU5lM2Z4b1puWHRw?=
+ =?utf-8?B?TEJIb0ZYYlR2SDlrUFRKVzlocjYyNnkxclVSTXExR25YNWk3bEgyS241YjJq?=
+ =?utf-8?B?QXpjTDBCVlk5T3BsbFRrSUJpUUFLZW0vVUdzQzlTOU05amg0S05GcGRFK3pE?=
+ =?utf-8?B?c3FzS210cmk5RDlYUUYrR0x3UFp2YkNlQVM4NWdNYU1KSXdzekNtTTRIb0hH?=
+ =?utf-8?B?ZUdiTXREVEMwSEFrQkNUL2JoUXJtcnIray9vSDJqYklBQ0dxRjZLN2pEWldJ?=
+ =?utf-8?B?dUE1eVVhU3NWOHEzdGdUU09QTE5OeUlmSDdRejQ0MEg0VHo1ZHlNQTNrMVFO?=
+ =?utf-8?B?ampJblFKbWJDWlZKcEdlSmdBbXUrY0NYUjljMStUQXYzSzVsS3p6TzQ3b0Mw?=
+ =?utf-8?B?VXFyV0FjTFpkbjN1SGQyS2FiU3ljVE12NHFWRFpGa0ZqR050NUF6cURUOWdt?=
+ =?utf-8?B?MnY2TnVuVFJWYzBOaktiOGR1Z29UdjJld24wVGVXYjJMMEVuRU9lWVBWVGxq?=
+ =?utf-8?B?b0Q0Nk95cDd6REgxak1tU2E5Z3hYdkgrNUlzQUl0V1BMck5lN2g4aEkyMUgy?=
+ =?utf-8?B?WHpwSWd1QjZORjRZenN0K0I5QXA0Q3hsOE9maGdrMmZweHZRVHBuNW9tOFBW?=
+ =?utf-8?B?dDNIbCtMY0szTFA4K1dVNnhHNHo2L012WmJ5NUFDUGdhNE4wd1JmS2JSQVU0?=
+ =?utf-8?B?SURUNlQwVklnOWRMS0NBMjM4RGJMdkE5RzZpdTFnenlvTm82L0c5aWhxSTBx?=
+ =?utf-8?B?cUE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B1D275096F5B7540A8F210047768286F@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMss42YC/zXMQQrCMBCF4auUWRvJxCrWlfeQLkIzTQdtIpMSl
- JK7Gwtd/o/Ht0IiYUpwa1YQypw4hhrm0MAw2eBJsasNRptWd2jU7BeeSQ1orvqite3sCer5LTT
- yZ4Mefe2J0xLlu7kZ/+tO4E5kVKioteRGdNrh+f4kCfQ6RvHQl1J+WhDCPJ0AAAA=
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel test robot <oliver.sang@intel.com>, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13069; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=aTQ96XEIsrqaJG45eHdwF72McOz43L38rVYY+vEBb8g=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm4yzOPITeQnROkNg4zZCsWbkOTvbB3AMBFm5aT
- motkTDru8mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuMszgAKCRAADmhBGVaC
- FeYyEADPfKdoNaF7jTs7GfvoyzTIZnwxncT73PXgPDwh4kgjc/J23tuLd3JVg/Hg2BHDljj5Pdp
- kOuvuUryqCA8JJ7zXJwBhaNykF9t9C5xATbBnFhvhgKZLT19gfnGQmHXftj0XNFNqiR29dHjOHq
- m/mo//qxboHt6siqrj3vKWTF0Hp1URLh3a4PN5tMObrjonlaWLOadiBUE9zNPx6T3zaG7JU/9sO
- 5L9c0tLabl//TCZYEEbE57Q7aYx6kB/5do4o5VL8Bx9Cck+PCD9nNhrIJudoSL4mCfS/ak1InmT
- cVA+5rldoF7qbvIJaSxrcH9WleDLP8IPv7f/tzMoV2bjx88EL/Ak2X4f2r9G4AsddnEaEbp3QRh
- h+PO3geyf8FQhIV1Wjpcbfg0CMgoxcsUOHfyeRPNkg8sfCutr3D5Q4OqK0AhGUiw83nfguslEf9
- ZZ4sEAIYc9XiU8JqPV01gQ8neAeb4ymfdQYomu9IwjMFXdn2XpROtCA/hZmS66oMpLYFc6Ips/+
- ehtK9bO0EkzF2NP9beN4LRQ1FXJqeyUFbUTuKDpH9O+asboMbCIV0j0+vYLSm9UvT+I8VfC3Juz
- liWVdUYhyc6Wf7IQs7LUVw3z/EtBi8UgVZ5DEtcMPkb8yB9jLP0Y+tEaVEO/ToKXUR5oQpjMdCR
- 54k1l5+e1eUkwCg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	9X287ABUbi8/68ROyrTCwSXqAtxjF/rxA/fK7R4ty0n/olPujL8nGHTOQ2Q6nAd9YtJb4CV9bGPxUWF1pUZ3oeQL/eI7eznI+mre5qKjnRQPNU2UoVAR8YCoqde5sxEq8gCi2dUPtU/rzCLAo9zvF5KqwWxluf4B8hfHIsLTURtLlfbhuV4Lu2p4X/0PP6myDZVqvT3kaRdaKrXQkPA18XtKwseGvoG8dd84//26BdgH1dmVbwtBJUX12dc1p6vCDzF+Kr15BuWRtziDhXgmF9dcTCP+NSOe2gOEoMNrwHDnr/GanRl/1lWMptPHHJcRGNDqmTPhwh+AH9VY3DmYx+djsjmhknGoMw014rn1X++Wxr1VduzoqXG3GgTPtGrttTl8mY+8geVsd3vDlV2mVM+qojQgbNTHl0ut5YSrWG0seAUx60HcrSMohJTIMpCcxS30MFOdP5duhDs1Ti/8c0ocWoM/aJyp4VJfXIKK6fZ8Hv699hfCysMmBBhjEmgv3y1HDRJ2kN9XooBPhxq3sn8OhYo/UYzTgQC4/0yKc2mj+LABtS/q/OoCruHrZ74glLKjQp/NkgWM1tY7SaCCV01nhCOVI+3M0I63N2PBmrA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2aeeab0b-6a65-47c6-8e78-08dcd3571bfd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2024 18:17:06.4796
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uWl0dqSs+Y8l5LXsbzHW9/HSmHHnlRQvsMvXnseL+6CRwxqIpcHjZHb3Pg6LGFf1VL7U94yWXTVZjhujoxR+tQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5055
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-12_06,2024-09-12_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 phishscore=0
+ spamscore=0 malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2409120135
+X-Proofpoint-GUID: aTiBclOLJY98ufp594yq0ZHcBbSfRhqZ
+X-Proofpoint-ORIG-GUID: aTiBclOLJY98ufp594yq0ZHcBbSfRhqZ
 
-The kernel test robot reported a performance hit in some will-it-scale
-tests due to the multigrain timestamp patches.  My own testing showed
-about a 7% drop in performance on the pipe1_threads test, and the data
-showed that coarse_ctime() was slowing down current_time().
-
-Move the multigrain timestamp floor tracking word into timekeeper.c. Add
-two new public interfaces: The first fills a timespec64 with the later
-of the coarse-grained clock and the floor time, and the second gets a
-fine-grained time and tries to swap it into the floor and fills a
-timespec64 with the result.
-
-The first function returns an opaque cookie that is suitable for passing
-to the second, which will use it as the "old" value in the cmpxchg.
-
-With this patch on top of the multigrain series, the will-it-scale
-pipe1_threads microbenchmark shows these averages on my test rig:
-
-	v6.11-rc7:			103561295 (baseline)
-	v6.11-rc7 + mgtime + this:	101357203 (~2% performance drop)
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409091303.31b2b713-oliver.sang@intel.com
-Suggested-by: Arnd Bergmann <arnd@kernel.org>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-This version moves more of the floor handling into the timekeeper code.
-
-Some of the earlier concern was about mixing different time value types
-in the same interface. This sort of still does that, but it does it
-using an opaque cookie value instead, which I'm hoping will make the
-interfaces a little cleaner. Using an opaque cookie also means that we
-can change the underlying implementation at will, without breaking the
-callers.
-
-If this approach looks OK, it's probably best for me to just respin the
-entire series and have Christian drop the old and pick up the new. That
-should reduce some of the unnecessary churn in fs/inode.c.
----
-Changes in v2:
-- move floor handling completely into timekeeper code
-- add new interfaces for multigrain timestamp handling
-- Link to v1: https://lore.kernel.org/r/20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org
----
- fs/inode.c                  | 105 +++++++++++++-------------------------------
- include/linux/timekeeping.h |   4 ++
- kernel/time/timekeeping.c   |  77 ++++++++++++++++++++++++++++++++
- 3 files changed, 111 insertions(+), 75 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index f0fbfd470d8e..3c7e16935bac 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -65,13 +65,6 @@ static unsigned int i_hash_shift __ro_after_init;
- static struct hlist_head *inode_hashtable __ro_after_init;
- static __cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_hash_lock);
- 
--/*
-- * This represents the latest fine-grained time that we have handed out as a
-- * timestamp on the system. Tracked as a monotonic value, and converted to the
-- * realtime clock on an as-needed basis.
-- */
--static __cacheline_aligned_in_smp atomic64_t ctime_floor;
--
- /*
-  * Empty aops. Can be used for the cases where the user does not
-  * define any of the address_space operations.
-@@ -2255,25 +2248,6 @@ int file_remove_privs(struct file *file)
- }
- EXPORT_SYMBOL(file_remove_privs);
- 
--/**
-- * coarse_ctime - return the current coarse-grained time
-- * @floor: current (monotonic) ctime_floor value
-- *
-- * Get the coarse-grained time, and then determine whether to
-- * return it or the current floor value. Returns the later of the
-- * floor and coarse grained timestamps, converted to realtime
-- * clock value.
-- */
--static ktime_t coarse_ctime(ktime_t floor)
--{
--	ktime_t coarse = ktime_get_coarse();
--
--	/* If coarse time is already newer, return that */
--	if (!ktime_after(floor, coarse))
--		return ktime_get_coarse_real();
--	return ktime_mono_to_real(floor);
--}
--
- /**
-  * current_time - Return FS time (possibly fine-grained)
-  * @inode: inode.
-@@ -2284,11 +2258,11 @@ static ktime_t coarse_ctime(ktime_t floor)
-  */
- struct timespec64 current_time(struct inode *inode)
- {
--	ktime_t floor = atomic64_read(&ctime_floor);
--	ktime_t now = coarse_ctime(floor);
--	struct timespec64 now_ts = ktime_to_timespec64(now);
-+	struct timespec64 now;
- 	u32 cns;
- 
-+	ktime_get_coarse_real_ts64_mg(&now);
-+
- 	if (!is_mgtime(inode))
- 		goto out;
- 
-@@ -2299,11 +2273,11 @@ struct timespec64 current_time(struct inode *inode)
- 		 * If there is no apparent change, then
- 		 * get a fine-grained timestamp.
- 		 */
--		if (now_ts.tv_nsec == (cns & ~I_CTIME_QUERIED))
--			ktime_get_real_ts64(&now_ts);
-+		if (now.tv_nsec == (cns & ~I_CTIME_QUERIED))
-+			ktime_get_real_ts64(&now);
- 	}
- out:
--	return timestamp_truncate(now_ts, inode);
-+	return timestamp_truncate(now, inode);
- }
- EXPORT_SYMBOL(current_time);
- 
-@@ -2745,7 +2719,7 @@ EXPORT_SYMBOL(timestamp_truncate);
-  *
-  * Set the inode's ctime to the current value for the inode. Returns the
-  * current value that was assigned. If this is not a multigrain inode, then we
-- * just set it to whatever the coarse_ctime is.
-+ * set it to the later of the coarse time and floor value.
-  *
-  * If it is multigrain, then we first see if the coarse-grained timestamp is
-  * distinct from what we have. If so, then we'll just use that. If we have to
-@@ -2756,16 +2730,16 @@ EXPORT_SYMBOL(timestamp_truncate);
-  */
- struct timespec64 inode_set_ctime_current(struct inode *inode)
- {
--	ktime_t now, floor = atomic64_read(&ctime_floor);
--	struct timespec64 now_ts;
-+	struct timespec64 now;
- 	u32 cns, cur;
-+	u64 cookie;
- 
--	now = coarse_ctime(floor);
-+	cookie = ktime_get_coarse_real_ts64_mg(&now);
- 
- 	/* Just return that if this is not a multigrain fs */
- 	if (!is_mgtime(inode)) {
--		now_ts = timestamp_truncate(ktime_to_timespec64(now), inode);
--		inode_set_ctime_to_ts(inode, now_ts);
-+		now = timestamp_truncate(now, inode);
-+		inode_set_ctime_to_ts(inode, now);
- 		goto out;
- 	}
- 
-@@ -2776,44 +2750,27 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 	 */
- 	cns = smp_load_acquire(&inode->i_ctime_nsec);
- 	if (cns & I_CTIME_QUERIED) {
--		ktime_t ctime = ktime_set(inode->i_ctime_sec, cns & ~I_CTIME_QUERIED);
--
--		if (!ktime_after(now, ctime)) {
--			ktime_t old, fine;
-+		struct timespec64 ctime = { .tv_sec = inode->i_ctime_sec,
-+					    .tv_nsec = cns & ~I_CTIME_QUERIED };
- 
--			/* Get a fine-grained time */
--			fine = ktime_get();
--			mgtime_counter_inc(mg_fine_stamps);
--
--			/*
--			 * If the cmpxchg works, we take the new floor value. If
--			 * not, then that means that someone else changed it after we
--			 * fetched it but before we got here. That value is just
--			 * as good, so keep it.
--			 */
--			old = floor;
--			if (atomic64_try_cmpxchg(&ctime_floor, &old, fine))
--				mgtime_counter_inc(mg_floor_swaps);
--			else
--				fine = old;
--			now = ktime_mono_to_real(fine);
--		}
-+		if (timespec64_compare(&now, &ctime) <= 0)
-+			ktime_get_real_ts64_mg(&now, cookie);
- 	}
- 	mgtime_counter_inc(mg_ctime_updates);
--	now_ts = timestamp_truncate(ktime_to_timespec64(now), inode);
--	cur = cns;
-+	now = timestamp_truncate(now, inode);
- 
- 	/* No need to cmpxchg if it's exactly the same */
--	if (cns == now_ts.tv_nsec && inode->i_ctime_sec == now_ts.tv_sec) {
--		trace_ctime_xchg_skip(inode, &now_ts);
-+	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec) {
-+		trace_ctime_xchg_skip(inode, &now);
- 		goto out;
- 	}
-+	cur = cns;
- retry:
- 	/* Try to swap the nsec value into place. */
--	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now_ts.tv_nsec)) {
-+	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
- 		/* If swap occurred, then we're (mostly) done */
--		inode->i_ctime_sec = now_ts.tv_sec;
--		trace_ctime_ns_xchg(inode, cns, now_ts.tv_nsec, cur);
-+		inode->i_ctime_sec = now.tv_sec;
-+		trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
- 		mgtime_counter_inc(mg_ctime_swaps);
- 	} else {
- 		/*
-@@ -2827,11 +2784,11 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 			goto retry;
- 		}
- 		/* Otherwise, keep the existing ctime */
--		now_ts.tv_sec = inode->i_ctime_sec;
--		now_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
-+		now.tv_sec = inode->i_ctime_sec;
-+		now.tv_nsec = cur & ~I_CTIME_QUERIED;
- 	}
- out:
--	return now_ts;
-+	return now;
- }
- EXPORT_SYMBOL(inode_set_ctime_current);
- 
-@@ -2854,8 +2811,7 @@ EXPORT_SYMBOL(inode_set_ctime_current);
-  */
- struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 update)
- {
--	ktime_t now, floor = atomic64_read(&ctime_floor);
--	struct timespec64 now_ts, cur_ts;
-+	struct timespec64 now, cur_ts;
- 	u32 cur, old;
- 
- 	/* pairs with try_cmpxchg below */
-@@ -2867,12 +2823,11 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
- 	if (timespec64_compare(&update, &cur_ts) <= 0)
- 		return cur_ts;
- 
--	now = coarse_ctime(floor);
--	now_ts = ktime_to_timespec64(now);
-+	ktime_get_coarse_real_ts64_mg(&now);
- 
- 	/* Clamp the update to "now" if it's in the future */
--	if (timespec64_compare(&update, &now_ts) > 0)
--		update = now_ts;
-+	if (timespec64_compare(&update, &now) > 0)
-+		update = now;
- 
- 	update = timestamp_truncate(update, inode);
- 
-diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-index fc12a9ba2c88..cf2293158c65 100644
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -45,6 +45,10 @@ extern void ktime_get_real_ts64(struct timespec64 *tv);
- extern void ktime_get_coarse_ts64(struct timespec64 *ts);
- extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
- 
-+/* Multigrain timestamp interfaces */
-+extern u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
-+extern void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie);
-+
- void getboottime64(struct timespec64 *ts);
- 
- /*
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 5391e4167d60..bb039c9d525e 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -114,6 +114,13 @@ static struct tk_fast tk_fast_raw  ____cacheline_aligned = {
- 	.base[1] = FAST_TK_INIT,
- };
- 
-+/*
-+ * This represents the latest fine-grained time that we have handed out as a
-+ * timestamp on the system. Tracked as a monotonic ktime_t, and converted to the
-+ * realtime clock on an as-needed basis.
-+ */
-+static __cacheline_aligned_in_smp atomic64_t mg_floor;
-+
- static inline void tk_normalize_xtime(struct timekeeper *tk)
- {
- 	while (tk->tkr_mono.xtime_nsec >= ((u64)NSEC_PER_SEC << tk->tkr_mono.shift)) {
-@@ -2394,6 +2401,76 @@ void ktime_get_coarse_real_ts64(struct timespec64 *ts)
- }
- EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
- 
-+/**
-+ * ktime_get_coarse_real_ts64_mg - get later of coarse grained time or floor
-+ * @ts: timespec64 to be filled
-+ *
-+ * Adjust floor to realtime and compare it to the coarse time. Fill
-+ * @ts with the latest one. Returns opaque cookie suitable to pass
-+ * to ktime_get_real_ts64_mg.
-+ */
-+u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
-+{
-+	struct timekeeper *tk = &tk_core.timekeeper;
-+	u64 floor = atomic64_read(&mg_floor);
-+	ktime_t f_real, offset, coarse;
-+	unsigned int seq;
-+
-+	WARN_ON(timekeeping_suspended);
-+
-+	do {
-+		seq = read_seqcount_begin(&tk_core.seq);
-+		*ts = tk_xtime(tk);
-+		offset = *offsets[TK_OFFS_REAL];
-+	} while (read_seqcount_retry(&tk_core.seq, seq));
-+
-+	coarse = timespec64_to_ktime(*ts);
-+	f_real = ktime_add(floor, offset);
-+	if (ktime_after(f_real, coarse))
-+		*ts = ktime_to_timespec64(f_real);
-+	return floor;
-+}
-+EXPORT_SYMBOL_GPL(ktime_get_coarse_real_ts64_mg);
-+
-+/**
-+ * ktime_get_real_ts64_mg - attempt to update floor value and return result
-+ * @ts:		pointer to the timespec to be set
-+ * @cookie:	opaque cookie from earlier call to ktime_get_coarse_real_ts64_mg()
-+ *
-+ * Get a current monotonic fine-grained time value and attempt to swap
-+ * it into the floor using @cookie as the "old" value. @ts will be
-+ * filled with the resulting floor value, regardless of the outcome of
-+ * the swap.
-+ */
-+void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
-+{
-+	struct timekeeper *tk = &tk_core.timekeeper;
-+	ktime_t offset, mono, old = (ktime_t)cookie;
-+	unsigned int seq;
-+	u64 nsecs;
-+
-+	WARN_ON(timekeeping_suspended);
-+
-+	do {
-+		seq = read_seqcount_begin(&tk_core.seq);
-+
-+		ts->tv_sec = tk->xtime_sec;
-+		mono = tk->tkr_mono.base;
-+		nsecs = timekeeping_get_ns(&tk->tkr_mono);
-+		offset = *offsets[TK_OFFS_REAL];
-+	} while (read_seqcount_retry(&tk_core.seq, seq));
-+
-+	mono = ktime_add_ns(mono, nsecs);
-+	if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
-+		ts->tv_nsec = 0;
-+		timespec64_add_ns(ts, nsecs);
-+	} else {
-+		*ts = ktime_to_timespec64(ktime_add(old, offset));
-+	}
-+
-+}
-+EXPORT_SYMBOL(ktime_get_real_ts64_mg);
-+
- void ktime_get_coarse_ts64(struct timespec64 *ts)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
-
----
-base-commit: 18348a38102a4efca57186740afb33f08e5f4609
-change-id: 20240912-mgtime-c1280600a9a3
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+DQoNCj4gT24gU2VwIDEyLCAyMDI0LCBhdCAxMTowNuKAr0FNLCBCZW5qYW1pbiBDb2RkaW5ndG9u
+IDxiY29kZGluZ0ByZWRoYXQuY29tPiB3cm90ZToNCj4gDQo+IE9uIDEyIFNlcCAyMDI0LCBhdCAx
+MDowMSwgQ2h1Y2sgTGV2ZXIgSUlJIHdyb3RlOg0KPiANCj4+IEZvciB0aGUgTkZTRCBhbmQgZXhw
+b3J0ZnMgaHVua3M6DQo+PiANCj4+IEFja2VkLWJ5OiBDaHVjayBMZXZlciA8Y2h1Y2subGV2ZXJA
+b3JhY2xlLmNvbSA8bWFpbHRvOmNodWNrLmxldmVyQG9yYWNsZS5jb20+Pg0KPj4gDQo+PiAibG9j
+a2Q6IGludHJvZHVjZSBzYWZlIGFzeW5jIGxvY2sgb3AiIGlzIGluIHY2LjEwLiBEb2VzIHRoaXMN
+Cj4+IHNlcmllcyBuZWVkIHRvIGJlIGJhY2twb3J0ZWQgdG8gdjYuMTAueSA/IFNob3VsZCB0aGUg
+c2VyaWVzDQo+PiBoYXZlICJGaXhlczogMmRkMTBkZThlNmJjICgibG9ja2Q6IGludHJvZHVjZSBz
+YWZlIGFzeW5jIGxvY2sNCj4+IG9wIikiID8NCj4gDQo+IFRoYW5rcyBDaHVjayEgUHJvYmFibHkg
+eWVzLCBpZiB3ZSB3YW50IG5vdGlmaWNhdGlvbnMgZml4ZWQgdXAgdGhlcmUuICBJdA0KPiBzaG91
+bGQgYmUgc3VmZmljaWVudCB0byBhZGQgdGhpcyB0byB0aGUgc2lnbm9mZiBhcmVhIGZvciBhdCBs
+ZWFzdCB0aGUgZmlyc3QNCj4gdGhyZWUgKGFuZCBmb3VydGggZm9yIGNsZWFudXApOg0KPiANCj4g
+Q2M6IDxzdGFibGVAdmdlci5rZXJuZWwub3JnPiAjIDYuMTAueA0KDQoyZGQxMGRlOGU2YmMgbGFu
+ZGVkIGluIHY2LjcuDQoNCkkgc3VwcG9zZSB0aGF0IHNpbmNlIHY2LjEwLnkgaXMgbGlrZWx5IHRv
+IGJlIGNsb3NlZCBieQ0KdGhlIHRpbWUgdGhpcyBzZXJpZXMgaXMgYXBwbGllZCB1cHN0cmVhbSwg
+dGhpcyB0YWcgbWlnaHQNCmJlIGNvbmZ1c2luZy4NCg0KVGh1cyBGaXhlczogMmRkMTBkZThlNmJj
+IGFuZCBhIHBsYWluIENjOiBzdGFibGUgc2hvdWxkDQp3b3JrIGJlc3QuIFRoZW4gd2hpY2hldmVy
+IHN0YWJsZSBrZXJuZWwgaXMgb3BlbiB3aGVuIHlvdXINCmZpeGVzIGFyZSBtZXJnZWQgdXBzdHJl
+YW0gd2lsbCBhdXRvbWF0aWNhbGx5IGdldCBmaXhlZC4NCg0KTm9uZSBvZiB0aGUgY3VycmVudCBM
+VFMga2VybmVscyBoYXZlIDJkZDEwZGU4ZTZiYyBzbyB0aGV5DQphcmVuJ3QgcmVsZXZhbnQgYXQg
+dGhpcyBwb2ludC4NCg0KLS0NCkNodWNrIExldmVyDQoNCg0K
 
