@@ -1,171 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-29144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F66B9765BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 11:35:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA08976642
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 12:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26681F214F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 09:35:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE581C23294
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 10:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B085190057;
-	Thu, 12 Sep 2024 09:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7937C19F10B;
+	Thu, 12 Sep 2024 10:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="GzoRH4xm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIbtk/mH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073F5188910
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 09:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133712; cv=pass; b=Uf6loNauRPaRcCmnZlpfqCdVHZkquJbjSppZjclHSRzo8NNfaW7w5EdivQc+CjaOJR77LYzsAY9kO8c/pTsxGjee8Y8bGKK15utaEirRQpVL5x1eNaCvCxu3YqQusX2byemrRBL51s1LM/kCC3/nL2GOHq3Kp1uqik8kbPxI20U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133712; c=relaxed/simple;
-	bh=iXsmtVzVopqHXLdONAhccBM+ywVkZnStJOTjrh/wmW8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WecoTBVEx8JfPFZ6fJrYMve1Ry9WygiYq8BItmfqPjFckMWNyJ/xl2g6p4Dk/lDSksL8v9T8QhOaIe481WiD0GKT6FljrwXUn7AjWIKIWq+ykmnGSFCCXrWck32FQsaB6JsetEkLNEt2flZuewUlhUeRS6fZ8pvephor8wuW31s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=GzoRH4xm; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726133703; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=L1sVBzz+Q//JWpyjuu7csmCT6cHY7f1SfyvmJFyExKmnvoHGS+3L60MPe47J7Ry5mnXbKlxwXQw4NkVOqfmIqkZED3VJ/trzlre3xmQ+Rys9UDWIxeCC6DeMSxQB3zApyM6agwj7pvDRF+haK+Sd/c2TRNBZFpS5Boakq0rh1eE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726133703; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=E0n7JRVOdlG+c3taXjUGqlrkCmLavvou2F5X4LHBmrA=; 
-	b=QqdKB1m8faNa8c1w6T38zghafV544IGX+hnckpCFrEZ7VUvsVh4jjRelYq5gDAryWmW1nn7Rn8TxhrEcCiztThXm2Ya1l68eC96Bg0noOEK/1XVZXeQ2OBQ/e19Pak/HTO5fHqeL5NhMUn57UBNopHJ3N3qUK6O/1mcAMHV0zLE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726133703;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=E0n7JRVOdlG+c3taXjUGqlrkCmLavvou2F5X4LHBmrA=;
-	b=GzoRH4xmtRlxdsD8tsUf+S8ildZ4+cdvQYc6korTIqoc6iXJxMghFUUvUPOJqRMu
-	7ZMdUsiioAuqFocKlj6+VHWPgG6IAU0HUJ5pvC+pbzpx+9tbcxByaxUrDdxkv9VYWlI
-	MPKXZvRiw4COIbaFAIV9lt/I0tBg21Ldvsffbfuk=
-Received: by mx.zohomail.com with SMTPS id 1726133702205592.6102112099303;
-	Thu, 12 Sep 2024 02:35:02 -0700 (PDT)
-Message-ID: <d3db84fc-c107-423d-9f02-3cae0217b576@collabora.com>
-Date: Thu, 12 Sep 2024 14:34:54 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA167136328
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 10:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726135362; cv=none; b=JEoFUe08zttWCBvW5c2GAidjMdEyNYe2z34oZQ03pX4iNIgZ3K/DTzcMe/umdWLuAgLf750AW15GPIVTDeLZQWFG9MhuV5Q0Jwqj2LcJJmbGbOgiYr0AFCjxQOWSV2QY81Lb0yA3qCrUSVfWhw14ESahYHLwSwTpeBPDS1OLJh0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726135362; c=relaxed/simple;
+	bh=a5vCrkBl64E/DxQ9VPHN+y7+aJZs9Z1Kpz+98ZbYe4Y=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=KvhLfUyJJLTmIgVPYFrL3mKLe5hQosdCJeyy3A+2vaH1LaMGEPOjSuggsAMiQUJetyb5RU6oo9Fx4QClhFOzt8IPw6CcLUUI8rvbh+qhCvn5uBynOtpvRQddXg0qW5kHUYF84emTHXSIQzUaMOcvhtcBbzbve77e05iYVMT1kV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIbtk/mH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5968AC4CEC5
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 10:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726135362;
+	bh=a5vCrkBl64E/DxQ9VPHN+y7+aJZs9Z1Kpz+98ZbYe4Y=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=cIbtk/mHKhxFttFlEB0tywkl4cFj4dA5RxxCfdbjlgnyzU9QdOmH1GXUBilh5AL0b
+	 /Y46yLkHoH/kR7rBbCBxls1xeQczIY4fOsWl5duUg+8BL+gxI2+23UYq+byI3iV3nH
+	 uD2f3RIJo9ao8RtHJU6OpK3LEq3LAf+VDO5gTpn7TBD9HsVEKmPf8iO+ZF3YXPLyt1
+	 EqxJeW0FLfVtiz7XOM94YwpdkOj3SEitjugOjdDPu8JYAFXrwIuJT+stUaD0CXnF66
+	 gfEAbVRq58mZUbOaDdlU32inlOH4Zuovj0BevrNlC0JgfCOWkKUeS4c9EwP3EwpTwc
+	 QqvHS/Xy9OWiQ==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6A79A120006A;
+	Thu, 12 Sep 2024 06:02:41 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 12 Sep 2024 06:02:41 -0400
+X-ME-Sender: <xms:QbziZi_gNVisByn4l1i4Jr1FxIpR1uEynX6RTtRl6lwZgvi0arq4DQ>
+    <xme:QbziZivKpKvdGbfZALX8t5O3HRRfeaP7YRr8JjUXbqlUw6TI5u2kkxDG6_NcoPjnq
+    vdUsaLuuSz6LYwxhY8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedgvdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlh
+    drohhrgheqnecuggftrfgrthhtvghrnhepjeejffetteefteekieejudeguedvgfeffeei
+    tdduieekgeegfeekhfduhfelhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrd
+    horhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehjshhtuhhlthiisehgohhoghhlvgdrtghomhdprhgtphhtth
+    hopeholhhivhgvrhdrshgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepsghrrghu
+    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepjhgrtghksehsuh
+    hsvgdrtgiipdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:QbziZoAO0cMepT2rctHgh4AK_aIj1zUgE-oPT73DVPFEYcKEGh3o3A>
+    <xmx:QbziZqeY7dWFUrxbUYyHhomeiYueageZRAjvsScfYDDA_N7r7rHVQA>
+    <xmx:QbziZnPNh1U4f9K4f27u9ap8v_5BwY8LIM8k1Q74e0KJyTc9db57OA>
+    <xmx:QbziZkloUg5oE-03ViTeXr3hyD-Xb9mgbnJqgLiatGNMfOWRilD8HA>
+    <xmx:QbziZpuOsQYn9n6tSYBsKJjXdwC4cydU0IBT6VNu9ATP_r8kmr0LSFu->
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 39243222006F; Thu, 12 Sep 2024 06:02:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, linux-fsdevel@vger.kernel.org,
- Kees Cook <keescook@chromium.org>
-Subject: Re: [bug report] fs/proc/task_mmu: implement IOCTL to get and
- optionally clear info about PTEs
-To: Dan Carpenter <dan.carpenter@linaro.org>, linux-mm@kvack.org
-References: <3a4e2a3e-b395-41e6-807d-0e6ad8722c7d@stanley.mountain>
- <b33db5d3-2407-4d25-a516-f0fd8d74a827@collabora.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <b33db5d3-2407-4d25-a516-f0fd8d74a827@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Sep 2024 10:01:59 +0000
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Jeff Layton" <jlayton@kernel.org>, "John Stultz" <jstultz@google.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Stephen Boyd" <sboyd@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "kernel test robot" <oliver.sang@intel.com>
+Message-Id: <1484d32b-ab0f-48ff-998a-62feada58300@app.fastmail.com>
+In-Reply-To: <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
+References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
+ <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
+ <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
+ <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
+Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into timekeeper
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-On 9/12/24 11:36 AM, Muhammad Usama Anjum wrote:
-> Hi Dan,
-> 
-> Thank you for reporting.
-I've debugged more and found out that no changes are required as
-access_ok() already deals well with the overflows. I've tested the
-corner cases on x86_64 and there are no issue found.
+On Wed, Sep 11, 2024, at 20:43, Jeff Layton wrote:
+>
+> I think we'd have to track this delta as an atomic value and cmpxchg
+> new values into place. The zeroing seems quite tricky to make race-
+> free.
+>
+> Currently, we fetch the floor value early in the process and if it
+> changes before we can swap a new one into place, we just take whatever
+> the new value is (since it's just as good). Since these are monotonic
+> values, any new value is still newer than the original one, so its
+> fine. I'm not sure that still works if we're dealing with a delta that
+> is siding upward and downward.
+>
+> Maybe it does though. I'll take a stab at this tomorrow and see how it
+> looks.
 
-I'll add more test cases in the selftest for this ioctl. Please share
-your thoughts if I may have missed something.
+Right, the only idea I had for this would be to atomically
+update a 64-bit tuple of the 32-bit sequence count and the
+32-bit delta value in the timerkeeper. That way I think the
+"coarse" reader would still get a correct value when running
+concurrently with both a fine-grained reader updating the count
+and the timer tick setting a new count.
 
-> 
-> On 9/11/24 3:21 PM, Dan Carpenter wrote:
->> Hello Muhammad Usama Anjum,
->>
->> Commit 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and
->> optionally clear info about PTEs") from Aug 21, 2023 (linux-next),
->> leads to the following Smatch static checker warning:
->>
->> 	fs/proc/task_mmu.c:2664 pagemap_scan_get_args()
->> 	warn: potential user controlled sizeof overflow 'arg->vec_len * 24' '0-u64max * 24' type='ullong'
->>
->> fs/proc/task_mmu.c
->>     2637 static int pagemap_scan_get_args(struct pm_scan_arg *arg,
->>     2638                                  unsigned long uarg)
->>     2639 {
->>     2640         if (copy_from_user(arg, (void __user *)uarg, sizeof(*arg)))
->>
->> arg comes from the user
->>
->>     2641                 return -EFAULT;
->>     2642 
->>     2643         if (arg->size != sizeof(struct pm_scan_arg))
->>     2644                 return -EINVAL;
->>     2645 
->>     2646         /* Validate requested features */
->>     2647         if (arg->flags & ~PM_SCAN_FLAGS)
->>     2648                 return -EINVAL;
->>     2649         if ((arg->category_inverted | arg->category_mask |
->>     2650              arg->category_anyof_mask | arg->return_mask) & ~PM_SCAN_CATEGORIES)
->>     2651                 return -EINVAL;
->>     2652 
->>     2653         arg->start = untagged_addr((unsigned long)arg->start);
->>     2654         arg->end = untagged_addr((unsigned long)arg->end);
->>     2655         arg->vec = untagged_addr((unsigned long)arg->vec);
->>     2656 
->>     2657         /* Validate memory pointers */
->>     2658         if (!IS_ALIGNED(arg->start, PAGE_SIZE))
->>     2659                 return -EINVAL;
->>
->> We should probably check ->end here as well.
->>
->>     2660         if (!access_ok((void __user *)(long)arg->start, arg->end - arg->start))
-> I'll add check to verify that end is equal or greater than start.
-> 
->>
->> Otherwise we're checking access_ok() and then making ->end larger.  Maybe move
->> the arg->end = ALIGN(arg->end, PAGE_SIZE) before the access_ok() check?
->>
->>     2661                 return -EFAULT;
->>     2662         if (!arg->vec && arg->vec_len)
->>     2663                 return -EINVAL;
->> --> 2664         if (arg->vec && !access_ok((void __user *)(long)arg->vec,
->>     2665                               arg->vec_len * sizeof(struct page_region)))
->>
->> This "arg->vec_len * sizeof(struct page_region)" multiply could have an integer
->> overflow.
-> I'll check for overflow before calling access_ok().
-> 
->>
->> arg->vec_len is a u64 so size_add() won't work on a 32bit system.  I wonder if
->> size_add() should check for sizes larger than SIZE_MAX?
->>
->>     2666                 return -EFAULT;
->>     2667 
->>     2668         /* Fixup default values */
->>     2669         arg->end = ALIGN(arg->end, PAGE_SIZE);
->>     2670         arg->walk_end = 0;
->>     2671         if (!arg->max_pages)
->>     2672                 arg->max_pages = ULONG_MAX;
->>     2673 
->>     2674         return 0;
->>     2675 }
-> I'll send fix soon.
-> 
->>
->> regards,
->> dan carpenter
-> 
+There are still a couple of problems:
 
--- 
-BR,
-Muhammad Usama Anjum
+- this extends the timekeeper logic beyond what the seqlock
+  semantics normally allow, and I can't prove that this actually
+  works in all corner cases.
 
+- if the delta doesn't fit in a 32-bit value, there has to 
+  be another fallback mechanism.
+
+- This still requires an atomic64_cmpxchg() in the
+  fine-grained ktime_get_real_ts64() replacement, which
+  I think is what inode_set_ctime_current() needs today
+  as well to ensure that the next coarse value is the
+  highest one that has been read so far.
+
+There is another idea that would completely replace
+your design with something /much/ simpler:
+
+ - add a variant of ktime_get_real_ts64() that just
+   sets a flag in the timekeeper to signify that a
+   fine-grained time has been read since the last
+   timer tick
+ - add a variant of ktime_get_coarse_real_ts64()
+   that returns either tk_xtime() if the flag is
+   clear or calls ktime_get_real_ts64() if it's set
+ - reset the flag in timekeeping_advance() and any other
+   place that updates tk_xtime
+
+That way you avoid the atomic64_try_cmpxchg()
+inode_set_ctime_current(), making that case faster,
+and avoid all overhead in coarse_ctime() unless you
+use both types during the same tick.
+
+      Arnd
 
