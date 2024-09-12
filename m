@@ -1,163 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-29193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8A6976F27
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 18:53:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4DF976F80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 19:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF091C23D38
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 16:53:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65D19B22BA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 17:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CAB1BE84B;
-	Thu, 12 Sep 2024 16:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B792A1BF7E3;
+	Thu, 12 Sep 2024 17:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGN5fpwX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Av0l2ARc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C45F1AD256
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 16:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AB015098A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 17:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726160000; cv=none; b=k9N9MdhDZcbf58ZiZ1rvqAhOQgswMp1SypJuVshrpX6apBMmtwVcxfkFjtpKb9zWhQt4vdysw+SE9T/xkWNvb1zAqa7KSubGEHESrhbDsaaxc88FENbU1O7J1kPvEwtv9gUIN8nswJQVuHSMH3LAB+5Bz7k3J8Vq+7lLCFREE04=
+	t=1726162032; cv=none; b=iErER9OLqtbO7UFbfg2nYdvglq7MdtrHLtB09RVaSu+Q/MchhVO1YgDjFOSlGj2+Uf/MPBfdlkkePWJ4CBH7rhqK7D3wwtg/p7A0XMgJUvEUlJpA+SeS30Rz0/lPOlk8KTkdc+m8BRBSvQXRInNlpl1UfU81qZfd9VtJzcLKu0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726160000; c=relaxed/simple;
-	bh=NS0psCyXMoQOWIi5/SsS35KhFzxrGs+XZODMnDu4vlE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=TmVKMvj2OmTedvL/4xkQ3l2eh1o4mmnegAwnrMfM8Sm+lwoDr8O5U1+A/T/1halPbNe4AiqKG7jRbQb8T98uqwaztlIeiNzVhjMJAId7rEqZfA9UA6NHgYNlYvPyNGM9a4ACZwKx8/xYF+kSi44H7J7etL1o6GTvLxIOCmwcQuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGN5fpwX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57703C4AF09;
-	Thu, 12 Sep 2024 16:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726159999;
-	bh=NS0psCyXMoQOWIi5/SsS35KhFzxrGs+XZODMnDu4vlE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=EGN5fpwXN8eF/DXVbaIirE/I7O2FWMzGft3z3+ITQqplQIVMDNiC/7TGD7+8K5qvW
-	 iLDaW0onkKiTiLtYgzhySnFK7QiOs69Yb5StpexuUIEmiU7YRk8LGdK4HxvrUe8hn/
-	 i+sEbDymRFZBKtCU2GTJsa++E3+qvgu/YZ3gJqbWjXTyKG8SvZV+nGCVPFVVEzsA9k
-	 Cb5oLRsd1NzXl9VeuJGS5qJOleV32h8dqYQilvs92DtWKkrr8fKaWoDXSn+7OS0OUZ
-	 Y34ckBQQn/kGf8w8kXDwYh/zO45YRJ7oLEUpn5Yjtd5jNcIUiJ7ii+xQyTpSoznT8f
-	 tHOs/Cq6jbuYg==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 5EB461200043;
-	Thu, 12 Sep 2024 12:53:18 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 12 Sep 2024 12:53:18 -0400
-X-ME-Sender: <xms:fhzjZtxr5FxgfOcgpu4W7reiYXKtUmuzhnldk7xndz3itREvy59Amw>
-    <xme:fhzjZtSw70R-Ydy5CzcZi0lQI8GuzSiBmSwkEOtRwkfam0YQ6omtwjRId4hcyeqwe
-    vd_qIcLUkbKvQrAXSg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedguddtkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvg
-    hlrdhorhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeef
-    iedtudeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlh
-    drohhrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtohepjhhsthhulhhtiiesghhoohhglhgvrdgtohhmpdhrtghpth
-    htohepohhlihhvvghrrdhsrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopegsrhgr
-    uhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehjrggtkhessh
-    hushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:fhzjZnUavYW64BMj7P5WbzfaZF4yPTdPBSSgy40KL9YRMBbnFxbgmQ>
-    <xmx:fhzjZvjNCPZ5thJHvEB-6Ng-fmoF93_CqFemTWgOg5kpRuNpRYyPxw>
-    <xmx:fhzjZvBGsNeGGJ_1Z9c-JYXTxRKBZwr--FJ2X6FnabblmxnbtgmRVg>
-    <xmx:fhzjZoJw8DvV39S4Eyole57cZwWd9JUpokSRrG4r0jV49EZp9NqpVQ>
-    <xmx:fhzjZuBE6nCXh-vzj419XjjjxIJnBVT9ZQZ4ix1sJEFGhxAbwOJrogLU>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 31D48222006F; Thu, 12 Sep 2024 12:53:18 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726162032; c=relaxed/simple;
+	bh=uaL3ya7TTf4buk5jOwX+d7wY/SHzwvJuRMVzEEl+leQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZRYpHjEXU8ypOC113WBS7ZsNSptq9oS2/0C8jXTHwL19gIvJICnGAHdIitZNAt7pp++CtJiK27JIXVloGtCaA0VdnjUkhu0A2qwPAVGdJQ2ahlkaVg1nPcQbleedmnFz5OwxaWG6D5vjt2F1n3PW4tO0z9xyVbyiXKQ7gq9RbJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Av0l2ARc; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso1044286a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 10:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726162030; x=1726766830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ytq7tkoDvqkkenLVDqM10lvENbdP1e6VeR6iCfYpPM0=;
+        b=Av0l2ARcchG3PmDJxvedPTw8YiyQQeaNqNVDunEuw45duhn9WHY3xFNM9rLiVdNg5R
+         7sQY1dCmUJf0cA5uXuwNWEKEFeq5ZH+0NGRfu2uHvXYFeJh+blOg8qU0B5Xc4uo43Asz
+         ZgQ9lcBhw/EXFEC58nYb3RWegO1hHgP0WbJXT6J0OVXB6kczcI99po5EfGhkrV4h0zff
+         KW6z3/gUvJ/GjyvhNzvZU26f3J9bAk/RtiBc9yPu/5oAKdUWCucMmlyPxghnW03rU4KL
+         rYSdEcmTSVAtmqa35/52+oBnXFgH8V6tU5B3AjrzEwg524bJiYUbBwP1hxHvq/LtXoXp
+         AN5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726162030; x=1726766830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ytq7tkoDvqkkenLVDqM10lvENbdP1e6VeR6iCfYpPM0=;
+        b=iL1BRvXrLhUKO+9j67eKxuRWgWnqAu2KFzUZ1B3F66kly1zMN08CmImJxSGeuAb6Mg
+         wmj2VAb7Vmhr6G/EwVyI6PYj22p0m/qSVQFP7Sk6RtKCENVyVHzaDtibPtU53EahaGUl
+         ArSOpB40GuGIZ5csVzK4h0qT3JJjXc/EryIKGQz9FlhiLjVj4ZqJYwcAFDJuZNWlzZu1
+         ieFIU35aFdnMaZsgmtmxCpCgQ4b8ALWwVqHo06FSwCXy0kgFsbqFFJEFDWNOJYVqEGok
+         ZgonOIeW/g+HzvzFT9in06NDCbhuucK/ojrKDrKhczn/h1pokjHbjvd8AcnVP4jhD9py
+         /mxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiXYNhveIqMFd4oYUKtzu2begb76ug1Gf0ZLOkzFu6/OfjTPjrwIt0vKhKozYjiDnvuvAFyp2NaHUl/HIS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8Elv/JKWDjN90O8HG3rf0CYKEmSaMzkpxUsHh/ak6DLOSpv9D
+	0DTH1s/GBI6yBHPpnw2yyrxeS9xnYJTEQJxMmAym3GyDZNMac/trcn6RAMwZD0NMNqKRRIUpbu1
+	QfYkwAnqvXjkC74uBxcU43NO7eSE=
+X-Google-Smtp-Source: AGHT+IH73Ai/V6sOtpMHSwI5ap9q6CWq4hXIOIvhA+gTd/nJkr4+m+kiAwnkxciP0HLby+W+wt7T0Vt2VbgnU2sZJFQ=
+X-Received: by 2002:a17:90a:6b44:b0:2d8:9513:d889 with SMTP id
+ 98e67ed59e1d1-2db9ffbeecdmr3677743a91.14.1726162029799; Thu, 12 Sep 2024
+ 10:27:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 12 Sep 2024 16:51:11 +0000
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Jeff Layton" <jlayton@kernel.org>, "John Stultz" <jstultz@google.com>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Stephen Boyd" <sboyd@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- "kernel test robot" <oliver.sang@intel.com>
-Message-Id: <7586990d-ca2b-4ff3-9231-928f1f3be4ea@app.fastmail.com>
-In-Reply-To: <12577f7d9865ef8fabc7447a23cdfc1674cbe7e8.camel@kernel.org>
-References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
- <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
- <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
- <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
- <1484d32b-ab0f-48ff-998a-62feada58300@app.fastmail.com>
- <c9ed7670a0b35b212991b7ce4735cb3dfaae1fda.camel@kernel.org>
- <b71c161a-8b43-400e-8c61-caac80e685a8@app.fastmail.com>
- <284fd6a654eaec5a45b78c9ee88cde7b543e2278.camel@kernel.org>
- <12577f7d9865ef8fabc7447a23cdfc1674cbe7e8.camel@kernel.org>
-Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into timekeeper
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <CAOw_e7bqrAkZtUcY=Q6ZSeh_bKo+jyQ=oNfuzKCJpRT=5s-Yqg@mail.gmail.com>
+ <5012b62c-79f3-4ec4-af19-ace3f9b340e7@fastmail.fm> <CAOw_e7Yd7shq3oup-s3PVVQMyHE7rqFF8JNftnCU5Fyp8S5pYQ@mail.gmail.com>
+ <CAJnrk1YxUqmV4uMJbokrsOajhtwuuXHRpB1T9r4DY-zoU7JZmQ@mail.gmail.com>
+ <CAOw_e7YSyq8C+_Qu_dkxS2k4qEECcySGdmAtqPcyTXBtaeiQ7w@mail.gmail.com>
+ <0a122714-8835-4658-b364-10f4709456e7@fastmail.fm> <CAOw_e7YvF5GVhR1Ozkw18w+kbe6s+Wf8EVCocEbVNh03b23THg@mail.gmail.com>
+ <be572f0c-e992-4f3f-8da0-03e0e2fa3b1e@fastmail.fm> <CAOw_e7aDMOF7orJ5eaPzNyOH8EmzJCB42GojfZmcSnhg_z2sng@mail.gmail.com>
+ <4f41ae59-cd54-44b4-a201-30aa898ee7f7@fastmail.fm>
+In-Reply-To: <4f41ae59-cd54-44b4-a201-30aa898ee7f7@fastmail.fm>
+From: Han-Wen Nienhuys <hanwenn@gmail.com>
+Date: Thu, 12 Sep 2024 19:26:58 +0200
+Message-ID: <CAOw_e7bR8xHbCrcv4x9P=XbE4nXcjiCkpiuxV4waS-i7QK=82A@mail.gmail.com>
+Subject: Re: Interrupt on readdirplus?
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024, at 14:37, Jeff Layton wrote:
-> On Thu, 2024-09-12 at 09:26 -0400, Jeff Layton wrote:
->> On Thu, 2024-09-12 at 13:17 +0000, Arnd Bergmann wrote:
->> > On Thu, Sep 12, 2024, at 11:34, Jeff Layton wrote:
->> 
->> I'll plan to hack something together later today and see how it does.
->> 
+On Wed, Sep 11, 2024 at 3:06=E2=80=AFPM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+> > Do you know how old this behavior is? It would be great to not have to
+> > write the kludge on my side, but if it has been out there for a long
+> > time, I can't pretend the problem doesn't exist once it is fixed, as
+> > it will still crop up if folks run things on older kernels. The
+> > runtime for Go has been issuing SIGURG for preempted goroutines since
+> > ~2020.
 >
-> Ok, already hit a couple of problems:
+> Following git history, I think introduced here
 >
-> First, moving the floor word into struct timekeeper is probably not a
-> good idea. This is going to be updated more often than the rest of the
-> timekeeper, and so its cacheline will be invalidated more. I think we
-> need to keep the floor word on its own cacheline. It can be a static
-> u64 though inside timekeeper.c.
-
-Right.
-
-> So, I think that we actually need an API like this:
+> commit 1f60fbe7274918adb8db2f616e321890730ab7e3
+> Author: Theodore Ts'o <tytso@mit.edu>
+> Date:   Sat Apr 23 22:50:07 2016 -0400
 >
->     /* returns opaque cookie value */
->     u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
->
->     /* accepts opaque cookie value from above function */ 
->     void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie);
->
-> The first function fills in @ts with the max of coarse time and floor,
-> and returns an opaque cookie (a copy of the floor word). The second
-> fetches a fine-grained timestamp and uses the floor cookie as the "old"
-> value when doing the cmpxchg, and then fills in @ts with the result.
+>     ext4: allow readdir()'s of large empty directories to be interrupted
 
-I think you lost me here, I'd need to look at the code in
-more detail to understand it.
+Could the same behavior happen for readdir, or is only readdirplus affected=
+?
 
-> Does that sound reasonable? If so, then the next question is around
-> what the floor word should hold:
->
-> IMO, just keeping it as a monotonic time value seems simplest. I'm
-> struggling to understand where the "delta" portion would come from in
-> your earlier proposal, and the fact that that value could overflow
-> seems less than ideal.
-
-I was thinking of the diffence between tk->xtime_nsec and the
-computed nsecs in ktime_get_real_ts64().
-
-The calculation is what is in timekeeping_cycles_to_ns(),
-with the  "+ tkr->xtime_nsec" left out, roughly
-
-   ((tk_clock_read(tkr) - tkr->cycle_last) & tkr->mask) * \
-         tkr->mult >> tkr->shift
-
-There are a few subtleties here, including the possible
-1-bit rounding error from the shift. 
-
-     Arnd
+--=20
+Han-Wen Nienhuys - hanwenn@gmail.com - http://www.xs4all.nl/~hanwen
 
