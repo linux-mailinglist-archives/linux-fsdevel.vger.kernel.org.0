@@ -1,153 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-29156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 640C79767FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 13:37:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B2B97684C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 13:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A961C2100F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 11:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA9F1C219EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 11:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270D8190079;
-	Thu, 12 Sep 2024 11:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5173F1A262F;
+	Thu, 12 Sep 2024 11:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DeUpvYmS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c60cbSQ6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C28190482
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 11:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A47F1A3AA6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 11:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726141020; cv=none; b=Yh1OXzUYaTA1B1n1iNoIlPsmmHBatcIet3IkomLrdKorMnMun7sxbEgrPWkNGR2VLqIyJ2p51SorU3OiWclnyK1MzhXVhfKnaHX2LRuttSLjNVpKgg1y5mSDBNXfjMoWwUcM8GIc/CkVgEpp+Pd3GjscHIg9Urq3Q5YpH0ta/qs=
+	t=1726141818; cv=none; b=dhvgHTg4eyOaTRlVZZlvitnSPGW75VMBuYg3gkGj8aKO9b7TkmkrvzIAIg67UgjMAfJYPfD3S9kxnoAaTa6F5dfJSt3Wic+G//bgf0b3NM3Fx4zzYyjGa22NX2G9vdiLp8ZgSVA4OhOVWATwfeoPqDv9dctyOpfuYzpWmUwmu9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726141020; c=relaxed/simple;
-	bh=9f2GbLLwUW0BkAz7MmT3DlEAAt7E3+wC1Y2NPkV6CCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xv8NE7zVXohI+NfezN2rkvVjkaSIFlietPmxureGk3uvY2H7VlS/GxZSz2Oa0d7XOlIXdDNrQqhUFM8KrsG6ycbFc0SDS1t+/aPMBrzXTHNFJmzBwig92eiTNUCJ6DvhkwqlOb/HAZvUAUO7P9bHhMq4PJ88dbdMZ5qi34E1d+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DeUpvYmS; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374ca65cafdso574822f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 04:36:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726141016; x=1726745816; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qo+/z/H6YP7glZxEKDzAxkCwRAdU2ktBeKwS3tGOJB0=;
-        b=DeUpvYmSjw0W4A7+qdH+sjgg5Ji62ieZcdj9ya1lOmgVMdAX8R0juwv/yx20bFtmj/
-         Y5zz1pH338y+T00MOu3dQamMmZmMZfC0hNcfvz6kvDI7RsMVOMo3s7JTiF/OrdCIzTMq
-         qfFviZh1oTfKtxcHwauHXMTG1Zqh6CFAVGrcTDsoIJwe5mSbZgesIqIqCWOuHxL8HjJi
-         tXHb1JKsVCp6ynLuOy6bAS1MzR+UmI3Q/cIHghiBYNvys9IHHWTtDSDgj3S4s8UxX0Gz
-         Pna21KsYxcAxZjeyZxhcwNidn434rkCMHZl3oj6sv5cxYGJvUQyi0Pazd7mHnhqgmcmT
-         z0Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726141016; x=1726745816;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qo+/z/H6YP7glZxEKDzAxkCwRAdU2ktBeKwS3tGOJB0=;
-        b=j3X0gucUwfGJFDTxkSjsStqXxIXblj8a+a0+J14n9lJM+4ZHZTng/joNEk+m4Ma3mW
-         dR/8BG6ruwCs5z6fMYxoC85blQy1UGpA+xkyv4T41nY8QJ78A8JII0ItR024ZurIZJJa
-         HTTSd0lOu5STGEx43G7dnXt4NbmM4Z6L4CWA82dTAsXhCnuRkiMm8C75U0mcumF9iWP1
-         Ieyy/v0NCyf/dKhKSGU3OYAnBZmKSjLdP0jkL+eWA83IucZpEwiXApKnKD3REsVzmTT0
-         Xf5PLfpHqIhHyySyRL7nMz5w7c5NHsk1AmcRstKQRSQzLGCYKmiXHcaUyoYKHngjw1nn
-         1XcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPhGkbnkVq2MSd2MIf/EwAKo44Z04WKJP1FCUQ4n7Gxpbu9swpS1rz9Hxdnx+6snGQz0vAQoAfTB8aE5x0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpb6DndQKiCbccO8Nqh3UyuPxkFURE4i+r+g9GUwW/oGsWmcAX
-	FPtG5QiD08LJk3bcop/0gtEDBx0zSvzzCdzrnYO6JpCTPcTFya5G
-X-Google-Smtp-Source: AGHT+IFnw6dHcd8i/qYm2bdIa0j4Bea62zSvUWe1fmDxL2gbB2wyt+SjZFwSqnHfePsoD+JQDR0Gww==
-X-Received: by 2002:adf:e3cf:0:b0:377:2df4:55f6 with SMTP id ffacd0b85a97d-378c2cf3d5dmr1414932f8f.17.1726141015744;
-        Thu, 12 Sep 2024 04:36:55 -0700 (PDT)
-Received: from f (cst-prg-85-144.cust.vodafone.cz. [46.135.85.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb44473sm170388925e9.26.2024.09.12.04.36.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 04:36:54 -0700 (PDT)
-Date: Thu, 12 Sep 2024 13:36:45 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Yafang Shao <laoar.shao@gmail.com>, torvalds@linux-foundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC] vfs: Introduce a new open flag to imply dentry
- deletion on file removal
-Message-ID: <f7bp3ggliqbb7adyysonxgvo6zn76mo4unroagfcuu3bfghynu@7wkgqkfb5c43>
-References: <20240912091548.98132-1-laoar.shao@gmail.com>
- <20240912105340.k2qsq7ao2e7f4fci@quack3>
+	s=arc-20240116; t=1726141818; c=relaxed/simple;
+	bh=Xl6nNLBK8GTBKxLIKD61vE0uvYByirFE263h76WjaRM=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=mOwxGBBj2zbMb2nE7dzol62XzCjFhh2MbzXA77OI4UtYJ8Wuc2LDcMILG9j+OU541yBAfDYpFPiUu9Wi+XuznCP48YGFzRY+I9dg7Pg8K9vmmDwWYN7ZpqeOQ74l58vDFPnA1NpeQJXtftVP1lILZ496kw79tBYli3Ou6oYIyNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c60cbSQ6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726141816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jLN3U1yZ7TMderZrIcQLdov+Z22mdFuW5sMvjEe338o=;
+	b=c60cbSQ6ECuz5CYf30bQT21XKzAF2vUr3AaRfycsazw8kc1hhv3LjCx63uQua0fynN39ni
+	IKxLHo1+o5sfXjqIl2HP2UQXzkaAurVjauw18Tn2FSNWeUFSAetouxrr0vfACo3Sd1/CMr
+	pOZetFAZcrH3qVJxk5u3rd/F5U8NzFs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-615-FdrR9fltPha0VMOFb_6fTA-1; Thu,
+ 12 Sep 2024 07:50:13 -0400
+X-MC-Unique: FdrR9fltPha0VMOFb_6fTA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F3217197702F;
+	Thu, 12 Sep 2024 11:50:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1FA4519560AA;
+	Thu, 12 Sep 2024 11:50:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>,
+    Steve French <stfrench@microsoft.com>
+cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Stephen Rothwell <sfr@canb.auug.org.au>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Fix up netfs-writeback vs cifs fixes merge conflicts
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240912105340.k2qsq7ao2e7f4fci@quack3>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1131387.1726141806.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Sep 2024 12:50:06 +0100
+Message-ID: <1131388.1726141806@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Sep 12, 2024 at 12:53:40PM +0200, Jan Kara wrote:
-> On Thu 12-09-24 17:15:48, Yafang Shao wrote:
-> > This patch seeks to reintroduce the concept conditionally, where the
-> > associated dentry is deleted only when the user explicitly opts for it
-> > during file removal.
-> > 
->
-> Umm, I don't think we want to burn a FMODE flag and expose these details of
-> dentry reclaim to userspace. BTW, if we wanted to do this, we already have
-> d_mark_dontcache() for in-kernel users which we could presumably reuse.
-> 
+    =
 
-I don't believe any mechanism letting userspace hint at what to do with
-a dentry is warranted at this point.
+Fix up the conflicts between the netfslib development patches and cifs fix
+commits due to:
 
-> But I would not completely give up on trying to handle this in an automated
-> way inside the kernel. The original solution you mention above was perhaps
-> too aggressive but maybe d_delete() could just mark the dentry with a
-> "deleted" flag, retain_dentry() would move such dentries into a special LRU
-> list which we'd prune once in a while (say once per 5 s). Also this list
-> would be automatically pruned from prune_dcache_sb(). This way if there's
-> quick reuse of a dentry, it will get reused and no harm is done, if it
-> isn't quickly reused, we'll free them to not waste memory.
-> 
-> What do people think about such scheme?
->
+        a68c74865f517e26728735aba0ae05055eaff76c
+        cifs: Fix SMB1 readv/writev callback in the same way as SMB2/3
 
-I have to note what to do with a dentry after unlink is merely a subset
-of the general problem of what to do about negative entries.  I had a
-look at it $elsewhere some years back and as one might suspect userspace
-likes to do counterproductive shit. For example it is going to stat a
-non-existent path 2-3 times and then open(..., O_CREAT) on it.
+conflicting with:
 
-I don't have numbers handy and someone(tm) will need to re-evaluate, but
-crux of the findings was as follows:
-- there is a small subset of negative entries which keep getting tons of
-  hits
-- a sizeable count literally does not get any hits after being created
-  (aka wastes memory)
-- some negative entries get 2-3 hits and get converted into a positive
-  entry afterwards (see that stat shitter)
-- some flip flop with deletion/creation
+        ee4cdf7ba857
+        netfs: Speed up buffered reading"
 
-So whatever magic mechanism, if it wants to mostly not get in the way in
-terms of performance, will have to account for the above.
+This will need to be applied if/when Christian's vfs.netfs branch is merge=
+d.
 
-I ended up with a kludge where negative entries hang out on some number
-of LRU lists and get promoted to a hot list if they manage to get some
-number of hits. The hot list is merely a FIFO and entries there no
-longer count any hits. Removal from the cold LRU also demotes an entry
-from the hot list.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <stfrench@microsoft.com>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/client/cifssmb.c |   14 +++++++-------
+ fs/smb/client/smb2pdu.c |    2 --
+ 2 files changed, 7 insertions(+), 9 deletions(-)
 
-The total count is limited and if you want to create a negative dentry
-you have to whack one from the LRU.
+diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+index 6ad22732c25c..d0df0c17b18f 100644
+--- a/fs/smb/client/cifssmb.c
++++ b/fs/smb/client/cifssmb.c
+@@ -1266,9 +1266,7 @@ static void cifs_readv_worker(struct work_struct *wo=
+rk)
+ 	struct cifs_io_subrequest *rdata =3D
+ 		container_of(work, struct cifs_io_subrequest, subreq.work);
+ =
 
-This is not perfect by any means but manages to succesfully separate the
-high churn entries from the one which are likely to stay in the long
-run. Definitely something to tinker with.
+-	netfs_subreq_terminated(&rdata->subreq,
+-				(rdata->result =3D=3D 0 || rdata->result =3D=3D -EAGAIN) ?
+-				rdata->got_bytes : rdata->result, true);
++	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
+ }
+ =
 
-If I read the original problem correctly this would be sorted out as a
-side effect by limiting how many entries are there to evict to begin
-with.
+ static void
+@@ -1327,9 +1325,9 @@ cifs_readv_callback(struct mid_q_entry *mid)
+ 		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 		rdata->result =3D 0;
+ 	} else {
+-		if (rdata->got_bytes < rdata->actual_len &&
+-		    rdata->subreq.start + rdata->subreq.transferred + rdata->got_bytes =
+=3D=3D
+-		    ictx->remote_i_size) {
++		size_t trans =3D rdata->subreq.transferred + rdata->got_bytes;
++		if (trans < rdata->subreq.len &&
++		    rdata->subreq.start + trans =3D=3D ictx->remote_i_size) {
+ 			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 			rdata->result =3D 0;
+ 		}
+@@ -1337,7 +1335,9 @@ cifs_readv_callback(struct mid_q_entry *mid)
+ =
 
-I'm not signing up to do squat though. :)
+ 	rdata->credits.value =3D 0;
+ 	rdata->subreq.transferred +=3D rdata->got_bytes;
+-	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
++	trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
++	INIT_WORK(&rdata->subreq.work, cifs_readv_worker);
++	queue_work(cifsiod_wq, &rdata->subreq.work);
+ 	release_mid(mid);
+ 	add_credits(server, &credits, 0);
+ }
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index 95377bb91950..bb8ecbbe78af 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -4614,8 +4614,6 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 			      0, cifs_trace_rw_credits_read_response_clear);
+ 	rdata->credits.value =3D 0;
+ 	rdata->subreq.transferred +=3D rdata->got_bytes;
+-	if (rdata->subreq.start + rdata->subreq.transferred >=3D rdata->subreq.r=
+req->i_size)
+-		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 	trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
+ 	INIT_WORK(&rdata->subreq.work, smb2_readv_worker);
+ 	queue_work(cifsiod_wq, &rdata->subreq.work);
+
 
