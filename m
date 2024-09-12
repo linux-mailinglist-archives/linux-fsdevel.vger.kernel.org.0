@@ -1,269 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-29143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F827976556
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 11:19:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F66B9765BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 11:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E0A2821E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 09:19:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26681F214F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 09:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D4B1925A2;
-	Thu, 12 Sep 2024 09:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B085190057;
+	Thu, 12 Sep 2024 09:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="GzoRH4xm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3427A18F2D4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 09:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726132768; cv=none; b=BO4lW1JIZVURezHQ//+bHzai19JZPJs8YCXVPAhsEcnu7f3by2VApBE8YbrdhADz2+29Yy9kqyMa6FiySC8FTTodAnTi+VilD73Fx4Letr1sEOvHE8L3L8UBaUzjZCv9DA9moBK/ras3dyna2axcBBVP9qpqVwXFYochvgy9Shw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726132768; c=relaxed/simple;
-	bh=Imp5yQzdeVWtYPjQT8iGHIcb/WZI5eim7r0rKvfJanE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ieeKDojoxFuruHJhqWDqVD9L9pAAABCJJw3QbYilfNRE5zIXdSncoSdhtODVhUBAaBem46hBHq5Kb2OoUE7xPojn6PTNN+0bKxhhnA90haiJJQwyHmhEHiDI2hTPTo9achNwcbpY+flPCkYKRUEqkzaaejoAGCAPlFjZ7qZ/lz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d28a70743so9224155ab.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 02:19:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726132766; x=1726737566;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vw2v1OIruMrO32uErPPuw2MWyZaTAJ62zGa/n7f3AUo=;
-        b=Y/ChjmMc+f1ASp1BPOPLrr7LrwvR3VfVcLqR4MSyrl+6eXHPeDfqeASrYr+ahB/EVv
-         1ivPEvpiCDtkdduxfX58UPHyr6nr50ozEHe67Z0iWk29osmi3ICttjG/aZ+ycjRdUUSz
-         iCUE+hvKFfXZ5LfCwaT4+kNZeJ8eTkgkixoY5RTcYGjWTzFjO0xqkVzuPhU6dlwMph24
-         97T8XZJL+ouAK+aoyMG0M/lx7FhVm757ayLrfHtTqdZ+lX1ZB9C6o4ZA/ZskJG8sMpAw
-         Utc866ZGpi+y71eu6i2oJ6HSkTyfhgdYzsoIfiQtt7hNNMBlckkmRwu2P07oS/v/1bjt
-         8cBA==
-X-Gm-Message-State: AOJu0Yx66yrWtvSI+qrTEVNxmLKxSjS5GsiZoINO9YLf2Xa0h5+b23KX
-	+3ssqBONIwnkhyY84lahQof2HA2ERTktOkYK9lBa1MQ58eQXFLtYspsdTiwY3KQlWbXR8lB5fY5
-	F+BaiFwCx62/OBvegtdO8TtGkh7eYviNL9C0pTU76UyZayFdjAoHGcEs=
-X-Google-Smtp-Source: AGHT+IHfigsAjnjxQG8GQoApoEiZ12VM5opynZzDaP7uzM8kN4mMjyfuwOuqnBhjlm4ecl+rvd33pNNzS2qRAGlxTiAJveLQ+Gy9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073F5188910
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 09:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726133712; cv=pass; b=Uf6loNauRPaRcCmnZlpfqCdVHZkquJbjSppZjclHSRzo8NNfaW7w5EdivQc+CjaOJR77LYzsAY9kO8c/pTsxGjee8Y8bGKK15utaEirRQpVL5x1eNaCvCxu3YqQusX2byemrRBL51s1LM/kCC3/nL2GOHq3Kp1uqik8kbPxI20U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726133712; c=relaxed/simple;
+	bh=iXsmtVzVopqHXLdONAhccBM+ywVkZnStJOTjrh/wmW8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WecoTBVEx8JfPFZ6fJrYMve1Ry9WygiYq8BItmfqPjFckMWNyJ/xl2g6p4Dk/lDSksL8v9T8QhOaIe481WiD0GKT6FljrwXUn7AjWIKIWq+ykmnGSFCCXrWck32FQsaB6JsetEkLNEt2flZuewUlhUeRS6fZ8pvephor8wuW31s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=GzoRH4xm; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726133703; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=L1sVBzz+Q//JWpyjuu7csmCT6cHY7f1SfyvmJFyExKmnvoHGS+3L60MPe47J7Ry5mnXbKlxwXQw4NkVOqfmIqkZED3VJ/trzlre3xmQ+Rys9UDWIxeCC6DeMSxQB3zApyM6agwj7pvDRF+haK+Sd/c2TRNBZFpS5Boakq0rh1eE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726133703; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=E0n7JRVOdlG+c3taXjUGqlrkCmLavvou2F5X4LHBmrA=; 
+	b=QqdKB1m8faNa8c1w6T38zghafV544IGX+hnckpCFrEZ7VUvsVh4jjRelYq5gDAryWmW1nn7Rn8TxhrEcCiztThXm2Ya1l68eC96Bg0noOEK/1XVZXeQ2OBQ/e19Pak/HTO5fHqeL5NhMUn57UBNopHJ3N3qUK6O/1mcAMHV0zLE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726133703;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=E0n7JRVOdlG+c3taXjUGqlrkCmLavvou2F5X4LHBmrA=;
+	b=GzoRH4xmtRlxdsD8tsUf+S8ildZ4+cdvQYc6korTIqoc6iXJxMghFUUvUPOJqRMu
+	7ZMdUsiioAuqFocKlj6+VHWPgG6IAU0HUJ5pvC+pbzpx+9tbcxByaxUrDdxkv9VYWlI
+	MPKXZvRiw4COIbaFAIV9lt/I0tBg21Ldvsffbfuk=
+Received: by mx.zohomail.com with SMTPS id 1726133702205592.6102112099303;
+	Thu, 12 Sep 2024 02:35:02 -0700 (PDT)
+Message-ID: <d3db84fc-c107-423d-9f02-3cae0217b576@collabora.com>
+Date: Thu, 12 Sep 2024 14:34:54 +0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1cab:b0:39b:35d8:dc37 with SMTP id
- e9e14a558f8ab-3a08464e389mr14397315ab.13.1726132766118; Thu, 12 Sep 2024
- 02:19:26 -0700 (PDT)
-Date: Thu, 12 Sep 2024 02:19:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005c2d960621e89afe@google.com>
-Subject: [syzbot] [fs?] KASAN: slab-use-after-free Read in invalidate_bh_lru
-From: syzbot <syzbot+0930d8a3c3c55e931634@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, linux-fsdevel@vger.kernel.org,
+ Kees Cook <keescook@chromium.org>
+Subject: Re: [bug report] fs/proc/task_mmu: implement IOCTL to get and
+ optionally clear info about PTEs
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-mm@kvack.org
+References: <3a4e2a3e-b395-41e6-807d-0e6ad8722c7d@stanley.mountain>
+ <b33db5d3-2407-4d25-a516-f0fd8d74a827@collabora.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <b33db5d3-2407-4d25-a516-f0fd8d74a827@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Hello,
+On 9/12/24 11:36 AM, Muhammad Usama Anjum wrote:
+> Hi Dan,
+> 
+> Thank you for reporting.
+I've debugged more and found out that no changes are required as
+access_ok() already deals well with the overflows. I've tested the
+corner cases on x86_64 and there are no issue found.
 
-syzbot found the following issue on:
+I'll add more test cases in the selftest for this ioctl. Please share
+your thoughts if I may have missed something.
 
-HEAD commit:    b31c44928842 Merge tag 'linux_kselftest-kunit-fixes-6.11-r..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12696f29980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
-dashboard link: https://syzkaller.appspot.com/bug?extid=0930d8a3c3c55e931634
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> On 9/11/24 3:21 PM, Dan Carpenter wrote:
+>> Hello Muhammad Usama Anjum,
+>>
+>> Commit 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and
+>> optionally clear info about PTEs") from Aug 21, 2023 (linux-next),
+>> leads to the following Smatch static checker warning:
+>>
+>> 	fs/proc/task_mmu.c:2664 pagemap_scan_get_args()
+>> 	warn: potential user controlled sizeof overflow 'arg->vec_len * 24' '0-u64max * 24' type='ullong'
+>>
+>> fs/proc/task_mmu.c
+>>     2637 static int pagemap_scan_get_args(struct pm_scan_arg *arg,
+>>     2638                                  unsigned long uarg)
+>>     2639 {
+>>     2640         if (copy_from_user(arg, (void __user *)uarg, sizeof(*arg)))
+>>
+>> arg comes from the user
+>>
+>>     2641                 return -EFAULT;
+>>     2642 
+>>     2643         if (arg->size != sizeof(struct pm_scan_arg))
+>>     2644                 return -EINVAL;
+>>     2645 
+>>     2646         /* Validate requested features */
+>>     2647         if (arg->flags & ~PM_SCAN_FLAGS)
+>>     2648                 return -EINVAL;
+>>     2649         if ((arg->category_inverted | arg->category_mask |
+>>     2650              arg->category_anyof_mask | arg->return_mask) & ~PM_SCAN_CATEGORIES)
+>>     2651                 return -EINVAL;
+>>     2652 
+>>     2653         arg->start = untagged_addr((unsigned long)arg->start);
+>>     2654         arg->end = untagged_addr((unsigned long)arg->end);
+>>     2655         arg->vec = untagged_addr((unsigned long)arg->vec);
+>>     2656 
+>>     2657         /* Validate memory pointers */
+>>     2658         if (!IS_ALIGNED(arg->start, PAGE_SIZE))
+>>     2659                 return -EINVAL;
+>>
+>> We should probably check ->end here as well.
+>>
+>>     2660         if (!access_ok((void __user *)(long)arg->start, arg->end - arg->start))
+> I'll add check to verify that end is equal or greater than start.
+> 
+>>
+>> Otherwise we're checking access_ok() and then making ->end larger.  Maybe move
+>> the arg->end = ALIGN(arg->end, PAGE_SIZE) before the access_ok() check?
+>>
+>>     2661                 return -EFAULT;
+>>     2662         if (!arg->vec && arg->vec_len)
+>>     2663                 return -EINVAL;
+>> --> 2664         if (arg->vec && !access_ok((void __user *)(long)arg->vec,
+>>     2665                               arg->vec_len * sizeof(struct page_region)))
+>>
+>> This "arg->vec_len * sizeof(struct page_region)" multiply could have an integer
+>> overflow.
+> I'll check for overflow before calling access_ok().
+> 
+>>
+>> arg->vec_len is a u64 so size_add() won't work on a 32bit system.  I wonder if
+>> size_add() should check for sizes larger than SIZE_MAX?
+>>
+>>     2666                 return -EFAULT;
+>>     2667 
+>>     2668         /* Fixup default values */
+>>     2669         arg->end = ALIGN(arg->end, PAGE_SIZE);
+>>     2670         arg->walk_end = 0;
+>>     2671         if (!arg->max_pages)
+>>     2672                 arg->max_pages = ULONG_MAX;
+>>     2673 
+>>     2674         return 0;
+>>     2675 }
+> I'll send fix soon.
+> 
+>>
+>> regards,
+>> dan carpenter
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
+-- 
+BR,
+Muhammad Usama Anjum
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-b31c4492.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c7a83e0168a1/vmlinux-b31c4492.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f991c4e68b58/bzImage-b31c4492.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0930d8a3c3c55e931634@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-BUG: KASAN: slab-use-after-free in __brelse fs/buffer.c:1235 [inline]
-BUG: KASAN: slab-use-after-free in brelse include/linux/buffer_head.h:325 [inline]
-BUG: KASAN: slab-use-after-free in __invalidate_bh_lrus fs/buffer.c:1508 [inline]
-BUG: KASAN: slab-use-after-free in invalidate_bh_lru+0xa8/0x1b0 fs/buffer.c:1521
-Read of size 4 at addr ffff88801c989a58 by task udevd/5114
-
-CPU: 0 UID: 0 PID: 5114 Comm: udevd Not tainted 6.11.0-rc6-syzkaller-00308-gb31c44928842 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
- __brelse fs/buffer.c:1235 [inline]
- brelse include/linux/buffer_head.h:325 [inline]
- __invalidate_bh_lrus fs/buffer.c:1508 [inline]
- invalidate_bh_lru+0xa8/0x1b0 fs/buffer.c:1521
- csd_do_func kernel/smp.c:134 [inline]
- smp_call_function_many_cond+0x15d7/0x29d0 kernel/smp.c:847
- on_each_cpu_cond_mask+0x3f/0x80 kernel/smp.c:1023
- kill_bdev block/bdev.c:89 [inline]
- blkdev_flush_mapping+0xfe/0x250 block/bdev.c:664
- blkdev_put_whole block/bdev.c:671 [inline]
- bdev_release+0x466/0x700 block/bdev.c:1096
- blkdev_release+0x15/0x20 block/fops.c:638
- __fput+0x24a/0x8a0 fs/file_table.c:422
- __do_sys_close fs/open.c:1566 [inline]
- __se_sys_close fs/open.c:1551 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1551
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8226f170a8
-Code: 48 8b 05 83 9d 0d 00 64 c7 00 16 00 00 00 83 c8 ff 48 83 c4 20 5b c3 64 8b 04 25 18 00 00 00 85 c0 75 20 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 5b 48 8b 15 51 9d 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffe0319be58 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 00007f8226dee0e0 RCX: 00007f8226f170a8
-RDX: 000056579a6766d5 RSI: 00007ffe0319b658 RDI: 0000000000000008
-RBP: 00005652ff487f60 R08: 0000000000000006 R09: b595b5b875e4bbae
-R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000002
-R13: 00005652ff478840 R14: 0000000000000008 R15: 00005652ff466910
- </TASK>
-
-Allocated by task 5112:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3992 [inline]
- slab_alloc_node mm/slub.c:4041 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4048
- alloc_buffer_head+0x2a/0x290 fs/buffer.c:3025
- folio_alloc_buffers+0x241/0x5b0 fs/buffer.c:929
- grow_dev_folio fs/buffer.c:1072 [inline]
- grow_buffers fs/buffer.c:1113 [inline]
- __getblk_slow fs/buffer.c:1139 [inline]
- bdev_getblk+0x2a6/0x550 fs/buffer.c:1441
- __bread_gfp+0x86/0x400 fs/buffer.c:1495
- sb_bread include/linux/buffer_head.h:347 [inline]
- sysv_fill_super+0x231/0x710 fs/sysv/super.c:379
- mount_bdev+0x20a/0x2d0 fs/super.c:1679
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 79:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2256 [inline]
- slab_free mm/slub.c:4477 [inline]
- kmem_cache_free+0x145/0x350 mm/slub.c:4552
- free_buffer_head+0x54/0x240 fs/buffer.c:3041
- try_to_free_buffers+0x311/0x5f0 fs/buffer.c:2982
- shrink_folio_list+0x26c2/0x8c90 mm/vmscan.c:1413
- evict_folios+0x50f7/0x7780 mm/vmscan.c:4560
- try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4755
- shrink_one+0x3b9/0x850 mm/vmscan.c:4793
- shrink_many mm/vmscan.c:4856 [inline]
- lru_gen_shrink_node mm/vmscan.c:4934 [inline]
- shrink_node+0x3799/0x3de0 mm/vmscan.c:5914
- kswapd_shrink_node mm/vmscan.c:6742 [inline]
- balance_pgdat mm/vmscan.c:6934 [inline]
- kswapd+0x1cbc/0x3720 mm/vmscan.c:7203
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-The buggy address belongs to the object at ffff88801c9899f8
- which belongs to the cache buffer_head of size 168
-The buggy address is located 96 bytes inside of
- freed 168-byte region [ffff88801c9899f8, ffff88801c989aa0)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1c989
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000000 ffff88801b763c80 ffffea0000725d40 0000000000000006
-raw: 0000000000000000 0000000080110011 00000001fdffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Reclaimable, gfp_mask 0x152c50(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 1, tgid 1 (init), ts 28576033639, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1500
- prep_new_page mm/page_alloc.c:1508 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3446
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2325
- allocate_slab+0x5a/0x2f0 mm/slub.c:2488
- new_slab mm/slub.c:2541 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3727
- __slab_alloc+0x58/0xa0 mm/slub.c:3817
- __slab_alloc_node mm/slub.c:3870 [inline]
- slab_alloc_node mm/slub.c:4029 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4048
- alloc_buffer_head+0x2a/0x290 fs/buffer.c:3025
- folio_alloc_buffers+0x241/0x5b0 fs/buffer.c:929
- grow_dev_folio fs/buffer.c:1072 [inline]
- grow_buffers fs/buffer.c:1113 [inline]
- __getblk_slow fs/buffer.c:1139 [inline]
- bdev_getblk+0x2a6/0x550 fs/buffer.c:1441
- __getblk include/linux/buffer_head.h:381 [inline]
- sb_getblk include/linux/buffer_head.h:387 [inline]
- ext4_read_inode_bitmap+0x24c/0x12f0 fs/ext4/ialloc.c:145
- __ext4_new_inode+0x106f/0x4260 fs/ext4/ialloc.c:1054
- ext4_create+0x279/0x550 fs/ext4/namei.c:2832
- lookup_open fs/namei.c:3578 [inline]
- open_last_lookups fs/namei.c:3647 [inline]
- path_openat+0x1a9a/0x3470 fs/namei.c:3883
- do_filp_open+0x235/0x490 fs/namei.c:3913
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff88801c989900: fc fc fa fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88801c989980: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fa
->ffff88801c989a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                    ^
- ffff88801c989a80: fb fb fb fb fc fc fc fc fc fc fc fc 00 00 00 00
- ffff88801c989b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
