@@ -1,139 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-29216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1DF9772C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 22:36:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2792D9772CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 22:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C381F2495F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 20:36:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B107AB23BDF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 20:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CE11C174F;
-	Thu, 12 Sep 2024 20:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BE51C174F;
+	Thu, 12 Sep 2024 20:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hmiybILs"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="uSvi5fR2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F2118BC19
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 20:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DDD19048C;
+	Thu, 12 Sep 2024 20:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726173356; cv=none; b=YDADk1S2dY2o9Q6xgci/BcjmAfxUnWFy3aw6cVYNbf5TCcSI+isHKqIAIE2208SutXNtyd9OiquckaawrUw372Gj8zbUT4GJppQbRmaoiqj35zqpHFoeDScVdbpx/g0L5OqBpZeBw7xGIAUzFMll1/08PTvxrUM8xyJAJrW6SF4=
+	t=1726173423; cv=none; b=pdFZFcDvBvof66iJ4VeiZBMc63Rz46h3bL316fhMOJxdGrXWNLaPuZgnOTyyyVfzx8QydPVGN3q+TvKJS7eY2qkOEqC/7KktkTF5owmGStOmckEDDHTIoLSkpchXuK4xxAPo3mAm4pqJlCpvAbeTiJyk4Wd4qK/TasWhJW9jiWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726173356; c=relaxed/simple;
-	bh=kUGAfoDLNCZWBTPAR+6jsLaXeg7dZKMiK4x1yTroAoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F5A7LXuDo0ILJMZ3hj5FQQQ/ODYawP/mXkNJVy7eYOYJeskJo8cWtcvR8TGEisZhXCmn1QswQxGEAKO5KNreuCdrlFasPQtUqCKkhOqlnaIWjr5Bn+e0PHuAY4zSpAFhKG4mF56dk/1hdiTckJgqzfzUJfo5cRoZnSaJBWcWyrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hmiybILs; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c3c3b63135so1444239a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 13:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726173353; x=1726778153; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pPyje0OHvWufuDaW/wO4b41jG4x08M2sTKOIRQm1UUo=;
-        b=hmiybILsRI4JoFUPSykJ1vKKrflMOYb68xDKs4PsMs4R9cozE5e/HQdyVSK/meE2LG
-         KZ8VBDgirVmW00h+mFr9//VyXj18Pexj487sVIA+HAvoOYdBeWYoDJJSxqSfLCb+zGwT
-         bVS4luDIf/TH30ljpP1cQKGT6rFMDpipVRxOVUZ9E1Eudt7GMRhR5FK1n1hBtImJoPoZ
-         kdMllxCJiaDJZe3+5jtW2lo6ggtsxbQ3EZJx3oX+rhqR5XCcwab/fTDEj7oBs8bjc8SW
-         K96dbQsKhDKbzPPXxIQMMx1eahPHTdMjPWt71neURQ4DcSwidWw6IbCjHObmeu0M2QVj
-         hYvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726173353; x=1726778153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pPyje0OHvWufuDaW/wO4b41jG4x08M2sTKOIRQm1UUo=;
-        b=qjXGR6XAX/ZVxcSAfBR4RCkz+YUIQqRbWuK2PXzmnYyU7pmKC72iZ66Fmi1NZVVYfD
-         wYhkCPTctLxbMifr+HcMwq3KVRpH8EKBe3ZGEplV1ZK6y5ZxpgnziSEd3CjO+DZr+Sva
-         PA5bJgLQYLwq0AECnSFWtj9V/26J8M41cRDBcHo/VwzkSZN29OvzZQDgfaPVVCYbhGCA
-         0RgSQx94zn+GlADCf0Xf8ApNPKsminxSWoZRvRUpiCIrp+kKPGMl45TJHAwab8lfUcXa
-         lvtpWS7aQci9/yio/VTBBk+0wE/M8Rb0g6aQ/TIHz/HOVlP0G152YjvcyzBpJBzP2H/X
-         LhkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhrP5s8ZpXayGRsYEslL2lCpXBgphZbIC6yojsanpK8QU8jao50GPY5VjEAQhYTEA1moH5qeGz61eWm5X7@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYasK4EaPzDlVnU75/c8wiN4jSipdtDplD3rOcMGeBkbzcLQhr
-	qzAkoGWh5wz1NoYMwjCfjIJ1B+U9PlcIEBP+jCHFT8gyjyStz697nDvCoubvvTLgFKZPWVxtY+m
-	OCNwu3WEpLqvm2yrb/rZkgpRt7k0oV6kBjb0=
-X-Google-Smtp-Source: AGHT+IFxDMjHDWm3CVPkFzN+glo30yHjPLs7dO9zEs5B79Xj8upFe4UXtxGVo1AlaBPAZoJflQ3c0PrG1+DtiwFjQ8U=
-X-Received: by 2002:a17:907:868c:b0:a8d:2d2e:90f3 with SMTP id
- a640c23a62f3a-a9029668262mr389551566b.55.1726173352752; Thu, 12 Sep 2024
- 13:35:52 -0700 (PDT)
+	s=arc-20240116; t=1726173423; c=relaxed/simple;
+	bh=7+M44koOMskpETV9kPeIdnNGWICx9D3h0F8RX7huMNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cbQHKYXuE9tY9L/43ZRE1vZelW3ckpoOtw1mjrwGSeLkh4K1VaVtr8v0fTLVtGApS5JPlGJcxE2mThYEDexZCG0OTyMuizZNsClny/v6Zxrnt2ZHu3OL9XlNcoLZhC3oYcm9qbJzNJEX1icswl+X7S6NjGLAlVg0WLIv7PmroHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=uSvi5fR2; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4X4TkZ655hzlgMVN;
+	Thu, 12 Sep 2024 20:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1726173408; x=1728765409; bh=9yS7HA6fKYDCCYVIl+KdIxvA
+	ej4qJ3r4GXFGjMqBgvo=; b=uSvi5fR2vmRTU5PsBWAozmgRWg15DQCoTw9QYG0Q
+	JILXCI2W17PMdjeB0eCaY4R9b4p5zp9bb+bfYJlcGbHdBTfiFtQtMF3dUYguzo/Z
+	TlwUp0S+sLzCJ2ZszrvHZG5CDzMw6iEjadRBSJIy5BAgA0y3vIeIBsfBENIkbnoW
+	r11vxY1o7k84TSJpKMgfwayzh+k0/J3gvxSYRGPxCpPyAAVkWDiPCc0uq08D7fpJ
+	66OjaML0t1A0/rH2BCmDW3sZR1xKfqOJVpFBi7aKD0+DNxhM9SCJFcr5+emr55CI
+	a+9PjgbvNYdOfcQHlw3ysfvDS3LLjk0rwkbAPwa/6Q1aNQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Z4I_UPR0myMw; Thu, 12 Sep 2024 20:36:48 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4X4TkN0rMHzlgT1M;
+	Thu, 12 Sep 2024 20:36:43 +0000 (UTC)
+Message-ID: <53043e99-be5f-4fc6-be87-4ebcb8ce99b6@acm.org>
+Date: Thu, 12 Sep 2024 13:36:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org> <CANDhNCrpkTfe6BRVNf1ihhGALbPBBhOs1PCPxA4MDHa1+=sEbQ@mail.gmail.com>
- <80f8f49da3f7208101e497a130a8abe106b298ad.camel@kernel.org> <CANDhNCoLCbAYRtA+kjVNiTeNZg6UtCycNpNievLboXbjNU-a9g@mail.gmail.com>
-In-Reply-To: <CANDhNCoLCbAYRtA+kjVNiTeNZg6UtCycNpNievLboXbjNU-a9g@mail.gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 12 Sep 2024 13:35:41 -0700
-Message-ID: <CANDhNCo-BWqpX1aWi8-q1RaAA_4KigUPcaEML6yCb2EksAX=vA@mail.gmail.com>
-Subject: Re: [PATCH v2] timekeeping: move multigrain timestamp floor handling
- into timekeeper
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/5] fcntl: add F_{SET/GET}_RW_HINT_EX
+To: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
+ hch@lst.de, sagi@grimberg.me, martin.petersen@oracle.com,
+ James.Bottomley@HansenPartnership.com, brauner@kernel.org,
+ viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
+ jlayton@kernel.org, chuck.lever@oracle.com
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+ linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
+ javier.gonz@samsung.com, Nitesh Shetty <nj.shetty@samsung.com>
+References: <20240910150200.6589-1-joshi.k@samsung.com>
+ <CGME20240910151052epcas5p48b20962753b1e3171daf98f050d0b5af@epcas5p4.samsung.com>
+ <20240910150200.6589-4-joshi.k@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240910150200.6589-4-joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 12, 2024 at 1:33=E2=80=AFPM John Stultz <jstultz@google.com> wr=
-ote:
->
-> On Thu, Sep 12, 2024 at 1:18=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
-wrote:
-> > On Thu, 2024-09-12 at 13:11 -0700, John Stultz wrote:
-> > > On Thu, Sep 12, 2024 at 11:02=E2=80=AFAM Jeff Layton <jlayton@kernel.=
-org> wrote:
-> > > But instead, it seems like if something has happened since the cookie
-> > > value was saved (another cpu getting a fine grained timestamp), your
-> > > ktime_get_real_ts64_mg() will fall back to returning the same coarse
-> > > grained time saved to the cookie, as if no time had past?
-> > >
-> > > It seems like that could cause problems:
-> > >
-> > > cpu1                                     cpu2
-> > > ---------------------------------------------------------------------=
------
-> > >                                          t2a =3D ktime_get_coarse_rea=
-l_ts64_mg
-> > > t1a =3D ktime_get_coarse_real_ts64_mg()
-> > > t1b =3D ktime_get_real_ts64_mg(t1a)
-> > >
-> > >                                          t2b =3D ktime_get_real_ts64_=
-mg(t2a)
-> > >
-> > > Where t2b will seem to be before t1b, even though it happened afterwa=
-rds.
-> > >
-> >
-> > Ahh no, the subtle thing about atomic64_try_cmpxchg is that it
-> > overwrites "old" with the value that was currently there in the event
-> > that the cmp fails.
->
-> Ah, ok. Thank you for the explanation there!
->
-> > So, the try_cmpxchg there will either swap the new value into place, or
-> > if it was updated in the meantime, "old" will now refer to the value
-> > that's currently in the floor word. Either is fine in this case, so we
-> > don't need to retry anything.
->
->
-> Though if cpu2 then made another call to
-> ktime_get_coarse_real_ts64_mg(), the value returned there will be the
-> same as t1b? and would be before t2b?
+On 9/10/24 8:01 AM, Kanchan Joshi wrote:
+> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
+> index b9942f5f13d3..ff708a75e2f6 100644
+> --- a/include/linux/rw_hint.h
+> +++ b/include/linux/rw_hint.h
+> @@ -21,4 +21,17 @@ enum rw_lifetime_hint {
+>   static_assert(sizeof(enum rw_lifetime_hint) == 1);
+>   #endif
+>   
+> +#define WRITE_HINT_TYPE_BIT	BIT(7)
+> +#define WRITE_HINT_VAL_MASK	(WRITE_HINT_TYPE_BIT - 1)
+> +#define WRITE_HINT_TYPE(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
+> +				TYPE_RW_PLACEMENT_HINT : TYPE_RW_LIFETIME_HINT)
+> +#define WRITE_HINT_VAL(h)	((h) & WRITE_HINT_VAL_MASK)
+> +
+> +#define WRITE_PLACEMENT_HINT(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
+> +				 WRITE_HINT_VAL(h) : 0)
+> +#define WRITE_LIFETIME_HINT(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
+> +				 0 : WRITE_HINT_VAL(h))
+> +
+> +#define PLACEMENT_HINT_TYPE	WRITE_HINT_TYPE_BIT
+> +#define MAX_PLACEMENT_HINT_VAL	(WRITE_HINT_VAL_MASK - 1)
+>   #endif /* _LINUX_RW_HINT_H */
 
-Oh, no. Apologies again, as I see  t2b would be the same as t1b as well. Ok=
-.
--john
+The above macros implement a union of two 7-bit types in an 8-bit field.
+Wouldn't we be better of by using two separate 8-bit values such that we
+don't need the above macros?
+
+Thanks,
+
+Bart.
 
