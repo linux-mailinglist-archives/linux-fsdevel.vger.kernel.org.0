@@ -1,279 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-29141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1D597653F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 11:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E1097654C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 11:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8BC2819D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 09:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C92801F2325A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 09:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BE7192B73;
-	Thu, 12 Sep 2024 09:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E52E1925A2;
+	Thu, 12 Sep 2024 09:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNq5XvuJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWBYgdcR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF0B1A28D;
-	Thu, 12 Sep 2024 09:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4883618EFF3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 09:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726132261; cv=none; b=p8dB5V9TNZhgqBSRv1mK0bY7Al2GuA4kqchJqlugjd9BFz53GflcmMNTU0Jqyu4nbQE/d3pOQCWUNeYvvGC3RD3nMm33JZMdHpI9/z9ZoAi5L12ZwwYAK6CtIklxkVMmL4Nsp2v+/+dqAkPmmoRzJdYstpqJpwJDONu3vFQfxjI=
+	t=1726132562; cv=none; b=S2/gh0UlzcCRnP9AFcb+QQMsF+wUvBmHOUVvUYFqRBKvrX3ItYBNJfM+bqqYUXq245T2cGYfTUtLXspEeUTd9YTImbVowBhIm16OoM2/PSvyD7ko1nqaeHFzcBodsbHxamH9hi3Vkba1sOc//jK82kluaPLoNRnsGJcvIcXXcHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726132261; c=relaxed/simple;
-	bh=vVoRduz3PXSsMxaTDnIe2sii3a9ZIDw8uNpP9dsyQdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gWnhCr7naGdbnSkFTOTlpoDJO7CzqgMLqMun1/yKiPny0Eso7RN4zd/b8SStDbmanRZ16fsxiRoTe7V6Tq+Qh2roNB2lsabx0ssESc0GRnqPDDAqO7prwZbyPh8KG92oWqOHahrvupiwyXM/qK2afy03TQBrC1dNdyJnBX7SyDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNq5XvuJ; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1726132562; c=relaxed/simple;
+	bh=+Ep5hPipzQop62EQBrp5tEOzNUuFgZZhfl9XgqJVSVc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GG+suulQ4ZD5Kwoq1rWKMedL5Wd2Qas4yL7D2+btqgqy9TbT632PGEp2gCX2/Y2GBEVn4X6Q0RNqpgUlWUQtm6DdC1kLcUJOtdjQfXdnpKQx5w/EyA63SA4g6IqcTtE5k8yggcRin/Bp+AvdSbyaJMJX3sClLKjPvN9pv1ZF1yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWBYgdcR; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f751a2a29fso277781fa.0;
-        Thu, 12 Sep 2024 02:10:58 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-206e614953aso8047555ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 02:16:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726132257; x=1726737057; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=01YKGFk3SAfDDky5pSAjdfHBUg1pbqc31tmiJcxwToI=;
-        b=fNq5XvuJI/4hwm7hwuM9MsVeshlRDUZJWsZTew3CK3uxsIog8JkvrXC2FiEbhj0StL
-         wegyhyNIA2eBFdfFejYuSuiGrwocGv7RhOiMlxN4HhtdfBejTDNFwIhg+oTdhpp+C4VF
-         ohl5zoy6EccQ1TPLOVcL6LxqdlPQWaHIQB5y6hua32YaCQpTdJD2VJVW5FGZy+Tvq9BI
-         sWI6elZRMQPuTnMnybb71U7SBFlFLTqYA1U7lcqt5OtzhNNXSqi+5baPHySpgDa/n454
-         DUjllviwerdru/vkM2sZI+vuRluXOt3f4vPFZu/dv6vC60AeNxFBPRF9an23RkMiuB40
-         6Aow==
+        d=gmail.com; s=20230601; t=1726132560; x=1726737360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mdQNdz9H3PIk3crOM07e8sZz3/4JT6D4XQg51USArCM=;
+        b=DWBYgdcRjw98P4bclIVVBvLkafw+Nt1HrzcENXxoz96rZsJKn7y1ARxj/G8oHuReVU
+         rkRMF7dcv9yujT+uxPueIZk/IW5AD7Zx/2F1UdwJPneLshSEFH3LcJ3A4E8eMWcxqSzB
+         waU++BVoJp1ADRHMdnz1PKgIoz+G7GiFuo5XAmCigY+L/3r2EIsZOA5SCnjXUHVNw5IG
+         OhyjcKKI0xpdZ7/jKJN3j0cPIzvJ454Aqnltc9fXFpKdhTpyNYvZfhR9uaP9YNK6U4OJ
+         pV9dUUltL+S6r2bG6liprIqjwUJZ6MXK/pIASKyFDyQFoul2F+azCUcaQYli5q2ty6Bi
+         tscA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726132257; x=1726737057;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=01YKGFk3SAfDDky5pSAjdfHBUg1pbqc31tmiJcxwToI=;
-        b=eQwJThMzIRgG9CnBuE7wasGtEoUZt1uYh4/2FvUsNHcbknSauCZg6hxHQUIC6cZsL/
-         zaq6ry8W5nuoL4gvY8Zu0ypLiBl2uiwq407FE+53QyCBjRhTJ9KjYcN4kSyjX0iZjZGi
-         xsqKU0I35+aJeTwVXvbX9I8UkFya1QFJNQFs410MdeCMGS4jJhTpg+wqGpBEfo8O++uF
-         V61Jbux8J6XOQspqDMP7ph/uIGvyk4g715WZ0C+m1wiO8zY/X8OlKkNuHEYzqNUa3BeU
-         dzU6HBppGkxwVt/ikmDbg/ZhcR4P9hCTrMnpYSDl8zdUobI3oKkcS8DKo8YbvaasJBbH
-         HaAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWSZ5wN8gsz6cVSIdOOik1GZK47LAA3T1gU4fzj2+DZ5E9utB5PtvLZDhuZpUSadc6HiXAaTKv7GrH@vger.kernel.org, AJvYcCXz4Md+L8dtUXL2zGZB5xRdF5pExBmfajFcy2BdZPBoOLQU4Mzxsn9fpMirYof/ABA2Hojd5KTQl6JpkVSPrQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTiQRDPcwC1ACGRyXEn/TN4f/vt+nvMNu/j3JEXepuwrXv2ytv
-	f+66KesHqAwv+1IofLZPVHCn3xhBYgEYDa0NW+ObE3eBYRwwu52jDZJaC3adfWTNXJZJKByhbgD
-	Myrh1Y2la2m8+lIJf40D3xt2ANxo=
-X-Google-Smtp-Source: AGHT+IEaDE9RBD9ZYnJ7bsAsDRA963ducZoLE7UHz6PDCFEYiUE2+BPwa+c6lnjWu5TmyhmUfk2+pjZXh1eFQmlw47U=
-X-Received: by 2002:a2e:a98a:0:b0:2ef:29fc:f950 with SMTP id
- 38308e7fff4ca-2f787dcd2f8mr3540351fa.6.1726132256376; Thu, 12 Sep 2024
- 02:10:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726132560; x=1726737360;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mdQNdz9H3PIk3crOM07e8sZz3/4JT6D4XQg51USArCM=;
+        b=EOHYLrEnvyF4CZDkXZmmjnDfEUz3bm3VJo8rFbtyPzo8WEehmfKi/cp+Iu04VfUhJ4
+         p4iZkqsQbdqle/bFZJSov9Iz7smMyrGNxgFS8A/S4gpsB6QquKxJXjKD680/rle48ONU
+         YF4ZuXttyabxBTRpDh5hl7lWhhb/TDLIAzITxN+mweD242MtXsXqkicORuV1hTzkxylT
+         Eas+QINIbHffJhyYl0YsoSNLv5EHFqpEhbULspzNval82pT96Z/K9ZhcTG5bjkpYaHnC
+         W4SV+YMEUACw/OWzJM2gHJ+HXsItdntu3sEfyJWwmIqs1Txf3gYZ4zQtk3HqA53VR2/c
+         y2HQ==
+X-Gm-Message-State: AOJu0YymS0doYjjGEkMQa0dNeueJj6+/9J8NJ0a3INy2Tc5iykj+ZT5U
+	ZIWy7folcO6dinG5WT1s8oCSTLpksaVMhr0UNWSeMjtObmJbTV1w
+X-Google-Smtp-Source: AGHT+IHohGuEQXcp6pqk/f0q9mRrAXhmAv/ocDwEnDKbYQIlNa//W8KhWplMzEqIN7u8qkRaPshjRQ==
+X-Received: by 2002:a17:902:d50c:b0:207:1708:734c with SMTP id d9443c01a7336-2076e31f979mr30591405ad.11.1726132560298;
+        Thu, 12 Sep 2024 02:16:00 -0700 (PDT)
+Received: from localhost.localdomain ([223.104.5.108])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af478cesm11029035ad.116.2024.09.12.02.15.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Sep 2024 02:15:59 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH RFC] vfs: Introduce a new open flag to imply dentry deletion on file removal
+Date: Thu, 12 Sep 2024 17:15:48 +0800
+Message-Id: <20240912091548.98132-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823082237.713543-1-zhaoyang.huang@unisoc.com>
- <20240903022902.GP9627@mit.edu> <CAGWkznEv+F1A878Nw0=di02DHyKxWCvK0B=93o1xjXK6nUyQ3Q@mail.gmail.com>
- <20240903120840.GD424729@mit.edu> <CAGWkznFu1GTB41Vx1_Ews=rNw-Pm-=ACxg=GjVdw46nrpVdO3g@mail.gmail.com>
- <20240904024445.GR9627@mit.edu> <CAGWkznFGDJsyMUhn5Y8DPmhba9h4GNkX_CaqEMev4z23xa-s6g@mail.gmail.com>
- <20240912084119.j3oqfikuavymctlm@quack3>
-In-Reply-To: <20240912084119.j3oqfikuavymctlm@quack3>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Thu, 12 Sep 2024 17:10:44 +0800
-Message-ID: <CAGWkznG7_=zjKZBO-sj=79F3a3tgZuXqCXbvddDDG2Atv5043g@mail.gmail.com>
-Subject: Re: [RFC PATCHv2 1/1] fs: ext4: Don't use CMA for buffer_head
-To: Jan Kara <jack@suse.cz>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 4:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 04-09-24 14:56:29, Zhaoyang Huang wrote:
-> > On Wed, Sep 4, 2024 at 10:44=E2=80=AFAM Theodore Ts'o <tytso@mit.edu> w=
-rote:
-> > > On Wed, Sep 04, 2024 at 08:49:10AM +0800, Zhaoyang Huang wrote:
-> > > > >
-> > > > > After all, using GFP_MOVEABLE memory seems to mean that the buffe=
-r
-> > > > > cache might get thrashed a lot by having a lot of cached disk buf=
-fers
-> > > > > getting ejected from memory to try to make room for some contiguo=
-us
-> > > > > frame buffer memory, which means extra I/O overhead.  So what's t=
-he
-> > > > > upside of using GFP_MOVEABLE for the buffer cache?
-> > > >
-> > > > To my understanding, NO. using GFP_MOVEABLE memory doesn't introduc=
-e
-> > > > extra IO as they just be migrated to free pages instead of ejected
-> > > > directly when they are the target memory area. In terms of reclaimi=
-ng,
-> > > > all migrate types of page blocks possess the same position.
-> > >
-> > > Where is that being done?  I don't see any evidence of this kind of
-> > > migration in fs/buffer.c.
-> > The journaled pages which carry jh->bh are treated as file pages
-> > during isolation of a range of PFNs in the callstack below[1]. The bh
-> > will be migrated via each aops's migrate_folio and performs what you
-> > described below such as copy the content and reattach the bh to a new
-> > page. In terms of the journal enabled ext4 partition, the inode is a
-> > blockdev inode which applies buffer_migrate_folio_norefs as its
-> > migrate_folio[2].
-> >
-> > [1]
-> > cma_alloc/alloc_contig_range
-> >     __alloc_contig_migrate_range
-> >         migrate_pages
-> >             migrate_folio_move
-> >                 move_to_new_folio
-> >
-> > mapping->aops->migrate_folio(buffer_migrate_folio_norefs->__buffer_migr=
-ate_folio)
-> >
-> > [2]
-> > static int __buffer_migrate_folio(struct address_space *mapping,
-> >                 struct folio *dst, struct folio *src, enum migrate_mode=
- mode,
-> >                 bool check_refs)
-> > {
-> > ...
-> >         if (check_refs) {
-> >                 bool busy;
-> >                 bool invalidated =3D false;
-> >
-> > recheck_buffers:
-> >                 busy =3D false;
-> >                 spin_lock(&mapping->i_private_lock);
-> >                 bh =3D head;
-> >                 do {
-> >                         if (atomic_read(&bh->b_count)) {
-> >           //My case failed here as bh is referred by a journal head.
-> >                                 busy =3D true;
-> >                                 break;
-> >                         }
-> >                         bh =3D bh->b_this_page;
-> >                 } while (bh !=3D head);
->
-> Correct. Currently pages with journal heads attached cannot be migrated
-> mostly out of pure caution that the generic code isn't sure what's
-> happening with them. As I wrote in [1] we could make pages with jhs on
-> checkpoint list only migratable as for them the buffer lock is enough to
-> stop anybody from touching the bh data. Bhs which are part of a running /
-> committing transaction are not realistically migratable but then these
-> states are more shortlived so it shouldn't be a big problem.
-By observing from our test case, the jh remains there for a long time
-when journal->j_free is bigger than j_max_transaction_buffers which
-failed cma_alloc. So you think this is rare or abnormal?
+Commit 681ce8623567 ("vfs: Delete the associated dentry when deleting a
+file") introduced an unconditional deletion of the associated dentry when a
+file is removed. However, this led to performance regressions in specific
+benchmarks, such as ilebench.sum_operations/s [0], prompting a revert in
+commit 4a4be1ad3a6e ("Revert 'vfs: Delete the associated dentry when
+deleting a file'").
 
-[6] j_free & j_max_transaction_buffers
-crash_arm64_v8.0.4++> struct
-journal_t.j_free,j_max_transaction_buffers 0xffffff80e70f3000 -x
-  j_free =3D 0x3f1,
-  j_max_transaction_buffers =3D 0x100,
+This patch seeks to reintroduce the concept conditionally, where the
+associated dentry is deleted only when the user explicitly opts for it
+during file removal.
 
->
-> > > > > Just curious, because in general I'm blessed by not having to use=
- CMA
-> > > > > in the first place (not having I/O devices too primitive so they =
-can't
-> > > > > do scatter-gather :-).  So I don't tend to use CMA, and obviously=
- I'm
-> > > > > missing some of the design considerations behind CMA.  I thought =
-in
-> > > > > general CMA tends to used in early boot to allocate things like f=
-rame
-> > > > > buffers, and after that CMA doesn't tend to get used at all?  Tha=
-t's
-> > > > > clearly not the case for you, apparently?
-> > > >
-> > > > Yes. CMA is designed for contiguous physical memory and has been us=
-ed
-> > > > via cma_alloc during the whole lifetime especially on the system
-> > > > without SMMU, such as DRM driver. In terms of MIGRATE_MOVABLE page
-> > > > blocks, they also could have compaction path retry for many times
-> > > > which is common during high-order alloc_pages.
-> > >
-> > > But then what's the point of using CMA-eligible memory for the buffer
-> > > cache, as opposed to just always using !__GFP_MOVEABLE for all buffer
-> > > cache allocations?  After all, that's what is being proposed for
-> > > ext4's ext4_getblk().  What's the downside of avoiding the use of
-> > > CMA-eligible memory for ext4's buffer cache?  Why not do this for
-> > > *all* buffers in the buffer cache?
-> > Since migration which arised from alloc_pages or cma_alloc always
-> > happens, we need appropriate users over MOVABLE pages. AFAIU, buffer
-> > cache pages under regular files are the best candidate for migration
-> > as we just need to modify page cache and PTE. Actually, all FSs apply
-> > GFP_MOVABLE on their regular files via the below functions.
-> >
-> > new_inode
-> >     alloc_inode
-> >         inode_init_always(struct super_block *sb, struct inode *inode)
-> >         {
-> >          ...
-> >             mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
->
-> Here you speak about data page cache pages. Indeed they can be allocated
-> from CMA area. But when Ted speaks about "buffer cache" he specifically
-> means page cache of the block device inode and there I can see:
->
-> struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
-> {
-> ...
->         mapping_set_gfp_mask(&inode->i_data, GFP_USER);
-> ...
-> }
->
-> so at this point I'm confused how come you can see block device pages in
-> CMA area. Are you using data=3Djournal mode of ext4 in your setup by any
-> chance? That would explain it but then that is a horrible idea as well...
-The page of 'fffffffe01a51c00'[1] which has bh attached comes from
-creating bitmap_blk by ext4_getblk->sb_getblk within process[2] where
-the gfpmask has GFP_MOVABLE. IMO, GFP_USER is used for regular file
-pages under the super_block but not available for metadata, right?
+There are practical use cases for this proactive dentry reclamation.
+Besides the Elasticsearch use case mentioned in commit 681ce8623567,
+additional examples have surfaced in our production environment. For
+instance, in video rendering services that continuously generate temporary
+files, upload them to persistent storage servers, and then delete them, a
+large number of negative dentries—serving no useful purpose—accumulate.
+Users in such cases would benefit from proactively reclaiming these
+negative dentries. This patch provides an API allowing users to actively
+delete these unnecessary negative dentries.
 
-[1]
-crash_arm64_v8.0.4++> kmem -p|grep
-ffffff808f0aa150(sb->s_bdev->bd_inode->i_mapping)
-fffffffe01a51c00  e9470000 ffffff808f0aa150        3  2 8000000008020
-lru,private //within CMA area
-fffffffe03d189c0 174627000 ffffff808f0aa150        4  2
-2004000000008020 lru,private
-fffffffe03d88e00 176238000 ffffff808f0aa150      3f9  2
-2008000000008020 lru,private
-fffffffe03d88e40 176239000 ffffff808f0aa150        6  2
-2008000000008020 lru,private
-fffffffe03d88e80 17623a000 ffffff808f0aa150        5  2
-2008000000008020 lru,private
-fffffffe03d88ec0 17623b000 ffffff808f0aa150        1  2
-2008000000008020 lru,private
-fffffffe03d88f00 17623c000 ffffff808f0aa150        0  2
-2008000000008020 lru,private
-fffffffe040e6540 183995000 ffffff808f0aa150      3f4  2
-2004000000008020 lru,private
+Link: https://lore.kernel.org/linux-fsdevel/202405291318.4dfbb352-oliver.sang@intel.com [0]
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+---
+ fs/dcache.c                      | 7 ++++++-
+ fs/open.c                        | 9 ++++++++-
+ include/linux/dcache.h           | 2 +-
+ include/linux/sched.h            | 2 +-
+ include/uapi/asm-generic/fcntl.h | 4 ++++
+ 5 files changed, 20 insertions(+), 4 deletions(-)
 
-[2]
-02148 < 4> [   14.133703] [08-11 18:38:25.133] __find_get_block+0x29c/0x634
-02149 < 4> [   14.133711] [08-11 18:38:25.133] __getblk_gfp+0xa8/0x290
-0214A < 4> [   14.133716] [08-11 18:38:25.133] ext4_read_inode_bitmap+0xa0/=
-0x6c4
-0214B < 4> [   14.133725] [08-11 18:38:25.133] __ext4_new_inode+0x34c/0x10d=
-4
-0214C < 4> [   14.133730] [08-11 18:38:25.133] ext4_create+0xdc/0x1cc
-0214D < 4> [   14.133737] [08-11 18:38:25.133] path_openat+0x4fc/0xc84
-0214E < 4> [   14.133745] [08-11 18:38:25.133] do_filp_open+0xc0/0x16c
-0214F < 4> [   14.133751] [08-11 18:38:25.133] do_sys_openat2+0x8c/0xf8
-02150 < 4> [   14.133758] [08-11 18:38:25.133] __arm64_sys_openat+0x78/0xa4
-02151 < 4> [   14.133764] [08-11 18:38:25.133] invoke_syscall+0x60/0x11c
-02152 < 4> [   14.133771] [08-11 18:38:25.133] el0_svc_common+0xb4/0xe8
-02153 < 4> [   14.133777] [08-11 18:38:25.133] do_el0_svc+0x24/0x30
-02154 < 4> [   14.133783] [08-11 18:38:25.133] el0_svc+0x3c/0x70
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 3d8daaecb6d1..6d744b5e5a6c 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1667,7 +1667,10 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 	smp_store_release(&dentry->d_name.name, dname); /* ^^^ */
+ 
+ 	dentry->d_lockref.count = 1;
+-	dentry->d_flags = 0;
++	if (current->flags & PF_REMOVE_DENTRY)
++		dentry->d_flags = DCACHE_FILE_REMOVE;
++	else
++		dentry->d_flags = 0;
+ 	spin_lock_init(&dentry->d_lock);
+ 	seqcount_spinlock_init(&dentry->d_seq, &dentry->d_lock);
+ 	dentry->d_inode = NULL;
+@@ -2394,6 +2397,8 @@ void d_delete(struct dentry * dentry)
+ 	 * Are we the only user?
+ 	 */
+ 	if (dentry->d_lockref.count == 1) {
++		if (dentry->d_flags & DCACHE_FILE_REMOVE)
++			__d_drop(dentry);
+ 		dentry->d_flags &= ~DCACHE_CANT_MOUNT;
+ 		dentry_unlink_inode(dentry);
+ 	} else {
+diff --git a/fs/open.c b/fs/open.c
+index 22adbef7ecc2..3441a004a841 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1428,7 +1428,14 @@ static long do_sys_openat2(int dfd, const char __user *filename,
+ long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
+ {
+ 	struct open_how how = build_open_how(flags, mode);
+-	return do_sys_openat2(dfd, filename, &how);
++	long err;
++
++	if (flags & O_NODENTRY)
++		current->flags |= PF_REMOVE_DENTRY;
++	err = do_sys_openat2(dfd, filename, &how);
++	if (flags & O_NODENTRY)
++		current->flags &= ~PF_REMOVE_DENTRY;
++	return err;
+ }
+ 
+ 
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index bff956f7b2b9..82ba79bc0072 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -215,7 +215,7 @@ struct dentry_operations {
+ 
+ #define DCACHE_NOKEY_NAME		BIT(25) /* Encrypted name encoded without key */
+ #define DCACHE_OP_REAL			BIT(26)
+-
++#define DCACHE_FILE_REMOVE		BIT(27) /* remove this dentry when file is removed */
+ #define DCACHE_PAR_LOOKUP		BIT(28) /* being looked up (with parent locked shared) */
+ #define DCACHE_DENTRY_CURSOR		BIT(29)
+ #define DCACHE_NORCU			BIT(30) /* No RCU delay for freeing */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f8d150343d42..f931a3a882e0 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1649,7 +1649,7 @@ extern struct pid *cad_pid;
+ #define PF_USED_MATH		0x00002000	/* If unset the fpu must be initialized before use */
+ #define PF_USER_WORKER		0x00004000	/* Kernel thread cloned from userspace thread */
+ #define PF_NOFREEZE		0x00008000	/* This thread should not be frozen */
+-#define PF__HOLE__00010000	0x00010000
++#define PF_REMOVE_DENTRY	0x00010000      /* Remove the dentry when the file is removed */
+ #define PF_KSWAPD		0x00020000	/* I am kswapd */
+ #define PF_MEMALLOC_NOFS	0x00040000	/* All allocations inherit GFP_NOFS. See memalloc_nfs_save() */
+ #define PF_MEMALLOC_NOIO	0x00080000	/* All allocations inherit GFP_NOIO. See memalloc_noio_save() */
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index 80f37a0d40d7..ca5f402d5e7d 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -89,6 +89,10 @@
+ #define __O_TMPFILE	020000000
+ #endif
+ 
++#ifndef O_NODENTRY
++#define O_NODENTRY     040000000
++#endif
++
+ /* a horrid kludge trying to make sure that this will fail on old kernels */
+ #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
+ 
+-- 
+2.43.5
 
->
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
 
