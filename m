@@ -1,255 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-29146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679F8976644
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 12:03:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60697976657
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 12:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F237DB22C94
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 10:03:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 921D21C23351
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 10:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6487019C54B;
-	Thu, 12 Sep 2024 10:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3AF19F135;
+	Thu, 12 Sep 2024 10:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjKKWRsl"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s4PPlACM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA813C809
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 10:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6A919E998
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 10:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726135381; cv=none; b=fUC//5GYLC+ihQyGKW9RXOatmBpZj8HrrToKPuRF65NFaCWXPRXOwyvw86A1bQAk7kAkFrE7ECs2++YCHRPUbC44BPoKkbZ/ECwa/dSjbvQUrCf1e4rPzGRjONl+lLKpPSjA/mA6cgDqBluP6Yu5ur6kwfjY4rhKQjP3v+p6dbk=
+	t=1726135576; cv=none; b=GKTeI9YHqUGA3WEYasK60Ajb8C6jqgLCR5qaD/BBR08AR7dQSyU4yC9A4uf39eT+CNMtZT1nEeHuyuRwTS+R0coYMF/lv1ajaiD6xvzuup9fMGmhHbwMVSL/GN/a0f1+6Txt5hBIRrotyHAriXWXZ97nxV03ArOMA1rUdTtf8Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726135381; c=relaxed/simple;
-	bh=DH74NqsLwXcYgpdc9ZxHdfBNxVq/m/ifXeMpKqe7SWY=;
+	s=arc-20240116; t=1726135576; c=relaxed/simple;
+	bh=zNQtdJ5lwCWCDgDgMTf79bjuaQqupoYjQ0YseckHteQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SSSw8TzConDwLJ30RqTUrZgzkxDudRKmg7RsbZPcBns43Xn5LXTBCIZ+nLHmbH2fOOOzfDWVtTVqIPg8jfi4ajzGfVGZRm24/TJiG0v2CZxzCKQHD92LyoHdfmr5B6dTRO2vgJFid6EgGDWzECisPQYWPAV05dN33gOBx9o7W9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjKKWRsl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4475DC4CEC3;
-	Thu, 12 Sep 2024 10:02:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726135381;
-	bh=DH74NqsLwXcYgpdc9ZxHdfBNxVq/m/ifXeMpKqe7SWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WjKKWRsl3FTj8ltKoz3PADGaFb+wngUO/UzFQf0tfJQ4y3uF5axxrds7loUSMusgK
-	 U/hWSxWc15pJXha8FQ5GjXEc7VATcRq1/6dEwg8oZN8l55s36OO07kYDakgyWVEwda
-	 UunJZvuJwOV371dqPh/TE6abw4DGQDiNCVwsvWUJpASA31/uL9V6qLYHoIv4lV9ZTI
-	 ask+beK1tFxIVJFdqPILwr323hRVJ+vrRvPtBCzRSJQyBBRdS27kBQXhMG6J0BIU+K
-	 RLjEx+fGP07sc60XtVm8Hyu5dnp3wv1OijaN70OXt7jKlpQ840NAHsLJ28Q9plSELd
-	 jejbpvWKLxCdw==
-Date: Thu, 12 Sep 2024 12:02:56 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, 
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH RFC 12/20] input: remove f_version abuse
-Message-ID: <20240912-zeche-entkommen-1ae27588d0de@brauner>
-References: <20240830-vfs-file-f_version-v1-0-6d3e4816aa7b@kernel.org>
- <20240830-vfs-file-f_version-v1-12-6d3e4816aa7b@kernel.org>
- <ZuJXYNeTGrnRpPHk@ly-workstation>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fw8lxgeipmWJn30NeRad5uGcXUwT0Lh004/zqzUxntJLvYPXDlfpG5wkr+PiUBF/54HxJ2R1RjxY7BmTUtO+t6VW9gfzbYv+0Z/LL/4IW/Tb2ear2Nt2c3e3bsB9NvSssnYG74k9/lvQ9vi+OHtncubTYxLmlVlNBgUta9ES8OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s4PPlACM; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso6924925e9.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 03:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726135573; x=1726740373; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9f9vw1hY5QrAMqb22ETyD6iQGuby4m6Ga+q6MMaPXKw=;
+        b=s4PPlACMwcK1gaNXaeSKezzEtGmfB7QZI6TWYLv1GNI7PRO1DdAkMzin8WOdCeufPi
+         hINCgoCzNNPb2FBonX6IdCkeNIvyqGxfsLV1hv5YsfAJHqI8yFE5ofHBRJDXfIXMSY5B
+         aoi6d7u3HolF3ECudzAYcqj869YeAopmYU45jhE0Hn+lm3giCDwrN5DXAjF0sDHWgLLx
+         EgD7aCb+qYySmWpE5y+7L1V5+MGooRtmuaCscniUiT/lCrk1xbaaRjFPlS6/aP+NCrIX
+         huyIRpRMS/C+iB0u38T16gYKGn2eGvSafLo5g6Wsp6GxwxyXOrD1LcQ07z+pVJc/22NF
+         5IZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726135573; x=1726740373;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9f9vw1hY5QrAMqb22ETyD6iQGuby4m6Ga+q6MMaPXKw=;
+        b=ujA8GsoMj2H/OitMxD29MKaV6/uSJuJBxyDRVgU12xGuglcd7vVgBtp82ZuG3+MqNM
+         cSC2up59YpdguZPpqBLMRZ5EZAd5/1KQkDRLLrb3bufKLqXYbULPzLQ9/N+LQI1UzvdJ
+         g5DZCHl/QbvjKmWAxWrxeW74sSwuvca8uy6QnPfkJ2XkgidoORjdQyuZSsFh7bCaKSRd
+         tRZh/XW+zdwqon1PUH4IYuozWE91TKheZ1ObE2LycnYWqmCvZqV4LY7Un7fPEZHY8JPT
+         MDCnOIklJVvACxfziKvZB5Mj1HghQ0cifba8ZOL7zCkTLldQukBcBmaYOzZ4AVbhd27D
+         PgJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBLhWsnCDSP1vAt/iMx4xDhe8YGSFq7uW/jUed5GxLpmq5YS2w5d5k6c4LoI8xgwzg5VK65PZu/94pmDny@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPiqW1eJBWayDhP7KymI0SB9eukWoELMxG+J5Xy+N6wrNoo2KK
+	VMKwvcMMuw2KKtcuO2jmDCXHcWsNRBniyKAE6pV0HHLlyODlZQLj4y4CxrbK5x0=
+X-Google-Smtp-Source: AGHT+IFIVXMSjXI0WItlEkRGBkE4sVo1mzs3x8iYM6cm17R5bnyS11Apu3o6+MP2BwuX9mdLX1bomg==
+X-Received: by 2002:a05:600c:4d06:b0:42c:acb0:ddb6 with SMTP id 5b1f17b1804b1-42cdb531b66mr19362125e9.9.1726135573210;
+        Thu, 12 Sep 2024 03:06:13 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8ada3sm165339195e9.43.2024.09.12.03.06.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 03:06:12 -0700 (PDT)
+Date: Thu, 12 Sep 2024 13:06:08 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: [bug report] fs/proc/task_mmu: implement IOCTL to get and
+ optionally clear info about PTEs
+Message-ID: <69e01b95-fcf1-4168-8aa9-708623ec3956@stanley.mountain>
+References: <3a4e2a3e-b395-41e6-807d-0e6ad8722c7d@stanley.mountain>
+ <b33db5d3-2407-4d25-a516-f0fd8d74a827@collabora.com>
+ <d3db84fc-c107-423d-9f02-3cae0217b576@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ijrkgxanuoezdhlk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuJXYNeTGrnRpPHk@ly-workstation>
+In-Reply-To: <d3db84fc-c107-423d-9f02-3cae0217b576@collabora.com>
 
-
---ijrkgxanuoezdhlk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-On Thu, Sep 12, 2024 at 10:52:16AM GMT, Lai, Yi wrote:
-> Hi Christian Brauner,
+On Thu, Sep 12, 2024 at 02:34:54PM +0500, Muhammad Usama Anjum wrote:
+> On 9/12/24 11:36 AM, Muhammad Usama Anjum wrote:
+> > Hi Dan,
+> > 
+> > Thank you for reporting.
+> I've debugged more and found out that no changes are required as
+> access_ok() already deals well with the overflows. I've tested the
+> corner cases on x86_64 and there are no issue found.
 > 
-> Greetings!
+> I'll add more test cases in the selftest for this ioctl. Please share
+> your thoughts if I may have missed something.
 > 
-> I used Syzkaller and found that there is BUG: unable to handle kernel paging request in input_proc_devices_poll in next-20240909.
-> 
-> After bisection and the first bad commit is:
-> "
-> 7c3d158418c2 input: remove f_version abuse
-> "
-> 
-> All detailed into can be found at:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240911_155303_input_proc_devices_poll
-> Syzkaller repro code:
-> https://github.com/laifryiee/syzkaller_logs/blob/main/240911_155303_input_proc_devices_poll/repro.c
-> Syzkaller repro syscall steps:
-> https://github.com/laifryiee/syzkaller_logs/blob/main/240911_155303_input_proc_devices_poll/repro.prog
-> Syzkaller report:
-> https://github.com/laifryiee/syzkaller_logs/blob/main/240911_155303_input_proc_devices_poll/repro.report
-> Kconfig(make olddefconfig):
-> https://github.com/laifryiee/syzkaller_logs/blob/main/240911_155303_input_proc_devices_poll/kconfig_origin
-> Bisect info:
-> https://github.com/laifryiee/syzkaller_logs/blob/main/240911_155303_input_proc_devices_poll/bisect_info.log
-> bzImage:
-> https://github.com/laifryiee/syzkaller_logs/raw/main/240911_155303_input_proc_devices_poll/bzImage_100cc857359b5d731407d1038f7e76cd0e871d94
-> Issue dmesg:
-> https://github.com/laifryiee/syzkaller_logs/blob/main/240911_155303_input_proc_devices_poll/100cc857359b5d731407d1038f7e76cd0e871d94_dmesg.log
 
-Thanks for all the info. I see what the issue is and pushed a fix out.
+I don't understand what you are saying.  We are discussing three issues:
 
---ijrkgxanuoezdhlk
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-input-remove-f_version-abuse.patch"
+1)  We check the size and then make the size larger:
 
-From 7a7ce8b3ba66754f5d275a71630b4ee8b507d266 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 30 Aug 2024 15:04:53 +0200
-Subject: [PATCH] input: remove f_version abuse
+    check: if (!access_ok((void __user *)(long)arg->start, arg->end - arg->start))
+    larger: arg->end = ALIGN(arg->end, PAGE_SIZE);
 
-f_version is removed from struct file. Make input stop abusing f_version
-for stashing information for poll. Move the input state counter into
-input_seq_state and allocate it via seq_private_open() and free via
-seq_release_private().
+The ALIGN() can't make ->end go beyond the end of the page so it's possible that
+if you have access_ok to the start of the page then you have access to the whole
+page.  It just seems ugly to rely on that.  (I don't know mm very well).
 
-Link: https://lore.kernel.org/r/20240830-vfs-file-f_version-v1-12-6d3e4816aa7b@kernel.org
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- drivers/input/input.c | 47 ++++++++++++++++++++-----------------------
- 1 file changed, 22 insertions(+), 25 deletions(-)
+2) Passing negative sizes to access_ok().
 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 54c57b267b25..19ea1888da9f 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -1079,33 +1079,31 @@ static inline void input_wakeup_procfs_readers(void)
- 	wake_up(&input_devices_poll_wait);
- }
- 
-+struct input_seq_state {
-+	unsigned short pos;
-+	bool mutex_acquired;
-+	int input_devices_state;
-+};
-+
- static __poll_t input_proc_devices_poll(struct file *file, poll_table *wait)
- {
-+	struct seq_file *seq = file->private_data;
-+	struct input_seq_state *state = seq->private;
-+
- 	poll_wait(file, &input_devices_poll_wait, wait);
--	if (file->f_version != input_devices_state) {
--		file->f_version = input_devices_state;
-+	if (state->input_devices_state != input_devices_state) {
-+		state->input_devices_state = input_devices_state;
- 		return EPOLLIN | EPOLLRDNORM;
- 	}
- 
- 	return 0;
- }
- 
--union input_seq_state {
--	struct {
--		unsigned short pos;
--		bool mutex_acquired;
--	};
--	void *p;
--};
--
- static void *input_devices_seq_start(struct seq_file *seq, loff_t *pos)
- {
--	union input_seq_state *state = (union input_seq_state *)&seq->private;
-+	struct input_seq_state *state = seq->private;
- 	int error;
- 
--	/* We need to fit into seq->private pointer */
--	BUILD_BUG_ON(sizeof(union input_seq_state) != sizeof(seq->private));
--
- 	error = mutex_lock_interruptible(&input_mutex);
- 	if (error) {
- 		state->mutex_acquired = false;
-@@ -1124,7 +1122,7 @@ static void *input_devices_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- 
- static void input_seq_stop(struct seq_file *seq, void *v)
- {
--	union input_seq_state *state = (union input_seq_state *)&seq->private;
-+	struct input_seq_state *state = seq->private;
- 
- 	if (state->mutex_acquired)
- 		mutex_unlock(&input_mutex);
-@@ -1210,7 +1208,8 @@ static const struct seq_operations input_devices_seq_ops = {
- 
- static int input_proc_devices_open(struct inode *inode, struct file *file)
- {
--	return seq_open(file, &input_devices_seq_ops);
-+	return seq_open_private(file, &input_devices_seq_ops,
-+				sizeof(struct input_seq_state));
- }
- 
- static const struct proc_ops input_devices_proc_ops = {
-@@ -1218,17 +1217,14 @@ static const struct proc_ops input_devices_proc_ops = {
- 	.proc_poll	= input_proc_devices_poll,
- 	.proc_read	= seq_read,
- 	.proc_lseek	= seq_lseek,
--	.proc_release	= seq_release,
-+	.proc_release	= seq_release_private,
- };
- 
- static void *input_handlers_seq_start(struct seq_file *seq, loff_t *pos)
- {
--	union input_seq_state *state = (union input_seq_state *)&seq->private;
-+	struct input_seq_state *state = seq->private;
- 	int error;
- 
--	/* We need to fit into seq->private pointer */
--	BUILD_BUG_ON(sizeof(union input_seq_state) != sizeof(seq->private));
--
- 	error = mutex_lock_interruptible(&input_mutex);
- 	if (error) {
- 		state->mutex_acquired = false;
-@@ -1243,7 +1239,7 @@ static void *input_handlers_seq_start(struct seq_file *seq, loff_t *pos)
- 
- static void *input_handlers_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- {
--	union input_seq_state *state = (union input_seq_state *)&seq->private;
-+	struct input_seq_state *state = seq->private;
- 
- 	state->pos = *pos + 1;
- 	return seq_list_next(v, &input_handler_list, pos);
-@@ -1252,7 +1248,7 @@ static void *input_handlers_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- static int input_handlers_seq_show(struct seq_file *seq, void *v)
- {
- 	struct input_handler *handler = container_of(v, struct input_handler, node);
--	union input_seq_state *state = (union input_seq_state *)&seq->private;
-+	struct input_seq_state *state = seq->private;
- 
- 	seq_printf(seq, "N: Number=%u Name=%s", state->pos, handler->name);
- 	if (handler->filter)
-@@ -1273,14 +1269,15 @@ static const struct seq_operations input_handlers_seq_ops = {
- 
- static int input_proc_handlers_open(struct inode *inode, struct file *file)
- {
--	return seq_open(file, &input_handlers_seq_ops);
-+	return seq_open_private(file, &input_handlers_seq_ops,
-+				sizeof(struct input_seq_state));
- }
- 
- static const struct proc_ops input_handlers_proc_ops = {
- 	.proc_open	= input_proc_handlers_open,
- 	.proc_read	= seq_read,
- 	.proc_lseek	= seq_lseek,
--	.proc_release	= seq_release,
-+	.proc_release	= seq_release_private,
- };
- 
- static int __init input_proc_init(void)
--- 
-2.45.2
+The access_ok() check will treat negative sizes as very large positive sizes and
+it will be rejected.  So far as I can see this is fine.  Plus there is a check
+at the start of walk_page_range() which says if (start >= end) return -EINVAL;
 
+3) Integer overflow:
+	access_ok((void __user *)(long)arg->vec, arg->vec_len * sizeof(struct page_region))
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This multiplication can overflow so access_ok() checks a smaller size than
+intended.  It will absolutely return success when it shouldn't.  To determine
+the impact then we have to look at do_pagemap_scan() but I don't know the code
+well enough to say if it's harmless or what the impact is.
 
---ijrkgxanuoezdhlk--
+Integer overflows to access_ok() are always treated as a bug though even if it's
+harmless.
+
+regards,
+dan carpenter
+
 
