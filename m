@@ -1,118 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-29217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2792D9772CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 22:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E08977340
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 23:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B107AB23BDF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 20:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D6D2867A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 21:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BE51C174F;
-	Thu, 12 Sep 2024 20:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CC61C232D;
+	Thu, 12 Sep 2024 20:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="uSvi5fR2"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fwSk6H6F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DDD19048C;
-	Thu, 12 Sep 2024 20:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262AB1BF7F9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 20:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726173423; cv=none; b=pdFZFcDvBvof66iJ4VeiZBMc63Rz46h3bL316fhMOJxdGrXWNLaPuZgnOTyyyVfzx8QydPVGN3q+TvKJS7eY2qkOEqC/7KktkTF5owmGStOmckEDDHTIoLSkpchXuK4xxAPo3mAm4pqJlCpvAbeTiJyk4Wd4qK/TasWhJW9jiWI=
+	t=1726174791; cv=none; b=KdA1NTeD29ilMc6sz35KN4Nzyo797P/rqXoEzezS0J13FYNvxhgQdf9c/iHiGe26+CJoU4aDDRVD9glRhDgrWzUUXI6hy2nnSEfr8Yfdw9n5Z4LQgD07lPk9gyX/5MlXmcbJd4Fv3ejvwU4MXYwv8nL76Rd+PVFuebjuhR4DpCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726173423; c=relaxed/simple;
-	bh=7+M44koOMskpETV9kPeIdnNGWICx9D3h0F8RX7huMNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cbQHKYXuE9tY9L/43ZRE1vZelW3ckpoOtw1mjrwGSeLkh4K1VaVtr8v0fTLVtGApS5JPlGJcxE2mThYEDexZCG0OTyMuizZNsClny/v6Zxrnt2ZHu3OL9XlNcoLZhC3oYcm9qbJzNJEX1icswl+X7S6NjGLAlVg0WLIv7PmroHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=uSvi5fR2; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4X4TkZ655hzlgMVN;
-	Thu, 12 Sep 2024 20:36:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1726173408; x=1728765409; bh=9yS7HA6fKYDCCYVIl+KdIxvA
-	ej4qJ3r4GXFGjMqBgvo=; b=uSvi5fR2vmRTU5PsBWAozmgRWg15DQCoTw9QYG0Q
-	JILXCI2W17PMdjeB0eCaY4R9b4p5zp9bb+bfYJlcGbHdBTfiFtQtMF3dUYguzo/Z
-	TlwUp0S+sLzCJ2ZszrvHZG5CDzMw6iEjadRBSJIy5BAgA0y3vIeIBsfBENIkbnoW
-	r11vxY1o7k84TSJpKMgfwayzh+k0/J3gvxSYRGPxCpPyAAVkWDiPCc0uq08D7fpJ
-	66OjaML0t1A0/rH2BCmDW3sZR1xKfqOJVpFBi7aKD0+DNxhM9SCJFcr5+emr55CI
-	a+9PjgbvNYdOfcQHlw3ysfvDS3LLjk0rwkbAPwa/6Q1aNQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Z4I_UPR0myMw; Thu, 12 Sep 2024 20:36:48 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4X4TkN0rMHzlgT1M;
-	Thu, 12 Sep 2024 20:36:43 +0000 (UTC)
-Message-ID: <53043e99-be5f-4fc6-be87-4ebcb8ce99b6@acm.org>
-Date: Thu, 12 Sep 2024 13:36:43 -0700
+	s=arc-20240116; t=1726174791; c=relaxed/simple;
+	bh=cAbAdJfAWvXcMGzLQXEJz8mvDAf9C94T25Rumz8sqaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fOk/l/W83oDakBUlq0+ZNZMlOd+vXzmcKej3N8uE0pZFJz7NPTOjtRoQ4W4MoNtt7m9qZRDqqvEjFdqbLjzivNqgQE253A1d/9YXAUObfYU2MimHwBHO39k6DPD5JSXaXWqXBCeBCdNaNzQE96eHPjbuD/YFHsUfrQJaEZCPmEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fwSk6H6F; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-277cfd3f07aso627196fac.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 13:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726174788; x=1726779588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8mM5Z0KLUO8efTiZgA6ECQxJ5r+uA/1F2hapQlso44M=;
+        b=fwSk6H6FwFSImla2JI4db2pKAihE3YGTsdT6hM7GiyLo8SRYVdzhLPUrn5lI0G4KXC
+         bKOqdpt9tLhJkQoG9TJfdFqctjoJXVjK+WS4grWX2SGXuPat7AvL/3nTrGb9ZU1e5pTk
+         8wsnnRYD0GJAqvSAq7s0OHt8leWJKpEMZvvtvTBK5bvZmBROM1v0Lzt30OoCjXXDqiCj
+         RuOdhh8EBGO+/mX+EJN8eT99KItxRnyvsgtua7OzQ0XEftb2ryV6PFR9a1oi6UO8TshT
+         H+H2WCqRy/z3JHygHgUcpjaDm3rt7rHd3EMcEeuuVKkk55Vd97MD1X4vqC+qVKehiOC2
+         cHig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726174788; x=1726779588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8mM5Z0KLUO8efTiZgA6ECQxJ5r+uA/1F2hapQlso44M=;
+        b=GMVb4VP8DfIsTsldsmwLuQr99jzk+bUravZVuPtNf6xP0sYI9TuD7zdlvLsdKVDrQB
+         oDM7Q+Ln/feBiF4aqNZ1xXteAeC0xIRtvo7ntOj7HpPwmqQtV0bbM7gudD9UnXDbuiMB
+         OCNRO4iIvK4gzhRSXY9WgYtfwd4mimIr3Uk0ij5WPjlMdZThhr09VJOWO2n6r0CP+ax4
+         6V0sIjvacNjADTYBUfTaRsnAJfFtebeOnWB+s1Bs/K1loR8NDIQixNiojC2uZxEj3aZC
+         BZAGyYGlbc0XdHgc8O3DCCiKVAfIdy3YUHnxZ7ApSHNkZEsZ0k2XWf5i4i5hS1EOdGp2
+         Z4iA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4ETPK9V3pyCyem70S0Pp/qkY4NvV0CU+tAzixs7N7TGt0/PIZgTr8qEdnSB7TVDpdniMYprW9nX+cRRVi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8w4hfoOOXxIUVi+NOPzRYxGsSu34pggr+pbQFvRzQag3GUeyp
+	+RHqgEXdOcAVAPqQkytltm8Tyd31vDaTq8/1Fb+sRvANI1jNlrdqWk4Mvx7kcZUdt42vOsqqhvX
+	O1g==
+X-Google-Smtp-Source: AGHT+IFM1AXJ051IzPPqsl49dRXV3EAPdU7MADRa2Tisd07EWLACnR0AfN41J2K91Abg++8l1F9PzA==
+X-Received: by 2002:a05:6870:610c:b0:27b:6267:61b0 with SMTP id 586e51a60fabf-27c3f603118mr3165118fac.32.1726174787877;
+        Thu, 12 Sep 2024 13:59:47 -0700 (PDT)
+Received: from google.com (30.64.135.34.bc.googleusercontent.com. [34.135.64.30])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-27ba3f3f125sm3276542fac.25.2024.09.12.13.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 13:59:47 -0700 (PDT)
+Date: Thu, 12 Sep 2024 13:59:42 -0700
+From: Justin Stitt <justinstitt@google.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	alx@kernel.org, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>
+Subject: Re: [PATCH v8 2/8] auditsc: Replace memcpy() with strscpy()
+Message-ID: <u42f2oneitzqmzh2tvwokzjxawj6utitu7rongurqeiglkvkvc@ryjktmvutysi>
+References: <20240828030321.20688-1-laoar.shao@gmail.com>
+ <20240828030321.20688-3-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/5] fcntl: add F_{SET/GET}_RW_HINT_EX
-To: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, sagi@grimberg.me, martin.petersen@oracle.com,
- James.Bottomley@HansenPartnership.com, brauner@kernel.org,
- viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
- jlayton@kernel.org, chuck.lever@oracle.com
-Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
- javier.gonz@samsung.com, Nitesh Shetty <nj.shetty@samsung.com>
-References: <20240910150200.6589-1-joshi.k@samsung.com>
- <CGME20240910151052epcas5p48b20962753b1e3171daf98f050d0b5af@epcas5p4.samsung.com>
- <20240910150200.6589-4-joshi.k@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240910150200.6589-4-joshi.k@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828030321.20688-3-laoar.shao@gmail.com>
 
-On 9/10/24 8:01 AM, Kanchan Joshi wrote:
-> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
-> index b9942f5f13d3..ff708a75e2f6 100644
-> --- a/include/linux/rw_hint.h
-> +++ b/include/linux/rw_hint.h
-> @@ -21,4 +21,17 @@ enum rw_lifetime_hint {
->   static_assert(sizeof(enum rw_lifetime_hint) == 1);
->   #endif
->   
-> +#define WRITE_HINT_TYPE_BIT	BIT(7)
-> +#define WRITE_HINT_VAL_MASK	(WRITE_HINT_TYPE_BIT - 1)
-> +#define WRITE_HINT_TYPE(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
-> +				TYPE_RW_PLACEMENT_HINT : TYPE_RW_LIFETIME_HINT)
-> +#define WRITE_HINT_VAL(h)	((h) & WRITE_HINT_VAL_MASK)
-> +
-> +#define WRITE_PLACEMENT_HINT(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
-> +				 WRITE_HINT_VAL(h) : 0)
-> +#define WRITE_LIFETIME_HINT(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
-> +				 0 : WRITE_HINT_VAL(h))
-> +
-> +#define PLACEMENT_HINT_TYPE	WRITE_HINT_TYPE_BIT
-> +#define MAX_PLACEMENT_HINT_VAL	(WRITE_HINT_VAL_MASK - 1)
->   #endif /* _LINUX_RW_HINT_H */
+Hi,
 
-The above macros implement a union of two 7-bit types in an 8-bit field.
-Wouldn't we be better of by using two separate 8-bit values such that we
-don't need the above macros?
+On Wed, Aug 28, 2024 at 11:03:15AM GMT, Yafang Shao wrote:
+> Using strscpy() to read the task comm ensures that the name is
+> always NUL-terminated, regardless of the source string. This approach also
+> facilitates future extensions to the task comm.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Cc: Eric Paris <eparis@redhat.com>
+> ---
+>  kernel/auditsc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 6f0d6fb6523f..e4ef5e57dde9 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2730,7 +2730,7 @@ void __audit_ptrace(struct task_struct *t)
+>  	context->target_uid = task_uid(t);
+>  	context->target_sessionid = audit_get_sessionid(t);
+>  	security_task_getsecid_obj(t, &context->target_sid);
+> -	memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
+> +	strscpy(context->target_comm, t->comm);
+>  }
+>  
+>  /**
+> @@ -2757,7 +2757,7 @@ int audit_signal_info_syscall(struct task_struct *t)
+>  		ctx->target_uid = t_uid;
+>  		ctx->target_sessionid = audit_get_sessionid(t);
+>  		security_task_getsecid_obj(t, &ctx->target_sid);
+> -		memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
+> +		strscpy(ctx->target_comm, t->comm);
+>  		return 0;
+>  	}
+>  
+> @@ -2778,7 +2778,7 @@ int audit_signal_info_syscall(struct task_struct *t)
+>  	axp->target_uid[axp->pid_count] = t_uid;
+>  	axp->target_sessionid[axp->pid_count] = audit_get_sessionid(t);
+>  	security_task_getsecid_obj(t, &axp->target_sid[axp->pid_count]);
+> -	memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
+> +	strscpy(axp->target_comm[axp->pid_count], t->comm);
+>  	axp->pid_count++;
+>  
+>  	return 0;
+> -- 
+> 2.43.5
+> 
 
-Thanks,
+Good usage of two-argument strscpy(). This helps towards [1].
 
-Bart.
+Reviewed-by: Justin Stitt <justinstitt@google.com>
+
+[1]: https://github.com/KSPP/linux/issues/90
+
+Thanks
+Justin
 
