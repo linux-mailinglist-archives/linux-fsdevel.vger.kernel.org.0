@@ -1,77 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-29168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD49976971
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 14:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BFD97696A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 14:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0946F1F247CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 12:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805391F246CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 12:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CED190482;
-	Thu, 12 Sep 2024 12:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D121B1AB6C3;
+	Thu, 12 Sep 2024 12:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bPc/jxgt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eAgQKien"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F5A1A76DD;
-	Thu, 12 Sep 2024 12:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932541A7254;
+	Thu, 12 Sep 2024 12:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145113; cv=none; b=IimpOLth+Q6+h5P2ad0LGZ5BGyHbQ5rXEu6GspZtMVBpm5sjYl1hkrDOUd8/KxGHTbHeh8HGN3Wf5HtRalCfxXmFy1osK5rvWJYBFgiPatOv/YDPBqKfHjIAY+ihkssx56LRieDJ/OosPn2Yz9H9y1E1NMilAZIp3W7WyU9XgrQ=
+	t=1726145110; cv=none; b=Aodp9funEDKEtdEETScXZAAHWw3/XqJ4k9cIStYOVmxLiU+zo8qyMkw/3Y57RLbUcQs4RybKb2FNVvRllHVwM7JIw0vrPItq5Z9851xREBF641dMfQJdH9O2dO50JYBqM9Oe4iHRGya3OfEZCimtF8icsZMOAMCANCDHfhGBIdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145113; c=relaxed/simple;
-	bh=Vt7jXiT5gjha+WuPdBIWpnCzY+4R2xZbrr+Uz478nDQ=;
+	s=arc-20240116; t=1726145110; c=relaxed/simple;
+	bh=wQ+7itKzPx0/AmRlbXpugZGEXX5dWhZJAHl3QzZ4WHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QuU5weCzf99b2TeVg9CuajNexSo90DpO5lp00Avr1AQo/DoOfs/RYLhZXTTYuUXaN85ituyFmwhTD3gZjaegdruBE2XGg0g3xMMR2eTR2ZYTzp8p+nnXV9RKSrlUO/wIBL73LY6SnMErgO+ZjNfhU8GJuJp/Xz/02anRNgu0ZpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bPc/jxgt; arc=none smtp.client-ip=192.198.163.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=Om27fDht8eQGvrn+RJSvYF0QqB3BjKBqmocvgSlXAbMbWL0oe9xOH0wghUKGrQcpRc32qNSFMvJ5aGkkdXjTK5qvIHwka2Nkp2X4cctuqGBBtSlij7n6JIcuH8zc4BNGNjaFwxxHDgDhNZN0CaEOjDYTFN98qHzJIPV8Il1kP7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eAgQKien; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726145110; x=1757681110;
+  t=1726145108; x=1757681108;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=Vt7jXiT5gjha+WuPdBIWpnCzY+4R2xZbrr+Uz478nDQ=;
-  b=bPc/jxgtGcasIBnN70Y30yXuQpIvQZTmUDMdJU76IA9o7pAHg1V8i7MU
-   cvtEAvQBVqvvwI6P1PvweYFfPkhK7r+FtFpjcCMuewVGGxESaakANdvwU
-   YUD+QEyj/LmcwsLRshy2ARnA5lVslrx6Se1/UnqAutca6zswTzleU0BZi
-   WzkwoiiGf2Ks63hMM8+V+iiW1oCT3NqKEpyyUpsMf4LfJ7mR5X0mpmmVf
-   93c4zdSwMaPPQeflfgQQCZMGG4ItSHfeGQr5Z3wkildveGWe9PT0XFDMJ
-   hTbkUrdcXPrdlt76mI4SAogdE0GzEvMVYy1QbYreBYpM9sk3awJhzWZbZ
-   w==;
-X-CSE-ConnectionGUID: No/wDZG2TP2Fi71TXLSSDQ==
-X-CSE-MsgGUID: 0wk4e6ZNTheigmEo/hu5Ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="35658228"
+  bh=wQ+7itKzPx0/AmRlbXpugZGEXX5dWhZJAHl3QzZ4WHM=;
+  b=eAgQKienUeVetXVmpemPP01Aspyh7kmuPVH/CnYKISJOWpCTldqBWnX0
+   pwde8qWNsPywZgZq8uiS2MYeZ+4OHyTTrAHAxPQt86nBRsPFaa/mb+vBp
+   nZMNj3x5rgpA8rH0rEwMut9SjFWLXP9Wp3Rlu9RUqe8JTFrHy9NOWoXWl
+   G3sBgDmtjdpABOGv5f8uYTIjbw1bIjy9NoDmjMqvbfaAAfYafTp/snc48
+   NDuBzSKjC3B2v2i12jyxD/GrcNGVtWYyKsC8VkiExfeGnwwlgPvKi/Ca9
+   7oepR88rcMFvXaif8stHt6Fikek5/PjKQ2/dMIQn23V8FfHHqQngbGKbg
+   A==;
+X-CSE-ConnectionGUID: QxvlPIlzQRChxcJjDITZHA==
+X-CSE-MsgGUID: jCX1QW0oRTiX/1opFPpmUA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="35658188"
 X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="35658228"
+   d="scan'208";a="35658188"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
   by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 05:45:05 -0700
-X-CSE-ConnectionGUID: GHbpGefhRduy8iPbwhzHvw==
-X-CSE-MsgGUID: U5N1ap7xR3eS+47RlfG6JA==
+X-CSE-ConnectionGUID: 3u5JwDbVQFOQVl5w4unWDA==
+X-CSE-MsgGUID: mvoL5Y7SRQGlyX/DzQ7g7w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="72062365"
+   d="scan'208";a="72062360"
 Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
   by fmviesa005.fm.intel.com with ESMTP; 12 Sep 2024 05:44:57 -0700
 Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sojBv-0005A5-1d;
+	id 1sojBv-0005A7-1f;
 	Thu, 12 Sep 2024 12:44:55 +0000
-Date: Thu, 12 Sep 2024 20:44:31 +0800
+Date: Thu, 12 Sep 2024 20:44:32 +0800
 From: kernel test robot <lkp@intel.com>
 To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
 	linux-mm@kvack.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Alistair Popple <apopple@nvidia.com>, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
+Cc: oe-kbuild-all@lists.linux.dev, Alistair Popple <apopple@nvidia.com>,
+	vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+	bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
+	catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+	npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
 	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
 	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -80,7 +79,7 @@ Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
 	linux-xfs@vger.kernel.org
 Subject: Re: [PATCH 04/12] mm: Allow compound zone device pages
-Message-ID: <202409122055.AMlMSljd-lkp@intel.com>
+Message-ID: <202409122024.PPIwP6vb-lkp@intel.com>
 References: <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -102,127 +101,71 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Popple/mm-gup-c-
 base:   6f1833b8208c3b9e59eff10792667b6639365146
 patch link:    https://lore.kernel.org/r/c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple%40nvidia.com
 patch subject: [PATCH 04/12] mm: Allow compound zone device pages
-config: um-allnoconfig (https://download.01.org/0day-ci/archive/20240912/202409122055.AMlMSljd-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240912/202409122055.AMlMSljd-lkp@intel.com/reproduce)
+config: csky-defconfig (https://download.01.org/0day-ci/archive/20240912/202409122024.PPIwP6vb-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240912/202409122024.PPIwP6vb-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409122055.AMlMSljd-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409122024.PPIwP6vb-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All error/warnings (new ones prefixed by >>):
 
-         |         ^
-   In file included from mm/memory.c:44:
-   In file included from include/linux/mm.h:1106:
-   In file included from include/linux/huge_mm.h:8:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:163:1: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
-     163 | _SIG_SET_BINOP(sigandnsets, _sig_andn)
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/signal.h:141:3: note: expanded from macro '_SIG_SET_BINOP'
-     141 |                 r->sig[2] = op(a2, b2);                                 \
-         |                 ^      ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from mm/memory.c:44:
-   In file included from include/linux/mm.h:1106:
-   In file included from include/linux/huge_mm.h:8:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:187:1: warning: array index 3 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
-     187 | _SIG_SET_OP(signotset, _sig_not)
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/signal.h:174:27: note: expanded from macro '_SIG_SET_OP'
-     174 |         case 4: set->sig[3] = op(set->sig[3]);                          \
-         |                                  ^        ~
-   include/linux/signal.h:186:24: note: expanded from macro '_sig_not'
-     186 | #define _sig_not(x)     (~(x))
-         |                            ^
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from mm/memory.c:44:
-   In file included from include/linux/mm.h:1106:
-   In file included from include/linux/huge_mm.h:8:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:187:1: warning: array index 3 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
-     187 | _SIG_SET_OP(signotset, _sig_not)
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/signal.h:174:10: note: expanded from macro '_SIG_SET_OP'
-     174 |         case 4: set->sig[3] = op(set->sig[3]);                          \
-         |                 ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from mm/memory.c:44:
-   In file included from include/linux/mm.h:1106:
-   In file included from include/linux/huge_mm.h:8:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:187:1: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
-     187 | _SIG_SET_OP(signotset, _sig_not)
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/signal.h:175:20: note: expanded from macro '_SIG_SET_OP'
-     175 |                 set->sig[2] = op(set->sig[2]);                          \
-         |                                  ^        ~
-   include/linux/signal.h:186:24: note: expanded from macro '_sig_not'
-     186 | #define _sig_not(x)     (~(x))
-         |                            ^
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from mm/memory.c:44:
-   In file included from include/linux/mm.h:1106:
-   In file included from include/linux/huge_mm.h:8:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:187:1: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
-     187 | _SIG_SET_OP(signotset, _sig_not)
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/signal.h:175:3: note: expanded from macro '_SIG_SET_OP'
-     175 |                 set->sig[2] = op(set->sig[2]);                          \
-         |                 ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from mm/memory.c:51:
-   include/linux/mman.h:158:9: warning: division by zero is undefined [-Wdivision-by-zero]
-     158 |                _calc_vm_trans(flags, MAP_SYNC,       VM_SYNC      ) |
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:136:21: note: expanded from macro '_calc_vm_trans'
-     136 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
-         |                     ^ ~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:159:9: warning: division by zero is undefined [-Wdivision-by-zero]
-     159 |                _calc_vm_trans(flags, MAP_STACK,      VM_NOHUGEPAGE) |
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:136:21: note: expanded from macro '_calc_vm_trans'
-     136 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
-         |                     ^ ~~~~~~~~~~~~~~~~~
->> mm/memory.c:4052:12: error: call to undeclared function 'page_dev_pagemap'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   In file included from include/linux/mm.h:32,
+                    from mm/gup.c:7:
+   include/linux/memremap.h: In function 'is_device_private_page':
+   include/linux/memremap.h:164:17: error: implicit declaration of function 'page_dev_pagemap' [-Wimplicit-function-declaration]
+     164 |                 page_dev_pagemap(page)->type == MEMORY_DEVICE_PRIVATE;
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/memremap.h:164:39: error: invalid type argument of '->' (have 'int')
+     164 |                 page_dev_pagemap(page)->type == MEMORY_DEVICE_PRIVATE;
+         |                                       ^~
+   include/linux/memremap.h: In function 'is_pci_p2pdma_page':
+   include/linux/memremap.h:176:39: error: invalid type argument of '->' (have 'int')
+     176 |                 page_dev_pagemap(page)->type == MEMORY_DEVICE_PCI_P2PDMA;
+         |                                       ^~
+   include/linux/memremap.h: In function 'is_device_coherent_page':
+   include/linux/memremap.h:182:39: error: invalid type argument of '->' (have 'int')
+     182 |                 page_dev_pagemap(page)->type == MEMORY_DEVICE_COHERENT;
+         |                                       ^~
+   include/linux/memremap.h: In function 'is_pci_p2pdma_page':
+>> include/linux/memremap.h:177:1: warning: control reaches end of non-void function [-Wreturn-type]
+     177 | }
+         | ^
+   include/linux/memremap.h: In function 'is_device_coherent_page':
+   include/linux/memremap.h:183:1: warning: control reaches end of non-void function [-Wreturn-type]
+     183 | }
+         | ^
+--
+   In file included from include/linux/mm.h:32,
+                    from mm/memory.c:44:
+   include/linux/memremap.h: In function 'is_device_private_page':
+   include/linux/memremap.h:164:17: error: implicit declaration of function 'page_dev_pagemap' [-Wimplicit-function-declaration]
+     164 |                 page_dev_pagemap(page)->type == MEMORY_DEVICE_PRIVATE;
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/memremap.h:164:39: error: invalid type argument of '->' (have 'int')
+     164 |                 page_dev_pagemap(page)->type == MEMORY_DEVICE_PRIVATE;
+         |                                       ^~
+   include/linux/memremap.h: In function 'is_pci_p2pdma_page':
+   include/linux/memremap.h:176:39: error: invalid type argument of '->' (have 'int')
+     176 |                 page_dev_pagemap(page)->type == MEMORY_DEVICE_PCI_P2PDMA;
+         |                                       ^~
+   include/linux/memremap.h: In function 'is_device_coherent_page':
+   include/linux/memremap.h:182:39: error: invalid type argument of '->' (have 'int')
+     182 |                 page_dev_pagemap(page)->type == MEMORY_DEVICE_COHERENT;
+         |                                       ^~
+   mm/memory.c: In function 'do_swap_page':
+>> mm/memory.c:4052:31: error: assignment to 'struct dev_pagemap *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
     4052 |                         pgmap = page_dev_pagemap(vmf->page);
-         |                                 ^
->> mm/memory.c:4052:10: error: incompatible integer to pointer conversion assigning to 'struct dev_pagemap *' from 'int' [-Wint-conversion]
-    4052 |                         pgmap = page_dev_pagemap(vmf->page);
-         |                               ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   42 warnings and 8 errors generated.
+         |                               ^
+   include/linux/memremap.h: In function 'is_device_private_page':
+   include/linux/memremap.h:165:1: warning: control reaches end of non-void function [-Wreturn-type]
+     165 | }
+         | ^
 
 
-vim +/page_dev_pagemap +4052 mm/memory.c
+vim +4052 mm/memory.c
 
   3988	
   3989	/*
