@@ -1,138 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-29219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E7E97736C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 23:15:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001EC977394
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 23:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 981F91C23F8F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 21:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31470B22F9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 21:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA7E1BC06E;
-	Thu, 12 Sep 2024 21:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0CE1C2449;
+	Thu, 12 Sep 2024 21:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TgrAtnXr"
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="Mpmiq3co"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321AA1C2330
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 21:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722BB18BB80;
+	Thu, 12 Sep 2024 21:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726175695; cv=none; b=Ls4egMXU4ltjmgBQfQaHL1IgDqk3mL6+QTO4ctUpIt9B3wBPXF+FFluwiLAzTUC5C7v/nBzoDs7SZfSNcI4vwrbsm5LABWJOuEFo+Ie5aDEbWJSYQhvcu4dQ/hZDmnZiYyy8rD7NguvIX5IpMURa/VHbrVbfcaEwfLBYadBd9i8=
+	t=1726176488; cv=none; b=KZ6ch7XRX5iy/Xv/d65gM5cRZeroZOP0h8WR1dddw8gf93H6WcrsjUN6+Yz2rwWDniDOdZJcEbT1rXxklYapym4Tp9BGy2GnLMGYwyVXLrY7xB9U8Rnzc3zNu6H2slsc+7o6zCRiFvo2QTE2/iWfQlPWODSZFTnCoy7C4tZCVBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726175695; c=relaxed/simple;
-	bh=peVnoRwbqecr/0PJF00iv4hFysL5tmps7T44YTBQn1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQgWrM96zZG/RVjVsVIKKoBuSv32m/+KcbhRGq79Q5EWoM7suyZj2Pe1hn3tZDueLfAavcbhteZUOTcu/dWXE5whfLyQGRAeZiBwxrk8sCYJN5yvKDhXTzdlkjal9h/P+6BR3+NJqee0CJ9HDxDar8u1J0M+kwcR0l5j0q/YHOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TgrAtnXr; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e03a5ed4d7so745761b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2024 14:14:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726175691; x=1726780491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2EO0qmaSPp73jvXnTs7TJzCKL8q51LBbEbQNyisfg4c=;
-        b=TgrAtnXr/7OJjvCVwZLNYSuwZYI+CkWtp53jxLr5DY6OZMrP9OBl6+HAyQk39Vmnoh
-         qqFlvNt44CLztfbZrj0FuRCR2iGPcc5KwKMipprl2samIjPIUTwaC70Mb9o7pSqUALGS
-         Y1XgtxzCoN2PV7HZ0F2hE5CbBIAFQWCEhapMSPTvKUjbbG/dkBUb37F4sJm/Y1dxF/Fr
-         W6/AXeohOW30JF1yMFMif9gq8qYKoFtgGFkSwa9AId0I5wgxwi5PemXv+4fDECM9suBZ
-         3A3nv5hCG0cMhnOLAQ3WtQ+XBjSLOF1Q0kJvhR5D+s+tgs3yeGY0AdbQe17Y81c19wFz
-         +PjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726175691; x=1726780491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2EO0qmaSPp73jvXnTs7TJzCKL8q51LBbEbQNyisfg4c=;
-        b=cSoVWnVoUxONwjno/4HwJZGaAViNuu2XmjFTs7wlU9MlGtYl4y++csxgSvsEzjrDgZ
-         9MgY3YAujULnQGW9pPdG0nqM/cuBjSLLqaeGv0dASXXuBOyaEhZtgnPHhMtHQHwoE34n
-         Fu9OFlfSCbzz72b42/Xjo00ji87DSEi0bv1jM89ytZFvcKYR9KbLu5tj8p5ItOOo+g0B
-         8vkqEtacvqpAo7t2YtLU6F23gzX6HpCgpTDx38K8fHMJpD+/+cpl9dZVtU5I6gc/upuR
-         s7jsdgfWXT7SQuIE1/Z68QrZJfEb6fxw0FMMfIva17tJ9vQT3UQTVhbiEHgrxcTtV1gG
-         ZiCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnQDG38b2RFtKdgF1R/QtJiyU6N6+4y9WMZoeetXVs3/86Tu/uSoSb+PXTGwwNKq33I29tWbYSRfovGVpa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7aVX2O2J/s3qtZKUk/znQJ3izg8uwbstTSddy5oqwZnVTZm4T
-	p+aaAaGdQLmGhGqgQmx/AhSLuccJCVsP6ALd84m+gLW9YZ5f4Jxu6FwBSH1mWw==
-X-Google-Smtp-Source: AGHT+IEXhrO73skogk/s/nT+zYKnKQ0Yub0DnxaAiKfl03Q20IYpu3fPe1nRti4noHn1qI7LW/QNUg==
-X-Received: by 2002:a05:6808:399b:b0:3d9:3a2f:959e with SMTP id 5614622812f47-3e0719ee561mr3950771b6e.0.1726175691128;
-        Thu, 12 Sep 2024 14:14:51 -0700 (PDT)
-Received: from google.com (30.64.135.34.bc.googleusercontent.com. [34.135.64.30])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5e1cab53594sm2250200eaf.43.2024.09.12.14.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 14:14:50 -0700 (PDT)
-Date: Thu, 12 Sep 2024 14:14:47 -0700
-From: Justin Stitt <justinstitt@google.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	alx@kernel.org, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v8 4/8] bpftool: Ensure task comm is always NUL-terminated
-Message-ID: <ozoyqz5a7zssggowambojv4x6fbhdl6iqjopgnycca223jm6sz@pdzdmshhdgwn>
-References: <20240828030321.20688-1-laoar.shao@gmail.com>
- <20240828030321.20688-5-laoar.shao@gmail.com>
+	s=arc-20240116; t=1726176488; c=relaxed/simple;
+	bh=RTKdlsvETPxqXxjU7Rd93X4kyI4i83Yt+XK3zkX09p8=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=mnDRJEwJYgwSugi6l/nLRZZAZwkdx2eRvV4g3ZkKGYBVWxuHoyC3U4sfHdOE0PPWX67vR5nnKf5IW7HN3eezafKWqeS/eM7xuAPOWEAVtBN4sk6ppKsWqE0zNFoNueKP7E7ZllKaPQ1hLB0cI4zHhxusvjhDGXmiELnANUC0ZFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=Mpmiq3co; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+From: Christian Theune <ct@flyingcircus.io>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1726175937;
+	bh=RTKdlsvETPxqXxjU7Rd93X4kyI4i83Yt+XK3zkX09p8=;
+	h=From:Subject:Date:Cc:To;
+	b=Mpmiq3cofaB5rbLbLbuVBsRAlNFsqRTeXxL4W1BX8XPw/xWWQ5UDy3y47Te6V9Epu
+	 2zDs/cQdphkBs69kuP8ASTUB23zi+3SsQen8Z/a5oQmOtJK7F4EzIc4Sm9rmFM33Z+
+	 ZL1soSGZ9MBkX7BUV+Y4k0WmaPIc70TYE6M4Tb3s=
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828030321.20688-5-laoar.shao@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Known and unfixed active data loss bug in MM + XFS with large folios
+ since Dec 2021 (any kernel from 6.1 upwards)
+Message-Id: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+Date: Thu, 12 Sep 2024 23:18:34 +0200
+Cc: torvalds@linux-foundation.org,
+ axboe@kernel.dk,
+ Daniel Dao <dqminh@cloudflare.com>,
+ Dave Chinner <david@fromorbit.com>,
+ willy@infradead.org,
+ clm@meta.com,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+To: linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Hi,
+Hello everyone,
 
-On Wed, Aug 28, 2024 at 11:03:17AM GMT, Yafang Shao wrote:
-> Let's explicitly ensure the destination string is NUL-terminated. This way,
-> it won't be affected by changes to the source string.
-> 
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> ---
->  tools/bpf/bpftool/pids.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/bpf/bpftool/pids.c b/tools/bpf/bpftool/pids.c
-> index 9b898571b49e..23f488cf1740 100644
-> --- a/tools/bpf/bpftool/pids.c
-> +++ b/tools/bpf/bpftool/pids.c
-> @@ -54,6 +54,7 @@ static void add_ref(struct hashmap *map, struct pid_iter_entry *e)
->  		ref = &refs->refs[refs->ref_cnt];
->  		ref->pid = e->pid;
->  		memcpy(ref->comm, e->comm, sizeof(ref->comm));
-> +		ref->comm[sizeof(ref->comm) - 1] = '\0';
+I=E2=80=99d like to raise awareness about a bug causing data loss =
+somewhere in MM interacting with XFS that seems to have been around =
+since Dec 2021 =
+(https://github.com/torvalds/linux/commit/6795801366da0cd3d99e27c37f020a8f=
+16714886).
 
-...
+We started encountering this bug when upgrading to 6.1 around June 2023 =
+and we have had at least 16 instances with data loss in a fleet of 1.5k =
+VMs.
 
->  		refs->ref_cnt++;
->  
->  		return;
-> @@ -77,6 +78,7 @@ static void add_ref(struct hashmap *map, struct pid_iter_entry *e)
->  	ref = &refs->refs[0];
->  	ref->pid = e->pid;
->  	memcpy(ref->comm, e->comm, sizeof(ref->comm));
-> +	ref->comm[sizeof(ref->comm) - 1] = '\0';
+This bug is very hard to reproduce but has been known to exist as a =
+=E2=80=9Cfluke=E2=80=9D for a while already. I have invested a number of =
+days trying to come up with workloads to trigger it quicker than that =
+stochastic =E2=80=9Conce every few weeks in a fleet of 1.5k machines", =
+but it eludes me so far. I know that this also affects Facebook/Meta as =
+well as Cloudflare who are both running newer kernels (at least 6.1, =
+6.6, and 6.9) with the above mentioned patch reverted. I=E2=80=99m from =
+a much smaller company and seeing that those guys are running with this =
+patch reverted (that now makes their kernel basically an =
+untested/unsupported deviation from the mainline) smells like =
+desparation. I=E2=80=99m with a much smaller team and company and I=E2=80=99=
+m wondering why this isn=E2=80=99t tackled more urgently from more hands =
+to make it shallow (hopefully).
 
-Excuse my ignorance, do we not have a strscpy() equivalent usable in bpf
-code?
+The issue appears to happen mostly on nodes that are running some kind =
+of database or specifically storage-oriented load. In our case we see =
+this happening with PostgreSQL and MySQL. Cloudflare IIRC saw this with =
+RocksDB load and Meta is talking about nfsd load.
 
->  	refs->ref_cnt = 1;
->  	refs->has_bpf_cookie = e->has_bpf_cookie;
->  	refs->bpf_cookie = e->bpf_cookie;
-> -- 
-> 2.43.5
-> 
+I suspect low memory (but not OOM low) / pressure and maybe swap =
+conditions seem to increase the chance of triggering it - but I might be =
+completely wrong on that suspicion.
 
-Thanks
-Justin
+There is a bug report I started here back then: =
+https://bugzilla.kernel.org/show_bug.cgi?id=3D217572 and there have been =
+discussions on the XFS list: =
+https://lore.kernel.org/lkml/CA+wXwBS7YTHUmxGP3JrhcKMnYQJcd6=3D7HE+E1v-guk=
+01L2K3Zw@mail.gmail.com/T/ but ultimately this didn=E2=80=99t receive =
+sufficient interested to keep it moving forward and I ran out of steam. =
+Unfortunately we can=E2=80=99t be stuck on 5.15 forever and other kernel =
+developers correctly keep pointing out that we should be updating, but =
+that isn=E2=80=99t an option as long as this time bomb still exists.
+
+Jens pointed out that Meta's findings and their notes on the revert =
+included "When testing nfsd on top of v5.19, we hit lockups in =
+filemap_read(). These ended up being because the xarray for the files =
+being read had pages from other files mixed in."
+
+XFS is known to me and admired for the very high standards they =
+represent regarding testing and avoiding data loss but ultimately that =
+doesn=E2=80=99t matter if we=E2=80=99re going to be stuck with this bug =
+forever.
+
+I=E2=80=99m able to help funding efforts, help creating a reproducer, =
+generally donate my time (not a kernel developer myself) and even =
+provide access to machines that did see the crash (but don=E2=80=99t =
+carry customer data), but I=E2=80=99m not making any progress or getting =
+any traction here.
+
+Jens encouraged me to raise the visibility in this way - so that=E2=80=99s=
+ what I=E2=80=99m trying here.
+
+Please help.
+
+In appreciation of all the hard work everyone is putting in and with =
+hugs and love,
+Christian
+
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
+
 
