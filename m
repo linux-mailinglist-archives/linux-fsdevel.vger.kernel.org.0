@@ -1,121 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-29165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F98B976949
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 14:41:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4481D976953
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 14:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A48A8B227A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 12:41:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA6B1F245D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2024 12:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AF01A4E89;
-	Thu, 12 Sep 2024 12:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A1B1A4E89;
+	Thu, 12 Sep 2024 12:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJGNzah0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSXlP5+v"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3841A3023;
-	Thu, 12 Sep 2024 12:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC0119E962;
+	Thu, 12 Sep 2024 12:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726144868; cv=none; b=W6f14yKGHx2HjsbfTvgn1wioUGNy2ogYbKUbOy0f9P9Du9n7HyB0dJVGoLkRUczZKkZhQJ9LXTQw61lVYvMI3vo+sQopzPQFc6f9BZ6wKXMhD35W16xpLwKNJjSQJYz0jyQMaXugYWp3BHKtDB9LVKeBcdrszDEQ6Pc6sj8xlnQ=
+	t=1726144987; cv=none; b=pyHrzXqDRvSL4uii+uUjWaJHwixGL3PWt3J1e1BbecQhgZiaFOAg9bvngGR/iVwqd8HOqed0pKAyxKZ2zzgrMLpFih5k7uVUr8ZxJbCs/LYX0eodKH73mzHmHKMM8ymcjx/oMJ9CmE+HuOc48IvjWm0c1QmEwVHoQqFbbFixEl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726144868; c=relaxed/simple;
-	bh=9UdpE9bRfyPWA9Gi9O6F8t+KWQsbhnFofcxVtiy2dPc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GwYTlVV36qmKfCDSTbnMxgZhVpJTY0SVhQDf7/L/9klXIy+Y8HFblKRq2FMG2R0vBfjC0aYGGVKxqL7csWnnnbGujKR21N0SNtqen9Szsbhfjfu/Eaz9j7agvshaaxHFdi+IWjCXkHLTyKQ4lAHiEtT9MKDU93Gh/9qHlmgRxGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJGNzah0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36FCDC4CEC4;
-	Thu, 12 Sep 2024 12:41:03 +0000 (UTC)
+	s=arc-20240116; t=1726144987; c=relaxed/simple;
+	bh=VgxqEB5xRdGv/PMzmA6ig3YYUuVJHLkIf1/nT766Db8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q46CRKFHHmvpK1lpO+423uKdHrLO6/32VQkRv4PiZBqQ4xFKIvSxZ04m2OUQcu+32A2oncW9+nW6x41EoEWWDXI/zzUsKh2JjVGVez6EnEe1/2N74WmB/T6J391pIjBI0FSYydjF+S3juwUxgqnvTtb3kolqGIsUQYf6C5WfH3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSXlP5+v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A94AC4CEC3;
+	Thu, 12 Sep 2024 12:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726144868;
-	bh=9UdpE9bRfyPWA9Gi9O6F8t+KWQsbhnFofcxVtiy2dPc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DJGNzah0uVKXY92tI4a9y87wFUcXK6fVhmQI27KD99z5aaqseFMQmb9d9+rTj+1tE
-	 iaDKjNxcIjhHhb3npGMZdwc+80pxB+rACcIGfvgfgFNCnT/iUWQjW7kGpNBzo7iL8P
-	 XfdHVnh4U2Qt/bdV83VjRz8v2MBL8xyD+UpXH9ONhWflWC8PttBguN5VsZuvu4K7KY
-	 Oo8I3r1TkxaAWeA3NXfLt99wA9OGSO8lv4xrTeI9RR3AY9ntm/4vmGFbeZxMVFxIo/
-	 FW3FV3hk1KRAMUWVzULfYkBC7T8hbMb2xaJxVprxufhTN8jcMhRgJWQsM0bIPzG1gK
-	 ANwdMUzRT6rlg==
+	s=k20201202; t=1726144986;
+	bh=VgxqEB5xRdGv/PMzmA6ig3YYUuVJHLkIf1/nT766Db8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZSXlP5+vzgY4RfmG9bZ6o/uhf4j4Qcq6lOMdoEdFDOyaazqxqc83n6Hsp1ACDrugp
+	 oKZ6uDbAORvtCiSvHIyfX+0RZyenijyyk/dA4z8eNDQS3RzOmbo2oOeRMG9gCmaSE9
+	 8IAPSe3/9XKO+BWi0Q7snmY/e73iGv9oWjfKk6IzM6hC61MPS5wLNrZpGtulw6CGVG
+	 VUYlGiWdUHgyz72pwnCAim/1NZ+ztpWvIJABisyYuF529jEgstD80BTiYxtQarRxKP
+	 5Q9CBky1vszxnHeDbqZ+svV4zJkRIGzF4Q7Io3W0jlPW7TA/00Qd9I7DMHXQK5eQda
+	 92OOVMsgA7IAQ==
+Date: Thu, 12 Sep 2024 14:43:01 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Benjamin Coddington <bcodding@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	ocfs2-devel@lists.linux.dev,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Neil Brown <neilb@suse.de>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Ahring Oder Aring <aahringo@redhat.com>
-Subject: Re: [PATCH v1 0/4] Fixup NLM and kNFSD file lock callbacks
-Date: Thu, 12 Sep 2024 14:40:47 +0200
-Message-ID: <20240912-jogginganzug-frucht-136525bde80c@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1726083391.git.bcodding@redhat.com>
-References: <cover.1726083391.git.bcodding@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into
+ timekeeper
+Message-ID: <20240912-gaspreis-einmal-50609ecfcd2d@brauner>
+References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
+ <20240912-korallen-rasant-d612bd138207@brauner>
+ <8de7cfc4958a739f3ce9dd3699a1a53fbb9dd074.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1773; i=brauner@kernel.org; h=from:subject:message-id; bh=9UdpE9bRfyPWA9Gi9O6F8t+KWQsbhnFofcxVtiy2dPc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ9ehhZ+3BTqo5chplhfAPnxe/XhO/y6dzUEXQ5MKl0t dF2E4P6jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkcvM3IME/nwhqln5dFd3/6 VV+XdOzU3X8s+z2uWZ6NT5VSfSon18rI0CUwb/uF+v157H8FNxZIiGdfivPYt1eNXbRCd7G1PZs iBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8de7cfc4958a739f3ce9dd3699a1a53fbb9dd074.camel@kernel.org>
 
-On Wed, 11 Sep 2024 15:42:56 -0400, Benjamin Coddington wrote:
-> Last year both GFS2 and OCFS2 had some work done to make their locking more
-> robust when exported over NFS.  Unfortunately, part of that work caused both
-> NLM (for NFS v3 exports) and kNFSD (for NFSv4.1+ exports) to no longer send
-> lock notifications to clients.
+On Thu, Sep 12, 2024 at 08:39:32AM GMT, Jeff Layton wrote:
+> On Thu, 2024-09-12 at 14:31 +0200, Christian Brauner wrote:
+> > On Wed, Sep 11, 2024 at 08:56:56AM GMT, Jeff Layton wrote:
+> > > The kernel test robot reported a performance regression in some
+> > > will-it-scale tests due to the multigrain timestamp patches. The data
+> > > showed that coarse_ctime() was slowing down current_time(), which is
+> > > called frequently in the I/O path.
+> > > 
+> > > Add ktime_get_coarse_real_ts64_with_floor(), which returns either the
+> > > coarse time or the floor as a realtime value. This avoids some of the
+> > > conversion overhead of coarse_ctime(), and recovers some of the
+> > > performance in these tests.
+> > > 
+> > > The will-it-scale pipe1_threads microbenchmark shows these averages on
+> > > my test rig:
+> > > 
+> > > 	v6.11-rc7:			83830660 (baseline)
+> > > 	v6.11-rc7 + mgtime series:	77631748 (93% of baseline)
+> > > 	v6.11-rc7 + mgtime + this:	81620228 (97% of baseline)
+> > > 
+> > > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > > Closes: https://lore.kernel.org/oe-lkp/202409091303.31b2b713-oliver.sang@intel.com
+> > > Suggested-by: Arnd Bergmann <arnd@kernel.org>
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > > Arnd suggested moving this into the timekeeper when reviewing an earlier
+> > > version of this series, and that turns out to be better for performance.
+> > > 
+> > > I'm not sure how this should go in (if acceptable). The multigrain
+> > > timestamp patches that this would affect are in Christian's tree, so
+> > > that may be best if the timekeeper maintainers are OK with this
+> > > approach.
+> > 
+> > We will need this as otherwise we can't really merge the multigrain
+> > timestamp work with known performance regressions?
 > 
-> This in itself is not a huge problem because most NFS clients will still
-> poll the server in order to acquire a conflicted lock, but now that I've
-> noticed it I can't help but try to fix it because there are big advantages
-> for setups that might depend on timely lock notifications, and we've
-> supported that as a feature for a long time.
+> Yes, I think we'll need something here. Arnd suggested an alternative
+> way to do this that might be even better. I'm not 100% sure that it'll
+> work though since the approach is a bit different.
 > 
-> [...]
+> I'd still like to see this go in for v6.12, so what I'd probably prefer
+> is to take this patch initially (with the variable name change that
+> John suggested), and then we can work on the alternative approach in
+> the meantime
+> 
+> Would that be acceptable?
 
-Applied to the vfs.misc.v6.13 branch of the vfs/vfs.git tree.
-Patches in the vfs.misc.v6.13 branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc.v6.13
-
-[1/4] fs: Introduce FOP_ASYNC_LOCK
-      https://git.kernel.org/vfs/vfs/c/8cf9a01edc21
-[2/4] gfs2/ocfs2: set FOP_ASYNC_LOCK
-      https://git.kernel.org/vfs/vfs/c/2253ab99f2e9
-[3/4] NLM/NFSD: Fix lock notifications for async-capable filesystems
-      https://git.kernel.org/vfs/vfs/c/81be05940ccc
-[4/4] exportfs: Remove EXPORT_OP_ASYNC_LOCK
-      https://git.kernel.org/vfs/vfs/c/bb06326008c3
+It would be ok with me but we should get a nodd from the time keeper folks.
 
