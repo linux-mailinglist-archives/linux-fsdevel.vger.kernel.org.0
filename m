@@ -1,133 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-29356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BA5978810
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 20:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E32978852
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 21:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5E71F26110
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA872891DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 19:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A79A12DD88;
-	Fri, 13 Sep 2024 18:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D76146A76;
+	Fri, 13 Sep 2024 19:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="18sqBN6J"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MNIqm060"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A00B86AE3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 18:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD6014658D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 19:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726253035; cv=none; b=uZosY8OKuztu1FTiOZXSKrV+BPimvqctqEZKKPUlh1OQb2+2mk072Ek+cGMrMLRrdIjjZh1vWu3OeOoQnj9LO8KH6SJqERePtf3IMkrf8hVFREmTbXBYazSpIirQ35UDnBNyj6KwtcS1FEfgP2PXoIlz5xOkvGyZcTShR9p34t4=
+	t=1726254012; cv=none; b=r0RdxvvSucIG2iA/vMcVUe64EC0VmiIWu+w7ZzDywM/syPnnEUZxOgrZQ/Bfu0vWD9C1LmypvOATYbv2gPRXyC1V/7TxSZur/wTHaU2J1pyy7Pmm2acSgJUt2aqDAwWci5mE5doNOm8VCEEym3sSQdkLxzSfto2z2rjG3NYg+TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726253035; c=relaxed/simple;
-	bh=9s3J+nIBRdpOtQXBcXpxwGEerq2F+ZsriMixrlq3mRs=;
+	s=arc-20240116; t=1726254012; c=relaxed/simple;
+	bh=f0/qHNroIZs6VOcePLiioAm+uTAbOHcEwWrIFuPphM8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GUtKvhpVlsjjy1PGFtbG9LO50EdnexqihdbXKCPW1lDE313N7h2nhNo9oyE/KkWEV2IP32UEAwP8aHW6MQQKx1nzC7k6CPRNM90eG7Wgvb+8bNELDYyrL5hPzWssIdbUMi0xTPKsk6eQj5CPioaerkD+ylcGjyJRogirfsqA5Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=18sqBN6J; arc=none smtp.client-ip=209.85.218.42
+	 To:Cc:Content-Type; b=HSA5AC7VukkWN6nNOUMKZS2ju0D1X5HxprpxUpHAwevdJOm0kBYdNEvcOe0rhCGsL1aJOfCZcOEXALHt5mpJSdgtNapeeGeRshi23CB1YYwXU+igUiZPjNAB3vdGL2wEREJncJ78nhC7A67cTzRnFOafXFyyGH+JNOHpU3YpTuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MNIqm060; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so305083966b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 11:43:53 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so581064566b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 12:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726253032; x=1726857832; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726254009; x=1726858809; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Lh0cDYgrNGGBdJnqeDTLCxWrLu1MGS9x+B+damV6xt4=;
-        b=18sqBN6JZL77j+p+mBBKs73UjY8+XiVy+G/p5mDDC7YhnL5LKGbdidQISCfVkVMuin
-         rxQFj8i7S2X6zYilPkRlxK5ICpbd/sWgEt16SeTytlNFXrx/AoHtBovU1JOjZCwlHgXZ
-         USgBxJG5hOjZJKgX4PYMZFtgfKeCkiXFF5RGV5qPV00AYScWaD0/wPQwQQiVxxy2H/Ib
-         OBheKeQz0LmYIAkW7YPVZ2hYloF5SOBssbe4BPWs+GYL2AcgUBPuDVMc2szBvoCmv1Y/
-         3be77vgmAaDQme7IR8KJ7G6ySsCxgyERIDpqD0BKCU4eQ8tGpiFdLy0EiHTbBOb9BrIQ
-         RWug==
+        bh=cZf2aYMb8Zlk0CPpJeIXHbW7WWQiG41ie4dpVzhJSlI=;
+        b=MNIqm060n/GP04KJLUWbp3Q+iu4zZRWCmq0y54/MKekUsC+Ii42LeNtOdBzkp5rnm7
+         KiBnmcwGyPxRCE7XnG2ACKeZmT75ghd6wIbLgAS372GyAMmVxtIm7+PkOHmZQJQm2mCa
+         shGmIInv5HS92o08HTLWXqfcQ9g/Ltu5PB8mu9DfwADtFWWizHF+rvcfQtdqykT60byO
+         6yINcotfPoo1X8JROsCZa5KTn+Ls0bsyyEifR/rpwJb1MuKd2EJ4NBBaD0EtZRhG5q0B
+         s9INIq1cMfT8n46zIFnsxJ4rY5bQ3Q0oTFN8PSAa87kDuM9nYhg7aILWvdDEDKDynC9C
+         0jbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726253032; x=1726857832;
+        d=1e100.net; s=20230601; t=1726254009; x=1726858809;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Lh0cDYgrNGGBdJnqeDTLCxWrLu1MGS9x+B+damV6xt4=;
-        b=EVBopsL/72+lAiu6y4ZAPZvvKqaXaikx46IlpANXoooSILl6miTDS2ks9UliiqtPae
-         MWwIMncVwOFMVXkL94DCw0srj0hZpYhMbQK92zZ/sz1q92MPrW4ZN1o0XHM+3sIMZHAM
-         JZVre68+xAG2C+bOxtKFhfR5zFheJ1VFuEaVK07udWtDQhpyIZxd50wsW4oLjI/FY+m6
-         2hiTHB6uy6JtwchMJ1thRG9uXfR0PrLH0f8yQ583bm6lUqp4VyLyRKFpnv6rcjzwTTQn
-         Z1zNXfeqpueYQPyRru9MeeFu1zrifh3QmOJzqp+fxsV+ZlYwpGESTJMYRg7Uot53go4r
-         mZ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+nf4E/rqvOTQxJyUIlbUfsT/HD9gCsz/8L79VuVwniBJT7N3qfqDjkPn1xqmOmR6ZqCQW7NwQAQNdxXXu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/s+duU0CqYvxgU6y9SxIxMOFpiVnbJpnmejxI5bkP8wIFgiFp
-	Im+YdpsomCRz80TdRKVPnQ76d9mHTT8aOE2y6f3qira2HL42LrlaGLhrjwTik239evsRo063kt1
-	XrJCaWoCsad42HlTFzX+93DMWeRqC5Qe6f8M=
-X-Google-Smtp-Source: AGHT+IECxwpd8EHiWIoIdYDsW71IpMx5pRA77Ps3QOkH/SLAqTQwBC0Yvb2+gmKvMDtEpMwkL3eel78xWDnaUYcPi2k=
-X-Received: by 2002:a17:907:7fa8:b0:a86:7cac:f871 with SMTP id
- a640c23a62f3a-a9029671603mr585172766b.54.1726253030511; Fri, 13 Sep 2024
- 11:43:50 -0700 (PDT)
+        bh=cZf2aYMb8Zlk0CPpJeIXHbW7WWQiG41ie4dpVzhJSlI=;
+        b=Gk9lJ9CXPdlbfaS8xgEgRxkrIy9KsQQL7fnwvkHAKJ3T0WmNJznu733lqpgJyyuHa3
+         q6XxKGIJWvuSIAAFa1j3xOM0l/a7d11eFavXO+R8zs8iuBWlCOSltciRkDOmDM3xLtOC
+         kZpiRgHbCeiXUGTNh2GServRbEZDhXIBSpT+HvcuehdDyfzPNhfHQK0BQDPTj/tSBGpz
+         Wjd9vZLyfbII74FqJhfz3NU20vFyT+fVF6A5uPGdK1ik1ju4yROcky7FovVQ8APGv+3O
+         E6n4GHZ+Krt309zqGyRhK+NaDoRv3pZtv4OiuXE5gZvR94A3l2YakmM389hpSV19+hci
+         AImw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbFSsnyHJm3jOPcU4mJ96OSFJq3FrkVjV6CEERaFjOJATr95kL4idNqePjqdeU/Cl0b3/5+vzOl72wAyny@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQFb4A+DPLtkbHeMMcFico0eGc0kCfEYatyFgqRFZjbm4b/wRG
+	ZrH3EMs/wRWXCrgDdTKIKCdruN6n8Mt2vYOxDosMPEIfkSiUUZ7rZpYYFt21CAw6LCtejhsPhlL
+	n/yHFXzezSwpF5rTOGU1+jo+j24zgmv8zLJA=
+X-Google-Smtp-Source: AGHT+IHcpW0D1DrK3lVMKL+Vimy/qbLz1ntvEPc5JnGQtAjSuYw2dvEcnvfRgLvohNaDJWzygVp9zoxdzZKfoDHquNE=
+X-Received: by 2002:a17:906:c10b:b0:a86:8f9b:ef6e with SMTP id
+ a640c23a62f3a-a902a438f77mr781205166b.13.1726254007768; Fri, 13 Sep 2024
+ 12:00:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org> <20240913112602.xrfdn7hinz32bhso@quack3>
- <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
-In-Reply-To: <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
+References: <20240913-mgtime-v7-0-92d4020e3b00@kernel.org> <20240913-mgtime-v7-1-92d4020e3b00@kernel.org>
+In-Reply-To: <20240913-mgtime-v7-1-92d4020e3b00@kernel.org>
 From: John Stultz <jstultz@google.com>
-Date: Fri, 13 Sep 2024 11:43:37 -0700
-Message-ID: <CANDhNCpBpBFrwu85oozKNW0N9_FzYXdpDbmX9sOnT_2oCGDeFw@mail.gmail.com>
-Subject: Re: [PATCH v2] timekeeping: move multigrain timestamp floor handling
- into timekeeper
+Date: Fri, 13 Sep 2024 11:59:56 -0700
+Message-ID: <CANDhNCof7+q+-XzQoP=w0pcrS_-ifH9pmAmtq8H++tbognBv1A@mail.gmail.com>
+Subject: Re: [PATCH v7 01/11] timekeeping: move multigrain timestamp floor
+ handling into timekeeper
 To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Arnd Bergmann <arnd@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel test robot <oliver.sang@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 5:01=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+On Fri, Sep 13, 2024 at 6:54=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
 ote:
-> On Fri, 2024-09-13 at 13:26 +0200, Jan Kara wrote:
-> > So what would be the difference if we did instead:
-> >
-> >       old =3D atomic64_read(&mg_floor);
-> >
-> > and not bother with the cookie? AFAIU this could result in somewhat mor=
-e
-> > updates to mg_floor (the contention on the mg_floor cacheline would be =
-the
-> > same but there would be more invalidates of the cacheline). OTOH these
-> > updates can happen only if max(current_coarse_time, mg_floor) =3D=3D
-> > inode->i_ctime which is presumably rare? What is your concern that I'm
-> > missing?
-> >
 >
-> My main concern is the "somewhat more updates to mg_floor". mg_floor is
-> a global variable, so one of my main goals is to minimize the updates
-> to it. There is no correctness issue in doing what you're saying above
-> (AFAICT anyway), but the window of time between when we fetch the
-> current floor and try to do the swap will be smaller, and we'll end up
-> doing more swaps as a result.
+> For multigrain timestamps, we must keep track of the latest timestamp
+> that has ever been handed out, and never hand out a coarse time below
+> that value.
+>
+> Add a static singleton atomic64_t into timekeeper.c that we can use to
+> keep track of the latest fine-grained time ever handed out. This is
 
-Would it be worth quantifying that cost?
+Maybe drop "ever" and  add "handed out through a specific interface",
+as timestamps can be accessed in a lot of ways that don't keep track
+of what was returned.
 
-> Do you have any objection to adding the cookie to this API?
 
-My main concern is it is just a bit subtle. I found it hard to grok
-(though I can be pretty dim sometimes, so maybe that doesn't count for
-much :)
-It seems if it were misused, the fine-grained accessor could
-constantly return coarse grained results when called repeatedly with a
-very stale cookie.
+> tracked as a monotonic ktime_t value to ensure that it isn't affected by
+> clock jumps.
+>
+> Add two new public interfaces:
+>
+> - ktime_get_coarse_real_ts64_mg() fills a timespec64 with the later of th=
+e
+>   coarse-grained clock and the floor time
+>
+> - ktime_get_real_ts64_mg() gets the fine-grained clock value, and tries
+>   to swap it into the floor. A timespec64 is filled with the result.
+>
+> Since the floor is global, we take great pains to avoid updating it
+> unless it's absolutely necessary. If we do the cmpxchg and find that the
+> value has been updated since we fetched it, then we discard the
+> fine-grained time that was fetched in favor of the recent update.
+>
+> To maximize the window of this occurring when multiple tasks are racing
+> to update the floor, ktime_get_coarse_real_ts64_mg returns a cookie
+> value that represents the state of the floor tracking word, and
+> ktime_get_real_ts64_mg accepts a cookie value that it uses as the "old"
+> value when calling cmpxchg().
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/timekeeping.h |  4 +++
+>  kernel/time/timekeeping.c   | 81 +++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 85 insertions(+)
+>
+> diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+> index fc12a9ba2c88..cf2293158c65 100644
+> --- a/include/linux/timekeeping.h
+> +++ b/include/linux/timekeeping.h
+> @@ -45,6 +45,10 @@ extern void ktime_get_real_ts64(struct timespec64 *tv)=
+;
+>  extern void ktime_get_coarse_ts64(struct timespec64 *ts);
+>  extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
+>
+> +/* Multigrain timestamp interfaces */
+> +extern u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
+> +extern void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie);
+> +
+>  void getboottime64(struct timespec64 *ts);
+>
+>  /*
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index 5391e4167d60..ee11006a224f 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -114,6 +114,13 @@ static struct tk_fast tk_fast_raw  ____cacheline_ali=
+gned =3D {
+>         .base[1] =3D FAST_TK_INIT,
+>  };
+>
+> +/*
+> + * This represents the latest fine-grained time that we have handed out =
+as a
+> + * timestamp on the system. Tracked as a monotonic ktime_t, and converte=
+d to the
+> + * realtime clock on an as-needed basis.
+> + */
+> +static __cacheline_aligned_in_smp atomic64_t mg_floor;
+> +
+>  static inline void tk_normalize_xtime(struct timekeeper *tk)
+>  {
+>         while (tk->tkr_mono.xtime_nsec >=3D ((u64)NSEC_PER_SEC << tk->tkr=
+_mono.shift)) {
+> @@ -2394,6 +2401,80 @@ void ktime_get_coarse_real_ts64(struct timespec64 =
+*ts)
+>  }
+>  EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
+>
+> +/**
+> + * ktime_get_coarse_real_ts64_mg - get later of coarse grained time or f=
+loor
+> + * @ts: timespec64 to be filled
+> + *
+> + * Adjust floor to realtime and compare it to the coarse time. Fill
+> + * @ts with the latest one. Returns opaque cookie suitable for passing
+> + * to ktime_get_real_ts64_mg().
+> + */
+> +u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
+> +{
+> +       struct timekeeper *tk =3D &tk_core.timekeeper;
+> +       u64 floor =3D atomic64_read(&mg_floor);
+> +       ktime_t f_real, offset, coarse;
+> +       unsigned int seq;
+> +
+> +       WARN_ON(timekeeping_suspended);
+> +
+> +       do {
+> +               seq =3D read_seqcount_begin(&tk_core.seq);
+> +               *ts =3D tk_xtime(tk);
+> +               offset =3D *offsets[TK_OFFS_REAL];
+> +       } while (read_seqcount_retry(&tk_core.seq, seq));
+> +
+> +       coarse =3D timespec64_to_ktime(*ts);
+> +       f_real =3D ktime_add(floor, offset);
+> +       if (ktime_after(f_real, coarse))
+> +               *ts =3D ktime_to_timespec64(f_real);
+> +       return floor;
+> +}
+> +EXPORT_SYMBOL_GPL(ktime_get_coarse_real_ts64_mg);
+> +
+> +/**
+> + * ktime_get_real_ts64_mg - attempt to update floor value and return res=
+ult
+> + * @ts:                pointer to the timespec to be set
+> + * @cookie:    opaque cookie from earlier call to ktime_get_coarse_real_=
+ts64_mg()
+> + *
+> + * Get a current monotonic fine-grained time value and attempt to swap
+> + * it into the floor using @cookie as the "old" value. @ts will be
+> + * filled with the resulting floor value, regardless of the outcome of
+> + * the swap.
 
-Further, the point about avoiding "too many" mg_floor writes is a
-little fuzzy. It feels almost like folks would need to use the cookie
-update as a tuning knob to balance the granularity of their timestamps
-against the cost of the global mg_floor writes. So this probably needs
-some clear comments to make it more obvious.
+I'd add more detail here to clarify that this can return a coarse
+floor value if the cookie is stale.
+
+> +void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
+> +{
+> +       struct timekeeper *tk =3D &tk_core.timekeeper;
+> +       ktime_t offset, mono, old =3D (ktime_t)cookie;
+> +       unsigned int seq;
+> +       u64 nsecs;
+> +
+> +       WARN_ON(timekeeping_suspended);
+> +
+> +       do {
+> +               seq =3D read_seqcount_begin(&tk_core.seq);
+> +
+> +               ts->tv_sec =3D tk->xtime_sec;
+> +               mono =3D tk->tkr_mono.base;
+> +               nsecs =3D timekeeping_get_ns(&tk->tkr_mono);
+> +               offset =3D *offsets[TK_OFFS_REAL];
+> +       } while (read_seqcount_retry(&tk_core.seq, seq));
+> +
+> +       mono =3D ktime_add_ns(mono, nsecs);
+> +
+> +       if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
+> +               ts->tv_nsec =3D 0;
+> +               timespec64_add_ns(ts, nsecs);
+> +       } else {
+> +               /*
+> +                * Something has changed mg_floor since "old" was
+> +                * fetched. That value is just as valid, so accept it.
+> +                */
+
+Mostly because I embarrassingly tripped over this in front of
+everyone, I might suggest:
+/*
+ * mg_floor was updated since the cookie was fetched, so the
+ * the try_cmpxchg failed. However try_cmpxchg updated old
+ * with the current mg_floor, so use that to return the current
+ * coarse floor value
+ */
+
+:)
 
 thanks
 -john
