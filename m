@@ -1,159 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-29355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BAD9787F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 20:33:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BA5978810
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 20:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6D8BB233C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5E71F26110
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F52F139590;
-	Fri, 13 Sep 2024 18:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A79A12DD88;
+	Fri, 13 Sep 2024 18:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xse7L38f"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="18sqBN6J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B739712D773;
-	Fri, 13 Sep 2024 18:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A00B86AE3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 18:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726252405; cv=none; b=FdH9GclVMw0UpU8Y650Pxv06GspkNBLhyhEuy32SL+5DBrj7tWhxx/0oFFPEqOwSHpR+jOEBR/BhybmMldwobvDRArzmcJ8TXxrWs2hX7o7j21nqBJnfv1ugjsna+nRDslqw3+jzufPewWbBiwqDilihPB3x2ezf5khUMYqI3dI=
+	t=1726253035; cv=none; b=uZosY8OKuztu1FTiOZXSKrV+BPimvqctqEZKKPUlh1OQb2+2mk072Ek+cGMrMLRrdIjjZh1vWu3OeOoQnj9LO8KH6SJqERePtf3IMkrf8hVFREmTbXBYazSpIirQ35UDnBNyj6KwtcS1FEfgP2PXoIlz5xOkvGyZcTShR9p34t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726252405; c=relaxed/simple;
-	bh=A1W9jCfny74eDZ2Sq3AsHaoLeaw3yFn1FM9duxuPzpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZpBf12XnyGY5gjW5UIt51wjLgyKCi9L4fobuRjIW3065jetV3iCeRrto7VDxn3XSMbGXY/HqtCvA0krG1aeg9YSnA8iKqLzu0teHYMYQfwgJ66beiiRhF+J21Bpym+DMCk4QMyI3K6KGFoqvmJDOskyXm5C6xDV9+8iRaGz7do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xse7L38f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05299C4CEC0;
-	Fri, 13 Sep 2024 18:33:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726252405;
-	bh=A1W9jCfny74eDZ2Sq3AsHaoLeaw3yFn1FM9duxuPzpw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xse7L38f6kbjvUpu6KuIcVvQkUwvvSdpQAM+baUWBOxKHwkNfN5n2a4WPozZqBe8H
-	 wK0MzQxo8HaBbxuUeFJXh3/RW+hMjig/4aZGdSxtxD3LD8GbD3DRZcbszWLIfS3u+T
-	 +C1yA4kCqVrgK0dsD4o3gsiA0TZa8JVM1HU/f8BtZlm8MQBlP8HkJcDN5H+1fbF5jI
-	 ndbaCs1vA15EeSzoQc+9usB98O311e5c8s64OxS6Xxc1uJ16cXD1TaIJd3pdwK4a4D
-	 07izK89AKA0KtL0Q249Alsfdaz8Zn0MATGInL83hMy59wNE/n9GB0mXHAaewkqPYn8
-	 4wIslCdEw1Wyg==
-Date: Fri, 13 Sep 2024 19:33:07 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: paul.walmsley@sifive.com, palmer@sifive.com, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, robh@kernel.org, krzk+dt@kernel.org,
-	oleg@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, akpm@linux-foundation.org, arnd@arndb.de,
-	ebiederm@xmission.com, kees@kernel.org, Liam.Howlett@oracle.com,
-	vbabka@suse.cz, lorenzo.stoakes@oracle.com, shuah@kernel.org,
-	brauner@kernel.org, samuel.holland@sifive.com, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, greentime.hu@sifive.com,
-	charlie@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
-	xiao.w.wang@intel.com, ajones@ventanamicro.com, anup@brainfault.org,
-	mchitale@ventanamicro.com, atishp@rivosinc.com, sameo@rivosinc.com,
-	bjorn@rivosinc.com, alexghiti@rivosinc.com, david@redhat.com,
-	libang.li@antgroup.com, jszhang@kernel.org, leobras@redhat.com,
-	guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, costa.shul@redhat.com, bhe@redhat.com,
-	zong.li@sifive.com, puranjay@kernel.org, namcaov@gmail.com,
-	antonb@tenstorrent.com, sorear@fastmail.com,
-	quic_bjorande@quicinc.com, ancientmodern4@gmail.com,
-	ben.dooks@codethink.co.uk, quic_zhonhan@quicinc.com,
-	cuiyunhui@bytedance.com, yang.lee@linux.alibaba.com,
-	ke.zhao@shingroup.cn, sunilvl@ventanamicro.com,
-	tanzhasanwork@gmail.com, schwab@suse.de, dawei.li@shingroup.cn,
-	rppt@kernel.org, willy@infradead.org, usama.anjum@collabora.com,
-	osalvador@suse.de, ryan.roberts@arm.com, andrii@kernel.org,
-	alx@kernel.org, catalin.marinas@arm.com, broonie@kernel.org,
-	revest@chromium.org, bgray@linux.ibm.com, deller@gmx.de,
-	zev@bewilderbeest.net
-Subject: Re: [PATCH v4 07/30] riscv: zicfilp / zicfiss in dt-bindings
- (extensions.yaml)
-Message-ID: <20240913-woven-droplet-1f25d0d5a33b@spud>
-References: <20240912231650.3740732-1-debug@rivosinc.com>
- <20240912231650.3740732-8-debug@rivosinc.com>
+	s=arc-20240116; t=1726253035; c=relaxed/simple;
+	bh=9s3J+nIBRdpOtQXBcXpxwGEerq2F+ZsriMixrlq3mRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GUtKvhpVlsjjy1PGFtbG9LO50EdnexqihdbXKCPW1lDE313N7h2nhNo9oyE/KkWEV2IP32UEAwP8aHW6MQQKx1nzC7k6CPRNM90eG7Wgvb+8bNELDYyrL5hPzWssIdbUMi0xTPKsk6eQj5CPioaerkD+ylcGjyJRogirfsqA5Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=18sqBN6J; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so305083966b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 11:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726253032; x=1726857832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lh0cDYgrNGGBdJnqeDTLCxWrLu1MGS9x+B+damV6xt4=;
+        b=18sqBN6JZL77j+p+mBBKs73UjY8+XiVy+G/p5mDDC7YhnL5LKGbdidQISCfVkVMuin
+         rxQFj8i7S2X6zYilPkRlxK5ICpbd/sWgEt16SeTytlNFXrx/AoHtBovU1JOjZCwlHgXZ
+         USgBxJG5hOjZJKgX4PYMZFtgfKeCkiXFF5RGV5qPV00AYScWaD0/wPQwQQiVxxy2H/Ib
+         OBheKeQz0LmYIAkW7YPVZ2hYloF5SOBssbe4BPWs+GYL2AcgUBPuDVMc2szBvoCmv1Y/
+         3be77vgmAaDQme7IR8KJ7G6ySsCxgyERIDpqD0BKCU4eQ8tGpiFdLy0EiHTbBOb9BrIQ
+         RWug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726253032; x=1726857832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lh0cDYgrNGGBdJnqeDTLCxWrLu1MGS9x+B+damV6xt4=;
+        b=EVBopsL/72+lAiu6y4ZAPZvvKqaXaikx46IlpANXoooSILl6miTDS2ks9UliiqtPae
+         MWwIMncVwOFMVXkL94DCw0srj0hZpYhMbQK92zZ/sz1q92MPrW4ZN1o0XHM+3sIMZHAM
+         JZVre68+xAG2C+bOxtKFhfR5zFheJ1VFuEaVK07udWtDQhpyIZxd50wsW4oLjI/FY+m6
+         2hiTHB6uy6JtwchMJ1thRG9uXfR0PrLH0f8yQ583bm6lUqp4VyLyRKFpnv6rcjzwTTQn
+         Z1zNXfeqpueYQPyRru9MeeFu1zrifh3QmOJzqp+fxsV+ZlYwpGESTJMYRg7Uot53go4r
+         mZ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCV+nf4E/rqvOTQxJyUIlbUfsT/HD9gCsz/8L79VuVwniBJT7N3qfqDjkPn1xqmOmR6ZqCQW7NwQAQNdxXXu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/s+duU0CqYvxgU6y9SxIxMOFpiVnbJpnmejxI5bkP8wIFgiFp
+	Im+YdpsomCRz80TdRKVPnQ76d9mHTT8aOE2y6f3qira2HL42LrlaGLhrjwTik239evsRo063kt1
+	XrJCaWoCsad42HlTFzX+93DMWeRqC5Qe6f8M=
+X-Google-Smtp-Source: AGHT+IECxwpd8EHiWIoIdYDsW71IpMx5pRA77Ps3QOkH/SLAqTQwBC0Yvb2+gmKvMDtEpMwkL3eel78xWDnaUYcPi2k=
+X-Received: by 2002:a17:907:7fa8:b0:a86:7cac:f871 with SMTP id
+ a640c23a62f3a-a9029671603mr585172766b.54.1726253030511; Fri, 13 Sep 2024
+ 11:43:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Wo0WH8RKXYiALMcP"
-Content-Disposition: inline
-In-Reply-To: <20240912231650.3740732-8-debug@rivosinc.com>
-
-
---Wo0WH8RKXYiALMcP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org> <20240913112602.xrfdn7hinz32bhso@quack3>
+ <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
+In-Reply-To: <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 13 Sep 2024 11:43:37 -0700
+Message-ID: <CANDhNCpBpBFrwu85oozKNW0N9_FzYXdpDbmX9sOnT_2oCGDeFw@mail.gmail.com>
+Subject: Re: [PATCH v2] timekeeping: move multigrain timestamp floor handling
+ into timekeeper
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Arnd Bergmann <arnd@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 04:16:26PM -0700, Deepak Gupta wrote:
-> Make an entry for cfi extensions in extensions.yaml.
->=20
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  .../devicetree/bindings/riscv/extensions.yaml        | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
-cumentation/devicetree/bindings/riscv/extensions.yaml
-> index a06dbc6b4928..b7c86fb91984 100644
-> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> @@ -361,6 +361,18 @@ properties:
->              The standard Zicboz extension for cache-block zeroing as rat=
-ified
->              in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
-> =20
-> +        - const: zicfilp
-> +          description:
-> +            The standard Zicfilp extension for enforcing forward edge co=
-ntrol-flow
-> +            integrity as ratified in commit 3f8e450 ("merge pull request=
- #227 from
-> +            ved-rivos/0709") of riscv-cfi github repo.
-> +
-> +        - const: zicfiss
-> +          description:
-> +            The standard Zicfilp extension for enforcing forward edge co=
-ntrol-flow
-> +            integrity as ratified in commit 3f8e450 ("merge pull request=
- #227 from
-> +            ved-rivos/0709") of riscv-cfi github repo.
+On Fri, Sep 13, 2024 at 5:01=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+> On Fri, 2024-09-13 at 13:26 +0200, Jan Kara wrote:
+> > So what would be the difference if we did instead:
+> >
+> >       old =3D atomic64_read(&mg_floor);
+> >
+> > and not bother with the cookie? AFAIU this could result in somewhat mor=
+e
+> > updates to mg_floor (the contention on the mg_floor cacheline would be =
+the
+> > same but there would be more invalidates of the cacheline). OTOH these
+> > updates can happen only if max(current_coarse_time, mg_floor) =3D=3D
+> > inode->i_ctime which is presumably rare? What is your concern that I'm
+> > missing?
+> >
+>
+> My main concern is the "somewhat more updates to mg_floor". mg_floor is
+> a global variable, so one of my main goals is to minimize the updates
+> to it. There is no correctness issue in doing what you're saying above
+> (AFAICT anyway), but the window of time between when we fetch the
+> current floor and try to do the swap will be smaller, and we'll end up
+> doing more swaps as a result.
 
-Because both of these have a # in them you need to have a | after
-description:. Please run dt_binding_check :)
+Would it be worth quantifying that cost?
 
-> +
->          - const: zicntr
->            description:
->              The standard Zicntr extension for base counters and timers, =
-as
-> --=20
-> 2.45.0
->=20
+> Do you have any objection to adding the cookie to this API?
 
---Wo0WH8RKXYiALMcP
-Content-Type: application/pgp-signature; name="signature.asc"
+My main concern is it is just a bit subtle. I found it hard to grok
+(though I can be pretty dim sometimes, so maybe that doesn't count for
+much :)
+It seems if it were misused, the fine-grained accessor could
+constantly return coarse grained results when called repeatedly with a
+very stale cookie.
 
------BEGIN PGP SIGNATURE-----
+Further, the point about avoiding "too many" mg_floor writes is a
+little fuzzy. It feels almost like folks would need to use the cookie
+update as a tuning knob to balance the granularity of their timestamps
+against the cost of the global mg_floor writes. So this probably needs
+some clear comments to make it more obvious.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuSFYwAKCRB4tDGHoIJi
-0vnMAP4jAcike3nNkua8hG9QWEW4+qazPoSFmDREmFEymZqK8wD/R5K+u0LGQlr6
-Bci3roI9osxHgbbuooL8Ckvlomw/wAc=
-=cQDJ
------END PGP SIGNATURE-----
-
---Wo0WH8RKXYiALMcP--
+thanks
+-john
 
