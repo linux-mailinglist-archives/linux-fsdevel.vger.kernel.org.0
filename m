@@ -1,142 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-29354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B749787C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 20:25:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BAD9787F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 20:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F046E286D27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:25:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6D8BB233C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B92132121;
-	Fri, 13 Sep 2024 18:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F52F139590;
+	Fri, 13 Sep 2024 18:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CqCOrKOt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xse7L38f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A2A12C465;
-	Fri, 13 Sep 2024 18:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B739712D773;
+	Fri, 13 Sep 2024 18:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726251920; cv=none; b=sU8wvO1reI4Udd1fX9dC8n1nZ+r9fG/F7BCDzmR909KIzTlzwkKs+16p+9j2XY/OZoOqXdfQRQetID5mpSGr+vHGiMsrNIf6aI7xb5AHHtxLlCK0a8ufRGAYAIoJEAfMg0Z8OF+UEsY1bSzT5XrzWpOey6ABIE7D4pNbjmor6fw=
+	t=1726252405; cv=none; b=FdH9GclVMw0UpU8Y650Pxv06GspkNBLhyhEuy32SL+5DBrj7tWhxx/0oFFPEqOwSHpR+jOEBR/BhybmMldwobvDRArzmcJ8TXxrWs2hX7o7j21nqBJnfv1ugjsna+nRDslqw3+jzufPewWbBiwqDilihPB3x2ezf5khUMYqI3dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726251920; c=relaxed/simple;
-	bh=ZP5Sr3pIISCAUY6csIxUxy+RYfNU+Q4zrM+AyHqj3zk=;
+	s=arc-20240116; t=1726252405; c=relaxed/simple;
+	bh=A1W9jCfny74eDZ2Sq3AsHaoLeaw3yFn1FM9duxuPzpw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJO4bv4j9oGvFGBziPTcmbEoCA5SD60Q0c1OOirMQBgVcdq8SrddGjdS7F8BMMJq0DwCiUiTcAyinLcaVQpOV/xtqBu4T3cizYgCnTlQ3CjFQoPLDd5d97Gs+WHmDTItUQh4lymadlzKT+c5517j0es0E0dwh8CzrfzinLAlrmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CqCOrKOt; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726251918; x=1757787918;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZP5Sr3pIISCAUY6csIxUxy+RYfNU+Q4zrM+AyHqj3zk=;
-  b=CqCOrKOtuc4KXD7IoEfkQIiV4kwh9Bs9pLQDnkGRCRfiOV5+Z5VPk67M
-   U/FeFoSCjEpdfFG6D7Q8VSm0fPOurHb2EHyodWOLhkMCmMX8aadlswH7V
-   ov2uPuYwLVlG/kS1pAhlh4IvQXloYLFqdcRzo45N+KtcwYwfz98NHkupZ
-   rKp/C4fj2UJ4WK913wU8MmxwMMJYzmJScYmebU1kkGSuRVHQTpXr66QWk
-   Pc9jhejzT49vNGN8dEkBwKLxH6Dy6lKE7BvGzx/z65P54SbppZcbgc8uq
-   4q5IQl+ysTerh8X+3Lulg7K4VZNWnkYdsKOpn+slHnPGXtTsdgwxTWSQH
-   g==;
-X-CSE-ConnectionGUID: namvzSXhQYiJjnASJizmlA==
-X-CSE-MsgGUID: ID1oSx0rR4S0hVbTuFvHOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25317602"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="25317602"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:25:17 -0700
-X-CSE-ConnectionGUID: qKVgOJ7vRz+xuOlNQcQR/g==
-X-CSE-MsgGUID: O8ITvqYkRYS8xm4R/TpOuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="72262328"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 13 Sep 2024 11:25:13 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spAyl-0006p4-2y;
-	Fri, 13 Sep 2024 18:25:11 +0000
-Date: Sat, 14 Sep 2024 02:25:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com, Christoph Hellwig <hch@lst.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [PATCH v4 07/10] tmpfs: Add casefold lookup support
-Message-ID: <202409140236.RR9Gbvqh-lkp@intel.com>
-References: <20240911144502.115260-8-andrealmeid@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZpBf12XnyGY5gjW5UIt51wjLgyKCi9L4fobuRjIW3065jetV3iCeRrto7VDxn3XSMbGXY/HqtCvA0krG1aeg9YSnA8iKqLzu0teHYMYQfwgJ66beiiRhF+J21Bpym+DMCk4QMyI3K6KGFoqvmJDOskyXm5C6xDV9+8iRaGz7do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xse7L38f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05299C4CEC0;
+	Fri, 13 Sep 2024 18:33:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726252405;
+	bh=A1W9jCfny74eDZ2Sq3AsHaoLeaw3yFn1FM9duxuPzpw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xse7L38f6kbjvUpu6KuIcVvQkUwvvSdpQAM+baUWBOxKHwkNfN5n2a4WPozZqBe8H
+	 wK0MzQxo8HaBbxuUeFJXh3/RW+hMjig/4aZGdSxtxD3LD8GbD3DRZcbszWLIfS3u+T
+	 +C1yA4kCqVrgK0dsD4o3gsiA0TZa8JVM1HU/f8BtZlm8MQBlP8HkJcDN5H+1fbF5jI
+	 ndbaCs1vA15EeSzoQc+9usB98O311e5c8s64OxS6Xxc1uJ16cXD1TaIJd3pdwK4a4D
+	 07izK89AKA0KtL0Q249Alsfdaz8Zn0MATGInL83hMy59wNE/n9GB0mXHAaewkqPYn8
+	 4wIslCdEw1Wyg==
+Date: Fri, 13 Sep 2024 19:33:07 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: paul.walmsley@sifive.com, palmer@sifive.com, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh@kernel.org, krzk+dt@kernel.org,
+	oleg@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, akpm@linux-foundation.org, arnd@arndb.de,
+	ebiederm@xmission.com, kees@kernel.org, Liam.Howlett@oracle.com,
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, shuah@kernel.org,
+	brauner@kernel.org, samuel.holland@sifive.com, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, greentime.hu@sifive.com,
+	charlie@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
+	xiao.w.wang@intel.com, ajones@ventanamicro.com, anup@brainfault.org,
+	mchitale@ventanamicro.com, atishp@rivosinc.com, sameo@rivosinc.com,
+	bjorn@rivosinc.com, alexghiti@rivosinc.com, david@redhat.com,
+	libang.li@antgroup.com, jszhang@kernel.org, leobras@redhat.com,
+	guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, costa.shul@redhat.com, bhe@redhat.com,
+	zong.li@sifive.com, puranjay@kernel.org, namcaov@gmail.com,
+	antonb@tenstorrent.com, sorear@fastmail.com,
+	quic_bjorande@quicinc.com, ancientmodern4@gmail.com,
+	ben.dooks@codethink.co.uk, quic_zhonhan@quicinc.com,
+	cuiyunhui@bytedance.com, yang.lee@linux.alibaba.com,
+	ke.zhao@shingroup.cn, sunilvl@ventanamicro.com,
+	tanzhasanwork@gmail.com, schwab@suse.de, dawei.li@shingroup.cn,
+	rppt@kernel.org, willy@infradead.org, usama.anjum@collabora.com,
+	osalvador@suse.de, ryan.roberts@arm.com, andrii@kernel.org,
+	alx@kernel.org, catalin.marinas@arm.com, broonie@kernel.org,
+	revest@chromium.org, bgray@linux.ibm.com, deller@gmx.de,
+	zev@bewilderbeest.net
+Subject: Re: [PATCH v4 07/30] riscv: zicfilp / zicfiss in dt-bindings
+ (extensions.yaml)
+Message-ID: <20240913-woven-droplet-1f25d0d5a33b@spud>
+References: <20240912231650.3740732-1-debug@rivosinc.com>
+ <20240912231650.3740732-8-debug@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Wo0WH8RKXYiALMcP"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240911144502.115260-8-andrealmeid@igalia.com>
-
-Hi André,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on tytso-ext4/dev brauner-vfs/vfs.all linus/master v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/libfs-Create-the-helper-function-generic_ci_validate_strict_name/20240911-224740
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240911144502.115260-8-andrealmeid%40igalia.com
-patch subject: [PATCH v4 07/10] tmpfs: Add casefold lookup support
-config: csky-randconfig-002-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140236.RR9Gbvqh-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140236.RR9Gbvqh-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409140236.RR9Gbvqh-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> mm/shmem.c:4719:39: warning: 'shmem_ci_dentry_ops' defined but not used [-Wunused-const-variable=]
-    4719 | static const struct dentry_operations shmem_ci_dentry_ops = {
-         |                                       ^~~~~~~~~~~~~~~~~~~
+In-Reply-To: <20240912231650.3740732-8-debug@rivosinc.com>
 
 
-vim +/shmem_ci_dentry_ops +4719 mm/shmem.c
+--Wo0WH8RKXYiALMcP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  4717	
-  4718	#if IS_ENABLED(CONFIG_UNICODE)
-> 4719	static const struct dentry_operations shmem_ci_dentry_ops = {
-  4720		.d_hash = generic_ci_d_hash,
-  4721		.d_compare = generic_ci_d_compare,
-  4722	#ifdef CONFIG_FS_ENCRYPTION
-  4723		.d_revalidate = fscrypt_d_revalidate,
-  4724	#endif
-  4725		.d_delete = always_delete_dentry,
-  4726	};
-  4727	#endif
-  4728	
+On Thu, Sep 12, 2024 at 04:16:26PM -0700, Deepak Gupta wrote:
+> Make an entry for cfi extensions in extensions.yaml.
+>=20
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  .../devicetree/bindings/riscv/extensions.yaml        | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
+cumentation/devicetree/bindings/riscv/extensions.yaml
+> index a06dbc6b4928..b7c86fb91984 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -361,6 +361,18 @@ properties:
+>              The standard Zicboz extension for cache-block zeroing as rat=
+ified
+>              in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
+> =20
+> +        - const: zicfilp
+> +          description:
+> +            The standard Zicfilp extension for enforcing forward edge co=
+ntrol-flow
+> +            integrity as ratified in commit 3f8e450 ("merge pull request=
+ #227 from
+> +            ved-rivos/0709") of riscv-cfi github repo.
+> +
+> +        - const: zicfiss
+> +          description:
+> +            The standard Zicfilp extension for enforcing forward edge co=
+ntrol-flow
+> +            integrity as ratified in commit 3f8e450 ("merge pull request=
+ #227 from
+> +            ved-rivos/0709") of riscv-cfi github repo.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Because both of these have a # in them you need to have a | after
+description:. Please run dt_binding_check :)
+
+> +
+>          - const: zicntr
+>            description:
+>              The standard Zicntr extension for base counters and timers, =
+as
+> --=20
+> 2.45.0
+>=20
+
+--Wo0WH8RKXYiALMcP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuSFYwAKCRB4tDGHoIJi
+0vnMAP4jAcike3nNkua8hG9QWEW4+qazPoSFmDREmFEymZqK8wD/R5K+u0LGQlr6
+Bci3roI9osxHgbbuooL8Ckvlomw/wAc=
+=cQDJ
+-----END PGP SIGNATURE-----
+
+--Wo0WH8RKXYiALMcP--
 
