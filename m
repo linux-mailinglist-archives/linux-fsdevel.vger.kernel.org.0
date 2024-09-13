@@ -1,460 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-29295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78467977B87
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 10:47:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F9E977CE7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 12:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A511F1C25EA1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 08:47:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 952ACB2A6BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 10:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144121D933E;
-	Fri, 13 Sep 2024 08:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85591D7E4A;
+	Fri, 13 Sep 2024 10:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WppxqUri";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="G6YiXexh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55671D9334;
-	Fri, 13 Sep 2024 08:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726217129; cv=none; b=J6gbVMdLXFUS40L9N1CbLhotJXrzVfkgJ7gNN9WFW2EMkqoLDsH90Xe4K0SBVBl/WWo2+a23j+EdFs6TOSbQ5j908h8M02n+3A3tGqEgOeJuhOk5A76N1R+F5V/5n90Q3jBMjpKS8DjgUra+sToNGER+LIq45x21cPuc2yldzkk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726217129; c=relaxed/simple;
-	bh=vkTn66u7El/MFAyAOzG7OX65lSHvS+6KdkwigBsG9Jg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Kh2YIpxi6OnQvmLC25y+WBMSfQvgTkSFrOWNhpsh2HfSHa+OIScziT7TrEmMlQC1gVu5I5DHSmBfaqiiBzu8+Vaj3EhJdqhW1UsNvrZpMFAU2297FXV0CfYFFLBKEHvJbHB1XbPVUJD4NKK0kqfwHrXE6cnAz0dFHCTiC/fZXv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1BA913D5;
-	Fri, 13 Sep 2024 01:45:56 -0700 (PDT)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.84])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EC3C23F73B;
-	Fri, 13 Sep 2024 01:45:20 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	x86@kernel.org,
-	linux-m68k@lists.linux-m68k.org,
-	linux-fsdevel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH 7/7] mm: Use pgdp_get() for accessing PGD entries
-Date: Fri, 13 Sep 2024 14:14:33 +0530
-Message-Id: <20240913084433.1016256-8-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240913084433.1016256-1-anshuman.khandual@arm.com>
-References: <20240913084433.1016256-1-anshuman.khandual@arm.com>
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37021D6C47;
+	Fri, 13 Sep 2024 10:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726222029; cv=fail; b=TMO2PQPlAiSYOwcXy0i6jZvz3RB3BZU2MKRQz1cuL7sPJhQH6MaYb+ROKuCYDC0YtTFUCM9oYqwFhUGwbkqBtUU9CpGeuaa8hyVHkI3UZGkkNzKIucMTjGG9aA1ACOhjpBOYFpFbr9Cjo37iaIatxb5vgAVLwnZHIKcxxvxkPWc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726222029; c=relaxed/simple;
+	bh=svcyHmzHK6hsFOMOQM+HyR3N1AzWGTjynJVUKp9QXKk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IXs1RPQysPRTedHOKAzMtzQpkqwt7Eg+o0VkUPL1Up5gNqALwltx6jyAA8YtP2IJuA5WrW97ot9NCyspEmqPeKZ/vXQtKucnSOHtObeKNC1ZbX5p/jnotscotiMx4Ac0WQm+la8u7RTusVakRWPJ0yAPnqjRUXSHOvtUGgeS6/Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WppxqUri; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=G6YiXexh; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48D9YJ7D012278;
+	Fri, 13 Sep 2024 10:06:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=MH7esTSbBESGy3C6YSgKy361CiEKM4K4qfTtvJo7tXU=; b=
+	WppxqUri1tAGIVZ8i6gdnM0H2F0ecwndeb/M1R+KOssLYsjDp47v8weGOcFB9BDJ
+	ZhXMRUJOsS+vFqtuCUX/ZgNttGXtJUD80IWuCdwLzYHcfCtRVVrVUpD7a0ZQja/j
+	PPoHZuDZr2XdwRgFy4DKGCA6FJjR3vD16Uvmg9mJjfCGO/IB8hX3ZG4gl1AiS/Mw
+	ycZVEnJYUFpKvtKTzanfKEiOuVIoRZJzC+K4RR1cLidI7FHgW/DuwxQa/FPyd7nc
+	SRHYGBpGhUvE9+/bVbgxNqNWIGmmfR6x2cwioOdRLMyZA7dSX6WBX/4oaKkCvle0
+	0SjjTxN+6SVOg0o8h1GhGg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gfctn78j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 10:06:57 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48D95E8Z040809;
+	Fri, 13 Sep 2024 10:06:57 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2045.outbound.protection.outlook.com [104.47.51.45])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9e5762-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 10:06:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Em3Z4mFA7k1HzE6tXu7ZDE0Fg7n73Zp0Zll8UHwgT7+s4hN8y41J3CT8QDRAy/wXjcrYriXLsHRDjHc+T7MwFQbWkB5k+qYHrgvbUfxORfE3I+L62fIUed5Qc+bz+GE4LRulQo6/AqSd9u5NEfXJr5COXakd2XEo2jk1NqBygwUv6Plfw/cLnuqJCMTa9Go0+pejRR/f18ajok/yAprmvKutRt9UF+MT3Lld37i+qq35+J3J+MohQgePPV4ZUyCgfDVnTySw08mkdcoeiJG4TqJpp5KrFg59IKYG/tqyNteW5LGPSqPdzls6nhQlySg9ESRL5MXBW7iadsJQqkT3Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MH7esTSbBESGy3C6YSgKy361CiEKM4K4qfTtvJo7tXU=;
+ b=EcHmhhv4dyXVCHIC8E1Mb+6uZ32dJU2YYFubbkhpnVMVSLHGYoTU/GTni2WNr8sBtpL5dcK/4aOxra9Qaky2adnF1nneGqfsUP28Ny2ZmzS0/gC3vHc6QQioZiQ//f5hXEkVJxinNCZy4UJLk8ABOmtbsBN99n0AI07CbOSnjgbm/Fh8oAIBkzZSiejjRLhjn0xX/H+vXNmlL0xJgn1WJ6qMLTNKiUhO2YHc0wHIrixk0vnQGmLiUFLGRTSZIwXXQP6jkr2CCCrpTh/oTeE24MuYLO6pRgyLwj4YfYZggHPW0Hh8v5jtLJy2gou2k8P5GWK9ooIU9hOrJukWGrV+3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MH7esTSbBESGy3C6YSgKy361CiEKM4K4qfTtvJo7tXU=;
+ b=G6YiXexhiC08PAbk+H07HvQhGdgEB0RqQ/AKz3HhANEHkaapJ3IJXKw7e++ezEDPeLM7/iLuv1cAeRJNf2hanDmTg19SCV+BFgPSLCbTFq1y+30ehjVqodAC/6583QZeTR1jc1woghi8xP6fjabGp5Tge9K/uD+AfIiy+i5LaoU=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CH2PR10MB4375.namprd10.prod.outlook.com (2603:10b6:610:7d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.16; Fri, 13 Sep
+ 2024 10:06:54 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.7982.008; Fri, 13 Sep 2024
+ 10:06:54 +0000
+Message-ID: <5831e24d-dd96-4bad-815f-b79da73f7634@oracle.com>
+Date: Fri, 13 Sep 2024 11:06:51 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/5] ext4: Implement support for extsize hints
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+        dchinner@redhat.com
+References: <cover.1726034272.git.ojaswin@linux.ibm.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <cover.1726034272.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0213.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:33a::11) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH2PR10MB4375:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7d3b877-18cb-470c-64ed-08dcd3dbcb3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OXdtUXdvb3o3NUE0RmllME9teXVubFZJSC9nYmVweFpKSktRWjQyTXBZcDhr?=
+ =?utf-8?B?czVBK0lQUmk1WjkrRHlJb3FRM0lFTS9TK01tSW1ybnJTeU5neWFhdVdZL0py?=
+ =?utf-8?B?TlJkMklsd2U2VElSNDhmbk5mZ3c2S1UrQXJnUkluN01SYnhKMHltei9MekU3?=
+ =?utf-8?B?SUFkNzFxVXZGLzkrcDRzdkRtd3pHTWRhVlc0U0lubUpGcUllRTFzek1Ec0Jx?=
+ =?utf-8?B?ZTQ1enRSYk5GWHg5c3ZnYXRPcmJueU1YYTYzS0xHbTlTVG41eW5xZm56czAw?=
+ =?utf-8?B?Mm9YV1ZaRXJBT2ErMC9BMndIOWJpZ2puRVJWMHhDb2tuOGRkdlFnOHF1TUhx?=
+ =?utf-8?B?NEVhRzhZNDdSQW41cndQc3Q0bllTWEQ3ZUxSNGcvKzhJTXNwQXc4UXlwOFov?=
+ =?utf-8?B?VlQ5OTgzVUwzYkpSWVNRR3BVcTRaNlRTWEFBcFlkWG9kZU43VnBtTkJobU1G?=
+ =?utf-8?B?a0xyZkRRSFJ1ZlRyL2FiN1ZlMHl1TXRHZFZhTlFHMXJKdmxDQ0hZTkZZZG9L?=
+ =?utf-8?B?YnNiY0p5dDRUQ1ZiSkZPQnJocFBMSE9jajZ6dkJ3RkRxamp2WXZtNWUwYWF3?=
+ =?utf-8?B?VDZVVGJ6UGVJUmVQNms5RC93TG5GelU3Q1hCRVhWbzFDQmR6YVc1RXF3OVUr?=
+ =?utf-8?B?bFl2VWZ1cWcvdE5mR3lzRWozaDdxaWVFa0htY2NUMDRLOFp1aGVzTUhhNS9s?=
+ =?utf-8?B?bjZCVnNBUnZpUlIyTW5vMVNpUHFqTXFEbHhtOHdjc21rQzNFcXdaZmgweStC?=
+ =?utf-8?B?SjZKS2ZsRzhVako3WkZSQ3Z6ZU9xRnZNYnRHUUNpSk1hTXp2U2dTc0MzSXhR?=
+ =?utf-8?B?d2RUWHRZeDNwVk9LYnpGdE40elZHU3dBdkxvN29lM3dRV1Q3ckoySGNMQzla?=
+ =?utf-8?B?QWFHSnA2bzI5NERNRlpXK3BqczRKVm1YRzhZRldTL0V0eEhpRUdzb21Nc2E3?=
+ =?utf-8?B?alNqQzJhb2lQMEl5bXlmeFdKZzBzSlNvSWgrSzlJbVBKOGwwQnZsZllNSEtt?=
+ =?utf-8?B?bzMyeFM5bGUrbjIvekJQWC90VzNxWnJGZTZON1RaSi8wMmcyNWx0Q0VHN1A2?=
+ =?utf-8?B?OWllcXlyVm1Ubm16VWdBMmQvN25LNkJNSlIvS3FSOGxNQWl5emJmd05wRU5l?=
+ =?utf-8?B?UW5Md0tDTXo1TlZ0OTY1R0pzUFdPNGEzKzQ2cXpTNGVBbldrQUJOSyt4Y2Rp?=
+ =?utf-8?B?ZXRYQmN3dWxPYTJ4OW9SeE5TS3UwTTZGZXhsKzNpYlVaVWtLcFRTQ0xNTEc1?=
+ =?utf-8?B?VFpkTlpIRy82MElicGJndlVtZ0Z1ZG5IZHIrVGF1cXdueHNBZTRXMm0wK1Fo?=
+ =?utf-8?B?Y2l3YzU5K2c2TVpjNXNKMTJMZHc0dE4rOTdHcVh4aklraE9PdVg3akVpaStE?=
+ =?utf-8?B?a2xwZktHWnZqQ3ZESEQvQVRYNnRiYXJ3bEZhN1RNbXZPN3haMUNISlkvVS9I?=
+ =?utf-8?B?VWlMYW5MekFRSW9iZDRJTy9QOUxxaXhTTWxMTVdRV1hIVkpNME5Gci9xb2Ji?=
+ =?utf-8?B?VFpnazRaTkVkTFROOElwalVkN0loVSsrb0JZL2dzSXlPdjd4T1VDbXd3R2tJ?=
+ =?utf-8?B?ckJPWmFBNkZiMTBMNkpHdWx6aFVCNmh4Y1htY0h0VWtUS1E3Q3RKV0hnMFNS?=
+ =?utf-8?B?WTZQbkxBbXg1aEtEVUlyamVtWWpWUmRCdExUV0J3ZDVvL0FxNUd5U3VSYjJs?=
+ =?utf-8?B?a1V2OEU2R0hjT2hwYTVicnB3OTRDYzlLUVJHUkZZVis2d0pvT2Rsd3JhUjZp?=
+ =?utf-8?B?NXN5L0x6MnFrMW0rTUZHN2xnMjFaK0ovUlBpbjdkd3BhS3pmdDYrU2diQ3c1?=
+ =?utf-8?B?cytDbHlaNHRwZXNhbUludz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NURXSDVFenB4dDdUQ0l0b3AzUUQrdTFtTkErRDJtSU04bDZmUFZLRC9rWGpU?=
+ =?utf-8?B?ZmQ1ZTJET202dzVTelU0b3I2SW01eDFEaytOUUdwVUhWRWJHNTVHdzhTZFFh?=
+ =?utf-8?B?RTc4Q210TmNYZDlqVGdzbkUvaytmSjc1RXNmTVZkZFVFU215UHhPMXMvZm9R?=
+ =?utf-8?B?RHk5YTFGeEpZbjViVUJFZUovQnQySU4wYnZQR2JRajZRU0pJcUkwRFNmQzVt?=
+ =?utf-8?B?UVhYV1dFN1VwS24zRC8wR2ZtYTAwRW84WDdxa3Q2UEVDbCtUWTU3RlBEOW04?=
+ =?utf-8?B?VVAyUGJXVE8wTVExOUFYc20wRHJQN0wxMTY4ODQxZ3ljdUpOdEcvbU50VmhZ?=
+ =?utf-8?B?aWpRdm9FaHJhRmE2b2p0d3FlZno5UFg4YmhvRC8yMDVUTEhqamxuQlhaYndL?=
+ =?utf-8?B?aTNmNVp5dGg4RnZKUnpKM3l4TXFYaXdOM0VGclFuVzB3aFB3V1Rkc3RSRXR6?=
+ =?utf-8?B?aExmMStLRjByeDUrTW9hZG9TVUFIZGdDamlvZjJRMTBRblhnRUZBNnRoL2VW?=
+ =?utf-8?B?NHB6VWxqREpLSndkWWZuNEVtRTFoS3lBVjBSTVFaOWdsRjcyWmFubWdQWFhx?=
+ =?utf-8?B?Q0JCaXNtMVR5T1AvMkR2QWFtVmhmY0ZhdWRaUzhwV1dyVzFBWGFzOXEvMTFR?=
+ =?utf-8?B?QjNhbVNhaGpyUDhwRGhIemRKVGJ2UW45VmpsTnRSSGwxWm5vWE5mVEpkTSsw?=
+ =?utf-8?B?ZmU5ZkRWbUwzNVdHMm84V003RUdKZkhXUkNvMWlNYVVmeUZiNTBLcDRqMzlH?=
+ =?utf-8?B?S0tReUhCaWZRZFRqSWNjcG5sODhzc1dJZGVOcUdSbUZnTWZIckhUeU1Dcld4?=
+ =?utf-8?B?RGNMWExHYTBWYmhmaTR3TjA5YjFEZXA1UWgrdExTMzU0QWYrdEUyL1o0SGVo?=
+ =?utf-8?B?Yk5yTVhNcDdOTnNsa3Vma2FBbHZTbElzNTI4UjZDb2paWHNKb0lUYjQ0WFNW?=
+ =?utf-8?B?Zzl3RjgyV2lyVGlvcW1hRWsxZUMrRUdhOVk5TE9yQW1sc0pibDdDL1RpTWJ1?=
+ =?utf-8?B?c1VOVDAwYmMwQjlBcGxHOHJtU2NBM2hwT3B0OG9rL2pSVlBuMlF3L21mS3dI?=
+ =?utf-8?B?NVkxdnNvRlRmK1J5MzZvNnNMNjNwZy8veEU2MG5ObWtxRXdSUS93TXdkK2Nn?=
+ =?utf-8?B?MVJKQUNHRGpZNDdZWm56WldXNkFtYnU1bXNjQVQ2bkFNemppaGNSbS9HQk1t?=
+ =?utf-8?B?c0o3dVVsc2dReXZoeCtDOFVKOW1TVlc1VzR3ZkhweFBsamp5WVMzeXNpNWpk?=
+ =?utf-8?B?VWZkNHJNYUVKU0FkYXQ3eDRZYzJwYzRxbElibld4Z1RlSzBJTkJCUmp1a2xW?=
+ =?utf-8?B?VEZ0L0lMUDNkQkk5Q2NQTmFVVEhCWGxjL004M0RMdzVJalNsOVVpeXJNTXp3?=
+ =?utf-8?B?aUdTejNzYjNrMXNXMG83QTkrRk41dlc2bXlPenhHa0R5OTJ0dmdFZ2NzWUVw?=
+ =?utf-8?B?VmZ0cCtZeG5HaUFLSm1HRDFpVGZyODVtQmk2OGZYNVJ4cEkyL3JmUGV5OFJv?=
+ =?utf-8?B?bkxGQXBjQXQzRFpsWm0yVUlWUjlqRWxCam8yNVhFb3A0by8rMERkVCtJc3RT?=
+ =?utf-8?B?L3RBL2l6cmtQLy9hYXkvRVA3cm9tQjhVQ1B4UEp5NGNMRCsvNDVqWU14Qmxo?=
+ =?utf-8?B?Vm9jNGZnTmlTRXpYbDlyYnA3Q1l2UkpsdEt6ekg5aHFRdEtKUFpGK1p0S1Qy?=
+ =?utf-8?B?T2g5UXBEN29SNURpYnZxSlp6a3FrVk9YRURlTXBCNm8xTm95akozbndMaUY5?=
+ =?utf-8?B?UWwzMUc2bUxFSmJ4dUgrRHlnZXlubHAzakRaOU51QVIzaFJIY29Id012ZDFQ?=
+ =?utf-8?B?QzdIMEN2QjhpTkRUNk5ndCt4NHJvOFZNRFhaeUp5UlBDSjB1WG1XM0s0Q0Fr?=
+ =?utf-8?B?WkI0VmlqaFRYS0lGaUsvUzJoL0NCRFUxelpDV0YxaU9SczFRdko3cTN5TWt5?=
+ =?utf-8?B?SldhUDErbkFSdW5paTFsMzVqSzlwVGVvZmNXSDJKRkFQQ0hrR2ZPVFRLN2tt?=
+ =?utf-8?B?OEtyOEV5VzFLY3B0ZitRWm5rRmZUUzlUWnFzMDlXSmZoM2NYUEdsRmROQWhY?=
+ =?utf-8?B?TmVVUU1tcXkwd3V5OCszTHNBSzVPT0RDZ2VCNWdUeTdESVFqMG04UE5MWHdy?=
+ =?utf-8?Q?Zs878Kg4divnFGCpkRdBUxjsL?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Lgf7myRypJK8cC08uoMVtnXaeuSjpMoJ5CAdvM5YoTFnD/sSyQ8fV0z1ZGxdDMOKXxx3/LZLPLW2lgasdPdrnCj53R1pRn9WtyAjiwDeRc9XNCJymRjDDzFyaeF2lzGeL9gZV8kTdwsOq3GJHc4irgeYDvL01/+mYOuHsPU+eTnSOLpV3F7mOb9QB8LkhH9F0C1rg9NCZ/hZ4e7Xd9oilRUwDsl76vvOWNnQmVncqntwUyDqiWvybZ+yySt4rQQrJWmcoWAHqAw9YHoUVk49U2yAN/O8aWw+AbnwTRz2zNnPj1iVM1hcFSueLKiusRadpY48WW4kTU0yl1SCFS6zLePZTPbeLMXbuZDAwQY0H5DU7W/A2JLqFYwmtMZzXfpaPY0goE6jz9kZ1YxnVe0I/RPn7YSVrKTeb0S4aRC2sQhuoeqIvNm05+RlVyY5vtIy2aEy+tV880kSNuSwr2bg6V4I2WwqKV+X9S1i+WtR1vxP6qVygXn8TEYLXl1txKuPO5KgCjTIA4YjBQk6zF8nk1s5RX98PsBWG70BfnopKqqjtsG08Xp6Xn1FjL0Q+8zF1v+pOkonmP5KP9rgDp2aEdfacYehTYeKqu3VzDsinrI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7d3b877-18cb-470c-64ed-08dcd3dbcb3c
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 10:06:54.3877
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8yJAojVpxZd3NfeobdqEJkXGj287hsI30cVZ8gM1BkTIqsQf958fn20l26FjzblTYDqpuhT2X2TwMuCHLUw4XQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4375
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_08,2024-09-13_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ mlxlogscore=993 mlxscore=0 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409130070
+X-Proofpoint-GUID: tRS8AKhRKE9uSe8qq8nXV-MkDACSfQrk
+X-Proofpoint-ORIG-GUID: tRS8AKhRKE9uSe8qq8nXV-MkDACSfQrk
 
-Convert PGD accesses via pgdp_get() helper that defaults as READ_ONCE() but
-also provides the platform an opportunity to override when required.
+On 11/09/2024 10:01, Ojaswin Mujoo wrote:
+> This patchset implements extsize hint feature for ext4. Posting this RFC to get
+> some early review comments on the design and implementation bits. This feature
+> is similar to what we have in XFS too with some differences.
+> 
+> extsize on ext4 is a hint to mballoc (multi-block allocator) and extent
+> handling layer to do aligned allocations. We use allocation criteria 0
+> (CR_POWER2_ALIGNED) for doing aligned power-of-2 allocations. With extsize hint
+> we try to align the logical start (m_lblk) and length(m_len) of the allocation
+> to be extsize aligned. CR_POWER2_ALIGNED criteria in mballoc automatically make
+> sure that we get the aligned physical start (m_pblk) as well. So in this way
+> extsize can make sure that lblk, len and pblk all are aligned for the allocated
+> extent w.r.t extsize.
+> 
+> Note that extsize feature is just a hinting mechanism to ext4 multi-block
+> allocator. That means that if we are unable to get an aligned allocation for
+> some reason, than we drop this flag and continue with unaligned allocation to
+> serve the request. However when we will add atomic/untorn writes support, then
+> we will enforce the aligned allocation and can return -ENOSPC if aligned
+> allocation was not successful.
 
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Muchun Song <muchun.song@linux.dev>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Miaohe Lin <linmiaohe@huawei.com>
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-cc: Christoph Lameter <cl@linux.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: linux-perf-users@vger.kernel.org
-Cc: kasan-dev@googlegroups.com
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- drivers/misc/sgi-gru/grufault.c |  2 +-
- fs/userfaultfd.c                |  2 +-
- include/linux/mm.h              |  2 +-
- include/linux/pgtable.h         |  6 +++---
- kernel/events/core.c            |  2 +-
- mm/gup.c                        |  8 ++++----
- mm/hugetlb.c                    |  2 +-
- mm/kasan/init.c                 |  8 ++++----
- mm/kasan/shadow.c               |  2 +-
- mm/memory-failure.c             |  2 +-
- mm/memory.c                     | 10 +++++-----
- mm/page_vma_mapped.c            |  2 +-
- mm/percpu.c                     |  2 +-
- mm/pgalloc-track.h              |  2 +-
- mm/pgtable-generic.c            |  2 +-
- mm/rmap.c                       |  2 +-
- mm/sparse-vmemmap.c             |  2 +-
- mm/vmalloc.c                    | 10 +++++-----
- 18 files changed, 34 insertions(+), 34 deletions(-)
+A few questions/confirmations:
+- You have no intention of adding an equivalent of forcealign, right?
 
-diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
-index cdca93398b44..2a8a154d8531 100644
---- a/drivers/misc/sgi-gru/grufault.c
-+++ b/drivers/misc/sgi-gru/grufault.c
-@@ -212,7 +212,7 @@ static int atomic_pte_lookup(struct vm_area_struct *vma, unsigned long vaddr,
- 	pte_t pte;
- 
- 	pgdp = pgd_offset(vma->vm_mm, vaddr);
--	if (unlikely(pgd_none(*pgdp)))
-+	if (unlikely(pgd_none(pgdp_get(pgdp))))
- 		goto err;
- 
- 	p4dp = p4d_offset(pgdp, vaddr);
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 4044e15cdfd9..6d33c7a9eb01 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -304,7 +304,7 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
- 	assert_fault_locked(vmf);
- 
- 	pgd = pgd_offset(mm, address);
--	if (!pgd_present(*pgd))
-+	if (!pgd_present(pgdp_get(pgd)))
- 		goto out;
- 	p4d = p4d_offset(pgd, address);
- 	if (!p4d_present(p4dp_get(p4d)))
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1bb1599b5779..1978a4b1fcf5 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2819,7 +2819,7 @@ int __pte_alloc_kernel(pmd_t *pmd);
- static inline p4d_t *p4d_alloc(struct mm_struct *mm, pgd_t *pgd,
- 		unsigned long address)
- {
--	return (unlikely(pgd_none(*pgd)) && __p4d_alloc(mm, pgd, address)) ?
-+	return (unlikely(pgd_none(pgdp_get(pgd))) && __p4d_alloc(mm, pgd, address)) ?
- 		NULL : p4d_offset(pgd, address);
- }
- 
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index b3e40f06c8c4..19f6557b4bf5 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1084,7 +1084,7 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
- 
- #define set_pgd_safe(pgdp, pgd) \
- ({ \
--	WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
-+	WARN_ON_ONCE(pgd_present(pgdp_get(pgdp)) && !pgd_same(pgdp_get(pgdp), pgd)); \
- 	set_pgd(pgdp, pgd); \
- })
- 
-@@ -1237,9 +1237,9 @@ void pmd_clear_bad(pmd_t *);
- 
- static inline int pgd_none_or_clear_bad(pgd_t *pgd)
- {
--	if (pgd_none(*pgd))
-+	if (pgd_none(pgdp_get(pgd)))
- 		return 1;
--	if (unlikely(pgd_bad(*pgd))) {
-+	if (unlikely(pgd_bad(pgdp_get(pgd)))) {
- 		pgd_clear_bad(pgd);
- 		return 1;
- 	}
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 4e56a276ed25..1e3142211cce 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7603,7 +7603,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
- 	pte_t *ptep, pte;
- 
- 	pgdp = pgd_offset(mm, addr);
--	pgd = READ_ONCE(*pgdp);
-+	pgd = pgdp_get(pgdp);
- 	if (pgd_none(pgd))
- 		return 0;
- 
-diff --git a/mm/gup.c b/mm/gup.c
-index 3a97d0263052..f43daab23979 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1060,7 +1060,7 @@ static struct page *follow_page_mask(struct vm_area_struct *vma,
- 	ctx->page_mask = 0;
- 	pgd = pgd_offset(mm, address);
- 
--	if (pgd_none(*pgd) || unlikely(pgd_bad(*pgd)))
-+	if (pgd_none(pgdp_get(pgd)) || unlikely(pgd_bad(pgdp_get(pgd))))
- 		page = no_page_table(vma, flags, address);
- 	else
- 		page = follow_p4d_mask(vma, address, pgd, flags, ctx);
-@@ -1111,7 +1111,7 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
- 		pgd = pgd_offset_k(address);
- 	else
- 		pgd = pgd_offset_gate(mm, address);
--	if (pgd_none(*pgd))
-+	if (pgd_none(pgdp_get(pgd)))
- 		return -EFAULT;
- 	p4d = p4d_offset(pgd, address);
- 	if (p4d_none(p4dp_get(p4d)))
-@@ -3158,7 +3158,7 @@ static int gup_fast_pgd_leaf(pgd_t orig, pgd_t *pgdp, unsigned long addr,
- 	if (!folio)
- 		return 0;
- 
--	if (unlikely(pgd_val(orig) != pgd_val(*pgdp))) {
-+	if (unlikely(pgd_val(orig) != pgd_val(pgdp_get(pgdp)))) {
- 		gup_put_folio(folio, refs, flags);
- 		return 0;
- 	}
-@@ -3267,7 +3267,7 @@ static void gup_fast_pgd_range(unsigned long addr, unsigned long end,
- 
- 	pgdp = pgd_offset(current->mm, addr);
- 	do {
--		pgd_t pgd = READ_ONCE(*pgdp);
-+		pgd_t pgd = pgdp_get(pgdp);
- 
- 		next = pgd_addr_end(addr, end);
- 		if (pgd_none(pgd))
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 4fdb91c8cc2b..294d74b03d83 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -7451,7 +7451,7 @@ pte_t *huge_pte_offset(struct mm_struct *mm,
- 	pmd_t *pmd;
- 
- 	pgd = pgd_offset(mm, addr);
--	if (!pgd_present(*pgd))
-+	if (!pgd_present(pgdp_get(pgd)))
- 		return NULL;
- 	p4d = p4d_offset(pgd, addr);
- 	if (!p4d_present(p4dp_get(p4d)))
-diff --git a/mm/kasan/init.c b/mm/kasan/init.c
-index 02af738fee5e..c2b307716551 100644
---- a/mm/kasan/init.c
-+++ b/mm/kasan/init.c
-@@ -271,7 +271,7 @@ int __ref kasan_populate_early_shadow(const void *shadow_start,
- 			continue;
- 		}
- 
--		if (pgd_none(*pgd)) {
-+		if (pgd_none(pgdp_get(pgd))) {
- 			p4d_t *p;
- 
- 			if (slab_is_available()) {
-@@ -345,7 +345,7 @@ static void kasan_free_p4d(p4d_t *p4d_start, pgd_t *pgd)
- 			return;
- 	}
- 
--	p4d_free(&init_mm, (p4d_t *)page_to_virt(pgd_page(*pgd)));
-+	p4d_free(&init_mm, (p4d_t *)page_to_virt(pgd_page(pgdp_get(pgd))));
- 	pgd_clear(pgd);
- }
- 
-@@ -468,10 +468,10 @@ void kasan_remove_zero_shadow(void *start, unsigned long size)
- 		next = pgd_addr_end(addr, end);
- 
- 		pgd = pgd_offset_k(addr);
--		if (!pgd_present(*pgd))
-+		if (!pgd_present(pgdp_get(pgd)))
- 			continue;
- 
--		if (kasan_p4d_table(*pgd)) {
-+		if (kasan_p4d_table(pgdp_get(pgd))) {
- 			if (IS_ALIGNED(addr, PGDIR_SIZE) &&
- 			    IS_ALIGNED(next, PGDIR_SIZE)) {
- 				pgd_clear(pgd);
-diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-index 52150cc5ae5f..7f3c46237816 100644
---- a/mm/kasan/shadow.c
-+++ b/mm/kasan/shadow.c
-@@ -191,7 +191,7 @@ static bool shadow_mapped(unsigned long addr)
- 	pmd_t *pmd;
- 	pte_t *pte;
- 
--	if (pgd_none(*pgd))
-+	if (pgd_none(pgdp_get(pgd)))
- 		return false;
- 	p4d = p4d_offset(pgd, addr);
- 	if (p4d_none(p4dp_get(p4d)))
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 3d900cc039b3..c9397eab52bd 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -411,7 +411,7 @@ static unsigned long dev_pagemap_mapping_shift(struct vm_area_struct *vma,
- 
- 	VM_BUG_ON_VMA(address == -EFAULT, vma);
- 	pgd = pgd_offset(vma->vm_mm, address);
--	if (!pgd_present(*pgd))
-+	if (!pgd_present(pgdp_get(pgd)))
- 		return 0;
- 	p4d = p4d_offset(pgd, address);
- 	if (!p4d_present(p4dp_get(p4d)))
-diff --git a/mm/memory.c b/mm/memory.c
-index 7e6bb051d187..7765d30e669f 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2936,11 +2936,11 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
- 	pgd = pgd_offset(mm, addr);
- 	do {
- 		next = pgd_addr_end(addr, end);
--		if (pgd_none(*pgd) && !create)
-+		if (pgd_none(pgdp_get(pgd)) && !create)
- 			continue;
--		if (WARN_ON_ONCE(pgd_leaf(*pgd)))
-+		if (WARN_ON_ONCE(pgd_leaf(pgdp_get(pgd))))
- 			return -EINVAL;
--		if (!pgd_none(*pgd) && WARN_ON_ONCE(pgd_bad(*pgd))) {
-+		if (!pgd_none(pgdp_get(pgd)) && WARN_ON_ONCE(pgd_bad(pgdp_get(pgd)))) {
- 			if (!create)
- 				continue;
- 			pgd_clear_bad(pgd);
-@@ -6035,7 +6035,7 @@ int __p4d_alloc(struct mm_struct *mm, pgd_t *pgd, unsigned long address)
- 		return -ENOMEM;
- 
- 	spin_lock(&mm->page_table_lock);
--	if (pgd_present(*pgd)) {	/* Another has populated it */
-+	if (pgd_present(pgdp_get(pgd))) {	/* Another has populated it */
- 		p4d_free(mm, new);
- 	} else {
- 		smp_wmb(); /* See comment in pmd_install() */
-@@ -6139,7 +6139,7 @@ int follow_pte(struct vm_area_struct *vma, unsigned long address,
- 		goto out;
- 
- 	pgd = pgd_offset(mm, address);
--	if (pgd_none(*pgd) || unlikely(pgd_bad(*pgd)))
-+	if (pgd_none(pgdp_get(pgd)) || unlikely(pgd_bad(pgdp_get(pgd))))
- 		goto out;
- 
- 	p4d = p4d_offset(pgd, address);
-diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-index a33f92db2666..fb8b610f7378 100644
---- a/mm/page_vma_mapped.c
-+++ b/mm/page_vma_mapped.c
-@@ -212,7 +212,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
- restart:
- 	do {
- 		pgd = pgd_offset(mm, pvmw->address);
--		if (!pgd_present(*pgd)) {
-+		if (!pgd_present(pgdp_get(pgd))) {
- 			step_forward(pvmw, PGDIR_SIZE);
- 			continue;
- 		}
-diff --git a/mm/percpu.c b/mm/percpu.c
-index 58660e8eb892..70e68ab002e9 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -3184,7 +3184,7 @@ void __init __weak pcpu_populate_pte(unsigned long addr)
- 	pud_t *pud;
- 	pmd_t *pmd;
- 
--	if (pgd_none(*pgd)) {
-+	if (pgd_none(pgdp_get(pgd))) {
- 		p4d = memblock_alloc(P4D_TABLE_SIZE, P4D_TABLE_SIZE);
- 		if (!p4d)
- 			goto err_alloc;
-diff --git a/mm/pgalloc-track.h b/mm/pgalloc-track.h
-index 3db8ccbcb141..644f632c7cba 100644
---- a/mm/pgalloc-track.h
-+++ b/mm/pgalloc-track.h
-@@ -7,7 +7,7 @@ static inline p4d_t *p4d_alloc_track(struct mm_struct *mm, pgd_t *pgd,
- 				     unsigned long address,
- 				     pgtbl_mod_mask *mod_mask)
- {
--	if (unlikely(pgd_none(*pgd))) {
-+	if (unlikely(pgd_none(pgdp_get(pgd)))) {
- 		if (__p4d_alloc(mm, pgd, address))
- 			return NULL;
- 		*mod_mask |= PGTBL_PGD_MODIFIED;
-diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index 7e0a4974b0fc..b97eea347a36 100644
---- a/mm/pgtable-generic.c
-+++ b/mm/pgtable-generic.c
-@@ -24,7 +24,7 @@
- 
- void pgd_clear_bad(pgd_t *pgd)
- {
--	pgd_ERROR(*pgd);
-+	pgd_ERROR(pgdp_get(pgd));
- 	pgd_clear(pgd);
- }
- 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 829d0cf5e384..7e2e977efaba 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -809,7 +809,7 @@ pmd_t *mm_find_pmd(struct mm_struct *mm, unsigned long address)
- 	pmd_t *pmd = NULL;
- 
- 	pgd = pgd_offset(mm, address);
--	if (!pgd_present(*pgd))
-+	if (!pgd_present(pgdp_get(pgd)))
- 		goto out;
- 
- 	p4d = p4d_offset(pgd, address);
-diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index 2bd1c95f107a..ffc78329a130 100644
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@ -233,7 +233,7 @@ p4d_t * __meminit vmemmap_p4d_populate(pgd_t *pgd, unsigned long addr, int node)
- pgd_t * __meminit vmemmap_pgd_populate(unsigned long addr, int node)
- {
- 	pgd_t *pgd = pgd_offset_k(addr);
--	if (pgd_none(*pgd)) {
-+	if (pgd_none(pgdp_get(pgd))) {
- 		void *p = vmemmap_alloc_block_zero(PAGE_SIZE, node);
- 		if (!p)
- 			return NULL;
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index c67b067f4686..de7a6dd0ab21 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -450,7 +450,7 @@ void __vunmap_range_noflush(unsigned long start, unsigned long end)
- 	pgd = pgd_offset_k(addr);
- 	do {
- 		next = pgd_addr_end(addr, end);
--		if (pgd_bad(*pgd))
-+		if (pgd_bad(pgdp_get(pgd)))
- 			mask |= PGTBL_PGD_MODIFIED;
- 		if (pgd_none_or_clear_bad(pgd))
- 			continue;
-@@ -582,7 +582,7 @@ static int vmap_small_pages_range_noflush(unsigned long addr, unsigned long end,
- 	pgd = pgd_offset_k(addr);
- 	do {
- 		next = pgd_addr_end(addr, end);
--		if (pgd_bad(*pgd))
-+		if (pgd_bad(pgdp_get(pgd)))
- 			mask |= PGTBL_PGD_MODIFIED;
- 		err = vmap_pages_p4d_range(pgd, addr, next, prot, pages, &nr, &mask);
- 		if (err)
-@@ -752,11 +752,11 @@ struct page *vmalloc_to_page(const void *vmalloc_addr)
- 	 */
- 	VIRTUAL_BUG_ON(!is_vmalloc_or_module_addr(vmalloc_addr));
- 
--	if (pgd_none(*pgd))
-+	if (pgd_none(pgdp_get(pgd)))
- 		return NULL;
--	if (WARN_ON_ONCE(pgd_leaf(*pgd)))
-+	if (WARN_ON_ONCE(pgd_leaf(pgdp_get(pgd))))
- 		return NULL; /* XXX: no allowance for huge pgd */
--	if (WARN_ON_ONCE(pgd_bad(*pgd)))
-+	if (WARN_ON_ONCE(pgd_bad(pgdp_get(pgd))))
- 		return NULL;
- 
- 	p4d = p4d_offset(pgd, addr);
--- 
-2.25.1
+- Would you also plan on using FS_IOC_FS(GET/SET)XATTR interface for 
+enabling atomic writes on a per-inode basis?
+
+- Can extsize be set at mkfs time?
+
+- Is there any userspace support for this series available?
+
+- how would/could extsize interact with bigalloc?
+
+> 
+> Comparison with XFS extsize feature -
+> =====================================
+> 1. extsize in XFS is a hint for aligning only the logical start and the lengh
+>     of the allocation v/s extsize on ext4 make sure the physical start of the
+>     extent gets aligned as well.
+
+note that forcealign with extsize aligns AG block also
+
+only for atomic writes do we enforce the AG block is aligned to physical 
+block
+
+> 
+> 2. eof allocation on XFS trims the blocks allocated beyond eof with extsize
+>     hint. That means on XFS for eof allocations (with extsize hint) only logical
+>     start gets aligned. However extsize hint in ext4 for eof allocation is not
+>     supported in this version of the series.
+> 
+> 3. XFS allows extsize to be set on file with no extents but delayed data.
+>     However, ext4 don't allow that for simplicity. The user is expected to set
+>     it on a file before changing it's i_size.
+> 
+> 4. XFS allows non-power-of-2 values for extsize but ext4 does not, since we
+>     primarily would like to support atomic writes with extsize.
+> 
+> 5. In ext4 we chose to store the extsize value in SYSTEM_XATTR rather than an
+>     inode field as it was simple and most flexible, since there might be more
+>     features like atomic/untorn writes coming in future.
+> 
+> 6. In buffered-io path XFS switches to non-delalloc allocations for extsize hint.
+>     The same has been kept for EXT4 as well.
+> 
+> Some TODOs:
+> ===========
+> 1. EOF allocations support can be added and can be kept similar to XFS
+
+Note that EOF alignment for forcealign may change - it needs to be 
+discussed further.
+
+Thanks,
+John
+
+.
+> 
+> Rest of the design details can be found in the individual commit messages.
+> 
+> Thoughts and suggestions are welcome!
+> 
+> Ojaswin Mujoo (5):
+>    ext4: add aligned allocation hint in mballoc
+>    ext4: allow inode preallocation for aligned alloc
+>    ext4: Support for extsize hint using FS_IOC_FS(GET/SET)XATTR
+>    ext4: pass lblk and len explicitly to ext4_split_extent*()
+>    ext4: Add extsize hint support
+> 
+>   fs/ext4/ext4.h              |  12 +-
+>   fs/ext4/ext4_jbd2.h         |  15 ++
+>   fs/ext4/extents.c           | 224 ++++++++++++++----
+>   fs/ext4/inode.c             | 442 +++++++++++++++++++++++++++++++++---
+>   fs/ext4/ioctl.c             | 119 ++++++++++
+>   fs/ext4/mballoc.c           | 126 ++++++++--
+>   fs/ext4/super.c             |   1 +
+>   include/trace/events/ext4.h |   2 +
+>   8 files changed, 841 insertions(+), 100 deletions(-)
+> 
 
 
