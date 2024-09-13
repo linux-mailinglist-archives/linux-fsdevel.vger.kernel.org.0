@@ -1,347 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-29347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D144F978649
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:57:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F31978691
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 19:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523A41F24CD8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 16:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374D91F25E86
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 17:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE4A81AC1;
-	Fri, 13 Sep 2024 16:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AA0824A1;
+	Fri, 13 Sep 2024 17:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNxZeJVL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Og03WfEP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3C36BFA3;
-	Fri, 13 Sep 2024 16:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA0C7E563;
+	Fri, 13 Sep 2024 17:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726246648; cv=none; b=ChsA8nmsCfx7qurFrD0oK9FO+b4sQSvH5PdwDUstcgQTYKrx9Fx+OJoJhHknMOD1H3wAJs2jDcK24knXHJ9mPemkG+X9pQ8GYie4vL6zhiXOOz74GHbcXtcOAjUFg737TR4s06PkMcAGDMjwfBhdJ72kc9VQEd1SuSlzMQir/Wo=
+	t=1726248109; cv=none; b=EciPqA7FXzB5PCaYMltl7ibIX6Th+RMzEXg9Hm2D6maBuTKV+XixvSOYRTgh7l+e2pK7WTe6OQx/sIc/MsrV2bWaTrzOHZ6V+0kDYc7CrHwkM4whgiq2HKqVEJp/NNkH+V4ZhPNYEMHcJhNRXhGLKAz6Lejr2rhWonxdMvB++EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726246648; c=relaxed/simple;
-	bh=RMuylek6k4wQuFye40QyAIsum81oCoU7c/Xx1asARsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t47iazrd4CAuQAhksOKCkcb0SJigzCGont8tKtSnNdep4HJekIUbvuMS07T/P1YcouiY5loFNxPb99jdHz0ivfiQl1ubdXJmThVe6KraxLy7z8CDCJVRrjk21NzITHShn6sdQtQofX0OH3xQr3zqJOVuRnAWE4xMqswkxYCIf4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNxZeJVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C320DC4CEC0;
-	Fri, 13 Sep 2024 16:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726246648;
-	bh=RMuylek6k4wQuFye40QyAIsum81oCoU7c/Xx1asARsc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VNxZeJVLFBxUokeO+/0P1EAnPmS1b5UaqbEzuH/GB95GkP+6XTvdKgXANz41Xsnau
-	 4WzgBN8FRydrWmS+UPzc7Puv3wNjnzcTmAXLvX7frZTJKuzBgvbi8/KG3ysLEmmTlF
-	 A1vafu0Xd0U9NrEkef/IVouurO/VyvsGPvJxG8LG3G6NOHv9IHtywhmvmedGnELRYw
-	 zE6jgf/sNhhz4B0QjlO+WcXSqW5X6JTlso+0Ugx822CoGLDkvnsUT8YtOp7INGTUiT
-	 dG+223qrTDrd8a9UPzj8xnj92d2AT5ZkCBqQpxLjgfrrJtG6nstTpaYmuPIPybv015
-	 2cwpmMkTycQoQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs netfs
-Date: Fri, 13 Sep 2024 18:56:36 +0200
-Message-ID: <20240913-vfs-netfs-39ef6f974061@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726248109; c=relaxed/simple;
+	bh=vdnM+CZTeCR9vtc54KCM3CD6QuawVpzxQ5fBCGrQFYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kwwRIzBXgaPbQefIaPI8CIne1b79eUpoSMBPQLhPD69I5Wgv74c8W5wOXHHQQaJs3JVGXLZFQh1SIxuE2uSDVKi8tr+ra3AOfPoHC7kjf6dw33vAaaI7qlbSZ32Lh9079wr1dUj417F8aTQDQiGRlaCBhvXtYiNFrh3EsaI5iwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Og03WfEP; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726248107; x=1757784107;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vdnM+CZTeCR9vtc54KCM3CD6QuawVpzxQ5fBCGrQFYI=;
+  b=Og03WfEP7fjlrhnMDNQ928rsEFqFZVvGEtFZBB9eBKB9N90apTIw3VX+
+   frdaExaeK0qK4HIld1ShazQ+9Jt0F7/awWj8dJq33jEY3EXDyRWCRHeb7
+   ZyHE/XN1TU5yiCTbZRebBr0iLBfR1tE27qsa/PW/P43zQQP8dw2rhPk/z
+   2FrJykiI+kKU/j3xUJlgVWL+axRcI4zWizDr9/gdLtEorkgcb75Arm9KB
+   1kU99RBdWdNqGSSDVSkrAI8J1DbiD6R3jjTxsO7W1bZoTw5euy6Ej9MRc
+   RbosI1tylOahQIYo46M1xdX4fTv72o9yJpQcjwYrAUBe6k19GkUFiUcxH
+   g==;
+X-CSE-ConnectionGUID: VJat6AejTd6rbM0v1HCvyg==
+X-CSE-MsgGUID: +FcBq6ulQ8y7hFMQx/GExA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="13515752"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="13515752"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:21:46 -0700
+X-CSE-ConnectionGUID: pZq42LnVSmarDZKTdgSiuA==
+X-CSE-MsgGUID: 8DBsX0MoQL+CuXku25so0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="98978570"
+Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO [10.124.220.219]) ([10.124.220.219])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:21:45 -0700
+Message-ID: <8e8a94d4-39fe-4c34-9f5d-5b347ca8fe9a@intel.com>
+Date: Fri, 13 Sep 2024 10:21:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12101; i=brauner@kernel.org; h=from:subject:message-id; bh=RMuylek6k4wQuFye40QyAIsum81oCoU7c/Xx1asARsc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ9yXtRPD19yyT/iYuP/A57lcddt0ZRUTZX1kvyVcbGp boPrsts6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI9iJGhierF+7RvFb0gHl5 Vn/BvIpD5l/L2i3q9/iFWm94LnFa4Tojw6JNDDPvyM1vE3QI+C7e6LPoyXYdq1cztm58PWm728m mM1wA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] x86/mm: Drop page table entry address output from
+ pxd_ERROR()
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ x86@kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-fsdevel@vger.kernel.org, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+References: <20240913084433.1016256-1-anshuman.khandual@arm.com>
+ <20240913084433.1016256-3-anshuman.khandual@arm.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240913084433.1016256-3-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hey Linus,
+On 9/13/24 01:44, Anshuman Khandual wrote:
+> This drops page table entry address output from all pxd_ERROR() definitions
+> which now matches with other architectures. This also prevents build issues
+> while transitioning into pxdp_get() based page table entry accesses.
 
-/* Summary */
+Could you be a _little_ more specific than "build issues"?  Is it that
+you want to do:
 
-This contains the work to improve read/write performance for the new
-netfs library.
+ void pmd_clear_bad(pmd_t *pmd)
+ {
+-        pmd_ERROR(*pmd);
++        pmd_ERROR(pmdp_get(pmd));
+         pmd_clear(pmd);
+ }
 
-The main performance enhancing changes are:
+But the pmd_ERROR() macro would expand that to:
 
-    - Define a structure, struct folio_queue, and a new iterator type,
-      ITER_FOLIOQ, to hold a buffer as a replacement for ITER_XARRAY. See
-      that patch for questions about naming and form.
+	&pmdp_get(pmd)
 
-      ITER_FOLIOQ is provided as a replacement for ITER_XARRAY. The
-      problem with an xarray is that accessing it requires the use of a
-      lock (typically the RCU read lock) - and this means that we can't
-      supply iterate_and_advance() with a step function that might sleep
-      (crypto for example) without having to drop the lock between
-      pages. ITER_FOLIOQ is the iterator for a chain of folio_queue
-      structs, where each folio_queue holds a small list of folios. A
-      folio_queue struct is a simpler structure than xarray and is not
-      subject to concurrent manipulation by the VM. folio_queue is used
-      rather than a bvec[] as it can form lists of indefinite size,
-      adding to one end and removing from the other on the fly.
+which is nonsense?
 
-    - Provide a copy_folio_from_iter() wrapper.
-
-    - Make cifs RDMA support ITER_FOLIOQ.
-
-    - Use folio queues in the write-side helpers instead of xarrays.
-
-    - Add a function to reset the iterator in a subrequest.
-
-    - Simplify the write-side helpers to use sheaves to skip gaps rather
-      than trying to work out where gaps are.
-
-    - In afs, make the read subrequests asynchronous, putting them into work
-      items to allow the next patch to do progressive unlocking/reading.
-
-    - Overhaul the read-side helpers to improve performance.
-
-    - Fix the caching of a partial block at the end of a file.
-
-    - Allow a store to be cancelled.
-
-Then some changes for cifs to make it use folio queues instead of
-xarrays for crypto bufferage:
-
-    - Use raw iteration functions rather than manually coding iteration when
-      hashing data.
-
-    - Switch to using folio_queue for crypto buffers.
-
-    - Remove the xarray bits.
-
-Make some adjustments to the /proc/fs/netfs/stats file such that:
-
-    - All the netfs stats lines begin 'Netfs:' but change this to something
-      a bit more useful.
-
-    - Add a couple of stats counters to track the numbers of skips and waits
-      on the per-inode writeback serialisation lock to make it easier to
-      check for this as a source of performance loss.
-
-Miscellaneous work:
-
-    - Ensure that the sb_writers lock is taken around
-      vfs_{set,remove}xattr() in the cachefiles code.
-
-    - Reduce the number of conditional branches in netfs_perform_write().
-
-    - Move the CIFS_INO_MODIFIED_ATTR flag to the netfs_inode struct and
-      remove cifs_post_modify().
-
-    - Move the max_len/max_nr_segs members from netfs_io_subrequest to
-      netfs_io_request as they're only needed for one subreq at a time.
-
-    - Add an 'unknown' source value for tracing purposes.
-
-    - Remove NETFS_COPY_TO_CACHE as it's no longer used.
-
-    - Set the request work function up front at allocation time.
-
-    - Use bh-disabling spinlocks for rreq->lock as cachefiles completion may
-      be run from block-filesystem DIO completion in softirq context.
-
-    - Remove fs/netfs/io.c.
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-3)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on the vfs-6.11-rc7.fixes merge to bring in prerequisite
-fixes in individual filesystems. All of this has been sitting in linux-next. No
-build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known merge conflicts.
-
-This has now a merge conflict with main due to some rather late cifs fixes.
-This can be resolved by:
-
-git rm fs/netfs/io.c
-
-and then:
-
-diff --cc fs/smb/client/cifssmb.c
-index cfae2e918209,04f2a5441a89..d0df0c17b18f
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@@ -1261,16 -1261,6 +1261,14 @@@ openRetry
-        return rc;
-  }
-
- +static void cifs_readv_worker(struct work_struct *work)
- +{
- +      struct cifs_io_subrequest *rdata =
- +              container_of(work, struct cifs_io_subrequest, subreq.work);
- +
--       netfs_subreq_terminated(&rdata->subreq,
--                               (rdata->result == 0 || rdata->result == -EAGAIN) ?
--                               rdata->got_bytes : rdata->result, true);
-++      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
- +}
- +
-  static void
-  cifs_readv_callback(struct mid_q_entry *mid)
-  {
-@@@ -1323,21 -1306,11 +1321,23 @@@
-                rdata->result = -EIO;
-        }
-
- -      if (rdata->result == 0 || rdata->result == -EAGAIN)
- -              iov_iter_advance(&rdata->subreq.io_iter, rdata->got_bytes);
- +      if (rdata->result == -ENODATA) {
- +              __set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- +              rdata->result = 0;
- +      } else {
--               if (rdata->got_bytes < rdata->actual_len &&
--                   rdata->subreq.start + rdata->subreq.transferred + rdata->got_bytes ==
--                   ictx->remote_i_size) {
-++              size_t trans = rdata->subreq.transferred + rdata->got_bytes;
-++              if (trans < rdata->subreq.len &&
-++                  rdata->subreq.start + trans == ictx->remote_i_size) {
- +                      __set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- +                      rdata->result = 0;
- +              }
- +      }
- +
-        rdata->credits.value = 0;
-+       rdata->subreq.transferred += rdata->got_bytes;
- -      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
-++      trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
- +      INIT_WORK(&rdata->subreq.work, cifs_readv_worker);
- +      queue_work(cifsiod_wq, &rdata->subreq.work);
-        release_mid(mid);
-        add_credits(server, &credits, 0);
-  }
-diff --cc fs/smb/client/smb2pdu.c
-index 88dc49d67037,95377bb91950..bb8ecbbe78af
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@@ -4614,6 -4613,10 +4613,8 @@@ smb2_readv_callback(struct mid_q_entry
-                              server->credits, server->in_flight,
-                              0, cifs_trace_rw_credits_read_response_clear);
-        rdata->credits.value = 0;
-+       rdata->subreq.transferred += rdata->got_bytes;
- -      if (rdata->subreq.start + rdata->subreq.transferred >= rdata->subreq.rreq->i_size)
- -              __set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
-+       trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
-        INIT_WORK(&rdata->subreq.work, smb2_readv_worker);
-        queue_work(cifsiod_wq, &rdata->subreq.work);
-        release_mid(mid);
-
-Merge conflicts with other trees
-================================
-
-No known merge conflicts.
-
-The following changes since commit 4356ab331c8f0dbed0f683abde345cd5503db1e4:
-
-  Merge tag 'vfs-6.11-rc7.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs (2024-09-04 09:33:57 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.netfs
-
-for you to fetch changes up to 4b40d43d9f951d87ae8dc414c2ef5ae50303a266:
-
-  docs: filesystems: corrected grammar of netfs page (2024-09-12 12:20:43 +0200)
-
-Please consider pulling these changes from the signed vfs-6.12.netfs tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.12.netfs
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      Merge branch 'netfs-writeback' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs into vfs.netfs
-
-David Howells (24):
-      cachefiles: Fix non-taking of sb_writers around set/removexattr
-      netfs: Adjust labels in /proc/fs/netfs/stats
-      netfs: Record contention stats for writeback lock
-      netfs: Reduce number of conditional branches in netfs_perform_write()
-      netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_inode
-      netfs: Move max_len/max_nr_segs from netfs_io_subrequest to netfs_io_stream
-      netfs: Reserve netfs_sreq_source 0 as unset/unknown
-      netfs: Remove NETFS_COPY_TO_CACHE
-      netfs: Set the request work function upon allocation
-      netfs: Use bh-disabling spinlocks for rreq->lock
-      mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence of folios
-      iov_iter: Provide copy_folio_from_iter()
-      cifs: Provide the capability to extract from ITER_FOLIOQ to RDMA SGEs
-      netfs: Use new folio_queue data type and iterator instead of xarray iter
-      netfs: Provide an iterator-reset function
-      netfs: Simplify the writeback code
-      afs: Make read subreqs async
-      netfs: Speed up buffered reading
-      netfs: Remove fs/netfs/io.c
-      cachefiles, netfs: Fix write to partial block at EOF
-      netfs: Cancel dirty folios that have no storage destination
-      cifs: Use iterate_and_advance*() routines directly for hashing
-      cifs: Switch crypto buffer to use a folio_queue rather than an xarray
-      cifs: Don't support ITER_XARRAY
-
-Dennis Lam (1):
-      docs: filesystems: corrected grammar of netfs page
-
- Documentation/filesystems/netfs_library.rst |   2 +-
- fs/9p/vfs_addr.c                            |  11 +-
- fs/afs/file.c                               |  30 +-
- fs/afs/fsclient.c                           |   9 +-
- fs/afs/write.c                              |   4 +-
- fs/afs/yfsclient.c                          |   9 +-
- fs/cachefiles/io.c                          |  19 +-
- fs/cachefiles/xattr.c                       |  34 +-
- fs/ceph/addr.c                              |  76 +--
- fs/netfs/Makefile                           |   4 +-
- fs/netfs/buffered_read.c                    | 766 ++++++++++++++++----------
- fs/netfs/buffered_write.c                   | 309 +++++------
- fs/netfs/direct_read.c                      | 147 ++++-
- fs/netfs/internal.h                         |  43 +-
- fs/netfs/io.c                               | 804 ----------------------------
- fs/netfs/iterator.c                         |  50 ++
- fs/netfs/main.c                             |   7 +-
- fs/netfs/misc.c                             |  94 ++++
- fs/netfs/objects.c                          |  16 +-
- fs/netfs/read_collect.c                     | 544 +++++++++++++++++++
- fs/netfs/read_pgpriv2.c                     | 264 +++++++++
- fs/netfs/read_retry.c                       | 256 +++++++++
- fs/netfs/stats.c                            |  27 +-
- fs/netfs/write_collect.c                    | 246 +++------
- fs/netfs/write_issue.c                      |  93 ++--
- fs/nfs/fscache.c                            |  19 +-
- fs/nfs/fscache.h                            |   7 +-
- fs/smb/client/cifsencrypt.c                 | 144 +----
- fs/smb/client/cifsglob.h                    |   4 +-
- fs/smb/client/cifssmb.c                     |   6 +-
- fs/smb/client/file.c                        |  96 ++--
- fs/smb/client/smb2ops.c                     | 219 ++++----
- fs/smb/client/smb2pdu.c                     |  27 +-
- fs/smb/client/smbdirect.c                   |  82 +--
- include/linux/folio_queue.h                 | 156 ++++++
- include/linux/iov_iter.h                    | 104 ++++
- include/linux/netfs.h                       |  46 +-
- include/linux/uio.h                         |  18 +
- include/trace/events/netfs.h                | 144 +++--
- lib/iov_iter.c                              | 240 ++++++++-
- lib/kunit_iov_iter.c                        | 259 +++++++++
- lib/scatterlist.c                           |  69 ++-
- 42 files changed, 3520 insertions(+), 1984 deletions(-)
- delete mode 100644 fs/netfs/io.c
- create mode 100644 fs/netfs/read_collect.c
- create mode 100644 fs/netfs/read_pgpriv2.c
- create mode 100644 fs/netfs/read_retry.c
- create mode 100644 include/linux/folio_queue.h
+Having the PTEs' kernel addresses _is_ handy, but I guess they're
+scrambled on most end users' systems now and anybody that's actively
+debugging can just use a kprobe or something to dump the pmd_clear_bad()
+argument directly.
 
