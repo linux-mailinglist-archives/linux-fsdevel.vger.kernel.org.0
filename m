@@ -1,211 +1,347 @@
-Return-Path: <linux-fsdevel+bounces-29346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31709785EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:38:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D144F978649
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30CCFB228F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 16:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523A41F24CD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 16:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD1178C76;
-	Fri, 13 Sep 2024 16:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE4A81AC1;
+	Fri, 13 Sep 2024 16:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="N4vcAlfG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNxZeJVL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7066BB5B;
-	Fri, 13 Sep 2024 16:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726245505; cv=fail; b=XkT8+5jXDRiZhlEzIbCoELWbdCX9rVz5E/3BnjjNB9YEDgyeNXStJeHVrBgDxbRA2uzLPw6byJYH8xHjYoyHrnPmSOSuaQUE0m9dlVXmfFW8JkkylVqZp68PzXqY6QjoByuxGtg5grDWFZpJRKcoH1nAxIXt3m2550ZdrgeG2to=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726245505; c=relaxed/simple;
-	bh=oKT7GpW/qAvMSAC8i+DB+Qeqw+sGy2Qcg0zxxP6AJk8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CfJvoY6UVepmK15iONw/atK1YnUgygQCoigXGyZ8GcdWt4XjfVKs3yMHaGyTBvEvFAiRgMqZUSvf5SdUEzbSN3590l0QwqYttEjdRhTICNZqHVP5uTwI98/YWrHeT8iYuo38s1UpU0TnjgMbVnrSc4aH9nJi+oGwe0Oi/rHb8dU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=N4vcAlfG; arc=fail smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DG4vew024253;
-	Fri, 13 Sep 2024 09:38:02 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	s2048-2021-q4; bh=6g4TNDvmemXLZWvUNjI9qQhr/3gV8bTsX2R9B3qhZsY=; b=
-	N4vcAlfGuFOeq9w52p/OuE4Uct1Ofgla/xOUsKQAq6TygbDnheazLZtfWUy72rSJ
-	7YvQqdkE8aZFf+HhXXYxC0KgzpNPxyZ0HIXVW6ZI+Sz5rqBicjBW4k0hYLs20B4/
-	YxcEjGZZ/31uInepDyZOtztvKyUoABt5PDGc1zodFC+yokN+XR6sHHNUy4C+JxVa
-	g3U+giuqShXKVmHjF+p19ND3gIsVjHnOWhEFlYgGzJEk8rSHNCit5gOXl0ECJR+B
-	dsijI8JfU8++gLO8fxOJ4jqOUj/hZtKSgrqjTYpaIKXToJRmlQ7l3u5t8uwb8hby
-	oPBxe82fe99sH87OiSd/sg==
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2040.outbound.protection.outlook.com [104.47.57.40])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 41mgk3jq9v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 09:38:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VYrJ+Tc/jrndZP9KOHFrnQfpGQU9gHlDO5UdCfbr7dXGv+n3VjJ198ujO4A+SHK+YAaM/xlx9phNWWAhLEo0kIQCGybYHPQK8tSRM9C5iq6z+Rplt5h568d5f8r9AynNGhP8CtoY3X6TFglPxH/Yy1RCHfzO73vmAMGek4qbIIMqfXzcVa42zh9j3KMPPVPMLEmHfsjc/FE5E5/rY9BCqztFVGQ1iHwl40Dtl9LniNlXug34pkgFFGlwVvanj1IAebC4jPD8QXApMNp6Ll6D3/PsJQiSLI+w3gPRTWUyRbHgvet+rFoyd/+o6tHvLilqBljxz8r+vsAzormtP3iLEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6g4TNDvmemXLZWvUNjI9qQhr/3gV8bTsX2R9B3qhZsY=;
- b=CR8zBcHuZDMCqUeXqwOz6cduJRxuI+w7obu4cJZygEIn8XaOdBb0IWC3ov/RL6/7xxue8wc3ijECslRyV1KhK1OZt5QlOIEIB+8iNp+5k1bU4FqWuWSbs5183gzWi4RkRS0VzUgZuI5D1nza3AvaWvA/ULOePlSSImVwQ5jaKvme8P/wy2DlpocR0jVfSnaGCK6sr/KyBygKTIMN6dg+DKGBkNw4w21BexONW7aR/PvOxYX6MgY0+z1VChiAS4RvLrWmpFP0nDiDtjvTLhIsH4JVhFCIrk8QFqWC7n+yNQLSrTztEFTZvMsfGniSKCLoqXkOW+zjdDYBZiyVsNxQow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
- by BY3PR15MB4819.namprd15.prod.outlook.com (2603:10b6:a03:3b6::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Fri, 13 Sep
- 2024 16:37:59 +0000
-Received: from LV3PR15MB6455.namprd15.prod.outlook.com
- ([fe80::740a:ec4a:6e81:cf28]) by LV3PR15MB6455.namprd15.prod.outlook.com
- ([fe80::740a:ec4a:6e81:cf28%7]) with mapi id 15.20.7939.017; Fri, 13 Sep 2024
- 16:37:59 +0000
-Message-ID: <9e8f8872-f51b-4a09-a92c-49218748dd62@meta.com>
-Date: Fri, 13 Sep 2024 12:37:49 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-To: David Howells <dhowells@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
-        Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Dao <dqminh@cloudflare.com>, Dave Chinner <david@fromorbit.com>,
-        regressions@lists.linux.dev, regressions@leemhuis.info
-References: <d4a1cca4-96b8-4692-81f0-81c512f55ccf@meta.com>
- <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
- <ZuNjNNmrDPVsVK03@casper.infradead.org>
- <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
- <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <1368975.1726243446@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Chris Mason <clm@meta.com>
-In-Reply-To: <1368975.1726243446@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR06CA0010.namprd06.prod.outlook.com
- (2603:10b6:208:23d::15) To LV3PR15MB6455.namprd15.prod.outlook.com
- (2603:10b6:408:1ad::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3C36BFA3;
+	Fri, 13 Sep 2024 16:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726246648; cv=none; b=ChsA8nmsCfx7qurFrD0oK9FO+b4sQSvH5PdwDUstcgQTYKrx9Fx+OJoJhHknMOD1H3wAJs2jDcK24knXHJ9mPemkG+X9pQ8GYie4vL6zhiXOOz74GHbcXtcOAjUFg737TR4s06PkMcAGDMjwfBhdJ72kc9VQEd1SuSlzMQir/Wo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726246648; c=relaxed/simple;
+	bh=RMuylek6k4wQuFye40QyAIsum81oCoU7c/Xx1asARsc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t47iazrd4CAuQAhksOKCkcb0SJigzCGont8tKtSnNdep4HJekIUbvuMS07T/P1YcouiY5loFNxPb99jdHz0ivfiQl1ubdXJmThVe6KraxLy7z8CDCJVRrjk21NzITHShn6sdQtQofX0OH3xQr3zqJOVuRnAWE4xMqswkxYCIf4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNxZeJVL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C320DC4CEC0;
+	Fri, 13 Sep 2024 16:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726246648;
+	bh=RMuylek6k4wQuFye40QyAIsum81oCoU7c/Xx1asARsc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VNxZeJVLFBxUokeO+/0P1EAnPmS1b5UaqbEzuH/GB95GkP+6XTvdKgXANz41Xsnau
+	 4WzgBN8FRydrWmS+UPzc7Puv3wNjnzcTmAXLvX7frZTJKuzBgvbi8/KG3ysLEmmTlF
+	 A1vafu0Xd0U9NrEkef/IVouurO/VyvsGPvJxG8LG3G6NOHv9IHtywhmvmedGnELRYw
+	 zE6jgf/sNhhz4B0QjlO+WcXSqW5X6JTlso+0Ugx822CoGLDkvnsUT8YtOp7INGTUiT
+	 dG+223qrTDrd8a9UPzj8xnj92d2AT5ZkCBqQpxLjgfrrJtG6nstTpaYmuPIPybv015
+	 2cwpmMkTycQoQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs netfs
+Date: Fri, 13 Sep 2024 18:56:36 +0200
+Message-ID: <20240913-vfs-netfs-39ef6f974061@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR15MB6455:EE_|BY3PR15MB4819:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc4bbd90-639e-4615-baf9-08dcd4126dc1
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U2F6cWtiUjBWS2hVMDhjZnhOZWRPTy9qNlFabVY0Z1FNYkVrM2VNMTVVOHdX?=
- =?utf-8?B?dTlXNll1VitISElsWmV0dGFXcjFsdmIxcmJSMUV0TEpxQkFNSG4ydThrRk1N?=
- =?utf-8?B?d1Erd2YvcVoxbXFSbFhZSTExWlZwbFZ5ZEtady9hVURoNlZ4dXdxMk14cjJm?=
- =?utf-8?B?QWdmcGgyaGJMRWo1dVVmaGQyU2xoRStwcWZIM0tzcmlQL2ZRQW1FaWo2T1VK?=
- =?utf-8?B?cjZYU04vSnd5T3pydmlTaFhHelM2N0NvS1h5T2JvUHJpR3Z1UzVjclRqUXV6?=
- =?utf-8?B?aFVSaU9oM2R3aVpheFd3aVVPdUdlTjNEL1BDdzd0VEZxZTV0ZWIrOEVPSVdp?=
- =?utf-8?B?N050OW10VEd3RDEremlwQkd1djd6b00zbkJnT0ZwMjRHOEVUVzVaTXc1alZt?=
- =?utf-8?B?RUlhZDliSFlhNFM2RUY4RjJ6aFNObFVTV0lrajFSRnBCZE1va240TmplekxX?=
- =?utf-8?B?eWMwblFZcmRMTmtkQ1pVQWFlaTBLalh0REY3MWVnblhlN2ZsdXplSUo4Y1l3?=
- =?utf-8?B?ZUNrQnRRK2NkTnFzTjdIa0cwQ3hzRnJIMkYzN3JVUUJhaXlhc3hKQzRlNzMz?=
- =?utf-8?B?NXJianR3OGh1alFrSm80dmUrTHZvbDB2d2F1TnNMVUZVdDBEZmt3dmU0dGRX?=
- =?utf-8?B?d2NSZ2x0UmxXSGo1SURpOS9ScnNYTTJSa0lVZGZUVGczWEpTeXNRNDJ3b1hO?=
- =?utf-8?B?UE5ENzVueEJrLzZCaDdZbzdtMTJnSERKYzRNVm9vMEJOcDRUaWhkKzJmVWdU?=
- =?utf-8?B?MWkyR1dQaU42djUzWm1NVW1kSDZ5QzhSNEJRMkJZRjVFT2FFM0ttRWJETTJU?=
- =?utf-8?B?cjIxdnA5aG9nV3E0S2IxdkhTbzJTQXZZMUtQSG5BS1h4SkJQWDVHYU5BN0R1?=
- =?utf-8?B?dTlCeWFFWGNWZGlQMTRyakZ3VWM5L3pBaDdDRUFTNHl0ZDlSbU5tVUIvSThO?=
- =?utf-8?B?R3dZOUpYNkN2MzVMWkVLOS94MEVYcXNhSXZXU09WOUFQWEhKQlczV0tDbjVa?=
- =?utf-8?B?Z1hEd3g3V2VLZkxKREI1U1JtdnVKTWk4QXIwM3dBOTBqREY4bTR1a0I0VGZV?=
- =?utf-8?B?ODZDVklveDlkTC9mUVBla2pMUmdpWTl4ZnBOeSttUkF1cTh1WWhxRXUrNUk1?=
- =?utf-8?B?c242ak9lQytDekNNQndrai9XeDdSUDdhMnJIZUtuWU4rNFZvb2xoRkozSXBI?=
- =?utf-8?B?Vm5ZbGJjM1hrVEdOODhLWlphQ0oyNGo3ZWlQMzd0SzF4c2FJLzJwQ016OGwv?=
- =?utf-8?B?ZHBUeXpMdGZ5cUZOclBRZXFUaTJIZDV4SVZmcmplbzhkVXB4YWdSS2gxaHVz?=
- =?utf-8?B?blRHeUV0bGlyV3ltcXc0V0ZMcnFVM1U0VXV2ei9YdDhDay96YUNhWnRraWJv?=
- =?utf-8?B?SDVENXc1bk54NDZtMFBPRExGQUowMlpINHc1elYyNUxpSGgyMWpxaHBMZ0tU?=
- =?utf-8?B?N3BVeHVrRzRxUk5MdzEwQnBGVDlEUGM5VFdWOGx0bWJ6anVvN2FPNnRoalk4?=
- =?utf-8?B?K1NxeiswR09EbkFnYUlaNjlMN2FwcUVBVXpxcS92aVpuWVFjc1ZobkhhdzRv?=
- =?utf-8?B?NVp1UlBWbW9oVHhBdFluMnVCeGtLM1k0azI5elNLTUVibjR6RlJyTlhleWQy?=
- =?utf-8?B?R1R0c3dEZWM0dlhKS2REODJGc1FSejVvT1NibjN5VHREK3N3MDBzRVFFY2RU?=
- =?utf-8?B?YTFaTTN2b0VmMFBJV1VzYmU2Rm1yU1hSYTZKWXFHR05lR2VJeFBXQXRIMlBv?=
- =?utf-8?B?N3dQOFZJRXdhYm9BZ0s2djdTVjZCOE1zQkdEZ3Y2ZEx5M3BlcjRXQ1NZd3J2?=
- =?utf-8?B?cUtLSk5kZ1lEKzQrTm1FUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR15MB6455.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WW80ZFYyb0I3NDVHU3VmUUdWVnE0YTNSWGs1blptaGxWNWZLSFg3dGNKNmJU?=
- =?utf-8?B?TGF1am91RFZuMzhaaTlZKzZ0M3dYR3psZkozMGovT1Q1M3pzSzR6amlJajkw?=
- =?utf-8?B?ZFY3dEVtNmN0ZlhyMU1aT1RPbWYxa3FzaXM1ZFE0alNXeWE5aDgzcHlIVzhQ?=
- =?utf-8?B?NExVUkt5b3UrSXhldENzM2dCU2kzTTAvTEwzN3Z1YlNJeVNXdFJ0dkUzeitV?=
- =?utf-8?B?VDdtWCt1Zk0rSy9RN3VHbE5xMUg3M1lzODFtVThGYlJSM2tqdDZ4RjREalhT?=
- =?utf-8?B?M2RhbVZxaW55ZUphQ2V4VmFqNnl2NUR2NXZLVWpSSTR4ZnZwRXhzVTJ1SWhw?=
- =?utf-8?B?Z3JCQ2hGWE9mU25mNVpoVGVXcGQxVys0b0R1SDlsRjJHcmxwMmRnTmpLWHpQ?=
- =?utf-8?B?YVdRMnNhZk0yaEVET241TFQzSHhUTEdzeDZsa1BndEZGd3hvR0tDUk4yQXRM?=
- =?utf-8?B?RS9DeGhwZFRtdGhhRFcxeElRYzJRSld1NGxtS2hRU1RITFFiMFRYampCdGpJ?=
- =?utf-8?B?cWZkMldSd2xwTmE0ZmhYU21rT3FXYndXeG01eVRFMkFPZ01GMUM2ZmtiV3lK?=
- =?utf-8?B?TGFEeGxHblpnNkNwWXZ5Z3BJSHFnN3pubWVkUGU1NXZxNFJlY2krKzVpQ2Nx?=
- =?utf-8?B?ZjZiV2FURythM0hjNlNhcm12OCt3QXNucUZzTThWelNURHh2bHBRNHZMdFR6?=
- =?utf-8?B?SUVKWTl1QXM2Q1JmaFVwQ3dXbHBrVlZXSGs3RkI5aWhrUmg2R0lJekRpZTNu?=
- =?utf-8?B?Z3ZEU3RJOGRGYXpwSEYwMkRwL2tBUnZCbmFBSTdnaTgrd1EvQmlyc3JSNEhr?=
- =?utf-8?B?dENBN1RTRHdQK0RwSTB1V21DMjNDQVJJckk2RWF3ZGhWNFA3VlduTEhMT1pU?=
- =?utf-8?B?WVUrMjFXdGlLOXgybTYyYUl6elZnZDhsOXVxSXBDM2Z1RHlHbFNZYXduSGxy?=
- =?utf-8?B?VFZ2QU1LR0lNMnJNdFIra2QyQmsyb1YzbW94R2plU0ZvMEFDRVEvS2dNY1Jz?=
- =?utf-8?B?V21ja3MwWFZrdDBONU9RYjZGTlRoZE5rL3d4RXM0ek9xVHdhMk1waGZyS01R?=
- =?utf-8?B?VDU0RDVxYTNONjF1bFpjdHFlK1ZNelRxbEhQbGJTZnJGRTZoSHA4QmpKZGhx?=
- =?utf-8?B?VW9qNFRuMFowWS9tWStHbnBVdFBpY2c1MWJMd2plN3BoVVp2QU5YNlEyNVAr?=
- =?utf-8?B?UFl5RkI4aWVDZk9sb2IrREcrcUVweHNxcStwR2JKT3JvSzJzQWtQeFNyL2Rw?=
- =?utf-8?B?ZVJGby8rOGZabFgzWG5qeVZrWERsY0VEaXdDT05MWllvWnV1YXB4NEhocWRu?=
- =?utf-8?B?RlFuekNuanNNQzFUOHZldEdTQ1lEUm81VGQ2em0yT01DL1NBaFhjMmhaeVk0?=
- =?utf-8?B?REZ2YytiU2hoTUVmT2VxT0xVWktackpTQVpNNmE5WFhRZDBiUS9YdHZMUG4w?=
- =?utf-8?B?cEFIajFKV0xwTm1DSWRtRGtLRnJtTzRPSVVDZnVNUVZMcElZWHZ6UGpIeUNT?=
- =?utf-8?B?QnlDMjYrS25FWklGRDFxRno0TnNiM2FoT1lpVWpUWU5vRXFkRzJ6VE5Ncitq?=
- =?utf-8?B?Rnl4NmhUSWtQbGl5SUdDV2ErNUNTdHliK0VTR21MeVFndkRZZW5uUjN4cjN5?=
- =?utf-8?B?UWIwa1NCaExDZDg2cUlHTHlBVnUzRkN2TlVsMDhaaVFGVm1nYXZXWkJpLzEz?=
- =?utf-8?B?b1VIcDh0Vnc0TnFYbVVaU3FZc0Q3ajlxWVBwalFpZVNlb2NHR3UyNE9xYWpV?=
- =?utf-8?B?Y0tXeGhqT0pGT092WlZjZVRPcGdBa0o0d2h5SHBvSkRidHRIYzZvY1V6ZXVM?=
- =?utf-8?B?MkxvRkdjRElsenNjT3pqaVVvdGNwKzhHNXAvclVCbmJtcnlmQWpVY2ZIYi9U?=
- =?utf-8?B?VHIxYmVML2UwWVRFWjF0N21TLzhaaVpOalIzRlMvbkkydkJ1UmhCbzZDVVBM?=
- =?utf-8?B?MjFwK2E0L0ZWMkNUY3pMVVdqb2lzTWl2c2hKK0E1U3lQUzk2NWgyM29vMFpy?=
- =?utf-8?B?MDNDUldzeFFWY2pZYUpKUzdHYUl3YWlBVnNya1cvN2tUcUtlMzZOTVhPMnps?=
- =?utf-8?B?b2lQQ25jNklCU2pNQkN2NUlNR3hEVkdERVJRZEJVdERxYWtzOVl5ZFVoQ1lH?=
- =?utf-8?Q?qw08=3D?=
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc4bbd90-639e-4615-baf9-08dcd4126dc1
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR15MB6455.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 16:37:59.6721
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2gbwizDTKn3Og0rjhZA36Flzeh+uEN1nnpBq8ViJYNQ02A9ahTDPjnplxF41Wqnk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR15MB4819
-X-Proofpoint-ORIG-GUID: hbb5Rda7b8UggOLD7NNt4e9CCuWBRZ7L
-X-Proofpoint-GUID: hbb5Rda7b8UggOLD7NNt4e9CCuWBRZ7L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12101; i=brauner@kernel.org; h=from:subject:message-id; bh=RMuylek6k4wQuFye40QyAIsum81oCoU7c/Xx1asARsc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ9yXtRPD19yyT/iYuP/A57lcddt0ZRUTZX1kvyVcbGp boPrsts6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI9iJGhierF+7RvFb0gHl5 Vn/BvIpD5l/L2i3q9/iFWm94LnFa4Tojw6JNDDPvyM1vE3QI+C7e6LPoyXYdq1cztm58PWm728m mM1wA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 9/13/24 12:04 PM, David Howells wrote:
-> Chris Mason <clm@meta.com> wrote:
-> 
->> I've mentioned this in the past to both Willy and Dave Chinner, but so
->> far all of my attempts to reproduce it on purpose have failed.
-> 
-> Could it be a splice bug?
+Hey Linus,
 
-I really wanted it to be a splice bug, but I believe the 6.9 workload I
-mentioned isn't using splice.  I didn't 100% verify though.
+/* Summary */
 
--chris
+This contains the work to improve read/write performance for the new
+netfs library.
+
+The main performance enhancing changes are:
+
+    - Define a structure, struct folio_queue, and a new iterator type,
+      ITER_FOLIOQ, to hold a buffer as a replacement for ITER_XARRAY. See
+      that patch for questions about naming and form.
+
+      ITER_FOLIOQ is provided as a replacement for ITER_XARRAY. The
+      problem with an xarray is that accessing it requires the use of a
+      lock (typically the RCU read lock) - and this means that we can't
+      supply iterate_and_advance() with a step function that might sleep
+      (crypto for example) without having to drop the lock between
+      pages. ITER_FOLIOQ is the iterator for a chain of folio_queue
+      structs, where each folio_queue holds a small list of folios. A
+      folio_queue struct is a simpler structure than xarray and is not
+      subject to concurrent manipulation by the VM. folio_queue is used
+      rather than a bvec[] as it can form lists of indefinite size,
+      adding to one end and removing from the other on the fly.
+
+    - Provide a copy_folio_from_iter() wrapper.
+
+    - Make cifs RDMA support ITER_FOLIOQ.
+
+    - Use folio queues in the write-side helpers instead of xarrays.
+
+    - Add a function to reset the iterator in a subrequest.
+
+    - Simplify the write-side helpers to use sheaves to skip gaps rather
+      than trying to work out where gaps are.
+
+    - In afs, make the read subrequests asynchronous, putting them into work
+      items to allow the next patch to do progressive unlocking/reading.
+
+    - Overhaul the read-side helpers to improve performance.
+
+    - Fix the caching of a partial block at the end of a file.
+
+    - Allow a store to be cancelled.
+
+Then some changes for cifs to make it use folio queues instead of
+xarrays for crypto bufferage:
+
+    - Use raw iteration functions rather than manually coding iteration when
+      hashing data.
+
+    - Switch to using folio_queue for crypto buffers.
+
+    - Remove the xarray bits.
+
+Make some adjustments to the /proc/fs/netfs/stats file such that:
+
+    - All the netfs stats lines begin 'Netfs:' but change this to something
+      a bit more useful.
+
+    - Add a couple of stats counters to track the numbers of skips and waits
+      on the per-inode writeback serialisation lock to make it easier to
+      check for this as a source of performance loss.
+
+Miscellaneous work:
+
+    - Ensure that the sb_writers lock is taken around
+      vfs_{set,remove}xattr() in the cachefiles code.
+
+    - Reduce the number of conditional branches in netfs_perform_write().
+
+    - Move the CIFS_INO_MODIFIED_ATTR flag to the netfs_inode struct and
+      remove cifs_post_modify().
+
+    - Move the max_len/max_nr_segs members from netfs_io_subrequest to
+      netfs_io_request as they're only needed for one subreq at a time.
+
+    - Add an 'unknown' source value for tracing purposes.
+
+    - Remove NETFS_COPY_TO_CACHE as it's no longer used.
+
+    - Set the request work function up front at allocation time.
+
+    - Use bh-disabling spinlocks for rreq->lock as cachefiles completion may
+      be run from block-filesystem DIO completion in softirq context.
+
+    - Remove fs/netfs/io.c.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-3)
+Debian clang version 16.0.6 (27+b1)
+
+All patches are based on the vfs-6.11-rc7.fixes merge to bring in prerequisite
+fixes in individual filesystems. All of this has been sitting in linux-next. No
+build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known merge conflicts.
+
+This has now a merge conflict with main due to some rather late cifs fixes.
+This can be resolved by:
+
+git rm fs/netfs/io.c
+
+and then:
+
+diff --cc fs/smb/client/cifssmb.c
+index cfae2e918209,04f2a5441a89..d0df0c17b18f
+--- a/fs/smb/client/cifssmb.c
++++ b/fs/smb/client/cifssmb.c
+@@@ -1261,16 -1261,6 +1261,14 @@@ openRetry
+        return rc;
+  }
+
+ +static void cifs_readv_worker(struct work_struct *work)
+ +{
+ +      struct cifs_io_subrequest *rdata =
+ +              container_of(work, struct cifs_io_subrequest, subreq.work);
+ +
+-       netfs_subreq_terminated(&rdata->subreq,
+-                               (rdata->result == 0 || rdata->result == -EAGAIN) ?
+-                               rdata->got_bytes : rdata->result, true);
+++      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
+ +}
+ +
+  static void
+  cifs_readv_callback(struct mid_q_entry *mid)
+  {
+@@@ -1323,21 -1306,11 +1321,23 @@@
+                rdata->result = -EIO;
+        }
+
+ -      if (rdata->result == 0 || rdata->result == -EAGAIN)
+ -              iov_iter_advance(&rdata->subreq.io_iter, rdata->got_bytes);
+ +      if (rdata->result == -ENODATA) {
+ +              __set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ +              rdata->result = 0;
+ +      } else {
+-               if (rdata->got_bytes < rdata->actual_len &&
+-                   rdata->subreq.start + rdata->subreq.transferred + rdata->got_bytes ==
+-                   ictx->remote_i_size) {
+++              size_t trans = rdata->subreq.transferred + rdata->got_bytes;
+++              if (trans < rdata->subreq.len &&
+++                  rdata->subreq.start + trans == ictx->remote_i_size) {
+ +                      __set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ +                      rdata->result = 0;
+ +              }
+ +      }
+ +
+        rdata->credits.value = 0;
++       rdata->subreq.transferred += rdata->got_bytes;
+ -      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
+++      trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
+ +      INIT_WORK(&rdata->subreq.work, cifs_readv_worker);
+ +      queue_work(cifsiod_wq, &rdata->subreq.work);
+        release_mid(mid);
+        add_credits(server, &credits, 0);
+  }
+diff --cc fs/smb/client/smb2pdu.c
+index 88dc49d67037,95377bb91950..bb8ecbbe78af
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@@ -4614,6 -4613,10 +4613,8 @@@ smb2_readv_callback(struct mid_q_entry
+                              server->credits, server->in_flight,
+                              0, cifs_trace_rw_credits_read_response_clear);
+        rdata->credits.value = 0;
++       rdata->subreq.transferred += rdata->got_bytes;
+ -      if (rdata->subreq.start + rdata->subreq.transferred >= rdata->subreq.rreq->i_size)
+ -              __set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
++       trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
+        INIT_WORK(&rdata->subreq.work, smb2_readv_worker);
+        queue_work(cifsiod_wq, &rdata->subreq.work);
+        release_mid(mid);
+
+Merge conflicts with other trees
+================================
+
+No known merge conflicts.
+
+The following changes since commit 4356ab331c8f0dbed0f683abde345cd5503db1e4:
+
+  Merge tag 'vfs-6.11-rc7.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs (2024-09-04 09:33:57 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.netfs
+
+for you to fetch changes up to 4b40d43d9f951d87ae8dc414c2ef5ae50303a266:
+
+  docs: filesystems: corrected grammar of netfs page (2024-09-12 12:20:43 +0200)
+
+Please consider pulling these changes from the signed vfs-6.12.netfs tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.12.netfs
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge branch 'netfs-writeback' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs into vfs.netfs
+
+David Howells (24):
+      cachefiles: Fix non-taking of sb_writers around set/removexattr
+      netfs: Adjust labels in /proc/fs/netfs/stats
+      netfs: Record contention stats for writeback lock
+      netfs: Reduce number of conditional branches in netfs_perform_write()
+      netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_inode
+      netfs: Move max_len/max_nr_segs from netfs_io_subrequest to netfs_io_stream
+      netfs: Reserve netfs_sreq_source 0 as unset/unknown
+      netfs: Remove NETFS_COPY_TO_CACHE
+      netfs: Set the request work function upon allocation
+      netfs: Use bh-disabling spinlocks for rreq->lock
+      mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence of folios
+      iov_iter: Provide copy_folio_from_iter()
+      cifs: Provide the capability to extract from ITER_FOLIOQ to RDMA SGEs
+      netfs: Use new folio_queue data type and iterator instead of xarray iter
+      netfs: Provide an iterator-reset function
+      netfs: Simplify the writeback code
+      afs: Make read subreqs async
+      netfs: Speed up buffered reading
+      netfs: Remove fs/netfs/io.c
+      cachefiles, netfs: Fix write to partial block at EOF
+      netfs: Cancel dirty folios that have no storage destination
+      cifs: Use iterate_and_advance*() routines directly for hashing
+      cifs: Switch crypto buffer to use a folio_queue rather than an xarray
+      cifs: Don't support ITER_XARRAY
+
+Dennis Lam (1):
+      docs: filesystems: corrected grammar of netfs page
+
+ Documentation/filesystems/netfs_library.rst |   2 +-
+ fs/9p/vfs_addr.c                            |  11 +-
+ fs/afs/file.c                               |  30 +-
+ fs/afs/fsclient.c                           |   9 +-
+ fs/afs/write.c                              |   4 +-
+ fs/afs/yfsclient.c                          |   9 +-
+ fs/cachefiles/io.c                          |  19 +-
+ fs/cachefiles/xattr.c                       |  34 +-
+ fs/ceph/addr.c                              |  76 +--
+ fs/netfs/Makefile                           |   4 +-
+ fs/netfs/buffered_read.c                    | 766 ++++++++++++++++----------
+ fs/netfs/buffered_write.c                   | 309 +++++------
+ fs/netfs/direct_read.c                      | 147 ++++-
+ fs/netfs/internal.h                         |  43 +-
+ fs/netfs/io.c                               | 804 ----------------------------
+ fs/netfs/iterator.c                         |  50 ++
+ fs/netfs/main.c                             |   7 +-
+ fs/netfs/misc.c                             |  94 ++++
+ fs/netfs/objects.c                          |  16 +-
+ fs/netfs/read_collect.c                     | 544 +++++++++++++++++++
+ fs/netfs/read_pgpriv2.c                     | 264 +++++++++
+ fs/netfs/read_retry.c                       | 256 +++++++++
+ fs/netfs/stats.c                            |  27 +-
+ fs/netfs/write_collect.c                    | 246 +++------
+ fs/netfs/write_issue.c                      |  93 ++--
+ fs/nfs/fscache.c                            |  19 +-
+ fs/nfs/fscache.h                            |   7 +-
+ fs/smb/client/cifsencrypt.c                 | 144 +----
+ fs/smb/client/cifsglob.h                    |   4 +-
+ fs/smb/client/cifssmb.c                     |   6 +-
+ fs/smb/client/file.c                        |  96 ++--
+ fs/smb/client/smb2ops.c                     | 219 ++++----
+ fs/smb/client/smb2pdu.c                     |  27 +-
+ fs/smb/client/smbdirect.c                   |  82 +--
+ include/linux/folio_queue.h                 | 156 ++++++
+ include/linux/iov_iter.h                    | 104 ++++
+ include/linux/netfs.h                       |  46 +-
+ include/linux/uio.h                         |  18 +
+ include/trace/events/netfs.h                | 144 +++--
+ lib/iov_iter.c                              | 240 ++++++++-
+ lib/kunit_iov_iter.c                        | 259 +++++++++
+ lib/scatterlist.c                           |  69 ++-
+ 42 files changed, 3520 insertions(+), 1984 deletions(-)
+ delete mode 100644 fs/netfs/io.c
+ create mode 100644 fs/netfs/read_collect.c
+ create mode 100644 fs/netfs/read_pgpriv2.c
+ create mode 100644 fs/netfs/read_retry.c
+ create mode 100644 include/linux/folio_queue.h
 
