@@ -1,107 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-29284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55433977A5F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 09:59:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4BF977AAA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 10:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F47F1C21D63
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 07:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4D51F24891
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 08:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CF81BC9EB;
-	Fri, 13 Sep 2024 07:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aTN0b4zl"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA0F1BD514;
+	Fri, 13 Sep 2024 08:07:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A07F1BB6A4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 07:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5529C19F41A;
+	Fri, 13 Sep 2024 08:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726214370; cv=none; b=bpZDo38ZRqsW10V5gCouJD1fBuT7OhJcU1g0sCo/UoLyOefe54LgXXX1f6PTn1sfWX+KFMeYCY6Wl3Thw7X7X5uDXkLRd34r1ZkKftBM4atrCqKgcNoLKGOJYxmfMEUaj6RwhhbgESiGV9REjniPJkpeeSeuvRmGzYakm9ef+2w=
+	t=1726214834; cv=none; b=j92zjUpkl2F35E1rH4tGo18chDYfPVZwCbaDmtwIO+3JFhiMTnAYdYySwXwrZsXpdsZ0f6yUqfEotMA5k90/L7meck7KnwKHU1zn9Pp5WbdW4pwgFlvjofaUY7fW/eAvNqPfNS7lLEcseQAqW8Ontr6hkL2do1hHaDxJMxlyXR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726214370; c=relaxed/simple;
-	bh=kgtxvsYQ+THuJREDp/R0kMk6JWPfaY7Kq1aHhRJ3s8E=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=RGmwT8D9vD9CoMlS3GrBo+lDzD6w2fGQRj35lgoyRp0+ie82limdar/0I2WR7qpG7bw2NW5wV94vf3MDD70I7br19k+cZ4Rk04GGPDcvVv+78UcJ0TH5379bPBJix/Scrx1NmNNXqrccRADC02I1wbEKcwf3ZDwhQJS1F4ScmxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aTN0b4zl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726214368;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AyeF+/WYzR3SYi9omjxf05OynwYJxePvZ/auujDdqu4=;
-	b=aTN0b4zlYVZHiJ1khOXj4B77PH8Zk5JoTocdgq7gkWuxnbyQx+LUA9DHmmExIQq7zJI8M8
-	CV39u3BWWxdX9pSasG3monZLx/sYBiRC0CpeP1IeuJFjk0I+6zCI0hNRRZ8nxrVwB/fjDD
-	yS6GZitT9Ifrsb91DCdb9zTp78zCJ74=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-611-OrTa6mQ8NEiM4VnKY-WhyQ-1; Fri,
- 13 Sep 2024 03:59:25 -0400
-X-MC-Unique: OrTa6mQ8NEiM4VnKY-WhyQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A94211956077;
-	Fri, 13 Sep 2024 07:59:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0215C30001AB;
-	Fri, 13 Sep 2024 07:59:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <202409131438.3f225fbf-oliver.sang@intel.com>
-References: <202409131438.3f225fbf-oliver.sang@intel.com>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: dhowells@redhat.com, oe-lkp@lists.linux.dev, lkp@intel.com,
-    Linux Memory Management List <linux-mm@kvack.org>,
-    Christian Brauner <brauner@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [linux-next:master] [netfs] a05b682d49: BUG:KASAN:slab-use-after-free_in_copy_from_iter
+	s=arc-20240116; t=1726214834; c=relaxed/simple;
+	bh=OoeooWScYrdT/7Ye2MT+bee9p/3N1jp3nqcoiu34Ji8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtlVxidlP4mp5ZEThGSMLb8GtnL8tR5vk+bJH4Wcm7w9IioPPbMcWoFDrmf+7frGtPDmuz0VGCIful2jA60fssXu0KhsZCyfaymDbVHu05Wyg87aN0YZ/OrpstsMGRG7M/LR9ilqC/fG48GEwZMRiOHlsIoji4ycBB0MXMjN+GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 3DAE2227ABD; Fri, 13 Sep 2024 10:07:00 +0200 (CEST)
+Date: Fri, 13 Sep 2024 10:06:59 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
+	sagi@grimberg.me, martin.petersen@oracle.com,
+	James.Bottomley@HansenPartnership.com, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
+	jlayton@kernel.org, chuck.lever@oracle.com, bvanassche@acm.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+	linux-scsi@vger.kernel.org, gost.dev@samsung.com,
+	vishak.g@samsung.com, javier.gonz@samsung.com,
+	Nitesh Shetty <nj.shetty@samsung.com>
+Subject: Re: [PATCH v5 4/5] sd: limit to use write life hints
+Message-ID: <20240913080659.GA30525@lst.de>
+References: <20240910150200.6589-1-joshi.k@samsung.com> <CGME20240910151057epcas5p3369c6257a6f169b4caa6dd59548b538c@epcas5p3.samsung.com> <20240910150200.6589-5-joshi.k@samsung.com> <20240912130235.GB28535@lst.de> <e6ae5391-ae84-bae4-78ea-4983d04af69f@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1263137.1726214359.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Sep 2024 08:59:19 +0100
-Message-ID: <1263138.1726214359@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6ae5391-ae84-bae4-78ea-4983d04af69f@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Can you try with the attached change?  It'll get folded into Christian's
-vfs.netfs branch at some point.
+On Thu, Sep 12, 2024 at 10:01:00PM +0530, Kanchan Joshi wrote:
+> Please see the response in patch #1. My worries were:
+> (a) adding a new field and propagating it across the stack will cause 
+> code duplication.
+> (b) to add a new field we need to carve space within inode, bio and 
+> request.
+> We had a hole in request, but it is set to vanish after ongoing 
+> integrity refactoring patch of Keith [1]. For inode also, there is no 
+> liberty at this point [2].
+> 
+> I think current multiplexing approach is similar to ioprio where 
+> multiple io priority classes/values are expressed within an int type. 
+> And few kernel components choose to interpret certain ioprio values at will.
+> 
+> And all this is still in-kernel details. Which can be changed if/when 
+> other factors start helping.
 
-David
----
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 84a517a0189d..97003155bfac 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1026,7 +1026,7 @@ static ssize_t iter_folioq_get_pages(struct iov_iter=
- *iter,
- 		iov_offset +=3D part;
- 		extracted +=3D part;
- =
+Maybe part of the problem is that the API is very confusing.  A smal
+part of that is of course that the existing temperature hints already
+have some issues, but this seems to be taking them make it significantly
+worse.
 
--		*pages =3D folio_page(folio, offset % PAGE_SIZE);
-+		*pages =3D folio_page(folio, offset / PAGE_SIZE);
- 		get_page(*pages);
- 		pages++;
- 		maxpages--;
+Note: this tries to include highlevel comments from the discussion of
+the previous patches instead of splitting them over multiple threads.
 
+F_{S,G}ET_RW_HINT works on arbitrary file descriptors with absolutely no
+check for support by the device or file system and not check for the
+file type.  That's not exactly good API design, but not really a major
+because they are clearly designed as hints with a fixed number of
+values, allowing the implementation to map them if not enough are
+supported.
+
+But if we increase this to a variable number of hints that don't have
+any meaning (and even if that is just the rough order of the temperature
+hints assigned to them), that doesn't really work.  We'll need an API
+to check if these stream hints are supported and how many of them,
+otherwise the applications can't make any sensible use of them.
+
+If these aren't just stream hints of the file system but you actually
+want them as an abstract API for FDP you'll also need to actually
+expose even more information like the reclaim unit size, but let's
+ignore that for this part of the discssion.
+
+Back the the API: the existing lifetime hints have basically three
+layers:
+
+ 1) syscall ABI
+ 2) the hint stored in the inode
+ 3) the hint passed in the bio
+
+1) is very much fixed for the temperature API, we just need to think if
+   we want to support it at the same time as a more general hints API.
+   Or if we can map one into another.  Or if we can't support them at
+   the same time how that is communicated.
+
+For 2) and 3) we can use an actual union if we decide to not support
+both at the same time, keyed off a flag outside the field, but if not
+we simply need space for both.
 
