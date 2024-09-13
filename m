@@ -1,84 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-29353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02289787B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 20:22:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B749787C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 20:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4F81B23B0A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F046E286D27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 18:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7B612CDA5;
-	Fri, 13 Sep 2024 18:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B92132121;
+	Fri, 13 Sep 2024 18:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fV+Oqrwc"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CqCOrKOt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7900BA2D;
-	Fri, 13 Sep 2024 18:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A2A12C465;
+	Fri, 13 Sep 2024 18:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726251719; cv=none; b=DpMxmgttRXysd08cukB7uyIwmycEPBCFMinhu+tjzMfyZxTEvG+pf6p/REngNLPaT9VzPsLwzLlh3/n6DMNRcY83yG6AM/oKTmj5S0NVjcTq2bvHt+GajxFq24FvGpEH2wDPUio6hh4OCJ5J+uexZESts2HWxUhfzON2e6QYaQA=
+	t=1726251920; cv=none; b=sU8wvO1reI4Udd1fX9dC8n1nZ+r9fG/F7BCDzmR909KIzTlzwkKs+16p+9j2XY/OZoOqXdfQRQetID5mpSGr+vHGiMsrNIf6aI7xb5AHHtxLlCK0a8ufRGAYAIoJEAfMg0Z8OF+UEsY1bSzT5XrzWpOey6ABIE7D4pNbjmor6fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726251719; c=relaxed/simple;
-	bh=uxPIZJ+1ViYGAZS6fAskkOGEtedQeDT8jbs3FuZ4Zis=;
+	s=arc-20240116; t=1726251920; c=relaxed/simple;
+	bh=ZP5Sr3pIISCAUY6csIxUxy+RYfNU+Q4zrM+AyHqj3zk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/NNkSdQbz+oTo31Z0OGTVRF/231DBqrlKVWdioOPJoTUimzt8rLlS3jvAnAGgz+QGylku6mNEuxt4+U+nom1xIUOsCZjxdg9jdkfEJSPZAyKucbT0I9UBMj+DGADGd4r2N5c3VO9TTXaGIYYY0k2hFkc2I7NKCYBYAtHYm3eRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fV+Oqrwc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wYxEaFz9qZ7MrEYfGMbQ7ngu7vfp+A8Nm3wr0M3NPsQ=; b=fV+OqrwcETEKCSa5SY8JoOHjs7
-	etiKndVR41a5f7s8aTZX5h8jAytgSk4CJ0EseqUw48EVRQb4M6YWtPUOhdu6yF4syiIyIy0PFFNdL
-	NiZ1frxk7F0Lxg+Thg5WIrg54l01zruGR0vvkBfGMNPVskCgwhI8C8x19eG+7F9hO9O62NM0A7Agn
-	MqasK56ejj1DLwICA7i9epd8XjW4Owtk4NiO/hygPX4aotARfV6tETagS0taEZrcHGKV7fmviLaBo
-	i7ZBteR7oA4nUedADY3nDw88itgEmVZWe72f7K5Kj3H8A2iX0wp+LCH9iSrMeDmq1MEIwvKhAQuY6
-	td9MOg/A==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1spAva-0000000Grip-3Jze;
-	Fri, 13 Sep 2024 18:21:54 +0000
-Date: Fri, 13 Sep 2024 19:21:54 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: trondmy@kernel.org
-Cc: Mike Snitzer <snitzer@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] filemap: Fix bounds checking in filemap_read()
-Message-ID: <ZuSCwiSl4kbo3Nar@casper.infradead.org>
-References: <c6f35a86fe9ae6aa33b2fd3983b4023c2f4f9c13.1726250071.git.trond.myklebust@hammerspace.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UJO4bv4j9oGvFGBziPTcmbEoCA5SD60Q0c1OOirMQBgVcdq8SrddGjdS7F8BMMJq0DwCiUiTcAyinLcaVQpOV/xtqBu4T3cizYgCnTlQ3CjFQoPLDd5d97Gs+WHmDTItUQh4lymadlzKT+c5517j0es0E0dwh8CzrfzinLAlrmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CqCOrKOt; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726251918; x=1757787918;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ZP5Sr3pIISCAUY6csIxUxy+RYfNU+Q4zrM+AyHqj3zk=;
+  b=CqCOrKOtuc4KXD7IoEfkQIiV4kwh9Bs9pLQDnkGRCRfiOV5+Z5VPk67M
+   U/FeFoSCjEpdfFG6D7Q8VSm0fPOurHb2EHyodWOLhkMCmMX8aadlswH7V
+   ov2uPuYwLVlG/kS1pAhlh4IvQXloYLFqdcRzo45N+KtcwYwfz98NHkupZ
+   rKp/C4fj2UJ4WK913wU8MmxwMMJYzmJScYmebU1kkGSuRVHQTpXr66QWk
+   Pc9jhejzT49vNGN8dEkBwKLxH6Dy6lKE7BvGzx/z65P54SbppZcbgc8uq
+   4q5IQl+ysTerh8X+3Lulg7K4VZNWnkYdsKOpn+slHnPGXtTsdgwxTWSQH
+   g==;
+X-CSE-ConnectionGUID: namvzSXhQYiJjnASJizmlA==
+X-CSE-MsgGUID: ID1oSx0rR4S0hVbTuFvHOw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25317602"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="25317602"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:25:17 -0700
+X-CSE-ConnectionGUID: qKVgOJ7vRz+xuOlNQcQR/g==
+X-CSE-MsgGUID: O8ITvqYkRYS8xm4R/TpOuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="72262328"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 13 Sep 2024 11:25:13 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spAyl-0006p4-2y;
+	Fri, 13 Sep 2024 18:25:11 +0000
+Date: Sat, 14 Sep 2024 02:25:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	krisman@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com, Daniel Rosenberg <drosen@google.com>,
+	smcv@collabora.com, Christoph Hellwig <hch@lst.de>,
+	Theodore Ts'o <tytso@mit.edu>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Subject: Re: [PATCH v4 07/10] tmpfs: Add casefold lookup support
+Message-ID: <202409140236.RR9Gbvqh-lkp@intel.com>
+References: <20240911144502.115260-8-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <c6f35a86fe9ae6aa33b2fd3983b4023c2f4f9c13.1726250071.git.trond.myklebust@hammerspace.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240911144502.115260-8-andrealmeid@igalia.com>
 
-On Fri, Sep 13, 2024 at 01:57:04PM -0400, trondmy@kernel.org wrote:
-> If the caller supplies an iocb->ki_pos value that is close to the
-> filesystem upper limit, and an iterator with a count that causes us to
-> overflow that limit, then filemap_read() enters an infinite loop.
+Hi André,
 
-Are we guaranteed that ki_pos lies in the range [0..s_maxbytes)?
-I'm not too familiar with the upper paths of the VFS and what guarantees
-we can depend on.  If we are guaranteed that, could somebody document
-it (and indeed create kernel-doc for struct kiocb)?
+kernel test robot noticed the following build warnings:
 
->  
-> -	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
-> +	iov_iter_truncate(iter, inode->i_sb->s_maxbytes - iocb->ki_pos);
->  	folio_batch_init(&fbatch);
->  
->  	do {
-> -- 
-> 2.46.0
-> 
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on tytso-ext4/dev brauner-vfs/vfs.all linus/master v6.11-rc7 next-20240913]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/libfs-Create-the-helper-function-generic_ci_validate_strict_name/20240911-224740
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240911144502.115260-8-andrealmeid%40igalia.com
+patch subject: [PATCH v4 07/10] tmpfs: Add casefold lookup support
+config: csky-randconfig-002-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140236.RR9Gbvqh-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140236.RR9Gbvqh-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140236.RR9Gbvqh-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> mm/shmem.c:4719:39: warning: 'shmem_ci_dentry_ops' defined but not used [-Wunused-const-variable=]
+    4719 | static const struct dentry_operations shmem_ci_dentry_ops = {
+         |                                       ^~~~~~~~~~~~~~~~~~~
+
+
+vim +/shmem_ci_dentry_ops +4719 mm/shmem.c
+
+  4717	
+  4718	#if IS_ENABLED(CONFIG_UNICODE)
+> 4719	static const struct dentry_operations shmem_ci_dentry_ops = {
+  4720		.d_hash = generic_ci_d_hash,
+  4721		.d_compare = generic_ci_d_compare,
+  4722	#ifdef CONFIG_FS_ENCRYPTION
+  4723		.d_revalidate = fscrypt_d_revalidate,
+  4724	#endif
+  4725		.d_delete = always_delete_dentry,
+  4726	};
+  4727	#endif
+  4728	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
