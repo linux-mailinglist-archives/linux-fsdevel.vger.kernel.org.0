@@ -1,75 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-29279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33FE977936
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 09:16:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A326C97797D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 09:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 642FF287C07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 07:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CA4F1F2659E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 07:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC62777107;
-	Fri, 13 Sep 2024 07:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577841BC084;
+	Fri, 13 Sep 2024 07:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ORtlmQjV"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oaUy9sBV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E867278289
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 07:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DF21BB6B1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 07:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726211757; cv=none; b=RMsA0ZsW9eBNHztYQPBBFOOBK74LpQm4DCwt6WRaQTLopFLNQxwyWZfKcbQWC3m+fSOlWnnzLZWFO18FUB6W5oWtNjccdKmY9zxL6ZbM3nl0HPYoh6Cx4oQkkzcD2/8lrF4HUMYjZvF0huNRfk4mXo3ea6kWEd8TiLfRm5CD2wU=
+	t=1726212182; cv=none; b=mgcR0UHwDVMjjuh+/HQaIeIQeX+YSEPIkigCcG+FgfmZB90ajjP4VkUOHhFbWL+vgww5LGfkHxW4HevIq6v6zY7jqwC01yScVAnPzYegvRigD2j1Nk7/LhrWkZKXLye5r1B12Hy2ZsrZlt4Jprhp+7nmeVmFoXZxWVLK7kQe4yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726211757; c=relaxed/simple;
-	bh=lXVe7zuMzZ3LDAaZ+Kcd6eGgm2KISOgk4k/VUcZcNTM=;
+	s=arc-20240116; t=1726212182; c=relaxed/simple;
+	bh=8HUGCCO38bSkRqAnXr3ntjDxYfQUEAlm/OzRrGCLns0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=aZks/P4km3trqmphdVcLTPRywXfS28UrmJFq313V6WXLqUI7QsO9xTJ8nTVKvDeXbpK1qgx5TdSXuoZtuJa+LChmottO2s2OsQeYqshtZ9stQV2+vBm1HPXT7yr7NU20YG4X9UqnL1+nDH/b+Q38yKQ3gPbb77HVbZ0R1rYz6Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ORtlmQjV; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=Uqbz1YqX+Iujx0xFUD9E+hOz3mMjOT1DdusYe2sfDKXe2N/i3CpzKdX/SfYvBD8go3xq2fPsNuBFn5dU7GLKY6vhqkh1s09HlV4gu/psgdCYvRGd374RksnUka8KwsS8c20tAHliBC71LnO7Ate0nkaiEy94AEr03vIf50jN6/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oaUy9sBV; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240913071552epoutp02cc5bcfc7dd4e627b54e64066f481fcc1~0vHF9o7TZ2790127901epoutp02s
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 07:15:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240913071552epoutp02cc5bcfc7dd4e627b54e64066f481fcc1~0vHF9o7TZ2790127901epoutp02s
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240913072258epoutp01c08bfd156e8b4971ec6d6315ddc50ca1~0vNStp8cO0713807138epoutp01V
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Sep 2024 07:22:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240913072258epoutp01c08bfd156e8b4971ec6d6315ddc50ca1~0vNStp8cO0713807138epoutp01V
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726211752;
-	bh=3zqtpJE/mdk5d0QMfgH8EkNrmbkSOpNb4bGq/RkfojY=;
+	s=mail20170921; t=1726212178;
+	bh=DfqqqIPcXuC33v4cLL0ODxpxiUkP1Rjz2JlXnKLXgh8=;
 	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=ORtlmQjVsW2YhXgfkmG/5bxOhjsKBtoesB9TnM9kkrMggSgzuuk5thhsWSXwKcY35
-	 VzH/pen3oMAEEogfXtS5X2UUN69eHuG3IQfaBtO6okL9E4pPUYr1qKo9Bm1S9llSP/
-	 6NqsaFlQ/cTCVDZ3qDh//ErbKg3CYy3BWygw7ZUs=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240913071552epcas5p407bc7471dba9c401717e052479b00d1a~0vHFg4og41690216902epcas5p41;
-	Fri, 13 Sep 2024 07:15:52 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4X4lvq1M23z4x9Ps; Fri, 13 Sep
-	2024 07:15:51 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	62.03.19863.7A6E3E66; Fri, 13 Sep 2024 16:15:51 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240913071550epcas5p105ccc2bbc82283e49e07d5dff05020b0~0vHEENaJk1486314863epcas5p1j;
-	Fri, 13 Sep 2024 07:15:50 +0000 (GMT)
+	b=oaUy9sBVP9dFId5l+KtVJaraEGn+CBmsqZSLSKhaCVPPx5yvvQX4XJSw7hVNzvwDC
+	 QgfRJ3PeRCHyi04mV0JpO9sUjDd5vXQg1ZuD1R28FC/hozRbnb2GHfRswdL84+Q2pC
+	 dZqepg0ezTPCzCQO6/6U6HD7356SIMccjvdIdBAY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240913072258epcas5p397659184e19ff6cb4130a0130e08b500~0vNSDHDvv1522615226epcas5p3i;
+	Fri, 13 Sep 2024 07:22:58 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4X4m401fQQz4x9Pt; Fri, 13 Sep
+	2024 07:22:56 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F9.2C.09640.F48E3E66; Fri, 13 Sep 2024 16:22:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240913072255epcas5p4ffa874219e563fd562003ce2c7ff0d3b~0vNPmRHie1203712037epcas5p4L;
+	Fri, 13 Sep 2024 07:22:55 +0000 (GMT)
 Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240913071550epsmtrp1178989a849662704336e4812401c84a6~0vHEDG6WC1969919699epsmtrp1W;
-	Fri, 13 Sep 2024 07:15:50 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-dd-66e3e6a77a65
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240913072255epsmtrp23d9b77e732158615fd765343f8ffae55~0vNPlSX6H2729727297epsmtrp2B;
+	Fri, 13 Sep 2024 07:22:55 +0000 (GMT)
+X-AuditID: b6c32a49-a57ff700000025a8-ac-66e3e84f6c4b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
 	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	49.15.19367.6A6E3E66; Fri, 13 Sep 2024 16:15:50 +0900 (KST)
+	A5.F5.19367.F48E3E66; Fri, 13 Sep 2024 16:22:55 +0900 (KST)
 Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240913071547epsmtip1be43924e78b5b0a33230ca2b73f0bf33~0vHBFfCZz3168031680epsmtip1q;
-	Fri, 13 Sep 2024 07:15:47 +0000 (GMT)
-Message-ID: <19f3205e-ba37-0541-f8ac-4e0fc8fcee87@samsung.com>
-Date: Fri, 13 Sep 2024 12:45:46 +0530
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240913072252epsmtip2556522eb0be364036be534a4f076b144~0vNMvbd2G1221912219epsmtip2y;
+	Fri, 13 Sep 2024 07:22:52 +0000 (GMT)
+Message-ID: <ea71bdfd-f0f8-eb61-255d-68ea1e4421f1@samsung.com>
+Date: Fri, 13 Sep 2024 12:52:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,118 +78,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
 	Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v5 3/5] fcntl: add F_{SET/GET}_RW_HINT_EX
+Subject: Re: [PATCH v5 1/5] fs, block: refactor enum rw_hint
 Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>, axboe@kernel.dk,
-	kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, martin.petersen@oracle.com,
-	James.Bottomley@HansenPartnership.com, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
-	jlayton@kernel.org, chuck.lever@oracle.com
-Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+To: Bart Van Assche <bvanassche@acm.org>, Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me,
+	martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	jaegeuk@kernel.org, jlayton@kernel.org, chuck.lever@oracle.com,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
 	linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
-	javier.gonz@samsung.com, Nitesh Shetty <nj.shetty@samsung.com>
+	javier.gonz@samsung.com
 From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <53043e99-be5f-4fc6-be87-4ebcb8ce99b6@acm.org>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xbVRTHfe+V1wdSfStj3HQG6jObDAa0E+qF8WPJ2HwRTJjoHxInPumD
-	kpa26Y+xmRIJBJSp4CoO7BgwJEAh4UdBws+IZYZNIF1gbkIANyglo5AJmExEmC1lk/8+59zz
-	vd9z7sklMH4JV0BkK3WsRskoKNyH0z18LCSs0bGQKRpa8YIts2U4dA6vI/Dqn5sYfDq7hMKp
-	oV4Umlt+QeG1ikIU2ttMGOwoI+DCzAYXbjY0c6HReg+Bg9OhcKLuLTgweJsDaxoWufDL+z04
-	bBzZQWH3Vg0GW52POdC2PeIFbaYq7qlD9OTdJNo218Ghrxp/xenJcT1taS7B6c76z+j+2g2U
-	7p/Kx+m1xWkOXdrVjNBjtTe59IYlkLbYV9EUXpo8VsYyUlYjZJUZKmm2MiuOSkpNP50eJRGJ
-	w8TR8E1KqGRy2DgqMTkl7Gy2wjUzJbzAKPSuVAqj1VIR8bEalV7HCmUqrS6OYtVShTpSHa5l
-	crR6ZVa4ktXFiEWiE1Guwo/lss2qakxtOXCxoXvAKx9p4l1GvAlARoKaQSNyGfEh+OQAAlpn
-	nnI9wToCClds2PNgsWAYeSb57ucV1HPQi4D6sbo9/SoCRueWMHcVj4wHtpkq1M0c8ggYnzfj
-	nvwBcPt7O8fN/uQn4J/fqnZv9SPjwI3tJq6bMTIATNtrdrUHyXYUTBT5uA0wshwFf1daXQYE
-	gZPHwJ1v9e4ab/Ik+MnRgXu0QaDwx2u7bQOy0RsMdK2jnrYTQXHfENfDfmB5pGuPBeBRWfEe
-	y8GD+QccDxtAT2epl4cTQP6/v3u5fTGXb1tfhMfrJfD1lh11pwHJA18U8z3Vr4I54+KeMgA8
-	rKzfYxpMl9/dbZNPLiOg+dHRbxChad+rmPZNb9o3jel/41qE04wIWLU2J4vNiFKLw5Rs7vON
-	Z6hyLMjunwhJ6UFa2rfDrQhKIFYEEBh1kGfE5zP5PClz6VNWo0rX6BWs1opEufZzBRP4Z6hc
-	n0qpSxdHRosiJRJJZPQbEjEVwHMWXZfyySxGx8pZVs1qnulQwluQjwp1RUV3Lt5iE6IHE62K
-	98+Mhppnix76+/W+LNOwwYZzH2EZt1KPRztr8/A+Y+6Rw7phUUROtSPoftIVH19DY+YfT8aO
-	RggFjC6NsoTcKxdICj+/cMY+er7aqmiSZYev2sYzidHYQEfYYY5E65TnfTVxKfOGfPL4277v
-	GCqkQsNW6an+usQfkoNK+z5QhMhLXlxjix1M8qaS2xaDC6D5vcfXJWvtAXmnO1UNxFmnrZ8x
-	fDgaPDSWMPVC4F+doa9Ta+fOR7WmVqIV1nfHJyfKIibMhwqSHB2vccxbg/xK37TTJ+KXCm4+
-	GRqWru5sJZ98JSZ4LCg7d2ehdhl2mcZrKI5WxohDMI2W+Q+MMFVlnAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjuO+fs7GgMjjPz6x4TIxM1JeyjUqKiDhUV3a/Y1OMy51xbywqi
-	lRW5Loqa1tGcpcym5GW5qamUlxJHsrykKWqoU0MtKymV0NVcgf+e931u74+XwoW9xGIqUnae
-	VcjEUhHpTJhqRct9dIP9EWvNJR4ovzuBRCO1PwBK/TaFI1v3EIY6XpdjSJ//BkPpaXEYshZy
-	OCpOoFB/1zgfTeny+Cippg2gqk5v1Px0B6qsaiCQVjfAR3fay0iUWz+DIdNvLY4KRsYIZJmu
-	5yELl8HfvJBpad3FWHqKCSY1yUwyLY0qxpAXTzIvcq4yFVnjGFPRoSaZ7wOdBHO/JA8w77Lq
-	+My4YTljsH7B9gmOO28KZ6WRF1iFX/Bp5zNTGZm43OByUWeq5KnBM4EGOFGQXgcfVI9iGuBM
-	CelSAHNmynEH4Q7j2ib5DuwK9TNDfIdoBMDkni7STgjoYGjpysDsmKA9YWOf/t/eBTY8shJ2
-	7EaHwspP12Y1rnQQfDL9bDYU/1vQadXO7hfQRRicbF5pL8DpFAyO3Bj71zYMYLo58e9AUSTt
-	Bd8nq+wGJ3ojfDVYTDqCAqHGqAEOvALGGdPxRCDk5tzBzenj5li4OZYsQOQBN1aujJZEh8n9
-	fZXiaKVKJvENi4k2gNkvWLO/DOgKp31rAEaBGgApXLRAkET2RQgF4eJLl1lFTIhCJWWVNWAJ
-	RYjcBR7S+HAhLRGfZ6NYVs4q/rMY5bRYjXlfv+4nVdUZj028m/5q+rx9p+Q37eLzy/OQzZLc
-	5ttwGNcdPHry6t269QMfOz9fkfO0H/X9r0cFyzCbrEp7bnPznu+8oMl7sLepaT4vzctb/rOL
-	G7zSvWXD1+bYwFhzQW2f9UGtWh864cUTWRM8Yqc+7VXdydrIe9su+5BqdC048jiqY3dfC3O5
-	qPdWSV117s3qbQGaipbKH8EB8yX97W/ygzJPrPZ8OFBifhySOJHNXfSf57HM1KReui1txyLz
-	vvZfN75k25rGYlaNP/WxoSXD7n5jpYk7h1uvZdbnjBaJzSk9k/TEgSdFxSZj/K3bZ5/fOyUH
-	5WnVloiXdzls61BhiohQnhH7r8EVSvEffHF713QDAAA=
-X-CMS-MailID: 20240913071550epcas5p105ccc2bbc82283e49e07d5dff05020b0
+In-Reply-To: <fe2ae1b7-7c77-49e1-ace0-50e937f2c32c@acm.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVDTdRzH+z1s+2HN+4US36hwruQEj4fVGF+SBzu9/JloXFJeHrF+sB8D
+	B9tuD0KIMdJKtCaRqSyeMo5iEJxAAQLx7FrSAeKIB5koD1EICrs6EaI2RsR/r8/7Ps+f+xCY
+	q47jQSTKNYxKTifx2RvwH9q9vX0jp8biA3K+wmDZyDk2nG6fR+CFBwsY/GfkNxQOttSjsLSs
+	E4VfXjyJwvFKAwavnCPg2C0bBy6UGDkwp60fgU1DO+CNy3thY5MZh4UlExx49tc6NvzGtIzC
+	iun7OOz+28SC3YY8zi43qu/mfqrbegWnLuT8zKb6ftFSVcYsNlVdnEE1FNlQqmFQx6bmJoZw
+	Sl9jRKiuog4OZavypKrGZ9BI7hFZSAJDSxgVj5HHKSSJcmkof/8h8W5xoChA4CsIhkF8npxO
+	ZkL5eyIifV9NTLKPy+cdo5O0dimSVqv5/mEhKoVWw/ASFGpNKJ9RSpKUQqWfmk5Wa+VSPzmj
+	eVkQEPBioN3xXVlCZcEirizFUnXGDlyHmNEzCEEAUgha5u24gXAlGxDwSWc122nMI+CL+UZ0
+	zfiu+PxaxP0BX6dej4DMPiPmNGYQMPZ9GecM4kJwyTDw541MzME4uQ30Wkswp/4kMOeO4w52
+	I2PBI0se4uBNZAiob51d0THSHQyNF64U20xSYOjeQUd+jPwdAxcHpzgOnU16g57PtQ53F3In
+	eLh8m+UM3QJqZ/JW+gHk1y7g0nDratN7wMlbfg4fQG4Cf5hqOE72ALbZJraTZWD07iju5HRQ
+	V61nOTkc6JYGWI40mL1s5VV/Z6mN4NPF8dXsXHD6I1en91ZgzZlYjXQHdy4VrzIFes+bVnfb
+	jILZ3stINsIzrFuKYd3whnXTGP6vXITgRuRpRqlOljLqQKVAzqSsXTtOkVyFrLyCz746ZGT0
+	gV8bghJIGwIIjL+Zm8O+G+/KldDvpTEqhVilTWLUbUig/TqfYR5ucQr7L8k1YoEwOEAoEomE
+	wS+JBHx37vSH+RJXUkprGBnDKBnVf3Eo4eKhQ2P+ahTNtaiieqLSk2NMjx8J/EkzkGcJr42e
+	DI+OuxZVKpo1gyVz9PLDbT+Gpd5pfS1GX3P9xOnXT2x8x52FTQ4svLW9YK4gKP9Q5shxH4sy
+	W6acTXuEHx47WpGyNyLCs7OVc6D55vNzp2K7dr6puP1GBjx7veDUrqv++/KtvWJLrde30vDh
+	HeVia7rs404N1V/G2pKhbxnKLjfPpxUe3D53tC3og9yWw1621P7h56b0tJek+AW58Nn0V2zN
+	FFHaEysKeltkgegTErfGXE6dbBBuja1KbMfwAc9yWbYp8dgzMzz92IGsx64pJqqZrnvyRSJ+
+	8n3tU1lWaYfFerxiSZbCx9UJtMAHU6npfwE7LGK5kwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA01ReUxScRzv997zvSdFvlDzl11GtZWVndpvZa7VqjdpdqyV3ZE8tIXKIJvd
+	NmsVtTTaTJ+tzJIGNim1zJQO1JmU2SUViXZg2Ki0zM0OqYC1+d9nn+/n2r40LrIRofS2lB2c
+	KkWqEJMC4kaNePSUZR3v5dNedwagYnsWiVw13wDK6fqBoz92J4Ze3a3EkL64DkP5ZzIx5DDy
+	OLqWRaP3Ld0U+qEzUEhrtgJksk1CTwuXoGpTA4HO69opdPzFTRJdrndjqMTVSaCmvno/1MSf
+	peYHs8+eS9im1msEm6O1kOyzxjS21HCMZMsuHWCrCroxtupVBsl+bbcR7MlyA2AfFtRSbHfp
+	KLbU8RlbLlwniJZxim07OdXUmC2CJOO5X4RSj6dnGGqJDNCAaQBNQ2YW7Hw5RQMEtIipAFBv
+	+Qk0wP8fHwIzrb2UDwdCvdtJ+UQuAE2NdZjnIGRiYM/Tg7gHE8x4+KRVh/v4IbAhz0F4cDCz
+	FVa3HfTqA5loWHnvi5fH/xXYHOe9I4IYFto+xXnyceYjDvPcPO4ru4PB4o4jXhHJTISPT6d5
+	vP7MXNjrbvPz5URBzXUN8OHRsOLzWTwbiPh+M/h+dXw/C9/PUgAIAwjmlOrkxOQE5fQItTRZ
+	nZaSGJGQmlwKvO8PX3kT6Ix9EWaA0cAMII2Lg4Ra8p1cJJRJd+3mVKmbVWkKTm0Gw2lCHCIc
+	qzgmEzGJ0h3cdo5Tcqr/V4z2D83AYnUj67c2tw6VPs9ds31pdqBrTmaXVrVl6aGeqLC4ztlF
+	k39Zot4E7S0olI0Y5GweLGk9vLOyh4isuK341DdgdebCB4fipFeenCsJNxN8e85DAT/o7SIR
+	sbYhZEKoY5+1pSz+5b3uo+4LRfnxF76Pepve1NGclDsxzCga4S+xXx7YFuk3Yea46LvfVjgW
+	SuJjQIA29mdVpWv4kLLC8nVjalZoTTNUq5vl9quLx8nFa7J/0wtkWKzphIWs+WA9RdmH7XnU
+	ksAOlSt0DHu4x5q3iS4zVos2dK0qcpbfH7AxVXnS2Z5+cU/S/sR5kYso6/qS3kt7iyR+YyKC
+	0LtbdnljiW2jmFAnSaeH4yq19C9zlmoQbQMAAA==
+X-CMS-MailID: 20240913072255epcas5p4ffa874219e563fd562003ce2c7ff0d3b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240910151052epcas5p48b20962753b1e3171daf98f050d0b5af
+X-CMS-RootMailID: 20240910151044epcas5p37f61bb85ccf8b3eb875e77c3fc260c51
 References: <20240910150200.6589-1-joshi.k@samsung.com>
-	<CGME20240910151052epcas5p48b20962753b1e3171daf98f050d0b5af@epcas5p4.samsung.com>
-	<20240910150200.6589-4-joshi.k@samsung.com>
-	<53043e99-be5f-4fc6-be87-4ebcb8ce99b6@acm.org>
+	<CGME20240910151044epcas5p37f61bb85ccf8b3eb875e77c3fc260c51@epcas5p3.samsung.com>
+	<20240910150200.6589-2-joshi.k@samsung.com> <20240912125347.GA28068@lst.de>
+	<0baddb91-b292-db90-8110-37fa5a19af01@samsung.com>
+	<fe2ae1b7-7c77-49e1-ace0-50e937f2c32c@acm.org>
 
-On 9/13/2024 2:06 AM, Bart Van Assche wrote:
-> On 9/10/24 8:01 AM, Kanchan Joshi wrote:
->> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
->> index b9942f5f13d3..ff708a75e2f6 100644
->> --- a/include/linux/rw_hint.h
->> +++ b/include/linux/rw_hint.h
->> @@ -21,4 +21,17 @@ enum rw_lifetime_hint {
->>   static_assert(sizeof(enum rw_lifetime_hint) == 1);
->>   #endif
->> +#define WRITE_HINT_TYPE_BIT    BIT(7)
->> +#define WRITE_HINT_VAL_MASK    (WRITE_HINT_TYPE_BIT - 1)
->> +#define WRITE_HINT_TYPE(h)    (((h) & WRITE_HINT_TYPE_BIT) ? \
->> +                TYPE_RW_PLACEMENT_HINT : TYPE_RW_LIFETIME_HINT)
->> +#define WRITE_HINT_VAL(h)    ((h) & WRITE_HINT_VAL_MASK)
->> +
->> +#define WRITE_PLACEMENT_HINT(h)    (((h) & WRITE_HINT_TYPE_BIT) ? \
->> +                 WRITE_HINT_VAL(h) : 0)
->> +#define WRITE_LIFETIME_HINT(h)    (((h) & WRITE_HINT_TYPE_BIT) ? \
->> +                 0 : WRITE_HINT_VAL(h))
->> +
->> +#define PLACEMENT_HINT_TYPE    WRITE_HINT_TYPE_BIT
->> +#define MAX_PLACEMENT_HINT_VAL    (WRITE_HINT_VAL_MASK - 1)
->>   #endif /* _LINUX_RW_HINT_H */
+On 9/13/2024 2:00 AM, Bart Van Assche wrote:
+> On 9/12/24 8:50 AM, Kanchan Joshi wrote:
+>> Wherever hint is being used in generic way, u8 data type is being used.
 > 
-> The above macros implement a union of two 7-bit types in an 8-bit field.
-> Wouldn't we be better of by using two separate 8-bit values such that we
-> don't need the above macros?
+> Has it been considered to introduce a new union and to use that as the
+> type of 'hint' instead of 'u8'?
+> 
 
-I had considered that, but it requires two bytes of space. In inode, 
-bio, and request.
-For example this change in inode:
-
-@@ -674,7 +674,13 @@ struct inode {
-         spinlock_t              i_lock; /* i_blocks, i_bytes, maybe 
-i_size */
-         unsigned short          i_bytes;
-         u8                      i_blkbits;
--       u8                      i_write_hint;
-+       union {
-+               struct {
-+                       enum rw_liftime_hint lifetime_hint;
-+                       u8 placement_hint;
-+               };
-+               u16 i_write_hint;
-+       };
-
-With this, generic propagation code will continue to use 
-inode->i_write_hint. And specific places (that care) can use either 
-lifetime_hint or placement_hint.
-
-That kills the need of type-bit and above macros, but we don't have the 
-two bytes of space currently.
+Is it same as your other question in patch 3?. I commented there.
+If not, can you expand on what you prefer (maybe with a code fragment).
 
