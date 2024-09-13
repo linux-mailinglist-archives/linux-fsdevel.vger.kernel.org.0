@@ -1,176 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-29274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536D19776DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 04:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0CF977769
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 05:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C361F224C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 02:24:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A5D91C2447E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 03:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B4A1D362C;
-	Fri, 13 Sep 2024 02:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E9B6F315;
+	Fri, 13 Sep 2024 03:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQo+NXvp"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ktc0h/d2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4901D131A;
-	Fri, 13 Sep 2024 02:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588B513D882;
+	Fri, 13 Sep 2024 03:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726194236; cv=none; b=a9f34iLXSAG3xAazadfSzu3j2pYtuOH9LEOOog4i8U8YKNEWk5rmtLkC6jbzfcFbPhArMSEb6dPNa3P++Iweto9cm4gX5bBhgwtvxWDneJJ8Z7u0IJ8bL8v04u5C66CvoLCjNcpT07wOBsZq5eO22UEGWeln0UR5jV//J0UmF2s=
+	t=1726198519; cv=none; b=EKK042UVDP1wWOwyT9Nld4mG+1dNmk5+duZyKzY8R1xu9XyW+WcajVio4EykYhGWahszEYXo7ecgUeKUVaJPRCHxjKdxpdUboV+bi2MNneUnVi8YheaBB7etoJR9I2bIM0j/KNY/MtpOpuMVv5V/sDWAqyvS26o+wjatfodvnlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726194236; c=relaxed/simple;
-	bh=qsNRyJ6AahyrLAzbp/5eacdSJ8jCyWQ12rPk4N4oy48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lbOX2o/paemX+wvWJrniTyYlHQUH1ewGJz5B5vj44Z2r+xWJSAtdPOGASZSz6V6nPZ+9l1zMHPR3uRhpZyEsUG5/JTUtHLVBtI5pckqwmQ9N/qOT98qOe4oXvQKMPYHVjkwcouQ0h8SetDnO1jtkDR95zPjcSmmGjzxmSHI1j3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQo+NXvp; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-458366791aaso8506801cf.1;
-        Thu, 12 Sep 2024 19:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726194234; x=1726799034; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VPVsVFceR0WWI5d/ojpASw6tDyoPFdiM2e1qY8KWSm4=;
-        b=KQo+NXvpzOhqrt+oLn9YrIUYLmZSpUhsBbZbL9reO70fDX0tsuzEwitiQ9fb65SFme
-         82fmjU8+bE/ZMZW6FmLv4bsVT7EGpNIDt75mg5JxGCrbxD9lWGmxwaulXW37FU+qTq6S
-         nVTTjPhRltQdacQKimrPRDUrIPcu8mxSVf+L9CnFCV0/MX7mO+f///s5wp4T2bgNQmho
-         DtRK/S3DH//yhrjynApLNbsIqGYUu6PRvDJH210C/rUuU7SdoZdWqQuLQRHTyvhsigLY
-         ce9SQBOPH86CTzxV4r/Gp7Wk4H8ne/wW5N4eHDOAgAWzctO/EVH6dVVbAv2ajCNrdM9g
-         oeIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726194234; x=1726799034;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VPVsVFceR0WWI5d/ojpASw6tDyoPFdiM2e1qY8KWSm4=;
-        b=DIEMLIVhFgDsfv/urSMPO30MHttNR1mrinaiC3JIy2y2k8wRGCutBPiCnygh0TpGo6
-         YNtU6kcpt1QeKACv0QTvMxkXhkWjJEO0zVpQFAVXwQ8wyZymTUp8uC400+qbFAsOWuzS
-         qu6i+0L3bDBW5b4D0wWobNfWfUt8uCFii5M+z6SOtyM0/Yb5CrkOYKwPF915gvMW69h1
-         JlgWbEiqju2SXVlPeZ4YdJQ/VTQNdGn+Sj7GNZG8ULEBAiwvlKgqan85o0tCorc4clpd
-         hDnXqIVeOXE7bTGudrkK3FYznyi9Hxi0cZjGMjza3xkKK3+YLDvNjYXadSIzqugvj9YH
-         9mrw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0+ULigQWsEr/d7nffy1alt9WXvNzzj7Rg4TqWVsgq/BPMfPSyt9q9XqIEHnSA6+8n7y2a@vger.kernel.org, AJvYcCUYrOD5zBl1Y2y3dUo2p08Ua7reDAMqUGhIIlTiLm+YB+NSgCgEot12OoT8W0SNZ6QZqacKuIo1@vger.kernel.org, AJvYcCV1zpCyAPYtdj7+HS/ngjHToKcaPKr8AuzOnT0tFlhBduiWQrs3XAYsp7SsOQgKiPBxi6PEzQ==@vger.kernel.org, AJvYcCVIS1x4yE0YjpZqFHUe/036nMLu86CzXEsVWvcbPyHi+XjzxrJmV5//HCmhsO9VZdcR5fCCutaug1ydqqDds16rE+Ix@vger.kernel.org, AJvYcCWScf1/IeeJ3biAx5NifqaF4eQ/8BtC1mSOxUYGNVK5r/+WlKVs69OhyyjdHyU7CC67+0IepX7FB2EO46IlJQ==@vger.kernel.org, AJvYcCWXmmDpd/psT1/GvJfwDBWsGedZAH4FxXMFmV1KFoG6hBBSLgdiOR2tg3L7MmUqoSZabS4dPh1jw81g94nPDWFLNkUBJsnJ@vger.kernel.org, AJvYcCWw9QeP0WPeBAppqLvel3/11Np9c8V5/QKQwl9CwiwJsCJ9bysMlWRo+VdgMaSNChaqjllIBIdbtg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFXr1ZMDIKhaaG3kMcD8cGAekcKMZYmw82ZGM095/02UQIB2ga
-	uJ0y5qOeRANfzwt0QaIqIL5JGT9+NXF8xt909whdPk73+1xILCZwhmCSIbK/khEG9NPc8OKNVWy
-	ZntctymiVyP8b2IEdSnG8ddsYHDo=
-X-Google-Smtp-Source: AGHT+IE7ATrua7rsyqeOcJseYjVtTnE4hssxQiNmRKzesjoiGraR/SEm091yrLZIkqiIIy/oAkVbRqThLd1lUTb523s=
-X-Received: by 2002:a05:6214:2e4a:b0:6c5:31d6:7749 with SMTP id
- 6a1803df08f44-6c5736ea189mr65801846d6.44.1726194233773; Thu, 12 Sep 2024
- 19:23:53 -0700 (PDT)
+	s=arc-20240116; t=1726198519; c=relaxed/simple;
+	bh=UcXzGLFGnaw/tGTsOLq+PsYah85pOdzTLcUIRcm2FNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c32OAGFxZoMu8KQAY0UetIPt+YIXECDE8Fy/C/IWjtNwoaIgblnlqHBxsXGmbOTb4N2cumUd7J5d7wh/8WyS5TDalFHbO5K0hUW9y2U2SQXttneqhne2xlFnKp/zGa3OdZgb3ihlR7kjgcpLuSHx8lGTER10oZ7gbU9wImaDWrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ktc0h/d2; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726198508; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=CaH9uISZWQ5XuSjgSdzz/6snX0bQtLXyo2HqABBtYXk=;
+	b=ktc0h/d2ZNG687cU7Dne9/Rl1vLFS7yzUberjo/dbRa1bA+0WSV022tLE0bygnUvwpIuKLuPEd/K6hNFjsAdKVXbokZZipF0i+pEpNL4tXd9BmiObGJpDucxw2C3r+5egQ9P2qxjL/vKSW33pwe2nIncqi9XKocwl+A+WdFyeNI=
+Received: from 30.221.145.1(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WEtHkSG_1726198506)
+          by smtp.aliyun-inc.com;
+          Fri, 13 Sep 2024 11:35:07 +0800
+Message-ID: <ce7a056d-e4f1-4606-b119-f8e21bbfff55@linux.alibaba.com>
+Date: Fri, 13 Sep 2024 11:35:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828030321.20688-1-laoar.shao@gmail.com> <20240828030321.20688-9-laoar.shao@gmail.com>
- <qqpiar6nlyuill6eng7safauo2xzzpx46cv6wku4xe42qsw47m@rirhsxrdzm2z>
-In-Reply-To: <qqpiar6nlyuill6eng7safauo2xzzpx46cv6wku4xe42qsw47m@rirhsxrdzm2z>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Fri, 13 Sep 2024 10:23:17 +0800
-Message-ID: <CALOAHbCRnqg8q-9KxNHZVfGUm5aO5_60X_sZB7TPB68EMz7mZA@mail.gmail.com>
-Subject: Re: [PATCH v8 8/8] drm: Replace strcpy() with strscpy()
-To: Justin Stitt <justinstitt@google.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, alx@kernel.org, 
-	ebiederm@xmission.com, alexei.starovoitov@gmail.com, rostedt@goodmis.org, 
-	catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Daniel Vetter <daniel.vetter@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Sep 13, 2024 at 5:28=E2=80=AFAM Justin Stitt <justinstitt@google.co=
-m> wrote:
->
-> Hi,
->
-> On Wed, Aug 28, 2024 at 11:03:21AM GMT, Yafang Shao wrote:
-> > To prevent erros from occurring when the src string is longer than the
-> > dst string in strcpy(), we should use strscpy() instead. This
-> > approach also facilitates future extensions to the task comm.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > Cc: Maxime Ripard <mripard@kernel.org>
-> > Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> > Cc: David Airlie <airlied@gmail.com>
-> > ---
-> >  drivers/gpu/drm/drm_framebuffer.c     | 2 +-
-> >  drivers/gpu/drm/i915/i915_gpu_error.c | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_fr=
-amebuffer.c
-> > index 888aadb6a4ac..2d6993539474 100644
-> > --- a/drivers/gpu/drm/drm_framebuffer.c
-> > +++ b/drivers/gpu/drm/drm_framebuffer.c
-> > @@ -868,7 +868,7 @@ int drm_framebuffer_init(struct drm_device *dev, st=
-ruct drm_framebuffer *fb,
-> >       INIT_LIST_HEAD(&fb->filp_head);
-> >
-> >       fb->funcs =3D funcs;
-> > -     strcpy(fb->comm, current->comm);
-> > +     strscpy(fb->comm, current->comm);
-> >
-> >       ret =3D __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
-> >                                   false, drm_framebuffer_free);
-> > diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i9=
-15/i915_gpu_error.c
->
-> There are other strcpy() in this file but it seems all control paths to
-> the copies themselves stem from string literals, so it is probably fine
-> not to also change those ones. But, if a v9 is required and you're
-> feeling up to it, we should probably replace them too, as per [1].
-
-will change them in the next version.
-Thanks for your suggestion.
-
->
->
-> > index 96c6cafd5b9e..afa9dae39378 100644
-> > --- a/drivers/gpu/drm/i915/i915_gpu_error.c
-> > +++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-> > @@ -1412,7 +1412,7 @@ static bool record_context(struct i915_gem_contex=
-t_coredump *e,
-> >       rcu_read_lock();
-> >       task =3D pid_task(ctx->pid, PIDTYPE_PID);
-> >       if (task) {
-> > -             strcpy(e->comm, task->comm);
-> > +             strscpy(e->comm, task->comm);
-> >               e->pid =3D task->pid;
-> >       }
-> >       rcu_read_unlock();
-> > --
-> > 2.43.5
-> >
-> >
->
->
-> Reviewed-by: Justin Stitt <justinstitt@google.com>
->
-> [1]: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcp=
-y
->
-> Thanks
-> Justin
+User-Agent: Mozilla Thunderbird
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Josef Bacik <josef@toxicpanda.com>, Dave Chinner <david@fromorbit.com>
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+ <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+ <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
+ <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+ <19ffac65-8e1f-431e-a6bd-f942a4b908fe@linux.alibaba.com>
+ <CAJnrk1bcN4k8Ou6xp20Zd5W3k349T3S=QGmxAVmAkF5=B5bq3w@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAJnrk1bcN4k8Ou6xp20Zd5W3k349T3S=QGmxAVmAkF5=B5bq3w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
---=20
-Regards
-Yafang
+On 9/13/24 7:18 AM, Joanne Koong wrote:
+> On Wed, Sep 11, 2024 at 2:32 AM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>
+>> Hi all,
+>>
+>> On 6/4/24 3:27 PM, Miklos Szeredi wrote:
+>>> On Tue, 4 Jun 2024 at 03:57, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>>
+>>>> IIUC, there are two sources that may cause deadlock:
+>>>> 1) the fuse server needs memory allocation when processing FUSE_WRITE
+>>>> requests, which in turn triggers direct memory reclaim, and FUSE
+>>>> writeback then - deadlock here
+>>>
+>>> Yep, see the folio_wait_writeback() call deep in the guts of direct
+>>> reclaim, which sleeps until the PG_writeback flag is cleared.  If that
+>>> happens to be triggered by the writeback in question, then that's a
+>>> deadlock.
+>>
+>> After diving deep into the direct reclaim code, there are some insights
+>> may be helpful.
+>>
+>> Back to the time when the support for fuse writeback is introduced, i.e.
+>> commit 3be5a52b30aa ("fuse: support writable mmap") since v2.6.26, the
+>> direct reclaim indeed unconditionally waits for PG_writeback flag being
+>> cleared.  At that time the direct reclaim is implemented in a two-stage
+>> style, stage 1) pass over the LRU list to start parallel writeback
+>> asynchronously, and stage 2) synchronously wait for completion of the
+>> writeback previously started.
+>>
+>> This two-stage design and the unconditionally waiting for PG_writeback
+>> flag being cleared is removed by commit 41ac199 ("mm: vmscan: do not
+>> stall on writeback during memory compaction") since v3.5.
+>>
+>> Though the direct reclaim logic continues to evolve and the waiting is
+>> added back, now the stall will happen only when the direct reclaim is
+>> triggered from kswapd or memory cgroup.
+>>
+>> Specifically the stall will only happen in following certain conditions
+>> (see shrink_folio_list() for details):
+>> 1) kswapd
+>> 2) or it's a user process under a non-root memory cgroup (actually
+>> cgroup_v1) with GFP_IO permitted
+>>
+>> Thus the potential deadlock does not exist actually (if I'm not wrong) if:
+>> 1) cgroup is not enabled
+>> 2) or cgroup_v2 is actually used
+>> 3) or (memory cgroup is enabled and is attached upon cgroup_v1) the fuse
+>> server actually resides under the root cgroup
+>> 4) or (the fuse server resides under a non-root memory cgroup_v1), but
+>> the fuse server advertises itself as a PR_IO_FLUSHER[1]
+>>
+>>
+>> Then we could considering adding a new feature bit indicating that any
+>> one of the above condition is met and thus the fuse server is safe from
+>> the potential deadlock inside direct reclaim.  When this feature bit is
+>> set, the kernel side could bypass the temp page copying when doing
+>> writeback.
+>>
+> 
+> Hi Jingbo, thanks for sharing your analysis of this.
+> 
+> Having the temp page copying gated on the conditions you mentioned
+> above seems a bit brittle to me. My understanding is that the mm code
+> for when it decides to stall or not stall can change anytime in the
+> future, in which case that seems like it could automatically break our
+> precondition assumptions.
+
+So this is why PR_IO_FLUSHER is introduced here, which is specifically
+for user space components playing a role in IO stack, e.g. fuse daemon,
+tcmu/nbd daemon, etc.  PR_IO_FLUSHER offers guarantee similar to
+GFP_NOIO, but for user space components.  At least we can rely on the
+assumption that mm would take PR_IO_FLUSHER into account.
+
+The limitation of the PR_IO_FLUSHER approach is that, as pointed by
+Miklos[1], there may be multiple components or services involved to
+service the fuse requests, and the kernel side has no effective way to
+check if all services in the whole chain have set PR_IO_FLUSHER.
+
+
+> Additionally, if I'm understanding it
+> correctly, we also would need to know if the writeback is being
+> triggered from reclaim by kswapd - is there even a way in the kernel
+> to check that?
+
+Nope.  What I mean in the previous email is that, kswapd can get stalled
+in direct reclaim, while the normal process, e.g. the fuse server, may
+not get stalled in certain condition, e.g. explicitly advertising
+PR_IO_FLUSHER.
+
+> 
+> I'm wondering if there's some way we could tell if a folio is under
+> reclaim when we're writing it back. I'm not familiar yet with the
+> reclaim code, but my initial thoughts were whether it'd be possible to
+> purpose the PG_reclaim flag or perhaps if the folio is not on any lru
+> list, as an indication that it's being reclaimed. We could then just
+> use the temp page in those cases, and skip the temp page otherwise.
+
+That is a good idea but I'm afraid it doesn't works.  Explained below.
+
+> 
+> Could you also point me to where in the reclaim code we end up
+> invoking the writeback callback? I see pageout() calls ->writepage()
+> but I'm not seeing where we invoke ->writepages().
+
+Yes, the direct reclaim would end up calling ->writepage() to writeback
+the dirty page.  ->writepages() is only called in normal writeback
+routine, e.g. when triggered from balance_dirty_page().
+
+Also FYI FUSE has removed ->writepage() since commit e1c420a ("fuse:
+Remove fuse_writepage"), and now it relies on ->migrate_folio(), i.e.
+memory compacting and the normal writeback routine (triggered from
+balance_dirty_page()) in low memory.
+
+Thus I'm afraid the approach of doing temp page copying only for
+writeback from direct reclaim code actually doesn't work.  That's
+because when doing the direct reclaim, the process not only waits for
+the writeback completion submitted from direct reclaim (e.g. marked with
+PG_reclaim, by ->writepage), but may also waits for that submitted from
+the normal writeback routine (without PG_reclaim marked, by
+->writepages). See commit c3b94f4 ("memcg: further prevent OOM with too
+many dirty pages").
+
+
+
+[1]
+https://lore.kernel.org/all/CAJfpegvYpWuTbKOm1hoySHZocY+ki07EzcXBUX8kZx92T8W6uQ@mail.gmail.com/
+
+-- 
+Thanks,
+Jingbo
 
