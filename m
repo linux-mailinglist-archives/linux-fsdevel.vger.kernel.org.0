@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-29335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570C49782D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 16:44:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A999782DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 16:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D86D1F230BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 14:44:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1DB2B25926
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 14:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6463D1DFDE;
-	Fri, 13 Sep 2024 14:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485F636AF8;
+	Fri, 13 Sep 2024 14:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZYXMB2V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqWDX5eI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C352E8F47;
-	Fri, 13 Sep 2024 14:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81222BB13;
+	Fri, 13 Sep 2024 14:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726238683; cv=none; b=Pz0gDROgcpO6BZDFhMmHrzvwFmriMoSGwZL2Lrsc/E6f6rAKBtU1x6i8NsVtwL2GXxUB7e3iy64CApihdqG4401vCLy2QDAu41KNqcBMEJPl/lzJ/s+E9PUQc+rCsQfNXMpVVJnhBGrwcvPhR1qIx9sKpRpGUS9INOlw/zMwGTU=
+	t=1726238718; cv=none; b=VlrXZMAOd8QwRZdR+hMsESRL9wwQZ1wA5rYLdqDlk5lO41zsDPzJaUayJXWN6m1K4bPLM+5kymka7vcZOQIbvpiVsMLcDIxJS1EkzogEcbFeqp7XWafPAVhtBiglMMAe3WMJOrlDx2DvJNVKk7jKzv+41c5mdyceEwOr/mlpMTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726238683; c=relaxed/simple;
-	bh=dbhC+Po6jXUp4ueqs57Yxhruw4p/WiDzZR9CQjKXaNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QNBWfVFcYOfkd9i72aSSdYoVU/Lo3jhC8zRhOi4u02R5h8619ou6K6Ap7FM8VLq5rkdGYUwJ8o7jqCotxkSwFvySgCGBQLZVvNyfRYr721GAUu6NTdks+/bthTVUbvtNFdGvpbhkd9YuQfQzsid63/ejbYvSU0FiLk5Ai7L9Fw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZYXMB2V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DB0C4CEC0;
-	Fri, 13 Sep 2024 14:44:42 +0000 (UTC)
+	s=arc-20240116; t=1726238718; c=relaxed/simple;
+	bh=TB2AsdrJ7JEBqRjjSRElrMDhNIYQUq/KDMCtNVT66fU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gtR1cfCIoN72SzQlBfTUND5/vPKn7eAxWkfQYdmSkPR3+HvKAIO13yp8VUeHe8T2LWjZKsNuq7CT6OtuKgKrPnC4xHIoDI6DkYAXP3LwafdMiEFPS7ml8MK57PNp+7SAD1iXCa8heKONyiZQR1GK/VxnvGYOG6oy6NpM8DSVfG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqWDX5eI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD0FC4CECC;
+	Fri, 13 Sep 2024 14:45:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726238683;
-	bh=dbhC+Po6jXUp4ueqs57Yxhruw4p/WiDzZR9CQjKXaNY=;
+	s=k20201202; t=1726238718;
+	bh=TB2AsdrJ7JEBqRjjSRElrMDhNIYQUq/KDMCtNVT66fU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=bZYXMB2V5CsMoRh3gVcDc5XvdpJDR2m/sUjRHJGL9PcZPT7ZrRD0VBOJl0Acn+DYQ
-	 oyZh0FHwQp+p+NhQMIQY8fsVXW+Ejg5bXnmC6goOZK1fkdKJTBZSusq3NyaJ8dRzH2
-	 4MiBe7Ee7Yn62/V7oS6TWuDXX6XYH5px05ML9OwN/Wx0b3+teu1zaDPNYzr0Vq/SKO
-	 KFkxFkCH0CMKRSHck7NRS7ML/KCBMu8hlYHBQ+BwmWLreWODQ92eWv6jiffu+MXTDF
-	 XEsf3WLGOZbmKIxG/t7Bg1vUAJfi2s8ekjlhQbsIUm9wMNFmWn2yKtIMwEIlnkXujf
-	 cfYP1DB/xbL/A==
+	b=WqWDX5eIL02yeMLAser/aAhKG9lnmWCbmEIm/huZouoUy8ClwnuQle+5tYh18MOdK
+	 eBGQpxDQ/pA16d2J67/s4T0zxCkBU5efOTjNioDs4YoEq7sglP7ZzBpaWIsmBlZTjs
+	 HUjH3wsPW0PQOmDCP91HVKHFCjhiNGdsB45eCtTsk7gAGjXFdIA3EbnZSyw87QvjJu
+	 telu7CYV7+uqaztt5Cm/QRy1BeeP1TgrmOfjskdp8ZAHch8BWxxHjC26DqR+4cwGX+
+	 1mcid9SHbYDJC5Vc4SO9QrorRXs4DtOt8XUiY43R5iDX/mbDJ5YrYfj8I6Gzv4o/fY
+	 qRtANqI4ok4xg==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fallocate
-Date: Fri, 13 Sep 2024 16:44:09 +0200
-Message-ID: <20240913-vfs-fallocate-34e5962f7372@brauner>
+Subject: [GIT PULL] vfs procfs
+Date: Fri, 13 Sep 2024 16:44:47 +0200
+Message-ID: <20240913-vfs-procfs-f4fc141daed2@brauner>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,26 +55,65 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2280; i=brauner@kernel.org; h=from:subject:message-id; bh=dbhC+Po6jXUp4ueqs57Yxhruw4p/WiDzZR9CQjKXaNY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ98T9fz3C0ZkMI3+75OaZlJppmAfavK3YwOP7c81r6+ 6QuERnpjhIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlYrGP4nrF1q0X2DpUpd2cy ar67USy0alLHg9BtiRsnHre+Usewi5FhRubGZPYD09Sl35Xx/dkv5OTYuCS0d5rG/TMLH3wu+9P HDgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4168; i=brauner@kernel.org; h=from:subject:message-id; bh=TB2AsdrJ7JEBqRjjSRElrMDhNIYQUq/KDMCtNVT66fU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ98f9WFFyY5bP+4kYRxvgN6y/ZdJizvA86/m3vNvdjS 0yze1z/dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykVofhn3VgQeb8o4pztDZZ SynN8guuW7W2XM3fVYF/Z1HigzzRCwx/JRpy684Wvz9sXdYQ65NveD9YZp1R6pdatfzX50RWf5T kAgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
+/* Summary */
 Hey Linus,
 
-/* Summary */
+This contains the following changes for procfs:
 
-This contains work to try and cleanup some the fallocate mode handling.
-Currently, it confusingly mixes operation modes and an optional flag.
-The work here tries to better define operation modes and optional flags
-allowing the core and filesystem code to use switch statements to switch
-on the operation mode.
+* Add config options and parameters to block forcing memory writes.
+
+  This adds a Kconfig option and boot param to allow removing the
+  FOLL_FORCE flag from /proc/<pid>/mem write calls as this can be used
+  in various attacks.
+
+  The traditional forcing behavior is kept as default because it can
+  break GDB and some other use cases.
+
+  This is the simpler version that you had requested.
+
+* Restrict overmounting of ephemeral entities.
+
+  It is currently possible to mount on top of various ephemeral entities
+  in procfs. This specifically includes magic links. To recap, magic
+  links are links of the form /proc/<pid>/fd/<nr>. They serve as
+  references to a target file and during path lookup they cause a jump
+  to the target path. Such magic links disappear if the corresponding
+  file descriptor is closed.
+
+  Currently it is possible to overmount such magic links. This is mostly
+  interesting for an attacker that wants to somehow trick a process into
+  e.g., reopening something that it didn't intend to reopen or to hide
+  a malicious file descriptor.
+
+  But also it risks leaking mounts for long-running processes. When
+  overmounting a magic link like above, the mount will not be detached
+  when the file descriptor is closed. Only the target mountpoint will
+  disappear. Which has the consequence of making it impossible to unmount
+  that mount afterwards. So the mount will stick around until the process
+  exits and the /proc/<pid>/ directory is cleaned up during
+  proc_flush_pid() when the dentries are pruned and invalidated.
+
+  That in turn means it's possible for a program to accidentally leak
+  mounts and it's also possible to make a task leak mounts without it's
+  knowledge if the attacker just keeps overmounting things under
+  /proc/<pid>/fd/<nr>.
+
+  Disallow overmounting of such ephemeral entities.
+
+* Cleanup the readdir method naming in some procfs file operations.
+
+* Replace kmalloc() and strcpy() with a simple kmemdup() call.
 
 /* Testing */
 
 gcc version 14.2.0 (Debian 14.2.0-3)
 Debian clang version 16.0.6 (27+b1)
 
-All patches are based on v6.11-rc4 and have been sitting in linux-next.
+All patches are based on v6.11-rc1 and have been sitting in linux-next.
 No build failures or warnings were observed.
 
 /* Conflicts */
@@ -82,51 +121,54 @@ No build failures or warnings were observed.
 Merge conflicts with mainline
 =============================
 
-No known conflicts.
+None.
 
 Merge conflicts with other trees
 ================================
 
-No known conflicts.
+None.
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.fallocate
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.procfs
 
-for you to fetch changes up to 7fbabbb4ae2a7203861e4db363e3c861a4df260e:
+for you to fetch changes up to 4ad5f9a021bd7e3a48a8d11c52cef36d5e05ffcc:
 
-  Merge patch series "Subject: sort out the fallocate mode mess" (2024-08-28 16:54:05 +0200)
+  proc: fold kmalloc() + strcpy() into kmemdup() (2024-09-09 10:51:20 +0200)
 
-Please consider pulling these changes from the signed vfs-6.12.fallocate tag.
+Please consider pulling these changes from the signed vfs-6.12.procfs tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.12.fallocate
+vfs-6.12.procfs
 
 ----------------------------------------------------------------
-Christian Brauner (1):
-      Merge patch series "Sort out the fallocate mode mess"
+Adrian Ratiu (1):
+      proc: add config & param to block forcing mem writes
 
-Christoph Hellwig (6):
-      block: remove checks for FALLOC_FL_NO_HIDE_STALE
-      ext4: remove tracing for FALLOC_FL_NO_HIDE_STALE
-      fs: sort out the fallocate mode vs flag mess
-      xfs: call xfs_flush_unmap_range from xfs_free_file_space
-      xfs: move the xfs_is_always_cow_inode check into xfs_alloc_file_space
-      xfs: refactor xfs_file_fallocate
+Alexey Dobriyan (1):
+      proc: fold kmalloc() + strcpy() into kmemdup()
 
- block/fops.c                |  10 +-
- fs/open.c                   |  51 ++++---
- fs/xfs/xfs_bmap_util.c      |  11 ++
- fs/xfs/xfs_file.c           | 353 ++++++++++++++++++++++++++------------------
- include/linux/falloc.h      |  18 ++-
- include/trace/events/ext4.h |   1 -
- include/uapi/linux/falloc.h |   1 +
- 7 files changed, 258 insertions(+), 187 deletions(-)
+Christian Brauner (7):
+      proc: proc_readfd() -> proc_fd_iterate()
+      proc: proc_readfdinfo() -> proc_fdinfo_iterate()
+      proc: add proc_splice_unmountable()
+      proc: block mounting on top of /proc/<pid>/map_files/*
+      proc: block mounting on top of /proc/<pid>/fd/*
+      proc: block mounting on top of /proc/<pid>/fdinfo/*
+      Merge patch series "proc: restrict overmounting of ephemeral entities"
+
+ Documentation/admin-guide/kernel-parameters.txt | 10 ++++
+ fs/proc/base.c                                  | 65 +++++++++++++++++++++++--
+ fs/proc/fd.c                                    | 16 +++---
+ fs/proc/generic.c                               |  4 +-
+ fs/proc/internal.h                              | 13 +++++
+ security/Kconfig                                | 32 ++++++++++++
+ 6 files changed, 127 insertions(+), 13 deletions(-)
 
