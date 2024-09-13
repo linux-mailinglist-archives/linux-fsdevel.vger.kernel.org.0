@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-29294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA820977B85
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 10:47:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78467977B87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 10:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACDF2280997
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 08:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A511F1C25EA1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Sep 2024 08:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063931D88DC;
-	Fri, 13 Sep 2024 08:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144121D933E;
+	Fri, 13 Sep 2024 08:45:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB10B1D88CE;
-	Fri, 13 Sep 2024 08:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55671D9334;
+	Fri, 13 Sep 2024 08:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726217123; cv=none; b=TMLrbi5h4Mqjl4vxxL33w08FeLUb+Mj2UHSRPTjm+19SqzGd9Gf/kd4KGe95mAHFSHulx6GxuEtvW0rsh6X1pEpBcubL88rQhPSdLofK8iwgj85LtLTv/BHTZfvAsJJpCcg/xnRoCEcTcFXf+2TqxGM+RMhBMynA3FWKefaKIIY=
+	t=1726217129; cv=none; b=J6gbVMdLXFUS40L9N1CbLhotJXrzVfkgJ7gNN9WFW2EMkqoLDsH90Xe4K0SBVBl/WWo2+a23j+EdFs6TOSbQ5j908h8M02n+3A3tGqEgOeJuhOk5A76N1R+F5V/5n90Q3jBMjpKS8DjgUra+sToNGER+LIq45x21cPuc2yldzkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726217123; c=relaxed/simple;
-	bh=sGLDvqf3giJXIFtxTTD6JYN+ET5glWCbC3FUb/3lcNU=;
+	s=arc-20240116; t=1726217129; c=relaxed/simple;
+	bh=vkTn66u7El/MFAyAOzG7OX65lSHvS+6KdkwigBsG9Jg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p0M0TjCFpHMTHVGojhAvsDrKi3iQOEY4DafbDvuYfNatd9HnpbU6u5FTenM4xDIxtF/ZsjFemPdmbTxgdscsr/4Ck77KJXOaRC/DNhFsupTfO9I2lbJFgibQjr0XV8gBWXccntV/MdmQPKsBW0ZFkOTZr8QQ8OEUjPP/XbDS3/o=
+	 MIME-Version; b=Kh2YIpxi6OnQvmLC25y+WBMSfQvgTkSFrOWNhpsh2HfSHa+OIScziT7TrEmMlQC1gVu5I5DHSmBfaqiiBzu8+Vaj3EhJdqhW1UsNvrZpMFAU2297FXV0CfYFFLBKEHvJbHB1XbPVUJD4NKK0kqfwHrXE6cnAz0dFHCTiC/fZXv8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAA98153B;
-	Fri, 13 Sep 2024 01:45:49 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1BA913D5;
+	Fri, 13 Sep 2024 01:45:56 -0700 (PDT)
 Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.84])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 11A813F73B;
-	Fri, 13 Sep 2024 01:45:13 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EC3C23F73B;
+	Fri, 13 Sep 2024 01:45:20 -0700 (PDT)
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 To: linux-mm@kvack.org
 Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -57,9 +57,9 @@ Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
 	Christoph Lameter <cl@linux.com>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH 6/7] mm: Use p4dp_get() for accessing P4D entries
-Date: Fri, 13 Sep 2024 14:14:32 +0530
-Message-Id: <20240913084433.1016256-7-anshuman.khandual@arm.com>
+Subject: [PATCH 7/7] mm: Use pgdp_get() for accessing PGD entries
+Date: Fri, 13 Sep 2024 14:14:33 +0530
+Message-Id: <20240913084433.1016256-8-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240913084433.1016256-1-anshuman.khandual@arm.com>
 References: <20240913084433.1016256-1-anshuman.khandual@arm.com>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert P4D accesses via p4dp_get() helper that defaults as READ_ONCE() but
+Convert PGD accesses via pgdp_get() helper that defaults as READ_ONCE() but
 also provides the platform an opportunity to override when required.
 
 Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
@@ -86,518 +86,374 @@ Cc: Uladzislau Rezki <urezki@gmail.com>
 Cc: Christoph Hellwig <hch@infradead.org>
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-perf-users@vger.kernel.org
 Cc: linux-mm@kvack.org
+Cc: linux-perf-users@vger.kernel.org
 Cc: kasan-dev@googlegroups.com
 Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
  drivers/misc/sgi-gru/grufault.c |  2 +-
- fs/userfaultfd.c                |  4 ++--
+ fs/userfaultfd.c                |  2 +-
+ include/linux/mm.h              |  2 +-
  include/linux/pgtable.h         |  6 +++---
  kernel/events/core.c            |  2 +-
- mm/gup.c                        |  6 +++---
+ mm/gup.c                        |  8 ++++----
  mm/hugetlb.c                    |  2 +-
- mm/kasan/init.c                 | 10 +++++-----
+ mm/kasan/init.c                 |  8 ++++----
  mm/kasan/shadow.c               |  2 +-
  mm/memory-failure.c             |  2 +-
- mm/memory.c                     | 14 +++++++-------
+ mm/memory.c                     | 10 +++++-----
  mm/page_vma_mapped.c            |  2 +-
- mm/pagewalk.c                   |  6 +++---
- mm/percpu.c                     |  4 ++--
+ mm/percpu.c                     |  2 +-
  mm/pgalloc-track.h              |  2 +-
- mm/pgtable-generic.c            |  4 ++--
- mm/ptdump.c                     |  2 +-
- mm/rmap.c                       |  4 ++--
- mm/sparse-vmemmap.c             |  4 ++--
- mm/vmalloc.c                    | 24 ++++++++++++------------
- mm/vmscan.c                     |  6 +++---
- 20 files changed, 54 insertions(+), 54 deletions(-)
+ mm/pgtable-generic.c            |  2 +-
+ mm/rmap.c                       |  2 +-
+ mm/sparse-vmemmap.c             |  2 +-
+ mm/vmalloc.c                    | 10 +++++-----
+ 18 files changed, 34 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
-index 0a06ec92f090..cdca93398b44 100644
+index cdca93398b44..2a8a154d8531 100644
 --- a/drivers/misc/sgi-gru/grufault.c
 +++ b/drivers/misc/sgi-gru/grufault.c
-@@ -216,7 +216,7 @@ static int atomic_pte_lookup(struct vm_area_struct *vma, unsigned long vaddr,
+@@ -212,7 +212,7 @@ static int atomic_pte_lookup(struct vm_area_struct *vma, unsigned long vaddr,
+ 	pte_t pte;
+ 
+ 	pgdp = pgd_offset(vma->vm_mm, vaddr);
+-	if (unlikely(pgd_none(*pgdp)))
++	if (unlikely(pgd_none(pgdp_get(pgdp))))
  		goto err;
  
  	p4dp = p4d_offset(pgdp, vaddr);
--	if (unlikely(p4d_none(*p4dp)))
-+	if (unlikely(p4d_none(p4dp_get(p4dp))))
- 		goto err;
- 
- 	pudp = pud_offset(p4dp, vaddr);
 diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 27a3e9285fbf..4044e15cdfd9 100644
+index 4044e15cdfd9..6d33c7a9eb01 100644
 --- a/fs/userfaultfd.c
 +++ b/fs/userfaultfd.c
-@@ -307,10 +307,10 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
- 	if (!pgd_present(*pgd))
+@@ -304,7 +304,7 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+ 	assert_fault_locked(vmf);
+ 
+ 	pgd = pgd_offset(mm, address);
+-	if (!pgd_present(*pgd))
++	if (!pgd_present(pgdp_get(pgd)))
  		goto out;
  	p4d = p4d_offset(pgd, address);
--	if (!p4d_present(*p4d))
-+	if (!p4d_present(p4dp_get(p4d)))
- 		goto out;
- 	pud = pud_offset(p4d, address);
--	if (!pud_present(*pud))
-+	if (!pud_present(pudp_get(pud)))
- 		goto out;
- 	pmd = pmd_offset(pud, address);
- again:
+ 	if (!p4d_present(p4dp_get(p4d)))
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1bb1599b5779..1978a4b1fcf5 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2819,7 +2819,7 @@ int __pte_alloc_kernel(pmd_t *pmd);
+ static inline p4d_t *p4d_alloc(struct mm_struct *mm, pgd_t *pgd,
+ 		unsigned long address)
+ {
+-	return (unlikely(pgd_none(*pgd)) && __p4d_alloc(mm, pgd, address)) ?
++	return (unlikely(pgd_none(pgdp_get(pgd))) && __p4d_alloc(mm, pgd, address)) ?
+ 		NULL : p4d_offset(pgd, address);
+ }
+ 
 diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index b25a0a505ce6..b3e40f06c8c4 100644
+index b3e40f06c8c4..19f6557b4bf5 100644
 --- a/include/linux/pgtable.h
 +++ b/include/linux/pgtable.h
-@@ -1078,7 +1078,7 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
+@@ -1084,7 +1084,7 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
  
- #define set_p4d_safe(p4dp, p4d) \
+ #define set_pgd_safe(pgdp, pgd) \
  ({ \
--	WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
-+	WARN_ON_ONCE(p4d_present(p4dp_get(p4dp)) && !p4d_same(p4dp_get(p4dp), p4d)); \
- 	set_p4d(p4dp, p4d); \
+-	WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
++	WARN_ON_ONCE(pgd_present(pgdp_get(pgdp)) && !pgd_same(pgdp_get(pgdp), pgd)); \
+ 	set_pgd(pgdp, pgd); \
  })
  
-@@ -1248,9 +1248,9 @@ static inline int pgd_none_or_clear_bad(pgd_t *pgd)
+@@ -1237,9 +1237,9 @@ void pmd_clear_bad(pmd_t *);
  
- static inline int p4d_none_or_clear_bad(p4d_t *p4d)
+ static inline int pgd_none_or_clear_bad(pgd_t *pgd)
  {
--	if (p4d_none(*p4d))
-+	if (p4d_none(p4dp_get(p4d)))
+-	if (pgd_none(*pgd))
++	if (pgd_none(pgdp_get(pgd)))
  		return 1;
--	if (unlikely(p4d_bad(*p4d))) {
-+	if (unlikely(p4d_bad(p4dp_get(p4d)))) {
- 		p4d_clear_bad(p4d);
+-	if (unlikely(pgd_bad(*pgd))) {
++	if (unlikely(pgd_bad(pgdp_get(pgd)))) {
+ 		pgd_clear_bad(pgd);
  		return 1;
  	}
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 35e2f2789246..4e56a276ed25 100644
+index 4e56a276ed25..1e3142211cce 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -7611,7 +7611,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
- 		return pgd_leaf_size(pgd);
+@@ -7603,7 +7603,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
+ 	pte_t *ptep, pte;
  
- 	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
--	p4d = READ_ONCE(*p4dp);
-+	p4d = p4dp_get(p4dp);
- 	if (!p4d_present(p4d))
+ 	pgdp = pgd_offset(mm, addr);
+-	pgd = READ_ONCE(*pgdp);
++	pgd = pgdp_get(pgdp);
+ 	if (pgd_none(pgd))
  		return 0;
  
 diff --git a/mm/gup.c b/mm/gup.c
-index 300fc7eb306c..3a97d0263052 100644
+index 3a97d0263052..f43daab23979 100644
 --- a/mm/gup.c
 +++ b/mm/gup.c
-@@ -1014,7 +1014,7 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
- 	p4d_t *p4dp, p4d;
+@@ -1060,7 +1060,7 @@ static struct page *follow_page_mask(struct vm_area_struct *vma,
+ 	ctx->page_mask = 0;
+ 	pgd = pgd_offset(mm, address);
  
- 	p4dp = p4d_offset(pgdp, address);
--	p4d = READ_ONCE(*p4dp);
-+	p4d = p4dp_get(p4dp);
- 	BUILD_BUG_ON(p4d_leaf(p4d));
- 
- 	if (!p4d_present(p4d) || p4d_bad(p4d))
-@@ -1114,7 +1114,7 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
- 	if (pgd_none(*pgd))
+-	if (pgd_none(*pgd) || unlikely(pgd_bad(*pgd)))
++	if (pgd_none(pgdp_get(pgd)) || unlikely(pgd_bad(pgdp_get(pgd))))
+ 		page = no_page_table(vma, flags, address);
+ 	else
+ 		page = follow_p4d_mask(vma, address, pgd, flags, ctx);
+@@ -1111,7 +1111,7 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
+ 		pgd = pgd_offset_k(address);
+ 	else
+ 		pgd = pgd_offset_gate(mm, address);
+-	if (pgd_none(*pgd))
++	if (pgd_none(pgdp_get(pgd)))
  		return -EFAULT;
  	p4d = p4d_offset(pgd, address);
--	if (p4d_none(*p4d))
-+	if (p4d_none(p4dp_get(p4d)))
- 		return -EFAULT;
- 	pud = pud_offset(p4d, address);
- 	if (pud_none(pudp_get(pud)))
-@@ -3245,7 +3245,7 @@ static int gup_fast_p4d_range(pgd_t *pgdp, pgd_t pgd, unsigned long addr,
+ 	if (p4d_none(p4dp_get(p4d)))
+@@ -3158,7 +3158,7 @@ static int gup_fast_pgd_leaf(pgd_t orig, pgd_t *pgdp, unsigned long addr,
+ 	if (!folio)
+ 		return 0;
  
- 	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
+-	if (unlikely(pgd_val(orig) != pgd_val(*pgdp))) {
++	if (unlikely(pgd_val(orig) != pgd_val(pgdp_get(pgdp)))) {
+ 		gup_put_folio(folio, refs, flags);
+ 		return 0;
+ 	}
+@@ -3267,7 +3267,7 @@ static void gup_fast_pgd_range(unsigned long addr, unsigned long end,
+ 
+ 	pgdp = pgd_offset(current->mm, addr);
  	do {
--		p4d_t p4d = READ_ONCE(*p4dp);
-+		p4d_t p4d = p4dp_get(p4dp);
+-		pgd_t pgd = READ_ONCE(*pgdp);
++		pgd_t pgd = pgdp_get(pgdp);
  
- 		next = p4d_addr_end(addr, end);
- 		if (!p4d_present(p4d))
+ 		next = pgd_addr_end(addr, end);
+ 		if (pgd_none(pgd))
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index a3820242b01e..4fdb91c8cc2b 100644
+index 4fdb91c8cc2b..294d74b03d83 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -7454,7 +7454,7 @@ pte_t *huge_pte_offset(struct mm_struct *mm,
- 	if (!pgd_present(*pgd))
+@@ -7451,7 +7451,7 @@ pte_t *huge_pte_offset(struct mm_struct *mm,
+ 	pmd_t *pmd;
+ 
+ 	pgd = pgd_offset(mm, addr);
+-	if (!pgd_present(*pgd))
++	if (!pgd_present(pgdp_get(pgd)))
  		return NULL;
  	p4d = p4d_offset(pgd, addr);
--	if (!p4d_present(*p4d))
-+	if (!p4d_present(p4dp_get(p4d)))
- 		return NULL;
- 
- 	pud = pud_offset(p4d, addr);
+ 	if (!p4d_present(p4dp_get(p4d)))
 diff --git a/mm/kasan/init.c b/mm/kasan/init.c
-index f4cf519443e1..02af738fee5e 100644
+index 02af738fee5e..c2b307716551 100644
 --- a/mm/kasan/init.c
 +++ b/mm/kasan/init.c
-@@ -208,7 +208,7 @@ static int __ref zero_p4d_populate(pgd_t *pgd, unsigned long addr,
+@@ -271,7 +271,7 @@ int __ref kasan_populate_early_shadow(const void *shadow_start,
  			continue;
  		}
  
--		if (p4d_none(*p4d)) {
-+		if (p4d_none(p4dp_get(p4d))) {
- 			pud_t *p;
+-		if (pgd_none(*pgd)) {
++		if (pgd_none(pgdp_get(pgd))) {
+ 			p4d_t *p;
  
  			if (slab_is_available()) {
-@@ -330,7 +330,7 @@ static void kasan_free_pud(pud_t *pud_start, p4d_t *p4d)
+@@ -345,7 +345,7 @@ static void kasan_free_p4d(p4d_t *p4d_start, pgd_t *pgd)
  			return;
  	}
  
--	pud_free(&init_mm, (pud_t *)page_to_virt(p4d_page(*p4d)));
-+	pud_free(&init_mm, (pud_t *)page_to_virt(p4d_page(p4dp_get(p4d))));
- 	p4d_clear(p4d);
+-	p4d_free(&init_mm, (p4d_t *)page_to_virt(pgd_page(*pgd)));
++	p4d_free(&init_mm, (p4d_t *)page_to_virt(pgd_page(pgdp_get(pgd))));
+ 	pgd_clear(pgd);
  }
  
-@@ -341,7 +341,7 @@ static void kasan_free_p4d(p4d_t *p4d_start, pgd_t *pgd)
+@@ -468,10 +468,10 @@ void kasan_remove_zero_shadow(void *start, unsigned long size)
+ 		next = pgd_addr_end(addr, end);
  
- 	for (i = 0; i < PTRS_PER_P4D; i++) {
- 		p4d = p4d_start + i;
--		if (!p4d_none(*p4d))
-+		if (!p4d_none(p4dp_get(p4d)))
- 			return;
- 	}
- 
-@@ -434,10 +434,10 @@ static void kasan_remove_p4d_table(p4d_t *p4d, unsigned long addr,
- 
- 		next = p4d_addr_end(addr, end);
- 
--		if (!p4d_present(*p4d))
-+		if (!p4d_present(p4dp_get(p4d)))
+ 		pgd = pgd_offset_k(addr);
+-		if (!pgd_present(*pgd))
++		if (!pgd_present(pgdp_get(pgd)))
  			continue;
  
--		if (kasan_pud_table(*p4d)) {
-+		if (kasan_pud_table(p4dp_get(p4d))) {
- 			if (IS_ALIGNED(addr, P4D_SIZE) &&
- 			    IS_ALIGNED(next, P4D_SIZE)) {
- 				p4d_clear(p4d);
+-		if (kasan_p4d_table(*pgd)) {
++		if (kasan_p4d_table(pgdp_get(pgd))) {
+ 			if (IS_ALIGNED(addr, PGDIR_SIZE) &&
+ 			    IS_ALIGNED(next, PGDIR_SIZE)) {
+ 				pgd_clear(pgd);
 diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-index dbd8164c75f1..52150cc5ae5f 100644
+index 52150cc5ae5f..7f3c46237816 100644
 --- a/mm/kasan/shadow.c
 +++ b/mm/kasan/shadow.c
-@@ -194,7 +194,7 @@ static bool shadow_mapped(unsigned long addr)
- 	if (pgd_none(*pgd))
+@@ -191,7 +191,7 @@ static bool shadow_mapped(unsigned long addr)
+ 	pmd_t *pmd;
+ 	pte_t *pte;
+ 
+-	if (pgd_none(*pgd))
++	if (pgd_none(pgdp_get(pgd)))
  		return false;
  	p4d = p4d_offset(pgd, addr);
--	if (p4d_none(*p4d))
-+	if (p4d_none(p4dp_get(p4d)))
- 		return false;
- 	pud = pud_offset(p4d, addr);
- 	if (pud_none(pudp_get(pud)))
+ 	if (p4d_none(p4dp_get(p4d)))
 diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index fbb63401fb51..3d900cc039b3 100644
+index 3d900cc039b3..c9397eab52bd 100644
 --- a/mm/memory-failure.c
 +++ b/mm/memory-failure.c
-@@ -414,7 +414,7 @@ static unsigned long dev_pagemap_mapping_shift(struct vm_area_struct *vma,
- 	if (!pgd_present(*pgd))
+@@ -411,7 +411,7 @@ static unsigned long dev_pagemap_mapping_shift(struct vm_area_struct *vma,
+ 
+ 	VM_BUG_ON_VMA(address == -EFAULT, vma);
+ 	pgd = pgd_offset(vma->vm_mm, address);
+-	if (!pgd_present(*pgd))
++	if (!pgd_present(pgdp_get(pgd)))
  		return 0;
  	p4d = p4d_offset(pgd, address);
--	if (!p4d_present(*p4d))
-+	if (!p4d_present(p4dp_get(p4d)))
- 		return 0;
- 	pud = pud_offset(p4d, address);
- 	if (!pud_present(pudp_get(pud)))
+ 	if (!p4d_present(p4dp_get(p4d)))
 diff --git a/mm/memory.c b/mm/memory.c
-index af6c9346493c..7e6bb051d187 100644
+index 7e6bb051d187..7765d30e669f 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -2902,11 +2902,11 @@ static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
- 	}
+@@ -2936,11 +2936,11 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+ 	pgd = pgd_offset(mm, addr);
  	do {
- 		next = p4d_addr_end(addr, end);
--		if (p4d_none(*p4d) && !create)
-+		if (p4d_none(p4dp_get(p4d)) && !create)
+ 		next = pgd_addr_end(addr, end);
+-		if (pgd_none(*pgd) && !create)
++		if (pgd_none(pgdp_get(pgd)) && !create)
  			continue;
--		if (WARN_ON_ONCE(p4d_leaf(*p4d)))
-+		if (WARN_ON_ONCE(p4d_leaf(p4dp_get(p4d))))
+-		if (WARN_ON_ONCE(pgd_leaf(*pgd)))
++		if (WARN_ON_ONCE(pgd_leaf(pgdp_get(pgd))))
  			return -EINVAL;
--		if (!p4d_none(*p4d) && WARN_ON_ONCE(p4d_bad(*p4d))) {
-+		if (!p4d_none(p4dp_get(p4d)) && WARN_ON_ONCE(p4d_bad(p4dp_get(p4d)))) {
+-		if (!pgd_none(*pgd) && WARN_ON_ONCE(pgd_bad(*pgd))) {
++		if (!pgd_none(pgdp_get(pgd)) && WARN_ON_ONCE(pgd_bad(pgdp_get(pgd)))) {
  			if (!create)
  				continue;
- 			p4d_clear_bad(p4d);
-@@ -6058,7 +6058,7 @@ int __pud_alloc(struct mm_struct *mm, p4d_t *p4d, unsigned long address)
+ 			pgd_clear_bad(pgd);
+@@ -6035,7 +6035,7 @@ int __p4d_alloc(struct mm_struct *mm, pgd_t *pgd, unsigned long address)
  		return -ENOMEM;
  
  	spin_lock(&mm->page_table_lock);
--	if (!p4d_present(*p4d)) {
-+	if (!p4d_present(p4dp_get(p4d))) {
- 		mm_inc_nr_puds(mm);
+-	if (pgd_present(*pgd)) {	/* Another has populated it */
++	if (pgd_present(pgdp_get(pgd))) {	/* Another has populated it */
+ 		p4d_free(mm, new);
+ 	} else {
  		smp_wmb(); /* See comment in pmd_install() */
- 		p4d_populate(mm, p4d, new);
-@@ -6082,7 +6082,7 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
- 		return -ENOMEM;
+@@ -6139,7 +6139,7 @@ int follow_pte(struct vm_area_struct *vma, unsigned long address,
+ 		goto out;
  
- 	ptl = pud_lock(mm, pud);
--	if (!pud_present(*pud)) {
-+	if (!pud_present(pudp_get(pud))) {
- 		mm_inc_nr_pmds(mm);
- 		smp_wmb(); /* See comment in pmd_install() */
- 		pud_populate(mm, pud, new);
-@@ -6143,11 +6143,11 @@ int follow_pte(struct vm_area_struct *vma, unsigned long address,
+ 	pgd = pgd_offset(mm, address);
+-	if (pgd_none(*pgd) || unlikely(pgd_bad(*pgd)))
++	if (pgd_none(pgdp_get(pgd)) || unlikely(pgd_bad(pgdp_get(pgd))))
  		goto out;
  
  	p4d = p4d_offset(pgd, address);
--	if (p4d_none(*p4d) || unlikely(p4d_bad(*p4d)))
-+	if (p4d_none(p4dp_get(p4d)) || unlikely(p4d_bad(p4dp_get(p4d))))
- 		goto out;
- 
- 	pud = pud_offset(p4d, address);
--	if (pud_none(*pud) || unlikely(pud_bad(*pud)))
-+	if (pud_none(pudp_get(pud)) || unlikely(pud_bad(pudp_get(pud))))
- 		goto out;
- 
- 	pmd = pmd_offset(pud, address);
 diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-index 511266307771..a33f92db2666 100644
+index a33f92db2666..fb8b610f7378 100644
 --- a/mm/page_vma_mapped.c
 +++ b/mm/page_vma_mapped.c
-@@ -217,7 +217,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
- 			continue;
- 		}
- 		p4d = p4d_offset(pgd, pvmw->address);
--		if (!p4d_present(*p4d)) {
-+		if (!p4d_present(p4dp_get(p4d))) {
- 			step_forward(pvmw, P4D_SIZE);
- 			continue;
- 		}
-diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index c3019a160e77..1d32c6da1a0d 100644
---- a/mm/pagewalk.c
-+++ b/mm/pagewalk.c
-@@ -145,7 +145,7 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
+@@ -212,7 +212,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
+ restart:
  	do {
-  again:
- 		next = pud_addr_end(addr, end);
--		if (pud_none(*pud)) {
-+		if (pud_none(pudp_get(pud))) {
- 			if (ops->pte_hole)
- 				err = ops->pte_hole(addr, next, depth, walk);
- 			if (err)
-@@ -163,14 +163,14 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
- 		if (walk->action == ACTION_AGAIN)
- 			goto again;
- 
--		if ((!walk->vma && (pud_leaf(*pud) || !pud_present(*pud))) ||
-+		if ((!walk->vma && (pud_leaf(pudp_get(pud)) || !pud_present(pudp_get(pud)))) ||
- 		    walk->action == ACTION_CONTINUE ||
- 		    !(ops->pmd_entry || ops->pte_entry))
+ 		pgd = pgd_offset(mm, pvmw->address);
+-		if (!pgd_present(*pgd)) {
++		if (!pgd_present(pgdp_get(pgd))) {
+ 			step_forward(pvmw, PGDIR_SIZE);
  			continue;
- 
- 		if (walk->vma)
- 			split_huge_pud(walk->vma, pud, addr);
--		if (pud_none(*pud))
-+		if (pud_none(pudp_get(pud)))
- 			goto again;
- 
- 		err = walk_pmd_range(pud, addr, next, walk);
+ 		}
 diff --git a/mm/percpu.c b/mm/percpu.c
-index 7ee77c0fd5e3..58660e8eb892 100644
+index 58660e8eb892..70e68ab002e9 100644
 --- a/mm/percpu.c
 +++ b/mm/percpu.c
-@@ -3192,7 +3192,7 @@ void __init __weak pcpu_populate_pte(unsigned long addr)
- 	}
+@@ -3184,7 +3184,7 @@ void __init __weak pcpu_populate_pte(unsigned long addr)
+ 	pud_t *pud;
+ 	pmd_t *pmd;
  
- 	p4d = p4d_offset(pgd, addr);
--	if (p4d_none(*p4d)) {
-+	if (p4d_none(p4dp_get(p4d))) {
- 		pud = memblock_alloc(PUD_TABLE_SIZE, PUD_TABLE_SIZE);
- 		if (!pud)
- 			goto err_alloc;
-@@ -3200,7 +3200,7 @@ void __init __weak pcpu_populate_pte(unsigned long addr)
- 	}
- 
- 	pud = pud_offset(p4d, addr);
--	if (pud_none(*pud)) {
-+	if (pud_none(pudp_get(pud))) {
- 		pmd = memblock_alloc(PMD_TABLE_SIZE, PMD_TABLE_SIZE);
- 		if (!pmd)
+-	if (pgd_none(*pgd)) {
++	if (pgd_none(pgdp_get(pgd))) {
+ 		p4d = memblock_alloc(P4D_TABLE_SIZE, P4D_TABLE_SIZE);
+ 		if (!p4d)
  			goto err_alloc;
 diff --git a/mm/pgalloc-track.h b/mm/pgalloc-track.h
-index 0f6b809431a3..3db8ccbcb141 100644
+index 3db8ccbcb141..644f632c7cba 100644
 --- a/mm/pgalloc-track.h
 +++ b/mm/pgalloc-track.h
-@@ -20,7 +20,7 @@ static inline pud_t *pud_alloc_track(struct mm_struct *mm, p4d_t *p4d,
+@@ -7,7 +7,7 @@ static inline p4d_t *p4d_alloc_track(struct mm_struct *mm, pgd_t *pgd,
  				     unsigned long address,
  				     pgtbl_mod_mask *mod_mask)
  {
--	if (unlikely(p4d_none(*p4d))) {
-+	if (unlikely(p4d_none(p4dp_get(p4d)))) {
- 		if (__pud_alloc(mm, p4d, address))
+-	if (unlikely(pgd_none(*pgd))) {
++	if (unlikely(pgd_none(pgdp_get(pgd)))) {
+ 		if (__p4d_alloc(mm, pgd, address))
  			return NULL;
- 		*mod_mask |= PGTBL_P4D_MODIFIED;
+ 		*mod_mask |= PGTBL_PGD_MODIFIED;
 diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index 5bd02c6208e7..7e0a4974b0fc 100644
+index 7e0a4974b0fc..b97eea347a36 100644
 --- a/mm/pgtable-generic.c
 +++ b/mm/pgtable-generic.c
-@@ -31,7 +31,7 @@ void pgd_clear_bad(pgd_t *pgd)
- #ifndef __PAGETABLE_P4D_FOLDED
- void p4d_clear_bad(p4d_t *p4d)
- {
--	p4d_ERROR(*p4d);
-+	p4d_ERROR(p4dp_get(p4d));
- 	p4d_clear(p4d);
- }
- #endif
-@@ -39,7 +39,7 @@ void p4d_clear_bad(p4d_t *p4d)
- #ifndef __PAGETABLE_PUD_FOLDED
- void pud_clear_bad(pud_t *pud)
- {
--	pud_ERROR(*pud);
-+	pud_ERROR(pudp_get(pud));
- 	pud_clear(pud);
- }
- #endif
-diff --git a/mm/ptdump.c b/mm/ptdump.c
-index 32ae8e829329..2c40224b8ad0 100644
---- a/mm/ptdump.c
-+++ b/mm/ptdump.c
-@@ -53,7 +53,7 @@ static int ptdump_p4d_entry(p4d_t *p4d, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	p4d_t val = READ_ONCE(*p4d);
-+	p4d_t val = p4dp_get(p4d);
+@@ -24,7 +24,7 @@
  
- #if CONFIG_PGTABLE_LEVELS > 3 && \
- 		(defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS))
+ void pgd_clear_bad(pgd_t *pgd)
+ {
+-	pgd_ERROR(*pgd);
++	pgd_ERROR(pgdp_get(pgd));
+ 	pgd_clear(pgd);
+ }
+ 
 diff --git a/mm/rmap.c b/mm/rmap.c
-index ec668c48bccc..829d0cf5e384 100644
+index 829d0cf5e384..7e2e977efaba 100644
 --- a/mm/rmap.c
 +++ b/mm/rmap.c
-@@ -813,11 +813,11 @@ pmd_t *mm_find_pmd(struct mm_struct *mm, unsigned long address)
+@@ -809,7 +809,7 @@ pmd_t *mm_find_pmd(struct mm_struct *mm, unsigned long address)
+ 	pmd_t *pmd = NULL;
+ 
+ 	pgd = pgd_offset(mm, address);
+-	if (!pgd_present(*pgd))
++	if (!pgd_present(pgdp_get(pgd)))
  		goto out;
  
  	p4d = p4d_offset(pgd, address);
--	if (!p4d_present(*p4d))
-+	if (!p4d_present(p4dp_get(p4d)))
- 		goto out;
- 
- 	pud = pud_offset(p4d, address);
--	if (!pud_present(*pud))
-+	if (!pud_present(pudp_get(pud)))
- 		goto out;
- 
- 	pmd = pmd_offset(pud, address);
 diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index c89706e107ce..2bd1c95f107a 100644
+index 2bd1c95f107a..ffc78329a130 100644
 --- a/mm/sparse-vmemmap.c
 +++ b/mm/sparse-vmemmap.c
-@@ -203,7 +203,7 @@ void __weak __meminit pmd_init(void *addr)
- pud_t * __meminit vmemmap_pud_populate(p4d_t *p4d, unsigned long addr, int node)
+@@ -233,7 +233,7 @@ p4d_t * __meminit vmemmap_p4d_populate(pgd_t *pgd, unsigned long addr, int node)
+ pgd_t * __meminit vmemmap_pgd_populate(unsigned long addr, int node)
  {
- 	pud_t *pud = pud_offset(p4d, addr);
--	if (pud_none(*pud)) {
-+	if (pud_none(pudp_get(pud))) {
- 		void *p = vmemmap_alloc_block_zero(PAGE_SIZE, node);
- 		if (!p)
- 			return NULL;
-@@ -220,7 +220,7 @@ void __weak __meminit pud_init(void *addr)
- p4d_t * __meminit vmemmap_p4d_populate(pgd_t *pgd, unsigned long addr, int node)
- {
- 	p4d_t *p4d = p4d_offset(pgd, addr);
--	if (p4d_none(*p4d)) {
-+	if (p4d_none(p4dp_get(p4d))) {
+ 	pgd_t *pgd = pgd_offset_k(addr);
+-	if (pgd_none(*pgd)) {
++	if (pgd_none(pgdp_get(pgd))) {
  		void *p = vmemmap_alloc_block_zero(PAGE_SIZE, node);
  		if (!p)
  			return NULL;
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index d27aa1ebaad6..c67b067f4686 100644
+index c67b067f4686..de7a6dd0ab21 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -200,7 +200,7 @@ static int vmap_try_huge_pud(pud_t *pud, unsigned long addr, unsigned long end,
- 	if (!IS_ALIGNED(phys_addr, PUD_SIZE))
- 		return 0;
+@@ -450,7 +450,7 @@ void __vunmap_range_noflush(unsigned long start, unsigned long end)
+ 	pgd = pgd_offset_k(addr);
+ 	do {
+ 		next = pgd_addr_end(addr, end);
+-		if (pgd_bad(*pgd))
++		if (pgd_bad(pgdp_get(pgd)))
+ 			mask |= PGTBL_PGD_MODIFIED;
+ 		if (pgd_none_or_clear_bad(pgd))
+ 			continue;
+@@ -582,7 +582,7 @@ static int vmap_small_pages_range_noflush(unsigned long addr, unsigned long end,
+ 	pgd = pgd_offset_k(addr);
+ 	do {
+ 		next = pgd_addr_end(addr, end);
+-		if (pgd_bad(*pgd))
++		if (pgd_bad(pgdp_get(pgd)))
+ 			mask |= PGTBL_PGD_MODIFIED;
+ 		err = vmap_pages_p4d_range(pgd, addr, next, prot, pages, &nr, &mask);
+ 		if (err)
+@@ -752,11 +752,11 @@ struct page *vmalloc_to_page(const void *vmalloc_addr)
+ 	 */
+ 	VIRTUAL_BUG_ON(!is_vmalloc_or_module_addr(vmalloc_addr));
  
--	if (pud_present(*pud) && !pud_free_pmd_page(pud, addr))
-+	if (pud_present(pudp_get(pud)) && !pud_free_pmd_page(pud, addr))
- 		return 0;
- 
- 	return pud_set_huge(pud, phys_addr, prot);
-@@ -251,7 +251,7 @@ static int vmap_try_huge_p4d(p4d_t *p4d, unsigned long addr, unsigned long end,
- 	if (!IS_ALIGNED(phys_addr, P4D_SIZE))
- 		return 0;
- 
--	if (p4d_present(*p4d) && !p4d_free_pud_page(p4d, addr))
-+	if (p4d_present(p4dp_get(p4d)) && !p4d_free_pud_page(p4d, addr))
- 		return 0;
- 
- 	return p4d_set_huge(p4d, phys_addr, prot);
-@@ -396,7 +396,7 @@ static void vunmap_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
- 		next = pud_addr_end(addr, end);
- 
- 		cleared = pud_clear_huge(pud);
--		if (cleared || pud_bad(*pud))
-+		if (cleared || pud_bad(pudp_get(pud)))
- 			*mask |= PGTBL_PUD_MODIFIED;
- 
- 		if (cleared)
-@@ -418,7 +418,7 @@ static void vunmap_p4d_range(pgd_t *pgd, unsigned long addr, unsigned long end,
- 		next = p4d_addr_end(addr, end);
- 
- 		p4d_clear_huge(p4d);
--		if (p4d_bad(*p4d))
-+		if (p4d_bad(p4dp_get(p4d)))
- 			*mask |= PGTBL_P4D_MODIFIED;
- 
- 		if (p4d_none_or_clear_bad(p4d))
-@@ -760,19 +760,19 @@ struct page *vmalloc_to_page(const void *vmalloc_addr)
+-	if (pgd_none(*pgd))
++	if (pgd_none(pgdp_get(pgd)))
+ 		return NULL;
+-	if (WARN_ON_ONCE(pgd_leaf(*pgd)))
++	if (WARN_ON_ONCE(pgd_leaf(pgdp_get(pgd))))
+ 		return NULL; /* XXX: no allowance for huge pgd */
+-	if (WARN_ON_ONCE(pgd_bad(*pgd)))
++	if (WARN_ON_ONCE(pgd_bad(pgdp_get(pgd))))
  		return NULL;
  
  	p4d = p4d_offset(pgd, addr);
--	if (p4d_none(*p4d))
-+	if (p4d_none(p4dp_get(p4d)))
- 		return NULL;
--	if (p4d_leaf(*p4d))
--		return p4d_page(*p4d) + ((addr & ~P4D_MASK) >> PAGE_SHIFT);
--	if (WARN_ON_ONCE(p4d_bad(*p4d)))
-+	if (p4d_leaf(p4dp_get(p4d)))
-+		return p4d_page(p4dp_get(p4d)) + ((addr & ~P4D_MASK) >> PAGE_SHIFT);
-+	if (WARN_ON_ONCE(p4d_bad(p4dp_get(p4d))))
- 		return NULL;
- 
- 	pud = pud_offset(p4d, addr);
--	if (pud_none(*pud))
-+	if (pud_none(pudp_get(pud)))
- 		return NULL;
--	if (pud_leaf(*pud))
--		return pud_page(*pud) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
--	if (WARN_ON_ONCE(pud_bad(*pud)))
-+	if (pud_leaf(pudp_get(pud)))
-+		return pud_page(pudp_get(pud)) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
-+	if (WARN_ON_ONCE(pud_bad(pudp_get(pud))))
- 		return NULL;
- 
- 	pmd = pmd_offset(pud, addr);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index bd489c1af228..b16925b5f072 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3421,7 +3421,7 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
- 	DEFINE_MAX_SEQ(walk->lruvec);
- 	int old_gen, new_gen = lru_gen_from_seq(max_seq);
- 
--	VM_WARN_ON_ONCE(pud_leaf(*pud));
-+	VM_WARN_ON_ONCE(pud_leaf(pudp_get(pud)));
- 
- 	/* try to batch at most 1+MIN_LRU_BATCH+1 entries */
- 	if (*first == -1) {
-@@ -3501,7 +3501,7 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
- 	struct lru_gen_mm_walk *walk = args->private;
- 	struct lru_gen_mm_state *mm_state = get_mm_state(walk->lruvec);
- 
--	VM_WARN_ON_ONCE(pud_leaf(*pud));
-+	VM_WARN_ON_ONCE(pud_leaf(pudp_get(pud)));
- 
- 	/*
- 	 * Finish an entire PMD in two passes: the first only reaches to PTE
-@@ -3579,7 +3579,7 @@ static int walk_pud_range(p4d_t *p4d, unsigned long start, unsigned long end,
- 	unsigned long next;
- 	struct lru_gen_mm_walk *walk = args->private;
- 
--	VM_WARN_ON_ONCE(p4d_leaf(*p4d));
-+	VM_WARN_ON_ONCE(p4d_leaf(p4dp_get(p4d)));
- 
- 	pud = pud_offset(p4d, start & P4D_MASK);
- restart:
 -- 
 2.25.1
 
