@@ -1,102 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-29373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4737978F00
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 10:09:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D19978F45
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 10:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81EA31F2358E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 08:09:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4DA7B245BE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 08:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3F313D51B;
-	Sat, 14 Sep 2024 08:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B3E146D5A;
+	Sat, 14 Sep 2024 08:55:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D9810E9;
-	Sat, 14 Sep 2024 08:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA97D15D1
+	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Sep 2024 08:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726301376; cv=none; b=aYv3G5Ay1IpwBG4P4Ld04KzvZn9GZ/+D6lGVjVQGfXntxqHRd2f5cC5MPr3xbf/bGfw5HnKi6/ayB+eNFTpnGPl/8F+7cvB02yuk/JtXo8uAg+0YI9soQVUeggKCYrIDRmnQnIb5ECeATQ2BPXlqcuNiVZtcSFOaeUpEZKXleG4=
+	t=1726304130; cv=none; b=S5vHUHScykSxqjtYhfdLir76k//3djvfynJxWNohdts4IrQGkyN2NKO3AVDpaAc4lPSzI2cDOg9AvT75yQhdW+BR1VS8XLjiVQfy64SssLYYbRQEE7kh+/odImIT4f5/1rIALXqJNyWnZwfV00kb7kUc7r9pRpUh/ZXGHH+U+HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726301376; c=relaxed/simple;
-	bh=hsbtLFpJhDGNRlHyhZUO4BRjdVPEg0v1yCWp3kAGgSw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mDcz+eAnnwmTt5ly/T0/gHn+xURDiB1bSATl4Pr8Ibl9EaXgORZJSSRRjz+inGHwfOOAebD/h9ykDtvDWtNNMpANtFwK6E4tkgTzOFCXjwIJm/ScwVESFbc+k4UPktg5B99B9s6i0g+pYIGxbLOT6eMyJtnMSwC31HcevSB+1yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1726304130; c=relaxed/simple;
+	bh=j8DxqegxzaeIemxWvcTNED8U48U43F5T27GAMKAyHW8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YaQv1b4ygdPe3S6votsum1ilVWXisKYXHIpj0aBVMfzKW68DT7bmmqfz3vGx7iHGWzfpmfULTTB5AwO4fbL18LDfCBvPqkTJPo3kksyVI3Yo8u2JN+C+yxDWvFQPooqNEf4idB3XAP7AzKbekLPi6yr9mFeVaIXipAhgnlZpT3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X5P0t1LSLzmYkK;
-	Sat, 14 Sep 2024 16:07:26 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 175F91800A0;
-	Sat, 14 Sep 2024 16:09:31 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 14 Sep 2024 16:09:30 +0800
-Message-ID: <bc88a7b9-3be8-4084-86a1-fe464ce99213@huawei.com>
-Date: Sat, 14 Sep 2024 16:09:30 +0800
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X5Q425ZQqz20npl;
+	Sat, 14 Sep 2024 16:55:14 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id EA2021401F0;
+	Sat, 14 Sep 2024 16:55:23 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 14 Sep
+ 2024 16:55:23 +0800
+From: yangyun <yangyun50@huawei.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+CC: Bernd Schubert <bschubert@ddn.com>, Amir Goldstein <amir73il@gmail.com>,
+	<linux-fsdevel@vger.kernel.org>, <lixiaokeng@huawei.com>
+Subject: [PATCH] fuse: use exclusive lock when FUSE_I_CACHE_IO_MODE is set
+Date: Sat, 14 Sep 2024 16:51:31 +0800
+Message-ID: <20240914085131.3871317-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 0/2] Introduce tracepoint for hugetlbfs
-Content-Language: en-US
-To: <muchun.song@linux.dev>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mathieu.desnoyers@efficios.com>, <linux-mm@kvack.org>,
-	<david@fromorbit.com>, <songmuchun@bytedance.com>
-CC: <linux-trace-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <20240829064110.67884-1-lihongbo22@huawei.com>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <20240829064110.67884-1-lihongbo22@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
-Hi,
+This may be a typo. The comment has said shared locks are
+not allowed when this bit is set. If using shared lock, the
+wait in `fuse_file_cached_io_open` may be forever.
 
-Just a gently ping for this. Does this patch have a change of making it 
-into this cycle?
+Fixes: 205c1d802683 ("fuse: allow parallel dio writes with FUSE_DIRECT_IO_ALLOW_MMAP")
+CC: stable@vger.kernel.org
+Signed-off-by: yangyun <yangyun50@huawei.com>
+---
+ fs/fuse/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Hongbo
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index ca553d7a7c9e..e5f6affb0baa 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1345,7 +1345,7 @@ static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from
+ 
+ 	/* shared locks are not allowed with parallel page cache IO */
+ 	if (test_bit(FUSE_I_CACHE_IO_MODE, &fi->state))
+-		return false;
++		return true;
+ 
+ 	/* Parallel dio beyond EOF is not supported, at least for now. */
+ 	if (fuse_io_past_eof(iocb, from))
+-- 
+2.33.0
 
-On 2024/8/29 14:41, Hongbo Li wrote:
-> Here we add some basic tracepoints for debugging hugetlbfs: {alloc, free,
-> evict}_inode, setattr and fallocate.
-> 
-> v2 can be found at:
-> https://lore.kernel.org/all/ZoYY-sfj5jvs8UpQ@casper.infradead.org/T/
-> 
-> Changes since v2:
->    - Simplify the tracepoint output for setattr.
->    - Make every token be space separated.
-> 
-> 
-> v1 can be found at:
-> https://lore.kernel.org/linux-mm/20240701194906.3a9b6765@gandalf.local.home/T/
-> 
-> Changes since v1:
->    - Decrease the parameters for setattr tracer suggested by Steve and Mathieu.
->    - Replace current_user_ns() with init_user_ns when translate uid/gid.
-> 
-> Hongbo Li (2):
->    hugetlbfs: support tracepoint
->    hugetlbfs: use tracepoints in hugetlbfs functions.
-> 
->   MAINTAINERS                      |   1 +
->   fs/hugetlbfs/inode.c             |  17 +++-
->   include/trace/events/hugetlbfs.h | 156 +++++++++++++++++++++++++++++++
->   3 files changed, 172 insertions(+), 2 deletions(-)
->   create mode 100644 include/trace/events/hugetlbfs.h
-> 
 
