@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-29379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCFC979245
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 19:07:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE9697924C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 19:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92F921F22744
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 17:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8701F22752
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 17:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5E21D1313;
-	Sat, 14 Sep 2024 17:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85421D220A;
+	Sat, 14 Sep 2024 17:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIhrG/TD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgrESo/2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3921D094B;
-	Sat, 14 Sep 2024 17:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AFE1D094B;
+	Sat, 14 Sep 2024 17:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726333642; cv=none; b=orOSv9okK/WjDvde51Yk7ow/Yki1S2hqXT+zz6rTClCXBGI24VjiObDvgRfqP7VeOKHJG5QlZNKSnpqvyvfV6lACvbqWZo020ORwNzTa7ci21ssfIkCYPuRC0fI2PLTxrbxOPesDLtZZBgKa8m21Rbssetshwpz/uqKYRbKJwDE=
+	t=1726333647; cv=none; b=q3JVK/f5hNTfuWAao8gKYIbLgjxS7x9Nehi+EyXIWLIN0lG8nM2/M0XMEggpUJraeD+DkGuXqPKu7AB/afHK797hUC1HBt8WE1SgZJQhBlzgtIkCpzH8Dl5qEpUM//I8TPDIjSQuJQ0XYMpLuCl9RvLbbdUkLK5AcUB60z43lHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726333642; c=relaxed/simple;
-	bh=oNZ9ifUx85pIo9YMYCgfUbZxCuBYJVyxSYhJ7nj6Okw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qRBLeW81DXmygBi7s7o3T9o9hiIoFS2RRTZaa7D9CIAKEWF0gDULw/5Fo3fUF6D+sM5C560PJM1yhvETRiDKquAXWGDyNf11yBxOkgdehnYeICkZ513my6pLpJ2i+7JplmQOH4lcotWzwN6WcUgRRJkOk9cD9ZR1N7W5Gi4QoJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIhrG/TD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C27AC4CEC0;
-	Sat, 14 Sep 2024 17:07:19 +0000 (UTC)
+	s=arc-20240116; t=1726333647; c=relaxed/simple;
+	bh=I9/47O7qo7bvUG1tGenasxTgf1bKbVz1h75bJIuETII=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Il/kKVrKldO9ZdmI7BPUvh0svpI3Z0R5k7dyILnJSXIW70et3fXzU3hmDnUhVVGSdDjKpTFhar14RNTGFXUOj8Fn2w2aiDFPKGEwNtU1rRf4TA+8j0Zl/O/HDkrdOErmj0TovADThGYo9eITZb/qI4eEEokUV+8sMIpwF+I4GXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgrESo/2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B09C4CECE;
+	Sat, 14 Sep 2024 17:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726333641;
-	bh=oNZ9ifUx85pIo9YMYCgfUbZxCuBYJVyxSYhJ7nj6Okw=;
-	h=From:Subject:Date:To:Cc:From;
-	b=NIhrG/TDQrl07dQ6TTbVV11vXpgZGzQZxMb7rqWJf9YAqDCOnuN8/88/0FV3S4zRz
-	 F/sRefY+mAgWCj290EfoHiDr/tFuPLrwWcSPQa15Ly6rSF8ogjkIt9UdqTIlKPC6by
-	 Ybmndyp8mgSJurKbFuIIBPi34KWS2K3oD1BKV6lHzBNQ3ZGMbbXyVe7+GO3Zpc3NRi
-	 3InVqX8jWq2iggLuTzveSlnI6KzQIp3opdUoZSS0xkYAeY7SsvDvGTc+PtrVtaSZF8
-	 Kvle/Z2ivJSJ4h9S9YYYq1bGJyyCGkGmp3hcpex84I2YuUaTGKdwN8yJ1Ags2cbifD
-	 BkS6SDCaPGIoA==
+	s=k20201202; t=1726333644;
+	bh=I9/47O7qo7bvUG1tGenasxTgf1bKbVz1h75bJIuETII=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=qgrESo/2dKlnGWdwdJt4WBacgChSPGID4vFllkaU0ksLvfh8W0/erR8TcsEd20YuZ
+	 qy7LG7yQaw1+e/hwVRstO2c5SRLjUDVSP/ai1Epg+DZnh8JrRgfa5TP41U31y2xz/7
+	 +080vYTYI1+3AEo46MOZstgKVgoVQmbrOFSFzlkobnc00Vjxiieldhagjt4wBVp973
+	 XWYxtSPcLauiLWBgbApL12W40KgS+mjYM9Rf0aPgs+ds4DZXA4+rRSTEnRWVCNll2X
+	 J3CCfCt44JNNKu6dnZep+GyBvY2msx2KWB6EgyIY2/rZe6t72Qcb7qRfabSY4kKAsr
+	 o+N7Q0cpT2x6w==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v8 00/11] fs: multigrain timestamp redux
-Date: Sat, 14 Sep 2024 13:07:13 -0400
-Message-Id: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+Date: Sat, 14 Sep 2024 13:07:14 -0400
+Subject: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
+ handling into timekeeper
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +53,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMHC5WYC/1WNQQ6CMBBFr0Jmbc1QChRX3sO4oHSEiQKmJY2Gc
- HcLxqjL9zPvzQyeHJOHQzKDo8CexyGC3iXQdPXQkmAbGSRKhVWaib6duCchsam0aWytNUE8vju
- 68GMLnc6RO/bT6J5bNxTr+k6Uaf5JhEKgUJpymyljpamPV3ID3faja2FthPLr/bwOZfQqaRVKp
- Mwg/nnLsrwA+W2M09UAAAA=
+Message-Id: <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+In-Reply-To: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
 To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
  Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
@@ -76,115 +76,174 @@ Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
  linux-nfs@vger.kernel.org, linux-mm@kvack.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4242; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=oNZ9ifUx85pIo9YMYCgfUbZxCuBYJVyxSYhJ7nj6Okw=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm5cLFlgIi7SHE2OO3b2zPbvHekVLuRGgQpvr7G
- ARO3J1jIfeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuXCxQAKCRAADmhBGVaC
- FdqoD/4wRjGY+YRjkK+C/HU/G/RaDXKhm2vvNLBmfdXKKZsZoysJ15/xGizWxxwA3gcNG+I3yRu
- 0ya0o2/adat2un1V3fbCiW9mnm3KqYqPhZEbDFWMz7RFpwNqeDg1/Rm0q8BOcDfGeufzR8Efzqe
- Poq08GAsbKITk3hkfpYd7AFI7lVhMn+moLz2knAjzLmaRjUa/Emlf6ENFKVbU7Re4bVE67s+SZt
- 9qpFpLKD3v0PtrKw0/B3Mb87PCRMrothPihtbKQun6+QO6bnkx7QRQGVdytzwGL4wARIYKKpQca
- AZcLEYR5BfQ5V9zNX2psOArfBOplvawPoBhxOP9ttGSUN7yS3vpvYYP2nqczTOQeRF4TWpfqPlz
- Ce7A0iWlkjue9rMYQUBdyMle/8b/mqHfL5I1pCZXGgY4uewUk5LhXe+imQCPFd7nq4dkZV51R7v
- x6WgqXLj3yFQv9+3Bzs2rRe+JdP8EVYTCEPR4Xk6Z3H0puhANuW1kkQozhZokAbNfprVPcMTHxV
- qN8XM9rTuaLF3XOJ2OGNKepD+szArorAasN6pHEY/olnn1AGh67bAqLTNgDGEFg/adoDvAKJ4ls
- SwTAwrprK0N0HzEmTCBo4f6ri25yP5TbqSpDmUNRMFBerH0a27fgMu0FXbm7JhVIOIatQE6T2AM
- Xzp8+BwB3oev/GQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5475; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=I9/47O7qo7bvUG1tGenasxTgf1bKbVz1h75bJIuETII=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm5cLFY6lXZvZm8RxN6kOFAGtO8JT2riURAMDHv
+ 52tncP7VVSJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuXCxQAKCRAADmhBGVaC
+ FVmqD/42vnYgXZg5mzwCTj8STzoscinyiV3K/zfYJZXBKlhsahthN4ivhC4Pb/lyArui3/IxAQq
+ EWZuccCCsliVOR5fGIXxBnGCyGUE/NFyJcgQVEdAjlz/lglEXC0qzAgFyqnBFXLjHIO/vEBN9A+
+ 3YgW/1rz3+jDt7H0Kfaszw9349+fGDmnzIlYg0fLqOG1l9LIdTFY7d1tCWtOxFJOhGeP+m5EUna
+ +jv01w18PUKFWAnYS5w3rpbXPSkmQt/sw6EeN19nRR3QwlkumZck7VVgKrkWPzk1k1fY1omGGeN
+ uu8YXrAhrI48XJ65fOyuUw4jBALv+ImDZwQGejRRPsguzETloqOXZI7HFDS+gpo52sMT22HwmgI
+ XrpgwBa1uVZVVqf02ZnjHftQRwVpHryUcccG4KCDzFW1ZkTKyIjUxpqhXcEAp6jR8/Roa58umQ1
+ qXMl1cHM2aIpIjH7vLxInGCDw/RpXZMST+q5+QwCvBnKs4WeJBuaI0XLBsBMmbfQhhqiKf3L+HF
+ 7xIK1uDDqzl9gZXVjuD8xpxGxLyhcf6BoT+dbv1E7KV5V8C8OJtRfPiuB/r6fbvaeqXDQLdlNxv
+ vHj65OVIB+mRWvY0NEVU9WSQgxeWZ24UWiflRgY4sxq6+zKOkdbJNn9cAkfgQhI/GS1tqCKU3Mq
+ e6rjZuBfD33jY/w==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-This is a fairly small update to the v7 set. It seems to pass all of my
-testing. Again, most of the changes are in the first two patches, but
-there are some differences in the patch that adds percpu counters as
-well.
+For multigrain timestamps, we must keep track of the latest timestamp
+that has ever been handed out, and never hand out a coarse time below
+that value.
 
-Since the report of a performance regression came just before the merge
-window, it looks like we're going to have to wait for yet another
-release, so consider this version v6.13 material.
+Add a static singleton atomic64_t into timekeeper.c that we can use to
+keep track of the latest fine-grained time ever handed out. This is
+tracked as a monotonic ktime_t value to ensure that it isn't affected by
+clock jumps.
+
+Add two new public interfaces:
+
+- ktime_get_coarse_real_ts64_mg() fills a timespec64 with the later of the
+  coarse-grained clock and the floor time
+
+- ktime_get_real_ts64_mg() gets the fine-grained clock value, and tries
+  to swap it into the floor. A timespec64 is filled with the result.
+
+Since the floor is global, we take great pains to avoid updating it
+unless it's absolutely necessary. If we do the cmpxchg and find that the
+value has been updated since we fetched it, then we discard the
+fine-grained time that was fetched in favor of the recent update.
+
+To maximize the window of this occurring when multiple tasks are racing
+to update the floor, ktime_get_coarse_real_ts64_mg returns a cookie
+value that represents the state of the floor tracking word, and
+ktime_get_real_ts64_mg accepts a cookie value that it uses as the "old"
+value when calling cmpxchg().
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v8:
-- drop the cookie handling from the new timekeeper interfaces
-- add back the floor_swaps percpu counter
-- comment updates and minor cleanups
-- Link to v7: https://lore.kernel.org/r/20240913-mgtime-v7-0-92d4020e3b00@kernel.org
+ include/linux/timekeeping.h |  4 +++
+ kernel/time/timekeeping.c   | 82 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 86 insertions(+)
 
-Changes in v7:
-- move the floor value handling into timekeeper for better performance
-- Link to v6: https://lore.kernel.org/r/20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index fc12a9ba2c88..7aa85246c183 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -45,6 +45,10 @@ extern void ktime_get_real_ts64(struct timespec64 *tv);
+ extern void ktime_get_coarse_ts64(struct timespec64 *ts);
+ extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
+ 
++/* Multigrain timestamp interfaces */
++extern void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
++extern void ktime_get_real_ts64_mg(struct timespec64 *ts);
++
+ void getboottime64(struct timespec64 *ts);
+ 
+ /*
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 5391e4167d60..16937242b904 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -114,6 +114,13 @@ static struct tk_fast tk_fast_raw  ____cacheline_aligned = {
+ 	.base[1] = FAST_TK_INIT,
+ };
+ 
++/*
++ * This represents the latest fine-grained time that we have handed out as a
++ * timestamp on the system. Tracked as a monotonic ktime_t, and converted to the
++ * realtime clock on an as-needed basis.
++ */
++static __cacheline_aligned_in_smp atomic64_t mg_floor;
++
+ static inline void tk_normalize_xtime(struct timekeeper *tk)
+ {
+ 	while (tk->tkr_mono.xtime_nsec >= ((u64)NSEC_PER_SEC << tk->tkr_mono.shift)) {
+@@ -2394,6 +2401,81 @@ void ktime_get_coarse_real_ts64(struct timespec64 *ts)
+ }
+ EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
+ 
++/**
++ * ktime_get_coarse_real_ts64_mg - get later of coarse grained time or floor
++ * @ts: timespec64 to be filled
++ *
++ * Adjust floor to realtime and compare it to the coarse time. Fill
++ * @ts with the latest one. Note that this is a filesystem-specific
++ * interface and should be avoided outside of that context.
++ */
++void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
++{
++	struct timekeeper *tk = &tk_core.timekeeper;
++	u64 floor = atomic64_read(&mg_floor);
++	ktime_t f_real, offset, coarse;
++	unsigned int seq;
++
++	WARN_ON(timekeeping_suspended);
++
++	do {
++		seq = read_seqcount_begin(&tk_core.seq);
++		*ts = tk_xtime(tk);
++		offset = *offsets[TK_OFFS_REAL];
++	} while (read_seqcount_retry(&tk_core.seq, seq));
++
++	coarse = timespec64_to_ktime(*ts);
++	f_real = ktime_add(floor, offset);
++	if (ktime_after(f_real, coarse))
++		*ts = ktime_to_timespec64(f_real);
++}
++EXPORT_SYMBOL_GPL(ktime_get_coarse_real_ts64_mg);
++
++/**
++ * ktime_get_real_ts64_mg - attempt to update floor value and return result
++ * @ts:		pointer to the timespec to be set
++ *
++ * Get a current monotonic fine-grained time value and attempt to swap
++ * it into the floor. @ts will be filled with the resulting floor value,
++ * regardless of the outcome of the swap. Note that this is a filesystem
++ * specific interface and should be avoided outside of that context.
++ */
++void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
++{
++	struct timekeeper *tk = &tk_core.timekeeper;
++	ktime_t old = atomic64_read(&mg_floor);
++	ktime_t offset, mono;
++	unsigned int seq;
++	u64 nsecs;
++
++	WARN_ON(timekeeping_suspended);
++
++	do {
++		seq = read_seqcount_begin(&tk_core.seq);
++
++		ts->tv_sec = tk->xtime_sec;
++		mono = tk->tkr_mono.base;
++		nsecs = timekeeping_get_ns(&tk->tkr_mono);
++		offset = *offsets[TK_OFFS_REAL];
++	} while (read_seqcount_retry(&tk_core.seq, seq));
++
++	mono = ktime_add_ns(mono, nsecs);
++
++	if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
++		ts->tv_nsec = 0;
++		timespec64_add_ns(ts, nsecs);
++	} else {
++		/*
++		 * Something has changed mg_floor since "old" was
++		 * fetched. "old" has now been updated with the
++		 * current value of mg_floor, so use that to return
++		 * the current coarse floor value.
++		 */
++		*ts = ktime_to_timespec64(ktime_add(old, offset));
++	}
++}
++EXPORT_SYMBOL_GPL(ktime_get_real_ts64_mg);
++
+ void ktime_get_coarse_ts64(struct timespec64 *ts)
+ {
+ 	struct timekeeper *tk = &tk_core.timekeeper;
 
-Changes in v6:
-- Normalize timespec64 in inode_set_ctime_to_ts
-- use DEFINE_PER_CPU counters for better vfs consistency
-- skip ctime cmpxchg if the result means nothing will change
-- add trace_ctime_xchg_skip to track skipped ctime updates
-- use __print_flags in ctime_ns_xchg tracepoint
-- Link to v5: https://lore.kernel.org/r/20240711-mgtime-v5-0-37bb5b465feb@kernel.org
-
-Changes in v5:
-- refetch coarse time in coarse_ctime if not returning floor
-- timestamp_truncate before swapping new ctime value into place
-- track floor value as atomic64_t
-- cleanups to Documentation file
-- Link to v4: https://lore.kernel.org/r/20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org
-
-Changes in v4:
-- reordered tracepoint fields for better packing
-- rework percpu counters again to also count fine grained timestamps
-- switch to try_cmpxchg for better efficiency
-- Link to v3: https://lore.kernel.org/r/20240705-mgtime-v3-0-85b2daa9b335@kernel.org
-
-Changes in v3:
-- Drop the conversion of i_ctime fields to ktime_t, and use an unused bit
-  of the i_ctime_nsec field as QUERIED flag.
-- Better tracepoints for tracking floor and ctime updates
-- Reworked percpu counters to be more useful
-- Track floor as monotonic value, which eliminates clock-jump problem
-
-Changes in v2:
-- Added Documentation file
-- Link to v1: https://lore.kernel.org/r/20240626-mgtime-v1-0-a189352d0f8f@kernel.org
-
----
-Jeff Layton (11):
-      timekeeping: move multigrain timestamp floor handling into timekeeper
-      fs: add infrastructure for multigrain timestamps
-      fs: have setattr_copy handle multigrain timestamps appropriately
-      fs: handle delegated timestamps in setattr_copy_mgtime
-      fs: tracepoints around multigrain timestamp events
-      fs: add percpu counters for significant multigrain timestamp events
-      Documentation: add a new file documenting multigrain timestamps
-      xfs: switch to multigrain timestamps
-      ext4: switch to multigrain timestamps
-      btrfs: convert to multigrain timestamps
-      tmpfs: add support for multigrain timestamps
-
- Documentation/filesystems/index.rst         |   1 +
- Documentation/filesystems/multigrain-ts.rst | 121 ++++++++++++
- fs/attr.c                                   |  60 +++++-
- fs/btrfs/file.c                             |  25 +--
- fs/btrfs/super.c                            |   3 +-
- fs/ext4/super.c                             |   2 +-
- fs/inode.c                                  | 278 +++++++++++++++++++++++++---
- fs/stat.c                                   |  42 ++++-
- fs/xfs/libxfs/xfs_trans_inode.c             |   6 +-
- fs/xfs/xfs_iops.c                           |  10 +-
- fs/xfs/xfs_super.c                          |   2 +-
- include/linux/fs.h                          |  36 +++-
- include/linux/timekeeping.h                 |   5 +
- include/trace/events/timestamp.h            | 124 +++++++++++++
- kernel/time/timekeeping.c                   |  83 +++++++++
- kernel/time/timekeeping_debug.c             |  12 ++
- kernel/time/timekeeping_internal.h          |   3 +
- mm/shmem.c                                  |   2 +-
- 18 files changed, 742 insertions(+), 73 deletions(-)
----
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-change-id: 20240913-mgtime-20c98bcda88e
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.46.0
 
 
