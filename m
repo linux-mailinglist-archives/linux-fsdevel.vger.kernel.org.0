@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-29386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4B4979276
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 19:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F92797927D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 19:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F138D1C2188A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 17:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2DE91C219B4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Sep 2024 17:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEB01D618E;
-	Sat, 14 Sep 2024 17:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896071D6791;
+	Sat, 14 Sep 2024 17:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6jXlekN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWxcOHhP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07D31D5CE9;
-	Sat, 14 Sep 2024 17:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91731D1317;
+	Sat, 14 Sep 2024 17:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726333661; cv=none; b=rNkSJz4lOdq6GuzRWhZhwvB+M/zs/Fgz1CoiX9ZnoqcmmMsuhrxGgL4josAfMxkxQnluJFVevSGBAKtocYBaYignNaiDpjjAE226rOed88X1+QLw+YxtaJ3C2lwRCDY9K4QJEeW8zRuSCTWqN8+DWlPeIkqLt1gZYT4D545hN5E=
+	t=1726333664; cv=none; b=A9DZNQz7ESYinLOULW4tUHdMpTFJXq7ndUwHGmCzCHbEPOKW48SbTgxPXt1aGV4GUuc99pXOwoGEn/u8C1Etotd9tKteMYT4fEPcR9jO/i3AHebHndx0/5/aAc5RPy1kJbgdUx4NRmCwWeVEJaEEnVj8uqXr4hKOpnXDZ+p6nZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726333661; c=relaxed/simple;
-	bh=/XcZHkK5gYpUwCSVg7s3+A6XUqyCAQD/OQvh4jjSlT8=;
+	s=arc-20240116; t=1726333664; c=relaxed/simple;
+	bh=bIaGrKHNkJGKwsIp2/9hx+nM5n7ktsZpZECPjECvfD4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dztHNkjndRO63MTOzAZuQ6UXAH5PP6cLKGe75eBkuzl40fZE8/9/VezzdJTqZNRSVthNXqXqmnqzpxJtIuFAZ+r7Oo8rvLecFRvQBUVIO0zixIkl+irDOYJoZYynd6TrRwAEEm0xk5v47lBf18KuWcjUM055FSE5bt5KykjCaF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6jXlekN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB481C4CECE;
-	Sat, 14 Sep 2024 17:07:38 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=sp03rjI22y7EttMQJwD/R3yaCMyogdpWCWu/Rl70oZzDx1mJii+WFzWRm90KXY2PJPGxFCBmm5LmbYwJOLI7glopqIMBgQGQG/JAZXp8mmWWOiOyHMDCvezNuGiLkoe/DG84ZNN7lRp9moblEdLYTtgnVcKzYDZiy9xSJ0JAy7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWxcOHhP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD957C4CECF;
+	Sat, 14 Sep 2024 17:07:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726333661;
-	bh=/XcZHkK5gYpUwCSVg7s3+A6XUqyCAQD/OQvh4jjSlT8=;
+	s=k20201202; t=1726333664;
+	bh=bIaGrKHNkJGKwsIp2/9hx+nM5n7ktsZpZECPjECvfD4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=I6jXlekNuZGCsp5NBpRYP0R+xcXpVQbTNaK6HMUBUnTRSpt1zMlwP9l28+OQQsA35
-	 qDoXUcSjO+bpgtb+5Fwv7gteU9Nn3R0dTcshB0a9pD2k3fNQQcCNyEnuNQAPrPXCmS
-	 9EPY65VWshQzrPwqy8HHc2coX7lK5lfDWBwZO4fBj5XPwwC/irwcLnoxz9nT+Ceopb
-	 obf3x/9tQr5KsfITxF8pANIEFJblk2cNow6RtJQgL5OpANFICZK2eSs5HLhO3srtMS
-	 82TGmM5omjLC8ZyXKmCqqtVN0z4DPt4tz+4+9qZgV/GdqjganAwnPl2l2av7XZxMN5
-	 Emi4PP3ARb5eg==
+	b=WWxcOHhPNBbvQOZoVEbWbSYGiCVIBwokWxYhCZncCHYiJQcTFpwERaEcR4Wh0Xbn2
+	 3xgKHnCdve6t5zipyFCFIIBbKMWVFc9FsCdvQlwXt0VN1K59PGcfWb0gtf66zVh9ku
+	 4gWzO/Exl3YH/sNl8Z55iJKZqKHzfWBD/8d75G3/rPfif7e0K/HOcWPYvxm/rvB6z7
+	 ynGJN/c23nHNOBswZWBCa0GrR4QQylZNz9jykfRjCvUNB3lAR92/VFZcvrBWVHvkFG
+	 cgl7qUvXIQhMBLNMBiIOTqlN2+HOEptvI6n7QQwrcqDYZie6g2r0gfXk8R9Qa2FNtn
+	 LNjg2zn+ZKxEQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Sat, 14 Sep 2024 13:07:20 -0400
-Subject: [PATCH v8 07/11] Documentation: add a new file documenting
- multigrain timestamps
+Date: Sat, 14 Sep 2024 13:07:21 -0400
+Subject: [PATCH v8 08/11] xfs: switch to multigrain timestamps
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240914-mgtime-v8-7-5bd872330bed@kernel.org>
+Message-Id: <20240914-mgtime-v8-8-5bd872330bed@kernel.org>
 References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
 In-Reply-To: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
 To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -76,175 +75,105 @@ Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
  linux-nfs@vger.kernel.org, linux-mm@kvack.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6998; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=/XcZHkK5gYpUwCSVg7s3+A6XUqyCAQD/OQvh4jjSlT8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm5cLGJuuSb1xltFHpW0q8a+qitvGMUmowicsfj
- Rg/e3AZpXiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuXCxgAKCRAADmhBGVaC
- FWVQEADCr1Ju8Vg4w9iEuJQYTT5m4eUvccIiH6Wxe4xu7Bjjl7Esfa5BErRe/5Jzro90FFNT424
- rEz4iPtm6aigGIR/RWKMg+HHvguntKiMPVorNF2LSPWDdD323OJYfux0/lhljniTqzGjYNxEJDD
- AyTSwsd+qaP99+L8AtMBC8VbvyBAM9M2d8I+U82Omh/FxBpuybHvs2KUh8Zqnom/ICx7y3131gx
- BUbpZN4gCpoP8yyUoB1+I8XnGs3Q4e4xU/3f3VMmHve1xpMr47XZ9aEuEpVQZ/6dyKTSTEkr5pd
- BW9VllFp5Xq0daBkYHXOVTJVR+5xX+GPkraB/JNTcJBRl8FQXnUXzbXHFottzpRseuCGkLnlhR5
- /Oy1FspdD6sUlKvnyALimjvBu6vKZzqJRuYOxHLNI0HYiY3mnBwq8UTouZR515qw64HylfuCHIh
- tfNxxCNnfr86gANN4QXomTNmAzzBzvWGfD+V48xHvhRE4ESBjfQ1B2NFJyinNOYkBQfrRtVUUXP
- aCHXIgF0oFoiDt2e0nCQym4YsEt0Wxh5aSNJDdcA0Zs6srKCiIjbA1U7TgGCF+UXQ9QhBLeeAaw
- iGt7V2f/qfXuyfXskvDFLtFTHw84eXq55hkiuqqgZJ+i4cvgaOQ6/d6+K8qD98nF0fWuHreU9yx
- EBLPusAlWUknZNQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2942; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=bIaGrKHNkJGKwsIp2/9hx+nM5n7ktsZpZECPjECvfD4=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm5cLGuWV9a+ING+mQgmsUefPyvxOtCZHhgbDyr
+ h3WPzWE+SWJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuXCxgAKCRAADmhBGVaC
+ Ff0ID/9dUQxrrNbqHpnaVnHsEUNWAcwDvm/Uzqz8JRH/iN4YRdGjThpIu7yEpdW72rihVUgzhdp
+ MDDhOlQO5YqQqkgHr2CFKMZk6mr8pRtn85S+8NTVanoaK5CcKu+J3cM9B8uAhojNlwwLA08TIEg
+ GarAOa/asTvsuyly/mkIWdl+B86IGn5U069ELYgegsSia8FaUxhSDP2aMn0ZXoP7yKsKU3iEGnY
+ OKDmWJaL4kfYP5m+nQQcjCvXkSJY9Ek9EIZIErc5POHxebkpCVmS2EYzTeC7jcJsCpY0mK4euhj
+ 05JoZnB5tDPT+Ct7GxZMu+oFKFfHk9kOG7cpt4wbXXB0V/eTid0mZdkeFy3Q6hzrgRxg+GoIJML
+ nS4LFtcRuOl/hBIkH+gAMvbPxqQMHWj5xvEiFoJGKo1X48NfNJwzOids5R/ru8ztisjIxOWUIQ8
+ loAuC5LGF8DixJKgHNRS9S7Pf5fC/zOAJwTWbHc1WsnJ8jCSraBKi6yhlJaY2ky5i0OSdZJ6KAK
+ tWQg7IgZtrxbNJuibvrXaOj8KBKky232I5TcB9IwV28ZFZiflP8071Ut5Gt8VEuoMan75ri60n2
+ R+g/WaoBLU5fySDEGF02y91KTtNV09R9oXBtC6oLh2HAY++rt9IZ6JzLzFbgWZCMyyI8/yQJwzq
+ yRfbZfa50FD1bMA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add a high-level document that describes how multigrain timestamps work,
-rationale for them, and some info about implementation and tradeoffs.
+Enable multigrain timestamps, which should ensure that there is an
+apparent change to the timestamp whenever it has been written after
+being actively observed via getattr.
+
+Also, anytime the mtime changes, the ctime must also change, and those
+are now the only two options for xfs_trans_ichgtime. Have that function
+unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
+always set.
+
+Finally, stop setting STATX_CHANGE_COOKIE in getattr, since the ctime
+should give us better semantics now.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- Documentation/filesystems/index.rst         |   1 +
- Documentation/filesystems/multigrain-ts.rst | 121 ++++++++++++++++++++++++++++
- 2 files changed, 122 insertions(+)
+ fs/xfs/libxfs/xfs_trans_inode.c |  6 +++---
+ fs/xfs/xfs_iops.c               | 10 +++-------
+ fs/xfs/xfs_super.c              |  2 +-
+ 3 files changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index e8e496d23e1d..44e9e77ffe0d 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -29,6 +29,7 @@ algorithms work.
-    fiemap
-    files
-    locks
-+   multigrain-ts
-    mount_api
-    quota
-    seq_file
-diff --git a/Documentation/filesystems/multigrain-ts.rst b/Documentation/filesystems/multigrain-ts.rst
-new file mode 100644
-index 000000000000..97877ab3d933
---- /dev/null
-+++ b/Documentation/filesystems/multigrain-ts.rst
-@@ -0,0 +1,121 @@
-+.. SPDX-License-Identifier: GPL-2.0
+diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+index 3c40f37e82c7..c962ad64b0c1 100644
+--- a/fs/xfs/libxfs/xfs_trans_inode.c
++++ b/fs/xfs/libxfs/xfs_trans_inode.c
+@@ -62,12 +62,12 @@ xfs_trans_ichgtime(
+ 	ASSERT(tp);
+ 	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
+ 
+-	tv = current_time(inode);
++	/* If the mtime changes, then ctime must also change */
++	ASSERT(flags & XFS_ICHGTIME_CHG);
+ 
++	tv = inode_set_ctime_current(inode);
+ 	if (flags & XFS_ICHGTIME_MOD)
+ 		inode_set_mtime_to_ts(inode, tv);
+-	if (flags & XFS_ICHGTIME_CHG)
+-		inode_set_ctime_to_ts(inode, tv);
+ 	if (flags & XFS_ICHGTIME_ACCESS)
+ 		inode_set_atime_to_ts(inode, tv);
+ 	if (flags & XFS_ICHGTIME_CREATE)
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 1cdc8034f54d..a1c4a350a6db 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -597,8 +597,9 @@ xfs_vn_getattr(
+ 	stat->gid = vfsgid_into_kgid(vfsgid);
+ 	stat->ino = ip->i_ino;
+ 	stat->atime = inode_get_atime(inode);
+-	stat->mtime = inode_get_mtime(inode);
+-	stat->ctime = inode_get_ctime(inode);
 +
-+=====================
-+Multigrain Timestamps
-+=====================
++	fill_mg_cmtime(stat, request_mask, inode);
 +
-+Introduction
-+============
-+Historically, the kernel has always used coarse time values to stamp inodes.
-+This value is updated every jiffy, so any change that happens within that jiffy
-+will end up with the same timestamp.
-+
-+When the kernel goes to stamp an inode (due to a read or write), it first gets
-+the current time and then compares it to the existing timestamp(s) to see
-+whether anything will change. If nothing changed, then it can avoid updating
-+the inode's metadata.
-+
-+Coarse timestamps are therefore good from a performance standpoint, since they
-+reduce the need for metadata updates, but bad from the standpoint of
-+determining whether anything has changed, since a lot of things can happen in a
-+jiffy.
-+
-+They are particularly troublesome with NFSv3, where unchanging timestamps can
-+make it difficult to tell whether to invalidate caches. NFSv4 provides a
-+dedicated change attribute that should always show a visible change, but not
-+all filesystems implement this properly, causing the NFS server to substitute
-+the ctime in many cases.
-+
-+Multigrain timestamps aim to remedy this by selectively using fine-grained
-+timestamps when a file has had its timestamps queried recently, and the current
-+coarse-grained time does not cause a change.
-+
-+Inode Timestamps
-+================
-+There are currently 3 timestamps in the inode that are updated to the current
-+wallclock time on different activity:
-+
-+ctime:
-+  The inode change time. This is stamped with the current time whenever
-+  the inode's metadata is changed. Note that this value is not settable
-+  from userland.
-+
-+mtime:
-+  The inode modification time. This is stamped with the current time
-+  any time a file's contents change.
-+
-+atime:
-+  The inode access time. This is stamped whenever an inode's contents are
-+  read. Widely considered to be a terrible mistake. Usually avoided with
-+  options like noatime or relatime.
-+
-+Updating the mtime always implies a change to the ctime, but updating the
-+atime due to a read request does not.
-+
-+Multigrain timestamps are only tracked for the ctime and the mtime. atimes are
-+not affected and always use the coarse-grained value (subject to the floor).
-+
-+Inode Timestamp Ordering
-+========================
-+
-+In addition to just providing info about changes to individual files, file
-+timestamps also serve an important purpose in applications like "make". These
-+programs measure timestamps in order to determine whether source files might be
-+newer than cached objects.
-+
-+Userland applications like make can only determine ordering based on
-+operational boundaries. For a syscall those are the syscall entry and exit
-+points. For io_uring or nfsd operations, that's the request submission and
-+response. In the case of concurrent operations, userland can make no
-+determination about the order in which things will occur.
-+
-+For instance, if a single thread modifies one file, and then another file in
-+sequence, the second file must show an equal or later mtime than the first. The
-+same is true if two threads are issuing similar operations that do not overlap
-+in time.
-+
-+If however, two threads have racing syscalls that overlap in time, then there
-+is no such guarantee, and the second file may appear to have been modified
-+before, after or at the same time as the first, regardless of which one was
-+submitted first.
-+
-+Multigrain Timestamp Implementation
-+===================================
-+Multigrain timestamps are aimed at ensuring that changes to a single file are
-+always recognizable, without violating the ordering guarantees when multiple
-+different files are modified. This affects the mtime and the ctime, but the
-+atime will always use coarse-grained timestamps.
-+
-+It uses an unused bit in the i_ctime_nsec field to indicate whether the mtime
-+or ctime has been queried. If either or both have, then the kernel takes
-+special care to ensure the next timestamp update will display a visible change.
-+This ensures tight cache coherency for use-cases like NFS, without sacrificing
-+the benefits of reduced metadata updates when files aren't being watched.
-+
-+The Ctime Floor Value
-+=====================
-+It's not sufficient to simply use fine or coarse-grained timestamps based on
-+whether the mtime or ctime has been queried. A file could get a fine grained
-+timestamp, and then a second file modified later could get a coarse-grained one
-+that appears earlier than the first, which would break the kernel's timestamp
-+ordering guarantees.
-+
-+To mitigate this problem, we maintain a global floor value that ensures that
-+this can't happen. The two files in the above example may appear to have been
-+modified at the same time in such a case, but they will never show the reverse
-+order. To avoid problems with realtime clock jumps, the floor is managed as a
-+monotonic ktime_t, and the values are converted to realtime clock values as
-+needed.
-+
-+Implementation Notes
-+====================
-+Multigrain timestamps are intended for use by local filesystems that get
-+ctime values from the local clock. This is in contrast to network filesystems
-+and the like that just mirror timestamp values from a server.
-+
-+For most filesystems, it's sufficient to just set the FS_MGTIME flag in the
-+fstype->fs_flags in order to opt-in, providing the ctime is only ever set via
-+inode_set_ctime_current(). If the filesystem has a ->getattr routine that
-+doesn't call generic_fillattr, then you should have it call fill_mg_cmtime to
-+fill those values. For setattr, it should use setattr_copy() to update the
-+timestamps, or otherwise mimic its behavior.
+ 	stat->blocks = XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks);
+ 
+ 	if (xfs_has_v3inodes(mp)) {
+@@ -608,11 +609,6 @@ xfs_vn_getattr(
+ 		}
+ 	}
+ 
+-	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
+-		stat->change_cookie = inode_query_iversion(inode);
+-		stat->result_mask |= STATX_CHANGE_COOKIE;
+-	}
+-
+ 	/*
+ 	 * Note: If you add another clause to set an attribute flag, please
+ 	 * update attributes_mask below.
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 27e9f749c4c7..210481b03fdb 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type = {
+ 	.init_fs_context	= xfs_init_fs_context,
+ 	.parameters		= xfs_fs_parameters,
+ 	.kill_sb		= xfs_kill_sb,
+-	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
++	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+ };
+ MODULE_ALIAS_FS("xfs");
+ 
 
 -- 
 2.46.0
