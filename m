@@ -1,105 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-29423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF551979973
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 00:51:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496F397999D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 01:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7DF91C22491
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2024 22:51:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0971F22C6E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2024 23:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CAD8120C;
-	Sun, 15 Sep 2024 22:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0CF135A53;
+	Sun, 15 Sep 2024 23:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mTN2DGVJ"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vSPE8pAN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6A6d8CiC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vSPE8pAN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6A6d8CiC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F5C5B216
-	for <linux-fsdevel@vger.kernel.org>; Sun, 15 Sep 2024 22:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6258175F;
+	Sun, 15 Sep 2024 23:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726440654; cv=none; b=fCaje8CndAr4rvWb4rCIuz73wRmyzrByeHsqMFgVFos/x32zJrVwLUyUe7gM3MOENh6ggDoPJeLHs75gpZ2fUFewpRkYe6q25c9FqymQ/4BUY1DpCotGJiOXceYgsRd/haeY9RVkco6Nce1eovxVDsVU6YnwPuDnPbYK/taCleY=
+	t=1726444377; cv=none; b=pYfPdkGyvn1Szf7XXBS3ZoLRXE5icU+iGKhsUWjdutc0wrAdoEPGREM9NUGzyyf2oYKnSKl528tzLY7FtTffDd5TyW++Q4COKoG4JFnFFIm1R3gIlmGRPt9jaK6oXiggskpr/UBlXYs6uEzpA/uwOzDcXySHFZXFb/8rzzfr7U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726440654; c=relaxed/simple;
-	bh=btHeVEjTKwInmIgK64nHoWbwJeGZPRJGhJws92hZ7lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fld7vpatBugkYffmWoDNsiNHk++/IRh87yqFRlrzCCIgxcqvYHrkvByJDNnvMdaBgeBTCjAZOwz+raDbzWCE4vKfjh3XQP6fSM1e/kSLh6q9PsRBr0w+XD+aWI60rVHpox4EXiU95r7oVwRncuSXPnKIAGpyoXLUos32FkxKw0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mTN2DGVJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rlqemsvp9se8kfd4HUJk3oHn3RtA9a/H3ENlioZ19vo=; b=mTN2DGVJpTdCyb2sfbLjkHAblU
-	qzuWKbxeg5hiDJ5JYf6m2JeqNLA9VyxnvfiyPcB4DbURi/W3qtnvVF1gMTxpSCDVSVFsYqslwz7Ky
-	EXV9o3RuntHPafXvYWx2aKLnGnM5dwUvpKxLDZKgY2m8zWrd9t1Fql2E94lCTeNh9guAsi1UWmgBv
-	pSETHOC5ZXhWNus0y8z1IBxptiyBU8wuYAP0OJjXlq7TCKC6nbaS5D4VEHOfi6sjNIRiQgVcCfGdL
-	ZKnjGwb7nnLm3aBhJWbrtmtQVGkYok2d3Bq8+hAuKwWCFAC9v6vWBXERmkL3zKSgFSbeQh1iNQwQW
-	Bjh0R18w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1spy4s-00000001GZf-2PwL;
-	Sun, 15 Sep 2024 22:50:46 +0000
-Date: Sun, 15 Sep 2024 23:50:46 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Yafang Shao <laoar.shao@gmail.com>,
-	torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC] vfs: Introduce a new open flag to imply dentry
- deletion on file removal
-Message-ID: <Zudkxn7KnWVqkGIm@casper.infradead.org>
-References: <20240912091548.98132-1-laoar.shao@gmail.com>
- <20240912105340.k2qsq7ao2e7f4fci@quack3>
- <f7bp3ggliqbb7adyysonxgvo6zn76mo4unroagfcuu3bfghynu@7wkgqkfb5c43>
+	s=arc-20240116; t=1726444377; c=relaxed/simple;
+	bh=ITkpgHKfuRfbjMe47+uAfPeMZI5fcCA82SAhXnYL82c=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=arS2vB1Hji2GQQdJPtSdB3ERqpwptTYDiQm5DjxV6uvmKUZtIU+fSkMD46VdrG8xbRtK0dChCXUQbHnf7l5BD37qKUWkpHM3hp6V050yhfuyBp9A2Il+GHm5XwL5cp8ZET6TqAOa7K+O/QTieSZnT5ZIU006XXseYEWMcMsNTgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vSPE8pAN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6A6d8CiC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vSPE8pAN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6A6d8CiC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 226FA1F837;
+	Sun, 15 Sep 2024 23:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726444373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
+	b=vSPE8pANYfBffFX2LjfSTIXbetOsfauvQi+6EC5tgY79kiIs65xPNMZe5+c8J5L6KNJ72z
+	TOrR9zkdSYnSknDBYr/bVT9xC58BiB1uPfSGmlHynzFgH81Z+Q2cBIUOSESRmcJpqNL0Bs
+	/HJsp2looqiqS5ANYZmNq4Nj5f5GlAQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726444373;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
+	b=6A6d8CiCwfWdLOZePf1uIcZeO1ut5uBH0tuB0RHXFerSz2k/VNnt0zPtC0kgRE72/evI5t
+	mxFhPz56kyhc1xBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vSPE8pAN;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=6A6d8CiC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726444373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
+	b=vSPE8pANYfBffFX2LjfSTIXbetOsfauvQi+6EC5tgY79kiIs65xPNMZe5+c8J5L6KNJ72z
+	TOrR9zkdSYnSknDBYr/bVT9xC58BiB1uPfSGmlHynzFgH81Z+Q2cBIUOSESRmcJpqNL0Bs
+	/HJsp2looqiqS5ANYZmNq4Nj5f5GlAQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726444373;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
+	b=6A6d8CiCwfWdLOZePf1uIcZeO1ut5uBH0tuB0RHXFerSz2k/VNnt0zPtC0kgRE72/evI5t
+	mxFhPz56kyhc1xBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B9B0E1351A;
+	Sun, 15 Sep 2024 23:52:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nmF1G1Jz52YbNgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Sun, 15 Sep 2024 23:52:50 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7bp3ggliqbb7adyysonxgvo6zn76mo4unroagfcuu3bfghynu@7wkgqkfb5c43>
+From: "NeilBrown" <neilb@suse.de>
+To: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Jens Axboe" <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Subject: Re: [PATCH 0/7 v2 RFC] Make wake_up_{bit,var} less fragile
+In-reply-to: <20240826063659.15327-1-neilb@suse.de>
+References: <20240826063659.15327-1-neilb@suse.de>
+Date: Mon, 16 Sep 2024 09:52:47 +1000
+Message-id: <172644436782.17050.10401810341028694092@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 226FA1F837
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[noble.neil.brown.name:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Thu, Sep 12, 2024 at 01:36:45PM +0200, Mateusz Guzik wrote:
-> I have to note what to do with a dentry after unlink is merely a subset
-> of the general problem of what to do about negative entries.  I had a
-> look at it $elsewhere some years back and as one might suspect userspace
-> likes to do counterproductive shit. For example it is going to stat a
-> non-existent path 2-3 times and then open(..., O_CREAT) on it.
+
+Hi Ingo and Peter,
+ have you had a chance to look at these yet?  Should I resend?  Maybe
+ after -rc is out?
+
+Thanks,
+NeilBrown
+
+
+On Mon, 26 Aug 2024, NeilBrown wrote:
+> This is a second attempt to make wake_up_{bit,var} less fragile.
+> This version doesn't change those functions much, but instead
+> improves the documentation and provides some helpers which
+> both serve as patterns to follow and alternates so that use of the
+> fragile functions can be limited or eliminated.
 > 
-> I don't have numbers handy and someone(tm) will need to re-evaluate, but
-> crux of the findings was as follows:
-> - there is a small subset of negative entries which keep getting tons of
->   hits
-> - a sizeable count literally does not get any hits after being created
->   (aka wastes memory)
-> - some negative entries get 2-3 hits and get converted into a positive
->   entry afterwards (see that stat shitter)
-> - some flip flop with deletion/creation
+> The only change to either function is that wake_up_bit() is changed to
+> take an unsigned long * rather than a void *.  This necessitates the
+> first patch which changes the one place where something other then
+> unsigned long * is passed to wake_up bit - it is in block/.
 > 
-> So whatever magic mechanism, if it wants to mostly not get in the way in
-> terms of performance, will have to account for the above.
+> The final patch modifies the same bit of code as a demonstration of one
+> of the new APIs that has been added.
 > 
-> I ended up with a kludge where negative entries hang out on some number
-> of LRU lists and get promoted to a hot list if they manage to get some
-> number of hits. The hot list is merely a FIFO and entries there no
-> longer count any hits. Removal from the cold LRU also demotes an entry
-> from the hot list.
+> Thanks,
+> NeilBrown
+> 
+> 
+>  [PATCH 1/7] block: change wait on bd_claiming to use a var_waitqueue,
+>  [PATCH 2/7] sched: change wake_up_bit() and related function to
+>  [PATCH 3/7] sched: Improve documentation for wake_up_bit/wait_on_bit
+>  [PATCH 4/7] sched: Document wait_var_event() family of functions and
+>  [PATCH 5/7] sched: Add test_and_clear_wake_up_bit() and
+>  [PATCH 6/7] sched: Add wait/wake interface for variable updated under
+>  [PATCH 7/7] Block: switch bd_prepare_to_claim to use
+> 
+> 
 
-This all reminds me of that paper you pointed me at.
-
-https://arxiv.org/pdf/1512.00727
-
-Summary for the impatient: Use 10% of the memory for a "not yet proven
-to be useful" entries, and use multiple Bloom filters to decide which
-ones are sufficiently useful to be added to the "more permanent" cache.
-
-I don't think it solves every problem our current dcache implementation
-has, but I'm 90% sure it'll be a huge improvement.
 
