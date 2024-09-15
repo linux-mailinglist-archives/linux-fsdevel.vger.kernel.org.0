@@ -1,231 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-29418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556C897993C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2024 23:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C06979959
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 00:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B181C21AAA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2024 21:51:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4431B1F22AB7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2024 22:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4BD74C1B;
-	Sun, 15 Sep 2024 21:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF737316E;
+	Sun, 15 Sep 2024 22:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="lXYqzlrR"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oAed+Cvx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2111.outbound.protection.outlook.com [40.107.121.111])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A923770C;
-	Sun, 15 Sep 2024 21:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.111
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726437082; cv=fail; b=jJBJpPX0PgYqdEBX2XEMP+wCnAXqvy5xNro3sBw4sD7M9Ugg7fi7wnrDK5nPTTeNKM5e6N4dJQTod64VJSUxdB1gMH9LgqT7PWwLCGJG4sYtaDm9ttdJ0IBOOvJke2tz70oX5aDJyl1/QTRUR5spTTEjJsTWbiWDrHn5vPrbkyk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726437082; c=relaxed/simple;
-	bh=W5YYT5l2JNnCkT2I7H0ly03Fq8d2ji3KseoQ5oKPiRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pBUMOtw1eODkGZq59BFXq6wPvi2oc41lL9rywJLhPcckVJfpKVJEfPf9N/sHdd3Vhg+wN+qPpYe5puzSDa/L61TlmK5yiXiytacq0QOcvFCh1Ob8uUm6C5q+UFVMxTXAtbYjDBNengynOLbAM21IVUJQ52PU5xvMTiK6pzP+BrE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=lXYqzlrR; arc=fail smtp.client-ip=40.107.121.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bdfrqdy79iZ2se89zCM2DahApl+AfEsAOvUakYR4O/c5Nj3go3UPSMYfYAmW83rzaPX6oeRfBKQDezekjwbEns98HUqxE/+1HMOkH1mlyKnDWjQ5vKzkUa/I7xu19FIlioBRrCy5w5sjvqYsNIvJtET9fqFsi/lVpZAJqzjfB+wCzGkjHnACQNSSLlAJghNXRnu44n2U0aLEsV8qwfH5vOA89r9C1wV9kJs9jxRwy/8s/pKrxdx9b51zwuEMMR6E2olZTV/EmpGpa3cKj8AobqR1NNn1qHgOo5yeWUF14rPioExm4ZcIUCgN0N1c4yuAODdprwaSfsxZDx03YAN3zQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IoUbB5eClGGtEU+UbzodWJPeXiRm7mGiOy9Xh9gXZhg=;
- b=evdbFLFjMFbFyTx/PUe7pZ9hyXZ/yad5peC0F6+1UoZcjcNFoCC0knxymWWKadrpoj1IZmfzIZMEHJ6F04Loaw8Hx+8TvMbRy1701VGb161AQl+Voen0mQuPziQV9f5f12Le/4jvBs6IskhkUN0jr8UJAaI70VKxmAyFX/erj359cXSKI/BvrTgvcHqyz+sv0mMRORQQoDw4+OyIuJI8YETarobaPaeFp2feLq2t90hk/N8nqW7R1ddqAgFqEsQbBzNYTvIQu9BoEr0+GALBzUjX7B6bbM5zL+2BlSxgVI0u4hP8TWBFyB+m3+s84GlbStpUQ+iOUhoZbedBOnu7aA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IoUbB5eClGGtEU+UbzodWJPeXiRm7mGiOy9Xh9gXZhg=;
- b=lXYqzlrRPLwTYCtAYtOQUidpFnkWNTCY/e3iWhZCxlAgFl/kt45iBsOxWASROfbv8biM/o9JPiuXjNIW0NTQAgdesI3h7wN+X7eDFq4k/ZPj3fV6V548kXu0YwnjE4sfNWoLwJic613f4cT+H/3rh/XCQNN/ut3gybupiyBvdf0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LO8P265MB7754.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:3ab::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Sun, 15 Sep
- 2024 21:51:17 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.7962.022; Sun, 15 Sep 2024
- 21:51:17 +0000
-Date: Sun, 15 Sep 2024 22:51:11 +0100
-From: Gary Guo <gary@garyguo.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1000101EE;
+	Sun, 15 Sep 2024 22:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726437714; cv=none; b=L8X6yCUcudtuFVdLQMs9iKAzFXpxXYou2jqQ98yhGBhknaL8HVC7iIQsfRd1RF08ixXpLNOM+aFwXWpPn4pqfmSpzMMUG9NtWL1QIGOmAgT8aF+RgMTFKVwN6pzd1NjJuhhZz4sV83W5zu+T6t/xZQYxCN8pfVQ+IO72+NsSiXI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726437714; c=relaxed/simple;
+	bh=sEOHdfoj9EzUrCtH+g3Xe2IUrUDQKucIUOQlkDPfyt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tp0B5HqsV5hznZI7lxEZfp257/Ydcjpm8oF0OV23nSCmImv++fad0t4aXYaNC25HR3bicJgQnVGXC4pIErwmWHtvJpfkBjDvJJ1oOucNPUW4MfLdDVMInLhJqV34LzfbwYbeoSowg1lqP9ZEu93JTGS5QsjMfoI7LLxFHF14nzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oAed+Cvx; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ELs+jLVT+v2Ekt7PF+z3M9b+rtkzpChlU0w4tXVYYzc=; b=oAed+Cvx6uY04gl700Ms0Us4qc
+	ReOVbFXl/Lsf/E2VNEkQnNEdyOQo5FJMBYynH0OxkSv6XAe/oMFcILi5oF1QBSXIvruFQ54egD1RW
+	QbC9WvW+WgUh4/XIXePqMvTq5eDdHuycB/J/ckVxrPEHHS57zWkXCQjHCLaYxLC9TAQR1jP7ZEQFz
+	qZ+GVj6IlmAfgvPIJu+DS9pDPe/cB3N28tF1WQgVHnfW7eL5YTcUSRetB90bOAWE4ItOsZsqvclZ5
+	cVd2aQ8fIPCFY3j+7/EBE32JsUYd/+M87HZLqWV8/nS/ACdbN4xm0I4oDi3ryhQoErxEeIaGY8Q56
+	wMpyokTA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1spxJ8-0000000ClOE-1F8L;
+	Sun, 15 Sep 2024 22:01:26 +0000
+Date: Sun, 15 Sep 2024 23:01:26 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
 To: Alice Ryhl <aliceryhl@google.com>
 Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
- Feng <boqun.feng@gmail.com>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Arve =?UTF-8?B?SGrDuG5uZXbDpWc=?="
- <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen
- <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas
- <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams
- <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, Martin Rodriguez
- Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook
- <kees@kernel.org>
-Subject: Re: [PATCH v10 3/8] rust: file: add Rust abstraction for `struct
- file`
-Message-ID: <20240915225111.50645f57.gary@garyguo.net>
-In-Reply-To: <20240915-alice-file-v10-3-88484f7a3dcf@google.com>
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v10 6/8] rust: file: add `FileDescriptorReservation`
+Message-ID: <20240915220126.GL2825852@ZenIV>
 References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
-	<20240915-alice-file-v10-3-88484f7a3dcf@google.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0188.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a::32) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+ <20240915-alice-file-v10-6-88484f7a3dcf@google.com>
+ <20240915183905.GI2825852@ZenIV>
+ <CAH5fLghu1NAoj1hSUOD2ULz2XEed329OtHY+w2eAnFd5GrXOKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO8P265MB7754:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ce96669-4530-4a6b-226d-08dcd5d08691
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?j/ELJ4Doxr9S3rOyLjWOqfh0SgAUGcrP70KSSeeVyjAvgAHy/IaxYIV7qxbN?=
- =?us-ascii?Q?E5MQcZzfttqSDZ2RNTQxBmaqi8sujtr5k20+AZ062Z/YIUbdDNq/997nAWt5?=
- =?us-ascii?Q?6unQy1qzlfL24JGuRDpr4tWc+434lFDWc09dvJeioauu3O/bSvf7fMKvaNNm?=
- =?us-ascii?Q?d/sLHLakeJwLAiBOu4BMEswFjc9bU3xhyVKlxuL3xXaM+piwma2EYZDi3pN/?=
- =?us-ascii?Q?sekqMIY92tfyafSs2LWQYqHHtXHWv646ZQQsc7ZCIXcXUyVK5EVOSAYuw75U?=
- =?us-ascii?Q?JvzOVW1msEK9JEdfYYX+NU6XPg/EI9lme7S7i1PANJIMha91TVqZJ/iyeS5I?=
- =?us-ascii?Q?H5dD8W8wN17y3B5OE2wObCXhv+PeNg/shh4pCgWUYeVUzyqp5bGZq7xfMNAc?=
- =?us-ascii?Q?yc2+CCd4g5+MPQFmyjliByIz+MjAynOGinA0kUn1wNNm5y1PTsZeI6h2WlaC?=
- =?us-ascii?Q?5kaJWASBd/NkyL8HpeECDyy9C/dtJE3UjcsM250vcZbcgbM2hf2m3LF9vSF8?=
- =?us-ascii?Q?oeRZ8cE7UOi+T9yVtpONvR+kClT4z000tL1wrWiyOx5npHqxum5Ul9Avc+kR?=
- =?us-ascii?Q?sqcMW3hkR4gltHY5DxrZ2XoThNyQic4xO6qIvtw/C3Si2NUURe7muqmbUBAC?=
- =?us-ascii?Q?teGXbKZSL365QQWQpbfdanuAQ3H3sgVqTEcwHLxe428tjFh1wbVl5z0F8dST?=
- =?us-ascii?Q?Czllhxuo+GVXAMOmm3XMo53rwkjAhjvGDAvXM6X08KKfim1CqstdQzkYx5lf?=
- =?us-ascii?Q?6opcxoHM1w0ZscVt+eaJfvByeVi12OWm/O9QIygP9PaO8ZZV2Ya03k98ks7d?=
- =?us-ascii?Q?x9Dx12EZwFyGpqO0W82YASOPu2WSt/H72/p5DlFaXarq6M8rfZ3rSA/JWwm9?=
- =?us-ascii?Q?GEctrMwqa/0E9XEEDJhnLQlH1PPfusigQTWp3wEj1pY61KRx78N/rkJJ+LUR?=
- =?us-ascii?Q?NpyxmRFU6bNpv0zfIeZcf8Cvgaa8tb7fabpTtpknY01ro6vHBLhfb6uB2Q/Z?=
- =?us-ascii?Q?4H4hpv+MPF8D1RMLHlAsixPE2eoR/PtyczojHUSa1aXa/kKKtD01GdB5U3F/?=
- =?us-ascii?Q?Mk2uZcOz46qfOMxTkpqLQHDTg3OsIb6ofQSmSCz4CLUnKgHO+KJH3Mwe8A/O?=
- =?us-ascii?Q?J22YrrGtK7CCI7IILtsZ8Zq9w88+gs3ohkD1GiBCB8L/Enx9edKeHoHanS0S?=
- =?us-ascii?Q?rRq5Q3kZ/7WrmQcHTfScxLjvHhWqUXovxfNV6xoEOGC6EVF5ehmf4Sm+gJH/?=
- =?us-ascii?Q?ZU919TDdtD+E/UgfYZB5esSbcX6q0ebFhzmjmn11IHv6oNGCtgYVwgISCPQ/?=
- =?us-ascii?Q?6NuUwdg6mc95oIf5zA22WgjbagrUMeruBUIu5rWCParI4A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bdUDSJ6oRq+EX7Aqp8v47EFE8oftyngS/uIrUmG037eglL+dmf1LM810qWsR?=
- =?us-ascii?Q?ah/8+9WhMwIbDP5pYTds/ILqMtmxA/OKlCA01QeyCTucvb4Bnzc9745ZVVMC?=
- =?us-ascii?Q?RtQnnLAq3q66ybEFAwqS9+Ho6+M8l5gQuw0mlLFLyYZFMYg7XTyR5xdNdStw?=
- =?us-ascii?Q?GU6hL/HhVb32Emv42Jf2HfSGp0BfyLsmQhrx5tvGFRBewhg7Ueo52g6oJyyB?=
- =?us-ascii?Q?u4tdV3qQah8yT2sK8DzerSLAxZqSA1/ffo+8TFuQVhwSTaWNQ/JppRxyYmRg?=
- =?us-ascii?Q?QPdUcw5d/D+y2GYuVALvGAJm5nLdN9eu7YoPQGWebD5aB1ZGFlO2WOhoI7bK?=
- =?us-ascii?Q?Ry5d/gnwmhYEwqkAHdeucxobjNAvJIWSFA/4xINlRExJ5+ByPRvaRu0g2niB?=
- =?us-ascii?Q?oS6Y4QW4TcKHD8rL6QNyZ1fNT5/AcoqOup/1cQvsaDFnJweSxlqBh5mlvkje?=
- =?us-ascii?Q?QgiVkYOUDFBenYJWz3rHXWqcEwUYr22cIO6qcKjfGajMiRbpqgvPfW/5j9HT?=
- =?us-ascii?Q?5M0kXmT7KgmyLUgvtHMxM+of59xoWVheLTFiNhbpqx0pE7L7sL2zIhmvxNkr?=
- =?us-ascii?Q?g28FJQmkm3rEANmoEfU5qTuZQk1F0co3RY9w6kAsYYMOhUVPnI45pD1tqy/D?=
- =?us-ascii?Q?YRK+N8+RfWOGx2jBfyjWhTaVgHmoE4UfGHLTL/yMTlB2UPcCKiSzxUJdzWOt?=
- =?us-ascii?Q?AREl9kTfY5jufj07hU4hWvwVmeVODMvHxVzrz6y5WmM9ICvaFQaQc6f395Ky?=
- =?us-ascii?Q?Ld6AgOCGvUPsV1BqFhUamnspqHXLQgqkriM4AF5QAa3ScZndN2ZEOLXMiSop?=
- =?us-ascii?Q?ryE6MA52i0Od2IiNT5L5HdV9WxaYCENubakRI/JSAKHF3h2dQsK0AgXlED+h?=
- =?us-ascii?Q?cshcZVrGHtfmhOc+U9+b+wV5NObF3Lgf6bwGntNdciKr8NBJiY3or6UJP+fF?=
- =?us-ascii?Q?f70yzc64gJ4nTdkEvtM0Rj4a2jYVEkxEhYStSbpIbB1urRPu5bOl0aHok2IN?=
- =?us-ascii?Q?43CwomUMjwsRDJDZ79GxTlr2xAFlLsNM0p3++8uWX4FaGdGcQluAu53BBGoP?=
- =?us-ascii?Q?pYFk0omdTOW/yTivwpabMtjrslv2sIlm+hA+XYpDGxfvF/kSxxk88otQ7/oR?=
- =?us-ascii?Q?Lyx9dwH0YCUm0u5FEeAnUWu8sfiPNoNqAQGuKyzOM3MVdICxpJUbqdmWXerq?=
- =?us-ascii?Q?fcmJRtp7F5dvVHrS37suH8C20omsHN7Nd6yp6xRHX5bxTQS/QSZDrJdlPYi/?=
- =?us-ascii?Q?/bjq5PFNCnzBRPKS1/8yVBPfPtW0dDswD5JwZfZYeY+3uwOtQA97Y0XyGTUT?=
- =?us-ascii?Q?y5tkHssf03OFsVm0NYgtkrQ/vDwvgKE7z/ps6v/bQ2hsVgYikxfpMACdiJ2D?=
- =?us-ascii?Q?PskYkSqDINZziGiu4cswpnxnbr6bcPALpIdu1ZugwhZ/J/6oEiAg3C0xLzOl?=
- =?us-ascii?Q?Kpcx/X5wvtXbBhKxTPN6r5dEYaQYYnn9Nea9T75LQWbyA48IYFDILNTzgVY2?=
- =?us-ascii?Q?yLm1BvyhsPyQ8CNB+/jNaTpPiG/orr8ks7154vLE5lzrcbex+34oZmfi7kOO?=
- =?us-ascii?Q?leBJrEc8YSv4Vla5BTMD+BLq3GxRyUOnfcQ4DJ4Uzj+Jjgz9lFX63jgpItft?=
- =?us-ascii?Q?Jw=3D=3D?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ce96669-4530-4a6b-226d-08dcd5d08691
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2024 21:51:16.9135
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SflJ1KZXYvqTsv/GytG9fvrQGA7NAA/KwFfkz5xMveQhWbv9SA9j8e7RxIzyQ6Ilob2VIjjgD41Zy8xaOqH8kA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO8P265MB7754
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH5fLghu1NAoj1hSUOD2ULz2XEed329OtHY+w2eAnFd5GrXOKQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, 15 Sep 2024 14:31:29 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
 
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
-> 
-> This abstraction makes it possible to manipulate the open files for a
-> process. The new `File` struct wraps the C `struct file`. When accessing
-> it using the smart pointer `ARef<File>`, the pointer will own a
-> reference count to the file. When accessing it as `&File`, then the
-> reference does not own a refcount, but the borrow checker will ensure
-> that the reference count does not hit zero while the `&File` is live.
-> 
-> Since this is intended to manipulate the open files of a process, we
-> introduce an `fget` constructor that corresponds to the C `fget`
-> method. In future patches, it will become possible to create a new fd in
-> a process and bind it to a `File`. Rust Binder will use these to send
-> fds from one process to another.
-> 
-> We also provide a method for accessing the file's flags. Rust Binder
-> will use this to access the flags of the Binder fd to check whether the
-> non-blocking flag is set, which affects what the Binder ioctl does.
-> 
-> This introduces a struct for the EBADF error type, rather than just
-> using the Error type directly. This has two advantages:
-> * `File::fget` returns a `Result<ARef<File>, BadFdError>`, which the
->   compiler will represent as a single pointer, with null being an error.
->   This is possible because the compiler understands that `BadFdError`
->   has only one possible value, and it also understands that the
->   `ARef<File>` smart pointer is guaranteed non-null.
-> * Additionally, we promise to users of the method that the method can
->   only fail with EBADF, which means that they can rely on this promise
->   without having to inspect its implementation.
-> That said, there are also two disadvantages:
-> * Defining additional error types involves boilerplate.
-> * The question mark operator will only utilize the `From` trait once,
->   which prevents you from using the question mark operator on
->   `BadFdError` in methods that return some third error type that the
->   kernel `Error` is convertible into. (However, it works fine in methods
->   that return `Error`.)
-> 
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Co-developed-by: Daniel Xu <dxu@dxuuu.xyz>
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> What happens if I call `get_unused_fd_flags`, and then never call
+> `put_unused_fd`? Assume that I don't try to use the fd in the future,
+> and that I just forgot to clean up after myself.
 
-Reviewed-by: Gary Guo <gary@garyguo.net>
+Moderate amount of bogosities while the thread exists.  For one thing,
+descriptor is leaked - for open() et.al. it will look like it's in use.
+For close() it will look like it's _not_ open (i.e. trying to close it
+from userland will quietly do nothing).  Trying to overwrite it with
+dup2() will keep failing with -EBUSY.
 
-> ---
->  fs/file.c                       |   7 +
->  rust/bindings/bindings_helper.h |   2 +
->  rust/helpers/fs.c               |  12 ++
->  rust/helpers/helpers.c          |   1 +
->  rust/kernel/fs.rs               |   8 +
->  rust/kernel/fs/file.rs          | 375 ++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs              |   1 +
->  7 files changed, 406 insertions(+)
+Kernel-side it definitely violates assertions, but currently nothing
+will break.  Might or might not remain true in the future.  Doing that
+again and again would lead to inflated descriptor table, but then
+so would dup2(0, something_large).
+
+IOW, it would be a bug, but it's probably not going to be high impact
+security hole.
+
+> >         + execve() at the point of no return (in begin_new_exec()).
+	      execve(2), sorry.
+> > That's the only place where violation of that constraint on some later
+> > changes is plausible.  That one needs to be watched out for.
+ 
+> Thanks for going through that.
+
+I'm in the middle of writing documentation on the descriptor table and
+struct file handling right now anyway...
+
+> From a Rust perspective, it sounds
+> easiest to just declare that execve() is an unsafe operation, and that
+> one of the conditions for using it is that you don't hold any fd
+> reservations. Trying to encode this in the fd reservation logic seems
+> too onerous, and I'm guessing execve is not used particularly often
+> anyway.
+
+Sorry, bad editing on my part - I should've clearly marked execve() as a
+syscall.  It's not that it's an unsafe operation - it's only called from
+userland anyway, so it's not going to happen in scope of any reserved
+descriptor.
+
+The problem is different:
+
+* userland calls execve("/usr/bin/whatever", argv, envp)
+
+* that proceeds through several wrappers to do_execveat_common().
+  There are several syscalls in that family and they all converge
+  to do_execveat_common() - wrappers just deal with difference
+  in calling conventions.
+
+* do_execveat_common() set up exec context (struct linux_binprm).
+  That opens the binary to be executed, creates memory context
+  to be used, calculates argc, sets up argv and envp on what will
+  become the userland stack for the new program, etc. - basically,
+  all the work for marshalling the data from caller's memory.
+  Then it calls bprm_execve(), which is where the rest of the work
+  will be done.
+
+* bprm_execve() eventually calls exec_binprm().  That calls
+  search_binary_handler(), which is where we finally get a look
+  at the binary we are trying to load.  search_binary_handler()
+  goes through the known binary formats (ELF, script, etc.)
+  and tries to offer the exec context to ->load_binary() of
+  each.
+
+* ->load_binary() instance looks at the binary (starting with the
+  first 256 bytes read for us by prepare_binprm() called in the
+  beginning of search_binary_handler()).  If it doesn't have the
+  right magic values, ->load_binary() just returns -ENOEXEC,
+  so that the next format would be tried.  If it *does* look like
+  something this format is going to deal with, more sanity checks
+  are done, things are set up, etc. - details depend upon the
+  binary format in question.  See load_elf_binary() for some taste
+  of that.  Eventually it decides to actually discard the old
+  memory and switch to new binary.  Up to that point it can
+  return an error - -ENOEXEC for soft ones ("not mine, after all,
+  try other formats"), something like -EINVAL/-ENOMEM/-EPERM/-EIO/etc.
+  for hard ones ("fail execve(2) with that error").  _After_ that
+  point we have nothing to return to; old binary is not mapped
+  anymore, userland stack frame is gone, etc.  Any errors past
+  that point are treated as "kill me".
+
+  At the point of no return we call begin_new_exec().  That
+  kills all other threads, unshares descriptor table in case it
+  had been shared wider than the thread group, switches memory
+  context, etc.
+
+  Once begin_new_exec() is done, we can safely map whatever we
+  want to map, handle relocations, etc.  Among other things,
+  we modify the userland register values saved on syscall entry,
+  so that once we return from syscall we'll end up with the
+  right register state at the right userland entry point, etc.
+  If everything goes fine, ->load_binary() returns 0 into
+  search_binary_handler() and we are pretty much done - some
+  cleanups on the way out and off to the loaded binary.
+
+  Alternatively, we may decide to mangle the exec context -
+  that's what #! handling does (see load_script() - basically
+  it opens the interpreter and massages the arguments, so
+  that something like debian/rules build-arch turns into
+  /usr/bin/make -f debian/rules build-arch and tells the
+  caller to deal with that; this is what the loop in
+  search_binary_handler() is about).
+
+There's not a lot of binary formats (5 of those currently -
+all in fs/binmt_*.c), but there's nothing to prohibit more
+of them.  If somebody decides to add the infrastructure for
+writing those in Rust, begin_new_exec() wrapper will need
+to be documented as "never call that in scope of reserved
+descriptor".  Maybe by marking that wrapper unsafe and
+telling the users about the restriction wrt descriptor
+reservations, maybe by somehow telling the compiler to
+watch out for that - or maybe the constraint will be gone
+by that time.
+
+In any case, the underlying constraint ("a thread with
+reserved descriptors should not try to get a private
+descriptor table until all those descriptors are disposed
+of one way or another") needs to be documented.
 
