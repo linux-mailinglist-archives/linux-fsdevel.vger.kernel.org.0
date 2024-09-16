@@ -1,119 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-29512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9F897A5BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 18:08:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C281897A63D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 18:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A1491C2769F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7301F2776B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D591598F4;
-	Mon, 16 Sep 2024 16:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C7E15DBAE;
+	Mon, 16 Sep 2024 16:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSi9rUnh"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Djk1CE1D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14930155C98;
-	Mon, 16 Sep 2024 16:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC1215B15D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 16:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726502882; cv=none; b=YfepXuXthnKf9PwNw6YsQNH5PuZMqwQkgR0x55N2X5IfA0virzCpRi7zXVWhBKTDa8AzDyLBO5FcEVyUdG/xUcAKMOx8JfYzSOqar6biL9PTESD7QtN09ONUw8APejOVpZm06gA+I55C6tkLpBy8dE6wjaTq9TiwKZpYHorQpoI=
+	t=1726505384; cv=none; b=fhBXmTyFPB+gd1zM7RCggblPS4WTIeSkqDmzt9n8IoLLw05siyTL42mN7MKMM2NcRQlka/y/8BZO3r5fmbXOVmdFDQu4gOeSWBWCuaMtEvCMVhomrAI6rR2/1Q+Y9UWJhoRnvQL2OOb9mI+1tiBZssxSP2eX7ewqkAj//7XrcHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726502882; c=relaxed/simple;
-	bh=SWTvLUexMhFlY181nJ/U8NnITWW9fyYDLU1b0tWo3xw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sdGWPSNSSalPGmV1hlEGD5Lco9s+ixq4IdW3iqFCPq8hN9YIOUd1DDW3+/yKctaeAo9DMf64pDQDH3jIRFiY2I7TRaD0/3HsuK3b4v41U/fs0aa4rhr+sNSpHsa8UBwQg5nulUImQU2Lo8xCHBbdB+nwNspjDEu7wJBXnw2Sg9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSi9rUnh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE3C5C4CEC5;
-	Mon, 16 Sep 2024 16:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726502881;
-	bh=SWTvLUexMhFlY181nJ/U8NnITWW9fyYDLU1b0tWo3xw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fSi9rUnhjnilk07rjUOY4raDWQMon8jbujKcgOberEG9A4tTNd68VwAREvC8DtEHm
-	 6IuP2d8VH0ZfYEZmc7YIdLgJ4yX6dGRrVptQLtLTjrvfWNm6l9RWgZMCbBHdCDE5RK
-	 jVL11Vq2itVqnTrLPkZrp50AverAoqW3I/JcUoP4pNiTyER8uB8xPA4JukJabefOMh
-	 4r/vofE/exFGW6DObcWLVjFM0GXYHBIgf8DXhoOEdBvgYx8rds6TitWeku8oTMEWAJ
-	 VH0DqZp5SD1sByHncw4o7YrPpm7YWo5c7HEG153grmlHfHcfEQMqDHnThH7lAR63oI
-	 kMSPh7S32kQCg==
-Date: Mon, 16 Sep 2024 09:08:01 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240916160801.GA182194@frogsfrogsfrogs>
-References: <20240805143522.GA623936@frogsfrogsfrogs>
- <20240806094413.GS37996@noisy.programming.kicks-ass.net>
- <20240806103808.GT37996@noisy.programming.kicks-ass.net>
- <875xsc4ehr.ffs@tglx>
- <20240807143407.GC31338@noisy.programming.kicks-ass.net>
- <87wmks2xhi.ffs@tglx>
- <20240807150503.GF6051@frogsfrogsfrogs>
- <20240827033506.GH865349@frogsfrogsfrogs>
- <20240905081241.GM4723@noisy.programming.kicks-ass.net>
- <20240905091605.GE4928@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1726505384; c=relaxed/simple;
+	bh=JqVxmwm6imXSZQvq0ATGpozaXZh1gx5CUVR2s7f8Des=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pjcq8pYFqhtQXNIquNfZyJBW7+r9XxG7sIImD17CBqg1GzCQ54f/832viE0QzNpPwX33pMtFDI3Uggc/2O7llsj4/rA+4Pz01ihhplKy9ngdJ+gx/5125CUOCPnJ+oQwyNUBikImXz0nxvkkA+wmlnsSNQjxFAP7EH7LXIIgex4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Djk1CE1D; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c4146c7d5dso4667550a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 09:49:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1726505380; x=1727110180; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+b7ycIpbNYPDxRZFWGu5S2e+XILAOlCP4jNkvghsyI4=;
+        b=Djk1CE1DDPFUPzbbDJrp/gMrFVkKLMS16s6+mH+u/dYeCQdaWioYtk4nkxyAOQSfsT
+         Nq+UhZT99TKaALjNfqBRY6B6YrCcKRgZ9J3ffSHpip/FuQP5tRGJcOXcp21x4R8rNjdq
+         ltyWcByxDLfNpnfmZZ3q7D6sMgHWBI99aNoHY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726505380; x=1727110180;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+b7ycIpbNYPDxRZFWGu5S2e+XILAOlCP4jNkvghsyI4=;
+        b=qoWUHaQO31hGBiRCclsrexC3zqEhy2+rnGS//x9uHxi1vOaW53VV53W8bEu+8EGmIB
+         /hwBl2M8CxXeHx1lU+UwsaNavN7dhkUSR4t2VrHYJn/PCdhzrfOqzQv9pekRX9venvXZ
+         wivqJ2LqwxS/l1y0LIgCym24t5yF38hwSpfqHbTRLs9awnIbKcRmohZiVe+nSszNWtpa
+         l6iiRjZ2v++d8WmwBOy7rN0tn2VWIZz0/nSDEGi/HwAMYYQ331olGGwrblDQTdt51+Um
+         vNKRQx/dnPY0MbJe3EPd4xs4IpnMkBHg3fQBgNHehi1FhTPR7oTOkTlWEgs85+Nwjrxx
+         iiNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOMDIWHhftFXNW6rlxMawoHl9MN4Jhm63k/PtBgm/RvGhBxWq+BnLRpN2v5bohNqr5NNi/UwmfazfWu8XU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyst/ZFPJUUlFgSjZM+YsQp6qjzMPW3CXqzaYiZW5z7zzh9kqNz
+	xQk1yASfGLh3U93x+Eudps8Jj36WeJ0fcRbYJWREug9gTp9iKyPguMSgmLJ3OsRRP5Zm54B7+y8
+	OKvc1gg==
+X-Google-Smtp-Source: AGHT+IFl9y7HppBK72dDsbgpXav2jA2VJdQzWT2GaAn542Mri/f9JUF+vfsBjBbpiNvMte8mtL6ljg==
+X-Received: by 2002:a05:6402:42c4:b0:5c4:135d:c4d6 with SMTP id 4fb4d7f45d1cf-5c41e1acbbdmr11166069a12.22.1726505379973;
+        Mon, 16 Sep 2024 09:49:39 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bc890d7sm2874618a12.94.2024.09.16.09.49.39
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2024 09:49:39 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so4788418a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 09:49:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXHDDfTo4z0mOc2LlBSyCWqIMz2zCW3M4aoNba98/RF23QFqNFPcR+Ky2vXbIJQwv5zCQfbPJoq0PgKu0+L@vger.kernel.org
+X-Received: by 2002:a05:6402:50c8:b0:5c4:1325:70a7 with SMTP id
+ 4fb4d7f45d1cf-5c41d5b8c30mr13446851a12.0.1726505379030; Mon, 16 Sep 2024
+ 09:49:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905091605.GE4928@noisy.programming.kicks-ass.net>
+References: <20240913-vfs-netfs-39ef6f974061@brauner> <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com>
+ <1947793.1726494616@warthog.procyon.org.uk> <CAHk-=wiVC5Cgyz6QKXFu6fTaA6h4CjexDR-OV9kL6Vo5x9v8=A@mail.gmail.com>
+ <2003346.1726500810@warthog.procyon.org.uk>
+In-Reply-To: <2003346.1726500810@warthog.procyon.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 16 Sep 2024 18:49:22 +0200
+X-Gmail-Original-Message-ID: <CAHk-=wgZA6kgZSd_4rx=KsnxM8OU0+FOu3T9mJroBeHq2qVO=Q@mail.gmail.com>
+Message-ID: <CAHk-=wgZA6kgZSd_4rx=KsnxM8OU0+FOu3T9mJroBeHq2qVO=Q@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Fix cifs readv callback merge resolution issue
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Steve French <stfrench@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 05, 2024 at 11:16:05AM +0200, Peter Zijlstra wrote:
-> On Thu, Sep 05, 2024 at 10:12:41AM +0200, Peter Zijlstra wrote:
-> > On Mon, Aug 26, 2024 at 08:35:06PM -0700, Darrick J. Wong wrote:
-> 
-> > > [33965.988873] ------------[ cut here ]------------
-> > > [33966.013870] WARNING: CPU: 1 PID: 8992 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> 
-> > > [33966.040184] pc : __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> > > [33966.042845] lr : __static_key_slow_dec_cpuslocked.part.0+0x48/0xc0
-> 
-> > > [33966.072840] Call trace:
-> > > [33966.073838]  __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> > > [33966.076105]  static_key_slow_dec+0x48/0x88
-> 
-> > > This corresponds to the:
-> > > 
-> > > 	WARN_ON_ONCE(!static_key_slow_try_dec(key));
-> > 
-> > But but but,... my patch killed that function. So are you sure it is
-> > applied ?!
-> > 
-> > Because this sounds like exactly that issue again.
-> > 
-> > Anyway, it appears I had totally forgotten about this issue again due to
-> > holidays, sorry. Let me stare hard at Thomas' patch and make a 'pretty'
-> > one that does boot.
-> 
-> I've taken tglx's version with a small change (added comment) and boot
-> tested it and queued it here:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/urgent
-> 
-> Could you please double check on both x86_64 and arm64?
+On Mon, 16 Sept 2024 at 17:33, David Howells <dhowells@redhat.com> wrote:
+>
+> It's probably a good idea, but there's also erofs, which also goes through
+> cachefiles_read() with it's own async callback which complicates things a
+> little.
 
-Will send this out on the test farm tonight, thanks for the patch.
+So I was thinking that if cachefiles_read_complete() would just do the
+->term_func() handling as a workqueue thing, that would make this all
+go away...
 
-> If green by with the build robots and your own testing I'll push this
-> into tip/locking/urgent to be sent to Linus on Sunday. Hopefully finally
-> resolving this issue.
-
-Sorry I didn't get to this earlier; I've been on vacation since the end
-of August.  Now to get to the ~1300 fsdevel emails... ;)
-
---D
+           Linus
 
