@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-29495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E001B97A38C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:02:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7EBA97A38E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1107E1C25930
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF3E1F26FDC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65DE17C99B;
-	Mon, 16 Sep 2024 13:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C7416B3AC;
+	Mon, 16 Sep 2024 13:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="g8obcaLK"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="ZXh9ANSe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B741417A59D;
-	Mon, 16 Sep 2024 13:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEA717B514;
+	Mon, 16 Sep 2024 13:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495030; cv=none; b=thjR2MOLM3HjxNBdtsg4enkT+m5c7tfNlort3wF/NGlyp/tCmvotFMn43cCfFd0wz83G+WJOBbn9rq17ZkwJra+6U6ZT7ZzB6aO4h+gckfG4CRCOdIHBeuwD3N1VXZ3dqTewNZ6ZjgwrKL+aszZzJlA7Gx/BzUFyQkLWT8B8v08=
+	t=1726495031; cv=none; b=svgrGTsjpv0XG5LcIzWnBysHtDkPAmZboNGmJ9xtuLvtBE2whBQbu6BJNP//Bm/0MfRdqiLY+4p7IM2uzN0U/I42FZLgOzOs8MP+qSaoypuLClPe1SXduLuNJSawDriePXcu+nnfYnlHsCbDdIVem7nwOCtJYcdneR4+W+UmSUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495030; c=relaxed/simple;
-	bh=YfrKy0P5t/PFVgfEJ9Oa8pP3m9ofPBgNKhmjzSJN120=;
+	s=arc-20240116; t=1726495031; c=relaxed/simple;
+	bh=jUiK35jhCNKwNtLZmWNbheSdEs1dR8byw40iyQ24itA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=exFt98B2J/aU0CQ/WWi4ceuMGWOVG+PKSPnKHIrKKS4mvgMhHuXhUClZJ4brH3KmmXyoAFHWYV9MGFudE8ZjwIRI+cqrw5qP/nSiNDeLaqg9aFhN4zwudax1KCkJN10EGU9mwyY7nZsixpqxpOAFNiS+Q5Cp1XREb7s4QKwGgXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=g8obcaLK; arc=none smtp.client-ip=148.135.17.20
+	 MIME-Version; b=GmW8ozwXHi/U2rPKQtcEzjd1UNEQF+BmrtoNeNY+onX1BQj0huV8J+jVoKsmeSbg+j4PzaUiVrjUFEZ5Q07NlAL7NLKwOOnJXvSlJxFK6AxyGztRgRqnBWvGJAdreKQ0WWbU6hDVJ37in0FhCHdTKX1szBCccMZqPb/ivkosuIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=ZXh9ANSe; arc=none smtp.client-ip=148.135.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7CD5769989;
-	Mon, 16 Sep 2024 09:57:06 -0400 (EDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7576069845;
+	Mon, 16 Sep 2024 09:57:08 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726495027; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1726495029; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=bCX/VGnpSaFf2bcuOvskzF/4BX9NNeVk1l0oyYrgTyQ=;
-	b=g8obcaLKn83twIxtsW1bMKexchJ/MixNaNHqV9/9wVbN1Tm0XJI+GQOH/h+dJ0gXl+uX7P
-	7xEc4xBpK51y0PKnnS4/Ma7hE99UXXOx7ap0tAZcH9XaV3UtgfAojztOBAoCnvX/XThgaL
-	MxKJNTvonxSeZQ4cikSnniS8pN4cmaMlU0svNBht1nckie5xXQMSKQfeKr4Q+ILgP6Nbpi
-	7ZzdyLcmeRasnDv7/ROCWkaxoMufdke1WjhW5g8pTWWtQFc8Gou3JqwYHnM7Oer5rWrhgZ
-	jD1dcmCu80OQR4cNzMMvsaFzmHW3FLjE+xnVgr7kC8EyxHAZt6ovnWDlORqLTQ==
+	bh=IJeFyOgl8nOrg6bU4FPruU0g/Xx5Ar0E77i2j4pU4gE=;
+	b=ZXh9ANSeQAemFI4eZL3sOh1Z2/r3EKl6hlzBLpgjMPgsxzAe+kNNa64a9MdPQqqYmHRJsl
+	3mBfx2PEAAQLsqHMGWmquqyme73AJoHHVz5iaVNcAYIqdRqV9a7B/kuw8mNrEFOkuRo5Zh
+	rHWXcuY1hgx0yHt4EXAbSnG1tWurs72jBfpkJmHx6EI4we2UTFs+gunmnMG+DkvI3pBqUx
+	zxoOFTdsPOxVTivfHCHMiacs26ZpzMZDkcjFGCxqvnZAjNp1vHPBaTdLo+qCF9om8mL6WW
+	pTt3MbFU9KdB++Cq1L41srGGKE0GIpVdsXkZaAd70XTtDaTC2QFnVqocbpQpJw==
 From: Yiyang Wu <toolmanp@tlmp.cc>
 To: linux-erofs@lists.ozlabs.org
 Cc: rust-for-linux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 15/24] erofs: add iter methods in filesystem in Rust
-Date: Mon, 16 Sep 2024 21:56:25 +0800
-Message-ID: <20240916135634.98554-16-toolmanp@tlmp.cc>
+Subject: [RFC PATCH 16/24] erofs: implement dir and inode operations in Rust
+Date: Mon, 16 Sep 2024 21:56:26 +0800
+Message-ID: <20240916135634.98554-17-toolmanp@tlmp.cc>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240916135634.98554-1-toolmanp@tlmp.cc>
 References: <20240916135634.98554-1-toolmanp@tlmp.cc>
@@ -62,194 +62,169 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Implement mapped iter that uses the MapIter and can yield data that is
-backed by EROFS inode.
-
-Implement continuous_iter and mapped_iter for filesystem which can
-returns an iterator that yields raw data.
+Implement dir ops and inode ops in Rust.
 
 Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 ---
- fs/erofs/rust/erofs_sys/data.rs               |  2 +
- .../rust/erofs_sys/data/raw_iters/ref_iter.rs | 63 +++++++++++++++++++
- .../rust/erofs_sys/data/raw_iters/traits.rs   |  4 ++
- fs/erofs/rust/erofs_sys/superblock.rs         | 13 ++++
- fs/erofs/rust/erofs_sys/superblock/mem.rs     | 22 +++++++
- 5 files changed, 104 insertions(+)
+ fs/erofs/rust/erofs_sys.rs            |  1 +
+ fs/erofs/rust/erofs_sys/data.rs       |  4 ++
+ fs/erofs/rust/erofs_sys/operations.rs | 35 ++++++++++++++++
+ fs/erofs/rust/erofs_sys/superblock.rs | 59 +++++++++++++++++++++++++++
+ 4 files changed, 99 insertions(+)
+ create mode 100644 fs/erofs/rust/erofs_sys/operations.rs
 
+diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
+index 20c0aa81a800..8c08ac347b2b 100644
+--- a/fs/erofs/rust/erofs_sys.rs
++++ b/fs/erofs/rust/erofs_sys.rs
+@@ -30,6 +30,7 @@
+ pub(crate) mod errnos;
+ pub(crate) mod inode;
+ pub(crate) mod map;
++pub(crate) mod operations;
+ pub(crate) mod superblock;
+ pub(crate) mod xattrs;
+ pub(crate) use errnos::{Errno, Errno::*};
 diff --git a/fs/erofs/rust/erofs_sys/data.rs b/fs/erofs/rust/erofs_sys/data.rs
-index 483f3204ce42..21630673c24e 100644
+index 21630673c24e..67bb66ce9efb 100644
 --- a/fs/erofs/rust/erofs_sys/data.rs
 +++ b/fs/erofs/rust/erofs_sys/data.rs
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,7 @@
  // SPDX-License-Identifier: MIT or GPL-2.0-or-later
  pub(crate) mod backends;
  pub(crate) mod raw_iters;
-+use super::inode::*;
-+use super::map::*;
++use super::dir::*;
+ use super::inode::*;
+ use super::map::*;
  use super::superblock::*;
- use super::*;
- 
-diff --git a/fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs b/fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs
-index 5aa2b7f44f3d..d39c9523b628 100644
---- a/fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs
-+++ b/fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs
-@@ -4,6 +4,69 @@
- use super::super::*;
- use super::*;
- 
-+pub(crate) struct RefMapIter<'a, 'b, FS, B, I>
-+where
-+    FS: FileSystem<I>,
-+    B: Backend,
-+    I: Inode,
-+{
-+    sb: &'a SuperBlock,
-+    backend: &'a B,
-+    map_iter: MapIter<'a, 'b, FS, I>,
-+}
-+
-+impl<'a, 'b, FS, B, I> RefMapIter<'a, 'b, FS, B, I>
-+where
-+    FS: FileSystem<I>,
-+    B: Backend,
-+    I: Inode,
-+{
-+    pub(crate) fn new(
-+        sb: &'a SuperBlock,
-+        backend: &'a B,
-+        map_iter: MapIter<'a, 'b, FS, I>,
-+    ) -> Self {
-+        Self {
-+            sb,
-+            backend,
-+            map_iter,
-+        }
+@@ -26,6 +27,9 @@ pub(crate) trait Backend {
+ /// DirEntries.
+ pub(crate) trait Buffer {
+     fn content(&self) -> &[u8];
++    fn iter_dir(&self) -> DirCollection<'_> {
++        DirCollection::new(self.content())
 +    }
-+}
-+
-+impl<'a, 'b, FS, B, I> Iterator for RefMapIter<'a, 'b, FS, B, I>
-+where
-+    FS: FileSystem<I>,
-+    B: Backend,
-+    I: Inode,
-+{
-+    type Item = PosixResult<RefBuffer<'a>>;
-+    fn next(&mut self) -> Option<Self::Item> {
-+        match self.map_iter.next() {
-+            Some(map) => match map {
-+                Ok(m) => {
-+                    let accessor = self.sb.blk_access(m.physical.start);
-+                    let len = m.physical.len.min(accessor.len);
-+                    match self.backend.as_buf(m.physical.start, len) {
-+                        Ok(buf) => Some(Ok(buf)),
-+                        Err(e) => Some(Err(e)),
-+                    }
-+                }
-+                Err(e) => Some(Err(e)),
-+            },
-+            None => None,
-+        }
-+    }
-+}
-+
-+impl<'a, 'b, FS, B, I> BufferMapIter<'a> for RefMapIter<'a, 'b, FS, B, I>
-+where
-+    FS: FileSystem<I>,
-+    B: Backend,
-+    I: Inode,
-+{
-+}
-+
- /// Continous Ref Buffer Iterator which iterates over a range of disk addresses within the
- /// the temp block size. Since the temp block is always the same size as page and it will not
- /// overflow.
-diff --git a/fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs b/fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs
-index 90b6a51658a9..531e970cdb49 100644
---- a/fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs
-+++ b/fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs
-@@ -3,6 +3,10 @@
+ }
  
- use super::super::*;
- 
-+/// Represents a basic iterator over a range of bytes from data backends.
-+/// The access order is guided by the block maps from the filesystem.
-+pub(crate) trait BufferMapIter<'a>: Iterator<Item = PosixResult<RefBuffer<'a>>> {}
+ /// Represents a buffer that holds a reference to a slice of data that
+diff --git a/fs/erofs/rust/erofs_sys/operations.rs b/fs/erofs/rust/erofs_sys/operations.rs
+new file mode 100644
+index 000000000000..070ba20908a2
+--- /dev/null
++++ b/fs/erofs/rust/erofs_sys/operations.rs
+@@ -0,0 +1,35 @@
++// Copyright 2024 Yiyang Wu
++// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
- /// Represents a basic iterator over a range of bytes from data backends.
- /// Note that this is skippable and can be used to move the iterator's cursor forward.
- pub(crate) trait ContinuousBufferIter<'a>:
++use super::inode::*;
++use super::superblock::*;
++use super::*;
++
++pub(crate) fn read_inode<'a, I, C>(
++    filesystem: &'a dyn FileSystem<I>,
++    collection: &'a mut C,
++    nid: Nid,
++) -> PosixResult<&'a mut I>
++where
++    I: Inode,
++    C: InodeCollection<I = I>,
++{
++    collection.iget(nid, filesystem)
++}
++
++pub(crate) fn dir_lookup<'a, I, C>(
++    filesystem: &'a dyn FileSystem<I>,
++    collection: &'a mut C,
++    inode: &I,
++    name: &str,
++) -> PosixResult<&'a mut I>
++where
++    I: Inode,
++    C: InodeCollection<I = I>,
++{
++    filesystem
++        .find_nid(inode, name)?
++        .map_or(Err(Errno::ENOENT), |nid| {
++            read_inode(filesystem, collection, nid)
++        })
++}
 diff --git a/fs/erofs/rust/erofs_sys/superblock.rs b/fs/erofs/rust/erofs_sys/superblock.rs
-index fc6b3cb00b18..f60657eff3d6 100644
+index f60657eff3d6..403ffdeb4573 100644
 --- a/fs/erofs/rust/erofs_sys/superblock.rs
 +++ b/fs/erofs/rust/erofs_sys/superblock.rs
-@@ -5,6 +5,7 @@
- use alloc::boxed::Box;
- use core::mem::size_of;
- 
-+use super::data::raw_iters::*;
+@@ -8,6 +8,7 @@
+ use super::data::raw_iters::*;
  use super::data::*;
  use super::devices::*;
++use super::dir::*;
  use super::inode::*;
-@@ -274,6 +275,18 @@ fn map(&self, inode: &I, offset: Off) -> MapResult {
-             _ => todo!(),
-         }
-     }
+ use super::map::*;
+ use super::*;
+@@ -287,6 +288,64 @@ fn continuous_iter<'a>(
+         offset: Off,
+         len: Off,
+     ) -> PosixResult<Box<dyn ContinuousBufferIter<'a> + 'a>>;
 +
-+    fn mapped_iter<'b, 'a: 'b>(
-+        &'a self,
-+        inode: &'b I,
-+        offset: Off,
-+    ) -> PosixResult<Box<dyn BufferMapIter<'a> + 'b>>;
++    // Inode related goes here.
++    fn read_inode_info(&self, nid: Nid) -> PosixResult<InodeInfo> {
++        (self.as_filesystem(), nid).try_into()
++    }
 +
-+    fn continuous_iter<'a>(
-+        &'a self,
++    fn find_nid(&self, inode: &I, name: &str) -> PosixResult<Option<Nid>> {
++        for buf in self.mapped_iter(inode, 0)? {
++            for dirent in buf?.iter_dir() {
++                if dirent.dirname() == name.as_bytes() {
++                    return Ok(Some(dirent.desc.nid));
++                }
++            }
++        }
++        Ok(None)
++    }
++
++    // Readdir related goes here.
++    fn fill_dentries(
++        &self,
++        inode: &I,
 +        offset: Off,
-+        len: Off,
-+    ) -> PosixResult<Box<dyn ContinuousBufferIter<'a> + 'a>>;
++        emitter: &mut dyn FnMut(Dirent<'_>, Off),
++    ) -> PosixResult<()> {
++        let sb = self.superblock();
++        let accessor = sb.blk_access(offset);
++        if offset > inode.info().file_size() {
++            return Err(EUCLEAN);
++        }
++
++        let map_offset = round!(DOWN, offset, sb.blksz());
++        let blk_offset = round!(UP, accessor.off, size_of::<DirentDesc>() as Off);
++
++        let mut map_iter = self.mapped_iter(inode, map_offset)?;
++        let first_buf = map_iter.next().unwrap()?;
++        let mut collection = first_buf.iter_dir();
++
++        let mut pos: Off = map_offset + blk_offset;
++
++        if blk_offset as usize / size_of::<DirentDesc>() <= collection.total() {
++            collection.skip_dir(blk_offset as usize / size_of::<DirentDesc>());
++            for dirent in collection {
++                emitter(dirent, pos);
++                pos += size_of::<DirentDesc>() as Off;
++            }
++        }
++
++        pos = round!(UP, pos, sb.blksz());
++
++        for buf in map_iter {
++            for dirent in buf?.iter_dir() {
++                emitter(dirent, pos);
++                pos += size_of::<DirentDesc>() as Off;
++            }
++            pos = round!(UP, pos, sb.blksz());
++        }
++        Ok(())
++    }
  }
  
  pub(crate) struct SuperblockInfo<I, C, T>
-diff --git a/fs/erofs/rust/erofs_sys/superblock/mem.rs b/fs/erofs/rust/erofs_sys/superblock/mem.rs
-index 12bf797bd1e3..5756dc08744c 100644
---- a/fs/erofs/rust/erofs_sys/superblock/mem.rs
-+++ b/fs/erofs/rust/erofs_sys/superblock/mem.rs
-@@ -1,6 +1,7 @@
- // Copyright 2024 Yiyang Wu
- // SPDX-License-Identifier: MIT or GPL-2.0-or-later
- 
-+use super::alloc_helper::*;
- use super::data::raw_iters::ref_iter::*;
- use super::*;
- 
-@@ -33,6 +34,27 @@ fn as_filesystem(&self) -> &dyn FileSystem<I> {
-         self
-     }
- 
-+    fn mapped_iter<'b, 'a: 'b>(
-+        &'a self,
-+        inode: &'b I,
-+        offset: Off,
-+    ) -> PosixResult<Box<dyn BufferMapIter<'a> + 'b>> {
-+        heap_alloc(RefMapIter::new(
-+            &self.sb,
-+            &self.backend,
-+            MapIter::new(self, inode, offset),
-+        ))
-+        .map(|v| v as Box<dyn BufferMapIter<'a> + 'b>)
-+    }
-+    fn continuous_iter<'a>(
-+        &'a self,
-+        offset: Off,
-+        len: Off,
-+    ) -> PosixResult<Box<dyn ContinuousBufferIter<'a> + 'a>> {
-+        heap_alloc(ContinuousRefIter::new(&self.sb, &self.backend, offset, len))
-+            .map(|v| v as Box<dyn ContinuousBufferIter<'a> + 'a>)
-+    }
-+
-     fn device_info(&self) -> &DeviceInfo {
-         &self.device_info
-     }
 -- 
 2.46.0
 
