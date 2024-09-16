@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-29488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799AC97A37B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:00:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6109297A37E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABAF21C24BD6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:00:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0ACFB25A4F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85CA15CD55;
-	Mon, 16 Sep 2024 13:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33C315E5CC;
+	Mon, 16 Sep 2024 13:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="gntO7RG+"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="OI84jiwE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186F015C128;
-	Mon, 16 Sep 2024 13:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE7515CD4A;
+	Mon, 16 Sep 2024 13:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495016; cv=none; b=boYl/+neym6MGFtvdaq2Ym361Md9g9nmma9FtvG68PPtnNR85UzVRkRvNyhFiu+9C6D10s52K4dAXU1TVxco6VBiFInGySy3YZDZMIh20lV1LlwFooOI0JQQb0AJVC+Xn0agvrsKNssr6UnALxVg88iorvNddxFrv/IUw9fh7aM=
+	t=1726495018; cv=none; b=AohSeG95OCS2slzLcp6+nMudB5RxACvLNlMf3VenxJcyEHUesnE6+KcvkDHiE5CB95APv9p6EtcYYgo8W7UOJFvMAgY6cKIiXR6l2UoDK519b2sEmRAZYSS0gleHrh8Z22nPzVliqY1vnuuoi8dbPvUe8PJXk96gvDAJe1NNa8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495016; c=relaxed/simple;
-	bh=0c66dwnUGs7UBAhZ/nX2CQVs5yJOB4tBeg1XqoqkzKE=;
+	s=arc-20240116; t=1726495018; c=relaxed/simple;
+	bh=C6bzJ0ahOVi4Lz5NDHXNa2g12EqOHhJgzseFPgoTZoI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CRFsmY+zPPURyWhXLeysYX+dPvsEuGBZJNWvvgADUZgRDxOhnKyevPd15eGblgnwZhQ79uLirzoNAvX0pDMir0tihZ11eVOrPMD1M6gMlPES0I1ETf8a0NjnRfMGPjo0SDRpcv2A+qJaR9WCPtSo4Xz72pfH+s22zlQlVYXK8I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=gntO7RG+; arc=none smtp.client-ip=148.135.17.20
+	 MIME-Version; b=AT/RfU86s52CG39tUb7OuStpSihueosk/sPG3SRf1ctvBWWCTFuL9jTyOojfkxl4eRKsMZa3brKHTerxAjOv/DZReIS6Zovww2ggCBN/uymnhsBv7QsbbWrpYHBDXogW1Q+y8FgQYk1Mk5V5dDfSwvA4EcJ8BMft8tmc39Kf25k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=OI84jiwE; arc=none smtp.client-ip=148.135.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D356F697C4;
-	Mon, 16 Sep 2024 09:56:52 -0400 (EDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C2F7F6984E;
+	Mon, 16 Sep 2024 09:56:54 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726495014; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1726495016; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=RpwAvNBL1BrrWM3+ylO6h2C6ZxDk5XDbbYWzUi+PA6A=;
-	b=gntO7RG+naT7UAbmN9YrOU7lFOnX6O7m9wdBElz71oXY/SvrFQPdgeh91hNsJqCtn6pwy4
-	50ZUtxmlhVTf5oHnbw9y3C35Twg+2gajp9ksrcy777rB/12VpaL3VeI1voDg2npj+iyKUP
-	uZT1Bt+vRqHJft7wmTCzNk6IW9qlTpu/oUGSFnEBM2Z+2YDAbQc9pFBxtn/nqVS1PDSMHG
-	VRUdsVTxGTiUZ9I5Tc5kEbPwyBGnhzauQanUdZXaQB8xpL53OheHsEcVQIFviGCznCDSX9
-	8iv9jVzAoYzTupEffpGl6bB0lSLXlJbrLfjayGtXQYCJT6jEEi4JozVGHjRHyg==
+	bh=CeM2RxQ3ayEheLUMCn9fl9h9UhYePHokORV1b9tMe8Y=;
+	b=OI84jiwEAZ7ZEOLluM+fIqX1Srps1RtOtX3VqfVlm4NGXwfbaD373VS/xNCdDmM/hiGYDZ
+	OHX/N0Vj2xsYcLKNElDkLkxxhMbOocc0YXu8NiK8WHl784LfdiZ3VeREs4qZgrGs6gcrCr
+	5SQ4cQOXbMAAWxSGTv6DB9kQD61+qf/9K9eBUDSMatJxLDWSaO4VsSF76v9Rj5+M+tvaEZ
+	uvJYeTYhvh+ddlt/XjZ447m9WCXe1xX/gZKjvoJKGVc4+fL9qq5n35kSNdvH/dj/Xrf2Ni
+	xyAHcPUesRUNe95B9viv+6x83gLqH4DrrdC8RgHWYKqQZy13ntEZzFiynr/o2g==
 From: Yiyang Wu <toolmanp@tlmp.cc>
 To: linux-erofs@lists.ozlabs.org
 Cc: rust-for-linux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 08/24] erofs: add device data structure in Rust
-Date: Mon, 16 Sep 2024 21:56:18 +0800
-Message-ID: <20240916135634.98554-9-toolmanp@tlmp.cc>
+Subject: [RFC PATCH 09/24] erofs: add continuous iterators in Rust
+Date: Mon, 16 Sep 2024 21:56:19 +0800
+Message-ID: <20240916135634.98554-10-toolmanp@tlmp.cc>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240916135634.98554-1-toolmanp@tlmp.cc>
 References: <20240916135634.98554-1-toolmanp@tlmp.cc>
@@ -62,61 +62,138 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-This patch introduce device data structure in Rust.
-It can later support chunk based block maps.
+This patch adds a special iterator that is capable of iterating over a
+memory region in the granularity of a common page. This can be later
+used to read device buffer or fast symlink.
 
 Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 ---
- fs/erofs/rust/erofs_sys.rs         |  1 +
- fs/erofs/rust/erofs_sys/devices.rs | 28 ++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 fs/erofs/rust/erofs_sys/devices.rs
+ fs/erofs/rust/erofs_sys/data.rs               |  2 +
+ fs/erofs/rust/erofs_sys/data/raw_iters.rs     |  6 ++
+ .../rust/erofs_sys/data/raw_iters/ref_iter.rs | 68 +++++++++++++++++++
+ .../rust/erofs_sys/data/raw_iters/traits.rs   | 13 ++++
+ 4 files changed, 89 insertions(+)
+ create mode 100644 fs/erofs/rust/erofs_sys/data/raw_iters.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs
 
-diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
-index 8cca2cd9b75f..f1a1e491caec 100644
---- a/fs/erofs/rust/erofs_sys.rs
-+++ b/fs/erofs/rust/erofs_sys.rs
-@@ -25,6 +25,7 @@
+diff --git a/fs/erofs/rust/erofs_sys/data.rs b/fs/erofs/rust/erofs_sys/data.rs
+index 284c8b1f3bd4..483f3204ce42 100644
+--- a/fs/erofs/rust/erofs_sys/data.rs
++++ b/fs/erofs/rust/erofs_sys/data.rs
+@@ -1,6 +1,8 @@
+ // Copyright 2024 Yiyang Wu
+ // SPDX-License-Identifier: MIT or GPL-2.0-or-later
+ pub(crate) mod backends;
++pub(crate) mod raw_iters;
++use super::superblock::*;
+ use super::*;
  
- pub(crate) mod alloc_helper;
- pub(crate) mod data;
-+pub(crate) mod devices;
- pub(crate) mod errnos;
- pub(crate) mod inode;
- pub(crate) mod superblock;
-diff --git a/fs/erofs/rust/erofs_sys/devices.rs b/fs/erofs/rust/erofs_sys/devices.rs
+ /// Represent some sort of generic data source. This cound be file, memory or even network.
+diff --git a/fs/erofs/rust/erofs_sys/data/raw_iters.rs b/fs/erofs/rust/erofs_sys/data/raw_iters.rs
 new file mode 100644
-index 000000000000..097676ee8720
+index 000000000000..8f3bd250d252
 --- /dev/null
-+++ b/fs/erofs/rust/erofs_sys/devices.rs
-@@ -0,0 +1,28 @@
++++ b/fs/erofs/rust/erofs_sys/data/raw_iters.rs
+@@ -0,0 +1,6 @@
 +// Copyright 2024 Yiyang Wu
 +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
-+use alloc::vec::Vec;
++pub(crate) mod ref_iter;
++mod traits;
++pub(crate) use traits::*;
+diff --git a/fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs b/fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs
+new file mode 100644
+index 000000000000..5aa2b7f44f3d
+--- /dev/null
++++ b/fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs
+@@ -0,0 +1,68 @@
++// Copyright 2024 Yiyang Wu
++// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
-+/// Device specification.
-+#[derive(Copy, Clone, Debug)]
-+pub(crate) struct DeviceSpec {
-+    pub(crate) tags: [u8; 64],
-+    pub(crate) blocks: u32,
-+    pub(crate) mapped_blocks: u32,
++use super::super::*;
++use super::*;
++
++/// Continous Ref Buffer Iterator which iterates over a range of disk addresses within the
++/// the temp block size. Since the temp block is always the same size as page and it will not
++/// overflow.
++pub(crate) struct ContinuousRefIter<'a, B>
++where
++    B: Backend,
++{
++    sb: &'a SuperBlock,
++    backend: &'a B,
++    offset: Off,
++    len: Off,
 +}
 +
-+/// Device slot.
-+#[derive(Copy, Clone, Debug)]
-+#[repr(C)]
-+pub(crate) struct DeviceSlot {
-+    tags: [u8; 64],
-+    blocks: u32,
-+    mapped_blocks: u32,
-+    reserved: [u8; 56],
++impl<'a, B> ContinuousRefIter<'a, B>
++where
++    B: Backend,
++{
++    pub(crate) fn new(sb: &'a SuperBlock, backend: &'a B, offset: Off, len: Off) -> Self {
++        Self {
++            sb,
++            backend,
++            offset,
++            len,
++        }
++    }
 +}
 +
-+/// Device information.
-+pub(crate) struct DeviceInfo {
-+    pub(crate) mask: u16,
-+    pub(crate) specs: Vec<DeviceSpec>,
++impl<'a, B> Iterator for ContinuousRefIter<'a, B>
++where
++    B: Backend,
++{
++    type Item = PosixResult<RefBuffer<'a>>;
++    fn next(&mut self) -> Option<Self::Item> {
++        if self.len == 0 {
++            return None;
++        }
++        let accessor = self.sb.blk_access(self.offset);
++        let len = accessor.len.min(self.len);
++        let result: Option<Self::Item> = self.backend.as_buf(self.offset, len).map_or_else(
++            |e| Some(Err(e)),
++            |buf| {
++                self.offset += len;
++                self.len -= len;
++                Some(Ok(buf))
++            },
++        );
++        result
++    }
++}
++
++impl<'a, B> ContinuousBufferIter<'a> for ContinuousRefIter<'a, B>
++where
++    B: Backend,
++{
++    fn advance_off(&mut self, offset: Off) {
++        self.offset += offset;
++        self.len -= offset
++    }
++    fn eof(&self) -> bool {
++        self.len == 0
++    }
++}
+diff --git a/fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs b/fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs
+new file mode 100644
+index 000000000000..90b6a51658a9
+--- /dev/null
++++ b/fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs
+@@ -0,0 +1,13 @@
++// Copyright 2024 Yiyang Wu
++// SPDX-License-Identifier: MIT or GPL-2.0-or-later
++
++use super::super::*;
++
++/// Represents a basic iterator over a range of bytes from data backends.
++/// Note that this is skippable and can be used to move the iterator's cursor forward.
++pub(crate) trait ContinuousBufferIter<'a>:
++    Iterator<Item = PosixResult<RefBuffer<'a>>>
++{
++    fn advance_off(&mut self, offset: Off);
++    fn eof(&self) -> bool;
 +}
 -- 
 2.46.0
