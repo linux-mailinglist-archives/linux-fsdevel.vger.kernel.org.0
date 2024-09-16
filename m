@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-29503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5F097A39D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:05:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7120497A3A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE9E1F28092
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:05:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADC8CB28A2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1B3192B80;
-	Mon, 16 Sep 2024 13:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5743B192D81;
+	Mon, 16 Sep 2024 13:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="fKGjqmd+"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="OBq4tMd5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303BD192589;
-	Mon, 16 Sep 2024 13:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175571925B6;
+	Mon, 16 Sep 2024 13:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495046; cv=none; b=CTN78x3NbQhBm1AsjIgvVM38fzM5lSWvHGHZJ1h+IadmrVIqyiQQCfFm0FV025qGh2PBc2GjoP7Il2gBxfvyegQJAZA+sc158EyB9PpFKkpXUFg6+lGCe7tphHAOylS/959+HjikbOl+M2XiRo2EUP3Antx3pHpRlLKXXmtBjlY=
+	t=1726495047; cv=none; b=usfwa/6ZbdVHRj4zs44cIR1bRLIa+OY8+cYL4OTNRX53rS1uIOmKPl7fuLkjXB62y9bTjtlXKN5l3hTZ3kGfQWILoBcelomv2Me6cxSRmSU6SH+7/kVEX2yxoGGJdmlfCi5Q0ta+mzXG08Laoxb6NEv3AuYjU6NpCrR7qsWej8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495046; c=relaxed/simple;
-	bh=7DhpC3v/3K+OOvs0Ee6iKzIQkx7FoXxDfepESWYQ9uc=;
+	s=arc-20240116; t=1726495047; c=relaxed/simple;
+	bh=IbqHVfFbye38HXIk4ja/9ILQ7+ASn23iwfedn4kSYa4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t0T2FvyT9xXtnVL7IYIMLrQJdMe+zH/jV13eZhz4Tp86WMKA3Bpolw8dEmWmlF7VbMruo+j93EcE35eB6KIXzOo+GYHnmBi3CJlXRPCekfcwJ5IIrD1g6IqBaltXhIFbw0qQ47fsVPQzgQld7Qfl4oT4H/68R90oy32x1nV2baQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=fKGjqmd+; arc=none smtp.client-ip=148.135.17.20
+	 MIME-Version; b=jUtIRtGyeAcL+1jxGaculGf42yhK8ZTT+7K3lI4N+AQdEpnj24HKBBiXQdstyLBFcgPjfyhNvX5+bDdT8vNIN5lzd+XsaVXhkeyvsd9O2bDlL/57GCL5gQe2BNrvUEftgybQ272lSyAx5IqyGbkk6DhpZbvhhuouiScDafK536I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=OBq4tMd5; arc=none smtp.client-ip=148.135.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 561F569848;
-	Mon, 16 Sep 2024 09:57:22 -0400 (EDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4B6EF6984F;
+	Mon, 16 Sep 2024 09:57:24 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726495043; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1726495045; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=zlfk2yVyXop5WdEA16RsoMhaE54MNmJqzOSetL+7z4A=;
-	b=fKGjqmd+H0YGLTKH12je9r6EFTAdm+p96HRgadUd7QQmZjwntWblUGYIdIVSycNZ0Dntvw
-	04B30JssSY01wVuEXuSZe3c5YHseypnyeV4f61UiRhsvghp8y/3GYPlALSfLETAnAL4Cs7
-	3VopXQjsQbZCkndT8ZbgZA5OZATgIrBIp37RtnuRksV+NNLSYI5kV0lyq2mUs1r2cg0dM2
-	3eJpUiWmkeNgcCTfx0LAq2qEOqLVoV3hTh3S3eZSO11zzkhhTRuws9yStiZ882x4srUXjF
-	ke2oPQPZDLX6eeBA+43a9lYCtH2VnF3ntPe/a6R/qXjEFM+FJ+YxS0PX0hkmkg==
+	bh=1pC3X6eZfUmCLid8GeSOP4AYR2slkMfkaqDKXR4//jw=;
+	b=OBq4tMd5dYEC3VbRFlTrDgJ/lGksSk/7sMmAwQyZTzjoDd5wCgs9eVvUoWrXGTmzjl1gDa
+	TeDBQH3Afx9YA958Hdk4c3RXefxejPxbat5ZHuSEHNhhSfQSgFu9EC6oB3j8f91y78BDo+
+	AudCJOL23givZmhLYVNf/+WRgtxOGJ8hYdG+6PcUlex5iiIgm1aBqEUFuIK0MQtFM2AtB3
+	axd12VcnG+Jx9Q7SA02HMmKWEpnx1oZ0au7byoIDk5fCKwr40CF6x1RpwhEtT6NTZlYm5D
+	nEjXbsW8XwpE3XcSOicA6n0Cxj0XTGwa/1FU4hHB+3pVCxvNC0y3afs5M3yScg==
 From: Yiyang Wu <toolmanp@tlmp.cc>
 To: linux-erofs@lists.ozlabs.org
 Cc: rust-for-linux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 23/24] erofs: implement xattrs operations in Rust
-Date: Mon, 16 Sep 2024 21:56:33 +0800
-Message-ID: <20240916135634.98554-24-toolmanp@tlmp.cc>
+Subject: [RFC PATCH 24/24] erofs: introduce xattrs replacement to C
+Date: Mon, 16 Sep 2024 21:56:34 +0800
+Message-ID: <20240916135634.98554-25-toolmanp@tlmp.cc>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240916135634.98554-1-toolmanp@tlmp.cc>
 References: <20240916135634.98554-1-toolmanp@tlmp.cc>
@@ -62,518 +62,257 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-This patch adds xattrs for erofs_sys crate and will later be used to
-implement xattr handler in Rust.
+This patch introduces erofs_getxattr_rust and erofs_listxattr_rust to C
+and can replace the original xattr logic entirely.
+
+Note that the original acl implementation is tweaked with a lifted
+function called erofs_getxattr_nobuf, so that difference of the calling
+convention of Rust side code can be bridged.
 
 Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 ---
- fs/erofs/inode_rs.rs                      |   7 +-
- fs/erofs/rust/erofs_sys/inode.rs          |   1 +
- fs/erofs/rust/erofs_sys/operations.rs     |  27 ++++
- fs/erofs/rust/erofs_sys/superblock.rs     | 141 +++++++++++++++++++++
- fs/erofs/rust/erofs_sys/superblock/mem.rs |  13 +-
- fs/erofs/rust/erofs_sys/xattrs.rs         | 148 ++++++++++++++++++++++
- fs/erofs/rust/kinode.rs                   |   6 +
- 7 files changed, 341 insertions(+), 2 deletions(-)
+ fs/erofs/Makefile        |   3 ++
+ fs/erofs/rust_bindings.h |   8 +++
+ fs/erofs/xattr.c         |  31 +++++++++---
+ fs/erofs/xattr.h         |   7 +++
+ fs/erofs/xattr_rs.rs     | 106 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 148 insertions(+), 7 deletions(-)
+ create mode 100644 fs/erofs/xattr_rs.rs
 
-diff --git a/fs/erofs/inode_rs.rs b/fs/erofs/inode_rs.rs
-index 5cca2ae581ac..a79d1157b910 100644
---- a/fs/erofs/inode_rs.rs
-+++ b/fs/erofs/inode_rs.rs
-@@ -48,8 +48,13 @@ fn try_fill_inode(k_inode: NonNull<inode>, nid: Nid) -> PosixResult<()> {
-     let erofs_inode: &mut KernelInode = unsafe {
-         &mut *(container_of!(k_inode.as_ptr(), KernelInode, k_inode) as *mut KernelInode)
-     };
--    erofs_inode.info.write(sbi.filesystem.read_inode_info(nid)?);
-+    let info = sbi.filesystem.read_inode_info(nid)?;
-     erofs_inode.nid.write(nid);
-+    erofs_inode.shared_entries.write(
-+        sbi.filesystem
-+            .read_inode_xattrs_shared_entries(nid, &info)?,
-+    );
-+    erofs_inode.info.write(info);
-     Ok(())
- }
- /// Exported as fill_inode additional fill inode
-diff --git a/fs/erofs/rust/erofs_sys/inode.rs b/fs/erofs/rust/erofs_sys/inode.rs
-index 1ecd6147a126..eb3c2144cad8 100644
---- a/fs/erofs/rust/erofs_sys/inode.rs
-+++ b/fs/erofs/rust/erofs_sys/inode.rs
-@@ -299,6 +299,7 @@ pub(crate) trait Inode: Sized {
-     fn new(_sb: &SuperBlock, info: InodeInfo, nid: Nid) -> Self;
-     fn info(&self) -> &InodeInfo;
-     fn nid(&self) -> Nid;
-+    fn xattrs_shared_entries(&self) -> &XAttrSharedEntries;
- }
+diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
+index 219ddca0642e..ad0650698f4b 100644
+--- a/fs/erofs/Makefile
++++ b/fs/erofs/Makefile
+@@ -10,3 +10,6 @@ erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
+ erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
+ erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
+ erofs-$(CONFIG_EROFS_FS_RUST) += super_rs.o inode_rs.o namei_rs.o dir_rs.o data_rs.o rust_helpers.o
++ifeq ($(CONFIG_EROFS_FS_XATTR),y)
++erofs-$(CONFIG_EROFS_FS_RUST) += xattr_rs.o
++endif
+diff --git a/fs/erofs/rust_bindings.h b/fs/erofs/rust_bindings.h
+index ad9aa75a7a2c..e5a879efd9e2 100644
+--- a/fs/erofs/rust_bindings.h
++++ b/fs/erofs/rust_bindings.h
+@@ -28,4 +28,12 @@ extern int erofs_readdir_rust(struct file *file, struct dir_context *ctx);
+ struct erofs_map_blocks;
+ extern int erofs_map_blocks_rust(struct inode *inode,
+ 				 struct erofs_map_blocks *map);
++extern int erofs_getxattr_rust(struct inode *inode, unsigned int flags,
++			       const char *name, void *buffer, size_t size);
++extern ssize_t erofs_listxattr_rust(struct dentry *dentry, char *buffer,
++			       size_t buffer_size);
++#ifdef CONFIG_EROFS_FS_POSIX_ACL
++extern int erofs_getxattr_nobuf_rust(struct inode *inode, int prefix,
++				 const char *name, char **value);
++#endif
+ #endif
+diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
+index a90d7d649739..0296c5809695 100644
+--- a/fs/erofs/xattr.c
++++ b/fs/erofs/xattr.c
+@@ -8,6 +8,7 @@
+ #include <linux/xxhash.h>
+ #include "xattr.h"
  
- /// Represents the error which occurs when trying to convert the inode.
-diff --git a/fs/erofs/rust/erofs_sys/operations.rs b/fs/erofs/rust/erofs_sys/operations.rs
-index 070ba20908a2..292bfbc7b72c 100644
---- a/fs/erofs/rust/erofs_sys/operations.rs
-+++ b/fs/erofs/rust/erofs_sys/operations.rs
-@@ -1,9 +1,16 @@
- // Copyright 2024 Yiyang Wu
- // SPDX-License-Identifier: MIT or GPL-2.0-or-later
- 
-+use super::alloc_helper::*;
-+use super::data::raw_iters::*;
-+use super::data::*;
- use super::inode::*;
- use super::superblock::*;
-+use super::xattrs::*;
- use super::*;
-+use alloc::vec::Vec;
-+
-+use crate::round;
- 
- pub(crate) fn read_inode<'a, I, C>(
-     filesystem: &'a dyn FileSystem<I>,
-@@ -33,3 +40,23 @@ pub(crate) fn dir_lookup<'a, I, C>(
-             read_inode(filesystem, collection, nid)
-         })
++#ifndef CONFIG_EROFS_FS_RUST
+ struct erofs_xattr_iter {
+ 	struct super_block *sb;
+ 	struct erofs_buf buf;
+@@ -122,6 +123,7 @@ static int erofs_init_inode_xattrs(struct inode *inode)
+ 	clear_and_wake_up_bit(EROFS_I_BL_XATTR_BIT, &vi->flags);
+ 	return ret;
  }
-+
-+pub(crate) fn get_xattr_infixes<'a>(
-+    iter: &mut (dyn ContinuousBufferIter<'a> + 'a),
-+) -> PosixResult<Vec<XAttrInfix>> {
-+    let mut result: Vec<XAttrInfix> = Vec::new();
-+    for data in iter {
-+        let buffer = data?;
-+        let buf = buffer.content();
-+        let len = buf.len();
-+        let mut cur: usize = 0;
-+        while cur <= len {
-+            let mut infix: Vec<u8> = Vec::new();
-+            let size = u16::from_le_bytes([buf[cur], buf[cur + 1]]) as usize;
-+            extend_from_slice(&mut infix, &buf[cur + 2..cur + 2 + size])?;
-+            push_vec(&mut result, XAttrInfix(infix))?;
-+            cur = round!(UP, cur + 2 + size, 4);
-+        }
-+    }
-+    Ok(result)
++#endif
+ 
+ static bool erofs_xattr_user_list(struct dentry *dentry)
+ {
+@@ -175,6 +177,7 @@ const struct xattr_handler * const erofs_xattr_handlers[] = {
+ 	NULL,
+ };
+ 
++#ifndef CONFIG_EROFS_FS_RUST
+ static int erofs_xattr_copy_to_buffer(struct erofs_xattr_iter *it,
+ 				      unsigned int len)
+ {
+@@ -509,8 +512,28 @@ int erofs_xattr_prefixes_init(struct super_block *sb)
+ 		erofs_xattr_prefixes_cleanup(sb);
+ 	return ret;
+ }
++#endif
+ 
+ #ifdef CONFIG_EROFS_FS_POSIX_ACL
++#ifndef CONFIG_EROFS_FS_RUST
++static int erofs_getxattr_nobuf(struct inode *inode, int prefix,
++				 const char *name, char **value)
++{
++	int rc;
++	char *buf = NULL;
++	rc = erofs_getxattr(inode, prefix, name, NULL, 0);
++	if (rc > 0) {
++		buf = kmalloc(rc, GFP_KERNEL);
++		if (!value)
++			return ENOMEM;
++		rc = erofs_getxattr(inode, prefix, name, buf, rc);
++	}
++	*value = buf;
++	return rc;
 +}
-diff --git a/fs/erofs/rust/erofs_sys/superblock.rs b/fs/erofs/rust/erofs_sys/superblock.rs
-index 403ffdeb4573..6ea59058446e 100644
---- a/fs/erofs/rust/erofs_sys/superblock.rs
-+++ b/fs/erofs/rust/erofs_sys/superblock.rs
-@@ -3,14 +3,17 @@
++#else
++#define erofs_getxattr_nobuf erofs_getxattr_nobuf_rust
++#endif
+ struct posix_acl *erofs_get_acl(struct inode *inode, int type, bool rcu)
+ {
+ 	struct posix_acl *acl;
+@@ -531,13 +554,7 @@ struct posix_acl *erofs_get_acl(struct inode *inode, int type, bool rcu)
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
- pub(crate) mod mem;
- use alloc::boxed::Box;
-+use alloc::vec::Vec;
- use core::mem::size_of;
+-	rc = erofs_getxattr(inode, prefix, "", NULL, 0);
+-	if (rc > 0) {
+-		value = kmalloc(rc, GFP_KERNEL);
+-		if (!value)
+-			return ERR_PTR(-ENOMEM);
+-		rc = erofs_getxattr(inode, prefix, "", value, rc);
+-	}
++	rc = erofs_getxattr_nobuf(inode, prefix, "", &value);
  
-+use super::alloc_helper::*;
- use super::data::raw_iters::*;
- use super::data::*;
- use super::devices::*;
- use super::dir::*;
- use super::inode::*;
- use super::map::*;
-+use super::xattrs::*;
- use super::*;
+ 	if (rc == -ENOATTR)
+ 		acl = NULL;
+diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
+index b246cd0e135e..2b934c25e991 100644
+--- a/fs/erofs/xattr.h
++++ b/fs/erofs/xattr.h
+@@ -46,10 +46,17 @@ static inline const char *erofs_xattr_prefix(unsigned int idx,
  
- use crate::round;
-@@ -346,6 +349,144 @@ fn fill_dentries(
-         }
-         Ok(())
-     }
-+    // Extended attributes goes here.
-+    fn xattr_infixes(&self) -> &Vec<XAttrInfix>;
-+    // Currently we eagerly initialized all xattrs;
-+    fn read_inode_xattrs_shared_entries(
-+        &self,
-+        nid: Nid,
-+        info: &InodeInfo,
-+    ) -> PosixResult<XAttrSharedEntries> {
-+        let sb = self.superblock();
-+        let mut offset = sb.iloc(nid) + info.inode_size();
-+        let mut buf = XATTR_ENTRY_SUMMARY_BUF;
-+        let mut indexes: Vec<u32> = Vec::new();
-+        self.backend().fill(&mut buf, offset)?;
-+
-+        let header: XAttrSharedEntrySummary = XAttrSharedEntrySummary::from(buf);
-+        offset += size_of::<XAttrSharedEntrySummary>() as Off;
-+        for buf in self.continuous_iter(offset, (header.shared_count << 2) as Off)? {
-+            let data = buf?;
-+            extend_from_slice(&mut indexes, unsafe {
-+                core::slice::from_raw_parts(
-+                    data.content().as_ptr().cast(),
-+                    data.content().len() >> 2,
-+                )
-+            })?;
-+        }
-+
-+        Ok(XAttrSharedEntries {
-+            name_filter: header.name_filter,
-+            shared_indexes: indexes,
-+        })
-+    }
-+    fn get_xattr(
-+        &self,
-+        inode: &I,
-+        index: u32,
-+        name: &[u8],
-+        buffer: &mut Option<&mut [u8]>,
-+    ) -> PosixResult<XAttrValue> {
-+        let sb = self.superblock();
-+        let shared_count = inode.xattrs_shared_entries().shared_indexes.len();
-+        let inline_offset = sb.iloc(inode.nid())
-+            + inode.info().inode_size() as Off
-+            + size_of::<XAttrSharedEntrySummary>() as Off
-+            + 4 * shared_count as Off;
-+
-+        let inline_len = inode.info().xattr_size()
-+            - size_of::<XAttrSharedEntrySummary>() as Off
-+            - shared_count as Off * 4;
-+
-+        if let Some(mut inline_provider) =
-+            SkippableContinuousIter::try_new(self.continuous_iter(inline_offset, inline_len)?)?
-+        {
-+            while !inline_provider.eof() {
-+                let header = inline_provider.get_entry_header()?;
-+                match inline_provider.query_xattr_value(
-+                    self.xattr_infixes(),
-+                    &header,
-+                    name,
-+                    index,
-+                    buffer,
-+                ) {
-+                    Ok(value) => return Ok(value),
-+                    Err(e) => {
-+                        if e != ENODATA {
-+                            return Err(e);
-+                        }
-+                    }
-+                }
-+            }
-+        }
-+
-+        for entry_index in inode.xattrs_shared_entries().shared_indexes.iter() {
-+            let mut shared_provider = SkippableContinuousIter::try_new(self.continuous_iter(
-+                sb.blkpos(self.superblock().xattr_blkaddr) + (*entry_index as Off) * 4,
-+                u64::MAX,
-+            )?)?
-+            .unwrap();
-+            let header = shared_provider.get_entry_header()?;
-+            match shared_provider.query_xattr_value(
-+                self.xattr_infixes(),
-+                &header,
-+                name,
-+                index,
-+                buffer,
-+            ) {
-+                Ok(value) => return Ok(value),
-+                Err(e) => {
-+                    if e != ENODATA {
-+                        return Err(e);
-+                    }
-+                }
-+            }
-+        }
-+
-+        Err(ENODATA)
-+    }
-+
-+    fn list_xattrs(&self, inode: &I, buffer: &mut [u8]) -> PosixResult<usize> {
-+        let sb = self.superblock();
-+        let shared_count = inode.xattrs_shared_entries().shared_indexes.len();
-+        let inline_offset = sb.iloc(inode.nid())
-+            + inode.info().inode_size() as Off
-+            + size_of::<XAttrSharedEntrySummary>() as Off
-+            + shared_count as Off * 4;
-+        let mut offset = 0;
-+        let inline_len = inode.info().xattr_size()
-+            - size_of::<XAttrSharedEntrySummary>() as Off
-+            - shared_count as Off * 4;
-+
-+        if let Some(mut inline_provider) =
-+            SkippableContinuousIter::try_new(self.continuous_iter(inline_offset, inline_len)?)?
-+        {
-+            while !inline_provider.eof() {
-+                let header = inline_provider.get_entry_header()?;
-+                offset += inline_provider.get_xattr_key(
-+                    self.xattr_infixes(),
-+                    &header,
-+                    &mut buffer[offset..],
-+                )?;
-+                inline_provider.skip_xattr_value(&header)?;
-+            }
-+        }
-+
-+        for index in inode.xattrs_shared_entries().shared_indexes.iter() {
-+            let mut shared_provider = SkippableContinuousIter::try_new(self.continuous_iter(
-+                sb.blkpos(self.superblock().xattr_blkaddr) + (*index as Off) * 4,
-+                u64::MAX,
-+            )?)?
-+            .unwrap();
-+            let header = shared_provider.get_entry_header()?;
-+            offset += shared_provider.get_xattr_key(
-+                self.xattr_infixes(),
-+                &header,
-+                &mut buffer[offset..],
-+            )?;
-+        }
-+        Ok(offset)
-+    }
- }
+ extern const struct xattr_handler * const erofs_xattr_handlers[];
  
- pub(crate) struct SuperblockInfo<I, C, T>
-diff --git a/fs/erofs/rust/erofs_sys/superblock/mem.rs b/fs/erofs/rust/erofs_sys/superblock/mem.rs
-index 5756dc08744c..c8af3cb5e56e 100644
---- a/fs/erofs/rust/erofs_sys/superblock/mem.rs
-+++ b/fs/erofs/rust/erofs_sys/superblock/mem.rs
-@@ -1,8 +1,8 @@
- // Copyright 2024 Yiyang Wu
- // SPDX-License-Identifier: MIT or GPL-2.0-or-later
- 
--use super::alloc_helper::*;
- use super::data::raw_iters::ref_iter::*;
-+use super::operations::*;
- use super::*;
- 
- // Memory Mapped Device/File so we need to have some external lifetime on the backend trait.
-@@ -16,6 +16,7 @@ pub(crate) struct KernelFileSystem<B>
-     backend: B,
-     sb: SuperBlock,
-     device_info: DeviceInfo,
-+    infixes: Vec<XAttrInfix>,
- }
- 
- impl<I, B> FileSystem<I> for KernelFileSystem<B>
-@@ -58,6 +59,9 @@ fn continuous_iter<'a>(
-     fn device_info(&self) -> &DeviceInfo {
-         &self.device_info
-     }
-+    fn xattr_infixes(&self) -> &Vec<XAttrInfix> {
-+        &self.infixes
-+    }
- }
- 
- impl<B> KernelFileSystem<B>
-@@ -68,6 +72,12 @@ pub(crate) fn try_new(backend: B) -> PosixResult<Self> {
-         let mut buf = SUPERBLOCK_EMPTY_BUF;
-         backend.fill(&mut buf, EROFS_SUPER_OFFSET)?;
-         let sb: SuperBlock = buf.into();
-+        let infixes = get_xattr_infixes(&mut ContinuousRefIter::new(
-+            &sb,
-+            &backend,
-+            sb.xattr_prefix_start as Off,
-+            sb.xattr_prefix_count as Off * 4,
-+        ))?;
-         let device_info = get_device_infos(&mut ContinuousRefIter::new(
-             &sb,
-             &backend,
-@@ -78,6 +88,7 @@ pub(crate) fn try_new(backend: B) -> PosixResult<Self> {
-             backend,
-             sb,
-             device_info,
-+            infixes,
-         })
-     }
- }
-diff --git a/fs/erofs/rust/erofs_sys/xattrs.rs b/fs/erofs/rust/erofs_sys/xattrs.rs
-index d1a110ef10dd..c97640731562 100644
---- a/fs/erofs/rust/erofs_sys/xattrs.rs
-+++ b/fs/erofs/rust/erofs_sys/xattrs.rs
-@@ -1,7 +1,13 @@
- // Copyright 2024 Yiyang Wu
- // SPDX-License-Identifier: MIT or GPL-2.0-or-later
- 
-+use super::alloc_helper::*;
-+use super::data::raw_iters::*;
-+use super::*;
-+use crate::round;
++#ifdef CONFIG_EROFS_FS_RUST
++#define erofs_getxattr erofs_getxattr_rust
++#define erofs_listxattr erofs_listxattr_rust
++static inline int erofs_xattr_prefixes_init(struct super_block *sb) { return 0; }
++static inline void erofs_xattr_prefixes_cleanup(struct super_block *sb) {}
++#else
+ int erofs_xattr_prefixes_init(struct super_block *sb);
+ void erofs_xattr_prefixes_cleanup(struct super_block *sb);
+ int erofs_getxattr(struct inode *, int, const char *, void *, size_t);
+ ssize_t erofs_listxattr(struct dentry *, char *, size_t);
++#endif
+ #else
+ static inline int erofs_xattr_prefixes_init(struct super_block *sb) { return 0; }
+ static inline void erofs_xattr_prefixes_cleanup(struct super_block *sb) {}
+diff --git a/fs/erofs/xattr_rs.rs b/fs/erofs/xattr_rs.rs
+new file mode 100644
+index 000000000000..9429507089f6
+--- /dev/null
++++ b/fs/erofs/xattr_rs.rs
+@@ -0,0 +1,106 @@
++// Copyright 2024 Yiyang Wu
++// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
- use alloc::vec::Vec;
-+use core::mem::size_of;
- 
- /// The header of the xattr entry index.
- /// This is used to describe the superblock's xattrs collection.
-@@ -122,3 +128,145 @@ pub(crate) enum XAttrValue {
-     Buffer(usize),
-     Vec(Vec<u8>),
- }
++//! EROFS Rust Kernel Module Helpers Implementation
++//! This is only for experimental purpose. Feedback is always welcome.
 +
-+/// An iterator to read xattrs by comparing the entry's name one by one and reads its value
-+/// correspondingly.
-+pub(crate) trait XAttrEntriesProvider {
-+    fn get_entry_header(&mut self) -> PosixResult<XAttrEntryHeader>;
-+    fn get_xattr_key(
-+        &mut self,
-+        pfs: &[XAttrInfix],
-+        header: &XAttrEntryHeader,
-+        buffer: &mut [u8],
-+    ) -> PosixResult<usize>;
-+    fn query_xattr_value(
-+        &mut self,
-+        pfs: &[XAttrInfix],
-+        header: &XAttrEntryHeader,
-+        name: &[u8],
-+        index: u32,
-+        buffer: &mut Option<&mut [u8]>,
-+    ) -> PosixResult<XAttrValue>;
-+    fn skip_xattr_value(&mut self, header: &XAttrEntryHeader) -> PosixResult<()>;
-+}
-+impl<'a> XAttrEntriesProvider for SkippableContinuousIter<'a> {
-+    fn get_entry_header(&mut self) -> PosixResult<XAttrEntryHeader> {
-+        let mut buf: [u8; 4] = [0; 4];
-+        self.read(&mut buf).map(|_| XAttrEntryHeader::from(buf))
-+    }
++#[allow(dead_code)]
++#[allow(missing_docs)]
++pub(crate) mod rust;
++use core::ffi::*;
++use core::ptr::NonNull;
 +
-+    fn get_xattr_key(
-+        &mut self,
-+        ifs: &[XAttrInfix],
-+        header: &XAttrEntryHeader,
-+        buffer: &mut [u8],
-+    ) -> PosixResult<usize> {
-+        let mut cur = if header.name_index.is_long() {
-+            let if_index: usize = header.name_index.into();
-+            let infix: &XAttrInfix = ifs.get(if_index).unwrap();
++use kernel::bindings::{dentry, inode};
++use kernel::container_of;
 +
-+            let pf_index = infix.prefix_index();
-+            let prefix = EROFS_XATTRS_PREFIXS[pf_index as usize];
-+            let plen = prefix.len();
++use rust::{erofs_sys::xattrs::*, kinode::*, ksuperblock::*};
 +
-+            buffer[..plen].copy_from_slice(&prefix[..plen]);
-+            buffer[plen..infix.name().len() + plen].copy_from_slice(infix.name());
-+
-+            plen + infix.name().len()
-+        } else {
-+            let pf_index: usize = header.name_index.into();
-+            let prefix = EROFS_XATTRS_PREFIXS[pf_index];
-+            let plen = prefix.len();
-+            buffer[..plen].copy_from_slice(&prefix[..plen]);
-+            plen
-+        };
-+
-+        self.read(&mut buffer[cur..cur + header.suffix_len as usize])?;
-+        cur += header.suffix_len as usize;
-+        buffer[cur] = b'\0';
-+        Ok(cur + 1)
-+    }
-+
-+    fn query_xattr_value(
-+        &mut self,
-+        ifs: &[XAttrInfix],
-+        header: &XAttrEntryHeader,
-+        name: &[u8],
-+        index: u32,
-+        buffer: &mut Option<&mut [u8]>,
-+    ) -> PosixResult<XAttrValue> {
-+        let xattr_size = round!(
-+            UP,
-+            header.suffix_len as Off + header.value_len as Off,
-+            size_of::<XAttrEntryHeader>() as Off
-+        );
-+
-+        let cur = if header.name_index.is_long() {
-+            let if_index: usize = header.name_index.into();
-+
-+            if if_index >= ifs.len() {
-+                return Err(ENODATA);
-+            }
-+
-+            let infix = ifs.get(if_index).unwrap();
-+            let ilen = infix.name().len();
-+
-+            let pf_index = infix.prefix_index();
-+
-+            if pf_index >= EROFS_XATTRS_PREFIXS.len() as u8 {
-+                return Err(ENODATA);
-+            }
-+
-+            if index != pf_index as u32
-+                || name.len() != ilen + header.suffix_len as usize
-+                || name[..ilen] != *infix.name()
-+            {
-+                return Err(ENODATA);
-+            }
-+            ilen
-+        } else {
-+            let pf_index: usize = header.name_index.into();
-+            if pf_index >= EROFS_XATTRS_PREFIXS.len() {
-+                return Err(ENODATA);
-+            }
-+
-+            if pf_index != index as usize || header.suffix_len as usize != name.len() {
-+                return Err(ENODATA);
-+            }
-+            0
-+        };
-+
-+        match self.try_cmp(&name[cur..]) {
-+            Ok(()) => match buffer.as_mut() {
-+                Some(b) => {
-+                    if b.len() < header.value_len as usize {
-+                        return Err(ERANGE);
-+                    }
-+                    self.read(&mut b[..header.value_len as usize])?;
-+                    Ok(XAttrValue::Buffer(header.value_len as usize))
-+                }
-+                None => {
-+                    let mut b: Vec<u8> = vec_with_capacity(header.value_len as usize)?;
-+                    self.read(&mut b)?;
-+                    Ok(XAttrValue::Vec(b))
-+                }
++/// Used as a replacement for erofs_getattr.
++#[no_mangle]
++pub unsafe extern "C" fn erofs_getxattr_rust(
++    k_inode: NonNull<inode>,
++    index: c_uint,
++    name: NonNull<u8>,
++    buffer: NonNull<u8>,
++    size: usize,
++) -> c_int {
++    // SAFETY: super_block and superblockinfo is always initialized in k_inode.
++    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
++    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
++    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
++    // SAFETY: buffer is always initialized in the caller and name is null terminated C string.
++    unsafe {
++        match sbi.filesystem.get_xattr(
++            erofs_inode,
++            index,
++            core::ffi::CStr::from_ptr(name.as_ptr().cast()).to_bytes(),
++            &mut Some(core::slice::from_raw_parts_mut(
++                buffer.as_ptr().cast(),
++                size,
++            )),
++        ) {
++            Ok(value) => match value {
++                XAttrValue::Buffer(x) => x as c_int,
++                _ => unreachable!(),
 +            },
-+            Err(skip_err) => match skip_err {
-+                SkipCmpError::NotEqual(nvalue) => {
-+                    self.skip(xattr_size - nvalue)?;
-+                    Err(ENODATA)
-+                }
-+                SkipCmpError::PosixError(e) => Err(e),
-+            },
++            Err(e) => i32::from(e) as c_int,
 +        }
 +    }
-+    fn skip_xattr_value(&mut self, header: &XAttrEntryHeader) -> PosixResult<()> {
-+        self.skip(
-+            round!(
-+                UP,
-+                header.suffix_len as Off + header.value_len as Off,
-+                size_of::<XAttrEntryHeader>() as Off
-+            ) - header.suffix_len as Off,
-+        )
++}
++
++/// Used as a replacement for erofs_getattr_nobuf.
++#[no_mangle]
++pub unsafe extern "C" fn erofs_getxattr_nobuf_rust(
++    k_inode: NonNull<inode>,
++    index: u32,
++    name: NonNull<u8>,
++    mut value: NonNull<*mut u8>,
++) -> c_int {
++    // SAFETY: super_block and superblockinfo is always initialized in k_inode.
++    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
++    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
++    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
++    // SAFETY: buffer is always initialized in the caller and name is null terminated C string.
++    unsafe {
++        match sbi.filesystem.get_xattr(
++            erofs_inode,
++            index,
++            core::ffi::CStr::from_ptr(name.as_ptr().cast()).to_bytes(),
++            &mut None,
++        ) {
++            Ok(xattr_value) => match xattr_value {
++                XAttrValue::Vec(v) => {
++                    let rc = v.len() as c_int;
++                    *value.as_mut() = v.leak().as_mut_ptr().cast();
++                    rc
++                }
++
++                _ => unreachable!(),
++            },
++            Err(e) => i32::from(e) as c_int,
++        }
 +    }
 +}
-diff --git a/fs/erofs/rust/kinode.rs b/fs/erofs/rust/kinode.rs
-index fac72bd8b6b3..a4bea228ddc0 100644
---- a/fs/erofs/rust/kinode.rs
-+++ b/fs/erofs/rust/kinode.rs
-@@ -11,6 +11,7 @@
- use super::erofs_sys::errnos::*;
- use super::erofs_sys::inode::*;
- use super::erofs_sys::superblock::*;
-+use super::erofs_sys::xattrs::*;
- use super::erofs_sys::*;
- 
- extern "C" {
-@@ -22,6 +23,7 @@
- pub(crate) struct KernelInode {
-     pub(crate) info: MaybeUninit<InodeInfo>,
-     pub(crate) nid: MaybeUninit<Nid>,
-+    pub(crate) shared_entries: MaybeUninit<XAttrSharedEntries>,
-     pub(crate) k_inode: MaybeUninit<inode>,
-     pub(crate) k_opaque: MaybeUninit<*mut c_void>,
- }
-@@ -31,6 +33,7 @@ fn new(_sb: &SuperBlock, _info: InodeInfo, _nid: Nid) -> Self {
-         Self {
-             info: MaybeUninit::uninit(),
-             nid: MaybeUninit::uninit(),
-+            shared_entries: MaybeUninit::uninit(),
-             k_inode: MaybeUninit::uninit(),
-             k_opaque: MaybeUninit::uninit(),
-         }
-@@ -41,6 +44,9 @@ fn nid(&self) -> Nid {
-     fn info(&self) -> &InodeInfo {
-         unsafe { self.info.assume_init_ref() }
-     }
-+    fn xattrs_shared_entries(&self) -> &XAttrSharedEntries {
-+        unsafe { self.shared_entries.assume_init_ref() }
++
++/// Used as a replacement for erofs_getattr.
++#[no_mangle]
++pub unsafe extern "C" fn erofs_listxattr_rust(
++    dentry: NonNull<dentry>,
++    buffer: NonNull<u8>,
++    size: usize,
++) -> c_long {
++    // SAFETY: dentry is always initialized in the caller.
++    let k_inode = unsafe { dentry.as_ref().d_inode };
++    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called.
++    let erofs_inode = unsafe { &*container_of!(k_inode, KernelInode, k_inode) };
++    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
++    let sbi = erofs_sbi(unsafe { NonNull::new((*k_inode).i_sb).unwrap() });
++    match sbi.filesystem.list_xattrs(
++        erofs_inode,
++        // SAFETY: buffer is always initialized in the caller.
++        unsafe { core::slice::from_raw_parts_mut(buffer.as_ptr().cast(), size) },
++    ) {
++        Ok(value) => value as c_long,
++        Err(e) => i32::from(e) as c_long,
 +    }
- }
- 
- pub(crate) struct KernelInodeCollection {
++}
 -- 
 2.46.0
 
