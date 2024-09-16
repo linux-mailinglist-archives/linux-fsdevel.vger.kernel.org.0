@@ -1,212 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-29431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD7E979A4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 06:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8065979A50
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 06:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF18282980
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 04:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BAF5283184
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 04:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B293A1BA;
-	Mon, 16 Sep 2024 04:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC76F2744E;
+	Mon, 16 Sep 2024 04:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ae/65gvP"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EG4+m3Ou"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6052F5B;
-	Mon, 16 Sep 2024 04:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5EA2CA6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 04:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726460315; cv=none; b=Oe0YDZl7suUxP+h6suDIYx6dZr3O/Uh1e4CgFsDnIN/56YoESGFwnCDEqFSw58D+6fJLLgCCMXgNzTYtQcPhzPbdED0rqA8yuAhcpahuGZLVhHuZMuRzky4Jo+cdbP5sDPd0lqFdyCr0UxEA+AX3e0EBPX0kws6pqqDQvN1SqMI=
+	t=1726460463; cv=none; b=Lwpw9PgOTMjA7RP3snqR/j5c9lAWFsDRTKItdDm3K3Y88ENG9aKn2sf1tCPhtFbbXRCCApZoXDb1LKDwYNWkz72SjHsVY06fBbPgVajkFqsaaUgkKzKEieugtFdMer4LNCKe83u4nuZNAJJ4ejMFfUVMHnqopVZSzOcd0kymK4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726460315; c=relaxed/simple;
-	bh=DR5eTYXqizS++Oxp4/zCK03oWTy2bGFeXCwR6HkHWFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XneMoVnSzw75NgMyULFQDU2cJA4GVO4o1K5ooB4QN5U+K+b5yn5SScuByqsuIG5PQjOauJthi/RR2SLcDVnbOfpi+DjL4MCqN8K45awbC4tmMdnInFYQ+wMGQKxcCoOIlOIafu+3Ok7eMvqQ52XhK7ZYpsZBdu5m2teUX7zEtQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ae/65gvP; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5DbAG9dxofjmc039hnMVqStrVmflynfUIJTlbchod58=; b=Ae/65gvPFWC1d+1iGXrzaTAwXR
-	VLlQV6jCW2IbzqgXcIFV/aELZEZCVw1SMsCm6TD34Oszu3O29hVKobe4cOhBFgZTIANNBzOSnZuM1
-	7ViT56FwjuRuBPvpZgRqQ1zhh0pzOLH2BpSFxRtULTn3m9Y+rryPIy6hdwMn8YAy5T+LX9wDuzsTs
-	COwQc2kaME+xOCZ35YiXMcFmG8ma49eZrmb5j8J9iXaITD1aaPAFDUYKBE1L+/fgbAMGJlqvp2zRd
-	/9kO3jjIFjrWsgaXDnGaee9xhFlvMuS6p7/H08wAHRWUKr/vURGJk8PnY0lITIuVm40W8apxhQn8V
-	4Z3sGCPg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sq3Bt-0000000Cq4Z-455W;
-	Mon, 16 Sep 2024 04:18:22 +0000
-Date: Mon, 16 Sep 2024 05:18:21 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH v10 6/8] rust: file: add `FileDescriptorReservation`
-Message-ID: <20240916041821.GN2825852@ZenIV>
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-6-88484f7a3dcf@google.com>
- <20240915183905.GI2825852@ZenIV>
- <20240915193443.GK2825852@ZenIV>
+	s=arc-20240116; t=1726460463; c=relaxed/simple;
+	bh=OTJ/oKsnoisoc9GbqLHkeCIc2BFxmDrQOsJxcfR3nk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RbRvNNDme8xYmZ0TP/5cf1CESWtVJT7hPGMnxz2z8nVwXVZRfRMw67IOKosnVxYxqfmwhnNcmrL2MSbVLjyiVfMVZww1EErZXMdIBgwIhTDPcjDjlAnIVA9QdS2MbOz59CNs43KzcwAMaoCWn6QtAOIn59e0kLKIUVFyLpd6CkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EG4+m3Ou; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d56155f51so526899766b.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Sep 2024 21:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1726460459; x=1727065259; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwnw+7buV/Co6cDy6nKRIoLyua67GCD7ZNv0sYBhUOM=;
+        b=EG4+m3OuB97C8n50jxnQ/2K09kcBih9ERGeMIO459vRyvMHHgivgjB1jpf4pzTuYYB
+         0GmMbrCTJTRnJZIjYdwFg7NyVJJZK2Dyz6OvfCSgxQPmDW0hwEqpNMHQHAl+sJKArZnw
+         OUONTkRMht9HS7J13XqI4c4fw+oJgulRV7ZZE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726460459; x=1727065259;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jwnw+7buV/Co6cDy6nKRIoLyua67GCD7ZNv0sYBhUOM=;
+        b=OBDFl4Eky2VpQdxn8TAz4498IujUbF1QNE7E97lvwjH8zIRvxHZJfM2vV9eYXDp3s2
+         COzYJFu7MnyBbuaZSbVkRrlpAoEAWOHAjuFG2ocY8XiZCVLSVfEbmiKjZJDV+O1vrgks
+         dK1F1+Fla4S6AQRtg4UvJO5yBZUqYZYac8mlNGXf+IYL0wZNMwVa1p2yhz9txqmwU+bW
+         L4x1820xtKOmbfKNARIWmTmbaLrfHrJLv7/6jTkDH1Nxl9KhdbZ/3SaAuuLpxcuzsEBQ
+         L/et6V7XATnZeG63P74Iud8gArNmje9FDFaFE2igfqbpSDWew+IcwbIx3z2Rw2M6EdBC
+         QF8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWAa4lBGyVHz7plwHbfOuJXYgjVTkzNLs7pDL/MybNj+JZHRX7soCvliSGa/TjL2X6nTzQENP67wklypxRG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFEJZkCH6svIvSUa7N0Zud9ftpBl5WIPTVR0TTBH35E7BgOxzD
+	uMUGXqNB2a8ma+f+9z+sATvGrl0YWhp1e/zefYm8e56n1aFG9gJkpZKQeyB0hqFMwi7eXlupAjc
+	eO7rQtA==
+X-Google-Smtp-Source: AGHT+IGBLGBfbBYmFlpDcMoATVajAKwgw9yx/soYqlJOqMX2/EYZThod/v5orDYTEtp8Y0MC0qK8cA==
+X-Received: by 2002:a17:907:7fa1:b0:a86:7dbf:9205 with SMTP id a640c23a62f3a-a9029617a53mr1325748966b.51.1726460459247;
+        Sun, 15 Sep 2024 21:20:59 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b3833sm259268466b.128.2024.09.15.21.20.58
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Sep 2024 21:20:58 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c3ed267a7bso5059985a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Sep 2024 21:20:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYjAY4DPN+/Qa36wzKpDr/hDsTWXpGGLuY8Fp2c1CipwIWn7kL2Q+3N0o0WdcRnJJE2I0S5TtStTUzV4wy@vger.kernel.org
+X-Received: by 2002:a05:6402:2107:b0:5c4:367e:c874 with SMTP id
+ 4fb4d7f45d1cf-5c4367ec9dfmr3443219a12.11.1726460457889; Sun, 15 Sep 2024
+ 21:20:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240915193443.GK2825852@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org> <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com> <Zud1EhTnoWIRFPa/@dread.disaster.area>
+In-Reply-To: <Zud1EhTnoWIRFPa/@dread.disaster.area>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 16 Sep 2024 06:20:40 +0200
+X-Gmail-Original-Message-ID: <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+Message-ID: <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>, 
+	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, clm@meta.com, 
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Sep 15, 2024 at 08:34:43PM +0100, Al Viro wrote:
+On Mon, 16 Sept 2024 at 02:00, Dave Chinner <david@fromorbit.com> wrote:
+>
+> I don't think this is a data corruption/loss problem - it certainly
+> hasn't ever appeared that way to me.  The "data loss" appeared to be
+> in incomplete postgres dump files after the system was rebooted and
+> this is exactly what would happen when you randomly crash the
+> system.
 
-> FWIW, I toyed with the idea of having reservations kept per-thread;
-> it is possible and it simplifies some things, but I hadn't been able to
-> find a way to do that without buggering syscall latency for open() et.al.
+Ok, that sounds better, indeed.
 
-Hmm...  How about the following:
+Of course, "hang due to internal xarray corruption" isn't _much_
+better, but still..
 
-* add an equivalent of array of pairs (fd, file) to task_struct;
-representation could be e.g. (a _VERY_ preliminary variant)
-	unsigned fd_count;
-	int fds[2];
-	struct file *fp[2];
-	void *spillover;
-with 'spillover' being a separately allocated array of pairs to deal with
-the moments when we have more than 2 simultaneously reserved descriptors.
-Initially NULL, allocated the first time we need more than 2.  Always empty
-outside of syscall.
+> All the hangs seem to be caused by folio lookup getting stuck
+> on a rogue xarray entry in truncate or readahead. If we find an
+> invalid entry or a folio from a different mapping or with a
+> unexpected index, we skip it and try again.
 
-* inline primitives:
-	count_reserved_fds()
-	reserved_descriptor(index)
-	reserved_file(index)
+We *could* perhaps change the "retry the optimistic lookup forever" to
+be a "retry and take lock after optimistic failure". At least in the
+common paths.
 
-* int reserve_fd(flags)
-	returns -E... or index.
+That's what we do with some dcache locking, because the "retry on
+race" caused some potential latency issues under ridiculous loads.
 
-	slot = current->fd_count
-	if (unlikely(slot == 2) && !current->spillover) {
-		allocate spillover
-		if failed
-			return -ENOMEM
-		set current->spillover
-	}
-	if slot is maximal allowed (2 + how much fits into allocated part?)
-		return -E<something>
-	fd = get_unused_fd_flags(flags);
-	if (unlikely(fd < 0))
-		return fd;
-	if (likely(slot < 2)) {
-		current->fds[slot] = fd;
-		current->fp[slot] = NULL;
-	} else {
-		store (fd, NULL) into element #(slot - 2) of current->spillover
-	}
-	current->fd_count = slot + 1;
+And if we retry with the lock, at that point we can actually notice
+corruption, because at that point we can say "we have the lock, and we
+see a bad folio with the wrong mapping pointer, and now it's not some
+possible race condition due to RCU".
 
-* void install_file(index, file)
-	
-	if (likely(slot < 2))
-		current->fp[slot] = file;
-	else
-		store file to element #(slot - 2) of current->spillover
+That, in turn, might then result in better bug reports. Which would at
+least be forward progress rather than "we have this bug".
 
-* void __commit_reservations(unsigned count, bool failed)
-	// count == current->fd_count
+Let me think about it. Unless somebody else gets to it before I do
+(hint hint to anybody who is comfy with that filemap_read() path etc).
 
-	while (count--) {
-		fd = reserved_descriptor(count);
-		file = reserved_file(count);
-		if (!file)
-			put_unused_fd(fd);
-		else if (!failed)
-			fd_install(fd, file);
-		else {
-			put_unused_fd(fd);
-			fput(file);
-		}
-	}
-	current->fd_count = 0;
-
-* static inline void commit_fd_reservations(bool failed)
-	called in syscall glue, right after the syscall returns
-	
-	unsigned slots = current->fd_count;
-	if (unlikely(slots))
-		__commit_reservations(slots, failed);
-
-
-Then we can (in addition to the current use of get_unused_fd_flags() et.al. -
-that still works) do e.g. things like
-
-	for (i = 0; i < 69; i++) {
-		index = reserve_fd(FD_CLOEXEC);
-
-		if (unlikely(index < 0))
-			return index;
-
-		file = some_driver_shite(some_shite, i);
-		if (IS_ERR(file))
-			return PTR_ERR(file);
-
-		install_file(index, file); // consumed file
-
-		ioctl_result.some_array[i] = reserved_descriptor(index);
-		....
-	}
-	...
-	if (copy_to_user(arg, &ioctl_result, sizeof(ioctl_result))
-		return -EFAULT;
-	...
-	return 0;
-
-and have it DTRT on all failures, no matter how many files we have added,
-etc. - on syscall return we will either commit all reservations
-(on success) or release all reserved descriptors and drop all files we
-had planned to put into descriptor table.  Getting that right manually
-is doable (drm has some examples), but it's _not_ pleasant.
-
-The win here is in simpler cleanup code.  And it can coexist with the
-current API just fine.  The PITA is in the need to add the call
-of commit_fd_reservations() in syscall exit glue and have that done
-on all architectures ;-/
-
-FWIW, I suspect that it won't be slower than the current API, even
-if used on hot paths.  pipe(2) would be an interesting testcase
-for that - converting it is easy, and there's a plenty of loads
-where latency of pipe(2) would be visible.
-
-Comments?
+                 Linus
 
