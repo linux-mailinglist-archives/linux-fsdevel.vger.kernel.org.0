@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-29475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F2097A331
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 15:56:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB0497A336
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 15:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA1011C221B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 13:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2BBA1F22E81
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 13:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6341215853B;
-	Mon, 16 Sep 2024 13:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14538158550;
+	Mon, 16 Sep 2024 13:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="mGxKwz3A"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="lWj1RcoQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF12B1581F2;
-	Mon, 16 Sep 2024 13:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007C315852E;
+	Mon, 16 Sep 2024 13:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726494974; cv=none; b=cgTpZF83+OcjD012/TFkIyUDt/olSSaWpHAPFUfBFwmEEgrFwXQyl+W4LxEXHFBga2idKvMu8diAIuyxjyHCGJy8FPF5YH2j8KBox0glggORyev+Ya72kVt2PAQ8Qz+EtWVRq3CxfPJ8+CPrMjd4xr0LXb4qjKgW2NHtrjJq5ss=
+	t=1726494976; cv=none; b=QUf1XNww2hnnBUTWKBS+p6MOfTSuvK7srWuriBYkHeOR6qmRiJ+3kkBJ3FsxJWZ/vrKQbwFQpq51gLJ0QW5f3k4qmvX86QdpQ/OPSP25OTaYyq+ovQkpYnX5PvvwD+7rId1Ag7TVXYhm3sOPBlNkp2ohi7XmXUXVVs/yIoK+V60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726494974; c=relaxed/simple;
-	bh=nfHK1i9ph1376F4QA3EYzyMqATO930veypDKTSAKBl4=;
+	s=arc-20240116; t=1726494976; c=relaxed/simple;
+	bh=H9qZQ6sPOX6lomGbiY5NWabke+KIbETnJDwauhJvUys=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h1WRy+2m+iQ5mYDExgR2hLNofpphKKALhxZnRKami7ebGj0Z1bJp2o7YEBhlLBzWUtaGFq1midRg7EcJbKd6OxeQysEP3fxAbgbMFWn3+JbGBbQtktb8PPtc5QMQyLVxG9EK9QCek5Xn67xzzg5+qlWc45VPHg/PTlIBZoJn9WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=mGxKwz3A; arc=none smtp.client-ip=148.135.17.20
+	 MIME-Version; b=FPzDVI3kFiWwUKhKRyJFV4tfMyrZS97JlPtLEQzShRCyv3vpRzfvFCYr6PyKeiGD0HUhmMgT6B2Ea81PEoTjVpOBoN4B7pKXne0b0as4DlDXDl7qB0JJGMTsOe/I/lXzFe7efuKj2r5UZDPuJo0J1tgo5tyv3cwyWTLICEbyX7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=lWj1RcoQ; arc=none smtp.client-ip=148.135.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C7E2B6997C;
-	Mon, 16 Sep 2024 09:56:10 -0400 (EDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7D8A26997B;
+	Mon, 16 Sep 2024 09:56:12 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726494971; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1726494973; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=fUBtB1guKBDyxePSsjzX2NyUyWv+dPs0ZXuq7FSRkmE=;
-	b=mGxKwz3AdeaXEa+Zwv4zhcj0QPfvTzlnGjWzfjlWezQsRbE3bBoPx8/ftT/tdocBSMQ0fo
-	LrFdFTZhsKHD4yaMuCHZTS5/ybTGly29AEwBdu/fikJDE7js+xJscqfqZQraDGnnqtOyn9
-	JT4PHznx8/VKrZWoOMUin0TMDGF1dJXkk5AbGRHWKH6E1wLwglj4xm27jLAM0tDXwZN0tB
-	85UzIuav1PuFzzBtLnF2Erfe3QQUzzCuqKjIUcXwazk1h58EJuxI0czudN6KA7IX3yOiTC
-	bZQKi1P7XCNt7KmCcd9tbyvpKk0J/V9DbachkuYvPEiux2UDmPU7osSPjvDBEg==
+	bh=RkMMOXQTsmanQe52UgGZbvf6dLNC+ICFQfOIzTuSzMo=;
+	b=lWj1RcoQuWBLQcg52cSVUJlekfGYmj3eyjhUX1zRLg5iPFQua2BXf+5dlwA0+Lc8jXT9+y
+	mhEoRsnJaaH9X7lCI38wRpiDni2rp/BQJ5lwFewaK/pvR610KrpNG/NUkgNhKcmNYCJmAp
+	b1pfLeNHdJMtbkMKxyFkG6Rqxab08HRTEfs423n/2xiL/Zoa/un+P7GvIXjqp/YPsL1b35
+	+0j+IVX4g+2Xdb3m3fIQytqD5IHifDEru+0sCOsNgHPAmP2NBWUf0vUkqvFNw3paqDEIKs
+	FNQAp23to/z/F9G43nJebIYU2LBl0ZXgWAeJaOH/rF0yRVy7SO6iIz8jfifnAw==
 From: Yiyang Wu <toolmanp@tlmp.cc>
 To: linux-erofs@lists.ozlabs.org
 Cc: rust-for-linux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 06/24] erofs: add alloc_helper in Rust
-Date: Mon, 16 Sep 2024 21:55:23 +0800
-Message-ID: <20240916135541.98096-7-toolmanp@tlmp.cc>
+Subject: [RFC PATCH 07/24] erofs: add data abstraction in Rust
+Date: Mon, 16 Sep 2024 21:55:24 +0800
+Message-ID: <20240916135541.98096-8-toolmanp@tlmp.cc>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240916135541.98096-1-toolmanp@tlmp.cc>
 References: <20240916135541.98096-1-toolmanp@tlmp.cc>
@@ -61,70 +61,156 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-In normal rust, heap related operations are infallible meaning
-that they do not throw errors and Rust will panic in usermode instead.
-However in kernel, it will throw AllocError this module helps to
-bridge the gaps and returns Errno universally.
+Introduce Buffer, Source, Backend traits.
+
+Implement Uncompressed Backend and RefBuffer to be
+used in future data operations.
 
 Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 ---
- fs/erofs/rust/erofs_sys.rs              |  1 +
- fs/erofs/rust/erofs_sys/alloc_helper.rs | 35 +++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
- create mode 100644 fs/erofs/rust/erofs_sys/alloc_helper.rs
+ fs/erofs/rust/erofs_sys.rs                    |  1 +
+ fs/erofs/rust/erofs_sys/data.rs               | 62 +++++++++++++++++++
+ fs/erofs/rust/erofs_sys/data/backends.rs      |  4 ++
+ .../erofs_sys/data/backends/uncompressed.rs   | 39 ++++++++++++
+ 4 files changed, 106 insertions(+)
+ create mode 100644 fs/erofs/rust/erofs_sys/data.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/backends.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/backends/uncompressed.rs
 
 diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
-index 34267ec7772d..c6fd7f78ac97 100644
+index c6fd7f78ac97..8cca2cd9b75f 100644
 --- a/fs/erofs/rust/erofs_sys.rs
 +++ b/fs/erofs/rust/erofs_sys.rs
-@@ -23,6 +23,7 @@
- /// to avoid naming conflicts.
+@@ -24,6 +24,7 @@
  pub(crate) type PosixResult<T> = Result<T, Errno>;
  
-+pub(crate) mod alloc_helper;
+ pub(crate) mod alloc_helper;
++pub(crate) mod data;
  pub(crate) mod errnos;
  pub(crate) mod inode;
  pub(crate) mod superblock;
-diff --git a/fs/erofs/rust/erofs_sys/alloc_helper.rs b/fs/erofs/rust/erofs_sys/alloc_helper.rs
+diff --git a/fs/erofs/rust/erofs_sys/data.rs b/fs/erofs/rust/erofs_sys/data.rs
 new file mode 100644
-index 000000000000..05ef2018d379
+index 000000000000..284c8b1f3bd4
 --- /dev/null
-+++ b/fs/erofs/rust/erofs_sys/alloc_helper.rs
-@@ -0,0 +1,35 @@
++++ b/fs/erofs/rust/erofs_sys/data.rs
+@@ -0,0 +1,62 @@
++// Copyright 2024 Yiyang Wu
++// SPDX-License-Identifier: MIT or GPL-2.0-or-later
++pub(crate) mod backends;
++use super::*;
++
++/// Represent some sort of generic data source. This cound be file, memory or even network.
++/// Note that users should never use this directly please use backends instead.
++pub(crate) trait Source {
++    fn fill(&self, data: &mut [u8], offset: Off) -> PosixResult<u64>;
++    fn as_buf<'a>(&'a self, offset: Off, len: Off) -> PosixResult<RefBuffer<'a>>;
++}
++
++/// Represents a generic data access backend that is backed by some sort of data source.
++/// This often has temporary buffers to decompress the data from the data source.
++/// The method signatures are the same as those of the Source trait.
++pub(crate) trait Backend {
++    fn fill(&self, data: &mut [u8], offset: Off) -> PosixResult<u64>;
++    fn as_buf<'a>(&'a self, offset: Off, len: Off) -> PosixResult<RefBuffer<'a>>;
++}
++
++/// Represents a buffer trait which can yield its internal reference or be casted as an iterator of
++/// DirEntries.
++pub(crate) trait Buffer {
++    fn content(&self) -> &[u8];
++}
++
++/// Represents a buffer that holds a reference to a slice of data that
++/// is borrowed from the thin air.
++pub(crate) struct RefBuffer<'a> {
++    buf: &'a [u8],
++    start: usize,
++    len: usize,
++    put_buf: fn(*mut core::ffi::c_void),
++}
++
++impl<'a> Buffer for RefBuffer<'a> {
++    fn content(&self) -> &[u8] {
++        &self.buf[self.start..self.start + self.len]
++    }
++}
++
++impl<'a> RefBuffer<'a> {
++    pub(crate) fn new(
++        buf: &'a [u8],
++        start: usize,
++        len: usize,
++        put_buf: fn(*mut core::ffi::c_void),
++    ) -> Self {
++        Self {
++            buf,
++            start,
++            len,
++            put_buf,
++        }
++    }
++}
++
++impl<'a> Drop for RefBuffer<'a> {
++    fn drop(&mut self) {
++        (self.put_buf)(self.buf.as_ptr() as *mut core::ffi::c_void)
++    }
++}
+diff --git a/fs/erofs/rust/erofs_sys/data/backends.rs b/fs/erofs/rust/erofs_sys/data/backends.rs
+new file mode 100644
+index 000000000000..3249f1af8be7
+--- /dev/null
++++ b/fs/erofs/rust/erofs_sys/data/backends.rs
+@@ -0,0 +1,4 @@
 +// Copyright 2024 Yiyang Wu
 +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
-+/// This module provides helper functions for the alloc crate
-+/// Note that in linux kernel, the allocation is fallible however in userland it is not.
-+/// Since most of the functions depend on infallible allocation, here we provide helper functions
-+/// so that most of codes don't need to be changed.
++pub(crate) mod uncompressed;
+diff --git a/fs/erofs/rust/erofs_sys/data/backends/uncompressed.rs b/fs/erofs/rust/erofs_sys/data/backends/uncompressed.rs
+new file mode 100644
+index 000000000000..c1b1a60258f8
+--- /dev/null
++++ b/fs/erofs/rust/erofs_sys/data/backends/uncompressed.rs
+@@ -0,0 +1,39 @@
++// Copyright 2024 Yiyang Wu
++// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
-+#[cfg(CONFIG_EROFS_FS = "y")]
-+use kernel::prelude::*;
++use super::super::*;
 +
-+#[cfg(not(CONFIG_EROFS_FS = "y"))]
-+use alloc::vec;
-+
-+use super::*;
-+use alloc::boxed::Box;
-+use alloc::vec::Vec;
-+
-+pub(crate) fn push_vec<T>(v: &mut Vec<T>, value: T) -> PosixResult<()> {
-+    v.push(value, GFP_KERNEL)
-+        .map_or_else(|_| Err(Errno::ENOMEM), |_| Ok(()))
++pub(crate) struct UncompressedBackend<T>
++where
++    T: Source,
++{
++    source: T,
 +}
 +
-+pub(crate) fn extend_from_slice<T: Clone>(v: &mut Vec<T>, slice: &[T]) -> PosixResult<()> {
-+    v.extend_from_slice(slice, GFP_KERNEL)
-+        .map_or_else(|_| Err(Errno::ENOMEM), |_| Ok(()))
++impl<T> Backend for UncompressedBackend<T>
++where
++    T: Source,
++{
++    fn fill(&self, data: &mut [u8], offset: Off) -> PosixResult<u64> {
++        self.source.fill(data, offset)
++    }
++
++    fn as_buf<'a>(&'a self, offset: Off, len: Off) -> PosixResult<RefBuffer<'a>> {
++        self.source.as_buf(offset, len)
++    }
 +}
 +
-+pub(crate) fn heap_alloc<T>(value: T) -> PosixResult<Box<T>> {
-+    Box::new(value, GFP_KERNEL).map_or_else(|_| Err(Errno::ENOMEM), |v| Ok(v))
++impl<T: Source> UncompressedBackend<T> {
++    pub(crate) fn new(source: T) -> Self {
++        Self { source }
++    }
 +}
 +
-+pub(crate) fn vec_with_capacity<T: Default + Clone>(capacity: usize) -> PosixResult<Vec<T>> {
-+    Vec::with_capacity(capacity, GFP_KERNEL).map_or_else(|_| Err(Errno::ENOMEM), |v| Ok(v))
++impl<T> From<T> for UncompressedBackend<T>
++where
++    T: Source,
++{
++    fn from(value: T) -> Self {
++        Self::new(value)
++    }
 +}
 -- 
 2.46.0
