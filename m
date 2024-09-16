@@ -1,167 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-29436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526AD979B0A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 08:15:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53E2979B2E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 08:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F224D1F23E3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 06:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 526A91F235FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 06:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00A18288C;
-	Mon, 16 Sep 2024 06:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6038442AB5;
+	Mon, 16 Sep 2024 06:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="fEab7XNw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC55482EB;
-	Mon, 16 Sep 2024 06:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3941B3BBCC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 06:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726467315; cv=none; b=dxPjaZOka7cjxkyIasKFyPF+vDKfTTxm3FLaqw2z/3Dhu9VW3vRmhNWsXmDVSBPlnTL6GQhQS43IQkHrkhFTavCI4iZqrSBcqEbefbiIjiHlQ9ovOecRuTrwCq22l0RaQyNikBptNaHB67AzL9YMuXu1geKt7k7D9XVyR8VxuhY=
+	t=1726468403; cv=none; b=OJTthaOI1ndr7ozPwykVky0PJPi8EqH6IS/IV78Ck92WU/0hHAnPA5R2F5FxywMVBSMZkaOEgxDtL+u4IaVXV2eIOAQ4Vh9HlEgiTvOVPZzBBzxfWo/X4Sdn7RN+nj7endb3STnANG30p8fqBniJGqCQbk9qrcck8C9qIcBgQkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726467315; c=relaxed/simple;
-	bh=D8j5Hk0CkaLEX7dXTn/2QhcETJs4MStq2/5OBrQQL24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nl1Bu0x95fDp0zOdJmfXyQSqq681xcLcRp+oO+VzV8pzRnJayYr6Ka7luEeIprlthj/PW+6l/b58xK4iUB37yFmnOQBZ4EKg4SkP3D/QrUY6ONTxbAcXfoIg7y0tz56DSrwSfVkBHSFINzovls9Skj/UCgElSx3+akqYInyhLpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DF0D11FB;
-	Sun, 15 Sep 2024 23:15:40 -0700 (PDT)
-Received: from [10.162.16.84] (a077893.blr.arm.com [10.162.16.84])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7AD03F66E;
-	Sun, 15 Sep 2024 23:15:04 -0700 (PDT)
-Message-ID: <61dafb6a-6212-40a6-8382-0d1b0dae57ac@arm.com>
-Date: Mon, 16 Sep 2024 11:45:00 +0530
+	s=arc-20240116; t=1726468403; c=relaxed/simple;
+	bh=DqUYrFG4Enz4+34W0+Vi1GhOjS3l28KXSdLtSsJa/4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/I8zjhbReOOKEMaq2Rrn4MG0XYYBy6kDgczZC7WqOnfVjFbe67xndOc/7b8XYG5xc6BS2CCzIcFsdzW0FSj8JjHccuvQGczp3XbMB7lp5uAh6lCAM45M7t2KE4b/uYE9OjBBlLxJdXEg2qIxTpx064VQvTj0E1PFU1b0IifMFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=fEab7XNw; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d87a1f0791so1943358a91.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Sep 2024 23:33:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726468401; x=1727073201; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XSZMwApg+gmjCJugiWkUy18xuz6LW9w5SgWcaqjuE8w=;
+        b=fEab7XNwBicl3kreywesAAHZfEk18jsD0/zz2Ua4qP2CIHVZYko2DvmMG0vUsiAqbh
+         RQRRbtlAWCvj7GuGZBMQzUgak5TniNUdaIoJYXlHS6jalMraRogG1KVnS/0SpTGvTdiD
+         AcwBvmjNZ9oANcoyQGrgXTMDjsKpwF7OCcWXMCwP2eSs2fXv8YwDXpatLT6jsaw4gEBC
+         rYS8uvYxso+UiHbF5wR0/OSlINnWUq6eReTZzba5I8bU+VRCEH0GsJkkbFmYtcMFXbQ2
+         gnOj00Xchz3s5QyxsBWcncovvYL+EWQu6roH96bzSC0Tucbj6Do8z+1/55imaMs11Wu5
+         mMfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726468401; x=1727073201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XSZMwApg+gmjCJugiWkUy18xuz6LW9w5SgWcaqjuE8w=;
+        b=FHw2FyvCeUYhZ+lAMa36On7XOJbJo1wseSaN4rnbhFSpNkumsJT6Ia/dUR5iHkUzQG
+         cPZ6zbe1a8tEdTCPIICauAS2lKCZPBVY5rVkVeR1n4++Jut+cNko8W8roqIgoSO3TnxB
+         ef/nUwg6js1eklQQl1UgZaLO9ROjWFE2ywafsiQtwE34yY5Oy5QdaMQ+xmFBNFrsp8UB
+         RFOJ3/xfEsDDViefG1duOdXVm6dhPnbxth4rYgCYBqETEGUZlWN1g6nZbHs0xtdlCUvd
+         8UOKF7Id0cieyJJFTXjZsMJwSoe/MBhb+8FTVzTFXxaNjYLkpU9s/VzMAu76Wf1VxXZe
+         fNRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyRLSMboVjg8E/ZRtkJX312+pyIu8wG4wjEdXOlNBWUN2ivu6pwxAtJd3w/xzJgHE5cjK25mhJXPl3dn9S@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlTjbLCxOR/a0VPIaScbvg9KTirSr5M7ydNhEEo92fGmTpuq1V
+	vNQWtcQzEvp0+zmxpOxN2RJtJWpTA5QD1cAJ35hzpcY2dVV/ocTvGeyIn4IUZ6Y=
+X-Google-Smtp-Source: AGHT+IH4SEadADz/E/S4sALk5BvwV5RWIKEOxqYtfNoR4jCgfo646bDgJygGp2QyNxqm298HKo6Q6g==
+X-Received: by 2002:a17:90b:3758:b0:2da:88b3:d001 with SMTP id 98e67ed59e1d1-2dbb9e1d271mr13104116a91.18.1726468401331;
+        Sun, 15 Sep 2024 23:33:21 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9d5c9d1sm6465575a91.35.2024.09.15.23.33.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 23:33:20 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sq5IU-005oml-09;
+	Mon, 16 Sep 2024 16:33:18 +1000
+Date: Mon, 16 Sep 2024 16:33:18 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <ZufRLhUxhMn2HGYB@dread.disaster.area>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <87frqf2smy.fsf@gmail.com>
+ <ZtjrUI+oqqABJL2j@dread.disaster.area>
+ <877cbq3g9i.fsf@gmail.com>
+ <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
+ <877cbkgr04.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] mm: Use pmdp_get() for accessing PMD entries
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dimitri Sivanich
- <dimitri.sivanich@hpe.com>, Muchun Song <muchun.song@linux.dev>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Dennis Zhou <dennis@kernel.org>,
- Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
-References: <20240913084433.1016256-1-anshuman.khandual@arm.com>
- <20240913084433.1016256-5-anshuman.khandual@arm.com>
- <f918bd00-c6a4-498a-bd17-9f5b32f7d6a7@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <f918bd00-c6a4-498a-bd17-9f5b32f7d6a7@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cbkgr04.fsf@gmail.com>
 
-
-
-On 9/13/24 16:08, Ryan Roberts wrote:
-> On 13/09/2024 09:44, Anshuman Khandual wrote:
->> Convert PMD accesses via pmdp_get() helper that defaults as READ_ONCE() but
->> also provides the platform an opportunity to override when required.
->>
->> Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
->> Cc: Muchun Song <muchun.song@linux.dev>
->> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
->> Cc: Miaohe Lin <linmiaohe@huawei.com>
->> Cc: Naoya Horiguchi <nao.horiguchi@gmail.com>
->> Cc: Pasha Tatashin <pasha.tatashin@soleen.com>
->> Cc: Dennis Zhou <dennis@kernel.org>
->> Cc: Tejun Heo <tj@kernel.org>
->> Cc: Christoph Lameter <cl@linux.com>
->> Cc: Uladzislau Rezki <urezki@gmail.com>
->> Cc: Christoph Hellwig <hch@infradead.org>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-fsdevel@vger.kernel.org
->> Cc: linux-mm@kvack.org
->> Cc: kasan-dev@googlegroups.com
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  drivers/misc/sgi-gru/grufault.c |  4 +--
->>  fs/proc/task_mmu.c              | 26 +++++++-------
->>  include/linux/huge_mm.h         |  3 +-
->>  include/linux/mm.h              |  2 +-
->>  include/linux/pgtable.h         | 14 ++++----
->>  mm/gup.c                        | 14 ++++----
->>  mm/huge_memory.c                | 60 ++++++++++++++++-----------------
->>  mm/hugetlb_vmemmap.c            |  4 +--
->>  mm/kasan/init.c                 | 10 +++---
->>  mm/kasan/shadow.c               |  4 +--
->>  mm/khugepaged.c                 |  4 +--
->>  mm/madvise.c                    |  6 ++--
->>  mm/memory-failure.c             |  6 ++--
->>  mm/memory.c                     | 25 +++++++-------
->>  mm/mempolicy.c                  |  4 +--
->>  mm/migrate.c                    |  4 +--
->>  mm/migrate_device.c             | 10 +++---
->>  mm/mlock.c                      |  6 ++--
->>  mm/mprotect.c                   |  2 +-
->>  mm/mremap.c                     |  4 +--
->>  mm/page_table_check.c           |  2 +-
->>  mm/pagewalk.c                   |  4 +--
->>  mm/percpu.c                     |  2 +-
->>  mm/pgtable-generic.c            | 16 ++++-----
->>  mm/ptdump.c                     |  2 +-
->>  mm/rmap.c                       |  2 +-
->>  mm/sparse-vmemmap.c             |  4 +--
->>  mm/vmalloc.c                    | 12 +++----
->>  28 files changed, 129 insertions(+), 127 deletions(-)
->>
->> diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
->> index 3557d78ee47a..f3d6249b7dfb 100644
->> --- a/drivers/misc/sgi-gru/grufault.c
->> +++ b/drivers/misc/sgi-gru/grufault.c
->> @@ -224,10 +224,10 @@ static int atomic_pte_lookup(struct vm_area_struct *vma, unsigned long vaddr,
->>  		goto err;
->>  
->>  	pmdp = pmd_offset(pudp, vaddr);
->> -	if (unlikely(pmd_none(*pmdp)))
->> +	if (unlikely(pmd_none(pmdp_get(pmdp))))
->>  		goto err;
->>  #ifdef CONFIG_X86_64
->> -	if (unlikely(pmd_leaf(*pmdp)))
->> +	if (unlikely(pmd_leaf(pmdp_get(pmdp))))
-> Just a general comment about multiple gets; before, the compiler most likely
-> turned multiple '*pmdp' dereferences into a single actual load. But READ_ONCE()
-> inside pmdp_get() ensures you get a load for every call to pmdp_get(). This has
-> 2 potential problems:
+On Tue, Sep 10, 2024 at 08:21:55AM +0530, Ritesh Harjani wrote:
+> Dave Chinner <david@fromorbit.com> writes:
 > 
->  - More loads could potentially regress speed in some hot paths
+> > On Thu, Sep 05, 2024 at 09:26:25AM +0530, Ritesh Harjani wrote:
+> >> Dave Chinner <david@fromorbit.com> writes:
+> >> > On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
+> >> >> 3. It is the FORCEALIGN feature which _mandates_ both allocation
+> >> >> (by using extsize hint) and de-allocation to happen _only_ in
+> >> >> extsize chunks.
+> >> >>
+> >> >>    i.e. forcealign mandates -
+> >> >>    - the logical and physical start offset should be aligned as
+> >> >>    per args->alignment
+> >> >>    - extent length be aligned as per args->prod/mod.
+> >> >>      If above two cannot be satisfied then return -ENOSPC.
+> >> >
+> >> > Yes.
+> >> >
+> >> >> 
+> >> >>    - Does the unmapping of extents also only happens in extsize
+> >> >>    chunks (with forcealign)?
+> >> >
+> >> > Yes, via use of xfs_inode_alloc_unitsize() in the high level code
+> >> > aligning the fsbno ranges to be unmapped.
+> >> >
+> >> > Remember, force align requires both logical file offset and
+> >> > physical block number to be correctly aligned,
+> >> 
+> >> This is where I would like to double confirm it again. Even the
+> >> extsize hint feature (w/o FORCEALIGN) will try to allocate aligned
+> >> physical start and logical start file offset and length right?
+> >
+> > No.
+> >
+> >> (Or does extsize hint only restricts alignment to logical start file
+> >> offset + length and not the physical start?)
+> >
+> > Neither.
+> >
 > 
->  - In paths that don't hold an appropriate PTL the multiple loads could race
-> with a writer, meaning each load gets a different value. The intent of the code
-> is usually that each check is operating on the same value.
+> Yes, thanks for the correction. Indeed extsize hint does not take care
+> of the physical start alignment at all.
+> 
+> > extsize hint by itself (i.e. existing behaviour) has no alignment
+> > effect at all. All it affects is -size- of the extent. i.e. once
+> > the extent start is chosen, extent size hints will trim the length
+> > of the extent to a multiple of the extent size hint. Alignment is
+> > not considered at all.
+> >
+> 
+> Please correct me I wrong here... but XFS considers aligning the logical
+> start and the length of the allocated extent (for extsize) as per below
+> code right? 
 
-Makes sense, above two concerns are potential problems I guess.
+Sorry, I was talking about physical alignment, not logical file
+offset alignment. The logical file offset alignment that is done
+for extent size hints is much more convoluted and dependent on
+certain preconditions existing for it to function as forced
+alignment/atomic writes require.
 
 > 
-> For the ptep_get() conversion, I solved this by reading into a temporary once
-> then using the temporary for the comparisons.
+> i.e.
+> 1) xfs_direct_write_iomap_begin()
+> {
+>     <...>
+>     if (offset + length > XFS_ISIZE(ip))
+> 		end_fsb = xfs_iomap_eof_align_last_fsb(ip, end_fsb);
+>                   => xfs_fileoff_t aligned_end_fsb = roundup_64(end_fsb, align);
+>                      return aligned_end_fsb
+> }
 
-Alright.
+That's calculating the file offset of the end of the extent for an
+extending write. It's not really an alignment - it's simply
+calculating the file offset the allocation needs to cover to allow
+for aligned allocation. This length needs to be fed into the
+transaction reservation (i.e. ENOSPC checks) before we start the
+allocation, so we have to have some idea of the extent size we are
+going to allocate here...
 
+
+> 2) xfs_bmap_compute_alignments()
+> {
+>     <...>
+>     	else if (ap->datatype & XFS_ALLOC_USERDATA)
+> 		     align = xfs_get_extsz_hint(ap->ip);
 > 
-> I'm not sure if these are real problems in practice, but seems safest to
-> continue to follow this established pattern?
+>         if (align) {
+>             if (xfs_bmap_extsize_align(mp, &ap->got, &ap->prev, align, 0,
+>                         ap->eof, 0, ap->conv, &ap->offset,
+>                         &ap->length))
+>                 ASSERT(0);
+>             ASSERT(ap->length);
+> 
+>             args->prod = align;
+>             div_u64_rem(ap->offset, args->prod, &args->mod);
+>             if (args->mod)
+>                 args->mod = args->prod - args->mod;
+>         }
+>         <...>
+> }
+> 
+> So args->prod and args->mod... aren't they use to align the logical
+> start and the length of the extent?
 
-Yes, will make the necessary changes across the series which might create some
-amount of code churn but seems like it would be worth. Planning to add old_pxd
-local variables when required and load them from the address, as soon as 'pxd'
-pointer becomes valid.
+Nope. They are only used way down in xfs_alloc_fix_len(), which
+trims the length of the selected *physical* extent to the required
+length.
+
+Look further up - ap->offset is the logical file offset the
+allocation needs to cover.  Logical alignment of the offset (i.e.
+determining where in the file the physical extent will be placed) is
+done in xfs_bmap_extsize_align(). As i said above, it's not purely
+an extent size alignment calculation....
+
+> However, I do notice that when the file is closed XFS trims the length
+> allocated beyond EOF boundary (for extsize but not for forcealign from
+> the new forcealign series) i.e.
+> 
+> xfs_file_release() -> xfs_release() -> xfs_free_eofblocks()
+> 
+> I guess that is because xfs_can_free_eofblocks() does not consider
+> alignment for extsize in this function 
+
+Of course - who wants large chunks of space allocated beyond EOF
+when you are never going to write to the file again?
+
+i.e. If you have large extsize hints then the post-eof tail can
+consume a -lot- of space that won't otherwise get freed. This can
+lead to rapid, unexpected ENOSPC, and it's not clear to users what
+the cause is.
+
+Hence we don't care if extsz is set on the inode or not when we
+decide to remove post-eof blocks - reclaiming the unused space is
+much more important that an occasional unaligned or small extent.
+
+Forcealign changes that equation, but if you choose forcealign you
+are doing it for a specific reason and likely not applying it to the
+entire filesystem.....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
