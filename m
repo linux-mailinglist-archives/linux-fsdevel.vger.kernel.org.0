@@ -1,178 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-29424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496F397999D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 01:53:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C87A9799A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 02:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0971F22C6E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2024 23:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E5291C21F73
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 00:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0CF135A53;
-	Sun, 15 Sep 2024 23:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441D1175AD;
+	Mon, 16 Sep 2024 00:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vSPE8pAN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6A6d8CiC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vSPE8pAN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6A6d8CiC"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="vzqR1C31"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6258175F;
-	Sun, 15 Sep 2024 23:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E0713957B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 00:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726444377; cv=none; b=pYfPdkGyvn1Szf7XXBS3ZoLRXE5icU+iGKhsUWjdutc0wrAdoEPGREM9NUGzyyf2oYKnSKl528tzLY7FtTffDd5TyW++Q4COKoG4JFnFFIm1R3gIlmGRPt9jaK6oXiggskpr/UBlXYs6uEzpA/uwOzDcXySHFZXFb/8rzzfr7U8=
+	t=1726444825; cv=none; b=rrBk126PYfMVMsVig04sZXdWZ90h7kneUyZe9WtUdIOTdloSKduZM0ymtdYQciY9RMxFrhBpIqDR8KiY0dA89HJX1kR/arQYCOnmj3Izm0sNMjlUGRDOPtg7E48VD6VoydGp1AbxMzHAvcEQcViFZuRJKIQ/6yvB1aB5K5iTPfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726444377; c=relaxed/simple;
-	bh=ITkpgHKfuRfbjMe47+uAfPeMZI5fcCA82SAhXnYL82c=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=arS2vB1Hji2GQQdJPtSdB3ERqpwptTYDiQm5DjxV6uvmKUZtIU+fSkMD46VdrG8xbRtK0dChCXUQbHnf7l5BD37qKUWkpHM3hp6V050yhfuyBp9A2Il+GHm5XwL5cp8ZET6TqAOa7K+O/QTieSZnT5ZIU006XXseYEWMcMsNTgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vSPE8pAN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6A6d8CiC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vSPE8pAN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6A6d8CiC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 226FA1F837;
-	Sun, 15 Sep 2024 23:52:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726444373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
-	b=vSPE8pANYfBffFX2LjfSTIXbetOsfauvQi+6EC5tgY79kiIs65xPNMZe5+c8J5L6KNJ72z
-	TOrR9zkdSYnSknDBYr/bVT9xC58BiB1uPfSGmlHynzFgH81Z+Q2cBIUOSESRmcJpqNL0Bs
-	/HJsp2looqiqS5ANYZmNq4Nj5f5GlAQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726444373;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
-	b=6A6d8CiCwfWdLOZePf1uIcZeO1ut5uBH0tuB0RHXFerSz2k/VNnt0zPtC0kgRE72/evI5t
-	mxFhPz56kyhc1xBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vSPE8pAN;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=6A6d8CiC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726444373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
-	b=vSPE8pANYfBffFX2LjfSTIXbetOsfauvQi+6EC5tgY79kiIs65xPNMZe5+c8J5L6KNJ72z
-	TOrR9zkdSYnSknDBYr/bVT9xC58BiB1uPfSGmlHynzFgH81Z+Q2cBIUOSESRmcJpqNL0Bs
-	/HJsp2looqiqS5ANYZmNq4Nj5f5GlAQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726444373;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
-	b=6A6d8CiCwfWdLOZePf1uIcZeO1ut5uBH0tuB0RHXFerSz2k/VNnt0zPtC0kgRE72/evI5t
-	mxFhPz56kyhc1xBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B9B0E1351A;
-	Sun, 15 Sep 2024 23:52:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nmF1G1Jz52YbNgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Sun, 15 Sep 2024 23:52:50 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1726444825; c=relaxed/simple;
+	bh=Bk6VaLA8U1o7y/shFK8tVIvvxwhrWjMjA7XJdgB4N/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5QZrZQ/Ta6bUmHZXW0B2M9Qc0NuWsQZBZazBz4uWc6WlZ84NaCDsZxF/rZ5SsgjE1G5GDpQezqNA25e6FF9VshXjNdDIoInMvlolKRuOf4xXQqPdTwUF5fFZHOyo68i5yYiCqzFI73IHbA5JYiNHabOydtlA/NsBN/ekjpeemQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=vzqR1C31; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2057c6c57b5so23061695ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Sep 2024 17:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726444823; x=1727049623; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yiTneBRUQz0c7oUx85pbwoHLabaV+URnFTxx3H0XSE8=;
+        b=vzqR1C31Sg/hV/NjWigbAilwrJmsR5cWrqtjxhcEV0xyDmEm8cO/ObzAmNkKZmVLrp
+         Zqd/GIe/AANdpQuocF9looSLsZxMxxrgImVK4jawbg0uYlTMDCx6yWddS1L+7LoMbBqh
+         X2MQX+m5tGMUjyOrzDxA5m21JiiAUvIDEan8lZJKYss5RN1nT8GLN95OmLr586jiNA4c
+         cvxbgOhs0nxZBJSqvuHOWd+TIKPWfSNk/mhlpMYC4pgYPxIAXqHlokgd3tZbzCVNAVfz
+         Um5smzbm87vsfOcmz/lqiA/GWbl9P5Uz+xC/BdWw83Q4jPFMlvcVxjvcZwgKbktJJFaf
+         qUig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726444823; x=1727049623;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yiTneBRUQz0c7oUx85pbwoHLabaV+URnFTxx3H0XSE8=;
+        b=kWS4y2cLh+55tDrK6oyG3zV7wgkRO7lk1w/THXhK8o9KEZrIAK7tAkAHrT26S8IxDE
+         kvz94qA83lqlYU6cBcKuyGwifb2td4v48eBWgrQ01kBfWuzlwZIVD83Ldaovummhwd5n
+         M/p/TlubpF27Hkty+iJBLbBXRWKF+NyOcR3XyqhCGmGuBiUc4MeWY0b8WNVSZdGuR6o9
+         ZH7K/2NlUJQyd8WGh5ujMwt7FnpWGn/V3yTvaUBWnz4swtavd3JyBhcdixiaqIaHz8Zb
+         et8Efs8tfbjHGc0/5nW1NmEG9mMDGjqRcglFBDA50SYqQTndCPqVRfpFEW5cBTPM7xj9
+         MPDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6wZW82WTg0bukSdqBe95ORonNbs4YC273BxHk+OUMVR42d84xxfqv+8EUamzOF9+eQBfqg7SHbjG75hlW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9UdrGd4PhnKfiw7+hJekdf9Oc8YFXIPs10HHugoF4TiSbEbYV
+	eYTS6Pumg61l9XFV++zc1UaeKSyU++VZVvP9oLevBlDnmuJyceQGNWy7QPlfxhL5+gtI6VOHA7Q
+	y
+X-Google-Smtp-Source: AGHT+IEL1eQKv3NuUXB18zqkV0UW1Ie5TJSdwTXsRLrQ2G5lCXlhwJhgyjhFRZZ66d6/+lADVVDKkA==
+X-Received: by 2002:a17:902:ce92:b0:207:6d2:1aa5 with SMTP id d9443c01a7336-2076e591737mr218814085ad.13.1726444822748;
+        Sun, 15 Sep 2024 17:00:22 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945dc76asm26908985ad.42.2024.09.15.17.00.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 17:00:22 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1spzAA-005hUa-2C;
+	Mon, 16 Sep 2024 10:00:18 +1000
+Date: Mon, 16 Sep 2024 10:00:18 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
+	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Dao <dqminh@cloudflare.com>, clm@meta.com,
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <Zud1EhTnoWIRFPa/@dread.disaster.area>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Jens Axboe" <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org
-Subject: Re: [PATCH 0/7 v2 RFC] Make wake_up_{bit,var} less fragile
-In-reply-to: <20240826063659.15327-1-neilb@suse.de>
-References: <20240826063659.15327-1-neilb@suse.de>
-Date: Mon, 16 Sep 2024 09:52:47 +1000
-Message-id: <172644436782.17050.10401810341028694092@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 226FA1F837
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[noble.neil.brown.name:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
 
+On Thu, Sep 12, 2024 at 03:25:50PM -0700, Linus Torvalds wrote:
+> On Thu, 12 Sept 2024 at 15:12, Jens Axboe <axboe@kernel.dk> wrote:
+> Honestly, the fact that it hasn't been reverted after apparently
+> people knowing about it for months is a bit shocking to me. Filesystem
+> people tend to take unknown corruption issues as a big deal. What
+> makes this so special? Is it because the XFS people don't consider it
+> an XFS issue, so...
 
-Hi Ingo and Peter,
- have you had a chance to look at these yet?  Should I resend?  Maybe
- after -rc is out?
+I don't think this is a data corruption/loss problem - it certainly
+hasn't ever appeared that way to me.  The "data loss" appeared to be
+in incomplete postgres dump files after the system was rebooted and
+this is exactly what would happen when you randomly crash the
+system. i.e. dirty data in memory is lost, and application data
+being written at the time is in an inconsistent state after the
+system recovers. IOWs, there was no clear evidence of actual data
+corruption occuring, and data loss is definitely expected when the
+page cache iteration hangs and the system is forcibly rebooted
+without being able to sync or unmount the filesystems...
 
-Thanks,
-NeilBrown
+All the hangs seem to be caused by folio lookup getting stuck
+on a rogue xarray entry in truncate or readahead. If we find an
+invalid entry or a folio from a different mapping or with a
+unexpected index, we skip it and try again.  Hence this does not
+appear to be a data corruption vector, either - it results in a
+livelock from endless retry because of the bad entry in the xarray.
+This endless retry livelock appears to be what is being reported.
 
+IOWs, there is no evidence of real runtime data corruption or loss
+from this pagecache livelock bug.  We also haven't heard of any
+random file data corruption events since we've enabled large folios
+on XFS. Hence there really is no evidence to indicate that there is
+a large folio xarray lookup bug that results in data corruption in
+the existing code, and therefore there is no obvious reason for
+turning off the functionality we are already building significant
+new functionality on top of.
 
-On Mon, 26 Aug 2024, NeilBrown wrote:
-> This is a second attempt to make wake_up_{bit,var} less fragile.
-> This version doesn't change those functions much, but instead
-> improves the documentation and provides some helpers which
-> both serve as patterns to follow and alternates so that use of the
-> fragile functions can be limited or eliminated.
-> 
-> The only change to either function is that wake_up_bit() is changed to
-> take an unsigned long * rather than a void *.  This necessitates the
-> first patch which changes the one place where something other then
-> unsigned long * is passed to wake_up bit - it is in block/.
-> 
-> The final patch modifies the same bit of code as a demonstration of one
-> of the new APIs that has been added.
-> 
-> Thanks,
-> NeilBrown
-> 
-> 
->  [PATCH 1/7] block: change wait on bd_claiming to use a var_waitqueue,
->  [PATCH 2/7] sched: change wake_up_bit() and related function to
->  [PATCH 3/7] sched: Improve documentation for wake_up_bit/wait_on_bit
->  [PATCH 4/7] sched: Document wait_var_event() family of functions and
->  [PATCH 5/7] sched: Add test_and_clear_wake_up_bit() and
->  [PATCH 6/7] sched: Add wait/wake interface for variable updated under
->  [PATCH 7/7] Block: switch bd_prepare_to_claim to use
-> 
-> 
+It's been 10 months since I asked Christain to help isolate a
+reproducer so we can track this down. Nothing came from that, so
+we're still at exactly where we were at back in november 2023 -
+waiting for information on a way to reproduce this issue more
+reliably.
 
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
