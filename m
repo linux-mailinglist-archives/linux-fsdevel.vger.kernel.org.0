@@ -1,145 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-29470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72ED197A318
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 15:50:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24A997A3C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6F428640E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 13:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 637E81F24C38
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACDC15748A;
-	Mon, 16 Sep 2024 13:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C0D15C12F;
+	Mon, 16 Sep 2024 14:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DdskVsLc"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="l6a/8fFj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F76A156257
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 13:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C86156F3B;
+	Mon, 16 Sep 2024 14:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726494626; cv=none; b=JVJoas+XuZI57ODVLrn0uJ12CBZJJl3lBA4+TYvQBUxDPBpLuKMFxowBFKMjLuPbTEnVCXjqK/TH/Bj1TjmXCR5/BIUfhemS01cITe4jeX9X1ZEnNX7q5y1bKSpyCY2W/XlxdDgaT70pdNxz4eQWGs4wPvyFBq/FmzYXDMfMcdQ=
+	t=1726495498; cv=none; b=dAt2Qslvkc6ZJ7260c+86DUUB76UzErJm+bA6ho8VXLhAiyvbf+kv/o/i7o/OV1BPV6LLuk6tq+jm5Crfo+8FEHfPVdZASZRmwf0FnEVhlS3/4c9QW5/TlHLCaT0grCzm7d+7/2X1ptRrZShPLf/gek0rNEvjEYKDBmEciuH2Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726494626; c=relaxed/simple;
-	bh=3G6nNUn1bMKAqYxa+NGBPYz7gridnax2Iqq1Mfv1v34=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=OF6tFN//ZHDdClR0PJs9mIS8/17PUwT+KXHhJ5zxkdbfPV+uKbH/3uTSC31LZsizmizr0urCcp/4lqpsnom9jzuiL2eiOVrEysJ8NWo/EoRowh+hqZCnl5Gxf4YUMgK/Xsajj9sIsRftd8HZQf4Nxgd2G9BZSr21YANgkdM/yc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DdskVsLc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726494623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bceaz3QXs0DKbabxrfpiWtFXiUoEB+2UhAh7kLlHFog=;
-	b=DdskVsLcknLX1eelCFH+S1Erbd0Zi/DB5aC/8gzaDXYg+AtBBvnOLhWnlVSQCoD4TT1ed/
-	8SVg9eTilSKTERxKe7kvLw68VntUj0lAOKHtXSPWdPMLgw6eaOuj5n4jKpMHt2dmyeGtBv
-	jkjDR2/XOvKlm4SrPlrGJ7l42IcDeAU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-98-ok2uxF2SM2Kr6B62Z9z6NQ-1; Mon,
- 16 Sep 2024 09:50:20 -0400
-X-MC-Unique: ok2uxF2SM2Kr6B62Z9z6NQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 55BF91955E9F;
-	Mon, 16 Sep 2024 13:50:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8E1021956086;
-	Mon, 16 Sep 2024 13:50:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com>
-References: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com> <20240913-vfs-netfs-39ef6f974061@brauner>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    Steve French <stfrench@microsoft.com>
-Subject: [PATCH] cifs: Fix cifs readv callback merge resolution issue
+	s=arc-20240116; t=1726495498; c=relaxed/simple;
+	bh=nQBeSGvWGge9BXDTZBsvwTapZiJYXMVkJWK7V8DFNy8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nJFnv82A0Rh6cKMnRn6AAXwktPHloBtNK8teMkT++xJW8Yfj+u52EGV4o2D39HXzo9Pq9u+a77b6prMAWAZrgKnnw1BhYIT7oTl+7QVJfeeZKJbHE+ENLHGcZRgRJ8kZLJdI7c07F5djC7GwWbTpBpMrjYbW4YlIN7BasyegWSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=l6a/8fFj; arc=none smtp.client-ip=148.135.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6E19169799;
+	Mon, 16 Sep 2024 09:55:52 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1726494958; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=9N+ZQkVun0N8rthsyIs0Y8nbkjuLiSMyhR8LZUW+bjg=;
+	b=l6a/8fFj2/PvQcWCumcQLWs2m5I0tlDX/65VILGQQKYi8aivsrOhhRmPbEhIWSwy4G5tc9
+	FEy3khtCymynox7uYG5voXxoUprQ9XT7tjzBt19wsycB0oPtWGnommd0NpOIqgsrr9fQoH
+	tgkj/JxaFTA7xoargGoa9vT5Yr7VVzi0VTpax2W1Se5vP17Rba41skQfXkMf2NL/YLRyQD
+	hN4CfgqgiZt2NhT1PgsnAoocTELhDXiaNxresJdBEgPUrhA0qLA7Yx3afrCms3k/Kq+MKy
+	965KUhba0fwMQUtEDzLWnhPxLAJIZ8cKGAO5lUOKx4Sk8ogSg5CXjXB8iLMdeQ==
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: linux-erofs@lists.ozlabs.org
+Cc: rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH 00/24] erofs: introduce Rust implementation
+Date: Mon, 16 Sep 2024 21:55:17 +0800
+Message-ID: <20240916135541.98096-1-toolmanp@tlmp.cc>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1947792.1726494616.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Sep 2024 14:50:16 +0100
-Message-ID: <1947793.1726494616@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Fix an upstream merge resolution issue[1].  Prior to the netfs read
-healpers, the SMB1 asynchronous read callback, cifs_readv_worker()
-performed the cleanup for the operation in the network message processing
-loop, potentially slowing down the processing of incoming SMB messages.
+Greetings,
 
-With commit a68c74865f51 ("cifs: Fix SMB1 readv/writev callback in the sam=
-e
-way as SMB2/3"), this was moved to a worker thread (as is done in the
-SMB2/3 transport variant).  However, the "was_async" argument to
-netfs_subreq_terminated (which was originally incorrectly "false" got
-flipped to "true" - which was then incorrect because, being in a kernel
-thread, it's not in an async context).
+So here is a patchset to add Rust skeleton codes to the current EROFS
+implementation. The implementation is deeply inspired by the current C 
+implementation, and it's based on a generic erofs_sys crate[1] written
+by me. The purpose is to potentially replace some of C codes to make
+to make full use of Rust's safety features and better
+optimization guarantees.
 
-This got corrected in the sample merge[2], but Linus, not unreasonably,
-switched it back to its previous value.
+Many of the features (like compression inodes) still
+fall back to C implementation because of my limited time and lack of
+Rust counterparts. However, the Extended Attributes work purely in Rust.
 
-Note that this value tells netfslib whether or not it can run sleepable
-stuff or stuff that takes a long time, such as retries and cleanups, in th=
-e
-calling thread, or whether it should offload to a worker thread.
+Some changes are done to the original C code.
+1) Some of superblock operations are modified slightly to make sure
+memory allocation and deallocation are done correctly when interacting
+with Rust.
+2) A new rust_helpers.c file is introduced to help Rust to deal with
+self-included EROFS API without exporting types that are not
+interpreted in Rust.
+3) A new rust_bindings.h is introduced to provide Rust functions
+externs with the same function signature as Rust side so that
+C-side code can use the bindings easily.
+4) CONFIG_EROFS_FS_RUST is added in dir.c, inode.c, super.c, data.c,
+and xattr.c to allow C code to be opt out and uses Rust implementation.
+5) Some macros and function signatures are tweaked in internal.h
+with the compilation options.
 
-Fix this so that it is "false".  The callback to netfslib in both SMB1 and
-SMB2/3 now gets offloaded from the network message thread to a separate
-worker thread and thus it's fine to do the slow work in this thread.
+Note that, since currently there is no mature Rust VFS implementation
+landed upstream, this patchset only uses C bindings internally and
+each unsafe operation is examined. This implementation only offers
+C-ABI-compatible functions impls and gets its exposed to original C
+implementation as either hooks or function pointers.
 
-Fixes: 35219bc5c71f ("Merge tag 'vfs-6.12.netfs' of git://git.kernel.org/p=
-ub/scm/linux/kernel/git/vfs/vfs")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Steve French <stfrench@microsoft.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/CAHk-=3Dwjr8fxk20-wx=3D63mZruW1LTvBvAKya1G=
-Q1EhyzXb-okMA@mail.gmail.com/ [1]
-Link: https://lore.kernel.org/linux-fsdevel/20240913-vfs-netfs-39ef6f97406=
-1@brauner/ [2]
----
- fs/smb/client/cifssmb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also note that, this patchset only uses already-present self-included
+EROFS API and it uses as few C bindings generated from bindgen as
+possible, only inode, dentry, file and dir_context related are used,
+to be precise.
 
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index d81da161d3ed..7f3b37120a21 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -1266,7 +1266,7 @@ static void cifs_readv_worker(struct work_struct *wo=
-rk)
- 	struct cifs_io_subrequest *rdata =3D
- 		container_of(work, struct cifs_io_subrequest, subreq.work);
- =
+Since the EROFS community is pretty interested in giving Rust a try,
+I think this patchset will be a good start for Rust EROFS.
 
--	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, true);
-+	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
- }
- =
+This patchset is based on the latest EROFS development tree.
+And the current codebase can also be found on my github repo[2].
 
- static void
+[1]: https://github.com/ToolmanP/erofs-rs
+[2]: https://github.com/ToolmanP/erofs-rs-linux
+
+Yiyang Wu (24):
+  erofs: lift up erofs_fill_inode to global
+  erofs: add superblock data structure in Rust
+  erofs: add Errno in Rust
+  erofs: add xattrs data structure in Rust
+  erofs: add inode data structure in Rust
+  erofs: add alloc_helper in Rust
+  erofs: add data abstraction in Rust
+  erofs: add device data structure in Rust
+  erofs: add continuous iterators in Rust
+  erofs: add device_infos implementation in Rust
+  erofs: add map data structure in Rust
+  erofs: add directory entry data structure in Rust
+  erofs: add runtime filesystem and inode in Rust
+  erofs: add block mapping capability in Rust
+  erofs: add iter methods in filesystem in Rust
+  erofs: implement dir and inode operations in Rust
+  erofs: introduce Rust SBI to C
+  erofs: introduce iget alternative to C
+  erofs: introduce namei alternative to C
+  erofs: introduce readdir alternative to C
+  erofs: introduce erofs_map_blocks alternative to C
+  erofs: add skippable iters in Rust
+  erofs: implement xattrs operations in Rust
+  erofs: introduce xattrs replacement to C
+
+ fs/erofs/Kconfig                              |  10 +
+ fs/erofs/Makefile                             |   4 +
+ fs/erofs/data.c                               |   5 +
+ fs/erofs/data_rs.rs                           |  63 +++
+ fs/erofs/dir.c                                |   2 +
+ fs/erofs/dir_rs.rs                            |  57 ++
+ fs/erofs/inode.c                              |  10 +-
+ fs/erofs/inode_rs.rs                          |  64 +++
+ fs/erofs/internal.h                           |  47 ++
+ fs/erofs/namei.c                              |   2 +
+ fs/erofs/namei_rs.rs                          |  56 ++
+ fs/erofs/rust/erofs_sys.rs                    |  47 ++
+ fs/erofs/rust/erofs_sys/alloc_helper.rs       |  35 ++
+ fs/erofs/rust/erofs_sys/data.rs               |  70 +++
+ fs/erofs/rust/erofs_sys/data/backends.rs      |   4 +
+ .../erofs_sys/data/backends/uncompressed.rs   |  39 ++
+ fs/erofs/rust/erofs_sys/data/raw_iters.rs     | 127 +++++
+ .../rust/erofs_sys/data/raw_iters/ref_iter.rs | 131 +++++
+ .../rust/erofs_sys/data/raw_iters/traits.rs   |  17 +
+ fs/erofs/rust/erofs_sys/devices.rs            |  75 +++
+ fs/erofs/rust/erofs_sys/dir.rs                |  98 ++++
+ fs/erofs/rust/erofs_sys/errnos.rs             | 191 +++++++
+ fs/erofs/rust/erofs_sys/inode.rs              | 398 ++++++++++++++
+ fs/erofs/rust/erofs_sys/map.rs                |  99 ++++
+ fs/erofs/rust/erofs_sys/operations.rs         |  62 +++
+ fs/erofs/rust/erofs_sys/superblock.rs         | 514 ++++++++++++++++++
+ fs/erofs/rust/erofs_sys/superblock/mem.rs     |  94 ++++
+ fs/erofs/rust/erofs_sys/xattrs.rs             | 272 +++++++++
+ fs/erofs/rust/kinode.rs                       |  76 +++
+ fs/erofs/rust/ksources.rs                     |  66 +++
+ fs/erofs/rust/ksuperblock.rs                  |  30 +
+ fs/erofs/rust/mod.rs                          |   7 +
+ fs/erofs/rust_bindings.h                      |  39 ++
+ fs/erofs/rust_helpers.c                       |  86 +++
+ fs/erofs/rust_helpers.h                       |  23 +
+ fs/erofs/super.c                              |  51 +-
+ fs/erofs/super_rs.rs                          |  59 ++
+ fs/erofs/xattr.c                              |  31 +-
+ fs/erofs/xattr.h                              |   7 +
+ fs/erofs/xattr_rs.rs                          | 106 ++++
+ 40 files changed, 3153 insertions(+), 21 deletions(-)
+ create mode 100644 fs/erofs/data_rs.rs
+ create mode 100644 fs/erofs/dir_rs.rs
+ create mode 100644 fs/erofs/inode_rs.rs
+ create mode 100644 fs/erofs/namei_rs.rs
+ create mode 100644 fs/erofs/rust/erofs_sys.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/alloc_helper.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/backends.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/backends/uncompressed.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/raw_iters.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/raw_iters/ref_iter.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/data/raw_iters/traits.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/devices.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/dir.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/errnos.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/inode.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/map.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/operations.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/superblock.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/superblock/mem.rs
+ create mode 100644 fs/erofs/rust/erofs_sys/xattrs.rs
+ create mode 100644 fs/erofs/rust/kinode.rs
+ create mode 100644 fs/erofs/rust/ksources.rs
+ create mode 100644 fs/erofs/rust/ksuperblock.rs
+ create mode 100644 fs/erofs/rust/mod.rs
+ create mode 100644 fs/erofs/rust_bindings.h
+ create mode 100644 fs/erofs/rust_helpers.c
+ create mode 100644 fs/erofs/rust_helpers.h
+ create mode 100644 fs/erofs/super_rs.rs
+ create mode 100644 fs/erofs/xattr_rs.rs
+
+-- 
+2.46.0
 
 
