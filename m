@@ -1,187 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-29517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3A197A664
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 19:00:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5470E97A672
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 19:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575AB1F22D41
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 17:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5E42837FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 17:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E701F16A95B;
-	Mon, 16 Sep 2024 16:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577A615A865;
+	Mon, 16 Sep 2024 17:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QoxQZ1hH"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JIdHZtnl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA7115B964;
-	Mon, 16 Sep 2024 16:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726505928; cv=fail; b=SiQCfcbBO+Kvj70hrIMmYgoB86BkAKkJngouHjwFk4xB8+5f3qcvroNFNHoH4j7YTkiwFT5i2goaId+Q33FM1Mr1jhgVIgXBgMe5P22+MCqY+6wsVofLRDsmx6xmpwi+5YRhjJ1F2Tixhym1qlS9IEhdwRMDXzuGUt6Sq93dX3s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726505928; c=relaxed/simple;
-	bh=Ch/3BXRIDwXuwvGggJHTLNf/PCWdMgQZ54sRU6QlWZk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BxdMGjX9YfDdn9kFycKMRyjFNUM+XSTd8V6E8pndbTHL8VqFxBP1RmELT+W8ZyKM/sXQmTLaVshN00qtJvH9RcTniPQ86/eBBD1xOlol+PUrAsVH79eq84qmN9g16V98o0JOAJf8vLx72o0PiMldS4LwOp8wNPtVOz1d8i6uDTo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QoxQZ1hH; arc=fail smtp.client-ip=40.107.92.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u5jIR95Kx2fG4Svhmo/jZ57vDaiWopGt1NRUJkPLZ1sr5b6OpvCqNr/b8CLLouCg6/Ngb0hKhGRQkiSXWwe0UFzWbpqitC4nHQwxmvvbeByxzrRP+FS4Ot6p4XD6P9+lfvlJefnGeGnquJ78iCNW4o95u3Xlgje7u+YDEjLEq0USwpyelgfggPN9PPY771lbLnTEcKz33L5GFinI1mlp+CkjODf4u6H+n8kmiDEjVa3VRk7ms1ev/BjBgwigcC65HD1lkXHz9gxg+/a8lk9pMMGlwBM/zGO+NkbsJ5PGbzZNVMsv4ZUs05RQNNqx718ilLeD+tX9ptC5z/XtcOlc7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t3TqfD3ymF6eqT4nlqJNmccBGoGKxBelhDPWPHnJ0q8=;
- b=zVJUD3LRylBHVZOH55tgjhN85vVulCoRXyuavhDntkWsEc8fo6yvE561c0aCcbjMkhXDawJAbeptmeXSzbOdIu+EW9hYrEUynwNWGFreUKqHm6JhUF53uW7xG5WEbR5K60exlvXW+K7aaf7p/+RZjDeftDKgfqUG5dQ94DUtOWBTyqitEGSRNEdodY8iWCS574kNKZsGVFNrIzL2aO54JtEFJalLLRGEKtbsL+BY4ybbAULwoN3PP1w2awqE//ygoEgHZu6t+i4pWIgTU/xHd5h2GCLo0GRKcJoJ4r28e2yWZGBnJ1jV677KZVZnm2RkB2uNuX9/owVQmf1QFXkCPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t3TqfD3ymF6eqT4nlqJNmccBGoGKxBelhDPWPHnJ0q8=;
- b=QoxQZ1hHyr14fQxR3BKCC715xWenv4az8sx9Mrzu2+etVof4p+8WXwI4VqWHS0/l4tvjQGubQJvwBJW5UTJjJH81sABWMYbXEgUIpnzXgNOYr0PqZCveenYyXsmahFspj1rAidfg0cunaKZl31ujzyrUgAKS+bJT2pBgwScFflg=
-Received: from SA0PR11CA0114.namprd11.prod.outlook.com (2603:10b6:806:d1::29)
- by DM4PR12MB5796.namprd12.prod.outlook.com (2603:10b6:8:63::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Mon, 16 Sep
- 2024 16:58:40 +0000
-Received: from SN1PEPF000252A1.namprd05.prod.outlook.com
- (2603:10b6:806:d1:cafe::40) by SA0PR11CA0114.outlook.office365.com
- (2603:10b6:806:d1::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Mon, 16 Sep 2024 16:58:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF000252A1.mail.protection.outlook.com (10.167.242.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Mon, 16 Sep 2024 16:58:39 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Sep
- 2024 11:58:32 -0500
-From: Shivank Garg <shivankg@amd.com>
-To: <pbonzini@redhat.com>, <corbet@lwn.net>, <akpm@linux-foundation.org>,
-	<willy@infradead.org>
-CC: <acme@redhat.com>, <namhyung@kernel.org>, <mpe@ellerman.id.au>,
-	<isaku.yamahata@intel.com>, <joel@jms.id.au>, <kvm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>, <shivankg@amd.com>,
-	<shivansh.dhiman@amd.com>, <bharata@amd.com>, <nikunj@amd.com>
-Subject: [PATCH RFC 3/3] KVM: guest_memfd: Enforce NUMA mempolicy if available
-Date: Mon, 16 Sep 2024 16:57:43 +0000
-Message-ID: <20240916165743.201087-4-shivankg@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916165743.201087-1-shivankg@amd.com>
-References: <20240916165743.201087-1-shivankg@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D90710A18;
+	Mon, 16 Sep 2024 17:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726506486; cv=none; b=d2W/vFq7fAXpaqTPq5VSDG+WEDlI+arDT9rD5MuMCsQxJM7Ox6mhvv7dJXJkSHJBCGgnscyeAikJPyVSWBuAgyhCg1x7No7fzW/CeEiLjx+ORx26pA4U+fC5gp27vHJf7+aUrI5iuUskMqwo5qz6OcR4T11NSrMvf1Xmn/Ao9Iw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726506486; c=relaxed/simple;
+	bh=1dZjd/ClL+1MJKVM0HnPeVDjPRfg9BFy88++S3/i9XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LadSmoOFMF1Gl0ji/3MpR9dMEMNcrAxTxse2MISAHQ0lTTVrvyn8qOTVao7l6gVoBzMhInO4DqNx9Zzy2gJLLzKH+Uos4SOG2XFsvZ0CCdCeUxOoKHQkQ5zzL3hODAkBBSb/9mEXv/D8vZSX6bW5mcDjaWLzLMFv+OFEZWB8QeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JIdHZtnl; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=e/xlYRrSDit/b/g6M8c4bdxRyyK3CLNhHmufMU5+ieg=; b=JIdHZtnlwMLdbu7oYdbKGigkqw
+	4s1ccsqYW4bnNBcYLSY3BZe0ZJ/kopW5iM2sTrVkXUF4UDsORvVSyYpnLSmQ36LavMlQVljMR/wcI
+	PTej5tPu6Wgrs4U9MAze6XiUffWeoCpMikl6Gb1WmMj7wnMT2+YRtvBlyxNXJ5PwGkvMnpTA7ANMy
+	93i7Je6/dfBFOtYGaaH48RIaVYTAX0exIEWJ6uddRxIBvbFgY23MynS5G8/GiIjqmJLWI+xNnVWsW
+	Gs+rASaVBVMMkqN16nKduyt0D447xA575Ab1H4OZQ+kITSZzADlYgmlyKhNtsHnOYGSbhZWXBKqjn
+	JzzcFJ2Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sqFCj-0000000D14P-0QWH;
+	Mon, 16 Sep 2024 17:08:01 +0000
+Date: Mon, 16 Sep 2024 18:08:01 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yiyang Wu <toolmanp@tlmp.cc>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 19/24] erofs: introduce namei alternative to C
+Message-ID: <20240916170801.GO2825852@ZenIV>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-20-toolmanp@tlmp.cc>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000252A1:EE_|DM4PR12MB5796:EE_
-X-MS-Office365-Filtering-Correlation-Id: f9f75e68-0ee6-488e-5b0f-08dcd670d051
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+bwEEvAnMVEBX6U9xmGh4Fmg6LC4oZNUd5RW1KE4MImQuwJvVVQSmJStxXfb?=
- =?us-ascii?Q?MohnRy3/t1VO8Xcpk3Yaxrqyk3/FIKBISMYPjLVxVotgX73pFAReY+qKp/lR?=
- =?us-ascii?Q?PMbX8+g1t69fhT1ENYvWZXJrFuAJZFial2bSuH1GFWfmvdT6reG3l1r/8C86?=
- =?us-ascii?Q?beh4BpqRERejjZCAzmy76eh6jVf5JJY5OP5serfVMGlWDwskLYzPbb2pijQC?=
- =?us-ascii?Q?zyZjUfvqrZ/n4IUiVVvGLLCEZ3i5MgiwUf85ekM4mm9rSfLW0hBdstWQXTbU?=
- =?us-ascii?Q?Xv0UjIZw98ORE4sn+WWkhZGvgSYZMtvVQMAQIIrUvyfiZZWFub+q4ufUTtcy?=
- =?us-ascii?Q?N32ah2Aq3AUmt4OvhO9yrMvPLZ46IAoMdOECuKgLNlyjGm7xOMfjiA7yu9v8?=
- =?us-ascii?Q?XxDVzPPr1QtTyJQrDbLShEw3opunnNunwkKJPLOO0nsdJD4nPFOKyhnfSS1b?=
- =?us-ascii?Q?GUtHnoah7bteYw5Lf4VEUvo8GY9lXNwSSuEgUywBeR3SJF951SeAspf99ZwZ?=
- =?us-ascii?Q?Xs2xAh0jJg4Z8/B19pRtbFnemq338Swl1J4t/NMYsVOzvVZ0vYdOZG1oXikA?=
- =?us-ascii?Q?3pmAI85+FYwXiL5uqDbtOVsZpOEKNrepGr7n0kjnJMlZ9R/ugm/OGkfKJPr0?=
- =?us-ascii?Q?NzXDP4X5mIe81zSZxha+sAIhcMAuObmx17m/G3ofWcZr3+lKomLOT4XHDvqP?=
- =?us-ascii?Q?vE8SugY3F9CbUQld1T50ascSTyKCNUIjhfs4CTO/IhSRDgaCHqWyC0zozg7I?=
- =?us-ascii?Q?nmpp16cCuhLGJRi8obLqPt1GmR/DJ0J4AeJl2zui2xcAkf1OFdu2u2wZ6pZI?=
- =?us-ascii?Q?2IC/O3yyuAW1LVm91LSn8KQCsSDzVgpdREu/uWXQJ2sbuqMWEBttO/j3TWJX?=
- =?us-ascii?Q?uCtQ4/Yl9Gnqnl+WjQQC4duXcQpuQnftWPHqt7pZ1tfmrdAuRtrBG5r5Q+uQ?=
- =?us-ascii?Q?6yNzfTYLF0xTemHHzf2XvcwyOzi/UvOGKEUyu+WfyVCx5iV+Hbpl/B5zUaYG?=
- =?us-ascii?Q?Dz8sqQgN+25UB3krLmimbG1R8vvDskhXJfNBjx3epTwmG8DpayqXuGccKl0e?=
- =?us-ascii?Q?JDDYAvFxL7YPnD3d5v2+qr+6XL01qmAAqiofjIuByusr/h0fvTIOdhZj9Ekd?=
- =?us-ascii?Q?YEVEF95WlgeVsmruzVR05ZYmpRY+ryuAqaSzWGCCmnNe/ICdWHDK9vLUQXXV?=
- =?us-ascii?Q?/Rn+MHYGtpzWgLgp95OPAiVeS7cQ59UOHNzQ9m3URx+7psav6nX9bBm4k0WI?=
- =?us-ascii?Q?xNVfTXKtl1tadZpvMRkvS9+P778cE4NF4yzuQKdH4MScvoH+zHwlJ7tgA1az?=
- =?us-ascii?Q?2Jl1InxY6VnXjkITcGlcRpxSEC1L6ZtpX+4Gp5e0of2ipbDh6RWwTQyebuSz?=
- =?us-ascii?Q?6wYGPlM4NnhsFaffVjUEDbFYie95EVhCtKmjfpO4U0r8qXWsiMEViJAbZEqb?=
- =?us-ascii?Q?hzJCG1kDYfgUKguGmoa7RR/2DKZEydZb?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 16:58:39.8660
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9f75e68-0ee6-488e-5b0f-08dcd670d051
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000252A1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5796
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916135634.98554-20-toolmanp@tlmp.cc>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Shivansh Dhiman <shivansh.dhiman@amd.com>
+On Mon, Sep 16, 2024 at 09:56:29PM +0800, Yiyang Wu wrote:
+> +/// Lookup function for dentry-inode lookup replacement.
+> +#[no_mangle]
+> +pub unsafe extern "C" fn erofs_lookup_rust(
+> +    k_inode: NonNull<inode>,
+> +    dentry: NonNull<dentry>,
+> +    _flags: c_uint,
+> +) -> *mut c_void {
+> +    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
+> +    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
 
-Enforce memory policy on guest-memfd to provide proper NUMA support.
-Previously, guest-memfd allocations were following local NUMA node id in
-absence of process mempolicy, resulting in random memory allocation.
-Moreover, it cannot use mbind() since memory isn't mapped to userspace.
+	Ummm...  A wrapper would be highly useful.  And the reason why
+it's safe is different - your function is called only via ->i_op->lookup,
+the is only one instance of inode_operations that has that ->lookup
+method, and the only place where an inode gets ->i_op set to that
+is erofs_fill_inode().  Which is always passed erofs_inode::vfs_inode.
 
-To support NUMA policies, retrieve the mempolicy struct from
-i_private_data part of memfd's inode. Use filemap_grab_folio_mpol() to
-ensure that allocations follow the specified memory policy.
+> +    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
+> +    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
 
-Signed-off-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
- virt/kvm/guest_memfd.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+	Again, that calls for a wrapper - this time not erofs-specific;
+inode->i_sb is *always* non-NULL, is assign-once and always points
+to live struct super_block instance at least until the call of
+destroy_inode().
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 8f1877be4976..8553d7069ba8 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -130,12 +130,15 @@ static struct folio *__kvm_gmem_get_folio(struct inode *inode, pgoff_t index,
- 					  bool allow_huge)
- {
- 	struct folio *folio = NULL;
-+	struct mempolicy *mpol;
- 
- 	if (gmem_2m_enabled && allow_huge)
- 		folio = kvm_gmem_get_huge_folio(inode, index, PMD_ORDER);
- 
--	if (!folio)
--		folio = filemap_grab_folio(inode->i_mapping, index);
-+	if (!folio) {
-+		mpol = (struct mempolicy *)(inode->i_mapping->i_private_data);
-+		folio = filemap_grab_folio_mpol(inode->i_mapping, index, mpol);
-+	}
- 
- 	pr_debug("%s: allocate folio with PFN %lx order %d\n",
- 		 __func__, folio_pfn(folio), folio_order(folio));
--- 
-2.34.1
+> +    // SAFETY: this is backed by qstr which is c representation of a valid slice.
 
+	What is that sentence supposed to mean?  Nevermind "why is it correct"...
+
+> +    let name = unsafe {
+> +        core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+> +            dentry.as_ref().d_name.name,
+> +            dentry.as_ref().d_name.__bindgen_anon_1.__bindgen_anon_1.len as usize,
+
+	Is that supposed to be an example of idiomatic Rust?  I'm not
+trying to be snide, but my interest here is mostly about safety of
+access to VFS data structures.	And ->d_name is _very_ unpleasant in
+that respect; the locking rules required for its stability are subtle
+and hard to verify on manual code audit.
+
+	Current erofs_lookup() (and your version as well) *is* indeed
+safe in that respect, but the proof (from filesystem POV) is that "it's
+called only as ->lookup() instance, so dentry is initially unhashed
+negative and will remain such until it's passed to d_splice_alias();
+until that point it is guaranteed to have ->d_name and ->d_parent stable".
+
+	Note that once you _have_ called d_splice_alias(), you can't
+count upon the ->d_name stability - or, indeed, upon ->d_name.name you've
+sampled still pointing to allocated memory.
+
+	For directory-modifying methods it's "stable, since parent is held
+exclusive".  Some internal function called from different environments?
+Well...  Swear, look through the call graph and see what can be proven
+for each.
+
+	Expressing that kind of fun in any kind of annotations (Rust type
+system included) is not pleasant.  _Probably_ might be handled by a type
+that would be a dentry pointer with annotation along the lines "->d_name
+and ->d_parent of that one are stable".  Then e.g. ->lookup() would
+take that thing as an argument and d_splice_alias() would consume it.
+->mkdir() would get the same thing, etc.  I hadn't tried to get that
+all way through (the amount of annotation churn in existing filesystems
+would be high and hard to split into reviewable patch series), so there
+might be dragons - and there definitely are places where the stability is
+proven in different ways (e.g. if dentry->d_lock is held, we have the damn
+thing stable; then there's a "take a safe snapshot of name" API; etc.).
+
+	I want to reduce the PITA of regular code audits.  If, at
+some point, Rust use in parts of the tree reduces that - wonderful.
+But then we'd better make sure that Rust-side uses _are_ safe, accurately
+annotated and easy to grep for.  Because we'll almost certainly need to
+change method calling conventions at some points through all of that.
+Even if it's just the annotation-level, any such contract change (it
+is doable and quite a few had been done) will require going through
+the instances and checking how much massage will be needed in those.
+Opaque chunks like the above promise to make that very painful...
 
