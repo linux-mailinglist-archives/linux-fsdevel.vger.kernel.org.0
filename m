@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-29482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2B997A362
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 15:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A8497A366
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 15:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803F61C20C49
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 13:58:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E80431C22666
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 13:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8325158DC5;
-	Mon, 16 Sep 2024 13:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638B315A4B0;
+	Mon, 16 Sep 2024 13:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="EXrdKMbP"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="dOn95zGg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BD5157E61;
-	Mon, 16 Sep 2024 13:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF80158DDD;
+	Mon, 16 Sep 2024 13:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495005; cv=none; b=LzM6M/5g79cgiTNIM4vfZO9goXz8tnIe5Hmep/CxIJTXvI2/XWj7z1sc2QeG8bCAlWDTflI0/zCu+OWGtyKvctMLxu2Fvwh/ozIhXWW93570rsP8zhprTPnbOmnpmVtuXBWcAK29xQbTzOQx6yWa+cuEqxh+94gpqir+ml5FKmc=
+	t=1726495006; cv=none; b=OFMnZR+mRS5vuJZUVUpg0PzYR9MYvbAGbkkhU6/nYSTGZI+7ncz4XN6Tg2YhrETDutSvnU/T+WYI+/Oj4lFWLEOMV1XpmK8seFjYWuxwLoiG9f71Rbk8mtZVrN2CFeXrtqPpZSzz1hBcIrQuTCcSpm1AMhYsgTXkSsnRCuTHsdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495005; c=relaxed/simple;
-	bh=d/XOj0hoNuU9nqfS2fwNSQ1cJ90NqcO0hLBokdH7oBY=;
+	s=arc-20240116; t=1726495006; c=relaxed/simple;
+	bh=vQLgpg+Uh6AnmzozA6msIhCQdsV7m8apo306xrKuq7U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KhXMD1TjYJMbbZ9bweDnBT4z1cJ9rvZkjbrLBgsoLde1DuUR8h4ptj36c/EGU8xfpmGigtztSxiReWuFGQl7dRWISzi8fdloAnoLrDbXRxIIoDgwnZoSRbwBKFVbbvE0++eWfw3RwcGs2cXOlav8lDWOVWNWBtC5U9YyReCD5eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=EXrdKMbP; arc=none smtp.client-ip=148.135.17.20
+	 MIME-Version; b=hG+pziZRATBw/fFMTk/CMp2Jw/g/RHd0BBPEZtlGhRQzJMidWQoxh+TAa8Q2EOlFjiXiWn7sYapR6aKHiqyXpO05bxre8foJFG12pkDzr//JDDkea3bwTzy6ahGy37Ou352MP/64zSmZbY/0ujNymEgFaAxFwV+dwCMucdJOnEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=dOn95zGg; arc=none smtp.client-ip=148.135.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1A8176983D;
-	Mon, 16 Sep 2024 09:56:40 -0400 (EDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2BDBE697C4;
+	Mon, 16 Sep 2024 09:56:42 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726495002; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1726495004; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=eiSTaIp2oxZp3XntcBK5EeEI9ViTxMs6XcQ702Or/vY=;
-	b=EXrdKMbPRSLWjUM9rpjDioPo1pyJcUduJGi9/DcPSUznc4+n3PK+QocMh5/3zd5PEb+T1I
-	YRcB2n2fyzAcWZwwf1x8r2KQmlq6J4K5JQvfg4s+6GGtMZsBRkedc66rf1mDJIKEQ/X5hP
-	pkDmgPNP4cuhtoSUWOoBzpATRGIYwu0Ik16Pm7SIcU03oydEj7wY68Y//2CZPg1pSF59FC
-	lTGyi9FjWi9q1YWpDnxQiLyvRugQXGa5w2I4jlum9qaViG9tL16UoCpoEL+oezba+vps0Q
-	dBRUkamfzg3bffUqyoJzfRAhdgDJB7KyE0fXR+BcuA1OYY5yVbxV72L5+vAJ8Q==
+	bh=ZuP3bujGZDBP75xkwLAFw1ksH6b/fY1knDKclkC/wOs=;
+	b=dOn95zGgGjKt7hhDZ/QhlPGv4twioBTmFU8v4vBHGWJjuHNLqPrYPL1TRlgHiKOGVaANQe
+	Q0ROqoKukjjsVleRpzwOv+M7aNYBZRAMuyhTCCVsvncV2qitG3sEcIAOC5FbD4LxPgTSr1
+	kj7IJZ/E1PaonivKJ/WYVOMJZ+QNtxCmx/M9iQjZAcaMlEO3CR86kj96DHe38DrIGRYCq5
+	/Zf4JCwL7D2AkvHRjDTRe1hAnf9csJZ0ASj/QLPGQaINfa9Ad3DGhLlGEOwoWRoZROPghe
+	nO8XCSuw9cTM4FiRSldvUDIf/mgPCQirncjyff85I72LFQqoEMwkpQ7DFIULXw==
 From: Yiyang Wu <toolmanp@tlmp.cc>
 To: linux-erofs@lists.ozlabs.org
 Cc: rust-for-linux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 02/24] erofs: add superblock data structure in Rust
-Date: Mon, 16 Sep 2024 21:56:12 +0800
-Message-ID: <20240916135634.98554-3-toolmanp@tlmp.cc>
+Subject: [RFC PATCH 03/24] erofs: add Errno in Rust
+Date: Mon, 16 Sep 2024 21:56:13 +0800
+Message-ID: <20240916135634.98554-4-toolmanp@tlmp.cc>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240916135634.98554-1-toolmanp@tlmp.cc>
 References: <20240916135634.98554-1-toolmanp@tlmp.cc>
@@ -62,242 +62,233 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-This patch adds a compilable super_rs.rs and introduces superblock
-data structure in Rust. Note that this patch leaves C-side code
-untouched.
+Introduce Errno to Rust side code. Note that in current Rust For Linux,
+Errnos are implemented as core::ffi::c_uint unit structs.
+However, EUCLEAN, a.k.a EFSCORRUPTED is missing from error crate.
+
+Since the errno_base hasn't changed for over 13 years,
+This patch merely serves as a temporary workaround for the missing
+errno in the Rust For Linux.
 
 Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 ---
- fs/erofs/Kconfig                      |  10 ++
- fs/erofs/Makefile                     |   1 +
- fs/erofs/rust/erofs_sys.rs            |  22 +++++
- fs/erofs/rust/erofs_sys/superblock.rs | 132 ++++++++++++++++++++++++++
- fs/erofs/rust/mod.rs                  |   4 +
- fs/erofs/super_rs.rs                  |   9 ++
- 6 files changed, 178 insertions(+)
- create mode 100644 fs/erofs/rust/erofs_sys.rs
- create mode 100644 fs/erofs/rust/erofs_sys/superblock.rs
- create mode 100644 fs/erofs/rust/mod.rs
- create mode 100644 fs/erofs/super_rs.rs
+ fs/erofs/rust/erofs_sys.rs        |   6 +
+ fs/erofs/rust/erofs_sys/errnos.rs | 191 ++++++++++++++++++++++++++++++
+ 2 files changed, 197 insertions(+)
+ create mode 100644 fs/erofs/rust/erofs_sys/errnos.rs
 
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 6ea60661fa55..e2883efbf497 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -178,3 +178,13 @@ config EROFS_FS_PCPU_KTHREAD_HIPRI
- 	  at higher priority.
- 
- 	  If unsure, say N.
-+
-+config EROFS_FS_RUST
-+	bool "EROFS use RUST Replacement (EXPERIMENTAL)"
-+	depends on EROFS_FS && RUST
-+	help
-+	  This permits EROFS to use EXPERIMENTAL Rust implementation
-+	  for EROFS. This should be considered as an experimental
-+	  feature for now.
-+
-+	  If unsure, say N.
-diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
-index 4331d53c7109..fb46a2c7fb50 100644
---- a/fs/erofs/Makefile
-+++ b/fs/erofs/Makefile
-@@ -9,3 +9,4 @@ erofs-$(CONFIG_EROFS_FS_ZIP_DEFLATE) += decompressor_deflate.o
- erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
- erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
- erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
-+erofs-$(CONFIG_EROFS_FS_RUST) += super_rs.o
 diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
-new file mode 100644
-index 000000000000..0f1400175fc2
---- /dev/null
+index 0f1400175fc2..2bd1381da5ab 100644
+--- a/fs/erofs/rust/erofs_sys.rs
 +++ b/fs/erofs/rust/erofs_sys.rs
-@@ -0,0 +1,22 @@
-+#![allow(dead_code)]
-+// Copyright 2024 Yiyang Wu
-+// SPDX-License-Identifier: MIT or GPL-2.0-or-later
+@@ -19,4 +19,10 @@
+ pub(crate) type Nid = u64;
+ /// Erofs Super Offset to read the ondisk superblock
+ pub(crate) const EROFS_SUPER_OFFSET: Off = 1024;
++/// PosixResult as a type alias to kernel::error::Result
++/// to avoid naming conflicts.
++pub(crate) type PosixResult<T> = Result<T, Errno>;
 +
-+//! A pure Rust implementation of the EROFS filesystem.
-+//! Technical Details are documented in the [EROFS Documentation](https://erofs.docs.kernel.org/en/latest/)
-+
-+// It's unavoidable to import alloc here. Since there are so many backends there and if we want to
-+// to use trait object to export Filesystem pointer. The alloc crate here is necessary.
-+
-+#[cfg(not(CONFIG_EROFS_FS = "y"))]
-+extern crate alloc;
-+
-+/// Erofs requires block index to a 32 bit unsigned integer.
-+pub(crate) type Blk = u32;
-+/// Erofs requires normal offset to be a 64bit unsigned integer.
-+pub(crate) type Off = u64;
-+/// Erofs requires inode nid to be a 64bit unsigned integer.
-+pub(crate) type Nid = u64;
-+/// Erofs Super Offset to read the ondisk superblock
-+pub(crate) const EROFS_SUPER_OFFSET: Off = 1024;
-+pub(crate) mod superblock;
-diff --git a/fs/erofs/rust/erofs_sys/superblock.rs b/fs/erofs/rust/erofs_sys/superblock.rs
++pub(crate) mod errnos;
+ pub(crate) mod superblock;
++pub(crate) use errnos::Errno;
+diff --git a/fs/erofs/rust/erofs_sys/errnos.rs b/fs/erofs/rust/erofs_sys/errnos.rs
 new file mode 100644
-index 000000000000..213be6dbc553
+index 000000000000..40e5cdbcb353
 --- /dev/null
-+++ b/fs/erofs/rust/erofs_sys/superblock.rs
-@@ -0,0 +1,132 @@
++++ b/fs/erofs/rust/erofs_sys/errnos.rs
+@@ -0,0 +1,191 @@
 +// Copyright 2024 Yiyang Wu
 +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
-+use super::*;
-+use core::mem::size_of;
-+
-+/// The ondisk superblock structure.
-+#[derive(Debug, Clone, Copy, Default)]
-+#[repr(C)]
-+pub(crate) struct SuperBlock {
-+    pub(crate) magic: u32,
-+    pub(crate) checksum: i32,
-+    pub(crate) feature_compat: i32,
-+    pub(crate) blkszbits: u8,
-+    pub(crate) sb_extslots: u8,
-+    pub(crate) root_nid: i16,
-+    pub(crate) inos: i64,
-+    pub(crate) build_time: i64,
-+    pub(crate) build_time_nsec: i32,
-+    pub(crate) blocks: i32,
-+    pub(crate) meta_blkaddr: u32,
-+    pub(crate) xattr_blkaddr: u32,
-+    pub(crate) uuid: [u8; 16],
-+    pub(crate) volume_name: [u8; 16],
-+    pub(crate) feature_incompat: i32,
-+    pub(crate) compression: i16,
-+    pub(crate) extra_devices: i16,
-+    pub(crate) devt_slotoff: i16,
-+    pub(crate) dirblkbits: u8,
-+    pub(crate) xattr_prefix_count: u8,
-+    pub(crate) xattr_prefix_start: i32,
-+    pub(crate) packed_nid: i64,
-+    pub(crate) xattr_filter_reserved: u8,
-+    pub(crate) reserved: [u8; 23],
++#[repr(i32)]
++#[non_exhaustive]
++#[allow(clippy::upper_case_acronyms)]
++#[derive(Debug, Copy, Clone, PartialEq)]
++pub(crate) enum Errno {
++    NONE = 0,
++    EPERM,
++    ENOENT,
++    ESRCH,
++    EINTR,
++    EIO,
++    ENXIO,
++    E2BIG,
++    ENOEXEC,
++    EBADF,
++    ECHILD,
++    EAGAIN,
++    ENOMEM,
++    EACCES,
++    EFAULT,
++    ENOTBLK,
++    EBUSY,
++    EEXIST,
++    EXDEV,
++    ENODEV,
++    ENOTDIR,
++    EISDIR,
++    EINVAL,
++    ENFILE,
++    EMFILE,
++    ENOTTY,
++    ETXTBSY,
++    EFBIG,
++    ENOSPC,
++    ESPIPE,
++    EROFS,
++    EMLINK,
++    EPIPE,
++    EDOM,
++    ERANGE,
++    EDEADLK,
++    ENAMETOOLONG,
++    ENOLCK,
++    ENOSYS,
++    ENOTEMPTY,
++    ELOOP,
++    ENOMSG = 42,
++    EIDRM,
++    ECHRNG,
++    EL2NSYNC,
++    EL3HLT,
++    EL3RST,
++    ELNRNG,
++    EUNATCH,
++    ENOCSI,
++    EL2HLT,
++    EBADE,
++    EBADR,
++    EXFULL,
++    ENOANO,
++    EBADRQC,
++    EBADSLT,
++    EBFONT = 59,
++    ENOSTR,
++    ENODATA,
++    ETIME,
++    ENOSR,
++    ENONET,
++    ENOPKG,
++    EREMOTE,
++    ENOLINK,
++    EADV,
++    ESRMNT,
++    ECOMM,
++    EPROTO,
++    EMULTIHOP,
++    EDOTDOT,
++    EBADMSG,
++    EOVERFLOW,
++    ENOTUNIQ,
++    EBADFD,
++    EREMCHG,
++    ELIBACC,
++    ELIBBAD,
++    ELIBSCN,
++    ELIBMAX,
++    ELIBEXEC,
++    EILSEQ,
++    ERESTART,
++    ESTRPIPE,
++    EUSERS,
++    ENOTSOCK,
++    EDESTADDRREQ,
++    EMSGSIZE,
++    EPROTOTYPE,
++    ENOPROTOOPT,
++    EPROTONOSUPPORT,
++    ESOCKTNOSUPPORT,
++    EOPNOTSUPP,
++    EPFNOSUPPORT,
++    EAFNOSUPPORT,
++    EADDRINUSE,
++    EADDRNOTAVAIL,
++    ENETDOWN,
++    ENETUNREACH,
++    ENETRESET,
++    ECONNABORTED,
++    ECONNRESET,
++    ENOBUFS,
++    EISCONN,
++    ENOTCONN,
++    ESHUTDOWN,
++    ETOOMANYREFS,
++    ETIMEDOUT,
++    ECONNREFUSED,
++    EHOSTDOWN,
++    EHOSTUNREACH,
++    EALREADY,
++    EINPROGRESS,
++    ESTALE,
++    EUCLEAN,
++    ENOTNAM,
++    ENAVAIL,
++    EISNAM,
++    EREMOTEIO,
++    EDQUOT,
++    ENOMEDIUM,
++    EMEDIUMTYPE,
++    ECANCELED,
++    ENOKEY,
++    EKEYEXPIRED,
++    EKEYREVOKED,
++    EKEYREJECTED,
++    EOWNERDEAD,
++    ENOTRECOVERABLE,
++    ERFKILL,
++    EHWPOISON,
++    EUNKNOWN,
 +}
 +
-+impl TryFrom<&[u8]> for SuperBlock {
-+    type Error = core::array::TryFromSliceError;
-+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-+        value[0..128].try_into()
-+    }
-+}
-+
-+impl From<[u8; 128]> for SuperBlock {
-+    fn from(value: [u8; 128]) -> Self {
-+        Self {
-+            magic: u32::from_le_bytes([value[0], value[1], value[2], value[3]]),
-+            checksum: i32::from_le_bytes([value[4], value[5], value[6], value[7]]),
-+            feature_compat: i32::from_le_bytes([value[8], value[9], value[10], value[11]]),
-+            blkszbits: value[12],
-+            sb_extslots: value[13],
-+            root_nid: i16::from_le_bytes([value[14], value[15]]),
-+            inos: i64::from_le_bytes([
-+                value[16], value[17], value[18], value[19], value[20], value[21], value[22],
-+                value[23],
-+            ]),
-+            build_time: i64::from_le_bytes([
-+                value[24], value[25], value[26], value[27], value[28], value[29], value[30],
-+                value[31],
-+            ]),
-+            build_time_nsec: i32::from_le_bytes([value[32], value[33], value[34], value[35]]),
-+            blocks: i32::from_le_bytes([value[36], value[37], value[38], value[39]]),
-+            meta_blkaddr: u32::from_le_bytes([value[40], value[41], value[42], value[43]]),
-+            xattr_blkaddr: u32::from_le_bytes([value[44], value[45], value[46], value[47]]),
-+            uuid: value[48..64].try_into().unwrap(),
-+            volume_name: value[64..80].try_into().unwrap(),
-+            feature_incompat: i32::from_le_bytes([value[80], value[81], value[82], value[83]]),
-+            compression: i16::from_le_bytes([value[84], value[85]]),
-+            extra_devices: i16::from_le_bytes([value[86], value[87]]),
-+            devt_slotoff: i16::from_le_bytes([value[88], value[89]]),
-+            dirblkbits: value[90],
-+            xattr_prefix_count: value[91],
-+            xattr_prefix_start: i32::from_le_bytes([value[92], value[93], value[94], value[95]]),
-+            packed_nid: i64::from_le_bytes([
-+                value[96], value[97], value[98], value[99], value[100], value[101], value[102],
-+                value[103],
-+            ]),
-+            xattr_filter_reserved: value[104],
-+            reserved: value[105..128].try_into().unwrap(),
++impl From<i32> for Errno {
++    fn from(value: i32) -> Self {
++        if (-value) <= 0 || (-value) > Errno::EUNKNOWN as i32 {
++            Errno::EUNKNOWN
++        } else {
++            // Safety: The value is guaranteed to be a valid errno and the memory
++            // layout is the same for both types.
++            unsafe { core::mem::transmute(value) }
 +        }
 +    }
 +}
 +
-+pub(crate) type SuperBlockBuf = [u8; size_of::<SuperBlock>()];
-+pub(crate) const SUPERBLOCK_EMPTY_BUF: SuperBlockBuf = [0; size_of::<SuperBlock>()];
-+
-+/// Used for external address calculation.
-+pub(crate) struct Accessor {
-+    pub(crate) base: Off,
-+    pub(crate) off: Off,
-+    pub(crate) len: Off,
-+    pub(crate) nr: Off,
-+}
-+
-+impl Accessor {
-+    pub(crate) fn new(address: Off, bits: Off) -> Self {
-+        let sz = 1 << bits;
-+        let mask = sz - 1;
-+        Accessor {
-+            base: (address >> bits) << bits,
-+            off: address & mask,
-+            len: sz - (address & mask),
-+            nr: address >> bits,
-+        }
++impl From<Errno> for i32 {
++    fn from(value: Errno) -> Self {
++        -(value as i32)
 +    }
 +}
 +
-+impl SuperBlock {
-+    pub(crate) fn blk_access(&self, address: Off) -> Accessor {
-+        Accessor::new(address, self.blkszbits as Off)
-+    }
-+
-+    pub(crate) fn blknr(&self, pos: Off) -> Blk {
-+        (pos >> self.blkszbits) as Blk
-+    }
-+
-+    pub(crate) fn blkpos(&self, blk: Blk) -> Off {
-+        (blk as Off) << self.blkszbits
-+    }
-+
-+    pub(crate) fn blksz(&self) -> Off {
-+        1 << self.blkszbits
-+    }
-+
-+    pub(crate) fn blk_round_up(&self, addr: Off) -> Blk {
-+        ((addr + self.blksz() - 1) >> self.blkszbits) as Blk
-+    }
-+
-+    pub(crate) fn iloc(&self, nid: Nid) -> Off {
-+        self.blkpos(self.meta_blkaddr) + ((nid as Off) << (5 as Off))
++/// Replacement for ERR_PTR in Linux Kernel.
++impl From<Errno> for *const core::ffi::c_void {
++    fn from(value: Errno) -> Self {
++        (-(value as core::ffi::c_long)) as *const core::ffi::c_void
 +    }
 +}
-diff --git a/fs/erofs/rust/mod.rs b/fs/erofs/rust/mod.rs
-new file mode 100644
-index 000000000000..e6c0731f2533
---- /dev/null
-+++ b/fs/erofs/rust/mod.rs
-@@ -0,0 +1,4 @@
-+// Copyright 2024 Yiyang Wu
-+// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
-+pub(crate) mod erofs_sys;
-diff --git a/fs/erofs/super_rs.rs b/fs/erofs/super_rs.rs
-new file mode 100644
-index 000000000000..4b8cbef507e3
---- /dev/null
-+++ b/fs/erofs/super_rs.rs
-@@ -0,0 +1,9 @@
-+// Copyright 2024 Yiyang Wu
-+// SPDX-License-Identifier: MIT or GPL-2.0-or-later
++impl From<Errno> for *mut core::ffi::c_void {
++    fn from(value: Errno) -> Self {
++        (-(value as core::ffi::c_long)) as *mut core::ffi::c_void
++    }
++}
 +
-+//! EROFS Rust Kernel Module Helpers Implementation
-+//! This is only for experimental purpose. Feedback is always welcome.
++/// Replacement for PTR_ERR in Linux Kernel.
++impl From<*const core::ffi::c_void> for Errno {
++    fn from(value: *const core::ffi::c_void) -> Self {
++        (-(value as i32)).into()
++    }
++}
 +
-+#[allow(dead_code)]
-+#[allow(missing_docs)]
-+pub(crate) mod rust;
++impl From<*mut core::ffi::c_void> for Errno {
++    fn from(value: *mut core::ffi::c_void) -> Self {
++        (-(value as i32)).into()
++    }
++}
++/// Replacement for IS_ERR in Linux Kernel.
++#[inline(always)]
++pub(crate) fn is_value_err(value: *const core::ffi::c_void) -> bool {
++    (value as core::ffi::c_ulong) >= (-4095 as core::ffi::c_long) as core::ffi::c_ulong
++}
 -- 
 2.46.0
 
