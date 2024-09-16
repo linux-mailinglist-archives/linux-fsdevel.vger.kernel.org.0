@@ -1,160 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-29449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2B8979F28
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 12:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64ED1979F34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 12:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A04281627
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 10:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9571F213E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 10:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78064153814;
-	Mon, 16 Sep 2024 10:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F052015350B;
+	Mon, 16 Sep 2024 10:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E94SEr6H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X9vlzHNg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D9RpAMTw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C83CA935;
-	Mon, 16 Sep 2024 10:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6C214A61A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 10:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726482041; cv=none; b=mjPNOkeiNJd3hRvXM0jOgp+495axDkTWA5pV+IJG9mbZMJKkMq60ZFsN+UGPkg/3DaIC30NPmFEtOT7rBN3fSjGeLZuHCSCBs2aik5wKIvEWLNZSxmmNmHVGeD1mog7513wyCZ6h4Ndl7TFaOt4u2tJv3Tj2JVD9tYHszUEHvHU=
+	t=1726482204; cv=none; b=Yxy2RcdLwuMFHSLFW/+jRiCc+b5+o5sRSltgw64EW8FAiSiIUGFlDw3ia/qja2qK7ejlU5jCLGHSqmxF7gNGjcmgUtNeJI+VGZzuUnCOQqUAYTdj/3XFdaH6mZF7ThLPgA6kfJl20h/gBxadRrXf1rlTbK7RIPAxnNr4HT1h2QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726482041; c=relaxed/simple;
-	bh=E/w4+xa3amQXpGI5fCZ/ptW0dOLoQK0QOmDuZUDIOP8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y112G5awmGDBPCSkgjcZ1vHa8Vf73EjHTJTc47p18ERXJMPdXc3tewgQj2PvYHsOY7tVMyzf3x/6c7jtlNnjTkAt1+DEj0EzA3UScCx29CXplIPygGQFR47G1O++CTk3itG3PIxQNiSPvCgtkSwU3lxyU034PdqQnE6LNDgtx64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E94SEr6H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X9vlzHNg; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726482038;
+	s=arc-20240116; t=1726482204; c=relaxed/simple;
+	bh=IDyHODyJ4j3RdqZbw6fIagiBbvuMbzpQTmpXdcLUqsY=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=PyiU6Ng9ZdWepT9O1TBUHxV9wTXda02SgarMDOytUaJbeZmSnwNiR6P9yTpUS5fA6U6ahmAbvdNfYv/XfJkWSqMntJRZlOakKW4IjqQF3HjlVQ+CMa69kit52NMoeACOYsmVRgWdl3D+lp73Hhi+JzkHT1/wbB/N+EJEeTijWyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D9RpAMTw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726482201;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OVG16f7Lu6e/H23VRJ+O/4IkmfuMphsrI/ipqzuRwhM=;
-	b=E94SEr6HGjjaRf5H7+ZkfgZowKYiFKpF328zjde6biUZeuGmGrtQv6oS3PBXA3GIoHTyKH
-	mQlJbIgW5eYuB9Qlvfl4V2sBvjGis+xqWMvwHYULSu2I9gleX8ZCTMU12a7jWzdcYLH9jl
-	LlwCnTAIHGLPcKhOqS6Gju9gsGcihltDLI9EUw5/JiygRw72jIjI+rP4BQPrr0Fs+5M3/D
-	OW+FIoCrmGJ9vK79YGucwB4XWRiKZmHjbiUFjrMmi2Bk3tbVVtwa4npQSIX7CmsQnEQvb9
-	xJdlZuWC6RRwTl2JzrFR4gwnJAsKly0FnZRlnIgwihMwy/O6ZrI4Brk8w2PyLQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726482038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OVG16f7Lu6e/H23VRJ+O/4IkmfuMphsrI/ipqzuRwhM=;
-	b=X9vlzHNgUVa0a3OKlhqGWstodYRShttuTWSfa1R6XCAL0ByC2d7QTL8VeW7MjLvjBlT+Lg
-	qpOskyA6Rt0z6SDQ==
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
- <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org, Jeff Layton
- <jlayton@kernel.org>
-Subject: Re: [PATCH v8 06/11] fs: add percpu counters for significant
- multigrain timestamp events
-In-Reply-To: <20240914-mgtime-v8-6-5bd872330bed@kernel.org>
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
- <20240914-mgtime-v8-6-5bd872330bed@kernel.org>
-Date: Mon, 16 Sep 2024 12:20:37 +0200
-Message-ID: <877cbb99xm.ffs@tglx>
+	bh=yhcNOV+akvmlPEBsqDRaj33vSsYLiwBwI4YZtgYT9s0=;
+	b=D9RpAMTwfLgqwO6nqHNupgzl1tWQ2bZjuyGMYfK3sXDmOo4tsetCa8Y6anDMBRoW1hCdnP
+	TKS1xpX0W1TCoRDIvn8omba8KMNCVnJyyiCrLIRYNqcueBJYb623B19o2aO3rWRPNdqAiH
+	Oiu7Oaxepxfz1f4Jz4A2Fstv2fV7hvk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-397-PweIc-PCNkaGCJlIzebK2g-1; Mon,
+ 16 Sep 2024 06:23:16 -0400
+X-MC-Unique: PweIc-PCNkaGCJlIzebK2g-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 12841195422B;
+	Mon, 16 Sep 2024 10:23:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D5DB030001AB;
+	Mon, 16 Sep 2024 10:23:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <202409161629.98887b2-oliver.sang@intel.com>
+References: <202409161629.98887b2-oliver.sang@intel.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: dhowells@redhat.com, oe-lkp@lists.linux.dev, lkp@intel.com,
+    Linux Memory Management List <linux-mm@kvack.org>,
+    Christian Brauner <brauner@kernel.org>,
+    Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
+    Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+    samba-technical@lists.samba.org
+Subject: Re: [linux-next:fs-next] [netfs, cifs] 73425800ac: xfstests.generic.080.fail
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1835553.1726482188.1@warthog.procyon.org.uk>
+Date: Mon, 16 Sep 2024 11:23:08 +0100
+Message-ID: <1835554.1726482188@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sat, Sep 14 2024 at 13:07, Jeff Layton wrote:
->  fs/inode.c                         | 76 ++++++++++++++++++++++++++++++++++++--
->  include/linux/timekeeping.h        |  1 +
->  kernel/time/timekeeping.c          |  3 +-
->  kernel/time/timekeeping_debug.c    | 12 ++++++
->  kernel/time/timekeeping_internal.h |  3 ++
+kernel test robot <oliver.sang@intel.com> wrote:
 
-So the subject says 'fs:'. This is not how it works.
+> in testcase: xfstests
+> version: xfstests-x86_64-b1465280-1_20240909
+> with following parameters:
+> 
+> 	disk: 4HDD
+> 	fs: ext4
+> 	fs2: smbv3
+> 	test: generic-080
 
-Provide the timekeeping changes in a separate patch and then add the fs
-voodoo. Documentation is pretty clear about this, no?
+What's the server?  Samba, Windows, Azure or ksmbd?  It seems to matter quite
+a lot.
 
-> diff --git a/kernel/time/timekeeping_debug.c b/kernel/time/timekeeping_debug.c
-> index b73e8850e58d..9a3792072762 100644
-> --- a/kernel/time/timekeeping_debug.c
-> +++ b/kernel/time/timekeeping_debug.c
-> @@ -17,6 +17,9 @@
->  
->  #define NUM_BINS 32
->  
-> +/* incremented every time mg_floor is updated */
+David
 
-Sentences start with a uppercase letter.
-
-> +DEFINE_PER_CPU(long, mg_floor_swaps);
-
-Why is this long? This is a counter which always counts up..
-
->  static unsigned int sleep_time_bin[NUM_BINS] = {0};
->  
->  static int tk_debug_sleep_time_show(struct seq_file *s, void *data)
-> @@ -53,3 +56,12 @@ void tk_debug_account_sleep_time(const struct timespec64 *t)
->  			   (s64)t->tv_sec, t->tv_nsec / NSEC_PER_MSEC);
->  }
->  
-> +long get_mg_floor_swaps(void)
-
-Can we please have a proper subsystem prefix and not this get_*()
-notation. It's horrible to grep for. timekeeping_mg_get_...() makes it
-clear where this function belongs to, no?
-
-> +{
-> +	int i;
-> +	long sum = 0;
-
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variable-declarations
-
-Also please use 'cpu' instead of 'i'. Self explanatory variable names
-have a value.
-
-> +	for_each_possible_cpu(i)
-> +		sum += per_cpu(mg_floor_swaps, i);
-
-This needs annotation for kcsan as this is a racy access.
-
-> +	return sum < 0 ? 0 : sum;
-> +}
-> diff --git a/kernel/time/timekeeping_internal.h b/kernel/time/timekeeping_internal.h
-> index 4ca2787d1642..2b49332b45a5 100644
-> --- a/kernel/time/timekeeping_internal.h
-> +++ b/kernel/time/timekeeping_internal.h
-> @@ -11,8 +11,11 @@
->   */
->  #ifdef CONFIG_DEBUG_FS
->  extern void tk_debug_account_sleep_time(const struct timespec64 *t);
-> +DECLARE_PER_CPU(long, mg_floor_swaps);
-> +#define mgtime_counter_inc(__var)	this_cpu_inc(__var)
-
-Please use static inlines for this.
-
-Thanks,
-
-        tglx
 
