@@ -1,62 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-29532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E47497A8E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 23:42:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2EEE97A8EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 23:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6CB286B72
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 21:42:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC95C2893DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 21:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D6F15FA72;
-	Mon, 16 Sep 2024 21:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CB19443;
+	Mon, 16 Sep 2024 21:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t8ZGdrsZ"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Fxa64976"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3FC158A2E;
-	Mon, 16 Sep 2024 21:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD3A4D8CC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 21:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726522941; cv=none; b=ul+IfF43u3cRJL2FXzt7Q7a9z89FjqGkcEhbPecYviK59FFt30VPJX+8jIg7a1p9yBcxCSaUbNyi6AGV84O9vCfW7+JIMhX+QKGy0utYP6n2W+dY2QPGVBSr1qqAAzxTsu9+l4gjJXcG+yoikxhxDv/A6pEY8az9oTqGFPSJyWg=
+	t=1726523735; cv=none; b=kZ3q+ZP3zUGsVHXjk3uPGEalNMlPlx0+mvgMee8jB6NoTw627cNL2J4KsqYNbDUpJahxYxnkrLYfK4ZpQXt9f74KSXDq1JWN/MjfsdERFMEa0GcfZ6RD9wLvC+NJ9IBMF5814xDml6iHj2ROOC4JyE8BJ99gXQog93ifT5ayZcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726522941; c=relaxed/simple;
-	bh=pbJX01PUVH+2R5tPmmtSbYG6rmE+twOIrxl+1J6Wxoo=;
+	s=arc-20240116; t=1726523735; c=relaxed/simple;
+	bh=dvdb/hPpUaIakFW38vCDL3nT+2nz/7o6ghkRKdQ6CU0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7QoEZxSO8vlQa/alNtIFDH+10tDOhEXC965hqtG5XNejqPIufTzEEyWls8wjVSM2jm8RhcoxuX7hl/hKu9xK03OQZIPch08JJ9djiiZWb2/0DUdIjNTOwNSGPdOGeFYHtu0wX9cCJWC4Lt23o8OuC1QMEl+vGRCJixlLmV5JGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=t8ZGdrsZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iWPVUjwXOy2FImjR05EIaFD8Hokx95ABL5Jg22WP/1Q=; b=t8ZGdrsZBw9vZG86m3yTJXqoB5
-	GMWr0Vsq3lqtfFAm6pg2j63vipBSLt6Me37OZFKXgmi7von2QYUx9PBIIbwEH41sjO45eCDJMydlX
-	hBtfHd/FcjcqDayDt22dU9PnVarf0xmlpCMW+ZRFIBA11JM0Az5wtJ0nek7XtLQFoCKLcPpyeBCwH
-	OapTa9xyVPd1VjVPcMRKGvBPKF9ymip8wv3FuGwdfRRJ0Q3yxpYRY2sjm6lMIYxCfpPRLNsCUzuTa
-	UaTjoryYB492d0saSphaC+pw9dDu9Pqp6Qc0JTthS8gEtGytCPs7eucTjwosI4h2AyLFAoV4qn5/f
-	0W3Wc8/w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sqJTy-00000002PR1-25HR;
-	Mon, 16 Sep 2024 21:42:06 +0000
-Date: Mon, 16 Sep 2024 22:42:06 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: pbonzini@redhat.com, corbet@lwn.net, akpm@linux-foundation.org,
-	acme@redhat.com, namhyung@kernel.org, mpe@ellerman.id.au,
-	isaku.yamahata@intel.com, joel@jms.id.au, kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	shivansh.dhiman@amd.com, bharata@amd.com, nikunj@amd.com
-Subject: Re: [PATCH RFC 2/3] mm: Add mempolicy support to the filemap layer
-Message-ID: <ZuimLtrpv1dXczf5@casper.infradead.org>
-References: <20240916165743.201087-1-shivankg@amd.com>
- <20240916165743.201087-3-shivankg@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AZZyB8LFRH1ex4U32mqLIC1IaH+hvuLSxuvevuJF4abirQF6CyYs8DihNBW+Xgp4k4ElEnFkpEyVkaphjZJvweZzFXpGH60gJq66dktGl84FPi/x3Z35XSjHrJWqjmGay089mMFDVYxIy/5r9wV+6msk7STZ+dSDtCdHIhig1X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Fxa64976; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20688fbaeafso42052985ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 14:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726523733; x=1727128533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7+QcDyNxCWCtWt9+G6UHYM5MMFaIylSmdocAH+GqoOc=;
+        b=Fxa64976TA7DtMxglyvo+6ObR75CazhewmJo1VoSdVwZHOHeYjrN3k7/+X9WF8RQ7W
+         u4QByY1vEBGgj2m640CWQ1Uh68js277k6m+YwIjt8SO21P75SOhllw/N/GgMEX0m8+oA
+         JvCv68RUC/aZ5VCR9wnk5jiZwGtcDkat9Fg2jp4nZQunVtAHobSjUP1dneE4CN4NTFVa
+         gHk8PA/eDCqpNcZeS1XGd7oqBsBUHeiE6sfWHH1FdBLCc2znYkNvkNPH09hjGTkeUYYo
+         genM5QQQIHsrTr+zmGWg7V5+exYEN76ZGSbWj4A7daN+QWGrj+5a3PbaAbS08AvJ50kL
+         JbIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726523733; x=1727128533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7+QcDyNxCWCtWt9+G6UHYM5MMFaIylSmdocAH+GqoOc=;
+        b=AsfFKoEiTbHgSesWEZ5L50zq8nc8LEgwsuJP3D71eOopD9c/iIky9AGoiKLtvj5VOm
+         zYYY3+yhiXcoxl9s8CUAjch3tB9AETruKUisSwe/aRdt0wYmAwF1rTdZW5pCp13J0PbM
+         re50EajAR6MsWpfoPXVqvDThQZQO/Ho4oxDqDmqznPfrnPZ5gfaDTqQfbshuAKO0Uvul
+         NE4/Q4ZJY+g24oaoL7NEY7gzKBROLQzS9JkVxcsG9rFARr5k7QjaPOTnAvTJ3QU+4gUB
+         6ya3NcHy6//MnXWX7PpV2WFBqnKgn+vdD7XJouVsPggmCCDQk/sC4aRFLFuDiyWWcrYz
+         SmIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW/dR3w0qSWuETogfYmWXZZbDZbGmuu9DTH1Qcmi9e5yCOwRMVVDCBQs2B6mDRY1eISIMgxdULc3xb+mwM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGeQlmvcWNvU74ID8Ow8ZmUNu4QDUxCYuf6eMOOnAq/cUSQaa1
+	pLWDC5PR1pWi3Of9wlOIgSrRHsoJVH47tNinL43YopXvIadNd/CEdFimd2P7/K4=
+X-Google-Smtp-Source: AGHT+IF0iFN6cnO2/4mZbjdywZwBn/2zzJXSThiMoB3CX3BD1WHtQH9VedLiduQdloMWcI2cvwTppQ==
+X-Received: by 2002:a17:902:c946:b0:207:5ca3:8d23 with SMTP id d9443c01a7336-20782b9e330mr183198465ad.59.1726523732632;
+        Mon, 16 Sep 2024 14:55:32 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079460111asm40742535ad.90.2024.09.16.14.55.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 14:55:32 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sqJgv-0066Fa-1C;
+	Tue, 17 Sep 2024 07:55:29 +1000
+Date: Tue, 17 Sep 2024 07:55:29 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: trondmy@kernel.org, Mike Snitzer <snitzer@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] filemap: Fix bounds checking in filemap_read()
+Message-ID: <ZuipUe6Z2QAF9pZs@dread.disaster.area>
+References: <c6f35a86fe9ae6aa33b2fd3983b4023c2f4f9c13.1726250071.git.trond.myklebust@hammerspace.com>
+ <ZuSCwiSl4kbo3Nar@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,63 +87,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240916165743.201087-3-shivankg@amd.com>
+In-Reply-To: <ZuSCwiSl4kbo3Nar@casper.infradead.org>
 
-On Mon, Sep 16, 2024 at 04:57:42PM +0000, Shivank Garg wrote:
-> @@ -652,6 +660,8 @@ static inline fgf_t fgf_set_order(size_t size)
->  void *filemap_get_entry(struct address_space *mapping, pgoff_t index);
->  struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  		fgf_t fgp_flags, gfp_t gfp);
-> +struct folio *__filemap_get_folio_mpol(struct address_space *mapping,
-> +		pgoff_t index, fgf_t fgp_flags, gfp_t gfp, struct mempolicy *mpol);
->  struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
->  		fgf_t fgp_flags, gfp_t gfp);
->  
-> @@ -710,6 +720,26 @@ static inline struct folio *filemap_grab_folio(struct address_space *mapping,
->  			mapping_gfp_mask(mapping));
->  }
->  
-> +/**
-> + * filemap_grab_folio_mpol - grab a folio from the page cache
-> + * @mapping: The address space to search
-> + * @index: The page index
-> + * @mpol: The mempolicy to apply
-> + *
-> + * Same as filemap_grab_folio(), except that it allocates the folio using
-> + * given memory policy.
-> + *
-> + * Return: A found or created folio. ERR_PTR(-ENOMEM) if no folio is found
-> + * and failed to create a folio.
-> + */
-> +static inline struct folio *filemap_grab_folio_mpol(struct address_space *mapping,
-> +					pgoff_t index, struct mempolicy *mpol)
-> +{
-> +	return __filemap_get_folio_mpol(mapping, index,
-> +			FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-> +			mapping_gfp_mask(mapping), mpol);
-> +}
+On Fri, Sep 13, 2024 at 07:21:54PM +0100, Matthew Wilcox wrote:
+> On Fri, Sep 13, 2024 at 01:57:04PM -0400, trondmy@kernel.org wrote:
+> > If the caller supplies an iocb->ki_pos value that is close to the
+> > filesystem upper limit, and an iterator with a count that causes us to
+> > overflow that limit, then filemap_read() enters an infinite loop.
+> 
+> Are we guaranteed that ki_pos lies in the range [0..s_maxbytes)?
+> I'm not too familiar with the upper paths of the VFS and what guarantees
+> we can depend on.  If we are guaranteed that, could somebody document
+> it (and indeed create kernel-doc for struct kiocb)?
 
-This should be conditional on CONFIG_NUMA, just like 
-filemap_alloc_folio_mpol_noprof() above.
+filemap_read() checks this itself before doing anything else:
 
-> @@ -1947,7 +1959,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  			err = -ENOMEM;
->  			if (order > 0)
->  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
-> -			folio = filemap_alloc_folio(alloc_gfp, order);
-> +			folio = filemap_alloc_folio_mpol_noprof(alloc_gfp, order, mpol);
+	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
+                return 0;
 
-Why use the _noprof variant here?
+i.e. there is no guarantee provided by the upper layers, it's first
+checked right here in any buffered read path...
 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 9e9450433fcc..88da732cf2be 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -2281,6 +2281,7 @@ struct folio *folio_alloc_mpol_noprof(gfp_t gfp, unsigned int order,
->  	return page_rmappable_folio(alloc_pages_mpol_noprof(gfp | __GFP_COMP,
->  							order, pol, ilx, nid));
->  }
-> +EXPORT_SYMBOL(folio_alloc_mpol_noprof);
+-Dave.
 
-Why does this need to be exported?  What module will use it?
+-- 
+Dave Chinner
+david@fromorbit.com
 
