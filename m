@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-29514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E6A97A64E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 18:58:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BEA97A656
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 18:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6660B209FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:58:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D671C2205C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6238415B133;
-	Mon, 16 Sep 2024 16:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B9915D5B6;
+	Mon, 16 Sep 2024 16:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AMGHk/96"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YkW338mG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2068.outbound.protection.outlook.com [40.107.100.68])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2083.outbound.protection.outlook.com [40.107.223.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4943410A18;
-	Mon, 16 Sep 2024 16:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26E815B984;
+	Mon, 16 Sep 2024 16:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.83
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726505902; cv=fail; b=QD2w1Nv1UjhmJRSlEbBFFhxxZMAzXTmcKfCnxhwLyH1u/Pueoderog2EfVcMGXjDc/RN6wONfdBhjkB6o//D9rmIwAkmXpNnUzrcD4YaEYDloiT1EN8HMDPFtq5+zrePU2+U6uf3x5Bkb0O7wHkv9QyFXQiJwfCtl0wEWT+Vme4=
+	t=1726505912; cv=fail; b=nJMudvbNJeL7vYOJ9luxr0t8inkE0UyHZqVu8xnK4/jSI62M8q867Tes003gd1/LZo3zk2oYTwgoqRyKJhVA0B8cwuRqprZRaIB59i+XEp3MlydeNSL1lM9J4MFNboLjx3lmcNLHKGcYwl8Xm1rGugbZEpuSpojZ9SGollNJR8c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726505902; c=relaxed/simple;
-	bh=Qs0AakKzu6m4cPlnNL7HjgeM6YQuRkbBGanII5b+jds=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vAq+tUGKeFuGz+Rba3PWCrTGGlGk+D9Dh3CxLGganwxjAvfsFWKqDBLO+LXOZIej2cJONQdPuIW4YPvO1agVHoaSbZ0xYlWfUe7R/OAK3ONJi8DleiEl7akTJUmBaEAn9BfUKX2Kj2+9urJERGn8gEkr214apdKdhVg/mYamwOY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AMGHk/96; arc=fail smtp.client-ip=40.107.100.68
+	s=arc-20240116; t=1726505912; c=relaxed/simple;
+	bh=ReSF15x6Fz9cbAIS+BmPe3ITzPb/PVO4IMCRZRH9514=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mN7ZZarj5lUX3UbPw+BUxojUMt6umdQyJOks690dpSr3d50uUzUnSpKurrH6LVnLGLKaqiA60aTLtLA7MTpSym85DFJFGJ5m42VqxPE8LwBQgkmrlFkNQyFoLED3h4D73bHk6wSpJJ6fYE/A8lxnJJKa9v19TvC9RUC0pJ3Ri1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YkW338mG; arc=fail smtp.client-ip=40.107.223.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j/i/VQTps2qgEHlS6j/nRB+IQI53QLK3X/c1Y6AImMbaAgbcDljKDw6DYHBWFWTxkhrMZagTz8JUr+1MUnPIANTeL2htlhso6J/FCYQogbcp9NqD8I+wui4Fe2LSWY/tPfmR/t4x8NXuB/qBRHT4W+Um0Ryk1hJi8wmo9YG02M0Yye8Nxu5nKqhcryRUiYcRL9heKWYueLYTZNTQRUgS0z3dv2DG8uAHZH1qtJy6Rfgz9ZhoEs2rjHy8EwbvpygfuSkoO6Rp47KAVj/G1k1Khvu493ENhqMQ401kiG+HxKLTz5eS5ySXmkZ5aWpNn1bwTx+c06aCssQ9BkrgUOS7Ng==
+ b=v5y6xQPiUWn1DkHwR7oPqcS4vfNLDWC0FGJJDw48UDdk/1KWPt2iQeRU9+UoTXqzxdYZSYm8nRKmgRSmIu6nRgFqSepV1MzuZLT6XGer1fUfiaQS0VSP7K4b0QGuegIq0/+vfR5hjnrgK6aalgKM83q7H43Iqme0CDRAh3t7i39Ss7EUXVvDpypyRtQAghverH/WqIEfVgmG8B6DrTVG3qiHKsn3uxtf+KCYkSaP2ViwVR4/ykDNInD8vzFO7Ma+FDWJMmH4DXzZk2ROIxn83KMoXJZdUqaVPU38bNp7/u01g2SX3fJGheGTLyXhPu3EKU6V4ESHG9w9IUoqY90Pqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ubS2tFOUtJAvpXXDPXQi0C6ol4vzx/+49QbQRu3P0nM=;
- b=WQtDE7y4C2Z4VohUhThqpRFAOpIVdXbq765mnjs77J1+lr4wBW0L7j4/rzNG0U9/2Lxztbnu+wuEa0uw8xpi41CLQcTWBQ4P6OmWXIyrBHar1hwFbZ4eVYmtY+auF+Qrj3MdE3aiaJmXHybpxKsThNVWacwrwxsajhGpI+4OqjKv27azusgYujUJ6pBzZVfmT79wwybpMozscyV2r0hiJy+MXFcla26txlwDQzg9U5O+H2UpPot5+M5AVP/TZK2BtZBHAwzNn1rWviPMtwJpDGnYB6OJDlOjjB0IN+G7qJYf96YLChxEeo/fBlUqy04OnPZESZogPSycHvyVLKubig==
+ bh=5wOCBU41KU/9jYAjuxEnaob8uAuZTVT2xJKX1zAfNJ4=;
+ b=DTWFQBBZJO6MXARF6+3FX8YDTifPLsd3rl8u3iTh0MThXxIMSyW+r0mlmYJGrcj+NJ5emH2YtrVYRuYTXu7vLKVKFqGGvsZel59yKa9xCWRtNoMxSSIez30v5VWUvyw6U7d8BJj/s61j/qn8GrZ9Y8xnNNjRpfd+kCqgVLWlOsaig1H9xxLLBtSqq6Vu+y1qaZAxNTCgtVydKq9qZ75CHX19ICE2U+dYh0qzpQqaPKW1RVAWCSnbo8Za47rHGiIRjUWNpPjfdwaAjMkosubbK2Dm6paV0KS2N38xj6V+mtu1HgQBpAX3vizBFOrLvJLfhLMIVE/ytSp1zW/cFSRoHA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ubS2tFOUtJAvpXXDPXQi0C6ol4vzx/+49QbQRu3P0nM=;
- b=AMGHk/96OeFDhygdQcxsuIefcXH6EkjKV4KU5Y+zokBKX6aTFn588cbMiBl/p64rtuXzdhH55Vz5KkHCO3orL2NbPmLUjj2r1LpcrML9OkmgQzhShpK9b22GHTi4sLHn9ksiagGdxh0Q/GFk8uojFiUo+CkllDbgz4V5W1QKCg8=
-Received: from SA0PR11CA0112.namprd11.prod.outlook.com (2603:10b6:806:d1::27)
- by PH0PR12MB5606.namprd12.prod.outlook.com (2603:10b6:510:141::16) with
+ bh=5wOCBU41KU/9jYAjuxEnaob8uAuZTVT2xJKX1zAfNJ4=;
+ b=YkW338mGtmM/rP8DoGGhHvxaaWZyPz217gv0nhKYa607H8Xy4KVzPe03YaOw+H/BDKVtp1Y07yERDK+s4LM0RYm1qVch3XeLPumE8o3FsUhrKzBAGjTij9ZS7DtEPLYhoxYx8wwBnYArgHvPcPU5A2lwIJkr+fk4iZB1XGl6WqU=
+Received: from SN7P222CA0002.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:124::14)
+ by CH3PR12MB8725.namprd12.prod.outlook.com (2603:10b6:610:170::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Mon, 16 Sep
- 2024 16:58:10 +0000
-Received: from SN1PEPF000252A1.namprd05.prod.outlook.com
- (2603:10b6:806:d1:cafe::e4) by SA0PR11CA0112.outlook.office365.com
- (2603:10b6:806:d1::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Mon, 16 Sep
+ 2024 16:58:26 +0000
+Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
+ (2603:10b6:806:124:cafe::8a) by SN7P222CA0002.outlook.office365.com
+ (2603:10b6:806:124::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Mon, 16 Sep 2024 16:58:10 +0000
+ Transport; Mon, 16 Sep 2024 16:58:25 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +63,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF000252A1.mail.protection.outlook.com (10.167.242.8) with Microsoft
+ SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Mon, 16 Sep 2024 16:58:10 +0000
+ 15.20.7918.13 via Frontend Transport; Mon, 16 Sep 2024 16:58:25 +0000
 Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Sep
- 2024 11:58:05 -0500
+ 2024 11:58:19 -0500
 From: Shivank Garg <shivankg@amd.com>
 To: <pbonzini@redhat.com>, <corbet@lwn.net>, <akpm@linux-foundation.org>,
 	<willy@infradead.org>
@@ -77,10 +78,12 @@ CC: <acme@redhat.com>, <namhyung@kernel.org>, <mpe@ellerman.id.au>,
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>, <shivankg@amd.com>,
 	<shivansh.dhiman@amd.com>, <bharata@amd.com>, <nikunj@amd.com>
-Subject: [PATCH RFC 0/3] Add NUMA mempolicy support for KVM guest_memfd
-Date: Mon, 16 Sep 2024 16:57:40 +0000
-Message-ID: <20240916165743.201087-1-shivankg@amd.com>
+Subject: [PATCH RFC 1/3] KVM: guest_memfd: Extend creation API to support NUMA mempolicy
+Date: Mon, 16 Sep 2024 16:57:41 +0000
+Message-ID: <20240916165743.201087-2-shivankg@amd.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240916165743.201087-1-shivankg@amd.com>
+References: <20240916165743.201087-1-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,102 +96,300 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000252A1:EE_|PH0PR12MB5606:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42eb57f6-d429-49c8-4d87-08dcd670beca
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|CH3PR12MB8725:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9f062da-5119-462f-3b16-08dcd670c77f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026;
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|7416014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Fs+cMxKVa5xC5zIRSTxVzpaoRksJhjsCMONPKnI7/mUYy0axpQcswIKuJ1BD?=
- =?us-ascii?Q?2IWbVC9YL/zwYiJxjTRwm5hbSEnfUoY/R5yIy2MRLJpCvdkZBTeHk0XZ0KBG?=
- =?us-ascii?Q?cTHnCSGWYr8aiwMpnP7tMKkOgXMi61iooCNd4X8IxM3Hizpudg6FpcVhXUvr?=
- =?us-ascii?Q?8EydIbaEXdMoyPzdLmmpJ7nHUVJE1j0qyYSBVUx1+QIwSZcVNVvaIXSOXo6O?=
- =?us-ascii?Q?ngdUlOHQy+WSisupKQAQD8WQ4RCP547Ow7ZeCmJBWSxzxwOEU922+Ic/v5aY?=
- =?us-ascii?Q?zV33zGJY2yuq1SWllo5gys2xAXEURYT2z7oNI9igU/jZDbJVgcTZNtDnEtET?=
- =?us-ascii?Q?JHwh3g5x22gLy0abadLcnclgab2hLMK0l3kkOpYpat6IL/Gdsfp6SkXIr3y7?=
- =?us-ascii?Q?EyGnBQPdT0qPvwNfZwc+FzTrTy6NZyTBi2s1snI6FHMyIOYQjo5F0g43OgNf?=
- =?us-ascii?Q?fBnR8bkFMxMyUK/12H88C7ZjgojarsbuwgjRLaghFHiSQ91K9KIXSghRwn7H?=
- =?us-ascii?Q?11ofFT1RK5vojOmctHvEDHIqknygo4vmeYeF3/ZKRE3znU7NfNUqwjpTH7lE?=
- =?us-ascii?Q?duci6WTz2ijyRXF9F+ahNwBGArWm85fWXQ3NQuwens/DYUEZdpAaMROkhfTK?=
- =?us-ascii?Q?ZD9O7ZwP7L3iudctPQOdTyqWU7CQlqyz+L/NQPkWWGMfHwjAI/IPLGjxcgW4?=
- =?us-ascii?Q?VX65AQVe3C0Zf9y3qpu9GpKdJmhKwtXTotwyKPDrbU3Y4ctvx8iSUYZvoKqr?=
- =?us-ascii?Q?+kboLNqERvTC/cfzMZNO/ZssPkvliOyZZ95pFwg8rScfaxc44BG/53VLkh5d?=
- =?us-ascii?Q?I0LLqEUxYqSDtOAzFXbLc+P0vyX7zUOacjnDl3oEEXgtpECYDhp8nGSd+AqY?=
- =?us-ascii?Q?ws+y6E0RzicCdH0POGLxGsTZiv67SVCJtEn4/aYlMCX8KxoCE0tiP/flN6yX?=
- =?us-ascii?Q?iA31XofOYmfBewV6doTOXBLWldOXBoRu9nbO0jp7VbzoUONrg1wbEDRIkYIv?=
- =?us-ascii?Q?W28jmrnkG/HtzRYgCJAn1apRjC9gTywXPxgiuJtpqIT/2bwXl2eouYYNectH?=
- =?us-ascii?Q?B1Nczxk116D46xiOkbTPBNvdo5BANgaY6It17Mea4nlBUAAnko2hiUcQTSP3?=
- =?us-ascii?Q?I0pb9lepypcDYCxZg/tG4LVbEW2UKGu2bFHfOiAaJjOxMjLeFPtVWTDM5cvn?=
- =?us-ascii?Q?CWTmHUygPiDe6+k6YOhTIY14DCVbzpoBkRNw6qRehPl45k+8oo/n8i1KTDYY?=
- =?us-ascii?Q?Mf0erjoaEKkFCrzpqDY36zhsC3XqNGfhZTZouPoX8Vb39lJdapx0+GtRzdcN?=
- =?us-ascii?Q?/F9VEbcOwjgQdPqp3q7I310qph7SOspaKWf4Bs+8RoOc1yFA0Pi7x27cIrmQ?=
- =?us-ascii?Q?i114+AlVktHJAi3qfRZckO59OW0Rte+ZeouJYdz8XdQAPa/G+cnRb6HywW07?=
- =?us-ascii?Q?swF4bAvC3rvB1tXtHtbtQbIk0aqrCy09?=
+	=?us-ascii?Q?sZuALtDDyE42Hp6mjhfDVXmW9wXL+1lX5Uq8rwB9yvdceyK1wqkKEghwGTaL?=
+ =?us-ascii?Q?trvdIVuxgxIIUSXVsl9ZPKfe/nCYQV0lHtAUFcmscwNm/6LHip/SHO4TKjLC?=
+ =?us-ascii?Q?SIcFcUpJvKpSOlc8B0ya680oyKcaPHVGhpj8DLerjhMo2vYcWqE5kSvkiywS?=
+ =?us-ascii?Q?Jh2ETgdXnYzSnS5QYO2DI3DkwYNef2ZCsgKP6dPDpKyKnTK4Q67wuh6jTV+Y?=
+ =?us-ascii?Q?erJSdCqt9tRdDZUEt4ioj5TTuclVgFiygOtiiouhZsh/fF91HRO16drBeVNZ?=
+ =?us-ascii?Q?G0TSrpXPc/8qAj28TTA2w1hgkzNQBg8M1K0j1QuQ0unvBuM5+Ez9quCiMOVP?=
+ =?us-ascii?Q?I2ESXF/m2LOkyPz8Ymu1SQpk0/myqoKeoX3nCCV+P+/1GezdzCvjS5aBb+kW?=
+ =?us-ascii?Q?EsDX8b6xzzZTGuzVIRRgGlZkogeQfaXuDi1DX6zf7yVhR1h9xZjW2fmq42SK?=
+ =?us-ascii?Q?1MCnv4qJT43ZTOOqH0xkvo1ewgiscEOjCTzzXX1lSorVv/YrWcKQAA4HbwsT?=
+ =?us-ascii?Q?Vqnmb2ySKgGxXtKGPdO729SWn678wCf8k3ZoBTsYA9gBrgggMjw3RjWlGpsv?=
+ =?us-ascii?Q?FEBemPS3GfysMlcLDX93nbG482gZZokSFjk/zVrT1LFAz5l4exT7QPVxHAoy?=
+ =?us-ascii?Q?vk0BBM+7G2VtDz1xAhMaEZDDFR0TtqUBEC6pQHGCQfF8wh5VadFrMLxSTN3H?=
+ =?us-ascii?Q?i9/EHcLbvUEUbUMCZfmI9x+gupLhVhw8T1yP5OzymP1ayYD90Rc1IdKdRyAb?=
+ =?us-ascii?Q?0zNsgRDO5SkkiLb6oZeJ1Lv9FOUmAouS+Ir+mAVNQj8IqIsiDgolp3d1cmaQ?=
+ =?us-ascii?Q?xkePFUfKPPnNv2a/YfFESrI3o+jWyn7/RJIpbIhDhZgPEhuGJpNIHBAnCGRr?=
+ =?us-ascii?Q?yQER3GOmG9Dhw87WPN8XhQ6QsIq6cC2+S3PdNsQJUY/ozA1f4vSt5ALM4DP3?=
+ =?us-ascii?Q?9jD/aSFspzFa78EZC0QN7YB30e7eQnAk27yjYtMzToWD35yQ7bt6iEYU39U2?=
+ =?us-ascii?Q?XyAP8zhXZeX4k/Ae+IxjkgtBCateatGS+sHif8rCGFA9dzHS88Y3L9pjKB+b?=
+ =?us-ascii?Q?fpraeNx3Hs0iUwvtK4A+JT8D5RlH77OMW/wg4vdE7+d3eiTG5bBQRyHWrexk?=
+ =?us-ascii?Q?HSfjvvJOU2fWzMuJlzWNscK/SBir4dYzigCgLTqTS2E4giIffOkWmmIgEiNR?=
+ =?us-ascii?Q?YpYErfFCuufPKyNd0ya037HKzaAMo87w65JkqBb+XPeafNHBRlvmMGey0X3g?=
+ =?us-ascii?Q?rGRVFjULDzT0Inaox9es7rzYJwWhwkx5vG1jRamD97RJtzhPCIPZSeqrWzSm?=
+ =?us-ascii?Q?lPpMSOL22n6us0EzpagR8UfoXRVJ3VYrC4akyTLzV9E3qXntHpwvvc6GwZjK?=
+ =?us-ascii?Q?aqD+uR5UUsbQKJnO863Flokl7t7BCH/dxUJFvG1LfXuZzRisSpQdnLSVZUQm?=
+ =?us-ascii?Q?5F+/pVOzQO64qVhwQSiF4LnrMUG1H5UH?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(7416014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 16:58:10.4440
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 16:58:25.0515
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42eb57f6-d429-49c8-4d87-08dcd670beca
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9f062da-5119-462f-3b16-08dcd670c77f
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000252A1.namprd05.prod.outlook.com
+	SN1PEPF0002529E.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5606
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8725
+
+From: Shivansh Dhiman <shivansh.dhiman@amd.com>
+
+Extend the API of creating guest-memfd to introduce proper NUMA support,
+allowing VMM to set memory policies effectively. The memory policy defines
+from which node memory is allocated.
 
 The current implementation of KVM guest-memfd does not honor the settings
 provided by VMM. While mbind() can be used for NUMA policy support in
 userspace applications, it is not functional for guest-memfd as the memory
 is not mapped to userspace.
 
-This patch-series adds support to specify NUMA memory policy for guests
-with private guest-memfd memory backend. KVM guest-memfd support for
-memory backend is already available in QEMU RAMBlock. However, the NUMA
-support was missing. This cause memory allocation from guest to randomly
-allocate on host NUMA nodes even when passing policy and host-nodes in the
-QEMU command. It ensures that VMM provided NUMA policy is adhered.
+Currently, SEV-SNP guest use guest-memfd as a memory backend and would
+benefit from NUMA support. It enables fine-grained control over memory
+allocation, optimizing performance for specific workload requirements.
 
-This feature is particularly useful for SEV-SNP guests as they require
-guest_memfd memory backend for allocations. Workloads with high memory-
-locality are likely to benefit with this change.
+To apply memory policy on a guest-memfd, extend the KVM_CREATE_GUEST_MEMFD
+IOCTL with additional fields related to mempolicy.
+- mpol_mode represents the policy mode (default, bind, interleave, or
+  preferred).
+- host_nodes_addr denotes the userspace address of the nodemask, a bit
+  mask of nodes containing up to maxnode bits.
+- First bit of flags must be set to use mempolicy.
 
-Users can provide a policy mode such as default, bind, interleave, or
-preferred along with a list of node IDs from the host machine.
+Store the mempolicy struct in i_private_data of the memfd's inode, which
+is currently unused in the context of guest-memfd.
 
-To try this patch-series, build the custom QEMU with NUMA supported KVM
-guest-memfd:
-QEMU tree- https://github.com/AMDESE/qemu/tree/NUMA_guest_memfd
-For instance, to run a SEV-SNP guest bound to NUMA Node 0 of the host,
-the corresponding QEMU command would be:
-
-$ qemu-system-x86_64 \
-   -enable-kvm \
-  ...
-   -machine memory-encryption=sev0,vmport=off \
-   -object sev-snp-guest,id=sev0,cbitpos=51,reduced-phys-bits=1 \
-   -numa node,nodeid=0,memdev=ram0,cpus=0-15 \
-   -object memory-backend-memfd,id=ram0,policy=bind,host-nodes=0,size=1024M,share=true,prealloc=false
-
-
-Shivansh Dhiman (3):
-  KVM: guest_memfd: Extend creation API to support NUMA mempolicy
-  mm: add mempolicy support to the filemap layer
-  KVM: guest_memfd: Enforce NUMA mempolicy if available
-
+Signed-off-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
+Signed-off-by: Shivank Garg <shivankg@amd.com>
+---
  Documentation/virt/kvm/api.rst | 13 ++++++++-
  include/linux/mempolicy.h      |  4 +++
- include/linux/pagemap.h        | 30 +++++++++++++++++++
  include/uapi/linux/kvm.h       |  5 +++-
- mm/filemap.c                   | 30 +++++++++++++++----
- mm/mempolicy.c                 | 53 ++++++++++++++++++++++++++++++++++
+ mm/mempolicy.c                 | 52 ++++++++++++++++++++++++++++++++++
  tools/include/uapi/linux/kvm.h |  5 +++-
- virt/kvm/guest_memfd.c         | 28 ++++++++++++++----
+ virt/kvm/guest_memfd.c         | 21 ++++++++++++--
  virt/kvm/kvm_mm.h              |  3 ++
- 9 files changed, 158 insertions(+), 13 deletions(-)
+ 7 files changed, 97 insertions(+), 6 deletions(-)
 
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index b3be87489108..dcb61282c773 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -6346,7 +6346,10 @@ and cannot be resized  (guest_memfd files do however support PUNCH_HOLE).
+   struct kvm_create_guest_memfd {
+ 	__u64 size;
+ 	__u64 flags;
+-	__u64 reserved[6];
++	__u64 host_nodes_addr;
++	__u16 maxnode;
++	__u8 mpol_mode;
++	__u8 reserved[37];
+   };
+ 
+ Conceptually, the inode backing a guest_memfd file represents physical memory,
+@@ -6367,6 +6370,14 @@ a single guest_memfd file, but the bound ranges must not overlap).
+ 
+ See KVM_SET_USER_MEMORY_REGION2 for additional details.
+ 
++NUMA memory policy support for KVM guest_memfd allows the host to specify
++memory allocation behavior for guest NUMA nodes, similar to mbind(). If
++KVM_GUEST_MEMFD_NUMA_ENABLE flag is set, memory allocations from the guest
++will use the specified policy and host-nodes for physical memory.
++- mpol_mode refers to the policy mode: default, preferred, bind, interleave, or
++  preferred.
++- host_nodes_addr points to bitmask of nodes containing up to maxnode bits.
++
+ 4.143 KVM_PRE_FAULT_MEMORY
+ ---------------------------
+ 
+diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+index 1add16f21612..468eeda2ec2f 100644
+--- a/include/linux/mempolicy.h
++++ b/include/linux/mempolicy.h
+@@ -299,4 +299,8 @@ static inline bool mpol_is_preferred_many(struct mempolicy *pol)
+ }
+ 
+ #endif /* CONFIG_NUMA */
++
++struct mempolicy *create_mpol_from_args(unsigned char mode,
++					const unsigned long __user *nmask,
++					unsigned short maxnode);
+ #endif
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 637efc055145..fda6cbef0a1d 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -1561,7 +1561,10 @@ struct kvm_memory_attributes {
+ struct kvm_create_guest_memfd {
+ 	__u64 size;
+ 	__u64 flags;
+-	__u64 reserved[6];
++	__u64 host_nodes_addr;
++	__u16 maxnode;
++	__u8 mpol_mode;
++	__u8 reserved[37];
+ };
+ 
+ #define KVM_PRE_FAULT_MEMORY	_IOWR(KVMIO, 0xd5, struct kvm_pre_fault_memory)
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index b858e22b259d..9e9450433fcc 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -3557,3 +3557,55 @@ static int __init mempolicy_sysfs_init(void)
+ 
+ late_initcall(mempolicy_sysfs_init);
+ #endif /* CONFIG_SYSFS */
++
++#ifdef CONFIG_KVM_PRIVATE_MEM
++/**
++ * create_mpol_from_args - create a mempolicy structure from args
++ * @mode:  NUMA memory policy mode
++ * @nmask:  bitmask of NUMA nodes
++ * @maxnode:  number of bits in the nodes bitmask
++ *
++ * Create a mempolicy from given nodemask and memory policy such as
++ * default, preferred, interleave or bind.
++ *
++ * Return: error encoded in a pointer or memory policy on success.
++ */
++struct mempolicy *create_mpol_from_args(unsigned char mode,
++					const unsigned long __user *nmask,
++					unsigned short maxnode)
++{
++	struct mm_struct *mm = current->mm;
++	unsigned short mode_flags;
++	struct mempolicy *mpol;
++	nodemask_t nodes;
++	int lmode = mode;
++	int err = -ENOMEM;
++
++	err = sanitize_mpol_flags(&lmode, &mode_flags);
++	if (err)
++		return ERR_PTR(err);
++
++	err = get_nodes(&nodes, nmask, maxnode);
++	if (err)
++		return ERR_PTR(err);
++
++	mpol = mpol_new(mode, mode_flags, &nodes);
++	if (IS_ERR_OR_NULL(mpol))
++		return mpol;
++
++	NODEMASK_SCRATCH(scratch);
++	if (!scratch)
++		return ERR_PTR(-ENOMEM);
++
++	mmap_write_lock(mm);
++	err = mpol_set_nodemask(mpol, &nodes, scratch);
++	mmap_write_unlock(mm);
++	NODEMASK_SCRATCH_FREE(scratch);
++
++	if (err)
++		return ERR_PTR(err);
++
++	return mpol;
++}
++EXPORT_SYMBOL(create_mpol_from_args);
++#endif
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index e5af8c692dc0..e3effcd1e358 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -1546,7 +1546,10 @@ struct kvm_memory_attributes {
+ struct kvm_create_guest_memfd {
+ 	__u64 size;
+ 	__u64 flags;
+-	__u64 reserved[6];
++	__u64 host_nodes_addr;
++	__u16 maxnode;
++	__u8 mpol_mode;
++	__u8 reserved[37];
+ };
+ 
+ #define KVM_PRE_FAULT_MEMORY	_IOWR(KVMIO, 0xd5, struct kvm_pre_fault_memory)
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index e930014b4bdc..8f1877be4976 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -4,6 +4,7 @@
+ #include <linux/kvm_host.h>
+ #include <linux/pagemap.h>
+ #include <linux/anon_inodes.h>
++#include <linux/mempolicy.h>
+ 
+ #include "kvm_mm.h"
+ 
+@@ -445,7 +446,8 @@ static const struct inode_operations kvm_gmem_iops = {
+ 	.setattr	= kvm_gmem_setattr,
+ };
+ 
+-static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
++static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags,
++			     struct mempolicy *pol)
+ {
+ 	const char *anon_name = "[kvm-gmem]";
+ 	struct kvm_gmem *gmem;
+@@ -478,6 +480,7 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ 	inode->i_private = (void *)(unsigned long)flags;
+ 	inode->i_op = &kvm_gmem_iops;
+ 	inode->i_mapping->a_ops = &kvm_gmem_aops;
++	inode->i_mapping->i_private_data = (void *)pol;
+ 	inode->i_mode |= S_IFREG;
+ 	inode->i_size = size;
+ 	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+@@ -505,7 +508,8 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
+ {
+ 	loff_t size = args->size;
+ 	u64 flags = args->flags;
+-	u64 valid_flags = 0;
++	u64 valid_flags = GUEST_MEMFD_NUMA_ENABLE;
++	struct mempolicy *mpol = NULL;
+ 
+ 	if (flags & ~valid_flags)
+ 		return -EINVAL;
+@@ -513,7 +517,18 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
+ 	if (size <= 0 || !PAGE_ALIGNED(size))
+ 		return -EINVAL;
+ 
+-	return __kvm_gmem_create(kvm, size, flags);
++	if (flags & GUEST_MEMFD_NUMA_ENABLE) {
++		unsigned char mode = args->mpol_mode;
++		unsigned short maxnode = args->maxnode;
++		const unsigned long __user *user_nmask =
++				(const unsigned long *)args->host_nodes_addr;
++
++		mpol = create_mpol_from_args(mode, user_nmask, maxnode);
++		if (IS_ERR_OR_NULL(mpol))
++			return PTR_ERR(mpol);
++	}
++
++	return __kvm_gmem_create(kvm, size, flags, mpol);
+ }
+ 
+ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
+index 715f19669d01..3dd8495ae03d 100644
+--- a/virt/kvm/kvm_mm.h
++++ b/virt/kvm/kvm_mm.h
+@@ -36,6 +36,9 @@ static inline void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,
+ #endif /* HAVE_KVM_PFNCACHE */
+ 
+ #ifdef CONFIG_KVM_PRIVATE_MEM
++/* Flag to check NUMA policy while creating KVM guest-memfd. */
++#define GUEST_MEMFD_NUMA_ENABLE BIT_ULL(0)
++
+ void kvm_gmem_init(struct module *module);
+ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
+ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
 -- 
 2.34.1
 
