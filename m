@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-29499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0332797A394
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:04:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593DE97A396
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 16:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2879A1C2608E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB5621F24733
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 14:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C794918A956;
-	Mon, 16 Sep 2024 13:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6FC18D645;
+	Mon, 16 Sep 2024 13:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="JAJ4mD6Y"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="jWV+aFZQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D0E189503;
-	Mon, 16 Sep 2024 13:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5CC1898F0;
+	Mon, 16 Sep 2024 13:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495038; cv=none; b=pjQRdf+vzZqM0JRQJyd7sj1DhSsCFSpA2yJnmlIeSXW4bMaYPRsGSwUu6DToDr2B/GWIGIKies1x/oa4ZT79xqAzJocpgVbIvTGonQAZOtuUMB+mnRpTI2LXX7eV5VNUmITPPhdwS7E67d5+Gv4Def98e50QDYyk/Qkxvfsb+F0=
+	t=1726495039; cv=none; b=kGVuHmuZ4VgyXPN5J0W7kz5laCV6rEeJDITgHIYFojFdS7I5cYjDF2MMEb7H90Bka9GONyKz3W8nhKjJOurICDmT4Yrn60KDi+tePPAR9F86lnwH3uyVPG39DLicoCdM0JAursCDVg6uCQxjk7KIdTEpguClqRw9ZU1Mw2G/z1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495038; c=relaxed/simple;
-	bh=hlsNrrmS5LmffHkBX0DY0nyvuVIEAppvHs0rSr/LvwA=;
+	s=arc-20240116; t=1726495039; c=relaxed/simple;
+	bh=lw8ntQ+iL9OQzESbczYfpyczLE2s4HQsBSHMKYWadaE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vj2Ucjj1Il5W/qt6hH8H+/dLI5bmpo4pq9KUqbwcDI8cJoEMWzVaareDvS5IKlJjO1NdbqYrASdxGWxtlKcSsCzyXn8a2zPWdEKODq6zgy5vsoMmsaB8nEwu7skkW7h7mYZaHTPqYIGutR+VipJeMenS9UKh0WvsrMbPJ6Xkz48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=JAJ4mD6Y; arc=none smtp.client-ip=148.135.17.20
+	 MIME-Version; b=hziIjYPhJJJUExfd0tqTgVYGFwSazBvB0Qa6jnH4oPS3LrPRTae6AKj7XMk0B/nsEXGjhP7Ct0oC0EPYL+cJK9T0NJ256BGDAl5g7jEJGohdxCVTV1aDH2l89tDCnTxdH1fhn5kE3NIZOtdrXMbdCtyAcqTsm4I/fC2GVCJU7zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=jWV+aFZQ; arc=none smtp.client-ip=148.135.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 41C9B69988;
-	Mon, 16 Sep 2024 09:57:14 -0400 (EDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6959869981;
+	Mon, 16 Sep 2024 09:57:16 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726495035; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1726495037; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Wch3FBTJC/bfytZ3iSboViHurbJ2bB+wmP7ljpFHKFU=;
-	b=JAJ4mD6Y6Dz95HshWm2ZSD8lfpBJTL8YO+qZvc6z6pWLLcAayJcjvOqvAZ7DSODgg1RgQc
-	ulM5shkDbh8AgRooTD35bJBgF+Uy2vhjqyq483jOhgeOZruvduGSyzLXRquBzadKyq/tvC
-	Ya2JL42DKCXPN8vGkZa0NoRvWahIqemXs8weQq6S90d6Na4+dqhn+Y0hqtJNPAvksQcJbZ
-	wqCTmbIlhY2WVrzzTlo2bmv+hswA9svhKXfpP3brGDVigu8wuftqOodhRHkIstiSdBCXvH
-	oQRACxgsPBmL+zDXAOu4+sBPFEMypa/XBMn0r6GIJmyy6G4pXLse+Hue6vN8Vg==
+	bh=PJC+8jRBBBR/onvAu4WHTXjuB2eZs+/U1I9QC+qBq5s=;
+	b=jWV+aFZQUroYA6ESh1hKZd3vfmMWYPu9Uq2vVLl32hAOGy/VZ4pGNk96YKOUnWNudiIsg6
+	DBPyRMbCZByWdUx9yyknSavniNyCSrExlnFblJaSXcN2HCBjj5PUaH8t5ENhZjeWH8t5Ao
+	TXIVyB5Ai/Sw1UNP5SsxvgNd74GJog45DBCvPiuQKHsfR+lPDNj+11amvNszH/doWkk5PT
+	HDpYpHIrFI/WObyup+4Tpk1wImstQ4X3n6RAT0a7E4f2XdZD+YtAz3g2v37TykytMMbm0w
+	gEE4VS7I3E1eCL2M5WoPaRXv+s+He11gjIwtPoxaYmqlcrfBRmfbrTHS3Ghdxw==
 From: Yiyang Wu <toolmanp@tlmp.cc>
 To: linux-erofs@lists.ozlabs.org
 Cc: rust-for-linux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 19/24] erofs: introduce namei alternative to C
-Date: Mon, 16 Sep 2024 21:56:29 +0800
-Message-ID: <20240916135634.98554-20-toolmanp@tlmp.cc>
+Subject: [RFC PATCH 20/24] erofs: introduce readdir alternative to C
+Date: Mon, 16 Sep 2024 21:56:30 +0800
+Message-ID: <20240916135634.98554-21-toolmanp@tlmp.cc>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240916135634.98554-1-toolmanp@tlmp.cc>
 References: <20240916135634.98554-1-toolmanp@tlmp.cc>
@@ -62,69 +62,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-This patch introduces erofs_lookup_rust and erofs_get_parent_rust
-written in Rust as an alternative to the original namei.c.
+This patch introduce erofs_readdir_rust as an alternative
+for erofs_readdir written in Rust.
 
 Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 ---
  fs/erofs/Makefile        |  2 +-
- fs/erofs/internal.h      |  2 ++
- fs/erofs/namei.c         |  2 ++
- fs/erofs/namei_rs.rs     | 56 ++++++++++++++++++++++++++++++++++++++++
- fs/erofs/rust_bindings.h |  4 ++-
- fs/erofs/super.c         |  2 ++
- 6 files changed, 66 insertions(+), 2 deletions(-)
- create mode 100644 fs/erofs/namei_rs.rs
+ fs/erofs/dir.c           |  2 ++
+ fs/erofs/dir_rs.rs       | 57 ++++++++++++++++++++++++++++++++++++++++
+ fs/erofs/internal.h      |  1 +
+ fs/erofs/rust_bindings.h |  1 +
+ 5 files changed, 62 insertions(+), 1 deletion(-)
+ create mode 100644 fs/erofs/dir_rs.rs
 
 diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
-index 46de6f490ca2..0f748f3e0ff6 100644
+index 0f748f3e0ff6..e086487971b6 100644
 --- a/fs/erofs/Makefile
 +++ b/fs/erofs/Makefile
 @@ -9,4 +9,4 @@ erofs-$(CONFIG_EROFS_FS_ZIP_DEFLATE) += decompressor_deflate.o
  erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
  erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
  erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
--erofs-$(CONFIG_EROFS_FS_RUST) += super_rs.o inode_rs.o rust_helpers.o
-+erofs-$(CONFIG_EROFS_FS_RUST) += super_rs.o inode_rs.o namei_rs.o rust_helpers.o
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 42ce84783be7..1d9dfae285d5 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -442,6 +442,8 @@ int erofs_iget5_eq(struct inode *inode, void *opaque);
- int erofs_iget5_set(struct inode *inode, void *opaque);
- #ifdef CONFIG_EROFS_FS_RUST
- #define erofs_iget erofs_iget_rust
-+#define erofs_get_parent erofs_get_parent_rust
-+#define erofs_lookup erofs_lookup_rust
- #else
- struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid);
- #endif
-diff --git a/fs/erofs/namei.c b/fs/erofs/namei.c
-index c94d0c1608a8..f657d475c4a1 100644
---- a/fs/erofs/namei.c
-+++ b/fs/erofs/namei.c
-@@ -7,6 +7,7 @@
- #include "xattr.h"
- #include <trace/events/erofs.h>
+-erofs-$(CONFIG_EROFS_FS_RUST) += super_rs.o inode_rs.o namei_rs.o rust_helpers.o
++erofs-$(CONFIG_EROFS_FS_RUST) += super_rs.o inode_rs.o namei_rs.o dir_rs.o rust_helpers.o
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index c3b90abdee37..0f5df8a4169b 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -6,6 +6,7 @@
+  */
+ #include "internal.h"
  
 +#ifndef CONFIG_EROFS_FS_RUST
- struct erofs_qstr {
- 	const unsigned char *name;
- 	const unsigned char *end;
-@@ -214,6 +215,7 @@ static struct dentry *erofs_lookup(struct inode *dir, struct dentry *dentry,
- 		inode = erofs_iget(dir->i_sb, nid);
- 	return d_splice_alias(inode, dentry);
+ static int erofs_fill_dentries(struct inode *dir, struct dir_context *ctx,
+ 			       void *dentry_blk, struct erofs_dirent *de,
+ 			       unsigned int nameoff0, unsigned int maxsize)
+@@ -92,6 +93,7 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+ 	erofs_put_metabuf(&buf);
+ 	return err < 0 ? err : 0;
  }
 +#endif
  
- const struct inode_operations erofs_dir_iops = {
- 	.lookup = erofs_lookup,
-diff --git a/fs/erofs/namei_rs.rs b/fs/erofs/namei_rs.rs
+ const struct file_operations erofs_dir_fops = {
+ 	.llseek		= generic_file_llseek,
+diff --git a/fs/erofs/dir_rs.rs b/fs/erofs/dir_rs.rs
 new file mode 100644
-index 000000000000..d73a0a7bee1e
+index 000000000000..d965e6076242
 --- /dev/null
-+++ b/fs/erofs/namei_rs.rs
-@@ -0,0 +1,56 @@
++++ b/fs/erofs/dir_rs.rs
+@@ -0,0 +1,57 @@
 +// Copyright 2024 Yiyang Wu
 +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
 +
@@ -137,90 +123,73 @@ index 000000000000..d73a0a7bee1e
 +use core::ffi::*;
 +use core::ptr::NonNull;
 +
-+use kernel::bindings::{d_obtain_alias, d_splice_alias, dentry, inode};
++use kernel::bindings::{dir_context, file};
 +use kernel::container_of;
 +
-+use rust::{erofs_sys::operations::*, kinode::*, ksuperblock::*};
++use rust::{
++    erofs_sys::{inode::*, *},
++    kinode::*,
++    ksuperblock::*,
++};
 +
-+/// Lookup function for dentry-inode lookup replacement.
++/// Exported as a replacement of erofs_readdir.
 +#[no_mangle]
-+pub unsafe extern "C" fn erofs_lookup_rust(
-+    k_inode: NonNull<inode>,
-+    dentry: NonNull<dentry>,
-+    _flags: c_uint,
-+) -> *mut c_void {
++pub unsafe extern "C" fn erofs_readdir_rust(
++    f: NonNull<file>,
++    mut ctx: NonNull<dir_context>,
++) -> c_int {
++    // SAFETY: inode is always initialized in file.
++    let k_inode = unsafe { f.as_ref().f_inode };
 +    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
-+    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
-+    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
-+    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
-+    // SAFETY: this is backed by qstr which is c representation of a valid slice.
-+    let name = unsafe {
-+        core::str::from_utf8_unchecked(core::slice::from_raw_parts(
-+            dentry.as_ref().d_name.name,
-+            dentry.as_ref().d_name.__bindgen_anon_1.__bindgen_anon_1.len as usize,
-+        ))
-+    };
-+    let k_inode: *mut inode =
-+        dir_lookup(sbi.filesystem.as_ref(), &mut sbi.inodes, erofs_inode, name)
-+            .map_or(core::ptr::null_mut(), |result| result.k_inode.as_mut_ptr());
-+
-+    // SAFETY: We are sure that the inner k_inode has already been initialized.
-+    unsafe { d_splice_alias(k_inode, dentry.as_ptr()).cast() }
++    let erofs_inode = unsafe { &*container_of!(k_inode, KernelInode, k_inode) };
++    // SAFETY: The super_block is always initialized when calling iget5_locked.
++    let sb = unsafe { (*k_inode).i_sb };
++    let sbi = erofs_sbi(NonNull::new(sb).unwrap());
++    // SAFETY: ctx is nonnull.
++    let offset = unsafe { ctx.as_ref().pos };
++    match sbi
++        .filesystem
++        .fill_dentries(erofs_inode, offset as Off, &mut |dir, pos| unsafe {
++            // inline expansion from dir_emit
++            ctx.as_ref().actor.unwrap()(
++                ctx.as_ptr(),
++                dir.name.as_ptr().cast(),
++                dir.name.len() as i32,
++                pos as i64,
++                dir.desc.nid as u64,
++                dir.desc.file_type as u32,
++            );
++            ctx.as_mut().pos = pos as i64;
++        }) {
++        Ok(_) => {
++            unsafe { ctx.as_mut().pos = erofs_inode.info().file_size() as i64 }
++            0
++        }
++        Err(e) => (i32::from(e)) as c_int,
++    }
 +}
-+
-+/// Exported as a replacement of erofs_get_parent.
-+#[no_mangle]
-+pub unsafe extern "C" fn erofs_get_parent_rust(child: NonNull<dentry>) -> *mut c_void {
-+    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
-+    let k_inode = unsafe { child.as_ref().d_inode };
-+    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
-+    let sbi = erofs_sbi(unsafe { NonNull::new((*k_inode).i_sb).unwrap() }); // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
-+    let inode = unsafe { &*container_of!(k_inode, KernelInode, k_inode) };
-+    let k_inode: *mut inode = dir_lookup(sbi.filesystem.as_ref(), &mut sbi.inodes, inode, "..")
-+        .map_or(core::ptr::null_mut(), |result| result.k_inode.as_mut_ptr());
-+    // SAFETY: We are sure that the inner k_inode has already been initialized
-+    unsafe { d_obtain_alias(k_inode).cast() }
-+}
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 1d9dfae285d5..6f57bb866637 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -444,6 +444,7 @@ int erofs_iget5_set(struct inode *inode, void *opaque);
+ #define erofs_iget erofs_iget_rust
+ #define erofs_get_parent erofs_get_parent_rust
+ #define erofs_lookup erofs_lookup_rust
++#define erofs_readdir erofs_readdir_rust
+ #else
+ struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid);
+ #endif
 diff --git a/fs/erofs/rust_bindings.h b/fs/erofs/rust_bindings.h
-index 657f109dd6e7..b35014aa5cae 100644
+index b35014aa5cae..8b71d65e2c0b 100644
 --- a/fs/erofs/rust_bindings.h
 +++ b/fs/erofs/rust_bindings.h
-@@ -6,7 +6,6 @@
- 
- #include <linux/fs.h>
- 
--
- typedef u64 erofs_nid_t;
- typedef u64 erofs_off_t;
- /* data type for filesystem-wide blocks number */
-@@ -21,4 +20,7 @@ extern void *erofs_alloc_sbi_rust(struct super_block *sb);
- extern void *erofs_free_sbi_rust(struct super_block *sb);
- extern int erofs_iget5_eq_rust(struct inode *inode, void *opaque);
- extern struct inode *erofs_iget_rust(struct super_block *sb, erofs_nid_t nid);
-+extern struct dentry *erofs_lookup_rust(struct inode *inode, struct dentry *dentry,
-+			      unsigned int flags);
-+extern struct dentry *erofs_get_parent_rust(struct dentry *dentry);
+@@ -23,4 +23,5 @@ extern struct inode *erofs_iget_rust(struct super_block *sb, erofs_nid_t nid);
+ extern struct dentry *erofs_lookup_rust(struct inode *inode, struct dentry *dentry,
+ 			      unsigned int flags);
+ extern struct dentry *erofs_get_parent_rust(struct dentry *dentry);
++extern int erofs_readdir_rust(struct file *file, struct dir_context *ctx);
  #endif
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 659502bdf5fe..d49c804acf3d 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -554,6 +554,7 @@ static struct dentry *erofs_fh_to_parent(struct super_block *sb,
- 				    erofs_nfs_get_inode);
- }
- 
-+#ifndef CONFIG_EROFS_FS_RUST
- static struct dentry *erofs_get_parent(struct dentry *child)
- {
- 	erofs_nid_t nid;
-@@ -565,6 +566,7 @@ static struct dentry *erofs_get_parent(struct dentry *child)
- 		return ERR_PTR(err);
- 	return d_obtain_alias(erofs_iget(child->d_sb, nid));
- }
-+#endif
- 
- static const struct export_operations erofs_export_ops = {
- 	.encode_fh = generic_encode_ino32_fh,
 -- 
 2.46.0
 
