@@ -1,146 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-29425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C87A9799A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 02:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D41059799BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 03:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E5291C21F73
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 00:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6FB283A2E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 01:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441D1175AD;
-	Mon, 16 Sep 2024 00:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0DCD51E;
+	Mon, 16 Sep 2024 01:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="vzqR1C31"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmL+WM2g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E0713957B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 00:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970C9256D;
+	Mon, 16 Sep 2024 01:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726444825; cv=none; b=rrBk126PYfMVMsVig04sZXdWZ90h7kneUyZe9WtUdIOTdloSKduZM0ymtdYQciY9RMxFrhBpIqDR8KiY0dA89HJX1kR/arQYCOnmj3Izm0sNMjlUGRDOPtg7E48VD6VoydGp1AbxMzHAvcEQcViFZuRJKIQ/6yvB1aB5K5iTPfo=
+	t=1726448489; cv=none; b=Yz+g5pMxahac/X813kLmJRDdHdRBLMKW/ebPFphE0SD6z1FGeMYl0ieTMZRCE4jtt8mTvRrdc/IDZknrmBUgmCoHDQ5pRoD1AkPg2l0n4N4ly4J6t8RIRVIrTW/CGruRnnIVd/Iy5S/kq/98SLUC945h93HuJc8O+bj95tFnr44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726444825; c=relaxed/simple;
-	bh=Bk6VaLA8U1o7y/shFK8tVIvvxwhrWjMjA7XJdgB4N/Y=;
+	s=arc-20240116; t=1726448489; c=relaxed/simple;
+	bh=7D/C5zl6x2ll3AyrS76fk4gpdsq3I5CMMCG+mMI8Elo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5QZrZQ/Ta6bUmHZXW0B2M9Qc0NuWsQZBZazBz4uWc6WlZ84NaCDsZxF/rZ5SsgjE1G5GDpQezqNA25e6FF9VshXjNdDIoInMvlolKRuOf4xXQqPdTwUF5fFZHOyo68i5yYiCqzFI73IHbA5JYiNHabOydtlA/NsBN/ekjpeemQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=vzqR1C31; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2057c6c57b5so23061695ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Sep 2024 17:00:23 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FOP8JcKzVXqDJrdMzufjF9Y0dGi5t19iYu60anZG8fkv3aD1t5aqjJRry//UUmWYe9v8I7r4cAUWvhDbH/OK8HPGB/CZP4cYCANaxfqluIGbBCPYlMAZYI8liPiPybReVxZ/FeS2Xj2iK1gS7INmuCK3N2NhPVPS1lw034c4lS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmL+WM2g; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7db12af2f31so3492658a12.1;
+        Sun, 15 Sep 2024 18:01:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726444823; x=1727049623; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726448487; x=1727053287; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yiTneBRUQz0c7oUx85pbwoHLabaV+URnFTxx3H0XSE8=;
-        b=vzqR1C31Sg/hV/NjWigbAilwrJmsR5cWrqtjxhcEV0xyDmEm8cO/ObzAmNkKZmVLrp
-         Zqd/GIe/AANdpQuocF9looSLsZxMxxrgImVK4jawbg0uYlTMDCx6yWddS1L+7LoMbBqh
-         X2MQX+m5tGMUjyOrzDxA5m21JiiAUvIDEan8lZJKYss5RN1nT8GLN95OmLr586jiNA4c
-         cvxbgOhs0nxZBJSqvuHOWd+TIKPWfSNk/mhlpMYC4pgYPxIAXqHlokgd3tZbzCVNAVfz
-         Um5smzbm87vsfOcmz/lqiA/GWbl9P5Uz+xC/BdWw83Q4jPFMlvcVxjvcZwgKbktJJFaf
-         qUig==
+        bh=7D/C5zl6x2ll3AyrS76fk4gpdsq3I5CMMCG+mMI8Elo=;
+        b=cmL+WM2gDuP4O+bn690YwmFhQ0vXL4n+Be4FXT+6NrMbMwJNsOaHCVSbLsB5bVCFJx
+         BoykbxIOQC/tyxrPBwl5hd28pQ7453AMb7wKDMRvidhChCLiodiG/Q0BVIMXGtMskbP6
+         4P++jFgGMx4wUmT0eCHLQY484hbjkJsbk1ZnbzjhFaSNM0nmAd/4WWRWXEGdU7O8jNhO
+         gBL/Y+tMU5V1dE4gQ1NjG2kI677N7CTb6gI/q8LnACmUw+/50q4KXVpnT6nqfzeR0kyN
+         cD0yYIKFaxwn/ySnatFQtmYJzfl0ZMvI5mJe3ihqMZu3L2uioZkdPiF4tSh/ljuUrwIx
+         q2og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726444823; x=1727049623;
+        d=1e100.net; s=20230601; t=1726448487; x=1727053287;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yiTneBRUQz0c7oUx85pbwoHLabaV+URnFTxx3H0XSE8=;
-        b=kWS4y2cLh+55tDrK6oyG3zV7wgkRO7lk1w/THXhK8o9KEZrIAK7tAkAHrT26S8IxDE
-         kvz94qA83lqlYU6cBcKuyGwifb2td4v48eBWgrQ01kBfWuzlwZIVD83Ldaovummhwd5n
-         M/p/TlubpF27Hkty+iJBLbBXRWKF+NyOcR3XyqhCGmGuBiUc4MeWY0b8WNVSZdGuR6o9
-         ZH7K/2NlUJQyd8WGh5ujMwt7FnpWGn/V3yTvaUBWnz4swtavd3JyBhcdixiaqIaHz8Zb
-         et8Efs8tfbjHGc0/5nW1NmEG9mMDGjqRcglFBDA50SYqQTndCPqVRfpFEW5cBTPM7xj9
-         MPDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6wZW82WTg0bukSdqBe95ORonNbs4YC273BxHk+OUMVR42d84xxfqv+8EUamzOF9+eQBfqg7SHbjG75hlW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9UdrGd4PhnKfiw7+hJekdf9Oc8YFXIPs10HHugoF4TiSbEbYV
-	eYTS6Pumg61l9XFV++zc1UaeKSyU++VZVvP9oLevBlDnmuJyceQGNWy7QPlfxhL5+gtI6VOHA7Q
-	y
-X-Google-Smtp-Source: AGHT+IEL1eQKv3NuUXB18zqkV0UW1Ie5TJSdwTXsRLrQ2G5lCXlhwJhgyjhFRZZ66d6/+lADVVDKkA==
-X-Received: by 2002:a17:902:ce92:b0:207:6d2:1aa5 with SMTP id d9443c01a7336-2076e591737mr218814085ad.13.1726444822748;
-        Sun, 15 Sep 2024 17:00:22 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945dc76asm26908985ad.42.2024.09.15.17.00.22
+        bh=7D/C5zl6x2ll3AyrS76fk4gpdsq3I5CMMCG+mMI8Elo=;
+        b=hfW4uY9AHq2FrjNEzDvRlq8d3/HgJ3Rnv6JBCwYqaYZ+7+v5ojnLJkRGX0/A8gJ1Tl
+         D9SJuCpwJ/wzj+ZykfhyhZikww6ju9902U7NRu4b10RGG2qvH+me0TRbix7E4QlXDk3s
+         BXYU/gwtPLTvvIHs46gVnacrMEguPXiHjLz2gztt0ZePKIBMdMf/1llR7NTtKeYVTuyF
+         jwouKQs8mVPcn/65WODXRlC9wULPUQ9VKBI34VYiUMgQL+rn7LTLSx+4iuPSwxCzuGte
+         Ro+GjV6fCi0Od6HKUXXA+gw1CY2FYzDdzGMHeWsD7wSGaq+POWmUWLpAV6UaTZGRpIMJ
+         w1nw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6gPr6GZiCCWvt87JPJZVop2HKVTWtmVfHW75j87HPwqWOE5Q/h1pObTZ/Yr29Buo05MyMLiLq3Yi5dw==@vger.kernel.org, AJvYcCV+ef29yjCDReIQSI1xZTFW2FLbDMTdERqTZe+N9+YV19U2tExX5UUudVu5TFOd0o59XCm/YQJHoIcEpg==@vger.kernel.org, AJvYcCV1KfMhFRPYeB5wR2w0hVRrYO9VuCVX4fz7Gte9MsQan4vgya3oDBTjCGcF8G5uX2x8ogZ3xtmULzgo1SSRq38Zx/QK@vger.kernel.org, AJvYcCWHfzt861yQB6PRHHjgspZWyNtMHHeSLOxEQHB+dJE70zlhLOP/0Gsqy/NFRHYUMG7yXMR7VFDAlxsM@vger.kernel.org, AJvYcCXUWmz5+px2CjpNev7KKw47RQ8WCx22TjafwAgk+eWFfUgalQcefImg5fefHP6jZbytlNcVC2aR4SRQ@vger.kernel.org, AJvYcCXUbzumcfbGFuHyCoQ8Ryt6l5sYnpUc54wX1SVTXcrM8tCSs6JcFb9vYVmpC6LIJ4ciRKa8Xf1E+IBJKqt+RQ==@vger.kernel.org, AJvYcCXbP1nbH+5Tuh6XuD2Tcnv1agPva2WVUpkrkE/xO2vZ9QHVnFL0F9aarFtoz5UbyY20LHFWWbvHOJJ5@vger.kernel.org, AJvYcCXcS83TFyAh+8dHwtvClGNdMmaYs53fi5jSd+2GuqwPk2TKk+AFoghdtmOWXUk59WXmY90IDUmgkPbdQiER@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgf38IRsysiWk+NNSdQQB6MN94TiM5M+zWiK/dfv1ZAZP0EZdI
+	WGaTyYeu+27E7ua+8xEBkhDODMA33TixslZEhkOMudLyHKkIsSfz
+X-Google-Smtp-Source: AGHT+IHeKKZs+OQSLFWh2p0zJ8126QggRcFIs3Yl9qB6SRWRR42B+47A+pkLNPsEo9M1k9q1ghVFtw==
+X-Received: by 2002:a17:902:da84:b0:206:adc8:2dcb with SMTP id d9443c01a7336-2076e35b147mr249054285ad.25.1726448486481;
+        Sun, 15 Sep 2024 18:01:26 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079473d05dsm27143635ad.287.2024.09.15.18.01.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 17:00:22 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1spzAA-005hUa-2C;
-	Mon, 16 Sep 2024 10:00:18 +1000
-Date: Mon, 16 Sep 2024 10:00:18 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
-	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Dao <dqminh@cloudflare.com>, clm@meta.com,
-	regressions@lists.linux.dev, regressions@leemhuis.info
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-Message-ID: <Zud1EhTnoWIRFPa/@dread.disaster.area>
-References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
- <ZuNjNNmrDPVsVK03@casper.infradead.org>
- <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
- <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+        Sun, 15 Sep 2024 18:01:25 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 8220D4A358AE; Mon, 16 Sep 2024 08:01:22 +0700 (WIB)
+Date: Mon, 16 Sep 2024 08:01:22 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v8 07/11] Documentation: add a new file documenting
+ multigrain timestamps
+Message-ID: <ZueDYmduQtlAnX_5@archie.me>
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+ <20240914-mgtime-v8-7-5bd872330bed@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kwvsaHxP9Dj4QI8r"
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+In-Reply-To: <20240914-mgtime-v8-7-5bd872330bed@kernel.org>
 
-On Thu, Sep 12, 2024 at 03:25:50PM -0700, Linus Torvalds wrote:
-> On Thu, 12 Sept 2024 at 15:12, Jens Axboe <axboe@kernel.dk> wrote:
-> Honestly, the fact that it hasn't been reverted after apparently
-> people knowing about it for months is a bit shocking to me. Filesystem
-> people tend to take unknown corruption issues as a big deal. What
-> makes this so special? Is it because the XFS people don't consider it
-> an XFS issue, so...
 
-I don't think this is a data corruption/loss problem - it certainly
-hasn't ever appeared that way to me.  The "data loss" appeared to be
-in incomplete postgres dump files after the system was rebooted and
-this is exactly what would happen when you randomly crash the
-system. i.e. dirty data in memory is lost, and application data
-being written at the time is in an inconsistent state after the
-system recovers. IOWs, there was no clear evidence of actual data
-corruption occuring, and data loss is definitely expected when the
-page cache iteration hangs and the system is forcibly rebooted
-without being able to sync or unmount the filesystems...
+--kwvsaHxP9Dj4QI8r
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-All the hangs seem to be caused by folio lookup getting stuck
-on a rogue xarray entry in truncate or readahead. If we find an
-invalid entry or a folio from a different mapping or with a
-unexpected index, we skip it and try again.  Hence this does not
-appear to be a data corruption vector, either - it results in a
-livelock from endless retry because of the bad entry in the xarray.
-This endless retry livelock appears to be what is being reported.
+On Sat, Sep 14, 2024 at 01:07:20PM -0400, Jeff Layton wrote:
+> +Multigrain timestamps aim to remedy this by selectively using fine-grain=
+ed
+> +timestamps when a file has had its timestamps queried recently, and the =
+current
+> +coarse-grained time does not cause a change.
 
-IOWs, there is no evidence of real runtime data corruption or loss
-from this pagecache livelock bug.  We also haven't heard of any
-random file data corruption events since we've enabled large folios
-on XFS. Hence there really is no evidence to indicate that there is
-a large folio xarray lookup bug that results in data corruption in
-the existing code, and therefore there is no obvious reason for
-turning off the functionality we are already building significant
-new functionality on top of.
+Do you mean using fine-grained timestamps when timestamps of a file has been
+recently queried/modified BUT its coarse-grained timestamps aren't changed?
 
-It's been 10 months since I asked Christain to help isolate a
-reproducer so we can track this down. Nothing came from that, so
-we're still at exactly where we were at back in november 2023 -
-waiting for information on a way to reproduce this issue more
-reliably.
+Confused...
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--kwvsaHxP9Dj4QI8r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZueDXQAKCRD2uYlJVVFO
+o9i4AP0T1JkEX2kwhV2+holu89lH/60QVNXUO2Lay3YffP3/dQD9G4CUoLWZ82Xp
+x8Jx3+7J66rerRpl5waFiihhu7wbiQ0=
+=tXkm
+-----END PGP SIGNATURE-----
+
+--kwvsaHxP9Dj4QI8r--
 
