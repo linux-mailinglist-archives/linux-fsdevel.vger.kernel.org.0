@@ -1,162 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-29438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB8F979BCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 09:03:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FA8979BE2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 09:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F82B1C22DEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 07:03:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11F26B21277
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2024 07:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7168B4C62A;
-	Mon, 16 Sep 2024 07:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE19113C9A6;
+	Mon, 16 Sep 2024 07:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="uacM8CBQ"
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="E9epe5D3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711AE1BDC8
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 07:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8EA13BC0E;
+	Mon, 16 Sep 2024 07:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726470219; cv=none; b=i2R9SqwmcdkVQltGfD2VBdk1Di0y4rQmuSiszddZw4ilbhgvgyZu7MCDWFntHpz6CIjuNEftpWYNXNQnvTxjatx1O7jc+VaHnPYgFbXAfY2EFlX2QPvkFxvXY9ZIzLaweBUJ7kBSESJoksYhmtYdBhWVo8pvVEHqilKzL1UinTI=
+	t=1726470922; cv=none; b=Cytw4EEw7cIC6JMGHZJd/qSI6jrGXLIo6UOQBLqBjKfoqYSvYX72zs6P1vUBoXWBXm2fc3Q+PepeEY5RxlnctuXY/M5kLBu8kKZ+Pj/mdzjxK5YsTGHqq9lcCIltbtMIrsk5ZyTveX0mBuUotDAOfq8mJPhFUsZgXx6ljocav3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726470219; c=relaxed/simple;
-	bh=p0HRwb7dckvpqsAEI1/7frDLgt0lW6OPyF4zHs0P8lE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkSVmYFB3YouBxwN/V2lf0D+v1QnABgIelVI1kSexNkWrxpcoWeTROgQSAUdGLbKvvDyIlUXSsVyzMelfI5+VEN6qVFakNEB8vXI5F5Q31V6ftrT8E7Yj6Go3ptPhE5j+WbCJ/OoyMAf4WQUI428XTzuVUC+TrdglG3j77lSzlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=uacM8CBQ; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d8a7c50607so2698473a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2024 00:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726470218; x=1727075018; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rZLEn0Q9zViAeMpnzS+Dnq04taHJPJso6pfVCKuErcs=;
-        b=uacM8CBQ2YTGMGXW9M1xXKYXDgwn8/OSFC33WCT3b6kiTcMp5H75DQFyTKUs5LVS6s
-         56PPDBTfDxUwfXayNVVF93060ZWqV8Vzi+tomk1ZuAM4A33XwpXXBxbAkr1XaH+HdC1r
-         +Z2Tvg1ZEregiWNZWUC4ZVrmfEjnIF5veYQFFP9UDXVvRNiJIuliVWN9RBlvqQpPJv7U
-         t+MrxHLqhekD/DChZoSVH6gXtC+ekq8NTzQuYNJwtFRJk3XuodZs0gL5p9+Ph6PMWmtk
-         FtHKkRgSXY4do+QrsunPd+Mv96KPaDyokG5CS5vygbIymSn5Duag07JNrJkVKV5vdfzx
-         DvMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726470218; x=1727075018;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rZLEn0Q9zViAeMpnzS+Dnq04taHJPJso6pfVCKuErcs=;
-        b=e/ygAbOLdvB27go3huD1ONmSKloyGRh9AQ5iltJKhAWosueauwypsPM3AGYV4b/GJ9
-         jZi09GNoK/mPGMDh26Kx3/qlOLFv42E6kq+YKJgGEg8Ga1/zyjLYxawD74J/q3N4eVx9
-         yFG3OM+HQsbqYSID+sC/NcVVCZWurIOc61g2+RHcyb2LEMBEFTuj1Jj2lYLtG1vIfe9T
-         WSG+Ndk0lo+AboIZHs2lPEEBncLBGIT0FvDbfp/MuZ1iHHXSmMFToBSefmwOMDj0VKIi
-         sh/K6qjaLvM0mgbHUXT1xyFSw6ZLoADe2qXzmGaD8ykgf1V4Nn2flfSv+I4X0ElkHNkc
-         z9uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVEjIAET2qP9GGTjMIEATk58vbuPLeH6T9pU3TbUJLQSo4iYqtjMapUADqXA5WnBz7HfjtB/a/tYUjggG+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8OeLT4XZMk/3AOkadB1T6vXEXE/X7zBpb5292nLXp3AgWYQRR
-	97y7jpFeYRTlkhVPlN+Z/QGi+HcRpN/y8c7LzK+JuZ5ZM8n0SXDncfpz+oY6NN0=
-X-Google-Smtp-Source: AGHT+IGq42CTY7GghG9ZTc+fqKHl5k23VXJfZNsjb0N1GaK6i7O2LyGs84PhBoOXpuTO1FVLs75q9Q==
-X-Received: by 2002:a17:90a:684c:b0:2d3:d414:4511 with SMTP id 98e67ed59e1d1-2db9ffefa37mr16283390a91.24.1726470217587;
-        Mon, 16 Sep 2024 00:03:37 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9c7c7b4sm6581412a91.17.2024.09.16.00.03.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 00:03:37 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sq5lm-005pLT-1M;
-	Mon, 16 Sep 2024 17:03:34 +1000
-Date: Mon, 16 Sep 2024 17:03:34 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZufYRolfyUqEOS1c@dread.disaster.area>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com>
- <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <877cbq3g9i.fsf@gmail.com>
- <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
- <8734m7henr.fsf@gmail.com>
+	s=arc-20240116; t=1726470922; c=relaxed/simple;
+	bh=RBngxJaZL4GTM0BgQCbsFFJ3NPAyFTCVteDqTkYdZFE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=mfz63E4FtoZbDyEBGlBb3hulLLbcFa9B4zNzv/DJYRZryRgmDBVprRzeFmagyzHA10AJt9rS9IVGkpG9BBnZf8Lz7wotre9U4sR9B4zvoqEGqQAS+GO2Ngrj7CUYbBjNW3+14EbdfPW4KHo6u6xF/M0EElkoOD/HcU1/iKpIrR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=E9epe5D3; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1726470908;
+	bh=t9TGglCebkVwz3Xfy8T8OgJ7gnTHiWWWEXfL6kuEj/E=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=E9epe5D3D1j+Q+sICOdAlUUKkZN6QetDxnUXPHefyIa63ZlqWP1lclUkb+7l8cWEf
+	 rsaAiCHiWmruiNdTaYBVwekXCY0u0mcMUF5vAWHLDxbPL2nuIattrWFD2EJ6Z3IXw9
+	 N9n65hNnyi+a/Ys2GeVYLfnN3+1xaQrrJtvsJpJg=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8734m7henr.fsf@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <Zud1EhTnoWIRFPa/@dread.disaster.area>
+Date: Mon, 16 Sep 2024 09:14:45 +0200
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Matthew Wilcox <willy@infradead.org>,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>,
+ clm@meta.com,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <686D222E-3CA3-49BE-A9E5-E5E2F5AFD5DA@flyingcircus.io>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <Zud1EhTnoWIRFPa/@dread.disaster.area>
+To: Dave Chinner <david@fromorbit.com>
 
-On Tue, Sep 10, 2024 at 06:03:12PM +0530, Ritesh Harjani wrote:
-> >> Is it something to just prevent users from destroying their own data
-> >> by not allowing a rw mount from an older kernel where users could do
-> >> unaligned writes to files marked for atomic writes?
-> >> Or is there any other reasoning to prevent XFS filesystem from becoming
-> >> inconsistent if an older kernel does a rw mount here.
-> >
-> > The older kernel does not know what the unknown inode flag means
-> > (i.e. atomic writes) and so, by definition, we cannot allow it to
-> > modify metadata or file data because it may not modify it in the
-> > correct way for that flag being set on the inode.
-> >
-> > Kernels that don't understand feature flags need to treat the
-> > filesystem as read-only, no matter how trivial the feature addition
-> > might seem.
-> >
-> 
-> 1. Will it require a fresh formatting of filesystem with mkfs.xfs for
-> enabling atomic writes (/forcealign) on XFS?
 
-Initially, yes.
+> On 16. Sep 2024, at 02:00, Dave Chinner <david@fromorbit.com> wrote:
+>=20
+> On Thu, Sep 12, 2024 at 03:25:50PM -0700, Linus Torvalds wrote:
+>> On Thu, 12 Sept 2024 at 15:12, Jens Axboe <axboe@kernel.dk> wrote:
+>> Honestly, the fact that it hasn't been reverted after apparently
+>> people knowing about it for months is a bit shocking to me. =
+Filesystem
+>> people tend to take unknown corruption issues as a big deal. What
+>> makes this so special? Is it because the XFS people don't consider it
+>> an XFS issue, so...
+>=20
+> I don't think this is a data corruption/loss problem - it certainly
+> hasn't ever appeared that way to me.  The "data loss" appeared to be
+> in incomplete postgres dump files after the system was rebooted and
+> this is exactly what would happen when you randomly crash the
+> system. i.e. dirty data in memory is lost, and application data
+> being written at the time is in an inconsistent state after the
+> system recovers. IOWs, there was no clear evidence of actual data
+> corruption occuring, and data loss is definitely expected when the
+> page cache iteration hangs and the system is forcibly rebooted
+> without being able to sync or unmount the filesystems=E2=80=A6
+> All the hangs seem to be caused by folio lookup getting stuck
+> on a rogue xarray entry in truncate or readahead. If we find an
+> invalid entry or a folio from a different mapping or with a
+> unexpected index, we skip it and try again.  Hence this does not
+> appear to be a data corruption vector, either - it results in a
+> livelock from endless retry because of the bad entry in the xarray.
+> This endless retry livelock appears to be what is being reported.
+>=20
+> IOWs, there is no evidence of real runtime data corruption or loss
+> from this pagecache livelock bug.  We also haven't heard of any
+> random file data corruption events since we've enabled large folios
+> on XFS. Hence there really is no evidence to indicate that there is
+> a large folio xarray lookup bug that results in data corruption in
+> the existing code, and therefore there is no obvious reason for
+> turning off the functionality we are already building significant
+> new functionality on top of.
 
->   a. Is that because reflink is not support with atomic writes
->   (/forcealign) today?
+Right, understood.=20
 
-It's much more complex than that.
+However, the timeline of one of the encounters with PostgreSQL (the =
+first comment in Bugzilla) involved still makes me feel uneasy:
+=20
+T0                   : one postgresql process blocked with a different =
+trace (not involving xas_load)
+T+a few minutes      : another process stuck with the relevant =
+xas_load/descend trace
+T+a few more minutes : other processes blocked in xas_load (this time =
+the systemd journal)
+T+14m                : the journal gets coredumped, likely due to some =
+watchdog=20
 
-e.g. How does force-align and COW interact, especially w.r.t.
-sub-alloc unit overwrites, cowextsz based preallocation and
-unwritten extents in the COW fork?
+Things go back to normal.
 
-> As I understand for setting forcealign attr on any inode it checks for
-> whether xfs_has_forcealign(mp). That means forcealign can _only_ be
-> enabled during mkfs time and it also needs reflink to be disabled with
-> -m reflink=0. Right?
+T+14h                : another postgres process gets fully stuck on the =
+xas_load/descend trace
 
-forcealign doesn't need to be completely turned off when reflink is
-enabled and/or vice versa. Both can co-exist in the filesytsem at
-the same time, but the current implementation does not allow
-forcealign and reflink to be used on the same inode at the same
-time.
 
-It was decided that the best way to handle the lack of reflink
-support initially was to make the two feature bits incompatible at
-mount time. Hence we currently have to make a non-reflink filesystem
-to test forcealign based functionality.
+I agree with your analysis if the process gets stuck in an infinite =
+loop, but I=E2=80=99ve seen at least one instance where it appears to =
+have left the loop at some point and IMHO that would be a condition that =
+would allow data corruption.
 
-However, doing it this way means that when we fix the implementation
-to support reflink and forcealign together, we just remove the mount
-time check and all existing reflink filesystems can be immediately
-upgraded to support forcealign.
+> It's been 10 months since I asked Christain to help isolate a
+> reproducer so we can track this down. Nothing came from that, so
+> we're still at exactly where we were at back in november 2023 -
+> waiting for information on a way to reproduce this issue more
+> reliably.
 
-OTOH, we can't do this with atomic writes. Atomic writes require
-some mkfs help because they require explicit physical alignment of
-the filesystem to the underlying storage. Hence we'll eventually end
-up with atomic writes needing to be enabled at mkfs time, but force
-align will be an upgradeable feature flag.
+Sorry for dropping the ball from my side as well - I=E2=80=99ve learned =
+my lesson from trying to go through Bugzilla here. ;)
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+You mentioned above that this might involve read-ahead code and that=E2=80=
+=99s something I noticed before: the machines that carry databases do =
+run with a higher read-ahead setting (1MiB vs. 128k elsewhere).
+
+Also, I=E2=80=99m still puzzled about the one variation that seems to =
+involve page faults and not XFS. That=E2=80=99s something I haven=E2=80=99=
+t seen a response to yet whether this IS in fact interesting or not.=20
+
+Christian
+
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
+
 
