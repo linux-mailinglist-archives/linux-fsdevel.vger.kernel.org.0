@@ -1,162 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-29607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9231697B55D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 23:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C0F97B58A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 00:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE1A3B22BDD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 21:54:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C8BDB2283F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 22:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AB01922F9;
-	Tue, 17 Sep 2024 21:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3F115B57F;
+	Tue, 17 Sep 2024 22:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ewz06wkw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QyCWF3SH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ewz06wkw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QyCWF3SH"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="p+I0VQyp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FuUBRSWN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2980CF510;
-	Tue, 17 Sep 2024 21:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEEE4594D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2024 22:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726610058; cv=none; b=m5KcuU1R8bH6jpi3T4giAZTzgTj+WETRZ8GM7lJqFaTO+rER80FQAeCIJsMEhTxqqo3h6bRBnlcGv6AiZhty1WYuhmra+Kf5hed5DfX4hfAOpLAJ/yvCcXAKLerAJuJSW39+FqATYy+qHVZgC7ewSNJQ4/6nnMtBbSQma+9xbUE=
+	t=1726610457; cv=none; b=V2wFUgTarRq2pB8+VqXxpaS6uani5bAXvs+UW4DKvodl+xs9OaCKaZRtsuW0lNVu2CwO94Zo7PQQwNqwR0xLU9Q2LAicUeKxcHAXzDgixPLJxxhjznynywYn+MWJZBjN8tq3tXPFmB+UCtbHJZN5h0hD0eWqYe+bmCdLqo6iahQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726610058; c=relaxed/simple;
-	bh=hPp59baIO1umS+sO8KbuL90XTx5D2LnUMl+rf4lg+DY=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=Np6RI6X8fYb4EWMKLn7I30G3l/4KmPzNPHa+3TH1BNA/5N1mVXPprLEfZcLwpJ0aHa6tXrERqqLoBWxqMD1dVPaLC0Rp0LNfjGBdygazCsZFzBFH2hP3tlY+lWzNmPeeV3FWnEuAPnJasoSgbkyNMPVxdcw+JJWA6evttry8YVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ewz06wkw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QyCWF3SH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ewz06wkw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QyCWF3SH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C11322532;
-	Tue, 17 Sep 2024 21:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726610055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iHyYymU40LHB7ZgzKtdHyNesr3HYnr4DdIzhSI4l7ds=;
-	b=Ewz06wkwEcEhM5k4mRLpXWquEssqZpH8q3k9CdodS6sTKPDkUgSK5YcQHlg8cZmfV1bfrQ
-	IvSFYEd2+vg/zS/ezEhp4+8ck56c+00YvSrcta5bVxDjSmaNB8FZNq3CdMPo0ZuaPZfY4E
-	ZS0JTlWX82pAvpMFXknAHo0prN9Bvbk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726610055;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iHyYymU40LHB7ZgzKtdHyNesr3HYnr4DdIzhSI4l7ds=;
-	b=QyCWF3SH8W0T347ycKGdYg0qAFagLsHdY4xAuKRJSk+8OPA28XKwT3emPXWunOjuZjQtL0
-	6G13NjlE0Hs8btBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Ewz06wkw;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=QyCWF3SH
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726610055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iHyYymU40LHB7ZgzKtdHyNesr3HYnr4DdIzhSI4l7ds=;
-	b=Ewz06wkwEcEhM5k4mRLpXWquEssqZpH8q3k9CdodS6sTKPDkUgSK5YcQHlg8cZmfV1bfrQ
-	IvSFYEd2+vg/zS/ezEhp4+8ck56c+00YvSrcta5bVxDjSmaNB8FZNq3CdMPo0ZuaPZfY4E
-	ZS0JTlWX82pAvpMFXknAHo0prN9Bvbk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726610055;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iHyYymU40LHB7ZgzKtdHyNesr3HYnr4DdIzhSI4l7ds=;
-	b=QyCWF3SH8W0T347ycKGdYg0qAFagLsHdY4xAuKRJSk+8OPA28XKwT3emPXWunOjuZjQtL0
-	6G13NjlE0Hs8btBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD1CD13A9B;
-	Tue, 17 Sep 2024 21:54:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id K9MrHIT66WYJOgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 17 Sep 2024 21:54:12 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1726610457; c=relaxed/simple;
+	bh=7YyXNhwfGj/8zUpJ98jJtAS3MCPTAmMjlhjwW0mVpSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ouO43CUc2ClibZaa9hnRJximheHuX2zsVNKFAjaScfMDi/UmkCLZm7k4lUrMli6j27Yhzj7pGw4wgGr7T18EGsxsblRC/sDh0t/AqXGkej6wXBE2MAPYFHKrWpEh2M9AY6BFK6NC9GI9+oKt882+AeDhAHuE2Sm3a9x0mac3Noc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=p+I0VQyp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FuUBRSWN; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 65E83138026F;
+	Tue, 17 Sep 2024 18:00:54 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Tue, 17 Sep 2024 18:00:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1726610454;
+	 x=1726696854; bh=3u1Z7nKNOyXjn3MmTb4WviaMzTdcHqiqYYPEZxqd6Z0=; b=
+	p+I0VQypIb0T+Rlj5TKc6dT89EcEaGZ98ibaBwjAv8xAg25QVailo/Uie4sPvZi6
+	xIPRW0xt4SoiasaNwEBHIqfUZFZThO94JNi8ft1EdUZ9nwfrE1oe9VNeLAuXEmWO
+	BVky5bKSsXa4U4zxKHfkKmMJ27ean6iv09vU9tQFRbRS+nVEWLih/v05pFFEPh4y
+	sqB8szEWMoGHLgOd+BSl6buIGHKzVjdIP//dsUhtvoAog/5rgIj9uFcPvAqApyCM
+	8gHQM0Ng9juYGqTCPg3cT0/UmFjzrccniUcf60Xkjljf6ATjuxbNPODHxcF4gGwV
+	xF6vkCUpgxjCelUPr2t3GQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726610454; x=
+	1726696854; bh=3u1Z7nKNOyXjn3MmTb4WviaMzTdcHqiqYYPEZxqd6Z0=; b=F
+	uUBRSWNkR/VLCzbqJMH9fhxal6GemfnBN5wcYFJzEXe36r6kb63s1TJBDJLeDjhN
+	FQ7vQFqTMEuLd6I3t2q0FByuAUv+HuqC+BRsBdEanSL80K4nn9XGSgYpA/Taj1Sr
+	qgVNvRVHBh/Nip03N/+WNhQBjjjhz4K02ZoAsVLvwTEukHlsb/kQ1+pIbf/dbn/X
+	KX3REB2CLmQmBeWLcXLrglM6ah84+0Uw7y8IDMjJN2lwC8Tsb2lZWqBbuAoA0B/b
+	VFDvLTTGE+H4yZtyIA6BkbT3xYhBIqwwjK7ENHX8o1FjReLqz8mkrzN8+Np+S8fy
+	biic5sFyVJLOWu//yUlJA==
+X-ME-Sender: <xms:FfzpZsB9bd8vZ-MN8lE8CwZsQ3zvWXWw8gE-7aBB8CJ779x-0QEXGg>
+    <xme:FfzpZugmjzUd691fdtETmyoJYivup9iAWGX2GipKRC7L5_N_d8dKVwVwEywxUvHgc
+    dYxWwM7EFhyaQiZ>
+X-ME-Received: <xmr:FfzpZvlYKHDhLXXFmmIzMGEQ5_GE8DU6yGG4nVitoDQJ8uIm0VnihLHuInnhpBhljR98xQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekkedgtdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
+    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
+    phhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugi
+    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhs
+    vghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehjvghffhhlvgiguheslh
+    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlrghorghrrdhshhgrohes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtg
+    homhdprhgtphhtthhopehjrghkohgsrdgslhhomhgvrhestggvrhhnrdgthh
+X-ME-Proxy: <xmx:FfzpZiwEjTk-qgkb9UQkPGAzdscC8yZ217v6W0K8AOcPBq7XNtZRtA>
+    <xmx:FfzpZhQTnm-IAJxsBWMm_Acomm3FJRPnMq2LfZWn9oGuiFXVLAJ_iA>
+    <xmx:FfzpZtazyPoci7V5kzPu6kfSlytX-h_7SWp8GlZ6wbo12G9LP9tbkQ>
+    <xmx:FfzpZqRn7Oh6ztadshgvg2abbzAsDgGC9g6nZBvsCVJ5oXX2-a-wCw>
+    <xmx:FvzpZsFxc7NU6VxjzCLhrCRMMdYb8-awLJ7x2d_2s7sHja34eZ_jv8P6>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 17 Sep 2024 18:00:50 -0400 (EDT)
+Message-ID: <b05ad1ae-fe54-4c0c-af4e-22a6c6e7d217@fastmail.fm>
+Date: Wed, 18 Sep 2024 00:00:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Jens Axboe" <axboe@kernel.dk>
-Cc: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org
-Subject: Re: [PATCH 1/7] block: change wait on bd_claiming to use a
- var_waitqueue, not a bit_waitqueue
-In-reply-to: <68e8c574-1266-42e1-9d0d-ed837c7105b6@kernel.dk>
-References: <>, <68e8c574-1266-42e1-9d0d-ed837c7105b6@kernel.dk>
-Date: Wed, 18 Sep 2024 07:54:05 +1000
-Message-id: <172661004540.17050.6252973409733219343@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 2C11322532
-X-Spam-Score: -6.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] fuse: add optional kernel-enforced timeout for
+ requests
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+ josef@toxicpanda.com, jefflexu@linux.alibaba.com, laoar.shao@gmail.com,
+ kernel-team@meta.com, Jakob Blomer <Jakob.Blomer@cern.ch>
+References: <20240830162649.3849586-1-joannelkoong@gmail.com>
+ <20240830162649.3849586-2-joannelkoong@gmail.com>
+ <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com>
+ <CAJnrk1ZSEk+GuC1kvNS_Cu9u7UsoFW+vd2xOsrbL5i_GNAoEkQ@mail.gmail.com>
+ <02b45c36-b64c-4b7c-9148-55cbd06cc07b@fastmail.fm>
+ <CAJnrk1ZSp97F3Y2=C-pLe_=0D+2ja5N3572yiY+4SGd=rz1m=Q@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1ZSp97F3Y2=C-pLe_=0D+2ja5N3572yiY+4SGd=rz1m=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 17 Sep 2024, Jens Axboe wrote:
-> On 8/26/24 12:30 AM, NeilBrown wrote:
-> > bd_prepare_to_claim() waits for a var to change, not for a bit to be
-> > cleared.
-> > So change from bit_waitqueue() to __var_waitqueue() and correspondingly
-> > use wake_up_var().
-> > This will allow a future patch which change the "bit" function to expect
-> > an "unsigned long *" instead of "void *".
+
+
+Hi Joanne,
+
+On 9/4/24 19:23, Joanne Koong wrote:
+> On Tue, Sep 3, 2024 at 3:38 PM Bernd Schubert
+
+>>
+>>
+>> I have question here, does it need to be an exact timeout or could it be
+>> an interval/epoch? Let's say you timeout based on epoch lists? Example
+>>
+>> 1) epoch-a starts, requests are added to epoch-a list.
+>> 2) epoch-b starts, epoch-a list should get empty
+>> 3) epoch-c starts, epoch-b list should get empty, kill the connection if
+>> epoch-a list is not empty (epoch-c list should not be needed, as epoch-a
+>> list can be used, once confirmed it is empty.)
+>>
+>>
+>> Here timeout would be epoch-a + epoch-b, i.e.
+>> max-timeout <= 2 * epoch-time.
+>> We could have more epochs/list-heads to make it more fine grained.
+>>
+>>
+>> From my point of view that should be a rather cheap, as it just
+>> adding/removing requests from list and checking for timeout if a list is
+>> empty. With the caveat that it is not precise anymore.
 > 
-> Looks fine to me - since this one is separate from the series, I can snag
-> it and shove it into the block side so it'll make 6.12-rc1. Then at least
-> it won't be a dependency for the rest of the series post that.
+> I like this idea a lot. I like that it enforces per-request behavior
+> and guarantees that any stalled request will abort the connection. I
+> think it's fine for the timeout to be an interval/epoch so long as the
+> documentation explicitly makes that clear. I think this would need to
+> be done in the kernel instead of libfuse because if the server is in a
+> deadlock when there are no pending requests in the lists and then the
+> kernel sends requests to the server, none of the requests will make it
+> to the list for the timer handler to detect any issues.
+> 
+> Before I make this change for v7, Miklos what are your thoughts on
+> this direction?
 
-Thanks Jens!
+we briefly discussed it with Miklos and Miklos agreed that epoch list
+should be fine (would be great if you could quickly confirm, Miklos).
 
-NeilBrown
+In the mean time I have another use case for timeout lists. Basically
+Jakob from Cern (in CC) is asking for way to stop requests to
+fuse-server and then to resume. I think that can be done easily through
+notifications and unsetting (and later setting) fc->initialized. Demo
+patch follows around tomorrow, but then Jakob actually wants to know
+when it is safe to restart fuse-server (or part of it). That is where
+the epoch timeout list would be handy - reply to the notification should
+happen when the lists got empty, i.e. no request is handled anymore.
+I think like this is better than FUSE_NOTIFY_RESEND, as that has an
+issue with non-idempotent requests.
+
+
+Thanks,
+Bernd
 
