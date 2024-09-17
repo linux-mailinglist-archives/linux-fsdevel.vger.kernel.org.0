@@ -1,177 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-29550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376EE97ABE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 09:15:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 361AB97AC15
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 09:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5415B2AECB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 07:15:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694E31C21634
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 07:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ED61531E2;
-	Tue, 17 Sep 2024 07:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GBQcVWCs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756CE14B086;
+	Tue, 17 Sep 2024 07:31:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8B313CFB6;
-	Tue, 17 Sep 2024 07:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3AD10F4;
+	Tue, 17 Sep 2024 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726557312; cv=none; b=Go8ugo5T95BrszmJhs0WkRnsZbW2quh+KxzaqDDCe3iqf9UscCc+l8k7ers9O0S43mksfyZefBjJ4aSORLvLjUZkfzye6HgseLYynBDHITiywTBKpjA51XhmvwLPBsaa8CqgDc2VOG6iFUmlrDOZ9TckSqG2+f9jxyFCNwOrSM0=
+	t=1726558291; cv=none; b=c3NI6F2B9ATcyVYIfeOW41rC/XO+1l0Xd+x++7sIk+stKvrBrEvNcT6hnTdeIfVtgaDf4nV9TaS2lcWXaEb8i4Z7xqguSQ4oG4Gcj8jN6dyOpUZ11hL7BX0CQYTSfvali7m7R52sHmjLL0nM/96vRPl4mcMsvlj1EOVsKrRAW1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726557312; c=relaxed/simple;
-	bh=uQSL8md113n0K1krkP2Ryqc1+J936Ef2Os9xbgicfBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUaNB3qmVKW/MXECnEmtRFu6nr8NEJovfl0mE0OXoJkyDO8uvHsVTy3mJ5AmlTEnwn+pAp5kxNumtAbReWkXE4HIp6gxJm7mOWSZySvEMxriJMvaaGtrdtSzmZPBveZ9Q1CkJTRphQJvUKwCypIjJAjiNN7T3N1mSTBkxzlS5sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GBQcVWCs; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726557300; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=aHmQE7AUQfpWpDBPMmGmaaJMlBjlx8yVsf52qbqS98k=;
-	b=GBQcVWCsDmuJ3zO1S2pJArzUDc1mE1ZZvGT+wfcSf7BFP7mADRKEXNczPF2MBUY7/YuZiW9c9pZ5NlxSprgEZifD9aZq20GXPlzSP0JSW4EijVO3RRXehAhK/7vAhuQ1+M40dSVxnw2P2gTgUGptNnqDz2KBcTCPhDIFikP2SGw=
-Received: from 30.27.106.17(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFACzIr_1726557298)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Sep 2024 15:15:00 +0800
-Message-ID: <1edf9fe3-5e39-463b-8825-67b4d1ad01be@linux.alibaba.com>
-Date: Tue, 17 Sep 2024 15:14:58 +0800
+	s=arc-20240116; t=1726558291; c=relaxed/simple;
+	bh=YtVtHuoqABW83akAZdZj/UkU/MTxSwj/EJVNpnVEej4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uyPxa/9uVWVsS7L+TiSE1Ndn/cPGKGu1zDJHP8Zzpwujlc4bECWE+jAMP8BzSJDN6nAybuW/zICzRzdN3BlaLVT5QNO4GPMDbcL15HG9+aDchBxT2zaIxPM5tJhWdjgoKv2NfrOr+BgrkBWpQ12CikgIoIOtdsg+I5x+xNyDCZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF4CF1063;
+	Tue, 17 Sep 2024 00:31:57 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.61.158])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 904823F64C;
+	Tue, 17 Sep 2024 00:31:23 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	x86@kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-fsdevel@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH V2 0/7] mm: Use pxdp_get() for accessing page table entries
+Date: Tue, 17 Sep 2024 13:01:10 +0530
+Message-Id: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 19/24] erofs: introduce namei alternative to C
-To: Yiyang Wu <toolmanp@tlmp.cc>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-20-toolmanp@tlmp.cc> <20240916170801.GO2825852@ZenIV>
- <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+This series converts all generic page table entries direct derefences via
+pxdp_get() based helpers extending the changes brought in via the commit
+c33c794828f2 ("mm: ptep_get() conversion"). First it does some platform
+specific changes for m68k and x86 architecture.
 
+This series has been build tested on multiple architecture such as x86,
+arm64, powerpc, powerpc64le, riscv, and m68k etc.
 
-On 2024/9/17 14:48, Yiyang Wu wrote:
-> On Mon, Sep 16, 2024 at 06:08:01PM GMT, Al Viro wrote:
->> On Mon, Sep 16, 2024 at 09:56:29PM +0800, Yiyang Wu wrote:
->>> +/// Lookup function for dentry-inode lookup replacement.
->>> +#[no_mangle]
->>> +pub unsafe extern "C" fn erofs_lookup_rust(
->>> +    k_inode: NonNull<inode>,
->>> +    dentry: NonNull<dentry>,
->>> +    _flags: c_uint,
->>> +) -> *mut c_void {
->>> +    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
->>> +    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
->>
->> 	Ummm...  A wrapper would be highly useful.  And the reason why
->> it's safe is different - your function is called only via ->i_op->lookup,
->> the is only one instance of inode_operations that has that ->lookup
->> method, and the only place where an inode gets ->i_op set to that
->> is erofs_fill_inode().  Which is always passed erofs_inode::vfs_inode.
->>
-> So my original intention behind this is that all vfs_inodes come from
-> that erofs_iget function and it's always gets initialized in this case
-> And this just followes the same convention here. I can document this
-> more precisely.
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: x86@kernel.org
+Cc: linux-m68k@lists.linux-m68k.org
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: kasan-dev@googlegroups.com
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org
+Cc: kasan-dev@googlegroups.com
 
-I think Al just would like a wrapper here, like the current C EROFS_I().
+Changes in V2:
 
->>> +    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
->>> +    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
->>
->> 	Again, that calls for a wrapper - this time not erofs-specific;
->> inode->i_sb is *always* non-NULL, is assign-once and always points
->> to live struct super_block instance at least until the call of
->> destroy_inode().
->>
-> 
-> Will be modified correctly, I'm not a native speaker and I just can't
-> find a better way, I will take my note here.
+- Separated out PUD changes from P4D changes
+- Updated the commit message for x86 patch per Dave
+- Implemented local variable page table value caching when applicable
+- Updated all commit messages regarding local variable caching
 
-Same here, like the current EROFS_I_SB().
+Changes in V1:
 
->>> +    // SAFETY: this is backed by qstr which is c representation of a valid slice.
->>
->> 	What is that sentence supposed to mean?  Nevermind "why is it correct"...
->>
->>> +    let name = unsafe {
->>> +        core::str::from_utf8_unchecked(core::slice::from_raw_parts(
->>> +            dentry.as_ref().d_name.name,
->>> +            dentry.as_ref().d_name.__bindgen_anon_1.__bindgen_anon_1.len as usize,
->>
+https://lore.kernel.org/all/20240913084433.1016256-1-anshuman.khandual@arm.com/
 
-...
+Anshuman Khandual (7):
+  m68k/mm: Change pmd_val()
+  x86/mm: Drop page table entry address output from pxd_ERROR()
+  mm: Use ptep_get() for accessing PTE entries
+  mm: Use pmdp_get() for accessing PMD entries
+  mm: Use pudp_get() for accessing PUD entries
+  mm: Use p4dp_get() for accessing P4D entries
+  mm: Use pgdp_get() for accessing PGD entries
 
-> 
->> 	Current erofs_lookup() (and your version as well) *is* indeed
->> safe in that respect, but the proof (from filesystem POV) is that "it's
->> called only as ->lookup() instance, so dentry is initially unhashed
->> negative and will remain such until it's passed to d_splice_alias();
->> until that point it is guaranteed to have ->d_name and ->d_parent stable".
+ arch/m68k/include/asm/page.h          |  2 +-
+ arch/x86/include/asm/pgtable-3level.h | 12 ++--
+ arch/x86/include/asm/pgtable_64.h     | 20 +++---
+ drivers/misc/sgi-gru/grufault.c       | 13 ++--
+ fs/proc/task_mmu.c                    | 28 +++++----
+ fs/userfaultfd.c                      |  6 +-
+ include/linux/huge_mm.h               |  6 +-
+ include/linux/mm.h                    |  6 +-
+ include/linux/pgtable.h               | 49 +++++++++------
+ kernel/events/core.c                  |  6 +-
+ mm/gup.c                              | 43 ++++++-------
+ mm/hmm.c                              |  2 +-
+ mm/huge_memory.c                      | 90 +++++++++++++++------------
+ mm/hugetlb.c                          | 10 +--
+ mm/hugetlb_vmemmap.c                  |  4 +-
+ mm/kasan/init.c                       | 38 +++++------
+ mm/kasan/shadow.c                     | 12 ++--
+ mm/khugepaged.c                       |  4 +-
+ mm/madvise.c                          |  6 +-
+ mm/mapping_dirty_helpers.c            |  2 +-
+ mm/memory-failure.c                   | 14 ++---
+ mm/memory.c                           | 71 +++++++++++----------
+ mm/mempolicy.c                        |  4 +-
+ mm/migrate.c                          |  4 +-
+ mm/migrate_device.c                   | 10 +--
+ mm/mlock.c                            |  6 +-
+ mm/mprotect.c                         |  2 +-
+ mm/mremap.c                           |  4 +-
+ mm/page_table_check.c                 |  4 +-
+ mm/page_vma_mapped.c                  |  6 +-
+ mm/pagewalk.c                         | 10 +--
+ mm/percpu.c                           |  8 +--
+ mm/pgalloc-track.h                    |  6 +-
+ mm/pgtable-generic.c                  | 30 ++++-----
+ mm/ptdump.c                           |  8 +--
+ mm/rmap.c                             | 10 +--
+ mm/sparse-vmemmap.c                   | 10 +--
+ mm/vmalloc.c                          | 58 +++++++++--------
+ mm/vmscan.c                           |  6 +-
+ 39 files changed, 333 insertions(+), 297 deletions(-)
 
-Agreed.
+-- 
+2.25.1
 
->>
->> 	Note that once you _have_ called d_splice_alias(), you can't
->> count upon the ->d_name stability - or, indeed, upon ->d_name.name you've
->> sampled still pointing to allocated memory.
->>
->> 	For directory-modifying methods it's "stable, since parent is held
->> exclusive".  Some internal function called from different environments?
->> Well...  Swear, look through the call graph and see what can be proven
->> for each.
-> 
-> Sorry for my ignorance.
-> I mean i just borrowed the code from the fs/erofs/namei.c and i directly
-> translated that into Rust code. That might be a problem that also
-> exists in original working C code.
-
-As for EROFS (an immutable fs), I think after d_splice_alias(), d_name is
-still stable (since we don't have rename semantics likewise for now).
-
-But as the generic filesystem POV, d_name access is actually tricky under
-RCU walk path indeed.
-
-> 
->> 	Expressing that kind of fun in any kind of annotations (Rust type
->> system included) is not pleasant.  _Probably_ might be handled by a type
->> that would be a dentry pointer with annotation along the lines "->d_name
->> and ->d_parent of that one are stable".  Then e.g. ->lookup() would
->> take that thing as an argument and d_splice_alias() would consume it.
->> ->mkdir() would get the same thing, etc.  I hadn't tried to get that
->> all way through (the amount of annotation churn in existing filesystems
->> would be high and hard to split into reviewable patch series), so there
->> might be dragons - and there definitely are places where the stability is
->> proven in different ways (e.g. if dentry->d_lock is held, we have the damn
->> thing stable; then there's a "take a safe snapshot of name" API; etc.).
-> 
-> That's kinda interesting, I originally thought that VFS will make sure
-> its d_name / d_parent is stable in the first place.
-> Again, I just don't have a full picture or understanding of VFS and my
-> code is just basic translation of original C code, Maybe we can address
-> this later.
-
-d_alloc will allocate an unhashed dentry which is almost unrecognized
-by VFS dcache (d_name is stable of course).
-
-After d_splice_alias() and d_add(), rename() could change d_name.  So
-either we take d_lock or with rcu_read_lock() to take a snapshot of
-d_name in the RCU walk path.  That is my overall understanding.
-
-But for EROFS, since we don't have rename, so it doesn't matter.
-
-Thanks,
-Gao Xiang
 
