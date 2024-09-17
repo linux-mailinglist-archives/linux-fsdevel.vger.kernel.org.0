@@ -1,411 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-29586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7370497B065
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 14:53:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB54E97B0AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 15:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300C02833BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 12:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFFCE1C2160D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 13:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5787D171E76;
-	Tue, 17 Sep 2024 12:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CEA176AA0;
+	Tue, 17 Sep 2024 13:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eyBdbiCF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="66M8RDWz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A+3QBsY3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="X3gUdlBd"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KYE2Ul8e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DB915B548
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2024 12:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B529165EEF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2024 13:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726577605; cv=none; b=Xzh4JTXiPVMAwz4EkStOeWCr0kUYaUE+ZZBkkabncUhbIl55YfNf6aLwRnroZ/FrzEHTm3WLHeD8eTPZJQYA1omAXSvCoAYcsCCWwUiuvjdkjGHzuz2kZFuWonWkp/uDg5VOhY/PCAjAlC2/3X1vHx1PrhlPn2qdDMXx/9rJaZs=
+	t=1726579115; cv=none; b=tcgII63HG1rlUGh6hIcForZ6TxfGHWd7GUUjZnoPo5sBwkuvKqq/Ab3u05D3LtAMbaTdPkJP6DSylKfV6WaT0Xq8EEDMQ6c63+TQS+whP6EQvLEfXxY1CvM0hjes7ph0GNedjkoSd3a2Z7fTqPoQZU3YWBqUIY0T6U+jCrI25Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726577605; c=relaxed/simple;
-	bh=zbAEWfXTKju9jfK7hkrbw3TtQaBpBUQZHlMZc+HxPRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0Eth/Ov5xs162p031gaku7SAIR1LS4LXa6evG6tSGdjIzMQZi6oAH1n/ZMp1EZGGSZjyV22XiQf4ojF9gVhJp8eihfe0c0J6y4jhpwvdTmdBi1r3+28htocQZ0sdEIaWGRioM1metu6PPbeMS5Rz3hkndaKR+FzIcSaJYnsIBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eyBdbiCF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=66M8RDWz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A+3QBsY3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=X3gUdlBd; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D4C0120065;
-	Tue, 17 Sep 2024 12:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726577602; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTP7lI0n73pJDUbBUHNCE6b12TOCY2Qn+jKgKV3U664=;
-	b=eyBdbiCFJULZYtt7I531M+cIxgisNGFN5m4NrttVKAvaq2rm1MbZYzDIi/rgXlwiyvMNV6
-	NTOR6I2DQeE8UpvdSBg11/ZlmWXljB+D35F3CQmN5WfaqdS2J1a7dxPHLS+2JbP+4TwugG
-	KME6P3f5070WiXT71G4qlvfwnJJ55Z0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726577602;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTP7lI0n73pJDUbBUHNCE6b12TOCY2Qn+jKgKV3U664=;
-	b=66M8RDWz1dHAUrzuZsBCE5dPoN+gQs9AdfUTWYSejEblVMEkwmsNTj3ZGVEvxWw6lFOxd8
-	U91VeupOngGQbwCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726577600; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTP7lI0n73pJDUbBUHNCE6b12TOCY2Qn+jKgKV3U664=;
-	b=A+3QBsY3N7ggbDwHaaWDuWwrFhb4XPikBls3xwUGelKpXZeRfOTXm2z7dzaMYAzIqLAnb5
-	z/tx4YZND1TkMOLtBzCNC9sRTUb3+DwR/ZlEslmRsCXHkepwdQMVi4WWZDjYHW9R8ifRWh
-	cR+gcP1vcn1jfKdk9XCTrfmO8qvTQ8k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726577600;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTP7lI0n73pJDUbBUHNCE6b12TOCY2Qn+jKgKV3U664=;
-	b=X3gUdlBdj2n30iHQ3gJNjrg/tLVkqzdA40k/RvHoZUA9m8up+8YGaBqfIaOT38meWBtrQV
-	mf0+BDldiIloUZBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A6499139CE;
-	Tue, 17 Sep 2024 12:53:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tPxLKMB76WbMJAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 17 Sep 2024 12:53:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8FFD5A08B3; Tue, 17 Sep 2024 14:52:58 +0200 (CEST)
-Date: Tue, 17 Sep 2024 14:52:58 +0200
-From: Jan Kara <jack@suse.cz>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
-Subject: Re: [PATCH 1/5] adfs: convert adfs to use the new mount api
-Message-ID: <20240917125258.gpnolxntcsklaicz@quack3>
-References: <20240916172735.866916-1-sandeen@redhat.com>
- <20240916172735.866916-2-sandeen@redhat.com>
+	s=arc-20240116; t=1726579115; c=relaxed/simple;
+	bh=PLZDwvQindRRAHeB5t+ZnYOnq5gFNu+v/Oyb6XAl6nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cGA+bwHT0B+eJpMxw/sS2okY2X2ZJdQloU0ep2fXSBrvaq5Hi/4N9XW+VbJLQoKHZM0Y0MfXa5ZqqQhl9+dfs56gSXW/bt4Sh19G1R5MEqeB2QP92m1+RvzL8ae1NRElfroiZ63NS4UlURP1zM94J0uPSQnDZgjG7Pm5zvlbZOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KYE2Ul8e; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6d6a3ab427aso39805227b3.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2024 06:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726579112; x=1727183912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ik0KS2s0Nmk5lT8nEB/dCiWK+hK/hgiv+ifmVBdzG4=;
+        b=KYE2Ul8e4vMrxhhwwfxSrDQGSZRPxfJzON9CW5ME+DtCdFNk8w+IRmPsuEZrp3Urxo
+         fNSNJtxxsnXcbdubeZo9/He3dd+Wmiud34gwzCGhiZLeuly56iea0YkajSjHCLxLUe6x
+         labaf8UaY0EFPvBEMLK6PFpyymc+Q0EJzSFR0sgeylNbnTc3gfz2Ep13L+nd3B79jaUW
+         gpW7Cxkw5HQmVDD7C/vFM+juSNAtqOpbobiBpxn5ec1S9tqYOGxKil3eiRgGHZ/BjZAG
+         eTKM8RdUW3SSdeDwvx+evkZb6hB9fJ+LS0RRtf90SziLHDEgJ7meDivUCbVum6VFoizb
+         27dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726579112; x=1727183912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0ik0KS2s0Nmk5lT8nEB/dCiWK+hK/hgiv+ifmVBdzG4=;
+        b=icgZU4IYRON6L1GROkntv9iWFPIRCDVfvEeTI32bvfT4BBOaXtV8WrLSAwfg0Rr+aj
+         XKJ0jAevoUGIIPQq3gFPnaSr6GsaQ7RSJn3ujW01i2UMthZTIdajoN0HojkviM5yMmFt
+         vJp0xgwa2bMNHhkr5p3AuBWbhfz6VzbUzFwXIws5dLXdouPNk4f/kIFD2w32OBOkTM0K
+         BF2fGi37I8oCx2VQnMsb6jjHLoo0uv/+DOaKb7iOqyekoGdHcvLIN1Cx+rhLc2+tOohV
+         yKlTOAGpD24uCGibbe7EC0iW2ZSMGqrmaXwFncz/ZbPDU101qgQuCL6dG4ZCgqlYjqs9
+         J61w==
+X-Forwarded-Encrypted: i=1; AJvYcCXzxRTuObWwk4MCsCEPlg5SjZJUrp53ZHom+xnhvocldqT0Y+j7ZSn0JKmVxPICuSWULPQ+QfANcwvMTdvt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQaeQfKmlQvhg0Sq4CFc6gyHuwtElugreKzDh7Ue3SIu8M9zkQ
+	j76z+wJvxzsNqGkYN1zOF+xpX5r1417O8SRUBghL3cjZletxQMAAVLWvfCooEiulAsfOlEZ6Fs9
+	CXfDeFGeGS+10L6OUqtaRqOslT1qyzinmDygH
+X-Google-Smtp-Source: AGHT+IFzy8A2VzLN97EIN8C84hYkL689RhOu4IvKHAq/2Q9MzBc7XO8oVmBIIV4kMcThVv4zW0yrYqT2m+du+VHod0g=
+X-Received: by 2002:a05:690c:6713:b0:6dd:dc67:a03f with SMTP id
+ 00721157ae682-6dddc67a3b0mr40348017b3.16.1726579112435; Tue, 17 Sep 2024
+ 06:18:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916172735.866916-2-sandeen@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-5-88484f7a3dcf@google.com> <202409151325.09E4F3C2F@keescook>
+ <CAH5fLghA0tLTwCDBRrm+GAEWhhY7Y8qLtpj0wwcvTK_ZRZVgBw@mail.gmail.com> <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com>
+In-Reply-To: <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 17 Sep 2024 09:18:21 -0400
+Message-ID: <CAHC9VhQX0k68fwWF08eMCiMsewRRSqN3q=QwirV_0XjoJ4wo5A@mail.gmail.com>
+Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <kees@kernel.org>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 16-09-24 13:26:18, Eric Sandeen wrote:
-> Convert the adfs filesystem to use the new mount API.
-> Tested by comparing random mount & remount options before and after
-> the change.
-> 
-> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+On Mon, Sep 16, 2024 at 11:40=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 9/15/2024 2:07 PM, Alice Ryhl wrote:
+> > On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> wr=
+ote:
+> >> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
+> >>> Add an abstraction for viewing the string representation of a securit=
+y
+> >>> context.
+> >> Hm, this may collide with "LSM: Move away from secids" is going to hap=
+pen.
+> >> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-ca.=
+com/
+> >>
+> >> This series is not yet landed, but in the future, the API changes shou=
+ld
+> >> be something like this, though the "lsmblob" name is likely to change =
+to
+> >> "lsmprop"?
+> >> security_cred_getsecid()   -> security_cred_getlsmblob()
+> >> security_secid_to_secctx() -> security_lsmblob_to_secctx()
+>
+> The referenced patch set does not change security_cred_getsecid()
+> nor remove security_secid_to_secctx(). There remain networking interfaces
+> that are unlikely to ever be allowed to move away from secids. It will
+> be necessary to either retain some of the secid interfaces or introduce
+> scaffolding around the lsm_prop structure ...
 
-Looks good. Feel free to add:
+First, thanks for CC'ing the LSM list Alice, I appreciate it.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+As Kees and Casey already pointed out, there are relevant LSM changes
+that are nearing inclusion which might be relevant to the Rust
+abstractions.  I don't think there is going to be anything too
+painful, but I must admit that my Rust knowledge has sadly not
+progressed much beyond the most basic "hello world" example.
 
-									Honza
+This brings up the point I really want to discuss: what portions of
+the LSM framework are currently accessible to Rust, and what do we
+(the LSM devs) need to do to preserve the Rust LSM interfaces when the
+LSM framework is modified?  While the LSM framework does not change
+often, we do modify both the LSM hooks (the security_XXX() calls that
+serve as the LSM interface/API) and the LSM callbacks (the individual
+LSM hook implementations) on occasion as they are intentionally not
+part of any sort of stable API.  In a perfect world we/I would have a
+good enough understanding of the Rust kernel abstractions and would
+submit patches to update the Rust code as appropriate, but that isn't
+the current situation and I want to make sure the LSM framework and
+the Rust interfaces don't fall out of sync.  Do you watch the LSM list
+or linux-next for patches that could affect the Rust abstractions?  Is
+there something else you would recommend?
 
-> ---
->  fs/adfs/super.c | 186 +++++++++++++++++++++++++-----------------------
->  1 file changed, 95 insertions(+), 91 deletions(-)
-> 
-> diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-> index f0b999a4961b..017c48a80203 100644
-> --- a/fs/adfs/super.c
-> +++ b/fs/adfs/super.c
-> @@ -6,7 +6,8 @@
->   */
->  #include <linux/module.h>
->  #include <linux/init.h>
-> -#include <linux/parser.h>
-> +#include <linux/fs_parser.h>
-> +#include <linux/fs_context.h>
->  #include <linux/mount.h>
->  #include <linux/seq_file.h>
->  #include <linux/slab.h>
-> @@ -115,87 +116,61 @@ static int adfs_show_options(struct seq_file *seq, struct dentry *root)
->  	return 0;
->  }
->  
-> -enum {Opt_uid, Opt_gid, Opt_ownmask, Opt_othmask, Opt_ftsuffix, Opt_err};
-> +enum {Opt_uid, Opt_gid, Opt_ownmask, Opt_othmask, Opt_ftsuffix};
->  
-> -static const match_table_t tokens = {
-> -	{Opt_uid, "uid=%u"},
-> -	{Opt_gid, "gid=%u"},
-> -	{Opt_ownmask, "ownmask=%o"},
-> -	{Opt_othmask, "othmask=%o"},
-> -	{Opt_ftsuffix, "ftsuffix=%u"},
-> -	{Opt_err, NULL}
-> +static const struct fs_parameter_spec adfs_param_spec[] = {
-> +	fsparam_uid	("uid",		Opt_uid),
-> +	fsparam_gid	("gid",		Opt_gid),
-> +	fsparam_u32oct	("ownmask",	Opt_ownmask),
-> +	fsparam_u32oct	("othmask",	Opt_othmask),
-> +	fsparam_u32	("ftsuffix",	Opt_ftsuffix),
-> +	{}
->  };
->  
-> -static int parse_options(struct super_block *sb, struct adfs_sb_info *asb,
-> -			 char *options)
-> +static int adfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  {
-> -	char *p;
-> -	int option;
-> -
-> -	if (!options)
-> -		return 0;
-> -
-> -	while ((p = strsep(&options, ",")) != NULL) {
-> -		substring_t args[MAX_OPT_ARGS];
-> -		int token;
-> -		if (!*p)
-> -			continue;
-> -
-> -		token = match_token(p, tokens, args);
-> -		switch (token) {
-> -		case Opt_uid:
-> -			if (match_int(args, &option))
-> -				return -EINVAL;
-> -			asb->s_uid = make_kuid(current_user_ns(), option);
-> -			if (!uid_valid(asb->s_uid))
-> -				return -EINVAL;
-> -			break;
-> -		case Opt_gid:
-> -			if (match_int(args, &option))
-> -				return -EINVAL;
-> -			asb->s_gid = make_kgid(current_user_ns(), option);
-> -			if (!gid_valid(asb->s_gid))
-> -				return -EINVAL;
-> -			break;
-> -		case Opt_ownmask:
-> -			if (match_octal(args, &option))
-> -				return -EINVAL;
-> -			asb->s_owner_mask = option;
-> -			break;
-> -		case Opt_othmask:
-> -			if (match_octal(args, &option))
-> -				return -EINVAL;
-> -			asb->s_other_mask = option;
-> -			break;
-> -		case Opt_ftsuffix:
-> -			if (match_int(args, &option))
-> -				return -EINVAL;
-> -			asb->s_ftsuffix = option;
-> -			break;
-> -		default:
-> -			adfs_msg(sb, KERN_ERR,
-> -				 "unrecognised mount option \"%s\" or missing value",
-> -				 p);
-> -			return -EINVAL;
-> -		}
-> +	struct adfs_sb_info *asb = fc->s_fs_info;
-> +	struct fs_parse_result result;
-> +	int opt;
-> +
-> +	opt = fs_parse(fc, adfs_param_spec, param, &result);
-> +	if (opt < 0)
-> +		return opt;
-> +
-> +	switch (opt) {
-> +	case Opt_uid:
-> +		asb->s_uid = result.uid;
-> +		break;
-> +	case Opt_gid:
-> +		asb->s_gid = result.gid;
-> +		break;
-> +	case Opt_ownmask:
-> +		asb->s_owner_mask = result.uint_32;
-> +		break;
-> +	case Opt_othmask:
-> +		asb->s_other_mask = result.uint_32;
-> +		break;
-> +	case Opt_ftsuffix:
-> +		asb->s_ftsuffix = result.uint_32;
-> +		break;
-> +	default:
-> +		return -EINVAL;
->  	}
->  	return 0;
->  }
->  
-> -static int adfs_remount(struct super_block *sb, int *flags, char *data)
-> +static int adfs_reconfigure(struct fs_context *fc)
->  {
-> -	struct adfs_sb_info temp_asb;
-> -	int ret;
-> +	struct adfs_sb_info *new_asb = fc->s_fs_info;
-> +	struct adfs_sb_info *asb = ADFS_SB(fc->root->d_sb);
->  
-> -	sync_filesystem(sb);
-> -	*flags |= ADFS_SB_FLAGS;
-> +	sync_filesystem(fc->root->d_sb);
-> +	fc->sb_flags |= ADFS_SB_FLAGS;
->  
-> -	temp_asb = *ADFS_SB(sb);
-> -	ret = parse_options(sb, &temp_asb, data);
-> -	if (ret == 0)
-> -		*ADFS_SB(sb) = temp_asb;
-> +	/* Structure copy newly parsed options */
-> +	*asb = *new_asb;
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int adfs_statfs(struct dentry *dentry, struct kstatfs *buf)
-> @@ -273,7 +248,6 @@ static const struct super_operations adfs_sops = {
->  	.write_inode	= adfs_write_inode,
->  	.put_super	= adfs_put_super,
->  	.statfs		= adfs_statfs,
-> -	.remount_fs	= adfs_remount,
->  	.show_options	= adfs_show_options,
->  };
->  
-> @@ -361,34 +335,21 @@ static int adfs_validate_dr0(struct super_block *sb, struct buffer_head *bh,
->  	return 0;
->  }
->  
-> -static int adfs_fill_super(struct super_block *sb, void *data, int silent)
-> +static int adfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  {
->  	struct adfs_discrecord *dr;
->  	struct object_info root_obj;
-> -	struct adfs_sb_info *asb;
-> +	struct adfs_sb_info *asb = sb->s_fs_info;
->  	struct inode *root;
->  	int ret = -EINVAL;
-> +	int silent = fc->sb_flags & SB_SILENT;
->  
->  	sb->s_flags |= ADFS_SB_FLAGS;
->  
-> -	asb = kzalloc(sizeof(*asb), GFP_KERNEL);
-> -	if (!asb)
-> -		return -ENOMEM;
-> -
->  	sb->s_fs_info = asb;
->  	sb->s_magic = ADFS_SUPER_MAGIC;
->  	sb->s_time_gran = 10000000;
->  
-> -	/* set default options */
-> -	asb->s_uid = GLOBAL_ROOT_UID;
-> -	asb->s_gid = GLOBAL_ROOT_GID;
-> -	asb->s_owner_mask = ADFS_DEFAULT_OWNER_MASK;
-> -	asb->s_other_mask = ADFS_DEFAULT_OTHER_MASK;
-> -	asb->s_ftsuffix = 0;
-> -
-> -	if (parse_options(sb, asb, data))
-> -		goto error;
-> -
->  	/* Try to probe the filesystem boot block */
->  	ret = adfs_probe(sb, ADFS_DISCRECORD, 1, adfs_validate_bblk);
->  	if (ret == -EILSEQ)
-> @@ -453,18 +414,61 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
->  	return ret;
->  }
->  
-> -static struct dentry *adfs_mount(struct file_system_type *fs_type,
-> -	int flags, const char *dev_name, void *data)
-> +static int adfs_get_tree(struct fs_context *fc)
-> +{
-> +	return get_tree_bdev(fc, adfs_fill_super);
-> +}
-> +
-> +static void adfs_free_fc(struct fs_context *fc)
->  {
-> -	return mount_bdev(fs_type, flags, dev_name, data, adfs_fill_super);
-> +	struct adfs_context *asb = fc->s_fs_info;
-> +
-> +	kfree(asb);
-> +}
-> +
-> +static const struct fs_context_operations adfs_context_ops = {
-> +	.parse_param	= adfs_parse_param,
-> +	.get_tree	= adfs_get_tree,
-> +	.reconfigure	= adfs_reconfigure,
-> +	.free		= adfs_free_fc,
-> +};
-> +
-> +static int adfs_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct adfs_sb_info *asb;
-> +
-> +	asb = kzalloc(sizeof(struct adfs_sb_info), GFP_KERNEL);
-> +	if (!asb)
-> +		return -ENOMEM;
-> +
-> +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
-> +		struct super_block *sb = fc->root->d_sb;
-> +		struct adfs_sb_info *old_asb = ADFS_SB(sb);
-> +
-> +		/* structure copy existing options before parsing */
-> +		*asb = *old_asb;
-> +	} else {
-> +		/* set default options */
-> +		asb->s_uid = GLOBAL_ROOT_UID;
-> +		asb->s_gid = GLOBAL_ROOT_GID;
-> +		asb->s_owner_mask = ADFS_DEFAULT_OWNER_MASK;
-> +		asb->s_other_mask = ADFS_DEFAULT_OTHER_MASK;
-> +		asb->s_ftsuffix = 0;
-> +	}
-> +
-> +	fc->ops = &adfs_context_ops;
-> +	fc->s_fs_info = asb;
-> +
-> +	return 0;
->  }
->  
->  static struct file_system_type adfs_fs_type = {
->  	.owner		= THIS_MODULE,
->  	.name		= "adfs",
-> -	.mount		= adfs_mount,
->  	.kill_sb	= kill_block_super,
->  	.fs_flags	= FS_REQUIRES_DEV,
-> +	.init_fs_context = adfs_init_fs_context,
-> +	.parameters	= adfs_param_spec,
->  };
->  MODULE_ALIAS_FS("adfs");
->  
-> -- 
-> 2.46.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+paul-moore.com
 
