@@ -1,140 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-29546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21D297AB29
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 07:46:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE26897AB5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 08:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E53BFB2C872
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 05:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3311F22882
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 06:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CE06CDBA;
-	Tue, 17 Sep 2024 05:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ghpYZ6Ea"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AF6132139;
+	Tue, 17 Sep 2024 06:20:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0DF4595B;
-	Tue, 17 Sep 2024 05:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E225D8F0;
+	Tue, 17 Sep 2024 06:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726551956; cv=none; b=XBHR4w+KaXteX0qAJ/lw88H3mq7cIaHqBbAgODIHKYrpUDj2drbrmiCMdO4POwl9aFAKhwcXR2LNWnG5SP4cdjKsUn8OK+P0qlvPhUmtTgc0RWxH4wH6AZ0+D7Yf34Y9+B5+LkxHxT+VIqTbwWWdgigJ7z5pmU4arGWI+pqMnis=
+	t=1726554014; cv=none; b=g6m2AXPyuskgyBO0tzQi+ABt/mDG8m04IeKKipgXujERGjUVOonL9x70Wu+nqstOxFVesp51nxqT3B48Z/Kp2utz58XUhCnKWFqGBvBdumneNPwgFSidzu+i4BHe68INFtl5PAF9JbDLPtPWYmLEpr3F060TfR4OqUKy+ZlnkIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726551956; c=relaxed/simple;
-	bh=mP3PoPRK7kLa1mY1jxVsusmKfpieOKIdeJVcjXDMbCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XSsH2E1HWoIS9uFpr4JVHUSRxkqkjxjBrc4MO0fZJhcjWJp8gfOsIPXmsslUekz3kexkffNoIrpJNHLQ2H7/SSRYnEMsBow4jUG0P+7lh5Bq9ymMyCCJjWCAXwWc+Ax//7Ax3VNY501fr/KWEM0ZC5cb5QxsCxVD0vhI42prCOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ghpYZ6Ea; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726551945; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=xDEH82Zgluj/gfAW11o3LnXM+W8TtjK147IvqunUm2g=;
-	b=ghpYZ6Ea2se7xsb0fcZato4y76PVigL85cuzbVMlTSg9yu0NU1Eurx2FbsKzMGQKsfB8lNr+2BddE7B922b3PF1ZK0X5iKZ7vsgO4SjU3b9K9054ojDbtNPiCO63NtwFe8VhrYpOHypKBkoCLfZVzk6LfHYOnYoRctOSez787tw=
-Received: from 30.27.106.17(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFA17GO_1726551943)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Sep 2024 13:45:44 +0800
-Message-ID: <35fbc99c-b914-4a0e-92c1-d680a3ae2345@linux.alibaba.com>
-Date: Tue, 17 Sep 2024 13:45:43 +0800
+	s=arc-20240116; t=1726554014; c=relaxed/simple;
+	bh=pFzT2ZqtUjl23iIZuzObb5iVFXkufhUazQnZ99FVJjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R2yXDxU0UhCo5c+q0MCA8lZ+uw2XQwn4Gw1wvfYG7ISLMUrzA+/VyleIVJQak1Ojzg6exyrl4naEOGOuo+LlNYdEXivjhvwgaGcStjsTiEEIZE3x0pygsNJZuVUJvYvidnHigtS/TyMgqC7b+SyZQ8e294bwnWF1GN8Pq9tkLss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C391B227ACB; Tue, 17 Sep 2024 08:20:07 +0200 (CEST)
+Date: Tue, 17 Sep 2024 08:20:07 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
+	sagi@grimberg.me, martin.petersen@oracle.com,
+	James.Bottomley@HansenPartnership.com, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
+	jlayton@kernel.org, chuck.lever@oracle.com, bvanassche@acm.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+	linux-scsi@vger.kernel.org, gost.dev@samsung.com,
+	vishak.g@samsung.com, javier.gonz@samsung.com,
+	Nitesh Shetty <nj.shetty@samsung.com>
+Subject: Re: [PATCH v5 4/5] sd: limit to use write life hints
+Message-ID: <20240917062007.GA4170@lst.de>
+References: <20240910150200.6589-1-joshi.k@samsung.com> <CGME20240910151057epcas5p3369c6257a6f169b4caa6dd59548b538c@epcas5p3.samsung.com> <20240910150200.6589-5-joshi.k@samsung.com> <20240912130235.GB28535@lst.de> <e6ae5391-ae84-bae4-78ea-4983d04af69f@samsung.com> <20240913080659.GA30525@lst.de> <4a39215a-1b0e-3832-93bd-61e422705f8b@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 02/24] erofs: add superblock data structure in Rust
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Yiyang Wu <toolmanp@tlmp.cc>, linux-fsdevel@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
- rust-for-linux@vger.kernel.org
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-3-toolmanp@tlmp.cc>
- <2024091655-sneeze-pacify-cf28@gregkh>
- <aa7a902a-25f6-491c-88a3-ad0a3204d2ff@linux.alibaba.com>
- <2024091702-easiest-prelude-7d4f@gregkh>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <2024091702-easiest-prelude-7d4f@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a39215a-1b0e-3832-93bd-61e422705f8b@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-
-
-On 2024/9/17 13:34, Greg KH wrote:
-> On Tue, Sep 17, 2024 at 08:18:06AM +0800, Gao Xiang wrote:
->> Hi Greg,
->>
->> On 2024/9/17 01:55, Greg KH wrote:
->>> On Mon, Sep 16, 2024 at 09:56:12PM +0800, Yiyang Wu wrote:
->>>> diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
->>>> new file mode 100644
->>>> index 000000000000..0f1400175fc2
->>>> --- /dev/null
->>>> +++ b/fs/erofs/rust/erofs_sys.rs
->>>> @@ -0,0 +1,22 @@
->>>> +#![allow(dead_code)]
->>>> +// Copyright 2024 Yiyang Wu
->>>> +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
->>>
->>> Sorry, but I have to ask, why a dual license here?  You are only linking
->>> to GPL-2.0-only code, so why the different license?  Especially if you
->>> used the GPL-2.0-only code to "translate" from.
->>>
->>> If you REALLY REALLY want to use a dual license, please get your
->>> lawyers to document why this is needed and put it in the changelog for
->>> the next time you submit this series when adding files with dual
->>> licenses so I don't have to ask again :)
->>
->> As a new Rust kernel developper, Yiyang is working on EROFS Rust
->> userspace implementation too.
->>
->> I think he just would like to share the common Rust logic between
->> kernel and userspace.
+On Mon, Sep 16, 2024 at 07:19:21PM +0530, Kanchan Joshi wrote:
+> > Maybe part of the problem is that the API is very confusing.  A smal
+> > part of that is of course that the existing temperature hints already
+> > have some issues, but this seems to be taking them make it significantly
+> > worse.
 > 
-> Is that actually possible here?  This is very kernel-specific code from
-> what I can tell, and again, it's based on the existing GPL-v2 code, so
-> you are kind of changing the license in the transformation to a
-> different language, right?
+> Can you explain what part is confusing. This is a simple API that takes 
+> type/value pair. Two types (and respective values) are clearly defined 
+> currently, and more can be added in future.
 
-It's possible, Yiyang implemented a total userspace Rust crates
-to parse EROFS format with limited APIs:
+I though I outlined that below.
 
-https://github.com/ToolmanP/erofs-rs
-
-Also take another C example, kernel XFS (fs/libxfs) and xfsprogs
-(userspace) use the same codebase.  Although they both use GPL
-license only.
-
+> > But if we increase this to a variable number of hints that don't have
+> > any meaning (and even if that is just the rough order of the temperature
+> > hints assigned to them), that doesn't really work.  We'll need an API
+> > to check if these stream hints are supported and how many of them,
+> > otherwise the applications can't make any sensible use of them.
 > 
->> Since for the userspace side, Apache-2.0
->> or even MIT is more friendly for 3rd applications (especially
->> cloud-native applications). So the dual license is proposed here,
->> if you don't have strong opinion, I will ask Yiyang document this
->> in the next version.  Or we're fine to drop MIT too.
-> 
-> If you do not have explicit reasons to do this, AND legal approval with
-> the understanding of how to do dual license kernel code properly, I
-> would not do it at all as it's a lot of extra work.  Again, talk to your
-> lawyers about this please.  And if you come up with the "we really want
-> to do this," great, just document it properly as to what is going on
-> here and why this decision is made.
+> - Since writes are backward compatible, nothing bad happens if the 
+> passed placement-hint value is not supported. Maybe desired outcome (in 
+> terms of WAF reduction) may not come but that's not a kernel problem 
+> anyway. It's rather about how well application is segregating and how 
+> well device is doing its job.
 
-Ok, then let's stay with GPL only.  Although as I mentioned,
-cloud-native applications are happy with Apache-2.0 or MIT, which
-means there could be diverged for kernel and userspace on the Rust
-side too.
+What do you mean with "writes are backward compatible" ?
 
-Thanks,
-Gao Xiang
+> - Device is perfectly happy to work with numbers (0 to 256 in current 
+> spec) to produce some value (i.e., WAF reduction). Any extra 
+> semantics/abstraction on these numbers only adds to the work without 
+> increasing that value. If any application needs that, it's free to 
+> attach any meaning/semantics to these numbers.
 
-> 
-> thanks,
-> 
-> greg k-h
+If the device (or file system, which really needs to be in control
+for actual files vs just block devices) does not support all 256
+we need to reduce them to less than that.  The kernel can help with
+that a bit if the streams have meanings (collapsing temperature levels
+that are close), but not at all if they don't have meanings.  The
+application can and thus needs to know the number of separate
+streams available.
 
 
