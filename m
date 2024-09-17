@@ -1,64 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-29611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5843697B5B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 00:22:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933F197B5B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 00:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8919B1C21224
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 22:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E5F1F23C4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 22:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39EC185B52;
-	Tue, 17 Sep 2024 22:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054EB17C9A7;
+	Tue, 17 Sep 2024 22:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bkVOdYuO"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="GLy4aq7E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4821B15B551;
-	Tue, 17 Sep 2024 22:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2D91607A4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2024 22:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726611742; cv=none; b=V1Z8VDJQ/gq/MufTSOKz79pgn+L2TxllfCDjGYRak9xCikaVDAgxhl8KU53IhlaUk+v7pehaO3bXL2Gj0C7uWjlvO6U85b8kWMyBxCb83MvZUF/vKdaTEDwhUy/n9IVOcU8zxMDM/xhB0ow8zXjwR1iyA9WwRd3Lc05rsyQ67ys=
+	t=1726612078; cv=none; b=d4wJekt5fsOwWawQTb23jjTKaWGY7SPfWuyLmn7NQFUer0r2cXtwN/S4npjIrzaaacV7GisohnrAboyyhPOS1fYmba9AgoqGVVcaWxH1+rHRnSvBKCYcCNNODyVkexjxQIK9S/KsXOEiqMQy7vPl46iy6EL5MJpgPo/+pybWDQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726611742; c=relaxed/simple;
-	bh=UjcRyY1Dvy8LHiMl+Gg+gbnBQD/E0+QZGy/iCcLrcDw=;
+	s=arc-20240116; t=1726612078; c=relaxed/simple;
+	bh=EBE/kDYbk7dbdt1bwZQbkSfHD+9mMbCAVxtBBX4iXd4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ow/4aw7XFWhnRDp6lLr3NKQUVSNnP5YvYRIqaCJr3WNNvNWDvY06yhNXjmdNb/vHLWIHaWZnPcUJVS68DTBwbEM7CE45WY3VciJqTWZb4KCXARBx4Nv6ynUZi5bjmo+KnCpdGsFaUVIZNMOQv75ayZJDDX/TX1+ewRE26bDNrAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bkVOdYuO; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iLQ5LiZffWjY0HKID2pJokQ+7vMW0GhlCO+qySBS8dA=; b=bkVOdYuOwPg80KgLMJGdoYMcRG
-	wLzPnAAj9GE+DC3QXzU/yJ9lkHW1WbPFoJx94t8fLUD3RgkS4jzLyj3bvrroQuTlXCgy74FhjD8fV
-	YgvTPj7HvivM9mzttpf3hy2A7AsUWcDBQ9E3bOThKoWGb6oAPPk5A+DzJ9IHeupSOV/kHZuo5Qpfb
-	XbL3m1JHwhb76Qq6bwgJoZJ4Uk1ukQSvULg9QUhuAwFQso20pZXd7S36tDPUD9zQMH/WtGDAn44Rj
-	iL6FAd0w++VJvRtz1/gP/AaU9ObAY0CMkDw8MsKjMNNKDYQIbS7wA6XxD39vI9/nrIVdcLykek4y+
-	VGsEdF/w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sqgaM-0000000DGfH-3tnr;
-	Tue, 17 Sep 2024 22:22:14 +0000
-Date: Tue, 17 Sep 2024 23:22:14 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Yiyang Wu <toolmanp@tlmp.cc>, linux-erofs@lists.ozlabs.org,
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 19/24] erofs: introduce namei alternative to C
-Message-ID: <20240917222214.GF3107530@ZenIV>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-20-toolmanp@tlmp.cc>
- <20240916170801.GO2825852@ZenIV>
- <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
- <1edf9fe3-5e39-463b-8825-67b4d1ad01be@linux.alibaba.com>
- <20240917073149.GD3107530@ZenIV>
- <20240917074429.GE3107530@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7E0KZpAc347ZHhcdVBvYAP65Wspzeof2gltiO2JRXtDSvBR6vrCN/zzCjCHjptbxaqkJ0BAAN3cnPD1KRhajrszLztb8pH7uFChQRpFFl0HncwnRDm3Xn+yCSrZ+yY0WhF4J0XdI09sXiufDdUzPKNH86jM4LqZyhrqtkNeBzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=GLy4aq7E; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7db54269325so2415817a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2024 15:27:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726612076; x=1727216876; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ccch/CYLhuEpupgCKar2vNrhn2tuHqzaZ85afBvK4mk=;
+        b=GLy4aq7EVIZnz9mrA3JPZRvCxApyShjN4Wj7Qq3M7gnwM0YhDZ2Zq6VJKQnfFZoGgl
+         XU6lp94UnvDLVdS/+nhTsceFmQgT/IRPfoBDcWeqxTJGOrDRLDApzLP9zNzM7N6a+NIo
+         xPaZAAtjtst09mph6zpDWh4RHiPxTp0OtwgsKRYKYDWju691nFkonIneFdHWjcWLvDOs
+         y9L3p+hCyL365/6RqIM7AtdvpqjVm87JleY7h0DloXuhRRI1pTknhc0LkCrNgNDHLKYo
+         CQw32WR4MhoLt80tQUOAb0icz731QBiz5lx1u5Ul6v/8/Fvr82GdhEMwYlp/csGSrtmn
+         WCmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726612076; x=1727216876;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ccch/CYLhuEpupgCKar2vNrhn2tuHqzaZ85afBvK4mk=;
+        b=CrPGiDgvsfiNADfpb3y7rC9zLuGGOWkuoDpcUrQOjTVlLW0KCBKlKA9fr8NNtDvGS5
+         4Rnhj0jVHc8pPfgjxyQdL3Ll4jA75Pg5kGT0VQh6aOSczFOeYPeATuH1HbPwieUJ/uJz
+         glCI//ofbS7udCWMMwxV2vE93By1mUNMN0s3q6qPaQIPiMdRAGcby/Vk1hX/ttVHVNt9
+         ELVOwepPQzBLPT105ALfzBRjFeVMBG02s8+Csm/i+6SknncrcF6oPKHNH94nu/WTEmrm
+         oHUrbYc188TTuW+ikU54NpMZLiuaZcTB6NjEpLBG7aAqtq/+kG7S+raBxreD4KtI+Jf/
+         3kvg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6ViC3hM88I8bPSXJ0xjVYF1ohabRisd0JpI2NViGH0riJ7Vy9ihEX3Y/dhcJt57iSgZjEUAUAOEA7VG1v@vger.kernel.org
+X-Gm-Message-State: AOJu0YyChLOMJAZuJKkICFWoDvRXIOB+2grm3GDvsl4gGYhJkSTl6eBP
+	G0uNsShO3wIoAq/htqoUbGVqajo3TQ5Khbv40eiIN7+S4iDT2/LeiALa+QOTJdo=
+X-Google-Smtp-Source: AGHT+IF0NtHcWGgQkVG/yMvHatmnpgG/DEnu8eXNlMFeupDDsk0kMCwvT1TDHdDTmoFzXGa/p8UhJg==
+X-Received: by 2002:a05:6a21:a4c4:b0:1d2:e793:b35 with SMTP id adf61e73a8af0-1d2e7930d35mr5104220637.47.1726612076095;
+        Tue, 17 Sep 2024 15:27:56 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a9809esm5583859b3a.39.2024.09.17.15.27.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 15:27:55 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sqgfp-006XwE-0D;
+	Wed, 18 Sep 2024 08:27:53 +1000
+Date: Wed, 18 Sep 2024 08:27:53 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <ZuoCafOAVqSN6AIK@dread.disaster.area>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <87frqf2smy.fsf@gmail.com>
+ <ZtjrUI+oqqABJL2j@dread.disaster.area>
+ <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
+ <Ztom6uI0L4uEmDjT@dread.disaster.area>
+ <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
+ <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
+ <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
+ <ZufBMioqpwjSFul+@dread.disaster.area>
+ <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,204 +99,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240917074429.GE3107530@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
 
-On Tue, Sep 17, 2024 at 08:44:29AM +0100, Al Viro wrote:
+On Mon, Sep 16, 2024 at 10:44:38AM +0100, John Garry wrote:
+> 
+> > > * I guess that you had not been following the recent discussion on this
+> > > topic in the latest xfs atomic writes series @ https://urldefense.com/v3/__https://lore.kernel.org/linux-xfs/20240817094800.776408-1-john.g.garry@oracle.com/__;!!ACWV5N9M2RV99hQ!JIzCbkyp3JuPyzBx1n80WAdog5rLxMRB65FYrs1sFf3ei-wOdqrU_DZBE5zwrJXhrj949HSE0TwOEV0ciu8$
+> > > and also mentioned earlier in
+> > > https://urldefense.com/v3/__https://lore.kernel.org/linux-xfs/20240726171358.GA27612@lst.de/__;!!ACWV5N9M2RV99hQ!JIzCbkyp3JuPyzBx1n80WAdog5rLxMRB65FYrs1sFf3ei-wOdqrU_DZBE5zwrJXhrj949HSE0TwOiiEnYSk$
+> > > 
+> > > There I dropped the sub-alloc unit zeroing. The concept to iter for a single
+> > > bio seems sane, but as Darrick mentioned, we have issue of non-atomically
+> > > committing all the extent conversions.
+> > 
+> > Yes, I understand these problems exist.  My entire point is that the
+> > forced alignment implemention should never allow such unaligned
+> > extent patterns to be created in the first place. If we avoid
+> > creating such situations in the first place, then we never have to
+> > care about about unaligned unwritten extent conversion breaking
+> > atomic IO.
+> 
+> OK, but what about this situation with non-EOF unaligned extents:
+> 
+> # xfs_io -c "lsattr -v" mnt/file
+> [extsize, has-xattr, force-align] mnt/file
+> # xfs_io -c "extsize" mnt/file
+> [65536] mnt/file
+> #
+> # xfs_io  -d -c "pwrite 64k 64k" mnt/file
+> # xfs_io  -d -c "pwrite 8k 8k" mnt/file
+> # xfs_bmap -vvp  mnt/file
+> mnt/file:
+> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+>   0: [0..15]:         384..399          0 (384..399)          16 010000
+>   1: [16..31]:        400..415          0 (400..415)          16 000000
+>   2: [32..127]:       416..511          0 (416..511)          96 010000
+>   3: [128..255]:      256..383          0 (256..383)         128 000000
+> FLAG Values:
+>    0010000 Unwritten preallocated extent
+> 
+> Here we have unaligned extents wrt extsize.
+> 
+> The sub-alloc unit zeroing would solve that - is that what you would still
+> advocate (to solve that issue)?
 
-> Anyway, I'm half-asleep at the moment and I'd rather leave writing these
-> rules up until tomorrow.  Sorry...
+Yes, I thought that was already implemented for force-align with the
+DIO code via the extsize zero-around changes in the iomap code. Why
+isn't that zero-around code ensuring the correct extent layout here?
 
+> > FWIW, I also understand things are different if we are doing 128kB
+> > atomic writes on 16kB force aligned files. However, in this
+> > situation we are treating the 128kB atomic IO as eight individual
+> > 16kB atomic IOs that are physically contiguous.
+> 
+> Yes, if 16kB force aligned, userspace can only issue 16KB atomic writes.
 
-[Below are the bits of my notes related to d_name and d_parent,
-with most of the unprintable parts thrown out and minimal markup added.
-Probably not all relevant notes are here - this has been culled from
-a bunch of files sitting around and I might've missed some]
+Right, but the eventual goal (given the statx parameters) is to be
+able to do 8x16kB sequential atomic writes as a single 128kB IO, yes?
 
-NOTE: ->d_parent and ->d_name are by far the worst parts of dentry
-wrt stability rules.  Code audits are not pleasant, to put it mildly.
-This covers the bits outside of VFS proper - verifying the locking
-rules is a separate story.
+> > > > Again, this is different to the traditional RT file behaviour - it
+> > > > can use unwritten extents for sub-alloc-unit alignment unmaps
+> > > > because the RT device can align file offset to any physical offset,
+> > > > and issue unaligned sector sized IO without any restrictions. Forced
+> > > > alignment does not have this freedom, and when we extend forced
+> > > > alignment to RT files, it will not have the freedom to use
+> > > > unwritten extents for sub-alloc-unit unmapping, either.
+> > > > 
+> > > So how do you think that we should actually implement
+> > > xfs_itruncate_extents_flags() properly for forcealign? Would it simply be
+> > > like:
+> > > 
+> > > --- a/fs/xfs/xfs_inode.c
+> > > +++ b/fs/xfs/xfs_inode.c
+> > > @@ -1050,7 +1050,7 @@ xfs_itruncate_extents_flags(
+> > >                  WARN_ON_ONCE(first_unmap_block > XFS_MAX_FILEOFF);
+> > >                  return 0;
+> > >          }
+> > > +	if (xfs_inode_has_forcealign(ip))
+> > > +	       first_unmap_block = xfs_inode_roundup_alloc_unit(ip,
+> > > first_unmap_block);
+> > >          error = xfs_bunmapi_range(&tp, ip, flags, first_unmap_block,
+> > 
+> > Yes, it would be something like that, except it would have to be
+> > done before first_unmap_block is verified.
+> > 
+> 
+> ok, and are you still of the opinion that this does not apply to rtvol?
 
+The rtvol is *not* force-aligned. It -may- have some aligned
+allocation requirements that are similar (i.e. sb_rextsize > 1 fsb)
+but it does *not* force-align extents, written or unwritten.
 
-A Really Blunt Tool You Should Not Use.
-======================================
+The moment we add force-align support to RT files (as is the plan),
+then the force-aligned inodes on the rtvol will need to behave as
+force aligned inodes, not "rtvol" inodes.
 
-All changes of ->d_parent are serialized on rename_lock.  It's *NOT*
-something you want the stuff outside of core VFS to touch, though.
-It's a seqlock, and write_seqlock() on it is limited to fs/dcache.c
-alone.  Reader side is allowed, but it's still not something you
-want to use lightly - outside of fs/dcache.c, fs/d_path.c and fs/namei.c
-there are only 3 users (ceph_mdsc_build_path(), nfs_path() and
-auditsc handle_path()).  Don't add more without a discussion on fsdevel
-and detailed ACKs; it's quite likely that a better solution will be
-found.
-
-With one exception (see the discussion of d_mark_tmpfile() in the end),
-->d_name is also stabilized by that.
-
-
-Slightly Less Blunt Tool You Still Should Not Use.
-==================================================
-
-->s_vfs_rename_mutex will stabilize ->d_parent.  The trouble is,
-while it's not system-wide like rename_lock, it's fs-wide, so there's
-a plenty of contention to run into *AND* if you try that while
-->i_rwsem is held on some directory in that filesystem, you are fucked -
-lock_rename() (and rename(2), and...) will deadlock on you.
-Nothing outside of fs/{namei,dcache}.c touches it directly; there is
-an indirect use (lock_rename()), but that should be done only around
-the call of cross-directory rename on _another_ filesystem - overlayfs
-moving stuff within the writable layer, ecryptfs doing rename on
-underlying filesystem, nfsd handling rename request from client, etc.
-
-Anyone trying to use that hammer without a good reason will be very
-sorry - that's a promise.  The pain will begin with the request to
-adjust the proof of deadlock avoidance in directory locking and it
-will only go downwards from there...
-
-
-Parent's ->i_rwsem Held Exclusive.
-==================================
-
-That stabilizes ->d_parent and ->d_name.  To be more precise,
-
-holding parent->d_inode->i_rwsem exclusive stabilizes the result
-of (dentry->d_parent == parent).  That is to say, dentry
-that is a child of parent will remain such and dentry that isn't
-a child won't become a child.
-
-holding parent->d_inode->i_rwsem exclusive stabilizes ->d_name of
-all children.  In other words, if you've locked the parent exclusive
-and found something to be its child while keeping the parent locked,
-child will have ->d_parent and ->d_name stable until you unlock the
-parent.
-
-That covers most of the directory-modifying methods - stuff like
-->mkdir(), ->unlink(), ->rename(), etc. can access ->d_parent and
-->d_name of the dentry argument(s) without any extra locks; the
-caller is already holding enough.  Well, unless you are special
-(*cough* apparmor *cough*) and feel like dropping and regaining
-the lock on parent inside your ->mkdir()...  Don't do that, please -
-you might have no renames, but there's a plenty of other headache
-you can get into that way.
-
-
-Negatives.
-==========
-
-Negative dentry doesn't change ->d_parent or ->d_name.  Of course,
-that is only worth something if you are guaranteed that it won't
-become positive under you - if that happens, all bets are off.
-
-Holding the inode of parent locked (at least) shared is enough to
-guarantee that.  That takes care of ->lookup() instances - their
-dentry argument has ->d_parent and ->d_name stable until you make
-it positive (normally - by d_splice_alias()).  Once you've done
-d_splice_alias(), you'd better be careful with access to those;
-you won't get hit by concurrent rename() (it locks parent(s)
-exclusive), but if your inode is a directory and d_splice_alias()
-*elsewhere* picks the same inode (fs image corruption, network
-filesystem with rename done from another client behind your back,
-etc.), you'll see the sucker moved.
-
-In practice, d_splice_alias() is the last thing done by most of ->lookup()
-instances - whatever it has returned gets returned by ->lookup() itself,
-possibly after freeing some temporary allocations, etc.  The rest needs
-to watch out for accesses to ->d_name and ->d_parent downstream of
-d_splice_alias() return.
-
-Another case where we are guaranteed that dentry is negative and
-will stay so is ->d_release() - it's called for a dentry that is
-well on the way to becoming an ex-parrot; it's already marked
-dead, unhashed and negative.  So a ->d_release() instance doesn't
-have to worry about ->d_name and ->d_parent - both are valid and
-stable.
-
-
-sprintf().
-==========
-
-%pd prints dentry name, safely.  %p2d - parent_name/dentry_name, etc. up
-to %p4d.  %pD .. %p4D  do the same by file reference.  Any time you see
-pr_warn("Some weird bollocks with %s (%d)\n", dentry->d_name, err);
-it should've been
-pr_warn("Some weird bollocks with %pd (%d)\n", dentry, err)...
-
-d_path() and friends are there for purpose - don't open-code those without
-a damn good reason.
-
-
-Checking if one dentry is an ancestor of another.
-=================================================
-
-Use the damn is_subdir(), don't open-code it.
-
-
-Spinlocks.
-==========
-
-dentry->d_lock stabilizes ->d_parent and ->d_name (as well as almost
-everything else about dentry); downside is that it's a spinlock
-*and* nesting it is not to be attempted easily; you are allowed
-to lock child while holding lock on parent, but very few places
-have any business doing that (only 2 outside of VFS - tree-walking
-in autofs, which might eventually get redone avoiding that and
-fsnotify_set_children_dentry_flags(), which just might get moved to
-fs/dcache.c itself; we'll see)
-
-Note that "almost everything" includes refcount; that is to say, dget()
-and dput() will spin if you are holding ->d_lock, so you can't dget()
-the parent under ->d_lock on child - that's a locking order violation
-that can easily deadlock on you.  dget_parent() does that kind of thing
-safely, and a look at it might be instructive.  Try to open-code something
-of that sort, and you'll be hurt.
-
-Said that, dget_parent() is overused - it has legitimate uses, but
-more often than not it's the wrong tool.  In particular, while you
-grab a reference to something that was the parent at some point during
-dget_parent(), it might not be the parent anymore by the time it is
-returned to caller.
-
-Most of the dget_parent() uses are due to bad calling conventions of
-->d_revalidate().  When that gets sanitized, those will be gone.
-
-The methods that are called with ->d_lock get the protection - that
-would be ->d_delete() and ->d_prune().
-
-->d_lock on parent is also sufficient; similar to exclusive ->i_rwsem,
-parent->d_lock stabilizes (dentry->d_parent == parent) and if child
-has been observed to have child->d_parent equal to parent after
-you've locked parent->d_lock, you know that child->d_{parent,name}
-will remain stable until you unlock the parent.
-
-
-Name Snapshots.
-===============
-
-There's take_dentry_name_snapshot()/release_dentry_name_snapshot().
-That stuff eats about 64 bytes on stack (longer names _are_ handled
-correctly; no allocations are needed, we can simply grab an extra
-reference to external name and hold it).  Can't be done under
-->d_lock, won't do anything about ->d_parent *and* there's nothing
-to prevent dentry being renamed while you are looking at the name
-snapshot.  Sometimes it's useful...
-
-
-RCU Headaches.
-==============
-
-See e.g. https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=fixes.pathwalk-rcu-2&id=8d0a75eba81813cbb00beb73a67783e1cde9982f
-(NB: ought to repost that)
-
-
-[*] d_mark_tmpfile() is pretty much a delayed bit of constructor.  There is
-a possible intermediate state of dentry ("will be tmpfile one"); dentries
-in that state are all created in vfs_tmpfile(), get passed to ->tmpfile()
-where they transition to normal unhashed postive dentries.  The reason why
-name is not set from the very beginning is that at that point we do not know
-the inumber of inode they are going to get (that becomes known inside
-->tmpfile() instance) and we want that inumber seen in their names (for
-/proc/*/fd/*, basically).  Name change is done while holding ->d_lock both
-on dentry itself and on its parent.
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
