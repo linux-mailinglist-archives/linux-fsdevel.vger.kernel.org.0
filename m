@@ -1,97 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-29565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253BC97AD05
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 10:44:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92B797AD6B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 11:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C514B1F25789
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 08:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B11C1287ECE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 09:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7A21581F3;
-	Tue, 17 Sep 2024 08:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEC01607B7;
+	Tue, 17 Sep 2024 08:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkDNdmJI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F191411C8;
-	Tue, 17 Sep 2024 08:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B28155A4E;
+	Tue, 17 Sep 2024 08:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726562678; cv=none; b=ebZI3mEaxusDf00Q53KnGtH6N2j+6GUxBsK9FXd49HJWbsqKXlJJy3J6bZ8vJwBPWAOq1y8DoI8ZoOLfuwncQpSfsuCp88xFz9O+xSdjTJn15Bg8b1irAKf6XsoOIgl2KtLV1R1iTwI5yTcJPOFG/dKuyt61NN32B5Ad63ZgVNY=
+	t=1726563566; cv=none; b=V/Z9vHZDEDMhJ/6wjOVH4UH49lG+HaE1g7ZG0O8pVqJ62yqVSR24OGSj0FlTqD+/QiS8pATeDQBrhSfoPKEO7WChvzOhHGssSTIRQzRBRNIaBDQCGESojEcz68VNpZHVq3coem6CDMg+skw9R+PrGrh/BNgZ/W3JM/DpFUmXbII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726562678; c=relaxed/simple;
-	bh=1kZQOv6aCARwhPkW5k+9PCifhhDez3ftRd0I8Urv4n0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FIAa/JYXvS5E+dzQ0rgR7WIbu8cO2DiNUkTA5mKY5Oe5uxcSTx6oMOBPPBCRpGMCDdAGP+QTflvbbcl8Sm50KVVHnkHqbSsgqpK76VsBMJRGuk76rlesmqTN4MiV8LXMFD0CMey84j+cyMQKssU68BVSiE/FJlt203r01XfrpNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0B8EDA7;
-	Tue, 17 Sep 2024 01:45:04 -0700 (PDT)
-Received: from [10.57.83.157] (unknown [10.57.83.157])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EBC1D3F66E;
-	Tue, 17 Sep 2024 01:44:33 -0700 (PDT)
-Message-ID: <45084868-0a09-4c57-81b0-f59a1ca292db@arm.com>
-Date: Tue, 17 Sep 2024 09:44:32 +0100
+	s=arc-20240116; t=1726563566; c=relaxed/simple;
+	bh=NKhckBMgwJKcDCDVH8R0awRFV2BdU7iPgvD+2gL7lgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V9lUlOZEVdCbkez3KlIIHLIuOSrJNqG/ijHdRRUngyGK5jmru+drcm15nOu31EZz5kZY7QtYo951hrdzgnfMUq3SdgSaSpSY2+SMwO/syEq+yxE/hSmvrd6Kj5yr6IgP2CwfH3RsFBiECWYYyz0YvpiLhTyXapQQ0FEGfffgM8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkDNdmJI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D740C4CEC5;
+	Tue, 17 Sep 2024 08:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726563565;
+	bh=NKhckBMgwJKcDCDVH8R0awRFV2BdU7iPgvD+2gL7lgQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hkDNdmJIqrdgegnNnlNIX+KgWGmbQVXD0wGSGAL40K5YK6/9OiM77zzk8lTJJ/ey+
+	 pSQucHG+KwI3gBYSQQnMjr4N6r8Kxb6oo6opLTyN1j0bJ4zYr+9eRvqNG/oFa1BFVn
+	 0x73yZxa3S8ErYG/OOGjY+olVwnDwH1rUGx1j+dS7NyfDFIv5tJQpNTvgqlyRzEd5S
+	 GxqXgz8kDXz6jp5wuALWXxyaNKBnKagklUvt/wNOgRv+U7so1tOD1KnbykM3Om8IoU
+	 TL7E7p0M0xgIMiBmbUWh4aBopqjaiWmli6y+ndzwnRhx13WBhz6I7/NMJfOZXLLNtl
+	 XkieuQHSDBerQ==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel test robot <oliver.sang@intel.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	linux-cifs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Steve French <sfrench@samba.org>
+Subject: Re: [PATCH] netfs, cifs: Fix mtime/ctime update for mmapped writes
+Date: Tue, 17 Sep 2024 10:59:01 +0200
+Message-ID: <20240917-hypen-advokat-2d384f761fde@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <2106017.1726559668@warthog.procyon.org.uk>
+References: <2106017.1726559668@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 3/7] mm: Use ptep_get() for accessing PTE entries
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
- <20240917073117.1531207-4-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240917073117.1531207-4-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1242; i=brauner@kernel.org; h=from:subject:message-id; bh=NKhckBMgwJKcDCDVH8R0awRFV2BdU7iPgvD+2gL7lgQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS9dHkifZuvafk8YU0el0MKa2IWePC8W985wW7OriN/9 2XPu96xrqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiL94yMjwWaFw0J4T3h9QW b/us1ave1cQcyYt+2Rm32IXvYn5u5lGGf4b8a5pt1jjYmEn4OzLJ2SvwXZvXe0pr2b/I8Buaqhv sGAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 17/09/2024 08:31, Anshuman Khandual wrote:
-> Convert PTE accesses via ptep_get() helper that defaults as READ_ONCE() but
-> also provides the platform an opportunity to override when required. This
-> stores read page table entry value in a local variable which can be used in
-> multiple instances there after. This helps in avoiding multiple memory load
-> operations as well possible race conditions.
+On Tue, 17 Sep 2024 08:54:28 +0100, David Howells wrote:
+> The cifs flag CIFS_INO_MODIFIED_ATTR, which indicates that the mtime and
+> ctime need to be written back on close, got taken over by netfs as
+> NETFS_ICTX_MODIFIED_ATTR to avoid the need to call a function pointer to
+> set it.
 > 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-
-> ---
->  include/linux/pgtable.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> The flag gets set correctly on buffered writes, but doesn't get set by
+> netfs_page_mkwrite(), leading to occasional failures in generic/080 and
+> generic/215.
 > 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 2a6a3cccfc36..547eeae8c43f 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1060,7 +1060,8 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
->   */
->  #define set_pte_safe(ptep, pte) \
->  ({ \
-> -	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
-> +	pte_t __old = ptep_get(ptep); \
-> +	WARN_ON_ONCE(pte_present(__old) && !pte_same(__old, pte)); \
->  	set_pte(ptep, pte); \
->  })
->  
+> [...]
 
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] netfs, cifs: Fix mtime/ctime update for mmapped writes
+      https://git.kernel.org/vfs/vfs/c/edd297c2764c
 
