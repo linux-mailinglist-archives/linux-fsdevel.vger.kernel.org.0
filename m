@@ -1,101 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-29547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE26897AB5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 08:20:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597C397AB8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 08:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3311F22882
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 06:20:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CB211C2169A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 06:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AF6132139;
-	Tue, 17 Sep 2024 06:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CCA8248C;
+	Tue, 17 Sep 2024 06:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eL9E3wGR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E225D8F0;
-	Tue, 17 Sep 2024 06:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8077F481D1;
+	Tue, 17 Sep 2024 06:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726554014; cv=none; b=g6m2AXPyuskgyBO0tzQi+ABt/mDG8m04IeKKipgXujERGjUVOonL9x70Wu+nqstOxFVesp51nxqT3B48Z/Kp2utz58XUhCnKWFqGBvBdumneNPwgFSidzu+i4BHe68INFtl5PAF9JbDLPtPWYmLEpr3F060TfR4OqUKy+ZlnkIg=
+	t=1726555250; cv=none; b=Wz8ZUj8s/Ca5YCv/2wGSg967WErdFhX3i+5l7krtR5C8V/YFaBq4BwN7CFLqCfGrhv2v9w+NWWeDF4kTK+wcsyOH4l5siEpi44Iup/LTdIDgF8gKSSXEGrItoceOw/UO10WrU637uXldxqW405W2Cw3ko49AfPbRmnCiDf2g8z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726554014; c=relaxed/simple;
-	bh=pFzT2ZqtUjl23iIZuzObb5iVFXkufhUazQnZ99FVJjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2yXDxU0UhCo5c+q0MCA8lZ+uw2XQwn4Gw1wvfYG7ISLMUrzA+/VyleIVJQak1Ojzg6exyrl4naEOGOuo+LlNYdEXivjhvwgaGcStjsTiEEIZE3x0pygsNJZuVUJvYvidnHigtS/TyMgqC7b+SyZQ8e294bwnWF1GN8Pq9tkLss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C391B227ACB; Tue, 17 Sep 2024 08:20:07 +0200 (CEST)
-Date: Tue, 17 Sep 2024 08:20:07 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
-	sagi@grimberg.me, martin.petersen@oracle.com,
-	James.Bottomley@HansenPartnership.com, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
-	jlayton@kernel.org, chuck.lever@oracle.com, bvanassche@acm.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
-	linux-scsi@vger.kernel.org, gost.dev@samsung.com,
-	vishak.g@samsung.com, javier.gonz@samsung.com,
-	Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [PATCH v5 4/5] sd: limit to use write life hints
-Message-ID: <20240917062007.GA4170@lst.de>
-References: <20240910150200.6589-1-joshi.k@samsung.com> <CGME20240910151057epcas5p3369c6257a6f169b4caa6dd59548b538c@epcas5p3.samsung.com> <20240910150200.6589-5-joshi.k@samsung.com> <20240912130235.GB28535@lst.de> <e6ae5391-ae84-bae4-78ea-4983d04af69f@samsung.com> <20240913080659.GA30525@lst.de> <4a39215a-1b0e-3832-93bd-61e422705f8b@samsung.com>
+	s=arc-20240116; t=1726555250; c=relaxed/simple;
+	bh=lrRaZzQx1PUicFEWsjf8xF11xneR/10BGrYs/hZuJDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TjLc/pSQQMi/o2IpJi+PoHSbOPyNtbpm6TW5KAA/K+/MvUQ/TsKQe84WTG2aoiZF3RU9UptZu54ZAb9oU/2XmlKGPFiZ0/B7aAjhSTw8O/XnUZ11ImYGzJOmHalevbdM4QOEV5VAG+GCCAroMloFQye94gZPR7sQvyyr+7AxR7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eL9E3wGR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDB8C4CEC6;
+	Tue, 17 Sep 2024 06:40:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726555250;
+	bh=lrRaZzQx1PUicFEWsjf8xF11xneR/10BGrYs/hZuJDw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eL9E3wGR3s740rRRgQAIKqMJsQpfySfDPBugUFjGUBco4W8N98ycr6Nzy3abi1TUN
+	 gCwz7tZigpL57f/qO5QpbF141bjEBpI4K7oW6A9y7aKTRD0l/okJFNFa3/maLYgHL8
+	 KOXf+BoTtixH7IJQVO4eXbBv2hpjWy+4u0Wuoe8z1zy3KWLruLSJLgu6vrR8PuNNmG
+	 hjzHOxkz5b63V9/ZIWN2hDbOm7FZERT8uk8KOmEQ1YF0fTF2AFhhSXCMT626gfgQGL
+	 7f0ylJ2XjlR0pmRpOC6/N8R0nfVsUDps54BjqUvCWjf/q9XxAG/VHJtvMldhPXPyGL
+	 jPsBZLE3NVJGg==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-277fdd7d509so2480715fac.0;
+        Mon, 16 Sep 2024 23:40:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcMWpzTENUWi+P+H+08s54ycaqkaYOzY2kDxlkPPZVpr0i2aR5dc0E564vRQsFBMsz88pt9FQmiGAfoFq8@vger.kernel.org, AJvYcCWvGRQ/3RVzqUFi7++ev7zpUTjmRg55y7mT5eU0DLejcmdIFpZWhC/UXQm5YPP7N1jPG4QBPhQbVGCvB2JM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5T7BZPO5preJqgs/7Y5lg3aXurrTVIwqj6SJxDKLStYnT+Fl6
+	99K9LpGsVattU4ZTrkahwrlzAS7oXEoTC6HtMztppKj5SjCpu3MZ2zaJo8vxSyY6mASGYZwXtuG
+	4pb8Fg3CNweE4UVM99a71tJhPjIc=
+X-Google-Smtp-Source: AGHT+IEH5yh6G5/4yB8JWXRjt1BvX3OfqdnjeZiwq+2OqqzdvIG1brElBn/avrLnH+0tOKQ7+ihdR6UQ4V0r3ESq/zs=
+X-Received: by 2002:a05:6870:c081:b0:278:15b:8ee0 with SMTP id
+ 586e51a60fabf-27c3e8e9821mr9627294fac.7.1726555249717; Mon, 16 Sep 2024
+ 23:40:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a39215a-1b0e-3832-93bd-61e422705f8b@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20240916230506.232137-1-danielyangkang@gmail.com>
+In-Reply-To: <20240916230506.232137-1-danielyangkang@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 17 Sep 2024 15:40:38 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-__5jnU3znV5qR1SVNaogqAbR-eQW2V_+LsbeVWRb50A@mail.gmail.com>
+Message-ID: <CAKYAXd-__5jnU3znV5qR1SVNaogqAbR-eQW2V_+LsbeVWRb50A@mail.gmail.com>
+Subject: Re: [PATCH v3] fs/exfat: resolve memory leak from exfat_create_upcase_table()
+To: Daniel Yang <danielyangkang@gmail.com>
+Cc: viro@zeniv.linux.org.uk, Sungjong Seo <sj1557.seo@samsung.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 16, 2024 at 07:19:21PM +0530, Kanchan Joshi wrote:
-> > Maybe part of the problem is that the API is very confusing.  A smal
-> > part of that is of course that the existing temperature hints already
-> > have some issues, but this seems to be taking them make it significantly
-> > worse.
-> 
-> Can you explain what part is confusing. This is a simple API that takes 
-> type/value pair. Two types (and respective values) are clearly defined 
-> currently, and more can be added in future.
-
-I though I outlined that below.
-
-> > But if we increase this to a variable number of hints that don't have
-> > any meaning (and even if that is just the rough order of the temperature
-> > hints assigned to them), that doesn't really work.  We'll need an API
-> > to check if these stream hints are supported and how many of them,
-> > otherwise the applications can't make any sensible use of them.
-> 
-> - Since writes are backward compatible, nothing bad happens if the 
-> passed placement-hint value is not supported. Maybe desired outcome (in 
-> terms of WAF reduction) may not come but that's not a kernel problem 
-> anyway. It's rather about how well application is segregating and how 
-> well device is doing its job.
-
-What do you mean with "writes are backward compatible" ?
-
-> - Device is perfectly happy to work with numbers (0 to 256 in current 
-> spec) to produce some value (i.e., WAF reduction). Any extra 
-> semantics/abstraction on these numbers only adds to the work without 
-> increasing that value. If any application needs that, it's free to 
-> attach any meaning/semantics to these numbers.
-
-If the device (or file system, which really needs to be in control
-for actual files vs just block devices) does not support all 256
-we need to reduce them to less than that.  The kernel can help with
-that a bit if the streams have meanings (collapsing temperature levels
-that are close), but not at all if they don't have meanings.  The
-application can and thus needs to know the number of separate
-streams available.
-
+On Tue, Sep 17, 2024 at 8:05=E2=80=AFAM Daniel Yang <danielyangkang@gmail.c=
+om> wrote:
+>
+>     If exfat_load_upcase_table reaches end and returns -EINVAL,
+>     allocated memory doesn't get freed and while
+>     exfat_load_default_upcase_table allocates more memory, leading to a
+>     memory leak.
+>
+>     Here's link to syzkaller crash report illustrating this issue:
+>     https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D1406c2019800=
+00
+>
+> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> Reported-by: syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
+> ---
+> V2 -> V3: free(NULL) is no-op, removed if() check
+> V1 -> V2: Moved the mem free to create_upcase_table
+Applied it to #dev now.
+Thanks for your work!
 
