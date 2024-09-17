@@ -1,46 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-29563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ACE797AC96
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 10:08:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42DF497ACF7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 10:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97DFBB29083
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 08:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 763E51C20F72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 08:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AC615697B;
-	Tue, 17 Sep 2024 08:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MvkUBde5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6807115383A;
+	Tue, 17 Sep 2024 08:40:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5D0152E0C;
-	Tue, 17 Sep 2024 08:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65768446DB;
+	Tue, 17 Sep 2024 08:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726560524; cv=none; b=m+hUWRS5pORmQ9C5s/+fidm4hbPF3aK3ZySALI1eGQ65tmPXsPfiiveP9lL+3Z2RzPgC9+drep5SyW39JYWzwUhLbYaoXfjj/gnS3EAmYM0QwPlGhe6agyx9j895QJD85IbRPwdkcF1t0X/gC1kkUtQBTPbGTyuI2K21o/7bjf4=
+	t=1726562408; cv=none; b=Ld9tCJ/NgnAZo3KwB+mDU8q4G89SfI6fTXqyEkrVg+wc7qGv890PLliKhKa0E+shZ1QyuF2TfRQaSW7mEcXyvEY249e6Y8TR/92+Ek4c2zyyIF/OJlc8Yu1o/meiLv7oT/z2oTC6uydS6cuviKmIrxQnCZ097PyFZNCvT0FaeIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726560524; c=relaxed/simple;
-	bh=f4Ch4NcQn4tmNn08i8cfN0ybAqWfXzIaika3s6Ft/ho=;
+	s=arc-20240116; t=1726562408; c=relaxed/simple;
+	bh=TWJMtfJZ9QPOu5Te4EqE5AIl1qhQ4uGMya1ppUhTjgk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lf0zn5Ux6y7vgdiBLI+S0KKj7jiN5iNo7QXY0NC9XKs+Bh2A37axiFB/z2gyEzFTWOxhi7DVueEvZckK3GyZXlloR0KzCqgoGH1rgJNY3c6rQDmJMoIBmIAg3vOQ0rZyXY5/vAh4QnfnghdmeXnH543pvHtsqI+lORZQf3yOKHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MvkUBde5; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726560509; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=I8eWoKaw2PNnTTn7YsG5l65WbNKRB5CSK40+WOhrwfs=;
-	b=MvkUBde52WXuB19AJKQNO3vGm9kww5tKJqlUra79SA+G2TBeAddd9AT/8y6Tps+E1sDBog4hDYthIHTYeCKLGiRYlFMMNs4AJE8vxmBUWIkboglSxyYETqSsr0Ok8Lcuujk0ufN5kVFljVqy6AdYyCRbasOgcXhzq0H4kW9focA=
-Received: from 30.244.95.26(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFARatd_1726560507)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Sep 2024 16:08:29 +0800
-Message-ID: <8871d954-4e6d-4e2d-9080-c5950e7ac2c6@linux.alibaba.com>
-Date: Tue, 17 Sep 2024 16:08:26 +0800
+	 In-Reply-To:Content-Type; b=e91vE6ZrED+JvEvSoHWoH2FTjAZVVOjJgTviI/tH19ZpL4RMC6QEw2FdN5F16I9X3caue2qxjb/OqFjiC9oSrpadZKkVGFLfABvOJyJ73EzVC+UFCURT6ELonHYfjc970TnYRD+FSDOrZdJ2ha3XIE35x99mPoEsC2a7IwFoqDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3231DA7;
+	Tue, 17 Sep 2024 01:40:33 -0700 (PDT)
+Received: from [10.57.83.157] (unknown [10.57.83.157])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5AF643F66E;
+	Tue, 17 Sep 2024 01:40:02 -0700 (PDT)
+Message-ID: <6800a37f-8a37-4a9b-9e22-a78943d1ecf7@arm.com>
+Date: Tue, 17 Sep 2024 09:40:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,62 +42,55 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 19/24] erofs: introduce namei alternative to C
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Yiyang Wu <toolmanp@tlmp.cc>, linux-erofs@lists.ozlabs.org,
- rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-20-toolmanp@tlmp.cc> <20240916170801.GO2825852@ZenIV>
- <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
- <1edf9fe3-5e39-463b-8825-67b4d1ad01be@linux.alibaba.com>
- <20240917073149.GD3107530@ZenIV> <20240917074429.GE3107530@ZenIV>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240917074429.GE3107530@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH V2 1/7] m68k/mm: Change pmd_val()
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Guo Ren <guoren@kernel.org>
+References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+ <20240917073117.1531207-2-anshuman.khandual@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240917073117.1531207-2-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 17/09/2024 08:31, Anshuman Khandual wrote:
+> This changes platform's pmd_val() to access the pmd_t element directly like
+> other architectures rather than current pointer address based dereferencing
+> that prevents transition into pmdp_get().
+> 
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Guo Ren <guoren@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-m68k@lists.linux-m68k.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
+I know very little about m68k, but for what it's worth:
 
-On 2024/9/17 15:44, Al Viro wrote:
-> On Tue, Sep 17, 2024 at 08:31:49AM +0100, Al Viro wrote:
-> 
->>> After d_splice_alias() and d_add(), rename() could change d_name.  So
->>> either we take d_lock or with rcu_read_lock() to take a snapshot of
->>> d_name in the RCU walk path.  That is my overall understanding.
->>
->> No, it's more complicated than that, sadly.  ->d_name and ->d_parent are
->> the trickiest parts of dentry field stability.
->>
->>> But for EROFS, since we don't have rename, so it doesn't matter.
->>
->> See above.  IF we could guarantee that all filesystem images are valid
->> and will remain so, life would be much simpler.
-> 
-> In any case, currently it is safe - d_splice_alias() is the last thing
-> done by erofs_lookup().  Just don't assume that names can't change in
-> there - and the fewer places in filesystem touch ->d_name, the better.
-> 
-> In practice, for ->lookup() you are safe until after d_splice_alias()
-> and for directory-modifying operations you are safe unless you start
-> playing insane games with unlocking and relocking the parent directories
-> (apparmorfs does; the locking is really obnoxious there).  That covers
-> the majority of ->d_name and ->d_parent accesses in filesystem code.
-> 
-> ->d_hash() and ->d_compare() are separate story; I've posted a text on
-> that last year (or this winter - not sure, will check once I get some
-> sleep).
-> 
-> d_path() et.al. are taking care to do the right thing; those (and %pd
-> format) can be used safely.
-> 
-> Anyway, I'm half-asleep at the moment and I'd rather leave writing these
-> rules up until tomorrow.  Sorry...
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-Agreed, thanks for writing so many words on this!
-
-Thanks,
-Gao Xiang
-
+> ---
+>  arch/m68k/include/asm/page.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/m68k/include/asm/page.h b/arch/m68k/include/asm/page.h
+> index 8cfb84b49975..be3f2c2a656c 100644
+> --- a/arch/m68k/include/asm/page.h
+> +++ b/arch/m68k/include/asm/page.h
+> @@ -19,7 +19,7 @@
+>   */
+>  #if !defined(CONFIG_MMU) || CONFIG_PGTABLE_LEVELS == 3
+>  typedef struct { unsigned long pmd; } pmd_t;
+> -#define pmd_val(x)	((&x)->pmd)
+> +#define pmd_val(x)	((x).pmd)
+>  #define __pmd(x)	((pmd_t) { (x) } )
+>  #endif
+>  
 
 
