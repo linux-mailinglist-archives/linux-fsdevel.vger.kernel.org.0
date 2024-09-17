@@ -1,116 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-29605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C172C97B538
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 23:30:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9231697B55D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 23:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96ADC284A28
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 21:30:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE1A3B22BDD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 21:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB1B193062;
-	Tue, 17 Sep 2024 21:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AB01922F9;
+	Tue, 17 Sep 2024 21:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Feq9E+mP"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ewz06wkw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QyCWF3SH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ewz06wkw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QyCWF3SH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C051925A3;
-	Tue, 17 Sep 2024 21:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2980CF510;
+	Tue, 17 Sep 2024 21:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726608576; cv=none; b=WNV9EO7rt6XBYHw2u+BCjEciQFA8bMnEQBZYIQ3lXdBRPEDRGLWRYmSJFXCqejTWFzl+6iVI7YgRvOJx8TMCB+uo7Y4xf1Iv6k/fzT6cUpxA/h8EruskoPECyVJaiEGNYIAVTrtRU+1bLA5mXbimHa+RLcTsp0u1tRA0fw3zhU0=
+	t=1726610058; cv=none; b=m5KcuU1R8bH6jpi3T4giAZTzgTj+WETRZ8GM7lJqFaTO+rER80FQAeCIJsMEhTxqqo3h6bRBnlcGv6AiZhty1WYuhmra+Kf5hed5DfX4hfAOpLAJ/yvCcXAKLerAJuJSW39+FqATYy+qHVZgC7ewSNJQ4/6nnMtBbSQma+9xbUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726608576; c=relaxed/simple;
-	bh=9oizcgefJXn2A/n2URFPYzu03ElkfcxTmK8MQYXe9xI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9se3SKI6v3IbtQ6fQeHUy5jqttIa4JnArl1KXSnZdzK6p2Bw9QpMYUwcqy1bfftShNUWtvHvJW6KApO5VKp5VRCte0oWtuf46PqU/V05Nemmv97OegEM8QZpnDIZM20U6wTwM1tu274GbItDzHVhtqFmhL1dDWM+7nZdTWOZTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Feq9E+mP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1F96C4CED0;
-	Tue, 17 Sep 2024 21:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726608576;
-	bh=9oizcgefJXn2A/n2URFPYzu03ElkfcxTmK8MQYXe9xI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Feq9E+mPeDxpS4TNLYUkIkwwYtDQUwUjOdFadPGugiXapB50tsyzfSGkMNrKsRFp6
-	 9ZGqnPHnkcNUF9zBVqi1IDv5AO/pZEUNr2Hys9h0Wtgs/3fJoYTPEMkjhtGYVgf4nh
-	 1VMxBL3gQ2q4QtmrVhj5/lJtgEMcVv2xjtU6qU20AN6/WmsjC5E8YfV+x6MtvN8tVM
-	 yj+6G6ata86sw5umXDNwUlR4FoLddeb2yH45B/oenxPcAzWPLRhMLdn9CdsnxxZScC
-	 M20WbgK0v6Uq2Qsd6gsopeeo970yIEq1Xvm/FEjSf44CE6aXIh9l3JeKD2oWhkJ+Ri
-	 di+kFyUnQoCZw==
-Date: Tue, 17 Sep 2024 14:29:35 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 08/12] iomap: zeroing already holds invalidate_lock
-Message-ID: <20240917212935.GE182177@frogsfrogsfrogs>
-References: <20240910043949.3481298-1-hch@lst.de>
- <20240910043949.3481298-9-hch@lst.de>
+	s=arc-20240116; t=1726610058; c=relaxed/simple;
+	bh=hPp59baIO1umS+sO8KbuL90XTx5D2LnUMl+rf4lg+DY=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Np6RI6X8fYb4EWMKLn7I30G3l/4KmPzNPHa+3TH1BNA/5N1mVXPprLEfZcLwpJ0aHa6tXrERqqLoBWxqMD1dVPaLC0Rp0LNfjGBdygazCsZFzBFH2hP3tlY+lWzNmPeeV3FWnEuAPnJasoSgbkyNMPVxdcw+JJWA6evttry8YVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ewz06wkw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QyCWF3SH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ewz06wkw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QyCWF3SH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C11322532;
+	Tue, 17 Sep 2024 21:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726610055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iHyYymU40LHB7ZgzKtdHyNesr3HYnr4DdIzhSI4l7ds=;
+	b=Ewz06wkwEcEhM5k4mRLpXWquEssqZpH8q3k9CdodS6sTKPDkUgSK5YcQHlg8cZmfV1bfrQ
+	IvSFYEd2+vg/zS/ezEhp4+8ck56c+00YvSrcta5bVxDjSmaNB8FZNq3CdMPo0ZuaPZfY4E
+	ZS0JTlWX82pAvpMFXknAHo0prN9Bvbk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726610055;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iHyYymU40LHB7ZgzKtdHyNesr3HYnr4DdIzhSI4l7ds=;
+	b=QyCWF3SH8W0T347ycKGdYg0qAFagLsHdY4xAuKRJSk+8OPA28XKwT3emPXWunOjuZjQtL0
+	6G13NjlE0Hs8btBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Ewz06wkw;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=QyCWF3SH
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726610055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iHyYymU40LHB7ZgzKtdHyNesr3HYnr4DdIzhSI4l7ds=;
+	b=Ewz06wkwEcEhM5k4mRLpXWquEssqZpH8q3k9CdodS6sTKPDkUgSK5YcQHlg8cZmfV1bfrQ
+	IvSFYEd2+vg/zS/ezEhp4+8ck56c+00YvSrcta5bVxDjSmaNB8FZNq3CdMPo0ZuaPZfY4E
+	ZS0JTlWX82pAvpMFXknAHo0prN9Bvbk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726610055;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iHyYymU40LHB7ZgzKtdHyNesr3HYnr4DdIzhSI4l7ds=;
+	b=QyCWF3SH8W0T347ycKGdYg0qAFagLsHdY4xAuKRJSk+8OPA28XKwT3emPXWunOjuZjQtL0
+	6G13NjlE0Hs8btBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD1CD13A9B;
+	Tue, 17 Sep 2024 21:54:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id K9MrHIT66WYJOgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 17 Sep 2024 21:54:12 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910043949.3481298-9-hch@lst.de>
+From: "NeilBrown" <neilb@suse.de>
+To: "Jens Axboe" <axboe@kernel.dk>
+Cc: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Subject: Re: [PATCH 1/7] block: change wait on bd_claiming to use a
+ var_waitqueue, not a bit_waitqueue
+In-reply-to: <68e8c574-1266-42e1-9d0d-ed837c7105b6@kernel.dk>
+References: <>, <68e8c574-1266-42e1-9d0d-ed837c7105b6@kernel.dk>
+Date: Wed, 18 Sep 2024 07:54:05 +1000
+Message-id: <172661004540.17050.6252973409733219343@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 2C11322532
+X-Spam-Score: -6.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Sep 10, 2024 at 07:39:10AM +0300, Christoph Hellwig wrote:
-> All callers of iomap_zero_range already hold invalidate_lock, so we can't
-> take it again in iomap_file_buffered_write_punch_delalloc.
+On Tue, 17 Sep 2024, Jens Axboe wrote:
+> On 8/26/24 12:30 AM, NeilBrown wrote:
+> > bd_prepare_to_claim() waits for a var to change, not for a bit to be
+> > cleared.
+> > So change from bit_waitqueue() to __var_waitqueue() and correspondingly
+> > use wake_up_var().
+> > This will allow a future patch which change the "bit" function to expect
+> > an "unsigned long *" instead of "void *".
 > 
-> Use the passed in flags argument to detect if we're called from a zeroing
-> operation and don't take the lock again in this case.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/iomap/buffered-io.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 52f285ae4bddcb..3d7e69a542518a 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1188,8 +1188,13 @@ static void iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
->  	 * folios and dirtying them via ->page_mkwrite whilst we walk the
->  	 * cache and perform delalloc extent removal. Failing to do this can
->  	 * leave dirty pages with no space reservation in the cache.
-> +	 *
-> +	 * For zeroing operations the callers already hold invalidate_lock.
->  	 */
-> -	filemap_invalidate_lock(inode->i_mapping);
-> +	if (flags & IOMAP_ZERO)
-> +		rwsem_assert_held_write(&inode->i_mapping->invalidate_lock);
+> Looks fine to me - since this one is separate from the series, I can snag
+> it and shove it into the block side so it'll make 6.12-rc1. Then at least
+> it won't be a dependency for the rest of the series post that.
 
-Does the other iomap_zero_range user (gfs2) take the invalidate lock?
-AFAICT it doesn't.  Shouldn't we annotate iomap_zero_range to say that
-callers have to hold i_rwsem and the invalidate_lock?
+Thanks Jens!
 
---D
-
-> +	else
-> +		filemap_invalidate_lock(inode->i_mapping);
->  	while (start_byte < scan_end_byte) {
->  		loff_t		data_end;
->  
-> @@ -1240,7 +1245,8 @@ static void iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
->  		punch(inode, punch_start_byte, end_byte - punch_start_byte,
->  				iomap);
->  out_unlock:
-> -	filemap_invalidate_unlock(inode->i_mapping);
-> +	if (!(flags & IOMAP_ZERO))
-> +		filemap_invalidate_unlock(inode->i_mapping);
->  }
->  
->  /*
-> -- 
-> 2.45.2
-> 
-> 
+NeilBrown
 
