@@ -1,494 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-29597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD89097B4BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 22:39:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5729497B4ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 22:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5559F28369E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 20:39:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0DE1C229FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 20:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E7E18D642;
-	Tue, 17 Sep 2024 20:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED793191F95;
+	Tue, 17 Sep 2024 20:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCM9CB+S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="If+Ajxd+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F56188A25
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2024 20:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7B427470;
+	Tue, 17 Sep 2024 20:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726605547; cv=none; b=CWwifkNacJbYJlNFhvS8cH2CnoYwlC7lMmZfuFwxTPZwxRwQcbmYtIEYyZC1u+TxtGtxQOUAm7VOexM7pV243lATvUZ6+JTjL6YKjmb5YYqx56YNSsBc0meaPmEKby0lqQRGSzbLM+courjo9lrXiILTmHomLVnnUmCRQccgYI4=
+	t=1726606461; cv=none; b=aky+/oOTf/i6t9WBkAq1vJc1tYF9elBuvBr6WcxBL/tdOs/GGctEwAwgG5XoMqHNfPGDWlM1orOiPhBNXOx2Yp2y8/TbX4DGVXhiLDjPoYfzCR5xgqwktFv/zAkb+iWmaj93roviN2UsQdQ8sM60YDsG3HcSVntrL5Ej+GzOR3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726605547; c=relaxed/simple;
-	bh=Vy68R9Rxa75OsGPJ4H5fHDPalkm0VO3GNCb5+gJ3rQI=;
+	s=arc-20240116; t=1726606461; c=relaxed/simple;
+	bh=qyGaWpfb/w0UzJgTsTCKxut6trVk3jG6V7ahLPFoNa0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=szBqrYKgS9qzeE//9Elf11sdZjEcMKqzKoFDrLtl+4+v1GpsCTHSxsMagOj2WGv/MOoykpUfyU1nIW7VU7qPUInf2FMt/qj2pe5whJ1X4UD2IZB7mWbfLkXwKfDkbCQU1CSPcIMNwX1UfCsZN/pQcLkI2YHNNPfOFEcCgi7DjYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCM9CB+S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0652C4CEC5;
-	Tue, 17 Sep 2024 20:39:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=t29rmObzyKSVRY8DwWbBctCSOp49H/QEqBIvibUJKH5jUq7meVw5C5KSUY6ufq5ylhieg1OYifLZ1m1TlTMeYk6B4FdCSJ6NBUIgN1YFiP7V4WCqqQj+guOTu+xEV78AFM67HPLA5yjIg7ZUxOciZ1qVd1ILB2uJgdftZGjBvDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=If+Ajxd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C08EEC4CEC5;
+	Tue, 17 Sep 2024 20:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726605546;
-	bh=Vy68R9Rxa75OsGPJ4H5fHDPalkm0VO3GNCb5+gJ3rQI=;
+	s=k20201202; t=1726606460;
+	bh=qyGaWpfb/w0UzJgTsTCKxut6trVk3jG6V7ahLPFoNa0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JCM9CB+SmSfkPQByKM98isEUP/mXVenkIRhQKmILNHo2f+8W2v5aKrVnWi77e9/Nu
-	 X/oaTmnUeQ2FPOx05zDqG74beLzFK0N/7V9KoZQQzc/+5TfuSVTdgTWx9l1j1F8idK
-	 0/8B1HytN4L6rL9sFRzZ7cUhL4E2LDiJbexeUqOglnE38i2Jb7/hGxU5smZTn6AMCT
-	 OCDvcuGQhVxH5FPYju4tEg2zUbvPxyjRiOAuvFlFLYxRteYowGd42AVvGF0lL+ks2N
-	 Fdt2sUBxIm/J7qF5BAwvrv65XiiiKfGyFNBeqlEe1ga7/6vl5NPfjNuDs0BobrgCb8
-	 fcv5d3Q7zVVyg==
-Date: Tue, 17 Sep 2024 13:39:06 -0700
+	b=If+Ajxd+MuwQa3wddNVbppCmbR0L95q8B6vFAyAiqWSsALuKQnuu72loovaKoHfWk
+	 zo45fqyBiJsyKufUo2p8fHreKgAr5VT00QhOL7xReFiQFDoddYZkWJYSGAK2tNcC/v
+	 gDKnu1FlzooiIEK1L65eW7I5jBc+0ARX0879A98SVRrq+I/v5izYbwKEYsHKhfgnZH
+	 5yLdwwdZYYSutoxeeQm1ybNR8XO8QSkMtYJHMChZTWDmfbxbPp4C3c61ztJcUG3iNv
+	 SxZCItjm9joUVUyLJ5embJuQhH0LwSllzleQezi4KawMeW+EUQgXaj+PXNOMkTJKk+
+	 vlJm88FhAGvLw==
+Date: Tue, 17 Sep 2024 13:54:20 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Julian Sun <sunjunchao2870@gmail.com>
-Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
-	jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	david@fromorbit.com, hch@lst.de,
-	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/2] iomap: Do not unshare exents beyond EOF
-Message-ID: <20240917203906.GA182177@frogsfrogsfrogs>
-References: <ZttT_sHrS5NQPAM9@bfoster>
- <CAHB1Nag5+AEqhd=nDKPg7S4y89CRAZp0mRU4_UHuQ=WnR58WpQ@mail.gmail.com>
- <Zt74BI7C-ZPn_WV_@bfoster>
- <CAHB1Nahz2UmrCpqEivV0Dzkt5P=rjbRaBekxtaXeWNraXfvCCA@mail.gmail.com>
- <Zt9MrgnBStwlGWpY@bfoster>
- <767963be0ce83221792d58667afd8b4ccc4f160d.camel@gmail.com>
- <ZuA70EmA47amHnwH@bfoster>
- <CAHB1Naj2XsnmeXJorOon1d1sOJnKKX4qeu_XZ+Z+8rd2vzcZow@mail.gmail.com>
- <ZuBQFMkIa5XNXrU0@bfoster>
- <f77404c7edf749b9981dd13ad45350faa60ce039.camel@gmail.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
+	dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	catherine.hoang@oracle.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <20240917205420.GB182177@frogsfrogsfrogs>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <87frqf2smy.fsf@gmail.com>
+ <ZtjrUI+oqqABJL2j@dread.disaster.area>
+ <877cbq3g9i.fsf@gmail.com>
+ <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
+ <8734m7henr.fsf@gmail.com>
+ <ZufYRolfyUqEOS1c@dread.disaster.area>
+ <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f77404c7edf749b9981dd13ad45350faa60ce039.camel@gmail.com>
+In-Reply-To: <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com>
 
-On Wed, Sep 11, 2024 at 12:01:34PM +0800, Julian Sun wrote:
-> On Tue, 2024-09-10 at 09:56 -0400, Brian Foster wrote:
-> > On Tue, Sep 10, 2024 at 09:25:41PM +0800, Julian Sun wrote:
-> > > Brian Foster <bfoster@redhat.com> 于2024年9月10日周二 20:29写道：
-> > > > 
-> > > > On Tue, Sep 10, 2024 at 03:03:18PM +0800, Julian Sun wrote:
-> > > > > On Mon, 2024-09-09 at 15:29 -0400, Brian Foster wrote:
-> > > > > > On Tue, Sep 10, 2024 at 01:40:24AM +0800, Julian Sun wrote:
-> > > > > > > Brian Foster <bfoster@redhat.com> 于2024年9月9日周一 21:27写道：
-> > > > > > > > 
-> > > > > > > > On Mon, Sep 09, 2024 at 08:15:43PM +0800, Julian Sun wrote:
-> > > > > > > > > Hi Brian,
-> > > > > > > > > 
-> > > > > > > > > Brian Foster <bfoster@redhat.com> 于2024年9月7日周六 03:11写道：
-> > > > > > > > > > 
-> > > > > > > > > > On Thu, Sep 05, 2024 at 06:24:24PM +0800, Julian Sun
-> > > > > > > > > > wrote:
-> > > > > > > > > > > Attempting to unshare extents beyond EOF will trigger
-> > > > > > > > > > > the need zeroing case, which in turn triggers a
-> > > > > > > > > > > warning.
-> > > > > > > > > > > Therefore, let's skip the unshare process if extents
-> > > > > > > > > > > are
-> > > > > > > > > > > beyond EOF.
-> > > > > > > > > > > 
-> > > > > > > > > > > Reported-and-tested-by:
-> > > > > > > > > > > syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-> > > > > > > > > > > Closes:
-> > > > > > > > > > > https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf30
-> > > > > > > > > > > 6e5a0
-> > > > > > > > > > > Fixes: 32a38a499104 ("iomap: use write_begin to read
-> > > > > > > > > > > pages to unshare")
-> > > > > > > > > > > Inspired-by: Dave Chinner <david@fromorbit.com>
-> > > > > > > > > > > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > >  fs/iomap/buffered-io.c | 3 +++
-> > > > > > > > > > >  1 file changed, 3 insertions(+)
-> > > > > > > > > > > 
-> > > > > > > > > > > diff --git a/fs/iomap/buffered-io.c
-> > > > > > > > > > > b/fs/iomap/buffered-io.c
-> > > > > > > > > > > index f420c53d86ac..8898d5ec606f 100644
-> > > > > > > > > > > --- a/fs/iomap/buffered-io.c
-> > > > > > > > > > > +++ b/fs/iomap/buffered-io.c
-> > > > > > > > > > > @@ -1340,6 +1340,9 @@ static loff_t
-> > > > > > > > > > > iomap_unshare_iter(struct iomap_iter *iter)
-> > > > > > > > > > >       /* don't bother with holes or unwritten extents
-> > > > > > > > > > > */
-> > > > > > > > > > >       if (srcmap->type == IOMAP_HOLE || srcmap->type ==
-> > > > > > > > > > > IOMAP_UNWRITTEN)
-> > > > > > > > > > >               return length;
-> > > > > > > > > > > +     /* don't try to unshare any extents beyond EOF.
-> > > > > > > > > > > */
-> > > > > > > > > > > +     if (pos > i_size_read(iter->inode))
-> > > > > > > > > > > +             return length;
-> > > > > > > > > > 
-> > > > > > > > > > Hi Julian,
-> > > > > > > > > > 
-> > > > > > > > > > 
-> > > > > > > > > > > What about if pos starts within EOF and the operation
-> > > > > > > > > > > extends beyond it?
-> > > > > > > > > 
-> > > > > > > > > Extents within EOF will be unshared as usual. Details are
-> > > > > > > > > below.
-> > > > > > > > > > 
-> > > > > > > > > > > I ask because I think I've reproduced this scenario,
-> > > > > > > > > > > though it is a bit
-> > > > > > > > > > > tricky and has dependencies...
-> > > > > > > > > > > 
-> > > > > > > > > > > For one, it seems to depend on the cowblocks patch I
-> > > > > > > > > > > recently posted
-> > > > > > > > > > > here [1] (though I don't think this is necessarily a
-> > > > > > > > > > > problem with the
-> > > > > > > > > > > patch, it just depends on keeping COW fork blocks
-> > > > > > > > > > > around after the
-> > > > > > > > > > > unshare). With that, I reproduce via fsx with unshare
-> > > > > > > > > > > range support [2]
-> > > > > > > > > > > using the ops file appended below [3] on a -bsize=1k
-> > > > > > > > > > > XFS fs.
-> > > > > > > > > > > 
-> > > > > > > > > > > I haven't quite characterized the full sequence other
-> > > > > > > > > > > than it looks like
-> > > > > > > > > > > the unshare walks across EOF with a shared data fork
-> > > > > > > > > > > block and COW fork
-> > > > > > > > > > > delalloc, presumably finds the post-eof part of the
-> > > > > > > > > > > folio !uptodate (so
-> > > > > > > > > > > iomap_adjust_read_range() doesn't skip it), and then
-> > > > > > > > > > > trips over the
-> > > > > > > > > > > warning and error return associated with the folio
-> > > > > > > > > > > zeroing in
-> > > > > > > > > > > __iomap_write_begin().
-> > > > > > > > > 
-> > > > > > > > > The scenario has already been reproduced by syzbot[1]. The
-> > > > > > > > > reproducer
-> > > > > > > > > provided by syzbot constructed the following extent maps
-> > > > > > > > > for a file of
-> > > > > > > > > size 0xE00 before fallocate unshare:
-> > > > > > > > > 
-> > > > > > > > > 0 - 4k: shared between two files
-> > > > > > > > > 4k - 6k: hole beyond EOF, not shared
-> > > > > > > > > 6k - 8k: delalloc extends
-> > > > > > > > > 
-> > > > > > > > > Then the reproducer attempted to unshare the extent between
-> > > > > > > > > 0 and
-> > > > > > > > > 0x2000 bytes, but the file size is 0xE00. This is likely
-> > > > > > > > > the scenario
-> > > > > > > > > you were referring to?
-> > > > > > > > > 
-> > > > > > > > 
-> > > > > > > > Yes, sort of..
-> > > > > > > > 
-> > > > > > > > > Eventually the unshare code does:
-> > > > > > > > > first map: 0 - 4k - unshare successfully.
-> > > > > > > > > second map: 4k - 6k - hole, skip. Beyond EOF.
-> > > > > > > > > third map: 6k - 8k - delalloc, beyond EOF so needs zeroing.
-> > > > > > > > > Fires warnings because UNSHARE.
-> > > > > > > > > 
-> > > > > > > > > During the first call to iomap_unshare_iter(),
-> > > > > > > > > iomap_length() returned
-> > > > > > > > > 4k, so 4k bytes were unshared.
-> > > > > > > > > See discuss here[2] for more details.
-> > > > > > > > > > 
-> > > > > > > > > > This all kind of has me wondering.. do we know the
-> > > > > > > > > > purpose of this
-> > > > > > > > > > warning/error in the first place? It seems like it's more
-> > > > > > > > > > of an
-> > > > > > > > > > "unexpected situation" than a specific problem. E.g.,
-> > > > > > > > > > assuming the same
-> > > > > > > > > > page were mmap'd, I _think_ the read fault path would do
-> > > > > > > > > > the same sort
-> > > > > > > > > > of zeroing such that the unshare would see a fully
-> > > > > > > > > > uptodate folio and
-> > > > > > > > > > carry on as normal. I added the mapread op to the opsfile
-> > > > > > > > > > below to give
-> > > > > > > > > > that a quick test (remove the "skip" text to enable it),
-> > > > > > > > > > and it seems to
-> > > > > > > > > > prevent the error, but I've not confirmed whether that
-> > > > > > > > > > theory is
-> > > > > > > > > > actually what's happening.
-> > > > > > > > > > 
-> > > > > > > > > > 
-> > > > > > > > > > > FWIW, I also wonder if another way to handle this would
-> > > > > > > > > > > be to just
-> > > > > > > > > > > restrict the range of iomap_file_unshare() to within
-> > > > > > > > > > > EOF. IOW if a
-> > > > > > > > > > > caller passes a range beyond EOF, just process whatever
-> > > > > > > > > > > part of the
-> > > > > > > > > > > range falls within EOF. It seems iomap isn't
-> > > > > > > > > > > responsible for the file
-> > > > > > > > > > > extending aspect of the fallocate unshare command
-> > > > > > > > > > > anyways.
-> > > > > > > > > 
-> > > > > > > > > It already does 'just process whatever part of the range
-> > > > > > > > > falls within EOF'.
-> > > > > > > > > Check the above case.
-> > > > > > > > > 
-> > > > > > > > > I'm not sure if I fully understand what you mean. This
-> > > > > > > > > patch does not
-> > > > > > > > > prevent unsharing extents within the EOF. This patch checks
-> > > > > > > > > if pos is
-> > > > > > > > > beyond EOF, instead of checking if pos + length is beyond
-> > > > > > > > > EOF. So the
-> > > > > > > > > extents within EOF should be unshared as usual.
-> > > > > > > > > 
-> > > > > > > > 
-> > > > > > > > I'm not concerned about preventing unsharing. I'm concerned
-> > > > > > > > that this
-> > > > > > > > patch doesn't always prevent attempts to unshare post-eof
-> > > > > > > > ranges. I
-> > > > > > > > think the difference here is that in the variant I was
-> > > > > > > > hitting, we end
-> > > > > > > > 
-> > > > > > > > > up with a mapping that starts within EOF and ends beyond
-> > > > > > > > > EOF, whereas
-> > > > > > > > > the syzbot variant produces a scenario where the
-> > > > > > > > > problematic mapping
-> > > > > > > > > always starts beyond EOF.
-> > > > > > > 
-> > > > > > > This is not true. In the case above, the syzbot did indeed
-> > > > > > > unshare the
-> > > > > > > extents between 0-4k, which were started within EOF and ended
-> > > > > > > beyond
-> > > > > > > EOF. The specific variants here are: pos:0 len:0x1000 EOF:
-> > > > > > > 0xE00. And
-> > > > > > > the unshare code successfully unshared extents between 0 and
-> > > > > > > 4k.
-> > > > > > > 
-> > > > > > > During the next loop in iomap_file_unshare(), the pos became
-> > > > > > > 0x1000,
-> > > > > > > which is beyond EOF.  What this patch does is to skip the
-> > > > > > > unshare
-> > > > > > > during the second loop.
-> > > > > > > Is there anything I misunderstand？
-> > > > > > 
-> > > > > > Hmm, what block size? Does the associated mapping have at least
-> > > > > > one full
-> > > > > > block beyond EOF? If you have a map at offset 0, length 0x1000
-> > > > > > and EOF
-> > > > > > at 0xE00, then unless you have 512b blocks it sounds like the EOF
-> > > > > > block
-> > > > > > actually starts within EOF.
-> > > > > 
-> > > > > The block size here is 2k, and there isn't a full block beyond EOF
-> > > > > within
-> > > > > this extent map.
-> > > > 
-> > > > Ok. That likely explains the difference in behavior. The fsx variant
-> > > > has
-> > > > a mapping that starts within EOF and has at least one post-EOF block
-> > > > that unshare attempts to process.
-> > > > 
-> > > > > > 
-> > > > > > The variant I'm seeing is more like this.. consider a -bsize=1k
-> > > > > > fs, a
-> > > > > > file size of 0x3c400, and an EOF mapping of (offset 0x3c000,
-> > > > > > length
-> > > > > > 0x4000). The EOF folio in this case is 4k in size and starts at
-> > > > > > the same
-> > > > > > 0x3c000 offset as the EOF mapping.
-> > > > > > 
-> > > > > > So with 1k blocks, the EOF mapping starts one block before EOF
-> > > > > > and
-> > > > > > extends well beyond it. What happens in the test case is that
-> > > > > > iomap_unshare_iter() is called with the EOF folio, pos 0x3c000,
-> > > > > > length
-> > > > > > 0x800, and where the block at offset 0x3c400 is not marked
-> > > > > > uptodate. pos
-> > > > > > is thus within EOF, but the while loop in __iomap_write_begin()
-> > > > > > walks
-> > > > > > past it and attempts to process one block beyond EOF.
-> > > > > 
-> > > > > Ok, so the key point here is that there is a full block beyond EOF
-> > > > > within
-> > > > > the associated extent map, which is different with the scenario
-> > > > > reproduced
-> > > > > by syzbot.
-> > > > > According to the Dave's comments, the trimming behavior seems like
-> > > > > should
-> > > > > be done in filesystem(e.g.,xfs), instead of iomap. I will
-> > > > > reconsider this scenario.
-> > > > > 
-> > > > 
-> > > > Seems reasonable, but I don't agree that is a suitable fix for iomap.
-> > > > To
-> > > > be clear, it's perfectly fine for the fs to trim the range however it
-> > > > sees fit (i.e. no shared blocks beyond EOF in XFS), but we should
-> > > > also
-> > > > recognize that iomap is a generic layer and unshare is currently
-> > > > implemented to trip over itself, warn and fail if passed a post-eof
-> > > > range.
-> > > > 
-> > > > 
-> > > > > I still suspect that just making unshare work correctly around
-> > > > > i_size
-> > > > > might be the more elegant long term solution, but that is not
-> > > > > totally
-> > > > > clear. IMO, as long as unshare is written to intentionally trip
-> > > > > over
-> > > > > itself for post-eof ranges, it should either trim the range or
-> > > > > check for
-> > > > > valid parameters and document the limitation. Otherwise we just
-> > > > > leave a
-> > > > > landmine for the next caller to have to work through the same
-> > > > > problems,
-> > > > > which is particularly subtle since the higher level fallocate
-> > > > > unshare
-> > > > > mode supports post-eof ranges. Just my .02.
-> > > 
-> > > Yeah, totally agreed. I prefer to do the trimming in the vfs layer
-> > > just like what generic_copy_file_checks() does, instead of a specific
-> > > file system. Maybe we need a helper function
-> > > generic_fallocate_checks(). But it requires more thought and testing.
-> > > 
-> > 
-> > I would agree with that if not for the subtle difference between
-> > fallocate unshare and the iomap implementation. fallocate unshare is
-> > basically just a behavior modifier for how shared blocks are handled by
-> > mode=0 preallocation, so AIUI it fully supports post-eof ranges. It can
-> > extend the file size or leave it unchanged (based on whether KEEP_SIZE
-> > is set) and preallocate beyond EOF.
-> > 
-> > IOW, it might be perfectly valid for a caller to run an fallocate
-> > unshare across EOF that happens to unshare various shared blocks within
-> > EOF, and then preallocate and extend the file size as part of the same
-> > command. The functional responsibility just happens to be split between
-> > iomap and the fs.
+On Mon, Sep 16, 2024 at 11:24:56AM +0100, John Garry wrote:
+> On 16/09/2024 08:03, Dave Chinner wrote:
+> > OTOH, we can't do this with atomic writes. Atomic writes require
+> > some mkfs help because they require explicit physical alignment of
+> > the filesystem to the underlying storage.
+
+Forcealign requires agsize%extsize==0, it's atomicwrites that adds the
+requirement that extsize be a power of 2...
+
+> If we are enabling atomic writes at mkfs time, then we can ensure agsize %
+> extsize == 0. That provides the physical alignment guarantee. It also makes
+> sense to ensure extsize is a power-of-2.
 > 
-> Yeah, precisely. It seems that fallocate unshare do support post-eof
-> ranges,
+> However, extsize is re-configurble per inode. So, for an inode enabled for
+> atomic writes, we must still ensure agsize % new extsize == 0 (and also new
+> extsize is a power-of-2)
 
-Correct.
+...so yes.
 
->         but iomap_unshare_iter() doesn't expect any blocks beyond eof.
-> Maybe the semantics here is that any blocks beyond eof shouldn't be shared,
-
-Correct, there cannot be blocks completely beyond EOF that are also
-shared.
-
-> but I can not confirm that. Also, it's possible that blocks beyond eof
-> which may belong to an extent acrossing eof may be passed to
-> iomap_unshare_iter() in some cases.
-
-Yes, this is possible, but pos and len passed to iomap_file_unshare
-should never cross EOF.
-
-> iomap_unshare_iter() in some cases. It seems we should figure out the
-> purpose of this warning. 
+> > Hence we'll eventually end
+> > up with atomic writes needing to be enabled at mkfs time, but force
+> > align will be an upgradeable feature flag.
 > 
-> Hi, Christoph. Do you remember why the warning was introduced? Looking
-> forward to your reply after you return from vacation.
+> Could atomic writes also be an upgradeable feature? We just need to ensure
+> that agsize % extsize == 0 for an inode enabled for atomic writes. Valid
+> extsize values may be quite limited, though, depending on the value of
+> agsize.
 
-I'm not hch, but hth.
+I don't see why forcealign and atomicwrites can't be added to the sb
+featureset after the fact, though you're right that callers of xfs_io
+chattr might be hard pressed to find an fsx_extsize value that fits.
 
 --D
 
-> 
-> > 
-> > Brian
-> > 
-> > > > 
-> > > > Brian
-> > > > 
-> > > > > Thanks for your comments and review.
-> > > > > > 
-> > > > > > Brian
-> > > > > > 
-> > > > > > > > 
-> > > > > > > > So IOW, this patch works for the syzbot variant because it
-> > > > > > > > happens to
-> > > > > > > > reproduce a situation where pos will be beyond EOF, but that
-> > > > > > > > is an
-> > > > > > > > 
-> > > > > > > > > assumption that might not always be true. The fsx generated
-> > > > > > > > > variant runs
-> > > > > > > > > a sequence that produces a mapping that spans across EOF,
-> > > > > > > > > which means
-> > > > > > > > > that pos is within EOF at the start of unshare, so unshare
-> > > > > > > > > proceeds to
-> > > > > > > > > walk across the EOF boundary, the corresponding EOF folio
-> > > > > > > > > is not fully
-> > > > > > > > > uptodate, and thus write begin wants to do partial zeroing
-> > > > > > > > > and
-> > > > > > > > > fails/warns.
-> > > > > > > 
-> > > > > > > Yeah, it's exactly what the syzbot does.
-> > > > > > > > 
-> > > > > > > > I suspect that if the higher level range were trimmed to be
-> > > > > > > > within EOF
-> > > > > > > > in iomap_file_unshare(), that would prevent this problem in
-> > > > > > > > either case.
-> > > > > > > > Note that this was on a -bsize=1k fs, so what I'm not totally
-> > > > > > > > sure about
-> > > > > > > > is whether skipping zeroing as such would be a problem with
-> > > > > > > > larger FSBs.
-> > > > > > > > My initial thinking was this might not be possible since the
-> > > > > > > > EOF folio
-> > > > > > > > should be fully uptodate in that case, but that probably
-> > > > > > > > requires some
-> > > > > > > > thought/review/testing.
-> > > > > > > > 
-> > > > > > > > Brian
-> > > > > > > > 
-> > > > > > > > > BTW, maybe the check here should be
-> > > > > > > > >                   if (pos >= i_size_read(iter->inode))
-> > > > > > > > > 
-> > > > > > > > > If there is any misunderstanding, please let me know,
-> > > > > > > > > thanks.
-> > > > > > > > > 
-> > > > > > > > > [1]:
-> > > > > > > > > https://lore.kernel.org/all/0000000000008964f1061f8c32b6@go
-> > > > > > > > > ogle.com/T/
-> > > > > > > > > [2]: https://lore.kernel.org/all/20240903054808.126799-1-
-> > > > > > > > > sunjunchao2870@gmail.com/
-> > > > > > > > > 
-> > > > > > > > > > 
-> > > > > > > > > > Thoughts?
-> > > > > > > > > > 
-> > > > > > > > > > Brian
-> > > > > > > > > > 
-> > > > > > > > > > [1] https://lore.kernel.org/linux-
-> > > > > > > > > > xfs/20240906114051.120743-1-bfoster@redhat.com/
-> > > > > > > > > > [2]
-> > > > > > > > > > https://lore.kernel.org/fstests/20240906185606.136402-1-
-> > > > > > > > > > bfoster@redhat.com/
-> > > > > > > > > > [3] fsx ops file:
-> > > > > > > > > > 
-> > > > > > > > > > fallocate 0x3bc00 0x400 0
-> > > > > > > > > > write 0x3bc00 0x800 0x3c000
-> > > > > > > > > > clone_range 0x3bc00 0x400 0x0 0x3c400
-> > > > > > > > > > skip mapread 0x3c000 0x400 0x3c400
-> > > > > > > > > > fallocate 0x3bc00 0xc00 0x3c400 unshare
-> > > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > Thanks,
-> > > > > > > > > --
-> > > > > > > > > Julian Sun <sunjunchao2870@gmail.com>
-> > > > > > > > > 
-> > > > > > > > 
-> > > > > > > 
-> > > > > > > Thanks,
-> > > > > > > --
-> > > > > > > Julian Sun <sunjunchao2870@gmail.com>
-> > > > > > > 
-> > > > > > 
-> > > > > 
-> > > > > Thanks,
-> > > > > --
-> > > > > Julian Sun <sunjunchao2870@gmail.com>
-> > > > > 
-> > > > 
-> > > 
-> > > 
-> > > -- 
-> > > Julian Sun <sunjunchao2870@gmail.com>
-> > > 
-> > 
-> 
 > Thanks,
-> -- 
-> Julian Sun <sunjunchao2870@gmail.com>
+> John
+> 
 > 
 
