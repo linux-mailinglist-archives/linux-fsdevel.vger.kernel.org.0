@@ -1,102 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-29604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7CA97B536
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 23:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7751F97B534
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 23:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0010A284306
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 21:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4028128404B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 21:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30611192D76;
-	Tue, 17 Sep 2024 21:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9F8192D6B;
+	Tue, 17 Sep 2024 21:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hqAc3YQU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ilAUebLi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hqAc3YQU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ilAUebLi"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X48GYiKf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9fjsH/x7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X48GYiKf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9fjsH/x7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322C21925A4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201771925A3
 	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2024 21:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726608575; cv=none; b=X6FHcNxj2iemVBHMTBUCrF5WN6oDDi3qADb5kwZmn1K9sJg505hEtthC9P9+/hmyFrLlpWQDCurT2hauHQxYu7dASX10I+O0OC/UyH69POpbOt40rGEsf8oyKAj0BCxL0C+soW3Qe3O+zL4pCg9oYv1HW8GcyA5kimzMMrpApKg=
+	t=1726608575; cv=none; b=MCsBKUojvcvRW1WkgRoJCD67dS6A+ljvb+5YwyJNYv/q1XABxDodcWWU1C134ZIo5ZGnCnCgJ16kaEXapHtaJTWfdzPrqzltPad5jOog2snbML0ySQ4h67sc/feIqzE8QSpaW/damwGrVuYw5mRKflOPKRDy+xM2C3Nd9Iav3Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726608575; c=relaxed/simple;
-	bh=WLmJoekLClcBArF0BzGGVpetgZXVEr/WaXWhyvj0Wfw=;
+	bh=QhIs/BoOmss6EFtqGdn39P7K0VzSGRWuSy5SaueNufE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hsEwnaVbpX1Paib5nqdwz0o5jwSciXlhtXWW+9SXprS2Yx5JM2n2AWgOc8DEdXMXmpKz6f9a6AJSgrQRnbbsl8ccg/zSlMqd8h+rcWfJh5Tox9MlG1I3oiu1SfcFzsujXLnRPfRX8tJZQXYhDXfsPUKNRLqX4OteOXfdvFCSnNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hqAc3YQU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ilAUebLi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hqAc3YQU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ilAUebLi; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOZ3YrAqixwqnu/9QFcf0BYblPPM3DTKFXRPD9rffIgWAazm5ygKyLygI8+o3IZtHxeoqQyHfzA3jUN1Sz1ObAvm/li87Mrmf/S5QkHSv7fJ7ZjLPWYkdSYNGT2KsN/kwtlAqNcKh83zaoSrgXdLjSzsaGJOK2jwny3bfijqYIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X48GYiKf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9fjsH/x7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X48GYiKf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9fjsH/x7; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 369702250C;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3A415201DF;
 	Tue, 17 Sep 2024 21:29:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1726608571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kMGUk0VoH6sbRT585DG1xyLsQxgpgA8+fowuiKKa2aw=;
-	b=hqAc3YQU6wIhHmVmoUo99/9jlA4ELJI7wjsu2h3+n/R0J8zMsq2LfD9NTlNXiqIkeesnmL
-	IYYXghx3MnH5eBN8DKIIo1lWgx6fKc8zSGHEKgf0YE8I+U5YLhE/F9XjhMl4MgktNTAnvK
-	X/ssfXcG9XaxRlQDua88xy+wQSdG6mc=
+	bh=N+D5jLI2L5hMvCN5NhpVP+kBi47HDAzocwrCk5JSk5E=;
+	b=X48GYiKfKTeZUoTSL2NOZSzp88ziSdw/qc85J1k6Hpcq/YKDxmA/jL+BeLxtejmEuYJg4J
+	ZBrffBYU12q2M0/mTFpoSNgKWj9sU/T+LxfVkHzfY+6mhKQHZy1RR6/QQeChvg6e7I2VRm
+	P+2QGnY3bI3VmdspRQqj3Beq2FO6gm4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1726608571;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kMGUk0VoH6sbRT585DG1xyLsQxgpgA8+fowuiKKa2aw=;
-	b=ilAUebLiW8bEClDBe9eFUMKKPZmaAMYKDB+I41h4ocONxykzm4jaU00D1UZL3zUiq0EVUj
-	tJcShhJ2OBpf8oDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hqAc3YQU;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ilAUebLi
+	bh=N+D5jLI2L5hMvCN5NhpVP+kBi47HDAzocwrCk5JSk5E=;
+	b=9fjsH/x7T4JIoA4z/9Hqkw9uB/LdKEXm8XIIPKnHToaB4zpk/oFF79y/cPBC0vbLc9oXa1
+	gJeEpYR27XQSQOCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=X48GYiKf;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="9fjsH/x7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1726608571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kMGUk0VoH6sbRT585DG1xyLsQxgpgA8+fowuiKKa2aw=;
-	b=hqAc3YQU6wIhHmVmoUo99/9jlA4ELJI7wjsu2h3+n/R0J8zMsq2LfD9NTlNXiqIkeesnmL
-	IYYXghx3MnH5eBN8DKIIo1lWgx6fKc8zSGHEKgf0YE8I+U5YLhE/F9XjhMl4MgktNTAnvK
-	X/ssfXcG9XaxRlQDua88xy+wQSdG6mc=
+	bh=N+D5jLI2L5hMvCN5NhpVP+kBi47HDAzocwrCk5JSk5E=;
+	b=X48GYiKfKTeZUoTSL2NOZSzp88ziSdw/qc85J1k6Hpcq/YKDxmA/jL+BeLxtejmEuYJg4J
+	ZBrffBYU12q2M0/mTFpoSNgKWj9sU/T+LxfVkHzfY+6mhKQHZy1RR6/QQeChvg6e7I2VRm
+	P+2QGnY3bI3VmdspRQqj3Beq2FO6gm4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1726608571;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kMGUk0VoH6sbRT585DG1xyLsQxgpgA8+fowuiKKa2aw=;
-	b=ilAUebLiW8bEClDBe9eFUMKKPZmaAMYKDB+I41h4ocONxykzm4jaU00D1UZL3zUiq0EVUj
-	tJcShhJ2OBpf8oDA==
+	bh=N+D5jLI2L5hMvCN5NhpVP+kBi47HDAzocwrCk5JSk5E=;
+	b=9fjsH/x7T4JIoA4z/9Hqkw9uB/LdKEXm8XIIPKnHToaB4zpk/oFF79y/cPBC0vbLc9oXa1
+	gJeEpYR27XQSQOCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 24BB813AB5;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1EE91139CE;
 	Tue, 17 Sep 2024 21:29:31 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +aDyCLv06WafMwAAD6G6ig
+	id sFASB7v06WaaMwAAD6G6ig
 	(envelope-from <jack@suse.cz>); Tue, 17 Sep 2024 21:29:31 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 75F20A08B3; Tue, 17 Sep 2024 17:50:51 +0200 (CEST)
-Date: Tue, 17 Sep 2024 17:50:51 +0200
+	id 040E2A0989; Tue, 17 Sep 2024 17:55:22 +0200 (CEST)
+Date: Tue, 17 Sep 2024 17:55:22 +0200
 From: Jan Kara <jack@suse.cz>
 To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>
-Subject: Re: [PATCH 3/5] befs: convert befs to use the new mount api
-Message-ID: <20240917155051.mwzaeq2d3u74acsi@quack3>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
+Subject: Re: [PATCH 4/5] hfs: convert hfs to use the new mount api
+Message-ID: <20240917155522.wbjqxpmrub7kolkf@quack3>
 References: <20240916172735.866916-1-sandeen@redhat.com>
- <20240916172735.866916-4-sandeen@redhat.com>
+ <20240916172735.866916-5-sandeen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,51 +103,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240916172735.866916-4-sandeen@redhat.com>
-X-Rspamd-Queue-Id: 369702250C
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
+In-Reply-To: <20240916172735.866916-5-sandeen@redhat.com>
+X-Rspamd-Queue-Id: 3A415201DF
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
 	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_THREE(0.00)[3];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+	RCPT_COUNT_THREE(0.00)[3];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon 16-09-24 13:26:20, Eric Sandeen wrote:
-> Convert the befs filesystem to use the new mount API.
+On Mon 16-09-24 13:26:21, Eric Sandeen wrote:
+> Convert the hfs filesystem to use the new mount API.
 > Tested by comparing random mount & remount options before and after
 > the change.
 > 
-> Cc: Luis de Bethencourt <luisbg@kernel.org>
-> Cc: Salah Triki <salah.triki@gmail.com>
 > Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 
 Looks good. Feel free to add:
@@ -159,308 +151,438 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/befs/linuxvfs.c | 199 +++++++++++++++++++++++----------------------
->  1 file changed, 102 insertions(+), 97 deletions(-)
+>  fs/hfs/super.c | 341 ++++++++++++++++++++++---------------------------
+>  1 file changed, 154 insertions(+), 187 deletions(-)
 > 
-> diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
-> index f92f108840f5..8f430ff8e445 100644
-> --- a/fs/befs/linuxvfs.c
-> +++ b/fs/befs/linuxvfs.c
-> @@ -11,12 +11,13 @@
+> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> index eeac99765f0d..ee314f3e39f8 100644
+> --- a/fs/hfs/super.c
+> +++ b/fs/hfs/super.c
+> @@ -15,10 +15,11 @@
 >  #include <linux/module.h>
->  #include <linux/slab.h>
->  #include <linux/fs.h>
+>  #include <linux/blkdev.h>
+>  #include <linux/backing-dev.h>
 > +#include <linux/fs_context.h>
 > +#include <linux/fs_parser.h>
->  #include <linux/errno.h>
->  #include <linux/stat.h>
+>  #include <linux/mount.h>
+>  #include <linux/init.h>
 >  #include <linux/nls.h>
->  #include <linux/buffer_head.h>
->  #include <linux/vfs.h>
 > -#include <linux/parser.h>
->  #include <linux/namei.h>
->  #include <linux/sched.h>
->  #include <linux/cred.h>
-> @@ -54,22 +55,20 @@ static int befs_utf2nls(struct super_block *sb, const char *in, int in_len,
->  static int befs_nls2utf(struct super_block *sb, const char *in, int in_len,
->  			char **out, int *out_len);
->  static void befs_put_super(struct super_block *);
-> -static int befs_remount(struct super_block *, int *, char *);
->  static int befs_statfs(struct dentry *, struct kstatfs *);
->  static int befs_show_options(struct seq_file *, struct dentry *);
-> -static int parse_options(char *, struct befs_mount_options *);
->  static struct dentry *befs_fh_to_dentry(struct super_block *sb,
->  				struct fid *fid, int fh_len, int fh_type);
->  static struct dentry *befs_fh_to_parent(struct super_block *sb,
->  				struct fid *fid, int fh_len, int fh_type);
->  static struct dentry *befs_get_parent(struct dentry *child);
-> +static void befs_free_fc(struct fs_context *fc);
->  
->  static const struct super_operations befs_sops = {
->  	.alloc_inode	= befs_alloc_inode,	/* allocate a new inode */
->  	.free_inode	= befs_free_inode, /* deallocate an inode */
->  	.put_super	= befs_put_super,	/* uninit super */
->  	.statfs		= befs_statfs,	/* statfs */
-> -	.remount_fs	= befs_remount,
->  	.show_options	= befs_show_options,
->  };
->  
-> @@ -672,92 +671,53 @@ static struct dentry *befs_get_parent(struct dentry *child)
+>  #include <linux/seq_file.h>
+>  #include <linux/slab.h>
+>  #include <linux/vfs.h>
+> @@ -111,21 +112,24 @@ static int hfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  	return 0;
 >  }
 >  
->  enum {
-> -	Opt_uid, Opt_gid, Opt_charset, Opt_debug, Opt_err,
-> +	Opt_uid, Opt_gid, Opt_charset, Opt_debug,
+> -static int hfs_remount(struct super_block *sb, int *flags, char *data)
+> +static int hfs_reconfigure(struct fs_context *fc)
+>  {
+> +	struct super_block *sb = fc->root->d_sb;
+> +
+>  	sync_filesystem(sb);
+> -	*flags |= SB_NODIRATIME;
+> -	if ((bool)(*flags & SB_RDONLY) == sb_rdonly(sb))
+> +	fc->sb_flags |= SB_NODIRATIME;
+> +	if ((bool)(fc->sb_flags & SB_RDONLY) == sb_rdonly(sb))
+>  		return 0;
+> -	if (!(*flags & SB_RDONLY)) {
+> +
+> +	if (!(fc->sb_flags & SB_RDONLY)) {
+>  		if (!(HFS_SB(sb)->mdb->drAtrb & cpu_to_be16(HFS_SB_ATTRIB_UNMNT))) {
+>  			pr_warn("filesystem was not cleanly unmounted, running fsck.hfs is recommended.  leaving read-only.\n");
+>  			sb->s_flags |= SB_RDONLY;
+> -			*flags |= SB_RDONLY;
+> +			fc->sb_flags |= SB_RDONLY;
+>  		} else if (HFS_SB(sb)->mdb->drAtrb & cpu_to_be16(HFS_SB_ATTRIB_SLOCK)) {
+>  			pr_warn("filesystem is marked locked, leaving read-only.\n");
+>  			sb->s_flags |= SB_RDONLY;
+> -			*flags |= SB_RDONLY;
+> +			fc->sb_flags |= SB_RDONLY;
+>  		}
+>  	}
+>  	return 0;
+> @@ -180,7 +184,6 @@ static const struct super_operations hfs_super_operations = {
+>  	.put_super	= hfs_put_super,
+>  	.sync_fs	= hfs_sync_fs,
+>  	.statfs		= hfs_statfs,
+> -	.remount_fs     = hfs_remount,
+>  	.show_options	= hfs_show_options,
 >  };
 >  
-> -static const match_table_t befs_tokens = {
-> -	{Opt_uid, "uid=%d"},
-> -	{Opt_gid, "gid=%d"},
-> -	{Opt_charset, "iocharset=%s"},
-> -	{Opt_debug, "debug"},
-> -	{Opt_err, NULL}
-> +static const struct fs_parameter_spec befs_param_spec[] = {
-> +	fsparam_uid	("uid",		Opt_uid),
-> +	fsparam_gid	("gid",		Opt_gid),
-> +	fsparam_string	("iocharset",	Opt_charset),
-> +	fsparam_flag	("debug",	Opt_debug),
+> @@ -188,181 +191,112 @@ enum {
+>  	opt_uid, opt_gid, opt_umask, opt_file_umask, opt_dir_umask,
+>  	opt_part, opt_session, opt_type, opt_creator, opt_quiet,
+>  	opt_codepage, opt_iocharset,
+> -	opt_err
+>  };
+>  
+> -static const match_table_t tokens = {
+> -	{ opt_uid, "uid=%u" },
+> -	{ opt_gid, "gid=%u" },
+> -	{ opt_umask, "umask=%o" },
+> -	{ opt_file_umask, "file_umask=%o" },
+> -	{ opt_dir_umask, "dir_umask=%o" },
+> -	{ opt_part, "part=%u" },
+> -	{ opt_session, "session=%u" },
+> -	{ opt_type, "type=%s" },
+> -	{ opt_creator, "creator=%s" },
+> -	{ opt_quiet, "quiet" },
+> -	{ opt_codepage, "codepage=%s" },
+> -	{ opt_iocharset, "iocharset=%s" },
+> -	{ opt_err, NULL }
+> +static const struct fs_parameter_spec hfs_param_spec[] = {
+> +	fsparam_u32	("uid",		opt_uid),
+> +	fsparam_u32	("gid",		opt_gid),
+> +	fsparam_u32oct	("umask",	opt_umask),
+> +	fsparam_u32oct	("file_umask",	opt_file_umask),
+> +	fsparam_u32oct	("dir_umask",	opt_dir_umask),
+> +	fsparam_u32	("part",	opt_part),
+> +	fsparam_u32	("session",	opt_session),
+> +	fsparam_string	("type",	opt_type),
+> +	fsparam_string	("creator",	opt_creator),
+> +	fsparam_flag	("quiet",	opt_quiet),
+> +	fsparam_string	("codepage",	opt_codepage),
+> +	fsparam_string	("iocharset",	opt_iocharset),
 > +	{}
 >  };
 >  
->  static int
-> -parse_options(char *options, struct befs_mount_options *opts)
-> +befs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> -static inline int match_fourchar(substring_t *arg, u32 *result)
+> -{
+> -	if (arg->to - arg->from != 4)
+> -		return -EINVAL;
+> -	memcpy(result, arg->from, 4);
+> -	return 0;
+> -}
+> -
+>  /*
+> - * parse_options()
+> + * hfs_parse_param()
+>   *
+> - * adapted from linux/fs/msdos/inode.c written 1992,93 by Werner Almesberger
+> - * This function is called by hfs_read_super() to parse the mount options.
+> + * This function is called by the vfs to parse the mount options.
+>   */
+> -static int parse_options(char *options, struct hfs_sb_info *hsb)
+> +static int hfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
 >  {
 > -	char *p;
 > -	substring_t args[MAX_OPT_ARGS];
-> -	int option;
-> -	kuid_t uid;
-> -	kgid_t gid;
+> -	int tmp, token;
 > -
-> -	/* Initialize options */
-> -	opts->uid = GLOBAL_ROOT_UID;
-> -	opts->gid = GLOBAL_ROOT_GID;
-> -	opts->use_uid = 0;
-> -	opts->use_gid = 0;
-> -	opts->iocharset = NULL;
-> -	opts->debug = 0;
+> -	/* initialize the sb with defaults */
+> -	hsb->s_uid = current_uid();
+> -	hsb->s_gid = current_gid();
+> -	hsb->s_file_umask = 0133;
+> -	hsb->s_dir_umask = 0022;
+> -	hsb->s_type = hsb->s_creator = cpu_to_be32(0x3f3f3f3f);	/* == '????' */
+> -	hsb->s_quiet = 0;
+> -	hsb->part = -1;
+> -	hsb->session = -1;
 > -
 > -	if (!options)
 > -		return 1;
 > -
 > -	while ((p = strsep(&options, ",")) != NULL) {
-> -		int token;
-> -
 > -		if (!*p)
 > -			continue;
 > -
-> -		token = match_token(p, befs_tokens, args);
+> -		token = match_token(p, tokens, args);
 > -		switch (token) {
-> -		case Opt_uid:
-> -			if (match_int(&args[0], &option))
+> -		case opt_uid:
+> -			if (match_int(&args[0], &tmp)) {
+> -				pr_err("uid requires an argument\n");
 > -				return 0;
-> -			uid = INVALID_UID;
-> -			if (option >= 0)
-> -				uid = make_kuid(current_user_ns(), option);
-> -			if (!uid_valid(uid)) {
-> -				pr_err("Invalid uid %d, "
-> -				       "using default\n", option);
-> -				break;
 > -			}
-> -			opts->uid = uid;
-> -			opts->use_uid = 1;
-> -			break;
-> -		case Opt_gid:
-> -			if (match_int(&args[0], &option))
-> -				return 0;
-> -			gid = INVALID_GID;
-> -			if (option >= 0)
-> -				gid = make_kgid(current_user_ns(), option);
-> -			if (!gid_valid(gid)) {
-> -				pr_err("Invalid gid %d, "
-> -				       "using default\n", option);
-> -				break;
-> -			}
-> -			opts->gid = gid;
-> -			opts->use_gid = 1;
-> -			break;
-> -		case Opt_charset:
-> -			kfree(opts->iocharset);
-> -			opts->iocharset = match_strdup(&args[0]);
-> -			if (!opts->iocharset) {
-> -				pr_err("allocation failure for "
-> -				       "iocharset string\n");
+> -			hsb->s_uid = make_kuid(current_user_ns(), (uid_t)tmp);
+> -			if (!uid_valid(hsb->s_uid)) {
+> -				pr_err("invalid uid %d\n", tmp);
 > -				return 0;
 > -			}
 > -			break;
-> -		case Opt_debug:
-> -			opts->debug = 1;
+> -		case opt_gid:
+> -			if (match_int(&args[0], &tmp)) {
+> -				pr_err("gid requires an argument\n");
+> -				return 0;
+> -			}
+> -			hsb->s_gid = make_kgid(current_user_ns(), (gid_t)tmp);
+> -			if (!gid_valid(hsb->s_gid)) {
+> -				pr_err("invalid gid %d\n", tmp);
+> -				return 0;
+> -			}
+> -			break;
+> -		case opt_umask:
+> -			if (match_octal(&args[0], &tmp)) {
+> -				pr_err("umask requires a value\n");
+> -				return 0;
+> -			}
+> -			hsb->s_file_umask = (umode_t)tmp;
+> -			hsb->s_dir_umask = (umode_t)tmp;
+> -			break;
+> -		case opt_file_umask:
+> -			if (match_octal(&args[0], &tmp)) {
+> -				pr_err("file_umask requires a value\n");
+> -				return 0;
+> -			}
+> -			hsb->s_file_umask = (umode_t)tmp;
+> -			break;
+> -		case opt_dir_umask:
+> -			if (match_octal(&args[0], &tmp)) {
+> -				pr_err("dir_umask requires a value\n");
+> -				return 0;
+> -			}
+> -			hsb->s_dir_umask = (umode_t)tmp;
+> -			break;
+> -		case opt_part:
+> -			if (match_int(&args[0], &hsb->part)) {
+> -				pr_err("part requires an argument\n");
+> -				return 0;
+> -			}
+> -			break;
+> -		case opt_session:
+> -			if (match_int(&args[0], &hsb->session)) {
+> -				pr_err("session requires an argument\n");
+> -				return 0;
+> -			}
+> -			break;
+> -		case opt_type:
+> -			if (match_fourchar(&args[0], &hsb->s_type)) {
+> -				pr_err("type requires a 4 character value\n");
+> -				return 0;
+> -			}
+> -			break;
+> -		case opt_creator:
+> -			if (match_fourchar(&args[0], &hsb->s_creator)) {
+> -				pr_err("creator requires a 4 character value\n");
+> -				return 0;
+> -			}
+> -			break;
+> -		case opt_quiet:
+> -			hsb->s_quiet = 1;
+> -			break;
+> -		case opt_codepage:
+> -			if (hsb->nls_disk) {
+> -				pr_err("unable to change codepage\n");
+> -				return 0;
+> -			}
+> -			p = match_strdup(&args[0]);
+> -			if (p)
+> -				hsb->nls_disk = load_nls(p);
+> -			if (!hsb->nls_disk) {
+> -				pr_err("unable to load codepage \"%s\"\n", p);
+> -				kfree(p);
+> -				return 0;
+> -			}
+> -			kfree(p);
+> -			break;
+> -		case opt_iocharset:
+> -			if (hsb->nls_io) {
+> -				pr_err("unable to change iocharset\n");
+> -				return 0;
+> -			}
+> -			p = match_strdup(&args[0]);
+> -			if (p)
+> -				hsb->nls_io = load_nls(p);
+> -			if (!hsb->nls_io) {
+> -				pr_err("unable to load iocharset \"%s\"\n", p);
+> -				kfree(p);
+> -				return 0;
+> -			}
+> -			kfree(p);
 > -			break;
 > -		default:
-> -			pr_err("Unrecognized mount option \"%s\" "
-> -			       "or missing value\n", p);
 > -			return 0;
 > -		}
-> +	struct befs_mount_options *opts = fc->fs_private;
-> +	int token;
+> -	}
+> +	struct hfs_sb_info *hsb = fc->s_fs_info;
 > +	struct fs_parse_result result;
+> +	int opt;
 > +
-> +	/* befs ignores all options on remount */
+> +	/* hfs does not honor any fs-specific options on remount */
 > +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE)
 > +		return 0;
+>  
+> -	if (hsb->nls_disk && !hsb->nls_io) {
+> -		hsb->nls_io = load_nls_default();
+> +	opt = fs_parse(fc, hfs_param_spec, param, &result);
+> +	if (opt < 0)
+> +		return opt;
 > +
-> +	token = fs_parse(fc, befs_param_spec, param, &result);
-> +	if (token < 0)
-> +		return token;
-> +
-> +	switch (token) {
-> +	case Opt_uid:
-> +		opts->uid = result.uid;
-> +		opts->use_uid = 1;
+> +	switch (opt) {
+> +	case opt_uid:
+> +		hsb->s_uid = result.uid;
 > +		break;
-> +	case Opt_gid:
-> +		opts->gid = result.gid;
-> +		opts->use_gid = 1;
+> +	case opt_gid:
+> +		hsb->s_gid = result.gid;
 > +		break;
-> +	case Opt_charset:
-> +		kfree(opts->iocharset);
-> +		opts->iocharset = param->string;
-> +		param->string = NULL;
+> +	case opt_umask:
+> +		hsb->s_file_umask = (umode_t)result.uint_32;
+> +		hsb->s_dir_umask = (umode_t)result.uint_32;
 > +		break;
-> +	case Opt_debug:
-> +		opts->debug = 1;
+> +	case opt_file_umask:
+> +		hsb->s_file_umask = (umode_t)result.uint_32;
+> +		break;
+> +	case opt_dir_umask:
+> +		hsb->s_dir_umask = (umode_t)result.uint_32;
+> +		break;
+> +	case opt_part:
+> +		hsb->part = result.uint_32;
+> +		break;
+> +	case opt_session:
+> +		hsb->session = result.uint_32;
+> +		break;
+> +	case opt_type:
+> +		if (strlen(param->string) != 4) {
+> +			pr_err("type requires a 4 character value\n");
+> +			return -EINVAL;
+> +		}
+> +		memcpy(&hsb->s_type, param->string, 4);
+> +		break;
+> +	case opt_creator:
+> +		if (strlen(param->string) != 4) {
+> +			pr_err("creator requires a 4 character value\n");
+> +			return -EINVAL;
+> +		}
+> +		memcpy(&hsb->s_creator, param->string, 4);
+> +		break;
+> +	case opt_quiet:
+> +		hsb->s_quiet = 1;
+> +		break;
+> +	case opt_codepage:
+> +		if (hsb->nls_disk) {
+> +			pr_err("unable to change codepage\n");
+> +			return -EINVAL;
+> +		}
+> +		hsb->nls_disk = load_nls(param->string);
+> +		if (!hsb->nls_disk) {
+> +			pr_err("unable to load codepage \"%s\"\n",
+> +					param->string);
+> +			return -EINVAL;
+> +		}
+> +		break;
+> +	case opt_iocharset:
+> +		if (hsb->nls_io) {
+> +			pr_err("unable to change iocharset\n");
+> +			return -EINVAL;
+> +		}
+> +		hsb->nls_io = load_nls(param->string);
+>  		if (!hsb->nls_io) {
+> -			pr_err("unable to load default iocharset\n");
+> -			return 0;
+> +			pr_err("unable to load iocharset \"%s\"\n",
+> +					param->string);
+> +			return -EINVAL;
+>  		}
 > +		break;
 > +	default:
 > +		return -EINVAL;
 >  	}
+> -	hsb->s_dir_umask &= 0777;
+> -	hsb->s_file_umask &= 0577;
+>  
 > -	return 1;
 > +	return 0;
 >  }
 >  
->  static int befs_show_options(struct seq_file *m, struct dentry *root)
-> @@ -793,6 +753,21 @@ befs_put_super(struct super_block *sb)
->  	sb->s_fs_info = NULL;
->  }
->  
-> +/*
-> + * Copy the parsed options into the sbi mount_options member
-> + */
-> +static void
-> +befs_set_options(struct befs_sb_info *sbi, struct befs_mount_options *opts)
-> +{
-> +	sbi->mount_opts.uid = opts->uid;
-> +	sbi->mount_opts.gid = opts->gid;
-> +	sbi->mount_opts.use_uid = opts->use_uid;
-> +	sbi->mount_opts.use_gid = opts->use_gid;
-> +	sbi->mount_opts.debug = opts->debug;
-> +	sbi->mount_opts.iocharset = opts->iocharset;
-> +	opts->iocharset = NULL;
-> +}
-> +
->  /* Allocate private field of the superblock, fill it.
->   *
->   * Finish filling the public superblock fields
-> @@ -800,7 +775,7 @@ befs_put_super(struct super_block *sb)
->   * Load a set of NLS translations if needed.
+>  /*
+> @@ -376,29 +310,24 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+>   * hfs_btree_init() to get the necessary data about the extents and
+>   * catalog B-trees and, finally, reading the root inode into memory.
 >   */
->  static int
-> -befs_fill_super(struct super_block *sb, void *data, int silent)
-> +befs_fill_super(struct super_block *sb, struct fs_context *fc)
+> -static int hfs_fill_super(struct super_block *sb, void *data, int silent)
+> +static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
 >  {
->  	struct buffer_head *bh;
->  	struct befs_sb_info *befs_sb;
-> @@ -810,6 +785,8 @@ befs_fill_super(struct super_block *sb, void *data, int silent)
->  	const unsigned long sb_block = 0;
->  	const off_t x86_sb_off = 512;
->  	int blocksize;
-> +	struct befs_mount_options *parsed_opts = fc->fs_private;
+> -	struct hfs_sb_info *sbi;
+> +	struct hfs_sb_info *sbi = HFS_SB(sb);
+>  	struct hfs_find_data fd;
+>  	hfs_cat_rec rec;
+>  	struct inode *root_inode;
 > +	int silent = fc->sb_flags & SB_SILENT;
+>  	int res;
 >  
->  	sb->s_fs_info = kzalloc(sizeof(*befs_sb), GFP_KERNEL);
->  	if (sb->s_fs_info == NULL)
-> @@ -817,11 +794,7 @@ befs_fill_super(struct super_block *sb, void *data, int silent)
+> -	sbi = kzalloc(sizeof(struct hfs_sb_info), GFP_KERNEL);
+> -	if (!sbi)
+> -		return -ENOMEM;
+> +	/* load_nls_default does not fail */
+> +	if (sbi->nls_disk && !sbi->nls_io)
+> +		sbi->nls_io = load_nls_default();
+> +	sbi->s_dir_umask &= 0777;
+> +	sbi->s_file_umask &= 0577;
 >  
->  	befs_sb = BEFS_SB(sb);
+> -	sbi->sb = sb;
+> -	sb->s_fs_info = sbi;
+>  	spin_lock_init(&sbi->work_lock);
+>  	INIT_DELAYED_WORK(&sbi->mdb_work, flush_mdb);
 >  
-> -	if (!parse_options((char *) data, &befs_sb->mount_opts)) {
-> -		if (!silent)
-> -			befs_error(sb, "cannot parse mount options");
-> -		goto unacquire_priv_sbp;
+> -	res = -EINVAL;
+> -	if (!parse_options((char *)data, sbi)) {
+> -		pr_err("unable to parse mount options\n");
+> -		goto bail;
 > -	}
-> +	befs_set_options(befs_sb, parsed_opts);
->  
->  	befs_debug(sb, "---> %s", __func__);
->  
-> @@ -934,10 +907,10 @@ befs_fill_super(struct super_block *sb, void *data, int silent)
+> -
+>  	sb->s_op = &hfs_super_operations;
+>  	sb->s_xattr = hfs_xattr_handlers;
+>  	sb->s_flags |= SB_NODIRATIME;
+> @@ -451,18 +380,56 @@ static int hfs_fill_super(struct super_block *sb, void *data, int silent)
+>  	return res;
 >  }
 >  
->  static int
-> -befs_remount(struct super_block *sb, int *flags, char *data)
-> +befs_reconfigure(struct fs_context *fc)
+> -static struct dentry *hfs_mount(struct file_system_type *fs_type,
+> -		      int flags, const char *dev_name, void *data)
+> +static int hfs_get_tree(struct fs_context *fc)
 >  {
-> -	sync_filesystem(sb);
-> -	if (!(*flags & SB_RDONLY))
-> +	sync_filesystem(fc->root->d_sb);
-> +	if (!(fc->sb_flags & SB_RDONLY))
->  		return -EINVAL;
->  	return 0;
->  }
-> @@ -965,19 +938,51 @@ befs_statfs(struct dentry *dentry, struct kstatfs *buf)
->  	return 0;
->  }
->  
-> -static struct dentry *
-> -befs_mount(struct file_system_type *fs_type, int flags, const char *dev_name,
-> -	    void *data)
-> +static int befs_get_tree(struct fs_context *fc)
-> +{
-> +	return get_tree_bdev(fc, befs_fill_super);
+> -	return mount_bdev(fs_type, flags, dev_name, data, hfs_fill_super);
+> +	return get_tree_bdev(fc, hfs_fill_super);
 > +}
 > +
-> +static const struct fs_context_operations befs_context_ops = {
-> +	.parse_param	= befs_parse_param,
-> +	.get_tree	= befs_get_tree,
-> +	.reconfigure	= befs_reconfigure,
-> +	.free		= befs_free_fc,
+> +static void hfs_free_fc(struct fs_context *fc)
+> +{
+> +	kfree(fc->s_fs_info);
+> +}
+> +
+> +static const struct fs_context_operations hfs_context_ops = {
+> +	.parse_param	= hfs_parse_param,
+> +	.get_tree	= hfs_get_tree,
+> +	.reconfigure	= hfs_reconfigure,
+> +	.free		= hfs_free_fc,
 > +};
 > +
-> +static int befs_init_fs_context(struct fs_context *fc)
+> +static int hfs_init_fs_context(struct fs_context *fc)
 > +{
-> +	struct befs_mount_options *opts;
+> +	struct hfs_sb_info *hsb;
 > +
-> +	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-> +	if (!opts)
+> +	hsb = kzalloc(sizeof(struct hfs_sb_info), GFP_KERNEL);
+> +	if (!hsb)
 > +		return -ENOMEM;
 > +
-> +	/* Initialize options */
-> +	opts->uid = GLOBAL_ROOT_UID;
-> +	opts->gid = GLOBAL_ROOT_GID;
+> +	fc->s_fs_info = hsb;
+> +	fc->ops = &hfs_context_ops;
 > +
-> +	fc->fs_private = opts;
-> +	fc->ops = &befs_context_ops;
+> +	if (fc->purpose != FS_CONTEXT_FOR_RECONFIGURE) {
+> +		/* initialize options with defaults */
+> +		hsb->s_uid = current_uid();
+> +		hsb->s_gid = current_gid();
+> +		hsb->s_file_umask = 0133;
+> +		hsb->s_dir_umask = 0022;
+> +		hsb->s_type = cpu_to_be32(0x3f3f3f3f); /* == '????' */
+> +		hsb->s_creator = cpu_to_be32(0x3f3f3f3f); /* == '????' */
+> +		hsb->s_quiet = 0;
+> +		hsb->part = -1;
+> +		hsb->session = -1;
+> +	}
 > +
 > +	return 0;
-> +}
-> +
-> +static void befs_free_fc(struct fs_context *fc)
->  {
-> -	return mount_bdev(fs_type, flags, dev_name, data, befs_fill_super);
-> +	struct befs_mount_options *opts = fc->fs_private;
-> +
-> +	kfree(opts->iocharset);
-> +	kfree(fc->fs_private);
 >  }
 >  
->  static struct file_system_type befs_fs_type = {
+>  static struct file_system_type hfs_fs_type = {
 >  	.owner		= THIS_MODULE,
->  	.name		= "befs",
-> -	.mount		= befs_mount,
+>  	.name		= "hfs",
+> -	.mount		= hfs_mount,
 >  	.kill_sb	= kill_block_super,
 >  	.fs_flags	= FS_REQUIRES_DEV,
-> +	.init_fs_context = befs_init_fs_context,
-> +	.parameters	= befs_param_spec,
+> +	.init_fs_context = hfs_init_fs_context,
 >  };
->  MODULE_ALIAS_FS("befs");
+>  MODULE_ALIAS_FS("hfs");
 >  
 > -- 
 > 2.46.0
