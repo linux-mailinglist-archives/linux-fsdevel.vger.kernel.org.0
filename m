@@ -1,261 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-29599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBE797B50E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 23:14:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738C497B522
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 23:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40DA11C22D7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 21:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A141C22099
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2024 21:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD29F185953;
-	Tue, 17 Sep 2024 21:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84121922E8;
+	Tue, 17 Sep 2024 21:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/lPpMuN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMhqGr/8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24339762E0;
-	Tue, 17 Sep 2024 21:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A4D34CE5;
+	Tue, 17 Sep 2024 21:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726607660; cv=none; b=I9Hx3q2eQ0edPKMITy6NXW/rG7B3c8txBvyCEv5VfW9YhHmqudnpaM4jp3eHNmaGK+9OSxpoiYlKnn7XaXIspNQGeyGJsZbxJ7WUQR4ii3wf0cRGvg9iz8UjEl3gcopFchtogZqYdBgDDbm9VlGaepKOEQLikVNi8uRke97R5O8=
+	t=1726608282; cv=none; b=l6Q2+Ve9GbY4mE3baKZvqFnFq/6WZKvZtfI7LhYy7S1DAS6hWdThu8EcO0LFpU3ym6mjYPkJfHHvUlpegixU7UtqEofnBoidynKGjIExQ2pAar0RK3tsK02Xa8peEaGaxK6d6ydTSJCN88QpEHwGv5x/2LT7xnPdXfaYCvwi5xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726607660; c=relaxed/simple;
-	bh=8P63ar+vDTXf5ivxQ/vJ2sKq85OTabVrl8wJoceTiLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXol+mhZesSXrbyxlaJbgbE7+1h8IbOaONH4jERkDxr/6Sb92nymL/qdOt4o3mE+S2e38hIwPQGPbn8Dl5nl16Qe+zhVuN3rZ6/v9CQ2/1nc0KYaca280FF1TYNlfI6JPUEJVqhnvB6xysosB8x3LS1EJKAl3GWVD9b/I6lKSw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/lPpMuN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4746C4CEC5;
-	Tue, 17 Sep 2024 21:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726607659;
-	bh=8P63ar+vDTXf5ivxQ/vJ2sKq85OTabVrl8wJoceTiLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J/lPpMuN6t1lPgDK8TYx7F1yhWn3Er3ps7fTJCzx23TyuR372cauTJUtOviLMym/9
-	 1yrN2f0dnc2f/M2cmYI0zgr201cJnEyPoQ6X56cYFjzeHHRarAC++ZfrdMfqNVSQFA
-	 l/t2Ui0NpnGVNHADd0I8NmFlNM+XC4M3uBOLmyde6Kyj45qwk9s14xw1vaH6Bq3OGm
-	 6SCT2OnhL1/ql2kTR2MvK+bOiRQ8XMJXy2+HP63fX4/Uamc5BI/L7COQ54JHHj2Q6e
-	 W1l4PXvNYfF52aemoacWCJPmj2PwwdORNOy6EvQ7nvyfYchH+7vcSgg5lhqglOzBex
-	 Qh9MVQ9ipVg+A==
-Date: Tue, 17 Sep 2024 14:14:19 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/12] xfs: factor out a xfs_file_write_zero_eof helper
-Message-ID: <20240917211419.GC182177@frogsfrogsfrogs>
-References: <20240910043949.3481298-1-hch@lst.de>
- <20240910043949.3481298-7-hch@lst.de>
+	s=arc-20240116; t=1726608282; c=relaxed/simple;
+	bh=qbzwExx8laMrc91h0RhCesWw10Mfdv3PH8Szj/HZGbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GOVpII8OOnJDWuGBcFNmefAVJBZVROeRRs0UeoHkH557eHv5ti3PxsbIhDWqMB9Q6YGZ2McSzYJ0HMA0PJLkm/ZcM9SGvjNJxuKWNDNMD+5YmVwx1gsQglgsBDltVnLQsjODJ24Qfh1lCnGAypBNBvapT+hfu5FDR655dh3fGqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMhqGr/8; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5356ab89665so6828064e87.1;
+        Tue, 17 Sep 2024 14:24:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726608278; x=1727213078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nELtIw4Zh0M13uRB/wUCoEnw1PUF7WXP5SyljJ7urZo=;
+        b=fMhqGr/8URtOGkTBGhuY0bL1sK/Fsc5wIl8Sp3tDG+CRme96UifQiXUmTp9l6IQXaa
+         WZVKHFNLDEX/4ltoA3TRKO44An1S/lOmZdRG9kAuQ/IgYAnT+DYYlZ076WQxCtLzb046
+         pxB4nfIRNNh4T0qpF0Jtp1V14KtYkYZQXI93UvLOpKRCks3TnblgxTmb4dWBziOMQj+h
+         U8Ty2drXSjisusplIRNvGnOFEgG5TSwEOnwVVGMjUH85Sp1LXkdIWLO3QTohhTB2HxAi
+         OqM2xbxDSnCjj8hDy4CaUnkXw6TpcYQnR7TYfRSXQhIlUKs28x144ji0muN+5Iemn8tp
+         xbxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726608278; x=1727213078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nELtIw4Zh0M13uRB/wUCoEnw1PUF7WXP5SyljJ7urZo=;
+        b=ll2eyim5Q70R0sncHZ5xbJUIpaUWJmZ9zc7IehqJrJmrlH8sLUkDQ9HHt4vJ2AFvQL
+         FN5m/XejGy3KolMcTE9HJDI5fj69wGTlpFgYPWFopSfTOvYgqllpx0BFUyPeTf60yOE0
+         YdKrKlhbU31lmWqDX1GHVjiknKZlbSsB12zK7qDusiCyXM6yHEffpjNzXk6tzOZyxPAo
+         7mJad2zG8LFhfKWqBVvwTlCz6v3OSDMcSjb2CjwU2Rn43m/tMrHWHcfjYF76PeQ31XWz
+         FaxW0l5bpoDWW8OKcie3drRDwziN/ZLiVNbCU8KO6Zt0ytRsBin/57YsSG+l9rO1Yqn4
+         wxIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQRArVLomZ8auQ3+dlOYWtzIpKqGI7a/VLkhA13nU32m9NMifVBtrJz+mSSNfnpIGxm3OzjUkNdWotRyAE@vger.kernel.org, AJvYcCWUR6C/r+ucTHYt0i9WlfwtAo5zS6xzMISfZQAQFxEOJ1/x5FtiIPcb/gAVnCpClmhM7ECsqepK1U+s@vger.kernel.org, AJvYcCXLoDTIMz6WmPG7rDRq49EQWHC4vmpj6MymLtDOX7LaH7AHyeimVPHr2oZgD7vBuKie+e0b3qjyJ/W7/fJXbg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhqCS8bpASN/+GZHx3MuAbCa9qhxBsv/DIyQ3VdemZMQCVvZGC
+	KOq3AsoBaP6ynshAD44lj9JpFhBo2aosa6zpGde90413d0U2GOxeAu5YEQ87dBHkB/GksesxdW7
+	rAP3s0wwyG9dbhM2EmNdx+d52sK4=
+X-Google-Smtp-Source: AGHT+IHpWygKBqdIpti/xTdN/vHJot0ZFGpOZk871PgTIMb/gjAsmuos+l2tbd/Rrtz8eDF8oHlZxhDKZPQxWoo6z4Q=
+X-Received: by 2002:a05:6512:1384:b0:52c:e1cd:39b7 with SMTP id
+ 2adb3069b0e04-53678fb1e9fmr10522085e87.5.1726608278095; Tue, 17 Sep 2024
+ 14:24:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910043949.3481298-7-hch@lst.de>
+References: <2106017.1726559668@warthog.procyon.org.uk> <4bb2eee39bec0972377931aa8f4c280e@manguebit.com>
+In-Reply-To: <4bb2eee39bec0972377931aa8f4c280e@manguebit.com>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 17 Sep 2024 16:24:26 -0500
+Message-ID: <CAH2r5mu3TBeMugfWddNYSpPZiYe8Hhv7DYY52rsMb-Zs8BMv4g@mail.gmail.com>
+Subject: Re: [PATCH] netfs, cifs: Fix mtime/ctime update for mmapped writes
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>, 
+	Christian Brauner <brauner@kernel.org>, kernel test robot <oliver.sang@intel.com>, 
+	Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 07:39:08AM +0300, Christoph Hellwig wrote:
-> Split a helper from xfs_file_write_checks that just deal with the
-> post-EOF zeroing to keep the code readable.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_file.c | 133 ++++++++++++++++++++++++++--------------------
->  1 file changed, 75 insertions(+), 58 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 0d258c21b9897f..a30fda1985e6af 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -347,10 +347,70 @@ xfs_file_splice_read(
->  	return ret;
->  }
->  
-> +static ssize_t
-> +xfs_file_write_zero_eof(
-> +	struct kiocb		*iocb,
-> +	struct iov_iter		*from,
-> +	unsigned int		*iolock,
-> +	size_t			count,
-> +	bool			*drained_dio)
-> +{
-> +	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
-> +	loff_t			isize;
-> +
-> +	/*
-> +	 * We need to serialise against EOF updates that occur in IO completions
-> +	 * here. We want to make sure that nobody is changing the size while
-> +	 * we do this check until we have placed an IO barrier (i.e. hold
-> +	 * XFS_IOLOCK_EXCL) that prevents new IO from being dispatched.  The
-> +	 * spinlock effectively forms a memory barrier once we have
-> +	 * XFS_IOLOCK_EXCL so we are guaranteed to see the latest EOF value and
-> +	 * hence be able to correctly determine if we need to run zeroing.
-> +	 */
-> +	spin_lock(&ip->i_flags_lock);
-> +	isize = i_size_read(VFS_I(ip));
-> +	if (iocb->ki_pos <= isize) {
-> +		spin_unlock(&ip->i_flags_lock);
-> +		return 0;
-> +	}
-> +	spin_unlock(&ip->i_flags_lock);
-> +
-> +	if (iocb->ki_flags & IOCB_NOWAIT)
-> +		return -EAGAIN;
-> +
-> +	if (!*drained_dio) {
-> +		/*
-> +		 * If zeroing is needed and we are currently holding the iolock
-> +		 * shared, we need to update it to exclusive which implies
-> +		 * having to redo all checks before.
-> +		 */
-> +		if (*iolock == XFS_IOLOCK_SHARED) {
-> +			xfs_iunlock(ip, *iolock);
-> +			*iolock = XFS_IOLOCK_EXCL;
-> +			xfs_ilock(ip, *iolock);
-> +			iov_iter_reexpand(from, count);
-> +		}
-> +
-> +		/*
-> +		 * We now have an IO submission barrier in place, but AIO can do
-> +		 * EOF updates during IO completion and hence we now need to
-> +		 * wait for all of them to drain.  Non-AIO DIO will have drained
-> +		 * before we are given the XFS_IOLOCK_EXCL, and so for most
-> +		 * cases this wait is a no-op.
-> +		 */
-> +		inode_dio_wait(VFS_I(ip));
-> +		*drained_dio = true;
-> +		return 1;
+You can also add "Tested-by: Steve French <stfrench@microsoft.com>"
 
-I gotta say, I'm not a big fan of the "return 1 to loop again" behavior.
-Can you add a comment at the top stating that this is a possible return
-value and why it gets returned?
+On Tue, Sep 17, 2024 at 1:01=E2=80=AFPM Paulo Alcantara <pc@manguebit.com> =
+wrote:
+>
+> David Howells <dhowells@redhat.com> writes:
+>
+> > The cifs flag CIFS_INO_MODIFIED_ATTR, which indicates that the mtime an=
+d
+> > ctime need to be written back on close, got taken over by netfs as
+> > NETFS_ICTX_MODIFIED_ATTR to avoid the need to call a function pointer t=
+o
+> > set it.
+> >
+> > The flag gets set correctly on buffered writes, but doesn't get set by
+> > netfs_page_mkwrite(), leading to occasional failures in generic/080 and
+> > generic/215.
+> >
+> > Fix this by setting the flag in netfs_page_mkwrite().
+> >
+> > Fixes: 73425800ac94 ("netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs=
+_inode")
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes: https://lore.kernel.org/oe-lkp/202409161629.98887b2-oliver.sang=
+@intel.com
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Jeff Layton <jlayton@kernel.org>
+> > cc: Steve French <sfrench@samba.org>
+> > cc: Paulo Alcantara <pc@manguebit.com>
+> > cc: linux-cifs@vger.kernel.org
+> > cc: netfs@lists.linux.dev
+> > cc: linux-fsdevel@vger.kernel.org
+> > ---
+> >  fs/netfs/buffered_write.c |    1 +
+> >  1 file changed, 1 insertion(+)
+>
+> Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+>
 
---D
 
-> +	}
-> +
-> +	trace_xfs_zero_eof(ip, isize, iocb->ki_pos - isize);
-> +	return xfs_zero_range(ip, isize, iocb->ki_pos - isize, NULL);
-> +}
-> +
->  /*
->   * Common pre-write limit and setup checks.
->   *
-> - * Called with the iolocked held either shared and exclusive according to
-> + * Called with the iolock held either shared and exclusive according to
->   * @iolock, and returns with it held.  Might upgrade the iolock to exclusive
->   * if called for a direct write beyond i_size.
->   */
-> @@ -360,13 +420,10 @@ xfs_file_write_checks(
->  	struct iov_iter		*from,
->  	unsigned int		*iolock)
->  {
-> -	struct file		*file = iocb->ki_filp;
-> -	struct inode		*inode = file->f_mapping->host;
-> -	struct xfs_inode	*ip = XFS_I(inode);
-> -	ssize_t			error = 0;
-> +	struct inode		*inode = iocb->ki_filp->f_mapping->host;
->  	size_t			count = iov_iter_count(from);
->  	bool			drained_dio = false;
-> -	loff_t			isize;
-> +	ssize_t			error;
->  
->  restart:
->  	error = generic_write_checks(iocb, from);
-> @@ -389,7 +446,7 @@ xfs_file_write_checks(
->  	 * exclusively.
->  	 */
->  	if (*iolock == XFS_IOLOCK_SHARED && !IS_NOSEC(inode)) {
-> -		xfs_iunlock(ip, *iolock);
-> +		xfs_iunlock(XFS_I(inode), *iolock);
->  		*iolock = XFS_IOLOCK_EXCL;
->  		error = xfs_ilock_iocb(iocb, *iolock);
->  		if (error) {
-> @@ -400,64 +457,24 @@ xfs_file_write_checks(
->  	}
->  
->  	/*
-> -	 * If the offset is beyond the size of the file, we need to zero any
-> +	 * If the offset is beyond the size of the file, we need to zero all
->  	 * blocks that fall between the existing EOF and the start of this
-> -	 * write.  If zeroing is needed and we are currently holding the iolock
-> -	 * shared, we need to update it to exclusive which implies having to
-> -	 * redo all checks before.
-> -	 *
-> -	 * We need to serialise against EOF updates that occur in IO completions
-> -	 * here. We want to make sure that nobody is changing the size while we
-> -	 * do this check until we have placed an IO barrier (i.e.  hold the
-> -	 * XFS_IOLOCK_EXCL) that prevents new IO from being dispatched.  The
-> -	 * spinlock effectively forms a memory barrier once we have the
-> -	 * XFS_IOLOCK_EXCL so we are guaranteed to see the latest EOF value and
-> -	 * hence be able to correctly determine if we need to run zeroing.
-> +	 * write.
->  	 *
-> -	 * We can do an unlocked check here safely as IO completion can only
-> -	 * extend EOF. Truncate is locked out at this point, so the EOF can
-> -	 * not move backwards, only forwards. Hence we only need to take the
-> -	 * slow path and spin locks when we are at or beyond the current EOF.
-> +	 * We can do an unlocked check for i_size here safely as I/O completion
-> +	 * can only extend EOF.  Truncate is locked out at this point, so the
-> +	 * EOF can not move backwards, only forwards. Hence we only need to take
-> +	 * the slow path when we are at or beyond the current EOF.
->  	 */
-> -	if (iocb->ki_pos <= i_size_read(inode))
-> -		goto out;
-> -
-> -	spin_lock(&ip->i_flags_lock);
-> -	isize = i_size_read(inode);
-> -	if (iocb->ki_pos > isize) {
-> -		spin_unlock(&ip->i_flags_lock);
-> -
-> -		if (iocb->ki_flags & IOCB_NOWAIT)
-> -			return -EAGAIN;
-> -
-> -		if (!drained_dio) {
-> -			if (*iolock == XFS_IOLOCK_SHARED) {
-> -				xfs_iunlock(ip, *iolock);
-> -				*iolock = XFS_IOLOCK_EXCL;
-> -				xfs_ilock(ip, *iolock);
-> -				iov_iter_reexpand(from, count);
-> -			}
-> -			/*
-> -			 * We now have an IO submission barrier in place, but
-> -			 * AIO can do EOF updates during IO completion and hence
-> -			 * we now need to wait for all of them to drain. Non-AIO
-> -			 * DIO will have drained before we are given the
-> -			 * XFS_IOLOCK_EXCL, and so for most cases this wait is a
-> -			 * no-op.
-> -			 */
-> -			inode_dio_wait(inode);
-> -			drained_dio = true;
-> +	if (iocb->ki_pos > i_size_read(inode)) {
-> +		error = xfs_file_write_zero_eof(iocb, from, iolock, count,
-> +				&drained_dio);
-> +		if (error == 1)
->  			goto restart;
-> -		}
-> -
-> -		trace_xfs_zero_eof(ip, isize, iocb->ki_pos - isize);
-> -		error = xfs_zero_range(ip, isize, iocb->ki_pos - isize, NULL);
->  		if (error)
->  			return error;
-> -	} else
-> -		spin_unlock(&ip->i_flags_lock);
-> +	}
->  
-> -out:
->  	return kiocb_modified(iocb);
->  }
->  
-> -- 
-> 2.45.2
-> 
-> 
+--=20
+Thanks,
+
+Steve
 
