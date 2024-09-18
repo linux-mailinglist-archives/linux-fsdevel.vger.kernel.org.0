@@ -1,132 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-29627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D80E97B963
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 10:31:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D132C97BA00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 11:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2653D1F21812
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 08:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E551F224A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 09:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE81547E6;
-	Wed, 18 Sep 2024 08:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D93176259;
+	Wed, 18 Sep 2024 09:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="Rd5vvMao"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="jvKq6LbI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="avT1wrQB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF58A1509AB;
-	Wed, 18 Sep 2024 08:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1625335BA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 09:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726648298; cv=none; b=ZICOavf9tTZTibQpHfuuDS2WJxzSZlFAmWTfrLBhIuhk682+15VAB+l9syFrVeONw0/OUUXw3FDS+H9yyOTBbQkSvKUSM031Ke28z6NxmCIl80sTZuoJq9lWYntV2LAiS+Q+5shuFOEE6F0rbFCw9i+YeO6oRXPvGpUwKlBzML0=
+	t=1726650757; cv=none; b=MFJoo7NmJ2rSCrvjq+j3EZbPXDN9291f/TP0/k2fGISav7ok/wLJYYHGSb2ka/OTWzvF8RyE6CprhHIoxC9GJmFDtWzAkiGhcd+TyuN1I082zbXRrXN6OlKRHsZtCi6F2MqxRpdPshp5PRvkQxtlqlLIa5K/MX02NGOGhhQFbU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726648298; c=relaxed/simple;
-	bh=Fzn1aEdw/yxhbLMFY9G3xd1Gy61G7ncfaBdVHUMisvY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CHx3ziIlmoX3a1vU8eSeNrCIC5PyBDCXVqhGUjiEeB7jH1Cm+dy4yKtV59uLRGtrr0dZ7TkQr+SxJKANYYukzYF34WK76smwdL3ud6iAdF1BIf64XwQ4YoS+VKSbQbeduZ7hzck4CJ+P6zFpCj50Hos7XGMDAQYL9tg6Axe1VaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=Rd5vvMao; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1726648291;
-	bh=me6yhkQ1Qf7Nz+9dw5lt1yO15V7nP5XWT/aS4UjahWA=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=Rd5vvMaolEmrl1l2z1ggs+5be2/6j4K964x7uMBLhVcPO2gEU/eYonbL1WLMHsp2+
-	 QT8qbQk0uFrMQew4heoH4gNpduUY/4ziQ8d6f9V2MVqoQat69ad6Vx9Eghq6wD66pw
-	 LS293864SUaoed/IsnRGnQ8RKO7SFKGBlbrR9QzE=
+	s=arc-20240116; t=1726650757; c=relaxed/simple;
+	bh=vzo9aXOcYTnpLmcWUmX/C9rQxZ0ikWBP5CsVSVvqOV8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=OXtGhISPmkFqUUAFMpo3F3X5aUEo3WVn5PlD4KYT3VBiPdvrsk4xG3Yjs8Aw67kHDEBRzNIAPZbZzcG5BtbQD3d073j+zhiMUY6jFg6/DbS1V+3HpnFMtEFMTyYbHWo6uDQvIFw4/ygLg91oZuknkmQPc0vGSQ38JpN4FVJmmCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=jvKq6LbI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=avT1wrQB; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E97FA1140189;
+	Wed, 18 Sep 2024 05:12:34 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Wed, 18 Sep 2024 05:12:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1726650754;
+	 x=1726737154; bh=OGL2vQGFP/h2t8UXE34Kxxw4BTytgfW3VXSw1q8eZ0g=; b=
+	jvKq6LbIv/ZSh+QI2qEpBG9L9tcRirFLE+QfqYLhtWSoPMbl2sTrsGfqoMIUdkCe
+	XG00/RoByLoklPJXsMuinVyPBsNKKuRMqReL2TBy1yrDbxYm9OhCDI0E5G1a63Ug
+	OocvpootgsNypCnQLrShKpYFLQci1ebpDdLNDGnrkgCzlHcpkTZ+eQQ2Lrjvud9q
+	P2I/V2qWUZR3vkXNEEBZHABLFSrQ0T65M7yN3EWhcRpq/SiQE94FGeFnAhRSPDH7
+	r7Qgr2iOQ6RPgjVDCrDX7rKgrTegf2CvYjDaN5THuEWCRGHJWks0O5Ux+pgnB9sQ
+	FDHOh6VKpBPjamai3XtRIA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726650754; x=
+	1726737154; bh=OGL2vQGFP/h2t8UXE34Kxxw4BTytgfW3VXSw1q8eZ0g=; b=a
+	vT1wrQBGtbpJG+HCMSxsp+xzVdbQ3zsAqqiDKI6AgpWI8oOXEJNqQg180q13oj7v
+	YIa5TXVSNYBQAI+F7WoM23hhmPUOX5MVI7mmnTuyhUASxQt+vJpNhzGp13posXyA
+	nRfSIyiBI7p55h8shhOTLTf4jhYyMBB0nVnyhCEaZ4gh1FX7qUWW9n2zq9nh8y5o
+	NgNGNR6iu1Ot7fH/rAn3Wn20kHEf++OUIaN1TkAkUpObsA2MmkiBT0L8H8M+mvvw
+	9s6LFUjAa1+YyLjnyh37rbhDTlNCIyq1liLSqxEZe7ganNk4S0bve4D6mFsgNYCE
+	O/FJyNr1PWVhtAQ2j2kng==
+X-ME-Sender: <xms:gZnqZotEhj4PmRbQYCcVzmF1WdmM2iOti5mCw0Gct1yXLiZw0dc4uQ>
+    <xme:gZnqZlct2kL-U0hRq4auls0bG6p3OvdY9X1S7X4MH1VeR25eNYEobTxIIFil8mM-R
+    rCQCCmc6wEQR_QT>
+X-ME-Received: <xmr:gZnqZjzQNbHNCmou-ZF7N0_h8mfzrNsiiZ1E8-XaIZT1yLm23jRzAw3_tYMvL7l5YPkIvMC6m0h_tXWwZHcL7vCFUANidB82YWI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekledguddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevufgfjghfkfggtgfgsehtqhhmtddtreej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepffeugeeihfffteev
+    heevveffjeehveekudegfedtfeegudevjedvhfefvdeitdfgnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
+    jhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugi
+    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhs
+    vghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehjvghffhhlvgiguheslh
+    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlrghorghrrdhshhgrohes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtg
+    homhdprhgtphhtthhopehjrghkohgsrdgslhhomhgvrhestggvrhhnrdgthh
+X-ME-Proxy: <xmx:gpnqZrP9MhE0NcI0EjcfPZONA392w4fib6KB4dV8QQhSgu91w_HcUQ>
+    <xmx:gpnqZo-b7HmxGoX2FZwrITPqu7IRm7J5HjdXx8rZVvcFIBfrGBkr9A>
+    <xmx:gpnqZjVSO2goD_PhCYIP48KqtAwlmy78ZJV_F5MJE9Y70cPafQKKZQ>
+    <xmx:gpnqZhcwl94k-IV8iUERtfrNikBbyMITPjdlE6q8VMEkY2WiwpJ-MQ>
+    <xmx:gpnqZsQ_KX1XBRxWp7zJDgs5X879x7WahHjy1VW_k73T3qoExy4ltgus>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 18 Sep 2024 05:12:33 -0400 (EDT)
+Date: Wed, 18 Sep 2024 11:12:32 +0200
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+To: Miklos Szeredi <miklos@szeredi.hu>
+CC: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
+ josef@toxicpanda.com, jefflexu@linux.alibaba.com, laoar.shao@gmail.com,
+ kernel-team@meta.com, Jakob Blomer <Jakob.Blomer@cern.ch>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_1/2=5D_fuse=3A_add_optional?=
+ =?US-ASCII?Q?_kernel-enforced_timeout_for_requests?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAJfpegsBG_=7Ns=n45Cwc8082OZ7Kg1WU+xoMPNDyyP+V1ik+Q@mail.gmail.com>
+References: <20240830162649.3849586-1-joannelkoong@gmail.com> <20240830162649.3849586-2-joannelkoong@gmail.com> <CAJfpegug0MeX7HYDkAGC6fn9HaMtsWf2h3OyuepVQar7E5y0tw@mail.gmail.com> <CAJnrk1ZSEk+GuC1kvNS_Cu9u7UsoFW+vd2xOsrbL5i_GNAoEkQ@mail.gmail.com> <02b45c36-b64c-4b7c-9148-55cbd06cc07b@fastmail.fm> <CAJnrk1ZSp97F3Y2=C-pLe_=0D+2ja5N3572yiY+4SGd=rz1m=Q@mail.gmail.com> <b05ad1ae-fe54-4c0c-af4e-22a6c6e7d217@fastmail.fm> <CAJfpegsBG_=7Ns=n45Cwc8082OZ7Kg1WU+xoMPNDyyP+V1ik+Q@mail.gmail.com>
+Message-ID: <9FA70B40-C556-43D9-9965-1290C929CBFC@fastmail.fm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <686D222E-3CA3-49BE-A9E5-E5E2F5AFD5DA@flyingcircus.io>
-Date: Wed, 18 Sep 2024 10:31:09 +0200
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>,
- Matthew Wilcox <willy@infradead.org>,
- linux-mm@kvack.org,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Daniel Dao <dqminh@cloudflare.com>,
- clm@meta.com,
- regressions@lists.linux.dev,
- regressions@leemhuis.info
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <0C392D79-DAB1-4730-B2AB-B2B8CF100F11@flyingcircus.io>
-References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
- <ZuNjNNmrDPVsVK03@casper.infradead.org>
- <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
- <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <686D222E-3CA3-49BE-A9E5-E5E2F5AFD5DA@flyingcircus.io>
-To: Dave Chinner <david@fromorbit.com>
+
+On September 18, 2024 9:29:44 AM GMT+02:00, Miklos Szeredi <miklos@szeredi=
+=2Ehu> wrote:
+>On Wed, 18 Sept 2024 at 00:00, Bernd Schubert
+><bernd=2Eschubert@fastmail=2Efm> wrote:
+>
+>> > I like this idea a lot=2E I like that it enforces per-request behavio=
+r
+>> > and guarantees that any stalled request will abort the connection=2E =
+I
+>> > think it's fine for the timeout to be an interval/epoch so long as th=
+e
+>> > documentation explicitly makes that clear=2E I think this would need =
+to
+>> > be done in the kernel instead of libfuse because if the server is in =
+a
+>> > deadlock when there are no pending requests in the lists and then the
+>> > kernel sends requests to the server, none of the requests will make i=
+t
+>> > to the list for the timer handler to detect any issues=2E
+>> >
+>> > Before I make this change for v7, Miklos what are your thoughts on
+>> > this direction?
+>
+>I have no problem with epochs, but there are scalability issue with
+>shared lists=2E  So I'm not sure=2E  Maybe the individual timers would be
+>the best solution but I don't know the overhead and the scalability of
+>that solution either=2E
+>
+>Thanks,
+>Miklos
+
+In principle we could also have lists per device and then a bitmap when th=
+e lists are empty=2E But now certainly more complex, especially as a device=
+ clone can happen any time=2E
 
 
-
-> On 16. Sep 2024, at 09:14, Christian Theune <ct@flyingcircus.io> =
-wrote:
->=20
->>=20
->> On 16. Sep 2024, at 02:00, Dave Chinner <david@fromorbit.com> wrote:
->>=20
->> I don't think this is a data corruption/loss problem - it certainly
->> hasn't ever appeared that way to me.  The "data loss" appeared to be
->> in incomplete postgres dump files after the system was rebooted and
->> this is exactly what would happen when you randomly crash the
->> system. i.e. dirty data in memory is lost, and application data
->> being written at the time is in an inconsistent state after the
->> system recovers. IOWs, there was no clear evidence of actual data
->> corruption occuring, and data loss is definitely expected when the
->> page cache iteration hangs and the system is forcibly rebooted
->> without being able to sync or unmount the filesystems=E2=80=A6
->> All the hangs seem to be caused by folio lookup getting stuck
->> on a rogue xarray entry in truncate or readahead. If we find an
->> invalid entry or a folio from a different mapping or with a
->> unexpected index, we skip it and try again.  Hence this does not
->> appear to be a data corruption vector, either - it results in a
->> livelock from endless retry because of the bad entry in the xarray.
->> This endless retry livelock appears to be what is being reported.
->>=20
->> IOWs, there is no evidence of real runtime data corruption or loss
->> from this pagecache livelock bug.  We also haven't heard of any
->> random file data corruption events since we've enabled large folios
->> on XFS. Hence there really is no evidence to indicate that there is
->> a large folio xarray lookup bug that results in data corruption in
->> the existing code, and therefore there is no obvious reason for
->> turning off the functionality we are already building significant
->> new functionality on top of.
-
-I=E2=80=99ve been chewing more on this and reviewed the tickets I have. =
-We did see a PostgreSQL database ending up reporting "ERROR: invalid =
-page in block 30896 of relation base/16389/103292=E2=80=9D.=20
-
-My understanding of the argument that this bug does not corrupt data is =
-that the error would only lead to a crash-consistent state. So =
-applications that can properly recover from a crash-consistent state =
-would only experience data loss to the point of the crash (which is fine =
-and expected) but should not end up in a further corrupted state.
-
-PostgreSQL reporting this error indicates - to my knowledge - that it =
-did not see a crash consistent state of the file system.
-
-Christian
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
-
+Thanks,
+Bernd
 
