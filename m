@@ -1,149 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-29648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE0D97BD9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 16:03:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A6597BDC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 16:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3531C2280C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 14:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426631F21F31
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 14:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E5D18A931;
-	Wed, 18 Sep 2024 14:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A3A18C918;
+	Wed, 18 Sep 2024 14:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ikv7hMcT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYdPTlg3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F49D176230
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 14:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C519E18B472;
+	Wed, 18 Sep 2024 14:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726668231; cv=none; b=d1lnISBaa2j1BRSru3pI69or6ClrrVdftmeUaY7jFXHRKgyOZzZnqTZu0AgS2TKx0H01M3bSeZSCAJzw7jsdrtQKiytG6Zx0gEyPfJh8CqpMT+SPEoOiPxE0+9hBffGByacyr3BQVBIqu/2C9hBf+gpmNfPXIivFmRDQ60M/H/4=
+	t=1726668651; cv=none; b=SshLx9QQdmGJyyskgzsvSA7WQSUg/+H6JtkKW4udegsiGwgovfH4RNJD0sqsFjFmBh+vozZskeEpMCYeVrOJcmu1nEkc06S2UIcjNpeXA+/0TJKVNrU0VRZCCmj1d4daDUpxg6/7hnY6HcE6tOSiOvCqk88trdR6x9J5EnqPYbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726668231; c=relaxed/simple;
-	bh=Kr3ea7knxR3K6ncu1yZFkSOzoV0ZNlUKfvGocBFxRZ4=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=g3DgvH3ptbnJUSU3qvwZxAbyINH25GItOXil6Qgm0Cs2w7bNJVnusDlsuIUW64ra3s/BocXGzu37YIpUVqucKx8yHib2PsTy0BWgebB+FJ0t/VRpRVSCE+2Fkou+gYJ8NWyp3jMRppSs4anFJrYXQD4/kHrU5nxOdh87LR4E9rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ikv7hMcT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726668228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+vDScTiHdr0sgOehdKhcZpjyeGo146YPJ6YCQDqIElU=;
-	b=Ikv7hMcTqglOvDA1VAPs6XlPedVOLTtxySgtiNQ6gjmDlj3bTBRougwDtTCySn3UK7RY6v
-	81FUbTio7Vs11qweCOxhV4ZSfYok2vuOyBJkNbE992PZdaZiOiSfTGzhXTpRB+x8SkxzCD
-	s762C4IxMiuKo5GAOUU5OSU87p2B+lQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-166-7e-FGBkuNbGTNhpDoCvOxA-1; Wed,
- 18 Sep 2024 10:03:47 -0400
-X-MC-Unique: 7e-FGBkuNbGTNhpDoCvOxA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 70CF51955E99;
-	Wed, 18 Sep 2024 14:03:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C67BB19560AA;
-	Wed, 18 Sep 2024 14:03:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <202409131438.3f225fbf-oliver.sang@intel.com>
-References: <202409131438.3f225fbf-oliver.sang@intel.com>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: dhowells@redhat.com, oe-lkp@lists.linux.dev, lkp@intel.com,
-    Linux Memory Management List <linux-mm@kvack.org>,
-    Christian Brauner <brauner@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [linux-next:master] [netfs] a05b682d49: BUG:KASAN:slab-use-after-free_in_copy_from_iter
+	s=arc-20240116; t=1726668651; c=relaxed/simple;
+	bh=dkeHweZOsjkx3Ag5GOp8+zbO/oMVxglgz9oAsbZuWfw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OQtzWW1yJvk2hwtDEOspoyyo8YL1koa5GFzg+BeJQg8IHMwxPOXG0d5dLmHzlzgWnEDFW2KQk3XitZI3m9S90Bbsj0VsL+PmviSkm4sys6NkvVobjbr0ck1dVb4rCT940QsvpGLE00312NyRBjmqWGjeHTjTKVzOamsac5Dy9C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYdPTlg3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 590E4C4CEC2;
+	Wed, 18 Sep 2024 14:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726668651;
+	bh=dkeHweZOsjkx3Ag5GOp8+zbO/oMVxglgz9oAsbZuWfw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=cYdPTlg3ffygWcgCxyBPlCZ9Bt7oZKTvffdXiXkqdMRUlalCxoVwJNqoy7UWqr8Z/
+	 cB0PvRYAYNCuwAPA4w/GefAWog7iPRS6imqxflPqErW3qq/YrFNolVT95/7ktAjJfT
+	 U7/+OLHSAtFlO97oWUfSvrJlE4b3Zac/O6QwMYyHW+DjDJiQuqBJSehVETt/GVn2Wf
+	 7bK6EchdYX4NtVgD32lDWPpUlcXd5At/x9dFUNRQt6RkQ1UPgRkx0sDRuVpllWQ4rS
+	 ppUjmpf0+McRx9aMu2S/YNWHg4Mn+4WmRJ47KeE6CVOF7PSwxD8phXfzsupH5ObObF
+	 dQn8LGmDvTa7A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A06CCD1AB;
+	Wed, 18 Sep 2024 14:10:51 +0000 (UTC)
+From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
+Subject: [PATCH 0/4] Backport statx(..., NULL, AT_EMPTY_PATH, ...)
+Date: Wed, 18 Sep 2024 22:10:36 +0800
+Message-Id: <20240918-statx-stable-linux-5-15-y-v1-0-5afb4401ddbe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2377097.1726668218.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Sep 2024 15:03:38 +0100
-Message-ID: <2377098.1726668218@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFzf6mYC/x2Myw5AMBBFf0VmbaRF4/ErYlEMJpGSFqmIf1c2J
+ znJPfcGR5bJQR3dYOlkx6sJIuMI+lmbiZCH4JCKNBeVLNHtevcfu4VwYXN4VCgVXljpTGSq1MW
+ QFxD6zdLI/v9u4FRJGH0U0D7PC/8LDll4AAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: Xi Ruoyao <xry111@xry111.site>, Mateusz Guzik <mjguzik@gmail.com>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+ stable@vger.kernel.org, Miao Wang <shankerwangmiao@gmail.com>, 
+ Linus Torvalds <torvalds@linux-foundation.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2178;
+ i=shankerwangmiao@gmail.com; h=from:subject:message-id;
+ bh=dkeHweZOsjkx3Ag5GOp8+zbO/oMVxglgz9oAsbZuWfw=;
+ b=kA0DAAoBsDHjynv+2W4ByyZiAGbq32iiclsVGevsH3fdEUaojZ1rU7KBcrzo1/cYK142hpS/N
+ YkCMwQAAQoAHRYhBESo9Y+A8kHGW57ME7Ax48p7/tluBQJm6t9oAAoJELAx48p7/tlu87gQANBX
+ CdjnQ6MdfZkdWU82SRd8+3aRBEBWeQpcHyEmSxMxBWS/pXs21wtcl85ssdEtjpOnf8Ebfsz56R/
+ VWbGkZFIsSpWJ42/34sAEBjK/g8wiZqNU1LSmyW9ZIq68P0qd6deZ4lTbAddNxIJLtugjEMw/9y
+ LdevRi9NV66yNGF3saB/1poT0JjMuhA8kCiQiqrhfUEBnpgdaH3u4r08AwNWFXRyyIhtw9g4nOd
+ J+bVssMyWn99MZ9kEfOgxxuxEjKR4j9MMcAWd2vIHVyCposnIneEOWVwDG26Fv2GRFwZE7AFEfZ
+ D+MQui4jhJlXW04XcL2jC8mrThujD7DVxoWwCytqMAFXhpFNWV2a+hVPmLdjV9IuwSAVQ+g+P/A
+ yjodgqh6fzEOrgwW3Ejm9SZEkTnztE0LoAP6uXLaPPxEJ8ze9t5iAru+32RElbfIhJqJz3XJ191
+ /a1sgN9nlnHmf41EmybQ1EkRpzHrFJ2T4ob4wSTLUlWwewyGH97Swkl0J2fOSIr+e4VY6o3NmAC
+ iA2SlvqYvtBHWYz2SMWJW52zrkB30LfAKslHWp5JG9rsaSDmDT4y//D+TA6lGUc3k9ha+mW3aje
+ LnbwovzKdaMbwI1q1iJ4udI5yjYl/yPobc74u3l1jh34TvaZ1p+U2DHxW7yIGYhKE4nyMHoZE1g
+ ZWRK+
+X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
+ fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
+X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/default with
+ auth_id=189
+X-Original-From: Miao Wang <shankerwangmiao@gmail.com>
+Reply-To: shankerwangmiao@gmail.com
 
-Hi Oliver,
+Commit 0ef625bba6fb ("vfs: support statx(..., NULL, AT_EMPTY_PATH,
+...)") added support for passing in NULL when AT_EMPTY_PATH is given,
+improving performance when statx is used for fetching stat informantion
+from a given fd, which is especially important for 32-bit platforms.
+This commit also improved the performance when an empty string is given
+by short-circuiting the handling of such paths.
 
-The reproducer script doesn't manage to build (I'm using Fedora 39):
+This series is based on the commits in the Linus’ tree. Modifications
+are applied to vfs_statx_path(). In the original patch, vfs_statx_path()
+was created to warp around the call to vfs_getattr() after
+filename_lookup() in vfs_statx(). Since the coresponding code is
+different in 5.15 and 5.10, the content of vfs_statx_path() is modified
+to match this. The original patch also moved path_mounted() from
+namespace.c to internal.h, which is not applicable for 5.15 and 5.10
+since it has not been introduced before 6.5. The original patch also
+used CLASS(fd_raw, ) to convert a file descriptor number provided from
+the user space in to a struct and automatically release it afterwards.
+Since CLASS mechanism is only available since 6.1.79, obtaining and
+releasing fd struct is done manually. do_statx() was directly handling
+filename string instead of a struct filename * before 5.18, as a result
+short-circuiting is implemented in do_statx() instead of sys_statx,
+without the need of introducing do_statx_fd().
 
-+ /usr/lib/rpm/check-rpaths
-**************************************************************************=
-*****
-*
-* WARNING: 'check-rpaths' detected a broken RPATH OR RUNPATH and will caus=
-e
-*          'rpmbuild' to fail. To ignore these errors, you can set the
-*          '$QA_RPATHS' environment variable which is a bitmask allowing t=
-he
-*          values below. The current value of QA_RPATHS is 0x0000.
-*
-*    0x0001 ... standard RPATHs (e.g. /usr/lib); such RPATHs are a minor
-*               issue but are introducing redundant searchpaths without
-*               providing a benefit. They can also cause errors in multili=
-b
-*               environments.
-*    0x0002 ... invalid RPATHs; these are RPATHs which are neither absolut=
-e
-*               nor relative filenames and can therefore be a SECURITY ris=
-k
-*    0x0004 ... insecure RPATHs; these are relative RPATHs which are a
-*               SECURITY risk
-*    0x0008 ... the special '$ORIGIN' RPATHs are appearing after other
-*               RPATHs; this is just a minor issue but usually unwanted
-*    0x0010 ... the RPATH is empty; there is no reason for such RPATHs
-*               and they cause unneeded work while loading libraries
-*    0x0020 ... an RPATH references '..' of an absolute path; this will br=
-eak
-*               the functionality when the path before '..' is a symlink
-*          =
+Tested-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
+---
+Christian Brauner (2):
+      fs: new helper vfs_empty_path()
+      stat: use vfs_empty_path() helper
 
-*
-* Examples:
-* - to ignore standard and empty RPATHs, execute 'rpmbuild' like
-*   $ QA_RPATHS=3D$(( 0x0001|0x0010 )) rpmbuild my-package.src.rpm
-* - to check existing files, set $RPM_BUILD_ROOT and execute check-rpaths =
-like
-*   $ RPM_BUILD_ROOT=3D<top-dir> /usr/lib/rpm/check-rpaths
-*  =
+Linus Torvalds (1):
+      vfs: mostly undo glibc turning 'fstat()' into 'fstatat(AT_EMPTY_PATH)'
 
-**************************************************************************=
-*****
-ERROR   0002: file '/usr/local/sbin/fsck.f2fs' contains an invalid runpath=
- '/usr/local/lib' in [/usr/local/lib]
-ERROR   0002: file '/usr/local/sbin/mkfs.f2fs' contains an invalid runpath=
- '/usr/local/lib' in [/usr/local/lib]
-ERROR   0002: file '/usr/local/lib/libf2fs_format.so.9.0.0' contains an in=
-valid runpath '/usr/local/lib' in [/usr/local/lib]
-error: Bad exit status from /var/tmp/rpm-tmp.ASUBws (%install)
+Mateusz Guzik (1):
+      vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
 
-RPM build warnings:
-    source_date_epoch_from_changelog set but %changelog is missing
+ fs/stat.c          | 73 +++++++++++++++++++++++++++++++++++++++++++++---------
+ include/linux/fs.h | 17 +++++++++++++
+ 2 files changed, 78 insertions(+), 12 deletions(-)
+---
+base-commit: 3a5928702e7120f83f703fd566082bfb59f1a57e
+change-id: 20240918-statx-stable-linux-5-15-y-9a30358a7d47
 
-RPM build errors:
-    Bad exit status from /var/tmp/rpm-tmp.ASUBws (%install)
-error: open of /mnt2/lkp-tests/programs/xfstests/pkg/rpm_build/RPMS/xfstes=
-ts-LKP.rpm failed: No such file or directory
-=3D=3D> WARNING: Failed to install built package(s).
+Best regards,
+-- 
+Miao Wang <shankerwangmiao@gmail.com>
+
 
 
