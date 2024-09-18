@@ -1,326 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-29625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58A397B8E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 10:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5018497B939
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 10:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD611F211D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 08:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF881F25151
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 08:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5507516E89B;
-	Wed, 18 Sep 2024 08:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AA917A5B2;
+	Wed, 18 Sep 2024 08:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jla3drzP";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JWgEWhPM"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="W3aO/XXY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F051170836;
-	Wed, 18 Sep 2024 08:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726646405; cv=fail; b=hpfuQaOma4LqJLRmnJ5/c30HTNgHjvIaRqzIkAyr5q6f8pig5H9/TQXzOUMeQgWj3RVqcTzqd2jA9AqU1RFkAKx1BA4Ip/8rCgeBWZQEUsGXKvkxX8DMfn65wd/cpHgXkRRCEDmoBxoaUyaTnq5lOiFrH70C9oeMUg0M54owV3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726646405; c=relaxed/simple;
-	bh=JrEw7ra8mj3OIykIEES5GMvNcbCv5RzgNETSIvyAyVU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=i0XRndMrDGV7V47zn7Wz/pXXciL46W6ghkVk2Jgk+p673/jTlPdMnpy+UJ/kjGstTDOZG+FJtvXlyL0esutFCmbYBnHEaTCMzXzfpptcPuzRdcc90fABIM75Niiu+fBHQ9yzDAh/oFIlbQoWQ6Jx3N4MEJC22d07Vxkq+YLqydQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=jla3drzP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JWgEWhPM; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48I7tqLD011237;
-	Wed, 18 Sep 2024 07:59:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=O2pqjaNlJjXubMFDNqhhjH8mnbvrRt4/0DJYTPR2A7g=; b=
-	jla3drzP6OaHpn2eQOl7QrYVIKoH67fXCYYbnkqXDVQYmRVGYHQ7Zar0PdzS5Avi
-	aNMy6AgtLRZeRJiUo/PKFlrZFZU9GPdNeIlZLi3FvfTyDVAoueqnQ2pjGXp8Mw+w
-	IJv04DH54ATmWmhADUGKEJjQhkT02+yza8yuKN0PA6RGG9EyOYUZrBzht4A49d1b
-	YuIjQvbyMSLX1LHQmxDQ9sgrd9dOdYZTrw7URf5s88b+xRRvcmN4vzQZxloixo21
-	mvvuCsT3w9xlqrdWKzN61OyMoilvPw3EVH8PfluRCY5I7MuFWqK00U3odg72/E6i
-	DhywxJsDo/zav/kPJZh2hw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3nsgmgu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Sep 2024 07:59:48 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48I7YHf9017831;
-	Wed, 18 Sep 2024 07:59:47 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nycxpg4u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Sep 2024 07:59:47 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a2QVYJ3UjtOtsv/lcx6ZpUuswjSMRRA/f6zuEnIGS1WI7NWg66KYiAuAX/DcmgWzZ1Aur3g/m8KwMK6Jubyc5I1lceysFELoU6BpGNP0YXBtdrdQ8VmrxYFFWv49fo9OfAhfH++5Bee9PMIkwv3e8wrxz+yRYZiv9hD8xG7xmJ/65NYbOlS4S8LUeWVjM81xIYlXe3enV76rBTerEUQG2uIgvE+oLIJmiHfYJdTjo4bJU+LPdSqYbCqGoYslwpaR9xiwv7Hyi0YHF2EdeJzZRBIfJaCUviVxdHGUXjdnH2ElhP1LJR/61SRso/fPuuIYsai1uFL8VnZhm9qgt6FHpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O2pqjaNlJjXubMFDNqhhjH8mnbvrRt4/0DJYTPR2A7g=;
- b=cYkcDjQIi9IDDz1frFyGbmL8H0yZhEiiTEhSOPfts0OrbNRglvSugoMB1Fn+MncdPnO9wnklfltYIwIBP5DcxxNUmvcdeUIrPj9wZ0Bnx6nHLU24Dph7wv4sYta9k5hFoAJ1BOD+i8cCssO9RojKE5wCVrZPsD9bfWgWYXZf7Vw90zUSODEOxCbEOK7/bVN5m2o88ITpf1lW2VN5oVSCPQqwEar8o2lY3x1LX4Nrf8k3h/Ivv1FcvJT+gwhQDj8c7PApM0hWla2sC+jlxCfvOUkPf0ru6EAFyChF4j3TnQuk5xpfvvCQ5Ty9ioJeMc9md2cZnLi50IS6vaK6zshs1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O2pqjaNlJjXubMFDNqhhjH8mnbvrRt4/0DJYTPR2A7g=;
- b=JWgEWhPM9XJBbqQZdoWzIvCN+s87x6olj8Rzjac3l0LGNha01sfdcy5ChYLGzFvkOCgsCKoZIgB8uKuYhjubabZIzyq2ffso2Q216dHMv/DdqaWsdI3B1273PIOz78yMvR4yBFA3QeXOk4EvFZWbjK2iZdJU8krmOCAX5aax7CM=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SA1PR10MB5823.namprd10.prod.outlook.com (2603:10b6:806:235::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.15; Wed, 18 Sep
- 2024 07:59:45 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.7982.011; Wed, 18 Sep 2024
- 07:59:45 +0000
-Message-ID: <8e13fa74-f8f7-49d3-b640-0daf50da5acb@oracle.com>
-Date: Wed, 18 Sep 2024 08:59:41 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-To: Dave Chinner <david@fromorbit.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
-        djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-        martin.petersen@oracle.com
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com> <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <877cbq3g9i.fsf@gmail.com> <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
- <8734m7henr.fsf@gmail.com> <ZufYRolfyUqEOS1c@dread.disaster.area>
- <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com>
- <Zun+yci6CeiuNS2o@dread.disaster.area>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <Zun+yci6CeiuNS2o@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0316.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:197::15) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35174176AAE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 08:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726647537; cv=none; b=Jl4VbpRKl2UMIyNnclw4yOsZRmIXwHF4YRSSzW2LvRgSHzato0CKt/YKAwzbc2ChSadERgSCy3zft0JqHBcsafyNo1Y7Zf4Ed47I7iZ2/kWIp70p7UU06EVzHxhtJ4qm5tOs2lD2kXc+D26y2OZlhvqxqikUQ4DPlcAwnakfRHY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726647537; c=relaxed/simple;
+	bh=hVS5/dLEpOOKYrRO9sHjVFV8c2Fp1IrgklMi3vZotYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=MxdVOzK8eslg/wYmhHUCXZHbX/rL/CfIkkw8UGm7hJA1uDnncximZfb+dYTTRJWf5BQlaIJOf7ggWwVhX8taMzJPIk3ryMprkSsUom+yEnv5LEXOkcQI/mRPUGlt3tm9vQ3k1x4IXQekycRJhi8OkwLHB2yzHRxfjTrM2hdwxD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=W3aO/XXY; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240918081259epoutp04c265e515e4a56cfb46525f6438392859~2SHYUWU4o1374213742epoutp04U
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 08:12:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240918081259epoutp04c265e515e4a56cfb46525f6438392859~2SHYUWU4o1374213742epoutp04U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726647179;
+	bh=FoClbYiaISSy4tE9A/eMkUtSrOUByd+2+OMRpBKthhQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=W3aO/XXY8kdv50riW7NNgh22FeVNbrsdEJK5EOR2GxPimr+vhWpzIvGHoMljFTNUo
+	 aDvSqSeyn8++P4WKaSD2qPPbxI/CZepf5fnBXeRHL+1l0e1Z0l7AGxOmvg9bUd91A3
+	 JbwUZfi5chpTViM/uhMO0dTai/T/Jut9Fx12IO9o=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240918081258epcas5p1823dac2b9a9e6de8274eb13f917c7f68~2SHXsXn9c2910929109epcas5p1C;
+	Wed, 18 Sep 2024 08:12:58 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4X7rxN46Jdz4x9Pw; Wed, 18 Sep
+	2024 08:12:56 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	17.5C.09642.88B8AE66; Wed, 18 Sep 2024 17:12:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240918081255epcas5p274303a976333fd9a6c74ae0ff2147342~2SHUxomyX0868808688epcas5p21;
+	Wed, 18 Sep 2024 08:12:55 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240918081255epsmtrp26af4e1a22d02d7d933be6f1d3f42a37c~2SHUwqAVe0537805378epsmtrp29;
+	Wed, 18 Sep 2024 08:12:55 +0000 (GMT)
+X-AuditID: b6c32a4b-879fa700000025aa-94-66ea8b886ab7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	71.6F.19367.78B8AE66; Wed, 18 Sep 2024 17:12:55 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240918081252epsmtip18dd83ba1309566b2e110c9a05d3ffe5d~2SHR36ysF1791217912epsmtip1_;
+	Wed, 18 Sep 2024 08:12:52 +0000 (GMT)
+Message-ID: <197b2c1a-66d2-5f5a-c258-7e2f35eff8e4@samsung.com>
+Date: Wed, 18 Sep 2024 13:42:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SA1PR10MB5823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9bae5142-47c6-40f0-a3f7-08dcd7b7dc19
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bERyTmYxR2Z5aGFMTDlQUGNMV2tVekhjbzk5b01Cd04velRHd0w0RW9nRlVw?=
- =?utf-8?B?M0dyOE1LTCtrVWdwcnpBOEtTT2dwbjdrSnB3RW5wMEcwbFUrcnBLTGU0bDlt?=
- =?utf-8?B?RWdMTzNieEIvWE94dDhFMGhBbVJNZFJ3WG1LaHh6cWVMdDhNWFhvWktqRUts?=
- =?utf-8?B?ajdrd2tYR0ZFZTEzYUJORk5SbE1aMDZDQXJIZTc0L0JyL25LbVhKeG1BNHVq?=
- =?utf-8?B?U1FWUnVld216SGpMMWRyaktuOUpDWXBlazdnWkhQamhYUGlwcUtKUHhrcmNJ?=
- =?utf-8?B?QmpPV1ovcCttcXRWRFNjenFRb3NYQzU0SklVd0RHSHdsWjZwVHhLNis0UCs3?=
- =?utf-8?B?VU5mUmg1bU9pS25kNHVMWTlFWE1vTHA3Vy9zK2lzc0ZjdVh0a0lkS3ZJWnRt?=
- =?utf-8?B?RWg3VVpNL1pOeVdqcE1aYnZidTdyWlc4dlNWdFQ4aUpJNkh0Z25wa1ZBY1BS?=
- =?utf-8?B?L0w5WDM3MUpldko5eDBnNFZocHJiVXdUUE4vZTJISjNpSFFRbE1mcW9SVkxy?=
- =?utf-8?B?K1ZFWFBxV0lmZTM0VHBFNEZjaHNsK3VzQUZhMUd4MFdJVTlQY0RXbnZDQU5N?=
- =?utf-8?B?UlZQUGthcDVmTTZJWm56RUp4UzNxNzZMSFFYekxMWWx2d3o4K3ovNlowcytv?=
- =?utf-8?B?a0p4L0VUVkIzbEpuMkppQmEwS0l6MDJmVkx5VVo3TVJUcEdkejFySE1CU2VL?=
- =?utf-8?B?YmlIZHBaTDBWZzRXNkZOWHRUbDBTU0lrbzBtUlprMmIxeENkNUVBRklvNi9a?=
- =?utf-8?B?eDJQTUpxSFF4MDBiV2hSdGlhRUl1OW1aUDdBZnprdEdCRzJuNmIwVE1ydFVs?=
- =?utf-8?B?Z3E1cTJNV3RDcFMxOXgrd1d6bUl2UEZLeFVRNmFiK3JMZTlzWDBjVFRjY0N1?=
- =?utf-8?B?WUdNUUlEZkFldXFkbWNpSXhXU0E2WWJBM1JIaEZ6ZkV6a1p2RlpUS3ZWU253?=
- =?utf-8?B?WW4rRlZNOHQ0b2xENjNaMTIrbzBJdWQ4bG1XRmdPZzRuY3cyZEx5bXltTGRt?=
- =?utf-8?B?UmEwU1U2NTVQY3lMcEU1SmkvY2I3T2RjbXVqc0E5Uno4c0UyMXJibjR3Ym5l?=
- =?utf-8?B?UnpIWlVPTzJnakN3dS8wVWJTNzhjTVNzYU1oZEVEem53bnAxQ2p5K0ZIc2NG?=
- =?utf-8?B?Z3VDeFV6U0lmblJxMWxpZnArZk9oU1J4WEsxVXBLRVBOWkxTNHpTT3Z3K0g5?=
- =?utf-8?B?Ui9UdFhiVkthS01hVVpyZURZVHBDeEZNRHlya08ydmszeUZkd0FwQzJIVGV0?=
- =?utf-8?B?bFU4MG8zMDU3RHpXUWRnL092ek9ObnhGU0ZDa2ViMTJKeWJyTXRYdlhseHZY?=
- =?utf-8?B?QS83SnBWczQ4SEJ4Vy9naURFeUloRkU2ckduUmZGNFNjTFRYZ2l3SEQzRElU?=
- =?utf-8?B?OWFLaUU1TndDTW1neVRuZ2RnM2J6MHBSQ1VqYmxJK0M1c2diVXpvZzYzY2hq?=
- =?utf-8?B?QW8vM1MxamNvTnkxSU5kNzNLZmJIcUowV25aKzA5elpVTGMzdWs2SllFOXc1?=
- =?utf-8?B?ZW5VcGhEU2pqNzk4NG5uN2wraGRRTmNXSG02dmdTczU4WG1OcXFrMHVuT2pF?=
- =?utf-8?B?aVRrN2kvMnhzYXZjeXY1Y3Q3WHFIQld5NTVDdlpneUtPMlQvRHVOcDlDSGV5?=
- =?utf-8?B?emo5Vk9tdDIrVU0zQ0IwOG5iNjA5dG1RaUJ3cytmaXlnYUdDV0ZwR3hMcnFU?=
- =?utf-8?B?K2JJb0RvdUhKVTRYR29mOFgwcFRFM09JcDl5Z0xsaVBIZGV4cTZMaktBbFZJ?=
- =?utf-8?B?NnFSaWt2OWZ3MXpaYlZGWVVPZFRLSHg1WmdBNVNTc1VZRjlUcUI2ZGM5TnlC?=
- =?utf-8?B?QzJ1MlBLNnh6QXFIRmx5Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eHJxS1dlTFJNSGlDU0pLWjRrSkR6Yk0ySjcwRTNGN3R4RXNxVE42MUhiczJT?=
- =?utf-8?B?TlN3cURDMm50S2pHREhzeEkzQVkwWnRaYUxaREFCQ2JQbG9SUFFYY1k0ZVB2?=
- =?utf-8?B?bDdRTStueUVtR3p6Vm9kcWlDN1ZSNUR6QThoNjAxcTlIZ0pJREdRTU5CTG5j?=
- =?utf-8?B?cUJrbnpaejE3NlRoZjNCVDhMQlI2ZlAvYkRvRkJuMUlpdXd4anJmMlNVYlR3?=
- =?utf-8?B?dlB3Q3FhcnVpYWZsUDRmM3NSZGE4R2JnbVZxOFkraldXNXRiaHRrYzVIaHk4?=
- =?utf-8?B?QmdleG5NZG5TcDhQL0NNVlV1VUVmQ2wxS0NkVmRENGxBaHdDMFE1ZlZrRmsw?=
- =?utf-8?B?SGJTaUN6VnpTR3IrNXlveU5wamVSeEhvMDl5MmFOQm9nc0NPUWEzVmx0VDdU?=
- =?utf-8?B?ajUyZVh1R1hYekZmSlBKajhaaXhOL0xsOUgyclpoWjFydjdmVS9vcnB1ZTBD?=
- =?utf-8?B?cGw2QzJKUk9EZlBmdmFxM2ZLNS9Jd1BTU0cwMnA5cWtXRmdLSEZEVktyVkFo?=
- =?utf-8?B?a28wWGVuTVdoQWdmNEhhOU14ak1wdHhEOUtCN09XSFJkSkluVWduR0s5dGtR?=
- =?utf-8?B?WGZHN1VTWHF4RzBnOEozQmNXL09JOUppVU9VVXlxVGlHRGUrN25TMExlbmJh?=
- =?utf-8?B?TW5MZFIrc1Y1NEYrVUJidlVIRlNadkhFWmxLbEw4NTJtVmhmNmViVWM0ZEFH?=
- =?utf-8?B?WVlxdlZHYkNXcFdIZWgzbVJRaFNYOHpiY1QwUHRPa1JZN3BFNHFQdXZWVFhO?=
- =?utf-8?B?U3luU3lCNXRVd2doTGtHYVlXMlRseWNLM3hsT2VSNFZFblFNR09NS3N5a1Y2?=
- =?utf-8?B?STFtRUNGaXlDaUlmTlVHWWEyenlZMnpjMXE1NjNiQkpKcVFTUjFabndqNElJ?=
- =?utf-8?B?UlVtcUg0c1FoOUhzU3JqMVMrS2RiVUQ1NWVTQkxjUnVHdjNHaEpXVDFEbFVP?=
- =?utf-8?B?ZkZLUkRKRENnTm5HUjFBTzVLWWxEZFY0cjJPRDhvTmZicERUaDBYWUhzbWlx?=
- =?utf-8?B?OWMzU0Z5RVVyTmdqOGJpbkQyRVd0OUo4NmpMR0lWSXFRSTRSRytoa2dTRmhM?=
- =?utf-8?B?U2lLNkt4dW9ObGlVZ0M1QWRmQkdTUFJMejdDb3ZJK0ZPb3c3TC9WUURCOHM3?=
- =?utf-8?B?RjBSeTNHbHVBS0x6T3U1Z082cGxDUUFpZjYrVU1HME9qSjhLTFp3OEtqeFZQ?=
- =?utf-8?B?Tm90UForRTVxUG5HbGdtQnVienMveHhadzZlVEc0cVlJNTRTTGdJUUkwZzFS?=
- =?utf-8?B?QlRyRmVmK3pjNTZ4U2pmTGtZK21zQ2NoWFd0eW00dEFkVDE2M3JzMUZsRHQr?=
- =?utf-8?B?a1dDYXA1dGtQY1QvZFBKQldVNVJoQUdvdjM5cUFaWGl6WENpYVQ2dnoyR2FI?=
- =?utf-8?B?NmhEZmNueXpHOUJreXA4MFhxZ2pqazBUT1Q5Wk1ETTVoU0VFb2dHTU95bnB5?=
- =?utf-8?B?VWZjSW1NT25qWlE0NVhvRVl2STk4TWxrbWNadGNqOUF1TXk3LzZ1Tmgva2pr?=
- =?utf-8?B?Z054TDlPN0g2TGd6V0llQjhpQkJXM0tGcDlPdkRCNFpkWHpwYVJLeW4xQ2Rh?=
- =?utf-8?B?NUIzd0orVWpaN01KWHZVY2hPZVpwdmtzWjFJaG9NTWZrTTV1OTZIYnhWSVhO?=
- =?utf-8?B?NXVlc0RKUktHakhiY0hFajhwU0FxbllsWFBzRUd3NHNUajNZU0VucFZOWVN2?=
- =?utf-8?B?OUU3cGRBdUVSWi9VUXdpSnlPRXpSTTB2cDYxQ0h3bmdhK0JreDkxZnhxOUJn?=
- =?utf-8?B?QS9Db3RxNFVCMmJTQzlUTTJ2Vnp0c3RIZkJJa21adUxXR3JRVUxOVkhMWkgw?=
- =?utf-8?B?d25LeG05TVhobzVHMkdRK1FHbkxXVHBDUFdGVmdhMnBFeXZiVkYvT3dBc1Fr?=
- =?utf-8?B?bDNldXN5TGVHeVo5Sm1ldWE1SEVzTklkNy85eVNNdFhLem1HY25md3I3akVG?=
- =?utf-8?B?UjE3K2FKeEVWOEZLRGtyZ2djcTh2OGMzb24yY1B4ZC9UUlhLbnZHQ3NxMWtI?=
- =?utf-8?B?UFkvblUvcnZRcXd5SUVqeE44T3R5eW9YQ28yajBHUkVzWlNIM2Z1T2NWVG9W?=
- =?utf-8?B?Qmh0NmJmMkI3SkE3alc5TGpPalc4V0dNS1hrSXZSbmYyVm9JR2dlOHJmbHZ4?=
- =?utf-8?Q?5R6h8omkL7cKVf29Xp75NSB8l?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	C7a5YPWgSQbtEg4tlPlCA88EgmpFX6Q8XAnaD5TgA2RDXI+NI2TmuYyVPSu9VvnmeOLA/uvheE0vW0oY7ji28lxZQjYl20jboUoO4jY6d4KMsdqoM22ByqnOD6j95wkzOlJU23mQZMzgE4iOUJlvWaiFBby7m7cYmZXYzDMqUeJ8pEtKaDpXNKTgY7OTgr+q8gUOvZIcegk266ca0U9qTYWQKbRUrVRi4YK2KgrpDvvtYvqDWQJxUm3aZFTlOQ7xEWFQ35jQZkMbyNrIZFcvC2PiQWgdbKV9EqqPS9OTZe939TN2BKk8nB5hPdvzaCI8ievZx3FNtlk7PTNCGHF6fM4vvh3OE8rOYqZIECZotF7Eq2tEgJfrbXQdMBtYmDflDmNnx5N9hQHnjjXv/7Ddxkubmq8TYupsWzUVwWvBQ+z5McFY8dG1SIWikcKOB7lbsKhzO/6ZryAnyR/JDZd8GY/+Ex4sU4tY83xEjztXvDWQkYO9u+ZkAMGLTGi1tzvhZG93NMpxjtlLHZ0yKjtbzFwpH+t8yqftTgAk0yD85knWl/Gkcd2I2/IWbOIJw6JvrHQ4QEWyVoRqf4ln5PDbRWHpLfxpeq/XN37OKEvrjLE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9bae5142-47c6-40f0-a3f7-08dcd7b7dc19
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 07:59:45.3538
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ECQd08bEZ/nPSzL4or0lfd2uke1vAXE4UFjeUfImjO+LI6ML7159FBfv3CzQ5yufQcCnrxq95KJAmVqqWrvllw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB5823
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-18_06,2024-09-16_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- spamscore=0 mlxscore=0 phishscore=0 malwarescore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409180049
-X-Proofpoint-GUID: ZAeYvnWsaRCtLavqAsXz3aewXj6WmDda
-X-Proofpoint-ORIG-GUID: ZAeYvnWsaRCtLavqAsXz3aewXj6WmDda
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+	Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH v5 4/5] sd: limit to use write life hints
+Content-Language: en-US
+To: Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me,
+	martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	jaegeuk@kernel.org, jlayton@kernel.org, chuck.lever@oracle.com,
+	bvanassche@acm.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com, Nitesh
+	Shetty <nj.shetty@samsung.com>
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <20240918064258.GA32627@lst.de>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te1BUdRSe3713X4wLlxXiByNCl8oweawu9MMBskHzjlSD08OJmYINLo8W
+	dnf2QUaOgQ6o0IJiAa0UZAjDQhKPlOeUEBIKw2NBZAWGxzICOxiPqMzCdvei8d93znzfOd85
+	Zw4fF2XxPPjJcg2jkktTKK4Dca3Td5ff2dzFhMB7tyGqnsjnIkvnKkCFyw9x9HjiPobGfm7G
+	UFV1F4YuFZ3GkLlWj6O6fD6aHV/joYcVBh4q6LgDULvpJTR0+TBqa+8hUGnFHA/ljjZxUWX3
+	BoauPSrF0VXLbwTq/7ebg/r1JbwDz9DG4Ui6f7KOoAsLbnFpY5+Wrjec49IN5Z/RrWVrGN06
+	lsGlV+ZMBJ3XaAB0b9kvPHqtfiddb17CooTRstAkRhrPqLwZeZwiPlmeGEZFvhUTERMUHCj2
+	E4eglylvuTSVCaMOvh7l91pyinVmyjtNmqK1pqKkajUVEB6qUmg1jHeSQq0JoxhlfIpSovRX
+	S1PVWnmiv5zR7BcHBu4NshJjZUmfDw5wlNcdjj+utYAM0MDPAQI+JCVwuLgXzwEOfBHZCmDj
+	jSYuG6wCOJRVjT8NFn7P5D2RfDNfRdiwiGwG8NSQgsVLAFb1ptqwkAyHv07m2PkE+TxcqPmO
+	x+adYc9XZrvWlfwQ/j1SAmx4OxkGc3Wj9jxOukGTuRSzYReSgnOLfcBmAicrCHhlpd9qj8/n
+	kr5w4KLWxhGQe2Cd7jKP1XrB60sldtOQrBTAm/Umjo0PyYOwrS+C9b8dLnY3bs7iAdcetHNZ
+	LINTM1MEi0/ApoY8DotfgRn/3LWXwa1ta1sC2FaOUPfIjLHVhfBstohlPwsnC+Y2lW5wurh8
+	0wANuzLd2W1O4NBiMPLOA2/9lqXotwyv3zKM/v/GZYAwAHdGqU5NZNRByn1y5uOn145TpNYD
+	+z/sjmwCM1PL/h0A44MOAPk45SJ0W15IEAnjpZ+kMypFjEqbwqg7QJD1OhdwD9c4hfWh5JoY
+	sSQkUBIcHCwJ2RcsptyElqyv40VkolTDyBhGyaie6DC+wCMDa+vb8ULV6R/y704fvXXMvfe9
+	FaVO5i6oLs/D4978oDLHs0szfiTnfcvoqFC/d6yiPFOOe01/75jsEuN8ONx5ZjXgAPBZ93Eu
+	bPG4GXvIOO7+9kbRydmWvFNpsaGjdETBxfOHRiTvOKzmmiLGa350ZH7aP1PXqJB9aijNPhYN
+	3cadPjqhKPpSt61wCKu8Gu6aftSpMyFWULto7DPtrLnhy9lBLomcj6Q7tFfNEsPpJx+sc0e+
+	9do10a1xjV7OOXNpz/35jXc3BoSv3uEgT6QxXwh/UWI8LhyUXfmi47n5cz1U7BtTqvV7s91n
+	PNuW/mgu99ElVBQPDv/lhJtuT61mj6Rt+5Mi1ElS8W5cpZb+B0mzXdSYBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xSYRzGe885co401pE032WzIq1RaNnF3nX/0NZZrVZtWatlUp7IKegO
+	YYq5rFwlFF1nkywdGYW2DKywhV0085KmaVNy0WVBF5kVUZmVmcDa/Pbb8+x5/s+HP4ULXxPj
+	qRTFbpZTSNNEPD5xq04UGXNY27tzlsE2GlU4jvOQu+4rQIVfBnA05HiPoef3b2PIVFGPoXNn
+	D2LIWanHkfk4hd6+8JJowFhOolO1XQDV9MxAHYYVyFbTRKASo4tE2u5qHrrc8BdDt36X4Oia
+	+zOB2gYbglCbvphcNo7pfLaKaXtpJpjCU808prNVxVjKC3hMVdk+5k6pF2PuPM/jMR5XD8Ho
+	bpQDpqX0Icl4LZGMxdmHrRVs5i9KZtNSMllu5pIk/q6jT9uDMqz8rKFKN8gDVZQGBFOQngsv
+	fDARGsCnhLQVwP5ObVDACIcHu36SAR4LTX/f+1lIuwG0GeN8LKCXwMaXGr9O0NHw49WLZEAP
+	gU1FTsLHYfR2aHu1H/PxWHox1B7r9uv4cH+Ps8Svh9Ii6OptBb4ROG0k4IMzfVhgkQOH7/44
+	hxdRFI8Ww/bTKl8gmJZA8zEDGSiKh5qbGhDgidDaV4yfAEL9iB36Eff0IyL6EZFSQJSDMDZD
+	KZfJd2TExSqlcqVKIYvdkS63AP8TTF9fDYyVg7G1AKNALYAULgoVhH/5uFMoSJZmq1kufRun
+	SmOVtSCCIkThgilpBclCWibdzaaybAbL/XcxKnh8HlaRvdQiGVKIPwzUGa5MjioLCsmLmOC5
+	aq1yL9R52iOrtZ9WRqoULR6r6lJLIp4Yn33v5ALdr4Jp0ed/mFB0uupNroT6OmrO4/6obml+
+	yJ4962aoc3TXWsMatZy2CJZcT/085ltWgiL3gHrl5B+DOtMRA9cFKvd6vQydk7P8Ebaow47P
+	T1xQH5WUVUyKtq45i3lWV9dH1HfaJ9ibWvuLUprncfn7xF0bzKXBktDmu9pMdVRFzbtDWzY5
+	XDaz2iWWm97EfLe0NxZvrbkbo39gP8/MnirWC2+Eo8aGTLFsf+8TicPUcs4qm7vxSrw9blnf
+	7/SkwwlrxuUy2KQV150iQrlLGjcd55TSfwfhi8FzAwAA
+X-CMS-MailID: 20240918081255epcas5p274303a976333fd9a6c74ae0ff2147342
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240910151057epcas5p3369c6257a6f169b4caa6dd59548b538c
+References: <20240910150200.6589-1-joshi.k@samsung.com>
+	<CGME20240910151057epcas5p3369c6257a6f169b4caa6dd59548b538c@epcas5p3.samsung.com>
+	<20240910150200.6589-5-joshi.k@samsung.com> <20240912130235.GB28535@lst.de>
+	<e6ae5391-ae84-bae4-78ea-4983d04af69f@samsung.com>
+	<20240913080659.GA30525@lst.de>
+	<4a39215a-1b0e-3832-93bd-61e422705f8b@samsung.com>
+	<20240917062007.GA4170@lst.de>
+	<b438dddd-f940-dd2b-2a6c-a2dbbc4ee67f@samsung.com>
+	<20240918064258.GA32627@lst.de>
 
-On 17/09/2024 23:12, Dave Chinner wrote:
-> On Mon, Sep 16, 2024 at 11:24:56AM +0100, John Garry wrote:
->> On 16/09/2024 08:03, Dave Chinner wrote:
->>> OTOH, we can't do this with atomic writes. Atomic writes require
->>> some mkfs help because they require explicit physical alignment of
->>> the filesystem to the underlying storage.
+On 9/18/2024 12:12 PM, Christoph Hellwig wrote:
+>>> If the device (or file system, which really needs to be in control
+>>> for actual files vs just block devices) does not support all 256
+>>> we need to reduce them to less than that.  The kernel can help with
+>>> that a bit if the streams have meanings (collapsing temperature levels
+>>> that are close), but not at all if they don't have meanings.
+>> Current patch (nvme) does what you mentioned above.
+>> Pasting the fragment that maps potentially large placement-hints to the
+>> last valid placement-id.
 >>
->> If we are enabling atomic writes at mkfs time, then we can ensure agsize %
->> extsize == 0. That provides the physical alignment guarantee. It also makes
->> sense to ensure extsize is a power-of-2.
-> 
-> No, mkfs does not want to align anything to "extsize". It needs to
-> align the filesystem geometry to be compatible with the underlying
-> block device atomic write alignment parameters.
-> 
-> We just don't care if extsize is not an exact multiple of agsize.
-> As long as extsize is aligned to the atomic write boundaries and the
-> start of the AG is aligned to atomic write boundaries, we can
-> allocate hardware aligned extsize sized extents from the AG.
-> 
-> AGs are always going to contain lots of non-aligned, randomly sized
-> extents for other stuff like metadata and unaligned file data.
-> Aligned allocation is all about finding extsized aligned free space
-> within the AG and has nothing to do with the size of the AG itself.
-
-Fine, we can go the way of aligning the agsize to the atomic write unit 
-max for mkfs.
-
-> 
->> However, extsize is re-configurble per inode. So, for an inode enabled for
->> atomic writes, we must still ensure agsize % new extsize == 0 (and also new
->> extsize is a power-of-2)
-> 
-> Ensuring that the extsize is aligned to the hardware atomic write
-> limits is a kernel runtime check when enabling atomic writes on an
-> inode.
-> 
-> In this case, we do not care what the AG size is - it is completely
-> irrelevant to these per-inode runtime checks because mkfs has
-> already guaranteed that the AG is correctly aligned to the
-> underlying hardware. That means is extsize is also aligned to the
-> underlying hardware, physical extent layout is guaranteed to be
-> compatible with the hardware constraints for atomic writes...
-
-Sure, we would just need to enforce that extsize is a power-of-2 then.
-
-> 
->>> Hence we'll eventually end
->>> up with atomic writes needing to be enabled at mkfs time, but force
->>> align will be an upgradeable feature flag.
+>> +static inline void nvme_assign_placement_id(struct nvme_ns *ns,
+>> +					struct request *req,
+>> +					struct nvme_command *cmd)
+>> +{
+>> +	u8 h = umin(ns->head->nr_plids - 1,
+>> +				WRITE_PLACEMENT_HINT(req->write_hint));
+>> +
+>> +	cmd->rw.control |= cpu_to_le16(NVME_RW_DTYPE_DPLCMT);
+>> +	cmd->rw.dsmgmt |= cpu_to_le32(ns->head->plids[h] << 16);
+>> +}
 >>
->> Could atomic writes also be an upgradeable feature? We just need to ensure
->> that agsize % extsize == 0 for an inode enabled for atomic writes.
-> 
-> To turn the superblock feature bit on, we have to check the AGs are
-> correctly aligned to the *underlying hardware*. If they aren't
-> correctly aligned (and there is a good chance they will not be)
-> then we can't enable atomic writes at all. The only way to change
-> this is to physically move AGs around in the block device (i.e. via
-> xfs_expand tool I proposed).
- > > i.e. the mkfs dependency on having the AGs aligned to the underlying
-> atomic write capabilities of the block device never goes away, even
-> if we want to make the feature dynamically enabled.
-> 
-> IOWs, yes, an existing filesystem -could- be upgradeable, but there
-> is no guarantee that is will be.
-> 
-> Quite frankly, we aren't going to see block devices that filesystems
-> already exist on suddenly sprout support for atomic writes mid-life.
+>> But this was just an implementation choice (and not a failure avoidance
+>> fallback).
+> And it completely fucks thing up as I said.  If I have an application
+> that wants to separate streams I need to know how many stream I
+> have available, and not fold all higher numbers into the last one
+> available.
 
-I would not be so sure. Some SCSI devices used in production which I 
-know implicitly write 32KB atomically. And we would like to use them for 
-atomic writes. 32KB is small and I guess that there is a small chance of 
-pre-existing AGs not being 32KB aligned. I would need to check if there 
-is even a min alignment for AGs...
-
-> Hence if mkfs detects atomic write support in the underlying device,
-> it should *always* modify the geometry to be compatible with atomic
-> writes and enable atomic write support.
-
-The current solution is to enable via commandline.
-
-> 
-> Yes, that means the "incompat with reflink" issue needs to be fixed
-> before we take atomic writes out of experimental (i.e. we consistently
-> apply the same "full support" criteria we applied to DAX).
-
-In the meantime, if mkfs auto-enables atomic writes (when the HW 
-supports), what will it do to reflink feature (in terms of enabling)?
-
-> 
-> Hence by the time atomic writes are a fully supported feature, we're
-> going to be able to enable them by default at mkfs time for any
-> hardware that supports them...
-> 
->> Valid
->> extsize values may be quite limited, though, depending on the value of
->> agsize.
-> 
-> No. The only limit agsize puts on extsize is that a single aligned
-> extent can't be larger than half the AG size. Forced alignment and
-> atomic writes don't change that.
-> 
-
-ok
-
-Thanks,
-John
-
+Would you prefer a new queue attribute (say nr_streams) that tells that?
 
