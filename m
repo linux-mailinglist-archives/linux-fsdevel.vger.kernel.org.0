@@ -1,94 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-29641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40BD997BD1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 15:35:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A440F97BD33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 15:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70F0B1C214B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 13:35:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34EB3B2738D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 13:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E35B18A939;
-	Wed, 18 Sep 2024 13:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eiUTHz3H"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CD018A924;
+	Wed, 18 Sep 2024 13:40:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121941891AC;
-	Wed, 18 Sep 2024 13:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B4216FF45
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 13:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726666511; cv=none; b=iUMHlOayEgwEdctbBo26d/eNS5TsPd+GJ6cNmdFdel8T0bbZpMtlIQvIHIZep1vU74bJJtt0Uw9eheA3UpXWCdQzTXo9oHEB9ZfQNbAVvtxVmTS7pT9dmfSAIBlhG4fieEtId73s/+K7slBo1+ckFPVQFtT1Xp5+sU45pufBt3Q=
+	t=1726666855; cv=none; b=Rlr6939IcMCfb2fmyI4CoTiGCA1B2f01FUlGnupAiFJiNgcIvBGKUS+TwxYy1kooswjYlYe8SuyEqukxKvPRUy0JI7jE7JRlpphigO0NQWRRpVR4EJzGqPKd8ww3NJx5UcIc+SrCQ4Uknl8GKdkiRm7JbeRerlLQqWQwoKKU6YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726666511; c=relaxed/simple;
-	bh=MdQjs6K0gmHwGgi6AUht9cox8zFl1PZT0Z4w7KwG71A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CRTYVkGdiG/ZUt8mrtSf0YzP2+w+ZulRPhw9cDBTavkKKp/9FeKtl0C0ZOcxE/DUqjmCzMYcCYHnI0IS6ReP7DSMZ9wASWL/Mbyt/5of4Ke/nRK/0loov5DBOktcTZXci2v4Ei4NFoW4F9EwMfGf9Qtbc4zREDofo209VaQUmFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eiUTHz3H; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ctRJF9uHUjt117HVJblBA7Yck7PY6Nvpd0RsIq4J+Mk=; b=eiUTHz3HhgXvW8Wyk9peiYyKdd
-	3zGGUtvVY5myV3gIz6y0vli6yjNWQUN5uysRnuNsNh5lKSvU5+uBD57H3iEx8zkWow545P1411ZLv
-	0DImM9weqgmnyjikDi62MG3TQflVd8sXuAoWFd60jNlWHKpN7S813yB1t3Nqmrqc6fleDDoFtaGMO
-	TCmkUIKHjuhb9/kw4+FJDEHc+Sv6ZS6wUt++38naA1gK1LyyJb18tNQXxY+wzACakL3+GlS5039JT
-	SBLNmcdLzYQZALEDtnJDl1JMh4b1/ttZogVVU9lPewq2p6A6d4+omV3rVwNroQPJFXXi9y0BifYii
-	j2Cj+qCg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1squpd-00000005Yqo-2bc7;
-	Wed, 18 Sep 2024 13:34:57 +0000
-Date: Wed, 18 Sep 2024 14:34:57 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Chris Mason <clm@meta.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Chinner <david@fromorbit.com>,
-	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
-	regressions@leemhuis.info
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-Message-ID: <ZurXAco1BKqf8I2E@casper.infradead.org>
-References: <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
- <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+	s=arc-20240116; t=1726666855; c=relaxed/simple;
+	bh=skXcaiW7rdCdHukWpzvhWq9PYWRg8uSwK/0zBD+x4R0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LnuhnIjSwPk7GqMifa5pUThnEbOLJQXiqN9yqXErBEGire4Gp9x/Cbi6JG2z3mintt42DWkpYbdESjSBnic/LL6ju+DgAYViW7jdCXm1buvOZoEq+dPb9ZqRklnCmEiss6p/gnKbrerAAip/jjuTdMI+RhIw2RJwZ1M0zrJMgdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F0B21007
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 06:41:22 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 893973F64C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 06:40:52 -0700 (PDT)
+Date: Wed, 18 Sep 2024 14:40:46 +0100
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: move FMODE_UNSIGNED_OFFSET to fop_flags
+Message-ID: <ZurYXipwj7jv4gy_@e110455-lin.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 11:28:52AM +0200, Chris Mason wrote:
-> I think the bug was in __filemap_add_folio()'s usage of xarray_split_alloc()
-> and the tree changing before taking the lock.  It's just a guess, but that
-> was always my biggest suspect.
+Hi Christian,
 
-Oh god, that's it.
+> This is another flag that is statically set and doesn't need to use up
+> an FMODE_* bit. Move it to ->fop_flags and free up another FMODE_* bit.
+> 
+> (1) mem_open() used from proc_mem_operations
+> (2) adi_open() used from adi_fops
+> (3) drm_open_helper():
+>     (3.1) accel_open() used from DRM_ACCEL_FOPS
+>     (3.2) drm_open() used from
+>     (3.2.1) amdgpu_driver_kms_fops
+>     (3.2.2) psb_gem_fops
+>     (3.2.3) i915_driver_fops
+>     (3.2.4) nouveau_driver_fops
+>     (3.2.5) panthor_drm_driver_fops
+>     (3.2.6) radeon_driver_kms_fops
+>     (3.2.7) tegra_drm_fops
+>     (3.2.8) vmwgfx_driver_fops
+>     (3.2.9) xe_driver_fops
+>     (3.2.10) DRM_GEM_FOPS
+>     (3.2.11) DEFINE_DRM_GEM_DMA_FOPS
+> (4) struct memdev sets fmode flags based on type of device opened. For
+>     devices using struct mem_fops unsigned offset is used.
+> 
+> Mark all these file operations as FOP_UNSIGNED_OFFSET and add asserts
+> into the open helper to ensure that the flag is always set.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-there should have been an xas_reset() after calling xas_split_alloc().
+Your patch seems to be missing the panthor_drm_driver_fops changes. I've
+discovered that on linux-next your patch triggers a WARN() during my testing.
 
-and 6758c1128ceb calls xas_reset() after calling xas_split_alloc().
+I've added the following change to my local tree to fix the warning.
 
-i wonder if xas_split_alloc() should call xas_reset() to prevent this
-from ever being a problem again?
+-- 8< -------------------------------------------
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index 34182f67136c1..c520f156e2d73 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -1383,6 +1383,7 @@ static const struct file_operations panthor_drm_driver_fops = {
+ 	.read = drm_read,
+ 	.llseek = noop_llseek,
+ 	.mmap = panthor_mmap,
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ #ifdef CONFIG_DEBUG_FS
+-- 8< -------------------------------------------
+
+Best regards,
+Liviu
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
