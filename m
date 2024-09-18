@@ -1,91 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-29620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (unknown [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC44997B759
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 07:15:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B9397B7FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 08:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9391C2295A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 05:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9879D282DFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 06:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F4E137C2A;
-	Wed, 18 Sep 2024 05:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E143B2C9A;
+	Wed, 18 Sep 2024 06:33:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D85313A3EC;
-	Wed, 18 Sep 2024 05:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0AF1487C8;
+	Wed, 18 Sep 2024 06:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726636529; cv=none; b=COinpf9IY/koBZcS8/mWcUeL1HDL/DPqheXesavkkBxY+jCZMO7E1woa8DgBXzdS2AMfOqx9RuI/6C1NyVBHpGAOmRQTdKn9egbbi9wsavqGl0qP3YcrC103YGxc4loNRZ4MlH+0YIGaVYU0b61Zkl5duL1NGCjGDq9FZf3/BHo=
+	t=1726641180; cv=none; b=CS0lIHHzpYulCOlCCncdVjfw4IUDcjOCgJ+U0VRreInBzkcOIfz027nsxUQH5MrfVnVUk5MQRi3e0IT4MCPx8MVfdSDixbdAb0s9ZXViJbaanB1O7bf6LlOVifalb2VOIG23hZlWzgQBKM//SHKctrLnULumidemuwIxk2rps6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726636529; c=relaxed/simple;
-	bh=CwxHztH+gWBZMyLxch/dTrF/ZYXcuboyr07EfNJR1ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOiQ4aVjvZg1aVA4UY83U9dVuH5Puy3UYK5gYjIYuXHxJ7D3Pm/w47WtiThMcibgVdda7FNrmyivPIB5fd0DJeivoJYW24M6LEENMgBebl08g3dGNuKfYFr3BuPwp/poS2Y2gRpz1hAfGh/AlywJhYgMLS6Cm4S9u0oUAud3lfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 64C66227AB6; Wed, 18 Sep 2024 07:15:23 +0200 (CEST)
-Date: Wed, 18 Sep 2024 07:15:23 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 08/12] iomap: zeroing already holds invalidate_lock
-Message-ID: <20240918051523.GC31238@lst.de>
-References: <20240910043949.3481298-1-hch@lst.de> <20240910043949.3481298-9-hch@lst.de> <20240917212935.GE182177@frogsfrogsfrogs>
+	s=arc-20240116; t=1726641180; c=relaxed/simple;
+	bh=TryCCA1ZWWAttn4FkLibmn0nSAOSRu1FKRZqsZOjeT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tCZmEaAQoDpwNmeXoAd9h4HXerOaRB43JpHm64FEgOdGPSBqVaocAhyd2S0vfS4X6YGv/7hjhhrMkQc7Yi5Zec8F7U31lxrxkL1nMY9I8gZzWEwI6jnC3Fa2snuBTUzS8cwCyqaakVVgv96UZ01nbKmPm5lCjLFq4FAEkBydnhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36FB4FEC;
+	Tue, 17 Sep 2024 23:33:21 -0700 (PDT)
+Received: from [10.162.16.84] (a077893.blr.arm.com [10.162.16.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E5633F64C;
+	Tue, 17 Sep 2024 23:32:48 -0700 (PDT)
+Message-ID: <8cafe140-35cf-4e9d-8218-dfbfc156ca69@arm.com>
+Date: Wed, 18 Sep 2024 12:02:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917212935.GE182177@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 3/7] mm: Use ptep_get() for accessing PTE entries
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+ <20240917073117.1531207-4-anshuman.khandual@arm.com>
+ <f9a7ebb4-3d7c-403e-b818-29a6a3b12adc@redhat.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <f9a7ebb4-3d7c-403e-b818-29a6a3b12adc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 17, 2024 at 02:29:35PM -0700, Darrick J. Wong wrote:
-> On Tue, Sep 10, 2024 at 07:39:10AM +0300, Christoph Hellwig wrote:
-> > All callers of iomap_zero_range already hold invalidate_lock, so we can't
-> > take it again in iomap_file_buffered_write_punch_delalloc.
-> > 
-> > Use the passed in flags argument to detect if we're called from a zeroing
-> > operation and don't take the lock again in this case.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  fs/iomap/buffered-io.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 52f285ae4bddcb..3d7e69a542518a 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -1188,8 +1188,13 @@ static void iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
-> >  	 * folios and dirtying them via ->page_mkwrite whilst we walk the
-> >  	 * cache and perform delalloc extent removal. Failing to do this can
-> >  	 * leave dirty pages with no space reservation in the cache.
-> > +	 *
-> > +	 * For zeroing operations the callers already hold invalidate_lock.
-> >  	 */
-> > -	filemap_invalidate_lock(inode->i_mapping);
-> > +	if (flags & IOMAP_ZERO)
-> > +		rwsem_assert_held_write(&inode->i_mapping->invalidate_lock);
+
+
+On 9/17/24 15:58, David Hildenbrand wrote:
+> On 17.09.24 09:31, Anshuman Khandual wrote:
+>> Convert PTE accesses via ptep_get() helper that defaults as READ_ONCE() but
+>> also provides the platform an opportunity to override when required. This
+>> stores read page table entry value in a local variable which can be used in
+>> multiple instances there after. This helps in avoiding multiple memory load
+>> operations as well possible race conditions.
+>>
 > 
-> Does the other iomap_zero_range user (gfs2) take the invalidate lock?
-> AFAICT it doesn't.  Shouldn't we annotate iomap_zero_range to say that
-> callers have to hold i_rwsem and the invalidate_lock?
+> Please make it clearer in the subject+description that this really only involves set_pte_safe().
 
-gfs2 does not hold invalidate_lock over iomap_zero_range.  But
-it also does not use iomap_file_buffered_write_punch_delalloc at
-all, which is what requires the lock (and asserts that it is held).
+I will update the commit message with some thing like this.
 
+mm: Use ptep_get() in set_pte_safe()
+
+This converts PTE accesses in set_pte_safe() via ptep_get() helper which
+defaults as READ_ONCE() but also provides the platform an opportunity to
+override when required. This stores read page table entry value in a local
+variable which can be used in multiple instances there after. This helps
+in avoiding multiple memory load operations as well as some possible race
+conditions.
+
+> 
+> 
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+>> Cc: linux-mm@kvack.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>   include/linux/pgtable.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>> index 2a6a3cccfc36..547eeae8c43f 100644
+>> --- a/include/linux/pgtable.h
+>> +++ b/include/linux/pgtable.h
+>> @@ -1060,7 +1060,8 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
+>>    */
+>>   #define set_pte_safe(ptep, pte) \
+>>   ({ \
+>> -    WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
+>> +    pte_t __old = ptep_get(ptep); \
+>> +    WARN_ON_ONCE(pte_present(__old) && !pte_same(__old, pte)); \
+>>       set_pte(ptep, pte); \
+>>   })
+>>   
+> 
+> I don't think this is necessary. PTE present cannot flip concurrently, that's the whole reason of the "safe" part after all.
+
+Which is not necessary ? Converting de-references to ptep_get() OR caching
+the page table read value in a local variable ? ptep_get() conversion also
+serves the purpose providing an opportunity for platform to override.
+
+> 
+> Can we just move these weird set_pte/pmd_safe() stuff to x86 init code and be done with it? Then it's also clear *where* it is getting used and for which reason.
+> 
+set_pte/pmd_safe() can be moved to x86 platform - as that is currently the
+sole user for these helpers. But because set_pgd_safe() gets used in riscv
+platform, just wondering would it be worth moving only the pte/pmd helpers
+but not the pgd one ?
 
