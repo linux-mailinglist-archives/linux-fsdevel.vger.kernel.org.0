@@ -1,133 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-29643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FD297BD5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 15:52:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF4597BD8E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 16:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90782B28834
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 13:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438251F24F7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2024 14:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DE518B471;
-	Wed, 18 Sep 2024 13:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0054A18C917;
+	Wed, 18 Sep 2024 14:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y5QQ0Ze2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQxJLCxT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEF5189F5D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 13:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A7118BC2A;
+	Wed, 18 Sep 2024 14:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726667523; cv=none; b=pwaqIIufUEt7OgXGIfJss8oetpZQ5Nip0hhQRCQ20Gg6ryFAnlvYOqSll7OYoI/Nf4c3u/fKsBEO26AgU+QQit0zVDiRCP4UZb7/4/soYh46sU6ouUkXU4QYqDHe5U5sZ3hhxX7zMI3Z+d8hLicPQYMhNv4AIzxcGzpO7Vj9H4k=
+	t=1726668109; cv=none; b=amU4KYf+sVSnc1vYzHlgQjE9Yku0WIVksQmmTO6608iP+lJP9JLyhuknv4V9J124ywS2GhnPwfi6ZPyHooAuD5pFlNw4SgCq0qbx5bbEQbLTrKtvuO1o9nJKjuGmXERVOJ4l5E4iPUoxQBnyMQwvJG9bSustn2Bij5kRKDaLytI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726667523; c=relaxed/simple;
-	bh=jJVr2CDyy7rQp2h2UjSJiI9buPJ4d++KINwnkdK6qcA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KkVsP6AoBMfLtKV2MAUILi5ykEBetpPnaHKljH+Q0vDXhwabOfGi79sh8pBg5XPw9+SKf70sFg0uk6KqyD5wHES4yftlMV3v+SGQPD7j1fxAqmlAmx6tUiooDeVO9k03Zixzv6yYXtd34E+j8uOjJ9EBcWJaTpQm9nrzWevicHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Y5QQ0Ze2; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f75129b3a3so73777801fa.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 06:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1726667519; x=1727272319; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+OjIl9uDxGAJUC7PJ0lAX4rCR6IE5m7Lsi7Ws5gE7Fw=;
-        b=Y5QQ0Ze2C2/Lyp3vpbQlEVIwUiAcRTMyC8tJNNyncaeNz+Fp9s60R858g9u6hMDnwA
-         AG39e/vi9vbeT1LhsUCquDaK8DqKRQ392I6QMniUMEHf3SR/6m0FPa3ma7R5Tm0R5uN3
-         0mscOYZU5Q5pn4BoUEg60al7/N2nqkeIZ1PL8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726667519; x=1727272319;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+OjIl9uDxGAJUC7PJ0lAX4rCR6IE5m7Lsi7Ws5gE7Fw=;
-        b=FfwxN4S1BauIufu4VKjtzeApmenLDX7/wEC+ZYGz6nA5d2udMpPEMR4Gr2lnea0zbj
-         NL+TlXlSlqOjrpndJnXYgucnObIpNpZLSzvJkDozJDz7ic4u0+Zz/j9w0f5B0BL23BJi
-         Aft/mspBEbrpVq6LgkcItyvb89k4Ffe3MGLBj5hm2n+Bkw41QyDwFI4iyRYkn4+wm9bz
-         QBjq2uWcc73b86CnZ3x7iSwWSbuPBDfaw8ZeyonIvn0hM1UBAt/FQuSxR1qwtHdiVqHO
-         L4y+JYzPWCtJ6/KpI4RoisJBkOlcZutr4revLHUOL9mlLRZhhXMmL714PkniNtEgc1MI
-         6eRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUprsByrHdRic4yg1kzOXr3wezm6zNJ/YTxju4e6HcwURMH2UxUD27E4ZXJw76SzBn800ddjQTYCuigU88i@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz85fsPwyJoQiQoRilGGgsxeKaClA1EAHJ6UrKYgs+WaX/g697
-	Ux3vx9TV4Z/vEIK9jaDmiRd64U1EpHk9Y1jD9IOojmKVfRmcw+ukC+GZG4gxijm28qKtH+79a9E
-	lVBCUbg==
-X-Google-Smtp-Source: AGHT+IGp4/JV69FbO0tfVo2Yz3i473bhguCtNNrc7jKQ7gv89lJUsVqUhiUIwbNYAtDaP1Qk0qlplQ==
-X-Received: by 2002:a05:651c:556:b0:2f7:631a:6e0c with SMTP id 38308e7fff4ca-2f787f44858mr135516061fa.35.1726667519010;
-        Wed, 18 Sep 2024 06:51:59 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d2e1eb5sm13251471fa.27.2024.09.18.06.51.57
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2024 06:51:57 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-536584f6c84so8662439e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 06:51:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXJtQJbYA/xirZWtHD4cDG4L7gz8EigaE/dF6CCetoLJglePM2ZifLXzanp/p6eFS+c92og0BPwp8x0Xgk6@vger.kernel.org
-X-Received: by 2002:a05:6512:4019:b0:52e:fc7b:39cb with SMTP id
- 2adb3069b0e04-53678fce759mr13328998e87.26.1726667516650; Wed, 18 Sep 2024
- 06:51:56 -0700 (PDT)
+	s=arc-20240116; t=1726668109; c=relaxed/simple;
+	bh=Gqo/olFf/TqaNzYStJ4h4iSgp/m9SF1eYLZDSlE6sec=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rDMnzQVfhCj0gm4uquuJ4f6MNZOxImR1+JvR6GGXPSnVI+gs3j3BqG2CAOcH2O2HE8MrOdpmNXg9Ez/w/o93hLzxP3VZ41YNz15S/m2XC0X/Mz+Du3yDNgNcoVkoe0UHd6Kn3XIf7bQsNTSEaLKA9tDNnnQwkl6WFojSb4a9fvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQxJLCxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1F7C4C4CEC2;
+	Wed, 18 Sep 2024 14:01:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726668109;
+	bh=Gqo/olFf/TqaNzYStJ4h4iSgp/m9SF1eYLZDSlE6sec=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=dQxJLCxTEYzKVu8bfUsRAJTyOREkmAq8iq9/J0SU9jxn9UtiZd6qVsBaH+7S6bwC7
+	 SItPvFCII7x8vy88sBcCZkMMXGxS+FUvs68TPro8/BDHU3uB2EtHTkoyial6yoWYfh
+	 hYfze8yqIkswolvjVpFDMd+3wIY2cIlJ5mkMWoIPqpY/1g+VmjMsK4+YPe2E6EmKat
+	 HL6AUYCMXX+drNbcRIgSBezrYmp1vSIU/V9tI5jly88iSbQ6pw+da+SN104k6gW8Sl
+	 yERVcRyjodlaoI9ntc1pAftyOrMXypgbNMGUJCzk14eoUXpRnfbV6n39LyD8iHkUvZ
+	 ZVQfYnC1mAZCA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E044CCD191;
+	Wed, 18 Sep 2024 14:01:49 +0000 (UTC)
+From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
+Subject: [PATCH 0/3] Backport statx(..., NULL, AT_EMPTY_PATH, ...)
+Date: Wed, 18 Sep 2024 22:01:18 +0800
+Message-Id: <20240918-statx-stable-linux-6-10-y-v1-0-8364a071074f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
- <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area> <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com> <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com> <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk> <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
-In-Reply-To: <ZurXAco1BKqf8I2E@casper.infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 18 Sep 2024 15:51:39 +0200
-X-Gmail-Original-Message-ID: <CAHk-=wjix8S7_049hd=+9NjiYr90TnT0LLt-HiYvwf6XMPQq6Q@mail.gmail.com>
-Message-ID: <CAHk-=wjix8S7_049hd=+9NjiYr90TnT0LLt-HiYvwf6XMPQq6Q@mail.gmail.com>
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Chris Mason <clm@meta.com>, Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
-	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org, 
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, 
-	regressions@lists.linux.dev, regressions@leemhuis.info
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAC7d6mYC/x2M0Q5EMBAAf0X22UrXieJXxIOr5TaRnrRIRfy78
+ jLJPMyc4NkJe2iSExzv4uVvo1CagPn1dmKUITrkKi9UTRX6tV/Dw+/MOIvdApZICg8kbT5sdFF
+ rU0HsF8ejhPfdwl5mpKC7rhtguFJ8cgAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: Xi Ruoyao <xry111@xry111.site>, Mateusz Guzik <mjguzik@gmail.com>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Wedson Almeida Filho <wedsonaf@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@samsung.com>, 
+ Alice Ryhl <aliceryhl@google.com>, linux-fsdevel@vger.kernel.org, 
+ stable@vger.kernel.org, Miao Wang <shankerwangmiao@gmail.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1261;
+ i=shankerwangmiao@gmail.com; h=from:subject:message-id;
+ bh=Gqo/olFf/TqaNzYStJ4h4iSgp/m9SF1eYLZDSlE6sec=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBm6t1K3ccq23E7ZBFaXcjel3XM1t9hHB7i4wcQW
+ DHQaHvjZCeJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCZurdSgAKCRCwMePKe/7Z
+ bqqAD/9mFnhmtbaWcLZxM02VcGsraDoJF/L1Ix/DNiwMxjuGZCqdjDZLmzMSvDYwdMnXrGA48O7
+ Jg5PJxqTecHodyF0sF8lAW2NRUkPHo/ABLRmkkDf9xvS3lV2RkW4hqBaXoCZGd9BHM7IZw4RUm9
+ euiXHFQ6hjaKRlj4efAi5zf0O7yI4bgvo7tNsFE6j/WaITzZ03tb7Fq8YXaeMjVdlJuZhas5KgC
+ BUGGrtm9lwkpXfseosEvDKfEr+oxl0DfGzXn7fcQ5bt9w4uQTlFzzjj9iFz7vmWmUJhxCQztX3v
+ bcdOdWxRnzBDNeYrYOnGNn2vi+RjgPIUeZjuZob4cRo27N71yJwPBTVXWASglVNY5lcbxiuUtAk
+ 0QGSEXsxlEWh1L0jD9k704StspBOnn1y9QXc02vzqns/8QTOzZHIs/VLRlmTANmicQ3P1YGAhlN
+ LUG/gLinXqzcYbaExAl18TjEnomMVHoch9Wm8whPBaBSIMdOinZPHHp4H5de0VAngpI87HrqlEI
+ oYNtgvLIycHzpS8F9zUswLPQSnzurQUd9OlBC1fbpLUDiP3GaUgbmVwidHU4khcyiTlgFqNQSg2
+ MvcvF76G7xFmCCCXZK15MKeHqtNDBN12Y8pP9y/G6MRd2Tx/mOplubimhlKjamnYB3/I8+Y9ERa
+ zxIikM6a1A0OXpA==
+X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
+ fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
+X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/default with
+ auth_id=189
+X-Original-From: Miao Wang <shankerwangmiao@gmail.com>
+Reply-To: shankerwangmiao@gmail.com
 
-On Wed, 18 Sept 2024 at 15:35, Matthew Wilcox <willy@infradead.org> wrote:
->
-> Oh god, that's it.
->
-> there should have been an xas_reset() after calling xas_split_alloc().
+Commit 0ef625bba6fb ("vfs: support statx(..., NULL, AT_EMPTY_PATH,
+...)") added support for passing in NULL when AT_EMPTY_PATH is given,
+improving performance when statx is used for fetching stat informantion
+from a given fd, which is especially important for 32-bit platforms.
+This commit also improved the performance when an empty string is given
+by short-circuiting the handling of such paths.
 
-I think it is worse than that.
+This series is based on the commits in the Linus’ tree. Sligth
+modifications are applied to the context of the patches for cleanly
+applying.
 
-Even *without* an xas_split_alloc(), I think the old code was wrong,
-because it drops the xas lock without doing the xas_reset.
+Tested-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
+---
+Christian Brauner (2):
+      fs: new helper vfs_empty_path()
+      stat: use vfs_empty_path() helper
 
-> i wonder if xas_split_alloc() should call xas_reset() to prevent this
-> from ever being a problem again?
+Mateusz Guzik (1):
+      vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
 
-See above: I think the code in filemap_add_folio() was buggy entirely
-unrelated to the xas_split_alloc(), although it is probably *much*
-easier to trigger issues with it (ie the alloc will just make any
-races much bigger)
+ fs/internal.h      |  14 ++++++
+ fs/namespace.c     |  13 ------
+ fs/stat.c          | 123 ++++++++++++++++++++++++++++++++++++-----------------
+ include/linux/fs.h |  17 ++++++++
+ 4 files changed, 116 insertions(+), 51 deletions(-)
+---
+base-commit: 049be94099ea5ba8338526c5a4f4f404b9dcaf54
+change-id: 20240918-statx-stable-linux-6-10-y-17c3ec7497c8
 
-But even when it doesn't do the alloc, it takes and drops the lock,
-and it's unclear how much xas state it just randomly re-uses over the
-lock drop.
+Best regards,
+-- 
+Miao Wang <shankerwangmiao@gmail.com>
 
-(Maybe none of the other operations end up mattering, but it does look
-very wrong).
 
-So I think it might be better to do the xas_reset() when you do the
-xas_lock_irq(), no? Isn't _that_ the a more logical point where "any
-old state is unreliable, now we need to reset the walk"?
-
-                   Linus
 
