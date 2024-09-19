@@ -1,175 +1,319 @@
-Return-Path: <linux-fsdevel+bounces-29723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D2D97CD4E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 19:49:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5737297CE27
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 21:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACBA0B22806
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 17:49:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BE9D1C22811
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 19:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8A31A2C0E;
-	Thu, 19 Sep 2024 17:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A499B2C87C;
+	Thu, 19 Sep 2024 19:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="MT8zbC1s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F6A1A00D6;
-	Thu, 19 Sep 2024 17:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E28723759;
+	Thu, 19 Sep 2024 19:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726768163; cv=none; b=AoHTwasalOxjfqy99Hd338/1hd0ttlM/tl98iGnp0BWuZvgYv2gN4ODDOfG529bFtF8rvekSw/8J8ZmGktnopj8Oa+lViNa7jKlnsaey/9DilaPA0tvXJePJX7WmMgdZ5oMQM17FK8odvoHx0xvRiesTRptNWseC/UgTyjly4HA=
+	t=1726774623; cv=none; b=b/4xME+njFdE83wn4itkbNBRjFeJwo3kfDLmKrSeiLoEzIUJZuwE3vSa0owAhvmjE3XrhBCNnuvvyU2CyJ5TRJA5SICFdDDG8lFQrUxHi1n+4siwbP1WRZVh1S9WFxt9LJnD5aAY9jDdUdy7GLKx+zMqtnbhLtv23X0AxT1hW/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726768163; c=relaxed/simple;
-	bh=Xzcxh0emf1BR3pfAuhfeoZgf9JYWV+PUBPOkNS+SmKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YcGpU96KRSopHhXBuYBX52S+H0FKGeBolPp1tEA1GAskQPsXp1va7xPnVunAAGYQqynmJinV6SUuw9qBUCSx0SvKv3lYZIwzPLAXDnUeQZffB6Hf1VChHkLUkQMENpDoNOqNF6wAJ5+/wnxhoZIf5uBSZP8zKKtxgKim/O+5wPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10F3A1007;
-	Thu, 19 Sep 2024 10:49:50 -0700 (PDT)
-Received: from [10.57.82.79] (unknown [10.57.82.79])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 973013F64C;
-	Thu, 19 Sep 2024 10:49:12 -0700 (PDT)
-Message-ID: <5bd51798-cb47-4a7b-be40-554b5a821fe7@arm.com>
-Date: Thu, 19 Sep 2024 19:49:09 +0200
+	s=arc-20240116; t=1726774623; c=relaxed/simple;
+	bh=C+ME7fXLk6IvChq/v/YexZ5AQKs5QVOylqDE2bdhMs0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TBMzQQTWjSwG/FBcC2cbcOoeJfXE7GaoUjEFBZwu3GMpTPQTRO2Bzl/RDD4hg32wQ/mqiL01pTbxM7TZZ0PKh4gKYYBfmWzDrRLcaZzjWmZc+6DSirMv29sPM5mUnbHjCqCfDs+vEyi3oV9dOTmTb90hECAxKMICNgkAXy86s+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=MT8zbC1s; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726774618; x=1727033818;
+	bh=DFBi15tweOygE7n7l7iIMTCGHcKMHtPF8B/hV9IQyg0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=MT8zbC1snKrDr+WkllpmTH2KgYxbh/bw3psX3m0wWOgtwgoy23nhavtt6uEpZMUAJ
+	 B0PQ0HpASeTPtguQoQFIWYEepoh0f/YQCV4hqLDQDmcmIikKHqSUffpAImYWOS8gTC
+	 Br1yySm/K2ZmZgGZRjB5vzJyix86Af2eSvbW1njeJv2XDtepHMLUlssssCsWk9/WpM
+	 e0rcUhLx/pjRV850DLQZKSmVWMS0W4wiWygW1oH9doBXlcTsb35GADHo8X9ZUVnLMF
+	 CF6gGAs6vn/DF8imwATwLpexJapAAnRuGv5wWmzl+rGFeESABa0ocbLAViF1Eew6Ij
+	 0jW46sBYhLV7A==
+Date: Thu, 19 Sep 2024 19:36:53 +0000
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, Gary Guo <gary@garyguo.net>, Yiyang Wu <toolmanp@tlmp.cc>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+Message-ID: <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
+In-Reply-To: <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc> <20240916135634.98554-4-toolmanp@tlmp.cc> <20240916210111.502e7d6d.gary@garyguo.net> <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com> <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me> <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 494c205a1874b0a64d5e13cf14775a4737933e3e
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 7/7] mm: Use pgdp_get() for accessing PGD entries
-Content-Language: en-GB
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- kernel test robot <lkp@intel.com>, linux-mm@kvack.org, llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dimitri Sivanich
- <dimitri.sivanich@hpe.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Muchun Song <muchun.song@linux.dev>, Andrey Ryabinin
- <ryabinin.a.a@gmail.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
- Christoph Lameter <cl@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
-References: <20240917073117.1531207-8-anshuman.khandual@arm.com>
- <202409190310.ViHBRe12-lkp@intel.com>
- <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
- <ZuvqpvJ6ht4LCuB+@shell.armlinux.org.uk>
- <82fa108e-5b15-435a-8b61-6253766c7d88@arm.com>
- <ZuxZ/QeSdqTHtfmw@shell.armlinux.org.uk>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <ZuxZ/QeSdqTHtfmw@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 19/09/2024 18:06, Russell King (Oracle) wrote:
-> On Thu, Sep 19, 2024 at 05:48:58PM +0200, Ryan Roberts wrote:
->>> 32-bit arm uses, in some circumstances, an array because each level 1
->>> page table entry is actually two descriptors. It needs to be this way
->>> because each level 2 table pointed to by each level 1 entry has 256
->>> entries, meaning it only occupies 1024 bytes in a 4096 byte page.
->>>
->>> In order to cut down on the wastage, treat the level 1 page table as
->>> groups of two entries, which point to two consecutive 1024 byte tables
->>> in the level 2 page.
->>>
->>> The level 2 entry isn't suitable for the kernel's use cases (there are
->>> no bits to represent accessed/dirty and other important stuff that the
->>> Linux MM wants) so we maintain the hardware page tables and a separate
->>> set that Linux uses in the same page. Again, the software tables are
->>> consecutive, so from Linux's perspective, the level 2 page tables
->>> have 512 entries in them and occupy one full page.
->>>
->>> This is documented in arch/arm/include/asm/pgtable-2level.h
->>>
->>> However, what this means is that from the software perspective, the
->>> level 1 page table descriptors are an array of two entries, both of
->>> which need to be setup when creating a level 2 page table, but only
->>> the first one should ever be dereferenced when walking the tables,
->>> otherwise the code that walks the second level of page table entries
->>> will walk off the end of the software table into the actual hardware
->>> descriptors.
->>>
->>> I've no idea what the idea is behind introducing pgd_get() and what
->>> it's semantics are, so I can't comment further.
+On 19.09.24 17:13, Gao Xiang wrote:
+> Hi Benno,
+>=20
+> On 2024/9/19 21:45, Benno Lossin wrote:
+>> Hi,
 >>
->> The helper is intended to read the value of the entry pointed to by the passed
->> in pointer. And it shoiuld be read in a "single copy atomic" manner, meaning no
->> tearing. Further, the PTL is expected to be held when calling the getter. If the
->> HW can write to the entry such that its racing with the lock holder (i.e. HW
->> update of access/dirty) then READ_ONCE() should be suitable for most
->> architectures. If there is no possibility of racing (because HW doesn't write to
->> the entry), then a simple dereference would be sufficient, I think (which is
->> what the core code was already doing in most cases).
-> 
-> The core code should be making no access to the PGD entries on 32-bit
-> ARM since the PGD level does not exist. Writes are done at PMD level
-> in arch code. Reads are done by core code at PMD level.
-> 
-> It feels to me like pgd_get() just doesn't fit the model to which 32-bit
-> ARM was designed to use decades ago, so I want full details about what
-> pgd_get() is going to be used for and how it is going to be used,
-> because I feel completely in the dark over this new development. I fear
-> that someone hasn't understood the Linux page table model if they're
-> wanting to access stuff at levels that effectively "aren't implemented"
-> in the architecture specific kernel model of the page tables.
+>> Thanks for the patch series. I think it's great that you want to use
+>> Rust for this filesystem.
+>>
+>> On 17.09.24 01:58, Gao Xiang wrote:
+>>> On 2024/9/17 04:01, Gary Guo wrote:
+>>>> Also, it seems that you're building abstractions into EROFS directly
+>>>> without building a generic abstraction. We have been avoiding that. If
+>>>> there's an abstraction that you need and missing, please add that
+>>>> abstraction. In fact, there're a bunch of people trying to add FS
+>>>
+>>> No, I'd like to try to replace some EROFS C logic first to Rust (by
+>>> using EROFS C API interfaces) and try if Rust is really useful for
+>>> a real in-tree filesystem.  If Rust can improve EROFS security or
+>>> performance (although I'm sceptical on performance), As an EROFS
+>>> maintainer, I'm totally fine to accept EROFS Rust logic landed to
+>>> help the whole filesystem better.
+>>
+>> As Gary already said, we have been using a different approach and it has
+>> served us well. Your approach of calling directly into C from the driver
+>> can be used to create a proof of concept, but in our opinion it is not
+>> something that should be put into mainline. That is because calling C
+>> from Rust is rather complicated due to the many nuanced features that
+>> Rust provides (for example the safety requirements of references).
+>> Therefore moving the dangerous parts into a central location is crucial
+>> for making use of all of Rust's advantages inside of your code.
+>=20
+> I'm not quite sure about your point honestly.  In my opinion, there
+> is nothing different to use Rust _within a filesystem_ or _within a
+> driver_ or _within a Linux subsystem_ as long as all negotiated APIs
+> are audited.
 
-This change isn't as big and scary as I think you fear. The core-mm today
-dereferences pgd pointers (and p4d, pud, pmd pointers) directly in its code. See
-follow_pfnmap_start(), gup_fast_pgd_leaf(), and many other sites. These changes
-aim to abstract those dereferences into an inline function that the architecture
-can override and implement if it so wishes.
+To us there is a big difference: If a lot of functions in an API are
+`unsafe` without being inherent from the problem that it solves, then
+it's a bad API.
 
-The core-mm implements default versions of these helper functions which do
-READ_ONCE(), but does not currently use them consistently.
+> Otherwise, it means Rust will never be used to write Linux core parts
+> such as MM, VFS or block layer. Does this point make sense? At least,
+> Rust needs to get along with the existing C code (in an audited way)
+> rather than refuse C code.
 
-From Anshuman's comments earlier in this thread, it looked to me like the arm
-pgd_t type is too big to read with READ_ONCE() - it can't be atomically read on
-that arch. So my proposal was to implement the override for arm to do exactly
-what the core-mm used to do, which is a pointer dereference. So that would
-result in exact same behaviour for the arm arch.
+I am neither requiring you to write solely safe code, nor am I banning
+interacting with the C side. What we mean when we talk about
+abstractions is that we want to minimize the Rust code that directly
+interfaces with C. Rust-to-Rust interfaces can be a lot safer and are
+easier to implement correctly.
 
-> 
-> Essentially, on 32-bit 2-level ARM, the PGD is merely indexed by the
-> virtual address. As far as the kernel is concerned, each entry is
-> 64-bit, and the generic kernel code has no business accessing that
-> through the pgd pointer.
-> 
-> The pgd pointer is passed through the PUD and PMD levels, where it is
-> typecast down through the kernel layers to a pmd_t pointer, where it
-> becomes a 32-bit quantity. This results in only the _first_ level 1
-> pointer being dereferenced by kernel code to a 32-bit pmd_t quantity.
-> pmd_page_vaddr() converts this pmd_t quantity to a pte pointer (which
-> points at the software level 2 page tables, not the hardware page
-> tables.)
+> My personal idea about Rust: I think Rust is just another _language
+> tool_ for the Linux kernel which could save us time and make the
+> kernel development better.
 
-As an aside, my understanding of Linux's pgtable model differs from what you
-describe. As I understand it, Linux's logical page table model has 5 levels
-(pgd, p4d, pud, pmd, pte). If an arch doesn't support all 5 levels, then the
-middle levels can be folded away (p4d first, then pud, then pmd). But the
-core-mm still logically walks all 5 levels. So if the HW supports 2 levels,
-those levels are (pgd, pte). But you are suggesting that arm exposes pmd and
-pte, which is not what Linux expects? (Perhaps you call it the pmd in the arch,
-but that is being folded and accessed through the pgd helpers in core code, I
-believe?
+Yes, but we do have conventions, rules and guidelines for writing such
+code. C code also has them. If you want/need to break them, there should
+be a good reason to do so. I don't see one in this instance.
 
-> 
-> So, as I'm now being told that the kernel wants to dereference the
-> pgd level despite the model I describe above, alarm bells are ringing.
-> I want full information please.
-> 
+> Or I wonder why not writing a complete new Rust stuff instead rather
+> than living in the C world?
 
-This is not new; the kernel already dereferences the pgd pointers.
+There are projects that do that yes. But Rust-for-Linux is about
+bringing Rust to the kernel and part of that is coming up with good
+conventions and rules.
 
-Thanks,
-Ryan
+>>> For Rust VFS abstraction, that is a different and indepenent story,
+>>> Yiyang don't have any bandwidth on this due to his limited time.
+>>
+>> This seems a bit weird, you have the bandwidth to write your own
+>> abstractions, but not use the stuff that has already been developed?
+>=20
+> It's not written by me, Yiyang is still an undergraduate tudent.
+> It's his research project and I don't think it's his responsibility
+> to make an upstreamable VFS abstraction.
+
+That is fair, but he wouldn't have to start from scratch, Wedsons
+abstractions were good enough for him to write a Rust version of ext2.
+In addition, tarfs and puzzlefs also use those bindings.
+To me it sounds as if you have not taken the time to try to make it work
+with the existing abstractions. Have you tried reaching out to Ariel? He
+is working on puzzlefs and might have some insight to give you. Sadly
+Wedson has left the project, so someone will have to pick up his work.
+
+I hope that you understand that we can't have two abstractions for the
+same C API. It confuses people which to use, some features might only be
+available in one version and others only in the other. It would be a
+total mess. It's just like the rule for no duplicated drivers that you
+have on the C side.
+
+People (mostly Wedson) also have put in a lot of work into making the
+VFS abstractions good. Why ignore all of that?
+
+>> I have quickly glanced over the patchset and the abstractions seem
+>> rather immature, not general enough for other filesystems to also take
+>=20
+> I don't have enough time to take a full look of this patchset too
+> due to other ongoing work for now (Rust EROFS is not quite a high
+> priority stuff for me).
+>=20
+> And that's why it's called "RFC PATCH".
+
+Yeah I saw the RFC title. I just wanted to communicate early that I
+would not review it if it were a normal patch. In fact, I would advise
+against taking the patch, due to the reasons I outlined.
+
+>> advantage of them. They also miss safety documentation and are in
+>=20
+> I don't think it needs to be general enough, since we'd like to use
+> the new Rust language tool within a subsystem.
+>=20
+> So why it needs to take care of other filesystems? Again, I'm not
+> working on a full VFS abstriction.
+
+And that's OK, feel free to just pick the parts of the existing VFS that
+you need and extend as you (or your student) see fit. What you said
+yourself is that we need a global vision for VFS abstractions. If you
+only use a subset of them, then you only care about that subset, other
+people can extend it if they need. If everyone would roll their own
+abstractions without communicating, then how would we create a global
+vision?
+
+> Yes, this patchset is not perfect.  But I've asked Yiyang to isolate
+> all VFS structures as much as possible, but it seems that it still
+> touches something.
+
+It would already be a big improvement to put the VFS structures into the
+kernel crate. Because then everyone can benefit from your work.
+
+>> general poorly documented.
+>=20
+> Okay, I think it can be improved then if you give more detailed hints.
+>=20
+>>
+>> Additionally, all of the code that I saw is put into the `fs/erofs` and
+>> `rust/erofs_sys` directories. That way people can't directly benefit
+>> from your code, put your general abstractions into the kernel crate.
+>> Soon we will be split the kernel crate, I could imagine that we end up
+>> with an `fs` crate, when that happens, we would put those abstractions
+>> there.
+>>
+>> As I don't have the bandwidth to review two different sets of filesystem
+>> abstractions, I can only provide you with feedback if you use the
+>> existing abstractions.
+>=20
+> I think Rust is just a tool, if you could have extra time to review
+> our work, that would be wonderful!  Many thanks then.
+>=20
+> However, if you don't have time to review, IMHO, Rust is just a tool,
+> I think each subsystem can choose to use Rust in their codebase, or
+> I'm not sure what's your real point is?
+
+I don't want to prevent or discourage you from using Rust in the kernel.
+In fact, I can't prevent you from putting this in, since after all you
+are the maintainer.
+What I can do, is advise against not using abstractions. That has been
+our philosophy since very early on. They are the reason that you can
+write PHY drivers without any `unsafe` code whatsoever *today*. I think
+that is an impressive feat and our recipe for success.
+
+We even have this in our documentation:
+https://docs.kernel.org/rust/general-information.html#abstractions-vs-bindi=
+ngs
+
+My real point is that I want Rust to succeed in the kernel. I strongly
+believe that good abstractions (in the sense that you can do as much as
+possible using only safe Rust) are a crucial factor.
+I and others from the RfL team can help you if you (or your student)
+have any Rust related questions for the abstractions. Feel free to reach
+out.
+
+
+Maybe Miguel can say more on this matter, since he was at the
+maintainers summit, but our takeaways essentially are that we want
+maintainers to experiment with Rust. And if you don't have any real
+users, then breaking the Rust code is fine.
+Though I think that with breaking we mean that changes to the C side
+prevent the Rust side from working, not shipping Rust code without
+abstractions.
+
+We might be able to make an exception to the "your driver can only use
+abstractions" rule, but only with the promise that the subsystem is
+working towards creating suitable abstractions and replacing the direct
+C accesses with that.
+
+I personally think that we should not make that the norm, instead try to
+create the minimal abstraction and minimal driver (without directly
+calling C) that you need to start. Of course this might not work, the
+"minimal driver" might need to be rather complex for you to start, but I
+don't know your subsystem to make that judgement.
+
+>>> And I _also_ don't think an incomplete ROFS VFS Rust abstraction
+>>> is useful to Linux community
+>>
+>> IIRC Wedson created ROFS VFS abstractions before going for the full
+>> filesystem. So it would definitely be useful for other read-only
+>> filesystems (as well as filesystems that also allow writing, since last
+>> time I checked, they often also support reading).
+>=20
+> Leaving aside everything else, an incomplete Rust read-only VFS
+> abstraction itself is just an unsafe stuff.
+
+I don't understand what you want to say.
+
+>>> (because IMO for generic interface
+>>> design, we need a global vision for all filesystems instead of
+>>> just ROFSes.  No existing user is not an excuse for an incomplete
+>>> abstraction.)
+>>
+>> Yes we need a global vision, but if you would use the existing
+>> abstractions, then you would participate in this global vision.
+>>
+>> Sorry for repeating this point so many times, but it is *really*
+>> important that we don't have multiple abstractions for the same thing.
+>=20
+> I've expressed my viewpoint.
+>=20
+>>
+>>> If a reasonble Rust VFS abstraction landed, I think we will switch
+>>> to use that, but as I said, they are completely two stories.
+>>
+>> For them to land, there has to be some kind of user. For example, a rust
+>> reference driver, or a new filesystem. For example this one.
+>=20
+> Without a full proper VFS abstraction, it's just broken and
+> needs to be refactored.  And that will be painful to all
+> users then.
+
+I also don't understand your point here. What is broken, this EROFS
+implementation? Why will it be painful to refactor?
+
+> =3D=3D=3D=3D=3D=3D=3D
+> In the end,
+>=20
+> Other thoughts, comments are helpful here since I wonder how "Rust
+> -for-Linux" works in the long term, and decide whether I will work
+> on Kernel Rust or not at least in the short term.
+
+The longterm goal is to make everything that is possible in C, possible
+in Rust. For more info, please take a look at the kernel summit talk by
+Miguel Ojeda.
+However, we can only reach that longterm goal if maintainers are willing
+and ready to put Rust into their subsystems (either by knowing/learning
+Rust themselves or by having a co-maintainer that does just the Rust
+part). So you wanting to experiment is great. I appreciate that you also
+have a student working on this. Still, I think we should follow our
+guidelines and create abstractions in order to require as little
+`unsafe` code as possible.
+
+---
+Cheers,
+Benno
 
 
