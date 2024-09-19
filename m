@@ -1,236 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-29713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C3397CABD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 16:06:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D6697CB77
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 17:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B8D284A41
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 14:06:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D67081F250EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 15:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172FC1A00E2;
-	Thu, 19 Sep 2024 14:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106441A0B02;
+	Thu, 19 Sep 2024 15:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWs0D8W5"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qSQdo6Lm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ED019FA8C;
-	Thu, 19 Sep 2024 14:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509661A2548;
+	Thu, 19 Sep 2024 15:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726754785; cv=none; b=mYvbowcaXRjvmm2ZGjbUq91us4ubTCTIM5foPsH/uoOm5u38pFBHk3/Qu+Gr1C/hbbzs3mjeJYvNu3GpxmdMfDTWfbpQUsrBX+nel12c3eKVAQpS/jiTC22+PyXLtKUB2/8E6XZag+XIzK74Z4KtvTBncdFeyelTGiRgJyplDmo=
+	t=1726758866; cv=none; b=Pp8IazVP+76NY+jncEDHgOLpvIKm25zk1aX6B1JDYcaQXq8pZruzBpVtAavD15opjHmL+Jkh9gDqKhD3Wy5sZAOK5d6NE+yrbUzk6J9oBOjOINepvYiA2vKdIWBWRz4dLLuN3oxcsTtuHR/vrL2KqzVe2YkCDHDUCDbUvQ1GdyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726754785; c=relaxed/simple;
-	bh=+xo4QouCGQEXsiBSHU5dsvdiemZw73K9CLdh9XdR2sY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pea0YHi7liLali9A5ggY75xJwfVAfPNPzOIdMmtQJfS7WkLE06Ig5VB3VdV4UBr1TmWoAUHtno3yL+MpJLN6lfFWvA3PqK7/LvHBF3yA6hfkhB4UwJFQFBVsTSPEE6WfRe3bfPFmFS4Yk34Isney7jwbYZVg9j9PWCZFucNS4T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWs0D8W5; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so115737266b.0;
-        Thu, 19 Sep 2024 07:06:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726754782; x=1727359582; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XUnDyBgoHRg3B4M6pmpbrK0J6zwK3/f7HDaqme+W9a4=;
-        b=VWs0D8W5jDQ5pCSwOWk/xmoBNSQU8Gb5JaJg0XYQqFP5LAkbNLOmlcDYdIyvZJqVQ+
-         q6HWX0+qhgf2kOwF5zl9b0JMBtSBK9xIHE+FBBEfsIUKqHinh2Fw+GXA6JdToSJxHGco
-         TtfZN/oeA5hQbrP2D1Gx4hbyfD/8eMtOp5emABn5quOgz7ZifcpjHMJaoCy6RD5OturN
-         GfFzUczjgpgwxWo0Ag/n/7WoEhp+3zTI5mEcOQ12RVS57sBbz1nlMr9WhaaMGTrBxISM
-         KjSzGzLrdsRbHOziwvow7cGQHE/MgkHMXkRLtN7FKFjs6cuK8aYvn+3SGNU4+hvJj6Tq
-         dDPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726754782; x=1727359582;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XUnDyBgoHRg3B4M6pmpbrK0J6zwK3/f7HDaqme+W9a4=;
-        b=MeelPQwRfiUJV41814vbO7yZ1De4ZA3kC55WfA7SKBx9R7RfU+xMVxIuundMJsnfZK
-         xnsMSeL89yZfH6x/xk+lhCfh+dhtrxLtPIGvaDlTX5P9Sn99mVEMZl67NleNKrDjjkaA
-         7kLZZnHkE7Lro8emcXQhndVliqgNc7T/vk/Wdk9JkvD1VssHqcW8w1yHnPnNVmIf9QTY
-         ++eaZ9zodGHkxdpfqJ/dwKOyvYsf0dRkBFJLplpkVnR1oduRU0ZuVGNbXkwuWZHDwP+v
-         0Q+XtmGIaHwoRY1CHleQbnG/b3Gtc62fuQLCEvZGqTG15uiZeyR3bUK682KM2BwztOLv
-         gyPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcJ+v649nmX5fhJGaKhL7SFBqq1jvUzIT3nuVLTjAow0qtRwbKZRNri9kY+ZINkliUwQyTc3P26OFV@vger.kernel.org, AJvYcCWF4n3/qNcEmGShW+XqfHRn+yO4Nu8puG2Q6oFvaxLfgfu81etjaFauOzUEJsFHV2WrR4gl8hVd1em277ne@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNLtWHTre9YabfePq5n0D08eFoY9wyshApy7I4h059NWbbaC/g
-	xJpK1f7A42Hf4WozxjQXPdcEStnVOLHJfBzhMJ7qaULE13r0d6uI
-X-Google-Smtp-Source: AGHT+IF6/Qb1dLqyVL46HmJF14+d93NYlTJRKZFhAQCAVHYhgmPEt3qgX1bOGbyHIXr0M5ieO3hF6A==
-X-Received: by 2002:a17:907:7f20:b0:a86:7514:e649 with SMTP id a640c23a62f3a-a9048108f9fmr2095117066b.52.1726754779993;
-        Thu, 19 Sep 2024 07:06:19 -0700 (PDT)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061330c1fsm719503266b.206.2024.09.19.07.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 07:06:18 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [RFC PATCH 2/2] fs: open_by_handle_at() support for decoding connectable file handles
-Date: Thu, 19 Sep 2024 16:06:11 +0200
-Message-Id: <20240919140611.1771651-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240919140611.1771651-1-amir73il@gmail.com>
-References: <20240919140611.1771651-1-amir73il@gmail.com>
+	s=arc-20240116; t=1726758866; c=relaxed/simple;
+	bh=aA6ncyqbB5zG1a+0fNn+ZX9FSpsfipgLPNOmW1nff8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=svFnHG/TnBB+aZwfMoRB6WEB00qFnkfNVHAEocJntmDPAkWZzaHxx8qBhFtDJ+adjXKMLLC0swy+EZcR5EalLx9Bt4VACnYVYQGHnaVdKv+aq1e9YTOY5lk/oi4EmkguGQoOXhnO5c69cEOJCJ3yAG5pePJ1rlQpHiWvxatorg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qSQdo6Lm; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726758824; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=5VCFEuYCnHsfOuo1YYnMThvXIJQAqGa76+hoecHZapM=;
+	b=qSQdo6LmLHBbbh2nJBAp1ZgWqrucWl39jfPg2PO5vCgHBX0pJFHcfqdSBEkc9EcxYyiArtPe7Vj2YUP2PtvCdSkJo16zZj3kEbzywUpwzcQ4T42bUcLI3aILGqnEHOSwdbNRV9EGZuLD3rAig7T6quZCfQuxYEegFjxHNtJ6cMo=
+Received: from 30.27.101.7(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFI-2kQ_1726758821)
+          by smtp.aliyun-inc.com;
+          Thu, 19 Sep 2024 23:13:43 +0800
+Message-ID: <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+Date: Thu, 19 Sep 2024 23:13:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+To: Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>,
+ Yiyang Wu <toolmanp@tlmp.cc>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-4-toolmanp@tlmp.cc>
+ <20240916210111.502e7d6d.gary@garyguo.net>
+ <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
+ <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Allow using an O_PATH fd as mount fd argument of open_by_handle_at(2).
-This was not allowed before, so we use it to enable a new API for
-decoding "connectable" file handles that were created using the
-AT_HANDLE_CONNECTABLE flag to name_to_handle_at(2).
+Hi Benno,
 
-When mount fd is an O_PATH fd and decoding an O_PATH fd is requested,
-use that as a hint to try to decode a "connected" fd with known path,
-which is accessible (to capable user) from mount fd path.
+On 2024/9/19 21:45, Benno Lossin wrote:
+> Hi,
+> 
+> Thanks for the patch series. I think it's great that you want to use
+> Rust for this filesystem.
+> 
+> On 17.09.24 01:58, Gao Xiang wrote:
+>> On 2024/9/17 04:01, Gary Guo wrote:
+>>> Also, it seems that you're building abstractions into EROFS directly
+>>> without building a generic abstraction. We have been avoiding that. If
+>>> there's an abstraction that you need and missing, please add that
+>>> abstraction. In fact, there're a bunch of people trying to add FS
+>>
+>> No, I'd like to try to replace some EROFS C logic first to Rust (by
+>> using EROFS C API interfaces) and try if Rust is really useful for
+>> a real in-tree filesystem.  If Rust can improve EROFS security or
+>> performance (although I'm sceptical on performance), As an EROFS
+>> maintainer, I'm totally fine to accept EROFS Rust logic landed to
+>> help the whole filesystem better.
+> 
+> As Gary already said, we have been using a different approach and it has
+> served us well. Your approach of calling directly into C from the driver
+> can be used to create a proof of concept, but in our opinion it is not
+> something that should be put into mainline. That is because calling C
+> from Rust is rather complicated due to the many nuanced features that
+> Rust provides (for example the safety requirements of references).
+> Therefore moving the dangerous parts into a central location is crucial
+> for making use of all of Rust's advantages inside of your code.
 
-Note that this does not check if the path is accessible to the calling
-user, just that it is accessible wrt the mount namesapce, so if there
-is no "connected" alias, or if parts of the path are hidden in the
-mount namespace, open_by_handle_at(2) will return -ESTALE.
+I'm not quite sure about your point honestly.  In my opinion, there
+is nothing different to use Rust _within a filesystem_ or _within a
+driver_ or _within a Linux subsystem_ as long as all negotiated APIs
+are audited.
 
-Note that the file handles used to decode a "connected" fd do not have
-to be encoded with the AT_HANDLE_CONNECTABLE flag.  Specifically,
-directory file handles are always "connectable", regardless of using
-the AT_HANDLE_CONNECTABLE flag.
+Otherwise, it means Rust will never be used to write Linux core parts
+such as MM, VFS or block layer. Does this point make sense? At least,
+Rust needs to get along with the existing C code (in an audited way)
+rather than refuse C code.
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/fhandle.c | 61 +++++++++++++++++++++++++++++++---------------------
- 1 file changed, 37 insertions(+), 24 deletions(-)
+My personal idea about Rust: I think Rust is just another _language
+tool_ for the Linux kernel which could save us time and make the
+kernel development better.
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 956d9b25d4f7..1fabfb79fd55 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -146,37 +146,45 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 	return err;
- }
- 
--static int get_path_from_fd(int fd, struct path *root)
-+enum handle_to_path_flags {
-+	HANDLE_CHECK_PERMS   = (1 << 0),
-+	HANDLE_CHECK_SUBTREE = (1 << 1),
-+};
-+
-+struct handle_to_path_ctx {
-+	struct path root;
-+	enum handle_to_path_flags flags;
-+	unsigned int fh_flags;
-+	unsigned int o_flags;
-+};
-+
-+static int get_path_from_fd(int fd, struct handle_to_path_ctx *ctx)
- {
- 	if (fd == AT_FDCWD) {
- 		struct fs_struct *fs = current->fs;
- 		spin_lock(&fs->lock);
--		*root = fs->pwd;
--		path_get(root);
-+		ctx->root = fs->pwd;
-+		path_get(&ctx->root);
- 		spin_unlock(&fs->lock);
- 	} else {
--		struct fd f = fdget(fd);
-+		struct fd f = fdget_raw(fd);
- 		if (!f.file)
- 			return -EBADF;
--		*root = f.file->f_path;
--		path_get(root);
-+		ctx->root = f.file->f_path;
-+		path_get(&ctx->root);
-+		/*
-+		 * Use O_PATH mount fd and requested O_PATH fd as a hint for
-+		 * decoding an fd with connected path, that is accessible from
-+		 * the mount fd path.
-+		 */
-+		if (ctx->o_flags & O_PATH && f.file->f_mode & FMODE_PATH)
-+			ctx->flags |= HANDLE_CHECK_SUBTREE;
- 		fdput(f);
- 	}
- 
- 	return 0;
- }
- 
--enum handle_to_path_flags {
--	HANDLE_CHECK_PERMS   = (1 << 0),
--	HANDLE_CHECK_SUBTREE = (1 << 1),
--};
--
--struct handle_to_path_ctx {
--	struct path root;
--	enum handle_to_path_flags flags;
--	unsigned int fh_flags;
--};
--
- static int vfs_dentry_acceptable(void *context, struct dentry *dentry)
- {
- 	struct handle_to_path_ctx *ctx = context;
-@@ -224,7 +232,13 @@ static int vfs_dentry_acceptable(void *context, struct dentry *dentry)
- 
- 	if (!(ctx->flags & HANDLE_CHECK_SUBTREE) || d == root)
- 		retval = 1;
--	WARN_ON_ONCE(d != root && d != root->d_sb->s_root);
-+	/*
-+	 * exportfs_decode_fh_raw() does not call acceptable() callback with
-+	 * a disconnected directory dentry, so we should have reached either
-+	 * mount fd directory or sb root.
-+	 */
-+	if (ctx->fh_flags & EXPORT_FH_DIR_ONLY)
-+		WARN_ON_ONCE(d != root && d != root->d_sb->s_root);
- 	dput(d);
- 	return retval;
- }
-@@ -265,8 +279,7 @@ static int do_handle_to_path(struct file_handle *handle, struct path *path,
-  * filesystem but that only applies to procfs and sysfs neither of which
-  * support decoding file handles.
-  */
--static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
--				 unsigned int o_flags)
-+static inline bool may_decode_fh(struct handle_to_path_ctx *ctx)
- {
- 	struct path *root = &ctx->root;
- 
-@@ -276,7 +289,7 @@ static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
- 	 *
- 	 * There's only one dentry for each directory inode (VFS rule)...
- 	 */
--	if (!(o_flags & O_DIRECTORY))
-+	if (!(ctx->o_flags & O_DIRECTORY))
- 		return false;
- 
- 	if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
-@@ -303,13 +316,13 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
- 	int retval = 0;
- 	struct file_handle f_handle;
- 	struct file_handle *handle = NULL;
--	struct handle_to_path_ctx ctx = {};
-+	struct handle_to_path_ctx ctx = { .o_flags = o_flags };
- 
--	retval = get_path_from_fd(mountdirfd, &ctx.root);
-+	retval = get_path_from_fd(mountdirfd, &ctx);
- 	if (retval)
- 		goto out_err;
- 
--	if (!capable(CAP_DAC_READ_SEARCH) && !may_decode_fh(&ctx, o_flags)) {
-+	if (!capable(CAP_DAC_READ_SEARCH) && !may_decode_fh(&ctx)) {
- 		retval = -EPERM;
- 		goto out_path;
- 	}
--- 
-2.34.1
+Or I wonder why not writing a complete new Rust stuff instead rather
+than living in the C world?
+
+> 
+>> For Rust VFS abstraction, that is a different and indepenent story,
+>> Yiyang don't have any bandwidth on this due to his limited time.
+> 
+> This seems a bit weird, you have the bandwidth to write your own
+> abstractions, but not use the stuff that has already been developed?
+
+It's not written by me, Yiyang is still an undergraduate tudent.
+It's his research project and I don't think it's his responsibility
+to make an upstreamable VFS abstraction.
+
+> 
+> I have quickly glanced over the patchset and the abstractions seem
+> rather immature, not general enough for other filesystems to also take
+
+I don't have enough time to take a full look of this patchset too
+due to other ongoing work for now (Rust EROFS is not quite a high
+priority stuff for me).
+
+And that's why it's called "RFC PATCH".
+
+> advantage of them. They also miss safety documentation and are in
+
+I don't think it needs to be general enough, since we'd like to use
+the new Rust language tool within a subsystem.
+
+So why it needs to take care of other filesystems? Again, I'm not
+working on a full VFS abstriction.
+
+Yes, this patchset is not perfect.  But I've asked Yiyang to isolate
+all VFS structures as much as possible, but it seems that it still
+touches something.
+
+> general poorly documented.
+
+Okay, I think it can be improved then if you give more detailed hints.
+
+> 
+> Additionally, all of the code that I saw is put into the `fs/erofs` and
+> `rust/erofs_sys` directories. That way people can't directly benefit
+> from your code, put your general abstractions into the kernel crate.
+> Soon we will be split the kernel crate, I could imagine that we end up
+> with an `fs` crate, when that happens, we would put those abstractions
+> there.
+> 
+> As I don't have the bandwidth to review two different sets of filesystem
+> abstractions, I can only provide you with feedback if you use the
+> existing abstractions.
+
+I think Rust is just a tool, if you could have extra time to review
+our work, that would be wonderful!  Many thanks then.
+
+However, if you don't have time to review, IMHO, Rust is just a tool,
+I think each subsystem can choose to use Rust in their codebase, or
+I'm not sure what's your real point is?
+
+> 
+>> And I _also_ don't think an incomplete ROFS VFS Rust abstraction
+>> is useful to Linux community
+> 
+> IIRC Wedson created ROFS VFS abstractions before going for the full
+> filesystem. So it would definitely be useful for other read-only
+> filesystems (as well as filesystems that also allow writing, since last
+> time I checked, they often also support reading).
+
+Leaving aside everything else, an incomplete Rust read-only VFS
+abstraction itself is just an unsafe stuff.
+
+> 
+>> (because IMO for generic interface
+>> design, we need a global vision for all filesystems instead of
+>> just ROFSes.  No existing user is not an excuse for an incomplete
+>> abstraction.)
+> 
+> Yes we need a global vision, but if you would use the existing
+> abstractions, then you would participate in this global vision.
+> 
+> Sorry for repeating this point so many times, but it is *really*
+> important that we don't have multiple abstractions for the same thing.
+
+I've expressed my viewpoint.
+
+> 
+>> If a reasonble Rust VFS abstraction landed, I think we will switch
+>> to use that, but as I said, they are completely two stories.
+> 
+> For them to land, there has to be some kind of user. For example, a rust
+> reference driver, or a new filesystem. For example this one.
+
+Without a full proper VFS abstraction, it's just broken and
+needs to be refactored.  And that will be painful to all
+users then.
+
+=======
+In the end,
+
+Other thoughts, comments are helpful here since I wonder how "Rust
+-for-Linux" works in the long term, and decide whether I will work
+on Kernel Rust or not at least in the short term.
+
+Thanks,
+Gao Xiang
+
+> 
+> ---
+> Cheers,
+> Benno
+> 
 
 
