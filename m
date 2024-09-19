@@ -1,234 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-29696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D909997C588
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 10:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B79B97C6AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 11:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F61E1F23881
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 08:04:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082E01F25473
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 09:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742A0198A2F;
-	Thu, 19 Sep 2024 08:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2B512E48;
+	Thu, 19 Sep 2024 09:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="imzFfkGq"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KxWAU0sA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3394018E045
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 08:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D962F19ABAC;
+	Thu, 19 Sep 2024 09:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726733062; cv=none; b=j2L8mDOdSum1BBs9MsqEiQMHGZtPh6/JCS3oJu3IJ9KP7m757jNTYIu7pVaLAF7yUyJM0al2EKCe7g3ag/gADsAWpHP4xCkvr5x1NAZn+iFTkci18u0It2uaAaUfZOx5eyw2nsc3+lkENp7iR0e2lCMCJ3fAdAxOKq7KBST83Yg=
+	t=1726737124; cv=none; b=LgLmlWIy42DJ5sit182sj+P0WqRpjewBxYsEg4IP/7xVCfHCU3m6S7yn9W9n+RvbSyIk9kpJP3Zg3ZhjTOCkidIUdkpXLnnVdXAd7Mb4x+lbx+t9wEWH1rA7oIoEFpSRZuZ6CSDATN9jCn1ItcRZctiGV0bu8gUh2k+1/DDgwy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726733062; c=relaxed/simple;
-	bh=uTxeqM0duEMWgF6Y0tzXiT8PF46ua58stWVZOnsdt2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PAG99uvvcH34jhAgCMiEBP0ggayyXDSgstL6VoM+j7SD5AXA9p9RA8vQ0OoJS5CRc7Tm8mhFO4genuJBBsOKNi0d5Ed948gLIBj4YHK+ey/t8d+VEgZUW2ck/i9CBgu31UkPBWHKnjNb7bg0NXNBxWF62iHdVWbsXY+4jTrbhuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=imzFfkGq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726733059;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4DpbblgkcMhjIC/ykM3FWmmeoOS60M6M8pYscao/Qy0=;
-	b=imzFfkGqEV3ldztVqeTLGPR+S4chl55iBdLUQepRT6o9qlIps7SWi+kx40mxjmAuf0B/T3
-	IrZx8K1zJewEY8cvMunJ6NFW2adl+XixcM+3FNdvQ9vvIEw2S7q/b1UbJmJvdJWC0M5Jk4
-	sKp0LZLF2hYZcYOfiiFShfOzd+0KONM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-620-YGRQi6DSNgWAs-UR5X60Xg-1; Thu, 19 Sep 2024 04:04:18 -0400
-X-MC-Unique: YGRQi6DSNgWAs-UR5X60Xg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-378929f1a4eso291120f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 01:04:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726733057; x=1727337857;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4DpbblgkcMhjIC/ykM3FWmmeoOS60M6M8pYscao/Qy0=;
-        b=AQ1/UPuKgViV+5fm5aYv4K3DnxmwHcArWpz5uYpTjeL+qzDV8uphHLF/xTUb0it+nE
-         ys56j+ZpuYkrbKbgRRAu8yxrBbpw91CYFujpRTn+1V2DuozLOq69gyZ/JETEgimll24l
-         T5RmTrXid9ILD+2tFlF45B2UGYr4c9uVlj6iZ6qBEHINIIbbMJ3KcMdPLUbqPTjG+o82
-         LSuEse1QImO1oZ6IBWUMeD2mYJD+8cVWFPU39cOfn6W9RUn75Uov3rSKct3LonL4152m
-         H710+OC8wEgFpj4FqW/CY43/DlakAx8e5pu7sN2zVqbzdC4U4UcgcU8gY30l5olYwA0E
-         CPuw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0yZkVPHz4qj6LCUbJBQcgZiGAYch9jZ4kXMLAvrk73xvrzgPwKp1rE5BqRyM2STX+5lCq2jtmEAoEhUO0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOrWBCBiHZBpIb6uRux1vCnFI+77pI0xGdpJeW+XBih82eT2j+
-	XXQUzp3LeaEkQymVoBAlo7GP0NmVWoAi0wVTYwqjsJGN5YaBe/G/MzSWwOEZUqv1ljUpAimywo0
-	YPEYuF6M8RLRS1FY0NAivbBQhNmn9QnpK9zDypRJ6NJ0zF+EPRNE2nK9835Q97CQkH9/wA0kxQQ
-	==
-X-Received: by 2002:a5d:6551:0:b0:374:c64d:5379 with SMTP id ffacd0b85a97d-378c2d11728mr15031511f8f.27.1726733056749;
-        Thu, 19 Sep 2024 01:04:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpAW3slwiy8Fov5De5bLtSVCBtgmykkdHrllakA5LjpSHlNOVMufE1znkiHOWKOyJCqq4r5w==
-X-Received: by 2002:a5d:6551:0:b0:374:c64d:5379 with SMTP id ffacd0b85a97d-378c2d11728mr15031486f8f.27.1726733056259;
-        Thu, 19 Sep 2024 01:04:16 -0700 (PDT)
-Received: from [10.131.4.59] ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f62bfsm14404103f8f.51.2024.09.19.01.04.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 01:04:14 -0700 (PDT)
-Message-ID: <d32136d4-94ab-432a-89ae-5f41935404ff@redhat.com>
-Date: Thu, 19 Sep 2024 10:04:15 +0200
+	s=arc-20240116; t=1726737124; c=relaxed/simple;
+	bh=GRaM6wOTqW6/lUjG+bM3shCBbIIJiMeQtQqlr5Drc4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WmRBHRY27XRbqMzYDdAYXombqU+c8EsqBe8Qug6utnWNZhW+A5hdInAoJWANi7c4tzI3NkR8rRp+1/pWyeG/Sih6ECz9w+rce/GhaMoQTUWaobV1SqyW0OtR3NOY4WDCI2Jpbo2Qdu4/qiZ4IL9wAe54MIDvCljOPRYYKCYn2V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KxWAU0sA; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=XSYMeRXWsqrG7F+YI4a+nTQDZpFZ8nCNoB9zSp4g67c=; b=KxWAU0sAe0pRV5nAR7txSNGzJO
+	XItJFBQrVuo5+4RSvbrFlqhDYvmkcSNIXEF68oEPTYwT+q2A1ztZDqeCU7pgQ5zkeuBwY9fqcBchi
+	4tvviAn87X1iy16W61vx5GnGCbZRricPB3EC7Ak7ApdDDKI/kEIyNBWxUtRDWMmFwgziStsxXWAxP
+	xnQJ5ixS87mwS0FPpD6dgfSy2lwrJdqsOXeSEhaUnKkK+5R2prDQOPpvO6fPHZovTNcqWgnlTPRQs
+	7ljx1NENkRmTCWVNLz+cyLfxQ+KwhrA2wFu4yR38fJzRWYlqoMw/lW9y+mYenxEqWEJk1iom421Zq
+	bTaPfakA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59440)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1srDBz-0000GJ-37;
+	Thu, 19 Sep 2024 10:11:15 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1srDBn-0001Rd-0M;
+	Thu, 19 Sep 2024 10:11:03 +0100
+Date: Thu, 19 Sep 2024 10:11:02 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: kernel test robot <lkp@intel.com>, linux-mm@kvack.org,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+	linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Miaohe Lin <linmiaohe@huawei.com>, Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH V2 7/7] mm: Use pgdp_get() for accessing PGD entries
+Message-ID: <ZuvqpvJ6ht4LCuB+@shell.armlinux.org.uk>
+References: <20240917073117.1531207-8-anshuman.khandual@arm.com>
+ <202409190310.ViHBRe12-lkp@intel.com>
+ <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 3/7] mm: Use ptep_get() for accessing PTE entries
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
- <20240917073117.1531207-4-anshuman.khandual@arm.com>
- <f9a7ebb4-3d7c-403e-b818-29a6a3b12adc@redhat.com>
- <8cafe140-35cf-4e9d-8218-dfbfc156ca69@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <8cafe140-35cf-4e9d-8218-dfbfc156ca69@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 18.09.24 08:32, Anshuman Khandual wrote:
-> 
-> 
-> On 9/17/24 15:58, David Hildenbrand wrote:
->> On 17.09.24 09:31, Anshuman Khandual wrote:
->>> Convert PTE accesses via ptep_get() helper that defaults as READ_ONCE() but
->>> also provides the platform an opportunity to override when required. This
->>> stores read page table entry value in a local variable which can be used in
->>> multiple instances there after. This helps in avoiding multiple memory load
->>> operations as well possible race conditions.
->>>
->>
->> Please make it clearer in the subject+description that this really only involves set_pte_safe().
-> 
-> I will update the commit message with some thing like this.
-> 
-> mm: Use ptep_get() in set_pte_safe()
-> 
-> This converts PTE accesses in set_pte_safe() via ptep_get() helper which
-> defaults as READ_ONCE() but also provides the platform an opportunity to
-> override when required. This stores read page table entry value in a local
-> variable which can be used in multiple instances there after. This helps
-> in avoiding multiple memory load operations as well as some possible race
-> conditions.
-> 
->>
->>
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: David Hildenbrand <david@redhat.com>
->>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
->>> Cc: linux-mm@kvack.org
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>> ---
->>>    include/linux/pgtable.h | 3 ++-
->>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->>> index 2a6a3cccfc36..547eeae8c43f 100644
->>> --- a/include/linux/pgtable.h
->>> +++ b/include/linux/pgtable.h
->>> @@ -1060,7 +1060,8 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
->>>     */
->>>    #define set_pte_safe(ptep, pte) \
->>>    ({ \
->>> -    WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
->>> +    pte_t __old = ptep_get(ptep); \
->>> +    WARN_ON_ONCE(pte_present(__old) && !pte_same(__old, pte)); \
->>>        set_pte(ptep, pte); \
->>>    })
->>>    
->>
->> I don't think this is necessary. PTE present cannot flip concurrently, that's the whole reason of the "safe" part after all.
-> 
-> Which is not necessary ? Converting de-references to ptep_get() OR caching
-> the page table read value in a local variable ? ptep_get() conversion also
-> serves the purpose providing an opportunity for platform to override.
+On Thu, Sep 19, 2024 at 01:25:08PM +0530, Anshuman Khandual wrote:
+> arm (32) platform currently overrides pgdp_get() helper in the platform but
+> defines that like the exact same version as the generic one, albeit with a
+> typo which can be fixed with something like this.
 
-Which arch override are you thinking of where this change here would 
-make a real difference? Would it even make a difference with cont-pte on 
-arm?
+pgdp_get() was added to arm in eba2591d99d1 ("mm: Introduce
+pudp/p4dp/pgdp_get() functions") with the typo you've spotted. It seems
+it was added with no users, otherwise the error would have been spotted
+earlier. I'm not a fan of adding dead code to the kernel for this
+reason.
 
+> Regardless there is another problem here. On arm platform there are multiple
+> pgd_t definitions available depending on various configs but some are arrays
+> instead of a single data element, although platform pgdp_get() helper remains
+> the same for all.
 > 
->>
->> Can we just move these weird set_pte/pmd_safe() stuff to x86 init code and be done with it? Then it's also clear *where* it is getting used and for which reason.
->>
-> set_pte/pmd_safe() can be moved to x86 platform - as that is currently the
-> sole user for these helpers. But because set_pgd_safe() gets used in riscv
-> platform, just wondering would it be worth moving only the pte/pmd helpers
-> but not the pgd one ?
+> arch/arm/include/asm/page-nommu.h:typedef unsigned long pgd_t[2];
+> arch/arm/include/asm/pgtable-2level-types.h:typedef struct { pmdval_t pgd[2]; } pgd_t;
+> arch/arm/include/asm/pgtable-2level-types.h:typedef pmdval_t pgd_t[2];
+> arch/arm/include/asm/pgtable-3level-types.h:typedef struct { pgdval_t pgd; } pgd_t;
+> arch/arm/include/asm/pgtable-3level-types.h:typedef pgdval_t pgd_t;
+> 
+> I guess it might need different pgdp_get() variants depending applicable pgd_t
+> definition. Will continue looking into this further but meanwhile copied Russel
+> King in case he might be able to give some direction.
 
-My take would be just to move them where they are used, and possibly 
-even inlining them.
+That's Russel*L*, thanks.
 
-The point is that it's absolutely underdocumented what "_safe" is 
-supposed to be here, and I don't really see the reason to have this in 
-common code (making the common API more complicated).
+32-bit arm uses, in some circumstances, an array because each level 1
+page table entry is actually two descriptors. It needs to be this way
+because each level 2 table pointed to by each level 1 entry has 256
+entries, meaning it only occupies 1024 bytes in a 4096 byte page.
+
+In order to cut down on the wastage, treat the level 1 page table as
+groups of two entries, which point to two consecutive 1024 byte tables
+in the level 2 page.
+
+The level 2 entry isn't suitable for the kernel's use cases (there are
+no bits to represent accessed/dirty and other important stuff that the
+Linux MM wants) so we maintain the hardware page tables and a separate
+set that Linux uses in the same page. Again, the software tables are
+consecutive, so from Linux's perspective, the level 2 page tables
+have 512 entries in them and occupy one full page.
+
+This is documented in arch/arm/include/asm/pgtable-2level.h
+
+However, what this means is that from the software perspective, the
+level 1 page table descriptors are an array of two entries, both of
+which need to be setup when creating a level 2 page table, but only
+the first one should ever be dereferenced when walking the tables,
+otherwise the code that walks the second level of page table entries
+will walk off the end of the software table into the actual hardware
+descriptors.
+
+I've no idea what the idea is behind introducing pgd_get() and what
+it's semantics are, so I can't comment further.
 
 -- 
-Cheers,
-
-David / dhildenb
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
