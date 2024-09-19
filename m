@@ -1,151 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-29688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E3F97C489
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 08:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFB997C4AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 09:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310AD2847DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 06:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1121E2831FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 07:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CC118FC86;
-	Thu, 19 Sep 2024 06:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SpEr+eq3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F31191F97;
+	Thu, 19 Sep 2024 07:12:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A7C18E36C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 06:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8FE1917CC;
+	Thu, 19 Sep 2024 07:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726729071; cv=none; b=qjRoY9DEVSeGlLg/NI1clkMb1eI5qwdJNZ16GYbHyFKos8wr9A80CeEZ5cUDV12sM4oSSTZ06ns4oXhhrJOqe1r1xw83VkrpqJXVLef8UOh82qK/CLMYaNkkJzgxfqt+OeBG7nOvLc0ZCCn5TFkPiTUfg9PxzQGddD6/GpJSe3I=
+	t=1726729949; cv=none; b=t3nsSd+dY/DFe2e8QifSMcivaFyDONazYYOMjacGNoTU6ravgEDIPv74PsocsKsnF3fTbrjTKHk7qCL0E8UMHgdfb2j+ikRwBzLLLredvbqjXDr6zfpzlvpunrif70e+6pcGf87NTXIbW0Ib+LXxbk7YsYiVlXJm16BXaJ2bCQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726729071; c=relaxed/simple;
-	bh=T42I0lRZBaFB9187EeGtKoTYqZo584h9kb6/EqVjmtE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EEoVQLhjjHw044XtVc/i3fdShz11t7JATaxBmnYJ6tS8Cd2ZxWWWPSjYI55AYFeneGcYK/10L6zcwdRbUpkQmaL1CG+hU8ewbtsAX60k2axEweMRgPB7QAqimIbvQ8dTLedM3TLrp6av+o8uL62/rj3QFbdUMcgsPgabuMUqOEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SpEr+eq3; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso58829366b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 23:57:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1726729067; x=1727333867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5TUPhH68J4aIRtGndcy4NXpmyIlQij++uMUQdRa57QE=;
-        b=SpEr+eq3/HQ76fT8RajuijqMzOA6bqekax+/as/obHB1a77UjrN5y1LJrrFqfcCIK7
-         AcxmtSLzvY3ZQSDCZOfg0DR819lly9TCQbo2PuO8eentFY4zmIAZ2PVpe0y2mTlSv0gM
-         nFQVT0QYN3rgJtORcJUYDcrQHBUc2xJOcYc2M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726729067; x=1727333867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5TUPhH68J4aIRtGndcy4NXpmyIlQij++uMUQdRa57QE=;
-        b=TgsyLtsq5RaWOR3FTwGkY02yo3RWNdR2VsM0nF5QAJvU7Mr6tm+Ifyf6yPUbHbREv8
-         VyjvDiPp9SzZ66pCxR75uA4uvxgCAjYTyE9vv30UvnCBY14hFTH717rre69kLpE0+PUI
-         detJjAS+dYaJUnHpwVL6oJg6pU79tYuZM9Xo4Tv9D7ITE5Cw+LRCY4ZGhoEl5yJXmFia
-         WYFR7CJwtjbfpjmCq7ebph496FUywU/nzY4Y1WumMJJdnf+UkByYY6tzo/liDfs6ZA4T
-         FJoGfeozEb0++LH8KTRmF0+zjBAsO1y4DUoGHcmR+RI2uWGj+hGfAppoOfe4A625BPBN
-         Rdcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhQSvkVGd48PIBMvGsZSiRfKXDf3dig482uu3uEelV+nPD08iRp/PTVOYvXm4gMwXb8v7PDvL2mcxMzRPS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYccXUCPB3h+BfDSmWqrYabQHic/WJAoOdi0qkHLN808kekCN5
-	h3So385dpGGbYbmvuAvOt/WwJoLiwQPCBVgiq+Ijg0Ait8uW+XKHJO9qJG+WCMEh1OU+5RIpPq0
-	npfBf/g==
-X-Google-Smtp-Source: AGHT+IEVD8vtBq0+QCaaee2bKiA9ZjpaYMt2wsOo2VdbzCW2lmVqT1OzppArD9d0YJ0rLAqasoCzsQ==
-X-Received: by 2002:a17:907:efd6:b0:a86:820e:2ac6 with SMTP id a640c23a62f3a-a9029435299mr2435778766b.22.1726729067287;
-        Wed, 18 Sep 2024 23:57:47 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612dfa6bsm681091566b.154.2024.09.18.23.57.46
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2024 23:57:46 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d4093722bso66260966b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2024 23:57:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVCT11s2IJm6DXsI/kqimIRszW8F/3bAn0BT8KuL+xBeeFXyJQCd+fGqYHVmGvqH6vRpzTE8jU3YwV77hiD@vger.kernel.org
-X-Received: by 2002:a17:906:f5a7:b0:a86:a56a:3596 with SMTP id
- a640c23a62f3a-a9029678cbemr2701906566b.60.1726729065735; Wed, 18 Sep 2024
- 23:57:45 -0700 (PDT)
+	s=arc-20240116; t=1726729949; c=relaxed/simple;
+	bh=/jgnX+ABOI2z3m4Qx4fkTR24jfiYP85AWYoL8PMuYjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gH/3L/rSTr6BnIjR14is2rd7zB8PEueUKn4oXuoWz+JYsqIBRhAO7sPpHYH51GheT1PxPWMTjAvYVnZy3u7IwlQNotzVUzvIzlUSfD2GGT6CcuUzEcUZb7bDb2QazIjmZVnK8l+4gMhwmfQKZZ0BwD7ZtV5shvdKkZV8igpwitc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 190C81007;
+	Thu, 19 Sep 2024 00:12:50 -0700 (PDT)
+Received: from [10.163.34.169] (unknown [10.163.34.169])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 109FE3F64C;
+	Thu, 19 Sep 2024 00:12:11 -0700 (PDT)
+Message-ID: <6191a730-1a0f-476e-8041-a0a51094b6b3@arm.com>
+Date: Thu, 19 Sep 2024 12:42:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area> <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com> <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com> <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk> <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org> <ZuuBs762OrOk58zQ@dread.disaster.area>
- <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com> <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
-In-Reply-To: <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 19 Sep 2024 08:57:29 +0200
-X-Gmail-Original-Message-ID: <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
-Message-ID: <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-To: Christian Theune <ct@flyingcircus.io>
-Cc: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@meta.com>, 
-	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, 
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, 
-	regressions@lists.linux.dev, regressions@leemhuis.info
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 4/7] mm: Use pmdp_get() for accessing PMD entries
+To: kernel test robot <lkp@intel.com>, linux-mm@kvack.org
+Cc: oe-kbuild-all@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ x86@kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-fsdevel@vger.kernel.org, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+ Muchun Song <muchun.song@linux.dev>, Andrey Ryabinin
+ <ryabinin.a.a@gmail.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Naoya Horiguchi <nao.horiguchi@gmail.com>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, Dennis Zhou <dennis@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
+References: <20240917073117.1531207-5-anshuman.khandual@arm.com>
+ <202409190244.JcrD4CwD-lkp@intel.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <202409190244.JcrD4CwD-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 19 Sept 2024 at 08:35, Christian Theune <ct@flyingcircus.io> wrote:
->
-> Happy to! I see there=E2=80=99s still some back and forth on the specific
-> patches. Let me know which kernel version and which patches I should
-> start trying out. I=E2=80=99m loosing track while following the discussio=
-n.
 
-Yeah, right now Jens is still going to run some more testing, but I
-think the plan is to just backport
 
-  a4864671ca0b ("lib/xarray: introduce a new helper xas_get_order")
-  6758c1128ceb ("mm/filemap: optimize filemap folio adding")
+On 9/19/24 00:37, kernel test robot wrote:
+> Hi Anshuman,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on char-misc/char-misc-testing]
+> [also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus brauner-vfs/vfs.all dennis-percpu/for-next linus/master v6.11]
+> [cannot apply to akpm-mm/mm-everything next-20240918]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/m68k-mm-Change-pmd_val/20240917-153331
+> base:   char-misc/char-misc-testing
+> patch link:    https://lore.kernel.org/r/20240917073117.1531207-5-anshuman.khandual%40arm.com
+> patch subject: [PATCH V2 4/7] mm: Use pmdp_get() for accessing PMD entries
+> config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240919/202409190244.JcrD4CwD-lkp@intel.com/config)
+> compiler: or1k-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240919/202409190244.JcrD4CwD-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409190244.JcrD4CwD-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from include/asm-generic/bug.h:22,
+>                     from arch/openrisc/include/asm/bug.h:5,
+>                     from include/linux/bug.h:5,
+>                     from include/linux/mmdebug.h:5,
+>                     from include/linux/mm.h:6,
+>                     from include/linux/pagemap.h:8,
+>                     from mm/pgtable-generic.c:10:
+>    mm/pgtable-generic.c: In function 'pmd_clear_bad':
+>>> arch/openrisc/include/asm/pgtable.h:369:36: error: lvalue required as unary '&' operand
+>      369 |                __FILE__, __LINE__, &(e), pgd_val(e))
+>          |                                    ^
+>    include/linux/printk.h:437:33: note: in definition of macro 'printk_index_wrap'
+>      437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+>          |                                 ^~~~~~~~~~~
+>    arch/openrisc/include/asm/pgtable.h:368:9: note: in expansion of macro 'printk'
+>      368 |         printk(KERN_ERR "%s:%d: bad pgd %p(%08lx).\n", \
+>          |         ^~~~~~
+>    include/asm-generic/pgtable-nop4d.h:25:50: note: in expansion of macro 'pgd_ERROR'
+>       25 | #define p4d_ERROR(p4d)                          (pgd_ERROR((p4d).pgd))
+>          |                                                  ^~~~~~~~~
+>    include/asm-generic/pgtable-nopud.h:32:50: note: in expansion of macro 'p4d_ERROR'
+>       32 | #define pud_ERROR(pud)                          (p4d_ERROR((pud).p4d))
+>          |                                                  ^~~~~~~~~
+>    include/asm-generic/pgtable-nopmd.h:36:50: note: in expansion of macro 'pud_ERROR'
+>       36 | #define pmd_ERROR(pmd)                          (pud_ERROR((pmd).pud))
+>          |                                                  ^~~~~~~~~
+>    mm/pgtable-generic.c:54:9: note: in expansion of macro 'pmd_ERROR'
+>       54 |         pmd_ERROR(pmdp_get(pmd));
+>          |         ^~~~~~~~~
+> 
+> 
+> vim +369 arch/openrisc/include/asm/pgtable.h
+> 
+> 61e85e367535a7 Jonas Bonn 2011-06-04  363  
+> 61e85e367535a7 Jonas Bonn 2011-06-04  364  #define pte_ERROR(e) \
+> 61e85e367535a7 Jonas Bonn 2011-06-04  365  	printk(KERN_ERR "%s:%d: bad pte %p(%08lx).\n", \
+> 61e85e367535a7 Jonas Bonn 2011-06-04  366  	       __FILE__, __LINE__, &(e), pte_val(e))
+> 61e85e367535a7 Jonas Bonn 2011-06-04  367  #define pgd_ERROR(e) \
+> 61e85e367535a7 Jonas Bonn 2011-06-04  368  	printk(KERN_ERR "%s:%d: bad pgd %p(%08lx).\n", \
+> 61e85e367535a7 Jonas Bonn 2011-06-04 @369  	       __FILE__, __LINE__, &(e), pgd_val(e))
+> 61e85e367535a7 Jonas Bonn 2011-06-04  370  
+> 
 
-and I think we're at the point where you might as well start testing
-that if you have the cycles for it. Jens is mostly trying to confirm
-the root cause, but even without that, I think you running your load
-with those two changes back-ported is worth it.
+This build failure can be fixed with dropping address output from
+pxd_ERROR() helpers as is being done for the x86 platform. Similar
+fix is also required for the UM architecture as well.
 
-(Or even just try running it on plain 6.10 or 6.11, both of which
-already has those commits)
-
-> In preparation: I=E2=80=99m wondering whether the known reproducer gives
-> insight how I might force my load to trigger it more easily? Would
-> running the reproducer above and combining that with a running
-> PostgreSQL benchmark make sense?
->
-> Otherwise we=E2=80=99d likely only be getting insight after weeks of not
-> seeing crashes =E2=80=A6
-
-So considering how well the reproducer works for Jens and Chris, my
-main worry is whether your load might have some _additional_ issue.
-
-Unlikely, but still .. The two commits fix the repproducer, so I think
-the important thing to make sure is that it really fixes the original
-issue too.
-
-And yeah, I'd be surprised if it doesn't, but at the same time I would
-_not_ suggest you try to make your load look more like the case we
-already know gets fixed.
-
-So yes, it will be "weeks of not seeing crashes" until we'd be
-_really_ confident it's all the same thing, but I'd rather still have
-you test that, than test something else than what caused issues
-originally, if you see what I mean.
-
-         Linus
+diff --git a/arch/openrisc/include/asm/pgtable.h b/arch/openrisc/include/asm/pgtable.h
+index 60c6ce7ff2dc..831efb71ab54 100644
+--- a/arch/openrisc/include/asm/pgtable.h
++++ b/arch/openrisc/include/asm/pgtable.h
+@@ -362,11 +362,11 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
+ #define pfn_pte(pfn, prot)  __pte((((pfn) << PAGE_SHIFT)) | pgprot_val(prot))
+ 
+ #define pte_ERROR(e) \
+-       printk(KERN_ERR "%s:%d: bad pte %p(%08lx).\n", \
+-              __FILE__, __LINE__, &(e), pte_val(e))
++       printk(KERN_ERR "%s:%d: bad pte (%08lx).\n", \
++              __FILE__, __LINE__, pte_val(e))
+ #define pgd_ERROR(e) \
+-       printk(KERN_ERR "%s:%d: bad pgd %p(%08lx).\n", \
+-              __FILE__, __LINE__, &(e), pgd_val(e))
++       printk(KERN_ERR "%s:%d: bad pgd (%08lx).\n", \
++              __FILE__, __LINE__, pgd_val(e))
+ 
+ extern pgd_t swapper_pg_dir[PTRS_PER_PGD]; /* defined in head.S */
 
