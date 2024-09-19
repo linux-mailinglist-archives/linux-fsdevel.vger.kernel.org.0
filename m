@@ -1,144 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-29709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA37897CA57
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 15:46:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896C597CA7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 15:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBAC41C22F92
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 13:46:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D5D286262
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 13:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D443719E83D;
-	Thu, 19 Sep 2024 13:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FAB19EED2;
+	Thu, 19 Sep 2024 13:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="W/c+d0T9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTzKHJqa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2031EB5B;
-	Thu, 19 Sep 2024 13:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D4019CD01;
+	Thu, 19 Sep 2024 13:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726753566; cv=none; b=DS+jKXVSccDLN/eYpSqnzYECT6K2QLteBv/ytRzUQa/TUakQH1C2vjveq8/0+CLDni2Tzt+LqDC1vk0vZMK19BT6R9ISlKTuf3hA9+w5DweEO+HfUq27yXK4XtPaGsHbRxL+jYAxx5MXhbWLHm0wNdiNq4UzQLuC0fIVhPKqWqs=
+	t=1726753841; cv=none; b=Vzw8nF22fq/cNY5iIluleA4lR3qx078Xy67klJpH5wlREZU0nqHjhGQ40DUa7njPxwhJCDx7fhh5w63AZHMnNeYd0Z8pM3rRn+VVEaH0oODZWfuuGJZshTvF6l0saFZEzdIcrGvJwbev6q9AzgVg0PTyStMfbDNRRl0McWbyY+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726753566; c=relaxed/simple;
-	bh=08Hrq/1zy42WL1U0lqBIB2EDF7K+U052L8fQ6GMV8/k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AYscFlPUeZXjyGOSELO7Rc31F6jn70nhKkRDkvdC5LYMHkHJy1WOPFXFRWAlSAYW2yvU0L/k1CVlkcNsRVqO3FohKhGV3FlIzw5gjnSE5ptDP7NtrBnUMqZ8Upt+zXmEvuIne9TllAlilgU3NTztyFnTcGg2EAIPd5rPiPiMmQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=W/c+d0T9; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726753559; x=1727012759;
-	bh=NT33HsfNCSAYhZK5GJl2I4nckfuU7LN1MNbY5TeJz/U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=W/c+d0T9UMJnzXhcPX0tffEyYNAXdVQ+ZIaXB0VTMs1MRV7bUq5IwH9btO4HfM1pJ
-	 yGSUotJheJm/LCtYz6S53Q6FMYIfvb8Tv7FEwJor03A+vLxB/NOJwouepTn+dPx83z
-	 cM5+ywIXqOdJrklOAEOTBTmVcm0li0VJYCOZNGV0YOgDFSk2fBea4iSpnBx+E1NBx4
-	 i9YtFWce7sywTDWT7nYWo2fvilMHPrcOdMs4fdQNw7k+3+Ua0Pjr4BIw8jKepNT8ph
-	 hM6CNgXzRMkHrf2kE1k8nXbQpOml2SzPCIkoZ+3yyqakRpDn+mhr45jPiecfE5R9eY
-	 Mhntehp3wQNUg==
-Date: Thu, 19 Sep 2024 13:45:56 +0000
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, Gary Guo <gary@garyguo.net>, Yiyang Wu <toolmanp@tlmp.cc>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
-Message-ID: <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
-In-Reply-To: <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc> <20240916135634.98554-4-toolmanp@tlmp.cc> <20240916210111.502e7d6d.gary@garyguo.net> <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: b8d97f78ee362a1aa80e09e4076bc52d0a830dd6
+	s=arc-20240116; t=1726753841; c=relaxed/simple;
+	bh=qU+wcOKBKgsxvhJNNpEX2XBS2YUu0drdapf3EnUG7v0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cgszc8Dx0dBuhAwEiJHGHlbJ67mphZOHMDW0c19jtwuImG3t2rn24iWMtZC3liBUKGK+ms8b7O8la66FdKhpb+t3uPP1u1+8d5x1Ol96vzbhR5oFJSueHbZL2CNaUGhjFcvlzBebE03g28zHjWusi+pLZMd6M9avF4gtPgdbp24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTzKHJqa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF1BC4CEC4;
+	Thu, 19 Sep 2024 13:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726753840;
+	bh=qU+wcOKBKgsxvhJNNpEX2XBS2YUu0drdapf3EnUG7v0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hTzKHJqaCSzXlOjknpHRwf2Fb7Fs/HQCISGXQ177dpGicQae9gR1idtN6AIOlYWSJ
+	 siU1JaIKtYvNCWBK7M5pYF4GkVa3V6P2mes8XnY1lNENqhU7OPLl4+Sf09sxTFLpWX
+	 2nn2dfWg1mn5xL6RIgluGfLAXaGGB6eFi5mtsqfLGtRAx4Bp56u+lAvBvQgGQBchrR
+	 7mUWrO/ltJO3khLT9wws4jzZokxKBEzDdUJhy3ZC0gvC5lCIgaSzwxBYFD3fvTqYsE
+	 +iCC9nMFE9cThsaAsadAIQOaxoDYklGh24K+iI1IF+JLN18lOCxQMKmc62cmKCzogE
+	 GImOLXQtYpa7w==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs blocksize
+Date: Thu, 19 Sep 2024 15:49:53 +0200
+Message-ID: <20240913-vfs-blocksize-ab40822b2366@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7183; i=brauner@kernel.org; h=from:subject:message-id; bh=qU+wcOKBKgsxvhJNNpEX2XBS2YUu0drdapf3EnUG7v0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS90dHI+ZH7fYMyZ+Js3d0aDBrG3rvX5TvvTE/yCbn/r mOec8jGjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk8Xc7IsKdI/ekjHY1SxRWf 4gJaedgiy+Pkry6Sf/Zh8cL/jnsbmBj++16Yszy76LjRhmjLek/GF92323haru87NWey78+HQiG FXAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hey Linus,
 
-Thanks for the patch series. I think it's great that you want to use
-Rust for this filesystem.
+Now that the large folio/xarry bug is sorted this one seems ready.
 
-On 17.09.24 01:58, Gao Xiang wrote:
-> On 2024/9/17 04:01, Gary Guo wrote:
->> Also, it seems that you're building abstractions into EROFS directly
->> without building a generic abstraction. We have been avoiding that. If
->> there's an abstraction that you need and missing, please add that
->> abstraction. In fact, there're a bunch of people trying to add FS
->=20
-> No, I'd like to try to replace some EROFS C logic first to Rust (by
-> using EROFS C API interfaces) and try if Rust is really useful for
-> a real in-tree filesystem.  If Rust can improve EROFS security or
-> performance (although I'm sceptical on performance), As an EROFS
-> maintainer, I'm totally fine to accept EROFS Rust logic landed to
-> help the whole filesystem better.
+/* Summary */
+This contains the vfs infrastructure as well as the xfs bits to enable
+support for block sizes (bs) larger than page sizes (ps) plus a few
+fixes to related infrastructure.
 
-As Gary already said, we have been using a different approach and it has
-served us well. Your approach of calling directly into C from the driver
-can be used to create a proof of concept, but in our opinion it is not
-something that should be put into mainline. That is because calling C
-from Rust is rather complicated due to the many nuanced features that
-Rust provides (for example the safety requirements of references).
-Therefore moving the dangerous parts into a central location is crucial
-for making use of all of Rust's advantages inside of your code.
+There has been efforts over the last 16 years to enable enable Large
+Block Sizes (LBS), that is block sizes in filesystems where bs > page
+size. Through these efforts we have learned that one of the main
+blockers to supporting bs > ps in filesystems has been a way to allocate
+pages that are at least the filesystem block size on the page cache
+where bs > ps.
 
-> For Rust VFS abstraction, that is a different and indepenent story,
-> Yiyang don't have any bandwidth on this due to his limited time.
+Thanks to various previous efforts it is possible to support bs > ps in
+XFS with only a few changes in XFS itself. Most changes are to the page
+cache to support minimum order folio support for the target block size
+on the filesystem.
 
-This seems a bit weird, you have the bandwidth to write your own
-abstractions, but not use the stuff that has already been developed?
+A motivation for Large Block Sizes today is to support high-capacity
+(large amount of Terabytes) QLC SSDs where the internal Indirection Unit
+(IU) are typically greater than 4k to help reduce DRAM and so in turn
+cost and space. In practice this then allows different architectures to
+use a base page size of 4k while still enabling support for block sizes
+aligned to the larger IUs by relying on high order folios on the page
+cache when needed.
 
-I have quickly glanced over the patchset and the abstractions seem
-rather immature, not general enough for other filesystems to also take
-advantage of them. They also miss safety documentation and are in
-general poorly documented.
+It also allows to take advantage of the drive's support for atomics
+larger than 4k with buffered IO support in Linux. As described this year
+at LSFMM, supporting large atomics greater than 4k enables databases to
+remove the need to rely on their own journaling, so they can disable
+double buffered writes, which is a feature different cloud providers are
+already enabling through custom storage solutions.
 
-Additionally, all of the code that I saw is put into the `fs/erofs` and
-`rust/erofs_sys` directories. That way people can't directly benefit
-from your code, put your general abstractions into the kernel crate.
-Soon we will be split the kernel crate, I could imagine that we end up
-with an `fs` crate, when that happens, we would put those abstractions
-there.
+/* Testing */
 
-As I don't have the bandwidth to review two different sets of filesystem
-abstractions, I can only provide you with feedback if you use the
-existing abstractions.
+gcc version 14.2.0 (Debian 14.2.0-3)
+Debian clang version 16.0.6 (27+b1)
 
-> And I _also_ don't think an incomplete ROFS VFS Rust abstraction
-> is useful to Linux community
+All patches are based on v6.11-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
 
-IIRC Wedson created ROFS VFS abstractions before going for the full
-filesystem. So it would definitely be useful for other read-only
-filesystems (as well as filesystems that also allow writing, since last
-time I checked, they often also support reading).
+A lot of emphasis has been put on testing using kdevops, starting with
+an XFS baseline [1]. The testing has been split into regression and
+progression.
 
-> (because IMO for generic interface
-> design, we need a global vision for all filesystems instead of
-> just ROFSes.  No existing user is not an excuse for an incomplete
-> abstraction.)
+The whole test suite was run to check for regressions on existing
+profiles due to the page cache changes.
 
-Yes we need a global vision, but if you would use the existing
-abstractions, then you would participate in this global vision.
+The split_huge_page_test selftest on XFS filesystem was also run to
+check for huge page splits in min order chunks is done correctly.
 
-Sorry for repeating this point so many times, but it is *really*
-important that we don't have multiple abstractions for the same thing.
+No regressions were found with these patches added on top.
 
-> If a reasonble Rust VFS abstraction landed, I think we will switch
-> to use that, but as I said, they are completely two stories.
+8k, 16k, 32k and 64k block sizes were used during feature testing. To
+compare it with existing support, an ARM VM with 64k base page system
+without the patches was used as a reference to check for actual failures
+due to LBS support in a 4k base page size system.
 
-For them to land, there has to be some kind of user. For example, a rust
-reference driver, or a new filesystem. For example this one.
+No new failures were found with the LBS support.
 
----
-Cheers,
-Benno
+Some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla vs these
+patches applied was done. There were no regressions detected.
 
+sysbench on postgres and mysql for several hours was run on LBS XFS
+without any issues.
+
+There's also an eBPF tool called blkalgn [2] to see if IO sent to the
+device is aligned and at least filesystem block size in length.
+
+[1] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+[2] https://github.com/iovisor/bcc/pull/4813
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.blocksize
+
+for you to fetch changes up to 71fdfcdd0dc8344ce6a7887b4675c7700efeffa6:
+
+  Documentation: iomap: fix a typo (2024-09-12 14:07:17 +0200)
+
+Please consider pulling these changes from the signed vfs-6.12.blocksize tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.12.blocksize
+
+----------------------------------------------------------------
+Brian Foster (2):
+      iomap: fix handling of dirty folios over unwritten extents
+      iomap: make zero range flush conditional on unwritten mappings
+
+Christian Brauner (2):
+      Merge patch series "enable bs > ps in XFS"
+      Merge patch series "iomap: flush dirty cache over unwritten mappings on zero range"
+
+Christoph Hellwig (5):
+      iomap: handle a post-direct I/O invalidate race in iomap_write_delalloc_release
+      iomap: improve shared block detection in iomap_unshare_iter
+      iomap: pass flags to iomap_file_buffered_write_punch_delalloc
+      iomap: pass the iomap to the punch callback
+      iomap: remove the iomap_file_buffered_write_punch_delalloc return value
+
+Dave Chinner (1):
+      xfs: use kvmalloc for xattr buffers
+
+Dennis Lam (1):
+      docs:filesystems: fix spelling and grammar mistakes in iomap design page
+
+Josef Bacik (1):
+      iomap: add a private argument for iomap_file_buffered_write
+
+Luis Chamberlain (2):
+      mm: split a folio in minimum folio order chunks
+      iomap: remove set_memor_ro() on zero page
+
+Matthew Wilcox (Oracle) (1):
+      fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (9):
+      filemap: allocate mapping_min_order folios in the page cache
+      readahead: allocate folios with mapping_min_order in readahead
+      filemap: cap PTE range to be created to allowed zero fill in folio_map_range()
+      iomap: fix iomap_dio_zero() for fs bs > system page size
+      xfs: expose block size in stat
+      xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+      xfs: enable block size larger than page size support
+      filemap: fix htmldoc warning for mapping_align_index()
+      Documentation: iomap: fix a typo
+
+ Documentation/filesystems/iomap/design.rst |   8 +-
+ block/fops.c                               |   2 +-
+ fs/gfs2/file.c                             |   2 +-
+ fs/iomap/buffered-io.c                     | 199 ++++++++++++++++++-----------
+ fs/iomap/direct-io.c                       |  42 +++++-
+ fs/xfs/libxfs/xfs_attr_leaf.c              |  15 +--
+ fs/xfs/libxfs/xfs_ialloc.c                 |   5 +
+ fs/xfs/libxfs/xfs_shared.h                 |   3 +
+ fs/xfs/xfs_file.c                          |   2 +-
+ fs/xfs/xfs_icache.c                        |   6 +-
+ fs/xfs/xfs_iomap.c                         |  19 +--
+ fs/xfs/xfs_iops.c                          |  12 +-
+ fs/xfs/xfs_mount.c                         |   8 +-
+ fs/xfs/xfs_super.c                         |  28 ++--
+ fs/zonefs/file.c                           |   2 +-
+ include/linux/huge_mm.h                    |  28 +++-
+ include/linux/iomap.h                      |  13 +-
+ include/linux/pagemap.h                    | 124 ++++++++++++++++--
+ mm/filemap.c                               |  36 ++++--
+ mm/huge_memory.c                           |  65 +++++++++-
+ mm/readahead.c                             |  83 +++++++++---
+ 21 files changed, 506 insertions(+), 196 deletions(-)
 
