@@ -1,55 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-29720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE2097CCAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 18:51:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9CB97CCB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 18:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3227A1C227E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 16:51:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48083B22306
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 16:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C7B1A0B1F;
-	Thu, 19 Sep 2024 16:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E052D1A0BCC;
+	Thu, 19 Sep 2024 16:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFtEyQji"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCf15Y6D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0641E1A08C0;
-	Thu, 19 Sep 2024 16:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB711A0AE0;
+	Thu, 19 Sep 2024 16:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726764668; cv=none; b=XmU1yMxl51nPdP7em58x2pGgln6SutrG1PM/4XkIZz4Bf6Kkhcw0gRnQly/DklNkkS9zBNrwKXR9baMXLbnTueVTGY+nTBzR41DvudJpBzZnJ3eHxosedxdUFKBDEiKY9sn2Nb1hcYiW2ghCFR+vCHlhoBSCHQjh5mK06qxYqsU=
+	t=1726764798; cv=none; b=cCjRBC/R9SE5qGikUHS2MSznh8QYNdwRpNeGcn0a4l1l2Cb4TBOgDALf9VgQUdnAGM3GkrGIhC8EkUWqA3T4FqmFpU1WnnwJbE14EtDy3HJU/TFIxNlR1MICFmUpNikZ42erEvXo94nxSMofJeFHorDHb7IOHdPxHknBPcZtLIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726764668; c=relaxed/simple;
-	bh=YAEOhzR+Y6euCt+y7hPD810lAjNpW2lTOCl2WibGMWU=;
+	s=arc-20240116; t=1726764798; c=relaxed/simple;
+	bh=Je6wFZQCPBSr3AfMwUUK1hMoXTyJ5WbhpknR8qleYo0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XaZT3V/72r0hpg3e5Ejn6OP+E9x8ggzTdcIAxRlNdHNdf1tM6zYNDKzmRNtR1/KeazKO+QCwcWV+sRgWymRwL7dVOZjbutS71ysfZg9R/B2x9lshgJ/ksU53X3VvR0/46utj/7gKoQ6VHgFvXOhY2Fk9PukMu4HBWmzjyUljaCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFtEyQji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D92C4CEC4;
-	Thu, 19 Sep 2024 16:51:01 +0000 (UTC)
+	 Content-Type:MIME-Version; b=uRtDG/mR8JExGrdkOw9AljtQLKGG4fQpGsYsj9fC840NkUdPPvcaVu58DWMR9qZkVPEuqF8n2XBpLJzG8jIC85CdpWlGz117jUz6KOOiDUg8M2hhMilfASNKdOyUG1qqXlYgHMYwVnl7JWpYMFVRt+tfx262zhRosTQ1n/d9G4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCf15Y6D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EAD2C4CEC4;
+	Thu, 19 Sep 2024 16:53:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726764667;
-	bh=YAEOhzR+Y6euCt+y7hPD810lAjNpW2lTOCl2WibGMWU=;
+	s=k20201202; t=1726764797;
+	bh=Je6wFZQCPBSr3AfMwUUK1hMoXTyJ5WbhpknR8qleYo0=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=pFtEyQji36orrRvxpz0SChn7R+ZxoDYIiut4QwqfezVCtIi2mSuT3J7zbhwxEls5t
-	 NTd4i3Ms8Mr/Wz8ZiO/E+uKl4Xi9H7URgkBU4N3aqCjL8wh2NT9AGkWd57ePhZWzdQ
-	 G/KhyQyyyb+a6+qMKdmgqqXuMEgzWH08WnzlPpvC56Hqk3fDxAf8POXIrGlkbvGqeB
-	 Kh+Xi8F/IgXxJIv9wksA2uMdIqgA8Lrjcex3EmrXTsIzf/LZ6FFbweBR3zBECOEOAh
-	 1hCiD7EdS+h6cN3NX/4VtF36h4hc1XFWxbfXfN4kMl4DUyHbbbKnz0WNVB96I8mf+i
-	 2dwTs+1qYKksg==
-Message-ID: <d771ea4d44f3c9da8470d0aa9d58ee1d96f5fb30.camel@kernel.org>
-Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
+	b=sCf15Y6D/7qLmt1xcsgp5oTgn1LEKq4le6ePb9p9YwzGRjGr+qLAxw75M8+pDVGbT
+	 dK15XZfncqIHLYA5wv5JQkEHFjZ4CXbMBeCXH7V2xjSNfcSjOJ41k+GQXYMyUPPzuK
+	 h0Dp5PJ+i6kDSWwDnrkBUjlQ/T/TJatoTrQqwILsXx0bzQzBMbQ6czqCwynhWk1haq
+	 eUTSbgXSYMMuw27mt9XyZpEM3mo3URy7tZhnx8ZcdIYUfBPScOPOuoOmidUzRcGuTA
+	 Gzf3z9RldS/pC6TnxC7qzGMygheQV64sIrnqfAQckyEqZDuPYhtJo1TOKjYRUqdCa3
+	 RKFw8TYK2280Q==
+Message-ID: <135fb33cc23ba1ff07045637916e44f6d6614851.camel@kernel.org>
+Subject: Re: [PATCH v8 07/11] Documentation: add a new file documenting
+ multigrain timestamps
 From: Jeff Layton <jlayton@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, 
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
+To: Bagas Sanjaya <bagasdotme@gmail.com>, John Stultz <jstultz@google.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
  <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
  Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
  <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
@@ -61,10 +62,10 @@ Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
  linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
  linux-ext4@vger.kernel.org,  linux-btrfs@vger.kernel.org,
  linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Date: Thu, 19 Sep 2024 18:50:59 +0200
-In-Reply-To: <87a5g79aag.ffs@tglx>
+Date: Thu, 19 Sep 2024 18:53:08 +0200
+In-Reply-To: <ZueDYmduQtlAnX_5@archie.me>
 References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
-	 <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87a5g79aag.ffs@tglx>
+	 <20240914-mgtime-v8-7-5bd872330bed@kernel.org> <ZueDYmduQtlAnX_5@archie.me>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -149,74 +150,28 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Mon, 2024-09-16 at 12:12 +0200, Thomas Gleixner wrote:
-> On Sat, Sep 14 2024 at 13:07, Jeff Layton wrote:
-> > For multigrain timestamps, we must keep track of the latest timestamp
+On Mon, 2024-09-16 at 08:01 +0700, Bagas Sanjaya wrote:
+> On Sat, Sep 14, 2024 at 01:07:20PM -0400, Jeff Layton wrote:
+> > +Multigrain timestamps aim to remedy this by selectively using fine-gra=
+ined
+> > +timestamps when a file has had its timestamps queried recently, and th=
+e current
+> > +coarse-grained time does not cause a change.
 >=20
-> What is a multgrain timestamp? Can you please describe the concept
-> behind it? I'm not going to chase random documentation or whatever
-> because change logs have to self contained.
+> Do you mean using fine-grained timestamps when timestamps of a file has b=
+een
+> recently queried/modified BUT its coarse-grained timestamps aren't change=
+d?
 >=20
-> And again 'we' do nothing. Describe the problem in technical terms and
-> do not impersonate code.
+> Confused...
 >=20
 
-Hi Thomas!
+Yes, I'll do an s/and/but/ there in the Documentation. Basically, we
+want to avoid updating the floor whenever we can (since it's a global
+variable), so we only get a fine-grained time if there is no other way
+to effect a change to the timestamps.
 
-Sorry for the delay in responding. I'll try to summarize below, but
-I'll also note that patch #7 in the v8 series adds a file to
-Documentation/ that explains this in a bit more depth:
-
-Currently the kernel always stamps files (mtime, ctime, etc.) using the
-coarse-grained clock. This is usually a good thing, since it reduces
-the number of metadata updates, but means that you can't reliably use
-file timestamps to detect whether there have been changes to the file
-since it was last checked. This is particularly a problem for NFSv3
-clients, which use timestamps to know when to invalidate their
-pagecache for an inode [1].
-
-The idea is to allow the kernel to use fine-grained timestamps (mtime
-and ctime) on files when they are under direct observation. When a task
-does a ->getattr against an inode for STATX_MTIME or STATX_CTIME, a
-flag is set in the inode that tells the kernel to use the fine-grained
-clock for the timestamp update iff the current coarse-grained clock
-value would not cause a change to the mtime/ctime.
-
-This works, but there is a problem:
-
-It's possible for one inode to get a fine-grained timestamp, and then
-another to get a coarse-grained timestamp. If this happens within a
-single coarse-grained timer tick, then the files may appear to have
-been modified in reverse order, which breaks POSIX guarantees (and
-obscure programs like "make").
-
-The fix for this is to establish a floor value for the coarse-grained
-clock. When stamping a file with a fine-grained timestamp, we update
-the floor value with the current monotonic time (using cmpxchg). Then
-later, when a coarse-grained timestamp is requested, check whether the
-floor is later than the current coarse-grained time. If it is, then the
-kernel will return the floor value (converted to realtime) instead of
-the current coarse-grained clock. That allows us to maintain the
-ordering guarantees.
-
-My original implementation of this tracked the floor value in
-fs/inode.c (also using cmpxchg), but that caused a performance
-regression, mostly due to multiple calls into the timekeeper functions
-with seqcount loops. By adding the floor to the timekeeper we can get
-that back down to 1 seqcount loop.
-
-Let me know if you have more questions about this, or suggestions about
-how to do this better. The timekeeping code is not my area of expertise
-(obviously) so I'm open to doing this a better way if there is one.
-
-Thanks for the review so far!
-
-[1]: NFSv4 mandates an opaque change attribute (usually using
-inode->i_version), but only some filesystems have a proper
-implementation of it (XFS being the notable exception). For the others,
-we end up using the ctime to generate a change attribute, which means
-that NFSv4 has the same problem on those filesystems. i_version also
-doesn't help NFSv3 clients and servers.
+Thanks!
 --=20
 Jeff Layton <jlayton@kernel.org>
 
