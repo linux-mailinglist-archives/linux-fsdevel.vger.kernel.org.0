@@ -1,131 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-29727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D0497CF62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 01:41:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCDA797CF6A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 01:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD4C1C21887
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 23:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4935728490C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 23:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0C81B2EE9;
-	Thu, 19 Sep 2024 23:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjEPNxsU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABB619A28F;
+	Thu, 19 Sep 2024 23:56:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08492F28;
-	Thu, 19 Sep 2024 23:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E982868B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 23:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726789308; cv=none; b=kW66ksIpjOpUxf9vq1GBYQVtASHB2NHhnjuFFybfGJI5xc+j7h7M+bSicXsYKd2X51oKyUXSPFGSHoVzHCPHzJeu1/g1VRmNCnnyBXZP/gRr9doMP9vSlUNm3U4Jd+DcCO8zA90vYD6pkTebA4TyGrLDRLSEj7gaOC4UG5DYAL8=
+	t=1726790167; cv=none; b=DV9/8Lz5hByg+XHyAJRqFAFgcjPwMKTWjTI2vznEU3YjzIxUHD89FmogbPmnsUoDVK3XAyLzHRkiacmjTwfNt8kzYmh2ZGMnWTevBAmA2+eNv6E5jFiM1YofXe/RYWCPS76rd158wv7eKMt87OolXhArk/YmGcUNlEJEkzNUdCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726789308; c=relaxed/simple;
-	bh=vz/QIZDB47L93JWTsoRjr27Dol6C67qi2DrzrtiaLPw=;
+	s=arc-20240116; t=1726790167; c=relaxed/simple;
+	bh=sRTCmP1M02Bpf558vUr/tF5q1Lx6824vi1YxbTqk8l0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dCUxCaiwPOGbXYtcpScEl/4iEt765hAQn6Mz7Z3NLkecwCpsD20KbG1akbs5/ZTxzfMa29c1or3qSkOcdi9e2Lr4/0Eqf1ElmtJBMFlXCNygij5OjjfeyWhVu9AU+fUsFdqAtCiYwqVz9E7U4mVr60SR9NXt0w3k18SGsy7diN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjEPNxsU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 399D2C4CEC5;
-	Thu, 19 Sep 2024 23:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726789308;
-	bh=vz/QIZDB47L93JWTsoRjr27Dol6C67qi2DrzrtiaLPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BjEPNxsU2EAHVeelpw9uycRMHeln01mG9DBbcO7HUYJVYDsHHZjh83g8LZMrwBd93
-	 bH+4FhJ4HFvRA2sKid7WgTQydB4t4y6JCxE+NM6BQcImT1/3x4ZJpHDQFuyJ15Q6tB
-	 xAuvrIXgNYn5Ur3aawTuu3quwbduJgGzY+dFMwcAP1eri9+zqYxeUSe7Db3/ByrXjS
-	 eeogUXERW2ouBk5o7dRINrJISxdhZBCbTDckbLIW1ha2owy8IuTpfy7edJwtVpJHdH
-	 qM1AfpMNbRxF43f9j27z2n9cZUNfLgr8rZk4O5YeML4r702pPdCdu7sns/467N30gH
-	 ZkqZIevq/r86g==
-Date: Thu, 19 Sep 2024 16:41:46 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240919234146.GH182177@frogsfrogsfrogs>
-References: <20240806094413.GS37996@noisy.programming.kicks-ass.net>
- <20240806103808.GT37996@noisy.programming.kicks-ass.net>
- <875xsc4ehr.ffs@tglx>
- <20240807143407.GC31338@noisy.programming.kicks-ass.net>
- <87wmks2xhi.ffs@tglx>
- <20240807150503.GF6051@frogsfrogsfrogs>
- <20240827033506.GH865349@frogsfrogsfrogs>
- <20240905081241.GM4723@noisy.programming.kicks-ass.net>
- <20240905091605.GE4928@noisy.programming.kicks-ass.net>
- <20240916160801.GA182194@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mi6WkEoMcRBo78FO92ClxEHJ0VoogPwEDDR5n8y3Q9tWZ2kfAgMANYVcIm4IszGuVEBkFSOtvhRP04X163fm4EPHiWDGiYQP4nR0sKgkker9bZr5+/KziV730zTIMX+pD1vDTskKguZN9AlguZ2T1crE2Y83DnmwwX91AqiH4kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85844FEC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 16:56:33 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C76993F71A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 16:56:03 -0700 (PDT)
+Date: Fri, 20 Sep 2024 00:55:57 +0100
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: move FMODE_UNSIGNED_OFFSET to fop_flags
+Message-ID: <Zuy6Daji_OFn8NFf@e110455-lin.cambridge.arm.com>
+References: <ZurYXipwj7jv4gy_@e110455-lin.cambridge.arm.com>
+ <20240919-kollabieren-seeweg-f780e1d5e9f8@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240916160801.GA182194@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240919-kollabieren-seeweg-f780e1d5e9f8@brauner>
 
-On Mon, Sep 16, 2024 at 09:08:01AM -0700, Darrick J. Wong wrote:
-> On Thu, Sep 05, 2024 at 11:16:05AM +0200, Peter Zijlstra wrote:
-> > On Thu, Sep 05, 2024 at 10:12:41AM +0200, Peter Zijlstra wrote:
-> > > On Mon, Aug 26, 2024 at 08:35:06PM -0700, Darrick J. Wong wrote:
+On Thu, Sep 19, 2024 at 03:03:19PM +0200, Christian Brauner wrote:
+> On Wed, Sep 18, 2024 at 02:40:46PM GMT, Liviu Dudau wrote:
+> > Hi Christian,
 > > 
-> > > > [33965.988873] ------------[ cut here ]------------
-> > > > [33966.013870] WARNING: CPU: 1 PID: 8992 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> > 
-> > > > [33966.040184] pc : __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> > > > [33966.042845] lr : __static_key_slow_dec_cpuslocked.part.0+0x48/0xc0
-> > 
-> > > > [33966.072840] Call trace:
-> > > > [33966.073838]  __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> > > > [33966.076105]  static_key_slow_dec+0x48/0x88
-> > 
-> > > > This corresponds to the:
-> > > > 
-> > > > 	WARN_ON_ONCE(!static_key_slow_try_dec(key));
+> > > This is another flag that is statically set and doesn't need to use up
+> > > an FMODE_* bit. Move it to ->fop_flags and free up another FMODE_* bit.
 > > > 
-> > > But but but,... my patch killed that function. So are you sure it is
-> > > applied ?!
+> > > (1) mem_open() used from proc_mem_operations
+> > > (2) adi_open() used from adi_fops
+> > > (3) drm_open_helper():
+> > >     (3.1) accel_open() used from DRM_ACCEL_FOPS
+> > >     (3.2) drm_open() used from
+> > >     (3.2.1) amdgpu_driver_kms_fops
+> > >     (3.2.2) psb_gem_fops
+> > >     (3.2.3) i915_driver_fops
+> > >     (3.2.4) nouveau_driver_fops
+> > >     (3.2.5) panthor_drm_driver_fops
+> > >     (3.2.6) radeon_driver_kms_fops
+> > >     (3.2.7) tegra_drm_fops
+> > >     (3.2.8) vmwgfx_driver_fops
+> > >     (3.2.9) xe_driver_fops
+> > >     (3.2.10) DRM_GEM_FOPS
+> > >     (3.2.11) DEFINE_DRM_GEM_DMA_FOPS
+> > > (4) struct memdev sets fmode flags based on type of device opened. For
+> > >     devices using struct mem_fops unsigned offset is used.
 > > > 
-> > > Because this sounds like exactly that issue again.
+> > > Mark all these file operations as FOP_UNSIGNED_OFFSET and add asserts
+> > > into the open helper to ensure that the flag is always set.
 > > > 
-> > > Anyway, it appears I had totally forgotten about this issue again due to
-> > > holidays, sorry. Let me stare hard at Thomas' patch and make a 'pretty'
-> > > one that does boot.
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > > 
-> > I've taken tglx's version with a small change (added comment) and boot
-> > tested it and queued it here:
+> > Your patch seems to be missing the panthor_drm_driver_fops changes. I've
+> > discovered that on linux-next your patch triggers a WARN() during my testing.
+> 
+> Yeah, I've added a WARN_ON_ONCE() to catch such cases. Good that it worked.
+> 
 > > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/urgent
-> > 
-> > Could you please double check on both x86_64 and arm64?
+> > I've added the following change to my local tree to fix the warning.
 > 
-> Will send this out on the test farm tonight, thanks for the patch.
-> 
-> > If green by with the build robots and your own testing I'll push this
-> > into tip/locking/urgent to be sent to Linus on Sunday. Hopefully finally
-> > resolving this issue.
-> 
-> Sorry I didn't get to this earlier; I've been on vacation since the end
-> of August.  Now to get to the ~1300 fsdevel emails... ;)
+> I would send a fixes PR soon. Do you want me to send a fix for this
+> along with this or are you taking this upstream soon yourself?
 
-After 3.5 days of continuous pounding on the jump labels I haven't seen
-any complaints from the kernel, so consider commit 6b01e5a8c11611
-("jump_label: Fix static_key_slow_dec() yet again")
+Was your series pulled into v6.12?
 
-Tested-by: Darrick J. Wong <djwong@kernel.org>
+I will send a patch and once reviewed I will push it into the relevant drm-misc branch.
 
-Thanks for your help!
+Best regards,
+Liviu
 
---D
-
-> --D
-> 
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
