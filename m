@@ -1,147 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-29703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35ADF97C7DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 12:19:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5C197C819
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 12:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567D21C264C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 10:19:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3261F2A34D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 10:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB2F19AA41;
-	Thu, 19 Sep 2024 10:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8779A19B5BB;
+	Thu, 19 Sep 2024 10:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="MdW/JwzL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LcPrI6NB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5EA33D8;
-	Thu, 19 Sep 2024 10:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEFA18E04D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 10:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726741189; cv=none; b=XJh8qN+O6sRjICs5KJKSwnpcU1KGTpYKeMPwz7jCt5q11uh8u6PvaE1EkbaIdVbc2t6mA1zFY7hpHpTJ76sNcA14b3XiZv3WFnz72t6MEp30dvbd4vDfT68+3sIZc38FCed/uM1FYUVgmTFoIT6eW8UhQovfN3XnkuLLa2wSTAY=
+	t=1726742463; cv=none; b=nd8SBWgLIUMfU843uOQs0SwYc2SOhU+wOfL7HRYIy5uLe3kmZqSR7HsBx7ODDuyfYn9C3OtYAUdfHbzqMtkU188fqoqmioj6TwH6eawmSIiH+oUJpvNeoEnrnGNZq14NiA1aTkzsZOjEq4vZCJJM89edFVtJomyzOq526h1iOhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726741189; c=relaxed/simple;
-	bh=yPvEhilC8o+QAD2dAw0R/Y7FjbORjvrTTvmE1gFLzow=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Uvoky0nuP1qj7FSQzFoEB2uqcgzxWiIXuIBJh6iFekV2SBle+fZyXzdPhWp1SF9pyAK+9wPLB8uSLF8iTvPVg3ONkGZ6n9K261L3mIgigd+TahHdVNI6h5k/11ScfIPncxxwzAE9ssudWppXg0h1zCj+1eS3+iCP4vyCZ9a/IWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=MdW/JwzL; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1726741181;
-	bh=C8urjnOua0GCJAjrYNro+A9+djxFaRIrbs95gdqoxeU=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=MdW/JwzLtG7jvM2lKNp19UNEGkA++Q85uQ+qZjR6Gwdt1C7rGaR7xP/GOO7e/Ff73
-	 yCRvERCX/lQ8dqkMhIY+NBCdHUAnPm+OuxhsFXaaIWt08iCDrjc450JYCSLAU7m66F
-	 Tj4x6f9YQRiT1AWs3G2qXIx+1o4QNalFGYcwxG2g=
+	s=arc-20240116; t=1726742463; c=relaxed/simple;
+	bh=iSdB96//uOYNetxOBLT39OE78EZTh4JQ1vmKYkFcepo=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=tG9ExKFXcC6rOQDmuxH/tp+CFUG+IwHHvtkTb3tEpRTFgX+n4i7P7r2IJjLVdGoTVaamIKu/fRtPGZ1bnxjXKQyirN+NwUBMTeYqPDbwQiTnN0zPTI9ukEL8i0UpI39+qE3OKn48FS2ddOtCkItHWeM53owtCH8/p/R/mP4VwBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LcPrI6NB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726742459;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=VcvHdf5Pmtgf7/MQNxfdvUPCsOw52+fwh9xXqYx7hPg=;
+	b=LcPrI6NBkh53jbD4oGOHLinRmeJZF2+6CQatQb2HIy7FNwOSJVJEBYFF6XLQaMcD8NNSkr
+	Y3kfVdEubV59JTFywqHfwf8qvuKendV78Q+JSN7dsjuGhYqjJD/bizvl6fYWkYnCQH5Tju
+	V376RdITzJJUGLIf2IN0izBwAFPAWTs=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-77-Wj0fOkpxPSa41HX4PpiQXg-1; Thu,
+ 19 Sep 2024 06:40:56 -0400
+X-MC-Unique: Wj0fOkpxPSa41HX4PpiQXg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC0291935852;
+	Thu, 19 Sep 2024 10:40:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 79398196CAD2;
+	Thu, 19 Sep 2024 10:40:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Marc Dionne <marc.dionne@auristor.com>
+cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix setting of the server responding flag
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
-Date: Thu, 19 Sep 2024 12:19:19 +0200
-Cc: Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>,
- Chris Mason <clm@meta.com>,
- Jens Axboe <axboe@kernel.dk>,
- linux-mm@kvack.org,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Daniel Dao <dqminh@cloudflare.com>,
- regressions@lists.linux.dev,
- regressions@leemhuis.info
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
- <ZuuBs762OrOk58zQ@dread.disaster.area>
- <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
- <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
- <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2614632.1726742450.1@warthog.procyon.org.uk>
+Date: Thu, 19 Sep 2024 11:40:50 +0100
+Message-ID: <2614633.1726742450@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+In afs_wait_for_operation(), we set transcribe the call responded flag to
+the server record that we used after doing the fileserver iteration loop -
+but it's possible to exit the loop having had a response from the server
+that we've discarded (e.g. it returned an abort or we started receiving
+data, but the call didn't complete).
 
+This means that op->server might be NULL, but we don't check that before
+attempting to set the server flag.
 
-> On 19. Sep 2024, at 08:57, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
->=20
-> Yeah, right now Jens is still going to run some more testing, but I
-> think the plan is to just backport
->=20
->  a4864671ca0b ("lib/xarray: introduce a new helper xas_get_order")
->  6758c1128ceb ("mm/filemap: optimize filemap folio adding")
->=20
-> and I think we're at the point where you might as well start testing
-> that if you have the cycles for it. Jens is mostly trying to confirm
-> the root cause, but even without that, I think you running your load
-> with those two changes back-ported is worth it.
->=20
-> (Or even just try running it on plain 6.10 or 6.11, both of which
-> already has those commits)
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+Fixes: 98f9fda2057b ("afs: Fold the afs_addr_cursor struct in")
+---
+ fs/afs/fs_operation.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-I=E2=80=99ve discussed this with my team and we=E2=80=99re preparing to =
-switch all our=20
-non-prod machines as well as those production machines that have shown
-the error before.
-
-This will require a bit of user communication and reboot scheduling.
-Our release prep will be able to roll this out starting early next week
-and the production machines in question around Sept 30.
-
-We would run with 6.11 as our understanding so far is that running the
-most current kernel would generate the most insight and is easier to
-work with for you all?
-
-(Generally we run the mostly vanilla LTS that has surpassed x.y.50+ so
-we might later downgrade to 6.6 when this is fixed.)
-
-> So considering how well the reproducer works for Jens and Chris, my
-> main worry is whether your load might have some _additional_ issue.
->=20
-> Unlikely, but still .. The two commits fix the repproducer, so I think
-> the important thing to make sure is that it really fixes the original
-> issue too.
->=20
-> And yeah, I'd be surprised if it doesn't, but at the same time I would
-> _not_ suggest you try to make your load look more like the case we
-> already know gets fixed.
->=20
-> So yes, it will be "weeks of not seeing crashes" until we'd be
-> _really_ confident it's all the same thing, but I'd rather still have
-> you test that, than test something else than what caused issues
-> originally, if you see what I mean.
-
-Agreed, I=E2=80=99m all onboard with that.
-
-Liebe Gr=C3=BC=C3=9Fe,
-Christian Theune
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
+diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
+index 3546b087e791..f9602c9a3257 100644
+--- a/fs/afs/fs_operation.c
++++ b/fs/afs/fs_operation.c
+@@ -197,13 +197,12 @@ void afs_wait_for_operation(struct afs_operation *op)
+ 			op->call_abort_code = op->call->abort_code;
+ 			op->call_error = op->call->error;
+ 			op->call_responded = op->call->responded;
++			if (op->call_responded)
++				set_bit(AFS_SERVER_FL_RESPONDING, &op->server->flags);
+ 			afs_put_call(op->call);
+ 		}
+ 	}
+ 
+-	if (op->call_responded)
+-		set_bit(AFS_SERVER_FL_RESPONDING, &op->server->flags);
+-
+ 	if (!afs_op_error(op)) {
+ 		_debug("success");
+ 		op->ops->success(op);
 
 
