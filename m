@@ -1,70 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-29711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E68B97CAB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 16:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18E197CABB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 16:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE96B1F219AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 14:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7237E28510D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 14:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BAB19F46C;
-	Thu, 19 Sep 2024 14:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDC819FA72;
+	Thu, 19 Sep 2024 14:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSf3htjv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQjJk0Ko"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B4519B59D;
-	Thu, 19 Sep 2024 14:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD2328EA;
+	Thu, 19 Sep 2024 14:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726754781; cv=none; b=CpyV+7h9CWrAblL9awTGg7wLL1quJveH6IW9vllq3pkitTTlOtiH8yV77gr4IkbXqk/j/fdp9hZyi2NQx73IvCuUplQixwKNykMCHWDcTRUgXUS+sE4suQvkz3tTx0BPhYuNWMnNVZUEmjoTHiwSsHtgVIfrBKgeJsK4y2c6ajk=
+	t=1726754782; cv=none; b=fyHxbB/m0tjDEeu21FTWo3RA4pUUuCN3W22OV2/xPUJ6T9THZ5KSCCgBWCj06fuaNH500Uu30eZDxatRusG31JdAdMB4VJqajTuZD/gXvT6oN9/J76dL4pS0CPlRSAeToGToZwgtL0E9GFzf04JZsZkorGTMNI4kIno4V+RsBcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726754781; c=relaxed/simple;
-	bh=tyPNWJUTxAw4PYTtIiDEFPLbPvzP/omGxXJINUksoaM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eAA1rTnWGfnfSuTMcndpAEFVh9WYjptQJpWxMr3cKDXqRGH+E07YF9/TiOBcMtqnt1MBqWnM6qYCpmAqZg1MCGI4XkSaQX+j8VErkZTgBcAVT2ZrCqpjnY9KVojR7+3B0oXr6r0z0JM0zbP5uMBs+gOB3DgI+29mvDFTKlA6abQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSf3htjv; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1726754782; c=relaxed/simple;
+	bh=O1jhhcUj3IsFFBDDWs8RNVQYM7nR++KsRPrT3QXUJw0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OpcjdTB+t3ZJYxE8YDIVA/RzHTzxJCvjNCW6xBGP3YfwjI2PDzqS2b3UYUxWk64PEakSe3ASrELo5BYmLtS3FuKHA8yq8m0Q2kT9shqcEU2KXM+oov3owinENwjoOZXJUwwx5kBxKk549gq6Ykr2++6sUqtrd6DuLFFCCP4Z+rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQjJk0Ko; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-536a2759f0eso1132822e87.3;
-        Thu, 19 Sep 2024 07:06:19 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d43657255so131945366b.0;
+        Thu, 19 Sep 2024 07:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726754778; x=1727359578; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/nFUu1Lm/TA49yAYnHi6fn//+2AUGCtCFlyf+jhldFE=;
-        b=hSf3htjve2yiN1RyjaMNKNDnY5pgcxwiVZGKNyubhy0hdTdLkJ9K4Zns8EXYxO9uKr
-         VMZ/06QZL3Hq8026ItWfO3v2xmXN6zAlP8lf8mpU8LwYUXoHOn/Iyd1Sg+soBgKVpuj0
-         uE32SxuP+206xF/057zVQROyOW3wb9ogiVLzIwDNxejJW8N4RXL6Sz0f+6erMPND23UW
-         8yAPP0Rob4ftX31LoDDc7nvPwgpUbM+PzcTGan1Lunn8UTep37zp7tvAus+ZmXh4sAEC
-         fiWMh7yui8Tv2fzm8vP++lZeSkj+zYOu1W/auXHbSHMWOosnfFvb9y9OHTqjFHosEktH
-         E5iA==
+        d=gmail.com; s=20230601; t=1726754779; x=1727359579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7zFM/SDc601a7c6eWxDpcFbMja292FpzqrursS83914=;
+        b=OQjJk0Ko0o1uMDttmebiBLDg+eTlDI8YhLQlYuah95DPjsWW0+Ytc9xoezZT6eKtU1
+         3wp9rdekLBKHCSedLNl4gTKeeSUjfSNEvZqqe7usjowM5CpW/Y99Z8HI1fKPJlTVmt9p
+         bdHNfTweT3FT2OQmFBXtZQF2VGH95lSvJQ2RVGAJQIYOZoxXwdwCLaYObe+7gezURL1p
+         TYUgDkAcH94Nh0n9PNmRuzSOSGE019BHryrigZ9BL+54Js49bJ3qJ0ck77X9cOy+naQF
+         zt9GJXOaEk9OmJ70ZMHN6mxWlbY37U1qdjKZf8Zs+9/rGfMBMj5yIy2DhGV4doiw9S+5
+         GGZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726754778; x=1727359578;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/nFUu1Lm/TA49yAYnHi6fn//+2AUGCtCFlyf+jhldFE=;
-        b=oFB7Wj114J3ijh4l3lsQbCAjVMPDijMC6W3wjsh52hbTvDcIvu0DEJhMAaC6PUB7et
-         jz/LIKEyIyiGU9WfMv7wuBQCsCd41ZVPSwpGW2b+yAI9RtiVo66lqkQWeNMHNB1bpG6n
-         UqXwZ43LLChP5svheS3BFKcDJqkoX/IhlsZBzCav7cA0qwRJouPq5DNYgiIVQVejq0Yi
-         al/bw8XTP9lRJUZWpKIB0pzcaZXlkNhmBtlHTqxB8BgvDGomr2/ARZaIpob+rNWzIh84
-         8xvbHhWGqfStplWbxZnWtLbLLZAMND2uTYkdsem4slB2XyDLPJGDRymeviQsxxLORtPQ
-         NOig==
-X-Forwarded-Encrypted: i=1; AJvYcCVEGlKSqxRDwEDQL67E/AFkZ5iZCSY1rNZfTMqzTIdAqcWvKd12viQemRy7R5ueNQ72ZbvGjCSjqUrSGSp7@vger.kernel.org, AJvYcCW2JvrT0oo2ZesB1h52gh1IAUHKYXr+RnagQ/inDj7j+WwgdV9GhJvrcMS6UhnCosadLjM9NFK0uzVd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvOQlNk3lK+8+nOCgYaOEY+PLGC7vWrfcvFt26OsB14XnsnjaH
-	+KAmDS1ysHapBNPIZroIFopCWpTLrACIpqtOt36QRKDj5V+4ukAA
-X-Google-Smtp-Source: AGHT+IHmk9ZJR9CZAp10wp+ZW9Eg17WM9stiQLYTQPsL3sM3WwaiEug03b/U2eBr0HE561XdQSZFJw==
-X-Received: by 2002:a05:6512:ba8:b0:52f:d15f:d46b with SMTP id 2adb3069b0e04-53678fb6de0mr15008070e87.14.1726754777175;
-        Thu, 19 Sep 2024 07:06:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726754779; x=1727359579;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7zFM/SDc601a7c6eWxDpcFbMja292FpzqrursS83914=;
+        b=aWgyqtJBGb+w2YwF9D+WcHGxfodSAG47ADFbSHcAgmEubQlq9+8Zl5FbEwxdSUgSnU
+         zFqpJylNJCjF7N3vT+hHXdP0vuUMLkHsG245tuD+Xsguo2dZDC9zZgpaVk8sNnd8SP0O
+         PZJRrHLArBudhytzqmd6XwWYMmFZWHkbh/JnuNNQldqXIl7hhdtT3B7MPd+IwGQ6A5BI
+         NKV8hsOPrllbRUy9y99vuND6SrBD1bLcVSzXRCxNPMB0+GuSaMTaXKefod2IEPaVdevS
+         VYlFosobRflkhKy0bJ8B0vgJbgXah5dP+OLYT9QQickHPqi7gJFjvp0YzCJFrrql5pVN
+         6VEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSPAISv0C4eU+9s9iPiw4+CyWUFb1ZGRR9V8MyKRGK5JziXwA8quMUZgt4gWRMdSGiHXWRGasCpB6MkJ5p@vger.kernel.org, AJvYcCXaxSoFYxlGNEaBb5tdOzyXcXbUkWXQfPAb8VZuhmf84SYsOc424+VXWDURw1m9ppad1zFhONZIxFBa@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaFaxt0c+pk4Ps2STf0skdwCWSp+FbvgF037528Bri7/YNgigL
+	AjGcnns9wlP9RI7Mn0FvHZCEMGd+reUP6O8TLf4Orfe3FdKngsFo
+X-Google-Smtp-Source: AGHT+IFVW65/x6M/ish4sB3Dy3c2EojrWo1KSmpOdSGAEDTyvANj7b4B+L5C22FNpF1Cti7jToZ5bQ==
+X-Received: by 2002:a17:907:7fa3:b0:a87:31c:c6c4 with SMTP id a640c23a62f3a-a9047ca725amr2221913166b.24.1726754778255;
+        Thu, 19 Sep 2024 07:06:18 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061330c1fsm719503266b.206.2024.09.19.07.06.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061330c1fsm719503266b.206.2024.09.19.07.06.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 07:06:16 -0700 (PDT)
+        Thu, 19 Sep 2024 07:06:17 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Jeff Layton <jlayton@kernel.org>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -72,10 +74,12 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Chuck Lever <chuck.lever@oracle.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-nfs@vger.kernel.org
-Subject: [RFC PATCH 0/2] API for exporting connectable file handles to userspace
-Date: Thu, 19 Sep 2024 16:06:09 +0200
-Message-Id: <20240919140611.1771651-1-amir73il@gmail.com>
+Subject: [RFC PATCH 1/2] fs: name_to_handle_at() support for connectable file handles
+Date: Thu, 19 Sep 2024 16:06:10 +0200
+Message-Id: <20240919140611.1771651-2-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240919140611.1771651-1-amir73il@gmail.com>
+References: <20240919140611.1771651-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,47 +88,89 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Jeff,
+nfsd encodes "connectable" file handles for the subtree_check feature.
+So far, userspace nfs server could not make use of this functionality.
 
-These patches bring the NFS connectable file handles feature to
-userspace servers.
+Introduce a new flag AT_HANDLE_CONNECTABLE to name_to_handle_at(2).
+When used, the encoded file handle is "connectable".
 
-They rely on Christian's and Aleksa's changes recently merged to v6.12.
+Note that decoding a "connectable" file handle with open_by_handle_at(2)
+is not guarandteed to return a "connected" fd (i.e. fd with known path).
+A new opt-in API would be needed to guarantee a "connected" fd.
 
-It may not be the best timing for posting RFC patches in the middle of
-the merge window and during LPC, but at least this gives you a chance to
-gossip about how bad an idea this is with folks ;)
-
-I am aware of the usability implications with connectable file handles,
-which are not consistent throughout the inode lifetime (i.e. when moved
-to another parent), but the nfsd feature does exists and some users (me)
-are interested in exporting this feature to userspace.
-
-The API I chose for encoding conenctable file handles is pretty
-conventional (AT_HANDLE_CONNECTABLE).
-
-The API I chose for decoding a connected fd is a bit whacky, but if
-you let it sink, it could make sense - my use case is to examine an
-object's current path given a previously connectable encoded file handle.
-
-By requesting to open an O_PATH fd, relative to an O_PATH mount_fd,
-I would like to get an error (ESTALE) if the path connecting mount_fd
-to the would-be-opened fd is unknown.
-
-Thought and flames are welcome.
-
-Thanks,
-Amir.
-
-
-Amir Goldstein (2):
-  fs: name_to_handle_at() support for connectable file handles
-  fs: open_by_handle_at() support for decoding connectable file handles
-
- fs/fhandle.c               | 85 +++++++++++++++++++++++++-------------
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/fhandle.c               | 24 ++++++++++++++++++++----
  include/uapi/linux/fcntl.h |  1 +
- 2 files changed, 58 insertions(+), 28 deletions(-)
+ 2 files changed, 21 insertions(+), 4 deletions(-)
 
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 8cb665629f4a..956d9b25d4f7 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -31,6 +31,11 @@ static long do_sys_name_to_handle(const struct path *path,
+ 	if (!exportfs_can_encode_fh(path->dentry->d_sb->s_export_op, fh_flags))
+ 		return -EOPNOTSUPP;
+ 
++	/* Do not encode a connectable handle for a disconnected dentry */
++	if (fh_flags & EXPORT_FH_CONNECTABLE &&
++	    path->dentry->d_flags & DCACHE_DISCONNECTED)
++		return -EACCES;
++
+ 	if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle)))
+ 		return -EFAULT;
+ 
+@@ -45,7 +50,7 @@ static long do_sys_name_to_handle(const struct path *path,
+ 	/* convert handle size to multiple of sizeof(u32) */
+ 	handle_dwords = f_handle.handle_bytes >> 2;
+ 
+-	/* we ask for a non connectable maybe decodeable file handle */
++	/* Encode a possibly decodeable/connectable file handle */
+ 	retval = exportfs_encode_fh(path->dentry,
+ 				    (struct fid *)handle->f_handle,
+ 				    &handle_dwords, fh_flags);
+@@ -109,15 +114,26 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+ {
+ 	struct path path;
+ 	int lookup_flags;
+-	int fh_flags;
++	int fh_flags = 0;
+ 	int err;
+ 
+ 	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
+-		     AT_HANDLE_MNT_ID_UNIQUE))
++		     AT_HANDLE_MNT_ID_UNIQUE | AT_HANDLE_CONNECTABLE))
++		return -EINVAL;
++
++	/*
++	 * AT_HANDLE_FID means there is no intention to decode file handle
++	 * AT_HANDLE_CONNECTABLE means there is an intention to decode a
++	 * connected fd (with known path), so these flags are conflicting.
++	 */
++	if (flag & AT_HANDLE_CONNECTABLE && flag & AT_HANDLE_FID)
+ 		return -EINVAL;
++	else if (flag & AT_HANDLE_FID)
++		fh_flags |= EXPORT_FH_FID;
++	else if (flag & AT_HANDLE_CONNECTABLE)
++		fh_flags |= EXPORT_FH_CONNECTABLE;
+ 
+ 	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
+-	fh_flags = (flag & AT_HANDLE_FID) ? EXPORT_FH_FID : 0;
+ 	if (flag & AT_EMPTY_PATH)
+ 		lookup_flags |= LOOKUP_EMPTY;
+ 	err = user_path_at(dfd, name, lookup_flags, &path);
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 87e2dec79fea..56ff2100e021 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -153,6 +153,7 @@
+ 					   object identity and may not be
+ 					   usable with open_by_handle_at(2). */
+ #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
++#define AT_HANDLE_CONNECTABLE	0x002	/* Request a connectable file handle */
+ 
+ #if defined(__KERNEL__)
+ #define AT_GETATTR_NOSEC	0x80000000
 -- 
 2.34.1
 
