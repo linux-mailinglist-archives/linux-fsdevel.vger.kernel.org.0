@@ -1,152 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-29773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5035C97DAA8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 00:46:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500AA97DAD1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 01:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5A581F2246F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 22:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0AC1C21437
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 23:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE27C18DF63;
-	Fri, 20 Sep 2024 22:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E7018D647;
+	Fri, 20 Sep 2024 23:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="T+M4tN9r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F2F502B1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Sep 2024 22:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A361C693
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Sep 2024 23:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726872382; cv=none; b=pv32DnBcYcN1kQpQZCOh2NiDHbT9Qm76+A9CQGNzTvw6hqIrWd40CPzqnqIsgPNgfvVNlNRJLT98DxF6H6SMrUKR1vYB62T2YVZw8v8kPtx2xRHPTaAdsSLx4z/L2J4dehRRyG7Je7D5rHQB64xdA3iAJqhhKxEuQyLv9PYRn0w=
+	t=1726875691; cv=none; b=BeiDVHCk0G03FG1xe+3qoV/OThs9V+2zaN8OUxraJ47x2nkxp1sHICNVEryDhbw2Oy8IRjtLOZJppvglEQKunqLI6fMx4NYVhYHSLiOx8x4a4IlORBTcoMtaOU0fQyTLS1VxpkFabkPXo7gXvYCecAls1Qor5gD7vfKFyW8DE8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726872382; c=relaxed/simple;
-	bh=GL47SFFcTle11eqGz4D70eZnps0ZNFsyHl8H3Sf95Q8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l6KIuybmaa/5XPGbv4G/u4SUqYxVuzmpG+fke0MQGoriZDlA1SwiY3JR5+7shsLr4NvUkR/xSKvctPgn4taiyTH7DCTotSlubZWKNXUSNwQ5bhwojcdDJsjDyAnJqBxK8q8PxAbhzAuv9NSDASe2fQAC8CubU31a2EXgiDWyQiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f53b1932aso32403825ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Sep 2024 15:46:20 -0700 (PDT)
+	s=arc-20240116; t=1726875691; c=relaxed/simple;
+	bh=BWbr7lgRbE1fc81eCV90O8aJB7YrFzUOlrsqNgjVbO0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mIOqMiyP4yY/UJebiwkZgT3yBsv0p4mq3r5aYl8KBgWzC2NhkPie5/t7LZmAVO5KPGE9vb3QjhdzJwuMr3A8mjCdlLRWpgqKtA4TssJa0pBZGkTnbcEeRfqiZJNVMif/+wNEUBnV/wWEfe4a86eUPRtwexv6MkoyrcW/6klRvw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=T+M4tN9r; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4581f44b9b4so17458491cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Sep 2024 16:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1726875689; x=1727480489; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CS7nHL0YpSltim+yTiE07vu+ADr6RRyFUsXhX72Lm08=;
+        b=T+M4tN9rsIqP1ECpVdZEWRUiGtvH2ad2nApcqaPb4h1HwSTtcgYrWXh1fdKwQBWZJZ
+         K8KkfrFRlyauLJJIKEOXBDfAGXl/2/RJY+8VXMcRLN7wV4I35Q+NRWAjmqQfOL1uVr+a
+         nlP15TPD6Vkhl0xwRiGcj1encmIt3V0y37XduMqUCce2AEb5GPB2V5EOI42xqLnBRH6+
+         SW+yq9Cun2gNUcm8ZvjQOUbyZecVCI0BY/Jx/nX7sqYp9bkh7JjMoM1CefXPPcNzAQmT
+         sOz+ryjaPgoXpmbcpOIOkyyFa/RtH+8j/KmHpXHBkqhMmZ7ewa7nJo/pnrKGY0u6vo8b
+         l1pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726872380; x=1727477180;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1726875689; x=1727480489;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5CWl/oXgHFGuHggsC2LsqL669quZl+i9JwDCfxfEDJM=;
-        b=P9EzuxfQJXJ1ZaCr7VE6ME1L1xwA+hT5yABU5RM0ehm/Uqm5kt1HO6JPiSdKlkPLO7
-         revky5+/7X7kQht7Q+EvAdr/qdxiGmnl0pbha8wM8BfmgCyx4zoYMA7FFhAytz58OJqw
-         1Cr/JZXvR2vLReog9TWzdGfTQvEdxqheQFuEvqgrPlgXL9tk2Zug4TgI4gmC1J1HU5An
-         fXeVigT9hDM/P5QPn+qNxfhpGO5isNTGElqiFkKRYMthEKliQXoP/qR4NTX49jM5W5V3
-         8EYN1VzOUswY8SAndHYpaDuvQEUQxpM2KDqwikAu4EcNvchCC4BK9gigsuRdaCvWLS4l
-         PLAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvcH6jcJaHVRyJBArLUhy5FIr5aVk5mA1Sop7EKjsEV0dsbCM8R+2tgdRL+DQXx2/6yWw1ZnYq7RU/UasZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwReBUn1XZhe8IXUUor+9y/aWSmetvVP96PwLCDgc72O1r6Qux6
-	uw/iBmZsPlbVF1niai/g8Tb5jWlK+T3hM9uzKDBahnRvLxV/43okZbGN7MbaVS0cWjx/xpfqmXe
-	YxBQKxasef8535IE+431j+miakyx55FgGiHfmq3CkxBTmPwDn/3XfRwM=
-X-Google-Smtp-Source: AGHT+IEnCMHwiQXwXo7xUh1hdOL7ScpBpmb0Kq1UHilzjw/OoE4eu0USUk0Mts3GnGbBjvMf/XscQfJE5xhEU8mgE5CFo9chVzYF
+        bh=CS7nHL0YpSltim+yTiE07vu+ADr6RRyFUsXhX72Lm08=;
+        b=hryweEr672sp0iQjcK3fOzdOGc5t2AhqVeEyLAcNog/y1eKyLgxyCbD21s/cB+01+n
+         jhrSR+heUwtm2kPTWRSG7aQL5T5waVpk6kyN16Irac/TAypSplogN7/ToYnbyIgrf0W6
+         1DIvVHKDthSp07T6j+HAvuj/0zh/0hO540BXJ3g3zrXu40twrVxVPlt1QDmO5ceJA+rb
+         iRpeMs1Ok52O+7QaXkTwcuJi3WQIi0CkS6232O9WQjlny74r0tkQtuqEYqYScU2a5EMu
+         rrD88cA/bk8yWayFACs0YSKGZq3/2BrkcBiO/+e0JfaJXdLOI8i+kSd3TXA2eJk+PlIn
+         04Qw==
+X-Gm-Message-State: AOJu0Yw2+QSFjLLD14S53VQs854MGoTK5uAqw7JIowztThGUfpFEZDCK
+	+xixkcyBE8oAQuJayEkwWv6VEhUqtUf4JkgG+ZQdNUKOJ0EXxpcUTGpuFKx1x33w8F/c/e6rOMX
+	sZsjDoWx4Q6jZHuC4rpSbQnls+m+TBr7WK5UxAI8uunnfIFTf8w==
+X-Google-Smtp-Source: AGHT+IG+Ixo9qjTFl2HOI5Xkq6nqqBs1gxciRek3ByfdYFARKrNFjKypDa9WFze+Mti4qvm3q73n7+DnFzd8+TnDO1g=
+X-Received: by 2002:ac8:5d8a:0:b0:458:a70:d9b5 with SMTP id
+ d75a77b69052e-45b204f133amr71475171cf.15.1726875688686; Fri, 20 Sep 2024
+ 16:41:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b26:b0:3a0:9b27:7d52 with SMTP id
- e9e14a558f8ab-3a0c8d39690mr42649655ab.20.1726872380049; Fri, 20 Sep 2024
- 15:46:20 -0700 (PDT)
-Date: Fri, 20 Sep 2024 15:46:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66edfb3c.050a0220.3195df.001a.GAE@google.com>
-Subject: [syzbot] [fs?] KCSAN: data-race in __ep_remove / __fput (5)
-From: syzbot <syzbot+3b6b32dc50537a49bb4a@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Fri, 20 Sep 2024 19:41:17 -0400
+Message-ID: <CAOg9mSSU61P0en4i0aLF=+CiTXkV7LzkB9XGuJ3FTQBrq52BQA@mail.gmail.com>
+Subject: [GIT PULL] orangefs changes for 6.12
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Mike Marshall <hubcap@omnibond.com>, 
+	devel@lists.orangefs.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Hi Linus...
 
-syzbot found the following issue on:
+Sorry I fat-fingered my tag...
 
-HEAD commit:    baeb9a7d8b60 Merge tag 'sched-rt-2024-09-17' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16080700580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b3c9c7ae5fde27e
-dashboard link: https://syzkaller.appspot.com/bug?extid=3b6b32dc50537a49bb4a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b0581f8f76ee/disk-baeb9a7d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/742809660d16/vmlinux-baeb9a7d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/628c7d467d97/bzImage-baeb9a7d.xz
+are available in the Git repository at:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3b6b32dc50537a49bb4a@syzkaller.appspotmail.com
+  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
+tags/for-linux-6.12-ofs1
 
-==================================================================
-BUG: KCSAN: data-race in __ep_remove / __fput
+for you to fetch changes up to 96319dacaf15f666bcba7275953d780e23fe9e75:
 
-write to 0xffff888117ce4690 of 8 bytes by task 3797 on cpu 1:
- __ep_remove+0x3c8/0x450 fs/eventpoll.c:826
- ep_remove_safe fs/eventpoll.c:864 [inline]
- ep_clear_and_put+0x158/0x260 fs/eventpoll.c:900
- ep_eventpoll_release+0x2c/0x40 fs/eventpoll.c:937
- __fput+0x17a/0x6d0 fs/file_table.c:431
- ____fput+0x1c/0x30 fs/file_table.c:459
- task_work_run+0x13a/0x1a0 kernel/task_work.c:228
- get_signal+0xf87/0x1100 kernel/signal.c:2690
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+  orangefs: Constify struct kobj_type (2024-09-06 10:18:17 -0400)
 
-read to 0xffff888117ce4690 of 8 bytes by task 3795 on cpu 0:
- eventpoll_release include/linux/eventpoll.h:45 [inline]
- __fput+0xee/0x6d0 fs/file_table.c:422
- ____fput+0x1c/0x30 fs/file_table.c:459
- task_work_run+0x13a/0x1a0 kernel/task_work.c:228
- get_signal+0xf87/0x1100 kernel/signal.c:2690
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+----------------------------------------------------------------
+orangefs: Constify struct kobj_type
 
-value changed: 0xffff888103209140 -> 0x0000000000000000
+----------------------------------------------------------------
+Huang Xiaojia (1):
+      orangefs: Constify struct kobj_type
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 3795 Comm: syz.3.142 Not tainted 6.11.0-syzkaller-07341-gbaeb9a7d8b60 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+ fs/orangefs/orangefs-sysfs.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
