@@ -1,123 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-29755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2519C97D6FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 16:37:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40BD97D700
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 16:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2689286CCC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 14:37:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377491F2487B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 14:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3903A17C224;
-	Fri, 20 Sep 2024 14:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB3517C9AB;
+	Fri, 20 Sep 2024 14:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEKp4pNy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6C06FB6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Sep 2024 14:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB2617C7A3;
+	Fri, 20 Sep 2024 14:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726843046; cv=none; b=fEJeArQg+POB7mx4pJ81YJnQQvQGoyZ7s1PI3b9FG9rJhXpDNLFSHIfdEksryQl9C0GbYaIKdX7eoAodH3zTzjlP90vs+1FqLN2EeEAMAKc0JshMC4qsivwVLbM5p2udfPxTXzNzk/7L4KFoY4Buaxyq3mhv2BHbO0N9c1tPMUw=
+	t=1726843048; cv=none; b=ULiUDVP3FFwNeD+1SuG8lUYhJFjYJ0PqSIaZ6jXlVeghN4gPV3qJJxEuonoRyeZfZR3T0dGMhyc4YJblO6WVarLtgcz1KtnC2sQE0EdjolLdRO5zwpcPTbqtTEiOEkcCuVcjp2czX0JFiZ+CO53MKpliCwUuCP+i2DZUFGH9Z/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726843046; c=relaxed/simple;
-	bh=CrAnsw/K7t6p8Uyw8TT1OVYMx9oOLfTaCCLAbv6rxZI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ILuDQ+BB/qjDymjGGpRAxfS1JuwHXvWVXf1jk8SmrlF/Tkefj8eGhiC+GQfS0qei/eKzwkJTegel9XX+Q3MbyDKLiiLkix3M0iH7Y87+cckVlWdRl7bAw311UpGZLRDOQnwaR41KQECrOPzVBxCq3nUsiN0OHmhnCzDPNqi6Djs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X9FLr4q0WzySBq;
-	Fri, 20 Sep 2024 22:36:20 +0800 (CST)
-Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
-	by mail.maildlp.com (Postfix) with ESMTPS id 701C5140392;
-	Fri, 20 Sep 2024 22:37:16 +0800 (CST)
-Received: from localhost.localdomain (10.175.112.125) by
- dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 20 Sep 2024 22:37:15 +0800
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
-	<hughd@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox
-	<willy@infradead.org>
-CC: Anna Schumaker <Anna.Schumaker@Netapp.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>, Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH v2] tmpfs: fault in smaller chunks if large folio allocation not allowed
-Date: Fri, 20 Sep 2024 22:36:54 +0800
-Message-ID: <20240920143654.1008756-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20240914140613.2334139-1-wangkefeng.wang@huawei.com>
-References: <20240914140613.2334139-1-wangkefeng.wang@huawei.com>
+	s=arc-20240116; t=1726843048; c=relaxed/simple;
+	bh=4MmuP1VrfpfdaU8HY/8diO4pRICsfkeZDrcLId9WLfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N10RhppkyyNDGTFn/9xdv7m3vT30/3KV+7CkOJodoeZSCtMWT8yAjjJOMsDzyC7zbmhta8FHPLNysdf7nSuQKh/yhYWs9b1QxJBukYZPM1u/Ply2CZYZ3FObAR+Kb98yB258cWbGxIPGYLWMAlGOIk1R7FZbdPVB00eC7DJsAcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEKp4pNy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F38ECC4CECE;
+	Fri, 20 Sep 2024 14:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726843048;
+	bh=4MmuP1VrfpfdaU8HY/8diO4pRICsfkeZDrcLId9WLfw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GEKp4pNy/zIFKL6nxbqcOwK3IaUCNSnQUgRFFFw2MsinqXSpW11807Okxi+Gduasf
+	 nUx+rSvlsR6y48Z6EW36WJhnCeWQBq84Zt1K0nHfe3mTLlTEQpJrk038A5CpNytmke
+	 5rZpaWH9SpycwrrR1/NmcIg6JmItlh2RQzPuEXWMgmpDDGjt6dVJief8spE7SjQ7ur
+	 ZnKzwZ/A4+qSuoozjMptzh+fBhqPQjtTr9dVmiE+nCtO5IhNlw9TUWGtwiZFA8tkb9
+	 sfhLpnPV5djM4YqPxsm343lYhT12izhzb32y7fXn7D1zN876f7XDSr6pigmMOax2g2
+	 tv4P33hZrx1hg==
+Date: Fri, 20 Sep 2024 07:37:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Julian Sun <sunjunchao2870@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, stable@vger.kernel.org
+Subject: Re: [PATCH 3/3] vfs: return -EOVERFLOW in generic_remap_checks()
+ when overflow check fails
+Message-ID: <20240920143727.GB21853@frogsfrogsfrogs>
+References: <20240920123022.215863-1-sunjunchao2870@gmail.com>
+ <Zu2EcEnlW1KJfzzR@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf100008.china.huawei.com (7.185.36.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zu2EcEnlW1KJfzzR@infradead.org>
 
-The tmpfs supports large folio, but there is some configurable options
-to enable/disable large folio allocation, and for huge=within_size,
-large folio only allowabled if it fully within i_size, so there is
-performance issue when perform write without large folio, the issue is
-similar to commit 4e527d5841e2 ("iomap: fault in smaller chunks for
-non-large folio mappings").
+On Fri, Sep 20, 2024 at 07:19:28AM -0700, Christoph Hellwig wrote:
+> On Fri, Sep 20, 2024 at 08:30:22PM +0800, Julian Sun wrote:
+> > Keep it consistent with the handling of the same check within
+> > generic_copy_file_checks().
+> > Also, returning -EOVERFLOW in this case is more appropriate.
+> 
+> Maybe:
+> 
+> Keep the errno value consistent with the equivalent check in
+> generic_copy_file_checks() that returns -EOVERFLOW, which feels like the
+> more appropriate value to return compared to the overly generic -EINVAL.
 
-Fix it by checking whether it allows large folio allocation or not
-before perform write.
+The manpage for clone/dedupe/exchange don't say anything about
+EOVERFLOW, but they do have this to say about EINVAL:
 
-Fixes: 9aac777aaf94 ("filemap: Convert generic_perform_write() to support large folios")
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
-v2:
-- Don't use IOCB flags
+EINVAL
+The  filesystem  does  not  support  reflinking the ranges of the given
+files.
 
- mm/filemap.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Does this errno code change cause any regressions in fstests?
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 3e46ca45e13d..b33f260fa32f 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -4126,13 +4126,28 @@ generic_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
- }
- EXPORT_SYMBOL(generic_file_direct_write);
- 
-+static size_t generic_mapping_max_folio_size(struct address_space *mapping,
-+					     loff_t pos)
-+{
-+	struct inode *inode = mapping->host;
-+	pgoff_t index = pos >> PAGE_SHIFT;
-+
-+	if (!shmem_mapping(mapping))
-+		goto out;
-+
-+	if (!shmem_allowable_huge_orders(inode, NULL, index, 0, false))
-+		return PAGE_SIZE;
-+out:
-+	return mapping_max_folio_size(mapping);
-+}
-+
- ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
- {
- 	struct file *file = iocb->ki_filp;
- 	loff_t pos = iocb->ki_pos;
- 	struct address_space *mapping = file->f_mapping;
- 	const struct address_space_operations *a_ops = mapping->a_ops;
--	size_t chunk = mapping_max_folio_size(mapping);
-+	size_t chunk = generic_mapping_max_folio_size(mapping, pos);
- 	long status = 0;
- 	ssize_t written = 0;
- 
--- 
-2.27.0
+--D
 
+> Otherwise looks good:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
 
