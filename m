@@ -1,251 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-29765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD4097D816
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 18:14:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C36597D82F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 18:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E1EFB23B9F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 16:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352B91C228CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 16:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2033E17DFEC;
-	Fri, 20 Sep 2024 16:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BD617E900;
+	Fri, 20 Sep 2024 16:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fzBsUIsb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZS+Iu+FD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fzBsUIsb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZS+Iu+FD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nj64M9N3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B332817C224;
-	Fri, 20 Sep 2024 16:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CEC14900E;
+	Fri, 20 Sep 2024 16:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726848851; cv=none; b=aBLygUjlCh8SRloUiClqryAVKIqUQzC8XIYP4DDsZuvSPGxOnFoLle6Ltbz9wiKopzxYs+nc966lWwthNu9tIo5aNhDp1zk+D+dRHLDQmoxtWEeJgoiK2aKPEOlr8MTjt4+DrshYcdgX8Kb0DnqvcCqkVG0J/HKyfF7rak+bZvI=
+	t=1726849035; cv=none; b=bdShM1NlAHQMXayx3VBjx3CqwmHu5dxnQsxm6Qf/2watr7QMJZTDf7NtNBndVogefIxnDg2Tzrd/ubrWL6foAMlgtvAAxTDHpATQ4VKIunJn3Q3fVQwQckq1lJEdR4tPHKFeV6oeqhHql3fSIfrWcE1rTP+O/Fea4hspQhEYaIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726848851; c=relaxed/simple;
-	bh=C2SqpYIGpwlVdRW4Q3baOxZijY8WtWEJoENSXs9zodY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olkMBdUeNDkbl4iTDIF8/EXpDQqMOIj3Eo/NrKRhRlKnXTgA1KB4/fc+5Pr4g/lcdv8sbWPYfdAaJtse18vDl6sdi9xGwmSSxWxrWeJcXPxc5+dCHX48owRtnl2SEDVMGsIfDXSRCut1BMOs1avBSDOG7NY8VblJTOA8sbkZGsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fzBsUIsb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZS+Iu+FD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fzBsUIsb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZS+Iu+FD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D35141F7F1;
-	Fri, 20 Sep 2024 16:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726848847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GNVPuZJDLc5AAqlm93Kc3imjJeumAJqKMSO1OJa2d+Q=;
-	b=fzBsUIsbwWRywYTMua2OrXmWRt339qzmLgva8i2BcbYXyYCP2XB1jz0KtpLLMzxjo/MzSq
-	sbvnBXl7FVCE5Jk65v3YC1gIAvtqB9dTRntPcphEN6sJlHwd2ItvPmjrOYSDkTCuoN3bIZ
-	+uXxKrH1euntHkToFppkMnodrbnCmew=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726848847;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GNVPuZJDLc5AAqlm93Kc3imjJeumAJqKMSO1OJa2d+Q=;
-	b=ZS+Iu+FDbkhZtiWJPlBxmm1T8fl1qODK+impvKFfPLwlEd4ihoq1sfZV0M1LHoxFBZbVjW
-	XWWp0hv01wgvDyDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726848847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GNVPuZJDLc5AAqlm93Kc3imjJeumAJqKMSO1OJa2d+Q=;
-	b=fzBsUIsbwWRywYTMua2OrXmWRt339qzmLgva8i2BcbYXyYCP2XB1jz0KtpLLMzxjo/MzSq
-	sbvnBXl7FVCE5Jk65v3YC1gIAvtqB9dTRntPcphEN6sJlHwd2ItvPmjrOYSDkTCuoN3bIZ
-	+uXxKrH1euntHkToFppkMnodrbnCmew=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726848847;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GNVPuZJDLc5AAqlm93Kc3imjJeumAJqKMSO1OJa2d+Q=;
-	b=ZS+Iu+FDbkhZtiWJPlBxmm1T8fl1qODK+impvKFfPLwlEd4ihoq1sfZV0M1LHoxFBZbVjW
-	XWWp0hv01wgvDyDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECBDF13AE1;
-	Fri, 20 Sep 2024 16:14:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PfiIOUmf7WbVawAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 20 Sep 2024 16:14:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E4C28A08BD; Fri, 20 Sep 2024 18:13:51 +0200 (CEST)
-Date: Fri, 20 Sep 2024 18:13:51 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 03/10] ext4: drop ext4_update_disksize_before_punch()
-Message-ID: <20240920161351.ax3oidpt6w6bf3o4@quack3>
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-4-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1726849035; c=relaxed/simple;
+	bh=HuuF0HTQ6WFY+mXiK4pXlbFhB5BaCKiY2zhgmUaNu9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nVCUQAQzPryOZ4d1Xp68fqMY+DwihZAWFnFSPF0sgmoNDATZU5xbP0eXApEKaGxgTNoCq0wgaIy29d1YrbYxmvRURkBaha8RlQQ4T6wJvQnYbM0HssqN/dkZ4A9Mul+oMtT7gCCe5RMEt+b2+PDx+CwemfRAYMXh6c5BKqJiLxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nj64M9N3; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f74e468baeso25709731fa.2;
+        Fri, 20 Sep 2024 09:17:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726849032; x=1727453832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yus/AQyI3rsCXQIWU3lsDABmOqGllelGHD+9XPDtl5E=;
+        b=Nj64M9N3Z8dhcU56U7nQkJQy3kHeowv/X9ouXOMatXyM1sQmFwJsbTgXRJlV0YA7sd
+         3QsDek2bIVqk1yYUMLq+1EhFBeEQo95nL/5S5rDc3d+kWQLAAbC99nNZhi31t/5ARlqg
+         3w5ZVx7RNwi7zkSEzNkxm+O7kPQY8cMLF+jIdin0fLvfI9DuSHtWdRP6lim+JF48X6aM
+         BplcsyimKAChC0tQFMYxIYBMux7bJ/RJxXvzqzbItEP9LGnBEMlCh0U7qp0VWeXmtU+x
+         1cGOjsbivnV6qVKowMA5DLPKi8wJ9CYSXZ3LakszMkHBuLzAq/+VlSTvo4WnyYIA+cZs
+         K4Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726849032; x=1727453832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yus/AQyI3rsCXQIWU3lsDABmOqGllelGHD+9XPDtl5E=;
+        b=aB0K3yNz9CpDGLqVoceyNnGuWuYgCpx4PQHL6aaIYRPlRwxsfl1T0y+Y9cmBZ9vjP/
+         15h4wT+vAOAgApAHMJqq29yi7vckEnwNxAPLCHeBOB1nuh8q5vZVCKGb5SjAzfpQVvMQ
+         NV+PICe9txXxdioIBu05Tcc/MqrV/UoCvCoI5ZvEeYw+nCSo2GSeJpCuFJ7H5KgraLVK
+         +/BGEtYauVA6RNiuo/mytfGAkNTlWR4JonG3eTtqd0pTWcExlNM4sKh1VdkTDEYH6+Sa
+         zc9DgditwEQqKTi6tU5X+RRbDPBtqAzr/oTbOBhDOah1m/n3Ym1BpK6NgMzHyZ34l6ce
+         2czw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrYVmm9iVZdxkUf7IYvyLcMjJt6vK5NIT/tEz9BSLPysIl5vx6lPFor/gab6BWs4cz+6jyv1eR@vger.kernel.org, AJvYcCXZcE+6M3JKzN/sqGZv36XYu50lcbMBthGD9e0mfPP++ln3J52q+2TdT5HDPNBbTfjuEupGx2q6zzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq8JawW6LPt/S6vDTaRtkug4EzME0VteLPHvU4Wv5LRTcJhBZE
+	k6dKxZRTqAUNiN2ZWQ8Dv72yk7yaelbcIlDIzJ7asbyxTj+NIsTPe3NH05yZT2BrRr5jZf37Cqc
+	9trgqX6JMyhvdpzz/fHiMnHIhhjY=
+X-Google-Smtp-Source: AGHT+IHo9BDi/pflKc3O3aaWxueD/163MygMaTuY1VPxsuWcW3rm/uyqrSfTPlmBoWGONGKWDf8+AHlcmIp3wpBErq0=
+X-Received: by 2002:a05:651c:150b:b0:2f1:929b:af03 with SMTP id
+ 38308e7fff4ca-2f7cb329399mr23628841fa.30.1726849031286; Fri, 20 Sep 2024
+ 09:17:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904062925.716856-4-yi.zhang@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240920122621.215397-1-sunjunchao2870@gmail.com> <Zu2FWuonuO97Q6V8@infradead.org>
+In-Reply-To: <Zu2FWuonuO97Q6V8@infradead.org>
+From: Julian Sun <sunjunchao2870@gmail.com>
+Date: Sat, 21 Sep 2024 00:17:00 +0800
+Message-ID: <CAHB1NagASLvnGiwB1kQwG4qEn+U_2SNxMfG+wnZ9C29d-Ov6Sg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] xfs: Do not unshare ranges beyond EOF
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	chandan.babu@oracle.com, djwong@kernel.org, stable@vger.kernel.org, 
+	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com, 
+	Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 04-09-24 14:29:18, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Since we always write back dirty data before zeroing range and punching
-> hole, the delalloc extended file's disksize of should be updated
-> properly when writing back pages, hence we don't need to update file's
-> disksize before discarding page cache in ext4_zero_range() and
-> ext4_punch_hole(), just drop ext4_update_disksize_before_punch().
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Christoph Hellwig <hch@infradead.org> =E4=BA=8E2024=E5=B9=B49=E6=9C=8820=E6=
+=97=A5=E5=91=A8=E4=BA=94 22:23=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Fri, Sep 20, 2024 at 08:26:21PM +0800, Julian Sun wrote:
+> > Attempting to unshare extents beyond EOF will trigger
+> > the need zeroing case, which in turn triggers a warning.
+> > Therefore, let's skip the unshare process if extents are
+> > beyond EOF.
+> >
+> > Reported-and-tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotma=
+il.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D296b1c84b9cbf306e5a0
+> > Fixes: 32a38a499104 ("iomap: use write_begin to read pages to unshare")
+> > Inspired-by: Dave Chinner <david@fromorbit.com>
+> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> > ---
+> >  fs/xfs/xfs_reflink.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> > index 6fde6ec8092f..65509ff6aba0 100644
+> > --- a/fs/xfs/xfs_reflink.c
+> > +++ b/fs/xfs/xfs_reflink.c
+> > @@ -3,6 +3,7 @@
+> >   * Copyright (C) 2016 Oracle.  All Rights Reserved.
+> >   * Author: Darrick J. Wong <darrick.wong@oracle.com>
+> >   */
+> > +#include "linux/fs.h"
+>
+> This really should not be needed (and is the wrong way to include
+> non-local headers anyway).
 
-So when we don't write out before hole punching & company this needs to stay
-in some shape or form. 
+Yes, it was added automatically by vscode... I will recheck the patch
+before sending it.
+>
+> >  #include "xfs.h"
+> >  #include "xfs_fs.h"
+> >  #include "xfs_shared.h"
+> > @@ -1669,6 +1670,9 @@ xfs_reflink_unshare(
+> >
+> >       if (!xfs_is_reflink_inode(ip))
+> >               return 0;
+> > +     /* don't try to unshare any ranges beyond EOF. */
+> > +     if (offset + len > i_size_read(inode))
+> > +             len =3D i_size_read(inode) - offset;
+>
+> So i_size is a byte granularity value, but later on iomap_file_unshare
+> operates on blocks.  If you reduce the value like this here this means
+> we can't ever unshare the last block of a file if the file size is
+> not block aligned, which feels odd.
 
-								Honza
+Got it, will fix it in patch v2. Thanks for your review and explantion.
+>
 
-> ---
->  fs/ext4/ext4.h    |  3 ---
->  fs/ext4/extents.c |  4 ----
->  fs/ext4/inode.c   | 37 +------------------------------------
->  3 files changed, 1 insertion(+), 43 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 08acd152261e..e8d7965f62c4 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3414,9 +3414,6 @@ static inline int ext4_update_inode_size(struct inode *inode, loff_t newsize)
->  	return changed;
->  }
->  
-> -int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
-> -				      loff_t len);
-> -
->  struct ext4_group_info {
->  	unsigned long   bb_state;
->  #ifdef AGGRESSIVE_CHECK
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 19a9b14935b7..d9fccf2970e9 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4637,10 +4637,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
->  			  EXT4_EX_NOCACHE);
->  
-> -		ret = ext4_update_disksize_before_punch(inode, offset, len);
-> -		if (ret)
-> -			goto out_invalidate_lock;
-> -
->  		/* Now release the pages and zero block aligned part of pages */
->  		truncate_pagecache_range(inode, start, end - 1);
->  
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 8af25442d44d..9343ce9f2b01 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3872,37 +3872,6 @@ int ext4_can_truncate(struct inode *inode)
->  	return 0;
->  }
->  
-> -/*
-> - * We have to make sure i_disksize gets properly updated before we truncate
-> - * page cache due to hole punching or zero range. Otherwise i_disksize update
-> - * can get lost as it may have been postponed to submission of writeback but
-> - * that will never happen after we truncate page cache.
-> - */
-> -int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
-> -				      loff_t len)
-> -{
-> -	handle_t *handle;
-> -	int ret;
-> -
-> -	loff_t size = i_size_read(inode);
-> -
-> -	WARN_ON(!inode_is_locked(inode));
-> -	if (offset > size || offset + len < size)
-> -		return 0;
-> -
-> -	if (EXT4_I(inode)->i_disksize >= size)
-> -		return 0;
-> -
-> -	handle = ext4_journal_start(inode, EXT4_HT_MISC, 1);
-> -	if (IS_ERR(handle))
-> -		return PTR_ERR(handle);
-> -	ext4_update_i_disksize(inode, size);
-> -	ret = ext4_mark_inode_dirty(handle, inode);
-> -	ext4_journal_stop(handle);
-> -
-> -	return ret;
-> -}
-> -
->  static void ext4_wait_dax_page(struct inode *inode)
->  {
->  	filemap_invalidate_unlock(inode->i_mapping);
-> @@ -4022,13 +3991,9 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  	last_block_offset = round_down((offset + length), sb->s_blocksize) - 1;
->  
->  	/* Now release the pages and zero block aligned part of pages*/
-> -	if (last_block_offset > first_block_offset) {
-> -		ret = ext4_update_disksize_before_punch(inode, offset, length);
-> -		if (ret)
-> -			goto out_dio;
-> +	if (last_block_offset > first_block_offset)
->  		truncate_pagecache_range(inode, first_block_offset,
->  					 last_block_offset);
-> -	}
->  
->  	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
->  		credits = ext4_writepage_trans_blocks(inode);
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
