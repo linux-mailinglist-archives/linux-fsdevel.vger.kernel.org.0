@@ -1,320 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-29769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD3A97D866
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 18:35:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FFA97D86D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 18:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF122839E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 16:35:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACEA71C219C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 16:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29BD178383;
-	Fri, 20 Sep 2024 16:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1972F178383;
+	Fri, 20 Sep 2024 16:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A0oTSivR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ani3vDmJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A0oTSivR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ani3vDmJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8uJ+bsv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215361E517;
-	Fri, 20 Sep 2024 16:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3203282F7;
+	Fri, 20 Sep 2024 16:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726850148; cv=none; b=a9g+bBGZLSCWQR/K0jRH3H6TlBFXPEXVMrxC1uTcP9Pu0/gfjU8lXyYMi7R65Op29Hpp3gPsMpxJHln/1Hc2PznxKggPwo4pNxaG2h0ly1d2NdgQNzHLE7FUZ3vpXw40keGVzG7bvniohHvlCT1uJkU/VKeMcGFg1i0I8OuKlL4=
+	t=1726850324; cv=none; b=Al8+sXlXc6y1/yVQInrNo5VDCUCyS8N+WiazZ3/t+EbpIDm5o9tXDzpljI+rpn1O3vhF6LNYl7a5xrKZqaLleABHK6mzRJXR3XiS9lnNqcz81qnLa9DJY4uTH8ETuONDrR1QXd6s4KZNzkIxCRf00W3xzrouIUngc4Q99YQtvHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726850148; c=relaxed/simple;
-	bh=U1K3hjNo+2BD1NjE9tQIDGJc9ZUuXNFJ65+wI/ahEHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaCzZpEFs2lPPmW1UQxK3oAIeKjEvTpQIr5TC3SN/1r5/EsoIqhKhwoRhwukKJLF2nzvgcq4BNIH4xFnYFfeNhWMovEgToDt25lFMhi19oPFw+vzpEenYu2lSndDuZ85v1mvvCx/SHmt2aGv8Owj1Lrp2LPP8NJGrCLxR+L6OME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A0oTSivR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ani3vDmJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A0oTSivR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ani3vDmJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E93E1FC81;
-	Fri, 20 Sep 2024 16:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726850144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pwyo6JrHL24YFWmzvjiKIz8myG6NFWRehZfGJj3iGDY=;
-	b=A0oTSivRRZFrKqPlGBdT1Yxb5n7Dop78y7d0HjMj/qjXrFHFHmjQHyXnV48U/4Ly50eiH9
-	CzlFRgQNILLscTO6Lny/Ap+tl/B9y1EXz4eJrkQSp5Kb5MTK6vFr91+ATfote51GxUHa1p
-	3n5xUrjogTmSFJacFFqxamRg3EpI/ao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726850144;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pwyo6JrHL24YFWmzvjiKIz8myG6NFWRehZfGJj3iGDY=;
-	b=ani3vDmJ9Bu+0wHng6zC3TgUG5sVMyqRpliCpZ5Y8mJ3AuTFGpwSdb/BWLlV+QE1l89KFH
-	7aMsQ9IC7wyqgpAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726850144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pwyo6JrHL24YFWmzvjiKIz8myG6NFWRehZfGJj3iGDY=;
-	b=A0oTSivRRZFrKqPlGBdT1Yxb5n7Dop78y7d0HjMj/qjXrFHFHmjQHyXnV48U/4Ly50eiH9
-	CzlFRgQNILLscTO6Lny/Ap+tl/B9y1EXz4eJrkQSp5Kb5MTK6vFr91+ATfote51GxUHa1p
-	3n5xUrjogTmSFJacFFqxamRg3EpI/ao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726850144;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pwyo6JrHL24YFWmzvjiKIz8myG6NFWRehZfGJj3iGDY=;
-	b=ani3vDmJ9Bu+0wHng6zC3TgUG5sVMyqRpliCpZ5Y8mJ3AuTFGpwSdb/BWLlV+QE1l89KFH
-	7aMsQ9IC7wyqgpAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3154D13AA7;
-	Fri, 20 Sep 2024 16:35:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xcwLDF2k7Wa4cQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 20 Sep 2024 16:35:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 16BF1A08BD; Fri, 20 Sep 2024 18:35:08 +0200 (CEST)
-Date: Fri, 20 Sep 2024 18:35:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 06/10] ext4: refactor ext4_collapse_range()
-Message-ID: <20240920163508.7467lwwu6xp3rg2d@quack3>
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-7-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1726850324; c=relaxed/simple;
+	bh=eiy7DjZXb6lrE5FuXfsJqUh1nuRn02DUddzILCrl4Gc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lS1DUDAnoWmZnqrPzuNKncPBsvofabKYj1FCzAis5DWlD2Kdy+FzTk/nGhO/4YSAA8kw5zV6cP0WbO6vka4nmeJhJFSnQcwMJDU7ThQgB2ZjLgFiqtWug6fkQG45G7zvoutJF1ecl2lmM4QBGF7vQ8F6Lr29cquTizXaiNEIeVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8uJ+bsv; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a99e8ad977so158167485a.3;
+        Fri, 20 Sep 2024 09:38:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726850321; x=1727455121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pmKwoK9FOiMc1fei6pC02R6WOikASBkYWDYW8QqhUSU=;
+        b=g8uJ+bsvnOOX0q8rM8HRbIVUHS7GiLgfSLVK3zJ0Z/djP1nRuKrBZOV1tyiqe/sSSW
+         bjsHujfOQGjMt9H+CNen2PKoekOfgGJX4y2xbfJL4TvfVzHbeNl4HuZf2K9rTJUvl2a+
+         SoEoWhyE3s0FMVxNDRxKE6irrG7nFVyEx3nFXKBYDg7h234p0j3Poq6AF60lx+vNXZs2
+         ASOdn4bBzyXrw41aLweZN3sY0z/D+nOhbQelejJg9RKx4GuJKPKKCesXX1AbLpaPbXb7
+         ZduVN4tUK6U9Gl+g+JoyHQx0Hysz3ZeD+EsA2HHZ7Zr10xOUgKTn90VWGCG97a9qDqGl
+         swcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726850321; x=1727455121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pmKwoK9FOiMc1fei6pC02R6WOikASBkYWDYW8QqhUSU=;
+        b=CEkj3X6cNVH83FxOeUDB6RyIQ0nU8uLFLW/MdVxahITWZnyMoR4TsJFw+X1xTehFQA
+         vEwu6K3Y4X3VAfNk5/CwfzKKmjAlnrQlqPUmHmBqpJRrnPzdv5CRZx3zud7ee0clT1N0
+         HjVhX6/ziWRg1YvHhCjmKaSh50TZ0AKPmtGYmrurxlKF/7Lsc0fssPtZOZrdGykRkdQK
+         sVHFSjrQpUHRNn0YK2QvDT88LCac8NIMalkhfm4s82Zlxr6D/b6pRxt+RyFMRlDZqEHL
+         zFhqMg24zvJfxWoiqBpJJCP7aH1u61WZcU4mdYK8yu3zIVyGY95ksA09u/4Y+BXn6x+/
+         QJBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIHFJdG+YQoJrP0nd7fPpLX+AVoKiUukN/33w3KfKRJYXLGLYOL9jMislbHSg2s0SaxDDMgMQ17q8B8eYo@vger.kernel.org, AJvYcCWVyDI/21OM/rnKXaQts1c53ne6QnEf564NKTlYwJWkwMSYo0BK2rMM9NdoiIBphF1yAihTr/QWDbAM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp+OAP381fuMCvLsCf8FZ58pneoETc2nncxkng6MLOf2rx6UOA
+	+K1IniQTfV8FGRU4/kfQNV5RdXSq4Kr+qttjrRd1aRjUh445FA6m9m5vXWVTc3cZ/N7XeteRTt7
+	golvAf0UIabdaslls5wT6v8BXtsE=
+X-Google-Smtp-Source: AGHT+IH+sx9UYhh5+ukSVXvmcmve+gYjewOfhsHS0TyYvuwnLKnS9du/OP9vthJpOcj34opofCOc/vcZ3UVtULwLYJw=
+X-Received: by 2002:a05:620a:4101:b0:79f:148d:f611 with SMTP id
+ af79cd13be357-7acb80d1670mr462718385a.29.1726850320701; Fri, 20 Sep 2024
+ 09:38:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904062925.716856-7-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+References: <20240919140611.1771651-1-amir73il@gmail.com> <20240919140611.1771651-3-amir73il@gmail.com>
+ <784e439e0319bf0c3fbb0b92361a99ee2d78ac9f.camel@kernel.org>
+In-Reply-To: <784e439e0319bf0c3fbb0b92361a99ee2d78ac9f.camel@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 20 Sep 2024 18:38:29 +0200
+Message-ID: <CAOQ4uxjkN2WgT8QJeeZfbRCqrTMED+PtYEXrkDmWjh0iw+PGGw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] fs: open_by_handle_at() support for decoding
+ connectable file handles
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 04-09-24 14:29:21, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Simplify ext4_collapse_range() and make the code style the same as
-> ext4_zero_range() and ext4_punch_hole(), refactor it by a) rename
-> variables, b) drop redundant input parameters checking, move others to
-> under i_rwsem, preparing for later refactor, c) rename the three stale
-> error tags.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Fri, Sep 20, 2024 at 6:02=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> On Thu, 2024-09-19 at 16:06 +0200, Amir Goldstein wrote:
+> > Allow using an O_PATH fd as mount fd argument of open_by_handle_at(2).
+> > This was not allowed before, so we use it to enable a new API for
+> > decoding "connectable" file handles that were created using the
+> > AT_HANDLE_CONNECTABLE flag to name_to_handle_at(2).
+> >
+> > When mount fd is an O_PATH fd and decoding an O_PATH fd is requested,
+> > use that as a hint to try to decode a "connected" fd with known path,
+> > which is accessible (to capable user) from mount fd path.
+> >
+> > Note that this does not check if the path is accessible to the calling
+> > user, just that it is accessible wrt the mount namesapce, so if there
+> > is no "connected" alias, or if parts of the path are hidden in the
+> > mount namespace, open_by_handle_at(2) will return -ESTALE.
+> >
+> > Note that the file handles used to decode a "connected" fd do not have
+> > to be encoded with the AT_HANDLE_CONNECTABLE flag.  Specifically,
+> > directory file handles are always "connectable", regardless of using
+> > the AT_HANDLE_CONNECTABLE flag.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/fhandle.c | 61 +++++++++++++++++++++++++++++++---------------------
+> >  1 file changed, 37 insertions(+), 24 deletions(-)
+> >
+>
+> The mountfd is only used to get a path, so I don't see a problem with
+> allowing that to be an O_PATH fd.
+>
+> I'm less keen on using the fact that mountfd is an O_PATH fd to change
+> the behaviour of open_by_handle_at(). That seems very subtle. Is there
+> a good reason to do it that way instead of just declaring a new AT_*
+> flag for this?
+>
 
-Looks good. Feel free to add:
+Not sure if it is a good reason, but open_by_handle_at() has an O_ flags
+argument, not an AT_ flags argument...
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+If my hack API is not acceptable then we will need to add
+open_by_handle_at2(), with struct open_how argument or something.
 
-								Honza
+>
+> > diff --git a/fs/fhandle.c b/fs/fhandle.c
+> > index 956d9b25d4f7..1fabfb79fd55 100644
+> > --- a/fs/fhandle.c
+> > +++ b/fs/fhandle.c
+> > @@ -146,37 +146,45 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, cons=
+t char __user *, name,
+> >       return err;
+> >  }
+> >
+> > -static int get_path_from_fd(int fd, struct path *root)
+> > +enum handle_to_path_flags {
+> > +     HANDLE_CHECK_PERMS   =3D (1 << 0),
+> > +     HANDLE_CHECK_SUBTREE =3D (1 << 1),
+> > +};
+> > +
+> > +struct handle_to_path_ctx {
+> > +     struct path root;
+> > +     enum handle_to_path_flags flags;
+> > +     unsigned int fh_flags;
+> > +     unsigned int o_flags;
+> > +};
+> > +
+> > +static int get_path_from_fd(int fd, struct handle_to_path_ctx *ctx)
+> >  {
+> >       if (fd =3D=3D AT_FDCWD) {
+> >               struct fs_struct *fs =3D current->fs;
+> >               spin_lock(&fs->lock);
+> > -             *root =3D fs->pwd;
+> > -             path_get(root);
+> > +             ctx->root =3D fs->pwd;
+> > +             path_get(&ctx->root);
+> >               spin_unlock(&fs->lock);
+> >       } else {
+> > -             struct fd f =3D fdget(fd);
+> > +             struct fd f =3D fdget_raw(fd);
+> >               if (!f.file)
+> >                       return -EBADF;
+> > -             *root =3D f.file->f_path;
+> > -             path_get(root);
+> > +             ctx->root =3D f.file->f_path;
+> > +             path_get(&ctx->root);
+> > +             /*
+> > +              * Use O_PATH mount fd and requested O_PATH fd as a hint =
+for
+> > +              * decoding an fd with connected path, that is accessible=
+ from
+> > +              * the mount fd path.
+> > +              */
+> > +             if (ctx->o_flags & O_PATH && f.file->f_mode & FMODE_PATH)
+> > +                     ctx->flags |=3D HANDLE_CHECK_SUBTREE;
+> >               fdput(f);
+> >       }
+> >
+> >       return 0;
+> >  }
+> >
+> > -enum handle_to_path_flags {
+> > -     HANDLE_CHECK_PERMS   =3D (1 << 0),
+> > -     HANDLE_CHECK_SUBTREE =3D (1 << 1),
+> > -};
+> > -
+> > -struct handle_to_path_ctx {
+> > -     struct path root;
+> > -     enum handle_to_path_flags flags;
+> > -     unsigned int fh_flags;
+> > -};
+> > -
+> >  static int vfs_dentry_acceptable(void *context, struct dentry *dentry)
+> >  {
+> >       struct handle_to_path_ctx *ctx =3D context;
+> > @@ -224,7 +232,13 @@ static int vfs_dentry_acceptable(void *context, st=
+ruct dentry *dentry)
+> >
+> >       if (!(ctx->flags & HANDLE_CHECK_SUBTREE) || d =3D=3D root)
+> >               retval =3D 1;
+> > -     WARN_ON_ONCE(d !=3D root && d !=3D root->d_sb->s_root);
+> > +     /*
+> > +      * exportfs_decode_fh_raw() does not call acceptable() callback w=
+ith
+> > +      * a disconnected directory dentry, so we should have reached eit=
+her
+> > +      * mount fd directory or sb root.
+> > +      */
+> > +     if (ctx->fh_flags & EXPORT_FH_DIR_ONLY)
+> > +             WARN_ON_ONCE(d !=3D root && d !=3D root->d_sb->s_root);
+>
+> I don't quite understand why the above change is necessary. Can you
+> explain why we need to limit this only to the case where
+> EXPORT_FH_DIR_ONLY is set?
+>
 
-> ---
->  fs/ext4/extents.c | 80 +++++++++++++++++++++++------------------------
->  1 file changed, 39 insertions(+), 41 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 2fb0c2e303c7..5c0b4d512531 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -5265,43 +5265,35 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  	struct inode *inode = file_inode(file);
->  	struct super_block *sb = inode->i_sb;
->  	struct address_space *mapping = inode->i_mapping;
-> -	ext4_lblk_t punch_start, punch_stop;
-> +	ext4_lblk_t start_lblk, end_lblk;
->  	handle_t *handle;
->  	unsigned int credits;
-> -	loff_t new_size, ioffset;
-> +	loff_t start, new_size;
->  	int ret;
->  
-> -	/*
-> -	 * We need to test this early because xfstests assumes that a
-> -	 * collapse range of (0, 1) will return EOPNOTSUPP if the file
-> -	 * system does not support collapse range.
-> -	 */
-> -	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> -		return -EOPNOTSUPP;
-> +	trace_ext4_collapse_range(inode, offset, len);
->  
-> -	/* Collapse range works only on fs cluster size aligned regions. */
-> -	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb)))
-> -		return -EINVAL;
-> +	inode_lock(inode);
->  
-> -	trace_ext4_collapse_range(inode, offset, len);
-> +	/* Currently just for extent based files */
-> +	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out;
-> +	}
->  
-> -	punch_start = offset >> EXT4_BLOCK_SIZE_BITS(sb);
-> -	punch_stop = (offset + len) >> EXT4_BLOCK_SIZE_BITS(sb);
-> +	/* Collapse range works only on fs cluster size aligned regions. */
-> +	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb))) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
->  
-> -	inode_lock(inode);
->  	/*
->  	 * There is no need to overlap collapse range with EOF, in which case
->  	 * it is effectively a truncate operation
->  	 */
->  	if (offset + len >= inode->i_size) {
->  		ret = -EINVAL;
-> -		goto out_mutex;
-> -	}
-> -
-> -	/* Currently just for extent based files */
-> -	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-> -		ret = -EOPNOTSUPP;
-> -		goto out_mutex;
-> +		goto out;
->  	}
->  
->  	/* Wait for existing dio to complete */
-> @@ -5309,7 +5301,7 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  
->  	ret = file_modified(file);
->  	if (ret)
-> -		goto out_mutex;
-> +		goto out;
->  
->  	/*
->  	 * Prevent page faults from reinstantiating pages we have released from
-> @@ -5319,43 +5311,46 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  
->  	ret = ext4_break_layouts(inode);
->  	if (ret)
-> -		goto out_mmap;
-> +		goto out_invalidate_lock;
->  
->  	/*
->  	 * Need to round down offset to be aligned with page size boundary
->  	 * for page size > block size.
->  	 */
-> -	ioffset = round_down(offset, PAGE_SIZE);
-> +	start = round_down(offset, PAGE_SIZE);
->  	/* Write out all dirty pages */
-> -	ret = filemap_write_and_wait_range(mapping, ioffset, LLONG_MAX);
-> +	ret = filemap_write_and_wait_range(mapping, start, LLONG_MAX);
->  	if (ret)
-> -		goto out_mmap;
-> -	truncate_pagecache(inode, ioffset);
-> +		goto out_invalidate_lock;
-> +	truncate_pagecache(inode, start);
->  
->  	credits = ext4_writepage_trans_blocks(inode);
->  	handle = ext4_journal_start(inode, EXT4_HT_TRUNCATE, credits);
->  	if (IS_ERR(handle)) {
->  		ret = PTR_ERR(handle);
-> -		goto out_mmap;
-> +		goto out_invalidate_lock;
->  	}
->  	ext4_fc_mark_ineligible(sb, EXT4_FC_REASON_FALLOC_RANGE, handle);
->  
-> +	start_lblk = offset >> inode->i_blkbits;
-> +	end_lblk = (offset + len) >> inode->i_blkbits;
-> +
->  	down_write(&EXT4_I(inode)->i_data_sem);
->  	ext4_discard_preallocations(inode);
-> -	ext4_es_remove_extent(inode, punch_start, EXT_MAX_BLOCKS - punch_start);
-> +	ext4_es_remove_extent(inode, start_lblk, EXT_MAX_BLOCKS - start_lblk);
->  
-> -	ret = ext4_ext_remove_space(inode, punch_start, punch_stop - 1);
-> +	ret = ext4_ext_remove_space(inode, start_lblk, end_lblk - 1);
->  	if (ret) {
->  		up_write(&EXT4_I(inode)->i_data_sem);
-> -		goto out_stop;
-> +		goto out_handle;
->  	}
->  	ext4_discard_preallocations(inode);
->  
-> -	ret = ext4_ext_shift_extents(inode, handle, punch_stop,
-> -				     punch_stop - punch_start, SHIFT_LEFT);
-> +	ret = ext4_ext_shift_extents(inode, handle, end_lblk,
-> +				     end_lblk - start_lblk, SHIFT_LEFT);
->  	if (ret) {
->  		up_write(&EXT4_I(inode)->i_data_sem);
-> -		goto out_stop;
-> +		goto out_handle;
->  	}
->  
->  	new_size = inode->i_size - len;
-> @@ -5363,16 +5358,19 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  	EXT4_I(inode)->i_disksize = new_size;
->  
->  	up_write(&EXT4_I(inode)->i_data_sem);
-> -	if (IS_SYNC(inode))
-> -		ext4_handle_sync(handle);
->  	ret = ext4_mark_inode_dirty(handle, inode);
-> +	if (ret)
-> +		goto out_handle;
-> +
->  	ext4_update_inode_fsync_trans(handle, inode, 1);
-> +	if (IS_SYNC(inode))
-> +		ext4_handle_sync(handle);
->  
-> -out_stop:
-> +out_handle:
->  	ext4_journal_stop(handle);
-> -out_mmap:
-> +out_invalidate_lock:
->  	filemap_invalidate_unlock(mapping);
-> -out_mutex:
-> +out:
->  	inode_unlock(inode);
->  	return ret;
->  }
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With EXPORT_FH_DIR_ONLY, exportfs_decode_fh_raw() should
+only be calling acceptable() with a connected directory dentry.
+
+Until this patch, vfs_dentry_acceptable() would only be called with
+EXPORT_FH_DIR_ONLY so the WARN_ON could be unconditional.
+
+After this patch, vfs_dentry_acceptable() could also be called for
+a disconnected non-dir dentry and then it should just fail to
+accept the dentry, but should not WARN_ON.
+
+Thanks for the review!
+Amir.
 
