@@ -1,176 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-29740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A628D97D2E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 10:40:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2AB97D3DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 11:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 339681F258DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 08:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1E681C215FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 09:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39E8811F7;
-	Fri, 20 Sep 2024 08:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7E013C683;
+	Fri, 20 Sep 2024 09:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAUSxmJp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FCaBAyrk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915F17DA73;
-	Fri, 20 Sep 2024 08:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FAB13AA3F;
+	Fri, 20 Sep 2024 09:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726821615; cv=none; b=nChBRatQz3/zmaRL3euXSUoqe2s2+HE2T7NLOhhU4/JcLrVzZO0BUN+U34rgcexVbtI8FjlOgLQj7BtdabenNpV+TR3K0Xuja6GJR+LaLbhLH/MbHkMMp2avtqpnU6qPJyl7vp4qJYeiKqIVzI0TRVBNgHYmSjS+qTwRELsEmSw=
+	t=1726825717; cv=none; b=pdpWwkkvpYCZuXrEAi8RdlCCvFAYIMmP5rHxc9uV3JCwg/M2JO9KSs52j2ttNm59iWQLuZ71jpA71FZxtYuPvk6lhGF25LxnE9q/HxrQ5X32WMI0a9nc9SnYnL68CzPnIBmzPlun3nfEB8Ff81feZDjOmr/6JIjucJQQSn1VHio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726821615; c=relaxed/simple;
-	bh=AxUg6QefsabFNqLGqyUOTnYsid3/1r9Y7B2steSm9jw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZwseQZs9GamTsCkkdVHqHGUniHC9KYzf3gzNE7taNGVeSxJeG4WmnyZi6A+ULg9KA/PuGWtPKppge84lErNgyV1+srK+7Gpv50pil6rqxdHLQy5Al5DFaHDgP7z7nvsakwWgf65cN7OY0DMpyey/r7rxrfk7+DWKi3UEXYLku5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GAUSxmJp; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4582760b79cso9599001cf.2;
-        Fri, 20 Sep 2024 01:40:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726821612; x=1727426412; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9E6JgcYFVVNW1/1pRJtZzP4w4R7pr9GW6NjH0nmdKeo=;
-        b=GAUSxmJpgIYhQJPlONK/T9wRKYL7/dnrpUC504EJxt0a6ld28BFn8ZCwTWwoFV0kBD
-         O8/gzwOGH2gePI2NFaCByCRnJYnndnwiXo4uxaF7e+BymbKH82Hyal87KDoZwmUL4lLc
-         NB5O+Js5lN6fvIV/MaylfZpOgiy6B4zhQqqJ2DNdmZeaMVsOA7fPRCtgZ7ZFUjRMpa6r
-         mhHIse5HyrER2M7UI6QCsj/h+9nmrekMyC4VAb9v5FblIZwhcioAH4oAh4t9wRFjQMI2
-         TLx/aI2/lzywUEh1VvIdvDuvIFZQY/uyDpI36xZANCHLRcU6T6rTZOnmJUH3Nt0rYbMN
-         DUxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726821612; x=1727426412;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9E6JgcYFVVNW1/1pRJtZzP4w4R7pr9GW6NjH0nmdKeo=;
-        b=tZjK3e9VTTJGUrkcKhlMVXuW6JdGkp56FKSb9knm8YgqS1Ehm4HIzvyIQWyDOjJio1
-         5wrVeBFf4eDTF+GvebT/5WswHGoxdj7nq/vCV3gTZwEqRDIjMSGzP1fTurh+1f02p3Bj
-         oB24LfDZX7y1fIDQ0nhG7meZavqonEtXYMXqGRVRWTNYcXGuGUxqx6RdlnzrJIwE8GbY
-         Qq+9BtYnjGbmWVLtNH/dmH72Ciuix2PvuXTS/rPsgHMd8VAbtCdYXAXUHaumhImhnRjI
-         PKNNNWuKvS8UPmosxCJK+EyvKqFN41N4oBkiqOTqoUJHErm3wko08LVpYnMjlclogYLl
-         JHpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXH2vOzyclXoMSca3ul/GNZQfhA2mNCr0/A/On9318XpTtk/m597ApRzpvOkcvL0dRUHRqIUVxgQgeM@vger.kernel.org, AJvYcCXv1KITd++geh97nAAcMDy/okhO+NCY6p1ch7mRPfy55N4Fh+Xczj58+PNXX0UktP7ON9p79NlSFrOI8su1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHyvI6bZHg9YkyCmSCuQ5q70HsVs09ECgtsyBHR6cK9iXT9vJs
-	+qI71YIPgYD7kC2O2ls08XwgviQr2kVwimiIpp+9RNOl0aN4pzt/IxOQEjNR7fLH/VhZ+6KuYXL
-	Y+c96/TXc987YpyysQ1DtMeykoB0=
-X-Google-Smtp-Source: AGHT+IH5d4jmLlXQ/0NAkUKfgjrMIvTe1uTRVX20M4bbYX1s8cyhGRLHvCYeLx6j674oEAu43POQ3CvdGifG+YgxU80=
-X-Received: by 2002:a05:622a:1a1c:b0:458:2b7b:c453 with SMTP id
- d75a77b69052e-45b226afd9emr19153471cf.4.1726821612176; Fri, 20 Sep 2024
- 01:40:12 -0700 (PDT)
+	s=arc-20240116; t=1726825717; c=relaxed/simple;
+	bh=FyxXb8akrb6773SzHwSGzE+XY53OJaKmSY0ZkfUJSqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HIDoFf2iJTYBpxOWvIvSIZlqOCQPS8fZMl94Zfajf1Karl0ArqW8B5OF8XCTNyXmKnmv/Rda5LpMk2f0AcUyh7tAIXrB+/vJzixLPRbJmVOy+t/h+yptoh6p1GR9zrc76Cpz5lABdo7KGJjAHR8lwBx1QH082KAN2rxFJM94fyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FCaBAyrk; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=lqLyI3VFGw/HAwz/TUdgSpSC7qmKkHxnZTuEYK+TROA=; b=FCaBAyrkr2GhMgqDOcDSm15x44
+	nBBZNKK4o9GTMPjz2ia1eI3kls0oviUY0lhgsfF078MVJ95hghGLUWqxjj7IQJmhvgpLIPV/yzCoi
+	UwCVkT0y2oAqMAnQ7V4iCoNNGeAaXGZoVmnKe+e4D8PVlQrF+WlpvAQT5N3EzL52CV2AbsyillS/E
+	G7kqNOAMyp5VI22eqWfpdik8O6y0z3/ezk72CoHzgDI7/QfbfayfpKTVZe42RhbO6Kyg63huHbJyD
+	lrcsuFtw8ntkZDjFpG/+BpKsPH4eBNbbt48coqkUgq60sBcdvKdIMvsGIaTRuXyBxkKozH6oFjq34
+	HASJesyQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33476)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sraF3-0001NG-1b;
+	Fri, 20 Sep 2024 10:47:57 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sraEr-0002Qp-2B;
+	Fri, 20 Sep 2024 10:47:45 +0100
+Date: Fri, 20 Sep 2024 10:47:45 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	kernel test robot <lkp@intel.com>, linux-mm@kvack.org,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+	linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Miaohe Lin <linmiaohe@huawei.com>, Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH V2 7/7] mm: Use pgdp_get() for accessing PGD entries
+Message-ID: <Zu1EwTItDrnkTVTB@shell.armlinux.org.uk>
+References: <20240917073117.1531207-8-anshuman.khandual@arm.com>
+ <202409190310.ViHBRe12-lkp@intel.com>
+ <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
+ <ZuvqpvJ6ht4LCuB+@shell.armlinux.org.uk>
+ <82fa108e-5b15-435a-8b61-6253766c7d88@arm.com>
+ <ZuxZ/QeSdqTHtfmw@shell.armlinux.org.uk>
+ <5bd51798-cb47-4a7b-be40-554b5a821fe7@arm.com>
+ <ZuyIwdnbYcm3ZkkB@shell.armlinux.org.uk>
+ <9e68ffad-8a7e-40d7-a6f3-fa989a834068@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919140611.1771651-1-amir73il@gmail.com> <20240919140611.1771651-2-amir73il@gmail.com>
- <9ab958370d5210394e5e6beaad0e788d71c42834.camel@kernel.org> <1f8eb177bf7aa09db96c32451a14a8cdb7e31649.camel@kernel.org>
-In-Reply-To: <1f8eb177bf7aa09db96c32451a14a8cdb7e31649.camel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 20 Sep 2024 10:40:00 +0200
-Message-ID: <CAOQ4uxj5c13VzDOPyZV0nkd7cqCPfXVqv_sRB5Qvi1da+qGv8Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] fs: name_to_handle_at() support for connectable
- file handles
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e68ffad-8a7e-40d7-a6f3-fa989a834068@arm.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Sep 20, 2024 at 9:36=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Fri, 2024-09-20 at 09:13 +0200, Jeff Layton wrote:
-> > On Thu, 2024-09-19 at 16:06 +0200, Amir Goldstein wrote:
-> > > nfsd encodes "connectable" file handles for the subtree_check feature=
-.
-> > > So far, userspace nfs server could not make use of this functionality=
-.
-> > >
-> > > Introduce a new flag AT_HANDLE_CONNECTABLE to name_to_handle_at(2).
-> > > When used, the encoded file handle is "connectable".
-> > >
-> > > Note that decoding a "connectable" file handle with open_by_handle_at=
-(2)
-> > > is not guarandteed to return a "connected" fd (i.e. fd with known pat=
-h).
-> > > A new opt-in API would be needed to guarantee a "connected" fd.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > ---
-> > >  fs/fhandle.c               | 24 ++++++++++++++++++++----
-> > >  include/uapi/linux/fcntl.h |  1 +
-> > >  2 files changed, 21 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/fs/fhandle.c b/fs/fhandle.c
-> > > index 8cb665629f4a..956d9b25d4f7 100644
-> > > --- a/fs/fhandle.c
-> > > +++ b/fs/fhandle.c
-> > > @@ -31,6 +31,11 @@ static long do_sys_name_to_handle(const struct pat=
-h *path,
-> > >     if (!exportfs_can_encode_fh(path->dentry->d_sb->s_export_op, fh_f=
-lags))
-> > >             return -EOPNOTSUPP;
-> > >
-> > > +   /* Do not encode a connectable handle for a disconnected dentry *=
-/
-> > > +   if (fh_flags & EXPORT_FH_CONNECTABLE &&
-> > > +       path->dentry->d_flags & DCACHE_DISCONNECTED)
-> > > +           return -EACCES;
-> > > +
-> >
-> > I'm not sure about EACCES here. That implies that if you had the right
-> > creds then this would work. DCACHE_DISCONNECTED has nothing to do with
-> > permissions though. Maybe -EINVAL instead since getting a disconnected
-> > dentry here would imply that @path is somehow bogus?
-> >
-> > Given how this function is used, will we ever see a disconnected dentry
-> > here? The path comes from userland in this case, so I don't think it
-> > can ever be disconnected. Maybe a WARN_ON_ONCE or pr_warn would be
-> > appropriate in this case too?
-> >
+On Fri, Sep 20, 2024 at 08:57:23AM +0200, Ryan Roberts wrote:
+> On 19/09/2024 21:25, Russell King (Oracle) wrote:
+> > On Thu, Sep 19, 2024 at 07:49:09PM +0200, Ryan Roberts wrote:
+> >> On 19/09/2024 18:06, Russell King (Oracle) wrote:
+> >>> On Thu, Sep 19, 2024 at 05:48:58PM +0200, Ryan Roberts wrote:
+> >>>>> 32-bit arm uses, in some circumstances, an array because each level 1
+> >>>>> page table entry is actually two descriptors. It needs to be this way
+> >>>>> because each level 2 table pointed to by each level 1 entry has 256
+> >>>>> entries, meaning it only occupies 1024 bytes in a 4096 byte page.
+> >>>>>
+> >>>>> In order to cut down on the wastage, treat the level 1 page table as
+> >>>>> groups of two entries, which point to two consecutive 1024 byte tables
+> >>>>> in the level 2 page.
+> >>>>>
+> >>>>> The level 2 entry isn't suitable for the kernel's use cases (there are
+> >>>>> no bits to represent accessed/dirty and other important stuff that the
+> >>>>> Linux MM wants) so we maintain the hardware page tables and a separate
+> >>>>> set that Linux uses in the same page. Again, the software tables are
+> >>>>> consecutive, so from Linux's perspective, the level 2 page tables
+> >>>>> have 512 entries in them and occupy one full page.
+> >>>>>
+> >>>>> This is documented in arch/arm/include/asm/pgtable-2level.h
+> >>>>>
+> >>>>> However, what this means is that from the software perspective, the
+> >>>>> level 1 page table descriptors are an array of two entries, both of
+> >>>>> which need to be setup when creating a level 2 page table, but only
+> >>>>> the first one should ever be dereferenced when walking the tables,
+> >>>>> otherwise the code that walks the second level of page table entries
+> >>>>> will walk off the end of the software table into the actual hardware
+> >>>>> descriptors.
+> >>>>>
+> >>>>> I've no idea what the idea is behind introducing pgd_get() and what
+> >>>>> it's semantics are, so I can't comment further.
+> >>>>
+> >>>> The helper is intended to read the value of the entry pointed to by the passed
+> >>>> in pointer. And it shoiuld be read in a "single copy atomic" manner, meaning no
+> >>>> tearing. Further, the PTL is expected to be held when calling the getter. If the
+> >>>> HW can write to the entry such that its racing with the lock holder (i.e. HW
+> >>>> update of access/dirty) then READ_ONCE() should be suitable for most
+> >>>> architectures. If there is no possibility of racing (because HW doesn't write to
+> >>>> the entry), then a simple dereference would be sufficient, I think (which is
+> >>>> what the core code was already doing in most cases).
+> >>>
+> >>> The core code should be making no access to the PGD entries on 32-bit
+> >>> ARM since the PGD level does not exist. Writes are done at PMD level
+> >>> in arch code. Reads are done by core code at PMD level.
+> >>>
+> >>> It feels to me like pgd_get() just doesn't fit the model to which 32-bit
+> >>> ARM was designed to use decades ago, so I want full details about what
+> >>> pgd_get() is going to be used for and how it is going to be used,
+> >>> because I feel completely in the dark over this new development. I fear
+> >>> that someone hasn't understood the Linux page table model if they're
+> >>> wanting to access stuff at levels that effectively "aren't implemented"
+> >>> in the architecture specific kernel model of the page tables.
+> >>
+> >> This change isn't as big and scary as I think you fear.
+> > 
+> > The situation is as I state above. Core code must _not_ dereference pgd
+> > pointers on 32-bit ARM.
+> 
+> Let's just rewind a bit. This thread exists because the kernel test robot failed
+> to compile pgd_none_or_clear_bad() (a core-mm function) for the arm architecture
+> after Anshuman changed the direct pgd dereference to pgdp_get(). The reason
+> compilation failed is because arm defines its own pgdp_get() override, but it is
+> broken (there is a typo).
 
-Yes, I agree (with some additions below...)
+Let's not rewind, because had you fully read and digested my reply, you
+would have seen why this isn't a problem... but let me spell it out.
 
->
-> Oh, I guess you can get a disconnected dentry here.
->
-> You could call open_by_handle_at() for a directory fh, and then pass
-> that into name_to_handle_at().
+> 
+> Code before Anshuman's change:
+> 
+> static inline int pgd_none_or_clear_bad(pgd_t *pgd)
+> {
+> 	if (pgd_none(*pgd))
+> 		return 1;
+> 	if (unlikely(pgd_bad(*pgd))) {
+> 		pgd_clear_bad(pgd);
+> 		return 1;
+> 	}
+> 	return 0;
+> }
 
-Aha, but a disconnected directory dentry is fine, because it is
-still "connectable", so we should not fail on it.
+This isn't a problem as the code stands. While there is a dereference
+in C, that dereference is a simple struct copy, something that we use
+everywhere in the kernel. However, that is as far as it goes, because
+neither pgd_none() and pgd_bad() make use of their argument, and thus
+the compiler will optimise it away, resulting in no actual access to
+the page tables - _as_ _intended_.
 
->
-> Either way, this API scares me since it seems like it can just randomly
-> fail, depending on the state of the dcache. That's the worst-case
-> scenario for an API.
->
-> If you want to go through with this, you'll need to carefully document
-> what's required to make this work properly, as this has some
-> significant footguns.
->
+If these are going to be converted to pgd_get(), then we need pgd_get()
+to _also_ be optimised away, and if e.g. this is the only place that
+pgd_get() is going to be used, the suggestion I made in my previous
+email is entirely reasonable, since we know that the result of pgd_get()
+will not actually be used.
 
-Agreed.
+> As an aside, the kernel also dereferences p4d, pud, pmd and pte pointers in
+> various circumstances.
 
-The correct statement is that we should not get a disconnected
-non-dir dentry, as long as we do not allow AT_EMPTY_PATH,
-so if we return EINVAL for the flag combination
-AT_EMPTY_PATH | AT_HANDLE_CONNECTABLE
-we should be back to a deterministic API.
+I already covered these in my previous reply.
 
-As you wrote in the first email, we should never expect to
-resolve a path to a dentry that is not "connectable". Right?
+> And other changes in this series are also replacing those
+> direct dereferences with calls to similar helpers. The fact that these are all
+> folded (by a custom arm implementation if I've understood the below correctly)
+> just means that each dereference is returning what you would call the pmd from
+> the HW perspective, I think?
 
-Thanks,
-Amir.
+It'll "return" the first of each pair of level-1 page table entries,
+which is pgd[0] or *p4d, *pud, *pmd - but all of these except *pmd
+need to be optimised away, so throwing lots of READ_ONCE() around
+this code without considering this is certainly the wrong approach.
+
+> >> The core-mm today
+> >> dereferences pgd pointers (and p4d, pud, pmd pointers) directly in its code. See
+> >> follow_pfnmap_start(),
+> > 
+> > Doesn't seem to exist at least not in 6.11.
+> 
+> Appologies, I'm on mm-unstable and that isn't upstream yet. See follow_pte() in
+> v6.11 or __apply_to_page_range(), or pgd_none_or_clear_bad() as per above.
+
+Looking at follow_pte(), it's not a problem.
+
+I think we wouldn't be having this conversation before:
+
+commit a32618d28dbe6e9bf8ec508ccbc3561a7d7d32f0
+Author: Russell King <rmk+kernel@arm.linux.org.uk>
+Date:   Tue Nov 22 17:30:28 2011 +0000
+
+    ARM: pgtable: switch to use pgtable-nopud.h
+
+where:
+-#define pgd_none(pgd)          (0)
+-#define pgd_bad(pgd)           (0)
+
+existed before this commit - and thus the dereference in things like:
+
+	pgd_none(*pgd)
+
+wouldn't even be visible to beyond the preprocessor step.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
