@@ -1,115 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-29728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCDA797CF6A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 01:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C5497CFA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 02:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4935728490C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2024 23:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB731F22E53
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 00:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABB619A28F;
-	Thu, 19 Sep 2024 23:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACF5B660;
+	Fri, 20 Sep 2024 00:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="zzZUsRx5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E982868B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 23:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D200779D2
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Sep 2024 00:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726790167; cv=none; b=DV9/8Lz5hByg+XHyAJRqFAFgcjPwMKTWjTI2vznEU3YjzIxUHD89FmogbPmnsUoDVK3XAyLzHRkiacmjTwfNt8kzYmh2ZGMnWTevBAmA2+eNv6E5jFiM1YofXe/RYWCPS76rd158wv7eKMt87OolXhArk/YmGcUNlEJEkzNUdCM=
+	t=1726791960; cv=none; b=u7lZ2xlkHs5f6yIBq/PbaMEu3G6EB1sTT3wVDT3I4TlNADmwu3XjUOZ0QrkafF/yiUahQjAFEBCQm7q8TulZS6MqJJ13MF/yiK38hymArsB9GWzuxQlKQg5AlWphoVuxAM+w0AT6dtGY6QBafIyCo/+7p3rjdZY0mDP0Nxe4d28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726790167; c=relaxed/simple;
-	bh=sRTCmP1M02Bpf558vUr/tF5q1Lx6824vi1YxbTqk8l0=;
+	s=arc-20240116; t=1726791960; c=relaxed/simple;
+	bh=z2dt4nzsJjknC2v3KkVTQJwIm+oqEF2Bl8t5YAKAkis=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mi6WkEoMcRBo78FO92ClxEHJ0VoogPwEDDR5n8y3Q9tWZ2kfAgMANYVcIm4IszGuVEBkFSOtvhRP04X163fm4EPHiWDGiYQP4nR0sKgkker9bZr5+/KziV730zTIMX+pD1vDTskKguZN9AlguZ2T1crE2Y83DnmwwX91AqiH4kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85844FEC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 16:56:33 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C76993F71A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 16:56:03 -0700 (PDT)
-Date: Fri, 20 Sep 2024 00:55:57 +0100
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: move FMODE_UNSIGNED_OFFSET to fop_flags
-Message-ID: <Zuy6Daji_OFn8NFf@e110455-lin.cambridge.arm.com>
-References: <ZurYXipwj7jv4gy_@e110455-lin.cambridge.arm.com>
- <20240919-kollabieren-seeweg-f780e1d5e9f8@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=apjPnHgUEPgPAUlIMd8+IfXQP3BbMKthuPau6PqASeCRI01Ut8RQJZNT0dgJmGFFiflx3jPnzNAvMtt+RKhUEOz0swttolmKa8l6zSGyC8losiekTl1GYQ/Xyz++Tmyxl+WczRDElqVQxNSK6ODAov9VxXdSmUH5KSq6MaxGHzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=zzZUsRx5; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-718e3c98b5aso1100604b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2024 17:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726791958; x=1727396758; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n0rQNifIodJ4c+JfI7/BChV1HaxjDpxyzVyQAeW2s7s=;
+        b=zzZUsRx5bw/+eCH4mu0k8yc5ZnJwLvThLAg/ifkGArpw31FwKhsMAraRymguwhuuaR
+         BRFkjq9NnnxZx2HK4gUR0j/oK/LaDBHD5h7Wv4HU9qOOaOa51YuziXIjt15EqwhyAs0I
+         Lthg7NjVLpuzxBtmZQsDWr1LMxlzTRZsiczsx+o49ZpiPCvxbxIWmWXo0Zx5tk92+HH+
+         mT9uHtEui900UH+gR1ZZhto/cfvuSpJnS4ET43PK0ho9a9Av98Gci8ng9XP2ryBuaqBK
+         GfZD0RaB8PGZgWIw3xeV29jZC4KCytzcebZQR1/A+tQ/PGpFzNToeyAl5Jk79faNCBmx
+         OyvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726791958; x=1727396758;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n0rQNifIodJ4c+JfI7/BChV1HaxjDpxyzVyQAeW2s7s=;
+        b=rDpqGG87ssYy7oitmbgHWihOFRUyIRBKSgZGm2X997bozpm/F+JnZ5YekoooX+O/AG
+         uhTVuHwlTYX5HlR3yJPBntIjSGJHrWe6frbEHn5t5HXN1oYAT8F1HlJBITiRl2/wjd43
+         CGZGPxFp1DW6q7+jhCRmJF8tAjOsmREQj0A8Ous74chPJfR2WX1Of5nm90g1sZKebc2A
+         eAh//hF2iVDhRvI2pip0uH5CCOkSxlMZxzmHNiXWqWMkIu/IX58NPJXdA9fDLmIVlzWf
+         DV4Thqc9zmD9SB90r+aB0S/J+o5YR5fe1qV0Y1s1dRlwkJlmrAzYZW5z3+ekOKFr5fIr
+         HEvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwcl8UxsOC6i650HnSgbe5w3BlhPvYxfKWz9jai1uuRx41TNX+Ta3xeKscoeJ/q62n2lsyUBQmpI/0QHL5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb0SqW5GfhOuJkinftYDeyRHdIIXWz0VVNy0tknm8NkAgZKDGl
+	G4S8IBd+acaOcQCGNhcMx6WMVZEPPQvV5ubOJU2hX+jjO6HuBKE6arys/GZx7SU=
+X-Google-Smtp-Source: AGHT+IG+KYpzAqAx/8j01hP1kK9twzYmYzsP1hZP+XPr4BEacEJmI2i/FgTilyCixlxXOdzY0dDrHQ==
+X-Received: by 2002:a05:6a00:cc4:b0:714:157a:bfc7 with SMTP id d2e1a72fcca58-7199cd8c263mr1268483b3a.15.1726791957941;
+        Thu, 19 Sep 2024 17:25:57 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b7aed3sm8881794b3a.114.2024.09.19.17.25.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 17:25:57 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1srRT8-007SKz-0Z;
+	Fri, 20 Sep 2024 10:25:54 +1000
+Date: Fri, 20 Sep 2024 10:25:54 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 06/12] xfs: factor out a xfs_file_write_zero_eof helper
+Message-ID: <ZuzBElgA34H7FAEl@dread.disaster.area>
+References: <20240910043949.3481298-1-hch@lst.de>
+ <20240910043949.3481298-7-hch@lst.de>
+ <20240917211419.GC182177@frogsfrogsfrogs>
+ <20240918050936.GA31238@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240919-kollabieren-seeweg-f780e1d5e9f8@brauner>
+In-Reply-To: <20240918050936.GA31238@lst.de>
 
-On Thu, Sep 19, 2024 at 03:03:19PM +0200, Christian Brauner wrote:
-> On Wed, Sep 18, 2024 at 02:40:46PM GMT, Liviu Dudau wrote:
-> > Hi Christian,
-> > 
-> > > This is another flag that is statically set and doesn't need to use up
-> > > an FMODE_* bit. Move it to ->fop_flags and free up another FMODE_* bit.
-> > > 
-> > > (1) mem_open() used from proc_mem_operations
-> > > (2) adi_open() used from adi_fops
-> > > (3) drm_open_helper():
-> > >     (3.1) accel_open() used from DRM_ACCEL_FOPS
-> > >     (3.2) drm_open() used from
-> > >     (3.2.1) amdgpu_driver_kms_fops
-> > >     (3.2.2) psb_gem_fops
-> > >     (3.2.3) i915_driver_fops
-> > >     (3.2.4) nouveau_driver_fops
-> > >     (3.2.5) panthor_drm_driver_fops
-> > >     (3.2.6) radeon_driver_kms_fops
-> > >     (3.2.7) tegra_drm_fops
-> > >     (3.2.8) vmwgfx_driver_fops
-> > >     (3.2.9) xe_driver_fops
-> > >     (3.2.10) DRM_GEM_FOPS
-> > >     (3.2.11) DEFINE_DRM_GEM_DMA_FOPS
-> > > (4) struct memdev sets fmode flags based on type of device opened. For
-> > >     devices using struct mem_fops unsigned offset is used.
-> > > 
-> > > Mark all these file operations as FOP_UNSIGNED_OFFSET and add asserts
-> > > into the open helper to ensure that the flag is always set.
-> > > 
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > 
-> > Your patch seems to be missing the panthor_drm_driver_fops changes. I've
-> > discovered that on linux-next your patch triggers a WARN() during my testing.
+On Wed, Sep 18, 2024 at 07:09:36AM +0200, Christoph Hellwig wrote:
+> On Tue, Sep 17, 2024 at 02:14:19PM -0700, Darrick J. Wong wrote:
+> > I gotta say, I'm not a big fan of the "return 1 to loop again" behavior.
+> > Can you add a comment at the top stating that this is a possible return
+> > value and why it gets returned?
 > 
-> Yeah, I've added a WARN_ON_ONCE() to catch such cases. Good that it worked.
-> 
-> > 
-> > I've added the following change to my local tree to fix the warning.
-> 
-> I would send a fixes PR soon. Do you want me to send a fix for this
-> along with this or are you taking this upstream soon yourself?
+> Sure.  If you have a better idea I'm all ears, too.
 
-Was your series pulled into v6.12?
+I would have thought a -EBUSY error would have been appropriate.
+i.e. there was an extending write in progress (busy doing IO) so we
+couldn't perform the zeroing operation and hence the write needs to
+be restarted now the IO has been drained...
 
-I will send a patch and once reviewed I will push it into the relevant drm-misc branch.
-
-Best regards,
-Liviu
-
+-Dave.
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Dave Chinner
+david@fromorbit.com
 
