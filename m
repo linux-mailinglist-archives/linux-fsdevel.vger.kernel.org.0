@@ -1,122 +1,251 @@
-Return-Path: <linux-fsdevel+bounces-29764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707C297D80C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 18:10:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CD4097D816
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 18:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36836283098
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 16:10:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E1EFB23B9F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 16:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3757617DE06;
-	Fri, 20 Sep 2024 16:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2033E17DFEC;
+	Fri, 20 Sep 2024 16:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3pylaOe"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fzBsUIsb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZS+Iu+FD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fzBsUIsb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZS+Iu+FD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C51B11CA9;
-	Fri, 20 Sep 2024 16:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B332817C224;
+	Fri, 20 Sep 2024 16:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726848624; cv=none; b=Qd4PMtQ06md1L/x+85++7tITufffGZHN4LeETgScYCI4k9cDJo24RL8+epxGqvaTHaF5qAs9/6GU0apStvopJ5f6/VXmreiQ8rWPBKntE176YzDfpPHlDhkxDVo5LUtDkGn5gVn0Yd6NzlAZZ4JbRLgWBxCv7OsJaeM+VsC5NII=
+	t=1726848851; cv=none; b=aBLygUjlCh8SRloUiClqryAVKIqUQzC8XIYP4DDsZuvSPGxOnFoLle6Ltbz9wiKopzxYs+nc966lWwthNu9tIo5aNhDp1zk+D+dRHLDQmoxtWEeJgoiK2aKPEOlr8MTjt4+DrshYcdgX8Kb0DnqvcCqkVG0J/HKyfF7rak+bZvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726848624; c=relaxed/simple;
-	bh=RWEMaJGaXsfxEE0C0lo9T9ZyPmvAAJNaokH0TQxxmw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lDvvdFIzlrMnnPqqY5A6as1jFV8rCONSGrbqy7jjadnoOa2Jawo+ftPOFsdHVl/HUkjqweNoLqxP7yfNj0F8cdOqVxdqGGxoQ6c1+t4bNsvMSxmD6qDn1piz7J4X62lJdQBAo/hhLnUoIhsSMUp6lkl1xGrnPW43kjcZ5nPMb0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3pylaOe; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c25f01879fso2690900a12.1;
-        Fri, 20 Sep 2024 09:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726848621; x=1727453421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cr7XGOcXUziTvyQlX8y4MaSV3P+QXr0/0cPRJVwRwZw=;
-        b=R3pylaOeye/T9XNN9JS7dUvXb/NhqFgdGBSTGZ+GJaNxw/Q1wr1d+TYiZY3Huoft/F
-         x64731mQjWt5cAcLb2U5INz4KHwQzZ/C2LOz/0ZxeeSwpWI9InFEg4a8BZ0u41ejVdkJ
-         NshTb85y4rNfooePpz/V0Z406PPArN2ma5WooRuwTV1ZOfTE2iDNZTS8q89dMQImAFFu
-         xs5oBBFQjYc2mM9leAIjUFyn9YkPGVK3RO0KTpRK7p3FMJMlAszKqeJzM/HR5MrxVC9K
-         1Q7MkMzMw2V4kcBNArUsQRtLS0lhaEYgORS2GiO+0CzKSluVcYE0gYbUt3FrAJ4cbR0S
-         Ddcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726848621; x=1727453421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cr7XGOcXUziTvyQlX8y4MaSV3P+QXr0/0cPRJVwRwZw=;
-        b=NituikGtLZnrSDVUzvcKtp/ZlJv3iPqbv54uirG7qAFKbyGd7oCckQClJRBM2PunDO
-         cSZEmQaxbvBGOGdre953GxEZlgQxj/WDL6CEvYfnmO3uv+cS97Z/e6WcrGWMesQ0yFrW
-         TCnmjJtgOfR/5icfEkTzhWP60D1KC1YSIeOwvrWweQ5Nf1XVakhQOUM0M4TVgzo20B+7
-         HOu6W1XXa/xhdkhtpPuC5lUFyHaEU+BAaYoP/Z9EReTtQPHL3qrwKuxuCu1vJtJgFPXG
-         ggbRCFyyiM+6GEPmLDaaYEgoDJVQC4v540i1NVTjmkt9+P1vv5fDZVhgy1v3IgSB+KFR
-         aptg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7QSmX0YvKch4vwkWxTIwQ07AQ2kzO8zLnOVYtphSto3w9ovmsat2uJVTJm/+vJPOF9+T455asUeeU@vger.kernel.org, AJvYcCUCJd1ozGQ1UhAkGhfGyuZfepK4auhdBbANKo3mw5Jvjf7Gkipt1S50o3JXABirUc8WoHIwOVqH@vger.kernel.org, AJvYcCVVYgUDf3SlgZ1hZ2Fc1BM44y5nQWg634mv6iEsBEs6XPQut3VePqEgsE/+TcEQYH4dI+pKkkErlkz91rEn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9H5geGu69a5JRF5g/07BqsNllXUVNmoAjtxm7YED7JRk0Qigu
-	x2vSXpQQNvHdzJhN2jVs4jPP+oz0rVtCk7nQb6XY9m5OJCOhVxt65vplK0Tskvy7siCLx/oyc+B
-	C2cYWKWIaJ+bpJtLv3iusa1lPe0o=
-X-Google-Smtp-Source: AGHT+IGB1VoPgmOEpq+79L6y06ORo5qnfiSPcOleFXvXlBXrfzDDPKj98YPlqM00JgvUC/DGeu1v7WP7Lhtg0Vobn2o=
-X-Received: by 2002:a05:6402:3588:b0:5c3:cc6d:19eb with SMTP id
- 4fb4d7f45d1cf-5c464a384b5mr2119053a12.2.1726848621078; Fri, 20 Sep 2024
- 09:10:21 -0700 (PDT)
+	s=arc-20240116; t=1726848851; c=relaxed/simple;
+	bh=C2SqpYIGpwlVdRW4Q3baOxZijY8WtWEJoENSXs9zodY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=olkMBdUeNDkbl4iTDIF8/EXpDQqMOIj3Eo/NrKRhRlKnXTgA1KB4/fc+5Pr4g/lcdv8sbWPYfdAaJtse18vDl6sdi9xGwmSSxWxrWeJcXPxc5+dCHX48owRtnl2SEDVMGsIfDXSRCut1BMOs1avBSDOG7NY8VblJTOA8sbkZGsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fzBsUIsb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZS+Iu+FD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fzBsUIsb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZS+Iu+FD; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D35141F7F1;
+	Fri, 20 Sep 2024 16:14:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726848847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNVPuZJDLc5AAqlm93Kc3imjJeumAJqKMSO1OJa2d+Q=;
+	b=fzBsUIsbwWRywYTMua2OrXmWRt339qzmLgva8i2BcbYXyYCP2XB1jz0KtpLLMzxjo/MzSq
+	sbvnBXl7FVCE5Jk65v3YC1gIAvtqB9dTRntPcphEN6sJlHwd2ItvPmjrOYSDkTCuoN3bIZ
+	+uXxKrH1euntHkToFppkMnodrbnCmew=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726848847;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNVPuZJDLc5AAqlm93Kc3imjJeumAJqKMSO1OJa2d+Q=;
+	b=ZS+Iu+FDbkhZtiWJPlBxmm1T8fl1qODK+impvKFfPLwlEd4ihoq1sfZV0M1LHoxFBZbVjW
+	XWWp0hv01wgvDyDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726848847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNVPuZJDLc5AAqlm93Kc3imjJeumAJqKMSO1OJa2d+Q=;
+	b=fzBsUIsbwWRywYTMua2OrXmWRt339qzmLgva8i2BcbYXyYCP2XB1jz0KtpLLMzxjo/MzSq
+	sbvnBXl7FVCE5Jk65v3YC1gIAvtqB9dTRntPcphEN6sJlHwd2ItvPmjrOYSDkTCuoN3bIZ
+	+uXxKrH1euntHkToFppkMnodrbnCmew=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726848847;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNVPuZJDLc5AAqlm93Kc3imjJeumAJqKMSO1OJa2d+Q=;
+	b=ZS+Iu+FDbkhZtiWJPlBxmm1T8fl1qODK+impvKFfPLwlEd4ihoq1sfZV0M1LHoxFBZbVjW
+	XWWp0hv01wgvDyDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECBDF13AE1;
+	Fri, 20 Sep 2024 16:14:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PfiIOUmf7WbVawAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 20 Sep 2024 16:14:01 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E4C28A08BD; Fri, 20 Sep 2024 18:13:51 +0200 (CEST)
+Date: Fri, 20 Sep 2024 18:13:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 03/10] ext4: drop ext4_update_disksize_before_punch()
+Message-ID: <20240920161351.ax3oidpt6w6bf3o4@quack3>
+References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
+ <20240904062925.716856-4-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920123022.215863-1-sunjunchao2870@gmail.com>
- <Zu2EcEnlW1KJfzzR@infradead.org> <20240920143727.GB21853@frogsfrogsfrogs>
- <Zu2NeawWugiaWxKA@infradead.org> <20240920150213.GD21853@frogsfrogsfrogs> <Zu2PsafDRpsu3Ryu@infradead.org>
-In-Reply-To: <Zu2PsafDRpsu3Ryu@infradead.org>
-From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Sat, 21 Sep 2024 00:10:10 +0800
-Message-ID: <CAHB1NagfhamaCnV_spH_uSU4u0sDWrESVy3uU=TfGN51tSBm6A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] vfs: return -EOVERFLOW in generic_remap_checks() when
- overflow check fails
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904062925.716856-4-yi.zhang@huaweicloud.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Christoph Hellwig <hch@infradead.org> =E4=BA=8E2024=E5=B9=B49=E6=9C=8820=E6=
-=97=A5=E5=91=A8=E4=BA=94 23:07=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Fri, Sep 20, 2024 at 08:02:13AM -0700, Darrick J. Wong wrote:
-> > > Which isn't exactly the integer overflow case described here :)
-> >
-> > Hm?  This patch is touching the error code you get for failing alignmen=
-t
-> > checks, not the one you get for failing check_add_overflow.  EOVERFLOW
-> > seems like an odd return code for unaligned arguments.  Though you're
-> > right that EINVAL is verrry vague.
->
-> I misread the patch (or rather mostly read the description).  Yes,
-> -EOVERFLOW is rather odd here.  And generic_copy_file_checks doesn't
-> even have alignment checks, so the message is wrong as well.  I'll
-> wait for Jun what the intention was here - maybe the diff got
-> misapplied and this was supposed to be applied to an  overflow
-> check that returns -EINVAL?
+On Wed 04-09-24 14:29:18, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Since we always write back dirty data before zeroing range and punching
+> hole, the delalloc extended file's disksize of should be updated
+> properly when writing back pages, hence we don't need to update file's
+> disksize before discarding page cache in ext4_zero_range() and
+> ext4_punch_hole(), just drop ext4_update_disksize_before_punch().
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Yeah... The patch was originally intended for overflow check and
-sourced from [1], differs from its description. After applying it to
-the latest kernel version, there were no warnings or errors, but I
-suspect there may be an issue with the git apply process. I'll fix it
-in the patch v2, thanks.
+So when we don't write out before hole punching & company this needs to stay
+in some shape or form. 
 
-[1]: https://lore.kernel.org/linux-fsdevel/20240906033202.1252195-1-sunjunc=
-hao2870@gmail.com/
->
+								Honza
 
-Thanks,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+> ---
+>  fs/ext4/ext4.h    |  3 ---
+>  fs/ext4/extents.c |  4 ----
+>  fs/ext4/inode.c   | 37 +------------------------------------
+>  3 files changed, 1 insertion(+), 43 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 08acd152261e..e8d7965f62c4 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3414,9 +3414,6 @@ static inline int ext4_update_inode_size(struct inode *inode, loff_t newsize)
+>  	return changed;
+>  }
+>  
+> -int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+> -				      loff_t len);
+> -
+>  struct ext4_group_info {
+>  	unsigned long   bb_state;
+>  #ifdef AGGRESSIVE_CHECK
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 19a9b14935b7..d9fccf2970e9 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -4637,10 +4637,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>  		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
+>  			  EXT4_EX_NOCACHE);
+>  
+> -		ret = ext4_update_disksize_before_punch(inode, offset, len);
+> -		if (ret)
+> -			goto out_invalidate_lock;
+> -
+>  		/* Now release the pages and zero block aligned part of pages */
+>  		truncate_pagecache_range(inode, start, end - 1);
+>  
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 8af25442d44d..9343ce9f2b01 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3872,37 +3872,6 @@ int ext4_can_truncate(struct inode *inode)
+>  	return 0;
+>  }
+>  
+> -/*
+> - * We have to make sure i_disksize gets properly updated before we truncate
+> - * page cache due to hole punching or zero range. Otherwise i_disksize update
+> - * can get lost as it may have been postponed to submission of writeback but
+> - * that will never happen after we truncate page cache.
+> - */
+> -int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+> -				      loff_t len)
+> -{
+> -	handle_t *handle;
+> -	int ret;
+> -
+> -	loff_t size = i_size_read(inode);
+> -
+> -	WARN_ON(!inode_is_locked(inode));
+> -	if (offset > size || offset + len < size)
+> -		return 0;
+> -
+> -	if (EXT4_I(inode)->i_disksize >= size)
+> -		return 0;
+> -
+> -	handle = ext4_journal_start(inode, EXT4_HT_MISC, 1);
+> -	if (IS_ERR(handle))
+> -		return PTR_ERR(handle);
+> -	ext4_update_i_disksize(inode, size);
+> -	ret = ext4_mark_inode_dirty(handle, inode);
+> -	ext4_journal_stop(handle);
+> -
+> -	return ret;
+> -}
+> -
+>  static void ext4_wait_dax_page(struct inode *inode)
+>  {
+>  	filemap_invalidate_unlock(inode->i_mapping);
+> @@ -4022,13 +3991,9 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  	last_block_offset = round_down((offset + length), sb->s_blocksize) - 1;
+>  
+>  	/* Now release the pages and zero block aligned part of pages*/
+> -	if (last_block_offset > first_block_offset) {
+> -		ret = ext4_update_disksize_before_punch(inode, offset, length);
+> -		if (ret)
+> -			goto out_dio;
+> +	if (last_block_offset > first_block_offset)
+>  		truncate_pagecache_range(inode, first_block_offset,
+>  					 last_block_offset);
+> -	}
+>  
+>  	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+>  		credits = ext4_writepage_trans_blocks(inode);
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
