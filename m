@@ -1,242 +1,431 @@
-Return-Path: <linux-fsdevel+bounces-29735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473A597D13A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 08:36:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CD197D160
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 08:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D211F286692
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 06:36:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85DDAB212FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2024 06:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EED3EA76;
-	Fri, 20 Sep 2024 06:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H3ZGddKm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C6144C97;
+	Fri, 20 Sep 2024 06:57:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA44374C4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Sep 2024 06:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726814201; cv=fail; b=Jx6mw/rHmN1C4WCnXRd/9AxzBcpi3dMMBgrkzSAavfGjIUiAKfy3hoz2KO+0KzrwQ+xaayJGu69JXCPSKhQgbuNErKCIl/bEtnttVMXmxVJtAOW0hNnlJm6VHbvVGdrJwU+Ktm0uGx6WcyDFusFT8Fd7F99Tib1ucYDHku1kPVk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726814201; c=relaxed/simple;
-	bh=DznMOS+k2H/CMEvWINr2gVePOFReMZLxcOrj0zFpm/4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Nbiwd1gOKwKeyhAedB7gBAkSkUQ1Kk8nLTykCj6d1IvBcrtRpx6uAJWK80Jy631BIpzGbWcc31N3FcQ4HMAoQ+qPz3pSmeJVpaXid75MbDP5gu6I08Bce9fzjjI8fPeRpwJRKQN7FlcJegunobAigmJi03Tf7mokAF2FwrbFLPI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H3ZGddKm; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726814200; x=1758350200;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=DznMOS+k2H/CMEvWINr2gVePOFReMZLxcOrj0zFpm/4=;
-  b=H3ZGddKmcecn30xIk0hyxWdrMq8PdJLLrKRXp7rF3vBGBP2s7QdlDOKp
-   Bp+Tj7bngYYSANKRnvywSv5UP0L7oB+nI0pVLD++gFwMBzTnJ5+87YHea
-   1AZ5ZLbvyLzI4HOwGLmmYffPlq3MRt+UXVvcNjTTJjhaUh+PT16UQILXS
-   LwU9+nJBme34a2sf/hoY7DNi1Y2XwCVYUXxdEf81Qn01KPvJNt2GGavIO
-   ZcHpeR5EZ9Sbap7LQihuO5GRYO5aPLu0hwN2/w+OpAEOn0rxUKetTgsTV
-   gQCf3f39y02r1H5QNQEiXjnxacKBVZEcKMZP11Z/k/TRNHIyAA703zktd
-   g==;
-X-CSE-ConnectionGUID: zLcp1ERmR8KMRDvNQQOpfw==
-X-CSE-MsgGUID: X0d3XYBLREGGYa6lK6WeIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="29542939"
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="29542939"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 23:36:40 -0700
-X-CSE-ConnectionGUID: f/6mPJcrTku3e2JiKuBtcQ==
-X-CSE-MsgGUID: qtYuXCC6QWCjgMm86xqVFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="69790380"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Sep 2024 23:36:40 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 19 Sep 2024 23:36:38 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 19 Sep 2024 23:36:38 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 19 Sep 2024 23:36:38 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.173)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 19 Sep 2024 23:36:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YAZy13uKpC05eqvZSba0wVzYyBJ1hA6Z4vDVeDdNSDbtUizd84aDMX87f3z75hNUTmzdpIBp0TAfY8rNh8pwelNILetSrq5dnGK8f1BL2THIMK2DCsCyKrGQGBMX26RfbUD4sFLPZiYOpe6RB+NEODxwScZh0y4La925OJJedJpg34P9gLyclZs0qKhPT811KnO+cyFtwry7+eb3AFwGjsrH/8l75XIkHCLcirVP7XEDaqgq/jRKrJi0M5OeEtLXMZRbMyObcWm2hJo3SC2vRdrL3aLhsqXhO+l5pjuqAXJU2csFa0NTx8N07taMwfZho16G7xWbTUSAm7FA4uP7uQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=50A4XbhEwjgwPR523DbJuZKwxqn6Pjr3A70r1J/qg2c=;
- b=Jn6Mmm9UCp8KLGxLthOOq0lOaAdZLlOxbuKYXZrpXfvOEGLmfEFYJ8908r/J54O5vQjexDKvtLnmqo2LW85OeHQq08W9bv7yShp2jrlmAtLz/fmdM5VnPmD1OGqMR69HxzSwRcvItbl4FLLAIeB/SESsIQ16mpKF7ItFpHNmrwsLLqT/0ihG0zui4NLt/Y4rPWJsPxmCmYHwJg9stNYHqVLOcUtrDbvM4l4v21VLU8O/FN5vn58aV1bsvLcHFMZOZOjw+yEDUnzDRPfRlALvX6pC2oLGatESyfsdTThQAIuruBsw+sPSabwMvIINkLdLclFFQfacn6r1jwU4+aOSQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by LV2PR11MB5973.namprd11.prod.outlook.com (2603:10b6:408:14e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.17; Fri, 20 Sep
- 2024 06:36:36 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
- 06:36:34 +0000
-Date: Fri, 20 Sep 2024 14:36:24 +0800
-From: Oliver Sang <oliver.sang@intel.com>
-To: David Howells <dhowells@redhat.com>
-CC: Christian Brauner <brauner@kernel.org>, Steve French <sfrench@samba.org>,
-	<oe-lkp@lists.linux.dev>, <lkp@intel.com>, Linux Memory Management List
-	<linux-mm@kvack.org>, Jeff Layton <jlayton@kernel.org>,
-	<netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<oliver.sang@intel.com>
-Subject: Re: [linux-next:master] [netfs] a05b682d49:
- BUG:KASAN:slab-use-after-free_in_copy_from_iter
-Message-ID: <Zu0X6JWpvxhzT6/x@xsang-OptiPlex-9020>
-References: <ZuuLLrurWiPSXt7X@xsang-OptiPlex-9020>
- <2362635.1726655653@warthog.procyon.org.uk>
- <Zuo50UCuM1F7EVLk@xsang-OptiPlex-9020>
- <202409131438.3f225fbf-oliver.sang@intel.com>
- <1263138.1726214359@warthog.procyon.org.uk>
- <20240913-felsen-nervig-7ea082a2702c@brauner>
- <2364479.1726658868@warthog.procyon.org.uk>
- <2537824.1726730090@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2537824.1726730090@warthog.procyon.org.uk>
-X-ClientProxiedBy: SI2PR01CA0051.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::6) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657AC3CF6A;
+	Fri, 20 Sep 2024 06:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726815453; cv=none; b=VUAbwZDxN0iMGHDS+aoWvX2jfYxFH8hZcuvgul3tiPaq0z6Rcfy2YvkdTDlVsTapEy0PHp4GPRpHU3axF01Z0BInuotN62ewEep4y+5LK1fvJ0oSaak/ARqVtean/pDMfS3Pd5zFi9Suhm0qDxiun2FpZZmeaX2jcpHqaq86POE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726815453; c=relaxed/simple;
+	bh=0/UhgaTsuEs+NVIcOfpdI7HF90mB1OkchrhrRkxJ+sk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EHdF6aPruuFkDzY79EjSNO/yEigeQInhOr8J6d2zGsVM7XCe0bRBxGn1UEn8Yns5p11WFi4TJ6wY9A0d7053oJVYhg+SbSk1fZLYZRyDhm493PzBWeLlmVLwx2jnIbepCKdHGsiTU6uWIcQ4WGvYfTvaCvVoWKviqfd06p/1I0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17D7EFEC;
+	Thu, 19 Sep 2024 23:58:00 -0700 (PDT)
+Received: from [10.57.83.252] (unknown [10.57.83.252])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 887063F64C;
+	Thu, 19 Sep 2024 23:57:25 -0700 (PDT)
+Message-ID: <9e68ffad-8a7e-40d7-a6f3-fa989a834068@arm.com>
+Date: Fri, 20 Sep 2024 08:57:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|LV2PR11MB5973:EE_
-X-MS-Office365-Filtering-Correlation-Id: 988b9345-706d-4630-0a04-08dcd93e922c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ob/gAYKK0wWUB8pN871DTOIIFYv5IirEfYzdSiJ0QMPkzG7vmADdfO3Zcf3f?=
- =?us-ascii?Q?5vXJC8W7qPGqTXFvE+sBqwawzWB2R8lIEpE6lKBAYeW+DhEXcAQK2KKXOKgS?=
- =?us-ascii?Q?1soTkibPey2Faym6G5cToRM9k47otR0Y7sKnTM42FQUIJlAk/keTYHB3oLdg?=
- =?us-ascii?Q?UWRAkQqkZ+NSj8AaNvm+cXOP1iDX3s4qJF/vIxDwO2sAXETnN61ozee7qlIl?=
- =?us-ascii?Q?zqS66hXMYm25eMVP6vfqOYQvXVNOaRknkuWDF6O2UMPoDyAxZHNfxayiUkL4?=
- =?us-ascii?Q?mO2n7wkCyn8ImUaBMYL4Tv/DUtSnyC5M7iJ8Xz2nCIXalTOOoLCPFU0JTzye?=
- =?us-ascii?Q?G20Utqsdy8ZyX1XvFdfHjTXcn4ey+Gq9cU21jgz0OllDeZB9NPYLQyBpSd0z?=
- =?us-ascii?Q?XQdWLBHDCqi1zCosyr6dLjwTnYSoMHiZ05dt/ZquRzCFh2hYXOf8naFg+a+Z?=
- =?us-ascii?Q?u1wjt26g5GjSYhAyivHsjZW/8Qd6LGQMGQT9CmV6PolVuFt0wE8xKaxD93xC?=
- =?us-ascii?Q?DS2TJtZr6vicz4GwGVcZ0c/VKhvlt3jJireIOzL88U0BKabTFfOJS/S4fgYX?=
- =?us-ascii?Q?04AUev/Of6bqJmdnjgsFP3AWR2iWtqlLb0Nh1kOTRnMJ0WAdLV6KKjvrwbzx?=
- =?us-ascii?Q?XKIPRq6/wJnYp2+/TeISU1N7ixqKX7qRQJZPPN40J6oBzHpztwlXagqnMfEA?=
- =?us-ascii?Q?1keXaf17QsfnJ6A9eZ+SKLoAnlpEkCtg9fFShe9ETgwbIZrbkhlWLTgBejls?=
- =?us-ascii?Q?1Md/KzVbvsZT6SKSyaX1ZlH3Nb1PkuSIH15n5nYqtCJxHJ9mi/1YvXlt3uOV?=
- =?us-ascii?Q?KTYtursA3EzTRcvqTvh6/zcg847occrsDX8PLjnx2ee3uDO2aHAWhiQsGTDB?=
- =?us-ascii?Q?PkE+ta00iid3HU2FhDcZ3WgN0D/DOMqO14FpGXfeq6ay4P9wozEr4oVQcMYs?=
- =?us-ascii?Q?TpCoxMa+Rc8EKbxfHfX77AUR5liIQZJMZKpka994sr5BkCILwRrG+9zXSl0x?=
- =?us-ascii?Q?QVeayt9SDE1TwyY5sR7S6+nnA3AJqPqy2JzE38xrPw2gkK2xl4Vng18Y1rRW?=
- =?us-ascii?Q?cYwQ+BJGqG82JbEH/hAouO/kpLjj4DSFJUx1+bUHkXNt63+hk9VeJOeuS7kI?=
- =?us-ascii?Q?xGNAs3Za9e3ayzjNfsKx33iK/CD8f5ziZ24CZp3nacbK4/f+9TRqx5vFEUqE?=
- =?us-ascii?Q?JkmyzVucsnKRh3wYZICK7d/V/gHz1mDyEi3Q+UciAtxE4m4Zf5j0OU5K8LvE?=
- =?us-ascii?Q?7pam3K5i9b1SO05bwjnuBR7xCawa8Zuao6sJc8z5z4JWMo6FMV1mhRvqFfqr?=
- =?us-ascii?Q?Elw=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gkBWUVvPgeI2PBJE5SppYbxY2ZvCdk6LyzEhMvbleZuPyBgAymsykSNk0A20?=
- =?us-ascii?Q?6tTPFt17TPcTjolrl7iUDqEwzUgnSSJIt0YYwaiNVyQ2Z5jUdhdXl/U0ujXC?=
- =?us-ascii?Q?EHqE1blgtLigGr5rz6v1MtCLl3ISQiAT4dQKV1++ZjwdF11Deo3ACE4LSf7I?=
- =?us-ascii?Q?E9YMv/QvqZiz+ohP/sX5P6DoyLHEVSWZMNOT8EKKLlbRI+yx/fuNCXDoT3Tf?=
- =?us-ascii?Q?cCPKNNAthDSGV1gEP+YF0jZOu1mwOkC4V/jIpWY0/VUDeMh6i8G4jqq2nf9w?=
- =?us-ascii?Q?07bNgNOY6+qDaiEIafmqXEwS8SzqL0veLyL0G+T2ekEGcTbePO6a3Cfhybb0?=
- =?us-ascii?Q?yfLyvijB44ebP3HpzjPoH4r7mcBxpJlEs01GLB/ELrRXmPEDfqMZqo8qE/mR?=
- =?us-ascii?Q?227zgEMeJs0jrMacmujs6FWM4P4YPs3JNVL+6FhF4RlFoj+l8Jie0m2Tc0ot?=
- =?us-ascii?Q?D2DfbICyqxFugIEAyXbSOVark/DrNQVTCr6iRYkuRmFXl4Njk9uMmeiHnDdS?=
- =?us-ascii?Q?7pIkoeaegKRT1D4fy9DkrNboxiEDk7cZDnOTv6HN6PUSYwuTJ46BGQKsfnyP?=
- =?us-ascii?Q?NPtWCP8Yg5tK9vp1nGxLa++PE4jXMHlUuIP2mnzIHbhG6/UtugkwUMrfNv0u?=
- =?us-ascii?Q?bzIWuiZQJg1HECxcN5up4uJLqaoCuDS04/YN/Rdg5ORT9vYKa2ejQNi/Q6Di?=
- =?us-ascii?Q?3ASIoD+eea4/i9odQRQiNJpcHCaaCFgMPwDCNsU7gzIHlOpsOy+Zae35A1NN?=
- =?us-ascii?Q?GScQ8hfuffr2+A9RjZMG/I6dABsvfYqisvTPPl7U35AT0REvuCOO0+yAg/JA?=
- =?us-ascii?Q?2zVIJG7inmvxcu6UespBbeuo7AVyuSnMxccPWb1szLx2U3jxM7sN3wMrtuH8?=
- =?us-ascii?Q?JdIpE4n3unAAMb4n4fev/kdOhviTzQeFQOU8scZzBK7FlKcnhvzhYEr+svJ8?=
- =?us-ascii?Q?INPK9/daxvwWH06UoS/iNbRQQyth4ij+FUCvlxUWUr8PnV6KZ/8/VcZa6QR5?=
- =?us-ascii?Q?pknrnd9f01QnLYAH967eJiqLjTSuabfjUoNjQGb9JnOYhmI3ECRKDSEzaoyd?=
- =?us-ascii?Q?+bRV8WDyeaVg4d2dKwKdaIbNooQpbCtz+JmtzNOHYmEbZYbWmj4HB/iKU7BT?=
- =?us-ascii?Q?72ZbmYJLMZIg/tymeWniGdHR4MqqUpI8IT/fb40LZGPHroAzDFaoLvIxWpgf?=
- =?us-ascii?Q?fgwYM+mXEjYDv+zOMxdKa/UxJf6apIpd3/BRirmi4doHJr6vJMa87Widz4iU?=
- =?us-ascii?Q?kvmwNCAqNzh5lVrohwbKOGtjUOrtEvchA8d6JFLuSoVVS+hHosJxOEZFBLSr?=
- =?us-ascii?Q?578KrOm/9ze0H5eosDy7mmafSgoWaBtDkYi4lgEve9scgVE3DlzvjJ7/PJGS?=
- =?us-ascii?Q?IvKnq3MZ9FDmfmIj8uMEmOcDrzF1Q2MTvJ/PkfabHa1uF245R+57dBzs3x5N?=
- =?us-ascii?Q?919JsQsusxsKg5Y4diIj9zXXDADxu67vA/N3ieg2VcEztEzX8HG6uNjRGYI3?=
- =?us-ascii?Q?SRqiKxyfQENXR0uS57pYVeFJGeVOMUN/T0r5XgOGy/rHXwUeDbnrtcqb0S9g?=
- =?us-ascii?Q?V92BMk1fA71tTZAuY1nAEHqaU/b1puzytwxS6zJF?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 988b9345-706d-4630-0a04-08dcd93e922c
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 06:36:34.4237
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6LobKgw0+pQwdzRY3TOoFC+R9/hvJPyfj4nUjNr0/PccnNjnzeon8hJZt2E+A+Q5z++Vbn8KmLOc/h+pagZP0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR11MB5973
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 7/7] mm: Use pgdp_get() for accessing PGD entries
+Content-Language: en-GB
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+ kernel test robot <lkp@intel.com>, linux-mm@kvack.org, llvm@lists.linux.dev,
+ oe-kbuild-all@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dimitri Sivanich
+ <dimitri.sivanich@hpe.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Muchun Song <muchun.song@linux.dev>, Andrey Ryabinin
+ <ryabinin.a.a@gmail.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Christoph Lameter <cl@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
+References: <20240917073117.1531207-8-anshuman.khandual@arm.com>
+ <202409190310.ViHBRe12-lkp@intel.com>
+ <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
+ <ZuvqpvJ6ht4LCuB+@shell.armlinux.org.uk>
+ <82fa108e-5b15-435a-8b61-6253766c7d88@arm.com>
+ <ZuxZ/QeSdqTHtfmw@shell.armlinux.org.uk>
+ <5bd51798-cb47-4a7b-be40-554b5a821fe7@arm.com>
+ <ZuyIwdnbYcm3ZkkB@shell.armlinux.org.uk>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <ZuyIwdnbYcm3ZkkB@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-hi, David,
-
-On Thu, Sep 19, 2024 at 08:14:50AM +0100, David Howells wrote:
-> Oliver Sang <oliver.sang@intel.com> wrote:
+On 19/09/2024 21:25, Russell King (Oracle) wrote:
+> On Thu, Sep 19, 2024 at 07:49:09PM +0200, Ryan Roberts wrote:
+>> On 19/09/2024 18:06, Russell King (Oracle) wrote:
+>>> On Thu, Sep 19, 2024 at 05:48:58PM +0200, Ryan Roberts wrote:
+>>>>> 32-bit arm uses, in some circumstances, an array because each level 1
+>>>>> page table entry is actually two descriptors. It needs to be this way
+>>>>> because each level 2 table pointed to by each level 1 entry has 256
+>>>>> entries, meaning it only occupies 1024 bytes in a 4096 byte page.
+>>>>>
+>>>>> In order to cut down on the wastage, treat the level 1 page table as
+>>>>> groups of two entries, which point to two consecutive 1024 byte tables
+>>>>> in the level 2 page.
+>>>>>
+>>>>> The level 2 entry isn't suitable for the kernel's use cases (there are
+>>>>> no bits to represent accessed/dirty and other important stuff that the
+>>>>> Linux MM wants) so we maintain the hardware page tables and a separate
+>>>>> set that Linux uses in the same page. Again, the software tables are
+>>>>> consecutive, so from Linux's perspective, the level 2 page tables
+>>>>> have 512 entries in them and occupy one full page.
+>>>>>
+>>>>> This is documented in arch/arm/include/asm/pgtable-2level.h
+>>>>>
+>>>>> However, what this means is that from the software perspective, the
+>>>>> level 1 page table descriptors are an array of two entries, both of
+>>>>> which need to be setup when creating a level 2 page table, but only
+>>>>> the first one should ever be dereferenced when walking the tables,
+>>>>> otherwise the code that walks the second level of page table entries
+>>>>> will walk off the end of the software table into the actual hardware
+>>>>> descriptors.
+>>>>>
+>>>>> I've no idea what the idea is behind introducing pgd_get() and what
+>>>>> it's semantics are, so I can't comment further.
+>>>>
+>>>> The helper is intended to read the value of the entry pointed to by the passed
+>>>> in pointer. And it shoiuld be read in a "single copy atomic" manner, meaning no
+>>>> tearing. Further, the PTL is expected to be held when calling the getter. If the
+>>>> HW can write to the entry such that its racing with the lock holder (i.e. HW
+>>>> update of access/dirty) then READ_ONCE() should be suitable for most
+>>>> architectures. If there is no possibility of racing (because HW doesn't write to
+>>>> the entry), then a simple dereference would be sufficient, I think (which is
+>>>> what the core code was already doing in most cases).
+>>>
+>>> The core code should be making no access to the PGD entries on 32-bit
+>>> ARM since the PGD level does not exist. Writes are done at PMD level
+>>> in arch code. Reads are done by core code at PMD level.
+>>>
+>>> It feels to me like pgd_get() just doesn't fit the model to which 32-bit
+>>> ARM was designed to use decades ago, so I want full details about what
+>>> pgd_get() is going to be used for and how it is going to be used,
+>>> because I feel completely in the dark over this new development. I fear
+>>> that someone hasn't understood the Linux page table model if they're
+>>> wanting to access stuff at levels that effectively "aren't implemented"
+>>> in the architecture specific kernel model of the page tables.
+>>
+>> This change isn't as big and scary as I think you fear.
 > 
-> > > Can you tell me SMB server you're using?  Samba, ksmbd, Windows, Azure?  I'm
-> > > guessing one of the first two.
-> > 
-> > we actually use local mount to simulate smb. I attached an output for details.
-> > 
-> > 2024-09-11 23:30:58 mkdir -p /cifs/sda1
-> > 2024-09-11 23:30:58 timeout 5m mount -t cifs -o vers=2.0 -o user=root,password=pass //localhost/fs/sda1 /cifs/sda1
-> > mount cifs success
-> 
-> Does your mount command run up samba or something?  This doesn't seem to work
-> on my system.  I get:
-> 
-> andromeda32# mount -t cifs -o vers=2.0 -o user=root,password=pass //localhost/fs/sda6 /mnt
-> mount error(111): could not connect to ::1mount error(111): could not connect to 127.0.0.1Unable to find suitable address.
+> The situation is as I state above. Core code must _not_ dereference pgd
+> pointers on 32-bit ARM.
 
-have you enable the samba with a /fs path? such like:
+Let's just rewind a bit. This thread exists because the kernel test robot failed
+to compile pgd_none_or_clear_bad() (a core-mm function) for the arm architecture
+after Anshuman changed the direct pgd dereference to pgdp_get(). The reason
+compilation failed is because arm defines its own pgdp_get() override, but it is
+broken (there is a typo).
 
-start_smbd()
+Code before Anshuman's change:
+
+static inline int pgd_none_or_clear_bad(pgd_t *pgd)
 {
-	# setup smb.conf
-	cat >> /etc/samba/smb.conf <<EOF
-[fs]
-   path = /fs
-   comment = lkp cifs
-   browseable = yes
-   read only = no
-EOF
-	# setup passwd
-	(echo "pass"; echo "pass") | smbpasswd -s -a $(whoami)
-	# restart service
-	systemctl restart smb.service
+	if (pgd_none(*pgd))
+		return 1;
+	if (unlikely(pgd_bad(*pgd))) {
+		pgd_clear_bad(pgd);
+		return 1;
+	}
+	return 0;
 }
 
-(https://github.com/intel/lkp-tests/blob/48db85cbe0f249d075bc7eef263b485f02cb153d/lib/fs_ext.sh#L93C1-L107C2)
+Code after Anshuman's change:
+
+static inline int pgd_none_or_clear_bad(pgd_t *pgd)
+{
+	pgd_t old_pgd = pgdp_get(pgd);
+
+	if (pgd_none(old_pgd))
+		return 1;
+	if (unlikely(pgd_bad(old_pgd))) {
+		pgd_clear_bad(pgd);
+		return 1;
+	}
+	return 0;
+}
+
+So the kernel _is_ alreday dereferencing pgd pointers for the arm arch, and has
+been since the beginning of (git) time. Note that pgd_none_or_clear_bad() is
+called from core code and from arm arch code.
+
+As an aside, the kernel also dereferences p4d, pud, pmd and pte pointers in
+various circumstances. And other changes in this series are also replacing those
+direct dereferences with calls to similar helpers. The fact that these are all
+folded (by a custom arm implementation if I've understood the below correctly)
+just means that each dereference is returning what you would call the pmd from
+the HW perspective, I think?
 
 > 
-> David
+>> The core-mm today
+>> dereferences pgd pointers (and p4d, pud, pmd pointers) directly in its code. See
+>> follow_pfnmap_start(),
 > 
+> Doesn't seem to exist at least not in 6.11.
+
+Appologies, I'm on mm-unstable and that isn't upstream yet. See follow_pte() in
+v6.11 or __apply_to_page_range(), or pgd_none_or_clear_bad() as per above.
+
+> 
+>> gup_fast_pgd_leaf(), and many other sites.
+> 
+> Only built when CONFIG_HAVE_GUP_FAST is set, which 32-bit ARM doesn't
+> set because its meaningless there, except when LPAE is in use (which is
+> basically the situation I'm discussing.)
+> 
+>> These changes
+>> aim to abstract those dereferences into an inline function that the architecture
+>> can override and implement if it so wishes.
+>>
+>> The core-mm implements default versions of these helper functions which do
+>> READ_ONCE(), but does not currently use them consistently.
+>>
+>> From Anshuman's comments earlier in this thread, it looked to me like the arm
+>> pgd_t type is too big to read with READ_ONCE() - it can't be atomically read on
+>> that arch. So my proposal was to implement the override for arm to do exactly
+>> what the core-mm used to do, which is a pointer dereference. So that would
+>> result in exact same behaviour for the arm arch.
+> 
+> Let me say this again: core code must NOT dereference pgds on 32-bit
+> non-LPAE ARM. They are meaningless to core code. A pgd_t does not
+> reference a single entry in hardware. It references two entries.
+
+OK, so there are 3 options; either I have misunderstood what the core code is
+doing (because as per above, I'm asserting that core code _is_ dereferencing pgd
+pointers), or the core code is dereferencing and that is buggy, or the core code
+is derefencing and its working as designed. I believe its the latter, but am
+willing to be proved wrong.
+
+> 
+>>> Essentially, on 32-bit 2-level ARM, the PGD is merely indexed by the
+>>> virtual address. As far as the kernel is concerned, each entry is
+>>> 64-bit, and the generic kernel code has no business accessing that
+>>> through the pgd pointer.
+>>>
+>>> The pgd pointer is passed through the PUD and PMD levels, where it is
+>>> typecast down through the kernel layers to a pmd_t pointer, where it
+>>> becomes a 32-bit quantity. This results in only the _first_ level 1
+>>> pointer being dereferenced by kernel code to a 32-bit pmd_t quantity.
+>>> pmd_page_vaddr() converts this pmd_t quantity to a pte pointer (which
+>>> points at the software level 2 page tables, not the hardware page
+>>> tables.)
+>>
+>> As an aside, my understanding of Linux's pgtable model differs from what you
+>> describe. As I understand it, Linux's logical page table model has 5 levels
+>> (pgd, p4d, pud, pmd, pte). If an arch doesn't support all 5 levels, then the
+>> middle levels can be folded away (p4d first, then pud, then pmd). But the
+>> core-mm still logically walks all 5 levels. So if the HW supports 2 levels,
+>> those levels are (pgd, pte). But you are suggesting that arm exposes pmd and
+>> pte, which is not what Linux expects? (Perhaps you call it the pmd in the arch,
+>> but that is being folded and accessed through the pgd helpers in core code, I
+>> believe?
+> 
+> What ARM does dates from before the Linux MM invented the current
+> "folding" method when we had three page table levels - pgd, pmd
+> and pte. The current folding techniques were invented well after
+> 32-bit ARM was implemented, which was using the original idea of
+> how to fold the page tables.
+> 
+> The new folding came up with a totally different way of doing it,
+> and I looked into converting 32-bit ARM over to it, but it wasn't
+> possible to do so with the need for two level-1 entries to be
+> managed for each level-2 page table.
+> 
+>>> So, as I'm now being told that the kernel wants to dereference the
+>>> pgd level despite the model I describe above, alarm bells are ringing.
+>>> I want full information please.
+>>>
+>>
+>> This is not new; the kernel already dereferences the pgd pointers.
+> 
+> Consider that 32-bit ARM has been this way for decades (Linux was ported
+> to 32-bit ARM by me back in the 1990s - so it's about 30 years old.)
+> Compare that to what you're stating is "not new"... I beg to differ with
+> your opinion on what is new and what isn't. It's all about the relative
+> time.
+
+By "not new" I meant that it's not introduced by this series. The kernel's
+dereferencing of pgd pointers was present before this series came along.
+
+> 
+> This is how the page tables are walked:
+> 
+> static inline pgd_t *pgd_offset_pgd(pgd_t *pgd, unsigned long address)
+> {
+>         return (pgd + pgd_index(address));
+> }
+> 
+> #define pgd_offset(mm, address)         pgd_offset_pgd((mm)->pgd, (address))
+> 
+> This returns a pointer to the pgd. This is then used with p4d_offset()
+> when walking the next level, and this is defined on 32-bit ARM from
+> include/asm-generic/pgtable-nop4d.h:
+> 
+> static inline p4d_t *p4d_offset(pgd_t *pgd, unsigned long address)
+> {
+>         return (p4d_t *)pgd;
+> }
+> 
+> Then from include/asm-generic/pgtable-nopud.h:
+> 
+> static inline pud_t *pud_offset(p4d_t *p4d, unsigned long address)
+> {
+>         return (pud_t *)p4d;
+> }
+> 
+> Then from arch/arm/include/asm/pgtable-2level.h:
+> 
+> static inline pmd_t *pmd_offset(pud_t *pud, unsigned long addr)
+> {
+>         return (pmd_t *)pud;
+> }
+> 
+> All of the above casts result in the pgd_t pointer being cast down
+> to a pmd_t pointer.
+> 
+> Now, looking at stuff in mm/memory.c such as unmap_page_range().
+> 
+>         pgd = pgd_offset(vma->vm_mm, addr);
+> 
+> This gets the pgd pointer into the level 1 page tables associated
+> with addr, and passes it down to zap_p4d_range().
+> 
+> That passes it to p4d_offset() without dereferencing it, which on
+> 32-bit ARM, merely casts the pgd_t pointer to a p4d_t pointer. Since
+> a p4d_t is defined to be a struct of a pgd_t, this also points at an
+> array of two 32-bit quantities. This pointer is passed down to
+> zap_pud_range().
+> 
+> zap_pud_range() passes this pointer to pud_offset(), again without
+> dereferencing it, and we end up with a pud_t pointer. Since pud_t is
+> defined to be a struct of p4d_t, this also points to an array of two
+> 32-bit quantities.
+> 
+> We then have:
+> 
+>                 if (pud_trans_huge(*pud) || pud_devmap(*pud)) {
+> 
+> These is an implicit memory copy/access between the memory pointed to
+> by pud, and their destination (which might be a register). However,
+> these are optimised away because 32-bit ARM doesn't set
+> HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD nor ARCH_HAS_PTE_DEVMAP (as
+> neither inline function make use of their argument.)
+> 
+> NOTE: If making these use READ_ONCE results in an access that can not
+> be optimised away, that is a bug that needs to be addressed.
+> 
+> zap_pud_range() then passes the pud pointer to zap_pmd_range().
+> 
+> zap_pmd_range() passes this pointer to pud_offset() with no further
+> dereferences, and this gets cast to a pmd_t pointer, which is a
+> pointer to the first 32-bit quantity pointed to by the pgd_t pointer.
+> 
+> All the dereferences from this point on are 32-bit which can be done
+> as single-copy atomic accesses. This will be the first real access
+> to the level-1 page tables in this code path as the code stands today,
+> and from this point on, accesses to the page tables are as the
+> architecture intends them to be.
+> 
+> 
+> Now, realise that for all of the accesses above that have all been
+> optimised away, none of that code even existed when 32-bit ARM was
+> using this method. The addition of these features not intefering
+> with the way 32-bit non-LPAE ARM works relies on all of those
+> accesses being optimised away, and they need to continue to be so
+> going forward.
+> 
+> 
+> Maybe that means that this new (and I mean new in relative terms
+> compared to the age of the 32-bit ARM code) pgdp_get() accessor
+> needs to be a non-dereferencing operation, so something like:
+> 
+> #define pgdp_get(pgdp)		((pgd_t){ })
+
+I'm afraid I haven't digested all these arm-specific details. But if I'm right
+that the core kernel does and is correct to dereference pgd pointers for these
+non-LPAE arm builds, then I think you at least need arm's implementation to be:
+
+#define pgdp_get(pgdp)		(*pgdp)
+
+Thanks,
+Ryan
+
+> 
+> in arch/arm/include/asm/pgtable-2level.h (note the corrected
+> spelling of pgdp), and the existing pgdp_get() moved to
+> arch/arm/include/asm/pgtable-3level.h. This isn't tested.
+> 
+> However, let me say this again... without knowing exactly how
+> and where pgdp_get() is intended to be used, I'm clutching at
+> straws here. Even looking at Linus' tree, there's very little in
+> evidence there to suggest how pgdp_get() is intended to be used.
+> For example, there's no references to it in mm/.
+> 
+> 
+> Please realise that I have _no_ _clue_ what "[PATCH V2 7/7] mm: Use
+> pgdp_get() for accessing PGD entries" is proposing. I wasn't on its
+> Cc list. I haven't seen the patch. The first I knew anything about
+> this was with the email that Anshuman Khandual sent in response to
+> the kernel build bot's build error.
+
+Here is the full series for context:
+
+https://lore.kernel.org/linux-mm/20240917073117.1531207-1-anshuman.khandual@arm.com/
+
+> 
+> I'm afraid that the kernel build bot's build error means that this
+> patch:
+> 
+> commit eba2591d99d1f14a04c8a8a845ab0795b93f5646
+> Author: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Date:   Wed Dec 13 21:29:59 2023 +0100
+> 
+>     mm: Introduce pudp/p4dp/pgdp_get() functions
+> 
+> is actually broken. I'm sorry that I didn't review that, but how the
+> series looked when it landed in my mailbox, it looked like it was
+> specific to RISC-V and of no interest to me, so I didn't bother
+> reading it (I get _lots_ of email, I can't read everything.) This
+> is how it looks like in my mailbox (and note that they're marked
+> as new to this day):
+> 
+> 3218 N T Dec 13 Alexandre Ghiti (   0) [PATCH v2 0/4] riscv: Use READ_ONCE()/WRI
+> 3219 N T Dec 13 Alexandre Ghiti (   0) ├─>[PATCH v2 1/4] riscv: Use WRITE_ONCE()
+> 3220 N T Dec 13 Alexandre Ghiti (   0) ├─>[PATCH v2 2/4] mm: Introduce pudp/p4dp
+> 3221 N T Dec 13 Alexandre Ghiti (   0) ├─>[PATCH v2 3/4] riscv: mm: Only compile
+> 3222 N T Dec 13 Alexandre Ghiti (   0) └─>[PATCH v2 4/4] riscv: Use accessors to
+> 3223 N C Dec 14 Anup Patel      (   0)   └─>
+> 
+> Sorry, but I'm not even going to look at something like that when it
+> looks like it's for RISC-V and nothing else.
+> 
+> One final point... because I'm sure someone's going to say "but you
+> were in the To: header". I've long since given up using "am I in the
+> Cc/To header" to carry any useful or meaningful information to
+> indicate whether it's something I should read. I'm afraid that the
+> kernel community has long since taught me that is of no value what
+> so ever, so I merely go by "does this look of any interest". If not,
+> I don't bother even _opening_ the email.
+> 
+
 
