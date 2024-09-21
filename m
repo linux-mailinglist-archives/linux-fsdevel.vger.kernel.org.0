@@ -1,205 +1,384 @@
-Return-Path: <linux-fsdevel+bounces-29787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1C197DCE9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 13:17:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD2697DE86
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 21:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAD8281C7A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 11:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 138391F21A7B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 19:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B93156C7B;
-	Sat, 21 Sep 2024 11:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C6762C1;
+	Sat, 21 Sep 2024 19:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="XQCriIi8"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NabXvlP+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021131.outbound.protection.outlook.com [52.101.129.131])
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C3113A26F
-	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2024 11:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.131
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726917439; cv=fail; b=TC37VhNYrTKvpZxQlJmOpqqJvGoownc/b1HHjeiIbyl0gRL2iBBhcE2YThUc9z162FXTVLOOYmSBxXIWWjzzKD5h4jtcMWU/adnG7K68frbP0a/DLv9Xyr7DjblBC4zLhGtiuXIrgIxFDHp7RVTaINgm3Dj1ZMzFVV1vhcsLVic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726917439; c=relaxed/simple;
-	bh=jQFr5xhpMivt76+FhDXSriQWElFWtWVIAwZF5/mArfw=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bSP1qBeN2dBfA9qI/USs0TTItd3sMnyv0xymwi68BGrzJRE6BKmR8+J6EDrW4ZfxEwEoZiaUr45WvnZOEAYHI9EuqVH2q1FN3zUDdJnbKF53nHMBdqz750dKklZBYjBbgC3bzMYb4kHlXzBQBJCQ7+EdPNIEDqfprz5HRD3xIg0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=XQCriIi8; arc=fail smtp.client-ip=52.101.129.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nVVeAPKC9HtYW8XhDQha2NLSuiqMvqwBbEMAYiP6STPy4k9ZBFDTdGxpAL1rPCulVijQC6bzdIRitesAR2YP/0v9Q5Xp7lhzTUejf5B5rCjr6URYdoeONV9ihLd8G/fx8lWIaGrzhVI0dAr2/SRF2pOhLjnvzU607ZjO4vXzY3OfZBro/WwatqStbtVGQQtC6Fj0RbToQ1chPnYfz37u7GCLaQAjwET0eWUjHv+23pgdjE2XY+5NFiSb10HhHjde3kd3MD1NvYwhwDBCy1sYQ3UnrGlJ17JAKIrNUx0TXlpFLig1n4REnia9+l6hYC9eqWuYDjh25SOgUWAWZBlMKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jQFr5xhpMivt76+FhDXSriQWElFWtWVIAwZF5/mArfw=;
- b=n+Qvln1Rskr3L3ywI/i8HvAV+bNZ1qIKWxnoDM03Ckjex/m58oWSR5Yas4in9eSXu03xetD6jEluTjCY9JQHKvO6RR0IsLsqo+f4H12SAusFpusiI9qIO5V8caSxuzGuNap+8ZL8+Pf+ozUHVevb61Je0XN+vOfF8ScgjP5ABdqZg/8YENtl+vixq2wo6AFAk1WrKG82glS7n0jqBt/OXxlpLQ0D5g9DnLDeYPLFRmwi25yfmpsveqpO19ZlZj2Y/PadSsK1dHgVZzZN7zgDnR/bdPkjYfBX40pQir7ZAZ0mlAKyMaqhqr5kbThVx27DbSnaWOPsa+18V4vtHVpSUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jQFr5xhpMivt76+FhDXSriQWElFWtWVIAwZF5/mArfw=;
- b=XQCriIi8azpslMUVSr01RiQRF8Hl81QUBhU9Yc5Wt5pCPyeW3X2JhqfrmI1QWgv7m8WwebQJKLDz8a2PoqYdEaMh0Esky080AvGkpu6tN6Mv1VgIqAu2E3hR+9SJ5B6T53x4idY3QgvcSqDjwnYF5uWaiMhDKALX6yUIiVaJb2A=
-Received: from SI2P153MB0718.APCP153.PROD.OUTLOOK.COM (2603:1096:4:1ff::8) by
- SI2P153MB0670.APCP153.PROD.OUTLOOK.COM (2603:1096:4:1fd::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8005.13; Sat, 21 Sep 2024 11:17:02 +0000
-Received: from SI2P153MB0718.APCP153.PROD.OUTLOOK.COM
- ([fe80::a647:e1c3:31c9:e35]) by SI2P153MB0718.APCP153.PROD.OUTLOOK.COM
- ([fe80::a647:e1c3:31c9:e35%6]) with mapi id 15.20.8005.010; Sat, 21 Sep 2024
- 11:17:02 +0000
-From: Krishna Vivek Vitta <kvitta@microsoft.com>
-To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC: "jack@suse.cz" <jack@suse.cz>
-Subject: Git clone fails in p9 file system marked with FANOTIFY
-Thread-Topic: Git clone fails in p9 file system marked with FANOTIFY
-Thread-Index: AdsMF7H2pA+A3TMFT7qIn4M6deqPig==
-Date: Sat, 21 Sep 2024 11:17:01 +0000
-Message-ID:
- <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=b3cb83a9-9f35-4243-9b7b-198dad1ed686;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-09-21T11:14:46Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SI2P153MB0718:EE_|SI2P153MB0670:EE_
-x-ms-office365-filtering-correlation-id: e199a6a4-195c-4bc5-1f62-08dcda2eea92
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?jiCecDfRoEgO9YVkIqD9Yaucw5gPubsJOSsIj07V/1yWqm2EvfKCSfM1wA7z?=
- =?us-ascii?Q?78CyYGWNn96OuHRAHcnMbN8Y2ol9hXRtYFeeERC977JCBuaY10gxPSItn7VL?=
- =?us-ascii?Q?oTW4xrmYpEYh3ElQwqurwrbwyrkacXZ2+g0IzD4MwhrAfy19atvf+0OcPBna?=
- =?us-ascii?Q?Ik9rPKByhbh7Vb2TLBnGT+dD4uODLGRwhcVLCEeFvprY3A67jcdLPcfKz9wz?=
- =?us-ascii?Q?hWiHnQLEjFbYdKT5O1xuQAJH6/oUCQATQkkfSEbBNCEo9OyAFEQFqpU5iwx6?=
- =?us-ascii?Q?z24hEMd9T9AxgMS9NihA0RMExRljlocVfiMOYTX5NwECO1Vc65CXPar2FZbo?=
- =?us-ascii?Q?mN/gf/fGn7xA1da/eO3ht34tJ+itGmgoNOXVSoEIfxVIH3xy28BDte+OJc3C?=
- =?us-ascii?Q?0wd9erjBSV3h1bFDieK435VIFOwudOP2i5asqD9jbHuvzo9V/MzyKbumWtdZ?=
- =?us-ascii?Q?koN2R+09J4zgWa6RNhKke8ALaiAjKgnCy4i5+EdsziMXkhSnV5oB5cWFbW6a?=
- =?us-ascii?Q?iBXGo/PDY/JF3u81L3hcQWXz+1xQOggiQzjlyM4QtkEkZO3Y1xW/YDXW4cPH?=
- =?us-ascii?Q?2zeFk4BvkbDBb8SmR0bTRqL8BZfkz57iO+UdR4e8Ghw3qd+xGndV3UGKPgRC?=
- =?us-ascii?Q?wYatJ59jUxGZ8GRoz4izlO2otf9EH1juOj+o+z0SU9em4b6NQ9dGMW8FKiuN?=
- =?us-ascii?Q?GOtgyGzD+5JtLtg3LyZldumQ+tIEl3Ich77rQrUAVWdyE9NS9ouDDQzZnW31?=
- =?us-ascii?Q?a4JDcNe+SCSIfKsocBnoj8zKoifh6yx49aT7lxSyk26cnTOIjTwiWbxkuqI1?=
- =?us-ascii?Q?MEUCffmlt1tuj8Wh4aHX6sCq5+2iJg2EHTN4W56VygH4tw+Skhgb9ruQMfFM?=
- =?us-ascii?Q?Yiysg/ycvSfOoqc6oGMeGKAHXre2xymLXAUccfZylDpFyJuoTJj6oFJTwF1n?=
- =?us-ascii?Q?a0ziKOiECaXXRx6L8qN+xskIGqHZGWYE8WyhlLlCa3X0mDiLtdbeeFDwg8/P?=
- =?us-ascii?Q?V3oP2YrI2c+CjqGCR67Wur1vJRA/M9/W7xDc3Cbg4SG+4Z0RxlcgxqKNsVJN?=
- =?us-ascii?Q?Fd9u3oKw8KpnkZB4hu/dx4+4xDjbEElz3Xqy5kebI6Jp2GUmLPTKMVk9Ehe6?=
- =?us-ascii?Q?h5C7ZoF8zTrZUHcz++5YNsckprrHz+0cSZwB1pArPsJuKPDtCpxJxoSNiQpV?=
- =?us-ascii?Q?FWssDN4hrgFT1tHW4KwXg8DxnHw28LKQ5ska02srGmvcWZwzduQIQsqRg9S7?=
- =?us-ascii?Q?hbJeOzmsfU7oTrjtj7gMgTvPv0UnaSTHnVQJM3f+jWgqKxdmNK1mSb4yWiS7?=
- =?us-ascii?Q?+FA=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2P153MB0718.APCP153.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?f2kwR7QlHNwgX2QSNFQcb94s1ef5zofrdIzClTh7lCSSCUSwndKKttTMJyul?=
- =?us-ascii?Q?xqFyvAngkvi1YiKMrMuZEv/9ABvOGV264tg1oNJOfPwqbYi8SIJqRn+T7v/M?=
- =?us-ascii?Q?DLXTbLwokg4QGI/N8eRTte12v+pTJJJYAz3DLAWT5MkrFbzY6D8gQgoEQzGU?=
- =?us-ascii?Q?q1Av9s4SF5N6J0io3wDsOkLfJeaBqZP/ZvOSU4fCNqY3FZLfIx13MozjWGf4?=
- =?us-ascii?Q?Gmnuu0+JRiooLe3nHEBYfsX0G/Ha+tO0akzYe4rKXkA2o5gsIU6jKrXcHwb4?=
- =?us-ascii?Q?KK25UearKqGUJxMaeGsca+TTsUsiIOTx/j6UqyySuBQzGcrnOLNSEg0DuPDZ?=
- =?us-ascii?Q?tA6SXOfUjK06dfSgNhAx12lojU8vDva8ucXuiBx8a2AatbDd+ipWb+iSE/Wk?=
- =?us-ascii?Q?Q9YP/qboLRonFXEGlbwLuxVNGGNkHcVywdw4kZ1kc+1IodxYrAnBm22utImZ?=
- =?us-ascii?Q?zIHGfeBbKsvwpD8pXxnPGLxA9c6+K1X+iFQjwfvvmjYdufe7C92tV0AB2QVh?=
- =?us-ascii?Q?cTVcsQ5RZ4REZ/Bw7sf5esyGRXlfPrcnIplpcl51qZ9YhWmfYipXv7JOI1gS?=
- =?us-ascii?Q?ZLkCkHDwez3P8p3pHCFPRn+eAFaJm/1KVJrjvqH8iThfF2Lf3Qk1HqMs+6XM?=
- =?us-ascii?Q?it9vL9wRQCn0p7Q2SrFEGYQ1hlHvQ9KdDiRLpDGywb2l511DVCsTqO0h0XnL?=
- =?us-ascii?Q?BCL7UBGcMXTk5oHL5r28aa++JSH2whNvn57KAswk10E43m5wnj7yGEZ24CqS?=
- =?us-ascii?Q?LenncaI+mRVQzjSPs+RDsqx6lZdOwRmPLt/maBALHRrXxzfVuwFpho8V7vE6?=
- =?us-ascii?Q?qa7Tcb0cz/0PnG8H8OsKpXjDfD/EwrOMShpQY+orYbcqXPjx6YU9GopRrg+q?=
- =?us-ascii?Q?nzUfFlsoKABWz/YHfQsnSDxmszGfpUKULWtH2L04cIgt14Lo7lKtERhbY+uP?=
- =?us-ascii?Q?BsVIkDo7hxhe3hEU7eMvnn8p/edRusEnXl0HvhkMf48hk9XxwyY/g4aDcRF3?=
- =?us-ascii?Q?DFWwYUs1rMufxS9uGs1B4jcXvq9R+/hOEPSWJVaJozDnsSW3l9CSlY5FdAWF?=
- =?us-ascii?Q?x0zBS/NOjuPkeiIBJ5yx1ptlfi6jzgRk+Rh8jNW8QXnmDa1zt6y/Zk9C/GeF?=
- =?us-ascii?Q?RWK4jojPvboNuagZjgqbhyCGlFzT/a32csRpocWuEsqv4QLwHTWcb/GO6Zsc?=
- =?us-ascii?Q?D9Gf3Zo5gRPj4g2+BwFwXMV8qv8qlry1ZNI6BJT94C6dzu7nd3O6/TOC74Vu?=
- =?us-ascii?Q?fg/RhH9POtv91g73Oy2wUJqDyZL+F4mzp4cUpALspO8uQpNUUFc03B97QbEn?=
- =?us-ascii?Q?RSwtf73NrE1gcjmRiVh0u/NaerMITAPe5VwNc+z4qEdyAhDuZeJWGfkVhqCY?=
- =?us-ascii?Q?RFWap/hhCanKXiM8DXFp7QMLZWPBlRPbR3ittZW6yHO0FghDlYtIozWO5k2q?=
- =?us-ascii?Q?W49DOmXwIUWNQqnwsXSbF9jwIZo4zZRoJdl5kGCQ0VhUPF3UKD7Kr1LVZ3O1?=
- =?us-ascii?Q?+9y0SonRDpizJGU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF843BBC1
+	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2024 19:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726946891; cv=none; b=q4oG/59obeC8uwqHR2xKJPGxYL6e9ZV7+nF2UwrEPM+D29I3MYI4/RPfko6izQalR3iMj/9o6EDEXeeiTlh7KeZK8yPmvg78BmJC8FOGxuHshDO0sp1xxhenP8quWcdIpRu0U10bcqOQnZsfN9BtP8jgidIS8z+e71rVWzuL42M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726946891; c=relaxed/simple;
+	bh=yJRE5a9yv1MoadkgcUX1MA9cZ1ciGYxfDxwQ5Sz7YbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UdvJz4j9mRiyyJzdgBBwZGVsg6+EBULtzkJEEvaw/aoOHlZMwj+cwVIkO2ZRCCxqWUH9vPbm8Fr5q7EKPfhRKA03BeH6JpK9mevmOW6Uk1jqfE0u0Cl5syjeDsv7HkzjOMjTH48qbZ/2zU8qnsHxlo6wJyZn5V1J1UtPWMaklRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NabXvlP+; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 21 Sep 2024 15:27:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726946883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=QvN+A4k/j4uBbpGNGBjBwlpS9XEVr9N8qPafYhHwVvc=;
+	b=NabXvlP+sCmXCLQ+f+jRvwXjtEijuHIA/2OQouI6avWjSvSiIvUKwbYkARp50r0tmb4dId
+	OwZhw7Sw+o+ki/nG/B5I1SU7iS6VfvxSF+jbsQCJmqyzMPTgaBLZLoN9I4TRnQ7BrnQtsD
+	hlWe2GRkjWXCIHYp7kq/ngeBD1u73vg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs changes for 6.12-rc1
+Message-ID: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SI2P153MB0718.APCP153.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: e199a6a4-195c-4bc5-1f62-08dcda2eea92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2024 11:17:01.8501
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xTMmxQqh0BzlKggp5U/QYoKV0wbyEPt256tP6gvcYQ0YGJXi0oFxkQ26RdB7tXWNBAWSlLB6DeUbQ5FY+0iCnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2P153MB0670
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
+Relatively quiet cycle here - which is good, because 6.11 was huge.
 
-Hi experts,=20
+I think we'll be able to take off EXPERIMENTAL in inside of a year, see
+below for more.
 
-Need your help in identifying the root cause for issue.
+Cheers,
+Kent
 
-We've seen multiple reports of git repositories failing to clone / getting =
-corrupted in p9 file system. The mount points under this file system are ma=
-rked for FANOTIFY(flags: FAN_MARK_ADD | FAN_MARK_MOUNT) to intercept file s=
-ystem events
+The following changes since commit 16005147cca41a0f67b5def2a4656286f8c0db4a:
 
-When we remove the marking on these mount points, git clone succeeds.
+  bcachefs: Don't delete open files in online fsck (2024-09-09 09:41:47 -0400)
 
-Following is the error message:
-kvitta@DESKTOP-OOHD5UG:/mnt/c/Users/Krishna Vivek$ git clone https://github=
-.com/zlatko-michailov/abc.git gtest
-Cloning into 'gtest'...
-fatal: unknown error occurred while reading the configuration files
+are available in the Git repository at:
 
-We have a MDE(Microsoft Defender for Endpoint) for Linux client running on =
-the this device which marks the filesystems for FANOTIFY to listen to file =
-system events. And, the issue(git clone failure) is occurring only in mount=
- points of p9 file systems.=20
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-21
 
-Following is the system information
+for you to fetch changes up to 025c55a4c7f11ea38521c6e797f3192ad8768c93:
 
-root@DESKTOP-OOHD5UG [ ~ ]# cat /etc/os-release
-NAME=3D"Common Base Linux Mariner"
-VERSION=3D"2.0.20240609"
-ID=3Dmariner
-VERSION_ID=3D"2.0"
-PRETTY_NAME=3D"CBL-Mariner/Linux"
-ANSI_COLOR=3D"1;34"
-HOME_URL=3Dhttps://aka.ms/cbl-mariner
-BUG_REPORT_URL=3Dhttps://aka.ms/cbl-mariner
-SUPPORT_URL=3Dhttps://aka.ms/cbl-mariner
+  bcachefs: return err ptr instead of null in read sb clean (2024-09-21 11:39:49 -0400)
 
-root@DESKTOP-OOHD5UG [ ~ ]# uname -a
-Linux DESKTOP-OOHD5UG 5.15.153.1-microsoft-standard-WSL2 #1 SMP Fri Mar 29 =
-23:14:13 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+----------------------------------------------------------------
+bcachefs changes for 6.12-rc1
 
-On collecting the strace of the operation(git clone <repo link>), it is fou=
-nd that renaming file name from .git/config.lock to .git/config and subsequ=
-ent read of that latter is failing.
+rcu_pending, btree key cache rework: this solves lock contenting in the
+key cache, eliminating the biggest source of the srcu lock hold time
+warnings, and drastically improving performance on some metadata heavy
+workloads - on multithreaded creates we're now 3-4x faster than xfs.
 
-Any known issues in this regard ?=20
+We're now using an rhashtable instead of the system inode hash table;
+this is another significant performance improvement on multithreaded
+metadata workloads, eliminating more lock contention.
 
-Let us know if you require further information.
+for_each_btree_key_in_subvolume_upto(): new helper for iterating over
+keys within a specific subvolume, eliminating a lot of open coded
+"subvolume_get_snapshot()" and also fixing another source of srcu lock
+time warnings, by running each loop iteration in its own transaction (as
+the existing for_each_btree_key() does).
 
+More work on btree_trans locking asserts; we now assert that we don't
+hold btree node locks when trans->locked is false, which is important
+because we don't use lockdep for tracking individual btree node locks.
 
-Thank you,
-Krishna Vivek
+Some cleanups and improvements in the bset.c btree node lookup code,
+from Alan.
 
+Rework of btree node pinning, which we use in backpointers fsck. The old
+hacky implementation, where the shrinker just skipped over nodes in the
+pinned range, was causing OOMs; instead we now use another shrinker with
+a much higher seeks number for pinned nodes.
+
+Rebalance now uses BCH_WRITE_ONLY_SPECIFIED_DEVS; this fixes an issue
+where rebalance would sometimes fall back to allocating from the full
+filesystem, which is not what we want when it's trying to move data to a
+specific target.
+
+Use __GFP_ACCOUNT, GFP_RECLAIMABLE for btree node, key cache
+allocations.
+
+Idmap mounts are now supported - Hongbo.
+
+Rename whiteouts are now supported - Hongbo.
+
+Erasure coding can now handle devices being marked as failed, or
+forcibly removed. We still need the evacuate path for erasure coding,
+but it's getting very close to ready for people to start using.
+
+Status, and when will we be taking off experimental:
+----------------------------------------------------
+
+Going by critical, user facing bugs getting found and fixed, we're
+nearly there. There are a couple key items that need to be finished
+before we can take off the experimental label:
+
+- The end-user experience is still pretty painful when the root
+  filesystem needs a fsck; we need some form of limited self healing so
+  that necessary repair gets run automatically. Errors (by type) are
+  recorded in the superblock, so what we need to do next is convert
+  remaining inconsistent() errors to fsck() errors (so that all runtime
+  inconsistencies are logged in the superblock), and we need to go
+  through the list of fsck errors and classify them by which fsck passes
+  are needed to repair them.
+
+- We need comprehensive torture testing for all our repair paths, to
+  shake out remaining bugs there. Thomas has been working on the tooling
+  for this, so this is coming soonish.
+
+Slightly less critical items:
+
+- We need to improve the end-user experience for degraded mounts: right
+  now, a degraded root filesystem means dropping to an initramfs shell
+  or somehow inputting mount options manually (we don't want to allow
+  degraded mounts without some form of user input, except on unattended
+  servers) - we need the mount helper to prompt the user to allow
+  mounting degraded, and make sure this works with systemd.
+
+- Scalabiity: we have users running 100TB+ filesystems, and that's
+  effectively the limit right now due to fsck times. We have some
+  reworks in the pipeline to address this, we're aiming to make petabyte
+  sized filesystems practical.
+
+----------------------------------------------------------------
+Alan Huang (8):
+      bcachefs: Remove unused parameter of bkey_mantissa
+      bcachefs: Remove unused parameter of bkey_mantissa_bits_dropped
+      bcachefs: Remove dead code in __build_ro_aux_tree
+      bcachefs: Convert open-coded extra computation to helper
+      bcachefs: Minimize the search range used to calculate the mantissa
+      bcachefs: Remove the prev array stuff
+      bcachefs: Remove unused parameter
+      bcachefs: Refactor bch2_bset_fix_lookup_table
+
+Alyssa Ross (1):
+      bcachefs: Fix negative timespecs
+
+Chen Yufan (1):
+      bcachefs: Convert to use jiffies macros
+
+Diogo Jahchan Koike (1):
+      bcachefs: return err ptr instead of null in read sb clean
+
+Feiko Nanninga (1):
+      bcachefs: Fix sysfs rebalance duration waited formatting
+
+Hongbo Li (2):
+      bcachefs: support idmap mounts
+      bcachefs: Fix compilation error for bch2_sb_member_alloc
+
+Julian Sun (4):
+      bcachefs: remove the unused macro definition
+      bcachefs: fix macro definition allocate_dropping_locks_errcode
+      bcachefs: fix macro definition allocate_dropping_locks
+      bcachefs: remove the unused parameter in macro bkey_crc_next
+
+Kent Overstreet (68):
+      inode: make __iget() a static inline
+      bcachefs: switch to rhashtable for vfs inodes hash
+      bcachefs: Fix deadlock in __wait_on_freeing_inode()
+      lib/generic-radix-tree.c: genradix_ptr_inlined()
+      lib/generic-radix-tree.c: add preallocation
+      bcachefs: rcu_pending
+      bcachefs: rcu_pending now works in userspace
+      bcachefs: Rip out freelists from btree key cache
+      bcachefs: key cache can now allocate from pending
+      bcachefs: data_allowed is now an opts.h option
+      bcachefs: bch2_opt_set_sb() can now set (some) device options
+      bcachefs: Opt_durability can now be set via bch2_opt_set_sb()
+      bcachefs: Add check for btree_path ref overflow
+      bcachefs: Btree path tracepoints
+      bcachefs: kill bch2_btree_iter_peek_and_restart()
+      bcachefs: bchfs_read(): call trans_begin() on every loop iter
+      bcachefs: bch2_fiemap(): call trans_begin() on every loop iter
+      bcachefs: for_each_btree_key_in_subvolume_upto()
+      bcachefs: bch2_readdir() -> for_each_btree_key_in_subvolume_upto
+      bcachefs: bch2_xattr_list() -> for_each_btree_key_in_subvolume_upto
+      bcachefs: bch2_seek_data() -> for_each_btree_key_in_subvolume_upto
+      bcachefs: bch2_seek_hole() -> for_each_btree_key_in_subvolume_upto
+      bcachefs: range_has_data() -> for_each_btree_key_in_subvolume_upto
+      bcachefs: bch2_folio_set() -> for_each_btree_key_in_subvolume_upto
+      bcachefs: quota_reserve_range() -> for_each_btree_key_in_subvolume_upto
+      bcachefs: Move rebalance_status out of sysfs/internal
+      bcachefs: promote_whole_extents is now a normal option
+      bcachefs: trivial open_bucket_add_buckets() cleanup
+      bcachefs: bch2_sb_nr_devices()
+      bcachefs: Drop memalloc_nofs_save() in bch2_btree_node_mem_alloc()
+      bcachefs: bch2_time_stats_reset()
+      bcachefs: Assert that we don't lock nodes when !trans->locked
+      bcachefs: darray: convert to alloc_hooks()
+      bcachefs: Switch gc bucket array to a genradix
+      bcachefs: Add pinned to btree cache not freed counters
+      bcachefs: do_encrypt() now handles allocation failures
+      bcachefs: convert __bch2_encrypt_bio() to darray
+      bcachefs: kill redundant is_vmalloc_addr()
+      bcachefs: fix prototype to bch2_alloc_sectors_start_trans()
+      bcachefs: BCH_WRITE_ALLOC_NOWAIT no longer applies to open bucket allocation
+      bcachefs: rebalance writes use BCH_WRITE_ONLY_SPECIFIED_DEVS
+      bcachefs: Use __GFP_ACCOUNT for reclaimable memory
+      bcachefs: Use mm_account_reclaimed_pages() when freeing btree nodes
+      bcachefs: Options for recovery_passes, recovery_passes_exclude
+      bcachefs: Move tabstop setup to bch2_dev_usage_to_text()
+      bcachefs: bch2_dev_remove_alloc() -> alloc_background.c
+      bcachefs: bch2_sb_member_alloc()
+      bcachefs: improve "no device to read from" message
+      bcachefs: bch2_opts_to_text()
+      bcachefs: Progress indicator for extents_to_backpointers
+      bcachefs: bch2_dev_rcu_noerror()
+      bcachefs: Failed devices no longer require mounting in degraded mode
+      bcachefs: Don't count "skipped access bit" as touched in btree cache scan
+      bcachefs: btree cache counters should be size_t
+      bcachefs: split up btree cache counters for live, freeable
+      bcachefs: Rework btree node pinning
+      bcachefs: EIO errcode cleanup
+      bcachefs: stripe_to_mem()
+      bcachefs: bch_stripe.disk_label
+      bcachefs: ec_stripe_head.nr_created
+      bcachefs: improve bch2_new_stripe_to_text()
+      bcachefs: improve error message on too few devices for ec
+      bcachefs: improve error messages in bch2_ec_read_extent()
+      bcachefs: bch2_trigger_ptr() calculates sectors even when no device
+      bcachefs: bch2_dev_remove_stripes()
+      bcachefs: bch_fs.rw_devs_change_count
+      bcachefs: bch2_ec_stripe_head_get() now checks for change in rw devices
+      bcachefs: Don't drop devices with stripe pointers
+
+Matthew Wilcox (Oracle) (1):
+      bcachefs: Do not check folio_has_private()
+
+Nathan Chancellor (1):
+      bcachefs: Fix format specifier in bch2_btree_key_cache_to_text()
+
+Reed Riley (1):
+      bcachefs: Replace div_u64 with div64_u64 where second param is u64
+
+Sasha Finkelstein (1):
+      bcachefs: Hook up RENAME_WHITEOUT in rename.
+
+Thorsten Blum (3):
+      bcachefs: Annotate struct bucket_array with __counted_by()
+      bcachefs: Annotate struct bch_xattr with __counted_by()
+      bcachefs: Annotate bch_replicas_entry_{v0,v1} with __counted_by()
+
+Xiaxi Shen (1):
+      bcachefs: Fix a spelling error in docs
+
+Yang Li (1):
+      bcachefs: Remove duplicated include in backpointers.c
+
+Youling Tang (4):
+      bcachefs: allocate inode by using alloc_inode_sb()
+      bcachefs: Mark bch_inode_info as SLAB_ACCOUNT
+      bcachefs: drop unused posix acl handlers
+      bcachefs: Simplify bch2_xattr_emit() implementation
+
+ Documentation/filesystems/bcachefs/CodingStyle.rst |   2 +-
+ fs/bcachefs/Kconfig                                |   7 +
+ fs/bcachefs/Makefile                               |   1 +
+ fs/bcachefs/acl.c                                  |   2 +-
+ fs/bcachefs/alloc_background.c                     |  45 +-
+ fs/bcachefs/alloc_background.h                     |   3 +-
+ fs/bcachefs/alloc_foreground.c                     |  59 +-
+ fs/bcachefs/alloc_foreground.h                     |   5 +-
+ fs/bcachefs/backpointers.c                         | 106 +++-
+ fs/bcachefs/backpointers.h                         |  23 +-
+ fs/bcachefs/bcachefs.h                             |  14 +-
+ fs/bcachefs/bcachefs_format.h                      |   2 +
+ fs/bcachefs/bset.c                                 | 182 +++---
+ fs/bcachefs/bset.h                                 |   4 +-
+ fs/bcachefs/btree_cache.c                          | 273 ++++++---
+ fs/bcachefs/btree_cache.h                          |   3 +
+ fs/bcachefs/btree_gc.c                             |  21 +-
+ fs/bcachefs/btree_io.c                             |   8 +-
+ fs/bcachefs/btree_io.h                             |   4 +-
+ fs/bcachefs/btree_iter.c                           |  63 +-
+ fs/bcachefs/btree_iter.h                           |  52 +-
+ fs/bcachefs/btree_key_cache.c                      | 405 +++----------
+ fs/bcachefs/btree_key_cache_types.h                |  18 +-
+ fs/bcachefs/btree_locking.h                        |  13 +-
+ fs/bcachefs/btree_trans_commit.c                   |   2 +-
+ fs/bcachefs/btree_types.h                          |  60 +-
+ fs/bcachefs/btree_update.c                         |  12 +-
+ fs/bcachefs/btree_update_interior.c                |  37 +-
+ fs/bcachefs/btree_update_interior.h                |   2 +
+ fs/bcachefs/buckets.c                              |  35 +-
+ fs/bcachefs/buckets.h                              |  15 +-
+ fs/bcachefs/buckets_types.h                        |   8 -
+ fs/bcachefs/checksum.c                             | 101 ++--
+ fs/bcachefs/clock.h                                |   9 -
+ fs/bcachefs/darray.c                               |   4 +-
+ fs/bcachefs/darray.h                               |  26 +-
+ fs/bcachefs/data_update.c                          |   2 +-
+ fs/bcachefs/dirent.c                               |  66 +--
+ fs/bcachefs/ec.c                                   | 303 +++++++---
+ fs/bcachefs/ec.h                                   |  11 +-
+ fs/bcachefs/ec_format.h                            |   9 +-
+ fs/bcachefs/ec_types.h                             |   1 +
+ fs/bcachefs/errcode.h                              |  14 +-
+ fs/bcachefs/extents.c                              |  33 +-
+ fs/bcachefs/extents.h                              |  24 +-
+ fs/bcachefs/fs-common.c                            |   5 +-
+ fs/bcachefs/fs-io-buffered.c                       |  41 +-
+ fs/bcachefs/fs-io-direct.c                         |   2 +-
+ fs/bcachefs/fs-io-pagecache.c                      |  90 ++-
+ fs/bcachefs/fs-io-pagecache.h                      |   4 +-
+ fs/bcachefs/fs-io.c                                | 178 ++----
+ fs/bcachefs/fs-ioctl.c                             |   4 +-
+ fs/bcachefs/fs.c                                   | 427 +++++++++-----
+ fs/bcachefs/fs.h                                   |  18 +-
+ fs/bcachefs/inode.c                                |   2 +-
+ fs/bcachefs/io_read.c                              |  18 +-
+ fs/bcachefs/io_write.c                             |   7 +-
+ fs/bcachefs/journal_io.c                           |   6 +-
+ fs/bcachefs/journal_reclaim.c                      |   7 +-
+ fs/bcachefs/opts.c                                 |  85 ++-
+ fs/bcachefs/opts.h                                 |  61 +-
+ fs/bcachefs/rcu_pending.c                          | 650 +++++++++++++++++++++
+ fs/bcachefs/rcu_pending.h                          |  27 +
+ fs/bcachefs/rebalance.c                            |   3 +
+ fs/bcachefs/recovery.c                             |  22 +-
+ fs/bcachefs/recovery_passes.c                      |  10 +-
+ fs/bcachefs/replicas.c                             |  10 +-
+ fs/bcachefs/replicas_format.h                      |   9 +-
+ fs/bcachefs/sb-clean.c                             |   2 +-
+ fs/bcachefs/sb-members.c                           |  57 ++
+ fs/bcachefs/sb-members.h                           |  22 +-
+ fs/bcachefs/str_hash.h                             |   2 +-
+ fs/bcachefs/subvolume.h                            |  45 ++
+ fs/bcachefs/subvolume_types.h                      |   3 +-
+ fs/bcachefs/super-io.c                             |  12 +-
+ fs/bcachefs/super.c                                |  85 +--
+ fs/bcachefs/sysfs.c                                |  55 +-
+ fs/bcachefs/thread_with_file.c                     |   2 +-
+ fs/bcachefs/time_stats.c                           |  14 +
+ fs/bcachefs/time_stats.h                           |   3 +-
+ fs/bcachefs/trace.h                                | 465 ++++++++++++++-
+ fs/bcachefs/util.c                                 |  16 +-
+ fs/bcachefs/util.h                                 |   2 +-
+ fs/bcachefs/xattr.c                                |  81 +--
+ fs/bcachefs/xattr_format.h                         |   2 +-
+ fs/inode.c                                         |   8 -
+ include/linux/fs.h                                 |   9 +-
+ include/linux/generic-radix-tree.h                 | 105 +++-
+ lib/generic-radix-tree.c                           |  80 +--
+ 89 files changed, 3155 insertions(+), 1690 deletions(-)
+ create mode 100644 fs/bcachefs/rcu_pending.c
+ create mode 100644 fs/bcachefs/rcu_pending.h
 
