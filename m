@@ -1,260 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-29786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC4E97DCD4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 12:25:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1C197DCE9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 13:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28561C20CC7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 10:25:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAD8281C7A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 11:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F6616DEAB;
-	Sat, 21 Sep 2024 10:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B93156C7B;
+	Sat, 21 Sep 2024 11:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAIkIyTR"
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="XQCriIi8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021131.outbound.protection.outlook.com [52.101.129.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3945154425;
-	Sat, 21 Sep 2024 10:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726914342; cv=none; b=oHo+9VAFzzCnM7EsMQz0TUAvek4d1Dyxv0yHZ9diUgLZHLd/xOL6KjKX1xUwrlNS5+N1I/3W6sNdE7EAj8PNfcDemfiNevMZ30LkvttO33x5d/+dnpqbNlHxDcj3Sf85PR3dShNpYgdxsAr+jI4V1BwPuU2r9Rm66M7pAgj6hUM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726914342; c=relaxed/simple;
-	bh=JBSwaa3lb+nw80GNHJ8y+Mlwk6VCdTjL9iXAjUaem9k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eVe/RYpjXrp/77vH8biiNs/q8ddqEP1q1iul7UD5NiP0NO4t6LVoUC5oOo81SboRrPFwzZxhD4yP5SGTf3STzJmw8MWXFgPDtYl8XrsVxU3KPCYdQoFrlfIZgK+ml+MWdxtv6EQJgBvjrYF37hxlmXijRhXm4VccJVqiuwh3wgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YAIkIyTR; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4583083d019so19088671cf.3;
-        Sat, 21 Sep 2024 03:25:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726914340; x=1727519140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pHggiO0aSd2mJzBI8SQuoqlzbxR7FqQfOwUz0SiPx90=;
-        b=YAIkIyTRMhp8z7eDyqRCGWW9oU2NRU7LZ8WYf6xaCnHyMwkF0GQ1qF244FDbz2v4tk
-         OZ3gcCEcli7Rjoqni2JV14vavgMN9xnQJ3SrVJF8nW8l9wGkMJ7gBYm7nDcS39u8cqe9
-         jt+9REjzFNF7+IXOij+hSrOEwfpt5AIZa00SD5xyQ4x2huhr/Jg/nw30dr185/MwREG3
-         zPhHtX/dTvH90hb12FHlr2I453V8TZVh/Sg4dpzIl8AFvDWapCcPIC9E8/xzTocChWJY
-         Sm8x3es8lx7ggtSSdEagcDXjZfHWxxXRPlKU+25vl/rC2gjj+lfdAeeC8is9cWOMS1Aw
-         FV7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726914340; x=1727519140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pHggiO0aSd2mJzBI8SQuoqlzbxR7FqQfOwUz0SiPx90=;
-        b=BINfiRHduLkA4JCPdPfZcrKwEaMGBkmGthS0FPpy86Ttw2qiFPYxA2St7aiLlqttq1
-         csBQ7vdO3OZ4C+iRE7nhzqe04piyhbffJjs20iJsjO0MW248+soothN6ozb64Kjc+XxA
-         xB1n9+Cd2MP9rjZGkRi8R4ICxz/4rDLsPiN4+LidJVZmq/MDZYhrWzxRLXhe9F6tsKM+
-         86YthOWmxDvf3sQFBy5ciloB36/1BoHvbGmc0xkMJ0sUE7sYOrcRUhgkm1/pr71gAxnv
-         lelw9Eq+MRIJhXmAHdDlSn2aNubMwVIFU2MCEt5ICb+XUlQ7nUp8zzlKSGMsl3w/ftKm
-         5YWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeiPnlD4i6jA+0TpMGwIOxCNwbmPmNikec9FduM+nLhN3ggYh7uPC+S3k5KO6tmStbDbEY1B8UbD9R@vger.kernel.org, AJvYcCXx1EZO4S/bBhudjp0rf59KABfsM9KsjAmGvnEhHnhM6y2HPEmacmc0JbYkHu50QFjDWqFGAdqgEHSXR9fF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7u0xlVxO0AUjpK2P3eOpd0Uz4eFQiXIvLVFrE2BvQnXeYImeT
-	wDqOwU9a6VukCLsYnj7mKVH/cVXvCZZLHY4ZOxRN6sSU7VzPHjjo2yjiXIAyWxseNJ++QCdbJ+8
-	GQXf86KTCEiz5Eby0OZGo8IRHJV8=
-X-Google-Smtp-Source: AGHT+IHG1rpeJVa6kFfdk0VsXjZDzkumH2RDxISa4St9ZJ7uz7YMnKz2NNfqIGS0WDLwK/0hGFa07Pys+lPiSMvlcz0=
-X-Received: by 2002:ac8:58c8:0:b0:458:53da:a4e9 with SMTP id
- d75a77b69052e-45b204e0346mr84104111cf.4.1726914339402; Sat, 21 Sep 2024
- 03:25:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C3113A26F
+	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2024 11:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726917439; cv=fail; b=TC37VhNYrTKvpZxQlJmOpqqJvGoownc/b1HHjeiIbyl0gRL2iBBhcE2YThUc9z162FXTVLOOYmSBxXIWWjzzKD5h4jtcMWU/adnG7K68frbP0a/DLv9Xyr7DjblBC4zLhGtiuXIrgIxFDHp7RVTaINgm3Dj1ZMzFVV1vhcsLVic=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726917439; c=relaxed/simple;
+	bh=jQFr5xhpMivt76+FhDXSriQWElFWtWVIAwZF5/mArfw=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bSP1qBeN2dBfA9qI/USs0TTItd3sMnyv0xymwi68BGrzJRE6BKmR8+J6EDrW4ZfxEwEoZiaUr45WvnZOEAYHI9EuqVH2q1FN3zUDdJnbKF53nHMBdqz750dKklZBYjBbgC3bzMYb4kHlXzBQBJCQ7+EdPNIEDqfprz5HRD3xIg0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=XQCriIi8; arc=fail smtp.client-ip=52.101.129.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nVVeAPKC9HtYW8XhDQha2NLSuiqMvqwBbEMAYiP6STPy4k9ZBFDTdGxpAL1rPCulVijQC6bzdIRitesAR2YP/0v9Q5Xp7lhzTUejf5B5rCjr6URYdoeONV9ihLd8G/fx8lWIaGrzhVI0dAr2/SRF2pOhLjnvzU607ZjO4vXzY3OfZBro/WwatqStbtVGQQtC6Fj0RbToQ1chPnYfz37u7GCLaQAjwET0eWUjHv+23pgdjE2XY+5NFiSb10HhHjde3kd3MD1NvYwhwDBCy1sYQ3UnrGlJ17JAKIrNUx0TXlpFLig1n4REnia9+l6hYC9eqWuYDjh25SOgUWAWZBlMKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jQFr5xhpMivt76+FhDXSriQWElFWtWVIAwZF5/mArfw=;
+ b=n+Qvln1Rskr3L3ywI/i8HvAV+bNZ1qIKWxnoDM03Ckjex/m58oWSR5Yas4in9eSXu03xetD6jEluTjCY9JQHKvO6RR0IsLsqo+f4H12SAusFpusiI9qIO5V8caSxuzGuNap+8ZL8+Pf+ozUHVevb61Je0XN+vOfF8ScgjP5ABdqZg/8YENtl+vixq2wo6AFAk1WrKG82glS7n0jqBt/OXxlpLQ0D5g9DnLDeYPLFRmwi25yfmpsveqpO19ZlZj2Y/PadSsK1dHgVZzZN7zgDnR/bdPkjYfBX40pQir7ZAZ0mlAKyMaqhqr5kbThVx27DbSnaWOPsa+18V4vtHVpSUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jQFr5xhpMivt76+FhDXSriQWElFWtWVIAwZF5/mArfw=;
+ b=XQCriIi8azpslMUVSr01RiQRF8Hl81QUBhU9Yc5Wt5pCPyeW3X2JhqfrmI1QWgv7m8WwebQJKLDz8a2PoqYdEaMh0Esky080AvGkpu6tN6Mv1VgIqAu2E3hR+9SJ5B6T53x4idY3QgvcSqDjwnYF5uWaiMhDKALX6yUIiVaJb2A=
+Received: from SI2P153MB0718.APCP153.PROD.OUTLOOK.COM (2603:1096:4:1ff::8) by
+ SI2P153MB0670.APCP153.PROD.OUTLOOK.COM (2603:1096:4:1fd::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8005.13; Sat, 21 Sep 2024 11:17:02 +0000
+Received: from SI2P153MB0718.APCP153.PROD.OUTLOOK.COM
+ ([fe80::a647:e1c3:31c9:e35]) by SI2P153MB0718.APCP153.PROD.OUTLOOK.COM
+ ([fe80::a647:e1c3:31c9:e35%6]) with mapi id 15.20.8005.010; Sat, 21 Sep 2024
+ 11:17:02 +0000
+From: Krishna Vivek Vitta <kvitta@microsoft.com>
+To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC: "jack@suse.cz" <jack@suse.cz>
+Subject: Git clone fails in p9 file system marked with FANOTIFY
+Thread-Topic: Git clone fails in p9 file system marked with FANOTIFY
+Thread-Index: AdsMF7H2pA+A3TMFT7qIn4M6deqPig==
+Date: Sat, 21 Sep 2024 11:17:01 +0000
+Message-ID:
+ <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=b3cb83a9-9f35-4243-9b7b-198dad1ed686;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-09-21T11:14:46Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SI2P153MB0718:EE_|SI2P153MB0670:EE_
+x-ms-office365-filtering-correlation-id: e199a6a4-195c-4bc5-1f62-08dcda2eea92
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?jiCecDfRoEgO9YVkIqD9Yaucw5gPubsJOSsIj07V/1yWqm2EvfKCSfM1wA7z?=
+ =?us-ascii?Q?78CyYGWNn96OuHRAHcnMbN8Y2ol9hXRtYFeeERC977JCBuaY10gxPSItn7VL?=
+ =?us-ascii?Q?oTW4xrmYpEYh3ElQwqurwrbwyrkacXZ2+g0IzD4MwhrAfy19atvf+0OcPBna?=
+ =?us-ascii?Q?Ik9rPKByhbh7Vb2TLBnGT+dD4uODLGRwhcVLCEeFvprY3A67jcdLPcfKz9wz?=
+ =?us-ascii?Q?hWiHnQLEjFbYdKT5O1xuQAJH6/oUCQATQkkfSEbBNCEo9OyAFEQFqpU5iwx6?=
+ =?us-ascii?Q?z24hEMd9T9AxgMS9NihA0RMExRljlocVfiMOYTX5NwECO1Vc65CXPar2FZbo?=
+ =?us-ascii?Q?mN/gf/fGn7xA1da/eO3ht34tJ+itGmgoNOXVSoEIfxVIH3xy28BDte+OJc3C?=
+ =?us-ascii?Q?0wd9erjBSV3h1bFDieK435VIFOwudOP2i5asqD9jbHuvzo9V/MzyKbumWtdZ?=
+ =?us-ascii?Q?koN2R+09J4zgWa6RNhKke8ALaiAjKgnCy4i5+EdsziMXkhSnV5oB5cWFbW6a?=
+ =?us-ascii?Q?iBXGo/PDY/JF3u81L3hcQWXz+1xQOggiQzjlyM4QtkEkZO3Y1xW/YDXW4cPH?=
+ =?us-ascii?Q?2zeFk4BvkbDBb8SmR0bTRqL8BZfkz57iO+UdR4e8Ghw3qd+xGndV3UGKPgRC?=
+ =?us-ascii?Q?wYatJ59jUxGZ8GRoz4izlO2otf9EH1juOj+o+z0SU9em4b6NQ9dGMW8FKiuN?=
+ =?us-ascii?Q?GOtgyGzD+5JtLtg3LyZldumQ+tIEl3Ich77rQrUAVWdyE9NS9ouDDQzZnW31?=
+ =?us-ascii?Q?a4JDcNe+SCSIfKsocBnoj8zKoifh6yx49aT7lxSyk26cnTOIjTwiWbxkuqI1?=
+ =?us-ascii?Q?MEUCffmlt1tuj8Wh4aHX6sCq5+2iJg2EHTN4W56VygH4tw+Skhgb9ruQMfFM?=
+ =?us-ascii?Q?Yiysg/ycvSfOoqc6oGMeGKAHXre2xymLXAUccfZylDpFyJuoTJj6oFJTwF1n?=
+ =?us-ascii?Q?a0ziKOiECaXXRx6L8qN+xskIGqHZGWYE8WyhlLlCa3X0mDiLtdbeeFDwg8/P?=
+ =?us-ascii?Q?V3oP2YrI2c+CjqGCR67Wur1vJRA/M9/W7xDc3Cbg4SG+4Z0RxlcgxqKNsVJN?=
+ =?us-ascii?Q?Fd9u3oKw8KpnkZB4hu/dx4+4xDjbEElz3Xqy5kebI6Jp2GUmLPTKMVk9Ehe6?=
+ =?us-ascii?Q?h5C7ZoF8zTrZUHcz++5YNsckprrHz+0cSZwB1pArPsJuKPDtCpxJxoSNiQpV?=
+ =?us-ascii?Q?FWssDN4hrgFT1tHW4KwXg8DxnHw28LKQ5ska02srGmvcWZwzduQIQsqRg9S7?=
+ =?us-ascii?Q?hbJeOzmsfU7oTrjtj7gMgTvPv0UnaSTHnVQJM3f+jWgqKxdmNK1mSb4yWiS7?=
+ =?us-ascii?Q?+FA=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2P153MB0718.APCP153.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?f2kwR7QlHNwgX2QSNFQcb94s1ef5zofrdIzClTh7lCSSCUSwndKKttTMJyul?=
+ =?us-ascii?Q?xqFyvAngkvi1YiKMrMuZEv/9ABvOGV264tg1oNJOfPwqbYi8SIJqRn+T7v/M?=
+ =?us-ascii?Q?DLXTbLwokg4QGI/N8eRTte12v+pTJJJYAz3DLAWT5MkrFbzY6D8gQgoEQzGU?=
+ =?us-ascii?Q?q1Av9s4SF5N6J0io3wDsOkLfJeaBqZP/ZvOSU4fCNqY3FZLfIx13MozjWGf4?=
+ =?us-ascii?Q?Gmnuu0+JRiooLe3nHEBYfsX0G/Ha+tO0akzYe4rKXkA2o5gsIU6jKrXcHwb4?=
+ =?us-ascii?Q?KK25UearKqGUJxMaeGsca+TTsUsiIOTx/j6UqyySuBQzGcrnOLNSEg0DuPDZ?=
+ =?us-ascii?Q?tA6SXOfUjK06dfSgNhAx12lojU8vDva8ucXuiBx8a2AatbDd+ipWb+iSE/Wk?=
+ =?us-ascii?Q?Q9YP/qboLRonFXEGlbwLuxVNGGNkHcVywdw4kZ1kc+1IodxYrAnBm22utImZ?=
+ =?us-ascii?Q?zIHGfeBbKsvwpD8pXxnPGLxA9c6+K1X+iFQjwfvvmjYdufe7C92tV0AB2QVh?=
+ =?us-ascii?Q?cTVcsQ5RZ4REZ/Bw7sf5esyGRXlfPrcnIplpcl51qZ9YhWmfYipXv7JOI1gS?=
+ =?us-ascii?Q?ZLkCkHDwez3P8p3pHCFPRn+eAFaJm/1KVJrjvqH8iThfF2Lf3Qk1HqMs+6XM?=
+ =?us-ascii?Q?it9vL9wRQCn0p7Q2SrFEGYQ1hlHvQ9KdDiRLpDGywb2l511DVCsTqO0h0XnL?=
+ =?us-ascii?Q?BCL7UBGcMXTk5oHL5r28aa++JSH2whNvn57KAswk10E43m5wnj7yGEZ24CqS?=
+ =?us-ascii?Q?LenncaI+mRVQzjSPs+RDsqx6lZdOwRmPLt/maBALHRrXxzfVuwFpho8V7vE6?=
+ =?us-ascii?Q?qa7Tcb0cz/0PnG8H8OsKpXjDfD/EwrOMShpQY+orYbcqXPjx6YU9GopRrg+q?=
+ =?us-ascii?Q?nzUfFlsoKABWz/YHfQsnSDxmszGfpUKULWtH2L04cIgt14Lo7lKtERhbY+uP?=
+ =?us-ascii?Q?BsVIkDo7hxhe3hEU7eMvnn8p/edRusEnXl0HvhkMf48hk9XxwyY/g4aDcRF3?=
+ =?us-ascii?Q?DFWwYUs1rMufxS9uGs1B4jcXvq9R+/hOEPSWJVaJozDnsSW3l9CSlY5FdAWF?=
+ =?us-ascii?Q?x0zBS/NOjuPkeiIBJ5yx1ptlfi6jzgRk+Rh8jNW8QXnmDa1zt6y/Zk9C/GeF?=
+ =?us-ascii?Q?RWK4jojPvboNuagZjgqbhyCGlFzT/a32csRpocWuEsqv4QLwHTWcb/GO6Zsc?=
+ =?us-ascii?Q?D9Gf3Zo5gRPj4g2+BwFwXMV8qv8qlry1ZNI6BJT94C6dzu7nd3O6/TOC74Vu?=
+ =?us-ascii?Q?fg/RhH9POtv91g73Oy2wUJqDyZL+F4mzp4cUpALspO8uQpNUUFc03B97QbEn?=
+ =?us-ascii?Q?RSwtf73NrE1gcjmRiVh0u/NaerMITAPe5VwNc+z4qEdyAhDuZeJWGfkVhqCY?=
+ =?us-ascii?Q?RFWap/hhCanKXiM8DXFp7QMLZWPBlRPbR3ittZW6yHO0FghDlYtIozWO5k2q?=
+ =?us-ascii?Q?W49DOmXwIUWNQqnwsXSbF9jwIZo4zZRoJdl5kGCQ0VhUPF3UKD7Kr1LVZ3O1?=
+ =?us-ascii?Q?+9y0SonRDpizJGU=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919140611.1771651-1-amir73il@gmail.com> <20240919140611.1771651-3-amir73il@gmail.com>
- <784e439e0319bf0c3fbb0b92361a99ee2d78ac9f.camel@kernel.org>
- <CAOQ4uxjkN2WgT8QJeeZfbRCqrTMED+PtYEXrkDmWjh0iw+PGGw@mail.gmail.com> <8aa01edea8972c1bde3b34df32f9db72e29420ed.camel@kernel.org>
-In-Reply-To: <8aa01edea8972c1bde3b34df32f9db72e29420ed.camel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 21 Sep 2024 12:25:27 +0200
-Message-ID: <CAOQ4uxj3wgXAnAiewbVNa32Mfr=TRstBPNQd=owrvV4=R3VP8Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] fs: open_by_handle_at() support for decoding
- connectable file handles
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SI2P153MB0718.APCP153.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: e199a6a4-195c-4bc5-1f62-08dcda2eea92
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2024 11:17:01.8501
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xTMmxQqh0BzlKggp5U/QYoKV0wbyEPt256tP6gvcYQ0YGJXi0oFxkQ26RdB7tXWNBAWSlLB6DeUbQ5FY+0iCnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2P153MB0670
 
-On Sat, Sep 21, 2024 at 7:33=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Fri, 2024-09-20 at 18:38 +0200, Amir Goldstein wrote:
-> > On Fri, Sep 20, 2024 at 6:02=E2=80=AFPM Jeff Layton <jlayton@kernel.org=
-> wrote:
-> > >
-> > > On Thu, 2024-09-19 at 16:06 +0200, Amir Goldstein wrote:
-> > > > Allow using an O_PATH fd as mount fd argument of open_by_handle_at(=
-2).
-> > > > This was not allowed before, so we use it to enable a new API for
-> > > > decoding "connectable" file handles that were created using the
-> > > > AT_HANDLE_CONNECTABLE flag to name_to_handle_at(2).
-> > > >
-> > > > When mount fd is an O_PATH fd and decoding an O_PATH fd is requeste=
-d,
-> > > > use that as a hint to try to decode a "connected" fd with known pat=
-h,
-> > > > which is accessible (to capable user) from mount fd path.
-> > > >
-> > > > Note that this does not check if the path is accessible to the call=
-ing
-> > > > user, just that it is accessible wrt the mount namesapce, so if the=
-re
-> > > > is no "connected" alias, or if parts of the path are hidden in the
-> > > > mount namespace, open_by_handle_at(2) will return -ESTALE.
-> > > >
-> > > > Note that the file handles used to decode a "connected" fd do not h=
-ave
-> > > > to be encoded with the AT_HANDLE_CONNECTABLE flag.  Specifically,
-> > > > directory file handles are always "connectable", regardless of usin=
-g
-> > > > the AT_HANDLE_CONNECTABLE flag.
-> > > >
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > ---
-> > > >  fs/fhandle.c | 61 +++++++++++++++++++++++++++++++-----------------=
-----
-> > > >  1 file changed, 37 insertions(+), 24 deletions(-)
-> > > >
-> > >
-> > > The mountfd is only used to get a path, so I don't see a problem with
-> > > allowing that to be an O_PATH fd.
-> > >
-> > > I'm less keen on using the fact that mountfd is an O_PATH fd to chang=
-e
-> > > the behaviour of open_by_handle_at(). That seems very subtle. Is ther=
-e
-> > > a good reason to do it that way instead of just declaring a new AT_*
-> > > flag for this?
-> > >
-> >
-> > Not sure if it is a good reason, but open_by_handle_at() has an O_ flag=
-s
-> > argument, not an AT_ flags argument...
-> >
-> > If my hack API is not acceptable then we will need to add
-> > open_by_handle_at2(), with struct open_how argument or something.
-> >
->
-> Oh right, I forgot that open_by_handle_at doesn't take AT_* flags.
-> A new syscall may be best then.
->
-> I can see a couple of other potential approaches:
->
-> 1/ You could add a new fcntl() cmd that puts the mountfd into a
-> "connectable filehandles" mode. The downside there is that it'd take 2
-> syscalls to do your open.
->
-> 2/ You could add flags to open_how that make openat2() behave like
-> open_by_handle_at(). Add a flag that allows "pathname" to point to a
-> filehandle instead, and a second flag that indicates that the fh is
-> connectable.
->
-> Both of those are pretty hacky though.
->
 
-Yes, especially #2, very creative ;)
+Hi experts,=20
 
-But I had another less hacky idea.
-Instead of (ab)using a sycall flag to get a "connected" fd,
-encode an explicit "connectable" fh, something like this untested patch.
+Need your help in identifying the root cause for issue.
 
-WDYT?
+We've seen multiple reports of git repositories failing to clone / getting =
+corrupted in p9 file system. The mount points under this file system are ma=
+rked for FANOTIFY(flags: FAN_MARK_ADD | FAN_MARK_MOUNT) to intercept file s=
+ystem events
 
-Thanks,
-Amir.
+When we remove the marking on these mount points, git clone succeeds.
 
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -59,6 +59,7 @@ static long do_sys_name_to_handle(const struct path *path=
-,
-        handle_bytes =3D handle_dwords * sizeof(u32);
-        handle->handle_bytes =3D handle_bytes;
-        if ((handle->handle_bytes > f_handle.handle_bytes) ||
-+           WARN_ON_ONCE(retval > FILEID_INVALID) ||
-            (retval =3D=3D FILEID_INVALID) || (retval < 0)) {
-                /* As per old exportfs_encode_fh documentation
-                 * we could return ENOSPC to indicate overflow
-@@ -72,8 +73,21 @@ static long do_sys_name_to_handle(const struct path *pat=
-h,
-                 * non variable part of the file_handle
-                 */
-                handle_bytes =3D 0;
--       } else
-+       } else {
-+               /*
-+                * When asked to encode a connectable file handle, encode t=
-his
-+                * property in the file handle itself, so we know how
-to decode it.
-+                * For sanity, also encode in the file handle if the
-encoded object
-+                * is a directory, because connectable directory file
-handles do not
-+                * encode the parent.
-+                */
-+               if (fh_flags & EXPORT_FH_CONNECTABLE) {
-+                       if (d_is_dir(path->dentry))
-+                               fh_flags |=3D EXPORT_FH_DIR_ONLY;
-+                       handle->handle_flags =3D fh_flags;
-+               }
-                retval =3D 0;
-+       }
-...
-@@ -336,6 +350,19 @@ static int handle_to_path(int mountdirfd, struct
-file_handle __user *ufh,
-                retval =3D -EINVAL;
-                goto out_path;
-        }
-+       if (f_handle.handle_flags & ~EXPORT_FH_USER_FLAGS) {
-+               retval =3D -EINVAL;
-+               goto out_path;
-+       }
-+       /*
-+        * If handle was encoded with AT_HANDLE_CONNECTABLE, verify that we
-+        * are decoding an fd with connected path, which is accessible from
-+        * the mount fd path.
-+        */
-+       ctx.fh_flags |=3D f_handle.handle_flags;
-+       if (ctx.fh_flags & EXPORT_FH_CONNECTABLE)
-+               ctx.flags |=3D HANDLE_CHECK_SUBTREE;
-+
-        handle =3D kmalloc(struct_size(handle, f_handle, f_handle.handle_by=
-tes),
-                         GFP_KERNEL);
-...
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -159,6 +159,8 @@ struct fid {
- #define EXPORT_FH_CONNECTABLE  0x1 /* Encode file handle with parent */
- #define EXPORT_FH_FID          0x2 /* File handle may be non-decodeable */
- #define EXPORT_FH_DIR_ONLY     0x4 /* Only decode file handle for a
-directory */
-+/* Flags allowed in encoded handle_flags that is exported to user */
-+#define EXPORT_FH_USER_FLAGS   (EXPORT_FH_CONNECTABLE | EXPORT_FH_DIR_ONLY=
-)
-...
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1071,7 +1071,8 @@ struct file {
+Following is the error message:
+kvitta@DESKTOP-OOHD5UG:/mnt/c/Users/Krishna Vivek$ git clone https://github=
+.com/zlatko-michailov/abc.git gtest
+Cloning into 'gtest'...
+fatal: unknown error occurred while reading the configuration files
 
- struct file_handle {
-        __u32 handle_bytes;
--       int handle_type;
-+       int handle_type:16;
-+       int handle_flags:16;
-        /* file identifier */
-        unsigned char f_handle[] __counted_by(handle_bytes);
- };
+We have a MDE(Microsoft Defender for Endpoint) for Linux client running on =
+the this device which marks the filesystems for FANOTIFY to listen to file =
+system events. And, the issue(git clone failure) is occurring only in mount=
+ points of p9 file systems.=20
+
+Following is the system information
+
+root@DESKTOP-OOHD5UG [ ~ ]# cat /etc/os-release
+NAME=3D"Common Base Linux Mariner"
+VERSION=3D"2.0.20240609"
+ID=3Dmariner
+VERSION_ID=3D"2.0"
+PRETTY_NAME=3D"CBL-Mariner/Linux"
+ANSI_COLOR=3D"1;34"
+HOME_URL=3Dhttps://aka.ms/cbl-mariner
+BUG_REPORT_URL=3Dhttps://aka.ms/cbl-mariner
+SUPPORT_URL=3Dhttps://aka.ms/cbl-mariner
+
+root@DESKTOP-OOHD5UG [ ~ ]# uname -a
+Linux DESKTOP-OOHD5UG 5.15.153.1-microsoft-standard-WSL2 #1 SMP Fri Mar 29 =
+23:14:13 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+
+On collecting the strace of the operation(git clone <repo link>), it is fou=
+nd that renaming file name from .git/config.lock to .git/config and subsequ=
+ent read of that latter is failing.
+
+Any known issues in this regard ?=20
+
+Let us know if you require further information.
+
+
+Thank you,
+Krishna Vivek
+
 
