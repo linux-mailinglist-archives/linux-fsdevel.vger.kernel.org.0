@@ -1,241 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-29784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4272797DC5E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 11:29:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FF797DC70
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 11:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B1F28261F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 09:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517061F21D78
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 09:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E168F155A26;
-	Sat, 21 Sep 2024 09:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8DF156F45;
+	Sat, 21 Sep 2024 09:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qV/7wxJH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+tgV2iV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCB235894;
-	Sat, 21 Sep 2024 09:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74026153803;
+	Sat, 21 Sep 2024 09:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726910979; cv=none; b=C05ZzfD9pPyzenotn6RXYvss6lSXT4Tnz+q75EJKXrBuPU0XV41SVMIF00Q+iZ9UpgJ5JZeIDxCEgXO6F9XLxL8HrV4QaaYDNnqchVv0riHC4+HfiMny9p1aQHX2NevRI4PrA4WE/cwUWwR36E4dpuoAjTOLsykfKIlgsPW3mZc=
+	t=1726911892; cv=none; b=MosNikk/cb6qc+uAIlI9jCMHZQ5m6kZ2/I91fsqXXrJk/v+MSAgMRRyejqd1fRpMCBy+6A2h07PqOfGVJGh7h7BK/N+7qIHJTLhspDqTjnx7YyQCgI/L7lwXGn7wmEvfJUV2e1mrnqOJwZr6DhdVQnNdZ1KYBH5qWOZ538O+bJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726910979; c=relaxed/simple;
-	bh=qrGGZagyHOFUSqd5JtsHDY8Wx8NB8gIgBm1NfQ6tqrk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bTEf/dYe9KijgTVVzaETXWtZkQ3mNP8r10858IaKcbyCKOwT5jSVXzHFFm0T8kmrNNTxSzlpPxBJfJq6JVJSI3vViw4kmnISFfHPuIHXhV9uZT6IwKcAH8TJP9fMhHOPaOGNg7ztBDNhXqdTWTur/IsuGO2CEYbm9VAhGR7kKAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qV/7wxJH; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726910968; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Db9JY12mR3v9qGVXqAPEtXS6YlRFHGoPfQPLW0pSgcY=;
-	b=qV/7wxJHRNC6+L+NOyMH+qI5AS58FfO9ojJvyJ+qYiTREmQ/mvZqy7y0jbIDMUqPlsxWf7UOHCZjh++4JaSF6Si7rO/E/CrmZcBFOQpFDT4ENVSbQE3w4tNQqK+0ntzN4GwDES9ciD5Yf/lI7XzKCEeC2/+S9/zIBvl5sN/B9C4=
-Received: from 30.27.103.103(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFNqScp_1726910965)
-          by smtp.aliyun-inc.com;
-          Sat, 21 Sep 2024 17:29:27 +0800
-Message-ID: <3a6314fc-7956-47f3-8727-9dc026f3f50e@linux.alibaba.com>
-Date: Sat, 21 Sep 2024 17:29:25 +0800
+	s=arc-20240116; t=1726911892; c=relaxed/simple;
+	bh=6Phqsl9iMeUtupsVAY2eZ8WVBngHTyrcT+r5eK72yfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h2uyWfZrec4iwJh4JQi0mbYLcUOEjv7DEPmQkg0EUWDf7A5K4fqP2xx7GHcPd4ShkyB6p5hxUsYLKtOeF27TbsmTbfC/n30SGebM5RNCgfEHTWxQ088zISHb/Qwy1f1+sDaYDWhwaFUeradd6mjttD1epfrHXtOZnPxoBcfDf+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+tgV2iV; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6dbb24ee34dso24414067b3.2;
+        Sat, 21 Sep 2024 02:44:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726911889; x=1727516689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iT/pooyDWx+cXonngBHeD7hY6o8n6hEZ+T12BUFn3eU=;
+        b=g+tgV2iVKL0S39gv64nB2vdg0Mt5sISh/OndWkEjkXyfnMVYmIpSBMF1Tni+VLShsK
+         VCeyisjYlEYUCrMbHelW6qJ31k7BFg94xeZX1AncxkshsOMrL/zItKuoThJjMewqrpnP
+         iTG6Ux3Ie02yT2idxJV9Or1eAbQAQiLAXTzKf9kyhRNMi0SYegveeBwaeaPcApiSUtdE
+         yDkZ0O9ERK06ph2ab4LczSdBi1O6v4IMuJkg1jJh/Yqoyw6tRHmieWYqdjX0trqiHRCI
+         1uDJanSsnB0ieKaowrPJICXkorTlAtkmiQWnnGLU0gSPZqbQluvLntf7G8PJhgUjL0ae
+         jNZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726911889; x=1727516689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iT/pooyDWx+cXonngBHeD7hY6o8n6hEZ+T12BUFn3eU=;
+        b=uabcHsI0EvIS6jlFntPzcn1/cNmj0N39a/NmuhbiM/mcJKsw3WsvJ8pAmElj4tardq
+         gPFDvDqzhmJqZb/MfxJI0DEWV4T03IPPXZ9BFrQpRjAYciNq69yXlM+NKxmilrJ4c4yq
+         84lL1v660saP0kpAq0ncLIH+suf77bzOLf3BeLkaXXzqLbv99TFVJ88um+GS/02yZ3YD
+         sgIo/99eC0v1lcDnJw/SGZT4Y+Lp4fwkZDTokuWS2gAOqyOuERTS4iUA0yE2m9mDMiw5
+         sKrOMZq+DUS9ZCO5zoRtSyWCvgUOH7ivhgZllryO1O0IyFRXEi4Ejg8FMVZ5snLufgZd
+         YnWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRPCGyQ/GU4Vgq9tALOpAK/b/quRrr1adBBj4kgCMS424RAQHaqy1YQ9Ah8fgS70JAIyY+Km4fQ9OonF/3OPA=@vger.kernel.org, AJvYcCW+5qSsmapN+f8d+ALIa8SmsS0wxQzRabfYmMejqrJYcKpog2hTnFrp4185IQaDabcs+QrPhzIc27yZysU6@vger.kernel.org, AJvYcCXApA+kf9kVHOm5BV9T5ESJP+/8cUGyustOGnv+zqkz/9urjFqbEqMfKhDd/bgRH26v0/HlIC2CBjAF02TX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxugJfu0pwnFN13bSHuu5Dyhi8S+4i/42m7MqqwhI09DJPsbx72
+	xhwrLtKnlRrg+P0GgcUwDCRzqgZz+twal1d030zco1EcytBpPoXfVzPcGiApm96YM0Aw1NnLaDt
+	f+XUzjS0gUxVK86WFAdfvgRgfxSLxBMM8LKY=
+X-Google-Smtp-Source: AGHT+IH7ANdlTlvW/Mj7eVhLgLzw9ibdGPzl72d8JbFblPa9x1BA+ryCfZKd5D4ZNR1894gY3DwL4D76QQESJDYX57Y=
+X-Received: by 2002:a05:690c:d81:b0:6dd:d82c:4923 with SMTP id
+ 00721157ae682-6dfeec1393amr60883837b3.7.1726911889342; Sat, 21 Sep 2024
+ 02:44:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>,
- Yiyang Wu <toolmanp@tlmp.cc>, linux-erofs@lists.ozlabs.org,
- rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-4-toolmanp@tlmp.cc>
- <20240916210111.502e7d6d.gary@garyguo.net>
- <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
- <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
- <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
- <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
- <b5c77d5b-7f6d-4fe5-a711-6376c265ed53@linux.alibaba.com>
- <2024092139-kimono-heap-8431@gregkh>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <2024092139-kimono-heap-8431@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240916135634.98554-1-toolmanp@tlmp.cc> <20240916135634.98554-11-toolmanp@tlmp.cc>
+In-Reply-To: <20240916135634.98554-11-toolmanp@tlmp.cc>
+From: Jianan Huang <jnhuang95@gmail.com>
+Date: Sat, 21 Sep 2024 17:44:34 +0800
+Message-ID: <CAJfKizpW1rQuVfB3cNKVsEMYvHBegGcy5fgxqTBrr0wGsjjpjw@mail.gmail.com>
+Subject: Re: [RFC PATCH 10/24] erofs: add device_infos implementation in Rust
+To: Yiyang Wu <toolmanp@tlmp.cc>
+Cc: linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Yiyang Wu via Linux-erofs <linux-erofs@lists.ozlabs.org> =E4=BA=8E2024=E5=
+=B9=B49=E6=9C=8816=E6=97=A5=E5=91=A8=E4=B8=80 21:57=E5=86=99=E9=81=93=EF=BC=
+=9A
+>
+> Add device_infos implementation in rust. It will later be used
+> to be put inside the SuperblockInfo. This mask and spec can later
+> be used to chunk-based image file block mapping.
+>
+> Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
+> ---
+>  fs/erofs/rust/erofs_sys/devices.rs | 47 ++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>
+> diff --git a/fs/erofs/rust/erofs_sys/devices.rs b/fs/erofs/rust/erofs_sys=
+/devices.rs
+> index 097676ee8720..7495164c7bd0 100644
+> --- a/fs/erofs/rust/erofs_sys/devices.rs
+> +++ b/fs/erofs/rust/erofs_sys/devices.rs
+> @@ -1,6 +1,10 @@
+>  // Copyright 2024 Yiyang Wu
+>  // SPDX-License-Identifier: MIT or GPL-2.0-or-later
+>
+> +use super::alloc_helper::*;
+> +use super::data::raw_iters::*;
+> +use super::data::*;
+> +use super::*;
+>  use alloc::vec::Vec;
+>
+>  /// Device specification.
+> @@ -21,8 +25,51 @@ pub(crate) struct DeviceSlot {
+>      reserved: [u8; 56],
+>  }
+>
+> +impl From<[u8; 128]> for DeviceSlot {
+> +    fn from(data: [u8; 128]) -> Self {
+> +        Self {
+> +            tags: data[0..64].try_into().unwrap(),
+> +            blocks: u32::from_le_bytes([data[64], data[65], data[66], da=
+ta[67]]),
+> +            mapped_blocks: u32::from_le_bytes([data[68], data[69], data[=
+70], data[71]]),
+> +            reserved: data[72..128].try_into().unwrap(),
+> +        }
+> +    }
+> +}
+> +
+>  /// Device information.
+>  pub(crate) struct DeviceInfo {
+>      pub(crate) mask: u16,
+>      pub(crate) specs: Vec<DeviceSpec>,
+>  }
+> +
+> +pub(crate) fn get_device_infos<'a>(
+> +    iter: &mut (dyn ContinuousBufferIter<'a> + 'a),
+> +) -> PosixResult<DeviceInfo> {
+> +    let mut specs =3D Vec::new();
+> +    for data in iter {
+> +        let buffer =3D data?;
+> +        let mut cur: usize =3D 0;
+> +        let len =3D buffer.content().len();
+> +        while cur + 128 <=3D len {
 
-On 2024/9/21 16:37, Greg Kroah-Hartman wrote:
-> On Fri, Sep 20, 2024 at 08:49:26AM +0800, Gao Xiang wrote:
->>
->>
 
-...
-
->>
->>>
->>>>>> For Rust VFS abstraction, that is a different and indepenent story,
->>>>>> Yiyang don't have any bandwidth on this due to his limited time.
->>>>>
->>>>> This seems a bit weird, you have the bandwidth to write your own
->>>>> abstractions, but not use the stuff that has already been developed?
->>>>
->>>> It's not written by me, Yiyang is still an undergraduate tudent.
->>>> It's his research project and I don't think it's his responsibility
->>>> to make an upstreamable VFS abstraction.
->>>
->>> That is fair, but he wouldn't have to start from scratch, Wedsons
->>> abstractions were good enough for him to write a Rust version of ext2.
->>
->> The Wedson one is just broken, I assume that you've read
->> https://lwn.net/Articles/978738/ ?
-> 
-> Yes, and if you see the patches on linux-fsdevel, people are working to
-> get these vfs bindings correct for any filesystem to use.  Please review
-> them and see if they will work for you for erofs, as "burying" the
-> binding in just one filesystem is not a good idea.
-
-Thanks for the reply!
-
-I do think the first Rust filesystem should be ext2 or other
-simple read-write fses due to many VFS member lifetime
-concerns as other filesystem developpers suggested before [1],
-otherwise honestly the VFS abstraction will be refactoredagain
-and again just due to limited vision and broken functionality,
-I do think which way is not how currently new C Linux kernel
-APIs are proposed too (e.g. carefully review all potential use
-cases).
-
-[1] https://lore.kernel.org/linux-fsdevel/ZZ3GeehAw%2F78gZJk@dread.disaster.area/
-
-> 
->>> In addition, tarfs and puzzlefs also use those bindings.
->>
->> These are both toy fses, I don't know who will use these two
->> fses for their customers.
-> 
-> tarfs is being used by real users as it solves a need they have today.
-> And it's a good example of how the vfs bindings would work, although
-> in a very simple way.  You have to start somewhere :)
-
-EROFS has resolved the same functionality upstream in
-2023, see [2]
-
-```
-Replacing tar or cpio archives with a filesystem is a
-potential use case for EROFS. There has been a proposal
-from the confidential-computing community for a kernel
-tarfs filesystem, which would allow guest VMs to
-efficiently mount a tar file directly. But EROFS would
-be a better choice, he said. There is a proof-of-concept
-patch set that allows directly mounting a downloaded tar
-file using EROFS that performs better than unpacking the
-tarball to ext4, then mounting it in the guest using
-overlayfs.
-```
-
-Honestly, I've kept doing very friendly public/private
-communitation with Wedson in the confidential-computing
-community to see if there could be a collaboration for
-our tar direct mount use cases, but he just ignored my
-suggestion [3] and keep on his "tarfs" development (even
-this "tarfs" has no relationship with the standard
-POSIX tar/pax format because you cannot mount a real
-POSIX tar/pax by his implementation.)
-
-So my concern is just as below:
-  1) EROFS can already work well for his "tarfs" use
-     cases, so there is already an in-tree stuff works
-     without any issue;
-
-  2) No matter from his "tarfs" current on-disk format,
-     and on-disk extendability perspersive, I think it
-     will be used for a very narrow use case.
-     So in the long term, it could be vanished or forget
-     since there are more powerful alternatives in the
-     kernel tree for more wider use cases.
-
-I think there could be some example fs to show Rust VFS
-abstraction (such as ext2, and even minix fs).  Those
-fses shouldn't be too hard to get a Rust implementation
-(e.g. minix fs for pre Linux 1.0).  But honestly I don't
-think it's a good idea to upstream a narrow use case
-stuff even it's written in Rust: also considering Wedson
-has been quited, so the code may not be maintainerd
-anymore.
-
-In short, I do _hope_ a nice Rust VFS abstraction could
-be landed upstream.  But it should be driven by a simple
-no-journal read-write filesystem to check all Rust VFS
-components in the global vision instead of some
-unsustainable random upstream work just for
-corporation pride likewise.
-
-And if some other approach could compare EROFS as a known
-prior art (as I once fully compared with SquashFS in the
-paper) with good reasons, I will be very happy and feel
-respect (also I could know the limitation of EROFS or how
-to improve EROFS.)  But if there is no reason and just
-ignore EROFS exists, and I think it's not the proper way
-to propose a new kernel feature / filesystem.
-
-[2] https://lwn.net/Articles/934047
-[3] https://github.com/kata-containers/kata-containers/pull/7106#issuecomment-1592192981
-
-> 
->>> Miguel Ojeda.
->>> However, we can only reach that longterm goal if maintainers are willing
->>> and ready to put Rust into their subsystems (either by knowing/learning
->>> Rust themselves or by having a co-maintainer that does just the Rust
->>> part). So you wanting to experiment is great. I appreciate that you also
->>> have a student working on this. Still, I think we should follow our
->>> guidelines and create abstractions in order to require as little
->>> `unsafe` code as possible.
->>
->> I've expressed my point.  I don't think some `guideline`
->> could bring success to RFL.  Since many subsystems needs
->> an incremental way, not just a black-or-white thing.
-> 
-> Incremental is good, and if you want to use a .rs file or two in the
-> middle of your module, that's fine.  But please don't try to implement
-> bindings to common kernel data structures like inodes and dentries and
-> superblocks if at all possible and ignore the work that others are doing
-> in this area as that's just duplicated work and will cause more
-> confusion over time.
-
-Yeah, agreed. That is what I'd like to say.
-
-Honestly, Yiyang don't have enough time to implement
-VFS abstraction due to his studies and my time slot is
-limited for now too.
-
-So I also asked him to "don't touch common kernel data
-structures like inodes and dentries and superblocks
-if possible" and just convert the EROFS core logic.
-
-But it seems his RFC patch is still left something,
-I think he will address them the next version.
-
-> 
-> It's the same for drivers, I will object strongly if someone attempted
-> to create a USB binding for 'struct usb_interface' in the middle of a
-> USB driver and instead insist they work on a generic binding that can be
-> used by all USB drivers.  I imagine the VFS maintainers have the same
-> opinion on their apis as well for valid reasons.
-
-Agreed.
+It is better to use macros instead of hardcode, like:
+const EROFS_DEVT_SLOT_SIZE: usize =3D size_of::<DeviceSlot>();
+Also works to the other similar usages in this patch set.
 
 Thanks,
-Gao Xiang
+Jianan
 
-> 
-> thanks,
-> 
-> greg k-h
-
+>
+> +            let slot_data: [u8; 128] =3D buffer.content()[cur..cur + 128=
+].try_into().unwrap();
+> +            let slot =3D DeviceSlot::from(slot_data);
+> +            cur +=3D 128;
+> +            push_vec(
+> +                &mut specs,
+> +                DeviceSpec {
+> +                    tags: slot.tags,
+> +                    blocks: slot.blocks,
+> +                    mapped_blocks: slot.mapped_blocks,
+> +                },
+> +            )?;
+> +        }
+> +    }
+> +
+> +    let mask =3D if specs.is_empty() {
+> +        0
+> +    } else {
+> +        (1 << (specs.len().ilog2() + 1)) - 1
+> +    };
+> +
+> +    Ok(DeviceInfo { mask, specs })
+> +}
+> --
+> 2.46.0
+>
 
