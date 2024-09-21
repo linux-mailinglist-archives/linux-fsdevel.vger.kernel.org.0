@@ -1,112 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-29775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8433697DB28
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 03:13:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192B297DB7C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 04:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4A71F221E4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 01:13:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44BB01C215EE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 02:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982A23D64;
-	Sat, 21 Sep 2024 01:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8A0224EF;
+	Sat, 21 Sep 2024 02:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7LjhjN3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWPJ/ZHy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB4836C;
-	Sat, 21 Sep 2024 01:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150401C693;
+	Sat, 21 Sep 2024 02:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726881190; cv=none; b=Jo1UTiPfQpIR22FHQF3VSGj+0bfDRSXerZCXaEX8kNI2+QC6whybEaBx7ZLn0sIqgpdZzoBM8EtBdGG0umUQGJ54AuHuUICC5RrzOgcAV3+Q3SdXdx1rLeL4/45aU0o6Vqu7bh1woCQS9cPxMcPDrfB70lV0LPTtTETALLQ4m2s=
+	t=1726886206; cv=none; b=PnNpAGqsW4icZWBuyxjA03V1wL4YiGe7fpTWpodlgX8+aTPjfeUXHNr5eMPoYBZwDtoUZJ8GVGhfI7IJdW94tZjx9BFoMrdWZ/GYIVWzhmzQIiwWoI//Ve4xj9KWgn56nBNTcozR5w4luPLkkols4ACpbkB3YY1F/qDDeT7Nr4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726881190; c=relaxed/simple;
-	bh=ApJBXp8aU52y3hgoyxSgPpJcY20lFPBpYtQwSED9mO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tE4Hq9YRu34aBSGZzZmUqc9it06V2Ebh7k8JgoRqwnRIBCcwMQdgcsID8REcCA3Ut1fq4+5beiyuKQBKixd9/XSCb+rSWxeNorFoELd1USAZ6P4IR+gkik6lGCYfztoRuQuZXtBKuTRY7Wl4nhCcDhX3dhjIrHWtPIkHvmogdT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7LjhjN3; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20570b42f24so29786495ad.1;
-        Fri, 20 Sep 2024 18:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726881188; x=1727485988; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KhWTpLUtCJ0kiQ1X7/HJbn73e+6H15QHc9kTJn9s/H8=;
-        b=g7LjhjN3mGy8idV5EHk81zJZjC4DUZNf+G0eAsDNzM7hKkLTOrLLxTjYzqfv2he8RS
-         tfPESMAyvjnvIw0JRwW5SkdU4ST1AdTWVpp+MzaRcQb2SYHt21kM2Ilvhygw9JAh/TDY
-         Sa5SpTRTdwDPxdWaWlXcSzcElS54wyqGewXtjNhl68+/KlzJyu9J6llhQOTFTmhde+gH
-         dm1R41JsdpPgZQAsDMk1UyhksXsHdJAibe6MwLVIc/hWIjHnlu7gMfbA737B5wZaogva
-         nlod7RujLiwCxukERsm9iH3zNl+K5f9Yj3oCf7e1l9KQbEhFAdtcBPSGmlG2HSt4blpl
-         3Imw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726881188; x=1727485988;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KhWTpLUtCJ0kiQ1X7/HJbn73e+6H15QHc9kTJn9s/H8=;
-        b=d5f6mnK17ufky9wZ0EyIK6I0Aha4+l7z+pvvLSACYyIFp2qvNWu29/jxE7FKcU4PMr
-         21Qz6sEsmXjv6mptT0TTdmtLLH/zqcniYcKaN3d8+DeiJVu42V7Nwltn3U8wuO36an3x
-         bz+iY7k1TqpG41fW0nkcE0cUMBVDwO/DWPUDaZHBrYptRSYO0R+0XabXivV31iyVx7Pu
-         LlfaCWFPJhg77t0Eau/fcNmR2UupdPaCVCdrqt6Hg17/GSu7ePxQhu1Rz1taM9tOpWLJ
-         XPUgORbzqdjhgM2noeCRytuM/dh7b6Bb5siCwXO0NfDC3daXg3O9rxc+0yPefBHk0x7V
-         68cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwxWcD4WYEbW1etJtfx9w2zk+PXz9En/NAlSc0pFrIU4g4P+WrgMkOf9nEDNi6AKEtxdFm81RjVlttZgrs@vger.kernel.org, AJvYcCXxei4h0XLmRezSZx5fp/PJknBh3eOBEUAv6bFdHzUeTK4JZdgq5ddxxIWwA3J4HU6Y/ontF5+BDaHnYSIz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrXJzi9koPd4LynD+Oq83vx+zmwXjHOpnZn7o41lMYSXRGvPt0
-	yF2C24Jyy/AXsaJCE0hMzsRt2S6w2iGOR2b9vPodpu5WiSoSW0OS
-X-Google-Smtp-Source: AGHT+IFb/4FuUoDCmoFChGv5caoTFoY7jrMIDatYtcYptR4hgzZ4J7g/uEd8146atPwtf85TrjOdYA==
-X-Received: by 2002:a17:902:e54e:b0:205:894b:b5b0 with SMTP id d9443c01a7336-208d83a1cabmr71344795ad.33.1726881187970;
-        Fri, 20 Sep 2024 18:13:07 -0700 (PDT)
-Received: from gmail.com ([24.130.68.0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945da7b8sm100732825ad.16.2024.09.20.18.13.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 18:13:07 -0700 (PDT)
-Date: Fri, 20 Sep 2024 18:13:05 -0700
-From: Chang Yu <marcus.yu.56@gmail.com>
-To: dhowells@redhat.com
-Cc: jlayton@kernel.org, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	marcus.yu.56@gmail.com, skhan@linuxfoundation.org
-Subject: [PATCH] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
-Message-ID: <Zu4doSKzXfSuVipQ@gmail.com>
+	s=arc-20240116; t=1726886206; c=relaxed/simple;
+	bh=RLiPbDYcGzDNjeU5OFk78Qj7Nelx1ZSOke5SLy8pfFI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=gYMOow1+ZQay6nKeZ18Q3uAz8fkprcGXnbsDTt84y0PmOhAeaitUY3qtfGk6HhozUmnP5LQ6HFuT4vUWYS/+bn4wIbAFfBlgSmLBXYPJ+JNk34/zvIAY+pINY+/juR13B/c3URWmN9O9YiLWwZKjd+HmB4zbD0fvwwloxnepBFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWPJ/ZHy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED15DC4CEC3;
+	Sat, 21 Sep 2024 02:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726886206;
+	bh=RLiPbDYcGzDNjeU5OFk78Qj7Nelx1ZSOke5SLy8pfFI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=QWPJ/ZHyHuShkbUAAoqGgJP5PavFFg+3Z4oSqHN6cGbdiA4H8z5q+kPogWMC+qbEC
+	 PikGyuavV6D9pFYcBrbRycHD4uvUxNA6GCfZYzJB7R6KunEbvfs+I69Ra9kJtp44eU
+	 feg4TOg2BeXVemOiqdWa2Y6M6EQUGcuYRiihns44/D8XuTcCv5XHmvMxY8oztpRmZU
+	 dT6JToWG3W9b9G4XGFYKMsOaMOjLy3Mj3HY4bRQcL6v1S7MU/W/7FWOHgF5eUi4jj4
+	 NPcup1o6tzXxmPpP5CE1orq2B/lIGnB+vpIcKbuWPpMswFqYnxiJDBMz1eOlUSNc2V
+	 t9qO/2YvnrQBA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B9A3806655;
+	Sat, 21 Sep 2024 02:36:49 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs blocksize
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240913-vfs-blocksize-ab40822b2366@brauner>
+References: <20240913-vfs-blocksize-ab40822b2366@brauner>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240913-vfs-blocksize-ab40822b2366@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.blocksize
+X-PR-Tracked-Commit-Id: 71fdfcdd0dc8344ce6a7887b4675c7700efeffa6
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 171754c3808214d4fd8843eab584599a429deb52
+Message-Id: <172688620789.2370754.10456047862779862980.pr-tracker-bot@kernel.org>
+Date: Sat, 21 Sep 2024 02:36:47 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Use kzalloc instead of kmalloc in netfs_buffer_append_folio to fix
-a KMSAN uninit-value error in netfs_clear_buffer
+The pull request you sent on Thu, 19 Sep 2024 15:49:53 +0200:
 
-Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
-Reported-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=921873345a95f4dae7e9
-Fixes: cd0277ed0c18 ("netfs: Use new folio_queue data type and iterator instead of xarray iter")
----
- fs/netfs/misc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.blocksize
 
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 0ad0982ce0e2..6f967b6d30b6 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -22,7 +22,7 @@ int netfs_buffer_append_folio(struct netfs_io_request *rreq, struct folio *folio
- 		return -EIO;
- 
- 	if (!tail || folioq_full(tail)) {
--		tail = kmalloc(sizeof(*tail), GFP_NOFS);
-+		tail = kzalloc(sizeof(*tail), GFP_NOFS);
- 		if (!tail)
- 			return -ENOMEM;
- 		netfs_stat(&netfs_n_folioq);
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/171754c3808214d4fd8843eab584599a429deb52
+
+Thank you!
+
 -- 
-2.46.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
