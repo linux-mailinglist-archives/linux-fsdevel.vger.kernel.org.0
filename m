@@ -1,173 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-29804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61DA97E171
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 14:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6538B97E21F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 17:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3114F1F21390
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 12:05:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972C61C2084F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 15:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D3919309C;
-	Sun, 22 Sep 2024 12:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E3DE567;
+	Sun, 22 Sep 2024 15:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EinX8U8n"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jb1oDkJ3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DE213B28D
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 12:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740574A28
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 15:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727006709; cv=none; b=PS7RHkTDJtHK89xdjItTONSH1gk3zaOcGlotSnOMU47zIdiHZl6UYDHoan1UDLaMfDdgx0rsaEuuz6Y8qW1mSyVZWxZ/ILZLb5BlfXiAUAqE32R5nQVSCTLkC1i1v74YtcvdS1AVKKO1zsdF6mJ6y3IY7VLx0aiRlXdY/FZgmgI=
+	t=1727017315; cv=none; b=Tvhl+WzY70joIDyu1B+IADIFnrgoRkDf8T0SBu91AqMzrmpUWwVbCYWl2loCXFc8pEhsVHskOS3LRrWH9RzDCRkG9CleK5EwzLQ0aw2W9v6zx//uUmoYxvbraE4pDF0fymqQMTTegh6EAm2em7CdyjMSbPtSaHnoZZlwRE1evt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727006709; c=relaxed/simple;
-	bh=04qoBtAnuv/GzWRMkyTmksM8uYelKBjAXypAUGUEb+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ik/Z1Yabdb3a81HzYAAU4lbiuJ5maMLZjePSe+uABiER/q+VokrunJ0G79QTo91GnOaTU3iBV/4z/xgGLz+OcIjnrMt3yFOqtOgbqLCmqE51WnQo9Hcw6GCkig+Y10C3TjPM2wfuEERqS8aWO8Fwq69ziBCrzCFGHrdaJru24Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EinX8U8n; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a99eee4a5bso313246985a.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 05:05:07 -0700 (PDT)
+	s=arc-20240116; t=1727017315; c=relaxed/simple;
+	bh=s0cShEYCAg+X7bWLg16m54ENQ3s7Xz+W1wGNdQR3+kE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LYuB2Yv62w6/5p66Y/kls8WxVq57/XHPgZxAfSOaCriPlnGJIk8iVawcpWTrrpkp207OuZdXCDWHxtkJTMe42m9+3iovEbsJ65w0TEhuxjAevsZOaJSoRfyB+TVHj0iZcn8BI3VMrcfrPDR9IN2/IerT2ghCH77yh+IXLww5DfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jb1oDkJ3; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-42cb6ed7f9dso32760295e9.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 08:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727006707; x=1727611507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GGjOSuyLbdig1HW4Hu6+Wbzuzt5HatQbAFQB2ceqVwA=;
-        b=EinX8U8nBfhg1EW+XIHDahxOsn0qxzAZAvb831CowdN8HH2FEx9BHfKvoI8QcihUUp
-         GHquk6BtQLn/66MvoxB09Kz53pMF8kAed8LanaMvM/YgjhI3hFhn61YgabVSNIhElwLr
-         s9mguqWeVEckVjNHjsI1bSCviFT7k9FdEzM3e3shmhWPhfem4wrHrYizjTE8EQ+fkpbY
-         AWwmgG9hVjdjUFL0Hz9eQaeDKRAmMnTi6VRap1LSIzLpVMS9jXOLRLBKFkNK4c4GJYEB
-         FbtzuEr2gfMXd4MOWL/UVtXSG1rz+C+c+nLcAdRtw6cbUP1CsNHJdKMNeBCZgt8jRX29
-         G82Q==
+        d=google.com; s=20230601; t=1727017312; x=1727622112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ncjkm+xBj4wAiYMDJEPjMYUCoBiTLntYFoQkyKAzX14=;
+        b=Jb1oDkJ3H7aBKFNJEWFyPgBQBBR97CB1W++3olg361eINWwG+xHmdarp+p6WWQCcZp
+         nZV6r3LOF7jz4oyY6YLBIByvHkQzxUCYQaO2cgY0CZ6bF0eJ8dlP3vCa5auqWHvB8FMM
+         Kk2CU5+fBYg+yvhmdUYOoxxPYlMe8pYH3d4AH03VH7a9WHb/v8JNqNDHpXSPkRwFF++x
+         qtsOhA4N82/+EX2t4fsgEHPbqEYVdvmitOGsjJcFABdSfsGqRXcQxTXe769OnQd5BAeY
+         QzbcCDw//nIxtm5nn34rSOinnCyZyxwmzJRzf/Gwa05BYxdJVnlH1Krpnb2WvgI6PBZj
+         rTEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727006707; x=1727611507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GGjOSuyLbdig1HW4Hu6+Wbzuzt5HatQbAFQB2ceqVwA=;
-        b=L0NNnFQ2vL9M+X+BuGhx7UJ5/RA08D7mjP68rwJEn1aBqN2RF0tE3/aYV+fBac4OLt
-         iMXFyYfDu+/TrOmBHlg70JaACF9k5XWSbm381+dzBWxC+LP6FiOpzT8Lk+PW1Qi9CD/v
-         GCe9VUY2CUDs9ugf75R+Vh8uJp1cjiX9s+sBDTmKBmuLb8xbHcijrdm63JbC1SsJCQyN
-         z34/stqr8BCeU7MWhUbFilRji55YcMfYrWjj4y95Vm8DOyjPpMl5o9TyS9PML7dWITPd
-         vRndJiwNsiGKzPB9ztTxEDNvNkYzsh7zTXKkV6CL6thCBckXWvF+EgzVEfjGNQ526N8t
-         8nAw==
-X-Gm-Message-State: AOJu0Yxl1yMgFh4aWRyCPjZiRhjMLutojvysYt5V64AX6x3/4+x4G92B
-	lWNy5jC4V/CaweRlYWO+BUTOV/FDkOc2t+xyw85NVUUEeOQYwq/X3v867MMfW17/wlcRue6dTxN
-	LuOI4Ab2268nJ5GA2cYwDSVNbFD4=
-X-Google-Smtp-Source: AGHT+IEs9j/cts4f/mLwHdMNKalocxe1fYaR3Amc80YDqEaJAmMOVx/aU6zxQS6I5TQQRIgEutf7ZxoSkOdDiJSL4ZU=
-X-Received: by 2002:a05:6214:ca:b0:6c7:c75c:a734 with SMTP id
- 6a1803df08f44-6c7c75ca865mr64437226d6.0.1727006707005; Sun, 22 Sep 2024
- 05:05:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727017312; x=1727622112;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ncjkm+xBj4wAiYMDJEPjMYUCoBiTLntYFoQkyKAzX14=;
+        b=uVz83SUhp/7Is60gqvu3EOS36PWrFbubKyqlCfgO25oNlq0dh/TPK/pDtL4TTgKfTs
+         4ifseFN+KQ1xcAvD784hwzFqled9u43+HmZwzPCgy6GFAEu+XDidJaAsdcRL8CArj14+
+         1oquFzlz+l2BdMSAJl8zCNKx9Tqys4xgdfOmBWx8Uiy9PqJSceCBJYDO0Myi6ZOe850s
+         psp8uyYkJA3pJ4Mbmr0O4pr+iELThjWLzDc1pa6qEX/yNc7i+MnCyN3zEx3CTy3NKseO
+         djqh8TA8jFbMTRRCV0+wE2CL4/W2J3B32Tq4rUhuP/RqFq+zIH7voP8PcUOGs3TijWKA
+         +HlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVDe/5d1YyBHFfYv2yoEiQCQeShzKylbPWfhRvmTt84unoZoZkTEqBO0JgtP5+BVCyt+k1LxcYlFAG2DT1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+cnQFhr4TlSJcd7k34hiYHfjmFAPkQfS2hZBeSL4EYUVyongg
+	LaKLtxXQYylPrOXS7MD1sZ0QW7TJEEtsQ96S2K5vpW/8CoOjzN/BNc6Q+HunkXF1OohqF0cui8K
+	DuFKGLRLVitZNVA==
+X-Google-Smtp-Source: AGHT+IECOclje4KsJl4Qt6l3KZ6Ti1CSsZjZP+0DmuLkcdwDN8cc/Ojour1aePp9l+ZstwUCPP+UzAnPRELuCaU=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:600c:1515:b0:42c:b32e:6ba7 with SMTP
+ id 5b1f17b1804b1-42e7ad85690mr98575e9.6.1727017311494; Sun, 22 Sep 2024
+ 08:01:51 -0700 (PDT)
+Date: Sun, 22 Sep 2024 15:01:49 +0000
+In-Reply-To: <CAHC9VhQX0k68fwWF08eMCiMsewRRSqN3q=QwirV_0XjoJ4wo5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240913083242.28055-1-laoar.shao@gmail.com>
-In-Reply-To: <20240913083242.28055-1-laoar.shao@gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 22 Sep 2024 20:04:30 +0800
-Message-ID: <CALOAHbBp691X-0XaMam2y6zAdkmmP0AvkP=3Yv_g4+f7j2T68Q@mail.gmail.com>
-Subject: Re: [PATCH] vfs: Add a sysctl for automated deletion of dentry
-To: torvalds@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <CAHC9VhQX0k68fwWF08eMCiMsewRRSqN3q=QwirV_0XjoJ4wo5A@mail.gmail.com>
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Message-ID: <20240922150149.3133570-1-aliceryhl@google.com>
+Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
+From: Alice Ryhl <aliceryhl@google.com>
+To: paul@paul-moore.com
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, brauner@kernel.org, casey@schaufler-ca.com, 
+	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, 
+	gary@garyguo.net, gregkh@linuxfoundation.org, jmorris@namei.org, 
+	joel@joelfernandes.org, kees@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	maco@android.com, ojeda@kernel.org, peterz@infradead.org, 
+	rust-for-linux@vger.kernel.org, serge@hallyn.com, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, 
+	viro@zeniv.linux.org.uk, wedsonaf@gmail.com, willy@infradead.org, 
+	yakoyoku@gmail.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 4:32=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> =
+On Tue, Sep 17, 2024 at 3:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Mon, Sep 16, 2024 at 11:40=E2=80=AFAM Casey Schaufler <casey@schaufler=
+-ca.com> wrote:
+> > On 9/15/2024 2:07 PM, Alice Ryhl wrote:
+> > > On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> =
 wrote:
+> > >> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
+> > >>> Add an abstraction for viewing the string representation of a secur=
+ity
+> > >>> context.
+> > >> Hm, this may collide with "LSM: Move away from secids" is going to h=
+appen.
+> > >> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-c=
+a.com/
+> > >>
+> > >> This series is not yet landed, but in the future, the API changes sh=
+ould
+> > >> be something like this, though the "lsmblob" name is likely to chang=
+e to
+> > >> "lsmprop"?
+> > >> security_cred_getsecid() =C2=A0 -> security_cred_getlsmblob()
+> > >> security_secid_to_secctx() -> security_lsmblob_to_secctx()
+> >
+> > The referenced patch set does not change security_cred_getsecid()
+> > nor remove security_secid_to_secctx(). There remain networking interfac=
+es
+> > that are unlikely to ever be allowed to move away from secids. It will
+> > be necessary to either retain some of the secid interfaces or introduce
+> > scaffolding around the lsm_prop structure ...
 >
-> Commit 681ce8623567 ("vfs: Delete the associated dentry when deleting a
-> file") introduced an unconditional deletion of the associated dentry when=
- a
-> file is removed. However, this led to performance regressions in specific
-> benchmarks, such as ilebench.sum_operations/s [0], prompting a revert in
-> commit 4a4be1ad3a6e ("Revert "vfs: Delete the associated dentry when
-> deleting a file"").
+> First, thanks for CC'ing the LSM list Alice, I appreciate it.
 >
-> This patch seeks to reintroduce the concept conditionally, where the
-> associated dentry is deleted only when the user explicitly opts for it
-> during file removal. A new sysctl fs.automated_deletion_of_dentry is
-> added for this purpose. Its default value is set to 0.
->
-> There are practical use cases for this proactive dentry reclamation.
-> Besides the Elasticsearch use case mentioned in commit 681ce8623567,
-> additional examples have surfaced in our production environment. For
-> instance, in video rendering services that continuously generate temporar=
-y
-> files, upload them to persistent storage servers, and then delete them, a
-> large number of negative dentries=E2=80=94serving no useful purpose=E2=80=
-=94accumulate.
-> Users in such cases would benefit from proactively reclaiming these
-> negative dentries.
->
-> Link: https://lore.kernel.org/linux-fsdevel/202405291318.4dfbb352-oliver.=
-sang@intel.com [0]
-> Link: https://lore.kernel.org/all/20240912-programm-umgibt-a1145fa73bb6@b=
-rauner/
-> Suggested-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->  fs/dcache.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 3d8daaecb6d1..ffd2cae2ba8d 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -130,6 +130,7 @@ struct dentry_stat_t {
->  static DEFINE_PER_CPU(long, nr_dentry);
->  static DEFINE_PER_CPU(long, nr_dentry_unused);
->  static DEFINE_PER_CPU(long, nr_dentry_negative);
-> +static int automated_deletion_of_dentry;
->
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_PROC_FS)
->  /* Statistics gathering. */
-> @@ -194,6 +195,15 @@ static struct ctl_table fs_dcache_sysctls[] =3D {
->                 .mode           =3D 0444,
->                 .proc_handler   =3D proc_nr_dentry,
->         },
-> +       {
-> +               .procname       =3D "automated_deletion_of_dentry",
-> +               .data           =3D &automated_deletion_of_dentry,
-> +               .maxlen         =3D sizeof(automated_deletion_of_dentry),
-> +               .mode           =3D 0644,
-> +               .proc_handler   =3D proc_dointvec_minmax,
-> +               .extra1         =3D SYSCTL_ZERO,
-> +               .extra2         =3D SYSCTL_ONE,
-> +       },
->  };
->
->  static int __init init_fs_dcache_sysctls(void)
-> @@ -2394,6 +2404,8 @@ void d_delete(struct dentry * dentry)
->          * Are we the only user?
->          */
->         if (dentry->d_lockref.count =3D=3D 1) {
-> +               if (automated_deletion_of_dentry)
-> +                       __d_drop(dentry);
->                 dentry->d_flags &=3D ~DCACHE_CANT_MOUNT;
->                 dentry_unlink_inode(dentry);
->         } else {
-> --
-> 2.43.5
->
+> As Kees and Casey already pointed out, there are relevant LSM changes
+> that are nearing inclusion which might be relevant to the Rust
+> abstractions. =C2=A0I don't think there is going to be anything too
+> painful, but I must admit that my Rust knowledge has sadly not
+> progressed much beyond the most basic "hello world" example.
 
-Gently ping.  Any feedback on this change?
+We discussed this email in-person at Plumbers. I'll outline what we
+discussed here.
 
---
-Regards
-Yafang
+> This brings up the point I really want to discuss: what portions of
+> the LSM framework are currently accessible to Rust,
+
+It's relatively limited. I'm adding a way to access the secctx as a
+string, and a way to manipulate `struct cred`. Basically it just lets
+you take and drop refcounts on the credential and pass a credential to
+functions.
+
+Other than what is in this patch series, Binder also needs a few other
+methods. Here are the signatures:
+
+fn binder_set_context_mgr(mgr: &Credential) -> Result;
+fn binder_transaction(from: &Credential, to: &Credential) -> Result;
+fn binder_transfer_binder(from: &Credential, to: &Credential) -> Result;
+fn binder_transfer_file(from: &Credential, to: &Credential, file: &File) ->=
+ Result;
+
+These methods just call into the equivalent C functions. The `Result`
+return type can hold either an "Ok" which indicates success, or an "Err"
+which indicates an error. In the latter case, it will hold whichever
+errno that the C api returns.
+
+> and what do we
+> (the LSM devs) need to do to preserve the Rust LSM interfaces when the
+> LSM framework is modified?  While the LSM framework does not change
+> often, we do modify both the LSM hooks (the security_XXX() calls that
+> serve as the LSM interface/API) and the LSM callbacks (the individual
+> LSM hook implementations) on occasion as they are intentionally not
+> part of any sort of stable API.
+
+That's fine. None of the Rust APIs are stable either.
+
+Rust uses the bindgen tool to convert C headers into Rust declarations,
+so changes to the C api will result in a build failure. This makes it
+easy to discover issues.
+
+> In a perfect world we/I would have a
+> good enough understanding of the Rust kernel abstractions and would
+> submit patches to update the Rust code as appropriate, but that isn't
+> the current situation and I want to make sure the LSM framework and
+> the Rust interfaces don't fall out of sync. =C2=A0Do you watch the LSM li=
+st
+> or linux-next for patches that could affect the Rust abstractions? =C2=A0=
+Is
+> there something else you would recommend?
+
+Ideally, you would add a CONFIG_RUST build to your CI setup so that you
+catch issues early. Of course, if something slips through, then we run
+build tests on linux-next too, so anything that falls through the cracks
+should get caught by that.
+
+If anything needs Rust changes, you can CC the rust-for-linux list and
+me, and we will take a look. Same applies to review of Rust code.
+
+Alice
+
 
