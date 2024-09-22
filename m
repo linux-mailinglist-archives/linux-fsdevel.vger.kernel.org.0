@@ -1,97 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-29799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BAAC97DFCC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 03:42:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0350F97DFD6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 04:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 818E4B21147
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 01:42:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67ACDB211E4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 02:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CF819308C;
-	Sun, 22 Sep 2024 01:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6232219309D;
+	Sun, 22 Sep 2024 02:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MIH4d2Fg"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ADP7mjki"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4512C192B84;
-	Sun, 22 Sep 2024 01:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B070E146581;
+	Sun, 22 Sep 2024 02:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726969331; cv=fail; b=Urd8uyljSnHVpQqGpUYcfsDYvnefIUuhf2s1o7A7wnaNDZ69/oNuKhfnT7ikclFYHJWrPdSVD4O4aRzarM00ofNHFeevIOkc6GqljLpimPnhc9KJinBiKnpbHsQ7uw/yfhrzZgs9RPdFfs8mxRPvvQYiopCdsm6ZFVh9mpcmX7A=
+	t=1726970875; cv=fail; b=MUDwsFOal2RvkIPVVX97R4KyR5BdgsPAIT2AGBWxijssU8RFNgeftqEUUei8EPRkBQqV2mxsEB95rsDU/fzNQtTbcahXjfmMBb+eL7QnnES/vyyxPaH3/f21KWjLmfVtg3Csni1lRq25g8ezgSocv2kPiyvyLD1vndntlvKflLU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726969331; c=relaxed/simple;
-	bh=/L1XxYzad/VZdn+jj7xpr+AMD85mxOdRWetT7qxXCf8=;
+	s=arc-20240116; t=1726970875; c=relaxed/simple;
+	bh=AxQv1JU38c11Bwphg517okxGVwYUap4uIGGRnuQBing=;
 	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mGM+xKA0ZbVP06HWoxKQ/EpnrOKDdXLuCxS5tRGhrY8kfNiMoSKgvLjKTHhOT8xZOVBGKC1tDT0DcRTEwxfBxPNrtHSbMeJXPeKZ5XUrB1DluUdHYMMsrto9ZSl8eSBtdWLQlvMBknxwN6P1DpE1sb85QmAvhaEkFA87v6f/IgM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MIH4d2Fg; arc=fail smtp.client-ip=198.175.65.16
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DXbcaH6V4S6ZP3c6xiau15se4OL1G4jBIcL4ZDeZww9fFcOe9RZlyfl96hLFz/GuwMwkyrVjbySdHvh6gU7xuaEx6ugqztevxVWG6NEM1lKfXOmH6oRiShWwfGbOKedpcVpGwAR7ZPJfXry/p40ugoupTcJRRpbrFBUbjhmoe5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ADP7mjki; arc=fail smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726969329; x=1758505329;
+  t=1726970874; x=1758506874;
   h=date:from:to:cc:subject:message-id:references:
    in-reply-to:mime-version;
-  bh=/L1XxYzad/VZdn+jj7xpr+AMD85mxOdRWetT7qxXCf8=;
-  b=MIH4d2Fg3SCbPD1v37N/Vq1ipi/uJnjbdSY17iIFgktYYho9uyh5ZhBP
-   5eKeV0fEgPM17x0JBbg2MPMo/QnjHhW8C+opmNaJ2BulutDfD0X1KiwRL
-   6OgNVI8dcJgE5KLYn/mRCrG2tk070XS8A8K1B+Ss9lcHaNTGViy8LUwys
-   az/HC80EI26T34dCoePEouDXfS+e2AHWRJG7mBnahxD3foBTEjar42K6y
-   KBHcL8vTPL0J6+1EkRTCN8YE6KGbWzhDW2ZmZ3qWEKsrosLInjDxyruqi
-   n8q621Ies6Z8SFw4YnuAh5qyChcjwlUSpZIgd8hD+jxjQkja4uLkm70C+
-   g==;
-X-CSE-ConnectionGUID: BYvDmojMRwWQ/AjlDesYkw==
-X-CSE-MsgGUID: rfw3DERHRkmoI5zibQaKKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26038143"
+  bh=AxQv1JU38c11Bwphg517okxGVwYUap4uIGGRnuQBing=;
+  b=ADP7mjkiy636+7nqCBfea3muShS+Wz8OC5uo0BZBgWPfpTBVDsw1w+eu
+   McYs9nauCOInak/tqWSafEKZpUUlTRvypAZ61T0furkH+S+u3sSnLpFjH
+   +hqSKcF5/7pzcwfxg0XzVSsKqD74JqDAN5y6GWm3wZe2kI74ry9Cq29tn
+   LzUjkVkvtMdggThP/odHY7dln6W7oyXbjOU3GaPb7vy0xU1JmH1KLVQuc
+   LQ2Gn0wKbPfr4ktTn90CzwdXYbHQDhIagHsJKiqTOZVSrHEMsY17bn5A7
+   qM1ZB82DcxsaNgYu58Cka7glCbL0RidHkBeA2rhSV3kzJFmfVMbNpyHf7
+   Q==;
+X-CSE-ConnectionGUID: SlVNuuJLSVmaWt+ci8hDjg==
+X-CSE-MsgGUID: hgyoOrs/RqiQph2J8t8agg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="43461744"
 X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="26038143"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 18:42:07 -0700
-X-CSE-ConnectionGUID: Wo3Tns3uRp6xS/URIhSWjQ==
-X-CSE-MsgGUID: /E8kPoMoTbmJfBheWHPa9A==
+   d="scan'208";a="43461744"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 19:07:53 -0700
+X-CSE-ConnectionGUID: kkmAIurXTESqREb4aRXJOA==
+X-CSE-MsgGUID: ULoVayGSQieUM9YZbdg1hA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="70690625"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Sep 2024 18:42:07 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+   d="scan'208";a="71007120"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Sep 2024 19:07:52 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 21 Sep 2024 18:42:06 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ 15.1.2507.39; Sat, 21 Sep 2024 19:07:51 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sat, 21 Sep 2024 18:42:06 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ 15.1.2507.39 via Frontend Transport; Sat, 21 Sep 2024 19:07:51 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 21 Sep 2024 18:42:06 -0700
+ 15.1.2507.39; Sat, 21 Sep 2024 19:07:51 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NO2WHTx1NEQYjGE2KIl5+yLIWFcTz7oWAF6mOjS+76jOA2x4g0ZkKqlpWlU2Uyem9iQ5HT2D7/IAw48QPu+HrIp4ZcJhyV2ei7UQvKb2w/cWJu27paAyNUVxvK3wxRWw4+6jDIyXW5UJorr+6b9LlaDINLhSTB0zz20iYd3KLDzx0ye5gDJ9SsqgwMv77oOK6mGCM+1EpI7PyplYJvuEH/AkLQR1Ndny0UAeqVK3xpFvvpxgJ+COFmmI3NRcG0RK2EYdfWNC+C+GuVWYdK2GsOm/Gan6Trc0OYtvd9fMpDkoYktsEtlO4zOtLfQgR4CuUosemNdKZV6AOdGSdpAsAg==
+ b=RsYvo38uSgVTXkvHMunbX36y93VtMxG/GZl5nISXOfR8q6f+qDmUX4pmI+m0HZVpBHsHLq+pGTR51lHTkmxIeMcP51q7l2HYDJYuY8kTmpN9zfqo07ukMBS1iBa+6yukqNgj004TXDA+iiDlUmVcToGhVOFxALOWtyML8fhF4nvo+/jpO65iBNhiqIMJBJtaOqSEOjxvdQUa1DR8hylrlhw+hQHaIBozNdL99L6Wy3nkY9d+52s3/p3+PBlP0VRnmfPwZnhk8PT9fswq98U3uGNrK7/KkNof6MRw2RSO7LwixB61sRgCgM2CS1xyMXmaSf2/y5wVCbHwiYwzRL0BlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=COTf4xb1EIpYlLQ0Pg2yTI8lVe2qW0B0HWQqOe0qbbo=;
- b=bW8Cp+zZbjWy+/H9rDSX/+EGaWYHh15vlHimx9CO3d+L4Peo6mUmfymFBE4ANhfYxvAI1DIu+oOWOONKpv6PQHvzWoffD6IAnB8juoNXXsBI5MDf9rmIBDyuSxUYv5lWIkxLWEi3DE1J1ZokcXrAsvjKsdPCKztgqIELoROF3SXGVj5vPsYllxmqFl9aXHz1GzR/hIX3CPyzbh5Y+nliilbGy9Nffkho3CHhbQRHNRyZb6eBYa9UPLztbBDSzqHCMRLu29ejJ4kMvs3ZBMIchTeWMW425TkhXoGhBs0i+XXmr6soIwklYjVXro9FKcZiB2rQATe4P5wpRBDYxo91Mg==
+ bh=pV0C966flC/962H6Rh6bfq+p7AsU2Gpehke4kx4Cu6A=;
+ b=TMxesWBB/WDIctknidlLwZYMD71Q4nDjpubPWW8iADV38vzuQlUcnSFTN6lbwHVtTez4wJ2v6ByLZ8aWmqdrJIDfPEeCZtRG9DSUTiGj9ELqXapEDBrlX0Z4IOVtjVXnlyYR9fW2VJTJoZMNHXQvyimiMGvfrHS6kLA3Bbv/ApWLw4f6JpB1NHSQTc+/2TlU9Ylmbu/lZZIk081JkdN9zbBJTK+krlYpjQ0vSeBSP61spn6EVtURjvVgKAeo5zJujBfoM4WQ6lMOtAGc8nxdoDn5aKUoNvxiST94LIpKYYHR8fCMDfGHGShkVF8nnpspe+mqEJFnf1zSRyYHKKLzuw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SA1PR11MB6781.namprd11.prod.outlook.com (2603:10b6:806:25d::12) with
+ by IA0PR11MB7307.namprd11.prod.outlook.com (2603:10b6:208:437::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.24; Sun, 22 Sep
- 2024 01:42:02 +0000
+ 2024 02:07:49 +0000
 Received: from PH8PR11MB8107.namprd11.prod.outlook.com
  ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
  ([fe80::6b05:74cf:a304:ecd8%7]) with mapi id 15.20.7962.027; Sun, 22 Sep 2024
- 01:42:02 +0000
-Date: Sun, 22 Sep 2024 03:41:57 +0200
+ 02:07:49 +0000
+Date: Sun, 22 Sep 2024 04:07:44 +0200
 From: Dan Williams <dan.j.williams@intel.com>
 To: Alistair Popple <apopple@nvidia.com>, <dan.j.williams@intel.com>,
 	<linux-mm@kvack.org>
@@ -106,19 +106,16 @@ CC: Alistair Popple <apopple@nvidia.com>, <vishal.l.verma@intel.com>,
 	<linuxppc-dev@lists.ozlabs.org>, <nvdimm@lists.linux.dev>,
 	<linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	<linux-ext4@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-	<jhubbard@nvidia.com>, <hch@lst.de>, <david@fromorbit.com>,
-	<hca@linux.ibm.com>, <gor@linux.ibm.com>, <agordeev@linux.ibm.com>,
-	<borntraeger@linux.ibm.com>, <svens@linux.ibm.com>,
-	<linux-s390@vger.kernel.org>, <gerald.schaefer@linux.ibm.com>
-Subject: Re: [PATCH 05/12] mm/memory: Add dax_insert_pfn
-Message-ID: <66ef75e59c7ea_109b5294d1@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<jhubbard@nvidia.com>, <hch@lst.de>, <david@fromorbit.com>
+Subject: Re: [PATCH 06/12] huge_memory: Allow mappings of PUD sized pages
+Message-ID: <66ef7bf0b1dfd_10a032946e@dwillia2-mobl3.amr.corp.intel.com.notmuch>
 References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <110d5b177d793ab17ea5d1210606cb7dd0f82493.1725941415.git-series.apopple@nvidia.com>
+ <3ce22c7c8f00cb62e68efa5be24137173a97d23c.1725941415.git-series.apopple@nvidia.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <110d5b177d793ab17ea5d1210606cb7dd0f82493.1725941415.git-series.apopple@nvidia.com>
-X-ClientProxiedBy: MW4PR03CA0247.namprd03.prod.outlook.com
- (2603:10b6:303:b4::12) To PH8PR11MB8107.namprd11.prod.outlook.com
+In-Reply-To: <3ce22c7c8f00cb62e68efa5be24137173a97d23c.1725941415.git-series.apopple@nvidia.com>
+X-ClientProxiedBy: MW4PR03CA0192.namprd03.prod.outlook.com
+ (2603:10b6:303:b8::17) To PH8PR11MB8107.namprd11.prod.outlook.com
  (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -127,455 +124,370 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SA1PR11MB6781:EE_
-X-MS-Office365-Filtering-Correlation-Id: d49d016b-3b30-4d8f-5612-08dcdaa7c19d
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|IA0PR11MB7307:EE_
+X-MS-Office365-Filtering-Correlation-Id: b778510f-7a98-4f5a-a4da-08dcdaab5b6f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?uZ72BXUS9lVU5WAtkW+FyN06syIR1UdvFTH1vtN/s0nTGe1Ei4hfg/eTvjmQ?=
- =?us-ascii?Q?lAoDZ5QIVCoPbqgBHr1hfr3l2hnAyz4gBi/h9AsX0oykLfuAtdrMp1pMcRSx?=
- =?us-ascii?Q?Te/UUFasah6ApjDPCdaxTT9WRnkoDg/HbLZFgLe9VuPIn+Ny+dAuvuzGs0wy?=
- =?us-ascii?Q?0IwdwaI91/QV86di8Bp0lGCYIH4VHIh+X1J02wo4hkC6zGtquXCSaREqiP9h?=
- =?us-ascii?Q?/pLKlHUP0EoNq+tnV2tB9bQ2iw2XMSYXP4DlSIA4/pdlD99X8G5IKwrI+U5B?=
- =?us-ascii?Q?LJf+CmLMat6pj/A7gsqvwHNj1pD+MzEZDpPybtH9Vv+VtLY9HIghKrjLsngG?=
- =?us-ascii?Q?2upmssm38B+GgFpMmRSWM0Z4PYeJZRU7hrOr5wNEFpDVcFkfwxCU5YCFaErD?=
- =?us-ascii?Q?3LkhoXnPRtp3gSL7G4V6QumHOrJVz4hgxr1GIZdY/RQbih7CINqrMcygal+p?=
- =?us-ascii?Q?T6rQ3aN1NCJLUd3+l37vshAr4mvAXd7tpzeOEXmj8XmFMA9oH6mqzOBWz0pO?=
- =?us-ascii?Q?7obK1lVc0im9wSA1VZLQS6Rc/OvCbL0Sib5p1cuuEgz9FfmfxOPkvBs/P7/t?=
- =?us-ascii?Q?Q2dUptmRKS5r5aLhu9eUOt3nxp0FjP++DmRgkupczfPTjZFBoz4x6vuDuBaR?=
- =?us-ascii?Q?v6i7qXOHAVPQdefIKzW0QiMyX7Bf4UDhiWdKiLB4ip/we0uZ2lGGtj2Wwlow?=
- =?us-ascii?Q?S/kTg6K1K4F79ei1tntapHHJV3RJQwyZFu7CQpnH4+LBRm8o8mcVW3BhfHwp?=
- =?us-ascii?Q?miqqVD/5YK8L76Hequ/cza5F16lzhdeJzgPc1XHOydDgtJrYLSyaM2O9a/5/?=
- =?us-ascii?Q?2rrWHFdrYIbSZZLI5AytPD3U78Fn3N8U9ou6cd8k/2XKZ2Ac2NY7uYaPJ0mY?=
- =?us-ascii?Q?jxOfb0AyVXMGibYg9SljgdjGCJNL7vMCEoqK+57/XKsPgSDP04SrpPYvldg7?=
- =?us-ascii?Q?cmu2JNs2vB5/5TU7CntVE9fEMKJsQldzirTHRA8lBGDlZ4JWKjiuosXTcn68?=
- =?us-ascii?Q?Ph1lbzTDXzLzW9i5Btd54vTYADqD/0Z2mTtEg7V+oNnWHIsTxAl/UnIVatkd?=
- =?us-ascii?Q?pTcY/CyLGCsfsiO5WrmBZqZrtntFWk4TqShHXwVjvwJ5zevutbnIwldBzUzm?=
- =?us-ascii?Q?tKY7Yztinpfgr5omAcO0qUUJhmV3AO/n9vbCyP/5ut4OqSTI0rMRxazj6QOq?=
- =?us-ascii?Q?8KuRrxSBtz8XE8hz1CEUzs2lRPVhfxYr/HISIlrf+hKC6EGBnmaqM23NTEvA?=
- =?us-ascii?Q?PhumB4Yu1xvbeThSiynJe0DTDXXz429n1V7Y8BCaNWTDtTnrZ/42pNO70NgH?=
- =?us-ascii?Q?Wl3zLUYASP5n5icIkAL71C4jMWGBWjwXrC7Jw6mFYtgXksP766sT8aPZl6DP?=
- =?us-ascii?Q?mryqpFQ=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?DA6OXHbqFH6omg26JbUv48HSJD+ZufTy5Oy2XFD5kKhBvddcF2gxZl5eqoU3?=
+ =?us-ascii?Q?wS4qz0nu9fPFZnhaKXopHElWY1FDbmDu009g7fPWlZpNJ6pY8aqPzqB2TWDd?=
+ =?us-ascii?Q?quFCFedLfdJ0bqBBA3ICx9Fm3zL51gvXjqeH5jN2MKRpQtJ/JElrTfIykkm3?=
+ =?us-ascii?Q?PVPNzjHNZQ/FZ79GDH+VQ2BntOc/cmGl5Um9Ser2DQ6JfOK7uJv/0m7848n+?=
+ =?us-ascii?Q?nk+4O9X+2aNxn1/uz+XPuR1xFSlvRSVshMphMEmWiMx9JYSuv+l8K/vfqXbD?=
+ =?us-ascii?Q?RnX7YIPwF/RWKrQV7hwx6dtUdNB6RxKEfbQQmDbuCkdHn+P8sQ4vbIJjXrIG?=
+ =?us-ascii?Q?+oc0NDP4KUPOBZQSVNUvDt1fvNIrm7AOA/v//LZCAZxyyORty7vOBHNzRNLR?=
+ =?us-ascii?Q?xS/lq/SYC+tS4HN61jdFETNXbKlH3IYx+1gMCdNKghaPzW6NJZydZjQR73U2?=
+ =?us-ascii?Q?m9e9IBGytfq0psc4juU2Esfk0K+CcL1dEtfHHQJ7rzMMAtFZgsXXYHzD2iJ3?=
+ =?us-ascii?Q?Vbu5IPDvFrQC3pVrMOFV5DUgMIMOaBzMvKi3jcbp6zt/wBeIT032BnU++I2m?=
+ =?us-ascii?Q?MZVTggujvGcQATk5TYO+YUfEab6ukNiKS/ev6Ou3v0enoVbUWunbccpjVvEN?=
+ =?us-ascii?Q?FH+QjeI6eVFK3MNaGFciiUAKQN3qoyLLlUYADmhInbya2jtGmLMr+13piEe8?=
+ =?us-ascii?Q?YqA1sMP6UEXGiIVxedmiPXGl2gdOdLRZO2SVZ0ijhVOxzfyXBoC1tZgXbcLw?=
+ =?us-ascii?Q?3VwRy3e+5jicyw+s0tos1/nHxTdTpUVT6SIwqL2TZ8nKSjW1Y8980dVTXaNY?=
+ =?us-ascii?Q?HQAfmlqKjsf/6v6l7vbRDs1J0XMH2ashQBut9wJOsVvhozl0VatsvTqYvJ2v?=
+ =?us-ascii?Q?sr6TAQjvUDo8GW6OyHh4fYHeUQlajYEy8/ViKzmkSvQWJGA320EGwVCiqyR0?=
+ =?us-ascii?Q?ZuQoYbdYQzH6aHqaUe1dkh9dKQGM02WN0kIMfxq+J9I4pxzaLUiDw/GlG8v1?=
+ =?us-ascii?Q?gkdXDwQjmNySeVhrusqglOPmsjwCCc8uiSCtQIWmrv1Gta3tmdsXzYlHU86O?=
+ =?us-ascii?Q?d9p3xv075jPM7w32L6vAlcqcLcnFfYCBubXvpL4+d3zFh4yTWwkGJMndaPek?=
+ =?us-ascii?Q?pKZl+Ed8vFygVkUQdNJ4sojHaDz9mgeOIkwFC6u8cttZ4a0JNVPXZTEgxQNo?=
+ =?us-ascii?Q?MnibCwYDZfxDbSSNjMA8lbP4a72nof8+9tudOQ1+8Ou/WNEeT6R6M2rhFalg?=
+ =?us-ascii?Q?SYZCnirEaPmF7KhHw18hRnJZZEGMmR7sKJlO3I4TNA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?O8VbIq1g3anv0vdzWWkbx/uwZis9sxxkJ2t5+m/AJEldKgiCXAbp+roQm95R?=
- =?us-ascii?Q?2nUU6SJIZO9BWwnehC2DgVxMdbGGso6B9L+/hAPHP2lDNIaU50jytrNCFp8r?=
- =?us-ascii?Q?zeDJt8tbZoFuE1ikSJlvg4zIhavG4JSJypbq1WSbUTKiHDp8wJOVpdLqRXWb?=
- =?us-ascii?Q?7ESWMK7TGzJ/sNvnCzBpMlnYRocG65gzfomXjty0BVSOAFTv72yd+NgyWj7G?=
- =?us-ascii?Q?7fsIKbENxiAvmld4JW+04jyEF7EbbMoYgMOofnhw23xql2RLCghGigVGHC6h?=
- =?us-ascii?Q?mcdQqpzxpcXFmukGVBY5sNz4qFy297ua8axqQiXNcBRz3zUa3kUxK3pwwrFD?=
- =?us-ascii?Q?zub3ZFemgzTPOOtVWg2qN53VXqMvULAsKDalRmu3TdgFpq3nBhYFgt2W4Soe?=
- =?us-ascii?Q?8QWNzd6p1EHBVTBUfxafamn/VKBVijZoFariLHA6YcLlqMhhZaCqWLuixqhy?=
- =?us-ascii?Q?0tZkqmUnKZxjLBLRJs9HaohX83AtnbYXU0tcwfUqlMdk4miFx5Y63PDwFENs?=
- =?us-ascii?Q?1XW+f7KHGO3eiralcc/iOW9SVh4DIZi20RJ2xUxv7cmbQbkQzRpmjpU7SEmI?=
- =?us-ascii?Q?E87IiuzDJoXWSaPiQquvEmMad2uzlxooPmn0dP/dBxXxx8Z5TjO+93HT/lr/?=
- =?us-ascii?Q?ezFUuug5WgU1qxNLUd/hXkaqGAwXvELp1DI5pIiAql19tFpkNngfpBxcLfeL?=
- =?us-ascii?Q?YHmGAyC7VdRLSFRsCR6f6oDH5sLrETyYtcsSKIDeeWy5xU034DFzx5t0r+Qx?=
- =?us-ascii?Q?AvKgPZN84E4iCKDGN0BCPwtrLtDAB5vkBK9Vo8/KeH4/iSBwE8eKn8lymd3Y?=
- =?us-ascii?Q?akflEamU2c8uBFtDqmYHDAMOkpWyYav5ROEDvW0zGFyG3rYMnybcC08dAY/x?=
- =?us-ascii?Q?an46MP2A4HnSSb25Zn1EeFomPN+GSRP6bq3XoaR4nY267sbuDbnTClXoIFMD?=
- =?us-ascii?Q?Ht51G7AHnwDJ9nwVXEMBvSrHLthX4INFyrr/GWMznYNlqyCfqS2MdmEFxrGw?=
- =?us-ascii?Q?Pf1iPyyZO3jmysJdlJ8BXeBnhUdWAZkJd7psZAHpfSWV0PIQD9M+tGIaqW34?=
- =?us-ascii?Q?3igflp4rK0OvsxVPdKFey+B/68ZYrVUXuXamqcpL8B8WNfBg3vWKdPeI7IuG?=
- =?us-ascii?Q?vpkSJpdJdK/HUJEfxYn/PXcRBoq6y62Mml2od+YVZ5cvZglaXdLkgA90+sV2?=
- =?us-ascii?Q?VTKHbtmFiSOVUFOQFn2CAkrtBaMgQSqgSqwVit87I5UNqrdpjWEnTgzmfCOr?=
- =?us-ascii?Q?xAzcpltMYXz8eZGtCKNCch1RW3XttbGL2+yPkeGYZ6aMufauhmIeU6KIJiKu?=
- =?us-ascii?Q?qtlrZ8eAn8pWb/y/0083yHZjvMMVHCAgmvINJQp6CnLzII5RnlUdTpBRKMiG?=
- =?us-ascii?Q?FPkwgKJ3mCpP6o5CVO5Tszngyymz8NkxjC8pgkenG21/dibOqmnYbDdkh342?=
- =?us-ascii?Q?ejeVNU7LyV1ld1sX+0wr5rbbk+Hy23oUdQklrCCfvYS/rsmr8T/wA11VkvBz?=
- =?us-ascii?Q?kHT2o6OyMFIeVVq/shg/1uxRJxLAs+9ZNGhZI0Kz+dOxFH8bwzK74Oa8z8pp?=
- =?us-ascii?Q?TH2ovygd7d51HNNf4oIeFLmk18hndVehFfJG7uXYwBEUVzmN2AAXu1rJD3CM?=
- =?us-ascii?Q?pQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d49d016b-3b30-4d8f-5612-08dcdaa7c19d
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?R7xbtulsK+sxAyNsEkFsj61JZhDbeTQxHJehmSWT0U9KIB2cnklXCHUzQpkW?=
+ =?us-ascii?Q?s0FOCw/iQhZhm3rgby2oOAjUG0pT8rbyKI0J9zwDvHRukRHfEwi5gm+rzkNd?=
+ =?us-ascii?Q?LhVIwXCtkmYbPBEGOYj4s4DtQ1zzYqJg1H/ogPCjaKq2Lhd5kKCVGjl9CUEL?=
+ =?us-ascii?Q?5Pu8TndXmIdAzHhKflNacOBG2HgVWfU7y+uGC1BXB7K55r6/26dhF8jt/sgE?=
+ =?us-ascii?Q?Oo9n9tzhBLEOS963eXi8X2u6jvuUlJc7woO5+HpKT+Yeg148EiHwlJgKz4Cq?=
+ =?us-ascii?Q?FtSjKfPlxgiKCfx65qmGUmjKfnI7Q92PbAtpw2awAL5gtBhBCyWvji/37Csu?=
+ =?us-ascii?Q?q8fuNtXUzfLAuTkjPedDb7Cdh3cogMQX6W4NEwX+RYSSl+PQG4qscKqj/hjp?=
+ =?us-ascii?Q?PWIiuQ9PMJAmau3yYW7OICgkT5Mo4o31OubdmQQG4D5GqJ6RxdZZDNDvRtIT?=
+ =?us-ascii?Q?GR5XRJvmaSA41UUaFzWm1SUnfTLZAEzzaozT0CUVD+jszne+Jy9UV7/r3fW/?=
+ =?us-ascii?Q?LsnWa+Hnn7zS0IzS1maTREqSWWRlyTURFZGU7JAyR3TG5CRhAjHIxWdbY9E5?=
+ =?us-ascii?Q?QdK6xdu0A/6HGNOEI9xpxDFyChlV6W7GsJDLubfA7CEH22T0VUGeBQtea77B?=
+ =?us-ascii?Q?UbfVAstr9CttQX6GxIMFk/IqN2cu4DeP+uqZZ5pNUH75w0LuXEbdnm3uFE0s?=
+ =?us-ascii?Q?YkC1Gw6HDXNwNWCovLqdvkZwPnVg59u8gCJKbRUJPi/8aE/xwJXWJLiLgBbJ?=
+ =?us-ascii?Q?yFZheVQt6PflRIXQHEr4lMQUtyrXwQHWdvNY3Hs0duNFgzXCIi5xKpOGY/dc?=
+ =?us-ascii?Q?JsKyK5JTCZ06b1Eqgza44afyISAAS1oeKB2MJWcC1Iyt4T7lyejk+GsHCxNX?=
+ =?us-ascii?Q?6+qs/LjBbS940fJf6k4Uyq9PhnUWlMtzKUXmsXFSHvVpu249Q+jIcKSUsWrY?=
+ =?us-ascii?Q?llVdUk2o/QWdshFyZ26pqTYeKyUg3PoHkX/Kf28GsK1BfPybQMg1ITNwTj8n?=
+ =?us-ascii?Q?jG9M8oVRN80oBG7Od7vg4sgjnqM9hRbWsn9LKaNLmUjwYF0FNoOOgKDBOS+o?=
+ =?us-ascii?Q?ikICjiOUiAXCa09ewVnHmVoUqtQnA9CnyIcI7cDf0ZmxrvaV8TZA/8DpltLH?=
+ =?us-ascii?Q?dFzIZXYkleSDiI+DGY4InOC7PyXeDAcOYuuq9C0y1viTp6N0yOjV1zNXEiDW?=
+ =?us-ascii?Q?V4yaU+NOOvv4sIy+juRMctCrSMpK4pEr2kHPZS7im0YulD3IrU06TGGKBvrZ?=
+ =?us-ascii?Q?ZP7ARfn7uC60bH+qEkit3gQYCHa+9P6NNRg2ADq5+/oNXwbEPL0P0j1HETO8?=
+ =?us-ascii?Q?qxTwv66lz0M43J4Gxwirssn3tkkD0vvcQAFHUV/fE78I7QOAnq0y7l1j8oMA?=
+ =?us-ascii?Q?8AH+/Gz7pIcRqk+NyN31NCqVMatYHsjybbVw/Y7X9LAjdTFVAAPcvGslKRpx?=
+ =?us-ascii?Q?JZY+ZaKIUaKt3qpUHpcMo7X/AuVoc0lcRYs4a7Rhs6DNJbH5KjXvpu8zQtqA?=
+ =?us-ascii?Q?0MDBu+yBqXuc+6Gr4dafSg+8bCM4Y8b9OxDxAZwFT8+LX2SiB0A3BbM0FXq3?=
+ =?us-ascii?Q?JpkKGNGTjOLCdQyKunCq46wrGpuHwWFKbzwkiWxHQEO8O7krY7uWrI+TxhRP?=
+ =?us-ascii?Q?hg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b778510f-7a98-4f5a-a4da-08dcdaab5b6f
 X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2024 01:42:02.3605
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2024 02:07:48.9127
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cPnOPiRIg+Aw6BtoQ2/ta6MhwSwQGQvxeOlVQWGIPyfeR4X9uauOcXgTopjZwXfaO6mUEhn5c1Iar7q4fF8AsWYmOi+/ZtFL4w7LKXhgDys=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6781
+X-MS-Exchange-CrossTenant-UserPrincipalName: lnsOs3d7avElvfMWZJ2/lPoYIVgKYJbhWiZ9xP9Nkm49dy8UKNOQezMMko51orKxyGvBcp0cfLBeDZ75lWhb/y5C43y9rkzxeTSI5KwxDvI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7307
 X-OriginatorOrg: intel.com
 
-[ add s390 folks to comment on CONFIG_FS_DAX_LIMITED ]
-
 Alistair Popple wrote:
-> Currently to map a DAX page the DAX driver calls vmf_insert_pfn. This
-> creates a special devmap PTE entry for the pfn but does not take a
-> reference on the underlying struct page for the mapping. This is
-> because DAX page refcounts are treated specially, as indicated by the
-> presence of a devmap entry.
+> Currently DAX folio/page reference counts are managed differently to
+> normal pages. To allow these to be managed the same as normal pages
+> introduce dax_insert_pfn_pud. This will map the entire PUD-sized folio
+> and take references as it would for a normally mapped page.
 > 
-> To allow DAX page refcounts to be managed the same as normal page
-> refcounts introduce dax_insert_pfn. This will take a reference on the
-> underlying page much the same as vmf_insert_page, except it also
-> permits upgrading an existing mapping to be writable if
-> requested/possible.
-> 
+> This is distinct from the current mechanism, vmf_insert_pfn_pud, which
+> simply inserts a special devmap PUD entry into the page table without
+> holding a reference to the page for the mapping.
+
+This is missing some description or comment in the code about the
+differences. More questions below:
+
 > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> 
 > ---
+>  include/linux/huge_mm.h |  4 ++-
+>  include/linux/rmap.h    | 15 +++++++-
+>  mm/huge_memory.c        | 93 ++++++++++++++++++++++++++++++++++++------
+>  mm/rmap.c               | 49 ++++++++++++++++++++++-
+>  4 files changed, 149 insertions(+), 12 deletions(-)
 > 
-> Updates from v1:
-> 
->  - Re-arrange code in insert_page_into_pte_locked() based on comments
->    from Jan Kara.
-> 
->  - Call mkdrity/mkyoung for the mkwrite case, also suggested by Jan.
-> ---
->  include/linux/mm.h |  1 +-
->  mm/memory.c        | 83 ++++++++++++++++++++++++++++++++++++++++++-----
->  2 files changed, 76 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index b0ff06d..ae6d713 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3463,6 +3463,7 @@ int vm_map_pages(struct vm_area_struct *vma, struct page **pages,
->  				unsigned long num);
->  int vm_map_pages_zero(struct vm_area_struct *vma, struct page **pages,
->  				unsigned long num);
-> +vm_fault_t dax_insert_pfn(struct vm_fault *vmf, pfn_t pfn_t, bool write);
->  vm_fault_t vmf_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
->  			unsigned long pfn);
->  vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
-> diff --git a/mm/memory.c b/mm/memory.c
-> index d2785fb..368e15d 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2039,19 +2039,47 @@ static int validate_page_before_insert(struct vm_area_struct *vma,
->  }
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 6370026..d3a1872 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -40,6 +40,7 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
 >  
->  static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
-> -			unsigned long addr, struct page *page, pgprot_t prot)
-> +				unsigned long addr, struct page *page,
-> +				pgprot_t prot, bool mkwrite)
-
-This upgrade of insert_page_into_pte_locked() to handle write faults
-deserves to be its own patch with rationale along the lines of:
-
-"In preparation for using insert_page() for DAX, enhance
-insert_page_into_pte_locked() to handle establishing writable mappings.
-Recall that DAX returns VM_FAULT_NOPAGE after installing a PTE which
-bypasses the typical set_pte_range() in finish_fault."
-
-
->  {
->  	struct folio *folio = page_folio(page);
-> +	pte_t entry = ptep_get(pte);
->  	pte_t pteval;
+>  vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+>  vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+> +vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
 >  
-> -	if (!pte_none(ptep_get(pte)))
-> -		return -EBUSY;
-> +	if (!pte_none(entry)) {
-> +		if (!mkwrite)
-> +			return -EBUSY;
+>  enum transparent_hugepage_flag {
+>  	TRANSPARENT_HUGEPAGE_UNSUPPORTED,
+> @@ -114,6 +115,9 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
+>  #define HPAGE_PUD_MASK	(~(HPAGE_PUD_SIZE - 1))
+>  #define HPAGE_PUD_SIZE	((1UL) << HPAGE_PUD_SHIFT)
+>  
+> +#define HPAGE_PUD_ORDER (HPAGE_PUD_SHIFT-PAGE_SHIFT)
+> +#define HPAGE_PUD_NR (1<<HPAGE_PUD_ORDER)
 > +
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  
+>  extern unsigned long transparent_hugepage_flags;
+> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> index 91b5935..c465694 100644
+> --- a/include/linux/rmap.h
+> +++ b/include/linux/rmap.h
+> @@ -192,6 +192,7 @@ typedef int __bitwise rmap_t;
+>  enum rmap_level {
+>  	RMAP_LEVEL_PTE = 0,
+>  	RMAP_LEVEL_PMD,
+> +	RMAP_LEVEL_PUD,
+>  };
+>  
+>  static inline void __folio_rmap_sanity_checks(struct folio *folio,
+> @@ -228,6 +229,14 @@ static inline void __folio_rmap_sanity_checks(struct folio *folio,
+>  		VM_WARN_ON_FOLIO(folio_nr_pages(folio) != HPAGE_PMD_NR, folio);
+>  		VM_WARN_ON_FOLIO(nr_pages != HPAGE_PMD_NR, folio);
+>  		break;
+> +	case RMAP_LEVEL_PUD:
 > +		/*
-> +		 * For read faults on private mappings the PFN passed in may not
-> +		 * match the PFN we have mapped if the mapped PFN is a writeable
-> +		 * COW page.  In the mkwrite case we are creating a writable PTE
-> +		 * for a shared mapping and we expect the PFNs to match. If they
-> +		 * don't match, we are likely racing with block allocation and
-> +		 * mapping invalidation so just skip the update.
+> +		 * Asume that we are creating * a single "entire" mapping of the
+> +		 * folio.
 > +		 */
-> +		if (pte_pfn(entry) != page_to_pfn(page)) {
-> +			WARN_ON_ONCE(!is_zero_pfn(pte_pfn(entry)));
-> +			return -EFAULT;
-> +		}
-> +		entry = maybe_mkwrite(entry, vma);
-> +		entry = pte_mkyoung(entry);
-> +		if (ptep_set_access_flags(vma, addr, pte, entry, 1))
-> +			update_mmu_cache(vma, addr, pte);
-
-I was going to say that this should be creating a shared helper with
-insert_pfn(), but on closer look the mkwrite case in insert_pfn() is now
-dead code (almost, *grumbles about dcssblk*). So I would just mention
-that in the changelog for this standalone patch and then we can follow
-on with a cleanup like the patch at the bottom of this mail (untested).
-
-> +		return 0;
-> +	}
+> +		VM_WARN_ON_FOLIO(folio_nr_pages(folio) != HPAGE_PUD_NR, folio);
+> +		VM_WARN_ON_FOLIO(nr_pages != HPAGE_PUD_NR, folio);
+> +		break;
+>  	default:
+>  		VM_WARN_ON_ONCE(true);
+>  	}
+> @@ -251,12 +260,16 @@ void folio_add_file_rmap_ptes(struct folio *, struct page *, int nr_pages,
+>  	folio_add_file_rmap_ptes(folio, page, 1, vma)
+>  void folio_add_file_rmap_pmd(struct folio *, struct page *,
+>  		struct vm_area_struct *);
+> +void folio_add_file_rmap_pud(struct folio *, struct page *,
+> +		struct vm_area_struct *);
+>  void folio_remove_rmap_ptes(struct folio *, struct page *, int nr_pages,
+>  		struct vm_area_struct *);
+>  #define folio_remove_rmap_pte(folio, page, vma) \
+>  	folio_remove_rmap_ptes(folio, page, 1, vma)
+>  void folio_remove_rmap_pmd(struct folio *, struct page *,
+>  		struct vm_area_struct *);
+> +void folio_remove_rmap_pud(struct folio *, struct page *,
+> +		struct vm_area_struct *);
+>  
+>  void hugetlb_add_anon_rmap(struct folio *, struct vm_area_struct *,
+>  		unsigned long address, rmap_t flags);
+> @@ -341,6 +354,7 @@ static __always_inline void __folio_dup_file_rmap(struct folio *folio,
+>  		atomic_add(orig_nr_pages, &folio->_large_mapcount);
+>  		break;
+>  	case RMAP_LEVEL_PMD:
+> +	case RMAP_LEVEL_PUD:
+>  		atomic_inc(&folio->_entire_mapcount);
+>  		atomic_inc(&folio->_large_mapcount);
+>  		break;
+> @@ -437,6 +451,7 @@ static __always_inline int __folio_try_dup_anon_rmap(struct folio *folio,
+>  		atomic_add(orig_nr_pages, &folio->_large_mapcount);
+>  		break;
+>  	case RMAP_LEVEL_PMD:
+> +	case RMAP_LEVEL_PUD:
+>  		if (PageAnonExclusive(page)) {
+>  			if (unlikely(maybe_pinned))
+>  				return -EBUSY;
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index c4b45ad..e8985a4 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1336,21 +1336,19 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	pgprot_t prot = vma->vm_page_prot;
+>  	pud_t entry;
+> -	spinlock_t *ptl;
+>  
+> -	ptl = pud_lock(mm, pud);
+>  	if (!pud_none(*pud)) {
+>  		if (write) {
+>  			if (pud_pfn(*pud) != pfn_t_to_pfn(pfn)) {
+>  				WARN_ON_ONCE(!is_huge_zero_pud(*pud));
+> -				goto out_unlock;
+> +				return;
+>  			}
+>  			entry = pud_mkyoung(*pud);
+>  			entry = maybe_pud_mkwrite(pud_mkdirty(entry), vma);
+>  			if (pudp_set_access_flags(vma, addr, pud, entry, 1))
+>  				update_mmu_cache_pud(vma, addr, pud);
+>  		}
+> -		goto out_unlock;
+> +		return;
+>  	}
+>  
+>  	entry = pud_mkhuge(pfn_t_pud(pfn, prot));
+> @@ -1362,9 +1360,6 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>  	}
+>  	set_pud_at(mm, addr, pud, entry);
+>  	update_mmu_cache_pud(vma, addr, pud);
+> -
+> -out_unlock:
+> -	spin_unlock(ptl);
+>  }
+>  
+>  /**
+> @@ -1382,6 +1377,7 @@ vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
+>  	unsigned long addr = vmf->address & PUD_MASK;
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	pgprot_t pgprot = vma->vm_page_prot;
+> +	spinlock_t *ptl;
+>  
+>  	/*
+>  	 * If we had pud_special, we could avoid all these restrictions,
+> @@ -1399,10 +1395,52 @@ vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
+>  
+>  	track_pfn_insert(vma, &pgprot, pfn);
+>  
+> +	ptl = pud_lock(vma->vm_mm, vmf->pud);
+>  	insert_pfn_pud(vma, addr, vmf->pud, pfn, write);
+> +	spin_unlock(ptl);
 > +
->  	/* Ok, finally just insert the thing.. */
->  	pteval = mk_pte(page, prot);
->  	if (unlikely(is_zero_folio(folio))) {
->  		pteval = pte_mkspecial(pteval);
->  	} else {
->  		folio_get(folio);
-> +		entry = mk_pte(page, prot);
-> +		if (mkwrite) {
-> +			entry = pte_mkyoung(entry);
-> +			entry = maybe_mkwrite(pte_mkdirty(entry), vma);
-> +		}
->  		inc_mm_counter(vma->vm_mm, mm_counter_file(folio));
->  		folio_add_file_rmap_pte(folio, page, vma);
->  	}
-> @@ -2060,7 +2088,7 @@ static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
->  }
->  
->  static int insert_page(struct vm_area_struct *vma, unsigned long addr,
-> -			struct page *page, pgprot_t prot)
-> +			struct page *page, pgprot_t prot, bool mkwrite)
->  {
->  	int retval;
->  	pte_t *pte;
-> @@ -2073,7 +2101,8 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
->  	pte = get_locked_pte(vma->vm_mm, addr, &ptl);
->  	if (!pte)
->  		goto out;
-> -	retval = insert_page_into_pte_locked(vma, pte, addr, page, prot);
-> +	retval = insert_page_into_pte_locked(vma, pte, addr, page, prot,
-> +					mkwrite);
->  	pte_unmap_unlock(pte, ptl);
->  out:
->  	return retval;
-> @@ -2087,7 +2116,7 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
->  	err = validate_page_before_insert(vma, page);
->  	if (err)
->  		return err;
-> -	return insert_page_into_pte_locked(vma, pte, addr, page, prot);
-> +	return insert_page_into_pte_locked(vma, pte, addr, page, prot, false);
->  }
->  
->  /* insert_pages() amortizes the cost of spinlock operations
-> @@ -2223,7 +2252,7 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
->  		BUG_ON(vma->vm_flags & VM_PFNMAP);
->  		vm_flags_set(vma, VM_MIXEDMAP);
->  	}
-> -	return insert_page(vma, addr, page, vma->vm_page_prot);
-> +	return insert_page(vma, addr, page, vma->vm_page_prot, false);
->  }
->  EXPORT_SYMBOL(vm_insert_page);
->  
-> @@ -2503,7 +2532,7 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
->  		 * result in pfn_t_has_page() == false.
->  		 */
->  		page = pfn_to_page(pfn_t_to_pfn(pfn));
-> -		err = insert_page(vma, addr, page, pgprot);
-> +		err = insert_page(vma, addr, page, pgprot, mkwrite);
->  	} else {
->  		return insert_pfn(vma, addr, pfn, pgprot, mkwrite);
->  	}
-> @@ -2516,6 +2545,44 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
 >  	return VM_FAULT_NOPAGE;
 >  }
->  
-> +vm_fault_t dax_insert_pfn(struct vm_fault *vmf, pfn_t pfn_t, bool write)
+>  EXPORT_SYMBOL_GPL(vmf_insert_pfn_pud);
+> +
+> +/**
+> + * dax_insert_pfn_pud - insert a pud size pfn backed by a normal page
+> + * @vmf: Structure describing the fault
+> + * @pfn: pfn of the page to insert
+> + * @write: whether it's a write fault
+
+It strikes me that this documentation is not useful for recalling why
+both vmf_insert_pfn_pud() and dax_insert_pfn_pud() exist. It looks like
+the only difference is that the "dax_" flavor takes a reference on the
+page. So maybe all these dax_insert_pfn{,_pmd,_pud} helpers should be
+unified in a common vmf_insert_page() entry point where the caller is
+responsible for initializing the compound page metadata before calling
+the helper?
+
+> + *
+> + * Return: vm_fault_t value.
+> + */
+> +vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
 > +{
 > +	struct vm_area_struct *vma = vmf->vma;
-> +	pgprot_t pgprot = vma->vm_page_prot;
-> +	unsigned long pfn = pfn_t_to_pfn(pfn_t);
-> +	struct page *page = pfn_to_page(pfn);
-
-The problem here is that we stubbornly have __dcssblk_direct_access() to
-worry about. That is the only dax driver that does not return
-pfn_valid() pfns.
-
-In fact, it looks like __dcssblk_direct_access() is the only thing
-standing in the way of the removal of pfn_t.
-
-It turns out it has been 3 years since the last time the question of
-bringing s390 fully into the ZONE_DEVICE regime was raised:
-
-https://lore.kernel.org/all/20210820210318.187742e8@thinkpad/
-
-Given that this series removes PTE_DEVMAP which was a stumbling block,
-would it be feasible to remove CONFIG_FS_DAX_LIMITED for a few kernel
-cycles until someone from the s390 side can circle back to add full
-ZONE_DEVICE support?
-
-> +	unsigned long addr = vmf->address;
-> +	int err;
+> +	unsigned long addr = vmf->address & PUD_MASK;
+> +	pud_t *pud = vmf->pud;
+> +	pgprot_t prot = vma->vm_page_prot;
+> +	struct mm_struct *mm = vma->vm_mm;
+> +	spinlock_t *ptl;
+> +	struct folio *folio;
+> +	struct page *page;
 > +
 > +	if (addr < vma->vm_start || addr >= vma->vm_end)
 > +		return VM_FAULT_SIGBUS;
 > +
-> +	track_pfn_insert(vma, &pgprot, pfn_t);
+> +	track_pfn_insert(vma, &prot, pfn);
 > +
-> +	if (!pfn_modify_allowed(pfn, pgprot))
-> +		return VM_FAULT_SIGBUS;
-> +
-> +	/*
-> +	 * We refcount the page normally so make sure pfn_valid is true.
-> +	 */
-> +	if (!pfn_t_valid(pfn_t))
-> +		return VM_FAULT_SIGBUS;
-> +
-> +	WARN_ON_ONCE(pfn_t_devmap(pfn_t));
-> +
-> +	if (WARN_ON(is_zero_pfn(pfn) && write))
-> +		return VM_FAULT_SIGBUS;
-> +
-> +	err = insert_page(vma, addr, page, pgprot, write);
-> +	if (err == -ENOMEM)
-> +		return VM_FAULT_OOM;
-> +	if (err < 0 && err != -EBUSY)
-> +		return VM_FAULT_SIGBUS;
+> +	ptl = pud_lock(mm, pud);
+> +	if (pud_none(*vmf->pud)) {
+> +		page = pfn_t_to_page(pfn);
+> +		folio = page_folio(page);
+> +		folio_get(folio);
+> +		folio_add_file_rmap_pud(folio, page, vma);
+> +		add_mm_counter(mm, mm_counter_file(folio), HPAGE_PUD_NR);
+> +	}
+> +	insert_pfn_pud(vma, addr, vmf->pud, pfn, write);
+> +	spin_unlock(ptl);
 > +
 > +	return VM_FAULT_NOPAGE;
 > +}
-> +EXPORT_SYMBOL_GPL(dax_insert_pfn);
+> +EXPORT_SYMBOL_GPL(dax_insert_pfn_pud);
+>  #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
+>  
+>  void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
+> @@ -1947,7 +1985,8 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  			zap_deposited_table(tlb->mm, pmd);
+>  		spin_unlock(ptl);
+>  	} else if (is_huge_zero_pmd(orig_pmd)) {
+> -		zap_deposited_table(tlb->mm, pmd);
+> +		if (!vma_is_dax(vma) || arch_needs_pgtable_deposit())
+> +			zap_deposited_table(tlb->mm, pmd);
 
-With insert_page_into_pte_locked() split out into its own patch and the
-dcssblk issue resolved to kill that special case, this patch looks good
-to me.
+This looks subtle to me. Why is it needed to skip zap_deposited_table()
+(I assume it is some THP assumption about the page being from the page
+allocator)? Why is it ok to to force the zap if the arch demands it?
 
+>  		spin_unlock(ptl);
+>  	} else {
+>  		struct folio *folio = NULL;
+> @@ -2435,12 +2474,24 @@ int zap_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  	orig_pud = pudp_huge_get_and_clear_full(vma, addr, pud, tlb->fullmm);
+>  	arch_check_zapped_pud(vma, orig_pud);
+>  	tlb_remove_pud_tlb_entry(tlb, pud, addr);
+> -	if (vma_is_special_huge(vma)) {
+> +	if (!vma_is_dax(vma) && vma_is_special_huge(vma)) {
+
+If vma_is_special_huge() is true vma_is_dax() will always be false, so
+not clear to me why this check is combined?
+
+>  		spin_unlock(ptl);
+>  		/* No zero page support yet */
+>  	} else {
+> -		/* No support for anonymous PUD pages yet */
+> -		BUG();
+> +		struct page *page = NULL;
+> +		struct folio *folio;
 > +
->  vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
->  		pfn_t pfn)
+> +		/* No support for anonymous PUD pages or migration yet */
+> +		BUG_ON(vma_is_anonymous(vma) || !pud_present(orig_pud));
+> +
+> +		page = pud_page(orig_pud);
+> +		folio = page_folio(page);
+> +		folio_remove_rmap_pud(folio, page, vma);
+> +		VM_BUG_ON_PAGE(!PageHead(page), page);
+> +		add_mm_counter(tlb->mm, mm_counter_file(folio), -HPAGE_PUD_NR);
+> +
+> +		spin_unlock(ptl);
+> +		tlb_remove_page_size(tlb, page, HPAGE_PUD_SIZE);
+>  	}
+>  	return 1;
+>  }
+> @@ -2448,6 +2499,8 @@ int zap_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  static void __split_huge_pud_locked(struct vm_area_struct *vma, pud_t *pud,
+>  		unsigned long haddr)
 >  {
-> -- 
-> git-series 0.9.1
+> +	pud_t old_pud;
+> +
+>  	VM_BUG_ON(haddr & ~HPAGE_PUD_MASK);
+>  	VM_BUG_ON_VMA(vma->vm_start > haddr, vma);
+>  	VM_BUG_ON_VMA(vma->vm_end < haddr + HPAGE_PUD_SIZE, vma);
+> @@ -2455,7 +2508,23 @@ static void __split_huge_pud_locked(struct vm_area_struct *vma, pud_t *pud,
+>  
+>  	count_vm_event(THP_SPLIT_PUD);
+>  
+> -	pudp_huge_clear_flush(vma, haddr, pud);
+> +	old_pud = pudp_huge_clear_flush(vma, haddr, pud);
+> +	if (is_huge_zero_pud(old_pud))
+> +		return;
+> +
+> +	if (vma_is_dax(vma)) {
+> +		struct page *page = pud_page(old_pud);
+> +		struct folio *folio = page_folio(page);
+> +
+> +		if (!folio_test_dirty(folio) && pud_dirty(old_pud))
+> +			folio_mark_dirty(folio);
+> +		if (!folio_test_referenced(folio) && pud_young(old_pud))
+> +			folio_set_referenced(folio);
+> +		folio_remove_rmap_pud(folio, page, vma);
+> +		folio_put(folio);
+> +		add_mm_counter(vma->vm_mm, mm_counter_file(folio),
+> +			-HPAGE_PUD_NR);
+> +	}
 
--- >8 --
-Subject: mm: Remove vmf_insert_mixed_mkwrite()
+So this does not split anything (no follow-on set_ptes()) it just clears
+and updates some folio metadata. Something is wrong if we get this far
+since the only dax mechanism that attempts PUD mappings is device-dax,
+and device-dax is not prepared for PUD mappings to be fractured.
 
-From: Dan Williams <dan.j.williams@intel.com>
-
-Now that fsdax has switched to dax_insert_pfn() which uses
-insert_page_into_pte_locked() internally, there are no more callers of
-vmf_insert_mixed_mkwrite(). This also reveals that all remaining callers
-of insert_pfn() never set @mkrite to true, so also cleanup insert_pfn()'s
-@mkwrite argument.
-
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/mm.h |    2 --
- mm/memory.c        |   60 +++++++---------------------------------------------
- 2 files changed, 8 insertions(+), 54 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5976276d4494..d9517e109ac3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3444,8 +3444,6 @@ vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
- 			unsigned long pfn, pgprot_t pgprot);
- vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- 			pfn_t pfn);
--vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
--		unsigned long addr, pfn_t pfn);
- int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long len);
- 
- static inline vm_fault_t vmf_insert_page(struct vm_area_struct *vma,
-diff --git a/mm/memory.c b/mm/memory.c
-index 000873596672..80b07dbd8304 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2327,7 +2327,7 @@ int vm_map_pages_zero(struct vm_area_struct *vma, struct page **pages,
- EXPORT_SYMBOL(vm_map_pages_zero);
- 
- static vm_fault_t insert_pfn(struct vm_area_struct *vma, unsigned long addr,
--			pfn_t pfn, pgprot_t prot, bool mkwrite)
-+			     pfn_t pfn, pgprot_t prot)
- {
- 	struct mm_struct *mm = vma->vm_mm;
- 	pte_t *pte, entry;
-@@ -2337,38 +2337,12 @@ static vm_fault_t insert_pfn(struct vm_area_struct *vma, unsigned long addr,
- 	if (!pte)
- 		return VM_FAULT_OOM;
- 	entry = ptep_get(pte);
--	if (!pte_none(entry)) {
--		if (mkwrite) {
--			/*
--			 * For read faults on private mappings the PFN passed
--			 * in may not match the PFN we have mapped if the
--			 * mapped PFN is a writeable COW page.  In the mkwrite
--			 * case we are creating a writable PTE for a shared
--			 * mapping and we expect the PFNs to match. If they
--			 * don't match, we are likely racing with block
--			 * allocation and mapping invalidation so just skip the
--			 * update.
--			 */
--			if (pte_pfn(entry) != pfn_t_to_pfn(pfn)) {
--				WARN_ON_ONCE(!is_zero_pfn(pte_pfn(entry)));
--				goto out_unlock;
--			}
--			entry = pte_mkyoung(entry);
--			entry = maybe_mkwrite(pte_mkdirty(entry), vma);
--			if (ptep_set_access_flags(vma, addr, pte, entry, 1))
--				update_mmu_cache(vma, addr, pte);
--		}
-+	if (!pte_none(entry))
- 		goto out_unlock;
--	}
- 
- 	/* Ok, finally just insert the thing.. */
- 	entry = pte_mkspecial(pfn_t_pte(pfn, prot));
- 
--	if (mkwrite) {
--		entry = pte_mkyoung(entry);
--		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
--	}
--
- 	set_pte_at(mm, addr, pte, entry);
- 	update_mmu_cache(vma, addr, pte); /* XXX: why not for insert_page? */
- 
-@@ -2433,8 +2407,7 @@ vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
- 
- 	track_pfn_insert(vma, &pgprot, __pfn_to_pfn_t(pfn, PFN_DEV));
- 
--	return insert_pfn(vma, addr, __pfn_to_pfn_t(pfn, PFN_DEV), pgprot,
--			false);
-+	return insert_pfn(vma, addr, __pfn_to_pfn_t(pfn, PFN_DEV), pgprot);
- }
- EXPORT_SYMBOL(vmf_insert_pfn_prot);
- 
-@@ -2480,8 +2453,8 @@ static bool vm_mixed_ok(struct vm_area_struct *vma, pfn_t pfn, bool mkwrite)
- 	return false;
- }
- 
--static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
--		unsigned long addr, pfn_t pfn, bool mkwrite)
-+vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
-+			    pfn_t pfn)
- {
- 	pgprot_t pgprot = vma->vm_page_prot;
- 	int err;
-@@ -2513,9 +2486,9 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
- 		 * result in pfn_t_has_page() == false.
- 		 */
- 		page = pfn_to_page(pfn_t_to_pfn(pfn));
--		err = insert_page(vma, addr, page, pgprot, mkwrite);
-+		err = insert_page(vma, addr, page, pgprot, false);
- 	} else {
--		return insert_pfn(vma, addr, pfn, pgprot, mkwrite);
-+		return insert_pfn(vma, addr, pfn, pgprot);
- 	}
- 
- 	if (err == -ENOMEM)
-@@ -2525,6 +2498,7 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
- 
- 	return VM_FAULT_NOPAGE;
- }
-+EXPORT_SYMBOL(vmf_insert_mixed);
- 
- vm_fault_t dax_insert_pfn(struct vm_fault *vmf, pfn_t pfn_t, bool write)
- {
-@@ -2562,24 +2536,6 @@ vm_fault_t dax_insert_pfn(struct vm_fault *vmf, pfn_t pfn_t, bool write)
- }
- EXPORT_SYMBOL_GPL(dax_insert_pfn);
- 
--vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
--		pfn_t pfn)
--{
--	return __vm_insert_mixed(vma, addr, pfn, false);
--}
--EXPORT_SYMBOL(vmf_insert_mixed);
--
--/*
-- *  If the insertion of PTE failed because someone else already added a
-- *  different entry in the mean time, we treat that as success as we assume
-- *  the same entry was actually inserted.
-- */
--vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
--		unsigned long addr, pfn_t pfn)
--{
--	return __vm_insert_mixed(vma, addr, pfn, true);
--}
--
- /*
-  * maps a range of physical memory into the requested pages. the old
-  * mappings are removed. any references to nonexistent pages results
+Peter Xu recently fixed mprotect() vs DAX PUD mappings, I need to check
+how that interacts with this.
 
