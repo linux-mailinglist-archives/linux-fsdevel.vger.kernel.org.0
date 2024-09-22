@@ -1,93 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-29801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C18F97E020
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 06:10:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EF897E035
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 07:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2291C209EF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 04:10:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136011C20A14
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 05:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAD4192D9F;
-	Sun, 22 Sep 2024 04:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD2119306B;
+	Sun, 22 Sep 2024 05:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mYk0Znp0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMzlE5wf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085C111712;
-	Sun, 22 Sep 2024 04:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E80156F2B;
+	Sun, 22 Sep 2024 05:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726978211; cv=none; b=qYC6AGgeV4T5WtTmio57bcJcLmTpvr4Je1FZE+Zko7Sgs+gw2Jt1A0iv8Qe/lA7HfLuC2DstrykMbe/7RyucyC2Ed62QBknTMbX7KagTpe/+IVXKdCEpLlJpNYI9PYN5XezHb07RpIE9GJEBXSQ4PsuJZlw6aeBXb3mXmkdH17o=
+	t=1726984160; cv=none; b=CT88odkiriti5F3L79wYweydK2YSaiow64Y8x//fKjzAoZxRVe8BiCfHhHU7WtHATIYMyCmKBPuE7hdKNDkKs8KNUnhEsFm1gOnhqTIGBaIx7HqOvi3lpU1QVvX6V0s20f7Hc19ChqWonFwg5HdgHfl2Yyk9LnTQ6yKPkdhuTSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726978211; c=relaxed/simple;
-	bh=GmwT2MfZb+Hu1vNI7h+KSFFt0VL/u8ZYV9yw6fYXAAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EeoGvWcJPLmqremzB3j/0+fHwQHZYm33NYT9HzYqNleCdnhrKy7iGCbOpKsPxaUqKiYWuuZ3CM0c6EewRstJs1hID67/RA4UEj6SXQOst/WwtEqqa8wEoonmcEIokEVSrV33Y99FUPhOmSrLsyYy7yI1ejnhTndjAkC7i7COoiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mYk0Znp0; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=luj7dJe41qjgBXfEQGsLBJu7l5i/4o7jBwDDa7KAlus=; b=mYk0Znp08aCcY+Ic336QIre0BZ
-	sVoL3PnxXvrOORMsYIETuK/PWQs504BTAD9Brae87iVZifHZ06YBhvJ8C/9E33WejRLErSnlFj/Nx
-	snBkfsV6t9IPEboG/tNNDmcKJr18bxF4zVOCLkzbn7GawAZJQozYggfekACM1tJedwXYaIx+DWITC
-	Xc+OcQO0O8ONH+ASxTq33PXFWOxfYJBS/ayCv1xa4YPZIV3NseMXyOrB3OxfcL1N/ybMNzOg3Txpe
-	dpqmCLu3maFxGwG22Tcx5b8j5DhlsXvPUoFxDlRGxXS+DTvoxnANSF9wB0k7P1wjxDUQY/cUapgxW
-	aiUvIQww==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1ssDvC-0000000EZeJ-1NUa;
-	Sun, 22 Sep 2024 04:10:06 +0000
-Date: Sun, 22 Sep 2024 05:10:06 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: audit@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC] struct filename, io_uring and audit troubles
-Message-ID: <20240922041006.GC3413968@ZenIV>
-References: <20240922004901.GA3413968@ZenIV>
+	s=arc-20240116; t=1726984160; c=relaxed/simple;
+	bh=jJW9B3d+KU2/i9btemTRtY7T483RJ0ApDaKU8HYkSB0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NgumcTGmhGoN5hDn6FEWFaTmJYd6iDCkeLrIR0rQuABg1MijQj3aGbQrOkcSowQTrFwbz9fxd/ElrsxT9CsaiyGlCHYDIajDOX4eyAf2TWqExtUhpceeBN090KKw3QW409yeSWUX/+9My//pdd/QXEwxJhtwJ4QJzGHkfha07hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMzlE5wf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E85BBC4CEC3;
+	Sun, 22 Sep 2024 05:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726984160;
+	bh=jJW9B3d+KU2/i9btemTRtY7T483RJ0ApDaKU8HYkSB0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=GMzlE5wf59FKARtlJgGs2n6P5kt5vtAqTeuh9OzKTGqWA0YNUSM/use4EZK3Gg3TN
+	 0xlIRGf6HUJRm/EOzi9BsTj8f3/JaQhU76dvvIGb5K+P3oQvXr5gC260w+FOMGsqGA
+	 B0dLfWBFoen4Sdr91RK2j18kS7kz6ve/pGOnaB0vdKo9NItHCOlavdg5GfnPWwZwk4
+	 w2kQ6rNTlWA26ls+omY8Jj5l7bg1VpYAwB/dHmY31O0qpj0ekunANrkaW1UVsxvc9O
+	 lIdu08TLrfzzxfRfV24zyAboJdh0Avrop6trmGiu2sl5KLRNbDjmyNWFk/bdqVRukb
+	 gdn7eRvixtCOA==
+X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Cc: nd@arm.com, akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
+	anshuman.khandual@arm.com, bp@alien8.de, broonie@kernel.org,
+	catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
+	szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org,
+	x86@kernel.org, kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 06/30] arm64: context switch POR_EL0 register
+In-Reply-To: <6c8ad091-a56b-41ba-b403-2e3c2e578100@intel.com>
+References: <20240822151113.1479789-1-joey.gouly@arm.com>
+ <20240822151113.1479789-7-joey.gouly@arm.com>
+ <425b8f8c-b6b5-422a-b5f4-41dd2d1ae3bb@arm.com>
+ <6c8ad091-a56b-41ba-b403-2e3c2e578100@intel.com>
+Date: Sun, 22 Sep 2024 11:19:05 +0530
+Message-ID: <yq5awmj4tezy.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240922004901.GA3413968@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
 
-On Sun, Sep 22, 2024 at 01:49:01AM +0100, Al Viro wrote:
+Dave Hansen <dave.hansen@intel.com> writes:
 
-> * don't bother with audit_name creation and linkage in getname(); do that
-> when we start using the sucker.  Doing that from __set_nameidata() will
-> catch the majority of the stuff that ever gets audit_inode* called for it
-> (the only exceptions are mq_open(2) and mq_unlink(2)).  Unfortunately,
-> each audit_name instance gets spewed into logs, so we would need to
-> bring the rest of that shite in, including the things like symlink
-> bodies (note that for io_uring-originating symlink we'd need that done
-> in do_symlinkat()), etc.  Unpleasant, that.
+> On 9/11/24 08:01, Kevin Brodsky wrote:
+>> On 22/08/2024 17:10, Joey Gouly wrote:
+>>> @@ -371,6 +382,9 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+>>>  		if (system_supports_tpidr2())
+>>>  			p->thread.tpidr2_el0 = read_sysreg_s(SYS_TPIDR2_EL0);
+>>>  
+>>> +		if (system_supports_poe())
+>>> +			p->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
+>> Here we are only reloading POR_EL0's value if the target is a user
+>> thread. However, as this series stands, POR_EL0 is also relevant to
+>> kthreads, because any uaccess or GUP done from a kthread will also be
+>> checked against POR_EL0. This is especially important in cases like the
+>> io_uring kthread, which accesses the memory of the user process that
+>> spawned it. To prevent such a kthread from inheriting a stale value of
+>> POR_EL0, it seems that we should reload POR_EL0's value in all cases
+>> (user and kernel thread).
+>
+> The problem with this is trying to figure out which POR_EL0 to use.  The
+> kthread could have been spawned ages ago and might not have a POR_EL0
+> which is very different from the current value of any of the threads in
+> the process right now.
+>
+> There's also no great way for a kthread to reach out and grab an updated
+> value.  It's all completely inherently racy.
+>
+>> Other approaches could also be considered (e.g. resetting POR_EL0 to
+>> unrestricted when creating a kthread), see my reply on v4 [1].
+>
+> I kinda think this is the only way to go.  It's the only sensible,
+> predictable way.  I _think_ it's what x86 will end up doing with PKRU,
+> but there's been enough churn there that I'd need to go double check
+> what happens in practice.
+>
 
-BTW, how much is exact order and number of PATH items in audit logs cast
-in stone?
 
-For example,
-        char s[2][20] = {"/tmp/blah/x", "/tmp/blah/x"};
-	rename(s[0], s[1]);
-	rename(s[0], s[0]);
+that is also what powerpc does. 
 
-produces 2 items (both for /tmp/blah) on the first call, and only 1 on
-the second.  Does anything care about preserving that distinction?
+/* usage of kthread_use_mm() should inherit the
+ * AMR value of the operating address space. But, the AMR value is
+ * thread-specific and we inherit the address space and not thread
+ * access restrictions. Because of this ignore AMR value when accessing
+ * userspace via kernel thread.
+ */
+static __always_inline u64 current_thread_amr(void)
+{
+	if (current->thread.regs)
+		return current->thread.regs->amr;
+	return default_amr;
+}
 
-And what in audit_inode{,_child}() behaviour can be changed?  I mean, does
-anything care about the loop directions when we pick the candidate
-audit_name for conversion, etc.?
 
-It's been a long time since I've touched audit, and I have done my best
-to purge memories of the specifications ;-/
+-aneesh
 
