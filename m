@@ -1,151 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-29806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED94497E228
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 17:08:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC71497E235
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 17:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B6F1F210DC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 15:08:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95D791F21493
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 15:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D525FEEB5;
-	Sun, 22 Sep 2024 15:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6D9168D0;
+	Sun, 22 Sep 2024 15:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F2dVclGU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Yi3xnbZg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9750AA95C
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 15:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4122BAE3;
+	Sun, 22 Sep 2024 15:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727017705; cv=none; b=ZMPv/Rwnpn53BRUyJl5SpIWNn3UTWsfpCJCFkZTQQG89WhcUNk/YFJs/6esOsPD2Nab2Ei/GvX9J0An0d4DWYXdXe3YMT/9lCwWWUOhpk/7LErztbJ/yaMFk8BwkM5Wpg938Cc8yZZYO9sXOFzYGERiVvjShE3pY6HcxHOnNU4I=
+	t=1727017776; cv=none; b=L65ZypB+uyxhPvW/rMIWdIUL6jKiWoRSU/aC7xp/64lLdnQ46vlDyPbbiYG1HAvjynCf6vwtt8EP1NkKfTvYvjnrGKQem5RaEtWLggrrUgPVBGLq+S1LVhwswXfR0w0aei9icDmke65m65kHgf8S/R2ihPYoJlmmkY8NmUDLdD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727017705; c=relaxed/simple;
-	bh=MoxLQntrUUoBxHnrc81SIjQBbgnESJ+mo2PgPhhKzIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A6wfDIwSSjhy4kVcCl4anQIYq3rtsZMuS8LQoPDX1ijUcNbSqsPUbehhTvGLrEK8+xLUqi/uS+cbdta3oVGav3MJqgELEl+A/8dbtpo+vrrHYAAbQxOjyMmCQirZoxPbleU4MHAzzeuG8wxYs/utEUFvxr68ycEDw4SS/Z4z76k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F2dVclGU; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb1758e41so27578325e9.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 08:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727017702; x=1727622502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hrk84WPNDauMmuWhCZFOUjncMPCI7YUNKYrU5/9qDmA=;
-        b=F2dVclGUp5a7EM4tP9+xCCMYqkbaoRIRxlNETzqmzVxWFsYvPNcSTRMkKWx4fXuUHk
-         7CNbV2yGyCGsEHeZMwII0IkKcKtetbtFJl72SzWUsvCGV+KVdF1kxXA8v727JShkuFtV
-         1veYL3UrwnX9obfwGokHplauqFDkJv88KTl26ljdZ/XgB2hCGTVyhY3Sb4IzbEAwocPz
-         pu59ZMoUnZFOES1VKaZPe2DEYnQD4t6+/3Sy2LCZbVODHgLurM8wx7mcbx7gg2T+wolv
-         /9TWR6OO82bwEATbf95r2ZiQnNW+/zd/3NKadlMvY95hZg+ylyos5M3g69sYEFeHlkbk
-         BmRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727017702; x=1727622502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hrk84WPNDauMmuWhCZFOUjncMPCI7YUNKYrU5/9qDmA=;
-        b=VkwNTW9GYkZ+bdiTjfbQTPsQtK4ic3EBu+GdQX5qeAuGbsLNZAEK/WVx1P1hwDADwQ
-         jQXtL/eUt0bnQ1uHa5LPzl6+MsCDpynf2S3MWljb6SCcCS9mndanNw6koKq3IXx3gdg4
-         8OXv0dTf5ILPP2+hCpjL85Wit1yn+50EvNxJdsQS6twwTjHiLpDlGkSIYiNQyPxKmBNf
-         UTgL9GYv4iP8mBtIhH6kIHNC7hJ6d3PAhAUcz2VZaJhN316x3K2gN9J7kW0e31Kltebj
-         dpH4AAWRulLRUVbeDHF0LA89d/zOCrDiUo1lGhJt0Yyfk3Em5cR5NnmtBv7FcYWsfLhJ
-         02Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/PvRfbk8Zu5q9mHOfxHpMBcUY6jYGy070klWDgQJivpSR/SP9vKQ2mV4iYLY3QxIU2C/l2r58U83uwaWw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPCJOFkoajJIDhFOkKTFyfPh5genyDsjgBz0ABMs1txW8gwDyp
-	6NsHbGhvEkF5fntiQNRvc49DtLkn/A1F7DErj1NiPTk+YVcKrY1T/YHSqS7oipb7+STW4FBJuwi
-	g3jOfuQe13aumBGVOidLgjk7AZPxaWVDJAScV
-X-Google-Smtp-Source: AGHT+IGsADpkm2OD+9HXWvm6Vc0+DYXpUjMQmyyBBb8VDvBcDtBLRCFADYlT+Lh/yx62UTYueWg79gtvFb1xPGK/3S0=
-X-Received: by 2002:a05:600c:1c04:b0:428:1b0d:8657 with SMTP id
- 5b1f17b1804b1-42e7ad8e706mr66211845e9.22.1727017701846; Sun, 22 Sep 2024
- 08:08:21 -0700 (PDT)
+	s=arc-20240116; t=1727017776; c=relaxed/simple;
+	bh=ZuAZvymcd1OQSceqOb7Sw+a3Ug5r3S9OfLI70ytWi7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gnGWkW0sppGNXgphQDdmZYz1nSKBu1ur9Ny5Lifo1bszmezVHPrxQM4ear/rVsE3i7n4qK2h/9h/TqeDVVztESMnE1PIT3Gbi/OHp0kKt1OjGStsuImK9cOvmmHdI54uX1UVmbdri641dHgwLWEJY/06rITytt6DUKaFToUT8Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Yi3xnbZg; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Z3y0d3YfLN/aVd7IZpf+g6UrOV5ztW7Ct6YUGmeiSBc=; b=Yi3xnbZgOsb1N0z94t6fTaQuoM
+	LwRT2RnB230hZHKUCaBcMj1s8bFOpUyRdgZXZckTL1wK+N2g6235Xj9Qy/9qgBU+7voWpnLQ6kT/i
+	fLydnKBnQ72SLe4d04BB5WFkR2OzfjKQqM1aMKB2mWa2KIcrOtOSKIjFq6NBLSNouaSsGHpgKwyBt
+	KBvEj4KrEz7U/zSJ9K/HsDKBHSUwbt4uQXAjDdIWBxa/P2Ruvl8r6TrJ11oaHBn9oaPCSNMyu2ZFK
+	cS7MebTy/MlVA1alIbIlobagQkB/sFx6PtQlqCYGx1ae291bSuCS0dpHJScc4ODiL3JYwyX8/Zmhe
+	W0NFuJgw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1ssODL-0000000Eehi-0rBE;
+	Sun, 22 Sep 2024 15:09:31 +0000
+Date: Sun, 22 Sep 2024 16:09:31 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: audit@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+Message-ID: <20240922150931.GD3413968@ZenIV>
+References: <20240922004901.GA3413968@ZenIV>
+ <20240922041006.GC3413968@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-5-88484f7a3dcf@google.com> <202409151325.09E4F3C2F@keescook>
- <CAH5fLghA0tLTwCDBRrm+GAEWhhY7Y8qLtpj0wwcvTK_ZRZVgBw@mail.gmail.com> <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com>
-In-Reply-To: <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sun, 22 Sep 2024 17:08:08 +0200
-Message-ID: <CAH5fLgjWkK0gXsGcT3gLEhYZvgnW9FPuV1eOZKRagEVvL5cGpw@mail.gmail.com>
-Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240922041006.GC3413968@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Sep 16, 2024 at 5:40=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
->
-> On 9/15/2024 2:07 PM, Alice Ryhl wrote:
-> > On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> wr=
-ote:
-> >> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
-> >>> Add an abstraction for viewing the string representation of a securit=
-y
-> >>> context.
-> >> Hm, this may collide with "LSM: Move away from secids" is going to hap=
-pen.
-> >> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-ca.=
-com/
-> >>
-> >> This series is not yet landed, but in the future, the API changes shou=
-ld
-> >> be something like this, though the "lsmblob" name is likely to change =
-to
-> >> "lsmprop"?
-> >> security_cred_getsecid()   -> security_cred_getlsmblob()
-> >> security_secid_to_secctx() -> security_lsmblob_to_secctx()
->
-> The referenced patch set does not change security_cred_getsecid()
-> nor remove security_secid_to_secctx(). There remain networking interfaces
-> that are unlikely to ever be allowed to move away from secids. It will
-> be necessary to either retain some of the secid interfaces or introduce
-> scaffolding around the lsm_prop structure.
->
-> Binder is currently only supported in SELinux, so this isn't a real issue
-> today. The BPF LSM could conceivably support binder, but only in cases wh=
-ere
-> SELinux isn't enabled. Should there be additional LSMs that support binde=
-r
-> the hooks would have to be changed to use lsm_prop interfaces, but I have
-> not included that *yet*.
->
-> > Thanks for the heads up. I'll make sure to look into how this
-> > interacts with those changes.
->
-> There will be a follow on patch set as well that replaces the LSMs use
-> of string/length pairs with a structure. This becomes necessary in cases
-> where more than one active LSM uses secids and security contexts. This
-> will affect binder.
+On Sun, Sep 22, 2024 at 05:10:06AM +0100, Al Viro wrote:
+> On Sun, Sep 22, 2024 at 01:49:01AM +0100, Al Viro wrote:
+> 
+> > * don't bother with audit_name creation and linkage in getname(); do that
+> > when we start using the sucker.  Doing that from __set_nameidata() will
+> > catch the majority of the stuff that ever gets audit_inode* called for it
+> > (the only exceptions are mq_open(2) and mq_unlink(2)).  Unfortunately,
+> > each audit_name instance gets spewed into logs, so we would need to
+> > bring the rest of that shite in, including the things like symlink
+> > bodies (note that for io_uring-originating symlink we'd need that done
+> > in do_symlinkat()), etc.  Unpleasant, that.
+> 
+> BTW, how much is exact order and number of PATH items in audit logs cast
+> in stone?
+> 
+> For example,
+>         char s[2][20] = {"/tmp/blah/x", "/tmp/blah/x"};
+> 	rename(s[0], s[1]);
+> 	rename(s[0], s[0]);
+> 
+> produces 2 items (both for /tmp/blah) on the first call, and only 1 on
+> the second.  Does anything care about preserving that distinction?
+> 
+> And what in audit_inode{,_child}() behaviour can be changed?  I mean, does
+> anything care about the loop directions when we pick the candidate
+> audit_name for conversion, etc.?
+> 
+> It's been a long time since I've touched audit, and I have done my best
+> to purge memories of the specifications ;-/
 
-When are these things expected to land? If this patch series gets
-merged in the same kernel cycle as those changes, it'll probably need
-special handling.
+Speaking of which, is there anything in specs that would require -F obj_uid=0
+to give a match on symlink("foo", "bar") done by non-root in non-root-owned
+directory, but not on symlink("foo", "foo") in the same conditions?
 
-Alice
+Put it another way, could we possibly make the predicates that refer to inode
+state *not* evaluate to true on audit_name instances that had never been
+associated with any inodes?  Currently, symlink body has such an audit_name
+instance, except when that instance had been picked by audit_inode_parent()
+for conversion (or had been shared from the very beginning in case of symlink(2)
+that had identical pointers passed in both arguments).
+
+Al, carefully abstaining from any comments on the sanity of said specifications -
+it's a government document, after all, so those should be obvious...
 
