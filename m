@@ -1,151 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-29791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3440E97DF84
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 01:03:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01ABD97DF93
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 02:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CA831C20B56
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2024 23:03:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E581F20FCA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Sep 2024 00:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD8A3BB25;
-	Sat, 21 Sep 2024 23:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13365C2E3;
+	Sun, 22 Sep 2024 00:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rurPnkPF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dpL1m5lO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DC329406
-	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2024 23:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29A02F50
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 00:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726959783; cv=none; b=Ic4Xx1tfLPReuFmnAL0RsKQa73lNAxmMG9Q3rg+Vojq4cA+Z/qzLKp1DIWsl1oLQve8lXTTQDtNdvhohNDWtful0Hxx/oZl9mtOtiEwVVQWXTyLtqNBjZxYPk6kRqpv+idBqIYm1iS0NsAFccc0kbKbSzbqxHMUiaXYXu0fousk=
+	t=1726963620; cv=none; b=AyMN2Xj8oYH1J9xm8m5x63QThYiGLkOMEdHCxKHdyWr1t01TPFfhKrmqjeVZWMThgGG0U6rrPgpGfbk2zfpz/fC/ZEOsRAn+pkj6AL9Kf5kfZxXCFbR0wce6GiuvFluFXQ8RB3+ntoIFXZLWN1jMFfEjjkl5lP9mVnlpNavwSJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726959783; c=relaxed/simple;
-	bh=xOHb1+cDcoaugQo2SmeYNgv9ywf2IOExG0eNy6thMD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kV9tRz0Nyoaxt87gyBiXc8mtPgqr92+8Rq0FS6fLeeTyVJBjWkUsCaCXoCG+IFM5vg4UN6saaxBDm6ND6hLAQ0l4fR/yFWvZqOPKC6uaIDy0vYH+gcWBThjvydOBQc2BZ6ybKkRC+SCKaqOZeNvemXo7Kn41APlr8izGNrIeaB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rurPnkPF; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 21 Sep 2024 19:02:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726959778;
+	s=arc-20240116; t=1726963620; c=relaxed/simple;
+	bh=WKyntDpY5RfpkJ3slVwHqlKCBjPxUylJnKPiT5ID+wg=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=E8e0ev7T8T0kfMoepxbLaSTADaxTna1vwy44oFZZ6qYxcCtNEpP4W6i7lPhxz5C4aH+MOmvwG+lyh1PBAMUd1vyDskzpl+E5mimWMRJz668OBRpS45iPcG3cmPSabRnVZqZ9Uc+nSug+QsjDVgqZxktdbBAlkAjWuSEGe68wzaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dpL1m5lO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726963617;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=UT7Rox1ZPcS4JOm3wspSy1yWoABHikamMD3mgcBRds4=;
-	b=rurPnkPFzQS/5u+BGUPfHRLx54bRJU/72H5iagG+xH0tXRAL1bHxTUCi1q6LsucE/SBAcC
-	cKT7sBtQro0O4UDwj7jhh+B/LlybMg93SvfRVAjNGrhOq+RXIDeWuOq/CPjArhny37ZzFQ
-	YB0mfWXfKDLkH6LSmixT0vHo4umlzbY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Cc: "Darrick J. Wong" <djwong@kernel.org>, 
-	Thomas Bertschinger <tahbertschinger@gmail.com>
-Subject: [bcachefs] self healing design doc
-Message-ID: <h63p6m5snken2ps7lvnmxmgnjrkzeegprjdweghw4styticya5@obigqaasdwyc>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=08s6M0VfFhuosAR80HkD/E3XEVyWoGIAF2KhFDbJcRY=;
+	b=dpL1m5lOvERrkfcDkCsDLCtG75YhX/e+ZHdI2Zu45KPamvsh0dy3sOhUXiLOnwHKKxdJ3v
+	HrKHDRorpxLjL5hmALIsBYV0w3MV69C4wKl7qNbYZTmDubvUgapAouiyrC+GGumxcAELqT
+	jb55sNoYcU7S58i2F6RT5h0jih0bNEE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-vSH2yiwgMliaspwAsY6mqQ-1; Sat,
+ 21 Sep 2024 20:06:52 -0400
+X-MC-Unique: vSH2yiwgMliaspwAsY6mqQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3FCDE19B9AB4;
+	Sun, 22 Sep 2024 00:06:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0A3F3195608A;
+	Sun, 22 Sep 2024 00:06:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <Zu4doSKzXfSuVipQ@gmail.com>
+References: <Zu4doSKzXfSuVipQ@gmail.com>
+To: Chang Yu <marcus.yu.56@gmail.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    skhan@linuxfoundation.org
+Subject: Re: [PATCH] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <557229.1726963607.1@warthog.procyon.org.uk>
+Date: Sun, 22 Sep 2024 01:06:47 +0100
+Message-ID: <557230.1726963607@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-So, I'm sketching out self healing for bcachefs - that is, repairing
-errors automatically, instead of requiring the user to run fsck
-manually.
+Chang Yu <marcus.yu.56@gmail.com> wrote:
 
-This can be divided up into two different categories, or strategies:
+> -		tail = kmalloc(sizeof(*tail), GFP_NOFS);
+> +		tail = kzalloc(sizeof(*tail), GFP_NOFS);
 
- - Repairing errors/damage as they are noticed in normal operation: i.e.
-   follow a backpointer to an extent, notice that there is no extent,
-   and then simply delete the backpointer and continue
+I'm deliberately not doing that because of the performance hit.  That's 31
+pointers of which, in many cases, we're only going to use the first couple.
+There's a bitmask indicating which pointers need putting and a counter that
+indicates how many are used.
 
- - Flagging in the superblock that either there's an unfixed error, or
-   that a fsck pass is required, and then running it automatically
-   either on next mount or scheduling it for some later time
+David
 
-The first is going to be a big focus in the future, as on larger
-filesystems we _really_ want to avoid running full fsck passes unless
-absolutely required.
-
-For now though, getting the second mode implemented is higher priority;
-we need that so that users aren't having to jump through hoops in order
-to get their filesystem working if their root filesystem encounters
-corruption - i.e. this is needed before we can take the EXPERIMENTAL
-label off.
-
-(I recently had to dig out my nixos recovery usb stick to recovery from
-the bug where online fsck was deleting inodes that were unlinked but
-still in use - whoops, don't want normal users to have to do that).
-
-Background, things we already have:
-
-- Recovery passes are enumerated, with stable identifiers. This is used
-  for upgrades and downgrades: upgrades and downgrades may specify
-  recovery passes to run and errors to silently fix, and those are
-  listed in the superblock until complete - in case of an interrupted
-  upgrade/downgrade.
-
-- fsck errors are also enumerated. This is currently used by the
-  superblock 'errors' section, which lists counts and date of last error
-  of every error the filesystem has ever seen. This section is purely
-  informational (it's highly useful in bug reports) - it doesn't (yet?)
-  have fields for whether a given error type has unfixed errors.
-
-Todo items:
-
-- Convert 'bch2_fs_inconsistent()' calls to fsck_err() calls.
-
-  bch2_fs_inconsistent() just goes emergency read-only (or panics, or
-  does nothing, according to options). fsck_err() logs the error (by
-  type) in the superblock, and returns true/false/error if we should fix
-  the error, just continue, or shut down.
-
-  One of the goals here is that any time there's a serious error that
-  causes us to go ERO/offline or needs repair, it should be logged in
-  the superblock.
-
-  I'm also hoping to get an opt-in telemetry tool written to upload
-  superblocks once a week (a bit like debian popcon); since many users
-  don't report bugs if they can work around them, this will give us some
-  valuable info on how buggy or not buggy bcachefs is in the wild, and
-  where to hunt for bugs.
-
-- Add a field to BCH_SB_ERRS() in sb-errors_format.h for which recovery
-  pass(es?) are required to fix each error.
-
-New superblock fields for self healing:
-
-The existing sb_ext.recovery_passes_required field that is used for
-upgrades/downgrades probably isn't what we want here - some errors need
-to be fixed right away, for others we just want to schedule fsck for at
-some point in the future.
-
-Q: What determines which errors need to be fixed right away, and should
-this get a bit in the superblock? Or is it static per-error-type?
-
-Not sure on this one yet.
-
-Q: In the superblock, should we be listing
- A: unfixed errors, or
- B: recovery passes we need to run (immediately or when scheduled), or
- C: perhaps both
-
-I think we'll be going with option A, which means we can just add a bit
-or two to the sb_errors superblock section - this works provided the
-sb_err -> recovery passing mapping is static, and I believe the sb_err
-enum is fine grained enough that it is.
-
-Once I've added the 'recovery passes to repair' field to BCH_SB_ERRS()
-I'll have a better feeling on this.
-
-Thoughts? Corner cases?
 
