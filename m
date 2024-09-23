@@ -1,207 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-29911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3974A983A65
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 01:21:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3CD983A54
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 01:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2453B1C2166F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 22:44:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A05282D41
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 23:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F22086131;
-	Mon, 23 Sep 2024 22:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61117130ADA;
+	Mon, 23 Sep 2024 23:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="GnappkJ1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDMhwB2k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D615FEE4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 22:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190768C06;
+	Mon, 23 Sep 2024 23:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727131439; cv=none; b=t0QE4pX607fwOB+sScDRf+QHO+XZ4jtnEsE2Xhg7og4d7jFovSKKZpHh2wA00FW+n8NCHu9c9orHNOcP+G53riHKxuqz8hgqX7GQ07PEqBXazVhgHTTP4UtSFs6j2AtBkaqKKN93hMAf4qJ9/vBarrMGcvGx8TYNhfUuM7fFeVU=
+	t=1727133438; cv=none; b=kUp5E+hnJ3OQiqZsg+vuB+3dEGi17XWwsq6EKLxdckrW0+DZCCavhtBOmwP+bGAgjTkKjsB8gxaHb9ZPuqca6Szc6EoE32etjCqzin3JJFPrQbTQEqsNXL1hyY3kzxGJvhO9RSOVquy77flNSy0YSnDv64RlGkkHQQWzrUA45Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727131439; c=relaxed/simple;
-	bh=cGaj8EG1PpbZNqB6qGvjD+ZVV7z0niQGXM8mQA5Pqo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvqRJfOsbsbc06kvv4Rf/OfQkMrQedrGbAEn3BCAMOx+VlNSCI8dY0FGres2+hlx/UM+LzTFgfmzWu5sk9QCLrTE2SDbUZuc09JsrGL0sPys6bhgKVKsP4w3i8mBvy02BhuX6fBeetykV+uFSbFDeAd/rNjZ4PGQGStVaPxrrSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=GnappkJ1; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-718d606726cso3288015b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 15:43:57 -0700 (PDT)
+	s=arc-20240116; t=1727133438; c=relaxed/simple;
+	bh=0nsbGQ5ZG+++6fMb6NiR0gGaP+XrX2RMKND9mwuNB3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ubX5kEb/PQGEe4HocS+d7jTYFklM06vFDR1ZmKGBOtdEqxV0MIjMRFvJvSnXHDw4PAEGtSTsLSnfxeN36zdAuSgKloDkJVvIbH/DxUYhDPCbFiDTgy9scZF/44po1Qa8ppjeXXQUWWpYxS0wHOYBkK/+8x8eiRO+O6cy0oFYWPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDMhwB2k; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c5b9d2195eso2927918a12.1;
+        Mon, 23 Sep 2024 16:17:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727131436; x=1727736236; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fDmCoiTk9KAvbYfey+3zzo1/LmdJ9Czlmjqevs576Ns=;
-        b=GnappkJ1EDvgRcs7LsKWxfetSP+JDaszWUlXWr9MgD772EkAnd2XE8sSrivRi4OvUJ
-         2JGVaj2pBYVVX6eXJp83L72wyOQXyi+Y6ZqCV0qQ4Ut1LauiEwb1uVnkk5gOiUCrVDch
-         r5Wigy+wDar5fI0GvdMB+N/2nEvcFsqPr8E7DEsKo0r3jZwXsXaZgcugrxw7EkEmM9oC
-         jEiDRhptajOywGSz03k2aJPghZ8Su2o03Swxe7BC2y6Q+8Fy945a8GBo3D+GfIjGndYl
-         6Q0tJfRFyBxbAXxHLqUIMFA/TJQUu5KLBUNIhD8mfNriY75IOTWZ14aO6dyJhlCgw6aa
-         i2Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727131436; x=1727736236;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727133434; x=1727738234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fDmCoiTk9KAvbYfey+3zzo1/LmdJ9Czlmjqevs576Ns=;
-        b=WvUzRpVSfRek91RGkAb1WtFxBQXD87JN2J1EaUWZYkqJqwkHFv4QvUAyVL5dpkD+vO
-         o7TFdZrQ+oeYuiSg1H/KaFhNYNRhC6IaYRUsAX1LSCE1ZWXuDBdAi8MMTEBRigUyC8ai
-         Mhatzso1zCpnGJmVKyfZsdIpChi7M/lfQLGWUru6bYubAa/3285h00gvrkSe3sVswrNr
-         NvIhAge9Y6km5RWu9XI1QJhMCBhTjrXs4w/JMkAPRDSS18w+yTELaoYLSHylnlAnVXLb
-         kyGDX4S1gTfATzGCEB/qiBSAgNmo7t63oXjm2Tuy3AjXSEZNwgI0RXAL1766tELj6WUG
-         vPGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzR1lXikdS2SqQgScYqBA/Wai3reDDU7lz3X4UE7nvx0tlg05FXoLr9fyoZ3ovc9AJ1MbMsb1UGKYeAjn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqanQNV0mMfL0biRQ8nzPTGgn64TmWrR2KceECIWwbb3UTajEk
-	T7BprMDNTyjqCtLYdPiSbFbFRhW/uElbvf+b3ep0SjZ3XwFzX5t3Z//14QGpGhcGmfsLPg6QRTN
-	g
-X-Google-Smtp-Source: AGHT+IFJEyQ8w6L3S7EuKwSf8rE8YBanqXR04+qAr3XkIa+ydZE3RyTa8BB5jpHQcOVKM1vBHxmELg==
-X-Received: by 2002:a05:6a20:c6cd:b0:1cf:215f:1055 with SMTP id adf61e73a8af0-1d30cb6f3cemr14045914637.48.1727131436610;
-        Mon, 23 Sep 2024 15:43:56 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc8341bdsm116585b3a.33.2024.09.23.15.43.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 15:43:56 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1ssrmb-009AkC-29;
-	Tue, 24 Sep 2024 08:43:53 +1000
-Date: Tue, 24 Sep 2024 08:43:53 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 02/10] iomap: remove
- iomap_file_buffered_write_punch_delalloc
-Message-ID: <ZvHvKWGJ0dNNOP5h@dread.disaster.area>
-References: <20240923152904.1747117-1-hch@lst.de>
- <20240923152904.1747117-3-hch@lst.de>
- <20240923161825.GE21877@frogsfrogsfrogs>
+        bh=ngRtzW5JM4PktiK1i50Y+IhfPwDmKMxpAqupnEmiErk=;
+        b=ZDMhwB2ke70yQ2Z32apIjRGlLZxCq8CUu2EXhROdU8PyJPDcKPMnRt2vTp9n9M0grH
+         OodDi38OhhmrN0D1h2lpj3wWS4bkcF+eJJ5AbmLgnlZeEURHhPt7j/T5Hi9Aeaf5nT/7
+         n8cDlnBg3FxsFwg7bE2uq6tT2vDJwhes27r0UMn+9VmtEy1z7i0HXTPFtNq7u+5QYSNy
+         fDPhH5nm10wAk2tBDhlV/GJXO5o+nXWvglEQcv26SeBsNOwGlmi3hnldIpXQgYelOhpR
+         klAWDnyzkMMvSaZb5bP0VTb6/uNySiAcdNJTk7mIGujSwGkE8v8HC3bah3Yll1B7bhr8
+         LcSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727133434; x=1727738234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ngRtzW5JM4PktiK1i50Y+IhfPwDmKMxpAqupnEmiErk=;
+        b=qn91G3z4ZZfdldf8wwk6uQWPyK+TzmX3c2HqG9lZABj6vsfY/tGvWWQVuyn6bay0t8
+         rqdKBNzK6x9pyUFTpLte87M9qS28vHrLe+O4xiLEMKpQXxWxzFWvi0nH5Hq7GdOQODIE
+         31QnhZGu3lakNXRuskpr9heQrskPDKhFiJTD/PE4WOW87UOFYgfFr5h5d4Rs3l3Z3kr4
+         Z4536TS/35l+mUVCXVSbvTdpaQHaGgF01189LmWVv221vkS6m5ZOjQfhNnsyIw+KOWxf
+         lEuIX/dMDyWzLbETGYO2Z88YM2pGowpbHnRL1/Ekr4bkkMGI5D+ZRuMMZl4EQeu+zhrY
+         1nDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDaTC20vLN4OrnQA4I4zNfXwmUkwB6K0cmSJv+BsQRrlxuzAPvIdsEVug6UnwmgzRjAHVXBUGvcQnQ@vger.kernel.org, AJvYcCUcvR3tXGgL9YvArsOblEDZMcUhvsmX1H5/fQ5sHuYDOmF3enSi0svdWY57A0QDXFx18ehOI6O4uvNu@vger.kernel.org, AJvYcCVPBEqpVcZPNOmLy2cPCJiizDq6r7riIPCyQzSniPcZj5K8ZYR3o3xajzz0nYgmTbuR4YuCA4RtVqDoNw==@vger.kernel.org, AJvYcCVlLXgK/VIf4NWsw0ECR+zuPL5W+PQO9YVnPGbospNLuI2UWNpgLO0ToNxYPEJqRGpcUVmlpI3ERXniPGWGyg==@vger.kernel.org, AJvYcCWDuHH4/mRADIINpPSp6WLBpWj24z16psjfwVvrQUxeUqOmxPhaD1Z+zPj0heLg00mq2lmsQwFybgrup6ag@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm82CJeUreG28o2EfFvQKlGqfsL3WAsDotnI4cMUlTEc9WSIMH
+	4VcpzadhFw5S9PLsE6NxRZSmNJ9zCo//aAEXOQAsHcBplZ3ocoAr26D/zJ4gaLNHDdMJMnD7Vp2
+	rpe2aSqQhqK7TVMgPTsJ8leiCdWA=
+X-Google-Smtp-Source: AGHT+IH8LipBtLSxEtozQ2rg05n3Ixckwwsb8tD+R3wx/CmXcuSVcLfSG+Z/gs1ubLzXvUowuTAPkX6CdLZ8O6/puxQ=
+X-Received: by 2002:a05:6402:3506:b0:5c5:c2a7:d53a with SMTP id
+ 4fb4d7f45d1cf-5c5c2a7d69amr3583016a12.12.1727133434103; Mon, 23 Sep 2024
+ 16:17:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923161825.GE21877@frogsfrogsfrogs>
+References: <20240923150756.902363-1-dhowells@redhat.com> <20240923150756.902363-2-dhowells@redhat.com>
+In-Reply-To: <20240923150756.902363-2-dhowells@redhat.com>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 23 Sep 2024 18:17:00 -0500
+Message-ID: <CAH2r5mv75LkMnB4ZAWO+sxQwjMne1gKb5EGC3i7kc7h=L0emSA@mail.gmail.com>
+Subject: Re: [PATCH 1/8] netfs: Fix mtime/ctime update for mmapped writes
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>, Steve French <sfrench@samba.org>, 
+	Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>, 
+	Jeff Layton <jlayton@kernel.org>, Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, 
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 23, 2024 at 09:18:25AM -0700, Darrick J. Wong wrote:
-> On Mon, Sep 23, 2024 at 05:28:16PM +0200, Christoph Hellwig wrote:
-> > Currently iomap_file_buffered_write_punch_delalloc can be called from
-> > XFS either with the invalidate lock held or not.  To fix this while
-> > keeping the locking in the file system and not the iomap library
-> > code we'll need to life the locking up into the file system.
-> > 
-> > To prepare for that, open code iomap_file_buffered_write_punch_delalloc
-> > in the only caller, and instead export iomap_write_delalloc_release.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  .../filesystems/iomap/operations.rst          |  2 +-
-> >  fs/iomap/buffered-io.c                        | 85 ++++++-------------
-> >  fs/xfs/xfs_iomap.c                            | 16 +++-
-> >  include/linux/iomap.h                         |  6 +-
-> >  4 files changed, 46 insertions(+), 63 deletions(-)
-> > 
-> > diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
-> > index 8e6c721d233010..b93115ab8748ae 100644
-> > --- a/Documentation/filesystems/iomap/operations.rst
-> > +++ b/Documentation/filesystems/iomap/operations.rst
-> > @@ -208,7 +208,7 @@ The filesystem must arrange to `cancel
-> >  such `reservations
-> >  <https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/>`_
-> >  because writeback will not consume the reservation.
-> > -The ``iomap_file_buffered_write_punch_delalloc`` can be called from a
-> > +The ``iomap_write_delalloc_release`` can be called from a
-> >  ``->iomap_end`` function to find all the clean areas of the folios
-> >  caching a fresh (``IOMAP_F_NEW``) delalloc mapping.
-> >  It takes the ``invalidate_lock``.
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 884891ac7a226c..237aeb883166df 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -1149,6 +1149,32 @@ static void iomap_write_delalloc_scan(struct inode *inode,
-> >   * have dirty data still pending in the page cache - those are going to be
-> >   * written and so must still retain the delalloc backing for writeback.
-> >   *
-> > + * When a short write occurs, the filesystem may need to remove reserved space
-> > + * that was allocated in ->iomap_begin from it's ->iomap_end method. For
-> 
-> "When a short write occurs, the filesystem may need to remove space
-> reservations created in ->iomap_begin.
-> 
-> > + * filesystems that use delayed allocation, we need to punch out delalloc
-> > + * extents from the range that are not dirty in the page cache. As the write can
-> > + * race with page faults, there can be dirty pages over the delalloc extent
-> > + * outside the range of a short write but still within the delalloc extent
-> > + * allocated for this iomap.
-> > + *
-> > + * The punch() callback *must* only punch delalloc extents in the range passed
-> > + * to it. It must skip over all other types of extents in the range and leave
-> > + * them completely unchanged. It must do this punch atomically with respect to
-> > + * other extent modifications.
-> 
-> Can a failing buffered write race with a write fault to the same file
-> range?
+added to cifs-2.6.git for-next since it is important as it fixes a
+regression affecting cifs.ko
 
-Yes.
+On Mon, Sep 23, 2024 at 10:08=E2=80=AFAM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> The cifs flag CIFS_INO_MODIFIED_ATTR, which indicates that the mtime and
+> ctime need to be written back on close, got taken over by netfs as
+> NETFS_ICTX_MODIFIED_ATTR to avoid the need to call a function pointer to
+> set it.
+>
+> The flag gets set correctly on buffered writes, but doesn't get set by
+> netfs_page_mkwrite(), leading to occasional failures in generic/080 and
+> generic/215.
+>
+> Fix this by setting the flag in netfs_page_mkwrite().
+>
+> Fixes: 73425800ac94 ("netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_i=
+node")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202409161629.98887b2-oliver.sang@i=
+ntel.com
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Steve French <sfrench@samba.org>
+> cc: Paulo Alcantara <pc@manguebit.com>
+> cc: linux-cifs@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/netfs/buffered_write.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+> index d7eae597e54d..b3910dfcb56d 100644
+> --- a/fs/netfs/buffered_write.c
+> +++ b/fs/netfs/buffered_write.c
+> @@ -552,6 +552,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, s=
+truct netfs_group *netfs_gr
+>                 trace_netfs_folio(folio, netfs_folio_trace_mkwrite);
+>         netfs_set_group(folio, netfs_group);
+>         file_update_time(file);
+> +       set_bit(NETFS_ICTX_MODIFIED_ATTR, &ictx->flags);
+>         if (ictx->ops->post_modify)
+>                 ictx->ops->post_modify(inode);
+>         ret =3D VM_FAULT_LOCKED;
+>
+>
 
-> write() thread:			page_mkwrite thread:
-> ---------------			--------------------
-> take i_rwsem
-> ->iomap_begin
-> create da reservation
-> lock folio
-> fail to write
-> unlock folio
-> 				take invalidation lock
-> 				lock folio
-> 				->iomap_begin
-> 				sees da reservation
-> 				mark folio dirty
-> 				unlock folio
-> 				drop invalidation lock
-> ->iomap_end
-> take invalidation lock
-> iomap_write_delalloc_release
-> drop invalidation lock
-> 
-> Can we end up in this situation, where the write fault thinks it has a
-> dirty page backed by a delalloc reservation, yet the delalloc
-> reservation gets removed by the delalloc punch logic? 
 
-No.
+--=20
+Thanks,
 
-> I think the
-> answer to my question is that this sequence is impossible because the
-> write fault dirties the folio so the iomap_write_delalloc_release does
-> nothing, correct?
-
-Yes.
-
-The above situation is the race condition that the delalloc punching
-code is taking into account when it checks for dirty data over the
-range being punched. As the comment above
-iomap_write_delalloc_release() says:
-
-/*
- * Punch out all the delalloc blocks in the range given except for those that
- * have dirty data still pending in the page cache - those are going to be
- * written and so must still retain the delalloc backing for writeback.
- *
-....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Steve
 
