@@ -1,95 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-29900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CBC97F147
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 21:39:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CEE97F14A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 21:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF789282FB6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 19:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BBE11F22814
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 19:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECF01A0B12;
-	Mon, 23 Sep 2024 19:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274A81A0732;
+	Mon, 23 Sep 2024 19:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cO+h062s"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Rwr6JOxb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hgYHeLhk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Rwr6JOxb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hgYHeLhk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B701A08A0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 19:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ACB1A01DB;
+	Mon, 23 Sep 2024 19:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727120332; cv=none; b=on7bc3/Tb56DO1Mo8UBC9gUMetWexLkzHoN8oTRwhJXpkBf+WvHf3/gYqF40B1kFyFpdFYcBlfvG8u1Bdpd43imBs51hJJN/At39/cg45WpM3ubD7eSWLbOUvr5753oadY0LMdYm88bkNGA04VKMgWwE+oMT4hsTcEspIeuddCo=
+	t=1727120350; cv=none; b=YdrLWWdsc4deCijoE1e2K4E1TZ68A70eKlnNsfM5rBpaW3XjQk9XcwLdXoCnwmoMmFfjUPRjrqtIdYo4hFFmngXPyiNnMixVSURh0foG/rKSYz/kgsUHGa1POhYTfq4NdbkZSzxrMsqGrAWXY88HIlwq2Pf62SWnqs2ms/dRsnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727120332; c=relaxed/simple;
-	bh=IMBNE2puIfzdked4t6uZlyrCqjh8qel5HvLo5rRBc9o=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=M5vd9NwTXEuB89TzzpcCwHEbYQijuUv0o2SxKHNNxp7SeOcxQ/zQbkQowN9c0A6ElK6Me42OH31Df5/AiGMH/KZ1pPuUyMkLQyx0BJFXz0o0cxwIhLqOZwK3hFlOnSEuFDgt2yZ4UIYhP+Y2buZ6NplBZzv12S2Nka+f6sYojpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cO+h062s; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727120329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IMBNE2puIfzdked4t6uZlyrCqjh8qel5HvLo5rRBc9o=;
-	b=cO+h062sPzmLwvgbadEEvHG06NXpi3wHF8Y0fKB4Aw8YGv0FiF09X7EOFwytLjx4iVEZdh
-	U5r7lSU5vXC9yE+zIValoaMUDAMzeh86IPk96+eAXIIYFonxtPIpjOjVUGNkDOSVA12e2E
-	5ELXZbeEDOd+1rtUbifRY3bHcrOVOgk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-BsQ4RlIhNY-hYa32ClXl0w-1; Mon,
- 23 Sep 2024 15:38:44 -0400
-X-MC-Unique: BsQ4RlIhNY-hYa32ClXl0w-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	s=arc-20240116; t=1727120350; c=relaxed/simple;
+	bh=fif18Gbqv3h2FyGK8EMsN1zq5El7xh5nAnmet2jGCBg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WXTmwBemD6vBh7+1wbwXlBZ3XIn4Ob4SkST9L9ak7WmA24hBJaRLYPCkfi5lbBX0WsYX0ekuXQMz2L80RZL1NRmmKr//rQZ8PKlwxQPn9RE6sJgBJ7bnx/eldt9rwIX8Vwwmi2POzMzEbrBjXq65448i4C/a+eIU1Kgf3syozaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Rwr6JOxb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hgYHeLhk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Rwr6JOxb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hgYHeLhk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 521C5190DE19;
-	Mon, 23 Sep 2024 19:38:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 71DD619560AA;
-	Mon, 23 Sep 2024 19:38:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240923183432.1876750-1-chantr4@gmail.com>
-References: <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com>
-To: Manu Bretelle <chantr4@gmail.com>
-Cc: dhowells@redhat.com, asmadeus@codewreck.org,
-    ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
-    hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
-    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
-    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
-    v9fs@lists.linux.dev, willy@infradead.org, eddyz87@gmail.com
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7AF1E21DC3;
+	Mon, 23 Sep 2024 19:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727120346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btFVzvo3cYlCIaFbLMC8UzMj/n6rmtuNvZUl+PCyxSQ=;
+	b=Rwr6JOxbkiklNQw+x4Hjx6dHODAJH+Vwmbh1oihVfmkQC7lsG+p5BjchvPPL04TD2zATCg
+	TifUqy+Diu6JkyKTwQ4p/pZlVE2/b+WV5V2ts7eGqv0d/UucPlG/p5Ds0FgTFCaz4Exzfi
+	comE3NVl7Z2xAnjL4VIhyNaSx61SsZM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727120346;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btFVzvo3cYlCIaFbLMC8UzMj/n6rmtuNvZUl+PCyxSQ=;
+	b=hgYHeLhkGlG/3YkB/t+moHHtkdI3ssLeOy9yq9aecJLkPfk3Yh/cev2O45V2KL92Y1Ehr6
+	oumwpzkQmAwe5CAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727120346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btFVzvo3cYlCIaFbLMC8UzMj/n6rmtuNvZUl+PCyxSQ=;
+	b=Rwr6JOxbkiklNQw+x4Hjx6dHODAJH+Vwmbh1oihVfmkQC7lsG+p5BjchvPPL04TD2zATCg
+	TifUqy+Diu6JkyKTwQ4p/pZlVE2/b+WV5V2ts7eGqv0d/UucPlG/p5Ds0FgTFCaz4Exzfi
+	comE3NVl7Z2xAnjL4VIhyNaSx61SsZM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727120346;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btFVzvo3cYlCIaFbLMC8UzMj/n6rmtuNvZUl+PCyxSQ=;
+	b=hgYHeLhkGlG/3YkB/t+moHHtkdI3ssLeOy9yq9aecJLkPfk3Yh/cev2O45V2KL92Y1Ehr6
+	oumwpzkQmAwe5CAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 360B31347F;
+	Mon, 23 Sep 2024 19:39:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Oor9BtrD8Wa0OQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 23 Sep 2024 19:39:06 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,  David Gow
+ <davidgow@google.com>,  Shuah Khan <skhan@linuxfoundation.org>,
+  linux-fsdevel@vger.kernel.org,  ~lkcamp/patches@lists.sr.ht,
+  linux-kselftest@vger.kernel.org,  kunit-dev@googlegroups.com,
+  porlando@lkcamp.dev,  dpereira@lkcamp.dev
+Subject: Re: [PATCH 1/2] unicode: kunit: refactor selftest to kunit tests
+In-Reply-To: <20240923173454.264852-2-gbittencourt@lkcamp.dev> (Gabriela
+	Bittencourt's message of "Mon, 23 Sep 2024 14:34:53 -0300")
+References: <20240923173454.264852-1-gbittencourt@lkcamp.dev>
+	<20240923173454.264852-2-gbittencourt@lkcamp.dev>
+Date: Mon, 23 Sep 2024 15:39:05 -0400
+Message-ID: <87r09axiqu.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <912765.1727120313.1@warthog.procyon.org.uk>
-Date: Mon, 23 Sep 2024 20:38:33 +0100
-Message-ID: <912766.1727120313@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lkcamp.dev:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Manu,
+Gabriela Bittencourt <gbittencourt@lkcamp.dev> writes:
 
-Are you using any other network filesystem than 9p, or just 9p?
+>
+> -static ssize_t utf8len(const struct unicode_map *um, enum utf8_normalization n,
+> -		const char *s)
+> +static ssize_t utf8len(const struct unicode_map *um, enum utf8_normalization n, const char *s)
+>  {
 
-David
+Please, do not make indentation-only changes, specially as part of a larger
+change.  It makes the patch much harder to review.
 
+
+>  	return utf8nlen(um, n, s, (size_t)-1);
+>  }
+>  
+>  static int utf8cursor(struct utf8cursor *u8c, const struct unicode_map *um,
+> -		enum utf8_normalization n, const char *s)
+> +		      enum utf8_normalization n, const char *s)
+
+likewise.
+
+>  {
+>  	return utf8ncursor(u8c, um, n, s, (unsigned int)-1);
+>  }
+>  
+> -static void check_utf8_nfdi(struct unicode_map *um)
+> +static void check_utf8_nfdi(struct kunit *test)
+>  {
+>  	int i;
+>  	struct utf8cursor u8c;
+> +	struct unicode_map *um = test->priv;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
+>  		int len = strlen(nfdi_test_data[i].str);
+> @@ -181,28 +161,29 @@ static void check_utf8_nfdi(struct unicode_map *um)
+>  		int j = 0;
+>  		unsigned char c;
+>  
+> -		test((utf8len(um, UTF8_NFDI, nfdi_test_data[i].str) == nlen));
+> -		test((utf8nlen(um, UTF8_NFDI, nfdi_test_data[i].str, len) ==
+> -			nlen));
+> +		KUNIT_EXPECT_EQ(test, utf8len(um, UTF8_NFDI, nfdi_test_data[i].str), nlen);
+> +		KUNIT_EXPECT_EQ(test, utf8nlen(um, UTF8_NFDI, nfdi_test_data[i].str, len),
+> +				nlen);
+> -		if (utf8cursor(&u8c, um, UTF8_NFDI, nfdi_test_data[i].str) < 0)
+> -			pr_err("can't create cursor\n");
+> +		KUNIT_EXPECT_GE_MSG(test, utf8cursor(&u8c, um, UTF8_NFDI, nfdi_test_data[i].str),
+> +				    0, "Can't create cursor\n");
+
+These KUNIT_ macros are way less readable than the existing code,
+IMO. the old macro makes it obvious what we are checking, without having
+to dig into the definition.  But, meh, I can live with it.
+
+
+
+>  
+>  		while ((c = utf8byte(&u8c)) > 0) {
+> -			test_f((c == nfdi_test_data[i].dec[j]),
+> -			       "Unexpected byte 0x%x should be 0x%x\n",
+> -			       c, nfdi_test_data[i].dec[j]);
+> +			KUNIT_EXPECT_EQ_MSG(test, c, nfdi_test_data[i].dec[j],
+> +					    "Unexpected byte 0x%x should be 0x%x\n",
+> +					    c, nfdi_test_data[i].dec[j]);
+>  			j++;
+>  		}
+>  
+> -		test((j == nlen));
+> +		KUNIT_EXPECT_EQ(test, j, nlen);
+>  	}
+>  }
+>  
+> -static void check_utf8_nfdicf(struct unicode_map *um)
+> +static void check_utf8_nfdicf(struct kunit *test)
+>  {
+>  	int i;
+>  	struct utf8cursor u8c;
+> +	struct unicode_map *um = test->priv;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(nfdicf_test_data); i++) {
+>  		int len = strlen(nfdicf_test_data[i].str);
+> @@ -210,29 +191,30 @@ static void check_utf8_nfdicf(struct unicode_map *um)
+>  		int j = 0;
+>  		unsigned char c;
+>  
+> -		test((utf8len(um, UTF8_NFDICF, nfdicf_test_data[i].str) ==
+> -				nlen));
+> -		test((utf8nlen(um, UTF8_NFDICF, nfdicf_test_data[i].str, len) ==
+> -				nlen));
+> +		KUNIT_EXPECT_EQ(test, utf8len(um, UTF8_NFDICF, nfdicf_test_data[i].str),
+> +				nlen);
+> +		KUNIT_EXPECT_EQ(test, utf8nlen(um, UTF8_NFDICF, nfdicf_test_data[i].str, len),
+> +				nlen);
+>  
+> -		if (utf8cursor(&u8c, um, UTF8_NFDICF,
+> -				nfdicf_test_data[i].str) < 0)
+> -			pr_err("can't create cursor\n");
+> +		KUNIT_EXPECT_GE_MSG(test,
+> +				    utf8cursor(&u8c, um, UTF8_NFDICF, nfdicf_test_data[i].str),
+> +				    0, "Can't create cursor\n");
+>  
+>  		while ((c = utf8byte(&u8c)) > 0) {
+> -			test_f((c == nfdicf_test_data[i].ncf[j]),
+> -			       "Unexpected byte 0x%x should be 0x%x\n",
+> -			       c, nfdicf_test_data[i].ncf[j]);
+> +			KUNIT_EXPECT_EQ_MSG(test, c, nfdicf_test_data[i].ncf[j],
+> +					    "Unexpected byte 0x%x should be 0x%x\n",
+> +					    c, nfdicf_test_data[i].ncf[j]);
+>  			j++;
+>  		}
+>  
+> -		test((j == nlen));
+> +		KUNIT_EXPECT_EQ(test, j, nlen);
+>  	}
+>  }
+>  
+> -static void check_utf8_comparisons(struct unicode_map *table)
+> +static void check_utf8_comparisons(struct kunit *test)
+>  {
+>  	int i;
+> +	struct unicode_map *um = test->priv;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
+>  		const struct qstr s1 = {.name = nfdi_test_data[i].str,
+> @@ -240,8 +222,9 @@ static void check_utf8_comparisons(struct unicode_map *table)
+>  		const struct qstr s2 = {.name = nfdi_test_data[i].dec,
+>  					.len = sizeof(nfdi_test_data[i].dec)};
+>  
+> -		test_f(!utf8_strncmp(table, &s1, &s2),
+> -		       "%s %s comparison mismatch\n", s1.name, s2.name);
+> +		// strncmp returns 0 when strings are equal
+
+We don't do comments with // in the kernel (aside from SPDX).  Please, use /* */.
+
+> +		KUNIT_EXPECT_EQ_MSG(test, utf8_strncmp(um, &s1, &s2), 0,
+> +				    "%s %s comparison mismatch\n", s1.name, s2.name);
+
+Yuck. This is even less readable.  Is there a kunit macro that receives
+an expression, similar to WARN_ON/BUG_ON? It would be way more readable.
+Something like this.
+
+KUNIT_BLA(test, utf8_strncmp(um, &s1,&s2) == 0, "BAD TEST!")
+
+
+-- 
+Gabriel Krisman Bertazi
 
