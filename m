@@ -1,677 +1,596 @@
-Return-Path: <linux-fsdevel+bounces-29838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC9A97E9FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 12:34:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EE697E9FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 12:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8CF281A1A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 10:34:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E49ED1C2115F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 10:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE222195FEF;
-	Mon, 23 Sep 2024 10:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2827A1974FA;
+	Mon, 23 Sep 2024 10:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DePaKixQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NxBaIGhl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0106026AC3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 10:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF27194C83
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 10:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727087689; cv=none; b=jt2+gO7ekbQKcM5rZv42YZdwfyflrqhBdIrZj+p8TSulXpMPWgbQNxjf1JzL8bCEn5LbI6qnJy0+994vOJzAPfVbMjszU/IbKibn8oAbXFsJje1hcbxuKWMgi+cOo/116iVKCJ/w/mGjmp9lSwZf5Y1PBAU0rN3W+5U6TtJfjdY=
+	t=1727087957; cv=none; b=P4hjXESfKhDFY0Sf8HNiZzCxCysKZUn9Y5AMATlmlUwlz/mZ5r0fLBBUpwxujgfAywNYoWxPEs5qeRG0ruftQLQ3V7abef5wgkyxgl+j6y0SQ9aUxiELFyyG9HCrdWNL14acIKHewInxLnmAbGueKF238LZhPAgt7xhlksNgPzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727087689; c=relaxed/simple;
-	bh=VD5tWHYrsADHxrA4SU20Tf0EllrWps1wexXLtSlnbxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kh7ZUKi6uoZM8TBxoIxAoyW+4ww5rRL3WB/MWj3PrDN9JoO7Qy15jZYtU/vYpk67IH/P8sPjv0F7GrUcJ2HvyirYss3doM0DmRKRpQ4OPwh4XLGwd0SUcT6bau2Y2jhMfA05O9bwoAlvJuUnAZBrL7mwMCkToJtazrcSaQzTuN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DePaKixQ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727087686; x=1758623686;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VD5tWHYrsADHxrA4SU20Tf0EllrWps1wexXLtSlnbxo=;
-  b=DePaKixQHsOKCIjlM+hby+BP/tqv8cEisFt97rJCpRKsyD3Bc7MFhaqW
-   9BZoPE2UD1SKvn0mDYKaJVb10jQ07fpsb2pT4VOeDcnQxBDYaADoIySM7
-   HQvxhDHTLdXzR9eamWIeLH8/i9TCJRhqXae7ETQvZkc+OkVGJDTnDowvw
-   A1q/Fi+jilSR4qz87+pBHYd307ooJfKQPXGt9t+6qtoF8C3tS7G0Ztv/N
-   mSTGt3QMhPkpan98PTWzUJNs0+2DSucfsMluUiboFcgP3/jsPe8lArtoW
-   bKgPPq3UK9fg3Mh1eZLQ328LhiqvWgDFqO/O4iJgoBWbtypLOol1Niczu
-   Q==;
-X-CSE-ConnectionGUID: EoH23jBgRGeAid+RlbxM0A==
-X-CSE-MsgGUID: daAgaw7PQ82KmXo3KCCHaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="37400186"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="37400186"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 03:34:46 -0700
-X-CSE-ConnectionGUID: /31sbh2kSwi2B67oDLA5Gw==
-X-CSE-MsgGUID: ZWwa07DWTNK7MfjUDGL0xw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="101770293"
-Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.161.23])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 03:34:43 -0700
-Date: Mon, 23 Sep 2024 18:33:36 +0800
-From: "Lai, Yi" <yi1.lai@linux.intel.com>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Peter-Jan Gootzen <pgootzen@nvidia.com>,
-	Jingbo Xu <jefflexu@linux.alibaba.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Yoray Zack <yorayz@nvidia.com>, Vivek Goyal <vgoyal@redhat.com>,
-	virtualization@lists.linux.dev, yi1.lai@intel.com
-Subject: Re: [PATCH] fuse: cleanup request queuing towards virtiofs
-Message-ID: <ZvFEAM6JfrBKsOU0@ly-workstation>
-References: <20240529155210.2543295-1-mszeredi@redhat.com>
+	s=arc-20240116; t=1727087957; c=relaxed/simple;
+	bh=CH65LImeA31V2gjQos723kYI2pAomGpkq/i+T/O62kQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=W1PdKPYCqvQRp1kA5oO1SOskIHapDjvQGDGpsvcHWBWuPlYGpIyTyYDrnLapHwfuvrbDQAWOljpm8cXPipBcfvjAvuhALhWbL2ZP7aUYjE2hWEAFo0RAlhiPnSoyYPsVYR//2D0UGZaZfNgIIYyCWjOCn7GsOe65HopNaBRBDxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NxBaIGhl; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-42cb050acc3so21454265e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 03:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727087954; x=1727692754; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+7IA8B4S/OjOJloT0o9UpFRo091wD5m6NGMGUoTT03Y=;
+        b=NxBaIGhlYGAwrGWZnWhT7rrsakAQeqNvx+7V3t05icEMuqPDubpzPeW3fr2hP+Rxy1
+         piN5s5pAS4crRCZmBsiB/txvbIhrfTrZhkQI1/+jtbSSnqOMxyEVRQZqe/EqCrddJfpz
+         oM1xDdj95yk3Gn87ra2vFb1Id1epmt8q39rUYhB7uCplJlHl0TxygzadVy4Q7rBu+8En
+         Lq1fXL//+vQn31xVyAgu0zZv/ehFX2U49coxuty1+cHYkqr3+WsX46PUSeK5ItXjkI/Y
+         7dySRew9N/cfz0CqdOY7lpVeB8jzUfhSFcbOZ1+ChclIhSlb9Z9O58MqqJWPTMrX02D/
+         JSIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727087954; x=1727692754;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+7IA8B4S/OjOJloT0o9UpFRo091wD5m6NGMGUoTT03Y=;
+        b=QKHH+Ez/xTJdydXU16FiXWHP8mJqYDG/c0QtbiVyn94ZxVPfaauknW3wmCJTTNZhq9
+         UKE8Rduv+Gv6fGmIu4aVSZPURPae6dvd+3HfNfHVz6M7z+opABf/MXLlBzBeEPkEc4bN
+         Yef26zxx9DAjfiZeMFL0+9hnZJ2B+3fNj+iHcv7bzSjMt/aRXMvsZwkPaDL+iak2trVL
+         9i4w3cmV4bke2N9J3NcWMYltwDVYZ72eTxxldAd2dipCEf07//doFQhhDkd1GMLSVWQ+
+         UIvke66MN/XaQ8UHDaba/v6nmJ7IX3g06BQLqx9HbP3iHQrVpKgnohJ2omCQzQ9MBu02
+         flbQ==
+X-Gm-Message-State: AOJu0YwZ2DGf0WsddrG8GqkDKVYYAiDiwWqvgBYNzYNrGQJQV5Yj2HbV
+	gUpunGfNKTH7GPntZ5kJQak5heXG1aBy0aMnhIl4Hs6NxXrFq8GhncTiuiI9nBIVWMrlE7Y/Wj9
+	HWYGsnc75duWp2g==
+X-Google-Smtp-Source: AGHT+IGnmDgpLMMur7aPg5uBT28jOb2AJr+cKC1CN46Ca0eTDLuzHjLPHmc/6gPU+glijQp5LkiefARc8INsayI=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a7b:cb43:0:b0:42c:a8d4:2554 with SMTP id
+ 5b1f17b1804b1-42e7a9e4172mr1703825e9.4.1727087953720; Mon, 23 Sep 2024
+ 03:39:13 -0700 (PDT)
+Date: Mon, 23 Sep 2024 10:38:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529155210.2543295-1-mszeredi@redhat.com>
+Mime-Version: 1.0
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=18252; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=CH65LImeA31V2gjQos723kYI2pAomGpkq/i+T/O62kQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm8UTB8rWceIYWmnvhfTXkX7Pd8EPJFuXbYmj3L
+ E2wLzwHIYWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvFEwQAKCRAEWL7uWMY5
+ RuwtD/9tnxW/3xlZLDnRrvcc4Nm0nRM9oZTussFIJ5PxfauSgqZm+2N3C7B/gVRSc6T1sBQ1w4x
+ wxJs1K5mzOjhddFirMucA5lmCB5Kg89B2SkJzeILQQisReRw+hsIWqmSHaCwt7NQv+JtQq7grBg
+ Y9nElhLRXniIQEV8HBURYltKn7im7Z+TNdt38hUeOurXeYJTZ1zD6KxG9VtiVfJfUB1Bv7ptGGj
+ vSGZQPZGBjO+j179VyeXNw0jxEUDZGR444nlbzVONxpTPnljnCGhxnPkbAnJRlZ3WLQAOyNUksP
+ MEUOC+f4BHkJvNKnurW8P0d0S6HkVPo2elJwOEzlAMrEGZpHLk403LdvOGoxO0zFhahDYMR+DuA
+ UqhKYJTTVvrIOsB5MKj1Q/lBf0O/P+b/rRwtGdL9D3r1uPgxjhRT/njeqdUj/CJNmXU/AH6L2J+
+ JDSpE2XUA1PhFOP0Wt2lgJm2jdW+Gh8tOiPRJRaEmIPDuMJxx7wNndxqftA+Vj8X27YfwbhXxLh
+ E101ca/SKOAbQk4N+c/SHaGGZCdTt7faDly1vxPEl1nWu0UzYFW2gT9Lewlt/x04kROABrVuVLl
+ Aqi0WZYdjRrHf0uvHJLi1KrZC4swvMxE5k/UpuDCHM4me5OdgUmJpHwKebkD1PDqoDbrGxkA8G1 7Qs7bAuUjJvXViA==
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Message-ID: <20240923-xa_enter_leave-v1-1-6ff365e8520a@google.com>
+Subject: [PATCH] xarray: rename xa_lock/xa_unlock to xa_enter/xa_leave
+From: Alice Ryhl <aliceryhl@google.com>
+To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Miklos Szeredi,
+Functions such as __xa_store() may temporarily unlock the internal
+spinlock if allocation is necessary. This means that code such as
 
-Greetings!
+	xa_lock(xa);
+	__xa_store(xa, idx1, ptr1, GFP_KERNEL);
+	__xa_store(xa, idx2, ptr2, GFP_KERNEL);
+	xa_unlock(xa);
 
-I used Syzkaller and found that there is WARNING in fuse_request_end in Linux-next tree - next-20240918.
+does not prevent the situation where another thread sees the first store
+without seeing the second store. Even if GFP_ATOMIC is used, this can
+still happen if the reader uses xa_load without taking the xa_lock. This
+is not the behavior that you would expect from a lock. We should not
+subvert the expectations of the reader.
 
-After bisection and the first bad commit is:
-"
-5de8acb41c86 fuse: cleanup request queuing towards virtiofs
-"
+Thus, rename xa_lock/xa_unlock to xa_enter/xa_leave. Users of the XArray
+will have fewer implicit expectations about how functions with these
+names will behave, which encourages users to check the documentation.
+The documentation is amended with additional notes about these caveats.
 
-All detailed into can be found at:
-https://github.com/laifryiee/syzkaller_logs/tree/main/240922_114402_fuse_request_end
-Syzkaller repro code:
-https://github.com/laifryiee/syzkaller_logs/blob/main/240922_114402_fuse_request_end/repro.c
-Syzkaller repro syscall steps:
-https://github.com/laifryiee/syzkaller_logs/blob/main/240922_114402_fuse_request_end/repro.prog
-Syzkaller report:
-https://github.com/laifryiee/syzkaller_logs/blob/main/240922_114402_fuse_request_end/repro.report
-Kconfig(make olddefconfig):
-https://github.com/laifryiee/syzkaller_logs/blob/main/240922_114402_fuse_request_end/kconfig_origin
-Bisect info:
-https://github.com/laifryiee/syzkaller_logs/blob/main/240922_114402_fuse_request_end/bisect_info.log
-bzImage:
-https://github.com/laifryiee/syzkaller_logs/raw/main/240922_114402_fuse_request_end/bzImage_55bcd2e0d04c1171d382badef1def1fd04ef66c5
-Issue dmesg:
-https://github.com/laifryiee/syzkaller_logs/blob/main/240922_114402_fuse_request_end/55bcd2e0d04c1171d382badef1def1fd04ef66c5_dmesg.log
+The previous example becomes:
 
-"
-[   31.577123] ------------[ cut here ]------------
-[   31.578842] WARNING: CPU: 1 PID: 1186 at fs/fuse/dev.c:373 fuse_request_end+0x7d2/0x910
-[   31.581269] Modules linked in:
-[   31.582553] CPU: 1 UID: 0 PID: 1186 Comm: repro Not tainted 6.11.0-next-20240918-55bcd2e0d04c #1
-[   31.584332] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
-[   31.586281] RIP: 0010:fuse_request_end+0x7d2/0x910
-[   31.587001] Code: ff 48 8b 7d d0 e8 ae 0f 72 ff e9 c2 fb ff ff e8 a4 0f 72 ff e9 e7 fb ff ff e8 3a 3b 0a ff 0f 0b e9 17 fa ff ff e8 2e 3b 0a ff <0f> 0b e9 c1 f9 ff ff 4c 89 ff e8 af 0f 72 ff e9 82 f8 ff ff e8 a5
-[   31.589442] RSP: 0018:ffff88802141f640 EFLAGS: 00010293
-[   31.590198] RAX: 0000000000000000 RBX: 0000000000000201 RCX: ffffffff825d5bb2
-[   31.591137] RDX: ffff888010b2a500 RSI: ffffffff825d61f2 RDI: 0000000000000001
-[   31.592072] RBP: ffff88802141f680 R08: 0000000000000000 R09: ffffed100356f28e
-[   31.593010] R10: 0000000000000001 R11: 0000000000000001 R12: ffff88801ab79440
-[   31.594062] R13: ffff88801ab79470 R14: ffff88801dcaa000 R15: ffff88800d71fa00
-[   31.594820] FS:  00007f812eca2640(0000) GS:ffff88806c500000(0000) knlGS:0000000000000000
-[   31.595670] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   31.596299] CR2: 000055b7baa16b20 CR3: 00000000109b0002 CR4: 0000000000770ef0
-[   31.597054] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   31.597850] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
-[   31.598595] PKRU: 55555554
-[   31.598902] Call Trace:
-[   31.599180]  <TASK>
-[   31.599439]  ? show_regs+0x6d/0x80
-[   31.599805]  ? __warn+0xf3/0x380
-[   31.600137]  ? report_bug+0x25e/0x4b0
-[   31.600521]  ? fuse_request_end+0x7d2/0x910
-[   31.600885]  ? report_bug+0x2cb/0x4b0
-[   31.601204]  ? fuse_request_end+0x7d2/0x910
-[   31.601564]  ? fuse_request_end+0x7d3/0x910
-[   31.601956]  ? handle_bug+0xf1/0x190
-[   31.602275]  ? exc_invalid_op+0x3c/0x80
-[   31.602595]  ? asm_exc_invalid_op+0x1f/0x30
-[   31.602959]  ? fuse_request_end+0x192/0x910
-[   31.603301]  ? fuse_request_end+0x7d2/0x910
-[   31.603643]  ? fuse_request_end+0x7d2/0x910
-[   31.603988]  ? do_raw_spin_unlock+0x15c/0x210
-[   31.604366]  fuse_dev_queue_req+0x23c/0x2b0
-[   31.604714]  fuse_send_one+0x1d1/0x360
-[   31.605031]  fuse_simple_request+0x348/0xd30
-[   31.605385]  ? lockdep_hardirqs_on+0x89/0x110
-[   31.605755]  fuse_send_open+0x234/0x2f0
-[   31.606126]  ? __pfx_fuse_send_open+0x10/0x10
-[   31.606487]  ? kasan_save_track+0x18/0x40
-[   31.606834]  ? lockdep_init_map_type+0x2df/0x810
-[   31.607227]  ? __kasan_check_write+0x18/0x20
-[   31.607591]  fuse_file_open+0x2bc/0x770
-[   31.607921]  fuse_do_open+0x5d/0xe0
-[   31.608215]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
-[   31.608681]  fuse_dir_open+0x138/0x220
-[   31.609005]  do_dentry_open+0x6be/0x1390
-[   31.609358]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
-[   31.609861]  ? __pfx_fuse_dir_open+0x10/0x10
-[   31.610240]  vfs_open+0x87/0x3f0
-[   31.610523]  ? may_open+0x205/0x430
-[   31.610834]  path_openat+0x23b7/0x32d0
-[   31.611161]  ? __pfx_path_openat+0x10/0x10
-[   31.611502]  ? lock_acquire.part.0+0x152/0x390
-[   31.611874]  ? __this_cpu_preempt_check+0x21/0x30
-[   31.612266]  ? lock_is_held_type+0xef/0x150
-[   31.612611]  ? __this_cpu_preempt_check+0x21/0x30
-[   31.613002]  do_filp_open+0x1cc/0x420
-[   31.613316]  ? __pfx_do_filp_open+0x10/0x10
-[   31.613669]  ? lock_release+0x441/0x870
-[   31.614043]  ? __pfx_lock_release+0x10/0x10
-[   31.614404]  ? do_raw_spin_unlock+0x15c/0x210
-[   31.614784]  do_sys_openat2+0x185/0x1f0
-[   31.615105]  ? __pfx_do_sys_openat2+0x10/0x10
-[   31.615470]  ? __this_cpu_preempt_check+0x21/0x30
-[   31.615854]  ? seqcount_lockdep_reader_access.constprop.0+0xb4/0xd0
-[   31.616370]  ? lockdep_hardirqs_on+0x89/0x110
-[   31.616736]  __x64_sys_openat+0x17a/0x240
-[   31.617067]  ? __pfx___x64_sys_openat+0x10/0x10
-[   31.617447]  ? __audit_syscall_entry+0x39c/0x500
-[   31.617870]  x64_sys_call+0x1a52/0x20d0
-[   31.618194]  do_syscall_64+0x6d/0x140
-[   31.618504]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   31.618917] RIP: 0033:0x7f812eb3e8c4
-[   31.619225] Code: 24 20 eb 8f 66 90 44 89 54 24 0c e8 76 d3 f5 ff 44 8b 54 24 0c 44 89 e2 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 89 44 24 0c e8 c8 d3 f5 ff 8b 44
-[   31.620656] RSP: 002b:00007f812eca1b90 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-[   31.621255] RAX: ffffffffffffffda RBX: 00007f812eca2640 RCX: 00007f812eb3e8c4
-[   31.621864] RDX: 0000000000010000 RSI: 0000000020002080 RDI: 00000000ffffff9c
-[   31.622428] RBP: 0000000020002080 R08: 0000000000000000 R09: 0000000000000000
-[   31.622987] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000010000
-[   31.623549] R13: 0000000000000006 R14: 00007f812ea9f560 R15: 0000000000000000
-[   31.624123]  </TASK>
-[   31.624316] irq event stamp: 1655
-[   31.624595] hardirqs last  enabled at (1663): [<ffffffff8145cb85>] __up_console_sem+0x95/0xb0
-[   31.625310] hardirqs last disabled at (1670): [<ffffffff8145cb6a>] __up_console_sem+0x7a/0xb0
-[   31.626039] softirqs last  enabled at (1466): [<ffffffff8128a889>] __irq_exit_rcu+0xa9/0x120
-[   31.626726] softirqs last disabled at (1449): [<ffffffff8128a889>] __irq_exit_rcu+0xa9/0x120
-[   31.627405] ---[ end trace 0000000000000000 ]---
-"
+	xa_enter(xa);
+	__xa_store(xa, idx1, ptr1, GFP_KERNEL);
+	__xa_store(xa, idx2, ptr2, GFP_KERNEL);
+	xa_leave(xa);
 
-I hope you find it useful.
+Existing users of the function will be updated to use the new name in
+follow-up patches. The old names will be deleted later to avoid
+conflicts with new code using xa_lock().
 
-Regards,
-Yi Lai
+The idea to rename these functions came up during a discussion at
+the Linux Plumbers conference 2024. I was working on a Rust API for
+using the XArray from Rust code, but I was dissatisfied with the Rust
+API being too confusing for the same reasons as outlined above.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ Documentation/core-api/xarray.rst |  75 ++++++++++++-------
+ include/linux/xarray.h            | 148 +++++++++++++++++++++++---------------
+ 2 files changed, 141 insertions(+), 82 deletions(-)
+
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 77e0ece2b1d6..2f3546cc2db2 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -200,7 +200,7 @@ Takes RCU read lock:
+  * xa_extract()
+  * xa_get_mark()
+ 
+-Takes xa_lock internally:
++Internally calls xa_enter to lock spinlock:
+  * xa_store()
+  * xa_store_bh()
+  * xa_store_irq()
+@@ -224,7 +224,7 @@ Takes xa_lock internally:
+  * xa_set_mark()
+  * xa_clear_mark()
+ 
+-Assumes xa_lock held on entry:
++Caller must use xa_enter:
+  * __xa_store()
+  * __xa_insert()
+  * __xa_erase()
+@@ -233,14 +233,41 @@ Assumes xa_lock held on entry:
+  * __xa_set_mark()
+  * __xa_clear_mark()
+ 
++Variants of xa_enter and xa_leave:
++ * xa_enter()
++ * xa_tryenter()
++ * xa_enter_bh()
++ * xa_enter_irq()
++ * xa_enter_irqsave()
++ * xa_enter_nested()
++ * xa_enter_bh_nested()
++ * xa_enter_irq_nested()
++ * xa_enter_irqsave_nested()
++ * xa_leave()
++ * xa_leave_bh()
++ * xa_leave_irq()
++ * xa_leave_irqrestore()
++
++The xa_enter() and xa_leave() functions correspond to spin_lock() and
++spin_unlock() on the internal spinlock.  Be aware that functions such as
++__xa_store() may temporarily unlock the internal spinlock to allocate memory.
++Because of that, if you have several calls to __xa_store() between a single
++xa_enter()/xa_leave() pair, other users of the XArray may see the first store
++without seeing the second store.  The xa_enter() function is not called xa_lock()
++to emphasize this distinction.
++
+-If you want to take advantage of the lock to protect the data structures
+-that you are storing in the XArray, you can call xa_lock()
+-before calling xa_load(), then take a reference count on the
+-object you have found before calling xa_unlock().  This will
+-prevent stores from removing the object from the array between looking
+-up the object and incrementing the refcount.  You can also use RCU to
+-avoid dereferencing freed memory, but an explanation of that is beyond
+-the scope of this document.
++If you want to take advantage of the lock to protect the data stored in the
++XArray, then you can use xa_enter() and xa_leave() to enter and leave the
++critical region of the internal spinlock. For example, you can enter the critcal
++region with xa_enter(), look up a value with xa_load(), increment the refcount,
++and then call xa_leave().  This will prevent stores from removing the object
++from the array between looking up the object and incrementing the refcount.
++
++Instead of xa_enter(), you can also use RCU to increment the refcount, but an
++explanation of that is beyond the scope of this document.
++
++Interrupts
++----------
+ 
+ The XArray does not disable interrupts or softirqs while modifying
+ the array.  It is safe to read the XArray from interrupt or softirq
+@@ -258,21 +285,21 @@ context and then erase them in softirq context, you can do that this way::
+     {
+         int err;
+ 
+-        xa_lock_bh(&foo->array);
++        xa_enter_bh(&foo->array);
+         err = xa_err(__xa_store(&foo->array, index, entry, GFP_KERNEL));
+         if (!err)
+             foo->count++;
+-        xa_unlock_bh(&foo->array);
++        xa_leave_bh(&foo->array);
+         return err;
+     }
+ 
+     /* foo_erase() is only called from softirq context */
+     void foo_erase(struct foo *foo, unsigned long index)
+     {
+-        xa_lock(&foo->array);
++        xa_enter(&foo->array);
+         __xa_erase(&foo->array, index);
+         foo->count--;
+-        xa_unlock(&foo->array);
++        xa_leave(&foo->array);
+     }
+ 
+ If you are going to modify the XArray from interrupt or softirq context,
+@@ -280,12 +307,12 @@ you need to initialise the array using xa_init_flags(), passing
+ ``XA_FLAGS_LOCK_IRQ`` or ``XA_FLAGS_LOCK_BH``.
+ 
+ The above example also shows a common pattern of wanting to extend the
+-coverage of the xa_lock on the store side to protect some statistics
+-associated with the array.
++coverage of the internal spinlock on the store side to protect some
++statistics associated with the array.
+ 
+ Sharing the XArray with interrupt context is also possible, either
+-using xa_lock_irqsave() in both the interrupt handler and process
+-context, or xa_lock_irq() in process context and xa_lock()
++using xa_enter_irqsave() in both the interrupt handler and process
++context, or xa_enter_irq() in process context and xa_enter()
+ in the interrupt handler.  Some of the more common patterns have helper
+ functions such as xa_store_bh(), xa_store_irq(),
+ xa_erase_bh(), xa_erase_irq(), xa_cmpxchg_bh()
+@@ -293,8 +320,8 @@ and xa_cmpxchg_irq().
+ 
+ Sometimes you need to protect access to the XArray with a mutex because
+ that lock sits above another mutex in the locking hierarchy.  That does
+-not entitle you to use functions like __xa_erase() without taking
+-the xa_lock; the xa_lock is used for lockdep validation and will be used
++not entitle you to use functions like __xa_erase() without calling
++xa_enter; the XArray lock is used for lockdep validation and will be used
+ for other purposes in the future.
+ 
+ The __xa_set_mark() and __xa_clear_mark() functions are also
+@@ -308,8 +335,8 @@ Advanced API
+ The advanced API offers more flexibility and better performance at the
+ cost of an interface which can be harder to use and has fewer safeguards.
+ No locking is done for you by the advanced API, and you are required
+-to use the xa_lock while modifying the array.  You can choose whether
+-to use the xa_lock or the RCU lock while doing read-only operations on
++to use xa_enter while modifying the array.  You can choose whether
++to use xa_enter or the RCU lock while doing read-only operations on
+ the array.  You can mix advanced and normal operations on the same array;
+ indeed the normal API is implemented in terms of the advanced API.  The
+ advanced API is only available to modules with a GPL-compatible license.
+@@ -320,8 +347,8 @@ This macro initialises the xa_state ready to start walking around the
+ XArray.  It is used as a cursor to maintain the position in the XArray
+ and let you compose various operations together without having to restart
+ from the top every time.  The contents of the xa_state are protected by
+-the rcu_read_lock() or the xas_lock().  If you need to drop whichever of
+-those locks is protecting your state and tree, you must call xas_pause()
++the rcu_read_lock() or the xas_enter() lock.  If you need to drop whichever
++of those locks is protecting your state and tree, you must call xas_pause()
+ so that future calls do not rely on the parts of the state which were
+ left unprotected.
+ 
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 0b618ec04115..dde10de4e6bf 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -532,29 +532,48 @@ static inline bool xa_marked(const struct xarray *xa, xa_mark_t mark)
+ 	for (index = 0, entry = xa_find(xa, &index, ULONG_MAX, filter); \
+ 	     entry; entry = xa_find_after(xa, &index, ULONG_MAX, filter))
+ 
+-#define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
+-#define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
+-#define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
+-#define xa_lock_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
+-#define xa_unlock_bh(xa)	spin_unlock_bh(&(xa)->xa_lock)
+-#define xa_lock_irq(xa)		spin_lock_irq(&(xa)->xa_lock)
+-#define xa_unlock_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
+-#define xa_lock_irqsave(xa, flags) \
++#define xa_tryenter(xa)		spin_trylock(&(xa)->xa_lock)
++#define xa_enter(xa)		spin_lock(&(xa)->xa_lock)
++#define xa_leave(xa)		spin_unlock(&(xa)->xa_lock)
++#define xa_enter_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
++#define xa_leave_bh(xa)		spin_unlock_bh(&(xa)->xa_lock)
++#define xa_enter_irq(xa)	spin_lock_irq(&(xa)->xa_lock)
++#define xa_leave_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
++#define xa_enter_irqsave(xa, flags) \
+ 				spin_lock_irqsave(&(xa)->xa_lock, flags)
+-#define xa_unlock_irqrestore(xa, flags) \
++#define xa_leave_irqrestore(xa, flags) \
+ 				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
+-#define xa_lock_nested(xa, subclass) \
++#define xa_enter_nested(xa, subclass) \
+ 				spin_lock_nested(&(xa)->xa_lock, subclass)
+-#define xa_lock_bh_nested(xa, subclass) \
++#define xa_enter_bh_nested(xa, subclass) \
+ 				spin_lock_bh_nested(&(xa)->xa_lock, subclass)
+-#define xa_lock_irq_nested(xa, subclass) \
++#define xa_enter_irq_nested(xa, subclass) \
+ 				spin_lock_irq_nested(&(xa)->xa_lock, subclass)
+-#define xa_lock_irqsave_nested(xa, flags, subclass) \
++#define xa_enter_irqsave_nested(xa, flags, subclass) \
+ 		spin_lock_irqsave_nested(&(xa)->xa_lock, flags, subclass)
+ 
++/*
++ * These names are deprecated. Please use xa_enter instead of xa_lock, and
++ * xa_leave instead of xa_unlock.
++ */
++#define xa_trylock(xa)			xa_tryenter(xa)
++#define xa_lock(xa)			xa_enter(xa)
++#define xa_unlock(xa)			xa_leave(xa)
++#define xa_lock_bh(xa)			xa_enter_bh(xa)
++#define xa_unlock_bh(xa)		xa_leave_bh(xa)
++#define xa_lock_irq(xa)			xa_enter_irq(xa)
++#define xa_unlock_irq(xa)		xa_leave_irq(xa)
++#define xa_lock_irqsave(xa, flags)	xa_enter_irqsave(xa, flags)
++#define xa_unlock_irqrestore(xa, flags) xa_leave_irqsave(xa, flags)
++#define xa_lock_nested(xa, subclass)	xa_enter_nested(xa, subclass)
++#define xa_lock_bh_nested(xa, subclass) xa_enter_bh_nested(xa, subclass)
++#define xa_lock_irq_nested(xa, subclass) xa_enter_irq_nested(xa, subclass)
++#define xa_lock_irqsave_nested(xa, flags, subclass) \
++		xa_enter_irqsave_nested(xa, flags, subclass)
++
+ /*
+- * Versions of the normal API which require the caller to hold the
+- * xa_lock.  If the GFP flags allow it, they will drop the lock to
++ * Versions of the normal API which require the caller to use
++ * xa_enter.  If the GFP flags allow it, they will drop the lock to
+  * allocate memory, then reacquire it afterwards.  These functions
+  * may also re-enable interrupts if the XArray flags indicate the
+  * locking should be interrupt safe.
+@@ -592,9 +611,9 @@ static inline void *xa_store_bh(struct xarray *xa, unsigned long index,
+ 	void *curr;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_bh(xa);
++	xa_enter_bh(xa);
+ 	curr = __xa_store(xa, index, entry, gfp);
+-	xa_unlock_bh(xa);
++	xa_leave_bh(xa);
+ 
+ 	return curr;
+ }
+@@ -619,9 +638,9 @@ static inline void *xa_store_irq(struct xarray *xa, unsigned long index,
+ 	void *curr;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_irq(xa);
++	xa_enter_irq(xa);
+ 	curr = __xa_store(xa, index, entry, gfp);
+-	xa_unlock_irq(xa);
++	xa_leave_irq(xa);
+ 
+ 	return curr;
+ }
+@@ -643,9 +662,9 @@ static inline void *xa_erase_bh(struct xarray *xa, unsigned long index)
+ {
+ 	void *entry;
+ 
+-	xa_lock_bh(xa);
++	xa_enter_bh(xa);
+ 	entry = __xa_erase(xa, index);
+-	xa_unlock_bh(xa);
++	xa_leave_bh(xa);
+ 
+ 	return entry;
+ }
+@@ -667,9 +686,9 @@ static inline void *xa_erase_irq(struct xarray *xa, unsigned long index)
+ {
+ 	void *entry;
+ 
+-	xa_lock_irq(xa);
++	xa_enter_irq(xa);
+ 	entry = __xa_erase(xa, index);
+-	xa_unlock_irq(xa);
++	xa_leave_irq(xa);
+ 
+ 	return entry;
+ }
+@@ -695,9 +714,9 @@ static inline void *xa_cmpxchg(struct xarray *xa, unsigned long index,
+ 	void *curr;
+ 
+ 	might_alloc(gfp);
+-	xa_lock(xa);
++	xa_enter(xa);
+ 	curr = __xa_cmpxchg(xa, index, old, entry, gfp);
+-	xa_unlock(xa);
++	xa_leave(xa);
+ 
+ 	return curr;
+ }
+@@ -723,9 +742,9 @@ static inline void *xa_cmpxchg_bh(struct xarray *xa, unsigned long index,
+ 	void *curr;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_bh(xa);
++	xa_enter_bh(xa);
+ 	curr = __xa_cmpxchg(xa, index, old, entry, gfp);
+-	xa_unlock_bh(xa);
++	xa_leave_bh(xa);
+ 
+ 	return curr;
+ }
+@@ -751,9 +770,9 @@ static inline void *xa_cmpxchg_irq(struct xarray *xa, unsigned long index,
+ 	void *curr;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_irq(xa);
++	xa_enter_irq(xa);
+ 	curr = __xa_cmpxchg(xa, index, old, entry, gfp);
+-	xa_unlock_irq(xa);
++	xa_leave_irq(xa);
+ 
+ 	return curr;
+ }
+@@ -781,9 +800,9 @@ static inline int __must_check xa_insert(struct xarray *xa,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock(xa);
++	xa_enter(xa);
+ 	err = __xa_insert(xa, index, entry, gfp);
+-	xa_unlock(xa);
++	xa_leave(xa);
+ 
+ 	return err;
+ }
+@@ -811,9 +830,9 @@ static inline int __must_check xa_insert_bh(struct xarray *xa,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_bh(xa);
++	xa_enter_bh(xa);
+ 	err = __xa_insert(xa, index, entry, gfp);
+-	xa_unlock_bh(xa);
++	xa_leave_bh(xa);
+ 
+ 	return err;
+ }
+@@ -841,9 +860,9 @@ static inline int __must_check xa_insert_irq(struct xarray *xa,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_irq(xa);
++	xa_enter_irq(xa);
+ 	err = __xa_insert(xa, index, entry, gfp);
+-	xa_unlock_irq(xa);
++	xa_leave_irq(xa);
+ 
+ 	return err;
+ }
+@@ -874,9 +893,9 @@ static inline __must_check int xa_alloc(struct xarray *xa, u32 *id,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock(xa);
++	xa_enter(xa);
+ 	err = __xa_alloc(xa, id, entry, limit, gfp);
+-	xa_unlock(xa);
++	xa_leave(xa);
+ 
+ 	return err;
+ }
+@@ -907,9 +926,9 @@ static inline int __must_check xa_alloc_bh(struct xarray *xa, u32 *id,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_bh(xa);
++	xa_enter_bh(xa);
+ 	err = __xa_alloc(xa, id, entry, limit, gfp);
+-	xa_unlock_bh(xa);
++	xa_leave_bh(xa);
+ 
+ 	return err;
+ }
+@@ -940,9 +959,9 @@ static inline int __must_check xa_alloc_irq(struct xarray *xa, u32 *id,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_irq(xa);
++	xa_enter_irq(xa);
+ 	err = __xa_alloc(xa, id, entry, limit, gfp);
+-	xa_unlock_irq(xa);
++	xa_leave_irq(xa);
+ 
+ 	return err;
+ }
+@@ -977,9 +996,9 @@ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock(xa);
++	xa_enter(xa);
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+-	xa_unlock(xa);
++	xa_leave(xa);
+ 
+ 	return err;
+ }
+@@ -1014,9 +1033,9 @@ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_bh(xa);
++	xa_enter_bh(xa);
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+-	xa_unlock_bh(xa);
++	xa_leave_bh(xa);
+ 
+ 	return err;
+ }
+@@ -1051,9 +1070,9 @@ static inline int xa_alloc_cyclic_irq(struct xarray *xa, u32 *id, void *entry,
+ 	int err;
+ 
+ 	might_alloc(gfp);
+-	xa_lock_irq(xa);
++	xa_enter_irq(xa);
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+-	xa_unlock_irq(xa);
++	xa_leave_irq(xa);
+ 
+ 	return err;
+ }
+@@ -1408,17 +1427,30 @@ struct xa_state {
+ 			(1U << (order % XA_CHUNK_SHIFT)) - 1)
+ 
+ #define xas_marked(xas, mark)	xa_marked((xas)->xa, (mark))
+-#define xas_trylock(xas)	xa_trylock((xas)->xa)
+-#define xas_lock(xas)		xa_lock((xas)->xa)
+-#define xas_unlock(xas)		xa_unlock((xas)->xa)
+-#define xas_lock_bh(xas)	xa_lock_bh((xas)->xa)
+-#define xas_unlock_bh(xas)	xa_unlock_bh((xas)->xa)
+-#define xas_lock_irq(xas)	xa_lock_irq((xas)->xa)
+-#define xas_unlock_irq(xas)	xa_unlock_irq((xas)->xa)
+-#define xas_lock_irqsave(xas, flags) \
+-				xa_lock_irqsave((xas)->xa, flags)
+-#define xas_unlock_irqrestore(xas, flags) \
+-				xa_unlock_irqrestore((xas)->xa, flags)
++#define xas_tryenter(xas)	xa_tryenter((xas)->xa)
++#define xas_enter(xas)		xa_enter((xas)->xa)
++#define xas_leave(xas)		xa_leave((xas)->xa)
++#define xas_enter_bh(xas)	xa_enter_bh((xas)->xa)
++#define xas_leave_bh(xas)	xa_leave_bh((xas)->xa)
++#define xas_enter_irq(xas)	xa_enter_irq((xas)->xa)
++#define xas_leave_irq(xas)	xa_leave_irq((xas)->xa)
++#define xas_enter_irqsave(xas, flags) xa_enter_irqsave((xas)->xa, flags)
++#define xas_leave_irqrestore(xas, flags) xa_leave_irqrestore((xas)->xa, flags)
++
++
++/*
++ * These names are deprecated. Please use xas_enter instead of xas_lock, and
++ * xas_leave instead of xas_unlock.
++ */
++#define xas_trylock(xas)			xas_tryenter(xas)
++#define xas_lock(xas)				xas_enter(xas)
++#define xas_unlock(xas)				xas_leave(xas)
++#define xas_lock_bh(xas)			xas_enter_bh(xas)
++#define xas_unlock_bh(xas)			xas_leave_bh(xas)
++#define xas_lock_irq(xas)			xas_enter_irq(xas)
++#define xas_unlock_irq(xas)			xas_leave_irq(xas)
++#define xas_lock_irqsave(xas, flags)		xas_enter_irqsave(xas, flags)
++#define xas_unlock_irqrestore(xas, flags)	xas_leave_irqsave(xas, flags)
+ 
+ /**
+  * xas_error() - Return an errno stored in the xa_state.
 
 ---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240921-xa_enter_leave-b11552c3caa2
 
-If you don't need the following environment to reproduce the problem or if you
-already have one reproduced environment, please ignore the following information.
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
-How to reproduce:
-git clone https://gitlab.com/xupengfe/repro_vm_env.git
-cd repro_vm_env
-tar -xvf repro_vm_env.tar.gz
-cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
-  // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
-  // You could change the bzImage_xxx as you want
-  // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
-You could use below command to log in, there is no password for root.
-ssh -p 10023 root@localhost
-
-After login vm(virtual machine) successfully, you could transfer reproduced
-binary to the vm by below way, and reproduce the problem in vm:
-gcc -pthread -o repro repro.c
-scp -P 10023 repro root@localhost:/root/
-
-Get the bzImage for target kernel:
-Please use target kconfig and copy it to kernel_src/.config
-make olddefconfig
-make -jx bzImage           //x should equal or less than cpu num your pc has
-
-Fill the bzImage file into above start3.sh to load the target kernel in vm.
-
-Tips:
-If you already have qemu-system-x86_64, please ignore below info.
-If you want to install qemu v7.1.0 version:
-git clone https://github.com/qemu/qemu.git
-cd qemu
-git checkout -f v7.1.0
-mkdir build
-cd build
-yum install -y ninja-build.x86_64
-yum -y install libslirp-devel.x86_64
-../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
-make
-make install 
-
-On Wed, May 29, 2024 at 05:52:07PM +0200, Miklos Szeredi wrote:
-> Virtiofs has its own queing mechanism, but still requests are first queued
-> on fiq->pending to be immediately dequeued and queued onto the virtio
-> queue.
-> 
-> The queuing on fiq->pending is unnecessary and might even have some
-> performance impact due to being a contention point.
-> 
-> Forget requests are handled similarly.
-> 
-> Move the queuing of requests and forgets into the fiq->ops->*.
-> fuse_iqueue_ops are renamed to reflect the new semantics.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/fuse/dev.c       | 159 ++++++++++++++++++++++++--------------------
->  fs/fuse/fuse_i.h    |  19 ++----
->  fs/fuse/virtio_fs.c |  41 ++++--------
->  3 files changed, 106 insertions(+), 113 deletions(-)
-> 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 9eb191b5c4de..a4f510f1b1a4 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -192,10 +192,22 @@ unsigned int fuse_len_args(unsigned int numargs, struct fuse_arg *args)
->  }
->  EXPORT_SYMBOL_GPL(fuse_len_args);
->  
-> -u64 fuse_get_unique(struct fuse_iqueue *fiq)
-> +static u64 fuse_get_unique_locked(struct fuse_iqueue *fiq)
->  {
->  	fiq->reqctr += FUSE_REQ_ID_STEP;
->  	return fiq->reqctr;
-> +
-> +}
-> +
-> +u64 fuse_get_unique(struct fuse_iqueue *fiq)
-> +{
-> +	u64 ret;
-> +
-> +	spin_lock(&fiq->lock);
-> +	ret = fuse_get_unique_locked(fiq);
-> +	spin_unlock(&fiq->lock);
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(fuse_get_unique);
->  
-> @@ -215,22 +227,67 @@ __releases(fiq->lock)
->  	spin_unlock(&fiq->lock);
->  }
->  
-> +static void fuse_dev_queue_forget(struct fuse_iqueue *fiq, struct fuse_forget_link *forget)
-> +{
-> +	spin_lock(&fiq->lock);
-> +	if (fiq->connected) {
-> +		fiq->forget_list_tail->next = forget;
-> +		fiq->forget_list_tail = forget;
-> +		fuse_dev_wake_and_unlock(fiq);
-> +	} else {
-> +		kfree(forget);
-> +		spin_unlock(&fiq->lock);
-> +	}
-> +}
-> +
-> +static void fuse_dev_queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
-> +{
-> +	spin_lock(&fiq->lock);
-> +	if (list_empty(&req->intr_entry)) {
-> +		list_add_tail(&req->intr_entry, &fiq->interrupts);
-> +		/*
-> +		 * Pairs with smp_mb() implied by test_and_set_bit()
-> +		 * from fuse_request_end().
-> +		 */
-> +		smp_mb();
-> +		if (test_bit(FR_FINISHED, &req->flags)) {
-> +			list_del_init(&req->intr_entry);
-> +			spin_unlock(&fiq->lock);
-> +		}
-> +		fuse_dev_wake_and_unlock(fiq);
-> +	} else {
-> +		spin_unlock(&fiq->lock);
-> +	}
-> +}
-> +
-> +static void fuse_dev_queue_req(struct fuse_iqueue *fiq, struct fuse_req *req)
-> +{
-> +	spin_lock(&fiq->lock);
-> +	if (fiq->connected) {
-> +		if (req->in.h.opcode != FUSE_NOTIFY_REPLY)
-> +			req->in.h.unique = fuse_get_unique_locked(fiq);
-> +		list_add_tail(&req->list, &fiq->pending);
-> +		fuse_dev_wake_and_unlock(fiq);
-> +	} else {
-> +		spin_unlock(&fiq->lock);
-> +		req->out.h.error = -ENOTCONN;
-> +		fuse_request_end(req);
-> +	}
-> +}
-> +
->  const struct fuse_iqueue_ops fuse_dev_fiq_ops = {
-> -	.wake_forget_and_unlock		= fuse_dev_wake_and_unlock,
-> -	.wake_interrupt_and_unlock	= fuse_dev_wake_and_unlock,
-> -	.wake_pending_and_unlock	= fuse_dev_wake_and_unlock,
-> +	.send_forget	= fuse_dev_queue_forget,
-> +	.send_interrupt	= fuse_dev_queue_interrupt,
-> +	.send_req	= fuse_dev_queue_req,
->  };
->  EXPORT_SYMBOL_GPL(fuse_dev_fiq_ops);
->  
-> -static void queue_request_and_unlock(struct fuse_iqueue *fiq,
-> -				     struct fuse_req *req)
-> -__releases(fiq->lock)
-> +static void fuse_send_one(struct fuse_iqueue *fiq, struct fuse_req *req)
->  {
->  	req->in.h.len = sizeof(struct fuse_in_header) +
->  		fuse_len_args(req->args->in_numargs,
->  			      (struct fuse_arg *) req->args->in_args);
-> -	list_add_tail(&req->list, &fiq->pending);
-> -	fiq->ops->wake_pending_and_unlock(fiq);
-> +	fiq->ops->send_req(fiq, req);
->  }
->  
->  void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
-> @@ -241,15 +298,7 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
->  	forget->forget_one.nodeid = nodeid;
->  	forget->forget_one.nlookup = nlookup;
->  
-> -	spin_lock(&fiq->lock);
-> -	if (fiq->connected) {
-> -		fiq->forget_list_tail->next = forget;
-> -		fiq->forget_list_tail = forget;
-> -		fiq->ops->wake_forget_and_unlock(fiq);
-> -	} else {
-> -		kfree(forget);
-> -		spin_unlock(&fiq->lock);
-> -	}
-> +	fiq->ops->send_forget(fiq, forget);
->  }
->  
->  static void flush_bg_queue(struct fuse_conn *fc)
-> @@ -263,9 +312,7 @@ static void flush_bg_queue(struct fuse_conn *fc)
->  		req = list_first_entry(&fc->bg_queue, struct fuse_req, list);
->  		list_del(&req->list);
->  		fc->active_background++;
-> -		spin_lock(&fiq->lock);
-> -		req->in.h.unique = fuse_get_unique(fiq);
-> -		queue_request_and_unlock(fiq, req);
-> +		fuse_send_one(fiq, req);
->  	}
->  }
->  
-> @@ -335,29 +382,12 @@ static int queue_interrupt(struct fuse_req *req)
->  {
->  	struct fuse_iqueue *fiq = &req->fm->fc->iq;
->  
-> -	spin_lock(&fiq->lock);
->  	/* Check for we've sent request to interrupt this req */
-> -	if (unlikely(!test_bit(FR_INTERRUPTED, &req->flags))) {
-> -		spin_unlock(&fiq->lock);
-> +	if (unlikely(!test_bit(FR_INTERRUPTED, &req->flags)))
->  		return -EINVAL;
-> -	}
->  
-> -	if (list_empty(&req->intr_entry)) {
-> -		list_add_tail(&req->intr_entry, &fiq->interrupts);
-> -		/*
-> -		 * Pairs with smp_mb() implied by test_and_set_bit()
-> -		 * from fuse_request_end().
-> -		 */
-> -		smp_mb();
-> -		if (test_bit(FR_FINISHED, &req->flags)) {
-> -			list_del_init(&req->intr_entry);
-> -			spin_unlock(&fiq->lock);
-> -			return 0;
-> -		}
-> -		fiq->ops->wake_interrupt_and_unlock(fiq);
-> -	} else {
-> -		spin_unlock(&fiq->lock);
-> -	}
-> +	fiq->ops->send_interrupt(fiq, req);
-> +
->  	return 0;
->  }
->  
-> @@ -412,21 +442,15 @@ static void __fuse_request_send(struct fuse_req *req)
->  	struct fuse_iqueue *fiq = &req->fm->fc->iq;
->  
->  	BUG_ON(test_bit(FR_BACKGROUND, &req->flags));
-> -	spin_lock(&fiq->lock);
-> -	if (!fiq->connected) {
-> -		spin_unlock(&fiq->lock);
-> -		req->out.h.error = -ENOTCONN;
-> -	} else {
-> -		req->in.h.unique = fuse_get_unique(fiq);
-> -		/* acquire extra reference, since request is still needed
-> -		   after fuse_request_end() */
-> -		__fuse_get_request(req);
-> -		queue_request_and_unlock(fiq, req);
->  
-> -		request_wait_answer(req);
-> -		/* Pairs with smp_wmb() in fuse_request_end() */
-> -		smp_rmb();
-> -	}
-> +	/* acquire extra reference, since request is still needed after
-> +	   fuse_request_end() */
-> +	__fuse_get_request(req);
-> +	fuse_send_one(fiq, req);
-> +
-> +	request_wait_answer(req);
-> +	/* Pairs with smp_wmb() in fuse_request_end() */
-> +	smp_rmb();
->  }
->  
->  static void fuse_adjust_compat(struct fuse_conn *fc, struct fuse_args *args)
-> @@ -581,7 +605,6 @@ static int fuse_simple_notify_reply(struct fuse_mount *fm,
->  {
->  	struct fuse_req *req;
->  	struct fuse_iqueue *fiq = &fm->fc->iq;
-> -	int err = 0;
->  
->  	req = fuse_get_req(fm, false);
->  	if (IS_ERR(req))
-> @@ -592,16 +615,9 @@ static int fuse_simple_notify_reply(struct fuse_mount *fm,
->  
->  	fuse_args_to_req(req, args);
->  
-> -	spin_lock(&fiq->lock);
-> -	if (fiq->connected) {
-> -		queue_request_and_unlock(fiq, req);
-> -	} else {
-> -		err = -ENODEV;
-> -		spin_unlock(&fiq->lock);
-> -		fuse_put_request(req);
-> -	}
-> +	fuse_send_one(fiq, req);
->  
-> -	return err;
-> +	return 0;
->  }
->  
->  /*
-> @@ -1076,9 +1092,9 @@ __releases(fiq->lock)
->  	return err ? err : reqsize;
->  }
->  
-> -struct fuse_forget_link *fuse_dequeue_forget(struct fuse_iqueue *fiq,
-> -					     unsigned int max,
-> -					     unsigned int *countp)
-> +static struct fuse_forget_link *fuse_dequeue_forget(struct fuse_iqueue *fiq,
-> +						    unsigned int max,
-> +						    unsigned int *countp)
->  {
->  	struct fuse_forget_link *head = fiq->forget_list_head.next;
->  	struct fuse_forget_link **newhead = &head;
-> @@ -1097,7 +1113,6 @@ struct fuse_forget_link *fuse_dequeue_forget(struct fuse_iqueue *fiq,
->  
->  	return head;
->  }
-> -EXPORT_SYMBOL(fuse_dequeue_forget);
->  
->  static int fuse_read_single_forget(struct fuse_iqueue *fiq,
->  				   struct fuse_copy_state *cs,
-> @@ -1112,7 +1127,7 @@ __releases(fiq->lock)
->  	struct fuse_in_header ih = {
->  		.opcode = FUSE_FORGET,
->  		.nodeid = forget->forget_one.nodeid,
-> -		.unique = fuse_get_unique(fiq),
-> +		.unique = fuse_get_unique_locked(fiq),
->  		.len = sizeof(ih) + sizeof(arg),
->  	};
->  
-> @@ -1143,7 +1158,7 @@ __releases(fiq->lock)
->  	struct fuse_batch_forget_in arg = { .count = 0 };
->  	struct fuse_in_header ih = {
->  		.opcode = FUSE_BATCH_FORGET,
-> -		.unique = fuse_get_unique(fiq),
-> +		.unique = fuse_get_unique_locked(fiq),
->  		.len = sizeof(ih) + sizeof(arg),
->  	};
->  
-> @@ -1822,7 +1837,7 @@ static void fuse_resend(struct fuse_conn *fc)
->  	spin_lock(&fiq->lock);
->  	/* iq and pq requests are both oldest to newest */
->  	list_splice(&to_queue, &fiq->pending);
-> -	fiq->ops->wake_pending_and_unlock(fiq);
-> +	fuse_dev_wake_and_unlock(fiq);
->  }
->  
->  static int fuse_notify_resend(struct fuse_conn *fc)
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index f23919610313..33b21255817e 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -449,22 +449,19 @@ struct fuse_iqueue;
->   */
->  struct fuse_iqueue_ops {
->  	/**
-> -	 * Signal that a forget has been queued
-> +	 * Send one forget
->  	 */
-> -	void (*wake_forget_and_unlock)(struct fuse_iqueue *fiq)
-> -		__releases(fiq->lock);
-> +	void (*send_forget)(struct fuse_iqueue *fiq, struct fuse_forget_link *link);
->  
->  	/**
-> -	 * Signal that an INTERRUPT request has been queued
-> +	 * Send interrupt for request
->  	 */
-> -	void (*wake_interrupt_and_unlock)(struct fuse_iqueue *fiq)
-> -		__releases(fiq->lock);
-> +	void (*send_interrupt)(struct fuse_iqueue *fiq, struct fuse_req *req);
->  
->  	/**
-> -	 * Signal that a request has been queued
-> +	 * Send one request
->  	 */
-> -	void (*wake_pending_and_unlock)(struct fuse_iqueue *fiq)
-> -		__releases(fiq->lock);
-> +	void (*send_req)(struct fuse_iqueue *fiq, struct fuse_req *req);
->  
->  	/**
->  	 * Clean up when fuse_iqueue is destroyed
-> @@ -1053,10 +1050,6 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
->  
->  struct fuse_forget_link *fuse_alloc_forget(void);
->  
-> -struct fuse_forget_link *fuse_dequeue_forget(struct fuse_iqueue *fiq,
-> -					     unsigned int max,
-> -					     unsigned int *countp);
-> -
->  /*
->   * Initialize READ or READDIR request
->   */
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 1a52a51b6b07..690e508dbc4d 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -1089,22 +1089,13 @@ static struct virtio_driver virtio_fs_driver = {
->  #endif
->  };
->  
-> -static void virtio_fs_wake_forget_and_unlock(struct fuse_iqueue *fiq)
-> -__releases(fiq->lock)
-> +static void virtio_fs_send_forget(struct fuse_iqueue *fiq, struct fuse_forget_link *link)
->  {
-> -	struct fuse_forget_link *link;
->  	struct virtio_fs_forget *forget;
->  	struct virtio_fs_forget_req *req;
-> -	struct virtio_fs *fs;
-> -	struct virtio_fs_vq *fsvq;
-> -	u64 unique;
-> -
-> -	link = fuse_dequeue_forget(fiq, 1, NULL);
-> -	unique = fuse_get_unique(fiq);
-> -
-> -	fs = fiq->priv;
-> -	fsvq = &fs->vqs[VQ_HIPRIO];
-> -	spin_unlock(&fiq->lock);
-> +	struct virtio_fs *fs = fiq->priv;
-> +	struct virtio_fs_vq *fsvq = &fs->vqs[VQ_HIPRIO];
-> +	u64 unique = fuse_get_unique(fiq);
->  
->  	/* Allocate a buffer for the request */
->  	forget = kmalloc(sizeof(*forget), GFP_NOFS | __GFP_NOFAIL);
-> @@ -1124,8 +1115,7 @@ __releases(fiq->lock)
->  	kfree(link);
->  }
->  
-> -static void virtio_fs_wake_interrupt_and_unlock(struct fuse_iqueue *fiq)
-> -__releases(fiq->lock)
-> +static void virtio_fs_send_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
->  {
->  	/*
->  	 * TODO interrupts.
-> @@ -1134,7 +1124,6 @@ __releases(fiq->lock)
->  	 * Exceptions are blocking lock operations; for example fcntl(F_SETLKW)
->  	 * with shared lock between host and guest.
->  	 */
-> -	spin_unlock(&fiq->lock);
->  }
->  
->  /* Count number of scatter-gather elements required */
-> @@ -1339,21 +1328,17 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
->  	return ret;
->  }
->  
-> -static void virtio_fs_wake_pending_and_unlock(struct fuse_iqueue *fiq)
-> -__releases(fiq->lock)
-> +static void virtio_fs_send_req(struct fuse_iqueue *fiq, struct fuse_req *req)
->  {
->  	unsigned int queue_id;
->  	struct virtio_fs *fs;
-> -	struct fuse_req *req;
->  	struct virtio_fs_vq *fsvq;
->  	int ret;
->  
-> -	WARN_ON(list_empty(&fiq->pending));
-> -	req = list_last_entry(&fiq->pending, struct fuse_req, list);
-> +	if (req->in.h.opcode != FUSE_NOTIFY_REPLY)
-> +		req->in.h.unique = fuse_get_unique(fiq);
-> +
->  	clear_bit(FR_PENDING, &req->flags);
-> -	list_del_init(&req->list);
-> -	WARN_ON(!list_empty(&fiq->pending));
-> -	spin_unlock(&fiq->lock);
->  
->  	fs = fiq->priv;
->  	queue_id = VQ_REQUEST + fs->mq_map[raw_smp_processor_id()];
-> @@ -1393,10 +1378,10 @@ __releases(fiq->lock)
->  }
->  
->  static const struct fuse_iqueue_ops virtio_fs_fiq_ops = {
-> -	.wake_forget_and_unlock		= virtio_fs_wake_forget_and_unlock,
-> -	.wake_interrupt_and_unlock	= virtio_fs_wake_interrupt_and_unlock,
-> -	.wake_pending_and_unlock	= virtio_fs_wake_pending_and_unlock,
-> -	.release			= virtio_fs_fiq_release,
-> +	.send_forget	= virtio_fs_send_forget,
-> +	.send_interrupt	= virtio_fs_send_interrupt,
-> +	.send_req	= virtio_fs_send_req,
-> +	.release	= virtio_fs_fiq_release,
->  };
->  
->  static inline void virtio_fs_ctx_set_defaults(struct fuse_fs_context *ctx)
-> -- 
-> 2.45.1
-> 
 
