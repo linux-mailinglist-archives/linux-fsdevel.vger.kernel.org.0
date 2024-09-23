@@ -1,180 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-29818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0011B97E519
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 05:47:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF8397E57B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 06:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA2C1C21183
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 03:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074691F21696
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 04:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DA2C13D;
-	Mon, 23 Sep 2024 03:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C9312B63;
+	Mon, 23 Sep 2024 04:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RJzk2GuE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b3I0p6Wm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229F38BE5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 03:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57CB17597;
+	Mon, 23 Sep 2024 04:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727063257; cv=none; b=jkfXePuPK2lmcyJc8nnSUMznNoSyZjhChiwwHNPsgz6DVH8n0JoKRASfW9uUF87jvwrH1sDk/Hm0mr7Xvbl6H7JJz0IiHo6k8gltcldYjsSgUZqxZABDfLo56te1N8uYievVh9wPYNzjeUs+x7xuUqxkhOAvMKx4J2JG5F/4D9k=
+	t=1727066713; cv=none; b=PEJKeC2IxScmS1I4JdWAHVyWzFVKzBtImcMcqMudS4mIu++qsJ5PZy39S2w4OWPNlzfKS1PamsEWu7Co9vbJ0uP0FTBEQHVBAHvEGM80boksFbIXWzh+7hG5u6uJHmzYhpaSczO5XxflC6CBE5Q4Vx55qmTbMndeYWR0Vk98lCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727063257; c=relaxed/simple;
-	bh=Sv/jD0fZCSwkcUwFZdGymClVqS4fpXg6kENcSrpO3ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pXv4vqFozehx032tYn8uGMK3kDZcInrWe2wMvcbAtyDeH/YhrTxXImgCk31ru4KDBLZROQdoHyvu1G3lM4VRzUVQ5j6YJxn6mkuIQiYqoIeLltjVp2bOvuwxAQCf4p4d2W6YgPBYNPNtTziMPTjZ2MD6fn6SJKbuHzD9yGV/n3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RJzk2GuE; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=9pCDagEez+9lI4kdXZalDF4XXF5uPrfqKLYWacXGsVQ=; b=RJzk2GuEwjYuKQRcT5tboI6f9e
-	dzG5vu7bQHvFI0rXN6ZT0IC3dxofmg6zl43Rn5RP0WkeM0stiMR98N5mMIpP9T7A7+Ay9c2L3LP2m
-	LXODTTN8q/t6BtY3n30RpoM3ze4BlEsUZTHnhAFxpyS4xWEp4M1M/SO2RGwrQEBRL7w7LP2Yrb+cF
-	drxvy2RBQ+qqSgABOYk0UqYGb8M1QqpMoAb7N81owTI7QorrYW07v03DagB1pZRe0+fyYi0B4jPj7
-	l202fGeOxCIsUmY20bt3h9wUP7BJnaH/LcNowYTWIJxAtEePKAQOXoI8dm2Wh2Cg85nKQePqOpVTY
-	MabV5QEw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1ssa2t-0000000EmYj-3zrw;
-	Mon, 23 Sep 2024 03:47:31 +0000
-Date: Mon, 23 Sep 2024 04:47:31 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [git pull] struct fd layout changes
-Message-ID: <20240923034731.GF3413968@ZenIV>
+	s=arc-20240116; t=1727066713; c=relaxed/simple;
+	bh=H4lW2GbrSxIbifL9QDRCmNx0sdIMaESBWAmbtjAnK4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DAwZM69QBX7J3ysxQvVXNKWNDZBpvpcW5bb8uFXFigltBLv7mushEC7fOryJ+u94u+StCqGH0edh2/RbL3QGpoba8IjCHfvRUZqqGQsj9Vo/mAQ8W1BR9ZKQUGNdaIfHnXadDxEYEcoMtvhiSc3fkqaHtBh9VwVEiWhrI/UuNMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b3I0p6Wm; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-45821eb62daso25259931cf.3;
+        Sun, 22 Sep 2024 21:45:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727066710; x=1727671510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W+UDAv8JUuD8CeMJd4evn90rK4F2VqQSJxb+UyTjTm0=;
+        b=b3I0p6WmNrwKGJ4sfxuW7MeXFGb3nn/OLfH/psGZ51qTb49NjXK7vD0PGVooXUgmMK
+         tDI3uEkbblLizqbU8ANdql0mxIlME2aMUlWIhcORNxn8pi3gCbNfuNmIEMwfDVszUkQB
+         ry/zxz3dIZwjVj+DfgkfEPmZW+stRw5zkigXalLyfoIMFb3wo+tALnnjbd/Fby9NmmlG
+         qg6/11btFxwURX7gIg0059dgdfk1u3V7yVVubRF0zAQdFND5RUC0tVVVO6rlD9mQzJmr
+         J5UFD6Nylf4QuxHWBWo84vn9/T7YT5cruaNq8vRnhYWrGciifMhbQgCHaN4qzizEDanw
+         SFuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727066710; x=1727671510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W+UDAv8JUuD8CeMJd4evn90rK4F2VqQSJxb+UyTjTm0=;
+        b=SjxqGP08MimWLYrwZkN142GM+OVoG+OlDcfj4+q9SKKsD1pgTRjo/r03Q7e4Sqcii5
+         FKWkdta7RKSkgxQBvxFaKcbPBVHj3pIKXtGzF2PPTElJDVdjncqp68hAxJjNpTQgnqeZ
+         +A/a/FY7TrKDyER8FY1liwTG+STNydOqm/OuSbnSwZnbQGi58qpxaega/CxBjuUXVkjv
+         1pKsNRRTEX6VChqTk0J8SBwjBnN8R+6mF1cGMbq5IB7Y61J5NSPjx5RfzuxBXZIDn7Qv
+         s0fF22dz14W0Xpwkc/bq36VOHIJuc9BPFMhSJyqJezfASEFnJ86TQU/RI8VLRR0Tp3zn
+         iOYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZux5oUGaLSjb1rMEajU/kZOC6LRrCEjJXaHdYS0D5PD/ewFBqtiLbO37Ob8z8/GwkaVrdQc+/@vger.kernel.org, AJvYcCXsEfTDMvm2kKlKoDBL8gigcg8gyMmyOJw0W464UoK4+3RfvThlPCCra6C0goIi0PQXetHKQzNGLG1W3uJoTQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5wniMrl6Wi6QJAirOkPBaPiOBQQ3kZiKaDMutRAJBwXCX4jS
+	K0lyjw8hXG3PFue83rP8HnO1pVk8cvi/PrOTI5zTQu82Mejpr4PyiBO7vHplQvVYnyGFLkgnv2j
+	LyFZzyPrZxjRWHsD0po7dW7yCPw0=
+X-Google-Smtp-Source: AGHT+IFCUNNKXhR8Wyqn9c0M40t2qOE+oiVeSi6DK0gS1TmMT+a2pTIlUG58PCLyvyT4IagFnjfHia6qd2C0LPYglKA=
+X-Received: by 2002:a05:622a:15d5:b0:453:1afe:c711 with SMTP id
+ d75a77b69052e-45b2050e59emr121771071cf.28.1727066710497; Sun, 22 Sep 2024
+ 21:45:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240829165627.2256514-1-david@redhat.com> <20240829165627.2256514-2-david@redhat.com>
+In-Reply-To: <20240829165627.2256514-2-david@redhat.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Mon, 23 Sep 2024 12:44:59 +0800
+Message-ID: <CABzRoyb3zNKPKCSWzdK8uy81pzf8MB_-4-kCCAoTeoPHD5tExA@mail.gmail.com>
+Subject: Re: [PATCH v1 01/17] mm: factor out large folio handling from
+ folio_order() into folio_large_order()
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-	Just the layout change and conversion to accessors (invariable
-branch in vfs.git#stable-struct_fd).
+On Fri, Aug 30, 2024 at 12:57=E2=80=AFAM David Hildenbrand <david@redhat.co=
+m> wrote:
+>
+> Let's factor it out into a simple helper function. This helper will
+> also come in handy when working with code where we know that our
+> folio is large.
+>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-	One textual conflict (fs/coda/inode.c, resolved by using the current
-mainline variant) and two conflicts that are not caught by merge - one in
-fs/namespace.c, another - fs/xfs/xfs_exchrange.c; both resolved by replacing
-if (!f.file) with if (fd_empty(f)) and other f.file with fd_file(f).
+LGTM. Feel feel to add:
 
-	Proposed conflict resolution in 
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #merge-candidate
+Reviewed-by: Lance Yang <ioworker0@gmail.com>
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+Thanks,
+Lance
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-stable-struct_fd
-
-for you to fetch changes up to de12c3391bce10504c0e7bd767516c74110cfce1:
-
-  add struct fd constructors, get rid of __to_fd() (2024-08-12 22:01:15 -0400)
-
-----------------------------------------------------------------
-struct fd layout change (and conversion to accessor helpers)
-
-----------------------------------------------------------------
-Al Viro (3):
-      introduce fd_file(), convert all accessors to it.
-      struct fd: representation change
-      add struct fd constructors, get rid of __to_fd()
-
- arch/alpha/kernel/osf_sys.c                |   4 +-
- arch/arm/kernel/sys_oabi-compat.c          |  10 +--
- arch/powerpc/kvm/book3s_64_vio.c           |   4 +-
- arch/powerpc/kvm/powerpc.c                 |  12 +--
- arch/powerpc/platforms/cell/spu_syscalls.c |   8 +-
- arch/x86/kernel/cpu/sgx/main.c             |   4 +-
- arch/x86/kvm/svm/sev.c                     |  16 ++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c  |   8 +-
- drivers/gpu/drm/drm_syncobj.c              |   6 +-
- drivers/infiniband/core/ucma.c             |   6 +-
- drivers/infiniband/core/uverbs_cmd.c       |  10 +--
- drivers/media/mc/mc-request.c              |   6 +-
- drivers/media/rc/lirc_dev.c                |   8 +-
- drivers/vfio/group.c                       |   6 +-
- drivers/vfio/virqfd.c                      |   6 +-
- drivers/virt/acrn/irqfd.c                  |   6 +-
- drivers/xen/privcmd.c                      |  10 +--
- fs/btrfs/ioctl.c                           |   4 +-
- fs/coda/inode.c                            |   4 +-
- fs/eventfd.c                               |   4 +-
- fs/eventpoll.c                             |  30 ++++----
- fs/ext4/ioctl.c                            |   6 +-
- fs/f2fs/file.c                             |   6 +-
- fs/fcntl.c                                 |  38 +++++-----
- fs/fhandle.c                               |   4 +-
- fs/file.c                                  |  26 +++----
- fs/fsopen.c                                |   6 +-
- fs/fuse/dev.c                              |   6 +-
- fs/ioctl.c                                 |  30 ++++----
- fs/kernel_read_file.c                      |   4 +-
- fs/locks.c                                 |  14 ++--
- fs/namei.c                                 |  10 +--
- fs/namespace.c                             |  12 +--
- fs/notify/fanotify/fanotify_user.c         |  12 +--
- fs/notify/inotify/inotify_user.c           |  12 +--
- fs/ocfs2/cluster/heartbeat.c               |   6 +-
- fs/open.c                                  |  24 +++---
- fs/overlayfs/file.c                        |  68 +++++++++--------
- fs/quota/quota.c                           |   8 +-
- fs/read_write.c                            | 118 ++++++++++++++---------------
- fs/readdir.c                               |  20 ++---
- fs/remap_range.c                           |   2 +-
- fs/select.c                                |   8 +-
- fs/signalfd.c                              |   6 +-
- fs/smb/client/ioctl.c                      |   8 +-
- fs/splice.c                                |  22 +++---
- fs/stat.c                                  |   8 +-
- fs/statfs.c                                |   4 +-
- fs/sync.c                                  |  14 ++--
- fs/timerfd.c                               |   8 +-
- fs/utimes.c                                |   4 +-
- fs/xattr.c                                 |  36 ++++-----
- fs/xfs/xfs_exchrange.c                     |   4 +-
- fs/xfs/xfs_handle.c                        |   6 +-
- fs/xfs/xfs_ioctl.c                         |  28 +++----
- include/linux/cleanup.h                    |   2 +-
- include/linux/file.h                       |  53 ++++++-------
- io_uring/sqpoll.c                          |  10 +--
- ipc/mqueue.c                               |  50 ++++++------
- kernel/bpf/bpf_inode_storage.c             |  14 ++--
- kernel/bpf/btf.c                           |   6 +-
- kernel/bpf/syscall.c                       |  42 +++++-----
- kernel/bpf/token.c                         |  10 +--
- kernel/cgroup/cgroup.c                     |   4 +-
- kernel/events/core.c                       |  14 ++--
- kernel/module/main.c                       |   2 +-
- kernel/nsproxy.c                           |  12 +--
- kernel/pid.c                               |  10 +--
- kernel/signal.c                            |   6 +-
- kernel/sys.c                               |  10 +--
- kernel/taskstats.c                         |   4 +-
- kernel/watch_queue.c                       |   4 +-
- mm/fadvise.c                               |   4 +-
- mm/filemap.c                               |   6 +-
- mm/memcontrol-v1.c                         |  12 +--
- mm/readahead.c                             |  10 +--
- net/core/net_namespace.c                   |   6 +-
- net/socket.c                               |  14 ++--
- security/integrity/ima/ima_main.c          |   4 +-
- security/landlock/syscalls.c               |  22 +++---
- security/loadpin/loadpin.c                 |   4 +-
- sound/core/pcm_native.c                    |   6 +-
- virt/kvm/eventfd.c                         |   6 +-
- virt/kvm/vfio.c                            |   8 +-
- 84 files changed, 559 insertions(+), 556 deletions(-)
+> ---
+>  include/linux/mm.h | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index b31d4bdd65ad5..3c6270f87bdc3 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1071,6 +1071,11 @@ int vma_is_stack_for_current(struct vm_area_struct=
+ *vma);
+>  struct mmu_gather;
+>  struct inode;
+>
+> +static inline unsigned int folio_large_order(const struct folio *folio)
+> +{
+> +       return folio->_flags_1 & 0xff;
+> +}
+> +
+>  /*
+>   * compound_order() can be called without holding a reference, which mea=
+ns
+>   * that niceties like page_folio() don't work.  These callers should be
+> @@ -1084,7 +1089,7 @@ static inline unsigned int compound_order(struct pa=
+ge *page)
+>
+>         if (!test_bit(PG_head, &folio->flags))
+>                 return 0;
+> -       return folio->_flags_1 & 0xff;
+> +       return folio_large_order(folio);
+>  }
+>
+>  /**
+> @@ -1100,7 +1105,7 @@ static inline unsigned int folio_order(const struct=
+ folio *folio)
+>  {
+>         if (!folio_test_large(folio))
+>                 return 0;
+> -       return folio->_flags_1 & 0xff;
+> +       return folio_large_order(folio);
+>  }
+>
+>  #include <linux/huge_mm.h>
+> @@ -2035,7 +2040,7 @@ static inline long folio_nr_pages(const struct foli=
+o *folio)
+>  #ifdef CONFIG_64BIT
+>         return folio->_folio_nr_pages;
+>  #else
+> -       return 1L << (folio->_flags_1 & 0xff);
+> +       return 1L << folio_large_order(folio);
+>  #endif
+>  }
+>
+> @@ -2060,7 +2065,7 @@ static inline unsigned long compound_nr(struct page=
+ *page)
+>  #ifdef CONFIG_64BIT
+>         return folio->_folio_nr_pages;
+>  #else
+> -       return 1L << (folio->_flags_1 & 0xff);
+> +       return 1L << folio_large_order(folio);
+>  #endif
+>  }
+>
+> --
+> 2.46.0
+>
+>
 
