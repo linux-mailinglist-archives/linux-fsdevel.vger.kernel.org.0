@@ -1,96 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-29845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9014697ECD1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 16:07:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEA297ED5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 16:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21834B214C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 14:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D09D281B0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 14:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22CF19CC1F;
-	Mon, 23 Sep 2024 14:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B5712C526;
+	Mon, 23 Sep 2024 14:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="hhYytb/o"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mjmEVYwA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B27881AC6;
-	Mon, 23 Sep 2024 14:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0960076056;
+	Mon, 23 Sep 2024 14:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727100409; cv=none; b=I3kn6vTNUOrmYzzmL1GuTfW6NI1Q0VVHseOTYSLQM6EbOvVMIAmBXYo+nXR8rRjV83WJus5/7ueUC0KF//ADPvm421HTu9O6nia3TeQmrzITwVRjGSXfMXBSkbCwjCXD34b06AMWJ9o+rVdMWNhH6kLJZMWhiTiYix0NYJSMWRE=
+	t=1727102927; cv=none; b=SJ1WpfD3hy3Dj3k4YOle0xznxE0Ea320TEbpeao67TuYj9SBICjhrxNkvvRgpyYAF62zvf4DJYprL9zxGAFmm/JBH9pAYPN1pQ36DO5QKGd7NMKQ6W77ZRzUlgj+rhCYze1Y+Z+oBAFug+pfQpcJ2/5hhwVOmgh8REXedco7tf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727100409; c=relaxed/simple;
-	bh=amYk76ox76gJLUUut7K6mpi34lPE4CePWuLirmUPGAQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=qiFOFxVwNz4wvtDwhV7jdbe1MzmdCAjPe/3GAxXaBxc1YVtzJazxSbJnJF95WTB/nbZHdNfgzS7jP2aFg48HKkvuM0sY7qywim9l9e3vOaqy6VTxexy8sEAMa24pQ3rXDaQ/aGXUHDClwMzTyGuUI8X8ddbHJS7NBNmYvLJvHHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=hhYytb/o; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1727100392; bh=tEta8O3+3KmFyhduT/iL/N1Z/7jFQgZWLhvul/eqDVw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=hhYytb/ovDWeHpvnfCG1yrwqTbgabcR2KClHLeBRkNUNJD0oRMuoSBPdPau0o+a7N
-	 y4u+X9tMDtZvE8M9gOBwOdKT6NCuDINm+SP9NZVk9Y2ydrGcciGzmELMq3tMlyPuAQ
-	 X61dtw0RPbQs6zwJftlMmysKF00D/qHbFTKUjl+o=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 150B9038; Mon, 23 Sep 2024 22:05:16 +0800
-X-QQ-mid: xmsmtpt1727100316tbjv39guc
-Message-ID: <tencent_E58DB7922A5DF0DDAB19394FA78D84A5FC07@qq.com>
-X-QQ-XMAILINFO: NyTsQ4JOu2J29T6jwAe0wk440ePxrnwkamRGpbnOFtjdbWrBPgRgs5m//TIIG+
-	 49QMQ9brBDQJ0944GmTIP9QWwcOz/1eIA02aBGk0UJnGRkO3ccGmFWwP65+SF/2pmGaVI1iBy1zz
-	 tqK4hVNM3aglPTNeZOYOYFNiZotkM9vvizCYS5WHfxzRzmX05RSlmjzUdEILeg0yR7joGTT0x/86
-	 ssISIiSXXyUzxA6PHVuUNCiGGpZ4RMaU95PcO0fNqNJ/Jyk/r+a4SgrBsXmSR84Rh/Bb4OqJPmp2
-	 5HiwLCYnPAIjpR+qipvbokrd++21bUVI3buKmoh2Sjt9bAUkHqx/jWjJbcWCncKK0Y4okLjik5VG
-	 H2fVy7EkSssMW6K8ZoqEPkHr7uiqb8bHfDRSWIKwYIX9GY3ayhZ+mCCx17RdsfXYCNTCE/0fHlpI
-	 pfBAyCHz6NblBNhw+/6E0sFWZiG1+KZ5jR7g0K7tu5DU6HizKzvW1oCvKAN+Dmg18LKX9PoN1RG1
-	 NU166g2GuECZhHgE/E04aYzuOB9lPj8kz6ja1OAhwc4iUN5Y8GrhLkbzVn9Ii6lACwtMpmX0lx5/
-	 OgpKZtaupeyM9QOGRG823jSesyBncNIej6oZk33sfn68bCOh58POPr3GRoIGyIj9deCat9KTFs3y
-	 +YNdNJJsR4djw5ZRk7l/tLTlDMbp2RYyhEWnJqwVBuO1gDncxd1TE+3kAVNcuvHWC/LGA8c9xtbU
-	 UCzCI2vMRgBSJu+he4f+ZcEXihD6/ReQJnpejnRescBYsVPVPvdesFK4I+cLhXa+8MJW0uNtTz4m
-	 QTj+VWHCauiJ3iGkxRhumnIRrG5TwLXQQSXjrvaGGxewHv0hBdkH24fWtLUn97sV9rUVtacX371+
-	 /E4mdGw59jKLCyP1A2933soJJEQ8iXbS/jMdqVR18jj/64VsVtp+P04nOC3ANIWg==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_iget
-Date: Mon, 23 Sep 2024 22:05:17 +0800
-X-OQ-MSGID: <20240923140516.2437463-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <66f11c57.050a0220.c23dd.000b.GAE@google.com>
-References: <66f11c57.050a0220.c23dd.000b.GAE@google.com>
+	s=arc-20240116; t=1727102927; c=relaxed/simple;
+	bh=EhpXs2M7C4l+N3EjpvmcNP9axElbk0sRkPBOPzG2oyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LlO/UJtvMyeyVBadbsQTDQyEMGSznKcuDFeHHYa1TWlzy5sx9wJ/kFiTI7+FZ185kwOmyjlPoXqGpCEqveq8GhQfgFGKIC/5m2sTERgZVGMcZrl2RQJPnjZWvz6BGg23tf3XcWWRZkbWgD/rCD6AbwZVBjcPIb9fW8Dop7vL8JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mjmEVYwA; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BNgewA9YeKWfGeEjE8HGltZneaOAbMnY+HPJeabU/pA=; b=mjmEVYwAwch7/YJ3dDArUg4R7v
+	dhnrYmz4DzBPEdUTu1FUZ0Yze+TGfwdwHsC4obXYlrWOZDhhmORRAlF4z3vN+bJgqHt8IyEt8/Ivf
+	IescV0yUfMqlVP1yuXMPEmuEPkOrWr3fxXpUgmuByWgSz0ZiJuljhEqKyyVS2wMZFXl6sZPUd+Ed3
+	xL2IXC17UfoS1e7vy0c5PkTJroNQxp6mebn1bNDPuPpw9bliI2xSaCmvcvVAOrsvTS9hLTyZx4HWW
+	BpGpQVqnYjXhRoC+ySqS9P4tm5Sik2mlx58pQOOymXKnF5PXJgUJgImRMtIdRHh1OG0I/xREf5aKe
+	QNObSzzw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sskMj-0000000EuKA-3rDr;
+	Mon, 23 Sep 2024 14:48:41 +0000
+Date: Mon, 23 Sep 2024 15:48:41 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+	audit@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+Message-ID: <20240923144841.GA3550746@ZenIV>
+References: <20240922004901.GA3413968@ZenIV>
+ <20240923015044.GE3413968@ZenIV>
+ <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
+ <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-When the read data is insufficient to fill the rec, use 0 to fill it
+On Mon, Sep 23, 2024 at 08:54:03AM -0400, Paul Moore wrote:
+> [Sorry for the delay, between flying back home, and just not wanting
+> to think about the kernel for a day, I took the weekend "off".]
+> 
+> Jens and I have talked about similar issues in the past, and I think
+> the only real solution to ensure the correctness of the audit records
+> and provide some consistency between the io_uring approach and
+> traditional syscalls, is to introduce a mechanism where we
+> create/clone an audit_context in the io_uring prep stage to capture
+> things like PATH records, stash that audit_context in the io_kiocb
+> struct, and then restore it later when io_uring does/finishes the
+> operation.  I'm reasonably confident that we don't need to do it for
+> all of the io_uring ops, just the !audit_skip case.
+> 
+> I'm always open to ideas, but everything else I can think of is either
+> far too op-specific to be maintainable long term, a performance
+> nightmare, or just plain wrong with respect to the audit records.
+> 
+> I keep hoping to have some time to code it up properly, but so far
+> this year has been an exercise in "I'll just put this fire over here
+> with the other fire".  Believe it or not, this is at the top of my
+> TODO list, perhaps this week I can dedicate some time to this.
 
-#syz test
+What are the requirements regarding the order of audit_names in
+the ->names_list?  I really don't like the idea of having struct filename
+tied to audit_context - io_uring is not the only context where it might
+make sense to treat struct filename as first-class citizens.
 
-diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-index ef9498a6e88a..f0292b76e3d4 100644
---- a/fs/hfs/bfind.c
-+++ b/fs/hfs/bfind.c
-@@ -168,6 +168,8 @@ int hfs_brec_read(struct hfs_find_data *fd, void *rec, int rec_len)
- 	if (fd->entrylength > rec_len)
- 		return -EINVAL;
- 	hfs_bnode_read(fd->bnode, rec, fd->entryoffset, fd->entrylength);
-+	if (rec_len > fd->entrylength)
-+		memset(rec + fd->entrylength, 0, rec_len - fd->entrylength);
- 	return 0;
- }
- 
+And having everything that passed through getname()/getname_kernel()
+shoved into ->names_list leads to very odd behaviour, especially with
+audit_names conversions in audit_inode()/audit_inode_child().
 
+Look at the handling of AUDIT_DEV{MAJOR,MINOR} or AUDIT_OBJ_{UID,GID}
+or AUDIT_COMPARE_..._TO_OBJ; should they really apply to audit_names
+resulting from copying the symlink body into the kernel?  And if they
+should be applied to audit_names instance that had never been associated
+with any inode, should that depend upon the string in those being
+equal to another argument of the same syscall?
+
+I'm going through the kernel/auditsc.c right now, but it's more of
+a "document what it does" - I don't have the specs and I certainly
+don't remember such details.
 
