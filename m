@@ -1,212 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-29834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B3097E7ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 10:54:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC1697E840
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 11:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D2F1F21E9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 08:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A785281AF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 09:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09EE19415D;
-	Mon, 23 Sep 2024 08:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1C8194A4C;
+	Mon, 23 Sep 2024 09:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lk7oGuWS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mh49yuCJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lk7oGuWS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mh49yuCJ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UHm69EB+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EF449649;
-	Mon, 23 Sep 2024 08:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCF244C8C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 09:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727081646; cv=none; b=kXB35HisMUmkbpNhEGqQrSqnTS4oll7Pte/h94MSFU/Bm68aGKfd2s2CaUO/O21ENWe8qEVt/MA8ir0UFbRLZp1WHPrRHDmmeC6jgN7XwYZ21ZAlZ0klFbPUwBy6ZwqBMbFynASXHoDWjqFXTE5aQXv4BNZ3puNDzP24UXT64OI=
+	t=1727082635; cv=none; b=BL7dQ6xsniAl2jWy18xlz/7J45T1Z78sHtKvro07FGgC/zZw5rErExL99NhPftPzYUUadXZgY7YlC3wCDyQ3OvnnEzVBjUgI+EmgaW6hTM+Fol0M/srJSeffo7OF4oy3pVZBMVbPIJ+gPyhaGREsuxCLak6n6/KP0ws37AR+rk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727081646; c=relaxed/simple;
-	bh=O7powSMYV53/q5xvNeAigkdmWUjsqYWO0CqysN5jlAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6m9jG8pswH/6lccuhqqkoJIgvoC/SW9IdP/L/88NAV8VwWA60OcPKbw+01IJY3y0XUFL2ix369vVPVpoSon9eLz2d6MBMyIUjdcpKyqqvIWOf6KkpohxvI6LO/ex8zLIiQmIouqu7HA8yvh702KEndks+8G5xELE4tIjWUGxZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lk7oGuWS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mh49yuCJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lk7oGuWS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mh49yuCJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ADA971F7A5;
-	Mon, 23 Sep 2024 08:54:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727081642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=In9SJZ6ZHi06A9k5Lxyf47PBCyy9O7DDkMytyeOolwg=;
-	b=Lk7oGuWSPr629D/kdVE8FNC0heaRHAYy+/wCjcrL4lgvAFl5dzhXq07aEwjgXEV+OwWW7Q
-	M5KGQDAhyKIcJPVFh3zOzR5RJmR9YkzUzffc/FABfsVdsCC9Y8C/uvvuyTukWiWaEVB3uw
-	m618x6ktaKgqOtbCwyY1ylehIaQv9Ns=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727081642;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=In9SJZ6ZHi06A9k5Lxyf47PBCyy9O7DDkMytyeOolwg=;
-	b=Mh49yuCJKZ+7ri1WkowjZsyZK6BVIANAVCZ6uPCA5XeshdHvCUPB0eCuF8VQSsDgPphdXQ
-	6enX+Tbu5VqPEICg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727081642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=In9SJZ6ZHi06A9k5Lxyf47PBCyy9O7DDkMytyeOolwg=;
-	b=Lk7oGuWSPr629D/kdVE8FNC0heaRHAYy+/wCjcrL4lgvAFl5dzhXq07aEwjgXEV+OwWW7Q
-	M5KGQDAhyKIcJPVFh3zOzR5RJmR9YkzUzffc/FABfsVdsCC9Y8C/uvvuyTukWiWaEVB3uw
-	m618x6ktaKgqOtbCwyY1ylehIaQv9Ns=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727081642;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=In9SJZ6ZHi06A9k5Lxyf47PBCyy9O7DDkMytyeOolwg=;
-	b=Mh49yuCJKZ+7ri1WkowjZsyZK6BVIANAVCZ6uPCA5XeshdHvCUPB0eCuF8VQSsDgPphdXQ
-	6enX+Tbu5VqPEICg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9519A13A64;
-	Mon, 23 Sep 2024 08:54:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WWZiJKos8WaydgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 23 Sep 2024 08:54:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 577EFA0ABF; Mon, 23 Sep 2024 10:54:02 +0200 (CEST)
-Date: Mon, 23 Sep 2024 10:54:02 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 10/10] ext4: factor out a common helper to lock and
- flush data before fallocate
-Message-ID: <20240923085402.amto7pryy67eadpj@quack3>
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-11-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1727082635; c=relaxed/simple;
+	bh=uPgZlCyKgHfBNlGgGtBBy44h+xASjg0WLpo+j35SnPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jUNvMUc5qycRYoOHQYHutsYwfEqBKNQ2jWtwM0pjv6Tu27xekE/rPwFd5Cp3HDZAIyLweGiRM5cq4irARp+4BvVgN3KTZHk/1oLXAQIVjQPbqL6mCj8gYTjMJjENsfYPYhZvSMCvLwzp8EzC0APnkDjKELrgDVNG3BkUnp8F9fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UHm69EB+; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75f116d11so37963991fa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 02:10:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727082632; x=1727687432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pTh3TINkxBJWpdvT07eZ7FGsjAZzFnLti1KSAZnm+A0=;
+        b=UHm69EB+GGCnZOwV3aue1IKtlkedL+Vqb5Ikziy+O3XhoYtWpzl42F/OQCziYnhXG+
+         3//7FNsK8Pr6R6qxIn6ofwBa2U9zUjxFI1QLPNnkGn3dm+Mz8Rk/8DDdraw3YuOC0eQE
+         PUQPvO5OVJIPBKgQj0VWVAdnToUZ3DluQvQGAKjdpm/OzkhTStxsbAfKFZ5a9blfxowT
+         amAv7qhFZ+K5B8QPCrB58tXOqTnzN+ClMAnpiBUocl2QWzlZGb8NrjpimW9lcYofpSyp
+         Uwom+R/gHgbVWzKSAnoHB2c7eZJRV20IpGkfFMPkd1gZtoOq4hxpV1dXz72BAgWrzYPb
+         ybrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727082632; x=1727687432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pTh3TINkxBJWpdvT07eZ7FGsjAZzFnLti1KSAZnm+A0=;
+        b=vkRiWyj2nxqlDulH4dcf/Uxi0BZm7qzvpQj2yAY5q/HfjFigDM0iFrd5q+y1ioDNBs
+         hPHXyhUMvR6oCe+jhgoRuShrdPu7IJ2CAbtjIRAKLnRxb9S7id1EMThxjbTfkYXtRAxe
+         /c2HUPkOAoo6nyzs7rjh9GVarDlmV61TdetqG6EdcF4FKKwtGOeXg7OmpvO/D/ZsNboy
+         D2R5sUvj92lexwFOAj2VEjeNshnLp5XndbHzh1X1978QjYzzoUpsOw1SsZXSN9jbIh2y
+         S2xDFjpVGO1IA9+dZB7BoDfhOKXA0QlxjxNg5Cd50wA1x5D1qCXmojTv2RHTQDicJn/G
+         Nf9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVvOh4MtNZVcXfncWmjK1bG7CWjaoD4YXs1kii3yaWtnCS3se2gTYY2+QJZQDm5cLzssRPiXabKlj3996c/@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuTD+Lkge9Jw333UnxQdS6mJdistxcKnqRDKez/wQiDvYWVEUV
+	ykNEbhGumy/dfMja0ft8gQ3hAhfoYIgzy487YK36jzMms3ut9cV0jtuaHs3jBHAs2U+2mofDsJ+
+	nCgQAAFt+Wl8rQCi5y8iZrgBAF8PQ1s3TV84K
+X-Google-Smtp-Source: AGHT+IFkDo4/xXo1toU5UNTrEq3g4zN2D09rl3Vkx1QeLDwzQPemWQJHswibNjBrREPKHVC790lBmLUeOANVqIdHn3Y=
+X-Received: by 2002:a2e:3302:0:b0:2f7:611c:a643 with SMTP id
+ 38308e7fff4ca-2f7cb342ec0mr44724231fa.33.1727082631501; Mon, 23 Sep 2024
+ 02:10:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904062925.716856-11-yi.zhang@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-8-88484f7a3dcf@google.com> <20240915232403.58466ba7.gary@garyguo.net>
+In-Reply-To: <20240915232403.58466ba7.gary@garyguo.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 23 Sep 2024 11:10:19 +0200
+Message-ID: <CAH5fLghE1RTGgnY=y=T0k62XfW6oqE-mQLSJEEc15YyZwdYU6Q@mail.gmail.com>
+Subject: Re: [PATCH v10 8/8] rust: file: add abstraction for `poll_table`
+To: Gary Guo <gary@garyguo.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 04-09-24 14:29:25, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Now the beginning of the first four functions in ext4_fallocate() (punch
-> hole, zero range, insert range and collapse range) are almost the same,
-> they need to wait for the dio to finish, get filemap invalidate lock,
-> write back dirty data and finally drop page cache. Factor out a common
-> helper to do these work can reduce a lot of the redundant code.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Mon, Sep 16, 2024 at 12:24=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote:
+>
+> On Sun, 15 Sep 2024 14:31:34 +0000
+> Alice Ryhl <aliceryhl@google.com> wrote:
+> > +    /// Register this [`PollTable`] with the provided [`PollCondVar`],=
+ so that it can be notified
+> > +    /// using the condition variable.
+> > +    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
+> > +        if let Some(qproc) =3D self.get_qproc() {
+> > +            // SAFETY: The pointers to `file` and `self` need to be va=
+lid for the duration of this
+> > +            // call to `qproc`, which they are because they are refere=
+nces.
+> > +            //
+> > +            // The `cv.wait_queue_head` pointer must be valid until an=
+ rcu grace period after the
+> > +            // waiter is removed. The `PollCondVar` is pinned, so befo=
+re `cv.wait_queue_head` can
+> > +            // be destroyed, the destructor must run. That destructor =
+first removes all waiters,
+> > +            // and then waits for an rcu grace period. Therefore, `cv.=
+wait_queue_head` is valid for
+> > +            // long enough.
+> > +            unsafe { qproc(file.as_ptr() as _, cv.wait_queue_head.get(=
+), self.0.get()) };
+> > +        }
+>
+> Should this be calling `poll_wait` instead?
+>
+> > +#[pinned_drop]
+> > +impl PinnedDrop for PollCondVar {
+> > +    fn drop(self: Pin<&mut Self>) {
+> > +        // Clear anything registered using `register_wait`.
+> > +        //
+> > +        // SAFETY: The pointer points at a valid `wait_queue_head`.
+> > +        unsafe { bindings::__wake_up_pollfree(self.inner.wait_queue_he=
+ad.get()) };
+>
+> Should this use `wake_up_pollfree` (without the leading __)?
 
-I like that we factor out this functionality in a common helper. But see
-below:
+For both cases, that would require a Rust helper. But I suppose we could do=
+ it.
 
-> @@ -4731,6 +4707,52 @@ static int ext4_fallocate_check(struct inode *inode, int mode,
->  	return 0;
->  }
->  
-> +int ext4_prepare_falloc(struct file *file, loff_t start, loff_t end, int mode)
-> +{
-> +	struct inode *inode = file_inode(file);
-> +	struct address_space *mapping = inode->i_mapping;
-> +	int ret;
-> +
-> +	/* Wait all existing dio workers, newcomers will block on i_rwsem */
-> +	inode_dio_wait(inode);
-> +	ret = file_modified(file);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Prevent page faults from reinstantiating pages we have released
-> +	 * from page cache.
-> +	 */
-> +	filemap_invalidate_lock(mapping);
-> +
-> +	ret = ext4_break_layouts(inode);
-> +	if (ret)
-> +		goto failed;
-> +
-> +	/*
-> +	 * Write data that will be zeroed to preserve them when successfully
-> +	 * discarding page cache below but fail to convert extents.
-> +	 */
-> +	ret = filemap_write_and_wait_range(mapping, start, end);
-
-The comment is somewhat outdated now. Also the range is wrong for collapse
-and insert range. There we need to writeout data upto the EOF because we
-truncate it below.
-
-								Honza
-
-> +	if (ret)
-> +		goto failed;
-> +
-> +	/*
-> +	 * For insert range and collapse range, COWed private pages should
-> +	 * be removed since the file's logical offset will be changed, but
-> +	 * punch hole and zero range doesn't.
-> +	 */
-> +	if (mode & (FALLOC_FL_INSERT_RANGE | FALLOC_FL_COLLAPSE_RANGE))
-> +		truncate_pagecache(inode, start);
-> +	else
-> +		truncate_pagecache_range(inode, start, end);
-> +
-> +	return 0;
-> +failed:
-> +	filemap_invalidate_unlock(mapping);
-> +	return ret;
-> +}
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Alice
 
