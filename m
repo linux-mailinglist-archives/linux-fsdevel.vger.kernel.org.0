@@ -1,154 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-29888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7EAB97F04A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 20:17:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B224A97F0B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 20:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E905282E0C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 18:17:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC621F22D25
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 18:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAEF1A01C3;
-	Mon, 23 Sep 2024 18:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4821A0AFB;
+	Mon, 23 Sep 2024 18:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JX9fAy/6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BAT6pvFF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCD513B7BD;
-	Mon, 23 Sep 2024 18:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239AC13A869;
+	Mon, 23 Sep 2024 18:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727115433; cv=none; b=hWTFfUGItsSoSBpHXvaK4pwOkr61WKbovmDhhMdsUtrvEMZHZxWhapvdXv3vrkgt5iBdynbVI6aZjl74Yj+fSsW0fNTdT1ICA+nrDinUQHn9Ij308mm7dRzdT3jUmxWrHUg3ZJOolNRAPuNOjELtZKIPXZZhjKxjlq9yafq4csc=
+	t=1727116503; cv=none; b=hAwZb0b2GuIcHJij38I7xDuLflmhvC0aaomomcmv8qakV/S0yAFgzp/yby020znAiwVT8laGTebtNfUF5afmmIUN8g2NQPyPIZS5eU2r8e6rasUkKHmnD89l211vQyHpqOZznnhhThzyLWFTKcXavjRAGauiYTDXD/8tvse69O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727115433; c=relaxed/simple;
-	bh=Nj+v7Jlg27lFBLxy1idpRfesBjRZ6ZzCQnuv5ZShD8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFfogl9XlfA1VVQ+Y2SGaIlnCBwNN3YE/p1k9DtJtXpNG9wgcmgWZr7vV4OoGL1c86vK6twk5IG8GuHaenQktsq9mZcIxtrKxPG8IEi9X1bTzMKqj/6uTK+4FUSJ7jtKj97NCo6UCUZvj8FRgZLK6/osY3mU5GlSLAuKX8/7BWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JX9fAy/6; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VPWUsWG3ybD6/U+EOW86OpKDYTxJrUN5xaHj5/gB7dE=; b=JX9fAy/6frn1zojIwqEx32fSmT
-	SYeRzfrerRojWGknwCjYwlaT9Bep3SsK+r854jnehJB1sVC5jGqfj9E3ly1DXH3WAL2xEvR/IG1qD
-	LF2gWg2xfExwf+mOslew+pwvidrhzK6MWsLOVfHfxn9K6EIaifNlOPiIOY26EYOdz458Wf8KL9jYJ
-	zgbuTCdrva87i1WK5JGq4RXErlfI7PUQsu8PzQcAh/W+3tZBLgjeV8dmU2OCmhIYtReUMKgWrcg/l
-	ttJd7Sj3MCnAIBsXxDfeW4+AKEIO5UKli8KXASv8TL2+k0+8WlpsosRhm2WE1R1mLeu159/czjS66
-	j9vo1eTg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1ssncS-0000000ExAr-1Bli;
-	Mon, 23 Sep 2024 18:17:08 +0000
-Date: Mon, 23 Sep 2024 19:17:08 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-	audit@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC] struct filename, io_uring and audit troubles
-Message-ID: <20240923181708.GC3550746@ZenIV>
-References: <20240922004901.GA3413968@ZenIV>
- <20240923015044.GE3413968@ZenIV>
- <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
- <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
- <20240923144841.GA3550746@ZenIV>
- <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
+	s=arc-20240116; t=1727116503; c=relaxed/simple;
+	bh=RKX5fFXoGLb5zuDBXhdYVsPbUnLmox4g9PwyHy+lMJg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=k6ta/qSZVzaMlGqDDx87Z0A8en1m+rqX22klUyAOzDdwcVrUy5q0Z0zewJE0Ci5Vhl2XziHduLAB/9cMFRBFqlNfeW1IjVedVof5IT1eUaX2tjoCEbJJpCCtXthij+5p9sU6hfXL68cGog49cfb/rVF9m/+7qFJ0KSpIRKM4VPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BAT6pvFF; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-710d9b33303so3495137a34.3;
+        Mon, 23 Sep 2024 11:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727116501; x=1727721301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IU1aoQ8nAToYML3G712UX67gK+ebjEKMmSqhwWIOXRU=;
+        b=BAT6pvFFyXKgWQy9Xe5OXG8+VGN4priUQBeLxrCXBU7et00nFwjtQGRKDaECO5YD3m
+         V6NMl7s9uQNMkIX96D6h5AB7bsWTNXT1tclPqHYhAIikiXSgyeUhS8iYQKVGA1m0ofMG
+         77vBOz4bgetr/GKYkldYJeSqaJKAjmaT60W9vyfjbGl+vZfyWigskeKtDgnKMrSXo5ck
+         d3L+VBi/SXYItm730PhEZRIl7i7PrszjePrYH+oWKEkZSVw07eRFQj9G7RCuxbNgt671
+         YvYrXtsqpG+z8nnSDqZUh51uQiqSvRh22okVt7qvkbbXBu1UgitC3bDRjMgpOaL+GJqj
+         feZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727116501; x=1727721301;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IU1aoQ8nAToYML3G712UX67gK+ebjEKMmSqhwWIOXRU=;
+        b=RSWE+ZhoigLQSu1dgXCzK8o2adkDg2Becb7gOy9lYE3tugymRJrdnRgsbrt+y1KtRo
+         hRet0NRge++3/Hc1BrAazsMgoOjRKxPNEd+hDc2w2cADoR0Z2KMOSpG32O4bREaLc4eE
+         HJiAptlgzvXrrkR4OMG8pHlfShrG9XIkpVZz0Nd4YYTPY8t3C5HT5dsBKpoe1a84K4Q/
+         FKYmdNBYETUWZLwFJu7VkwLvgK4pW0S626xcEPa530iDZmDJZRWFwxh4tWgRakQ8z3oY
+         2FJ1THwOhkJqaehsa8nQIbbjPbnPxsCrma3okUNweoe8DWjKaSs8ZO6PEVoC9UHG/j/V
+         jOVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8LP2JIJZx6Ne5TRqfxmHimFiRnVtJAP1/Jw683X/LrIlmozpF/LRZxkr95g9kt+43FazLhBX8a55zJg==@vger.kernel.org, AJvYcCV0AIJkf45sbJrZyAyzQuo80Oas9z5299XT16Idjvf+s1PzcWuRhyr0deCTrbW4/ecgKn09ZBD+ML7y@vger.kernel.org, AJvYcCVXEVK7rEMwWD9LiJcPs6NRRHC8ZvNhEiHP4iFltxCuUS8WMPdf4G1c+eS3gr4Buv+hoPNdRm8hlDvq@vger.kernel.org, AJvYcCVtaLmtJdJwXFCl372oKIhIZYHFsMvCgd1NC96XwrkpTMU90hvvB1oOHpxQ8YlJsLSQhtfnqp7c047ndNapCA==@vger.kernel.org, AJvYcCWrGMe/mraGMdTadtHdsBisJYdZ79luIAPHF0/MsHEUsrjCUmV5/hpxZpxsMfoIw1mK15tYgSTk@vger.kernel.org, AJvYcCX4uSFCb2qURiaAK73TVW0aJo4DJEyY9yrBGCYyN8KH8Ns8Fbudqm/GowJ4pBsAxrqcZwFZmNSdlzd71Kth@vger.kernel.org
+X-Gm-Message-State: AOJu0YxldV5W7wldMsSVy7RWoCvqYc3pHuG9YAux9aNu7TqfN5rq0CZW
+	S4thsqlO5uptPwYa1XHjLekH3OSUXvw5lFRvDPAVR0/jRzrM3bOx
+X-Google-Smtp-Source: AGHT+IFvgEYijirg/eXLBYiD5dxcd0Zmc+d70nalPrLG/FqXhYvz1aSQ8Ig7QbHNJjxjsN+QDuXf8g==
+X-Received: by 2002:a05:6830:3891:b0:703:6076:a47 with SMTP id 46e09a7af769-71393533f16mr8751528a34.23.1727116501003;
+        Mon, 23 Sep 2024 11:35:01 -0700 (PDT)
+Received: from localhost (fwdproxy-vll-115.fbsv.net. [2a03:2880:12ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5e3b0d94409sm3611397eaf.18.2024.09.23.11.34.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 11:34:59 -0700 (PDT)
+From: Manu Bretelle <chantr4@gmail.com>
+To: dhowells@redhat.com
+Cc: asmadeus@codewreck.org,
+	ceph-devel@vger.kernel.org,
+	christian@brauner.io,
+	ericvh@kernel.org,
+	hsiangkao@linux.alibaba.com,
+	idryomov@gmail.com,
+	jlayton@kernel.org,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-nfs@vger.kernel.org,
+	marc.dionne@auristor.com,
+	netdev@vger.kernel.org,
+	netfs@lists.linux.dev,
+	pc@manguebit.com,
+	smfrench@gmail.com,
+	sprasad@microsoft.com,
+	tom@talpey.com,
+	v9fs@lists.linux.dev,
+	willy@infradead.org,
+	eddyz87@gmail.com
+Subject: [PATCH v2 19/25] netfs: Speed up buffered reading
+Date: Mon, 23 Sep 2024 11:34:32 -0700
+Message-ID: <20240923183432.1876750-1-chantr4@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20240814203850.2240469-20-dhowells@redhat.com>
+References: <20240814203850.2240469-20-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 23, 2024 at 12:14:29PM -0400, Paul Moore wrote:
+Hi David,
 
-> > And having everything that passed through getname()/getname_kernel()
-> > shoved into ->names_list leads to very odd behaviour, especially with
-> > audit_names conversions in audit_inode()/audit_inode_child().
-> >
-> > Look at the handling of AUDIT_DEV{MAJOR,MINOR} or AUDIT_OBJ_{UID,GID}
-> > or AUDIT_COMPARE_..._TO_OBJ; should they really apply to audit_names
-> > resulting from copying the symlink body into the kernel?  And if they
-> > should be applied to audit_names instance that had never been associated
-> > with any inode, should that depend upon the string in those being
-> > equal to another argument of the same syscall?
-> >
-> > I'm going through the kernel/auditsc.c right now, but it's more of
-> > a "document what it does" - I don't have the specs and I certainly
-> > don't remember such details.
-> 
-> My approach to audit is "do what makes sense for a normal person", if
-> somebody needs silly behavior to satisfy some security cert then they
-> can get involved in upstream development and send me patches that
-> don't suck.
 
-root@kvm1:/tmp# auditctl -l
--a always,exit -S all -F dir=/tmp/blah -F perm=rwxa -F obj_uid=0
-root@kvm1:/tmp# su - al
-al@kvm1:~$ cd /tmp/blah
-al@kvm1:/tmp/blah$ ln -s a a
-al@kvm1:/tmp/blah$ ln -s c b
-al@kvm1:/tmp/blah$ ls -l
-total 0
-lrwxrwxrwx 1 al al 1 Sep 23 13:44 a -> a
-lrwxrwxrwx 1 al al 1 Sep 23 13:44 b -> c
-al@kvm1:/tmp/blah$ ls -ld 
-drwxr-xr-x 2 al al 4096 Sep 23 13:44 .
+It seems this commit (ee4cdf7ba857: "netfs: Speed up buffered reading") broke
+booting vms using qemu. It still reproduces on top of linux-master.
 
-resulting in
-type=USER_START msg=audit(1727113434.684:497): pid=3433 uid=0 auid=0 ses=1 subj=unconfined msg='op=PAM:session_open grantors=pam_key
-init,pam_env,pam_env,pam_mail,pam_limits,pam_permit,pam_unix,pam_ecryptfs acct="al" exe="/usr/bin/su" hostname=? addr=? terminal=/de
-v/pts/0 res=success'^]UID="root" AUID="root"
-type=SYSCALL msg=audit(1727113466.464:498): arch=c000003e syscall=266 success=yes exit=0 a0=7ffc441ad843 a1=ffffff9c a2=7ffc441ad845 a3=7f10e4816a90 items=3 ppid=3434 pid=3449 auid=0 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=1 comm="ln" exe="/usr/bin/ln" subj=unconfined key=(null)^]ARCH=x86_64 SYSCALL=symlinkat AUID="root" UID="al" GID="al" EUID="al" SUID="al" FSUID="al" EGID="al" SGID="al" FSGID="al"
-type=CWD msg=audit(1727113466.464:498): cwd="/tmp/blah"
-type=PATH msg=audit(1727113466.464:498): item=0 name="/tmp/blah" inode=135460 dev=08:14 mode=041777 ouid=1000 ogid=1000 rdev=00:00 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0^]OUID="al" OGID="al"
-type=PATH msg=audit(1727113466.464:498): item=1 name="c" nametype=UNKNOWN cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
-type=PATH msg=audit(1727113466.464:498): item=2 name="b" inode=135497 dev=08:14 mode=0120777 ouid=1000 ogid=1000 rdev=00:00 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0^]OUID="al" OGID="al"
-type=PROCTITLE msg=audit(1727113466.464:498): proctitle=6C6E002D7300630062
-type=USER_END msg=audit(1727113560.852:499): pid=3433 uid=0 auid=0 ses=1 subj=unconfined msg='op=PAM:session_close grantors=pam_keyinit,pam_env,pam_env,pam_mail,pam_limits,pam_permit,pam_unix,pam_ecryptfs acct="al" exe="/usr/bin/su" hostname=? addr=? terminal=/dev/pts/0 res=success'^]UID="root" AUID="root"
+BPF CI has failed to boot kernels with the following trace [0]. Bisect narrowed
+it down to this commit.
+Reverting ee4cdf7ba857 on to of current bpf-next master with [1] (basically
+ee4cdf7ba857 where I had to manually edit some conflict to the best of my
+uneducated knowledge) gets qemu boot back on track.
 
-Note that
-	* none of the filesystem objects involved have UID 0
-	* of two calls of symlinkat(), only the second one triggers the rule
-... and removing the -F obj_uid=0 from the rule catches both (as expected),
-with the first one getting *two* items instead of 3 - there's PARENT (identical
-to the second call), there's CREATE (for "a" instead of "b", obviously) and
-there's no UNKNOWN with the symlink body.
+This can be reproed by following the build steps in [2]. Assuming danobi/vmtest
+[3] is already installed, here is the script used during bisect.
 
-Does the behaviour above make sense for a normal person, by your definition?
+  #!/bin/bash
+  cat tools/testing/selftests/bpf/config{,.$(uname -m),.vm} > .config
+  make olddefconfig
+  make -j$((4* $(nproc))) || exit 125
+  timeout 10 vmtest -k $(make -s image_name) "echo yeah"
+  exit $?
 
-What happens is that we start with two UNKNOWN (for oldname and newname arguments
-of symlinkat(); incidentally, for the order is undefined - it's up to compiler
-which argument of do_symlinkat(getname(oldname), newdfd, getname(newname)) gets
-evaluated first).  When we get through the call of __filename_parentat(), we get
-the newname's audit_names instance hit by audit_inode(...., AUDIT_INODE_PARENT).
-That converts the one for newname from UNKNOWN to PARENT.  Then, in may_create(),
-we hit it with audit_inode_child() for AUDIT_TYPE_CHILD_CREATING.  Which finds
-the parent (newname's audit_names, converted to PARENT by that point) and goes
-looking for child.
+The qemu command invoked by vmtest is:
 
-That's where the execution paths diverge - for symlink("a", "a") the oldname's
-audit_names instance looks like a valid candidate and gets converted to CHILD_CREATING.
-For symlink("c", "b") such candidate is there, so we get a new item allocated -
-CHILD_CREATING for "b".  Name reference gets cloned from PARENT.
+qemu-system-x86_64 "-nodefaults" "-display" "none" "-serial" "mon:stdio" \
+  "-enable-kvm" "-cpu" "host" "-qmp" "unix:/tmp/qmp-971717.sock,server=on,wait=off" \
+  "-chardev" "socket,path=/tmp/qga-888301.sock,server=on,wait=off,id=qga0" \
+  "-device" "virtio-serial" \
+  "-device" "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0" \
+  "--device" "virtio-serial" \
+  "-chardev" "socket,path=/tmp/cmdout-508724.sock,server=on,wait=off,id=cmdout" \
+  "--device" "virtserialport,chardev=cmdout,name=org.qemu.virtio_serial.0" \
+  "-virtfs" "local,id=root,path=/,mount_tag=/dev/root,security_model=none,multidevs=remap" \
+  "-kernel" "/data/users/chantra/linux/arch/x86/boot/bzImage" \
+  "-no-reboot" "-append" "rootfstype=9p rootflags=trans=virtio,cache=mmap,msize=1048576 rw earlyprintk=serial,0,115200 printk.devkmsg=on console=0,115200 loglevel=7 raid=noautodetect init=/tmp/vmtest-init4PdCA.sh panic=-1" \
+  "-virtfs" "local,id=shared,path=/data/users/chantra/linux,mount_tag=vmtest-shared,security_model=none,multidevs=remap" \
+  "-smp" "2" "-m" "4G"
 
-Now, ->symlink() is done, it succeeds and fsnotify_create(dir, dentry) gets
-called.  We get an identical audit_inode_child() call, except that now dentry
-is positive.  It finds PARENT instance, finds CHILD_CREATING one, and slaps
-the inode metadata into it, setting ->uid to non-zero.
 
-As the result, in one case you are left with PARENT, UNKNOWN, CHILD_CREATING and
-in another - PARENT, CHILD_CREATING.  Modulo reordering first two items if
-compiler decides to evaluate the first argument of do_symlinkat() call before
-the third one...  In any case, AUDIT_OBJ_UID(0) gives a match on UNKNOWN -
-if it's there.  Since both PARENT and CHILD_CREATING refer to non-root-owned
-inodes, AUDIT_OBJ_UID(0) does not match either...
+[0] https://gist.github.com/chantra/683d9d085c28b7971bbc6f76652c22f3
+[1] https://gist.github.com/chantra/642868407d10626fd44febdfed0a4fce
+[2] https://chantra.github.io/bpfcitools/bpf-local-development.html#building-a-vm-friendly-kernel-for-bpf
+[3] https://github.com/danobi/vmtest
 
