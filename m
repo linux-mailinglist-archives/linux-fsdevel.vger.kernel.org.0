@@ -1,150 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-29904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884BE97F1A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 22:21:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D675F97F1B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 22:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6D41C21920
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 20:21:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746491F21ED3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 20:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8601A0BE3;
-	Mon, 23 Sep 2024 20:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FF62E859;
+	Mon, 23 Sep 2024 20:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnKk/sCu"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="h5f9TNsE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1902C197A77;
-	Mon, 23 Sep 2024 20:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E672A1C3D;
+	Mon, 23 Sep 2024 20:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727122862; cv=none; b=gqwzkS65tgp1qb0Hhr8UPvTrNrPg2mcU9RcNGwjsZsGMGwJ+NaFuKAxjP/OJuT08DXtnw2gpbsis9ap5ouo6gILTwVVkonhQKyDv7W70EG7xz4CMfps7g24DR589u2BHvObFXwM9qCHh4E5COH9VeB7maEzlcLPFtXVMpwjLttw=
+	t=1727123824; cv=none; b=OrC3hW2U/DHaH59t6iu+sk9GbdKwnE3n7BTlAjuAw9Y2EllYFpumyZupkN2K2+ec818afY24Ghyj3EIufY/WoRBftA7HymiIrO5xIMz9SoREHHjJEK6v/RFN166cEsE+LZ7dYYyLGapycjPtfXZw0hGWBvd5b3gIRgYWR5pqEA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727122862; c=relaxed/simple;
-	bh=DsCb6qpLdEgMJ5yT5bmM7oaMBnnki7ouT3XEgyQdChw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jK+D+x3EGcQpidD4loIxGb7IL/pg7YlvuFxH8lp4obQNcfl42PQ3wX4+CevoCbBMrnLgMZSltHyvYweN7nvmeSM6TLwZ70GlV2juC8vksSFkjMzFod8sUgm7TBFzzzB1D8DqW3kM1LhNSLTH+XERPVlOfDxlUF2ocHv8cvK5an4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnKk/sCu; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53653ee23adso4311597e87.3;
-        Mon, 23 Sep 2024 13:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727122859; x=1727727659; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NleUZATndt1acwKzBa7y/6tS+SaA3XdbIXpdmDlWmuM=;
-        b=TnKk/sCuLv5vkgPYiYZINQrsq61aMi24rCYxVeETwQm6zi5mSGlsbh1uT5Ttj6/rb5
-         vJwEy4Z0ix3MwEmSSI4aEGS1L81JOvRT+8vkVRSIRBf7eLt8Xq4bI91pwDNZVSrLnOIn
-         E6WSdUquC9OYz9OleyGMrM4/nFRMVxTpQ5Wzu9ZBL2WZCGT2SDqLUr/cLuqjT7Hb5vWx
-         xZuipdCxVsny87xpXfqS/GR0Hmf+wa3QpBYVOUlWMif32d42fOOA2raOEZP6VJSYPr+2
-         u6IaKIVs8vN+Cf/1nFpHnm8YusG+5TF7eYVjZ0RuguabFHMAEVntGLT0Z530sqtGfb6u
-         8ZrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727122859; x=1727727659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NleUZATndt1acwKzBa7y/6tS+SaA3XdbIXpdmDlWmuM=;
-        b=g19eWJvP2pAiJ5C/yo0EYCoB9ZfhTHfwE7Jq84hcvEY2XpI9/r/sBONR/Ozc0igv9q
-         9ciSgrUIVv4r5AkBXEk+R4zXJTRamnOMncxueYZPsBikBeAgyzMzr7/Bztvwf8L0Rf2V
-         lFAccz/SdInJesRMWH/ejUfiB4UrwjeAnaAbES5wLGr7mA7BNiF2hQOE2eQEM7qMMYJc
-         EPWIp58vwIP9HNtjOVcd934Qx8jBHp4gT7ZIL/AdkDHxSXMICkSr+NqBgJ0iYT2dJN6M
-         45M1wPomBH9yshGeNIsyBpI/4QTEcwHLsROIHipACpd51zlXsn31e59vdFvwv4KXS1bj
-         kunQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFzGF6omiZV+XWIybbIzrpuhJ9yb1Avrq8IxpLNNcrhp4GBSzV2rT81t8MSYXsycmSGsxUcnaVWf29@vger.kernel.org, AJvYcCVN8VQkaPLHZ+kLFlKDv3YDkS1NkkUbFmZnazji9hk9dbESY4yoJ9pwUDRYhSw8egnDzpX9HG166LT7@vger.kernel.org, AJvYcCVvVBW7hCEAnwmSWOhihuAR3nV3obE0JI9YC5czL5m1hDqMC9q0FvQYklJVl+B7HV3jMQanJy0d8YB8Pg==@vger.kernel.org, AJvYcCWTLJS3OZkmslimGd/MFJIcNi7CoILaN3P1JTFPoIMLOzwUSSv7EWHaXN/jvSQKBJf724bXEzCleWeMbeAgZg==@vger.kernel.org, AJvYcCX5C0zXtntRXDvPbIL6qaZKYDqH7n/xpeiKv6ryIQ1dAyeLbxGXtZzRXiCAqnG5QNYoyqXkcgH2Z74cwp/V@vger.kernel.org, AJvYcCXH2KTM/zFdk5lfgcw66Htl13FFO/dN0LWIoiOJKyYGDkaJJ6Cm6/oUd791wRXT6Sg13c2CBHuJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6tkieRY34dcDCKB/NymGv3VXpJcpFyv1VUIFrmK0b55hxXqAj
-	bpGewHMFwgorkDwmlmaQDVKpdIeaIXqqntufm+8Tl8u20+fqKBwLNGUVaxPgtJJyZoY0vGMzzXq
-	L6canLMMny7ar9TEEOeamrcJgmcs=
-X-Google-Smtp-Source: AGHT+IFe6pzcf17Wh1gjew0V8YTIVeE9hLlPHLiePqr1rh/borgYiDBhQWNwMIzi8TlRjg6PaEMoWqREOxcDUAURZmM=
-X-Received: by 2002:a05:6512:6c3:b0:535:63a3:c7d1 with SMTP id
- 2adb3069b0e04-536ad3b7f23mr6933488e87.48.1727122858742; Mon, 23 Sep 2024
- 13:20:58 -0700 (PDT)
+	s=arc-20240116; t=1727123824; c=relaxed/simple;
+	bh=Ge/INV1DCihg8u0K0dtZIxHEcglYThbaG+RfLrp+ieA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7QJxSaLbVKqkfzl+vy8camFOm8ZHZ2Nef5M2evKlcpoc7W+2KBjbgS8+MGTPoUsZSXEdn6+hVA7tVeHowz/Pny3VOCmX613243rQDOtC85S30MEFVoGqpB3ewH9XDe4uk6ZdzHQ5OAjJ/fcv7UH1QX4YRLnRJMiB4xlTVPjbRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=h5f9TNsE; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8va+wSI0jH4YNvmV6CQTpud3DZG27Y4kQFClTpxSxKE=; b=h5f9TNsEqM7M35R16PKmpzm+4j
+	syU+UWF50x6eF40SJ14+/uYpo7K0LiVvapP+AwdhrCz9IaxlMrZvI/N0X2czNUvyPCw3HJEbrapU0
+	VUyGeZnzMwzwiU2KNUcj2y5HgBXdFTBpifXz5U2/QjbxSxDqex6UuprmbeU9d4EzFNk1EsM2HYvuH
+	1B/SFjru6+ux/DercWoHYjFMp5YzpsfRd+pT/46beD513T5eZUsStjuEOzNU145QV5u0Ijs0XlNun
+	8vtpsutPmxzoUM8OhyNUG9Y1npzQq61A6/xH7ZdYnUQ2vdLKZq9OBt+GBe0Q2r++erMGkU39VYcPu
+	E5Gi3tbQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sspnn-0000000Ez2c-3c33;
+	Mon, 23 Sep 2024 20:36:59 +0000
+Date: Mon, 23 Sep 2024 21:36:59 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+	audit@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+Message-ID: <20240923203659.GD3550746@ZenIV>
+References: <20240922004901.GA3413968@ZenIV>
+ <20240923015044.GE3413968@ZenIV>
+ <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
+ <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
+ <20240923144841.GA3550746@ZenIV>
+ <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814203850.2240469-20-dhowells@redhat.com>
- <20240923183432.1876750-1-chantr4@gmail.com> <912766.1727120313@warthog.procyon.org.uk>
-In-Reply-To: <912766.1727120313@warthog.procyon.org.uk>
-From: Manu Bretelle <chantr4@gmail.com>
-Date: Mon, 23 Sep 2024 13:20:47 -0700
-Message-ID: <CAArYzrL0+tiPRhW6Z5fDp4WJgxVBeMg90A44rA=htXku0Q99eQ@mail.gmail.com>
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
-To: David Howells <dhowells@redhat.com>
-Cc: asmadeus@codewreck.org, ceph-devel@vger.kernel.org, christian@brauner.io, 
-	ericvh@kernel.org, hsiangkao@linux.alibaba.com, idryomov@gmail.com, 
-	jlayton@kernel.org, linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	marc.dionne@auristor.com, netdev@vger.kernel.org, netfs@lists.linux.dev, 
-	pc@manguebit.com, smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
-	v9fs@lists.linux.dev, willy@infradead.org, eddyz87@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Sep 23, 2024 at 12:38=E2=80=AFPM David Howells <dhowells@redhat.com=
-> wrote:
->
-> Hi Manu,
->
-> Are you using any other network filesystem than 9p, or just 9p?
+On Mon, Sep 23, 2024 at 12:14:29PM -0400, Paul Moore wrote:
 
-Should be 9p only.
+[ordering and number of PATH items for syscall]
 
-We ended up reverting the whole merge with
-https://patch-diff.githubusercontent.com/raw/kernel-patches/vmtest/pull/288=
-.patch
-as my initial commit revert happened to work because of the left over
-cached .o.
+> >From my point of view, stuff like that is largely driven by enterprise
+> distros chasing 3rd party security certifications so they can sell
+> products/services to a certain class of users.  These are the same
+> enterprise distros that haven't really bothered to contribute a lot to
+> the upstream Linux kernel's audit subsystem lately so I'm not going to
+> worry too much about them at this point.
 
-FWIW, I quickly checked and virtiofs is not affected. e.g is I was to
-apply https://github.com/danobi/vmtest/pull/88 to vmtest and recompile
-the kernel with:
-  CONFIG_FUSE_FS=3Dy
-  CONFIG_VIRTIO_FS=3Dy
-  CONFIG_FUSE_PASSTHROUGH=3Dy
+Umm...  IIRC, sgrubb had been involved in the spec-related horrors, but
+that was a long time ago...
 
-qemu-system-x86_64 "-nodefaults" "-display" "none" \
-  "-serial" "mon:stdio" "-enable-kvm" "-cpu" "host" \
-  "-qmp" "unix:/tmp/qmp-895732.sock,server=3Don,wait=3Doff" \
-  "-chardev" "socket,path=3D/tmp/qga-733184.sock,server=3Don,wait=3Doff,id=
-=3Dqga0" \
-  "-device" "virtio-serial" \
-  "-device" "virtserialport,chardev=3Dqga0,name=3Dorg.qemu.guest_agent.0" \
-  "-object" "memory-backend-memfd,id=3Dmem,share=3Don,size=3D4G" "-numa"
-"node,memdev=3Dmem" \
-  "-device" "virtio-serial" "-chardev"
-"socket,path=3D/tmp/cmdout-713466.sock,server=3Don,wait=3Doff,id=3Dcmdout" =
-\
-  "-device" "virtserialport,chardev=3Dcmdout,name=3Dorg.qemu.virtio_serial.=
-0" \
-  "-chardev" "socket,id=3Droot,path=3D/tmp/virtiofsd-807478.sock" \
-  "-device" "vhost-user-fs-pci,queue-size=3D1024,chardev=3Droot,tag=3Drootf=
-s" \
-  "-kernel" "/data/users/chantra/linux/arch/x86/boot/bzImage" \
-  "-no-reboot" "-append" "rootfstype=3Dvirtiofs root=3Drootfs rw
-earlyprintk=3Dserial,0,115200 printk.devkmsg=3Don console=3D0,115200
-loglevel=3D7 raid=3Dnoautodetect init=3D/tmp/vmtest-initBdg4J.sh panic=3D-1=
-" \
-  "-chardev" "socket,id=3Dshared,path=3D/tmp/virtiofsd-992342.sock" \
-  "-device" "vhost-user-fs-pci,queue-size=3D1024,chardev=3Dshared,tag=3Dvmt=
-est-shared"
-\
-  "-smp" "2" "-m" "4G"
+> where I would like to take audit ... eventually).  Assuming your ideas
+> for struct filename don't significantly break audit you can consider
+> me supportive so long as we still have a way to take a struct filename
+> reference inside the audit_context; we need to keep that ref until
+> syscall/io_uring-op exit time as we can't be certain if we need to log
+> the PATH until we know the success/fail status of the operation (among
+> other things).
 
-would work.
+OK...  As for what I would like to do:
 
-Manu
+	* go through the VFS side of things and make sure we have a consistent
+set of helpers that would take struct filename * - *not* the ad-hoc mix we
+have right now, when that's basically driven by io_uring borging them in
+one by one - or duplicates them without bothering to share helpers.
+E.g. mkdirat(2) does getname() and passes it to do_mkdirat(), which
+consumes the sucker; so does mknodat(2), but do_mknodat() is static.  OTOH,
+path_setxattr() does setxattr_copy(), then retry_estale loop with
+user_path_at() + mnt_want_write() + do_setxattr() + mnt_drop_write() + path_put()
+as a body, while on io_uring side we have retry_estale loop with filename_lookup() +
+(io_uring helper that does mnt_want_write() + do_setxattr() + mnt_drop_write()) +
+path_put().
+	Sure, that user_path_at() call is getname() + filename_lookup() + putname(),
+so they are equivalent, but keeping that shite in sync is going to be trouble.
 
->
-> David
->
+	* get rid of the "repeated getname() on the same address is going to
+give you the same object" - that can't be relied upon without audit, for one
+thing and for another... having a syscall that takes two pathnames that gives
+different audit log (if not predicate evaluation) in cases when those are
+identical pointers vs. strings with identical contenst is, IMO, somewhat
+undesirable.  That kills filename->uaddr.
+
+	* looking at the users of that stuff, I would probably prefer to
+separate getname*() from insertion into audit context.  It's not that
+tricky - __set_nameidata() catches *everything* that uses nd->name (i.e.
+all that audit_inode() calls in fs/namei.c use).  What remains is
+	do_symlinkat() for symlink body
+	fs_index() on the argument (if we want to bother - it's a part
+of weird Missed'em'V sysfs(2) syscall; I sincerely doubt that there's
+anybody who'd use it)
+	fsconfig(2) FSCONFIG_SET_PATH handling.
+	mq_open(2) and mq_unlink(2) - those bypass the normal pathwalk
+logics, so __set_nameidata() won't catch them.
+	_maybe_ alpha osf_mount(2) devname argument; or we could get rid
+of that stupidity and have it use copy_mount_string() like mount(2) does,
+instead of messing with getname().
+	That's all it takes.  With that done, we can kill ->aname;
+just look in the ->names_list for the first entry with given ->name -
+as in, given struct filename * value, no need to look inside.
 
