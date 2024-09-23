@@ -1,276 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-29901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CEE97F14A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 21:39:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A177B97F16C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 21:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BBE11F22814
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 19:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13FD11C21454
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 19:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274A81A0732;
-	Mon, 23 Sep 2024 19:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A217B1A08AB;
+	Mon, 23 Sep 2024 19:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Rwr6JOxb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hgYHeLhk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Rwr6JOxb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hgYHeLhk"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hH0lD9XK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ACB1A01DB;
-	Mon, 23 Sep 2024 19:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0E919F12C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 19:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727120350; cv=none; b=YdrLWWdsc4deCijoE1e2K4E1TZ68A70eKlnNsfM5rBpaW3XjQk9XcwLdXoCnwmoMmFfjUPRjrqtIdYo4hFFmngXPyiNnMixVSURh0foG/rKSYz/kgsUHGa1POhYTfq4NdbkZSzxrMsqGrAWXY88HIlwq2Pf62SWnqs2ms/dRsnE=
+	t=1727121420; cv=none; b=I2kxgh6zSUy1RbY59CcFxsefPrOPc1XMVrhxc/icfmJIkjtbJjyYKcRbqnhz2VOFQ1UMiolxUij3iZI3wAj9GMIMmMEv0650QNgA4YGSu8TKckWDOav3zRsNBQRG9FvWkkpUwVWsJ8oKE8gxnO7UnovS9Dew3UawzfBkyEp1rKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727120350; c=relaxed/simple;
-	bh=fif18Gbqv3h2FyGK8EMsN1zq5El7xh5nAnmet2jGCBg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WXTmwBemD6vBh7+1wbwXlBZ3XIn4Ob4SkST9L9ak7WmA24hBJaRLYPCkfi5lbBX0WsYX0ekuXQMz2L80RZL1NRmmKr//rQZ8PKlwxQPn9RE6sJgBJ7bnx/eldt9rwIX8Vwwmi2POzMzEbrBjXq65448i4C/a+eIU1Kgf3syozaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Rwr6JOxb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hgYHeLhk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Rwr6JOxb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hgYHeLhk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7AF1E21DC3;
-	Mon, 23 Sep 2024 19:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727120346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1727121420; c=relaxed/simple;
+	bh=yioyKrHUsrhpPPufYVkl6oLIP1GDj9d1PKWTIrF1+zA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u62zmeaLeMVTh4oZNtGrMR/q0wt1POx/79YvkL4lXYaTB3TYyShGGQKUPbWMOyBfT5ypu26F2FC5Ncl197dCYBmwzqzkFV6/adMkzBMAZhlA7Ewb2gkofqIgNkjWLaavtHBj9ERyhnEfFC0SI44Wi6W2bk+nrdCZNpwqdjeMb4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hH0lD9XK; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 23 Sep 2024 15:56:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727121415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=btFVzvo3cYlCIaFbLMC8UzMj/n6rmtuNvZUl+PCyxSQ=;
-	b=Rwr6JOxbkiklNQw+x4Hjx6dHODAJH+Vwmbh1oihVfmkQC7lsG+p5BjchvPPL04TD2zATCg
-	TifUqy+Diu6JkyKTwQ4p/pZlVE2/b+WV5V2ts7eGqv0d/UucPlG/p5Ds0FgTFCaz4Exzfi
-	comE3NVl7Z2xAnjL4VIhyNaSx61SsZM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727120346;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=btFVzvo3cYlCIaFbLMC8UzMj/n6rmtuNvZUl+PCyxSQ=;
-	b=hgYHeLhkGlG/3YkB/t+moHHtkdI3ssLeOy9yq9aecJLkPfk3Yh/cev2O45V2KL92Y1Ehr6
-	oumwpzkQmAwe5CAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727120346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=btFVzvo3cYlCIaFbLMC8UzMj/n6rmtuNvZUl+PCyxSQ=;
-	b=Rwr6JOxbkiklNQw+x4Hjx6dHODAJH+Vwmbh1oihVfmkQC7lsG+p5BjchvPPL04TD2zATCg
-	TifUqy+Diu6JkyKTwQ4p/pZlVE2/b+WV5V2ts7eGqv0d/UucPlG/p5Ds0FgTFCaz4Exzfi
-	comE3NVl7Z2xAnjL4VIhyNaSx61SsZM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727120346;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=btFVzvo3cYlCIaFbLMC8UzMj/n6rmtuNvZUl+PCyxSQ=;
-	b=hgYHeLhkGlG/3YkB/t+moHHtkdI3ssLeOy9yq9aecJLkPfk3Yh/cev2O45V2KL92Y1Ehr6
-	oumwpzkQmAwe5CAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 360B31347F;
-	Mon, 23 Sep 2024 19:39:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Oor9BtrD8Wa0OQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 23 Sep 2024 19:39:06 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
-Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,  David Gow
- <davidgow@google.com>,  Shuah Khan <skhan@linuxfoundation.org>,
-  linux-fsdevel@vger.kernel.org,  ~lkcamp/patches@lists.sr.ht,
-  linux-kselftest@vger.kernel.org,  kunit-dev@googlegroups.com,
-  porlando@lkcamp.dev,  dpereira@lkcamp.dev
-Subject: Re: [PATCH 1/2] unicode: kunit: refactor selftest to kunit tests
-In-Reply-To: <20240923173454.264852-2-gbittencourt@lkcamp.dev> (Gabriela
-	Bittencourt's message of "Mon, 23 Sep 2024 14:34:53 -0300")
-References: <20240923173454.264852-1-gbittencourt@lkcamp.dev>
-	<20240923173454.264852-2-gbittencourt@lkcamp.dev>
-Date: Mon, 23 Sep 2024 15:39:05 -0400
-Message-ID: <87r09axiqu.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	bh=3e4DCekOHk5Rai6aJWYF2CY+CpXsl/gUdUFSHk9AhaQ=;
+	b=hH0lD9XKymoDizKVyS5DIxZfDl7bMP0NwKRvN4Jo5JH9x012Bu3UVZM2LIje/hA5yKVInH
+	sQDlqZrhTeIZlOLrqUCwyvjb7FK/tKiH+3xB54YGHJ9aXA6qmIg9HNkJ/xd/rgR8WGc4hI
+	yyazIzMSA/IgXZkiEc04luPcKVYg8Q0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
+Message-ID: <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
+References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+ <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lkcamp.dev:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Gabriela Bittencourt <gbittencourt@lkcamp.dev> writes:
+On Mon, Sep 23, 2024 at 10:18:57AM GMT, Linus Torvalds wrote:
+> On Sat, 21 Sept 2024 at 12:28, Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > We're now using an rhashtable instead of the system inode hash table;
+> > this is another significant performance improvement on multithreaded
+> > metadata workloads, eliminating more lock contention.
+> 
+> So I've pulled this, but I reacted to this issue - what is the load
+> where the inode hash table is actually causing issues?
+> 
+> Because honestly, the reason we're using that "one single lock" for
+> the inode hash table is that nobody has ever bothered.
+> 
+> In particular, it *should* be reasonably straightforward (lots of
+> small details, but not fundamentally hard) to just make the inode hash
+> table be a "bl" hash - with the locking done per-bucket, not using one
+> global lock.
 
->
-> -static ssize_t utf8len(const struct unicode_map *um, enum utf8_normalization n,
-> -		const char *s)
-> +static ssize_t utf8len(const struct unicode_map *um, enum utf8_normalization n, const char *s)
->  {
+Dave was working on that - he posted patches and it seemed like they
+were mostly done, not sure what happened with those.
 
-Please, do not make indentation-only changes, specially as part of a larger
-change.  It makes the patch much harder to review.
+> But nobody has ever seemed to care before. Because the inode hash just
+> isn't all that heavily used, since normal loads don't look up inodes
+> directly (they look up dentries, and you find the inodes off those -
+> and the *dentry* hash scales well thanks to both RCU and doing the
+> bucket lock thing).
+> 
+> So the fact that bcachefs cares makes me go "Why?"
 
+I've seen benchmarks (not just on bcachefs, ext4 as well) where it was
+actually _really_ heavy. They were synthetics, but I'd expect to see the
+same effect from workloads where we're streaming a lot of inodes through
+the cache - think rsync.
 
->  	return utf8nlen(um, n, s, (size_t)-1);
->  }
->  
->  static int utf8cursor(struct utf8cursor *u8c, const struct unicode_map *um,
-> -		enum utf8_normalization n, const char *s)
-> +		      enum utf8_normalization n, const char *s)
+Another data point is that the btree key cache work I just did was also
+for exactly this type of situation - it addressed lock contention when
+streaming items into and out of the key cache, which are mostly inodes
+(it's also used for the alloc btree) - and I had reports from multiple
+users it was a drastic improvement, much more than expected, and
+eliminated the main source of our "srcu lock held too long" warnings -
+and if lock contention is bad enough to trip a 10 second warning, you
+know it's bad, heh.
 
-likewise.
-
->  {
->  	return utf8ncursor(u8c, um, n, s, (unsigned int)-1);
->  }
->  
-> -static void check_utf8_nfdi(struct unicode_map *um)
-> +static void check_utf8_nfdi(struct kunit *test)
->  {
->  	int i;
->  	struct utf8cursor u8c;
-> +	struct unicode_map *um = test->priv;
->  
->  	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
->  		int len = strlen(nfdi_test_data[i].str);
-> @@ -181,28 +161,29 @@ static void check_utf8_nfdi(struct unicode_map *um)
->  		int j = 0;
->  		unsigned char c;
->  
-> -		test((utf8len(um, UTF8_NFDI, nfdi_test_data[i].str) == nlen));
-> -		test((utf8nlen(um, UTF8_NFDI, nfdi_test_data[i].str, len) ==
-> -			nlen));
-> +		KUNIT_EXPECT_EQ(test, utf8len(um, UTF8_NFDI, nfdi_test_data[i].str), nlen);
-> +		KUNIT_EXPECT_EQ(test, utf8nlen(um, UTF8_NFDI, nfdi_test_data[i].str, len),
-> +				nlen);
-> -		if (utf8cursor(&u8c, um, UTF8_NFDI, nfdi_test_data[i].str) < 0)
-> -			pr_err("can't create cursor\n");
-> +		KUNIT_EXPECT_GE_MSG(test, utf8cursor(&u8c, um, UTF8_NFDI, nfdi_test_data[i].str),
-> +				    0, "Can't create cursor\n");
-
-These KUNIT_ macros are way less readable than the existing code,
-IMO. the old macro makes it obvious what we are checking, without having
-to dig into the definition.  But, meh, I can live with it.
-
-
-
->  
->  		while ((c = utf8byte(&u8c)) > 0) {
-> -			test_f((c == nfdi_test_data[i].dec[j]),
-> -			       "Unexpected byte 0x%x should be 0x%x\n",
-> -			       c, nfdi_test_data[i].dec[j]);
-> +			KUNIT_EXPECT_EQ_MSG(test, c, nfdi_test_data[i].dec[j],
-> +					    "Unexpected byte 0x%x should be 0x%x\n",
-> +					    c, nfdi_test_data[i].dec[j]);
->  			j++;
->  		}
->  
-> -		test((j == nlen));
-> +		KUNIT_EXPECT_EQ(test, j, nlen);
->  	}
->  }
->  
-> -static void check_utf8_nfdicf(struct unicode_map *um)
-> +static void check_utf8_nfdicf(struct kunit *test)
->  {
->  	int i;
->  	struct utf8cursor u8c;
-> +	struct unicode_map *um = test->priv;
->  
->  	for (i = 0; i < ARRAY_SIZE(nfdicf_test_data); i++) {
->  		int len = strlen(nfdicf_test_data[i].str);
-> @@ -210,29 +191,30 @@ static void check_utf8_nfdicf(struct unicode_map *um)
->  		int j = 0;
->  		unsigned char c;
->  
-> -		test((utf8len(um, UTF8_NFDICF, nfdicf_test_data[i].str) ==
-> -				nlen));
-> -		test((utf8nlen(um, UTF8_NFDICF, nfdicf_test_data[i].str, len) ==
-> -				nlen));
-> +		KUNIT_EXPECT_EQ(test, utf8len(um, UTF8_NFDICF, nfdicf_test_data[i].str),
-> +				nlen);
-> +		KUNIT_EXPECT_EQ(test, utf8nlen(um, UTF8_NFDICF, nfdicf_test_data[i].str, len),
-> +				nlen);
->  
-> -		if (utf8cursor(&u8c, um, UTF8_NFDICF,
-> -				nfdicf_test_data[i].str) < 0)
-> -			pr_err("can't create cursor\n");
-> +		KUNIT_EXPECT_GE_MSG(test,
-> +				    utf8cursor(&u8c, um, UTF8_NFDICF, nfdicf_test_data[i].str),
-> +				    0, "Can't create cursor\n");
->  
->  		while ((c = utf8byte(&u8c)) > 0) {
-> -			test_f((c == nfdicf_test_data[i].ncf[j]),
-> -			       "Unexpected byte 0x%x should be 0x%x\n",
-> -			       c, nfdicf_test_data[i].ncf[j]);
-> +			KUNIT_EXPECT_EQ_MSG(test, c, nfdicf_test_data[i].ncf[j],
-> +					    "Unexpected byte 0x%x should be 0x%x\n",
-> +					    c, nfdicf_test_data[i].ncf[j]);
->  			j++;
->  		}
->  
-> -		test((j == nlen));
-> +		KUNIT_EXPECT_EQ(test, j, nlen);
->  	}
->  }
->  
-> -static void check_utf8_comparisons(struct unicode_map *table)
-> +static void check_utf8_comparisons(struct kunit *test)
->  {
->  	int i;
-> +	struct unicode_map *um = test->priv;
->  
->  	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
->  		const struct qstr s1 = {.name = nfdi_test_data[i].str,
-> @@ -240,8 +222,9 @@ static void check_utf8_comparisons(struct unicode_map *table)
->  		const struct qstr s2 = {.name = nfdi_test_data[i].dec,
->  					.len = sizeof(nfdi_test_data[i].dec)};
->  
-> -		test_f(!utf8_strncmp(table, &s1, &s2),
-> -		       "%s %s comparison mismatch\n", s1.name, s2.name);
-> +		// strncmp returns 0 when strings are equal
-
-We don't do comments with // in the kernel (aside from SPDX).  Please, use /* */.
-
-> +		KUNIT_EXPECT_EQ_MSG(test, utf8_strncmp(um, &s1, &s2), 0,
-> +				    "%s %s comparison mismatch\n", s1.name, s2.name);
-
-Yuck. This is even less readable.  Is there a kunit macro that receives
-an expression, similar to WARN_ON/BUG_ON? It would be way more readable.
-Something like this.
-
-KUNIT_BLA(test, utf8_strncmp(um, &s1,&s2) == 0, "BAD TEST!")
-
-
--- 
-Gabriel Krisman Bertazi
+I try to really jump on these sorts of lock contention issues because
+I've seen many instances where they caused performance cliffs - in
+practice they're often O(n^2) issues because as your workload scales up
+it's usually not just number of instances where you take the lock that
+increases, usually something else is scaling too - even just increased
+cacheline bouncing from the lock contention itself will be problematic.
 
