@@ -1,153 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-29889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B224A97F0B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 20:35:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8C197F0B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 20:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC621F22D25
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 18:35:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A76CB22544
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 18:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4821A0AFB;
-	Mon, 23 Sep 2024 18:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB991A0705;
+	Mon, 23 Sep 2024 18:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BAT6pvFF"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="db4b+/fH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239AC13A869;
-	Mon, 23 Sep 2024 18:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27439FC0B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 18:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727116503; cv=none; b=hAwZb0b2GuIcHJij38I7xDuLflmhvC0aaomomcmv8qakV/S0yAFgzp/yby020znAiwVT8laGTebtNfUF5afmmIUN8g2NQPyPIZS5eU2r8e6rasUkKHmnD89l211vQyHpqOZznnhhThzyLWFTKcXavjRAGauiYTDXD/8tvse69O8=
+	t=1727116523; cv=none; b=FCO13ijyv01Um12Ja+Eh2TBPlzjNs3+Fcs0KP/aVM1+7a+ssXdVfTESLjplpdb83rb1799dI86lyIgkAoPLSxz8rrWi1GgWppHnB/XOqoOiKHO7hMgbIR0A8kpk5PwypF5THjGDTbLleGjeFHSQBaH2muRsf1vOFqJGkW3MSTRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727116503; c=relaxed/simple;
-	bh=RKX5fFXoGLb5zuDBXhdYVsPbUnLmox4g9PwyHy+lMJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k6ta/qSZVzaMlGqDDx87Z0A8en1m+rqX22klUyAOzDdwcVrUy5q0Z0zewJE0Ci5Vhl2XziHduLAB/9cMFRBFqlNfeW1IjVedVof5IT1eUaX2tjoCEbJJpCCtXthij+5p9sU6hfXL68cGog49cfb/rVF9m/+7qFJ0KSpIRKM4VPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BAT6pvFF; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-710d9b33303so3495137a34.3;
-        Mon, 23 Sep 2024 11:35:01 -0700 (PDT)
+	s=arc-20240116; t=1727116523; c=relaxed/simple;
+	bh=bwKRCg+aP9T6zO2Ie/7WKjZMIfPjESguBBWGJLZejO4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aJnANjLflP0Ubz80kKjyO9YafbNjy+IDagILydMhjlH7uXQ+7wYyNU0rW8fUsKZSVya7CK7u605/0HJ1Mg2KU5bBo79CyaO19J9tp1X0ZNF++oOBHpQUUW8DXCRwdOPfL/dSHsL3wOKQbwUhbWheT6KS7fSxNIwZYBXSHAEJJkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=db4b+/fH; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8d29b7edc2so705532466b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 11:35:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727116501; x=1727721301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IU1aoQ8nAToYML3G712UX67gK+ebjEKMmSqhwWIOXRU=;
-        b=BAT6pvFFyXKgWQy9Xe5OXG8+VGN4priUQBeLxrCXBU7et00nFwjtQGRKDaECO5YD3m
-         V6NMl7s9uQNMkIX96D6h5AB7bsWTNXT1tclPqHYhAIikiXSgyeUhS8iYQKVGA1m0ofMG
-         77vBOz4bgetr/GKYkldYJeSqaJKAjmaT60W9vyfjbGl+vZfyWigskeKtDgnKMrSXo5ck
-         d3L+VBi/SXYItm730PhEZRIl7i7PrszjePrYH+oWKEkZSVw07eRFQj9G7RCuxbNgt671
-         YvYrXtsqpG+z8nnSDqZUh51uQiqSvRh22okVt7qvkbbXBu1UgitC3bDRjMgpOaL+GJqj
-         feZA==
+        d=linux-foundation.org; s=google; t=1727116519; x=1727721319; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JMHpSSP2p1/s64pyzSuk9VhdckGA7XV6OQbz+MnGuEo=;
+        b=db4b+/fHi5vdF9atsVNd2ovqJOMvICuY3AFgjZlWJyXkg736xFp3dK13ue2C3iVHwF
+         WWWqQVoty9eNMaL3wrjgsiTsVEMydXqugPZOWx/tVarBKraTryUh2K1WFLykXdX0PKNx
+         o9vAsw/y/q4otSlZ+Jruox+Rtd03tVPM/so6s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727116501; x=1727721301;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IU1aoQ8nAToYML3G712UX67gK+ebjEKMmSqhwWIOXRU=;
-        b=RSWE+ZhoigLQSu1dgXCzK8o2adkDg2Becb7gOy9lYE3tugymRJrdnRgsbrt+y1KtRo
-         hRet0NRge++3/Hc1BrAazsMgoOjRKxPNEd+hDc2w2cADoR0Z2KMOSpG32O4bREaLc4eE
-         HJiAptlgzvXrrkR4OMG8pHlfShrG9XIkpVZz0Nd4YYTPY8t3C5HT5dsBKpoe1a84K4Q/
-         FKYmdNBYETUWZLwFJu7VkwLvgK4pW0S626xcEPa530iDZmDJZRWFwxh4tWgRakQ8z3oY
-         2FJ1THwOhkJqaehsa8nQIbbjPbnPxsCrma3okUNweoe8DWjKaSs8ZO6PEVoC9UHG/j/V
-         jOVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8LP2JIJZx6Ne5TRqfxmHimFiRnVtJAP1/Jw683X/LrIlmozpF/LRZxkr95g9kt+43FazLhBX8a55zJg==@vger.kernel.org, AJvYcCV0AIJkf45sbJrZyAyzQuo80Oas9z5299XT16Idjvf+s1PzcWuRhyr0deCTrbW4/ecgKn09ZBD+ML7y@vger.kernel.org, AJvYcCVXEVK7rEMwWD9LiJcPs6NRRHC8ZvNhEiHP4iFltxCuUS8WMPdf4G1c+eS3gr4Buv+hoPNdRm8hlDvq@vger.kernel.org, AJvYcCVtaLmtJdJwXFCl372oKIhIZYHFsMvCgd1NC96XwrkpTMU90hvvB1oOHpxQ8YlJsLSQhtfnqp7c047ndNapCA==@vger.kernel.org, AJvYcCWrGMe/mraGMdTadtHdsBisJYdZ79luIAPHF0/MsHEUsrjCUmV5/hpxZpxsMfoIw1mK15tYgSTk@vger.kernel.org, AJvYcCX4uSFCb2qURiaAK73TVW0aJo4DJEyY9yrBGCYyN8KH8Ns8Fbudqm/GowJ4pBsAxrqcZwFZmNSdlzd71Kth@vger.kernel.org
-X-Gm-Message-State: AOJu0YxldV5W7wldMsSVy7RWoCvqYc3pHuG9YAux9aNu7TqfN5rq0CZW
-	S4thsqlO5uptPwYa1XHjLekH3OSUXvw5lFRvDPAVR0/jRzrM3bOx
-X-Google-Smtp-Source: AGHT+IFvgEYijirg/eXLBYiD5dxcd0Zmc+d70nalPrLG/FqXhYvz1aSQ8Ig7QbHNJjxjsN+QDuXf8g==
-X-Received: by 2002:a05:6830:3891:b0:703:6076:a47 with SMTP id 46e09a7af769-71393533f16mr8751528a34.23.1727116501003;
-        Mon, 23 Sep 2024 11:35:01 -0700 (PDT)
-Received: from localhost (fwdproxy-vll-115.fbsv.net. [2a03:2880:12ff:73::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5e3b0d94409sm3611397eaf.18.2024.09.23.11.34.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 11:34:59 -0700 (PDT)
-From: Manu Bretelle <chantr4@gmail.com>
-To: dhowells@redhat.com
-Cc: asmadeus@codewreck.org,
-	ceph-devel@vger.kernel.org,
-	christian@brauner.io,
-	ericvh@kernel.org,
-	hsiangkao@linux.alibaba.com,
-	idryomov@gmail.com,
-	jlayton@kernel.org,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-nfs@vger.kernel.org,
-	marc.dionne@auristor.com,
-	netdev@vger.kernel.org,
-	netfs@lists.linux.dev,
-	pc@manguebit.com,
-	smfrench@gmail.com,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	v9fs@lists.linux.dev,
-	willy@infradead.org,
-	eddyz87@gmail.com
-Subject: [PATCH v2 19/25] netfs: Speed up buffered reading
-Date: Mon, 23 Sep 2024 11:34:32 -0700
-Message-ID: <20240923183432.1876750-1-chantr4@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240814203850.2240469-20-dhowells@redhat.com>
-References: <20240814203850.2240469-20-dhowells@redhat.com>
+        d=1e100.net; s=20230601; t=1727116519; x=1727721319;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JMHpSSP2p1/s64pyzSuk9VhdckGA7XV6OQbz+MnGuEo=;
+        b=tAGUcd5/QiHQ63gUq8tu3peyAHW1xKj5JhFdHXo2+FLYG9YZpfikGxr9j0ot7SQi2F
+         naVtX5Nlm/N0q8TT3/G5e+Jaoqh0cYsd+o3Zw/qzoJSCw0HP8RtuBAzXCdMoYeCzOR4O
+         ns1qugMlzqzfbCOt96mh6tP2IB+ue09pJ51WcvWUlgTSMWdFjCJbMtKtWyRKvhL5Tkc8
+         SMQ4rAfVKzS2pX1/6iF7eg5qABOlW8ZP/2Rb+kaO2FmV6DWN8XbxfhIwRMyh4c30KKyl
+         q/6Lz08QHomPtCBEbgQhU/4fvxmffeaf2PR14j75cqWl15ig3CMshCqeXE1NveAc3V85
+         U5Jw==
+X-Gm-Message-State: AOJu0YxGqXG/OWBivZWIt3NQNmfmvgORF2peSefM2CVMy9cpC+3DykM/
+	E2b9f9QkWk6E4zt8cHK2rL6wgxjDP877T+OE93rd7uYjWc/EvEtP5naP9ioiwNKtCxJ35H50eGt
+	/h+g=
+X-Google-Smtp-Source: AGHT+IHXAebnBuzY2C5iXnZekPPlTbZrKt68Mg7SlBTBIQ0bUPT6f8CgiXzmmu43qC5iSzKKEk6wIw==
+X-Received: by 2002:a17:907:7da1:b0:a86:9ba1:639e with SMTP id a640c23a62f3a-a90d5614d1bmr1243586166b.26.1727116518889;
+        Mon, 23 Sep 2024 11:35:18 -0700 (PDT)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b38b2sm1258173466b.126.2024.09.23.11.35.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 11:35:18 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8d100e9ce0so576442566b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 11:35:18 -0700 (PDT)
+X-Received: by 2002:a17:906:7949:b0:a8d:128a:cc49 with SMTP id
+ a640c23a62f3a-a90d57793f4mr1189115866b.52.1727116517712; Mon, 23 Sep 2024
+ 11:35:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240923110348.tbwihs42dxxltabc@quack3>
+In-Reply-To: <20240923110348.tbwihs42dxxltabc@quack3>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 23 Sep 2024 11:35:00 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiE1QQ-_kTKSf4Ur6JEjMtieu7twcLqu_CH4r1daTBiCw@mail.gmail.com>
+Message-ID: <CAHk-=wiE1QQ-_kTKSf4Ur6JEjMtieu7twcLqu_CH4r1daTBiCw@mail.gmail.com>
+Subject: Re: [GIT PULL] Fsnotify changes for 6.12-rc1
+To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi David,
+On Mon, 23 Sept 2024 at 04:03, Jan Kara <jack@suse.cz> wrote:
+>
+>   * The implementation of the pre-content fanotify events. T
 
+I pulled this, and then I decided to unpull.
 
-It seems this commit (ee4cdf7ba857: "netfs: Speed up buffered reading") broke
-booting vms using qemu. It still reproduces on top of linux-master.
+I don't see what the permissions for this thing are, and without
+explanations for why this isn't a huge security issue, I'm not pulling
+it.
 
-BPF CI has failed to boot kernels with the following trace [0]. Bisect narrowed
-it down to this commit.
-Reverting ee4cdf7ba857 on to of current bpf-next master with [1] (basically
-ee4cdf7ba857 where I had to manually edit some conflict to the best of my
-uneducated knowledge) gets qemu boot back on track.
+Maybe those explanations exist elsewhere, but they sure aren't in the
+pull request.
 
-This can be reproed by following the build steps in [2]. Assuming danobi/vmtest
-[3] is already installed, here is the script used during bisect.
+IOW, I want to know where the code is that says "you can't block root
+processes doing accesses to your files" etc. Or things like "oh, the
+kernel took a page fault while holding some lock, what protects this
+from being misused"?
 
-  #!/bin/bash
-  cat tools/testing/selftests/bpf/config{,.$(uname -m),.vm} > .config
-  make olddefconfig
-  make -j$((4* $(nproc))) || exit 125
-  timeout 10 vmtest -k $(make -s image_name) "echo yeah"
-  exit $?
+And if that code doesn't exist, there's no way in hell we're pulling this. Ever.
 
-The qemu command invoked by vmtest is:
+IOW, where is the "we don't allow unprivileged groups to do this" code?
 
-qemu-system-x86_64 "-nodefaults" "-display" "none" "-serial" "mon:stdio" \
-  "-enable-kvm" "-cpu" "host" "-qmp" "unix:/tmp/qmp-971717.sock,server=on,wait=off" \
-  "-chardev" "socket,path=/tmp/qga-888301.sock,server=on,wait=off,id=qga0" \
-  "-device" "virtio-serial" \
-  "-device" "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0" \
-  "--device" "virtio-serial" \
-  "-chardev" "socket,path=/tmp/cmdout-508724.sock,server=on,wait=off,id=cmdout" \
-  "--device" "virtserialport,chardev=cmdout,name=org.qemu.virtio_serial.0" \
-  "-virtfs" "local,id=root,path=/,mount_tag=/dev/root,security_model=none,multidevs=remap" \
-  "-kernel" "/data/users/chantra/linux/arch/x86/boot/bzImage" \
-  "-no-reboot" "-append" "rootfstype=9p rootflags=trans=virtio,cache=mmap,msize=1048576 rw earlyprintk=serial,0,115200 printk.devkmsg=on console=0,115200 loglevel=7 raid=noautodetect init=/tmp/vmtest-init4PdCA.sh panic=-1" \
-  "-virtfs" "local,id=shared,path=/data/users/chantra/linux,mount_tag=vmtest-shared,security_model=none,multidevs=remap" \
-  "-smp" "2" "-m" "4G"
+Because:
 
+>   These events are
+>  sent before read / write / page fault and the execution is paused until
+>  event listener replies similarly to current fanotify permission events.
 
-[0] https://gist.github.com/chantra/683d9d085c28b7971bbc6f76652c22f3
-[1] https://gist.github.com/chantra/642868407d10626fd44febdfed0a4fce
-[2] https://chantra.github.io/bpfcitools/bpf-local-development.html#building-a-vm-friendly-kernel-for-bpf
-[3] https://github.com/danobi/vmtest
+Permission events aren't allowed for unprivileged users. I want to
+make sure people have thought about this, and I need to actually see
+this talked about in the pull request.
+
+              Linus
 
