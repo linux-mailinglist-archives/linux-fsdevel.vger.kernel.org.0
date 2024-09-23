@@ -1,110 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-29886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6760E97EFD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 19:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 217CF97F014
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 20:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CAA61C2110E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 17:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 345531C21789
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 18:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B5419F412;
-	Mon, 23 Sep 2024 17:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293AB19E99B;
+	Mon, 23 Sep 2024 18:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="OmPqdtpm";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="eYSPNvDg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCDU+obU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B2A19F40C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 17:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489391EB36;
+	Mon, 23 Sep 2024 18:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727112680; cv=none; b=peMV1Mlc6sL0iliTirIqrLMAEzhfw8hAx0GARptORhgoWNHYbsnWfTARCsA4fsYgcKa1IBvGrNld9/P+y0lmnl3JeVtrD14YDg3XfFybnznDFQh1goDugrUgIyfePQo+zTMgdNZo2Bx5XveFpYHiuHNp5Nk9OTJPDO1YKJ/Di/8=
+	t=1727114556; cv=none; b=Fo9GtETVTivBqCjn7fKnIkx2k8vbCMspM2V0co+12QIJa19Kx/VOe2U/017UYPENWm9lMm+CpNWRoKUVQEnIco0+REx09Zn3Ob+SPpAbm/4oFj96whlUIMGTY2A3MFZdx+ICye2Ss7ORB9NMTOxVGXjqfg9gAIGyqXDAVHmSxeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727112680; c=relaxed/simple;
-	bh=2nL+gJE/xUGOiECsRdkY2s0zPbV1/VkEl3IslBMeitQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EJbIcRS+VaBchidN2gPuyDBOaY/WWzpLbyQlMZ7rSHg1TJJ3ZoAOUnx51YvPhk3D5LRlq5FBknkhWQ12SOkXd8XgC5hZjaeJluGyNmDwh987aG99JEC8v6GrsSFYZvs5ktuDWZRQkNZcuRcCBdO0LbiUnBaA+D5osUqLtUVjyvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=OmPqdtpm; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=eYSPNvDg; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=OmPqdtpmz6efyksDBUQRS60DihVRA8nbZkrLCv3lixKlera9U5lNVDkslyuA1Y188JNhYhoFQWSc0cb5xU929V8AmIlJte2EPNo1vWioA1HGWI0B5R4w07xIOyGFTu3uoPI/KPj5Y14g7pHA6tohSFNU+uBE97/4Ww59bhNozVaNj5in6Iy4PEWNJwZr6EnLruO8F/I50ApqsDBMAv7D/NKwNWI8MLIsVNCAYSLjhJOa8pijTdGDyy/ZCvPeHQHYhLaCbSweZVUCumlldi0HAUhzEFk4GwEZgj9cgOPKi/2MQNQBklp0ZvtFCb5UjoS0mIGTNP/uyj3fv+1tNB3uyw==; s=purelymail3; d=lkcamp.dev; v=1; bh=2nL+gJE/xUGOiECsRdkY2s0zPbV1/VkEl3IslBMeitQ=; h=Received:From:To:Subject:Date;
-DKIM-Signature: a=rsa-sha256; b=eYSPNvDgAyv26z29oMilC/m4jGEcDCkWtcbcm7he1RgpwBBiX5DiBhOblYdgLMJLbgMvoAnafgtofN8OkzbRvh100UYiQHpjoj8piOqc4GmndysAoMcqHXfIYHn3Rj9vUv8GhDnvE4AvgB1c/NZef08hr5ZBJZz+bXHaltrp+oLMikqSHZN1SrCY0z2CJk4XavBjnxBw/eL0CX8T/fEuXEksO5mlkcD8SFBujm7aR7Svof6SPKnYtC7oIk5MOm67r/uozZH/g6EELWdYArTcTwrH76NR4eA4srvhA80YofQs4JHtwwjuYP3K7uVkjSQo9c3tjuxb9KyMXh9nm+vvMg==; s=purelymail3; d=purelymail.com; v=1; bh=2nL+gJE/xUGOiECsRdkY2s0zPbV1/VkEl3IslBMeitQ=; h=Feedback-ID:Received:From:To:Subject:Date;
-Feedback-ID: 40598:7130:null:purelymail
-X-Pm-Original-To: linux-fsdevel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1005398190;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 23 Sep 2024 17:31:09 +0000 (UTC)
-From: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
-To: Gabriel Krisman Bertazi <krisman@kernel.org>,
-	David Gow <davidgow@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Cc: linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	porlando@lkcamp.dev,
-	dpereira@lkcamp.dev,
-	gbittencourt@lkcamp.dev
-Subject: [PATCH 2/2] unicode: kunit: change tests filename and path
-Date: Mon, 23 Sep 2024 14:34:54 -0300
-Message-ID: <20240923173454.264852-3-gbittencourt@lkcamp.dev>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240923173454.264852-1-gbittencourt@lkcamp.dev>
-References: <20240923173454.264852-1-gbittencourt@lkcamp.dev>
+	s=arc-20240116; t=1727114556; c=relaxed/simple;
+	bh=i6A1h8ekt9sJf8i1G1ZE1UZpWt2//e1ngJB6vmWW/xM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ltbzuc78AgRSmb/U9ciGK2xTC8/TlJs+PHxroT7jG+6+cylQ1n3Vd/ykQncDS9spp3IOFn3ZJTBVKZH9YRM0evQXT2Rd5+kU9loFQSJ91QWBeCnLb1WBUmOzT1Hz7XNQwwELVccAoUmURBVHJx2BlU73lNI68KIO9j1/B5i75aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCDU+obU; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d4fbe62bf5so2680227a12.0;
+        Mon, 23 Sep 2024 11:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727114554; x=1727719354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+l5G06iAwNEMFjhIddmVaNEYy3o0TliivMNvfjYJnFA=;
+        b=eCDU+obUEjZ/IFgj1Fv9TivgI1g3VHD0baO7ZurYKCM6Iebl9nCdY/xMuk2Z9TLFUT
+         UKICDhRRtlRPlVqAebRL7YqhRNmY7r55q7Hn8r9BwRgZ3+5g0uKBDwjRozvGfwABW5UH
+         8aGl7HvU7HLTGZZGoxebUadXl+tEQxxHigkEYeYsX7bGhTrH15fsEXer6KkE6RBr4XGu
+         4dkqghrpqazFiSi2oit7vAiuop3PnupnpoFFvWyqa0xbNPTt76mP1m44ISKLmemHt//I
+         /Rqn1pRwhcOiOJovFIHUoHPhHOr+d/yFzo2cLCbaIpkT1Q5bAydWjZ9iKLKY6np+vdyi
+         woUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727114554; x=1727719354;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+l5G06iAwNEMFjhIddmVaNEYy3o0TliivMNvfjYJnFA=;
+        b=ZIiPwDw29oUlyD2TGfzuOS3fSvNT3ds6v43I6dU+AtXHTuppTNd1NwO64+EuR2Fbc2
+         /Ok/UbRRGfFY0yfm8mL+AC3uiqzwlOC13RMm5uqSdh6G6YfhkRSd7g+QrsxtfXXF1A9O
+         l9nVKK24IPHKAkNKyH3LNSOF0nnEhWD0UTrOpbmJI7BjZd8W0yowFsIfcnDoqHbXjXm1
+         pRQV46aT4xQ0V7ZGsYmMEvQJ95xx5HkHCl/bv42B2BxLe/c/YSTsYLcsCKFHCtHMKz4N
+         OZaUs3fMrgSmoj8LwIp5VBsZQSWZGglHqipo+SZ7ppZE+3MtpsbMu0ERcJ+Nmk2WzG4Y
+         B2AQ==
+X-Gm-Message-State: AOJu0YygDScf9q5sHDJa3LNGvY0H5xpOVGkDlBMo2J3lW1bRpqFmEBSO
+	zINF0kEFs7PW8ClhV5XZWUqOTyJsP3yXXipDzLTegYIr2chaCa0rsWqUZA==
+X-Google-Smtp-Source: AGHT+IEma2umjh1MgFLTRdkW/AXbjpBvdd/FAY5Bo/sTfzcsDa+cnUEQrdfXW1JW5LyjIqLyfhL+BA==
+X-Received: by 2002:a05:6a20:6f08:b0:1cf:3a52:6ad6 with SMTP id adf61e73a8af0-1d30a96d7aamr18508977637.24.1727114554215;
+        Mon, 23 Sep 2024 11:02:34 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:223:9c18:52fc:a4b:7ef5:db4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b975f2sm14604598b3a.149.2024.09.23.11.02.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 11:02:33 -0700 (PDT)
+From: SurajSonawane2415 <surajsonawane0215@gmail.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	SurajSonawane2415 <surajsonawane0215@gmail.com>,
+	syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
+Subject: [PATCH] hfs: Fix uninitialized value issue in hfs_iget
+Date: Mon, 23 Sep 2024 23:30:50 +0530
+Message-Id: <20240923180050.11158-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Change utf8 kunit test filename and path to follow the style
-convention on Documentation/dev-tools/kunit/style.rst
+Fix uninitialized value issue in hfs_iget by initializing the hfs_cat_rec 
+structure in hfs_lookup.
 
-Co-developed-by: Pedro Orlando <porlando@lkcamp.dev>
-Signed-off-by: Pedro Orlando <porlando@lkcamp.dev>
-Co-developed-by: Danilo Pereira <dpereira@lkcamp.dev>
-Signed-off-by: Danilo Pereira <dpereira@lkcamp.dev>
-Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+Reported-by: syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=18dd03a3fcf0ffe27da0
+Tested-by: syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
+Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
 ---
- fs/unicode/Makefile                                | 2 +-
- fs/unicode/{ =3D> tests}/.kunitconfig                | 0
- fs/unicode/{utf8-selftest.c =3D> tests/utf8_kunit.c} | 0
- 3 files changed, 1 insertion(+), 1 deletion(-)
- rename fs/unicode/{ =3D> tests}/.kunitconfig (100%)
- rename fs/unicode/{utf8-selftest.c =3D> tests/utf8_kunit.c} (100%)
+ fs/hfs/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-index 37bbcbc628a1..d95be7fb9f6b 100644
---- a/fs/unicode/Makefile
-+++ b/fs/unicode/Makefile
-@@ -4,7 +4,7 @@ ifneq ($(CONFIG_UNICODE),)
- obj-y=09=09=09+=3D unicode.o
- endif
- obj-$(CONFIG_UNICODE)=09+=3D utf8data.o
--obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) +=3D utf8-selftest.o
-+obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) +=3D tests/utf8_kunit.o
-=20
- unicode-y :=3D utf8-norm.o utf8-core.o
-=20
-diff --git a/fs/unicode/.kunitconfig b/fs/unicode/tests/.kunitconfig
-similarity index 100%
-rename from fs/unicode/.kunitconfig
-rename to fs/unicode/tests/.kunitconfig
-diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/tests/utf8_kunit.c
-similarity index 100%
-rename from fs/unicode/utf8-selftest.c
-rename to fs/unicode/tests/utf8_kunit.c
---=20
-2.46.1
+diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+index b75c26045df4..3b880b3e4b4c 100644
+--- a/fs/hfs/dir.c
++++ b/fs/hfs/dir.c
+@@ -20,7 +20,7 @@
+ static struct dentry *hfs_lookup(struct inode *dir, struct dentry *dentry,
+ 				 unsigned int flags)
+ {
+-	hfs_cat_rec rec;
++	hfs_cat_rec rec = {0};
+ 	struct hfs_find_data fd;
+ 	struct inode *inode = NULL;
+ 	int res;
+-- 
+2.34.1
 
 
