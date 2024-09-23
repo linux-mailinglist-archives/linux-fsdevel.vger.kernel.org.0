@@ -1,319 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-29828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912B197E770
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 10:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20EA797E784
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 10:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4B751C21185
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 08:21:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 521D61C211FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 08:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AC5193436;
-	Mon, 23 Sep 2024 08:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E6319343D;
+	Mon, 23 Sep 2024 08:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zvl3F49c";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FGY8kuZY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zvl3F49c";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FGY8kuZY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUuu5rjC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFDC192D7E;
-	Mon, 23 Sep 2024 08:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E7017BA9;
+	Mon, 23 Sep 2024 08:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727079657; cv=none; b=pfNVrskN8spXCpPiEOAe98YCic6crIut3WMLvdLbiAikDVlwDx1AILvM5flhalUdTFNbAac7+JV74iYdcXBt1h7mrkcacCG2lJziYZ7L6Aa+t/iNa7QqjHh85l3jlRK3I3qt/ZHblAsbRsV1bs4nWeaf24TKhVz7UCLoNTWFqEc=
+	t=1727080117; cv=none; b=GfKVvPxP6RUU0VlBfSjORhSKE8WMtcYod6sRXagMntzBktvq/D5hj3tqjDAsnhBFvQWXKcNiN/Md/CLShY/DSRBA+ib+751j8f9NTE8y9T2o4P+ODQeJSVFyrUd9MiXdgLeCcDDH3pOer2AXQj8yUHPQSHDzOKrjIHhushmNPrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727079657; c=relaxed/simple;
-	bh=GqHq2PDW3f8bGIaCfl0g+Yv3qTbUNV94rofgjMwHWj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkHe+yiP28qynfY3fdB4qeg/3X4g3IVvG6UBwgxe5dVaeqbkp6f9MCCzU4gjnllemc2YtnVpd5BQEEmzvmHGYpnnZWnHcz6Xpjp3uev0nPdxqUlKqpHaY3KqCLSdEXiQzt9d8QhDTes8HRTFG9pmNP36dHVbZxloT+Is4YiM8vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zvl3F49c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FGY8kuZY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zvl3F49c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FGY8kuZY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 48E631F7A5;
-	Mon, 23 Sep 2024 08:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727079653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/KZpjNHDu94Ylr2t2PZPijpnyCtUTNnKe6nggAve46g=;
-	b=zvl3F49cGUAoQkFgorRSWCoGU4XdFTA0jXApEAAdb4nKhSp8NN7R4IQHH5H2LEjAHcgmKn
-	ysmCd15tupnWluc85DxpzEZJDpqnNHh+U6sb3BvHkDphAm/Za4bL13/UwaLw4cH3ZH1n62
-	5/5sYmhXNOtf6IH2oqxXur8JuWGKuro=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727079653;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/KZpjNHDu94Ylr2t2PZPijpnyCtUTNnKe6nggAve46g=;
-	b=FGY8kuZYJkKL0PJM023q/LvRxjJSWiDWsvec6cWV7BeBaiw4unKNleXxfC+ODjPFczaXJu
-	Fg25vh6kNYqoZeDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727079653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/KZpjNHDu94Ylr2t2PZPijpnyCtUTNnKe6nggAve46g=;
-	b=zvl3F49cGUAoQkFgorRSWCoGU4XdFTA0jXApEAAdb4nKhSp8NN7R4IQHH5H2LEjAHcgmKn
-	ysmCd15tupnWluc85DxpzEZJDpqnNHh+U6sb3BvHkDphAm/Za4bL13/UwaLw4cH3ZH1n62
-	5/5sYmhXNOtf6IH2oqxXur8JuWGKuro=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727079653;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/KZpjNHDu94Ylr2t2PZPijpnyCtUTNnKe6nggAve46g=;
-	b=FGY8kuZYJkKL0PJM023q/LvRxjJSWiDWsvec6cWV7BeBaiw4unKNleXxfC+ODjPFczaXJu
-	Fg25vh6kNYqoZeDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3C0C313A64;
-	Mon, 23 Sep 2024 08:20:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Hv62DuUk8Wa8bAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 23 Sep 2024 08:20:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DCC00A0ABF; Mon, 23 Sep 2024 10:20:52 +0200 (CEST)
-Date: Mon, 23 Sep 2024 10:20:52 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 08/10] ext4: factor out ext4_do_fallocate()
-Message-ID: <20240923082052.s7b7k23iybukujij@quack3>
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-9-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1727080117; c=relaxed/simple;
+	bh=yHtG3hlnpI3BrMNM+sawMfp8abAJ61ytI5jNxG6T+1c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gHNjNZ/pTS7xHiDytowMVllRuGbDkPTR+zUbH6mHq2LLh37Pus/39Ug4Eo8SimCLa3bVPR7G3nf+0K5EMO4d+votJmAcHxKYrQhsc1sqxRT40S2Qb9YXzG7OX38V9/OosmD4CVniheizrDgs1A43O5PeukdmpSlKwCyGFfzgQC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUuu5rjC; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7aa086b077so533014666b.0;
+        Mon, 23 Sep 2024 01:28:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727080114; x=1727684914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P9C/zxi8apjLDMZQ5ZZwCJp+8pzL4l0A19wCqb0vQaQ=;
+        b=KUuu5rjCBbkVFfMDUjmoAVQmtl+XJO8bAaBHMHb7ltNlTgLCvSDDfgbgsu546uVgTY
+         nzfokuUhfXSEoiHLjc67MHIMe1kkJAFvgznWe+I3Ln1gR/IqERjSgwn06v1btwS0DPy0
+         LYsQWByp64bdo2oyfNR8NS1DgpMCD7w1AyVJE7a91aBvdj0yktqFCdEKVIeJ6QTf7a8+
+         GolpDBpWKQEr8t/VChD5GWXVefLQOSoqhhWzyN+JErwN43HEDsnhIDEJsUd7km5pDKFb
+         TIDcb38xnFG9YCZhVD7dtF05g/i2QJyObQhE2zuVr5AdiWaQzK1/bIMdcqz5MLk6oNJp
+         aKiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727080114; x=1727684914;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P9C/zxi8apjLDMZQ5ZZwCJp+8pzL4l0A19wCqb0vQaQ=;
+        b=eKYmixIWjN20WDr+6Yd4h0wqWYdfXr+X/xzO1TADe2EVWrx9yb6MzEI9DSIgVTaFuO
+         OQqxtXVP4uz5qRoU5j2z1WsplMGV6pTHC2Jfm2vNwlAZm+V0APHOZe3EhVbko2uHeXM1
+         zCu1epVM7/l72JRurIZ6ndriJtvMZtM4XYoJECeFm0e1hETnQpyPqRoo30YRZVPYZWYK
+         I223G+rd6+Eqr9tx4wVkT44EPL+RpmgXXYbT9aCYEW9tgOHtvkGGCCpKHFakvTHcI8Kv
+         lcJrdaIqnnm6YCdwWEmqGJKFkeJlQY3/r2Hxfdt2NyoYEyqAMhsnb3ffVCqz0cde2yFq
+         Rg2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVf6WzbKw0BXut15LbCCk81nSYaEcoJs9WNXos57eBBIQG8CWpGGoYq+Q+/bimUWgMJs22cORB/M9Gj@vger.kernel.org, AJvYcCVnhF01gRl4ER40GsVsctSZp5bRDNQjfKyChbZbQBcNjB+uA83+Ps3cHOJ1Sqt447HkkDOYFo4LG0K34iNr@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr74r0PHE57TLUokwepQXA6AK/knF/XTVR7BE/IYQNRLB+xQ/C
+	Ut1m8MybY2L7jpzcOh1bCfUJGWie+UQgM8NBzwkdtjqIpWg7IzY+EqyAAQ==
+X-Google-Smtp-Source: AGHT+IF1SMfcx0uP0ubXbVbGqr8tI7cZNkjk0wAUmlPqKaxQCdwKfivcqYVnRXbCNA8NmXScphDTqA==
+X-Received: by 2002:a17:907:9343:b0:a86:963f:ea8d with SMTP id a640c23a62f3a-a90d516abaamr1169402466b.64.1727080113750;
+        Mon, 23 Sep 2024 01:28:33 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90cbc7122esm512948866b.124.2024.09.23.01.28.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 01:28:33 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH v2 0/2] API for exporting connectable file handles to userspace
+Date: Mon, 23 Sep 2024 10:28:27 +0200
+Message-Id: <20240923082829.1910210-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904062925.716856-9-yi.zhang@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Wed 04-09-24 14:29:23, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Now the real job of normal fallocate are open code in ext4_fallocate(),
-> factor out a new helper ext4_do_fallocate() to do the real job, like
-> others functions (e.g. ext4_zero_range()) in ext4_fallocate() do, this
-> can make the code more clear, no functional changes.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Jeff,
 
-Looks good. Feel free to add:
+These patches bring the NFS connectable file handles feature to
+userspace servers.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+They rely on Christian's and Aleksa's changes recently merged to v6.12.
 
-								Honza
+I am aware of the usability implications with connectable file handles,
+which are not consistent throughout the inode lifetime (i.e. when moved
+to another parent), but the nfsd feature does exists and some users (me)
+are interested in exporting this feature to userspace.
 
-> ---
->  fs/ext4/extents.c | 125 ++++++++++++++++++++++------------------------
->  1 file changed, 60 insertions(+), 65 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index a6c24c229cb4..06b2c1190181 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4662,6 +4662,58 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	return ret;
->  }
->  
-> +static long ext4_do_fallocate(struct file *file, loff_t offset,
-> +			      loff_t len, int mode)
-> +{
-> +	struct inode *inode = file_inode(file);
-> +	loff_t end = offset + len;
-> +	loff_t new_size = 0;
-> +	ext4_lblk_t start_lblk, len_lblk;
-> +	int ret;
-> +
-> +	trace_ext4_fallocate_enter(inode, offset, len, mode);
-> +
-> +	start_lblk = offset >> inode->i_blkbits;
-> +	len_lblk = EXT4_MAX_BLOCKS(len, offset, inode->i_blkbits);
-> +
-> +	inode_lock(inode);
-> +
-> +	/* We only support preallocation for extent-based files only. */
-> +	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out;
-> +	}
-> +
-> +	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
-> +	    (end > inode->i_size || end > EXT4_I(inode)->i_disksize)) {
-> +		new_size = end;
-> +		ret = inode_newsize_ok(inode, new_size);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +
-> +	/* Wait all existing dio workers, newcomers will block on i_rwsem */
-> +	inode_dio_wait(inode);
-> +
-> +	ret = file_modified(file);
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret = ext4_alloc_file_blocks(file, start_lblk, len_lblk, new_size,
-> +				     EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT);
-> +	if (ret)
-> +		goto out;
-> +
-> +	if (file->f_flags & O_SYNC && EXT4_SB(inode->i_sb)->s_journal) {
-> +		ret = ext4_fc_commit(EXT4_SB(inode->i_sb)->s_journal,
-> +					EXT4_I(inode)->i_sync_tid);
-> +	}
-> +out:
-> +	inode_unlock(inode);
-> +	trace_ext4_fallocate_exit(inode, offset, len_lblk, ret);
-> +	return ret;
-> +}
-> +
->  /*
->   * preallocate space for a file. This implements ext4's fallocate file
->   * operation, which gets called from sys_fallocate system call.
-> @@ -4672,12 +4724,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  {
->  	struct inode *inode = file_inode(file);
-> -	loff_t new_size = 0;
-> -	unsigned int max_blocks;
-> -	int ret = 0;
-> -	int flags;
-> -	ext4_lblk_t lblk;
-> -	unsigned int blkbits = inode->i_blkbits;
-> +	int ret;
->  
->  	/*
->  	 * Encrypted inodes can't handle collapse range or insert
-> @@ -4699,71 +4746,19 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  	ret = ext4_convert_inline_data(inode);
->  	inode_unlock(inode);
->  	if (ret)
-> -		goto exit;
-> +		return ret;
->  
-> -	if (mode & FALLOC_FL_PUNCH_HOLE) {
-> +	if (mode & FALLOC_FL_PUNCH_HOLE)
->  		ret = ext4_punch_hole(file, offset, len);
-> -		goto exit;
-> -	}
-> -
-> -	if (mode & FALLOC_FL_COLLAPSE_RANGE) {
-> +	else if (mode & FALLOC_FL_COLLAPSE_RANGE)
->  		ret = ext4_collapse_range(file, offset, len);
-> -		goto exit;
-> -	}
-> -
-> -	if (mode & FALLOC_FL_INSERT_RANGE) {
-> +	else if (mode & FALLOC_FL_INSERT_RANGE)
->  		ret = ext4_insert_range(file, offset, len);
-> -		goto exit;
-> -	}
-> -
-> -	if (mode & FALLOC_FL_ZERO_RANGE) {
-> +	else if (mode & FALLOC_FL_ZERO_RANGE)
->  		ret = ext4_zero_range(file, offset, len, mode);
-> -		goto exit;
-> -	}
-> -	trace_ext4_fallocate_enter(inode, offset, len, mode);
-> -	lblk = offset >> blkbits;
-> -
-> -	max_blocks = EXT4_MAX_BLOCKS(len, offset, blkbits);
-> -	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
-> -
-> -	inode_lock(inode);
-> -
-> -	/*
-> -	 * We only support preallocation for extent-based files only
-> -	 */
-> -	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))) {
-> -		ret = -EOPNOTSUPP;
-> -		goto out;
-> -	}
-> -
-> -	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
-> -	    (offset + len > inode->i_size ||
-> -	     offset + len > EXT4_I(inode)->i_disksize)) {
-> -		new_size = offset + len;
-> -		ret = inode_newsize_ok(inode, new_size);
-> -		if (ret)
-> -			goto out;
-> -	}
-> -
-> -	/* Wait all existing dio workers, newcomers will block on i_rwsem */
-> -	inode_dio_wait(inode);
-> -
-> -	ret = file_modified(file);
-> -	if (ret)
-> -		goto out;
-> -
-> -	ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size, flags);
-> -	if (ret)
-> -		goto out;
-> +	else
-> +		ret = ext4_do_fallocate(file, offset, len, mode);
->  
-> -	if (file->f_flags & O_SYNC && EXT4_SB(inode->i_sb)->s_journal) {
-> -		ret = ext4_fc_commit(EXT4_SB(inode->i_sb)->s_journal,
-> -					EXT4_I(inode)->i_sync_tid);
-> -	}
-> -out:
-> -	inode_unlock(inode);
-> -	trace_ext4_fallocate_exit(inode, offset, max_blocks, ret);
-> -exit:
->  	return ret;
->  }
->  
-> -- 
-> 2.39.2
-> 
+The API I chose for encoding conenctable file handles is pretty
+conventional (AT_HANDLE_CONNECTABLE).
+
+open_by_handle_at(2) does not have AT_ flags argument, but also, I find
+it more useful API that encoding a connectable file handle can mandate
+the resolving of a connected fd, without having to opt-in for a
+connected fd independently.
+
+Therefore, the whacky API from RFC was replaced with an explicit
+connectable flag in the unused (*) upper bits of the handle_type.
+
+(*) It may be valid for filesystems to return a handle type with upper
+bits set, but AFAIK, no filesystem does that.
+
+I chose to implemnent this by re-farmatting struct file_handle using bit
+feilds.  While using bit fields in UAPI is a questionable practice,
+file_handle is not actually in the UAPI and the legacy struct
+file_handle which is described in the man page, is binary compatible
+with the modified kernel definition with bit fields.
+If this is a problem, I can add (and strip) the connectable bit using
+plain arithmetics.
+
+Thought and flames are welcome.
+
+Thanks,
+Amir.
+
+Changes since v1 [1]:
+- Assert on encode for disconnected path (Jeff)
+- Don't allow AT_HANDLE_CONNECTABLE with AT_EMPTY_PATH
+- Drop the O_PATH mount_fd API hack (Jeff)
+- Encode an explicit "connectable" flag in handle type
+
+[1] https://lore.kernel.org/linux-fsdevel/20240919140611.1771651-1-amir73il@gmail.com/
+
+Amir Goldstein (2):
+  fs: name_to_handle_at() support for "explicit connectable" file
+    handles
+  fs: open_by_handle_at() support for decoding "explicit connectable"
+    file handles
+
+ fs/fhandle.c               | 70 ++++++++++++++++++++++++++++++++++----
+ include/linux/exportfs.h   |  2 ++
+ include/linux/fs.h         |  3 +-
+ include/uapi/linux/fcntl.h |  1 +
+ 4 files changed, 69 insertions(+), 7 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
