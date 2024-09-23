@@ -1,198 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-29896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A176297F125
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 21:13:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E75D97F128
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 21:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6381F22B53
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 19:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D60E1C21782
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 19:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FE219F407;
-	Mon, 23 Sep 2024 19:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6B319F438;
+	Mon, 23 Sep 2024 19:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="whOCPy81";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wsPrNOuM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="whOCPy81";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wsPrNOuM"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cVJMmGbd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586E217BCC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 19:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2394C15E86
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 19:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727118822; cv=none; b=Svgmg9787LH9ATtowwXI4V6pTuPKgEcOe53dImsB1Vz/zKGKMoVLNP+eN7Sp4C0V6L09SdusNVLnqTHV821ciqu7OTMJhQGX6aBYvLDpaT7UvVxLZmONVI9/uRvDgTaxgAnX4ipiMnfm9EdQmU2NhC9g82xgex8YHhU7OLJYb/s=
+	t=1727119090; cv=none; b=asnJr7QSIWL6ZNH7CCW9k+T7xqb1FjtjY1nzO0fO4kxgPrqlxAzbaI5dFLbweQlmEd4YwHD+O0kiK74KoK3KfdLEkryZ1G5Je3hqsTQ2+Ms6qJLN32LrQ63wlxuudHWimlq0ht+9xzaqQKM1rqVjml9NAWKrMG/3BC0AhNQ52pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727118822; c=relaxed/simple;
-	bh=QAuhvBmId4AhpD3JkqQ4o/8sVMOvkLzcQOItt3nXd5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJpOrxN+8oaUxMpcko2xXvaKB6YSEnX24mnj7LGmRMYnUVzoU3jo7tCR5Tjbk10knauwYE0v1Hj5ud2UJGA/bAD5FNCuV8RYkZEspXp3648z69p1nu3dS0Tl6RKodiwgF/wQ0U9E2aRshjft5mgMjP/JGnfRe0qqtOC5acQ+GCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=whOCPy81; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wsPrNOuM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=whOCPy81; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wsPrNOuM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6EDF51F390;
-	Mon, 23 Sep 2024 19:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727118818; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7kyRNi2+rqNZD3wa8cUJq5PMVcecbiSFwjuGeV4QkRo=;
-	b=whOCPy81OuPQuLxyF8jmh1BZoVy6JcelIEZzxPPeELm6cIQASidm69O7Udbc0SLwN7EePf
-	k1GXKxA8x+R8yF5pME1UOZllkppqWr7FT+krutyD7uklE9nhJ8OB38fpKL6tmPBKljr7I/
-	A0J5hGcTsMAVFXDV6xq6lmbAGyjZzMk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727118818;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7kyRNi2+rqNZD3wa8cUJq5PMVcecbiSFwjuGeV4QkRo=;
-	b=wsPrNOuMwLx0tXeVxScBq+y/W5fNF3kyktCG3Pd1XGA8RucvdIwFePm59EPSzl8FO8dXBw
-	f7E7WleHp5Z4EmBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727118818; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7kyRNi2+rqNZD3wa8cUJq5PMVcecbiSFwjuGeV4QkRo=;
-	b=whOCPy81OuPQuLxyF8jmh1BZoVy6JcelIEZzxPPeELm6cIQASidm69O7Udbc0SLwN7EePf
-	k1GXKxA8x+R8yF5pME1UOZllkppqWr7FT+krutyD7uklE9nhJ8OB38fpKL6tmPBKljr7I/
-	A0J5hGcTsMAVFXDV6xq6lmbAGyjZzMk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727118818;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7kyRNi2+rqNZD3wa8cUJq5PMVcecbiSFwjuGeV4QkRo=;
-	b=wsPrNOuMwLx0tXeVxScBq+y/W5fNF3kyktCG3Pd1XGA8RucvdIwFePm59EPSzl8FO8dXBw
-	f7E7WleHp5Z4EmBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5FE4B1347F;
-	Mon, 23 Sep 2024 19:13:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qfFgF+K98WamMwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 23 Sep 2024 19:13:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F17E1A0656; Mon, 23 Sep 2024 21:13:22 +0200 (CEST)
-Date: Mon, 23 Sep 2024 21:13:22 +0200
-From: Jan Kara <jack@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [GIT PULL] Fsnotify changes for 6.12-rc1
-Message-ID: <20240923191322.3jbkvwqzxvopt3kb@quack3>
-References: <20240923110348.tbwihs42dxxltabc@quack3>
- <CAHk-=wiE1QQ-_kTKSf4Ur6JEjMtieu7twcLqu_CH4r1daTBiCw@mail.gmail.com>
+	s=arc-20240116; t=1727119090; c=relaxed/simple;
+	bh=12UraXgOhO1+DKxjW3Y41QHOUND95cJavo13ywtBn1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pMlCGhE7c2NUwJK/FlJ+dJ6IzyaZeTQIw4o+qxrNVMYoUJLxA1EFvzT+KMzsMOBV2WZsvlF2LjVysAAr3bLZrJMfl8Zv80ODyXs9fi1VwVpSXQ0teUQiMgZCoQGEU3cxs3J7aPGlnpItm0kfaq6n+ivQ8XkMwiEzMdhkRm3cMTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cVJMmGbd; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-711009878e2so2018947a34.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 12:18:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727119088; x=1727723888; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LQOZDxeBiZ4/EBMkqJytOAhzCR3WJTa2BWTB+lJpGfs=;
+        b=cVJMmGbdHgoL0GEb6mIPhYaWkBgjelkk1KfqlMGP+eG+qSbEJlTc88PxBUr6x6PBgs
+         cPw6L1aGr3dk9hjQbC5Ac2/R+d1hwY4L+npXvBygiJRt2lhfEd/OIgI4FF5+zIm2Gvyz
+         dBDs/5x/F8mWs+CIQnhpIVsrNRXtl/xBdq8Sg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727119088; x=1727723888;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LQOZDxeBiZ4/EBMkqJytOAhzCR3WJTa2BWTB+lJpGfs=;
+        b=MBcnUEz6rlrIZWV1fdSzkEQEmJlj9ziscJcKL65EVN7Eib6+DpYcAFX+3/7SmhMHdT
+         FyoIVrTYfEIek+96pSDMQ5Py+PftvWMaH9Zs+Hoz6cqVdKWJiCDbH4vhnO+y1YteEGEK
+         ddh/k8PtNGHxPQKRI73gVD/4leHcgrC7ePhknGpnK6LsQH+9Xs9fRfwmKzWS41T3ITFg
+         3JRwExAiBXZqsExC7Y1SdFy71G0O36OBO27BFXqh9LYfCvOo0ax7pMtiY9oypo/HPIy+
+         uuvnti98pCTJcUCSSbhqAC5Dxs09zACf+e3sqYqjEZAfNKAGctmv8N41xUums9caajax
+         29TA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKm5IALIm90VxoZbG2Qyzv9h2ZUZPPLM/m3QHjLn5Gz/3mOLshThwxi21s7QhDgHHPZyDBVdXDtiRVBlPC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1RwU8Ks9jO3+az5E8G4mqIMS+1mTjaZPubJVbZXPjRdWIS00L
+	qSHESjki2IjCRed024lf2r8RLkvZGA6Q/0jss+BDK8iCHFkUW8qIPwlb/A0rNyc=
+X-Google-Smtp-Source: AGHT+IEB7oD+JNpFtZW52HqiwhT6S97TksasAQppSj4aFmR20g6Bc2YLWC2AtEk9zu9i/0uK0NSsTw==
+X-Received: by 2002:a05:6830:6016:b0:710:f543:e39b with SMTP id 46e09a7af769-713934b2dcamr8660583a34.18.1727119088270;
+        Mon, 23 Sep 2024 12:18:08 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71389bb30d3sm2386062a34.49.2024.09.23.12.18.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 12:18:06 -0700 (PDT)
+Message-ID: <06f56247-d2fb-4038-9593-7717a4e7796b@linuxfoundation.org>
+Date: Mon, 23 Sep 2024 13:18:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiE1QQ-_kTKSf4Ur6JEjMtieu7twcLqu_CH4r1daTBiCw@mail.gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] unicode: kunit: refactor selftest to kunit tests
+To: Gabriela Bittencourt <gbittencourt@lkcamp.dev>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>, David Gow
+ <davidgow@google.com>, linux-fsdevel@vger.kernel.org,
+ ~lkcamp/patches@lists.sr.ht
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ porlando@lkcamp.dev, dpereira@lkcamp.dev,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240923173454.264852-1-gbittencourt@lkcamp.dev>
+ <20240923173454.264852-2-gbittencourt@lkcamp.dev>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240923173454.264852-2-gbittencourt@lkcamp.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 23-09-24 11:35:00, Linus Torvalds wrote:
-> On Mon, 23 Sept 2024 at 04:03, Jan Kara <jack@suse.cz> wrote:
-> >
-> >   * The implementation of the pre-content fanotify events. T
+On 9/23/24 11:34, Gabriela Bittencourt wrote:
+> Instead of creating 'test' functions, use kunit functions to test
+> utf-8 support in unicode subsystem.
+
+Can you elaborate on the reefactoring changes. This will help
+others who would want to take on such refactoring in the future.
+
 > 
-> I pulled this, and then I decided to unpull.
+> Co-developed-by: Pedro Orlando <porlando@lkcamp.dev>
+> Signed-off-by: Pedro Orlando <porlando@lkcamp.dev>
+> Co-developed-by: Danilo Pereira <dpereira@lkcamp.dev>
+> Signed-off-by: Danilo Pereira <dpereira@lkcamp.dev>
+> Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+> ---
+>   fs/unicode/.kunitconfig    |   3 +
+>   fs/unicode/Kconfig         |   5 +-
+>   fs/unicode/Makefile        |   2 +-
+>   fs/unicode/utf8-selftest.c | 152 +++++++++++++++++--------------------
+>   4 files changed, 76 insertions(+), 86 deletions(-)
+>   create mode 100644 fs/unicode/.kunitconfig
 > 
-> I don't see what the permissions for this thing are, and without
-> explanations for why this isn't a huge security issue, I'm not pulling
-> it.
-> 
-> Maybe those explanations exist elsewhere, but they sure aren't in the
-> pull request.
+> diff --git a/fs/unicode/.kunitconfig b/fs/unicode/.kunitconfig
+> new file mode 100644
+> index 000000000000..62dd5c171f9c
+> --- /dev/null
+> +++ b/fs/unicode/.kunitconfig
+> @@ -0,0 +1,3 @@
+> +CONFIG_KUNIT=y
+> +CONFIG_UNICODE=y
+> +CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST=y
+> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
+> index da786a687fdc..4ad2c36550f1 100644
+> --- a/fs/unicode/Kconfig
+> +++ b/fs/unicode/Kconfig
+> @@ -10,6 +10,7 @@ config UNICODE
+>   	  be a separate loadable module that gets requested only when a file
+>   	  system actually use it.
+>   
+> -config UNICODE_NORMALIZATION_SELFTEST
+> +config UNICODE_NORMALIZATION_KUNIT_TEST
+>   	tristate "Test UTF-8 normalization support"
+> -	depends on UNICODE
+> +	depends on UNICODE && KUNIT
+> +	default KUNIT_ALL_TESTS
+> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
+> index e309afe2b2bb..37bbcbc628a1 100644
+> --- a/fs/unicode/Makefile
+> +++ b/fs/unicode/Makefile
+> @@ -4,7 +4,7 @@ ifneq ($(CONFIG_UNICODE),)
+>   obj-y			+= unicode.o
+>   endif
+>   obj-$(CONFIG_UNICODE)	+= utf8data.o
+> -obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
+> +obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) += utf8-selftest.o
+>   
+>   unicode-y := utf8-norm.o utf8-core.o
+>   
+> diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
+> index 600e15efe9ed..54ded8db6b1c 100644
+> --- a/fs/unicode/utf8-selftest.c
+> +++ b/fs/unicode/utf8-selftest.c
+> @@ -1,38 +1,18 @@
+>   // SPDX-License-Identifier: GPL-2.0-only
+>   /*
+> - * Kernel module for testing utf-8 support.
+> + * KUnit tests for utf-8 support
+>    *
+>    * Copyright 2017 Collabora Ltd.
+>    */
+>   
+> -#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> -
+> -#include <linux/module.h>
+> -#include <linux/printk.h>
+>   #include <linux/unicode.h>
+> -#include <linux/dcache.h>
+> +#include <kunit/test.h>
+>   
+>   #include "utf8n.h"
+>   
+> -static unsigned int failed_tests;
+> -static unsigned int total_tests;
+> -
+>   /* Tests will be based on this version. */
+>   #define UTF8_LATEST	UNICODE_AGE(12, 1, 0)
+>   
+> -#define _test(cond, func, line, fmt, ...) do {				\
+> -		total_tests++;						\
+> -		if (!cond) {						\
+> -			failed_tests++;					\
+> -			pr_err("test %s:%d Failed: %s%s",		\
+> -			       func, line, #cond, (fmt?":":"."));	\
+> -			if (fmt)					\
+> -				pr_err(fmt, ##__VA_ARGS__);		\
+> -		}							\
+> -	} while (0)
+> -#define test_f(cond, fmt, ...) _test(cond, __func__, __LINE__, fmt, ##__VA_ARGS__)
+> -#define test(cond) _test(cond, __func__, __LINE__, "")
+> -
+>   static const struct {
+>   	/* UTF-8 strings in this vector _must_ be NULL-terminated. */
+>   	unsigned char str[10];
+> @@ -158,22 +138,22 @@ static const struct {
+>   	}
+>   };
+>   
+> -static ssize_t utf8len(const struct unicode_map *um, enum utf8_normalization n,
+> -		const char *s)
+> +static ssize_t utf8len(const struct unicode_map *um, enum utf8_normalization n, const char *s)
 
-Sure, the details are in some of the commit messages but you're right I
-should have summarized them in the pull request as well:
+Keep "const char *s" on the second line.
 
-Pre-content events are restricted to global CAP_SYS_ADMIN. This is achieved
-by pre-content events being restricted to FAN_CLASSS_PRE_CONTENT
-notification groups which are restricted to CAP_SYS_ADMIN in
-fanotify_init() by this check:
+>   {
+>   	return utf8nlen(um, n, s, (size_t)-1);
+>   }
+>   
 
-        if (!capable(CAP_SYS_ADMIN)) {
-                /*
-                 * An unprivileged user can setup an fanotify group with
-                 * limited functionality - an unprivileged group is limited to
-                 * notification events with file handles and it cannot use
-                 * unlimited queue/marks.
-                 */
-                if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) || !fid_mode)
-                        return -EPERM;
-		...
-	}
+Rest looks good to me.
 
+thanks,
+-- Shuah
 
-> IOW, I want to know where the code is that says "you can't block root
-> processes doing accesses to your files" etc. Or things like "oh, the
-> kernel took a page fault while holding some lock, what protects this
-> from being misused"?
-> 
-> And if that code doesn't exist, there's no way in hell we're pulling
-> this. Ever.
-
-Sure, I understand that. That would have been a huge security hole.
-
-> IOW, where is the "we don't allow unprivileged groups to do this" code?
-> 
-> Because:
-> 
-> >   These events are
-> >  sent before read / write / page fault and the execution is paused until
-> >  event listener replies similarly to current fanotify permission events.
-> 
-> Permission events aren't allowed for unprivileged users. I want to
-> make sure people have thought about this, and I need to actually see
-> this talked about in the pull request.
-
-Should I update the pull request and resend or will you update it with
-paragraph above?
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
