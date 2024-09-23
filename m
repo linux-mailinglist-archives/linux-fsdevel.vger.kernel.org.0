@@ -1,161 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-29820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8313897E5FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 08:29:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C66797E5FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 08:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7402812E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 06:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70461F21522
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2024 06:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411031805E;
-	Mon, 23 Sep 2024 06:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26A017BCA;
+	Mon, 23 Sep 2024 06:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ycYwNRr4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D13E175A1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 06:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B29312E5B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2024 06:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727072962; cv=none; b=cOqGGv+SuxgPgTaHg38naOQasfIwNjyXvKiVH1ZbIpBojTbC0f5ffF/po5YBCM7LFlXuvauuo/NIPddO+NKh8deeJQ4g9a3peHLhPohsSkTH9nFZ+po5ERpT+n/4YzaDM3BZerkQLBAs50yviKOkkmglJg+01XoHrYDcwECQC84=
+	t=1727073057; cv=none; b=Haw0PhttGyyp2Mz+XvxrpaxF8In1Dg6/kyC1/AQF2YENz61jmgThX0S+bYyd9FhUmhKZDo2r6+9+u+BfYz1nOG15tVf2F9gJ6R7rRuxQnuAePUUoIPqv33U8agn2VdQrJoQeH7y9/gkJjIBgldjMoQhjkWI8wzBNgtYp4CzHRjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727072962; c=relaxed/simple;
-	bh=Kx2TQ68EgLTyrPdq9aPMZHinCZwxdZiZuzFAaa2+RNM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FDbTnG7kpm2osP6+G3B61zzQcM5IfHOVNuw1icyjx2fjq+PIzGnmM2M4ZlMGSkTlISPplDgQ8m1bUKzmPpsrpcZMCQbr3MyT24iqIGVxUtd9rl1TmaAj899Z2Vhxf6JFCaqBNj2fve9IYZPxrVcpj3KubqefLdE5kv1YIvVS9RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39f56ac8d88so60481635ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 23:29:21 -0700 (PDT)
+	s=arc-20240116; t=1727073057; c=relaxed/simple;
+	bh=Y2Rp6Mh3oPRvtUu+mbUcpny+kHYSHTc8zKFDBW+xjFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j6Bf2jA2odj3QwcRevQja9Hofs/1X17CMNp3Rq8m5A0iWWmTPM/ZvCIEfhI3hYp9TBSGPT2lUdtQ0kfYSvlWuupStyk1p5r22BSEzEIto9DZUUjY1KHj77647evJ4MMMDuBQ691QcGu7wjQeGk8z6JGuOgzq3Nu2Nz3NdqXulYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ycYwNRr4; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374b5f27cf2so2283894f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Sep 2024 23:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727073051; x=1727677851; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VWlE4/jwrvzyvaDVc7QjPWywTucisKenm+tAHehwRbc=;
+        b=ycYwNRr4SODDqbZMAhBdARtTdz43vEka58swUadnUWvoKKqvVLAqDomZhhFkm1rO/S
+         LmVgL+Sx8Sh+gn22mCHfOGK7+vnflKpb6JeQ1HXUOATLhuB3B56bzGPV+cl3ryG05n+4
+         U7s59wzs1AsqmR0i2YRQDEjg/f9M/9PYSzJaxeRwvDDAQHBaZ0Kn3cLZ+fYMxDNV5bnJ
+         GopdA/pAszoF1nUL04SoEELegromc8kpYRmZvAf6mZRlULmy8wN5VUCp7eRbPhzPq6iq
+         PEVLRZVZndukA0fvIItlD8c1NNpr6SmsC8m5Rl03BUl4ib2n3fJXTYSLeDMljg2IC9fl
+         ocuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727072960; x=1727677760;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1727073051; x=1727677851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y3eisFSRgCY6SMH0f8UYNrkNokbVueDFjny1BQQTsH4=;
-        b=UnDDeFJF7wsrHBnh9ZIAmbuUQYjaQkOAGlquR4gQvCYrOsp9Q7q8bsY2X7D4uWgRG5
-         ybwKyL3X17rxHaHoHLZec2BWdxRkjW7d4It5CfFEjIN2wFTLiSiy8EVZ2d1Gv8nU0LxX
-         Yb18Jb/Q72akrnC2XCLcVK3TiBDjMPehuCn7PJTlD7yuolgu4Mho5xgF54iF6k2XfDNC
-         MWhc/J3ySrkhK0RQFfHGK0JuI2ttMMAiTi641qs7yf8FgHDmESGbFTPe7Z+ZCA+FP3Cu
-         FlagvhHULZKxQK1Oynf1W1S4Vj0dGcuocgVrJRUKUT0X3C+Bcpi0yxyDeXZ5c/XywyLj
-         twmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDfPQmTzaaY24sgfkXbwiaKGpwFhmFp2oyn2wwTNcXq2X/vAuAu2bweT7nz3F893RIIRupEvwEM+0s731l@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDlhCK1UW4EkBXGnjtIqkr88lqMnVohd9lMnYnxhBY9YQK0lnJ
-	jg9cNO6rewy2xFFEG+n7Zbamy2VlG9uQBFraBiBWJiUpzuiWkB+KCAkNIMxLRQlpALYoJG/9acT
-	V54Fb6bN76v0zm9l2hz3eoPv+ZhhrAarj/HZMYUxQTNIBMLR0laH16n0=
-X-Google-Smtp-Source: AGHT+IG8Yx2EOLpckWvpFVzqGKecn74ALfi2WkCETiIB4ueMOGCM0jtAvUXAm60wGHP1fCOwJj6CTwCjcNTmlVZdvBwgoNRvNknu
+        bh=VWlE4/jwrvzyvaDVc7QjPWywTucisKenm+tAHehwRbc=;
+        b=P+l4vI1FJN6Njd90mez6ApdDyAROfMcFW/n6X9eMJ53U4V7JDwwEyeOaaUVEN5csrm
+         lulk0sm78+shXzpMYJFadmgJ2hcp7uUEK7uKKiKTqB3XuYofPjs1E8DTCRJX3btRXGqC
+         DxraQLclI3PkU2XQjEyUoZJZ5pUK3Br/1X2fd3udtMTUGXZk6V2Hio1SuTBPvpfusKpD
+         3EfeoctpnUk14f+gUej0X4VkfQSgAp5gW0cucPzAO7GwcfxeKlNYA+9wKKLlJtgZwC2z
+         FIiDL71swVeI7nkQonbVkj4fxomupEWYxide0eZE1LtppI9AH9rMKuwg7IZsBjTMoO2F
+         4q2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUrBCq5guBwjuPBIdm9O4+rbmjjjFDwexLl9UdySZbFMe6BF+LNdBXYwlhw/j+iAoWOtHMyQoOLY0Dtp65P@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd6hjRms9zgAX4Ubg8Ptm2VBEQhIhGyuj802wB+A7E0eYZUrKS
+	N63YDIr2Z4KlTFAYAoD+c0Lymh/gstRFLZUf4OfW2MTeYzMJ3fQMkBdhqBEZXGg=
+X-Google-Smtp-Source: AGHT+IHANHbriFpVTAnwbXMbE0PKCk1TVwu9FPuVTurP+Z+NrUQCJFCWnlQyTrmM+geMokzP4Ihz4Q==
+X-Received: by 2002:a5d:4f0e:0:b0:374:bf97:ba10 with SMTP id ffacd0b85a97d-37a43154b16mr5330447f8f.25.1727073050940;
+        Sun, 22 Sep 2024 23:30:50 -0700 (PDT)
+Received: from [172.20.13.88] ([45.147.210.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7800299sm23599632f8f.73.2024.09.22.23.30.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Sep 2024 23:30:49 -0700 (PDT)
+Message-ID: <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
+Date: Mon, 23 Sep 2024 00:30:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c84:b0:3a0:98e9:1b7a with SMTP id
- e9e14a558f8ab-3a0c8c8e8b8mr80971335ab.2.1727072960585; Sun, 22 Sep 2024
- 23:29:20 -0700 (PDT)
-Date: Sun, 22 Sep 2024 23:29:20 -0700
-In-Reply-To: <000000000000849b0606179c33b7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f10ac0.050a0220.3eed3.0004.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING in bchfs_truncate
-From: syzbot <syzbot+247ac87eabcb1f8fa990@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: audit@vger.kernel.org, io-uring@vger.kernel.org
+References: <20240922004901.GA3413968@ZenIV> <20240923015044.GE3413968@ZenIV>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240923015044.GE3413968@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On 9/22/24 7:50 PM, Al Viro wrote:
+> On Sun, Sep 22, 2024 at 01:49:01AM +0100, Al Viro wrote:
+> 
+>> 	Another fun bit is that both audit_inode() and audit_inode_child()
+>> may bump the refcount on struct filename.  Which can get really fishy
+>> if they get called by helper thread while the originator is exiting the
+>> syscall - putname() from audit_free_names() in originator vs. refcount
+>> increment in helper is Not Nice(tm), what with the refcount not being
+>> atomic.
+> 
+> *blink*
+> 
+> OK, I really wonder which version had I been reading at the time; refcount
+> is, indeed, atomic these days.
+> 
+> Other problems (->aname pointing to other thread's struct audit_names
+> and outliving reuse of those, as well as insane behaviour of audit predicates
+> on symlink(2)) are, unfortunately, quite real - on the current mainline.
 
-HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e69c27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
-dashboard link: https://syzkaller.appspot.com/bug?extid=247ac87eabcb1f8fa990
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a57480580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15e69c27980000
+Traveling but took a quick look. As far as I can tell, for the "reuse
+someone elses aname", we could do either:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/b790e8eefcc7/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/47201b805f63/mount_1.gz
+1) Just don't reuse the entry. Then we can drop the struct
+   filename->aname completely as well. Yes that might incur an extra
+   alloc for the odd case of audit_enabled and being deep enough that
+   the preallocated names have been used, but doesn't anyone really
+   care? It'll be noise in the overhead anyway. Side note - that would
+   unalign struct filename again. Would be nice to drop audit_names from
+   a core fs struct...
 
-The issue was bisected to:
+2) Add a ref to struct audit_names, RCU kfree it when it drops to zero.
+   This would mean dropping struct audit_context->preallocated_names, as
+   otherwise we'd run into trouble there if a context gets blown away
+   while someone else has a ref to that audit_names struct. We could do
+   this without a ref as well, as long as we can store an audit_context
+   pointer in struct audit_names and be able to validate it under RCU.
+   If ctx doesn't match, don't use it.
 
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
+And probably other ways too, those were just the two immediate ones I
+thought it. Seems like option 1 is simpler and just fine? Quick hack:
 
-    bcachefs: Ignore unknown mount options
+diff --git a/fs/namei.c b/fs/namei.c
+index 891b169e38c9..11263f779b96 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -206,7 +206,6 @@ getname_flags(const char __user *filename, int flags)
+ 
+ 	atomic_set(&result->refcnt, 1);
+ 	result->uptr = filename;
+-	result->aname = NULL;
+ 	audit_getname(result);
+ 	return result;
+ }
+@@ -254,7 +253,6 @@ getname_kernel(const char * filename)
+ 	}
+ 	memcpy((char *)result->name, filename, len);
+ 	result->uptr = NULL;
+-	result->aname = NULL;
+ 	atomic_set(&result->refcnt, 1);
+ 	audit_getname(result);
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0df3e5f0dd2b..859244c877b4 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2685,10 +2685,8 @@ struct filename {
+ 	const char		*name;	/* pointer to actual string */
+ 	const __user char	*uptr;	/* original userland pointer */
+ 	atomic_t		refcnt;
+-	struct audit_names	*aname;
+ 	const char		iname[];
+ };
+-static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
+ 
+ static inline struct mnt_idmap *file_mnt_idmap(const struct file *file)
+ {
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index cd57053b4a69..09caf8408225 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2240,7 +2240,6 @@ void __audit_getname(struct filename *name)
+ 
+ 	n->name = name;
+ 	n->name_len = AUDIT_NAME_FULL;
+-	name->aname = n;
+ 	atomic_inc(&name->refcnt);
+ }
+ 
+@@ -2325,22 +2324,6 @@ void __audit_inode(struct filename *name, const struct dentry *dentry,
+ 	if (!name)
+ 		goto out_alloc;
+ 
+-	/*
+-	 * If we have a pointer to an audit_names entry already, then we can
+-	 * just use it directly if the type is correct.
+-	 */
+-	n = name->aname;
+-	if (n) {
+-		if (parent) {
+-			if (n->type == AUDIT_TYPE_PARENT ||
+-			    n->type == AUDIT_TYPE_UNKNOWN)
+-				goto out;
+-		} else {
+-			if (n->type != AUDIT_TYPE_PARENT)
+-				goto out;
+-		}
+-	}
+-
+ 	list_for_each_entry_reverse(n, &context->names_list, list) {
+ 		if (n->ino) {
+ 			/* valid inode number, use that for the comparison */
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1077cf8a980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1277cf8a980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1477cf8a980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+247ac87eabcb1f8fa990@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
-
-------------[ cut here ]------------
-truncate spotted in mem i_size < btree i_size: 1 < 57344
-WARNING: CPU: 0 PID: 6420 at fs/bcachefs/fs-io.c:447 bchfs_truncate+0x988/0xab0 fs/bcachefs/fs-io.c:444
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor335 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : bchfs_truncate+0x988/0xab0 fs/bcachefs/fs-io.c:444
-lr : bchfs_truncate+0x988/0xab0 fs/bcachefs/fs-io.c:444
-sp : ffff8000a4467300
-x29: ffff8000a4467500 x28: ffff0000de380000 x27: 000000000000e000
-x26: ffff0000de748da0 x25: dfff800000000000 x24: ffff70001488ce74
-x23: 1fffe0001bce91b4 x22: ffff0000de748ca0 x21: ffff0000de3ca380
-x20: ffff8000927b7000 x19: ffff0000de748760 x18: 0000000000000008
-x17: 0000000000000000 x16: ffff800083032784 x15: 0000000000000001
-x14: 1fffe000366d325a x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000000002 x10: 0000000000ff0100 x9 : ab59bfad62359900
-x8 : ab59bfad62359900 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff8000a4466a58 x4 : ffff80008f65b620 x3 : ffff8000806051a0
-x2 : 0000000000000001 x1 : 0000000100000000 x0 : 0000000000000000
-Call trace:
- bchfs_truncate+0x988/0xab0 fs/bcachefs/fs-io.c:444
- bch2_setattr+0x198/0x230 fs/bcachefs/fs.c:942
- notify_change+0x9f0/0xca0 fs/attr.c:503
- do_truncate+0x1c0/0x28c fs/open.c:65
- handle_truncate fs/namei.c:3381 [inline]
- do_open fs/namei.c:3731 [inline]
- path_openat+0x2388/0x29f8 fs/namei.c:3886
- do_filp_open+0x1bc/0x3cc fs/namei.c:3913
- do_sys_openat2+0x124/0x1b8 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __arm64_sys_openat+0x1f0/0x240 fs/open.c:1442
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 140
-hardirqs last  enabled at (139): [<ffff800080388420>] __up_console_sem kernel/printk/printk.c:341 [inline]
-hardirqs last  enabled at (139): [<ffff800080388420>] __console_unlock kernel/printk/printk.c:2801 [inline]
-hardirqs last  enabled at (139): [<ffff800080388420>] console_unlock+0x18c/0x3d4 kernel/printk/printk.c:3120
-hardirqs last disabled at (140): [<ffff80008b3363f4>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-softirqs last  enabled at (8): [<ffff8000800307f8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (6): [<ffff8000800307c4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+Jens Axboe
 
