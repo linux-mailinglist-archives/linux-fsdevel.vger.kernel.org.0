@@ -1,45 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-29971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB55298443E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 13:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3590898444F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 13:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6120B1F22994
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 11:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E99DF282E07
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 11:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6751A4F1B;
-	Tue, 24 Sep 2024 11:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3290D78C90;
+	Tue, 24 Sep 2024 11:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zIIoIV2G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFE91A4E95;
-	Tue, 24 Sep 2024 11:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244A184A5C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 11:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727176205; cv=none; b=jg4ExqxQflxFfVl8ihhJGpqiZD8WSrFW2YcRfmSbg+nMqwxg/kLX7QWhf2hJXMhv/0hIWwQDw151s6oiTDmAzaeaGqFX3Y8JHh5N5JAE47PRg96+AYuYl4zDwfZjpt/aD7zTu/mM+v4pnV1p3IN4Cvn3/U6137ontiHosLZGNMU=
+	t=1727176522; cv=none; b=skfqDD/T4eUtaV+XRK8e9end05Se4LihsC4kKBeg2TEQEQjzY9t/n+QZ+fSrhGJghEjPSpt3bpVmjYy1sDrZpf9+JTU/IRIbNd7ErIpLTr241u+cM4jcX81JywnGMPI7v4EKR57eW9Fjr+aOCCI5JYyHrXDyKGwmoMPII5c0jlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727176205; c=relaxed/simple;
-	bh=cpI6pGHmRebpNzkmkIEeAjGeKKQx/iNqWGbZ1h3E+KU=;
+	s=arc-20240116; t=1727176522; c=relaxed/simple;
+	bh=9FI9xAMCHBNmhI/DaYI1b7ZOqlOzY6QcewMETRn+Y/g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M+vrZ7kJdzFCpObqt+FVwj/3xnK8jlJx7WK24AjctImtCk7S6ttW16jvxoP6osWS8V3uMr94NhRuG39Ppgczmn7KHnH7cdgD+I45lCiLpMmIESLpiJ/8olT0s3yBUzFBVzOplNxD/1EoPqnz7i+tBKcagubKCVh+ONbE4tA+3kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XCcZV3vPPz4f3lCv;
-	Tue, 24 Sep 2024 19:09:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6C5AC1A0359;
-	Tue, 24 Sep 2024 19:09:55 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgDHR8QBnvJm3RbeCA--.62308S3;
-	Tue, 24 Sep 2024 19:09:55 +0800 (CST)
-Message-ID: <d92d106b-3a85-4ca1-85da-7078ba63f95b@huaweicloud.com>
-Date: Tue, 24 Sep 2024 19:09:53 +0800
+	 In-Reply-To:Content-Type; b=st8AWEiUBHrvVlbIazX2tYXefzeXrhK0/Y7a4kr16KLqsSbvJDLYAPRUvVOrStvE0GVpn1n2QCSKfthgbwn0Is+2xM9heZNqm8LtEUGfDouqiBVa7bkYEHNx835vvQsOWVq3uxNSytqI0S2e1e5HrUUVQ/l6G4Hm+T+6u6i6T9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zIIoIV2G; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dbb24ee2ebso47422657b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 04:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727176519; x=1727781319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LcmWd7rhU3F8u3+OG+sqswVZPydo9kgTuDZb6jS8fh4=;
+        b=zIIoIV2GmP7Kx2Q2Q9J1b06zG0dS1urqq8Y6w4n41MkttoNPuBawFaY0dCT7AkOFRU
+         ERv3z/3OTXM3C6CuBGlCIx9GgyRbJP20/ggsn1D6MuoSkHnJCv2yRnxKkKmLXcmRgf4t
+         ouMdaQHcVp4fXfcwcddPk+prVfaZbd6HgmTJ0DZiko/7whN3ba8VRpk1LM42rrRa4Ymk
+         uCTgM0eQNx8yY+NdS6Hf+B9AXkn3uoKwgOlGG6HLbc2Iirq+L5vtCYk1pl6601pppFlt
+         ZvVqqwc+n1ahwFB28JfoSJF7XM+t9xGd7LQG5MoJujFNWr9gyP+YQ57ABdNwl+AbOLqP
+         cRPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727176519; x=1727781319;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LcmWd7rhU3F8u3+OG+sqswVZPydo9kgTuDZb6jS8fh4=;
+        b=HAiUqiFj0Km8+uMOgTmbTbsb+EyJXX9ywaMved2ZKFOhkrf+0pZ+3FU/46Iftdi8jY
+         svL2WdANPKFTTryHA2xhO4ux5aCQ/mh6tkGyaKAH7srUMBC7CjOdt1Bkf74rWhhnHXHY
+         jnB2VZisx2dtStTCRClA7RGZ7cj7N32jAmfh/x3+a/+nrL73APTe4bC/2f3U0aBn5b99
+         MWrpgbtvWZWtYdySlXYyFjyMfgkFZRh/GSlL6Bmu/VjffDNJQLhY629mUbNtUPZSF7QV
+         Is46wLQIxnzOeAqblLfiC0N98XUP91tORbhjswyKe3IMUpi862pK09CHjWCI/Tl2tO/e
+         CpAg==
+X-Gm-Message-State: AOJu0YwrlJtN1LSuVXtHZbVXG88cHWtKD6p7kFzb8+WyAD7xYKcKThcs
+	NQECWSa/qVWUkIDw+hsI8JduWpHKVbS11fwfHH92HqAZjoOMM2aD/rWgA78P4Vk=
+X-Google-Smtp-Source: AGHT+IEv1rdaR3GUb9IwW3Dmmojo2CNTa7E6hkdkv5LH3UOd53lsITQUVJZofBU6aeuKOo0A+OiSTQ==
+X-Received: by 2002:a05:690c:4713:b0:6dd:ce4c:2f4c with SMTP id 00721157ae682-6dfeed5715emr92447957b3.16.1727176518778;
+        Tue, 24 Sep 2024 04:15:18 -0700 (PDT)
+Received: from ?IPV6:2600:381:1d13:f852:a731:c08e:e897:179a? ([2600:381:1d13:f852:a731:c08e:e897:179a])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e20d15b3c8sm2081067b3.78.2024.09.24.04.15.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 04:15:17 -0700 (PDT)
+Message-ID: <fb2d2ec3-f0c6-4116-a574-eef8f79afee4@kernel.dk>
+Date: Tue, 24 Sep 2024 05:15:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,75 +75,63 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/10] ext4: drop ext4_update_disksize_before_punch()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-4-yi.zhang@huaweicloud.com>
- <20240920161351.ax3oidpt6w6bf3o4@quack3>
- <5de46c69-74f4-4955-a825-8c8970c0aa09@huaweicloud.com>
- <20240924101119.xzejk3a2rjmgqed7@quack3>
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, audit@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <20240922004901.GA3413968@ZenIV> <20240923015044.GE3413968@ZenIV>
+ <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
+ <20240923150745.GB3550746@ZenIV>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20240924101119.xzejk3a2rjmgqed7@quack3>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240923150745.GB3550746@ZenIV>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDHR8QBnvJm3RbeCA--.62308S3
-X-Coremail-Antispam: 1UD129KBjvJXoWrKFyfJr43JFykGF4ftF45GFg_yoW8Jry3pF
-	WfKay8tF48K3y8Cr1Iq3WIvr18tw4Iyr48XryxXr17XrZY9Fy3Kr4IqryUKF95uw1vkr45
-	X3Wjga97Z3yjvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2024/9/24 18:11, Jan Kara wrote:
-> On Tue 24-09-24 15:43:22, Zhang Yi wrote:
->> On 2024/9/21 0:13, Jan Kara wrote:
->>> On Wed 04-09-24 14:29:18, Zhang Yi wrote:
->>>> From: Zhang Yi <yi.zhang@huawei.com>
->>>>
->>>> Since we always write back dirty data before zeroing range and punching
->>>> hole, the delalloc extended file's disksize of should be updated
->>>> properly when writing back pages, hence we don't need to update file's
->>>> disksize before discarding page cache in ext4_zero_range() and
->>>> ext4_punch_hole(), just drop ext4_update_disksize_before_punch().
->>>>
->>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->>>
->>> So when we don't write out before hole punching & company this needs to stay
->>> in some shape or form. 
->>>
->>
->> Thanks for taking time to review this series!
->>
->> I don't fully understand this comment, please let me confirm. Do you
->> suggested that we still don't write out all the data before punching /
->> zeroing / collapseing(i.e. drop patch 01), so we need to keep
->> ext4_update_disksize_before_punch()(i.e. also drop this patch), is
->> that right?
+On 9/23/24 9:07 AM, Al Viro wrote:
+> On Mon, Sep 23, 2024 at 12:30:48AM -0600, Jens Axboe wrote:
 > 
-> Yes, this is what I meant. Sorry for not being clear.
+>> 1) Just don't reuse the entry. Then we can drop the struct
+>>    filename->aname completely as well. Yes that might incur an extra
+>>    alloc for the odd case of audit_enabled and being deep enough that
+>>    the preallocated names have been used, but doesn't anyone really
+>>    care? It'll be noise in the overhead anyway. Side note - that would
+>>    unalign struct filename again. Would be nice to drop audit_names from
+>>    a core fs struct...
 > 
-> 								Honza
+> You'll get different output in logs, though.  Whether that breaks userland
+> setups/invalidates certifications/etc.... fuck knows.
+
+No idea about that... But I'd say without strong evidence that this
+breaks userland for something as odd as audit, well... And honestly
+really a layering problem that struct filename has an audit link in
+there.
+
+> If anything, a loop through the list, searching for matching entry would
+> be safer in that respect.  Order of the items... might or might not be
+> an issue - see above.
 > 
+>> 2) Add a ref to struct audit_names, RCU kfree it when it drops to zero.
+>>    This would mean dropping struct audit_context->preallocated_names, as
+> 
+> Costly, that.
 
-OK, this looks fine to me. Let me revise this series.
+For sure. And you could keep preallocated_names if you rcu free the
+context too. But I strongly believe that approach #1 is, by far, the
+cheaper alternative. If we can tolerate the ordering potentially
+changing.
 
-Thanks,
-Yi.
+>>    otherwise we'd run into trouble there if a context gets blown away
+>>    while someone else has a ref to that audit_names struct. We could do
+>>    this without a ref as well, as long as we can store an audit_context
+>>    pointer in struct audit_names and be able to validate it under RCU.
+>>    If ctx doesn't match, don't use it.
+> 
+> That's one of the variants I mentioned upthread...
 
+Sorry, still away on travels and conferences, so haven't been keeping up
+on replies.
+
+-- 
+Jens Axboe
 
