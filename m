@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-29948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61385984002
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 10:11:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611589840AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 10:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4C12841E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 08:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AE01F22301
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 08:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEC814BF85;
-	Tue, 24 Sep 2024 08:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0120E14F12D;
+	Tue, 24 Sep 2024 08:38:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6430C14883F;
-	Tue, 24 Sep 2024 08:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0567F14D6F7;
+	Tue, 24 Sep 2024 08:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727165476; cv=none; b=sDR61A/7oVBWCCKpNNKtz2gTTbZ/9+OLgE01Nls5XFPk1Kfx/yiUw4ID6Ujjq6pkk/nTYg99hdG5u3WEjuqsnMDhML5kiOIK6vzmMTiI3oP6aoSX+etsMIV7GedENyI6A55SxSEYLAQrbye74ddlGIf/Y9WfcXZkYVH0CUn13Gg=
+	t=1727167115; cv=none; b=ATL0k4EF6QHE9Ob5woN7HsMZDO6gLnDcyUGJ2jtJVZYihdyCfWXIBbCIOoCircoMmi6TVozeyg0wOG8EfRDQeAcknqtwIn+ZZ2lz5pcmjnJ0lqx/MAXVtxGkA291qdoRbxU4fWTNxsJncDZTdGNLmbOTdHIN1avDVRZ7onfzR08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727165476; c=relaxed/simple;
-	bh=BBB2+zMUlgbn5hJn45cfafMDfms312TaWh9lZPab6vg=;
+	s=arc-20240116; t=1727167115; c=relaxed/simple;
+	bh=pJ5CYF+xh7vVW+BdvRoXJBxN/UL7keL3HlCjGMaI/7U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HqWV5SfrEPi6tUTG1sh1WaPbUZcbyQwXjwEkTduCh4kwM0kIfDRokjS6Cmart+hmlLu4RSjwDhydI5g34C8hEhQwkZHOnDYfjW3dGsHcawLwtMZ4ji/slGWxT2HpdpQe5h++y68AHfKBjTHV/fynoJaHLVVD5HdavW9ajEl+jN0=
+	 In-Reply-To:Content-Type; b=hF+4D6vDuddZOuAqxI9xGf8gfGo1hmg6E78oNsZAoF+Y4MMhUuma9pFfmVkllKzc/+a5FF+vE7iHU27WA/WjEvMV/PMZniqJ1NgKuRc1FCD3F/lP2GTwnpxn8mSXXAYl1ykjdmbi9tSma4dSjk8RNrlGOiKckzF7FNNsd9DbS0o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XCXcF4wQkz4f3lDG;
-	Tue, 24 Sep 2024 16:10:53 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XCYCl4Zqfz4f3l2C;
+	Tue, 24 Sep 2024 16:38:11 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8C7661A0359;
-	Tue, 24 Sep 2024 16:11:10 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 81C521A092F;
+	Tue, 24 Sep 2024 16:38:28 +0800 (CST)
 Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAHPMgcdPJmzGLSCA--.38253S3;
-	Tue, 24 Sep 2024 16:11:10 +0800 (CST)
-Message-ID: <e6cceeee-9ff1-4638-8521-19ab40593693@huaweicloud.com>
-Date: Tue, 24 Sep 2024 16:11:08 +0800
+	by APP4 (Coremail) with SMTP id gCh0CgD3Ksd+evJm_yLUCA--.35468S3;
+	Tue, 24 Sep 2024 16:38:24 +0800 (CST)
+Message-ID: <e3503ded-749c-4651-85a4-a6165b22cfd1@huaweicloud.com>
+Date: Tue, 24 Sep 2024 16:38:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,139 +47,270 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/10] ext4: factor out a common helper to lock and
- flush data before fallocate
-To: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v5 03/10] ext4: warn if delalloc counters are not zero on
+ inactive
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
 Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-11-yi.zhang@huaweicloud.com>
- <20240923085402.amto7pryy67eadpj@quack3>
+ jack@suse.cz, ritesh.list@gmail.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yi1.lai@intel.com
+References: <20240517124005.347221-1-yi.zhang@huaweicloud.com>
+ <20240517124005.347221-4-yi.zhang@huaweicloud.com>
+ <ZvIxRP0eVkbagUr5@ly-workstation>
 Content-Language: en-US
 From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20240923085402.amto7pryy67eadpj@quack3>
+In-Reply-To: <ZvIxRP0eVkbagUr5@ly-workstation>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAHPMgcdPJmzGLSCA--.38253S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXrW3JF1kKr45CF1xWFyfJFb_yoW5Aw43pF
-	Z5GFn2gF40ga48uFn5Z3ZrZF4Fg3sYkrWxZry7Gas293s0yrn2kF1YkrWUuF17JrZ3Ar4U
-	ZF4jv3sruF4jvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
+X-CM-TRANSID:gCh0CgD3Ksd+evJm_yLUCA--.35468S3
+X-Coremail-Antispam: 1UD129KBjvAXoWfJryrAFyUKF1DWF4kXF17trb_yoW8JrW8Xo
+	WfJrZ7Aw4rGFy5Jrs3Cw1DJryUGa97tas7XrWDKrWUGF1xWr4DXr1UG3s7XwsrtF1rKFyU
+	A3sIvF1DX3y5trn7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUY27kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
+	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF
+	7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7
+	CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kK
+	e7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	UAwIDUUUUU=
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2024/9/23 16:54, Jan Kara wrote:
-> On Wed 04-09-24 14:29:25, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Now the beginning of the first four functions in ext4_fallocate() (punch
->> hole, zero range, insert range and collapse range) are almost the same,
->> they need to wait for the dio to finish, get filemap invalidate lock,
->> write back dirty data and finally drop page cache. Factor out a common
->> helper to do these work can reduce a lot of the redundant code.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On 2024/9/24 11:25, Lai, Yi wrote:
+> Hi Zhang Yi,
 > 
-> I like that we factor out this functionality in a common helper. But see
-> below:
+> Greetings!
 > 
->> @@ -4731,6 +4707,52 @@ static int ext4_fallocate_check(struct inode *inode, int mode,
->>  	return 0;
->>  }
->>  
->> +int ext4_prepare_falloc(struct file *file, loff_t start, loff_t end, int mode)
->> +{
->> +	struct inode *inode = file_inode(file);
->> +	struct address_space *mapping = inode->i_mapping;
->> +	int ret;
->> +
->> +	/* Wait all existing dio workers, newcomers will block on i_rwsem */
->> +	inode_dio_wait(inode);
->> +	ret = file_modified(file);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Prevent page faults from reinstantiating pages we have released
->> +	 * from page cache.
->> +	 */
->> +	filemap_invalidate_lock(mapping);
->> +
->> +	ret = ext4_break_layouts(inode);
->> +	if (ret)
->> +		goto failed;
->> +
->> +	/*
->> +	 * Write data that will be zeroed to preserve them when successfully
->> +	 * discarding page cache below but fail to convert extents.
->> +	 */
->> +	ret = filemap_write_and_wait_range(mapping, start, end);
+> I used Syzkaller and found that there is WARNING in ext4_destroy_inode.
 > 
-> The comment is somewhat outdated now.
-
-Sure, will update it in next iteration.
-
-> Also the range is wrong for collapse
-> and insert range. There we need to writeout data upto the EOF because we
-> truncate it below.
+> After bisection and the first bad commit is:
+> "
+> b37c907073e8 ext4: warn if delalloc counters are not zero on inactive
+> "
+> 
+> I understand that the commit is to add WARN_ON_ONCE to make error message more visible. I hope the reproduction program will be insightful for you.
 > 
 
-For collapse and insert range, I passed the length LLONG_MAX, which is
-the same as before, this should've upto the EOF, so I think it's
-right, or am I missing something?
+Thanks for the report! It seems that this patch worked, it start exposing
+problems about inconsistent delalloc counter, which were previously hidden.
+However, the counter updating logic has changed after this series:
 
-ext4_collapse_range():
+https://lore.kernel.org/linux-ext4/20240813123452.2824659-1-yi.zhang@huaweicloud.com/
 
--	start = round_down(offset, PAGE_SIZE);
--	/* Write out all dirty pages */
--	ret = filemap_write_and_wait_range(mapping, start, LLONG_MAX);
-+	ret = ext4_prepare_falloc(file, round_down(offset, PAGE_SIZE),
-+				  LLONG_MAX, FALLOC_FL_COLLAPSE_RANGE);
-
-
-ext4_insert_range():
-
--	start = round_down(offset, PAGE_SIZE);
--	/* Write out all dirty pages */
--	ret = filemap_write_and_wait_range(mapping, start, LLONG_MAX);
-+	ret = ext4_prepare_falloc(file, round_down(offset, PAGE_SIZE),
-+				  LLONG_MAX, FALLOC_FL_INSERT_RANGE);
+Could you reproduce this issue with this series or in the latest upstream
+kernel?
 
 Thanks,
 Yi.
 
+> All detailed into can be found at:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/240923_043748_ext4_destroy_inode
+> Syzkaller repro code:
+> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/repro.c
+> Syzkaller repro syscall steps:
+> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/repro.prog
+> Syzkaller report:
+> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/repro.report
+> Kconfig(make olddefconfig):
+> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/kconfig_origin
+> Bisect info:
+> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/bisect_info.log
+> bzImage:
+> https://github.com/laifryiee/syzkaller_logs/raw/main/240923_043748_ext4_destroy_inode/bzImage_98f7e32f20d28ec452afb208f9cffc08448a2652
+> Issue dmesg:
+> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/98f7e32f20d28ec452afb208f9cffc08448a2652_dmesg.log
 > 
->> +	if (ret)
->> +		goto failed;
+> "
+> [   25.223775] ------------[ cut here ]------------
+> [   25.224177] WARNING: CPU: 0 PID: 740 at fs/ext4/super.c:1464 ext4_destroy_inode+0x1de/0x280
+> [   25.224724] Modules linked in:
+> [   25.224920] CPU: 0 UID: 0 PID: 740 Comm: repro Not tainted 6.11.0-98f7e32f20d2 #1
+> [   25.225393] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [   25.226103] RIP: 0010:ext4_destroy_inode+0x1de/0x280
+> [   25.226429] Code: 31 ff 44 89 e6 e8 62 ad 45 ff 45 85 e4 75 16 e8 d8 a9 45 ff 48 8d 65 e0 5b 41 5c 41 5d 41 5e 5d c3 cc cc cc cc e8 c2 a9 45 ff <0f> 0b 48 8d 7b 40 4c 8d 83 50 fd ff ff 48 b8 00 00 00 00 00 fc ff
+> [   25.227570] RSP: 0018:ff11000023707c08 EFLAGS: 00010293
+> [   25.227915] RAX: 0000000000000000 RBX: ff11000022f22a50 RCX: ffffffff822028de
+> [   25.228357] RDX: ff110000139a8000 RSI: ffffffff822028fe RDI: 0000000000000005
+> [   25.228840] RBP: ff11000023707c30 R08: 0000000000000001 R09: ffe21c00024e24eb
+> [   25.229284] R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+> [   25.229712] R13: ff11000012712000 R14: ff11000022f22ad0 R15: ff1100006c1aa440
+> [   25.230168] FS:  00007f1d418a7800(0000) GS:ff1100006c400000(0000) knlGS:0000000000000000
+> [   25.230666] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   25.230818] EXT4-fs (sda): Inode 151593 (000000004419e1b8): i_reserved_data_blocks (1) not cleared!
+> [   25.231037] CR2: 00007f1d416b1ac0 CR3: 00000000140e4004 CR4: 0000000000771ef0
+> [   25.232104] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   25.232546] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
+> [   25.233006] PKRU: 55555554
+> [   25.233184] Call Trace:
+> [   25.233348]  <TASK>
+> [   25.233489]  ? show_regs+0xa8/0xc0
+> [   25.233724]  ? __warn+0xee/0x380
+> [   25.233953]  ? report_bug+0x25e/0x4b0
+> [   25.234201]  ? ext4_destroy_inode+0x1de/0x280
+> [   25.234485]  ? report_bug+0x2cb/0x4b0
+> [   25.234729]  ? ext4_destroy_inode+0x1de/0x280
+> [   25.235020]  ? handle_bug+0xa2/0x130
+> [   25.235266]  ? exc_invalid_op+0x3c/0x80
+> [   25.235513]  ? asm_exc_invalid_op+0x1f/0x30
+> [   25.235786]  ? ext4_destroy_inode+0x1be/0x280
+> [   25.236072]  ? ext4_destroy_inode+0x1de/0x280
+> [   25.236356]  ? ext4_destroy_inode+0x1de/0x280
+> [   25.236637]  ? ext4_destroy_inode+0x1de/0x280
+> [   25.236949]  ? __pfx_ext4_destroy_inode+0x10/0x10
+> [   25.237257]  destroy_inode+0xd6/0x1d0
+> [   25.237507]  evict+0x5a7/0x930
+> [   25.237708]  ? lock_release+0x441/0x870
+> [   25.237975]  ? do_raw_spin_lock+0x141/0x280
+> [   25.238246]  ? __pfx_evict+0x10/0x10
+> [   25.238486]  ? __pfx_lock_release+0x10/0x10
+> [   25.238757]  ? lock_release+0x441/0x870
+> [   25.239015]  ? lock_release+0x441/0x870
+> [   25.239266]  ? do_raw_spin_unlock+0x15c/0x210
+> [   25.239552]  iput.part.0+0x543/0x740
+> [   25.239788]  ? __pfx_ext4_drop_inode+0x10/0x10
+> [   25.240081]  iput+0x68/0x90
+> [   25.240265]  do_unlinkat+0x5dc/0x730
+> [   25.240503]  ? __pfx_do_unlinkat+0x10/0x10
+> [   25.240791]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+> [   25.241149]  ? strncpy_from_user+0x1ef/0x2e0
+> [   25.241436]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
+> [   25.241774]  ? getname_flags.part.0+0x1d5/0x570
+> [   25.242459]  __x64_sys_unlink+0xd1/0x120
+> [   25.242749]  x64_sys_call+0x2014/0x20d0
+> [   25.243031]  do_syscall_64+0x6d/0x140
+> [   25.243304]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   25.243630] RIP: 0033:0x7f1d4163eb7b
+> [   25.243878] Code: f0 ff ff 73 01 c3 48 8b 0d a2 b2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 84 00 00 00 00 00 f3 0f 1e fa b8 57 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 75 b2 1b 00 f7 d8 64 89 01 48
+> [   25.245038] RSP: 002b:00007fffffa2ca48 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
+> [   25.245508] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1d4163eb7b
+> [   25.245966] RDX: 00007fffffa2ca60 RSI: 00007fffffa2caf0 RDI: 00007fffffa2caf0
+> [   25.246412] RBP: 00007fffffa2db30 R08: 0000000000000000 R09: 00007fffffa2c8e0
+> [   25.246872] R10: 00007f1d4160b208 R11: 0000000000000206 R12: 00007fffffa2dca8
+> [   25.247310] R13: 0000000000402e4b R14: 0000000000404e08 R15: 00007f1d418f2000
+> [   25.247759]  </TASK>
+> [   25.247912] irq event stamp: 5719
+> [   25.248127] hardirqs last  enabled at (5727): [<ffffffff81458eb4>] console_unlock+0x224/0x240
+> [   25.248690] hardirqs last disabled at (5736): [<ffffffff81458e99>] console_unlock+0x209/0x240
+> [   25.249236] softirqs last  enabled at (5252): [<ffffffff81289d19>] __irq_exit_rcu+0xa9/0x120
+> [   25.249768] softirqs last disabled at (5247): [<ffffffff81289d19>] __irq_exit_rcu+0xa9/0x120
+> [   25.250311] ---[ end trace 0000000000000000 ]---
+> [   25.250602] EXT4-fs (sda): Inode 151586 (00000000f9d6a315): i_reserved_data_blocks (1) not cleared!
+> [   25.326263] EXT4-fs (sda): Inode 151578 (00000000d86ad2f9): i_reserved_data_blocks (1) not cleared!
+> [   25.680884] EXT4-fs (sda): Inode 151596 (00000000da9177c9): i_reserved_data_blocks (1) not cleared!
+> [   25.717550] EXT4-fs (sda): Inode 151573 (0000000088687caa): i_reserved_data_blocks (1) not cleared!
+> [   25.726089] EXT4-fs (sda): Inode 151585 (000000005d7aed9a): i_reserved_data_blocks (1) not cleared!
+> [   25.838592] EXT4-fs (sda): Inode 151573 (000000004af622df): i_reserved_data_blocks (1) not cleared!
+> [   25.955073] EXT4-fs (sda): Inode 151598 (00000000a6e598ec): i_reserved_data_blocks (1) not cleared!
+> [   26.525552] EXT4-fs (sda): Inode 151593 (0000000026aef1cd): i_reserved_data_blocks (1) not cleared!
+> [   26.554067] EXT4-fs (sda): Inode 151591 (0000000051e990da): i_reserved_data_blocks (1) not cleared!
+> [   30.291490] EXT4-fs: 14 callbacks suppressed
+> [   30.291510] EXT4-fs (sda): Inode 151591 (0000000050be254a): i_reserved_data_blocks (1) not cleared!
+> [   30.301238] EXT4-fs (sda): Inode 151587 (000000004ba9ad70): i_reserved_data_blocks (1) not cleared!
+> [   30.414377] EXT4-fs (sda): Inode 151583 (00000000f6751ad3): i_reserved_data_blocks (1) not cleared!
+> [   30.417213] EXT4-fs (sda): Inode 151591 (0000000090a0dce3): i_reserved_data_blocks (1) not cleared!
+> [   30.537920] EXT4-fs (sda): Inode 151587 (00000000de72acf9): i_reserved_data_blocks (1) not cleared!
+> [   30.645791] EXT4-fs (sda): Inode 151580 (00000000a40a052f): i_reserved_data_blocks (1) not cleared!
+> [   30.665732] EXT4-fs (sda): Inode 151587 (00000000d9452edd): i_reserved_data_blocks (1) not cleared!
+> [   30.670204] EXT4-fs (sda): Inode 151597 (00000000f861d75f): i_reserved_data_blocks (1) not cleared!
+> [   31.964931] EXT4-fs (sda): Inode 151589 (000000009baa4064): i_reserved_data_blocks (1) not cleared!
+> [   32.101343] EXT4-fs (sda): Inode 151598 (000000003fca6cd5): i_reserved_data_blocks (1) not cleared!
+> "
+> 
+> I hope you find it useful.
+> 
+> Regards,
+> Yi Lai
+> 
+> ---
+> 
+> If you don't need the following environment to reproduce the problem or if you
+> already have one reproduced environment, please ignore the following information.
+> 
+> How to reproduce:
+> git clone https://gitlab.com/xupengfe/repro_vm_env.git
+> cd repro_vm_env
+> tar -xvf repro_vm_env.tar.gz
+> cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
+>   // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
+>   // You could change the bzImage_xxx as you want
+>   // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
+> You could use below command to log in, there is no password for root.
+> ssh -p 10023 root@localhost
+> 
+> After login vm(virtual machine) successfully, you could transfer reproduced
+> binary to the vm by below way, and reproduce the problem in vm:
+> gcc -pthread -o repro repro.c
+> scp -P 10023 repro root@localhost:/root/
+> 
+> Get the bzImage for target kernel:
+> Please use target kconfig and copy it to kernel_src/.config
+> make olddefconfig
+> make -jx bzImage           //x should equal or less than cpu num your pc has
+> 
+> Fill the bzImage file into above start3.sh to load the target kernel in vm.
+> 
+> Tips:
+> If you already have qemu-system-x86_64, please ignore below info.
+> If you want to install qemu v7.1.0 version:
+> git clone https://github.com/qemu/qemu.git
+> cd qemu
+> git checkout -f v7.1.0
+> mkdir build
+> cd build
+> yum install -y ninja-build.x86_64
+> yum -y install libslirp-devel.x86_64
+> ../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
+> make
+> make install 
+> 
+> On Fri, May 17, 2024 at 08:39:58PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> The per-inode i_reserved_data_blocks count the reserved delalloc blocks
+>> in a regular file, it should be zero when destroying the file. The
+>> per-fs s_dirtyclusters_counter count all reserved delalloc blocks in a
+>> filesystem, it also should be zero when umounting the filesystem. Now we
+>> have only an error message if the i_reserved_data_blocks is not zero,
+>> which is unable to be simply captured, so add WARN_ON_ONCE to make it
+>> more visable.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/ext4/super.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> index 044135796f2b..b68064c877e3 100644
+>> --- a/fs/ext4/super.c
+>> +++ b/fs/ext4/super.c
+>> @@ -1343,6 +1343,9 @@ static void ext4_put_super(struct super_block *sb)
+>>  
+>>  	ext4_group_desc_free(sbi);
+>>  	ext4_flex_groups_free(sbi);
 >> +
->> +	/*
->> +	 * For insert range and collapse range, COWed private pages should
->> +	 * be removed since the file's logical offset will be changed, but
->> +	 * punch hole and zero range doesn't.
->> +	 */
->> +	if (mode & (FALLOC_FL_INSERT_RANGE | FALLOC_FL_COLLAPSE_RANGE))
->> +		truncate_pagecache(inode, start);
->> +	else
->> +		truncate_pagecache_range(inode, start, end);
->> +
->> +	return 0;
->> +failed:
->> +	filemap_invalidate_unlock(mapping);
->> +	return ret;
->> +}
+>> +	WARN_ON_ONCE(!(sbi->s_mount_state & EXT4_ERROR_FS) &&
+>> +		     percpu_counter_sum(&sbi->s_dirtyclusters_counter));
+>>  	ext4_percpu_param_destroy(sbi);
+>>  #ifdef CONFIG_QUOTA
+>>  	for (int i = 0; i < EXT4_MAXQUOTAS; i++)
+>> @@ -1473,7 +1476,8 @@ static void ext4_destroy_inode(struct inode *inode)
+>>  		dump_stack();
+>>  	}
+>>  
+>> -	if (EXT4_I(inode)->i_reserved_data_blocks)
+>> +	if (!(EXT4_SB(inode->i_sb)->s_mount_state & EXT4_ERROR_FS) &&
+>> +	    WARN_ON_ONCE(EXT4_I(inode)->i_reserved_data_blocks))
+>>  		ext4_msg(inode->i_sb, KERN_ERR,
+>>  			 "Inode %lu (%p): i_reserved_data_blocks (%u) not cleared!",
+>>  			 inode->i_ino, EXT4_I(inode),
+>> -- 
+>> 2.39.2
+>>
 > 
 
 
