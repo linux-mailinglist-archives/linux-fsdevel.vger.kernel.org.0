@@ -1,178 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-29970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91043984332
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 12:11:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB55298443E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 13:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B971F2361F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 10:11:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6120B1F22994
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 11:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D01816F8EB;
-	Tue, 24 Sep 2024 10:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wH2AhbmJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mpks5XCQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wH2AhbmJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mpks5XCQ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6751A4F1B;
+	Tue, 24 Sep 2024 11:10:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB05413B780;
-	Tue, 24 Sep 2024 10:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFE91A4E95;
+	Tue, 24 Sep 2024 11:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727172691; cv=none; b=q23DBwrV3GVAfIf6uCmNygWVEvurnatGhUzjLwEw9ken9ecLZuzO04DQ0zJvt9DvoAF9s4OCzF8LWo4t4yLdUjKSW0tm0nHFNV7oKghVvwtt2acG7BZvV/czURThCAKV1VvW9ei1a0vrnW46F1wCflPM7loOzfG0TPe4VOWkpRk=
+	t=1727176205; cv=none; b=jg4ExqxQflxFfVl8ihhJGpqiZD8WSrFW2YcRfmSbg+nMqwxg/kLX7QWhf2hJXMhv/0hIWwQDw151s6oiTDmAzaeaGqFX3Y8JHh5N5JAE47PRg96+AYuYl4zDwfZjpt/aD7zTu/mM+v4pnV1p3IN4Cvn3/U6137ontiHosLZGNMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727172691; c=relaxed/simple;
-	bh=QUsmLd3zzHcx/v7WmMBRwvO3NBj0nNB5T9UJvBy/D+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Grhm4B6DQ6PvMcCQKx4wFOgfkKDUDCblWaX537+20pMkNbUrEDhZyGifCgWpmL767K32iKjGE3Ad2DSP/zJe1XaFD7lR9sVHEfgeEB8t7WRkZYkZcaR7yJe8XZrxA3Hh6EJFCmI2SRqUTy4QptfEl7v0/bETCsyLUcTkZ0iZ+aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wH2AhbmJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mpks5XCQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wH2AhbmJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mpks5XCQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0653021A39;
-	Tue, 24 Sep 2024 10:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727172688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJ+ZBbCZ06n6ana7hUvQHivY4XNZ9A8Dw3+YCjAwxj0=;
-	b=wH2AhbmJxrZ6+tbnoF972uiKEK8qldYwU5PL3u8tKYLaT3ON1eO8RJaaXuz0RTIPRNA5PQ
-	MuSgeodSKxofPb6YVtek+ISc5XXMONKqMOpeboBPDPVa7lbcGx09eFQFYpZfjhjuhI8oZG
-	66OiMQna7CSpYeTIQQjvZRC+OdO7RCA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727172688;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJ+ZBbCZ06n6ana7hUvQHivY4XNZ9A8Dw3+YCjAwxj0=;
-	b=Mpks5XCQRG+9B0ebU/ZiXreOVQ1yIZhiMhZyDOvzasP9Z8BEmp3iuZ8CHngUaazmo/xEZT
-	Sv7QEjV5B2ljv3BQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=wH2AhbmJ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Mpks5XCQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727172688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJ+ZBbCZ06n6ana7hUvQHivY4XNZ9A8Dw3+YCjAwxj0=;
-	b=wH2AhbmJxrZ6+tbnoF972uiKEK8qldYwU5PL3u8tKYLaT3ON1eO8RJaaXuz0RTIPRNA5PQ
-	MuSgeodSKxofPb6YVtek+ISc5XXMONKqMOpeboBPDPVa7lbcGx09eFQFYpZfjhjuhI8oZG
-	66OiMQna7CSpYeTIQQjvZRC+OdO7RCA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727172688;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJ+ZBbCZ06n6ana7hUvQHivY4XNZ9A8Dw3+YCjAwxj0=;
-	b=Mpks5XCQRG+9B0ebU/ZiXreOVQ1yIZhiMhZyDOvzasP9Z8BEmp3iuZ8CHngUaazmo/xEZT
-	Sv7QEjV5B2ljv3BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DAFC713AA8;
-	Tue, 24 Sep 2024 10:11:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id t+RoNU+Q8mbnGAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 24 Sep 2024 10:11:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 879ECA088D; Tue, 24 Sep 2024 12:11:19 +0200 (CEST)
-Date: Tue, 24 Sep 2024 12:11:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 03/10] ext4: drop ext4_update_disksize_before_punch()
-Message-ID: <20240924101119.xzejk3a2rjmgqed7@quack3>
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-4-yi.zhang@huaweicloud.com>
- <20240920161351.ax3oidpt6w6bf3o4@quack3>
- <5de46c69-74f4-4955-a825-8c8970c0aa09@huaweicloud.com>
+	s=arc-20240116; t=1727176205; c=relaxed/simple;
+	bh=cpI6pGHmRebpNzkmkIEeAjGeKKQx/iNqWGbZ1h3E+KU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M+vrZ7kJdzFCpObqt+FVwj/3xnK8jlJx7WK24AjctImtCk7S6ttW16jvxoP6osWS8V3uMr94NhRuG39Ppgczmn7KHnH7cdgD+I45lCiLpMmIESLpiJ/8olT0s3yBUzFBVzOplNxD/1EoPqnz7i+tBKcagubKCVh+ONbE4tA+3kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XCcZV3vPPz4f3lCv;
+	Tue, 24 Sep 2024 19:09:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6C5AC1A0359;
+	Tue, 24 Sep 2024 19:09:55 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDHR8QBnvJm3RbeCA--.62308S3;
+	Tue, 24 Sep 2024 19:09:55 +0800 (CST)
+Message-ID: <d92d106b-3a85-4ca1-85da-7078ba63f95b@huaweicloud.com>
+Date: Tue, 24 Sep 2024 19:09:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5de46c69-74f4-4955-a825-8c8970c0aa09@huaweicloud.com>
-X-Rspamd-Queue-Id: 0653021A39
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,huawei.com];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/10] ext4: drop ext4_update_disksize_before_punch()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
+ <20240904062925.716856-4-yi.zhang@huaweicloud.com>
+ <20240920161351.ax3oidpt6w6bf3o4@quack3>
+ <5de46c69-74f4-4955-a825-8c8970c0aa09@huaweicloud.com>
+ <20240924101119.xzejk3a2rjmgqed7@quack3>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20240924101119.xzejk3a2rjmgqed7@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDHR8QBnvJm3RbeCA--.62308S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrKFyfJr43JFykGF4ftF45GFg_yoW8Jry3pF
+	WfKay8tF48K3y8Cr1Iq3WIvr18tw4Iyr48XryxXr17XrZY9Fy3Kr4IqryUKF95uw1vkr45
+	X3Wjga97Z3yjvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Tue 24-09-24 15:43:22, Zhang Yi wrote:
-> On 2024/9/21 0:13, Jan Kara wrote:
-> > On Wed 04-09-24 14:29:18, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> Since we always write back dirty data before zeroing range and punching
-> >> hole, the delalloc extended file's disksize of should be updated
-> >> properly when writing back pages, hence we don't need to update file's
-> >> disksize before discarding page cache in ext4_zero_range() and
-> >> ext4_punch_hole(), just drop ext4_update_disksize_before_punch().
-> >>
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> > 
-> > So when we don't write out before hole punching & company this needs to stay
-> > in some shape or form. 
-> > 
+On 2024/9/24 18:11, Jan Kara wrote:
+> On Tue 24-09-24 15:43:22, Zhang Yi wrote:
+>> On 2024/9/21 0:13, Jan Kara wrote:
+>>> On Wed 04-09-24 14:29:18, Zhang Yi wrote:
+>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>
+>>>> Since we always write back dirty data before zeroing range and punching
+>>>> hole, the delalloc extended file's disksize of should be updated
+>>>> properly when writing back pages, hence we don't need to update file's
+>>>> disksize before discarding page cache in ext4_zero_range() and
+>>>> ext4_punch_hole(), just drop ext4_update_disksize_before_punch().
+>>>>
+>>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>>>
+>>> So when we don't write out before hole punching & company this needs to stay
+>>> in some shape or form. 
+>>>
+>>
+>> Thanks for taking time to review this series!
+>>
+>> I don't fully understand this comment, please let me confirm. Do you
+>> suggested that we still don't write out all the data before punching /
+>> zeroing / collapseing(i.e. drop patch 01), so we need to keep
+>> ext4_update_disksize_before_punch()(i.e. also drop this patch), is
+>> that right?
 > 
-> Thanks for taking time to review this series!
+> Yes, this is what I meant. Sorry for not being clear.
 > 
-> I don't fully understand this comment, please let me confirm. Do you
-> suggested that we still don't write out all the data before punching /
-> zeroing / collapseing(i.e. drop patch 01), so we need to keep
-> ext4_update_disksize_before_punch()(i.e. also drop this patch), is
-> that right?
+> 								Honza
+> 
 
-Yes, this is what I meant. Sorry for not being clear.
+OK, this looks fine to me. Let me revise this series.
 
-								Honza
+Thanks,
+Yi.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
