@@ -1,169 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-29980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7106D9848F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 17:58:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2C99848F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 17:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399C62845CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 15:58:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A501F23DAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 15:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5651ABEA1;
-	Tue, 24 Sep 2024 15:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300AF1AB6F3;
+	Tue, 24 Sep 2024 15:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPKBZ9dS"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tcg08JrS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0091AB6D0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 15:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EA427735;
+	Tue, 24 Sep 2024 15:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727193447; cv=none; b=fcHBpgg8M/ujZgJgyA1L8F1EPo6nLIKe1BSOdDISdYhTUuo5XfxP1gOzXJwOPLoNOw0ez8zMLPRpqiRnohF0M5FbBtiTzuhzJ/Kgaz98P4F22296aZUecL+B4X7K+6rt2lX5CDV4bWi8T7+0byz6TtT1L6Ptj8Iq2LAHjTVUIJU=
+	t=1727193525; cv=none; b=n9qExCwrgy4cjgqklxQzqNbGAn79eajg0IYSaBWKuHWRpF1E1YMv8MuHtC8CHeF9aQD/z0mX9qe4VMSSdc82rCrpb2jSLjpBFIzWtHhdnqSt5zfttdLEeHAli+7wsMgY1LrKXvB2XWW9cHWdb+6WvzkO+f9tIdqv26Aw5iDflKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727193447; c=relaxed/simple;
-	bh=6qB2Y/v8lHK5nxyWIAPnNhL9lVPTxYVgvNq5DmY/uxw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=C1EChz7T8bzVh5saoKntRN/zFc5ipM2Bj6NuhWtRREQveuysrLFUJToT/FgMNPW7BVaeKiRTAgfPdUAJ9qHzIyefnmCr2pzytsFuXBf8YG/RJFdgUlH+L6lx5Lv0DY9yOXSDex1sHZsNbKz/Tx9EOgSNYVyl1xURVQoG0ZdSlKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPKBZ9dS; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f8ca33ef19so30935051fa.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 08:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727193443; x=1727798243; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EWjBZ6ePnJ3ZvXHUOjr3QzL91L445uJTvSbMxhDQZXw=;
-        b=DPKBZ9dSwLIAEFzEI8O7MPIe7bZJ9+Wyh+/I8NnyCzsPXTx63Zvq/60NpGKxk0KjDF
-         VJM/j9tp8TJDq/IB7rEyY+5D1+PHxTBBXP+F1xgkmEWw/PnmgtgAop6laDdnkaqXlW41
-         oV6nxKvTnR+JFA4In6nG4fvaVZye+iMuX5vLHnQO39fGZ9XBYctfn6cfuX1kqDWWklMv
-         8CRatjFHxY2xtNKp6NedC57dfPTe/CSVMU+GhyFhKe4PGi0AZOz8PDQmuote2KW8PLYH
-         proIDyNskwc81ZhaX9JcpAcYlZRDIHnYqH3GjTX/1dh1+LlT/ZyX/7+pZIRVDTAOWByS
-         c7QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727193443; x=1727798243;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EWjBZ6ePnJ3ZvXHUOjr3QzL91L445uJTvSbMxhDQZXw=;
-        b=CtiEaeVzXHpXu6WWEWD3hEwGpR7wRI6dfDFFJDaEn0fnySDg7XdvEZ6GH286JnudNX
-         kndC1OWQAKOOFJLUp6JJRDjW6JhGzyh0MVxBkC8N7yieemXAJ8KphvqXxcOCiu0vKd3s
-         Yi6iv+zG4Gt2X5f+/x1BE0OPEntbdvuYKEH14klgdLYjFFmJ0RMnpwDcKQiDw94H9ZHV
-         2hURsDWG+4cOG1pJ2n643OrwVnVRY4jd1O1srSaRbVoVfW8cwzfWNC/FNmCKora0NqwA
-         XXdO/kUSTN1g4NtPkLTmEU2/k3wOm6E/VwXnjeghMbBYZIhgihF5fH/s0tA8JLuaqGCe
-         zRPA==
-X-Gm-Message-State: AOJu0Yyg2Q3ax8SlXUe0mVgILRGWYLUGgf+G/qAFSEGTJ1SeIwBeJkOc
-	YCe8W3rPqhmxoUKZiJ1a5MinGkuOafTwngAM8XCvgBW5yIinSLPNwTGNVhasU39onaJWm9c88ot
-	SU0m8e0ascXrkGUTIIB2dYGatRrU=
-X-Google-Smtp-Source: AGHT+IFYAOXNjuXPP9f6EsMGAOmIFiAbkb4OFJH8aUJPd1m6k7DW/6F07t8iJ06j/7enxNn8YdIvkQL3KqHrhgMVZs8=
-X-Received: by 2002:a05:6512:3b92:b0:536:5810:e89 with SMTP id
- 2adb3069b0e04-536ac33f3f3mr9940820e87.49.1727193443132; Tue, 24 Sep 2024
- 08:57:23 -0700 (PDT)
+	s=arc-20240116; t=1727193525; c=relaxed/simple;
+	bh=RQYoFQKbn7eT1j543PysaUj4crr0F3CY17BnjvpHBhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XA4XdF+UlmwDPAmAHi5Axuh+yUgzJsFh/UVmuEHA9HV0hiYgxPeZtW7d4crVNxLQvJpuguG/EKPbbD8d7dMOoHZTSxgK9FV5EST2+9q2UspWj14S2Dkn9HuDnTgmnu7+e1i4il6zmKOfZFSNoBUN16ZvDPq96nB92GtgyeGg7X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tcg08JrS; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=V69cTC5cWm2Olzjm4Q+Ede0enQBKS02QbXSespSzrzY=; b=tcg08JrSLY1o3obB4H1iG+ojAy
+	iXS15zRyD0BwojJQARr5sOSMoLAsLnuu3awYoANJG4P8Rk2JJ83IqsOQWDzRjCilXHNGMDNljYpg2
+	jVAFl3fpvBJAaRkvvcOVVK8D2vcShv4Ovl+yID12YPswZjmjCHfGNpCFiFxHDJoblKqRShwMzF1LT
+	UIwVvqR/PI3ZFJf1GTju1QuHltJrb8CMZ332HeqsV+18ZFHE8QrucO0iBlDfqsiCALP86WKmJM0E6
+	ZD8p34HmPcexSmz6U843J2MpvAjddsBjQ1ewfuywYxMC+NPIppd4XKYZrc7GDv6wCozeR5GbKPqDY
+	11A2/R1w==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1st7vw-00000001uiM-445t;
+	Tue, 24 Sep 2024 15:58:36 +0000
+Date: Tue, 24 Sep 2024 16:58:36 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Chris Mason <clm@meta.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Chinner <david@fromorbit.com>,
+	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
+	regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <ZvLhrF5lj3x596Qm@casper.infradead.org>
+References: <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <8697e349-d22f-43a0-8469-beb857eb44a1@kernel.dk>
+ <ZuuqPEtIliUJejvw@casper.infradead.org>
+ <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: reveliofuzzing <reveliofuzzing@gmail.com>
-Date: Tue, 24 Sep 2024 11:57:12 -0400
-Message-ID: <CA+-ZZ_iZFM6s5d9T8yL5Pb1u_VtkAyZHvm-L=N=XoOXAb5rT3Q@mail.gmail.com>
-Subject: Report "general protection fault in do_select"
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com>
 
-Hello,
+On Fri, Sep 20, 2024 at 03:54:55PM +0200, Chris Mason wrote:
+> On 9/19/24 12:36 AM, Matthew Wilcox wrote:
+> > My brain is still mushy, but I think there is still a problem (both with
+> > the simple fix for 6.9 and indeed with 6.10).
+> > 
+> > For splitting a folio, we have the folio locked, so we know it's not
+> > going anywhere.  The tree may get rearranged around it while we don't
+> > have the xa_lock, but we're somewhat protected.
+> > 
+> > In this case we're splitting something that was, at one point, a shadow
+> > entry.  There's no struct there to lock.  So I think we can have a
+> > situation where we replicate 'old' (in 6.10) or xa_load() (in 6.9)
+> > into the nodes we allocate in xas_split_alloc().  In 6.10, that's at
+> > least guaranteed to be a shadow entry, but in 6.9, it might already be a
+> > folio by this point because we've raced with something else also doing a
+> > split.
+> > 
+> > Probably xas_split_alloc() needs to just do the alloc, like the name
+> > says, and drop the 'entry' argument.  ICBW, but I think it explains
+> > what you're seeing?  Maybe it doesn't?
+> 
+> Jens and I went through a lot of iterations making the repro more
+> reliable, and we were able to pretty consistently show a UAF with
+> the debug code that Willy suggested:
+> 
+> XA_NODE_BUG_ON(xas->xa_alloc, memchr_inv(&xas->xa_alloc->slots, 0, sizeof(void *) * XA_CHUNK_SIZE));
+> 
+> But, I didn't really catch what Willy was saying about xas_split_alloc()
+> until this morning.
+> 
+> xas_split_alloc() does the allocation and also shoves an entry into some of
+> the slots.  When the tree changes, the entry we've stored is wildly 
+> wrong, but xas_reset() doesn't undo any of that.  So when we actually
+> use the xas->xa_alloc nodes we've setup, they are pointing to the
+> wrong things.
+> 
+> Which is probably why the commits in 6.10 added this:
+> 
+> /* entry may have changed before we re-acquire the lock */
+> if (alloced_order && (old != alloced_shadow || order != alloced_order)) {
+> 	xas_destroy(&xas);
+>         alloced_order = 0;
+> }
+> 
+> The only way to undo the work done by xas_split_alloc() is to call
+> xas_destroy().
 
-We found the following crash when fuzzing^1 the Linux kernel 6.10 and
-we are able
-to reproduce it. To our knowledge, this crash has not been observed by SyzBot so
-we would like to report it for your reference.
+I hadn't fully understood this until today.  Here's what the code in 6.9
+did (grossly simplified):
 
-- Crash
-Oops: general protection fault, probably for non-canonical address
-0xdffffc0000000009: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000048-0x000000000000004f]
-CPU: 0 PID: 239 Comm: syz-executor Not tainted 6.10.0 #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-RIP: 0010:vfs_poll linux-6.10/include/linux/poll.h:82 [inline]
-RIP: 0010:do_select+0xaa7/0x13f0 linux-6.10/fs/select.c:538
-Code: c1 e8 03 80 3c 30 00 0f 85 c7 07 00 00 4d 8b ac 24 b0 00 00 00
-48 ba 00 00 00 00 00 fc ff df 49 8d 7d 48 48 89 f8 48 c1 e8 03 <80> 3c
-10 00 0f 85 b9 07 00 00 4d 8b 6d 48 83 e3 01 4d 85 ed 0f 84
-RSP: 0018:ffff88800bed7740 EFLAGS: 00010206
-RAX: 0000000000000009 RBX: ffff88800a608780 RCX: 1ffff110017c30d4
-RDX: dffffc0000000000 RSI: dffffc0000000000 RDI: 0000000000000048
-RBP: ffff88800bed7be0 R08: 0000000000000000 R09: ffffed10017c30d1
-R10: ffffed10017c30d0 R11: ffff88800be18683 R12: ffff88800a608780
-R13: 0000000000000000 R14: 000000000000001e R15: 0000000040000000
-FS:  00005555585f49c0(0000) GS:ffff88806d200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4f4ae87930 CR3: 000000000a098001 CR4: 0000000000170ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- core_sys_select+0x270/0x5f0 linux-6.10/fs/select.c:681
- do_pselect.constprop.0+0x159/0x1a0 linux-6.10/fs/select.c:763
- __do_sys_pselect6 linux-6.10/fs/select.c:804 [inline]
- __se_sys_pselect6 linux-6.10/fs/select.c:795 [inline]
- __x64_sys_pselect6+0x154/0x1d0 linux-6.10/fs/select.c:795
- do_syscall_x64 linux-6.10/arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x4b/0x110 linux-6.10/arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x7f2210e3194b
-Code: 29 44 24 30 4c 89 4c 24 40 48 c7 44 24 48 08 00 00 00 64 8b 04
-25 18 00 00 00 4c 8d 4c 24 40 85 c0 75 2c b8 0e 01 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 7d 48 8b 4c 24 58 64 48 33 0c 25 28 00 00 00
-RSP: 002b:00007ffe3c6a17c0 EFLAGS: 00000246 ORIG_RAX: 000000000000010e
-RAX: ffffffffffffffda RBX: 000000000000001e RCX: 00007f2210e3194b
-RDX: 0000000000000000 RSI: 00007ffe3c6a1940 RDI: 000000000000001f
-RBP: 00007ffe3c6a1c10 R08: 00007ffe3c6a17f0 R09: 00007ffe3c6a1800
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000555558611e80
-R13: 0000000000000001 R14: 0000555558612d50 R15: 00007ffe3c6a1cf0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:vfs_poll linux-6.10/include/linux/poll.h:82 [inline]
-RIP: 0010:do_select+0xaa7/0x13f0 linux-6.10/fs/select.c:538
-Code: c1 e8 03 80 3c 30 00 0f 85 c7 07 00 00 4d 8b ac 24 b0 00 00 00
-48 ba 00 00 00 00 00 fc ff df 49 8d 7d 48 48 89 f8 48 c1 e8 03 <80> 3c
-10 00 0f 85 b9 07 00 00 4d 8b 6d 48 83 e3 01 4d 85 ed 0f 84
-RSP: 0018:ffff88800bed7740 EFLAGS: 00010206
-RAX: 0000000000000009 RBX: ffff88800a608780 RCX: 1ffff110017c30d4
-RDX: dffffc0000000000 RSI: dffffc0000000000 RDI: 0000000000000048
-RBP: ffff88800bed7be0 R08: 0000000000000000 R09: ffffed10017c30d1
-R10: ffffed10017c30d0 R11: ffff88800be18683 R12: ffff88800a608780
-R13: 0000000000000000 R14: 000000000000001e R15: 0000000040000000
-FS:  00005555585f49c0(0000) GS:ffff88806d200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4f4ae87930 CR3: 000000000a098001 CR4: 0000000000170ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+        do {
+                unsigned int order = xa_get_order(xas.xa, xas.xa_index);
+                if (order > folio_order(folio))
+                        xas_split_alloc(&xas, xa_load(xas.xa, xas.xa_index),
+                                        order, gfp);
+                xas_lock_irq(&xas);
+                if (old) {
+                        order = xa_get_order(xas.xa, xas.xa_index);
+                        if (order > folio_order(folio)) {
+                                xas_split(&xas, old, order);
+                        }
+                }
+                xas_store(&xas, folio);
+                xas_unlock_irq(&xas);
+        } while (xas_nomem(&xas, gfp));
 
-- reproducer
-syz_genetlink_get_family_id$mptcp(0x0, 0xffffffffffffffff)
-unlink(0x0)
-syz_genetlink_get_family_id$nl80211(0x0, 0xffffffffffffffff)
-r0 = socket$nl_generic(0x10, 0x3, 0x10)
-openat$null(0xffffffffffffff9c, 0x0, 0x0, 0x0)
-socket$inet6_tcp(0xa, 0x1, 0x0)
-syz_genetlink_get_family_id$ipvs(0x0, r0)
-r1 = openat$urandom(0xffffffffffffff9c, &(0x7f0000000040), 0x0, 0x0)
-read(r1, &(0x7f0000000000), 0x2000)
-r2 = syz_open_dev$sg(&(0x7f0000000040), 0x0, 0x0)
-ioctl$SCSI_IOCTL_SEND_COMMAND(r2, 0x1,
-&(0x7f0000000000)=ANY=[@ANYBLOB="000000001d00000085", @ANYRES8=r2])
+The intent was that xas_store() would use the node allocated by
+xas_nomem() and xas_split() would use the nodes allocated by
+xas_split_alloc().  That doesn't end up happening if the split already
+happened before getting the lock.  So if we were looking for a minimal
+fix for pre-6.10, calling xas_destroy if we don't call xas_split()
+would fix the problem.  But I think we're better off backporting the
+6.10 patches.
 
+For 6.12, I'm going to put this in -next:
 
-- kernel config
-https://drive.google.com/file/d/1LMJgfJPhTu78Cd2DfmDaRitF6cdxxcey/view?usp=sharing
+http://git.infradead.org/?p=users/willy/xarray.git;a=commitdiff;h=6684aba0780da9f505c202f27e68ee6d18c0aa66
 
+and then send it to Linus in a couple of weeks as an "obviously correct"
+bit of hardening.  We really should have called xas_reset() before
+retaking the lock.
 
-[^1] We used a customized Syzkaller but did not change the guest kernel or the
-hypervisor.
+Beyond that, I really want to revisit how, when and what we split.
+A few months ago we came to the realisation that splitting order-9
+folios to 512 order-0 folios was just legacy thinking.  What each user
+really wants is to specify a precise page and say "I want this page to
+end up in a folio that is of order N" (where N is smaller than the order
+of the folio that it's currently in).  That is, if we truncate a file
+which is currently a multiple of 2MB in size to one which has a tail of,
+say, 13377ea bytes, we'd want to create a 1MB folio which we leave at
+the end of the file, then a 512kB folio which we free, then a 256kB
+folio which we keep, a 128kB folio which we discard, a 64kB folio which
+we discard, ...
+
+So we need to do that first, then all this code becomes way easier and
+xas_split_alloc() no longer needs to fill in the node at the wrong time.
 
