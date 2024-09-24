@@ -1,130 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-29996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C247984B82
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 21:24:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E8E984B86
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 21:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85D6B1C23023
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 19:24:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9C81F22313
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 19:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80211A4F0C;
-	Tue, 24 Sep 2024 19:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996631ACDF5;
+	Tue, 24 Sep 2024 19:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="quld+fji"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eSyd9mhF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BD612D1F1;
-	Tue, 24 Sep 2024 19:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE601AC8A5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 19:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727205856; cv=none; b=lX6lkPjH38uIK1L0PRSMIIQqzeN2jfa5GJJyT8BD1cS0OGYO8GBJu1apqmF2PmzE4kn2AqRe8tHXmX3Xpvnxmms3m6vbG01EVxzWjOBSexuniSxoud/8G9zYmZGujlvNz/qQGied7/2zqjoBRaIF/46FtK/ZKZE0ASHwBKhWdck=
+	t=1727205877; cv=none; b=WjxkNsvHASVWHlCvGLxpOjxFuhtFe6Ly73JoXbZPKvZsy2mr5AsJ4ZoHgy9azdZZvEsmdzUQOG2gbCI2t7LqfVGqCeWAJ1JvvTu4i2jRv5JHfBQpNucPXtSzVUW5kCCsUlMhV6+YWU/N0nb0ySoh7yKgIhX31sBBfEzN2aL4hkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727205856; c=relaxed/simple;
-	bh=0s6cwSvjN7F3YMoaMLVmKNEbM2+8ApQcoGW6ym8fUzo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G+brqOhzVe5fIpA5bGliMuvB4WBqoUH01K0G1v/JpjPZQtglFBDhggPLE1n3Ss7cDHluxQh/eQ5ojw31P/Lp807GWB+V4mHUxYURNBQom11RI60Z6MA9xY4Pm4tRy6Bm+LG1L0x2t1QQCXklPceI49h/rK0MvJ86fEI/j/bSktE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=quld+fji; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4XCqY12xnYz9tYw;
-	Tue, 24 Sep 2024 21:24:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1727205845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U09YIrJ1rTrNYNR6aljoqFaAa55MjJXw4x7cHzq7sa4=;
-	b=quld+fji3c9zZ+Xaqhwneoqyr9jMcU020sND0mwU3HSyVmOHUgD5FyaRBZXpLTNKbzGunl
-	Gp7DnrMIihzukfQQccI59Dv1WtKaHYY6UMTpRZe0iV4gU621WggifOwkxzkfbEyPaa2hsS
-	Rlqv/5IED284FCTAIi71Oq4ex8AzZSVdPy81B4CjrMJP74hNDKd+pIq7Zl1jJRhnv3xtOT
-	v5h3F6eFdtSl7jt+xLi6GrVAcRnYpjylXEtsFtA050o8GXac8tNgAIhbac+4BkAn75Pztg
-	N9cw6yDZCCPd+IGq5Bl9rBN/OLr+iYRUKLSVAfqwX0CytwJjWmgBY0w5Tw/64w==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: willy@infradead.org,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	akpm@linux-foundation.org,
-	kernel@pankajraghav.com,
-	Christian Brauner <brauner@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 2/2] ramfs: enable block size > page size
-Date: Tue, 24 Sep 2024 21:23:51 +0200
-Message-ID: <20240924192351.74728-3-kernel@pankajraghav.com>
-In-Reply-To: <20240924192351.74728-1-kernel@pankajraghav.com>
-References: <20240924192351.74728-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1727205877; c=relaxed/simple;
+	bh=SIeQoyCxYAQebwPctse0ec/xuA/Q6FV0i8cdsXtARic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oJMbqiNvE8AMRbuKE4ELxK+BxczgumPhV1lKb+qW9UtpjGjLI1hT9NRedkOG8S3Z/H/h0/7lNsSWJWyhAfEZ3SjQQT+VeNsf18teoLfJf8EKjHlgPwgdD/A64vE1j7qFCkoyQwB7mpfBTQdL5Xmvrnfi43Qh5Ot0qWl0BKRTNbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eSyd9mhF; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c42e7adbddso7812800a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 12:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727205873; x=1727810673; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3AEQwCgf5wgX6ZTyJ9aWNB159Y5/5DzJz6MiCsxsiWg=;
+        b=eSyd9mhFdtmsq3dEfWRKP5ZMJdd0egIpa3MuPtXvCvm0GeTBw3AGpd8v0eqBZ9Ouwm
+         VjzPrXseWGXNRss6ChzLXcZuP2YUNy77dC1keB0SQ+D040jNoPG2pmfbcUPPayaqOPdH
+         VttoI3U4Ub8/RXc8k6dd4+sxzBHRxJSFWz3ec=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727205873; x=1727810673;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3AEQwCgf5wgX6ZTyJ9aWNB159Y5/5DzJz6MiCsxsiWg=;
+        b=GQkl97w8rieLzGxrypXLax2GLNYdVJrAObV9BTiF5lnzLm0GNO2dDIuNpNZC6/Doz3
+         DSVviG1Y3TamGnKCMVc3lvMem9ZTRnsP0zGx4KnMWBoKWUITNWfkV/QUQyJcA54AP3NC
+         wL83na9JfYlP7HS6/LI70boo4IVNkv8xXmIo58Gs13c4PVPdyA1qDbKqFHtPVtSNS2c/
+         UqgoJNirXl1U4hikCnLuF0GqO/PugSlxB2qnlBIcjtv/NaOHWQ3N7noli8Km4JgaC3Zy
+         c17cjuMArmHy+fhv/sBL9aRKpWoX1AbU/iEwX27nCEL4hMM+a1+OYAaONDrDK5Ghu+pC
+         w5GA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4OU4TMgN1r1kUizcRkSN7fwsE0E4xyAXKz8Xozn/yennVhheSbfEsIBVay21xvtEbZGwwsLWkGI6RAZ/C@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNa7cQcH1cdf4aEnizFxot2/j/P68G0mKspohR1E0CqRQ8XAc9
+	Sb+7LdmZFMibNdZ718Nlr+CxTSycEeaNxUtJWHl/j66s8oDV4a2WFoAFPFMSipqRYsBb6gzR7Et
+	QIW/otA==
+X-Google-Smtp-Source: AGHT+IFI1XlxlTTHljxYVrRrEAEjFhggFMaJ3ncfBgZspwt+BTkblMtyzRp6Rf/fZO8ez9kqvGxPCw==
+X-Received: by 2002:a17:907:86a7:b0:a8a:86f8:4eed with SMTP id a640c23a62f3a-a93a03421d3mr31362466b.10.1727205873036;
+        Tue, 24 Sep 2024 12:24:33 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9393138af7sm119823366b.206.2024.09.24.12.24.31
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 12:24:31 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d24f98215so788384466b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 12:24:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYGDhucoVtZjo8c3IbhYHZjjhFLB+j/r/kQT4wVdr61u3QtgCic83A1O4PAGum1NmyRDcVviDI/F8rGvTU@vger.kernel.org
+X-Received: by 2002:a17:907:9726:b0:a86:799d:f8d1 with SMTP id
+ a640c23a62f3a-a93a06333edmr32505866b.47.1727205871314; Tue, 24 Sep 2024
+ 12:24:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ZulMlPFKiiRe3iFd@casper.infradead.org> <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org> <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com> <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area> <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <8697e349-d22f-43a0-8469-beb857eb44a1@kernel.dk> <ZuuqPEtIliUJejvw@casper.infradead.org>
+ <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com> <15f15df9-ec90-486a-a784-effb8b2cb292@meta.com>
+In-Reply-To: <15f15df9-ec90-486a-a784-effb8b2cb292@meta.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 24 Sep 2024 12:24:14 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiAQ23ongRsJTdYhpQRn2YP-2-Z4_NkWiSJRyv6wf_dxg@mail.gmail.com>
+Message-ID: <CAHk-=wiAQ23ongRsJTdYhpQRn2YP-2-Z4_NkWiSJRyv6wf_dxg@mail.gmail.com>
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Chris Mason <clm@meta.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
+	Dave Chinner <david@fromorbit.com>, Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, 
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Content-Type: text/plain; charset="UTF-8"
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On Tue, 24 Sept 2024 at 12:18, Chris Mason <clm@meta.com> wrote:
+>
+> A few days of load later and some extra printks, it turns out that
+> taking the writer lock in __filemap_add_folio() makes us dramatically
+> more likely to just return EEXIST than go into the xas_split_alloc() dance.
 
-Use page cache's minimum folio order infrastructure to support block
-size > page size.
+.. and that sounds like a good thing, except for the test coverage, I guess.
 
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- fs/ramfs/inode.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Which you seem to have fixed:
 
-diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-index d846345a0f4b1..5ac41115d9c62 100644
---- a/fs/ramfs/inode.c
-+++ b/fs/ramfs/inode.c
-@@ -74,6 +74,9 @@ struct inode *ramfs_get_inode(struct super_block *sb,
- 		case S_IFREG:
- 			inode->i_op = &ramfs_file_inode_operations;
- 			inode->i_fop = &ramfs_file_operations;
-+			mapping_set_folio_min_order(inode->i_mapping,
-+						    sb->s_blocksize_bits -
-+							    PAGE_SHIFT);
- 			break;
- 		case S_IFDIR:
- 			inode->i_op = &ramfs_dir_inode_operations;
-@@ -211,6 +214,8 @@ static int ramfs_show_options(struct seq_file *m, struct dentry *root)
- 
- 	if (fsi->mount_opts.mode != RAMFS_DEFAULT_MODE)
- 		seq_printf(m, ",mode=%o", fsi->mount_opts.mode);
-+	if (fsi->mount_opts.blocksize != PAGE_SIZE)
-+		seq_printf(m, ",blocksize=%u", fsi->mount_opts.blocksize);
- 	return 0;
- }
- 
-@@ -235,6 +240,7 @@ static int ramfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct fs_parse_result result;
- 	struct ramfs_fs_info *fsi = fc->s_fs_info;
-+	size_t max_blocksize = mapping_max_folio_size_supported();
- 	int opt;
- 
- 	opt = fs_parse(fc, ramfs_fs_parameters, param, &result);
-@@ -263,8 +269,8 @@ static int ramfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 
- 		fsi->mount_opts.blocksize = rounddown_pow_of_two(result.uint_32);
- 
--		if (fsi->mount_opts.blocksize > PAGE_SIZE)
--			fsi->mount_opts.blocksize = PAGE_SIZE;
-+		if (fsi->mount_opts.blocksize > max_blocksize)
-+			fsi->mount_opts.blocksize = max_blocksize;
- 
- 		if (fsi->mount_opts.blocksize < PAGE_SIZE)
- 			fsi->mount_opts.blocksize = PAGE_SIZE;
--- 
-2.44.1
+> With the changes in 6.10, we only get into that xas_destroy() case above
+> when the conflicting entry is a shadow entry, so I changed my repro to
+> use memory pressure instead of fadvise.
+>
+> I also added a schedule_timeout(1) after the split alloc, and with all
+> of that I'm able to consistently make the xas_destroy() case trigger
+> without causing any system instability.  Kairui Song's patches do seem
+> to have fixed things nicely.
 
+<confused thumbs up / fingers crossed emoji>
+
+              Linus
 
