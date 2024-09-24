@@ -1,175 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-29953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89018984209
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 11:26:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E94984239
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 11:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027301F23C66
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 09:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DC9D28335F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 09:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125AC177992;
-	Tue, 24 Sep 2024 09:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E772F1714B3;
+	Tue, 24 Sep 2024 09:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DRzdAs3Q"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J8EjFUUf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF441714CC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 09:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DDF155CAC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 09:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727169912; cv=none; b=V5hgqhpXkNRNi0wcMgTq90gwiH/t9kaAi/W9nE0gMTHsnM+gr2vS+KrTBqVaZq4a108gdG/3Pm2gRp8mTkm6WPkk/SMBN6YDjNUO8VmRoOF4NkGQAXoHdAiCmIFaTdlr+i300fOhG8h161vvYgQPdd4rh9bbk2FAS18LNyIoJZs=
+	t=1727170379; cv=none; b=uVAdggaVqfaG6kwzehtToeb8qReY3vyNLJMqJT0e1ZIK/XCAshWYIJPYuROdzqeNmL1QNPGGTEAHlmVjEdqE5INcJQgNefKjgKHZZLu9YO0Ii6bsYzen5qDnHt2DutW8fu3EG06oNy/93UeAOZJwxzTTLx9kcyue4rgpk++THBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727169912; c=relaxed/simple;
-	bh=dNHi3O2X2k099XP44w2M/mi53+tBlMIsNqguMCPtdWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=F3qzg2aFOQQFO4eL5Cj0IeV9f6Kr4amF2IkOAbOQjhTSRNolY9eL38h25swno91jWFWGRMSRAO/KL53N87DhnEXcfyAmMxqBT5tomUUbtYECz/e4YINQ20HysiCra5d9MWjmdvF3GL9o4UrC6yLVLO5W5ihv//cDPy+jx9feAJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DRzdAs3Q; arc=none smtp.client-ip=203.254.224.34
+	s=arc-20240116; t=1727170379; c=relaxed/simple;
+	bh=VHEY5enqTMnC/+RG2f9x6q557yzmCYer09TIlKHohU4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=SPiqT/db+DAKnZPHwB6/kXM1FnwXNR8S48PC6OmSIsqWJOO9S2T7xw0EIUPr37xkFXm1m4VBMKJlA0bDPWMLJPTdTFYTABYGCi0ONEEl9K2eeVHSSMJBECNer1dvywy+ygnsXx1e0Ni+D2/MGJdp2N1wlWTNVAwahb5cwj7UpJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J8EjFUUf; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240924092502epoutp04e8dc5063bb7b4b6460ec3e5db42d2656~4I_A1mYQ01410314103epoutp04f
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 09:25:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240924092502epoutp04e8dc5063bb7b4b6460ec3e5db42d2656~4I_A1mYQ01410314103epoutp04f
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240924093250epoutp02316134c8a6030ddb4dd918e66a54861d~4JE0LFuAg2094820948epoutp02T
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 09:32:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240924093250epoutp02316134c8a6030ddb4dd918e66a54861d~4JE0LFuAg2094820948epoutp02T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727169903;
-	bh=ujjozdZ0S6smtIOf2Eo64izQZAki0Dpgi2fL4KYD0eo=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=DRzdAs3QWhKDnHH2NVAMWRA7Ft3n+f+xxAm724jDu+lihzspJUgS+Y9br3V8hxIH+
-	 Z3QVZHILd0aBm29DI4/sRJSTG5oBDL8ME2M0JaL+P3k18e87exOVmbIsbb0n39KtKj
-	 DKauxVWTJIBdoRvHwLO64WyEwmHUWE6e3Of7LM6Q=
+	s=mail20170921; t=1727170370;
+	bh=O/zo7RhP61a9O8LhrGF/ZtU+oupMYRBaBJMbkLt8RWE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=J8EjFUUfgBjp+HMXv7klApRcsEB61VDto7YGUaMRPQJsmLh/H9UAIOEgPeZxVkg/j
+	 ybNYkLU8oxuhJ7vSCRt21OgGkl+aCAkHzmEeWzXUDOJ6mJ5ngvF9YuW3/GkM4qsnzY
+	 OEtEcMds5gJjd7j9KpHN+DQu3WczJ5RsAUsy5+90=
 Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
 	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240924092501epcas5p3f637377fab6c1cc78535ad611ec3c268~4I9-tP-SU2625526255epcas5p3P;
-	Tue, 24 Sep 2024 09:25:01 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XCZFm1yQRz4x9Q8; Tue, 24 Sep
-	2024 09:25:00 +0000 (GMT)
+	20240924093249epcas5p3fcbf7bcc0b66c56c798faa982378d7a9~4JEzWd1nY1076610766epcas5p3H;
+	Tue, 24 Sep 2024 09:32:49 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XCZQl5qNKz4x9Q8; Tue, 24 Sep
+	2024 09:32:47 +0000 (GMT)
 Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AE.0F.08855.C6582F66; Tue, 24 Sep 2024 18:25:00 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240924092459epcas5p23e41d7dfa92acf415d9dab1d0e433842~4I9918t0b2825728257epcas5p2N;
-	Tue, 24 Sep 2024 09:24:59 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240924092459epsmtrp2deb043bef0671cc130aa36af932e5811~4I991DpJu0725707257epsmtrp2I;
-	Tue, 24 Sep 2024 09:24:59 +0000 (GMT)
-X-AuditID: b6c32a44-15fb870000002297-2f-66f2856cb18c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AF.28.19367.B6582F66; Tue, 24 Sep 2024 18:24:59 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240924092456epsmtip18d685cf23e102be2cbcceaf47e18117b~4I960RNvX2191221912epsmtip1D;
-	Tue, 24 Sep 2024 09:24:56 +0000 (GMT)
-Message-ID: <edcbf69e-9ae9-06df-60c0-47393371fcd8@samsung.com>
-Date: Tue, 24 Sep 2024 14:54:51 +0530
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	11.BD.09640.F3782F66; Tue, 24 Sep 2024 18:32:47 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240924093247epcas5p4807fe5e531a2b7b2d6961d23bc989c80~4JExIvixO2460424604epcas5p4W;
+	Tue, 24 Sep 2024 09:32:47 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240924093247epsmtrp12b64f86c2a37fd7b3e74534f718926df~4JExGlRU50907509075epsmtrp1Q;
+	Tue, 24 Sep 2024 09:32:47 +0000 (GMT)
+X-AuditID: b6c32a49-a57ff700000025a8-04-66f2873fcd23
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	36.C1.08964.E3782F66; Tue, 24 Sep 2024 18:32:46 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240924093243epsmtip2ac324fa66b8c50096f40fb2d889aea28~4JEuIOfcM0088900889epsmtip2D;
+	Tue, 24 Sep 2024 09:32:43 +0000 (GMT)
+From: Kanchan Joshi <joshi.k@samsung.com>
+To: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	martin.petersen@oracle.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+	bvanassche@acm.org, asml.silence@gmail.com
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com, Kanchan
+	Joshi <joshi.k@samsung.com>
+Subject: [PATCH v6 0/3] per-io hints and FDP
+Date: Tue, 24 Sep 2024 14:54:54 +0530
+Message-Id: <20240924092457.7846-1-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v5 4/5] sd: limit to use write life hints
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>
-Cc: axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me,
-	martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	jaegeuk@kernel.org, jlayton@kernel.org, chuck.lever@oracle.com,
-	bvanassche@acm.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com, Nitesh
-	Shetty <nj.shetty@samsung.com>
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20240918120159.GA20658@lst.de>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xbdRTH/d17e1saO69ljB9FgTVqNgasVcAfDIZmZLtuU0gWQ+LcaqUX
-	SugrfTCdJMLIUNfBBs2YVATmkM4iMhhBXiXIRthEHg6UR4UAlm2ullcTsw1FW8om/33OOd/z
-	O6/8ODj/E7aAk6XSM1qVVCEkuUTL9Z3hkYrTKxmiEQsb1U2dI5Hz+gpAZUsPcfTv1F0MTXS3
-	Yeibul4MfXGxAEOOBjOOGs9x0O+/udnoYa2VjUp7fgXINrkL3f7qAOq03SJQVe08GxnHWklk
-	6VvDUMtqFY6+cy4SaOifPhYaMlewX9tGj4weooemGwm6rPRHkh4ZMNBN1s9I+lrNx3RHtRuj
-	OybySHp5fpKgi5utgP6p+gabdjeF0E0OF5bKeyc7Qc5IZYw2jFGlq2VZqsxE4aEjkn2SmFiR
-	OFIch14VhqmkSiZRmHw4NXJ/lsIzszAsR6oweFypUp1OuHtvglZt0DNhcrVOnyhkNDKFJloT
-	pZMqdQZVZpSK0ceLRaKXYzzC97LlQ6MuUjPI/WB+roudB7o4Z4AfB1LRsPxKOTgDuBw+1QHg
-	iDOP8BkrAA7XL4InRvFAG+txyoVTi5gv0Aagq2WV9Ab4lAvA/AcyL/OovdDoGsa9TFAvwlO2
-	i6TP/yy8Ve4gvBxAvQ8f/VIBvOxPJUJj0di6H6cC4aSjCvPyVkoI5+8PrHeBU7UE/Hp5yPMQ
-	h0NSO+GwyeDV+FER8I+1ReDLDYXfuypwrx5SFj9ou9C60XUytDknNtgf3u9rZvtYAN0LNtLH
-	2XBmbobwcS5svVa8oU+CeX+Ps7x1cU/dhvbdvlpbYNGqA/O6IcWDnxbyfertcLp0fiMzEM5+
-	XsPySWjYmx/kW1shAecmb2DnQZh501bMm6Y3b5rG/H/hakBYQRCj0SkzmfQYjVjFnHhy73S1
-	sgms/4jw5FYwXrUW1QMwDugBkIMLt/JKJ5Yz+DyZ9MOTjFYt0RoUjK4HxHjOU4ILAtLVni+l
-	0kvE0XGi6NjY2Oi4V2LFwkCe8/SXMj6VKdUz2QyjYbSP8zCOnyAPu6t/w3RTYqvr739hPN60
-	ULS9Pi05KoNu2HOwpb7/0dlBZ1JpGstwnpVfWddqMpUcGSvY8lffYpkycs+9whS3wGI/2t0u
-	LzwccbnT/hJ3ind89s6DHzJudqgGk+yX3vyoqzFn2BTvnzIYvFTC4L1zTWOSSt2BJSLtyvPJ
-	RdxdRMIzIfaoqw72ytsdx6dn7sVlPXXMOPFtMGkNKrB0GizD7bWjEe6COvaCQL6tDTydItDu
-	mJ2qoHszjLhAeSnnas3+fQG5K7f77gDn2csDq9VH/1zrzrX/XBJUFiIKbh4PPtHy+sBYEbeT
-	KGXsb6W8W2yrPBaaayzpPHlwh7UsIC30uXohoZNLxeG4Vif9D9ch+QCaBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRmVeSWpSXmKPExsWy7bCSnG5266c0gxeflC1W3+1ns3h9+BOj
-	xbQPP5kt/t99zmRx88BOJouVq48yWcye3sxk8WT9LGaLjf0cFo/vfGa3+LlsFbvFpEPXGC32
-	3tK2uLTI3WLP3pMsFvOXPWW36L6+g81i+fF/TBbbfs9ntlj3+j2Lxfm/x1ktzs+aw+4g5nH5
-	irfH+XsbWTymTTrF5nH5bKnHplWdbB6bl9R77F7wmclj980GNo+PT2+xePRtWcXocWbBEXaP
-	z5vkPDY9ecsUwBvFZZOSmpNZllqkb5fAlXH+ylu2gnNcFU8f7WNvYNzH0cXIySEhYCIxtek9
-	UxcjF4eQwHZGiUlTGtghEuISzdd+QNnCEiv/PWeHKHrNKLH/wkqwBK+AnUT32wvMIDaLgKpE
-	097pbBBxQYmTM5+wgNiiAkkSe+43MoHYwgK2Et2918HizEALbj2ZDxYXEVCSePrqLCPIAmaB
-	ZSwSB6e8hTqpjUXi/bKjQA4HB5uApsSFyaUgDZwCOhIv/71nhBhkJtG1tQvKlpfY/nYO8wRG
-	oVlI7piFZN8sJC2zkLQsYGRZxSiaWlCcm56bXGCoV5yYW1yal66XnJ+7iRGcCrSCdjAuW/9X
-	7xAjEwfjIUYJDmYlEd5JNz+mCfGmJFZWpRblxxeV5qQWH2KU5mBREudVzulMERJITyxJzU5N
-	LUgtgskycXBKNTAxZTk/npb9vf5JxJxFZb9sdj2UtDTnCmw+l8dk8PN8MC+T9RfWPctrZj9S
-	PX7t0yQ1jUUFqyMD9z5PDMopqF18XUXtz88XHkqdcqLX5XY/eOIh21hXIX36RapCxrUlBx12
-	MvA+qUg40M7/dIqBwcGpefNPVjzysw+7Y375/MlQhsXC1jv41+3i/HvW7W1SOvfJpwxdZzr9
-	95642n47dO0pn8n6f176ZOY2tFSHhOi8Dexm7V5YyXpQ6dHEbfl35D6dneP0b7uBi6Qov5tM
-	xJS3vfHv+G05uzawr63p3fv/2DbLYJ0Fi2/yN9rmbjtamu4e9ObqQ7uj8q5Lfp37G+FuW/D1
-	9Lu9U19esHq+otJFiaU4I9FQi7moOBEAityLA3QDAAA=
-X-CMS-MailID: 20240924092459epcas5p23e41d7dfa92acf415d9dab1d0e433842
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUVRzHO/de9i7U6m1BPTIBy1YY4CIbCxwKhCm0WzKFMVk5GmxwYYl9
+	uQ8ixkmGl4my5GKIi04SD3EZYkIkCNFYwI2m2lJwhAEiXChFAWHUCBfaZdfyv8/5nd/3fM/3
+	PNg49ybLm50p1zAquVjKZ3kQbT2BQYLYg/PpodVzweiksQ2gxtEyFipZbiXQdM88QBVzizia
+	yV8i0ND3HRg629iHoZmiXwhUdbwAQ9ZmA45ujCyQqG/lDgvpTdcAOlaRD1DXcDC60NVPoC/r
+	J0l0xryMoa+nZwlksZndkMVwkoxbT18d2EF3GEZJ2jL2DUFf/VlLtxgPseiWeT1Jn6s9QHcO
+	5bHou5PDBD17cZBF61qNgP7pdC9JL7T40i3WO1jimt1Z0RJGnMaoeIw8VZGWKc+I4e9ISn41
+	OTwiVCgQRqFIPk8uljEx/PiERMH2TKk9Op+XLZZq7aVEsVrN37I1WqXQahieRKHWxPAZZZpU
+	KVKGqMUytVaeESJnNC8JQ0NfDLc3pmRJKs/ewJSX1ubM9pa55YGeJ0uAOxtSIthkaSAdzKU6
+	Aew9klsCPOw8D+DtqctuzsF9ANtNi+QjxZStFXdOdAH42w/drsECgNWmfruEzWZRgfDXcq2j
+	7kUVY7BwvAJ3qHHKBqBpKMHBntRmaB0ZxRxMUM/DyzOdhIM5VCS0LFaxnG5+8MSVB6Sz/jTs
+	P2ElnOv4wYLzVavGkCpwh2O9h1yCeGhbsLi26glvmVtd7A1vlhW7OAuOT4wTTt4P28/p3Jwc
+	C/MeXl8NgNsDNH+3xem1BpYuWTFHGVIc+Fkx19ntD8f0ky7lBvhHZa2LaThY3wgc7VxqLxyt
+	++hz4Gt4LIDhsQCG/71OA9wINjJKtSyDUYcrhXLm4/+uMlUhawGrbz7o9XYwOj4XYgIYG5gA
+	ZON8L45+6G46l5Mm/iSXUSmSVVopozaBcPupHsW916Uq7J9GrkkWiqJCRREREaKosAghfwNn
+	uuhUGpfKEGuYLIZRMqpHOozt7p2HHfxne+mft+KkmUWvPJEY9mCgir8IvYNjbg/f8yJ94pt1
+	xsmm/d0ywVfdPjWnVkYG69ikQeeuwdqu5QerQjbnHDZy/HJ952ideenexTnetnXPfDo4MVEf
+	0zDQAC9lj9e8tZJUvmnXBZvuvXfisIdRr3X7ek5ZX57Zd13tEXflBYlnwvsp5/O2HsD2fJiv
+	7/BP8rp/ZiPGy0pP0Oa8cYy2Ba0176vvOpJd5yuKLRdIyADetsrS6P6j1o7DnqKCshpZ4abd
+	DR/sHBs+vutZ/Rf+AY3LP2YQBKnZ+3dKWOD0U8XfCgqr8fXm35tYPu/2xUbPwIE3AyR7xirf
+	zpfujKz8a6D2OQWfUEvEwiBcpRb/C8tarjh8BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsWy7bCSvK5d+6c0g80rbCzmrNrGaLH6bj+b
+	Rde/LSwWrw9/YrSY9uEns8W7pt8sFjcP7GSyWLn6KJPFu9ZzLBazpzczWTxZP4vZ4vGdz+wW
+	R/+/ZbOYdOgao8WUaU2MFntvaVvs2XuSxWL+sqfsFsuP/2OyWPf6PYvF+b/HWS3Oz5rD7iDm
+	cfmKt8fOWXfZPc7f28jicflsqcemVZ1sHps+TWL32Lyk3mP3zQY2j49Pb7F4vN93lc2jb8sq
+	Ro8zC46we3zeJOex6clbpgC+KC6blNSczLLUIn27BK6MGSsfMxXs5694f6SftYHxMHcXIyeH
+	hICJxLO/W5i7GLk4hAR2M0r0HZjECpEQl2i+9oMdwhaWWPnvOTtE0UdGiZmPZzN2MXJwsAlo
+	SlyYXAoSFxGYwSRxasVBNhCHWaCdSeLaxLvMIN3CAjoST+7cZQKxWQRUJY69280CYvMKmEuc
+	/zmbDWKDvMTMS9/ZIeKCEidnPgGrYQaKN2+dzTyBkW8WktQsJKkFjEyrGCVTC4pz03OLDQsM
+	81LL9YoTc4tL89L1kvNzNzGCI1JLcwfj9lUf9A4xMnEwHmKU4GBWEuGddPNjmhBvSmJlVWpR
+	fnxRaU5q8SFGaQ4WJXFe8Re9KUIC6YklqdmpqQWpRTBZJg5OqQampKcL7P5O6GfV3sRXb6A6
+	4/cC46sSGzlPeIbcmp2a05Tz7LJrXnPtafZ5kw4kLTaN/Pr+2pTnOfPvPjq/vl7BcULntY3T
+	TwT17Sy48a2Sz3fRWt9b1e2et4IOs6zu2Bq8Mas6325hiRjzcq7NU67Vi17Ylf13KetpeXbG
+	ksXBYUfk2P9scP93PFTFMnFb0ouJ32+ySc2LmWQv3KqTuWWpI1v8gePH5p26122v3cGckbT7
+	R4LARsWXErbW3RsUjwZflZ1twrW/mWHjhqqY2Jo0+6u7ok75l70N7nnb57ljg0/LMrZcqScL
+	VdId3I7psTNrHF+lGDdhkt6d1fNyzGyS9ex8/SS+3enKKvu3191CiaU4I9FQi7moOBEA0UbF
+	+zcDAAA=
+X-CMS-MailID: 20240924093247epcas5p4807fe5e531a2b7b2d6961d23bc989c80
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240910151057epcas5p3369c6257a6f169b4caa6dd59548b538c
-References: <CGME20240910151057epcas5p3369c6257a6f169b4caa6dd59548b538c@epcas5p3.samsung.com>
-	<20240910150200.6589-5-joshi.k@samsung.com> <20240912130235.GB28535@lst.de>
-	<e6ae5391-ae84-bae4-78ea-4983d04af69f@samsung.com>
-	<20240913080659.GA30525@lst.de>
-	<4a39215a-1b0e-3832-93bd-61e422705f8b@samsung.com>
-	<20240917062007.GA4170@lst.de>
-	<b438dddd-f940-dd2b-2a6c-a2dbbc4ee67f@samsung.com>
-	<20240918064258.GA32627@lst.de>
-	<197b2c1a-66d2-5f5a-c258-7e2f35eff8e4@samsung.com>
-	<20240918120159.GA20658@lst.de>
+X-CMS-RootMailID: 20240924093247epcas5p4807fe5e531a2b7b2d6961d23bc989c80
+References: <CGME20240924093247epcas5p4807fe5e531a2b7b2d6961d23bc989c80@epcas5p4.samsung.com>
 
-On 9/18/2024 5:31 PM, Christoph Hellwig wrote:
-> On Wed, Sep 18, 2024 at 01:42:51PM +0530, Kanchan Joshi wrote:
->> Would you prefer a new queue attribute (say nr_streams) that tells that?
-> 
-> No.  For one because using the same file descriptors as the one used
-> to set the hind actually makes it usable - finding the block device
-> does not.  And second as told about half a dozend time for this scheme
-> to actually work on a regular file the file system actually needs the
-> arbiter, as it can work on top of multiple block devices, consumes
-> streams, might export streams even if the underlying devices don't and
-> so on.
-> 
+Another spin to incorporate the feedback from LPC and previous
+iteration. The series adds two capabilities:
+- FDP support at NVMe level (patch #1)
+- Per-io hinting via io_uring (patch #3)
+Patch #2 is needed to do per-io hints.
 
-FS managed/created hints is a different topic altogether, and honestly 
-that is not the scope of this series. That needs to be thought at per-FS 
-level due to different data/meta layouts.
-This scope of this series is to enable application-managed hints passing 
-through the file system. FS only needs to pass what it receives. No 
-active decision making (since application is doing that). Whether it 
-works fine or not - is application's problem. But due to the simplicity 
-it scales across filesystems. This is for the class of applications that 
-know about their data and have decided to be in control.
+The motivation and interface details are present in the commit
+descriptions.
 
-Regardless, since placement-hints are not getting the reception I 
-imagined, I will backtrack.
+Testing:
+Done with fcntl and liburing based custom applications.
+On raw block device, ext4, xfs, btrfs and F2FS.
+Checked that no regression occurs for application that use per-inode
+hints.
+Checked that per-io hints, when passed, take the precedence over per-inode
+hints.
+
+Changes since v5:
+- Drop placement hints
+- Add per-io hint interface
+
+Changes since v4:
+- Retain the size/type checking on the enum (Bart)
+- Use the name "*_lifetime_hint" rather than "*_life_hint" (Bart)
+
+Changes since v3:
+- 4 new patches to introduce placement hints
+- Make nvme patch use the placement hints rather than lifetime hints
+
+Changes since v2:
+- Base it on nvme-6.11 and resolve a merge conflict
+
+Changes since v1:
+- Reduce the fetched plids from 128 to 6 (Keith)
+- Use struct_size for a calculation (Keith)
+- Handle robot/sparse warning
+
+Kanchan Joshi (3):
+  nvme: enable FDP support
+  block, fs: restore kiocb based write hint processing
+  io_uring: enable per-io hinting capability
+
+ block/fops.c                  |  6 +--
+ drivers/nvme/host/core.c      | 70 +++++++++++++++++++++++++++++++++++
+ drivers/nvme/host/nvme.h      |  4 ++
+ fs/aio.c                      |  1 +
+ fs/cachefiles/io.c            |  1 +
+ fs/direct-io.c                |  2 +-
+ fs/fcntl.c                    | 22 -----------
+ fs/iomap/direct-io.c          |  2 +-
+ include/linux/fs.h            |  8 ++++
+ include/linux/nvme.h          | 19 ++++++++++
+ include/linux/rw_hint.h       | 24 ++++++++++++
+ include/uapi/linux/io_uring.h | 10 +++++
+ io_uring/rw.c                 | 20 ++++++++++
+ 13 files changed, 162 insertions(+), 27 deletions(-)
+
+-- 
+2.25.1
+
 
