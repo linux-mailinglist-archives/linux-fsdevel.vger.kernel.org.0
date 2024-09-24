@@ -1,147 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-29983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4619849B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 18:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A8E9849B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 18:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5483D1C21012
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 16:34:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D7E1C22FBC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 16:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ACA1ABEB0;
-	Tue, 24 Sep 2024 16:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDCC1AC427;
+	Tue, 24 Sep 2024 16:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MqMn7pud"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJaNTrDF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9441ABEA5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 16:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87331ABEAF;
+	Tue, 24 Sep 2024 16:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727195659; cv=none; b=bcJ9IYH152vAakmd8xI1DRgAvVPpRcDuV4PgFz9hOChMOvEJX9hgqbZdcg+KTzRm9yWx3OLph6RtHjJr/TTcp1luxZCluvdxwyIpyUQYrZRCbmnJw0Rc1ardNQdEuh+sfVCSDr82D0n76v1kDqza9OkBr8RRg9bopWgP6yaE2ww=
+	t=1727195670; cv=none; b=p5zR+CWn4f8t++ShtGZnRMG92KU/Ns8rPqT6xq47N3J9XX/Oe8SfDN0Vfn85jN0AXbFxPvMBo81WZZfENUu4szND2xls6i+E3Ke9ZpGEGG/sjT/yb25kwsS/QhVeIgZ1S4CEx3vIlYFbWgOZQziPtLikA1ZDY2iDWqdx/xu466Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727195659; c=relaxed/simple;
-	bh=nmK9Uuj1ByPl48wGybQrcJO9RxUQXrVfzgOXeoWVdow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xz/Io2rsBlhrng10Gbd+hVBPbesQaH8aCjuCKXpFn2SP18rwQPKw77MtYJ2whMLb6vDOBYKALtCVbcNX6bLv5PF8EmSLTPlY3fT08EhcxbjV0GKNKmgCK4sTuLHlkp7RZZK2U8vsorPVirjPKMwA0NQTrc//30/U5OjLeLZzc6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MqMn7pud; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so75834431fa.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 09:34:16 -0700 (PDT)
+	s=arc-20240116; t=1727195670; c=relaxed/simple;
+	bh=CKQYHaO7SFJI1SmPcWqAwBv8/BcIfWAEOxizwPvzJh0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ptsOyv8sNT3okzOzmBHztbZzWolIIGLHPe9Mhx1jla9y7k7zg4PQ7XZJBNgfn2kIVFAomBDRpfR2t5y1EnivtDifKRpUWy1zKOlm3vw+pZvVUM9GoKTMPavW30V5p0n8LOvCGujaB2aBXEP/DU5iHfm7c6ggdYLbb4BRhvSC66o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJaNTrDF; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f74b6e1810so47673471fa.2;
+        Tue, 24 Sep 2024 09:34:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727195655; x=1727800455; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2BsWm6obMCZPV1aGLLtpJZVt21+qXQFY669dpMECc4A=;
-        b=MqMn7pud5kY0RobdWySiIshE7sv6CHg/1iZOIxR5sOhCtmSKtSwVr63B/vViYS60L3
-         OQEshF31FvNrR2eHg/XcxtRgrNMnPSGOY0YRFzFBT1oM9RpmbmtvZ6iOjdfNaQtRfA3L
-         DrRM7c8Yo8LXwZxCnsmIdMFixMHqeZ12zCg6U=
+        d=gmail.com; s=20230601; t=1727195667; x=1727800467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SohsbHCOgCyY9zRN0YDEWi0hquGgftBulLmPBuTfvhQ=;
+        b=CJaNTrDF6z7Qu30bNRbYBcyXo5I5U9JGzQMijUqcj1FI5YeJT1FSZlOm19iDFJp1FX
+         SZGRnfOJK+b+5hUWNHXJARcIE0amAi1k2QJ36KZYJuGwPR1KdIZKdqQTgdTzsXxefnI0
+         SAINtTcGfHJovPl68efb2Nc4KZNKeGlnCEa4rmag9Z7bDRFmsy1PIpOhz7QGcN5/1kld
+         1xfm9XdD6mRL+tLotpDVs1UKybLIFefsT0TSt+leEVmDNhaabkr54/HBGBouhpFLXBLy
+         kJzG5r1u3lm3UM8ECwtrUEMqGbmEcwKH1WLsmHHSAzPS43+HPsIMYbtap45v4j8tDh2k
+         sTbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727195655; x=1727800455;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1727195667; x=1727800467;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2BsWm6obMCZPV1aGLLtpJZVt21+qXQFY669dpMECc4A=;
-        b=hT5Fk9xgdfD3h7bAiOT6e01q6C1N/DF/6Q+vW9RyVcyMOTGtP2TXESqT7uVPxVaKk7
-         igW2BzhTtlnDUzMyh+bavU5kmuU1Kbu+HvDzvf2iW9THsthVCLv2Uvibgk7uzLul2OaD
-         sxc6PFE1b0QSC0+ZBy9mjxu/RjqlfyzMzK0PSjoNWo9Q3cqnRhx6IaTnCntGKTWS699I
-         UZDh+AlhjrY/V4E04DUo0TnkYXbbHMYzq+RT4exBOnumxdC0LpBSk0J1C1zqYc6lof3N
-         qfHm8hfE6z4hfhmUn7bakk4+SRInrZ7KiCG1mRlCN7m8pidRYmQrBXe3LenSARYUJ37d
-         TGUA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2vMJZMFFsXzrU9UvkMhJIrDXX1BqsuIphoJn+iv/HJKDrq6JN92y85YUPZ3r4U9yhli6TOoSgtIBMhJyD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxogQaXQYy0R804Hm7msoK/Dnklm76UBVAvZQdET2YCy/g9FZME
-	/o4GBfcxXQxHx/QcUcv8UGaJY1coS48+zL5fzuwIaqPHoWamPM2Jt1hcr+V5cfw6Hh38enjzJ1c
-	1O1NKPg==
-X-Google-Smtp-Source: AGHT+IGSjr1Z3OhxNz9dfLLKABYd02SZ571PQhImUccBq/yfu26m6bEeYX/aMPNvCF+2MKljsYf6lw==
-X-Received: by 2002:a05:651c:1509:b0:2ef:2555:e52d with SMTP id 38308e7fff4ca-2f7cb37f0a1mr102256571fa.45.1727195654708;
-        Tue, 24 Sep 2024 09:34:14 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d288e0dfsm2768781fa.77.2024.09.24.09.34.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 09:34:13 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so75833491fa.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 09:34:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVSEZp+597H+Pdb5llzAuVKVycRNjrjCIp0hydXNz8WTLd0qhpMD3L0585gl81hi1MbDiSfQjpF63fUxmkN@vger.kernel.org
-X-Received: by 2002:a05:6512:3995:b0:536:5509:8862 with SMTP id
- 2adb3069b0e04-536ac2f7f92mr10434069e87.36.1727195651396; Tue, 24 Sep 2024
- 09:34:11 -0700 (PDT)
+        bh=SohsbHCOgCyY9zRN0YDEWi0hquGgftBulLmPBuTfvhQ=;
+        b=a685BzpFzKlOxaiQqy7DRPh17RuTwz6Z1YndgAFn+jHdT/8Lq5vH5kCIGS1+zsGfOC
+         8aDCEU6Eau1zziFqkbOlA+hOFIdx7+o7dIK04ns0kgoDPVUP6qbXIWrUWu6IS8dQuxXW
+         5U1KO7F4nehDvcF2ufau/+QKnuIQy1EITRasjuyPwgs1IqCu6+mc+2r493hCPF4kXe5t
+         kUcJrSj19zKssDu+FDD0+LwQVS39lhP/pcC+jWALwNyQkIM9fgoY4AxpDv6+y9DqQ52Q
+         olMITZkJ+PgdlP/U5Zv/xNRfpTHyp/kEptKt/etlVbNR10bhdUsdBTBBlHKiTtg96QJd
+         j00g==
+X-Forwarded-Encrypted: i=1; AJvYcCULOC74jMFOCPTxZcPb4E4OPy9MzEI5wHxHE4De9lfZ5tQ9JVxsbZ6Q0V7GI83OLcAhVv4=@vger.kernel.org, AJvYcCV91G1rcQB+h/fzv+BBqwdv8zAuYroEkBJ5zy/lxvJEH7KNysW5YrvT2NhQhxP8Jy45oBxDliKZgAdK/UwrIA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIjpEtHiyFDa2Hvlsk+VIurul81UxBqY0PRL7DVW+krY9U1Hoa
+	HKkXJOC9DjG1BV9eO1I+6HkDchQcPY4vwieCwwJ6QAXJbNMwewM8
+X-Google-Smtp-Source: AGHT+IGBXVJqK6H3iIWJYI6elOBG0YMyK86L4AC8vXtjYyAZyzXeR2mZuA/kfKXulqZnbV0IeDnNeQ==
+X-Received: by 2002:a05:651c:1548:b0:2f7:acf5:7ddc with SMTP id 38308e7fff4ca-2f7cb324136mr69918591fa.26.1727195666517;
+        Tue, 24 Sep 2024 09:34:26 -0700 (PDT)
+Received: from ast-mac.fritz.box (046075014122.atmpu0009.highway.a1.net. [46.75.14.122])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4977d7sm923788a12.40.2024.09.24.09.34.24
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 24 Sep 2024 09:34:25 -0700 (PDT)
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: viro@zeniv.linux.org.uk,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org,
+	martin.lau@kernel.org
+Subject: [GIT PULL] BPF struct_fd changes for 6.12
+Date: Tue, 24 Sep 2024 18:34:23 +0200
+Message-Id: <20240924163423.76635-1-alexei.starovoitov@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923110348.tbwihs42dxxltabc@quack3> <CAHk-=wiE1QQ-_kTKSf4Ur6JEjMtieu7twcLqu_CH4r1daTBiCw@mail.gmail.com>
- <20240923191322.3jbkvwqzxvopt3kb@quack3> <CAHk-=whm4QfqzSJvBQFrCi4V5SP_iD=DN0VkxfpXaA02PKCb6Q@mail.gmail.com>
- <20240924092757.lev6mwrmhpcoyjtu@quack3>
-In-Reply-To: <20240924092757.lev6mwrmhpcoyjtu@quack3>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 24 Sep 2024 09:33:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgzLHTi7s50-BE7oq_egpDnUqhrba+EKux0NyLvgphsEw@mail.gmail.com>
-Message-ID: <CAHk-=wgzLHTi7s50-BE7oq_egpDnUqhrba+EKux0NyLvgphsEw@mail.gmail.com>
-Subject: Re: [GIT PULL] Fsnotify changes for 6.12-rc1
-To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 24 Sept 2024 at 02:28, Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 23-09-24 12:36:14, Linus Torvalds wrote:
-> >
-> > Do we really want to call that horrific fsnotify path for the case
-> > where we already have the page cached? This is a fairly critical
-> > fastpath, and not giving out page cache pages means that now you are
-> > literally violating mmap coherency.
-> >
-> > If the aim is to fill in caches on first access, then if we already
-> > have a page cache page, it's by definition not first access any more!
->
-> Well, that's what actually should be happening. do_read_fault() will do
-> should_fault_around(vmf) -> yes -> do_fault_around() and
-> filemap_map_pages() will insert all pages in the page cache into the page
-> table page before we even get to filemap_fault() calling our fsnotify
-> hooks.
+Hi Linus,
 
-That's the fault-around code, yes, and it will populate most pages on
-many filesystems, but it's still optional.
+The following changes since commit de12c3391bce10504c0e7bd767516c74110cfce1:
 
-Not all filesystems have a 'map_pages' function at all (from a quick
-grep at least ceph, erofs, ext2, ocfs2 - although I didn't actually
-validate that my quick grep was right).
+  add struct fd constructors, get rid of __to_fd() (2024-08-12 22:01:15 -0400)
 
-Look here - the part I disliked the most was literally commit
-4f0ec01f45cd ("fsnotify: generate pre-content permission event on page
-fault") which at the very top of 'filemap_fault()' adds
+are available in the Git repository at:
 
-    /*
-     * If we have pre-content watchers then we need to generate events on
-     * page fault so that we can populate any data before the fault.
-     */
-    ret = __filemap_fsnotify_fault(vmf, &fpin);
-    ...
+  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git tags/bpf-next-6.12-struct-fd
 
-right *above* the code that then does
+for you to fetch changes up to 37d3dd663f7485bf3e444f40abee3c68f53158cb:
 
-    /*
-     * Do we have something in the page cache already?
-     */
-    folio = filemap_get_folio(mapping, index);
+  bpf: convert bpf_token_create() to CLASS(fd, ...) (2024-09-12 18:58:02 -0700)
 
-and this is all still in the fast-path for any filesystem that doesn't
-do map_pages.
+----------------------------------------------------------------
+Since Al's first 3 patches for struct_fd landed in
+https://lore.kernel.org/all/20240923034731.GF3413968@ZenIV/
 
-Do we care deeply about such filesystems? Perhaps not - but this all
-still smells to me.
+This pull includes struct_fd BPF changes from Al and Andrii.
 
-When the code that is supposed to ignore caches exists right *above*
-the code that has a big comment about "is it already in the page
-cache", it makes me unhappy.
+Note the pull includes Andrii's merge commit for Al's
+vfs/stable-struct_fd branch with 3 already landed patches
+that Andrii applied back in August when Al created
+the stable branch. These 8 patches were developed on top.
 
-                      Linus
+The last minute rebases are frown upon, so we didn't rebase
+and I don't see a way in git to avoid this extra commit.
+
+fwiw the rebased commits are in bpf-next/struct_fd_latest
+branch in unlikely case you prefer that.
+
+The following diff stat is concatenated from two 'git request-pull'
+commands, since I couldn't make it to generate both patch list
+and diff stat correctly. Either patch list was ok or diff stat.
+I hope that's ok, since doing
+'git pull bpf-next.git tags/bpf-next-6.12-struct-fd'
+gives me exactly this result.
+
+There should be no conflicts.
+
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+----------------------------------------------------------------
+Al Viro (6):
+      bpf: convert __bpf_prog_get() to CLASS(fd, ...)
+      bpf: switch fdget_raw() uses to CLASS(fd_raw, ...)
+      bpf: switch maps to CLASS(fd, ...)
+      bpf: trivial conversions for fdget()
+      bpf: more trivial fdget() conversions
+      bpf: convert bpf_token_create() to CLASS(fd, ...)
+
+Andrii Nakryiko (3):
+      Merge remote-tracking branch 'vfs/stable-struct_fd'
+      bpf: factor out fetching bpf_map from FD and adding it to used_maps list
+      security,bpf: constify struct path in bpf_token_create() LSM hook
+
+ include/linux/bpf.h            |  11 ++-
+ include/linux/lsm_hook_defs.h  |   2 +-
+ include/linux/security.h       |   4 +-
+ kernel/bpf/bpf_inode_storage.c |  24 ++----
+ kernel/bpf/btf.c               |  11 +--
+ kernel/bpf/map_in_map.c        |  38 +++------
+ kernel/bpf/syscall.c           | 181 +++++++++++------------------------------
+ kernel/bpf/token.c             |  74 ++++++-----------
+ kernel/bpf/verifier.c          | 110 ++++++++++++++-----------
+ net/core/sock_map.c            |  23 ++----
+ security/security.c            |   2 +-
+ security/selinux/hooks.c       |   2 +-
+ 12 files changed, 179 insertions(+), 303 deletions(-)
 
