@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-29995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A17F984B80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 21:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C247984B82
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 21:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B7E1C23074
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 19:24:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85D6B1C23023
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 19:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85FF1ACDF6;
-	Tue, 24 Sep 2024 19:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80211A4F0C;
+	Tue, 24 Sep 2024 19:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="pHGMUCI1"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="quld+fji"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FE213B58F;
-	Tue, 24 Sep 2024 19:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BD612D1F1;
+	Tue, 24 Sep 2024 19:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727205848; cv=none; b=bitS/UY5iJhg+sexZDMFaV5+QHxAS0zTiaU4BPfJFdkFUV6aN++E/GwcZffhOB/HTsVcSZFosvpbO5nmXLhUjcecLnX2CHt6GdjVhPY3bvOAvGdIQnibrlfdlQKS4m4jF0tWSHcd2et052nwMo8Z1xOsHgAd8WrDTjvLiWy2I30=
+	t=1727205856; cv=none; b=lX6lkPjH38uIK1L0PRSMIIQqzeN2jfa5GJJyT8BD1cS0OGYO8GBJu1apqmF2PmzE4kn2AqRe8tHXmX3Xpvnxmms3m6vbG01EVxzWjOBSexuniSxoud/8G9zYmZGujlvNz/qQGied7/2zqjoBRaIF/46FtK/ZKZE0ASHwBKhWdck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727205848; c=relaxed/simple;
-	bh=oNnGAEcj3/7lfDvnlxPFLGd6H1DIu/5RdpoOHjJidJY=;
+	s=arc-20240116; t=1727205856; c=relaxed/simple;
+	bh=0s6cwSvjN7F3YMoaMLVmKNEbM2+8ApQcoGW6ym8fUzo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SOWQvtIhPs5o6EkyxRfj4QvCP8p/RwsjQGuKA4FB8i+EXetHJtKIFbdbckyAoF+qDcKOoZg81A24Uvpdg/NWj7f1g5KQ7qq1BUFpdLND1OKg61xKjtaptDUwigjZ/w/0E4mKGtW8Kr5Nqtyc5vI4C6DuxL6rL8c8Mm7uC6bkVNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=pHGMUCI1; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=G+brqOhzVe5fIpA5bGliMuvB4WBqoUH01K0G1v/JpjPZQtglFBDhggPLE1n3Ss7cDHluxQh/eQ5ojw31P/Lp807GWB+V4mHUxYURNBQom11RI60Z6MA9xY4Pm4tRy6Bm+LG1L0x2t1QQCXklPceI49h/rK0MvJ86fEI/j/bSktE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=quld+fji; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XCqXz17g1z9tk3;
-	Tue, 24 Sep 2024 21:24:03 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4XCqY12xnYz9tYw;
+	Tue, 24 Sep 2024 21:24:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1727205843;
+	s=MBO0001; t=1727205845;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=H0IK76GF0f4I5CNMIWSRyOvrhnjvYg2BlEw92/pU0RE=;
-	b=pHGMUCI1SbCaezK155pQUrkw7MOO99RR2DnBKBiuj9ai1yAperJXhf4mDWFnaEHsjFtqnR
-	fUPvUWPaL5HGYg5xnP410C5A18qs4US/ApnYHtvICnJtknqcBRMp2SyGqgr7YV1owfzslM
-	2HWZFJglrgFEEEBc6uyCmoKavnVmWkAINzVs+lkORJBe6pAPv9wykT74KCdniO9FnOg3fF
-	kO5Gd0soIXj9PPskw40hz+T7HqrqKFwRjVOgxEGwGkiDi3HjxjbpLgcML6Z5IbeMjZZx7f
-	RhGok8n8qkMexL5O/rnRVCGSx10WXAW8dKua9iW+X5mVCHsMtabPq5Cu1S+l/g==
+	bh=U09YIrJ1rTrNYNR6aljoqFaAa55MjJXw4x7cHzq7sa4=;
+	b=quld+fji3c9zZ+Xaqhwneoqyr9jMcU020sND0mwU3HSyVmOHUgD5FyaRBZXpLTNKbzGunl
+	Gp7DnrMIihzukfQQccI59Dv1WtKaHYY6UMTpRZe0iV4gU621WggifOwkxzkfbEyPaa2hsS
+	Rlqv/5IED284FCTAIi71Oq4ex8AzZSVdPy81B4CjrMJP74hNDKd+pIq7Zl1jJRhnv3xtOT
+	v5h3F6eFdtSl7jt+xLi6GrVAcRnYpjylXEtsFtA050o8GXac8tNgAIhbac+4BkAn75Pztg
+	N9cw6yDZCCPd+IGq5Bl9rBN/OLr+iYRUKLSVAfqwX0CytwJjWmgBY0w5Tw/64w==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -59,9 +59,9 @@ Cc: willy@infradead.org,
 	kernel@pankajraghav.com,
 	Christian Brauner <brauner@kernel.org>,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 1/2] ramfs: add blocksize mount option
-Date: Tue, 24 Sep 2024 21:23:50 +0200
-Message-ID: <20240924192351.74728-2-kernel@pankajraghav.com>
+Subject: [PATCH 2/2] ramfs: enable block size > page size
+Date: Tue, 24 Sep 2024 21:23:51 +0200
+Message-ID: <20240924192351.74728-3-kernel@pankajraghav.com>
 In-Reply-To: <20240924192351.74728-1-kernel@pankajraghav.com>
 References: <20240924192351.74728-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -71,88 +71,59 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4XCqXz17g1z9tk3
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-ramfs has only supported blocksize == PAGE_SIZE as page cache's minimum
-allocation unit was a PAGE_SIZE.
-
-As the page cache now has minimum folio order support, ramfs can support
-different blocksizes.
-
-This is a preparation patch which adds blocksize mount option but still
-supporting only blocksize == PAGE_SIZE.
+Use page cache's minimum folio order infrastructure to support block
+size > page size.
 
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- fs/ramfs/inode.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ fs/ramfs/inode.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-index 8006faaaf0ec7..d846345a0f4b1 100644
+index d846345a0f4b1..5ac41115d9c62 100644
 --- a/fs/ramfs/inode.c
 +++ b/fs/ramfs/inode.c
-@@ -43,6 +43,7 @@
+@@ -74,6 +74,9 @@ struct inode *ramfs_get_inode(struct super_block *sb,
+ 		case S_IFREG:
+ 			inode->i_op = &ramfs_file_inode_operations;
+ 			inode->i_fop = &ramfs_file_operations;
++			mapping_set_folio_min_order(inode->i_mapping,
++						    sb->s_blocksize_bits -
++							    PAGE_SHIFT);
+ 			break;
+ 		case S_IFDIR:
+ 			inode->i_op = &ramfs_dir_inode_operations;
+@@ -211,6 +214,8 @@ static int ramfs_show_options(struct seq_file *m, struct dentry *root)
  
- struct ramfs_mount_opts {
- 	umode_t mode;
-+	u32 blocksize;
- };
- 
- struct ramfs_fs_info {
-@@ -221,10 +222,12 @@ static const struct super_operations ramfs_ops = {
- 
- enum ramfs_param {
- 	Opt_mode,
-+	Opt_blocksize,
- };
- 
- const struct fs_parameter_spec ramfs_fs_parameters[] = {
- 	fsparam_u32oct("mode",	Opt_mode),
-+	fsparam_u32("blocksize", Opt_blocksize),
- 	{}
- };
- 
-@@ -254,6 +257,19 @@ static int ramfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_mode:
- 		fsi->mount_opts.mode = result.uint_32 & S_IALLUGO;
- 		break;
-+	case Opt_blocksize:
-+		if (!fsi->mount_opts.blocksize)
-+			return -EINVAL;
-+
-+		fsi->mount_opts.blocksize = rounddown_pow_of_two(result.uint_32);
-+
-+		if (fsi->mount_opts.blocksize > PAGE_SIZE)
-+			fsi->mount_opts.blocksize = PAGE_SIZE;
-+
-+		if (fsi->mount_opts.blocksize < PAGE_SIZE)
-+			fsi->mount_opts.blocksize = PAGE_SIZE;
-+
-+		break;
- 	}
- 
+ 	if (fsi->mount_opts.mode != RAMFS_DEFAULT_MODE)
+ 		seq_printf(m, ",mode=%o", fsi->mount_opts.mode);
++	if (fsi->mount_opts.blocksize != PAGE_SIZE)
++		seq_printf(m, ",blocksize=%u", fsi->mount_opts.blocksize);
  	return 0;
-@@ -265,8 +281,8 @@ static int ramfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	struct inode *inode;
+ }
  
- 	sb->s_maxbytes		= MAX_LFS_FILESIZE;
--	sb->s_blocksize		= PAGE_SIZE;
--	sb->s_blocksize_bits	= PAGE_SHIFT;
-+	sb->s_blocksize		= fsi->mount_opts.blocksize;
-+	sb->s_blocksize_bits	= ilog2(fsi->mount_opts.blocksize);
- 	sb->s_magic		= RAMFS_MAGIC;
- 	sb->s_op		= &ramfs_ops;
- 	sb->s_time_gran		= 1;
-@@ -304,6 +320,7 @@ int ramfs_init_fs_context(struct fs_context *fc)
- 		return -ENOMEM;
+@@ -235,6 +240,7 @@ static int ramfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	struct fs_parse_result result;
+ 	struct ramfs_fs_info *fsi = fc->s_fs_info;
++	size_t max_blocksize = mapping_max_folio_size_supported();
+ 	int opt;
  
- 	fsi->mount_opts.mode = RAMFS_DEFAULT_MODE;
-+	fsi->mount_opts.blocksize = PAGE_SIZE;
- 	fc->s_fs_info = fsi;
- 	fc->ops = &ramfs_context_ops;
- 	return 0;
+ 	opt = fs_parse(fc, ramfs_fs_parameters, param, &result);
+@@ -263,8 +269,8 @@ static int ramfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 
+ 		fsi->mount_opts.blocksize = rounddown_pow_of_two(result.uint_32);
+ 
+-		if (fsi->mount_opts.blocksize > PAGE_SIZE)
+-			fsi->mount_opts.blocksize = PAGE_SIZE;
++		if (fsi->mount_opts.blocksize > max_blocksize)
++			fsi->mount_opts.blocksize = max_blocksize;
+ 
+ 		if (fsi->mount_opts.blocksize < PAGE_SIZE)
+ 			fsi->mount_opts.blocksize = PAGE_SIZE;
 -- 
 2.44.1
 
