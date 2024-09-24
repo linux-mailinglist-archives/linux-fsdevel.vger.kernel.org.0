@@ -1,102 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-29954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-29955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0085984234
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 11:33:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7439F984217
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 11:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9965CB29A12
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 09:28:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F6481F241B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2024 09:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4453115539F;
-	Tue, 24 Sep 2024 09:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TaT/Zkbg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F+q2davD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TaT/Zkbg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F+q2davD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A1415666D;
+	Tue, 24 Sep 2024 09:28:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC05146D59
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 09:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B9E146D59;
+	Tue, 24 Sep 2024 09:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727170085; cv=none; b=X+UcqT9Wven5hM8mSwvWzYWEidfoJuUXCvcC71bgCur6ezIXIPa4BpfFhsM7LSffejpIThQ3kZi438144YCKipgpHE7lZ+jftRykI+bq4Z5g3/4xIzRqhKvxu4eVLgpNbnYuOp7ESgVvIwsJwv63CKqh/IBrS5V77k2TgYaU394=
+	t=1727170120; cv=none; b=NJhWn6dDMc7nNfYB6g+ISuM6sJDHcDjhIU8dDMI0/zjwHOuj9tAfc5/Os2qbOM3VwB6j6J08p4KRRktSrln+AXneYraoxUTfuIbowNPgKbVecIkTf560HCynqJizrS48rFnHMjtPW6t8nG+YyU7cz5EdqeNK6bxvCwPCAbF5/WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727170085; c=relaxed/simple;
-	bh=tReYtK0psAEf8vOcHrvE5/wzXgPUJPY1+z2/ehCf7DM=;
+	s=arc-20240116; t=1727170120; c=relaxed/simple;
+	bh=fjVVmIrEi0o8jKXEV+bEzfwsrbypruhXbD3Jk5awKw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gM/+PUcrLfdNhosNwrR46RtSKL3N5azQRPwbkCSozJ60WWW1lIWGZ8Y0TZc34B1B3oLrYRibzzb8FctoQr5sHjgagfWgjf+NvvXu5fcrR5j/pUERlME1TM52DsW8KNEg8XcOBoGlCGdJI4dfM9I1nc6+LzYs0BtX15BKU2xyUyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TaT/Zkbg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F+q2davD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TaT/Zkbg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F+q2davD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 005A821AFD;
-	Tue, 24 Sep 2024 09:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727170082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VSwk1DCYrARQYrG/J7t94mfk1TfePjycEa8j231jMmo=;
-	b=TaT/ZkbgQ5H1EaagiFz/7V4unToXFEzu82jkxvW853lSKjasUo8M5mtwWvM44tAeu7C/lH
-	55zi1CTBwWEl7IHxDpYvpohByQQLfqfrc4HD+qs6/Vh6jwP5CQMA3t//rX2GRwWacz4eI2
-	nfFr/KlI7SJw2kFf9cb+A9G4CY789vc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727170082;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VSwk1DCYrARQYrG/J7t94mfk1TfePjycEa8j231jMmo=;
-	b=F+q2davDtZ9H7OdIzaV0QM+hqLvWu16JORUPi1GG00D3M6de7OiRSRoRNCGZVpeGf1rh3n
-	UwTCD+a24W3c1xCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727170082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VSwk1DCYrARQYrG/J7t94mfk1TfePjycEa8j231jMmo=;
-	b=TaT/ZkbgQ5H1EaagiFz/7V4unToXFEzu82jkxvW853lSKjasUo8M5mtwWvM44tAeu7C/lH
-	55zi1CTBwWEl7IHxDpYvpohByQQLfqfrc4HD+qs6/Vh6jwP5CQMA3t//rX2GRwWacz4eI2
-	nfFr/KlI7SJw2kFf9cb+A9G4CY789vc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727170082;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VSwk1DCYrARQYrG/J7t94mfk1TfePjycEa8j231jMmo=;
-	b=F+q2davDtZ9H7OdIzaV0QM+hqLvWu16JORUPi1GG00D3M6de7OiRSRoRNCGZVpeGf1rh3n
-	UwTCD+a24W3c1xCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DBF4713AA8;
-	Tue, 24 Sep 2024 09:28:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XxasNSGG8mafCgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 24 Sep 2024 09:28:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6E4B2A088D; Tue, 24 Sep 2024 11:27:57 +0200 (CEST)
-Date: Tue, 24 Sep 2024 11:27:57 +0200
-From: Jan Kara <jack@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [GIT PULL] Fsnotify changes for 6.12-rc1
-Message-ID: <20240924092757.lev6mwrmhpcoyjtu@quack3>
-References: <20240923110348.tbwihs42dxxltabc@quack3>
- <CAHk-=wiE1QQ-_kTKSf4Ur6JEjMtieu7twcLqu_CH4r1daTBiCw@mail.gmail.com>
- <20240923191322.3jbkvwqzxvopt3kb@quack3>
- <CAHk-=whm4QfqzSJvBQFrCi4V5SP_iD=DN0VkxfpXaA02PKCb6Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEjT5TLPSiyfRqfzaDpfQe6OtdpZmw17E9kCooEpCAh2zal1NS+bKI+YgmFjupYiDbc6Dssr0Lz+vwHLwoDBmlVLX430m4GkYqNQKrV8TBdmMOVNGwb7RzyD5mWSO/T10j2tYnqBUmiPPXdmucJubBdLVVtHe38IQfjltn8Z94Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id EE8A1227A8E; Tue, 24 Sep 2024 11:28:32 +0200 (CEST)
+Date: Tue, 24 Sep 2024 11:28:32 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
+	sagi@grimberg.me, martin.petersen@oracle.com,
+	James.Bottomley@HansenPartnership.com, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
+	jlayton@kernel.org, chuck.lever@oracle.com, bvanassche@acm.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+	linux-scsi@vger.kernel.org, gost.dev@samsung.com,
+	vishak.g@samsung.com, javier.gonz@samsung.com,
+	Nitesh Shetty <nj.shetty@samsung.com>
+Subject: Re: [PATCH v5 4/5] sd: limit to use write life hints
+Message-ID: <20240924092832.GA26208@lst.de>
+References: <20240912130235.GB28535@lst.de> <e6ae5391-ae84-bae4-78ea-4983d04af69f@samsung.com> <20240913080659.GA30525@lst.de> <4a39215a-1b0e-3832-93bd-61e422705f8b@samsung.com> <20240917062007.GA4170@lst.de> <b438dddd-f940-dd2b-2a6c-a2dbbc4ee67f@samsung.com> <20240918064258.GA32627@lst.de> <197b2c1a-66d2-5f5a-c258-7e2f35eff8e4@samsung.com> <20240918120159.GA20658@lst.de> <edcbf69e-9ae9-06df-60c0-47393371fcd8@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,68 +55,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whm4QfqzSJvBQFrCi4V5SP_iD=DN0VkxfpXaA02PKCb6Q@mail.gmail.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <edcbf69e-9ae9-06df-60c0-47393371fcd8@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon 23-09-24 12:36:14, Linus Torvalds wrote:
-> On Mon, 23 Sept 2024 at 12:13, Jan Kara <jack@suse.cz> wrote:
-> >
-> > Sure, the details are in some of the commit messages but you're right I
-> > should have summarized them in the pull request as well:
-> 
-> So I really only looked at the parts I know - the VM side, and
-> honestly, I threw up in my mouth a bit there.
-> 
-> Do we really want to call that horrific fsnotify path for the case
-> where we already have the page cached? This is a fairly critical
-> fastpath, and not giving out page cache pages means that now you are
-> literally violating mmap coherency.
-> 
-> If the aim is to fill in caches on first access, then if we already
-> have a page cache page, it's by definition not first access any more!
+On Tue, Sep 24, 2024 at 02:54:51PM +0530, Kanchan Joshi wrote:
+> FS managed/created hints is a different topic altogether,
+> and honestly 
+> that is not the scope of this series. That needs to be thought at per-FS 
+> level due to different data/meta layouts.
 
-Well, that's what actually should be happening. do_read_fault() will do
-should_fault_around(vmf) -> yes -> do_fault_around() and
-filemap_map_pages() will insert all pages in the page cache into the page
-table page before we even get to filemap_fault() calling our fsnotify
-hooks. Note that filemap_map_pages() returns VM_FAULT_NOPAGE if it has
-mapped the page for the faulting address which makes the page fault code
-bail out even before ->fault handler is even called.
+No, it is not.  If you design an API where hints bypass the file
+system you fundamentally do the wrong thing when there is a file
+system.  No one is asking to actually implement file system
+support in this series, but we need to consider the fundamental
+problem in the API design.
 
-That being said now that I'm rereading this code again, write faults will
-always end up in the fault handler so we'll generate PRE_WRITE events for
-them on each write fault (if someone is watching for it). Not sure if write
-faults matter that much and I don't see easy way around that as that's the
-promise of PRE_WRITE event...
+And yes, the actual implementation will be highly dependent on the
+file system.
 
-Do the above explanations make the VM changes acceptable for you? I agree
-it isn't exactly beautiful but it should work.
+> This scope of this series is to enable application-managed hints passing 
+> through the file system. FS only needs to pass what it receives.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Which fundamentally can't work for even a semi-intelligent file system.
+
 
