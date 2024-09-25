@@ -1,200 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-30060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C669857CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 13:15:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78FF985859
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 13:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DD20B21E3D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 11:15:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD234285359
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 11:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D7281AB4;
-	Wed, 25 Sep 2024 11:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE2317B508;
+	Wed, 25 Sep 2024 11:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1lp+Pl2v";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="of+h3bOa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1lp+Pl2v";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="of+h3bOa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiXzXxwf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0963C36130
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 11:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA6E18C34C;
+	Wed, 25 Sep 2024 11:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727262920; cv=none; b=UXVlCYtNcjhiyqPZmcm4cPKGyqsha8pZcTWYO1VgXN32/n9YsqeIPzWAfWOYTyG5m4j+3TTp9NahA+YC2BctGf+ImZ5H/ZQXmmacHgmsJy3npPMce9p574zgAVdq8Tg4JUZDPCW4ln3KCpDZqXM98BcA2yGKf+C+U7vjC9j0X6E=
+	t=1727264248; cv=none; b=ueyywQWZgL3a7QIfC1JaT/vmtUeZf2YPckGEzA8qrmOqUVNIMkMlHrxtLJ99/p5TpOep0r2ePIcgwn0ITRZUwlxAdlwSvuoaIx5STzQPSHqjXmmYwtJVjCrlLRu99C62Kgj5Gidg0aV8FGDoynTHymJLy7Xg3AYzkkPmspEIPIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727262920; c=relaxed/simple;
-	bh=QIeYbGxYwfu/0Oh00qmP8mhtMB0lab70SvD5adpHDZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxyPBeYZXxqWCPOPqjfE+9qrB0A11knhzSG02M6norSCMoC1syvTRikDeCGOXfZ4p90nueE4m9ajhaSGBFZHzq0mjWVAH3xuGh0sBEZpM46bKha28vdgS6yXbpqiw2vrv/6rgP3ZXQKJhdbDSNgGHr2tOWaIaKyzHA8skLjGxnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1lp+Pl2v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=of+h3bOa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1lp+Pl2v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=of+h3bOa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0AD6921A99;
-	Wed, 25 Sep 2024 11:15:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727262917; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KkQbdQhWHYMyqmvsbpPyrCutprZzgjA66QOrda6wrM8=;
-	b=1lp+Pl2vDfJbnOWo8MEAzLYSskWAbp7gx57uWhOYrL9llVXd9ZE+UutC6BZb3LSyi5EtST
-	65DnDiH3COQOmxpTYgKFfnIYppEdguHxS7jbsJmq0JIejWnh7TLx0oQJqMtnZVFcTcxE+D
-	HJ8Ir3qlh0Mf6A2XlChj5/GnF0N6tvQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727262917;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KkQbdQhWHYMyqmvsbpPyrCutprZzgjA66QOrda6wrM8=;
-	b=of+h3bOazI8WLIYUuZlEfrxmOhDXoxssPgnMNE4hj+W50LhAFfbt6/QKtc/sBpn1Vq5Gnz
-	VMPeG8DeABJYHcBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1lp+Pl2v;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=of+h3bOa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727262917; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KkQbdQhWHYMyqmvsbpPyrCutprZzgjA66QOrda6wrM8=;
-	b=1lp+Pl2vDfJbnOWo8MEAzLYSskWAbp7gx57uWhOYrL9llVXd9ZE+UutC6BZb3LSyi5EtST
-	65DnDiH3COQOmxpTYgKFfnIYppEdguHxS7jbsJmq0JIejWnh7TLx0oQJqMtnZVFcTcxE+D
-	HJ8Ir3qlh0Mf6A2XlChj5/GnF0N6tvQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727262917;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KkQbdQhWHYMyqmvsbpPyrCutprZzgjA66QOrda6wrM8=;
-	b=of+h3bOazI8WLIYUuZlEfrxmOhDXoxssPgnMNE4hj+W50LhAFfbt6/QKtc/sBpn1Vq5Gnz
-	VMPeG8DeABJYHcBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F031113793;
-	Wed, 25 Sep 2024 11:15:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GCdPOsTw82bcNAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 25 Sep 2024 11:15:16 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 975D8A089B; Wed, 25 Sep 2024 13:15:16 +0200 (CEST)
-Date: Wed, 25 Sep 2024 13:15:16 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-	syzbot+3b6b32dc50537a49bb4a@syzkaller.appspotmail.com
-Subject: Re: [PATCH] epoll: annotate racy check
-Message-ID: <20240925111516.rb7x7btig74y7nj3@quack3>
-References: <20240925-fungieren-anbauen-79b334b00542@brauner>
+	s=arc-20240116; t=1727264248; c=relaxed/simple;
+	bh=oxGGPOE4uL7X7MkTJ9BgnFV6wDR+RX7IZb/it7homu0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eV+OAh8gtkabpGik3J7E6WFWn1W/mJ01kCznj8eWiMJPLCPj0BDOVP+rteezaKPyAvzCzbRBdtxWMaOBPCVMlQk1IBdMS6CdOmZKDHKpQqlsAlNV8fcdma9PDd5LgQ0MxEZTo5MVKdKzimPTAjMrO8CDNFb/T9M7kEDKSdxA47o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiXzXxwf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84309C4CEC7;
+	Wed, 25 Sep 2024 11:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727264248;
+	bh=oxGGPOE4uL7X7MkTJ9BgnFV6wDR+RX7IZb/it7homu0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AiXzXxwfCszQteN0H2JfpBF1HmMWp0eyH70Tp40fzJo7kzIECnaJsmcv577jq/AKs
+	 SWhJR/GafkU95byIdjU/iGTngsmxg5YRAxhgafsigwNZXN2UWJhe/uOzP2jqVVedUJ
+	 KxvtN8vwSYBWKeEFRsgjqcIps5iX9XKDOfl7ojybZm6GC/weBB0GhGLU4XoOg/tUpu
+	 oLo3G2qLnRk907VfJ8vR4m8aLeBwf2jtNZL/PYHr9vXisqS2X7x7R1wBtzT19gFjKl
+	 QiXJdLzrhL5QZlwzEUuigczvjMFtEPlRrilxO48/G2Eknpn1w4QVcOO8bjOLFFzH6L
+	 wHN7J2l7aHTMA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.11 020/244] exec: don't WARN for racy path_noexec check
+Date: Wed, 25 Sep 2024 07:24:01 -0400
+Message-ID: <20240925113641.1297102-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240925113641.1297102-1-sashal@kernel.org>
+References: <20240925113641.1297102-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925-fungieren-anbauen-79b334b00542@brauner>
-X-Rspamd-Queue-Id: 0AD6921A99
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[3b6b32dc50537a49bb4a];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11
+Content-Transfer-Encoding: 8bit
 
-On Wed 25-09-24 11:05:16, Christian Brauner wrote:
-> Epoll relies on a racy fastpath check during __fput() in
-> eventpoll_release() to avoid the hit of pointlessly acquiring a
-> semaphore. Annotate that race by using WRITE_ONCE() and READ_ONCE().
-> 
-> Link: https://lore.kernel.org/r/66edfb3c.050a0220.3195df.001a.GAE@google.com
-> Reported-by: syzbot+3b6b32dc50537a49bb4a@syzkaller.appspotmail.com
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/eventpoll.c            | 3 ++-
->  include/linux/eventpoll.h | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index f53ca4f7fced..fa766695f886 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -823,7 +823,8 @@ static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
->  	to_free = NULL;
->  	head = file->f_ep;
->  	if (head->first == &epi->fllink && !epi->fllink.next) {
-> -		file->f_ep = NULL;
-> +		/* See eventpoll_release() for details. */
-> +		WRITE_ONCE(file->f_ep, NULL);
+From: Mateusz Guzik <mjguzik@gmail.com>
 
-There's one more write to file->f_ep in attach_epitem() which needs
-WRITE_ONCE() as well to match the READ_ONCE() in other places. Otherwise
-feel free to add:
+[ Upstream commit 0d196e7589cefe207d5d41f37a0a28a1fdeeb7c6 ]
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Both i_mode and noexec checks wrapped in WARN_ON stem from an artifact
+of the previous implementation. They used to legitimately check for the
+condition, but that got moved up in two commits:
+633fb6ac3980 ("exec: move S_ISREG() check earlier")
+0fd338b2d2cd ("exec: move path_noexec() check earlier")
 
-								Honza
+Instead of being removed said checks are WARN_ON'ed instead, which
+has some debug value.
 
+However, the spurious path_noexec check is racy, resulting in
+unwarranted warnings should someone race with setting the noexec flag.
 
->  		if (!is_file_epoll(file)) {
->  			struct epitems_head *v;
->  			v = container_of(head, struct epitems_head, epitems);
-> diff --git a/include/linux/eventpoll.h b/include/linux/eventpoll.h
-> index 3337745d81bd..0c0d00fcd131 100644
-> --- a/include/linux/eventpoll.h
-> +++ b/include/linux/eventpoll.h
-> @@ -42,7 +42,7 @@ static inline void eventpoll_release(struct file *file)
->  	 * because the file in on the way to be removed and nobody ( but
->  	 * eventpoll ) has still a reference to this file.
->  	 */
-> -	if (likely(!file->f_ep))
-> +	if (likely(!READ_ONCE(file->f_ep)))
->  		return;
->  
->  	/*
-> -- 
-> 2.45.2
-> 
+One can note there is more to perm-checking whether execve is allowed
+and none of the conditions are guaranteed to still hold after they were
+tested for.
+
+Additionally this does not validate whether the code path did any perm
+checking to begin with -- it will pass if the inode happens to be
+regular.
+
+Keep the redundant path_noexec() check even though it's mindless
+nonsense checking for guarantee that isn't given so drop the WARN.
+
+Reword the commentary and do small tidy ups while here.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Link: https://lore.kernel.org/r/20240805131721.765484-1-mjguzik@gmail.com
+[brauner: keep redundant path_noexec() check]
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/exec.c | 31 ++++++++++++-------------------
+ 1 file changed, 12 insertions(+), 19 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 50e76cc633c4b..caae051c5a956 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -145,13 +145,11 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+ 		goto out;
+ 
+ 	/*
+-	 * may_open() has already checked for this, so it should be
+-	 * impossible to trip now. But we need to be extra cautious
+-	 * and check again at the very end too.
++	 * Check do_open_execat() for an explanation.
+ 	 */
+ 	error = -EACCES;
+-	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
+-			 path_noexec(&file->f_path)))
++	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)) ||
++	    path_noexec(&file->f_path))
+ 		goto exit;
+ 
+ 	error = -ENOEXEC;
+@@ -954,7 +952,6 @@ EXPORT_SYMBOL(transfer_args_to_stack);
+ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+ {
+ 	struct file *file;
+-	int err;
+ 	struct open_flags open_exec_flags = {
+ 		.open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
+ 		.acc_mode = MAY_EXEC,
+@@ -971,24 +968,20 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+ 
+ 	file = do_filp_open(fd, name, &open_exec_flags);
+ 	if (IS_ERR(file))
+-		goto out;
++		return file;
+ 
+ 	/*
+-	 * may_open() has already checked for this, so it should be
+-	 * impossible to trip now. But we need to be extra cautious
+-	 * and check again at the very end too.
++	 * In the past the regular type check was here. It moved to may_open() in
++	 * 633fb6ac3980 ("exec: move S_ISREG() check earlier"). Since then it is
++	 * an invariant that all non-regular files error out before we get here.
+ 	 */
+-	err = -EACCES;
+-	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
+-			 path_noexec(&file->f_path)))
+-		goto exit;
++	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)) ||
++	    path_noexec(&file->f_path)) {
++		fput(file);
++		return ERR_PTR(-EACCES);
++	}
+ 
+-out:
+ 	return file;
+-
+-exit:
+-	fput(file);
+-	return ERR_PTR(err);
+ }
+ 
+ /**
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
