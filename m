@@ -1,105 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-30055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4E2985730
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 12:31:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9347985765
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 12:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592921F24335
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 10:31:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65CC32847F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 10:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3A4188582;
-	Wed, 25 Sep 2024 10:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1762D15DBAE;
+	Wed, 25 Sep 2024 10:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7cRb2uC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MCB2VXdU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4603B1B85DD;
-	Wed, 25 Sep 2024 10:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D557F77107
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 10:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727260283; cv=none; b=nfc4wc6jusYYWSIqxluPaIbY6RXjQWlzjy0hYpcwZpaU9/2xz+KkoodRMcpJ3BsEj/HG+2qasEgbaeMtXeDQxE02u35wZ5W9DiGgvX9zKKvNwcWfuk0wrzl1vv6DGNCc+jGHktgOC7azptWEJX71H6QMkFyRBL2MKa8Sr4d6BSM=
+	t=1727261513; cv=none; b=JAeK+0Z0S21pefpCB/AOSL7WrkToqLeoFilTi03ujhhWrfdPHXcSXuyhoOHcZ93m0sjC58selXlIoUYiGId0zQGIwa83Dz0cO/u1NJdn1oS9MVfFxNjV4/drOLjw6ZkGGz1Q/rEVDwHkjJ3zH2DNBlYWarePFLayyG6uBI3CXSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727260283; c=relaxed/simple;
-	bh=azYpPCRc7Fpbb2pqhBjEq/yVygWme8hOTL1tIFJNaK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vt2AKogIar5jOr1OJCNZXSy/61CZ+eSf7FaDCbOpOXdQFaGgl+HylawSxWryNCzzj/OZv5+pfQTnZRXocpdMpdvezv/0f6aVVhfQJpbDZTlppqcQO9LwzYoGc+E+6jDUccNkpBsyvF20yPeWeWSxIvsJTd2ncMCwDibjWWb7v/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7cRb2uC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D09AC4CEC3;
-	Wed, 25 Sep 2024 10:31:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727260282;
-	bh=azYpPCRc7Fpbb2pqhBjEq/yVygWme8hOTL1tIFJNaK0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U7cRb2uCSSGYlrTYOMEkLkLJVOvOsQCMhJxNZE4VBoyjE7Gq9o6SrUMyXirimlK0E
-	 McSps++Q2aGwn4KdkOIuSMCsy3CbLPaeiyfRhm/l01iDsfhIhlIPhnbfFUZFeYGsKJ
-	 aKZKMFqtRCSipuRw/1WbpImuw9tKxoyA/LAiu+FUsU6K+65c0JDfa5Bwd2UnBcyd5j
-	 3QnFPplvGm09sqRiYq5x5mC5kji/QEtY0ec6n7UoL2uLBp6C8Iy2TEB0wSIVUkMeVP
-	 uy1dTuxxY8VG6XbzT6GVhe1lO/x4nUkht3sJu2EhRJWrPe4wYn0i5oqac34vFn3Rad
-	 ktd405WzhKKSA==
-Date: Wed, 25 Sep 2024 13:31:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Eduard Zingerman <eddyz87@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
-	ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
-	hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
-	netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
-	smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
-	v9fs@lists.linux.dev, willy@infradead.org
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
-Message-ID: <20240925103118.GE967758@unreal>
-References: <20240923183432.1876750-1-chantr4@gmail.com>
- <20240814203850.2240469-20-dhowells@redhat.com>
- <1279816.1727220013@warthog.procyon.org.uk>
- <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
+	s=arc-20240116; t=1727261513; c=relaxed/simple;
+	bh=H2J5Y5v62km63zTKlgAsuNML8wiQj25tmcncB/LKjtg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I/eCoECyq/lEIisAPEMlNRAI4wiAMPOwAPge8ZFw0b8MYgIol4lpvwfWGgfadkpV5mLLkjObuFUdJAeBC5EsSDViyruCaPno27l/ibHzSL8BHPF3JS/0C4NwBz0SOYLdDQOJohoHjKSAz7NJTSb0vs+De2fSukg/HiPwtj4U3xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MCB2VXdU; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cb259e2eafso2189106d6.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 03:51:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727261511; x=1727866311; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DyDMghNbMpXYpH6JPESBzs160dDoR0mGLIEhOZx1OCI=;
+        b=MCB2VXdUaKoNePf24P8++jfACpObppjCHQuIG184Gb9MiDe2GyZvEVS8rEvNaMorPk
+         X2oSizSTeJWUQF7Un4ViTaXrcmHRu7C8VSvBBYUozDDVLNb+z5IvH8m6HWfUeluOfNOL
+         EhMLWuM7B+LNublozX0Gkf8S1P5NQ3NhuFE8WhzyPeZKYZJz2Fn5Fleue9meCvVCpzqr
+         416V2Je/OaFcmJ/l8cxxuzxzoIG6FZtqzY2ewleSiC6OrJAw7x8nPKerIMEXeS0Q9+jP
+         c3DxkAfcj0073xPJswxaYBG61/HNE1DSl2hOUYgeo3aLnBmk5SiyRWZnWq/8s6/ZSLXm
+         TjAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727261511; x=1727866311;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DyDMghNbMpXYpH6JPESBzs160dDoR0mGLIEhOZx1OCI=;
+        b=CR+MwFX06WclOWAgDPqlzwrzTrxTpKm4VLk0RT45o84ldVrckT81ZA/HchD4HZHy/L
+         C7KgvM9Z4uMpMegJlZOU7xGOd2S7k4dNbY69D4AXz8D9ejwz2YEkWyZS7+k7jW7TTFtg
+         ybvii3Tp+n1+IMcF2hKn1tjNK50ROHrqAIWC3GfNz4dEZwk555gpQkM+nOQnwhN38ole
+         yuvx13QL+ZiDJrtwtORFTxQ9qBh2P7hprCNNENQnW5urcBy4UE0RrRP1EuiTYEw1ew6I
+         ZiunZe/jIOyq7HJrqsGE6hgtPczP92Y/DprncfRdJvn7FaKABbcGcB6bCPySLZaQhbe8
+         BNyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7Yae/DjpKOktQtgpZlLnpWTQyVKtuOSfz387J1i9WeCggF9Sqh7/R5wfX1lraH8QjTbe/C714QHz5jfT1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyteAJG+OeOqtA5y/Yp9fFCgIPrUHuGiNXz4CeUjgxJjKebwcw+
+	HEMf7mdxfpdU3CFiOHB5nD0Y9WWUMYaxWiJ0IkgZ/N9mMagSApnMCWlK2FYBJSz6JAR7wt+jiMX
+	EkZ70WKFDJJTPaGE8uYOfTkmNkz8=
+X-Google-Smtp-Source: AGHT+IHor01mHc1jv0lqnhlGb4rKdd5EVVuGnLoJyoqNQmitt2l9MOlUF4uzTE0mgx8Ebac0OSmgN4Xnwa6i6lvdxb4=
+X-Received: by 2002:a05:6214:4497:b0:6c5:1452:2b47 with SMTP id
+ 6a1803df08f44-6cb1dc22895mr33608336d6.18.1727261510560; Wed, 25 Sep 2024
+ 03:51:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
+References: <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxiuPn4g1EBAq70XU-_5tYOXh4HqO5WF6O2YsfF9kM=qPw@mail.gmail.com>
+ <SI2P153MB07187CEE4DFF8CDD925D6812D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxjd2pf-KHiXdHWDZ10um=_Joy9y5_1VC34gm6Yqb-JYog@mail.gmail.com>
+ <SI2P153MB0718D1D7D2F39F48E6D870C1D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <SI2P153MB07187B0BE417F6662A991584D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <20240925081146.5gpfxo5mfmlcg4dr@quack3> <20240925081808.lzu6ukr6pr2553tf@quack3>
+In-Reply-To: <20240925081808.lzu6ukr6pr2553tf@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 25 Sep 2024 12:51:38 +0200
+Message-ID: <CAOQ4uxji2ENLXB2CeUmt72YhKv_wV8=L=JhnfYTh0RTunyTQXw@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: Git clone fails in p9 file system marked with FANOTIFY
+To: Jan Kara <jack@suse.cz>
+Cc: Krishna Vivek Vitta <kvitta@microsoft.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 05:01:13PM -0700, Eduard Zingerman wrote:
-> On Wed, 2024-09-25 at 00:20 +0100, David Howells wrote:
-> > Could you try the attached?  It may help, though this fixes a bug in the
-> > write-side, not the read-side.
+On Wed, Sep 25, 2024 at 10:18=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 25-09-24 10:11:46, Jan Kara wrote:
+> > On Tue 24-09-24 12:07:51, Krishna Vivek Vitta wrote:
+> > > Please ignore the last line.
+> > > Git clone operation is failing with fanotify example code as well.
+> > >
+> > > root@MININT-S244RA7:/mnt/c/Users/kvitta/Desktop/MDE binaries/GitClone=
+Issue# ./fanotify_ex /mnt/c
+> > > Press enter key to terminate.
+> > > root@MININT-S244RA7:/mnt/c/Users/kvitta/Desktop/MDE binaries/GitClone=
+Issue# ./fanotify_ex /mnt/c
+> > > Press enter key to terminate.
+> > > Listening for events.
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/info/exclude
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/info/exclude
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-applypat=
+ch.sample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-applyp=
+atch.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/applypatch-m=
+sg.sample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/applypatch=
+-msg.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/commit-msg.s=
+ample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/commit-msg=
+.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-push.sam=
+ple
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-push.s=
+ample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-merge-co=
+mmit.sample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-merge-=
+commit.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-commit.s=
+ample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-commit=
+.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/post-update.=
+sample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/post-updat=
+e.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/push-to-chec=
+kout.sample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/push-to-ch=
+eckout.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/fsmonitor-wa=
+tchman.sample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/fsmonitor-=
+watchman.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/update.sampl=
+e
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/update.sam=
+ple
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-rebase.s=
+ample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-rebase=
+.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-receive.=
+sample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-receiv=
+e.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/prepare-comm=
+it-msg.sample
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/prepare-co=
+mmit-msg.sample
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/description
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/description
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/HEAD.lock
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/HEAD.lock
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config.lock
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/config.lock
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config.lock
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config.lock
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config.lock
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/config
+> > > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/tNbqjiA
+> > > read: No such file or directory
+> > > root@MININT-S244RA7:/mnt/c/Users/kvitta/Desktop/MDE binaries/GitClone=
+Issue#
 > >
-> 
-> Hi David,
-> 
-> I tried this patch on top of bpf-next but behaviour seems unchanged,
-> dmesg is at [1].
-> 
-> [1] https://gist.github.com/eddyz87/ce45f90453980af6a5fadeb652e109f3
+> > OK, so it appears that dentry_open() is failing with ENOENT when we try=
+ to
+> > open the file descriptor to return with the event. This is indeed
+> > unexpected from the filesystem.
 
+How did you conclude that is what is happening?
+Were you able to reproduce, because I did not.
 
-BTW, I'm hitting the same issue over Linus's tree now, but unfortunately
-there is no WA in my case as I don't have "cache=mmap" in rootflags.
-https://lore.kernel.org/all/20240924094809.GA1182241@unreal/#t
+> > On the other hand we already do silently
+> > fixup similar EOPENSTALE error that can come from NFS so perhaps we sho=
+uld
+> > be fixing ENOENT similarly? What do you thing Amir?
+>
 
-It came to Linus with Christian Brauner's pull request.
-https://lore.kernel.org/all/20240913-vfs-netfs-39ef6f974061@brauner/
+But we never return this error to the caller for a non-permission event,
+so what am I missing?
 
-Thanks
+> But what is still unclear to me is how this failure to generate fanotify
+> event relates to git clone failing. Perhaps the dentry references fanotif=
+y
+> holds in the notification queue confuse 9p and it returns those ENOENT
+> errors?
 
-> 
-> Thanks,
-> Eduard
-> 
-> [...]
-> 
-> 
+My guess is that ENOENT for openat(2)/newfstatat(2) is from this code
+in fid_out label in:
+v9fs_vfs_getattr() =3D> v9fs_fid_lookup() =3D>
+v9fs_fid_lookup_with_uid()
+
+                if (d_unhashed(dentry)) {
+                        spin_unlock(&dentry->d_lock);
+                        p9_fid_put(fid);
+                        fid =3D ERR_PTR(-ENOENT);
+                } else {
+                        __add_fid(dentry, fid);
+
+So fanotify contributes a deferred reference on the dentry,
+and that can somehow lead to operating on a stale unhashed dentry?
+Not exactly sure how to piece that all together.
+
+This seems like a problem that requires p9 developers to look at it.
+fanotify mark has an indirect effect on this use case IMO.
+
+Thanks,
+Amir.
 
