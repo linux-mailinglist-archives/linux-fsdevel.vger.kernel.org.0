@@ -1,206 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-30104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26562986352
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 17:23:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF7898637D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 17:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E871F259C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 15:23:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59BFA1C26D37
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 15:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08AD1D5AAA;
-	Wed, 25 Sep 2024 15:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7755712E1CA;
+	Wed, 25 Sep 2024 15:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5AFSXns"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tQZCg/98"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F8013D50C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 15:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349BE127E01;
+	Wed, 25 Sep 2024 15:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276714; cv=none; b=pPNH04NbsGwi8eQTeHq3JjJ0HuxdacUUPmkme3Fe4S6FEGKbbEL+xoYbvZGbwBQSO8IsOjzVP4LWoj3y3Oe1RlrsdDv3zM8hHgRW9/j9MqvImlmXghahEtKopmN9LDb0ZMs3cIo29w5ggnPXrl4i/bt5HsMjcBsPEeKlmjfVDUk=
+	t=1727277618; cv=none; b=QItQpZB7pmwQVN6tDd7V7NLP1lSNmFOX0cA69UQ6G3jWK2NWlyQsVaa3qsd/w3g5PpMD45xRqj0u5VXyhUAlqW6ByhF8attBY6/MiKetk6GqaZHVt7ZudNShfX6IcSFpHwqhsS0UXivsUdkNukFzeE64sC0RnkxRllJo7PC1RCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276714; c=relaxed/simple;
-	bh=i4aWQ74F68GcZ66T0SPUsPClUeL1Pwn1OnLNsTQW20M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AmzCxvlHhImOHhdWYt6t99fglwFa2oiLzmUJHNIoSwSU9G+FcxoEwHDPdZb4hYgEoKH2ioprsFD17sHbotGDOCmWkUX5rnZSMo814WYd3fONK3E6zliEvY+92qhfLiaAZDoI27RalbLMv2gBPil38lupYT3BmrgJIoqId/9syRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5AFSXns; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a9a7bea3cfso427993885a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 08:05:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727276711; x=1727881511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i4aWQ74F68GcZ66T0SPUsPClUeL1Pwn1OnLNsTQW20M=;
-        b=I5AFSXnsQnjrd8Aga+kZuRjCBQYbDZ7+p7RKGsQJxnj1ld4iVsftP1BKhrx0otVd4I
-         Cyi7PqiTTSWoaomJMBJsUkCock1gCzn27BI1gJALZAXg99GFuf/1czEW3lxa+uAK3a1U
-         IpdLY8Gm1wpKyjpPk0y3v1k/m0cbx1AJkpgFN9vmzB7bQ/8+8HsZN71PFCJvVSVe+k1I
-         MeRbrHZeyw/oCB7Kk96luLGWO13+IW0l0WUXsJ8gFx2TVK54IyUvbmywl6Bg5xl64M7K
-         w7Z2an47+yIEs9ZRQNIoUA10IDsYiL5n5iSSUK4+v40VV5ljUI89PxSFJYQ1iFLDgd5w
-         Z4yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276711; x=1727881511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i4aWQ74F68GcZ66T0SPUsPClUeL1Pwn1OnLNsTQW20M=;
-        b=r9SJH3jW7pXwLL54+OIc/6T/aVGvvqihZncAk/so36bVFdRXKKD/eLYWuO4LWh3qVe
-         4WvuAYV4qauHzYQOogxS9u++VVIbfLts7DItVgpDPba/Z9IgByRoPEsO7FWdktxoxJps
-         mgBvd8DsgWmEmr2RJqnS+vcXohIWHSnVEhC3Y7IE2RBjHA2eUVboHw666IvWR93yKJU2
-         yGYeFQfBl8fGQsFihntw+op7dUPQi/w8lDbir8Hpjd2cIQ1wjYYp/7m0KbmAQFA2WAk0
-         f86txEUU+7+qPR/MMMcqR4Wfn0n86OVNBY3kdORWoW0oPdFnWqPj1IUgL8Dm+WkKsTJs
-         Mw2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXiV4q7ZXJugV64deFVKqghD8kNQgE/GHQAGtUeBQY1R6NwdA54oApLmSarfJEsQ9RgptrUMPcsUcUDV5QP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOJn2dIcH2tI6+kuci4J7zcNfI86L6JL+xdoYNcKGBO5auhqjR
-	0gBA8NbjfBfP2ShW8Q4CFt/GhYytRcZteo8Q0bR+h+HQa0O/KcJLW8uXJSxLF6jOn1ZlX0rRuHH
-	sqlTeWO9+99l2RKgbop8FrTQgprs=
-X-Google-Smtp-Source: AGHT+IHLRkUkrQz9oX2/jWpdyBnuBn0AH6wAkFvLI7fK0CnB4oT1RUmW00sdQaCzOkjws2SMxFckIGwkQIeAn/NNTSY=
-X-Received: by 2002:a05:620a:4145:b0:7a9:b04a:b324 with SMTP id
- af79cd13be357-7ace74658ebmr362468785a.64.1727276709328; Wed, 25 Sep 2024
- 08:05:09 -0700 (PDT)
+	s=arc-20240116; t=1727277618; c=relaxed/simple;
+	bh=2OzWc76CJ5Bsdr55197joKnim82KEQLgiZs3sWvyAuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KcICDikE8iOEDRFy5OWhT4I1n5joVz8teahmi6v0lGeaNWyJLUn8RDClTyTSxG3HsJIa0vttRMsGlQEOIrCRqAX6cSpotpWJlf4pbDr2iNP5WJAYAyuD+RImC9iQNJbrkfRH3uIuKYnX42XX3cqUmHyTa9GTfDZKlvAtiNLV98Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tQZCg/98; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 25 Sep 2024 11:20:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727277614;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aiHBYW61Q99lbPSaV3HFKFXGi8oz8BK9hAfEMY5UgxM=;
+	b=tQZCg/98FFy29MUkAxwsbzmf8AF1oEoXBMLojN/+ZjZYOa1tHJZbz3oL0DfOnQlSiVteru
+	EHfuraK3s6oGhieaq/Jp9xGDoGbN4N2+es2xxuW/cKTAHxHnZwAPqejT2gF46hF6rGG0Ax
+	ULXMvYRDez98G852BeNmHa8uTm+5r2E=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com, 
+	brauner@kernel.org, jack@suse.cz, jfs-discussion@lists.sourceforge.net, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] bcachefs: return the error code instead of the return
+ value of IS_ERR_OR_NULL
+Message-ID: <ywccsi7uqqnsfha4yvg6lycsbafeqwylwabwvkjprjrv66q4sb@kxuz3ygc5qp7>
+References: <66f33aad.050a0220.457fc.0030.GAE@google.com>
+ <tencent_4A8FBB4133EA9E461B0C4B2C1B2425FFBA08@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxiuPn4g1EBAq70XU-_5tYOXh4HqO5WF6O2YsfF9kM=qPw@mail.gmail.com>
- <SI2P153MB07187CEE4DFF8CDD925D6812D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxjd2pf-KHiXdHWDZ10um=_Joy9y5_1VC34gm6Yqb-JYog@mail.gmail.com>
- <SI2P153MB0718D1D7D2F39F48E6D870C1D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <SI2P153MB07187B0BE417F6662A991584D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <20240925081146.5gpfxo5mfmlcg4dr@quack3> <20240925081808.lzu6ukr6pr2553tf@quack3>
- <CAOQ4uxji2ENLXB2CeUmt72YhKv_wV8=L=JhnfYTh0RTunyTQXw@mail.gmail.com>
- <20240925113834.eywqa4zslz6b6dag@quack3> <CAOQ4uxgEcQ5U=FOniFRnV1k1EYpqEjawt52377VgFh7CY2pP8A@mail.gmail.com>
- <JH0P153MB0999C71E821090B2C13227E5D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxirX3XUr4UOusAzAWhmhaAdNbVAfEx60CFWSa8Wn9y5ZQ@mail.gmail.com> <JH0P153MB0999464D8F8D0DE2BC38EE62D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
-In-Reply-To: <JH0P153MB0999464D8F8D0DE2BC38EE62D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 25 Sep 2024 17:04:57 +0200
-Message-ID: <CAOQ4uxjfO0BJUsnB-QqwqsjQ6jaGuYuAizOB6N2kNgJXvf7eTg@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: Git clone fails in p9 file system marked with FANOTIFY
-To: Krishna Vivek Vitta <kvitta@microsoft.com>
-Cc: Jan Kara <jack@suse.cz>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	"v9fs@lists.linux.dev" <v9fs@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_4A8FBB4133EA9E461B0C4B2C1B2425FFBA08@qq.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 25, 2024 at 4:22=E2=80=AFPM Krishna Vivek Vitta
-<kvitta@microsoft.com> wrote:
->
-> Thanks for the link.
->
-> Also can you try the third step on your standard linux kernel by omitting=
- FAN_OPEN_PERM in the mask and share the observations of git clone operatio=
-n. Does it succeed ?
->
+On Wed, Sep 25, 2024 at 09:53:00PM GMT, Edward Adam Davis wrote:
+> Syzbot report a kernel BUG in vfs_get_tree.
+> The root cause is that read_btree_nodes() returned 1 and returned -EINTR
+> due to kthread_run() execution failure.
+> 
+> The -EINTR needs to be returnned to bch2_fs_recovery(), not return to
+> "ret = IS_ERR_OR_NULL(t)".
+> 
+> Reported-and-tested-by: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c0360e8367d6d8d04a66
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>  fs/bcachefs/btree_node_scan.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
+> index b28c649c6838..df7090ca1e81 100644
+> --- a/fs/bcachefs/btree_node_scan.c
+> +++ b/fs/bcachefs/btree_node_scan.c
+> @@ -281,6 +281,10 @@ static int read_btree_nodes(struct find_btree_nodes *f)
+>  			closure_put(&cl);
+>  			f->ret = ret;
+>  			bch_err(c, "error starting kthread: %i", ret);
+> +			if (IS_ERR(t)) {
+> +				closure_sync(&cl);
+> +				return PTR_ERR(t);
+> +			}
+>  			break;
+>  		}
+>  	}
+> -- 
+> 2.43.0
+> 
 
-So it depends on the definition of success..
+I fixed this last night with the patch below...
 
-I do get this error with the fanotify_example watching 9p mount:
+commit c1a6f5ca052b7f8609917d13cd11fc60c94396aa
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Tue Sep 24 19:31:22 2024 -0400
 
-root@kvm-xfstests:~# /vtmp/fanotify_example /vtmp/
-Press enter key to terminate.
-Listening for events.
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/info/exclude
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/description
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/applypatch-msg.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-merge-commit.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-receive.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/update.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/post-update.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-push.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-commit.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/prepare-commit-msg.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/push-to-checkout.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-rebase.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-applypatch.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/fsmonitor-watchman.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/commit-msg.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/HEAD.lock
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/config.lock
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/config.lock
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/config.lock
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/config.lock
-read: No such file or directory
+    bcachefs: Fix incorrect IS_ERR_OR_NULL usage
+    
+    Returning a positive integer instead of an error code causes error paths
+    to become very confused.
+    
+    Closes: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
+    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 
-But git clone does not complain at all:
-
-root@kvm-xfstests:/vtmp# git clone https://github.com/filebench/filebench.g=
-it
-Cloning into 'filebench'...
-remote: Enumerating objects: 1157, done.
-remote: Total 1157 (delta 0), reused 0 (delta 0), pack-reused 1157 (from 1)
-Receiving objects: 100% (1157/1157), 1.13 MiB | 1005.00 KiB/s, done.
-Resolving deltas: 100% (812/812), done.
-Updating files: 100% (136/136), done.
-
-I did get the same error with FAN_OPEN_PERM:
-
-root@kvm-xfstests:~# /vtmp/fanotify_example /vtmp/
-Press enter key to terminate.
-Listening for events.
-FAN_OPEN_PERM: File /vtmp/filebench/.git/info/exclude
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/info/exclude
-FAN_OPEN_PERM: File /vtmp/filebench/.git/description
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/description
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/applypatch-msg.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/applypatch-msg.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/pre-merge-commit.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-merge-commit.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/pre-receive.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-receive.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/update.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/update.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/post-update.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/post-update.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/pre-push.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-push.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/pre-commit.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-commit.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/prepare-commit-msg.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/prepare-commit-msg.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/push-to-checkout.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/push-to-checkout.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/pre-rebase.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-rebase.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/pre-applypatch.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/pre-applypatch.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/fsmonitor-watchman.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/fsmonitor-watchman.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/hooks/commit-msg.sample
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/hooks/commit-msg.sample
-FAN_OPEN_PERM: File /vtmp/filebench/.git/HEAD.lock
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/HEAD.lock
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config.lock
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/config.lock
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config.lock
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/config.lock
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config.lock
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/config.lock
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config.lock
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config
-FAN_OPEN_PERM: File /vtmp/filebench/.git/config
-FAN_CLOSE_WRITE: File /vtmp/filebench/.git/config.lock
-FAN_OPEN_PERM: File /vtmp/filebench/.git/tSXZBNw
-read: No such file or directory
-
-I do not get fanotify error when watching and git clone on xfs mount.
-
-Thanks,
-Amir.
+diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
+index b28c649c6838..1e694fedc5da 100644
+--- a/fs/bcachefs/btree_node_scan.c
++++ b/fs/bcachefs/btree_node_scan.c
+@@ -275,7 +275,7 @@ static int read_btree_nodes(struct find_btree_nodes *f)
+ 		w->ca		= ca;
+ 
+ 		t = kthread_run(read_btree_nodes_worker, w, "read_btree_nodes/%s", ca->name);
+-		ret = IS_ERR_OR_NULL(t);
++		ret = PTR_ERR_OR_ZERO(t);
+ 		if (ret) {
+ 			percpu_ref_put(&ca->io_ref);
+ 			closure_put(&cl);
 
