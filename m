@@ -1,167 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-30041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E502498554E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 10:18:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5ADD98555F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 10:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47ED9B2267C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 08:18:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3FC282375
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 08:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A6E156886;
-	Wed, 25 Sep 2024 08:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A05715921D;
+	Wed, 25 Sep 2024 08:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAs/myGn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AC913AA26
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 08:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90D0157472;
+	Wed, 25 Sep 2024 08:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727252292; cv=none; b=soq+gd/p/Nq2M8IRpmGzxiBTjB6/I1xIq+IGl/lkK8nrEQt99laEmkS+fbgAd8tiW7CcNkEsaBLGaWd5jhfsEjU+jM3LNHn7JnPKxheO4g5DunuopAd64l2vw8qo6Tx9etsS4+K1SakJJV1VCGyBYsgLj+BIWBNuZ7RkmGnMJJM=
+	t=1727252467; cv=none; b=TE43pXMsgl3SXzftcj/RENyy/8aclwK4C0cLgHdmH6jCGwxwKXjEeH0oiW2f5y23U8ogNj77xQSvlGBEkmqv9b+5m2obXmZYgvxS04ddU3ndsNhAShDPJgKuGg7aM3iGT4h7oYki7+rHh8/YAOxop/PqNUQDTUUhz+uytULDfLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727252292; c=relaxed/simple;
-	bh=3QA6geJymr/V5/ofwUtTh8Ce06b5PEt6v8PSf9irocI=;
+	s=arc-20240116; t=1727252467; c=relaxed/simple;
+	bh=QmYF9mAYJQbgVS85AxdTvM5CXVsN5gmmSJw9tjqbUUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qw/dHXqiWED2bM+6j+MwooaRtGrHqg51HbIpf7Cvvdf+FBntTIVSuQkX7WKbHJpc9/JSZ3wguwH/cCWqt3XVNZNdR2MtR3tadUE4Mksgaz124eRBzonhhimZnsSj+PcUObBhr8ySJqdlGJ7JNzj+ZTRovatyRW8ADHB5pcq2vOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 15E4F21A63;
-	Wed, 25 Sep 2024 08:18:09 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B8E713A6A;
-	Wed, 25 Sep 2024 08:18:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7VfLAkHH82YefQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 25 Sep 2024 08:18:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C5738A089B; Wed, 25 Sep 2024 10:18:08 +0200 (CEST)
-Date: Wed, 25 Sep 2024 10:18:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Krishna Vivek Vitta <kvitta@microsoft.com>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"jack@suse.cz" <jack@suse.cz>
-Subject: Re: [EXTERNAL] Re: Git clone fails in p9 file system marked with
- FANOTIFY
-Message-ID: <20240925081808.lzu6ukr6pr2553tf@quack3>
-References: <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxiuPn4g1EBAq70XU-_5tYOXh4HqO5WF6O2YsfF9kM=qPw@mail.gmail.com>
- <SI2P153MB07187CEE4DFF8CDD925D6812D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxjd2pf-KHiXdHWDZ10um=_Joy9y5_1VC34gm6Yqb-JYog@mail.gmail.com>
- <SI2P153MB0718D1D7D2F39F48E6D870C1D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <SI2P153MB07187B0BE417F6662A991584D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <20240925081146.5gpfxo5mfmlcg4dr@quack3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ud6QSTbjPF1/6ML4FNIC0qghHeSEkCHD0bYWg/0xAbkKmRhh5kqHgp1MCwjqH0rWz11aI5K+ej6yN3OBBx8QN2MhTRplyAX8S7eIvonatr7Id8f94/cmT5gsnSuscTQhpVszdAYuusEyVWwg0LqNs0aWTJCkdb6lCf/piIcdX58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAs/myGn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E56CC4CEC3;
+	Wed, 25 Sep 2024 08:21:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727252467;
+	bh=QmYF9mAYJQbgVS85AxdTvM5CXVsN5gmmSJw9tjqbUUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RAs/myGnly3ulviILdxBQVG/60wM9VhcYM9KSZEuS1TIRL6Af1SE+SLwblC6kzUHE
+	 fF2I9G7uVY54lJhg9IfNbKtrD1tJ6qwVFVtZl0NNeC63EimzlCoe4W5FUUlC5dPLU9
+	 /GW2jKJKMfjsST6lF/fuDWnzNuou1aNh+tiJe4VgIhCqgSxIw46+iw2zv94sRgAiZY
+	 lcaMsTZEH+Xr/8QWcZOEIcWeEkHkoTZWzXOWK3tQhMGu03YSLl8qSHznOS79J2bM1V
+	 a3JoRl+sShxzrGyxs7r88cE7bsIn8dxBxYDS4D+Ki8RjqNAUrcEBk/zLsZhekvfB9K
+	 IogryK75bdPdw==
+Date: Wed, 25 Sep 2024 10:21:03 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Hongbo Li <lihongbo22@huawei.com>, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, chris.zjh@huawei.com
+Subject: Re: [PATCH v2] fs: ext4: support relative path for `journal_path` in
+ mount option.
+Message-ID: <20240925-jungtier-dagewesen-0040c64576a9@brauner>
+References: <20240925015624.3817878-1-lihongbo22@huawei.com>
+ <20240925075105.lnssx7gcgfh5s743@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240925081146.5gpfxo5mfmlcg4dr@quack3>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 15E4F21A63
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+In-Reply-To: <20240925075105.lnssx7gcgfh5s743@quack3>
 
-On Wed 25-09-24 10:11:46, Jan Kara wrote:
-> On Tue 24-09-24 12:07:51, Krishna Vivek Vitta wrote:
-> > Please ignore the last line.
-> > Git clone operation is failing with fanotify example code as well.
+On Wed, Sep 25, 2024 at 09:51:05AM GMT, Jan Kara wrote:
+> On Wed 25-09-24 09:56:24, Hongbo Li wrote:
+> > The `fs_lookup_param` did not consider the relative path for
+> > block device. When we mount ext4 with `journal_path` option using
+> > relative path, `param->dirfd` was not set which will cause mounting
+> > error.
 > > 
-> > root@MININT-S244RA7:/mnt/c/Users/kvitta/Desktop/MDE binaries/GitCloneIssue# ./fanotify_ex /mnt/c
-> > Press enter key to terminate.
-> > root@MININT-S244RA7:/mnt/c/Users/kvitta/Desktop/MDE binaries/GitCloneIssue# ./fanotify_ex /mnt/c
-> > Press enter key to terminate.
-> > Listening for events.
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/info/exclude
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/info/exclude
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-applypatch.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-applypatch.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/applypatch-msg.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/applypatch-msg.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/commit-msg.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/commit-msg.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-push.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-push.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-merge-commit.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-merge-commit.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-commit.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-commit.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/post-update.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/post-update.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/push-to-checkout.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/push-to-checkout.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/fsmonitor-watchman.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/fsmonitor-watchman.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/update.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/update.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-rebase.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-rebase.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-receive.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/pre-receive.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/hooks/prepare-commit-msg.sample
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/hooks/prepare-commit-msg.sample
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/description
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/description
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/HEAD.lock
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/HEAD.lock
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config.lock
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/config.lock
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config.lock
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config.lock
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config.lock
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_CLOSE_WRITE: File /mnt/c/Users/kvitta/gtest/.git/config
-> > FAN_OPEN_PERM: File /mnt/c/Users/kvitta/gtest/.git/tNbqjiA
-> > read: No such file or directory
-> > root@MININT-S244RA7:/mnt/c/Users/kvitta/Desktop/MDE binaries/GitCloneIssue#
+> > This can be reproduced easily like this:
+> > 
+> > mke2fs -F -O journal_dev $JOURNAL_DEV -b 4096 100M
+> > mkfs.ext4 -F -J device=$JOURNAL_DEV -b 4096 $FS_DEV
+> > cd /dev; mount -t ext4 -o journal_path=`basename $JOURNAL_DEV` $FS_DEV $MNT
+> > 
+> > Fixes: 461c3af045d3 ("ext4: Change handle_mount_opt() to use fs_parameter")
+> > Suggested-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> > ---
+> > v2:
+> >   - Change the journal_path parameter as string not bdev, and
+> >     determine the relative path situation inside fs_lookup_param.
+> >   - Add Suggested-by.
+> > 
+> > v1: https://lore.kernel.org/all/20240527-mahlen-packung-3fe035ab390d@brauner/
+> > ---
+> >  fs/ext4/super.c | 4 ++--
+> >  fs/fs_parser.c  | 3 +++
+> >  2 files changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index 16a4ce704460..cd23536ce46e 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -1744,7 +1744,7 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
+> >  	fsparam_u32	("min_batch_time",	Opt_min_batch_time),
+> >  	fsparam_u32	("max_batch_time",	Opt_max_batch_time),
+> >  	fsparam_u32	("journal_dev",		Opt_journal_dev),
+> > -	fsparam_bdev	("journal_path",	Opt_journal_path),
+> > +	fsparam_string	("journal_path",	Opt_journal_path),
 > 
-> OK, so it appears that dentry_open() is failing with ENOENT when we try to
-> open the file descriptor to return with the event. This is indeed
-> unexpected from the filesystem. On the other hand we already do silently
-> fixup similar EOPENSTALE error that can come from NFS so perhaps we should
-> be fixing ENOENT similarly? What do you thing Amir?
+> Why did you change this? As far as I can see the only effect would be that
+> empty path will not be allowed (which makes sense) but that seems like an
+> independent change which would deserve a comment in the changelog? Or am I
+> missing something?
 
-But what is still unclear to me is how this failure to generate fanotify
-event relates to git clone failing. Perhaps the dentry references fanotify
-holds in the notification queue confuse 9p and it returns those ENOENT
-errors?
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'll drop the ext4 bit as that can be done independently drop the
+conditional.
 
