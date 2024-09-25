@@ -1,666 +1,354 @@
-Return-Path: <linux-fsdevel+bounces-30113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F53098647F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 18:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 803649864A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 18:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5A41F28A7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:11:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062F31F2163D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAB8219E0;
-	Wed, 25 Sep 2024 16:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDFC4965B;
+	Wed, 25 Sep 2024 16:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fHIEBvS2"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="waZd9n2j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE871DA53
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 16:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D047143ABD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 16:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727280671; cv=none; b=QcwR3j3/C7f0WmW5ePreyW20nLyOeUC8e4sRdHe71W26xSS+LqX7eaBjnvbZz134gStkvNVIfEegrobnw13yizvXwUE3SPnJ8FMjLjwuYZYqo6Th4bs6wWHAj5JsVpZlhayo9reCVm/zaYEkdOLZtFG2zbRbWCF2z1nkYS4+ZSU=
+	t=1727281081; cv=none; b=DXAo+ACPMu1E+8LK375Bt64ZqzQLrsGUH8vJFflb/uXk0oKzrnb2XN18Nimsb7i8Bf7GhvwzUpVod06N2TeWEmsP95V8Zi25Thpy7fOcEPXBTUsp3o/jt7uCNsRJxwDbwrt9kE4s4QWdu9R76IXRGQYhcHcjGHSLm12Byc9WF8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727280671; c=relaxed/simple;
-	bh=HKcOshuQzFQI40MAS59PLBy/6eKBV3My/ucKKwB/GlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dqIMQrjTusT8pRCDEitCUye/ZgYrdHiAcbGTlrJvVEuuRtEQYP6t1GJQcIk2bj/Z5wIwc8MDR6pY60PMGe9B5CeQ6sa5oeQHCOrN5V/78mOPpWO6w5r1BvFtO5a/iGjeNEeEp5uMeS8ANdLcDuB9blZL6eiCOv5hPpk1wXmOHjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fHIEBvS2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727280668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OnkWHTXXSMjnPQS907NzULS6xD06Lc5SjRHiFidb6Ck=;
-	b=fHIEBvS2uApBNA18lwdAaBFuRvKaBD1ZgNGG28XxgZSsvKKhuhoXA6sXaxHKW8S+FABRE+
-	Ld+UtnDoEVwZM68Y74X7uPEI4X14DaHCyNOasmgZK38P/6pXE48fXvoUOyDhmxuWoAx8cS
-	9EwSJLuVsuu+HC1sJQI4lypmrihLZ1c=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-U8SpSdwwOty9Kssh3gHQ8w-1; Wed, 25 Sep 2024 12:11:07 -0400
-X-MC-Unique: U8SpSdwwOty9Kssh3gHQ8w-1
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82aa467836eso1131613139f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 09:11:07 -0700 (PDT)
+	s=arc-20240116; t=1727281081; c=relaxed/simple;
+	bh=g9E8zPJQZ+WKtz/NOzLnwgbBUCFBXvSj04Z75GvLJZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tXBSTjgjd3LAoMzWxM7+PQoPoAMqzw16acHgZhlxOYRdfB1eXKouqJsm4a7kqM7EfzX+DYnF2hxoBg7juC3D/NDGxFW0uFyB0XmX0Bzsb9jdO/gPqSP7/Z681MBIyDIYTyEd4P4wwfUnWAl0E/wivecgzF0Rwrj4Ken8+1FnmoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=waZd9n2j; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 73CF64064D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 16:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727281072;
+	bh=KEgQnWZ+UHxrm0MMWG0A0YgheYaHlx7qOY6QwfASbDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=waZd9n2jTVAMr+zlvebWzdSaQNSCafbiKGSPASfP96te8bfQ08pdZEN2pimL4d7RF
+	 ApaL7iBF3lm2Gz5vNwmXCWE8MEswovcbJyXbl6TeXEz4FIVzYZWyr3srSAegsP7CJW
+	 OZbqEhAnseMjISb0srFEgwbubEM+Y8lCtnCWJPL+KRJbFF+hVRpKsq+xbVfJE8zIFx
+	 ArY6MxAdhrTXsGIsPXplD8AjOLoOoTVNDpAsSSLRO2cYVU0upudWs1ter9I64NYH+a
+	 OVhQCXsrZGc15JFzEPZWzbu1Y4iMsvg5XRpfxC6UpAIuMe4I/Nd3SNkSvzE/F79KP3
+	 Z210Kbd+p6oAQ==
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-5012505f76bso790185e0c.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 09:17:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727280666; x=1727885466;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OnkWHTXXSMjnPQS907NzULS6xD06Lc5SjRHiFidb6Ck=;
-        b=kFYaBkhdPh/b8BpYzL6fQ4xXaSgM5BLVkly5YcukKe9SXm5goimZ8RXRZTUN6UT5oW
-         HnmhGZTkM5j0DBJYCHRC0uTGskfHswYivf82ZtIv9t0kl3lCKdA2+AjTupBMZNz50lHi
-         V2m8/lZEKr8FIfmmcy3u7QApomh2pwn1MOnx7Wvtt26wqJoq+5Hq8P14YyRcrcOGxU0r
-         psv+AwSZc71LmQjYnyjedMBKddMxdzGYocXcCtbNZ4zBRURa6igADeLzUUowDjQHMqe9
-         1x6Xyb/avABsoFoDavPBL8eGN8KMWilP3MXr3UjuEI8AySvAWchD6uBVPa3BE3NeAJPX
-         QhUg==
-X-Gm-Message-State: AOJu0YwjxgWwszPSu/PzqiLNLtt74KTOEh0+ioM9LeHSdCZXAg8FmOD9
-	IHpFTEAqQl5UcNbIrC//RwMWEsQUnsmaF37ch8II0Z7TkYaX7Dg2KtGstPvUbXtACDwduYoLa70
-	gdcBMgRlXlV61D20pvxkzd3UuVC+G6zlvSH0E4ObWVpd72tWoYEnfTGXFZl3XOYY=
-X-Received: by 2002:a05:6602:2b0a:b0:832:13ce:1fa3 with SMTP id ca18e2360f4ac-83247d1f11bmr490529939f.8.1727280666351;
-        Wed, 25 Sep 2024 09:11:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEMLDOi7Lbv8OGfRDgLUj9xwW6AMJf2XtJGJ5xjcGvqt6NiwoFoGbnW36qXCqZHlEsUPRNBAA==
-X-Received: by 2002:a05:6602:2b0a:b0:832:13ce:1fa3 with SMTP id ca18e2360f4ac-83247d1f11bmr490527139f.8.1727280665827;
-        Wed, 25 Sep 2024 09:11:05 -0700 (PDT)
-Received: from [10.0.0.71] (67-4-202-127.mpls.qwest.net. [67.4.202.127])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d40f2f5410sm1143817173.141.2024.09.25.09.11.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 09:11:05 -0700 (PDT)
-Message-ID: <012da8a4-bb34-4f7e-88f9-f1b4812b4ea6@redhat.com>
-Date: Wed, 25 Sep 2024 11:11:04 -0500
+        d=1e100.net; s=20230601; t=1727281071; x=1727885871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KEgQnWZ+UHxrm0MMWG0A0YgheYaHlx7qOY6QwfASbDE=;
+        b=ae2Jq27DE3RcuSlUALVNhPZuc4eLLFqHQKs6r/NcP6TaYVT3wS+jaNvLBlCPLB0U5Y
+         q/YeZG7k7mzayuZUTeFjND1fran7c2SKoYUrW3A22AuXqh9LBA+a3ysvF7N+NhdmuG7U
+         XC+hml7JmELV+vc38katUipvxS5SZC28WSF8+rjk7cedfVpv0g1oxzxMk9CKXKlOOBnn
+         sKNXFcmR8Xq+b0h8ecq2GuRRpvfxmOi+sHzk6CNOTSsdLjVE2HuDnWz+BozNK7tWF+4z
+         B4DagPhv2JppHEVNWeylekElfYiOhjU+m3FWoa2OmEgvi4+6oqQgRDsuJcD3j8iviNYy
+         nmYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4efb5xQ25T4/cVk75LVsPCNBP2QwmbEeSusVP2vcDQSKL1YtX7QrzZX3bSUrckXpk570uivjloWYKwZVG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzctJqT4DKbymQ6tbTFkyCjoe8JmO8rF/qkKOioyQN/R7wqZgVw
+	cnY676jsmF+yQDnGQaY9Zk9DtSP27j8sHU1C5a6lpmF2usZF95M2pJdyv9/YkuZabLsT25JMStQ
+	2zMMEd5RWjY1xCIdTVas4KNNL6kIVI9VSi3YDxZsCrKuxZ2HQp410bq1LpigOvdsYoccCRLJqA9
+	symyivnVpVNzWc8uwyEbtTmVWTQ2mkj8963kqQbzp4vtxBk3ixTSSwMg==
+X-Received: by 2002:a05:6122:3193:b0:503:d876:5e0a with SMTP id 71dfb90a1353d-5073bf2c77fmr313434e0c.0.1727281070934;
+        Wed, 25 Sep 2024 09:17:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZZuyYU0WAWeXCej3QTUblc6Uv7YSQNlxDGc/5pLtnfQpPZc0N61MMk4ehu32sSNA43VULOeWPMn3L/LXLhPg=
+X-Received: by 2002:a05:6122:3193:b0:503:d876:5e0a with SMTP id
+ 71dfb90a1353d-5073bf2c77fmr313362e0c.0.1727281070421; Wed, 25 Sep 2024
+ 09:17:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hpfs: convert hpfs to use the new mount api
-To: Mikulas Patocka <mpatocka@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-References: <0a066bbb-59ad-17b0-e413-190569f2fea9@redhat.com>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <0a066bbb-59ad-17b0-e413-190569f2fea9@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com> <20240925155706.zad2euxxuq7h6uja@quack3>
+In-Reply-To: <20240925155706.zad2euxxuq7h6uja@quack3>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Wed, 25 Sep 2024 18:17:39 +0200
+Message-ID: <CAEivzxfjnKq2fgCfYwhZukAO-ZfoUiC5n0Y5yaUpuz-y7kDf+g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
+To: Jan Kara <jack@suse.cz>
+Cc: tytso@mit.edu, stable@vger.kernel.org, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Baokun Li <libaokun1@huawei.com>, 
+	=?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>, 
+	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	Wesley Hershberger <wesley.hershberger@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/25/24 8:17 AM, Mikulas Patocka wrote:
-> Hi
-> 
-> Here I'm sending Eric's patch that converts hpfs to use the new mount API.
-> 
-> Mikulas
-> 
+On Wed, Sep 25, 2024 at 5:57=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
+> > [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b9=
+2b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
+> > [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 =
+blocks
+> > [   33.888740] ------------[ cut here ]------------
+> > [   33.888742] kernel BUG at fs/ext4/resize.c:324!
+>
+> Ah, I was staring at this for a while before I understood what's going on
+> (it would be great to explain this in the changelog BTW).  As far as I
+> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory allocati=
+on
+> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger than
+> flexbg_size (for example when ogroup =3D flexbg_size, ngroup =3D 2*flexbg=
+_size
+> - 1) which then confuses things. I think that was not really intended and
 
-Oh, thanks Mikulas.
+Hi Jan,
 
-Cc: Christian who has been collecting a few other mount API conversions in a
-git branch for 6.13, I think.
+First of all, thanks for your reaction/review on this one ;-)
 
-Thanks,
--Eric
- 
-> 
-> From: Eric Sandeen <sandeen@redhat.com>
-> 
-> Convert the hpfs filesystem to use the new mount API.
-> Tested by comparing random mount & remount options before and after
-> the change.
-> 
-> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> ---
->  fs/hpfs/super.c | 414 ++++++++++++++++++++++++------------------------
->  1 file changed, 204 insertions(+), 210 deletions(-)
-> 
-> diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
-> index e73717daa5f9..27567920abe4 100644
-> --- a/fs/hpfs/super.c
-> +++ b/fs/hpfs/super.c
-> @@ -9,7 +9,8 @@
->  
->  #include "hpfs_fn.h"
->  #include <linux/module.h>
-> -#include <linux/parser.h>
-> +#include <linux/fs_context.h>
-> +#include <linux/fs_parser.h>
->  #include <linux/init.h>
->  #include <linux/statfs.h>
->  #include <linux/magic.h>
-> @@ -90,7 +91,7 @@ void hpfs_error(struct super_block *s, const char *fmt, ...)
->  	hpfs_sb(s)->sb_was_error = 1;
->  }
->  
-> -/* 
-> +/*
->   * A little trick to detect cycles in many hpfs structures and don't let the
->   * kernel crash on corrupted filesystem. When first called, set c2 to 0.
->   *
-> @@ -272,146 +273,70 @@ static void destroy_inodecache(void)
->  	kmem_cache_destroy(hpfs_inode_cachep);
->  }
->  
-> -/*
-> - * A tiny parser for option strings, stolen from dosfs.
-> - * Stolen again from read-only hpfs.
-> - * And updated for table-driven option parsing.
-> - */
-> -
->  enum {
-> -	Opt_help, Opt_uid, Opt_gid, Opt_umask, Opt_case_lower, Opt_case_asis,
-> -	Opt_check_none, Opt_check_normal, Opt_check_strict,
-> -	Opt_err_cont, Opt_err_ro, Opt_err_panic,
-> -	Opt_eas_no, Opt_eas_ro, Opt_eas_rw,
-> -	Opt_chkdsk_no, Opt_chkdsk_errors, Opt_chkdsk_always,
-> -	Opt_timeshift, Opt_err,
-> +	Opt_help, Opt_uid, Opt_gid, Opt_umask, Opt_case,
-> +	Opt_check, Opt_err, Opt_eas, Opt_chkdsk, Opt_timeshift,
->  };
->  
-> -static const match_table_t tokens = {
-> -	{Opt_help, "help"},
-> -	{Opt_uid, "uid=%u"},
-> -	{Opt_gid, "gid=%u"},
-> -	{Opt_umask, "umask=%o"},
-> -	{Opt_case_lower, "case=lower"},
-> -	{Opt_case_asis, "case=asis"},
-> -	{Opt_check_none, "check=none"},
-> -	{Opt_check_normal, "check=normal"},
-> -	{Opt_check_strict, "check=strict"},
-> -	{Opt_err_cont, "errors=continue"},
-> -	{Opt_err_ro, "errors=remount-ro"},
-> -	{Opt_err_panic, "errors=panic"},
-> -	{Opt_eas_no, "eas=no"},
-> -	{Opt_eas_ro, "eas=ro"},
-> -	{Opt_eas_rw, "eas=rw"},
-> -	{Opt_chkdsk_no, "chkdsk=no"},
-> -	{Opt_chkdsk_errors, "chkdsk=errors"},
-> -	{Opt_chkdsk_always, "chkdsk=always"},
-> -	{Opt_timeshift, "timeshift=%d"},
-> -	{Opt_err, NULL},
-> +static const struct constant_table hpfs_param_case[] = {
-> +	{"asis",	0},
-> +	{"lower",	1},
-> +	{}
->  };
->  
-> -static int parse_opts(char *opts, kuid_t *uid, kgid_t *gid, umode_t *umask,
-> -		      int *lowercase, int *eas, int *chk, int *errs,
-> -		      int *chkdsk, int *timeshift)
-> -{
-> -	char *p;
-> -	int option;
-> +static const struct constant_table hpfs_param_check[] = {
-> +	{"none",	0},
-> +	{"normal",	1},
-> +	{"strict",	2},
-> +	{}
-> +};
->  
-> -	if (!opts)
-> -		return 1;
-> +static const struct constant_table hpfs_param_err[] = {
-> +	{"continue",	0},
-> +	{"remount-ro",	1},
-> +	{"panic",	2},
-> +	{}
-> +};
->  
-> -	/*pr_info("Parsing opts: '%s'\n",opts);*/
-> -
-> -	while ((p = strsep(&opts, ",")) != NULL) {
-> -		substring_t args[MAX_OPT_ARGS];
-> -		int token;
-> -		if (!*p)
-> -			continue;
-> -
-> -		token = match_token(p, tokens, args);
-> -		switch (token) {
-> -		case Opt_help:
-> -			return 2;
-> -		case Opt_uid:
-> -			if (match_int(args, &option))
-> -				return 0;
-> -			*uid = make_kuid(current_user_ns(), option);
-> -			if (!uid_valid(*uid))
-> -				return 0;
-> -			break;
-> -		case Opt_gid:
-> -			if (match_int(args, &option))
-> -				return 0;
-> -			*gid = make_kgid(current_user_ns(), option);
-> -			if (!gid_valid(*gid))
-> -				return 0;
-> -			break;
-> -		case Opt_umask:
-> -			if (match_octal(args, &option))
-> -				return 0;
-> -			*umask = option;
-> -			break;
-> -		case Opt_case_lower:
-> -			*lowercase = 1;
-> -			break;
-> -		case Opt_case_asis:
-> -			*lowercase = 0;
-> -			break;
-> -		case Opt_check_none:
-> -			*chk = 0;
-> -			break;
-> -		case Opt_check_normal:
-> -			*chk = 1;
-> -			break;
-> -		case Opt_check_strict:
-> -			*chk = 2;
-> -			break;
-> -		case Opt_err_cont:
-> -			*errs = 0;
-> -			break;
-> -		case Opt_err_ro:
-> -			*errs = 1;
-> -			break;
-> -		case Opt_err_panic:
-> -			*errs = 2;
-> -			break;
-> -		case Opt_eas_no:
-> -			*eas = 0;
-> -			break;
-> -		case Opt_eas_ro:
-> -			*eas = 1;
-> -			break;
-> -		case Opt_eas_rw:
-> -			*eas = 2;
-> -			break;
-> -		case Opt_chkdsk_no:
-> -			*chkdsk = 0;
-> -			break;
-> -		case Opt_chkdsk_errors:
-> -			*chkdsk = 1;
-> -			break;
-> -		case Opt_chkdsk_always:
-> -			*chkdsk = 2;
-> -			break;
-> -		case Opt_timeshift:
-> -		{
-> -			int m = 1;
-> -			char *rhs = args[0].from;
-> -			if (!rhs || !*rhs)
-> -				return 0;
-> -			if (*rhs == '-') m = -1;
-> -			if (*rhs == '+' || *rhs == '-') rhs++;
-> -			*timeshift = simple_strtoul(rhs, &rhs, 0) * m;
-> -			if (*rhs)
-> -				return 0;
-> -			break;
-> -		}
-> -		default:
-> -			return 0;
-> -		}
-> -	}
-> -	return 1;
-> -}
-> +static const struct constant_table hpfs_param_eas[] = {
-> +	{"no",		0},
-> +	{"ro",		1},
-> +	{"rw",		2},
-> +	{}
-> +};
-> +
-> +static const struct constant_table hpfs_param_chkdsk[] = {
-> +	{"no",		0},
-> +	{"errors",	1},
-> +	{"always",	2},
-> +	{}
-> +};
-> +
-> +static const struct fs_parameter_spec hpfs_param_spec[] = {
-> +	fsparam_flag	("help",	Opt_help),
-> +	fsparam_uid	("uid",		Opt_uid),
-> +	fsparam_gid	("gid",		Opt_gid),
-> +	fsparam_u32oct	("umask",	Opt_umask),
-> +	fsparam_enum	("case",	Opt_case,	hpfs_param_case),
-> +	fsparam_enum	("check",	Opt_check,	hpfs_param_check),
-> +	fsparam_enum	("errors",	Opt_err,	hpfs_param_err),
-> +	fsparam_enum	("eas",		Opt_eas,	hpfs_param_eas),
-> +	fsparam_enum	("chkdsk",	Opt_chkdsk,	hpfs_param_chkdsk),
-> +	fsparam_s32	("timeshift",	Opt_timeshift),
-> +	{}
-> +};
-> +
-> +struct hpfs_fc_context {
-> +	kuid_t uid;
-> +	kgid_t gid;
-> +	umode_t umask;
-> +	int lowercase;
-> +	int eas;
-> +	int chk;
-> +	int errs;
-> +	int chkdsk;
-> +	int timeshift;
-> +};
->  
->  static inline void hpfs_help(void)
->  {
-> @@ -439,49 +364,92 @@ HPFS filesystem options:\n\
->  \n");
->  }
->  
-> -static int hpfs_remount_fs(struct super_block *s, int *flags, char *data)
-> +static int hpfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  {
-> -	kuid_t uid;
-> -	kgid_t gid;
-> -	umode_t umask;
-> -	int lowercase, eas, chk, errs, chkdsk, timeshift;
-> -	int o;
-> +	struct hpfs_fc_context *ctx = fc->fs_private;
-> +	struct fs_parse_result result;
-> +	int opt;
-> +
-> +	opt = fs_parse(fc, hpfs_param_spec, param, &result);
-> +	if (opt < 0)
-> +		return opt;
-> +
-> +	switch (opt) {
-> +	case Opt_help:
-> +		hpfs_help();
-> +		return -EINVAL;
-> +	case Opt_uid:
-> +		ctx->uid = result.uid;
-> +		break;
-> +	case Opt_gid:
-> +		ctx->gid = result.gid;
-> +		break;
-> +	case Opt_umask:
-> +		ctx->umask = result.uint_32;
-> +		break;
-> +	case Opt_case:
-> +		ctx->lowercase = result.uint_32;
-> +		break;
-> +	case Opt_check:
-> +		ctx->chk = result.uint_32;
-> +		break;
-> +	case Opt_err:
-> +		ctx->errs = result.uint_32;
-> +		break;
-> +	case Opt_eas:
-> +		ctx->eas = result.uint_32;
-> +		break;
-> +	case Opt_chkdsk:
-> +		ctx->chkdsk = result.uint_32;
-> +		break;
-> +	case Opt_timeshift:
-> +		{
-> +			int m = 1;
-> +			char *rhs = param->string;
-> +			int timeshift;
-> +
-> +			if (*rhs == '-') m = -1;
-> +			if (*rhs == '+' || *rhs == '-') rhs++;
-> +			timeshift = simple_strtoul(rhs, &rhs, 0) * m;
-> +			if (*rhs)
-> +					return -EINVAL;
-> +			ctx->timeshift = timeshift;
-> +			break;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int hpfs_reconfigure(struct fs_context *fc)
-> +{
-> +	struct hpfs_fc_context *ctx = fc->fs_private;
-> +	struct super_block *s = fc->root->d_sb;
->  	struct hpfs_sb_info *sbi = hpfs_sb(s);
->  
->  	sync_filesystem(s);
->  
-> -	*flags |= SB_NOATIME;
-> +	fc->sb_flags |= SB_NOATIME;
->  
->  	hpfs_lock(s);
-> -	uid = sbi->sb_uid; gid = sbi->sb_gid;
-> -	umask = 0777 & ~sbi->sb_mode;
-> -	lowercase = sbi->sb_lowercase;
-> -	eas = sbi->sb_eas; chk = sbi->sb_chk; chkdsk = sbi->sb_chkdsk;
-> -	errs = sbi->sb_err; timeshift = sbi->sb_timeshift;
-> -
-> -	if (!(o = parse_opts(data, &uid, &gid, &umask, &lowercase,
-> -	    &eas, &chk, &errs, &chkdsk, &timeshift))) {
-> -		pr_err("bad mount options.\n");
-> -		goto out_err;
-> -	}
-> -	if (o == 2) {
-> -		hpfs_help();
-> -		goto out_err;
-> -	}
-> -	if (timeshift != sbi->sb_timeshift) {
-> +
-> +	if (ctx->timeshift != sbi->sb_timeshift) {
->  		pr_err("timeshift can't be changed using remount.\n");
->  		goto out_err;
->  	}
->  
->  	unmark_dirty(s);
->  
-> -	sbi->sb_uid = uid; sbi->sb_gid = gid;
-> -	sbi->sb_mode = 0777 & ~umask;
-> -	sbi->sb_lowercase = lowercase;
-> -	sbi->sb_eas = eas; sbi->sb_chk = chk; sbi->sb_chkdsk = chkdsk;
-> -	sbi->sb_err = errs; sbi->sb_timeshift = timeshift;
-> +	sbi->sb_uid = ctx->uid; sbi->sb_gid = ctx->gid;
-> +	sbi->sb_mode = 0777 & ~ctx->umask;
-> +	sbi->sb_lowercase = ctx->lowercase;
-> +	sbi->sb_eas = ctx->eas; sbi->sb_chk = ctx->chk;
-> +	sbi->sb_chkdsk = ctx->chkdsk;
-> +	sbi->sb_err = ctx->errs; sbi->sb_timeshift = ctx->timeshift;
->  
-> -	if (!(*flags & SB_RDONLY)) mark_dirty(s, 1);
-> +	if (!(fc->sb_flags & SB_RDONLY)) mark_dirty(s, 1);
->  
->  	hpfs_unlock(s);
->  	return 0;
-> @@ -530,30 +498,24 @@ static const struct super_operations hpfs_sops =
->  	.evict_inode	= hpfs_evict_inode,
->  	.put_super	= hpfs_put_super,
->  	.statfs		= hpfs_statfs,
-> -	.remount_fs	= hpfs_remount_fs,
->  	.show_options	= hpfs_show_options,
->  };
->  
-> -static int hpfs_fill_super(struct super_block *s, void *options, int silent)
-> +static int hpfs_fill_super(struct super_block *s, struct fs_context *fc)
->  {
-> +	struct hpfs_fc_context *ctx = fc->fs_private;
->  	struct buffer_head *bh0, *bh1, *bh2;
->  	struct hpfs_boot_block *bootblock;
->  	struct hpfs_super_block *superblock;
->  	struct hpfs_spare_block *spareblock;
->  	struct hpfs_sb_info *sbi;
->  	struct inode *root;
-> -
-> -	kuid_t uid;
-> -	kgid_t gid;
-> -	umode_t umask;
-> -	int lowercase, eas, chk, errs, chkdsk, timeshift;
-> +	int silent = fc->sb_flags & SB_SILENT;
->  
->  	dnode_secno root_dno;
->  	struct hpfs_dirent *de = NULL;
->  	struct quad_buffer_head qbh;
->  
-> -	int o;
-> -
->  	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
->  	if (!sbi) {
->  		return -ENOMEM;
-> @@ -563,26 +525,6 @@ static int hpfs_fill_super(struct super_block *s, void *options, int silent)
->  	mutex_init(&sbi->hpfs_mutex);
->  	hpfs_lock(s);
->  
-> -	uid = current_uid();
-> -	gid = current_gid();
-> -	umask = current_umask();
-> -	lowercase = 0;
-> -	eas = 2;
-> -	chk = 1;
-> -	errs = 1;
-> -	chkdsk = 1;
-> -	timeshift = 0;
-> -
-> -	if (!(o = parse_opts(options, &uid, &gid, &umask, &lowercase,
-> -	    &eas, &chk, &errs, &chkdsk, &timeshift))) {
-> -		pr_err("bad mount options.\n");
-> -		goto bail0;
-> -	}
-> -	if (o==2) {
-> -		hpfs_help();
-> -		goto bail0;
-> -	}
-> -
->  	/*sbi->sb_mounting = 1;*/
->  	sb_set_blocksize(s, 512);
->  	sbi->sb_fs_size = -1;
-> @@ -622,17 +564,17 @@ static int hpfs_fill_super(struct super_block *s, void *options, int silent)
->  	sbi->sb_dirband_start = le32_to_cpu(superblock->dir_band_start);
->  	sbi->sb_dirband_size = le32_to_cpu(superblock->n_dir_band);
->  	sbi->sb_dmap = le32_to_cpu(superblock->dir_band_bitmap);
-> -	sbi->sb_uid = uid;
-> -	sbi->sb_gid = gid;
-> -	sbi->sb_mode = 0777 & ~umask;
-> +	sbi->sb_uid = ctx->uid;
-> +	sbi->sb_gid = ctx->gid;
-> +	sbi->sb_mode = 0777 & ~ctx->umask;
->  	sbi->sb_n_free = -1;
->  	sbi->sb_n_free_dnodes = -1;
-> -	sbi->sb_lowercase = lowercase;
-> -	sbi->sb_eas = eas;
-> -	sbi->sb_chk = chk;
-> -	sbi->sb_chkdsk = chkdsk;
-> -	sbi->sb_err = errs;
-> -	sbi->sb_timeshift = timeshift;
-> +	sbi->sb_lowercase = ctx->lowercase;
-> +	sbi->sb_eas = ctx->eas;
-> +	sbi->sb_chk = ctx->chk;
-> +	sbi->sb_chkdsk = ctx->chkdsk;
-> +	sbi->sb_err = ctx->errs;
-> +	sbi->sb_timeshift = ctx->timeshift;
->  	sbi->sb_was_error = 0;
->  	sbi->sb_cp_table = NULL;
->  	sbi->sb_c_bitmap = -1;
-> @@ -653,7 +595,7 @@ static int hpfs_fill_super(struct super_block *s, void *options, int silent)
->  	
->  	/* Check for general fs errors*/
->  	if (spareblock->dirty && !spareblock->old_wrote) {
-> -		if (errs == 2) {
-> +		if (sbi->sb_err == 2) {
->  			pr_err("Improperly stopped, not mounted\n");
->  			goto bail4;
->  		}
-> @@ -667,16 +609,16 @@ static int hpfs_fill_super(struct super_block *s, void *options, int silent)
->  	}
->  
->  	if (le32_to_cpu(spareblock->n_dnode_spares) != le32_to_cpu(spareblock->n_dnode_spares_free)) {
-> -		if (errs >= 2) {
-> +		if (sbi->sb_err >= 2) {
->  			pr_err("Spare dnodes used, try chkdsk\n");
->  			mark_dirty(s, 0);
->  			goto bail4;
->  		}
->  		hpfs_error(s, "warning: spare dnodes used, try chkdsk");
-> -		if (errs == 0)
-> +		if (sbi->sb_err == 0)
->  			pr_err("Proceeding, but your filesystem could be corrupted if you delete files or directories\n");
->  	}
-> -	if (chk) {
-> +	if (sbi->sb_chk) {
->  		unsigned a;
->  		if (le32_to_cpu(superblock->dir_band_end) - le32_to_cpu(superblock->dir_band_start) + 1 != le32_to_cpu(superblock->n_dir_band) ||
->  		    le32_to_cpu(superblock->dir_band_end) < le32_to_cpu(superblock->dir_band_start) || le32_to_cpu(superblock->n_dir_band) > 0x4000) {
-> @@ -755,18 +697,70 @@ bail2:	brelse(bh0);
->  	return -EINVAL;
->  }
->  
-> -static struct dentry *hpfs_mount(struct file_system_type *fs_type,
-> -	int flags, const char *dev_name, void *data)
-> +static int hpfs_get_tree(struct fs_context *fc)
-> +{
-> +	return get_tree_bdev(fc, hpfs_fill_super);
-> +}
-> +
-> +static void hpfs_free_fc(struct fs_context *fc)
->  {
-> -	return mount_bdev(fs_type, flags, dev_name, data, hpfs_fill_super);
-> +	kfree(fc->fs_private);
->  }
->  
-> +static const struct fs_context_operations hpfs_fc_context_ops = {
-> +	.parse_param	= hpfs_parse_param,
-> +	.get_tree	= hpfs_get_tree,
-> +	.reconfigure	= hpfs_reconfigure,
-> +	.free		= hpfs_free_fc,
-> +};
-> +
-> +static int hpfs_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct hpfs_fc_context *ctx;
-> +
-> +	ctx = kzalloc(sizeof(struct hpfs_fc_context), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
-> +		struct super_block *sb = fc->root->d_sb;
-> +		struct hpfs_sb_info *sbi = hpfs_sb(sb);
-> +
-> +		ctx->uid = sbi->sb_uid;
-> +		ctx->gid = sbi->sb_gid;
-> +		ctx->umask = 0777 & ~sbi->sb_mode;
-> +		ctx->lowercase = sbi->sb_lowercase;
-> +		ctx->eas = sbi->sb_eas;
-> +		ctx->chk = sbi->sb_chk;
-> +		ctx->chkdsk = sbi->sb_chkdsk;
-> +		ctx->errs = sbi->sb_err;
-> +		ctx->timeshift = sbi->sb_timeshift;
-> +
-> +	} else {
-> +		ctx->uid = current_uid();
-> +		ctx->gid = current_gid();
-> +		ctx->umask = current_umask();
-> +		ctx->lowercase = 0;
-> +		ctx->eas = 2;
-> +		ctx->chk = 1;
-> +		ctx->errs = 1;
-> +		ctx->chkdsk = 1;
-> +		ctx->timeshift = 0;
-> +	}
-> +
-> +	fc->fs_private = ctx;
-> +	fc->ops = &hpfs_fc_context_ops;
-> +
-> +	return 0;
-> +};
-> +
->  static struct file_system_type hpfs_fs_type = {
->  	.owner		= THIS_MODULE,
->  	.name		= "hpfs",
-> -	.mount		= hpfs_mount,
->  	.kill_sb	= kill_block_super,
->  	.fs_flags	= FS_REQUIRES_DEV,
-> +	.init_fs_context = hpfs_init_fs_context,
-> +	.parameters	= hpfs_param_spec,
->  };
->  MODULE_ALIAS_FS("hpfs");
->  
+You are absolutely right, have just checked with our reproducer and
+this modification:
 
+diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+index e04eb08b9060..530a918f0cab 100644
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -258,6 +258,8 @@ static struct ext4_new_flex_group_data
+*alloc_flex_gd(unsigned int flexbg_size,
+                flex_gd->resize_bg =3D 1 << max(fls(last_group - o_group + =
+1),
+                                              fls(n_group - last_group));
+
++       BUG_ON(flex_gd->resize_bg > flexbg_size);
++
+        flex_gd->groups =3D kmalloc_array(flex_gd->resize_bg,
+                                        sizeof(struct ext4_new_group_data),
+                                        GFP_NOFS);
+
+and yes, it crashes on this BUG_ON. So it looks like instead of making
+flex_gd->resize_bg to be smaller
+than flexbg_size in most cases we can actually have an opposite effect
+here. I guess we really need to fix alloc_flex_gd() too.
+
+> instead of fixing up ext4_alloc_group_tables() we should really change
+> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never exceed=
+s
+> flexbg size. Baokun?
+
+At the same time, if I understand the code right, as we can have
+flex_gd->resize_bg !=3D flexbg_size after
+5d1935ac02ca5a ("ext4: avoid online resizing failures due to oversized
+flex bg") and
+665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_flex_gd(=
+)")
+we should always refer to flex_gd->resize_bg value which means that
+ext4_alloc_group_tables() fix is needed too.
+Am I correct in my understanding?
+
+>
+>                                                                 Honza
+
+Kind regards,
+Alex
+
+>
+>
+> > [   33.889075] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> > [   33.889503] CPU: 9 UID: 0 PID: 3576 Comm: resize2fs Not tainted 6.11=
+.0+ #27
+> > [   33.890039] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), B=
+IOS 1.15.0-1 04/01/2014
+> > [   33.890705] RIP: 0010:ext4_resize_fs+0x1212/0x12d0
+> > [   33.891063] Code: b8 45 31 c0 4c 89 ff 45 31 c9 31 c9 ba 0e 08 00 00=
+ 48 c7 c6 68 75 65 b8 e8 2b 79 01 00 41 b8 ea ff ff ff 41 5f e9 8d f1 ff ff=
+ <0f> 0b 48 83 bd 70 ff ff ff 00 75 32 45 31 c0 e9 53 f1 ff ff 41 b8
+> > [   33.892701] RSP: 0018:ffffa97f413f3cc8 EFLAGS: 00010202
+> > [   33.893081] RAX: 0000000000000018 RBX: 0000000000000001 RCX: 0000000=
+0fffffff0
+> > [   33.893639] RDX: 0000000000000017 RSI: 0000000000000016 RDI: 0000000=
+0e8c2c810
+> > [   33.894197] RBP: ffffa97f413f3d90 R08: 0000000000000000 R09: 0000000=
+000008000
+> > [   33.894755] R10: ffffa97f413f3cc8 R11: ffffa2c1845bfc80 R12: 0000000=
+000000000
+> > [   33.895317] R13: ffffa2c1843d6000 R14: 0000000000008000 R15: ffffa2c=
+199963000
+> > [   33.895877] FS:  00007f46efd17000(0000) GS:ffffa2c89fc40000(0000) kn=
+lGS:0000000000000000
+> > [   33.896524] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   33.896954] CR2: 00005630a4a1cc88 CR3: 000000010532c000 CR4: 0000000=
+000350eb0
+> > [   33.897516] Call Trace:
+> > [   33.897638]  <TASK>
+> > [   33.897728]  ? show_regs+0x6d/0x80
+> > [   33.897942]  ? die+0x3c/0xa0
+> > [   33.898106]  ? do_trap+0xe5/0x110
+> > [   33.898311]  ? do_error_trap+0x6e/0x90
+> > [   33.898555]  ? ext4_resize_fs+0x1212/0x12d0
+> > [   33.898844]  ? exc_invalid_op+0x57/0x80
+> > [   33.899101]  ? ext4_resize_fs+0x1212/0x12d0
+> > [   33.899387]  ? asm_exc_invalid_op+0x1f/0x30
+> > [   33.899675]  ? ext4_resize_fs+0x1212/0x12d0
+> > [   33.899961]  ? ext4_resize_fs+0x745/0x12d0
+> > [   33.900239]  __ext4_ioctl+0x4e0/0x1800
+> > [   33.900489]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > [   33.900832]  ? putname+0x5b/0x70
+> > [   33.901028]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > [   33.901374]  ? do_sys_openat2+0x87/0xd0
+> > [   33.901632]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > [   33.901981]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > [   33.902324]  ? __x64_sys_openat+0x59/0xa0
+> > [   33.902595]  ext4_ioctl+0x12/0x20
+> > [   33.902802]  ? ext4_ioctl+0x12/0x20
+> > [   33.903031]  __x64_sys_ioctl+0x99/0xd0
+> > [   33.903277]  x64_sys_call+0x1206/0x20d0
+> > [   33.903534]  do_syscall_64+0x72/0x110
+> > [   33.903771]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > [   33.904115]  ? irqentry_exit+0x3f/0x50
+> > [   33.904362]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > [   33.904707]  ? exc_page_fault+0x1aa/0x7b0
+> > [   33.904979]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [   33.905349] RIP: 0033:0x7f46efe3294f
+> > [   33.905579] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10=
+ 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05=
+ <41> 89 c0 3d 00 f0 ff ff 77 1f 48 8b 44 24 18 64 48 2b 04 25 28 00
+> > [   33.907321] RSP: 002b:00007ffe9b8833a0 EFLAGS: 00000246 ORIG_RAX: 00=
+00000000000010
+> > [   33.907926] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f4=
+6efe3294f
+> > [   33.908487] RDX: 00007ffe9b8834a0 RSI: 0000000040086610 RDI: 0000000=
+000000004
+> > [   33.909046] RBP: 00005630a4a0b0e0 R08: 0000000000000000 R09: 00007ff=
+e9b8832d7
+> > [   33.909605] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000=
+000000004
+> > [   33.910165] R13: 00005630a4a0c580 R14: 00005630a4a10400 R15: 0000000=
+000000000
+> > [   33.910740]  </TASK>
+> > [   33.910837] Modules linked in:
+> > [   33.911049] ---[ end trace 0000000000000000 ]---
+> > [   33.911428] RIP: 0010:ext4_resize_fs+0x1212/0x12d0
+> > [   33.911810] Code: b8 45 31 c0 4c 89 ff 45 31 c9 31 c9 ba 0e 08 00 00=
+ 48 c7 c6 68 75 65 b8 e8 2b 79 01 00 41 b8 ea ff ff ff 41 5f e9 8d f1 ff ff=
+ <0f> 0b 48 83 bd 70 ff ff ff 00 75 32 45 31 c0 e9 53 f1 ff ff 41 b8
+> > [   33.913928] RSP: 0018:ffffa97f413f3cc8 EFLAGS: 00010202
+> > [   33.914313] RAX: 0000000000000018 RBX: 0000000000000001 RCX: 0000000=
+0fffffff0
+> > [   33.914909] RDX: 0000000000000017 RSI: 0000000000000016 RDI: 0000000=
+0e8c2c810
+> > [   33.915482] RBP: ffffa97f413f3d90 R08: 0000000000000000 R09: 0000000=
+000008000
+> > [   33.916258] R10: ffffa97f413f3cc8 R11: ffffa2c1845bfc80 R12: 0000000=
+000000000
+> > [   33.917027] R13: ffffa2c1843d6000 R14: 0000000000008000 R15: ffffa2c=
+199963000
+> > [   33.917884] FS:  00007f46efd17000(0000) GS:ffffa2c89fc40000(0000) kn=
+lGS:0000000000000000
+> > [   33.918818] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   33.919322] CR2: 00005630a4a1cc88 CR3: 000000010532c000 CR4: 0000000=
+000350eb0
+> > [   44.072293] ------------[ cut here ]------------
+> >
+> > Cc: stable@vger.kernel.org # v6.8+
+> > Fixes: 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in all=
+oc_flex_gd()")
+> > Cc: "Theodore Ts'o" <tytso@mit.edu>
+> > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Baokun Li <libaokun1@huawei.com>
+> > Cc: St=C3=A9phane Graber <stgraber@stgraber.org>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: <linux-kernel@vger.kernel.org>
+> > Cc: <linux-fsdevel@vger.kernel.org>
+> > Cc: <linux-ext4@vger.kernel.org>
+> > Reported-by: Wesley Hershberger <wesley.hershberger@canonical.com>
+> > Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2081231
+> > Reported-by: St=C3=A9phane Graber <stgraber@stgraber.org>
+> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
+om>
+> > ---
+> >  fs/ext4/resize.c | 13 ++++++-------
+> >  1 file changed, 6 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+> > index e04eb08b9060..c057a7867363 100644
+> > --- a/fs/ext4/resize.c
+> > +++ b/fs/ext4/resize.c
+> > @@ -300,8 +300,7 @@ static void free_flex_gd(struct ext4_new_flex_group=
+_data *flex_gd)
+> >   * block group.
+> >   */
+> >  static int ext4_alloc_group_tables(struct super_block *sb,
+> > -                             struct ext4_new_flex_group_data *flex_gd,
+> > -                             unsigned int flexbg_size)
+> > +                             struct ext4_new_flex_group_data *flex_gd)
+> >  {
+> >       struct ext4_new_group_data *group_data =3D flex_gd->groups;
+> >       ext4_fsblk_t start_blk;
+> > @@ -313,7 +312,7 @@ static int ext4_alloc_group_tables(struct super_blo=
+ck *sb,
+> >       ext4_group_t group;
+> >       ext4_group_t last_group;
+> >       unsigned overhead;
+> > -     __u16 uninit_mask =3D (flexbg_size > 1) ? ~EXT4_BG_BLOCK_UNINIT :=
+ ~0;
+> > +     __u16 uninit_mask =3D (flex_gd->resize_bg > 1) ? ~EXT4_BG_BLOCK_U=
+NINIT : ~0;
+> >       int i;
+> >
+> >       BUG_ON(flex_gd->count =3D=3D 0 || group_data =3D=3D NULL);
+> > @@ -321,8 +320,8 @@ static int ext4_alloc_group_tables(struct super_blo=
+ck *sb,
+> >       src_group =3D group_data[0].group;
+> >       last_group  =3D src_group + flex_gd->count - 1;
+> >
+> > -     BUG_ON((flexbg_size > 1) && ((src_group & ~(flexbg_size - 1)) !=
+=3D
+> > -            (last_group & ~(flexbg_size - 1))));
+> > +     BUG_ON((flex_gd->resize_bg > 1) && ((src_group & ~(flex_gd->resiz=
+e_bg - 1)) !=3D
+> > +            (last_group & ~(flex_gd->resize_bg - 1))));
+> >  next_group:
+> >       group =3D group_data[0].group;
+> >       if (src_group >=3D group_data[0].group + flex_gd->count)
+> > @@ -403,7 +402,7 @@ static int ext4_alloc_group_tables(struct super_blo=
+ck *sb,
+> >
+> >               printk(KERN_DEBUG "EXT4-fs: adding a flex group with "
+> >                      "%u groups, flexbg size is %u:\n", flex_gd->count,
+> > -                    flexbg_size);
+> > +                    flex_gd->resize_bg);
+> >
+> >               for (i =3D 0; i < flex_gd->count; i++) {
+> >                       ext4_debug(
+> > @@ -2158,7 +2157,7 @@ int ext4_resize_fs(struct super_block *sb, ext4_f=
+sblk_t n_blocks_count)
+> >                                        ext4_blocks_count(es));
+> >                       last_update_time =3D jiffies;
+> >               }
+> > -             if (ext4_alloc_group_tables(sb, flex_gd, flexbg_size) !=
+=3D 0)
+> > +             if (ext4_alloc_group_tables(sb, flex_gd) !=3D 0)
+> >                       break;
+> >               err =3D ext4_flex_group_add(sb, resize_inode, flex_gd);
+> >               if (unlikely(err))
+> > --
+> > 2.34.1
+> >
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
