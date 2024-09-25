@@ -1,110 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-30088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF499860A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B21B29860AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E187B288799
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:29:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B68287B9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEA74AECE;
-	Wed, 25 Sep 2024 13:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D4218C343;
+	Wed, 25 Sep 2024 13:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Lc2HD6bl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6259F487B0;
-	Wed, 25 Sep 2024 13:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06ACA18C03D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 13:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727270330; cv=none; b=dCV4cibeHzCN1JDTVaAA/Wd/XEhjsKZZieZFT04JFZvmFdbEjJAbsqgv7/6fDpVf0dlO6fBlwjGGd6Jnh3VtGvZ8xL2XAXpXIqclAK76wd/1ibDu37wm1qVhg55rvJVXbpcSVdtm8wzFYCYh936Y5nm7dTtCw+f6Tv/ZtLYxGgY=
+	t=1727270493; cv=none; b=i8bqoR7oo2cxo0/KwXsqc2v7T+yp7mzYR0VZQUVKyMgvI/Iwl8XwvrT9TmzS+/y1v6/Tw1/sojd+cyBLG6MMfJObUASqvpR2l1Eq1OMrPmyuxXlkuWEMIeiky4bTJ+tR2ZKkRgZLpdzOBmtcqZoYN23x+tRKWpZczHrfeJKpN2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727270330; c=relaxed/simple;
-	bh=PP7aq5C8n8TxDp+EHp46ciDzlU37Fv5PHSVhKT+8QHk=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=Kn0JouL5poqp6ABJxzTLCc5+DBxmPjTJxHXJjfc+m8lQXZRl9QA7Eq2/2psm7zZtQ9atqJC2V0aJlGnrMEIrXaaK15cwFvJ72BjTGVnx0tRFe/OUEk/5nqxug/rEjWi22whwMl5tsBIJkiG+TiXvh4KyXttesI36jMyFFyTxG4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:53986)
-	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1stRup-006dUP-MN; Wed, 25 Sep 2024 07:18:47 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:58286 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1stRuo-004SfG-DQ; Wed, 25 Sep 2024 07:18:46 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Tycho Andersen <tycho@tycho.pizza>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Jan Kara <jack@suse.cz>,  Kees Cook
- <kees@kernel.org>,  Jeff Layton <jlayton@kernel.org>,  Chuck Lever
- <chuck.lever@oracle.com>,  Alexander Aring <alex.aring@gmail.com>,
-  linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Tycho Andersen <tandersen@netflix.com>,
-  Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,  Aleksa
- Sarai
- <cyphar@cyphar.com>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
-	<20240925-herziehen-unerbittlich-23c5845fed06@brauner>
-Date: Wed, 25 Sep 2024 08:18:39 -0500
-In-Reply-To: <20240925-herziehen-unerbittlich-23c5845fed06@brauner> (Christian
-	Brauner's message of "Wed, 25 Sep 2024 10:31:04 +0200")
-Message-ID: <874j63an2o.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727270493; c=relaxed/simple;
+	bh=mnoe8Xd1F7ztDH7Q61E4LvL1QadZ2xUAO++ntgsh7/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=rgUzjDwaiXTKmeB5y2KE2lrup5OI4WxLfE4hc7ebWZGRVuxG2wzpKxQzDIWgqxtL+YRj2dvy38FhWQj7eldgcU4tdoXOQPV7eVPGGH0khyNQkbuYksgSMR5HE63KSVXb5nlQIrKt+doQR/uULyoErB14Wm1tPTPpAP+/E4MQpfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Lc2HD6bl; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240925132127epoutp03c369febcc6d104341e771161c130b166~4f1tV9TW31388413884epoutp03K
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 13:21:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240925132127epoutp03c369febcc6d104341e771161c130b166~4f1tV9TW31388413884epoutp03K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727270487;
+	bh=+1Yc1j/F9EUOGjp4C92RegYtPjoX8rRZqa0vTdTHK48=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Lc2HD6blpJLV/4WfxwsAMpBsi8DR/GOPrjWsVCPHq5pNPwKz1Gs5TMn5c8GQkysLI
+	 5omKhiT71xcyqH1j/ZPBXqq2N/H1VD5qhpZb2PAV0d9v+dXE9fnnWpCb7McLLolakE
+	 0WNG7VZu3dH6EYYYyk1EtjeTpayhfHnFRxa3wYyM=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240925132126epcas5p2b8370189c618a80127d8cb97c040f7a7~4f1somcHI0162601626epcas5p2T;
+	Wed, 25 Sep 2024 13:21:26 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4XDHS52bxdz4x9Ps; Wed, 25 Sep
+	2024 13:21:25 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	80.A5.08855.55E04F66; Wed, 25 Sep 2024 22:21:25 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240925132124epcas5p1cc362b7e5fec64e41bde11aec1ab9ea5~4f1qS-viC2284122841epcas5p1t;
+	Wed, 25 Sep 2024 13:21:24 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240925132124epsmtrp1de7dc004f5a08b5d887f6fa16623a015~4f1qSD7971595215952epsmtrp1w;
+	Wed, 25 Sep 2024 13:21:24 +0000 (GMT)
+X-AuditID: b6c32a44-15fb870000002297-b7-66f40e5581c4
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9B.C3.19367.35E04F66; Wed, 25 Sep 2024 22:21:23 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240925132120epsmtip1fc0524d7ed2f4e6e95512f107b748adb~4f1nR6kh43096430964epsmtip1w;
+	Wed, 25 Sep 2024 13:21:20 +0000 (GMT)
+Message-ID: <8665404f-604e-ef64-e8d7-2a2e9de60ba7@samsung.com>
+Date: Wed, 25 Sep 2024 18:51:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1stRuo-004SfG-DQ;;;mid=<874j63an2o.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+iuWV+WzFVZr6NUegQlBB1YDjWlT50k0Y=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4009]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christian Brauner <brauner@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 346 ms - load_scoreonly_sql: 0.06 (0.0%),
-	signal_user_changed: 9 (2.6%), b_tie_ro: 7 (2.1%), parse: 1.01 (0.3%),
-	extract_message_metadata: 3.1 (0.9%), get_uri_detail_list: 0.77 (0.2%),
-	 tests_pri_-2000: 2.5 (0.7%), tests_pri_-1000: 3.3 (1.0%),
-	tests_pri_-950: 1.35 (0.4%), tests_pri_-900: 1.15 (0.3%),
-	tests_pri_-90: 146 (42.1%), check_bayes: 143 (41.3%), b_tokenize: 5
-	(1.5%), b_tok_get_all: 4.1 (1.2%), b_comp_prob: 1.71 (0.5%),
-	b_tok_touch_all: 128 (37.1%), b_finish: 0.91 (0.3%), tests_pri_0: 159
-	(45.9%), check_dkim_signature: 0.54 (0.2%), check_dkim_adsp: 8 (2.3%),
-	poll_dns_idle: 6 (1.8%), tests_pri_10: 2.2 (0.6%), tests_pri_500: 7
-	(2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: cyphar@cyphar.com, zbyszek@in.waw.pl, tandersen@netflix.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, alex.aring@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, kees@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk, tycho@tycho.pizza, brauner@kernel.org
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out02.mta.xmission.com); SAEximRunCond expanded to false
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+	Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH v6 3/3] io_uring: enable per-io hinting capability
+Content-Language: en-US
+To: Pavel Begunkov <asml.silence@gmail.com>, Hannes Reinecke <hare@suse.de>,
+	axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	martin.petersen@oracle.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+	bvanassche@acm.org
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com, Nitesh
+	Shetty <nj.shetty@samsung.com>
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <cb3302c0-56dd-4173-9866-c8e40659becb@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf1DTZRzH7/nuyzYo3NcJ8UCezVXegYFbwXzwQEyJ+wqeoV53FiEt9uXH
+	bWxrP0Cgu8gOyl0OGYY0EEwpYXJ4DAQGA71JN1H5kQQBDV0xSuCGAXYlBLQxIv97PZ/P+33v
+	5/N57mHS2GWMIGamVEUppEIJl+6Dt9wKDgl9Z9OTNN5tPQtVGloAujpeTEealWYczdyaB6js
+	j6c0NHtqCUejN00YMl/SYaju6vcYmi3sw1HF+c8w5Limp6EJ2wID6SzDAJ0rOwVQ59hOZO7s
+	wVH1d5MMdMW6gqGWpWoaaph5jKP+ZasX6tdXMvYFkIM/JpAm/TiD7H/QiJODvWrSaDhNJ43z
+	OgbZVPMJ2TFaQCfnJsdw8nHXEJ3UNhsAee9it6t5N59cMG4jjQ4nlsh6TxyVQQlFlIJDSVNl
+	okxpejQ34VjKgZQIAY8fyo9Eu7kcqTCLiubGHkoMjcuUuHbA5WQLJWpXKVGoVHJ37Y1SyNQq
+	ipMhU6qiuZRcJJGHy8OUwiylWpoeJqVUe/g83usRLuEH4ozZykeYvIR50jltoheARroGeDMh
+	EQ6nJ0cYbmYTHQA2n35FA3xcPA9gZ3UTtnFwtmoYG47yy7inYQKwR9u3bncCWDGb7GZfYi+c
+	LDhHczNOvAqHp/6me+qbYc/XDtzN/sSHcHGoErh5CxEHmyr6vdxMIwLgmKN6LdmPMGHw9+WH
+	dPeBRqwC+FWdwaViMulEMBwoVbvRm4iGc/YTHu9LsNVZSXPLIXHDGzospZjn1rHQbm/GPbwF
+	Tlub16cJglPFResshvZf7euaj2Fbk9bLwzGw4J+RtViaK/Za+y5P1iZ4ZsmBucuQ8IVfFLE9
+	6u3wgW5y3RkAfymv8fJISKhZPuxZ230M6qYasbOAo39mK/pnptc/M43+/+CLADeAQEquzEqn
+	UiPkfCmVs/HcqbIsI1j7ICGxbWCkeiXMAjAmsADIpHH9fHWjc2lsX5EwN49SyFIUagmltIAI
+	1/OU0IL8U2WuHyZVpfDDI3nhAoEgPPINAZ8b4DtTeEHEJtKFKkpMUXJK8Z8PY3oHFWDPr34e
+	efd624HzXBtrtWX5uslywvnbRM3TrbJs0p6fPWC9uZg0ZDOHmi0Nmi8f2pNfCNhzKHfHQved
+	Ny//FdpRP/Hn23NHqnKOaI/Xq80/JwR+GtX1TVVR1ftgoEXbvhI3ulj6shcLTxhOHjLyrqjr
+	XsyLqt3fwW+focyHbfPlTxrz7MYLtuAYa28WK95vlX20py3wUq6O+e3x2nf9WfcT2IzsnO3i
+	sJKF27263UofwbYbkj4+ETNm08RSE0kN8Zoigah1q+FMzXh+ak7XkvZk0sGDZfU7jg7WxFGF
+	jyLFzxXv3CwpP1b5U0h3oJVzJ62PN3LvtfiPbEv794W8VWsK+yGQiyszhPwQmkIp/Bd5Uipy
+	qQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsWy7bCSnG4w35c0gxc3rCzmrNrGaLH6bj+b
+	Rde/LSwWrw9/YrSY9uEns8W7pt8sFjcP7GSy2LNoEpPFytVHmSzetZ5jsZg9vZnJ4sn6WcwW
+	j+98ZreYdOgao8WUaU2MFntvaVvs2XuSxWL+sqfsFsuP/2Oy2PZ7PrPFutfvWSzO/z3OanF+
+	1hx2B3GPy1e8PXbOusvucf7eRhaPy2dLPTat6mTz2PRpErvH5iX1HrtvNrB5fHx6i8Xj/b6r
+	bB59W1YxepxZcAQoebra4/MmOY9NT94yBfBHcdmkpOZklqUW6dslcGW8m/OCqWAiR8XbVzvZ
+	Ghg3snUxcnJICJhIvJqxmKWLkYtDSGA7o8SfXXNZIRLiEs3XfrBD2MISK/89Z4coes0o0XRq
+	Mlg3r4CdxNOGKcwgNouAqsS1lz+g4oISJ2c+YQGxRQWSJPbcb2QCsYUF3CQ2zz4PtoAZaMGt
+	J/OZQIaKCOxkkvi48T8biMMs8J9RouPYMiaIdZeYJHa93QCU4eBgE9CUuDC5FMTkFLCV+Pgg
+	DmKQmUTX1i5GCFteYvvbOcwTGIVmIbljFpJ9s5C0zELSsoCRZRWjaGpBcW56bnKBoV5xYm5x
+	aV66XnJ+7iZGcKrQCtrBuGz9X71DjEwcjIcYJTiYlUR4J938mCbEm5JYWZValB9fVJqTWnyI
+	UZqDRUmcVzmnM0VIID2xJDU7NbUgtQgmy8TBKdXAtGty91rZVe5KTw30j9rtT5U90HPz0buu
+	I1u55tobHwuyyKmdd4VhWvP1rz9+WLO73TH4v/O5cvSMKWtkub1UZTae4+jWOr4gyY35iekh
+	YQ2lrUFL5zL9zNryWrdU1KWIffO67WoMpQtEP3JPaWx8YzTDsKnJ8olqVtgcnbBvwVYL20zO
+	r/nXsD5c535PaaF0dxun9QuR2Y9vVzWeePDfj8v1BXMiT73B5e8v9r/UuN75fpJoq/bCIl2e
+	617qXBm/PPndHsw8+TV86uppvWuqFba+2b/yNkOE8oHrwU6Psz7naGQFp/9b/e349F6u3ILV
+	7zYvVuP89zp7sWVYhcn14wxBqXILZeI7bh345/34sBJLcUaioRZzUXEiAE9puQyEAwAA
+X-CMS-MailID: 20240925132124epcas5p1cc362b7e5fec64e41bde11aec1ab9ea5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53
+References: <20240924092457.7846-1-joshi.k@samsung.com>
+	<CGME20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53@epcas5p1.samsung.com>
+	<20240924092457.7846-4-joshi.k@samsung.com>
+	<28419703-681c-4d8c-9450-bdc2aff19d56@suse.de>
+	<678921a8-584c-f95e-49c8-4d9ce9db94ab@samsung.com>
+	<cb3302c0-56dd-4173-9866-c8e40659becb@gmail.com>
 
-Christian Brauner <brauner@kernel.org> writes:
+On 9/25/2024 5:53 PM, Pavel Begunkov wrote:
+> On 9/25/24 12:09, Kanchan Joshi wrote:
+>> On 9/25/2024 11:27 AM, Hannes Reinecke wrote:
+> ...
+>> As it stands the new struct will introduce
+>>> a hole of 24 bytes after 'hint_type'.
+>>
+>> This gets implicitly padded at this point [1][2], and overall size is
+>> still capped by largest struct (which is of 16 bytes, placed just above
+>> this).
+> 
+> For me it's about having hardly usable in the future by anyone else
+> 7 bytes of space or how much that will be. Try to add another field
+> using those bytes and endianess will start messing with you. And 7
+> bytes is not that convenient.
+> 
+> I have same problem with how commands were merged while I was not
+> looking. There was no explicit padding, and it split u64 into u32
+> and implicit padding, so no apps can use the space to put a pointer
+> anymore while there was a much better option of using one of existing
+> 4B fields.
 
-> Please add a:
->
-> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
->
-> to the commit where this originated from.
-
-What standing does some random github project have? 
-
-Eric
+How would you prefer it. Explicit padding (7 bytes), hint_type as u16 or 
+anything else?
 
