@@ -1,176 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-30125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7802C98686C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 23:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247D098687B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 23:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 023A6284B82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 21:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E214E281F15
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 21:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E161534EC;
-	Wed, 25 Sep 2024 21:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A504C91;
+	Wed, 25 Sep 2024 21:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="lh4VTquL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iSwaEIRt"
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="cCJt1xVl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+Received: from rcdn-iport-6.cisco.com (rcdn-iport-6.cisco.com [173.37.86.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B232F13AA5F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 21:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA001534FB;
+	Wed, 25 Sep 2024 21:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727300542; cv=none; b=FTgH6upeToYP4QyMwqhq9MjOIB0MkX1uZfnHW33trACnPpfMDtb6jmkVUXDc8+KZcvUhYfbuc6Ef6DRta2IYFKmf7UW5IwiyfMrMpiUJ+rG+Lv4zg+Vic/D8bRr2wVxtEyveLo5A+yEIXWneuv+rWSunvcgkWK3ftPZVJNuJbgk=
+	t=1727300796; cv=none; b=jNfW5HTiJErsSQ/yvtDoWhg5PxWhRNvc5jkHf9Eo/AnFkmvNOSG3bUx4rPUWNPq3SQLSyjZE+2BKEuuPJVWKhx4d9yq5VIiXX/dXUl3CmJrUhzNVA9LYojhWasWgMPpNWkpRUddJuF/jZrdQpKktmBi4E251gB54WHMdfcasZRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727300542; c=relaxed/simple;
-	bh=GckInD7EWFcX7GPJAcK/x1Y1NjJemSDuXg4bcm4WTZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNbs3oYX1t0+t3RJ+RdnYM2hCwh9JTFnjX+LEbwhO1QA7B8yWghfkb9mhlIDQZLkgT7Ll5stdGfJNng5rqMuAZOSLr6xWJJfVXIyYDxCw/0HrtprBCpyiFl8k94Qo+y8IXqOMP+eoUDoPOGs7g96RwuOS+IkN8s/OkOb1WJIr+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=lh4VTquL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iSwaEIRt; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id ADAB8114019A;
-	Wed, 25 Sep 2024 17:42:19 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 25 Sep 2024 17:42:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1727300539;
-	 x=1727386939; bh=jy8hYqzIpYDgZDGxEkmjMxGauGUbI8uv6wRmfEnjWsM=; b=
-	lh4VTquLbuvaCzKHXn88mvon9oDlIhSKkqIqnt3z6/3usOioX7ElE4QDWalwd+5O
-	ktQOxW6RiyqYZT2KexCYJakU5WvcvjQoc0qOagiB9PDmpZ3K6fiJ31RTMvugq5ih
-	cZgQakJMFy8WhMucDan0xoghaHlMA0XU/xdnwFkk5lHfJIKhYpMvhmgM9iKBWqej
-	G5aw2+udzhrKLm6uGUFOa9I8yqCwf40DZQGzUR9n/NiZi6F3oQX+5ML4eJHgrWiD
-	d3vr+sSOLCjFrCTfC7hoYV+uDt+4vvdPeQpIy8D1G0sVKwSrDc+aZU6Go5DOhi53
-	UPH7pQIq/qPYzKE5cyfLDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727300539; x=
-	1727386939; bh=jy8hYqzIpYDgZDGxEkmjMxGauGUbI8uv6wRmfEnjWsM=; b=i
-	SwaEIRt5Vcf4EhapKBLokHg/ddvZ+IF0UkxjafmqEXv6TYIkS+RbBfLIj5nQ1rd6
-	Rya4Jgn5dY+F1lUbY/Yup1q1wTpIpawSOBaCdIjgc1eKFm5Dl+zEf3SQN7+kH+MD
-	n2kjsdyjEbXjBDDGG9aamQCAcmhv3EDrZg7igF5sgGgQYS2C6I/JBu+caJfotgT4
-	apYWaOhe0vmh3d3ZA1kwkYyU5cTK9j+BMIzjkwINWGo5YuT6KLNz1rpZ91MPJjCm
-	FrxMMqHc04o9jO+S2Lk6M42K3CKRNAu90PcDAmvk5+q+PolzLtC03QMFcobpk8D8
-	dHizHuy86nO4ZAb4BPjzg==
-X-ME-Sender: <xms:u4P0Zs6gMN8IkN-NAhduCI8FL-hM5ss5qLvl6VntuAzYmO1NXHgXeg>
-    <xme:u4P0Zt6nC-LqN2xawe-V4Kl_PhG3Bvpza0ZmDxEedYGvYO2t0lG9AHvymWLiSbwvs
-    juCXbcN9UpWuD1b>
-X-ME-Received: <xmr:u4P0ZrdF0PPeSlzzQrmZaf2-c3EWCn-sEOLlDb0CfpJzKcPRlXdhjcK8QoOKqW2iWDeDIQaBv0Y_UH9SWY5EGw6dlociUUwNDQQx_6vtx2mMqp3TAz38>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtiedgtddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
-    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
-    lhgruhhrrgdrphhrohhmsggvrhhgvghrsegtvghrnhdrtghhpdhrtghpthhtohepfhhush
-    gvqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthht
-    oheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:u4P0ZhKF5ymC3tJBCTk0nBh0woRDzH94o_6zbut_NVqUQInFhRzaXA>
-    <xmx:u4P0ZgKZ_V2vcwtbyhtkdE6NPjzZgoGql_Q_SPcXUagcThGqAZwPaA>
-    <xmx:u4P0ZiyOMCeMJ0_2JPEJSEvOuGlNwno6Y5UlEQ4GXK_709vMp2c8CA>
-    <xmx:u4P0ZkKilfp34Wy1cZ_21koOmqSJXIcEp8ZhCuVG9RkkvcAk7FbIKg>
-    <xmx:u4P0ZlF3jAPLQdzUXG6Epqs7Jr5Yx7BHW5rYDWB8_mkPj21QfzUTYQxo>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Sep 2024 17:42:18 -0400 (EDT)
-Message-ID: <e137f814-f9ca-44d0-9620-8c421d50d685@fastmail.fm>
-Date: Wed, 25 Sep 2024 23:42:17 +0200
+	s=arc-20240116; t=1727300796; c=relaxed/simple;
+	bh=Kx2+4ZXFIWfwPwQqzWzCQt1Dr+Ll7UJtTbovdy752CY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q6ElJNXdjVnOP9FBLdepFWpg2/VsxJKts9NcFkqAyJgnOjBDza/LlMBzYks/jTfwMChwkLwKfStqLQ1VxKMLzfjulyAevESdrF5zuLIWwfLK/p8+kuOIMd9T8B4UOmSLYLY9qEXniawr3cXoHps5E0FR7hi+Hpk7D4J3zIQvoik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=cCJt1xVl; arc=none smtp.client-ip=173.37.86.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=cisco.com; i=@cisco.com; l=5105; q=dns/txt; s=iport;
+  t=1727300794; x=1728510394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VckOAgRjdjkhJ0K9ZO4MPe4CiswPipPZEA7GbCxjh5M=;
+  b=cCJt1xVlKcpZq1SXiYwfeNDNowxyck0wBWeYdi0Fi26mNCSCPyNg5DMi
+   L75QA/8M9KzqmnzwEhlcGHNQeNCxFHA63iA76OowwTfmxzl6THEeZy0Xm
+   kXRZZEwCxtnXwD4Wr7QxMMFL1PpTqfK/Qyfc3wX9Onclxin7vyWHk/ysD
+   Q=;
+X-CSE-ConnectionGUID: WQuQom6JQ06Xd3Zv61Pf8w==
+X-CSE-MsgGUID: 8zLzPAsSQv2dNIE0WjRMNg==
+X-IPAS-Result: =?us-ascii?q?A0ADAAC0g/RmmJxdJa1aGwEBAQEBAQEBBQEBARIBAQEDA?=
+ =?us-ascii?q?wEBAUCBOwYBAQELAYNAWUNIBIxuhzCCIgOeFYF+DwEBAQ0BATsJBAEBhEFGA?=
+ =?us-ascii?q?ooEAiY0CQ4BAgQBAQEBAwIDAQEBAQEBAQEBBQEBBQEBAQIBBwUUAQEBAQEBA?=
+ =?us-ascii?q?QE3BUmFdQ2GWwEBAQECATo0CwULCw4KLlYGExSCbQGCQSMDEQawF3iBNIEBg?=
+ =?us-ascii?q?2IB2k+BZgaBSAGISgGFZhuEXCcbgUlEhD8+glUMAQECgUiGWgSGcIp+DQ6BJ?=
+ =?us-ascii?q?4lLfCVNiHATkH1Se3ghAhEBVRMXCwkFiTgKgxwpgUUmgQqDC4Ezg3KBZwlhi?=
+ =?us-ascii?q?EmBDYE+gVkBgzdKg0+BeQU4Cj+CUWtOOQINAjeCKIEOglqFAE0dQAMLbT01F?=
+ =?us-ascii?q?BusOYFbSIMFRSgQBAEEDAsCLAINcBgkQS0DkkpLB4JnjmKBOZ9KhCGMFpUmT?=
+ =?us-ascii?q?RMDg2+NAYZEOpJBmHaNe5VhhRcCBAYFAheBZzqBWzMaCBsVgyITDDMZD44tD?=
+ =?us-ascii?q?QmDWIRZO7oFQzICATgCBwsBAQMJi1aBfAEB?=
+IronPort-Data: A9a23:FvU1bqM2Hhuk3+bvrR29kMFynXyQoLVcMsEvi/4bfWQNrUol1zEHy
+ 2YfWW/SOPyMZDCkctgiaIyw8R9QuJ/WztYwSXM5pCpnJ55oRWUpJjg4wmPYZX76whjrFRo/h
+ ykmQoCdap1yFDmE/0fF3oHJ9RFUzbuPSqf3FNnKMyVwQR4MYCo6gHqPocZh6mJTqYb/WlvlV
+ e/a+ZWFZAf0gWMsaAr41orawP9RlKWq0N8nlgRWicBj5Df2i3QTBZQDEqC9R1OQapVUBOOzW
+ 9HYx7i/+G7Dlz91Yj9yuu+mGqGiaue60Tmm0hK6aYD76vRxjnBaPpIACRYpQRw/ZwNlMDxG4
+ I4lWZSYEW/FN0BX8QgXe0Ew/ypWZcWq9FJbSJSymZT78qHIT5fj68pXEXgxONM6w74pMW0Vx
+ +JGcQgDPg/W0opawJrjIgVtrt4oIM+uN4QFtzQ9izrYFv0hB5vERs0m5/cBg2x23Z8ITK2YP
+ pdHAdZsREyojxlnM1IWA486lfyAjXjkeDoeo1WQzUYyyzKNklYsieWzb7I5fPTaV+FHpm+Dn
+ VvYpWjfIzxCC96l7ByKpyfEaujnxn6jB9lIS9VU7MVCnFqJ2GUXBAY+UVq9vOn8hEmjXd5WN
+ 00T/Gwpt6da3EiqSMTtGhCip3CflhodQMZLVeoo7AiH0ezT+QnxLmwFSCNRLdI9uMIoSDgCy
+ FCEhZXqCCZpvbnTTmiSnp+KrCm1EToYK24cIysFSxYVpd75r8cujXrnStdlDb7wjdDvHzz06
+ y6FoTJ4hLgJi8MPkaKh8jjvjCihqZvJZgo04BjHUGW46A9weI+iYcqv81ezxexdN5rcQF6b+
+ XwFndWOxP4BAIvLlyGXRugJWraz6J6tLDrbhVtmGYEJ6zCo4zioduh47zhkNW9mO9wVdiLuJ
+ knepWt57pJVOnzsaahseIO3I9wwyrTnE5LgW5j8bsFPa55+dwaA1CVvY1OAmWnpkUIlm6h5M
+ pCeGftAFl4AAqhhiTGxXepYjPkgxzs1wiXYQpWTIwmbPaS2W0eIcLAAbnm3Nr4J4Pi2vluMy
+ 9gPKJ7fo/lAa9HWbi7S+I8VCFkFK3knGJz7w/C7kMbdfmKK/0l/V5fsLaMdRmBzo0hCeg71E
+ pyVQERUzh/0gmfKbFjMYXF4Y7SpVpF6xZ7aAcDOFQj0s5TASd/zhEv6S3fRVeJ6nACE5aUoJ
+ 8Tpg+3aXpxyps3volzxl6XVoo14bwiMjgmTJSejazVXV8c/HVOTooW6L1C2rnhm4s+LWS0W/
+ eXIOuTzHMpreuieJJyKAB5S5wrr5CFGybgas7XgeYEKIRiEHHdWx9zZ1aJvfJpWdn0vNxOR1
+ h2dBl8DtPLRroouuNjPjubskmtaO7UWI6auJEGCtezeHXCDpgKLmNYQOM7WJmq1fD2vp82fi
+ RB9kquU3Asvxgga6uKR0t9DkMoD2jcYj+UHlV88QyuXPgvD53EJCiDu4PSjf5Zlntdx0TZak
+ GrWkjWGEd1l4P/YLWM=
+IronPort-HdrOrdr: A9a23:lRCHlqlZzZSEcjSRQa3F8T9TXMDpDfID3DAbv31ZSRFFG/FwWf
+ rAoB0+726QtN9xYgBDpTnuAsO9qB/nmKKdpLNhWYtKPzOW21dATrsC0WKK+VSJcBEWtNQ86U
+ 4KScZD4bPLYWRSvILT/BS4H9E8wNOO7aykwdvFw2wFd3AMV0mlhD0Jczpy1SZNNW97OaY=
+X-Talos-CUID: =?us-ascii?q?9a23=3AXp24JGsFh2/+uU3Er4puKZVJ6IsaS2Dky3KOAXb?=
+ =?us-ascii?q?gV1ZlE4+LFwao9vN7xp8=3D?=
+X-Talos-MUID: 9a23:w5wbjQrd+hl7jmlbCOUez2FwENVQyr+VMV5XnbMnlpG7NxZVHTjI2Q==
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.10,258,1719878400"; 
+   d="scan'208";a="266251567"
+Received: from rcdn-core-5.cisco.com ([173.37.93.156])
+  by rcdn-iport-6.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 21:45:26 +0000
+Received: from localhost ([10.239.198.28])
+	(authenticated bits=0)
+	by rcdn-core-5.cisco.com (8.15.2/8.15.2) with ESMTPSA id 48PLjMBV025421
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 25 Sep 2024 21:45:25 GMT
+Date: Thu, 26 Sep 2024 00:45:18 +0300
+From: Ariel Miculas <amiculas@cisco.com>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>,
+        Yiyang Wu <toolmanp@tlmp.cc>, rust-for-linux@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+Message-ID: <20240925214518.fvig2n6cop3sliqy@amiculas-l-PF3FCGJH>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-4-toolmanp@tlmp.cc>
+ <20240916210111.502e7d6d.gary@garyguo.net>
+ <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
+ <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
+ <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+ <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
+ <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
+ <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [fuse-devel] Symlink caching: Updating the target can result in
- corrupted symlinks - kernel issue?
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Laura Promberger <laura.promberger@cern.ch>,
- "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>,
- linux-fsdevel@vger.kernel.org
-References: <GV0P278MB07187F9B0E7B576AD0B362B485802@GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM>
- <CAJfpegvVtao9OotO3sZopxxkSTkRV-cizpE1r2VtG7xZExZFOQ@mail.gmail.com>
- <a48f642d-a129-4a55-8338-d446725dc868@fastmail.fm>
- <CAJfpegv=7cnS9N7Fb8dMXSNgA1neYuhqavGeBdTAKFHXhL19KQ@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegv=7cnS9N7Fb8dMXSNgA1neYuhqavGeBdTAKFHXhL19KQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
+X-Authenticated-User: amiculas@cisco.com
+X-Outbound-SMTP-Client: 10.239.198.28, [10.239.198.28]
+X-Outbound-Node: rcdn-core-5.cisco.com
 
-
-
-On 9/25/24 16:25, Miklos Szeredi wrote:
-> On Wed, 25 Sept 2024 at 16:07, Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
->>
->> Hi Miklos,
->>
->> On 9/25/24 14:20, Miklos Szeredi wrote:
->>> On Thu, 15 Aug 2024 at 16:45, Laura Promberger <laura.promberger@cern.ch> wrote:
->>>
->>>> - But for corrupted symlinks `fuse_change_attributes()` exits before `fuse_change_attributes_common()` is called and as such the length stays the old one.
->>>
->>> The reason is that the attr_version check fails.  The trace logs show
->>> a zero attr_version value, which suggests that the check can not fail.
->>> But we know that fuse_dentry_revalidate() supplies a non-zero
->>> attr_version to fuse_change_attributes() and if there's a racing
->>> fuse_reverse_inval_inode() which updates the fuse_inode's
->>> attr_version, then it would result in fuse_change_attributes() exiting
->>> before updating the cached attributes, which is what you observe.
->>
->>
->> I'm a bit confused by this, especially due to "fuse_reverse_inval_inode()",
->> isn't this about FUSE_NOTIFY_INVAL_ENTRY and the additional flag
->> FUSE_EXPIRE_ONLY? I.e. the used code path is fuse_reverse_inval_entry()?
->> And that path doesn't change the attr_version? Which I'm also confused
->> about.
+On 24/09/26 12:35, Gao Xiang wrote:
+> Hi Ariel,
 > 
-> The trace does have several fuse_reverse_inval_inode() calls, which
-> made me conclude that this was the cause.
+> On 2024/9/25 23:48, Ariel Miculas wrote:
+> 
+> ...
+> 
+> > I share the same opinions as Benno that we should try to use the
+> > existing filesystem abstractions, even if they are not yet upstream.
+> > Since erofs is a read-only filesystem and the Rust filesystem
+> > abstractions are also used by other two read-only filesystems (TarFS and
+> > PuzzleFS), it shouldn't be too difficult to adapt the erofs Rust code so
+> > that it also uses the existing filesystem abstractions. And if there is
+> > anything lacking, we can improve the existing generic APIs. This would
+> > also increase the chances of upstreaming them.
+> 
+> I've expressed my ideas about "TarFS" [1] and PuzzleFS already: since
+> I'm one of the EROFS authors, I should be responsible for this
+> long-term project as my own promise to the Linux community and makes
+> it serve for more Linux users (it has not been interrupted since 2017,
+> even I sacrificed almost all my leisure time because the EROFS project
+> isn't all my paid job, I need to maintain our internal kernel storage
+> stack too).
+> 
+> [1] https://lore.kernel.org/r/3a6314fc-7956-47f3-8727-9dc026f3f50e@linux.alibaba.com
+> 
+> Basically there should be some good reasons to upstream a new stuff to
+> Linux kernel, I believe it has no exception on the Rust side even it's
+> somewhat premature: please help compare to the prior arts in details.
+> 
+> And there are all thoughts for reference [2][3][4][5]:
+> [2] https://github.com/project-machine/puzzlefs/issues/114#issuecomment-2369872133
+> [3] https://github.com/opencontainers/image-spec/issues/1190#issuecomment-2138572683
+> [4] https://lore.kernel.org/linux-fsdevel/b9358e7c-8615-1b12-e35d-aae59bf6a467@linux.alibaba.com/
+> [5] https://lore.kernel.org/linux-fsdevel/20230609-nachrangig-handwagen-375405d3b9f1@brauner/
+> 
+> Here still, I do really want to collaborate with you on your
+> reasonable use cases.  But if you really want to do your upstream
+> attempt without even any comparsion, please go ahead because I
+> believe I can only express my own opinion, but I really don't
+> decide if your work is acceptable for the kernel.
+> 
 
-Yeah, you are right, I checked cvmfs and it uses both.
+Thanks for your thoughts on PuzzleFS, I would really like if we could
+centralize the discussions on the latest patch series I sent to the
+mailing lists back in May [1]. The reason I say this is because looking
+at that thread, it seems there is no feedback for PuzzleFS. The feedback
+exists, it's just scattered throughout different mediums. On top of
+this, I would also like to engage in the discussions with Dave Chinner,
+so I can better understand the limitations of PuzzleFS and the reasons
+for which it might be rejected in the Linux Kernel. I do appreciate your
+feedback and I need to take my time to respond to the technical issues
+that you brought up in the github issue.
+
+However, even if it's not upstream, PuzzleFS does use the latest Rust
+filesystem abstractions and thus it stands as an example of how to use
+them. And this thread is not about PuzzleFS, but about the Rust
+filesystem abstractions and how one might start to use them. That's
+where I offered to help, since I already went through the process of
+having to use them.
+
+[1] https://lore.kernel.org/all/20240516190345.957477-1-amiculas@cisco.com/
+
+> > 
+> > I'm happy to help you if you decide to go down this route.
+> 
+> Again, the current VFS abstraction is totally incomplete and broken
+> [6].
+
+If they're incomplete, we can work together to implement the missing
+functionalities. Furthermore, we can work to fix the broken stuff. I
+don't think these are good reasons to completely ignore the work that's
+already been done on this topic.
+
+By the way, what is it that's actually broken? You've linked to an LWN
+article [2] (or at least I think your 6th link was supposed to link to
+"Rust for filesystems" instead of the "Committing to Rust in the kernel"
+one), but I'm interested in the specifics. What exactly doesn't work as
+expected from the filesystem abstractions?
+
+[2] https://lwn.net/Articles/978738/
 
 > 
->>> This is probably okay, as the cached attributes remain invalid and the
->>> next call to fuse_change_attributes() will likely update the inode
->>> with the correct values.
->>>
->>> The reason this causes problems is that cached symlinks will be
->>> returned through page_get_link(), which truncates the symlink to
->>> inode->i_size.  This is correct for filesystems that don't mutate
->>> symlinks, but for cvmfs it causes problems.
->>>
->>> My proposed solution would be to just remove this truncation.  This
->>> can cause a regression in a filesystem that relies on supplying a
->>> symlink larger than the file size, but this is unlikely.   If that
->>> happens we'd need to make this behavior conditional.
->>
->> I wonder if we can just repeat operations if we detect changes in the
->> middle. Hard started to work on a patch, but got distracted and I
->> first would like to create a passthrough reproducer.
+> I believe it should be driven by a full-featured read-write fs [7]
+> (even like a simple minix fs in pre-Linux 1.0 era) and EROFS will
+
+I do find it weird that you want a full-featured read-write fs
+implemented in Rust, when erofs is a read-only filesystem.
+
+> use Rust in "fs/erofs" as the experiment, but I will definitely
+> polish the Rust version until it looks good before upstreaming.
+
+I honestly don't see how it would look good if they're not using the
+existing filesystem abstractions. And I'm not convinced that Rust in the
+kernel would be useful in any way without the many subsystem
+abstractions which were implemented by the Rust for Linux team for the
+past few years.
+
+Cheers,
+Ariel
+
 > 
-> I think in this case it's much cleaner to just ignore the file size.
-> Old, non-cached readlink code never did anything with i_size, why
-> should the cached one care about it?
-
-Yeah, I see your point. (Probably just my too long out-of-tree habit
-to avoid vfs changes whenever possible).
-
-Thanks,
-Bernd
-
+> I really don't want to be a repeater again.
+> 
+> [6] https://lwn.net/SubscriberLink/991062/9de8e9a466a3faf5
+> [7] https://lore.kernel.org/linux-fsdevel/ZZ3GeehAw%2F78gZJk@dread.disaster.area
+> 
+> Thanks,
+> Gao Xiang
+> 
+> > 
+> > Cheers,
+> > Ariel
+> 
 
