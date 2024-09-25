@@ -1,111 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-30116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81DF98650B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 18:42:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DEF7986516
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 18:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834561F26793
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:42:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71F21F25EB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7C85588E;
-	Wed, 25 Sep 2024 16:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BC75336B;
+	Wed, 25 Sep 2024 16:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="ERP++1tb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1ruB+AV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24749482EB;
-	Wed, 25 Sep 2024 16:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573F83D982;
+	Wed, 25 Sep 2024 16:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727282549; cv=none; b=uCWB5xKiZr7G5XbKncAToCHHRnU563qlfQ2QIMT7xO/yuu946n+rJgOP//TCQgBJ92zD208fiGuVRF8egZes3LLg+NY9kPTeIMgCzEolwNFRNVWX4kFN4jMERRm4ivP3K2COm3lnNdT+3a10X8gn58RQKC8KYYcrA5B5/z1OqzE=
+	t=1727282697; cv=none; b=mR4YKM8UwAja53dK07YzM/9X7D/My3KMGZesn/NVJHQG7BFTrGb5nUVnLu9Ro3m/n9UL83ydBTgafowcbYJoONLqhGi+hdw1CqsYGcrXQJYAaXktZYMKw69oRhrqIMxYIIf4e22CollkWOWoAjEaTKW2xi5VIp+U7/jlXqlo5JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727282549; c=relaxed/simple;
-	bh=oA161oXEIQ4guVGXQDc4q7uLp2UFDyKiyr/RvZCjPAM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Hm7O/w0ZG/UBTU44epbVdWBfHmETLlvZe+QBz2sYEeeArY455SsCk1QTcw896Njxh4RCHJAqPyJ//bLYDnPKvIPbjAMoMPFPh6b0PMqtUXYGZiQg/2mQJofD7M+Kf0ph1sR9nG85KO4qJUVidmFNgYN8eW1W8fCC8Dw9O2EMU5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=ERP++1tb; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1727282543;
-	bh=oA161oXEIQ4guVGXQDc4q7uLp2UFDyKiyr/RvZCjPAM=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=ERP++1tbL0DSo1ZnTsIBOqd81AXzG64+ZA7CjnMOerFjy0zEOHxOG3HdxnuFmgwH+
-	 zSDSqT74x3V1Lopz/+5kApJ8SMQG8tVFEb7sgbkqpy3CBQ5Ma3PrGUxnxJM/+9rkxz
-	 jyIB5+RIEex4DFEi3qs1ajYKWWkAIMKftfH7dnN0=
+	s=arc-20240116; t=1727282697; c=relaxed/simple;
+	bh=e4mIbPeUi4IIJOjjjTHV7QDYIBnrUl904pw7QZo72Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eCaJEo4+pnuNb0T6DwzONLNSpb4RpP9pV7ZABB109FXHkiNQIBQAGWLqsOyPzxAh1IC5QkrWauqOcb+Vz7UU8gcJwxxjZ1syq8wUIElsRyfEe5we7VDa5DFSAx1ZpeVwHJbOuPje4MQbR4ed/egMFfil0j0MJk2d08U9G5Ty8zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1ruB+AV; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso18228966b.0;
+        Wed, 25 Sep 2024 09:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727282694; x=1727887494; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e4mIbPeUi4IIJOjjjTHV7QDYIBnrUl904pw7QZo72Do=;
+        b=m1ruB+AVoKzOao9Hy9/n8UgYc+FUunsucla8IiMoYegXXM70pDEF8jiUZ9Y6QKzIAN
+         FxBCFS/lyskFfNZdMYeQtEv5ADbc8PiNSmMxn0R2FsGhxsqcFqxTlLvKa7zPRboaxUDL
+         iVABgZA2cr+OnWnjxcRAfAgG4V8+AduPegIss7ib/KD8XQlhEUOaQZElNXdzVROUjdT7
+         QjGWK8o6ShOSTb9jlqbjqSsb85jXLvxKhzLc1b7aLn7rImhgFYoGH/ape/KpGj0y/m2l
+         VWaDcCqlJkNcU1UOJLfqN00hLr2GDdRpeITwqEd++TuMqAIdrnp5ejPh68smaxDQu6Cm
+         fFDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727282694; x=1727887494;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e4mIbPeUi4IIJOjjjTHV7QDYIBnrUl904pw7QZo72Do=;
+        b=Zp7uq3pmxd8piIOY5QXGc6xb1pYFYy6wtjMqNkPY6ASVqjjBW3QSSQ+IUcKO+hbPal
+         j9WyQZQa7FRBkZ6F0pYkH1TfnGcLz0IwT5hg1a8zIyZMbvesAIxeYRd+klimmnPhuGUa
+         N3dubz7fMh6aysEUNs7r9QNsUI0DZSAHIg/RNnmwtHVdNZWtWWsjbHruGx73UYfIgjA/
+         zC+QrAWkhRK4FGLIO5Vbb09dshq53Igy0n24RP/ys0rfioi+rL8gFpjLko//d2J4xlE3
+         4wDhfuBvBl3lEtqDS140NrFATsfbAIzyP+pTwgxqev7UXZPQ+Er8nuTONdi+lWaVTO0V
+         mi2A==
+X-Forwarded-Encrypted: i=1; AJvYcCU4fflq5tTwMelpxgmtRxebKTFLCFft2awU0m7GTI58BYoMhOihUCzFoWWdG1SJa0osid/DhUL2b5Kuw9/V@vger.kernel.org, AJvYcCWYBIrPbSmVgrDZu3X/FeSnUOBv2xpi852Ov3tCIbEB4wvJawhN1c5PvnuDJvyL75F7iv37ahFixygEeDbB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIU4kyC/qgxzOKCcZy4z7jQ091yuXCivq+wQbLvNbGAVOfBMXi
+	Bw0/GllkceSGKaLhpA3ILY+qW7iUEI4zFUldQEiA26OnQxv8oRSrMwm7ZOI=
+X-Google-Smtp-Source: AGHT+IG9D0LDfzS3VIl5vBz7iU9wg9X0r6ayH9AnEK8ZPj9L0m8niTNMc6lMyYGHiic4SRAbk1HcFQ==
+X-Received: by 2002:a17:907:f1aa:b0:a8d:4e69:4030 with SMTP id a640c23a62f3a-a93b15f929cmr31248766b.19.1727282694305;
+        Wed, 25 Sep 2024 09:44:54 -0700 (PDT)
+Received: from p183 ([46.53.252.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f36369sm228320066b.42.2024.09.25.09.44.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 09:44:54 -0700 (PDT)
+Date: Wed, 25 Sep 2024 19:44:51 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+Message-ID: <d559c6d7-5f69-4e86-8616-11d1718ae782@p183>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
-Date: Wed, 25 Sep 2024 18:42:00 +0200
-Cc: Sam James <sam@gentoo.org>,
- stable@kernel.org,
- clm@meta.com,
- Matthew Wilcox <willy@infradead.org>,
- axboe@kernel.dk,
- Dave Chinner <david@fromorbit.com>,
- dqminh@cloudflare.com,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-mm@kvack.org,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- regressions@leemhuis.info,
- regressions@lists.linux.dev,
- torvalds@linux-foundation.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2EC5C349-325C-4EF6-AFF8-0952B7A3D364@flyingcircus.io>
-References: <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com>
- <87plotvuo1.fsf@gentoo.org>
- <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
-To: Kairui Song <ryncsn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
+> #define AT_EXEC_REASONABLE_COMM 0x200
 
-
-> On 25. Sep 2024, at 18:06, Kairui Song <ryncsn@gmail.com> wrote:
->=20
-> On Wed, Sep 25, 2024 at 1:16=E2=80=AFAM Sam James <sam@gentoo.org> =
-wrote:
->>=20
->> Kairui, could you send them to the stable ML to be queued if Willy is
->> fine with it?
->>=20
->=20
-> Hi Sam,
->=20
-> Thanks for adding me to the discussion.
->=20
-> Yes I'd like to, just not sure if people are still testing and
-> checking the commits.
-
-As the one who raised the issue recently: we=E2=80=99re rolling out 6.11 =
-for testing on a couple hundred machines right now. I=E2=80=99ve =
-scheduled this internally to run 8-12 weeks due to the fleeting nature =
-and will report back if it pops up again or after that time has elapsed.
-
-AFAICT this is a fix in any case even if we should find more issues in =
-my fleet later.
-
-Cheers,
-Christian
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
-
+Please call this AT_ARGV0_COMM or something like that. "Reasonable" is quite
+meaningless word by itself.
 
