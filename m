@@ -1,58 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-30073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D55985C4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:44:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD90985CCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3744A1F28D6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 12:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCD6928637F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 12:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018D31CCEF9;
-	Wed, 25 Sep 2024 11:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4FF1D4169;
+	Wed, 25 Sep 2024 12:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/3gUqP8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUQLQixt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE871AD3EB;
-	Wed, 25 Sep 2024 11:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A661AED48;
+	Wed, 25 Sep 2024 12:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727265550; cv=none; b=vFSeN/aYR8G/xq9YmtXVcjPccAZU2CSRIkbMI4PQ2ylkDVRK1wB5pM+Es2ap9Vy9YUoHhM+kPJjI/fkVcjzUigcBllUx3jwC2rG7EdksqdwkjmV6Ymvw56X5Q1iIbV+W1tHCyascgst57JFndhFNO6sVMYY5HLLqjd0Pa9q0Yb0=
+	t=1727265637; cv=none; b=bQFBiDSaS2rdVouTsLJjrWyieIm78olBL92nET9biYJ3H5mPvH+JjJ7ZPYhV1A4FbLcaDGfB8j2M5295urbRGGV/utiHf6Gx/MaHczjWynnAX+fGaptxCtKUardt8P1n00nPvBmGAGOQ78vxVIpQPEb5i3uew7+n/wmFOyP0AcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727265550; c=relaxed/simple;
-	bh=EK0+SipkcdrDogVWkLHzlJq2Ddq5HTNuGcYsS+qjXG0=;
+	s=arc-20240116; t=1727265637; c=relaxed/simple;
+	bh=fo9Wus1YGakrmE0lyb6iV/Vnz4Aa5fMEZ1xe+PPDEcw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FC/K/0HCgvFfGLJa7/TB3fYTZNGU4UZ7rO5IUR+0wBTvvmI9Z7bIheeP0ncNMaznHxCQUCp3jgWUsDXMbWGwEHqH6iVf0sEREz812xkVeWxB08GunximyGU5y5GCWFkCyLQiShnKtGw/eUkgXfr5VzuPHSRAOB32nm7QC2GMg3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/3gUqP8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35880C4CECD;
-	Wed, 25 Sep 2024 11:59:09 +0000 (UTC)
+	 MIME-Version; b=hFHc1uVR2S984ZGU2JsvLZHPHg+eZth05ep0zmcA0gDcLtg4U7neOzrv6JPc8ozZHxnooS/qL7Nq4vHkeEeoc1tGPOuy6WUoBz/g6rZ3OqGo8KBMUFmck1+uBapuGlbG1ByGFSNMCunCvyMJm9qMVtC0WADOQ2VdtUL7GG1y2i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUQLQixt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2DBC4CEC7;
+	Wed, 25 Sep 2024 12:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727265550;
-	bh=EK0+SipkcdrDogVWkLHzlJq2Ddq5HTNuGcYsS+qjXG0=;
+	s=k20201202; t=1727265637;
+	bh=fo9Wus1YGakrmE0lyb6iV/Vnz4Aa5fMEZ1xe+PPDEcw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F/3gUqP8lI9vD5yGzJlCAht1SBdFvxPUkZ9Hwd5d3sjmAU415ikp3bqZnT5ggzROE
-	 dSh9W+tnrsdcOyypc4Rv9LSVnkWKBA8Be+perB/oP5zvpdCp4ZVAIHgkfINoe0G4mU
-	 8KXAGPv+In3wFiZb5SKeDIzVjuEpeWyVLPhQzblz0Nm8iBaK2mqbHtBe/jK8S7v4av
-	 nTZh9FcKiZMHJMi10WJ9rX63fWr0GWOawrnFOAeDBvbkUxfp998emG1W7lR/FVTO1l
-	 OlCMMa9efq68GpRqF138KdPINLdOExRct+7mtFE1Fj+et4qXI28F6QvL23YP1bOy6w
-	 6LUoUPgCukrtA==
+	b=gUQLQixt+2oQkYcnuZ3YY/k+31MtGq8E/IS1C6dYrzx5Umtubv1Ld/VubGFLt8DYl
+	 Y5ixO1XBVv7md3ZCnDKGOtkMBL9fJvolb0uOAplNs3rSkoeQC6deHbtF6o1Bj4jEr9
+	 scqfqFK+d+XekTz23tXoIhL6Kh3ZR/kRKjRLmU/S6NpCEM+XTZCYEMF3XVlNhm/KQk
+	 vLo8Em2+GVn1PQIbuF7mqY1NtOk+W0/Ly+ecl8F0vTSCBI7Oe5epJM6CVW+8RzqxAV
+	 oA/wtZ4dcgANIbgOyV9IceWgdcAnuXYQ8XRfqBSawg8FYZXhz3dBXCNh/kIrTmAuEm
+	 O6Rc3vrAjMn4w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Li Zhijian <lizhijian@fujitsu.com>,
-	Jan Kara <jack@suse.cz>,
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Doug Anderson <dianders@chromium.org>,
+	Jeff Xu <jeffxu@google.com>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
 	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.10 018/197] fs/inode: Prevent dump_mapping() accessing invalid dentry.d_name.name
-Date: Wed, 25 Sep 2024 07:50:37 -0400
-Message-ID: <20240925115823.1303019-18-sashal@kernel.org>
+	corbet@lwn.net,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	thuth@redhat.com,
+	bp@alien8.de,
+	jpoimboe@kernel.org,
+	tglx@linutronix.de,
+	paulmck@kernel.org,
+	tony@atomide.com,
+	xiongwei.song@windriver.com,
+	akpm@linux-foundation.org,
+	oleg@redhat.com,
+	chengming.zhou@linux.dev,
+	mic@digikod.net,
+	yang.lee@linux.alibaba.com,
+	jlayton@kernel.org,
+	amir73il@gmail.com,
+	casey@schaufler-ca.com,
+	adobriyan@gmail.com,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 054/197] proc: add config & param to block forcing mem writes
+Date: Wed, 25 Sep 2024 07:51:13 -0400
+Message-ID: <20240925115823.1303019-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925115823.1303019-1-sashal@kernel.org>
 References: <20240925115823.1303019-1-sashal@kernel.org>
@@ -67,134 +93,198 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.10.11
 Content-Transfer-Encoding: 8bit
 
-From: Li Zhijian <lizhijian@fujitsu.com>
+From: Adrian Ratiu <adrian.ratiu@collabora.com>
 
-[ Upstream commit 7f7b850689ac06a62befe26e1fd1806799e7f152 ]
+[ Upstream commit 41e8149c8892ed1962bd15350b3c3e6e90cba7f4 ]
 
-It's observed that a crash occurs during hot-remove a memory device,
-in which user is accessing the hugetlb. See calltrace as following:
+This adds a Kconfig option and boot param to allow removing
+the FOLL_FORCE flag from /proc/pid/mem write calls because
+it can be abused.
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 14045 at arch/x86/mm/fault.c:1278 do_user_addr_fault+0x2a0/0x790
-Modules linked in: kmem device_dax cxl_mem cxl_pmem cxl_port cxl_pci dax_hmem dax_pmem nd_pmem cxl_acpi nd_btt cxl_core crc32c_intel nvme virtiofs fuse nvme_core nfit libnvdimm dm_multipath scsi_dh_rdac scsi_dh_emc s
-mirror dm_region_hash dm_log dm_mod
-CPU: 1 PID: 14045 Comm: daxctl Not tainted 6.10.0-rc2-lizhijian+ #492
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-RIP: 0010:do_user_addr_fault+0x2a0/0x790
-Code: 48 8b 00 a8 04 0f 84 b5 fe ff ff e9 1c ff ff ff 4c 89 e9 4c 89 e2 be 01 00 00 00 bf 02 00 00 00 e8 b5 ef 24 00 e9 42 fe ff ff <0f> 0b 48 83 c4 08 4c 89 ea 48 89 ee 4c 89 e7 5b 5d 41 5c 41 5d 41
-RSP: 0000:ffffc90000a575f0 EFLAGS: 00010046
-RAX: ffff88800c303600 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000001000 RSI: ffffffff82504162 RDI: ffffffff824b2c36
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90000a57658
-R13: 0000000000001000 R14: ffff88800bc2e040 R15: 0000000000000000
-FS:  00007f51cb57d880(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000001000 CR3: 00000000072e2004 CR4: 00000000001706f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ? __warn+0x8d/0x190
- ? do_user_addr_fault+0x2a0/0x790
- ? report_bug+0x1c3/0x1d0
- ? handle_bug+0x3c/0x70
- ? exc_invalid_op+0x14/0x70
- ? asm_exc_invalid_op+0x16/0x20
- ? do_user_addr_fault+0x2a0/0x790
- ? exc_page_fault+0x31/0x200
- exc_page_fault+0x68/0x200
-<...snip...>
-BUG: unable to handle page fault for address: 0000000000001000
- #PF: supervisor read access in kernel mode
- #PF: error_code(0x0000) - not-present page
- PGD 800000000ad92067 P4D 800000000ad92067 PUD 7677067 PMD 0
- Oops: Oops: 0000 [#1] PREEMPT SMP PTI
- ---[ end trace 0000000000000000 ]---
- BUG: unable to handle page fault for address: 0000000000001000
- #PF: supervisor read access in kernel mode
- #PF: error_code(0x0000) - not-present page
- PGD 800000000ad92067 P4D 800000000ad92067 PUD 7677067 PMD 0
- Oops: Oops: 0000 [#1] PREEMPT SMP PTI
- CPU: 1 PID: 14045 Comm: daxctl Kdump: loaded Tainted: G        W          6.10.0-rc2-lizhijian+ #492
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
- RIP: 0010:dentry_name+0x1f4/0x440
-<...snip...>
-? dentry_name+0x2fa/0x440
-vsnprintf+0x1f3/0x4f0
-vprintk_store+0x23a/0x540
-vprintk_emit+0x6d/0x330
-_printk+0x58/0x80
-dump_mapping+0x10b/0x1a0
-? __pfx_free_object_rcu+0x10/0x10
-__dump_page+0x26b/0x3e0
-? vprintk_emit+0xe0/0x330
-? _printk+0x58/0x80
-? dump_page+0x17/0x50
-dump_page+0x17/0x50
-do_migrate_range+0x2f7/0x7f0
-? do_migrate_range+0x42/0x7f0
-? offline_pages+0x2f4/0x8c0
-offline_pages+0x60a/0x8c0
-memory_subsys_offline+0x9f/0x1c0
-? lockdep_hardirqs_on+0x77/0x100
-? _raw_spin_unlock_irqrestore+0x38/0x60
-device_offline+0xe3/0x110
-state_store+0x6e/0xc0
-kernfs_fop_write_iter+0x143/0x200
-vfs_write+0x39f/0x560
-ksys_write+0x65/0xf0
-do_syscall_64+0x62/0x130
+The traditional forcing behavior is kept as default because
+it can break GDB and some other use cases.
 
-Previously, some sanity check have been done in dump_mapping() before
-the print facility parsing '%pd' though, it's still possible to run into
-an invalid dentry.d_name.name.
+Previously we tried a more sophisticated approach allowing
+distributions to fine-tune /proc/pid/mem behavior, however
+that got NAK-ed by Linus [1], who prefers this simpler
+approach with semantics also easier to understand for users.
 
-Since dump_mapping() only needs to dump the filename only, retrieve it
-by itself in a safer way to prevent an unnecessary crash.
-
-Note that either retrieving the filename with '%pd' or
-strncpy_from_kernel_nofault(), the filename could be unreliable.
-
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-Link: https://lore.kernel.org/r/20240826055503.1522320-1-lizhijian@fujitsu.com
-Reviewed-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Jeff Xu <jeffxu@google.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+Link: https://lore.kernel.org/r/20240802080225.89408-1-adrian.ratiu@collabora.com
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/inode.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ .../admin-guide/kernel-parameters.txt         | 10 +++
+ fs/proc/base.c                                | 61 ++++++++++++++++++-
+ security/Kconfig                              | 32 ++++++++++
+ 3 files changed, 102 insertions(+), 1 deletion(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index f5add7222c98e..bdff0ff61570b 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -593,6 +593,7 @@ void dump_mapping(const struct address_space *mapping)
- 	struct hlist_node *dentry_first;
- 	struct dentry *dentry_ptr;
- 	struct dentry dentry;
-+	char fname[64] = {};
- 	unsigned long ino;
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index c82446cef8e21..2c8e062eb2ce5 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4791,6 +4791,16 @@
+ 	printk.time=	Show timing data prefixed to each printk message line
+ 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
  
- 	/*
-@@ -629,11 +630,14 @@ void dump_mapping(const struct address_space *mapping)
- 		return;
- 	}
++	proc_mem.force_override= [KNL]
++			Format: {always | ptrace | never}
++			Traditionally /proc/pid/mem allows memory permissions to be
++			overridden without restrictions. This option may be set to
++			restrict that. Can be one of:
++			- 'always': traditional behavior always allows mem overrides.
++			- 'ptrace': only allow mem overrides for active ptracers.
++			- 'never':  never allow mem overrides.
++			If not specified, default is the CONFIG_PROC_MEM_* choice.
++
+ 	processor.max_cstate=	[HW,ACPI]
+ 			Limit processor to maximum C-state
+ 			max_cstate=9 overrides any DMI blacklist limit.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 72a1acd03675c..f389c69767fa5 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -85,6 +85,7 @@
+ #include <linux/elf.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/user_namespace.h>
++#include <linux/fs_parser.h>
+ #include <linux/fs_struct.h>
+ #include <linux/slab.h>
+ #include <linux/sched/autogroup.h>
+@@ -117,6 +118,40 @@
+ static u8 nlink_tid __ro_after_init;
+ static u8 nlink_tgid __ro_after_init;
  
-+	if (strncpy_from_kernel_nofault(fname, dentry.d_name.name, 63) < 0)
-+		strscpy(fname, "<invalid>");
- 	/*
--	 * if dentry is corrupted, the %pd handler may still crash,
--	 * but it's unlikely that we reach here with a corrupt mapping
-+	 * Even if strncpy_from_kernel_nofault() succeeded,
-+	 * the fname could be unreliable
- 	 */
--	pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n", a_ops, ino, &dentry);
-+	pr_warn("aops:%ps ino:%lx dentry name(?):\"%s\"\n",
-+		a_ops, ino, fname);
++enum proc_mem_force {
++	PROC_MEM_FORCE_ALWAYS,
++	PROC_MEM_FORCE_PTRACE,
++	PROC_MEM_FORCE_NEVER
++};
++
++static enum proc_mem_force proc_mem_force_override __ro_after_init =
++	IS_ENABLED(CONFIG_PROC_MEM_NO_FORCE) ? PROC_MEM_FORCE_NEVER :
++	IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
++	PROC_MEM_FORCE_ALWAYS;
++
++static const struct constant_table proc_mem_force_table[] __initconst = {
++	{ "always", PROC_MEM_FORCE_ALWAYS },
++	{ "ptrace", PROC_MEM_FORCE_PTRACE },
++	{ "never", PROC_MEM_FORCE_NEVER },
++	{ }
++};
++
++static int __init early_proc_mem_force_override(char *buf)
++{
++	if (!buf)
++		return -EINVAL;
++
++	/*
++	 * lookup_constant() defaults to proc_mem_force_override to preseve
++	 * the initial Kconfig choice in case an invalid param gets passed.
++	 */
++	proc_mem_force_override = lookup_constant(proc_mem_force_table,
++						  buf, proc_mem_force_override);
++
++	return 0;
++}
++early_param("proc_mem.force_override", early_proc_mem_force_override);
++
+ struct pid_entry {
+ 	const char *name;
+ 	unsigned int len;
+@@ -835,6 +870,28 @@ static int mem_open(struct inode *inode, struct file *file)
+ 	return ret;
  }
  
- void clear_inode(struct inode *inode)
++static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
++{
++	struct task_struct *task;
++	bool ptrace_active = false;
++
++	switch (proc_mem_force_override) {
++	case PROC_MEM_FORCE_NEVER:
++		return false;
++	case PROC_MEM_FORCE_PTRACE:
++		task = get_proc_task(file_inode(file));
++		if (task) {
++			ptrace_active =	READ_ONCE(task->ptrace) &&
++					READ_ONCE(task->mm) == mm &&
++					READ_ONCE(task->parent) == current;
++			put_task_struct(task);
++		}
++		return ptrace_active;
++	default:
++		return true;
++	}
++}
++
+ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 			size_t count, loff_t *ppos, int write)
+ {
+@@ -855,7 +912,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 	if (!mmget_not_zero(mm))
+ 		goto free;
+ 
+-	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
++	flags = write ? FOLL_WRITE : 0;
++	if (proc_mem_foll_force(file, mm))
++		flags |= FOLL_FORCE;
+ 
+ 	while (count > 0) {
+ 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
+diff --git a/security/Kconfig b/security/Kconfig
+index 412e76f1575d0..a93c1a9b7c283 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++choice
++	prompt "Allow /proc/pid/mem access override"
++	default PROC_MEM_ALWAYS_FORCE
++	help
++	  Traditionally /proc/pid/mem allows users to override memory
++	  permissions for users like ptrace, assuming they have ptrace
++	  capability.
++
++	  This allows people to limit that - either never override, or
++	  require actual active ptrace attachment.
++
++	  Defaults to the traditional behavior (for now)
++
++config PROC_MEM_ALWAYS_FORCE
++	bool "Traditional /proc/pid/mem behavior"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions if you have ptrace access rights.
++
++config PROC_MEM_FORCE_PTRACE
++	bool "Require active ptrace() use for access override"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions for active ptracers like gdb.
++
++config PROC_MEM_NO_FORCE
++	bool "Never"
++	help
++	  Never override memory mapping permissions
++
++endchoice
++
+ config SECURITY
+ 	bool "Enable different security models"
+ 	depends on SYSFS
 -- 
 2.43.0
 
