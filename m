@@ -1,206 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-30057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA8E985794
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 13:05:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D440C98579B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 13:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B060F1C23572
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 11:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F94A1F24F96
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 11:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A15884A5E;
-	Wed, 25 Sep 2024 11:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87265154BFE;
+	Wed, 25 Sep 2024 11:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GVVtuOHR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IWbi3bAX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GVVtuOHR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IWbi3bAX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y0qoZkaG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D9A482D8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 11:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6067913212A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 11:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727262303; cv=none; b=SD5UKAr6QEr6HmliYNfK+zrt+j9Y8KVUculGTbjmuwuFH2qdF80V5Ta7WUa8mj6PM2G0I/HbAwppN/z+q4DwATxChu3FPWE2M80EvlBxeCtbThH9wTkj/JmeXfQ3zUu+JBfLCa4bpsFJOP/B6XrR6pANc7lVJeVHn4BCRA4tw44=
+	t=1727262386; cv=none; b=gIqFRr6rpn/XkXkcF/ixNSuhP+34hm9lmxxVPMyebtgaLxl7xcgKDNRB7T/k/eNQr+zmmNYx0sdukXxeXwmw7sGlGmEaO/6NZQII5GsX56q49LkeonZZC6AxnmVHgv5gPGQtHIef1C7QFTOXypmgq/c4sPsdJzFdKX98W98/B1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727262303; c=relaxed/simple;
-	bh=E4fCpgjnoprNvRxEJqsKDJ8Z0NF9XOf4pzni94PSKLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N51qLuYoI6VmaQCfmSmUndrzJcaySOnLIeN0teAjBMFkPqpqSJQguoGAdoyroyvPxzW7HLdaYlgKK/OMx7CQ4Jd1ybCKn6C9BC/aoHc8elC9WroKdIHN4cle508rtiKT0xZOXyK896q3GhcQQEMg1fdoBkDovZjkh/iFED243cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GVVtuOHR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IWbi3bAX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GVVtuOHR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IWbi3bAX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AF33821A9B;
-	Wed, 25 Sep 2024 11:04:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727262298; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jTuBFDkrrkufJsoS8TZxooJtZUCCC1WcKqkLyBm1JRo=;
-	b=GVVtuOHRPFARqxiAxXB/R6bgvu6xxGK9KRkA50aypl8D3FdPq3diB7JwqTNnF4meTVWSp/
-	13xFFYU0jzDf6nXOu2Jv7zYBxAFqYm5PS1YwHDWO73er3+nElD1iFqrFgsjsdBTrfYXT/c
-	YKBKkA7mkckD/U7y24I0GjErJFaGCqk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727262298;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jTuBFDkrrkufJsoS8TZxooJtZUCCC1WcKqkLyBm1JRo=;
-	b=IWbi3bAXQ3jZVR53Q7eLl34CYJxy4AyZ/Ia0+jN4pzCYL2kWScYqglBEd+it6f7HHsAy8c
-	gULUrPJJWropxIAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727262298; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jTuBFDkrrkufJsoS8TZxooJtZUCCC1WcKqkLyBm1JRo=;
-	b=GVVtuOHRPFARqxiAxXB/R6bgvu6xxGK9KRkA50aypl8D3FdPq3diB7JwqTNnF4meTVWSp/
-	13xFFYU0jzDf6nXOu2Jv7zYBxAFqYm5PS1YwHDWO73er3+nElD1iFqrFgsjsdBTrfYXT/c
-	YKBKkA7mkckD/U7y24I0GjErJFaGCqk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727262298;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jTuBFDkrrkufJsoS8TZxooJtZUCCC1WcKqkLyBm1JRo=;
-	b=IWbi3bAXQ3jZVR53Q7eLl34CYJxy4AyZ/Ia0+jN4pzCYL2kWScYqglBEd+it6f7HHsAy8c
-	gULUrPJJWropxIAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C7B713793;
-	Wed, 25 Sep 2024 11:04:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r27pJVru82blMQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 25 Sep 2024 11:04:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 34BD7A089B; Wed, 25 Sep 2024 13:04:54 +0200 (CEST)
-Date: Wed, 25 Sep 2024 13:04:54 +0200
-From: Jan Kara <jack@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [GIT PULL] Fsnotify changes for 6.12-rc1
-Message-ID: <20240925110454.ao2kcpfqba6uygnc@quack3>
-References: <20240923110348.tbwihs42dxxltabc@quack3>
- <CAHk-=wiE1QQ-_kTKSf4Ur6JEjMtieu7twcLqu_CH4r1daTBiCw@mail.gmail.com>
- <20240923191322.3jbkvwqzxvopt3kb@quack3>
- <CAHk-=whm4QfqzSJvBQFrCi4V5SP_iD=DN0VkxfpXaA02PKCb6Q@mail.gmail.com>
- <20240924092757.lev6mwrmhpcoyjtu@quack3>
- <CAHk-=wgzLHTi7s50-BE7oq_egpDnUqhrba+EKux0NyLvgphsEw@mail.gmail.com>
- <e46d20c8-c201-41fd-93ea-6d5bc1e38c6d@linux.alibaba.com>
- <CAHk-=wijqCH+9HUkOgwT_f1o4Tp05ACQUFG9YrxLpOVdRoCwpw@mail.gmail.com>
+	s=arc-20240116; t=1727262386; c=relaxed/simple;
+	bh=v9SOENpp+GEqMEfpbzjHUOzd9Uxz8a8eI7GUtlWQs+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TTni0YI/EgV8TkiAV7gwNrkNuMxV+aKh6umIebvE7CSb9jHdwskz9MLGSFxcynmcO4plInUx/hAyHJYbKzA/+NsY0lZLezpxAi/Dj6+v3JgSYazoATUjLKIuKDnoIMdZ67wS7XXm+zpPKgS1iqkspJGMEH9G5y9HV7n/4cBOJ90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y0qoZkaG; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso84107205e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 04:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727262382; x=1727867182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JhQ4TPCHuI58LZ38MBixhcUn27fdFhOzEs54JQFmEu4=;
+        b=Y0qoZkaGAi7LcUT3oJb4NisLSJU/jQJH27zodADr2z0dvPpCGPDg5u7nQ4RIsCYMak
+         le/mIhlmqZ8X6+GmN3PP2QMCKp6vbmxzotaBm1Yuw0RXmtw32VA+G7yMyWtf4xmzAhKM
+         UcGaIYxfzd8JowKxx+i3zJ6nNRBJXXxEklTgZMxjg+YgF1Z3ofeLDp/41kfNnENqDcCI
+         luE4FdlQEo4BAdOUU66phuSQdN3pka/+v/NSGPGVtV4o41NqrBDjLgAdZqbjZXl89pIh
+         tYk0Dth2KHO+fllaG9Qs7ETkDZAIAD0pLvwMM632vU9VIipk2b6BElfMGUO2065bcTEx
+         X8cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727262382; x=1727867182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JhQ4TPCHuI58LZ38MBixhcUn27fdFhOzEs54JQFmEu4=;
+        b=ZDiPZ7BmNh9iEhV5FHCsInYzy1LFXvmER5RMST/GbJq3+LEiTe3BSbaEeDLvGMAuAC
+         obzX/cXWz6nj0tH8GROcExJVt+U0BgQ2GGvRlR0RYCTA8VUOkSn0ycv/Nc5enbtefGHe
+         S8xZhUJ7OQEkpJWj2uSeJqKfyQhpLcvTEaI81NWqD3sUqmwVlh4VV0I7kxviIYfFZZSc
+         u9N758hekZo01U9wXMh9VDj5WBXRzED52uJFCUwAMYRIOdWsuyyMeRjxYjpuPo6bKqGY
+         8nTfdUdk41hf+dbVfvCoYCVrGaXK1ogdb1HEQJXH9n5srd8RTQv9oIE8dXpPytpsJY/2
+         PfNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGbmFnpw9GmqPhhdL7lqkm1eHwhObQaiVJReY79Cc3pPjgh+Oyv0QY61YMUu7MJ0jxgtTANaCODNfgG0LY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW+6tgdZzEnBc0pN9YrQAIqD48Qlc1T2lKE2duPsTg0EcP5ip8
+	NbxN9CDRxBIqLPXsTxof7V+eJ5wDDx4GcqVSZAjtaygox08et8qopdqy4wHB0ixLJjuSz54HnuR
+	hC0sTb2lEWKF9I2CpD95KGtG1HXIcCvYvMH4/
+X-Google-Smtp-Source: AGHT+IGFAj+j04oaHOFqsP7FAM4DEPPjCdbCbDCCKy/XEfJz3JFRtsBnFMPeIPy5+2A+yRs/huLSjBw7dGu97fMWSko=
+X-Received: by 2002:a5d:5d86:0:b0:37c:c51b:8d9c with SMTP id
+ ffacd0b85a97d-37cc51b8ee6mr1224327f8f.38.1727262382323; Wed, 25 Sep 2024
+ 04:06:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wijqCH+9HUkOgwT_f1o4Tp05ACQUFG9YrxLpOVdRoCwpw@mail.gmail.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.alibaba.com,suse.cz,gmail.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-1-88484f7a3dcf@google.com> <20240924194540.GA636453@mail.hallyn.com>
+In-Reply-To: <20240924194540.GA636453@mail.hallyn.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 25 Sep 2024 13:06:10 +0200
+Message-ID: <CAH5fLgggtjNAAotBzwRQ4RYQ9+WDom0MRyYFMnQ+E5UXgOc3RQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/8] rust: types: add `NotThreadSafe`
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 24-09-24 18:15:51, Linus Torvalds wrote:
-> On Tue, 24 Sept 2024 at 17:17, Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+On Tue, Sep 24, 2024 at 9:45=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com> =
+wrote:
+>
+> On Sun, Sep 15, 2024 at 02:31:27PM +0000, Alice Ryhl wrote:
+> > This introduces a new marker type for types that shouldn't be thread
+> > safe. By adding a field of this type to a struct, it becomes non-Send
+> > and non-Sync, which means that it cannot be accessed in any way from
+> > threads other than the one it was created on.
 > >
-> > Just side note: I think `generic_file_vm_ops` already prepares this
-> > feature, so generic_file_mmap users also have fault around behaviors.
-> 
-> Hmm. Maybe. But it doesn't really change the fundamental issue - the
-> code in question seems to be just *random*.
-> 
-> And I mean that in a very real and very immediate sense: the
-> fault-around code and filemap_map_pages() only maps in pages that are
-> uptodate, so it literally DEPENDS ON TIMING whether some previous IO
-> has completed or not, and thus on whether the page fault is handled by
-> the fault-around in filemap_map_pages() or by the filemap_fault()
-> code.
-> 
-> In other words - I think this is all completely broken.
-> 
-> Put another way: explain to me why random IO timing details should
-> matter for the whether we do __filemap_fsnotify_fault() on a page
-> fault or not?
+> > This is useful for APIs that require globals such as `current` to remai=
+n
+> > constant while the value exists.
+> >
+> > We update two existing users in the Kernel to use this helper:
+> >
+> >  * `Task::current()` - moving the return type of this value to a
+> >    different thread would not be safe as you can no longer be guarantee=
+d
+> >    that the `current` pointer remains valid.
+> >  * Lock guards. Mutexes and spinlocks should be unlocked on the same
+> >    thread as where they were locked, so we enforce this using the Send
+> >    trait.
+>
+> Hi,
+>
+> this sounds useful, however from kernel side when I think thread-safe,
+> I think must not be used across a sleep.  Would something like ThreadLock=
+ed
+> or LockedToThread make sense?
 
-I agree that with the fault-around code, there's dependency on IO
-completion time. So we can still be generating PRE_ACCESS events while the
-data is being loaded from the disk. This was a compromise we ended up with
-after quite some discussions about possible solutions. Generally the
-options I see for page faults are:
+Hmm, those names seem pretty similar to the current name to me?
 
-1) Generate PRE_ACCESS event whenever a page is being mapped into page
-tables (in fact Josef originally had this in his patch). This would
-provide the determinism at the cost of performance (events generated even
-for cached pages). If this is OK with you, we can do that but from what I
-gather from your previous emails you don't really like this either.
-
-2) We could generate event in filemap_fault() only if we don't find
-uptodate folio there. I'm happy to do this if it looks better to you
-although I don't think there's a practical difference from the current
-state (the same raciness with IO completion applies, just the window is
-smaller).
-
-3) We could generate event in filemap_fault() only if we didn't find a
-folio in the page cache or we found it, locked it, but it still was not
-uptodate. This will make sure we generate the event only if we really need
-to pull in the data into the page cache. Doable. The case when we found &
-locked a page that's not uptodate in the end will be a bit ugly but not too
-bad and this case should be rare. I actually like this option the most I
-guess. 
-
-> So no. I'm not taking this pull request. It makes absolutely zero
-> sense to me, and I don't think it has sane semantics.  The argument
-> that it is already used by people is not an argument.
-
-I mentioned that to show that there's practical interest in this kind of
-functionality. I think people involved understand things are pretty much in
-flux until they are merged upstream.
-
-> The new fsnotify hooks need to make SENSE - not be in random locations
-> that give some kind of random data.
-
-Thanks for feedback. So 1) and 3) from the above options make sense to me
-(in the sense that it is relatively easy to explain when events are
-generated). I'd prefer 3) for performance reasons so can we settle on that?
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Alice
 
