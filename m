@@ -1,136 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-30115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED569864EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 18:36:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81DF98650B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 18:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50DCA28C025
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:36:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834561F26793
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55DF71B3A;
-	Wed, 25 Sep 2024 16:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7C85588E;
+	Wed, 25 Sep 2024 16:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NbrkOdBZ"
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="ERP++1tb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25019381AF;
-	Wed, 25 Sep 2024 16:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24749482EB;
+	Wed, 25 Sep 2024 16:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727282139; cv=none; b=pqGFx/tRvXt6nYSASuNJ8nYOWYRQp1GdNq3uKE/LcfUadfE7KnssLUGFvpwV8TtOS1tGD4uMR89ILkZP/wTsTZy1DpiJeIdKzGB3Y+yC8LBQlLB6X0Xl3GFH0sK5v+QJwKvICFMhrHC/5oDlS3vyHajv9zXXUl5RxUB7YgQ19oA=
+	t=1727282549; cv=none; b=uCWB5xKiZr7G5XbKncAToCHHRnU563qlfQ2QIMT7xO/yuu946n+rJgOP//TCQgBJ92zD208fiGuVRF8egZes3LLg+NY9kPTeIMgCzEolwNFRNVWX4kFN4jMERRm4ivP3K2COm3lnNdT+3a10X8gn58RQKC8KYYcrA5B5/z1OqzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727282139; c=relaxed/simple;
-	bh=HMxBVux/FQvn7pBMChSCMMhWMsYbvTHrT3oR2wbLjA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ePN0rpvTwQl0+yzFkcMynoRt/QSQAHV9bF3TxLawTE3zXSXxkaAj31sv0vbXisimLBm8XXt8dubrR3/fgwTYjVq2aQ81d7HfiVYwl6l5FCuPlJDQkrNh/59l3GbCArQlD7qbRZXOq18yrqs6KYommVxsksAOATbqylwPTt2aEls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NbrkOdBZ; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1727282128; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=E6ocSw4NWKlqHxKRP24Nwyb3i7XLZtOr82Y4AE+Iu6Q=;
-	b=NbrkOdBZ24/y4whkZwn5YCaXeYH6TXhl0h2Kuyy3Z636t8CsZXZ2j1LENJ2FWDoeDAEBI4huVxVFHeDm38AiXcY09kW6z710Kn53l9I0EweGbvvZa1Bfk/jC/jjU/f3PZ0+Ya8+/w9UwrTxAA71dmItB9fYGH7/kQgizVr66nLo=
-Received: from 30.244.99.85(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFkHUjQ_1727282125)
-          by smtp.aliyun-inc.com;
-          Thu, 26 Sep 2024 00:35:27 +0800
-Message-ID: <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
-Date: Thu, 26 Sep 2024 00:35:25 +0800
+	s=arc-20240116; t=1727282549; c=relaxed/simple;
+	bh=oA161oXEIQ4guVGXQDc4q7uLp2UFDyKiyr/RvZCjPAM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Hm7O/w0ZG/UBTU44epbVdWBfHmETLlvZe+QBz2sYEeeArY455SsCk1QTcw896Njxh4RCHJAqPyJ//bLYDnPKvIPbjAMoMPFPh6b0PMqtUXYGZiQg/2mQJofD7M+Kf0ph1sR9nG85KO4qJUVidmFNgYN8eW1W8fCC8Dw9O2EMU5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=ERP++1tb; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1727282543;
+	bh=oA161oXEIQ4guVGXQDc4q7uLp2UFDyKiyr/RvZCjPAM=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=ERP++1tbL0DSo1ZnTsIBOqd81AXzG64+ZA7CjnMOerFjy0zEOHxOG3HdxnuFmgwH+
+	 zSDSqT74x3V1Lopz/+5kApJ8SMQG8tVFEb7sgbkqpy3CBQ5Ma3PrGUxnxJM/+9rkxz
+	 jyIB5+RIEex4DFEi3qs1ajYKWWkAIMKftfH7dnN0=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
-To: Ariel Miculas <amiculas@cisco.com>, Benno Lossin <benno.lossin@proton.me>
-Cc: Gary Guo <gary@garyguo.net>, Yiyang Wu <toolmanp@tlmp.cc>,
- rust-for-linux@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-4-toolmanp@tlmp.cc>
- <20240916210111.502e7d6d.gary@garyguo.net>
- <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
- <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
- <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
- <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
- <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
+Date: Wed, 25 Sep 2024 18:42:00 +0200
+Cc: Sam James <sam@gentoo.org>,
+ stable@kernel.org,
+ clm@meta.com,
+ Matthew Wilcox <willy@infradead.org>,
+ axboe@kernel.dk,
+ Dave Chinner <david@fromorbit.com>,
+ dqminh@cloudflare.com,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ regressions@leemhuis.info,
+ regressions@lists.linux.dev,
+ torvalds@linux-foundation.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2EC5C349-325C-4EF6-AFF8-0952B7A3D364@flyingcircus.io>
+References: <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com>
+ <87plotvuo1.fsf@gentoo.org>
+ <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
+To: Kairui Song <ryncsn@gmail.com>
 
-Hi Ariel,
 
-On 2024/9/25 23:48, Ariel Miculas wrote:
 
-...
+> On 25. Sep 2024, at 18:06, Kairui Song <ryncsn@gmail.com> wrote:
+>=20
+> On Wed, Sep 25, 2024 at 1:16=E2=80=AFAM Sam James <sam@gentoo.org> =
+wrote:
+>>=20
+>> Kairui, could you send them to the stable ML to be queued if Willy is
+>> fine with it?
+>>=20
+>=20
+> Hi Sam,
+>=20
+> Thanks for adding me to the discussion.
+>=20
+> Yes I'd like to, just not sure if people are still testing and
+> checking the commits.
 
-> I share the same opinions as Benno that we should try to use the
-> existing filesystem abstractions, even if they are not yet upstream.
-> Since erofs is a read-only filesystem and the Rust filesystem
-> abstractions are also used by other two read-only filesystems (TarFS and
-> PuzzleFS), it shouldn't be too difficult to adapt the erofs Rust code so
-> that it also uses the existing filesystem abstractions. And if there is
-> anything lacking, we can improve the existing generic APIs. This would
-> also increase the chances of upstreaming them.
+As the one who raised the issue recently: we=E2=80=99re rolling out 6.11 =
+for testing on a couple hundred machines right now. I=E2=80=99ve =
+scheduled this internally to run 8-12 weeks due to the fleeting nature =
+and will report back if it pops up again or after that time has elapsed.
 
-I've expressed my ideas about "TarFS" [1] and PuzzleFS already: since
-I'm one of the EROFS authors, I should be responsible for this
-long-term project as my own promise to the Linux community and makes
-it serve for more Linux users (it has not been interrupted since 2017,
-even I sacrificed almost all my leisure time because the EROFS project
-isn't all my paid job, I need to maintain our internal kernel storage
-stack too).
+AFAICT this is a fix in any case even if we should find more issues in =
+my fleet later.
 
-[1] https://lore.kernel.org/r/3a6314fc-7956-47f3-8727-9dc026f3f50e@linux.alibaba.com
+Cheers,
+Christian
 
-Basically there should be some good reasons to upstream a new stuff to
-Linux kernel, I believe it has no exception on the Rust side even it's
-somewhat premature: please help compare to the prior arts in details.
-
-And there are all thoughts for reference [2][3][4][5]:
-[2] https://github.com/project-machine/puzzlefs/issues/114#issuecomment-2369872133
-[3] https://github.com/opencontainers/image-spec/issues/1190#issuecomment-2138572683
-[4] https://lore.kernel.org/linux-fsdevel/b9358e7c-8615-1b12-e35d-aae59bf6a467@linux.alibaba.com/
-[5] https://lore.kernel.org/linux-fsdevel/20230609-nachrangig-handwagen-375405d3b9f1@brauner/
-
-Here still, I do really want to collaborate with you on your
-reasonable use cases.  But if you really want to do your upstream
-attempt without even any comparsion, please go ahead because I
-believe I can only express my own opinion, but I really don't
-decide if your work is acceptable for the kernel.
-
-> 
-> I'm happy to help you if you decide to go down this route.
-
-Again, the current VFS abstraction is totally incomplete and broken
-[6].
-
-I believe it should be driven by a full-featured read-write fs [7]
-(even like a simple minix fs in pre-Linux 1.0 era) and EROFS will
-use Rust in "fs/erofs" as the experiment, but I will definitely
-polish the Rust version until it looks good before upstreaming.
-
-I really don't want to be a repeater again.
-
-[6] https://lwn.net/SubscriberLink/991062/9de8e9a466a3faf5
-[7] https://lore.kernel.org/linux-fsdevel/ZZ3GeehAw%2F78gZJk@dread.disaster.area
-
-Thanks,
-Gao Xiang
-
-> 
-> Cheers,
-> Ariel
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
 
 
