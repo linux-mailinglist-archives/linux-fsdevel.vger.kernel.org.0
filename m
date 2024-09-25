@@ -1,380 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-30108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E356C986423
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 17:50:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D13986422
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 17:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A056928F222
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 15:50:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68EC1F269A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 15:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93771B949;
-	Wed, 25 Sep 2024 15:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1C21AACB;
+	Wed, 25 Sep 2024 15:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="BNpAv7r9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gb17EgjX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F051B963;
-	Wed, 25 Sep 2024 15:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E3F20B22
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 15:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727279441; cv=none; b=NLgieocGAMImqE7qXxkpVx9Ogoy1zp/yWazvDL0E+MPBUut50lT25wvhd0ITaaFM8jpOoBaUFOQpx9S/6/O432XP2q2Cxh0OtmmvM972pVlId6zqjps847CpFZ3Vzsw8vwAe3NNdg5kEK1VVHLLVx9aRIhx8gg8p4OncX8joOVE=
+	t=1727279432; cv=none; b=cQi7jyIumm4PvQsE+dS/zgJ4sNsP8ON0DVBgybvXJq+cTrxaJw0nzhUy1gPf1MMHLXklBV5JGJWWI9JCbx7g/LutRvhS9RCTfNz4yvuiaIi+kpGTGi4yFLL7E2w6BOHVCg+W005EzVfdQBqCxZu77+hgAt6bszlIBNXrXy2iWbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727279441; c=relaxed/simple;
-	bh=CB+3Lp3VN774vqHi8/oCBn9vplfDccD6BeDeA6L4O4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LgP8YVhjAyxmeIXhdotzzHzwQkaDZ1pIlLXA1fG62fXZUKdkELSdu8UwQJkgCd4gyVrWx2aWMYmcYdRyf/RgsGaMeEtWIbTP/DSQ7LR7R6LLM16F0ZfBKX72f5QePzEiK5xK9QKsUdAnC069j7ecezpBEM1tz8wRZkYF71fv6iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=BNpAv7r9; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4XDLm51Fzgz9v6Q;
-	Wed, 25 Sep 2024 17:50:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1727279429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QQf8ojWSXWZSZ6MYBGzujgts/DM5JNOMcUzwckxOaIM=;
-	b=BNpAv7r9p6pFXjR/X5j1ZOd09QJPaD38/oxMmMUAOYAyGMwU5Z2EHrSKBYBYsbro8XdWwn
-	7t6sq892Z9CoCO29BfTEUXsGM763nE9U4rMxDd9/C9/CFb1GXSfzF1aPwLtgE4cGyFmNrO
-	CbEIYdj1s8C8fLGPpT7eoAD2qxAPi3+TYGtbh+aubowslCOY5KXR2S/5Kiwl/TLyr0JvX7
-	tV/iyvWjTwqwgM+ZqOM9wOlF7GzawnK0qIFCxFXZYMGqJTx+yQUFAsg09du0YoHRjkuCse
-	6sd1b+hC8BMwhwlZJo5oDQdnM9on+m7mD0pNk2/TMpcsU54knGMETW2E5N3kSw==
-Date: Wed, 25 Sep 2024 17:50:10 +0200
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Tycho Andersen <tycho@tycho.pizza>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Tycho Andersen <tandersen@netflix.com>, Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-Message-ID: <20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
- <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1727279432; c=relaxed/simple;
+	bh=pjuXSKNBJFJmRN701jOqrpujudqW8Qb0hSxjDE9RccU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ey54YXUSyztXaLbGaUEnj7VcLxaC1EHc3C8qGhG4W/e8KgcAJBCFA8TeLnsImLHOgtyWqsi4V/mt+sqOTcGJHpBmf5HMaYh37o7ce8fpguqoNUFGcB6vxVoK1NHu/7vaeEcwAFPV597KV1rI4M4hoHfs7nh8EC3FlZ1gqQV65BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gb17EgjX; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f75d044201so570191fa.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 08:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727279429; x=1727884229; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MGvxJOx0m15ElP+Cb7no83FvsGsOuHFHbLocdN/sFIY=;
+        b=Gb17EgjXPkqP/iTa2HwV/nYNv71wawsng8FcZRfYUqlRmgUYsRflwOY6moJcYSOi2x
+         VUHMwVhB25tUVQok16Mcn7HPynxiVrujTAnonPFDpK1Puh6nuKDFaW8Ee+bXOr8q3wmz
+         Kz66UXjQSy6v+gdwmz86ldfOvNhwShvuV4ZoL0id3sPMdjo3zR/odIOTs+7Dw786+Gah
+         vOI5MloFopJdSSagF6RmlVCXiUHL9ithWJTZ6DHMlMHxnAT2AvbAieD/ygysWq9Tq6JE
+         Pr2MRE3Nk5j+he7szBzqLP2RMvo13nGInJ+JRTQ9hdqMqSdcumR9WaBsx8wyqJYP3FzG
+         PHeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727279429; x=1727884229;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MGvxJOx0m15ElP+Cb7no83FvsGsOuHFHbLocdN/sFIY=;
+        b=kDIo4rAQmJ5y68N7DzHO2vcyJzQOULoB4ny2RlkMoLVQiH1E9FbYdLNiDBw8LWRhmy
+         GI6yGh/UO3c4WCfaBSUTbaJXeEo9eR1S+Gz7LlujSUCxOIHl53zRffZA653Rz0EZpUfR
+         bQAfm2xaZcwVbhIpPMKXnFy05B/jR3GHjgg0DXRnpSEpiWwOojHQEO+GLO1nOAXM80dP
+         QmdMoCikAQL0XM8sShjN46/Sr7m6eF5sAnAo3KAbvv1fUjwL12ylI+FHaaBUKHveUq2n
+         UOqWAXPxiE2zhNRg5ag6lGriJocvcgMZUU1AnZ46lufj7h1oDGhq7pny8cJ7kqKHuJmZ
+         7jqA==
+X-Gm-Message-State: AOJu0YymLP5wow2pfAPF+hzPcygPTth5xCg6UjDvzg6PSImStqUGXjbN
+	I4ynQb4BxEyWY9WEF0rga01GDvuRP7YuI3+5LOxcsGDCjz35FI2JQFRU6/BFAT832ODvICtafLu
+	jVmydx0UqHWDgRjJXKMvx5fffdyKStlvY8Qc=
+X-Google-Smtp-Source: AGHT+IFoShcjBVDfC6i7WUK42U9XZqvsCm2IthDwvL0s/zi55MBgaAv1Y2lwbBwolklL/VIltkwGGdUSc1mW2g7n3hQ=
+X-Received: by 2002:a05:651c:1546:b0:2ef:21a6:7c82 with SMTP id
+ 38308e7fff4ca-2f9c6d5a95emr143161fa.20.1727279428498; Wed, 25 Sep 2024
+ 08:50:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zq3wrif6kf5tb34a"
-Content-Disposition: inline
-In-Reply-To: <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
-X-Rspamd-Queue-Id: 4XDLm51Fzgz9v6Q
+From: reveliofuzzing <reveliofuzzing@gmail.com>
+Date: Wed, 25 Sep 2024 11:50:17 -0400
+Message-ID: <CA+-ZZ_gDJ02P46ee08sFcFGUWCyS37nbybcRALnBkGhSPkB-fQ@mail.gmail.com>
+Subject: Report "WARNING in putname"
+To: viro@zeniv.linux.org.uk, brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+We found the following error when fuzzing^1 the Linux kernel 6.10 and
+we are able
+to reproduce it. To our knowledge, this error has not been observed by SyzBot so
+we would like to report it for your reference.
+
+- Crash
+WARNING: CPU: 1 PID: 2687 at fs/namei.c:263 putname+0x114/0x140
+linux-6.10/fs/namei.c:263
+Modules linked in:
+CPU: 1 PID: 2687 Comm: syz-executor Not tainted 6.10.0 #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:putname+0x114/0x140 linux-6.10/fs/namei.c:263
+Code: 5d 41 5c 41 5d e9 8c 4b cc ff e8 87 4b cc ff 48 89 ee 4c 89 ef
+e8 fc 0d f5 ff 5b 5d 41 5c 41 5d e9 71 4b cc ff e8 6c 4b cc ff <0f> 0b
+eb d1 4c 89 e7 e8 30 9e fa ff e9 3a ff ff ff 48 c7 c7 b8 37
+RSP: 0018:ffff88800b7dfe50 EFLAGS: 00010293
+RAX: ffff88800c80c300 RBX: dffffc0000000000 RCX: ffffffff817771a5
+RDX: 0000000000000000 RSI: ffffffff81777284 RDI: ffff888008a82210
+RBP: ffff888008a82200 R08: 0000000000000001 R09: ffffed1001150443
+R10: ffffed1001150442 R11: ffff888008a82213 R12: ffff888008a82210
+R13: ffff888008a82200 R14: 00000000ffffff9c R15: ffff888007180128
+FS:  0000555593f1ba00(0000) GS:ffff88806d300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f754e228d50 CR3: 0000000009bca003 CR4: 0000000000170ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_mkdirat+0x184/0x280 linux-6.10/fs/namei.c:4169
+ __do_sys_mkdir linux-6.10/fs/namei.c:4180 [inline]
+ __se_sys_mkdir linux-6.10/fs/namei.c:4178 [inline]
+ __x64_sys_mkdir+0x65/0x80 linux-6.10/fs/namei.c:4178
+ do_syscall_x64 linux-6.10/arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x4b/0x110 linux-6.10/arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f0e7fe1778b
+Code: 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66
+2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 53 00 00 00 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcacc14348 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f0e7fe1778b
+RDX: 00000000000000cb RSI: 00000000000001c0 RDI: 00007ffcacc145b0
+RBP: 00007ffcacc145bc R08: 000000000000000d R09: 0000000000011dcc
+R10: 7fffffffffffffff R11: 0000000000000246 R12: 00007ffcacc145b0
+R13: 00007f0e7feafec0 R14: 00007ffcacc14370 R15: 8421084210842109
+ </TASK>
+---[ end trace 0000000000000000 ]---
 
 
---zq3wrif6kf5tb34a
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+- reproducer
+syz_genetlink_get_family_id$mptcp(0x0, 0xffffffffffffffff)
+syz_open_dev$usbmon(&(0x7f00000004c0), 0x0, 0x0)
+setxattr$trusted_overlay_opaque(0x0, 0x0, 0x0, 0x0, 0x0)
+socket$nl_generic(0x10, 0x3, 0x10)
+openat$null(0xffffffffffffff9c, &(0x7f0000001180), 0x0, 0x0)
+r0 = openat$urandom(0xffffffffffffff9c, &(0x7f0000000040), 0x0, 0x0)
+read(r0, &(0x7f0000000000), 0x2000)
+shutdown(0xffffffffffffffff, 0x0)
+r1 = syz_open_dev$sg(&(0x7f0000000040), 0x0, 0x0)
 
-On 2024-09-24, Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Tycho Andersen <tycho@tycho.pizza> writes:
->=20
-> > From: Tycho Andersen <tandersen@netflix.com>
-> >
-> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> > switching to execveat() for service execution, but can't, because the
-> > contents of /proc/pid/comm are the file descriptor which was used,
-> > instead of the path to the binary. This makes the output of tools like
-> > top and ps useless, especially in a world where most fds are opened
-> > CLOEXEC so the number is truly meaningless.
-> >
-> > This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
-> > contents of argv[0], instead of the fdno.
->=20
-> The kernel allows prctl(PR_SET_NAME, ...)  without any permission
-> checks so adding an AT_ flat to use argv[0] instead of the execed
-> filename seems reasonable.
->=20
-> Maybe the flag should be called AT_NAME_ARGV0.
->=20
->=20
-> That said I am trying to remember why we picked /dev/fd/N, as the
-> filename.
->=20
-> My memory is that we couldn't think of anything more reasonable to use.
-> Looking at commit 51f39a1f0cea ("syscalls: implement execveat() system
-> call") unfortunately doesn't clarify anything for me, except that
-> /dev/fd/N was a reasonable choice.
->=20
-> I am thinking the code could reasonably try:
-> 	get_fs_root_rcu(current->fs, &root);
-> 	path =3D __d_path(file->f_path, root, buf, buflen);
->=20
-> To see if a path to the file from the current root directory can be
-> found.  For files that are not reachable from the current root the code
-> still need to fallback to /dev/fd/N.
->=20
-> Do you think you can investigate that and see if that would generate
-> a reasonable task->comm?
 
-The problem mentioned during the discussion after the talk was that
-busybox symlinks everything to the same program, so using d_path will
-give somewhat confusing results and so separate behaviour is still
-needed (though to be fair, the current results are also confusing).
+- kernel config
+https://drive.google.com/file/d/1LMJgfJPhTu78Cd2DfmDaRitF6cdxxcey/view?usp=sharing
 
-> If for no other reason than because it would generate a usable result
-> for #! scripts, without /proc mounted.
 
-For interpreters, wouldn't there be a race condition where the path
-might change after doing d_path? I don't know if any interpreter
-actually cares about that, but it seems possible that it could lead to
-issues. Though for O_CLOEXEC, the fd will always be closed (as Zbigniew
-said in his talk) so maybe this isn't a problem in practice.
-
-> It looks like a reasonable case can be made that while /dev/fd/N is
-> a good path for interpreters, it is never a good choice for comm,
-> so perhaps we could always use argv[0] if the fdpath is of the
-> form /dev/fd/N.
->=20
-> All of that said I am not a fan of the implementation below as it has
-> the side effect of replacing /dev/fd/N with a filename that is not
-> usable by #! interpreters.  So I suggest an implementation that affects
-> task->comm and not brpm->filename.
-
-I think only affecting task->comm would be ideal.
-
-> Eric
->=20
->=20
-> > Signed-off-by: Tycho Andersen <tandersen@netflix.com>
-> > Suggested-by: Zbigniew J=C4=99drzejewski-Szmek <zbyszek@in.waw.pl>
-> > CC: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> > There is some question about what to name the flag; it seems to me that
-> > "everyone wants this" instead of the fdno, but probably "REASONABLE" is=
- not
-> > a good choice.
-> >
-> > Also, requiring the arg to alloc_bprm() is a bit ugly: kernel-based exe=
-cs
-> > will never use this, so they just have to pass an empty thing. We could
-> > introduce a bprm_fixup_comm() to do the munging there, but then the code
-> > paths start to diverge, which is maybe not nice. I left it this way bec=
-ause
-> > this is the smallest patch in terms of size, but I'm happy to change it.
-> >
-> > Finally, here is a small set of test programs, I'm happy to turn them i=
-nto
-> > kselftests if we agree on an API
-> >
-> > #include <stdio.h>
-> > #include <unistd.h>
-> > #include <stdlib.h>
-> > #include <sys/types.h>
-> > #include <sys/stat.h>
-> > #include <fcntl.h>
-> >
-> > int main(void)
-> > {
-> > 	int fd;
-> > 	char buf[128];
-> >
-> > 	fd =3D open("/proc/self/comm", O_RDONLY);
-> > 	if (fd < 0) {
-> > 		perror("open comm");
-> > 		exit(1);
-> > 	}
-> >
-> > 	if (read(fd, buf, 128) < 0) {
-> > 		perror("read");
-> > 		exit(1);
-> > 	}
-> >
-> > 	printf("comm: %s", buf);
-> > 	exit(0);
-> > }
-> >
-> > #define _GNU_SOURCE
-> > #include <stdio.h>
-> > #include <syscall.h>
-> > #include <stdbool.h>
-> > #include <unistd.h>
-> > #include <fcntl.h>
-> > #include <stdlib.h>
-> > #include <errno.h>
-> > #include <sys/wait.h>
-> >
-> > #ifndef AT_EMPTY_PATH
-> > #define AT_EMPTY_PATH                        0x1000  /* Allow empty rel=
-ative */
-> > #endif
-> >
-> > #ifndef AT_EXEC_REASONABLE_COMM
-> > #define AT_EXEC_REASONABLE_COMM         0x200
-> > #endif
-> >
-> > int main(int argc, char *argv[])
-> > {
-> > 	pid_t pid;
-> > 	int status;
-> > 	bool wants_reasonable_comm =3D argc > 1;
-> >
-> > 	pid =3D fork();
-> > 	if (pid < 0) {
-> > 		perror("fork");
-> > 		exit(1);
-> > 	}
-> >
-> > 	if (pid =3D=3D 0) {
-> > 		int fd;
-> > 		long ret, flags;
-> >
-> > 		fd =3D open("./catprocselfcomm", O_PATH);
-> > 		if (fd < 0) {
-> > 			perror("open catprocselfname");
-> > 			exit(1);
-> > 		}
-> >
-> > 		flags =3D AT_EMPTY_PATH;
-> > 		if (wants_reasonable_comm)
-> > 			flags |=3D AT_EXEC_REASONABLE_COMM;
-> > 		syscall(__NR_execveat, fd, "", (char *[]){"./catprocselfcomm", NULL},=
- NULL, flags);
-> > 		fprintf(stderr, "execveat failed %d\n", errno);
-> > 		exit(1);
-> > 	}
-> >
-> > 	if (waitpid(pid, &status, 0) !=3D pid) {
-> > 		fprintf(stderr, "wrong child\n");
-> > 		exit(1);
-> > 	}
-> >
-> > 	if (!WIFEXITED(status)) {
-> > 		fprintf(stderr, "exit status %x\n", status);
-> > 		exit(1);
-> > 	}
-> >
-> > 	if (WEXITSTATUS(status) !=3D 0) {
-> > 		fprintf(stderr, "child failed\n");
-> > 		exit(1);
-> > 	}
-> >
-> > 	return 0;
-> > }
-> > ---
-> >  fs/exec.c                  | 22 ++++++++++++++++++----
-> >  include/uapi/linux/fcntl.h |  3 ++-
-> >  2 files changed, 20 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index dad402d55681..36434feddb7b 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -1569,11 +1569,15 @@ static void free_bprm(struct linux_binprm *bprm)
-> >  	kfree(bprm);
-> >  }
-> > =20
-> > -static struct linux_binprm *alloc_bprm(int fd, struct filename *filena=
-me, int flags)
-> > +static struct linux_binprm *alloc_bprm(int fd, struct filename *filena=
-me,
-> > +				       struct user_arg_ptr argv, int flags)
-> >  {
-> >  	struct linux_binprm *bprm;
-> >  	struct file *file;
-> >  	int retval =3D -ENOMEM;
-> > +	bool needs_comm_fixup =3D flags & AT_EXEC_REASONABLE_COMM;
-> > +
-> > +	flags &=3D ~AT_EXEC_REASONABLE_COMM;
-> > =20
-> >  	file =3D do_open_execat(fd, filename, flags);
-> >  	if (IS_ERR(file))
-> > @@ -1590,11 +1594,20 @@ static struct linux_binprm *alloc_bprm(int fd, =
-struct filename *filename, int fl
-> >  	if (fd =3D=3D AT_FDCWD || filename->name[0] =3D=3D '/') {
-> >  		bprm->filename =3D filename->name;
-> >  	} else {
-> > -		if (filename->name[0] =3D=3D '\0')
-> > +		if (needs_comm_fixup) {
-> > +			const char __user *p =3D get_user_arg_ptr(argv, 0);
-> > +
-> > +			retval =3D -EFAULT;
-> > +			if (!p)
-> > +				goto out_free;
-> > +
-> > +			bprm->fdpath =3D strndup_user(p, MAX_ARG_STRLEN);
-> > +		} else if (filename->name[0] =3D=3D '\0')
-> >  			bprm->fdpath =3D kasprintf(GFP_KERNEL, "/dev/fd/%d", fd);
-> >  		else
-> >  			bprm->fdpath =3D kasprintf(GFP_KERNEL, "/dev/fd/%d/%s",
-> >  						  fd, filename->name);
-> > +		retval =3D -ENOMEM;
-> >  		if (!bprm->fdpath)
-> >  			goto out_free;
-> > =20
-> > @@ -1969,7 +1982,7 @@ static int do_execveat_common(int fd, struct file=
-name *filename,
-> >  	 * further execve() calls fail. */
-> >  	current->flags &=3D ~PF_NPROC_EXCEEDED;
-> > =20
-> > -	bprm =3D alloc_bprm(fd, filename, flags);
-> > +	bprm =3D alloc_bprm(fd, filename, argv, flags);
-> >  	if (IS_ERR(bprm)) {
-> >  		retval =3D PTR_ERR(bprm);
-> >  		goto out_ret;
-> > @@ -2034,6 +2047,7 @@ int kernel_execve(const char *kernel_filename,
-> >  	struct linux_binprm *bprm;
-> >  	int fd =3D AT_FDCWD;
-> >  	int retval;
-> > +	struct user_arg_ptr user_argv =3D {};
-> > =20
-> >  	/* It is non-sense for kernel threads to call execve */
-> >  	if (WARN_ON_ONCE(current->flags & PF_KTHREAD))
-> > @@ -2043,7 +2057,7 @@ int kernel_execve(const char *kernel_filename,
-> >  	if (IS_ERR(filename))
-> >  		return PTR_ERR(filename);
-> > =20
-> > -	bprm =3D alloc_bprm(fd, filename, 0);
-> > +	bprm =3D alloc_bprm(fd, filename, user_argv, 0);
-> >  	if (IS_ERR(bprm)) {
-> >  		retval =3D PTR_ERR(bprm);
-> >  		goto out_ret;
-> > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > index 87e2dec79fea..7178d1e4a3de 100644
-> > --- a/include/uapi/linux/fcntl.h
-> > +++ b/include/uapi/linux/fcntl.h
-> > @@ -100,7 +100,8 @@
-> >  /* Reserved for per-syscall flags	0xff. */
-> >  #define AT_SYMLINK_NOFOLLOW		0x100   /* Do not follow symbolic
-> >  						   links. */
-> > -/* Reserved for per-syscall flags	0x200 */
-> > +#define AT_EXEC_REASONABLE_COMM		0x200   /* Use argv[0] for comm in
-> > +						   execveat */
-> >  #define AT_SYMLINK_FOLLOW		0x400   /* Follow symbolic links. */
-> >  #define AT_NO_AUTOMOUNT			0x800	/* Suppress terminal automount
-> >  						   traversal. */
-> >
-> > base-commit: baeb9a7d8b60b021d907127509c44507539c15e5
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---zq3wrif6kf5tb34a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZvQxMQAKCRAol/rSt+lE
-b1XgAP41kGZlYqUV0ZABrpnHjekcL3eayZchKbYAY7PP51DYDgD9EmJbAQws0DYN
-7baXa27f1/Ih9KmNAYcj2WsktTkQogI=
-=vOm3
------END PGP SIGNATURE-----
-
---zq3wrif6kf5tb34a--
+[^1] We used a customized Syzkaller but did not change the guest kernel or the
+hypervisor.
 
