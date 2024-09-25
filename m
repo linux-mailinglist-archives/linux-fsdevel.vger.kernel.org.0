@@ -1,250 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-30020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30021-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614A1984F69
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 02:17:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035CD984F6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 02:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84AF51C21014
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 00:17:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829D51F24450
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 00:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03066DDD9;
-	Wed, 25 Sep 2024 00:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CC0DDA0;
+	Wed, 25 Sep 2024 00:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wh0owYJv"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ScGRUpX5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB807483;
-	Wed, 25 Sep 2024 00:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727223435; cv=fail; b=Va1PxzIxhvz/BOV12RbiU2dFYjCGVjWRv+Q7Rl8geQfjkFH0XxTBA0R3kuaBjSAOjnsk9Ss1vDvKM7JTXyUht8FtAK92JOfnH/9EYJ7ODmic8nT2MvIDo6/dZEtfapANQ+3mm//iOJTSt/+fuiinFIP9F2Cm35CLbKdhob5e1hQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727223435; c=relaxed/simple;
-	bh=GJUX1tDgZccI3gDUkLY42AH2sufdAK+FPRo0xE6yNQY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pj/4opOWCaJMs94sIWSmAaFavjDuQ/H/yCDF2cZ8G9l4LhLh4lYJzilSfA2aiSriNI7Tak2DXExpFnMQB2tonsjtmsZO5BSCa7NeUe6QpMaa+Dby69RdFLM6DciN68ln08S42IJg1nIpEsVKLGeM6H19tp1ByA9sS3gImyWmaFw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wh0owYJv; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727223432; x=1758759432;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=GJUX1tDgZccI3gDUkLY42AH2sufdAK+FPRo0xE6yNQY=;
-  b=Wh0owYJvEgPxctQOvKRutq0SpAHsNle9POdzfFto4Hobut9OQQxJ+3Ui
-   6l1Vu0oHpmDizhNsuAhtAOsXlXTHWP5kToSSfYvKDp2B+pazPk4Nm2CUP
-   kmpOzvh1DGSFB22JA9EWf3/tl1emOoapd24v0iR7LQQJCjZNiEUwiEUZa
-   7ZaMw+ck8lllPQhgiMM9BcrsnyKyaDnc7J4jWZsxhlUoOMoyWY5smG4g1
-   AAUNipPclaCEH/paQ44N3ZEOU7he5QW+/4nZVDsR4hSriaOF3c01X6lt2
-   IiNi3yZiDGNIPpE2+bjUXcB+KYhBeQZwSydCrP0s7B1YLyd0JfVE5xv3v
-   A==;
-X-CSE-ConnectionGUID: rGfPyGs8Qo2qM66KwoZJIQ==
-X-CSE-MsgGUID: rW/uhMKNR6iyY4HGVcqOdg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26373595"
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="26373595"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 17:17:11 -0700
-X-CSE-ConnectionGUID: GuXdUZiLTY+5rUDKPPSNeQ==
-X-CSE-MsgGUID: N1BIjOjQRcSvloMewWHNfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="102412223"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Sep 2024 17:17:11 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 24 Sep 2024 17:17:10 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 24 Sep 2024 17:17:10 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.173)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 24 Sep 2024 17:17:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lfrG4ZA7RoUUzvsM3MxjPJcr0SMNZNq9NwafSdfRxTUekph+YH6nGKm6Ph5qrouXj6f2SBi5qkOepFQ5KA4ODgQfASXuPsOga1qpYtFRxlpxL/n2PSR8rlehOi9x7QSmw3s0MrjmWR60mqtB9ZOYAXhOvZdcLA9AN0nlaSUN2WspEVBToeI6vKUR/fRQfW4d3TzTmPeBTfNbAtzL75tP7+pVxenUTuH3hxaBQJvGbWO65D/qmxZjkpn9FA5WXV2bep9HNw17IuAyCc58fr/BEV3VDFMg7RGxQY/8ODUr0relb/RVpGgbKAiJuyrxOqkWWz60dVFHm/LcyzHO/TDYQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xxti1EliHpWziCeoLvCXgN7zfMCyYcvZ1HLt9sZbgwA=;
- b=rWwfwEibr3didVbD+zB7GW7EzzcrEVufJ4EYewRcXqO3jziAqcNABDfh2+lK8vyFF2BJz0N39Ht9iyh9PPTHkoeWvKG/04voec6f6MvujCDan8bPxOhiVozjZRnOP9KQFqWmSWb9/T7EMUXrNPmT7Bl/NQUZxUAwT/XkUn2LBTfhHfV5QFppx6vvd/Fjx1YCO0pKmzN2whkDh0jyHvkzO/dYkZp7nc1+indNsa9k0t7fsndwxTd2lqHUG7Kp7zMm2uQMWr8UWqkk9tUicFJEJMPnqX+HqN654Gi8zU/BIXcubHBK5i6iUmyBVjLIoK/ci6yJHcrdkj3K+BYFovk36g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by PH8PR11MB7096.namprd11.prod.outlook.com (2603:10b6:510:214::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.26; Wed, 25 Sep
- 2024 00:17:07 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%7]) with mapi id 15.20.7982.022; Wed, 25 Sep 2024
- 00:17:07 +0000
-Date: Tue, 24 Sep 2024 17:17:03 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Alistair Popple <apopple@nvidia.com>, <dan.j.williams@intel.com>,
-	<linux-mm@kvack.org>
-CC: Alistair Popple <apopple@nvidia.com>, <vishal.l.verma@intel.com>,
-	<dave.jiang@intel.com>, <logang@deltatee.com>, <bhelgaas@google.com>,
-	<jack@suse.cz>, <jgg@ziepe.ca>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<mpe@ellerman.id.au>, <npiggin@gmail.com>, <dave.hansen@linux.intel.com>,
-	<ira.weiny@intel.com>, <willy@infradead.org>, <djwong@kernel.org>,
-	<tytso@mit.edu>, <linmiaohe@huawei.com>, <david@redhat.com>,
-	<peterx@redhat.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <nvdimm@lists.linux.dev>,
-	<linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-	<jhubbard@nvidia.com>, <hch@lst.de>, <david@fromorbit.com>
-Subject: Re: [PATCH 08/12] gup: Don't allow FOLL_LONGTERM pinning of FS DAX
- pages
-Message-ID: <66f3567f76762_2a7f29441@dwillia2-xfh.jf.intel.com.notmuch>
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <78b49fc7e0302be282b4fcbd3f71fa4ae38e2d5f.1725941415.git-series.apopple@nvidia.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <78b49fc7e0302be282b4fcbd3f71fa4ae38e2d5f.1725941415.git-series.apopple@nvidia.com>
-X-ClientProxiedBy: MW4PR04CA0090.namprd04.prod.outlook.com
- (2603:10b6:303:6b::35) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93AE947A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 00:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727223472; cv=none; b=M15Lq9jp9tndUh8MS0UICi0xjEhrm5wlIgjz/JLmoefSOG+fpBeFnGLzND37df7f277kOPq+69EgLXOWe+napkYlgVyK1Qscw6EzEolx4a/OUZN+14+GqnRHSFTo0CavI6mp7i9Kkjyt7TKxLTpbuW+2R8GBwNG2YnJ80+V4tDw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727223472; c=relaxed/simple;
+	bh=XjwV7ooouV4mXp4zpORY+QsAa1Fc9zhXXncoNiqLpRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kHwTAxbjJJn3UPHhpGMgV7Ux9NMDvtg8jwmV35hR+KiwmBurMgRB8rDWedCkEcmmI28CyMoR4IqSNJ5d9L1cFDjyHI7x/FpQbOlxqhrRtGuzvGovQYepMCGcKkHnnHr9r7dM1yzLaEp4nzC7xr65Pk+qL1yl1W2EjzqqaKnX6Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ScGRUpX5; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20792913262so72951555ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2024 17:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727223470; x=1727828270; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxBCf5uNQNAL3k3Wxpn0q6ae9NteRJmyEjICcWBnEX8=;
+        b=ScGRUpX5pBE2+MCXfETE0Y26bpnqqn0amUvNiHlHZ5mgA3uOLeeblbW6IbTNZxwTwW
+         7yhQb0LRRFsMnx58NicmyN39Q//+lHhLhR05PXIvwC6qOUxiSz18IAtixQkMbPlo/QuZ
+         3ZXMkcyY26TsNkRm2w54sCK/VBM+ZA+OuNjoFt90+uEbfD5u9M3gWMhtaogh8+rdpBsh
+         FJ3aNKzTRKfvo7HOec4ALwb1L9tNX5XGG420BWx3Vep3fiMkhBXaIWtWgM0f8U7Ex/mj
+         n7gR+6HYwlzVhAOpbJlg/E/IbmDWKzmM6BshUPNJVNsxUufe65ekd9I0/9KQs19ZyNGA
+         mtOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727223470; x=1727828270;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZxBCf5uNQNAL3k3Wxpn0q6ae9NteRJmyEjICcWBnEX8=;
+        b=mH+cCqByHqRVLKOv92ibC9B7FgZ5eTcpvLhBLGfb13yxwzI90m0OJ52cZ5l2IQOi+x
+         dLCtnv53A4UeKBiO+EL1+BffIH0xLMiT7AXs8b9gXWS2ehHcbf4U17Odz4azt8y32PTi
+         ZZ4B4tUUM2IOYZpYnt7gtZY9WWZoqrFdkhyAZ9v+7Wp69kx+J1lVbTxPVL5ZYBqlf636
+         skHjNOOllbhlLF/D0QZK0w8T47AXl9KdRXB8HXLlVW7rlgZ/LWF+TqjDTc6G2HW1/ofA
+         YNElfVvDVtAq0YP7NNU/GVMQHYVB3pFh9xEBMpTR3G2o4Uyogsl95tQJuyqZdL0N+e6g
+         fSag==
+X-Forwarded-Encrypted: i=1; AJvYcCU/sRFE93oKMP1DZbrtfV4HDvDnep7q/9tgT5t3uGY86OzDY/wJ6p9yZJT7dMGuJzZvHDIDY3hvqtb2obEY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYCA/Gj2h9+6UXfQbOe2BZ7Td+UTeZBj5MffGq5PtKVoA1lyQM
+	YXJP7fsa4sri1Co86RQ8/vzMgKbQsCMT1IsLRidS+XWhG7GjXuwQc54igtwp9aI=
+X-Google-Smtp-Source: AGHT+IHeVKhbsatOw7Qx2kKg+qV81P7Ump5pcTq+XicBjALOlKzXHaZhf4/0ryeV1aZtpLdVW+Bq1g==
+X-Received: by 2002:a17:902:ce86:b0:205:5eaf:99e7 with SMTP id d9443c01a7336-20afc4c6c7emr12552095ad.38.1727223470033;
+        Tue, 24 Sep 2024 17:17:50 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1720b00sm14779125ad.64.2024.09.24.17.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 17:17:49 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1stFj0-009di0-1N;
+	Wed, 25 Sep 2024 10:17:46 +1000
+Date: Wed, 25 Sep 2024 10:17:46 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
+Message-ID: <ZvNWqhnUgqk5BlS4@dread.disaster.area>
+References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+ <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+ <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
+ <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
+ <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
+ <CAHk-=wh+atcBWa34mDdG1bFGRc28eJas3tP+9QrYXX6C7BX0JQ@mail.gmail.com>
+ <ZvI4N55fzO7kg0W/@dread.disaster.area>
+ <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|PH8PR11MB7096:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8c78880-c113-4cee-ea98-08dcdcf7643a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?pHFDg1iCoOwwjYWaordOtr+oILDC8TY1URxQuzabUgg9vNPT3P5t0LnRQXdO?=
- =?us-ascii?Q?yBF6+8q5OZaSbSWpXEzSpUH97zwtYNfbRxEi76P29xomNbdL+P22svuK4EX1?=
- =?us-ascii?Q?N088UPpGo/Ll/ReOvtEA+4vRVUVSTTHEcjS00J3yMOaOcRhn1lN920gH+tfu?=
- =?us-ascii?Q?6sukLE+8qfpeWpbtnyT4RaOm9XhEU1IdHRANfFod0Z7/6vHDfJQGUs3d+JDX?=
- =?us-ascii?Q?MxFHgURq0ar4/j5PkWQ2zIUZ25mrKw3h+LTqFjsYryAZCfgtQvEtcWBIszrF?=
- =?us-ascii?Q?VMPjC3ASX5051wO9jxMExiBlrWSAaHmfcsK8wq4krXnZGsrKXDdX97TUIepT?=
- =?us-ascii?Q?nHqSA3st+oH/wlHKbd1NCX1bRBaYdJnke0xyNj4+xiRafnp0Vpp+dB4uKWeD?=
- =?us-ascii?Q?QBqqHNQBBMECD749sX1E1dTr+DrNqgDcgMCcIrvPKWbyKR7jpMFniMh5kBBJ?=
- =?us-ascii?Q?861fHorjr8YlbQ8sUJuPttRhjGEJw2NlmO897syPfC7kniahqVyhc2vAnK2n?=
- =?us-ascii?Q?/AhiGm2aCp078MRQC1qvLXVXtdf2j/85I2bDOfCqLakCqC7Yo/lSI90f4Hm/?=
- =?us-ascii?Q?ONzNJVcSSWZqb91RMLbk18iir6n9JozPBNnYaaqVwq/QbVlnxEm7a8uq4XeV?=
- =?us-ascii?Q?Z8PK7jceAujDnIsh+f8YVY9UXfUOj4Zjm68S+FrNK5nLQ4VxYCW7VRLHNSPn?=
- =?us-ascii?Q?yR9aFrWWI7Wsst6g1BYEnhNle4wt1Q4vlpEJhTnxOqVYXSJ66ERlqa2dFyeI?=
- =?us-ascii?Q?8cmcPylx3fR43lRB65qE1cJoPALTpxrMxMw+mrNmV9y0x5UpEenZB1Hl2YBX?=
- =?us-ascii?Q?7llnye7EoILLyGMVFDqsSjGsF7RhwIItch1dawfakLkP5hz+1rpHJqvDMYVA?=
- =?us-ascii?Q?dmL8tw+MDvmSs2Nq4b98ctsqBG7vuQeCK3LiyODKPSIQjrWL1M1c2mKZumb+?=
- =?us-ascii?Q?cWnT9HhYc7fN9Ugd37OnWSDSCEdZgjzsfoRi6STV6qu/eX/BlLILdVzrlLxg?=
- =?us-ascii?Q?22kGggoErfS949Ihhk9wDAKp9/hs/n/HmLlNIgJds075ynpVF7WwAJTqsdmZ?=
- =?us-ascii?Q?5MJeUXp5Kd5UQNKFK8r5YyaXtCNSqItPT8Zde+jOrVDku1OYir+yxDG9dKU/?=
- =?us-ascii?Q?L71D/D/dSw8DJUKw+5+mID1Q3itFBEaqdGvvcTz+n2AEz+hAGzUCw35Cu3X5?=
- =?us-ascii?Q?1jd4EHofG4fcwYEHPchHZjjusmc71cwufGc7WxH99d2QI1KhkbUnRmFKViW/?=
- =?us-ascii?Q?rjt/f2vZq5iRSuibn4msf0XaYcLQwrWZF8DtgK2Cjg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hWAMbR9t/89CJUQIotnGN8cHSlPEsi2ha9pkghPHoJGd6Ndc8ay9HCK8uNez?=
- =?us-ascii?Q?tcBqZSZwj3XQpKMDQ7g8mxYPJJzeoeSKizE/XZ5YNrjHKPflX2569g5RKd0U?=
- =?us-ascii?Q?3r0ZThKbuQ+CBU3/7p4r6CVY3LIoOSuTdzZgpyaCroO7l9mznl+5uNgmVi1z?=
- =?us-ascii?Q?yACaUcxmUSqBp6z9J/xWb10BvKJzlJQTiiXNiPz5pj/t8wIT7pAHBvLCwqJT?=
- =?us-ascii?Q?B42v5c1o5Wi1q3a/Vq9hC3RLQEutzmWeLB6qx1j+Weclnue0Rumg/WuFtU3l?=
- =?us-ascii?Q?TLhR5pWj10fWAkW2NzYWT0gf4B8nwGjDQ6sOOe+3JF985i40aSxNbptbNCQ/?=
- =?us-ascii?Q?AVoKl2UgNAFc1xjWRebkgxWizNHiowwednUIxgmqTUM2K6Ski4dAxCBGe2fB?=
- =?us-ascii?Q?DKlBIy4hwDIY6pRsv7B23EyTUMHhzAQ2+FDtsZV0A+0gWVQqZc1bt3OEMlss?=
- =?us-ascii?Q?Vm7jpn2PL2iUMts5yKcacnWOxgYxzdkguz4xpw0eTC//iur0XFbwKtiAhdOn?=
- =?us-ascii?Q?vnOAT8aVZr+KixL0vfVXD5eN1ZS0rUma5bs1+QemZkRu//Vpe+/BT41OTEGq?=
- =?us-ascii?Q?Ab/8qW7DHaK4BZffSwTcZH4aBMJg5yCO/TLggyRUBvSU9+KOojR5XnbZ9qvU?=
- =?us-ascii?Q?4vO31Q4VbRw4trMD/RzbJgV8EggAsdClrwQXqDHXepkdJaJwjOyu4AXiJ91c?=
- =?us-ascii?Q?qGOJWxbYtqyQ9GdemKDsb3If/xV7KOFazOiM4Ek/xlN0vtR4/HpVJrRrdsmi?=
- =?us-ascii?Q?0vbzAZe4Be21s8agx4HYx2V9aJJU+K/btZb3PemhJlCMEwNoBNtWSP3HnL83?=
- =?us-ascii?Q?fIdwnw67hWJskwS5Z/pk6n35JhjD6xx8VkdrjrPN3ybh3ObmxcolvIkekbMV?=
- =?us-ascii?Q?McGtiqh1r17yT3sWhDeGjlSe/pRSeZmIEKNTEQ9/pO2v2wfaUWD1rDQNkwcV?=
- =?us-ascii?Q?7rgBneLA4MenI1VYgacZb0im1VNh0yYgYeTwOfF0N5/FEWkRjmU1BWNzaDu8?=
- =?us-ascii?Q?0ULoTnmsBsapt6zMvUkhgWSWnu4dejFPEgXEH7ymMis1HPtwYLgfapMeGt3x?=
- =?us-ascii?Q?swsZ4bR0KmTkr8d+5FmewZr70muIKl33w8pNu7+aVlMy/KNM86bJjQUy7F/S?=
- =?us-ascii?Q?CQTyFnK5LH6I0oNArk0s11gJW/+DSr0Kd2anxuCd/4aC8weXLleotf6T7hKb?=
- =?us-ascii?Q?O5is8tqlT5BT/PX2/fK1CTsKS1+p8B3hfkR0dbKBzrJ6yDiaXfVzR0/B8WFj?=
- =?us-ascii?Q?6jYer9gCgNhKj7GV1hEyCaKPGQjiMN+qmOF8yFmcyXByE8ArHuz8tKmJKiwO?=
- =?us-ascii?Q?v1GaxT9qC2B70gz1DDIR1a7LNw5lmWdQ9ZFhdfT+BNhPnFsagHod4BCUJzI3?=
- =?us-ascii?Q?mx2IUCMTuhcccBUVgP4N5Fa1G42b2nVxMcKrcXQ7oLOkV5bWeVV2iCGkGxWp?=
- =?us-ascii?Q?W3JdlizzCLFWf0hyHns74xYYWRI1mV/LDByCi/6U1FFpqktygIPO0xtSNLbk?=
- =?us-ascii?Q?5KgwA84L97UmdQW+3L4tChRfp814iywjNqiQ5IlY0lyPH1E0kNsNedPpUvQA?=
- =?us-ascii?Q?zcqFpeHgvNt/3iiwALg19qrFAuHpUjHT4hG2FfJjgHh+Nbe2RTtmYCKymnZS?=
- =?us-ascii?Q?0w=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8c78880-c113-4cee-ea98-08dcdcf7643a
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 00:17:07.7597
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 88NOV4F3ADBEkGtRXBaBlp+VLQb2UwQqPMPxQtObcpETut73ZIecitOuh7aFg+NkJKudojKC5LGfJL6FbChBvfJJux8lYS7P52k8i3ar63A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7096
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
 
-Alistair Popple wrote:
-> Longterm pinning of FS DAX pages should already be disallowed by
-> various pXX_devmap checks. However a future change will cause these
-> checks to be invalid for FS DAX pages so make
-> folio_is_longterm_pinnable() return false for FS DAX pages.
+On Tue, Sep 24, 2024 at 09:57:13AM -0700, Linus Torvalds wrote:
+> On Mon, 23 Sept 2024 at 20:55, Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > That's effectively what the patch did - it added a spinlock per hash
+> > list.
 > 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> ---
->  include/linux/memremap.h | 11 +++++++++++
->  include/linux/mm.h       |  4 ++++
->  2 files changed, 15 insertions(+)
+> Yeah, no, I like your patches, they all seem to be doing sane things
+> and improve the code.
 > 
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index 14273e6..6a1406a 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -187,6 +187,17 @@ static inline bool folio_is_device_coherent(const struct folio *folio)
->  	return is_device_coherent_page(&folio->page);
->  }
->  
-> +static inline bool is_device_dax_page(const struct page *page)
-> +{
-> +	return is_zone_device_page(page) &&
-> +		page_dev_pagemap(page)->type == MEMORY_DEVICE_FS_DAX;
-> +}
-> +
-> +static inline bool folio_is_device_dax(const struct folio *folio)
-> +{
-> +	return is_device_dax_page(&folio->page);
-> +}
-> +
->  #ifdef CONFIG_ZONE_DEVICE
->  void zone_device_page_init(struct page *page);
->  void *memremap_pages(struct dev_pagemap *pgmap, int nid);
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ae6d713..935e493 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1989,6 +1989,10 @@ static inline bool folio_is_longterm_pinnable(struct folio *folio)
->  	if (folio_is_device_coherent(folio))
->  		return false;
->  
-> +	/* DAX must also always allow eviction. */
-> +	if (folio_is_device_dax(folio))
+> The part I don't like is how the basic model that your patches improve
+> seems quite a bit broken.
+> 
+> For example, that whole superblock list lock contention just makes me
+> go "Christ, that's stupid". Not because your patches to fix it with
+> Waiman's fancy list would be wrong or bad, but because the whole pain
+> is self-inflicted garbage.
 
-Why is this called "folio_is_device_dax()" when the check is for fsdax?
+I'm not about to disagree with that assessment.
 
-I would expect:
+> And it's all historically very very understandable. It wasn't broken
+> when it was written.
+> 
+> That singly linked list is 100% sane in the historical context of "we
+> really don't want anything fancy for this". The whole list of inodes
+> for a superblock is basically unimportant, and it's main use (only
+> use?) is for the final "check that we don't have busy inodes at umount
+> time, remove any pending stuff".
+> 
+> So using a stupid linked list was absolutely the right thing to do,
+> but now that just the *locking* for that list is a pain, it turns out
+> that we probably shouldn't use a list at all. Not because the list was
+> wrong, but because a flat list is such a pain for locking, since
+> there's no hierarchy to spread the locking out over.
 
-if (folio_is_fsdax(folio))
-	return false;
+Right, that's effectively what the dlist infrastructure has taught
+us - we need some kind of heirarchy to spread the locking over. But
+what that heirachy is for a "iterate every object" list looks like
+isn't really clear cut...
 
-...and s/device_dax/fsdax/ for the rest of the helpers.
+Another option I'd considered was to offload the iteration to
+filesystems that have internal tracking mechanisms. e.g. use a
+superblock method (say ->for_all_cached_inodes()) that gets passed a
+callback function for the operation to perform on a stabilised
+inode.
+
+This would work for XFS - we already have such an internal callback
+based cache-walking infrastructure - xfs_iwalk() - that is used
+extensively for internal admin, gc and scrub/repair functions.
+If we could use this for VFS icache traversals, then
+we wouldn't need to maintain the sb->s_inodes list at all in XFS.
+
+But I didn't go down that route because I didn't think we wanted to
+encourage each major filesysetm to have their own unique internal
+inode caching implementations with there own special subtle
+differences. The XFS icache code is pretty complex and really
+requires a lot of XFS expertise to understand - that makes changing
+global inode caching behaviour or life cycle semantics much more
+difficult than it already is.
+
+That said, if we do decide that a model where filesystems will
+provide their own inode caches is acceptible, then as a first step
+we could convert the generic s_inodes list iteration to the callback
+model fairly easily....
+
+> (We used to have that kind of "flat lock" for the dcache too, but
+> "dcache_lock" went away many moons ago, and good riddance - but the
+> only reason it could go away is that the dcache has a hierarchy, so
+> that you can always lock just the local dentry (or the parent dentry)
+> if you are just careful).
+
+> 
+> > [ filesystems doing their own optimized thing ]
+> >
+> > IOWs, it's not clear to me that this is a caching model we really
+> > want to persue in general because of a) the code duplication and b)
+> > the issues such an inode life-cycle model has interacting with the
+> > VFS life-cycle expectations...
+> 
+> No, I'm sure you are right, and I'm just frustrated with this code
+> that probably _should_ look a lot more like the dcache code, but
+> doesn't.
+> 
+> I get the very strong feeling that we should have a per-superblock
+> hash table that we could also traverse the entries of. That way the
+> superblock inode list would get some structure (the hash buckets) that
+> would allow the locking to be distributed (and we'd only need one lock
+> and just share it between the "hash inode" and "add it to the
+> superblock list").
+
+The only problem with this is the size of the per-sb hash tables
+needed for scalability - we can't allocate system sized hash tables
+for every superblock just in case a superblock might be asked to
+cache 100 million inodes. That's why Kent used rhashtables for the
+bcachefs implementation - they resize according to how many objects
+are being indexed, and hence scale both up and down.
+
+That is also why XFS uses multiple radix trees per-sb in it's icache
+implementation - they scale up efficiently, yet have a small
+memory footprint when only a few inodes are in cache in a little
+used filesystem.
+
+> But that would require something much more involved than "improve the
+> current code".
+
+Yup.
+
+FWIW, I think all this "how do we cache inodes better" discussion is
+somehwat glossing over a more important question we need to think
+about first: do we even need a fully fledged inode cache anymore?
+
+Every inode brought into cache is pinned by a dentry. The dentry
+cache has an LRU and cache aging, and so by the time a dentry is
+aged out of the dentry cache and the inode is finally dropped, it
+has not been in use for some time. It has aged out of the current
+working set.
+
+Given that we've already aged the inode out of the working set.  why
+do we then need to dump the inode into another LRU and age that out
+again before we reclaim the inode? What does this double caching
+actually gaining us?
+
+I've done experiments on XFS marking all inodes with I_DONT_CACHE,
+which means it gets removed from the inode cache the moment the
+reference count goes to zero (i.e. when the dentry is dropped from
+cache). This leaves the inode life cycle mirroring the dentry
+life-cycle. i.e. the inode is evicted when the dentry is aged out as
+per normal.
+
+On SSD based systems, I really don't see any performance degradation
+for my typical workstation workloads like git tree operations and
+kernel compiles. I don't see any noticable impact on streaming
+inode/data workloads, either. IOWs, the dentry cache appears to be
+handling the workings set maintenance duties pretty well for most
+common workloads. Hence I question the need for LRU based inode
+cache aging being needed at all.
+
+So: should we be looking towards gutting the inode cache and so the
+in-memory VFS inode lifecycle tracks actively referenced inodes? If
+so, then the management of the VFS inodes becomes a lot simpler as
+the LRU lock, maintenance and shrinker-based reclaim goes away
+entirely. Lots of code gets simpler if we trim down the VFS inode
+life cycle to remove the caching of unreferenced inodes...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
