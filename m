@@ -1,133 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-30058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D440C98579B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 13:06:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8D59857A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 13:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F94A1F24F96
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 11:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 098991C20DA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 11:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87265154BFE;
-	Wed, 25 Sep 2024 11:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7511494DC;
+	Wed, 25 Sep 2024 11:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y0qoZkaG"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O6k+H8mm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6067913212A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 11:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C6521A1C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 11:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727262386; cv=none; b=gIqFRr6rpn/XkXkcF/ixNSuhP+34hm9lmxxVPMyebtgaLxl7xcgKDNRB7T/k/eNQr+zmmNYx0sdukXxeXwmw7sGlGmEaO/6NZQII5GsX56q49LkeonZZC6AxnmVHgv5gPGQtHIef1C7QFTOXypmgq/c4sPsdJzFdKX98W98/B1A=
+	t=1727262592; cv=none; b=rctPr+Cbf6MPMZBWL808sqbBk0B3/fZfwBKe0v7WEGk0ZLoR4nTZiuSlQAX21wVhmm9awKhvNoXQGYNM7V9we7++RxAHCcIi18+kk+6fuhdYNb8Y+cZKoEXkRLlxlUYHXOBjCFWyY1RG3hEjxoY1BlYDd1ge1TrV7pm97/h5uj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727262386; c=relaxed/simple;
-	bh=v9SOENpp+GEqMEfpbzjHUOzd9Uxz8a8eI7GUtlWQs+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TTni0YI/EgV8TkiAV7gwNrkNuMxV+aKh6umIebvE7CSb9jHdwskz9MLGSFxcynmcO4plInUx/hAyHJYbKzA/+NsY0lZLezpxAi/Dj6+v3JgSYazoATUjLKIuKDnoIMdZ67wS7XXm+zpPKgS1iqkspJGMEH9G5y9HV7n/4cBOJ90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y0qoZkaG; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso84107205e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 04:06:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727262382; x=1727867182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JhQ4TPCHuI58LZ38MBixhcUn27fdFhOzEs54JQFmEu4=;
-        b=Y0qoZkaGAi7LcUT3oJb4NisLSJU/jQJH27zodADr2z0dvPpCGPDg5u7nQ4RIsCYMak
-         le/mIhlmqZ8X6+GmN3PP2QMCKp6vbmxzotaBm1Yuw0RXmtw32VA+G7yMyWtf4xmzAhKM
-         UcGaIYxfzd8JowKxx+i3zJ6nNRBJXXxEklTgZMxjg+YgF1Z3ofeLDp/41kfNnENqDcCI
-         luE4FdlQEo4BAdOUU66phuSQdN3pka/+v/NSGPGVtV4o41NqrBDjLgAdZqbjZXl89pIh
-         tYk0Dth2KHO+fllaG9Qs7ETkDZAIAD0pLvwMM632vU9VIipk2b6BElfMGUO2065bcTEx
-         X8cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727262382; x=1727867182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JhQ4TPCHuI58LZ38MBixhcUn27fdFhOzEs54JQFmEu4=;
-        b=ZDiPZ7BmNh9iEhV5FHCsInYzy1LFXvmER5RMST/GbJq3+LEiTe3BSbaEeDLvGMAuAC
-         obzX/cXWz6nj0tH8GROcExJVt+U0BgQ2GGvRlR0RYCTA8VUOkSn0ycv/Nc5enbtefGHe
-         S8xZhUJ7OQEkpJWj2uSeJqKfyQhpLcvTEaI81NWqD3sUqmwVlh4VV0I7kxviIYfFZZSc
-         u9N758hekZo01U9wXMh9VDj5WBXRzED52uJFCUwAMYRIOdWsuyyMeRjxYjpuPo6bKqGY
-         8nTfdUdk41hf+dbVfvCoYCVrGaXK1ogdb1HEQJXH9n5srd8RTQv9oIE8dXpPytpsJY/2
-         PfNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGbmFnpw9GmqPhhdL7lqkm1eHwhObQaiVJReY79Cc3pPjgh+Oyv0QY61YMUu7MJ0jxgtTANaCODNfgG0LY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW+6tgdZzEnBc0pN9YrQAIqD48Qlc1T2lKE2duPsTg0EcP5ip8
-	NbxN9CDRxBIqLPXsTxof7V+eJ5wDDx4GcqVSZAjtaygox08et8qopdqy4wHB0ixLJjuSz54HnuR
-	hC0sTb2lEWKF9I2CpD95KGtG1HXIcCvYvMH4/
-X-Google-Smtp-Source: AGHT+IGFAj+j04oaHOFqsP7FAM4DEPPjCdbCbDCCKy/XEfJz3JFRtsBnFMPeIPy5+2A+yRs/huLSjBw7dGu97fMWSko=
-X-Received: by 2002:a5d:5d86:0:b0:37c:c51b:8d9c with SMTP id
- ffacd0b85a97d-37cc51b8ee6mr1224327f8f.38.1727262382323; Wed, 25 Sep 2024
- 04:06:22 -0700 (PDT)
+	s=arc-20240116; t=1727262592; c=relaxed/simple;
+	bh=LQEzXPAIIICkhmqoZQCr+ZgX6AtcOa0R/eWt6GYdcmY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=a/UFLu3s93wuwL8yANY0BnnZWysSm82lGUdMQCwMqPCRp9RDmdRaE0HZK23oWUvXGKvFieK3OIrCf9OxTepfyFTB31Zrz4zjXdw1VsUEXFCdC4GzdVH1imlPA7NOQpQ3MpKu+oL32bHiqjlvWweJgoI+1Ckxm9+bmBMk27fKf6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O6k+H8mm; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240925110947epoutp042d47c54ecf0cf52f6c9e301e975e39d2~4eCv9Odvn0751007510epoutp04B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 11:09:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240925110947epoutp042d47c54ecf0cf52f6c9e301e975e39d2~4eCv9Odvn0751007510epoutp04B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727262587;
+	bh=N+h3PsTPTQHDyIY9DQ7puLUE1ePpWavL+lGTJUupizU=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=O6k+H8mm6iKRX5Zc+FhV3dBREcuw/+zRNC7A/CY2jdg9EZVZo7REij+jWss6liQ4V
+	 6ktt0okuWPFEHJR7LX6s70bek43R1tcphY0z5RHIOZyvbUD1AL05SxR90rbaDvknge
+	 vwRSoXxbyIZrhrmpDv3cQeQxnnLDbIok4cGkJKcE=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240925110946epcas5p2d3caa556f7252ff32ef4283ce4becb0f~4eCvTn7cf1791117911epcas5p2F;
+	Wed, 25 Sep 2024 11:09:46 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XDDX94bcYz4x9Pw; Wed, 25 Sep
+	2024 11:09:45 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BE.48.08855.97FE3F66; Wed, 25 Sep 2024 20:09:45 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240925110945epcas5p33419ecc893436e250dc77fe629d86c4d~4eCtxtCtn2184821848epcas5p3u;
+	Wed, 25 Sep 2024 11:09:45 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240925110945epsmtrp26fd009b541f5c043f80be1ddfacbbe1a~4eCtwuvnp0643906439epsmtrp2L;
+	Wed, 25 Sep 2024 11:09:45 +0000 (GMT)
+X-AuditID: b6c32a44-107ff70000002297-b2-66f3ef7983c6
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7C.57.07567.87FE3F66; Wed, 25 Sep 2024 20:09:44 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240925110941epsmtip2688610a145f992978c8e49e754c94e0b~4eCqpQ_lf2519425194epsmtip2f;
+	Wed, 25 Sep 2024 11:09:41 +0000 (GMT)
+Message-ID: <678921a8-584c-f95e-49c8-4d9ce9db94ab@samsung.com>
+Date: Wed, 25 Sep 2024 16:39:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-1-88484f7a3dcf@google.com> <20240924194540.GA636453@mail.hallyn.com>
-In-Reply-To: <20240924194540.GA636453@mail.hallyn.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 25 Sep 2024 13:06:10 +0200
-Message-ID: <CAH5fLgggtjNAAotBzwRQ4RYQ9+WDom0MRyYFMnQ+E5UXgOc3RQ@mail.gmail.com>
-Subject: Re: [PATCH v10 1/8] rust: types: add `NotThreadSafe`
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+	Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH v6 3/3] io_uring: enable per-io hinting capability
+Content-Language: en-US
+To: Hannes Reinecke <hare@suse.de>, axboe@kernel.dk, kbusch@kernel.org,
+	hch@lst.de, sagi@grimberg.me, martin.petersen@oracle.com,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com, bvanassche@acm.org,
+	asml.silence@gmail.com
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com, Nitesh
+	Shetty <nj.shetty@samsung.com>
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <28419703-681c-4d8c-9450-bdc2aff19d56@suse.de>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TaVBTVxid+/KygEVfo5RLRjFNx6GoQFKWXqyo0yK+Dm0Hl4FuSiN5EAok
+	mSyltowyWECRTbCAYQlVKhBblLUghNKgoEGlI6BCK6IEtVD2wrQi2CQPW/6d891z7rnf983l
+	MLj5bB4nSqamlDJxjIBlj9e3ubm6H5qYiRCm1PBRob4eoPP3MlkodbEWR6Nt0wDlTv7DQOOJ
+	8zjqa23EUPOZbAxVnL+CofGkmzgqyDuKIfMFLQMN/T7DRtnG2wCdyk0EyNC/CTUbruFId26Y
+	jco6FjFUP69joMrRCRx1LXQwUZe2kL3DiezuCSIbtffYZNdAFU5239CQ1frjLLJ6OptN1pQe
+	IZv6Eljk1HA/Tk609LLIjFo9IK+XXLYcdn5NzlS7kNXmMSx41cfRW6WUWEIp+ZQsXC6JkkX6
+	C4L2hr0T5uMrFLmL/NCbAr5MHEv5CwLeC3YPjIqxzEDA/0Ico7GUgsUqlcBz21alXKOm+FK5
+	Su0voBSSGIW3wkMljlVpZJEeMkq9RSQUvuFjEX4WLU278R2m+NvpywJTGzsBjLyUCuw4kPCG
+	beVVjFRgz+ESTQDO9uQDmkwD2JVWitNkDsAT9WfBC8vtq7+wrJhLGACsShTRojEAy4f+sokc
+	iG1wOPGBTYQTG6DpuhGn6y/Da6fNNuxIHIRPewtt+tVEIKwp6GJaMYNwgv1mHWa9dA1RjsFH
+	zbNMK2EQzwH8tkJvIRwOi3CDv+ZorAY74i34R0oRmzavh0frCmwNQcJkB/uTF5j0swNg162U
+	pRZWw5GOWjaNeXBm3MCicTQcfDiI0zgeNtRkLHm3w4Rnd225DEvuhUuedNZKmD5vxqxlSDjA
+	Y8lcWv0qHMgeXnI6wQf5pUxaQsLUhQ/oWY0AWNf+EGQBvnbZWLTL2tcu60b7f3AJwPXAmVKo
+	YiOpcB+FSEbF/bfwcHlsNbB9kY0BDeCubtHDCDAOMALIYQjWOGT3TUVwHSTiQ19RSnmYUhND
+	qYzAx7KfkwyeY7jc8sdk6jCRt5/Q29fX19vPy1ckcHIYTSqScIlIsZqKpigFpXzhwzh2vAQs
+	S+Q8znQUxg+nZ9bl2BXvd9sUFKR8LI3LOxx+80xTbtmU+U+X9AMJOc8M9iF3sjs/fT/g0mLl
+	47W60/MRJcbDXgMtO19fV5HWYrpStW/z8xCxsfXILDd4Vl6+R9ga9Vvefg31g/zgWEXN58mj
+	g7vb2s0b3D9al+syN9fiq3McYP+4O8vZJNnV3hh63416+0Rb0/acfT3MnzrRWtYofyHjwCrD
+	+tDu+1uewJRJ5x3x0j2zr0TpL37z2rHvjwdndjisCBxy9QyNLcrYbLy8q9L+5+LJEMmHT++s
+	VKhdHlG8uOKTYhPvVO+qi2d3NvQoxgy39vLfrRovk5cVftKfdM7L9eoK45NpTwGukopFGxlK
+	lfhfs/a3TKsEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsWy7bCSvG7F+89pBpe+m1vMWbWN0WL13X42
+	i65/W1gsXh/+xGgx7cNPZot3Tb9ZLG4e2MlksWfRJCaLlauPMlm8az3HYjF7ejOTxZP1s5gt
+	Ht/5zG4x6dA1Rosp05oYLfbe0rbYs/cki8X8ZU/ZLZYf/8dkse33fGaLda/fs1ic/3uc1eL8
+	rDnsDuIel694e+ycdZfd4/y9jSwel8+Wemxa1cnmsenTJHaPzUvqPXbfbGDz+Pj0FovH+31X
+	2Tz6tqxi9Diz4AhQ8nS1x+dNch6bnrxlCuCP4rJJSc3JLEst0rdL4MroObuQqeCHeMXsU4fZ
+	Gxhf8XQxcnJICJhIXDtxkK2LkYtDSGA3o8TXq/vZIBLiEs3XfrBD2MISK/89Z4coes0oMbN/
+	JjNIglfATuJp00OwBhYBVYlTZw6xQMQFJU7OfAJmiwokSey538gEYgsLuElsnn2eFcRmBlpw
+	68l8JpChIgIrmCQu/ZkH5jAL/GeU6Di2jAli3StGiR0XJgCN4uBgE9CUuDC5FKSbU8Ba4mX7
+	XHaISWYSXVu7GCFseYnmrbOZJzAKzUJyyCwkC2chaZmFpGUBI8sqRsnUguLc9NxkwwLDvNRy
+	veLE3OLSvHS95PzcTYzgpKGlsYPx3vx/eocYmTgYDzFKcDArifBOuvkxTYg3JbGyKrUoP76o
+	NCe1+BCjNAeLkjiv4YzZKUIC6YklqdmpqQWpRTBZJg5OqQam7U9unX674FfNqRuL2M5d3PrW
+	Q35DVbfaIWV7NaW1KyXLQycb6fLL7GXc72Bruna73+8nZof/T/BReiv1doqdbOPFw7vCkqYI
+	XJX7pv/8lgjTm2mRs3y+CNgHFK39+4TpqEi9y8trcZu6YngZfvycMm9pzFPbJ/q7LwTnTtue
+	8Wy5Yb4Ne73HwWrNrb4L2JtL0ksmMEw4vW1LzJrO7bv7Xdf1RS0rV/XLS/JweXtyUfSDG179
+	i/eU747Y/dIhqas5I8ScI4Tp7Z3Ji2d2XreZsjH0jnaI193gMw6OEXGXzT5fmeY8da/gKv/y
+	UO0bnn+OOl1MEe29zucV48nEc+FODceuiZIJ7oXtr1Y0rDTUUWIpzkg01GIuKk4EACcrUB6J
+	AwAA
+X-CMS-MailID: 20240925110945epcas5p33419ecc893436e250dc77fe629d86c4d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53
+References: <20240924092457.7846-1-joshi.k@samsung.com>
+	<CGME20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53@epcas5p1.samsung.com>
+	<20240924092457.7846-4-joshi.k@samsung.com>
+	<28419703-681c-4d8c-9450-bdc2aff19d56@suse.de>
 
-On Tue, Sep 24, 2024 at 9:45=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com> =
-wrote:
->
-> On Sun, Sep 15, 2024 at 02:31:27PM +0000, Alice Ryhl wrote:
-> > This introduces a new marker type for types that shouldn't be thread
-> > safe. By adding a field of this type to a struct, it becomes non-Send
-> > and non-Sync, which means that it cannot be accessed in any way from
-> > threads other than the one it was created on.
-> >
-> > This is useful for APIs that require globals such as `current` to remai=
-n
-> > constant while the value exists.
-> >
-> > We update two existing users in the Kernel to use this helper:
-> >
-> >  * `Task::current()` - moving the return type of this value to a
-> >    different thread would not be safe as you can no longer be guarantee=
-d
-> >    that the `current` pointer remains valid.
-> >  * Lock guards. Mutexes and spinlocks should be unlocked on the same
-> >    thread as where they were locked, so we enforce this using the Send
-> >    trait.
->
-> Hi,
->
-> this sounds useful, however from kernel side when I think thread-safe,
-> I think must not be used across a sleep.  Would something like ThreadLock=
-ed
-> or LockedToThread make sense?
+On 9/25/2024 11:27 AM, Hannes Reinecke wrote:
+>> @@ -98,6 +98,11 @@ struct io_uring_sqe {
+>>               __u64    addr3;
+>>               __u64    __pad2[1];
+>>           };
+>> +        struct {
+>> +            /* To send per-io hint type/value with write command */
+>> +            __u64    hint_val;
+>> +            __u8    hint_type;
+>> +        };
+> Why is 'hint_val' 64 bits? Everything else is 8 bytes, so wouldn't it
+> be better to shorten that? 
 
-Hmm, those names seem pretty similar to the current name to me?
+Right, within kernel hint is stored as 8bits value.
+But I chose not because how kernel stores hint internally (which may 
+change at any time) but how the existing F_SET_RW_HINT interface exposed 
+this to user space. It expects u64.
 
-Alice
+If we do 8bits interface here, application needs to learn that for the 
+same lifetime hint it needs u64 for fcntl interface, but u8 for io_uring 
+interface. That seems a bit confusing.
+
+Also, in future if we do support another hint type, we may be able to 
+pass hint_val beyond what can be supported by u8.
+
+As it stands the new struct will introduce
+> a hole of 24 bytes after 'hint_type'.
+
+This gets implicitly padded at this point [1][2], and overall size is 
+still capped by largest struct (which is of 16 bytes, placed just above 
+this).
+
+[1] On 64bit
+»       union {
+»       »       struct {
+»       »       »       __u64      addr3;                /*    48     8 */
+»       »       »       __u64      __pad2[1];            /*    56     8 */
+»       »       };                                       /*    48    16 */
+»       »       struct {
+»       »       »       __u64      hint_val;             /*    48     8 */
+»       »       »       __u8       hint_type;            /*    56     1 */
+»       »       };                                       /*    48    16 */
+»       »       __u64              optval;               /*    48     8 */
+»       »       __u8               cmd[0];               /*    48     0 */
+»       };                                               /*    48    16 */
+
+»       /* size: 64, cachelines: 1, members: 13 */
+
+[2] On 32bit
+
+»       union {
+»       »       struct {
+»       »       »       __u64      addr3;                /*    48     8 */
+»       »       »       __u64      __pad2[1];            /*    56     8 */
+»       »       };                                       /*    48    16 */
+»       »       struct {
+»       »       »       __u64      hint_val;             /*    48     8 */
+»       »       »       __u8       hint_type;            /*    56     1 */
+»       »       };                                       /*    48    12 */
+»       »       __u64              optval;               /*    48     8 */
+»       »       __u8               cmd[0];               /*    48     0 */
+»       };                                               /*    48    16 */
+
+»       /* size: 64, cachelines: 1, members: 13 */
+};
 
