@@ -1,158 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-30084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E44986006
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:12:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC9F98607B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B6D1C24BE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3810286F22
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F11192D64;
-	Wed, 25 Sep 2024 12:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9494F18A955;
+	Wed, 25 Sep 2024 13:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OyRWU5t1"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ZJHGiHAF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1488213DBBC;
-	Wed, 25 Sep 2024 12:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6B115B562
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 13:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266959; cv=none; b=ZVbiC/b47EKjS1V+dfGDbm/D0VCDZ9nNew1LjfXmVdJbEgLvm5T4/va8fdxWCBDvB0BrMi0xwPGVWbEyK+RdRwuKtwOKgBWT9cgqFSEj46VlKzC3nsmfW7lIHOV0Xbl1pilzdsfwH2ZJ7IL4fe+6sxVFO6Cn55zJnc8+EgkqYmY=
+	t=1727269312; cv=none; b=mLUAVOZ1gSeyaRj7nf0ZNoZShu6gixzu6cEX7DS/kKOqG8YBp1B48NuxyUwSBzCXM/1QGulRnXqZg9dysDIGO07MCm5X7L40f3l+QohEZSss/rlAfPklig1xQQ2MoB2Gsi24+0mL7DfgfcitMB0OYzuc5RbHkESfJVuV8gYSk1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266959; c=relaxed/simple;
-	bh=2nTLYXHLashP6U5iqb2SNaeRGPOeYJIEzFyRmQOBPvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rRf8LWRfi8e3yw2QyDPuM1GSiC+jp2it6glf7BjF9m+060KuyWQijYzNeJV+sKqwz26lbSXtaV0ogsUWUwpN1c/gd28uFOp1arPiXOcAQuvBD0bL6BRcyoIsUVnr21RO2N3byqwWvkXXkAXTPEtOHY11FL9V9D2zgSIrGn2jO7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OyRWU5t1; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c241feb80dso1680885a12.0;
-        Wed, 25 Sep 2024 05:22:37 -0700 (PDT)
+	s=arc-20240116; t=1727269312; c=relaxed/simple;
+	bh=/I2QyuALtHqcZ4GKUEhdX0jON2I0ZTnTM6uixWW961A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gUL3yMpCYC4cemRUO/HNonVbw7o9/0pIaWIbssK+zjD4terqWAW5hukV7vInEvIbe4LULr49JtVLJg1d594g+aTEhHlJMEL/e1He/Qdz1Qo+O/zIBwB5xS1h1WGVLXSWjp9b8c2Ehlf0tTcKwpgF3FgFbaEn7J6xg/zhS6o5cGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ZJHGiHAF; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7191f58054aso4989044b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 06:01:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727266956; x=1727871756; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e1vsdKX31ZQMJQnYW8l7+O8odVCjbHrQhd7IsOPE+00=;
-        b=OyRWU5t1nMvpS+40cJm/SneXHoGtZpxT+DWxK9bxhTjfxGTgyhFXzWx26WLOhYy+yJ
-         xsDjzi7MRAzy5GXcPBb5tucNxsDDMyPRkV457d9R5cYmxDqF1b67nlwhHbYEiatBxxaF
-         DyFTYGiOR8Bx6CfhFwdrlXAA4ZqyLKlt+nMg6jyCMKooG2CkR1xu7LqPJhO+SkbJz0Vz
-         wDBYDq2/vtXrJ5mm2x6Gsq0z0txoH1iUs6wsJ9fKtzL4gI4rWf9IBzuCC2SLRpqug1pr
-         pNbD8tYMXSWf1jKvwJxMimRBPnKO/8HvU4hKIH0ujOaf0OkTjJS8bKAnhHjLMHvBPRTI
-         0EeA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727269310; x=1727874110; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Hs7Rj+geVPl0+wE/2Riapln7P4i8+opp+f+HJRO79M=;
+        b=ZJHGiHAFS2AgScucvvWX3NCYCxcshW9W19k3I9uqzfr2w399/a/heKllDE6r+cbK9Q
+         qOnyEIEsCNxa6x2kjeAufWFV8+88lbP/ElRRRHj23uxgUmdPBdw1ETd1aOhvh5bkvyvB
+         yqzaxM5Y3J9BxcYmTF5Fo4xducN9rUSoS8gOtzBAqX8B1KvWvumrFPOtnSxkfQGKpJNW
+         f6iSuDRv5k+8jWlJtUyU2JtSEEwIq4PEUPGwHO0fPnxdMgNs9e13MXt9mRK9W27/h5RN
+         VJCO4ZaZYB2YisTYoEdelYlbWoSoTvi0yQz8jLL0yRNL8u8nG0CF4tCasEPck2/kGeyu
+         SA7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727266956; x=1727871756;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e1vsdKX31ZQMJQnYW8l7+O8odVCjbHrQhd7IsOPE+00=;
-        b=tkgCoL7V5kX00905qpd8lhnH0A5rgL4/MNDytd1oqOvi3/wHa2RqdflbIsbt/voU2U
-         6LNMWijWPL23yQ8vaepDt1edMYG+CWrz1j7EvoXrF3XLDBPtnVkFZflfBeDEBI4RSN0n
-         3zTjZen1A7MMS7P70fit6xehf1lkPGci5LHYghIXVCjOCRyWe4TErkH0Nq3aMUNm228g
-         6ssoUunxqgFaEdEp4K9QP6GMrIEz6eTth/vzuzn56P+NWvBq0hZmST2IhLlppnyPxEGS
-         PtMLNJb8mTujlpilhRSFAzzgA/TKoeD1bJoz7XTGtQmEuncMYua+sWuQtJXpHIVEk/8I
-         z0mA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyfWxdNIa7W8EayNUtSWSyLzGco/IvhCNuVKWJ1n7lTvxLWrJ13hlEU2OroSH4905U15FWNDSUaYea8RI=@vger.kernel.org, AJvYcCXHhV4N783dh+Tpxc0QDyKdMkZVKQ3FLRsVsRgb5K+2XNllvYdgeyrSg8wD6BVNY1DF0vIvPBGRQtYzelDRMA==@vger.kernel.org, AJvYcCXWxegUowp1CrnTLhnKFyIfwiyLYxvGxRsLlFUQ6bvJq9I0ZLiBFzlMGpQ7tEWNgo7Ql2S0RIk8dw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywop3LqtbjljBtpE18cuxabgLzIHYnetHiR5sfOOdVfjaVcqlkM
-	SglYQvUs0bEolMlMswa1iJ4nUstZxKk1OQ2chodqVjIb0cFjzOjX
-X-Google-Smtp-Source: AGHT+IHy8FnDpRRZ0xuHx941u/L73CdgNsgVKXSABy4Wq1uMlQmuwdBzBKZV8xBOb4xFnl0sRAAXbg==
-X-Received: by 2002:a05:6402:13d2:b0:5c4:1c0c:cc6d with SMTP id 4fb4d7f45d1cf-5c5cdf051d2mr7695812a12.0.1727266955977;
-        Wed, 25 Sep 2024 05:22:35 -0700 (PDT)
-Received: from [192.168.92.221] ([85.255.235.163])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf49dbbdsm1802486a12.57.2024.09.25.05.22.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 05:22:35 -0700 (PDT)
-Message-ID: <cb3302c0-56dd-4173-9866-c8e40659becb@gmail.com>
-Date: Wed, 25 Sep 2024 13:23:14 +0100
+        d=1e100.net; s=20230601; t=1727269310; x=1727874110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Hs7Rj+geVPl0+wE/2Riapln7P4i8+opp+f+HJRO79M=;
+        b=bShnWIs2Ym1O2mBaesr3k0n11Q8CiYE0/QA3tKxOLtEA4tbWUV7qFWZZMI3hSLthKL
+         zTid44opWyWU4/I2Nnyke9STLAqww3XUTcXyBYXWxtRVyeykFI3NxO0+KUlKm77QabfS
+         JD2eFAtCyXnluekVb8s789b/SQZ/PKghs12sVWSext6bxJMdEv/5OeRocN2YWhh2dc/K
+         4POkevdqPT4SClvF73Txedk/GzJTIaa9rg78o1BenqFC3TjWkhgwwsKKVLT0J0GAyaJE
+         fOcLY6sQlGgZD4nycDgB+eW8B8B1q3WLrQQDcZtzJ/cfMGycV6pOOV7sfL7u9tBJaMwS
+         Nh9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUPQokIXfVIYXxC2xQSN1/PWBps0XwxPj1Me/bN8Xpr/EUxjS7aqFNAuRcuozX+WME1wcOJ6M9+1pdAIFxn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2AkWNIGWoAxQxTY0hroDrlsPHZ4EkLouITRcUYnL82y1Qatbh
+	X+Wk3gKoHbXDR0i3mOr386USFcHp9dL+ieAzhy4SrwGsIU1MSr0WY48e60WK5603yVND1pqkJP2
+	z
+X-Google-Smtp-Source: AGHT+IGhVDXpQmSdOuPcFz0YHbnVT7KRb9mz7wJNr05mOpzbhnXZwabgK4/OENvrYl39bd7adJnW7A==
+X-Received: by 2002:a05:6a21:3997:b0:1cf:e5e5:263d with SMTP id adf61e73a8af0-1d4e0bf0da3mr4193230637.35.1727269309727;
+        Wed, 25 Sep 2024 06:01:49 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c7326dsm2566998a12.66.2024.09.25.06.01.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 06:01:49 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1stReM-009sBT-2S;
+	Wed, 25 Sep 2024 23:01:46 +1000
+Date: Wed, 25 Sep 2024 23:01:46 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Hannes Reinecke <hare@suse.de>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Dave Chinner <dchinner@redhat.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.11 237/244] iomap: fix iomap_dio_zero() for fs
+ bs > system page size
+Message-ID: <ZvQJuuGxixcPgTUG@dread.disaster.area>
+References: <20240925113641.1297102-1-sashal@kernel.org>
+ <20240925113641.1297102-237-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] io_uring: enable per-io hinting capability
-To: Kanchan Joshi <joshi.k@samsung.com>, Hannes Reinecke <hare@suse.de>,
- axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
- martin.petersen@oracle.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
- jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
- bvanassche@acm.org
-Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
- gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com,
- Nitesh Shetty <nj.shetty@samsung.com>
-References: <20240924092457.7846-1-joshi.k@samsung.com>
- <CGME20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53@epcas5p1.samsung.com>
- <20240924092457.7846-4-joshi.k@samsung.com>
- <28419703-681c-4d8c-9450-bdc2aff19d56@suse.de>
- <678921a8-584c-f95e-49c8-4d9ce9db94ab@samsung.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <678921a8-584c-f95e-49c8-4d9ce9db94ab@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925113641.1297102-237-sashal@kernel.org>
 
-On 9/25/24 12:09, Kanchan Joshi wrote:
-> On 9/25/2024 11:27 AM, Hannes Reinecke wrote:
-...
-> As it stands the new struct will introduce
->> a hole of 24 bytes after 'hint_type'.
+On Wed, Sep 25, 2024 at 07:27:38AM -0400, Sasha Levin wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> This gets implicitly padded at this point [1][2], and overall size is
-> still capped by largest struct (which is of 16 bytes, placed just above
-> this).
-
-For me it's about having hardly usable in the future by anyone else
-7 bytes of space or how much that will be. Try to add another field
-using those bytes and endianess will start messing with you. And 7
-bytes is not that convenient.
-
-I have same problem with how commands were merged while I was not
-looking. There was no explicit padding, and it split u64 into u32
-and implicit padding, so no apps can use the space to put a pointer
-anymore while there was a much better option of using one of existing
-4B fields.
-
-
-> [1] On 64bit
-> »       union {
-> »       »       struct {
-> »       »       »       __u64      addr3;                /*    48     8 */
-> »       »       »       __u64      __pad2[1];            /*    56     8 */
-> »       »       };                                       /*    48    16 */
-> »       »       struct {
-> »       »       »       __u64      hint_val;             /*    48     8 */
-> »       »       »       __u8       hint_type;            /*    56     1 */
-> »       »       };                                       /*    48    16 */
-> »       »       __u64              optval;               /*    48     8 */
-> »       »       __u8               cmd[0];               /*    48     0 */
-> »       };                                               /*    48    16 */
+> [ Upstream commit 10553a91652d995274da63fc317470f703765081 ]
 > 
-> »       /* size: 64, cachelines: 1, members: 13 */
+> iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
+> < fs block size. iomap_dio_zero() has an implicit assumption that fs block
+> size < page_size. This is true for most filesystems at the moment.
 > 
-> [2] On 32bit
+> If the block size > page size, this will send the contents of the page
+> next to zero page(as len > PAGE_SIZE) to the underlying block device,
+> causing FS corruption.
 > 
-> »       union {
-> »       »       struct {
-> »       »       »       __u64      addr3;                /*    48     8 */
-> »       »       »       __u64      __pad2[1];            /*    56     8 */
-> »       »       };                                       /*    48    16 */
-> »       »       struct {
-> »       »       »       __u64      hint_val;             /*    48     8 */
-> »       »       »       __u8       hint_type;            /*    56     1 */
-> »       »       };                                       /*    48    12 */
-> »       »       __u64              optval;               /*    48     8 */
-> »       »       __u8               cmd[0];               /*    48     0 */
-> »       };                                               /*    48    16 */
-> 
-> »       /* size: 64, cachelines: 1, members: 13 */
-> };
+> iomap is a generic infrastructure and it should not make any assumptions
+> about the fs block size and the page size of the system.
 
+Please drop this. It is for support of new functionality that was
+just merged and has no relevance to older kernels. It is not a bug
+fix.
+
+And ....
+
+> +
+> +	set_memory_ro((unsigned long)page_address(zero_page),
+> +		      1U << IOMAP_ZERO_PAGE_ORDER);
+
+.... this will cause stable kernel regressions.
+
+It was removed later in the merge because it is unnecessary and
+causes boot failures on (at least) some Power architectures.
+
+-Dave.
 -- 
-Pavel Begunkov
+Dave Chinner
+david@fromorbit.com
 
