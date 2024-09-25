@@ -1,157 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-30093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315E2986158
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA07986170
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD3C28B42A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:47:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD66C1C26CD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0441B533E;
-	Wed, 25 Sep 2024 14:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B53193435;
+	Wed, 25 Sep 2024 14:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="gg0Rp0ay";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k2CdQj5d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRVKH3Lg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F49A18F2C3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 14:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C33186614
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 14:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727273253; cv=none; b=fDR+6PfWZJKxeKl0IYQcN/Z6n2weOOy4MzgHI1pfZ7ds9ymZ9w4NcfiimAtDrBwIRVbC7vPpzrAKqpxRG7+pu/ljyeYnk1+GywLvJcRYCEjzaijyMrzMcb0MuC0d7DsyS+yuKQx16rm5K4FrY7GOK9vMihGnh0T53Yz3ukwgOVc=
+	t=1727273781; cv=none; b=iXD3fUGzQNVlnx/h+jkyURsgwSAPmfK8a7gnNnMLXq/FB6G/Nzew8IteqECo0SUUJGs5+yXXqWRtrvH8K6bYk5f34NXGEJdt0nSwolY7GPYXkN6TqF5Q4saj2v3O7sUy5/JrB58wvO3AQz8x2xNd02VWwtTY4h67Ts5Q7/Jb0Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727273253; c=relaxed/simple;
-	bh=rEEDIh85bHbdcByqr+PFC5FgCn4FhWJT1QrtqcCegTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ptPKMvwH9UKi/epOBZIAuuy9kX9npL7XieHkEn+g/I7nWM9sjQMDfkZ8o5v9M1y6YMQVZtNGCu351RVMQ7HiS+6S3hh223CN7TPZbuQTj7t7CbqoXiPXOlQNOCoAc4j1rihop8zGng1sW0Hh88FFv7N4Wlb8WQ88JE+c8fKk/bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=gg0Rp0ay; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k2CdQj5d; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2C5C51380342;
-	Wed, 25 Sep 2024 10:07:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 25 Sep 2024 10:07:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1727273250;
-	 x=1727359650; bh=m1VPGu6rSVC9jkIGICq3PexQNYs8+fLWppQ7H8AlL90=; b=
-	gg0Rp0ayg69aMZ2bKzqlau3I/LiD8ROl3XBlQeLl2Naibr3RQ0RIQPtdSxdcwUsx
-	7u+ZN0BfPpTeatF+3D2VTls38uLzXKecowi8VeBPsM757u4PYsLQAEbgQvgXQmR1
-	YhAPOep4Vrv55WjaUmSWux5nuyKFJQN7uRWM67VesjjZwbN8ymLur7iphUpQL8u7
-	gdOO3TGFDI1LmxhlnbtRNefV6QHudKVtGN8Kivz5VqX/ZykviRX0e4TZZ2N4HHI8
-	ez25MCZT4t6UsXfZkFM0eHpEY58xkzOBgM8BYfcUn4Y/+Kk0mfn3AEDNLbun8lbw
-	QTdM1rT+dik1f7aMIoWsBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727273250; x=
-	1727359650; bh=m1VPGu6rSVC9jkIGICq3PexQNYs8+fLWppQ7H8AlL90=; b=k
-	2CdQj5dr5i7vIfWB6E1qyH3EH9GJCdkfRMAqX8oHSr1KvzuC5obt66Hgpq35xQJW
-	D10Kpz21Tu/8rD4t8vQJTUuqBpNn3tVSGPEyb+jT24rNFeGM8UMN2T0cLyYpLyFs
-	NSjuaI5q1hQFavSeoGp+6PSwE8GW8wXwetcR9Vkj2fGFzmpsAD3OXvTTSgrST2X+
-	yM+2it9arxF2Ob5mzPVJ+tVic6K6SZCxU6pfIv5TmVK2PpG2URYfI8p5U7zo+VyG
-	c5hHR7RJWfm0uE16c0FpFbsQsHY4DXTTBbpK/aHASuFyN83JtW58EhHLsC5SydhQ
-	XI3G0c3qBxYIfiEcoe9FA==
-X-ME-Sender: <xms:IRn0Zle6YNCiHW-GiRRauLuGtyxIrajwCou5RvZeBmJuWk4HFVDaKg>
-    <xme:IRn0ZjOdwyLFVcmKqOSYVEHrtNqPS25toeRPn-9XWW8QH77kb6EmpsusBtwp0alOZ
-    C0YH9Q0Qzf5uYHO>
-X-ME-Received: <xmr:IRn0ZugY6qj6EmeNevWtx7yITN4D81RBz9sljBd3UNiKccHCbq0Tt6XQtnSo9YGRcuJX5kXjUficCGl6nLQcQhnbesJSAiNk1qRSbO2L_9Cd42Vf4Xmn>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddthedgjedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
-    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
-    lhgruhhrrgdrphhrohhmsggvrhhgvghrsegtvghrnhdrtghhpdhrtghpthhtohepfhhush
-    gvqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthht
-    oheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:IRn0Zu920KjvNhm9bpaJHfFTRcrchYvuWl1n-gCzlmsevc0D4bY0rw>
-    <xmx:IRn0ZhsiNU6kr3evYY-goMlRbd9ZujtWIOX-2er_T0QtltWbYHyRMg>
-    <xmx:IRn0ZtFjDmVs6Nh-lJMVGne3sl4dFkucPHc4YwsbM_lj-bG-g5EWXQ>
-    <xmx:IRn0ZoPXF6rXnnZN1iMcGzZcxR2vHdG0_pMYoF0Rydw8nTWwTh7Unw>
-    <xmx:Ihn0ZrKzzZN6h9POEyu4-X5CLCj3WlPMjulOkJ5n0nBvL6F6q_oihswY>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Sep 2024 10:07:28 -0400 (EDT)
-Message-ID: <a48f642d-a129-4a55-8338-d446725dc868@fastmail.fm>
-Date: Wed, 25 Sep 2024 16:07:27 +0200
+	s=arc-20240116; t=1727273781; c=relaxed/simple;
+	bh=VDeMpAMbnZy5A7Fs5mK35QoMo/QnecaTFugYTwoT5+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h0w7YoWOVFYEI1LfxOklsOy1lYdZI7QAYePEMPpeLNrGOvh3SfdBu4dD4jdgTYpgRamq+loVlSrAABcQ/Qufo4ZfG4/QVgGkdObppYRyBAriUac5TNo4uMDXpeVl40SukEe9/Pe8uGQeB3TwC7FrWqJ+5Plsu27KfzA+pQAjMH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRVKH3Lg; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a9a3071c6bso763980685a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 07:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727273778; x=1727878578; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VDeMpAMbnZy5A7Fs5mK35QoMo/QnecaTFugYTwoT5+I=;
+        b=ZRVKH3LgLJR0ICmiPTxAOUtJIaXwnAHO4vRucnK6KFjWrv/LAupz9shmepV0TtsS+7
+         tzDHiLsYm+qhk4xlZJGff29IImQhi2TNeqDsQDl6zmziU4jn7Un19l16qMh0Cw01dvqP
+         JReLVxF3NONHCnk7ONw0EWgjh8Z3eLdWkSREF+xVnH8I9eaXKdVrX0CWwcfpWaRqIjUi
+         kjYuvm/UHoar4VVq72mpTtzVwAT3ndUszlUMUmnmHmfiE8vYLnmO6OjYc2+pbFBsR6Ho
+         UEcI4niZya8Y6ckFMOEDyfVP19Oanpj/C6NuxrgaoXRyAHTGLKWFySiOiAGeYnwdnhdv
+         gV9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727273778; x=1727878578;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VDeMpAMbnZy5A7Fs5mK35QoMo/QnecaTFugYTwoT5+I=;
+        b=EP3pJikg5LpAs8JOPLXGTRdpbWqtANSDHYoueUULQpRiDeP0WY1/apc5JNQAkw25SA
+         liM0kMiMGHRz6kpMS1mrU9qYnt3u7JlWduSMdpsn4GHuaunNSN2ANQXtkN0nVNR/rFxE
+         rks8eT4KEzxw28M9CXcD+QK+9Q/+sbFe3YxzHb9zwMM1nb1Y2Fy/SfCO72s+oK9pnlHU
+         tzagUTrHBk3N8NvYfz0AnwM+7vNc4XCnxOr4wUSEWCohJwDeZy/CyWevkikY2N+zvvPA
+         4F3PCbXlp1avbj1WefMVgZRhaX9GgOMDtlDq91JOxAPie/rPypB1jRC0I1dNI8VZsabR
+         x5Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1JfMj0kEGrwdah6ygSir/SGlgmBmYouZ8XIcdFvnNWLr+yOyuSgSzw2iMWPZaKqRyr6blGlhCPrlHS4+J@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3hvGqRhyeRqwKgaIBuUPmr+7jaAkKVbMKQU3l5JpVK+/Y7nV+
+	cERDmSyolgALD/IKA/WdGb8Sc5PFQwzO18teV5+DE0FO36rWbm9KW80OY12Fxa69kof+luCnR5n
+	VIb9dcWqGzPjSKpLyYec8upRwxdc=
+X-Google-Smtp-Source: AGHT+IF3zXbFwb9usZNQiYWwUWXQ2R8F+mTXhYQZHgcWCBzoOIkDRSsLnKCX2yep9/t0y2PvVnB3vaHwUXngmZ8c4Iw=
+X-Received: by 2002:a05:620a:4105:b0:7ab:36c8:6607 with SMTP id
+ af79cd13be357-7ace74598d0mr353955385a.54.1727273777942; Wed, 25 Sep 2024
+ 07:16:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [fuse-devel] Symlink caching: Updating the target can result in
- corrupted symlinks - kernel issue?
-To: Miklos Szeredi <miklos@szeredi.hu>,
- Laura Promberger <laura.promberger@cern.ch>
-Cc: "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>,
- linux-fsdevel@vger.kernel.org
-References: <GV0P278MB07187F9B0E7B576AD0B362B485802@GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM>
- <CAJfpegvVtao9OotO3sZopxxkSTkRV-cizpE1r2VtG7xZExZFOQ@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegvVtao9OotO3sZopxxkSTkRV-cizpE1r2VtG7xZExZFOQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxiuPn4g1EBAq70XU-_5tYOXh4HqO5WF6O2YsfF9kM=qPw@mail.gmail.com>
+ <SI2P153MB07187CEE4DFF8CDD925D6812D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxjd2pf-KHiXdHWDZ10um=_Joy9y5_1VC34gm6Yqb-JYog@mail.gmail.com>
+ <SI2P153MB0718D1D7D2F39F48E6D870C1D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <SI2P153MB07187B0BE417F6662A991584D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <20240925081146.5gpfxo5mfmlcg4dr@quack3> <20240925081808.lzu6ukr6pr2553tf@quack3>
+ <CAOQ4uxji2ENLXB2CeUmt72YhKv_wV8=L=JhnfYTh0RTunyTQXw@mail.gmail.com>
+ <20240925113834.eywqa4zslz6b6dag@quack3> <CAOQ4uxgEcQ5U=FOniFRnV1k1EYpqEjawt52377VgFh7CY2pP8A@mail.gmail.com>
+ <JH0P153MB0999C71E821090B2C13227E5D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+In-Reply-To: <JH0P153MB0999C71E821090B2C13227E5D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 25 Sep 2024 16:16:06 +0200
+Message-ID: <CAOQ4uxirX3XUr4UOusAzAWhmhaAdNbVAfEx60CFWSa8Wn9y5ZQ@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: Git clone fails in p9 file system marked with FANOTIFY
+To: Krishna Vivek Vitta <kvitta@microsoft.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
+	"v9fs@lists.linux.dev" <v9fs@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Miklos,
+On Wed, Sep 25, 2024 at 4:04=E2=80=AFPM Krishna Vivek Vitta
+<kvitta@microsoft.com> wrote:
+>
+> Hi Amir, Jan Kara
+>
+> Thanks for the responses so far. Appreciated.
+>
+> I have taken step back, started afresh and performed another trial using =
+the fanotify example program in another WSL2 setup.
+>
+> 1.) Uninstalled MDE software in WSL where FANOTIFY was initialized and th=
+at marks the mount point using mask: FAN_CLOSE_WRITE only. Ensured no piece=
+s of monitoring software is present
+> 2.) Ran the fanotify example program(without any changes) on p9 mount poi=
+nt and performed git clone on another session. Git clone was successful. Th=
+is program was using mask FAN_OPEN_PERM and FAN_CLOSE_WRITE.
+> 3.) Modified the fanotify example program to mark the mount point using m=
+ask FAN_CLOSE_WRITE only. Ran the git clone. The operation fails.
 
-On 9/25/24 14:20, Miklos Szeredi wrote:
-> On Thu, 15 Aug 2024 at 16:45, Laura Promberger <laura.promberger@cern.ch> wrote:
-> 
->> - But for corrupted symlinks `fuse_change_attributes()` exits before `fuse_change_attributes_common()` is called and as such the length stays the old one.
-> 
-> The reason is that the attr_version check fails.  The trace logs show
-> a zero attr_version value, which suggests that the check can not fail.
-> But we know that fuse_dentry_revalidate() supplies a non-zero
-> attr_version to fuse_change_attributes() and if there's a racing
-> fuse_reverse_inval_inode() which updates the fuse_inode's
-> attr_version, then it would result in fuse_change_attributes() exiting
-> before updating the cached attributes, which is what you observe.
+I ran the rename_try reproducer only with FAN_CLOSE_WRITE events watched
+and could not reproduce.
 
+>
+> Is it something to do with mask ?
+>
+> I didn't get a chance to run on standard linux kernel. Can you share the =
+commands to do so of mounting 9p on standard linux
+>
 
-I'm a bit confused by this, especially due to "fuse_reverse_inval_inode()",
-isn't this about FUSE_NOTIFY_INVAL_ENTRY and the additional flag
-FUSE_EXPIRE_ONLY? I.e. the used code path is fuse_reverse_inval_entry()?
-And that path doesn't change the attr_version? Which I'm also confused 
-about.
+You'd need some 9p server.
+I am using the 9p mount in the kvm test box that you can download from:
 
-
-> 
-> This is probably okay, as the cached attributes remain invalid and the
-> next call to fuse_change_attributes() will likely update the inode
-> with the correct values.
-> 
-> The reason this causes problems is that cached symlinks will be
-> returned through page_get_link(), which truncates the symlink to
-> inode->i_size.  This is correct for filesystems that don't mutate
-> symlinks, but for cvmfs it causes problems.
-> 
-> My proposed solution would be to just remove this truncation.  This
-> can cause a regression in a filesystem that relies on supplying a
-> symlink larger than the file size, but this is unlikely.   If that
-> happens we'd need to make this behavior conditional.
-
-I wonder if we can just repeat operations if we detect changes in the
-middle. Hard started to work on a patch, but got distracted and I 
-first would like to create a passthrough reproducer.
-
+https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickst=
+art.md
 
 Thanks,
-Bernd
+Amir.
 
