@@ -1,169 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-30083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6C5986005
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:12:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E44986006
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 16:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82AB51F26365
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:12:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B6D1C24BE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2024 14:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABD5192B88;
-	Wed, 25 Sep 2024 12:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F11192D64;
+	Wed, 25 Sep 2024 12:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dhmG5ePW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OyRWU5t1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83501BA87B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 12:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1488213DBBC;
+	Wed, 25 Sep 2024 12:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266864; cv=none; b=tgLmnpaxY0yw41ziwYbQldrVjg5dFr9/IgN1b6XKqQoOrKl9+PIuL566MY6kE2S1elbCHkypiy3shThD+U3ZbTM0GocWdh3LxB+59/X7LGdeVFfIny7i1FvIYnsg1r9q523+eUjqpqg9xHn4x5uSQJNsvwi3xqKCM4tAG/CRIZw=
+	t=1727266959; cv=none; b=ZVbiC/b47EKjS1V+dfGDbm/D0VCDZ9nNew1LjfXmVdJbEgLvm5T4/va8fdxWCBDvB0BrMi0xwPGVWbEyK+RdRwuKtwOKgBWT9cgqFSEj46VlKzC3nsmfW7lIHOV0Xbl1pilzdsfwH2ZJ7IL4fe+6sxVFO6Cn55zJnc8+EgkqYmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266864; c=relaxed/simple;
-	bh=ga0Cx7tOBgH57Oelvhci2adrgTr03DDJ8MaBMV+OZAo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RLLodiGBWxknDCdXQejSnH0tNFxG4bYGAFUV2URQLLMPJy4FgsTSlvzAC9q0KaTHqX8unL7Az/JZuOqIw4rfjg5YmRPTZ3yUq0xTW/GKfTUpS6MDo/psXNC0WTaNETKqMQB1N60TF0tJu86mHP6HO9gsLW/kB9ctyilu7csQyc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=dhmG5ePW; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8a7b1c2f2bso1093647866b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2024 05:21:00 -0700 (PDT)
+	s=arc-20240116; t=1727266959; c=relaxed/simple;
+	bh=2nTLYXHLashP6U5iqb2SNaeRGPOeYJIEzFyRmQOBPvY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rRf8LWRfi8e3yw2QyDPuM1GSiC+jp2it6glf7BjF9m+060KuyWQijYzNeJV+sKqwz26lbSXtaV0ogsUWUwpN1c/gd28uFOp1arPiXOcAQuvBD0bL6BRcyoIsUVnr21RO2N3byqwWvkXXkAXTPEtOHY11FL9V9D2zgSIrGn2jO7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OyRWU5t1; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c241feb80dso1680885a12.0;
+        Wed, 25 Sep 2024 05:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1727266859; x=1727871659; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0rovbvcwz17VtlC6RUdTLoxXpB3BKdraf2nzblRa518=;
-        b=dhmG5ePWXT7ePvWQiJ8G0pJZYAHWrfAbfYFTMXLFUNwJRM4Y3MjJBdVUmErEvrDsir
-         lKmoK2mihW+CF+FtuUmiOHxx1S49N/GzN07O056bdkG5MzkIfovsimBLL5fsh7t5dTc1
-         Q6JE7aeTcV2UX/+KwQ0tBpITgzXHJQmQlWDMU=
+        d=gmail.com; s=20230601; t=1727266956; x=1727871756; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e1vsdKX31ZQMJQnYW8l7+O8odVCjbHrQhd7IsOPE+00=;
+        b=OyRWU5t1nMvpS+40cJm/SneXHoGtZpxT+DWxK9bxhTjfxGTgyhFXzWx26WLOhYy+yJ
+         xsDjzi7MRAzy5GXcPBb5tucNxsDDMyPRkV457d9R5cYmxDqF1b67nlwhHbYEiatBxxaF
+         DyFTYGiOR8Bx6CfhFwdrlXAA4ZqyLKlt+nMg6jyCMKooG2CkR1xu7LqPJhO+SkbJz0Vz
+         wDBYDq2/vtXrJ5mm2x6Gsq0z0txoH1iUs6wsJ9fKtzL4gI4rWf9IBzuCC2SLRpqug1pr
+         pNbD8tYMXSWf1jKvwJxMimRBPnKO/8HvU4hKIH0ujOaf0OkTjJS8bKAnhHjLMHvBPRTI
+         0EeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727266859; x=1727871659;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0rovbvcwz17VtlC6RUdTLoxXpB3BKdraf2nzblRa518=;
-        b=Q0SDmt1Z1X+hiwwOaxyuAWzR93jyfcDo/EDTKKjVPtvjIz0z8jtusRrX8pYOY72Wpn
-         WNt1Ag1I71d4eOC912eQIvGYalik00FXjGhak3BIzCGs/0E/y2MSnfG1mnjqVBaAJmAE
-         axYi69pF7+XTed6vejZLv6v5n9q7tmt1n7plceT3bhZgem4LSkCZgPUwT+YP7pbTMuXL
-         1z6gozmMGKNTDKrmKMbODi3Sr6AXBl5lZOE+2I9nfoDq8q+fV8mlke3yf5ev9w066Woo
-         OsrDCvbYtFEVxaCBq8MfpNdmamEwTAhocwniTE0iMgzuilD4UqTg/1Opz1bSIVoB1Vtt
-         VWqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhxSTXRGnFHDjRYF6qykxUgyos74WUTzyCLc+DUyqkccM2uo1kbzizBfoDFzlpPTt+LmqvuMexfkbBZcvE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza8RrtBMizLDfpU6E8s1T31scRATb50Ma0c35S4xsxrsr3Xj3w
-	IKXRVHChlWgevNHRpMjXjNTqZpbYbh2DnS9e/AVVcB1WTJQHcl9oYFU9DsX91aI4RBbNyNHkK8M
-	HbKE5IYgl4N1+sELhMMO+rgKyu6ohl9urZkFF7A==
-X-Google-Smtp-Source: AGHT+IFCQvR9d0jVlhxFf6DFIMpZA9vFvOEqWSC9XlfupIcmTwqiAoxigpaE87BG2i4iMydQ+F9Ft9WlnY2GJp9FdB0=
-X-Received: by 2002:a17:907:940d:b0:a8d:2faf:d329 with SMTP id
- a640c23a62f3a-a93a031eb83mr238778266b.2.1727266858548; Wed, 25 Sep 2024
- 05:20:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727266956; x=1727871756;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1vsdKX31ZQMJQnYW8l7+O8odVCjbHrQhd7IsOPE+00=;
+        b=tkgCoL7V5kX00905qpd8lhnH0A5rgL4/MNDytd1oqOvi3/wHa2RqdflbIsbt/voU2U
+         6LNMWijWPL23yQ8vaepDt1edMYG+CWrz1j7EvoXrF3XLDBPtnVkFZflfBeDEBI4RSN0n
+         3zTjZen1A7MMS7P70fit6xehf1lkPGci5LHYghIXVCjOCRyWe4TErkH0Nq3aMUNm228g
+         6ssoUunxqgFaEdEp4K9QP6GMrIEz6eTth/vzuzn56P+NWvBq0hZmST2IhLlppnyPxEGS
+         PtMLNJb8mTujlpilhRSFAzzgA/TKoeD1bJoz7XTGtQmEuncMYua+sWuQtJXpHIVEk/8I
+         z0mA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyfWxdNIa7W8EayNUtSWSyLzGco/IvhCNuVKWJ1n7lTvxLWrJ13hlEU2OroSH4905U15FWNDSUaYea8RI=@vger.kernel.org, AJvYcCXHhV4N783dh+Tpxc0QDyKdMkZVKQ3FLRsVsRgb5K+2XNllvYdgeyrSg8wD6BVNY1DF0vIvPBGRQtYzelDRMA==@vger.kernel.org, AJvYcCXWxegUowp1CrnTLhnKFyIfwiyLYxvGxRsLlFUQ6bvJq9I0ZLiBFzlMGpQ7tEWNgo7Ql2S0RIk8dw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywop3LqtbjljBtpE18cuxabgLzIHYnetHiR5sfOOdVfjaVcqlkM
+	SglYQvUs0bEolMlMswa1iJ4nUstZxKk1OQ2chodqVjIb0cFjzOjX
+X-Google-Smtp-Source: AGHT+IHy8FnDpRRZ0xuHx941u/L73CdgNsgVKXSABy4Wq1uMlQmuwdBzBKZV8xBOb4xFnl0sRAAXbg==
+X-Received: by 2002:a05:6402:13d2:b0:5c4:1c0c:cc6d with SMTP id 4fb4d7f45d1cf-5c5cdf051d2mr7695812a12.0.1727266955977;
+        Wed, 25 Sep 2024 05:22:35 -0700 (PDT)
+Received: from [192.168.92.221] ([85.255.235.163])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf49dbbdsm1802486a12.57.2024.09.25.05.22.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 05:22:35 -0700 (PDT)
+Message-ID: <cb3302c0-56dd-4173-9866-c8e40659becb@gmail.com>
+Date: Wed, 25 Sep 2024 13:23:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <GV0P278MB07187F9B0E7B576AD0B362B485802@GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM>
-In-Reply-To: <GV0P278MB07187F9B0E7B576AD0B362B485802@GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 25 Sep 2024 14:20:47 +0200
-Message-ID: <CAJfpegvVtao9OotO3sZopxxkSTkRV-cizpE1r2VtG7xZExZFOQ@mail.gmail.com>
-Subject: Re: [fuse-devel] Symlink caching: Updating the target can result in
- corrupted symlinks - kernel issue?
-To: Laura Promberger <laura.promberger@cern.ch>
-Cc: "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>, linux-fsdevel@vger.kernel.org, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: multipart/mixed; boundary="0000000000008976900622f0a76b"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/3] io_uring: enable per-io hinting capability
+To: Kanchan Joshi <joshi.k@samsung.com>, Hannes Reinecke <hare@suse.de>,
+ axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+ martin.petersen@oracle.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+ jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+ bvanassche@acm.org
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+ gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com,
+ Nitesh Shetty <nj.shetty@samsung.com>
+References: <20240924092457.7846-1-joshi.k@samsung.com>
+ <CGME20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53@epcas5p1.samsung.com>
+ <20240924092457.7846-4-joshi.k@samsung.com>
+ <28419703-681c-4d8c-9450-bdc2aff19d56@suse.de>
+ <678921a8-584c-f95e-49c8-4d9ce9db94ab@samsung.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <678921a8-584c-f95e-49c8-4d9ce9db94ab@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---0000000000008976900622f0a76b
-Content-Type: text/plain; charset="UTF-8"
+On 9/25/24 12:09, Kanchan Joshi wrote:
+> On 9/25/2024 11:27 AM, Hannes Reinecke wrote:
+...
+> As it stands the new struct will introduce
+>> a hole of 24 bytes after 'hint_type'.
+> 
+> This gets implicitly padded at this point [1][2], and overall size is
+> still capped by largest struct (which is of 16 bytes, placed just above
+> this).
 
-On Thu, 15 Aug 2024 at 16:45, Laura Promberger <laura.promberger@cern.ch> wrote:
+For me it's about having hardly usable in the future by anyone else
+7 bytes of space or how much that will be. Try to add another field
+using those bytes and endianess will start messing with you. And 7
+bytes is not that convenient.
 
-> - But for corrupted symlinks `fuse_change_attributes()` exits before `fuse_change_attributes_common()` is called and as such the length stays the old one.
+I have same problem with how commands were merged while I was not
+looking. There was no explicit padding, and it split u64 into u32
+and implicit padding, so no apps can use the space to put a pointer
+anymore while there was a much better option of using one of existing
+4B fields.
 
-The reason is that the attr_version check fails.  The trace logs show
-a zero attr_version value, which suggests that the check can not fail.
-But we know that fuse_dentry_revalidate() supplies a non-zero
-attr_version to fuse_change_attributes() and if there's a racing
-fuse_reverse_inval_inode() which updates the fuse_inode's
-attr_version, then it would result in fuse_change_attributes() exiting
-before updating the cached attributes, which is what you observe.
 
-This is probably okay, as the cached attributes remain invalid and the
-next call to fuse_change_attributes() will likely update the inode
-with the correct values.
+> [1] On 64bit
+> »       union {
+> »       »       struct {
+> »       »       »       __u64      addr3;                /*    48     8 */
+> »       »       »       __u64      __pad2[1];            /*    56     8 */
+> »       »       };                                       /*    48    16 */
+> »       »       struct {
+> »       »       »       __u64      hint_val;             /*    48     8 */
+> »       »       »       __u8       hint_type;            /*    56     1 */
+> »       »       };                                       /*    48    16 */
+> »       »       __u64              optval;               /*    48     8 */
+> »       »       __u8               cmd[0];               /*    48     0 */
+> »       };                                               /*    48    16 */
+> 
+> »       /* size: 64, cachelines: 1, members: 13 */
+> 
+> [2] On 32bit
+> 
+> »       union {
+> »       »       struct {
+> »       »       »       __u64      addr3;                /*    48     8 */
+> »       »       »       __u64      __pad2[1];            /*    56     8 */
+> »       »       };                                       /*    48    16 */
+> »       »       struct {
+> »       »       »       __u64      hint_val;             /*    48     8 */
+> »       »       »       __u8       hint_type;            /*    56     1 */
+> »       »       };                                       /*    48    12 */
+> »       »       __u64              optval;               /*    48     8 */
+> »       »       __u8               cmd[0];               /*    48     0 */
+> »       };                                               /*    48    16 */
+> 
+> »       /* size: 64, cachelines: 1, members: 13 */
+> };
 
-The reason this causes problems is that cached symlinks will be
-returned through page_get_link(), which truncates the symlink to
-inode->i_size.  This is correct for filesystems that don't mutate
-symlinks, but for cvmfs it causes problems.
-
-My proposed solution would be to just remove this truncation.  This
-can cause a regression in a filesystem that relies on supplying a
-symlink larger than the file size, but this is unlikely.   If that
-happens we'd need to make this behavior conditional.
-
-Can you please try the  attached patch?
-
-Thanks,
-Miklos
-
---0000000000008976900622f0a76b
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="fuse-fix-cached-symlink-size-limiting.patch"
-Content-Disposition: attachment; 
-	filename="fuse-fix-cached-symlink-size-limiting.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m1hth9lg0>
-X-Attachment-Id: f_m1hth9lg0
-
-ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZGlyLmMgYi9mcy9mdXNlL2Rpci5jCmluZGV4IDU0MTA0ZGQ0
-OGFmNy4uNzBmYjU3NzE0Zjc5IDEwMDY0NAotLS0gYS9mcy9mdXNlL2Rpci5jCisrKyBiL2ZzL2Z1
-c2UvZGlyLmMKQEAgLTE2MzIsNyArMTYzMiw3IEBAIHN0YXRpYyBjb25zdCBjaGFyICpmdXNlX2dl
-dF9saW5rKHN0cnVjdCBkZW50cnkgKmRlbnRyeSwgc3RydWN0IGlub2RlICppbm9kZSwKIAkJZ290
-byBvdXRfZXJyOwogCiAJaWYgKGZjLT5jYWNoZV9zeW1saW5rcykKLQkJcmV0dXJuIHBhZ2VfZ2V0
-X2xpbmsoZGVudHJ5LCBpbm9kZSwgY2FsbGJhY2spOworCQlyZXR1cm4gcGFnZV9nZXRfbGlua19y
-YXcoZGVudHJ5LCBpbm9kZSwgY2FsbGJhY2spOwogCiAJZXJyID0gLUVDSElMRDsKIAlpZiAoIWRl
-bnRyeSkKZGlmZiAtLWdpdCBhL2ZzL25hbWVpLmMgYi9mcy9uYW1laS5jCmluZGV4IDRhNGEyMmEw
-OGFjMi4uNjc5NTYwMGM1NzM4IDEwMDY0NAotLS0gYS9mcy9uYW1laS5jCisrKyBiL2ZzL25hbWVp
-LmMKQEAgLTUzMDAsMTAgKzUzMDAsOSBAQCBjb25zdCBjaGFyICp2ZnNfZ2V0X2xpbmsoc3RydWN0
-IGRlbnRyeSAqZGVudHJ5LCBzdHJ1Y3QgZGVsYXllZF9jYWxsICpkb25lKQogRVhQT1JUX1NZTUJP
-TCh2ZnNfZ2V0X2xpbmspOwogCiAvKiBnZXQgdGhlIGxpbmsgY29udGVudHMgaW50byBwYWdlY2Fj
-aGUgKi8KLWNvbnN0IGNoYXIgKnBhZ2VfZ2V0X2xpbmsoc3RydWN0IGRlbnRyeSAqZGVudHJ5LCBz
-dHJ1Y3QgaW5vZGUgKmlub2RlLAotCQkJICBzdHJ1Y3QgZGVsYXllZF9jYWxsICpjYWxsYmFjaykK
-K3N0YXRpYyBjaGFyICpfX3BhZ2VfZ2V0X2xpbmsoc3RydWN0IGRlbnRyeSAqZGVudHJ5LCBzdHJ1
-Y3QgaW5vZGUgKmlub2RlLAorCQkJICAgICBzdHJ1Y3QgZGVsYXllZF9jYWxsICpjYWxsYmFjaykK
-IHsKLQljaGFyICprYWRkcjsKIAlzdHJ1Y3QgcGFnZSAqcGFnZTsKIAlzdHJ1Y3QgYWRkcmVzc19z
-cGFjZSAqbWFwcGluZyA9IGlub2RlLT5pX21hcHBpbmc7CiAKQEAgLTUzMjIsOCArNTMyMSwyMyBA
-QCBjb25zdCBjaGFyICpwYWdlX2dldF9saW5rKHN0cnVjdCBkZW50cnkgKmRlbnRyeSwgc3RydWN0
-IGlub2RlICppbm9kZSwKIAl9CiAJc2V0X2RlbGF5ZWRfY2FsbChjYWxsYmFjaywgcGFnZV9wdXRf
-bGluaywgcGFnZSk7CiAJQlVHX09OKG1hcHBpbmdfZ2ZwX21hc2sobWFwcGluZykgJiBfX0dGUF9I
-SUdITUVNKTsKLQlrYWRkciA9IHBhZ2VfYWRkcmVzcyhwYWdlKTsKLQluZF90ZXJtaW5hdGVfbGlu
-ayhrYWRkciwgaW5vZGUtPmlfc2l6ZSwgUEFHRV9TSVpFIC0gMSk7CisJcmV0dXJuIHBhZ2VfYWRk
-cmVzcyhwYWdlKTsKK30KKworY29uc3QgY2hhciAqcGFnZV9nZXRfbGlua19yYXcoc3RydWN0IGRl
-bnRyeSAqZGVudHJ5LCBzdHJ1Y3QgaW5vZGUgKmlub2RlLAorCQkJICAgICAgc3RydWN0IGRlbGF5
-ZWRfY2FsbCAqY2FsbGJhY2spCit7CisJcmV0dXJuIF9fcGFnZV9nZXRfbGluayhkZW50cnksIGlu
-b2RlLCBjYWxsYmFjayk7Cit9CitFWFBPUlRfU1lNQk9MX0dQTChwYWdlX2dldF9saW5rX3Jhdyk7
-CisKK2NvbnN0IGNoYXIgKnBhZ2VfZ2V0X2xpbmsoc3RydWN0IGRlbnRyeSAqZGVudHJ5LCBzdHJ1
-Y3QgaW5vZGUgKmlub2RlLAorCQkJCQlzdHJ1Y3QgZGVsYXllZF9jYWxsICpjYWxsYmFjaykKK3sK
-KwljaGFyICprYWRkciA9IF9fcGFnZV9nZXRfbGluayhkZW50cnksIGlub2RlLCBjYWxsYmFjayk7
-CisKKwlpZiAoIUlTX0VSUihrYWRkcikpCisJCW5kX3Rlcm1pbmF0ZV9saW5rKGthZGRyLCBpbm9k
-ZS0+aV9zaXplLCBQQUdFX1NJWkUgLSAxKTsKIAlyZXR1cm4ga2FkZHI7CiB9CiAKZGlmZiAtLWdp
-dCBhL2luY2x1ZGUvbGludXgvZnMuaCBiL2luY2x1ZGUvbGludXgvZnMuaAppbmRleCBlYWU1YjY3
-ZTRhMTUuLmZjOTBkMWY2ZThjNyAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9mcy5oCisrKyBi
-L2luY2x1ZGUvbGludXgvZnMuaApAQCAtMzMxNiw2ICszMzE2LDggQEAgZXh0ZXJuIGNvbnN0IHN0
-cnVjdCBmaWxlX29wZXJhdGlvbnMgZ2VuZXJpY19yb19mb3BzOwogCiBleHRlcm4gaW50IHJlYWRs
-aW5rX2NvcHkoY2hhciBfX3VzZXIgKiwgaW50LCBjb25zdCBjaGFyICopOwogZXh0ZXJuIGludCBw
-YWdlX3JlYWRsaW5rKHN0cnVjdCBkZW50cnkgKiwgY2hhciBfX3VzZXIgKiwgaW50KTsKK2V4dGVy
-biBjb25zdCBjaGFyICpwYWdlX2dldF9saW5rX3JhdyhzdHJ1Y3QgZGVudHJ5ICosIHN0cnVjdCBp
-bm9kZSAqLAorCQkJCSAgICAgc3RydWN0IGRlbGF5ZWRfY2FsbCAqKTsKIGV4dGVybiBjb25zdCBj
-aGFyICpwYWdlX2dldF9saW5rKHN0cnVjdCBkZW50cnkgKiwgc3RydWN0IGlub2RlICosCiAJCQkJ
-IHN0cnVjdCBkZWxheWVkX2NhbGwgKik7CiBleHRlcm4gdm9pZCBwYWdlX3B1dF9saW5rKHZvaWQg
-Kik7Cg==
---0000000000008976900622f0a76b--
+-- 
+Pavel Begunkov
 
