@@ -1,109 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-30177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EEA98761C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 16:58:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B09E987623
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 16:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85D28282815
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 14:58:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED932897F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 14:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC5C14A616;
-	Thu, 26 Sep 2024 14:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E324D152165;
+	Thu, 26 Sep 2024 14:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R3aab9ax"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ewUJumSc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8896E56A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 14:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF50314A616
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 14:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727362703; cv=none; b=RVYJaWEu9MevmDpi8YzOMtwbepBKr1jcQgDXsmo1CW9BFvATvBJKK0sB8GP46aLn9fQH7KmM5jXg+wiNlHX32xh8VBM/CWt5WpxKEHJ/QV2siSRBMkrhukba8q4c+Y3LyUb6OBUSJjZrd7g2iEWZpuk1Ql0oF/EGl0Sn3qqr1wM=
+	t=1727362778; cv=none; b=QsroZ8oCftxwLEPhgOd51gxrS6F52tLoYTH0xMZPIz7300QzHKgt3kYEtRrZJ75qz5KGAQOeGtV3/X5wgk/ymlNhWu8/8HrJNzsaoA5YlqWhtgPRNvCJUA05pEeVCfnX4oenVqyUZeq6Jv0kd5X3eZlbMNfsO1TJarSKyffdsgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727362703; c=relaxed/simple;
-	bh=cg9YCTAZ1Oiz/nHiEawk2Od4xUKfvRrLszaYnTMDGcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WxI89klkv7/A/+PpyhLz/HxuPpl+UVV7hI6XCLXKzcvdRz/cl0duQHsxvWnFAirGiDN9o/h4YhNEsavEvUSU8uMYIOZhVlWHd+HYpQCuyMSRtneSiRtdiCISgnW2y0cHKYugu5ePmiuY2/uuof0CNT7uvCxcmAYhCRknZAnBPe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R3aab9ax; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ifm+nIfno/WcCSPpO4Pf5285I2KcitoTGt2NJ3FYDZ0=; b=R3aab9ax70t5xQbc/HAFBCVf1x
-	vD+Tf2QRdfLpEw3qRdUFi8ySVXASR58bN4Anj1H44RI5MVGmEmMAGWDIpWvWooQU/XGqmYx6cWjqy
-	n9PUJuG+pOebXN7g1f5czJoYoNoPYj8x8lR8qfdzkhAsozZzYfOuMHkgyK6pgKpE5cI+MG3l8pN/w
-	xok6WtAhWUanTQloY1bkl93u0ZLml5mTxgTJF5YgL4QRZJH8KSxbrjRyjl7X45DL8F+reQ9eLAIXK
-	KLLbD/qBZekfTbBGj6Mskvfn5w3qgiUopIp7YZOdA3U85hlowJN7+/Kx1j6defVU5a6hnQHyJCZAZ
-	GnjTY5qQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1stpwS-00000006uCg-44sy;
-	Thu, 26 Sep 2024 14:58:05 +0000
-Date: Thu, 26 Sep 2024 15:58:04 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Anna Schumaker <Anna.Schumaker@netapp.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: Re: [PATCH v2] tmpfs: fault in smaller chunks if large folio
- allocation not allowed
-Message-ID: <ZvV2fAELufMuNdWh@casper.infradead.org>
-References: <20240914140613.2334139-1-wangkefeng.wang@huawei.com>
- <20240920143654.1008756-1-wangkefeng.wang@huawei.com>
- <Zu9mbBHzI-MyRoHa@casper.infradead.org>
- <1d4f98aa-f57d-4801-8510-5c44e027c4e4@huawei.com>
- <nhnpbkyxbbvjl2wg77x2f7gx3b3wj7jujfkucc33tih3d4jnpx@5dg757r4go64>
- <ZvVnO777wfXcfjYX@casper.infradead.org>
- <9a420cea-b0c0-4c25-8c31-0eb2e2f33549@huawei.com>
+	s=arc-20240116; t=1727362778; c=relaxed/simple;
+	bh=Twk1wQnSBYqUrwPgppU6IblWdyNgBfrFOMFHTIuSYDk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hbjAbSBqQzBYXjhwokIPo6DfSbeLPRmrfBjAiJbquIwk6JIa/H2ahEEMfUvVdDEZb5Aj8Jq1Ml8X/z4cWf/vIu6e9D70tjffpxOfcIeyZNUF7mOXkiv9u8kewsERf2bIBwbQeF1JNFNphpPnqiT6GUYYuJC6QTyoHVeUdU+1Mxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ewUJumSc; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02b5792baaso1719221276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 07:59:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727362775; x=1727967575; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bmvRPgDoL8QHsBR9jVlHIhzOpjA+hNTzpNM4jcDB5LU=;
+        b=ewUJumScUoSxOntswYgRQ0TE6WGYaddx4Hx7cy8uRwcNHNIi5OTbhPDWtRoM7x9uRF
+         y3EUMQskIZ+UX9ibCm3CdPuTkjhEddkWULtkpI3uNzS8ZpR1w8UVd1fAl/r64jT39ncy
+         ei9V5Vm4Ed1qOErR0LjQOGqaHil2In9Sof8d/bGgpvKpH278apIeJyEL2On4Kg/G9WZu
+         AsBy+YzNY+EJzb8puWV0PofLyJPFwfH8vtQA/kH2P+M6oYKgLXPUq7Is1L/n+IJo+RFR
+         hUA0e5GWoI/XmamDHqlOnkuUKDrpIYdYAJrG5uHLnIHYY0BBB4WNR8Jf02lx5AQJRX5p
+         KXgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727362775; x=1727967575;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bmvRPgDoL8QHsBR9jVlHIhzOpjA+hNTzpNM4jcDB5LU=;
+        b=ukGaVsp2/1V0wDnRXpiPTObSbH2XxzPAwBcgWmPPZXiKdYPQa2ky1bB8WfEerWsNMj
+         JsHdlBcue/s/A7yDkAIvIPYLiDfVGqCegKoAV8ALhAJpYMiNKhT7gUF54OWWnt+kFiWX
+         5AiW5CDEvFyr/GRYTF0OPVEH1uFEeN7KLbj+Qd70/8V8uV6u9D4zyfmjcl58kl0ifnYF
+         Cf9L/KDBWnzqFhkn11JNQHD12JU5tSyiRzx09INIGFYEwCVv9jsliM9xtWumsoWtOnWI
+         88XcM+WbMSgmoeyjFDsAeKUdjlMChAoZJ94qa11kBqOk1/Y1gkc7EGvhbQj/B7jpS1bJ
+         J9ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUZf7cvz93DbMoTD/6aJVxZfZ+UqpuH8EyN8XhXuyOp6/sZaVo6dfyik5XgWExiyVih56qzgT38GeRFzuMN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzppaLNM3Fis6ynTTBS4Ympyxkr+nAtMQmvOFlr+Qfd2Qr3dxyN
+	JoK1Wx8RQPohl4OVQepZnwJDkiuwr+P5IrryDCf4j5YCI/PooXl9tTHCiSFgb/ks0e+nfzhIxNb
+	JeHtvN/xXcsaJLg==
+X-Google-Smtp-Source: AGHT+IENP7Kx7M4Vi4Vt/eiie+FqP0nzfwl2y+4Din8XNMrO/5bTMKuLlkVaBOTPlzBeY9KeSKk3Ah2pbeqQc98=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a25:74cc:0:b0:e25:cced:3e3f with SMTP id
+ 3f1490d57ef6-e25cced3f41mr34732276.4.1727362774767; Thu, 26 Sep 2024 07:59:34
+ -0700 (PDT)
+Date: Thu, 26 Sep 2024 14:58:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a420cea-b0c0-4c25-8c31-0eb2e2f33549@huawei.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAK529WYC/x2MSwqAIBQAryJvnaAmoV0lWvh51ltkoRCBdPek5
+ cDMNKhYCCvMrEHBmyqduYMcGITd5Q05xc6ghNLCqol7zQ+qIXY3IFfWiRSNHo2X0JurYKLn/y3 r+36p9wRwXwAAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1434; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=Twk1wQnSBYqUrwPgppU6IblWdyNgBfrFOMFHTIuSYDk=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm9Xa2YUpz8YLZJ0XuLQKBhsgdcDwfS7+0EQz25
+ oN/K01chRaJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvV2tgAKCRAEWL7uWMY5
+ RjP+D/0VUGUvQuh2G44M+zDxJ4o/WUijMkAgM38lt7KdI0LAw/6fwSoJlZWXOGk563fruQ44SIj
+ kmBZ0MeUs44ENruJXaRPtK/KJIfQT9Le+o+hJ0tCmD9MbBSXZO2xXohqfvIgn6E+4hd+VYaC9JF
+ YzwRRODpoQxeSipt2eBQe8bUmfe8xSg/lJ6QSFlz/c6EwMZUhE/ZL6GVtWZ3UzWgy+nFTi/9++r
+ dib2+PkHcS9CS/KTJn4LhSGRO04d4aen0EknjcZxm1RoKXiW0UZfwAx4Z7xXfiVg1vqrWqmhYuw
+ 6YKNvTq4ldIM4+S8u5X3FnjXP1IqReRbCJUcUYOlNQQnfCoGDGG/DDRB/m8u0YzeFIlZ+QobFAJ
+ A5fQqmiQzW3EPgtkOAewZpR3iA1vdSdDNR9g48Lih3Lia0ClaPRHrl170EpiZQ0jIqVUvAVM0yz
+ exJdZXv2Ik3y8nJH/q/A/9aJmZlSnW8lR/moyHnEZ6zbIYWFEpdHDyYuOJwly5+nmNVqRjpqpXF
+ 3a6LG2lcE1uR0VoV23V/bWVZcTQ7gpH22Lu4p0jLRSHI3CSBjUNu2Sfb/IcHR/r5BczHQUC8Vyr
+ 3f2EALu0SBk5mVbbdC86cCdJjT9EuTG7dWxFVHpGkg3QhLJzEEm2smFu9BSjO4mnQM+W//j9TM/ 1SBYl6jLGALOThA==
+X-Mailer: b4 0.13.0
+Message-ID: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+Subject: [PATCH 0/3] Miscdevices in Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Sep 26, 2024 at 10:20:54PM +0800, Kefeng Wang wrote:
-> On 2024/9/26 21:52, Matthew Wilcox wrote:
-> > On Thu, Sep 26, 2024 at 10:38:34AM +0200, Pankaj Raghav (Samsung) wrote:
-> > > > So this is why I don't use mapping_set_folio_order_range() here, but
-> > > > correct me if I am wrong.
-> > > 
-> > > Yeah, the inode is active here as the max folio size is decided based on
-> > > the write size, so probably mapping_set_folio_order_range() will not be
-> > > a safe option.
-> > 
-> > You really are all making too much of this.  Here's the patch I think we
-> > need:
-> > 
-> > -       mapping_set_large_folios(inode->i_mapping);
-> > +       if (sbinfo->huge)
-> > +               mapping_set_large_folios(inode->i_mapping);
-> 
-> But it can't solve all issue, eg,
->   mount with huge = SHMEM_HUGE_WITHIN_SIZE, or
+A misc device is generally the best place to start with your first Rust
+driver, so having abstractions for miscdevice in Rust will be important
+for our ability to teach Rust to kernel developers.
 
-The page cache will not create folios which overhang the end of the file
-by more than the minimum folio size for that mapping.  So this is wrong.
+I intend to add a sample driver using these abstractions, and I also
+intend to use it in Rust Binder to handle the case where binderfs is
+turned off.
 
->   mount with SHMEM_HUGE_ALWAYS  +  runtime SHMEM_HUGE_DENY
+I know that the patchset is still a bit rough. It could use some work on
+the file position aspect. But I'm sending this out now to get feedback
+on the overall approach.
 
-That's a tweak to this patch, not a fundamental problem with it.
+This patchset depends on files [1] and vma [2].
 
-> and the above change will break
->   mount with SHMEM_HUGE_NEVER + runtime SHMEM_HUGE_FORCE
+Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@google.com/ [1]
+Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.com/ [2]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (3):
+      rust: types: add Opaque::try_ffi_init
+      rust: file: add f_pos and set_f_pos
+      rust: miscdevice: add abstraction for defining miscdevices
 
-Likewise.
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/fs/file.rs          |  20 ++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/miscdevice.rs       | 401 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/types.rs            |  16 ++
+ 5 files changed, 439 insertions(+)
+---
+base-commit: a6266fcab443f4b6ae31016bd6c3872f8200d5e1
+change-id: 20240926-b4-miscdevice-29a0fd8438b1
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
