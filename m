@@ -1,140 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-30151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A311A98701E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 11:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF42987031
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 11:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 258A8B20D6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 09:28:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBB54B2677C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 09:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863631ABEDD;
-	Thu, 26 Sep 2024 09:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0E51AC897;
+	Thu, 26 Sep 2024 09:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="okCdTKbs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F261AB6F2;
-	Thu, 26 Sep 2024 09:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770021AD3EF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 09:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727342898; cv=none; b=PB43eQTwYyn0QFSca1k7Btj8iTlwLg8GqQEFrY//ui0J0ScVgbCSar9sU3RYpsjXPHfd0ENWF1lvlFHLlSRxws8TXu3A3c0sVp64hidu0H38dTKAAJmWRqHxnpYjc4Fcl77xIK1WebNgypM6rq+gjmyrg6OdI6bXU3RvdJxWaU8=
+	t=1727343018; cv=none; b=D66lBriuvMAZd9RW9dNCa3mfMMaitmYfXmnOqWMWceFfrr979IiTuI3EMmCouHw9UJi+At7YJV9LvWdAMrr6j9jhGx85rBHJQj04gu0IoSnR8wBxXhr9wjVezji4J7cikrZ5QKabeP63mmtfcQuqVf1RURSxajSB2FdM36jWpjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727342898; c=relaxed/simple;
-	bh=EDht8aYisYAcI7n+B9DfXTXswUoogYDJgicgfThstww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hx0kWE8jXjAEjqdfOId3XGEYK7VRN8a4jwa9OJh/zFruf3OVIj1VMGpBaLppPM6LJNonFbcTYGi42V9mCBN5ZBYJ2QdQlEUwQhKae2vePkxoRZlmBn7haykAVrYZ7jw6uRjA1BKuNQFfT9mGk5yVNSQcbVWundiF1/KzyQtKegg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XDpBs5d7Hz10McL;
-	Thu, 26 Sep 2024 17:26:45 +0800 (CST)
-Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
-	by mail.maildlp.com (Postfix) with ESMTPS id 495EF1401F0;
-	Thu, 26 Sep 2024 17:28:12 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
- (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 26 Sep
- 2024 17:28:11 +0800
-Message-ID: <52f055eb-a828-45cd-a06d-ca2006321926@huawei.com>
-Date: Thu, 26 Sep 2024 17:28:11 +0800
+	s=arc-20240116; t=1727343018; c=relaxed/simple;
+	bh=lWks5AbQTns8xoGiXZ8iHqB6GWZbAzaW22hmp0qMM1A=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=bSBEVkWeqYuxX9lu/m2RYpCucs+9A+bx4A0RtA1RSv+mMUeQZsWOn2hj87xHIptyvLC2bKNUCqnWen/xx0S4IDIlH6x4p2vIKstfcAltYY/Ro55gchOIhGgcu3KZdbhQfx9Gg2LFrHh32aa9niqmVdjvEMCFtEm4DXkAWDXN50U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=okCdTKbs; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e24985919c8so757366276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 02:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1727343014; x=1727947814; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Nyou1ZAVx0ZVf3uAAhgzuQpfNnp1ypcAHepL1cHliPw=;
+        b=okCdTKbsssR7ExI/x/HmagjSB5zmxqzJOXJedlE3VljDFi36P3V5CN7wpOS0Ia2YHP
+         4/PBBIuOPhHxVlbNtRrrBU5BViT6GCfIOZxTnRlEN0oY0aGyGEcWhwRrFp2fC7Y9d56z
+         KVX8r7cx9qnPH7UV3+v5cf1HHA1V9MRiT96rA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727343014; x=1727947814;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Nyou1ZAVx0ZVf3uAAhgzuQpfNnp1ypcAHepL1cHliPw=;
+        b=tLaUq/4Z67+LfYh/ckXpPih+tYQzUcGL/7x8hY01pVF65RJzs7iOG3IRsaeM+xXT3I
+         lxOJn5x65PWdbsvVQ0I+An/apdlW4L67zIRQnRlTypAqWA8mUkbdH1/nJldbSpDpizMI
+         eoEubVjNksesL63+c5Rwf4GsMROLNXbfxoB2OUg4C6vAv9FgYxSS9QLkke9XurI3oJQV
+         RgXG8msr/UAiXw4szMd4NxbdMBrFcxwFDWTtLjjBsevB1/MYZAFhrjAuhHRTnGAtK4bU
+         TNW2Hl8l6yD3Zxd99bqd0O2jjClWC0XCA/YHqvdDHu5XeVZqPaY9Wyy/xSz+Xxmj6wNi
+         vvtw==
+X-Gm-Message-State: AOJu0YwStYF1Hgg70Ubv9U+rrNFOc76LNSGJzOudljBHYZnXqzAhTK8C
+	L3j6f9xlAqQypFwKLVyUztq2bH+7gON4g+3tFFqbawJEj+y0l7R+9Ky0c+2lmj5Bhc1ym6onoMA
+	oPRRIzOaw6/ZqPFmqjy8raqs1KF7khckUIlhayw==
+X-Google-Smtp-Source: AGHT+IGhuzRle/WPEaylBIBRgs3i3y0CTD7aZdyFKJV2gyylLm3duCKIFwZ9vzBJn4SGSSmKfzfaTJx3l1QK4Obdpco=
+X-Received: by 2002:a05:6902:2b88:b0:e20:2232:aab6 with SMTP id
+ 3f1490d57ef6-e24d7debcc2mr3949475276.7.1727343014145; Thu, 26 Sep 2024
+ 02:30:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
-To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-CC: Jan Kara <jack@suse.cz>, <tytso@mit.edu>, <stable@vger.kernel.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, =?UTF-8?Q?St=C3=A9phane_Graber?=
-	<stgraber@stgraber.org>, Christian Brauner <brauner@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, Wesley Hershberger
-	<wesley.hershberger@canonical.com>, Yang Erkun <yangerkun@huawei.com>
-References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
- <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
- <20240925155706.zad2euxxuq7h6uja@quack3>
- <142a28f9-5954-47f6-9c0c-26f7c142dbc1@huawei.com>
- <CAEivzxc-b-QDx8AEdHEwa06Q2TYgZZkw2PWQ+K_Lyf+oyTM1Zg@mail.gmail.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <CAEivzxc-b-QDx8AEdHEwa06Q2TYgZZkw2PWQ+K_Lyf+oyTM1Zg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml100021.china.huawei.com (7.185.36.148)
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 26 Sep 2024 11:30:02 +0200
+Message-ID: <CAJfpegsmxdUwKWqeofn9-DYvqmPWafwxQfy4nLgfvosvhXfjOA@mail.gmail.com>
+Subject: optimizing backing file setup
+To: Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Jakob Blomer <jakob.blomer@cern.ch>, Jann Horn <jannh@google.com>, 
+	Laura Promberger <laura.promberger@cern.ch>, Valentin Volkl <valentin.volkl@cern.ch>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/9/26 17:16, Aleksandr Mikhalitsyn wrote:
-> On Thu, Sep 26, 2024 at 10:29 AM Baokun Li <libaokun1@huawei.com> wrote:
->> On 2024/9/25 23:57, Jan Kara wrote:
->>> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
->>>> [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
->>>> [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
->>>> [   33.888740] ------------[ cut here ]------------
->>>> [   33.888742] kernel BUG at fs/ext4/resize.c:324!
->>> Ah, I was staring at this for a while before I understood what's going on
->>> (it would be great to explain this in the changelog BTW).  As far as I
->>> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation
->>> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger than
->>> flexbg_size (for example when ogroup = flexbg_size, ngroup = 2*flexbg_size
->>> - 1) which then confuses things. I think that was not really intended and
->>> instead of fixing up ext4_alloc_group_tables() we should really change
->>> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never exceeds
->>> flexbg size. Baokun?
->>>
->>>                                                                Honza
->> Hi Honza,
->>
->> Your analysis is absolutely correct. It's a bug!
->> Thank you for locating this issue！
->> An extra 1 should not be added when calculating resize_bg in
->> alloc_flex_gd().
->>
->>
->> Hi Aleksandr,
-> Hi Baokun,
->
->> Could you help test if the following changes work?
-> I can confirm that this patch helps.
->
-> Tested-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
->
-> Kind regards,
-> Alex
+I'm following up on this item mentioned by the CernVM-FS developers.
 
-Thank you for the test!
+The concern with the current passthrough interface is that for small
+files it may add more overhead than it eliminates.
 
+My suggestion was to simply not use passthrough for small files, but
+maybe this deserves a little more thought.
 
-Cheers,
-Baokun
->>
->> Thanks,
->> Baokun
->>
->> ---
->>
->> diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
->> index e04eb08b9060..1f01a7632149 100644
->> --- a/fs/ext4/resize.c
->> +++ b/fs/ext4/resize.c
->> @@ -253,10 +253,12 @@ static struct ext4_new_flex_group_data
->> *alloc_flex_gd(unsigned int flexbg_size,
->>           /* Avoid allocating large 'groups' array if not needed */
->>           last_group = o_group | (flex_gd->resize_bg - 1);
->>           if (n_group <= last_group)
->> -               flex_gd->resize_bg = 1 << fls(n_group - o_group + 1);
->> +               flex_gd->resize_bg = 1 << fls(n_group - o_group);
->>           else if (n_group - last_group < flex_gd->resize_bg)
->> -               flex_gd->resize_bg = 1 << max(fls(last_group - o_group + 1),
->> +               flex_gd->resize_bg = 1 << max(fls(last_group - o_group),
->>                                                 fls(n_group - last_group));
->>
->>           flex_gd->groups = kmalloc_array(flex_gd->resize_bg,
->>                                           sizeof(struct ext4_new_group_data),
->>
+The current interface from the fuse server's point of view is:
+
+  backing_fd = open(backing_path, flags);
+  struct fuse_backing_map map = { .fd = backing_fd };
+  backing_id  = ioctl(devfd, FUSE_DEV_IOC_BACKING_OPEN, &map);
+
+  struct fuse_open_out outarg;
+  outarg.open_flags |= FOPEN_PASSTHROUGH;
+  outarg.backing_id = backing_id;
+[...]
+  ioctl(devfd, FUSE_DEV_IOC_BACKING_CLOSE, &backing_id);
+
+The question is: can we somehow eliminate the ioctl syscalls.  Amir's
+original patch optimized away the FUSE_DEV_IOC_BACKING_CLOSE by
+transferring the reference to the open file.  IIRC this was dropped to
+simplify the interface, but I don't see any issues with optionally
+adding this back.
+
+The FUSE_DEV_IOC_BACKING_OPEN could also be eliminated when using the
+io_uring interface, since that doesn't have the issue that Jann
+described (privileged process being tricked to send one of its file
+descriptors to fuse with a write(2):
+https://lore.kernel.org/all/CAG48ez17uXtjCTa7xpa=JWz3iBbNDQTKO2hvn6PAZtfW3kXgcA@mail.gmail.com/)
+
+AFAICS it's not enough to restrict the backing fd to be an O_PATH or
+O_RDONLY fd.  That would likely limit the attack but it might still
+allow the attacker to gain access to an otherwise inaccessible file
+(e.g. file is readable but containing directory is not).
+
+Thanks,
+Miklos
 
