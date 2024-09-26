@@ -1,148 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-30200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE2D9879FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 22:08:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4688987A0F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 22:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC14E1C21C1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 20:08:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2FEFB219DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 20:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD62417DFFC;
-	Thu, 26 Sep 2024 20:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF9717F4F7;
+	Thu, 26 Sep 2024 20:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOzYRWUr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D784LKgZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878931BC58;
-	Thu, 26 Sep 2024 20:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BB017C9AA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 20:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727381317; cv=none; b=TYJCALgDCxRXkdTKF3WaVZO2p8NfrHOoM9zD6sBSbUSGpPfla7EZCy0WZY8W/OwK+imrUBHjmSgG5TCMmYBDpstBb7sAmMy2zMi2YN4dAFeWlkM0uqOMD40O7fs3Dj88A+dfthQhzBupBiKo6CavTypYI3aXfjb5PNYZvEmOINk=
+	t=1727382497; cv=none; b=rrKRvIJXwToP7o2XLClrSfpsd0EpqACnjarFKKl/yNuBrhAU1OsUbpU0jGlbgQT5oKpvW+PQ8It/K8UEYNbl3mBRsU6LwHHvlTq9ww7zm9MpGtV5UBwh+f7qdkXdWHKYfz1i8v9Ro+uZNEb6PNhGdpLhYf1y+aTS5XWYmaZcXn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727381317; c=relaxed/simple;
-	bh=1GbYnWKzSVy3cpllGDN6AI05mWhQlZ4Y15ZaoU/FG38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rWxtmK169+IkduK6MOZ3rnKecDwwXJNAT8oRGqUGkTG8vnGjPjwkNlRNsWmuIgbTeJ3lrXWxDegP3KQzcwgTMGB0h+8KBVzzHqAURedGAAyRhaviOijINMSS7Ae7P/ErJl/xsJh8T/9lPcDB4aC4pozxPBpthwcbpdF0SNv2QgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iOzYRWUr; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1727382497; c=relaxed/simple;
+	bh=pknfZZZQcqqBmnB4YUw1rasAfvsUhrx+hscgFcM1NfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I/PvBPmBM5HfW7++axD74SFv7R4jqP4eqX/6SSDUA+bEktZBjDbH+QzoMMTe5/5XWExKtZVgT2dBhwjdg3gKKeAZPJjbVMjl8oN6H+SAKx6G8+Yyar2qeqMOF7Vy4uZcO6bzXW6nKkVbzj3PNkDY0OPbGs79ZAnHvVSWbmzKYG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D784LKgZ; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so9331635e9.1;
-        Thu, 26 Sep 2024 13:08:35 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e25d405f255so933637276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 13:28:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727381314; x=1727986114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qja+XDs7guUN35rttc9FL0qVA6mpRjfv1Lp+wNX5FBc=;
-        b=iOzYRWUrZX/gQ+Ky65JvL67ZlkB23Xv1UxEvhnal0BpGjNgZYwhV3j0SDS0UxZPlHV
-         JOARx0fec73zqQMbnUPpjZHMgYMk7Ij7PDvPnhOU75dTQ/C9ctQrRbZUxCzM9T0isam9
-         AJ+qwX6MURGKpYcHUkGe9uBr7IU/LRvp0x+dTtB4/ruzJc7Zgi3Mo6Mm+F0WKxSxkPtS
-         Uu/bwjpL1+SRBVFxmwnk/LLPJY0k3fS0B3a/U7Tx+19/MbBDARL8s3ObNzG//KnWzH3I
-         0BpFVTQUyL0BdxJTnz2BAX/KFN34bzahXLKQ6gEPOYg0xkm9wakQF7bom2Po5JG34LeE
-         Eavw==
+        d=gmail.com; s=20230601; t=1727382495; x=1727987295; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pknfZZZQcqqBmnB4YUw1rasAfvsUhrx+hscgFcM1NfM=;
+        b=D784LKgZUVuwWeHk9RLw70mzyeyZjmsELTykIc8gVX42Kv5770AK7djvHY7xm858Hn
+         KP1qEhBSM5IUGdWqWYtx8HGzgbHcnQW6Oxf5PwjqcLlUJPmYpPA6Clvw46v5NVC8pLxj
+         VR/2Qk82SFv618cE+ldy9LU0aPHx0Zg8KJ+dB9heqUCBQ7o4VSrLZuK+F/fRKpXMO3aW
+         E+W1VKpGSnTwVhbvtyZqQPQyxoPGnueE+Feotg4+x+fIgRERVsob99HI6PwkwcPbJdsP
+         lE6lFNeOiXM9ZhqPAnb522WCD6nrgfmOcwTg2Vi59Nq/z9F+EYT+Gm1q4VwalGoN/ebl
+         hx/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727381314; x=1727986114;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qja+XDs7guUN35rttc9FL0qVA6mpRjfv1Lp+wNX5FBc=;
-        b=Kui14rgESh6fkxC2iCiFwgAa8KfQn5299iz/qHALnfXan1M2tKGSHBmi5k6NXcL0Px
-         BcEKWWXYGakYCxyfBw2QjHpQoagruYtKa3f0tkqZTMapdZeEjxlTwXJ7eqCsS57GOa5Y
-         hR0C5m7e6Gufa9EvoMw2QCLlrQMQWe5mPlw6mVf5yhwVnRC783nZGj+L/g2zUXL3mlcU
-         W+9YlQ08KZ/Y66caCRSf+j2s2oBhI9t6PpxZD4zHqKbV8WwlaYbG6WToFkHa0aBYG9D1
-         KA7uwjztu/V8cEO0L6vM9LtVOw5/gdx0uGjsVgSWLK8NjNoau+Bmb4JSubq7QQ+vuifr
-         m9SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1EHBejFXnY8VQ0Zl+betPoYrDfxCGfT9pMFi04FKGP51BetLqLWokvW2rYSSUQoTod/VqnSaXsqSsXMI=@vger.kernel.org, AJvYcCWTTriTI3KLDW7r4PE7Lt93ys8Jgm4b7aoGsmhuUsR8jGgBZxKvMwZOptN1oIH5NrDAfNa0n2qgQ9Hh7f880g==@vger.kernel.org, AJvYcCXhfW/FfkfwCE2sprmu3SGL2bOA5Xwmzr6/w1Dltq+dkLQ02ZNY6M2RZ6cQwloDi6WrMcu2yAqv8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYUZfPzb+PvKAixO5A7UYSFWWrKtjnVetgzrsGIbF7vC7wBs4k
-	gQ3pWG0pFQUVpoByKj9JpzgYzhcmagJ2Ma0vujsSyQXx31LOqqCC
-X-Google-Smtp-Source: AGHT+IECVBMYxZNk/vP2MiJPkmrQ4JB7C0Ivw5Fl0+CKBMqRmr9TgnFrLLY2uS80X1AGnQDRPQSYBQ==
-X-Received: by 2002:a05:600c:5903:b0:42c:b7e1:a9c with SMTP id 5b1f17b1804b1-42f58bd7a9dmr3414365e9.5.1727381313633;
-        Thu, 26 Sep 2024 13:08:33 -0700 (PDT)
-Received: from [192.168.42.227] (218.173.55.84.rev.sfr.net. [84.55.173.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a56fd1sm54617485e9.48.2024.09.26.13.08.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 13:08:32 -0700 (PDT)
-Message-ID: <3f4b4b60-d9f7-4dc7-9045-d41a560e2ad3@gmail.com>
-Date: Thu, 26 Sep 2024 21:09:13 +0100
+        d=1e100.net; s=20230601; t=1727382495; x=1727987295;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pknfZZZQcqqBmnB4YUw1rasAfvsUhrx+hscgFcM1NfM=;
+        b=w9HW8i97cNiIB1AsnCRXlIWWjTiLMzzAwRffEH+MawzvZSpQj5JqB5kp5xcxSk9kp9
+         bBFijP+RZ2lNimu4HbFy8gNbj3xk4arPJmDLrI23VoK8PYN4gtCLLQ1nllG5oMtK90la
+         p2//DdelLY+VoTB6P8/0PR5T4lNREnwMMqFD9eTMbcqfKv+559Yk91SvInat+k+mixI8
+         LJTIk7NZgHJGqDc7OtEL69iNvqAExC+/2vVT7YZB83kTUpTC0NG3mp3zft1Ys9cQ30eE
+         EmbFo4g+u1I2vx7ypH0XGrGwFmTtyl+XXjr0KEN5Mf+ES+krMsvaf63UgJ9QJrC/pWqu
+         97aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ6EaCyqWu8M87Qo07MhJIDGwpfwS7LT0ltJo7XbmOnmBi5g822DdBRGI0oXz4FGpq7QnU5Rpzi+onhGAp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRbCvorhIc8jMjsXR8tXhfHxUDO8xiguaunEHN/Sjy9zwPY7MG
+	C5ZxpclzG7SKoJkfrSZpEJcrwTWSOtH25soyrIuYXnwOYwmLkGXENYfCzuf4fGmi0iZ4oytXE7S
+	ogcdnt4cVrCW4Q62/IyWemqyM9l/5dEVsEVM=
+X-Google-Smtp-Source: AGHT+IGBDy2RlG2XLotWUmR2bMly7Lt4Vd4mdCIC/hqNHTAu18kx/fUhOHB434FIoE0n7SUspusrRyC/zDShng7K5Q4=
+X-Received: by 2002:a05:690c:2848:b0:6db:d5e8:d612 with SMTP id
+ 00721157ae682-6e247585df5mr7090797b3.23.1727382494998; Thu, 26 Sep 2024
+ 13:28:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] io_uring: enable per-io hinting capability
-To: Kanchan Joshi <joshi.k@samsung.com>, Hannes Reinecke <hare@suse.de>,
- axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
- martin.petersen@oracle.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
- jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
- bvanassche@acm.org
-Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
- gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com,
- Nitesh Shetty <nj.shetty@samsung.com>
-References: <20240924092457.7846-1-joshi.k@samsung.com>
- <CGME20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53@epcas5p1.samsung.com>
- <20240924092457.7846-4-joshi.k@samsung.com>
- <28419703-681c-4d8c-9450-bdc2aff19d56@suse.de>
- <678921a8-584c-f95e-49c8-4d9ce9db94ab@samsung.com>
- <cb3302c0-56dd-4173-9866-c8e40659becb@gmail.com>
- <8665404f-604e-ef64-e8d7-2a2e9de60ba7@samsung.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <8665404f-604e-ef64-e8d7-2a2e9de60ba7@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxiuPn4g1EBAq70XU-_5tYOXh4HqO5WF6O2YsfF9kM=qPw@mail.gmail.com>
+ <SI2P153MB07187CEE4DFF8CDD925D6812D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxjd2pf-KHiXdHWDZ10um=_Joy9y5_1VC34gm6Yqb-JYog@mail.gmail.com>
+ <SI2P153MB0718D1D7D2F39F48E6D870C1D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <SI2P153MB07187B0BE417F6662A991584D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <20240925081146.5gpfxo5mfmlcg4dr@quack3> <20240925081808.lzu6ukr6pr2553tf@quack3>
+ <CAOQ4uxji2ENLXB2CeUmt72YhKv_wV8=L=JhnfYTh0RTunyTQXw@mail.gmail.com>
+ <20240925113834.eywqa4zslz6b6dag@quack3> <CAOQ4uxgEcQ5U=FOniFRnV1k1EYpqEjawt52377VgFh7CY2pP8A@mail.gmail.com>
+ <JH0P153MB0999C71E821090B2C13227E5D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxirX3XUr4UOusAzAWhmhaAdNbVAfEx60CFWSa8Wn9y5ZQ@mail.gmail.com>
+ <JH0P153MB0999464D8F8D0DE2BC38EE62D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxjfO0BJUsnB-QqwqsjQ6jaGuYuAizOB6N2kNgJXvf7eTg@mail.gmail.com>
+ <JH0P153MB099940642723553BA921C520D46A2@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxjyihkjfZTF3qVX0varsj5HyjqRRGvjBHTC5s258_WpiQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjyihkjfZTF3qVX0varsj5HyjqRRGvjBHTC5s258_WpiQ@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 26 Sep 2024 22:28:03 +0200
+Message-ID: <CAOQ4uxivUh4hKoB_V3H7D75wTX1ijX4bV4rYcgMyoEuZMD+-Eg@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: Git clone fails in p9 file system marked with FANOTIFY
+To: Krishna Vivek Vitta <kvitta@microsoft.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
+	"v9fs@lists.linux.dev" <v9fs@lists.linux.dev>
+Content-Type: multipart/mixed; boundary="00000000000001b36e06230b9422"
 
-On 9/25/24 14:21, Kanchan Joshi wrote:
-> On 9/25/2024 5:53 PM, Pavel Begunkov wrote:
->> On 9/25/24 12:09, Kanchan Joshi wrote:
->>> On 9/25/2024 11:27 AM, Hannes Reinecke wrote:
->> ...
->>> As it stands the new struct will introduce
->>>> a hole of 24 bytes after 'hint_type'.
->>>
->>> This gets implicitly padded at this point [1][2], and overall size is
->>> still capped by largest struct (which is of 16 bytes, placed just above
->>> this).
->>
->> For me it's about having hardly usable in the future by anyone else
->> 7 bytes of space or how much that will be. Try to add another field
->> using those bytes and endianess will start messing with you. And 7
->> bytes is not that convenient.
->>
->> I have same problem with how commands were merged while I was not
->> looking. There was no explicit padding, and it split u64 into u32
->> and implicit padding, so no apps can use the space to put a pointer
->> anymore while there was a much better option of using one of existing
->> 4B fields.
-> 
-> How would you prefer it. Explicit padding (7 bytes), hint_type as u16 or
-> anything else?
+--00000000000001b36e06230b9422
+Content-Type: text/plain; charset="UTF-8"
 
-Explicit padding is better than the current version. Ideally,
-I'd like the new fields gone (e.g. if it goes in the direction
-of per file hints) or prefer to minimise the size and make the
-leftover padding reusable, but that depends on what the feature
-needs to be extendable.
+> > What would be the next steps for this investigation ?
+> >
+>
+> I need to find some time and to debug the reason for 9p open failure
+> so we can make sure the problem is in 9p code and report more details
+> of the bug to 9p maintainers, but since a simple reproducer exists,
+> they can also try to reproduce the issue right now.
 
-And what hint types do we expect in the future? Another question,
-don't we want an apui that allows to pass multiple hints? Quite
-similar to what I asked about "meta" rw, and it might actually
-make a lot of sense to combine them into common infra, like what
-cmsg is for networking.
+FWIW, the attached reproducer mimics git clone rename_over pattern closer.
+It reproduces fanotify_read() errors sometimes, not always,
+with either CLOSE_WRITE or OPEN_PERM | CLOSE_WRITE.
+maybe CLOSE_WRITE alone has better odds - I'm not sure.
 
-meta[] = [ {INTEGRITY, integrity_params},
-            {write_hint, ...},
-            ...];
+Thanks,
+Amir.
 
-Even though an actual impl would need to be a bit more elaborated.
+--00000000000001b36e06230b9422
+Content-Type: text/x-csrc; charset="US-ASCII"; name="rename_over.c"
+Content-Disposition: attachment; filename="rename_over.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m1jqwsjk0>
+X-Attachment-Id: f_m1jqwsjk0
 
--- 
-Pavel Begunkov
+I2luY2x1ZGUgPHN0ZGlvLmg+DQojaW5jbHVkZSA8c3RkbGliLmg+DQojaW5jbHVkZSA8dW5pc3Rk
+Lmg+DQojaW5jbHVkZSA8ZmNudGwuaD4NCiNpbmNsdWRlIDxzdHJpbmcuaD4NCiNpbmNsdWRlIDxl
+cnJuby5oPg0KI2luY2x1ZGUgPHB0aHJlYWQuaD4NCg0KDQp2b2lkICp0aHJlYWQodm9pZCAqcHRy
+KQ0Kew0KICAgIGNoYXIgZmlsZW5hbWVbMTBdID0ge307DQogICAgY29uc3QgY2hhciAqbmV3X2Zp
+bGVuYW1lID0gImNvbmZpZyI7DQogICAgY29uc3QgY2hhciAqY29udGVudCA9ICJIZWxsbywgdGhp
+cyBpcyBhIHRlc3Qgd2l0aCBmaWxlIHJlbmFtZSBvcGVyYXRpb24uXG4iOw0KICAgIGNoYXIgYnVm
+ZmVyWzEwMF07DQogICAgaW50IGZkOw0KICAgIHNzaXplX3QgYnl0ZXNfcmVhZDsNCiAgICBpbnQg
+Y291bnRlcj0wOw0KDQogICAgZnByaW50ZihzdGRlcnIsIlRocmVhZCAlbGQgc3RhcnRlZFxuIiwg
+KGxvbmcpcHRyKTsNCiAgICBzcHJpbnRmKGZpbGVuYW1lLCJjb25maWcuJWxkIiwgKGxvbmcpcHRy
+KTsNCg0KcmV0cnk6DQogICAgLy8gQ3JlYXRlIGEgbmV3IGZpbGUgYW5kIHdyaXRlIHRvIGl0DQog
+ICAgZmQgPSBvcGVuKGZpbGVuYW1lLCBPX1dST05MWSB8IE9fQ1JFQVQgfCBPX0VYQ0wsIDA2NDQp
+Ow0KICAgIGlmIChmZCA9PSAtMSkgew0KICAgICAgICBwZXJyb3IoIkZhaWxlZCB0byBjcmVhdGUg
+ZmlsZSIpOw0KICAgICAgICByZXR1cm4gTlVMTDsNCiAgICB9DQogICAgaWYgKHdyaXRlKGZkLCBj
+b250ZW50LCBzdHJsZW4oY29udGVudCkpID09IC0xKSB7DQogICAgICAgIHBlcnJvcigiRmFpbGVk
+IHRvIHdyaXRlIHRvIGZpbGUiKTsNCiAgICAgICAgY2xvc2UoZmQpOw0KICAgICAgICByZXR1cm4g
+TlVMTDsNCiAgICB9DQogICAgY2xvc2UoZmQpOw0KDQogICAgLy8gUmVuYW1lIHRoZSBmaWxlDQog
+ICAgaWYgKHJlbmFtZShmaWxlbmFtZSwgbmV3X2ZpbGVuYW1lKSAhPSAwKSB7DQogICAgICAgIHBl
+cnJvcigiRmFpbGVkIHRvIHJlbmFtZSBmaWxlIik7DQogICAgICAgIHJldHVybiBOVUxMOw0KICAg
+IH0NCg0KICAgIGZkID0gb3BlbihuZXdfZmlsZW5hbWUsIE9fUkRPTkxZKTsNCg0KICAgIGlmIChm
+ZCA9PSAtMSkgew0KICAgICAgICBwZXJyb3IoIkZhaWxlZCB0byBvcGVuIHJlbmFtZWQgZmlsZSIp
+Ow0KICAgICAgICByZXR1cm4gTlVMTDsNCiAgICB9DQogICAgYnl0ZXNfcmVhZCA9IHJlYWQoZmQs
+IGJ1ZmZlciwgc2l6ZW9mKGJ1ZmZlcikgLSAxKTsNCiAgICBpZiAoYnl0ZXNfcmVhZCA9PSAtMSkg
+ew0KICAgICAgICBwZXJyb3IoIkZhaWxlZCB0byByZWFkIGZyb20gZmlsZSIpOw0KICAgICAgICBj
+bG9zZShmZCk7DQogICAgICAgIHJldHVybiBOVUxMOw0KICAgIH0NCiAgICBidWZmZXJbYnl0ZXNf
+cmVhZF0gPSAnXDAnOyAgLy8gTnVsbC10ZXJtaW5hdGUgdGhlIGJ1ZmZlcg0KICAgIGNsb3NlKGZk
+KTsNCg0KICAgIC8vIE9wZW4gdGhlIHJlbmFtZWQgZmlsZSBhbmQgcmVhZCB0aGUgY29udGVudA0K
+ICAgIGlmIChjb3VudGVyKysgPCAxMDApDQoJICAgIGdvdG8gcmV0cnk7DQoNCiAgICBwcmludGYo
+IkZpbGUgc2F2ZWQgJWQgaXRlcmF0aW9uc1xuIiwgY291bnRlcik7DQoNCiAgICAvLyBQcmludCB0
+aGUgY29udGVudA0KICAgIHByaW50ZigiQ29udGVudCBvZiAlczpcbiVzIiwgbmV3X2ZpbGVuYW1l
+LCBidWZmZXIpOw0KDQogICAgcmV0dXJuIHB0cjsNCn0NCg0KaW50IG1haW4oKSB7DQogICAgcHRo
+cmVhZF90IHRoWzEwXTsNCiAgICBsb25nIGk7DQogICAgZm9yIChpID0gMDsgaSA8IDEwOyBpKysp
+DQoJICAgIHB0aHJlYWRfY3JlYXRlKCZ0aFtpXSwgTlVMTCwgKnRocmVhZCwgKHZvaWQgKilpKTsN
+Cg0KICAgIGZvciAoaSA9IDA7IGkgPCAxMDsgaSsrKQ0KCSAgICBwdGhyZWFkX2pvaW4odGhbaV0g
+LE5VTEwpOw0KDQogICAgcmV0dXJuIEVYSVRfU1VDQ0VTUzsNCn0NCg==
+--00000000000001b36e06230b9422--
 
