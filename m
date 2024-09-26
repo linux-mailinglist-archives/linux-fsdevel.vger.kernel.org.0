@@ -1,224 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-30161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330C19872D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 13:32:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6095A98734A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 14:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AABBA1F25CC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 11:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27ECD2824F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 12:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF57E14B08A;
-	Thu, 26 Sep 2024 11:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21571714D9;
+	Thu, 26 Sep 2024 12:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="k8fyNGgu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTH+8V0g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BB113DDDD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 11:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDD4171088
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 12:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727350358; cv=none; b=rr4PIPpCDBb6df+fa2wpjFFfpaIuF+WkpWYW9pWD5U3E17DNJBivFVDFu98nldhSMoZPPHXYXoCJgg2vnUOW+daIZrhOUxcKsZBtpYasYet+6950N83QI89APBusNn3ijiQcIGDbFXXZrHLR1rGuYwRw9MU6ywhN7d9OQ89xstw=
+	t=1727352623; cv=none; b=aX42Jo0hr4CfhjOjLpjWf+6W3PekP6dtgW8pD/0G0aqJmvXHB1+xU9Ja3HQ6nNnFqdLF/NqJinkCA+xRA0e5FDK6hd1WPIXNz5xvWVm+RXRWkrq4gmMXyBlJG+mT9faglFQ4Yl3ItuHOl/3jk2vijayALIQfykOd4kXZUi5CFNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727350358; c=relaxed/simple;
-	bh=xKiXZK3qa6f566IlLibrHNHgeg+38FWO0YqBNklGEVI=;
+	s=arc-20240116; t=1727352623; c=relaxed/simple;
+	bh=KWWSCa4bm5iRBUvMYRVkyewVmHwFy1Gvzhu1WXJbih0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=URixcqYYct4xmmNjLS4OikXnZlwp/VHuPkhPGFrjwvsLuYsp69/02YkapeKg+qHhysqu/o3uxN+HZlKbfjxiKDykwpAROhRFaSqnCBvdWp7IYm2Y3UeyP+8iLl9xVONviwBeyGohsPhog9UQCrS3p3HWKGmqVqwGH59JFlb4KfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=k8fyNGgu; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 55CB03FB75
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 11:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727350353;
-	bh=zPpF9aDmC+Mnyu4DVOZ2Pa9ex2ANZ8Mr+tKqw0+7zXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=k8fyNGgud6xffURWvwn739NqVehhu9ytHaJySTZfYyMXzPficg/JZ1GZGk+npc1vp
-	 l7FNFWSIPBxdSVvIGGzpQ79Xnp/7PaqAN3RA+CEnrVux1HCprj6/DGCc+mGgNcNANe
-	 3auhXDKDSlGbWb+kXwb1qucKdMD7xvwZkRCSSZgmXtYavmMv4VLBSI5tfIxzjhn+rm
-	 wkxp2DUSt8A0vFzcLcxpBZkpdQP16RFzgPg5Ow8GSZDykbcELe7+UeTJAPJ3nR5VZx
-	 oPyp8mQekgKAefb0gLe317FkaspDVksJzGP0Osbh+bAbobkmoXREftBRngtNSATDYw
-	 5uaFKaGSdnaPg==
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-501a273e3bdso224502e0c.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 04:32:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=OwsebJCwXTCba2VbQUXT3/JsXMYSzYGrtVetV/qaHe0lTdk6wY08EorLfDvc/GLUpfVe6pJgc1/KVY7xp6+IHOcpY6ETE3XKvevC4l/ZQud3B+SAU2U4/d7HZdbJm1ygoIHR2GzjFXdbxXCT765Fbgyvn3r819JOL/pBC4xuBWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTH+8V0g; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a99e8ad977so67983585a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 05:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727352621; x=1727957421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mf7Om00r0mCig/ZMqczV49KZAqpWgZLX+5yEYgrLlko=;
+        b=aTH+8V0gXx7c8J/sZZyP7JJXXZa4/g+jz1E6sskeDMJYRIFHWWkFXcPW42BB84fQIh
+         XQhwfHgA0JIF3M0EH6XsbNkO0z0DNckYv6b1nS/t5hvFhj1BDD/2LXyFnrrwBcAIdNuw
+         6o3aFs6MGgzf66jW1IVWQQzqAJ94QAP2BcVZscGPMSh5A5yWkqHgs1u0eSv+jm2jigee
+         k66616gzXRCS98C3VcE5HEupqCTMcUaYZiLp/adb6CjAJ6JC6Nzzg/9mBgaSaUIC8sZu
+         Th6S1+nZf549YbHdKmAqv2qSLHQRWxE1veHk5WbXiLyyUKYcZoFdYn2QSkVaGc9bl+ur
+         5XIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727350351; x=1727955151;
+        d=1e100.net; s=20230601; t=1727352621; x=1727957421;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zPpF9aDmC+Mnyu4DVOZ2Pa9ex2ANZ8Mr+tKqw0+7zXQ=;
-        b=U94bIzNMSn1oW5+Y2q1QFUT1a1L4UFNhXdjl/OwOJ4vXRqTzTJe5f141FmhJbofCLF
-         OHRqF5PSi4/PKCf26xCFWqz/fcyPViRUYUJry/9alWV9KFOfxBIPj0Df9F9vjbzcoupy
-         07vwxP5YqYHFzBW5+zU6R+S6P+ejSlLLRtzK0ODHx+KM3UV7NeSagcmxPMHGrQhBx0sY
-         B3sBTYEdZ5aoGAuOE0Po3oWokrh4wfdXDvz6nWKANwZol/66V9EZY0iYMGD/GtDATgiL
-         YcaPtY0Xk0HkLktYSW+3DV2zIp001TxGvbvEX99ECca5teK64x+sAtmJj2CHTBmDw9EB
-         jV2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIRNEgY2d30/U/+Bai1HcK6sJJsjXk2ESql2PSdXQvP3fzWZfN3U4XMmkeKX2hUvnKPMAMicneUvpo9Lld@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNIta1Nnx2zn9F9cXK2OJl3p/QqpP4y6gd9EuG0NwCZ4wUE75o
-	Dlj47wnxk06oht3bflNlYGJBLA9vBEqUKzWRuT3nZ3l5Cekiv5EIgf3k23X+rtSIWCkGN8yLKJB
-	vVzwUWa4KJCVhGQ8I7MYWfXRWoSafYnYfvZHST9FEziVIbLPCfK8LKaDSBRZraPUXdKeX/RwnzY
-	mmmZCGPtxGbLTcRh7MZ2UEgnvmZ58LYFV2WaQW52fHeUW2rCyuvARLdw==
-X-Received: by 2002:a05:6122:1dac:b0:4f5:202b:6220 with SMTP id 71dfb90a1353d-505c199c949mr4820585e0c.0.1727350351320;
-        Thu, 26 Sep 2024 04:32:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH5d0qCzTsLa+yY4RvWO1He7An170Y7lxw70RCK4Y01gROAsLBp+vUbl6SD/qSHuicDsRxCqT4xsHz05zLJQpQ=
-X-Received: by 2002:a05:6122:1dac:b0:4f5:202b:6220 with SMTP id
- 71dfb90a1353d-505c199c949mr4820541e0c.0.1727350350968; Thu, 26 Sep 2024
- 04:32:30 -0700 (PDT)
+        bh=mf7Om00r0mCig/ZMqczV49KZAqpWgZLX+5yEYgrLlko=;
+        b=ZWN4LbB1mQ9V1uCv3PhEQQ0wK9MLgwVsIo0g9CGpcsCzFtSs+8NpaAu7/PpDVuNo1k
+         MOpC6y1Z1thGUhyHE/x8uc0r8qexRMPAJL1K304jHpL8f61weH2YkrAC37AfjM7zAfhO
+         EvYoZZwHHk1lH2xduHAuTbYqdvDi7ppDlPv/syU4cdO4mqsqOq0Fy0QW3CRxl1jbUfSO
+         GJQJKH0rsJS8dcHLkglkfadnTVOauPpoN0KXtYCtqFkw94f9ELgDRTILok9dnhhqqDfk
+         DhdTa96CFKoC5BJvXJoX4bVh7GAJWH9MvXGb3OLVlpy4gL3EYznSb+SkkHwbV+ac0BES
+         Z8xg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBR2Jz5ddGEFlCxdQKuohQkwWMgGftxqD6NwOyjbtIGVygjXCttMn5KoZR3CpJluhUE9qM6uNtyvlCU4lT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw22BpOraJCOXG0IHUnve4RBZVZpHND6WqGBJt+BC3h6rQ85eTZ
+	e9cVslazOmZQzW5gOrIvXBI40x2fBFeI78XOtSVKx2eYuKGXIS0n6vm5ZVshbfIiJzF6sMqOeNG
+	n8eY/Z8uAHRVw3B6vMfC/HiwFPUY=
+X-Google-Smtp-Source: AGHT+IHOu02hfo2NqYxaYTeobf8HzVHsr74VBRW/0nvcQAkFKMdhB1GQQIM2rCkqtQJNfGD3OzyenMhMbx2gd7/MLMU=
+X-Received: by 2002:a05:620a:45a9:b0:7a3:5f3f:c084 with SMTP id
+ af79cd13be357-7ace741340fmr736526185a.30.1727352620663; Thu, 26 Sep 2024
+ 05:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
- <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
- <20240925155706.zad2euxxuq7h6uja@quack3> <CAEivzxfjnKq2fgCfYwhZukAO-ZfoUiC5n0Y5yaUpuz-y7kDf+g@mail.gmail.com>
- <dcda93dd-f2ef-4419-ae73-7d3c55b5df8f@huawei.com> <CAEivzxdnAt3WbVmMLpb+HCBSrwkX6vesMvK3onc+Zc9wzv1EtA@mail.gmail.com>
- <4ce5c69c-fda7-4d5b-a09e-ea8bbca46a89@huawei.com>
-In-Reply-To: <4ce5c69c-fda7-4d5b-a09e-ea8bbca46a89@huawei.com>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Thu, 26 Sep 2024 13:32:20 +0200
-Message-ID: <CAEivzxekNfuGw_aK2yq91OpzJfhg_RDDWO2Onm6kZ-ioh3GaUg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, tytso@mit.edu, stable@vger.kernel.org, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>, 
-	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	Wesley Hershberger <wesley.hershberger@canonical.com>, Yang Erkun <yangerkun@huawei.com>
+References: <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxiuPn4g1EBAq70XU-_5tYOXh4HqO5WF6O2YsfF9kM=qPw@mail.gmail.com>
+ <SI2P153MB07187CEE4DFF8CDD925D6812D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxjd2pf-KHiXdHWDZ10um=_Joy9y5_1VC34gm6Yqb-JYog@mail.gmail.com>
+ <SI2P153MB0718D1D7D2F39F48E6D870C1D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <SI2P153MB07187B0BE417F6662A991584D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
+ <20240925081146.5gpfxo5mfmlcg4dr@quack3> <20240925081808.lzu6ukr6pr2553tf@quack3>
+ <CAOQ4uxji2ENLXB2CeUmt72YhKv_wV8=L=JhnfYTh0RTunyTQXw@mail.gmail.com>
+ <20240925113834.eywqa4zslz6b6dag@quack3> <CAOQ4uxgEcQ5U=FOniFRnV1k1EYpqEjawt52377VgFh7CY2pP8A@mail.gmail.com>
+ <JH0P153MB0999C71E821090B2C13227E5D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxirX3XUr4UOusAzAWhmhaAdNbVAfEx60CFWSa8Wn9y5ZQ@mail.gmail.com>
+ <JH0P153MB0999464D8F8D0DE2BC38EE62D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxjfO0BJUsnB-QqwqsjQ6jaGuYuAizOB6N2kNgJXvf7eTg@mail.gmail.com>
+ <JH0P153MB099940642723553BA921C520D46A2@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+ <CAOQ4uxjyihkjfZTF3qVX0varsj5HyjqRRGvjBHTC5s258_WpiQ@mail.gmail.com> <JH0P153MB09996860C90193AB4D293D84D46A2@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+In-Reply-To: <JH0P153MB09996860C90193AB4D293D84D46A2@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 26 Sep 2024 14:10:08 +0200
+Message-ID: <CAOQ4uxiAyCTF30xwcMbgY5f=5He2oTGCACV26GO=s0CHYfJVyg@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: Git clone fails in p9 file system marked with FANOTIFY
+To: Krishna Vivek Vitta <kvitta@microsoft.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
+	"v9fs@lists.linux.dev" <v9fs@lists.linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 11:40=E2=80=AFAM Baokun Li <libaokun1@huawei.com> w=
-rote:
+On Thu, Sep 26, 2024 at 1:17=E2=80=AFPM Krishna Vivek Vitta
+<kvitta@microsoft.com> wrote:
 >
-> On 2024/9/26 17:23, Aleksandr Mikhalitsyn wrote:
-> > On Thu, Sep 26, 2024 at 10:50=E2=80=AFAM Baokun Li <libaokun1@huawei.co=
-m> wrote:
-> >> On 2024/9/26 0:17, Aleksandr Mikhalitsyn wrote:
-> >>> On Wed, Sep 25, 2024 at 5:57=E2=80=AFPM Jan Kara <jack@suse.cz> wrote=
-:
-> >>>> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
-> >>>>> [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa=
-8-b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
-> >>>>> [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786=
-432 blocks
-> >>>>> [   33.888740] ------------[ cut here ]------------
-> >>>>> [   33.888742] kernel BUG at fs/ext4/resize.c:324!
-> >>>> Ah, I was staring at this for a while before I understood what's goi=
-ng on
-> >>>> (it would be great to explain this in the changelog BTW).  As far as=
- I
-> >>>> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory all=
-ocation
-> >>>> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger tha=
-n
-> >>>> flexbg_size (for example when ogroup =3D flexbg_size, ngroup =3D 2*f=
-lexbg_size
-> >>>> - 1) which then confuses things. I think that was not really intende=
-d and
-> >>> Hi Jan,
-> >>>
-> >>> First of all, thanks for your reaction/review on this one ;-)
-> >>>
-> >>> You are absolutely right, have just checked with our reproducer and
-> >>> this modification:
-> >>>
-> >>> diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
-> >>> index e04eb08b9060..530a918f0cab 100644
-> >>> --- a/fs/ext4/resize.c
-> >>> +++ b/fs/ext4/resize.c
-> >>> @@ -258,6 +258,8 @@ static struct ext4_new_flex_group_data
-> >>> *alloc_flex_gd(unsigned int flexbg_size,
-> >>>                   flex_gd->resize_bg =3D 1 << max(fls(last_group - o_=
-group + 1),
-> >>>                                                 fls(n_group - last_gr=
-oup));
-> >>>
-> >>> +       BUG_ON(flex_gd->resize_bg > flexbg_size);
-> >>> +
-> >>>           flex_gd->groups =3D kmalloc_array(flex_gd->resize_bg,
-> >>>                                           sizeof(struct ext4_new_grou=
-p_data),
-> >>>                                           GFP_NOFS);
-> >>>
-> >>> and yes, it crashes on this BUG_ON. So it looks like instead of makin=
-g
-> >>> flex_gd->resize_bg to be smaller
-> >>> than flexbg_size in most cases we can actually have an opposite effec=
-t
-> >>> here. I guess we really need to fix alloc_flex_gd() too.
-> >>>
-> >>>> instead of fixing up ext4_alloc_group_tables() we should really chan=
-ge
-> >>>> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never e=
-xceeds
-> >>>> flexbg size. Baokun?
-> >>> At the same time, if I understand the code right, as we can have
-> >>> flex_gd->resize_bg !=3D flexbg_size after
-> >>> 5d1935ac02ca5a ("ext4: avoid online resizing failures due to oversize=
-d
-> >>> flex bg") and
-> >>> 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_fl=
-ex_gd()")
-> >>> we should always refer to flex_gd->resize_bg value which means that
-> >>> ext4_alloc_group_tables() fix is needed too.
-> >>> Am I correct in my understanding?
-> >> Hi Alex,
-> > Hi Baokun,
-> >
-> >> These two are not exactly equivalent.
-> >>
-> >> The flex_gd->resize_bg is only used to determine how many block groups=
- we
-> >> allocate memory to, i.e., the maximum number of block groups per resiz=
-e.
-> >> And the flexbg_size is used to make some judgement on flexible block
-> >> groups, for example, the BUG_ON triggered in the issue is to make sure
-> >> src_group and last_group must be in the same flexible block group.
-> > Huge thanks for explaining this!
-> >
-> > Then I guess it's better if you send a patch with your fix.
-> > Feel free to add my Tested-by tag.
-> Okay, I'll send a patch later.
-> >
-> > Question to you and Jan. Do you guys think that it makes sense to try
-> > to create a minimal reproducer for this problem without Incus/LXD invol=
-ved?
-> > (only e2fsprogs, lvm tools, etc)
-> >
-> > I guess this test can be put in the xfstests test suite, right?
-> >
-> > Kind regards,
-> > Alex
-> I think it makes sense, and it's good to have more use cases to look
-> around some corners. If you have an idea, let it go.
-
-Minimal reproducer:
-
-mkdir -p /tmp/ext4_crash/mnt
-EXT4_CRASH_IMG=3D"/tmp/ext4_crash/disk.img"
-rm -f $EXT4_CRASH_IMG
-truncate $EXT4_CRASH_IMG --size 25MiB
-EXT4_CRASH_DEV=3D$(losetup --find --nooverlap --direct-io=3Don --show
-$EXT4_CRASH_IMG)
-mkfs.ext4 -E nodiscard,lazy_itable_init=3D0,lazy_journal_init=3D0 $EXT4_CRA=
-SH_DEV
-mount $EXT4_CRASH_DEV /tmp/ext4_crash/mnt
-truncate $EXT4_CRASH_IMG --size 3GiB
-losetup -c $EXT4_CRASH_DEV
-resize2fs $EXT4_CRASH_DEV
-
+> Hi Amir,
 >
-> Regards, Baokun
+> Yes, and my guess is that the MDE software running on your machine had re=
+acted
+> fanotify_read() error as a threat and removed the .config file, that is w=
+hy it could not be found by the open syscall??
+> >>>>No, that can't  be because I have performed the exercises by uninstal=
+ling MDE software running in WSL(5.15 and 6.3).
 >
+> Git clone succeeds, but the listener terminates as you see in your machin=
+e in standard linux. It is the same manifestation.
+>
+> In MDE software, Fanotify marking was just being done only with CLOSE_WRI=
+TE in mask, while the example code(fanotify listener) was having mask OPEN_=
+PERM | CLOSE_WRITE.
+>
+> I shall include OPEN_PERM in the mask in MDE and then invoke git clone an=
+d then see if it succeeds.
+>
+> Can you explain the significance of OPEN_PERM and its relation with CLOSE=
+_WRITE ?
+
+I cannot explain but anyway the impact of the reference that fanotify
+takes in the dentry
+is not exactly clear to us yet.
+
+In my test OPEN_PERM | CLOSE_WRITE also got fanotify_read() error ENOENT
+see my email.
+
+Thanks,
+Amir.
 
