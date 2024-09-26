@@ -1,146 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-30193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB35987805
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 19:00:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589AD987849
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 19:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F1B1C21445
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 17:00:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF6C1F23339
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 17:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB12115DBC1;
-	Thu, 26 Sep 2024 16:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OyPAll4O"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3986815DBB2;
+	Thu, 26 Sep 2024 17:29:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67831157E61;
-	Thu, 26 Sep 2024 16:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD13136337;
+	Thu, 26 Sep 2024 17:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727369988; cv=none; b=KFZqSsudVxjUOnB/wp+EfxywikuXBeE8mdaTfQHbAfkgrDzUzZbovkJcKcgG+UsQDjRYSQzd5DAD+8Upt2RWhXNr0SD5LQ2aFp9JdFqjxxmVMao4sWuVt6b6pCd4NFOI0+U+OZSNXRV4cY8O5LFcVyzd8Hzx5Qw3h7Fp0oXmy4I=
+	t=1727371791; cv=none; b=QrfnR7ZyW1mgtEqyWERGp/BZkm2DIs3Lqxc+cF6EaBFQ2NSRJYRP1ZFUTcG3Jhk9kiEgbSHQ79AzhGLnb1uphXEG1hgzZ3XmiUNgUIdgpZnNhoF5tF+ZtZChXyH4ddt0+eJDu6w3Ej7VdfAE2oLnylhVhQlhH18TTlxyMvKSZ+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727369988; c=relaxed/simple;
-	bh=FvyFBt+Vd5UF2A+sqhYijCe2ynDIwnVNWV+evOwSXP0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B1SiIdFW46NHrhcKA1/acXKyGIfdRGzUO6oJuUKaO7IE995Z9i8dJ/BGNLPEXukuznYmuKMF8u2++mxYIMAZf1zO4VUmYKPWbE0C+E9tQSWDzm1kWYne+2qbSMhCE2v2YiytYXjJQE03FGKxmPteJxz7JnSgnr0CgGvlulVFyuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OyPAll4O; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=vZZTa11CAK73ciRtK/MoLNusDFg6dIj6Gmywiet9pEk=; b=OyPAll4OChxKP8zrcRtGRnwDsS
-	zgKDZwCOCsLmEc3+M7QxVMRw982AGTIfUzIiE0r3n23a11U3UDZEMxLYNM618gxtGhCmRWJP9IslZ
-	9+fiZSZkbwBnKX2dlUHKkc3YWMFduEcnt37crCl9ejx+ykHfIKIsY2xu7mT6c09KLkFB6Nj2shRI/
-	b9o0cncTZMvy1eY9nrSfrqswutAzEmxTAPzp6LD6L9+WM7TNgOssSkIjNUWpwRnM5fRfscLCL093N
-	0O2bR8GyaCgxQdhUQxbDRrz9hy5l7wu9KZI/IeAiNOYxC27i+h5n/x1QgIcty/TPcFVrW1NPOWxWe
-	lyN231og==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1strpz-000000078sX-1WvG;
-	Thu, 26 Sep 2024 16:59:32 +0000
-Message-ID: <fadc1ea2-fb43-41e2-af8c-8a93cf9e7865@infradead.org>
-Date: Thu, 26 Sep 2024 09:59:21 -0700
+	s=arc-20240116; t=1727371791; c=relaxed/simple;
+	bh=4afPFV6dbcYoMxauCprHFhl/iT5djV7VSu1CLYr4mu4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pM8zJkkqpwoIlZNvG+2oBIaHEUcl4smA3nHlL0vHLjyG4ryKvJ3Nx/0+SPRdHt20gsmYiQ7ZDjL1+BbsrmDEeOV/C7A5zwa9857+wnNVu7EM5/Ml5S36K4rSTVT+VhEEBeJMelZ4v1kveBhQgdAofZ+wVpc5sWIGl5RoDtv9hhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c876ed9c93so1297396a12.2;
+        Thu, 26 Sep 2024 10:29:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727371788; x=1727976588;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4afPFV6dbcYoMxauCprHFhl/iT5djV7VSu1CLYr4mu4=;
+        b=kQ7hOg6UlYyXf49fR+VpnEJGZ1NfcFtUhSE34fww26RqlYVQ9cjisHAdvwhcM+0YtQ
+         ZCPdXkbjmPlp/3J0DVuaVmdiOOAgrArLUYKv0JC8U/CX258k2w+JOaZV7YZtIv29UBz2
+         qFeMU8hN0AJOUbkQSsh+rTG/1NJocWxL3tj65jIqRtB2WYh7ltLZaAXeONFmeFxED+KV
+         7wLXmJPpiafLCgGBeexiOgvLkwAGVUdMdW6x/44DxclKKeBaunbIvRLMPFH5Dl77EJaO
+         I7pDQUGNSz5PykbTwdcRZjhu2RBeUch1E7diORbC4rLeNGKZmPpzSMwHX9RFhCN4lvxS
+         jMcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7cWEFlEd8hsZgPLX5DpOuKYXFzdoQEvcPyAc9ZiodPkRo+wrekfWg0SvGr2WB+U+xgeGqp0no/kmCM7vi@vger.kernel.org, AJvYcCVbryu4tmpQEIYgaqYv1KwUfwa8oYw73D2m2eHfneF4Lkg8ZWuFiN/voICRdq93tKelVEeoYYycMD3dftKOrg==@vger.kernel.org, AJvYcCW+IoOdsVrVXatsVVa2iW4Yxf2oMsKyg/Bk7hPuZpJBs93TyDcSDqIyxaf/Pt+J5bFkuMzX2fBN2XEiM5qGvw==@vger.kernel.org, AJvYcCW27FyPhUuXvLpF6vbylHKA3BYyu7EUChDyVPfZk5JwUSXZE5nShAVOv3xm8XljICdIuT5Br5uiBUvauAMk+ClEc+pKhvep@vger.kernel.org
+X-Gm-Message-State: AOJu0YyapNt1aL5+Ax7zNxhKA9DGxyY0gH2CG4vuvRtebV/2JPlnwDdy
+	zw4Nm1AqZuNAl5Jz4UPxgS0wDB0gmnSPUNFl8S27ARtNz9bBS5NY
+X-Google-Smtp-Source: AGHT+IG0A5dujC3CjHvj9UIpzlSW1clgtQTDw6ZAJgzcvSavTZk1wMdg2ScfHyrsjW3CMML4CP+HRA==
+X-Received: by 2002:a05:6402:2552:b0:5c2:609d:397e with SMTP id 4fb4d7f45d1cf-5c8825fe1eemr373033a12.15.1727371788365;
+        Thu, 26 Sep 2024 10:29:48 -0700 (PDT)
+Received: from localhost.localdomain (109-81-81-255.rct.o2.cz. [109.81.81.255])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245eb15sm145336a12.49.2024.09.26.10.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 10:29:47 -0700 (PDT)
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2 v3] remove PF_MEMALLOC_NORECLAIM
+Date: Thu, 26 Sep 2024 19:11:49 +0200
+Message-ID: <20240926172940.167084-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/11] fs: multigrain timestamp redux
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jonathan Corbet <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>,
- "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Chuck Lever <chuck.lever@oracle.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Jeff,
+Hi,
+I am reposting these patches after rebasing them on top of the current
+Linus tree 11a299a7933e which should contain PRs from trees which
+confliced with these patches previously (LSM and bcachefs). The previous
+version was posted https://lore.kernel.org/all/20240902095203.1559361-1-mhocko@kernel.org/T/#u
+and there are no functional changes since then. I have folded in a doc
+fix which has triggered a warning.
 
-On 9/14/24 10:07 AM, Jeff Layton wrote:
-> This is a fairly small update to the v7 set. It seems to pass all of my
-> testing. Again, most of the changes are in the first two patches, but
-> there are some differences in the patch that adds percpu counters as
-> well.
-> 
-> Since the report of a performance regression came just before the merge
-> window, it looks like we're going to have to wait for yet another
-> release, so consider this version v6.13 material.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
+I have preserved all the acks, please let me know if I should drop any.
 
-> ---
-> Jeff Layton (11):
->       timekeeping: move multigrain timestamp floor handling into timekeeper
->       fs: add infrastructure for multigrain timestamps
->       fs: have setattr_copy handle multigrain timestamps appropriately
->       fs: handle delegated timestamps in setattr_copy_mgtime
->       fs: tracepoints around multigrain timestamp events
->       fs: add percpu counters for significant multigrain timestamp events
->       Documentation: add a new file documenting multigrain timestamps
->       xfs: switch to multigrain timestamps
->       ext4: switch to multigrain timestamps
->       btrfs: convert to multigrain timestamps
->       tmpfs: add support for multigrain timestamps
-> 
->  Documentation/filesystems/index.rst         |   1 +
->  Documentation/filesystems/multigrain-ts.rst | 121 ++++++++++++
->  fs/attr.c                                   |  60 +++++-
->  fs/btrfs/file.c                             |  25 +--
->  fs/btrfs/super.c                            |   3 +-
->  fs/ext4/super.c                             |   2 +-
->  fs/inode.c                                  | 278 +++++++++++++++++++++++++---
->  fs/stat.c                                   |  42 ++++-
->  fs/xfs/libxfs/xfs_trans_inode.c             |   6 +-
->  fs/xfs/xfs_iops.c                           |  10 +-
->  fs/xfs/xfs_super.c                          |   2 +-
->  include/linux/fs.h                          |  36 +++-
->  include/linux/timekeeping.h                 |   5 +
->  include/trace/events/timestamp.h            | 124 +++++++++++++
->  kernel/time/timekeeping.c                   |  83 +++++++++
->  kernel/time/timekeeping_debug.c             |  12 ++
->  kernel/time/timekeeping_internal.h          |   3 +
->  mm/shmem.c                                  |   2 +-
->  18 files changed, 742 insertions(+), 73 deletions(-)
-> ---
-> base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-
-IME it would be better to make this series apply to linux-next-($latest)
-instead of base mainline Linux. for integration reasons.
-
-You can add
-
-Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
-
-for all patches if you want to.
-
-
-> change-id: 20240913-mgtime-20c98bcda88e
-> 
-> Best regards,
 
