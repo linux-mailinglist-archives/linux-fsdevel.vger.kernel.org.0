@@ -1,102 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-30199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5934198797C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 20:58:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE2D9879FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 22:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C462874B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 18:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC14E1C21C1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 20:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE2178CD9;
-	Thu, 26 Sep 2024 18:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD62417DFFC;
+	Thu, 26 Sep 2024 20:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eNmc+Qah"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOzYRWUr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F36B15B98E;
-	Thu, 26 Sep 2024 18:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878931BC58;
+	Thu, 26 Sep 2024 20:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727377101; cv=none; b=AHgHPsUvuoTVtfvC4OjlJF+BRkD7si0VUZJSswn2rcyRLdJWSkrViyrDsvOPi+3pk8ztBbt63VN24fui5ehc09hujHe8DRkv0DY9b5NLykj1kI5W1r8JbazWHrkUC8LT7FR5aoTLgrTuiWp/pcghyLu3Sl3EsPf7MG7t3G3zg0Q=
+	t=1727381317; cv=none; b=TYJCALgDCxRXkdTKF3WaVZO2p8NfrHOoM9zD6sBSbUSGpPfla7EZCy0WZY8W/OwK+imrUBHjmSgG5TCMmYBDpstBb7sAmMy2zMi2YN4dAFeWlkM0uqOMD40O7fs3Dj88A+dfthQhzBupBiKo6CavTypYI3aXfjb5PNYZvEmOINk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727377101; c=relaxed/simple;
-	bh=nFOuKnkaTmIkn6GiEorRCB9FV+6ha31zO84j5crpkY0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m6XLt4R+jLQg8Y82Hjeac/NCkCyKMrRmScPgMHUNi+RtYbOTh0HF8BiPnPb05H8rGGLhJz3Se8xYqqy1OhoXyFgE9fn7RU7TUEXy120Ec7rK4dA0s/kasrRcLXEvjLzEpDGHmJOGK8AJ1S2qMkdqtztcamf8r6H+GaBCjhtB2fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eNmc+Qah; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1727377096; x=1727636296;
-	bh=MY/ZvB0yi1dIucSZzljqvB4KqcbC9zKa10VJMi+Shxg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=eNmc+Qah1iuFhuit9fCzpb6eaSuWVKd/NfqP3FMLfrcWo4BUWyIeXuCFbpIrEmxVN
-	 9PMyLF922uEhwE7eiMZHag8WGBlNsQOqwWcZt+3rja8XdjSmJLkEQ0RjHWM6wfFGgE
-	 RP4JfL83yNIbpWEYFWqyTXlTzURzyorjQdoxGLgEmXn9oOqewdqdYbZ0+gILeLVU4x
-	 on5u9vzC4nnwCPY1GcXPprlpelP0o23FE0G8ceUoyCEf0gl7XbDUa6Hvh9Y6gVDkqe
-	 1T2bf4uU5JlWcjdWyX1sJ/D7eVnB4P47r/5HxtcyFNX6/3uQqt7DBxtBmuOM1t7cVD
-	 I/XatSfu55B1w==
-Date: Thu, 26 Sep 2024 18:58:10 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Miscdevices in Rust
-Message-ID: <f7820784-9d9c-4ab9-8c84-b010fead8321@proton.me>
-In-Reply-To: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
-References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: b96f335b3237fcac0256ede9a308460b398ca769
+	s=arc-20240116; t=1727381317; c=relaxed/simple;
+	bh=1GbYnWKzSVy3cpllGDN6AI05mWhQlZ4Y15ZaoU/FG38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rWxtmK169+IkduK6MOZ3rnKecDwwXJNAT8oRGqUGkTG8vnGjPjwkNlRNsWmuIgbTeJ3lrXWxDegP3KQzcwgTMGB0h+8KBVzzHqAURedGAAyRhaviOijINMSS7Ae7P/ErJl/xsJh8T/9lPcDB4aC4pozxPBpthwcbpdF0SNv2QgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iOzYRWUr; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so9331635e9.1;
+        Thu, 26 Sep 2024 13:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727381314; x=1727986114; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qja+XDs7guUN35rttc9FL0qVA6mpRjfv1Lp+wNX5FBc=;
+        b=iOzYRWUrZX/gQ+Ky65JvL67ZlkB23Xv1UxEvhnal0BpGjNgZYwhV3j0SDS0UxZPlHV
+         JOARx0fec73zqQMbnUPpjZHMgYMk7Ij7PDvPnhOU75dTQ/C9ctQrRbZUxCzM9T0isam9
+         AJ+qwX6MURGKpYcHUkGe9uBr7IU/LRvp0x+dTtB4/ruzJc7Zgi3Mo6Mm+F0WKxSxkPtS
+         Uu/bwjpL1+SRBVFxmwnk/LLPJY0k3fS0B3a/U7Tx+19/MbBDARL8s3ObNzG//KnWzH3I
+         0BpFVTQUyL0BdxJTnz2BAX/KFN34bzahXLKQ6gEPOYg0xkm9wakQF7bom2Po5JG34LeE
+         Eavw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727381314; x=1727986114;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qja+XDs7guUN35rttc9FL0qVA6mpRjfv1Lp+wNX5FBc=;
+        b=Kui14rgESh6fkxC2iCiFwgAa8KfQn5299iz/qHALnfXan1M2tKGSHBmi5k6NXcL0Px
+         BcEKWWXYGakYCxyfBw2QjHpQoagruYtKa3f0tkqZTMapdZeEjxlTwXJ7eqCsS57GOa5Y
+         hR0C5m7e6Gufa9EvoMw2QCLlrQMQWe5mPlw6mVf5yhwVnRC783nZGj+L/g2zUXL3mlcU
+         W+9YlQ08KZ/Y66caCRSf+j2s2oBhI9t6PpxZD4zHqKbV8WwlaYbG6WToFkHa0aBYG9D1
+         KA7uwjztu/V8cEO0L6vM9LtVOw5/gdx0uGjsVgSWLK8NjNoau+Bmb4JSubq7QQ+vuifr
+         m9SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1EHBejFXnY8VQ0Zl+betPoYrDfxCGfT9pMFi04FKGP51BetLqLWokvW2rYSSUQoTod/VqnSaXsqSsXMI=@vger.kernel.org, AJvYcCWTTriTI3KLDW7r4PE7Lt93ys8Jgm4b7aoGsmhuUsR8jGgBZxKvMwZOptN1oIH5NrDAfNa0n2qgQ9Hh7f880g==@vger.kernel.org, AJvYcCXhfW/FfkfwCE2sprmu3SGL2bOA5Xwmzr6/w1Dltq+dkLQ02ZNY6M2RZ6cQwloDi6WrMcu2yAqv8w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYUZfPzb+PvKAixO5A7UYSFWWrKtjnVetgzrsGIbF7vC7wBs4k
+	gQ3pWG0pFQUVpoByKj9JpzgYzhcmagJ2Ma0vujsSyQXx31LOqqCC
+X-Google-Smtp-Source: AGHT+IECVBMYxZNk/vP2MiJPkmrQ4JB7C0Ivw5Fl0+CKBMqRmr9TgnFrLLY2uS80X1AGnQDRPQSYBQ==
+X-Received: by 2002:a05:600c:5903:b0:42c:b7e1:a9c with SMTP id 5b1f17b1804b1-42f58bd7a9dmr3414365e9.5.1727381313633;
+        Thu, 26 Sep 2024 13:08:33 -0700 (PDT)
+Received: from [192.168.42.227] (218.173.55.84.rev.sfr.net. [84.55.173.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a56fd1sm54617485e9.48.2024.09.26.13.08.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2024 13:08:32 -0700 (PDT)
+Message-ID: <3f4b4b60-d9f7-4dc7-9045-d41a560e2ad3@gmail.com>
+Date: Thu, 26 Sep 2024 21:09:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/3] io_uring: enable per-io hinting capability
+To: Kanchan Joshi <joshi.k@samsung.com>, Hannes Reinecke <hare@suse.de>,
+ axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+ martin.petersen@oracle.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+ jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+ bvanassche@acm.org
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+ gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com,
+ Nitesh Shetty <nj.shetty@samsung.com>
+References: <20240924092457.7846-1-joshi.k@samsung.com>
+ <CGME20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53@epcas5p1.samsung.com>
+ <20240924092457.7846-4-joshi.k@samsung.com>
+ <28419703-681c-4d8c-9450-bdc2aff19d56@suse.de>
+ <678921a8-584c-f95e-49c8-4d9ce9db94ab@samsung.com>
+ <cb3302c0-56dd-4173-9866-c8e40659becb@gmail.com>
+ <8665404f-604e-ef64-e8d7-2a2e9de60ba7@samsung.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <8665404f-604e-ef64-e8d7-2a2e9de60ba7@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 26.09.24 16:58, Alice Ryhl wrote:
-> A misc device is generally the best place to start with your first Rust
-> driver, so having abstractions for miscdevice in Rust will be important
-> for our ability to teach Rust to kernel developers.
+On 9/25/24 14:21, Kanchan Joshi wrote:
+> On 9/25/2024 5:53 PM, Pavel Begunkov wrote:
+>> On 9/25/24 12:09, Kanchan Joshi wrote:
+>>> On 9/25/2024 11:27 AM, Hannes Reinecke wrote:
+>> ...
+>>> As it stands the new struct will introduce
+>>>> a hole of 24 bytes after 'hint_type'.
+>>>
+>>> This gets implicitly padded at this point [1][2], and overall size is
+>>> still capped by largest struct (which is of 16 bytes, placed just above
+>>> this).
+>>
+>> For me it's about having hardly usable in the future by anyone else
+>> 7 bytes of space or how much that will be. Try to add another field
+>> using those bytes and endianess will start messing with you. And 7
+>> bytes is not that convenient.
+>>
+>> I have same problem with how commands were merged while I was not
+>> looking. There was no explicit padding, and it split u64 into u32
+>> and implicit padding, so no apps can use the space to put a pointer
+>> anymore while there was a much better option of using one of existing
+>> 4B fields.
+> 
+> How would you prefer it. Explicit padding (7 bytes), hint_type as u16 or
+> anything else?
 
-Sounds good!
+Explicit padding is better than the current version. Ideally,
+I'd like the new fields gone (e.g. if it goes in the direction
+of per file hints) or prefer to minimise the size and make the
+leftover padding reusable, but that depends on what the feature
+needs to be extendable.
 
-> I intend to add a sample driver using these abstractions, and I also
-> intend to use it in Rust Binder to handle the case where binderfs is
-> turned off.
->=20
-> I know that the patchset is still a bit rough. It could use some work on
-> the file position aspect. But I'm sending this out now to get feedback
-> on the overall approach.
->=20
-> This patchset depends on files [1] and vma [2].
->=20
-> Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@=
-google.com/ [1]
-> Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.c=
-om/ [2]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Alice Ryhl (3):
->       rust: types: add Opaque::try_ffi_init
->       rust: file: add f_pos and set_f_pos
->       rust: miscdevice: add abstraction for defining miscdevices
+And what hint types do we expect in the future? Another question,
+don't we want an apui that allows to pass multiple hints? Quite
+similar to what I asked about "meta" rw, and it might actually
+make a lot of sense to combine them into common infra, like what
+cmsg is for networking.
 
-I recall that we had a sample miscdev driver in the old rust branch. Can
-you include that in this series, or is there still some stuff missing? I
-think it would be really useful for people that want to implement such a
-driver to have something to look at.
+meta[] = [ {INTEGRITY, integrity_params},
+            {write_hint, ...},
+            ...];
 
----
-Cheers,
-Benno
+Even though an actual impl would need to be a bit more elaborated.
 
+-- 
+Pavel Begunkov
 
