@@ -1,150 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-30198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9363C98787A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 19:41:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5934198797C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 20:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55341C20C81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 17:41:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C462874B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 18:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A83D15B96C;
-	Thu, 26 Sep 2024 17:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE2178CD9;
+	Thu, 26 Sep 2024 18:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FquEoQcK"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eNmc+Qah"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD33C1494AC;
-	Thu, 26 Sep 2024 17:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F36B15B98E;
+	Thu, 26 Sep 2024 18:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727372455; cv=none; b=q+27NoAzB9L5BVfNIt4lQjO261pTxnY5vKHWXMLs4glc7SkOTG7i585wGGSW9uQ8ZEV3u3mrysWn8btBLWZWOyfl1/tSku0fxJ7R8bJWHV6GEjta8OWI1Y1u1H0ZftbnY/bumtQamJXNAWUJBssCv9d8Qqc9YIGjkJ1S3nU48ug=
+	t=1727377101; cv=none; b=AHgHPsUvuoTVtfvC4OjlJF+BRkD7si0VUZJSswn2rcyRLdJWSkrViyrDsvOPi+3pk8ztBbt63VN24fui5ehc09hujHe8DRkv0DY9b5NLykj1kI5W1r8JbazWHrkUC8LT7FR5aoTLgrTuiWp/pcghyLu3Sl3EsPf7MG7t3G3zg0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727372455; c=relaxed/simple;
-	bh=9ur6iHYWetiD1WwXGvoUlLSBJ2gxFjncZHfy2k4W2aM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aV2tFJSlQSL0BBzvqehr943q0ptGn9peiOTWmMNwbpKggwDWk3il4VSUkw+juSuu6+yfF8q2Rx/inCjKl9ZtfwGwOo9grtfU1mWrvGmzzoktvQEuN88x8UVtqwNMwMww7BIEP5h9vmit6aUoBVxk81qI+voksNYpSUL1QiN8aaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FquEoQcK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF6A0C4CEC5;
-	Thu, 26 Sep 2024 17:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727372455;
-	bh=9ur6iHYWetiD1WwXGvoUlLSBJ2gxFjncZHfy2k4W2aM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FquEoQcKPCcXmaNQsul83gic1fwsA+y+T9EUGVFAbGdMOZDLiGkBGN6Va5h4xMKmO
-	 aG5zAZgPnTDN7BLEmxtmWvw4NSRQZRHlPsM0Nbr5HFbW3/iWYZLg331WFkPPSnLasS
-	 4JXWCyueaTMeVTIMdITz4QsZQkPOMMna145LpYQMGJskVEJN6yBd8f7I3ipVGXNNPz
-	 MIQFc606ilLYi2lVTFGTL4jyUTz0HB+brnFrJQ0306SIPqhNEHWaNf+RvcpOWpnJ+F
-	 Qgt1T63zAlcs0Xc+S3q1kOj+AeFykUMS5RioeiCfoNYqJHoBsgoVIp22OYEG668jNS
-	 OBHJBvyTUGipA==
-Date: Thu, 26 Sep 2024 20:40:43 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs netfs
-Message-ID: <20240926174043.GA2166429@unreal>
-References: <20240913-vfs-netfs-39ef6f974061@brauner>
+	s=arc-20240116; t=1727377101; c=relaxed/simple;
+	bh=nFOuKnkaTmIkn6GiEorRCB9FV+6ha31zO84j5crpkY0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m6XLt4R+jLQg8Y82Hjeac/NCkCyKMrRmScPgMHUNi+RtYbOTh0HF8BiPnPb05H8rGGLhJz3Se8xYqqy1OhoXyFgE9fn7RU7TUEXy120Ec7rK4dA0s/kasrRcLXEvjLzEpDGHmJOGK8AJ1S2qMkdqtztcamf8r6H+GaBCjhtB2fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eNmc+Qah; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1727377096; x=1727636296;
+	bh=MY/ZvB0yi1dIucSZzljqvB4KqcbC9zKa10VJMi+Shxg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=eNmc+Qah1iuFhuit9fCzpb6eaSuWVKd/NfqP3FMLfrcWo4BUWyIeXuCFbpIrEmxVN
+	 9PMyLF922uEhwE7eiMZHag8WGBlNsQOqwWcZt+3rja8XdjSmJLkEQ0RjHWM6wfFGgE
+	 RP4JfL83yNIbpWEYFWqyTXlTzURzyorjQdoxGLgEmXn9oOqewdqdYbZ0+gILeLVU4x
+	 on5u9vzC4nnwCPY1GcXPprlpelP0o23FE0G8ceUoyCEf0gl7XbDUa6Hvh9Y6gVDkqe
+	 1T2bf4uU5JlWcjdWyX1sJ/D7eVnB4P47r/5HxtcyFNX6/3uQqt7DBxtBmuOM1t7cVD
+	 I/XatSfu55B1w==
+Date: Thu, 26 Sep 2024 18:58:10 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Miscdevices in Rust
+Message-ID: <f7820784-9d9c-4ab9-8c84-b010fead8321@proton.me>
+In-Reply-To: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: b96f335b3237fcac0256ede9a308460b398ca769
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240913-vfs-netfs-39ef6f974061@brauner>
 
-On Fri, Sep 13, 2024 at 06:56:36PM +0200, Christian Brauner wrote:
-> Hey Linus,
+On 26.09.24 16:58, Alice Ryhl wrote:
+> A misc device is generally the best place to start with your first Rust
+> driver, so having abstractions for miscdevice in Rust will be important
+> for our ability to teach Rust to kernel developers.
+
+Sounds good!
+
+> I intend to add a sample driver using these abstractions, and I also
+> intend to use it in Rust Binder to handle the case where binderfs is
+> turned off.
 >=20
-> /* Summary */
+> I know that the patchset is still a bit rough. It could use some work on
+> the file position aspect. But I'm sending this out now to get feedback
+> on the overall approach.
 >=20
-> This contains the work to improve read/write performance for the new
-> netfs library.
+> This patchset depends on files [1] and vma [2].
 >=20
-> The main performance enhancing changes are:
->=20
->     - Define a structure, struct folio_queue, and a new iterator type,
->       ITER_FOLIOQ, to hold a buffer as a replacement for ITER_XARRAY. See
->       that patch for questions about naming and form.
->=20
->       ITER_FOLIOQ is provided as a replacement for ITER_XARRAY. The
->       problem with an xarray is that accessing it requires the use of a
->       lock (typically the RCU read lock) - and this means that we can't
->       supply iterate_and_advance() with a step function that might sleep
->       (crypto for example) without having to drop the lock between
->       pages. ITER_FOLIOQ is the iterator for a chain of folio_queue
->       structs, where each folio_queue holds a small list of folios. A
->       folio_queue struct is a simpler structure than xarray and is not
->       subject to concurrent manipulation by the VM. folio_queue is used
->       rather than a bvec[] as it can form lists of indefinite size,
->       adding to one end and removing from the other on the fly.
+> Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@=
+google.com/ [1]
+> Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.c=
+om/ [2]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> Alice Ryhl (3):
+>       rust: types: add Opaque::try_ffi_init
+>       rust: file: add f_pos and set_f_pos
+>       rust: miscdevice: add abstraction for defining miscdevices
 
-<...>
+I recall that we had a sample miscdev driver in the old rust branch. Can
+you include that in this series, or is there still some stuff missing? I
+think it would be really useful for people that want to implement such a
+driver to have something to look at.
 
-> David Howells (24):
->       cachefiles: Fix non-taking of sb_writers around set/removexattr
->       netfs: Adjust labels in /proc/fs/netfs/stats
->       netfs: Record contention stats for writeback lock
->       netfs: Reduce number of conditional branches in netfs_perform_write=
-()
->       netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_inode
->       netfs: Move max_len/max_nr_segs from netfs_io_subrequest to netfs_i=
-o_stream
->       netfs: Reserve netfs_sreq_source 0 as unset/unknown
->       netfs: Remove NETFS_COPY_TO_CACHE
->       netfs: Set the request work function upon allocation
->       netfs: Use bh-disabling spinlocks for rreq->lock
->       mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence =
-of folios
->       iov_iter: Provide copy_folio_from_iter()
->       cifs: Provide the capability to extract from ITER_FOLIOQ to RDMA SG=
-Es
->       netfs: Use new folio_queue data type and iterator instead of xarray=
- iter
->       netfs: Provide an iterator-reset function
->       netfs: Simplify the writeback code
->       afs: Make read subreqs async
->       netfs: Speed up buffered reading
->       netfs: Remove fs/netfs/io.c
->       cachefiles, netfs: Fix write to partial block at EOF
->       netfs: Cancel dirty folios that have no storage destination
->       cifs: Use iterate_and_advance*() routines directly for hashing
->       cifs: Switch crypto buffer to use a folio_queue rather than an xarr=
-ay
->       cifs: Don't support ITER_XARRAY
+---
+Cheers,
+Benno
 
-Christian, David,
-
-Do you have fixes for the following issues reported for series?
-https://lore.kernel.org/all/20240923183432.1876750-1-chantr4@gmail.com/
-https://lore.kernel.org/all/4b5621958a758da830c1cf09c6f6893aed371f9d.camel@=
-gmail.com/
-https://lore.kernel.org/all/20240924094809.GA1182241@unreal/
-
-In my case, I don't have any other workaround but simply revert these commi=
-ts:
- "netfs: Use new folio_queue data type and iterator instead of xarray iter"
- "netfs: Provide an iterator-reset function"
- "netfs: Simplify the writeback code"
- "afs: Make read subreqs async"
- "netfs: Speed up buffered reading"
- "netfs: Remove fs/netfs/io.c"
- "cachefiles, netfs: Fix write to partial block at EOF"
- "netfs: Cancel dirty folios that have no storage destination"
- "cifs: Use iterate_and_advance*() routines directly for hashing"
- "cifs: Switch crypto buffer to use a folio_queue rather than an xarray"
- "cifs: Don't support ITER_XARRAY"
- "cifs: Fix signature miscalculation"
- "cifs: Fix cifs readv callback merge resolution issue"
- "cifs: Remove redundant setting of NETFS_SREQ_HIT_EOF"
-
-Thanks
 
