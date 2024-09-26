@@ -1,102 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-30166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B8B98741B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 15:02:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EA09874CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 15:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1396A2850F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 13:02:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34D03B27D9C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 13:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6D852F88;
-	Thu, 26 Sep 2024 13:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8A77A13A;
+	Thu, 26 Sep 2024 13:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="P5r//7RW"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rcPflZ7P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from xry111.site (xry111.site [89.208.246.23])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC9B3B1A2;
-	Thu, 26 Sep 2024 13:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C6054F95
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 13:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727355745; cv=none; b=a+fHil1mGX23Hc0n3+X5mCNefB7LjiFiDdDSp4sr+KiKQE5qy8KHG+9m4qUUzyJEb+X7Am/Timnebw+QW1nkX5D7VTQ10h9w7HVNOe8Q3KcsQW+OfxsF+E8UXiohsWOwEyYqmFhThr+DqTY1o/+Rp9Bus7yOrMlXHSR9jGQ2vCc=
+	t=1727358794; cv=none; b=LxRsr1X4VO6uekl4G+XQjGfkQMwe8z61mRK0cB0y53VuHdoEhoHhQuT5NcPP8ISTmlB1Qw9CfEVV0rxsDR8Cc1MiNqzdisJOsjGeTDskSc+XMu8Xv9NoEv/E7lcm5zC1BW7grZ2svRABFCEKJBZl6GX2aD3ldNxdTmiAT+Ce04o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727355745; c=relaxed/simple;
-	bh=/PkRpfB0PdoBt4FH2s7FLwEXQjPgWWiJFlbMEgJ5WaU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mMQBAnzDqpa4o8iUC8aNmlDNwHKYNWB46SrZQgDHiE/QQRKR2ufRsxnLnRfnqVZLfSLGZzuCBuf2r/sWheIVVYtxxFkqGJVmr+r4CLfyzwO2V/xGzPBpQ5/fmrQWwYi0MEE2RaK9Or2Cm4EwriuACkFG3qiM6mvbmvaA8Zsmhug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=P5r//7RW; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1727355739;
-	bh=/PkRpfB0PdoBt4FH2s7FLwEXQjPgWWiJFlbMEgJ5WaU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=P5r//7RW1i54eoDPKokh9h7fLtp56utlLdSYwLbCLCJJ3i0rzn515ty+KdKzJVmrK
-	 zd5tyHya/b/66LljnDMEfMOqNND3zbpjolbOcazN8VOPl0ZZP9PbMRQq35MDLPS5Hg
-	 sbYzzN+XkJigBLIPmKqBRikmXLuLIO2ySRh40yCE=
-Received: from [192.168.124.11] (unknown [113.200.174.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 9530C66522;
-	Thu, 26 Sep 2024 09:02:16 -0400 (EDT)
-Message-ID: <3b42c80c3be4f583b4e7fe5f04015b0e8d39d73f.camel@xry111.site>
-Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, Miao Wang <shankerwangmiao@gmail.com>, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, axboe@kernel.dk, 
-	torvalds@linux-foundation.org, loongarch@lists.linux.dev
-Date: Thu, 26 Sep 2024 21:02:11 +0800
-In-Reply-To: <CAGudoHFrTWktBYQjrQMJbVZvWLPD3A51YsOMOJqAtpdruSkGsQ@mail.gmail.com>
-References: <20240625151807.620812-1-mjguzik@gmail.com>
-	 <6afb4e1e2bad540dcb4790170c42f38a95d369bb.camel@xry111.site>
-	 <CAGudoHFrTWktBYQjrQMJbVZvWLPD3A51YsOMOJqAtpdruSkGsQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1727358794; c=relaxed/simple;
+	bh=1UJrOvJldB0tb7mLeLmuMQ5f/rN84sIL4+2CKikHASk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kupau/cLa0h20GhnxG+jPXwbJXhB958nrPQaAJnklcAu8upWJD+Q3/KO4IfWrZEjPcRL84ykaCYmeYztVA0ykNacgoG1h+iFbGgpcqzvUCcpyRINzxX3RUOovjPnb/grJ8K8amsWzNHvawL4japEvodvInnR6KOTPHVRPG+e0Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rcPflZ7P; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yRx6qLYwqz04Vp58gRtJGngnhFxcQA4gy1QsyF9WlLk=; b=rcPflZ7P4TxnglRWIss7fEwE1f
+	nQv5JLt2+1MX1LQ5ZRBr+jC5NJmSI8yUSgDTy75t5hpXYeRwsLQ8ARfDpSr1YQ1HtgZbpuoJ/Nesr
+	QmmUhpwYaqhPCmQHYEnlmDEN1Lpkpa46ZUDqFE9Pgy6aW3pD1yWBRusSuuUC0Q+09x4AXg6t0tfkn
+	rKb1uhp5URDHSX0MDE5VVO49OXyfO4MxnUWnyjyp3V2AD+gilVSqOBCLYBJreIU45CGXxP/TRVdSY
+	jiYgF/Ru8lsIVUNUoICRUkGXQhQaSeIhmiBVDvpkH722erBR+eOPsDbUw+fOBF4snl+6eIrwd9KLA
+	Qn/sLLmA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1stovU-00000006mVK-0LrT;
+	Thu, 26 Sep 2024 13:53:00 +0000
+Date: Thu, 26 Sep 2024 14:52:59 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Anna Schumaker <Anna.Schumaker@netapp.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: Re: [PATCH v2] tmpfs: fault in smaller chunks if large folio
+ allocation not allowed
+Message-ID: <ZvVnO777wfXcfjYX@casper.infradead.org>
+References: <20240914140613.2334139-1-wangkefeng.wang@huawei.com>
+ <20240920143654.1008756-1-wangkefeng.wang@huawei.com>
+ <Zu9mbBHzI-MyRoHa@casper.infradead.org>
+ <1d4f98aa-f57d-4801-8510-5c44e027c4e4@huawei.com>
+ <nhnpbkyxbbvjl2wg77x2f7gx3b3wj7jujfkucc33tih3d4jnpx@5dg757r4go64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nhnpbkyxbbvjl2wg77x2f7gx3b3wj7jujfkucc33tih3d4jnpx@5dg757r4go64>
 
-On Wed, 2024-09-25 at 17:56 +0200, Mateusz Guzik wrote:
-> On Wed, Sep 25, 2024 at 4:30=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wr=
-ote:
-> > There's a special case, AT_FDCWD + NULL + AT_EMPTY_PATH, still resultin=
-g
-> > EFAULT, while AT_FDCWD + "" + AT_EMPTY_PATH is OK (returning the stat o=
-f
-> > current directory).
-> >=20
-> > I know allowing NULL with AT_FDCWD won't produce any performance gain,
-> > but it seems the difference would make the document of the API more
-> > nasty.
-> >=20
-> > So is it acceptable to make the kernel "hide" this difference, i.e.
-> > accept AT_FDCWD + NULL + AT_EMPTY_PATH as-is AT_FDCWD + "" +
-> > AT_EMPTY_PATH?
-> >=20
->=20
-> huh, that indeed makes sense to add. kind of weird this was not sorted
-> out at the time, but i'm not going to pointer a finger at myself :) so
-> ACK from me as far as the idea goes
->=20
-> I presume you can do the honors? :)
+On Thu, Sep 26, 2024 at 10:38:34AM +0200, Pankaj Raghav (Samsung) wrote:
+> > So this is why I don't use mapping_set_folio_order_range() here, but
+> > correct me if I am wrong.
+> 
+> Yeah, the inode is active here as the max folio size is decided based on
+> the write size, so probably mapping_set_folio_order_range() will not be
+> a safe option.
 
-Should I use a Fixes: tag in the commit then? (I.e. should it be
-backported to 6.11?)
+You really are all making too much of this.  Here's the patch I think we
+need:
 
++++ b/mm/shmem.c
+@@ -2831,7 +2831,8 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+        cache_no_acl(inode);
+        if (sbinfo->noswap)
+                mapping_set_unevictable(inode->i_mapping);
+-       mapping_set_large_folios(inode->i_mapping);
++       if (sbinfo->huge)
++               mapping_set_large_folios(inode->i_mapping);
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+        switch (mode & S_IFMT) {
+        default:
 
