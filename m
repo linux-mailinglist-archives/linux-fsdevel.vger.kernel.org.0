@@ -1,167 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-30176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364EB9875FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 16:51:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EEA98761C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 16:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5501F22B2A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 14:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85D28282815
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 14:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D20F14A615;
-	Thu, 26 Sep 2024 14:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC5C14A616;
+	Thu, 26 Sep 2024 14:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R3aab9ax"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932DD1494AC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 14:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8896E56A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 14:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727362286; cv=none; b=shIvAO44xsoCttxAWGEA7JhT9lNI/3+HG1/TyVWI5nbHGCGKBSikYHyUy+EKYdUJceWa2/sqfr2tWXpcdLAYqMIVNdxhNrnmnlPjoMzXCnYdaraoXsQgEeDIBRzPV48iukGT52Jw7MLHFxSSEzFFM7tvD9FnRPt87ZBF1Ot3R88=
+	t=1727362703; cv=none; b=RVYJaWEu9MevmDpi8YzOMtwbepBKr1jcQgDXsmo1CW9BFvATvBJKK0sB8GP46aLn9fQH7KmM5jXg+wiNlHX32xh8VBM/CWt5WpxKEHJ/QV2siSRBMkrhukba8q4c+Y3LyUb6OBUSJjZrd7g2iEWZpuk1Ql0oF/EGl0Sn3qqr1wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727362286; c=relaxed/simple;
-	bh=tfyLEcxwApaUw4J3qs9B/uHIRaFGr1MiOAr/a5jrMP4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R3orUPJuEIPmBtNb3gbhf5Fv7gLO68pgy3FQzXI3tvGRfSeWMwmpn1jNB9jhGdLHMhYwZev7b+61Tmewbi39ya0DiAdPFrdHG/MLaOF6avpnHe8OFeyGoSK+vSDhfDFndFWjMQJ9yy2ROh8ibMu0C85ALN/VvwkUIuGfyu+lQ5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-832160abde4so185247439f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 07:51:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727362284; x=1727967084;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v1HQ/Lfsohoktuql0HRG6JowL8qNEgFtC2kvN5vfDVU=;
-        b=i13eh9WpuRLfl4vm3ZEu66xm+N027jr6G/qoZ8L8WIMdPZtpw7l+r/8q6uVtFds7Pq
-         uNXv1Wos5UoRzZ0ogkRIMSRO9sKGKSyJnkQyilSbH1xnOIwWR/Bf5imHgSP0dJ5XM09h
-         xumCcB0zFEEpbTaACRZMu0RGgR6o/afx+I3dqUTymPUWsoF62Qj61+q3xvMAHHZ6f45G
-         0Us0J7fKq4Hq5jFCTmRcGX8l+Knc18/XgcBFpu7pGXNV4LlYsOXAZaK2VZkd5gu81hPQ
-         81fNP1O2abIM5J451q7J/b53D3H15JqgtZ6xOtQYQQ2l1tUk/K0Xx5wsVnaoBqOc12T7
-         7hyQ==
-X-Gm-Message-State: AOJu0Yy+Irx0VSahZ8+/J8hDJoQpnpWRt2VMpnqLESUU5RCVGfmuVk4N
-	EQB3KZJg/S/h80g34sGf8dBbxmFOfl15aYB/axXyFvwkfmwCVwFGOvqdkGOsz3Ha48YkP+anmzK
-	RNSW7srs+6e8x2LuoARP20e6z4EmuABksb6D34NtZ3LwKvVS+25PEEig=
-X-Google-Smtp-Source: AGHT+IE5q8iTzvKiO24R57q2O7GmO1h/ZNs41BSE8SMYpnLA8b3W75tM6glYDROpVifs1zn3q78v+3IXimthoVSSuXThGBoF/eU+
+	s=arc-20240116; t=1727362703; c=relaxed/simple;
+	bh=cg9YCTAZ1Oiz/nHiEawk2Od4xUKfvRrLszaYnTMDGcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WxI89klkv7/A/+PpyhLz/HxuPpl+UVV7hI6XCLXKzcvdRz/cl0duQHsxvWnFAirGiDN9o/h4YhNEsavEvUSU8uMYIOZhVlWHd+HYpQCuyMSRtneSiRtdiCISgnW2y0cHKYugu5ePmiuY2/uuof0CNT7uvCxcmAYhCRknZAnBPe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R3aab9ax; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ifm+nIfno/WcCSPpO4Pf5285I2KcitoTGt2NJ3FYDZ0=; b=R3aab9ax70t5xQbc/HAFBCVf1x
+	vD+Tf2QRdfLpEw3qRdUFi8ySVXASR58bN4Anj1H44RI5MVGmEmMAGWDIpWvWooQU/XGqmYx6cWjqy
+	n9PUJuG+pOebXN7g1f5czJoYoNoPYj8x8lR8qfdzkhAsozZzYfOuMHkgyK6pgKpE5cI+MG3l8pN/w
+	xok6WtAhWUanTQloY1bkl93u0ZLml5mTxgTJF5YgL4QRZJH8KSxbrjRyjl7X45DL8F+reQ9eLAIXK
+	KLLbD/qBZekfTbBGj6Mskvfn5w3qgiUopIp7YZOdA3U85hlowJN7+/Kx1j6defVU5a6hnQHyJCZAZ
+	GnjTY5qQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1stpwS-00000006uCg-44sy;
+	Thu, 26 Sep 2024 14:58:05 +0000
+Date: Thu, 26 Sep 2024 15:58:04 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Anna Schumaker <Anna.Schumaker@netapp.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH v2] tmpfs: fault in smaller chunks if large folio
+ allocation not allowed
+Message-ID: <ZvV2fAELufMuNdWh@casper.infradead.org>
+References: <20240914140613.2334139-1-wangkefeng.wang@huawei.com>
+ <20240920143654.1008756-1-wangkefeng.wang@huawei.com>
+ <Zu9mbBHzI-MyRoHa@casper.infradead.org>
+ <1d4f98aa-f57d-4801-8510-5c44e027c4e4@huawei.com>
+ <nhnpbkyxbbvjl2wg77x2f7gx3b3wj7jujfkucc33tih3d4jnpx@5dg757r4go64>
+ <ZvVnO777wfXcfjYX@casper.infradead.org>
+ <9a420cea-b0c0-4c25-8c31-0eb2e2f33549@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d91:b0:3a1:f6ac:621e with SMTP id
- e9e14a558f8ab-3a344607de1mr646225ab.7.1727362283749; Thu, 26 Sep 2024
- 07:51:23 -0700 (PDT)
-Date: Thu, 26 Sep 2024 07:51:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f574eb.050a0220.211276.0076.GAE@google.com>
-Subject: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference
- in read_cache_folio
-From: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a420cea-b0c0-4c25-8c31-0eb2e2f33549@huawei.com>
 
-Hello,
+On Thu, Sep 26, 2024 at 10:20:54PM +0800, Kefeng Wang wrote:
+> On 2024/9/26 21:52, Matthew Wilcox wrote:
+> > On Thu, Sep 26, 2024 at 10:38:34AM +0200, Pankaj Raghav (Samsung) wrote:
+> > > > So this is why I don't use mapping_set_folio_order_range() here, but
+> > > > correct me if I am wrong.
+> > > 
+> > > Yeah, the inode is active here as the max folio size is decided based on
+> > > the write size, so probably mapping_set_folio_order_range() will not be
+> > > a safe option.
+> > 
+> > You really are all making too much of this.  Here's the patch I think we
+> > need:
+> > 
+> > -       mapping_set_large_folios(inode->i_mapping);
+> > +       if (sbinfo->huge)
+> > +               mapping_set_large_folios(inode->i_mapping);
+> 
+> But it can't solve all issue, eg,
+>   mount with huge = SHMEM_HUGE_WITHIN_SIZE, or
 
-syzbot found the following issue on:
+The page cache will not create folios which overhang the end of the file
+by more than the minimum folio size for that mapping.  So this is wrong.
 
-HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16084107980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ba9c4620d9519d1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11084107980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a0d880580000
+>   mount with SHMEM_HUGE_ALWAYS  +  runtime SHMEM_HUGE_DENY
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-88264981.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e96d7b6835d2/vmlinux-88264981.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0e1e66778641/Image-88264981.gz.xz
+That's a tweak to this patch, not a fundamental problem with it.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+> and the above change will break
+>   mount with SHMEM_HUGE_NEVER + runtime SHMEM_HUGE_FORCE
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-Mem abort info:
-  ESR = 0x0000000086000006
-  EC = 0x21: IABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x06: level 2 translation fault
-user pgtable: 4k pages, 52-bit VAs, pgdp=00000000462cce00
-[0000000000000000] pgd=080000004468e003, p4d=08000000466cc003, pud=0800000046cd6003, pmd=0000000000000000
-Internal error: Oops: 0000000086000006 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 UID: 0 PID: 3265 Comm: syz-executor218 Tainted: G    B              6.11.0-syzkaller-08481-g88264981f208 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: linux,dummy-virt (DT)
-pstate: 61400809 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=-c)
-pc : 0x0
-lr : filemap_read_folio+0x44/0xf4 mm/filemap.c:2363
-sp : ffff800088e6bac0
-x29: ffff800088e6bac0 x28: f1f000000474e000 x27: 0000000020ffd000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000002100cca
-x23: f6f0000006cd5c00 x22: 0000000000000000 x21: f6f0000006cd5c00
-x20: 0000000000000000 x19: ffffc1ffc02e3300 x18: ffff800088e6bc20
-x17: ffff8000804fee60 x16: ffff80008052fe10 x15: 0000000000000001
-x14: 0000000000000000 x13: 0000000000000003 x12: 00000000000706a3
-x11: 0000000000000001 x10: ffff800081f19060 x9 : 0000000000000000
-x8 : fff07ffffd1f0000 x7 : fff000007f8e9d60 x6 : 0000000000000002
-x5 : ffffc1ffc02e3300 x4 : 0000000000000000 x3 : faf0000005491240
-x2 : 0000000000000000 x1 : ffffc1ffc02e3300 x0 : f6f0000006cd5c00
-Call trace:
- 0x0
- do_read_cache_folio+0x18c/0x29c mm/filemap.c:3821
- read_cache_folio+0x14/0x20 mm/filemap.c:3853
- freader_get_folio+0x1a8/0x1f8 lib/buildid.c:72
- freader_fetch+0x44/0x164 lib/buildid.c:115
- __build_id_parse.isra.0+0x98/0x2a8 lib/buildid.c:300
- build_id_parse+0x18/0x24 lib/buildid.c:354
- do_procmap_query+0x670/0x7a0 fs/proc/task_mmu.c:534
- procfs_procmap_ioctl+0x2c/0x44 fs/proc/task_mmu.c:613
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __arm64_sys_ioctl+0xac/0xf0 fs/ioctl.c:893
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
- el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
- el0_svc+0x34/0xec arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:598
-Code: ???????? ???????? ???????? ???????? (????????) 
----[ end trace 0000000000000000 ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Likewise.
 
