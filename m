@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-30182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CA398762B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 17:01:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37900987635
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 17:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34291C24F25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 15:01:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9336FB26953
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2024 15:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33E413632B;
-	Thu, 26 Sep 2024 15:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B311A14BF8B;
+	Thu, 26 Sep 2024 15:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G71ETbkN"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZBc/gFHn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F157611E;
-	Thu, 26 Sep 2024 15:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5852E56A;
+	Thu, 26 Sep 2024 15:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727362873; cv=none; b=dv01nS5N88Nl7TM2Gyk/UiNosqDwAxaHPu9B1biygjTSey3+n7+E3b5wviGph+lDvgiUreCjrvV/a5/uVirhINt+pso/Kpa9HPx3MhXqFVqJ8FzgRNvYGqiysCn4fkdJijw28EfOEfzsPU8S5SSBFrCidy641ykUycrDn4EvXPo=
+	t=1727363140; cv=none; b=vDC/2smoMTQShlT1opW7aSfq3pJxq6BKzdRPO+KTNGhGGSQdGewLvZhqAEPK0/S5DO+hoibPFm9pQPu7UEjUKdJ14VTUc/Z0H/f6GfH/JaUpHkJzdryok+/F1xlgG60S7QdXoPDEOPRw9AUx9NaeiYyR13i2pgetBWXIPSFny4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727362873; c=relaxed/simple;
-	bh=xt+lwaa8Bhd6R3nAk5b0ke55SJtmalMMKqPtuZLAfeQ=;
+	s=arc-20240116; t=1727363140; c=relaxed/simple;
+	bh=/NGdEFNyrAbKge3yFgZc4lPX3H1bXgr4e2H1TEfy630=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O5zHOhm0hCjnQlxkNTnPS/HGEgLLCDcYBm48yIqcNMwIxsLTeIb2QqIkLlj1qqwqnB28cF1VAzKs0zRPfnw1pRBhgGkBC3l9kz/6Bin0MKMzDrDuk3oJGMFLyP/bjDVm6shGeEUlnFMPQL42pbicewOosYwYWLceo/vZhetRNbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G71ETbkN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3744C4CECD;
-	Thu, 26 Sep 2024 15:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727362873;
-	bh=xt+lwaa8Bhd6R3nAk5b0ke55SJtmalMMKqPtuZLAfeQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWd1i74DkMijrzmyIvlhU65IoJYvWKQPcQKJm4P7Wyskc2CO1TSZ8doNJdZX6eZ8Ro9hgDc2V6tgT7q7HRi28/kEzxWXM4Rb7eD7H8AliuHzsHW71u94SeKXf9mfJY4gCms0opqo6kwcfXKobqSBEvWuoTeO2ZQYDe1a/LkOdV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZBc/gFHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F15C4CEC5;
+	Thu, 26 Sep 2024 15:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727363139;
+	bh=/NGdEFNyrAbKge3yFgZc4lPX3H1bXgr4e2H1TEfy630=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G71ETbkNuOvxdCDcYwz1RthpPynvTuSaqF+qzvKT1QXOY4quc8y79x/kV+Dsqli4Z
-	 AgYyN/ebZfjIa3T2gVhgXID2u1WLYfO4YlhMfVxZE97hrpoClionXb+C7XExXUYtLS
-	 2T5x13+SfXcfVLVpX281Tex4m3BoR+3ZsVL83Nae6oeqVVfVeUpVwYvkaKulbOGjW1
-	 kROSiaq0bu2NzVMuS8V2QlcRHHizeMW53ysAlMkQjaAjoJS9joBiGe8zDXVAdzJwnS
-	 3zkquPaq6YnbM79fDb2Ol6plnjSDWdlFMOkU8uIA4p11k2UH8smlYuI0+PtweVoMmE
-	 sn+KNsFVQ4VJA==
-Date: Thu, 26 Sep 2024 11:01:11 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	trondmy@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Subject: Re: filemap: Fix bounds checking in filemap_read()
-Message-ID: <ZvV3N0F1ZR9Y7SAr@kernel.org>
-References: <c6f35a86fe9ae6aa33b2fd3983b4023c2f4f9c13.1726250071.git.trond.myklebust@hammerspace.com>
- <ZuSCwiSl4kbo3Nar@casper.infradead.org>
- <ZuipUe6Z2QAF9pZs@dread.disaster.area>
+	b=ZBc/gFHnNdzdAs6CNYvZpTJjvZ9DFM3wkruwCecoVPTNp4xncYRoa7roHTynT6z4p
+	 08fRxhMJzMt4RcloKu0Pv13EuNMRaocY7fH6D1uvCCexXBOOfjpgVY3wuM6atFC7ei
+	 ajCPrjM2duKFwThWNaSrjYX1PdwJIILTrhpJmSSk=
+Date: Thu, 26 Sep 2024 17:05:36 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Miscdevices in Rust
+Message-ID: <2024092647-subgroup-aqueduct-ec24@gregkh>
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,52 +61,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuipUe6Z2QAF9pZs@dread.disaster.area>
+In-Reply-To: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
 
-Hi Willy,
-
-On Tue, Sep 17, 2024 at 07:55:29AM +1000, Dave Chinner wrote:
-> On Fri, Sep 13, 2024 at 07:21:54PM +0100, Matthew Wilcox wrote:
-> > On Fri, Sep 13, 2024 at 01:57:04PM -0400, trondmy@kernel.org wrote:
-> > > If the caller supplies an iocb->ki_pos value that is close to the
-> > > filesystem upper limit, and an iterator with a count that causes us to
-> > > overflow that limit, then filemap_read() enters an infinite loop.
-> > 
-> > Are we guaranteed that ki_pos lies in the range [0..s_maxbytes)?
-> > I'm not too familiar with the upper paths of the VFS and what guarantees
-> > we can depend on.  If we are guaranteed that, could somebody document
-> > it (and indeed create kernel-doc for struct kiocb)?
+On Thu, Sep 26, 2024 at 02:58:54PM +0000, Alice Ryhl wrote:
+> A misc device is generally the best place to start with your first Rust
+> driver, so having abstractions for miscdevice in Rust will be important
+> for our ability to teach Rust to kernel developers.
 > 
-> filemap_read() checks this itself before doing anything else:
+> I intend to add a sample driver using these abstractions, and I also
+> intend to use it in Rust Binder to handle the case where binderfs is
+> turned off.
 > 
-> 	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
->                 return 0;
-> 
-> i.e. there is no guarantee provided by the upper layers, it's first
-> checked right here in any buffered read path...
-> 
-> -Dave.
-> 
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> I know that the patchset is still a bit rough. It could use some work on
+> the file position aspect. But I'm sending this out now to get feedback
+> on the overall approach.
 
-Linus merged the NFS LOCALIO changes via the NFS client tree a couple
-days ago.  LOCALIO teased out this filemap_read infinite loop bug, so
-it is important to fix this for 6.12 (probably should get marked for
-stable@ too):
-https://lore.kernel.org/all/c6f35a86fe9ae6aa33b2fd3983b4023c2f4f9c13.1726250071.git.trond.myklebust@hammerspace.com/
+Very cool!
 
-(weirdly, Trond's reply to you didn't make it to the linux-nfs or
-linux-fsdevel list archives, but Dave's above reply covers the same)
+> This patchset depends on files [1] and vma [2].
+>
+> Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@google.com/ [1]
+> Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.com/ [2]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Trond also offered this additional filemap_read negative check:
-https://lore.kernel.org/all/482ee0b8a30b62324adb9f7c551a99926f037393.1726257832.git.trond.myklebust@hammerspace.com/
+Does it really need all of those dependencies?  I know your development
+stack is deep here, but maybe I can unwind a bit of the file stuff to
+get this in for the next merge window (6.13-rc1) if those two aren't
+going to be planned for there.
 
-Could be you've been busy with travel or whatever, but for future
-reference, should linux-mm and/or Andrew always be cc'd on filemap
-fixes?
+I'll look into this some more next week, thanks!
 
-Thanks,
-Mike
+greg k-h
 
