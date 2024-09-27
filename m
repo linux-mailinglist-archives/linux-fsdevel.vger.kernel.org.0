@@ -1,93 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-30261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B72988814
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 17:18:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06CDD988817
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 17:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD89E1F22659
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 15:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28EF81C20FB8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 15:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC2B1C174D;
-	Fri, 27 Sep 2024 15:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CF21C1AA1;
+	Fri, 27 Sep 2024 15:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="Nb7KPdXZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X9fjwLSM"
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="OaGgv9nY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AjUy+z71"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D39F1C1744;
-	Fri, 27 Sep 2024 15:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEC41411E0;
+	Fri, 27 Sep 2024 15:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727450296; cv=none; b=WRVl4SSbopHVHOXqEmoEqCOUm/FGgOXJ8FQ3/FbJ7B/Xn1ek3O8br5eTj2irboeHZaC0OCQdSyH01TCTTNQp6vovjF0+ZBnB8Beh8WKoTWkp9h0Z1CiY6GZ+xYEJeJ1HXb25Dzd62qTNaPdMmfu6nSCuMOT2XPSnfVBlXKeNs3E=
+	t=1727450298; cv=none; b=kIrOL6N6Ck4JwvLHl+sQ3Z8Iv/neAd5lfe3syWtzb3Q+27brgTHLrBFQIUjSReW2l+ROPZm32K1wCuRyPUgLWAl6fpmydJSQ6cqwtW/lqnqyWL1LctFvhH8hlO/phQGuKMCvkggmHUYbIWeHI7g22Rvzd1MdFMrqOfRozL8xUWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727450296; c=relaxed/simple;
-	bh=RXE4h0FEmJJq139bQEJcVL4bi6vRBpAMaWbMvnIb4K0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EA0FvOC+s8sSM4CDL2f8sr0O0PM+q2aNEN19q8JOdw2hK/gd/uIF72O5Bg1kecTGKTbhODforLxvk77mcXUlfYg6hiG4Pq4AUHdXvlAHzVD2FBrVOhwTQnCjWYfehBhpRCN8COiZe1ytDUZb+yEqnrhDcsskC9c+7iyBcUeDkPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=Nb7KPdXZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X9fjwLSM; arc=none smtp.client-ip=103.168.172.159
+	s=arc-20240116; t=1727450298; c=relaxed/simple;
+	bh=Au412/fFbpquOp/lmA/1fVR4HYznA9tZpqoVa2f6kL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aUfaYHgQ6EayQGiib3iZFioIKU5cc5jGwwBHw4qNmhwuHqpFD9r9uljFOEkMcBoAhnZ6uPYgE/eGubJBckp3Y5ZvhEaL7UleNzKRyjw9dLov/6vfxxIsOUVOs9dsqmap+XxETC/XrURYBtYX4+XRKSEreu+t/fkAt+0Sl059wCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=OaGgv9nY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AjUy+z71; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8A4C911401BF;
-	Fri, 27 Sep 2024 11:18:13 -0400 (EDT)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id BF56813802B2;
+	Fri, 27 Sep 2024 11:18:15 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Fri, 27 Sep 2024 11:18:13 -0400
+  by phl-compute-09.internal (MEProxy); Fri, 27 Sep 2024 11:18:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1727450293; x=1727536693; bh=1M
-	JeUQz3swau3AVK/0+TWO5a/QWf2ulbE3IH6vSxBJI=; b=Nb7KPdXZFSjhJ8Anh1
-	SnJYc1wgl4ONE3Bmff2Ln0JZ7/YdBmmJYG0Wb4/dAqCb47tl8OwJ3Xkcu2SDK0H/
-	imzCNbvglV4mmZxEvSVTG1dD2Gq6Bv9Txgsg0LP++zA49c5bR7jc1WsywbQ0C3dg
-	jDMII71P92IPRmX7UICFCgZ5DPlYnvCWC/lLisk243eLJ1IpHW5S6fgrv22pVBjA
-	Q0ISIMJwKPPYpEy0mgzXQrPJIqjRxYrZ+iHPKMNkNldNxWfxed0fy1z1n9FW9d7/
-	LQh62B6yUsLY+AHGVutq0FIHq2Ia6cq9Zhnwew5Ihdpxz+tfy+Nr1d5S7K4HU9kr
-	/ikw==
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1727450295; x=
+	1727536695; bh=jcSby7W+5uYeteUvGb/mYaE5eneel7efJMsI4xZNg/Q=; b=O
+	aGgv9nY/gvXmka7uEIvUyI2bcReYcLIrGXiC2EXnWt+6t/+3/pSz2aOwRahK5NGN
+	S4w1LpVVLX0+T9WDe2cmujPbqbp7OfhaW9cZKw6wolwdr0KLQCU2J8X6l74GP3zP
+	b71pzfbKjFsjrH0HS8yg/Buznwjlxmdg/d1W5IIHCXyjR9OgOBHq25HjgGtauHzG
+	SbhTRjnAvrw8GMzHNAqjlCjcIkVu0U/+dSnoMbD1yILpYlZ6xaAJR5vu68+1Pklm
+	iF2sJLkKIzeBZ37xp2MTlzV7Fwfg9GMIrAEq/t/WHbSsOkDjC25tReJRJPLMjeyf
+	FqnT2H6YnE0aHR9ZPM11A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm2; t=1727450293; x=1727536693; bh=1MJeUQz3swau3
-	AVK/0+TWO5a/QWf2ulbE3IH6vSxBJI=; b=X9fjwLSM4GotMVLhkIxg+GhurN2z0
-	Wh2y4OX/kg+W+c0mi7bz3XEDivZ496Otb7n3ooZUfatfZVOIMWV4BIWOH77FLkpl
-	pGJK7lGi+uRhsGCU0dYqOgX933SzS0838T7lfnSRiENLXhfaK/iF9VWjbmaDc/ui
-	Uk4Ye8MbrhDeKw+Lh6V6Rm7+u5/UIYBfcL8fA9SI59Ct6kR/batutbOZ2QRIEFfb
-	lkBo7RJeC6KK+5SMpQN9sxuz4XePW//21H5uRyGBcBqhAiREGhmAPHyTj8Gvj8XX
-	vatNHLYNn65CDcP6qY2WPMi8waXkZdInVR2aQPtLwIoDFFKBzsXh2/jtw==
-X-ME-Sender: <xms:tMz2Zh8lLK3tS3RkyXhijK7LxeqE5BVR9e8n3eKQozFPqwjNQOsnYw>
-    <xme:tMz2ZlvEr8eCuUT09VzhdDhbkYr2IofLHzonUjJtFhd1jmnrrC_vB318_IDl9Q0BT
-    piMdzuu17Mify8PQcY>
-X-ME-Received: <xmr:tMz2ZvC0hNWsyMdMg5DBH94wMXoldEuYrIoi9pNtd7m6VORLOzwJDOgPaIBD84y81KXthQ>
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727450295; x=
+	1727536695; bh=jcSby7W+5uYeteUvGb/mYaE5eneel7efJMsI4xZNg/Q=; b=A
+	jUy+z71oFyvq3G7NnTwpUPU9yVnmsM+V82bXRSyZUmqLXVa06AI4PYxNoge9NSFv
+	MLrGAGndjUbPvblZBY6zscQfYm1qMXdPet6kSlYanG7OAvsIMUlfBkkuVixdkbl3
+	tgkNxetvMtqk/LqG/NL0kmW62+voaWY0ZvZ6bP/bH80rZ+ASXo2WXGWhyHg4IgFU
+	jKlIjoBkz6TJmPTZRFetKfZB6oVn6YGlzbxUvVOAnesgTGcOV7xq+MEILp+xBiVH
+	qwNTNCiQGeer/Pq5C4t6sPLL0m2l/jRGdHoPNTcG9OLXOsFyUCaBj7k/Upg36h1j
+	zsYSMyvxT3PUF0n0z3IyA==
+X-ME-Sender: <xms:t8z2ZsMPbYRGneU6RmeB3Iv60fjN5ScCVEuw07reEi5UG-1IUZygmQ>
+    <xme:t8z2Zi8EU0jwGRji3Pg3tiGqbyWfbVB_VfN_2IL5o_mgxVCFRUrXwrtqX6SSy5Ejm
+    x2ZGFZr0NrUpKqy7JM>
+X-ME-Received: <xmr:t8z2ZjRaz_VkZPPa-TigCr1y0XzwRu7zYXbQ6rvJrv2QIs2vcrpbxIZ3yaVMESZY7EuYmg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledgkeeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecu
-    hfhrohhmpefvhigthhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpih
-    iiiigrqeenucggtffrrghtthgvrhhnpeeuueeujeffffekheevvdeiudffgfdtteevuddv
-    tefhgeduffehuddvjeffhffgueenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthihtghhohes
-    thihtghhohdrphhiiiiirgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhr
-    tghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtg
-    hksehsuhhsvgdrtgiipdhrtghpthhtohepvggsihgvuggvrhhmseigmhhishhsihhonhdr
-    tghomhdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhk
-    shgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:tMz2ZlcWNFatk9ru8y8mkxKVMDJS988goJtAc-aNkl6iuOAaW8FQ8w>
-    <xmx:tMz2ZmNxt8YhS-4a8lz2Z3AVXUr39Ff7CVrnhxm8tuzOkPk-5YN31g>
-    <xmx:tMz2ZnnVJE6a9HEmYBxuDJVhBN6Ogk2xnflveTS-ITTa7HZ_vkLGXg>
-    <xmx:tMz2Zgsso4n5cJ85n7TBV18dvcicQs6BzFW9FSdOXpv7e84vFfSnIA>
-    <xmx:tcz2ZgvEQ990Cayo0DUoc7UUf36zcyUCW25YzbWTT1JMbz0qeCKmmejo>
+    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
+    ucfhrhhomhepvfihtghhohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrph
+    hiiiiirgeqnecuggftrfgrthhtvghrnhepvdegffehledvleejvdethffgieefveevhfei
+    gefffffgheeguedtieektdeigeeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhiiiiirgdpnhgspghrtghp
+    thhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehvihhrohesiigvnh
+    hivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepvg
+    gsihgvuggvrhhmseigmhhishhsihhonhdrtghomhdprhgtphhtthhopehkvggvsheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:t8z2ZkuMJ3mb6j0Zg6OTn1vk8onkfZQ88D4FOLMQamzI8Reb3NCePg>
+    <xmx:t8z2ZkfiSbncT3x4VYeGsFv2jvgJOKF3iI_jpsuTSgUYTNuyonMeaA>
+    <xmx:t8z2Zo2-G_IUcqWPqHsz2_gQfllhFhqJeQ-EW7mHzvtznfPNoPXb9g>
+    <xmx:t8z2Zo9hnGX1GiG2tDMsGzKdrwCg7HauSwTXnFFm6jqD27RtL5KK4w>
+    <xmx:t8z2Zo2OAieCbFF6JSSCu-F0t5K-z3TbwE05FYch6oxsNrg6rjXfFtcU>
 Feedback-ID: i21f147d5:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Sep 2024 11:18:10 -0400 (EDT)
+ 27 Sep 2024 11:18:13 -0400 (EDT)
 From: Tycho Andersen <tycho@tycho.pizza>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -99,74 +101,73 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Tycho Andersen <tycho@tycho.pizza>,
-	Tycho Andersen <tandersen@netflix.com>,
-	=?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: [PATCH v2 1/2] exec: add a flag for "reasonable" execveat() comm
-Date: Fri, 27 Sep 2024 09:17:45 -0600
-Message-Id: <20240927151746.391931-1-tycho@tycho.pizza>
+	Tycho Andersen <tandersen@netflix.com>
+Subject: [PATCH v2 2/2] selftests/exec: add a test to enforce execveat()'s comm
+Date: Fri, 27 Sep 2024 09:17:46 -0600
+Message-Id: <20240927151746.391931-2-tycho@tycho.pizza>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240927151746.391931-1-tycho@tycho.pizza>
+References: <20240927151746.391931-1-tycho@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Tycho Andersen <tandersen@netflix.com>
 
-Zbigniew mentioned at Linux Plumber's that systemd is interested in
-switching to execveat() for service execution, but can't, because the
-contents of /proc/pid/comm are the file descriptor which was used,
-instead of the path to the binary. This makes the output of tools like
-top and ps useless, especially in a world where most fds are opened
-CLOEXEC so the number is truly meaningless.
-
-Change exec path to fix up /proc/pid/comm in the case where we have
-allocated one of these synthetic paths in bprm_init(). This way the actual
-exec machinery is unchanged, but cosmetically the comm looks reasonable to
-admins investigating things.
+We want to ensure that /proc/self/comm stays useful for execveat() callers.
 
 Signed-off-by: Tycho Andersen <tandersen@netflix.com>
-Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
-CC: Aleksa Sarai <cyphar@cyphar.com>
-Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
 ---
-v2: * drop the flag, everyone :)
-    * change the rendered value to f_path.dentry->d_name.name instead of
-      argv[0], Eric
----
- fs/exec.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ tools/testing/selftests/exec/execveat.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index dad402d55681..9520359a8dcc 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1416,7 +1416,18 @@ int begin_new_exec(struct linux_binprm * bprm)
- 		set_dumpable(current->mm, SUID_DUMP_USER);
+diff --git a/tools/testing/selftests/exec/execveat.c b/tools/testing/selftests/exec/execveat.c
+index 071e03532cba..091029f4ca9b 100644
+--- a/tools/testing/selftests/exec/execveat.c
++++ b/tools/testing/selftests/exec/execveat.c
+@@ -419,6 +419,9 @@ int main(int argc, char **argv)
+ 	if (argc >= 2) {
+ 		/* If we are invoked with an argument, don't run tests. */
+ 		const char *in_test = getenv("IN_TEST");
++		/* TASK_COMM_LEN == 16 */
++		char buf[32];
++		int fd;
  
- 	perf_event_exec();
--	__set_task_comm(me, kbasename(bprm->filename), true);
+ 		if (verbose) {
+ 			ksft_print_msg("invoked with:\n");
+@@ -432,6 +435,28 @@ int main(int argc, char **argv)
+ 			return 1;
+ 		}
+ 
++		fd = open("/proc/self/comm", O_RDONLY);
++		if (fd < 0) {
++			perror("open comm");
++			return 1;
++		}
 +
-+	/*
-+	 * If fdpath was set, execveat() made up a path that will
-+	 * probably not be useful to admins running ps or similar.
-+	 * Let's fix it up to be something reasonable.
-+	 */
-+	if (bprm->fdpath) {
-+		BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
-+		__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
-+	} else {
-+		__set_task_comm(me, kbasename(bprm->filename), true);
-+	}
- 
- 	/* An exec changes our domain. We are no longer part of the thread
- 	   group */
-
-base-commit: baeb9a7d8b60b021d907127509c44507539c15e5
++		if (read(fd, buf, sizeof(buf)) < 0) {
++			close(fd);
++			perror("read comm");
++			return 1;
++		}
++		close(fd);
++
++		/*
++		 * /proc/self/comm should fail to convert to an integer, i.e.
++		 * atoi() should return 0.
++		 */
++		if (atoi(buf) != 0) {
++			ksft_print_msg("bad /proc/self/comm: %s", buf);
++			return 1;
++		}
++
+ 		/* Use the final argument as an exit code. */
+ 		rc = atoi(argv[argc - 1]);
+ 		exit(rc);
 -- 
 2.34.1
 
