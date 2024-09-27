@@ -1,145 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-30286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FBC988BB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 23:12:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1E3988C60
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 00:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F1E1C20CD8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 21:12:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0BB81F21DB0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 22:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F0C1C2DAB;
-	Fri, 27 Sep 2024 21:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D40518732E;
+	Fri, 27 Sep 2024 22:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FsJTpKKn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eh4zuQq4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E9E1C2317
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 21:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DB41F931
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 22:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727471518; cv=none; b=eZm0gF1FVBSD37OA2xt5rpKjBT7ZPeStttZ5D5wjTcmzzC4EJqEK9+J59+Cqx8354RYfPGIjCORXBso3X7nm8kUBCF+mxaAbVvSepFO2tXxTkpgyQA8ruO1FBJ0Oc0fWqKsFfuMwRUznSFPQEVxR/kY8ezvG+C8b1v6qKoF590E=
+	t=1727475759; cv=none; b=QQDzc8TeK6GiG6hB6hyY34m1/A3Ibqelq6WOsJDG0jsLUpQ+8pAzJDCbH5g8wsBf0yvUUb/kABnEqMk44am4jULJvdrB4qiH/FiWY+GuQ+KJoE65+1z5JozlJsdB609RnpSzCDtAKe1gyHp5344yZ9mYt0r+fMcq+c7YniNS0Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727471518; c=relaxed/simple;
-	bh=j3c5/Zh4p82GAk9vaXtDQNsggU/jIEjNscDXUpnSLwI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=caHPD0r4cfb4R+RjWdwZGG/nLEzHnaXIIdmR1HkKbMMvkJ775EHGndgc2yBAaICQyFOsBrVvuftLBaTbXPjnFLW4eqZsVO1L75fURi3opAuGynAgDiGWL7jKGkTRCH5Oaf1yJMvMMo49G9Qqv+M/hoRaYMxlLyfpu7KhWOMfNNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FsJTpKKn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727471515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8uMxOBU2H6Hw+qD+HRMDEGiSShQKw6OKRseN26Hxg0M=;
-	b=FsJTpKKnXbio8SND1s1thRm9O+Ioa7LV/ohIU03LvcLBVubCeLSwPhE1dyTSBb+jfNKVZ8
-	GHwWXy1+trr933LG+RJ+dfxgJ0lRhulKrVE+XI8QT/vWODhKbkXZugqJuHOGNKH4WxTm6k
-	Vb4OZ/lpvZXFEEmyBeDVsN41G9vDUWQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-nkGTJbKIOsK6M6_0H6aoDw-1; Fri,
- 27 Sep 2024 17:11:52 -0400
-X-MC-Unique: nkGTJbKIOsK6M6_0H6aoDw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F2381936B95;
-	Fri, 27 Sep 2024 21:11:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BC3D43003DF2;
-	Fri, 27 Sep 2024 21:11:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com>
-References: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <2663729.1727470216@warthog.procyon.org.uk>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: dhowells@redhat.com, Manu Bretelle <chantr4@gmail.com>,
-    asmadeus@codewreck.org, ceph-devel@vger.kernel.org,
-    christian@brauner.io, ericvh@kernel.org, hsiangkao@linux.alibaba.com,
-    idryomov@gmail.com, jlayton@kernel.org,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
-    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
-    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
-    v9fs@lists.linux.dev, willy@infradead.org
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
+	s=arc-20240116; t=1727475759; c=relaxed/simple;
+	bh=DhnkrmnGzBOqt8kqpnt+7VSBHA0tlU1dWrU+DdHM6RI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bYbZOlRkaH1sM5tuqyrcit+BCmcBf4O6lCWqV0TFh65s/U6Q/51EP37gih/n7mEUiQ3Gm6Fm1Mt3ifyPKLoG9WS/aSd2aTSJOqG3lYH+/ldYPE3JGatHJtKZ3gBZDenhax7yQy7TZZCVsfHHc5uUEfpR0IC/NTo7ZRQc+LI0kps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eh4zuQq4; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4582face04dso24407431cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 15:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727475757; x=1728080557; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/6piYYRScne2+Fn2MTXhxchgKXv5F2DjgfSdHuokrUM=;
+        b=Eh4zuQq4bvQ1+Ce72PCxMFzXa69mG6L1w2S3JCwnuhy4gceW8oWawcmfvFz++XwQox
+         OyFMfSHmAF4R8Z/Y141S3PQxBUrZZwcZfKlbrRoU9lFwkJdq+eRbnO8fr884HuY6sCtx
+         on2t0b/4IJvVQ7Y2X+7x+oL9E6DsyojeKzpMH/k9Llt68RzPYPl7XV244ZJu9nq2TzKp
+         4NI19kw0SfNwfwJzvWCEVqgtDarah9Oe0AEvsF8wHXxNMSnTmI9qVefDklL0OiIbq/o1
+         hftReD3eSBgvko7Dr0il9R+WVKoJqxlgxtvpBeClsi72r92srPxiXhPgMJUnnsltbVuF
+         VOoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727475757; x=1728080557;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/6piYYRScne2+Fn2MTXhxchgKXv5F2DjgfSdHuokrUM=;
+        b=CNDDaOl/98XVK1wKT8Kqx/BufhP6SyNC9h71Yl4o/hQPHm39ihyIJ3AvQSECoExNUc
+         xB2WzcM6Y8dG6k5a8OQ9mG9EZKQJzp+RoWDKLnONgAra+u6SFHiBbkFb1RJ4rH0EdaCt
+         bb91RxSlOfSSfvqj6XJWFa0YX4F/KictQftgu5iNPl+wL93CPova+J5GYWcWVk5IVGPL
+         eUdqSqSQUjBJc4TgHxoF8UXJCz995ZIg3fs/olRLtbXXWc3ral+gIz9S8oM95Gx0Z+CG
+         AshUcjzkFvcImyGvpFJDOp0fmUXChIEeLPCnz9l+IAQGKz5UwXXTeZ6uv2zHPssGxNs7
+         xi0w==
+X-Gm-Message-State: AOJu0YwSsw7xMyv4SzSyVrSFJR3womMu32cohGJQp72wUWVAGz3njQcA
+	FigkRxDQ3Q7xZ3DSBiij/Dj5Nl1DVAOO3F0b9pMmOZO1hk6/qSFP16pETpVkw84lPABgkHW8qcb
+	5Md1l2lQtwjEMBMuI3LqLcBH+boc=
+X-Google-Smtp-Source: AGHT+IFETtOuZly0aqTxeIaeLmEI+LkPu+XcljF+hBiU3UMFGzE9/BWbIPEPAsPm1JS/7oY0nTZylkt5fjgVOLRsCMQ=
+X-Received: by 2002:ac8:57c4:0:b0:458:2e58:46d with SMTP id
+ d75a77b69052e-45c94975cdemr152564151cf.12.1727475756643; Fri, 27 Sep 2024
+ 15:22:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2668611.1727471502.1@warthog.procyon.org.uk>
+References: <cover.1727469663.git.josef@toxicpanda.com> <ffa6fe7ca63c4b2647447ddc9e5c1a67fe0fbb2d.1727469663.git.josef@toxicpanda.com>
+In-Reply-To: <ffa6fe7ca63c4b2647447ddc9e5c1a67fe0fbb2d.1727469663.git.josef@toxicpanda.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 27 Sep 2024 15:22:25 -0700
+Message-ID: <CAJnrk1bELT0PwOQFzKYryEYQgpJiZ3fyUjERaWH4f+NgM1oirg@mail.gmail.com>
+Subject: Re: [PATCH v3 01/10] fuse: convert readahead to use folios
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, miklos@szeredi.hu, 
+	kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Sep 2024 22:11:42 +0100
-Message-ID: <2668612.1727471502@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Eduard Zingerman <eddyz87@gmail.com> wrote:
+On Fri, Sep 27, 2024 at 1:45=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
+wrote:
+>
+> Currently we're using the __readahead_batch() helper which populates our
+> fuse_args_pages->pages array with pages.  Convert this to use the newer
+> folio based pattern which is to call readahead_folio() to get the next
+> folio in the read ahead batch.  I've updated the code to use things like
+> folio_size() and to take into account larger folio sizes, but this is
+> purely to make that eventual work easier to do, we currently will not
+> get large folios so this is more future proofing than actual support.
+>
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  fs/fuse/file.c | 43 ++++++++++++++++++++++++++++---------------
+>  1 file changed, 28 insertions(+), 15 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index f33fbce86ae0..132528cde745 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -938,7 +938,6 @@ static void fuse_readpages_end(struct fuse_mount *fm,=
+ struct fuse_args *args,
+>                 struct folio *folio =3D page_folio(ap->pages[i]);
+>
+>                 folio_end_read(folio, !err);
+> -               folio_put(folio);
+>         }
+>         if (ia->ff)
+>                 fuse_file_put(ia->ff, false);
+> @@ -985,18 +984,36 @@ static void fuse_send_readpages(struct fuse_io_args=
+ *ia, struct file *file)
+>  static void fuse_readahead(struct readahead_control *rac)
+>  {
+>         struct inode *inode =3D rac->mapping->host;
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+>         struct fuse_conn *fc =3D get_fuse_conn(inode);
+> -       unsigned int i, max_pages, nr_pages =3D 0;
+> +       unsigned int max_pages, nr_pages;
+> +       pgoff_t first =3D readahead_index(rac);
+> +       pgoff_t last =3D first + readahead_count(rac) - 1;
+>
+>         if (fuse_is_bad(inode))
+>                 return;
+>
+> +       wait_event(fi->page_waitq, !fuse_range_is_writeback(inode, first,=
+ last));
 
-> On Fri, 2024-09-27 at 21:50 +0100, David Howells wrote:
-> > Is it possible for you to turn on some tracepoints and access the trac=
-es?
-> > Granted, you probably need to do the enablement during boot.
-> =
+Should this line be moved to after we check the readahead count? eg
 
-> Yes, sure, tell me what you need.
+nr_pages =3D readahead_count(rac);
+if (!nr_pages)
+    return;
+wait_event(fi->page_waitq, !fuse_range_is_writeback(inode, first, last));
 
-If you look here:
+Otherwise I think in that case you mentioned where read_pages() calls
+into readahead_folio() after it's consumed the last folio, we end up
+calling this wait_event
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
-/?h=3Dnetfs-fixes
-
-you can see some patches I've added.  If you can try this branch or cherry
-pick:
-
-	netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
-	netfs: Advance iterator correctly rather than jumping it
-	netfs: Use a folio_queue allocation and free functions
-	netfs: Add a tracepoint to log the lifespan of folio_queue structs
-
-And then turn on the following "netfs" tracepoints:
-
-	read,sreq,rreq,failure,write,write_iter,folio,folioq,progress,donate
-
-which can be done by:
-
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_read/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_rreq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_sreq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_failure/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write_iter/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_folio/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_folioq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_progress/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_donate/enable
-
-or through trace-cmd.
-
-> Alternatively I can pack this thing in a dockerfile, so that you would
-> be able to reproduce locally (but that would have to wait till my evenin=
-g).
-
-I don't have Docker set up, so I'm not sure how easy that would be for me =
-to
-use.
-
-Thanks,
-David
-
+> +
+>         max_pages =3D min_t(unsigned int, fc->max_pages,
+>                         fc->max_read / PAGE_SIZE);
+>
+> -       for (;;) {
+> +       /*
+> +        * This is only accurate the first time through, since readahead_=
+folio()
+> +        * doesn't update readahead_count() from the previous folio until=
+ the
+> +        * next call.  Grab nr_pages here so we know how many pages we're=
+ going
+> +        * to have to process.  This means that we will exit here with
+> +        * readahead_count() =3D=3D folio_nr_pages(last_folio), but we wi=
+ll have
+> +        * consumed all of the folios, and read_pages() will call
+> +        * readahead_folio() again which will clean up the rac.
+> +        */
+> +       nr_pages =3D readahead_count(rac);
+> +
+> +       while (nr_pages) {
+>                 struct fuse_io_args *ia;
+>                 struct fuse_args_pages *ap;
+> +               struct folio *folio;
+> +               unsigned cur_pages =3D min(max_pages, nr_pages);
+>
+>                 if (fc->num_background >=3D fc->congestion_threshold &&
+>                     rac->ra->async_size >=3D readahead_count(rac))
+> @@ -1006,23 +1023,19 @@ static void fuse_readahead(struct readahead_contr=
+ol *rac)
+>                          */
+>                         break;
+>
+> -               nr_pages =3D readahead_count(rac) - nr_pages;
+> -               if (nr_pages > max_pages)
+> -                       nr_pages =3D max_pages;
+> -               if (nr_pages =3D=3D 0)
+> -                       break;
+> -               ia =3D fuse_io_alloc(NULL, nr_pages);
+> +               ia =3D fuse_io_alloc(NULL, cur_pages);
+>                 if (!ia)
+>                         return;
+>                 ap =3D &ia->ap;
+> -               nr_pages =3D __readahead_batch(rac, ap->pages, nr_pages);
+> -               for (i =3D 0; i < nr_pages; i++) {
+> -                       fuse_wait_on_page_writeback(inode,
+> -                                                   readahead_index(rac) =
++ i);
+> -                       ap->descs[i].length =3D PAGE_SIZE;
+> +
+> +               while (ap->num_pages < cur_pages &&
+> +                      (folio =3D readahead_folio(rac)) !=3D NULL) {
+> +                       ap->pages[ap->num_pages] =3D &folio->page;
+> +                       ap->descs[ap->num_pages].length =3D folio_size(fo=
+lio);
+> +                       ap->num_pages++;
+>                 }
+> -               ap->num_pages =3D nr_pages;
+>                 fuse_send_readpages(ia, rac->file);
+> +               nr_pages -=3D cur_pages;
+>         }
+>  }
+>
+> --
+> 2.43.0
+>
+>
 
