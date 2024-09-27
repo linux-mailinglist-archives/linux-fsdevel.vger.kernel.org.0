@@ -1,330 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-30232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166F7988059
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 10:35:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918319880EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 10:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E3A284E23
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 08:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D134C1C22243
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 08:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984641898F1;
-	Fri, 27 Sep 2024 08:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33CF18A6CA;
+	Fri, 27 Sep 2024 08:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZuirOky9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqAazClv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6690918308A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 08:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19EC18C1F;
+	Fri, 27 Sep 2024 08:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727426132; cv=none; b=t9lh20WmK4neMGHreDrXvUDv9Zsv1tVXN5OFWaz2fi4nONP8u9lr2cezF8MvhTrOMSzUtqWQPcnIKjLCGJ2ldVUVQ14mWPh7ks3ItiGIQ+csRwtYVrszcgmvQyK+6p1eGoBZaSwS6l//BF2UfjGe5jaWuAyIpfxsD600lZVrThA=
+	t=1727427485; cv=none; b=RSaQfqPiL6gEx7MR+stae+M7VlfB1BaZaZnRHeGMAd20771EAkWBwyaJK0kCRZKswDKPPhhFLYN6G/Cv87DckLqkbHY6P2JKwtEpqnzcPQtxKNQYN0U56emsdwCC4kzKsb1Ud6TX5jD3zLHFTzlr3oQ2ODesnvlFTI0Xl+NWcUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727426132; c=relaxed/simple;
-	bh=WdHCfssJBfAGWrUKzv3JISdS3NwnfQshMXghECmnc0Y=;
+	s=arc-20240116; t=1727427485; c=relaxed/simple;
+	bh=pEp5gXfIjEbg1ta4gdp8fy84aFsgcENp6aqfPlh6iqM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KkMx8EokU4UNExCE4hB7YeNid95npzz/EiRJz/nNKMg3dyQ0VPui0FHGqUTxGKtBcSKNoiDJyluXupHonVPy5OEVlXDSZqcEtI8qcQUkF4R6/UNXbCNwpQ4mRmlGKYWfu8c9TMVo8UgOPSyOSzi7GBLd3BwdKtifJ4HDo9x5+78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZuirOky9; arc=none smtp.client-ip=209.85.222.175
+	 To:Cc:Content-Type; b=hJZWOmteWdSYbFZE6Uohme4xxBsSm/nNpu/lBbKBfNsdem1U4CeHDRWdQDqMAMd+I0Ea/HjOMtu5mtrI84atwtvSmJZq0qDz6/T++9q7RAm4n/mFpwRLK43TEYfFlOXh6gZLsWM6s9y/g09caFpc3VBIreyCFYurWfFQyLbNCXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqAazClv; arc=none smtp.client-ip=209.85.217.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a9ad15d11bso164722385a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 01:35:30 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4a3075662b6so344760137.1;
+        Fri, 27 Sep 2024 01:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727426129; x=1728030929; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727427483; x=1728032283; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c09mzcUV6e7wOQOB/SdFy2XBC+9LPo/MP10U/jpIHPs=;
-        b=ZuirOky9hKdA309Q1bzv6+BT3vdNAziUbWrB+m17cCknEyZPq9zrEZUFOID7VF/P2d
-         piS0Qr3gGhbx5hL900TYLaX3ZnQ+Wp0Mg0PYloeK44ueoGbPQHd5jHUT2ZPgGIm7OrX5
-         qZleBx0FLnJgfqTtkw9xGpMTRP9TUQcRXOC/U+y7dbxOFW2YAy4bHOA3DBI6hiiXDnK2
-         Sob3N59xNSqvkLx9Qx/yDewtp4ZczbnhYrN6fzSsNpGJ0QyhnFG4YTo7op7NJ1KUlbjZ
-         JXb5IGXkyEnqJ7dCOIWuXPK08udURZMGXmiJ6bWaINLg1mNBHbGo2u6ckZF1FuHC0G3n
-         B5Nw==
+        bh=Eg8VUnCWU6xpmCG+ce1Tu7r95og6PEk5nWNUF8PLnD0=;
+        b=gqAazClv8s0ANTY895QSRiOBzehxWHAxTajzp8+L4oMVqITx1Rc1ZRR9N9zO3Vk1iS
+         0E0oCx/nlNg97ah1qOH5riadZAAUmcSvNTYO5+8cO82PLUIPlS/cfntRZC9yPsZp5BNq
+         HZigxvF8s1kAqeM4oah+T9Tu7K/saEbRk9nxIw4DIvRuG/wE2jmZ+lLUJ0nSO9Dx2xMF
+         0I10U74DdkKzjVpgTDGlNKXooe+uatFavOqUsEAAcqBFLrRAjiPMFMCrJtoLD3RBJ5An
+         kmon8czuYyTN9mFTIFXEn+V4NwEhigt5kZsoBpPbFRmrglYrNA4EqqQsJbKRRvYNpG4I
+         noGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727426129; x=1728030929;
+        d=1e100.net; s=20230601; t=1727427483; x=1728032283;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c09mzcUV6e7wOQOB/SdFy2XBC+9LPo/MP10U/jpIHPs=;
-        b=PNCxeFOTXdZ+dg2oaN/95tz/C06qdWbLJdxU+b0JfL2Re33XNjIuSRp5P56RlZTHU2
-         DEIBljPdS67nuL0ve5F0Wbw4FpmKAM5tuPW5fOWsYknB4qrh/hDU4RcN0Z6G1lO+uj1z
-         auTz6zEUUPisKv2gxpPgu/SzWomTBEcV6ZBTQchIMxXfi7SwcobkSsnx1rZp456n4HKX
-         slKrGmJrW0ZtteJdxb1oMehOTTAlomjadKIfN+o+eUUD6USlnLvcm6tKYoWwGI2zPuK4
-         rVtt3dBwerlPFUCGhy3G2wBQk+tFc3swF2ui/ELTKmZ/MV8kkfOWF+Y3tXGVKW8LfQry
-         /MpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ+UJz7ZUyzR9FG3if+6BUcSnTeLVQrRKPYQV4VVyiBs7Gk8Lc5odAaLUEZ4v+AhTtRYTzjDXSY0gwmASt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFDfHd1hxpIwvn69SoJ3wCckcVKpHqhFGGqOj/tVioQENC6Aaq
-	p9/+7PxQ8PkjwpNhswpJZ2Hkwg2KWCZ2QhHySAqgchu/3P3fkZNtasNT+AHmJJ3S5OegHTWpNmy
-	vEX1scCY4IwxICS6fpR30iEfjG2+lGMFXiZM=
-X-Google-Smtp-Source: AGHT+IFzxutq8InEVh6ERKf3WjezyZqYeGTpafiufqMx6rb97ufSdoJaluPruzGbwrADRQk9iwwFGx5ZHLEbNV8g9+4=
-X-Received: by 2002:a05:620a:4412:b0:7a1:d73f:53d2 with SMTP id
- af79cd13be357-7ae37838bbdmr342241485a.20.1727426128923; Fri, 27 Sep 2024
- 01:35:28 -0700 (PDT)
+        bh=Eg8VUnCWU6xpmCG+ce1Tu7r95og6PEk5nWNUF8PLnD0=;
+        b=gv9fLOBopnpIo0Vc3onAwq98+o1AmwfsGOzUyG8gbGravcS6kGattnVwcEWUJUJe40
+         +0OOaYz2ANAIKW0RBypiVzAdT1I3PPoxhOlVSraoYfh2Bvxgo0knFVqOXuiZGWQJ/0uI
+         wNEBBqoz2gsSku0wksBpFcUDb4BUZnjJQ5uzKu3fioSEbsV0pTWGrFkuQ01jqemwx+0B
+         Lti5Sm19C0rU2s/Z1M0gTtzA1hyMkguLjTvVPMb3XU/fyRpveYS6rj1uJ0AiB2JqyjVk
+         qom0D4uTvulcKDDjVr8ygshXwLmd/7QDhYBW9C/c/49306qMxXO6s7s0LoNKBHccM8yq
+         ZzlA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2kNwiVal/pbxQT4WCA9SZmuyu4dEISqslPuFr2sq3fPC9fh4lTuNtOeMwBn7eFImzsyFFI6xRhuhFf81Yz1wZL1wQ@vger.kernel.org, AJvYcCV2d0D0BsiKzXbQwL2TqwG+DY84lebb4Cux4G3ododFoAY6h2IDdKJbj2Rirj5VI/GV5D4wQlxe+CgYaZXOIQ==@vger.kernel.org, AJvYcCVBl/qvinXfWiUkGDVSQEEFr34DlHiFhgvil23df4xrDTJaQwe8+RbTWWC7NSxrKM2HLeN0@vger.kernel.org, AJvYcCWv54scAvVjhxJ7pezM8EjvxB7WchzIL10MLmaFUD5N0HnHJDuhrh3OttX2qEFrQFjslKvAbekh@vger.kernel.org, AJvYcCX9euyxmhyykrVUsgOdHzuNKV/u6O+k37wODRkiEsSzy6g1Zc4McDVPNUsKwU5fVqUshNJjLg==@vger.kernel.org, AJvYcCXd2/Cf5XF8BV7pfNUiXvazo1DtVaAEBfxUYPzvDHrcZrXX9wPyDY7dwNKWJ6jM7wdBSmSTZMDWtvu24YZf0jTXd+AvdPDG@vger.kernel.org, AJvYcCXuBnXWcCYL00ekJ2MlOU2kOwc6+ENoSoMdNGRjknOmTeVb81bBrChPPP9VJ0o7LFuwo9fkrerckw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlZYuYIBAqeuADDiwDH4QGdEkax+KYdlNITZDIn6qmDW0w1eWE
+	ziTAFLcqCrTmyw7kYJrLRlLAjg2pJLbz0YY1FjnOza6HmFweOxsxMhgfO6ZnU2yzL/YdMhgEvO0
+	CMEi91DmBjgQJjf1VLr4BwrAZDmk=
+X-Google-Smtp-Source: AGHT+IHlhccJP6o8YVDcpGsoOKh73nleQWjN6gMlntdM8azrnOLgCbN569DWouWNGBJF/Vf+8gknJS6h6du5PlKNbYc=
+X-Received: by 2002:a05:6102:2ac4:b0:49b:e9fc:14d2 with SMTP id
+ ada2fe7eead31-4a2d7ff9815mr2856108137.23.1727427482685; Fri, 27 Sep 2024
+ 01:58:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxiuPn4g1EBAq70XU-_5tYOXh4HqO5WF6O2YsfF9kM=qPw@mail.gmail.com>
- <SI2P153MB07187CEE4DFF8CDD925D6812D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxjd2pf-KHiXdHWDZ10um=_Joy9y5_1VC34gm6Yqb-JYog@mail.gmail.com>
- <SI2P153MB0718D1D7D2F39F48E6D870C1D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <SI2P153MB07187B0BE417F6662A991584D4682@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM>
- <20240925081146.5gpfxo5mfmlcg4dr@quack3> <20240925081808.lzu6ukr6pr2553tf@quack3>
- <CAOQ4uxji2ENLXB2CeUmt72YhKv_wV8=L=JhnfYTh0RTunyTQXw@mail.gmail.com>
- <20240925113834.eywqa4zslz6b6dag@quack3> <CAOQ4uxgEcQ5U=FOniFRnV1k1EYpqEjawt52377VgFh7CY2pP8A@mail.gmail.com>
- <JH0P153MB0999C71E821090B2C13227E5D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxirX3XUr4UOusAzAWhmhaAdNbVAfEx60CFWSa8Wn9y5ZQ@mail.gmail.com>
- <JH0P153MB0999464D8F8D0DE2BC38EE62D4692@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxjfO0BJUsnB-QqwqsjQ6jaGuYuAizOB6N2kNgJXvf7eTg@mail.gmail.com>
- <JH0P153MB099940642723553BA921C520D46A2@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
- <CAOQ4uxjyihkjfZTF3qVX0varsj5HyjqRRGvjBHTC5s258_WpiQ@mail.gmail.com>
- <CAOQ4uxivUh4hKoB_V3H7D75wTX1ijX4bV4rYcgMyoEuZMD+-Eg@mail.gmail.com>
- <CAOQ4uxgRnzB0E2ESeqgZBHW++zyRj8-VmvB38Vxm5OXgr=EM9g@mail.gmail.com> <JH0P153MB099961BA4C71F05B394D0D6FD46B2@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
-In-Reply-To: <JH0P153MB099961BA4C71F05B394D0D6FD46B2@JH0P153MB0999.APCP153.PROD.OUTLOOK.COM>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 27 Sep 2024 10:35:17 +0200
-Message-ID: <CAOQ4uxjF9Lt4g6q2=C9mO-rRPDmXhFgMVhwjrGv=bdY3GWgFMg@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: Git clone fails in p9 file system marked with FANOTIFY
-To: Krishna Vivek Vitta <kvitta@microsoft.com>
-Cc: Jan Kara <jack@suse.cz>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	"v9fs@lists.linux.dev" <v9fs@lists.linux.dev>
+References: <20240817025624.13157-1-laoar.shao@gmail.com> <20240817025624.13157-6-laoar.shao@gmail.com>
+ <CAHp75VdpG=yQVaJLR3J5puwj4FYWtXzaHkC1TdmiqfJu1s9PpA@mail.gmail.com>
+In-Reply-To: <CAHp75VdpG=yQVaJLR3J5puwj4FYWtXzaHkC1TdmiqfJu1s9PpA@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Fri, 27 Sep 2024 16:57:26 +0800
+Message-ID: <CALOAHbBHV_xB88AD8azVXZQzdowLtU6EHewFGUtPHQE9K6GQ_Q@mail.gmail.com>
+Subject: Re: [PATCH v7 5/8] mm/util: Fix possible race condition in kstrdup()
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, alx@kernel.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+On Fri, Sep 27, 2024 at 1:35=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 >
-> -----Original Message-----
-> From: Amir Goldstein <amir73il@gmail.com>
-> Sent: Friday, September 27, 2024 3:40 AM
-> To: Krishna Vivek Vitta <kvitta@microsoft.com>
-> Cc: Jan Kara <jack@suse.cz>; linux-fsdevel@vger.kernel.org; Eric Van Hens=
-bergen <ericvh@kernel.org>; Latchesar Ionkov <lucho@ionkov.net>; Dominique =
-Martinet <asmadeus@codewreck.org>; v9fs@lists.linux.dev
-> Subject: Re: [EXTERNAL] Re: Git clone fails in p9 file system marked with=
- FANOTIFY
->
-> On Thu, Sep 26, 2024 at 10:28=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
-om> wrote:
+> On Thu, Sep 26, 2024 at 7:44=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com=
+> wrote:
 > >
-> > > > What would be the next steps for this investigation ?
-> > > >
-> > >
-> > > I need to find some time and to debug the reason for 9p open failure
-> > > so we can make sure the problem is in 9p code and report more
-> > > details of the bug to 9p maintainers, but since a simple reproducer
-> > > exists, they can also try to reproduce the issue right now.
+> > In kstrdup(), it is critical to ensure that the dest string is always
+> > NUL-terminated. However, potential race condidtion can occur between a
+>
+> condition
+>
+> > writer and a reader.
 > >
-> > FWIW, the attached reproducer mimics git clone rename_over pattern clos=
-er.
-> > It reproduces fanotify_read() errors sometimes, not always, with
-> > either CLOSE_WRITE or OPEN_PERM | CLOSE_WRITE.
-> > maybe CLOSE_WRITE alone has better odds - I'm not sure.
+> > Consider the following scenario involving task->comm:
 > >
+> >     reader                    writer
+> >
+> >   len =3D strlen(s) + 1;
+> >                              strlcpy(tsk->comm, buf, sizeof(tsk->comm))=
+;
+> >   memcpy(buf, s, len);
+> >
+> > In this case, there is a race condition between the reader and the
+> > writer. The reader calculate the length of the string `s` based on the
 >
-> scratch that.
-> I think the renames were just a destruction git clone events do not alway=
-s fail on a close+rename pattern, they always fail on the close+unlink that=
- follows the renames:
+> calculates
 >
-> 1776  openat(AT_FDCWD, "/vtmp/filebench/.git/tjEzMUw", O_RDWR|O_CREAT|O_E=
-XCL, 0600) =3D 3
-> 1776  close(3)                          =3D 0
-> 1776  unlink("/vtmp/filebench/.git/tjEzMUw") =3D 0
-> 1776  symlink("testing", "/vtmp/filebench/.git/tjEzMUw") =3D 0
-> 1776  lstat("/vtmp/filebench/.git/tjEzMUw", {st_mode=3DS_IFLNK|0777, st_s=
-ize=3D7, ...}) =3D 0
-> 1776  unlink("/vtmp/filebench/.git/tjEzMUw") =3D 0
+> > old value of task->comm. However, during the memcpy(), the string `s`
+> > might be updated by the writer to a new value of task->comm.
+> >
+> > If the new task->comm is larger than the old one, the `buf` might not b=
+e
+> > NUL-terminated. This can lead to undefined behavior and potential
+> > security vulnerabilities.
+> >
+> > Let's fix it by explicitly adding a NUL-terminator.
 >
-> I know because I added this print:
+> memcpy() is not atomic AFAIK, meaning that the new string can be also
+> shorter and when memcpy() already copied past the new NUL. I would
+> amend the explanation to include this as well.
 >
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -275,6 +275,7 @@ static int create_fd(struct fsnotify_group *group, co=
-nst struct path *path,
->                  */
->                 put_unused_fd(client_fd);
->                 client_fd =3D PTR_ERR(new_file);
-> +               pr_warn("%s(%pd2): ret=3D%d\n", __func__, path->dentry,
-> client_fd);
->         } else {
+> ...
 >
-> We should consider adding it as is or maybe ratelimited.
+> > +               /* During memcpy(), the string might be updated to a ne=
+w value,
+> > +                * which could be longer than the string when strlen() =
+is
+> > +                * called. Therefore, we need to add a null termimator.
 >
-> The trivial reproducer below fails fanotify_read() always with one try.
->
-> Thanks,
-> Amir.
->
-> int main() {
->     const char *filename =3D "config.lock";
->     int fd;
->
->     // Create a new file
->     fd =3D open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
->     if (fd =3D=3D -1) {
->         perror("Failed to create file");
->         return EXIT_FAILURE;
->     }
->     close(fd);
->
->     // Remove the file
->     if (unlink(filename) !=3D 0) {
->         perror("Failed to unlink file");
->         return EXIT_FAILURE;
->     }
->
->     return EXIT_SUCCESS;
-> }
+> /*
+>  * The wrong comment style. Besides that a typo
+>  * in the word 'terminator'. Please, run codespell on your changes.
+>  * Also use the same form: NUL-terminator when you are talking
+>  * about '\0' and not NULL.
+>  */
 
-On Fri, Sep 27, 2024 at 8:34=E2=80=AFAM Krishna Vivek Vitta
-<kvitta@microsoft.com> wrote:
->
-> Hi Amir
+Thank you for pointing out these errors and for recommending the use
+of codespell.
+Will fix them in the next version.
 
-Hi Krishna,
-
-Please do not "top post" on mailing lists.
-It makes it very hard for people that are trying to follow the
-conversation in mailing archives
-or join in the middle of the conversation.
-
->
-> Thanks for the experiment.
-> Though reproducer program is succeeding but fanotify listener is terminat=
-ing since its failing to read the event. Right ?
-
-Right, the fanotify_example.c is programmed to stop on event read error.
-Productions fanotify listeners should log the error or ignore it, but not a=
-bort.
-
->
-> Can you elaborate on: " We should consider adding it as is or maybe ratel=
-imited." ?
-
-When fanotify fails to open an fd for reporting an event, we either
-return the error to fanotify_read() or silently ignore the event.
-What I meant is that we should add the pr_warn() in that case
-to make the problem more visible to sysadmins.
-
->
-> Does this mean there should be a fix at fanotify side ?
-
-Yes, I think there should be a fix in fanotify.
-9p is not doing something terribly wrong and as Jan
-already wrote, the exact same case from nfs/cifs is handled
-by ignoring the open error.
-
->
-> Can you summarize the problem statement for once in larger interest of gr=
-oup.
->
-
-Yes, I will try.
-
-fanotify needs to report an open fd with the event (in some operation modes=
-).
-The open fd needs to be created and installed in the fd table of the
-listener process
-that is calling fanotify_read() to read the event.
-
-By the time that the listener process wants to read the events, the
-file in question
-may have already been unlinked.
-
-fanotify holds a reference on the dentry where an event happened while the
-event is in the queue.
-In local filesystems, it should not be a problem to open an unlinked file
-from a referenced dentry.
-For example, If adding sleep(1) before handle_events() then
-fanotify_example will
-print these messages from ext/xfs:
-
-   FAN_CLOSE_WRITE: File /vdc/config.lock (deleted)
-
-The problem is that remote/network filesystems cannot provide
-full guarantee that an unlinked file can be opened even if the
-dentry reference exists.
-
-nfs/nfs4/cifs clients return -EOPENSTALE in that case, so vfs/nfsd
-can retry the open and fanotify also recognizes this error and
-silently drops the event.
-
-But vfs/fanotify cannot guarantee that all the remote/network
-filesystems will return this special error code and as the comment
-in  create_fd() says, there are many other cases that open can fail:
-
-/*
- * we still send an event even if we can't open the file.  this
- * can happen when say tasks are gone and we try to open their
- * /proc files or we try to open a WRONLY file like in sysfs
- * we just send the errno to userspace since there isn't much
- * else we can do.
- */
-
-The problems are:
-1. The first line of the comment is wrong - we are not sending the event
-2. We only send the errno to userspace if this is the first event being rea=
-d
-3. Even if userspace gets the errno, there is very little visibility about =
-the
-    event that caused the error (*)
-
-(*) This can be improved by the pr_warn() that I suggested
-
-Frankly, I never understood why this situation is not handled
-as the first line of the comment claims - that is to send the
-event with event->fd =3D -errno.
-
-This way userspace gets an event about every error and get
-try to do something about it (start an investigation).
-Getting the errno sometimes and ignoring it sometimes
-is a very poor UAPI.
-
-> I assume the whole of these experiments succeed in ext, xfs.
->
-
-Yes. This specific experiment succeeds on ext/xfs.
-However, other failures to open fd for event can also
-happen on ext/xfs, for example if the listener is watching
-FAN_CLOSE|FAN_OPEN and fanotify_init() uses O_WRONLY
-as event_f_flags argument and the watched fs is mounted read-only,
-then you would get an error like this in fanotify_example,
-after opening a file for read on ext/xfs:
-
-   read: Read-only file system
-
-At the bottom line, this is a UAPI issue. The UAPI can be improved,
-but we will probably have to make a new opt-in flag for a new UAPI.
-
-But I must say that I do not fully understand your original report.
-Your original report claimed that git clone fails when
-MDE(Microsoft Defender for Endpoint) is watching CLOSE_WRITE
-events on a 9p mount.
-
-Failures to report a FAN_CLOSE_WRITE event should have never
-failed git clone. Only failure to report FAN_OPEN_PERM could have
-failed git clone operations, but in that case, open would have failed anywa=
-y.
-
-My guess is that a would-be ENOENT open failure is replaced with
-an EPERM open failure when fanotify is watching FAN_OPEN_PERM
-events, but I have no confirmation to this assumption from your strace.
-
-Unless I misunderstand the report, it sounds like the fix (to git clone
-failure) should be in MDE software, because I could never reproduce
-git clone failure with fanotify_example, no matter with events I tried.
-
-Anyway, if I misunderstood something in the report, please clarify.
-
-Thanks,
-Amir.
+--=20
+Regards
+Yafang
 
