@@ -1,144 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-30220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165A4987EDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 08:55:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E35987EFF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 08:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87AC3B2559D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 06:55:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C5251F21B2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 06:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314AD189502;
-	Fri, 27 Sep 2024 06:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD6E17ADF6;
+	Fri, 27 Sep 2024 06:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEvF7YDi"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SECq03ZU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD7E183CAB
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 06:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA6A170A07
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 06:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727420032; cv=none; b=T+f884q8N3eP+9xZBvu2OhAm8FdMb9WBMjxRuxup23nBBUaz7MaSIcaBFxZ2qy3yPd3oDKrFPcQ8xQakBw289QPvfDyn9JqAlZ6/9qDObsjvZOXg7zTgSHAMXmf3qluei/YDvX0Wwk6+z0PiM+AcNgvSiIBXp02ldPKRD9986V0=
+	t=1727420228; cv=none; b=HiGv0QAaKqXqS0WX3D/9n5caegRFYLfHz6XXXkhLTPidaHV5ilQRcoCwaXxCS15rp6T9tObDyv2LUOvD1cDJTZmrQrl2vT2ahV1dY8YGj2bKnjS9QZBi8UXWrQYcP5Jh++oxPAoVCZlo39ILXi4fEiGy86eAKJ4KESJ0HXnXWZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727420032; c=relaxed/simple;
-	bh=BZTfloABqmq16Demr1vWhXwTH+Hgd5ctDn9L9ao7rYE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A/7KCnPxMqXmQ9CxwNQweK29PgRtaDs7Kjudh5yKXAlt11TKMvWuHjPLuYEd93a7KE5vwoOV2FMjNkQMom7PQsHuzkQ/8yngIbcHbECKbA/4VylKpjoLa2KNC8uCICta8bE0YHdFsDgHW8BA0M7xcIOUQrVaAiv6en0UYHwm9dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEvF7YDi; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2054e22ce3fso20905675ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 23:53:51 -0700 (PDT)
+	s=arc-20240116; t=1727420228; c=relaxed/simple;
+	bh=ntPXSTn0XaL1bz+NWhec/AVUqU9BTy+XXCzoOAy9NCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jjD7ZddJEQeQpDIounsA3rKKHCh9A3HcMsNNXZAEH+8bTVn58alPaadk7WWyQ2+AI8gGlpHi7V8tBOFxYjG3BoiZzTBNq0jvJ7pJStWUyc3jFoPsdIQondX/TvMqQDkoRm+TmYF5hZU0lP55yEQXJiH3JDrZ4KOTAa/mOhtUwQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SECq03ZU; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so15379065e9.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2024 23:57:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727420030; x=1728024830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oqILDHt9buTwqcHgMYkm2JW4TGLcznIkgNWApRFuxlw=;
-        b=QEvF7YDirYI7A5ASv3VOb/AkpJew4a3qQ+vG+s2vM3aSMlv6Qvb8kyr/5oJYSzlQOs
-         f6gR0DjgzKVZsYBoiI28A9Ga6A9brCJ0CeoQ47vAnhN+oSz498gGVGnQ4Lv4G4TZoowB
-         K5LpI0ikJblK6TeW7gvoKSZkvGonUDCQBxhNCyOkvgxcg7Duf8cZ83JGFV/bNLjfYt8x
-         kcJR8j8nGadgvq1+Eb4JuUGB3GYvk+8DWpSZ7PKTxn0NXDEKW9op+qmmZpFPoCIzc7R/
-         Ng8Q6maFR6HwErNbQaPAVzL3cpXz2AOl3H0kEroNZF6yfv6o5awBAeQKjmIgn0V3wMt6
-         6HQw==
+        d=google.com; s=20230601; t=1727420225; x=1728025025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tqmPizVsqq4qdhBRG8AwKRaqHKBJIvPdTR51rrGTtac=;
+        b=SECq03ZU2pg9DQNujkSYfZivqpvthEnMbafx09geZ4kG+VEiy01aL+XVPziekrQJ//
+         DHMo4bPnWmOKIP1rZ7S1IOg2eNOAZ4iZcaH1q/SiVex7+KPjmGJRMtWnYw3RA55UQrdb
+         teMm8RfyDaCYPNlBi+03Wo06oiMO5zztZI5x9bWhrCmEI8J7Z+38i4l0NIDrNjoqxLVz
+         OSdz5l8Wrm1e4nDsl98RIDboD1P8GNq6wU82QIPW2pXPQcpiM7qKpuhgOf5OW1wvZ+nx
+         tU+uksxDbBStzkmayixOmu0U3YZdXQ6QgeUKt0nK90PMdMgcZEQqLXPxh1xIdU9I0+Ol
+         cBrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727420030; x=1728024830;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oqILDHt9buTwqcHgMYkm2JW4TGLcznIkgNWApRFuxlw=;
-        b=w3i2+mg+LskBEWASJUyTbMW5DOooLq2R6bU+NUUZn0fQeXHBCRVfCIbp5EBOqmnAZK
-         7UlfSNH5KJQogE1C8nxfhSvv8YuWXD5K/TMY0Iz3IUJh7rLdWsP9TChuM+Cg9/2yM+Z4
-         e8TE1IWQpq3UEQmBuv7ea1g7laWV8hHHNui/VvPatBVns/03f/ifUv5sI54TboZWOL5h
-         IOt/0Z5EBxiHbXehDdV37RwS+AdEy+I5xF6JygPNmYAYz+kw9U5qnioMpcC9gKhcxwZQ
-         zmvMkxjPEuse9S3JWKhMAFetaNRofzOF8B9Ef6wGjIz1Gxs1Lj7+hoAJYDH8pc7/B0G5
-         wZbg==
-X-Gm-Message-State: AOJu0Yxe1XBLejFvw+Irh8Ru0MV3c1HTLZWsZbMITsDeKCj/R9P+A6Bf
-	GiiIiFoiV3iTPc5wQ6M1753KoLWlSWn6Y9HN1Pc38+lkznpQxqrIM/+jf5uFY3Y=
-X-Google-Smtp-Source: AGHT+IEy53ZT2fVnyyGaTa25q8lgz1xb0P871UoHWPT2nx1qhdI7IDTkE02OCYfRkcXCXqeHrRr67w==
-X-Received: by 2002:a17:902:f550:b0:207:60f4:a3c8 with SMTP id d9443c01a7336-20b37ba5c03mr40396215ad.38.1727420029526;
-        Thu, 26 Sep 2024 23:53:49 -0700 (PDT)
-Received: from localhost ([206.237.119.150])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e0d4bdsm7706165ad.139.2024.09.26.23.53.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 23:53:49 -0700 (PDT)
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: chandan.babu@oracle.com,
-	djwong@kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	hch@lst.de,
-	Julian Sun <sunjunchao2870@gmail.com>,
-	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com,
-	Dave Chinner <david@fromorbit.com>
-Subject: [PATCH v2] xfs: do not unshare any blocks beyond eof
-Date: Fri, 27 Sep 2024 14:53:44 +0800
-Message-Id: <20240927065344.2628691-1-sunjunchao2870@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1727420225; x=1728025025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tqmPizVsqq4qdhBRG8AwKRaqHKBJIvPdTR51rrGTtac=;
+        b=G3GfJuWhob8okr9uVzljW2y0xA3CdnmDKPdafLUNYqRUuh8v8o64WwPU+2EpKes651
+         +ZTcl/XDNU5zjVwj1OchW34oCEXfpsglua+jdk93x5HgsqvcRo8EOQzYFNH1W173lozy
+         CX23CYHaWAsnIe7c4udLy8YQabKiehdomWOsRV75o+wl0JddW3EadtHAjPBdpfj56YkH
+         TXzNoKhw1W0FIQ5848QY0QFiHZTUCr1XjV7yvQ1q636I2gL0TgsnlHYLhvKElUK2ASCc
+         okCrMs6GRcfqO1MbkxzJ9ikH+2cIenUqTuD5lMoOmMvM2jONl7BmzJtZO1LSN1HGOFPH
+         fY0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWHx9K8A5u0VJiLYZ5SsbmypowG4cWiRoqPKuJ3A+JZf3aVgurkRvP4v/XPgsvyMhHrp2hfhDLxjlsPZDPB@vger.kernel.org
+X-Gm-Message-State: AOJu0YynJfsRVZLEX2Nle/ek5wYDecRq+FaLS3oKnqttzmoANNudIqzq
+	WWP5480rHm2VSJYY86LPwQ9sUOUkhQVDqgDjDphMTweqOs+ieR/NLLEWwZ6jSfc4DLp+ZVoczGM
+	35zFxUZA2yjz2kbbKOLl6jC1PH2FWf2k7ORqB
+X-Google-Smtp-Source: AGHT+IEL+etCLpk5OYw+YdsvWhveUaQTGppJFFWoWLIplEsVQRyrmKK2vppq4B4v8T1EMDfuPi9L4dAtpHeeA2VvdXY=
+X-Received: by 2002:a05:600c:1c81:b0:42c:bae0:f065 with SMTP id
+ 5b1f17b1804b1-42f5840cf46mr13043465e9.5.1727420225137; Thu, 26 Sep 2024
+ 23:57:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+ <20240926-b4-miscdevice-v1-2-7349c2b2837a@google.com> <20240926220821.GP3550746@ZenIV>
+ <20240926224733.GQ3550746@ZenIV>
+In-Reply-To: <20240926224733.GQ3550746@ZenIV>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 27 Sep 2024 08:56:50 +0200
+Message-ID: <CAH5fLgick=nmDFd1w5zLSw9tVXMe-u2vk3sBbG-HZsPEUtYLVw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rust: file: add f_pos and set_f_pos
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Attempting to unshare extents beyond EOF will trigger
-the need zeroing case, which in turn triggers a warning.
-Therefore, let's skip the unshare process if blocks are
-beyond EOF.
+On Fri, Sep 27, 2024 at 12:47=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+>
+> On Thu, Sep 26, 2024 at 11:08:21PM +0100, Al Viro wrote:
+> > On Thu, Sep 26, 2024 at 02:58:56PM +0000, Alice Ryhl wrote:
+> > > Add accessors for the file position. Most of the time, you should not
+> > > use these methods directly, and you should instead use a guard for th=
+e
+> > > file position to prove that you hold the fpos lock. However, under
+> > > limited circumstances, files are allowed to choose a different lockin=
+g
+> > > strategy for their file position. These accessors can be used to hand=
+le
+> > > that case.
+> > >
+> > > For now, these accessors are the only way to access the file position
+> > > within the llseek and read_iter callbacks.
+> >
+> > You really should not do that within ->read_iter().  If your method
+> > does that, it has the wrong signature.
+> >
+> > If nothing else, it should be usable for preadv(2), so what file positi=
+on
+> > are you talking about?
+>
+> To elaborate: ->llseek() is the only method that has any business accessi=
+ng
+> ->f_pos (and that - possibly not forever).  Note, BTW, that most of the
+> time ->llseek() should be using one of the safe instances from fs/libfs.c
+> or helpers from the same place; direct ->f_pos access in drivers is
+> basically for things like
+> static loff_t cfam_llseek(struct file *file, loff_t offset, int whence)
+> {
+>         switch (whence) {
+>         case SEEK_CUR:
+>                 break;
+>         case SEEK_SET:
+>                 file->f_pos =3D offset;
+>                 break;
+>         default:
+>                 return -EINVAL;
+>         }
+>
+>         return offset;
+> }
+> which is... really special.  Translation: lseek(fd, n, SEEK_CUR) - return=
+ n
+> and do nothing.  lseek(fd, n, SEEK_SET) - usual semantics.  Anything else
+> - fail with EINVAL.  The mind-boggling part is SEEK_CUR, but that's
+> userland ABI of that particular driver; if the authors can be convinced t=
+hat
+> we don't need to preserve that wart, it can be replaced with use of
+> no_seek_end_llseek.  If their very special userland relies upon it...
+> not much we can do.
+>
+> Anything else outside of core VFS should not touch the damn thing, unless
+> they have a very good reason and are willing to explain what makes them
+> special.
+>
+> From quick grep through the tree, we seem to have grown a bunch of bogosi=
+ties
+> in vfio (including one in samples, presumably responsible for that infest=
+ation),
+> there's a few strange ioctls that reset it to 0 or do other unnatural thi=
+ngs
+> (hell, VFAT has readdir() variant called that way), there are _really_ sh=
+itty
+> cases in HFS, HFS+ and HPFS, where things like unlink() while somebody ha=
+s the
+> parent directory open will modify the current position(s), and then there=
+'s
+> whatever ksmbd is playing at.
+>
+> We really should not expose ->f_pos - that can't be done on the C side (y=
+et),
+> but let's not spread that idiocy.
 
-This patch passed the xfstests using './check -g quick', without
-causing any additional failure
+Okay, interesting. I did not know about all of these llseek helpers.
+I'm definitely happy to make the Rust API force users to do the right
+thing if we can.
 
-Reported-and-tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
-Fixes: 32a38a499104 ("iomap: use write_begin to read pages to unshare")
-Inspired-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
----
- fs/xfs/xfs_iomap.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+It sounds like we basically have a few different seeking behaviors
+that the driver can choose between, and we want to force the user to
+use one of them?
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 72c981e3dc92..81a0514b8652 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -976,6 +976,7 @@ xfs_buffered_write_iomap_begin(
- 	int			error = 0;
- 	unsigned int		lockmode = XFS_ILOCK_EXCL;
- 	u64			seq;
-+	xfs_fileoff_t eof_fsb;
- 
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
-@@ -1016,6 +1017,13 @@ xfs_buffered_write_iomap_begin(
- 	if (eof)
- 		imap.br_startoff = end_fsb; /* fake hole until the end */
- 
-+	/* Don't try to unshare any blocks beyond EOF. */
-+	eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-+	if (flags & IOMAP_UNSHARE && end_fsb > eof_fsb) {
-+		xfs_trim_extent(&imap, offset_fsb, eof_fsb - offset_fsb);
-+		end_fsb = eof_fsb;
-+	}
-+
- 	/* We never need to allocate blocks for zeroing or unsharing a hole. */
- 	if ((flags & (IOMAP_UNSHARE | IOMAP_ZERO)) &&
- 	    imap.br_startoff > offset_fsb) {
-@@ -1030,7 +1038,6 @@ xfs_buffered_write_iomap_begin(
- 	 */
- 	if ((flags & IOMAP_ZERO) && imap.br_startoff <= offset_fsb &&
- 	    isnullstartblock(imap.br_startblock)) {
--		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
- 
- 		if (offset_fsb >= eof_fsb)
- 			goto convert_delay;
--- 
-2.39.2
-
+Alice
 
