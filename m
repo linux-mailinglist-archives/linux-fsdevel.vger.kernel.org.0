@@ -1,139 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-30288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035BB988C6D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 00:25:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68820988C83
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 00:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2B61F21FA8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 22:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7303B1C20F5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 22:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32943188936;
-	Fri, 27 Sep 2024 22:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACC81B3742;
+	Fri, 27 Sep 2024 22:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMSDPw2J"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKR1LfQg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2901F188583
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 22:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C111B373A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 22:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727475906; cv=none; b=eyWpp03OQDTPlBHpRSy/FsO6ZOPn2C3CwJoRoQ3Yvb6ZJfaCfk9Fl1uO57nGLdoTLly3qcTmIUgbkiBOZ/9SsC+S/kmqsO0+UXZ+qvGWj/if+rYU8a7PLpsgWoJCe56huB16cqe0QBKzczYej9C4XQZTOEjvHT0I/KHMLRSS+/s=
+	t=1727476603; cv=none; b=TGq6GmV9jE8mLqfIlfYg+e0raVMNei5kiIODRbi7vX8wzV6NjlcTsULPtCiVF72VilH4VYIcEEkjZ9PT5iwpVC/umK2vC9LKnsT0wc1wrUKbEwqQ9Wj9OBy9m2QP5f6SETeZw0oKiRTYE5ULMnzBKhRcORa9ruViz7W831JNelw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727475906; c=relaxed/simple;
-	bh=/aFGgeqV1RMpR2mzH5tRdtulBpw6b19+S1oOHatSoAE=;
+	s=arc-20240116; t=1727476603; c=relaxed/simple;
+	bh=uJ3a9hPbPrYgFIiAHoKkZ1J21G6HOLd4NcO/otXV5A8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nfdXKET+WD4kf5we477029yfOVOp3v3PuTr6BexIAT1QZfhFFNakmYZiImYUdBWXfBIgumLIfC4i7MUS+KJlNzTEXaeyVmK09Qj8kq6xIrQU6QzZIjZk3Rg2JtFKpwtHIG5vE3XbL/toEGQFzIsju5tumW2yIbMpe6jwXHqFNQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMSDPw2J; arc=none smtp.client-ip=209.85.160.169
+	 To:Cc:Content-Type; b=qYT4ZK7t6mGjXL/Ml5LIxt9A/UgnfDkJ56WZ6lrXo5ZGVHUcA3D2wsFXjm8qofPMPEiwoofPAwjQ29eTpK12wtGMzwdj+q0EA0fpfPDRSww1c5L0PBs8NeNxXWuSamAbRaLp2KPHyyGMg5Y3xZd9aTizgEmJ3MuJIu9rEVuDTFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKR1LfQg; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4585e25f42bso21329741cf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 15:25:04 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-457ce5fda1aso20045821cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 15:36:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727475904; x=1728080704; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727476600; x=1728081400; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m1R/BIPgwpN2XRzidhXtoYfpeOggdurE68ki7Yr/NEo=;
-        b=fMSDPw2JlUDG++N6EEwzAlPMjigjnm1Q1aPnbnBGM6lgDcEkXRbgjlc4e3AF4rdADn
-         9jpEoy3l7ogtQUSIImJLuTm16drjRZn3yel7irEVmBRpT++wThthfsUIqs7qxDlUFJyv
-         XLFHelHoXphhiGSbm9ZxQauQHRdi/jsCkZ7wzZ3TaOQtIB11Z+RZt7F6hP1CSlfjnire
-         GhChkMvWTuQly2c8NXKwFS7pYaU2SW6LAVCqjyJAu8uuqYJoZzN8jJh3BWVu1a13WlLs
-         RGiX/tjoa3HSKbgqopqbqcbun+VcTpQwUphloeAom6l/dYtrotXcW4WqUK/P8Ln5ORHl
-         iPKQ==
+        bh=Sl+IRmkACJD3GG4bP+dTnIAiT186YCH1FI90JiB1kYI=;
+        b=SKR1LfQgXy17b3xub/AMZh+Xj4+qs5IqWbXtTVDaGa0ch20s8ulv/Y8QXRW5t1huad
+         uHh6yHmTAZ2io06sFCcT02wfX8/rnTZKeuyVIB52urVI1WNSaB7FtwY0yR3Fimv5jqUx
+         pBM8+XbpodvI3mx/KciFngO9yUj/HwXTFqff5qvwObTYbaHVWM80z6yGsBnO573TiTcK
+         mPvKBVnMQp43z3qNLA1INvYZfaft2/kX9SWqqYXlckCddooiuNoHUC8XAH9ufVoIIOB6
+         lEbM7DcO5yK56Co5Q4wEn8EPyMH5uR4kaY9bTc1fxWRqjabiai+J8rUosFT7CQijNmE6
+         uEZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727475904; x=1728080704;
+        d=1e100.net; s=20230601; t=1727476600; x=1728081400;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m1R/BIPgwpN2XRzidhXtoYfpeOggdurE68ki7Yr/NEo=;
-        b=q9U2KLcXargA4SGJMCijoMETPQevWUWbfJa7LgR/+bXl5+6dOL8UV6+J0uZhToJdOR
-         sWwf/scE6ZSDDNYOST42v8HiGsYlBrpmlfeDa35ax01jEYyCw3B9S3ZOnLYAuUzIf4W0
-         4YjZuusozinF70XHUZ1YSOkZ15R2JkY3U9p29Zm2ko10To/AaabhqeFWQweLXs/9oMmW
-         DiapwZ+vFnM51nAogOwjbykEnlm+mf35oGP2/GT5s94o1oKgt9xfp9T/3EKnSl/EInfY
-         UlFWtsVF/mfcuBpZurn6c/6GaOdIM3IQOIA8dpe4ZIHwtQBd+UOMhKAczckHBWfOaAKz
-         3EeQ==
-X-Gm-Message-State: AOJu0YyUrb/Q6EJRIi+zgiUOIdL6PmW/+lAn2TzJGjAu65a8A2HMPvoX
-	MJuyiS0vi4FgdJydz6FeVe/AbKZLqs8bo5VgJ5JPHHGuhQ/msYbql8gik2NM2W0ithQ0uo6uh0S
-	6ALqkNgHwt1oCUF+K8sq39hkVSzMrzfy4
-X-Google-Smtp-Source: AGHT+IHfygWYMhcW9sE9xSyeT5vk7YQZHk82HQPjNdY5XskVykD1EEr3LrMTHL3wiF+SUtZGlJkikikdypIFval0Vzs=
-X-Received: by 2002:a05:622a:412:b0:458:1de8:4e46 with SMTP id
- d75a77b69052e-45c9f1d6de7mr77737331cf.6.1727475903967; Fri, 27 Sep 2024
- 15:25:03 -0700 (PDT)
+        bh=Sl+IRmkACJD3GG4bP+dTnIAiT186YCH1FI90JiB1kYI=;
+        b=QXJK3CG4lE06Cqz0mEYA+mew2vtMVwdXBUg8rFY5N5E0bgawc3/bxZFzoCE3DynoH3
+         w5J91BkIuhw9wUGIPyQWiXXFe0B2iDeTP8kMvOcNmjOu7bMFdavOyw5uJUkmOEgK3/TH
+         c7v6EllutuQK2A56vYdhOu0wR1LpskGhdG7zDvyhnsYQZQHTPGNsTXUvuRs34C0sn+G0
+         l49NNr3Rl60OuVWB89Vu+yGbq/j7IbDuNesLu2gueZu/nhvjIljkAKJVWeI+kw5dBYM5
+         XcGmE8pE5mPL01q/S3lGX9CBtl6tU0JQiZlM2sHWmx0Dbm2evjSfiWZXnNuNW6yZT3aY
+         jD/A==
+X-Gm-Message-State: AOJu0YyyuCiVmL8PKJWLxaAKbNzL0LIIvR5v14SKVYHsdIWnU8KS1euP
+	qFR83zgIURN4Z46JI2nb4DWtWN5TaWzZ7WbC2jlaJjqlbAuk6u16KzpqLh9EnoIWxktJ0s8NG6p
+	DuTFdiDGUbGOfAlOYqAexDN+6I6DKzoy0
+X-Google-Smtp-Source: AGHT+IHASrAtH5WwP5d/yWtwcDSQ7esdrX9qEWyhSmGVQqfvD2rbMBeFSaR/sL1FAtjSpJSMbKdxN8EBsrGF2xLnsmE=
+X-Received: by 2002:a05:622a:610:b0:457:ca9b:a28f with SMTP id
+ d75a77b69052e-45c9f2876f9mr62767081cf.47.1727476600321; Fri, 27 Sep 2024
+ 15:36:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727469663.git.josef@toxicpanda.com> <f0e70cb0b99f46d05385705095fb9413a6c9ef0e.1727469663.git.josef@toxicpanda.com>
-In-Reply-To: <f0e70cb0b99f46d05385705095fb9413a6c9ef0e.1727469663.git.josef@toxicpanda.com>
+References: <cover.1727469663.git.josef@toxicpanda.com> <00a02299e944530c1be03d2d31b45614bedbc758.1727469663.git.josef@toxicpanda.com>
+In-Reply-To: <00a02299e944530c1be03d2d31b45614bedbc758.1727469663.git.josef@toxicpanda.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 27 Sep 2024 15:24:53 -0700
-Message-ID: <CAJnrk1Zb+NOE3uiSNh5dROyUuM0ZKKeA7D3zM=3QrZtDdH--EQ@mail.gmail.com>
-Subject: Re: [PATCH v3 02/10] fuse: convert fuse_send_write_pages to use folios
+Date: Fri, 27 Sep 2024 15:36:29 -0700
+Message-ID: <CAJnrk1bkOSCE1XZ9A1itr7O_X9qX7cLg0e=1nViQnHv66gC-7A@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] fuse: convert fuse_fill_write_pages to use folios
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, miklos@szeredi.hu, 
-	kernel-team@fb.com, Matthew Wilcox <willy@infradead.org>
+	kernel-team@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 1:46=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
+On Fri, Sep 27, 2024 at 1:45=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
 wrote:
 >
-> Convert this to grab the folio from the fuse_args_pages and use the
-> appropriate folio related functions.
+> Convert this to grab the folio directly, and update all the helpers to
+> use the folio related functions.
 >
-> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
 Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 
 > ---
->  fs/fuse/file.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  fs/fuse/file.c | 28 +++++++++++++++-------------
+>  1 file changed, 15 insertions(+), 13 deletions(-)
 >
 > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 132528cde745..17ac2de61cdb 100644
+> index 17ac2de61cdb..1f7fe5416139 100644
 > --- a/fs/fuse/file.c
 > +++ b/fs/fuse/file.c
-> @@ -1168,23 +1168,23 @@ static ssize_t fuse_send_write_pages(struct fuse_=
+> @@ -1206,7 +1206,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io=
+_args *ia,
+>
+>         do {
+>                 size_t tmp;
+> -               struct page *page;
+> +               struct folio *folio;
+>                 pgoff_t index =3D pos >> PAGE_SHIFT;
+>                 size_t bytes =3D min_t(size_t, PAGE_SIZE - offset,
+>                                      iov_iter_count(ii));
+> @@ -1218,25 +1218,27 @@ static ssize_t fuse_fill_write_pages(struct fuse_=
 io_args *ia,
->         offset =3D ap->descs[0].offset;
->         count =3D ia->write.out.size;
->         for (i =3D 0; i < ap->num_pages; i++) {
-> -               struct page *page =3D ap->pages[i];
-> +               struct folio *folio =3D page_folio(ap->pages[i]);
+>                 if (fault_in_iov_iter_readable(ii, bytes))
+>                         break;
 >
->                 if (err) {
-> -                       ClearPageUptodate(page);
-> +                       folio_clear_uptodate(folio);
->                 } else {
-> -                       if (count >=3D PAGE_SIZE - offset)
-> -                               count -=3D PAGE_SIZE - offset;
-> +                       if (count >=3D folio_size(folio) - offset)
-> +                               count -=3D folio_size(folio) - offset;
->                         else {
->                                 if (short_write)
-> -                                       ClearPageUptodate(page);
-> +                                       folio_clear_uptodate(folio);
->                                 count =3D 0;
->                         }
->                         offset =3D 0;
->                 }
->                 if (ia->write.page_locked && (i =3D=3D ap->num_pages - 1)=
-)
+> -               err =3D -ENOMEM;
+> -               page =3D grab_cache_page_write_begin(mapping, index);
+> -               if (!page)
+> +               folio =3D __filemap_get_folio(mapping, index, FGP_WRITEBE=
+GIN,
+> +                                           mapping_gfp_mask(mapping));
+> +               if (IS_ERR(folio)) {
+> +                       err =3D PTR_ERR(folio);
+>                         break;
+> +               }
+>
+>                 if (mapping_writably_mapped(mapping))
+> -                       flush_dcache_page(page);
+> +                       flush_dcache_folio(folio);
+>
+> -               tmp =3D copy_page_from_iter_atomic(page, offset, bytes, i=
+i);
+> -               flush_dcache_page(page);
+> +               tmp =3D copy_folio_from_iter_atomic(folio, offset, bytes,=
+ ii);
+> +               flush_dcache_folio(folio);
+>
+>                 if (!tmp) {
 > -                       unlock_page(page);
-> -               put_page(page);
+> -                       put_page(page);
 > +                       folio_unlock(folio);
-> +               folio_put(folio);
->         }
+> +                       folio_put(folio);
+>                         goto again;
+>                 }
 >
->         return err;
+>                 err =3D 0;
+> -               ap->pages[ap->num_pages] =3D page;
+> +               ap->pages[ap->num_pages] =3D &folio->page;
+>                 ap->descs[ap->num_pages].length =3D tmp;
+>                 ap->num_pages++;
+>
+> @@ -1248,10 +1250,10 @@ static ssize_t fuse_fill_write_pages(struct fuse_=
+io_args *ia,
+>
+>                 /* If we copied full page, mark it uptodate */
+>                 if (tmp =3D=3D PAGE_SIZE)
+> -                       SetPageUptodate(page);
+> +                       folio_mark_uptodate(folio);
+>
+> -               if (PageUptodate(page)) {
+> -                       unlock_page(page);
+> +               if (folio_test_uptodate(folio)) {
+> +                       folio_unlock(folio);
+>                 } else {
+>                         ia->write.page_locked =3D true;
+>                         break;
 > --
 > 2.43.0
 >
