@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-30281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49C7988B73
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 22:46:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE98988B75
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 22:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA413282B50
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 20:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66A1CB24B7C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 20:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38A41C3314;
-	Fri, 27 Sep 2024 20:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8EA1C331B;
+	Fri, 27 Sep 2024 20:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="efXUwW9f"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="uTW+Gx+Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5631C2DCC
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 20:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EF81C1AB9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 20:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727469957; cv=none; b=kX0HXT3+CUCkTaoEkWpgiuc7y4MZ+YVGI6c/dQ6B1w2MjdWDbrMMKmbiwwCcnYaL0LMlO+GPU3p0u7I5jDtPXc1jkHl4KDsgp097KYjie20ZIwGPkfu8kcfi8utLlXtfGg6MoHOD7gnEE851GtOcysDTwIl7EFhs0t5tXk1gZ1o=
+	t=1727469957; cv=none; b=Roo6Oh15sS3MPzt27nGA/+oKpZ1eIlZk6yO4W38s77eZFogonN04GawyG47q2qM+nzYLImmn4c9Q48z1qNHStKZTKSIxYwDo8Rt3uGCI02k3vwR9I+iZiHj/AZMLCDB8MICCb8r5mF8ipHkxWGr4Cuk/wcmN2s8HcCD5yIuBr1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727469957; c=relaxed/simple;
-	bh=+HnPfo1rD7Vgc5AIyDlbXn29yOYJwGnHhzSitOUVI8I=;
+	bh=wVISCudRt38hav0ZgW6Oe4SSnOs/IfFY15A7fvAwhTg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oWfDBO33HPX/Whr9lk0UKgJxv+VUTQYlypfzjFV9jf9qLKrAEiccoXcZSI5MKwx02XPAl7jgXUQN8GXXQf8r1X2lJ2EMS3kPpAoZm/sNDjjtYZb1pxxooiPbiMg0et5Rsgy131OWl8vwFWa6oFUmdeKhZPY6KgL2GmOhpi9LEkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=efXUwW9f; arc=none smtp.client-ip=209.85.219.179
+	 MIME-Version; b=ZgMIrKlo93nx+F0DL5wWx6xZOBixs9AeM9MZ8jc4N+uvJvzgUAMU3Epc5joYaJrqEf+oKhQt71r6/3lg9DjVOqkvdSEiqzbVZhJEHpdg+dMcpHVKvvA9pJDx99ldVdDqz0p4nG2ncc0GM79N4lO5J3YOYGtfgT4x5QeVnc5b2h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=uTW+Gx+Q; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e260b747fdcso682770276.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 13:45:55 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e23aa29408so19598667b3.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 13:45:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1727469953; x=1728074753; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1727469955; x=1728074755; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6Z5BCJNtJV/IvtlHntdQ6UJVoG2UpNpzKZHzKW76QrQ=;
-        b=efXUwW9f3tycqSji8Rid3lcjbou6Mz4cHll3C7dn+kKQo/8A5z1bgIbpAH3QmNFcuT
-         /hBbs3ExxDjFzXBhvj0xzIySYig7bOZTvX4G526owL/LpySPGwFE/bikcLz3BJuzA5xE
-         YqEO2Dd1w5m0ODByXUf0sITEZtJqKerYRnVKpyLU80zouPrgxFou43HDZ/D+F2v2QWfe
-         rEfGJSyiMx0egxoxOwoWbrHSaIoI8Iq5PDg8T0xbeyzF03204vqfjRuNXnTSCDECaibU
-         fWW980OL6xPgIRwjnATk09+dUhkpgQC98V5COV9UyYR6IcOqDYy+SWWSG/t1MH3RsS8O
-         W7eQ==
+        bh=j74oib4cu11+e7bTznb2eAYbEwPMzV5mPl9l6fM+GTg=;
+        b=uTW+Gx+QrQFymaNx67AGmy+nYnmtx5l8JpFL66+o+IHpv6QFUnTciqi9+8Jaymcev5
+         oBiJgS+9wiqVNLgLG6A6unK7KLu+uUd352ExFbX+k99PzKOaC6z5VqN+IO16RRGAuGmj
+         dUgJ+iZ+hcccx60Mq6eyujzFaEdOTXkHNlrpdXNCvm15cyrt4x73HfoWXaY7KdK308xc
+         U1nAZ7Uztd4p6X9Aci4HtfpOTKikRQ0hadOEpq6s7vs8Hq5R0on6orhVz0S1bqir92e2
+         s9gi92ScsrL4XqpXe4L0RTgPyWN0AKR5UstdQTUuvpE+ax51rRQZlMHM4vDP/4Wvp84D
+         eiGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727469953; x=1728074753;
+        d=1e100.net; s=20230601; t=1727469955; x=1728074755;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6Z5BCJNtJV/IvtlHntdQ6UJVoG2UpNpzKZHzKW76QrQ=;
-        b=ZU3/9VIj1QrmYe5x4B8eyEkDi6iULg0EfBvwTO+g6gOqXG9vxVZw+zS+tSxqVzUQfI
-         M0TtTu+FGwGu8EPhWT7Mokh3d3aGItFijlSuuW3+Z5t9sOZGNh8IMsJ4UJyuC5pB1TlP
-         zYGt8+rW1/jg0PjwwpfudGZR9PzJb8rz8a5aGJYIVcGevc1b6+wwwKupIJGZjywjCWW/
-         pJ7o4jz+09dYezelpdqicr0w2TiirCkLU3UsBmiohn8DEjufuTbQX2ASjXTpXg74yiXw
-         YrHqjy9qv1OACjQv77JvQIg+IyiB7MqTVV3E8HHXaSUplG+HQhngAuW6n8tHIXLNtisA
-         wx4Q==
-X-Gm-Message-State: AOJu0Yz8KZ9sjuZ998HXCzMz+23cmarOT1z3ffzJXx3PpwW91jcoLwL8
-	GwnSsD5h36nosg7qNoU6yKNU4iGcGVb/2fbRxjKX9JfXKSpzRXAK6/FN9xibCdCD2s/QTrCpi+r
-	v
-X-Google-Smtp-Source: AGHT+IGfQT05VlxWYk1EoK77iZjJNtULSY3oA6W5c3MxiHJw9uKqjG8d4V0+QqWpR8Yzttv2cFhujw==
-X-Received: by 2002:a05:6902:1b8d:b0:e1d:2f11:3eb9 with SMTP id 3f1490d57ef6-e2604b5f1c3mr3475439276.2.1727469953579;
-        Fri, 27 Sep 2024 13:45:53 -0700 (PDT)
+        bh=j74oib4cu11+e7bTznb2eAYbEwPMzV5mPl9l6fM+GTg=;
+        b=GL/8kfBiV/XWiayvVFe1zO79k0gsmn/vvSYhutkVs8wDsFLYL8elC/A8mhH6r9I2tu
+         subzRd8ngYInGRl9WUMtbSAlpSezixRH/xciPlzyikjVjbP2xXOtqXymBV8hKld71rZa
+         gNYe9nTKEZymee5tgFfm0/4eXp0bk1GeW8AIi6p+ZEb+WCCrEE6Hj559007Y+u3R2N20
+         Gg9myVnj1GoZXD8YVXLsqeBkVNTP2Ogqr9Wzdcyv0XjAa7AvNEokB97YeXPm/c6mzhbm
+         67ulgtL1Bb35DMqR1F2MrxpTV8fJAXmi1gMOuxEJJ9cuzxUdYcoym7aAB6AeQuwOtRn+
+         nKZg==
+X-Gm-Message-State: AOJu0YywiqxQkKJWAgHPTVqL/hqrVGNQhhU+Avksk/rWTbYppIgAcj4C
+	j5+9RVRowPvpgnFIYnLH0jn0DL+3K9Et8mM9nxREjG2Krl7XwSvBSuHHa1rT0+0d5dpP1l090F8
+	M
+X-Google-Smtp-Source: AGHT+IHZyGxm7wwuRxV6fZ9ZYijhkkFE1PYR/OlTL3n5e3gRe1Py0XHlvrgo2WfVYbrXgbhK5OjyMQ==
+X-Received: by 2002:a05:690c:55c6:b0:6dd:c6a8:5778 with SMTP id 00721157ae682-6e245386765mr36266807b3.14.1727469955157;
+        Fri, 27 Sep 2024 13:45:55 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e400f009sm610712276.17.2024.09.27.13.45.52
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e24530a961sm4207717b3.36.2024.09.27.13.45.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 13:45:52 -0700 (PDT)
+        Fri, 27 Sep 2024 13:45:54 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-fsdevel@vger.kernel.org,
 	amir73il@gmail.com,
 	miklos@szeredi.hu,
 	kernel-team@fb.com
 Cc: Joanne Koong <joannelkoong@gmail.com>
-Subject: [PATCH v3 08/10] fuse: use the folio based vmstat helpers
-Date: Fri, 27 Sep 2024 16:44:59 -0400
-Message-ID: <f2a67dd4c204b7de69d9c765c5c33857d1b2654f.1727469663.git.josef@toxicpanda.com>
+Subject: [PATCH v3 09/10] fuse: convert fuse_retrieve to use folios
+Date: Fri, 27 Sep 2024 16:45:00 -0400
+Message-ID: <5b0e4f2c48a04d66dfe70f8228b05ebc53be6a00.1727469663.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1727469663.git.josef@toxicpanda.com>
 References: <cover.1727469663.git.josef@toxicpanda.com>
@@ -87,75 +87,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In order to make it easier to switch to folios in the fuse_args_pages
-update the places where we update the vmstat counters for writeback to
-use the folio related helpers.  On the inc side this is easy as we
-already have the folio, on the dec side we have to page_folio() the
-pages for now.
+We're just looking for pages in a mapping, use a folio and the folio
+lookup function directly instead of using the page helper.
 
 Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/fuse/file.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ fs/fuse/dev.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index e02093fe539a..4c6eb724212d 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1794,12 +1794,12 @@ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
- 	kfree(wpa);
- }
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 1f64ae6d7a69..4c58113eb6a1 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1756,15 +1756,15 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
+ 	index = outarg->offset >> PAGE_SHIFT;
  
--static void fuse_writepage_finish_stat(struct inode *inode, struct page *page)
-+static void fuse_writepage_finish_stat(struct inode *inode, struct folio *folio)
- {
- 	struct backing_dev_info *bdi = inode_to_bdi(inode);
+ 	while (num && ap->num_pages < num_pages) {
+-		struct page *page;
++		struct folio *folio;
+ 		unsigned int this_num;
  
- 	dec_wb_stat(&bdi->wb, WB_WRITEBACK);
--	dec_node_page_state(page, NR_WRITEBACK_TEMP);
-+	node_stat_sub_folio(folio, NR_WRITEBACK_TEMP);
- 	wb_writeout_inc(&bdi->wb);
- }
+-		page = find_get_page(mapping, index);
+-		if (!page)
++		folio = __filemap_get_folio(mapping, index, 0, 0);
++		if (IS_ERR(folio))
+ 			break;
  
-@@ -1811,7 +1811,7 @@ static void fuse_writepage_finish(struct fuse_writepage_args *wpa)
- 	int i;
- 
- 	for (i = 0; i < ap->num_pages; i++)
--		fuse_writepage_finish_stat(inode, ap->pages[i]);
-+		fuse_writepage_finish_stat(inode, page_folio(ap->pages[i]));
- 
- 	wake_up(&fi->page_waitq);
- }
-@@ -1866,7 +1866,8 @@ __acquires(fi->lock)
- 	for (aux = wpa->next; aux; aux = next) {
- 		next = aux->next;
- 		aux->next = NULL;
--		fuse_writepage_finish_stat(aux->inode, aux->ia.ap.pages[0]);
-+		fuse_writepage_finish_stat(aux->inode,
-+					   page_folio(aux->ia.ap.pages[0]));
- 		fuse_writepage_free(aux);
- 	}
- 
-@@ -2086,7 +2087,7 @@ static void fuse_writepage_args_page_fill(struct fuse_writepage_args *wpa, struc
- 	ap->descs[page_index].length = PAGE_SIZE;
- 
- 	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
--	inc_node_page_state(&tmp_folio->page, NR_WRITEBACK_TEMP);
-+	node_stat_add_folio(tmp_folio, NR_WRITEBACK_TEMP);
- }
- 
- static struct fuse_writepage_args *fuse_writepage_args_setup(struct folio *folio,
-@@ -2260,7 +2261,8 @@ static bool fuse_writepage_add(struct fuse_writepage_args *new_wpa,
- 	spin_unlock(&fi->lock);
- 
- 	if (tmp) {
--		fuse_writepage_finish_stat(new_wpa->inode, new_ap->pages[0]);
-+		fuse_writepage_finish_stat(new_wpa->inode,
-+					   page_folio(new_ap->pages[0]));
- 		fuse_writepage_free(new_wpa);
- 	}
- 
+ 		this_num = min_t(unsigned, num, PAGE_SIZE - offset);
+-		ap->pages[ap->num_pages] = page;
++		ap->pages[ap->num_pages] = &folio->page;
+ 		ap->descs[ap->num_pages].offset = offset;
+ 		ap->descs[ap->num_pages].length = this_num;
+ 		ap->num_pages++;
 -- 
 2.43.0
 
