@@ -1,108 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-30226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65B8987FEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 10:01:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AC9987FFC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 10:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C781C21811
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 08:01:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B96C42829E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 08:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FB917A918;
-	Fri, 27 Sep 2024 08:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C8D1898F7;
+	Fri, 27 Sep 2024 08:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XdamcXhh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaAIXMic"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2078475
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 08:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A4F188CB7;
+	Fri, 27 Sep 2024 08:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727424088; cv=none; b=KTbH2rYTNEsklLRENJ02L+5h1SbR+aSwnHY7Wx9/iaYHBaoXBEsDMeIixSgm5Qj332my7+bP/gTWI7+elzE8XP2ua5aFx3ci8sxpG250rs/xthwPOdo8c/O8cbmWi+mgiuwiIt2Vc4Xxihnz3SSIzCBBDGm4W2/LFniSJ21pwSA=
+	t=1727424365; cv=none; b=qPCl7zYfDTxdMNqYt5TiXbxOnhNiU1leP+L5ANK9L0RnhVhpFIgZMM+0aBnuzO4KndZ4baX+B5d4Blz3agLsNofS6ywPaI8j10TSVtG7FZJlGSdE0ES3mE8c6yfqD3kAxYT3SxTa1xCxcxp7qJwDsFfZzy1NPxavpu4BQMnGxlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727424088; c=relaxed/simple;
-	bh=Bz65efZunOsddqTWVpmN1jChR7h+KsKVxHwcbnAgBxg=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=FS1+UbUdFYpQ+RClaBSZ+Jr4QFo5ra/WWax2xfNqzb+heG1RZuGRMsfOkD8BR7cOEM8ZCU+22luOG2XbCjpwcPavPyqDtab4YuK2WOMaXfJ4eRIhMz63xDpH9aYYySGiCvBwuT2ho6zXCWFPAM+DbR1CdBi6Sn4mCGHDAxcoyis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XdamcXhh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727424085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aloVGHaDt2hYSL7SSw030vx7EurptsAcbaQDTmCFtRM=;
-	b=XdamcXhh0BUJbOdy3kSbescWg+7g12d8x67/eiIlnE6P07HqqxbwIYj/lF4cRRu2BiQr/3
-	s6gz7KWqcxCmHY5+n3BVY8ArL0Gw+GnmiBuNdWR6T0a8KvBQBT2dEvN8dTmyzBPHmqc0QV
-	Orq3vCC/+DRPNbuiccIxNUUjplDUHgI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-_RuhlAuwMJqMkVne5ocjtQ-1; Fri,
- 27 Sep 2024 04:01:23 -0400
-X-MC-Unique: _RuhlAuwMJqMkVne5ocjtQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 02C381902F55;
-	Fri, 27 Sep 2024 08:01:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5A453195605A;
-	Fri, 27 Sep 2024 08:01:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240926174043.GA2166429@unreal>
-References: <20240926174043.GA2166429@unreal> <20240913-vfs-netfs-39ef6f974061@brauner>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs netfs
+	s=arc-20240116; t=1727424365; c=relaxed/simple;
+	bh=KjsjOpufVwVtvtG9C4bCus2/XmKmDXOmFJWmSRq/BY0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sVECCzO6ZT6P5v8TGkhZAg9Lv4sJKFjSsN6wTrxv98//XX39N3/DR6pvlNvDxzDea0KVrkjtrDZM+qDlf9hw0F1HXCXjOWVh2JfEVbu6YNLZJjEf5KmUNs93NwGgLiy+pzb2+v1gzNm9x9eBcUIEJrgsQpfkJ1fcJ0RObzps/iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaAIXMic; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8945C4CEC4;
+	Fri, 27 Sep 2024 08:06:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727424364;
+	bh=KjsjOpufVwVtvtG9C4bCus2/XmKmDXOmFJWmSRq/BY0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HaAIXMict1VrTe7i8TwVZ5W3EQ/WTegi8/OHOEkwPr173UnrLezn4mPejbmDGj2Va
+	 JzClZWAAEFXfx5vFVFkjx+3Bkn30tc+SssdrENLR5FslHOsVouXCdLzMO+adoH9tnc
+	 zkXNylEWRwKw5LUIOdH0peE5GHb2oq7StB/T/R1ZqX2rjLg3gyt73TQdT9CGlK1e1y
+	 +0R1PmoplUYpYy45bYv/DHBqbVebHLvqJ+Zj3yrLJO2EGsPMgBdMR6uK6DZ+/mXWG2
+	 BnuUyJDVL64zGvygjtGlvBwmLB3O/DZn15DHVuse1YXw/gPPN/DLf8Erpw19GuMUJ6
+	 BIWbB7FwYdy7Q==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Markus Suvanto <markus.suvanto@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Marc Dionne <marc.dionne@auristor.com>
+Subject: Re: (subset) [PATCH 5/8] afs: Fix possible infinite loop with unresponsive servers
+Date: Fri, 27 Sep 2024 10:05:44 +0200
+Message-ID: <20240927-raunt-gekrochen-aa4fd2c2e59b@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240923150756.902363-6-dhowells@redhat.com>
+References: <20240923150756.902363-1-dhowells@redhat.com> <20240923150756.902363-6-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2238232.1727424079.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Sep 2024 09:01:19 +0100
-Message-ID: <2238233.1727424079@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1319; i=brauner@kernel.org; h=from:subject:message-id; bh=KjsjOpufVwVtvtG9C4bCus2/XmKmDXOmFJWmSRq/BY0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR9S0+55/AnN86X/6qh8Jnw2/fN3txs/vdb88Csxor51 h0HFWpKOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCv4SR4f4hM23PS4ZOM4SW /uIJzdp91vHK3XmrQzc7J2s8lPYT0GT4Z2t0NERa9/mHUpZlb9KM7mza0TV9pafR+8KMuYvUDR4 GMAEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Leon Romanovsky <leon@kernel.org> wrote:
+On Mon, 23 Sep 2024 16:07:49 +0100, David Howells wrote:
+> A return code of 0 from afs_wait_for_one_fs_probe is an indication
+> that the endpoint state attached to the operation is stale and has
+> been superseded.  In that case the iteration needs to be restarted
+> so that the newer probe result state gets used.
+> 
+> Failure to do so can result in an tight infinite loop around the
+> iterate_address label, where all addresses are thought to be responsive
+> and have been tried, with nothing to refresh the endpoint state.
+> 
+> [...]
 
-> Do you have fixes for the following issues reported for series?
-> https://lore.kernel.org/all/20240923183432.1876750-1-chantr4@gmail.com/
-> https://lore.kernel.org/all/4b5621958a758da830c1cf09c6f6893aed371f9d.cam=
-el@gmail.com/
-> https://lore.kernel.org/all/20240924094809.GA1182241@unreal/
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-I'm working on a fix for the third one at the moment, I think it's the rea=
-d
-version of the write fix I posted previously:
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-	https://lore.kernel.org/linux-fsdevel/2050099.1727359110@warthog.procyon.=
-org.uk/
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-I'm looking to see if I can make a general solution that abstracts out the
-buffer handling for both as we're early in the cycle.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-I haven't looked at the first two yet.  I was in the middle of testing 9p =
-when
-I hit the write-side bug that cifs was also seeing (ie. the url above).
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-David
-
+[5/8] afs: Fix possible infinite loop with unresponsive servers
+      https://git.kernel.org/vfs/vfs/c/6e45740867ee
 
