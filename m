@@ -1,94 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-30242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3592E988349
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 13:27:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA4A9883D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 14:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE0E8281365
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 11:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4AD1F2133F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 12:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9670189909;
-	Fri, 27 Sep 2024 11:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851E818B474;
+	Fri, 27 Sep 2024 12:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGTSznEq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HreBdGkz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251AE188CA8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 11:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3CF61FCE;
+	Fri, 27 Sep 2024 12:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727436431; cv=none; b=eI4JREu4nUx9mvKNl7Ic2R8EpUgHvY6RQ8EZpdYoEZzWtYrlxIc2b7nIdnNWIU37NqU9MnAp141XhP7DNvVgTYrTSjFs5o+dpwEOQ2i/jfya//eikEweGxdOa7I2knG5pft8Vf45A4gK9LgkkUsPSgX3A5NHe4ormFWZbW+JEkY=
+	t=1727438602; cv=none; b=SPhwq6iBw7A5AHJSVJC+R1ouwFoMD7Zc9O/9iT+ErDs4yMG4IW8X0vkqpHMwfZp2YYU743kmsj7eFToHXN/EOXySI26XS4jAI0gsdBgYwkHnQs5sOED+pTn1dRKdYRClcRqeKTnfd6xoO+G4IGm9631p1X41zL2alGQrfImm0Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727436431; c=relaxed/simple;
-	bh=S5VTyUkNaRGFGvv8OSg0WlPkUVDHtifzA3PJbFFkMDQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fh28uyLi+ZVd1FyRkLEs7sq1NLT6ZAEAp37BuHdlqz6Mc8iOEqNZHShm8F1tQswkz5gSfE+QsOLt1FlDjVAHu0btQp0n8wXeuNzuHa1LbjYnrWzU2veU2/7hcSKTAttPCmHkgPnpYfZLaKwTLcEhSybtBPoB6ZeK7beEHa2hyXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGTSznEq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA378C4CEC4;
-	Fri, 27 Sep 2024 11:27:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727436430;
-	bh=S5VTyUkNaRGFGvv8OSg0WlPkUVDHtifzA3PJbFFkMDQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XGTSznEqbNJU7FWhJRpvEinVO+8yJSzH4VxRq4Q+SSTWTtq7IPOpi+a/wHmGI87a7
-	 ET+Sw9FVydyU5OjBq1Wcca2lsOJhZjMNtqbPdAXieQqk7iNB7AtfazzXTX+4it/fkv
-	 uynyQkfxKc6jrOXTG/Apt/8sUe5++3ztSdj1bWopeWXo4kL3Of1bqA1iph1bWVH7op
-	 OjCXzTZeeN/zAFNteHrrMYFnsQfnj5BD3a4QpqsU7eFzjh9gkmAWlP1E6fp6kn//cx
-	 n2eBYr+HI8etspnRzE2A6zoo57BqyyROjZXtEXcF8tW3HbRiamPAe7gJvGlTXZ6YiX
-	 72d8IH5RqIZpA==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Julian Sun <sunjunchao2870@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	hch@lst.de
-Subject: Re: [PATCH v2] vfs: return -EOVERFLOW in generic_remap_checks() when overflow check fails
-Date: Fri, 27 Sep 2024 13:27:01 +0200
-Message-ID: <20240927-eilte-willkommen-36601271c983@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240927065325.2628648-1-sunjunchao2870@gmail.com>
-References: <20240927065325.2628648-1-sunjunchao2870@gmail.com>
+	s=arc-20240116; t=1727438602; c=relaxed/simple;
+	bh=UrWY7OTU1UoGyyUUzsqFBb1AIuPIeooFBg78qnJeh8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EZCTL8+/nE9VRFAaeAOSJ0A/ksSEQuS+ldYT+hPXyTDKEG8CdMCP2nP3YhYEF29jkWequADTGfK07L/NyaCrnmdnXfMWKNke8klBb3eZsbIz0FiyxmoL7zxLxKQIEw5V/p/jnRP/dCfEWpET8M6z1uFRsjm8yRz5pUHjfXGUgpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HreBdGkz; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a99e8d5df1so186465085a.2;
+        Fri, 27 Sep 2024 05:03:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727438599; x=1728043399; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ien4lPw09mlafs2YgqQEs4Jx+N6Q89EVx3qb97kHkOw=;
+        b=HreBdGkzG9BxLONh5m29gb8BxV2VNFvXuNmPmTnNRBwTiyJHgDiOn0PrrM/V5iKBT3
+         HXGbOagsYqcA7a1CmsNFYmujx5D+7HZ8/rK4ILwiX1uw/5hICbGQsFXMqZCEaevpdd6J
+         UOo5oMD7gdj+XL07UBf8iRfM28T8L5e6IuR2MVLmnwJDB6xwYEBO28vY0VtlvL5AvLgb
+         ou+mWBJqI2E2zPhS26n0Mjr0FckUh0B29rX/hX+WygHg85oblja2yViHwmg49DRlnNBn
+         Ftk9zL9zBFd/0CrpWehXkfQf/d0e5w7pBfV9xrcOFWK6meXrFslo6M2ZQNQ0zFRAQFyc
+         5DBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727438599; x=1728043399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ien4lPw09mlafs2YgqQEs4Jx+N6Q89EVx3qb97kHkOw=;
+        b=qBq3I/u2YrxF638sALN3mspzKEbegB5YDcHgvJhfoJPSQH+mrPMILsYEhK5iMnUh9N
+         g8aUfNA1c7bknzdSTRdeWcqw1KnKHjWp25W3TOj868xRU5JFaZtkrpD34cckmeh3O/Gn
+         FrmzX2dwyp3hd9XfhrW9kHk97EpvObFuu8C3zy4zmHtBalYT09c9pJY6wIPtriZhygvA
+         LqMx5+GMn6B++AX7gGcaO+tlKVyocvG/EYfsdtCxwf3argKEhIhrkNFpGKBQLcVgyQR+
+         puhCPrXfCOC4Kwxzr/9m7MBswJmZWCmU2uFIuII6i1RpDlm6e1lqj2EVPbeVBu8Gczb7
+         nNHA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6r9GPhy2L+dhxKM2eKqYd2wQyFB2MZGrC2rZEnBw1p227OlvAd1ZWaxViDDsSUTuGsKd0M0qiTqmlSzXe@vger.kernel.org, AJvYcCUWWEMbUjBDe3tFOzrFTWM6/VnHuyzOQr648zRhwWa+R7bxy/iIcdUImSAx2kmZhDx+A7kzVOgwbzH/lENV7w==@vger.kernel.org, AJvYcCVs36w/ExU/TvogSQRl1Kz5H/SHGrhVQMehDsajXLKPBYm+xux7+8Wz13gXOrvgVtIbNJCRfWspz1B4B0zW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNF7iwv/3h5AqKC8f16XePngknIMT/q/yCjBowlHLd70X1MMTs
+	x58ImFInMqDyk+TwXlzAWChNYu66K1/MG9u5dND2qc0q8raWpW3vjDcGjt17q1s/23o7AiJuWFo
+	CW1TdCxOdp3+4oanrpjMkbwoHAg0=
+X-Google-Smtp-Source: AGHT+IEvoF9mwgTLcAuSVa+Xp4oXZXGcBCFvJyQtw2z10Ya7vZXTvtIti1wQJGe6WjK5yS0GELWoZ/ad/HEfri7pN6Q=
+X-Received: by 2002:a05:620a:1a18:b0:7ac:de4d:9129 with SMTP id
+ af79cd13be357-7ae3785918fmr452213985a.31.1727438599209; Fri, 27 Sep 2024
+ 05:03:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1083; i=brauner@kernel.org; h=from:subject:message-id; bh=S5VTyUkNaRGFGvv8OSg0WlPkUVDHtifzA3PJbFFkMDQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR9m9b+cvbJlHSdvZptQlJbN7hwOb2Y6tOg3sZ5c2/Nu fN98X1LO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSto7hn57SlQuNt/OCt9md mPG/8MZcnsqIfKeM7X6Rk0PXCjLVlzAyXNo7TfZx5iGtIvcziW5HWHyO6/rmma44EPZ7/68fZbz FjAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
+In-Reply-To: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 27 Sep 2024 14:03:07 +0200
+Message-ID: <CAOQ4uxhXbTZS3wmLibit-vP_3yQSC=p+qmBLxKkBHL1OgO5NBQ@mail.gmail.com>
+Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_llseek
+To: Leo Stone <leocstone@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com, 
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org, 
+	anupnewsmail@gmail.com, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="0000000000001467e7062318a4e2"
 
-On Fri, 27 Sep 2024 14:53:25 +0800, Julian Sun wrote:
-> Keep the errno value consistent with the equivalent check in
-> generic_copy_file_checks() that returns -EOVERFLOW, which feels like the
-> more appropriate value to return compared to the overly generic -EINVAL.
-> 
-> 
+--0000000000001467e7062318a4e2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Applied to the vfs.misc.v6.13 branch of the vfs/vfs.git tree.
-Patches in the vfs.misc.v6.13 branch should appear in linux-next soon.
+On Fri, Sep 27, 2024 at 9:10=E2=80=AFAM Leo Stone <leocstone@gmail.com> wro=
+te:
+>
+> Add a check to avoid using an invalid pointer if ovl_open_realfile fails.
+>
+> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.g=
+it master
+>
+> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> index 2b7a5a3a7a2f..67f75eeb1e51 100644
+> --- a/fs/overlayfs/file.c
+> +++ b/fs/overlayfs/file.c
+> @@ -117,7 +117,11 @@ static int ovl_real_fdget_meta(const struct file *fi=
+le, struct fd *real,
+>                 struct file *f =3D ovl_open_realfile(file, &realpath);
+>                 if (IS_ERR(f))
+>                         return PTR_ERR(f);
+> -               real->word =3D (unsigned long)ovl_open_realfile(file, &re=
+alpath) | FDPUT_FPUT;
+> +               f =3D ovl_open_realfile(file, &realpath);
+> +               if (IS_ERR(f))
+> +                       return PTR_ERR(f);
+> +               real->word =3D (unsigned long)f;
+> +               real->word |=3D FDPUT_FPUT;
+>                 return 0;
+>         }
+>
+>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+No, that's the wrong fix.
+There is a braino and a file leak in this code.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Linus,
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Could you apply this braino fix manually before releasing rc1.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc.v6.13
+Thanks,
+Amir.
 
-[1/1] vfs: return -EOVERFLOW in generic_remap_checks() when overflow check fails
-      https://git.kernel.org/vfs/vfs/c/53070eb468a2
+--0000000000001467e7062318a4e2
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-ovl-fix-file-leak-in-ovl_real_fdget_meta.patch"
+Content-Disposition: attachment; 
+	filename="0001-ovl-fix-file-leak-in-ovl_real_fdget_meta.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m1ko8gok0>
+X-Attachment-Id: f_m1ko8gok0
+
+RnJvbSA5OTRkNWE2MTg1NWRhMjc1MjkyNzgwYWY3Mjk0OGQ3MjA3MDI1ZWM4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
+YXRlOiBGcmksIDI3IFNlcCAyMDI0IDEzOjU0OjIzICswMjAwClN1YmplY3Q6IFtQQVRDSF0gb3Zs
+OiBmaXggZmlsZSBsZWFrIGluIG92bF9yZWFsX2ZkZ2V0X21ldGEoKQoKb3ZsX29wZW5fcmVhbGZp
+bGUoKSBpcyB3cm9uZ2x5IGNhbGxlZCB0d2ljZSBhZnRlciBjb252ZXJzaW9uIHRvCm5ldyBzdHJ1
+Y3QgZmQuCgpGaXhlczogKCI4OGEyZjY0NjhkMDEgc3RydWN0IGZkOiByZXByZXNlbnRhdGlvbiBj
+aGFuZ2UiKQpSZXBvcnRlZC1ieTogc3l6Ym90K2Q5ZWZlYzk0ZGNiZmEwZGUxYzA3QHN5emthbGxl
+ci5hcHBzcG90bWFpbC5jb20KU2lnbmVkLW9mZi1ieTogQW1pciBHb2xkc3RlaW4gPGFtaXI3M2ls
+QGdtYWlsLmNvbT4KLS0tCiBmcy9vdmVybGF5ZnMvZmlsZS5jIHwgMiArLQogMSBmaWxlIGNoYW5n
+ZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZnMvb3Zlcmxh
+eWZzL2ZpbGUuYyBiL2ZzL292ZXJsYXlmcy9maWxlLmMKaW5kZXggMmI3YTVhM2E3YTJmLi40NTA0
+NDkzYjIwYmUgMTAwNjQ0Ci0tLSBhL2ZzL292ZXJsYXlmcy9maWxlLmMKKysrIGIvZnMvb3Zlcmxh
+eWZzL2ZpbGUuYwpAQCAtMTE3LDcgKzExNyw3IEBAIHN0YXRpYyBpbnQgb3ZsX3JlYWxfZmRnZXRf
+bWV0YShjb25zdCBzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IGZkICpyZWFsLAogCQlzdHJ1Y3Qg
+ZmlsZSAqZiA9IG92bF9vcGVuX3JlYWxmaWxlKGZpbGUsICZyZWFscGF0aCk7CiAJCWlmIChJU19F
+UlIoZikpCiAJCQlyZXR1cm4gUFRSX0VSUihmKTsKLQkJcmVhbC0+d29yZCA9ICh1bnNpZ25lZCBs
+b25nKW92bF9vcGVuX3JlYWxmaWxlKGZpbGUsICZyZWFscGF0aCkgfCBGRFBVVF9GUFVUOworCQly
+ZWFsLT53b3JkID0gKHVuc2lnbmVkIGxvbmcpZiB8IEZEUFVUX0ZQVVQ7CiAJCXJldHVybiAwOwog
+CX0KIAotLSAKMi4zNC4xCgo=
+--0000000000001467e7062318a4e2--
 
