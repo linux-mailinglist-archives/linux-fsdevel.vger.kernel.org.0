@@ -1,223 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-30249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD95098869A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 15:59:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8FF9886AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 16:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D36B1F21157
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 13:59:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEE2E1C22FCB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 14:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885B01BF333;
-	Fri, 27 Sep 2024 13:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6767132464;
+	Fri, 27 Sep 2024 14:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bK7q693o"
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="YLIExtAS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mt+Z0Npn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D41714B948;
-	Fri, 27 Sep 2024 13:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C787081727;
+	Fri, 27 Sep 2024 14:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727445566; cv=none; b=RSlmvIFIjOAZKjNzle+/UNXGVeM/IBgP/T7Kbj/37mwcO+VJ36CHRwFK/Z3Rck8q9qztZ3HsmRYO1S/g+b2h9CJ3Qk/HZs4QS1OuJOtYYKdVm/53avdTFt/ZAspYcD11SlPl0HbtUhaDpVazhmYg4L/whUv5K8igthAGlUEzLYc=
+	t=1727446047; cv=none; b=HVbK8ALtc1c/ECdBeAhW8dEQezYvISowoSyL+gIZ3d0iPeXnPYMki22FCGORRMyjLLa5YOBTf5YwJtsL2N52ysNUFw6KFajSpVCoswYhhj3x77R+EjNwVqO7oIVsfbZx+mDXtlfd35uX7DbE61F5gZnMhB7PD+CeeaWryJqA1P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727445566; c=relaxed/simple;
-	bh=QOO7bM3BxCld4I7w3SKm6fR/fATGrMJwlKz/o5jA1dg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lTBPyMrnAjrWywZE5ufgaRlvHTv5SpODsetGoVCf4zhI/HwEK31kAcD0X0PcblasTaha0xIGMAma/xIce5n8HFjkRLu227866u2KPYk2C2TqMix9Ihtzg7QRjepkPrMjUiJWMJQ8bBJhJx4NSYC7KFHeEdjOw25XoVN8Y3Bx5Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bK7q693o; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a9b049251eso153576885a.2;
-        Fri, 27 Sep 2024 06:59:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727445563; x=1728050363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QC84xRtiM2EHhYrzttd5edITO3mZ2UNQ01fEBAONKVQ=;
-        b=bK7q693ouekQujBCcFqmxt8HIM8QNa/Loa6jqvsc7W4AO1GwEi+yp1c5iuGzPB9q+T
-         yHjI3k+wlBg9fWf4m0wqreAcH5wJlVzkXseSJo3oIEyBnSb9Bb0zTEiAaky22PTtTrNP
-         kamSNAHecJu8EcnvIpFzNLOPrKvpDa6nyDXW6lgBp0k69SB7bCiHpdZjHFQYujUNYLS9
-         rczeNoDQYa0qEmSSaUfmYMcczdvxueBlosXUyemU42oVGNZ2RCugRfWhm0FzufP8LePR
-         B8/X4ZzwsKqqIJ8HqaAWrUj0kCn/CDustdBAIpGCuXK8Xj5Xk+L7atTiZtCSDeCS0/A1
-         PFkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727445563; x=1728050363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QC84xRtiM2EHhYrzttd5edITO3mZ2UNQ01fEBAONKVQ=;
-        b=GemfiTCXKYdD3GnzTqTKhlSCnabIWKYh9PiDIFpesHYsb3JdIfX2BTxvbqQ/HPMuKP
-         WPBapqzV6/T2AT8ufdTMG5f3BfXNvVF4v+KFpSGwNwMneO3E9CAOMlCIrfv8JcxllaIA
-         kRbGvf5dbhRH3E9IlxcJu/rht+SD2dDcHynmHG4lrTPQcmWaKlZ6s8iAjqyBPSqIPeU1
-         95YqJSu9c7zsKlReuZZqywhpo68U70m+mjLSnPHuXKxNCEOBfmVkqnZveUd9r9g4pYtR
-         KEE+rMiqvIIGj/KdbMfz1De+LgErZSPldDrwFyS+phgojyhqgCUHur+oqfWGq6GE//X2
-         JMdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSNWCONh3RaNa6z6I5i3QR+ueX8C55NSvh5wXaDUvyfTTd9U/1BUk/pEB5VslGNeoQoQvRlfhV/e+SacHX@vger.kernel.org, AJvYcCV38WOiiep18i5bRVlk1kkuxci3YMAq7tDCrjSj9hWozpUezC/KX7piaS8rKAOwE7v77JyEKLYKmr1/NVD/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVkZj1wOUIAhMdFrT0GLT22fEDYx2LcZqAtmU7DqrAn90JlohF
-	P0wppWbXt03cPfHjsdpymmxliuJ0iCOwWPh/gW/qxqD0+bug60aF+pQH1S/ODYBmTJPoKIqAt23
-	wzsTUpVYAjCrZRPOnwsHteyStsME=
-X-Google-Smtp-Source: AGHT+IEGgVbTI6rRNCD7pZtEj3ilFW9TedoUVleeLwkzfoBUcEEbG6RX5Mm1endL3sQDchKRXHWEoacW+QnTOAjyn1c=
-X-Received: by 2002:a05:620a:462b:b0:7a2:32e:3c40 with SMTP id
- af79cd13be357-7ae37825ff7mr458844585a.10.1727445563058; Fri, 27 Sep 2024
- 06:59:23 -0700 (PDT)
+	s=arc-20240116; t=1727446047; c=relaxed/simple;
+	bh=+my4i+PV2U51waZhPAUIE9prTED9WJKWUkcEfP0xVPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGSSdgXfj8lt44ukq9YQHPEiFpeWXwuXmlz5bxncJcwnHOk7v9ORaRsn+WELsz5vRId7MLEugZq1F3KCvRFWS8+XXe8HkPXvLwS8YLgFM9kFy8dKMDineeiAmaDkTL62RlTqxqCSCI0cuyXoY4fcAbWW5Fztx4svW3ezghc9z8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=YLIExtAS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Mt+Z0Npn; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id C41B81380162;
+	Fri, 27 Sep 2024 10:07:23 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Fri, 27 Sep 2024 10:07:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727446043; x=1727532443; bh=reEuEofoIX
+	50Jk9+XfJrwD0MRSP6hIoJJ1tb5DJ8T7Y=; b=YLIExtASxjMsLzAQVgJU9JmOsc
+	/FBDk20AQOHIbQA7l7q9wC4SvNTwE1yR1a3+uMTjCsEuR9eRGZ7PD3HjlG57wM7f
+	G2E3CNdhbx0h1HB6sq699XOXVA5eH4LbBpwGxQ4HZXDR3uKH44/6hCo3+L9DsZt9
+	UBqkFKV0lHuNX7EgQQf7MeK8WxU0uOjKUiCjr1fwnm8iGHUk+EVa1jPQJ/aAKsLX
+	BiIBXbiO0P2Fu+s4XuSdoRa2hffg2Z616fMs+EV44vJIFwsaAFLdUd2iy8ofFshD
+	xvSH/qsG5VuqbM8wu5+dMYAE3GKh/mBY10xVMNo0ayxm5PKHFpS4KJ6JiQjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727446043; x=1727532443; bh=reEuEofoIX50Jk9+XfJrwD0MRSP6
+	hIoJJ1tb5DJ8T7Y=; b=Mt+Z0Npn8iF9AEDWPT/DMESvRfJ6Vow6mC1kB0zqM5zN
+	9krzJvPSFtaWibAFAbrc/ifWXfGCsi4F4PAyCUkK7lLDbsPgLhyZA/sutqm4WL7B
+	5MAYhe92No5bG6skcJq7vv9ctRs1+04EhLJZ7eQvbGMBJ0VFHQRnUgmWpKQRk8N4
+	Pr5GK/5BM4HZ4Z0Kl7/E2fnVtrRVGNJG2JszaEZBqMeDCb9yTIU/l9t+s8CJm9wR
+	Q8af6Q1UBBzZllHKNPst8J2RY48lgi5nIGnuJ1Srt7BHi+QqolFgZ2zoyZsCH6tW
+	/T5V4ghJW9a1effr3R+hOmEJ4ywaycEu20MTFpcLIw==
+X-ME-Sender: <xms:Grz2ZlqGIvXlpRo9uUAW4OPreujmx493hsSqmz_8xn947VvyVTfdpg>
+    <xme:Grz2ZnosVpMV3AsEwWt5zEphIMSFJWmwkltr_4iLYNYrSgltG4Pnjt0CLEU67CJWG
+    EcnXxeEoTN8NTCKIZ4>
+X-ME-Received: <xmr:Grz2ZiPkfuvFKo82vsv4_AyjlndDEj4Y5KtcqadjzH5S0P-ZSN_Qiq1gwPZMJuozrpZg9EiTMmMLNgifpyAe5d8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledgjedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepvfihtghhohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrph
+    hiiiiirgeqnecuggftrfgrthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifedu
+    leegjedutdefffetkeelhfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhiiiiirgdpnhgspghrtghp
+    thhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegvsghivgguvghrmh
+    esgihmihhsshhiohhnrdgtohhmpdhrtghpthhtoheptgihphhhrghrsegthihphhgrrhdr
+    tghomhdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgr
+    tghksehsuhhsvgdrtgiipdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhhu
+    tghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegrlhgvgidrrghrih
+    hnghesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:Grz2Zg4BJjWdY2Yh5cV6xInhNtB0zxrdpiicIQLMG5HDCyvav2WUjg>
+    <xmx:Grz2Zk7LTB8wJrYWbGqAwdd7MrgceZCF6g1D1lBnY2VltB5Rgtg9FQ>
+    <xmx:Grz2ZohAKeO1p7tkMNLKMEgTuWmtDHxLZt86Yiu0gglgqVEghqfO7Q>
+    <xmx:Grz2Zm47iKhCqT0JlVDoNgtu6xHXu4AxRaNwZAXuCdN-Bb7KNJUDsg>
+    <xmx:G7z2ZjSmQVDFIxhXt7zMHHjK-VylwIdSXZ9EJCeOfJIAkwlXvWgDiqCn>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 27 Sep 2024 10:07:21 -0400 (EDT)
+Date: Fri, 27 Sep 2024 08:07:20 -0600
+From: Tycho Andersen <tycho@tycho.pizza>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+Message-ID: <Zva8GEUv1Xj8SsLf@tycho.pizza>
+References: <20240924141001.116584-1-tycho@tycho.pizza>
+ <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+ <20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com>
+ <ZvR+k3D1KGALOIWt@tycho.pizza>
+ <878qvf17zl.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927102050.cfr4ovprdbgiicgk@quack3> <20240927133826.2037827-1-lizhi.xu@windriver.com>
-In-Reply-To: <20240927133826.2037827-1-lizhi.xu@windriver.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 27 Sep 2024 15:59:11 +0200
-Message-ID: <CAOQ4uxhrSSpPijzeuFWRZBrgZvEyk6aLK=q7fBz3rpiZcHZrvg@mail.gmail.com>
-Subject: Re: [PATCH V2] inotify: Fix possible deadlock in fsnotify_destroy_mark
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	phillip@squashfs.org.uk, squashfs-devel@lists.sourceforge.net, 
-	syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878qvf17zl.fsf@email.froward.int.ebiederm.org>
 
-On Fri, Sep 27, 2024 at 3:38=E2=80=AFPM Lizhi Xu <lizhi.xu@windriver.com> w=
-rote:
->
-> [Syzbot reported]
-> WARNING: possible circular locking dependency detected
-> 6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0 Not tainted
-> ------------------------------------------------------
-> kswapd0/78 is trying to acquire lock:
-> ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_group_loc=
-k include/linux/fsnotify_backend.h:270 [inline]
-> ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_destroy_m=
-ark+0x38/0x3c0 fs/notify/mark.c:578
->
-> but task is already holding lock:
-> ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:=
-6841 [inline]
-> ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vms=
-can.c:7223
->
-> which lock already depends on the new lock.
->
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #1 (fs_reclaim){+.+.}-{0:0}:
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
->        __fs_reclaim_acquire mm/page_alloc.c:3818 [inline]
->        fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3832
->        might_alloc include/linux/sched/mm.h:334 [inline]
->        slab_pre_alloc_hook mm/slub.c:3939 [inline]
->        slab_alloc_node mm/slub.c:4017 [inline]
->        kmem_cache_alloc_noprof+0x3d/0x2a0 mm/slub.c:4044
->        inotify_new_watch fs/notify/inotify/inotify_user.c:599 [inline]
->        inotify_update_watch fs/notify/inotify/inotify_user.c:647 [inline]
->        __do_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:786 [i=
-nline]
->        __se_sys_inotify_add_watch+0x72e/0x1070 fs/notify/inotify/inotify_=
-user.c:729
->        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->        entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> -> #0 (&group->mark_mutex){+.+.}-{3:3}:
->        check_prev_add kernel/locking/lockdep.c:3133 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3252 [inline]
->        validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
->        __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
->        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
->        fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
->        fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
->        fsnotify_destroy_marks+0x14a/0x660 fs/notify/mark.c:934
->        fsnotify_inoderemove include/linux/fsnotify.h:264 [inline]
->        dentry_unlink_inode+0x2e0/0x430 fs/dcache.c:403
->        __dentry_kill+0x20d/0x630 fs/dcache.c:610
->        shrink_kill+0xa9/0x2c0 fs/dcache.c:1055
->        shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1082
->        prune_dcache_sb+0x10f/0x180 fs/dcache.c:1163
->        super_cache_scan+0x34f/0x4b0 fs/super.c:221
->        do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
->        shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
->        shrink_one+0x43b/0x850 mm/vmscan.c:4815
->        shrink_many mm/vmscan.c:4876 [inline]
->        lru_gen_shrink_node mm/vmscan.c:4954 [inline]
->        shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
->        kswapd_shrink_node mm/vmscan.c:6762 [inline]
->        balance_pgdat mm/vmscan.c:6954 [inline]
->        kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
->        kthread+0x2f0/0x390 kernel/kthread.c:389
->        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> other info that might help us debug this:
->
->  Possible unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(fs_reclaim);
->                                lock(&group->mark_mutex);
->                                lock(fs_reclaim);
->   lock(&group->mark_mutex);
->
->  *** DEADLOCK ***
->
-> [Analysis]
-> The inotify_new_watch() call passes through GFP_KERNEL, use memalloc_nofs=
-_save/
-> memalloc_nofs_restore to make sure we don't end up with the fs reclaim de=
-pendency.
->
-> That any notification group needs to use NOFS allocations to be safe
-> against this race so we can just remove FSNOTIFY_GROUP_NOFS and
-> unconditionally do memalloc_nofs_save() in fsnotify_group_lock().
->
-> Reported-and-tested-by: syzbot+c679f13773f295d2da53@syzkaller.appspotmail=
-.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3Dc679f13773f295d2da53
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
-> V1 -> V2: remove FSNOTIFY_GROUP_NOFS in fsnotify_group_lock and unlock
->
->  fs/notify/inotify/inotify_user.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_ba=
-ckend.h
-> index 8be029bc50b1..7b0a2809fc2d 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -268,14 +268,12 @@ struct fsnotify_group {
->  static inline void fsnotify_group_lock(struct fsnotify_group *group)
->  {
->         mutex_lock(&group->mark_mutex);
-> -       if (group->flags & FSNOTIFY_GROUP_NOFS)
-> -               group->owner_flags =3D memalloc_nofs_save();
-> +       group->owner_flags =3D memalloc_nofs_save();
->  }
->
->  static inline void fsnotify_group_unlock(struct fsnotify_group *group)
->  {
-> -       if (group->flags & FSNOTIFY_GROUP_NOFS)
-> -               memalloc_nofs_restore(group->owner_flags);
-> +       memalloc_nofs_restore(group->owner_flags);
->         mutex_unlock(&group->mark_mutex);
->  }
->
+On Wed, Sep 25, 2024 at 09:09:18PM -0500, Eric W. Biederman wrote:
+> Tycho Andersen <tycho@tycho.pizza> writes:
+> 
+> > Yep, I did this for the test above, and it worked fine:
+> >
+> >         if (bprm->fdpath) {
+> >                 /*
+> >                  * If fdpath was set, execveat() made up a path that will
+> >                  * probably not be useful to admins running ps or similar.
+> >                  * Let's fix it up to be something reasonable.
+> >                  */
+> >                 struct path root;
+> >                 char *path, buf[1024];
+> >
+> >                 get_fs_root(current->fs, &root);
+> >                 path = __d_path(&bprm->file->f_path, &root, buf, sizeof(buf));
+> >
+> >                 __set_task_comm(me, kbasename(path), true);
+> >         } else {
+> >                 __set_task_comm(me, kbasename(bprm->filename), true);
+> >         }
+> >
+> > obviously we don't want a stack allocated buffer, but triggering on
+> > ->fdpath != NULL seems like the right thing, so we won't need a flag
+> > either.
+> >
+> > The question is: argv[0] or __d_path()?
+> 
+> You know.  I think we can just do:
+> 
+> 	BUILD_BUG_ON(DNAME_INLINE_LEN >= TASK_COMM_LEN);
+> 	__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
+> 
+> Barring cache misses that should be faster and more reliable than what
+> we currently have and produce the same output in all of the cases we
+> like, and produce better output in all of the cases that are a problem
+> today.
+> 
+> Does anyone see any problem with that?
 
-You missed several more instances of FSNOTIFY_GROUP_NOFS
-that need to be removed, and please also remove the definition of the
-flag as well as the nofs_marks_lock lockdep key that is no longer needed.
+Nice, this works great. We need to drop the BUILD_BUG_ON() since it is
+violated in today's tree, but I think this is safe to do anyway since
+__set_task_comm() does strscpy_pad(tsk->comm, buf, sizeof(tsk->comm)).
 
-Thanks,
-Amir.
+I will respin with this and dropping the flag.
+
+Tycho
 
