@@ -1,105 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-30272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5BD988B49
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 22:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34CD988B67
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 22:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516BB2813DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 20:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B8C1F217D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 20:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D05A1C2435;
-	Fri, 27 Sep 2024 20:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813DF1C2DC1;
+	Fri, 27 Sep 2024 20:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LFzzxslc"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="uNxL84I7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E822D381B1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 20:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C73179654
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 20:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727469096; cv=none; b=imGIVrNl1cTaE09VwjdaKVl0Z8cQZyq7UrKWx4B/ILU46WsHpjkF6HxPUN7+TA2a68fqgGW/OT/4N5YlaQ57MH5Qh/4YwqiEdIn2tziam7CFxHKoa3JrC9wKyxY++TVcplzNByPMs882jp93Ile03ojzK2mdXf6e2+lpPkXeoKQ=
+	t=1727469942; cv=none; b=iVn0o+EpzWjpaPFXSjiBqi2e7vtmx0988N7mFU6O415eVNjpxt9WZmeL2UKFG9oZkATZtMjbdLFZf0pG1HYs+Z2KafCkvCwIPZRyLb3rb96OAtzpsT1HNgn9fEtbuUf5GINw1jii8q/0dbla+6C0Fg1gq/RTVxtHw0hNeY3JtRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727469096; c=relaxed/simple;
-	bh=j9okCmyMMDKl1+WIsBb9/Jp2OC9bhokKiYD/X+kiE1E=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=o5+uRssra3wj34rLN/nzDrn7oA/aIPiFAdLsUj8qcwUUnVhN/5cSvBebtac+CmRrv6Fj8/nPfC1pQqwQpz3ciXIjw0lCLmVb2AzTzNs19+h+NmcNSaZ+LG/x1yRiwDIok4yLTIKQh6PvIi8GBsKzD4dV7+xI4vE9x4LRFH7gnu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LFzzxslc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727469093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o3rKtpAudpnbWXY9lBExbJgVRIH1wW0oKgKwXi+mu5I=;
-	b=LFzzxslcB2FcPpez/76cdhU9t0u/fYefGW5F3/bKwpeH43KPUELQ809DTLzUZGN9RiRf/T
-	sTksrU9NWz72q/C1s3MtFiCqWux++6PG8vzx0fDuKdBuAv12BFs94wOWY4Rt6F9EKYSlsU
-	KV0HRT+aRGaqZJZJzwGgKQOrgPXuX2o=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-tOllJRsfNWGB3_RsiNfh0g-1; Fri,
- 27 Sep 2024 16:31:32 -0400
-X-MC-Unique: tOllJRsfNWGB3_RsiNfh0g-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A6C981902727;
-	Fri, 27 Sep 2024 20:31:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 21CED1954B0E;
-	Fri, 27 Sep 2024 20:31:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240927163423.GG967758@unreal>
-References: <20240927163423.GG967758@unreal> <20240926174043.GA2166429@unreal> <20240913-vfs-netfs-39ef6f974061@brauner> <2238233.1727424079@warthog.procyon.org.uk>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs netfs
+	s=arc-20240116; t=1727469942; c=relaxed/simple;
+	bh=4JhMalXxkV77OEkgZZ354b7RdFkLZ6WDhxenoIXvgoE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=B1F+kvjAmfdx1qXK1Z3AUP0HnC/l2km/d/cfu6GV82i43KIFKwkvRVfojDJadQYn/GfN4Z8uNj3xxDe5Iyc11BDJA0YjnDW1T0ByzYzUHV/tMOa7jAqIoyMTe+jwi9PZfCumf3Tsm02hw7i0RdoeorUOVgufbxbQR9fIxO8EG4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=uNxL84I7; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6dbc5db8a31so20413997b3.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 13:45:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1727469939; x=1728074739; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u5c7tiy2UOWJDSyWap7g1Y7+4uM5/VKDGLfh8pE8TjA=;
+        b=uNxL84I7GYdAiLF97dYD78hlHJDBDB4muzZIbLo7sZJVpz0UEbwrxr5ThQy8NheUYT
+         D51yDby7m+lq7MNC3x1chKJxwye4iLtvLUB1T5+741mfcYaNjxsw8BtP8+wE3w6ELmU9
+         L4nSv4hl/zU2MDr0j5PppTEBO+E8dPMNaqB3qi0TfutHmOBvOXi6OLN6KrqVvmmzDA4y
+         /nzzTVosfh/flJgLq/ZzXYXsKrWSitcIoiGMMioSlC/nZKOV7ledYBFIjkpNn4HIy81n
+         0Ms+9O2udtobEoc+gS2rHUkjHj0xhT3NOHMeiyzL6rj5BHNjaBXu7mbxV762gyEpfLl5
+         kTIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727469939; x=1728074739;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u5c7tiy2UOWJDSyWap7g1Y7+4uM5/VKDGLfh8pE8TjA=;
+        b=ON5wGp0xn8NiXJFimwKm8i84ZrSAc90Xli1gMz0GqY5XFvyMLBnkvI4XXwYKw7CSR5
+         8qp06zKBbfLo8y8uCiSFhMvwItzZTlWU8vLHcwjBZ+cqtXdLxhosnKHewwS2MipLebYJ
+         x4frs6yS86qpuVdsA92B9vO+nK2H/1UBSoVCb6SQTPYckuVAejd4toc/FJC9r7yjghkY
+         DU1GKyJcZCcrk9Lh5rkD+Jf0Ikuq3UHBVA1R+KGC4HHlwakCvlh/RWGDrOwqDY858EFG
+         PnH36s+pZuYKbaSTmDfLYfEI4Ni536MPYVcjuva6V64cGQJeu6oTEttVrybrkslE/z08
+         LT4w==
+X-Gm-Message-State: AOJu0Yw/H370pI2aaCIJJKzzCnWFt0FE+d2/EqxJHHruaCsizcTPw4+n
+	u3if+cRQD/QBbe8G1QDGVk4wULCuEn4yLJk8iCZFSUYPuFTfrURFMzx+nCR0/cPX65UV7PXYesr
+	K
+X-Google-Smtp-Source: AGHT+IEtYmk/ftILLuXZpyN50gARemojLhsPvOLpbq+9xJnsi1oQRi1AjOkIZ9YxGP8Smz+zSrA2eg==
+X-Received: by 2002:a05:690c:668f:b0:6d5:7617:950e with SMTP id 00721157ae682-6e245386844mr41458117b3.18.1727469939279;
+        Fri, 27 Sep 2024 13:45:39 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2452f7c26sm4127847b3.11.2024.09.27.13.45.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 13:45:38 -0700 (PDT)
+From: Josef Bacik <josef@toxicpanda.com>
+To: linux-fsdevel@vger.kernel.org,
+	amir73il@gmail.com,
+	miklos@szeredi.hu,
+	kernel-team@fb.com
+Subject: [PATCH v3 00/10] fuse: folio conversions
+Date: Fri, 27 Sep 2024 16:44:51 -0400
+Message-ID: <cover.1727469663.git.josef@toxicpanda.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2631082.1727469088.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Sep 2024 21:31:28 +0100
-Message-ID: <2631083.1727469088@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
-Leon Romanovsky <leon@kernel.org> wrote:
+v2: https://lore.kernel.org/linux-fsdevel/cover.1724879414.git.josef@toxicpanda.com/
+v1: https://lore.kernel.org/linux-fsdevel/cover.1724791233.git.josef@toxicpanda.com/
 
-> I hope that you mean that we have plenty of time before the merge window=
- ends.
-> Otherwise, it will be very inconvenient to open official -next/-rc branc=
-hes,
-> based on -rc1, remembering to revert so many commits.
+v2->v3:
+- Discussions with Willy at Plumbers helped clarify expectations around large
+  folio usage, he had already converted the generic_perform_write to deal with
+  large folios, so I dropped the iomap conversion since it's a bit overkill for
+  FUSE's buffered use case.
+- Rebased onto linus + fuse/for-next.  I had to combine the branches because
+  fuse/for-next is behind linus and there are fixes from Jann and Willy that
+  aren't in the FUSE tree.
+- Pushed a new GH branch since I had to combine everything
+  https://github.com/josefbacik/linux/tree/fuse-folio-prep
 
-Yes, I'm aware of the time, thank you.
+v1->v2:
+- Fixed my fstests setup to use --nopassthrough so my code actually got tested
+  this time.
+- Fixed a bug where we double put on the folio in readpages, because previous
+  behavior was the reference was maintained until the endio, but
+  readahead_folio() drops the reference on the folio, so we need to not call put
+  in the endio anymore.
+- Fixed the IS_ERR inversion pointed out by Joanne.
+- Made the various adjustments pointed out by Willy.
+- Updated the Kconfig per hch's suggestion.
+- Pushed to my GH tree since there are dependencies to make it easier to see
+  what the code is https://github.com/josefbacik/linux/tree/fuse-iomap
 
-Can you please try the branch at:
+--- Original email ---
+Hello,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/=
-?h=3Dnetfs-fixes
+This is a prep series for my work to enable large folios on fuse.  It has two
+dependencies, one is Joanne's writeback clean patches
 
-see if it fixes your problem?  It runs through -g quick with 9p over TCP f=
-or
-me.
+https://lore.kernel.org/linux-fsdevel/20240826211908.75190-1-joannelkoong@gmail.com/
 
-David
+and an iomap patch to allow us to pass the file through the buffered write path
+
+https://lore.kernel.org/linux-fsdevel/7f55c7c32275004ba00cddf862d970e6e633f750.1724755651.git.josef@toxicpanda.com/
+
+I've run these through an fstests run with passthrough_hp --direct-io,
+everything looks good.
+
+The last remaining bit that needs to be made to use folios is the splice/pipe
+code, which I need to be a lot more careful about.  The next step is to plumb
+through the ability to handle large folios.  But this is a decent start and
+removes the bulk of FUSE's use of struct page, and is relatively safe and
+straightforward.  Thanks,
+
+Josef
+
+Josef Bacik (10):
+  fuse: convert readahead to use folios
+  fuse: convert fuse_send_write_pages to use folios
+  fuse: convert fuse_fill_write_pages to use folios
+  fuse: convert fuse_page_mkwrite to use folios
+  fuse: use kiocb_modified in buffered write path
+  fuse: convert fuse_do_readpage to use folios
+  fuse: convert fuse_writepage_need_send to take a folio
+  fuse: use the folio based vmstat helpers
+  fuse: convert fuse_retrieve to use folios
+  fuse: convert fuse_notify_store to use folios
+
+ fs/fuse/dev.c  |  38 ++++++------
+ fs/fuse/file.c | 163 ++++++++++++++++++++++++++++---------------------
+ 2 files changed, 116 insertions(+), 85 deletions(-)
+
+-- 
+2.43.0
 
 
