@@ -1,159 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-30243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA4A9883D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 14:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3139883DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 14:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4AD1F2133F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 12:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38071F212B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 12:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851E818B474;
-	Fri, 27 Sep 2024 12:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDF318BB8F;
+	Fri, 27 Sep 2024 12:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HreBdGkz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="097hUeN6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3CF61FCE;
-	Fri, 27 Sep 2024 12:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00FA61FCE
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 12:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727438602; cv=none; b=SPhwq6iBw7A5AHJSVJC+R1ouwFoMD7Zc9O/9iT+ErDs4yMG4IW8X0vkqpHMwfZp2YYU743kmsj7eFToHXN/EOXySI26XS4jAI0gsdBgYwkHnQs5sOED+pTn1dRKdYRClcRqeKTnfd6xoO+G4IGm9631p1X41zL2alGQrfImm0Os=
+	t=1727438669; cv=none; b=aNw9BArebPWp0M95Q8PxKJWoaUKnEUX01Z0q1hTviMnLuwvrg/SwcXn0/OSaK/GwHE+K5dExAZBuYA+XMnpu78m9Jj/1hfA0hAM/qjDwK47hbzH/ymdRNLM85VykrtrmKG4A2Py+WOuPpj8T9txRbuklOtWL9p9Ch6BmBWH9ZFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727438602; c=relaxed/simple;
-	bh=UrWY7OTU1UoGyyUUzsqFBb1AIuPIeooFBg78qnJeh8w=;
+	s=arc-20240116; t=1727438669; c=relaxed/simple;
+	bh=A52lZ6eit/IH20xPJbZ0ifh6fyqIylwhlAVPULjwrM8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EZCTL8+/nE9VRFAaeAOSJ0A/ksSEQuS+ldYT+hPXyTDKEG8CdMCP2nP3YhYEF29jkWequADTGfK07L/NyaCrnmdnXfMWKNke8klBb3eZsbIz0FiyxmoL7zxLxKQIEw5V/p/jnRP/dCfEWpET8M6z1uFRsjm8yRz5pUHjfXGUgpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HreBdGkz; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a99e8d5df1so186465085a.2;
-        Fri, 27 Sep 2024 05:03:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=QP1N0VVr37+cxzJTwR9ZxWvm3ZqCwwdAPLQycPn7Xjzoixdk7y+jIt1JwVXzwCJesvIXRf2Yiz248WrHF+M8Fl1LD+FmAGxyjv4BPV8XGdiiBRiltA5EeGeD1ZQ+Q0EfyFR/knQszQA0IqPX5JRdHInfyp2MZY7qINiSZHYZvnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=097hUeN6; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37cc9aeb01dso1298288f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 05:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727438599; x=1728043399; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ien4lPw09mlafs2YgqQEs4Jx+N6Q89EVx3qb97kHkOw=;
-        b=HreBdGkzG9BxLONh5m29gb8BxV2VNFvXuNmPmTnNRBwTiyJHgDiOn0PrrM/V5iKBT3
-         HXGbOagsYqcA7a1CmsNFYmujx5D+7HZ8/rK4ILwiX1uw/5hICbGQsFXMqZCEaevpdd6J
-         UOo5oMD7gdj+XL07UBf8iRfM28T8L5e6IuR2MVLmnwJDB6xwYEBO28vY0VtlvL5AvLgb
-         ou+mWBJqI2E2zPhS26n0Mjr0FckUh0B29rX/hX+WygHg85oblja2yViHwmg49DRlnNBn
-         Ftk9zL9zBFd/0CrpWehXkfQf/d0e5w7pBfV9xrcOFWK6meXrFslo6M2ZQNQ0zFRAQFyc
-         5DBQ==
+        d=google.com; s=20230601; t=1727438666; x=1728043466; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A52lZ6eit/IH20xPJbZ0ifh6fyqIylwhlAVPULjwrM8=;
+        b=097hUeN6Fwz5/BL43oDYO8p/1fifXuzVn7Mso1pxqMg/WbzJaigjzvHc90Tf0v1XRc
+         aOmdmBLaqJBV9u9K7cuC1AvCSOqZNP9Fr6vIBxF/Ubf5XCNqrHQH77mwanWhOj8HpMzO
+         a/POu5LZcImYnMDDwXgUUi7j9BGYcaNfKSLfodZiHNfDt/i3ofPOxhcBKvkJNHHUwha/
+         QNmPnUkazkbZCNO1OuIe1RvnVLS4+b8IK4BrDvCMv5xFOscPh7/GYkAONiddW1696Iww
+         jpne4UrtHqdi7TISYT6v/2a8qnyNDxYSCxjUB89HoYBbsy+4YBzwH6hB04VMJe6okZ5f
+         DzAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727438599; x=1728043399;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ien4lPw09mlafs2YgqQEs4Jx+N6Q89EVx3qb97kHkOw=;
-        b=qBq3I/u2YrxF638sALN3mspzKEbegB5YDcHgvJhfoJPSQH+mrPMILsYEhK5iMnUh9N
-         g8aUfNA1c7bknzdSTRdeWcqw1KnKHjWp25W3TOj868xRU5JFaZtkrpD34cckmeh3O/Gn
-         FrmzX2dwyp3hd9XfhrW9kHk97EpvObFuu8C3zy4zmHtBalYT09c9pJY6wIPtriZhygvA
-         LqMx5+GMn6B++AX7gGcaO+tlKVyocvG/EYfsdtCxwf3argKEhIhrkNFpGKBQLcVgyQR+
-         puhCPrXfCOC4Kwxzr/9m7MBswJmZWCmU2uFIuII6i1RpDlm6e1lqj2EVPbeVBu8Gczb7
-         nNHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6r9GPhy2L+dhxKM2eKqYd2wQyFB2MZGrC2rZEnBw1p227OlvAd1ZWaxViDDsSUTuGsKd0M0qiTqmlSzXe@vger.kernel.org, AJvYcCUWWEMbUjBDe3tFOzrFTWM6/VnHuyzOQr648zRhwWa+R7bxy/iIcdUImSAx2kmZhDx+A7kzVOgwbzH/lENV7w==@vger.kernel.org, AJvYcCVs36w/ExU/TvogSQRl1Kz5H/SHGrhVQMehDsajXLKPBYm+xux7+8Wz13gXOrvgVtIbNJCRfWspz1B4B0zW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNF7iwv/3h5AqKC8f16XePngknIMT/q/yCjBowlHLd70X1MMTs
-	x58ImFInMqDyk+TwXlzAWChNYu66K1/MG9u5dND2qc0q8raWpW3vjDcGjt17q1s/23o7AiJuWFo
-	CW1TdCxOdp3+4oanrpjMkbwoHAg0=
-X-Google-Smtp-Source: AGHT+IEvoF9mwgTLcAuSVa+Xp4oXZXGcBCFvJyQtw2z10Ya7vZXTvtIti1wQJGe6WjK5yS0GELWoZ/ad/HEfri7pN6Q=
-X-Received: by 2002:a05:620a:1a18:b0:7ac:de4d:9129 with SMTP id
- af79cd13be357-7ae3785918fmr452213985a.31.1727438599209; Fri, 27 Sep 2024
- 05:03:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727438666; x=1728043466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A52lZ6eit/IH20xPJbZ0ifh6fyqIylwhlAVPULjwrM8=;
+        b=KlAXl8R1pNU7/5eyz8EB0w9gyh6roS0saN7yN/IKxkHyOf6jbsDq2c3of8wPkW4z9O
+         rIehYBomiSswSUpyF0R7h1csb4I8qdXcw2xKvZ/KsRmsNu9cOBEuk/vsar7Jv0UlNP+c
+         qvdo3eXBmtQEHSIjKc5FhsSzenudN2ZmXBZJzpLML8wnpFW1LIh3UiQjosO0nDkE6H/e
+         yWocqkq+TQGnJr3ViJcXlqgFkRjOu1i3Dc7NQYvh9WRrmoMmlQWRf/R3sjsV7uAYWTM2
+         /aL7GD0GWHl092mamy5yfdCWKZ8PbpVOYvls1cvqwSF3DLDcNDPJshz16VGtjsCf/EPI
+         eUKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVO1Ma+3XVPsOZQo07s694AM+oCTARTa74BXp652lfn9OVj5qwkmj1Hgv6onCmKkcWMGjU99hrCPPu3j/Cd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsDtSXhCsZICr6Yo0GDJnqcXa9l0N3jGLvZpj7bTg/PJKPU+T5
+	P3AfYVzTgE76EHYa7Bo5ICzgW1yN8ZS9TFTygo3I1IPRqqBsJbCE7EBK+BD5lbATrnizDpb2Osh
+	77wVmi1+yPIUuQwIR1qj5pJSAoJG0awdE9lf4
+X-Google-Smtp-Source: AGHT+IEy3dP7p1C2eMoRV16OpmNG4PB6S4oIj5yrTQFRdGKMIDUcgcOI2efalw5tNFlnpHn1BB6580PiK2e8zpr1Klo=
+X-Received: by 2002:a5d:4808:0:b0:37c:d55a:38a5 with SMTP id
+ ffacd0b85a97d-37cd5a69225mr1687246f8f.11.1727438665878; Fri, 27 Sep 2024
+ 05:04:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
-In-Reply-To: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 27 Sep 2024 14:03:07 +0200
-Message-ID: <CAOQ4uxhXbTZS3wmLibit-vP_3yQSC=p+qmBLxKkBHL1OgO5NBQ@mail.gmail.com>
-Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_llseek
-To: Leo Stone <leocstone@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org, 
-	anupnewsmail@gmail.com, Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000001467e7062318a4e2"
-
---0000000000001467e7062318a4e2
+References: <CAH5fLgixve=E5=ghc3maXVC+JdqkrPSDqKgJiYEJ9j_MD4GAzg@mail.gmail.com>
+ <20240926-bewundere-beseitigen-59808f199f82@brauner> <20240926-pocht-sittlich-87108178c093@brauner>
+In-Reply-To: <20240926-pocht-sittlich-87108178c093@brauner>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 27 Sep 2024 14:04:13 +0200
+Message-ID: <CAH5fLghUj3-8eZMOVhhk0c9x29B7uMj=9dHWsRJYC1ghxqUdxg@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] rust: add PidNamespace wrapper
+To: Christian Brauner <brauner@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Bjoern Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 9:10=E2=80=AFAM Leo Stone <leocstone@gmail.com> wro=
-te:
+On Thu, Sep 26, 2024 at 6:36=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> Add a check to avoid using an invalid pointer if ovl_open_realfile fails.
+> Ok, so here's my feeble attempt at getting something going for wrapping
+> struct pid_namespace as struct pid_namespace indirectly came up in the
+> file abstraction thread.
+
+This looks great!
+
+> The lifetime of a pid namespace is intimately tied to the lifetime of
+> task. The pid namespace of a task doesn't ever change. A
+> unshare(CLONE_NEWPID) or setns(fd_pidns/pidfd, CLONE_NEWPID) will not
+> change the task's pid namespace only the pid namespace of children
+> spawned by the task. This invariant is important to keep in mind.
 >
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.g=
-it master
+> After a task is reaped it will be detached from its associated struct
+> pids via __unhash_process(). This will also set task->thread_pid to
+> NULL.
 >
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 2b7a5a3a7a2f..67f75eeb1e51 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -117,7 +117,11 @@ static int ovl_real_fdget_meta(const struct file *fi=
-le, struct fd *real,
->                 struct file *f =3D ovl_open_realfile(file, &realpath);
->                 if (IS_ERR(f))
->                         return PTR_ERR(f);
-> -               real->word =3D (unsigned long)ovl_open_realfile(file, &re=
-alpath) | FDPUT_FPUT;
-> +               f =3D ovl_open_realfile(file, &realpath);
-> +               if (IS_ERR(f))
-> +                       return PTR_ERR(f);
-> +               real->word =3D (unsigned long)f;
-> +               real->word |=3D FDPUT_FPUT;
->                 return 0;
->         }
+> In order to retrieve the pid namespace of a task task_active_pid_ns()
+> can be used. The helper works on both current and non-current taks but
+> the requirements are slightly different in both cases and it depends on
+> where the helper is called.
 >
+> The rules for this are simple but difficult for me to translate into
+> Rust. If task_active_pid_ns() is called on current then no RCU locking
+> is needed as current is obviously alive. On the other hand calling
+> task_active_pid_ns() after release_task() would work but it would mean
+> task_active_pid_ns() will return NULL.
 >
+> Calling task_active_pid_ns() on a non-current task, while valid, must be
+> under RCU or other protection mechanism as the task might be
+> release_task() and thus in __unhash_process().
 
-No, that's the wrong fix.
-There is a braino and a file leak in this code.
+Just to confirm, calling task_active_pid_ns() on a non-current task
+requires the rcu lock even if you own a refcont on the task?
 
-Linus,
-
-Could you apply this braino fix manually before releasing rc1.
-
-Thanks,
-Amir.
-
---0000000000001467e7062318a4e2
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-ovl-fix-file-leak-in-ovl_real_fdget_meta.patch"
-Content-Disposition: attachment; 
-	filename="0001-ovl-fix-file-leak-in-ovl_real_fdget_meta.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m1ko8gok0>
-X-Attachment-Id: f_m1ko8gok0
-
-RnJvbSA5OTRkNWE2MTg1NWRhMjc1MjkyNzgwYWY3Mjk0OGQ3MjA3MDI1ZWM4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
-YXRlOiBGcmksIDI3IFNlcCAyMDI0IDEzOjU0OjIzICswMjAwClN1YmplY3Q6IFtQQVRDSF0gb3Zs
-OiBmaXggZmlsZSBsZWFrIGluIG92bF9yZWFsX2ZkZ2V0X21ldGEoKQoKb3ZsX29wZW5fcmVhbGZp
-bGUoKSBpcyB3cm9uZ2x5IGNhbGxlZCB0d2ljZSBhZnRlciBjb252ZXJzaW9uIHRvCm5ldyBzdHJ1
-Y3QgZmQuCgpGaXhlczogKCI4OGEyZjY0NjhkMDEgc3RydWN0IGZkOiByZXByZXNlbnRhdGlvbiBj
-aGFuZ2UiKQpSZXBvcnRlZC1ieTogc3l6Ym90K2Q5ZWZlYzk0ZGNiZmEwZGUxYzA3QHN5emthbGxl
-ci5hcHBzcG90bWFpbC5jb20KU2lnbmVkLW9mZi1ieTogQW1pciBHb2xkc3RlaW4gPGFtaXI3M2ls
-QGdtYWlsLmNvbT4KLS0tCiBmcy9vdmVybGF5ZnMvZmlsZS5jIHwgMiArLQogMSBmaWxlIGNoYW5n
-ZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZnMvb3Zlcmxh
-eWZzL2ZpbGUuYyBiL2ZzL292ZXJsYXlmcy9maWxlLmMKaW5kZXggMmI3YTVhM2E3YTJmLi40NTA0
-NDkzYjIwYmUgMTAwNjQ0Ci0tLSBhL2ZzL292ZXJsYXlmcy9maWxlLmMKKysrIGIvZnMvb3Zlcmxh
-eWZzL2ZpbGUuYwpAQCAtMTE3LDcgKzExNyw3IEBAIHN0YXRpYyBpbnQgb3ZsX3JlYWxfZmRnZXRf
-bWV0YShjb25zdCBzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IGZkICpyZWFsLAogCQlzdHJ1Y3Qg
-ZmlsZSAqZiA9IG92bF9vcGVuX3JlYWxmaWxlKGZpbGUsICZyZWFscGF0aCk7CiAJCWlmIChJU19F
-UlIoZikpCiAJCQlyZXR1cm4gUFRSX0VSUihmKTsKLQkJcmVhbC0+d29yZCA9ICh1bnNpZ25lZCBs
-b25nKW92bF9vcGVuX3JlYWxmaWxlKGZpbGUsICZyZWFscGF0aCkgfCBGRFBVVF9GUFVUOworCQly
-ZWFsLT53b3JkID0gKHVuc2lnbmVkIGxvbmcpZiB8IEZEUFVUX0ZQVVQ7CiAJCXJldHVybiAwOwog
-CX0KIAotLSAKMi4zNC4xCgo=
---0000000000001467e7062318a4e2--
+Alice
 
