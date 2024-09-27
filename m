@@ -1,78 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-30247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C019885C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 14:56:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94BD98865C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 15:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75901F221E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 12:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741672817EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 13:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C245418C929;
-	Fri, 27 Sep 2024 12:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Th7OBBpJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6D418CC05;
+	Fri, 27 Sep 2024 13:38:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984C318CBE1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 12:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE5E189F58;
+	Fri, 27 Sep 2024 13:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727441807; cv=none; b=GO1FVuzrJ5jXS/88eS8GEweIjSaopDTmtcw+7EpZ6NgfbgU5i++kuuWV1RpiwMQ2GK0ftL7fKioDBfUWHRE7HaWH1Wl9PE8GZQREI3FzLqYwrvvMy/l7c08qhUfac3rw3WbFV5w5c/ZZ9yJ6YrhSZrd2P8hTmZ70FiHzM5AzMeM=
+	t=1727444331; cv=none; b=nMD0WuIGpDXQB+58PnuR+2jVpo8xxFDrxVvp5HIgIKMPy7ZBZc59zcNXXEfsnwWZaRxSXuVCsjzVIouM3yYaT7BkOxlaPxxoauhXdfKBmipfKgLsr84xWKyT8iJ40ZxG7vudMagbDWQZFv4ksLYHqgIancBj5AL33zPAhyPAwAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727441807; c=relaxed/simple;
-	bh=saU1e1mYxEFFx4xx365CqvU8y5vpJ1gvXabKMyso/Ik=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ePRzLqicBxW+Y8Ux9D0hHshRbWyMisOuHQOTWfgI/cIiA2Qs+WusS3yzIerXuXlbAbLJVyFdWsUobiU0GKQxYRG0GaOEvN8nh3e4Wpw3zupc9kjcUFNJG0W+yiBkxLYt2ATgOFJIkjRiNdIMGDzYKbBOOH4pFuDuJAi+VnpuUmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Th7OBBpJ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a83562f9be9so209244766b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 05:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727441804; x=1728046604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jQsdYFTP/gMEWx3GsCDfM2jmhEay39Kjmrb4duiasZA=;
-        b=Th7OBBpJYjF2g/FKWuSJjpKiL7hVZrOOtILZctgUOaurDdYMGi0Q0vPuHKoAXA4Lys
-         jssLchf0LfRGeaABoa5I03wGeHaYPwhNRcQZP5sl3sJGgGYENhwyHIzliR2cQ/RXSAf1
-         DqweuaPzVLahwIZP2+IrjOQsBCTHFfd3ATS4cFopj2VM+AKpXTyZDOn0I5EDv5Gv2rgy
-         Y9hhj7ikR2ZbpBTVQjvLqnVkguczOX1/nlYMOWP0WUnSOtzO0F0YBLjZiGajtbX0q2fl
-         Yku2irw/aRjLQnPvC029GnKJiVm4mgSItOZIaYYFWEd09vJclAJE3iXAX/WGcNwHv0Ka
-         nbEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727441804; x=1728046604;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jQsdYFTP/gMEWx3GsCDfM2jmhEay39Kjmrb4duiasZA=;
-        b=t0KeZPB9Af3svPyUEyCeMCevx5vqe8T51rcJKmPhyANbQ2nn9NkUuzZBx5GBE6ysg8
-         QOenpPRYOu2H58W/OOCyu366/E1a1SY7oDjiVPLjhCf+xAsX+CPSz7XFfAGd6sEdDjYV
-         Ii9IRYUYxlMEiDH4cKM382dIpUPK1k3Gr3oZtKeHi5FEOvOX004QhI6CaxNq8U73MN20
-         3jndEoNwWUxgMw2qu6SB/UgXNziCg3LZMin4JfiIKelzIN7boBywHS/QoCjpFkd7/1uD
-         vKStrgjvJZelQbHwaWxw/3mEZCS0OPMufLarW5vNDQkrOqkj2RylC9WAmj9q6CKqCK8b
-         +heA==
-X-Forwarded-Encrypted: i=1; AJvYcCWevGmSOjqNxz0TcZIPszjFBucV+35BvFuNmLTgaAX1fmXs53I5poPowybcVEdcsIHNeGCIH2AqXHgRCNMv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSeCC3sAwKa1xM6UpA5GEWUr92guSVaVft51JQtlkqk8nmWz8t
-	173XYYX6ysSUVopGcyL7Vyl3hXCICkgRh+JY49lE9FCwdyx027PJDet0X+j9
-X-Google-Smtp-Source: AGHT+IHIIYe//XfRETp3MVg47hIF3ONPky6gUvsyIYjQf+rQ4ZtEL0Nc8ziGPkfJ8nV7QI/fXP950A==
-X-Received: by 2002:a17:907:9812:b0:a8d:64af:dc2a with SMTP id a640c23a62f3a-a93c4923733mr245846066b.25.1727441803369;
-        Fri, 27 Sep 2024 05:56:43 -0700 (PDT)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c7237sm132001266b.81.2024.09.27.05.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 05:56:43 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Krishna Vivek Vitta <kvitta@microsoft.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fanotify: allow reporting errors on failure to open fd
-Date: Fri, 27 Sep 2024 14:56:24 +0200
-Message-Id: <20240927125624.2198202-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727444331; c=relaxed/simple;
+	bh=dcqSIEZ1WHDX1vkifs0jkex+rRu2+n2NxZjAF+XTxKs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IXz6y3L4PTlvot8d4B8S3p/oTFC/Hreg2MTJYTNdDPhrPonBvxXWj6yvhXugP7hz5lKqq95Wtf0yn0JOIDVy4mzoEQNLuoGUoINi8NGObjZEyuz54o0aDCSHv8gBfgG+mFRUSNxVRptVcUCZxliwBQWJ/u07+rKzG5v94cvbf1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R5ERVj029480;
+	Fri, 27 Sep 2024 13:38:30 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41um6hms4h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 27 Sep 2024 13:38:30 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 27 Sep 2024 06:38:29 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 27 Sep 2024 06:38:26 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <jack@suse.cz>
+CC: <amir73il@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH V2] inotify: Fix possible deadlock in fsnotify_destroy_mark
+Date: Fri, 27 Sep 2024 21:38:26 +0800
+Message-ID: <20240927133826.2037827-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240927102050.cfr4ovprdbgiicgk@quack3>
+References: <20240927102050.cfr4ovprdbgiicgk@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,184 +63,136 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: z3wfENa62nUhi0JXx87v3rUroaVjfLMo
+X-Authority-Analysis: v=2.4 cv=bas5U/PB c=1 sm=1 tr=0 ts=66f6b556 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=EaEq8P2WXUwA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=JEpJUzSd5mD0hPGLkQkA:9 a=cQPPKAXgyycSBL8etih5:22
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: z3wfENa62nUhi0JXx87v3rUroaVjfLMo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-27_06,2024-09-27_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=695 clxscore=1015 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2408220000 definitions=main-2409270098
 
-When working in "fd mode", fanotify_read() needs to open an fd
-from a dentry to report event->fd to userspace.
+[Syzbot reported]
+WARNING: possible circular locking dependency detected
+6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0 Not tainted
+------------------------------------------------------
+kswapd0/78 is trying to acquire lock:
+ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
+ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
 
-Opening an fd from dentry can fail for several reasons.
-For example, when tasks are gone and we try to open their
-/proc files or we try to open a WRONLY file like in sysfs
-or when trying to open a file that was deleted on the
-remote network server.
+but task is already holding lock:
+ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6841 [inline]
+ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vmscan.c:7223
 
-Add a new flag FAN_REPORT_FD_ERROR for fanotify_init().
-For a group with FAN_REPORT_FD_ERROR, we will send the
-event with the error instead of the open fd, otherwise
-userspace may not get the error at all.
+which lock already depends on the new lock.
 
-In any case, userspace will not know which file failed to
-open, so leave a warning in ksmg for further investigation.
 
-Reported-by: Krishna Vivek Vitta <kvitta@microsoft.com>
-Closes: https://lore.kernel.org/linux-fsdevel/SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+the existing dependency chain (in reverse order) is:
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __fs_reclaim_acquire mm/page_alloc.c:3818 [inline]
+       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3832
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3939 [inline]
+       slab_alloc_node mm/slub.c:4017 [inline]
+       kmem_cache_alloc_noprof+0x3d/0x2a0 mm/slub.c:4044
+       inotify_new_watch fs/notify/inotify/inotify_user.c:599 [inline]
+       inotify_update_watch fs/notify/inotify/inotify_user.c:647 [inline]
+       __do_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:786 [inline]
+       __se_sys_inotify_add_watch+0x72e/0x1070 fs/notify/inotify/inotify_user.c:729
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&group->mark_mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
+       fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
+       fsnotify_destroy_marks+0x14a/0x660 fs/notify/mark.c:934
+       fsnotify_inoderemove include/linux/fsnotify.h:264 [inline]
+       dentry_unlink_inode+0x2e0/0x430 fs/dcache.c:403
+       __dentry_kill+0x20d/0x630 fs/dcache.c:610
+       shrink_kill+0xa9/0x2c0 fs/dcache.c:1055
+       shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1082
+       prune_dcache_sb+0x10f/0x180 fs/dcache.c:1163
+       super_cache_scan+0x34f/0x4b0 fs/super.c:221
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+       shrink_one+0x43b/0x850 mm/vmscan.c:4815
+       shrink_many mm/vmscan.c:4876 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4954 [inline]
+       shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
+       kswapd_shrink_node mm/vmscan.c:6762 [inline]
+       balance_pgdat mm/vmscan.c:6954 [inline]
+       kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&group->mark_mutex);
+                               lock(fs_reclaim);
+  lock(&group->mark_mutex);
+
+ *** DEADLOCK ***
+
+[Analysis] 
+The inotify_new_watch() call passes through GFP_KERNEL, use memalloc_nofs_save/
+memalloc_nofs_restore to make sure we don't end up with the fs reclaim dependency.
+
+That any notification group needs to use NOFS allocations to be safe
+against this race so we can just remove FSNOTIFY_GROUP_NOFS and
+unconditionally do memalloc_nofs_save() in fsnotify_group_lock().
+
+Reported-and-tested-by: syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c679f13773f295d2da53
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 ---
+V1 -> V2: remove FSNOTIFY_GROUP_NOFS in fsnotify_group_lock and unlock
 
-Jan,
+ fs/notify/inotify/inotify_user.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-This is my proposal for a slightly better UAPI for error reporting.
-I have a vague memory that we discussed this before and that you preferred
-to report errno in an extra info field (?), but I have a strong repulsion
-from this altenative, which seems like way over design for the case.
-
-Here is what it looks like with an enhanced fanotify_example [1]
-and the reproducer of the 9p open unlinked file issue [2]:
-
-$ ./fanotify_example /vtmp/
-Press enter key to terminate.
-Listening for events.
-FAN_OPEN_PERM: File /vtmp/config.lock
-FAN_CLOSE_WRITE: fd open failed: No such file or directory
-
-And the warning in kmsg:
-[ 1836.619957] fanotify: create_fd(/config.lock) failed err=-2
-
-fanotify_read() can still return an error with FAN_REPORT_FD_ERROR,
-but not for a failure to open an fd.
-
-WDYT?
-
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/fsnotify-utils/blob/fan_report_fd_error/src/test/fanotify_example.c
-[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxgRnzB0E2ESeqgZBHW++zyRj8-VmvB38Vxm5OXgr=EM9g@mail.gmail.com/
-
- fs/notify/fanotify/fanotify_user.c | 42 ++++++++++++++++++------------
- include/linux/fanotify.h           |  1 +
- include/uapi/linux/fanotify.h      |  1 +
- 3 files changed, 28 insertions(+), 16 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 13454e5fd3fb..80917814981c 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -266,13 +266,6 @@ static int create_fd(struct fsnotify_group *group, const struct path *path,
- 			       group->fanotify_data.f_flags | __FMODE_NONOTIFY,
- 			       current_cred());
- 	if (IS_ERR(new_file)) {
--		/*
--		 * we still send an event even if we can't open the file.  this
--		 * can happen when say tasks are gone and we try to open their
--		 * /proc files or we try to open a WRONLY file like in sysfs
--		 * we just send the errno to userspace since there isn't much
--		 * else we can do.
--		 */
- 		put_unused_fd(client_fd);
- 		client_fd = PTR_ERR(new_file);
- 	} else {
-@@ -691,8 +684,25 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
- 	    path && path->mnt && path->dentry) {
- 		fd = create_fd(group, path, &f);
--		if (fd < 0)
--			return fd;
-+		/*
-+		 * Opening an fd from dentry can fail for several reasons.
-+		 * For example, when tasks are gone and we try to open their
-+		 * /proc files or we try to open a WRONLY file like in sysfs
-+		 * or when trying to open a file that was deleted on the
-+		 * remote network server.
-+		 *
-+		 * For a group with FAN_REPORT_FD_ERROR, we will send the
-+		 * event with the error instead of the open fd, otherwise
-+		 * Userspace may not get the error at all.
-+		 * In any case, userspace will not know which file failed to
-+		 * open, so leave a warning in ksmg for further investigation.
-+		 */
-+		if (fd < 0) {
-+			pr_warn_ratelimited("fanotify: create_fd(%pd2) failed err=%d\n",
-+					    path->dentry, fd);
-+			if (!FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR))
-+				return fd;
-+		}
- 	}
- 	metadata.fd = fd;
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 8be029bc50b1..7b0a2809fc2d 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -268,14 +268,12 @@ struct fsnotify_group {
+ static inline void fsnotify_group_lock(struct fsnotify_group *group)
+ {
+ 	mutex_lock(&group->mark_mutex);
+-	if (group->flags & FSNOTIFY_GROUP_NOFS)
+-		group->owner_flags = memalloc_nofs_save();
++	group->owner_flags = memalloc_nofs_save();
+ }
  
-@@ -737,9 +747,6 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	buf += FAN_EVENT_METADATA_LEN;
- 	count -= FAN_EVENT_METADATA_LEN;
+ static inline void fsnotify_group_unlock(struct fsnotify_group *group)
+ {
+-	if (group->flags & FSNOTIFY_GROUP_NOFS)
+-		memalloc_nofs_restore(group->owner_flags);
++	memalloc_nofs_restore(group->owner_flags);
+ 	mutex_unlock(&group->mark_mutex);
+ }
  
--	if (fanotify_is_perm_event(event->mask))
--		FANOTIFY_PERM(event)->fd = fd;
--
- 	if (info_mode) {
- 		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
- 						buf, count);
-@@ -753,15 +760,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (pidfd_file)
- 		fd_install(pidfd, pidfd_file);
- 
-+	if (fanotify_is_perm_event(event->mask))
-+		FANOTIFY_PERM(event)->fd = fd;
-+
- 	return metadata.event_len;
- 
- out_close_fd:
--	if (fd != FAN_NOFD) {
-+	if (f) {
- 		put_unused_fd(fd);
- 		fput(f);
- 	}
- 
--	if (pidfd >= 0) {
-+	if (pidfd_file) {
- 		put_unused_fd(pidfd);
- 		fput(pidfd_file);
- 	}
-@@ -845,7 +855,7 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
- 		if (!fanotify_is_perm_event(event->mask)) {
- 			fsnotify_destroy_event(group, &event->fse);
- 		} else {
--			if (ret <= 0) {
-+			if (ret <= 0 || FANOTIFY_PERM(event)->fd < 0) {
- 				spin_lock(&group->notification_lock);
- 				finish_permission_event(group,
- 					FANOTIFY_PERM(event), FAN_DENY, NULL);
-@@ -1954,7 +1964,7 @@ static int __init fanotify_user_setup(void)
- 				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
- 
- 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 13);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 11);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fanotify_mark,
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 4f1c4f603118..89ff45bd6f01 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -36,6 +36,7 @@
- #define FANOTIFY_ADMIN_INIT_FLAGS	(FANOTIFY_PERM_CLASSES | \
- 					 FAN_REPORT_TID | \
- 					 FAN_REPORT_PIDFD | \
-+					 FAN_REPORT_FD_ERROR | \
- 					 FAN_UNLIMITED_QUEUE | \
- 					 FAN_UNLIMITED_MARKS)
- 
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index a37de58ca571..34f221d3a1b9 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -60,6 +60,7 @@
- #define FAN_REPORT_DIR_FID	0x00000400	/* Report unique directory id */
- #define FAN_REPORT_NAME		0x00000800	/* Report events with name */
- #define FAN_REPORT_TARGET_FID	0x00001000	/* Report dirent target id  */
-+#define FAN_REPORT_FD_ERROR	0x00002000	/* event->fd can report error */
- 
- /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
- #define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
 -- 
-2.34.1
+2.43.0
 
 
