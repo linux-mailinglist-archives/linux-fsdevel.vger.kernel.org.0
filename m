@@ -1,189 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-30235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9432698811F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 11:13:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22751988155
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 11:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ADDE1C224BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 09:13:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCBEF1F20FEA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 09:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5026E18A6B4;
-	Fri, 27 Sep 2024 09:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6691BB683;
+	Fri, 27 Sep 2024 09:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIERjt0I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D1C157490;
-	Fri, 27 Sep 2024 09:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F241BA29B;
+	Fri, 27 Sep 2024 09:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727428373; cv=none; b=AzVVfIWzeb+xJEw/SVlOnLFSlUfeAlXhemGOCpMHuLkqtgp7koxIoI+szwxdNJ4AAWe4Rz3Ugu5TOUOfGQVlR+koIbS/U2jWtiyHKkZfqpIhpIC9JuWVnF8To9VmWteE8Z0dhnLWkxRx9g5bscjidtiJaTItiQEt/3aSkD/5i6c=
+	t=1727429335; cv=none; b=LqcxbijW7aADSVD+RG4W0Oc44xmBqkJcquXpImkFlYiD81qBn2mppNu1qHLHEhejBYZ4pvDf1+uL2WdQ8ouUaCmIGuPovfg3EBzQuMf+Fex97+0s4TQ6ZXLs/EHANRLZSMXY8/qPgb76CZ9bEqssFbiMyefq5ow5KwiLOLboWD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727428373; c=relaxed/simple;
-	bh=T6H/yeWzGi/gIx84mGsW1qk/tZdu30/9GsfI8bpEK3I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jY8OsISK3qSoUd92oGPEAGwh72UpYueoy6VIM6ujFeTHo5RL+peZX/9f2+Wd8n5y6J5HK6wp+Yie7rR4nWTlZrqxprfpo+YlLpxSruBzBIRwHHmlY5uAGpcFI5PWNZeF3iKfcPMm1Ao+MeuCK3+shyP2728FV5jpFEQsNxEuzV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R5bHPg000550;
-	Fri, 27 Sep 2024 02:12:35 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41umbvvgy2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 27 Sep 2024 02:12:34 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 27 Sep 2024 02:12:33 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 27 Sep 2024 02:12:31 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com>
-CC: <amir73il@gmail.com>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <phillip@squashfs.org.uk>,
-        <squashfs-devel@lists.sourceforge.net>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] inotify: Fix possible deadlock in fsnotify_destroy_mark
-Date: Fri, 27 Sep 2024 17:12:31 +0800
-Message-ID: <20240927091231.360334-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000ae63710620417f67@google.com>
-References: <000000000000ae63710620417f67@google.com>
+	s=arc-20240116; t=1727429335; c=relaxed/simple;
+	bh=sKt8/7JHzE8MsBKuh6blTXHEQ9ZK2ZOA5ITusQ2b34A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kVS3DS75ifYnI9cB8npw1JHUeNLKK4kcIcJ0FesSkX/rNvN39ZabT+YJYZQ3BRDVXO2qNZYw5terSqfvkxvb+TnfyVyxZ04mzHK7phWYh+qevXII1E53m9AWWj2czoOc5tz2nOBEN4NZ+9QP6BykDR2o7Tc5VTLQPtlcBhpyD3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIERjt0I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840D9C4CECF;
+	Fri, 27 Sep 2024 09:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727429335;
+	bh=sKt8/7JHzE8MsBKuh6blTXHEQ9ZK2ZOA5ITusQ2b34A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XIERjt0IDuxY6m4h5IPyGGlGQabYhSaYp/Hc+uC04n6GPcJhF0ld9iaV/yY7Nw3Lc
+	 rIVREsf4iV6yxmfFbtF0ELn46T5RQ5vjqiSSQflhm2UM2e8Jkx4WlJleOUeHVAH07F
+	 xqzEyzpECi8dDMudQ3+kez//lTcFAypUvgWlPcUDdc1dZrQPp+3T66GoNedNRmAR+2
+	 LZONBILhvibMfeTs11NwlHKGZUrrtkPWne3uAIMRhst/Eyr4Q9nqmIoWPR4Pt527o3
+	 qnhiroQziVj/CJik1a7wx9AKYqneZyvAz2Wqi4QRUCuBeFGBaajgJYojcitTaFW9aP
+	 nwTxTo/0sIRTg==
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>,
+	Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH v10 0/8] File abstractions needed by Rust Binder
+Date: Fri, 27 Sep 2024 11:28:42 +0200
+Message-ID: <20240927-kicken-minigolf-de3ebd20f6ec@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1936; i=brauner@kernel.org; h=from:subject:message-id; bh=sKt8/7JHzE8MsBKuh6blTXHEQ9ZK2ZOA5ITusQ2b34A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR9qzq19sr6j49iFAK1mwN7HfOd7oiJNPh/WTRnLcM/r 1CZC6dfdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkTTjD/+oP0xMuXPkqaj+T OXRDe2qA9Swrhvm81vP9K/kNLn+8vZ6R4crmW8vk/6TL+9T9LGrdd/7Dot2K79nM8tfv518h+i8 8hhkA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=TKoXSEla c=1 sm=1 tr=0 ts=66f67702 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=EaEq8P2WXUwA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=hTKf5CPcikx21O5q8QUA:9 a=cQPPKAXgyycSBL8etih5:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: ZAcY3JOD7EgS7gK253xaOHb3FU99_dT1
-X-Proofpoint-GUID: ZAcY3JOD7EgS7gK253xaOHb3FU99_dT1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-27_04,2024-09-27_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 adultscore=0 malwarescore=0 mlxlogscore=908 mlxscore=0
- lowpriorityscore=0 phishscore=0 clxscore=1011 impostorscore=0
- suspectscore=0 spamscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2408220000 definitions=main-2409270064
 
-[Syzbot reported]
-WARNING: possible circular locking dependency detected
-6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0 Not tainted
-------------------------------------------------------
-kswapd0/78 is trying to acquire lock:
-ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
-ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
+On Sun, 15 Sep 2024 14:31:26 +0000, Alice Ryhl wrote:
+> This patchset contains the file abstractions needed by the Rust
+> implementation of the Binder driver.
+> 
+> Please see the Rust Binder RFC for usage examples:
+> https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/
+> 
+> Users of "rust: types: add `NotThreadSafe`":
+> 	[PATCH 5/9] rust: file: add `FileDescriptorReservation`
+> 
+> [...]
 
-but task is already holding lock:
-ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6841 [inline]
-ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vmscan.c:7223
+Applied to the vfs.rust.file.v6.13 branch of the vfs/vfs.git tree.
+Patches in the vfs.rust.file.v6.13 branch should appear in linux-next soon.
 
-which lock already depends on the new lock.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-the existing dependency chain (in reverse order) is:
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __fs_reclaim_acquire mm/page_alloc.c:3818 [inline]
-       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3832
-       might_alloc include/linux/sched/mm.h:334 [inline]
-       slab_pre_alloc_hook mm/slub.c:3939 [inline]
-       slab_alloc_node mm/slub.c:4017 [inline]
-       kmem_cache_alloc_noprof+0x3d/0x2a0 mm/slub.c:4044
-       inotify_new_watch fs/notify/inotify/inotify_user.c:599 [inline]
-       inotify_update_watch fs/notify/inotify/inotify_user.c:647 [inline]
-       __do_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:786 [inline]
-       __se_sys_inotify_add_watch+0x72e/0x1070 fs/notify/inotify/inotify_user.c:729
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.rust.file.v6.13
 
--> #0 (&group->mark_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
-       fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
-       fsnotify_destroy_marks+0x14a/0x660 fs/notify/mark.c:934
-       fsnotify_inoderemove include/linux/fsnotify.h:264 [inline]
-       dentry_unlink_inode+0x2e0/0x430 fs/dcache.c:403
-       __dentry_kill+0x20d/0x630 fs/dcache.c:610
-       shrink_kill+0xa9/0x2c0 fs/dcache.c:1055
-       shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1082
-       prune_dcache_sb+0x10f/0x180 fs/dcache.c:1163
-       super_cache_scan+0x34f/0x4b0 fs/super.c:221
-       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
-       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
-       shrink_one+0x43b/0x850 mm/vmscan.c:4815
-       shrink_many mm/vmscan.c:4876 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4954 [inline]
-       shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
-       kswapd_shrink_node mm/vmscan.c:6762 [inline]
-       balance_pgdat mm/vmscan.c:6954 [inline]
-       kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&group->mark_mutex);
-                               lock(fs_reclaim);
-  lock(&group->mark_mutex);
-
- *** DEADLOCK ***
-
-[Analysis] 
-The inotify_new_watch() call passes through GFP_KERNEL, use memalloc_nofs_save/
-memalloc_nofs_restore to make sure we don't end up with the fs reclaim dependency.
-
-Reported-and-tested-by: syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c679f13773f295d2da53
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/notify/inotify/inotify_user.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index c7e451d5bd51..70b77b6186a6 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -643,8 +643,13 @@ static int inotify_update_watch(struct fsnotify_group *group, struct inode *inod
- 	/* try to update and existing watch with the new arg */
- 	ret = inotify_update_existing_watch(group, inode, arg);
- 	/* no mark present, try to add a new one */
--	if (ret == -ENOENT)
-+	if (ret == -ENOENT) {
-+		unsigned int nofs_flag;
-+
-+		nofs_flag = memalloc_nofs_save();
- 		ret = inotify_new_watch(group, inode, arg);
-+		memalloc_nofs_restore(nofs_flag);
-+	}
- 	fsnotify_group_unlock(group);
- 
- 	return ret;
--- 
-2.43.0
-
+[1/8] rust: types: add `NotThreadSafe`
+      https://git.kernel.org/vfs/vfs/c/cf9139a8a2ff
+[2/8] rust: task: add `Task::current_raw`
+      https://git.kernel.org/vfs/vfs/c/16c7a0430f3a
+[3/8] rust: file: add Rust abstraction for `struct file`
+      https://git.kernel.org/vfs/vfs/c/d403edaaee09
+[4/8] rust: cred: add Rust abstraction for `struct cred`
+      https://git.kernel.org/vfs/vfs/c/fa4912bed836
+[5/8] rust: security: add abstraction for secctx
+      https://git.kernel.org/vfs/vfs/c/34f391deba6d
+[6/8] rust: file: add `FileDescriptorReservation`
+      https://git.kernel.org/vfs/vfs/c/054e1b6a797e
+[7/8] rust: file: add `Kuid` wrapper
+      https://git.kernel.org/vfs/vfs/c/a78b176bfdc2
+[8/8] rust: file: add abstraction for `poll_table`
+      https://git.kernel.org/vfs/vfs/c/e0cdb09b7100
 
