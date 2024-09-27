@@ -1,109 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-30208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8734987C3A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 02:48:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62AD5987CAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 03:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A291F24418
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 00:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F01284A20
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2024 01:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705FDEEA6;
-	Fri, 27 Sep 2024 00:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Ae1hDkvV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD8715099E;
+	Fri, 27 Sep 2024 01:43:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C7AEACD;
-	Fri, 27 Sep 2024 00:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4412746D;
+	Fri, 27 Sep 2024 01:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727398114; cv=none; b=B5YsZF+et1Nvq+wFvICWUVFc/vkSVVgPdQKYkOS8PdAT2rNiWub9aDyoj9ABDhIhOpXEW0/x3GSLp+5SKPzgh2EEvj/t4Uj0+w0cannl1VQ7vWzSI5EvGrY1JRKozxef2/Y9mquLXDKvZTpLHMvTbCo+YhTi/iXqCWZoEHRvfBs=
+	t=1727401405; cv=none; b=aMsGFiHnuaHqAFfQs2CRBOb/Pv0+kuhl8wvONFLrLAhfZVDRok6m4gxz+B08zAd5CfN/E6+JSj/HUNJgCldiCY7g3gTgELDz7kg8MGp3Y5g1syJoNL1P9kolDnRWD+TEtw2u/Kqbyv4MMYuJMCy1Zt6NM3/FMNNtr+tVdn/8848=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727398114; c=relaxed/simple;
-	bh=NZoZG5Fq/KN0fXsfXGJBfvPGTUFN3ANPPxnXaQGlogs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AsyzCO5/W/4YILfU/MQwEsmH0Mi79qxPKR6xFDJzGpAjjvF7RCtrY59vWLEkIvYE0HKct+wp/2q1/5wu3uSivcrmFxkEgGZ1iw3NT5RB6Ryb7pSACNYgU2zfX8hUKeOJhIULnn3kj/nC5p/dy4zA/lp8HGZKrPe62fYjl/ti2+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Ae1hDkvV; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=UEwo8Z5dWn7UoZgdVw71nh1ggeBZQz2H3RZ0PCeeF84=; b=Ae1hDkvVuXXGOZm9UJW4yz8i37
-	16+GvwjVbLy+LuFntcIMX87idMKt6tX3DKXJheVBVZwftahl2q/2UMLY0LRseEHL7nUQURCvtQFoH
-	Hja+699crclwa/0odJPdTVsCzjLdgy+zbFYfK0KTD0T5+2Q70BJ/FNIlqHne4HvMoeNosqjdBUpJN
-	oYOOr/NdYXBPt8rrzsNWFVAEhqEdQSXyNs9fcux76QmJORPWv4AO6cyl3Evrvh31bPOzFe7toSKuQ
-	RopYUhpt7N83NSqL6UiqG4hWs3/mFmmHF96RD+R3qNSehIpwx/s3BfyuLHqXtS6565hJakUDG50OS
-	klnKs14Q==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1styzg-0059mK-2F;
-	Fri, 27 Sep 2024 08:48:15 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 27 Sep 2024 08:48:14 +0800
-Date: Fri, 27 Sep 2024 08:48:14 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Dave Chinner <david@fromorbit.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-	Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-Message-ID: <ZvYAzh1gEw3u5nyD@gondor.apana.org.au>
-References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
- <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
- <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
- <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
- <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
- <CAHk-=wh+atcBWa34mDdG1bFGRc28eJas3tP+9QrYXX6C7BX0JQ@mail.gmail.com>
- <ZvI4N55fzO7kg0W/@dread.disaster.area>
- <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
- <ZvNWqhnUgqk5BlS4@dread.disaster.area>
- <jeyayqez34guxgvzf4unzytbfgjv2thgrha5miul25y4eearp2@33junxiz2o7f>
+	s=arc-20240116; t=1727401405; c=relaxed/simple;
+	bh=eThHgiFZLCQUTtc9xrFLaZUNnQjcwKmNmd28LqBUrx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bbCX2/CcUj6BUKFZn95nV1g0SYbxhJ1wWLzX28f3JWAFeh+Ar75oudE7Oc0eiku2cXcCVhebxj+Ga5pj6M2CJgsBli5Jh82kJ/ut1RKV6UQMcwDqm7HSoEzeZ/q0n4b0WciCQxLzmYhpbxxsgw6WWZr91KdwqlPG4h9Ps2DMC54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XFCrd12pxz2DcZj;
+	Fri, 27 Sep 2024 09:42:25 +0800 (CST)
+Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9118C1A0188;
+	Fri, 27 Sep 2024 09:43:14 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
+ (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 27 Sep
+ 2024 09:43:13 +0800
+Message-ID: <e6758b35-fb97-4f69-8cdb-2650edea80b5@huawei.com>
+Date: Fri, 27 Sep 2024 09:43:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <jeyayqez34guxgvzf4unzytbfgjv2thgrha5miul25y4eearp2@33junxiz2o7f>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
+To: Eric Sandeen <sandeen@sandeen.net>
+CC: Jan Kara <jack@suse.cz>, Alexander Mikhalitsyn
+	<aleksandr.mikhalitsyn@canonical.com>, <tytso@mit.edu>,
+	<stable@vger.kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>,
+	=?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>, Christian Brauner
+	<brauner@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>, Wesley
+ Hershberger <wesley.hershberger@canonical.com>, Yang Erkun
+	<yangerkun@huawei.com>, Baokun Li <libaokun1@huawei.com>
+References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
+ <20240925155706.zad2euxxuq7h6uja@quack3>
+ <142a28f9-5954-47f6-9c0c-26f7c142dbc1@huawei.com>
+ <ac29f2ba-7f77-4413-82b9-45f377f6c971@sandeen.net>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <ac29f2ba-7f77-4413-82b9-45f377f6c971@sandeen.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml100021.china.huawei.com (7.185.36.148)
 
-On Tue, Sep 24, 2024 at 10:48:07PM -0400, Kent Overstreet wrote:
+On 2024/9/27 0:04, Eric Sandeen wrote:
+> On 9/26/24 3:28 AM, Baokun Li wrote:
+>> On 2024/9/25 23:57, Jan Kara wrote:
+>>> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
+>>>> [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
+>>>> [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
+>>>> [   33.888740] ------------[ cut here ]------------
+>>>> [   33.888742] kernel BUG at fs/ext4/resize.c:324!
+>>> Ah, I was staring at this for a while before I understood what's going on
+>>> (it would be great to explain this in the changelog BTW).  As far as I
+>>> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation
+>>> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger than
+>>> flexbg_size (for example when ogroup = flexbg_size, ngroup = 2*flexbg_size
+>>> - 1) which then confuses things. I think that was not really intended and
+>>> instead of fixing up ext4_alloc_group_tables() we should really change
+>>> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never exceeds
+>>> flexbg size. Baokun?
+>>>
+>>>                                  Honza
+>> Hi Honza,
+>>
+>> Your analysis is absolutely correct. It's a bug!
+>> Thank you for locating this issue！
+>> An extra 1 should not be added when calculating resize_bg in alloc_flex_gd().
+>>
+>>
+>> Hi Aleksandr,
+>>
+>> Could you help test if the following changes work?
+>>
+> I just got an internal bug report for this as well, and I can also confirm that
+> the patch fixes my testcase, thanks! Feel free to add:
 >
-> I've been noticing rhashtable resize is surprisingly heavy (the default
-> parameters don't ever shrink the table, which is why it's not seen as
-> much).
+> Tested-by: Eric Sandeen <sandeen@redhat.com>
+>
+> I had been trying to debug this and it felt like an off by one but I didn't get
+> to a solution in time. ;)
+>
+> Can you explain what the 2 cases under
+>
+> /* Avoid allocating large 'groups' array if not needed */
+>
+> are doing? I *think* the first 'if' is trying not to over-allocate for the last
+> batch of block groups that get added during a resize. What is the "else if" case
+> doing?
+>
+> Thanks,
+> -Eric
+>
+The ext4 online resize started out by allocating the memory needed
+for an entire flexible block group regardless of the number of block
+groups to be added.
 
-Most rhashtable users enable automatic shrinking.
+This led to a warning being triggered in the mm module when the
+userland set a very large flexbg_size (perhaps they wanted to put
+all the group metadata in the head of the disk), allocating more
+memory than the MAX_ORDER size. Commit 5d1935ac02ca5a
+("ext4: avoid online resizing failures due to oversized flex bg") fixes
+this problem with resize_bg.
 
-> And, when I was torture testing that code I tripped over what appeared
-> to be an infinite loop in rht_bucket() when a rehsah is in progress,
-> which I worked around in
-> 
->   a592cdf5164d bcachefs: don't use rht_bucket() in btree_key_cache_scan()
+Normally, when online resizing, we may not need to allocate the
+memory required for an entire flexible block group. So if o_group
+and n_group are in the same flexible block group or if o_group
+and n_group are in neighbouring flexible block groups, we
+check if less memory can be allocated. This is what was done in
+commit 665d3e0af4d3 ("ext4: reduce unnecessary memory
+allocation in alloc_flex_gd()").
 
-You must not walk the rhashtable internal data structures by hand.
-If you need to iterate through the whole table, use the provided
-walking mechanism.
+Regards,
+Baokun
 
-However, as rhashtable is dynamic, walking it during a resize may
-cause you to see some elements twice.  If you want to avoid that,
-set up your own linked list of all elements for a completely stable
-walk.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
