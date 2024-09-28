@@ -1,137 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-30305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85529891A5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 23:56:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30E698920F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 02:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1C131C22EB0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 21:56:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1203BB23CDC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 00:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA721865E6;
-	Sat, 28 Sep 2024 21:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED197188002;
+	Sat, 28 Sep 2024 23:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Teb2HkVS"
+	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="ZwFqGiBw";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="P5fAhA7G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6057E17B428;
-	Sat, 28 Sep 2024 21:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481A0146A69
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Sep 2024 23:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727560563; cv=none; b=b5CAEpt5PGLBqOdqM4HAO8Lt+5uHEdnEzrRzl8WGkp4TD75Ch5RGkWrIKcXFlxMVo9ikfeasiwUQBQZ3Hk3cojSAEQp2XOWgbSbcNLX1G3p9JReYCdvkIrVA4ATf25SmY/koxTYbSJj467Y2xwmb2RNBMdXQde5OzYKJWoYYGwk=
+	t=1727567994; cv=none; b=Yw1za8CkDd4UFTIw3MJiZzCFGZJa7RP9fk/W2GyXSBx8OBv4CbjFsC0CxACIQjCVzqNGEdkntrKHkHo22wlYXjtxSZ13VJCWG6H8IMaSvld0kZGu1qYbm00KMWB2iesFsSTeFNpHQ4ECChx40wSsGnueXrrs/Tto6e6R7vWSdTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727560563; c=relaxed/simple;
-	bh=Bls5swmpeMzUWj2RlsQGBW8bINZMXO0c0CeG2/n6aR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bi29yvr/Z5BbjwCUmS1rXFTTSQkhL/cTvhSznhTCx+b41EW1le0lUeP4BLjiNBl1ebwCaJ8tkXBZGo710qRuMYBqKEqQLkcwuDV1R7+lUswTITp10DdMa6pDw5YomuJl+wmXR+TK8q/98iNlp7WHLn5+K78m0Ot+ouFCi/QaJ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Teb2HkVS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1605C4CEC3;
-	Sat, 28 Sep 2024 21:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727560563;
-	bh=Bls5swmpeMzUWj2RlsQGBW8bINZMXO0c0CeG2/n6aR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Teb2HkVSXlHPGKaQcYTedlkoVOlbSwhrrHJD0daluNnTdurb5ZsbWx4N/mlLU3GVJ
-	 uTJuNrdK0n2GyH6iTeTPQRWzyCGKBkaFYMN+ED6ybnoII/TOZg7zbMBk7IfPu2+YLE
-	 akqKzVjZSHmpndorYJ3AcDK0ROyPcMDoQSfp8+K3M3gSHrxWKWIgkLcCO5So2Gafk7
-	 EReey6Ip1vTAFTo+Xj/JKL5Gyhrgp9SfWyfRdnXA0H0umdKOJcEu3gCiPUv9N2SosM
-	 8B0QXa2iZV93R3OQUvaCk4dmersJxQSJp/yPDdyYo58dEbHX2AEbj8xHsyCT+ML2Ak
-	 Narrp1bIfYvoQ==
-Date: Sat, 28 Sep 2024 14:56:02 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Tycho Andersen <tycho@tycho.pizza>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH v2 1/2] exec: add a flag for "reasonable" execveat() comm
-Message-ID: <202409281453.B9B9999D@keescook>
-References: <20240927151746.391931-1-tycho@tycho.pizza>
- <87ikuhw155.fsf@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1727567994; c=relaxed/simple;
+	bh=bCmg4cHcYwrdNuYIol7Lkn8j0eN4jWb29bm4oleYH3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gV7x54BBwlDeNPv7eOfxHi16uMY7a1XjmvLUNlpTtDHhc3KMFN3tUdNcYHyT0Cjd9+QKjfKefhhZWjhwdxxDpvPpLzQGu4M8D5I3Qw75U2/kd9TTbebBM6Fth5X/0EardOQ6weItTQDVK2Ng6nz5lyrIRsIoGb1jUG4wB1aWqRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=ZwFqGiBw; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=P5fAhA7G; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=ZwFqGiBwKitlZdl6dHnV+qjD45D97odR+3lRtoZICwTMvpLhnocm/fQ9wq9u2jFICkJGXVuWNFiJVusik2mBmpKVi6yL5DXVLDia9HAfYF68EudLUSD82T87xl1UYBWE3FO/NKHZ18iHEXppPHp4uxEikBrbqtOtqlxGZSt7l0JeIKHV3SVu4VYEr2fN7YToQhCIAW/wNqEttW91TBlYNqbO9Nx4nrjB5SKMPUSqe/CVgri/RYxVLIzJefBjYW9ZrvQ1OR4EQK5npz6BgwcXHAqo4LpjMmx2khzAHVuMEFWcr8hXom5MqHmJDp9N1IsVePd95bwaskJRHoKdLY3WmA==; s=purelymail1; d=lkcamp.dev; v=1; bh=bCmg4cHcYwrdNuYIol7Lkn8j0eN4jWb29bm4oleYH3Y=; h=Received:From:To:Subject:Date;
+DKIM-Signature: a=rsa-sha256; b=P5fAhA7G9DD2UoOnoSSL/3MogMwN9LwTyWISvfy7hFue03dXFkcqUeMP+xuIXqJATDHcEBPM+xTGHX8Qnbp8EbSbY13gib+vBRkT330lLNjzKuS2TayHbpQ53FIEFcUca29mhdp03tDN8ZghSQT2u1qRr39K78S4DKX+YdQzPSK/C0sqCKflib5CXlikQ6VaUEFh0N7/a2ymPjWFw+bksTYyUPuqy1OSZc2UPsyX9FOumgxiZGBrl9esSU4WjfHdE6bsH0ERPiZD1I70zqDLJSlbevOfqhppFqEv2+2Y3VQYwYEn/DoBWcGanAdpn8xvfMuoB+V4WG4mfygleMNjvA==; s=purelymail1; d=purelymail.com; v=1; bh=bCmg4cHcYwrdNuYIol7Lkn8j0eN4jWb29bm4oleYH3Y=; h=Feedback-ID:Received:From:To:Subject:Date;
+Feedback-ID: 48571:7130:null:purelymail
+X-Pm-Original-To: linux-fsdevel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1507990812;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Sat, 28 Sep 2024 23:59:39 +0000 (UTC)
+From: Pedro Orlando <porlando@lkcamp.dev>
+To: Gabriel Krisman Bertazi <krisman@kernel.org>,
+	David Gow <davidgow@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com
+Cc: Pedro Orlando <porlando@lkcamp.dev>,
+	Gabriela Bittencourt <gbittencourt@lkcamp.dev>,
+	Danilo Pereira <dpereira@lkcamp.dev>
+Subject: [PATCH v2 0/2] unicode: kunit: refactor selftest to kunit tests
+Date: Sat, 28 Sep 2024 20:58:24 -0300
+Message-Id: <20240928235825.96961-1-porlando@lkcamp.dev>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ikuhw155.fsf@email.froward.int.ebiederm.org>
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=UTF-8
 
-On Fri, Sep 27, 2024 at 10:45:58AM -0500, Eric W. Biederman wrote:
-> Tycho Andersen <tycho@tycho.pizza> writes:
-> 
-> > From: Tycho Andersen <tandersen@netflix.com>
-> >
-> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> > switching to execveat() for service execution, but can't, because the
-> > contents of /proc/pid/comm are the file descriptor which was used,
-> > instead of the path to the binary. This makes the output of tools like
-> > top and ps useless, especially in a world where most fds are opened
-> > CLOEXEC so the number is truly meaningless.
-> >
-> > Change exec path to fix up /proc/pid/comm in the case where we have
-> > allocated one of these synthetic paths in bprm_init(). This way the actual
-> > exec machinery is unchanged, but cosmetically the comm looks reasonable to
-> > admins investigating things.
-> 
-> Perhaps change the subject to match the code.
-> 
-> > Signed-off-by: Tycho Andersen <tandersen@netflix.com>
-> > Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
-> > CC: Aleksa Sarai <cyphar@cyphar.com>
-> > Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
-> > ---
-> > v2: * drop the flag, everyone :)
-> >     * change the rendered value to f_path.dentry->d_name.name instead of
-> >       argv[0], Eric
-> > ---
-> >  fs/exec.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index dad402d55681..9520359a8dcc 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -1416,7 +1416,18 @@ int begin_new_exec(struct linux_binprm * bprm)
-> >  		set_dumpable(current->mm, SUID_DUMP_USER);
-> >  
-> >  	perf_event_exec();
-> > -	__set_task_comm(me, kbasename(bprm->filename), true);
-> > +
-> > +	/*
-> > +	 * If fdpath was set, execveat() made up a path that will
-> > +	 * probably not be useful to admins running ps or similar.
-> > +	 * Let's fix it up to be something reasonable.
-> > +	 */
-> > +	if (bprm->fdpath) {
-> > +		BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
-> > +		__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
-> 
-> We can just do this regardless of bprm->fdpath.
-> 
-> It will be a change of behavior on when executing symlinks and possibly
-> mount points but I don't think we care.  If we do then we can add make
-> it conditional with "if (bprm->fdpath)"
-> 
-> At the very least using the above version unconditionally ought to flush
-> out any bugs.
+Hey all,
 
-I'm not super comfortable doing this regardless of bprm->fdpath; that
-seems like too many cases getting changed. Can we just leave it as
-depending on bprm->fdpath?
+We are making these changes as part of a KUnit Hackathon at LKCamp [1].
 
-Also, is d_name.name always going to be set? e.g. what about memfd, etc?
+This patch sets out to refactor fs/unicode/utf8-selftest.c to KUnit tests.
 
--- 
-Kees Cook
+The main benefit of this change is that we can leverage KUnit's
+test suite for quickly compiling and testing the functions in utf8,
+instead of compiling the kernel and loading the previous utf8-selftest
+module, as well as adopting a pattern across all kernel tests.
+
+The first commit is the refactoring itself from self test into KUnit,
+which kept the original test logic intact -- maintaining the purpose
+of the original tests -- with the added benefit of including these
+tests into the KUnit test suite.
+
+The second commit applies the naming style and file path conventions
+defined on Documentation/dev-tools/kunit/style.rst
+
+We appreciate any feedback and suggestions. :)
+
+[1] https://lkcamp.dev/about/
+
+Co-developed-by: Pedro Orlando <porlando@lkcamp.dev>
+Signed-off-by: Pedro Orlando <porlando@lkcamp.dev>
+Co-developed-by: Danilo Pereira <dpereira@lkcamp.dev>
+Signed-off-by: Danilo Pereira <dpereira@lkcamp.dev>
+Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+
+Gabriela Bittencourt (2):
+  unicode: kunit: refactor selftest to kunit tests
+  unicode: kunit: change tests filename and path
+
+ fs/unicode/Kconfig                            |   5 +-
+ fs/unicode/Makefile                           |   2 +-
+ fs/unicode/tests/.kunitconfig                 |   3 +
+ .../{utf8-selftest.c =3D> tests/utf8_kunit.c}   | 149 ++++++++----------
+ 4 files changed, 76 insertions(+), 83 deletions(-)
+ create mode 100644 fs/unicode/tests/.kunitconfig
+ rename fs/unicode/{utf8-selftest.c =3D> tests/utf8_kunit.c} (64%)
+
+--=20
+2.34.1
+
 
