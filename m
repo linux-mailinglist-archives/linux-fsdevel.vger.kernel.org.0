@@ -1,110 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-30297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD4A988D37
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 02:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DCB988DB5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 05:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ACFAB21D15
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 00:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A168E1F220C8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Sep 2024 03:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9130411CA1;
-	Sat, 28 Sep 2024 00:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="OYQ+MFgD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A68165F05;
+	Sat, 28 Sep 2024 03:15:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6134910A19;
-	Sat, 28 Sep 2024 00:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624DB15B13C
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Sep 2024 03:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727484465; cv=none; b=uC4zQX//TlAonPhn8ObN9tOCIXes6sGSpiH2mAcG8wGX6BZVmEo1V+TaIF8yptXdqEO5A4EbVtQuI9XFi+AtBVCL+8hdPef6WCN1hskVqv81xYHioONXntgnt5ClWR4sSpRMoXMh6pPUl2Uqvq+okn5DSyUsQygPlhgna7ppii8=
+	t=1727493305; cv=none; b=QMR5d6XSZJUlaWouPdT69DDUfcjFZOHmR9X2AbBi65PGf7iJ9EIY7W0t7SgOaKF9GeNx7fKFcaWuwJWCoQG0hbxCYtqjfpsLOYXLdVBWKg2AkMhJezM6m6DEyO8H8Yb8rhv94O8cesY70tSffZ3FaOVxw5u/Iu70NV16W0tbFQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727484465; c=relaxed/simple;
-	bh=yCsVypw9UcLb+YOktbLz1AblsRn70oqRwRo8CRYU4Fo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dI4DJmUuhtBbHC0T5z94jWngIiKQogqE3FA9yXM6ZxDo8OBWodb2LZ5AL3QovvCIhbWCT94XeMlLyBF1FImp9Vv9jp27S8eogJCqB6PZhRQmYcVI4VPgl+s7QU5NVKMalMPBWJBuYL7kUvMVQW+ENSnIc2wGL6HAd2XLv8qi4Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=OYQ+MFgD; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=qYqPtrNpt3gRQXhveLSu29jwHNc5+OrTNCW/cEqmJZI=; b=OYQ+MFgDgj+inwXcaaRck8R88n
-	91tJZ/vrIwoXGAgZEAcadqNiy744DHQdIbeaE/mEXs5u/8hoWwCkjLm4cmneD9Bv8kGkV9oB0P46K
-	5gkGdlpOQN26QVSa/NjlLo8cLEfv7l6vm1p5fYvo09zo5TX0PsQhnheG7YMVWbquKdSw74qaxkdvd
-	EziXONHxNpiuZnSxDmLz2jPsxGuWLRDeP0Ld+RF3Z4TfnfKdiv0UpWwRwfPxCtd9uBpocNBd7C/TE
-	OLpLJeel3kdjVJ7HEFGdy31dWwpToVcKF0zZ3lQZTy8lSG8jxGPBwkwqZix7tbIH0LYAgrm3YUo+V
-	fPjA8hFg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1suLSK-005Mey-37;
-	Sat, 28 Sep 2024 08:47:19 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 28 Sep 2024 08:47:18 +0800
-Date: Sat, 28 Sep 2024 08:47:18 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Dave Chinner <david@fromorbit.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-	Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-Message-ID: <ZvdSFlaEkk7fqZVl@gondor.apana.org.au>
-References: <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
- <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
- <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
- <CAHk-=wh+atcBWa34mDdG1bFGRc28eJas3tP+9QrYXX6C7BX0JQ@mail.gmail.com>
- <ZvI4N55fzO7kg0W/@dread.disaster.area>
- <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
- <ZvNWqhnUgqk5BlS4@dread.disaster.area>
- <jeyayqez34guxgvzf4unzytbfgjv2thgrha5miul25y4eearp2@33junxiz2o7f>
- <ZvYAzh1gEw3u5nyD@gondor.apana.org.au>
- <nlwn4yodlo54hdbyil3kyxhaqgg5dmmdfvizsyj77oczgzezt2@m3qbtep3fhln>
+	s=arc-20240116; t=1727493305; c=relaxed/simple;
+	bh=GI5PlcA7k1T0SPN11Js8TGmiwDLVxJmVmNY0LpQ2u+U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Xc3DXD7QjrglrJ5QnWeM9myPxqYAnKtUdnHUqzAVyEEHnpgpCnK0ZyZ4PYzCVC2ea//xoLM9E6MC2x0Ow5b0aVzAnXs2t0Xb97eI2oWit7JgPANeT2K93CZW+WaYWdx0g56j6RHh2DtuM1fxWj1oYWbZqO3BU5ttYyA4rwmgCUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3440fc2d3so22794095ab.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Sep 2024 20:15:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727493303; x=1728098103;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=of15A6+c6OVOnBSyfpHxoxeIJmFo7yniresxfuX6ydM=;
+        b=eAQUaTOn4bKHoWyVLUxWyT0G5M/9peQbVImrBbO+aSGviXvn0+WJSsGh6L4GX333Ph
+         AscaI5j8NZBj/1/IsihpG6GhAZU9Cu1MUdXIsEADMd69pQ0ufPyxHOQGH7XTQkCNkv6x
+         IlLQWeauxM4jCD6EsF0hWySyR2ZJETtMJGBcoJ/m3nhiVo8ljwf2ZzQfBAYdlAT/Juw6
+         gaJMKIbhpg85/Cj/RRxdW/6IraO+O3h9C7v3zDP8N7GWyit2FwkG9BjrKuPyU0X6BUcL
+         ks1lOt+LfY8MB05FHlj7/23QcazIWkFroc8fZaG/21qk6/7QHvfokK0IQ7CwiiwRD1pE
+         NRMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8z1kGIAJIMeBHrmdWpstELLBx8/OC7x83rGm9LGT+Be77f1IACeW6fbvMQ8Y9FFhNOzlYpfHmHMXt3qOf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhgEI65VLwVDA3iUGXnhgbDuHMhukiUalw2mh3cgS+7ozXiMZO
+	9hK9oWHob12/z7XToGQCGWQxKcqaOCbUqAKXq7hhZXEwT5o/gmJjVWfndomvUV2X8H4H5EGcMAb
+	lv5EL2kHq0iLSPeqDPPG1eZpr1wDqrFu/von/IUdZdtWwEVV8lcXXBlk=
+X-Google-Smtp-Source: AGHT+IHu8aR870tmrsFMAh7OqP99syBX1HGq/p1JiP29OwoRwxJ4K6Doqd4JttMGza8m5LGwv+PabDf3IkTBzM6HF66aIQu76fpN
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nlwn4yodlo54hdbyil3kyxhaqgg5dmmdfvizsyj77oczgzezt2@m3qbtep3fhln>
+X-Received: by 2002:a05:6e02:13a7:b0:3a0:92a4:a462 with SMTP id
+ e9e14a558f8ab-3a345161df1mr54434605ab.10.1727493303471; Fri, 27 Sep 2024
+ 20:15:03 -0700 (PDT)
+Date: Fri, 27 Sep 2024 20:15:03 -0700
+In-Reply-To: <0000000000002dabd805ee5b222e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f774b7.050a0220.46d20.002d.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] possible deadlock in hfsplus_file_extend
+From: syzbot <syzbot+325b61d3c9a17729454b@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, akpm@linux-foundation.org, brauner@kernel.org, 
+	chao@kernel.org, jack@suse.cz, jlayton@kernel.org, josef@toxicpanda.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 27, 2024 at 08:11:06PM -0400, Kent Overstreet wrote:
->
-> > > And, when I was torture testing that code I tripped over what appeared
-> > > to be an infinite loop in rht_bucket() when a rehsah is in progress,
-> > > which I worked around in
-> > > 
-> > >   a592cdf5164d bcachefs: don't use rht_bucket() in btree_key_cache_scan()
-> > 
-> > You must not walk the rhashtable internal data structures by hand.
-> > If you need to iterate through the whole table, use the provided
-> > walking mechanism.
-> 
-> I was just doing rht_for_each_entry_rcu() (open coded because you don't
-> provide a safe version).
+syzbot suspects this issue was fixed by commit:
 
-I'm talking about the commit a592cd above.  You were doing this:
+commit be4edd1642ee205ed7bbf66edc0453b1be1fb8d7
+Author: Chao Yu <chao@kernel.org>
+Date:   Fri Jun 7 14:23:04 2024 +0000
 
-	for (i = 0; i < tbl->size; i++)
-		rht_for_each_entry_rcu(ck, pos, tbl, i, hash) {
+    hfsplus: fix to avoid false alarm of circular locking
 
-This is absolutely not allowed.  The rhashtable must only be accessed
-through the published API and not iterated over directly.  This is
-guaranteed to break during a resize/rehash.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16c5f59f980000
+start commit:   90d35da658da Linux 6.8-rc7
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=70429b75d4a1a401
+dashboard link: https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159253ee180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11afd4fe180000
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: hfsplus: fix to avoid false alarm of circular locking
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
