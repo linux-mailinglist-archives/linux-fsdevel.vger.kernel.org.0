@@ -1,194 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-30311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C53A19893C2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 10:30:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6F2989440
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 11:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82201B2379B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 08:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3930D286511
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 09:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C59513C9A3;
-	Sun, 29 Sep 2024 08:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDA51428FA;
+	Sun, 29 Sep 2024 09:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNgHeWOw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H9qxlis2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBF5F9CF;
-	Sun, 29 Sep 2024 08:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCEB14375C
+	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Sep 2024 09:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727598627; cv=none; b=WvSUw+STaif+hxbo3yn3Qtya6bS+HC4HSGgyTHc3yT93JLjNLXkgaqgAN9bAF9NxaS9pS35LHaoGYj60o+7vVH8XZzA6a0e3N6nq2sLfgWG+U4Yeldj37edfE5Jq4ff9jEagyaNVpx9MqGYUOyS/hwJde4P9S6Dg9ECPsulqsJY=
+	t=1727601172; cv=none; b=ebMhDSxG/YpJ4Faay+S1cqf1L4107BiF7jYgYTVY8cjzWARGhnrC2TAjRM1qUwbp9m8Dr0aIqGIR/yBybfpmudQiWaP/XMDjCsvbkvCYFylEF74b8K5UIBhcPpaFI3IBVoxaUe/q1fg9lCwogx8INfhm4fhLfe0GpLRU2hd5jbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727598627; c=relaxed/simple;
-	bh=hmUs0GdfxyuCzAbqNxBCaF2AGSPRpqOhupSHuBWEgDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fY6PaRtpEmMgUZI3cOqZQ6xC34XUeAyyuy9vk0gdTR4q67a63A/KKrYA0ZvjAr4x3MIcJArJYSa2j4VPKm1jXHaWkNi98AbOoDH/V3U4G99Wx+alUxVdI+YT8R+VS7ElXwEgwgflKp+srwPBSW5pluz+JTYqWMubSFSY5cJDY5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNgHeWOw; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2facaa16826so1889791fa.0;
-        Sun, 29 Sep 2024 01:30:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727598624; x=1728203424; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FtfQ8PjVBIqC5x6Ptii/ji6tl6SwiydJhKrTqRkluSY=;
-        b=jNgHeWOwI62HIY6dXe6OFJGE6i9uFIK+MpIQrucGrMoYMu4Ov2c8aNizHe1Rnq770C
-         ET9r5RuxikieGZvAsfNF9Q6pA9LjBGdOrkfFwmbDMG+ggp2izr1Z7MHwBKiIDaO6e4Uj
-         4uUa6yPQeWlycMC+2M+8dCqnd6mSIkQA7/p7W+g4RDNnCPxFekRN5inTn5jP0HG18KLD
-         I49dK2dIbpGRJas4+mjzZlAPg5Ii2ehylboGwuakSu2CCuttnllzPUGKby3M7RY644c0
-         t9l8cng7UwHaKBA6ewYfgWXKxCjBk7hcdUt07iXAgkDVXLfuwlxPJ4BItGC+ehTxohG6
-         AiTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727598624; x=1728203424;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FtfQ8PjVBIqC5x6Ptii/ji6tl6SwiydJhKrTqRkluSY=;
-        b=fMGYhgJ8qa/4DRrS2WI3A0R2nuVrsLMbdjPJ04ZtVkyn79vs8zNH16cD1iMwHMMzQu
-         HFxnnjd0mZU4aXwROjGz9O28lf4KMvvki1v/V2YA+2OC29oggK6WLlPJekvx7K2ep+Bv
-         nxVQ+RMQp7IK23ozfk9qJgSVVPTskkUVmbr+3IWtinIuNH1oeZRQbau2MhTE+uUx0ilo
-         B0Gt3moVMyMLc28tB2gWehsgXUbsv+bEzbR0rBiiWE4u432d0rc1/dExw/dy6/aynGdg
-         MsEiDGdRvhv58jTT/NAQmhXFeH/yrYw7lAPxJlYTx5bZxm9Y8LD4Bi/phJZxpQtHWWqV
-         ss9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXWzhCuO52nonADX98SzyPaWZMvZVbLwMgR5qt0UpBhbw1SH4envTPYCkuVmfnnQUHuH5wE46/FK38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylewPqS55INkx2MIVUu9l9IDP4uYx2Q6+jI4XVNAGzaaYy8scQ
-	oD7Z88NDlv9zv4WL/N/jrF6tJKq9n2vPwHBH0BEqAcLG7+jLYW2/Cw1XX4y0kh+XIZ7VjqQwlKT
-	JCzfD/F/QjEOA9yjMyMf3FqxXxwk=
-X-Google-Smtp-Source: AGHT+IHD6DwTrsgbtaWY8g0IRkeuPLtO//m0DIce8g2mLe7kG+RSz0ObZMACtx390B1vwoLp0Nf42VG5qMRJZ3enjfs=
-X-Received: by 2002:a05:6512:1113:b0:52f:d69e:bb38 with SMTP id
- 2adb3069b0e04-5389fc3312fmr4933272e87.2.1727598623394; Sun, 29 Sep 2024
- 01:30:23 -0700 (PDT)
+	s=arc-20240116; t=1727601172; c=relaxed/simple;
+	bh=f9dQE09AdUkmncuy/YNZ8fl3PlvEKyh1yrqvan2WfdA=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=e/WID351WCseYEcTwTJ1sYhPE1GrkeAkcnZr2jyqVFAYJuFnhoV5if1JqWy22Lf+czU+GDiGrMejkzs9v/IuCXgUBjLCiEcWGo32FFshXr/AUmiqAOzXVQPipnEsySvxs9RUtrKLdvxSJwvfDlXfZAp4yiGhcL0OjzE3nB1Dyl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H9qxlis2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727601168;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JiqqlxmQYH/fiwHpJ0K7lC2A6lz/Rw3eIk1FtzNUMEY=;
+	b=H9qxlis2y3VOGsiZ3bhL86nHU6iN0yBa1MCzv/Hd7lvs3cNOBUz+gTWyibgUe7hflptBNa
+	HBiLgdEB6drxhp0N68kJdypgy/Q2O1FCy+VVlSM3+6w4w3mu+/4mZ2jEK2E33Qks+34rRZ
+	lGCm4AbqSerwld8stht57TVSyPqzQOk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-263-ngDjsBEOMcCfzSSWO9NFYQ-1; Sun,
+ 29 Sep 2024 05:12:45 -0400
+X-MC-Unique: ngDjsBEOMcCfzSSWO9NFYQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F5D4195FE25;
+	Sun, 29 Sep 2024 09:12:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F1CB519560AE;
+	Sun, 29 Sep 2024 09:12:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240925103118.GE967758@unreal>
+References: <20240925103118.GE967758@unreal> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <1279816.1727220013@warthog.procyon.org.uk> <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: dhowells@redhat.com, Eduard Zingerman <eddyz87@gmail.com>,
+    Christian Brauner <brauner@kernel.org>,
+    Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
+    ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
+    hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
+    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
+    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
+    v9fs@lists.linux.dev, willy@infradead.org
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927065344.2628691-1-sunjunchao2870@gmail.com> <20240928044358.GV21877@frogsfrogsfrogs>
-In-Reply-To: <20240928044358.GV21877@frogsfrogsfrogs>
-From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Sun, 29 Sep 2024 16:30:12 +0800
-Message-ID: <CAHB1NahOXEHrzkcNM4GFWoC_sH5Ru-wajDeciFKgaD=+7w=UVQ@mail.gmail.com>
-Subject: Re: [PATCH v2] xfs: do not unshare any blocks beyond eof
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, hch@lst.de, 
-	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com, 
-	Dave Chinner <david@fromorbit.com>, xfs <linux-xfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2808174.1727601153.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Sun, 29 Sep 2024 10:12:33 +0100
+Message-ID: <2808175.1727601153@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi, Darrick. Thanks for your review and comments.
+Can you try the attached?  I've also put it on my branch here:
 
-Darrick J. Wong <djwong@kernel.org> =E4=BA=8E2024=E5=B9=B49=E6=9C=8828=E6=
-=97=A5=E5=91=A8=E5=85=AD 12:44=E5=86=99=E9=81=93=EF=BC=9A
->
-> [cc linux-xfs]
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/=
+?h=3Dnetfs-fixes
 
-Sorry for missing the CC to the XFS mailing list...
->
-> On Fri, Sep 27, 2024 at 02:53:44PM +0800, Julian Sun wrote:
-> > Attempting to unshare extents beyond EOF will trigger
-> > the need zeroing case, which in turn triggers a warning.
-> > Therefore, let's skip the unshare process if blocks are
-> > beyond EOF.
-> >
-> > This patch passed the xfstests using './check -g quick', without
-> > causing any additional failure
-> >
-> > Reported-and-tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotma=
-il.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D296b1c84b9cbf306e5a0
-> > Fixes: 32a38a499104 ("iomap: use write_begin to read pages to unshare")
-> > Inspired-by: Dave Chinner <david@fromorbit.com>
-> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
-> > ---
-> >  fs/xfs/xfs_iomap.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index 72c981e3dc92..81a0514b8652 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -976,6 +976,7 @@ xfs_buffered_write_iomap_begin(
->
-> I'm unsure about why this correction is in
-> xfs_buffered_write_iomap_begin.  If extent size hints are enabled, this
-> function delegates to xfs_direct_write_iomap_begin, which means that
-> this isn't a complete fix.
+David
+---
+9p: Don't revert the I/O iterator after reading
 
-My understanding is that xfs_get_extsz_hint() return a nonzero value
-only involving realtime dev/inodes, right?
-If that is true, and reflink is not supproted with realtime devices,
-then fallocate unshare will directly return 0 within
-xfs_reflink_unshare() for rt dev/inodes. Furthermore,
-xfs_get_extsz_hint() will always return zero for non-rt dev/inodes,
-which means that fallocate unshare will never enter
-xfs_direct_write_iomap_begin().
+Don't revert the I/O iterator before returning from p9_client_read_once().
+netfslib doesn't require the reversion and nor doed 9P directory reading.
 
-I reviewed the code for xfs_direct_write_iomap_begin(), and there is
-no handling of IOMAP_UNSHARE, just as xfs_buffered_write_iomap_begin()
-has done. Perhaps this is the reason?
->
-> Shouldn't it suffice to clamp offset/len in xfs_reflink_unshare?
+Make p9_client_read() use a temporary iterator to call down into
+p9_client_read_once(), and advance that by the amount read.
 
-Possible makes sense. However, as Christoph mentioned here[1] where I
-did this in xfs_reflink_unshare(), we should consider the last block
-if file size is not block aligned. IMO, it's more elegant to do it in
-iomap_begin() callback...
+Reported-by: Manu Bretelle <chantr4@gmail.com>
+Reported-by: Eduard Zingerman <eddyz87@gmail.com>
+Reported-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Eric Van Hensbergen <ericvh@kernel.org>
+cc: Latchesar Ionkov <lucho@ionkov.net>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+cc: v9fs@lists.linux.dev
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ net/9p/client.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-If there's any misunderstanding or if I missed something, please let
-me know, thanks!
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 5cd94721d974..be59b0a94eaf 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -1519,13 +1519,15 @@ p9_client_read(struct p9_fid *fid, u64 offset, str=
+uct iov_iter *to, int *err)
+ 	*err =3D 0;
+ =
 
-[1]: https://lore.kernel.org/linux-xfs/Zu2FWuonuO97Q6V8@infradead.org/
->
-> --D
->
-> >       int                     error =3D 0;
-> >       unsigned int            lockmode =3D XFS_ILOCK_EXCL;
-> >       u64                     seq;
-> > +     xfs_fileoff_t eof_fsb;
-> >
-> >       if (xfs_is_shutdown(mp))
-> >               return -EIO;
-> > @@ -1016,6 +1017,13 @@ xfs_buffered_write_iomap_begin(
-> >       if (eof)
-> >               imap.br_startoff =3D end_fsb; /* fake hole until the end =
-*/
-> >
-> > +     /* Don't try to unshare any blocks beyond EOF. */
-> > +     eof_fsb =3D XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> > +     if (flags & IOMAP_UNSHARE && end_fsb > eof_fsb) {
-> > +             xfs_trim_extent(&imap, offset_fsb, eof_fsb - offset_fsb);
-> > +             end_fsb =3D eof_fsb;
-> > +     }
-> > +
-> >       /* We never need to allocate blocks for zeroing or unsharing a ho=
-le. */
-> >       if ((flags & (IOMAP_UNSHARE | IOMAP_ZERO)) &&
-> >           imap.br_startoff > offset_fsb) {
-> > @@ -1030,7 +1038,6 @@ xfs_buffered_write_iomap_begin(
-> >        */
-> >       if ((flags & IOMAP_ZERO) && imap.br_startoff <=3D offset_fsb &&
-> >           isnullstartblock(imap.br_startblock)) {
-> > -             xfs_fileoff_t eof_fsb =3D XFS_B_TO_FSB(mp, XFS_ISIZE(ip))=
-;
-> >
-> >               if (offset_fsb >=3D eof_fsb)
-> >                       goto convert_delay;
-> > --
-> > 2.39.2
-> >
+ 	while (iov_iter_count(to)) {
++		struct iov_iter tmp =3D *to;
+ 		int count;
+ =
 
+-		count =3D p9_client_read_once(fid, offset, to, err);
++		count =3D p9_client_read_once(fid, offset, &tmp, err);
+ 		if (!count || *err)
+ 			break;
+ 		offset +=3D count;
+ 		total +=3D count;
++		iov_iter_advance(to, count);
+ 	}
+ 	return total;
+ }
+@@ -1567,16 +1569,12 @@ p9_client_read_once(struct p9_fid *fid, u64 offset=
+, struct iov_iter *to,
+ 	}
+ 	if (IS_ERR(req)) {
+ 		*err =3D PTR_ERR(req);
+-		if (!non_zc)
+-			iov_iter_revert(to, count - iov_iter_count(to));
+ 		return 0;
+ 	}
+ =
 
-Thanks,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+ 	*err =3D p9pdu_readf(&req->rc, clnt->proto_version,
+ 			   "D", &received, &dataptr);
+ 	if (*err) {
+-		if (!non_zc)
+-			iov_iter_revert(to, count - iov_iter_count(to));
+ 		trace_9p_protocol_dump(clnt, &req->rc);
+ 		p9_req_put(clnt, req);
+ 		return 0;
+@@ -1596,8 +1594,6 @@ p9_client_read_once(struct p9_fid *fid, u64 offset, =
+struct iov_iter *to,
+ 			p9_req_put(clnt, req);
+ 			return n;
+ 		}
+-	} else {
+-		iov_iter_revert(to, count - received - iov_iter_count(to));
+ 	}
+ 	p9_req_put(clnt, req);
+ 	return received;
+
 
