@@ -1,131 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-30309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856F698932D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 08:03:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B659893A1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 09:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED8E1F22AFF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 06:03:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AE2EB23285
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 07:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4856913A41F;
-	Sun, 29 Sep 2024 06:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89E013C9CB;
+	Sun, 29 Sep 2024 07:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="F9lb2t0f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="na/tpird"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35FF37171
-	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Sep 2024 06:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B29718641;
+	Sun, 29 Sep 2024 07:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727589791; cv=none; b=Qf3uduX0o55iUBUvs7eFtdm3j9sS6hPP9O0rZkCCzcDNj6PWX6kOyiiSUxemN1T5BRTSHrspf4aEaWKJKko6cjWntazmbkKAY7KSCm0eHNltGnqmPvtqWq8BBr36/+e8mcXKjpLxSn4Q037dWjqRdNrsKAVCppVMgQua/j3GjJ4=
+	t=1727596711; cv=none; b=qIqCZ/PN4XEKrqW9/UGqcqIGa7PEurFvnID02LWwoymfvvLE8484xBWqwgSp0WI+BIKCO7oeSnn5WRWBOl3N33MxHgiUWT/GBy2klN85LP0wKROwdVO7h9nZlwtGL6jSaYQLeCJfzpcKMHq5vNiDGIh0E6codcJMo+ljFrJw0hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727589791; c=relaxed/simple;
-	bh=+akFPa+8alj51MCfrHOvoYE8LLNbQjwGyJuPEMHWLnY=;
+	s=arc-20240116; t=1727596711; c=relaxed/simple;
+	bh=3xHAO/1nMaKipfHebjoHo1sKkeBUhtCQGPDbex00eno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DlFIsKtrqCQ90YD8y0IAev1lsaHTzwdv9QxkixSdtJluxasusMz8WqfjzGS9bs9PmLTAZzMzuWHdjeiY6RFIoaGjBNBCR7+QEFsIH3G18SOyOrv5gxKoI+XUNLmPrsmdwD7TsHvsemvn+c+/++6cH4wB98DLzLCbi5zgNIziQyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=F9lb2t0f; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org ([191.96.150.29])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 48T5xa0F003145
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 29 Sep 2024 01:59:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1727589579; bh=irslh8MsFcziIi7ImkqjnJQeDeABJM+Q2j1bZu9qw5Q=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=F9lb2t0f9NjX3BPjn6sGHLs9VIHknZUoi1KhvEaJOtho67SUD8rFrxfiHFKznp9+S
-	 eCajM9Fo0SdJuLBsT3cDKG/qWuY9FH/YuRXkTW0Q+McT37KKIyIM3y99vlgbpUc9AR
-	 pUZczo55ghh124GGJyyNY5jpzHkCn2kvNJeSVfQjicQCCmOqajnqaDnegEknvxd+1+
-	 tx7YlAyzawhZv4mHHPV1nM23Sp3OljZk1syml6ecHvIgWGJ3X95gcpC7H/43iBZ7Hx
-	 7fJtFtY/lj8JtED6GlIEuqqdDVhFgaugNG+qvp7s1U1bPLVXm4iMxaLWp0cZmgsuhb
-	 tNfxAH8ChHfgA==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 9B17A3402F3; Fri, 27 Sep 2024 08:50:19 -0700 (PDT)
-Date: Fri, 27 Sep 2024 08:50:19 -0700
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Max Brener <linmaxi@gmail.com>
-Cc: adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, brauner@kernel.org,
-        jack@suse.cz, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] [PATCH] vfs/ext4: Fixed a potential problem related to
- an infinite loop
-Message-ID: <20240927155019.GA365622@mit.edu>
-References: <20240926221103.24423-1-linmaxi@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjbaCv7mxKmViur6q41Bsvx/bzK9c7ndh8mALEAdn9mYYD0jV53iBpWBJH0+JzU3i7ydjn+/cRWSmoJ83Bdv2SElQbHa2AIqUcdEn5uiAEfz8ZK6uy5agQD9PlA4CvuY76qPtK3NIf9Ov2xwrDkKm7D5cq7yh/H10r3YsWON77k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=na/tpird; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC4E7C4CEC5;
+	Sun, 29 Sep 2024 07:58:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727596710;
+	bh=3xHAO/1nMaKipfHebjoHo1sKkeBUhtCQGPDbex00eno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=na/tpird1bl9uvUKD9qDM4ARwhFA8PdpOm4dQQ7LxTWB/c33ja9fLlbqblYaKveqp
+	 Dd1mL5wLQhBBHY5REMFl7wDVk2vg5in81Z/qrjqgroWrMr3iBR0QeIK9xo2g+fID1W
+	 fZItj8cABW/yqR2e/9FCQSn2af9tg6wehIBneqHIGm7ROS54HNnV/IcC74/wYenXJj
+	 tccFdIJcBXl3O9NWHn38NKksr88Yq2jp0vqBFnpjaGrdNMZbnTJOOK8iAiy+HshUZi
+	 5744M39jfLtZQvSe3QV3UBHhc4ZP6RD/28eA0H8XD1lcVIHekhInDLtSvj5jVVewoi
+	 1xkMVvPzd8Ktg==
+Date: Sun, 29 Sep 2024 09:58:24 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
+	torvalds@linux-foundation.org, justinstitt@google.com, ebiederm@xmission.com, 
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Subject: Re: [PATCH v7 5/8] mm/util: Fix possible race condition in kstrdup()
+Message-ID: <xzhijtnrz57jxrqoumamxfs3vl7nrsu5qamcjcm4mgtdhruy5r@4az7dbngmfdn>
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-6-laoar.shao@gmail.com>
+ <w6fx3gozq73slfpge4xucpezffrdioauzvoscdw2is5xf7viea@a4doumg264s4>
+ <202409281414.487BFDAB@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sc2ag33lzzfktmx5"
 Content-Disposition: inline
-In-Reply-To: <20240926221103.24423-1-linmaxi@gmail.com>
-
-On Fri, Sep 27, 2024 at 01:11:03AM +0300, Max Brener wrote:
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219306
-> 
-> This patch fixes a potential infinite journal-truncate-print
-> problem.  When systemd's journald is called, ftruncate syscall is
-> called. If anywhere down the call stack of ftruncate a printk of
-> some sort happens, it triggers journald again therefore an infinite
-> loop is established.
-
-This isn't a good justification for this change; in general, whenever
-you have code paths which get triggered when a logging daemon is
-triggered, whether it's systemd-journald, or syslog, and this can
-cause this kind of infinite loop.  For example, suppose you are using
-remote logging (where a log message gets sent over the network via the
-remote syslog facility), and anything in the networking stack triggers
-a printk, that will also trigger an "infinite loop".  This falls in
-the "Doctor, doctor, it hurts when I do that --- so don't do that!"
-
-In this particular situation, journald is doing something silly/stupid
-which is whenver a message is logged, it is issuing a no-op ftruncate
-to the journald log file.  It's also worth noting that ext4's truncate
-path does *not* trigger a printk unless something really haw gone
-wrong (e.g., a WARN_ON when a kernel bug has happened and flags in the
-in-memory get erronously set, or the file system gets corrupted and
-this gets reported via ext4_error()).  The reporter discovered this by
-explicitly adding a printk in their privatea kernel sources, and in
-general, when you add random changes to the kernel, any unfortunate
-consequences are not something that upstream code can be expected to
-defend against.
-
-For context, see: https://bugzilla.kernel.org/show_bug.cgi?id=219306
-
-We can justify an optimization here so that in the case of
-silly/stupid userspace programs which are constnatly calling
-truncate(2) which are no-ops, we can optimize ext4's handling of these
-silly/stupid programs.  The ext4_truncate() code path causes starting
-a journal handle, adding the inode to the orphan list, and then
-removing it at the end of the truncate.  In the case where sopme
-program calls truncate() in a tight loop, we can optimize the
-behaviour.  It's not a high priority optimization, but if given that
-we can't necessarily change silly/stupid userspace programmers, it can
-be something that we can do if the patch is too invasive.
-
-HOWEVER....
+In-Reply-To: <202409281414.487BFDAB@keescook>
 
 
-> To fix this issue:
-> Add  a new inode flag S_TRUNCATED which helps in stopping such an infinite loop by marking an in-memory inode as already truncated.
+--sc2ag33lzzfktmx5
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
+	torvalds@linux-foundation.org, justinstitt@google.com, ebiederm@xmission.com, 
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Subject: Re: [PATCH v7 5/8] mm/util: Fix possible race condition in kstrdup()
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-6-laoar.shao@gmail.com>
+ <w6fx3gozq73slfpge4xucpezffrdioauzvoscdw2is5xf7viea@a4doumg264s4>
+ <202409281414.487BFDAB@keescook>
+MIME-Version: 1.0
+In-Reply-To: <202409281414.487BFDAB@keescook>
 
-Adding a generic VFS-level flag is not something that we can justify
-here.  The VFS maintainers would NACK such a change, and deservedly
-so.
+[CC +=3D Andy, Gustavo]
 
-What I had in mind was to define a new EXT4 state flag, say,
-EXT4_STATE_TRUNCATED, and then test, set, and clear it using
-ext4_{test,set,clear}_inode_state().
+On Sat, Sep 28, 2024 at 02:17:30PM GMT, Kees Cook wrote:
+> > > diff --git a/mm/util.c b/mm/util.c
+> > > index 983baf2bd675..4542d8a800d9 100644
+> > > --- a/mm/util.c
+> > > +++ b/mm/util.c
+> > > @@ -62,8 +62,14 @@ char *kstrdup(const char *s, gfp_t gfp)
+> > > =20
+> > >  	len =3D strlen(s) + 1;
+> > >  	buf =3D kmalloc_track_caller(len, gfp);
+> > > -	if (buf)
+> > > +	if (buf) {
+> > >  		memcpy(buf, s, len);
+> > > +		/* During memcpy(), the string might be updated to a new value,
+> > > +		 * which could be longer than the string when strlen() is
+> > > +		 * called. Therefore, we need to add a null termimator.
+> > > +		 */
+> > > +		buf[len - 1] =3D '\0';
+> > > +	}
+> >=20
+> > I would compact the above to:
+> >=20
+> > 	len =3D strlen(s);
+> > 	buf =3D kmalloc_track_caller(len + 1, gfp);
+> > 	if (buf)
+> > 		strcpy(mempcpy(buf, s, len), "");
+> >=20
+> > It allows _FORTIFY_SOURCE to track the copy of the NUL, and also uses
+> > less screen.  It also has less moving parts.  (You'd need to write a
+> > mempcpy() for the kernel, but that's as easy as the following:)
+> >=20
+> > 	#define mempcpy(d, s, n)  (memcpy(d, s, n) + n)
+> >=20
+> > In shadow utils, I did a global replacement of all buf[...] =3D '\0'; by
+> > strcpy(..., "");.  It ends up being optimized by the compiler to the
+> > same code (at least in the experiments I did).
+>=20
+> Just to repeat what's already been said: no, please, don't complicate
+> this with yet more wrappers. And I really don't want to add more str/mem
+> variants -- we're working really hard to _remove_ them. :P
 
-Cheers,
+Hi Kees,
 
-					- Ted
+I assume by "[no] more str/mem variants" you're referring to mempcpy(3).
+
+mempcpy(3) is a libc function available in several systems (at least
+glibc, musl, FreeBSD, and NetBSD).  It's not in POSIX nor in OpenBSD,
+but it's relatively widely available.  Availability is probably
+pointless to the kernel, but I mention it because it's not something
+random I came up with, but rather something that several projects have
+found useful.  I find it quite useful to copy the non-zero part of a
+string.  See string_copying(7).
+<https://www.man7.org/linux/man-pages/man7/string_copying.7.html>
+
+Regarding "we're working really hard to remove them [mem/str wrappers]",
+I think it's more like removing those that are prone to misuse, not just
+blinly reducing the amount of wrappers.  Some of them are really useful.
+
+I've done a randomized search of kernel code, and found several places
+where mempcpy(3) would be useful for simplifying code:
+
+=2E/drivers/staging/rtl8723bs/core/rtw_ap.c:		memcpy(pwps_ie, pwps_ie_src, =
+wps_ielen + 2);
+=2E/drivers/staging/rtl8723bs/core/rtw_ap.c-		pwps_ie +=3D (wps_ielen+2);
+
+equivalent to:
+
+	pwps_ie =3D mempcpy(pwps_ie, pwps_ie_src, wps_ielen + 2);
+
+=2E/drivers/staging/rtl8723bs/core/rtw_ap.c:		memcpy(supportRate + supportR=
+ateNum, p + 2, ie_len);
+=2E/drivers/staging/rtl8723bs/core/rtw_ap.c-		supportRateNum +=3D ie_len;
+
+equivalent to:
+
+	supportRateNum =3D mempcpy(supportRate + supportRateNum, p + 2, ie_len);
+
+=2E/drivers/staging/rtl8723bs/core/rtw_ap.c:		memcpy(dst_ie, &tim_bitmap_le=
+, 2);
+=2E/drivers/staging/rtl8723bs/core/rtw_ap.c-		dst_ie +=3D 2;
+
+equivalent to:
+
+	dst_ie =3D mempcpy(dst_ie, &tim_bitmap_le, 2);
+
+
+And there are many cases like this.  Using mempcpy(3) would make this
+pattern less repetitive.
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--sc2ag33lzzfktmx5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmb5CJoACgkQnowa+77/
+2zLfmw/9FsLN/M7ZkpM7L+8hpOThHHZDCRD40jrK8GQ9Ao1lmIKMASXMncuGw7Qn
+BoGLg+9glMCF47rsNtrqU5iSAoXuXOhIbi6iJUxF6WbK/Y0h4un0vjBoBZuoINnP
+fnGIPzVp2pNx70EaOw1Af3zUpXpbdzJYFpI++i7OJ4dnH8uQ5sbZMs2HioBKiWRT
+arfK0OD+HhJHE7GRtZMMCPeq1JvaELpBPp2exwe6j29Js6cD0EX4T9cLf7zTzU2n
+4enMj6OY04Hq78bmLv2Ej13DHYSrQCQdcbYu5auFN/dF3oq5AuB8XAk6L/gnuXdH
+bxIsS3yRvZL3JRYRU/n9RJzzAlrUX7wFo1/EVQFQvw/tbhmizOL3UM4IW8AXTxX+
+b4UuHBu+U3bGx1xCREqqWdq0Kl7CaGR2y8HipW5BXRa+58CaqZd3KPiyCvxsFxkN
+mMHgXRagtAo/RAjPapyBy++yBNFAy1QiXs4C+WOyONP3x+AA0e+tZiNvZOgFSrHC
+82An0a78d7f+1EXhpuE8X+LpVqwR7EFQVnPG1ox9B3B4380hphULOEa9HqstIvvt
+WGCtOL6T/Jb7SVoYesDuu26eQFoiK4JmDJht/K/z7NEhJsop3qzKnEnKl81GeX4K
+sNCQWo2X1SFnUZcxvQKNzGVMsOlNdjjTO4pOoSEFgurln1kI+BY=
+=4tYC
+-----END PGP SIGNATURE-----
+
+--sc2ag33lzzfktmx5--
 
