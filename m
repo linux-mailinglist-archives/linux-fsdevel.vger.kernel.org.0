@@ -1,61 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-30346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A4698A1F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 14:19:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63A698A1FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 14:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBC8C1F22254
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 12:19:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897D9281594
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 12:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ECF1922E6;
-	Mon, 30 Sep 2024 12:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C92192B60;
+	Mon, 30 Sep 2024 12:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtW7/GyH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PoGvy5J5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC9F18E75F;
-	Mon, 30 Sep 2024 12:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D35118E778;
+	Mon, 30 Sep 2024 12:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698289; cv=none; b=cATqNJYXEfFQlqnVBQgov4x6GAcXzH1W60KEjVpQiei6vZIYJPlXvJZkFpzqEKtKsOKAvEKBVPaT++kOASzHhpmnxHXahF4eR63AQbSekJMQac8HjiI6EsWmkZhzzOra7lNJaWSyc/90Jxr4EtV0JGa4HwpLWG/0I4N+pWadyZ0=
+	t=1727698320; cv=none; b=oKwYAR7k50fwuKZGrRfj72/987Va2AjuR2lTvW61aep+FEs8GK5igcHKCM6BiZ9nNcvB3JKsaS86kig7Ds14Jw7Sy3wVZFI7lKTh8rswgwISUxYLWnqs2hzVc5cK3brYjAZmlOxr/qm+CQWCWMQFKO+pWC71+jAurt1XWoWIqCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698289; c=relaxed/simple;
-	bh=9tWYCp4vpeMn12EPX2msoogZdQh1CDg3ECXvFAwQFrI=;
+	s=arc-20240116; t=1727698320; c=relaxed/simple;
+	bh=PN+pVT5TT24Sk4ntvNlo6LVYPStz22N4kv1xhwFM2ks=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NOSh5C7FALJBMvvpAplGktuPNAvdLb+I1PY4uhtADjfFxr8quaIQ8es3Y1pEIRwqeuXZzP6KFj61cz6AqnWeI6EonRvnbBgAQEeZhephJAcVOLftNFTjVP/igaEMGwi+GD82I+n0yAt4kCNnM2ZBaC2/Prm7iHpSFjp2s2R7AVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DtW7/GyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD78C4CEC7;
-	Mon, 30 Sep 2024 12:11:26 +0000 (UTC)
+	 MIME-Version:Content-Type; b=A8EzSuNAzN0VltEOMuvW2Uw/Rkt+d8v0v97Tx8gIDGfpxRi2iU+qO8ueh4DQRhhOLa1YaBatiud7SDkLvEIfb7Qk966Vj0Fx9yn692gNZpm681VcELfUMGN5DE2aZi2LrAWP9u6rIPHKN5mq77G2xV0m216g51c9gC+x93Li8fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PoGvy5J5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4136C4CEC7;
+	Mon, 30 Sep 2024 12:11:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727698288;
-	bh=9tWYCp4vpeMn12EPX2msoogZdQh1CDg3ECXvFAwQFrI=;
+	s=k20201202; t=1727698320;
+	bh=PN+pVT5TT24Sk4ntvNlo6LVYPStz22N4kv1xhwFM2ks=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DtW7/GyH4g10ziUg9s5F+jREy77B0GIPKsSrEPcpFH/JvNCzMKcqs/ItrlREKtPOa
-	 9EC2ctjfh70STkNZ+tsJnmRGjatdPOuPWCDdWE4IGrVvIl2AKu/Ro0G1C+HnK5W36H
-	 QUj5ZwxlzYekodauDrU1eZb+/58mU7nZu/LBi0U0Qv/7b36tqPXYBpdysyO7UGYTt7
-	 W89lQv3L+DWhbvWMPJTSpNOQbglEptxhyshUWWtWCihXybRSsiVP/ipqkvd9XYLgCN
-	 U1vNvcV6GZ9Xyz73AUnbFuq8zTZKh6XLr72tZ76vtYF0/LXi3ooi1x1C/r9zbt9ZPA
-	 WcKdMeHzLvFBg==
+	b=PoGvy5J5eH8MF9+NlPUsxr0y7cW7mk1uVSGZCWpodlJVW2Wpxc69+7O429eGafTAP
+	 eIGp+zkvY4w9Ks09thnUMcpXyJwh62J1Bf2GrYdvYVVL8GgdKgJ6WhJDVesFkTgW1Y
+	 LwbmJuJuMFFbVd5fwGXCSoQqrGPcChaZIoVkRFzzyk2I00ES6BvZanIvTpp7oNJhc/
+	 9BAHQDlD1rEJJc4NI79sfIL1x/rc1n8fESTpG+z/PKUhA1aWcHqAvYhbFI2Yz4thOj
+	 a4XwXh2zT4FCBQULzVkXl/q5TgAkY+OtMKlJUchABUpa1EFx60BvJKgqVrJFkC5PUx
+	 o8SdzGR9H+Q5A==
 From: Christian Brauner <brauner@kernel.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Christian Brauner <brauner@kernel.org>,
 	Jeff Layton <jlayton@kernel.org>,
 	netfs@lists.linux.dev,
-	linux-doc@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Add folio_queue API documentation
-Date: Mon, 30 Sep 2024 14:11:17 +0200
-Message-ID: <20240930-baubranche-unbewusst-8646dc251e66@brauner>
+Subject: Re: [PATCH] netfs: Fix the netfs_folio tracepoint to handle NULL mapping
+Date: Mon, 30 Sep 2024 14:11:54 +0200
+Message-ID: <20240930-gasversorger-dient-dd843f92df8b@brauner>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2912369.1727691281@warthog.procyon.org.uk>
-References: <2912369.1727691281@warthog.procyon.org.uk>
+In-Reply-To: <2917423.1727697556@warthog.procyon.org.uk>
+References: <2917423.1727697556@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,13 +61,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=867; i=brauner@kernel.org; h=from:subject:message-id; bh=9tWYCp4vpeMn12EPX2msoogZdQh1CDg3ECXvFAwQFrI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9mpq5rcmS6R738hc6YjnHHuYeOG3aydDfI1zH7v1Ef PU1oW6ZjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIks12VkOLfhfUIsh7aUqpXB XSOlVuPS0Ozrr86lWDfPkXzdddRal+F/jnGGeca7dab+op9eRe78Jtlp9S1+X9/OSzpCr2TLdj7 iBQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=983; i=brauner@kernel.org; h=from:subject:message-id; bh=PN+pVT5TT24Sk4ntvNlo6LVYPStz22N4kv1xhwFM2ks=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9mtrlxrd02+HPC7vncF6JUxdYa7ucJ0f6fd9DraJgv nlsJ5JlOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyV52R4dyR/hcZabtM7832 cPD38J45dUVMLp9Om/3TrGW9okdP3WH47+sYqLNvCcNeuTbP9l07VnD8Twiavv1cT4u71gPbq9P seAE=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 30 Sep 2024 11:14:41 +0100, David Howells wrote:
-> 
-> Add API documentation for folio_queue.
+On Mon, 30 Sep 2024 12:59:16 +0100, David Howells wrote:
+> Fix the netfs_folio tracepoint to handle folios that have a NULL mapping
+> pointer.  In such a case, just substitute a zero inode number.
 > 
 > 
 
@@ -88,6 +86,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.fixes
 
-[1/1] netfs: Add folio_queue API documentation
-      https://git.kernel.org/vfs/vfs/c/28e8c5c095ec
+[1/1] netfs: Fix the netfs_folio tracepoint to handle NULL mapping
+      https://git.kernel.org/vfs/vfs/c/f801850bc263
 
