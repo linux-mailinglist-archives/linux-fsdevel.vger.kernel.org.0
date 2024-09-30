@@ -1,127 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-30404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC62798AC6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 20:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E8698AC76
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 21:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4E61C21932
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 18:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E69E01C212CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 19:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CED7199248;
-	Mon, 30 Sep 2024 18:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA43C199E8D;
+	Mon, 30 Sep 2024 19:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="uQOeVS5V"
+	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="AD2ZcWHJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4047D198E93
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 18:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1039B19992C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 19:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727722512; cv=none; b=kHYV/sMtkbQUIMQGa3ipfRqoGipUWIK8tPATPRprJGJWxCsQCy/luUUagp/h3xlXvt/l5UI+l472Ho/6XveuXLSI9BD7hEsa5iC1FzZCILZEpxcoYqnZ+ZkhJiWCuNylpJ5VNaHBQ5y9BvG2y/F8l454jqc/79MSuqXDULIu9Xw=
+	t=1727722823; cv=none; b=ap1sHgZK+4n/rOJta7r+Rj+lTIk3ym+NgqN05WLYoQvU4ovHkGGwrZ5+hXrz4b7vVrwn4Fcr25PAdE8r7obVKl7S8cQ3nFowta6CnXS37XQ84kIGfg00X4PMsUddv0PN0oyb4HU+DucsvWO+rvB7IUW+k7juL9TXUlObg7Ew6f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727722512; c=relaxed/simple;
-	bh=DncG/RMrnPEbFWH6D8LtrSW9LSny2ClSKkba5oLV8OI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XTey9RnRoqsF88OmnHnP2f9H1GkJ5XUxQNJ/r6Di9J9dEeijoJncSEzTVH6PW31QK6FCHsskZYwHHFwDZZVQbXgLrUHaTDJ0lp7SdltTWLT3MGr3rHSzE7DJq4AxkBs9Cj5eqKvhy61MbM+QhKklzHf4H6fziHwakGg1EzTXDTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=uQOeVS5V; arc=none smtp.client-ip=209.85.215.169
+	s=arc-20240116; t=1727722823; c=relaxed/simple;
+	bh=UTeuYgMehmLJA/arPzgIQes3j/4SwwxcY8cev10CXXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+45T/17UUwnDD9n+z6BYwnlhMoF4bmy7W6M+snDu3REzDmakxUSpEX6zVmy4H2q2H2hTVgLX/LzkCBokHF1xdj/aZzj8A+Ux+s+Z6AIH9W7WTrILVGUXMdZEtfJqqneLMXd+vM2FvZv38hCrWra++vQpMwNjmLSI8ZKWqEwDV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=AD2ZcWHJ; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7dafb321dbcso238686a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 11:55:10 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-718e0421143so672960b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 12:00:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1727722510; x=1728327310; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8VAQ/SmVDfVAhynU7T94wopV4O6hecY0N9QDW6gOokw=;
-        b=uQOeVS5VSUNKrhpOv4MZlHklzL/7NfACyYerOTVZoJTxkyl2uz1Yw/UTBrzXKx2iJ1
-         Dh8kRgdZ4URtZfbDCvNKQwEfMaDSweHRpElkWhcYX03CmFdjJqURKyedaQm8F89Se/SR
-         KohNnJUhqNb45fmc7LBx3YmQKzJOoPVfcUvkSYIqSz3x5YqRrDwKkiY5kkgplDSJqDSQ
-         JT475/zhh9sADjs1IEJTmpqEdSXPEt9FJek/RRYNx1PWevz01pa7nqvTKrbHH3r5iiHi
-         fNlegkVOR76xffwASWZZiBlJGn6sF8sOXnDlxrDGYi+maxLPa7WyDtU56F3k1PoMm43v
-         X7mg==
+        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1727722818; x=1728327618; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tK4zHMv9BgdsXfJFkQFkyqT5Q9MVxMalN7pOJK+VYMc=;
+        b=AD2ZcWHJT/Eh8QCoGwtR2mU/72Hn5PXbAqIORnZDyFQ12uCk5B6tgPR0gvJL4FDpmJ
+         ulZzhaj/oQ9sKYNODSjhgVv94UWmTt9EA+rp3AZxM3D7FuMreK9zLBVPVKWu3uh3+yR+
+         vy+EFC32Ma8cvowRGq+XAGeEadeMV+x3qYlOPzmGn6BqAD76WPYrQPop8bkeDhZ4ERpK
+         1UNXgJ0vFc4lVx8afjUXBo0LvvB6Rd4zof4t3Zc6Vy61FsDUmw+QDwS60x7YioxFUGH3
+         CoTsxWXSnHhGL7i7+cVMdkBzfJQ1pVAYBQUJy/0cBhT0hau1JKlewvZ94VVeJ6zOGv4q
+         0Crg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727722510; x=1728327310;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8VAQ/SmVDfVAhynU7T94wopV4O6hecY0N9QDW6gOokw=;
-        b=AiuKA1BKD3mqEVke0XL3iRm1Ga1LrMOAD3TjSIvIjhmmt4LpGBeLL0R9Kr2MphNghr
-         gX4UwYij3TIeiPKDjoeyXQ4EncNj5rdpGbzu8VCnw0bjCOpYGzJN61sxpLQu5USWUTFe
-         K4dEqi4zMCI0Otbjto0PvJxcOXdtl0z+5RkTgSvd1I32woApu4t1jLKxK4tTGy0vCxdJ
-         YZcv03RlJEgpl7SvdYM5/hhvznC7ec9xBfUA995yZ1g8CxBUrVvqY7uKC/PWDza3tPHE
-         b9TwozvNzFBTL2C1DIDw+A5jB22mWIgamHq2MhpdE7ap7y0a524Z/TlHXKt0QgQ59Du+
-         aWSA==
-X-Gm-Message-State: AOJu0YwuxoXuf7mVlzjPNbgY2V3tPgSELBnU+8APYdOArLTu+3amgeST
-	SfoqyVxmAdn538b7HPKN8KCwpA4ySQWxPseMpIorq8RQ0Yi5/7jUiVf66xmOWVedu3QIwb3vXMm
-	4
-X-Google-Smtp-Source: AGHT+IEHnADY9Lk/jZUl1YRpGsPuBms2JZDBO/xgFDkOwrdjxf+4j2N2oNKU13O1aDFUuC5vUMn2fA==
-X-Received: by 2002:a05:6a21:3283:b0:1cf:4903:7f66 with SMTP id adf61e73a8af0-1d509b1c3dcmr6304093637.2.1727722510147;
-        Mon, 30 Sep 2024 11:55:10 -0700 (PDT)
-Received: from telecaster.thefacebook.com ([2620:10d:c090:500::6:e49b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bc3ecsm6610976b3a.60.2024.09.30.11.55.08
+        d=1e100.net; s=20230601; t=1727722818; x=1728327618;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tK4zHMv9BgdsXfJFkQFkyqT5Q9MVxMalN7pOJK+VYMc=;
+        b=W8DZK1Ve1eDCGQ0BFVhMDOHLpYlDYM4zUeIFIhruXg50FyVZURe+aFcq+38Rp1A92l
+         opLoxbn94iUPT0bSvb8HmtfxgjBAUv1ihD+etb/m63xZXbgxgFvGAb4NpUfICIwj59uI
+         8SuLi7LPbnMKnDOUNpqJBPak0ws6A66cM+JhuBbwYfoWEiCZrZMxW8BUKrzcWjpbsQ85
+         TobLbeFKl+cxsGmx76ptS7LnPkMQ05ROoio2eQhYNkzZcEmcQEavnd437qdoZAtbFgwr
+         GQHxtLzo17/Pk3iOzW+1anKFgXgKbzWmT23cqU0gKfi4NklR+zn60i+FwXLh2S0oRdA+
+         RHdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/Luv7lTZY5ENAcf9AUjKssOwD1vfGFpc37Kw6yqK18BBY8y6N+6EJKrOiNmHk1typsMQ+zRWAtvI55x22@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdMUMHdLA2wQvSzT4/QigiKotZ48eGiOhajFNC3Mh5xU4G29Yy
+	10KU5Ia87DdNOb/+c+XTmyekd4O3yLkuL989mopONkExzHMiKBs9RXK5qVyy88c=
+X-Google-Smtp-Source: AGHT+IHr3t4octArrJkwK4KlggdiRYNEixY4E7CvOHzMJxxuBtEfGjyLTrjjT9DROP00qxEU234jog==
+X-Received: by 2002:a05:6a00:2392:b0:718:e49f:246e with SMTP id d2e1a72fcca58-71b260a8a3fmr8397735b3a.6.1727722818090;
+        Mon, 30 Sep 2024 12:00:18 -0700 (PDT)
+Received: from telecaster.dhcp.thefacebook.com ([2620:10d:c090:500::6:e49b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2652a622sm6544654b3a.164.2024.09.30.12.00.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 11:55:09 -0700 (PDT)
+        Mon, 30 Sep 2024 12:00:17 -0700 (PDT)
+Date: Mon, 30 Sep 2024 12:00:13 -0700
 From: Omar Sandoval <osandov@osandov.com>
-To: linux-fsdevel@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: kernel-team@fb.com,
-	v9fs@lists.linux.dev,
-	David Howells <dhowells@redhat.com>,
-	Manu Bretelle <chantr4@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Leon Romanovsky <leon@kernel.org>
-Subject: [PATCH] iov_iter: fix advancing slot in iter_folioq_get_pages()
-Date: Mon, 30 Sep 2024 11:55:00 -0700
-Message-ID: <cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com>
-X-Mailer: git-send-email 2.46.1
+To: David Howells <dhowells@redhat.com>
+Cc: Eduard Zingerman <eddyz87@gmail.com>, Leon Romanovsky <leon@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
+	ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
+	hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
+	netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
+	smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
+	v9fs@lists.linux.dev, willy@infradead.org
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
+Message-ID: <Zvr1PVRpC33aaUdt@telecaster.dhcp.thefacebook.com>
+References: <423fbd9101dab18ba772f24db4ab2fecf5de2261.camel@gmail.com>
+ <2968940.1727700270@warthog.procyon.org.uk>
+ <20240925103118.GE967758@unreal>
+ <20240923183432.1876750-1-chantr4@gmail.com>
+ <20240814203850.2240469-20-dhowells@redhat.com>
+ <1279816.1727220013@warthog.procyon.org.uk>
+ <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
+ <2969660.1727700717@warthog.procyon.org.uk>
+ <3007428.1727721302@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3007428.1727721302@warthog.procyon.org.uk>
 
-From: Omar Sandoval <osandov@fb.com>
+On Mon, Sep 30, 2024 at 07:35:02PM +0100, David Howells wrote:
+> Eduard Zingerman <eddyz87@gmail.com> wrote:
+> 
+> > Are there any hacks possible to printout tracelog before complete boot
+> > somehow?
+> 
+> You could try setting CONFIG_NETFS_DEBUG=y.  That'll print some stuff to
+> dmesg.
+> 
+> David
 
-iter_folioq_get_pages() decides to advance to the next folioq slot when
-it has reached the end of the current folio. However, it is checking
-offset, which is the beginning of the current part, instead of
-iov_offset, which is adjusted to the end of the current part, so it
-doesn't advance the slot when it's supposed to. As a result, on the next
-iteration, we'll use the same folio with an out-of-bounds offset and
-return an unrelated page.
+I hit this in drgn's VM test setup, too, and just sent a patch that
+fixed it for me and Manu:
+https://lore.kernel.org/linux-fsdevel/cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com/
 
-This manifested as various crashes and other failures in 9pfs in drgn's
-VM testing setup and BPF CI.
-
-Fixes: db0aa2e9566f ("mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence of folios")
-Link: https://lore.kernel.org/linux-fsdevel/20240923183432.1876750-1-chantr4@gmail.com/
-Tested-by: Manu Bretelle <chantr4@gmail.com>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
----
- lib/iov_iter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 97003155bfac..1abb32c0da50 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1033,7 +1033,7 @@ static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
- 		if (maxpages == 0 || extracted >= maxsize)
- 			break;
- 
--		if (offset >= fsize) {
-+		if (iov_offset >= fsize) {
- 			iov_offset = 0;
- 			slot++;
- 			if (slot == folioq_nr_slots(folioq) && folioq->next) {
--- 
-2.46.1
-
+Thanks,
+Omar
 
