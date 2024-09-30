@@ -1,101 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-30402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9519F98AC21
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 20:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C799498AC57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 20:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A0B21F21781
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 18:35:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D7328175A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 18:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2404C19925A;
-	Mon, 30 Sep 2024 18:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FED41C6A;
+	Mon, 30 Sep 2024 18:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkQOw5kt"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JX2IytFj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CEC43AD2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 18:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ADFB667
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 18:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727721320; cv=none; b=d9xUUQqa6EJmsLyR+t8EtFmkb89+SeupBjW5CFryHQwjwi0qdY7/Ikt7+JX9VRaaDdW+HIdjGJr3aHeG4eSx8codzT2BtUK1cIDU42aLU8dR/CKQuIMlKmpCBYzY0nH6BsKVwvIrT30uIlvQYHMOutqzr+dHxouF8gzt4mhP4OA=
+	t=1727722014; cv=none; b=n6Y3Np94V7zlW03cfd3n6QVmfo/1M3sGGVBG060IB6oQi6E3KvZwuviPlMiFN/W9AmL67sPfKaz+JBIOJ3D0D1smUTMZi0qeUDMuaQKa+AJtsRxBNYcBfKDhRkYkRkvhJ/RJtJi8unKWVncq4yAoudH/1/RTMJe0g1VjxwYFUF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727721320; c=relaxed/simple;
-	bh=u/r1gsK3d9HgHSLkwy9YD8P0OsrJDIi+1lCKi06YOU0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=EcrVn74+EGZE2scOx6xZcr7nze3qeGfYb44yyaJKHOTckiX8BWhOwarYD/ua8EnSHH3SaADRay//hULJr39rQoqEhfohd/3bUkM09huOUHQij1GaUQ0pbke5+zW6H/libCZxI/6euiwYMu3XJfVzWuaGQHUvnq8I4sp1mxfcjjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WkQOw5kt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727721318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7X8o4DowsqGONQ/4kasxk3OiTMOAJHVfF5+gN/kqpqg=;
-	b=WkQOw5kt70R/WrIEdj2b5mUT+hMkUkKd1zw3+SQlm684xmNjgEdlKh6YEnR1NcV+AAGQ5a
-	XxgkF0eCyqq9ff6s50XZKg9WFgamqjdUntt18PbzCzGFSJZ2Eztsi1vobHDwXhOfsPZObu
-	JqdLvxAGYhKaNQteBTmxuJ5T7UQoPBw=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-453--d_Kp97WPyK6rMA1zpyZig-1; Mon,
- 30 Sep 2024 14:35:14 -0400
-X-MC-Unique: -d_Kp97WPyK6rMA1zpyZig-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59638196A10F;
-	Mon, 30 Sep 2024 18:35:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 10E771944CF6;
-	Mon, 30 Sep 2024 18:35:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <423fbd9101dab18ba772f24db4ab2fecf5de2261.camel@gmail.com>
-References: <423fbd9101dab18ba772f24db4ab2fecf5de2261.camel@gmail.com> <2968940.1727700270@warthog.procyon.org.uk> <20240925103118.GE967758@unreal> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <1279816.1727220013@warthog.procyon.org.uk> <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com> <2969660.1727700717@warthog.procyon.org.uk>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: dhowells@redhat.com, Leon Romanovsky <leon@kernel.org>,
-    Christian Brauner <brauner@kernel.org>,
-    Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
-    ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
-    hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
-    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
-    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
-    v9fs@lists.linux.dev, willy@infradead.org
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
+	s=arc-20240116; t=1727722014; c=relaxed/simple;
+	bh=LJBd2XzWsHz164n1fTuK+B4D3XarcsLPTUGiEDLMWG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dm7cdO63aIyganrsV12nlEJoznBhl/U7AIUfL52XVucn+vgG/sUtQ++qh/edOMPM/Bj9vUNMrCsobk76dLLu5WLSJYuZQarI/Oxue7CktQrQxiiKctVsbCdRwyP4mZdPeWm0u+pRTdWY+RA+HDYJtNq7avQE9/2yYMzcB6nPDV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JX2IytFj; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so5767997e87.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 11:46:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727722010; x=1728326810; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ZxtY/yExLakikPIWimGxq8rXeYi1ZRab5obj2wCNkU=;
+        b=JX2IytFjK6uDYofVY6bhRn9dqxxuRzcYIY6Olru8nFDstHQtjmlQuol+wRluNQXrbH
+         9+ItpMDby8QJ0U+8mGPljuKdS0NgptVs2zo07K8heAJTlCO2wOqufdcAhSga95t9w5hH
+         QVG5GExg+ptMhgoPdGXhbkWg2VKVcxnQ/FdhA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727722010; x=1728326810;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8ZxtY/yExLakikPIWimGxq8rXeYi1ZRab5obj2wCNkU=;
+        b=UPLocoq2qAyIUq+2W9Mfdvsh9jflY05ihZvwNH3ZURuHXSaWqs9ClD+huNyo4GUABv
+         e323wfTGmDGnt8pHbXAAGHK1CtedTxHEI2fu10skrHklNxh10IYs7SUIx08ZbRmKAA/e
+         Bf9e3UvDkZ/19PG27308oQt/Db6h+stz7NsiJg5ae2M1Ct0FdkKp4PuGLuOcANRnGaD5
+         Yl42RQgJuvzutUMYjC0/BAkZHPhxnZhrtC/sJbk+GDyLV3duGUNBHWP17HhYu9UvL7MU
+         AZQdrVS65vTZAw1h5hQy7xyZbz0eaHVc6XNMqWH2RfQGfyD0Ldu5IfqM9xsEONRituAV
+         iA7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXBFCe6CLRMY1Gz7Q5p+p+L+XeBdtrXpMe9gM8FYNNAsXbiz9BERMqM3hggI3PfuGYdfqHf1jxUuLfHzOtl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs9P+jaGvMLSgPHUd1E8xe6iuLYux1fOUzPJLxBV15WmZ9DQei
+	CFoKxZYQwT4fgimjW2bwHpjl6oVwkgux3wexwzF87jXqRnenl8GO+qOuceNLDY8uPBYf204LMBy
+	1gW6XUQ==
+X-Google-Smtp-Source: AGHT+IETn3VOsZ/G8tM4HtYtU//keYkkTp1Q/tYYZ610oJuEclI3gyHoV4+lRJgmYjGacv8O1jRIqA==
+X-Received: by 2002:a05:6512:6405:b0:530:aa82:a50a with SMTP id 2adb3069b0e04-5389fc633d5mr6979829e87.45.1727722009972;
+        Mon, 30 Sep 2024 11:46:49 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a0440bc2sm1316855e87.249.2024.09.30.11.46.48
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 11:46:48 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5389917ef34so5392663e87.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 11:46:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW4nPBhAvR+R+MoNUkTpCn6Rttxl0JYGtJ2Cl2ply0P3Co3sO5xgSo8d6v/3AVhGv5kDvSkSdokfP/iuyJC@vger.kernel.org
+X-Received: by 2002:a05:6512:ad2:b0:537:a824:7e5 with SMTP id
+ 2adb3069b0e04-5389fc361dfmr6504852e87.18.1727722007490; Mon, 30 Sep 2024
+ 11:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3007427.1727721302.1@warthog.procyon.org.uk>
-Date: Mon, 30 Sep 2024 19:35:02 +0100
-Message-ID: <3007428.1727721302@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <Zud1EhTnoWIRFPa/@dread.disaster.area> <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+ <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com> <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com> <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk> <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org> <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io> <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+ <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io> <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
+In-Reply-To: <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 30 Sep 2024 11:46:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
+Message-ID: <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Christian Theune <ct@flyingcircus.io>
+Cc: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@meta.com>, 
+	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, 
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Content-Type: text/plain; charset="UTF-8"
 
-Eduard Zingerman <eddyz87@gmail.com> wrote:
+On Mon, 30 Sept 2024 at 10:35, Christian Theune <ct@flyingcircus.io> wrote:
+>
+> Sep 27 00:51:20 <redactedhostname>13 kernel:  folio_wait_bit_common+0x13f/0x340
+> Sep 27 00:51:20 <redactedhostname>13 kernel:  folio_wait_writeback+0x2b/0x80
 
-> Are there any hacks possible to printout tracelog before complete boot
-> somehow?
+Gaah. Every single case you point to is that folio_wait_writeback() case.
 
-You could try setting CONFIG_NETFS_DEBUG=y.  That'll print some stuff to
-dmesg.
+And this might be an old old annoyance.
 
-David
+folio_wait_writeback() is insane. It does
 
+        while (folio_test_writeback(folio)) {
+                trace_folio_wait_writeback(folio, folio_mapping(folio));
+                folio_wait_bit(folio, PG_writeback);
+        }
+
+and the reason that is insane is that PG_writeback isn't some kind of
+exclusive state. So folio_wait_bit() will return once somebody has
+ended writeback, but *new* writeback can easily have been started
+afterwards. So then we go back to wait...
+
+And even after it eventually returns (possibly after having waited for
+hundreds of other processes writing back that folio - imagine lots of
+other threads doing writes to it and 'fdatasync()' or whatever) the
+caller *still* can't actually assume that the writeback bit is clear,
+because somebody else might have started writeback again.
+
+Anyway, it's insane, but it's insane for a *reason*. We've tried to
+fix this before, long before it was a folio op. See commit
+c2407cf7d22d ("mm: make wait_on_page_writeback() wait for multiple
+pending writebacks").
+
+IOW, this code is known-broken and might have extreme unfairness
+issues (although I had blissfully forgotten about it), because while
+the actual writeback *bit* itself is set and cleared atomically, the
+wakeup for the bit is asynchronous and can be delayed almost
+arbitrarily, so you can get basically spurious wakeups that were from
+a previous bit clear.
+
+So the "wait many times" is crazy, but it's sadly a necessary crazy as
+things are right now.
+
+Now, many callers hold the page lock while doing this, and in that
+case new writeback cases shouldn't happen, and so repeating the loop
+should be extremely limited.
+
+But "many" is not "all". For example, __filemap_fdatawait_range() very
+much doesn't hold the lock on the pages it waits for, so afaik this
+can cause that unfairness and starvation issue.
+
+That said, while every one of your traces are for that
+folio_wait_writeback(), the last one is for the truncate case, and
+that one *does* hold the page lock and so shouldn't see this potential
+unfairness issue.
+
+So the code here is questionable, and might cause some issues, but the
+starvation of folio_wait_writeback() can't explain _all_ the cases you
+see.
+
+                  Linus
 
