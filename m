@@ -1,143 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-30320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165CF989867
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 01:23:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EAF9898F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 03:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53D31F21650
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Sep 2024 23:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A915A2839F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 01:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E5C17E012;
-	Sun, 29 Sep 2024 23:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="MBtavOo4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE8B2F30;
+	Mon, 30 Sep 2024 01:27:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B62E18EB0
-	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Sep 2024 23:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DC936D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 01:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727652206; cv=none; b=pi1pOag086t6Udqs/AwpxFPjREaPauhx42M45lcnHOLtt1KQQ56/q6LTQWV8iuMe5fvLXEzf1QcUW+Yn3mExDMpNETTCH0uIIylMvAszMIoOyqZZD5rxsRslXV5iX+JKC2lKcfHBFN+u4qB7kYDswLfusUfu5ji3d7f9HCkWneI=
+	t=1727659661; cv=none; b=pP9pLzjDL0WBBnVuf8TAieesKsUAumecoWkqFkHGxBtgO3LMZPxT8/+c2iRl/qCgpJE2mug0J6BgFIM5kTBrR+f02K8kY6z7/kQH59nmC5+7wdUTA9L2yWiCDTMwy6qPK/h15x63ztUN5aQFuuOl1TJ8kfh6rJjY5nAGPzMlOIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727652206; c=relaxed/simple;
-	bh=NjiUM8DYsZYO33SPbNfp1mswW0oLD2KvstRs8zVWDfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nd+5+kyC1w76n0J6RGoM9AKusjh9tOOkmc3j94qsgA9u2N/3gpJtUnvO/URWC9CI+Qy3lMQopB1/r9VbGMmYVO/aph02TLO7jCr+vE0XdbCLPOcFBXZ85PLoFUElKRpvDVuPJPcsBw6yLM5uEyobSKzAYa46Mk5+dYgtulXFAGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=MBtavOo4; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71b00a97734so3274495b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 29 Sep 2024 16:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727652204; x=1728257004; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XVPIcDr0WvhWO6ztyJnBinOFQAeaT2H7Vw3yuyZBPq8=;
-        b=MBtavOo4vy8+DmhGPFAeMfLcn6/KWI6gQTyv8Z7IprIHWVPZY0rbK8W2j075BGxtey
-         V7ssnDzLWw/OdfOwD9JlIggRmh6CVCsnZWr4NuXsi//7GYqzpCBW+S7rQnzblGA5Nae6
-         FfvNh46hMc18xt7Qkrkw9ybomjYRPo4dv0XvhHxoPouF3WkSbRk1LgPkSntthMThfi3+
-         Iq+W/On9v1vzkP/W/j6GMH/a4Izx4wLNkGUUf8EINO5a7iwjoRWL4yLuKrss9Oq/DUhC
-         CX3+3beT6B9LmYgYDWzyhDRYXHl8cdEo9AwOh1SvdlLXSc8582THK2hUJjZCgBNSmWfz
-         Sn9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727652204; x=1728257004;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XVPIcDr0WvhWO6ztyJnBinOFQAeaT2H7Vw3yuyZBPq8=;
-        b=KPNejP1YkLCLIhgXN/+p43/w2iKG3XmX21QECcK8673sqh/b2voPJb9caBaLPSM84M
-         OG9Z6fLzi6Fra0IfqUnXUYkYvL+L0jOQSBo4QTv3IsZliHHQxqTbpy7NoRjfFN6/+HlB
-         fO3goIWZ0eSS8LEoiDou3H+AFHq0vre4yW5tjbvtzTu4nmdgXYhyeoKfX3xPqa6rJD8g
-         ndYlAgiv/qzswWn3EnxXA++w3HnUG52hsf8rFiBUmZXXNPH1Fe99Nj2JnxL/9VvFblhX
-         ltSiREsjk//zLAZHKDgPuvpB6dcIpbE2yvo7NwjgMIA2Y8J0CGnryunt6fsEoKhrPZPR
-         L8xw==
-X-Gm-Message-State: AOJu0YzDevtZTvrh/M1l7sFf3wD5/Wuv0dTk/U8QbVdnOk1cglDs/MDr
-	rkgJbnNxOGZ6tkFmxy8ouWmbCL88EKR5MB0DuSL9wogNWWUbPxGXt1R4Q4hB5UwW29JfJvyBUas
-	G
-X-Google-Smtp-Source: AGHT+IETKSJ63nh9ktOURi5w3NTuSOfHNMzqx2xmG7CM0+NLIe1yHGjGOw5Md0rPA1rcYe66pV5mYg==
-X-Received: by 2002:a05:6a00:1956:b0:717:900d:7cbd with SMTP id d2e1a72fcca58-71b25f0b1e4mr15305266b3a.5.1727652204243;
-        Sun, 29 Sep 2024 16:23:24 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db610c99sm5341934a12.76.2024.09.29.16.23.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 16:23:23 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sv3G4-00BoaP-1q;
-	Mon, 30 Sep 2024 09:23:20 +1000
-Date: Mon, 30 Sep 2024 09:23:20 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Julian Sun <sunjunchao2870@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com,
-	djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, hch@lst.de,
-	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] xfs: do not unshare any blocks beyond eof
-Message-ID: <ZvnhaPWplOK4cNa3@dread.disaster.area>
-References: <20240927065344.2628691-1-sunjunchao2870@gmail.com>
+	s=arc-20240116; t=1727659661; c=relaxed/simple;
+	bh=TCsmi1curqm/akYnsUVFl0nOyebe7klRcWD/xIjX7oM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=caeFFt22RsqvL4KzLUka6Tf7EunnUt1MKQ3iKIDz2ytwZX0p9yphC0ealZbtsWdg/90qGL5kAkeQwn4A9R4/XjXHMOfBPipRtbNeoXg51Dnqd9g+8EX0D35zPAGeP7VgUzkNRP2mPMq5C+aWiyl1z5KcYmg1c9afvRoQ5uxPiFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XH3NB4QL4z1ymhF;
+	Mon, 30 Sep 2024 09:27:38 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 101CF180041;
+	Mon, 30 Sep 2024 09:27:36 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 30 Sep 2024 09:27:35 +0800
+Message-ID: <579518dd-a04c-491b-9c46-0880fa9fdf9c@huawei.com>
+Date: Mon, 30 Sep 2024 09:27:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927065344.2628691-1-sunjunchao2870@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] tmpfs: fault in smaller chunks if large folio
+ allocation not allowed
+To: Matthew Wilcox <willy@infradead.org>
+CC: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, Anna Schumaker <Anna.Schumaker@netapp.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>
+References: <20240914140613.2334139-1-wangkefeng.wang@huawei.com>
+ <20240920143654.1008756-1-wangkefeng.wang@huawei.com>
+ <Zu9mbBHzI-MyRoHa@casper.infradead.org>
+ <1d4f98aa-f57d-4801-8510-5c44e027c4e4@huawei.com>
+ <nhnpbkyxbbvjl2wg77x2f7gx3b3wj7jujfkucc33tih3d4jnpx@5dg757r4go64>
+ <ZvVnO777wfXcfjYX@casper.infradead.org>
+ <9a420cea-b0c0-4c25-8c31-0eb2e2f33549@huawei.com>
+ <ZvV2fAELufMuNdWh@casper.infradead.org>
+Content-Language: en-US
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <ZvV2fAELufMuNdWh@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-On Fri, Sep 27, 2024 at 02:53:44PM +0800, Julian Sun wrote:
-> Attempting to unshare extents beyond EOF will trigger
-> the need zeroing case, which in turn triggers a warning.
-> Therefore, let's skip the unshare process if blocks are
-> beyond EOF.
-> 
-> This patch passed the xfstests using './check -g quick', without
-> causing any additional failure
-> 
-> Reported-and-tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
-> Fixes: 32a38a499104 ("iomap: use write_begin to read pages to unshare")
-> Inspired-by: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
-> ---
->  fs/xfs/xfs_iomap.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 72c981e3dc92..81a0514b8652 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -976,6 +976,7 @@ xfs_buffered_write_iomap_begin(
->  	int			error = 0;
->  	unsigned int		lockmode = XFS_ILOCK_EXCL;
->  	u64			seq;
-> +	xfs_fileoff_t eof_fsb;
->  
->  	if (xfs_is_shutdown(mp))
->  		return -EIO;
-> @@ -1016,6 +1017,13 @@ xfs_buffered_write_iomap_begin(
->  	if (eof)
->  		imap.br_startoff = end_fsb; /* fake hole until the end */
->  
-> +	/* Don't try to unshare any blocks beyond EOF. */
-> +	eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> +	if (flags & IOMAP_UNSHARE && end_fsb > eof_fsb) {
-> +		xfs_trim_extent(&imap, offset_fsb, eof_fsb - offset_fsb);
-> +		end_fsb = eof_fsb;
-> +	}
 
-No. The EOF check/limiting needs to be at a higher level - probably
-in xfs_falloc_unshare_range() because the existing
-xfs_falloc_newsize() call implements the wrong file size growing
-semantics for UNSHARE...
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+On 2024/9/26 22:58, Matthew Wilcox wrote:
+> On Thu, Sep 26, 2024 at 10:20:54PM +0800, Kefeng Wang wrote:
+>> On 2024/9/26 21:52, Matthew Wilcox wrote:
+>>> On Thu, Sep 26, 2024 at 10:38:34AM +0200, Pankaj Raghav (Samsung) wrote:
+>>>>> So this is why I don't use mapping_set_folio_order_range() here, but
+>>>>> correct me if I am wrong.
+>>>>
+>>>> Yeah, the inode is active here as the max folio size is decided based on
+>>>> the write size, so probably mapping_set_folio_order_range() will not be
+>>>> a safe option.
+>>>
+>>> You really are all making too much of this.  Here's the patch I think we
+>>> need:
+>>>
+>>> -       mapping_set_large_folios(inode->i_mapping);
+>>> +       if (sbinfo->huge)
+>>> +               mapping_set_large_folios(inode->i_mapping);
+>>
+>> But it can't solve all issue, eg,
+>>    mount with huge = SHMEM_HUGE_WITHIN_SIZE, or
+> 
+> The page cache will not create folios which overhang the end of the file
+> by more than the minimum folio size for that mapping.  So this is wrong.
+
+
+Sorry for the late, not very familiar with it, will test after back to 
+the office in next few days.
+
+> 
+>>    mount with SHMEM_HUGE_ALWAYS  +  runtime SHMEM_HUGE_DENY
+> 
+> That's a tweak to this patch, not a fundamental problem with it.
+> 
+>> and the above change will break
+>>    mount with SHMEM_HUGE_NEVER + runtime SHMEM_HUGE_FORCE
+> 
+> Likewise.
+> 
+
+But the SHMEM_HUGE_DENY/FORCE could be changed at runtime, I don't find
+a better way to fix, any more suggestion will be appreciate, thanks.
+
+
 
