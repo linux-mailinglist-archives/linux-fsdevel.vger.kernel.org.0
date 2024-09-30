@@ -1,126 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-30415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7419798ADC0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 22:10:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4169498ADC4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 22:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34CBD281814
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 20:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09E6C2823AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 20:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3911A0B0F;
-	Mon, 30 Sep 2024 20:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SjCpkozf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5B31A0BC9;
+	Mon, 30 Sep 2024 20:11:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C544131E2D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 20:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBCA199236;
+	Mon, 30 Sep 2024 20:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727727015; cv=none; b=pMPgWmbFTS9+nFzc413i8VIetF5CN0nAgdZ2dHgzzLNNYImc/5Pn5pZOuEyDlroC8WO0CJrhVu9Pii2WDQDWO1EGvMXRKR0MIYMIR55MK/N4ZsiLcr0rPbKQrTMZXvVPlzQMqAiyplrjrEsOhUDuEeeMZBcxVVbFkuha2IdpWoU=
+	t=1727727074; cv=none; b=TydeuhJKG3D0w2OMLW6W00FRNIYU/S+tBYxdSccUv1z+2W0jSBnOOcsjcaMKOoL7QqAazGfobAfZ6exd4GuAy1p8Vj2hRziqXNvZei6J8rvqIO+SS8gB6sei8iHq4nrpEx4m7p/SNwt5qbBnRbn0yGUdluQnWQwnZQmbicvzTD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727727015; c=relaxed/simple;
-	bh=zOQ6Hs0/cVGtqjjJFkZB7pBKk5JKlQcCKDTL+hZmyNU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=u6fveH7c9kJ8qd1Laxf3kBNmFebW7oknzx929W4e/fem5e4j8E/nRbXeTzdQBa+vqt/udaHOeBm14tU4PZ6qO1/Cc0+7RxLAfI5CSjJvkAV2Ilp7TuqIgK83XqN6zk/gWDXAz5o+CR5GM7vtpK8bHzcecBzyi7HaXxkqf0YMSE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SjCpkozf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727727013;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kPKn2Kv6qjDNm6/HF2s7vGlTGGGWG6HMQFjCEB8xiMU=;
-	b=SjCpkozfsUprRiR7oFACup0lECgKstrhzn5HRRq91MhAwO5mkk2aAHem4G5S+jTQT4FFWk
-	aBDZI8rK0B8OdqxJDnjSv+bT4Lb70g66O7pkONml7Zr4HrfVcq6Jt1MV27ZIfNGceWnWLV
-	vEv3ZMSRB2i5Hgp2sIK8YCLSJg0vEq8=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-133-5azF9J-mOqmL2byezmZePw-1; Mon,
- 30 Sep 2024 16:10:07 -0400
-X-MC-Unique: 5azF9J-mOqmL2byezmZePw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E4C719626EF;
-	Mon, 30 Sep 2024 20:10:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 943993003E4D;
-	Mon, 30 Sep 2024 20:10:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com>
-References: <cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com>
-To: Omar Sandoval <osandov@osandov.com>,
-    Christian Brauner <brauner@kernel.org>
-Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-    Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com,
-    v9fs@lists.linux.dev, Manu Bretelle <chantr4@gmail.com>,
-    Eduard Zingerman <eddyz87@gmail.com>,
-    Leon Romanovsky <leon@kernel.org>
-Subject: Re: [PATCH] iov_iter: fix advancing slot in iter_folioq_get_pages()
+	s=arc-20240116; t=1727727074; c=relaxed/simple;
+	bh=16wgqX3QeEVfNDAe/n90GmLOm3v9Aejvw0xD7oxZ77E=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=PqGSK/9lWqlAFb6MEuqPRUk8/g0/YNVLsC4DQBRbybGygDiywZ/cI5dLpVQPRVCSiX7uMcBrV5PnJkG4DM7kabrjpi0MBkV5n6Sb9ryPzKl8PyR6pg/GLocX95a1ryBPxtS9jFYX1cnygyKdFeujFR2aP7Nq30LeqlPxbI801pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:40336)
+	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1svMjY-00FenK-1S; Mon, 30 Sep 2024 14:11:04 -0600
+Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:60936 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1svMjX-00GHAt-4e; Mon, 30 Sep 2024 14:11:03 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Tycho Andersen <tycho@tycho.pizza>,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Jan
+ Kara <jack@suse.cz>,  linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,  Tycho
+ Andersen <tandersen@netflix.com>,  Zbigniew =?utf-8?Q?J=C4=99drzejewski-S?=
+ =?utf-8?Q?zmek?=
+ <zbyszek@in.waw.pl>,  Aleksa Sarai <cyphar@cyphar.com>
+References: <20240927151746.391931-1-tycho@tycho.pizza>
+	<87ikuhw155.fsf@email.froward.int.ebiederm.org>
+	<202409281453.B9B9999D@keescook>
+	<87bk05vobx.fsf@email.froward.int.ebiederm.org>
+Date: Mon, 30 Sep 2024 15:10:29 -0500
+In-Reply-To: <87bk05vobx.fsf@email.froward.int.ebiederm.org> (Eric
+	W. Biederman's message of "Sun, 29 Sep 2024 21:59:30 -0500")
+Message-ID: <871q10vr62.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3011075.1727727002.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 30 Sep 2024 21:10:02 +0100
-Message-ID: <3011076.1727727002@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain
+X-XM-SPF: eid=1svMjX-00GHAt-4e;;;mid=<871q10vr62.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+saTEKwt+JRZ60ZDFuo0pZti0glltWxMo=
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
+	*      [score: 0.3837]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Kees Cook <kees@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 281 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 4.5 (1.6%), b_tie_ro: 3.2 (1.1%), parse: 1.10
+	(0.4%), extract_message_metadata: 10 (3.7%), get_uri_detail_list: 0.96
+	(0.3%), tests_pri_-2000: 10 (3.6%), tests_pri_-1000: 2.1 (0.7%),
+	tests_pri_-950: 0.98 (0.3%), tests_pri_-900: 0.82 (0.3%),
+	tests_pri_-90: 80 (28.6%), check_bayes: 79 (28.1%), b_tokenize: 4.3
+	(1.5%), b_tok_get_all: 5 (1.9%), b_comp_prob: 1.24 (0.4%),
+	b_tok_touch_all: 65 (23.2%), b_finish: 0.70 (0.2%), tests_pri_0: 160
+	(56.9%), check_dkim_signature: 0.38 (0.1%), check_dkim_adsp: 3.1
+	(1.1%), poll_dns_idle: 1.67 (0.6%), tests_pri_10: 1.73 (0.6%),
+	tests_pri_500: 6 (2.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 1/2] exec: add a flag for "reasonable" execveat() comm
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: cyphar@cyphar.com, zbyszek@in.waw.pl, tandersen@netflix.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, tycho@tycho.pizza, kees@kernel.org
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out02.mta.xmission.com); SAEximRunCond expanded to false
 
-Omar Sandoval <osandov@osandov.com> wrote:
+"Eric W. Biederman" <ebiederm@xmission.com> writes:
 
-> From: Omar Sandoval <osandov@fb.com>
-> =
+> Kees Cook <kees@kernel.org> writes:
 
-> iter_folioq_get_pages() decides to advance to the next folioq slot when
-> it has reached the end of the current folio. However, it is checking
-> offset, which is the beginning of the current part, instead of
-> iov_offset, which is adjusted to the end of the current part, so it
-> doesn't advance the slot when it's supposed to. As a result, on the next
-> iteration, we'll use the same folio with an out-of-bounds offset and
-> return an unrelated page.
-> =
+>> I'm not super comfortable doing this regardless of bprm->fdpath; that
+>> seems like too many cases getting changed. Can we just leave it as
+>> depending on bprm->fdpath?
 
-> This manifested as various crashes and other failures in 9pfs in drgn's
-> VM testing setup and BPF CI.
-> =
+I was recommending that because I did not expect that there was any
+widespread usage of aliasing of binary names using symlinks.
 
-> Fixes: db0aa2e9566f ("mm: Define struct folio_queue and ITER_FOLIOQ to h=
-andle a sequence of folios")
-> Link: https://lore.kernel.org/linux-fsdevel/20240923183432.1876750-1-cha=
-ntr4@gmail.com/
-> Tested-by: Manu Bretelle <chantr4@gmail.com>
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
+I realized today that on debian there are many aliases
+of binaries created with the /etc/alternatives mechanism.
+So there is much wider exposure to problems than I would have
+supposed.
 
-Thanks for finding that!  That would explain why I didn't see it with afs =
-or
-cifs - both of those pass the iterator directly to the socket rather than
-pulling the pages out of it.  I'm not sure how I managed to do things like=
- run
-xfstests to completion and git clone and build a kernel without encounteri=
-ng
-the bug.
+So I remove any objections to making the new code conditional on bprm->fdpath.
 
-Christian: Can you add this to vfs.fixes and tag it:
-
-Acked-by: David Howells <dhowells@redhat.com>
-Tested-by: Eduard Zingerman <eddyz87@gmail.com>
+Eric
 
 
