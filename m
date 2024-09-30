@@ -1,491 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-30411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CEA98ACFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 21:35:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE8098AD01
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 21:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4EE9B21982
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 19:35:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D4C282E1D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 19:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1695F199FD2;
-	Mon, 30 Sep 2024 19:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E0C199FC5;
+	Mon, 30 Sep 2024 19:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LxQHK1Cy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kipEP3JE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8929199E8E;
-	Mon, 30 Sep 2024 19:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36A114F9D9;
+	Mon, 30 Sep 2024 19:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727724940; cv=none; b=g+q+YTxBp0dGdogf5qPVGm6dbu9/bdHg9N7XxFGG54a5oK0OVCi8zNK42XIr1PWVtqg+qCNnScCNpsiM53u6vmjg2+d4f9dFK0YpsirqE1AjU+uDuTx9LuLTIcdqkaWidKktGw1f4Qu4imR8KV0rZZNpw/AnTqvbtQGqViJAzKg=
+	t=1727725038; cv=none; b=V8wCYg6JiJcSP7ikjc8Iua/9Tp7YmM3HY0NKR/8x79VIHdBBFr7DKEMIjoIgEw8wyqu0MsjvUCFAXmb0HHjKtB07ZrrMc9+8VGpz/YRExHSnUppibGB6S17vPjmWBnb4w4iR2ZdWM5k4LvtCeJPBdKZptv0StkwTUgbkJ2o3++8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727724940; c=relaxed/simple;
-	bh=bFq60gg3/DDTP1991jDCUEhlqqvLR/MT6h3RdrnzjOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NN2XKiJ4pa5iKyPS32/Z4PQDnWUI1EMTpUFWGEizDrL9/0hhBTKB4LUifwx1BkFd9Zc8IVwPnpB3D0MUfD33UDC7F0cLep9jaFWAToLXaaQMqkLCoftF/RGVjtED6qZrp1HJY11E2yRGjH/oW6HBDd4fKyJIzwS+3LPe6Hz4zg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LxQHK1Cy; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727724938; x=1759260938;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bFq60gg3/DDTP1991jDCUEhlqqvLR/MT6h3RdrnzjOI=;
-  b=LxQHK1CyJwDe24TO61kuxU1NkgiKvkrgbrLyqE9Hbnj/VUPWGGXZNrOB
-   1B0RkrdriM0wL647LRh9SayafbLg3GmtwcjQFMKP0Ngqt9BfJkRRCSaUG
-   TEoYOmhODGLVZIJXxwpkickk84zCA9nBjejPDdDKmAT22FSKR56Hc1VUw
-   94S1iMc6BVWDDrrbo9yRdfT77BS4jnJvg99dXjQB1olN5V5BdSCXe7sBh
-   dILErzd5zfRiPU6eNFApHvznBFxgIXq7M0vZmKxcqipFLO1oG4l49cw5a
-   W4Q8O334vPHiMA9RQAQgZPcvudMozimkqDv0hX3utVowpEa1A0c3S746B
-   Q==;
-X-CSE-ConnectionGUID: vc11/zSGQUGlc2U6VhQiYQ==
-X-CSE-MsgGUID: 4FTD0fnBQXekf9BJkJSABw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26960738"
-X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
-   d="scan'208";a="26960738"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 12:35:37 -0700
-X-CSE-ConnectionGUID: aH3uY5nyRuykDUGN1lqx+A==
-X-CSE-MsgGUID: /d8VFVQiQCyPkiSPvV8ulQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
-   d="scan'208";a="78150926"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 30 Sep 2024 12:35:31 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svMB7-000PoX-0n;
-	Mon, 30 Sep 2024 19:35:29 +0000
-Date: Tue, 1 Oct 2024 03:34:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stas Sergeev <stsp2@yandex.ru>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Stas Sergeev <stsp2@yandex.ru>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Florent Revest <revest@chromium.org>, Kees Cook <kees@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Oleg Nesterov <oleg@redhat.com>, Helge Deller <deller@gmx.de>,
-	Zev Weiss <zev@bewilderbeest.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-fsdevel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH v2] add group restriction bitmap
-Message-ID: <202410010306.DiK2TZWL-lkp@intel.com>
-References: <20240930063405.113227-1-stsp2@yandex.ru>
+	s=arc-20240116; t=1727725038; c=relaxed/simple;
+	bh=AUTU96iyYXkfHgK0dTxI/fkVIV97CDq1YiK27OAFx6Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qGI+3Wtw6fDj8nlu1UvALXqZJpVTmC0y05Bt6Jdh2zP1bpmhTrf0w8OufmEesba4ZOTx/P+uzh3bkEbZBTpLR31HeZv2g/MViF60YlfdrZ70v5ltKbSHzKdMvJ3qp3W7MkaaRYIxSgqmYBF1tzcsJwzVnQPGxXhzk187LLwW8sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kipEP3JE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB25C4CEC7;
+	Mon, 30 Sep 2024 19:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727725038;
+	bh=AUTU96iyYXkfHgK0dTxI/fkVIV97CDq1YiK27OAFx6Y=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=kipEP3JEc3TcWuF4vydlPebTPQQ04LTIeRGzHif9UywdJDOTEIjWFIlbPXaCE6M71
+	 YDl/98QtodAXktgxMmV6vskAmIYSVofi8HDWkQtUQrV0QaI81TsTdGYASLh8TusI4z
+	 vUFCQF65pw1pIBb9RQA5pE++2wuls/BcVdVfgN3wz5DDPVuzgxepELmcLk8zKL4DtG
+	 FF5nUn+YK7yPzk0HQfM3L23JdXsJ54XMRHFop0DT1Mlvv0wWEi3vXWnUJEyRgDa4xo
+	 Kwzho+cGca4raHNlB0IGaXX9PYVpxKBAMMTVshtIn0reot+LkHvtZlJuKjPZ3Fn8X3
+	 hBNPmdfQVj5Qg==
+Message-ID: <4933075b1023f466edb516e86608e0938de28c1d.camel@kernel.org>
+Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
+ handling into timekeeper
+From: Jeff Layton <jlayton@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
+ <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
+ Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+ <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,  Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
+ <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org,  linux-btrfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Date: Mon, 30 Sep 2024 15:37:14 -0400
+In-Reply-To: <878qv90x6w.ffs@tglx>
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+	 <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87a5g79aag.ffs@tglx>
+	 <874j6f99dg.ffs@tglx>
+	 <b300fec8b6f611662195e0339f290d473a41607c.camel@kernel.org>
+	 <878qv90x6w.ffs@tglx>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930063405.113227-1-stsp2@yandex.ru>
 
-Hi Stas,
+On Mon, 2024-09-30 at 21:16 +0200, Thomas Gleixner wrote:
+> On Mon, Sep 16 2024 at 06:57, Jeff Layton wrote:
+> > On Mon, 2024-09-16 at 12:32 +0200, Thomas Gleixner wrote:
+> > > > 'Something has changed' is a truly understandable technical
+> > > > explanation.
+> > >=20
+> > >      old =3D mg_floor
+> > >                                 mono =3D T1;
+> > >                                 mg_floor =3D mono
+> > > preemption
+> > >=20
+> > >      do {
+> > >         mono =3D T2;
+> > >      }
+> > >=20
+> > >      cmpxchg fails and the function returns a value based on T1
+> > >=20
+> > > No?
+> > >=20
+> > >=20
+> >=20
+> > Packing for LPC, so I can't respond to all of these just now, but I
+> > will later. You're correct, but either outcome is OK.
+> >=20
+> > The requirement is that we don't hand out any values that were below
+> > the floor at the time that the task entered the kernel. Since the time
+> > changed while the task was already inside the kernel, either T1 or T2
+> > would be valid timestamps.
+>=20
+> That really needs to be documented. A similar scenario exists
+> vs. ktime_get_coarse_real_ts64_mg().
+>=20
 
-kernel test robot noticed the following build errors:
+Yes.
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.12-rc1 next-20240930]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I have the following section in the multigrain-ts.rst file that gets
+added in patch 7 of this series. I'll also plan to add some extra
+wording about how backward realtime clock jumps can affect ordering:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Stas-Sergeev/add-group-restriction-bitmap/20240930-144632
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240930063405.113227-1-stsp2%40yandex.ru
-patch subject: [PATCH v2] add group restriction bitmap
-config: i386-buildonly-randconfig-001-20241001 (https://download.01.org/0day-ci/archive/20241001/202410010306.DiK2TZWL-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410010306.DiK2TZWL-lkp@intel.com/reproduce)
+Inode Timestamp Ordering
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410010306.DiK2TZWL-lkp@intel.com/
+In addition to providing info about changes to individual files, file      =
+                   =20
+timestamps also serve an important purpose in applications like "make". The=
+se                      =20
+programs measure timestamps in order to determine whether source files migh=
+t be                    =20
+newer than cached objects.                                                 =
+                        =20
 
-All errors (new ones prefixed by >>):
+Userland applications like make can only determine ordering based on       =
+                        =20
+operational boundaries. For a syscall those are the syscall entry and exit =
+                        =20
+points. For io_uring or nfsd operations, that's the request submission and =
+                        =20
+response. In the case of concurrent operations, userland can make no       =
+                        =20
+determination about the order in which things will occur.
 
->> kernel/sys.c:2799:8: error: call to undeclared function 'may_setgroups'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    2799 |                 if (!may_setgroups())
-         |                      ^
-   1 error generated.
+For instance, if a single thread modifies one file, and then another file i=
+n                       =20
+sequence, the second file must show an equal or later mtime than the first.=
+ The                    =20
+same is true if two threads are issuing similar operations that do not over=
+lap                     =20
+in time.
 
+If however, two threads have racing syscalls that overlap in time, then the=
+re                      =20
+is no such guarantee, and the second file may appear to have been modified =
+                        =20
+before, after or at the same time as the first, regardless of which one was=
+                        =20
+submitted first.
 
-vim +/may_setgroups +2799 kernel/sys.c
-
-  2456	
-  2457	SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
-  2458			unsigned long, arg4, unsigned long, arg5)
-  2459	{
-  2460		struct task_struct *me = current;
-  2461		unsigned char comm[sizeof(me->comm)];
-  2462		long error;
-  2463	
-  2464		error = security_task_prctl(option, arg2, arg3, arg4, arg5);
-  2465		if (error != -ENOSYS)
-  2466			return error;
-  2467	
-  2468		error = 0;
-  2469		switch (option) {
-  2470		case PR_SET_PDEATHSIG:
-  2471			if (!valid_signal(arg2)) {
-  2472				error = -EINVAL;
-  2473				break;
-  2474			}
-  2475			me->pdeath_signal = arg2;
-  2476			break;
-  2477		case PR_GET_PDEATHSIG:
-  2478			error = put_user(me->pdeath_signal, (int __user *)arg2);
-  2479			break;
-  2480		case PR_GET_DUMPABLE:
-  2481			error = get_dumpable(me->mm);
-  2482			break;
-  2483		case PR_SET_DUMPABLE:
-  2484			if (arg2 != SUID_DUMP_DISABLE && arg2 != SUID_DUMP_USER) {
-  2485				error = -EINVAL;
-  2486				break;
-  2487			}
-  2488			set_dumpable(me->mm, arg2);
-  2489			break;
-  2490	
-  2491		case PR_SET_UNALIGN:
-  2492			error = SET_UNALIGN_CTL(me, arg2);
-  2493			break;
-  2494		case PR_GET_UNALIGN:
-  2495			error = GET_UNALIGN_CTL(me, arg2);
-  2496			break;
-  2497		case PR_SET_FPEMU:
-  2498			error = SET_FPEMU_CTL(me, arg2);
-  2499			break;
-  2500		case PR_GET_FPEMU:
-  2501			error = GET_FPEMU_CTL(me, arg2);
-  2502			break;
-  2503		case PR_SET_FPEXC:
-  2504			error = SET_FPEXC_CTL(me, arg2);
-  2505			break;
-  2506		case PR_GET_FPEXC:
-  2507			error = GET_FPEXC_CTL(me, arg2);
-  2508			break;
-  2509		case PR_GET_TIMING:
-  2510			error = PR_TIMING_STATISTICAL;
-  2511			break;
-  2512		case PR_SET_TIMING:
-  2513			if (arg2 != PR_TIMING_STATISTICAL)
-  2514				error = -EINVAL;
-  2515			break;
-  2516		case PR_SET_NAME:
-  2517			comm[sizeof(me->comm) - 1] = 0;
-  2518			if (strncpy_from_user(comm, (char __user *)arg2,
-  2519					      sizeof(me->comm) - 1) < 0)
-  2520				return -EFAULT;
-  2521			set_task_comm(me, comm);
-  2522			proc_comm_connector(me);
-  2523			break;
-  2524		case PR_GET_NAME:
-  2525			get_task_comm(comm, me);
-  2526			if (copy_to_user((char __user *)arg2, comm, sizeof(comm)))
-  2527				return -EFAULT;
-  2528			break;
-  2529		case PR_GET_ENDIAN:
-  2530			error = GET_ENDIAN(me, arg2);
-  2531			break;
-  2532		case PR_SET_ENDIAN:
-  2533			error = SET_ENDIAN(me, arg2);
-  2534			break;
-  2535		case PR_GET_SECCOMP:
-  2536			error = prctl_get_seccomp();
-  2537			break;
-  2538		case PR_SET_SECCOMP:
-  2539			error = prctl_set_seccomp(arg2, (char __user *)arg3);
-  2540			break;
-  2541		case PR_GET_TSC:
-  2542			error = GET_TSC_CTL(arg2);
-  2543			break;
-  2544		case PR_SET_TSC:
-  2545			error = SET_TSC_CTL(arg2);
-  2546			break;
-  2547		case PR_TASK_PERF_EVENTS_DISABLE:
-  2548			error = perf_event_task_disable();
-  2549			break;
-  2550		case PR_TASK_PERF_EVENTS_ENABLE:
-  2551			error = perf_event_task_enable();
-  2552			break;
-  2553		case PR_GET_TIMERSLACK:
-  2554			if (current->timer_slack_ns > ULONG_MAX)
-  2555				error = ULONG_MAX;
-  2556			else
-  2557				error = current->timer_slack_ns;
-  2558			break;
-  2559		case PR_SET_TIMERSLACK:
-  2560			if (arg2 <= 0)
-  2561				current->timer_slack_ns =
-  2562						current->default_timer_slack_ns;
-  2563			else
-  2564				current->timer_slack_ns = arg2;
-  2565			break;
-  2566		case PR_MCE_KILL:
-  2567			if (arg4 | arg5)
-  2568				return -EINVAL;
-  2569			switch (arg2) {
-  2570			case PR_MCE_KILL_CLEAR:
-  2571				if (arg3 != 0)
-  2572					return -EINVAL;
-  2573				current->flags &= ~PF_MCE_PROCESS;
-  2574				break;
-  2575			case PR_MCE_KILL_SET:
-  2576				current->flags |= PF_MCE_PROCESS;
-  2577				if (arg3 == PR_MCE_KILL_EARLY)
-  2578					current->flags |= PF_MCE_EARLY;
-  2579				else if (arg3 == PR_MCE_KILL_LATE)
-  2580					current->flags &= ~PF_MCE_EARLY;
-  2581				else if (arg3 == PR_MCE_KILL_DEFAULT)
-  2582					current->flags &=
-  2583							~(PF_MCE_EARLY|PF_MCE_PROCESS);
-  2584				else
-  2585					return -EINVAL;
-  2586				break;
-  2587			default:
-  2588				return -EINVAL;
-  2589			}
-  2590			break;
-  2591		case PR_MCE_KILL_GET:
-  2592			if (arg2 | arg3 | arg4 | arg5)
-  2593				return -EINVAL;
-  2594			if (current->flags & PF_MCE_PROCESS)
-  2595				error = (current->flags & PF_MCE_EARLY) ?
-  2596					PR_MCE_KILL_EARLY : PR_MCE_KILL_LATE;
-  2597			else
-  2598				error = PR_MCE_KILL_DEFAULT;
-  2599			break;
-  2600		case PR_SET_MM:
-  2601			error = prctl_set_mm(arg2, arg3, arg4, arg5);
-  2602			break;
-  2603		case PR_GET_TID_ADDRESS:
-  2604			error = prctl_get_tid_address(me, (int __user * __user *)arg2);
-  2605			break;
-  2606		case PR_SET_CHILD_SUBREAPER:
-  2607			me->signal->is_child_subreaper = !!arg2;
-  2608			if (!arg2)
-  2609				break;
-  2610	
-  2611			walk_process_tree(me, propagate_has_child_subreaper, NULL);
-  2612			break;
-  2613		case PR_GET_CHILD_SUBREAPER:
-  2614			error = put_user(me->signal->is_child_subreaper,
-  2615					 (int __user *)arg2);
-  2616			break;
-  2617		case PR_SET_NO_NEW_PRIVS:
-  2618			if (arg2 != 1 || arg3 || arg4 || arg5)
-  2619				return -EINVAL;
-  2620	
-  2621			task_set_no_new_privs(current);
-  2622			break;
-  2623		case PR_GET_NO_NEW_PRIVS:
-  2624			if (arg2 || arg3 || arg4 || arg5)
-  2625				return -EINVAL;
-  2626			return task_no_new_privs(current) ? 1 : 0;
-  2627		case PR_GET_THP_DISABLE:
-  2628			if (arg2 || arg3 || arg4 || arg5)
-  2629				return -EINVAL;
-  2630			error = !!test_bit(MMF_DISABLE_THP, &me->mm->flags);
-  2631			break;
-  2632		case PR_SET_THP_DISABLE:
-  2633			if (arg3 || arg4 || arg5)
-  2634				return -EINVAL;
-  2635			if (mmap_write_lock_killable(me->mm))
-  2636				return -EINTR;
-  2637			if (arg2)
-  2638				set_bit(MMF_DISABLE_THP, &me->mm->flags);
-  2639			else
-  2640				clear_bit(MMF_DISABLE_THP, &me->mm->flags);
-  2641			mmap_write_unlock(me->mm);
-  2642			break;
-  2643		case PR_MPX_ENABLE_MANAGEMENT:
-  2644		case PR_MPX_DISABLE_MANAGEMENT:
-  2645			/* No longer implemented: */
-  2646			return -EINVAL;
-  2647		case PR_SET_FP_MODE:
-  2648			error = SET_FP_MODE(me, arg2);
-  2649			break;
-  2650		case PR_GET_FP_MODE:
-  2651			error = GET_FP_MODE(me);
-  2652			break;
-  2653		case PR_SVE_SET_VL:
-  2654			error = SVE_SET_VL(arg2);
-  2655			break;
-  2656		case PR_SVE_GET_VL:
-  2657			error = SVE_GET_VL();
-  2658			break;
-  2659		case PR_SME_SET_VL:
-  2660			error = SME_SET_VL(arg2);
-  2661			break;
-  2662		case PR_SME_GET_VL:
-  2663			error = SME_GET_VL();
-  2664			break;
-  2665		case PR_GET_SPECULATION_CTRL:
-  2666			if (arg3 || arg4 || arg5)
-  2667				return -EINVAL;
-  2668			error = arch_prctl_spec_ctrl_get(me, arg2);
-  2669			break;
-  2670		case PR_SET_SPECULATION_CTRL:
-  2671			if (arg4 || arg5)
-  2672				return -EINVAL;
-  2673			error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
-  2674			break;
-  2675		case PR_PAC_RESET_KEYS:
-  2676			if (arg3 || arg4 || arg5)
-  2677				return -EINVAL;
-  2678			error = PAC_RESET_KEYS(me, arg2);
-  2679			break;
-  2680		case PR_PAC_SET_ENABLED_KEYS:
-  2681			if (arg4 || arg5)
-  2682				return -EINVAL;
-  2683			error = PAC_SET_ENABLED_KEYS(me, arg2, arg3);
-  2684			break;
-  2685		case PR_PAC_GET_ENABLED_KEYS:
-  2686			if (arg2 || arg3 || arg4 || arg5)
-  2687				return -EINVAL;
-  2688			error = PAC_GET_ENABLED_KEYS(me);
-  2689			break;
-  2690		case PR_SET_TAGGED_ADDR_CTRL:
-  2691			if (arg3 || arg4 || arg5)
-  2692				return -EINVAL;
-  2693			error = SET_TAGGED_ADDR_CTRL(arg2);
-  2694			break;
-  2695		case PR_GET_TAGGED_ADDR_CTRL:
-  2696			if (arg2 || arg3 || arg4 || arg5)
-  2697				return -EINVAL;
-  2698			error = GET_TAGGED_ADDR_CTRL();
-  2699			break;
-  2700		case PR_SET_IO_FLUSHER:
-  2701			if (!capable(CAP_SYS_RESOURCE))
-  2702				return -EPERM;
-  2703	
-  2704			if (arg3 || arg4 || arg5)
-  2705				return -EINVAL;
-  2706	
-  2707			if (arg2 == 1)
-  2708				current->flags |= PR_IO_FLUSHER;
-  2709			else if (!arg2)
-  2710				current->flags &= ~PR_IO_FLUSHER;
-  2711			else
-  2712				return -EINVAL;
-  2713			break;
-  2714		case PR_GET_IO_FLUSHER:
-  2715			if (!capable(CAP_SYS_RESOURCE))
-  2716				return -EPERM;
-  2717	
-  2718			if (arg2 || arg3 || arg4 || arg5)
-  2719				return -EINVAL;
-  2720	
-  2721			error = (current->flags & PR_IO_FLUSHER) == PR_IO_FLUSHER;
-  2722			break;
-  2723		case PR_SET_SYSCALL_USER_DISPATCH:
-  2724			error = set_syscall_user_dispatch(arg2, arg3, arg4,
-  2725							  (char __user *) arg5);
-  2726			break;
-  2727	#ifdef CONFIG_SCHED_CORE
-  2728		case PR_SCHED_CORE:
-  2729			error = sched_core_share_pid(arg2, arg3, arg4, arg5);
-  2730			break;
-  2731	#endif
-  2732		case PR_SET_MDWE:
-  2733			error = prctl_set_mdwe(arg2, arg3, arg4, arg5);
-  2734			break;
-  2735		case PR_GET_MDWE:
-  2736			error = prctl_get_mdwe(arg2, arg3, arg4, arg5);
-  2737			break;
-  2738		case PR_PPC_GET_DEXCR:
-  2739			if (arg3 || arg4 || arg5)
-  2740				return -EINVAL;
-  2741			error = PPC_GET_DEXCR_ASPECT(me, arg2);
-  2742			break;
-  2743		case PR_PPC_SET_DEXCR:
-  2744			if (arg4 || arg5)
-  2745				return -EINVAL;
-  2746			error = PPC_SET_DEXCR_ASPECT(me, arg2, arg3);
-  2747			break;
-  2748		case PR_SET_VMA:
-  2749			error = prctl_set_vma(arg2, arg3, arg4, arg5);
-  2750			break;
-  2751		case PR_GET_AUXV:
-  2752			if (arg4 || arg5)
-  2753				return -EINVAL;
-  2754			error = prctl_get_auxv((void __user *)arg2, arg3);
-  2755			break;
-  2756	#ifdef CONFIG_KSM
-  2757		case PR_SET_MEMORY_MERGE:
-  2758			if (arg3 || arg4 || arg5)
-  2759				return -EINVAL;
-  2760			if (mmap_write_lock_killable(me->mm))
-  2761				return -EINTR;
-  2762	
-  2763			if (arg2)
-  2764				error = ksm_enable_merge_any(me->mm);
-  2765			else
-  2766				error = ksm_disable_merge_any(me->mm);
-  2767			mmap_write_unlock(me->mm);
-  2768			break;
-  2769		case PR_GET_MEMORY_MERGE:
-  2770			if (arg2 || arg3 || arg4 || arg5)
-  2771				return -EINVAL;
-  2772	
-  2773			error = !!test_bit(MMF_VM_MERGE_ANY, &me->mm->flags);
-  2774			break;
-  2775	#endif
-  2776		case PR_RISCV_V_SET_CONTROL:
-  2777			error = RISCV_V_SET_CONTROL(arg2);
-  2778			break;
-  2779		case PR_RISCV_V_GET_CONTROL:
-  2780			error = RISCV_V_GET_CONTROL();
-  2781			break;
-  2782		case PR_RISCV_SET_ICACHE_FLUSH_CTX:
-  2783			error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
-  2784			break;
-  2785		case PR_GET_GRBITMAP:
-  2786			if (arg2 || arg3 || arg4 || arg5)
-  2787				return -EINVAL;
-  2788			error = current_cred()->group_info->restrict_bitmap;
-  2789			break;
-  2790		case PR_SET_GRBITMAP:
-  2791			/* Allow 31 bits to avoid setting sign bit. */
-  2792			if (arg2 > (1U << 31) - 1 || arg3 || arg4 || arg5)
-  2793				return -EINVAL;
-  2794			current_cred()->group_info->restrict_bitmap |= arg2;
-  2795			break;
-  2796		case PR_CLR_GRBITMAP:
-  2797			if (arg2 || arg3 || arg4 || arg5)
-  2798				return -EINVAL;
-> 2799			if (!may_setgroups())
-  2800				return -EPERM;
-  2801			current_cred()->group_info->restrict_bitmap = 0;
-  2802			break;
-  2803		default:
-  2804			error = -EINVAL;
-  2805			break;
-  2806		}
-  2807		return error;
-  2808	}
-  2809	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Jeff Layton <jlayton@kernel.org>
 
