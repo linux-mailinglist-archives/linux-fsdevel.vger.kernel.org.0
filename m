@@ -1,167 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-30350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE73798A299
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 14:34:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF8398A353
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 14:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 922B2281C30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 12:34:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1A41F242BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 12:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B4F183098;
-	Mon, 30 Sep 2024 12:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954AA191F6C;
+	Mon, 30 Sep 2024 12:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XX55u6TP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ESp4XrK8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D016126C07;
-	Mon, 30 Sep 2024 12:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FAC18EFD6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2024 12:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727699678; cv=none; b=Uzme+17lFmrAKz9cUit73Dpzye/K7oKqUz+Z/n8mQhB/heGiA+OL+QDZcNJj2Zxm1caUyVQCjPPguj0PrM/1yqnQLCgWtRKc/9ThJ0ry9mkixAVQsojtg5r6Pq3xXveWuGshRlCCGv1eSd9ZCS2UkasYJEWmqhEOb9+iv/p0JKk=
+	t=1727700287; cv=none; b=YkSeN+UGVK4FpcbR08KHPwgdyW+3ejBXFbvEcUzrQYEgQI9VhqGJaMoRfja4tyMlkw15sWYpebwfTrLFltwEMX+VxjYzPMagbwUVKUtgrZRR0arlVTyxVZAtRglBIVF0dvgzRBJBe2x6SUqlwCDfXekEMid3mJ/lyTY9k6HquIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727699678; c=relaxed/simple;
-	bh=QIG50gsAuDNEdAD4sYdmyP9U9mIQ+FPqmqNXI/RmpE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxGNdQrzOMtAUz3STMFmu0VA7yd2QbT+eGGeT8lQgKYSFx2AMQREf962LioA5Q/D8/B+35AabfCAjxp5gvQDsUA6q+7eyRnu4r3JP96ocSF7wpjtjeSdR7vXPjNKSBB6aaX3q+gBIslEKY90o7V5Tw3ZtPOCnNbbr/BgGd3wi7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XX55u6TP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 580A2C4CEC7;
-	Mon, 30 Sep 2024 12:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727699678;
-	bh=QIG50gsAuDNEdAD4sYdmyP9U9mIQ+FPqmqNXI/RmpE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XX55u6TPb7v1ucI75GB0Fgvo0jazhfo5ge0LACwOmkf8sLGc2lCqH/17jcSJMT1Yg
-	 /vqJ2u1yN8ATiSCDVLNWzAl+2ydsx2NA96Qx0ujDXI+D4OZ7xAuAkguamoiN1CmyOL
-	 x1FJ6m1igOWyLxm8kcss9g2XRsBAwKO26K3znpgxiHbO+lel1ADtgU4jvg7JWkUA9h
-	 1cH/WDYN6fP6cfCj4bCtVBgGugFFXwpZDCE53i0qkc8dz9xV72mPzpRJ3QOH/A4Wwm
-	 xd/tnsbhTs/kzncbTOSqqGq/+gL4H0vrcbakHA4Hv+HqNYu67QPKXmAvl4pAF8wyk1
-	 qrvNtXUe8m99w==
-Date: Mon, 30 Sep 2024 14:34:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Florian Weimer <fweimer@redhat.com>, 
-	Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] introduce PIDFD_SELF
-Message-ID: <20240930-verbiegen-zinspolitik-cafb730c3c84@brauner>
-References: <cover.1727644404.git.lorenzo.stoakes@oracle.com>
- <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
- <42df57ac-d89c-4111-a04d-290dd2197573@lucifer.local>
+	s=arc-20240116; t=1727700287; c=relaxed/simple;
+	bh=6vUuZ2dmjzVrkKIoa9FfLBuOBd8yL0AJKjCVHkJVKs0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=rVmuEEAShaPydf/VP1MHIYSSYQUZ3u1/4u/MTqRKqBJBts4q9ILwlZIwMK1kzY4CZcK5eMoIpd2H7VX6KlLrF6wHoMsdA+8VkGZLSgjlwshwoF4NG0ipRTquuJBIs6Qv0smhqJdl9wpShJqR16dBQusoZOzzZ26ov/8Ox6Vyb2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ESp4XrK8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727700283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6bVDH90pWvwnLUcopy8GzWW9f5uyvFXFYBMlGFlIsT8=;
+	b=ESp4XrK8ugs1enaSltg3WyLRmon32/oqcDhvwu8jo31FLvkUhCB3tq91sJyPn9EpCurq5S
+	rw/VXtnMLOv9Xz/b+DnSFB/tUpnyRsGn4aEGf1K1ocKqv1FNRRaiUiSDcM3RXJpN7S4OQ9
+	XkV+gjlXmWr9xJZ1ME3JX/iAyJyXwR8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-q9x6f1A7NQmqo91dzCKIUg-1; Mon,
+ 30 Sep 2024 08:44:41 -0400
+X-MC-Unique: q9x6f1A7NQmqo91dzCKIUg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 722E31944DDB;
+	Mon, 30 Sep 2024 12:44:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3243E1979060;
+	Mon, 30 Sep 2024 12:44:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240925103118.GE967758@unreal>
+References: <20240925103118.GE967758@unreal> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <1279816.1727220013@warthog.procyon.org.uk> <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: dhowells@redhat.com, Eduard Zingerman <eddyz87@gmail.com>,
+    Christian Brauner <brauner@kernel.org>,
+    Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
+    ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
+    hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
+    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
+    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
+    v9fs@lists.linux.dev, willy@infradead.org
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <42df57ac-d89c-4111-a04d-290dd2197573@lucifer.local>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2968939.1727700270.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 30 Sep 2024 13:44:30 +0100
+Message-ID: <2968940.1727700270@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Sep 30, 2024 at 11:39:49AM GMT, Lorenzo Stoakes wrote:
-> On Mon, Sep 30, 2024 at 12:33:18PM GMT, Florian Weimer wrote:
-> > * Lorenzo Stoakes:
-> >
-> > > If you wish to utilise a pidfd interface to refer to the current process
-> > > (from the point of view of userland - from the kernel point of view - the
-> > > thread group leader), it is rather cumbersome, requiring something like:
-> > >
-> > > 	int pidfd = pidfd_open(getpid(), 0);
-> > >
-> > > 	...
-> > >
-> > > 	close(pidfd);
-> > >
-> > > Or the equivalent call opening /proc/self. It is more convenient to use a
-> > > sentinel value to indicate to an interface that accepts a pidfd that we
-> > > simply wish to refer to the current process.
-> >
-> > The descriptor will refer to the current thread, not process, right?
-> 
-> No it refers to the current process (i.e. thread group leader from kernel
-> perspective). Unless you specify PIDFD_THREAD, this is the same if you did the above.
-> 
-> >
-> > The distinction matters for pidfd_getfd if a process contains multiple
-> > threads with different file descriptor tables, and probably for
-> > pidfd_send_signal as well.
-> 
-> You mean if you did a strange set of flags to clone()? Otherwise these are
-> shared right?
-> 
-> Again, we are explicitly looking at process not thread from userland
-> perspective. A PIDFD_SELF_THREAD might be possible, but this series doesn't try
-> to implement that.
+Okay, let's try something a little more drastic.  See if we can at least g=
+et
+it booting to the point we can read the tracelog.  If you can apply the
+attached patch?  It won't release any folio_queue struct or put the refs o=
+n
+any pages, so it will quickly run out of memory - but if you have sufficie=
+nt
+menory, it might be enough to boot.
 
-Florian raises a good point. Currently we have:
+David
+---
+9p: [DEBUGGING] Don't release pages or folioq structs
 
-(1) int pidfd_tgid = pidfd_open(getpid(), 0);
-(2) int pidfd_thread = pidfd_open(getpid(), PIDFD_THREAD);
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index af46a598f4d7..702286484176 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -84,8 +84,8 @@ static size_t netfs_load_buffer_from_ra(struct netfs_io_=
+request *rreq,
+ 		folioq->orders[i] =3D order;
+ 		size +=3D PAGE_SIZE << order;
+ =
 
-and this instructs:
+-		if (!folio_batch_add(put_batch, folio))
+-			folio_batch_release(put_batch);
++		//if (!folio_batch_add(put_batch, folio))
++		//	folio_batch_release(put_batch);
+ 	}
+ =
 
-pidfd_send_signal()
-pidfd_getfd()
+ 	for (int i =3D nr; i < folioq_nr_slots(folioq); i++)
+diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+index 63280791de3b..cec55b7eb5bc 100644
+--- a/fs/netfs/misc.c
++++ b/fs/netfs/misc.c
+@@ -88,7 +88,7 @@ struct folio_queue *netfs_delete_buffer_head(struct netf=
+s_io_request *wreq)
+ 	if (next)
+ 		next->prev =3D NULL;
+ 	netfs_stat_d(&netfs_n_folioq);
+-	kfree(head);
++	//kfree(head);
+ 	wreq->buffer =3D next;
+ 	return next;
+ }
+@@ -108,11 +108,11 @@ void netfs_clear_buffer(struct netfs_io_request *rre=
+q)
+ 				continue;
+ 			if (folioq_is_marked(p, slot)) {
+ 				trace_netfs_folio(folio, netfs_folio_trace_put);
+-				folio_put(folio);
++				//folio_put(folio);
+ 			}
+ 		}
+ 		netfs_stat_d(&netfs_n_folioq);
+-		kfree(p);
++		//kfree(p);
+ 	}
+ }
+ =
 
-to do different things. For pidfd_send_signal() it's whether the
-operation has thread-group scope or thread-scope for pidfd_send_signal()
-and for pidfd_getfd() it determines the fdtable to use.
-
-The thing is that if you pass:
-
-pidfd_getfd(PDIFD_SELF)
-
-and you have:
-
-TGID
-
-T1 {
-    clone(CLONE_THREAD)
-    unshare(CLONE_FILES)
-}
-
-T2 {
-    clone(CLONE_THREAD)
-    unshare(CLONE_FILES)
-}
-
-You have 3 threads in the same thread-group that all have distinct file
-descriptor tables from each other.
-
-So if T1 did:
-
-pidfd_getfd(PIDFD_SELF, ...)
-
-and we mirror the PIDTYPE_TGID behavior then T1 will very likely expect
-to get the fd from its file descriptor table. IOW, its reasonable to
-expect that T1 is interested in their very own resource, not someone
-else's even if it is the thread-group leader.
-
-But what T1 will get in reality is an fd from TGID's file descriptor
-table (and similar for T2).
-
-Iirc, yes that confusion exists already with /proc/self. But the
-question is whether we should add the same confusion to the pidfd api or
-whether we make PIDFD_SELF actually mean PIDTYPE_PID aka the actual
-calling thread.
-
-My thinking is that if you have the reasonable suspicion that you're
-multi-threaded and that you're interested in the thread-group resource
-then you should be using:
-
-int pidfd = pidfd_open(getpid(), 0)
-
-and hand that thread-group leader pidfd around since you're interested
-in another thread. But if you're really just interested in your own
-resource then pidfd_open(getpid(), 0) makes no sense and you would want
-PIDFD_SELF.
-
-Thoughts?
 
