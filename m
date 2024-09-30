@@ -1,204 +1,372 @@
-Return-Path: <linux-fsdevel+bounces-30381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5CA98A6E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 16:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED14498A725
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 16:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2542828FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 14:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19B3D2828AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2024 14:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CEC190688;
-	Mon, 30 Sep 2024 14:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AFD1917FB;
+	Mon, 30 Sep 2024 14:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FtdKYzAX";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GxWxikDj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7F52CA5;
-	Mon, 30 Sep 2024 14:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727706185; cv=none; b=OvuSk5uJ2PBc0mgkrxavau1HTt6BXvdfRJ+lLU0eumPKOg4iM3Y8Ckaq3g/Bm+0i7qtmXXWm0zRNOdS96h4/aXQO1W9//j9jOidJYvn7Jm9hjOWdvoZUpwtbby1zKG7c/lX1ugIBCXJxSce4N3PfZZMAYlAwV48abh6qzWSfuww=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727706185; c=relaxed/simple;
-	bh=PP7YcUhsIi+utu31RkQv3pnqlWmA+DDtA6v7wf31oT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/tn9+aASDBJu7xR2JLypKjnTzlXz/n++NiXxlzyStAJXPmsoqAZ4fs1VPJfixdpJZuMVjZOn7K/k/jF9gnOnqJ83OvEQ086x3NlzBqPHaTyX+TSzEALpren87t6pCzk67JrZjAl6drBajcFKz3L2n7KmOabA5LEUfkRMzIXYHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e03caab48a2so3495420276.1;
-        Mon, 30 Sep 2024 07:23:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727706181; x=1728310981;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cr/EtosCTi+osAYF0gtgC9Zdrd07pNfm4NnYKdP5ZWs=;
-        b=ffHNHn2lJVp92AStm+x9Pj4r6c95eFt1biVf/4EGcbKfTUWTi6Q4wfPZP4l/7BGWB2
-         f35Dod0qUIcgD8w+PlSSh9WkQLrycXdKsTwcrVamP744QN5KBReQPbUAgcZLWgZtQN+k
-         Qy2tkFHe+kv/Cxv/lhk7AM6I/GSEkzi7O6hecv5Te8TIOkX1Nq4FShs8Yyg86s0cjCtU
-         ER+IBI1feHRB69UgMhvQGirSvZEn2OK6DzzMk8vL1+z9GBjPmaYKfzzn3eUKgC43b8t5
-         yhK1jOujxO2QVJDiLjpyuofkBLG4lnebTh/Oc9nqN8hlf2vvyJ53qavwiLaXAT12w81N
-         KJqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtuXvR2pS+wFJWKVa+eetjHvjVbXB+rKwFWElyR2feczyrEJIDFsBzai09Q/l/CFzXiXFJgfTrZRm0yzpo@vger.kernel.org, AJvYcCWOJunKBmpLQi6VxXfzJ9cBF21sDcVHAqxc36B0T8V7yyRT8bLwM75DSaPkHfPGFp2yw0uLLhvNPe8tBtox@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjSkT5LHMzAXYEvytSyJdbv8iPnnNvqxwO7OFQgcEWX4VvtEUP
-	JFiGd2CBLrckOdX4urpSmv+Cg9OXwQtkUf5firEqDbuxT0e7zOydb5nIqI1G
-X-Google-Smtp-Source: AGHT+IEetcUEoGQufw0Ff3zP/g1mpAEAlXaV0Oy1iQBZtgE+yk6XaAdXNESGqxQBKRshTHAkJYmOTA==
-X-Received: by 2002:a05:6902:27c3:b0:e26:18f0:5f7b with SMTP id 3f1490d57ef6-e2618f0707cmr2892355276.0.1727706180930;
-        Mon, 30 Sep 2024 07:23:00 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e6c3285esm2256800276.64.2024.09.30.07.23.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 07:23:00 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e116d2f5f7fso4189092276.1;
-        Mon, 30 Sep 2024 07:23:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCf8MRYJHINUw+yD5wyZCkb4Z7EUTxzIWuMMILeZv6w8JSrx9GsUiKciMHP53u94JFv/ki7g49oabaK0Qp@vger.kernel.org, AJvYcCUdNRB3KIoIHr/l6rOO8R4vtCIrDvYheOxMbOxnnonpRjSq8KycSzHRRrbXyz/w/4/XU9N12kc+dbICu+7C@vger.kernel.org
-X-Received: by 2002:a05:690c:55c6:b0:6dd:c6a8:5778 with SMTP id
- 00721157ae682-6e245386765mr82710077b3.14.1727706179826; Mon, 30 Sep 2024
- 07:22:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FCE23D2;
+	Mon, 30 Sep 2024 14:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727706784; cv=fail; b=aRUy6yBhBONWaX3QVKYjOfPTky7mYIk4CB2ZcnmtqfJrzAu3vtb76a7LYmkcJx6xBDEAOG9Cf+EwbBa63B78aIuoGUEWEJPFwPpTEJE0Y3eeZ6GIPzpuCc0KnGDmgg21uMwz6grvbsGYvEIAon6INGyWzvGv7l+fgLt2iSRZ2MU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727706784; c=relaxed/simple;
+	bh=Xii5yab72VqzYwfuF6eAWOFqenBV+g+3OxYvhvIXt1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=itA4afhg+/nry34haHrKI1gcfS4n7E9aN9+ZjZwecPKNLu4ZAn8OFuPZ0DOffEVDoNfwY+VPEcwynGc52ofcAXppzDWXBwruaphYRHOvJppz9yAHA8W6dEIsS3kgWv64yghWAVy6IXP1yp45VKCM/bMZLN7KoyjkXmKektgAP6g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FtdKYzAX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GxWxikDj; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UCXMkF024695;
+	Mon, 30 Sep 2024 14:32:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=t6U3R/fz265Aqui
+	8L6Ipg+c3qCtDj2da25C2xdpCgZE=; b=FtdKYzAXeXnZzgoKgOcpRQEYBbQI675
+	EPnD+ZIBGIgh+DNt4ObOC645rqeFWhPiWcbkTyeFTBf7+rr4wi+GcpXnrW3SRTux
+	9LDRtezfXjblVRQU+vfbdgr/aoEfC/g/T6KW0uYzo5jHAMiKXH7hzPBGB5WEBbIc
+	4mUNHoJjW2vydmAmVjgluUrkOP4S2sGpDEkBp1hgvZ41wvCS0iqrxLmoZUT7cV4y
+	Nn9dAbPAZaHQEqHoECW36SAEZsof4/Ua3BhZuuz2MpfIc/EiGqPX4kOaix+RgOwV
+	2jFqkZjLn1iamZzoGBbLJkQ3ZdQb3e+gR4klskATu+DyRtfjNAgskcA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x87d3f9v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Sep 2024 14:32:41 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48UEBtfd028604;
+	Mon, 30 Sep 2024 14:32:33 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2043.outbound.protection.outlook.com [104.47.70.43])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41x886by72-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Sep 2024 14:32:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R4LP/0B4aTEHaduV2y7ZICjyrLO9AY2JqnxzynBaJU+bT2TkTdxHXVZyWge8TZd8XHJaxL3aX2trRinQ7eImXcBkn1PMj6zJU6wstG9/8QW0j9q9t6Qn6co7k3kB6xD2B2rEy1ioYe7kQiwXSRrWfxuKqqhWUPWShNmfbtMu6R7EGfVcjKBiaxi7zMr5M4MjO3w6I6wkfLCbgPsKnsGq0jTZVTueS5zbSYxhdx/oRcG/07fRWhNYQUNBgKjFkeYLHQL+zL0SCAmS/nM38Syj3cUsAuiDz/WKeac8L5VwzPAfxpFwK/NC7MFg4NYBlViBA5aFMm6W6y4r9TYBQQmnMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t6U3R/fz265Aqui8L6Ipg+c3qCtDj2da25C2xdpCgZE=;
+ b=Vg0iDS2W3LkKFwy9ZmtIYQV1urF9iK3w7BDA+OUy2Sk0kaERIi/shXBSfcUUgu0qJfAVcq1n8mQdXkFie4zVrKjox1oxfw6ICRwCS7qYSBQ5A/vgYNgQK6M9kBQleOcF5hRh7i6tlgo1YTWIQsOh9U37PKUj6YuSkodNlaY87PpepdbyWvBrY85+xl+veu3IBbyjA0uHO2mUzjccFbkDZfHHUMoNlj/JTQpW1fOz+ociToOr/0MDkvCWuJ2EIklkR/h6FGRHJN9F1P3PgIQUqQCEc7yNk3fpUi3Qz2F6yUWyZaGnzYE1dv0kR/TCS3Qdf0ft1LUsz2h3sBAOuvhFFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t6U3R/fz265Aqui8L6Ipg+c3qCtDj2da25C2xdpCgZE=;
+ b=GxWxikDjRLKM9wB7ZyUrh5jNKNcdYZL104JfM2iROyUtJ5FM5jOQOotfQvpw5dL/MPzabaYCUDtu37QKFCU7JuquBZNMK/gZZF3f1bdoYD2oILIUGMlqo4y9VBDuvj3h1VBUh94hGqkdVBDcLV3CpTIkrlDXODgwYYyuiQOvcuw=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by CH4PR10MB8003.namprd10.prod.outlook.com (2603:10b6:610:240::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Mon, 30 Sep
+ 2024 14:32:29 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.014; Mon, 30 Sep 2024
+ 14:32:29 +0000
+Date: Mon, 30 Sep 2024 15:32:25 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Shuah Khan <shuah@kernel.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] introduce PIDFD_SELF
+Message-ID: <8b1b376b-3c4f-409a-b8e4-8faf3efecdc8@lucifer.local>
+References: <cover.1727644404.git.lorenzo.stoakes@oracle.com>
+ <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
+ <42df57ac-d89c-4111-a04d-290dd2197573@lucifer.local>
+ <20240930-verbiegen-zinspolitik-cafb730c3c84@brauner>
+ <cdd24e6d-4300-4afe-b2ef-1b8ee528bccc@lucifer.local>
+ <20240930.141721-salted.birth.growing.forges-5Z29YNO700C@cyphar.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930.141721-salted.birth.growing.forges-5Z29YNO700C@cyphar.com>
+X-ClientProxiedBy: LO2P123CA0083.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:138::16) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
- <CAMuHMdVqa2Mjqtqv0q=uuhBY1EfTaa+X6WkG7E2tEnKXJbTkNg@mail.gmail.com> <20240930141819.tabcwa3nk5v2mkwu@quack3>
-In-Reply-To: <20240930141819.tabcwa3nk5v2mkwu@quack3>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 30 Sep 2024 16:22:47 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU8chLLwxMqwm8DE6_6894q1w=ePJ=hgD34HmNQfJE0PQ@mail.gmail.com>
-Message-ID: <CAMuHMdU8chLLwxMqwm8DE6_6894q1w=ePJ=hgD34HmNQfJE0PQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] erofs: add file-backed mount support
-To: Jan Kara <jack@suse.cz>
-Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org, 
-	LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CH4PR10MB8003:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e57306c-6618-41a2-78a5-08dce15cb642
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BdJlf3ZI/Y3ivSdj9g3EFR5Tn//TOXgEzwF+JmqF9KAUOq3H91VCyPIVhdCI?=
+ =?us-ascii?Q?+i4/o4bXZIMA419HdW9PFanHJC80FyNwaRcvFsfg1lVLJhP0n2BQz/WHwPbP?=
+ =?us-ascii?Q?GecP9GmouQjbR8wlHB+haf3JoLZZXpuiGVpYwjndd/9e18CQ+ebGXHdDpsVo?=
+ =?us-ascii?Q?xLuD42Y2cfddVgBIdEGjvIY517UCIR6h9UYtRpXmT8GWt7GX+zTxppieZDJs?=
+ =?us-ascii?Q?Uzb9ZR4iUIGQn8JDLOJfR048sN+wgHkr9PViDR5FqjIkxlRCG57R552eCzZG?=
+ =?us-ascii?Q?qKcZqys/S6K9yenmDt2jNPedFglHBX9waLKOu8wPvRmrM0EJ8A5ZIcb+fdoR?=
+ =?us-ascii?Q?ikoTsd0Zw09M725D8VeDLSih3n32YltcsGlBhEEFFiLsprkm2Chgj0tVvrWT?=
+ =?us-ascii?Q?OHJ8XRzUnT2gkI0mmGid4P7phrG6x0a3fN0HJIAymAvVeP8cuduQOUm0uORi?=
+ =?us-ascii?Q?Oe3vK/m7uoqC56FJtKcSFQ0hxjzN9Y0kIDjxD4ujMuj11djNZkEs1nWLdz0J?=
+ =?us-ascii?Q?AMocaqV40+R2VNl2jCaA1Bc6WUipDXgxUlRnY+CMF/GsnBRamfgMwLJcxWK2?=
+ =?us-ascii?Q?JtdUMXbT0um8E5MzT8YumkCYfxsWIJ+3spdJ8dN6+fSsvtWvdlX2gYLOuve7?=
+ =?us-ascii?Q?kCHnnnVTdOzuhRc4coY8zFlHbKQKGyQcoK98Hz6+fYuAs1uSMY9D73rhEZSE?=
+ =?us-ascii?Q?SC0MTuSgRCmMT+mQhcRoCfk4BfQHll6re9B9dPktX9VCDVJVvNEIStDzvYjT?=
+ =?us-ascii?Q?B8GPYFsnxAPoU4WMyohl82eL8RTad97lu2OYMP2h6W7ip5pRk3Rn7nnOCYKh?=
+ =?us-ascii?Q?TLGmGqwPTqCmLmLu43wBR+mWC0/l7fJXp2oSDRvg/WeYXiMbV3JpNcqGrAQB?=
+ =?us-ascii?Q?3tbo6EGNIr64RMGyiiux2cgk2rAeut8NZsB9zZo4iMXbJkwXNyHL96mxZtuH?=
+ =?us-ascii?Q?OU1AJMeDgN5zXEM6fL3HZan2RWD9BhueAYovanLw6LeCmQ8mgsLkx0n2JMS0?=
+ =?us-ascii?Q?uCSVGM0+pT7ek/PaEKBTvnEr3etJDcLK8kj07jW/IsF7umfek61fzHAn1y5Q?=
+ =?us-ascii?Q?sZoh7Qx06t8k4J3pLZtfFC/BDNl/VaqXsV2PEpG+C4KA0AOblh7TztKF4rkb?=
+ =?us-ascii?Q?LRfZFfLBIkj93W1JwopNknRAIV3gf4YYdoOfVAA7Al3+DnFc3075ZZpvv24s?=
+ =?us-ascii?Q?/3LdnhK9Kv9XTNpcjALx/hxA7WWkpUu9+e1Hid4XUeobCINLEjAL4jTiUNE?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9kuENzYVQ78sI0lLjKulCgMNOZTmr4XkcOLoxGUizsDTc3QPh7JLjEO8gQj0?=
+ =?us-ascii?Q?xXCn3/EINIntwzrTQwHZEBPL/I4GKLIHKkrVSCSecgDEbTpH4wzsNyghaQ97?=
+ =?us-ascii?Q?ajdZ1cJwDM7Z+nARKr6sPEVkg6zgVcrbrR/SUby8YKbe09oeGpvM5vEnqI2F?=
+ =?us-ascii?Q?/uDB5pTbSNmGYe5gZ1GwfymYKGFXAtCFcrM+J8WHK/I/MdpBKcfQ9aJOFEBe?=
+ =?us-ascii?Q?gwE++phoz6CfXN/lLRgn36CA/mlNJ1erdoMk8eBjylkKtWyk6QAC/HzjTbEj?=
+ =?us-ascii?Q?ai9pc98fQz1CCFqefieCue2ntRZYMBC4PrOUVKLFH+VvPhN9fcA4Y3kzl8Bp?=
+ =?us-ascii?Q?7ka3bQD1CwJlBSBiwwYGnFrt2OSx8ZNz8V0fpj25A58KplwPROnHRG82eBZ8?=
+ =?us-ascii?Q?yxEFKUarRg7eH9PAaKEv+xtPoOeWGaZ+sbd4vIbUCuoMXLNOmO3Y0I2uOqQq?=
+ =?us-ascii?Q?YJRgcTukryC9kpSwIPK6xXhrfcVibldT+uFxtdUGGDNuqweaCZkdi/9amFa5?=
+ =?us-ascii?Q?A3fpeeFa1C4KNvjbtC3glO45XbSZ3NkLn+9EJvcoiiY7gjHjo7vN+aM0mu4L?=
+ =?us-ascii?Q?bClTZYNbLjQllucyWcF/KxrBRr/LB2O4Y2mF5NV50IBTItIT9OBQfkkyC08M?=
+ =?us-ascii?Q?3vQc0FfpOh7fvDuomLb4ly+XtCBRyz2qB+CoSURFnw8xQ16JwGP59GzxxXGk?=
+ =?us-ascii?Q?3h4xqjv3e1JE33cW+hTenIuAASTCCgFfpSvNXFCwA+LO/W7UhEOcGQ6urTgO?=
+ =?us-ascii?Q?hW+7eMssmZdPVTJ7hlhuExO1b3jTZAEzYnXHv+X24VtDnBAYT6PVnUmSl932?=
+ =?us-ascii?Q?zm1dB4O4FT8vsbzMNIiVbWzOu3PiMj8mPFWyuy/hu7GywSucr8gLKKvzOIpV?=
+ =?us-ascii?Q?lWjED6r+49wRBgn+YX193IeO070hSB/J+og6X5uYkLb1nspkJkPxBqdiLm4s?=
+ =?us-ascii?Q?hjdYXK4lHq8Ha4aBzjf08MYLjG+TGDvOh+ek7ZEE0jhNAlcnzLg7ungkpN68?=
+ =?us-ascii?Q?RbGDVZLX5Zvx8pdtxwBDq49I2X4bXXYSBhcWq0yXLCWUq/5RGeNjcI2JNhoP?=
+ =?us-ascii?Q?qIJZpxiSvUe2g3ukXI6qsTft0EB5tN/gOGgQNYtWSWxfp52av0ncspWuj0AT?=
+ =?us-ascii?Q?lvQbPXOkdUh1OqthcC5CgUYOo9s50L5BKSj1cKMVqckwvARs8ND37j66koVF?=
+ =?us-ascii?Q?bM9R+iYqzNiQ5lNxXpsZUgOa8gKcehGgXH5HFVQZoHmcX1JvNdwQdVSUeKxM?=
+ =?us-ascii?Q?eYAAaVhG1kAgqbwjgtLjA1j/TYwJrYEe1h5Qnaupmh0YPjlaOB9wA0luAK0e?=
+ =?us-ascii?Q?00x7ITyeY78zICRV/JzIWxZavb265j+9jzTicUjf1WVGYG+0Pdgh5v5WXDTv?=
+ =?us-ascii?Q?sEve3PpdySOpg/TT1Zx2qUIflj5ODPgre0dtXN/P6PgqXlDEEoZbMg6MC9CH?=
+ =?us-ascii?Q?dyWZ3X62J2FhTm+rEURcbYAhC6Vul9Zdrvxy93/f4k5PIsXJ8CfRXFCS0AyJ?=
+ =?us-ascii?Q?rdhH6QyEA/ozU4PwU1Ok5tSSy6nFByPTkOdP+aEVkGGz0j2WCBcB1B/A9XkE?=
+ =?us-ascii?Q?jG9tJ+NSQTHxToOumxZDkQNNe1Ldo3ZCqAjAxRCg2pZ92HdLTJOmRpekOJWx?=
+ =?us-ascii?Q?UQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	pJGRbDUCwe7+vzisDt43fexMLfxoYWg4mgR5X3scPbQzeHHleVtLJzL8cUkYUWDrFNgqp5wZEu3a4NkDo63kNs/Entw1PFGXBrGg60pOXlAI+Yfhli/ZjlNfHaDuAVMDI86pxDbJ8pubRH07HT416AlFJSI8jXBRC3DlKoRIO6o1YCkBBWcw8855u2LiOgyJwL+GmTrUeW6ua/MuGZIZOgaaA30Np0exgJgB/HZM6Esn8tnRJD9R3wK+Nmk5uZU9PaFUzUBDrC0+qES5VDvbzebjC49Va4hCmWH9vN1IgJkGWdHGOiimUFxNfqsfZw42aW6dGJt4+yfpHKBVrNFZW/UlmkwDjqgGex5B3inoG70fuR98E5R2PlgBIPklgcGFK3vd2Nq1EeT93xpbRxyILEtJLyuvKC3PCrdQ2dVuv2uWHtAPRWl64jLHPzW9k54CVPn9zh5JWQhicG8ZTKm29EtUxS9iaAxshQZRvWzPh/cptuENfrqGXVwgZ7GgYDtZFK/BnsGc7lZb36tKICr1IpWt+eutgvNz2otzwJaE1CO8v7YPfU1A7Wcpq/lLC9HWMCY3IPElo+wnkZ/2cCF2t1jpYk8h7QemHGBj7zIZy+U=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e57306c-6618-41a2-78a5-08dce15cb642
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 14:32:29.3586
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IQOcyB7aMpQ02KbZSeECXk9c5x1NQG9qeyItJIWgeeYxrn6BR25nGw5nw0CZzrL1nSyvdB3/m2JtnrBl4gq4G0Yboia8VzusVkZEv3ZHpcY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR10MB8003
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-09-30_14,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2409300105
+X-Proofpoint-GUID: QLwbH1gLnsmVys-I_BDXnZkq373kPtIJ
+X-Proofpoint-ORIG-GUID: QLwbH1gLnsmVys-I_BDXnZkq373kPtIJ
 
-Hi Jan,
-
-On Mon, Sep 30, 2024 at 4:18=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> On Tue 24-09-24 11:21:59, Geert Uytterhoeven wrote:
-> > On Fri, Aug 30, 2024 at 5:29=E2=80=AFAM Gao Xiang <hsiangkao@linux.alib=
-aba.com> wrote:
-> > > It actually has been around for years: For containers and other sandb=
-ox
-> > > use cases, there will be thousands (and even more) of authenticated
-> > > (sub)images running on the same host, unlike OS images.
+On Mon, Sep 30, 2024 at 04:21:23PM GMT, Aleksa Sarai wrote:
+> On 2024-09-30, Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> > On Mon, Sep 30, 2024 at 02:34:33PM GMT, Christian Brauner wrote:
+> > > On Mon, Sep 30, 2024 at 11:39:49AM GMT, Lorenzo Stoakes wrote:
+> > > > On Mon, Sep 30, 2024 at 12:33:18PM GMT, Florian Weimer wrote:
+> > > > > * Lorenzo Stoakes:
+> > > > >
+> > > > > > If you wish to utilise a pidfd interface to refer to the current process
+> > > > > > (from the point of view of userland - from the kernel point of view - the
+> > > > > > thread group leader), it is rather cumbersome, requiring something like:
+> > > > > >
+> > > > > > 	int pidfd = pidfd_open(getpid(), 0);
+> > > > > >
+> > > > > > 	...
+> > > > > >
+> > > > > > 	close(pidfd);
+> > > > > >
+> > > > > > Or the equivalent call opening /proc/self. It is more convenient to use a
+> > > > > > sentinel value to indicate to an interface that accepts a pidfd that we
+> > > > > > simply wish to refer to the current process.
+> > > > >
+> > > > > The descriptor will refer to the current thread, not process, right?
+> > > >
+> > > > No it refers to the current process (i.e. thread group leader from kernel
+> > > > perspective). Unless you specify PIDFD_THREAD, this is the same if you did the above.
+> > > >
+> > > > >
+> > > > > The distinction matters for pidfd_getfd if a process contains multiple
+> > > > > threads with different file descriptor tables, and probably for
+> > > > > pidfd_send_signal as well.
+> > > >
+> > > > You mean if you did a strange set of flags to clone()? Otherwise these are
+> > > > shared right?
+> > > >
+> > > > Again, we are explicitly looking at process not thread from userland
+> > > > perspective. A PIDFD_SELF_THREAD might be possible, but this series doesn't try
+> > > > to implement that.
 > > >
-> > > Of course, all scenarios can use the same EROFS on-disk format, but
-> > > bdev-backed mounts just work well for OS images since golden data is
-> > > dumped into real block devices.  However, it's somewhat hard for
-> > > container runtimes to manage and isolate so many unnecessary virtual
-> > > block devices safely and efficiently [1]: they just look like a burde=
-n
-> > > to orchestrators and file-backed mounts are preferred indeed.  There
-> > > were already enough attempts such as Incremental FS, the original
-> > > ComposeFS and PuzzleFS acting in the same way for immutable fses.  As
-> > > for current EROFS users, ComposeFS, containerd and Android APEXs will
-> > > be directly benefited from it.
+> > > Florian raises a good point. Currently we have:
 > > >
-> > > On the other hand, previous experimental feature "erofs over fscache"
-> > > was once also intended to provide a similar solution (inspired by
-> > > Incremental FS discussion [2]), but the following facts show file-bac=
-ked
-> > > mounts will be a better approach:
-> > >  - Fscache infrastructure has recently been moved into new Netfslib
-> > >    which is an unexpected dependency to EROFS really, although it
-> > >    originally claims "it could be used for caching other things such =
-as
-> > >    ISO9660 filesystems too." [3]
+> > > (1) int pidfd_tgid = pidfd_open(getpid(), 0);
+> > > (2) int pidfd_thread = pidfd_open(getpid(), PIDFD_THREAD);
 > > >
-> > >  - It takes an unexpectedly long time to upstream Fscache/Cachefiles
-> > >    enhancements.  For example, the failover feature took more than
-> > >    one year, and the deamonless feature is still far behind now;
+> > > and this instructs:
 > > >
-> > >  - Ongoing HSM "fanotify pre-content hooks" [4] together with this wi=
-ll
-> > >    perfectly supersede "erofs over fscache" in a simpler way since
-> > >    developers (mainly containerd folks) could leverage their existing
-> > >    caching mechanism entirely in userspace instead of strictly follow=
-ing
-> > >    the predefined in-kernel caching tree hierarchy.
+> > > pidfd_send_signal()
+> > > pidfd_getfd()
 > > >
-> > > After "fanotify pre-content hooks" lands upstream to provide the same
-> > > functionality, "erofs over fscache" will be removed then (as an EROFS
-> > > internal improvement and EROFS will not have to bother with on-demand
-> > > fetching and/or caching improvements anymore.)
+> > > to do different things. For pidfd_send_signal() it's whether the
+> > > operation has thread-group scope or thread-scope for pidfd_send_signal()
+> > > and for pidfd_getfd() it determines the fdtable to use.
 > > >
-> > > [1] https://github.com/containers/storage/pull/2039
-> > > [2] https://lore.kernel.org/r/CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=3Dw_A=
-eM6YM=3DzVixsUfQ@mail.gmail.com
-> > > [3] https://docs.kernel.org/filesystems/caching/fscache.html
-> > > [4] https://lore.kernel.org/r/cover.1723670362.git.josef@toxicpanda.c=
-om
+> > > The thing is that if you pass:
 > > >
-> > > Closes: https://github.com/containers/composefs/issues/144
-> > > Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> > > pidfd_getfd(PDIFD_SELF)
+> > >
+> > > and you have:
+> > >
+> > > TGID
+> > >
+> > > T1 {
+> > >     clone(CLONE_THREAD)
+> > >     unshare(CLONE_FILES)
+> > > }
+> > >
+> > > T2 {
+> > >     clone(CLONE_THREAD)
+> > >     unshare(CLONE_FILES)
+> > > }
+> > >
+> > > You have 3 threads in the same thread-group that all have distinct file
+> > > descriptor tables from each other.
+> > >
+> > > So if T1 did:
+> > >
+> > > pidfd_getfd(PIDFD_SELF, ...)
+> > >
+> > > and we mirror the PIDTYPE_TGID behavior then T1 will very likely expect
+> > > to get the fd from its file descriptor table. IOW, its reasonable to
+> > > expect that T1 is interested in their very own resource, not someone
+> > > else's even if it is the thread-group leader.
+> > >
+> > > But what T1 will get in reality is an fd from TGID's file descriptor
+> > > table (and similar for T2).
+> > >
+> > > Iirc, yes that confusion exists already with /proc/self. But the
+> > > question is whether we should add the same confusion to the pidfd api or
+> > > whether we make PIDFD_SELF actually mean PIDTYPE_PID aka the actual
+> > > calling thread.
+> > >
+> > > My thinking is that if you have the reasonable suspicion that you're
+> > > multi-threaded and that you're interested in the thread-group resource
+> > > then you should be using:
+> > >
+> > > int pidfd = pidfd_open(getpid(), 0)
+> > >
+> > > and hand that thread-group leader pidfd around since you're interested
+> > > in another thread. But if you're really just interested in your own
+> > > resource then pidfd_open(getpid(), 0) makes no sense and you would want
+> > > PIDFD_SELF.
+> > >
+> > > Thoughts?
 > >
-> > Thanks for your patch, which is now commit fb176750266a3d7f
-> > ("erofs: add file-backed mount support").
+> > I mean from my perspective, my aim is to get current->mm for
+> > process_madvise() so both work for me :) however you both raise a very good
+> > point here (sorry Florian, perhaps I was a little too dismissive as to your
+> > point, you're absolutely right).
 > >
-> > > ---
-> > > v2:
-> > >  - should use kill_anon_super();
-> > >  - add O_LARGEFILE to support large files.
-> > >
-> > >  fs/erofs/Kconfig    | 17 ++++++++++
-> > >  fs/erofs/data.c     | 35 ++++++++++++---------
-> > >  fs/erofs/inode.c    |  5 ++-
-> > >  fs/erofs/internal.h | 11 +++++--
-> > >  fs/erofs/super.c    | 76 +++++++++++++++++++++++++++++--------------=
---
-> > >  5 files changed, 100 insertions(+), 44 deletions(-)
-> > >
-> > > diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-> > > index 7dcdce660cac..1428d0530e1c 100644
-> > > --- a/fs/erofs/Kconfig
-> > > +++ b/fs/erofs/Kconfig
-> > > @@ -74,6 +74,23 @@ config EROFS_FS_SECURITY
-> > >
-> > >           If you are not using a security module, say N.
-> > >
-> > > +config EROFS_FS_BACKED_BY_FILE
-> > > +       bool "File-backed EROFS filesystem support"
-> > > +       depends on EROFS_FS
-> > > +       default y
+> > My intent was for PIDFD_SELF to simply mirror the pidfd_open(getpid(), 0)
+> > behaviour, but you and Florian make a strong case that you'd _probably_
+> > find this very confusing had you unshared in this fashion.
 > >
-> > I am a bit reluctant to have this default to y, without an ack from
-> > the VFS maintainers.
+> > I mean in general this confusion already exists, and is for what
+> > PIDFD_THREAD was created, but I suspect ideally if you could go back you
+> > might actually do this by default Christian + let the TGL behaviour be the
+> > optional thing?
+> >
+> > For most users this will not be an issue, but for those they'd get the same
+> > result whichever they used, but yes actually I think you're both right -
+> > PIDFD_SELF should in effect imply PIDFD_THREAD.
 >
-> Well, we generally let filesystems do whatever they decide to do unless i=
-t
-> is a affecting stability / security / maintainability of the whole system=
-.
-> In this case I don't see anything that would be substantially different
-> than if we go through a loop device. So although the feature looks somewh=
-at
-> unusual I don't see a reason to nack it or otherwise interfere with
-> whatever the fs maintainer wants to do. Are you concerned about a
-> particular problem?
+> Funnily enough we ran into issues with this when running Go code in runc
+> that did precisely this -- /proc/self gave you the wrong fd table in
+> very specific circumstances that were annoying to debug. For languages
+> with green-threading you can't turn off (like Go) these kinds of issues
+> pop up surprisingly often.
 
-I was just wondering if there are any issues with accessing files directly.
-If you're fine with it, I am, too.
+Yeah, damn, useful insight that such things do happen in the wild.
+
+>
+> > We can adjust the pidfd_send_signal() call to infer the correct scope
+> > (actually nicely we can do that without any change there, by having
+> > __pidfd_get_pid() set f_flags accordingly).
+> >
+> > So TL;DR: I agree, I will respin with PIDFD_SELF referring to the thread.
+> >
+> > My question in return here then is - should we introduce PIDFD_SELF_PROCESS
+> > also (do advise if you feel this naming isn't quite right) - to provide
+> > thread group leader behaviour?
+>
+> Sorry to bike-shed, but to match /proc/self and /proc/thread-self, maybe
+> they should be called PIDFD_SELF (for tgid) and PIDFD_THREAD_SELF (for
+> current's tid)? In principle I guess users might use PIDFD_SELF by
+> accident but if we mirror the naming with /proc/{,thread-}self that
+> might not be that big of an issue?
+
+Lol, you know I wasn't even aware /proc/thread-self existed...
+
+Yeah, that actually makes sense and is consistent, though obviously the
+concern is people will reflexively use PIDFD_SELF and end up with
+potentially confusing results.
+
+I will obviously be doing a manpage patch for this so we can spell it out
+there very clearly and also in the header - so I'd actually lean towards
+doing this myself.
+
+Christian, Florian? Thoughts?
+
 Thanks!
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>
+> Just a thought.
+>
+> >
+> > Thanks!
+> >
+>
+> --
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
 
