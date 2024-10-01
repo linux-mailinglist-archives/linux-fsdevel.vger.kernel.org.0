@@ -1,180 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-30564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A1E98C5AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 20:50:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB5B98C5C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 21:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 467431F25A18
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE7702846EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE0C1CDA28;
-	Tue,  1 Oct 2024 18:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9D21CCEDC;
+	Tue,  1 Oct 2024 18:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ppaifXUB"
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="a7vooxlQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61621CB30F;
-	Tue,  1 Oct 2024 18:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0F11A08C6;
+	Tue,  1 Oct 2024 18:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727808518; cv=none; b=NkNqTlE+EfvxJmkI9b5WqaBW1r7zifHJrI1V2USYIN2dc4Z6twhsXZWaJEg/OklEhtp3HQoFenMZ3dHbLrbYDaPcBtiN8k8GUiZsHbPpJcOknykqePe2MYdNxurwToen1rZ20JliHVJAnckVY7YORONElopd/a82z+QBC7UzHMs=
+	t=1727809188; cv=none; b=ktaiaMkR3HUOJ4ZZwjHC48Q96z7rJXeQ5L4Pwu9rt+RGEWmkkbYQ/AHNSq7X+bUsa7dsCsDYlvFhNFgYH75Fp7SXAz8yGSexHr4QoCpTQz7qZYNp+OEFsyDWE16lZm6bc73+anO/iS0QO3UjFJWuX/XG93Q+7cRje2Bbxml8DFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727808518; c=relaxed/simple;
-	bh=H76BOncWu8xQUpoYVO7/nfxlsFJ5MIyoc5Ipf+SgPco=;
+	s=arc-20240116; t=1727809188; c=relaxed/simple;
+	bh=srQwgyYq+G97BRzwotELBbaZrcRKSuj98FoHLN6u0Ds=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LmdF6VHmVwU/dqOMgwUyTPoG9l3M1zEb93b8EADOsHuai09QtIt4Clt30eSIUvPLc2phM031xiOSxjl3yvGkHl/OL1AM7qSyykbcbsjN37/GqjEWaW/320RRNywReImkVU1i0Lm6ip/SRvKWd3rZvqkS2iWurCWSA0dTiU4Ehxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ppaifXUB; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4XJ6Qd1vMTz9spH;
-	Tue,  1 Oct 2024 20:48:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1727808505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fdrBQP3bUQTRkSAN5X0Ar51E6rJtrMZnr+nnaX4bGRY=;
-	b=ppaifXUBL5l2kuCJ8egHIfyZh/zpcMPobazbgCznTK2IAulMQs4Xfuhv+ErhMJfoQ2Utgz
-	NH85pxly39WgRC6bMazehTB41rN+k7WkcsEz6h61o+62hn+cE8VgHQQcASXI0+ffzU14Lr
-	AO6Jv86KT/NB+ffeid5eJXelt79dlRmqNs3qYfmlXssc5smHJgGfAmdN/4Q7alSMZLrUHp
-	PcpWAzTVJw9K0DLbYH2fznGpSsujduRUHzAHIlKSvjfmyAlBg4+E6LvUKVABn+SBPeZ1Dd
-	D/mpIfN4x/Q7fX28AolTkOIiEGS7LrAgNWVudmdEds65Jqb63KiLWltYBKg5yw==
-Date: Tue, 1 Oct 2024 20:48:06 +0200
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Tycho Andersen <tandersen@netflix.com>, Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-Subject: Re: [PATCH v3 1/2] exec: fix up /proc/pid/comm in the
- execveat(AT_EMPTY_PATH) case
-Message-ID: <20241001.184625-homely.tarps.selfish.shotgun-bJjSBGdHDLKb@cyphar.com>
-References: <20241001134945.798662-1-tycho@tycho.pizza>
- <20241001.175124-western.preview.meager.saws-pzvpWxOhfokt@cyphar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jhN+emYqBkDUCxzeWWr5trPt3ax6fu+8GamJJeWg+QaxZwHuuWOeqs3otHX/Krq3ubZ7PDT/kAO8YvUDgbP46C5r7YNO0DMbpGCwgE2GbIH+yvJtwMDMM0TBUFbxuwHboPt4RHfFs9W62EphGj1KZ9A3wY8oKUuR6fmmhwxFtXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=a7vooxlQ; arc=none smtp.client-ip=212.227.126.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1727809152; x=1728413952; i=christian@heusel.eu;
+	bh=k3WrPHh+pQgOST0TG/DsxdIM//YxJc9OTvspQubSD94=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=a7vooxlQc1UC7oVfE6hwKR/VmmLq+n7gmtt9Fspe8MpyyVgKeuH1ygRbvw9Yn/Ua
+	 M7wTLKd1P6I7KxQB3chjkDHqi0PV4raSWU4U/ZwCdS63qaZsl8H0AuuAT+DGr0o0g
+	 3/npNuk8f2zyLq7o9ay8MB2GfWm05J0xClQ1qlkbnzCK8i0OyGlnUNUhAGQGJHyE0
+	 uONACAGccXSOyo5+d8Rjyac6ULyHHoMrVafthxAS1ZqmMo+1/5sf98j8DyZAETyHC
+	 R7VJVG7EjVypjKGg7fkbbiJALaKtBxKniw8pPFeAQ5IA9DTxHgBL3t5Twp/b0yaMW
+	 3/kyuvT2OROOJWC/5A==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([93.196.158.52]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MQ8OG-1sZf041sQq-00KOdp; Tue, 01 Oct 2024 20:59:12 +0200
+Date: Tue, 1 Oct 2024 20:59:09 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Krzysztof =?utf-8?Q?Ma=C5=82ysa?= <varqox@gmail.com>, 
+	yangerkun <yangerkun@huawei.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	linux-btrfs@vger.kernel.org
+Subject: Re: [regression] getdents() does not list entries created after
+ opening the directory
+Message-ID: <b8089429-cff1-41f3-a3ee-a3c345f2289a@heusel.eu>
+References: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
+ <ZvvonHPqrAqSHhgV@casper.infradead.org>
+ <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wd2o7flkl4ghydpi"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mpz5nn36wgj3iugp"
 Content-Disposition: inline
-In-Reply-To: <20241001.175124-western.preview.meager.saws-pzvpWxOhfokt@cyphar.com>
-X-Rspamd-Queue-Id: 4XJ6Qd1vMTz9spH
+In-Reply-To: <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
+X-Provags-ID: V03:K1:T88c3DXPkd2HIhYeJcp9wz8+CpvNbgYL+fxcLFE+b2+653QmuyL
+ CnNEpJ8bizXbbmrIrDJ2w26gWP99wahEaMr/HUWZ3AFb7miazUAyV3ytEa0IPMtBgcsIV+X
+ jlITf2/AHEZmkzYv1rFTXfr+0s8C+ujq5kMOwCUszYYgacUWD+KRsPsSycrjrNdqSohPz+2
+ 1SpXq3+SoYJs3FD2rVU6Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lmQO8pjVS9k=;X1guPrCyMDhfoREQYE2f42iYwck
+ 9ElwZJWhVYljCu6LGX8a9tT+PlpfJMYdJ6im2jl8CKxDZy5o14PN9K8U/HELb/e7zXxHGniZr
+ wMlHe6le3lLCj3DyAfQPBdEA5LZC/uBVCednsz935MCRtTaB/S3nkI5xYnrOZffdf8yvwKMOH
+ XBtMtjBISBoiqFh7NCgJGgVyLezFKIIuNhsH5s+bg7tQQiOuMI1Dw6HJWh+zlS8ghTLrs9AFL
+ qfjm88CJdV3I2m4ynDFxdHA8WfhMLs5gh2XtFDCFt8s+62Q3ARN4HGcf/z15HhUOrlt4xhAMy
+ 1hz0l0cJAQC6CdoDqAGcIZ1hHHANavK6Itm9SOBUqjB0R3vgOJ0LHpujeoiNDwmnpDhkj4xLj
+ UV3uKTAHH3McGNXEoeFwsZGdniPOTfC373YFHpHZ2PuO1oDnOISfu7UJYuv9fGmKM29x/AAz6
+ VhnLDbVh1aJ7P63IV3etEoq0wau/hdnAXhKpQ+gD0vFV0wI4E0ag6PTYnnuHhrM3lpaGTYeN/
+ Qe6Q0jdQ6Y9FeEF6N6yHaqC5PONFKCh7bJC819OL/agpGqkTnRSz7GO0H6Cs1mnWGQLe0CNHr
+ bR5Mhq5DOnmCvkpQ0eXJKis96S2VevFlYMp6bfOqOMD7Z4GAe2BeeS30yPW+7SrKqmLwh++Lt
+ gFNk+3TLRWbtIAAMAjUDfoxXCssAJBinAsFZJ8pjhRrUX2Ycv4JolUrQgwoG/q3xk/MxDBDyr
+ AlR/sla/qrf5xpnI9DlnrQqCkLFoiEODQ==
 
 
---wd2o7flkl4ghydpi
-Content-Type: text/plain; charset=utf-8
+--mpz5nn36wgj3iugp
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 2024-10-01, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2024-10-01, Tycho Andersen <tycho@tycho.pizza> wrote:
-> > From: Tycho Andersen <tandersen@netflix.com>
+On 24/10/01 02:49PM, Linux regression tracking (Thorsten Leemhuis) wrote:
+> On 01.10.24 14:18, Matthew Wilcox wrote:
+> > On Tue, Oct 01, 2024 at 01:29:09PM +0200, Linux regression tracking (Th=
+orsten Leemhuis) wrote:
+> >>> 	DIR* dir =3D opendir("/tmp/dirent-problems-test-dir");
+> >>>
+> >>> 	fd =3D creat("/tmp/dirent-problems-test-dir/after", 0644);
 > >=20
-> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> > switching to execveat() for service execution, but can't, because the
-> > contents of /proc/pid/comm are the file descriptor which was used,
-> > instead of the path to the binary. This makes the output of tools like
-> > top and ps useless, especially in a world where most fds are opened
-> > CLOEXEC so the number is truly meaningless.
+> > "If a file is removed from or added to the directory after the most
+> > recent call to opendir() or rewinddir(), whether a subsequent call to
+> > readdir() returns an entry for that file is unspecified."
 > >=20
-> > Change exec path to fix up /proc/pid/comm in the case where we have
-> > allocated one of these synthetic paths in bprm_init(). This way the act=
-ual
-> > exec machinery is unchanged, but cosmetically the comm looks reasonable=
- to
-> > admins investigating things.
+> > https://pubs.opengroup.org/onlinepubs/007904975/functions/readdir.html
+> >=20
+> > That said, if there's an easy fix here, it'd be a nice improvement to
+> > QoI to do it, but the test-case as written is incorrect.
 >=20
-> While I still think the argv[0] solution was semantically nicer, it
-> seems this is enough to fix the systemd problem for most cases and so we
-> can revisit the argv[0] discussion in another 10 years. :D
-
-Of course, this assumes the busybox problem I mentioned really is not an
-issue. But at least this option is "less wrong" than using the fd
-number. I suspect we will eventually need the argv[0] thing.
-
-> Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+> Many thx Willy!
 >=20
-> > Signed-off-by: Tycho Andersen <tandersen@netflix.com>
-> > Suggested-by: Zbigniew J=C4=99drzejewski-Szmek <zbyszek@in.waw.pl>
-> > CC: Aleksa Sarai <cyphar@cyphar.com>
-> > Link: https://github.com/uapi-group/kernel-features#set-comm-field-befo=
-re-exec
-> > ---
-> > v2: * drop the flag, everyone :)
-> >     * change the rendered value to f_path.dentry->d_name.name instead of
-> >       argv[0], Eric
-> > v3: * fix up subject line, Eric
-> > ---
-> >  fs/exec.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index dad402d55681..9520359a8dcc 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -1416,7 +1416,18 @@ int begin_new_exec(struct linux_binprm * bprm)
-> >  		set_dumpable(current->mm, SUID_DUMP_USER);
-> > =20
-> >  	perf_event_exec();
-> > -	__set_task_comm(me, kbasename(bprm->filename), true);
-> > +
-> > +	/*
-> > +	 * If fdpath was set, execveat() made up a path that will
-> > +	 * probably not be useful to admins running ps or similar.
-> > +	 * Let's fix it up to be something reasonable.
-> > +	 */
-> > +	if (bprm->fdpath) {
-> > +		BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
-> > +		__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
-> > +	} else {
-> > +		__set_task_comm(me, kbasename(bprm->filename), true);
-> > +	}
-> > =20
-> >  	/* An exec changes our domain. We are no longer part of the thread
-> >  	   group */
-> >=20
-> > base-commit: baeb9a7d8b60b021d907127509c44507539c15e5
-> > --=20
-> > 2.34.1
-> >=20
+> Which leads to a question:
 >=20
-> --=20
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> <https://www.cyphar.com/>
+> Krzysztof, how did you find the problem? Was there a practical use case
+> (some software or workload) with this behavior that broke and made your
+> write that test-case? Or is that a test-program older and part of your
+> CI tests or something like that?
 
+The above message and the mentioned patch reminded me of an [old
+issue][0] that is bothering us in the Arch Linux Infrastructure Team
+which makes files vanish if modified during an rsync transaction (which
+breaks our mirror infrastructure because it makes the package sync
+databases [go missing][1]).
 
+The issue was previously discussed with the BTRFS developers after they
+implemented a [similar patch][2] (atleast judging from the title of
+both) for their filesystem who also pointed to the standards compliance
+after we have complained.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+The workload and the issue with it (and how the new behaviour breaks
+rsync for our usecase) was [nicely explained][3] by one of the BTRFS
+developers.
 
---wd2o7flkl4ghydpi
+So going back to the initial question: There could be a practical
+usecase this causes a regression for, atleast if the patch has the same
+implications as the BTRFS patch has. While we will have to sort out our
+issue separately with the BTRFS folks I thought I'd still leave this
+information in this thread.
+
+> Ciao, Thorsten
+
+Cheers,
+Chris
+
+[0]: https://lore.kernel.org/linux-btrfs/00ed09b9-d60c-4605-b3b6-f4e79bf92f=
+ca@foutras.com/
+[1]: https://gitlab.archlinux.org/archlinux/infrastructure/-/issues/585
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commi=
+t/?id=3D9b378f6ad48c
+[3]: https://lore.kernel.org/linux-btrfs/ZP8AWKMVYOY0mAwq@debian0.Home/
+
+--mpz5nn36wgj3iugp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZvxD5gAKCRAol/rSt+lE
-b6K4AP0bkE8XQim5jTCFtZmavfUnJ3zLtIlqABmpFfxf4uq8AAD+KW/IsgZGoAu7
-ov97H3FBDh8FdTxrCOEcruXb8xQQnwU=
-=1uQQ
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmb8Rn0ACgkQwEfU8yi1
+JYXavBAArTSgj5qGEGfQd/DPUlTK+Wu0dcezPOB1BX47GnKWOV6FvFdOsKL9y6A2
+nqoL1Dhmhz9lz/WWMboln2HEN5ompIXJTYLe9EeCOu6lWuxwctJdszOlP9+sFdMf
+FUOrQXK6OUs56hrWn8Ew/RUAmJ0NvvdZk75l+OriGWM5QTt1qiDS4cK5zIpp7EI7
+TFulZ4kA9VO6PjWzR4bKIC5pTe2zDB1U+PNlVk9JIFo8HCDLSHSjfWh0d9Sxs3YN
+bcXyq9vrhFhbPjFUt41ZZHn469MoPC5Wi0WI5qkLzhMQRoHFs+ObX+V63X79YESA
+ckDPGZjo3LVXXsBjzlblMkMfjVuXZk2yfR3btVCrJ3U3kDBq8Wy4mQQHbXkDrs76
+00PwUjfx9arQuwyzMfAhqiHStqDY1AuIS2CenkiRSTFttfNtGSWfnqpgAVjlnWZM
+5VO7FaG4CuJNDAcFlsxMVTICrHSZjccFF5IapDC42auYOSmeFiEKVBcSa51TAy6I
+CTfWNKnN5JJxMmjC51tpDkLCNGCatTi/UL6zMj8jjqq06vulF8ZzscgneA35OTB7
+/wmzPmKgs0OrS0j0xwM86M1WyfSrzVEvXcvjCbrItXLkx8mXCXunlquGovjgR926
+Vi0UpS7HaqtNGlmlj4B/Iswbk7xRjETTNRT170aUkpjoTHsIBcg=
+=2qI0
 -----END PGP SIGNATURE-----
 
---wd2o7flkl4ghydpi--
+--mpz5nn36wgj3iugp--
 
