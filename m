@@ -1,154 +1,341 @@
-Return-Path: <linux-fsdevel+bounces-30505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110C098BDF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 15:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE1598BDBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 15:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401451C21500
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AED289461
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0721C3F34;
-	Tue,  1 Oct 2024 13:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3561C461F;
+	Tue,  1 Oct 2024 13:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="qSqm3bad"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rDj2Daeg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B1A5Czx/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rDj2Daeg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B1A5Czx/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2463C3D7A;
-	Tue,  1 Oct 2024 13:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFCCEEC5;
+	Tue,  1 Oct 2024 13:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727789817; cv=none; b=praywevr9bL2WX4EvdLbBfEjXaMDQvreW2L9QKTEFY68Yv30XjclUFKgKe9BU0g2tIv/M7T4G0ElX9TGk+M8jFBwT5tkXBzGj7+/PwM06iBkqn8sI9aj9UtyYSKl+4pWDWp+LHk3hTs05jNGglsi4f5ZDNnzYhEhXrxjgbru2yA=
+	t=1727789547; cv=none; b=n4614+MK8rmcjreLV2CKTZFDGz1mya1HVW+h0GDmGLxNADJxVE/VVRkMA2C0nlY7ba+9fQhtoa+lhP3TzbuJHvqf54Ov667qEAE3tNon9qxtcnCyeZtTCzgGmD3a4mc2aQn0icDZvIIXLEPYhRYUVh0SUA4Cqn0cbPb01mvFBV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727789817; c=relaxed/simple;
-	bh=c/Rk6PjmJ6GfC6NURLP1vSsA9XLmz1niuHd9MU2R9eI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DtitGfi+C2CFot78m1fRU/NIgW7ByQjr+fM+A9Zyq3zCPJF02WWkLcocNi5pF16fuzJT4tV6vdzHFDQVi1KgEX3oppKa/TxNa4C011AiESn4aE11a22k37UZvXeyeSc4y68A08Zn0JLP5OsPJaNNU2dd3O5dfbPn4E3mnsJ6a0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=qSqm3bad; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3143:0:640:c03:0])
-	by forward502d.mail.yandex.net (Yandex) with ESMTPS id CD1DF60F6D;
-	Tue,  1 Oct 2024 16:29:42 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id bTapn58i2iE0-2EyJBfL4;
-	Tue, 01 Oct 2024 16:29:41 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1727789381; bh=KubsaPbyWvwFEquzJqrt0T5NjPeudcABlCQsvgPu6Wc=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=qSqm3badk6i9jZ40aZgck5nFcpbu+vw+uwNo3AjkrMl5iLfgL5Q6WdHLI2WjUGfjO
-	 lKex9w1nOijQDDZqK6kgZ8xgmZ0tKIHCfBBhKAGWOq4SYeVjhm8XFiZ5NLISJqxnfI
-	 Gk9teRAEVjzf/nk/S+lZhIwMGQ8URuyjKJxt/9/U=
-Authentication-Results: mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <62362149-c550-490f-bd7a-0fd7a5cd22bc@yandex.ru>
-Date: Tue, 1 Oct 2024 16:29:37 +0300
+	s=arc-20240116; t=1727789547; c=relaxed/simple;
+	bh=HW2VSXeX/jBgYNRhPYF7a3Igw5CEPNBegW6vQHHcbU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tyw4fZth/0ucL94Go2LLyUd1x5dMcfXJ6MChZo86rlL4DFRcQKI+hWyN7xeQIAcEG4QPYl8HMwcwGDYFtl0tRUcWEm+BfW3wV6EJW/KpDdnsGKEVs81RyjxUPCG6zIYVWMXFEFV2xJNtyWQWsDXSk2txA96zGckXE6yLWni7Z0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rDj2Daeg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B1A5Czx/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rDj2Daeg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B1A5Czx/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BC9501F813;
+	Tue,  1 Oct 2024 13:32:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727789543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJyVh7xpKFUerqgpvOUGQtwMuhiG+vMZUA+eKVSBOeQ=;
+	b=rDj2Daegw8acNetwuj+igR8urk35s9IZ5Ei4I5Xxg1Hf1yqHsGh07lzo6akylF2rlreVuA
+	RBAeL6aZkGoF0vKutQUZhkX3qKm/b1/jlPlXDc2TU6/f+CeVzyg5lpcXpqHqMArMLoBpqB
+	v9XWD2kMJCRuN9Moac3CaUXQnIsYDQE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727789543;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJyVh7xpKFUerqgpvOUGQtwMuhiG+vMZUA+eKVSBOeQ=;
+	b=B1A5Czx/JU851NEzyiwPym53Dc/Uk7kviKL8OOcS1KkhL/cvrtNrUAxf40xEk6CgQKiBQn
+	jRfTdeTqntkjpyCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727789543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJyVh7xpKFUerqgpvOUGQtwMuhiG+vMZUA+eKVSBOeQ=;
+	b=rDj2Daegw8acNetwuj+igR8urk35s9IZ5Ei4I5Xxg1Hf1yqHsGh07lzo6akylF2rlreVuA
+	RBAeL6aZkGoF0vKutQUZhkX3qKm/b1/jlPlXDc2TU6/f+CeVzyg5lpcXpqHqMArMLoBpqB
+	v9XWD2kMJCRuN9Moac3CaUXQnIsYDQE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727789543;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJyVh7xpKFUerqgpvOUGQtwMuhiG+vMZUA+eKVSBOeQ=;
+	b=B1A5Czx/JU851NEzyiwPym53Dc/Uk7kviKL8OOcS1KkhL/cvrtNrUAxf40xEk6CgQKiBQn
+	jRfTdeTqntkjpyCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AEA3713A73;
+	Tue,  1 Oct 2024 13:32:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vHWbKuf5+2ZwDwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 01 Oct 2024 13:32:23 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6A189A0881; Tue,  1 Oct 2024 15:32:19 +0200 (CEST)
+Date: Tue, 1 Oct 2024 15:32:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v8 04/12] fs: handle delegated timestamps in
+ setattr_copy_mgtime
+Message-ID: <20241001133219.aenkpa5ydeefqqyd@quack3>
+References: <20241001-mgtime-v8-0-903343d91bc3@kernel.org>
+ <20241001-mgtime-v8-4-903343d91bc3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] add group restriction bitmap
-Content-Language: en-US
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Florent Revest <revest@chromium.org>, Kees Cook <kees@kernel.org>,
- Palmer Dabbelt <palmer@rivosinc.com>, Charlie Jenkins
- <charlie@rivosinc.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Helge Deller <deller@gmx.de>, Zev Weiss <zev@bewilderbeest.net>,
- Samuel Holland <samuel.holland@sifive.com>, linux-fsdevel@vger.kernel.org,
- Eric Biederman <ebiederm@xmission.com>, Andy Lutomirski <luto@kernel.org>,
- Josh Triplett <josh@joshtriplett.org>
-References: <20240930195958.389922-1-stsp2@yandex.ru>
- <20241001111516.GA23907@redhat.com>
- <02ae38f6-698c-496f-9e96-1376ef9f1332@yandex.ru>
- <20241001130236.GB23907@redhat.com>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <20241001130236.GB23907@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Yandex-Filter: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001-mgtime-v8-4-903343d91bc3@kernel.org>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[32];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLy4jt9zmnbk4oncb1qwahh5jo)];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,infradead.org:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-01.10.2024 16:02, Oleg Nesterov пишет:
-> On 10/01, stsp wrote:
->> 01.10.2024 14:15, Oleg Nesterov пишет:
->>> Suppose we change groups_search()
->>>
->>> 	--- a/kernel/groups.c
->>> 	+++ b/kernel/groups.c
->>> 	@@ -104,8 +104,11 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
->>> 				left = mid + 1;
->>> 			else if (gid_lt(grp, group_info->gid[mid]))
->>> 				right = mid;
->>> 	-		else
->>> 	-			return 1;
->>> 	+		else {
->>> 	+			bool r = mid < BITS_PER_LONG &&
->>> 	+				 test_bit(mid, &group_info->restrict_bitmap);
->>> 	+			return r ? -1 : 1;
->>> 	+		}
->>> 		}
->>> 		return 0;
->>> 	 }
->>>
->>> so that it returns, say, -1 if the found grp is restricted.
->>>
->>> Then everything else can be greatly simplified, afaics...
->> This will mean updating all callers
->> of groups_search(), in_group_p(),
->> in_egroup_p(), vfsxx_in_group_p()
-> Why? I think with this change you do not need to touch in_group_p/etc at all.
->
->> if in_group_p() returns -1 for not found
->> and 0 for gid,
-> With the the change above in_group_p() returns 0 if not found, !0 otherwise.
-> It returns -1 if grp != cred->fsgid and the found grp is restricted.
+On Tue 01-10-24 06:58:58, Jeff Layton wrote:
+> When updating the ctime on an inode for a SETATTR with a multigrain
+> filesystem, we usually want to take the latest time we can get for the
+> ctime. The exception to this rule is when there is a nfsd write
+> delegation and the server is proxying timestamps from the client.
+> 
+> When nfsd gets a CB_GETATTR response, we want to update the timestamp
+> value in the inode to the values that the client is tracking. The client
+> doesn't send a ctime value (since that's always determined by the
+> exported filesystem), but it can send a mtime value. In the case where
+> it does, then we may need to update the ctime to a value commensurate
+> with that instead of the current time.
+> 
+> If ATTR_DELEG is set, then use ia_ctime value instead of setting the
+> timestamp to the current time.
+> 
+> With the addition of delegated timestamps we can also receive a request
+> to update only the atime, but we may not need to set the ctime. Trust
+> the ATTR_CTIME flag in the update and only update the ctime when it's
+> set.
+> 
+> Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-in_group_p() doesn't check if the
-group is restricted or not.
-acl_permission_check() does, but
-in your example it doesn't as well.
-I think you mean to move the
-restrict_bitmap check upwards to
-in_group_p()?
-Anyway, suppose you don't mean that.
-In this case:
-1. in_group_p() and in_egroup_p()
-   should be changed:
--  int retval = 1;
-+ int retval = -1;
+Looks good. Feel free to add:
 
-But their callers should not.
-There are also the callers of groups_search()
-in kernel/auditsc.c and they should
-be updated. But they are few.
-Just to be clear, is this what you suggest?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> So acl_permission_check() can simply do
->
-> 	if (mask & (mode ^ (mode >> 3))) {
-> 		vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
-> 		int xxx = vfsgid_in_group_p(vfsgid);
->
-> 		if (xxx) {
-> 			if (mask & ~(mode >> 3))
-> 				return -EACCES;
-> 			if (xxx > 0)
-> 				return 0;
-> 			/* If we hit restrict_bitmap, then check Others. */
-> 		}
-> 	}
+								Honza
 
-Well, in my impl it should check
-the bitmap right here, but you removed
-that. Maybe you want the check elsewhere?
-
+> ---
+>  fs/attr.c          | 28 +++++++++++++--------
+>  fs/inode.c         | 72 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fs.h |  2 ++
+>  3 files changed, 92 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/attr.c b/fs/attr.c
+> index 3bcbc45708a3..392eb62aa609 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -286,16 +286,20 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
+>  	unsigned int ia_valid = attr->ia_valid;
+>  	struct timespec64 now;
+>  
+> -	/*
+> -	 * If the ctime isn't being updated then nothing else should be
+> -	 * either.
+> -	 */
+> -	if (!(ia_valid & ATTR_CTIME)) {
+> -		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
+> -		return;
+> +	if (ia_valid & ATTR_CTIME) {
+> +		/*
+> +		 * In the case of an update for a write delegation, we must respect
+> +		 * the value in ia_ctime and not use the current time.
+> +		 */
+> +		if (ia_valid & ATTR_DELEG)
+> +			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
+> +		else
+> +			now = inode_set_ctime_current(inode);
+> +	} else {
+> +		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
+> +		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
+>  	}
+>  
+> -	now = inode_set_ctime_current(inode);
+>  	if (ia_valid & ATTR_ATIME_SET)
+>  		inode_set_atime_to_ts(inode, attr->ia_atime);
+>  	else if (ia_valid & ATTR_ATIME)
+> @@ -354,8 +358,12 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+>  		inode_set_atime_to_ts(inode, attr->ia_atime);
+>  	if (ia_valid & ATTR_MTIME)
+>  		inode_set_mtime_to_ts(inode, attr->ia_mtime);
+> -	if (ia_valid & ATTR_CTIME)
+> -		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+> +	if (ia_valid & ATTR_CTIME) {
+> +		if (ia_valid & ATTR_DELEG)
+> +			inode_set_ctime_deleg(inode, attr->ia_ctime);
+> +		else
+> +			inode_set_ctime_to_ts(inode, attr->ia_ctime);
+> +	}
+>  }
+>  EXPORT_SYMBOL(setattr_copy);
+>  
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 4ec1e71e9a9d..7a324d999816 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2751,6 +2751,78 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+>  }
+>  EXPORT_SYMBOL(inode_set_ctime_current);
+>  
+> +/**
+> + * inode_set_ctime_deleg - try to update the ctime on a delegated inode
+> + * @inode: inode to update
+> + * @update: timespec64 to set the ctime
+> + *
+> + * Attempt to atomically update the ctime on behalf of a delegation holder.
+> + *
+> + * The nfs server can call back the holder of a delegation to get updated
+> + * inode attributes, including the mtime. When updating the mtime we may
+> + * need to update the ctime to a value at least equal to that.
+> + *
+> + * This can race with concurrent updates to the inode, in which
+> + * case we just don't do the update.
+> + *
+> + * Note that this works even when multigrain timestamps are not enabled,
+> + * so use it in either case.
+> + */
+> +struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 update)
+> +{
+> +	struct timespec64 now, cur_ts;
+> +	u32 cur, old;
+> +
+> +	/* pairs with try_cmpxchg below */
+> +	cur = smp_load_acquire(&inode->i_ctime_nsec);
+> +	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
+> +	cur_ts.tv_sec = inode->i_ctime_sec;
+> +
+> +	/* If the update is older than the existing value, skip it. */
+> +	if (timespec64_compare(&update, &cur_ts) <= 0)
+> +		return cur_ts;
+> +
+> +	ktime_get_coarse_real_ts64_mg(&now);
+> +
+> +	/* Clamp the update to "now" if it's in the future */
+> +	if (timespec64_compare(&update, &now) > 0)
+> +		update = now;
+> +
+> +	update = timestamp_truncate(update, inode);
+> +
+> +	/* No need to update if the values are already the same */
+> +	if (timespec64_equal(&update, &cur_ts))
+> +		return cur_ts;
+> +
+> +	/*
+> +	 * Try to swap the nsec value into place. If it fails, that means
+> +	 * we raced with an update due to a write or similar activity. That
+> +	 * stamp takes precedence, so just skip the update.
+> +	 */
+> +retry:
+> +	old = cur;
+> +	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, update.tv_nsec)) {
+> +		inode->i_ctime_sec = update.tv_sec;
+> +		mgtime_counter_inc(mg_ctime_swaps);
+> +		return update;
+> +	}
+> +
+> +	/*
+> +	 * Was the change due to someone marking the old ctime QUERIED?
+> +	 * If so then retry the swap. This can only happen once since
+> +	 * the only way to clear I_CTIME_QUERIED is to stamp the inode
+> +	 * with a new ctime.
+> +	 */
+> +	if (!(old & I_CTIME_QUERIED) && (cur == (old | I_CTIME_QUERIED)))
+> +		goto retry;
+> +
+> +	/* Otherwise, it was a new timestamp. */
+> +	cur_ts.tv_sec = inode->i_ctime_sec;
+> +	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
+> +	return cur_ts;
+> +}
+> +EXPORT_SYMBOL(inode_set_ctime_deleg);
+> +
+>  /**
+>   * in_group_or_capable - check whether caller is CAP_FSETID privileged
+>   * @idmap:	idmap of the mount @inode was found from
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 23908bad166c..b1a3bd07711b 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1584,6 +1584,8 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
+>  
+>  struct timespec64 current_time(struct inode *inode);
+>  struct timespec64 inode_set_ctime_current(struct inode *inode);
+> +struct timespec64 inode_set_ctime_deleg(struct inode *inode,
+> +					struct timespec64 update);
+>  
+>  static inline time64_t inode_get_atime_sec(const struct inode *inode)
+>  {
+> 
+> -- 
+> 2.46.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
