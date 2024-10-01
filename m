@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-30479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274B298BA4D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:01:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816FD98BA55
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ACB61C23645
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:01:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D205AB23074
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871CC1C2429;
-	Tue,  1 Oct 2024 10:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C8D1C2DA8;
+	Tue,  1 Oct 2024 10:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iouMPU0k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJYReTzj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84B71C1ADB;
-	Tue,  1 Oct 2024 10:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69381C2426;
+	Tue,  1 Oct 2024 10:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780361; cv=none; b=KSo0m2ZSOw3/SzRHiuBEATEGALrIo9gS/ObuKsvUFKbuPaM/3oUiRAnigWuWUPkj4Gd7NrKJYze7qzuilOvUMwO+O8RUuY1EW++g++e4N7R4v7n8ch6Ff9MT8zBkW67ctolLY7nmRVmuUlqwfJn/yuk4vx5/wMt8iMPNpfmlwwY=
+	t=1727780364; cv=none; b=LOX1t4BA/ATlax43633cl00uNmXwr+wrRv7qWxFkUWFMMXPrAJACVgsrUbCYN+xIARHXr9xfklI9KsHH9jSl5weQrRLeiIqNKpDfTuqA/5YT6ZaTMshiPZqgtX1ivKwb1nIt4nnrCefwyIjouKyl1fZXoROU/d3FWbrfffyJ7pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780361; c=relaxed/simple;
-	bh=otxFDOKr6FG8LsCMnriOfpK/JOFC4LtwAGxd1Ko/vgM=;
+	s=arc-20240116; t=1727780364; c=relaxed/simple;
+	bh=izJl02glxmmNWffqD/IPDGQCuMtAoj3PYaIpg9PyC+M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D30kir8W5QFh4tOOBLALM7DSroLN65KvZbyOomxSDxhgQf76QnyzfC8yUjtYmwuJ0VmMvVxSvyCTW7HmmFYsVgKZ0KMmQw28wxNyfbYOA0uGbwvKgqZMq0NyK8YzqzxaLndCemGEUqjjZf5o9JsF+AKtACExg6MvRDXEsKzP6N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iouMPU0k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B8A4C4CED3;
-	Tue,  1 Oct 2024 10:59:19 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=AwKVmB7hY9Glskw4BV/ymcxpwIOP2PODLD5cdmoi5zISbLHFrsdLd8Wna8GPF3wLzKeFRmE+4fTEHh+ZU1N4KXC608dHooHLtphc5BU0/KIUNPguwXJzytZihtn4R6xGdRQ9utR5WMO1S2csVUF5AEsvDvebydZnvSLl+zWTYTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJYReTzj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A3DC4CED5;
+	Tue,  1 Oct 2024 10:59:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727780361;
-	bh=otxFDOKr6FG8LsCMnriOfpK/JOFC4LtwAGxd1Ko/vgM=;
+	s=k20201202; t=1727780364;
+	bh=izJl02glxmmNWffqD/IPDGQCuMtAoj3PYaIpg9PyC+M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=iouMPU0kTWC6M8npPfU0q2wFskriO4LNOr8BhfkrxeQrTmfuwtAU2qX8aV59H/EWu
-	 yb1y5W49N4SFLIMhwFa+ZA7jQ26HCsz5y1Nc1/f9BCH1gRee7b8ynledplAnFSI57V
-	 263wZ+4IpzwtwIGp8fEeauEOLFnV256F8asITtggzLheTwjSCtfKX1pg8YVm5qukWP
-	 lR3lBRAAc91/iOB/suVkMLg2fT2MetTV1GW+6qmAbhHvlpZ3z36l5wb97Wsas8nXyn
-	 NGwYXVDOZogH8ePpV0Ue1A/e52jiyh0d2BqZycje35KAPLWN2/Qs/mw30lkiZBn5rF
-	 NPJcQXpRtFaMQ==
+	b=KJYReTzjCU5juqIQtdAtIbD6Cg8WsgMtVfkxad1wpDaXt0C/azxShGQz0aEdLwS+i
+	 NMBJSD5AMwqRC9jAD+agmdvxZbhb1deO6PZ20MXZuTvm5IN2yZOhqr5TYaydIZtyzy
+	 xoWFhDolE7EBRb9u82huyjjPzS//NxjCBPgB0yyus0QgUHAP06Y8Wv+UmwMAz13+EK
+	 wRZzJDLC3n0/pimokV7Gr3o2unPk5KJgF3sUwNY2CljlHaTslpI+nqcpCkVxr0NBUj
+	 9Tu5xv20Nz3Ux9zeEAaX7IwNb02A5DF0jW/Zxim6vaMiiu8f3Ye7VsX2FYMRggkIvE
+	 d7X3TQycX4uFQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 01 Oct 2024 06:58:58 -0400
-Subject: [PATCH v8 04/12] fs: handle delegated timestamps in
- setattr_copy_mgtime
+Date: Tue, 01 Oct 2024 06:58:59 -0400
+Subject: [PATCH v8 05/12] fs: tracepoints around multigrain timestamp
+ events
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-mgtime-v8-4-903343d91bc3@kernel.org>
+Message-Id: <20241001-mgtime-v8-5-903343d91bc3@kernel.org>
 References: <20241001-mgtime-v8-0-903343d91bc3@kernel.org>
 In-Reply-To: <20241001-mgtime-v8-0-903343d91bc3@kernel.org>
 To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -76,195 +76,229 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6276; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=otxFDOKr6FG8LsCMnriOfpK/JOFC4LtwAGxd1Ko/vgM=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm+9X64D3EHKo2ySeez80WVHd3oCsvm+pNbsgmR
- 0aOttENCLGJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZvvV+gAKCRAADmhBGVaC
- FYm7D/4qzJJQm9TmX5xrE7NpsLG94CdIeCac47fLnlVxmf3t3Mjkt5I1L2v0j5u5Af3l2qg3p8i
- is8M/pFHGfva0Tvm6zCYQyajc1TFOSk1CnHSGbN44zHC3XftW2w+aT7wEleS46FU22+/HmaaQ4d
- icXVwKy09Hvr8Nmz/pmbP8ADLuWjSnoga/0bhJdOanUvf1WzsV7RgH0lI+I/Mf5r25YH9QmQe18
- +ZDRGPs4SBuwzQ6L0CR6pQmSuGHCvo11mEDnulJuEW0MnmkS7L+Q0MJJq8izDNCZAlVF3NqwN0C
- f3u+OygAKquCyKT8dugS9lqkEOXJBhi5OZhDZdSBGxOkXQiwb0gy5tLMkPhZ8K2g8pLzKeA6KjA
- AtoR4crhk1WNXcU4nzjhBDgS1wB+idQe8CHHyoTGvy5j97RCr6d+hNVFhEDtAK1HWd7bRJG6dzE
- b9PhO56VnY1bDWMLHOJCSWf1qgCyVVcHv+Ma+7Z21qnNI/YKo6VVjfj5fuisKZX4QxhHGVgDZv1
- pXXPdbO8sttx+ccUD9hwj0etd8WW5IyqRpvbtJFus50FIxV7DVjvMUPPUJ8fjeTSAhnhh8M550A
- RotKZi9jt8ytEzPXSq/+XyCry209lsk44xqqR5YNZb6WMGC30+UeZrUPJBsNoRdJyuQ1fGjDzl9
- CAsXrWV3wpcbqhA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6077; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=izJl02glxmmNWffqD/IPDGQCuMtAoj3PYaIpg9PyC+M=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm+9X696gqADrOhEqB6pujGiTNndsyHf/izuC/1
+ R463+eBHFWJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZvvV+gAKCRAADmhBGVaC
+ FbboEACUj+9F3EVD5uJtrX2uK5uY53172VIJT2UCmgEOe9ZlQA7D6if6CWZVPpy84ZAFu0wKvCU
+ nUfGe+A6pYC7FsWSWtboTu4uITOQh80rU3WCcsO2wvzjoi0r+sasAbUqKCSQQ03TKI7P864nU6w
+ s02Q5/aUyzz8G+ClLfJ6+oaoxzxdlqxVt26SF6t/cwBvqv21aB6lPekW0yU+0G9fQzugdYDs9tR
+ 4IaBJVJIPDUGj9CNQLAfmB+R7ZqQCaX0ial0zvkB5j5DThz5OCKhv2BoHsySCKOSxAK5ljs4V29
+ FSLRdvZe7fmhn+pVlw4zCeGrK90NjBPLY05C1taeQGjXm1KMTYxIRVTYppCGOrbxRlV8HAqCfNA
+ h/f7Kj5Ig3A+TIavynuTUw+cLKXxTS8/KcpbfSa228J9uujdacgBgN5tNHjWJLqbGd1CnxF3EE1
+ G0/Tc41yTgoQPk1eZbgcEefCxgG1wSzpWVixfbgYFnVHQnxMDxmE6ME/pzql569Onv5uvSoXL7v
+ ii0xb1hqVt3AWZPlFcv2dLDzXp6DCkga+++6O+tiwAR3lOEdBe7ZHyKwGNqa9+ttRmDzG/Y8BPr
+ TJ1hwYpwwsQrPBeldGN5ImNSqSxV05EHm+neGOG5J+7diqsxz74eScJtZxkQ0PkpS6XSSZrquPH
+ CgidwNso0HxHmJA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-When updating the ctime on an inode for a SETATTR with a multigrain
-filesystem, we usually want to take the latest time we can get for the
-ctime. The exception to this rule is when there is a nfsd write
-delegation and the server is proxying timestamps from the client.
+Add some tracepoints around various multigrain timestamp events.
 
-When nfsd gets a CB_GETATTR response, we want to update the timestamp
-value in the inode to the values that the client is tracking. The client
-doesn't send a ctime value (since that's always determined by the
-exported filesystem), but it can send a mtime value. In the case where
-it does, then we may need to update the ctime to a value commensurate
-with that instead of the current time.
-
-If ATTR_DELEG is set, then use ia_ctime value instead of setting the
-timestamp to the current time.
-
-With the addition of delegated timestamps we can also receive a request
-to update only the atime, but we may not need to set the ctime. Trust
-the ATTR_CTIME flag in the update and only update the ctime when it's
-set.
-
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/attr.c          | 28 +++++++++++++--------
- fs/inode.c         | 72 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  2 ++
- 3 files changed, 92 insertions(+), 10 deletions(-)
+ fs/inode.c                       |   9 ++-
+ fs/stat.c                        |   3 +
+ include/trace/events/timestamp.h | 124 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 135 insertions(+), 1 deletion(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index 3bcbc45708a3..392eb62aa609 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -286,16 +286,20 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
- 	unsigned int ia_valid = attr->ia_valid;
- 	struct timespec64 now;
- 
--	/*
--	 * If the ctime isn't being updated then nothing else should be
--	 * either.
--	 */
--	if (!(ia_valid & ATTR_CTIME)) {
--		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
--		return;
-+	if (ia_valid & ATTR_CTIME) {
-+		/*
-+		 * In the case of an update for a write delegation, we must respect
-+		 * the value in ia_ctime and not use the current time.
-+		 */
-+		if (ia_valid & ATTR_DELEG)
-+			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
-+		else
-+			now = inode_set_ctime_current(inode);
-+	} else {
-+		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
-+		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
- 	}
- 
--	now = inode_set_ctime_current(inode);
- 	if (ia_valid & ATTR_ATIME_SET)
- 		inode_set_atime_to_ts(inode, attr->ia_atime);
- 	else if (ia_valid & ATTR_ATIME)
-@@ -354,8 +358,12 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
- 		inode_set_atime_to_ts(inode, attr->ia_atime);
- 	if (ia_valid & ATTR_MTIME)
- 		inode_set_mtime_to_ts(inode, attr->ia_mtime);
--	if (ia_valid & ATTR_CTIME)
--		inode_set_ctime_to_ts(inode, attr->ia_ctime);
-+	if (ia_valid & ATTR_CTIME) {
-+		if (ia_valid & ATTR_DELEG)
-+			inode_set_ctime_deleg(inode, attr->ia_ctime);
-+		else
-+			inode_set_ctime_to_ts(inode, attr->ia_ctime);
-+	}
- }
- EXPORT_SYMBOL(setattr_copy);
- 
 diff --git a/fs/inode.c b/fs/inode.c
-index 4ec1e71e9a9d..7a324d999816 100644
+index 7a324d999816..1a7eff2a40e2 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -2751,6 +2751,78 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- }
- EXPORT_SYMBOL(inode_set_ctime_current);
+@@ -22,6 +22,9 @@
+ #include <linux/iversion.h>
+ #include <linux/rw_hint.h>
+ #include <trace/events/writeback.h>
++#define CREATE_TRACE_POINTS
++#include <trace/events/timestamp.h>
++
+ #include "internal.h"
  
-+/**
-+ * inode_set_ctime_deleg - try to update the ctime on a delegated inode
-+ * @inode: inode to update
-+ * @update: timespec64 to set the ctime
-+ *
-+ * Attempt to atomically update the ctime on behalf of a delegation holder.
-+ *
-+ * The nfs server can call back the holder of a delegation to get updated
-+ * inode attributes, including the mtime. When updating the mtime we may
-+ * need to update the ctime to a value at least equal to that.
-+ *
-+ * This can race with concurrent updates to the inode, in which
-+ * case we just don't do the update.
-+ *
-+ * Note that this works even when multigrain timestamps are not enabled,
-+ * so use it in either case.
-+ */
-+struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 update)
-+{
-+	struct timespec64 now, cur_ts;
-+	u32 cur, old;
-+
-+	/* pairs with try_cmpxchg below */
-+	cur = smp_load_acquire(&inode->i_ctime_nsec);
-+	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
-+	cur_ts.tv_sec = inode->i_ctime_sec;
-+
-+	/* If the update is older than the existing value, skip it. */
-+	if (timespec64_compare(&update, &cur_ts) <= 0)
-+		return cur_ts;
-+
-+	ktime_get_coarse_real_ts64_mg(&now);
-+
-+	/* Clamp the update to "now" if it's in the future */
-+	if (timespec64_compare(&update, &now) > 0)
-+		update = now;
-+
-+	update = timestamp_truncate(update, inode);
-+
-+	/* No need to update if the values are already the same */
-+	if (timespec64_equal(&update, &cur_ts))
-+		return cur_ts;
-+
-+	/*
-+	 * Try to swap the nsec value into place. If it fails, that means
-+	 * we raced with an update due to a write or similar activity. That
-+	 * stamp takes precedence, so just skip the update.
-+	 */
-+retry:
-+	old = cur;
-+	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, update.tv_nsec)) {
-+		inode->i_ctime_sec = update.tv_sec;
-+		mgtime_counter_inc(mg_ctime_swaps);
-+		return update;
-+	}
-+
-+	/*
-+	 * Was the change due to someone marking the old ctime QUERIED?
-+	 * If so then retry the swap. This can only happen once since
-+	 * the only way to clear I_CTIME_QUERIED is to stamp the inode
-+	 * with a new ctime.
-+	 */
-+	if (!(old & I_CTIME_QUERIED) && (cur == (old | I_CTIME_QUERIED)))
-+		goto retry;
-+
-+	/* Otherwise, it was a new timestamp. */
-+	cur_ts.tv_sec = inode->i_ctime_sec;
-+	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
-+	return cur_ts;
-+}
-+EXPORT_SYMBOL(inode_set_ctime_deleg);
-+
- /**
-  * in_group_or_capable - check whether caller is CAP_FSETID privileged
-  * @idmap:	idmap of the mount @inode was found from
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 23908bad166c..b1a3bd07711b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1584,6 +1584,8 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
+ /*
+@@ -2639,6 +2642,7 @@ EXPORT_SYMBOL(inode_nohighmem);
  
- struct timespec64 current_time(struct inode *inode);
- struct timespec64 inode_set_ctime_current(struct inode *inode);
-+struct timespec64 inode_set_ctime_deleg(struct inode *inode,
-+					struct timespec64 update);
- 
- static inline time64_t inode_get_atime_sec(const struct inode *inode)
+ struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 ts)
  {
++	trace_inode_set_ctime_to_ts(inode, &ts);
+ 	set_normalized_timespec64(&ts, ts.tv_sec, ts.tv_nsec);
+ 	inode->i_ctime_sec = ts.tv_sec;
+ 	inode->i_ctime_nsec = ts.tv_nsec;
+@@ -2723,14 +2727,17 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ 	}
+ 
+ 	/* No need to cmpxchg if it's exactly the same */
+-	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec)
++	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec) {
++		trace_ctime_xchg_skip(inode, &now);
+ 		goto out;
++	}
+ 	cur = cns;
+ retry:
+ 	/* Try to swap the nsec value into place. */
+ 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
+ 		/* If swap occurred, then we're (mostly) done */
+ 		inode->i_ctime_sec = now.tv_sec;
++		trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
+ 	} else {
+ 		/*
+ 		 * Was the change due to someone marking the old ctime QUERIED?
+diff --git a/fs/stat.c b/fs/stat.c
+index 381926fb405f..72914b6624a5 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -23,6 +23,8 @@
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
+ 
++#include <trace/events/timestamp.h>
++
+ #include "internal.h"
+ #include "mount.h"
+ 
+@@ -52,6 +54,7 @@ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
+ 	if (!(stat->ctime.tv_nsec & I_CTIME_QUERIED))
+ 		stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn));
+ 	stat->ctime.tv_nsec &= ~I_CTIME_QUERIED;
++	trace_fill_mg_cmtime(inode, &stat->ctime, &stat->mtime);
+ }
+ EXPORT_SYMBOL(fill_mg_cmtime);
+ 
+diff --git a/include/trace/events/timestamp.h b/include/trace/events/timestamp.h
+new file mode 100644
+index 000000000000..c9e5ec930054
+--- /dev/null
++++ b/include/trace/events/timestamp.h
+@@ -0,0 +1,124 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM timestamp
++
++#if !defined(_TRACE_TIMESTAMP_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_TIMESTAMP_H
++
++#include <linux/tracepoint.h>
++#include <linux/fs.h>
++
++#define CTIME_QUERIED_FLAGS \
++	{ I_CTIME_QUERIED, "Q" }
++
++DECLARE_EVENT_CLASS(ctime,
++	TP_PROTO(struct inode *inode,
++		 struct timespec64 *ctime),
++
++	TP_ARGS(inode, ctime),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		dev)
++		__field(ino_t,		ino)
++		__field(time64_t,	ctime_s)
++		__field(u32,		ctime_ns)
++		__field(u32,		gen)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->ino		= inode->i_ino;
++		__entry->gen		= inode->i_generation;
++		__entry->ctime_s	= ctime->tv_sec;
++		__entry->ctime_ns	= ctime->tv_nsec;
++	),
++
++	TP_printk("ino=%d:%d:%ld:%u ctime=%lld.%u",
++		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
++		__entry->ctime_s, __entry->ctime_ns
++	)
++);
++
++DEFINE_EVENT(ctime, inode_set_ctime_to_ts,
++		TP_PROTO(struct inode *inode,
++			 struct timespec64 *ctime),
++		TP_ARGS(inode, ctime));
++
++DEFINE_EVENT(ctime, ctime_xchg_skip,
++		TP_PROTO(struct inode *inode,
++			 struct timespec64 *ctime),
++		TP_ARGS(inode, ctime));
++
++TRACE_EVENT(ctime_ns_xchg,
++	TP_PROTO(struct inode *inode,
++		 u32 old,
++		 u32 new,
++		 u32 cur),
++
++	TP_ARGS(inode, old, new, cur),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		dev)
++		__field(ino_t,		ino)
++		__field(u32,		gen)
++		__field(u32,		old)
++		__field(u32,		new)
++		__field(u32,		cur)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->ino		= inode->i_ino;
++		__entry->gen		= inode->i_generation;
++		__entry->old		= old;
++		__entry->new		= new;
++		__entry->cur		= cur;
++	),
++
++	TP_printk("ino=%d:%d:%ld:%u old=%u:%s new=%u cur=%u:%s",
++		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
++		__entry->old & ~I_CTIME_QUERIED,
++		__print_flags(__entry->old & I_CTIME_QUERIED, "|", CTIME_QUERIED_FLAGS),
++		__entry->new,
++		__entry->cur & ~I_CTIME_QUERIED,
++		__print_flags(__entry->cur & I_CTIME_QUERIED, "|", CTIME_QUERIED_FLAGS)
++	)
++);
++
++TRACE_EVENT(fill_mg_cmtime,
++	TP_PROTO(struct inode *inode,
++		 struct timespec64 *ctime,
++		 struct timespec64 *mtime),
++
++	TP_ARGS(inode, ctime, mtime),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		dev)
++		__field(ino_t,		ino)
++		__field(time64_t,	ctime_s)
++		__field(time64_t,	mtime_s)
++		__field(u32,		ctime_ns)
++		__field(u32,		mtime_ns)
++		__field(u32,		gen)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->ino		= inode->i_ino;
++		__entry->gen		= inode->i_generation;
++		__entry->ctime_s	= ctime->tv_sec;
++		__entry->mtime_s	= mtime->tv_sec;
++		__entry->ctime_ns	= ctime->tv_nsec;
++		__entry->mtime_ns	= mtime->tv_nsec;
++	),
++
++	TP_printk("ino=%d:%d:%ld:%u ctime=%lld.%u mtime=%lld.%u",
++		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
++		__entry->ctime_s, __entry->ctime_ns,
++		__entry->mtime_s, __entry->mtime_ns
++	)
++);
++#endif /* _TRACE_TIMESTAMP_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
 
 -- 
 2.46.2
