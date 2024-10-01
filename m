@@ -1,413 +1,336 @@
-Return-Path: <linux-fsdevel+bounces-30442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F19998B6D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 10:24:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB7F398B6ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 10:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC701C221F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 08:24:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3388CB20E0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 08:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D14A19CD17;
-	Tue,  1 Oct 2024 08:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C73119AD5C;
+	Tue,  1 Oct 2024 08:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TPIJx5Ls"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WNmXc/A7";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="btV2lvWq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C612619C56E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 08:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727770982; cv=none; b=AxRQVUP6Oe8TVxNtiawq1a4+2c5vWV6pzzPxY4oIErjs3gqGbP2rCk7muV/+yoJmnQ+jtA3SBMJ6Gcik/DaZ4oDoRXms/2W4VIwnkqig8z7mrdM4ecdo9G93zFn0vxMgqP5j7rkOdGxZWWzVfv+bH0Uc0XV+rgQxCxd/97FSYtU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727770982; c=relaxed/simple;
-	bh=3VyRonBCJVjK5hj6nYbxWH10b75C5wDKm0/8vUkO9uY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=h0veI4zk2OX/ORCBeSEd8fvB1fR/lK5wlocGx11jL4Y+qV8RB75F7dU1GIE3X1eKPZSqHJLzKZ4+bebyJDaOEIUhZBwj3rs6F0DDvUOywFOsAmqeHcAZPWtG2SIQfWxjnKBdK8mmzFwuaT4HiykO3YSfqbd+FKpXOvb9u5c0YPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TPIJx5Ls; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-37cc9b5e533so2112820f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 01:23:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6781E4AF;
+	Tue,  1 Oct 2024 08:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727771400; cv=fail; b=VzllFozNnMtAqPHoOA2y1p/Q3bGyELf66ihbFaZs/nIu3YQsSyFLjr5F3IajAJoduCr4dkt8CnyTw2Z33MByn9dQM2OlWTyUjTtxs3oRfOlzQIare1ei6yso+GO3/ynFBaDkd7FEgP8nifGIYmpFghgEP5u4wMbD5zq5RLyGq7I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727771400; c=relaxed/simple;
+	bh=jrZuNl0j5MiVcu63j4Y7Dra0zkhfPT3mpG3pvUYg8BE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Yr76qB6mGGmcNwceNd81U7a1h3C5izoJ48QKb76q+xO9OgOb3damIXGgITiQqXl8qe7J4wy7C+VbAhF7tX81ofgZXdrROH1sTTggG2hxe/t19PeTEMLtklwYrIoJ0l6Q63nA6RoFn383bR9TUkma8NXoVPoc0IuczgFcV4W0g+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WNmXc/A7; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=btV2lvWq; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4911vQoB031515;
+	Tue, 1 Oct 2024 08:29:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=s+mos2AisWx16cdFZIooPQN9BrcsNPiuJApPilhbyBs=; b=
+	WNmXc/A7vbcuPGm4hHvjgIAc5UwuPqadakYuFmvxL0D6MepMYM/cVUYHjt8KbtHy
+	8Uhuwch/b2i3Cno7oTiDNgBGe1qesZulMmP3NhPkh95k3j4BeD4yW4WDd0zyN2jc
+	uN2zyn/V/+KVbd9cBRt+Cx7BObcOZ8NGhcaAxdc6RrUv6XbNgX4BoTscLIx//P4d
+	2t0EAMG+ExxLe0g9ocBPXqu/6qlrHeNr/wdeByu5uwz74gruwk2Lz/kgzuc+pqqK
+	3TmhKu/lQvg+5VPUZDri+xJN9z/GVFD8lBKjJ7X/gC4nCWcvsqmA5rG76WRnIJ2Q
+	4zv8BYq3OkS3qQx42b1vHQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x8k35pyj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 01 Oct 2024 08:29:43 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4917jBVP017254;
+	Tue, 1 Oct 2024 08:29:42 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41x8876xvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 01 Oct 2024 08:29:42 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fqT48twqiW6x0pqO5KbQGFiopRzENh+k0om4QFKq5CjAux+lyZd246w/Aw2dXxz/NgvCaAx94ZLkqW592b449/ZwSb5SE7LtmLJYoj9TOsh8SC09uWJxxGv1RQ7BnsTm7yrL6ymnhBc462yfTT0guYhlF+vQuATOl3sP1zyfBdPDpVoWFu6ONQMIeG5AO5bQmsWJGX9SBWXEQVCjv7yuhMgpzyEjMvT6iYrO163SjfRTeXXhSJ350Y53iAm3TQmpyjUF+tITzuS7OHfbWeu6Eb8XubUWf1qUs4Vpo986+mqgUOEllJSpvSxnjavTPC989SytpzlxS5hH/YOdIQnLqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s+mos2AisWx16cdFZIooPQN9BrcsNPiuJApPilhbyBs=;
+ b=avxhAK8OVvF2ngXEt/GZ1tKjHJ7La3kZdlw0C7fXwKqM1XL44RVJ119XslFfuwJEF5LB0q1jQ10PE7bb9LzSj3SiMmvZk19rZIyWSujQlFfhX8Lq8gRSMjhFs3HVBRhCvzgXtzQ2ImsqqqXqZdPK3E70UjXHg8hoiwhe2zUlh4H4FF73UBViT1S+m+SjprQTQ/TRG658IAmxJxaGRT2vOi11Ufxs7Uz9eJJhzCh+MOweJtJBZX4kPtTQwBoYhed5gO0gf6wgb0kk4u0fZ6aPPEngilMuAZWhtEKfbyzUPYK14XTvNf9YFigl/ivddyFXpZARh955aK2wA8pOqvq9yQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727770979; x=1728375779; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m3FZn52H9O8F+yOf60yqUxuDYPyvQ608t9F+r6MmgRc=;
-        b=TPIJx5LsWMsjhETBDqVCjTCf+wRf8DKs/Qek70NuZeimPKAfXiLfOvdEM4KBMTDMoe
-         rSuoljUxMtMz8xFVRZyz7OYYHjoB0/Xr9JSbVY4AjPoUaF5yLretRnHDoI2ygdXuZF03
-         j3u/ZlW75bgh46O+CzrW6dVbeyb+IZszM3hL72w9TcjdgxfsFj4Dq9gMWBUCFapaJOyV
-         N/YwJLxxJZg18apiK4VvGEzVmZVlOejRvv5f3tY0ibb3gGl7r81yR93PMqvDCs96BxHs
-         vBODnCHE6Kts4lTfqTaQgUyZoA/AJ5rDgg6h9P4fAu93broAlYsWAsIL0ltJrF7mS3o2
-         /drA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727770979; x=1728375779;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m3FZn52H9O8F+yOf60yqUxuDYPyvQ608t9F+r6MmgRc=;
-        b=BR6XM6Tj+SfrHdGF/AYFSimsQptd99ulMfnMQ2H3AqjsCjNm+5w+zseFRh0GrzODvH
-         z1GJXtUvHB18u5RNq90pCa0voUFw791xNNGuW0LtwhLV6kpb5/sOiPZUGSm+7BvG25o1
-         B4YIIN7MX8OaFvqEGx1/BijEyviVK5U7CpA//IhPS+mGb/35DMzeCjrQ/BQIkCItvn0K
-         T79HMoKN0xgAZfKAdZuUgSoBTL4aGb7Sl8Z7tUDRDNJwDfpeF+KTSalFaig/W/ZxZsd+
-         gaNv2mX8p5wOFCxnD9Xi/CQ1SOzyQQ62wvs+9q779QNnJMDgGEVPmA5hES4W630fZwle
-         jEeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAjzVhrpHPViS7UEB0Ks+WYmxVbaCuNxqGDIJcAu4HWBzITLNAXZHenQNUAvOmn+mECWZL92hreiRlc09Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz14WkFEHHYPmMQaW2h3JZlBqGV1VELymqPkRMNBbQylTlZz/rG
-	qtaiOOqM0O38/0g6bM+IzlAhPgJcQr85PcqSnVjbgTBIsUEhu8F7FyckI1ehOvWQ6skkg3kX+ah
-	2NsHw4l5GwaqGXA==
-X-Google-Smtp-Source: AGHT+IHpK+MaMjGg3iunzco3p6gSgwx7hU4pG4yd89Mn5+bw2OyXM+54l3wap13mwr+yym6F7IFddnAWJogvi+w=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a05:6000:88:b0:376:89e0:7b72 with SMTP
- id ffacd0b85a97d-37cd5b1b5ccmr9814f8f.8.1727770978942; Tue, 01 Oct 2024
- 01:22:58 -0700 (PDT)
-Date: Tue, 01 Oct 2024 08:22:22 +0000
-In-Reply-To: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s+mos2AisWx16cdFZIooPQN9BrcsNPiuJApPilhbyBs=;
+ b=btV2lvWqaDv7BSWmPmiLlewCj3L3uy58o3+Ruu9nPkwM2Fyglen5/vqvE8JHAV1ZkAIASyfBvlWqqESc7A7X/4+mdB/RUmF6oP1osjjvulHh3V0QS4S9o53yofp1rs7mf9AYchxS6EG0/CZA59VYQzb5HpeZxm8e9aJvhZfmKyI=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by SA1PR10MB7585.namprd10.prod.outlook.com (2603:10b6:806:379::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Tue, 1 Oct
+ 2024 08:29:39 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.8026.005; Tue, 1 Oct 2024
+ 08:29:39 +0000
+Message-ID: <753babd8-de34-422f-9958-a2a06b503ca6@oracle.com>
+Date: Tue, 1 Oct 2024 09:29:35 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/7] xfs: Support atomic write for statx
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+        dchinner@redhat.com, hch@lst.de, cem@kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de,
+        martin.petersen@oracle.com, catherine.hoang@oracle.com,
+        mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+References: <20240930125438.2501050-1-john.g.garry@oracle.com>
+ <20240930125438.2501050-6-john.g.garry@oracle.com>
+ <20240930163716.GO21853@frogsfrogsfrogs>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240930163716.GO21853@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0668.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:316::14) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10556; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=3VyRonBCJVjK5hj6nYbxWH10b75C5wDKm0/8vUkO9uY=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm+7Fb3wqX6uQGUAddVnUHiAfZi14kjbYSuWFQY
- G3dvwX40OKJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvuxWwAKCRAEWL7uWMY5
- Rhb1EACkC9obOPUnU7Rf6FWMvgJO1DXkTTEHGYIRuHGFXNlNaBQupG9IHeuG+7URG8KqzETYn7d
- LkHJzlUJ9JUBpl8PXj+u33qwGNNLShqVTDeOBUcbqhn4GLyLGFmavrfg05wj+hqWt4e+XeZZKcF
- Lwv+cxIReGrWbmYDfOkDorRnLMISN4V8QUzl0HDWO5sFD4B93nAePT9UXvM7fMZWBNoGKK0ufUf
- 6r2R6Cr5ko85DfGb6HaM0uBicBwUcrAMtALKq0rPtBvlE6PliDjspyKdGw5iesWS/82htC/6Did
- 1EsMdCIZTXevkpYZP/oHqoz5PMG5JQQ9XoVe3sAw0F79kFspjFxeSXgUWUwCa6psK2+RQWHz7jW
- 2o/qBhnvdtgyFwdQZyiz2SpyMzm5sgapb5yE/O7GV0DeBkjh2dKAnN4TYbb9KnT4M+mBlrPPUed
- EgdFsidmgqMdtKGVv0XL6yDoHKp4rzYjmHRFnhPsQtlZsCMCtZguRdolEIclTjipaZZdylXfg/s
- Ny6Pnj8uUQnP6mjnnLWxneUnec5P9Z1pUGe+Y/qcDkvONCWrcHyssEjtvzOgTn8/5sYmXKvPkhW
- iIavjRCuSrVwLvbGUOJT9sguznntAhVYZkVj2y4alyAik50i1uOm+mizDgbxmYUAH7Lx1Mzsjan 1mmXt80nn8yFY3w==
-X-Mailer: b4 0.13.0
-Message-ID: <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
-Subject: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SA1PR10MB7585:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f0f5a85-3f25-41d5-4fbc-08dce1f330db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a3Q0Y3IvOVJrUXQ4L0NWKzVWbHBNQlFSUk1Ld0NPR0tWeGFDc0hWYmNNZkNX?=
+ =?utf-8?B?STJubEtNZGtUZFhTcG9lS05DdEM3Qm9Jd2txS0ExZHIzVXhXK2dyZUdxQ3lY?=
+ =?utf-8?B?djVhQW83UzI5THc2OWM2TThHRWtiTGQrOU44K1lRTHVQQ3REWnJTS29sSlI4?=
+ =?utf-8?B?OEYyN1pRUitacCtmMmJZNDAvaW1zanJRNW5yMHBLbSsxMVJmaU14bjhMZ3Zt?=
+ =?utf-8?B?SWxjUTc2SVhjQVlNa2RZSys2K1ZDZWpoTXc5aEp3V1BMZlFCUDJJNjh1MGFW?=
+ =?utf-8?B?WXpMYXg2OXBkcWkvTGR2bFlvTjdyOUM2OEVOcENFVmluOGF5MEJ1ZmUrLy8y?=
+ =?utf-8?B?RUN6b3Jld2RnRk0zWURxVXkyOHlCbVlNcFJqQXlBdUhPMll0SjNnU1lxL09S?=
+ =?utf-8?B?TVVMK1BQdiszRmxJMCtpaTZ6b3NqNHJjTU5BbTBIaVc0UWpKWVhxejlRV1Rs?=
+ =?utf-8?B?d1QybzZ5N1MyZUtwZndNTEVCTldtOVNLZWRjNWwyWGFucGNGV2Z2b2x5YU9y?=
+ =?utf-8?B?eklQcGNaVktGc3pqY2VoM1d0Slcvb3lKMjd0OXhQcC9OSk1lT3RZODUzeTdM?=
+ =?utf-8?B?QTJEdzFEa2Q1RDdYQk95V2c5cmVhbUFGWlBBaExHSlcyOUIwN3NSWkQ0OU55?=
+ =?utf-8?B?Ym8yT1NKRnVzZ28za2tiVUUyV3dvK002TWpIaFdyZGE0bTAxcGtZV0IwTkdW?=
+ =?utf-8?B?dG9KNktWWUI2cmN2TmRTbE5HM1BZQ1hsOUdmM2dVdlN3Q1FWbE5QWnorZG9i?=
+ =?utf-8?B?bjNYdzJzdnBVYXg0dWtYdVVVSDNxVWRhN1dBUklkOVRhdFk0WnJTUmdLZXVx?=
+ =?utf-8?B?eTZKRGR3ZXMrSzNKdEN6QzE2cFZaL3JoSFRzaG9iZi96TU1KcDNvQ1h3bDRw?=
+ =?utf-8?B?aE44KzdpNCtZNHQ5cFFxNnhObzI4Yi9UcDZuSHQ3OUFscE9ueUFmdGdHT01C?=
+ =?utf-8?B?TUg1UFNwNFB5UDJHb0g0UXdEM2Z6N3BjRUU1bFZoK0t5SEx3U3pzbURLd1Bj?=
+ =?utf-8?B?d2grcWttMGxtSlhmSWMzQzNMWmd4ZXNTcFhydzZrUXJHYnVRVkMycDQxU1NV?=
+ =?utf-8?B?QW9JUUZraVVVeWdScHBpNmZCck5tbzF4ZWVkR0orbWRNQ0Y5NmowZ0MySWtX?=
+ =?utf-8?B?YjR5M3hoRHZWdkszZndQbFR5RFM1amR2bjBTU0E4ZXJVMlVxM1lpMWwvVklX?=
+ =?utf-8?B?RWtyVlhLZzQyclNudFZIcmI5L2l2eGJiaFNUQ052RUd2NjlWdkIvSk5heDE0?=
+ =?utf-8?B?QWxPeVdneXA0dFlKZDFtYy9QQi84eUNCWWhPRTY2Mks1QVN0THUxRGcxS3M5?=
+ =?utf-8?B?QU9hNm1QT05iYmlWR2lPb0RlNkI0OUxjL1phQ2ZZRTFsY1VUWHN2QzVxaFBO?=
+ =?utf-8?B?a1FRTnhaSkNwSDdMQzBtc1R5bDZHV3BWNVl6NlAxbFgxUVJEaEtibzVmZmdh?=
+ =?utf-8?B?aWc1U0NPQTJVdGw1bWxSdUFoNDJ3QUJWeTYzRHEyZnF2TkV6bU9iQ0VzNU8y?=
+ =?utf-8?B?Q085ZFArWVdWQWxHTFplUWw2aUl5ZnpySVJwTEI3aS90ckQxWjZlUUZwckdy?=
+ =?utf-8?B?RWJlL09qTVo4aGt2eFZkSjUzVUVLQ3VGbFA3bzU3TW9qWEF2MXlhbUFWaTFn?=
+ =?utf-8?B?TEVNcS9INVNydW5rejNQWE9WWnFHa2k0amlKelVrUXF0bVRORnk2TlFlajNM?=
+ =?utf-8?B?MTZrV0F6cGNxZGtQcllXRCt4UHoyYzgyNHI2ZUhKVmpFckV2NWJKcTFQdTYw?=
+ =?utf-8?B?OHlJTnhvZVFiTDRVVmNmajVzR1VuUTFZUFU1c0lsODVzYktqZXZzTUc3V0J0?=
+ =?utf-8?B?QUkyZTdHU3UwWXA0MDhoZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RlJjMDVZWEYyR3RiZHA3ekVoOGFCTTB3ZlRVbkRpNG5TKzluV1BwYWpyNVdq?=
+ =?utf-8?B?UXJkajA3N3ZwNkFNUGZWWkNVdnlnUHBLcElKT1g3cWUyc0xuZ01EbFVsb3M4?=
+ =?utf-8?B?V3BQK3F3ZnJWdGcxZWcrWXo2R3oxVzRtK3RDa04rQXFrb3l5WnI4SjFzZ1FR?=
+ =?utf-8?B?ZHJJK0U3OUhrSDBEYzRrV1FmLzU4QkVMZzVwMUl6ZjdkVkdUL1pHYk5UNnBh?=
+ =?utf-8?B?UVhBTlFVQkJEdmxWWlhWN1hCcEs0V2J2UjA2SXRqMGM3Z0dWaWVkNXZCK3ZH?=
+ =?utf-8?B?YXhaR214cXl4UFAwTm9iMkhPczRQUEN3MkUvS2tqM2VQU2haYTdBcU53RzA3?=
+ =?utf-8?B?MEQwY1RSTjJMN3J0ak1qc1FLZkFUM3R4My9jMWdoczBtdkhuaGlEeUNpS0lM?=
+ =?utf-8?B?UW85c1lBK3RwNWV4TWtBeDhWNzJoMUQyRGRpbmNqUGxJWS9VLzI0K09hZ3NF?=
+ =?utf-8?B?WUtxTW0zWXJLNEw2VWVUVHJhZ05xWnlVdWxCYTdzVDFOWVVlOUtycVpHSFR6?=
+ =?utf-8?B?RUJ4U1NjMkV3R2hvVGhSeWNweUtMenZJQ0kvTUxDbFJwM09mZHlqV3RKMEo2?=
+ =?utf-8?B?aEx0MkFDMG42QXIyRFo1eVRpOEUzOEx6Vy93RUZndXhwK2twKzhqZVhUbm83?=
+ =?utf-8?B?MHFMV0ovL2xPQ1F3UFJEWUFSUzdPYVpVRUtWSTdmM3lKb0pnamNXUklNOTdJ?=
+ =?utf-8?B?QWs0aVU3OEI1MllGZlZMT054N284UW5XSGw3c1FrNlBXSnRjN1k4S3l2T01v?=
+ =?utf-8?B?NVN2a0Z0enB6TkNqbVJZNFJZSUpEUFRlUWRMRVpNSzJ0b0Y0VmQ3eU9oVjdW?=
+ =?utf-8?B?NDVodkt1Mi9LMkx2T2hZelRZdHVaNG53NENNUmtFUWJDcmE2MnlUY0RjSUZo?=
+ =?utf-8?B?RkJJemJYekZ0UVc2SmR1UDI4YnNVRXhDa0c2YVg3VkVqdE9kM3pHb253anFB?=
+ =?utf-8?B?OVEreHlncnJjQ0dZbENnRU5RTWlGY1UyK2ZpWFNKNzJ4Ykp5eGNzWFFHZzQz?=
+ =?utf-8?B?NVUwQU5tbXEvSHR3d0twUXhTM1MyVmFTamJBSm8yNzV2d0xsMEJtcTVzWHhp?=
+ =?utf-8?B?cmo0UGg4NzA5bkpYUVFQUG1ja3VaSHBnSnNSa2RQVUc4b0FKTVZ1b3FCVm10?=
+ =?utf-8?B?TWJYSlIrVDRvZ2hhMHBVN2ExSXUvWldKS2NJbktnbHV0YkNVVUs0ZE8zSXpI?=
+ =?utf-8?B?ZXRBc2lmTlQyZ2tkcVMrSkNKR2o3cUUrUUF2Z2NMUGNaR0FSV0lXR3RYbTI4?=
+ =?utf-8?B?WGRKQzR6N2wrMlpMakkvWWZkQ0tyeFBhSnJ5dExKR3ZPUjZuUWNMZ2tsQWhZ?=
+ =?utf-8?B?ZUU2dXhXakw5RkUzdHdkZnNTNGRhMW1tQlRPcDhGb0JiR1R4N3ZiNHAwTzRP?=
+ =?utf-8?B?aHZ6OXg1ODI4d0pUV0VJNXVGZGxpTnRMTXJzTitXaE9qM0pHTnlMVk9LUzlu?=
+ =?utf-8?B?VStoWDVJNVJNS2FQYkc0WGkweXJTdU9TZTBnUHVlYVl6MUdsYzFDa0JSMXNR?=
+ =?utf-8?B?V3JzVSs5WE1nNXJwSitoRDVaZEdjOTM3TG81R1lzTHNNbFNDR2NudlBpVUpY?=
+ =?utf-8?B?d0xGMDJiVmx3a2MxYVJQNGNyZDVKalU2T2lUeDBSRVozZHoxUE9kRkplek1K?=
+ =?utf-8?B?MTgrcGhvTXV2VjZzQlQrcDZvZTg1cjRTVUwxZ3hLUFlod0dDbnpTdjYyZm5p?=
+ =?utf-8?B?Z25aL0E4WkhDaVV4S0luRjNBZmNFd3p2L3JTYU5tRFF4VWd1dG1HTHNlUGUx?=
+ =?utf-8?B?dE5nTjNjYlVOdUZ0RlJWRVQxL1NQdS9rbmZ5dFhZVHVsMzFHcGVWMWVvNDBP?=
+ =?utf-8?B?S2pWNVB2U2l6WmpuZjNiQS8xM24zRndXeGd1RTZhSE13Q0s3SGJ3KzBvNGFH?=
+ =?utf-8?B?WWVaZjRyZlUwa0tyMktXZGRZWFdRVmU2UUphZ1VwTVozRG5zRjQ0WUpadkVs?=
+ =?utf-8?B?dE9LSFRxcFhxWGVyZnhmdmNhcUJxMUZuQmxBWWN1dzJ3SDZuVmI2cnpCUUNh?=
+ =?utf-8?B?STBXdkdRREVXUmJhSVE5ZmdaUEFyd3VxTkl4SDl4T3I1Z1h0ZkI1a3kxaXFP?=
+ =?utf-8?B?dUJqSDVrSi9rNCtCMWpVWWpscjdKY3BQVUM2bUNZekdnM0VhbTNWcWpnOERu?=
+ =?utf-8?B?akxRMHdxNUIwUjd4SmFYU1BtVzV6VGxzZ0RDL0thaWxWdzJ6cXNGRWEvTzJ6?=
+ =?utf-8?B?Wmc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	wkBzEJvji3Pt6alQ8r/Eu22/ojjOPfLEeWj9Jm+rO8UM41UFjO/lwvMgsoozfguCMpODgPCfzEeWIRhjJ9BgY7VMUIP+0b5Crn3KT58/6g8E/4vg1+RcH6W7dY6iqnxzjkBdNw4KE4suGWbUkcTzEje1QFzHrvI/keho0j1PWZkwvYM/oFEmwurkDOsDqXBl20cPlsrjP8Hc486wEYfbHLiY4Fms7hsPU/DRoFjFlyekjJUsRyjyzTA4GeIc862r4GKpqvU8L850acOytOwkeEHAYr84vlXl4RnRNWrl5darFgzwqc7vL+978U7gWCcVeJmTmvOZHHVt9Rs6TsfM2Y+cXUDEGO08CAAbBUzOUW9lebYyW0Ke8ApdoLs6khWIdE5DU/2bx3m1QyvIeRlk5v1w2jyO+jPVBO2V1IceBbmjAaAolVl5VJHlkv3xSkYrKpE3OX0EXhV4oiPgB/UV6b2KcxFQP8/uEAwqdkaJvmbniE8bmQwfabX8ns4KQBVgk7GpcEP6J/WKsdX0WNaeaYoYBwnhcHet1NqX88kpCwhdSbpoA2CkW2AXoBKEQbybGi6XFnSVaxluRXyl2ARV4xUVCwPN027kDVj5In6MKZE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f0f5a85-3f25-41d5-4fbc-08dce1f330db
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 08:29:39.5410
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GkJVEhxjG/sTHlxjJ0ek2n3wqU7hZsELRiIGOWdLPn8cVwtMNhE058U8tqmmcUMMK7NRIRjHqV2pnqQp00b+ew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB7585
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-01_05,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2410010055
+X-Proofpoint-GUID: XSuVEqrVD7a2DUBw4AQbRZDZYApySeFU
+X-Proofpoint-ORIG-GUID: XSuVEqrVD7a2DUBw4AQbRZDZYApySeFU
 
-Provide a `MiscDevice` trait that lets you specify the file operations
-that you wish to provide for your misc device. For now, only three file
-operations are provided: open, close, ioctl.
+On 30/09/2024 17:37, Darrick J. Wong wrote:
+> On Mon, Sep 30, 2024 at 12:54:36PM +0000, John Garry wrote:
+>> Support providing info on atomic write unit min and max for an inode.
+>>
+>> For simplicity, currently we limit the min at the FS block size. As for
+>> max, we limit also at FS block size, as there is no current method to
+>> guarantee extent alignment or granularity for regular files.
+>>
+>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>> ---
+>>   fs/xfs/xfs_inode.h | 17 +++++++++++++++++
+>>   fs/xfs/xfs_iops.c  | 24 ++++++++++++++++++++++++
+>>   2 files changed, 41 insertions(+)
+>>
+>> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+>> index 1c62ee294a5a..1ea73402d592 100644
+>> --- a/fs/xfs/xfs_inode.h
+>> +++ b/fs/xfs/xfs_inode.h
+>> @@ -332,6 +332,23 @@ static inline bool xfs_inode_has_atomicwrites(struct xfs_inode *ip)
+>>   	return ip->i_diflags2 & XFS_DIFLAG2_ATOMICWRITES;
+>>   }
+>>   
+>> +static inline bool
+>> +xfs_inode_can_atomicwrite(
+>> +	struct xfs_inode	*ip)
+>> +{
+>> +	struct xfs_mount	*mp = ip->i_mount;
+>> +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+>> +
+>> +	if (!xfs_inode_has_atomicwrites(ip))
+>> +		return false;
+>> +	if (mp->m_sb.sb_blocksize < target->bt_bdev_awu_min)
+>> +		return false;
+>> +	if (mp->m_sb.sb_blocksize > target->bt_bdev_awu_max)
+>> +		return false;
+>> +
+>> +	return true;
+>> +}
+>> +
+>>   /*
+>>    * In-core inode flags.
+>>    */
+>> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+>> index ee79cf161312..915d057db9bb 100644
+>> --- a/fs/xfs/xfs_iops.c
+>> +++ b/fs/xfs/xfs_iops.c
+>> @@ -570,6 +570,23 @@ xfs_stat_blksize(
+>>   	return max_t(uint32_t, PAGE_SIZE, mp->m_sb.sb_blocksize);
+>>   }
+>>   
+>> +static void
+>> +xfs_get_atomic_write_attr(
+>> +	struct xfs_inode	*ip,
+>> +	unsigned int		*unit_min,
+>> +	unsigned int		*unit_max)
+>> +{
+>> +	struct xfs_mount	*mp = ip->i_mount;
+>> +	struct xfs_sb		*sbp = &mp->m_sb;
+>> +
+>> +	if (!xfs_inode_can_atomicwrite(ip)) {
+>> +		*unit_min = *unit_max = 0;
+>> +		return;
+>> +	}
+>> +
+>> +	*unit_min = *unit_max = sbp->sb_blocksize;
+> 
+> Ok, so we're only supporting untorn writes if they're exactly the fs
+> blocksize, and 1 fsblock is between awu_min/max.  That simplifies a lot
+> of things. :)
+> 
+> Not supporting sub-fsblock atomic writes means that we'll never hit the
+> directio COW fallback code, which uses the pagecache.
 
-These abstractions only support MISC_DYNAMIC_MINOR. This enforces that
-new miscdevices should not hard-code a minor number.
+My original idea (with forcealign) was to support 1FSB and larger.
 
-When implementing ioctl, the Result type is used. This means that you
-can choose to return either of:
-* An integer of type isize.
-* An errno using the kernel::error::Error type.
-When returning an isize, the integer is returned verbatim. It's mainly
-intended for returning positive integers to userspace. However, it is
-technically possible to return errors via the isize return value too.
+I suppose that with a larger FS block size we might want to support 
+sub-fsblock atomic writes. However, for the moment, I don't see a need 
+to support this.
 
-To avoid having a dependency on files, this patch does not provide the
-file operations callbacks a pointer to the file. This means that they
-cannot check file properties such as O_NONBLOCK (which Binder needs).
-Support for that can be added as a follow-up.
+> 
+> Not supporting multi-fsblock atomic writes means that you don't have to
+> figure out how to ensure that we always do cow on forcealign
+> granularity.  Though as I pointed out elsewhere in this thread, that's a
+> forcealign problem.
 
-To avoid having a dependency on vma, this patch does not provide any way
-to implement mmap (which Binder needs). Support for that can be added as
-a follow-up.
+Sure
 
-Rust Binder will use these abstractions to create the /dev/binder file
-when binderfs is disabled.
+> 
+> Yay! ;)
+> 
+>> +}
+>> +
+>>   STATIC int
+>>   xfs_vn_getattr(
+>>   	struct mnt_idmap	*idmap,
+>> @@ -643,6 +660,13 @@ xfs_vn_getattr(
+>>   			stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
+>>   			stat->dio_offset_align = bdev_logical_block_size(bdev);
+>>   		}
+>> +		if (request_mask & STATX_WRITE_ATOMIC) {
+>> +			unsigned int unit_min, unit_max;
+>> +
+>> +			xfs_get_atomic_write_attr(ip, &unit_min, &unit_max);
+>> +			generic_fill_statx_atomic_writes(stat,
+>> +				unit_min, unit_max);
+> 
+> Consistent indenting and wrapping, please:
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/lib.rs              |   1 +
- rust/kernel/miscdevice.rs       | 241 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 243 insertions(+)
+ok
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index ae82e9c941af..84303bf221dd 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -15,6 +15,7 @@
- #include <linux/firmware.h>
- #include <linux/jiffies.h>
- #include <linux/mdio.h>
-+#include <linux/miscdevice.h>
- #include <linux/phy.h>
- #include <linux/refcount.h>
- #include <linux/sched.h>
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 22a3bfa5a9e9..e268eae54c81 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -39,6 +39,7 @@
- #[cfg(CONFIG_KUNIT)]
- pub mod kunit;
- pub mod list;
-+pub mod miscdevice;
- #[cfg(CONFIG_NET)]
- pub mod net;
- pub mod page;
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-new file mode 100644
-index 000000000000..cbd5249b5b45
---- /dev/null
-+++ b/rust/kernel/miscdevice.rs
-@@ -0,0 +1,241 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2024 Google LLC.
-+
-+//! Miscdevice support.
-+//!
-+//! C headers: [`include/linux/miscdevice.h`](srctree/include/linux/miscdevice.h).
-+//!
-+//! Reference: <https://www.kernel.org/doc/html/latest/driver-api/misc_devices.html>
-+
-+use crate::{
-+    bindings,
-+    error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-+    prelude::*,
-+    str::CStr,
-+    types::{ForeignOwnable, Opaque},
-+};
-+use core::{
-+    ffi::{c_int, c_long, c_uint, c_ulong},
-+    marker::PhantomData,
-+    mem::MaybeUninit,
-+    pin::Pin,
-+};
-+
-+/// Options for creating a misc device.
-+#[derive(Copy, Clone)]
-+pub struct MiscDeviceOptions {
-+    /// The name of the miscdevice.
-+    pub name: &'static CStr,
-+}
-+
-+impl MiscDeviceOptions {
-+    /// Create a raw `struct miscdev` ready for registration.
-+    pub const fn into_raw<T: MiscDevice>(self) -> bindings::miscdevice {
-+        // SAFETY: All zeros is valid for this C type.
-+        let mut result: bindings::miscdevice = unsafe { MaybeUninit::zeroed().assume_init() };
-+        result.minor = bindings::MISC_DYNAMIC_MINOR as _;
-+        result.name = self.name.as_char_ptr();
-+        result.fops = create_vtable::<T>();
-+        result
-+    }
-+}
-+
-+/// A registration of a miscdevice.
-+///
-+/// # Invariants
-+///
-+/// `inner` is a registered misc device.
-+#[repr(transparent)]
-+#[pin_data(PinnedDrop)]
-+pub struct MiscDeviceRegistration<T> {
-+    #[pin]
-+    inner: Opaque<bindings::miscdevice>,
-+    _t: PhantomData<T>,
-+}
-+
-+// SAFETY: It is allowed to call `misc_deregister` on a different thread from where you called
-+// `misc_register`.
-+unsafe impl<T> Send for MiscDeviceRegistration<T> {}
-+// SAFETY: All `&self` methods on this type are written to ensure that it is safe to call them in
-+// parallel.
-+unsafe impl<T> Sync for MiscDeviceRegistration<T> {}
-+
-+impl<T: MiscDevice> MiscDeviceRegistration<T> {
-+    /// Register a misc device.
-+    pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self {
-+            inner <- Opaque::try_ffi_init(move |slot: *mut bindings::miscdevice| {
-+                // SAFETY: The initializer can write to the provided `slot`.
-+                unsafe { slot.write(opts.into_raw::<T>()) };
-+
-+                // SAFETY: We just wrote the misc device options to the slot. The miscdevice will
-+                // get unregistered before `slot` is deallocated because the memory is pinned and
-+                // the destructor of this type deallocates the memory.
-+                // INVARIANT: If this returns `Ok(())`, then the `slot` will contain a registered
-+                // misc device.
-+                to_result(unsafe { bindings::misc_register(slot) })
-+            }),
-+            _t: PhantomData,
-+        })
-+    }
-+
-+    /// Returns a raw pointer to the misc device.
-+    pub fn as_raw(&self) -> *mut bindings::miscdevice {
-+        self.inner.get()
-+    }
-+}
-+
-+#[pinned_drop]
-+impl<T> PinnedDrop for MiscDeviceRegistration<T> {
-+    fn drop(self: Pin<&mut Self>) {
-+        // SAFETY: We know that the device is registered by the type invariants.
-+        unsafe { bindings::misc_deregister(self.inner.get()) };
-+    }
-+}
-+
-+/// Trait implemented by the private data of an open misc device.
-+#[vtable]
-+pub trait MiscDevice {
-+    /// What kind of pointer should `Self` be wrapped in.
-+    type Ptr: ForeignOwnable + Send + Sync;
-+
-+    /// Called when the misc device is opened.
-+    ///
-+    /// The returned pointer will be stored as the private data for the file.
-+    fn open() -> Result<Self::Ptr>;
-+
-+    /// Called when the misc device is released.
-+    fn release(device: Self::Ptr) {
-+        drop(device);
-+    }
-+
-+    /// Handler for ioctls.
-+    ///
-+    /// The `cmd` argument is usually manipulated using the utilties in [`kernel::ioctl`].
-+    ///
-+    /// [`kernel::ioctl`]: mod@crate::ioctl
-+    fn ioctl(
-+        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+        _cmd: u32,
-+        _arg: usize,
-+    ) -> Result<isize> {
-+        kernel::build_error(VTABLE_DEFAULT_ERROR)
-+    }
-+
-+    /// Handler for ioctls.
-+    ///
-+    /// Used for 32-bit userspace on 64-bit platforms.
-+    ///
-+    /// This method is optional and only needs to be provided if the ioctl relies on structures
-+    /// that have different layout on 32-bit and 64-bit userspace. If no implementation is
-+    /// provided, then `compat_ptr_ioctl` will be used instead.
-+    #[cfg(CONFIG_COMPAT)]
-+    fn compat_ioctl(
-+        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+        _cmd: u32,
-+        _arg: usize,
-+    ) -> Result<isize> {
-+        kernel::build_error(VTABLE_DEFAULT_ERROR)
-+    }
-+}
-+
-+const fn create_vtable<T: MiscDevice>() -> &'static bindings::file_operations {
-+    const fn maybe_fn<T: Copy>(check: bool, func: T) -> Option<T> {
-+        if check {
-+            Some(func)
-+        } else {
-+            None
-+        }
-+    }
-+
-+    struct VtableHelper<T: MiscDevice> {
-+        _t: PhantomData<T>,
-+    }
-+    impl<T: MiscDevice> VtableHelper<T> {
-+        const VTABLE: bindings::file_operations = bindings::file_operations {
-+            open: Some(fops_open::<T>),
-+            release: Some(fops_release::<T>),
-+            unlocked_ioctl: maybe_fn(T::HAS_IOCTL, fops_ioctl::<T>),
-+            #[cfg(CONFIG_COMPAT)]
-+            compat_ioctl: if T::HAS_COMPAT_IOCTL {
-+                Some(fops_compat_ioctl::<T>)
-+            } else if T::HAS_IOCTL {
-+                Some(bindings::compat_ptr_ioctl)
-+            } else {
-+                None
-+            },
-+            ..unsafe { MaybeUninit::zeroed().assume_init() }
-+        };
-+    }
-+
-+    &VtableHelper::<T>::VTABLE
-+}
-+
-+unsafe extern "C" fn fops_open<T: MiscDevice>(
-+    inode: *mut bindings::inode,
-+    file: *mut bindings::file,
-+) -> c_int {
-+    // SAFETY: The pointers are valid and for a file being opened.
-+    let ret = unsafe { bindings::generic_file_open(inode, file) };
-+    if ret != 0 {
-+        return ret;
-+    }
-+
-+    let ptr = match T::open() {
-+        Ok(ptr) => ptr,
-+        Err(err) => return err.to_errno(),
-+    };
-+
-+    // SAFETY: The open call of a file owns the private data.
-+    unsafe { (*file).private_data = ptr.into_foreign().cast_mut() };
-+
-+    0
-+}
-+
-+unsafe extern "C" fn fops_release<T: MiscDevice>(
-+    _inode: *mut bindings::inode,
-+    file: *mut bindings::file,
-+) -> c_int {
-+    // SAFETY: The release call of a file owns the private data.
-+    let private = unsafe { (*file).private_data };
-+    // SAFETY: The release call of a file owns the private data.
-+    let ptr = unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private) };
-+
-+    T::release(ptr);
-+
-+    0
-+}
-+
-+unsafe extern "C" fn fops_ioctl<T: MiscDevice>(
-+    file: *mut bindings::file,
-+    cmd: c_uint,
-+    arg: c_ulong,
-+) -> c_long {
-+    // SAFETY: The ioctl call of a file can access the private data.
-+    let private = unsafe { (*file).private_data };
-+    // SAFETY: Ioctl calls can borrow the private data of the file.
-+    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-+
-+    match T::ioctl(device, cmd as u32, arg as usize) {
-+        Ok(ret) => ret as c_long,
-+        Err(err) => err.to_errno() as c_long,
-+    }
-+}
-+
-+#[cfg(CONFIG_COMPAT)]
-+unsafe extern "C" fn fops_compat_ioctl<T: MiscDevice>(
-+    file: *mut bindings::file,
-+    cmd: c_uint,
-+    arg: c_ulong,
-+) -> c_long {
-+    // SAFETY: The compat ioctl call of a file can access the private data.
-+    let private = unsafe { (*file).private_data };
-+    // SAFETY: Ioctl calls can borrow the private data of the file.
-+    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-+
-+    match T::compat_ioctl(device, cmd as u32, arg as usize) {
-+        Ok(ret) => ret as c_long,
-+        Err(err) => err.to_errno() as c_long,
-+    }
-+}
+> 
+> 			xfs_get_atomic_write_attr(ip, &unit_min,
+> 					&unit_max);
+> 			generic_fill_statx_atomic_writes(stat,
+> 					unit_min, unit_max);
+> 
+> 
+> With that fixed,
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
--- 
-2.46.1.824.gd892dcdcdd-goog
-
+ok, thanks!
 
