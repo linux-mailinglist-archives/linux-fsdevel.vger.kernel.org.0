@@ -1,146 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-30556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3E498C33A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E5BC98C346
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DDCBB225EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 16:22:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890DC1C2430C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 16:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600BB1CF287;
-	Tue,  1 Oct 2024 16:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEB11CF5F6;
+	Tue,  1 Oct 2024 16:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6M89iS2"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JKGO9QDL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82BB1CC158
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 16:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CAE1CF5DF
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 16:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727799467; cv=none; b=WgU0XDClXUl0hqxDNm539vy2XHMLVIwr1dS0/FVXSL79AvVIewAzJTV1agPf2Wj7GGjqTjrIPQLzxmdt31J8RJtXZsku7qS22Zq29ofh3M2m+rrQO2w5DcYPWLNF+Wjg1hJn1ivN7YBPZGMpWuRGva8dFNT1LHiwBZMyzhh60mw=
+	t=1727799525; cv=none; b=QOVeFfyyKs1l3NMR6e56vy0NdHtfdh8jFSN8KcNTQJYSsf6gt9WYK/IciwxK/mT9YkuEalbndpX8ejLV/sv69MArjAAA18T/yLSfaJaZC4uG+SI9F2TyBHTehsw8IQPXC5GEi2aWDV8yPrsLRUBvIeH27xcpyRIoVpDXALugWyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727799467; c=relaxed/simple;
-	bh=nvUOMkUhAIlhTvp2v7jF7CiybAc7a4O7z3ckYf3J0cE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tR8E33c4WZU3uRNimDXMUOsr3RN8LD+DTENTnSQ61IM5uJVrEecnQx+U4bU4hrBmoKIHxtJr1431nJnlXHRA7SRX9A1E0+rGdSkBoN4WSBPHgCIm1ZYBixvhDuA7Uzozy2azpmxMMnjhDnK6ypP3NgUoXJawe3dg+66s4++t75k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n6M89iS2; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a90188ae58eso730049766b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 09:17:45 -0700 (PDT)
+	s=arc-20240116; t=1727799525; c=relaxed/simple;
+	bh=/6sa7hWBGz1r0Va3Qz2rpYvKdO98ZVVHU/A9tn4VDrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kMDGjYy4wddZGsd5bD6HavPI0Pa2SY64flKTZlZnWUWoRKF1LZThLdIaJCccMULga8IYlGNJ7mKRgcDx9sUQ8QEc9fSLvbqN5qX7unJ01azTQp2Uhg14TsiOB8JCL1to3yPkC39rIXkZuSLdvBFOp1hOSMtnrdC595xjfkRNMSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JKGO9QDL; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a363feabc6so1688825ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 09:18:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727799464; x=1728404264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g1gtQcrWNpd5RcxSJdvlyP5hnxs6NY26BZrJEREQ6SI=;
-        b=n6M89iS2RniF2RYZSWZ4sNnyvw19kd8737yL+vkFqxGdtXv65HFs2ne4xHZd6EiYt2
-         haa2Fv20tWSAxqboq9E7vJL2wubXsiT+lOrWuEc61seBF8uBVNv+If5X7cBvx8Uzqe8z
-         So0UkNfksKxLK+1R2NXRpJppJ41dikYYlsWT2AnaCo0t75hDiJs6/Mbl7onU80uBBL9a
-         79OzYZaFjq5IoE2dD50Prd48wqdBsK7676+GnLr7ahyqqeQ9bj8O46u3aGZ+1wq3leoG
-         4M2EvP8M6YPxpjsCchzrzGIvbgE1CwnGeCGykgQxL1138DSMhM6PuG1Yxrzm0+pND/jW
-         FAPw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727799523; x=1728404323; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tAN9+Fgd7PdcO/S9osl9BZBdIn0Oo+OHK8n02sQXHo4=;
+        b=JKGO9QDLj7i07HmCccv5gAYqpmYQMHo7jxnKGnDeWV8yrNsgCwOMWAjtneze2CqAGu
+         GIIDsMeslQQqYMQbheMADr+KKsy0c+pAP6ljjsdXvKBZ4WvEzVFz0xl9SJbUhIsRnIrW
+         8HydhoI9VHKxcotoz6knfieAKXXGGAR3o4Qp0e5T8YICpr0ACKwYbMjr8jS3h+ob0zIJ
+         AENwceNP2vNFJd9QSH+1+5t/5ypXSjgRwJkZRB+fcu+fJwdt+HP7BsG4HTs5fIDO11Ve
+         8wwIEE9JFpG4HD7bDa67x/cEP1FJdOuOpprHeBUh0LJIZ5Lc10+q4yY9R8ZGqUNJWvMr
+         NPqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727799464; x=1728404264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g1gtQcrWNpd5RcxSJdvlyP5hnxs6NY26BZrJEREQ6SI=;
-        b=nCve59AdsbYzcRkdrRDsFGgkKuoqMrEoNXYpIuXNRe7UUgxaRnMtOT7ncrIZUpp2Bq
-         pfLWrIFKOonELFSkYEUGS4Y/xaL6d1mnB0Rxr09Gq9X4Y/N9+rW2QUYxHRpOB16w8Td/
-         jO5WXnHL7RUeBkLRC7W4+wTMnN662kd1cBSFan8gPSRWLl7nf619i/Huczg+P2npBV2x
-         2RGj3OIdGF1J4PTvKLNC2TsRjs3bwnqzhEQ3wMDvf2K/LHn6u/HWgZvLTC8z5DhUjBaP
-         UVsS8tPHavH8MJeH6f/j33rSvgpotrMxNgREEQFuUx3CuuA9ZYq3aojzP4ma87NAkKNQ
-         oCPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWq5zwj/FH5IRFKwS72yqrSVsNOguCIQCtN1hyvovGzv159ES3hwxwBGu75ZPgvbKl+rReR/pUOE2NFn7x9@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMVq/K7rOYDx17iI3NJQsuJXKW70p129qmX4C9s9lQRlxnHBIH
-	henJAcLhL3dJ4LfFsfru4qeOExiEVQf/yhybcstdeaSgiYMqPJrqAFhHhxIQftJCIym2QqYgA51
-	gpIKFpchPWg0xfW+PGjHq5dlH0IQUaFcRVxI=
-X-Google-Smtp-Source: AGHT+IEb55N3RbLLnNditOaIXzMGvdtfhXP4P7OFauiPnc3PqRDlMwtWq4LEIawZw0mkwT8uv4u9xKZ9+AFgQWhXcHQ=
-X-Received: by 2002:a17:907:3f97:b0:a86:b923:4a04 with SMTP id
- a640c23a62f3a-a98f834d078mr13740866b.50.1727799463691; Tue, 01 Oct 2024
- 09:17:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727799523; x=1728404323;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tAN9+Fgd7PdcO/S9osl9BZBdIn0Oo+OHK8n02sQXHo4=;
+        b=b74qJGGh1Tf7WKdjfbK4f2wuwVoWBD+GvxNs2YuD29c5lhV4axb/rfgy3qkHIlqWpo
+         eAPbikZPucoZ2hrCDJp955Ao07YRdsla6kkEpdDEHEmEzMYB/VylEU0YjA9E7EBK7aG+
+         T3RZBtqeRpLjAmCOhc7bEIIWwtRyX48MNPF006+LuGuBqk3iI0KII4eaHXTIXpO/mx4T
+         1arjqu/Eia6Ds24DbzSl0YpxCKY/Y9PhFj8iNwWiegfbTyb0jEVHRGXE9E4y2cRxxWNB
+         ufS6YM/oMNVNlCGUG09VkgKEOGaXZYpOL2DVb48+UgcMgPtsxwhINfkhysmq6TO++zn6
+         C/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUB2bfXABfqQDKnZ3IF8s37jJcOx+n2CInDhg8gvwnmitRJHY5HrKK/2fWi8xJEfDWrKjEubBYDBmYzFnOJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMzRftOP6jCHldSZnA8Ze3ZQ+C8RYaKcFIo7+GTa+vSEfFU6zG
+	ja3C4Ni3V3LJb1i9xZU4P5FjTqJLR8/5fAHQECKWsW6iLZRjVLh/DfXaR3bE5Cc=
+X-Google-Smtp-Source: AGHT+IEVRPJ/uF7tZwik0ff3xUr95buoTs5S0Hs3+xr4rSMiaRrnSDjMAIRQglj6MrbFnKyykiXTPw==
+X-Received: by 2002:a05:6e02:148a:b0:3a0:cc84:9859 with SMTP id e9e14a558f8ab-3a35eb6177fmr28452955ab.10.1727799523118;
+        Tue, 01 Oct 2024 09:18:43 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888c2f4esm2640662173.110.2024.10.01.09.18.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 09:18:42 -0700 (PDT)
+Message-ID: <99c95f26-d6fb-4354-822d-eac94fdba765@kernel.dk>
+Date: Tue, 1 Oct 2024 10:18:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001-mgtime-v8-0-903343d91bc3@kernel.org> <20241001-mgtime-v8-1-903343d91bc3@kernel.org>
-In-Reply-To: <20241001-mgtime-v8-1-903343d91bc3@kernel.org>
-From: John Stultz <jstultz@google.com>
-Date: Tue, 1 Oct 2024 09:17:31 -0700
-Message-ID: <CANDhNCrKFvUYchQ8UStxUEpBmFpN4ZeP4W4DdwJ5WxZ5EbqjMw@mail.gmail.com>
-Subject: Re: [PATCH v8 01/12] timekeeping: add interfaces for handling
- timestamps with a floor value
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Randy Dunlap <rdunlap@infradead.org>, Chandan Babu R <chandan.babu@oracle.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+To: Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>
+Cc: kbusch@kernel.org, hare@suse.de, sagi@grimberg.me,
+ martin.petersen@oracle.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+ jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+ bvanassche@acm.org, asml.silence@gmail.com, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-aio@kvack.org, gost.dev@samsung.com,
+ vishak.g@samsung.com, javier.gonz@samsung.com
+References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
+ <20240930181305.17286-1-joshi.k@samsung.com> <20241001092047.GA23730@lst.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241001092047.GA23730@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 1, 2024 at 3:59=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wro=
-te:
->
-> Multigrain timestamps allow the kernel to use fine-grained timestamps
-> when an inode's attributes is being actively observed via ->getattr().
-> With this support, it's possible for a file to get a fine-grained
-> timestamp, and another modified after it to get a coarse-grained stamp
-> that is earlier than the fine-grained time.  If this happens then the
-> files can appear to have been modified in reverse order, which breaks
-> VFS ordering guarantees.
->
-> To prevent this, maintain a floor value for multigrain timestamps.
-> Whenever a fine-grained timestamp is handed out, record it, and when
-> coarse-grained stamps are handed out, ensure they are not earlier than
-> that value. If the coarse-grained timestamp is earlier than the
-> fine-grained floor, return the floor value instead.
->
-> Add a static singleton atomic64_t into timekeeper.c that we can use to
-> keep track of the latest fine-grained time ever handed out. This is
-> tracked as a monotonic ktime_t value to ensure that it isn't affected by
-> clock jumps. Because it is updated at different times than the rest of
-> the timekeeper object, the floor value is managed independently of the
-> timekeeper via a cmpxchg() operation, and sits on its own cacheline.
->
-> This patch also adds two new public interfaces:
->
-> - ktime_get_coarse_real_ts64_mg() fills a timespec64 with the later of th=
-e
->   coarse-grained clock and the floor time
->
-> - ktime_get_real_ts64_mg() gets the fine-grained clock value, and tries
->   to swap it into the floor. A timespec64 is filled with the result.
->
-> Since the floor is global, take care to avoid updating it unless it's
-> absolutely necessary. If we do the cmpxchg and find that the value has
-> been updated since we fetched it, then we discard the fine-grained time
-> that was fetched in favor of the recent update.
->
-> Note that the VFS ordering guarantees assume that the realtime clock
-> does not experience a backward jump. POSIX requires that we stamp files
-> using realtime clock values, so if a backward clock jump occurs, then
-> files can appear to have been modified in reverse order.
->
-> Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On 10/1/24 3:20 AM, Christoph Hellwig wrote:
+> Any reason you completely ignored my feedback on the last version
+> and did not even answer?
 
-Acked-by: John Stultz <jstultz@google.com>
+Probably because he got a little tired of dealing with the bullshit
+related to this topic.
+
+> That's not a very productive way to work.
+
+Have to say, that neither have your responses been. Can't really fault
+people for just giving up at some point, when no productive end seems to
+be in sight.
+
+As far as I'm concerned, this looks fine to me. There are customers
+wanting to use us, and folks making drives that support it. It's not
+right to continually gatekeep this feature just because you don't like
+it.
+
+I need to review the io_uring bits, but that should be the least of it.
+
+-- 
+Jens Axboe
 
