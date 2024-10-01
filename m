@@ -1,49 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-30467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D922F98B8A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EFF98B8AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C452F2813F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 09:48:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A571F2498C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 09:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127BF19DFA6;
-	Tue,  1 Oct 2024 09:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6638419E808;
+	Tue,  1 Oct 2024 09:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PlsFhNNG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CE72BAF1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 09:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D192BAF1;
+	Tue,  1 Oct 2024 09:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727776085; cv=none; b=f+oxMZmMVSoUQSkAf+pwcrpE61BN+V+/KiwT/qyXApJKFeH7EjRwkHJrUzx8XEYViVq5++CRjg5ZDa+XN+hqTEhTsVxaxz3O5Wz6NaREtkBok9S2GPbZSLBpDgH7IkGd6b+SuxArwgVCRIv6pel62yAHkwR/cJAgu90LHC5IHX4=
+	t=1727776230; cv=none; b=WTckK8oNEd1A85LNXsXW3sS46pupHkhYwUuxLNkbpkQfl0sl5wga534jjSd9b2K3thMGN6gOGewALZX05oTCi8Zz4c6Ev2w/8WI8qDSb9ztI4AykYslqQzkblE8ccqEenRxaWATYbALoVaiQLQOJKc6rqpuzThfVL3j4ZA7SH9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727776085; c=relaxed/simple;
-	bh=JstjSzRX98qxQWqnfLsMllsEDmjl14O7nvcM2y5DxRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2+2u7o6tAF43AJACRiNbII33JvcwvGxJeWkMz09YnR0TiRMe68mOuB9XbIKYQQVbakJ6PKjGyxJtRNF5Js1OzVqfCVkpWTBFjU9ZEC6ao+8Qq6gnv0hN01F0BOuM+Xyq2K+NtEkej2KB9sOt5AbL1OajHURKZ4zOhvs0YS9aXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 908AE339;
-	Tue,  1 Oct 2024 02:48:25 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E9733F587;
-	Tue,  1 Oct 2024 02:47:54 -0700 (PDT)
-Date: Tue, 1 Oct 2024 10:47:47 +0100
-From: Joey Gouly <joey.gouly@arm.com>
+	s=arc-20240116; t=1727776230; c=relaxed/simple;
+	bh=TA36krAyJnVhU2tqDYZyR0XwtwgoWzebH5zbPuWmmu4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JgkAq0IWNhWTg7SZXYmtklhqGiR/a99B0Lhm00+oMIilnahsYgkbeTiGIIC4+zPmoatQwrM6Pv9HyketoFc2x9i+kWwVHj2agM3QmY0ApTvE0z4GsRd6TXZvzG2qpOe6DqFMThspV40HmaXC43Qy0wSSKWXdESBKVmGLeT54VhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PlsFhNNG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A0ECC4CEC6;
+	Tue,  1 Oct 2024 09:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727776230;
+	bh=TA36krAyJnVhU2tqDYZyR0XwtwgoWzebH5zbPuWmmu4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PlsFhNNGwE/TRdxKwihGJ6mKu4KDrmiEubEdyrke23opynqCqW7nF9JlWzjziemps
+	 L1A6g5/DUo76bl6ydzxn4XXako0Ib3y5I02agu44+OYhW7F4ck7u4rVYAZkjnWqdUg
+	 ad0hidkIqsCpBgfdDPl1wxXSyQn4hoIvFqckLjvCBpFSa6ZsMfzxd1HzTzUCicanbo
+	 V2YwuZDjOPqGCdsGwI8p9rVHCUijd4OnLIBrzEAu6AFJctpijmqONTA1vv6ZoDXRzx
+	 88EFR0KONt9Ob2btf5vpdtIyDNW/FoV426tGnbhp02YnuhzQraf8x/OClL5kVRkmAa
+	 kkYqj/fYhXsng==
+From: Christian Brauner <brauner@kernel.org>
 To: Omar Sandoval <osandov@osandov.com>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, kernel-team@fb.com,
-	v9fs@lists.linux.dev, David Howells <dhowells@redhat.com>,
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-team@fb.com,
+	v9fs@lists.linux.dev,
+	David Howells <dhowells@redhat.com>,
 	Manu Bretelle <chantr4@gmail.com>,
 	Eduard Zingerman <eddyz87@gmail.com>,
-	Leon Romanovsky <leon@kernel.org>
+	Leon Romanovsky <leon@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>
 Subject: Re: [PATCH] iov_iter: fix advancing slot in iter_folioq_get_pages()
-Message-ID: <20241001094747.GA1483717@e124191.cambridge.arm.com>
+Date: Tue,  1 Oct 2024 11:50:12 +0200
+Message-ID: <20241001-revitalisieren-beipflichten-9b36df43d295@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com>
 References: <cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -51,13 +64,12 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1302; i=brauner@kernel.org; h=from:subject:message-id; bh=TA36krAyJnVhU2tqDYZyR0XwtwgoWzebH5zbPuWmmu4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9Pnr/4ZUWm9ZJUfMuvrvGv2KK5+ZL+lN8l+QYcG9w9 XypeJbPrqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi8fUM/9PFux4K3t23zHJr 1K/bdpMCPCpzUhj6d/FGH57ocJqn8BfDf5cjm+P4Pqpd9rb+Xm9i8Dz7uM5dX/H2oOXLCmXjZ3d mcQEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 11:55:00AM -0700, Omar Sandoval wrote:
-> From: Omar Sandoval <osandov@fb.com>
-> 
+On Mon, 30 Sep 2024 11:55:00 -0700, Omar Sandoval wrote:
 > iter_folioq_get_pages() decides to advance to the next folioq slot when
 > it has reached the end of the current folio. However, it is checking
 > offset, which is the beginning of the current part, instead of
@@ -66,34 +78,23 @@ On Mon, Sep 30, 2024 at 11:55:00AM -0700, Omar Sandoval wrote:
 > iteration, we'll use the same folio with an out-of-bounds offset and
 > return an unrelated page.
 > 
-> This manifested as various crashes and other failures in 9pfs in drgn's
-> VM testing setup and BPF CI.
-> 
-> Fixes: db0aa2e9566f ("mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence of folios")
-> Link: https://lore.kernel.org/linux-fsdevel/20240923183432.1876750-1-chantr4@gmail.com/
-> Tested-by: Manu Bretelle <chantr4@gmail.com>
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
-> ---
->  lib/iov_iter.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 97003155bfac..1abb32c0da50 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -1033,7 +1033,7 @@ static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
->  		if (maxpages == 0 || extracted >= maxsize)
->  			break;
->  
-> -		if (offset >= fsize) {
-> +		if (iov_offset >= fsize) {
->  			iov_offset = 0;
->  			slot++;
->  			if (slot == folioq_nr_slots(folioq) && folioq->next) {
+> [...]
 
-This fixes booting for me with my 9pfs rootfs. Tested on next-20241001+this patch.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Tested-by: Joey Gouly <joey.gouly@arm.com>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Thanks!
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] iov_iter: fix advancing slot in iter_folioq_get_pages()
+      https://git.kernel.org/vfs/vfs/c/0d24852bd71e
 
