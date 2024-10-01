@@ -1,135 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-30491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6D298BB77
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FE098BBC6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 14:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DE1B1C23531
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:44:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67F762845DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 12:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754E41C1AB3;
-	Tue,  1 Oct 2024 11:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422E41BFE0A;
+	Tue,  1 Oct 2024 12:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="E2Sms+vA"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W2PqVQSN";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MsdAyC7Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E1D1C0DE8;
-	Tue,  1 Oct 2024 11:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783060; cv=none; b=Vk1v96FC1VpAJBTEVYAGf3lzrj2/tGRlzXddWHzmOYgbAA1SHqPcgfLLP++bAp/MPhB/qY8HIa3O5pI7lfqnbRGm+cyOqIrhFVaTsWVhDXYE65WzBmjs06xPH/mnLN2m/Pr81QCtaI5Zal8CrkSjhtjiV0vkcvtKjjb7Y2ozXqU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783060; c=relaxed/simple;
-	bh=vf5UiZA0vTJSGISspXXbncYGj9jU7xRtOyVNA/MviVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YmN5sda0ZnIU5ESTQjq3SxLxYo+61q5rEgmlLQjGutYA8cWcXE29cf/ZIuIsEB28uY56iYNtQEBEo5dx6qlKa1ULvKXBzk7DEIBo8rw5tXJoqABQEuEKZip6M6xI52yeWs/Y1mxatB2323QB6IisjkG+rKrgpJEdPUujAN0SifM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=E2Sms+vA; arc=none smtp.client-ip=178.154.239.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:604:0:640:5e0e:0])
-	by forward502a.mail.yandex.net (Yandex) with ESMTPS id 6DB5261731;
-	Tue,  1 Oct 2024 14:37:23 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id JbYXgU6uG4Y0-xzpIRnzq;
-	Tue, 01 Oct 2024 14:37:22 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1727782642; bh=nkUi1re8xSaX4VEbWTAH8Gbnb9x5lV8m5bMF1DhNAKY=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=E2Sms+vAggUNd9njWTLIKE+Q+iyP0cW9aXjfY52hI4t8tVdPCIcEwLr2Q8wdxMm/r
-	 iZZtbLto9JqK88zcwzhQwbxWv/UpeK6BUM6SOadNobVyFEWi8kSmL0n5Xbx83ZWwmC
-	 47RzdYWIAwQRN/fkKB2oNPJthHKNBOHm0P3vQUU4=
-Authentication-Results: mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <02ae38f6-698c-496f-9e96-1376ef9f1332@yandex.ru>
-Date: Tue, 1 Oct 2024 14:37:18 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B379C3209;
+	Tue,  1 Oct 2024 12:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727784368; cv=fail; b=Bd0RQ8IVTj4ZwEeSnfxMsYknn6mzYzPi0ynb11e7piHg+7KVR42oS1G63bm/m/iF0e1YGfvxEKEZN1Caaoo4mOJ5gOO9gNZFJeUgX9IUOVPSKE8kwWM+6aoXCV/wTnpztWNfwyY2BlyEf6i/zMdVMzZYiSDhkTPUiu0I+KJvgD0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727784368; c=relaxed/simple;
+	bh=J8sl+2Xvs2TuXR2yk5Q8Gw7wuWna5hBwaAX18rYfoOY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Lc5YjkwbTCBZti/bdptEiVFNJoCQD91CVWUZ2TVXGUEFdQkynoobFhl0pXVZibmPjkOQa98B8WUXIMXejhIT7uD8iA6TQXeviSOA2OdxM/tk/wHI33Pjub46ikgqGSO+3meeGwt9xgJvq3kzGGeT79mUdlpX/2oA2eH3qXIFRH0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=W2PqVQSN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MsdAyC7Y; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4911tjrq029451;
+	Tue, 1 Oct 2024 12:05:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=ypM0x55udi49iFtzI0oit4QZ9ndjYcTfwf8PyMXv6Rw=; b=
+	W2PqVQSNUcqFoflTIR+WOJC6DXZQBMkh4HtEvdk7bUr/eRlqZDXFNOY6N8Ej1jFj
+	xujINGsmLpZwmXEwztIiGGpPJ8nqxO4H/WqsAIclDYzRJd8eeAloK7kfByCWCfkz
+	yBQwLN9YsXaJumc7RrEgWja5WppxRt4KC8Ykf3xIuEACOrRAsjQEpG83eVDRkCj+
+	7ecuvRL4KI6WTNc8L39vWNHQYzlcRWUWH80lczStZijobqUf0eWxvbe//trelZF+
+	HrwF18tUFKSl5P2f7PGZto2x1GobANcA8jbc3GcQ+7t5c4hEcmErBVZRgsHjAfaQ
+	0Y2mKCjjFisGo9p9JvW5WA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41xabtp06e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 01 Oct 2024 12:05:50 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 491AUDcZ038599;
+	Tue, 1 Oct 2024 12:05:49 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41x887euy2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 01 Oct 2024 12:05:49 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qrYCTEpFwX0nIwfehw+tai3Yn7r2fENltqPRBt8jE/va9EuzZ5W/izSnihFVqYB1miRTK7wwoxWXKXf6PbUQRfqaKujU/2zaN1wvNh/iC5SbwIVkodY9JU1PhJW8RwRT4D2pL4i3Fyeso8GW36RpUGTpUlbcRDKLBIvU4Id4rCMSv6ccLjfhDcH1lMzEmKLmOKOLZzaDZwxk4W/3IJzmbohZnQSbibwtJn9D0EWcySEYzkHX/O05glQ7GLOMzmt5x6aOO67MGVzkqhnRXLUWUmKvpXLiLhpizTrtni9PAvcJcs0X5JU6kqFE840/uGTKMp1mnnoeJuODiqWnr1No+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ypM0x55udi49iFtzI0oit4QZ9ndjYcTfwf8PyMXv6Rw=;
+ b=t1U3A/6MMJNHSlz8FTuhwkZMWbekk7xFiBvIzvyEvppwabL85Ckspd0sXs7dXvlRlbBSD74aIwXyW2aZ8zMKRG1PSHF2EVudy+Dps/doLJ3ZIUXADQyjo0HpDN7QgNYz2ddCyBB8URsUghYPgAzkdPyBhH3tz1ZQ6bWOYm9yOPWbReeRglmQVSgILKHG5BT9g9nEWm1ucziMAwHBbl2RN4rjXk8Gein1iYgHM7MAn2Lq/txjEJvilKmKv07qtGsjcggRABamphhSMzErHcyJORRRo6Cb8AtrLi29WrKcD4QyOayz78BMy/VvSMkOaWIFMzo93h4JeoAWN/kEjvCfeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ypM0x55udi49iFtzI0oit4QZ9ndjYcTfwf8PyMXv6Rw=;
+ b=MsdAyC7YwuxfROSOTXXq1WWJ48L86Cd8lS/fs4SQ0vCRezykdR3W6b9nrc0fJhtNj0A7sac+3sWGBcekQdl1Bm2Xrx+RP5nPoNkZRIy0wJdnQOtgeNMkB39w0N5tn1aomYLnd00x+kz9qnUC75sCBG8kymXb3YRs4budxqyAHH0=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DS0PR10MB7222.namprd10.prod.outlook.com (2603:10b6:8:f2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Tue, 1 Oct
+ 2024 12:05:46 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.8026.005; Tue, 1 Oct 2024
+ 12:05:46 +0000
+Message-ID: <ad90a029-31d7-4644-a44c-31b58a67cbfc@oracle.com>
+Date: Tue, 1 Oct 2024 13:05:42 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/7] xfs: Support FS_XFLAG_ATOMICWRITES
+To: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+        dchinner@redhat.com, cem@kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hare@suse.de,
+        martin.petersen@oracle.com, catherine.hoang@oracle.com,
+        mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+References: <20240930125438.2501050-1-john.g.garry@oracle.com>
+ <20240930125438.2501050-5-john.g.garry@oracle.com>
+ <20240930160349.GN21853@frogsfrogsfrogs> <20241001084102.GB20648@lst.de>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20241001084102.GB20648@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM4PR07CA0029.eurprd07.prod.outlook.com
+ (2603:10a6:205:1::42) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] add group restriction bitmap
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Florent Revest <revest@chromium.org>, Kees Cook <kees@kernel.org>,
- Palmer Dabbelt <palmer@rivosinc.com>, Charlie Jenkins
- <charlie@rivosinc.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Helge Deller <deller@gmx.de>, Zev Weiss <zev@bewilderbeest.net>,
- Samuel Holland <samuel.holland@sifive.com>, linux-fsdevel@vger.kernel.org,
- Eric Biederman <ebiederm@xmission.com>, Andy Lutomirski <luto@kernel.org>,
- Josh Triplett <josh@joshtriplett.org>
-References: <20240930195958.389922-1-stsp2@yandex.ru>
- <20241001111516.GA23907@redhat.com>
-Content-Language: en-US
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <20241001111516.GA23907@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Yandex-Filter: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS0PR10MB7222:EE_
+X-MS-Office365-Filtering-Correlation-Id: a01e87d4-d51e-4c4e-b6db-08dce21161c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QkhtRU1tRTdoY202cnh0Ni9XN1JBemh6YUU0YndwMVkzaTdmcDI2clNBU2Fk?=
+ =?utf-8?B?bFloazdQenM2OFRIbmk5aXlCR0UzRWNJSW8rcXJyM05kWmxoYWlGNkRGZ2w5?=
+ =?utf-8?B?WTg5Mk9OZ2wyc0s3MU80NlZoUmlJam9mNW0wUkp5OWJ5TU9paWcxZm1Ld1NN?=
+ =?utf-8?B?UDRpaDIrTEdlMnFnOUF3RkJ3QjVYRWFsU3lxdmVMWVNXT3UyaWhwUUpRWEVT?=
+ =?utf-8?B?eE1lNnlKWnpyeHBZcHZKNDF1NUJ4em10Z1daUUVUOHg1THNjNzlmVnZPaHc3?=
+ =?utf-8?B?WUM5NndSdHQ4ejRJOUFRRnBuOXhjb3ZzOWxLc0RSQVF3QmRKZFZ1U0hKS1Vi?=
+ =?utf-8?B?RkpIMDFiQWFvTXV1SmlzY2djWTd6czNhMW1JSGlidW9EN1p4VUhUdk5BQTRU?=
+ =?utf-8?B?WUNjM0RPaExEMGRJaDB2VmZGSGpiZG1lUDhTT2VsdXJacFBGeDQvSmVneVND?=
+ =?utf-8?B?cXlieEQydnorYk0vM21HQjYvUnlXWmVCWHFNN0pIQUhNR3I2Z0dIdHEzdkNJ?=
+ =?utf-8?B?SkJsenFKRDJmU3RzaE9hT3NjQTUrRENDR3E0N2t1R1dxQm9aVk9ENWx4SkN5?=
+ =?utf-8?B?OWlYaFhuNVpqVE5QRmNYUnZxK1ZBY2N0OVpDeCs1YndhY083VVIxZnUrUW9T?=
+ =?utf-8?B?VU92Z0VOYTFBU0xXN3puRm9HdWdOeVpQSjE2MHJsSG9BY05uM0JiNXZ1bnc4?=
+ =?utf-8?B?ZFoxRnFBSUtydDdKWm9wV1ZZZ20rU1lNWHBlZHhJbTgrN2NBVXpKZUNSNWpu?=
+ =?utf-8?B?QmU3QUhjV0R4dGpUcmh5NUFpUFlHZ2hkYlU5NFNNNjNNTGVjcGlHS3BZa3dx?=
+ =?utf-8?B?ZDRpU3lCazdlOHJHTTluUXFqWnhtbGVWNGFuSEF4bk96UXJGYUh1YmtsT0Ra?=
+ =?utf-8?B?NGxFTFp3ZmpwWS9Eblo0VmJLb0YvUTBmdnJ0SGp1akVza3JKdVpPYmlxRlhn?=
+ =?utf-8?B?WmE4eFk2Z0p6bFJJeTI2cVZlRnBvYURabkhpTUtTUE1pMGdXMDc2ZDl0Tkth?=
+ =?utf-8?B?RHYvYVNXeGlxdUs2dGZtc3luZmxTK0lZYW1EQzdOVVlzeU01NVc4dXBtNys3?=
+ =?utf-8?B?MWlsaUpYN1dHZ1RLSDVsZkVka0xyT0tjVnNMSDNnR2t6R0t5VldYSElMQ0d2?=
+ =?utf-8?B?a2p5cEZWNEtDT012cTZiZ09PdUpKQ3VGQ3RaaktZbzYrTkt2ODA5WjFMTUNE?=
+ =?utf-8?B?dnFHVzBScGdMRnBMRG4wUzBuQXd5N2JhakIwOS92dzVsaHkyVkc2aU1HUWRk?=
+ =?utf-8?B?eGxZQ0FjdE5HQlNrMm5TT084RmtuWTlXbzhhSkFSU3pkcHNITHZWdXlGdU1J?=
+ =?utf-8?B?eWl2SUdlaUF1RFl4V05ZZVdhRi9mQXQ0anRiQytJdjNsVGVMWFB3ang4bHNE?=
+ =?utf-8?B?NUMvWTNYcnNOVkRqbkhtZUJSbjZqM2JuckI4bitoS3BvcFF0YkJ5Q1dacExs?=
+ =?utf-8?B?ZldBSzU4MW5VdHhHcnIzTzdlWTFsOUlzQW1GdU5jank4YlZHQUY5bDc5anoz?=
+ =?utf-8?B?Ny95eE5KV0IxM3YyS2EvT0l4Wlh2OFZkMHhWYnZ2cmhpVVVWK0ZxT041bkpO?=
+ =?utf-8?B?YzFBb2FXbS9hRVpnWmYyN2V6LytrVUNnaUU0QlYwa2Z0djZZTTEvNjdpVWVx?=
+ =?utf-8?B?d2xhaUlsNVo4TWhKSjR6QTIzOE8wTzJuQ3U1L0IzaUdqeEVqR0pSUHkxSEJj?=
+ =?utf-8?B?WjFnbThuMzd4VDR3MWlxL2dJMXhjWmxEUzZsSjhqQlJFcm41T0F2MmZ2VlR0?=
+ =?utf-8?B?MWkzOXlBNmQ5dm5jcDk4Vmo4UjJTL2lZU0hBVkdDcXJIZUU1Rm5iS0xRdGQ0?=
+ =?utf-8?B?SDdGbU5pcGVRMEVxMUR1QT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VzhXcUpxakRTR3pvblZIMElSM1pkd3pNamFrRndQbkYzcTY2VGk5aG9JeHVq?=
+ =?utf-8?B?TUpaNVYwVENZRnBiekJVdlRhczZqYVdkL2JhNng1aTZVc2dHWHF5WFNRWG9K?=
+ =?utf-8?B?YUg4L1B0eGZvY01TQjBxcEdVc1NPUEVHQkloalJyLzJtbGhtcTN5b2JqWkNJ?=
+ =?utf-8?B?S3VMZk5PNnc4ZWFhVVZ4V1ducm5EQkpLdlBTWGx0QUx1K1UrNUpyMmluMFpO?=
+ =?utf-8?B?dis1NHVpSUdsd2JwcVp2b3hwaGpOTVY1SjRMY04rR0xaNzRtMnVPbmZ0MTlQ?=
+ =?utf-8?B?RGtINzFsNitEMXFuMXJ4L3cxRCs1eFo1THJHRDd0LzNpUEZxRWZRd281UHM3?=
+ =?utf-8?B?UmpQSkNTbXBzZVB6VndGRHphVklwNGcxUTJrQllhUis0aGthRkcrcDgxbyty?=
+ =?utf-8?B?bGYvMllVMi9haC9va1E2aUJ5RmlNUkJjOWtFYURsZnRCeEhGUkwvZ1lwU1Zh?=
+ =?utf-8?B?cndFNmM5bk5zUVpMUFBHZTFSelErVnVjaTU2M01tYitPSTEzYmFvNlM3MDIz?=
+ =?utf-8?B?VnN2cG5Bc1RXbk0vajQ0UHVlbEZ6dmNwNnRhdUZmNFlrc3JNbXBvaUtGNHNv?=
+ =?utf-8?B?ZkpRb3o5WDBGb3MxNlI0K0dJQVRuTlF2QnZ0WFViMmdYRXdkYlJJWGYxZTNp?=
+ =?utf-8?B?aUo0ZkwvUzRuU0tVYkNMYW9xN290YmtmMHBGZFRnd3VLRVVWM3JqeGJKMVNW?=
+ =?utf-8?B?UGp0akl4UVAvMGVhbXEwMnl4RFVhaFNIN25UeEEwUVdidWlCeFM5UDNudW1R?=
+ =?utf-8?B?RnlxajFuZzJJTkJjb3N4c3E5MFNpNHA5a1RyYndVYnpTUXJRVStYcnFTdUEz?=
+ =?utf-8?B?MXEwNWxid2labnNkMVNqRnRuRGwxS2h5cW1SNmJsUDlQdVZ5SmNwZ05URHZy?=
+ =?utf-8?B?VnR3U2JnV2dLR2hPSUF2NmhLVTdtenliWE9wOGZrdytpT0JucmFFRlZZOHVk?=
+ =?utf-8?B?UFl0M2tCRXhXZFNMeCtHc3pnQ3F2WmNtK3k0WmkwaVd5QmVkVjRKUndKY003?=
+ =?utf-8?B?OHc0Vzg1c3V1ZjBjRmxhTFE0dlJrZTF2cjBLVHIrMDhlNWNGVzBuYnpSN1po?=
+ =?utf-8?B?Z3JFNzREQnVEWHNzckYwNmJwT2xGbTBkMlpWUTIxUDdhaTlTRkdkRDE0Zkt1?=
+ =?utf-8?B?TGVxbEkwQ3dCVGE4VEFOdzVHY2dhVVFDc3VEdGkyN0IrSGxRYUMxUTBiNzRD?=
+ =?utf-8?B?VUtRZkxiWkRSeitjakNQYjZDejcwY1RJVkZlUm1oZDk0cG82N1owSFhTRGZV?=
+ =?utf-8?B?ZXNKN0RqcHVvY2NRWkg1Z0t6Y0tnNmJmUE92WjgrbFlwWFNTakt5WHIwZ1VD?=
+ =?utf-8?B?UFljczJqM3RlcThHUjdTR1ZDUUhUSHhaeDZaRWpKd0RvTWFMOHN4M001WGdQ?=
+ =?utf-8?B?d2FlTy9TdlVKVE5sbjU3eTljbUZYMGltZXhxV1ZvR2dxMXFsV3JoMFZVTkxW?=
+ =?utf-8?B?VncvYUpoTklPZndDdS9scFo0NWtiNUhRTG5SNDY2blMxbkZ3ekNHa0tiV3hN?=
+ =?utf-8?B?S0pBWlU3amVTTE9wdStEZnBHc2xscHVtL3YvNElOREw0L2N3Zmk0cHhtSTRZ?=
+ =?utf-8?B?dWNvV0RpaWJzY0xSWDRQWm1tL3RGc3M2V3BLemg4dWlZaGhnK2xWQm5nUWpF?=
+ =?utf-8?B?N3FSRWpxdHB3UTYyRzI1OFJIVEF5b3NYcGpwc3RXTWVoNGpTcDRlbkFxWG9w?=
+ =?utf-8?B?ZG41eWpjSGwzYjI0ODZJMGh0a0pXUEpNTURIeXJ4bm4xdlRhblgyTktjcDY5?=
+ =?utf-8?B?Y3l4b0ZHcUpOTDNGNjhZYzVaR0l6UjBsbWFESlZtdCtSKzcxbmFxTStaOXBv?=
+ =?utf-8?B?Q2sxMzd1WktwOGUrOXE2dmZETmFudit3cXVaSXB6eU9OV09Ua01uMjV5Ritx?=
+ =?utf-8?B?Z1B5YkdLODNlV0dTVHNPc3kzTkZrTHc0KzBWbzAwZVJxMThXVDVlRElLZGNX?=
+ =?utf-8?B?allPeTJ6MlduYkl4emtVdVBoN1JBcWRMMEJIMmptMHFvMVQ2NEowMXk1THBx?=
+ =?utf-8?B?aXA0SnpqSXZYWFNVWlFlUzNlVjk4UjhOVHZYSDVTdmhhajJyZC9OVkJXUmt3?=
+ =?utf-8?B?VkhUOVYweTVETXBkdG1UOWtiS01RUUVscTJqWElrc3NNQWxmWkoveVErcm95?=
+ =?utf-8?Q?ul7X7xabe2QL9LAU5nOwPu+wJ?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	H7xsO9Un1dHv+kk+m34AT/BoIEZPj+FL3t+t9/rgOpKha5daDKyYnjSMHaXluXurWZdXrirsRXIm2grXswHV5Kk94+m2mmPfQlYmDOqZr+0xIho1KKMIHfR40v8Dq+EaDOan9m3q7aHJ5dnAlMQFui9QvDXcUHUXDCSvlk0KMIDPG0o5L71mtANyZmkZ8BnvqdTWYvYhhL1yKPkChqmw4tQbgj0CTITBo2HfkWQOzGgWO2Ir9b25UMm5IHxXdb8Ey4eIpupIWgl/nnJumHYMnF2Zj+njuG241NoN/Y3IwdcWl6nDwM4CTgSv06vwGlHCeHCYaj93uJrNPWJloMW/yV3QD7o4GT3QbuI/JWNwkw44pMWp241034B/SiGsz18oVdEp31M78FmA3+E3FnG7QKqios2UIR1tecZy65WyKFecBGsNEPE/jWIVKPWop55VLbt4SHLXUPWedv7EozKbKoLlcp3E70qdJTk1pcCho3QwbQO9U0yvuy5zK9K3Vm2boimooW35rHLAqHVwd/5YnOwa7/vNc6diFTDQPYXPu3OsDOQJnS9Fjoymho/eqiB6lM60BDHvfzmo8xKpaDkkkvWHQViXIi4eHdo0vV0FLJ4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a01e87d4-d51e-4c4e-b6db-08dce21161c9
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 12:05:46.5775
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MVETaCvrM0mlHA2Eovza+njMFj0elepW74nBkfffEyXqarD2Tz4TbvQW6pFktJl9c7Smn2kIIqsgbxNtadH+/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7222
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-01_07,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2410010078
+X-Proofpoint-ORIG-GUID: qCRlvEhM8-LOR6BxWcFhv5JcUJ8oljUN
+X-Proofpoint-GUID: qCRlvEhM8-LOR6BxWcFhv5JcUJ8oljUN
 
-01.10.2024 14:15, Oleg Nesterov пишет:
-> I can't comment the intent, just some nits about implementation.
->
-> On 09/30, Stas Sergeev wrote:
->>   struct group_info {
->>   	refcount_t	usage;
->> +	unsigned int	restrict_bitmap;
-> Why not unsigned long?
+On 01/10/2024 09:41, Christoph Hellwig wrote:
+> On Mon, Sep 30, 2024 at 09:03:49AM -0700, Darrick J. Wong wrote:
+>> If we're only allowing atomic writes that are 1 fsblock or less, then
+>> copy on write will work correctly because CoWs are always done with
+>> fsblock granularity.  The ioend remap is also committed atomically.
+>>
+>> IOWs, it's forcealign that isn't compatible with reflink and you can
+>> drop this incompatibility.
+> That was my thought as well when reading through this patch.
 
-My impl claims to support 31bit only.
-Maybe use "unsigned long long" to
-get like 63? Isn't "unsigned long"
-arch-dependent? What would be the
-benefit of an arch-dependent bitmap?
+ok, fine. I just thought that we don't want to mix reflinked files and 
+atomic writes at all. I do understand that there was also an 
+incompatibility between forcealign and reflink.
 
->>   int groups_search(const struct group_info *group_info, kgid_t grp)
->>   {
->>   	unsigned int left, right;
->> @@ -105,7 +108,7 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
->>   		else if (gid_lt(grp, group_info->gid[mid]))
->>   			right = mid;
->>   		else
->> -			return 1;
->> +			return mid + 1;
-> Suppose we change groups_search()
->
-> 	--- a/kernel/groups.c
-> 	+++ b/kernel/groups.c
-> 	@@ -104,8 +104,11 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
-> 				left = mid + 1;
-> 			else if (gid_lt(grp, group_info->gid[mid]))
-> 				right = mid;
-> 	-		else
-> 	-			return 1;
-> 	+		else {
-> 	+			bool r = mid < BITS_PER_LONG &&
-> 	+				 test_bit(mid, &group_info->restrict_bitmap);
-> 	+			return r ? -1 : 1;
-> 	+		}
-> 		}
-> 		return 0;
-> 	 }
->
-> so that it returns, say, -1 if the found grp is restricted.
->
-> Then everything else can be greatly simplified, afaics...
-This will mean updating all callers
-of groups_search(), in_group_p(),
-in_egroup_p(), vfsxx_in_group_p()
-and so on. Also I am not sure if it really
-helps: in_group_p() has also gid, so
-if in_group_p() returns -1 for not found
-and 0 for gid, then I still need to
-increment the retval of groups_search(),
-just as I do now.
-So unless I am missing your intention,
-this isn't really helping.
+Cheers,
+John
 
