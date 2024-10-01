@@ -1,128 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-30489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A694798BB08
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:29:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8AA98BB0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA2881C232D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:29:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50124283C61
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DFA1BFE01;
-	Tue,  1 Oct 2024 11:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516241C172E;
+	Tue,  1 Oct 2024 11:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="adaidGRe"
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="hOqxm6iV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A3C1BFDF4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 11:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29F01C0DE1;
+	Tue,  1 Oct 2024 11:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727782150; cv=none; b=VbpjRx2Yknlkf9M5AnSEHkZPgaBB5vDd1o1OPJOw0wuWTZs5L59k8lTLol58yyGkc6WriOljid2TFMRf5zqHTZYlyqoWycD5Z7bgodmq7v8C6SaDVa7lCEHiiudlhSA4dAy3HofPCcbJNEL9+HItYxZ2rjsmKl+P33NF8fC9dls=
+	t=1727782155; cv=none; b=WeH+bbPeRSIZPJPMxbwjem1AdCpodzCrxPMYHGt3Cr1pgrAbfyj6LDN7Nb5p24G46YwaHFGSgM7dqsN/71LZYaPEIlDFolII1A5H3QIsEtJBSnWfocQbo7YPolIUxhEISSmxjGE6rMLnNKFKOxqm8EogsISpl1UymJlITosvjQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727782150; c=relaxed/simple;
-	bh=wRYe1vcQI0lZ4YwSx4XKpg3rYqAFEJunm9v7pgh1H1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ti3CN1RnWjJKRwa5vUf+j4QgGERaQ2LtHbiii0NR1guB4nubL2EUDG8jqM7TYHMABoglX/kEwx032WnvppzSo8hExpE4YZzhiC6Fs2R+YXRVvWhPZW4K1rCfdplryPpc+pkdffV+g/6/sjJPsZczjLtRqXXKS4JZL7Xb8J5O1FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=adaidGRe; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37ccd50faafso3480304f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 04:29:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727782147; x=1728386947; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C0EGqao/z/3uTPQ94VdscyZy2iIMPcbVgjbB5vcmiAM=;
-        b=adaidGReAMjv7H+AYMtEOGAOHxoiIgw7QQZ/eKSOTS7vYtqAECZfnWBAb/DFkAQrjG
-         F2vEgnsC5R8VjAO5m5ttTytaPM1quKVO857VCyX7GmOsH31GS1kD9L+A6hTuauRYN/DH
-         Jyp62jAjEfKt74PB4blJtCyxNzLFHiRb5f46P/QTg9k5WgmbZKtnnyaC1SqHwM6e1oUX
-         nNmVjr5hkuHJLOkXUYhNIxN81iUHzBuSCsQoW3o0Gvk2jRqglISsd+C/iWZNWdrOt2jB
-         5/00aD9cVV2H7v9m78cp3SG3gYFQOfo6lBTTAxEsCF38EaezACk9YwuJ3bJAUTi4h6NR
-         Nu4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727782147; x=1728386947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C0EGqao/z/3uTPQ94VdscyZy2iIMPcbVgjbB5vcmiAM=;
-        b=WJPoWdDQgYYVPDQ+QHXT7FmZ9CXbiFwILlUUW5syn/wgRUlI+EVqipImjMFxKgzpad
-         z6Bcw21Q52P7Y49kYPZ9FgwtlN2FdbiF6e4RNzPM8zfL1OyckQaIcZivFmrKbzk5B/aJ
-         Y8DuIdswg2Y5YeJKZIJzzK05ilXQtTER9a42HQ+gIR9w7SM6Y0x4n9ooSpF+jN5s/kKS
-         xnwA7ShYXxmh9bgboGRbWFfi6atd63IuBRjg3qVqp1uUXHke2Ie9DkcFS4gQ0TwrLawq
-         GAIPiIfwnHnzHimKd0GBC2bPpHXUDSupcBDWQk46AAVWKjDUzrllgV4yuzzVCiUELbiQ
-         zSyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjgmmUgVUnWbx11+8aBuZRaImypmsGaDtWolCgtHInqe7RBbag6unkFr3TuyXFHA/VcjxM8RBKev0uQDA3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2JRhcNWS1onzArGJoitENbF/O9+w5I4KZ+H+5DyBo4oPZ0nNg
-	ZVb78OSbyKUwd27Wx3X2oDsSZfrvQf152+yznSwwylMeAwVNjZb+x+nfxLvu332dPIkneb8jTzv
-	yXu+ancOAAo3QobBY3zn6evu33ynHwdGi26j9
-X-Google-Smtp-Source: AGHT+IHdJuezNC+cQOgCWdRYkNZbxrqMXbT01e/SnhIAXkrXy+UEqZN+0xO+ze21oJFFoxqcCO/UzF62jVvVTatBwGI=
-X-Received: by 2002:adf:e709:0:b0:37c:ccad:733a with SMTP id
- ffacd0b85a97d-37cd5b3cc45mr8866453f8f.59.1727782147358; Tue, 01 Oct 2024
- 04:29:07 -0700 (PDT)
+	s=arc-20240116; t=1727782155; c=relaxed/simple;
+	bh=a8WHZ7W3EhQ9PtI7lCDoDsTRkyAHfHKrzoPIXZXeYg8=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=dX7EH9Q3xifIgTEL4tvV8l38HLrzmtPuVnw5bq7ag0K0+/wGC4u8Gx/Qct0fJe4jkoTWDs0sjEyyFyettZf9mjZ6kxjQFObwlMJMCJBFVrfqUqaT6R18TYxtFle/DLSVprcVM8sghRiBu7t0pB2SaQ+waattwqZe32HM0hhp2Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=hOqxm6iV; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	Reply-To:Subject:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To
+	:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=zF9uz8JVM3HISwS+6MEo57XAsK6xXE3AG8qaHZeixt4=; t=1727782153;
+	x=1728214153; b=hOqxm6iVo+ojbWG2adXOLDJ0wDk6JQwzE1u9fIzVD8t3wJiVw71ol3u90rAMo
+	dlleOVwRhEmNTVb8Zmq147RNb0bE7XOoyyraW/tTHYO5lYAVf1nCzVX1LC5B2bo0Qr3SMym2r8Aii
+	Owh3q44AYeqFINNVIm6RzwgfJaEgCtyzS0u+M1EUtA0lYnIQkIOIQQexnExgNcagzY/jYwKmJQNky
+	x5KH0mHs0DruFeAjm7PSM33JxcSYar+VcfzLi605pz/NPCFBad0yLYH8vVCRvcp33EoU9U2fpPkO/
+	6wzPpULLKsiJImAd9L+hNM4pkF0RPwLcTk4uJb75+0ixvfHA/w==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1svb42-00089I-8P; Tue, 01 Oct 2024 13:29:10 +0200
+Message-ID: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
+Date: Tue, 1 Oct 2024 13:29:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com> <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
-In-Reply-To: <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 1 Oct 2024 13:28:53 +0200
-Message-ID: <CAH5fLgjCA77nAYqZLus7TWbW7mOKC1MKn+jJL-_tpQSR-h-r8w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: yangerkun <yangerkun@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Krzysztof_Ma=C5=82ysa?=
+ <varqox@gmail.com>
+Subject: [regression] getdents() does not list entries created after opening
+ the directory
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727782153;5e5fb709;
+X-HE-SMSGID: 1svb42-00089I-8P
 
-On Tue, Oct 1, 2024 at 10:22=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
-> +impl<T: MiscDevice> MiscDeviceRegistration<T> {
-> +    /// Register a misc device.
-> +    pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error=
-> {
-> +        try_pin_init!(Self {
-> +            inner <- Opaque::try_ffi_init(move |slot: *mut bindings::mis=
-cdevice| {
-> +                // SAFETY: The initializer can write to the provided `sl=
-ot`.
-> +                unsafe { slot.write(opts.into_raw::<T>()) };
-> +
-> +                // SAFETY: We just wrote the misc device options to the =
-slot. The miscdevice will
-> +                // get unregistered before `slot` is deallocated because=
- the memory is pinned and
-> +                // the destructor of this type deallocates the memory.
-> +                // INVARIANT: If this returns `Ok(())`, then the `slot` =
-will contain a registered
-> +                // misc device.
-> +                to_result(unsafe { bindings::misc_register(slot) })
-> +            }),
-> +            _t: PhantomData,
-> +        })
-> +    }
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
-Note that right now this can only be used in the module init function
-if the registration is stored in a pinned box. We need the in-place
-initialization change to fix that.
+yangerkun, I noticed a report about a regression in bugzilla.kernel.org
+that appears to be caused by the following change of yours:
 
-Does anyone want to revive the in-place initialization patch?
+64a7ce76fb901b ("libfs: fix infinite directory reads for offset dir")
+[merged via: "Merge tag 'vfs-6.11-rc4.fixes' of
+git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs"; v6.11-rc4]
 
-Link: https://lore.kernel.org/rust-for-linux/20240328195457.225001-1-wedson=
-af@gmail.com/
+As many (most?) kernel developers don't keep an eye on the bug tracker,
+I decided to write this mail. To quote from
+https://bugzilla.kernel.org/show_bug.cgi?id=219285:
 
-Alice
+> below program illustrates the problem. Expected output should include line "entry: after", actual output does not:
+> ```
+> entry: .
+> entry: ..
+> entry: before
+> ```
+> Program:
+> 
+> ```c
+> #include <unistd.h>
+> #include <dirent.h>
+> #include <stdlib.h>
+> #include <sys/stat.h>
+> #include <stdio.h>
+> #include <fcntl.h>
+> 
+> int main() {
+> 	system("rm -rf /tmp/dirent-problems-test-dir");
+> 	if (mkdir("/tmp/dirent-problems-test-dir", 0755)) {
+> 		abort();
+> 	}
+> 
+> 	int fd = creat("/tmp/dirent-problems-test-dir/before", 0644);
+> 	if (fd < 0) {
+> 		abort();
+> 	}
+> 	close(fd);
+> 
+> 	DIR* dir = opendir("/tmp/dirent-problems-test-dir");
+> 
+> 	fd = creat("/tmp/dirent-problems-test-dir/after", 0644);
+> 	if (fd < 0) {
+> 		abort();
+> 	}
+> 	close(fd);
+> 
+> 	struct dirent* entry;
+> 	while ((entry = readdir(dir))) {
+> 		printf("entry: %s\n", entry->d_name);
+> 	}
+> 
+> 	closedir(dir);
+> 	return 0;
+> }
+> ```
+> 
+> Affected kernel version: 6.10.10.
+> Filesystem: ext4.
+> Distribution: Arch Linux.
+
+> On Linux 6.6.51 it works as expected.
+
+> Regression first appeared in 6.10.7, 6.10.6 was good. I will further
+> bisect tomorrow.
+
+> 6.11 is still affected.
+
+See the ticket for more details. Reporter ist CCed. I made no judgement
+if the code provided is sane, I'm just assumed forwarding the issue was
+a good idea.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a
+#regzbot title: libfs: getdents() does not list entries created after
+opening the directory
+#regzbot from: Krzysztof Małysa <varqox@gmail.com>
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219285
+#regzbot ignore-activity
 
