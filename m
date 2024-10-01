@@ -1,159 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-30571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842E698C758
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 23:11:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CBB98C7C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 23:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB561F255A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 21:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E43DD1C21780
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 21:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362B61CCEFD;
-	Tue,  1 Oct 2024 21:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C2919DFAB;
+	Tue,  1 Oct 2024 21:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLgn3b9K"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="S2K2WldV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D42114B972;
-	Tue,  1 Oct 2024 21:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63BC17B427
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 21:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727817040; cv=none; b=uvY0s/2Kyv8GAz5oT8IUhS0B77UIdAdZ1KIF1GshFAsg4Y42k2KOrNdezJkbozi+APt5UXJkM9mOutAO+1frQDRUB5Eq+GvxDoAdKFBaYfN6ockU4B3t4dpdsWWCh/eR6DqyPhhsoSqDNRdHBTiYROC/XJI8NZWI76rhnCqlCV0=
+	t=1727819205; cv=none; b=n/4e391VKbzt0hLR2TdoS9lZTucuYrqPJT6dKreFx9toeHF8W6SKm6ahSe64ZCjNuNz2koek+Gj3y4FHNmWBULKWgFXHjQ+3qHVUwWurk2Swddx0YhTchaOQe6O4QTvTcd3IXV89ZPGYSmlaTSdFXXp2bw5FHrdeXSUOE7wtFDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727817040; c=relaxed/simple;
-	bh=BdLPaNlX/F3gzkLxlYzljybqQgCh1CZlleMAH3/NzJA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VyEv0zt22UyABkfHXCyzY5oIknqfdRsewP23oaPtCmDkDaxFjFpGilr12uUD9PsDUEhMSZkBjeFkux19QhiDj/zY+BidKsKJQcAWPlNNdp5IHsL7VSOp25087pQAJTd25/Nb+vwe4KMkkVCgW9bCqJ2SEYo8YpFDlzqUF++mwTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLgn3b9K; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2faccada15bso28636491fa.3;
-        Tue, 01 Oct 2024 14:10:38 -0700 (PDT)
+	s=arc-20240116; t=1727819205; c=relaxed/simple;
+	bh=NI7gIZ6lXNALBDXx17GTUYrDqDSXsA596QRPsZyrdEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZtU5tgULyxta+i579t20grCgy8FAgHw29LaCdyGZrneThbU/7ASSZOYmtTYEpehvj760ziuhBpv/3LtzceSJQYQfe7CTeGP4SxeaYWs2M4EcTH/0FfubsP/aJaJr/Bp2nsNGIs4WxsaTLmfkt0Fg1zp7yAWQ8kvcAuBUkuRhSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=S2K2WldV; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20bc506347dso3783865ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 14:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727817037; x=1728421837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j5FPHhbte4Tmc4ZuPG7hVMprQvRDLf4/a9y4DExRTII=;
-        b=CLgn3b9KoSx9JIAdndd0qu5wGcg/6R4xE0JJJWHm3hYT7fHVTwpv2UbZDk6QFhqQ5z
-         qCFq+K/UsssncG5hieEIqSui913bI5MwRgRjdy7DxdYZg1vEaFQpTx3XUm02AvA8/NOL
-         6nKmxML9RPR8VOMp7BPkoC49urkG5ruColaQQRo1G/OwitDFgCp15YYA4XQtyyWA0edh
-         bwy+UWbgZUafvH4Htuc+8Dlu1y+2yYvKdKsCD+VD048C1ODs/YBBKrDQyis3A9O0aPN3
-         94wMwQhdF5cz2Uey+enmfo0+0NqU+PDaI2bGTi5RXxd2oTsjPJVVe34Qn7AepqxFT8BD
-         N4qQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727819203; x=1728424003; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NI7gIZ6lXNALBDXx17GTUYrDqDSXsA596QRPsZyrdEQ=;
+        b=S2K2WldV/2rdo2FVApspxAietHKRorS5wt505eSfc5CKZU9aCRhGC4cm0ILVinpbuR
+         DowrIM4BkIk5B3syO4isXBuMeVkbMjqeQNfE7aKt5CQQgchNWVqd6CD2Sp/HsnkYfHQH
+         3ldcMBBgwvaOZnfcNsq46hRhmxQ743dqB0J1c2kIQDGan7B7l/OTLoSHp5K1ikS+KyoD
+         Fmt+av5uXOMnOJU5+rBh4HV32QqgIbGsEflb7voMfTtexVt4vQzpfTXx7+cKlpnUnPyQ
+         yvBmf8pseDCX7H7w5RCm83pPev1svT2Szbdns1rQhgMtubqUKEWHUiQf3ZY0wdUy/FQG
+         eDYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727817037; x=1728421837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j5FPHhbte4Tmc4ZuPG7hVMprQvRDLf4/a9y4DExRTII=;
-        b=SwSHGP0feJ1qzJccy4YePLClZ2/H14zA4upYAkPMpW9mz4RoozF7ZNq7t2iXS+wDAa
-         B1QcSa7RoDwGMBgtQRc5N7ujE5r1ZRP11Ic1Zhzpf8mNDwXaHeQGypKtnqfZfPcKX+I0
-         bhN3ZwbN7IRnTvJP9y74t7I0Mp3WEybAtYsKeRR3oh4KmsoiwacaIOYih0q3Q4S2XJot
-         Rh9tUkshpVLd3ExzQI4BjDvEVZWmy7a/nDatruvuYcc5pHLgQc9JOTgIvwoQoxTtq6dP
-         ir4Y2gNz9ehGx53Ofce+QBR/ULw0y1QYrlKI9tDFT9gg7+aA9tpvAa3UjtdghkEBOiXF
-         ldOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9YkoWBif9GTfBcV5t7ZAk/OSPRFBkn8YueSErk2UC1i1sv+GNfljRiWVJI+TtmbDdHX/BRRBW8oGe@vger.kernel.org, AJvYcCXHMEpBT7rBMI/uAO/9dwOlfjVh/Ypaf9+Xdb4CQFOjAMaS0Ubm8hCUz2kKWYI6Ff3kbzahC5Y0fa/l+TcM@vger.kernel.org, AJvYcCXM0afpXGUmhICT0DuK7bhe0GNEUuyNEmgDwfCFTmDvsANejPM0W5zkIBcAm7fre4D43PkvFlwZaZdYATMF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc5BIjiGD2SnclvtEoruDbfViQVcH1IY5h//vMrYlewnW6b/vI
-	X7uaRTePvrblI1g7Zmve3hOdFBx3AjsYg9fJ2mAdBBmvCLg+g/sUjOSP/Jcuc2PBrHfQSOGm9pf
-	mCEm+nskbWfDpTuMNVrk8ymqMNmM=
-X-Google-Smtp-Source: AGHT+IHyH38WiVX8HHUwc+OFQWovZwKbJEqW/O3u3XocYkPNvtQCAvFmTdZx0nP6F2Y0oSa7jC6KgiPT019755iLMPg=
-X-Received: by 2002:a2e:be9e:0:b0:2f7:6e3a:7c1d with SMTP id
- 38308e7fff4ca-2fae1044cf5mr8284241fa.15.1727817036745; Tue, 01 Oct 2024
- 14:10:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727819203; x=1728424003;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NI7gIZ6lXNALBDXx17GTUYrDqDSXsA596QRPsZyrdEQ=;
+        b=Cu/8fiEF2v2WnSfNcyZVU3PX4TeAkdW/p13jfCqLIF8lqRxJgeZg35JRMmbN8+IVZf
+         TiLInHAJoF+JwoBMOSl4Imn1JFzNEYsKAF0H8i8Ed44BfBx+M69GPiRSMqWsXwMNEWHS
+         8KZH6OD54TqbFdX4TFW2Unax2TdFVM0wzzR2mL2FsGFK9k4SOdgeR+vPCN6b8PAKFce3
+         pQEx60MjaNB0b3FlFsdoZtDiPDcwODfK+042T7EFa0N6WWsaaeOCFoUTRVFGTCy9KaLh
+         ssdTDR0Sog1PHa3we72jOn3u+C8j7arF0L5wjGIaHbpnzXxnq6S3wAEIQJjrYEyhx6t9
+         xQSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0TlTk0VCfOa0tm1/OTu+Vob5G4P47SEBPs1dfF1u7kTsNZonHcSgUaijdjTnL0oCEKGbxAcMjxOK27dzX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7GiQX2e4/yVabIZ1D1SMtRW7RoXsD4jLGGZQOfH7D2TqvfEdC
+	8sNnTVkMKmG3OyJ87o1JKhT6qhYAIQRq9PZxyZxBIM3JiWhQxeAnAuc1LtAao/U=
+X-Google-Smtp-Source: AGHT+IHZV3IXCvzX283Z6okxtWKNux4YPD3i7IwxnTn7aGOH5zQYuUZMEM+naOwP+vJ3UKzd1e3dgQ==
+X-Received: by 2002:a17:902:e743:b0:20b:7ed8:3990 with SMTP id d9443c01a7336-20bc59bc4cbmr14154355ad.12.1727819203103;
+        Tue, 01 Oct 2024 14:46:43 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e61c4csm74275315ad.274.2024.10.01.14.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 14:46:42 -0700 (PDT)
+Date: Tue, 1 Oct 2024 14:46:39 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, rick.p.edgecombe@intel.com
+Subject: Re: [PATCH 17/33] prctl: arch-agnostic prctl for shadow stack
+Message-ID: <ZvxtvxMwFvjgengs@debug.ba.rivosinc.com>
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+ <20241001-v5_user_cfi_series-v1-17-3ba65b6e550f@rivosinc.com>
+ <e7c48ad8-5fe2-46d8-b137-e04046b7c572@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com>
- <87plotvuo1.fsf@gentoo.org> <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
- <87y13dtaih.fsf@gentoo.org> <0bdce668-5711-4315-ab05-1a3492cb8bf6@kernel.dk>
-In-Reply-To: <0bdce668-5711-4315-ab05-1a3492cb8bf6@kernel.dk>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 2 Oct 2024 05:10:20 +0800
-Message-ID: <CAMgjq7DMWGyXDdf86tkZ=1N6CnFQza4xzRhZXcw1j1WQXWBn=g@mail.gmail.com>
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Sam James <sam@gentoo.org>, Greg KH <gregkh@linuxfoundation.org>, stable@kernel.org, 
-	clm@meta.com, Matthew Wilcox <willy@infradead.org>, ct@flyingcircus.io, david@fromorbit.com, 
-	dqminh@cloudflare.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
-	regressions@leemhuis.info, regressions@lists.linux.dev, 
-	torvalds@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <e7c48ad8-5fe2-46d8-b137-e04046b7c572@sirena.org.uk>
 
-On Fri, Sep 27, 2024 at 10:58=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
-:
+On Tue, Oct 01, 2024 at 05:15:08PM +0100, Mark Brown wrote:
+>On Tue, Oct 01, 2024 at 09:06:22AM -0700, Deepak Gupta wrote:
+>> From: Mark Brown <broonie@kernel.org>
 >
-> On 9/27/24 8:51 AM, Sam James wrote:
-> > Kairui Song <ryncsn@gmail.com> writes:
-> >
-> >> On Wed, Sep 25, 2024 at 1:16?AM Sam James <sam@gentoo.org> wrote:
-> >>>
-> >>> Kairui, could you send them to the stable ML to be queued if Willy is
-> >>> fine with it?
-> >>>
-> >>
-> >> Hi Sam,
-> >
-> > Hi Kairui,
-> >
-> >>
-> >> Thanks for adding me to the discussion.
-> >>
-> >> Yes I'd like to, just not sure if people are still testing and
-> >> checking the commits.
-> >>
-> >> And I haven't sent seperate fix just for stable fix before, so can
-> >> anyone teach me, should I send only two patches for a minimal change,
-> >> or send a whole series (with some minor clean up patch as dependency)
-> >> for minimal conflicts? Or the stable team can just pick these up?
-> >
-> > Please see https://www.kernel.org/doc/html/v6.11/process/stable-kernel-=
-rules.html.
-> >
-> > If Option 2 can't work (because of conflicts), please follow Option 3
-> > (https://www.kernel.org/doc/html/v6.11/process/stable-kernel-rules.html=
-#option-3).
-> >
-> > Just explain the background and link to this thread in a cover letter
-> > and mention it's your first time. Greg didn't bite me when I fumbled my
-> > way around it :)y
-> >
-> > (greg, please correct me if I'm talking rubbish)
+>> This is based on a patch originally written by Deepak Gupta but later
+>> modified by Mark Brown for arm's GCS patch series.
+>>
+>> Signed-off-by: Mark Brown <broonie@kernel.org>
+>> Co-developed-by: Deepak Gupta <debug@rivosinc.com>
+>> ---
 >
-> It needs two cherry picks, one of them won't pick cleanly. So I suggest
-> whoever submits this to stable does:
->
-> 1) Cherry pick the two commits, fixup the simple issue with one of them.
->    I forget what it was since it's been a week and a half since I did
->    it, but it's trivial to fixup.
->
->    Don't forget to add the "commit XXX upstream" to the commit message.
->
-> 2) Test that it compiles and boots and send an email to
->    stable@vger.kernel.org with the patches attached and CC the folks in
->    this thread, to help spot if there are mistakes.
->
-> and that should be it. Worst case, we'll need a few different patches
-> since this affects anything back to 5.19, and each currently maintained
-> stable kernel version will need it.
->
+>You need to add your own signoff to this when reposting, see
+>submitting-patches.rst.
 
-Hi Sam, Jens,
+Thanks. Will do that.
 
-Thanks very much, currently maintained upstream kernels are
-6.10, 6.6, 6.1, 5.15, 5.10, 5.4, 4.19.
 
-I think only 6.6 and 6.1 need backport, I've sent a fix for these two,
-it's three checkpicks from the one 6.10 series so the conflict is
-minimal. The stable series can be applied without conflict for both.
+
 
