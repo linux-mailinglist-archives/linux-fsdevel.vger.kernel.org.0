@@ -1,161 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-30516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AE798C156
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 17:15:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5590298C1BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 17:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F9E31F23A6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 15:15:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE431F25464
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 15:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EB11C9B8F;
-	Tue,  1 Oct 2024 15:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168341CB300;
+	Tue,  1 Oct 2024 15:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="P9RaiR6X"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="N4iRSmCO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740531C5782
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 15:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A591C6889;
+	Tue,  1 Oct 2024 15:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727795694; cv=none; b=r/uKc5q1YAkAaw4tbL5scC4T6VQdmqJKZhCtwQPnnnTvC8MDTgrMtbwgU/5ipgLKPRrR8iyxLIIyk8TqtLBdrWmR8Jpmx2USGSVuHEVqwvz3r6FdeElCvuzrK1gTs1rmbaRTChYZs/jHGxriLlNrVld/MReHJTTYfqQeb0rUQ0Y=
+	t=1727796969; cv=none; b=iaIcBA35aocpMlE2A5p4AUvjQWFPpwzvnxB+E77Q74CGOUWCY5vzwMPxmVqji2sqFb2923m0o3UO3vembzqBOdb+0b4XOkxnY2kkhXrt0LT0qakcfIJk/vCO5fyA4t+qnkzlxvvmOmb4rIvGNhh2vMYRivqvsdQirLoqRzO8e30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727795694; c=relaxed/simple;
-	bh=vGfztZfGRFWc4NBs1quyq8Qr4M8gtUs6U3u8lP4FNeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FbSdhRYUyoHYBmEdR7mbMSo1bEfQzeMf/vS/njL6u/kxRBA+k9Kbo26LoiO9+nNUCeOwOpDIGToDqHX953lbwsJ/UfjudWE1xWvQSxepfzBhUOcg1dcJ4jcQEB+2c+4jX4HaL1cRBKUgdH9IlKmbkNli71lzB8JPR+sLaBPGuQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=P9RaiR6X; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a27599274eso18084235ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 08:14:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727795691; x=1728400491; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kKqi6XAaCDK4ylDvOJNyWgR8U3btYX9UaPK/lnzXIXY=;
-        b=P9RaiR6XixRGUHqE6aOSlXaS0ZB5mEnnE2GTOxtd8U+rKL5soSEa7lX/xsCNo0LDXy
-         SZEfWWzq9mNYElr/OJL0RgRAHyPZZ/gfNmcv0Kq7uyZrYTTa1MRSPapbeeq0LCpCViXq
-         gnGudGV/92wN0o0E6qwuz3Ae37xazpz1nXk7w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727795691; x=1728400491;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKqi6XAaCDK4ylDvOJNyWgR8U3btYX9UaPK/lnzXIXY=;
-        b=QjRlaPv62pP2vzqffhirZyKYW15XUkGoVCJRDR66svF5lSq0KC0gQjJIlAUiRKk1YO
-         i2uOsdj+C5lfto9BosrlaHAeMcx9Y/AL3hWuqPCaVMGfgQ3bdr6gbB2tq9fS24zcYeP+
-         LX+JHY2hnAZl5F7A1ysRQhdB3qPYn947zHwuLFKfxHyo+fZmrXA7AQhXs8fpRf46Hk42
-         UOAvJhyPqqhr/hlVhNeXqBus7JERCyt5VluodCa+iDJTFTnlFBmMxLjhHOwhRB+6ZoGD
-         Lo2YHTXrWxnwheu5YHTAMIzbrrKFW1sJtRJHXGtrHj6oAmdf71R1dH/LTP/FrLFEZ63v
-         M6ng==
-X-Gm-Message-State: AOJu0Yy+EF7Rap/4ES5HSXhm50psBQauUpsKun4mBSaQVhDtILJ2GE7I
-	ZndJYafW3YcHk6vS6w8Hp0yMqe0N5dlnMgbbxfoJBosnUiWLtgmTLN0N1KNywnw=
-X-Google-Smtp-Source: AGHT+IHPRaDLHh5NNr+7xNJ7xQp3GFEDDjA2gli79iP+lkT3RW37GJzP/Nly6ScHDzliGfN1hpNRrg==
-X-Received: by 2002:a05:6e02:1d10:b0:3a0:4db0:ddbf with SMTP id e9e14a558f8ab-3a34515d316mr128132985ab.8.1727795691507;
-        Tue, 01 Oct 2024 08:14:51 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888c2c51sm2677358173.102.2024.10.01.08.14.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 08:14:51 -0700 (PDT)
-Message-ID: <7ad58665-ed3f-4b20-b7ee-5d8314de3cc2@linuxfoundation.org>
-Date: Tue, 1 Oct 2024 09:14:49 -0600
+	s=arc-20240116; t=1727796969; c=relaxed/simple;
+	bh=a3ihKYAJstiwcBkSn6UnWh62jrc+i4Tz9f1A6uXv2LY=;
+	h=To:Cc:From:Subject:In-Reply-To:References:Content-Type:Date:
+	 Message-ID:MIME-Version; b=ajklAQZpep/YZnsGRpc6r4jp+UO9FFeqofKQeDOUm2RHM0KpZs7IEto73KjYbCvINKecpUcjY/LGxYjKunL60bvYLQdgmi62JIFEMvqjJs1UcDobFWv6xDkrrf88OG+r+/0SK6OW4KEJQ4PRlphrZJE8NKI/NQPZnJ9tsz8yvxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=N4iRSmCO; arc=none smtp.client-ip=178.154.239.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3143:0:640:c03:0])
+	by forward501d.mail.yandex.net (Yandex) with ESMTPS id 40962612E8;
+	Tue,  1 Oct 2024 18:28:49 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id iScIT09i70U0-Ce6zD59g;
+	Tue, 01 Oct 2024 18:28:47 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1727796528; bh=a3ihKYAJstiwcBkSn6UnWh62jrc+i4Tz9f1A6uXv2LY=;
+	h=Message-ID:References:Date:In-Reply-To:Cc:Subject:From:To;
+	b=N4iRSmCOdwLHH2HgIDWLiciNpGAS+Bavmf7HGbAC2Wh0enZ4yaES3iRWJwuKo2hc6
+	 oC9/oc4nXKgVjNiYHt8lvS9qc73vXN3lHGVAfXprqrWUfSy/QdkPHHS4darTEKUepC
+	 IzpEbuprOZp+feXezEWfDyJ32sGYR/xx+uUmxVrA=
+Authentication-Results: mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+X-Priority: 3
+To: oleg@redhat.com
+Cc:
+ viro@zeniv.linux.org.uk,brauner@kernel.org,jack@suse.cz,axboe@kernel.dk,akpm@linux-foundation.org,catalin.marinas@arm.com,revest@chromium.org,kees@kernel.org,palmer@rivosinc.com,charlie@rivosinc.com,bgray@linux.ibm.com,deller@gmx.de,zev@bewilderbeest.net,samuel.holland@sifive.com,linux-fsdevel@vger.kernel.org,ebiederm@xmission.com,luto@kernel.org,josh@joshtriplett.org,
+  linux-kernel@vger.kernel.org
+From: stsp <stsp2@yandex.ru>
+Subject: Re: [PATCH v3] add group restriction bitmap
+In-Reply-To: <20241001150258.GD23907@redhat.com>
+References: <20240930195958.389922-1-stsp2@yandex.ru>
+ <20241001111516.GA23907@redhat.com>
+ <02ae38f6-698c-496f-9e96-1376ef9f1332@yandex.ru>
+ <20241001130236.GB23907@redhat.com>
+ <62362149-c550-490f-bd7a-0fd7a5cd22bc@yandex.ru>
+ <20241001150258.GD23907@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Date: Tue, 1 Oct 2024 15:28:44 +0000
+Message-ID:
+ <e4ii9s.skooc0.3aq6g4-qmf@mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net>
+ 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] selftests/exec: add a test to enforce execveat()'s
- comm
-To: Tycho Andersen <tycho@tycho.pizza>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Tycho Andersen <tandersen@netflix.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241001134945.798662-1-tycho@tycho.pizza>
- <20241001134945.798662-2-tycho@tycho.pizza>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241001134945.798662-2-tycho@tycho.pizza>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Yandex-Filter: 1
 
-On 10/1/24 07:49, Tycho Andersen wrote:
-> From: Tycho Andersen <tandersen@netflix.com>
-> 
-> We want to ensure that /proc/self/comm stays useful for execveat() callers.
-
-This commit message is vague? What does staying useful mean?
-Elaborate on the staying useful and the tests added to ensure.
-Add test results as well.
-
-> 
-> Signed-off-by: Tycho Andersen <tandersen@netflix.com>
-> ---
->   tools/testing/selftests/exec/execveat.c | 25 +++++++++++++++++++++++++
->   1 file changed, 25 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/exec/execveat.c b/tools/testing/selftests/exec/execveat.c
-> index 071e03532cba..091029f4ca9b 100644
-> --- a/tools/testing/selftests/exec/execveat.c
-> +++ b/tools/testing/selftests/exec/execveat.c
-> @@ -419,6 +419,9 @@ int main(int argc, char **argv)
->   	if (argc >= 2) {
->   		/* If we are invoked with an argument, don't run tests. */
->   		const char *in_test = getenv("IN_TEST");
-> +		/* TASK_COMM_LEN == 16 */
-> +		char buf[32];
-> +		int fd;
->   
->   		if (verbose) {
->   			ksft_print_msg("invoked with:\n");
-> @@ -432,6 +435,28 @@ int main(int argc, char **argv)
->   			return 1;
->   		}
->   
-> +		fd = open("/proc/self/comm", O_RDONLY);
-> +		if (fd < 0) {
-> +			perror("open comm");
-
-The existing code in this file uses ksft_perror() - please keep
-the new code consistent with the existing code.
-
-> +			return 1;
-> +		}
-> +
-> +		if (read(fd, buf, sizeof(buf)) < 0) {
-> +			close(fd);
-> +			perror("read comm");
-
-Same comment as above.
-
-> +			return 1;
-> +		}
-> +		close(fd);
-> +
-> +		/*
-> +		 * /proc/self/comm should fail to convert to an integer, i.e.
-> +		 * atoi() should return 0.
-> +		 */
-> +		if (atoi(buf) != 0) {
-> +			ksft_print_msg("bad /proc/self/comm: %s", buf);
-> +			return 1;
-> +		}
-> +
->   		/* Use the final argument as an exit code. */
->   		rc = atoi(argv[argc - 1]);
->   		exit(rc);
-
-thanks,
--- Shuah
+DQoNCtCS0YLQvtGA0L3QuNC6LCAxINC+0LrRgtGP0LHRgNGPIDIwMjQg0LMg0L/QvtC70YPRh9C1
+0L3QviDQvtGCIE9sZWcgTmVzdGVyb3Y6DQo+IFdlIGNhbid0IHVuZGVyc3RhbmQgZWFjaCBvdGhl
+ci4gSSBndWVzcyBJIG1pc3NlZCBzb21ldGhpbmcuLi4NCj4gDQo+IE9uIDEwLzAxLCBzdHNwIHdy
+b3RlOg0KPiA+DQo+ID4gMDEuMTAuMjAyNCAxNjowMiwgT2xlZyBOZXN0ZXJvdiDQv9C40YjQtdGC
+Og0KPiA+ID5PbiAxMC8wMSwgc3RzcCB3cm90ZToNCj4gPiA+PjAxLjEwLjIwMjQgMTQ6MTUsIE9s
+ZWcgTmVzdGVyb3Yg0L/QuNGI0LXRgjoNCj4gPiA+Pj5TdXBwb3NlIHdlIGNoYW5nZSBncm91cHNf
+c2VhcmNoKCkNCj4gPiA+Pj4NCj4gPiA+Pj4JLS0tIGEva2VybmVsL2dyb3Vwcy5jDQo+ID4gPj4+
+CSsrKyBiL2tlcm5lbC9ncm91cHMuYw0KPiA+ID4+PglAQCAtMTA0LDggKzEwNCwxMSBAQCBpbnQg
+Z3JvdXBzX3NlYXJjaChjb25zdCBzdHJ1Y3QgZ3JvdXBfaW5mbyAqZ3JvdXBfaW5mbywga2dpZF90
+IGdycCkNCj4gPiA+Pj4JCQkJbGVmdCA9IG1pZCArIDE7DQo+ID4gPj4+CQkJZWxzZSBpZiAoZ2lk
+X2x0KGdycCwgZ3JvdXBfaW5mby0+Z2lkW21pZF0pKQ0KPiA+ID4+PgkJCQlyaWdodCA9IG1pZDsN
+Cj4gPiA+Pj4JLQkJZWxzZQ0KPiA+ID4+PgktCQkJcmV0dXJuIDE7DQo+ID4gPj4+CSsJCWVsc2Ug
+ew0KPiA+ID4+PgkrCQkJYm9vbCByID0gbWlkIDwgQklUU19QRVJfTE9ORyAmJg0KPiA+ID4+Pgkr
+CQkJCSB0ZXN0X2JpdChtaWQsICZncm91cF9pbmZvLT5yZXN0cmljdF9iaXRtYXApOw0KPiA+ID4+
+PgkrCQkJcmV0dXJuIHIgPyAtMSA6IDE7DQo+ID4gPj4+CSsJCX0NCj4gPiA+Pj4JCX0NCj4gPiA+
+Pj4JCXJldHVybiAwOw0KPiA+ID4+PgkgfQ0KPiA+ID4+Pg0KPiA+ID4+PnNvIHRoYXQgaXQgcmV0
+dXJucywgc2F5LCAtMSBpZiB0aGUgZm91bmQgZ3JwIGlzIHJlc3RyaWN0ZWQuDQo+ID4gPj4+DQo+
+ID4gPj4+VGhlbiBldmVyeXRoaW5nIGVsc2UgY2FuIGJlIGdyZWF0bHkgc2ltcGxpZmllZCwgYWZh
+aWNzLi4uDQo+ID4gPj5UaGlzIHdpbGwgbWVhbiB1cGRhdGluZyBhbGwgY2FsbGVycw0KPiA+ID4+
+b2YgZ3JvdXBzX3NlYXJjaCgpLCBpbl9ncm91cF9wKCksDQo+ID4gPj5pbl9lZ3JvdXBfcCgpLCB2
+ZnN4eF9pbl9ncm91cF9wKCkNCj4gPiA+V2h5PyBJIHRoaW5rIHdpdGggdGhpcyBjaGFuZ2UgeW91
+IGRvIG5vdCBuZWVkIHRvIHRvdWNoIGluX2dyb3VwX3AvZXRjIGF0IGFsbC4NCj4gPiA+DQo+ID4g
+Pj5pZiBpbl9ncm91cF9wKCkgcmV0dXJucyAtMSBmb3Igbm90IGZvdW5kDQo+ID4gPj5hbmQgMCBm
+b3IgZ2lkLA0KPiA+ID5XaXRoIHRoZSB0aGUgY2hhbmdlIGFib3ZlIGluX2dyb3VwX3AoKSByZXR1
+cm5zIDAgaWYgbm90IGZvdW5kLCAhMCBvdGhlcndpc2UuDQo+ID4gPkl0IHJldHVybnMgLTEgaWYg
+Z3JwICE9IGNyZWQtPmZzZ2lkIGFuZCB0aGUgZm91bmQgZ3JwIGlzIHJlc3RyaWN0ZWQuDQo+ID4N
+Cj4gPiBpbl9ncm91cF9wKCkgZG9lc24ndCBjaGVjayBpZiB0aGUNCj4gPiBncm91cCBpcyByZXN0
+cmljdGVkIG9yIG5vdC4NCj4gDQo+IEFuZCBpdCBzaG91bGRuJ3QuIEl0IHJldHVybnMgdGhlIHJl
+c3VsdCBvZiBncm91cHNfc2VhcmNoKCkgaWYgdGhpcw0KPiBncnAgaXMgc3VwcGxlbWVudGFyeSBv
+ciAibm90IGZvdW5kIi4NCj4gDQo+ID4gYWNsX3Blcm1pc3Npb25fY2hlY2soKSBkb2VzLCBidXQN
+Cj4gPiBpbiB5b3VyIGV4YW1wbGUgaXQgZG9lc24ndCBhcyB3ZWxsLg0KPiANCj4gQnV0IGl0IGRv
+ZXM/Pz8gc2VlIGJlbG93Li4uDQo+IA0KPiA+IEkgdGhpbmsgeW91IG1lYW4gdG8gbW92ZSB0aGUN
+Cj4gPiByZXN0cmljdF9iaXRtYXAgY2hlY2sgdXB3YXJkcyB0bw0KPiA+IGluX2dyb3VwX3AoKT8N
+Cj4gDQo+IE5vLCBJIG1lYW50IHRvIG1vdmUgdGhlIHJlc3RyaWN0X2JpdG1hcCBjaGVjayB0byBn
+cm91cHNfc2VhcmNoKCksIHNlZSB0aGUgcGF0Y2gNCj4gYWJvdmUuDQoNCkFoLCBJIHNlZSBub3ch
+DQpTb3JyeS4NCkkgZGlkbid0IGV4cGVjdCB0byBtb3ZlIHRoYXQgY2hlY2sNCnRoYXQgZmFyLCBz
+byBJIHRob3VnaHQgeW91IG1lYW4ganVzdA0KbWFrZSBncm91cHNfc2VhcmNoKCkgMC1iYXNlZCBh
+bmQNCi0xIGlmIG5vdCBmb3VuZC4uLiBldmVuIGlmIHlvdSBzYWlkDQpvdGhlcndpc2UuDQoNClll
+cywgLTEgd2hlbiBmb3VuZCBidXQgcmVzdHJpY3RlZA0KaXMgdGhlIHZlcnkgaW50ZXJlc3Rpbmcg
+c2ltcGxpZmljYXRpb24hDQpXaWxsIHNlbmQgYW4gdXBkYXRlLg0KVGhhbmtzLg0KDQo+IA0KPiA+
+IEFueXdheSwgc3VwcG9zZSB5b3UgZG9uJ3QgbWVhbiB0aGF0Lg0KPiA+IEluIHRoaXMgY2FzZToN
+Cj4gPiAxLiBpbl9ncm91cF9wKCkgYW5kIGluX2Vncm91cF9wKCkNCj4gPiAgIHNob3VsZCBiZSBj
+aGFuZ2VkOg0KPiA+IC0gIGludCByZXR2YWwgPSAxOw0KPiA+ICsgaW50IHJldHZhbCA9IC0xOw0K
+PiANCj4gV2h5PyAtMSBtZWFucyB0aGF0IHRoZSBncnAgaXMgc3VwcGxlbWVudGFyeSBhbmQgcmVz
+dHJpY3RlZC4NCj4gDQo+ID4gVGhlcmUgYXJlIGFsc28gdGhlIGNhbGxlcnMgb2YgZ3JvdXBzX3Nl
+YXJjaCgpDQo+ID4gaW4ga2VybmVsL2F1ZGl0c2MuYyBhbmQgdGhleSBzaG91bGQNCj4gPiBiZSB1
+cGRhdGVkLg0KPiANCj4gV2h5PyBJIGRvbid0IHRoaW5rIHNvLiBhdWRpdF9maWx0ZXJfcnVsZXMo
+KSB1c2VzIHRoZSByZXN1bHQgb2YgZ3JvdXBzX3NlYXJjaCgpDQo+IGFzIGEgYm9vbGVhbi4NCj4g
+DQo+ID4gPlNvIGFjbF9wZXJtaXNzaW9uX2NoZWNrKCkgY2FuIHNpbXBseSBkbw0KPiA+ID4NCj4g
+PiA+CWlmIChtYXNrICYgKG1vZGUgXiAobW9kZSA+PiAzKSkpIHsNCj4gPiA+CQl2ZnNnaWRfdCB2
+ZnNnaWQgPSBpX2dpZF9pbnRvX3Zmc2dpZChpZG1hcCwgaW5vZGUpOw0KPiA+ID4JCWludCB4eHgg
+PSB2ZnNnaWRfaW5fZ3JvdXBfcCh2ZnNnaWQpOw0KPiA+ID4NCj4gPiA+CQlpZiAoeHh4KSB7DQo+
+ID4gPgkJCWlmIChtYXNrICYgfihtb2RlID4+IDMpKQ0KPiA+ID4JCQkJcmV0dXJuIC1FQUNDRVM7
+DQo+ID4gPgkJCWlmICh4eHggPiAwKQ0KPiA+ID4JCQkJcmV0dXJuIDA7DQo+ID4gPgkJCS8qIElm
+IHdlIGhpdCByZXN0cmljdF9iaXRtYXAsIHRoZW4gY2hlY2sgT3RoZXJzLiAqLw0KPiA+ID4JCX0N
+Cj4gPiA+CX0NCj4gPg0KPiA+IFdlbGwsIGluIG15IGltcGwgaXQgc2hvdWxkIGNoZWNrDQo+ID4g
+dGhlIGJpdG1hcCByaWdodCBoZXJlLCBidXQgeW91IHJlbW92ZWQNCj4gPiB0aGF0Lg0KPiANCj4g
+Tm8sIEkgZGlkbid0IHJlbW92ZSB0aGUgY2hlY2ssIHRoaXMgY29kZSByZWxpZXMgb24gdGhlIGNo
+YW5nZSBpbg0KPiBncm91cHNfc2VhcmNoKCkuIE5vdGUgdGhlICJ4eHggPiAwIiBjaGVjay4NCj4g
+DQo+IEkgbXVzdCBoYXZlIG1pc3NlZCBzb21ldGhpbmcgOi8NCj4gDQo+IE9sZWcuDQo+IA0KPg==
 
