@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-30593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB8398C8ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 01:06:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7CA98C8F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 01:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA92B1C21DE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 23:06:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78B14B20FA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 23:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A291D0421;
-	Tue,  1 Oct 2024 23:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E7D1D042F;
+	Tue,  1 Oct 2024 23:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5QOvsyH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUx8wIEC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5783D1CF2BE;
-	Tue,  1 Oct 2024 23:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44D41CEEB5;
+	Tue,  1 Oct 2024 23:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727823819; cv=none; b=qmGknbq2AHtxWEOthI287xsOmwv8JZ9Nv+Iybogkpoueiv1pE3SjBK9JkdnzMVCjdTrJPBSBh0LxXTiAKwrutXhK8GE68HHrYZAyh5gRWeSWI/cFtVDOcxZDD86s7xtbiT8O8dPXwgaQf9g25nYfrvwoY0tE8wG0+71ncFif/a8=
+	t=1727823831; cv=none; b=Rm1Xx+fCQ0GZArfgeT0vSFLZdvhhlKmuYMHWQ3yYN381hdSDMtFggbQa+D6dszCuyY49HL5nbksbczQlegkYUUvZ6oeA4um3i/z2YJjrtpMi/iw6VQvlcOF3mhRYwivFYrq2QyJQhz9Aiyh10Shew/P/XlsJjzaDOg4iohhtp+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727823819; c=relaxed/simple;
-	bh=JwTS5J5Kz+XCxYDRc3FG3N1klYZC99PAyz93oxxWHns=;
+	s=arc-20240116; t=1727823831; c=relaxed/simple;
+	bh=B+jxXTUkTSef0cvYwALMxetqKDkj+z2yhbykonxuIvw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xl340ZXE1vUbe1pJ2Tz33fDDnLtrnYD1w5NHEcbFdIPr7l+sniamvlpxcw3p1Za6LTPdhEpy49nX1VQBqSRMUTl8jp01KiQsXjERf3kov3ahTLbjFXN8DSAU6zlnh67HpiEX83D3qNjzb5QRrNFIxwWMBLp6sst0flRErSpVfLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5QOvsyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B91A5C4CEC6;
-	Tue,  1 Oct 2024 23:03:27 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=cbotcb9sgDwEGDC3ERzbQYOJvSug3UetHzddIjLwNQQxm5wsiNx4VR4qx2XC6F/Pkg9sFMFWyED01wdYD8gbnuVXyZgQaOQQwPFueYBY4v5YSqyTCuqseqipnYgpzBs/y32ymqy1HlITkNOGVAR1hMGOCEQqOiS2BEP98p4Yfx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUx8wIEC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9525BC4CEC6;
+	Tue,  1 Oct 2024 23:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727823818;
-	bh=JwTS5J5Kz+XCxYDRc3FG3N1klYZC99PAyz93oxxWHns=;
+	s=k20201202; t=1727823831;
+	bh=B+jxXTUkTSef0cvYwALMxetqKDkj+z2yhbykonxuIvw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=h5QOvsyHwmwYJXTikpeXsVEp2A3UPoVjGZRUucHDnIEP8s20RwqCtfvtaEgYASJ3A
-	 4VvT7Z9FkWpjGLRRUyAM0E57+nFfV/1smmkjKGkRZKQARGtcXv4Kr/B1Fg5EqqXPTT
-	 w7iMpC+tcgCrK+qsiDR7XnELMA4PkJgDckI9vpw8SVgbifNvpYEuLSdt70HOnbcLrh
-	 bILOGqSFtZOKo1haHLpTrtPKpk0NC0HS0Pd2sgi3K8cPhb+7HZxIGLJOcB3QJHfl0A
-	 Gos56B/AegT6wsD2YwKq8Ie1aAdRX49w3baVX3709fSna41T6qIRdgrbFb2IW97c4V
-	 0q6PzQ7x+JAPg==
+	b=HUx8wIECR9lToVgEuuRmL1LTcof2SadUqhIeeq87HK6Vh5V0HYCpD8XsImAgHM0+i
+	 t9MgwEkfFPeiUZrwIsl1rbxozChdiha+NTSyAa1S7yVv7u6cfe+F5QUsqLXI7DHTOH
+	 px22G4UkMeFRmJidB5PidQ7keLIJUIo/fue980rAKoStkksx0adimrxQVGaZpjzIOk
+	 qm0jRfMf3bI1fSa9ha3mn9r6pDP84uJzOaF2uEuMJ0I72tNBqhhgMzrm6m/EqHGi+B
+	 kUtOj7EaSX2hkutQLSZ3Ozf5B0Y83qSLL/ev1DtwcbqyiH4Dfsjk+WQQXjCKMF1iPO
+	 k2Z0V5P25+TqA==
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 01 Oct 2024 23:58:59 +0100
-Subject: [PATCH v13 20/40] arm64/mm: Handle GCS data aborts
+Date: Tue, 01 Oct 2024 23:59:00 +0100
+Subject: [PATCH v13 21/40] arm64/gcs: Context switch GCS state for EL0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-arm64-gcs-v13-20-222b78d87eee@kernel.org>
+Message-Id: <20241001-arm64-gcs-v13-21-222b78d87eee@kernel.org>
 References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
 In-Reply-To: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -79,120 +79,257 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3733; i=broonie@kernel.org;
- h=from:subject:message-id; bh=JwTS5J5Kz+XCxYDRc3FG3N1klYZC99PAyz93oxxWHns=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm/H7TVZ3jDKeIyJFS2xkZycVzFdIgkZ/2MVMSxegg
- PracWFmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvx+0wAKCRAk1otyXVSH0PPFB/
- 9jOVBZ0sZYLFYt8CYSgFwth5bQAMffCYR65UIbAKTDAZV8czeEm1xDTBVqLzh2y8cJ8L9rksWGRzsa
- KoNNdusUYbP0WwOzwiB8f26x4k5gKBP8dzKhvHobyjoVwM9dwHJ1P+31Rnk9S2VC0HlJ12ukGOll7A
- CZczYl0vb1teCaug4ldvi8DJRkAAMotUN8oeVWz1J0E9GwHb+eMDvTL9igdY9wrw4EyL8kkGp2K8aF
- B+pBMS0HXzUFSpXDbnSX5eVKfGA1myQSsEM0KQsGSA4aaHTZ8Guexvn78tQkU7ofyEMejYY/2DYTmb
- IZnC/hzjnKbZohafBaYTyRcPVaFiYq
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7335; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=B+jxXTUkTSef0cvYwALMxetqKDkj+z2yhbykonxuIvw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm/H7UABcgRepLC8/BSr/31M9cejBZhSyBGfKixQ4S
+ CY8NnOqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvx+1AAKCRAk1otyXVSH0C3MB/
+ 9LkMlFMmSzQNqWzPn4u2mp4miFf2NFWEYmSg15LjV8XbEQl6b8hH0BEHWBfNCxBQOtDj/yW/9fkL4/
+ 1GS6g9GYcoXPS8j4UBZVxHhFOS5d1nATMSVL4vmF2wVD7HeHxcLbLnU+jnfoyM58HBHLRhiwcyyXrO
+ CKZTtB1PWAIwtA8YMiTSPURfF/u+ngYFysvvoizBewFLIIg08trjdUoSjHZ2yefmXcif6Z4UMao5fh
+ Jt+OQEWq6p/cgvHM4d/H2L95mmxDgM/w61k+s/R/bP91pdTY2mFnsYL/21j/lZPLw7LykOnCK5mHn6
+ numrEQSMpJt8eRfpLOQwyzWjsIyudp
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-All GCS operations at EL0 must happen on a page which is marked as
-having UnprivGCS access, including read operations.  If a GCS operation
-attempts to access a page without this then it will generate a data
-abort with the GCS bit set in ESR_EL1.ISS2.
+There are two registers controlling the GCS state of EL0, GCSPR_EL0 which
+is the current GCS pointer and GCSCRE0_EL1 which has enable bits for the
+specific GCS functionality enabled for EL0. Manage these on context switch
+and process lifetime events, GCS is reset on exec().  Also ensure that
+any changes to the GCS memory are visible to other PEs and that changes
+from other PEs are visible on this one by issuing a GCSB DSYNC when
+moving to or from a thread with GCS.
 
-EL0 may validly generate such faults, for example due to copy on write
-which will cause the GCS data to be stored in a read only page with no
-GCS permissions until the actual copy happens.  Since UnprivGCS allows
-both reads and writes to the GCS (though only through GCS operations) we
-need to ensure that the memory management subsystem handles GCS accesses
-as writes at all times.  Do this by adding FAULT_FLAG_WRITE to any GCS
-page faults, adding handling to ensure that invalid cases are identfied
-as such early so the memory management core does not think they will
-succeed.  The core cannot distinguish between VMAs which are generally
-writeable and VMAs which are only writeable through GCS operations.
+Since the current GCS configuration of a thread will be visible to
+userspace we store the configuration in the format used with userspace
+and provide a helper which configures the system register as needed.
 
-EL1 may validly write to EL0 GCS for management purposes (eg, while
-initialising with cap tokens).
+On systems that support GCS we always allow access to GCSPR_EL0, this
+facilitates reporting of GCS faults if userspace implements disabling of
+GCS on error - the GCS can still be discovered and examined even if GCS
+has been disabled.
 
-We also report any GCS faults in VMAs not marked as part of a GCS as
-access violations, causing a fault to be delivered to userspace if it
-attempts to do GCS operations outside a GCS.
-
-Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/mm/fault.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ arch/arm64/include/asm/gcs.h       | 24 +++++++++++++++
+ arch/arm64/include/asm/processor.h |  6 ++++
+ arch/arm64/kernel/process.c        | 62 ++++++++++++++++++++++++++++++++++++++
+ arch/arm64/mm/Makefile             |  1 +
+ arch/arm64/mm/gcs.c                | 42 ++++++++++++++++++++++++++
+ 5 files changed, 135 insertions(+)
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 8b281cf308b3..c2f89a678ac0 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -504,6 +504,14 @@ static bool fault_from_pkey(unsigned long esr, struct vm_area_struct *vma,
- 			false);
+diff --git a/arch/arm64/include/asm/gcs.h b/arch/arm64/include/asm/gcs.h
+index 7c5e95218db6..04594ef59dad 100644
+--- a/arch/arm64/include/asm/gcs.h
++++ b/arch/arm64/include/asm/gcs.h
+@@ -48,4 +48,28 @@ static inline u64 gcsss2(void)
+ 	return Xt;
  }
  
-+static bool is_gcs_fault(unsigned long esr)
-+{
-+	if (!esr_is_data_abort(esr))
-+		return false;
++#ifdef CONFIG_ARM64_GCS
 +
-+	return ESR_ELx_ISS2(esr) & ESR_ELx_GCS;
++static inline bool task_gcs_el0_enabled(struct task_struct *task)
++{
++	return current->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE;
 +}
 +
- static bool is_el0_instruction_abort(unsigned long esr)
- {
- 	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_LOW;
-@@ -518,6 +526,23 @@ static bool is_write_abort(unsigned long esr)
- 	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
- }
- 
-+static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 esr)
++void gcs_set_el0_mode(struct task_struct *task);
++void gcs_free(struct task_struct *task);
++void gcs_preserve_current_state(void);
++
++#else
++
++static inline bool task_gcs_el0_enabled(struct task_struct *task)
 +{
-+	if (!system_supports_gcs())
-+		return false;
-+
-+	if (unlikely(is_gcs_fault(esr))) {
-+		/* GCS accesses must be performed on a GCS page */
-+		if (!(vma->vm_flags & VM_SHADOW_STACK))
-+			return true;
-+	} else if (unlikely(vma->vm_flags & VM_SHADOW_STACK)) {
-+		/* Only GCS operations can write to a GCS page */
-+		return esr_is_data_abort(esr) && is_write_abort(esr);
-+	}
-+
 +	return false;
 +}
 +
- static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
- 				   struct pt_regs *regs)
- {
-@@ -554,6 +579,14 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
- 		/* It was exec fault */
- 		vm_flags = VM_EXEC;
- 		mm_flags |= FAULT_FLAG_INSTRUCTION;
-+	} else if (is_gcs_fault(esr)) {
-+		/*
-+		 * The GCS permission on a page implies both read and
-+		 * write so always handle any GCS fault as a write fault,
-+		 * we need to trigger CoW even for GCS reads.
-+		 */
-+		vm_flags = VM_WRITE;
-+		mm_flags |= FAULT_FLAG_WRITE;
- 	} else if (is_write_abort(esr)) {
- 		/* It was write fault */
- 		vm_flags = VM_WRITE;
-@@ -587,6 +620,13 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
- 	if (!vma)
- 		goto lock_mmap;
- 
-+	if (is_invalid_gcs_access(vma, esr)) {
-+		vma_end_read(vma);
-+		fault = 0;
-+		si_code = SEGV_ACCERR;
-+		goto bad_area;
-+	}
++static inline void gcs_set_el0_mode(struct task_struct *task) { }
++static inline void gcs_free(struct task_struct *task) { }
++static inline void gcs_preserve_current_state(void) { }
 +
- 	if (!(vma->vm_flags & vm_flags)) {
- 		vma_end_read(vma);
- 		fault = 0;
++#endif
++
+ #endif
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index 1438424f0064..5260788247d8 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -185,6 +185,12 @@ struct thread_struct {
+ 	u64			svcr;
+ 	u64			tpidr2_el0;
+ 	u64			por_el0;
++#ifdef CONFIG_ARM64_GCS
++	unsigned int		gcs_el0_mode;
++	u64			gcspr_el0;
++	u64			gcs_base;
++	u64			gcs_size;
++#endif
+ };
+ 
+ static inline unsigned int thread_get_vl(struct thread_struct *thread,
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index 0540653fbf38..aedcf332f422 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -49,6 +49,7 @@
+ #include <asm/cacheflush.h>
+ #include <asm/exec.h>
+ #include <asm/fpsimd.h>
++#include <asm/gcs.h>
+ #include <asm/mmu_context.h>
+ #include <asm/mte.h>
+ #include <asm/processor.h>
+@@ -280,6 +281,25 @@ static void flush_poe(void)
+ 	write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
+ }
+ 
++#ifdef CONFIG_ARM64_GCS
++
++static void flush_gcs(void)
++{
++	if (!system_supports_gcs())
++		return;
++
++	gcs_free(current);
++	current->thread.gcs_el0_mode = 0;
++	write_sysreg_s(GCSCRE0_EL1_nTR, SYS_GCSCRE0_EL1);
++	write_sysreg_s(0, SYS_GCSPR_EL0);
++}
++
++#else
++
++static void flush_gcs(void) { }
++
++#endif
++
+ void flush_thread(void)
+ {
+ 	fpsimd_flush_thread();
+@@ -287,6 +307,7 @@ void flush_thread(void)
+ 	flush_ptrace_hw_breakpoint(current);
+ 	flush_tagged_addr_state();
+ 	flush_poe();
++	flush_gcs();
+ }
+ 
+ void arch_release_task_struct(struct task_struct *tsk)
+@@ -484,6 +505,46 @@ static void entry_task_switch(struct task_struct *next)
+ 	__this_cpu_write(__entry_task, next);
+ }
+ 
++#ifdef CONFIG_ARM64_GCS
++
++void gcs_preserve_current_state(void)
++{
++	current->thread.gcspr_el0 = read_sysreg_s(SYS_GCSPR_EL0);
++}
++
++static void gcs_thread_switch(struct task_struct *next)
++{
++	if (!system_supports_gcs())
++		return;
++
++	/* GCSPR_EL0 is always readable */
++	gcs_preserve_current_state();
++	write_sysreg_s(next->thread.gcspr_el0, SYS_GCSPR_EL0);
++
++	if (current->thread.gcs_el0_mode != next->thread.gcs_el0_mode)
++		gcs_set_el0_mode(next);
++
++	/*
++	 * Ensure that GCS memory effects of the 'prev' thread are
++	 * ordered before other memory accesses with release semantics
++	 * (or preceded by a DMB) on the current PE. In addition, any
++	 * memory accesses with acquire semantics (or succeeded by a
++	 * DMB) are ordered before GCS memory effects of the 'next'
++	 * thread. This will ensure that the GCS memory effects are
++	 * visible to other PEs in case of migration.
++	 */
++	if (task_gcs_el0_enabled(current) || task_gcs_el0_enabled(next))
++		gcsb_dsync();
++}
++
++#else
++
++static void gcs_thread_switch(struct task_struct *next)
++{
++}
++
++#endif
++
+ /*
+  * Handle sysreg updates for ARM erratum 1418040 which affects the 32bit view of
+  * CNTVCT, various other errata which require trapping all CNTVCT{,_EL0}
+@@ -580,6 +641,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
+ 	cntkctl_thread_switch(prev, next);
+ 	ptrauth_thread_switch_user(next);
+ 	permission_overlay_switch(next);
++	gcs_thread_switch(next);
+ 
+ 	/*
+ 	 * Complete any pending TLB or cache maintenance on this CPU in case
+diff --git a/arch/arm64/mm/Makefile b/arch/arm64/mm/Makefile
+index 2fc8c6dd0407..fc92170a8f37 100644
+--- a/arch/arm64/mm/Makefile
++++ b/arch/arm64/mm/Makefile
+@@ -11,6 +11,7 @@ obj-$(CONFIG_TRANS_TABLE)	+= trans_pgd.o
+ obj-$(CONFIG_TRANS_TABLE)	+= trans_pgd-asm.o
+ obj-$(CONFIG_DEBUG_VIRTUAL)	+= physaddr.o
+ obj-$(CONFIG_ARM64_MTE)		+= mteswap.o
++obj-$(CONFIG_ARM64_GCS)		+= gcs.o
+ KASAN_SANITIZE_physaddr.o	+= n
+ 
+ obj-$(CONFIG_KASAN)		+= kasan_init.o
+diff --git a/arch/arm64/mm/gcs.c b/arch/arm64/mm/gcs.c
+new file mode 100644
+index 000000000000..f8f4f984a247
+--- /dev/null
++++ b/arch/arm64/mm/gcs.c
+@@ -0,0 +1,42 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/mm.h>
++#include <linux/mman.h>
++#include <linux/syscalls.h>
++#include <linux/types.h>
++
++#include <asm/cpufeature.h>
++#include <asm/page.h>
++
++/*
++ * Apply the GCS mode configured for the specified task to the
++ * hardware.
++ */
++void gcs_set_el0_mode(struct task_struct *task)
++{
++	u64 gcscre0_el1 = GCSCRE0_EL1_nTR;
++
++	if (task->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE)
++		gcscre0_el1 |= GCSCRE0_EL1_RVCHKEN | GCSCRE0_EL1_PCRSEL;
++
++	if (task->thread.gcs_el0_mode & PR_SHADOW_STACK_WRITE)
++		gcscre0_el1 |= GCSCRE0_EL1_STREn;
++
++	if (task->thread.gcs_el0_mode & PR_SHADOW_STACK_PUSH)
++		gcscre0_el1 |= GCSCRE0_EL1_PUSHMEn;
++
++	write_sysreg_s(gcscre0_el1, SYS_GCSCRE0_EL1);
++}
++
++void gcs_free(struct task_struct *task)
++{
++	if (!system_supports_gcs())
++		return;
++
++	if (task->thread.gcs_base)
++		vm_munmap(task->thread.gcs_base, task->thread.gcs_size);
++
++	task->thread.gcspr_el0 = 0;
++	task->thread.gcs_base = 0;
++	task->thread.gcs_size = 0;
++}
 
 -- 
 2.39.2
