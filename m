@@ -1,179 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-30470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8891098B8D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 12:02:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D9398B95D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 12:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377B2282C62
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 10:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77EA1F2362B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 10:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB79E1A01B9;
-	Tue,  1 Oct 2024 10:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B52192D74;
+	Tue,  1 Oct 2024 10:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0U/jHsR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QM9h8C/G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67EC15099B;
-	Tue,  1 Oct 2024 10:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FD23209;
+	Tue,  1 Oct 2024 10:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727776950; cv=none; b=FEeYi3gcXY4x40LWbqh13nx5z5alUtomgIcFLcaHKjz/8FMtjToQK6X1HRLAHwc+ReF9GZU3RpzMo3jMpkg9aauylMae6sSJSu71UwVe3lAnRjsqCe2J3ldSKTk0fsAYmhvHLCxT3jz0sHRTlVTX60bwii6Xm6Y9Vo2dFDAJ8z4=
+	t=1727778098; cv=none; b=KxC99NppsSPvU7nOddkRvO5sAGpnjLDtLBJRF39KMxz+uxMOfYezXvAjQ/TWdnKrhHi8NS/U6qwpQiTvGCoeHCBkLE+aJmBUbuaoYNfYQLpiWiIfTeZ1UK40mo6tBAUOxXqcUMVYhlG12HdnyMoJBB+yY53Pw7f0Ah2eoSKG7fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727776950; c=relaxed/simple;
-	bh=ZE+XF1/1NQ0XkNgNQxpngChw8V26A33RUz+IkoejLpI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hn+nfoV/88NPMaAzzOixVaM9AmhEUjG3fKRNgdf0NBawXxvEmavw8RIBVa6oOAvqtUEjBFiAxKzohmaZf/U2GOCbLRCAwdYQQSPMBWsYuzjWoJzjLK3ccsGHdY4eGH23oF/gXHHpITdU1ahp4o+Nkbec8m3kclELi2Do63nw2hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0U/jHsR; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b9b35c7c7so10812345ad.1;
-        Tue, 01 Oct 2024 03:02:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727776948; x=1728381748; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7AiVXDQNaCEQCZIzuaPudvTxMDTECJeNuKQJM59klM=;
-        b=R0U/jHsRmTa5+6/dXMJC6pn1uysSEncA7CpCbwkbBbFy7DMj1HcNItB05jZYjkC+yK
-         d7ECWEub768wGg2JwcJ3qVv4SjRb10RBxqJ97jjTSgvBTPwV8/tAjFjY3qjOmDnHptHd
-         Fz19CapGjLF/6ybGQO5jXI2pjL90wTJHnIjDtc2lYY78hD6giIym0I0OTzLY5II7+FFD
-         +zrIueYILtMWry4W5y8XfG/sxOlZ8wYOjSnE9bbeaakgWEfcgAT03LdOMYmnsU8lKpWt
-         2Qq7ip8ViiJTPX2VVOZNhP8v/WwO5XkH0lqxj79mrjR5J40texOINbkuTW2Ty6TZMtB8
-         y+ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727776948; x=1728381748;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r7AiVXDQNaCEQCZIzuaPudvTxMDTECJeNuKQJM59klM=;
-        b=bE+RWionhEzM4LSPw9N5EEaAhbrdY7LLWbe9XMlVlgXPASJ7RuXjcWsHIomUIX2SZm
-         cWimnijoqiEcogvmH0nNCBKQuPYQfmLOG5hA9C9Bzm3MJsqR5EhbRZ/n9SVzkFZirn01
-         1QFfoW7sgp4SQvRtP943XdAAnGSG3hHI0FI3xrMEQdlBjn0TXmxV8aPi+3e2fAm+GvuK
-         6T6fqlZYAXWU2sf8btelVeBTT8jh7KrBHctg5rdl/ZXwOgdsnGSTF8ul2Rp3BrfkyEc6
-         b3NuXGF7plM7ySc0sgqPSlo1FCdn9GH52AX/+BCYzT/c1kckJePSa03lAGBNGf2WSCBX
-         /HEA==
-X-Forwarded-Encrypted: i=1; AJvYcCURKBdxw7oNsbAMfnJRH/n7qIQUwGX0WgP9IRoixstB7ZOYDyjUpdlGM/NlGkfPiZRy8sXtGZ8O+dJHPzeS@vger.kernel.org, AJvYcCXL2KSlzRG9GlbmZ/TQeQE7qTs86hic6+dvjk9xC9ZkMbZIiKB/4/XJX+tdaLcge1Yx8npdGwU4rs84LmL3QwfY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO6B3034lekduqhDs7FdAoM1bZTdxAWK9u/vArbxRrIYFsJKxg
-	8GCj3cxT9kRJ2eOxVya3W30kxBPlsn/MMIiEmBG56ihgAfQdSzv7M6INeiaq
-X-Google-Smtp-Source: AGHT+IGG294ztucO/TfZv6LCV+TnkGPzng11YoQlw/h1wqLGFs6Z6c8cL1xJg0F1dE41+VSuEZB5Fg==
-X-Received: by 2002:a17:902:e887:b0:20b:9841:b44d with SMTP id d9443c01a7336-20b9841b6c1mr62242545ad.9.1727776947990;
-        Tue, 01 Oct 2024 03:02:27 -0700 (PDT)
-Received: from BiscuitBobby.am.students.amrita.edu ([123.63.2.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d5edd1sm66955705ad.57.2024.10.01.03.02.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 03:02:27 -0700 (PDT)
-From: Siddharth Menon <simeddon@gmail.com>
-To: shuah@kernel.org
-Cc: amer.shanawany@gmail.com,
-	Siddharth Menon <simeddon@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v2] selftests/proc: Add test to check unmapped process
-Date: Tue,  1 Oct 2024 15:32:06 +0530
-Message-Id: <20241001100206.18554-1-simeddon@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1727778098; c=relaxed/simple;
+	bh=wluuHAc01SS7mkJT/FzCZ0xt1SHsHqpNeSN0BbjLliM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fb4jRs3g5Fb6mXo+ItfEB707Mq26zF/Ho2myPV/w/jgAoSryJNZF0+SwxyK6Vom4kbOLi9dEkNDQqPRP7iln2WeauEkhIm4XNu8owj8+42vvEbvGmDf9WzwhoNZSBZ405CzwR0cbCO4vLVzW2yAi6AhQhKKvvZE1faN53p4H5pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QM9h8C/G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97CD6C4CEC6;
+	Tue,  1 Oct 2024 10:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727778097;
+	bh=wluuHAc01SS7mkJT/FzCZ0xt1SHsHqpNeSN0BbjLliM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QM9h8C/GJ9l7//lxMgAEa90ssI+3WGddnIEmrHtARmkQEtO56Uxd/uLcbM4n5/EP+
+	 AYhGc4Uf2yuqbeDqUsMbushkHpWyS4KRnmevv0iE8zk4zXVZtDSq6qu+6obXHdnCG3
+	 P2Bji66wBL1ymFhNLHlP6Y1aeFWNseR88fv7dSLzChRJUhOgnIirqqZoUnlWozHkTy
+	 ZBgjJvOCjLWlhLJgj0EYIcF5+eajsgMUqC6Km3HpYTrTUTuWsgII5SCdX261eRHiVN
+	 8CnoT2556iVH08CoKr5RvwyWiHdBw6DNU+qGEfKLGVZWCcbRBzWPAXvTgK3PEqB7Wt
+	 98SQtQRTWEKMA==
+Date: Tue, 1 Oct 2024 12:21:32 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Florian Weimer <fweimer@redhat.com>, Christian Brauner <christian@brauner.io>, 
+	Shuah Khan <shuah@kernel.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] introduce PIDFD_SELF
+Message-ID: <20241001-stapfen-darfst-5fe2a8b2c6ec@brauner>
+References: <cover.1727644404.git.lorenzo.stoakes@oracle.com>
+ <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
+ <42df57ac-d89c-4111-a04d-290dd2197573@lucifer.local>
+ <20240930-verbiegen-zinspolitik-cafb730c3c84@brauner>
+ <cdd24e6d-4300-4afe-b2ef-1b8ee528bccc@lucifer.local>
+ <20240930.141721-salted.birth.growing.forges-5Z29YNO700C@cyphar.com>
+ <8b1b376b-3c4f-409a-b8e4-8faf3efecdc8@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8b1b376b-3c4f-409a-b8e4-8faf3efecdc8@lucifer.local>
 
-Introduce test 'test_proc_pid_mem' to address the issue in the TODO.
-Check if VMsize is 0 to determine whether the process has been unmapped.
-The child process cannot signal the parent that it has unmapped itself,
-as it no longer exists. This includes unmapping the text segment,
-preventing the child from proceeding to the next instruction.
+On Mon, Sep 30, 2024 at 03:32:25PM GMT, Lorenzo Stoakes wrote:
+> On Mon, Sep 30, 2024 at 04:21:23PM GMT, Aleksa Sarai wrote:
+> > On 2024-09-30, Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> > > On Mon, Sep 30, 2024 at 02:34:33PM GMT, Christian Brauner wrote:
+> > > > On Mon, Sep 30, 2024 at 11:39:49AM GMT, Lorenzo Stoakes wrote:
+> > > > > On Mon, Sep 30, 2024 at 12:33:18PM GMT, Florian Weimer wrote:
+> > > > > > * Lorenzo Stoakes:
+> > > > > >
+> > > > > > > If you wish to utilise a pidfd interface to refer to the current process
+> > > > > > > (from the point of view of userland - from the kernel point of view - the
+> > > > > > > thread group leader), it is rather cumbersome, requiring something like:
+> > > > > > >
+> > > > > > > 	int pidfd = pidfd_open(getpid(), 0);
+> > > > > > >
+> > > > > > > 	...
+> > > > > > >
+> > > > > > > 	close(pidfd);
+> > > > > > >
+> > > > > > > Or the equivalent call opening /proc/self. It is more convenient to use a
+> > > > > > > sentinel value to indicate to an interface that accepts a pidfd that we
+> > > > > > > simply wish to refer to the current process.
+> > > > > >
+> > > > > > The descriptor will refer to the current thread, not process, right?
+> > > > >
+> > > > > No it refers to the current process (i.e. thread group leader from kernel
+> > > > > perspective). Unless you specify PIDFD_THREAD, this is the same if you did the above.
+> > > > >
+> > > > > >
+> > > > > > The distinction matters for pidfd_getfd if a process contains multiple
+> > > > > > threads with different file descriptor tables, and probably for
+> > > > > > pidfd_send_signal as well.
+> > > > >
+> > > > > You mean if you did a strange set of flags to clone()? Otherwise these are
+> > > > > shared right?
+> > > > >
+> > > > > Again, we are explicitly looking at process not thread from userland
+> > > > > perspective. A PIDFD_SELF_THREAD might be possible, but this series doesn't try
+> > > > > to implement that.
+> > > >
+> > > > Florian raises a good point. Currently we have:
+> > > >
+> > > > (1) int pidfd_tgid = pidfd_open(getpid(), 0);
+> > > > (2) int pidfd_thread = pidfd_open(getpid(), PIDFD_THREAD);
+> > > >
+> > > > and this instructs:
+> > > >
+> > > > pidfd_send_signal()
+> > > > pidfd_getfd()
+> > > >
+> > > > to do different things. For pidfd_send_signal() it's whether the
+> > > > operation has thread-group scope or thread-scope for pidfd_send_signal()
+> > > > and for pidfd_getfd() it determines the fdtable to use.
+> > > >
+> > > > The thing is that if you pass:
+> > > >
+> > > > pidfd_getfd(PDIFD_SELF)
+> > > >
+> > > > and you have:
+> > > >
+> > > > TGID
+> > > >
+> > > > T1 {
+> > > >     clone(CLONE_THREAD)
+> > > >     unshare(CLONE_FILES)
+> > > > }
+> > > >
+> > > > T2 {
+> > > >     clone(CLONE_THREAD)
+> > > >     unshare(CLONE_FILES)
+> > > > }
+> > > >
+> > > > You have 3 threads in the same thread-group that all have distinct file
+> > > > descriptor tables from each other.
+> > > >
+> > > > So if T1 did:
+> > > >
+> > > > pidfd_getfd(PIDFD_SELF, ...)
+> > > >
+> > > > and we mirror the PIDTYPE_TGID behavior then T1 will very likely expect
+> > > > to get the fd from its file descriptor table. IOW, its reasonable to
+> > > > expect that T1 is interested in their very own resource, not someone
+> > > > else's even if it is the thread-group leader.
+> > > >
+> > > > But what T1 will get in reality is an fd from TGID's file descriptor
+> > > > table (and similar for T2).
+> > > >
+> > > > Iirc, yes that confusion exists already with /proc/self. But the
+> > > > question is whether we should add the same confusion to the pidfd api or
+> > > > whether we make PIDFD_SELF actually mean PIDTYPE_PID aka the actual
+> > > > calling thread.
+> > > >
+> > > > My thinking is that if you have the reasonable suspicion that you're
+> > > > multi-threaded and that you're interested in the thread-group resource
+> > > > then you should be using:
+> > > >
+> > > > int pidfd = pidfd_open(getpid(), 0)
+> > > >
+> > > > and hand that thread-group leader pidfd around since you're interested
+> > > > in another thread. But if you're really just interested in your own
+> > > > resource then pidfd_open(getpid(), 0) makes no sense and you would want
+> > > > PIDFD_SELF.
+> > > >
+> > > > Thoughts?
+> > >
+> > > I mean from my perspective, my aim is to get current->mm for
+> > > process_madvise() so both work for me :) however you both raise a very good
+> > > point here (sorry Florian, perhaps I was a little too dismissive as to your
+> > > point, you're absolutely right).
+> > >
+> > > My intent was for PIDFD_SELF to simply mirror the pidfd_open(getpid(), 0)
+> > > behaviour, but you and Florian make a strong case that you'd _probably_
+> > > find this very confusing had you unshared in this fashion.
+> > >
+> > > I mean in general this confusion already exists, and is for what
+> > > PIDFD_THREAD was created, but I suspect ideally if you could go back you
+> > > might actually do this by default Christian + let the TGL behaviour be the
+> > > optional thing?
+> > >
+> > > For most users this will not be an issue, but for those they'd get the same
+> > > result whichever they used, but yes actually I think you're both right -
+> > > PIDFD_SELF should in effect imply PIDFD_THREAD.
+> >
+> > Funnily enough we ran into issues with this when running Go code in runc
+> > that did precisely this -- /proc/self gave you the wrong fd table in
+> > very specific circumstances that were annoying to debug. For languages
+> > with green-threading you can't turn off (like Go) these kinds of issues
+> > pop up surprisingly often.
+> 
+> Yeah, damn, useful insight that such things do happen in the wild.
+> 
+> >
+> > > We can adjust the pidfd_send_signal() call to infer the correct scope
+> > > (actually nicely we can do that without any change there, by having
+> > > __pidfd_get_pid() set f_flags accordingly).
+> > >
+> > > So TL;DR: I agree, I will respin with PIDFD_SELF referring to the thread.
+> > >
+> > > My question in return here then is - should we introduce PIDFD_SELF_PROCESS
+> > > also (do advise if you feel this naming isn't quite right) - to provide
+> > > thread group leader behaviour?
+> >
+> > Sorry to bike-shed, but to match /proc/self and /proc/thread-self, maybe
+> > they should be called PIDFD_SELF (for tgid) and PIDFD_THREAD_SELF (for
+> > current's tid)? In principle I guess users might use PIDFD_SELF by
+> > accident but if we mirror the naming with /proc/{,thread-}self that
+> > might not be that big of an issue?
+> 
+> Lol, you know I wasn't even aware /proc/thread-self existed...
 
-Signed-off-by: Siddharth Menon <simeddon@gmail.com>
----
- v1->v2: Removed redundant parenthesis, fixed other checkpatch warnings.
- Revised commit message based on feedback.
- 
- tools/testing/selftests/proc/proc-empty-vm.c | 56 +++++++++++++++++---
- 1 file changed, 50 insertions(+), 6 deletions(-)
+Wait until you learn that /proc/$TID thread entries exist but aren't
+shown when you do ls -al /proc, only when you explicitly access them.
 
-diff --git a/tools/testing/selftests/proc/proc-empty-vm.c b/tools/testing/selftests/proc/proc-empty-vm.c
-index b3f898aab4ab..bfb7f8823529 100644
---- a/tools/testing/selftests/proc/proc-empty-vm.c
-+++ b/tools/testing/selftests/proc/proc-empty-vm.c
-@@ -213,6 +213,53 @@ static void vsyscall(void)
- }
- #endif
- 
-+static int test_proc_pid_mem(pid_t pid)
-+{
-+	char buf[4096];
-+	char *line;
-+	int vm_size = -1;
-+
-+	snprintf(buf, sizeof(buf), "/proc/%d/status", pid);
-+	int fd = open(buf, O_RDONLY);
-+
-+	if (fd == -1) {
-+		if (errno == ENOENT)
-+			/* Process does not exist */
-+			return EXIT_SUCCESS;
-+
-+	perror("open /proc/[pid]/status");
-+	return EXIT_FAILURE;
-+	}
-+
-+	ssize_t rv = read(fd, buf, sizeof(buf) - 1);
-+
-+	if (rv == -1) {
-+		perror("read");
-+		close(fd);
-+		return EXIT_FAILURE;
-+	}
-+	buf[rv] = '\0';
-+
-+	line = strtok(buf, "\n");
-+	while (line != NULL) {
-+		/* Check for VmSize */
-+		if (strncmp(line, "VmSize:", 7) == 0) {
-+			if (sscanf(line, "VmSize: %d", &vm_size) == 1)
-+				break;
-+			perror("Failed to parse VmSize.\n");
-+		}
-+		line = strtok(NULL, "\n");
-+	}
-+
-+	close(fd);
-+
-+	/* Check if VmSize is 0 */
-+	if (vm_size == 0)
-+		return EXIT_SUCCESS;
-+
-+	return EXIT_FAILURE;
-+}
-+
- static int test_proc_pid_maps(pid_t pid)
- {
- 	char buf[4096];
-@@ -500,14 +547,11 @@ int main(void)
- #endif
- 		return EXIT_FAILURE;
- 	} else {
--		/*
--		 * TODO find reliable way to signal parent that munmap(2) completed.
--		 * Child can't do it directly because it effectively doesn't exist
--		 * anymore. Looking at child's VM files isn't 100% reliable either:
--		 * due to a bug they may not become empty or empty-like.
--		 */
- 		sleep(1);
- 
-+		if (rv == EXIT_SUCCESS)
-+			rv = test_proc_pid_mem(pid);
-+
- 		if (rv == EXIT_SUCCESS) {
- 			rv = test_proc_pid_maps(pid);
- 		}
--- 
-2.39.5
+> 
+> Yeah, that actually makes sense and is consistent, though obviously the
+> concern is people will reflexively use PIDFD_SELF and end up with
+> potentially confusing results.
+> 
+> I will obviously be doing a manpage patch for this so we can spell it out
+> there very clearly and also in the header - so I'd actually lean towards
+> doing this myself.
+> 
+> Christian, Florian? Thoughts?
 
+I think adding both would be potentially useful. How about:
+
+#define PIDFD_SELF		-100
+#define PIDFD_THREAD_GROUP	-200
+
+This will make PIDFD_SELF mean current and PIDFD_THREAD_GROUP mean
+current->pid_links[PIDTYPE_TGID]. I don't think we need to or should
+mirror procfs in any way. pidfds are intended to be usable without
+procfs at all.
+
+I want to leave one comment on a bit of quirkiness in the api when we
+add this. I don't consider it a big deal but it should be pointed out.
+
+It can be useful to allow PIDFD_SELF or PIDFD_THREAD_GROUP to refer to
+the calling thread even for pidfd_open() to avoid an additional getpid()
+system call:
+
+(1) pidfd_open(PIDFD_SELF, PIDFD_THREAD)
+(2) pidfd_open(PIDFD_SELF, 0)
+
+So if we allow this (Should we allow it?) then (1) is just redundant but
+whathever. But (2) is at least worth discussing: Should we reject (2) on
+the grounds of contradictory requests or allow it and document that it's
+equivalent to pidfd_open(getpid(), PIDFD_THREAD)? It feels like the
+latter would be ok.
+
+Similar for pidfd_send_signal():
+
+// redundant but ok:
+(1) pidfd_send_signal(PIDFD_SELF,         PIDFD_SIGNAL_THREAD)
+
+// redundant but ok:
+(2) pidfd_send_signal(PIDFD_THREAD_GROUP, PIDFD_SIGNAL_THREAD_GROUP)
+
+// weird way to spell pidfd_send_signal(PIDFD_THREAD_GROUP, 0)
+(3) pidfd_send_signal(PIDFD_SELF,         PIDFD_SIGNAL_THREAD_GROUP)
+
+// weird way to spell pidfd_send_signal(PIDFD_SELF, 0)
+(4) pidfd_send_signal(PIDFD_THREAD_GROUP, PIDFD_SIGNAL_THREAD)
+
+I think all of this is ok but does anyone else have a strong opinion?
 
