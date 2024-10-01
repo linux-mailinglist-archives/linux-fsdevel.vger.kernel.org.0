@@ -1,76 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-30525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A2B98C269
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC4198C26F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4071F26360
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 16:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356D5284B7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 16:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AC31CB50B;
-	Tue,  1 Oct 2024 16:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5059F1CCB58;
+	Tue,  1 Oct 2024 16:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="gVrh5Ykh"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="gQdL286E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A9C1CC89A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 16:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D471CCB37
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 16:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727798834; cv=none; b=KWFnuFrAlV6E90yvf9O6+YMAKykhRxcz47uY9kNcc/BplP8sSCOvfYBoIrOK71XAlwQ801H5aXfakeEQeh3CqE/mpuivXYgJTF09CvZ3/aeNnkWZi24tlganSEhVWh+xMB+lHrk/r5LR+rb+pueWBCi1knLha5JRdBFVkQnEyZ0=
+	t=1727798837; cv=none; b=T0PfJk/XqLfBfoJl0uKqDQC/42VORtf6sHsesBTRC+2enZmKZt/DvC40hdDVqF6Q5PH8tR0U3j4pbTZVa/FlUON3GJmluVGmwi7vLt5Oa+cOoF63H/2FJC79sUoh2ZtuW5kMZr+HeA741UUkqN7PxwEEwCeSwiw+zqNGAd4lmrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727798834; c=relaxed/simple;
-	bh=Q6gtuJzM/MF65bP/ly/fmxi6CUiczezK+tibtuC6KK8=;
+	s=arc-20240116; t=1727798837; c=relaxed/simple;
+	bh=Cq07DZYYTuLqQ4gxwqCLLHBNKJv4iDz96fE7XrIs4Yk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WDoJApC1fQ+pgm7MGfugtRs/vsFGHk0SR+DMS8+kvUpw02ZdmqAxwsToK/4aKzbQbgt9HsqVQplmxo6P6p8QGE6FfCcXt78P42AY1KGPhoBhUXby072E9fVxLJZJiobktP//T4TPb5hSRE+phU7p+KkjQXhgjZxKdYfxTRU62nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=gVrh5Ykh; arc=none smtp.client-ip=209.85.216.42
+	 In-Reply-To:To:Cc; b=GFwKZ6CJDbrUCAsuIQsmqJZVAvfKoifGSGpD3+fPWIciI5WUMdS1bw7WOCBC4boCcOtQOOMLpV6LOKdVER/IqO83lLfqiUsqd36KD2KFEuvRtzLMLxeFv+4FRjBMB1ZgSvJReIVyIcUr4yU0PyWCRBuA9RcQndlWOs04YsSjNLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=gQdL286E; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e053f42932so4227972a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 09:07:12 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b90ab6c19so22626185ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 09:07:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727798832; x=1728403632; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727798835; x=1728403635; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FOwX8zEWq9u2vqkDVwGK82xZureIgOdXeRz6EPpdBWc=;
-        b=gVrh5YkhSYJsePM9K2pFclvjEbCb0hbrM1DM3T1mCK8owlbSxPcfLPSHBLT9UPIBp0
-         ZZ78xchhVxYaYSDRJjNTdhujQDzlkLtZls3O2Tqa8v1E0TL8sX5JnYkWX5wJpXt/0h+E
-         TJdUhJXlvJECKZ6hxEv2UMarIbyf/ix+rS7HEbru6vnHQRRH5GUqEdVkUoKYFvsmN5Zh
-         J13D77XhtpDnVN5bonuBA+5HwKv/g+trBmoMiyUDcYreJGLSlZopFq5bi4Ol25cqPB1G
-         0V3ZJbxSv5gpK4XxrJdaeFC6xLlorw6b5q51VaD94+3Su/1MbyWGfdEwjYNlEvWz9Lo3
-         S50Q==
+        bh=pxvPbFdPQ1tC+j3wFHGGOQBUzN++1F4GTwbS3f8RUbU=;
+        b=gQdL286EriOvKuyIIAfyek5awxMP6bl6wgvBevWfpq9TulYGm7jWarTNrbF1fRUsLy
+         wGjIFVtxRjyVvWdgMIC3at2JaT5LVT1AM1VTwaOMVR+EVS/VNzo0dXWu2q8hZa1VMAnu
+         564/nLuybd9x2M6Bau7S7Eq/ZfX2R4qCDOftkLvygLNjSvCOB4o8ynFNeRSfEP4cJ+Hi
+         XSYiWSerPJk7RmJKqKS6g7yAUTus/Rqa5iF3afbihMrySeYAonqRCBMVDTJcJjmOCrAy
+         q5E+Xj4KkQ1AApM62rnzgMz1ReuNVNroNg89OnBDFq6cMICNiCAtGpAPxTjSGz6AZqOH
+         BbRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727798832; x=1728403632;
+        d=1e100.net; s=20230601; t=1727798835; x=1728403635;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FOwX8zEWq9u2vqkDVwGK82xZureIgOdXeRz6EPpdBWc=;
-        b=A8l+9ZL9/KAQK6eFxkboBJrnEUI6Q5ViY9bEo4b6e+CZbIFMzKYdSPNbt904hteMvk
-         Ifs1HupiG1MqiG1cby0qoFcYWcUzMtneCjv3bjvfQ6iV2Wri3MVb7vZN1EJz65GhkW3V
-         pahuozaqu1/18qa2tD3Qe2XxCMaqUzP88RRrLW9lSlhq0ZsIny0OepvQK3A+X1s6EZLc
-         ECfdhfc1uofQftv2xdPajGHZtt0Z3sA/75edQZmhPasmcJ3+TFYulktBq4U/5T30oNCo
-         6LH66UlzDKlG1Hm5faFR7FOYlDGs7jRrgmYP8QJZ4eVWxAJsia3Ee6o7KOK6ItRWJRJY
-         1gxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX62w1+MQggo7FgFoZlglULIdNUFEOSzwwNYmVnJBJTQEY48z/m42uaWIGG/mkwkMJF9jo5j7qgK9m3t9L+@vger.kernel.org
-X-Gm-Message-State: AOJu0YyypN3id+KwmtsQ4Rnn5monVwBKpZhSsi6kMkGSvdYhSmzwUM1M
-	O542smq9tyTrq/1okoqumoAILw6r5eS9v/41qQgK1E5NQ/9VUsp4XNIl8oLxd7E=
-X-Google-Smtp-Source: AGHT+IG+QoJp6SaYR4NX7gvJQsxk2XpCmBA5X0cJPckGFJwiDNphfS2kILfudd4XZsrEP9ImoMA9pw==
-X-Received: by 2002:a17:90b:4a86:b0:2e0:a9e8:b9c1 with SMTP id 98e67ed59e1d1-2e1846aff84mr236832a91.22.1727798832417;
-        Tue, 01 Oct 2024 09:07:12 -0700 (PDT)
+        bh=pxvPbFdPQ1tC+j3wFHGGOQBUzN++1F4GTwbS3f8RUbU=;
+        b=YMuOoaZsWEODowOWMhLJoQS4vFZqvoMziaoRvZ69gIZabp2bRgsf1Y0IHSXYyUfFKy
+         FrYJwTBT2UKhMva5PV4uJpS8HAL4fZVH0P0a6D9y+cHewSS/CXZwVVfD+WY2qWCtTQWe
+         uHsh8iOIPLof6mm3pstaA84YQz0fO2Lp+J7zMbLNM8/XgVZYthiJGS8E+J0Mcahyuh4x
+         YYrJ+q/0pftVwJpSyoNO/bDLBPVaP5Ri0dbGAFtT93tyZ/88ukuAyZL8sdrtL6gwubV4
+         1uzes8x37CLrhEe8pplje9aEJOhnhhlWFt54R6ZU98x5uBbjsSGNvE2a12/xIDp1L8GH
+         h+9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXeOSGvFF24oVumc9Uyv8Q1+lTy3wdUkxJRaQ7NlTQ4AToEVUbPCDljx6dAC2Wbejisiy1WaaJqi/30yQN6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJEMiaPbimJNb4Wrd0ilG0Q2W9jjaOhedvuGsmFK00J1c9iZaZ
+	0sHTTgpY/fA4qtneYtb51Jw1KFHZwDQylHXh9ZB+SSeHdlHHA8KNwycqSsKcNqM=
+X-Google-Smtp-Source: AGHT+IH2Sm4Er88BRFmxFtoVQlQZa6M14xX+NOC0OSBp2pCUlTzjnB+u1q8ipbNjt5+sqIq3C7HKbw==
+X-Received: by 2002:a17:90b:3b52:b0:2e0:8784:d420 with SMTP id 98e67ed59e1d1-2e1848013e7mr226286a91.21.1727798835139;
+        Tue, 01 Oct 2024 09:07:15 -0700 (PDT)
 Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1d7d47sm13843973a91.28.2024.10.01.09.07.09
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1d7d47sm13843973a91.28.2024.10.01.09.07.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 09:07:12 -0700 (PDT)
+        Tue, 01 Oct 2024 09:07:14 -0700 (PDT)
 From: Deepak Gupta <debug@rivosinc.com>
-Date: Tue, 01 Oct 2024 09:06:10 -0700
-Subject: [PATCH 05/33] riscv: Call riscv_user_isa_enable() only on the boot
- hart
+Date: Tue, 01 Oct 2024 09:06:11 -0700
+Subject: [PATCH 06/33] riscv/Kconfig: enable HAVE_EXIT_THREAD for riscv
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,7 +78,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-v5_user_cfi_series-v1-5-3ba65b6e550f@rivosinc.com>
+Message-Id: <20241001-v5_user_cfi_series-v1-6-3ba65b6e550f@rivosinc.com>
 References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
 In-Reply-To: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -105,74 +104,48 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
  atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
  alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Andrew Jones <ajones@ventanamicro.com>, 
- Conor Dooley <conor.dooley@microchip.com>
+ rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.14.0
 
-From: Samuel Holland <samuel.holland@sifive.com>
+riscv will need an implementation for exit_thread to clean up shadow stack
+when thread exits. If current thread had shadow stack enabled, shadow
+stack is allocated by default for any new thread.
 
-Now that the [ms]envcfg CSR value is maintained per thread, not per
-hart, riscv_user_isa_enable() only needs to be called once during boot,
-to set the value for the init task. This also allows it to be marked as
-__init.
-
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Deepak Gupta <debug@rivosinc.com>
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
- arch/riscv/include/asm/cpufeature.h | 2 +-
- arch/riscv/kernel/cpufeature.c      | 4 ++--
- arch/riscv/kernel/smpboot.c         | 2 --
- 3 files changed, 3 insertions(+), 5 deletions(-)
+ arch/riscv/Kconfig          | 1 +
+ arch/riscv/kernel/process.c | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
-index 45f9c1171a48..ce9a995730c1 100644
---- a/arch/riscv/include/asm/cpufeature.h
-+++ b/arch/riscv/include/asm/cpufeature.h
-@@ -31,7 +31,7 @@ DECLARE_PER_CPU(struct riscv_cpuinfo, riscv_cpuinfo);
- /* Per-cpu ISA extensions. */
- extern struct riscv_isainfo hart_isa[NR_CPUS];
- 
--void riscv_user_isa_enable(void);
-+void __init riscv_user_isa_enable(void);
- 
- #define _RISCV_ISA_EXT_DATA(_name, _id, _subset_exts, _subset_exts_size, _validate) {	\
- 	.name = #_name,									\
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index c0986291696a..7117366d80db 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -920,12 +920,12 @@ unsigned long riscv_get_elf_hwcap(void)
- 	return hwcap;
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 22dc5ea4196c..808ea66b9537 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -182,6 +182,7 @@ config RISCV
+ 	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
+ 	select HAVE_STACKPROTECTOR
+ 	select HAVE_SYSCALL_TRACEPOINTS
++	select HAVE_EXIT_THREAD
+ 	select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
+ 	select IRQ_DOMAIN
+ 	select IRQ_FORCED_THREADING
+diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+index e3142d8a6e28..1f2574fb2edb 100644
+--- a/arch/riscv/kernel/process.c
++++ b/arch/riscv/kernel/process.c
+@@ -201,6 +201,11 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+ 	return 0;
  }
  
--void riscv_user_isa_enable(void)
-+void __init riscv_user_isa_enable(void)
++void exit_thread(struct task_struct *tsk)
++{
++
++}
++
+ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
  {
- 	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICBOZ))
- 		current->thread_info.envcfg |= ENVCFG_CBZE;
- 	else if (any_cpu_has_zicboz)
--		pr_warn_once("Zicboz disabled as it is unavailable on some harts\n");
-+		pr_warn("Zicboz disabled as it is unavailable on some harts\n");
- }
- 
- #ifdef CONFIG_RISCV_ALTERNATIVE
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 0f8f1c95ac38..e36d20205bd7 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -233,8 +233,6 @@ asmlinkage __visible void smp_callin(void)
- 	numa_add_cpu(curr_cpuid);
- 	set_cpu_online(curr_cpuid, true);
- 
--	riscv_user_isa_enable();
--
- 	/*
- 	 * Remote cache and TLB flushes are ignored while the CPU is offline,
- 	 * so flush them both right now just in case.
+ 	unsigned long clone_flags = args->flags;
 
 -- 
 2.45.0
