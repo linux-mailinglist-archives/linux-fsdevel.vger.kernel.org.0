@@ -1,138 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-30488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0523C98BACA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:16:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A694798BB08
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 13:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 709B1B23EAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA2881C232D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 11:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770421BF7FA;
-	Tue,  1 Oct 2024 11:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DFA1BFE01;
+	Tue,  1 Oct 2024 11:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WPTQA4Xw"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="adaidGRe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425591BF333
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 11:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A3C1BFDF4
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 11:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727781353; cv=none; b=LazCuERjav0onUbqLtwrknRR5bvfq1cf40W6BtMRhyzxk+Q5KvKCPlAXHS2+IxviP6NQrhc6Ry+fvSGPqzZyP+89Fb8oy7j0+L65DPCtQRfkBU13RxY5xNfkglY00bF+DNoUn99vFQXvQVgRrgmTMNOAqIYvaEnxnQFCcNsva1Y=
+	t=1727782150; cv=none; b=VbpjRx2Yknlkf9M5AnSEHkZPgaBB5vDd1o1OPJOw0wuWTZs5L59k8lTLol58yyGkc6WriOljid2TFMRf5zqHTZYlyqoWycD5Z7bgodmq7v8C6SaDVa7lCEHiiudlhSA4dAy3HofPCcbJNEL9+HItYxZ2rjsmKl+P33NF8fC9dls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727781353; c=relaxed/simple;
-	bh=75htphhgA085Ed8d9ndrShWFVyE9Crb9bXv3CKbhqHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PV6IFa4j5j7ZUfgdOiJ0XaBCWkVMq8VPBCLSO3cEkJzEUaPPJEhQKrOx0MUPCcll01GxYlHJ5UMBtmk3nh9YcEeMUbQjPmwz8Mp5j1p9LsTQfo0GVncxmHDEB6WJElyx7wOwlA1ID/N2Mox6ZbKYWfO4DdWd1G7pZW06QyWGqJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WPTQA4Xw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727781351;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NIVZImqQH49iyAAF5H9hztBo3T/3c+Ny3Vzoq1Av9pM=;
-	b=WPTQA4XwWPEGEn0T4upx7KKZDgkjIAwUTajD0DAId9AS9VMZDohfaXOmkqGqjOBfEI82q9
-	6dPBv58FdIv7nYHTbJIwugnxCRpecP3j5TLO32kuImS4VjvbM33FKcduXuDiJPxO2S6oPr
-	b/xJEwqwE5g0QHqjvAthtvrvTZAZMmM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-584-gpYJf8bhNRKEkSMww0yRxw-1; Tue,
- 01 Oct 2024 07:15:45 -0400
-X-MC-Unique: gpYJf8bhNRKEkSMww0yRxw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 68422194511F;
-	Tue,  1 Oct 2024 11:15:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.88])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D20FF1944B21;
-	Tue,  1 Oct 2024 11:15:31 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  1 Oct 2024 13:15:29 +0200 (CEST)
-Date: Tue, 1 Oct 2024 13:15:17 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Stas Sergeev <stsp2@yandex.ru>
-Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Florent Revest <revest@chromium.org>, Kees Cook <kees@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Benjamin Gray <bgray@linux.ibm.com>, Helge Deller <deller@gmx.de>,
-	Zev Weiss <zev@bewilderbeest.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-fsdevel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH v3] add group restriction bitmap
-Message-ID: <20241001111516.GA23907@redhat.com>
-References: <20240930195958.389922-1-stsp2@yandex.ru>
+	s=arc-20240116; t=1727782150; c=relaxed/simple;
+	bh=wRYe1vcQI0lZ4YwSx4XKpg3rYqAFEJunm9v7pgh1H1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ti3CN1RnWjJKRwa5vUf+j4QgGERaQ2LtHbiii0NR1guB4nubL2EUDG8jqM7TYHMABoglX/kEwx032WnvppzSo8hExpE4YZzhiC6Fs2R+YXRVvWhPZW4K1rCfdplryPpc+pkdffV+g/6/sjJPsZczjLtRqXXKS4JZL7Xb8J5O1FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=adaidGRe; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37ccd50faafso3480304f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 04:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727782147; x=1728386947; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C0EGqao/z/3uTPQ94VdscyZy2iIMPcbVgjbB5vcmiAM=;
+        b=adaidGReAMjv7H+AYMtEOGAOHxoiIgw7QQZ/eKSOTS7vYtqAECZfnWBAb/DFkAQrjG
+         F2vEgnsC5R8VjAO5m5ttTytaPM1quKVO857VCyX7GmOsH31GS1kD9L+A6hTuauRYN/DH
+         Jyp62jAjEfKt74PB4blJtCyxNzLFHiRb5f46P/QTg9k5WgmbZKtnnyaC1SqHwM6e1oUX
+         nNmVjr5hkuHJLOkXUYhNIxN81iUHzBuSCsQoW3o0Gvk2jRqglISsd+C/iWZNWdrOt2jB
+         5/00aD9cVV2H7v9m78cp3SG3gYFQOfo6lBTTAxEsCF38EaezACk9YwuJ3bJAUTi4h6NR
+         Nu4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727782147; x=1728386947;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C0EGqao/z/3uTPQ94VdscyZy2iIMPcbVgjbB5vcmiAM=;
+        b=WJPoWdDQgYYVPDQ+QHXT7FmZ9CXbiFwILlUUW5syn/wgRUlI+EVqipImjMFxKgzpad
+         z6Bcw21Q52P7Y49kYPZ9FgwtlN2FdbiF6e4RNzPM8zfL1OyckQaIcZivFmrKbzk5B/aJ
+         Y8DuIdswg2Y5YeJKZIJzzK05ilXQtTER9a42HQ+gIR9w7SM6Y0x4n9ooSpF+jN5s/kKS
+         xnwA7ShYXxmh9bgboGRbWFfi6atd63IuBRjg3qVqp1uUXHke2Ie9DkcFS4gQ0TwrLawq
+         GAIPiIfwnHnzHimKd0GBC2bPpHXUDSupcBDWQk46AAVWKjDUzrllgV4yuzzVCiUELbiQ
+         zSyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjgmmUgVUnWbx11+8aBuZRaImypmsGaDtWolCgtHInqe7RBbag6unkFr3TuyXFHA/VcjxM8RBKev0uQDA3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2JRhcNWS1onzArGJoitENbF/O9+w5I4KZ+H+5DyBo4oPZ0nNg
+	ZVb78OSbyKUwd27Wx3X2oDsSZfrvQf152+yznSwwylMeAwVNjZb+x+nfxLvu332dPIkneb8jTzv
+	yXu+ancOAAo3QobBY3zn6evu33ynHwdGi26j9
+X-Google-Smtp-Source: AGHT+IHdJuezNC+cQOgCWdRYkNZbxrqMXbT01e/SnhIAXkrXy+UEqZN+0xO+ze21oJFFoxqcCO/UzF62jVvVTatBwGI=
+X-Received: by 2002:adf:e709:0:b0:37c:ccad:733a with SMTP id
+ ffacd0b85a97d-37cd5b3cc45mr8866453f8f.59.1727782147358; Tue, 01 Oct 2024
+ 04:29:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930195958.389922-1-stsp2@yandex.ru>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com> <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
+In-Reply-To: <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 1 Oct 2024 13:28:53 +0200
+Message-ID: <CAH5fLgjCA77nAYqZLus7TWbW7mOKC1MKn+jJL-_tpQSR-h-r8w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I can't comment the intent, just some nits about implementation.
+On Tue, Oct 1, 2024 at 10:22=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+> +impl<T: MiscDevice> MiscDeviceRegistration<T> {
+> +    /// Register a misc device.
+> +    pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error=
+> {
+> +        try_pin_init!(Self {
+> +            inner <- Opaque::try_ffi_init(move |slot: *mut bindings::mis=
+cdevice| {
+> +                // SAFETY: The initializer can write to the provided `sl=
+ot`.
+> +                unsafe { slot.write(opts.into_raw::<T>()) };
+> +
+> +                // SAFETY: We just wrote the misc device options to the =
+slot. The miscdevice will
+> +                // get unregistered before `slot` is deallocated because=
+ the memory is pinned and
+> +                // the destructor of this type deallocates the memory.
+> +                // INVARIANT: If this returns `Ok(())`, then the `slot` =
+will contain a registered
+> +                // misc device.
+> +                to_result(unsafe { bindings::misc_register(slot) })
+> +            }),
+> +            _t: PhantomData,
+> +        })
+> +    }
 
-On 09/30, Stas Sergeev wrote:
->
->  struct group_info {
->  	refcount_t	usage;
-> +	unsigned int	restrict_bitmap;
+Note that right now this can only be used in the module init function
+if the registration is stored in a pinned box. We need the in-place
+initialization change to fix that.
 
-Why not unsigned long?
+Does anyone want to revive the in-place initialization patch?
 
->  int groups_search(const struct group_info *group_info, kgid_t grp)
->  {
->  	unsigned int left, right;
-> @@ -105,7 +108,7 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
->  		else if (gid_lt(grp, group_info->gid[mid]))
->  			right = mid;
->  		else
-> -			return 1;
-> +			return mid + 1;
+Link: https://lore.kernel.org/rust-for-linux/20240328195457.225001-1-wedson=
+af@gmail.com/
 
-Suppose we change groups_search()
-
-	--- a/kernel/groups.c
-	+++ b/kernel/groups.c
-	@@ -104,8 +104,11 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
-				left = mid + 1;
-			else if (gid_lt(grp, group_info->gid[mid]))
-				right = mid;
-	-		else
-	-			return 1;
-	+		else {
-	+			bool r = mid < BITS_PER_LONG &&
-	+				 test_bit(mid, &group_info->restrict_bitmap);
-	+			return r ? -1 : 1;
-	+		}
-		}
-		return 0;
-	 }
-
-so that it returns, say, -1 if the found grp is restricted.
-
-Then everything else can be greatly simplified, afaics...
-
-Oleg.
-
+Alice
 
