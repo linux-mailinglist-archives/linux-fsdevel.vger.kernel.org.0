@@ -1,117 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-30495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5590398BC87
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 14:45:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D59A98BCAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 14:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9C6BB24569
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 12:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05524B241BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 12:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501CF1C32E7;
-	Tue,  1 Oct 2024 12:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0E41C3F1B;
+	Tue,  1 Oct 2024 12:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qa86wiHY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J5x8Q9UD"
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="xwg3lWQB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137F0188A01;
-	Tue,  1 Oct 2024 12:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A60A1C2DB1;
+	Tue,  1 Oct 2024 12:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727786721; cv=none; b=R+XuNA1f94QrDT391vex4Uo4Y7enu3SNOsOGRjflMsZhwGZysIXtMMtEDvEsDXWC0Q/guxbPnt+jfRm8mNkOInMIK1PZT3GPtV3AenfEe7p+ubSh6WviYRoOEnxVtTUUEVSefZDrzUfJ2Z2ffGUDVZOAnHgy7MSRFBMCJObA9MA=
+	t=1727787004; cv=none; b=AYMVZcTmKeZZkushNrqXsfitO3kjZOeorwwVlqmJA2npA3MwnOCBaO0hmnAXxPNBrtRSYmcu42DQ8yvpnubgcfsSYErsNE8ILIcbNcuvY8olEtl6tSROcZp9OZwFomIn6eIv3xV1so2SzHuGfKmF7xUEkoUEWnAhbNcu+cG/vFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727786721; c=relaxed/simple;
-	bh=yv21nIoxt2G1+TKHhwI6It6b6JK37ExoWIj1knINT+M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WYFhtiDYIwSgqFfGwxCnIqNc7nzgRn3a0E3bRtrRDFyctWu7V5AGDGx1e+iJrHMdqUZmQE9Bfa8WKP2M/Z66Q+bglvgHeGdw0gaSyLUlqvVJ7ibwoNSLvnAxMnCFdwjXyXHHGQ7zUTUpM4qHp2WKVqO7gfhKJxygFV/nUdwkeTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qa86wiHY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J5x8Q9UD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727786717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wloN27YoSxiWKp6fQGqBt4c8axyymw0Hk/QN5VGPdHc=;
-	b=Qa86wiHY5udGbTL/4RbGP4MQElJwzeGrubSygjC1tQRy4zfMQXolM4/rdSgHW4aJ4pa7Sx
-	Q+O/4+vGx/sNJTbKYXMz5OLOImXaYf16vuEWJGfu9jGd7Pe8Oe4wko1CKa3r1Wmo/BxmpV
-	KBm+5T4xozujbGHa6wPPK8WpyQM15uWJnEuiRgimTY2zeOcCwWdlezQwO0yXiEQRFdxwXO
-	F81jdaerQPF+4+x4zENY5l572B4SqKZGduMGTwWUtFj5dqgYuIRy2piVLxTiUZMzRYeEAt
-	Ilm2DMAemuc8XGtm4muAJ2r/8epa7DzGpWnwN3YdoRfheVaCCRI+1tin3061Yg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727786717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wloN27YoSxiWKp6fQGqBt4c8axyymw0Hk/QN5VGPdHc=;
-	b=J5x8Q9UDN+URvo6b7cPp4+Jh2nNorxNY4jIijs4dArCgLFGPkpanNKVIjGpOrcWyCk6yoJ
-	fNP1c9ZTZ+79dgBA==
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
- <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-In-Reply-To: <4aa41dcb6f4be736355506dd500c4d255e008764.camel@kernel.org>
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
- <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87a5g79aag.ffs@tglx>
- <874j6f99dg.ffs@tglx>
- <b300fec8b6f611662195e0339f290d473a41607c.camel@kernel.org>
- <878qv90x6w.ffs@tglx>
- <4933075b1023f466edb516e86608e0938de28c1d.camel@kernel.org>
- <87y138zyfu.ffs@tglx>
- <79a32ab9308d6e63e066aa17c5c2492b51b55850.camel@kernel.org>
- <87plokzuy6.ffs@tglx>
- <4aa41dcb6f4be736355506dd500c4d255e008764.camel@kernel.org>
-Date: Tue, 01 Oct 2024 14:45:17 +0200
-Message-ID: <8734lgyote.ffs@tglx>
+	s=arc-20240116; t=1727787004; c=relaxed/simple;
+	bh=xns8hsxhIdD6+hI7mmFB5qJiP3BTBo67OOjHhk9I9Tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FMt9AAM6cAUOyd2IjFOHsxbQ7diJOvsmD0O2/2NFB6B2si9ZTtbjkNiz/6ChKLAdARtYIT6Y5YhhEbzSd/fSEIn03mlqaQLrzhaZfSgv2WkkpBJZ2P4dR+cDtw4Ni6gBWAIW/gfo5c2MQj008GkKUodrl0vcp5Y61u3ubmxwOfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=xwg3lWQB; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=v2VbEpiu02sSfttNZ1FIT6I0JoTTAy8v78m159FGc9c=;
+	t=1727787002; x=1728219002; b=xwg3lWQB2SmD+yEeHiW8rBym9RlQ2WCxPnDPO2olVqsxE13
+	jJHmqltEGeumQUO5txmJhdzRFnctVI2o+4SEN7AvhpvjQMOqDPxrY86mwP3nBhPX+1qjUp43+XyF7
+	Dj0D2jpinEj/rn63KKSeP+lVWShf3465Ulxrk9pmwa83AL6kWZyzc7zBd1y2xUvXTSd3PTNKCDjbB
+	aEi2Eb7zvhA5yLpXAonvY5MBom5TB7rX+RDlKCwQU1hVqo2FPy8T/NeZA44s4jSTgdfRgQY93674C
+	xTUaIXKSbxILnnn2JoxyORyUb1TwEERdYFGI9tBMclBOpGn2YXjrdVtxZd1cYyDg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1svcK7-00079U-U7; Tue, 01 Oct 2024 14:49:52 +0200
+Message-ID: <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
+Date: Tue, 1 Oct 2024 14:49:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regression] getdents() does not list entries created after
+ opening the directory
+To: =?UTF-8?Q?Krzysztof_Ma=C5=82ysa?= <varqox@gmail.com>
+Cc: yangerkun <yangerkun@huawei.com>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
+ <ZvvonHPqrAqSHhgV@casper.infradead.org>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Language: en-US, de-DE
+In-Reply-To: <ZvvonHPqrAqSHhgV@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727787002;408a80b2;
+X-HE-SMSGID: 1svcK7-00079U-U7
 
-On Tue, Oct 01 2024 at 05:45, Jeff Layton wrote:
-> On Mon, 2024-09-30 at 23:35 +0200, Thomas Gleixner wrote:
->> > I certainly wouldn't rule out a workqueue job calling that function,
->> > but this is something we do while dirtying an inode, and that's not
->> > typically done in interrupt context.
->> 
->> The reason I'm asking is that if it's always syscall context,
->> i.e. write() or io_uring()/RPC request etc., then you can avoid the
->> whole global floor value dance and make it strictly per thread, which
->> simplifies the exercise significantly.
->> 
->
-> I'm not sure I follow what you're proposing here.
->
-> Consider two threads doing writes serially to different files. IOW, the
-> second thread enters the write() syscall after the first thread returns
-> from its write(). In that situation, the second timestamp mustn't
-> appear to be earlier than the first (assuming no backward clock jump,
-> of course).
->
-> How would we ensure that with only per-thread structures?
+On 01.10.24 14:18, Matthew Wilcox wrote:
+> On Tue, Oct 01, 2024 at 01:29:09PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+>>> 	DIR* dir = opendir("/tmp/dirent-problems-test-dir");
+>>>
+>>> 	fd = creat("/tmp/dirent-problems-test-dir/after", 0644);
+> 
+> "If a file is removed from or added to the directory after the most
+> recent call to opendir() or rewinddir(), whether a subsequent call to
+> readdir() returns an entry for that file is unspecified."
+> 
+> https://pubs.opengroup.org/onlinepubs/007904975/functions/readdir.html
+> 
+> That said, if there's an easy fix here, it'd be a nice improvement to
+> QoI to do it, but the test-case as written is incorrect.
 
-Bah. Right. Ignore my sleep deprived rambling.
+Many thx Willy!
+
+Which leads to a question:
+
+Krzysztof, how did you find the problem? Was there a practical use case
+(some software or workload) with this behavior that broke and made your
+write that test-case? Or is that a test-program older and part of your
+CI tests or something like that?
+
+Ciao, Thorsten
+
+
 
