@@ -1,83 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-30558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE0D98C359
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:25:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C50AA98C3B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2901C2434C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 16:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01C311C23A51
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 16:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BD01CB534;
-	Tue,  1 Oct 2024 16:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45FE1CB524;
+	Tue,  1 Oct 2024 16:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kt3ZiVnQ"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BSLk+XZD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80DC1CB513;
-	Tue,  1 Oct 2024 16:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641CD2A1D2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 16:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727799827; cv=none; b=gXorZmRAX8V7DKRWkARnpD3AVVS4in2atOjhm6TQO2WgPsd7H/BSvSqNBSBV+pelnk8P0iAUu5JSz1ufptU7dEMZVjLPAE+hCCoFo1tGIQUxJ+MoIjpgjp67duWfFUwg+m+Toy5rKXuZX+uD2cDoC6STTU/vM4+I3Y84CCziU+o=
+	t=1727801033; cv=none; b=seq/7r3Q1rjxzZSsxRygu9GnjOlO3XwrhRXArlo2NMO/tY+GcvwIXIOoV71TyefF8D8JJTQivpqPUNR7qsONrMaHRcryzlpIRrkX5RD69AGfsct4V6akfYG96NBm7kZuh9LzEWLmTTtykrDKtcgORURXuPw6irejxZhUFtYdvEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727799827; c=relaxed/simple;
-	bh=w1g+MZ8OSr/yI8Fxcdx00lY1A/TRv9HBlLNAipFFr4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E8gCg8VxswC6m8scLTsmQbqI9FB4MsfgtGSbQ4EL/ruiKDrlFFex5WvAk7HMvu3kWXxAzppxFquppi40PIqFIn3iNR/hLaezpxMObcSIPzI0s68aAgRNCNANVe/CovO/1slieSgrIcRcwjK37uhR/MTuSTSSdzs3NpAOyKJu8jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kt3ZiVnQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70583C4CEC6;
-	Tue,  1 Oct 2024 16:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727799826;
-	bh=w1g+MZ8OSr/yI8Fxcdx00lY1A/TRv9HBlLNAipFFr4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kt3ZiVnQmIb8+1XZ90iic2VM1jfsyrND5B4ffPweDTWhMOiqLSg8NggcpsKJQQzAT
-	 fYshWYHV3OCZHoBd3QpRA5vaJ3H0uTIhvQyFK+mkjycQJSz9PyeA/VFKMUVw2wcjTW
-	 nww5w4oxIPPZj4JftoHAFJhDqITWfTH0S69I4fi7pUPsUBM1rDw3xUqdCUu/hFpelN
-	 w+8rsT0uQYEfA+rU72UpXCZYEttyUltTImUSsrEM+6i8dljg1UQMSXBEzZOPkUSBQx
-	 gwYl6aUzfgi/lBIwG07o3VQYJkRInrnFRxFre40mKG4OHMTIeYTcIZtbSOFW6Odseq
-	 KeNx+LcN5mT+w==
-Date: Tue, 1 Oct 2024 10:23:43 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, hare@suse.de,
-	sagi@grimberg.me, martin.petersen@oracle.com, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
-	bcrl@kvack.org, dhowells@redhat.com, bvanassche@acm.org,
-	asml.silence@gmail.com, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-aio@kvack.org,
-	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <ZvwiD0v3ASF8Hap2@kbusch-mbp.mynextlight.net>
-References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
- <20240930181305.17286-1-joshi.k@samsung.com>
- <20241001092047.GA23730@lst.de>
+	s=arc-20240116; t=1727801033; c=relaxed/simple;
+	bh=+cyq0kmWN6KB34sPrRQYecF7x+xdDpSrvpVly7NNnNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BfIr5MCnROZcFGYcpVEGj6KiDSbueGTSlFpjE8pmXxMliGyd0GlYvMRRfwZmdd2qxsUZP9FUMIYvSxCrwao4+NKQ3qknLUVzKpY1d5n+OJWuvAq2BYA6Y4OJrms+U5CRb48NlcGO41ihGzOETqvyzQ8ysq5E3oxfWLLM+wC3Y+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BSLk+XZD; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727801029;
+	bh=+cyq0kmWN6KB34sPrRQYecF7x+xdDpSrvpVly7NNnNU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BSLk+XZDnvKmbF8XvuVT5b8SGFHw9sdQD8epLkVwGh2h6+8rSNWgCac4GL6KK6iSO
+	 ZhmoqxDMMRPXQvyzVATPgzDtl8RNI3RdYKEw0DFA4QNnO1exi/6EeJCUvE0lTFN4DC
+	 Sy4mgEEb9uXrfBIIvbWvvjJONHnleSv98/VAZpEmQba1q5eIiliQFQZM+HktIo2pKo
+	 u/00FdmgCCM/0ibsfa06OZ6wHZXjkZXrXNXCahDPsB1bM7SAj/Fc4s07KlVeYoW9Jn
+	 Elo8UD+2ql5giuGBLJNKLbUDCyEoB7FjlyLXfuZivDYVzb4rrLZhHhUfiUQkl4UPAr
+	 tzqL9r0w/iWvQ==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 39D7617E1060;
+	Tue,  1 Oct 2024 18:43:49 +0200 (CEST)
+Date: Tue, 1 Oct 2024 18:43:44 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Steven Price <steven.price@arm.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Christian Brauner <brauner@kernel.org>,
+ dri-devel@lists.freedesktop.org, Al Viro <viro@zeniv.linux.org.uk>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: Add FOP_UNSIGNED_OFFSET to fop_flags
+Message-ID: <20241001184344.14ded785@collabora.com>
+In-Reply-To: <20240920102802.2483367-1-liviu.dudau@arm.com>
+References: <20240920102802.2483367-1-liviu.dudau@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001092047.GA23730@lst.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 01, 2024 at 11:20:48AM +0200, Christoph Hellwig wrote:
-> Any reason you completely ignored my feedback on the last version
-> and did not even answer?
+On Fri, 20 Sep 2024 11:28:02 +0100
+Liviu Dudau <liviu.dudau@arm.com> wrote:
+
+> Since 641bb4394f40 ("fs: move FMODE_UNSIGNED_OFFSET to fop_flags")
+> the FMODE_UNSIGNED_OFFSET flag has been moved to fop_flags and renamed,
+> but the patch failed to make the changes for the panthor driver.
+> When user space opens the render node the WARN() added by the patch
+> gets triggered.
 > 
-> That's not a very productive way to work.
+> Fixes: 641bb4394f40 ("fs: move FMODE_UNSIGNED_OFFSET to fop_flags")
+> Cc: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 
-I think because he's getting conflicting feedback. The arguments against
-it being that it's not a good match, however it's the same match created
-for streams, and no one complained then, and it's an existing user ABI.
-FDP is a the new "streams", so I really don't see a big deal here. I
-understand you have use cases that have filesystems intercept the hints
-for different types of devices, but I don't see these use cases as
-mutally exclusive. Supporting this one doesn't prevent other uses.
+Queued to drm-misc-fixes.
+
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index 34182f67136c1..c520f156e2d73 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1383,6 +1383,7 @@ static const struct file_operations panthor_drm_driver_fops = {
+>  	.read = drm_read,
+>  	.llseek = noop_llseek,
+>  	.mmap = panthor_mmap,
+> +	.fop_flags = FOP_UNSIGNED_OFFSET,
+>  };
+>  
+>  #ifdef CONFIG_DEBUG_FS
+
 
