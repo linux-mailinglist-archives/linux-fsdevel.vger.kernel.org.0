@@ -1,148 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-30568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB6898C5F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 21:20:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD5798C6AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 22:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4A5284390
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 19:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF90E1C231F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 20:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6D11CCEE1;
-	Tue,  1 Oct 2024 19:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D0F1CEAA3;
+	Tue,  1 Oct 2024 20:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Gav4q8hn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward201b.mail.yandex.net (forward201b.mail.yandex.net [178.154.239.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658271C32FA
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 19:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A715E1CCED2;
+	Tue,  1 Oct 2024 20:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727810422; cv=none; b=AdqiiYvxJjWiRn40jnDkH2RLwQczLrk6yRHCtu87UpF5LWr1Z/9PuebhI7OImHVod4IvqRXgpfP9FchGqtERAnySkoYP6hK2lIyK7pqIXLLDQxEqzXEEzW/Eew9HH5zGyArfFduhnbna/l+ZZYGXebO3eUlFhuexz1jOlwVUP9U=
+	t=1727813943; cv=none; b=lsRFalQH9eXkz689iPhEqiFHJ1dLDnqCu37WdmOv7eVAu2ap8oUzPTdYMc2nZ46m7FxVShmQFgyjgjWv/n1MGrgaA9CsNmgFVFA1aZs2I5onpW4E4aYCzZxE1tCOAKKs2J3f24u4ZlS62trXdtrcLBca9ShFQY1rY62Y5FjAE+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727810422; c=relaxed/simple;
-	bh=l8OYaEgK8rWIvqiCcS9aOfiCpVz6pegQvvwXGV+5ddg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ovf68YrVRa4nV4t/lPnoBfB3coHn7C8RlfKqF0M9xLrxPHCv7dFBPbjDvI6KM0jZA/ntak2lKi0UhMKnAJgGc/6xJkiQm/XYc54XW3Yu1nUlMOizCfYwMgqqJHEPgA5pfJB99w1leszWQSi9rSwxCfKRMRQK9NNFt66lxekZKbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1925177fdso56615035ab.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 12:20:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727810420; x=1728415220;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GpD9/fvZE/BXOJ9tA2sRSNvX4bC2KiiW9AZPVj6j7Pg=;
-        b=ebdQrSyZOiTJeEhpaNcxgedi48EUUAiCMrw4OMprDGgMU/Gj0jAJxs64SN0sVoYFMG
-         2BVwMecu6g0tLjkXLoxAg1C4eG2x1ssVRXmPONcbVNCtRU5o8xgz47eKo7FfKPA8xTY9
-         dasFDsfq4VWkntG7YxUaBlSVkslwNPuNBuKp5FfcWfHnd6YDdnxeB+dNwo3IQ9MwNQjB
-         mhTxfFRI3yQRRFFxLkXWBuQpsII7Q8Dpzn9+v7o5o7kJv11Z8TZXIqkzc1FBEMv3gpjE
-         IKu5GwOdXTFsbPY/thXzvYRq2A8hc6ow3BKE9cD/BWyxxPaPVuYwUDMJeklmHl8pPmGN
-         zVFw==
-X-Gm-Message-State: AOJu0Yz6SG7X0RHAGxAUD66cecv5sd17seEL9RZr3DJ+vYF2NNDDyLoD
-	Nez92R2dUIAFJRYEpd8NjsN6gxcOObOcQUxVt5NOQUlLn0gZvTBGAvgoC8QOJ0y3pscA+eeAij3
-	P6EwoZRDMoUgdnKoToqQlSkhftKu31RJkpGRBA9c4vN9XSgPDSviwqIo=
-X-Google-Smtp-Source: AGHT+IFm+ztl6vR3+lrL4Gle17B1HZdm0JeMgYfyjtT9afU8WEZdxcK2bTNBBzsUyFcdGh0XljrNHYnk0BFBt4uwz+lB77/aMN2y
+	s=arc-20240116; t=1727813943; c=relaxed/simple;
+	bh=WHSeu36YYDeAR7t8fRMQ1RqDbdEG9rP8gtPP9nxG704=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RrVvWMPWAZL/OvcA0ZfI6A2pR4iecHkmxtifuavazKHQSPldIK6AwiST7n6ps+KaiavXpJmPniUL3qozMIoYSAeDnLAKQh0QKuYAO+gria4iA5Dus1N8hWK68LH6mMX/1lQ5th9QYkueu+AI43Mq02CkN0zwkjhOWYawCy5C0ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=Gav4q8hn; arc=none smtp.client-ip=178.154.239.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from forward100b.mail.yandex.net (forward100b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d100])
+	by forward201b.mail.yandex.net (Yandex) with ESMTPS id F2CC863AA0;
+	Tue,  1 Oct 2024 23:13:12 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:3b0f:0:640:9181:0])
+	by forward100b.mail.yandex.net (Yandex) with ESMTPS id 2CF2E608E4;
+	Tue,  1 Oct 2024 23:13:05 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 1DhPnWAMbCg0-IC0MOBqb;
+	Tue, 01 Oct 2024 23:13:03 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1727813583; bh=wpve//yw/aM5VisuFaR4Q9jmRtS+exuTk91SdXEuo9I=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=Gav4q8hnTkkPJ3VYnqEduLlzUy59qfI+aqS9N3LvwKR+ljsVKXw84/cPOy824+5JH
+	 zLStglEAGzrqHiPfDwVUYFHJI972FCkV2kFd6gzDWl4SDKP00wt4bzK2P32rada4pX
+	 58KdoTX7ndA54+S30poyWf6E0O7D0Xfyg4/bToK0=
+Authentication-Results: mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Stas Sergeev <stsp2@yandex.ru>
+To: linux-kernel@vger.kernel.org
+Cc: Stas Sergeev <stsp2@yandex.ru>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Florent Revest <revest@chromium.org>,
+	Kees Cook <kees@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Helge Deller <deller@gmx.de>,
+	Zev Weiss <zev@bewilderbeest.net>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-fsdevel@vger.kernel.org,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>
+Subject: [PATCH v4] add group restriction bitmap
+Date: Tue,  1 Oct 2024 23:12:57 +0300
+Message-ID: <20241001201257.771832-1-stsp2@yandex.ru>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1386:b0:3a0:92e5:af68 with SMTP id
- e9e14a558f8ab-3a36594a26emr6079915ab.15.1727810420523; Tue, 01 Oct 2024
- 12:20:20 -0700 (PDT)
-Date: Tue, 01 Oct 2024 12:20:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fc4b74.050a0220.f28ec.04c8.GAE@google.com>
-Subject: [syzbot] [fuse?] WARNING in fuse_writepages
-From: syzbot <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Yandex-Filter: 1
 
-Hello,
+This patch adds the group restriction bitmap.
+This bitmap is normally 0 (all bits clear), which means the normal
+handling of the group permission check. When either bit is set, the
+corresponding entry in supplementary group list is treated differently:
+- if group access denied, then deny, as before
+- if group access allowed, then proceed to checking Other perms.
 
-syzbot found the following issue on:
+Added 3 prctl calls: PR_GET_GRBITMAP, PR_SET_GRBITMAP and PR_CLR_GRBITMAP
+to manipulate the bitmap. This implementation only allows to manipulate
+31 bits. PR_CLR_GRBITMAP needs CAP_SETGID, meaning that the user can
+only set the restriction bits but never clear (unless capable).
 
-HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e8bdd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b5201b91035a876
-dashboard link: https://syzkaller.appspot.com/bug?extid=217a976dc26ef2fa8711
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Q: Why is this needed?
+A: When you want to lower the privs of your process, you may use
+suid/sgid bits to switch to some home-less (no home dir) unprivileged
+user that can't touch any files of the original user. But the
+supplementary group list ruins that possibility, and you can't drop it.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The ability to drop the group list was proposed by Josh Tripplett:
+https://lore.kernel.org/all/0895c1f268bc0b01cc6c8ed4607d7c3953f49728.1416041823.git.josh@joshtriplett.org/
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a585cdb91cda/disk-e32cde8d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dbeec5d7b296/vmlinux-e32cde8d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/000fd790e08a/bzImage-e32cde8d.xz
+But it wasn't considered secure enough because the group may restrict
+an access, not only allow. My solution avoids that problem, as when you
+set a bit in the restriction bitmap, the group restriction still
+applies - only the permission is withdrawn. Another advantage is that
+you can selectively restrict groups from the list, rather than to drop
+them all at once.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com
+Changes in v4: check bitmap directly in groups_search() (Oleg Nesterov)
+Changes in v3: add may_setgroups() for !CONFIG_MULTIUSER
+  (fixes test bot problem)
+Changes in v2: add PR_CLR_GRBITMAP and make the bits otherwise unclearable.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_write_file_get fs/fuse/file.c:1989 [inline]
-WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_write_file_get fs/fuse/file.c:1986 [inline]
-WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_writepages+0x497/0x5a0 fs/fuse/file.c:2368
-Modules linked in:
-CPU: 0 UID: 0 PID: 5296 Comm: kworker/u8:8 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: writeback wb_workfn (flush-0:52)
-RIP: 0010:fuse_write_file_get fs/fuse/file.c:1989 [inline]
-RIP: 0010:fuse_write_file_get fs/fuse/file.c:1986 [inline]
-RIP: 0010:fuse_writepages+0x497/0x5a0 fs/fuse/file.c:2368
-Code: 00 00 00 44 89 f8 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 79 b6 90 fe 48 8b 7c 24 08 e8 af 6f 27 08 e8 6a b6 90 fe 90 <0f> 0b 90 41 bf fb ff ff ff eb 8b e8 59 b6 90 fe 48 8b 7c 24 18 be
-RSP: 0018:ffffc900044ff4a8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffc900044ff4f8 RCX: 0000000000000000
-RDX: ffff88802d42da00 RSI: ffffffff82fcd286 RDI: 0000000000000001
-RBP: ffff88805c994aa0 R08: 0000000000000000 R09: ffffed100b9329d7
-R10: ffff88805c994ebb R11: 0000000000000003 R12: ffffc900044ff840
-R13: ffff88805c994880 R14: ffff88805f330000 R15: ffff88805c994d50
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020055000 CR3: 000000005df4a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x166/0xfa0 fs/fs-writeback.c:1658
- writeback_sb_inodes+0x603/0xfa0 fs/fs-writeback.c:1954
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2134
- wb_do_writeback fs/fs-writeback.c:2281 [inline]
- wb_workfn+0x294/0xbc0 fs/fs-writeback.c:2321
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
 
-
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: Christian Brauner <brauner@kernel.org>
+CC: Jan Kara <jack@suse.cz>
+CC: Jens Axboe <axboe@kernel.dk>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Florent Revest <revest@chromium.org>
+CC: Kees Cook <kees@kernel.org>
+CC: Palmer Dabbelt <palmer@rivosinc.com>
+CC: Charlie Jenkins <charlie@rivosinc.com>
+CC: Benjamin Gray <bgray@linux.ibm.com>
+CC: Oleg Nesterov <oleg@redhat.com>
+CC: Helge Deller <deller@gmx.de>
+CC: Zev Weiss <zev@bewilderbeest.net> (commit_signer:1/12=8%)
+CC: Samuel Holland <samuel.holland@sifive.com>
+CC: linux-fsdevel@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: Eric Biederman <ebiederm@xmission.com>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Josh Triplett <josh@joshtriplett.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/namei.c                 | 13 +++++++++++--
+ include/linux/cred.h       |  5 +++++
+ include/uapi/linux/prctl.h |  4 ++++
+ kernel/groups.c            | 15 +++++++++++----
+ kernel/sys.c               | 18 ++++++++++++++++++
+ 5 files changed, 49 insertions(+), 6 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/namei.c b/fs/namei.c
+index 4a4a22a08ac2..7818aed7b02f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -373,8 +373,17 @@ static int acl_permission_check(struct mnt_idmap *idmap,
+ 	 */
+ 	if (mask & (mode ^ (mode >> 3))) {
+ 		vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
+-		if (vfsgid_in_group_p(vfsgid))
+-			mode >>= 3;
++		int rc = vfsgid_in_group_p(vfsgid);
++
++		if (rc) {
++			unsigned int mode_grp = mode >> 3;
++
++			if (mask & ~mode_grp)
++				return -EACCES;
++			if (rc > 0)
++				return 0;
++			/* If we hit restrict_bitmap (rc==-1), then check Others. */
++		}
+ 	}
+ 
+ 	/* Bits in 'mode' clear that we require? */
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 2976f534a7a3..97fc0a2105dc 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -25,6 +25,7 @@ struct inode;
+  */
+ struct group_info {
+ 	refcount_t	usage;
++	unsigned int	restrict_bitmap;
+ 	int		ngroups;
+ 	kgid_t		gid[];
+ } __randomize_layout;
+@@ -83,6 +84,10 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
+ {
+ 	return 1;
+ }
++static inline bool may_setgroups(void)
++{
++	return 1;
++}
+ #endif
+ 
+ /*
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 35791791a879..2a9f3e0c9845 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -328,4 +328,8 @@ struct prctl_mm_map {
+ # define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec */
+ # define PR_PPC_DEXCR_CTRL_MASK		0x1f
+ 
++#define PR_GET_GRBITMAP			74
++#define PR_SET_GRBITMAP			75
++#define PR_CLR_GRBITMAP			76
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/groups.c b/kernel/groups.c
+index 9b43da22647d..700fe980e82b 100644
+--- a/kernel/groups.c
++++ b/kernel/groups.c
+@@ -20,6 +20,7 @@ struct group_info *groups_alloc(int gidsetsize)
+ 		return NULL;
+ 
+ 	refcount_set(&gi->usage, 1);
++	gi->restrict_bitmap = 0;
+ 	gi->ngroups = gidsetsize;
+ 	return gi;
+ }
+@@ -88,7 +89,9 @@ void groups_sort(struct group_info *group_info)
+ }
+ EXPORT_SYMBOL(groups_sort);
+ 
+-/* a simple bsearch */
++/* a simple bsearch
++ * Return: 0 if not found, 1 if found, -1 if found but restricted.
++ */
+ int groups_search(const struct group_info *group_info, kgid_t grp)
+ {
+ 	unsigned int left, right;
+@@ -104,8 +107,12 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
+ 			left = mid + 1;
+ 		else if (gid_lt(grp, group_info->gid[mid]))
+ 			right = mid;
+-		else
+-			return 1;
++		else {
++			if (mid >= 31 || !((1 << mid) &
++					group_info->restrict_bitmap))
++				return 1;
++			return -1;
++		}
+ 	}
+ 	return 0;
+ }
+@@ -222,7 +229,7 @@ SYSCALL_DEFINE2(setgroups, int, gidsetsize, gid_t __user *, grouplist)
+ }
+ 
+ /*
+- * Check whether we're fsgid/egid or in the supplemental group..
++ * Check whether we're fsgid/egid or in the supplemental group.
+  */
+ int in_group_p(kgid_t grp)
+ {
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 4da31f28fda8..ed12ac6f5a8a 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2784,6 +2784,24 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 	case PR_RISCV_SET_ICACHE_FLUSH_CTX:
+ 		error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
+ 		break;
++	case PR_GET_GRBITMAP:
++		if (arg2 || arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = current_cred()->group_info->restrict_bitmap;
++		break;
++	case PR_SET_GRBITMAP:
++		/* Allow 31 bits to avoid setting sign bit. */
++		if (arg2 > (1U << 31) - 1 || arg3 || arg4 || arg5)
++			return -EINVAL;
++		current_cred()->group_info->restrict_bitmap |= arg2;
++		break;
++	case PR_CLR_GRBITMAP:
++		if (arg2 || arg3 || arg4 || arg5)
++			return -EINVAL;
++		if (!may_setgroups())
++			return -EPERM;
++		current_cred()->group_info->restrict_bitmap = 0;
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
+-- 
+2.46.2
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
