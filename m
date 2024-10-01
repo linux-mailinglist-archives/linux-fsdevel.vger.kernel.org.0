@@ -1,145 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-30438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A09F98B68E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 10:09:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95E498B6A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 10:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72B1C1C22064
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 08:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C12FB22069
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 08:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106501BE223;
-	Tue,  1 Oct 2024 08:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A8519ABCB;
+	Tue,  1 Oct 2024 08:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r4YSsT6q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337861BDAAA
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 08:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D65A199FB7
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 08:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727770170; cv=none; b=gxpWaU4bfW5Jx4H5sMKKEjClT6RN4pFXjjEFWISf0SA1IZ5zGOmnSSeEGLo/sRGhmdg7jDsylNcJx1reevLojJz8PaNAL2FOOoZLh5nntfQ7Cuzr6fGDwa2twqfXVP9DFOsOPu54FBEnKf0GjwHHWYz2/8SavikHOz5SVitVM/Y=
+	t=1727770846; cv=none; b=nD63xgwSlRncWgNOpDkTdlQxTUJj6QWYMWDl/gqQSf9w2kXJWI6cgcux2Kg0M8u5Lg7m5svdBFESZSo1UWVur+5ZSvaJtIJLrhxVWJxi7mhGu6H/FvvcTbzSlTVC6dSfIUPqFAbqWJN6UdyKR/yoGTeQNEoVStZIkzQ238t9djU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727770170; c=relaxed/simple;
-	bh=EbGBpRHnvl6IvzXCA9jp3xcrqQjFWk+0/sKdxxv7f5A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qtzWkT9zKF1kTKKqN4CfeCmZqsQf1YP4UViUAnE4PMqW444VcUkxcUIVYA44Jcchaj+LMy1woB84oozxqyA4FFcVvmAhz4peJlfd0+0eSU6IOX3G5p3J/wqIB+5GFOhlp1dw0Af1KvYTfSjlp/oIe5hYNWN84XsIercyIGN4P/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a342620d49so46781915ab.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 01:09:28 -0700 (PDT)
+	s=arc-20240116; t=1727770846; c=relaxed/simple;
+	bh=4N+ibs1sFppJJYULH32Paj5So960irpOMdhYsZRhbhQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sYT4HcUcSCcQ244YyKA61eQTuJ71ckHUV544L+Klpy7tbEGb7ZS6G848PJFPE3GqjI5jOBduxm8Wiq4c1/zUg4Q/ARBw1oLWlxPVFr9NE6EgSpX3Uv7Iz8rL7azsXBLcBm8EXU8qQIoSOtVEp1zGLXrIpY2iuWU5z/bb7H638w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r4YSsT6q; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37ccd81de57so3239690f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 01:20:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727770843; x=1728375643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KwjqJSGgG+H6oyeqtpNUfZYxj/aohEl0owqW2NF032o=;
+        b=r4YSsT6qtHAkYGO6butlfCotkL7AKlufq12Un7TQfcgtRy4iJWkW4QmPS6kouuGOuR
+         ZWs0zDfZfHw8r9LxlPvlryF6GuKS1XmKe3DN6WiZlcm+ZT8iTCMOodv3fS+C3x6X95tH
+         37lF0p9MQ8Y1+/t+ekAv6OieFaEpsGc4PuDfCD9NkI41k86FABa+3ofiiJlsDgCZ0d+c
+         0jBVvFNjU3FO9/wRvEpAwmuMiONOfzyH5KoY5UJd/a9AZJRMhGK/Nhz7Y/5gva9DpOkT
+         0w+11t4U7vzMeS41cT6ixYPNjOHBqnbH8XqI4OEEDK4Ps1JFpkq3jDiqqDqTZ82+cAHF
+         QX+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727770168; x=1728374968;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C7V6fRL7UjAsnDR6dRn4CiYM7Ws9Jq2H2tMuf/ISe00=;
-        b=byuMzhm39HBqD5vLSzhI7jLu9yAyeHn4oQlpSqYyZKU16aONFEqfhbozICrgaIgPbs
-         8obvJdkxLSdbUycDBsNTGyTDnV5/VVtPahjI2ipwTk47Zy4g6eEwfokBoeez7/26k6UP
-         4nEhzjusABWGmCjPg3NXxIpzO42ixQcsGTNo56WAs1UDU9Bz1ne3txgTW/C2LuaSTOfQ
-         q9aRy8o8M8Y2MlHZoAo//zPBRJviOVLpdYOcnlXtRyFldMdhL2umHCKq/jtD8RGgSKw4
-         Juv7rB1qTA08toxlcA8buUVYXHUr8+EHY+8nNXLPIDUuzR9+iAOVaZS6FlEq0dJqMUIB
-         jZfg==
-X-Gm-Message-State: AOJu0Yxaeclap05ifBUd1HzeUPBIvX9ogdx+BHb+JRmxXLQ7XINbXv36
-	7eciZzudTFxpP1TqqvohgfrTzCZUq0smJ+b8LZbGjyrHN8fJil/41XGdBsqDVXz9dUIBtk2xobO
-	4i6QF7twZZLM+QMcAGTAlxqtrp1YzkGGRDICWWn64jF3YYdN74Z9wzvU=
-X-Google-Smtp-Source: AGHT+IHvwPpOTbWnjjgHECUbOyyXGi3Q2t54HQTs8Eu3KoRGFooAKRrP2mQnEePL+pKAldgpmK4DT0+7ZaCkcLIxFzgM/a4dIHLp
+        d=1e100.net; s=20230601; t=1727770843; x=1728375643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KwjqJSGgG+H6oyeqtpNUfZYxj/aohEl0owqW2NF032o=;
+        b=rPVpoCPhFOkWfw6ogT8afWGXnnV5M6DVpc3JKbZTBhsz+5r2FawKv4xst6q0jMEiS8
+         6TcLOnOsD8kHfJy4oj830kSzbrVrxbB0updWTk5XHp9sdvkeNw/Z2INmv10dy5cY5oTK
+         JzaDC2HIMMfQ+fC+21okzJ5to+kMcBfq+OVrNq+0+rFtNFMXbZrn3bp4fTyG0kTb9vMr
+         hbHATBmmIlv5ncfV40h+IsgxZu5FSJ2EGJsjwrPnJXawSyd3C/1W2N1UM7P7bySmvfZm
+         p3KF+BRdDs86xvb95ebtQNXZi+gBtKq4uapLGWYxEpQODckPTHdcXdKQMUctd5BJ6SUS
+         a7TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMrp6g/WHpbVhb7ebXMCuv63RMPKFpJOZv3gqMzccSwA+f2g3Ba6SneeapBIZ8qoZDqqG6J3iT3Xz0nkru@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+B1r9ER88ilGSKWl/+ARrsIfKJ6S+N5fVA5QWrhkuWoYG0p1h
+	nmV/F23t+xrpP73ph7TUzSWb/26ZeJRstlsaIJGrOIvyQx4K2O/VOuyh6jwT++TC3Wq5wosemgA
+	tAL8CUG54Ltv4D2o+VgRbp+7SQaXVfUmWlVTx
+X-Google-Smtp-Source: AGHT+IEuz+NLxVqHubfGTHjcpcw7MR71fHOixLslnBUog2WWIigqb2G698IyoTMJG2l/y5i+sVBXfSl/bEc8RDk46kg=
+X-Received: by 2002:a05:6000:d02:b0:374:d130:a43b with SMTP id
+ ffacd0b85a97d-37cf289b98amr1332507f8f.4.1727770842386; Tue, 01 Oct 2024
+ 01:20:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:184d:b0:39f:53b3:ca63 with SMTP id
- e9e14a558f8ab-3a345155676mr109902515ab.3.1727770168249; Tue, 01 Oct 2024
- 01:09:28 -0700 (PDT)
-Date: Tue, 01 Oct 2024 01:09:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fbae38.050a0220.6bad9.0051.GAE@google.com>
-Subject: [syzbot] [fuse?] WARNING in fuse_write_file_get (2)
-From: syzbot <syzbot+f69287fa1bf99c7c3321@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+ <20240926-b4-miscdevice-v1-2-7349c2b2837a@google.com> <20240926220821.GP3550746@ZenIV>
+ <20240926224733.GQ3550746@ZenIV> <CAH5fLgick=nmDFd1w5zLSw9tVXMe-u2vk3sBbG-HZsPEUtYLVw@mail.gmail.com>
+ <20240927193809.GV3550746@ZenIV>
+In-Reply-To: <20240927193809.GV3550746@ZenIV>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 1 Oct 2024 10:20:29 +0200
+Message-ID: <CAH5fLghqptxk5LiY3a+k1WX8pf73kJTLf2VxRJBiOPwxZtNmtw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rust: file: add f_pos and set_f_pos
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Sep 27, 2024 at 9:38=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Fri, Sep 27, 2024 at 08:56:50AM +0200, Alice Ryhl wrote:
+>
+> > Okay, interesting. I did not know about all of these llseek helpers.
+> > I'm definitely happy to make the Rust API force users to do the right
+> > thing if we can.
+> >
+> > It sounds like we basically have a few different seeking behaviors
+> > that the driver can choose between, and we want to force the user to
+> > use one of them?
+>
+> Depends...  Basically, SEEK_HOLE/SEEK_DATA is seriously fs-specific
+> (unsurprisingly), and pretty much everything wants the usual relation
+> between SEEK_SET and SEEK_CUR (<SEEK_CUR,n> is the same as <SEEK_SET,
+> current position + n>).  SEEK_END availability varies - the simplest
+> variant is <SEEK_END, n> =3D=3D <SEEK_SET, size + n>, but there are
+> cases that genuinely have nothing resembling end-relative seek
+> (e.g. anything seq_file-related).
+>
+> It's not so much available instances as available helpers; details of
+> semantics may seriously vary by the driver.
+>
+> Note that once upon a time ->f_pos had been exposed to ->read() et.al.;
+> caused recurring bugs, until we switched to "sample ->f_pos before callin=
+g
+> ->read(), pass the reference to local copy into the method, then put
+> what's the method left behind in there back into ->f_pos".
+>
+> Something similar might be a good idea for ->llseek().  Locking is
+> an unpleasant problem, unfortunately.  lseek() is not a terribly hot
+> codepath, but read() and write() are.  For a while we used to do exclusio=
+n
+> on per-struct file basis for _all_ read/write/lseek; see 797964253d35
+> "file: reinstate f_pos locking optimization for regular files" for the
+> point where it eroded.
+>
+> FWIW, I suspect that unconditionally taking ->f_pos_mutex for llseek(2)
+> would solve most of the problems - for one thing, with guaranteed
+> per-struct-file serialization of vfs_llseek() we could handle SEEK_CUR
+> right there, so that ->llseek() instances would never see it; for another=
+,
+> we just might be able to pull the same 'pass a reference to local variabl=
+e
+> and let it be handled there' trick for ->llseek().  That would require
+> an audit of locking in the instances, though...
 
-syzbot found the following issue on:
+Okay, thanks for the explanation. The file position stuff seems pretty
+complicated.
 
-HEAD commit:    cea5425829f7 Add linux-next specific files for 20240930
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=161c439f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41a28720ed564c6a
-dashboard link: https://syzkaller.appspot.com/bug?extid=f69287fa1bf99c7c3321
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+One thing to think about is whether there are some behaviors used by
+old drivers that new drivers should not use. We can design our Rust
+APIs to prevent using it in those legacy ways.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+For now I'm dropping this patch from the series at Greg's request.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/566995596f19/disk-cea54258.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e7c506c1c71d/vmlinux-cea54258.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7fcb4468b8c0/bzImage-cea54258.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f69287fa1bf99c7c3321@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 12 at fs/fuse/file.c:1989 fuse_write_file_get+0xb8/0xf0 fs/fuse/file.c:1989
-Modules linked in:
-CPU: 1 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.12.0-rc1-next-20240930-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: writeback wb_workfn (flush-0:57)
-RIP: 0010:fuse_write_file_get+0xb8/0xf0 fs/fuse/file.c:1989
-Code: ff ff ff ff e8 29 d2 7b fe 09 dd 78 3c e8 e0 cd 7b fe 4c 89 f7 e8 78 79 b8 08 eb 11 e8 d1 cd 7b fe 4c 89 f7 e8 69 79 b8 08 90 <0f> 0b 90 4c 89 e0 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 b0 cd
-RSP: 0018:ffffc900001170d0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff88805dbe4610 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000001
-RBP: ffffc90000117210 R08: ffff88805dbe477b R09: 1ffff1100bb7c8ef
-R10: dffffc0000000000 R11: ffffed100bb7c8f0 R12: 0000000000000000
-R13: 1ffff92000022e28 R14: ffff88805dbe4778 R15: ffff88805dbe4140
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c302213 CR3: 0000000067444000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- fuse_writepages+0x259/0x4f0 fs/fuse/file.c:2368
- do_writepages+0x35d/0x870 mm/page-writeback.c:2683
- __writeback_single_inode+0x14f/0x10d0 fs/fs-writeback.c:1658
- writeback_sb_inodes+0x80c/0x1370 fs/fs-writeback.c:1954
- wb_writeback+0x41b/0xbd0 fs/fs-writeback.c:2134
- wb_do_writeback fs/fs-writeback.c:2281 [inline]
- wb_workfn+0x410/0x1090 fs/fs-writeback.c:2321
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Alice
 
