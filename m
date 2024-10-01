@@ -1,260 +1,364 @@
-Return-Path: <linux-fsdevel+bounces-30519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E699698C205
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 17:49:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C9898C24C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 18:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ECA01F26305
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 15:49:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120C91C23A18
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2024 16:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069151CB321;
-	Tue,  1 Oct 2024 15:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E3B1CB532;
+	Tue,  1 Oct 2024 16:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fEz1q2RS";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fq0NFtct"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EATPRsyy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986E01C7B9D;
-	Tue,  1 Oct 2024 15:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727797758; cv=fail; b=cJF5GwijoMXOY2iNxR2R8SqBDm7HrkLzAusU9IjV9haf+z4gN6ilZ7BcJcgpg+rhzxORiLuVbbE9YvJb7CkQg4SGQu8TLYB3E1VBm4sCLgQjsAcGBvciUYDRpjaOlWCLkYZsYvsQN3szZi0tbkZi88/z8PeLAD3zU3BE7WOtCYQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727797758; c=relaxed/simple;
-	bh=fczhA5ePa/IWdn51py0b+OoDAM5eLn0I3CGn/PSwsR8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RQek7moTSjBB+OzmvZPxXlCjOWIOsaGfLh3fCHYo8DwtLw6yUg4OjtxYZfBku5aDK/svReP1ixnV+m0mzRQMddE/3Pw1qLa/9QrHqE1TWU/ubyqoqax707hmp9dhyHKvwztItA2m492PU9YwMN/0PAwBj48O2hFVHOmF6Y2c1bM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fEz1q2RS; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=fq0NFtct; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491DtaQS014808;
-	Tue, 1 Oct 2024 15:49:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=T9ir8gQJNe5SCwpLzKGH0QRYRFczdrR0nM2+adB/vtw=; b=
-	fEz1q2RSkDjhECKkfoqY4LaP3DX0l7ZX0mu5Ttt9+doFISMKna8C04lFdwsNHJ2W
-	ko+8QdR9eIZJF8banPDJYFwILe51GEvv2gB+SXh8whEskrodKsC1FuYcVz8k990A
-	s4wbNqIVYRq5EMeb4ikw2EA1XdFOqKlOpR7SGQPsAZLIkpAAYeg0QbkroPofADzb
-	R7A+E+blqbisL+FpLRW6kvAyVeE9tnpgOnxHVBm5c+3Z9iYxejjh4sZCNxLRrOXL
-	JQ+ze87Z2LvCqrvMr8DnlRGAH0oxK5QGzE9UOaC3P3p86lf/lcRxaiUaWtDbom5y
-	kUJWZyPLiq8HhiApkm5K9w==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x8d1enf2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Oct 2024 15:49:00 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 491FKx8G040537;
-	Tue, 1 Oct 2024 15:48:59 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2044.outbound.protection.outlook.com [104.47.70.44])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41x887qbhk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Oct 2024 15:48:59 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aBWWAsA+h7Xvb8UgzKNnQyxzr3KI5AzbQKpLPQ8v2rBQJYx2bYULpP9SIQoj3gkvORRl55cpZnfXVvjLwYmTVAolGLUOEceUqB92IazvMbqx6D583OvXOHiCe4wZJDouC4LAoG+tDLM9WS8KqUt9c5wUN+DE5I438XnL49J1OfCCutjcKdqPRkKFTWBV4e6GIH2W5fzozx5Ug0pEMbjw9r+jD2YgIoImsV+edItcPMAnrTBoYtRcbHV+rasCJs8OaYwWK11viaqxgX/xDomvoeG49RZ42807VojxoVbixsFyuG0dye4U2QeF7a196JTXqydo1AAlUz+my0/GCWQogg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T9ir8gQJNe5SCwpLzKGH0QRYRFczdrR0nM2+adB/vtw=;
- b=uYFGICUFoQvJdgre+h7BRkG+StmILHvjaUhx6fAg++yMtG+u3VQ0yfwBX6aebLpsdQcdhRGqDQXGAduz5edOXuD9oc3m/pVe+IFbU0OKQOtxWhdbtviiTi/bf28QM1NRCiaQ9D1PCXwPphju+iCMoMtB8Kz0YyIviIuSgDF1TXF5QSI4j48VkVJr//2E0rpU+/5AQN/tmIvjQsNVFaYQ2O7vas+A+Bpx0Du2IVwfnzS8iLbGPqe7FPc3KNDNLddGj9MCNaWvOIzV7IpjPoeqRDOpnl3gBR0LxnLdXKj5054f77OBXGmpG+Je9is6pB0x2qvwWbTaxbrOTBzPhJwRng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B2F1CB50F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Oct 2024 16:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727798822; cv=none; b=WaI4AXfVEjwlxMrg6tMuOC2epCOod5an3gUpDZlxOaWQTejfQcv8GcmRtKdNW0UoM3LFfBIzXifFbfG9NSdjl2KFbyrUsqPk/jg0nTMciDxWIvHAqrWK0RCWeoXCVNBxdaRKxmrVsIutZW2cBeS9VbCc7gnaKfhJtxNzsdAjM3k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727798822; c=relaxed/simple;
+	bh=m0FIsgogONUZNmfchDshFIQ0w4NVb3xrsAQwcxIIjy4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XlKWP2+6c1fGTjtPuyba1fWMDZavAzVnXD7PDJlDXWCqMumyw86bjarBGNpQSyjxNOuSv93qohMh3AyX4n3rHiuegqStZrjrFuRdz7KfFDOuzPJRW7Z3a/ZbNzAy9/x5Pr9jVuDsXiM2iAWZE0ZwS3g+EOM24V3JZ2deKNBD5+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EATPRsyy; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e09d9f2021so3822770a91.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 09:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T9ir8gQJNe5SCwpLzKGH0QRYRFczdrR0nM2+adB/vtw=;
- b=fq0NFtctLoszX1AU+My5UYy5R8rd2e3bWgyo1k1zE4bR4UzNFdNeso6zDWmgV0tk2mappq+g8+ojTP0C+femqqADYwfR1YSUle0eGz7QE/GTXHwsnDOj5Kau8S3unoeTwmMlL/LjowfES61oWnjqV9QHu3X+cB7JWrFu89KXDVE=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by CO1PR10MB4692.namprd10.prod.outlook.com (2603:10b6:303:99::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Tue, 1 Oct
- 2024 15:48:55 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.8026.005; Tue, 1 Oct 2024
- 15:48:55 +0000
-Message-ID: <8138f79c-7390-4754-b5f0-8320e82f81f8@oracle.com>
-Date: Tue, 1 Oct 2024 16:48:51 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/7] xfs: Validate atomic writes
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-        dchinner@redhat.com, hch@lst.de, cem@kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de,
-        martin.petersen@oracle.com, catherine.hoang@oracle.com,
-        mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
-References: <20240930125438.2501050-1-john.g.garry@oracle.com>
- <20240930125438.2501050-7-john.g.garry@oracle.com>
- <20240930164116.GP21853@frogsfrogsfrogs>
- <7fa598f5-3920-4b13-9d15-49337688713f@oracle.com>
- <20241001144851.GW21853@frogsfrogsfrogs>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20241001144851.GW21853@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM9P250CA0017.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:20b:21c::22) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727798819; x=1728403619; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p/+CAfw719K7trKUOdaKnGov4VX+rClpCqrk7kv+YBo=;
+        b=EATPRsyyj2q81GehYdkE/ZPRkVpxUhaGQPNLwl5bQNm46SaY8JdKO1nQfezQO+L3C+
+         pa1hJX2R2MlKtDJ8uycgj5oUbZagsgL9ik0quQ5TyaHiBwDr1iJ000m/+gZ7H1TeQcm1
+         4XtRyWCv1JFRn8dIHkUj6nD1kPc9NZUKyt8CDWDAOtT8mWcyLa0lwwR37CkZ16DXZxgS
+         wIdN6osroeGGZhncvNLCOVFHDdtI9DjVw5KW2QVC2QeIBNxQ+QCMErY1LExVTkbAh9rl
+         /nGEHP5WAy2wd1a0YoKs9111yc/4//iwyjdkXwnn24JDzdJm6FefeSiTWOGweXFrRmGk
+         QBig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727798819; x=1728403619;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p/+CAfw719K7trKUOdaKnGov4VX+rClpCqrk7kv+YBo=;
+        b=Yd54oWwcSS2wkgdwlvANlM6xqxfYDu5AO4PcQmY67ma3Mer7XgOfoTOuIMO8Suf8Gn
+         4d0S5YHeDb7sNpvzQnuavEQyeO0vJb2Nu3lYPAGsrq0eDrzE+l/NCqj6uX5558bB+Axm
+         H6QfMdZd4USe0T969YidLkqbQCbWdDFveKA8MtrlRHwIRJVLEXa9qF5QTTCsD/YRJGP3
+         CD4ThuPXDFch4qDUFDtXNhZqIQ5/ypn/l1f2b2qoU3Nd9IlyZbvp/f/0mvIpgpdXkQ9Y
+         fabzYIUz1y83dEM5cNuD+7QhKLBHGpCFwngGRqmXVP1TJeBn+NgxUzWKoG92qJEdj9v9
+         oQfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwfY681ld9y5ynm6nchk6asqO8VjFrs2JB63qXA8SBK53UBkA48JgQqlE3xznWW40mffTHRMG2MCkCCpJJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDlHI0etPOp44fm5bWJcUTfv7hMWo8dzK6ZlNJedNon6O4apRX
+	p2dvX3qkifIk3o+GVewewNni0AV0Bi/eWOPCQ4erXRJKik/Grate9TPHzr/iKqQ=
+X-Google-Smtp-Source: AGHT+IEN2dus5eCDv3FJ6JG+o53WejlfJ1X7DX0j+cv1B0CFXJtJs/0I33VncpmVbaQmMUBwG53XiQ==
+X-Received: by 2002:a17:90b:46cd:b0:2d3:ba42:775c with SMTP id 98e67ed59e1d1-2e184521a79mr281772a91.1.1727798818585;
+        Tue, 01 Oct 2024 09:06:58 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1d7d47sm13843973a91.28.2024.10.01.09.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 09:06:58 -0700 (PDT)
+From: Deepak Gupta <debug@rivosinc.com>
+Subject: [PATCH 00/33] riscv control-flow integrity for usermode
+Date: Tue, 01 Oct 2024 09:06:05 -0700
+Message-Id: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CO1PR10MB4692:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a2d51ed-57a8-496a-bab7-08dce2308e11
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aHVUSjdrbDNzRVk2bUkrTk1QS1JBdGVwNi9Ja2theFpNVllQNmNHNHFDaTBL?=
- =?utf-8?B?akFlRmcySDJXdmhxOVpTVkpkN3ZIeWwxZ3owTHlkK2IwbCtPN2gvaENyWnhY?=
- =?utf-8?B?ZU9VQ3lzN09LTmh0cllVZ3JHNWhYZ21WVUJCYVY4TUhYeE1GcTFKeTNnSVVO?=
- =?utf-8?B?T0RJRnF6UjRGajZwQnY5T0psckZmQUVlc2MrV09jWlNNa25LcVM4TlVvWDlj?=
- =?utf-8?B?TUtFZXNONVU1YUd6MHlTSVNTY1dxTnFoZDlBVmVxdnZnNmVDMklRU05zaEd2?=
- =?utf-8?B?Sk5mOWs1Nk1vdmR4M01kNGRlcUUzaHBDUGVjeWhrcGxuQlUwWURodUQ5Qy80?=
- =?utf-8?B?K3VJbEdWK0lyM2VNejBjK1NRbXl4UmhBdlJoNS9XbjBBM0F0cVppdVpYMHdI?=
- =?utf-8?B?Mk9yYk9BcW1TakFBVVRrenZyMWVtajEvaUw2bnFnd0lCVXNnWngrWkdrU1ZF?=
- =?utf-8?B?SUVQOU05bnJkSDVYdnF6N3piUUovTmNzRE5Bak1ZSVE5bWVRQUMrZG9wdmpO?=
- =?utf-8?B?L1VQZWNnaDFRcHpZRjhRWUYzVlozcjBlZFRMejh5WDF2SGJjajArdFJYUWhL?=
- =?utf-8?B?QUZzZVdhUDl3SDZFckZrWEY1YjhyZ040ZklxQ3BGOFBLeEw0dElsbUZrbXV4?=
- =?utf-8?B?bXF4RnNVNU9Mbm4zRXRtcTlNWnRMZW4xNWppK1UrR3RlRjcyVkpKMlY0Zlc5?=
- =?utf-8?B?ZDFMb0ZXU04veHpQb1Fudkk0TjBFaEtHcy9YbGV2QysrNHFzcHBaUE15U2tP?=
- =?utf-8?B?c3QrRlRibFFFVjIvQTdoTnp1R3QrK1VVK000UGsxMjhxVjBIdmhidWJad0cy?=
- =?utf-8?B?WVNUZUdYbStRa0xqTDJhdUtnMGJFaWllbzhiYlRTcGkwVDN3VUhPTFJ2SmVU?=
- =?utf-8?B?RGdsQWIrUWJZOFFoK3NvaTVsNFJ6TXlCNVFCekcxWktyTFhrRTdqZ3BTOVQz?=
- =?utf-8?B?NTFXZ0l4ZExhbTdwRFRYT1dxWFB2OGlCUGp1WnR2UGpjaExtdDhOL2xWbzRx?=
- =?utf-8?B?L1hNaGpVMjBXN3dLM3dmaVc4TSs0YkdnQ2dZcnV1Wk9LSXJ3Vnp0Uk5lRVI3?=
- =?utf-8?B?aTVoZHVwNUJBeWdqQlBPN2o2R0dsSlIrMXFQQnFXNllZOU5qYWJmbmRGUEk2?=
- =?utf-8?B?ZHFucUFYTG9qbWdjOTliR2haOCswVi9MM25oU0QvN3FrV0tsVDdsL2hpaEJm?=
- =?utf-8?B?c29OczN1NXM3Wmp2ajJjc3ZJdXZwejJzTnhJcVJpdmJ4dUFJZGpoYlFza1pt?=
- =?utf-8?B?Rk9sOUdNWXpuMCtybmh6WnpkWDJGckF0MDBsRlR5OGI5dmw3ZFZMUjdTYjZh?=
- =?utf-8?B?TkI4Y0dCd05nTVFLamlNTGZXeFRrQ2xJNlNZZ3Y0cGdZR3NDRzArZ2VPd29W?=
- =?utf-8?B?NHRQcnpybFcvVjVHZWpHVEJvUkxKVUNvTFlPZVlwcStFU1dCM1BvQThOTTVG?=
- =?utf-8?B?d1BHYTVBcVpBRk9HeVo0OVlnd0xONytnQ3F3L280L2lKeHIxWVpSem5WblhL?=
- =?utf-8?B?UGZ1OHhaRk40ZGthVW5KMVl1U2RKTWhRbDdnSndtN252UHp4ZGFTQWI5aUNy?=
- =?utf-8?B?TmVhUjhkOXVLdFFNT1ZySzNkZjBQdVlGMDJ2NUlTVVVMcVJJeklRNk96SDdq?=
- =?utf-8?B?U2xZZ0Fma24zQU9OanlSaWU5dWc2YUF5R0dPWkk3cC9Cdy9RTGJCWTYzRzB1?=
- =?utf-8?B?RFRJVndibUdSc0VqODJXUmovQjNPTVFPMWQwVHErdWV1ZVBZMEZvbGF6TWJt?=
- =?utf-8?B?eVR2TTJwdy81dEJjbk5DVzdYU1lwZUk0a0liS2Y3MnFmdzcyR2J5UGdzenhq?=
- =?utf-8?B?ZlRUOHVFaDhvRHIxVytIUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eG03YWEvZFo2c0ZYaVNuNHM4ZCt0blV5UUNuREFKTDVyYkxoSmxCSVVFOHNP?=
- =?utf-8?B?dkUycFlXWFdubFR6bC9TOFdhN1pSSnhybzgyZkc5UUNzcTZKdzR5VmhsVjhu?=
- =?utf-8?B?bUVaWksxTjR2N3NhUm1xT2kyVnZIK081TURSZmJCaVhwV2M5QjRkc0VRd0Vu?=
- =?utf-8?B?V3duTlUwU0NONklHWVRGeTFWSHFkeFBST1NZcmhCdGhPZGYzMHZyTmVnbXl0?=
- =?utf-8?B?L2JFMjJhek9EN1I2ZEV1WmlJb3NTTEJZbm5FN2NDbHFmdzEvYnQ1VVk3VUMx?=
- =?utf-8?B?b2JBZ1dBUUhUUWdVWXd0aUZpaW1YTmxSWlZCb0dZdlRtQVFEKzlTN2luL2RY?=
- =?utf-8?B?eWhYWTB4enpCbDZ1MGtFL0dITHdaNjhGNnFySkdDSkVhdjVaeHZaZVNsVGVE?=
- =?utf-8?B?dTJ2QnYxUlNCVXc3OWpNc3FoODFFNE00Yy8zaVNiZzVGeXRnTmgwRU41V0p6?=
- =?utf-8?B?dDhVbURRTjBQbTRVS3BSaHZueDZ1RUN0bHBIYkxFYStXL0NQdzlKcElnNk9Z?=
- =?utf-8?B?UmVSeGwxR08xdnU4NzlFRDI5NE8yNUpoZmE4ZSs1c3ZPUjBwYnJOeXRDNGtX?=
- =?utf-8?B?UFppN2NoS09nRGtLd1N0emZXNjRuOWZIRllOSGR3c1RrQ1FHZHgwdkhwUWE3?=
- =?utf-8?B?OTc5bW1pdU5jTnhwOHQrQ1Y0ank2U0JqcERSdzhUK09nSlVpL0ZVQW5mdEoy?=
- =?utf-8?B?d2NkYVFVT3pmdHRINUtWWngraUdKOUtZb2VsMEVFaWxWbTNpMnpRTVRMUTBr?=
- =?utf-8?B?a2FaemNQN0dPV0U0cmNFZE84WG83ZWRmZzJ2ajI0V2hyeWJKZGQxVS9EMmVS?=
- =?utf-8?B?Z0JjOEdRWHlHRnRDajZ6SHNETDB5R1JFcUxXYlI3STQ1dXU2YUZwM0NwTGFt?=
- =?utf-8?B?VDJYYmdUUVdCSDZMSXJ2Y1pRSTNsc2ZDOXY2L3ZFNWxybWdnbzBheTlweEFZ?=
- =?utf-8?B?YWtlR1JpVnZiR0xoUWF4MndoUEFPVG1jdHpaa3loZUxNSHZYTWZzbWxuQStk?=
- =?utf-8?B?Q0Vyd1ozTjJJVUVrNkI2ZHFVTXk2WEh0TkhDY0RVOG5YeCtUWUVoVVlQOWxo?=
- =?utf-8?B?eXphMVVVOUlsQVdqdERNU0RsQ1NpMWFmRlpUQktzS29lRUJ2Zjdjd1p1QUdv?=
- =?utf-8?B?MjlzYis2djB3cmY3ZGs4U1R0YzlxYXRjRk9nS0cyWk5ENXVSK01xaldib3h1?=
- =?utf-8?B?YnBkckpjYVVpVGxwR1BHRjBPb0o1aTJCeWdMa1dKbXBnYmFrcEZPYjVwNlVm?=
- =?utf-8?B?eGEwWXF3b2p2d25YcEpCYjlaLzczUTVhS0FqUy9acmFIT2ViV1Frc0ZjeWZo?=
- =?utf-8?B?R25XUE1xZzVCZ1J2a3VUUjRDMG5FcU9jRkhFZkxub1RjMDF2ajJOTTFMTUZF?=
- =?utf-8?B?akprbmN2TUtBeU4wUDJ4WDJLb2RuNUtxc1IzL0Z4VS8yNWp5cC9idDZuVGty?=
- =?utf-8?B?NHNiRXBMY3h6UkZleW8yV2VITzJZU1VWZW9nSTFZL0k2V3YwSmRXR0d0c3dI?=
- =?utf-8?B?bEZyYUlTd0NFUWVZYlBaUjRHZmFwTFQwQ1F0YndaNUN4ZS9LekdlWXpFWmIz?=
- =?utf-8?B?U3YzaEdVc09XSDF2c2pkTm8yenVoZkZrb1VLNWxhQzIySmZPVFpYNjROc240?=
- =?utf-8?B?ZzVSUkpqcWFYSG9nZEhST2NYOEtEbEFTb2JuZ2dTVXQ1RGw0ZTA4eE5BbU9s?=
- =?utf-8?B?bW4zZmtrbnVoc1NDOGNQUDVIc29QdGJRRDlNdksrUFJFQmdFcDVxcWRmVmtP?=
- =?utf-8?B?cGVpZHY1YWZTcDE2NmMzajBxbmZUalc0alVqNFhtZ3V5ODZZNUh1OG1pY1Vx?=
- =?utf-8?B?WWJKZ0pDRTU0NjdFL0hwSTdHdllhdEovYmJoVEI0QlFUcEdXSjc5emcyVWgz?=
- =?utf-8?B?ODVQNENkNy9KdGhwNitmYkpBNmN6Smk2K2QzdUY1Rkg2d2FHakt2K1dmbVc2?=
- =?utf-8?B?K3NGYTJIWXJUUTlSQXNkeFcyZjA1WTdCalpDWDhvUThmcFlrVWVuUENwcDRY?=
- =?utf-8?B?Z280KzFmTFBPZjE3TndmOE5GVElPZTZDV1lhVHhHWCszRjdDUWpzZ3VDUGth?=
- =?utf-8?B?bm5pTUhDTzZqb2RkT3JzdTJvWmVINjQramU2L3kxamVPZ2VOWCtTTElrR2FO?=
- =?utf-8?Q?ioj/epY2kc0Rbt9/rW8/Nnk5M?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	i6q84XFXAvP9NsEDhd5PBACf43cSihRdH1IU93fb0ySUpsssxNmXxG7USrYhuBYWTXSk5dfLCEeLqDyW69uupcAmj6jVQyRj80PM/Zu/+mlT+j3OSDCw8cTe0/4oxg9V/prfnX9++RZEO98oxBZSAJ5XvMx3tONoKv5d7oJl9h1nCmuXfLz/quD8Ky16eFLDU3wNXRgGoZPTp0pDRJVtdxtdUIkG3E1eBbWiK3CNOAVOpXiWDUVBr967Hqc77oTBbhRVg/yvgM4T67nw41KDhkcNfwXmJLd3Nm3EB4tov6+C4PhuZin6Ekpcb8kBp7CH2Hzrrd2MQmQuzPUV7L0fNrAuvbRRXd0eUcUFHs9ilwCHIeCi2ojMWWSVOI1IdTAQUtmb594Ckd2IX9RIjZ8pCJjzIfZFrPSPWuF+/enr4i0+70k4NTx8lbvSF5Nkr6uZwGMsDlBaqCMKF102RGf3K57LAhNDaBCk+UK8QBsavvVBvvFkjtrmNl4qrIg3imDZu00pumCf0t2Gu1hK6AjOC0hzYHePNU+6CQb0jdu17p7CrTKA6zVAcKiSQAr+JEuZfw3q+vSBRZPz96rcQCTr1ofdRPhL7YALgN6DuoiWzZo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a2d51ed-57a8-496a-bab7-08dce2308e11
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 15:48:55.2417
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fk/v8BVIayUR+inYu2KX4LA/29EUj11D0IclsAqg4fxPRCaeFD519iUe2peINlxMHlj2jlyPyLEeXA6+eB0w6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4692
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_12,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- malwarescore=0 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2410010103
-X-Proofpoint-ORIG-GUID: tOTZFdGEQWujBZvIkb7AOXNKFSubTckx
-X-Proofpoint-GUID: tOTZFdGEQWujBZvIkb7AOXNKFSubTckx
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAO0d/GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS2MD3TLT+FKgnvjktMx4iF5d45RkY2OjNIs00yQjJaDGgqLUtMwKsKH
+ RsbW1ALWj2ONkAAAA
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
+ alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
+ rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>, 
+ David Hildenbrand <david@redhat.com>, 
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Andrew Jones <ajones@ventanamicro.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, Andy Chiu <andy.chiu@sifive.com>
+X-Mailer: b4 0.14.0
 
-On 01/10/2024 15:48, Darrick J. Wong wrote:
->> --- a/fs/iomap/direct-io.c
->> +++ b/fs/iomap/direct-io.c
->> @@ -679,7 +679,12 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter
->> *iter,
->>   			if (ret != -EAGAIN) {
->>   				trace_iomap_dio_invalidate_fail(inode, iomi.pos,
->>   								iomi.len);
->> -				ret = -ENOTBLK;
->> +				if (iocb->ki_flags & IOCB_ATOMIC) {
->> +					if (ret == -ENOTBLK)
->> +						ret = -EAGAIN;
-> I don't follow the logic here -- all the error codes except for EAGAIN
-> are squashed into ENOTBLK, so why would we let them through for an
-> atomic write?
+v5 for cpu assisted riscv user mode control flow integrity.
+zicfiss and zicfilp [1] are ratified riscv CPU extensions.
 
-Right, the errors apart from EAGAIN are normally squashed to ENOTBLK; 
-but I thought that since we would not do this for IOCB_ATOMIC, then just 
-return the actual error from kiocb_invalidate_pages() - apart from 
-ENOTBLK, which has this special treatment.
+Changes in this version are
+- rebased on v6.12-rc1
+- Fixed schema related issues in device tree file
+- Fixed some of the documentation related issues in zicfilp/ss.rst
+  (style issues and added index)
+- added `SHADOW_STACK_SET_MARKER` so that implementation can define base
+  of shadow stack.
+- Fixed warnings on definitions added in usercfi.h when
+  CONFIG_RISCV_USER_CFI is not selected.
+- Adopted context header based signal handling as proposed by Andy Chiu
+- Added support for enabling kernel mode access to shadow stack using
+  FWFT [4]
 
-But I can always just return EAGAIN for IOCB_ATOMIC when 
-kiocb_invalidate_pages() errors, as you suggest below.
+v4 [3] and v3 [2] are earlier versions of patch series.
 
-> 
-> 	if (ret != -EAGAIN) {
-> 		trace_iomap_dio_invalidate_fail(inode, iomi.pos,
-> 						iomi.len);
-> 
-> 		if (iocb->ki_flags & IOCB_ATOMIC) {
-> 			/*
-> 			 * folio invalidation failed, maybe this is
-> 			 * transient, unlock and see if the caller
-> 			 * tries again
-> 			 */
-> 			return -EAGAIN;
-> 		} else {
-> 			/* fall back to buffered write */
-> 			return -ENOTBLK;
-> 		}
-> 	}
+To get more information on kernel interactions with respect to
+zicfilp and zicfiss, patch series adds documentation for
+`zicfilp` and `zicfiss`
 
-Cheers,
-John
+Documentation/arch/riscv/zicfiss.rst
+Documentation/arch/riscv/zicfilp.rst
+
+How to test this series
+=======================
+
+Toolchain
+---------
+$ git clone git@github.com:sifive/riscv-gnu-toolchain.git -b cfi-dev
+$ riscv-gnu-toolchain/configure --prefix=<path-to-where-to-build> --with-arch=rv64gc_zicfilp_zicfiss --enable-linux --disable-gdb  --with-extra-multilib-test="rv64gc_zicfilp_zicfiss-lp64d:-static"
+$ make -j$(nproc)
+
+Qemu
+----
+$ git clone git@github.com:deepak0414/qemu.git -b zicfilp_zicfiss_ratified_master_july11
+$ cd qemu
+$ mkdir build
+$ cd build
+$ ../configure --target-list=riscv64-softmmu
+$ make -j$(nproc)
+
+Opensbi
+-------
+$ git clone git@github.com:deepak0414/opensbi.git -b v6_cfi_spec_split_opensbi
+$ make CROSS_COMPILE=<your riscv toolchain> -j$(nproc) PLATFORM=generic
+
+Linux
+-----
+Running defconfig is fine. CFI is enabled by default if the toolchain
+supports it.
+
+$ make ARCH=riscv CROSS_COMPILE=<path-to-cfi-riscv-gnu-toolchain>/build/bin/riscv64-unknown-linux-gnu- -j$(nproc) defconfig
+$ make ARCH=riscv CROSS_COMPILE=<path-to-cfi-riscv-gnu-toolchain>/build/bin/riscv64-unknown-linux-gnu- -j$(nproc)
+
+Running
+-------
+
+Modify your qemu command to have:
+-bios <path-to-cfi-opensbi>/build/platform/generic/firmware/fw_dynamic.bin
+-cpu rv64,zicfilp=true,zicfiss=true,zimop=true,zcmop=true
+
+vDSO related Opens (in the flux)
+=================================
+
+I am listing these opens for laying out plan and what to expect in future
+patch sets. And of course for the sake of discussion.
+
+Shadow stack and landing pad enabling in vDSO
+----------------------------------------------
+vDSO must have shadow stack and landing pad support compiled in for task
+to have shadow stack and landing pad support. This patch series doesn't
+enable that (yet). Enabling shadow stack support in vDSO should be
+straight forward (intend to do that in next versions of patch set). Enabling
+landing pad support in vDSO requires some collaboration with toolchain folks
+to follow a single label scheme for all object binaries. This is necessary to
+ensure that all indirect call-sites are setting correct label and target landing
+pads are decorated with same label scheme.
+
+How many vDSOs
+---------------
+Shadow stack instructions are carved out of zimop (may be operations) and if CPU
+doesn't implement zimop, they're illegal instructions. Kernel could be running on
+a CPU which may or may not implement zimop. And thus kernel will have to carry 2
+different vDSOs and expose the appropriate one depending on whether CPU implements
+zimop or not.
+
+[1] - https://github.com/riscv/riscv-cfi
+[2] - https://lore.kernel.org/lkml/20240403234054.2020347-1-debug@rivosinc.com/
+[3] - https://lore.kernel.org/all/20240912231650.3740732-1-debug@rivosinc.com/
+[4] - https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-firmware-features.adoc
+
+---
+changelog
+---------
+
+v4
+--
+- rebased on 6.11-rc6
+- envcfg: Converged with Samuel Holland's patches for envcfg management on per-
+thread basis.
+- vma_is_shadow_stack is renamed to is_vma_shadow_stack
+- picked up Mark Brown's `ARCH_HAS_USER_SHADOW_STACK` patch
+- signal context: using extended context management to maintain compatibility.
+- fixed `-Wmissing-prototypes` compiler warnings for prctl functions
+- Documentation fixes and amending typos.
+
+v3
+--
+envcfg:
+logic to pick up base envcfg had a bug where `ENVCFG_CBZE` could have been
+picked on per task basis, even though CPU didn't implement it. Fixed in
+this series.
+
+dt-bindings:
+As suggested, split into separate commit. fixed the messaging that spec is
+in public review
+
+arch_is_shadow_stack change:
+arch_is_shadow_stack changed to vma_is_shadow_stack
+
+hwprobe:
+zicfiss / zicfilp if present will get enumerated in hwprobe
+
+selftests:
+As suggested, added object and binary filenames to .gitignore
+Selftest binary anyways need to be compiled with cfi enabled compiler which
+will make sure that landing pad and shadow stack are enabled. Thus removed
+separate enable/disable tests. Cleaned up tests a bit.
+
+v2
+--
+
+- Using config `CONFIG_RISCV_USER_CFI`, kernel support for riscv control flow
+integrity for user mode programs can be compiled in the kernel.
+
+- Enabling of control flow integrity for user programs is left to user runtime
+
+- This patch series introduces arch agnostic `prctls` to enable shadow stack
+and indirect branch tracking. And implements them on riscv.
+
+Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+
+---
+Andy Chiu (1):
+      riscv: signal: abstract header saving for setup_sigcontext
+
+Clément Léger (1):
+      riscv: Add Firmware Feature SBI extensions definitions
+
+Deepak Gupta (26):
+      mm: helper `is_shadow_stack_vma` to check shadow stack vma
+      riscv/Kconfig: enable HAVE_EXIT_THREAD for riscv
+      riscv: zicfilp / zicfiss in dt-bindings (extensions.yaml)
+      riscv: zicfiss / zicfilp enumeration
+      riscv: zicfiss / zicfilp extension csr and bit definitions
+      riscv: usercfi state for task and save/restore of CSR_SSP on trap entry/exit
+      riscv/mm : ensure PROT_WRITE leads to VM_READ | VM_WRITE
+      riscv mm: manufacture shadow stack pte
+      riscv mmu: teach pte_mkwrite to manufacture shadow stack PTEs
+      riscv mmu: write protect and shadow stack
+      riscv/mm: Implement map_shadow_stack() syscall
+      riscv/shstk: If needed allocate a new shadow stack on clone
+      prctl: arch-agnostic prctl for indirect branch tracking
+      riscv: Implements arch agnostic shadow stack prctls
+      riscv: Implements arch agnostic indirect branch tracking prctls
+      riscv/traps: Introduce software check exception
+      riscv signal: save and restore of shadow stack for signal
+      riscv/kernel: update __show_regs to print shadow stack register
+      riscv/ptrace: riscv cfi status and state via ptrace and in core files
+      riscv/hwprobe: zicfilp / zicfiss enumeration in hwprobe
+      riscv: enable kernel access to shadow stack memory via FWFT sbi call
+      riscv: kernel command line option to opt out of user cfi
+      riscv: create a config for shadow stack and landing pad instr support
+      riscv: Documentation for landing pad / indirect branch tracking
+      riscv: Documentation for shadow stack on riscv
+      kselftest/riscv: kselftest for user mode cfi
+
+Mark Brown (2):
+      mm: Introduce ARCH_HAS_USER_SHADOW_STACK
+      prctl: arch-agnostic prctl for shadow stack
+
+Samuel Holland (3):
+      riscv: Enable cbo.zero only when all harts support Zicboz
+      riscv: Add support for per-thread envcfg CSR values
+      riscv: Call riscv_user_isa_enable() only on the boot hart
+
+ Documentation/arch/riscv/index.rst                 |   2 +
+ Documentation/arch/riscv/zicfilp.rst               | 115 +++++
+ Documentation/arch/riscv/zicfiss.rst               | 176 +++++++
+ .../devicetree/bindings/riscv/extensions.yaml      |  14 +
+ arch/riscv/Kconfig                                 |  20 +
+ arch/riscv/include/asm/asm-prototypes.h            |   1 +
+ arch/riscv/include/asm/cpufeature.h                |  15 +-
+ arch/riscv/include/asm/csr.h                       |  16 +
+ arch/riscv/include/asm/entry-common.h              |   2 +
+ arch/riscv/include/asm/hwcap.h                     |   2 +
+ arch/riscv/include/asm/mman.h                      |  24 +
+ arch/riscv/include/asm/pgtable.h                   |  30 +-
+ arch/riscv/include/asm/processor.h                 |   2 +
+ arch/riscv/include/asm/sbi.h                       |  27 ++
+ arch/riscv/include/asm/switch_to.h                 |   8 +
+ arch/riscv/include/asm/thread_info.h               |   4 +
+ arch/riscv/include/asm/usercfi.h                   |  89 ++++
+ arch/riscv/include/uapi/asm/hwprobe.h              |   2 +
+ arch/riscv/include/uapi/asm/ptrace.h               |  22 +
+ arch/riscv/include/uapi/asm/sigcontext.h           |   1 +
+ arch/riscv/kernel/Makefile                         |   2 +
+ arch/riscv/kernel/asm-offsets.c                    |   8 +
+ arch/riscv/kernel/cpufeature.c                     |  13 +-
+ arch/riscv/kernel/entry.S                          |  31 +-
+ arch/riscv/kernel/head.S                           |  12 +
+ arch/riscv/kernel/process.c                        |  31 +-
+ arch/riscv/kernel/ptrace.c                         |  83 ++++
+ arch/riscv/kernel/signal.c                         | 140 +++++-
+ arch/riscv/kernel/smpboot.c                        |   2 -
+ arch/riscv/kernel/suspend.c                        |   4 +-
+ arch/riscv/kernel/sys_hwprobe.c                    |   2 +
+ arch/riscv/kernel/sys_riscv.c                      |  10 +
+ arch/riscv/kernel/traps.c                          |  42 ++
+ arch/riscv/kernel/usercfi.c                        | 526 +++++++++++++++++++++
+ arch/riscv/mm/init.c                               |   2 +-
+ arch/riscv/mm/pgtable.c                            |  17 +
+ arch/x86/Kconfig                                   |   1 +
+ fs/proc/task_mmu.c                                 |   2 +-
+ include/linux/cpu.h                                |   4 +
+ include/linux/mm.h                                 |   5 +-
+ include/uapi/asm-generic/mman.h                    |   4 +
+ include/uapi/linux/elf.h                           |   1 +
+ include/uapi/linux/prctl.h                         |  48 ++
+ kernel/sys.c                                       |  60 +++
+ mm/Kconfig                                         |   6 +
+ mm/gup.c                                           |   2 +-
+ mm/mmap.c                                          |   1 +
+ mm/vma.h                                           |  10 +-
+ tools/testing/selftests/riscv/Makefile             |   2 +-
+ tools/testing/selftests/riscv/cfi/.gitignore       |   3 +
+ tools/testing/selftests/riscv/cfi/Makefile         |  10 +
+ tools/testing/selftests/riscv/cfi/cfi_rv_test.h    |  83 ++++
+ tools/testing/selftests/riscv/cfi/riscv_cfi_test.c |  82 ++++
+ tools/testing/selftests/riscv/cfi/shadowstack.c    | 362 ++++++++++++++
+ tools/testing/selftests/riscv/cfi/shadowstack.h    |  37 ++
+ 55 files changed, 2178 insertions(+), 42 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240930-v5_user_cfi_series-3dc332f8f5b2
+--
+- debug
+
 
