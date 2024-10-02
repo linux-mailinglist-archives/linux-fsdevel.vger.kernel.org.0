@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-30820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7253998E751
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:47:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D226498E753
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FDFA28865C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:47:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618741F26283
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5F71C9B6B;
-	Wed,  2 Oct 2024 23:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D1D1A0726;
+	Wed,  2 Oct 2024 23:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WQXH2dH+"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="S3porjiK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F0E1C7B7F;
-	Wed,  2 Oct 2024 23:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1682E1C9DC2;
+	Wed,  2 Oct 2024 23:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912740; cv=none; b=K0JuO8CZF5qB5U3NEf5nvb1fTiUqNHpkX/BT+QixITF983nBSu/ASae3FQn2Y9TVn9BzZnpCG5Co81gaYRjF3fWAIXYJXmvG9gwQmcW6lUtOoGMLY/VcfoOTOEK2DL3BbKz9XYnlWcO0cZsjb8V/w6LJKYRMl7B69dV+F4iCeyo=
+	t=1727912743; cv=none; b=uuyu1cy4qxHFvuIwCpVhwrYJqVmdJ5hllQkrsLu8aOHc4JnADnE/Vev5FZ8uJoHlDsfAb+5qobDeubrlQHxweiGVj201UpgITLdnayi+XAgeyD09TK9koxaLcqwUjzQSKr5Gk4ytcTjek5HSKkxo3ZliKl3S7yIP7dtxBJPQyNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912740; c=relaxed/simple;
-	bh=Sa+//KaquEMlmqekUsr7aQ/KhcNfYjdlVFv0NcFuJyM=;
+	s=arc-20240116; t=1727912743; c=relaxed/simple;
+	bh=qKBxsVp/91eSCWgq+8I6tAO54YPVMjb1pJ/8/vbu/9g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uq1/H54tsDQcdKSwB7JHxAZhg3eEX+hy+uMocMLZU+BosxyPd2EiwaG4ADBpgdxWR6I4qau0HJBXaSi0yPVxFir1hsX4UhGhKyaHfP2nBs7LYY5fdLsRniZr41RRlFHXhtaJUfqosBdC3VKEGrU/my6jODPNFbZiZNjE95Hv5gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WQXH2dH+; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=GQFpsGTmzV6mpMa9PjHi31XCYAH/WV3kTsf3IHkxvAa2lNdrLPHpgdtHniVVDImTC2DC8CPPovolka/755HAlCyyFUraZANVVYp1oh5moJK6E5M9sMxTudicddc6C2n/HPIXBROEE/zsJ0szmJ9+rnStpk7F3IYKcttG5Ma/Jv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=S3porjiK; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=a44X2hLHZHM6OEDMyxUHO1xVlMNMtLmqduY2AzXe0HA=; b=WQXH2dH+S1J9YIo6G0O001t96K
-	J5FiSqTRu2ts8uBrtgp7+vm3sVcL9rJDY2x0K3cGx0tLF2Ft8sN50OJWFJcCUMEIb4ihwv8K83qM8
-	j0xJsAd3Soy2U8p9+uTvqu3je5yS0dTvCMbNI+a0qCv2RdNc5vMRf6HUKVi7/9AFPRAH6VhN0jVsU
-	06lFGMoUusQhHd11deSJT7hrzmEnZL0BuygM2JU6jq00BJlXr+cHiH/H0A6DWH+/ytKWn8tcGTkLp
-	oibfaKgYymHDk8q/Q2s0PJDOYvePUNM2Xc0QJkgrTVO4pWIvjc/5WtudxD3RCYRa9sS5UDJwtuCdV
-	YOAVB09g==;
+	bh=QytpkEJz2P1dJL+CmfxoJi8346LIRFv339Bsa+p1XKQ=; b=S3porjiKB8j1yc1P13gIqYyX/u
+	7PmSf6enyYqUSXaev5M2yurMA9//3IHYmZFL5hQ8Tl+aU1b5nDWsh6QW0POaCoR4JQTLD+jPpIE5I
+	VfJYHblM+8f7loAVsR0hBj6degYp9N+sBHcRgqVXTChMkEOYB8stu7o5x0uZwfti8kRtYo8P5hOgM
+	eLQrWem3+Rh9e+YodNjfn+z7wVKQc7DDFggSevcgRQ1moW8XNTc/dhyCYkyGFlOyZLiHSKJR15j6v
+	0xMZOcXyrKWkkB6VaAFCxvLVOS0ug0/gRrBnlnlOz9XlKAt/lIpekWGhqHK0geEG5g80+EXaDABwB
+	wEyThyVQ==;
 Received: from [187.57.199.212] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw928-0045tc-SR; Thu, 03 Oct 2024 01:45:29 +0200
+	id 1sw92D-0045tc-FT; Thu, 03 Oct 2024 01:45:33 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: Hugh Dickins <hughd@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -62,10 +62,11 @@ Cc: linux-mm@kvack.org,
 	smcv@collabora.com,
 	Christoph Hellwig <hch@lst.de>,
 	Theodore Ts'o <tytso@mit.edu>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v5 07/10] tmpfs: Add casefold lookup support
-Date: Wed,  2 Oct 2024 20:44:41 -0300
-Message-ID: <20241002234444.398367-8-andrealmeid@igalia.com>
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH v5 08/10] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
+Date: Wed,  2 Oct 2024 20:44:42 -0300
+Message-ID: <20241002234444.398367-9-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
 References: <20241002234444.398367-1-andrealmeid@igalia.com>
@@ -78,329 +79,155 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Enable casefold lookup in tmpfs, based on the encoding defined by
-userspace. That means that instead of comparing byte per byte a file
-name, it compares to a case-insensitive equivalent of the Unicode
-string.
-
-* Dcache handling
-
-There's a special need when dealing with case-insensitive dentries.
-First of all, we currently invalidated every negative casefold dentries.
-That happens because currently VFS code has no proper support to deal
-with that, giving that it could incorrectly reuse a previous filename
-for a new file that has a casefold match. For instance, this could
-happen:
-
-$ mkdir DIR
-$ rm -r DIR
-$ mkdir dir
-$ ls
-DIR/
-
-And would be perceived as inconsistency from userspace point of view,
-because even that we match files in a case-insensitive manner, we still
-honor whatever is the initial filename.
-
-Along with that, tmpfs stores only the first equivalent name dentry used
-in the dcache, preventing duplications of dentries in the dcache. The
-d_compare() version for casefold files uses a normalized string, so the
-filename under lookup will be compared to another normalized string for
-the existing file, achieving a casefolded lookup.
-
-* Enabling casefold via mount options
-
-Most filesystems have their data stored in disk, so casefold option need
-to be enabled when building a filesystem on a device (via mkfs).
-However, as tmpfs is a RAM backed filesystem, there's no disk
-information and thus no mkfs to store information about casefold.
-
-For tmpfs, create casefold options for mounting. Userspace can then
-enable casefold support for a mount point using:
-
-$ mount -t tmpfs -o casefold=utf8-12.1.0 fs_name mount_dir/
-
-Userspace must set what Unicode standard is aiming to. The available
-options depends on what the kernel Unicode subsystem supports.
-
-And for strict encoding:
-
-$ mount -t tmpfs -o casefold=utf8-12.1.0,strict_encoding fs_name mount_dir/
-
-Strict encoding means that tmpfs will refuse to create invalid UTF-8
-sequences. When this option is not enabled, any invalid sequence will be
-treated as an opaque byte sequence, ignoring the encoding thus not being
-able to be looked up in a case-insensitive way.
-
-* Check for casefold dirs on simple_lookup()
-
-On simple_lookup(), do not create dentries for casefold directories.
-Currently, VFS does not support case-insensitive negative dentries and
-can create inconsistencies in the filesystem. Prevent such dentries to
-being created in the first place.
+Enable setting flag FS_CASEFOLD_FL for tmpfs directories, when tmpfs is
+mounted with casefold support. A special check is need for this flag,
+since it can't be set for non-empty directories.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
-Changes from v4:
-- Squash commit Check for casefold dirs on simple_lookup() here
-- Fails to mount if strict_encoding is used without encoding
-- tmpfs doesn't support fscrypt, so I dropped d_revalidate line
-
-Changes from v3:
-- Simplified shmem_parse_opt_casefold()
-- sb->s_d_op is set to shmem_ci_dentry_ops during mount time
-- got rid of shmem_lookup(), modified simple_lookup()
-
 Changes from v2:
-- simple_lookup() now sets d_ops
-- reworked shmem_parse_opt_casefold()
-- if `mount -o casefold` has no param, load latest UTF-8 version
-- using (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir) when possible
+- Fixed bug when adding a non-casefold flag in a non-empty dir
 ---
- fs/libfs.c |   4 ++
- mm/shmem.c | 119 ++++++++++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 118 insertions(+), 5 deletions(-)
+ include/linux/shmem_fs.h |  6 ++--
+ mm/shmem.c               | 70 ++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 67 insertions(+), 9 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 7b290404c5f9..a168ece5cc61 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -77,6 +77,10 @@ struct dentry *simple_lookup(struct inode *dir, struct dentry *dentry, unsigned
- 		return ERR_PTR(-ENAMETOOLONG);
- 	if (!dentry->d_sb->s_d_op)
- 		d_set_d_op(dentry, &simple_dentry_operations);
-+
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-+		return NULL;
-+
- 	d_add(dentry, NULL);
- 	return NULL;
- }
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index 515a9a6a3c6f..018da28c01e7 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -42,10 +42,10 @@ struct shmem_inode_info {
+ 	struct inode		vfs_inode;
+ };
+ 
+-#define SHMEM_FL_USER_VISIBLE		FS_FL_USER_VISIBLE
++#define SHMEM_FL_USER_VISIBLE		(FS_FL_USER_VISIBLE | FS_CASEFOLD_FL)
+ #define SHMEM_FL_USER_MODIFIABLE \
+-	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
+-#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
++	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL | FS_CASEFOLD_FL)
++#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL | FS_CASEFOLD_FL)
+ 
+ struct shmem_quota_limits {
+ 	qsize_t usrquota_bhardlimit; /* Default user quota block hard limit */
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 162d68784309..3c8c7b34632a 100644
+index 3c8c7b34632a..f07b446b3c98 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -40,6 +40,7 @@
- #include <linux/fs_parser.h>
- #include <linux/swapfile.h>
- #include <linux/iversion.h>
-+#include <linux/unicode.h>
- #include "swap.h"
- 
- static struct vfsmount *shm_mnt __ro_after_init;
-@@ -123,6 +124,8 @@ struct shmem_options {
- 	bool noswap;
- 	unsigned short quota_types;
- 	struct shmem_quota_limits qlimits;
-+	struct unicode_map *encoding;
-+	bool strict_encoding;
- #define SHMEM_SEEN_BLOCKS 1
- #define SHMEM_SEEN_INODES 2
- #define SHMEM_SEEN_HUGE 4
-@@ -3574,6 +3577,9 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
-+	if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
-+		return -EINVAL;
-+
- 	error = simple_acl_create(dir, inode);
- 	if (error)
- 		goto out_iput;
-@@ -3589,7 +3595,12 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	dir->i_size += BOGO_DIRENT_SIZE;
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	inode_inc_iversion(dir);
--	d_instantiate(dentry, inode);
-+
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-+		d_add(dentry, inode);
-+	else
-+		d_instantiate(dentry, inode);
-+
- 	dget(dentry); /* Extra count - pin the dentry in core */
- 	return error;
- 
-@@ -3680,7 +3691,10 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir,
- 	inc_nlink(inode);
- 	ihold(inode);	/* New dentry reference */
- 	dget(dentry);	/* Extra pinning count for the created dentry */
--	d_instantiate(dentry, inode);
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-+		d_add(dentry, inode);
-+	else
-+		d_instantiate(dentry, inode);
- out:
- 	return ret;
- }
-@@ -3700,6 +3714,14 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
- 	inode_inc_iversion(dir);
- 	drop_nlink(inode);
- 	dput(dentry);	/* Undo the count from "create" - does all the work */
-+
-+	/*
-+	 * For now, VFS can't deal with case-insensitive negative dentries, so
-+	 * we invalidate them
-+	 */
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-+		d_invalidate(dentry);
-+
- 	return 0;
- }
- 
-@@ -3844,7 +3866,10 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	dir->i_size += BOGO_DIRENT_SIZE;
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	inode_inc_iversion(dir);
--	d_instantiate(dentry, inode);
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-+		d_add(dentry, inode);
-+	else
-+		d_instantiate(dentry, inode);
- 	dget(dentry);
- 	return 0;
- 
-@@ -4197,6 +4222,9 @@ enum shmem_param {
- 	Opt_usrquota_inode_hardlimit,
- 	Opt_grpquota_block_hardlimit,
- 	Opt_grpquota_inode_hardlimit,
-+	Opt_casefold_version,
-+	Opt_casefold,
-+	Opt_strict_encoding,
- };
- 
- static const struct constant_table shmem_param_enums_huge[] = {
-@@ -4228,9 +4256,54 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
- 	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit),
- 	fsparam_string("grpquota_inode_hardlimit", Opt_grpquota_inode_hardlimit),
- #endif
-+	fsparam_string("casefold",	Opt_casefold_version),
-+	fsparam_flag  ("casefold",	Opt_casefold),
-+	fsparam_flag  ("strict_encoding", Opt_strict_encoding),
- 	{}
- };
+@@ -2760,13 +2760,62 @@ static int shmem_file_open(struct inode *inode, struct file *file)
+ #ifdef CONFIG_TMPFS_XATTR
+ static int shmem_initxattrs(struct inode *, const struct xattr *, void *);
  
 +#if IS_ENABLED(CONFIG_UNICODE)
-+static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *param,
-+				    bool latest_version)
++/*
++ * shmem_inode_casefold_flags - Deal with casefold file attribute flag
++ *
++ * The casefold file attribute needs some special checks. I can just be added to
++ * an empty dir, and can't be removed from a non-empty dir.
++ */
++static int shmem_inode_casefold_flags(struct inode *inode, unsigned int fsflags,
++				      struct dentry *dentry, unsigned int *i_flags)
 +{
-+	struct shmem_options *ctx = fc->fs_private;
-+	unsigned int version = UTF8_LATEST;
-+	struct unicode_map *encoding;
-+	char *version_str = param->string + 5;
++	unsigned int old = inode->i_flags;
++	struct super_block *sb = inode->i_sb;
 +
-+	if (!latest_version) {
-+		if (strncmp(param->string, "utf8-", 5))
-+			return invalfc(fc, "Only UTF-8 encodings are supported "
-+				       "in the format: utf8-<version number>");
++	if (fsflags & FS_CASEFOLD_FL) {
++		if (!(old & S_CASEFOLD)) {
++			if (!sb->s_encoding)
++				return -EOPNOTSUPP;
 +
-+		version = utf8_parse_version(version_str);
-+		if (version < 0)
-+			return invalfc(fc, "Invalid UTF-8 version: %s", version_str);
++			if (!S_ISDIR(inode->i_mode))
++				return -ENOTDIR;
++
++			if (dentry && !simple_empty(dentry))
++				return -ENOTEMPTY;
++		}
++
++		*i_flags = *i_flags | S_CASEFOLD;
++	} else if (old & S_CASEFOLD) {
++		if (dentry && !simple_empty(dentry))
++			return -ENOTEMPTY;
 +	}
-+
-+	encoding = utf8_load(version);
-+
-+	if (IS_ERR(encoding)) {
-+		return invalfc(fc, "Failed loading UTF-8 version: utf8-%u.%u.%u\n",
-+			       unicode_major(version), unicode_minor(version),
-+			       unicode_rev(version));
-+	}
-+
-+	pr_info("tmpfs: Using encoding : utf8-%u.%u.%u\n",
-+		unicode_major(version), unicode_minor(version), unicode_rev(version));
-+
-+	ctx->encoding = encoding;
 +
 +	return 0;
 +}
 +#else
-+static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *param,
-+				    bool latest_version)
++static int shmem_inode_casefold_flags(struct inode *inode, unsigned int fsflags,
++				      struct dentry *dentry, unsigned int *i_flags)
 +{
-+	return invalfc(fc, "tmpfs: Kernel not built with CONFIG_UNICODE\n");
++	if (fsflags & FS_CASEFOLD_FL)
++		return -EOPNOTSUPP;
++
++	return 0;
 +}
 +#endif
 +
- static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ /*
+  * chattr's fsflags are unrelated to extended attributes,
+  * but tmpfs has chosen to enable them under the same config option.
+  */
+-static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
++static int shmem_set_inode_flags(struct inode *inode, unsigned int fsflags, struct dentry *dentry)
  {
- 	struct shmem_options *ctx = fc->fs_private;
-@@ -4389,6 +4462,13 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
- 				       "Group quota inode hardlimit too large.");
- 		ctx->qlimits.grpquota_ihardlimit = size;
- 		break;
-+	case Opt_casefold_version:
-+		return shmem_parse_opt_casefold(fc, param, false);
-+	case Opt_casefold:
-+		return shmem_parse_opt_casefold(fc, param, true);
-+	case Opt_strict_encoding:
-+		ctx->strict_encoding = true;
-+		break;
- 	}
- 	return 0;
- 
-@@ -4618,6 +4698,11 @@ static void shmem_put_super(struct super_block *sb)
- {
- 	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
- 
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	if (sb->s_encoding)
-+		utf8_unload(sb->s_encoding);
-+#endif
+ 	unsigned int i_flags = 0;
++	int ret;
 +
- #ifdef CONFIG_TMPFS_QUOTA
- 	shmem_disable_quotas(sb);
- #endif
-@@ -4628,6 +4713,14 @@ static void shmem_put_super(struct super_block *sb)
- 	sb->s_fs_info = NULL;
++	ret = shmem_inode_casefold_flags(inode, fsflags, dentry, &i_flags);
++	if (ret)
++		return ret;
+ 
+ 	if (fsflags & FS_NOATIME_FL)
+ 		i_flags |= S_NOATIME;
+@@ -2777,10 +2826,12 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
+ 	/*
+ 	 * But FS_NODUMP_FL does not require any action in i_flags.
+ 	 */
+-	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE);
++	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE | S_CASEFOLD);
++
++	return 0;
  }
- 
-+#if IS_ENABLED(CONFIG_UNICODE)
-+static const struct dentry_operations shmem_ci_dentry_ops = {
-+	.d_hash = generic_ci_d_hash,
-+	.d_compare = generic_ci_d_compare,
-+	.d_delete = always_delete_dentry,
-+};
-+#endif
-+
- static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	struct shmem_options *ctx = fc->fs_private;
-@@ -4663,10 +4756,24 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_export_op = &shmem_export_ops;
- 	sb->s_flags |= SB_NOSEC | SB_I_VERSION;
- 
--	sb->s_d_op = &simple_dentry_operations;
-+	if (!ctx->encoding && ctx->strict_encoding) {
-+		pr_err("tmpfs: strict_encoding option without encoding is forbidden\n");
-+		error = -EINVAL;
-+		goto failed;
-+	}
-+
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	if (ctx->encoding) {
-+		sb->s_encoding = ctx->encoding;
-+		sb->s_d_op = &shmem_ci_dentry_ops;
-+		if (ctx->strict_encoding)
-+			sb->s_encoding_flags = SB_ENC_STRICT_MODE_FL;
-+	}
-+#endif
-+
  #else
- 	sb->s_flags |= SB_NOUSER;
--#endif
-+#endif /* CONFIG_TMPFS */
- 	sbinfo->max_blocks = ctx->blocks;
- 	sbinfo->max_inodes = ctx->inodes;
- 	sbinfo->free_ispace = sbinfo->max_inodes * BOGO_INODE_SIZE;
-@@ -4940,6 +5047,8 @@ int shmem_init_fs_context(struct fs_context *fc)
- 	ctx->uid = current_fsuid();
- 	ctx->gid = current_fsgid();
+-static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
++static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags, struct dentry *dentry)
+ {
+ }
+ #define shmem_initxattrs NULL
+@@ -2827,7 +2878,7 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+ 	info->fsflags = (dir == NULL) ? 0 :
+ 		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
+ 	if (info->fsflags)
+-		shmem_set_inode_flags(inode, info->fsflags);
++		shmem_set_inode_flags(inode, info->fsflags, NULL);
+ 	INIT_LIST_HEAD(&info->shrinklist);
+ 	INIT_LIST_HEAD(&info->swaplist);
+ 	simple_xattrs_init(&info->xattrs);
+@@ -3934,16 +3985,23 @@ static int shmem_fileattr_set(struct mnt_idmap *idmap,
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
++	int ret, flags;
  
-+	ctx->encoding = NULL;
+ 	if (fileattr_has_fsx(fa))
+ 		return -EOPNOTSUPP;
+ 	if (fa->flags & ~SHMEM_FL_USER_MODIFIABLE)
+ 		return -EOPNOTSUPP;
+ 
+-	info->fsflags = (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
++	flags = (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
+ 		(fa->flags & SHMEM_FL_USER_MODIFIABLE);
+ 
+-	shmem_set_inode_flags(inode, info->fsflags);
++	ret = shmem_set_inode_flags(inode, flags, dentry);
 +
- 	fc->fs_private = ctx;
- 	fc->ops = &shmem_fs_context_ops;
++	if (ret)
++		return ret;
++
++	info->fsflags = flags;
++
+ 	inode_set_ctime_current(inode);
+ 	inode_inc_iversion(inode);
  	return 0;
 -- 
 2.46.0
