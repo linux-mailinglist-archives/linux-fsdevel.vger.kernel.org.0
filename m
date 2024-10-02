@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-30648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C105B98CBDD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 06:02:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5207D98CBD5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 06:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738A61F25A3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 04:02:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEEBBB2414E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 04:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FE174413;
-	Wed,  2 Oct 2024 04:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C574EB51;
+	Wed,  2 Oct 2024 04:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mciO33gZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DMtIe9YM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C72855C0A;
-	Wed,  2 Oct 2024 04:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8CF482E4;
+	Wed,  2 Oct 2024 04:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727841686; cv=none; b=RhyS/WXTZPFblYH4XVlobaoawUqXWZ71zC8LhsfrgUqmmWcebqk3TDVKJa7Vm7DgVwaDGxaXIiW8SHwhGWvr8U2bOyHJK288Gq68beQE4aM+DpgwHJ3elGqP6888fU9wAfgZohRDhezeJ8a5drW6glSrjcUKduUuCfujxXhaHCo=
+	t=1727841681; cv=none; b=Pa59myK3ZnTPmslgg+Jc95lTzCIZS9j4UJBO8L1xQPuHRhOFD8JLZaZ0vC2OS2KMYZDOVSmrqY8QmQoM6u7eaE8exFi1mOKHqb6Gum9url92pfN2d3wGjyoAXmDqF+PvvZ6wIfoA8CKO9Slft0GAmRhyIEds5B/7QXDnuM58JPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727841686; c=relaxed/simple;
-	bh=+IvZr+9MNld7cvhsUD/d19bLAd63YphMOfrOEDroHs4=;
+	s=arc-20240116; t=1727841681; c=relaxed/simple;
+	bh=eBhcOcMbrLy9/fehR74PUakwF/9049yDkRIeCHnPKZA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sCzuZSndQpy3Ex3lXTYm5rFRxkLffnCasS78CKgu1OiThA4DuDaTwBcHv9g++HJ9zP4jfT1obYhNmOZ5JrbYQeRrk/BrsadQkHFV4UT/cSqERHrjs7Rq0AkYQMiQbn+/i3KT0WG1eza+XPDNwS8gN7GX91+RYnvE3gP1Fg8X+Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mciO33gZ; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=lOvdBApFAb5veYZDRfovsZVqiFnyPl1MrDmDoyl9zEAIRZjsw52dftcgcsg/2kyE0Qt3sMp4Ogqw3k+gLjD+vkgGUBXuXqw70GkN1iTpqoVFXiluDPyFQnZCp/WhFMJRE/+wGd24tzEcvau7bbeoQHEUwxjszPGzvQJuiJKWKk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DMtIe9YM; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=IS+o70XI9H6xAbtwLOTIZ3eCVSzAnaR0y6//eiVhID0=; b=mciO33gZCfuz25EaGN6Yu3qDbL
-	/m9SVAj5Ircnf11Vk607Z4G9g5Js9S8IjTN2R7t8FZgM/oR+jMao/T7iU2DyEvno2TcH60m6VyJzU
-	0bkX9v75/BiT15C/N3HU8JmwDW9u9VoZj8cwfbPCFr/zEReWz7/8sIweOFzi6K+XuT4cnNlhNvpdd
-	3dMtYf9wyJNc5D/YmZwM9h0ZduNNRPpB8V5rbKVH0pSAxO8iLf8sYNpZklbGLALAYNZqBnk/NmBEe
-	zkqpZHVfwhfFgtc2+dr0xsg3/YHdczfTERn/MuHIkZHFNftHqgxFN53cpGhUt1rbJ018C6hgqBrHi
-	Znk/b9xw==;
+	bh=jm1g6XtuabKqm9/JIMlSTf6MikBfRVYmTm8EFY+uDyU=; b=DMtIe9YMNkx31KhDVNPCTySp1x
+	pXXraeUTSuORncN9UhAdmxtUQ8bt5st5ctV3seN3YE7qCDfDzL4HB/QqvtEKCX39BJsrmELrtr9CW
+	+daJ720l9aLvJ+RMK24+79cTk7PD65qaKAH4Nro1VTW/YpcPpQyGtYM84yUXydyromE3/CWfGIqK+
+	qzi7b9t6ZKLHb4eEcCBeMInvSa9UrrrhU7bkWlLrtmGFsP0FY5SICdK90ofGWBi1/tqbEKqi6UVtW
+	vGSOo0uqu+hPAYjEEF0SufgLYzBJCCJCZmTDGy0+965MEKyevWlEI6vUfAYGk8H9b4bbrKctu1ltA
+	kxEmSWBg==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1svqY5-00000004I8T-2ivo;
+	id 1svqY5-00000004I8V-3AQG;
 	Wed, 02 Oct 2024 04:01:13 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Christian Brauner <brauner@kernel.org>
@@ -52,9 +52,9 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-btrfs@vger.kernel.org,
 	linux-nilfs@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 1/6] fs: Move clearing of mappedtodisk to buffer.c
-Date: Wed,  2 Oct 2024 05:01:03 +0100
-Message-ID: <20241002040111.1023018-2-willy@infradead.org>
+Subject: [PATCH 2/6] nilfs2: Convert nilfs_copy_buffer() to use folios
+Date: Wed,  2 Oct 2024 05:01:04 +0100
+Message-ID: <20241002040111.1023018-3-willy@infradead.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241002040111.1023018-1-willy@infradead.org>
 References: <20241002040111.1023018-1-willy@infradead.org>
@@ -66,41 +66,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The mappedtodisk flag is only meaningful for buffer head based
-filesystems.  It should not be cleared for other filesystems.  This allows
-us to reuse the mappedtodisk flag to have other meanings in filesystems
-that do not use buffer heads.
+Use folio APIs instead of page APIs.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/buffer.c   | 1 +
- mm/truncate.c | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ fs/nilfs2/page.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1fc9a50def0b..35f9af799e0a 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1649,6 +1649,7 @@ void block_invalidate_folio(struct folio *folio, size_t offset, size_t length)
- 	if (length == folio_size(folio))
- 		filemap_release_folio(folio, 0);
- out:
-+	folio_clear_mappedtodisk(folio);
- 	return;
- }
- EXPORT_SYMBOL(block_invalidate_folio);
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 0668cd340a46..870af79fb446 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -166,7 +166,6 @@ static void truncate_cleanup_folio(struct folio *folio)
- 	 * Hence dirty accounting check is placed after invalidation.
- 	 */
- 	folio_cancel_dirty(folio);
--	folio_clear_mappedtodisk(folio);
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 9c0b7cddeaae..16bb82cdbc07 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -98,16 +98,16 @@ void nilfs_forget_buffer(struct buffer_head *bh)
+  */
+ void nilfs_copy_buffer(struct buffer_head *dbh, struct buffer_head *sbh)
+ {
+-	void *kaddr0, *kaddr1;
++	void *saddr, *daddr;
+ 	unsigned long bits;
+-	struct page *spage = sbh->b_page, *dpage = dbh->b_page;
++	struct folio *sfolio = sbh->b_folio, *dfolio = dbh->b_folio;
+ 	struct buffer_head *bh;
+ 
+-	kaddr0 = kmap_local_page(spage);
+-	kaddr1 = kmap_local_page(dpage);
+-	memcpy(kaddr1 + bh_offset(dbh), kaddr0 + bh_offset(sbh), sbh->b_size);
+-	kunmap_local(kaddr1);
+-	kunmap_local(kaddr0);
++	saddr = kmap_local_folio(sfolio, bh_offset(sbh));
++	daddr = kmap_local_folio(dfolio, bh_offset(dbh));
++	memcpy(daddr, saddr, sbh->b_size);
++	kunmap_local(daddr);
++	kunmap_local(saddr);
+ 
+ 	dbh->b_state = sbh->b_state & NILFS_BUFFER_INHERENT_BITS;
+ 	dbh->b_blocknr = sbh->b_blocknr;
+@@ -121,13 +121,13 @@ void nilfs_copy_buffer(struct buffer_head *dbh, struct buffer_head *sbh)
+ 		unlock_buffer(bh);
+ 	}
+ 	if (bits & BIT(BH_Uptodate))
+-		SetPageUptodate(dpage);
++		folio_mark_uptodate(dfolio);
+ 	else
+-		ClearPageUptodate(dpage);
++		folio_clear_uptodate(dfolio);
+ 	if (bits & BIT(BH_Mapped))
+-		SetPageMappedToDisk(dpage);
++		folio_set_mappedtodisk(dfolio);
+ 	else
+-		ClearPageMappedToDisk(dpage);
++		folio_clear_mappedtodisk(dfolio);
  }
  
- int truncate_inode_folio(struct address_space *mapping, struct folio *folio)
+ /**
 -- 
 2.43.0
 
