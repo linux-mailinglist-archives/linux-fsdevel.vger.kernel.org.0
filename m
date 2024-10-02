@@ -1,155 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-30730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C740298DF49
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 17:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F51498DF73
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 17:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ADAB282CA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:35:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0BA28734A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37A21D096B;
-	Wed,  2 Oct 2024 15:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679631D0DD7;
+	Wed,  2 Oct 2024 15:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EpWibrko"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MvN2Cys4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E8C1D0953
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Oct 2024 15:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA861D0B97;
+	Wed,  2 Oct 2024 15:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883324; cv=none; b=A1jvXW0af/XLca9wuG+dJgMGoZPE0dd8WVbfsN19RvASNxsk4MzxPdpPfrW0ZsoJIDsEEXKJwQogmcS1KGGathcuUxdCNXjEDlWo8C0Z8NirZcSr7COSWWG01v0Y7lCFYTWGQHHzinNjTgp/3juMX+bbEWBAub8VsjsiNlwwA70=
+	t=1727883655; cv=none; b=tSrxWBAiiwl0HW6VhaK5Zgu1MRnfa1N3XCNS+gGkLnAs5Krvzq9CNGl4youYHLx30rnN8zqq5q5GTYmrO7P3QIhXs5y/e1qyPmo/Abx7DAAMXgXp07iq3Qw7xlWGJLJPgjab+SX/FavKn0A+9+a7IiaTiT+owRUQwqjKNbXSPEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883324; c=relaxed/simple;
-	bh=Rq/HcJAbR9WHQ83k5hEzQ+OVk7NsDlsdsyId+Da4S7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lCUrqPNAOhTtmVIS6bnscT16GEfSFuFqaKg3aU/DB5qHCt3IslHI7gbJxvx4AYwEwzo1tE7uDTp8BKr63zK/zSgkQyO376KixA1G1kbB+pmg36FiEPWtgHIjRKJutAhRIvQwA9X2LuZBDKu1USrFC84OeQoDWoIbB9gcotkhW6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EpWibrko; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727883322; x=1759419322;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Rq/HcJAbR9WHQ83k5hEzQ+OVk7NsDlsdsyId+Da4S7A=;
-  b=EpWibrkos2f8LiF1rVq4w9mXS5UTw9G6bJYZI8pMazyWQCyKBr/MX8vp
-   jCBzH3WfDIfpd4Fj69PGyF4kH4pMbR0cwmSSeCTzyrbWy22qb4Rog8/Yn
-   LqygEiSf/448zarfE1RzTf/GHD0KE9T3Ue96kT9oV0C+gsqzKeIXwYMEC
-   4EvoCODwrMdFyQH1tFO0yJXgV1ZWkmme/tGlZTTu2rFzoBDYijhu2vi3d
-   hTtbIGc4CpYRLquLKPCPQEzpayP7swIWUR6spQJrKpqJwO63spYNnz5tx
-   AfbRJd5WGgx7yiOkAp0eSc2ja5t4afZ8+QOueJqmOs5WRWDe6B9vcU369
-   g==;
-X-CSE-ConnectionGUID: uH1Wd7auR2GDEUqqHs2tHQ==
-X-CSE-MsgGUID: Wy8SoNZ0QyKf+pK0+Lzm3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="44516554"
-X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="44516554"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 08:35:20 -0700
-X-CSE-ConnectionGUID: UXcqZzWoTFer4T+juVz4Fg==
-X-CSE-MsgGUID: Ep3Iyda9QyaqH/juug2V6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="74461725"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 02 Oct 2024 08:35:20 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sw1Nk-000UA7-2l;
-	Wed, 02 Oct 2024 15:35:16 +0000
-Date: Wed, 2 Oct 2024 23:35:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.fd 1/31] drivers/block/ataflop.c:428:13: error:
- conflicting types for 'fd_error'; have 'void(void)'
-Message-ID: <202410022344.sMXwiZCW-lkp@intel.com>
+	s=arc-20240116; t=1727883655; c=relaxed/simple;
+	bh=WIP2KkjUlSVjwcDNw4d3jTWw8EguXiw7+Opg9pqYWpw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O25n/v13Jk8vfL5bWUdFXeJN6UIcKft9arNQ9zv8qjqNc4A5btPsitPjOEs+6OTdKoMiAFH5NgQfP0qCPQ89XZxQt7hGvV0Im/JVHHHE4K1YoOEtVA3EF8zHlG5KCU6GzBXVxyATLfFFLIqrEGL+DhnFuFrLcZztQHuwtmkzGbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MvN2Cys4; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fac47f0b1aso44998701fa.1;
+        Wed, 02 Oct 2024 08:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727883652; x=1728488452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4BO7GvoEvRQo4g/wy/IaY0N6iqmmGOHEMQUrshuZ/AU=;
+        b=MvN2Cys4KDWHFH9mb4MoczJHGNJyH3MiXa6FWsO6J8qaP1coR6GANjoGNhpxlKCNq8
+         UNKP0pwM3ThK28T2Mj8tMTO5Gry+1AFo2xXObLhTHOO+SbM5QX4ycTVkXgIqzlBOIgsU
+         KKmhCHTlVwOSzi9HT5aT692ih6cg4ev5mkUEB+LgE7XZ6P7G6IoOnE7Xm7D47wGx8TMh
+         12qAOZVN0vYu1DlKynCY+dBesYH8yQdDR0PewTcBDfI9c7QZGCP62V+wbwLwD2jx0j8q
+         Ak/j6YuQ/W/1Rek8mACrClloBkHAjiuOsoUCosQhikT2yOJx0ZmiFnSHT3CBdbJE0GwV
+         E5Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727883652; x=1728488452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4BO7GvoEvRQo4g/wy/IaY0N6iqmmGOHEMQUrshuZ/AU=;
+        b=RVUi8oVqVGLk358Dh30Ty6U7Rbp8TjCDpjKL//oO6xHdHtPRGlqQVvr/f/7ctAXIRr
+         9qrSZoh2Gk5qXwj0UFElkjH9irnechKtUrYjvLv3GVIwg1IC5VI+/3lYnPt5IIV86VqV
+         f4Shorw+op4pi64gkQxh+O+uNG0yf/SebLSej0HaUOavXDb855dFPW5kCZqO73C38IJK
+         17fLUQruWNzerUfLekJKfb+eUx3TZvuNQiwo2vBBas3r+9CQMc7IC8wHp6DG+YmyC8wQ
+         uFCmHMgRVRDNXpKNfV6y8ypPdZJF5Ff0jdUPAkErBB3m6xNG9IoN02UDSdNNe41tw86J
+         SHwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Ln0kClGeUxxtmvGcj51wtxTpQV2liTa+vtzvEGf11SCLFRde2xSWwmmX0TSylWij3X8qd6Jnq9Ocfw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz5EItufwtWC1xOnP5YgDzpZZYwcHsnCxYQG2hKA5NLpjEha7b
+	+2lg5Zv65xPWgvcTweHK+WaE2KSOT+MiwEt3g25rUXpYowyvjN08OP0hSyR+XtnCJp7Lhuv7K9k
+	D78vHK8x3Ez82JoALRQpAM1Apwto=
+X-Google-Smtp-Source: AGHT+IFuXTdNAQnGRSwGmrKlUm8cdAE9HZOTGFJNei48st3ZVzmi325nJB/hpn0GE9NQdMu07nTMExp2YkaqeHUXfHQ=
+X-Received: by 2002:a05:6512:ea4:b0:536:55ae:7458 with SMTP id
+ 2adb3069b0e04-539a0795bb2mr2354026e87.40.1727883651912; Wed, 02 Oct 2024
+ 08:40:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241002150036.1339475-1-willy@infradead.org>
+In-Reply-To: <20241002150036.1339475-1-willy@infradead.org>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Thu, 3 Oct 2024 00:40:35 +0900
+Message-ID: <CAKFNMokwCtK2WjBPRqbO2_Me=x_RRH=htF=Tcz0t9g96--Wx0A@mail.gmail.com>
+Subject: Re: [PATCH 0/4] nilfs2: Finish folio conversion
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-nilfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.fd
-head:   f8d355c905903186d23c995fe5515d949d4aa9f5
-commit: 4601d30d36153ce6a6b8ee3b6b722f93df2519c0 [1/31] introduce struct fderr, convert overlayfs uses to that
-config: m68k-defconfig (https://download.01.org/0day-ci/archive/20241002/202410022344.sMXwiZCW-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410022344.sMXwiZCW-lkp@intel.com/reproduce)
+On Thu, Oct 3, 2024 at 12:00=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
+>
+> After "nilfs2: Convert nilfs_copy_buffer() to use folios", there are
+> only a few remaining users of struct page in all of nilfs2, and they're
+> straightforward to remove.  Build tested only.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410022344.sMXwiZCW-lkp@intel.com/
+Thank you for your ongoing work on converting to folio-based.
 
-All errors (new ones prefixed by >>):
+Page structure references still remain in other files, but I'm
+preparing a patch set to convert them to be folio-based, so together
+with that, I think we'll be able to remove most of the page references
+in nilfs2 in the next cycle.
 
->> drivers/block/ataflop.c:428:13: error: conflicting types for 'fd_error'; have 'void(void)'
-     428 | static void fd_error( void );
-         |             ^~~~~~~~
-   In file included from include/linux/blkdev.h:27,
-                    from include/linux/blk-mq.h:5,
-                    from drivers/block/ataflop.c:70:
-   include/linux/file.h:64:20: note: previous definition of 'fd_error' with type 'long int(struct fderr)'
-      64 | static inline long fd_error(struct fderr f)
-         |                    ^~~~~~~~
+I'll check out this patch set.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+Thanks,
+Ryusuke Konishi
 
-
-vim +428 drivers/block/ataflop.c
-
-^1da177e4c3f41 Linus Torvalds    2005-04-16  421  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  422  static void fd_select_side( int side );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  423  static void fd_select_drive( int drive );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  424  static void fd_deselect( void );
-24ed960abf1d50 Kees Cook         2017-08-28  425  static void fd_motor_off_timer(struct timer_list *unused);
-24ed960abf1d50 Kees Cook         2017-08-28  426  static void check_change(struct timer_list *unused);
-7d12e780e003f9 David Howells     2006-10-05  427  static irqreturn_t floppy_irq (int irq, void *dummy);
-^1da177e4c3f41 Linus Torvalds    2005-04-16 @428  static void fd_error( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  429  static int do_format(int drive, int type, struct atari_format_descr *desc);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  430  static void do_fd_action( int drive );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  431  static void fd_calibrate( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  432  static void fd_calibrate_done( int status );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  433  static void fd_seek( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  434  static void fd_seek_done( int status );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  435  static void fd_rwsec( void );
-24ed960abf1d50 Kees Cook         2017-08-28  436  static void fd_readtrack_check(struct timer_list *unused);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  437  static void fd_rwsec_done( int status );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  438  static void fd_rwsec_done1(int status);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  439  static void fd_writetrack( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  440  static void fd_writetrack_done( int status );
-24ed960abf1d50 Kees Cook         2017-08-28  441  static void fd_times_out(struct timer_list *unused);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  442  static void finish_fdc( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  443  static void finish_fdc_done( int dummy );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  444  static void setup_req_params( int drive );
-05bdb9965305bb Christoph Hellwig 2023-06-08  445  static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
-05bdb9965305bb Christoph Hellwig 2023-06-08  446  		unsigned int cmd, unsigned long param);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  447  static void fd_probe( int drive );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  448  static int fd_test_drive_present( int drive );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  449  static void config_types( void );
-05bdb9965305bb Christoph Hellwig 2023-06-08  450  static int floppy_open(struct gendisk *disk, blk_mode_t mode);
-ae220766d87cd6 Christoph Hellwig 2023-06-08  451  static void floppy_release(struct gendisk *disk);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  452  
-
-:::::: The code at line 428 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
-
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> Matthew Wilcox (Oracle) (4):
+>   nilfs2: Remove nilfs_writepage
+>   nilfs2: Convert nilfs_page_count_clean_buffers() to take a folio
+>   nilfs2: Convert nilfs_recovery_copy_block() to take a folio
+>   nilfs2: Convert metadata aops from writepage to writepages
+>
+>  fs/nilfs2/dir.c      |  2 +-
+>  fs/nilfs2/inode.c    | 35 ++---------------------------------
+>  fs/nilfs2/mdt.c      | 19 +++++++++++++++----
+>  fs/nilfs2/page.c     |  4 ++--
+>  fs/nilfs2/page.h     |  4 ++--
+>  fs/nilfs2/recovery.c | 11 ++++-------
+>  6 files changed, 26 insertions(+), 49 deletions(-)
+>
+> --
+> 2.43.0
+>
 
