@@ -1,126 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-30798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BB598E543
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:33:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BE298E54E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC011F21D41
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 21:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F101F21EE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 21:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A9A22AA7B;
-	Wed,  2 Oct 2024 21:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AACD21B42B;
+	Wed,  2 Oct 2024 21:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pY4qgNaa"
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="onbSexGJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77C52225D9;
-	Wed,  2 Oct 2024 21:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C59217336;
+	Wed,  2 Oct 2024 21:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904484; cv=none; b=l+HcEFYaQQjtnnmY4idEFq+BA2N2v64VfmPuR0bhwRoeLmSaTPcX61xw+SPsh29YXQfhFyFoIS+R6tIYMblxProIZPdVoIWzYi1WN4NyUkyYL+I/P7PgyuS3nQgmPNJtqEpyPpmKDJvz71daYNvL+5ghpHGROCrnxvIqLMC1C5A=
+	t=1727904584; cv=none; b=bcK2aEGpS4wktCLmnZeVDlEBtnYkecV7XPxkUYoHGogPuAVYvMvTmeNKOzpbZ57g2DGmye64GMVK+CGpuTKi4FtfYzzSEg6WQohJRamcGoPmPZwYpmX6cmI0G8AeuK7cZq5peVikp3Ip7T7g04BLRelJx2y1qZzBJF182f9TYlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904484; c=relaxed/simple;
-	bh=5/dsLO8cNmOaM6p0rv+Qvzx/xMvPBJnx6tvOBbPfMzs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dcUa7mhcQ8lr/TLJfNg75UgjQkB79jsi2EJOkQko4x4xekno8YFYkWMk/2/GnF0mWwndmohbkUNdaKh9iPHHg25rrgbHcfJXDr17yXTwURXhAwEUUUXFAAZKqOYfcB3Wlg6sP584izJ1fIVBH4+mwSO8TT9xxN6Okysx517og5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pY4qgNaa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF362C4CEE1;
-	Wed,  2 Oct 2024 21:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727904484;
-	bh=5/dsLO8cNmOaM6p0rv+Qvzx/xMvPBJnx6tvOBbPfMzs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pY4qgNaaCqezS32qjDZEbsRs2uGb8OTkbND/gQNC3DZDk0GQyrjGRmxHYO6BtyTWX
-	 EQfJp0qmbpEp8Y4fEBEdJjYyDC1X6D/lcrtX9zhRMFR6vrtcr9gEpaw9lqhsBV4dzt
-	 hc/hRRGOV1mrRGkkpHthnO5R0XB4+yg2XN5Y8PwXRYhYvmUUyN5X088MqLAETzHPqn
-	 O26reMyyJqwCWRtn9LB+2DwWyURABcR1Pa7VdYMKNk9ArrOhg9DFEh4PfCmVFPe9Be
-	 NqUMbmrsKxgNgWyLK1sCeoxlIVRcC4VfPN2PcY5JZrL6kxFEm9kVwZtbsg1V1uskh8
-	 uQiYUVOkUhxhA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 02 Oct 2024 17:27:27 -0400
-Subject: [PATCH v10 12/12] tmpfs: add support for multigrain timestamps
+	s=arc-20240116; t=1727904584; c=relaxed/simple;
+	bh=OoV7yqE3FGrBgjjOwRt50ehmiiNHVPg/GEjin9PLh0Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rMwwhaqFKKBLRmvhB6LQNJRAbRZPYDa9jcDy9fd0G8eOD/8mBVMe6mLahR30THBvAA1NOJwhS3jt0SkVE8zFpxN6ehZ8eCAHTpovt66fTVHS53cet2Js9oYv/pD5+FJEonMeCL1+iAUu0qZlNaz/wIy+vISJNGqRb+92Sbu52Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=onbSexGJ; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2688440002;
+	Wed,  2 Oct 2024 21:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1727904573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HncRwIusYKLU1a073mDPta5phkAfT1syOg05rFDwoQs=;
+	b=onbSexGJeEjE3hP6YPlRHUL5A36yM9CyJsX/NdT4QU8UK+9FQ6lT1rNLTNVDbHP1yPIUsA
+	2ElZyD6CfFiTF5vni2SV87o12V/F2Xve0JH27U7ksguHlPOyUUoBwKaPYd0S+XdnDNA71W
+	amD5yQFqC2Tjwr37RBKrNCiH9N7Q0SNa6E4EWkwFmUDLBcZJt2p2QjMLGFA/jaBXu0lg7f
+	1lUbulrfVzFAyl4czGiB4Q0PoRRR06QFwX+/6z83eTQtxNQ19l/ZfHgxVhbxVOtBDNrE3e
+	1pLDmWQlyeERljtbRmb5XiF9m6/EgOuQCndO4ful3QacW6xb1VPC+eBURkvtCw==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,  Hugh Dickins
+ <hughd@google.com>,  Andrew Morton <akpm@linux-foundation.org>,  Alexander
+ Viro <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,
+  Jan Kara <jack@suse.cz>,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  kernel-dev@igalia.com,  Daniel Rosenberg <drosen@google.com>,
+  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,  Theodore Ts'o
+ <tytso@mit.edu>
+Subject: Re: [PATCH v4 07/10] tmpfs: Add casefold lookup support
+In-Reply-To: <c547e1aa-f894-409e-9033-f370c5c16171@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Tue, 1 Oct 2024 22:40:17 -0300")
+References: <20240911144502.115260-1-andrealmeid@igalia.com>
+	<20240911144502.115260-8-andrealmeid@igalia.com>
+	<87ed5olmmc.fsf@mailhost.krisman.be>
+	<c547e1aa-f894-409e-9033-f370c5c16171@igalia.com>
+Date: Wed, 02 Oct 2024 17:29:29 -0400
+Message-ID: <877caqw5vq.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-mgtime-v10-12-d1c4717f5284@kernel.org>
-References: <20241002-mgtime-v10-0-d1c4717f5284@kernel.org>
-In-Reply-To: <20241002-mgtime-v10-0-d1c4717f5284@kernel.org>
-To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
- Chandan Babu R <chandan.babu@oracle.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
- Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
- Chuck Lever <chuck.lever@oracle.com>, 
- Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=988; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=5/dsLO8cNmOaM6p0rv+Qvzx/xMvPBJnx6tvOBbPfMzs=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm/brALjfB22SLtWrZvbq9dOIudVwmi0I1qA+aV
- n4HN6LIytCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZv26wAAKCRAADmhBGVaC
- FRSFEACPohqXeTh7KgceuIiMgaiZvFEfTN6SD/E380ADOa3A/9s4jdNxUzvvIUF5TGO3RjuqvXp
- vQ39lbU+sN/EReWdsZdlcuP9wIJTEDPEo0Sd1UVdKEqRfvB7MXkHnFyhigbts8E4EeZm3vtO5Um
- dEueBuYGU/uHUQ+C6uWNdEqboX38koaVM6De2O+XxmDB25xapHTAlc+OjmcQvs6DpWxF5RNdpJg
- 84pcISszclA73/fk3T5S6O5wVNqceFy6Rj/wOaY0mSjy0XDKDJKGBWz7VJtKWZKTPmcLIh46ehW
- D3rEEFjv/THx5b+VU8ecQynhSjyfgPRiRgZ/ZFcxmYMlGzxi639VSAmecRyY4j1lwNLBwcaxP3U
- qfns+SkW0ZRePXxgunj1ox6ARPkr5OFR5Pa7/h0JkK0hjguHgiSpu5K82GofgSxXHpUFOv0Dkyj
- Ee32pebJG1fZRa4wWzJRSNqUvn+2uXCZvk35HWRS2uPOeNohiJVtbaJ34ZRn78lHec+pf5Z7ZJ5
- GKT64vZ0wq2zEDEprVAk5g9Pid6BM0mn2dixzCz1QwYLKWJdWrcK7YfU6uGpmvh/UiXzYOPesTz
- zpKM7FScCuy994O5F+7EBot7sYRW87SFI2Nu0MwRE5tPQdBY/CHLfBwZP8GTD2ThHGIm8ZnGudD
- XIxJwAEylXRaCkQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gabriel@krisman.be
 
-Enable multigrain timestamps, which should ensure that there is an
-apparent change to the timestamp whenever it has been written after
-being actively observed via getattr.
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-tmpfs only requires the FS_MGTIME flag.
+> Hey Krisman,
+>
+> Em 12/09/2024 16:04, Gabriel Krisman Bertazi escreveu:
+>> Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+>>=20
+>
+> [...]
+>
+>>> +#if IS_ENABLED(CONFIG_UNICODE)
+>>> +	if (ctx->encoding) {
+>>> +		sb->s_encoding =3D ctx->encoding;
+>>> +		sb->s_d_op =3D &shmem_ci_dentry_ops;
+>>> +		if (ctx->strict_encoding)
+>>> +			sb->s_encoding_flags =3D SB_ENC_STRICT_MODE_FL;
+>>> +	}
+>>>   #else
+>>> -	sb->s_flags |=3D SB_NOUSER;
+>>> +	sb->s_d_op =3D &simple_dentry_operations;
+>> Moving simple_dentry_operations to be set at s_d_op should be a
+>> separate
+>> patch.
+>> It is a change that has non-obvious side effects (i.e. the way we
+>> treat the root dentry) so it needs proper review by itself.  It is
+>> also not related to the rest of the case-insensitive patch.
+>>=20
+>
+> The idea of setting simple_dentry_operations come from my previous
+> approach of having our own shmem_lookup(), replacing
+> simple_lookup(). Now that we are settled to keep with simple_lookup()
+> anyway (that already sets simple_dentry_operations), I think we don't
+> need this change anymore, right?
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Up to you, really. If you don't need it to support casefold lookup in
+tmpfs, it doesn't need to be part of the same patchset.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 5a77acf6ac6a621dc7b5e7b46402b2b714b45bea..5f17eaaa32e2902228be7b245c5b3b11c5fb6a56 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4804,7 +4804,7 @@ static struct file_system_type shmem_fs_type = {
- 	.parameters	= shmem_fs_parameters,
- #endif
- 	.kill_sb	= kill_litter_super,
--	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
- };
- 
- void __init shmem_init(void)
+> This will be set for every dentry that doesn't have a
+> dentry->d_sb->s_d_op. Case-insensitive mount points will have this set,
+> so we don't risk overwriting it.
 
--- 
-2.46.2
+I encourage you to send a new version with this.  makes sense to me.
 
+--=20
+Gabriel Krisman Bertazi
 
