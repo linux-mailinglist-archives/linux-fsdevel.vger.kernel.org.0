@@ -1,859 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-30627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127BC98CABC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 03:23:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4320198CAEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 03:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDB38283CB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 01:23:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91870B220CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 01:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26B212E5D;
-	Wed,  2 Oct 2024 01:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1186DF78;
+	Wed,  2 Oct 2024 01:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Y72uVuZL"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="KTa9MzKa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FFCB674;
-	Wed,  2 Oct 2024 01:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA53D5256
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Oct 2024 01:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727832155; cv=none; b=JHiw/1XPWTeHIqzotpoAXXWhvR2yaaFIY3rRqEBfIGNdeo4gVHAzfOUvsv9MrAbAt7FRX3sib6afoCyjqSq/hu8auIIp85woOL5J1Bfs/1lZ3mGzmeOlDqRW9ZVOa39f/u0ssASm7dbnJNy2wJA5Z++7U9ZmHmrTEl5N3kyfG38=
+	t=1727833227; cv=none; b=J9Ic3YcL+SiUAznBMTUQm4xxcRaI+3OxKbdLeSHANZh0+B/ej3hF5bDXfQY00Sv5UUJ1JxWojT2Qxi3cgWpQrKyjpC662vFE/lb+eCIrqRWu/9gMWdYTZ3MCPfu6ihEWj16dC1X/h6erfdX32I1HTLXXWB4hwAuGHKGRPrYTA5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727832155; c=relaxed/simple;
-	bh=z/1wNhbPZY84KptqS48Zoxu9t/L4UZTAjkm8ShjUhos=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J6F2eLqU8HAJecvBJ3rKXSCju/e6GKjA+oao39FN99dxi0NCNxQg+e8uH30QXPM89ogGQyolJreSffr6KUe3t8zvHoaiYHYQWRUJ5fe7Pzh2avAQVfjyZT4JcLNrOCM3gGGVVPSsPryHgn8DE5s5WU+q0/hktnDXgq/HcoTywVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Y72uVuZL; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
-	To:From:Reply-To:Content-ID:Content-Description;
-	bh=dpW4U1vUG7v5XSgdCL9t9GpdlJAruZ4zMZf+McI+BFg=; b=Y72uVuZLBMHyqH7lfh4FUl5YLG
-	FZvghEHC7XPv0RlrotXe+QVfKRDKK5bO5gBAIu8wJid8v9q0z3ulyeDONF6X7Ii9KCrEWvWRzAghI
-	sfzuF5LcD+M2/qUTtDwWA48nck5wGNsftwPW137cDkFqlVQglNEVwU0GD/bXJaX1ZIzvRS17LDIpT
-	GzIAP2hA/+B60GH3knh5KIIXLCdS6ef6muCaLi4w9GFacrJDN76eQq/ETC96rZmycIItYynAI9Chy
-	LIuTe4xcwtaL/n3Ai1Dt+Bu/zyiREhH00r8zJiRBfTD1vryr646lLEgKmehSQsK7OdKiS+kK5hXew
-	Eov4syLg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1svo4V-0000000HW0o-0Tfz;
-	Wed, 02 Oct 2024 01:22:31 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1727833227; c=relaxed/simple;
+	bh=gFgJLi5T4Aq+ZEXMe0aWDzXtKFuAqp2ElfhjlWpGNwo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HMsZVmwFYhF7htarM1ZX43EWTxNlgM4eFZxI4LZB6Q/ePfLF7t89CziGigdPl+a4Ul+n1/ZlXnxWNMGmIh9pf0LqOZ8ldTJ324sAmXRt+URmqxetx+tpC7oELd78Xz4CFJ2Z7zp5qZ29xRf/0slkuRwXqDgHZ3r6/OowMFfKOQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=KTa9MzKa; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e18aa9f06dso187589a91.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2024 18:40:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727833224; x=1728438024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FL/uWM+F1cyS7WiT9KPMhNIEAhs7u8tYn84QmX7EFE4=;
+        b=KTa9MzKaMMHdHGeqTNYcmH2KvtgOSomHI7so/BDBmXWuX9tDqIoNR8h+bccD1kxxVl
+         E8Us1NG4/9T1S9HtlwxqCfogB+UGkD8At5k0vRkzdb72Tg3PynDIhNPlwjBVOPeS014s
+         srq4qclF3hxFYh1fICnSAlAxGBmu39k8aD2+p23AWdjCd45pIwHbQjPr0q90RS9r5ION
+         eC7FNwfuRvmH4ii7nPSLTg1VY/q6wFDhQnNh+6J/USRDEaaOuvgu7VZEmpcvJ/S6jjCj
+         eKziY/H51kOseaf/ILis0PHvI6KNQ0w4TqUHWNaMBsRkGO4rAvDjcGx4MySCItWrCgk8
+         gIcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727833224; x=1728438024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FL/uWM+F1cyS7WiT9KPMhNIEAhs7u8tYn84QmX7EFE4=;
+        b=gPPPOXNXMWKKyYn5LVSlkj/yLxoLKwGbfEVZjsyGnxeBTEAFQUVEjXZ0Uxeun0tEEO
+         kNgHMYsX58reaVAeHpjqM1Lt/vejJn45iJoYvtoFKxItyxUndnbUwQJRHwecUz7Ertm3
+         C4Wp628zOPI071k/78ZR1jAqGNBamNUZVxokhu+whQV6RKxYaE9aXGK1zF2Vc8DDNO8r
+         /ZPyxGzz0TjjADpM3ifhD3rUqIT6kKU5vcwXHX677shI1H/zFP8OvG+8DZEKGqtkB0SK
+         KgVmKykmeBixE95aIs2GBSfNs3G2IDbWKd+LZhpT90dq4nFSKClfUaKIifcNA7N+0MOg
+         1oSg==
+X-Gm-Message-State: AOJu0YzIFiKHKBrF7j/2W9sKXNtBUQSXOpHj6cP5XwLl35D4qOwIajyq
+	iOgifOnvFFBQbS4R7qSJA6J7/Bs6MEgezHaXBDKqY3bvatV3rU8sKO84YnVc4gWEvy0vMFJJp6D
+	m
+X-Google-Smtp-Source: AGHT+IG92mfCf/4JI93m8RltdBvzKp4sj6jD/Lj8LsU1FzMRk+wzCw1/d0x0uCot/MaWEPCSmto9ZQ==
+X-Received: by 2002:a17:90b:4d04:b0:2e0:a9e8:bb95 with SMTP id 98e67ed59e1d1-2e15a19ec2dmr7463719a91.3.1727833224007;
+        Tue, 01 Oct 2024 18:40:24 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f8cda33sm329075a91.44.2024.10.01.18.40.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 18:40:22 -0700 (PDT)
+Received: from [192.168.253.23] (helo=devoid.disaster.area)
+	by dread.disaster.area with esmtp (Exim 4.96)
+	(envelope-from <dave@fromorbit.com>)
+	id 1svoLj-00Ck8P-01;
+	Wed, 02 Oct 2024 11:40:19 +1000
+Received: from dave by devoid.disaster.area with local (Exim 4.98)
+	(envelope-from <dave@devoid.disaster.area>)
+	id 1svoLj-0000000FxG9-1jxt;
+	Wed, 02 Oct 2024 11:40:19 +1000
+From: Dave Chinner <david@fromorbit.com>
 To: linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org,
-	io-uring@vger.kernel.org,
-	cgzones@googlemail.com
-Subject: [PATCH 9/9] fs/xattr: add *at family syscalls
-Date: Wed,  2 Oct 2024 02:22:30 +0100
-Message-ID: <20241002012230.4174585-9-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
-References: <20241002011011.GB4017910@ZenIV>
- <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
+Cc: linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org,
+	kent.overstreet@linux.dev,
+	torvalds@linux-foundation.org
+Subject: [RFC PATCH 0/7] vfs: improving inode cache iteration scalability
+Date: Wed,  2 Oct 2024 11:33:17 +1000
+Message-ID: <20241002014017.3801899-1-david@fromorbit.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Christian Göttsche <cgzones@googlemail.com>
+The management of the sb->s_inodes list is a scalability limitation;
+it is protected by a single lock and every inode that is
+instantiated has to be added to the list. Those inodes then need to
+be removed from the list when evicted from cache. Hence every inode
+that moves through the VFS inode cache must take this global scope
+lock twice.
 
-Add the four syscalls setxattrat(), getxattrat(), listxattrat() and
-removexattrat().  Those can be used to operate on extended attributes,
-especially security related ones, either relative to a pinned directory
-or on a file descriptor without read access, avoiding a
-/proc/<pid>/fd/<fd> detour, requiring a mounted procfs.
+This proves to be a significant limiting factor for concurrent file
+access workloads that repeatedly miss the dentry cache on lookup.
+Directory search and traversal workloads are particularly prone to
+these issues, though on XFS we have enough concurrency capability
+in file creation and unlink for the sb->s_inodes list to be a
+limitation there as well.
 
-One use case will be setfiles(8) setting SELinux file contexts
-("security.selinux") without race conditions and without a file
-descriptor opened with read access requiring SELinux read permission.
+Previous efforts to solve this problem have
+largely centered around reworking the sb->s_inodes list into
+something more scalable such as this longstanding patchset does:
 
-Use the do_{name}at() pattern from fs/open.c.
+https://lore.kernel.org/linux-fsdevel/20231206060629.2827226-1-david@fromorbit.com/
 
-Pass the value of the extended attribute, its length, and for
-setxattrat(2) the command (XATTR_CREATE or XATTR_REPLACE) via an added
-struct xattr_args to not exceed six syscall arguments and not
-merging the AT_* and XATTR_* flags.
+However, a recent discussion about inode cache behaviour that arose
+from the bcachefs 6.12-rc1 pull request opened a new direction for
+us to explore. With both XFS and bcachefs now providing their own
+per-superblock inode cache implementations, we should try to make
+use of these inode caches as first class citizens.
 
-[AV: fixes by Christian Brauner folded in, the entire thing rebased on
-top of {filename,file}_...xattr() primitives, treatment of empty
-pathnames regularized.  As the result, AT_EMPTY_PATH+NULL handling
-is cheap, so f...(2) can use it]
+With that new direction in mind, it became obvious that XFS could
+elide the sb->s_inodes list completely - "the best part is no part"
+- if iteration was not reliant on open-coded sb->s_inodes list
+walks.
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-Link: https://lore.kernel.org/r/20240426162042.191916-1-cgoettsche@seltendoof.de
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-CC: x86@kernel.org
-CC: linux-alpha@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-ia64@vger.kernel.org
-CC: linux-m68k@lists.linux-m68k.org
-CC: linux-mips@vger.kernel.org
-CC: linux-parisc@vger.kernel.org
-CC: linuxppc-dev@lists.ozlabs.org
-CC: linux-s390@vger.kernel.org
-CC: linux-sh@vger.kernel.org
-CC: sparclinux@vger.kernel.org
-CC: linux-fsdevel@vger.kernel.org
-CC: audit@vger.kernel.org
-CC: linux-arch@vger.kernel.org
-CC: linux-api@vger.kernel.org
-CC: linux-security-module@vger.kernel.org
-CC: selinux@vger.kernel.org
-[brauner: slight tweaks]
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- arch/alpha/kernel/syscalls/syscall.tbl      |   4 +
- arch/arm/tools/syscall.tbl                  |   4 +
- arch/m68k/kernel/syscalls/syscall.tbl       |   4 +
- arch/microblaze/kernel/syscalls/syscall.tbl |   4 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |   4 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   4 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |   4 +
- arch/parisc/kernel/syscalls/syscall.tbl     |   4 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |   4 +
- arch/s390/kernel/syscalls/syscall.tbl       |   4 +
- arch/sh/kernel/syscalls/syscall.tbl         |   4 +
- arch/sparc/kernel/syscalls/syscall.tbl      |   4 +
- arch/x86/entry/syscalls/syscall_32.tbl      |   4 +
- arch/x86/entry/syscalls/syscall_64.tbl      |   4 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |   4 +
- fs/xattr.c                                  | 271 ++++++++++++++------
- include/asm-generic/audit_change_attr.h     |   6 +
- include/linux/syscalls.h                    |  13 +
- include/linux/xattr.h                       |   4 +
- include/uapi/asm-generic/unistd.h           |  11 +-
- include/uapi/linux/xattr.h                  |   7 +
- 21 files changed, 286 insertions(+), 86 deletions(-)
+We already use the internal inode cache for iteration, and we have
+filters for selecting specific inodes to operate on with specific
+callback operations. If we had an abstraction for iterating
+all VFS inodes, we can easily implement that directly on the XFS
+inode cache.
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 74720667fe09..c59d53d6d3f3 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -502,3 +502,7 @@
- 570	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 571	common	lsm_list_modules		sys_lsm_list_modules
- 572	common  mseal				sys_mseal
-+573	common	setxattrat			sys_setxattrat
-+574	common	getxattrat			sys_getxattrat
-+575	common	listxattrat			sys_listxattrat
-+576	common	removexattrat			sys_removexattrat
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 23c98203c40f..49eeb2ad8dbd 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -477,3 +477,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 22a3cbd4c602..f5ed71f1910d 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -462,3 +462,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 2b81a6bd78b2..680f568b77f2 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -468,3 +468,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 953f5b7dc723..0b9b7e25b69a 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -401,3 +401,7 @@
- 460	n32	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	n32	lsm_list_modules		sys_lsm_list_modules
- 462	n32	mseal				sys_mseal
-+463	n32	setxattrat			sys_setxattrat
-+464	n32	getxattrat			sys_getxattrat
-+465	n32	listxattrat			sys_listxattrat
-+466	n32	removexattrat			sys_removexattrat
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 1464c6be6eb3..c844cd5cda62 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -377,3 +377,7 @@
- 460	n64	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	n64	lsm_list_modules		sys_lsm_list_modules
- 462	n64	mseal				sys_mseal
-+463	n64	setxattrat			sys_setxattrat
-+464	n64	getxattrat			sys_getxattrat
-+465	n64	listxattrat			sys_listxattrat
-+466	n64	removexattrat			sys_removexattrat
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 2439a2491cff..349b8aad1159 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -450,3 +450,7 @@
- 460	o32	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	o32	lsm_list_modules		sys_lsm_list_modules
- 462	o32	mseal				sys_mseal
-+463	o32	setxattrat			sys_setxattrat
-+464	o32	getxattrat			sys_getxattrat
-+465	o32	listxattrat			sys_listxattrat
-+466	o32	removexattrat			sys_removexattrat
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 66dc406b12e4..d9fc94c86965 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -461,3 +461,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index ebae8415dfbb..d8b4ab78bef0 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -553,3 +553,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 01071182763e..e9115b4d8b63 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -465,3 +465,7 @@
- 460  common	lsm_set_self_attr	sys_lsm_set_self_attr		sys_lsm_set_self_attr
- 461  common	lsm_list_modules	sys_lsm_list_modules		sys_lsm_list_modules
- 462  common	mseal			sys_mseal			sys_mseal
-+463  common	setxattrat		sys_setxattrat			sys_setxattrat
-+464  common	getxattrat		sys_getxattrat			sys_getxattrat
-+465  common	listxattrat		sys_listxattrat			sys_listxattrat
-+466  common	removexattrat		sys_removexattrat		sys_removexattrat
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index c55fd7696d40..c8cad33bf250 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -466,3 +466,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index cfdfb3707c16..727f99d333b3 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -508,3 +508,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal 				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 534c74b14fab..4d0fb2fba7e2 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -468,3 +468,7 @@
- 460	i386	lsm_set_self_attr	sys_lsm_set_self_attr
- 461	i386	lsm_list_modules	sys_lsm_list_modules
- 462	i386	mseal 			sys_mseal
-+463	i386	setxattrat		sys_setxattrat
-+464	i386	getxattrat		sys_getxattrat
-+465	i386	listxattrat		sys_listxattrat
-+466	i386	removexattrat		sys_removexattrat
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 7093ee21c0d1..5eb708bff1c7 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -386,6 +386,10 @@
- 460	common	lsm_set_self_attr	sys_lsm_set_self_attr
- 461	common	lsm_list_modules	sys_lsm_list_modules
- 462 	common  mseal			sys_mseal
-+463	common	setxattrat		sys_setxattrat
-+464	common	getxattrat		sys_getxattrat
-+465	common	listxattrat		sys_listxattrat
-+466	common	removexattrat		sys_removexattrat
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 67083fc1b2f5..37effc1b134e 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -433,3 +433,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal 				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 6f87f23c0e84..59cdb524412e 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -597,6 +597,32 @@ int import_xattr_name(struct xattr_name *kname, const char __user *name)
- 	return 0;
- }
- 
-+static struct filename *getname_xattr(const char __user *pathname,
-+				      unsigned int at_flags)
-+{
-+	struct filename *name;
-+	char c;
-+
-+	if (!(at_flags & AT_EMPTY_PATH))
-+		return getname(pathname);
-+
-+	if (!pathname)
-+		return NULL;
-+
-+	/* try to save on allocations; will suck on s390 and um, though */
-+	if (get_user(c, pathname))
-+		return ERR_PTR(-EFAULT);
-+	if (!c)
-+		return NULL;
-+
-+	name = getname_flags(pathname, LOOKUP_EMPTY);
-+	if (!IS_ERR(name) && !(name->name[0])) {
-+		putname(name);
-+		name = NULL;
-+	}
-+	return name;
-+}
-+
- /*
-  * Extended attribute SET operations
-  */
-@@ -675,69 +701,90 @@ int filename_setxattr(int dfd, struct filename *filename,
- 	return error;
- }
- 
--static int path_setxattr(const char __user *pathname,
--			 const char __user *name, const void __user *value,
--			 size_t size, int flags, unsigned int lookup_flags)
-+static int path_setxattrat(int dfd, const char __user *pathname,
-+			   unsigned int at_flags, const char __user *name,
-+			   const void __user *value, size_t size, int flags)
- {
- 	struct xattr_name kname;
- 	struct kernel_xattr_ctx ctx = {
--		.cvalue   = value,
--		.kvalue   = NULL,
--		.size     = size,
--		.kname    = &kname,
--		.flags    = flags,
-+		.cvalue	= value,
-+		.kvalue	= NULL,
-+		.size	= size,
-+		.kname	= &kname,
-+		.flags	= flags,
- 	};
-+	struct filename *filename;
-+	unsigned int lookup_flags = 0;
- 	int error;
- 
-+	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-+		return -EINVAL;
-+
-+	if (at_flags & AT_SYMLINK_NOFOLLOW)
-+		lookup_flags = LOOKUP_FOLLOW;
-+
- 	error = setxattr_copy(name, &ctx);
- 	if (error)
- 		return error;
- 
--	error = filename_setxattr(AT_FDCWD, getname(pathname), lookup_flags,
--				  &ctx);
-+	filename = getname_xattr(pathname, at_flags);
-+	if (!filename) {
-+		CLASS(fd, f)(dfd);
-+		if (fd_empty(f))
-+			error = -EBADF;
-+		else
-+			error = file_setxattr(fd_file(f), &ctx);
-+	} else {
-+		error = filename_setxattr(dfd, filename, lookup_flags, &ctx);
-+	}
- 	kvfree(ctx.kvalue);
- 	return error;
- }
- 
-+SYSCALL_DEFINE6(setxattrat, int, dfd, const char __user *, pathname, unsigned int, at_flags,
-+		const char __user *, name, const struct xattr_args __user *, uargs,
-+		size_t, usize)
-+{
-+	struct xattr_args args = {};
-+	int error;
-+
-+	BUILD_BUG_ON(sizeof(struct xattr_args) < XATTR_ARGS_SIZE_VER0);
-+	BUILD_BUG_ON(sizeof(struct xattr_args) != XATTR_ARGS_SIZE_LATEST);
-+
-+	if (unlikely(usize < XATTR_ARGS_SIZE_VER0))
-+		return -EINVAL;
-+	if (usize > PAGE_SIZE)
-+		return -E2BIG;
-+
-+	error = copy_struct_from_user(&args, sizeof(args), uargs, usize);
-+	if (error)
-+		return error;
-+
-+	return path_setxattrat(dfd, pathname, at_flags, name,
-+			       u64_to_user_ptr(args.value), args.size,
-+			       args.flags);
-+}
-+
- SYSCALL_DEFINE5(setxattr, const char __user *, pathname,
- 		const char __user *, name, const void __user *, value,
- 		size_t, size, int, flags)
- {
--	return path_setxattr(pathname, name, value, size, flags, LOOKUP_FOLLOW);
-+	return path_setxattrat(AT_FDCWD, pathname, 0, name, value, size, flags);
- }
- 
- SYSCALL_DEFINE5(lsetxattr, const char __user *, pathname,
- 		const char __user *, name, const void __user *, value,
- 		size_t, size, int, flags)
- {
--	return path_setxattr(pathname, name, value, size, flags, 0);
-+	return path_setxattrat(AT_FDCWD, pathname, AT_SYMLINK_NOFOLLOW, name,
-+			       value, size, flags);
- }
- 
- SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
- 		const void __user *,value, size_t, size, int, flags)
- {
--	struct xattr_name kname;
--	struct kernel_xattr_ctx ctx = {
--		.cvalue   = value,
--		.kvalue   = NULL,
--		.size     = size,
--		.kname    = &kname,
--		.flags    = flags,
--	};
--	int error;
--
--	CLASS(fd, f)(fd);
--
--	if (fd_empty(f))
--		return -EBADF;
--
--	error = setxattr_copy(name, &ctx);
--	if (error)
--		return error;
--
--	error = file_setxattr(fd_file(f), &ctx);
--	kvfree(ctx.kvalue);
--	return error;
-+	return path_setxattrat(fd, NULL, AT_EMPTY_PATH, name,
-+			       value, size, flags);
- }
- 
- /*
-@@ -802,11 +849,10 @@ ssize_t filename_getxattr(int dfd, struct filename *filename,
- 	return error;
- }
- 
--static ssize_t path_getxattr(const char __user *pathname,
--			     const char __user *name, void __user *value,
--			     size_t size, unsigned int lookup_flags)
-+static ssize_t path_getxattrat(int dfd, const char __user *pathname,
-+			       unsigned int at_flags, const char __user *name,
-+			       void __user *value, size_t size)
- {
--	ssize_t error;
- 	struct xattr_name kname;
- 	struct kernel_xattr_ctx ctx = {
- 		.value    = value,
-@@ -814,44 +860,72 @@ static ssize_t path_getxattr(const char __user *pathname,
- 		.kname    = &kname,
- 		.flags    = 0,
- 	};
-+	struct filename *filename;
-+	ssize_t error;
-+
-+	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-+		return -EINVAL;
- 
- 	error = import_xattr_name(&kname, name);
- 	if (error)
- 		return error;
--	return filename_getxattr(AT_FDCWD, getname(pathname), lookup_flags, &ctx);
-+
-+	filename = getname_xattr(pathname, at_flags);
-+	if (!filename) {
-+		CLASS(fd, f)(dfd);
-+		if (fd_empty(f))
-+			return -EBADF;
-+		return file_getxattr(fd_file(f), &ctx);
-+	} else {
-+		int lookup_flags = 0;
-+		if (at_flags & AT_SYMLINK_NOFOLLOW)
-+			lookup_flags = LOOKUP_FOLLOW;
-+		return filename_getxattr(dfd, filename, lookup_flags, &ctx);
-+	}
-+}
-+
-+SYSCALL_DEFINE6(getxattrat, int, dfd, const char __user *, pathname, unsigned int, at_flags,
-+		const char __user *, name, struct xattr_args __user *, uargs, size_t, usize)
-+{
-+	struct xattr_args args = {};
-+	int error;
-+
-+	BUILD_BUG_ON(sizeof(struct xattr_args) < XATTR_ARGS_SIZE_VER0);
-+	BUILD_BUG_ON(sizeof(struct xattr_args) != XATTR_ARGS_SIZE_LATEST);
-+
-+	if (unlikely(usize < XATTR_ARGS_SIZE_VER0))
-+		return -EINVAL;
-+	if (usize > PAGE_SIZE)
-+		return -E2BIG;
-+
-+	error = copy_struct_from_user(&args, sizeof(args), uargs, usize);
-+	if (error)
-+		return error;
-+
-+	if (args.flags != 0)
-+		return -EINVAL;
-+
-+	return path_getxattrat(dfd, pathname, at_flags, name,
-+			       u64_to_user_ptr(args.value), args.size);
- }
- 
- SYSCALL_DEFINE4(getxattr, const char __user *, pathname,
- 		const char __user *, name, void __user *, value, size_t, size)
- {
--	return path_getxattr(pathname, name, value, size, LOOKUP_FOLLOW);
-+	return path_getxattrat(AT_FDCWD, pathname, 0, name, value, size);
- }
- 
- SYSCALL_DEFINE4(lgetxattr, const char __user *, pathname,
- 		const char __user *, name, void __user *, value, size_t, size)
- {
--	return path_getxattr(pathname, name, value, size, 0);
-+	return path_getxattrat(AT_FDCWD, pathname, AT_SYMLINK_NOFOLLOW, name,
-+			       value, size);
- }
- 
- SYSCALL_DEFINE4(fgetxattr, int, fd, const char __user *, name,
- 		void __user *, value, size_t, size)
- {
--	ssize_t error;
--	struct xattr_name kname;
--	struct kernel_xattr_ctx ctx = {
--		.value    = value,
--		.size     = size,
--		.kname    = &kname,
--		.flags    = 0,
--	};
--	CLASS(fd, f)(fd);
--
--	if (fd_empty(f))
--		return -EBADF;
--	error = import_xattr_name(&kname, name);
--	if (error)
--		return error;
--	return file_getxattr(fd_file(f), &ctx);
-+	return path_getxattrat(fd, NULL, AT_EMPTY_PATH, name, value, size);
- }
- 
- /*
-@@ -915,32 +989,50 @@ ssize_t filename_listxattr(int dfd, struct filename *filename,
- 	return error;
- }
- 
--static ssize_t path_listxattr(const char __user *pathname, char __user *list,
--			      size_t size, unsigned int lookup_flags)
-+static ssize_t path_listxattrat(int dfd, const char __user *pathname,
-+				unsigned int at_flags, char __user *list,
-+				size_t size)
-+{
-+	struct filename *filename;
-+	int lookup_flags;
-+
-+	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-+		return -EINVAL;
-+
-+	filename = getname_xattr(pathname, at_flags);
-+	if (!filename) {
-+		CLASS(fd, f)(dfd);
-+		if (fd_empty(f))
-+			return -EBADF;
-+		return file_listxattr(fd_file(f), list, size);
-+	}
-+
-+	lookup_flags = (at_flags & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
-+	return filename_listxattr(dfd, filename, lookup_flags, list, size);
-+}
-+
-+SYSCALL_DEFINE5(listxattrat, int, dfd, const char __user *, pathname,
-+		unsigned int, at_flags,
-+		char __user *, list, size_t, size)
- {
--	return filename_listxattr(AT_FDCWD, getname(pathname), lookup_flags,
--				  list, size);
-+	return path_listxattrat(dfd, pathname, at_flags, list, size);
- }
- 
- SYSCALL_DEFINE3(listxattr, const char __user *, pathname, char __user *, list,
- 		size_t, size)
- {
--	return path_listxattr(pathname, list, size, LOOKUP_FOLLOW);
-+	return path_listxattrat(AT_FDCWD, pathname, 0, list, size);
- }
- 
- SYSCALL_DEFINE3(llistxattr, const char __user *, pathname, char __user *, list,
- 		size_t, size)
- {
--	return path_listxattr(pathname, list, size, 0);
-+	return path_listxattrat(AT_FDCWD, pathname, AT_SYMLINK_NOFOLLOW, list, size);
- }
- 
- SYSCALL_DEFINE3(flistxattr, int, fd, char __user *, list, size_t, size)
- {
--	CLASS(fd, f)(fd);
--
--	if (fd_empty(f))
--		return -EBADF;
--	return file_listxattr(fd_file(f), list, size);
-+	return path_listxattrat(fd, NULL, AT_EMPTY_PATH, list, size);
- }
- 
- /*
-@@ -992,44 +1084,53 @@ static int filename_removexattr(int dfd, struct filename *filename,
- 	return error;
- }
- 
--static int path_removexattr(const char __user *pathname,
--			    const char __user *name, unsigned int lookup_flags)
-+static int path_removexattrat(int dfd, const char __user *pathname,
-+			      unsigned int at_flags, const char __user *name)
- {
- 	struct xattr_name kname;
-+	struct filename *filename;
-+	unsigned int lookup_flags;
- 	int error;
- 
-+	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-+		return -EINVAL;
-+
- 	error = import_xattr_name(&kname, name);
- 	if (error)
- 		return error;
--	return filename_removexattr(AT_FDCWD, getname(pathname), lookup_flags,
--				    &kname);
-+
-+	filename = getname_xattr(pathname, at_flags);
-+	if (!filename) {
-+		CLASS(fd, f)(dfd);
-+		if (fd_empty(f))
-+			return -EBADF;
-+		return file_removexattr(fd_file(f), &kname);
-+	}
-+	lookup_flags = (at_flags & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
-+	return filename_removexattr(dfd, filename, lookup_flags, &kname);
-+}
-+
-+SYSCALL_DEFINE4(removexattrat, int, dfd, const char __user *, pathname,
-+		unsigned int, at_flags, const char __user *, name)
-+{
-+	return path_removexattrat(dfd, pathname, at_flags, name);
- }
- 
- SYSCALL_DEFINE2(removexattr, const char __user *, pathname,
- 		const char __user *, name)
- {
--	return path_removexattr(pathname, name, LOOKUP_FOLLOW);
-+	return path_removexattrat(AT_FDCWD, pathname, 0, name);
- }
- 
- SYSCALL_DEFINE2(lremovexattr, const char __user *, pathname,
- 		const char __user *, name)
- {
--	return path_removexattr(pathname, name, 0);
-+	return path_removexattrat(AT_FDCWD, pathname, AT_SYMLINK_NOFOLLOW, name);
- }
- 
- SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
- {
--	CLASS(fd, f)(fd);
--	struct xattr_name kname;
--	int error;
--
--	if (fd_empty(f))
--		return -EBADF;
--
--	error = import_xattr_name(&kname, name);
--	if (error)
--		return error;
--	return file_removexattr(fd_file(f), &kname);
-+	return path_removexattrat(fd, NULL, AT_EMPTY_PATH, name);
- }
- 
- int xattr_list_one(char **buffer, ssize_t *remaining_size, const char *name)
-diff --git a/include/asm-generic/audit_change_attr.h b/include/asm-generic/audit_change_attr.h
-index 331670807cf0..cc840537885f 100644
---- a/include/asm-generic/audit_change_attr.h
-+++ b/include/asm-generic/audit_change_attr.h
-@@ -11,9 +11,15 @@ __NR_lchown,
- __NR_fchown,
- #endif
- __NR_setxattr,
-+#ifdef __NR_setxattrat
-+__NR_setxattrat,
-+#endif
- __NR_lsetxattr,
- __NR_fsetxattr,
- __NR_removexattr,
-+#ifdef __NR_removexattrat
-+__NR_removexattrat,
-+#endif
- __NR_lremovexattr,
- __NR_fremovexattr,
- #ifdef __NR_fchownat
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 5758104921e6..c6333204d451 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -77,6 +77,7 @@ struct cachestat_range;
- struct cachestat;
- struct statmount;
- struct mnt_id_req;
-+struct xattr_args;
- 
- #include <linux/types.h>
- #include <linux/aio_abi.h>
-@@ -338,23 +339,35 @@ asmlinkage long sys_io_uring_register(unsigned int fd, unsigned int op,
- 				void __user *arg, unsigned int nr_args);
- asmlinkage long sys_setxattr(const char __user *path, const char __user *name,
- 			     const void __user *value, size_t size, int flags);
-+asmlinkage long sys_setxattrat(int dfd, const char __user *path, unsigned int at_flags,
-+			       const char __user *name,
-+			       const struct xattr_args __user *args, size_t size);
- asmlinkage long sys_lsetxattr(const char __user *path, const char __user *name,
- 			      const void __user *value, size_t size, int flags);
- asmlinkage long sys_fsetxattr(int fd, const char __user *name,
- 			      const void __user *value, size_t size, int flags);
- asmlinkage long sys_getxattr(const char __user *path, const char __user *name,
- 			     void __user *value, size_t size);
-+asmlinkage long sys_getxattrat(int dfd, const char __user *path, unsigned int at_flags,
-+			       const char __user *name,
-+			       struct xattr_args __user *args, size_t size);
- asmlinkage long sys_lgetxattr(const char __user *path, const char __user *name,
- 			      void __user *value, size_t size);
- asmlinkage long sys_fgetxattr(int fd, const char __user *name,
- 			      void __user *value, size_t size);
- asmlinkage long sys_listxattr(const char __user *path, char __user *list,
- 			      size_t size);
-+asmlinkage long sys_listxattrat(int dfd, const char __user *path,
-+				unsigned int at_flags,
-+				char __user *list, size_t size);
- asmlinkage long sys_llistxattr(const char __user *path, char __user *list,
- 			       size_t size);
- asmlinkage long sys_flistxattr(int fd, char __user *list, size_t size);
- asmlinkage long sys_removexattr(const char __user *path,
- 				const char __user *name);
-+asmlinkage long sys_removexattrat(int dfd, const char __user *path,
-+				  unsigned int at_flags,
-+				  const char __user *name);
- asmlinkage long sys_lremovexattr(const char __user *path,
- 				 const char __user *name);
- asmlinkage long sys_fremovexattr(int fd, const char __user *name);
-diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-index d20051865800..86b0d47984a1 100644
---- a/include/linux/xattr.h
-+++ b/include/linux/xattr.h
-@@ -19,6 +19,10 @@
- #include <linux/user_namespace.h>
- #include <uapi/linux/xattr.h>
- 
-+/* List of all open_how "versions". */
-+#define XATTR_ARGS_SIZE_VER0	16 /* sizeof first published struct */
-+#define XATTR_ARGS_SIZE_LATEST	XATTR_ARGS_SIZE_VER0
-+
- struct inode;
- struct dentry;
- 
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 5bf6148cac2b..88dc393c2bca 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -841,8 +841,17 @@ __SYSCALL(__NR_lsm_list_modules, sys_lsm_list_modules)
- #define __NR_mseal 462
- __SYSCALL(__NR_mseal, sys_mseal)
- 
-+#define __NR_setxattrat 463
-+__SYSCALL(__NR_setxattrat, sys_setxattrat)
-+#define __NR_getxattrat 464
-+__SYSCALL(__NR_getxattrat, sys_getxattrat)
-+#define __NR_listxattrat 465
-+__SYSCALL(__NR_listxattrat, sys_listxattrat)
-+#define __NR_removexattrat 466
-+__SYSCALL(__NR_removexattrat, sys_removexattrat)
-+
- #undef __NR_syscalls
--#define __NR_syscalls 463
-+#define __NR_syscalls 467
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
-index 9463db2dfa9d..9854f9cff3c6 100644
---- a/include/uapi/linux/xattr.h
-+++ b/include/uapi/linux/xattr.h
-@@ -11,6 +11,7 @@
- */
- 
- #include <linux/libc-compat.h>
-+#include <linux/types.h>
- 
- #ifndef _UAPI_LINUX_XATTR_H
- #define _UAPI_LINUX_XATTR_H
-@@ -20,6 +21,12 @@
- 
- #define XATTR_CREATE	0x1	/* set value, fail if attr already exists */
- #define XATTR_REPLACE	0x2	/* set value, fail if attr does not exist */
-+
-+struct xattr_args {
-+	__aligned_u64 __user value;
-+	__u32 size;
-+	__u32 flags;
-+};
- #endif
- 
- /* Namespaces */
--- 
-2.39.5
+This is what this patchset aims to implement.
 
+There are two superblock iterator functions provided. The first is a
+generic iterator that provides safe, reference counted inodes for
+the callback to operate on. This is generally what most sb->s_inodes
+iterators use, and it allows the iterator to drop locks and perform
+blocking operations on the inode before moving to the next inode in
+the sb->s_inodes list.
+
+There is one quirk to this interface - INO_ITER_REFERENCE - because
+fsnotify iterates the inode cache -after- evict_inodes() has been
+called during superblock shutdown to evict all non-referenced
+inodes. Hence it should only find referenced inodes, and it has
+a check to skip unreferenced inodes. This flag does the same.
+
+However, I suspect this is now somewhat sub-optimal because LSMs can
+hold references to inodes beyond evict_inodes(), and they don't get
+torn down until after fsnotify evicts the referenced inodes it
+holds. However, the landlock LSM doesn't have checks for
+unreferenced inodes (i.e. doesn't use INO_ITER_REFERENCE), so this
+guard is not consistently applied.
+
+I'm undecided on how best to handle this, but it does not need to be
+solved for this patchset to work. fsnotify and
+landlock don't need to run -after- evict_inodes(), but moving them
+to before evict_inodes() mean we now do three full inode cache
+iterations to evict all the inodes from the cache. That doesn't seem
+like a good idea when there might be hundreds of millions of cached
+inodes at unmount.
+
+Similarly, needing the iterator to be aware that there should be no
+unreferenced inodes left when they run doesn't seem like a good
+idea, either. So perhaps the answer is that the iterator checks for
+SB_ACTIVE (or some other similar flag) that indicates the superblock
+is being torn down and so will skip zero-referenced inodes
+automatically in this case. Like I said - this doesn't need to be
+solved right now, it's just something to be aware of.
+
+The second iterator is the "unsafe" iterator variant that only
+provides the callback with an existence guarantee. It does this by
+holding the rcu_read_lock() to guarantee that the inode is not freed
+from under the callback. There are no validity checks performed on
+the inode - it is entirely up to the callback to validate the inode
+can be operated on safely.
+
+Hence the "unsafe" variant is only for very specific internal uses
+only. Nobody should be adding new uses of this function without
+as there are very few good reasons for external access to inodes
+without holding a valid reference. I have not decided whether the
+unsafe callbacks should require a lockdep_assert_in_rcu_read_lock()
+check in them to clearly document the context under which they are
+running.
+
+The patchset converts all the open coded iterators to use these
+new iterator functions, which means the only use of sb->s_inodes
+is now confined to fs/super.c (iterator API) and fs/inode.c
+(add/remove API). A new superblock operation is then added to
+call out from the iterators into the filesystem to allow them to run
+the iteration instead of walking the sb->s_inodes list.
+
+XFS is then converted to use this new superblock operation. I didn't
+use the existing iterator function for this functionality right now
+as it is currently based on radix tree tag lookups. It also uses a
+batched 'lookup and lock' mechanism that complicated matters as I
+developed this code. Hence I open coded a new, simpler cache walk
+for testing purposes.
+
+Now that I have stuff working and I think I have the callback API
+semantics settled, batched radix tree lookups should still work to
+minimise the iteration overhead. Also, we might want to tag VFS
+inodes in the radix tree so that we can filter them efficiently for
+traversals. This would allow us to use the existing generic inode
+cache walker rather than a separate variant as this patch set
+implements. This can be done as future work, though.
+
+In terms of scalability improvements, a quick 'will it scale' test
+demonstrates where the sb->s_inodes list hurts. Running a sharded,
+share-nothing cold cache workload with 100,000 files per thread in
+per-thread directories gives the following results on a 4-node 64p
+machine with 128GB RAM.
+
+The workloads "walk", "chmod" and "unlink" are all directory
+traversal workloads that stream cold cache inodes into the cache.
+There is enough memory on this test machine that these indoes are
+not being reclaimed during the workload, and are being freed between
+steps via drop_caches (which iterates the inode cache and so
+explicitly tests the new iteration APIs!). Hence the sb->s_inodes
+scalability issues aren't as bad in these tests as when memory is
+tight and inodes are being reclaimed (i.e. the issues are worse in
+real workloads).
+
+The "bulkstat" workload uses the XFS bulkstat ioctl to iterate
+inodes via walking the internal inode btrees. It uses
+d_mark_dontcache() so it is actually tearing down each inode as soon
+as it has been sampled by the bulkstat code. Hence it is doing two
+sb->s_inodes list manipulations per inode and so shows scalability
+issues much earlier than the other workloads.
+
+Before:
+
+Filesystem      Files  Threads  Create       Walk      Chmod      Unlink     Bulkstat
+       xfs     400000     4      4.269      3.225      4.557      7.316      1.306
+       xfs     800000     8      4.844      3.227      4.702      7.905      1.908
+       xfs    1600000    16      6.286      3.296      5.592      8.838      4.392
+       xfs    3200000    32      8.912      5.681      8.505     11.724      7.085
+       xfs    6400000    64     15.344     11.144     14.162     18.604     15.494
+
+Bulkstat starts to show issues at 8 threads, walk and chmod between
+16 and 32 threads, and unlink is limited by internal XFS stuff.
+Bulkstat is bottlenecked at about 400-450 thousand inodes/s by the
+sb->s_inodes list management.
+
+After:
+
+Filesystem      Files  Threads  Create       Walk      Chmod      Unlink     Bulkstat
+       xfs     400000     4      4.140      3.502      4.154      7.242      1.164
+       xfs     800000     8      4.637      2.836      4.444      7.896      1.093
+       xfs    1600000    16      5.549      3.054      5.213      8.696      1.107
+       xfs    3200000    32      8.387      3.218      6.867     10.668      1.125
+       xfs    6400000    64     14.112      3.953     10.365     18.620      1.270
+
+When patched, walk shows little in way of scalability degradation
+out to 64 threads, chmod is significantly improved at 32-64 threads,
+and bulkstat shows perfect scalability out to 64 threads now.
+
+I did a couple of other longer running, higher inode count tests
+with bulkstat to get an idea of inode cache streaming rates - 32
+million inodes scanned in 4.4 seconds at 64 threads. That's about
+7.2 million inodes/s being streamed through the inode cache with the
+IO rates are peaking well above 5.5GB/s (near IO bound).
+
+Hence raw VFS inode cache throughput sees a ~17x scalability
+improvement on XFS at 64 threads (and probably a -lot- more on
+higher CPU count machines).  That's far better performance than I
+ever got from the dlist conversion of the sb->s_inodes list in
+previous patchsets, so this seems like a much better direction to be
+heading for optimising the way we cache inodes.
+
+I haven't done a lot of testing on this patchset yet - it boots and
+appears to work OK for block devices, ext4 and XFS, but checking
+stuff like quota on/off is still working properly on ext4 hasn't
+been done yet.
+
+What do people think of moving towards per-sb inode caching and
+traversal mechanisms like this?
+
+-Dave.
 
