@@ -1,310 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-30775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B0998E371
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 21:29:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE74198E377
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 21:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C15B1F23C1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 19:29:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D40EB23FB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 19:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28845216A0C;
-	Wed,  2 Oct 2024 19:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DDC215F7C;
+	Wed,  2 Oct 2024 19:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HwLHPqCn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDyp8qd2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEB72141C6
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Oct 2024 19:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63718AE4;
+	Wed,  2 Oct 2024 19:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727897358; cv=none; b=mAxk0kZezmbI1BYQb7EXVjeJMYllsxxx8Xm7+Ibgvq97ISsvtLcoUkpQ+hmXX8fO9shXIObizF3Mdh/ZB0kYGYwF6v1P9Mr2MR29sL2RqRAUR9IJy2tmq+BBXYJq62OonH41WMdYltvw1nji9vmRTT2poCRqVstUG6FMJXkLYgE=
+	t=1727897373; cv=none; b=g2jQdYFC9GaTu94KVR33UstNlT+pdpWO0KKYSrR4uAyW9zay4612iW389PdyBOnw8faoTygUARW2njvS7Ohhet4hLS2H1u+KfS8/1ArcPAbpZKBT2FUSkWKjqqCCe+2iYcRIxOX6sIvNig6kHPjPyzauqZr0KJQ75HYLqfF33jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727897358; c=relaxed/simple;
-	bh=wjK0yT5JPmEf5G2Uq8EHfLJmZLzi7OMsEXbamwKy40E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/o/Wux+9ekHR1NnoARrj++TcPwDpFYhSkVQUqkCrbW9TP49sO0hZ800j8IWq2S1ZHa7C0dO2OP3xV9kXeNKnnpDNx9rKGkHLZAFLbIT7F7nJLO7Yb1xbr//CWRTgfH+gIptexm4JsM9fh3ggh2SMD8PnYvObfsD52yrOnQ3fwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HwLHPqCn; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 2 Oct 2024 15:29:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727897353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dWJ9pxxtWMmCuuRCPO5AlhR0Cmnz0wTRR6c9OG5nDe4=;
-	b=HwLHPqCnuo/0K8UQx/5hWY8jqN2/WFm/ZRg6TGLahWBSywoyMsmL2PV8boYh+Xa3dC85JI
-	7WF7uQq2bS3sYpPs1Tibh3BhBasPAQQgoszJiKv9kJdY5vy+D9jsG3F1NwIA9KUerFr1ag
-	V14M72Qo7cq0osy9x2y/TbxqDNb29yc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [RFC PATCH 0/7] vfs: improving inode cache iteration scalability
-Message-ID: <3lukwhxkfyqz5xsp4r7byjejrgvccm76azw37pmudohvxcxqld@kiwf5f5vjshk>
-References: <20241002014017.3801899-1-david@fromorbit.com>
- <20241002-lethargisch-hypnose-fd06ae7a0977@brauner>
- <Zv098heGHOtGfw1R@dread.disaster.area>
+	s=arc-20240116; t=1727897373; c=relaxed/simple;
+	bh=8oiK5IU7Qhw1ttezR2j18nH046N1hl/vjVmhxTcZaFY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GElZw0GaqiiZVz6kxyg8sXCUjhX6J0ZOMQgYQquuI0gaGVchdhwxmFgJgNzFtMENb/BKi5iezgj1o9ne+2nGZMVkuv8g8VKPdsedF5rNlC00nEJKrpDOWY6t6dhLXp0ICuGJYVi6uobJ6uAR5N1kXLyd+OINa8Pnuc91Pf5By7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDyp8qd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4E90C4CEC2;
+	Wed,  2 Oct 2024 19:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727897372;
+	bh=8oiK5IU7Qhw1ttezR2j18nH046N1hl/vjVmhxTcZaFY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sDyp8qd2iGUJbVxlIon1SZp0FoCrNFapbJG6H1XLZJstGoks821loMKlBgRtxS2pt
+	 FRMpM8u13XP2/wZpMtv0JlrO0jXiITzPaCiB72pKFeO+VvHW3+f1LgmulYoBNWB+Wc
+	 q5Ob/UPjxZeQZLg/1xo3xEkj9k47VllAkXb8ds4i7xTjY8QOSXI1pIQRZQc4ZAl7ol
+	 IrbDPhKzw5eOK+NaxfsunNLGLprzo+1j5t5Q0Sqmp/TzkTjPB9+Td2DEYrencPTYwG
+	 WkLUopQgg8gRDgGEaIYV6F8k4PHvmdqIkrvNGMYQZCkTapZ70VoT52gNc1EMmKbZGi
+	 pJC9UA2ziOg9w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sw52P-00H99U-5J;
+	Wed, 02 Oct 2024 20:29:29 +0100
+Date: Wed, 02 Oct 2024 20:29:28 +0100
+Message-ID: <868qv6717r.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	David Spickett <david.spickett@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v13 16/40] KVM: arm64: Manage GCS access and registers for guests
+In-Reply-To: <37fbc082-6bda-46e3-9ee7-9240b41f26fd@sirena.org.uk>
+References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
+	<20241001-arm64-gcs-v13-16-222b78d87eee@kernel.org>
+	<86bk0373nq.wl-maz@kernel.org>
+	<86a5fm7b4i.wl-maz@kernel.org>
+	<37fbc082-6bda-46e3-9ee7-9240b41f26fd@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zv098heGHOtGfw1R@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, david.spickett@arm.com, yury.khrustalev@arm.com, wilco.dijkstra@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Oct 02, 2024 at 10:34:58PM GMT, Dave Chinner wrote:
-> On Wed, Oct 02, 2024 at 12:00:01PM +0200, Christian Brauner wrote:
-> > On Wed, Oct 02, 2024 at 11:33:17AM GMT, Dave Chinner wrote:
-> > > What do people think of moving towards per-sb inode caching and
-> > > traversal mechanisms like this?
-> > 
-> > Patches 1-4 are great cleanups that I would like us to merge even
-> > independent of the rest.
+On Wed, 02 Oct 2024 19:24:12 +0100,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> Yes, they make it much easier to manage the iteration code.
+> [1  <text/plain; us-ascii (7bit)>]
+> On Wed, Oct 02, 2024 at 04:55:25PM +0100, Marc Zyngier wrote:
+> > Marc Zyngier <maz@kernel.org> wrote:
 > 
-> > I don't have big conceptual issues with the series otherwise. The only
-> > thing that makes me a bit uneasy is that we are now providing an api
-> > that may encourage filesystems to do their own inode caching even if
-> > they don't really have a need for it just because it's there.  So really
-> > a way that would've solved this issue generically would have been my
-> > preference.
+> > > > +	if (!kvm_has_gcs(kvm))
+> > > > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
+> > > > +						HFGxTR_EL2_nGCS_EL1);
 > 
-> Well, that's the problem, isn't it? :/
+> > > Why are you still allowing the GCS instructions when GCS isn't
+> > > enabled?
 > 
-> There really isn't a good generic solution for global list access
-> and management.  The dlist stuff kinda works, but it still has
-> significant overhead and doesn't get rid of spinlock contention
-> completely because of the lack of locality between list add and
-> remove operations.
+> > Scratch that, they are NOPs when GCS isn't enabled, so there shouldn't
+> > be any need for extra traps.
+> 
+> They are, though really they should UNDEF if GCS isn't there (which I
+> had thought was what you were referencing here).  Equally we only have
+> traps for a subset of GCS instructions and it's not like there aren't a
+> whole bunch of untrappable extensions anyway so it's not clear it's
+> worth the effort just for that.
 
-There is though; I haven't posted it yet because it still needs some
-work, but the concept works and performs about the same as dlock-list.
+If the encodings UNDEF when GCS is not implemented (i.e. they are not
+in the NOP space), then all trapable instructions should absolutely
+UNDEF (and yes, it is worth the effort, even if it is only to
+demonstrate that the architecture is sub-par).
 
-https://evilpiepirate.org/git/bcachefs.git/log/?h=fast_list
+So I expect the next version to handle traps for GCSPUSHX, GCSPOPX,
+GCSPUSHM, GCSSTR and GCSSTTR when GCS isn't enabled.
 
-The thing that needs to be sorted before posting is that it can't shrink
-the radix tree. generic-radix-tree doesn't support shrinking, and I
-could add that, but then ida doesn't provide a way to query the highest
-id allocated (xarray doesn't support backwards iteration).
+I'm also pretty sure this is missing some form of sanitisation for
+PSTATE.EXLOCK, and looking at the pseudocode, you seem to be missing
+the handling of that bit on exception injection.
 
-So I'm going to try it using idr and see how that performs (idr is not
-really the right data structure for this, split ida and item radix tree
-is better, so might end up doing something else).
+	M.
 
-But - this approach with more work will work for the list_lru lock
-contention as well.
-
-From 32cb8103ecfacdd5ed8e1eb390221c3f8339de6f Mon Sep 17 00:00:00 2001
-From: Kent Overstreet <kent.overstreet@linux.dev>
-Date: Sat, 28 Sep 2024 16:22:38 -0400
-Subject: [PATCH] lib/fast_list.c
-
-A fast "list" data structure, which is actually a radix tree, with an
-IDA for slot allocation and a percpu buffer on top of that.
-
-Items cannot be added or moved to the head or tail, only added at some
-(arbitrary) position and removed. The advantage is that adding, removing
-and iteration is generally lockless, only hitting the lock in ida when
-the percpu buffer is full or empty.
-
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-diff --git a/include/linux/fast_list.h b/include/linux/fast_list.h
-new file mode 100644
-index 000000000000..7d5d8592864d
---- /dev/null
-+++ b/include/linux/fast_list.h
-@@ -0,0 +1,22 @@
-+#ifndef _LINUX_FAST_LIST_H
-+#define _LINUX_FAST_LIST_H
-+
-+#include <linux/generic-radix-tree.h>
-+#include <linux/idr.h>
-+#include <linux/percpu.h>
-+
-+struct fast_list_pcpu;
-+
-+struct fast_list {
-+	GENRADIX(void *)	items;
-+	struct ida		slots_allocated;;
-+	struct fast_list_pcpu	*buffer;
-+};
-+
-+int fast_list_get_idx(struct fast_list *l);
-+int fast_list_add(struct fast_list *l, void *item);
-+void fast_list_remove(struct fast_list *l, unsigned idx);
-+void fast_list_exit(struct fast_list *l);
-+int fast_list_init(struct fast_list *l);
-+
-+#endif /* _LINUX_FAST_LIST_H */
-diff --git a/lib/Makefile b/lib/Makefile
-index 773adf88af41..85cf5a0d36b1 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -49,7 +49,7 @@ obj-y += bcd.o sort.o parser.o debug_locks.o random32.o \
- 	 bsearch.o find_bit.o llist.o lwq.o memweight.o kfifo.o \
- 	 percpu-refcount.o rhashtable.o base64.o \
- 	 once.o refcount.o rcuref.o usercopy.o errseq.o bucket_locks.o \
--	 generic-radix-tree.o bitmap-str.o
-+	 generic-radix-tree.o bitmap-str.o fast_list.o
- obj-$(CONFIG_STRING_KUNIT_TEST) += string_kunit.o
- obj-y += string_helpers.o
- obj-$(CONFIG_STRING_HELPERS_KUNIT_TEST) += string_helpers_kunit.o
-diff --git a/lib/fast_list.c b/lib/fast_list.c
-new file mode 100644
-index 000000000000..bbb69bb29687
---- /dev/null
-+++ b/lib/fast_list.c
-@@ -0,0 +1,140 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Fast, unordered lists
-+ *
-+ * Supports add, remove, and iterate
-+ *
-+ * Underneath, they're a radix tree and an IDA, with a percpu buffer for slot
-+ * allocation and freeing.
-+ *
-+ * This means that adding, removing, and iterating over items is lockless,
-+ * except when refilling/emptying the percpu slot buffers.
-+ */
-+
-+#include <linux/fast_list.h>
-+
-+struct fast_list_pcpu {
-+	size_t			nr;
-+	size_t			entries[31];
-+};
-+
-+/**
-+ * fast_list_get_idx - get a slot in a fast_list
-+ * @l:		list to get slot in
-+ *
-+ * This allocates a slot in the radix tree without storing to it, so that we can
-+ * take the potential memory allocation failure early and do the list add later
-+ * when we can't take an allocation failure.
-+ *
-+ * Returns: positive integer on success, -ENOMEM on failure
-+ */
-+int fast_list_get_idx(struct fast_list *l)
-+{
-+	int idx;
-+
-+	preempt_disable();
-+	struct fast_list_pcpu *lp = this_cpu_ptr(l->buffer);
-+
-+	if (unlikely(!lp->nr))
-+		while (lp->nr <= ARRAY_SIZE(lp->entries) / 2) {
-+			idx = ida_alloc_range(&l->slots_allocated, 1, ~0, GFP_NOWAIT|__GFP_NOWARN);
-+			if (unlikely(idx < 0)) {
-+				preempt_enable();
-+				idx = ida_alloc_range(&l->slots_allocated, 1, ~0, GFP_KERNEL);
-+				if (unlikely(idx < 0))
-+					return idx;
-+
-+				preempt_disable();
-+				lp = this_cpu_ptr(l->buffer);
-+			}
-+
-+			if (unlikely(!genradix_ptr_alloc_inlined(&l->items, idx,
-+							GFP_NOWAIT|__GFP_NOWARN))) {
-+				preempt_enable();
-+				if (!genradix_ptr_alloc(&l->items, idx, GFP_KERNEL)) {
-+					ida_free(&l->slots_allocated, idx);
-+					return -ENOMEM;
-+				}
-+
-+				preempt_disable();
-+				lp = this_cpu_ptr(l->buffer);
-+			}
-+
-+			if (unlikely(lp->nr == ARRAY_SIZE(lp->entries)))
-+				ida_free(&l->slots_allocated, idx);
-+			else
-+				lp->entries[lp->nr++] = idx;
-+		}
-+
-+	idx = lp->entries[--lp->nr];
-+	preempt_enable();
-+
-+	return idx;
-+}
-+
-+/**
-+ * fast_list_add - add an item to a fast_list
-+ * @l:		list
-+ * @item:	item to add
-+ *
-+ * Allocates a slot in the radix tree and stores to it and then returns the
-+ * slot index, which must be passed to fast_list_remove().
-+ *
-+ * Returns: positive integer on success, -ENOMEM on failure
-+ */
-+int fast_list_add(struct fast_list *l, void *item)
-+{
-+	int idx = fast_list_get_idx(l);
-+	if (idx < 0)
-+		return idx;
-+
-+	*genradix_ptr_inlined(&l->items, idx) = item;
-+	return idx;
-+}
-+
-+/**
-+ * fast_list_remove - remove an item from a fast_list
-+ * @l:		list
-+ * @idx:	item's slot index
-+ *
-+ * Zeroes out the slot in the radix tree and frees the slot for future
-+ * fast_list_add() operations.
-+ */
-+void fast_list_remove(struct fast_list *l, unsigned idx)
-+{
-+	if (!idx)
-+		return;
-+
-+	*genradix_ptr_inlined(&l->items, idx) = NULL;
-+
-+	preempt_disable();
-+	struct fast_list_pcpu *lp = this_cpu_ptr(l->buffer);
-+
-+	if (unlikely(lp->nr == ARRAY_SIZE(lp->entries)))
-+		while (lp->nr >= ARRAY_SIZE(lp->entries) / 2) {
-+			ida_free(&l->slots_allocated, idx);
-+			idx = lp->entries[--lp->nr];
-+		}
-+
-+	lp->entries[lp->nr++] = idx;
-+	preempt_enable();
-+}
-+
-+void fast_list_exit(struct fast_list *l)
-+{
-+	/* XXX: warn if list isn't empty */
-+	free_percpu(l->buffer);
-+	ida_destroy(&l->slots_allocated);
-+	genradix_free(&l->items);
-+}
-+
-+int fast_list_init(struct fast_list *l)
-+{
-+	genradix_init(&l->items);
-+	ida_init(&l->slots_allocated);
-+	l->buffer = alloc_percpu(*l->buffer);
-+	if (!l->buffer)
-+		return -ENOMEM;
-+	return 0;
-+}
+-- 
+Without deviation from the norm, progress is not possible.
 
