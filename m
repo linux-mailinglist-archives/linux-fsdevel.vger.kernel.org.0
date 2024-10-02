@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-30817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1148798E74B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:46:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F3198E74D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D521C2544E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:46:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C74111C255A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F87B1BFDFC;
-	Wed,  2 Oct 2024 23:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BF81C2451;
+	Wed,  2 Oct 2024 23:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="rEN9q944"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GRS0ZU4D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614FA1A4F1C;
-	Wed,  2 Oct 2024 23:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8921C0DCB;
+	Wed,  2 Oct 2024 23:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912727; cv=none; b=rG9Z339uIt5WRayvv7ZOLUJCdrxDevgz3njp5xprdQ7DU8KxnGTbrRa+MKeCZjb8IFQEJLkeclETuYGfMU5km1GZEmX+aC/oNv1mUixwqB6d3l7KPAOSB8DPDLIv1NRhgwp8y68rGVXep0BS7Eax0vJQwcAursCGu21aA8NCkjs=
+	t=1727912730; cv=none; b=U+yJZOk/L9a+PgdjkcLaQPPujqaLmtRheFVzqzxFsRSQqKszQZvITDoz7vkG4tGiURtNPsXtv9ldAEzdVULiKYN9oXMsFi2truEVXEhou+PiHtspCnWQZ5Sf/GxM7o/wWLL4Or/IBPRt4gNYdXRrA+n3O8VuTVi3JOK7ClIxPTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912727; c=relaxed/simple;
-	bh=+kkwFwJnq0dJkV7YDtzBnVifdVhZtRPynXmCviDLHIY=;
+	s=arc-20240116; t=1727912730; c=relaxed/simple;
+	bh=YxdydQxEeqgWOKZDzzhLVNxkB+ZO7uV8OQ8R50Iwbbk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bsNpg+O8J+Ep1qmQW87rHEzkZ6/posq0lcJmPqCKpykcrwglletrZXjOo2Ghx7xP+FK5YX3uUw+sEvVyg1sn9sBNJEL4G4+Dr1Ef2ALNU+Zgzkqc5sb1e1NNvgmG3cw2ru2IIN0K8cc5BbI5Oj/AZbtXMZCBTRxloZXdVY/GZUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=rEN9q944; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=WYD5Vx3uj1DXcEOF1xXREXd3Yc5uOLtHOzToyTR/Or/4d+S4L4LLciygPDOQDnaZpBo+6RBUkBT9UIw0XOiQD1AtA1x/9kDx2dijVTIfSx1s9NiRu4afH+W/XKNV7bZ7I1uunee3tdOued7PXWRZzsD/JuzSKTc3o4MTfyxGPvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GRS0ZU4D; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=HCbVqueHUmSSCcT+A2gsLYEdLj0anlbi7vfWbqjQz7g=; b=rEN9q9445fHCa6+Cu5k/ZNfA6l
-	rUVf5HN05YiPW6LBeSVDHVW4yadCX1//v6PcFQTA/Mu90qZhR7Kx2QsPMNbrNzyHSUt4N8NcoKeY7
-	WDaRV9YyJxmiKIQKzgH4Tqf6xY2PfLxyrL1xu+3E+lHnOktCjoFwrwW0u+T+Dm6IIp3tyD2xekUbA
-	ppP90YeCpxXhbXEgPg7bO0JT0sxAzzCV9SfZH9N9JKBfMt7feJ+oUh9ehxpd5ETYEhNy9ULePV+4s
-	oCrLHrmwF0ZREkJLY1US/OZkYXFek93sSO42K+dxBJIzW+OHd0L33CVG8dyiqCs0qBtz3j5HTqmPQ
-	O0FJJMEQ==;
+	bh=AQXk6ztfHTUQteq8elPhWhUuCISghcvWoGYTPvw/Cw8=; b=GRS0ZU4D/LbdgGtJz8RqDet2I/
+	kBSmua98CNEkx9YC1kQqu5FoWtonv8v6mjKUDDc+4jt2vUVc3H6KfulRVGlmnmc77P+HgeXkffCxc
+	ylDiVRu9Ko+fcofddOY/MotK4SzHmfX/qso/QhYfbjx+NngmuqyXbkJsJKWcizQVxvqWLiSXbitLm
+	7N5QOFhclCGI2g2TRhiPKOVDDFSHwO19js7JLFOv+9TrSrB6I5oA81S9Gzs6k2x9duS/K3VXWggQY
+	rjF7yM0fWEyE+RAq7rdWWkODzySa7GRoaOxdV0lHMyk6n0mrrCOHOXnjiIU+96+GbfoKG8yqtGoj/
+	1ycf+wPA==;
 Received: from [187.57.199.212] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw91w-0045tc-Bz; Thu, 03 Oct 2024 01:45:16 +0200
+	id 1sw920-0045tc-HW; Thu, 03 Oct 2024 01:45:20 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: Hugh Dickins <hughd@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -62,11 +62,10 @@ Cc: linux-mm@kvack.org,
 	smcv@collabora.com,
 	Christoph Hellwig <hch@lst.de>,
 	Theodore Ts'o <tytso@mit.edu>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v5 04/10] unicode: Recreate utf8_parse_version()
-Date: Wed,  2 Oct 2024 20:44:38 -0300
-Message-ID: <20241002234444.398367-5-andrealmeid@igalia.com>
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v5 05/10] libfs: Export generic_ci_ dentry functions
+Date: Wed,  2 Oct 2024 20:44:39 -0300
+Message-ID: <20241002234444.398367-6-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
 References: <20241002234444.398367-1-andrealmeid@igalia.com>
@@ -79,82 +78,76 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-All filesystems that currently support UTF-8 casefold can fetch the
-UTF-8 version from the filesystem metadata stored on disk. They can get
-the data stored and directly match it to a integer, so they can skip the
-string parsing step, which motivated the removal of this function in the
-first place.
-
-However, for tmpfs, the only way to tell the kernel which UTF-8 version
-we are about to use is via mount options, using a string. Re-introduce
-utf8_parse_version() to be used by tmpfs.
-
-This version differs from the original by skipping the intermediate step
-of copying the version string to an auxiliary string before calling
-match_token(). This versions calls match_token() in the argument string.
-The paramenters are simpler now as well.
-
-utf8_parse_version() was created by 9d53690f0d4 ("unicode: implement
-higher level API for string handling") and later removed by 49bd03cc7e9
-("unicode: pass a UNICODE_AGE() tripple to utf8_load").
+Export generic_ci_ dentry functions so they can be used by
+case-insensitive filesystems that need something more custom than the
+default one set by `struct generic_ci_dentry_ops`.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
+Changes from v4:
+- Guard func signatures inside IS_ENABLED(CONFIG_UNICODE)
 Changes from v3:
-- Return version on the return value, instead of returning version at
-  function args.
+- New patch
 ---
- fs/unicode/utf8-core.c  | 26 ++++++++++++++++++++++++++
- include/linux/unicode.h |  2 ++
- 2 files changed, 28 insertions(+)
+ fs/libfs.c         | 8 +++++---
+ include/linux/fs.h | 4 ++++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
-index 0400824ef493..6fc9ab8667e6 100644
---- a/fs/unicode/utf8-core.c
-+++ b/fs/unicode/utf8-core.c
-@@ -214,3 +214,29 @@ void utf8_unload(struct unicode_map *um)
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 46966fd8bcf9..7b290404c5f9 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1791,8 +1791,8 @@ bool is_empty_dir_inode(struct inode *inode)
+  *
+  * Return: 0 if names match, 1 if mismatch, or -ERRNO
+  */
+-static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+-				const char *str, const struct qstr *name)
++int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
++			 const char *str, const struct qstr *name)
+ {
+ 	const struct dentry *parent;
+ 	const struct inode *dir;
+@@ -1835,6 +1835,7 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+ 
+ 	return utf8_strncasecmp(dentry->d_sb->s_encoding, name, &qstr);
  }
- EXPORT_SYMBOL(utf8_unload);
++EXPORT_SYMBOL(generic_ci_d_compare);
  
-+/**
-+ * utf8_parse_version - Parse a UTF-8 version number from a string
-+ *
-+ * @version: input string
-+ *
-+ * Returns the parsed version on success, negative code on error
-+ */
-+int utf8_parse_version(char *version)
-+{
-+	substring_t args[3];
-+	unsigned int maj, min, rev;
-+	static const struct match_token token[] = {
-+		{1, "%d.%d.%d"},
-+		{0, NULL}
-+	};
-+
-+	if (match_token(version, token, args) != 1)
-+		return -EINVAL;
-+
-+	if (match_int(&args[0], &maj) || match_int(&args[1], &min) ||
-+	    match_int(&args[2], &rev))
-+		return -EINVAL;
-+
-+	return UNICODE_AGE(maj, min, rev);
-+}
-+EXPORT_SYMBOL(utf8_parse_version);
-diff --git a/include/linux/unicode.h b/include/linux/unicode.h
-index 0c0ab04e84ee..5e6b212a2aed 100644
---- a/include/linux/unicode.h
-+++ b/include/linux/unicode.h
-@@ -78,4 +78,6 @@ int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
- struct unicode_map *utf8_load(unsigned int version);
- void utf8_unload(struct unicode_map *um);
+ /**
+  * generic_ci_d_hash - generic d_hash implementation for casefolding filesystems
+@@ -1843,7 +1844,7 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+  *
+  * Return: 0 if hash was successful or unchanged, and -EINVAL on error
+  */
+-static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
++int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ {
+ 	const struct inode *dir = READ_ONCE(dentry->d_inode);
+ 	struct super_block *sb = dentry->d_sb;
+@@ -1858,6 +1859,7 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 		return -EINVAL;
+ 	return 0;
+ }
++EXPORT_SYMBOL(generic_ci_d_hash);
  
-+int utf8_parse_version(char *version);
+ static const struct dentry_operations generic_ci_dentry_ops = {
+ 	.d_hash = generic_ci_d_hash,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9a5d38fc3b67..400d070d9a9b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3453,6 +3453,10 @@ extern int generic_ci_match(const struct inode *parent,
+ 			    const u8 *de_name, u32 de_name_len);
+ 
+ #if IS_ENABLED(CONFIG_UNICODE)
++int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
++int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
++			 const char *str, const struct qstr *name);
 +
- #endif /* _LINUX_UNICODE_H */
+ /**
+  * generic_ci_validate_strict_name - Check if a given name is suitable
+  * for a directory
 -- 
 2.46.0
 
