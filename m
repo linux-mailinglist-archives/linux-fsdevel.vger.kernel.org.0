@@ -1,121 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-30731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F51498DF73
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 17:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC79498DFB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 17:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0BA28734A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9617228448B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679631D0DD7;
-	Wed,  2 Oct 2024 15:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9181D0E08;
+	Wed,  2 Oct 2024 15:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MvN2Cys4"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TU3t05EV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E5Q+YBcT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA861D0B97;
-	Wed,  2 Oct 2024 15:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0861D0DDA;
+	Wed,  2 Oct 2024 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883655; cv=none; b=tSrxWBAiiwl0HW6VhaK5Zgu1MRnfa1N3XCNS+gGkLnAs5Krvzq9CNGl4youYHLx30rnN8zqq5q5GTYmrO7P3QIhXs5y/e1qyPmo/Abx7DAAMXgXp07iq3Qw7xlWGJLJPgjab+SX/FavKn0A+9+a7IiaTiT+owRUQwqjKNbXSPEE=
+	t=1727883937; cv=none; b=Ewbx+QTT1TQ4Kk6ElBqdvp4MarrTHAaAxrc1hG7FiVImaLTRHOxuYY1c6KP7KEv4gVFaySoe+MxanxSQb+NTLIemJMNkB+nevblWZkWMgrWIUhjvjfw3hIX472lfPrHzP8Ion7J+uNTmezOO9E6o0bsUayFoCtXK8bVTV1UOX8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883655; c=relaxed/simple;
-	bh=WIP2KkjUlSVjwcDNw4d3jTWw8EguXiw7+Opg9pqYWpw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O25n/v13Jk8vfL5bWUdFXeJN6UIcKft9arNQ9zv8qjqNc4A5btPsitPjOEs+6OTdKoMiAFH5NgQfP0qCPQ89XZxQt7hGvV0Im/JVHHHE4K1YoOEtVA3EF8zHlG5KCU6GzBXVxyATLfFFLIqrEGL+DhnFuFrLcZztQHuwtmkzGbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MvN2Cys4; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fac47f0b1aso44998701fa.1;
-        Wed, 02 Oct 2024 08:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727883652; x=1728488452; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4BO7GvoEvRQo4g/wy/IaY0N6iqmmGOHEMQUrshuZ/AU=;
-        b=MvN2Cys4KDWHFH9mb4MoczJHGNJyH3MiXa6FWsO6J8qaP1coR6GANjoGNhpxlKCNq8
-         UNKP0pwM3ThK28T2Mj8tMTO5Gry+1AFo2xXObLhTHOO+SbM5QX4ycTVkXgIqzlBOIgsU
-         KKmhCHTlVwOSzi9HT5aT692ih6cg4ev5mkUEB+LgE7XZ6P7G6IoOnE7Xm7D47wGx8TMh
-         12qAOZVN0vYu1DlKynCY+dBesYH8yQdDR0PewTcBDfI9c7QZGCP62V+wbwLwD2jx0j8q
-         Ak/j6YuQ/W/1Rek8mACrClloBkHAjiuOsoUCosQhikT2yOJx0ZmiFnSHT3CBdbJE0GwV
-         E5Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727883652; x=1728488452;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4BO7GvoEvRQo4g/wy/IaY0N6iqmmGOHEMQUrshuZ/AU=;
-        b=RVUi8oVqVGLk358Dh30Ty6U7Rbp8TjCDpjKL//oO6xHdHtPRGlqQVvr/f/7ctAXIRr
-         9qrSZoh2Gk5qXwj0UFElkjH9irnechKtUrYjvLv3GVIwg1IC5VI+/3lYnPt5IIV86VqV
-         f4Shorw+op4pi64gkQxh+O+uNG0yf/SebLSej0HaUOavXDb855dFPW5kCZqO73C38IJK
-         17fLUQruWNzerUfLekJKfb+eUx3TZvuNQiwo2vBBas3r+9CQMc7IC8wHp6DG+YmyC8wQ
-         uFCmHMgRVRDNXpKNfV6y8ypPdZJF5Ff0jdUPAkErBB3m6xNG9IoN02UDSdNNe41tw86J
-         SHwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Ln0kClGeUxxtmvGcj51wtxTpQV2liTa+vtzvEGf11SCLFRde2xSWwmmX0TSylWij3X8qd6Jnq9Ocfw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz5EItufwtWC1xOnP5YgDzpZZYwcHsnCxYQG2hKA5NLpjEha7b
-	+2lg5Zv65xPWgvcTweHK+WaE2KSOT+MiwEt3g25rUXpYowyvjN08OP0hSyR+XtnCJp7Lhuv7K9k
-	D78vHK8x3Ez82JoALRQpAM1Apwto=
-X-Google-Smtp-Source: AGHT+IFuXTdNAQnGRSwGmrKlUm8cdAE9HZOTGFJNei48st3ZVzmi325nJB/hpn0GE9NQdMu07nTMExp2YkaqeHUXfHQ=
-X-Received: by 2002:a05:6512:ea4:b0:536:55ae:7458 with SMTP id
- 2adb3069b0e04-539a0795bb2mr2354026e87.40.1727883651912; Wed, 02 Oct 2024
- 08:40:51 -0700 (PDT)
+	s=arc-20240116; t=1727883937; c=relaxed/simple;
+	bh=eNw4arMQ67mFk/jMxU41QXu7mkTh6QRJeAtFMw5V9fA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=J5TRjMPZEHrw01zDXB3GsBVPz3V++idbQFrAlLjkRPBqxKo34ILS/C8kt4gX7IM4LQmzvtJFVIYUOuo6+TA86MUKzwteZhzqC7VuxUxB1NDoO1a9TX5p+xL1O5c0L6iUcPb/MI0znP93wDKnR6Yzy+S6wJJpnJePqY/mnEOucmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TU3t05EV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E5Q+YBcT; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5939213801D4;
+	Wed,  2 Oct 2024 11:45:30 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 11:45:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727883930;
+	 x=1727970330; bh=oty9sIPBDyhv/ZrVcebfA4NP1nfbxqi9GsI5LvWrrbY=; b=
+	TU3t05EVvnf+3c0sOGvgfnxfzdU7aSj5aDYQ8lyymUzkbF1u0H28xAnzXyVimMqC
+	LFFVUXpQLq1qFq7ZuIaxYPr0hH1RLmMWCF4VegzeRud3I23Kw6e0qv8itsHk1NlJ
+	JQSvD1HeK0OXbQy0b5nbqpMGx9jXgK1iUyqFbihKrN+7m2tADmb5GgggAYcjqwps
+	pvbBlVM/XcHxmmeuxaDAugd0ig/wm7XsQ5/KM2NMVY2iAc4pDjcMz0fgrCSuZcQf
+	1dpUjBNN7FJacGQ/6QrW/IGjEf8Iqfpqd5m90OLaVliSFkD2jFn4AvwuyfSNHOhD
+	U2r1AB0zc39ROTeA8yib7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727883930; x=
+	1727970330; bh=oty9sIPBDyhv/ZrVcebfA4NP1nfbxqi9GsI5LvWrrbY=; b=E
+	5Q+YBcTJFwGrltbC587xsM4eizoIksjMfg0VYZF9YOC4UKOtwkXIu/Hb5+mrAexQ
+	1Ksfj/NQGrpnMylYRj5WG6ihKwXHBm+i+kH18nYwDWz95W+RCMGmJiZkDFNjkX7D
+	NP3y1Q/gvfXDcPQUNHblmjtDfiqQ4Op5td3XYrqxUe4IOoKzmzpkSWgib9EHnZd2
+	Cl+NbIRv2ncqw4Em48HotsxzAF9c7Mxl/XwiiTvSXET1NVU9yuPfr/CddxWcfHua
+	bcmTiAd9Rp/oCTna/2BLOdOfH/W8mPOEeLh1wJOeJ/X8ezLmXYgsdUFoVz1FWpmG
+	Oe/rcXGetx+ZFi+bdSAKQ==
+X-ME-Sender: <xms:mWr9ZozH4bN5v69rCWMkfKKW_V0DjkJW9o15vjST08rbfZZyZgGtCQ>
+    <xme:mWr9ZsTabxXJ5N7tM1CEcDeVMnBsB25XwCF0O5hzt-_Uh2ASpHtp3MF7R3-kgsSnh
+    jpbU9edCxjoipuBDyk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgkeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnh
+    gvthdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphht
+    thhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrdhhih
+    hnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghp
+    thhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtohepsg
+    hjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:mWr9ZqWVPDt5RBEIqvvyVgEU6Ct8PJNcawEza60twQ07LV7vfAoMfA>
+    <xmx:mWr9ZmhhPfaehgEIV-twXgpg_3UV4TL1sGYGySNmgHr85kfc0G_g1A>
+    <xmx:mWr9ZqCtyTX1RNs6V4W0j0wEjlpIe5TEM7d3FO9NS2PkTEfeK3JhSg>
+    <xmx:mWr9ZnJJQ2lG2BKgYmMfWBVAYnvzFuTFxZ2yS577rfaUUdQfgE2N2Q>
+    <xmx:mmr9ZiZcEXn7tfIoHJkk7yhhspjTgTExumE1GtGCbN_YXXNP5lWYssLP>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9027B2220071; Wed,  2 Oct 2024 11:45:29 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002150036.1339475-1-willy@infradead.org>
-In-Reply-To: <20241002150036.1339475-1-willy@infradead.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Thu, 3 Oct 2024 00:40:35 +0900
-Message-ID: <CAKFNMokwCtK2WjBPRqbO2_Me=x_RRH=htF=Tcz0t9g96--Wx0A@mail.gmail.com>
-Subject: Re: [PATCH 0/4] nilfs2: Finish folio conversion
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-nilfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Wed, 02 Oct 2024 15:45:08 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christian Brauner" <brauner@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <10dca723-73e2-4757-8e94-22407f069a75@app.fastmail.com>
+In-Reply-To: <20241002-inbegriff-getadelt-9275ce925594@brauner>
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
+ <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
+ <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
+ <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
+ <20241002-inbegriff-getadelt-9275ce925594@brauner>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 3, 2024 at 12:00=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
+On Wed, Oct 2, 2024, at 14:23, Christian Brauner wrote:
+
+> and then copy the stuff via copy_struct_from_user() or copy back out to
+> user via other means.
 >
-> After "nilfs2: Convert nilfs_copy_buffer() to use folios", there are
-> only a few remaining users of struct page in all of nilfs2, and they're
-> straightforward to remove.  Build tested only.
+> This way you can safely extend ioctl()s in a backward and forward
+> compatible manner and if we can enforce this for new drivers then I
+> think that's what we should do.
 
-Thank you for your ongoing work on converting to folio-based.
+I don't see much value in building generic code for ioctl around
+this specific variant of extensibility. Extending ioctl commands
+by having a larger structure that results in a new cmd code
+constant is fine, but there is little difference between doing
+this with the same or a different 'nr' value. Most drivers just
+always use a new nr here, and I see no reason to discourage that.
 
-Page structure references still remain in other files, but I'm
-preparing a patch set to convert them to be folio-based, so together
-with that, I think we'll be able to remove most of the page references
-in nilfs2 in the next cycle.
+There is actually a small risk in your example where it can
+break if you have the same size between native and compat
+variants of the same command, like
 
-I'll check out this patch set.
+struct old {
+    long a;
+};
 
-Thanks,
-Ryusuke Konishi
+struct new {
+    long a;
+    int b;
+};
 
->
-> Matthew Wilcox (Oracle) (4):
->   nilfs2: Remove nilfs_writepage
->   nilfs2: Convert nilfs_page_count_clean_buffers() to take a folio
->   nilfs2: Convert nilfs_recovery_copy_block() to take a folio
->   nilfs2: Convert metadata aops from writepage to writepages
->
->  fs/nilfs2/dir.c      |  2 +-
->  fs/nilfs2/inode.c    | 35 ++---------------------------------
->  fs/nilfs2/mdt.c      | 19 +++++++++++++++----
->  fs/nilfs2/page.c     |  4 ++--
->  fs/nilfs2/page.h     |  4 ++--
->  fs/nilfs2/recovery.c | 11 ++++-------
->  6 files changed, 26 insertions(+), 49 deletions(-)
->
-> --
-> 2.43.0
->
+Here, the 64-bit 'old' has the same size as the 32-bit 'new',
+so if we try to handle them in a shared native/compat ioctl
+function, this needs an extra in_conmpat_syscall() check that
+adds complexity and is easy to forget.
+
+    Arnd
 
