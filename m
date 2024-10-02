@@ -1,244 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-30807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6307A98E659
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 00:55:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DCC98E67F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 00:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20099286D73
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 22:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8B7A1C21A16
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 22:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869BE19CC14;
-	Wed,  2 Oct 2024 22:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F181F19E968;
+	Wed,  2 Oct 2024 22:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QGpXtaJb"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NaNQ5BFc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F249319C56B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Oct 2024 22:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE7819CC31;
+	Wed,  2 Oct 2024 22:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727909727; cv=none; b=e3+SxVT/pVIjCAdubA5rAoZjBREXBy7VoVVoA/hDE/eumKV5hXNsyxgglNX3Lazl8SVUyydAbxKBONtoJWnC18x4a/OtsnagLYpafS6i+Q6nY3vCvLoS3EuodMDqEwoynw1g7060SGIBQrKt1bsAxV8Xhlc5KTsCrx/SE/05S68=
+	t=1727909757; cv=none; b=B0y2MxHMeTyfj9wzswrQnwdHnOujljDaTnCZ5M0d0PtJIdWX9tWsu7RbcYp6X7bJEGjHdU/1I5rWMzFqiTLzU/A2yyfe/WahfVC6ZMlz7LzlY18Jz9LTvc6hLmMhCmbPVr/JD7hQZ+nfyiBfFtd7tFzP6xL1jnZRe7xEzyutJ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727909727; c=relaxed/simple;
-	bh=iDdjyx8b8uf+i1lPuHlzsSeXJeI9q/2tiP2XcpYN7OU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R8+V8S7GUhoCTj9I4BwpXfOjxFkRrhAN8lRRaKxHTAxYVZ18sPnRxvOKCsM/R6DxwWFMGs9l0vaOkuoiD+/zwOrkW9QQVuuX8Pci007dqhjv1jNR3FLsTvJb+xFkGMSyvDzAzDCAzDxfK74Q2C3PEHitIayE0HMPdUFScueyJS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QGpXtaJb; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-6e7b121be30so184331a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Oct 2024 15:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727909724; x=1728514524; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/FKEqvb8gVk326XClv/YmoVUpmVfBagbVbZQZgGEjzY=;
-        b=QGpXtaJbojoGmINQq/TLThpCITTTcK8J6w6dHMykdGUJ0P8rHeMAunn3aPLMNlnq9S
-         Ap0qE3fzy/Fwc+m3byCyOID2VQqc7PvyksTe7SckrBYsWvVCh2m/Efp8B/3TJTjFpeOy
-         nxaKttDnH+yWql83c8HMwWAnVpWQ6ISoTZ90Dmz+JpJS4Xf7YLAqyTfQdZlaKOmFPNo1
-         HDHBo4jZNZvT9w2qKXP/iiZws0mVES+hMQ+UZ/5dQhHe9Uo1hvSvMhLAYQYo3wRikPaJ
-         HZ6Ea7GiRNvaBWGuDMeUL/VD5yBtcW/kr/9yLxLrAY1Al82bqPehouTJal7qm9XPhBSC
-         ZcDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727909724; x=1728514524;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/FKEqvb8gVk326XClv/YmoVUpmVfBagbVbZQZgGEjzY=;
-        b=SzpiRbx/lfSGdX2HET1FkNpiBaMuX7vc7mvME+PfhdtsG/LLLDdz/agJakMJ80T/iJ
-         +TtJ0axlxKhcoFHgvKkxNA+sBLo6Y8QbiM04HPQAxD5xzDyX/tgVeIshOU1fDgCt+Oeb
-         KK3UBfpRLgwO1N52eM5bfpRXnKC5nmi8aSkFMTOv07dz8MH2xn/hqkX9gk2YrcRsnRye
-         c0I9uOJ3B/ZCyiO51tVLy/QZXgX/mLxHFXUoN7397BNXnd+XdCfYq2mfsDgPCGjYTsPI
-         cOgiMFu+oiFXvBMgwvwBIPCmyR+iHOVvAyeM0UHaVlCw6UOyHWvTZ2odPQ91+V+BNEi5
-         8QLQ==
-X-Gm-Message-State: AOJu0Yzy4NpjLLDduIKd3M+4Wzpe2Fq2aTTi2dDB5f/RNfeEpGXLxvzq
-	VV8+ayS3LBZMpyU/l4rVNGGgxR25QsmFUfijxIeYlvYgRpMMJtuk0/cgePNyl80=
-X-Google-Smtp-Source: AGHT+IHNpL9ICLdlOrO/5G/SxKV94DA0mLNwiuH8gIKjwtE4K/+r1dEqEWnVZLYOsfDwvDQg1kzTkA==
-X-Received: by 2002:a05:6a20:d499:b0:1cf:54a7:6a25 with SMTP id adf61e73a8af0-1d5e2ca7ecdmr7018699637.23.1727909723900;
-        Wed, 02 Oct 2024 15:55:23 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2930a4sm10460288a12.13.2024.10.02.15.55.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 15:55:23 -0700 (PDT)
-Message-ID: <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
-Date: Wed, 2 Oct 2024 16:55:22 -0600
+	s=arc-20240116; t=1727909757; c=relaxed/simple;
+	bh=hISdmrroN3z/ouzw/ahGkbNjtKr7wuAcEVgGI4iucIA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=dMoMf6vsMMFlVZ7j2Q3Po0gkDZhSp6lZxv11ypu5OGDIU2p6UzAOMEGu3OnBM9/kH7NX8htNc85MHzkkBaj5sdxwz9asV86SuM4b45XRkjZ4fDWOpWtbmNzjad3fVW2f9i1i48GjGBKTEtJuJ338ywrNnvpTRIQRhbgZxhTR8zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NaNQ5BFc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72634C4CEC2;
+	Wed,  2 Oct 2024 22:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727909756;
+	bh=hISdmrroN3z/ouzw/ahGkbNjtKr7wuAcEVgGI4iucIA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NaNQ5BFc0EogH4hGv2L5VXb2PjEsbiIYyespXgp3cTKFOHhtiMd0IhN2R06wsYtDi
+	 WqRouJj2Rex11BlXtzt+iQjz4hBpDNc9AehzwbTFL1zehH9m6DmovbFBL+xiU+MCu4
+	 yhjC+ILDwpsDDDnFsi8Wl7Wviay4DKbZyMCC4XB4=
+Date: Wed, 2 Oct 2024 15:55:55 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox
+ <willy@infradead.org>, Yu Zhao <yuzhao@google.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] mm/truncate: reset xa_has_values flag on each iteration
+Message-Id: <20241002155555.7fc4c6e294c75e2510426598@linux-foundation.org>
+In-Reply-To: <20241002225150.2334504-1-shakeel.butt@linux.dev>
+References: <20241002225150.2334504-1-shakeel.butt@linux.dev>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
- io-uring@vger.kernel.org, cgzones@googlemail.com
-References: <20241002011011.GB4017910@ZenIV>
- <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
- <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
- <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
- <20241002020857.GC4017910@ZenIV>
- <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
- <20241002211939.GE4017910@ZenIV>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241002211939.GE4017910@ZenIV>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 10/2/24 3:19 PM, Al Viro wrote:
-> On Wed, Oct 02, 2024 at 12:00:45PM -0600, Jens Axboe wrote:
->> On 10/1/24 8:08 PM, Al Viro wrote:
->>> On Tue, Oct 01, 2024 at 07:34:12PM -0600, Jens Axboe wrote:
->>>
->>>>> -retry:
->>>>> -	ret = filename_lookup(AT_FDCWD, ix->filename, lookup_flags, &path, NULL);
->>>>> -	if (!ret) {
->>>>> -		ret = __io_setxattr(req, issue_flags, &path);
->>>>> -		path_put(&path);
->>>>> -		if (retry_estale(ret, lookup_flags)) {
->>>>> -			lookup_flags |= LOOKUP_REVAL;
->>>>> -			goto retry;
->>>>> -		}
->>>>> -	}
->>>>> -
->>>>> +	ret = filename_setxattr(AT_FDCWD, ix->filename, LOOKUP_FOLLOW, &ix->ctx);
->>>>>  	io_xattr_finish(req, ret);
->>>>>  	return IOU_OK;
->>>>
->>>> this looks like it needs an ix->filename = NULL, as
->>>> filename_{s,g}xattr() drops the reference. The previous internal helper
->>>> did not, and hence the cleanup always did it. But should work fine if
->>>> ->filename is just zeroed.
->>>>
->>>> Otherwise looks good. I've skimmed the other patches and didn't see
->>>> anything odd, I'll take a closer look tomorrow.
->>>
->>> Hmm...  I wonder if we would be better off with file{,name}_setxattr()
->>> doing kvfree(cxt->kvalue) - it makes things easier both on the syscall
->>> and on io_uring side.
->>>
->>> I've added minimal fixes (zeroing ix->filename after filename_[sg]etxattr())
->>> to 5/9 and 6/9 *and* added a followup calling conventions change at the end
->>> of the branch.  See #work.xattr2 in the same tree; FWIW, the followup
->>> cleanup is below; note that putname(ERR_PTR(-Ewhatever)) is an explicit
->>> no-op, so there's no need to zero on getname() failures.
->>
->> Looks good to me, thanks Al!
+On Wed,  2 Oct 2024 15:51:50 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+
+> Currently mapping_try_invalidate() and invalidate_inode_pages2_range()
+> traverses the xarray in batches and then for each batch, maintains and
+> set the flag named xa_has_values if the batch has a shadow entry to
+> clear the entries at the end of the iteration. However they forgot to
+> reset the flag at the end of the iteration which cause them to always
+> try to clear the shadow entries in the subsequent iterations where
+> there might not be any shadow entries. Fixing it.
 > 
-> I'm still not sure if the calling conventions change is right - in the
-> current form the last commit in there leaks ctx.kvalue in -EBADF case.
-> It's easy to fix up, but... as far as I'm concerned, a large part of
-> the point of the exercise is to come up with the right model for the
-> calling conventions for that family of APIs.
 
-The reason I liked the putname() is that it's unconditional - the caller
-can rely on it being put, regardless of the return value. So I'd say the
-same should be true for ctx.kvalue, and if not, the caller should still
-free it. That's the path of least surprise - no leak for the least
-tested error path, and no UAF in the success case.
+So this is an efficiency thing, no other effects expected?
 
-For the put case, most other abstractions end up being something ala:
-
-helper(struct file *file, ...)
-{
-	actual actions
-}
-
-regular_sys_call(int fd, ...)
-{
-	struct fd f;
-	int ret = -EBADF;
-
-	f = fdget(fd);
-	if (f.file) {
-		ret = helper(f.file, ...);
-		fdput(f();
-	}
-
-	return ret;
-}
-
-where io_uring will use helper(), and where the file reference is
-assumed to be valid for helper() and helper() will not put a reference
-to it.
-
-That's a bit different than your putname() case, but I think as long as
-it's consistent regardless of return value, then either approach is
-fine. Maybe just add a comment about that? At least for the consistent
-case, if it blows up, it'll blow up instantly rather than be a surprise
-down the line for "case x,y,z doesn't put it" or "case x,y,z always puts
-in, normal one does not".
-
-> I really want to get rid of that ad-hoc crap.  If we are to have what
-> amounts to the alternative syscall interface, we'd better get it
-> right.  I'm perfectly fine with having a set of "this is what the
-> syscall is doing past marshalling arguments" primitives, but let's
-> make sure they are properly documented and do not have landmines for
-> callers to step into...
-
-Fully agree.
-
-> Questions on the io_uring side:
-> 	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
-> Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
-> Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
-> Am I missing something subtle here?
-
-Right, it could be allowed for fgetxattr on the io_uring side. Anything
-that passes in a struct file would be fair game to enable it on.
-Anything that passes in a path (eg a non-fd value), it obviously
-wouldn't make sense anyway.
-
-> 	* what's to guarantee that pointers fetched by io_file_get_fixed()
-> called from io_assing_file() will stay valid?  You do not bump the struct
-> file refcount in this case, after all; what's to prevent unregistration
-> from the main thread while the worker is getting through your request?
-> Is that what the break on node->refs in the loop in io_rsrc_node_ref_zero()
-> is about?  Or am I barking at the wrong tree here?  I realize that I'm about
-> the last person to complain about the lack of documentation, but...
-> 
-> 	FWIW, my impression is that you have a list of nodes corresponding
-> to overall resource states (which includes the file reference table) and
-> have each borrow bump the use count on the node corresponding to the current
-> state (at the tail of the list?)
-> 	Each removal adds new node to the tail of the list, sticks the
-> file reference there and tries to trigger io_rsrc_node_ref_zero() (which,
-> for some reason, takes node instead of the node->ctx, even though it
-> doesn't give a rat's arse about anything else in its argument).
-> 	If there are nodes at the head of the list with zero use count,
-> that takes them out, stopping at the first in-use node.  File reference
-> stashed in a node is dropped when it's taken out.
-> 
-> 	If the above is more or less correct (and I'm pretty sure that it
-> misses quite a few critical points), the rules would be equivalent to
-> 	+ there is a use count associated with the table state.
-> 	+ before we borrow a file reference from the table, we must bump
-> that use count (see the call of __io_req_set_rsrc_node() in
-> io_file_get_fixed()) and arrange for dropping it once we are done with
-> the reference (io_put_rsrc_node() when freeing request, in io_free_batch_list())
-> 	+ any removals from the table will switch to new state; dropping
-> the removed reference is guaranteed to be delayed until use counts on
-> all earlier states drop to zero.
-> 
-> 	How far are those rules from being accurate and how incomplete
-> they are?  I hadn't looked into the quiescence-related stuff, which might
-> or might not be relevant...
-
-That is pretty darn accurate. The ordering of the rsrc nodes and the
-break ensure that it stays valid until anything using it has completed.
-And yes it would be nice to document that code a bit, but honestly I'd
-much rather just make it more obviously referenced if that can be done
-cheaply enough. For now, I'll add some comments, and hope you do the
-same on your side! Because I don't ever remember seeing an Al comment.
-Great emails, for sure, but not really comments.
-
--- 
-Jens Axboe
+> --- a/mm/truncate.c
+> +++ b/mm/truncate.c
+> @@ -463,10 +463,10 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
+>  	unsigned long ret;
+>  	unsigned long count = 0;
+>  	int i;
+> -	bool xa_has_values = false;
+>  
+>  	folio_batch_init(&fbatch);
+>  	while (find_lock_entries(mapping, &index, end, &fbatch, indices)) {
+> +		bool xa_has_values = false;
+>  		int nr = folio_batch_count(&fbatch);
+>  
+>  		for (i = 0; i < nr; i++) {
+> @@ -592,7 +592,6 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+>  	int ret = 0;
+>  	int ret2 = 0;
+>  	int did_range_unmap = 0;
+> -	bool xa_has_values = false;
+>  
+>  	if (mapping_empty(mapping))
+>  		return 0;
+> @@ -600,6 +599,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+>  	folio_batch_init(&fbatch);
+>  	index = start;
+>  	while (find_get_entries(mapping, &index, end, &fbatch, indices)) {
+> +		bool xa_has_values = false;
+>  		int nr = folio_batch_count(&fbatch);
+>  
+>  		for (i = 0; i < nr; i++) {
+> -- 
+> 2.43.5
 
