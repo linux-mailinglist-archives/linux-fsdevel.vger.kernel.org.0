@@ -1,134 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-30758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0815E98E25B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 20:24:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228E998E27D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 20:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2855B21CC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 18:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A72D2817D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 18:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E19F212F1A;
-	Wed,  2 Oct 2024 18:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91F32139C8;
+	Wed,  2 Oct 2024 18:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpLyxwDc"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="2+HXCbK6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E440F1D0BA2;
-	Wed,  2 Oct 2024 18:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3151D0F58;
+	Wed,  2 Oct 2024 18:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727893465; cv=none; b=PfkXg2L7vJHCMMjUPdVfs9UFvti754YU9W1Z3s2YUhItkZudMlUMlfJbmbm4i8g8u6q/xbpkaVYnqFaMEUiDhJ+xah9y0WpixFk1AIO8wuUPYJhrzFm3GBzJfVHmUz2kqN9wTusnYjiU6jcmSB8BaCPV/nMLHjI/FJ3VRGgUTWQ=
+	t=1727893798; cv=none; b=YlK2tBycHOhCcvFD9KmTs0qaEZcQ4PSMeasnSNGNu3C4qk1IlRdjRP2V/c8jTkc/2KJMAWkgFpiylGCBevDLzqjOuZsjXtuygJBKdf9EgEUDgWQa0ppPmu/vLNESArqUHTVExq4dYEDtZzZMhgn6TCG+bD2Oxy9OoBNrFKexcMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727893465; c=relaxed/simple;
-	bh=Xn5r/F/y3n+IVpjGqNQ5xxlIqpNtWX913WJmrs1pThE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7uWIBxI9rCW4y8mrtACrt3pke4a1pYL+uiRPDB/6k2cLiQnO3smwt7TASScNSkkfzsyuW25qkEMzbfPWj/UzpIbfFlKFaIz4tqJDof2KUWyIt03s4K5R6x/wiDAmbhJ3KszeGT3YiA1cHxzcSrjaIJsqDRrDa+SC2if9Oz2YjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpLyxwDc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4524BC4CEC2;
-	Wed,  2 Oct 2024 18:24:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727893464;
-	bh=Xn5r/F/y3n+IVpjGqNQ5xxlIqpNtWX913WJmrs1pThE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HpLyxwDchSeqF4R9rk9zqytwWCTBbpujg7WnOnXPszioolkSCIFdMKzkLWZeF4ohP
-	 PssFFutZ0TqK/qn3q51d9EEuAw1pmYyCIWQjcAmufjUCC0l618/rZcYNJWnnizCg2G
-	 1CNq7+MXFCmw+6MEaE1iTjnB6QQMMH8g2IbrGHBviaxXC3DKarwixTHZrjcuZIVaF8
-	 uykmFydsc/VUQbPXgNyiEqKDEo6UDITxmpz1IbAxb3J0yd96UH6KQ5fJ2jmwinS3Lh
-	 bV3306MvladnEqvxq3o8HLRZ428Zey8544gcd+Ycx/nCEeiynVhb3l2MR99n+DXhMT
-	 0AeL/bD/KzbNQ==
-Date: Wed, 2 Oct 2024 19:24:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	David Spickett <david.spickett@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v13 16/40] KVM: arm64: Manage GCS access and registers
- for guests
-Message-ID: <37fbc082-6bda-46e3-9ee7-9240b41f26fd@sirena.org.uk>
-References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
- <20241001-arm64-gcs-v13-16-222b78d87eee@kernel.org>
- <86bk0373nq.wl-maz@kernel.org>
- <86a5fm7b4i.wl-maz@kernel.org>
+	s=arc-20240116; t=1727893798; c=relaxed/simple;
+	bh=Z28y+tpcPpMVId5gAiIuBlMyT/Kux7RGYjReD8gSWds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qDdqVBRbku6doCDhwlNdTNP4lj+/YaJfvN8+pVorMFFmErVV6tv76rIbSs4cXyYhFFP7QFDX63BWcuM/Jxj1HTU70w80JXK0b74nFPX4dB7H7LCo5J/mRQcNhJ5W6eGZ9Ewsg58DjSXW+4zLbXXFR9aXRkjbQz0nptmk2eAnBEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=2+HXCbK6; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XJjyr00kTzlgMWB;
+	Wed,  2 Oct 2024 18:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1727893788; x=1730485789; bh=rFxspoJzSpoidu30KdZ/3Lut
+	pEs5eoSpyKA4GWnHU/c=; b=2+HXCbK6SmuieqTkaM6qtUc4K+iKcGDiWWfIUizJ
+	qeDK0l4j6vf7prZMWMfP9kYMN2aIimluNOu+uUOnbUDlu3QWes6ZaFJNNqo6IVFr
+	1vNgCcRCPvD8KUbJ4rkKqd9mf8L9NVKfjM8MGjCfp6WN/CrLaHPziAyxB/MdnA12
+	K0/AYnRp/u9Cxf4iE0i52F7EgoiOTnT/Txceo9XtDuFIC4iDfseJ/SFMmqvripyS
+	yFD/YTy6aMKsmFUvyi21OD2H43fr5lNP1XUqxKF0fBXpm451dOyxPXRSA6vBbdaI
+	Gn+ys5xCORibg0VCvGEOHTyZ1XzOp8+N8beaw7tzBN/NyA==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id fb7lQuE366pl; Wed,  2 Oct 2024 18:29:48 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XJjyf4PxZzlgMW9;
+	Wed,  2 Oct 2024 18:29:46 +0000 (UTC)
+Message-ID: <80eb6cb1-c1e6-42fd-8941-ffe081041a18@acm.org>
+Date: Wed, 2 Oct 2024 11:29:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f644fc4VKEnWPPLA"
-Content-Disposition: inline
-In-Reply-To: <86a5fm7b4i.wl-maz@kernel.org>
-X-Cookie: Know Thy User.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/3] io_uring: enable per-io hinting capability
+To: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
+ hch@lst.de, hare@suse.de, sagi@grimberg.me, martin.petersen@oracle.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+ asml.silence@gmail.com
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+ gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com,
+ Nitesh Shetty <nj.shetty@samsung.com>
+References: <20240930181305.17286-1-joshi.k@samsung.com>
+ <CGME20240930182103epcas5p4c9e91ca3cdf20e900b1425ae45fef81d@epcas5p4.samsung.com>
+ <20240930181305.17286-4-joshi.k@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240930181305.17286-4-joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/30/24 11:13 AM, Kanchan Joshi wrote:
+> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
+> index 309ca72f2dfb..f4373a71ffed 100644
+> --- a/include/linux/rw_hint.h
+> +++ b/include/linux/rw_hint.h
+> @@ -21,4 +21,28 @@ enum rw_hint {
+>   static_assert(sizeof(enum rw_hint) == 1);
+>   #endif
+>   
+> +#define	WRITE_LIFE_INVALID	(RWH_WRITE_LIFE_EXTREME + 1)
+> +
+> +static inline bool rw_hint_valid(u64 hint)
+> +{
+> +	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
+> +	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
+> +	BUILD_BUG_ON(WRITE_LIFE_SHORT != RWH_WRITE_LIFE_SHORT);
+> +	BUILD_BUG_ON(WRITE_LIFE_MEDIUM != RWH_WRITE_LIFE_MEDIUM);
+> +	BUILD_BUG_ON(WRITE_LIFE_LONG != RWH_WRITE_LIFE_LONG);
+> +	BUILD_BUG_ON(WRITE_LIFE_EXTREME != RWH_WRITE_LIFE_EXTREME);
+> +
+> +	switch (hint) {
+> +	case RWH_WRITE_LIFE_NOT_SET:
+> +	case RWH_WRITE_LIFE_NONE:
+> +	case RWH_WRITE_LIFE_SHORT:
+> +	case RWH_WRITE_LIFE_MEDIUM:
+> +	case RWH_WRITE_LIFE_LONG:
+> +	case RWH_WRITE_LIFE_EXTREME:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
 
---f644fc4VKEnWPPLA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Moving a function that is not in the hot path from a .c file to a .h
+file is wrong. This increases the kernel size, slows down compilation
+and makes implementation details visible to callers that should not have
+access to these implementation details.
 
-On Wed, Oct 02, 2024 at 04:55:25PM +0100, Marc Zyngier wrote:
-> Marc Zyngier <maz@kernel.org> wrote:
-
-> > > +	if (!kvm_has_gcs(kvm))
-> > > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
-> > > +						HFGxTR_EL2_nGCS_EL1);
-
-> > Why are you still allowing the GCS instructions when GCS isn't
-> > enabled?
-
-> Scratch that, they are NOPs when GCS isn't enabled, so there shouldn't
-> be any need for extra traps.
-
-They are, though really they should UNDEF if GCS isn't there (which I
-had thought was what you were referencing here).  Equally we only have
-traps for a subset of GCS instructions and it's not like there aren't a
-whole bunch of untrappable extensions anyway so it's not clear it's
-worth the effort just for that.
-
---f644fc4VKEnWPPLA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb9j8sACgkQJNaLcl1U
-h9AOWQf8DFoVOjrYp2ocafOH0wTbI6Jawr1ucPRjwYcn5sAGuTLywrEihNxOR42y
-l62ygvYkYtUWpgViQZqrQznNkYbdxg7O6dnvc4ywKu0iWo1KPVJFT0At7NZp6Pxy
-z8z/9OOYjxelIy33541t+XgjS3MxR3LA2PJSZd7ZOd4sHZMl7t1oLNi/s9HV0LAK
-/xkcFEkwnX1y0EndbVnntD9crF+J0pBIuO1z3wtywncxixscc0PgM3e1mvmTmYu6
-k62weouXEqlaiF5DZ6hHH4iHj8mPMYlnmvEz6Dsiev6PWcCm2hYrKiIO44ThjQJU
-OggiVTV8pqPtukHW/VmVN/VFPC5k6w==
-=YDrc
------END PGP SIGNATURE-----
-
---f644fc4VKEnWPPLA--
+Bart.
 
