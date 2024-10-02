@@ -1,120 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-30670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC56998D210
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5809198D238
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B12F2815C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 11:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 043A11F224B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 11:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A8D1EBFFC;
-	Wed,  2 Oct 2024 11:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B81A1EBFE5;
+	Wed,  2 Oct 2024 11:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9gygmqK"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ahvogri+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4002219D07D;
-	Wed,  2 Oct 2024 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350522F43;
+	Wed,  2 Oct 2024 11:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727867542; cv=none; b=KpU44n3rBrBTS2s4ZRaiayM38f/JCEAueUIFdMR94/nuXlydKoOlN1cFr0iSnopW9ckdilsuvRySpt3779Se00tkgd1LyOhkLcL5fva1Ij7qDm0+CDjOKwSm3MCayQnLXlgkxbNGtm5OhtKAo3BmMROgUL13/SfPtd8ij4Ndr8c=
+	t=1727868643; cv=none; b=pvh1exInyn4uUdx4fftg76sFlkMYAVAQRB9iSp/2YxZreldrV1XXOw2m6xJOlTtTWuOPbD7n3x5vYkO30U99nCWT1PoI2wBDKO0UgbYkbLZxx0mBSAfEs2ddRKFz2HSQg0nSl1EhPOmcrjIfcTvcEM30eOrhZXgk1sIFpm6kiq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727867542; c=relaxed/simple;
-	bh=5vN0FKCJY7Bs5943KeAecQOYX6VBY2Bk/nhQqeDuA88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMAtuDh/RayDsChLyWiE/3Gjcs7qV1ZYshkJP7HCjpLx0AQmINq1lueQU9/CAqEy8e4HcoT100khLUWHAvPxfu8x280DCeRrCwiGupl/CNlhtIO/HpaAHAEuVA2EbP5F/HIttn0Lw7MtUiJPcofsRHx7TT3El6dcPsACzxYjg7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9gygmqK; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7e9cbd25337so15696a12.3;
-        Wed, 02 Oct 2024 04:12:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727867540; x=1728472340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qB+nsD2+9MJf31TGlfwMYkDJKpDgVU8UBg71/5sugvU=;
-        b=h9gygmqKJPSn7e3H1gcgzPN7xqBci0zaXKhmOkQWa521wFYzuNWX6N45HuBFg694MT
-         IRmHhAae7mUE/xQb4ZkSTQDymTIpFtNWpZzmLI48sivQth+BV5Q4HJuIyTtzmzrKgO3u
-         qWX7UPi7NlgrO/gSL7WWWjOy7pYkagVoGLeM71i054wMEEttmxZRimng2RxoH2zDAgCT
-         Gf307HH3RBYfiC3DJoXCNIdm3+3rkn2IxqCd8Nuld7VlYcssEaZmsFfPvXyisen+PP5r
-         VUo+EAYnoybrp7Teg1fDAYccPAaWSRrCagGzMJ6+nWxk0HZtHwb35rehTSdNVBqz/0Kj
-         Twlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727867540; x=1728472340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qB+nsD2+9MJf31TGlfwMYkDJKpDgVU8UBg71/5sugvU=;
-        b=KdpKGnqcZShGHgKR6uaM1IiNMgvcsPJ5J9vmCodwRjPQKRExr0sXm3dalZhm0XcRl1
-         ieBd6kaQlR1MzIZAyCWZosLL6L3WhYzR61S0LUTWM3S6mik6A1HLKJQ0t7BSbZ2ULUEs
-         7eqcSedF5lt/ilMwuGM2gV8v8fM9K3tV/CwM3hYlEry+9yVo6fByNdVXOe6YMzyS/Cd4
-         yuGKe98OFe/nlf/G2p2v6EKdpZu/SgoGI2rWX9KbuPO1gCM/ZfOGf1n8voQZ3MpVUEU/
-         ounZVWM726vw5e5Ia4eMCr2CwAF0POZcY5omLvDkmqF6+wYM8CdUWiLSuXj+C9SIU1Xl
-         0I6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYtQ5a6x+mik6/yHe+aZL9l0DfeUVTpAW1rc3f9yZk6jovHyFDP9eomuzDVUXpjjaXf3c3r06KTR/XnuuJ@vger.kernel.org, AJvYcCUkGgKeYv2XoNI9NwTMQ1si6QGYu4cvo19GbzZJ4zQoTykvsumMnr4CG2i3WYx1Nw9+CZnBhuv6ttrqZFcMFWTroNiWggDr@vger.kernel.org, AJvYcCW3vaOxP1czwoxF7R9CxWTuISJ+m7zmxxbuhX1Sk9rdAt8es0yXqOOOGkUP5j3MHwaUyICjOw3DxZnFgv8t@vger.kernel.org, AJvYcCWjgMJuBFxV1M+RTZmHasHWn8q8FDA9IRXM7X+wsrvkVRaMBgMv5wVdpzgr9Eq5YAq5o+AwkxNJYf5IrmFQ0S0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAdfLb+lQCJOqZ7aj51C9H0qaYBHK7lzPS5HpqjEDHtDntkaQq
-	HicHi+yZSJDAs6cibqRHJAIxtTUN6ImxQqNPDLGWiZvCnkFCZtcme6Iq8Fs02WBZLYy7oSyyAmD
-	wyRfsvxfbyaM8tadBd1Er9ImE9c8=
-X-Google-Smtp-Source: AGHT+IEXKjcRQAr6yvtLLxnWNOyfOQZWq0d5nh/tpvciPGIRYgaJQmd5wkvF2MSAYinYB41YBd77uXdWcoKxZKTZRjM=
-X-Received: by 2002:a05:6a00:3920:b0:710:5243:4161 with SMTP id
- d2e1a72fcca58-71dc5d6026amr1827408b3a.5.1727867540474; Wed, 02 Oct 2024
- 04:12:20 -0700 (PDT)
+	s=arc-20240116; t=1727868643; c=relaxed/simple;
+	bh=oR9lYsRsUhjny1bmq1b+3xZAoJRr4GA7VsyEj/Nw3aA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q1EcDDa3aP1sBaQuJXEv4fxR3ILdHcFAu0gYdVjSy7Q+50ckLp7em1h0SPBuVzdkTDqThBJorWFZefj0l5i8/zHr9quZNsq8yTcwW1cncK28o6uLApTiXKQcp9Xbp7enLtu7oaHQNJuPMqLFSh7PU8wtqULJtsNa2whCm5KtwbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ahvogri+; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727868633; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=xEwxijDeSh+VJN3BJ+JAiKDblgWvKqGAbbaQA2kzvZk=;
+	b=Ahvogri+wmScbuVPRXbmKj7vXNImKOe2A1yfzt7OW5xTiH+z52nCyXmsnKgZLth0fsAkDpCHhVCYQSgGJ1+H+nUCxK+2dNopk0xz1bCpPHPUa+rRYhH8aYYf/A4IX8tDDNxejMbdcUU9JPJPLIqoKibmdd31G4thaAlVb1T2ETc=
+Received: from 192.168.2.29(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WG9ymnr_1727868312)
+          by smtp.aliyun-inc.com;
+          Wed, 02 Oct 2024 19:25:13 +0800
+Message-ID: <7cde8511-9d56-4366-aac4-29dfbd8c76b1@linux.alibaba.com>
+Date: Wed, 2 Oct 2024 19:25:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-brauner-rust-pid_namespace-v4-1-d28045dc7348@kernel.org>
-In-Reply-To: <20241002-brauner-rust-pid_namespace-v4-1-d28045dc7348@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 2 Oct 2024 13:12:08 +0200
-Message-ID: <CANiq72my2N41wRWGFpPhJk_zTTaLJcuvYFekWFyoWrhQRLEfDQ@mail.gmail.com>
-Subject: Re: [PATCH v4] rust: add PidNamespace
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Bjoern Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve Hjonnevag <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] erofs: add file-backed mount support
+To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-erofs@lists.ozlabs.org,
+ LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+ <CAMuHMdVqa2Mjqtqv0q=uuhBY1EfTaa+X6WkG7E2tEnKXJbTkNg@mail.gmail.com>
+ <20240930141819.tabcwa3nk5v2mkwu@quack3>
+ <20241002-burgfrieden-nahen-079f64e243ad@brauner>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20241002-burgfrieden-nahen-079f64e243ad@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 2, 2024 at 1:00=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> +        let pidns =3D unsafe { bindings::task_active_pid_ns(Task::curren=
-t_raw()) };
 
-Missing `// SAFETY` -- I mention it since this will be a warning (thus
-error in `WERROR`) soon.
 
-> +        let ptr =3D unsafe { bindings::task_get_pid_ns(self.0.get()) };
+On 2024/10/2 14:12, Christian Brauner wrote:
+> On Mon, Sep 30, 2024 at 04:18:19PM GMT, Jan Kara wrote:
 
-Ditto.
+..
 
-> +            Some(pidns) =3D> unsafe { bindings::task_tgid_nr_ns(self.0.g=
-et(), pidns.as_ptr()) },
-> +            None =3D> unsafe { bindings::task_tgid_nr_ns(self.0.get(), p=
-tr::null_mut()) },
+>>>>
+>>>> diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+>>>> index 7dcdce660cac..1428d0530e1c 100644
+>>>> --- a/fs/erofs/Kconfig
+>>>> +++ b/fs/erofs/Kconfig
+>>>> @@ -74,6 +74,23 @@ config EROFS_FS_SECURITY
+>>>>
+>>>>            If you are not using a security module, say N.
+>>>>
+>>>> +config EROFS_FS_BACKED_BY_FILE
+>>>> +       bool "File-backed EROFS filesystem support"
+>>>> +       depends on EROFS_FS
+>>>> +       default y
+>>>
+>>> I am a bit reluctant to have this default to y, without an ack from
+>>> the VFS maintainers.
+>>
+>> Well, we generally let filesystems do whatever they decide to do unless it
+>> is a affecting stability / security / maintainability of the whole system.
+>> In this case I don't see anything that would be substantially different
+>> than if we go through a loop device. So although the feature looks somewhat
+>> unusual I don't see a reason to nack it or otherwise interfere with
+>> whatever the fs maintainer wants to do. Are you concerned about a
+>> particular problem?
+> 
+> I see no reason to nak it either.
 
-Ditto.
+Thanks all for taking time on writing down these!
 
-Cheers,
-Miguel
+Unfortunately, fanotify pre-content hooks was't landed in 6.12 cycle
+(which I think will be used in a lot of scenarios)..
+
+I do hope it could be landed in the next cycle so I could clean up
+the codebase then.
+
+Thanks,
+Gao Xiang
 
