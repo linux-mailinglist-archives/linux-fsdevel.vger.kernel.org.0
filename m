@@ -1,82 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-30784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEE898E48E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:03:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DA798E4C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479541C221DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 21:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985DE1F24B8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 21:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A850D217330;
-	Wed,  2 Oct 2024 21:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B465216A3D;
+	Wed,  2 Oct 2024 21:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jmwllp6j"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ECaauAHU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECD4745F4;
-	Wed,  2 Oct 2024 21:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CD21D0420;
+	Wed,  2 Oct 2024 21:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727903017; cv=none; b=PbAS9J6uhKL4KPU0wmgnAf18oyUVz8CQRYOFzHfu2uPj6IMkVWV2ErfIb+v32L0Y+qJapSQAPY1xSxIzkOAF8u5xT7J9ausrYdL7S1ttIzPfDf1GGjlmMj1K9S3wa/TQCz+7j03SAEbH4J1sfhDlKWqDwkGEV+/Vwx3SV/hMOtQ=
+	t=1727903984; cv=none; b=OdUqo/5IjeF3a9rHYnAp6Mf4sLA3vCbqu8mKJMqI4zHBf8OCHfH6+AGDs8ciNeiXS83FREE3qKBr1g0//iJNtqkK7JpYspe8VroT6y/6nluPp3M2ziyEOi7IHCpalJvI3DwXyLWoMHuTL0OPrU2d39+fpavI3+c9TW8bqBzB38s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727903017; c=relaxed/simple;
-	bh=T/J+bsNsUgw22rlBrYHJdcx0PE1m7ec1tmy77h9yuls=;
+	s=arc-20240116; t=1727903984; c=relaxed/simple;
+	bh=HwQX9RB5Y+tKMzZF3BAxhdguhMntgPo9XEbYXFDW57E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZp5MoLle7iAq6YMeasL8eNvzvGo10NY6/NYhyNu/yuIN/wuB3Gt46v9kewfCHp0iFJlTFzOhTh5ltqzpXT6sakDlPT+lW43rqpFjs9JurB0af80MHRKwpr9yAwFcFfuo9l0bwG5e+A2/OpbIjj6Gyfe4nH5yhYwbTp/VqZ7o5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jmwllp6j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A9FC4CEC2;
-	Wed,  2 Oct 2024 21:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727903016;
-	bh=T/J+bsNsUgw22rlBrYHJdcx0PE1m7ec1tmy77h9yuls=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jmwllp6jzRETuClzX6i3XersBeu6pr5GCmFLlKZUoLVMVYp98nR8I1WBsoziE1zwv
-	 EqLtCFWqPGJSD96kzZpm58e3IsTbFS7WDAX/QDivj9IgWJB8G+loz3oUm+b3k+Vvfg
-	 5fJ5j6eLgua8KQ7IIkJDZ4frWJ2mmOyEdrVzJL3Mhhg2OGLV7RgIUBMO+k0lqmw0wT
-	 nTitMwjJNI14VX3a/mC5weH5VNLpjfvsCpIjvdGAv1Jt3ysB1issay1HQfQxnI0rFp
-	 2tniOP6L1zeIj89TM5ZmkNI70CjZOSWSGmwzAhNH9ZgcYj++UnNtpYvJbDk2jxE51K
-	 ILXa6mUOgiYBA==
-Date: Wed, 2 Oct 2024 16:03:35 -0500
-From: Rob Herring <robh@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, broonie@kernel.org,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH 07/33] riscv: zicfilp / zicfiss in dt-bindings
- (extensions.yaml)
-Message-ID: <20241002210335.GA1307114-robh@kernel.org>
-References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
- <20241001-v5_user_cfi_series-v1-7-3ba65b6e550f@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhXMEmTMGF0hdRkCxJn9E68dc+l5AYzL11llJtj1Qp3zhLym2GGgfZUUCW0rWyufiKy6rm49o80sQ64vxTLQRBj/3Z6bSmVLEeFNPIkaeIN6urJTrHqSl4YDbP/7SFdtxfO3NRIYb/gKv9JKUPRFdGSI6nznH0GM9hYDS1zQJMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ECaauAHU; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Og0U2eIfSDg6LaiBViZHnO3uFmlD6Gy3HhCDBLsiw5g=; b=ECaauAHUww3SmIZUdAJJ6h5lLp
+	eGSjl0vu5axEVnaFw1n+T8tw6G3R9pRiuien9Ajxqw59p3AePt3pHBancRpp8pneFOEKPE1z20KGT
+	VVZVZcqjjsBQajwSPIGPhy4b1/6h59Hc6PU3EFjgYoyMRymvUFAWxiqv8gwKtp1P1UaWOyHUhC2Xu
+	yY3fbGs0vbbFpKS/Mi2h0hO4hSbqHuC/dqXD7lrBxbuxxaMRw02tTeYo7KXTL3d+6bdAD6mPjRzpB
+	PkO20Nu7u4l7pafuofNzIZjR3gbE/ZEYCQPNwm9Q9fHLY7DJrqPW0DHGxp3ItnQk6UjMpvM0OnE59
+	hPFlwrhA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sw6l1-00000000JxI-2yUF;
+	Wed, 02 Oct 2024 21:19:39 +0000
+Date: Wed, 2 Oct 2024 22:19:39 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	io-uring@vger.kernel.org, cgzones@googlemail.com
+Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
+Message-ID: <20241002211939.GE4017910@ZenIV>
+References: <20241002011011.GB4017910@ZenIV>
+ <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
+ <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
+ <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
+ <20241002020857.GC4017910@ZenIV>
+ <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,47 +65,97 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001-v5_user_cfi_series-v1-7-3ba65b6e550f@rivosinc.com>
+In-Reply-To: <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Oct 01, 2024 at 09:06:12AM -0700, Deepak Gupta wrote:
-> Make an entry for cfi extensions in extensions.yaml.
+On Wed, Oct 02, 2024 at 12:00:45PM -0600, Jens Axboe wrote:
+> On 10/1/24 8:08 PM, Al Viro wrote:
+> > On Tue, Oct 01, 2024 at 07:34:12PM -0600, Jens Axboe wrote:
+> > 
+> >>> -retry:
+> >>> -	ret = filename_lookup(AT_FDCWD, ix->filename, lookup_flags, &path, NULL);
+> >>> -	if (!ret) {
+> >>> -		ret = __io_setxattr(req, issue_flags, &path);
+> >>> -		path_put(&path);
+> >>> -		if (retry_estale(ret, lookup_flags)) {
+> >>> -			lookup_flags |= LOOKUP_REVAL;
+> >>> -			goto retry;
+> >>> -		}
+> >>> -	}
+> >>> -
+> >>> +	ret = filename_setxattr(AT_FDCWD, ix->filename, LOOKUP_FOLLOW, &ix->ctx);
+> >>>  	io_xattr_finish(req, ret);
+> >>>  	return IOU_OK;
+> >>
+> >> this looks like it needs an ix->filename = NULL, as
+> >> filename_{s,g}xattr() drops the reference. The previous internal helper
+> >> did not, and hence the cleanup always did it. But should work fine if
+> >> ->filename is just zeroed.
+> >>
+> >> Otherwise looks good. I've skimmed the other patches and didn't see
+> >> anything odd, I'll take a closer look tomorrow.
+> > 
+> > Hmm...  I wonder if we would be better off with file{,name}_setxattr()
+> > doing kvfree(cxt->kvalue) - it makes things easier both on the syscall
+> > and on io_uring side.
+> > 
+> > I've added minimal fixes (zeroing ix->filename after filename_[sg]etxattr())
+> > to 5/9 and 6/9 *and* added a followup calling conventions change at the end
+> > of the branch.  See #work.xattr2 in the same tree; FWIW, the followup
+> > cleanup is below; note that putname(ERR_PTR(-Ewhatever)) is an explicit
+> > no-op, so there's no need to zero on getname() failures.
+> 
+> Looks good to me, thanks Al!
 
-Run "git log --oneline" on the file/subsystem and follow the subject 
-prefix pattern.
+I'm still not sure if the calling conventions change is right - in the current
+form the last commit in there leaks ctx.kvalue in -EBADF case.  It's easy to
+fix up, but... as far as I'm concerned, a large part of the point of the
+exercise is to come up with the right model for the calling conventions
+for that family of APIs.
 
-> 
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  Documentation/devicetree/bindings/riscv/extensions.yaml | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> index 2cf2026cff57..356c60fd6cc8 100644
-> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> @@ -368,6 +368,20 @@ properties:
->              The standard Zicboz extension for cache-block zeroing as ratified
->              in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
->  
-> +        - const: zicfilp
-> +          description: |
-> +            The standard Zicfilp extension for enforcing forward edge
-> +            control-flow integrity as ratified in commit 3f8e450 ("merge
-> +            pull request #227 from ved-rivos/0709") of riscv-cfi
-> +            github repo.
-> +
-> +        - const: zicfiss
-> +          description: |
-> +            The standard Zicfiss extension for enforcing backward edge
-> +            control-flow integrity as ratified in commit 3f8e450 ("merge
-> +            pull request #227 from ved-rivos/0709") of riscv-cfi
-> +            github repo.
-> +
->          - const: zicntr
->            description:
->              The standard Zicntr extension for base counters and timers, as
-> 
-> -- 
-> 2.45.0
-> 
+I really want to get rid of that ad-hoc crap.  If we are to have what amounts
+to the alternative syscall interface, we'd better get it right.  I'm perfectly
+fine with having a set of "this is what the syscall is doing past marshalling
+arguments" primitives, but let's make sure they are properly documented and
+do not have landmines for callers to step into...
+
+Questions on the io_uring side:
+	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
+Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
+Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
+Am I missing something subtle here?
+	* what's to guarantee that pointers fetched by io_file_get_fixed()
+called from io_assing_file() will stay valid?  You do not bump the struct
+file refcount in this case, after all; what's to prevent unregistration
+from the main thread while the worker is getting through your request?
+Is that what the break on node->refs in the loop in io_rsrc_node_ref_zero()
+is about?  Or am I barking at the wrong tree here?  I realize that I'm about
+the last person to complain about the lack of documentation, but...
+
+	FWIW, my impression is that you have a list of nodes corresponding
+to overall resource states (which includes the file reference table) and
+have each borrow bump the use count on the node corresponding to the current
+state (at the tail of the list?)
+	Each removal adds new node to the tail of the list, sticks the
+file reference there and tries to trigger io_rsrc_node_ref_zero() (which,
+for some reason, takes node instead of the node->ctx, even though it
+doesn't give a rat's arse about anything else in its argument).
+	If there are nodes at the head of the list with zero use count,
+that takes them out, stopping at the first in-use node.  File reference
+stashed in a node is dropped when it's taken out.
+
+	If the above is more or less correct (and I'm pretty sure that it
+misses quite a few critical points), the rules would be equivalent to
+	+ there is a use count associated with the table state.
+	+ before we borrow a file reference from the table, we must bump
+that use count (see the call of __io_req_set_rsrc_node() in
+io_file_get_fixed()) and arrange for dropping it once we are done with
+the reference (io_put_rsrc_node() when freeing request, in io_free_batch_list())
+	+ any removals from the table will switch to new state; dropping
+the removed reference is guaranteed to be delayed until use counts on
+all earlier states drop to zero.
+
+	How far are those rules from being accurate and how incomplete
+they are?  I hadn't looked into the quiescence-related stuff, which might
+or might not be relevant...
 
