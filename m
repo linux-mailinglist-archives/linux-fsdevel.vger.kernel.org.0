@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-30822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B48A98E755
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:47:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D477498E757
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53240288AB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:47:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123EC1C25F74
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7C41C9DC2;
-	Wed,  2 Oct 2024 23:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2967A1CCB23;
+	Wed,  2 Oct 2024 23:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YUXfIqOm"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JUOKNPWp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AFD1CC14C;
-	Wed,  2 Oct 2024 23:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221F81A0AE9;
+	Wed,  2 Oct 2024 23:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912747; cv=none; b=VRZ1otsMZnyTYllkCuyccUYP1VqD7vDvMOCUM3t0GPIgR4sxHIljPGqYVBu/Fz+JaD9l6PM7/g9uD6pKrDJbmkjh3Tti6md3krhGGM3jzydoW3RdsAeULT9Qb/nQFp/NS6gw9jYBntTAtkDjJx4/OgNuOBoUVkaiVaQDoCssX0g=
+	t=1727912752; cv=none; b=Ue2mT8Ehffzfac5ZMW1ptXtEhr31FS4VAa5nd4ecb39063caSv4J53+jdFprWYDN8OmZnK1XgJLQkoh/eHAQ7uwCRVcnxd9/IDxW0kMJ0SvaSlr+jkaHtz+LcRHcf5M7e3ZRpX+x7bGJdosmPC4LOXcpH0NcmPs9zka8jpwmF3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912747; c=relaxed/simple;
-	bh=Q5OxMdiU6Bu3fjUb9MsjJWYA7YZ1HuV4bsGRFebf78M=;
+	s=arc-20240116; t=1727912752; c=relaxed/simple;
+	bh=g6SodgXuhFSjZPqpwigjcfcJJcRz7X6EEVS62TB2WS8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c0rwWX6z4JYNBlGul3MBwQdnzSnt7/v/S+Wo8d0IG/NGSuEc/mSv9a8VHMgKSneYcO4JMG+LnmzJ4gz/fM6EwR2wvcVYgMMJO/JXf21ZZ3sPglJEPzm81M22OQJCs/svDDrmmazvlNJEISqlqqpIDn56u2yorYFTETLONvA4lqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YUXfIqOm; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=k6K1i4I1M+HS3Xju26VTQpDXDiwKz7aJtOU+k+NdnRgKED+njx/30XOugg1hdVVbe6u/fmROr5VYkgLH2sLCFS1QtzP5eWQaHZo263KKHM/7dl2Th4Wx/1X0got9ABN237t+rcgsE1flqUOOw0yAiVZviCbSHblpgOnRu0hQrRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JUOKNPWp; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=IRPMd0h51YpQUBbAAX/wcuH0ZmexRZTVdCGmfxXJDJ4=; b=YUXfIqOmAm+ugm/XutADfo8KPq
-	852FMkqLH0SDzwTuLviY9XWwuciBiWB4uZfTdN24lUwGI3iZLz9ztLI4yr4ZiyMOkqajRybBp4+6Y
-	ZVNOj6EVyZdjf3mfra9zlRHjbxVuwh3/Z7v79gNubJXqRoQVGVoJi+XcDsmWWGpHG+/pqElH1cuGD
-	jlrxW7RXb3rlOqzNOGq7INMOtQuN2U3xQ1Qpt7V/+XV7ntd24CXQJgXdwHF2fo2xTS1t0RNn6ugun
-	BmWFAlzoQECJH/X4J4E+FfadeI5VAdDMnKrk+E24N09A1HfCdwjjM2faNC5hDeOKzLCKd6vGLTVVO
-	pnqUI3LQ==;
+	bh=bm71yghG5LmMPzMX6MAemKlkSPoby82wgR5jHJ9lUOc=; b=JUOKNPWprVahbSaKyzgJmNEx3M
+	oddv6lJOok+SD7V/VPr5KC+WOTyqzaNMHoygRYybFzuPmkQvSGabEroPITqAbrEqUoJLlbjmakWUX
+	hoScsaL4uMDdYEijrIvsiQxlnzqY7xACli8TttrH8Yy/LF94oWJWS2PtftPR4qaWqGqRuvnnoWKy3
+	CntcYbyf3l+Z1irHv4S9UUt56wM37QvLpNIzei5pCPOpcDRWjuKox8OWO+LkUUs5Jp6TfYQ/A9P8G
+	lGJTtTypJdsTL+JjpHdQkscGbV7p2UgehaMyGB0lGLtg9M8SyPMKkkCBd3EK5zQbwnJ3SKKQIc/Yi
+	eB2wDhuQ==;
 Received: from [187.57.199.212] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw92H-0045tc-Rv; Thu, 03 Oct 2024 01:45:38 +0200
+	id 1sw92M-0045tc-81; Thu, 03 Oct 2024 01:45:42 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: Hugh Dickins <hughd@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -64,9 +64,9 @@ Cc: linux-mm@kvack.org,
 	Theodore Ts'o <tytso@mit.edu>,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v5 09/10] tmpfs: Expose filesystem features via sysfs
-Date: Wed,  2 Oct 2024 20:44:43 -0300
-Message-ID: <20241002234444.398367-10-andrealmeid@igalia.com>
+Subject: [PATCH v5 10/10] docs: tmpfs: Add casefold options
+Date: Wed,  2 Oct 2024 20:44:44 -0300
+Message-ID: <20241002234444.398367-11-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
 References: <20241002234444.398367-1-andrealmeid@igalia.com>
@@ -79,63 +79,56 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Expose filesystem features through sysfs, so userspace can query if
-tmpfs support casefold.
-
-This follows the same setup as defined by ext4 and f2fs to expose
-casefold support to userspace.
+Document mounting options for casefold support in tmpfs.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- mm/shmem.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+Changes from v3:
+- Rewrote note about "this doesn't enable casefold by default" (Krisman)
+---
+ Documentation/filesystems/tmpfs.rst | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index f07b446b3c98..007123019d1c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -5543,3 +5543,40 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
- 	return page;
- }
- EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
+diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+index 56a26c843dbe..0385310f2258 100644
+--- a/Documentation/filesystems/tmpfs.rst
++++ b/Documentation/filesystems/tmpfs.rst
+@@ -241,6 +241,28 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
+ will give you tmpfs instance on /mytmpfs which can allocate 10GB
+ RAM/SWAP in 10240 inodes and it is only accessible by root.
+ 
++tmpfs has the following mounting options for case-insensitive lookup support:
 +
-+#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
-+#if IS_ENABLED(CONFIG_UNICODE)
-+static DEVICE_STRING_ATTR_RO(casefold, 0444, "supported");
-+#endif
++================= ==============================================================
++casefold          Enable casefold support at this mount point using the given
++                  argument as the encoding standard. Currently only UTF-8
++                  encodings are supported. If no argument is used, it will load
++                  the latest UTF-8 encoding available.
++strict_encoding   Enable strict encoding at this mount point (disabled by
++                  default). In this mode, the filesystem refuses to create file
++                  and directory with names containing invalid UTF-8 characters.
++================= ==============================================================
 +
-+static struct attribute *tmpfs_attributes[] = {
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	&dev_attr_casefold.attr.attr,
-+#endif
-+	NULL
-+};
++This option doesn't render the entire filesystem case-insensitive. One needs to
++still set the casefold flag per directory, by flipping +F attribute in an empty
++directory. Nevertheless, new directories will inherit the attribute. The
++mountpoint itself cannot be made case-insensitive.
 +
-+static const struct attribute_group tmpfs_attribute_group = {
-+	.attrs = tmpfs_attributes,
-+	.name = "features"
-+};
++Example::
 +
-+static struct kobject *tmpfs_kobj;
++    $ mount -t tmpfs -o casefold=utf8-12.1.0,strict_encoding fs_name /mytmpfs
++    $ mount -t tmpfs -o casefold fs_name /mytmpfs
 +
-+static int __init tmpfs_sysfs_init(void)
-+{
-+	int ret;
-+
-+	tmpfs_kobj = kobject_create_and_add("tmpfs", fs_kobj);
-+	if (!tmpfs_kobj)
-+		return -ENOMEM;
-+
-+	ret = sysfs_create_group(tmpfs_kobj, &tmpfs_attribute_group);
-+	if (ret)
-+		kobject_put(tmpfs_kobj);
-+
-+	return ret;
-+}
-+
-+fs_initcall(tmpfs_sysfs_init);
-+#endif /* CONFIG_SYSFS && CONFIG_TMPFS */
+ 
+ :Author:
+    Christoph Rohland <cr@sap.com>, 1.12.01
+@@ -250,3 +272,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by root.
+    KOSAKI Motohiro, 16 Mar 2010
+ :Updated:
+    Chris Down, 13 July 2020
++:Updated:
++   André Almeida, 23 Aug 2024
 -- 
 2.46.0
 
