@@ -1,124 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-30708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA4198DC69
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 16:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84C698DD6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 16:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FD2C1F26DD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 14:41:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F4C1F214AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 14:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045D61D2202;
-	Wed,  2 Oct 2024 14:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749301D0F7A;
+	Wed,  2 Oct 2024 14:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q164X5Iv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from kawka3.in.waw.pl (kawka3.in.waw.pl [68.183.222.220])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143C91D0E0B;
-	Wed,  2 Oct 2024 14:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.183.222.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C8E1D0E04
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Oct 2024 14:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879686; cv=none; b=N+Sv2cWAxDXnMMU8mjFtX3+395R7mOHugkM38CKM5v72xQrPr4Uy+mh5bGkXbqutUiCmhF5NVCwLjJhd9kG9SgHFlETHpHjywfZXtTQs3Si6H/dkct+CsYAuB5v6vhEIHifJU/eIH/oIJXjniQc9duq3aTdMuUzSrQr8KqGk3o0=
+	t=1727880370; cv=none; b=NA4owPwoRpHX/fmYkMO3STgrPuu1A3KU6RlIA1NnEZxjTkqB2bLE7/ROoS4CEPypXwsMOHdlTR2o1FbHFY60ZA3l5Nd8ACVJQHvKG6KclllX0Y6JiSnkfr/PGbudG9X9Bj1qpZ7SRNlq7cws7ggOnMpcTSFh/sIDKvrlOWxYh3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879686; c=relaxed/simple;
-	bh=ZxMR1giUq/l/tOnJ7G/X+j2Gz5nZGDwTDKjK/KYw0eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j40n/E5qUVDQaNw2a6yDeBXidw9rfbAUcVERC76IYPqbTGz2bdHSM0ZaGSpMw/vzHWvUbRa1we3fUaTihYHDiynybbVgwy9z0niAP+LkwFNwBqH98bfcRkA0cK2FBgXh2Zw/uj03st2LlZGthl6T04MiW+nPvsQFoMfAZOHkSHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl; spf=pass smtp.mailfrom=in.waw.pl; arc=none smtp.client-ip=68.183.222.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.waw.pl
-Received: by kawka3.in.waw.pl (Postfix, from userid 1000)
-	id 1FF5E550DB2; Wed,  2 Oct 2024 14:34:43 +0000 (UTC)
-Date: Wed, 2 Oct 2024 14:34:43 +0000
-From: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Tycho Andersen <tycho@tycho.pizza>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-Message-ID: <Zv1aA4I6r4py-8yW@kawka3.in.waw.pl>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
- <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1727880370; c=relaxed/simple;
+	bh=sNh/AIa+JnaRrSjGaa32yEPyaI6KwqBpjQs1HPPeD+s=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=BDGMaqlwaABMt1A5ZmMQNA9lZ0ZBMW7H5nZeU8h3zb5agiS3JelzU2fuGrBgBF7DdlMzFXwb7wSTnKuKcVGv9Nqj3pyBGY9KuL5u860YRmeV2gx9TD7OHDhy1ee01UVCzoe0gnCFfEhvDAgfwD6+FwXCGKBrJqKjuIVadVhZsFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q164X5Iv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727880367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wx+Qy/zl06Mj2fY6S2Q/NqjkDcK+6NpSkSBNzQEim2o=;
+	b=Q164X5Iv6f1tNWZ21OXFYAR1c22D7gqqUH1zmRpuxW40rNZ/v5yT7lBRc0lMsbPCxGqTxH
+	hzGpQlncHSy0OCuewx9ts+AIhWq5oNMfLoMYT59NNOvXS+dzXFWFF/LQUr0saSyKoQPSki
+	wORhQbf9wpI7PNzDjfN/fL+I26+ctgA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-8-Kr-4CUsINVKkZ5xCKWvUgQ-1; Wed,
+ 02 Oct 2024 10:45:57 -0400
+X-MC-Unique: Kr-4CUsINVKkZ5xCKWvUgQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BEFCB1955DE0;
+	Wed,  2 Oct 2024 14:45:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0AA043000198;
+	Wed,  2 Oct 2024 14:45:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix missing wakeup after issuing writes
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3317783.1727880350.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 02 Oct 2024 15:45:50 +0100
+Message-ID: <3317784.1727880350@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Sep 24, 2024 at 12:39:35PM -0500, Eric W. Biederman wrote:
-> Tycho Andersen <tycho@tycho.pizza> writes:
-> 
-> > From: Tycho Andersen <tandersen@netflix.com>
-> >
-> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> > switching to execveat() for service execution, but can't, because the
-> > contents of /proc/pid/comm are the file descriptor which was used,
-> > instead of the path to the binary. This makes the output of tools like
-> > top and ps useless, especially in a world where most fds are opened
-> > CLOEXEC so the number is truly meaningless.
-> >
-> > This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
-> > contents of argv[0], instead of the fdno.
+After dividing up a proposed write into subrequests, netfslib sets
+NETFS_RREQ_ALL_QUEUED to indicate to the collector that it can move on to
+the final cleanup once it has emptied the subrequest queues.
 
-I tried this version (with a local modification to drop the flag and
-enable the new codepath if get_user_arg_ptr(argv, 0) returns nonnull
-as suggested later in the thread), and it seems to work as expected.
-In particular, 'pgrep' finds for the original name in case of
-symlinks.
+Now, whilst the collector will normally end up running at least once after
+this bit is set just because it takes a while to process all the write
+subrequests before the collector runs out of subrequests, there exists the
+possibility that the issuing thread will be forced to sleep and the
+collector thread will clean up all the subrequests before ALL_QUEUED gets
+set.
 
-> All of that said I am not a fan of the implementation below as it has
-> the side effect of replacing /dev/fd/N with a filename that is not
-> usable by #! interpreters.  So I suggest an implementation that affects
-> task->comm and not brpm->filename.
+In such a case, the collector thread will not get triggered again and will
+never clear NETFS_RREQ_IN_PROGRESS thus leaving a request uncompleted and
+causing a potential futute hang.
 
-Hmm, I don't understand this. /dev/fd/ would not generally contain an
-open fd for the original binary. It only would if the caller uses
-fexecve with an fd opened without O_CLOEXEC, but then it'd be
-something like /dev/fd/3 or /dev/fd/4 and the callee would be confused
-by having an extra fd, so except for some specialed cases, the caller
-should always use O_CLOEXEC.
+Fix this by scheduling the write collector if all the subrequest queues ar=
+e
+empty (and thus no writes pending issuance).
 
-With this patch:
-$ sudo ln -sv /bin/sleep /usr/local/bin/sleep-link
-$ sudo systemd-run sleep-link 10000
+Note that we'd do this ideally before queuing the subrequest, but in the
+case of buffered writeback, at least, we can't find out that we've run out
+of folios until after we've called writeback_iter() and it has returned
+NULL - at which point we might not actually have any subrequests still
+under construction.
 
-$ sudo strace -f -e execve,execveat -p 1
-...
-[pid  1200] execve("/proc/self/fd/9", ["/usr/lib/systemd/systemd-executo"..., "--deserialize", "150", "--log-level", "info", "--log-target", "journal-or-kmsg"], 0x7ffe97b98178 /* 3 vars */) = 0
-[pid  1200] execveat(4, "", ["/usr/local/bin/sleep-link", "10000"], 0xd8edf70 /* 9 vars */, AT_EMPTY_PATH) = 0
-^C
+Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/write_issue.c |   42 +++++++++++++++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 15 deletions(-)
 
-$ pgrep sleep-link
-1200
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 6293f547e4c3..bf6d507578e5 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -508,6 +508,30 @@ static int netfs_write_folio(struct netfs_io_request =
+*wreq,
+ 	return 0;
+ }
+ =
 
-$ sudo ls -l /proc/1200/fd
-total 0
-lr-x------ 1 root root 64 Oct  2 17:13 0 -> /dev/null
-lrwx------ 1 root root 64 Oct  2 17:13 1 -> 'socket:[8585]'
-lrwx------ 1 root root 64 Oct  2 17:13 2 -> 'socket:[8585]'
++/*
++ * End the issuing of writes, letting the collector know we're done.
++ */
++static void netfs_end_issue_write(struct netfs_io_request *wreq)
++{
++	bool needs_poke =3D true;
++
++	smp_wmb(); /* Write subreq lists before ALL_QUEUED. */
++	set_bit(NETFS_RREQ_ALL_QUEUED, &wreq->flags);
++
++	for (int s =3D 0; s < NR_IO_STREAMS; s++) {
++		struct netfs_io_stream *stream =3D &wreq->io_streams[s];
++
++		if (!stream->active)
++			continue;
++		if (!list_empty(&stream->subrequests))
++			needs_poke =3D false;
++		netfs_issue_write(wreq, stream);
++	}
++
++	if (needs_poke)
++		netfs_wake_write_collector(wreq, false);
++}
++
+ /*
+  * Write some of the pending data back to the server
+  */
+@@ -559,10 +583,7 @@ int netfs_writepages(struct address_space *mapping,
+ 			break;
+ 	} while ((folio =3D writeback_iter(mapping, wbc, folio, &error)));
+ =
 
-$ head -n1 /proc/1200/{comm,status,stat}
-==> /proc/1200/comm <==
-sleep-link
-==> /proc/1200/status <==
-Name:   sleep-link
-==> /proc/1200/stat <==
-1200 (sleep-link) ...
+-	for (int s =3D 0; s < NR_IO_STREAMS; s++)
+-		netfs_issue_write(wreq, &wreq->io_streams[s]);
+-	smp_wmb(); /* Write lists before ALL_QUEUED. */
+-	set_bit(NETFS_RREQ_ALL_QUEUED, &wreq->flags);
++	netfs_end_issue_write(wreq);
+ =
 
-This all looks good.
+ 	mutex_unlock(&ictx->wb_lock);
+ =
 
-Zbyszek
+@@ -650,10 +671,7 @@ int netfs_end_writethrough(struct netfs_io_request *w=
+req, struct writeback_contr
+ 	if (writethrough_cache)
+ 		netfs_write_folio(wreq, wbc, writethrough_cache);
+ =
+
+-	netfs_issue_write(wreq, &wreq->io_streams[0]);
+-	netfs_issue_write(wreq, &wreq->io_streams[1]);
+-	smp_wmb(); /* Write lists before ALL_QUEUED. */
+-	set_bit(NETFS_RREQ_ALL_QUEUED, &wreq->flags);
++	netfs_end_issue_write(wreq);
+ =
+
+ 	mutex_unlock(&ictx->wb_lock);
+ =
+
+@@ -699,13 +717,7 @@ int netfs_unbuffered_write(struct netfs_io_request *w=
+req, bool may_wait, size_t
+ 			break;
+ 	}
+ =
+
+-	netfs_issue_write(wreq, upload);
+-
+-	smp_wmb(); /* Write lists before ALL_QUEUED. */
+-	set_bit(NETFS_RREQ_ALL_QUEUED, &wreq->flags);
+-	if (list_empty(&upload->subrequests))
+-		netfs_wake_write_collector(wreq, false);
+-
++	netfs_end_issue_write(wreq);
+ 	_leave(" =3D %d", error);
+ 	return error;
+ }
+
 
