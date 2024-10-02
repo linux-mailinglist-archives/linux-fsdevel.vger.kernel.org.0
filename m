@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-30818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F3198E74D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:46:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC39A98E750
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C74111C255A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0F12883EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BF81C2451;
-	Wed,  2 Oct 2024 23:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C321C6F48;
+	Wed,  2 Oct 2024 23:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GRS0ZU4D"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bka5vrt0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8921C0DCB;
-	Wed,  2 Oct 2024 23:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAD31C2DBE;
+	Wed,  2 Oct 2024 23:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912730; cv=none; b=U+yJZOk/L9a+PgdjkcLaQPPujqaLmtRheFVzqzxFsRSQqKszQZvITDoz7vkG4tGiURtNPsXtv9ldAEzdVULiKYN9oXMsFi2truEVXEhou+PiHtspCnWQZ5Sf/GxM7o/wWLL4Or/IBPRt4gNYdXRrA+n3O8VuTVi3JOK7ClIxPTE=
+	t=1727912735; cv=none; b=mKkOrocDSv2BC2DJcYF5JtridPG68+3OeNKFuzwf/yU2UP/Zq+rVw5GtmKEnMkbsAszFyDV3/AP4CiuM6Lv2VgAGndineiZ04RGB9Az8IA53eoxuh6oZIDqXZ/CRbygArudSLbXeOzNXnqaZggCartpNnDe628Pw131D/fxgob4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912730; c=relaxed/simple;
-	bh=YxdydQxEeqgWOKZDzzhLVNxkB+ZO7uV8OQ8R50Iwbbk=;
+	s=arc-20240116; t=1727912735; c=relaxed/simple;
+	bh=baYyqH1zkRLR2JTEM1uWa5kkwLV6py0GhE+cOwhsPGk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WYD5Vx3uj1DXcEOF1xXREXd3Yc5uOLtHOzToyTR/Or/4d+S4L4LLciygPDOQDnaZpBo+6RBUkBT9UIw0XOiQD1AtA1x/9kDx2dijVTIfSx1s9NiRu4afH+W/XKNV7bZ7I1uunee3tdOued7PXWRZzsD/JuzSKTc3o4MTfyxGPvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GRS0ZU4D; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=WSKxPymW42Kf89pWr5uC1isnmDWEL9Lp9jalM3cboJWZR241XVXGOijDST6wlxmHqQJSNrceh0DZ8GabMb07kTJFZsbxMY8n2uWojSrOe2LKxHbOGhe0RUSKdV+RNLvjtP1FTVUfPWCSbK21wcPRjhncsY2NYTcrsK0mK958AR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bka5vrt0; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=AQXk6ztfHTUQteq8elPhWhUuCISghcvWoGYTPvw/Cw8=; b=GRS0ZU4D/LbdgGtJz8RqDet2I/
-	kBSmua98CNEkx9YC1kQqu5FoWtonv8v6mjKUDDc+4jt2vUVc3H6KfulRVGlmnmc77P+HgeXkffCxc
-	ylDiVRu9Ko+fcofddOY/MotK4SzHmfX/qso/QhYfbjx+NngmuqyXbkJsJKWcizQVxvqWLiSXbitLm
-	7N5QOFhclCGI2g2TRhiPKOVDDFSHwO19js7JLFOv+9TrSrB6I5oA81S9Gzs6k2x9duS/K3VXWggQY
-	rjF7yM0fWEyE+RAq7rdWWkODzySa7GRoaOxdV0lHMyk6n0mrrCOHOXnjiIU+96+GbfoKG8yqtGoj/
-	1ycf+wPA==;
+	bh=Quu0dtbQ9E+zFuEMK6MzcOIEYam2pR7bqkVHBNP4Z1M=; b=bka5vrt0u16euP1xIhWZ/Kg1wh
+	ar8IE3EbJsB3viwk03hqbcr4jQJ2jK9Xd6LueY/9eMGT++ho5OGh5/nR0NfR5aDwNNIoORZs/tzPz
+	xFCknGIhr9MWfGMTi7ksYaVVUUNTC7KXm0a4Ifde3cNKpmNSRYxCGMWk/4ECZlxRe2NbGewsG7ttU
+	t9jE5ElARxyxdq15MgdjrRrqqiW5cAx8boixraK6bpaUw1r/5E6uO6yzCTq45C4dbRy9hfU7qwsMV
+	CmUkUxxnREwLcSVoSqLD/1vhksx9xUx1OfIaSteNU0kxODerKgSU6VvcJH3wt1Syiovvb9s8Zj6NQ
+	rIR49aAA==;
 Received: from [187.57.199.212] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw920-0045tc-HW; Thu, 03 Oct 2024 01:45:20 +0200
+	id 1sw924-0045tc-N1; Thu, 03 Oct 2024 01:45:25 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: Hugh Dickins <hughd@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -63,9 +63,9 @@ Cc: linux-mm@kvack.org,
 	Christoph Hellwig <hch@lst.de>,
 	Theodore Ts'o <tytso@mit.edu>,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v5 05/10] libfs: Export generic_ci_ dentry functions
-Date: Wed,  2 Oct 2024 20:44:39 -0300
-Message-ID: <20241002234444.398367-6-andrealmeid@igalia.com>
+Subject: [PATCH v5 06/10] tmpfs: Always set simple_dentry_operations as dentry ops
+Date: Wed,  2 Oct 2024 20:44:40 -0300
+Message-ID: <20241002234444.398367-7-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
 References: <20241002234444.398367-1-andrealmeid@igalia.com>
@@ -78,76 +78,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Export generic_ci_ dentry functions so they can be used by
-case-insensitive filesystems that need something more custom than the
-default one set by `struct generic_ci_dentry_ops`.
+Set simple_dentry_operations as the superblock dentry ops, so all tmpfs
+dentries can inherit it.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
-Changes from v4:
-- Guard func signatures inside IS_ENABLED(CONFIG_UNICODE)
-Changes from v3:
-- New patch
----
- fs/libfs.c         | 8 +++++---
- include/linux/fs.h | 4 ++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ mm/shmem.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 46966fd8bcf9..7b290404c5f9 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1791,8 +1791,8 @@ bool is_empty_dir_inode(struct inode *inode)
-  *
-  * Return: 0 if names match, 1 if mismatch, or -ERRNO
-  */
--static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
--				const char *str, const struct qstr *name)
-+int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-+			 const char *str, const struct qstr *name)
- {
- 	const struct dentry *parent;
- 	const struct inode *dir;
-@@ -1835,6 +1835,7 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
- 
- 	return utf8_strncasecmp(dentry->d_sb->s_encoding, name, &qstr);
- }
-+EXPORT_SYMBOL(generic_ci_d_compare);
- 
- /**
-  * generic_ci_d_hash - generic d_hash implementation for casefolding filesystems
-@@ -1843,7 +1844,7 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-  *
-  * Return: 0 if hash was successful or unchanged, and -EINVAL on error
-  */
--static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
-+int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
- {
- 	const struct inode *dir = READ_ONCE(dentry->d_inode);
- 	struct super_block *sb = dentry->d_sb;
-@@ -1858,6 +1859,7 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
- 		return -EINVAL;
- 	return 0;
- }
-+EXPORT_SYMBOL(generic_ci_d_hash);
- 
- static const struct dentry_operations generic_ci_dentry_ops = {
- 	.d_hash = generic_ci_d_hash,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9a5d38fc3b67..400d070d9a9b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3453,6 +3453,10 @@ extern int generic_ci_match(const struct inode *parent,
- 			    const u8 *de_name, u32 de_name_len);
- 
- #if IS_ENABLED(CONFIG_UNICODE)
-+int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
-+int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-+			 const char *str, const struct qstr *name);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4f11b5506363..162d68784309 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4662,6 +4662,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	}
+ 	sb->s_export_op = &shmem_export_ops;
+ 	sb->s_flags |= SB_NOSEC | SB_I_VERSION;
 +
- /**
-  * generic_ci_validate_strict_name - Check if a given name is suitable
-  * for a directory
++	sb->s_d_op = &simple_dentry_operations;
+ #else
+ 	sb->s_flags |= SB_NOUSER;
+ #endif
 -- 
 2.46.0
 
