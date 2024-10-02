@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-30815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB0D98E743
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:45:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC8298E74A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B815F1C25371
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:45:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E92C287A32
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7F61A0BC4;
-	Wed,  2 Oct 2024 23:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E1A1A38D3;
+	Wed,  2 Oct 2024 23:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="R/1/uZzI"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UgzBQREk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4563D1A00CB;
-	Wed,  2 Oct 2024 23:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36FC1A4F1C;
+	Wed,  2 Oct 2024 23:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912718; cv=none; b=PXO6x1NJ4l+DDA+7ihzazpHdL7STgVNEDjigorLHeMhS2tKXDAJrJF54C8vhuzba3NZR3BsHcQtpOYnp9NmYhs2R5p3QTjPPBs72fUvyI7nIGOsv72iqVmoy1kH70dCAnlNBxjGGM5a7Ch7q9XK0gbIp8vLbzTiVizp7QVPhW0s=
+	t=1727912723; cv=none; b=YyQcCbfxvxTfLlvqk+9gxYd4EqcRwKvyMcEFh76vGsauVFJCAn4cd+fsVJLTaeArzdR5JCyGY+PDwyMTXNdPCFVQjok3GZ7m0MKTTnGdpTSvcOwEp3HtkbpgcSeXeUTks2wjpNJRH/P+hSvpkQDYDnUBQvLlN1X40vHoWBY4l28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912718; c=relaxed/simple;
-	bh=oIHm5vuPIZznXvIblbYar2SLDHn+DYeKHsv+ZEkNTRI=;
+	s=arc-20240116; t=1727912723; c=relaxed/simple;
+	bh=D3t0v1iUUZS5Dn6r8EulUfg/PAjBiyFz29UUoFs9DQ4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hNCEEm+c4FXbzP3UBxTqIBKHT4hU26/PwgkxLFcUJEOylC5eoD2RPt0NAHCBvkml7QSozD26+EqXLKoXf6KsGGbL3GfoIOiAaunSmqZNbD7Bu8n87lGuN5deGyidNuHybgEHPavY0ZPD/NyLt/2njgruPM9W+qxIhbuil+tdIrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=R/1/uZzI; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=oyPkYDGaOZ9T4PakFLxGnGID0I80XR2bcR7gWo/8vbSMK5NQhTl4fN0nw2abkiUAEQ2XmtkxtAl0PPaSdo0H6bT1CMQUJ1hYUKbuOksf/6HWk/Roo5pvx4iD+rB2kOIe3ea+A6/EDy/OAlS2qgvUkygWiwRw4YH6s3/DgRZ+6jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UgzBQREk; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=KXLeYwW1OCCqt0oK34O4XtdDejRlj8zSL51Jo9mqNzY=; b=R/1/uZzI/kIq1MfL9Fyep64GAN
-	DThJRyI7liLrxMsvDeAcg6HQv1z1Ydktk7c41UBYpBb6SSjONTsurzcfgayHZg7l7w6+BjRbv/xAB
-	DP9pG7AKa2oReMvwGx3Ae/uX5AKWeV05+AoQUggMbeWFPoDkmlcVfWpYsFaMa3OwMQjNTvfCwzdOE
-	6tsFAE3ox7EsCugi/yvjLSJJ61mXHnko8SZzbTqWkIZ0CedMr0cb++XzjBjmNJpsZKc+zHVEKrJwr
-	qyPVsw23JHhXUalI88GbHqQ7nkbaKLJMo8FDotp3h3zqxex+/7qTO7s0gmVWqRuJUFpMaIuwnKqgj
-	G864n8bA==;
+	bh=DalQc9ZFDkAEv3Wa+zRkk2ZJ5+lE2Yk2pdRycpfio0A=; b=UgzBQREksyY9Nb2Y5xXzTaqlbk
+	yogZnCArPZAn08oPQZEdWPUNmG8pl5ZtM0j4iy5+XcdiKQeVPztN7tOaXFDXSHiDH1W3nSydxyKD9
+	TxqluSZz/becVnaml0eECIvj0UHDLW9LB78cePc0ddHXzgGqjJyxW6mVViMMfYDoR9qTF67iOKwqU
+	nk+aRiWIdAQx++IsD/G9JXyzVFa+wE1aoGe2qG3FklV22U9GHo/U2OPbM8crVUe/wE8jYMtPWJqXO
+	td8xWsu3H/xoWO1GM3zXOqrsz3hzBXpQMiDgDQK9PH9um02ltAp2yQt8JlswIlCaloNLF+5eIyei4
+	+YJl6+kg==;
 Received: from [187.57.199.212] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw91n-0045tc-JV; Thu, 03 Oct 2024 01:45:08 +0200
+	id 1sw91r-0045tc-Vt; Thu, 03 Oct 2024 01:45:12 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: Hugh Dickins <hughd@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -64,9 +64,9 @@ Cc: linux-mm@kvack.org,
 	Theodore Ts'o <tytso@mit.edu>,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v5 02/10] ext4: Use generic_ci_validate_strict_name helper
-Date: Wed,  2 Oct 2024 20:44:36 -0300
-Message-ID: <20241002234444.398367-3-andrealmeid@igalia.com>
+Subject: [PATCH v5 03/10] unicode: Export latest available UTF-8 version number
+Date: Wed,  2 Oct 2024 20:44:37 -0300
+Message-ID: <20241002234444.398367-4-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
 References: <20241002234444.398367-1-andrealmeid@igalia.com>
@@ -79,37 +79,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Use the helper function to check the requirements for casefold
-directories using strict encoding.
+Export latest available UTF-8 version number so filesystems can easily
+load the newest one.
 
-Suggested-by: Gabriel Krisman Bertazi <krisman@suse.de>
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
-Acked-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
-Changes from v4:
-- Now we can drop the if IS_ENABLED() guard
----
- fs/ext4/namei.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/unicode/utf8-selftest.c | 3 ---
+ include/linux/unicode.h    | 2 ++
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 790db7eac6c2..612ccbeb493b 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2395,11 +2395,8 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
- 	if (fscrypt_is_nokey_name(dentry))
- 		return -ENOKEY;
+diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
+index 600e15efe9ed..5ddaf27b21a6 100644
+--- a/fs/unicode/utf8-selftest.c
++++ b/fs/unicode/utf8-selftest.c
+@@ -17,9 +17,6 @@
+ static unsigned int failed_tests;
+ static unsigned int total_tests;
  
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (sb_has_strict_encoding(sb) && IS_CASEFOLDED(dir) &&
--	    utf8_validate(sb->s_encoding, &dentry->d_name))
-+	if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
- 		return -EINVAL;
--#endif
+-/* Tests will be based on this version. */
+-#define UTF8_LATEST	UNICODE_AGE(12, 1, 0)
+-
+ #define _test(cond, func, line, fmt, ...) do {				\
+ 		total_tests++;						\
+ 		if (!cond) {						\
+diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+index 4d39e6e11a95..0c0ab04e84ee 100644
+--- a/include/linux/unicode.h
++++ b/include/linux/unicode.h
+@@ -16,6 +16,8 @@ struct utf8data_table;
+ 	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
+ 	 ((unsigned int)(REV)))
  
- 	retval = ext4_fname_setup_filename(dir, &dentry->d_name, 0, &fname);
- 	if (retval)
++#define UTF8_LATEST        UNICODE_AGE(12, 1, 0)
++
+ static inline u8 unicode_major(unsigned int age)
+ {
+ 	return (age >> UNICODE_MAJ_SHIFT) & 0xff;
 -- 
 2.46.0
 
