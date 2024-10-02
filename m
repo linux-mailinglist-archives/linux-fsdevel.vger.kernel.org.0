@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-30816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC8298E74A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:46:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1148798E74B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E92C287A32
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:46:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D521C2544E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E1A1A38D3;
-	Wed,  2 Oct 2024 23:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F87B1BFDFC;
+	Wed,  2 Oct 2024 23:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UgzBQREk"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="rEN9q944"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36FC1A4F1C;
-	Wed,  2 Oct 2024 23:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614FA1A4F1C;
+	Wed,  2 Oct 2024 23:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912723; cv=none; b=YyQcCbfxvxTfLlvqk+9gxYd4EqcRwKvyMcEFh76vGsauVFJCAn4cd+fsVJLTaeArzdR5JCyGY+PDwyMTXNdPCFVQjok3GZ7m0MKTTnGdpTSvcOwEp3HtkbpgcSeXeUTks2wjpNJRH/P+hSvpkQDYDnUBQvLlN1X40vHoWBY4l28=
+	t=1727912727; cv=none; b=rG9Z339uIt5WRayvv7ZOLUJCdrxDevgz3njp5xprdQ7DU8KxnGTbrRa+MKeCZjb8IFQEJLkeclETuYGfMU5km1GZEmX+aC/oNv1mUixwqB6d3l7KPAOSB8DPDLIv1NRhgwp8y68rGVXep0BS7Eax0vJQwcAursCGu21aA8NCkjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912723; c=relaxed/simple;
-	bh=D3t0v1iUUZS5Dn6r8EulUfg/PAjBiyFz29UUoFs9DQ4=;
+	s=arc-20240116; t=1727912727; c=relaxed/simple;
+	bh=+kkwFwJnq0dJkV7YDtzBnVifdVhZtRPynXmCviDLHIY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oyPkYDGaOZ9T4PakFLxGnGID0I80XR2bcR7gWo/8vbSMK5NQhTl4fN0nw2abkiUAEQ2XmtkxtAl0PPaSdo0H6bT1CMQUJ1hYUKbuOksf/6HWk/Roo5pvx4iD+rB2kOIe3ea+A6/EDy/OAlS2qgvUkygWiwRw4YH6s3/DgRZ+6jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UgzBQREk; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=bsNpg+O8J+Ep1qmQW87rHEzkZ6/posq0lcJmPqCKpykcrwglletrZXjOo2Ghx7xP+FK5YX3uUw+sEvVyg1sn9sBNJEL4G4+Dr1Ef2ALNU+Zgzkqc5sb1e1NNvgmG3cw2ru2IIN0K8cc5BbI5Oj/AZbtXMZCBTRxloZXdVY/GZUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=rEN9q944; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=DalQc9ZFDkAEv3Wa+zRkk2ZJ5+lE2Yk2pdRycpfio0A=; b=UgzBQREksyY9Nb2Y5xXzTaqlbk
-	yogZnCArPZAn08oPQZEdWPUNmG8pl5ZtM0j4iy5+XcdiKQeVPztN7tOaXFDXSHiDH1W3nSydxyKD9
-	TxqluSZz/becVnaml0eECIvj0UHDLW9LB78cePc0ddHXzgGqjJyxW6mVViMMfYDoR9qTF67iOKwqU
-	nk+aRiWIdAQx++IsD/G9JXyzVFa+wE1aoGe2qG3FklV22U9GHo/U2OPbM8crVUe/wE8jYMtPWJqXO
-	td8xWsu3H/xoWO1GM3zXOqrsz3hzBXpQMiDgDQK9PH9um02ltAp2yQt8JlswIlCaloNLF+5eIyei4
-	+YJl6+kg==;
+	bh=HCbVqueHUmSSCcT+A2gsLYEdLj0anlbi7vfWbqjQz7g=; b=rEN9q9445fHCa6+Cu5k/ZNfA6l
+	rUVf5HN05YiPW6LBeSVDHVW4yadCX1//v6PcFQTA/Mu90qZhR7Kx2QsPMNbrNzyHSUt4N8NcoKeY7
+	WDaRV9YyJxmiKIQKzgH4Tqf6xY2PfLxyrL1xu+3E+lHnOktCjoFwrwW0u+T+Dm6IIp3tyD2xekUbA
+	ppP90YeCpxXhbXEgPg7bO0JT0sxAzzCV9SfZH9N9JKBfMt7feJ+oUh9ehxpd5ETYEhNy9ULePV+4s
+	oCrLHrmwF0ZREkJLY1US/OZkYXFek93sSO42K+dxBJIzW+OHd0L33CVG8dyiqCs0qBtz3j5HTqmPQ
+	O0FJJMEQ==;
 Received: from [187.57.199.212] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw91r-0045tc-Vt; Thu, 03 Oct 2024 01:45:12 +0200
+	id 1sw91w-0045tc-Bz; Thu, 03 Oct 2024 01:45:16 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: Hugh Dickins <hughd@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -64,9 +64,9 @@ Cc: linux-mm@kvack.org,
 	Theodore Ts'o <tytso@mit.edu>,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v5 03/10] unicode: Export latest available UTF-8 version number
-Date: Wed,  2 Oct 2024 20:44:37 -0300
-Message-ID: <20241002234444.398367-4-andrealmeid@igalia.com>
+Subject: [PATCH v5 04/10] unicode: Recreate utf8_parse_version()
+Date: Wed,  2 Oct 2024 20:44:38 -0300
+Message-ID: <20241002234444.398367-5-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
 References: <20241002234444.398367-1-andrealmeid@igalia.com>
@@ -79,43 +79,82 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Export latest available UTF-8 version number so filesystems can easily
-load the newest one.
+All filesystems that currently support UTF-8 casefold can fetch the
+UTF-8 version from the filesystem metadata stored on disk. They can get
+the data stored and directly match it to a integer, so they can skip the
+string parsing step, which motivated the removal of this function in the
+first place.
+
+However, for tmpfs, the only way to tell the kernel which UTF-8 version
+we are about to use is via mount options, using a string. Re-introduce
+utf8_parse_version() to be used by tmpfs.
+
+This version differs from the original by skipping the intermediate step
+of copying the version string to an auxiliary string before calling
+match_token(). This versions calls match_token() in the argument string.
+The paramenters are simpler now as well.
+
+utf8_parse_version() was created by 9d53690f0d4 ("unicode: implement
+higher level API for string handling") and later removed by 49bd03cc7e9
+("unicode: pass a UNICODE_AGE() tripple to utf8_load").
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
-Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- fs/unicode/utf8-selftest.c | 3 ---
- include/linux/unicode.h    | 2 ++
- 2 files changed, 2 insertions(+), 3 deletions(-)
+Changes from v3:
+- Return version on the return value, instead of returning version at
+  function args.
+---
+ fs/unicode/utf8-core.c  | 26 ++++++++++++++++++++++++++
+ include/linux/unicode.h |  2 ++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
-index 600e15efe9ed..5ddaf27b21a6 100644
---- a/fs/unicode/utf8-selftest.c
-+++ b/fs/unicode/utf8-selftest.c
-@@ -17,9 +17,6 @@
- static unsigned int failed_tests;
- static unsigned int total_tests;
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index 0400824ef493..6fc9ab8667e6 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -214,3 +214,29 @@ void utf8_unload(struct unicode_map *um)
+ }
+ EXPORT_SYMBOL(utf8_unload);
  
--/* Tests will be based on this version. */
--#define UTF8_LATEST	UNICODE_AGE(12, 1, 0)
--
- #define _test(cond, func, line, fmt, ...) do {				\
- 		total_tests++;						\
- 		if (!cond) {						\
++/**
++ * utf8_parse_version - Parse a UTF-8 version number from a string
++ *
++ * @version: input string
++ *
++ * Returns the parsed version on success, negative code on error
++ */
++int utf8_parse_version(char *version)
++{
++	substring_t args[3];
++	unsigned int maj, min, rev;
++	static const struct match_token token[] = {
++		{1, "%d.%d.%d"},
++		{0, NULL}
++	};
++
++	if (match_token(version, token, args) != 1)
++		return -EINVAL;
++
++	if (match_int(&args[0], &maj) || match_int(&args[1], &min) ||
++	    match_int(&args[2], &rev))
++		return -EINVAL;
++
++	return UNICODE_AGE(maj, min, rev);
++}
++EXPORT_SYMBOL(utf8_parse_version);
 diff --git a/include/linux/unicode.h b/include/linux/unicode.h
-index 4d39e6e11a95..0c0ab04e84ee 100644
+index 0c0ab04e84ee..5e6b212a2aed 100644
 --- a/include/linux/unicode.h
 +++ b/include/linux/unicode.h
-@@ -16,6 +16,8 @@ struct utf8data_table;
- 	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
- 	 ((unsigned int)(REV)))
+@@ -78,4 +78,6 @@ int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
+ struct unicode_map *utf8_load(unsigned int version);
+ void utf8_unload(struct unicode_map *um);
  
-+#define UTF8_LATEST        UNICODE_AGE(12, 1, 0)
++int utf8_parse_version(char *version);
 +
- static inline u8 unicode_major(unsigned int age)
- {
- 	return (age >> UNICODE_MAJ_SHIFT) & 0xff;
+ #endif /* _LINUX_UNICODE_H */
 -- 
 2.46.0
 
