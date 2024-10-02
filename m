@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-30814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F9898E740
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB0D98E743
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5A7D1F24DEE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B815F1C25371
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2EE1A01BF;
-	Wed,  2 Oct 2024 23:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7F61A0BC4;
+	Wed,  2 Oct 2024 23:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aFc7Mb1H"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="R/1/uZzI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4AF199249;
-	Wed,  2 Oct 2024 23:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4563D1A00CB;
+	Wed,  2 Oct 2024 23:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912717; cv=none; b=rxfcnqu594pAPwkm+kwwgH+5MktbQg4+ZozZaOdZBkcI/j679j2RGqJJzkSMl/CgmNIYDXWwelxqAql7HI2bmpfHs+W4cl1aVrFdb3cMD3riFuBe1XMJE5F0HmEgbi507FSTobA0rQqgvbN89rTEA8395rj2ildn+Vv6bm0nLrg=
+	t=1727912718; cv=none; b=PXO6x1NJ4l+DDA+7ihzazpHdL7STgVNEDjigorLHeMhS2tKXDAJrJF54C8vhuzba3NZR3BsHcQtpOYnp9NmYhs2R5p3QTjPPBs72fUvyI7nIGOsv72iqVmoy1kH70dCAnlNBxjGGM5a7Ch7q9XK0gbIp8vLbzTiVizp7QVPhW0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912717; c=relaxed/simple;
-	bh=XD0655LMXQQE3H7/vJ0Cph68fsRLWyVLDTRgK0rdatk=;
+	s=arc-20240116; t=1727912718; c=relaxed/simple;
+	bh=oIHm5vuPIZznXvIblbYar2SLDHn+DYeKHsv+ZEkNTRI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YL1uNFwPo6E39Zsny2GJrEynbuSgSffZdwdl9eruKMlaECdOLPZLl4eVAVt2WWZTly2hN6AfhZym5NvkwLAOGUN9Rk7bUVbvSGRvEtAZ/slZVqKekkJdRg+ohnu0kAbeY2wK7cIeaoUwQj+EOkW6tsEgESYHtXmi4YVP5gpavcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aFc7Mb1H; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=hNCEEm+c4FXbzP3UBxTqIBKHT4hU26/PwgkxLFcUJEOylC5eoD2RPt0NAHCBvkml7QSozD26+EqXLKoXf6KsGGbL3GfoIOiAaunSmqZNbD7Bu8n87lGuN5deGyidNuHybgEHPavY0ZPD/NyLt/2njgruPM9W+qxIhbuil+tdIrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=R/1/uZzI; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=Y8QDzI/AINMwYgFuy4R/IREoIrpywxbZXblB5AdDFcw=; b=aFc7Mb1HSQlbH0FXXlc1YsbKdF
-	OZD65SM+Mo9xLxyEBrZUjzuHCCkRsZcBFJYLdQlKwdRX6nWq0w6esff57g7fqherOH8YuTk/Ost1I
-	MI5DF3mAGvO4fodymwddk7xTPROZmALyoPPx4GX8GMtxBfNe6NQnqxLTUICHA3fuLjd14/LosDiAH
-	an2uWrZtQFDjpoR+7iy4UR4FQ+0BmINEzIOpELXgGGsF8Pb1kAG/2mPbfUeYlwphCN9FwOpNZp2SY
-	g8rT81v0k5CwfMJtLdPaFf6qxEgZIn5jEowDq9ZdmiMlRlCg4j+hhgQHvYsQ/JS8K174GH9+q36lD
-	n7m+wA/w==;
+	bh=KXLeYwW1OCCqt0oK34O4XtdDejRlj8zSL51Jo9mqNzY=; b=R/1/uZzI/kIq1MfL9Fyep64GAN
+	DThJRyI7liLrxMsvDeAcg6HQv1z1Ydktk7c41UBYpBb6SSjONTsurzcfgayHZg7l7w6+BjRbv/xAB
+	DP9pG7AKa2oReMvwGx3Ae/uX5AKWeV05+AoQUggMbeWFPoDkmlcVfWpYsFaMa3OwMQjNTvfCwzdOE
+	6tsFAE3ox7EsCugi/yvjLSJJ61mXHnko8SZzbTqWkIZ0CedMr0cb++XzjBjmNJpsZKc+zHVEKrJwr
+	qyPVsw23JHhXUalI88GbHqQ7nkbaKLJMo8FDotp3h3zqxex+/7qTO7s0gmVWqRuJUFpMaIuwnKqgj
+	G864n8bA==;
 Received: from [187.57.199.212] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw91j-0045tc-71; Thu, 03 Oct 2024 01:45:03 +0200
+	id 1sw91n-0045tc-JV; Thu, 03 Oct 2024 01:45:08 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: Hugh Dickins <hughd@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -64,9 +64,9 @@ Cc: linux-mm@kvack.org,
 	Theodore Ts'o <tytso@mit.edu>,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v5 01/10] libfs: Create the helper function generic_ci_validate_strict_name()
-Date: Wed,  2 Oct 2024 20:44:35 -0300
-Message-ID: <20241002234444.398367-2-andrealmeid@igalia.com>
+Subject: [PATCH v5 02/10] ext4: Use generic_ci_validate_strict_name helper
+Date: Wed,  2 Oct 2024 20:44:36 -0300
+Message-ID: <20241002234444.398367-3-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
 References: <20241002234444.398367-1-andrealmeid@igalia.com>
@@ -79,86 +79,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Create a helper function for filesystems do the checks required for
-casefold directories and strict encoding.
+Use the helper function to check the requirements for casefold
+directories using strict encoding.
 
 Suggested-by: Gabriel Krisman Bertazi <krisman@suse.de>
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
+Acked-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
 Changes from v4:
-- Inline this function
-
-Changes from v2:
-- Moved function to libfs and adpated its name
-- Wrapped at 72 chars column
-- Decomposed the big if (...) to be more clear
+- Now we can drop the if IS_ENABLED() guard
 ---
- include/linux/fs.h | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ fs/ext4/namei.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e3c603d01337..9a5d38fc3b67 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -45,6 +45,7 @@
- #include <linux/slab.h>
- #include <linux/maple_tree.h>
- #include <linux/rw_hint.h>
-+#include <linux/unicode.h>
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 790db7eac6c2..612ccbeb493b 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2395,11 +2395,8 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
+ 	if (fscrypt_is_nokey_name(dentry))
+ 		return -ENOKEY;
  
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -3451,6 +3452,50 @@ extern int generic_ci_match(const struct inode *parent,
- 			    const struct qstr *folded_name,
- 			    const u8 *de_name, u32 de_name_len);
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	if (sb_has_strict_encoding(sb) && IS_CASEFOLDED(dir) &&
+-	    utf8_validate(sb->s_encoding, &dentry->d_name))
++	if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
+ 		return -EINVAL;
+-#endif
  
-+#if IS_ENABLED(CONFIG_UNICODE)
-+/**
-+ * generic_ci_validate_strict_name - Check if a given name is suitable
-+ * for a directory
-+ *
-+ * This functions checks if the proposed filename is valid for the
-+ * parent directory. That means that only valid UTF-8 filenames will be
-+ * accepted for casefold directories from filesystems created with the
-+ * strict encoding flag.  That also means that any name will be
-+ * accepted for directories that doesn't have casefold enabled, or
-+ * aren't being strict with the encoding.
-+ *
-+ * @dir: inode of the directory where the new file will be created
-+ * @name: name of the new file
-+ *
-+ * Return:
-+ * * True if the filename is suitable for this directory. It can be
-+ * true if a given name is not suitable for a strict encoding
-+ * directory, but the directory being used isn't strict
-+ * * False if the filename isn't suitable for this directory. This only
-+ * happens when a directory is casefolded and the filesystem is strict
-+ * about its encoding.
-+ */
-+static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *name)
-+{
-+	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
-+		return true;
-+
-+	/*
-+	 * A casefold dir must have a encoding set, unless the filesystem
-+	 * is corrupted
-+	 */
-+	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
-+		return true;
-+
-+	return utf8_validate(dir->i_sb->s_encoding, name);
-+}
-+#else
-+static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *name)
-+{
-+	return true;
-+}
-+#endif
-+
- static inline bool sb_has_encoding(const struct super_block *sb)
- {
- #if IS_ENABLED(CONFIG_UNICODE)
+ 	retval = ext4_fname_setup_filename(dir, &dentry->d_name, 0, &fname);
+ 	if (retval)
 -- 
 2.46.0
 
