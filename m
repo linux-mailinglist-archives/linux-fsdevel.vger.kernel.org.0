@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-30689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4F4498D515
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:27:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D36C98D869
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 16:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99ACF285C59
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:27:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27C2E1F20CFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 14:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8855316F84F;
-	Wed,  2 Oct 2024 13:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE2A1D0E16;
+	Wed,  2 Oct 2024 13:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BUPbBATH"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FTgprCho"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26CD1CFECF;
-	Wed,  2 Oct 2024 13:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C781D07AD;
+	Wed,  2 Oct 2024 13:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875594; cv=none; b=GirGudkFhNp6lZ4H5PrBNaciWaN5QRGpRJM9XfyAXDKYOoSRMFRf3t7ZFIg2q5yzvFAfrEzZErPYNfou0Z+Bkq3B8VaJme+zI7iM7B70lAavIssItPUoM/qIg+4RhGl8Z/ewuDQffswZH33Aw9OssMCGV/vJhq88fSNJBtrZssQ=
+	t=1727877521; cv=none; b=Cd2zIjVuCrLFPjGKZICjAXArSdGv5tadNMidVyUJ1O8hABty0w9/ywdwWNxbC3x3IWyyPl5DhjvdNPbB6m/fros0Q64hN75q8jB0fy45lYWELOpwVLOtQT9UldzHRZEOK6IV7Kirn8JJzOH0JPlEq2SrhJtY7jPd9arxHda4bsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875594; c=relaxed/simple;
-	bh=N0daNTTHR4kVEaXoYIs2c6SecM2Ow+RiShhTwtKkVio=;
+	s=arc-20240116; t=1727877521; c=relaxed/simple;
+	bh=ryqptHfQ6/OzlBpaqIqv0j7pXd+zyI6Lx21/BYxeqww=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=po/2dL9xhG34oa9LfC38RkrYjyA0do07a7Y7xKBn+l8cV8WcmLwvahF0a5LfLqa/Lmiph7eXvR+R1rYjIV3rc9Q1/Aze+YFMHQTj7XGAFA7w2jwwX7bJu5kvpMAcC89e/T0lCIWN0IdEbJtY9jJrAFCbZMbWrR0Hvs0cGfxqXfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BUPbBATH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670F0C4CEC5;
-	Wed,  2 Oct 2024 13:26:33 +0000 (UTC)
+	 MIME-Version; b=fRNHcLStDY7dQ9us7q93ZFapqkSZU0Ga8JBtzCiUpRpU/MTF5j1ypWLHhls5JkRlkdfuGyGAzm97ukXOTqhGHi9uffntr+aejWG97hTWRp/3H5IjhUKtYc427qkwI+yk9yKRR17A/yFf1x5JUk854LHukXXTp+OSizc/DipiKwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FTgprCho; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65686C4CEC5;
+	Wed,  2 Oct 2024 13:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727875593;
-	bh=N0daNTTHR4kVEaXoYIs2c6SecM2Ow+RiShhTwtKkVio=;
+	s=korg; t=1727877520;
+	bh=ryqptHfQ6/OzlBpaqIqv0j7pXd+zyI6Lx21/BYxeqww=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BUPbBATHdN325EQDnrVhXhAyKzj77Hbc6mSazWL/LNwGbN340Rab465E9+sJyXhl4
-	 l39j7GPVoXQXYI9kxZ21JJ56xT8F62zia6UR8JlHIB7XuOLGiuORZBV6Yr7qmpaI2Z
-	 /KwB89WHVagvZhF79ViYINlo1PPQ4GaAK3T9i3rs=
+	b=FTgprChowle0gpVPmb7ppzu5uLmNVELgD+LroLWLj4GKNoCOLoIAEzaWa6xPcTN/M
+	 MRNp6HCGzk+Ysk/Dup8ahjV72KC4MEBtk8m69bzrxjECynwBi4rTw8I2gSmEhc1yLh
+	 VBSiQxEJU57tSGdBFHTN5NZz3v9UsoCLfOsko3Y0=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -49,12 +49,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-erofs@lists.ozlabs.org,
 	linux-fsdevel@vger.kernel.org,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.11 123/695] cachefiles: Fix non-taking of sb_writers around set/removexattr
-Date: Wed,  2 Oct 2024 14:52:01 +0200
-Message-ID: <20241002125827.382185172@linuxfoundation.org>
+Subject: [PATCH 6.10 107/634] cachefiles: Fix non-taking of sb_writers around set/removexattr
+Date: Wed,  2 Oct 2024 14:53:27 +0200
+Message-ID: <20241002125815.338541071@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241002125822.467776898@linuxfoundation.org>
-References: <20241002125822.467776898@linuxfoundation.org>
+In-Reply-To: <20241002125811.070689334@linuxfoundation.org>
+References: <20241002125811.070689334@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -66,7 +66,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.11-stable review patch.  If anyone has any objections, please let me know.
+6.10-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
