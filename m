@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-30792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6055298E516
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:30:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661DB98E51D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1035A283361
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 21:30:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893561C229B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 21:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0466B21D2CA;
-	Wed,  2 Oct 2024 21:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C908C21F421;
+	Wed,  2 Oct 2024 21:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiQb+Vas"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzCXJ6wf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4741C21D2AC;
-	Wed,  2 Oct 2024 21:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7D62178ED;
+	Wed,  2 Oct 2024 21:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904468; cv=none; b=ecavxAeNWjJxBh9fJUlTkRmp1+oM0JBEoSjKzsfpLF+NGNfrtbit1Td4f00/TGYaaYibAJr4Xq8XAyAuercYbAThunR+pg1A0DruKyyQdoFJI4wbHgHU+9ZXQUvb8dxMjrtAYDgYatOQWaGXyz3iWDetd6G4Md1bXlTZKVDGdnU=
+	t=1727904471; cv=none; b=vDK7ptKrJkEvgp+zGvklJxdztqbnk4V6NG4hAX2GF/Eq0VKlTCBQ7GRJV6GRyswk+pXYs8G5E92ifNg5Q2UymXnqd/7WcIDwvvqFmB/Q4Zw1xebA8UPiDPvyCYH4IJKmoOEaA4BgHfWtlbamIe38Y76Z5LSsOQ68nAOjW2SB+14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904468; c=relaxed/simple;
-	bh=MRGGG8rqdJzdD5KgI4WfyNMzLguXPYXob8v5j7W1QaM=;
+	s=arc-20240116; t=1727904471; c=relaxed/simple;
+	bh=Z8ARvNSJ2qaGQw9gXXGsklzintCaz0parTyIMYimjOU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z9v0hJxXHa+29X7cd8WUVSJH8v67mfZZLCJSS2ml/MURxve7zRr7wLldU/KVskbMuTQJsK/XJ21RDhGrWA6JIwzpNHPk8TdzDacnrO4YQ4ZEa3JcB5SFNCCLMgtdmcXJtXiFjY1zehMHduN7yHi3xb3x62i6N0omCS5wl0JHW38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiQb+Vas; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53227C4CED6;
-	Wed,  2 Oct 2024 21:27:45 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=dTcDlVkxG5lrmLzsYS8EUfu7d5KbzExWtk6H94LWffDH7Ty1WA7L8lg4WZE1At232b6kQONQTuc5c2UKnxyQDC6BdPLT7VPVXPlWQ+N9sSUZeTHEHKERt6muX4P4SQAMlqcXNxYfcCvHu87lKAeF3KWrgflvoFu7dmIxkiiELJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzCXJ6wf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17306C4CED1;
+	Wed,  2 Oct 2024 21:27:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727904467;
-	bh=MRGGG8rqdJzdD5KgI4WfyNMzLguXPYXob8v5j7W1QaM=;
+	s=k20201202; t=1727904470;
+	bh=Z8ARvNSJ2qaGQw9gXXGsklzintCaz0parTyIMYimjOU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=RiQb+VasJhrhbm+efzGbpIcwLxszW5XKADxsVvHvZ4PtU9omVM1uKPRYjdDFTLrxU
-	 spC6qoc3Jx5R2FiTqiPPDvCGVFpDpJoGjjicm25vd2LLcfcz9jjV/RR/bjlnI1V4EY
-	 ad67YYwlvOrSCQNhgnodXxdPfs01FPltkNs3R5FmGOCg4ttPkExz83Q71CZ2EKDmER
-	 3vEcrINS5svEVCEpFlZZQrG/rtN2NbUWpkxh9VaYk5MStmuCmVXUCBhdZXbYBg8jBs
-	 7qYe48hdyaiE4eaWZsSg0Wr6BU5TlKcgxiilkkzod6H78fW5qEKHCFkhLxB0g4czZQ
-	 211YHMvElLRgA==
+	b=tzCXJ6wfC5VMb2ExRKKrzQ20m0/cMA8alt1mx22BM50xuDhE0GS9gVEFsrjSveh5f
+	 HFH5VS9B24S84IqvZUpSgC0C1q24ouXK3xTB7RbQfG8UaeRZcICfAK6HDjmfFkfBV7
+	 3aO9o2M1mNeM3mDVEnXkN4uh72RWd1d3J5IlhvmQyO4+hhMRETQlHKR4X9G6/DFhRe
+	 YSYJkbBlozjLOXMmaq1m2Gt9EFtR/FJhOO+7ql9Vva32Q75BFsiORHAqNQJqujNmqW
+	 SBn90QVLpNFHTeIS+z4r+VmFCXvrhebJ9B4yq9M8D2P5LJh1lY5wtzoECPs6IH+MI2
+	 QP5O6BUQzp8Rg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 02 Oct 2024 17:27:21 -0400
-Subject: [PATCH v10 06/12] fs: tracepoints around multigrain timestamp
- events
+Date: Wed, 02 Oct 2024 17:27:22 -0400
+Subject: [PATCH v10 07/12] fs: add percpu counters for significant
+ multigrain timestamp events
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-mgtime-v10-6-d1c4717f5284@kernel.org>
+Message-Id: <20241002-mgtime-v10-7-d1c4717f5284@kernel.org>
 References: <20241002-mgtime-v10-0-d1c4717f5284@kernel.org>
 In-Reply-To: <20241002-mgtime-v10-0-d1c4717f5284@kernel.org>
 To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -76,229 +76,144 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6245; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=MRGGG8rqdJzdD5KgI4WfyNMzLguXPYXob8v5j7W1QaM=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm/bq/rrV42gSWRnMywus+4vWn2erTXDHpugNyH
- p5Jt5mx0kCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZv26vwAKCRAADmhBGVaC
- FfHLD/0Y+Ozd45QWOEXlGcizIJuYoklt/IclS6YYuOynkLK657rXW0pb+HYJPpKskii5RnL8UEO
- zVviDGgIKrEHkavVfZbP1PYA1Z+VQJxoYVWmMckxEU4D/ttgg9q8HMGi6CTbx8HZxejV2aRidO5
- Q2DxmAfAokB2UKHZIppBcbZszz1P7Kl0yfRlUKeJuklq9GVYBs1Pim1fZgiXRyYL6b+tP/7ps5C
- ymjA4tKdOekiGiOceknMPhjV8Y9IqU+PmHDLm2KiN5LIetf6bnNXJkL52Q29NJ+eyMJwio0Ff1f
- Or/F8FVlAfl8FiM6wEM6D4BzMWoUdKQ4jZhMYgFdEkKNPohN1ckS5sGybaKegOQKCmz935a0+QB
- BPqzCoiaaZpYYAktHl5D4RtVolKmJtLGY2UYlkv0XkOyEjWDXeFzLnjTufDI846IzHPWWVDRGJ8
- 9EaICfw8ssZEJ1BjJ3qNb5yFKxCidh7aW86QQORcgAC80gN2aI+HZXv9ijN3+4SCsr/suRndazc
- kUa9Wh92buOEq+U0+WoJQBKJ5dKFUJram9X+6fl//fjCaCVByxDXkahkzeJk+k/CKqLT5eUqaWc
- XKmwVPbj0nWdMCahwZT6k0Suf4uVnDOSP/+bA9QNEaZGS34TkJrUBsyzRUcRoKoQpfFn6QVLS4H
- 6h9x5TdrOvNT+vg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3654; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Z8ARvNSJ2qaGQw9gXXGsklzintCaz0parTyIMYimjOU=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm/bq/TMaGYuw/cJFUuusrG5sD9Gz0d9qf6qw5y
+ upmhOuFiF6JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZv26vwAKCRAADmhBGVaC
+ FRvxD/9evDrf3HGvYTuhxkxutkxIEi68sVhkiNZD69Mm7WZA2CzmHFpkbIzJUXlNfytAPvjdSGx
+ Se9Non3XuQRLNglgc0lhxcfcZdu/X+u5yMiBvHkBZEf5lodGBnhBUeXjm4jg9rEign2Xcke0uen
+ zmW17gVIHwMZ3pm48WdgDnI8LGujnHwyRtaKHMgoMO1zgnVvcxwJwwUnejPgDLsmruCTvs+3DcO
+ Y1qi5xwXYC30GgA8xLI3gOheiXnZPH7tbEJ+CH8lRjel+ECcxNYyb4BgLgnjumPTmVu+ctbB3O/
+ NyFL+R7Pi0fN4SNBqZmhwLTUJrcqb7DCkLXIHsvJwkrbW3Bqnf24X7QYDnJtEJQ9zSf7lLcSU6k
+ V+ew1hvKLd2wb+drV/Ii7HSHdlUZvaWrk8oHWdjSCKLvUAmjwdajzx9wmNWqXhGfXmTr0ecFsKA
+ NXFHfSfVYvzOmgE53f2k3i5mgVRZyIhHJUlyjRFJKFGzUxYaTAIh5NNmXRgDtW4ppFtQH53Hxhu
+ kp4ZqjZv2oO3ibhlxc5JK1fBHr6GVEm5y/b+JdsECtsh3oy/dqkLWdOAHXM5vNLGLzaBO7Qa7Ds
+ CYD7TxCxZPUyWMagc0FhPLEfyvMm79Aw6QZdmp6UVnPQO6c8VRfeyGOyuivKJVQaMeSbXMaQuV2
+ JHDiBQHJy0omjwA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add some tracepoints around various multigrain timestamp events.
+New percpu counters for counting various stats around multigrain
+timestamp events, and a new debugfs file for displaying them when
+CONFIG_DEBUG_FS is enabled:
+
+- number of attempted ctime updates
+- number of successful i_ctime_nsec swaps
+- number of fine-grained timestamp fetches
+- number of floor value swap events
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/inode.c                       |   9 ++-
- fs/stat.c                        |   3 +
- include/trace/events/timestamp.h | 124 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 135 insertions(+), 1 deletion(-)
+ fs/inode.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
 diff --git a/fs/inode.c b/fs/inode.c
-index 7d1ede60e549683502911f3bb3a3a079768e449b..f7a25c511d6b7069fa235135cf3bad0cda32815b 100644
+index f7a25c511d6b7069fa235135cf3bad0cda32815b..6d501c7308aefcbb8001d64cb46e57f1839b8a3b 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -22,6 +22,9 @@
+@@ -21,6 +21,8 @@
+ #include <linux/list_lru.h>
  #include <linux/iversion.h>
  #include <linux/rw_hint.h>
++#include <linux/seq_file.h>
++#include <linux/debugfs.h>
  #include <trace/events/writeback.h>
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/timestamp.h>
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/timestamp.h>
+@@ -101,6 +103,70 @@ long get_nr_dirty_inodes(void)
+ 	return nr_dirty > 0 ? nr_dirty : 0;
+ }
+ 
++#ifdef CONFIG_DEBUG_FS
++static DEFINE_PER_CPU(long, mg_ctime_updates);
++static DEFINE_PER_CPU(long, mg_fine_stamps);
++static DEFINE_PER_CPU(long, mg_ctime_swaps);
 +
- #include "internal.h"
- 
++static unsigned long get_mg_ctime_updates(void)
++{
++	unsigned long sum = 0;
++	int i;
++
++	for_each_possible_cpu(i)
++		sum += data_race(per_cpu(mg_ctime_updates, i));
++	return sum;
++}
++
++static unsigned long get_mg_fine_stamps(void)
++{
++	unsigned long sum = 0;
++	int i;
++
++	for_each_possible_cpu(i)
++		sum += data_race(per_cpu(mg_fine_stamps, i));
++	return sum;
++}
++
++static unsigned long get_mg_ctime_swaps(void)
++{
++	unsigned long sum = 0;
++	int i;
++
++	for_each_possible_cpu(i)
++		sum += data_race(per_cpu(mg_ctime_swaps, i));
++	return sum;
++}
++
++#define mgtime_counter_inc(__var)	this_cpu_inc(__var)
++
++static int mgts_show(struct seq_file *s, void *p)
++{
++	unsigned long ctime_updates = get_mg_ctime_updates();
++	unsigned long ctime_swaps = get_mg_ctime_swaps();
++	unsigned long fine_stamps = get_mg_fine_stamps();
++	unsigned long floor_swaps = timekeeping_get_mg_floor_swaps();
++
++	seq_printf(s, "%lu %lu %lu %lu\n",
++		   ctime_updates, ctime_swaps, fine_stamps, floor_swaps);
++	return 0;
++}
++
++DEFINE_SHOW_ATTRIBUTE(mgts);
++
++static int __init mg_debugfs_init(void)
++{
++	debugfs_create_file("multigrain_timestamps", S_IFREG | S_IRUGO, NULL, NULL, &mgts_fops);
++	return 0;
++}
++late_initcall(mg_debugfs_init);
++
++#else /* ! CONFIG_DEBUG_FS */
++
++#define mgtime_counter_inc(__var)	do { } while (0)
++
++#endif /* CONFIG_DEBUG_FS */
++
  /*
-@@ -2603,6 +2606,7 @@ EXPORT_SYMBOL(inode_nohighmem);
- 
- struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 ts)
- {
-+	trace_inode_set_ctime_to_ts(inode, &ts);
- 	set_normalized_timespec64(&ts, ts.tv_sec, ts.tv_nsec);
- 	inode->i_ctime_sec = ts.tv_sec;
- 	inode->i_ctime_nsec = ts.tv_nsec;
-@@ -2689,14 +2693,17 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+  * Handle nr_inode sysctl
+  */
+@@ -2689,8 +2755,10 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ 		if (timespec64_compare(&now, &ctime) <= 0) {
+ 			ktime_get_real_ts64_mg(&now);
+ 			now = timestamp_truncate(now, inode);
++			mgtime_counter_inc(mg_fine_stamps);
+ 		}
  	}
++	mgtime_counter_inc(mg_ctime_updates);
  
  	/* No need to cmpxchg if it's exactly the same */
--	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec)
-+	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec) {
-+		trace_ctime_xchg_skip(inode, &now);
- 		goto out;
-+	}
- 	cur = cns;
- retry:
- 	/* Try to swap the nsec value into place. */
- 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
+ 	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec) {
+@@ -2704,6 +2772,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
  		/* If swap occurred, then we're (mostly) done */
  		inode->i_ctime_sec = now.tv_sec;
-+		trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
+ 		trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
++		mgtime_counter_inc(mg_ctime_swaps);
  	} else {
  		/*
  		 * Was the change due to someone marking the old ctime QUERIED?
-diff --git a/fs/stat.c b/fs/stat.c
-index dd480bf51a2a764e5eb1d0a213c5ec8b640db911..6eb6c39d003755f9e602996ed93dcbd863847820 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -23,6 +23,8 @@
- #include <linux/uaccess.h>
- #include <asm/unistd.h>
- 
-+#include <trace/events/timestamp.h>
-+
- #include "internal.h"
- #include "mount.h"
- 
-@@ -56,6 +58,7 @@ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
- 	if (!(stat->ctime.tv_nsec & I_CTIME_QUERIED))
- 		stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn));
- 	stat->ctime.tv_nsec &= ~I_CTIME_QUERIED;
-+	trace_fill_mg_cmtime(inode, &stat->ctime, &stat->mtime);
- }
- EXPORT_SYMBOL(fill_mg_cmtime);
- 
-diff --git a/include/trace/events/timestamp.h b/include/trace/events/timestamp.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..c9e5ec930054887a6a7bae8e487611b5ded33d71
---- /dev/null
-+++ b/include/trace/events/timestamp.h
-@@ -0,0 +1,124 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM timestamp
-+
-+#if !defined(_TRACE_TIMESTAMP_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_TIMESTAMP_H
-+
-+#include <linux/tracepoint.h>
-+#include <linux/fs.h>
-+
-+#define CTIME_QUERIED_FLAGS \
-+	{ I_CTIME_QUERIED, "Q" }
-+
-+DECLARE_EVENT_CLASS(ctime,
-+	TP_PROTO(struct inode *inode,
-+		 struct timespec64 *ctime),
-+
-+	TP_ARGS(inode, ctime),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev)
-+		__field(ino_t,		ino)
-+		__field(time64_t,	ctime_s)
-+		__field(u32,		ctime_ns)
-+		__field(u32,		gen)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev		= inode->i_sb->s_dev;
-+		__entry->ino		= inode->i_ino;
-+		__entry->gen		= inode->i_generation;
-+		__entry->ctime_s	= ctime->tv_sec;
-+		__entry->ctime_ns	= ctime->tv_nsec;
-+	),
-+
-+	TP_printk("ino=%d:%d:%ld:%u ctime=%lld.%u",
-+		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
-+		__entry->ctime_s, __entry->ctime_ns
-+	)
-+);
-+
-+DEFINE_EVENT(ctime, inode_set_ctime_to_ts,
-+		TP_PROTO(struct inode *inode,
-+			 struct timespec64 *ctime),
-+		TP_ARGS(inode, ctime));
-+
-+DEFINE_EVENT(ctime, ctime_xchg_skip,
-+		TP_PROTO(struct inode *inode,
-+			 struct timespec64 *ctime),
-+		TP_ARGS(inode, ctime));
-+
-+TRACE_EVENT(ctime_ns_xchg,
-+	TP_PROTO(struct inode *inode,
-+		 u32 old,
-+		 u32 new,
-+		 u32 cur),
-+
-+	TP_ARGS(inode, old, new, cur),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev)
-+		__field(ino_t,		ino)
-+		__field(u32,		gen)
-+		__field(u32,		old)
-+		__field(u32,		new)
-+		__field(u32,		cur)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev		= inode->i_sb->s_dev;
-+		__entry->ino		= inode->i_ino;
-+		__entry->gen		= inode->i_generation;
-+		__entry->old		= old;
-+		__entry->new		= new;
-+		__entry->cur		= cur;
-+	),
-+
-+	TP_printk("ino=%d:%d:%ld:%u old=%u:%s new=%u cur=%u:%s",
-+		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
-+		__entry->old & ~I_CTIME_QUERIED,
-+		__print_flags(__entry->old & I_CTIME_QUERIED, "|", CTIME_QUERIED_FLAGS),
-+		__entry->new,
-+		__entry->cur & ~I_CTIME_QUERIED,
-+		__print_flags(__entry->cur & I_CTIME_QUERIED, "|", CTIME_QUERIED_FLAGS)
-+	)
-+);
-+
-+TRACE_EVENT(fill_mg_cmtime,
-+	TP_PROTO(struct inode *inode,
-+		 struct timespec64 *ctime,
-+		 struct timespec64 *mtime),
-+
-+	TP_ARGS(inode, ctime, mtime),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev)
-+		__field(ino_t,		ino)
-+		__field(time64_t,	ctime_s)
-+		__field(time64_t,	mtime_s)
-+		__field(u32,		ctime_ns)
-+		__field(u32,		mtime_ns)
-+		__field(u32,		gen)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev		= inode->i_sb->s_dev;
-+		__entry->ino		= inode->i_ino;
-+		__entry->gen		= inode->i_generation;
-+		__entry->ctime_s	= ctime->tv_sec;
-+		__entry->mtime_s	= mtime->tv_sec;
-+		__entry->ctime_ns	= ctime->tv_nsec;
-+		__entry->mtime_ns	= mtime->tv_nsec;
-+	),
-+
-+	TP_printk("ino=%d:%d:%ld:%u ctime=%lld.%u mtime=%lld.%u",
-+		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
-+		__entry->ctime_s, __entry->ctime_ns,
-+		__entry->mtime_s, __entry->mtime_ns
-+	)
-+);
-+#endif /* _TRACE_TIMESTAMP_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
 
 -- 
 2.46.2
