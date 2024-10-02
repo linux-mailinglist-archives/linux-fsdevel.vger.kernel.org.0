@@ -1,51 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-30722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7628898DE98
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 17:15:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A257998DEA5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 17:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8061F22106
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D15BC1C23ADD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4BD1D0DDA;
-	Wed,  2 Oct 2024 15:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FAA1D0B91;
+	Wed,  2 Oct 2024 15:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hjUa6Ca+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D101D0BBE;
-	Wed,  2 Oct 2024 15:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3057F1D0B8D;
+	Wed,  2 Oct 2024 15:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882040; cv=none; b=HRMXEW1eNF6W1q0XU6+HmDeSEXATW+p53cuVR+t74wBt25E8K8eDO9E9t1nTgfoqH3IjzhhibXYGZIJ6YDC2YQckqUrBr4fFaxsbG4Z4xWL4tQWEA7YtN0vKnyH5qtwC7BeWoePvN/pZfFbG/AvqgAUkYL7kD1T5XqAT17Q5QbY=
+	t=1727882089; cv=none; b=aFn3KaxVMSNAoiml3vBsbd4fFvlzJihbdhwXQW0UukuiEn5UEa7wAlqX0JWl+DO2tzLgjycyfvZTAw3F0YXyXKAg66y2Hut3uuSRGWa2lG3G5isiPW7cdBgOx+8+fAP/CNaf8p1IfPf5vzrUZ3fUhQcUkm7vBoh14u/tlh9fi0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882040; c=relaxed/simple;
-	bh=whVvvacyysEOjUYvVSNXCF2AXIsxHb9DQEhAh4XDOpc=;
+	s=arc-20240116; t=1727882089; c=relaxed/simple;
+	bh=oGg9VhDgI+SWJP1RAKLnjLcADS1LF0CQqxQXWKUcrbg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ryyO7F2wOl0j00NjHk5dCwyji8BbieeVzRr5YoVC9VremD8p7W4RpKc+2EhCsc5xfFWd3B5V8V1PPaeBMBvd3FWf+8z32WNjaQO4WyAeU/3gMkWwYBj4GT7KI3P+7P7Mh/YSnHzqp7l9kmgGuRiiiqO2QpIZupP7Y4qSdyQp6/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C558B227AB1; Wed,  2 Oct 2024 17:13:44 +0200 (CEST)
-Date: Wed, 2 Oct 2024 17:13:44 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>,
-	kbusch@kernel.org, hare@suse.de, sagi@grimberg.me,
-	martin.petersen@oracle.com, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
-	bcrl@kvack.org, dhowells@redhat.com, bvanassche@acm.org,
-	asml.silence@gmail.com, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-aio@kvack.org,
-	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241002151344.GA20364@lst.de>
-References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com> <20240930181305.17286-1-joshi.k@samsung.com> <20241001092047.GA23730@lst.de> <99c95f26-d6fb-4354-822d-eac94fdba765@kernel.dk> <20241002075140.GB20819@lst.de> <f14a246b-10bf-40c1-bf8f-19101194a6dc@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mEqGw3MlqJzA1fnF8xaJmzncMYfbELM430VnTcWHr4565b3wj47BmyJKFm7Fhuq/y+LlDfwqVkaxUHBXU4556UFbxpblRU5c+W3UQgyvA3NEYFp65P6YYdaQPo7uGiz3uL8R00xb6ocz+lT/3KXv7uHefhMbQUw0yNPOlZ+KuuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hjUa6Ca+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uDmYxLeXoO9Dy5oZ1ZLKRakEVrj2vTGHT495+npa05g=; b=hjUa6Ca+N4fM2eOA5a01dBW7fB
+	5bgheaPp+UgDF6gqT/5HYNZe/uK0Dh0RkeXLZHLCj+j101Se/TsnQY8CAIhHDbI2zo1Eskn73065M
+	1N95vMZkLNzbZcHpqRu5huM8/uAiNocuwRQ80vwE12LD8jwdQOeRktWBi7cHNvMVmXs/lVhjtGzVV
+	Df9XaPADYto1vHbC/vVPouRHvRepm68lMk3O/f51OxE8qZVdQ37sxNqE9KydUnjQGRS9YyOJvwpqL
+	3OIpYVQZq8yA1a84eDBqNQF/HsLxmUwP9s5Z7m93fGK0NtN3EW9a85jUbf20tuVX1Wh/8wP9opwfU
+	NL5ysJJA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sw13v-00000006Zyc-3G9w;
+	Wed, 02 Oct 2024 15:14:47 +0000
+Date: Wed, 2 Oct 2024 08:14:47 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	xfs <linux-xfs@vger.kernel.org>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 1/2] iomap: don't bother unsharing delalloc extents
+Message-ID: <Zv1jZ-1tg2jOnw21@infradead.org>
+References: <20241002150040.GB21853@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,29 +62,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f14a246b-10bf-40c1-bf8f-19101194a6dc@kernel.dk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241002150040.GB21853@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Oct 02, 2024 at 09:03:22AM -0600, Jens Axboe wrote:
-> > The previous stream separation approach made total sense, but just
-> > needed a fair amount of work.  But it closely matches how things work
-> > at the hardware and file system level, so it was the right approach.
+On Wed, Oct 02, 2024 at 08:00:40AM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 > 
-> What am I missing that makes this effort that different from streams?
-> Both are a lifetime hint.
+> If unshare encounters a delalloc reservation in the srcmap, that means
+> that the file range isn't shared because delalloc reservations cannot be
+> reflinked.  Therefore, don't try to unshare them.
 
-A stream has a lot less strings attached.  But hey, don't make me
-argue for streams - you pushed the API in despite reservations back
-then, and we've learned a lot since.
+Looks good:
 
-> > Suddenly dropping that and ignoring all comments really feels like
-> > someone urgently needs to pull a marketing stunt here.
-> 
-> I think someone is just trying to finally get this feature in, so it
-> can get used by customers, after many months of fairly unproductive
-> discussion.
-
-Well, he finally started on the right approach and gave it up after the
-first round of feedback.  That's just a bit weird.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
