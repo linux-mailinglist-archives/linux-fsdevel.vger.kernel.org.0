@@ -1,113 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-30638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0612298CAF1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 03:41:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E220098CB10
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 04:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C3D1C22ECF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 01:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A0401F228F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 02:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF7118039;
-	Wed,  2 Oct 2024 01:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF4A2F34;
+	Wed,  2 Oct 2024 02:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WHMuCLRv"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oDgp3/zA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BBB17996;
-	Wed,  2 Oct 2024 01:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6771C5C96;
+	Wed,  2 Oct 2024 02:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727833259; cv=none; b=kEYSgi2vAFMnUz4A38RW2kEJgEPId1fkHpyuQ9Z820EbpAzappdLclKmhj2zakCM9MHEb943byQX+QKpHN2QdzXOBZr6GUxC+5S4XGrjLqLvzbjwqqepgsAjv+NQqtx/GY2pMsd2w7kJO5cYVOiBwI82ULFuSFqNIGzHoTepsJk=
+	t=1727834942; cv=none; b=kEDoRcihiIFrS7hFCTDZK1Dnl6aEk69E5BhoBBrj97UjyIjigcXxxHJuRbG1J+5bDnBqDDeve2ZrA62YojLCEYplLgJ+jL5jjWqaifK81Wmxt9LI9t8XAGHr+Pg7DfapNsWbFgZDSWhzctJaqWM40IE6v8c3tw9YqHwYKm79wcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727833259; c=relaxed/simple;
-	bh=9jKvMaq8iwbnZtv8Fo4b2JbvDPAWMLpwqbyLe5TtjJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=txrP80JwI11sCO/xldJOIahXAJQiidMko0YRUetWvHLKOLy9JRmMjkXzzrQj2t5t2PKlAR+DHmyXIl1rIJccVO2KyH/YRWcaTVCtdiUc42S/mseKCRIcGQmW3/eo3xRt/6X9YTsO60oqttUcjiRZ+zHDkluOOMbJBO8SzSg28S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WHMuCLRv; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=F2Ynh9330ndz09vKD3bfokDXM+kkK4ocaOTAo8EIolc=; b=WHMuCLRvFXEcXlePXfpP78nSoI
-	pdIzaVDUO+kp6ZgucZEMn7zoZ/xPZIg0VPDELJ74APoMSCD2SlvxyBYkOV8Vf0cB6QWDb2+uSMsqB
-	0vCQ6tUBa59spE7md5TZyC8sVAyvOL32Wwh56bqCFkc/VeshQwBhd+IfKv1SzewMLFNAPo4kzXhik
-	URDqsN7PQ3W5uFMcMQX9wzLujs61Z3oxAhAGYgDYO4Yu+f6+0qSZFsc1d9wC5FTwYlWoDJ0zTZNLV
-	Za/ngr7RwWHMJCgS/BIA13Xx5wXRxH1fXpyf3/IAz4kfByIhz0QZEOmLJE7LIEJjCSXFJdMB8UMPW
-	xoR7vesQ==;
-Received: from [187.57.199.212] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1svoLq-003eIM-0u; Wed, 02 Oct 2024 03:40:26 +0200
-Message-ID: <c547e1aa-f894-409e-9033-f370c5c16171@igalia.com>
-Date: Tue, 1 Oct 2024 22:40:17 -0300
+	s=arc-20240116; t=1727834942; c=relaxed/simple;
+	bh=DwkW/7SFUysSfvCv0rC7v78Z9UJo3Be59a3v8pEYKQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SKwsdfzBs/RQMbXrd7q4h7vOFs16CMI07pBJj/o1OcIfNog4kWC/Y+X4T1L47LocLJrT4astTSl4ZO2vE/qI7nCCwEtEb8mAeQC5uoKmqeNmDSMYfjgRz2XyXz6ya6btfLxsEpLBnXZEnZVZ2fDY8fK5HPqKc5q4AfUPOyFvAFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oDgp3/zA; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/KRwNgUWnU1ZCqCiFsyu0pqGpY1DifhN1myR3c7j7qo=; b=oDgp3/zAb6B4hTFQHhv0slMDWF
+	GPWKTRiqbVlXEDajx92c8F8KfS3+tnrkkkcoavY5TrfOnIU95Cn0tpI1gH4qpdWF658LLUu6pvSvA
+	4IRiUkMPlEy05QX87HlI2vVHysd+PtfGjS4ghiIT4uLfghJrKO9UwPoCch4YLY6k3r9p1H4OjEA8s
+	wcXrx3ucJClGOSzJh4AMGlea33txQ3V77I1R8X4SO/snzKAv0jUaD9+ZECmtYqh7xgoH7MQq6LPTX
+	pZ0u2xcfuqnz+4uyR64k+d+B9v6oc5EpImEwvPDMiKo1hKwOw15v6IhrWdlFUivSagJ/qCSof1jAL
+	I3v74fbA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1svonR-0000000HXEJ-1bIk;
+	Wed, 02 Oct 2024 02:08:57 +0000
+Date: Wed, 2 Oct 2024 03:08:57 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	io-uring@vger.kernel.org, cgzones@googlemail.com
+Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
+Message-ID: <20241002020857.GC4017910@ZenIV>
+References: <20241002011011.GB4017910@ZenIV>
+ <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
+ <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
+ <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/10] tmpfs: Add casefold lookup support
-To: Gabriel Krisman Bertazi <gabriel@krisman.be>
-Cc: Hugh Dickins <hughd@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
- Daniel Rosenberg <drosen@google.com>, smcv@collabora.com,
- Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>
-References: <20240911144502.115260-1-andrealmeid@igalia.com>
- <20240911144502.115260-8-andrealmeid@igalia.com>
- <87ed5olmmc.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <87ed5olmmc.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hey Krisman,
+On Tue, Oct 01, 2024 at 07:34:12PM -0600, Jens Axboe wrote:
 
-Em 12/09/2024 16:04, Gabriel Krisman Bertazi escreveu:
-> André Almeida <andrealmeid@igalia.com> writes:
+> > -retry:
+> > -	ret = filename_lookup(AT_FDCWD, ix->filename, lookup_flags, &path, NULL);
+> > -	if (!ret) {
+> > -		ret = __io_setxattr(req, issue_flags, &path);
+> > -		path_put(&path);
+> > -		if (retry_estale(ret, lookup_flags)) {
+> > -			lookup_flags |= LOOKUP_REVAL;
+> > -			goto retry;
+> > -		}
+> > -	}
+> > -
+> > +	ret = filename_setxattr(AT_FDCWD, ix->filename, LOOKUP_FOLLOW, &ix->ctx);
+> >  	io_xattr_finish(req, ret);
+> >  	return IOU_OK;
 > 
-
-[...]
-
->> +#if IS_ENABLED(CONFIG_UNICODE)
->> +	if (ctx->encoding) {
->> +		sb->s_encoding = ctx->encoding;
->> +		sb->s_d_op = &shmem_ci_dentry_ops;
->> +		if (ctx->strict_encoding)
->> +			sb->s_encoding_flags = SB_ENC_STRICT_MODE_FL;
->> +	}
->>   #else
->> -	sb->s_flags |= SB_NOUSER;
->> +	sb->s_d_op = &simple_dentry_operations;
+> this looks like it needs an ix->filename = NULL, as
+> filename_{s,g}xattr() drops the reference. The previous internal helper
+> did not, and hence the cleanup always did it. But should work fine if
+> ->filename is just zeroed.
 > 
-> Moving simple_dentry_operations to be set at s_d_op should be a separate
-> patch.
-> 
-> It is a change that has non-obvious side effects (i.e. the way we
-> treat the root dentry) so it needs proper review by itself.  It is
-> also not related to the rest of the case-insensitive patch.
-> 
+> Otherwise looks good. I've skimmed the other patches and didn't see
+> anything odd, I'll take a closer look tomorrow.
 
-The idea of setting simple_dentry_operations come from my previous 
-approach of having our own shmem_lookup(), replacing simple_lookup(). 
-Now that we are settled to keep with simple_lookup() anyway (that 
-already sets simple_dentry_operations), I think we don't need this 
-change anymore, right?
+Hmm...  I wonder if we would be better off with file{,name}_setxattr()
+doing kvfree(cxt->kvalue) - it makes things easier both on the syscall
+and on io_uring side.
 
-This will be set for every dentry that doesn't have a 
-dentry->d_sb->s_d_op. Case-insensitive mount points will have this set, 
-so we don't risk overwriting it.
+I've added minimal fixes (zeroing ix->filename after filename_[sg]etxattr())
+to 5/9 and 6/9 *and* added a followup calling conventions change at the end
+of the branch.  See #work.xattr2 in the same tree; FWIW, the followup
+cleanup is below; note that putname(ERR_PTR(-Ewhatever)) is an explicit
+no-op, so there's no need to zero on getname() failures.
+
+commit 67896be9ac99b3fdef82708dd06e720332c13cdc
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Tue Oct 1 22:03:16 2024 -0400
+
+    saner calling conventions for file{,name}_setxattr()
+    
+    Have them consume ctx->kvalue.  That simplifies both the path_setxattrat()
+    and io_uring side of things - there io_xattr_finish() is just left to
+    free the xattr name and that's it.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 59cdb524412e..6bb656941bce 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -672,6 +672,7 @@ int file_setxattr(struct file *f, struct kernel_xattr_ctx *ctx)
+ 		error = do_setxattr(file_mnt_idmap(f), f->f_path.dentry, ctx);
+ 		mnt_drop_write_file(f);
+ 	}
++	kvfree(ctx->kvalue);
+ 	return error;
+ }
+ 
+@@ -697,6 +698,7 @@ int filename_setxattr(int dfd, struct filename *filename,
+ 	}
+ 
+ out:
++	kvfree(ctx->kvalue);
+ 	putname(filename);
+ 	return error;
+ }
+@@ -731,14 +733,10 @@ static int path_setxattrat(int dfd, const char __user *pathname,
+ 	if (!filename) {
+ 		CLASS(fd, f)(dfd);
+ 		if (fd_empty(f))
+-			error = -EBADF;
+-		else
+-			error = file_setxattr(fd_file(f), &ctx);
+-	} else {
+-		error = filename_setxattr(dfd, filename, lookup_flags, &ctx);
++			return -EBADF;
++		return file_setxattr(fd_file(f), &ctx);
+ 	}
+-	kvfree(ctx.kvalue);
+-	return error;
++	return filename_setxattr(dfd, filename, lookup_flags, &ctx);
+ }
+ 
+ SYSCALL_DEFINE6(setxattrat, int, dfd, const char __user *, pathname, unsigned int, at_flags,
+diff --git a/io_uring/xattr.c b/io_uring/xattr.c
+index 90277246dbea..9f3ea12f628d 100644
+--- a/io_uring/xattr.c
++++ b/io_uring/xattr.c
+@@ -35,9 +35,10 @@ void io_xattr_cleanup(struct io_kiocb *req)
+ 
+ static void io_xattr_finish(struct io_kiocb *req, int ret)
+ {
+-	req->flags &= ~REQ_F_NEED_CLEANUP;
++	struct io_xattr *ix = io_kiocb_to_cmd(req, struct io_xattr);
+ 
+-	io_xattr_cleanup(req);
++	kfree(ix->ctx.kname);
++	req->flags &= ~REQ_F_NEED_CLEANUP;
+ 	io_req_set_res(req, ret, 0);
+ }
+ 
+@@ -94,12 +95,9 @@ int io_getxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
+ 
+ 	ix->filename = getname(path);
+-	if (IS_ERR(ix->filename)) {
+-		ret = PTR_ERR(ix->filename);
+-		ix->filename = NULL;
+-	}
+-
+-	return ret;
++	if (IS_ERR(ix->filename))
++		return PTR_ERR(ix->filename);
++	return 0;
+ }
+ 
+ int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
+@@ -122,7 +120,6 @@ int io_getxattr(struct io_kiocb *req, unsigned int issue_flags)
+ 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+ 
+ 	ret = filename_getxattr(AT_FDCWD, ix->filename, LOOKUP_FOLLOW, &ix->ctx);
+-	ix->filename = NULL;
+ 	io_xattr_finish(req, ret);
+ 	return IOU_OK;
+ }
+@@ -172,12 +169,9 @@ int io_setxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
+ 
+ 	ix->filename = getname(path);
+-	if (IS_ERR(ix->filename)) {
+-		ret = PTR_ERR(ix->filename);
+-		ix->filename = NULL;
+-	}
+-
+-	return ret;
++	if (IS_ERR(ix->filename))
++		return PTR_ERR(ix->filename);
++	return 0;
+ }
+ 
+ int io_fsetxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -205,7 +199,6 @@ int io_setxattr(struct io_kiocb *req, unsigned int issue_flags)
+ 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+ 
+ 	ret = filename_setxattr(AT_FDCWD, ix->filename, LOOKUP_FOLLOW, &ix->ctx);
+-	ix->filename = NULL;
+ 	io_xattr_finish(req, ret);
+ 	return IOU_OK;
+ }
 
