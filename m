@@ -1,154 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-30684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48CB98D40C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:12:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E9898D4C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CE99B21624
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:12:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3497281D44
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632BC1D0412;
-	Wed,  2 Oct 2024 13:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6E01D0493;
+	Wed,  2 Oct 2024 13:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zmw6BTEn"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C2JPeSwX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d7l4p7qR";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C2JPeSwX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d7l4p7qR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A12F1CFECE;
-	Wed,  2 Oct 2024 13:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179D51CF28B;
+	Wed,  2 Oct 2024 13:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727874730; cv=none; b=tf0Ev9yKSBa9TThqGHrRjURpUMQPikMF4kRHVvRIn7LuIEuGWUjeFZ+CutseaBDRUqLpb8XNFgCYGQ3rRJDuHmE8xcUZzANa7jZdAGAwNBP9M17ySZ00S5NH5nayNEqIm5RIkhKJI8N2Y7eiVItEctYX52ZGFrDMyDPm1HgHiTc=
+	t=1727875435; cv=none; b=oRpQDmbemPqWJSUnchL/LyR8f/KLPUs4JXzlkfO3H4xgD0gRurXJM77X0NPvDAxzLh9iEI7m4umCmB2SGxPFXh4IoPMI2/fHvSVAx+FC1ciNMk6mZ8OWFkLYT80ORo9RbYSpcGxsteDdVfhOnKKFr5KbTvTGriW5TPKZQqd9xns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727874730; c=relaxed/simple;
-	bh=Ym9UaLXM7C6E1WASDUKQvHvYozxylcLdgBglCTwiyKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OiZ8hgSXdL7GDaj54bQ/fulzKMf7mR1daRCF6ezv3xrU5TkLZQcUn3KaLI8Ua3OWSiXRHiJjqN4A/OTMfmqskfSPjnoCgL8OxlL9juHzyGS1vLNAnl+K0wQXhiHbp4ep9Z3fkajwmv6sEUjoCCR3zE+hHvp+tOT5y+5nTylbaxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zmw6BTEn; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53993c115cfso4291390e87.2;
-        Wed, 02 Oct 2024 06:12:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727874727; x=1728479527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P4y8jBTmqmaQ765rlbFTfYn8ZR3POR7YKLh+55wd/zQ=;
-        b=Zmw6BTEncXENhwcqhIKIdyS/MBlWGVHWmAEe9nA3dd38tOhIWXv8MlgMntezSOpVVy
-         5oIvWTp00u/BG28Ql6dwsRjI/K+NiVsiMWKyrG4cJkb38TFbUAF7p2DkGRlAP+tPI2sz
-         1ahVyVDINp0sSrKKNn+qxdkqhBTmwsh86p+qMYc4wPWm2s4xf3lMSLIqq2lk3emkWKOe
-         KjdFVEWcNnRbnIWEa36TVB6HWrMUQmjke76ISuXrFLP/xj36sQY8kOR8dnauyYDVljkS
-         rCUg90XKB/1JRrHUqilF+X0zwz1gOPeUbRTevaT2HSE0jVc8VgXHIuGcEdQU4ffkJpo9
-         2JeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727874727; x=1728479527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P4y8jBTmqmaQ765rlbFTfYn8ZR3POR7YKLh+55wd/zQ=;
-        b=JA9co8YOpxhDVUBLJkumGVr+xthMbDi6+4ozG9s8AtsVfPgsbS3MR350+Zfg3LrBXg
-         9xadI5H7m57hHgm5iFUdrzmG4ZR68nUmTgu+mLVDwHv4seuz/+SikjW59+/laLjkMhUj
-         9AMDsKoMO+5mU8y0V6zO6UTr85EZmCiyrHrESLcYSZhttW+NAPSWkZrozjr8tHUmyJrC
-         qkZ1UEV7St677XldtrM94t7pXE81Ml0xnRVSSMxgpWgjTKfaat0HFANYwpMEts25aglh
-         1QqJ/NJdHKbEUMn+mkSH1UVG/d3orq2SeWynYvQpCFzyYRxmqLrOQTKK5KXdFNSeAsBt
-         cdsw==
-X-Forwarded-Encrypted: i=1; AJvYcCU45KG3icLQ6RK9HoiQ26gaou4xu/h9gFaT5+p7G3d846U5ZRcKDLnbYEKUOBw2rPtOPMhaaB6uQX8X@vger.kernel.org, AJvYcCVBn/g8KXcz2JkRMnFBtE0UBEJWC8ox2HYgu54GTHGsLefViudCKvFn+VyM4Vo9uAiSiTGsjABMfcvw7nlSeQ==@vger.kernel.org, AJvYcCVhYOO9ltN4IXNm5mxyg6lyngior6wpinVP3LNduR1Re0u3LPMTWvoiBEns8S0m8AR2zFonyqeQ47NLf2U=@vger.kernel.org, AJvYcCWXf8y2a25+EyeLN7haM2mxTL42ZeFkQzJnzyykWUmfOGpBo/0azeFrzbSVCVrUG9U4MnZEpRSBQOXaTmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5/18Y1OtzCuJDkNHjAP4hkpVUuCSFlDTcDgspJ/uukuJ6pmBZ
-	ky43A2ctMWFpjFgQVmFS0mvAlyqrZNB/XJYU4W947q4v8V3wX7KCKMsiRzpwLH1by66d8KRE5Dw
-	sInIpe69mXom5TX/J/7MMWjfbC8s7K6Z2
-X-Google-Smtp-Source: AGHT+IEOPzA+vTRDEoKgqlR/0QvjfCjz/hNyhuloe/dk3pCc6OsTIHbciHg7uHGZcLFyaYtf4p7q54Ugf5w8aF5NOvg=
-X-Received: by 2002:a05:6512:e96:b0:533:711:35be with SMTP id
- 2adb3069b0e04-539a06834aamr1720320e87.26.1727874726884; Wed, 02 Oct 2024
- 06:12:06 -0700 (PDT)
+	s=arc-20240116; t=1727875435; c=relaxed/simple;
+	bh=YMsEHsHqgHU2Jqw9WqFUXm5C7dSstlBx7jDdUtF5zAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=REylYC35givBiYQ1l8zFwpxHPBqDtiOXSeV2Hecgg+KsHma0qMKLNEWxrlAAXSDI5aVbsydgL01+0qElcm6LhUg7zmaqlb7knltX4uYeF9ts9RyxpVOKkYobv7rgwk2YjjbNnYi/0f3IgDVc6aUoiOOqUaW89kfwKZWOeSFqfl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C2JPeSwX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d7l4p7qR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C2JPeSwX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d7l4p7qR; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1D6221FD53;
+	Wed,  2 Oct 2024 13:23:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727875432; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVuiTvRCrZwf6HeXK12csr1q5Em3pvbiT9/7ux4NBe0=;
+	b=C2JPeSwXzI5h9FClwHGd7YqfFg0AzCuEtXCXXFX+gmhYYrBhnHAl2t5E6X0jHkmzREGAZo
+	O4yzuY7LZxSBUgLWPeXY13cuCYkMBdGD3suWSzXy4m0W8ibSnmLZvnq99dMYtNZeSAl7HJ
+	gaHJ7kMp32hg7UXhPQ0Fih5fZwath2I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727875432;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVuiTvRCrZwf6HeXK12csr1q5Em3pvbiT9/7ux4NBe0=;
+	b=d7l4p7qRxOQ0w4AMWRDuxgDgltYQG/YpIfEeizfjGio1oNpuegQnsz2KA1eEAVMwLfkOkH
+	au1YG75ajwlwAdCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=C2JPeSwX;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=d7l4p7qR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727875432; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVuiTvRCrZwf6HeXK12csr1q5Em3pvbiT9/7ux4NBe0=;
+	b=C2JPeSwXzI5h9FClwHGd7YqfFg0AzCuEtXCXXFX+gmhYYrBhnHAl2t5E6X0jHkmzREGAZo
+	O4yzuY7LZxSBUgLWPeXY13cuCYkMBdGD3suWSzXy4m0W8ibSnmLZvnq99dMYtNZeSAl7HJ
+	gaHJ7kMp32hg7UXhPQ0Fih5fZwath2I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727875432;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVuiTvRCrZwf6HeXK12csr1q5Em3pvbiT9/7ux4NBe0=;
+	b=d7l4p7qRxOQ0w4AMWRDuxgDgltYQG/YpIfEeizfjGio1oNpuegQnsz2KA1eEAVMwLfkOkH
+	au1YG75ajwlwAdCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1104E13A6E;
+	Wed,  2 Oct 2024 13:23:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MIwkBGhJ/WY7HAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 02 Oct 2024 13:23:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B638EA08CB; Wed,  2 Oct 2024 15:23:51 +0200 (CEST)
+Date: Wed, 2 Oct 2024 15:23:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
+	squashfs-devel@lists.sourceforge.net,
+	syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V3] inotify: Fix possible deadlock in
+ fsnotify_destroy_mark
+Message-ID: <20241002132351.soglueukw7ttgxhf@quack3>
+References: <CAOQ4uxhrSSpPijzeuFWRZBrgZvEyk6aLK=q7fBz3rpiZcHZrvg@mail.gmail.com>
+ <20240927143642.2369508-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002040111.1023018-1-willy@infradead.org> <20241002040111.1023018-3-willy@infradead.org>
-In-Reply-To: <20241002040111.1023018-3-willy@infradead.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Wed, 2 Oct 2024 22:11:50 +0900
-Message-ID: <CAKFNMomcfjrm7UaaoByu6Sg-ssRQPAA1gntssLR_ycRS9hyt3g@mail.gmail.com>
-Subject: Re: [PATCH 2/6] nilfs2: Convert nilfs_copy_buffer() to use folios
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927143642.2369508-1-lizhi.xu@windriver.com>
+X-Rspamd-Queue-Id: 1D6221FD53
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[c679f13773f295d2da53];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,suse.cz,vger.kernel.org,squashfs.org.uk,lists.sourceforge.net,syzkaller.appspotmail.com,googlegroups.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-On Wed, Oct 2, 2024 at 1:02=E2=80=AFPM Matthew Wilcox (Oracle) wrote:
->
-> Use folio APIs instead of page APIs.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/nilfs2/page.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-> index 9c0b7cddeaae..16bb82cdbc07 100644
-> --- a/fs/nilfs2/page.c
-> +++ b/fs/nilfs2/page.c
-> @@ -98,16 +98,16 @@ void nilfs_forget_buffer(struct buffer_head *bh)
->   */
->  void nilfs_copy_buffer(struct buffer_head *dbh, struct buffer_head *sbh)
->  {
-> -       void *kaddr0, *kaddr1;
-> +       void *saddr, *daddr;
->         unsigned long bits;
-> -       struct page *spage =3D sbh->b_page, *dpage =3D dbh->b_page;
-> +       struct folio *sfolio =3D sbh->b_folio, *dfolio =3D dbh->b_folio;
->         struct buffer_head *bh;
->
-> -       kaddr0 =3D kmap_local_page(spage);
-> -       kaddr1 =3D kmap_local_page(dpage);
-> -       memcpy(kaddr1 + bh_offset(dbh), kaddr0 + bh_offset(sbh), sbh->b_s=
-ize);
-> -       kunmap_local(kaddr1);
-> -       kunmap_local(kaddr0);
-> +       saddr =3D kmap_local_folio(sfolio, bh_offset(sbh));
-> +       daddr =3D kmap_local_folio(dfolio, bh_offset(dbh));
-> +       memcpy(daddr, saddr, sbh->b_size);
-> +       kunmap_local(daddr);
-> +       kunmap_local(saddr);
->
->         dbh->b_state =3D sbh->b_state & NILFS_BUFFER_INHERENT_BITS;
->         dbh->b_blocknr =3D sbh->b_blocknr;
-> @@ -121,13 +121,13 @@ void nilfs_copy_buffer(struct buffer_head *dbh, str=
-uct buffer_head *sbh)
->                 unlock_buffer(bh);
->         }
->         if (bits & BIT(BH_Uptodate))
-> -               SetPageUptodate(dpage);
-> +               folio_mark_uptodate(dfolio);
->         else
-> -               ClearPageUptodate(dpage);
-> +               folio_clear_uptodate(dfolio);
->         if (bits & BIT(BH_Mapped))
-> -               SetPageMappedToDisk(dpage);
-> +               folio_set_mappedtodisk(dfolio);
->         else
-> -               ClearPageMappedToDisk(dpage);
-> +               folio_clear_mappedtodisk(dfolio);
->  }
->
->  /**
-> --
-> 2.43.0
+On Fri 27-09-24 22:36:42, Lizhi Xu wrote:
+> [Syzbot reported]
+> WARNING: possible circular locking dependency detected
+> 6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0 Not tainted
+> ------------------------------------------------------
+> kswapd0/78 is trying to acquire lock:
+> ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
+> ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
+> 
+> but task is already holding lock:
+> ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6841 [inline]
+> ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vmscan.c:7223
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (fs_reclaim){+.+.}-{0:0}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+>        __fs_reclaim_acquire mm/page_alloc.c:3818 [inline]
+>        fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3832
+>        might_alloc include/linux/sched/mm.h:334 [inline]
+>        slab_pre_alloc_hook mm/slub.c:3939 [inline]
+>        slab_alloc_node mm/slub.c:4017 [inline]
+>        kmem_cache_alloc_noprof+0x3d/0x2a0 mm/slub.c:4044
+>        inotify_new_watch fs/notify/inotify/inotify_user.c:599 [inline]
+>        inotify_update_watch fs/notify/inotify/inotify_user.c:647 [inline]
+>        __do_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:786 [inline]
+>        __se_sys_inotify_add_watch+0x72e/0x1070 fs/notify/inotify/inotify_user.c:729
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #0 (&group->mark_mutex){+.+.}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3133 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+>        validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+>        __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>        fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
+>        fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
+>        fsnotify_destroy_marks+0x14a/0x660 fs/notify/mark.c:934
+>        fsnotify_inoderemove include/linux/fsnotify.h:264 [inline]
+>        dentry_unlink_inode+0x2e0/0x430 fs/dcache.c:403
+>        __dentry_kill+0x20d/0x630 fs/dcache.c:610
+>        shrink_kill+0xa9/0x2c0 fs/dcache.c:1055
+>        shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1082
+>        prune_dcache_sb+0x10f/0x180 fs/dcache.c:1163
+>        super_cache_scan+0x34f/0x4b0 fs/super.c:221
+>        do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+>        shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+>        shrink_one+0x43b/0x850 mm/vmscan.c:4815
+>        shrink_many mm/vmscan.c:4876 [inline]
+>        lru_gen_shrink_node mm/vmscan.c:4954 [inline]
+>        shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
+>        kswapd_shrink_node mm/vmscan.c:6762 [inline]
+>        balance_pgdat mm/vmscan.c:6954 [inline]
+>        kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
+>        kthread+0x2f0/0x390 kernel/kthread.c:389
+>        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(fs_reclaim);
+>                                lock(&group->mark_mutex);
+>                                lock(fs_reclaim);
+>   lock(&group->mark_mutex);
+> 
+>  *** DEADLOCK ***
+> 
+> [Analysis]
+> The inotify_new_watch() call passes through GFP_KERNEL, use memalloc_nofs_save/
+> memalloc_nofs_restore to make sure we don't end up with the fs reclaim dependency.
+> 
+> That any notification group needs to use NOFS allocations to be safe
+> against this race so we can just remove FSNOTIFY_GROUP_NOFS and
+> unconditionally do memalloc_nofs_save() in fsnotify_group_lock().
+> 
+> Reported-and-tested-by: syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c679f13773f295d2da53
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 
-I understand the change.  Also, thank you for converting this function
-to be folio-based.
+Thanks. I've added the patch to my tree.
 
-Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+								Honza
 
-Thanks,
-Ryusuke Konishi
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
