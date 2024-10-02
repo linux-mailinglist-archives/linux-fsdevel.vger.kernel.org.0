@@ -1,51 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-30813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A5D98E73D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:45:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F9898E740
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 562EEB24DA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:45:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5A7D1F24DEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47C419F111;
-	Wed,  2 Oct 2024 23:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2EE1A01BF;
+	Wed,  2 Oct 2024 23:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GvKN74QA"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aFc7Mb1H"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B88B1991A9;
-	Wed,  2 Oct 2024 23:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4AF199249;
+	Wed,  2 Oct 2024 23:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912716; cv=none; b=N4B3xAjqOa0F/uKymHcwr9lvj75PPT2M1JatMrMKBkbONn+2Ly1DvQvK9d0c1fgqP7oE6nzHTIJTcDq5oF/8cPY8CmbatDsY670jNAOUwerycaC2m3GaVR3Z8uCAFwlhzy/ueH77BT1gUgFzrlhsXfnZt31xJVt9bAat7flZx+c=
+	t=1727912717; cv=none; b=rxfcnqu594pAPwkm+kwwgH+5MktbQg4+ZozZaOdZBkcI/j679j2RGqJJzkSMl/CgmNIYDXWwelxqAql7HI2bmpfHs+W4cl1aVrFdb3cMD3riFuBe1XMJE5F0HmEgbi507FSTobA0rQqgvbN89rTEA8395rj2ildn+Vv6bm0nLrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912716; c=relaxed/simple;
-	bh=C5PGpC6pnWKx6IbsYaMl+hW4V+6xPJJmkirZRMzcrQY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J8l8sxkJD0qH60rzbSL6vGyr5ZcDU041T4pw9VWiWjMl4j2yvhMNh/ldz1F/TXWB5Ougduz2fKDpejr9NYowkNx9SyrWi3ZLloDCy8PcU9H2CVKJerXXHvVSD9Xm+b5IrGy8I9SbPXbg0OyHaeZzgTTtafI+bVjkg5hDQ8jNy4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GvKN74QA; arc=none smtp.client-ip=178.60.130.6
+	s=arc-20240116; t=1727912717; c=relaxed/simple;
+	bh=XD0655LMXQQE3H7/vJ0Cph68fsRLWyVLDTRgK0rdatk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YL1uNFwPo6E39Zsny2GJrEynbuSgSffZdwdl9eruKMlaECdOLPZLl4eVAVt2WWZTly2hN6AfhZym5NvkwLAOGUN9Rk7bUVbvSGRvEtAZ/slZVqKekkJdRg+ohnu0kAbeY2wK7cIeaoUwQj+EOkW6tsEgESYHtXmi4YVP5gpavcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aFc7Mb1H; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=kj7oVNFXBHyRs7B0iMgteogxKX3su9r74K3KaL3e4KM=; b=GvKN74QA18wBN9dzszPvApYpMT
-	xXSMBzdxoZNJVxGCDghI4infFlHUSKbBT84HZjWY2ZMVXKovWm4WBknybp9kjlh+lVpl1m0eupTns
-	MDfdXJlUwEx77as+qiIyt7ZNSN3UoQ0yUdE62M1xY1iMTr4nd8yVL9SyC+sr1o1BYBbxv7x0AKd46
-	BwuSvvo59M0hJUiKXgKJXDdObGuptXFO3MC8Wjh31Rw9PfvjprnIHvO0t0g72SR/cdvr4mE7HLvWq
-	PwpTVJ9Cu+FwTBLQVi3LyZzfkPDY3/G5ec1le9lWwVf1oGS0NhyICLaqbFrN2LDJFZGv/FoDCFy02
-	xqfhKIjw==;
+	bh=Y8QDzI/AINMwYgFuy4R/IREoIrpywxbZXblB5AdDFcw=; b=aFc7Mb1HSQlbH0FXXlc1YsbKdF
+	OZD65SM+Mo9xLxyEBrZUjzuHCCkRsZcBFJYLdQlKwdRX6nWq0w6esff57g7fqherOH8YuTk/Ost1I
+	MI5DF3mAGvO4fodymwddk7xTPROZmALyoPPx4GX8GMtxBfNe6NQnqxLTUICHA3fuLjd14/LosDiAH
+	an2uWrZtQFDjpoR+7iy4UR4FQ+0BmINEzIOpELXgGGsF8Pb1kAG/2mPbfUeYlwphCN9FwOpNZp2SY
+	g8rT81v0k5CwfMJtLdPaFf6qxEgZIn5jEowDq9ZdmiMlRlCg4j+hhgQHvYsQ/JS8K174GH9+q36lD
+	n7m+wA/w==;
 Received: from [187.57.199.212] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw91e-0045tc-Qk; Thu, 03 Oct 2024 01:44:59 +0200
+	id 1sw91j-0045tc-71; Thu, 03 Oct 2024 01:45:03 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: Hugh Dickins <hughd@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -61,11 +62,14 @@ Cc: linux-mm@kvack.org,
 	smcv@collabora.com,
 	Christoph Hellwig <hch@lst.de>,
 	Theodore Ts'o <tytso@mit.edu>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v5 00/10] tmpfs: Add case-insensitive support for tmpfs
-Date: Wed,  2 Oct 2024 20:44:34 -0300
-Message-ID: <20241002234444.398367-1-andrealmeid@igalia.com>
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH v5 01/10] libfs: Create the helper function generic_ci_validate_strict_name()
+Date: Wed,  2 Oct 2024 20:44:35 -0300
+Message-ID: <20241002234444.398367-2-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
+References: <20241002234444.398367-1-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,129 +79,86 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Create a helper function for filesystems do the checks required for
+casefold directories and strict encoding.
 
-This patchset adds support for case-insensitive file names lookups in
-tmpfs. The main difference from other casefold filesystems is that tmpfs
-has no information on disk, just on RAM, so we can't use mkfs to create a
-case-insensitive tmpfs.  For this implementation, I opted to have a mount
-option for casefolding. The rest of the patchset follows a similar approach
-as ext4 and f2fs.
+Suggested-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Signed-off-by: André Almeida <andrealmeid@igalia.com>
+---
+Changes from v4:
+- Inline this function
 
-* Use case (from the original cover letter)
+Changes from v2:
+- Moved function to libfs and adpated its name
+- Wrapped at 72 chars column
+- Decomposed the big if (...) to be more clear
+---
+ include/linux/fs.h | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-The use case for this feature is similar to the use case for ext4, to
-better support compatibility layers (like Wine), particularly in
-combination with sandboxing/container tools (like Flatpak). Those
-containerization tools can share a subset of the host filesystem with an
-application. In the container, the root directory and any parent
-directories required for a shared directory are on tmpfs, with the
-shared directories bind-mounted into the container's view of the
-filesystem.
-
-If the host filesystem is using case-insensitive directories, then the
-application can do lookups inside those directories in a
-case-insensitive way, without this needing to be implemented in
-user-space. However, if the host is only sharing a subset of a
-case-insensitive directory with the application, then the parent
-directories of the mount point will be part of the container's root
-tmpfs. When the application tries to do case-insensitive lookups of
-those parent directories on a case-sensitive tmpfs, the lookup will
-fail.
-
-For example, if /srv/games is a case-insensitive directory on the host,
-then applications will expect /srv/games/Steam/Half-Life and
-/srv/games/steam/half-life to be interchangeable; but if the
-container framework is only sharing /srv/games/Steam/Half-Life and
-/srv/games/Steam/Portal (and not the rest of /srv/games) with the
-container, with /srv, /srv/games and /srv/games/Steam as part of the
-container's tmpfs root, then making /srv/games a case-insensitive
-directory inside the container would be necessary to meet that
-expectation.
-
-* Testing
-
-I send a patch for xfstests to enable the casefold test (generic/556) for
-tmpfs.[1] The test succeed.
-
-You can test this patchset using:
-
-  sudo mount -t tmpfs -o casefold tmpfs mnt/
-
-And making a dir case-insensitive:
-
-  mkdir mnt/dir
-  chattr +F mnt/dir
-
-[1] https://lore.kernel.org/fstests/20240823173008.280917-1-andrealmeid@igalia.com/
-
-Changes in v5:
- - New patch "Always set simple_dentry_operations as dentry ops"
- - "Squashed libfs: Check for casefold dirs on simple_lookup()" into "tmpfs: Add
-    casefold lookup support"
- - Fail to mount if strict_encoding is used without encoding
- - Inlined generic_ci_validate_strict_name()
- - Added IS_ENABLED(UNICODE) guards to public generic_ci_ funcs
- - Dropped .d_revalidate = fscrypt_d_revalidate, tmpfs doesn't support it
- v4: https://lore.kernel.org/lkml/20240911144502.115260-1-andrealmeid@igalia.com/
-
-Changes in v4:
- - Got rid of shmem_lookup() and changed simple_lookup() to cover casefold use
-   case
- - Simplified shmem_parse_opt_casefold() and how it handle the lastest_version
-   option
- - Simplified utf8_parse_version() to return the version in one variable instead
-   of three
- - Rewrote part of the documentation patch
- - Make sure that d_sb->s_d_op is set during mount time
- - Moved `generic_ci_always_del_dentry_ops` to mm/shmem.c as `shmem_ci_dentry_ops`
-v3: https://lore.kernel.org/lkml/20240905190252.461639-1-andrealmeid@igalia.com/
-
-Changes in v3:
- - Renamed utf8_check_strict_name() to generic_ci_validate_strict_name(), and
- reworked the big if(...) to be more clear
- - Expose the latest UTF-8 version in include/linux/unicode.h
- - shmem_lookup() now sets d_ops
- - reworked shmem_parse_opt_casefold()
- - if `mount -o casefold` has no param, load latest UTF-8 version
- - using (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir) when possible
- - Fixed bug when adding a non-casefold flag in a non-empty dir
-v2: https://lore.kernel.org/lkml/20240902225511.757831-1-andrealmeid@igalia.com/
-
-Changes in v2:
- - Found and fixed a bug in utf8_load()
- - Created a helper for checking strict file names (Krisman)
- - Merged patch 1/ and 3/ together (Krisman)
- - Reworded the explanation about d_compare (Krisman)
- - Removed bool casefold from shmem_sb_info (Krisman)
- - Reworked d_add(dentry, NULL) to be called as d_add(dentry, inode) (Krisman)
- - Moved utf8_parse_version to common unicode code
- - Fixed some smatch/sparse warnings (kernel test bot/Dan Carpenter)
-v1: https://lore.kernel.org/linux-fsdevel/20240823173332.281211-1-andrealmeid@igalia.com/
-
-André Almeida (10):
-  libfs: Create the helper function generic_ci_validate_strict_name()
-  ext4: Use generic_ci_validate_strict_name helper
-  unicode: Export latest available UTF-8 version number
-  unicode: Recreate utf8_parse_version()
-  libfs: Export generic_ci_ dentry functions
-  tmpfs: Always set simple_dentry_operations as dentry ops
-  tmpfs: Add casefold lookup support
-  tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
-  tmpfs: Expose filesystem features via sysfs
-  docs: tmpfs: Add casefold options
-
- Documentation/filesystems/tmpfs.rst |  24 +++
- fs/ext4/namei.c                     |   5 +-
- fs/libfs.c                          |  12 +-
- fs/unicode/utf8-core.c              |  26 ++++
- fs/unicode/utf8-selftest.c          |   3 -
- include/linux/fs.h                  |  49 ++++++
- include/linux/shmem_fs.h            |   6 +-
- include/linux/unicode.h             |   4 +
- mm/shmem.c                          | 226 ++++++++++++++++++++++++++--
- 9 files changed, 332 insertions(+), 23 deletions(-)
-
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e3c603d01337..9a5d38fc3b67 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -45,6 +45,7 @@
+ #include <linux/slab.h>
+ #include <linux/maple_tree.h>
+ #include <linux/rw_hint.h>
++#include <linux/unicode.h>
+ 
+ #include <asm/byteorder.h>
+ #include <uapi/linux/fs.h>
+@@ -3451,6 +3452,50 @@ extern int generic_ci_match(const struct inode *parent,
+ 			    const struct qstr *folded_name,
+ 			    const u8 *de_name, u32 de_name_len);
+ 
++#if IS_ENABLED(CONFIG_UNICODE)
++/**
++ * generic_ci_validate_strict_name - Check if a given name is suitable
++ * for a directory
++ *
++ * This functions checks if the proposed filename is valid for the
++ * parent directory. That means that only valid UTF-8 filenames will be
++ * accepted for casefold directories from filesystems created with the
++ * strict encoding flag.  That also means that any name will be
++ * accepted for directories that doesn't have casefold enabled, or
++ * aren't being strict with the encoding.
++ *
++ * @dir: inode of the directory where the new file will be created
++ * @name: name of the new file
++ *
++ * Return:
++ * * True if the filename is suitable for this directory. It can be
++ * true if a given name is not suitable for a strict encoding
++ * directory, but the directory being used isn't strict
++ * * False if the filename isn't suitable for this directory. This only
++ * happens when a directory is casefolded and the filesystem is strict
++ * about its encoding.
++ */
++static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *name)
++{
++	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
++		return true;
++
++	/*
++	 * A casefold dir must have a encoding set, unless the filesystem
++	 * is corrupted
++	 */
++	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
++		return true;
++
++	return utf8_validate(dir->i_sb->s_encoding, name);
++}
++#else
++static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *name)
++{
++	return true;
++}
++#endif
++
+ static inline bool sb_has_encoding(const struct super_block *sb)
+ {
+ #if IS_ENABLED(CONFIG_UNICODE)
 -- 
 2.46.0
 
