@@ -1,52 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-30668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E830C98D1EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:06:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7F798D200
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A61282821
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 11:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2574B1C21547
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 11:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BF61E767A;
-	Wed,  2 Oct 2024 11:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8301EBFE6;
+	Wed,  2 Oct 2024 11:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHp75TvD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nk+QdQcS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89BD19409C;
-	Wed,  2 Oct 2024 11:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90D719409C;
+	Wed,  2 Oct 2024 11:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727867150; cv=none; b=RCehnE+wS24MK52JA3tn7sDeH1Uuxvl8v//ILhgq2KwcOF1eKZJ/2XVEB0W9kcEua+YPYahxiKhKJ0zlkcQf3PZl+7NFBCg4Y92ztCtOi2tz7qOPYFGgyb8ob8xMRFR4N5mgsoucYJBLZqf9aNZ+lnaNoxX7Sp6NNz82JsWPwM4=
+	t=1727867338; cv=none; b=dtiaokCFbnumX1Xs0OCuKDyMKtSVJKvi5U6ZoMEvQd/ucxgXVje/LYCu7mMqbnN9KApr0POWP2is9Wu/TeJtXqNhfVOrHtX21DWqNAuPe3Gr9laSH9FiS6DbjjgDV5GY7Zz6rr1pcs7X17TbDewu/TnK/TgfT+493HDl+TQWCDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727867150; c=relaxed/simple;
-	bh=fALEU8spfzDldU+PQg9dZPzSUwpp4WvualU6SuNwvjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmPskKPntKd4MG/INz/YrZjKhtJQ4HJo05lqhO46FwxN51jEShBlSl4wfMaPwTf9qe4oBDK61CIhbHdV/BvKgxsZGdlT89KHBsYkTOV7pfGnadplKjikIOOrGz8AXcCg5r7xqWp6JtysrGhnmtoevpV2eEOMbODjobbe5a4pM6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHp75TvD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFD4CC4CECD;
-	Wed,  2 Oct 2024 11:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727867150;
-	bh=fALEU8spfzDldU+PQg9dZPzSUwpp4WvualU6SuNwvjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iHp75TvDjERd0vw0hCrVUi90kekRP607FfCM8xvoCG+jgkLedmKfHSGMV202FAR/N
-	 dR6ff5SJtA5O1sORgW2xVVWLrp01t4I4vfrbRm8rg70g6Vsb8Cte2o59BUzehmutjq
-	 qHRT+/Vkk4tDmDVEylxuIlMeNQXpXF2aw6nLHrAEu1cEXzKY26ylH/+hvAUmRpJOIT
-	 LfDamtyG815LfF9LAqXBZA2WZLXNBTP2UuCzmAXcVsdFxHqRJoN8nj6mP443Q5fU+z
-	 gtjx9UL+/k8dHSICxyBg8kBIX0sJAOil9lRoizyZyGkfOWbe5YJ4xEpsd+yxUwCBiK
-	 E/T9ut4c6tvXA==
-Date: Wed, 2 Oct 2024 13:05:41 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Gary Guo <gary@garyguo.net>
-Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	s=arc-20240116; t=1727867338; c=relaxed/simple;
+	bh=++w/CFmeMI6p9ixo9ipmUY7G3z+c1V1MtOoiuK1svw8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+Y3RgPQF0FYxXNaytGHtREM+h5TwYeqhcnokx/ry7ZxRWZKlg3VQXssnv+R8PDji6JSHesiVLgnnLiEHuftjcqkCHf77VXUnNFx4XLw1AvI1zr5EExYlqsCnDJsydjGUeOIGMA4PosWHnMK5o8HJ9detP5P67LOolMfXMQtKDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nk+QdQcS; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20b03c9336cso5778725ad.2;
+        Wed, 02 Oct 2024 04:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727867336; x=1728472136; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=++w/CFmeMI6p9ixo9ipmUY7G3z+c1V1MtOoiuK1svw8=;
+        b=nk+QdQcS6hgyuS8NblEJDuBtwg4eXkIAkC5psUZ1OAkPpwkBFPk8FXETgLsFZG4jer
+         Ljk6rSQfAKsaCLtqL4DiPFzvD1cDTqaPug8QJlwwhbgtg+hybr551k7vD27toFRb5AH/
+         anKgMK8uTGdgt+Zm5XBp/0ZZt+7YCfBQ9f0rntwTJZ34Sf6lRW9w07Shkyhj3imU6R2M
+         qX2NkXRQ4pWyt0T9GPiMQ7HywzjKrrAIZLReBAjM5g/UIgwnj2ttQZiGhUNcI4ywe0ly
+         aI+htWsyvbxFy/+Ag3D30UbGHpEA5sk0SkyumU9Y+3tFVxAIr44nWT5C7KjVg/cJQhig
+         DYrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727867336; x=1728472136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=++w/CFmeMI6p9ixo9ipmUY7G3z+c1V1MtOoiuK1svw8=;
+        b=HCK1p1F0sRgqYoGEmcHRqqI3x7VxGix41Gg/A5m1Bm0UJKW1gYbkIvTW/zHXkGuyf0
+         WwTXhAEXgm71MPvBMDyUktuXLENlxVblkykRnNH35KApmQ3dvgej/C7WE4VxR0bXcHts
+         3d4OSWhF+gMlO+RpiVpLdVnjFBTXKnf9VBBjKgOY76Zdv3nOpg49tOExKQLYKoOYGcpn
+         5+ecDa/alKI+PeO6XE17kbGSL7zpiSKTwAjRGWfdbT26mLkhwxd3VcHl2TX+iCPXT6C/
+         3FMgS12cuBKVPUrpdHP8FSDzXSHQ06guZYt3+vNF+SfRdtJB/2hRWzTEgz10hDfQSn41
+         fN+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVFJJFwgUR7XKmva/k+o6dqMcngh/de5KoCUwQZQ+4r2mrdUgW9EDrLzCBMUhRMUmMEGCrTgygC3e3S70zL@vger.kernel.org, AJvYcCWKHrjm7IElPjLQf8viX2jSMmMh4hUMQudBwEKFDqCMMDve6WOPPVmotkqKf/j3RwleMMvI7e4DWSA8qehTYs0=@vger.kernel.org, AJvYcCWOlaXJoxDJlSWtP2eINki5UEtLieozjiQtcMmefhQaNG8i4mkTPyTUKURuG5Rfit36QLam3TiF6kZEtpQ5AJDX8GAZiBtJ@vger.kernel.org, AJvYcCXCXDEMUWLn3X/Pn4fQxmEHrIy2R76LXtdvMEg/k2E984MmdmXwByXq8C+O15si22jRapLQXyg3mB+OJZgg@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS0ipiVE69uX0luUrXY/1ap5koFVTwtJKIaESFTk218aZ9WnRJ
+	K3XswQKOKKQ9nmzreBpwYAONH1/GfsDGXno8ksTQ580uMyGXSYcl+ELBCirgEQ3Ang+kR+fUJxP
+	DJ8hALqvIu6IgGkg5TF5byarm6tc=
+X-Google-Smtp-Source: AGHT+IH8jvqo/FcePOrIXT5KP6MVh2BtKDtfffXnIWNV6iZYbBR99b7MS0BOnYQ/7istTfy1FF3ZfhWvbfPErTAVElI=
+X-Received: by 2002:a05:6a00:22ca:b0:717:6bb0:53e8 with SMTP id
+ d2e1a72fcca58-71dc5c4333cmr1870943b3a.2.1727867336095; Wed, 02 Oct 2024
+ 04:08:56 -0700 (PDT)
+Precedence: bulk
+X-Mailing-List: linux-fsdevel@vger.kernel.org
+List-Id: <linux-fsdevel.vger.kernel.org>
+List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240926-pocht-sittlich-87108178c093@brauner> <20241001-brauner-rust-pid_namespace-v2-1-37eac8d93e75@kernel.org>
+ <CAH5fLghaj+mjL63vw7DKCMg3NSaqU3qwd0byXKksG65mdOA2bA@mail.gmail.com>
+ <20241001-sowie-zufall-d1e1421ba00f@brauner> <CANiq72nJbmhicsNqZHV9=j_imXPPZWxuHiqr=N4wTDxwGaMW5g@mail.gmail.com>
+ <20241002-dehnen-beklagen-f7f6ca460b5b@brauner>
+In-Reply-To: <20241002-dehnen-beklagen-f7f6ca460b5b@brauner>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 2 Oct 2024 13:08:43 +0200
+Message-ID: <CANiq72==AkkqCDaZMENQRg8cf4zdeHpTHwdWS3sZiFWm0vyJUA@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: add PidNamespace
+To: Christian Brauner <brauner@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alice Ryhl <aliceryhl@google.com>, 
+	rust-for-linux@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
 	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Bjoern Roy Baron <bjorn3_gh@protonmail.com>, 
 	Benno Lossin <benno.lossin@proton.me>, Peter Zijlstra <peterz@infradead.org>, 
@@ -56,406 +93,31 @@ Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
 	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
 	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
 	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v2] rust: add PidNamespace
-Message-ID: <20241002-backt-inkognito-e25cd4baa03f@brauner>
-References: <20240926-pocht-sittlich-87108178c093@brauner>
- <20241001-brauner-rust-pid_namespace-v2-1-37eac8d93e75@kernel.org>
- <20241001201054.73167686.gary@garyguo.net>
-Precedence: bulk
-X-Mailing-List: linux-fsdevel@vger.kernel.org
-List-Id: <linux-fsdevel.vger.kernel.org>
-List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241001201054.73167686.gary@garyguo.net>
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 01, 2024 at 08:10:54PM GMT, Gary Guo wrote:
-> On Tue, 01 Oct 2024 11:43:42 +0200
-> Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > The lifetime of `PidNamespace` is bound to `Task` and `struct pid`.
-> > 
-> > The `PidNamespace` of a `Task` doesn't ever change once the `Task` is
-> > alive. A `unshare(CLONE_NEWPID)` or `setns(fd_pidns/pidfd, CLONE_NEWPID)`
-> > will not have an effect on the calling `Task`'s pid namespace. It will
-> > only effect the pid namespace of children created by the calling `Task`.
-> > This invariant guarantees that after having acquired a reference to a
-> > `Task`'s pid namespace it will remain unchanged.
-> > 
-> > When a task has exited and been reaped `release_task()` will be called.
-> > This will set the `PidNamespace` of the task to `NULL`. So retrieving
-> > the `PidNamespace` of a task that is dead will return `NULL`. Note, that
-> > neither holding the RCU lock nor holding a referencing count to the
-> > `Task` will prevent `release_task()` being called.
-> > 
-> > In order to retrieve the `PidNamespace` of a `Task` the
-> > `task_active_pid_ns()` function can be used. There are two cases to
-> > consider:
-> > 
-> > (1) retrieving the `PidNamespace` of the `current` task (2) retrieving
-> > the `PidNamespace` of a non-`current` task
-> > 
-> > From system call context retrieving the `PidNamespace` for case (1) is
-> > always safe and requires neither RCU locking nor a reference count to be
-> > held. Retrieving the `PidNamespace` after `release_task()` for current
-> > will return `NULL` but no codepath like that is exposed to Rust.
-> > 
-> > Retrieving the `PidNamespace` from system call context for (2) requires
-> > RCU protection. Accessing `PidNamespace` outside of RCU protection
-> > requires a reference count that must've been acquired while holding the
-> > RCU lock. Note that accessing a non-`current` task means `NULL` can be
-> > returned as the non-`current` task could have already passed through
-> > `release_task()`.
-> > 
-> > To retrieve (1) the `current_pid_ns!()` macro should be used which
-> > ensure that the returned `PidNamespace` cannot outlive the calling
-> > scope. The associated `current_pid_ns()` function should not be called
-> > directly as it could be abused to created an unbounded lifetime for
-> > `PidNamespace`. The `current_pid_ns!()` macro allows Rust to handle the
-> > common case of accessing `current`'s `PidNamespace` without RCU
-> > protection and without having to acquire a reference count.
-> > 
-> > For (2) the `task_get_pid_ns()` method must be used. This will always
-> > acquire a reference on `PidNamespace` and will return an `Option` to
-> > force the caller to explicitly handle the case where `PidNamespace` is
-> > `None`, something that tends to be forgotten when doing the equivalent
-> > operation in `C`. Missing RCU primitives make it difficult to perform
-> > operations that are otherwise safe without holding a reference count as
-> > long as RCU protection is guaranteed. But it is not important currently.
-> > But we do want it in the future.
-> > 
-> > Note for (2) the required RCU protection around calling
-> > `task_active_pid_ns()` synchronizes against putting the last reference
-> > of the associated `struct pid` of `task->thread_pid`. The `struct pid`
-> > stored in that field is used to retrieve the `PidNamespace` of the
-> > caller. When `release_task()` is called `task->thread_pid` will be
-> > `NULL`ed and `put_pid()` on said `struct pid` will be delayed in
-> > `free_pid()` via `call_rcu()` allowing everyone with an RCU protected
-> > access to the `struct pid` acquired from `task->thread_pid` to finish.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  rust/helpers/helpers.c       |   1 +
-> >  rust/helpers/pid_namespace.c |  26 ++++++++++
-> >  rust/kernel/lib.rs           |   1 +
-> >  rust/kernel/pid_namespace.rs |  70 +++++++++++++++++++++++++
-> >  rust/kernel/task.rs          | 119 ++++++++++++++++++++++++++++++++++++++++---
-> >  5 files changed, 211 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> > index 62022b18caf5ec17231fd0e7be1234592d1146e3..d553ad9361ce17950d505c3b372a568730020e2f 100644
-> > --- a/rust/helpers/helpers.c
-> > +++ b/rust/helpers/helpers.c
-> > @@ -17,6 +17,7 @@
-> >  #include "kunit.c"
-> >  #include "mutex.c"
-> >  #include "page.c"
-> > +#include "pid_namespace.c"
-> >  #include "rbtree.c"
-> >  #include "refcount.c"
-> >  #include "security.c"
-> > diff --git a/rust/helpers/pid_namespace.c b/rust/helpers/pid_namespace.c
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..f41482bdec9a7c4e84b81ec141027fbd65251230
-> > --- /dev/null
-> > +++ b/rust/helpers/pid_namespace.c
-> > @@ -0,0 +1,26 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +#include <linux/pid_namespace.h>
-> > +#include <linux/cleanup.h>
-> > +
-> > +struct pid_namespace *rust_helper_get_pid_ns(struct pid_namespace *ns)
-> > +{
-> > +	return get_pid_ns(ns);
-> > +}
-> > +
-> > +void rust_helper_put_pid_ns(struct pid_namespace *ns)
-> > +{
-> > +	put_pid_ns(ns);
-> > +}
-> > +
-> > +/* Get a reference on a task's pid namespace. */
-> > +struct pid_namespace *rust_helper_task_get_pid_ns(struct task_struct *task)
-> > +{
-> > +	struct pid_namespace *pid_ns;
-> > +
-> > +	guard(rcu)();
-> > +	pid_ns = task_active_pid_ns(task);
-> > +	if (pid_ns)
-> > +		get_pid_ns(pid_ns);
-> > +	return pid_ns;
-> > +}
-> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > index ff7d88022c57ca232dc028066dfa062f3fc84d1c..0e78ec9d06e0199dfafc40988a2ae86cd5df949c 100644
-> > --- a/rust/kernel/lib.rs
-> > +++ b/rust/kernel/lib.rs
-> > @@ -44,6 +44,7 @@
-> >  #[cfg(CONFIG_NET)]
-> >  pub mod net;
-> >  pub mod page;
-> > +pub mod pid_namespace;
-> >  pub mod prelude;
-> >  pub mod print;
-> >  pub mod sizes;
-> > diff --git a/rust/kernel/pid_namespace.rs b/rust/kernel/pid_namespace.rs
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..9a0509e802b4939ad853a802ee6d069a5f00c9df
-> > --- /dev/null
-> > +++ b/rust/kernel/pid_namespace.rs
-> > @@ -0,0 +1,70 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +// Copyright (c) 2024 Christian Brauner <brauner@kernel.org>
-> > +
-> > +//! Pid namespaces.
-> > +//!
-> > +//! C header: [`include/linux/pid_namespace.h`](srctree/include/linux/pid_namespace.h) and
-> > +//! [`include/linux/pid.h`](srctree/include/linux/pid.h)
-> > +
-> > +use crate::{
-> > +    bindings,
-> > +    types::{AlwaysRefCounted, Opaque},
-> > +};
-> > +use core::{
-> > +    ptr,
-> > +};
-> > +
-> > +/// Wraps the kernel's `struct pid_namespace`. Thread safe.
-> > +///
-> > +/// This structure represents the Rust abstraction for a C `struct pid_namespace`. This
-> > +/// implementation abstracts the usage of an already existing C `struct pid_namespace` within Rust
-> > +/// code that we get passed from the C side.
-> > +#[repr(transparent)]
-> > +pub struct PidNamespace {
-> > +    inner: Opaque<bindings::pid_namespace>,
-> > +}
-> > +
-> > +impl PidNamespace {
-> > +    /// Returns a raw pointer to the inner C struct.
-> > +    #[inline]
-> > +    pub fn as_ptr(&self) -> *mut bindings::pid_namespace {
-> > +        self.inner.get()
-> > +    }
-> > +
-> > +    /// Creates a reference to a [`PidNamespace`] from a valid pointer.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
-> > +    /// returned [`PidNamespace`] reference.
-> > +    pub unsafe fn from_ptr<'a>(ptr: *const bindings::pid_namespace) -> &'a Self {
-> > +        // SAFETY: The safety requirements guarantee the validity of the dereference, while the
-> > +        // `PidNamespace` type being transparent makes the cast ok.
-> > +        unsafe { &*ptr.cast() }
-> > +    }
-> > +}
-> > +
-> > +// SAFETY: Instances of `PidNamespace` are always reference-counted.
-> > +unsafe impl AlwaysRefCounted for PidNamespace {
-> > +    #[inline]
-> > +    fn inc_ref(&self) {
-> > +        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-> > +        unsafe { bindings::get_pid_ns(self.as_ptr()) };
-> > +    }
-> > +
-> > +    #[inline]
-> > +    unsafe fn dec_ref(obj: ptr::NonNull<PidNamespace>) {
-> > +        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-> > +        unsafe { bindings::put_pid_ns(obj.cast().as_ptr()) }
-> > +    }
-> > +}
-> > +
-> > +// SAFETY:
-> > +// - `PidNamespace::dec_ref` can be called from any thread.
-> > +// - It is okay to send ownership of `PidNamespace` across thread boundaries.
-> > +unsafe impl Send for PidNamespace {}
-> > +
-> > +// SAFETY: It's OK to access `PidNamespace` through shared references from other threads because
-> > +// we're either accessing properties that don't change or that are properly synchronised by C code.
-> > +unsafe impl Sync for PidNamespace {}
-> > diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-> > index 1a36a9f193685393e7211793b6e6dd7576af8bfd..92603cdb543d9617f1f7d092edb87ccb66c9f0c1 100644
-> > --- a/rust/kernel/task.rs
-> > +++ b/rust/kernel/task.rs
-> > @@ -6,7 +6,8 @@
-> >  
-> >  use crate::{
-> >      bindings,
-> > -    types::{NotThreadSafe, Opaque},
-> > +    pid_namespace::PidNamespace,
-> > +    types::{ARef, NotThreadSafe, Opaque},
-> >  };
-> >  use core::{
-> >      cmp::{Eq, PartialEq},
-> > @@ -36,6 +37,65 @@ macro_rules! current {
-> >      };
-> >  }
-> >  
-> > +/// Returns the currently running task's pid namespace.
-> > +///
-> > +/// The lifetime of `PidNamespace` is bound to `Task` and `struct pid`.
-> > +///
-> > +/// The `PidNamespace` of a `Task` doesn't ever change once the `Task` is alive. A
-> > +/// `unshare(CLONE_NEWPID)` or `setns(fd_pidns/pidfd, CLONE_NEWPID)` will not have an effect on the
-> > +/// calling `Task`'s pid namespace. It will only effect the pid namespace of children created by
-> > +/// the calling `Task`. This invariant guarantees that after having acquired a reference to a
-> > +/// `Task`'s pid namespace it will remain unchanged.
-> > +///
-> > +/// When a task has exited and been reaped `release_task()` will be called. This will set the
-> > +/// `PidNamespace` of the task to `NULL`. So retrieving the `PidNamespace` of a task that is dead
-> > +/// will return `NULL`. Note, that neither holding the RCU lock nor holding a referencing count to
-> > +/// the `Task` will prevent `release_task()` being called.
-> > +///
-> > +/// In order to retrieve the `PidNamespace` of a `Task` the `task_active_pid_ns()` function can be
-> > +/// used. There are two cases to consider:
-> > +///
-> > +/// (1) retrieving the `PidNamespace` of the `current` task
-> > +/// (2) retrieving the `PidNamespace` of a non-`current` task
-> > +///
-> > +/// From system call context retrieving the `PidNamespace` for case (1) is always safe and requires
-> > +/// neither RCU locking nor a reference count to be held. Retrieving the `PidNamespace` after
-> > +/// `release_task()` for current will return `NULL` but no codepath like that is exposed to Rust.
-> > +///
-> > +/// Retrieving the `PidNamespace` from system call context for (2) requires RCU protection.
-> > +/// Accessing `PidNamespace` outside of RCU protection requires a reference count that must've been
-> > +/// acquired while holding the RCU lock. Note that accessing a non-`current` task means `NULL` can
-> > +/// be returned as the non-`current` task could have already passed through `release_task()`.
-> > +///
-> > +/// To retrieve (1) the `current_pid_ns!()` macro should be used which ensure that the returned
-> > +/// `PidNamespace` cannot outlive the calling scope. The associated `current_pid_ns()` function
-> > +/// should not be called directly as it could be abused to created an unbounded lifetime for
-> > +/// `PidNamespace`. The `current_pid_ns!()` macro allows Rust to handle the common case of
-> > +/// accessing `current`'s `PidNamespace` without RCU protection and without having to acquire a
-> > +/// reference count.
-> > +///
-> > +/// For (2) the `task_get_pid_ns()` method must be used. This will always acquire a reference on
-> > +/// `PidNamespace` and will return an `Option` to force the caller to explicitly handle the case
-> > +/// where `PidNamespace` is `None`, something that tends to be forgotten when doing the equivalent
-> > +/// operation in `C`. Missing RCU primitives make it difficult to perform operations that are
-> > +/// otherwise safe without holding a reference count as long as RCU protection is guaranteed. But
-> > +/// it is not important currently. But we do want it in the future.
-> > +///
-> > +/// Note for (2) the required RCU protection around calling `task_active_pid_ns()` synchronizes
-> > +/// against putting the last reference of the associated `struct pid` of `task->thread_pid`.
-> > +/// The `struct pid` stored in that field is used to retrieve the `PidNamespace` of the caller.
-> > +/// When `release_task()` is called `task->thread_pid` will be `NULL`ed and `put_pid()` on said
-> > +/// `struct pid` will be delayed in `free_pid()` via `call_rcu()` allowing everyone with an RCU
-> > +/// protected access to the `struct pid` acquired from `task->thread_pid` to finish.
-> 
-> Is the comment here in the wrong place? The macro here is just getting
-> `current` one. Perhaps move it to the `task_get_pid_ns`, and as a
-> normal comment, since this is impl detail and not something for user to
-> worry about (yet)?
+On Wed, Oct 2, 2024 at 12:14=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> You could consider adding a way to turn it off then instead of turning
+> it on.
+>
+> Imho, since Rust enforces code formatting style I see no point in not
+> immediately failing the build because of formatting issues.
 
-Sure.
+For maintainers, it would be better if we could unconditionally do it,
+but like with other diagnostics, it is a balance.
 
-> 
-> > +#[macro_export]
-> > +macro_rules! current_pid_ns {
-> > +    () => {
-> > +        // SAFETY: Deref + addr-of below create a temporary `PidNamespaceRef` that cannot outlive
-> > +        // the caller.
-> > +        unsafe { &*$crate::task::Task::current_pid_ns() }
-> > +    };
-> > +}
-> > +
-> >  /// Wraps the kernel's `struct task_struct`.
-> >  ///
-> >  /// # Invariants
-> > @@ -145,6 +205,41 @@ fn deref(&self) -> &Self::Target {
-> >          }
-> >      }
-> >  
-> > +    /// Returns a PidNamespace reference for the currently executing task's/thread's pid namespace.
-> > +    ///
-> > +    /// This function can be used to create an unbounded lifetime by e.g., storing the returned
-> > +    /// PidNamespace in a global variable which would be a bug. So the recommended way to get the
-> > +    /// current task's/thread's pid namespace is to use the [`current_pid_ns`] macro because it is
-> > +    /// safe.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// Callers must ensure that the returned object doesn't outlive the current task/thread.
-> > +    pub unsafe fn current_pid_ns() -> impl Deref<Target = PidNamespace> {
-> > +        struct PidNamespaceRef<'a> {
-> > +            task: &'a PidNamespace,
-> > +            _not_send: NotThreadSafe,
-> > +        }
-> > +
-> > +        impl Deref for PidNamespaceRef<'_> {
-> > +            type Target = PidNamespace;
-> > +
-> > +            fn deref(&self) -> &Self::Target {
-> > +                self.task
-> > +            }
-> > +        }
-> > +
-> > +        let pidns = unsafe { bindings::task_active_pid_ns(Task::current_raw()) };
-> > +        PidNamespaceRef {
-> > +            // SAFETY: If the current thread is still running, the current task and its associated
-> > +            // pid namespace are valid. Given that `PidNamespaceRef` is not `Send`, we know it
-> > +            // cannot be transferred to another thread (where it could potentially outlive the
-> > +            // current `Task`).
-> > +            task: unsafe { &*pidns.cast() },
-> > +            _not_send: NotThreadSafe,
-> > +        }
-> > +    }
-> > +
-> >      /// Returns the group leader of the given task.
-> >      pub fn group_leader(&self) -> &Task {
-> >          // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
-> > @@ -182,11 +277,23 @@ pub fn signal_pending(&self) -> bool {
-> >          unsafe { bindings::signal_pending(self.0.get()) != 0 }
-> >      }
-> >  
-> > -    /// Returns the given task's pid in the current pid namespace.
-> > -    pub fn pid_in_current_ns(&self) -> Pid {
-> > -        // SAFETY: We know that `self.0.get()` is valid by the type invariant, and passing a null
-> > -        // pointer as the namespace is correct for using the current namespace.
-> > -        unsafe { bindings::task_tgid_nr_ns(self.0.get(), ptr::null_mut()) }
-> > +    /// Returns task's pid namespace with elevated reference count
-> > +    pub fn task_get_pid_ns(&self) -> Option<ARef<PidNamespace>> {
-> 
-> Given that this is within `Task`, the full name of the function became
-> `Task::task_get_pid_ns`. So this can just be `get_pid_ns`?
+If there is a way out (like something like `WERROR` or perhaps a "dev
+mode" like `make D=3D1` that could encompass other bits), then I think
+it should be OK. Any preference?
 
-Fair.
+(We also need to be careful about `rustfmt` having e.g. bugs in future
+versions that change the output, but since we are in the Rust CI and
+we can test the nightly compiler, the risk should be low.)
 
-> 
-> > +        let ptr = unsafe { bindings::task_get_pid_ns(self.0.get()) };
-> > +        if ptr.is_null() {
-> > +            None
-> > +        } else {
-> > +            // SAFETY: `ptr` is valid by the safety requirements of this function. And we own a
-> > +            // reference count via `task_get_pid_ns()`.
-> > +            // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::pid_namespace`.
-> > +            Some(unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr.cast::<PidNamespace>())) })
-> > +        }
-> > +    }
-> > +
-> > +    /// Returns the given task's pid in the provided pid namespace.
-> > +    pub fn task_tgid_nr_ns(&self, pidns: &PidNamespace) -> Pid {
-> 
-> Similarly, this can drop `task_` prefix as it's already scoped to
-> `Task`.
-> 
-> PS. I think I quite like the more descriptive name in Alice's patch,
-> maybe `Task::tgid_in_ns` could be a good name for this?
-
-I'm not found of the "in" part. tgid_nr_ns() is fine with me.
-
-> 
-> If there's concern about documentation searchability, there is a
-> feature in rustdoc where you can put
-> 
-> 	#[doc(alias = "task_tgid_nr_ns")]
-> 
-> and then the function will be searchable with the C name.
-
-Sounds good.
+Cheers,
+Miguel
 
