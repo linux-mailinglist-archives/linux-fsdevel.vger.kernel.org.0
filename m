@@ -1,176 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-30693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AFD98D626
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD03898D697
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 15:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C7E286198
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:37:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869C2284527
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 13:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB3E1D0794;
-	Wed,  2 Oct 2024 13:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5EC1D0B88;
+	Wed,  2 Oct 2024 13:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KU4RhYHW"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TnzRLz4w";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E2EB3bn2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TnzRLz4w";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E2EB3bn2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4291D04A2
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Oct 2024 13:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117F01D0799;
+	Wed,  2 Oct 2024 13:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727876209; cv=none; b=LK5kxzI7GltSgFcHxCXWJcAamREvWPaBvAXmC7fak0C/ELQzXBbp/ZP+HMYKI1L3fXwrQen+70xMw+LqCtktBm22fK+listY7fnw4XGvSitSbBnlKKP28JOFACnDvEODRwkVvxlfyj1JrYLGtOqfx/Yk2Klge5xSWJIYXpd9Qr8=
+	t=1727876448; cv=none; b=dCcpqE3+p6X+b+OiWotYevA61hKflERhVjVa2CsuLvQ36wb++6GLLdLbqLI0dFY3YdZ9Ff8v3Ro7VhvtdB304JLUDptNfHkdItY6zZTW4Bk12xieyi8SO2RMabXgjbXEr20/wvx5RtX/j7TgeMiqvULnZSXf2YHVa/TTrzu921c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727876209; c=relaxed/simple;
-	bh=l+47bXLYl4yy2e8lJa8E5g2vj1iZfXMGhncCb/6mWN0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YgKuSRkRD8sFjKc0Dy9Bbn8U05hekosu2a5f82YrfGKLfF+gPeXLVsZ4XNyfiUDEeQMCLVhdgw1FJCNJmNp/t1NDIqwsnuIiJ84NDgXSutQq6lCTBCrUNmNxwIsrH4IYzoekcPcwaDkVO8Ywa0TVM9bInuz7uh1GYsMaUjbEwEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KU4RhYHW; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37ccc600466so3036932f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Oct 2024 06:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727876206; x=1728481006; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VeS6fGpb9kLNgYn5kD0zRdoYybzkuxoklL8QigoCJf4=;
-        b=KU4RhYHWHCC4g0fmTg1/Dkzg1VktvC5b5RTSzRKtiG7dZiru5SqfGV7nOAJt1lWJT+
-         hMteBAOof+GuPa8I61MpnKDNmUNQOFeaxmAgWKQNKbh7QYwoXy7ISjZ8yPzzV/4mNhtH
-         UkTldSLsxCNc2D5Hq3S2OG7Vz4efP/9z9YApBnh5OKQXRM3AokAfUgRBRjv1/sx6qqPT
-         OfnSBiKQKisve/LpUNHah4CVaYqRgoJQcUrTVv7G0Si0xagTN9rrjH0cBn6xGfJ85gCE
-         qM1hEe1A7ij8j3zuF949q7jvANczuZmPoYBs154wdvT5u6Gn6CeFMsP47XtgjSfv6EGT
-         rILA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727876206; x=1728481006;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VeS6fGpb9kLNgYn5kD0zRdoYybzkuxoklL8QigoCJf4=;
-        b=QSQDJ0Ed/ku4TRYJbopWwLwlDfdPHomB9HHqYlkvsm6XXTlOAlc+AJguoNjuR5k/DT
-         s2dXtCMUonkF+MJ+4pRjAd+yPqky5j6C8ZcYsw1qswAiYHQv5o20+0v2U/lC/r55Q/qe
-         zCp3rtfIyO/nfglCvS+eR2y3OIS9UUHUck7Z2NjwLiTG3SOGdf6xFKjgSAFTFW8qNA2O
-         w6GuKISMa11U0iJopEu7A2VpgH2j+nodkwlQvE83ix9AMNpwOkc5Oc20XO32Orh5IjcS
-         dWHa1Uwaj4r6f57DUdWVTQTzszfiUd4OuTzstnh8nAfACGqy9PWf9izgkw1lfjdf8sP3
-         TzEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCGsdtx4wwvA/aeHx357FS6D51CjCaZZTWpDrldMjZ0RPPsC11gPQWYAo8dOxwkhxpIjVnZ8nh14DlMj4b@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzJVOOcxGEcQ5LQxTgYS0xzNGUjrk6ykY8ebj7NosNQh6CbuG3
-	zWf9Fx/XNcyb8tA6RY+d/WBi10ZBaf37jf83VKRzDQf89Z8xoAYq+GMaQXrYWCXDbo6A/mIoDQk
-	55nNucoEI8qCZFAzNmPSi7/yh59dKWr0sA6sO
-X-Google-Smtp-Source: AGHT+IET4bgd2O7fUBJAw3Zthwv1E6m/zgp1w3SGtluJLDimHbPGXWAml2WMM4ZBGLhDNaa9XYD2lzzWg16o6cLs8qM=
-X-Received: by 2002:adf:b186:0:b0:374:c581:9f4f with SMTP id
- ffacd0b85a97d-37cfba16a00mr2083256f8f.55.1727876205409; Wed, 02 Oct 2024
- 06:36:45 -0700 (PDT)
+	s=arc-20240116; t=1727876448; c=relaxed/simple;
+	bh=jZLPez61J5wMwXMokqI09G0R/ctDuFExVER5WYtsa7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tESCzqOrA/8M3ks8m0FHb7R+6HObo9KiLi0Ll+XumW2uODA8j8xzlUJ1cfjEO9IA0kKbWNDwUue4uc/1Z03iKI8NA0MBv/MzvnoLOZdtcgUfqQvd3cyURCuzUmWgerCK+sbSbQLucsvn7QphZW32a1LUVBi1152TYqKzdqE3QG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TnzRLz4w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E2EB3bn2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TnzRLz4w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E2EB3bn2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 382071FD63;
+	Wed,  2 Oct 2024 13:40:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727876444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qN4jdMdYc3XrKwX0MrXijGkE/HH5JkxIjoq4ke+SNt4=;
+	b=TnzRLz4wyBRrAd/SRoVhfy79zNrs0HGerb4290Wa41zekCbCvDy4L9rxcnZ+mXvugbfFTX
+	KCLJTSlrLOWlrQAXblhefVK2oWRLMQ3VUyhU+nQLT6EyC+NeOc/Yoop6Cu4sYevnELBi2D
+	9P/+c8y6owZak/YRNt7s7ghKItcB+Bo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727876444;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qN4jdMdYc3XrKwX0MrXijGkE/HH5JkxIjoq4ke+SNt4=;
+	b=E2EB3bn2CHboFzcxEQ5RrhbOjVJ8rMRz6+NPt6ePzB1JvQNHQjmk3I9GiR2kSwfAbBfEbN
+	CLZmd2ExkWya1uCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727876444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qN4jdMdYc3XrKwX0MrXijGkE/HH5JkxIjoq4ke+SNt4=;
+	b=TnzRLz4wyBRrAd/SRoVhfy79zNrs0HGerb4290Wa41zekCbCvDy4L9rxcnZ+mXvugbfFTX
+	KCLJTSlrLOWlrQAXblhefVK2oWRLMQ3VUyhU+nQLT6EyC+NeOc/Yoop6Cu4sYevnELBi2D
+	9P/+c8y6owZak/YRNt7s7ghKItcB+Bo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727876444;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qN4jdMdYc3XrKwX0MrXijGkE/HH5JkxIjoq4ke+SNt4=;
+	b=E2EB3bn2CHboFzcxEQ5RrhbOjVJ8rMRz6+NPt6ePzB1JvQNHQjmk3I9GiR2kSwfAbBfEbN
+	CLZmd2ExkWya1uCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2AA0913974;
+	Wed,  2 Oct 2024 13:40:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CJJhClxN/WacIQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 02 Oct 2024 13:40:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D4080A08CB; Wed,  2 Oct 2024 15:40:43 +0200 (CEST)
+Date: Wed, 2 Oct 2024 15:40:43 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, jfs-discussion@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [syzbot] [jfs?] KASAN: null-ptr-deref Read in drop_buffers (3)
+Message-ID: <20241002134043.4wyvsahhhsrtem2g@quack3>
+References: <66fcb7f9.050a0220.f28ec.04e8.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
- <20241001-b4-miscdevice-v2-2-330d760041fa@google.com> <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
- <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
-In-Reply-To: <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 2 Oct 2024 15:36:33 +0200
-Message-ID: <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-To: Christian Brauner <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66fcb7f9.050a0220.f28ec.04e8.GAE@google.com>
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	MISSING_XM_UA(0.00)[];
+	TAGGED_RCPT(0.00)[de1498ff3a934ac5e8b4];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Oct 2, 2024 at 3:24=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Wed, Oct 02, 2024 at 12:48:12PM GMT, Arnd Bergmann wrote:
-> > On Tue, Oct 1, 2024, at 08:22, Alice Ryhl wrote:
-> > > +#[cfg(CONFIG_COMPAT)]
-> > > +unsafe extern "C" fn fops_compat_ioctl<T: MiscDevice>(
-> > > +    file: *mut bindings::file,
-> > > +    cmd: c_uint,
-> > > +    arg: c_ulong,
-> > > +) -> c_long {
-> > > +    // SAFETY: The compat ioctl call of a file can access the privat=
-e
-> > > data.
-> > > +    let private =3D unsafe { (*file).private_data };
-> > > +    // SAFETY: Ioctl calls can borrow the private data of the file.
-> > > +    let device =3D unsafe { <T::Ptr as ForeignOwnable>::borrow(priva=
-te)
-> > > };
-> > > +
-> > > +    match T::compat_ioctl(device, cmd as u32, arg as usize) {
-> > > +        Ok(ret) =3D> ret as c_long,
-> > > +        Err(err) =3D> err.to_errno() as c_long,
-> > > +    }
-> > > +}
-> >
-> > I think this works fine as a 1:1 mapping of the C API, so this
-> > is certainly something we can do. On the other hand, it would be
-> > nice to improve the interface in some way and make it better than
-> > the C version.
-> >
-> > The changes that I think would be straightforward and helpful are:
-> >
-> > - combine native and compat handlers and pass a flag argument
-> >   that the callback can check in case it has to do something
-> >   special for compat mode
-> >
-> > - pass the 'arg' value as both a __user pointer and a 'long'
-> >   value to avoid having to cast. This specifically simplifies
-> >   the compat version since that needs different types of
-> >   64-bit extension for incoming 32-bit values.
-> >
-> > On top of that, my ideal implementation would significantly
-> > simplify writing safe ioctl handlers by using the information
-> > encoded in the command word:
-> >
-> >  - copy the __user data into a kernel buffer for _IOW()
-> >    and back for _IOR() type commands, or both for _IOWR()
-> >  - check that the argument size matches the size of the
-> >    structure it gets assigned to
->
-> - Handle versioning by size for ioctl()s correctly so stuff like:
->
->         /* extensible ioctls */
->         switch (_IOC_NR(ioctl)) {
->         case _IOC_NR(NS_MNT_GET_INFO): {
->                 struct mnt_ns_info kinfo =3D {};
->                 struct mnt_ns_info __user *uinfo =3D (struct mnt_ns_info =
-__user *)arg;
->                 size_t usize =3D _IOC_SIZE(ioctl);
->
->                 if (ns->ops->type !=3D CLONE_NEWNS)
->                         return -EINVAL;
->
->                 if (!uinfo)
->                         return -EINVAL;
->
->                 if (usize < MNT_NS_INFO_SIZE_VER0)
->                         return -EINVAL;
->
->                 return copy_ns_info_to_user(to_mnt_ns(ns), uinfo, usize, =
-&kinfo);
->         }
->
-> This is not well-known and noone versions ioctl()s correctly and if they
-> do it's their own hand-rolled thing. Ideally, this would be a first
-> class concept with Rust bindings and versioning like this would be
-> universally enforced.
+On Tue 01-10-24 20:03:21, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17b18307980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=de1498ff3a934ac5e8b4
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10718307980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f3939f980000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e32cde8d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/9c681f5609bc/vmlinux-e32cde8d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/00b4d54de1d9/bzImage-e32cde8d.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/14b0b7eafa4c/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+> BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+> BUG: KASAN: null-ptr-deref in buffer_busy fs/buffer.c:2881 [inline]
+> BUG: KASAN: null-ptr-deref in drop_buffers+0x6f/0x710 fs/buffer.c:2893
+> Read of size 4 at addr 0000000000000060 by task kswapd0/74
 
-Could you point me at some more complete documentation or example of
-how to correctly do versioning?
+Weird. This shows bh has been NULL in drop_buffers() which can happen only
+when the buffer_head circular list on the page has been corrupted
+(otherwise page_buffers() would have BUGed earlier). The reproducer does
+only mount of JFS and FAT filesystems so likely suitably corrupted
+filesystem for one of these is causing memory corruption. Added relevant
+maintainers to CC to have a look.
 
-Alice
+								Honza
+
+> CPU: 0 UID: 0 PID: 74 Comm: kswapd0 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_report+0xe8/0x550 mm/kasan/report.c:491
+>  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>  instrument_atomic_read include/linux/instrumented.h:68 [inline]
+>  atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+>  buffer_busy fs/buffer.c:2881 [inline]
+>  drop_buffers+0x6f/0x710 fs/buffer.c:2893
+>  try_to_free_buffers+0x295/0x5f0 fs/buffer.c:2947
+>  shrink_folio_list+0x240c/0x8cc0 mm/vmscan.c:1432
+>  evict_folios+0x549b/0x7b50 mm/vmscan.c:4583
+>  try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4778
+>  shrink_one+0x3b9/0x850 mm/vmscan.c:4816
+>  shrink_many mm/vmscan.c:4879 [inline]
+>  lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+>  shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+>  kswapd_shrink_node mm/vmscan.c:6765 [inline]
+>  balance_pgdat mm/vmscan.c:6957 [inline]
+>  kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> ==================================================================
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
