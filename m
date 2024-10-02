@@ -1,133 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-30757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C747598E204
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 20:00:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0815E98E25B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 20:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF581C23070
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 18:00:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2855B21CC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 18:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CC81D1508;
-	Wed,  2 Oct 2024 18:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E19F212F1A;
+	Wed,  2 Oct 2024 18:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XCTkLsF5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpLyxwDc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF151D174C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Oct 2024 18:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E440F1D0BA2;
+	Wed,  2 Oct 2024 18:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727892050; cv=none; b=h50HqtnnXxwOsnXcgPMr1V9rIVeekTGSgW4jpFo0EPUov7cbD/BDIvoGkJdmSJapaDDKlSflSqjsO5qAFQNCcuDIC3VoSgtFSgljW9fcjWQY4FgvFmNmdRG7ain7SOhdmKT/SaRczoqYAHbVyd25YxlDhmi+LK6MFPJ8EagMj5Y=
+	t=1727893465; cv=none; b=PfkXg2L7vJHCMMjUPdVfs9UFvti754YU9W1Z3s2YUhItkZudMlUMlfJbmbm4i8g8u6q/xbpkaVYnqFaMEUiDhJ+xah9y0WpixFk1AIO8wuUPYJhrzFm3GBzJfVHmUz2kqN9wTusnYjiU6jcmSB8BaCPV/nMLHjI/FJ3VRGgUTWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727892050; c=relaxed/simple;
-	bh=05yGC6hKcwAdcRf2UNZvWovJuEM40Fh85xtp43QdXw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nS0mD4H5Mu5N8CUgLdCW9540gEiWSJu0t80s+dY/vGOjl0gHCiAAXeOQ/QK5+zOp7FdFzYgR+aukugqi2HbrgEmq3vgKik3KXT9KLv7pd6YGdbOwOiZIisbfQ9yCu8hSsO17sS7vPutB7H4/+Xw3qI+cMDc26PwjVcOIq8btWvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XCTkLsF5; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-8324124a172so4058739f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Oct 2024 11:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727892047; x=1728496847; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ozC4Wyjdu4pmuRDMmWKmlCuUQ8Fi4PleS7Ihu8qdzqI=;
-        b=XCTkLsF5N1KWJzDSbmV3mQUMCmkrzLpyNO5sElOzLS+PG6lCvStq/Mnr7ovCLhfD/y
-         exGpoKNkRFBT203heedOdSKCEiJl9YyuQQaSiNPMTYfzCE5Avb0CvfEIwdV7h9aAjIx6
-         4fYBUzLL2OvVHgWpfK+JlwxvcxoYnAisX5Ame0hrXIRvwym+Ow6jhAqqisxN6TzJYMCL
-         /id1szqRyCxrHTtkn02RUVgCCFZNZQjZ0wVGxKZLj5iZdwqRpaDBSboWQd7LW2xjIt71
-         GWQ1uFSi7BAynuuilFCr1zItXMcp8HCfEcJ5Aqu93hGuD7FzBhOuxz8dmoca9WZFzidK
-         9w6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727892047; x=1728496847;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ozC4Wyjdu4pmuRDMmWKmlCuUQ8Fi4PleS7Ihu8qdzqI=;
-        b=vAah5/1rkRmq+ByKhe1XlzLvTqBQSO5iOM/mqz2sq3/nbP0i1Q5EHw9OmZLyu6eJVF
-         PPy3pj7FyTlCJnkdbGwfq+w5YthZL+SXyVub2Qtzp7QOU7a7kmCI8N2HR9y/ikX+edaa
-         dVmH/LSQiYJLI9zWlmNSwFYAQPNrO+aKxMXbeJJ2rCx1mS5uid9Nj2oFA7ABUOaRjKp/
-         6mgDvuBjkSKnjk4QkjQyaJESetRe6fjsSGHiyDB9zoNL8Sl+qz40b+PQjACbCP2XFCiI
-         5TJ2i3NokQAzPXv+nznlp78Evl8zrHBm6UhC1vts5LFodCuY9Mgic69c4djHAWnIZgpr
-         dmpA==
-X-Gm-Message-State: AOJu0YxRx5qkW9/szUSpFjuRGwm7MaqvV13Cvzq0A9qjevZ5G1iGpNd6
-	R/IyiBBCOP9U3rdK25pQBqYeuogndRzBa//ZxYVtUaU1A8i2FvT2zRDzd4kusSc=
-X-Google-Smtp-Source: AGHT+IH/ifZ/wMzuWeC+hfqcHscZJhSVf6PjF+TaiduZ1HBSmEb0uj5p+wUO7ZhbON7h4/zjUcNT5Q==
-X-Received: by 2002:a05:6602:6d0e:b0:82d:2a45:79f5 with SMTP id ca18e2360f4ac-834d84d4e78mr356729039f.13.1727892046900;
-        Wed, 02 Oct 2024 11:00:46 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888f9b30sm3200185173.171.2024.10.02.11.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 11:00:46 -0700 (PDT)
-Message-ID: <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
-Date: Wed, 2 Oct 2024 12:00:45 -0600
+	s=arc-20240116; t=1727893465; c=relaxed/simple;
+	bh=Xn5r/F/y3n+IVpjGqNQ5xxlIqpNtWX913WJmrs1pThE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7uWIBxI9rCW4y8mrtACrt3pke4a1pYL+uiRPDB/6k2cLiQnO3smwt7TASScNSkkfzsyuW25qkEMzbfPWj/UzpIbfFlKFaIz4tqJDof2KUWyIt03s4K5R6x/wiDAmbhJ3KszeGT3YiA1cHxzcSrjaIJsqDRrDa+SC2if9Oz2YjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpLyxwDc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4524BC4CEC2;
+	Wed,  2 Oct 2024 18:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727893464;
+	bh=Xn5r/F/y3n+IVpjGqNQ5xxlIqpNtWX913WJmrs1pThE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HpLyxwDchSeqF4R9rk9zqytwWCTBbpujg7WnOnXPszioolkSCIFdMKzkLWZeF4ohP
+	 PssFFutZ0TqK/qn3q51d9EEuAw1pmYyCIWQjcAmufjUCC0l618/rZcYNJWnnizCg2G
+	 1CNq7+MXFCmw+6MEaE1iTjnB6QQMMH8g2IbrGHBviaxXC3DKarwixTHZrjcuZIVaF8
+	 uykmFydsc/VUQbPXgNyiEqKDEo6UDITxmpz1IbAxb3J0yd96UH6KQ5fJ2jmwinS3Lh
+	 bV3306MvladnEqvxq3o8HLRZ428Zey8544gcd+Ycx/nCEeiynVhb3l2MR99n+DXhMT
+	 0AeL/bD/KzbNQ==
+Date: Wed, 2 Oct 2024 19:24:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	David Spickett <david.spickett@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v13 16/40] KVM: arm64: Manage GCS access and registers
+ for guests
+Message-ID: <37fbc082-6bda-46e3-9ee7-9240b41f26fd@sirena.org.uk>
+References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
+ <20241001-arm64-gcs-v13-16-222b78d87eee@kernel.org>
+ <86bk0373nq.wl-maz@kernel.org>
+ <86a5fm7b4i.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
- io-uring@vger.kernel.org, cgzones@googlemail.com
-References: <20241002011011.GB4017910@ZenIV>
- <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
- <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
- <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
- <20241002020857.GC4017910@ZenIV>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241002020857.GC4017910@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="f644fc4VKEnWPPLA"
+Content-Disposition: inline
+In-Reply-To: <86a5fm7b4i.wl-maz@kernel.org>
+X-Cookie: Know Thy User.
 
-On 10/1/24 8:08 PM, Al Viro wrote:
-> On Tue, Oct 01, 2024 at 07:34:12PM -0600, Jens Axboe wrote:
-> 
->>> -retry:
->>> -	ret = filename_lookup(AT_FDCWD, ix->filename, lookup_flags, &path, NULL);
->>> -	if (!ret) {
->>> -		ret = __io_setxattr(req, issue_flags, &path);
->>> -		path_put(&path);
->>> -		if (retry_estale(ret, lookup_flags)) {
->>> -			lookup_flags |= LOOKUP_REVAL;
->>> -			goto retry;
->>> -		}
->>> -	}
->>> -
->>> +	ret = filename_setxattr(AT_FDCWD, ix->filename, LOOKUP_FOLLOW, &ix->ctx);
->>>  	io_xattr_finish(req, ret);
->>>  	return IOU_OK;
->>
->> this looks like it needs an ix->filename = NULL, as
->> filename_{s,g}xattr() drops the reference. The previous internal helper
->> did not, and hence the cleanup always did it. But should work fine if
->> ->filename is just zeroed.
->>
->> Otherwise looks good. I've skimmed the other patches and didn't see
->> anything odd, I'll take a closer look tomorrow.
-> 
-> Hmm...  I wonder if we would be better off with file{,name}_setxattr()
-> doing kvfree(cxt->kvalue) - it makes things easier both on the syscall
-> and on io_uring side.
-> 
-> I've added minimal fixes (zeroing ix->filename after filename_[sg]etxattr())
-> to 5/9 and 6/9 *and* added a followup calling conventions change at the end
-> of the branch.  See #work.xattr2 in the same tree; FWIW, the followup
-> cleanup is below; note that putname(ERR_PTR(-Ewhatever)) is an explicit
-> no-op, so there's no need to zero on getname() failures.
 
-Looks good to me, thanks Al!
+--f644fc4VKEnWPPLA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Jens Axboe
+On Wed, Oct 02, 2024 at 04:55:25PM +0100, Marc Zyngier wrote:
+> Marc Zyngier <maz@kernel.org> wrote:
+
+> > > +	if (!kvm_has_gcs(kvm))
+> > > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
+> > > +						HFGxTR_EL2_nGCS_EL1);
+
+> > Why are you still allowing the GCS instructions when GCS isn't
+> > enabled?
+
+> Scratch that, they are NOPs when GCS isn't enabled, so there shouldn't
+> be any need for extra traps.
+
+They are, though really they should UNDEF if GCS isn't there (which I
+had thought was what you were referencing here).  Equally we only have
+traps for a subset of GCS instructions and it's not like there aren't a
+whole bunch of untrappable extensions anyway so it's not clear it's
+worth the effort just for that.
+
+--f644fc4VKEnWPPLA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb9j8sACgkQJNaLcl1U
+h9AOWQf8DFoVOjrYp2ocafOH0wTbI6Jawr1ucPRjwYcn5sAGuTLywrEihNxOR42y
+l62ygvYkYtUWpgViQZqrQznNkYbdxg7O6dnvc4ywKu0iWo1KPVJFT0At7NZp6Pxy
+z8z/9OOYjxelIy33541t+XgjS3MxR3LA2PJSZd7ZOd4sHZMl7t1oLNi/s9HV0LAK
+/xkcFEkwnX1y0EndbVnntD9crF+J0pBIuO1z3wtywncxixscc0PgM3e1mvmTmYu6
+k62weouXEqlaiF5DZ6hHH4iHj8mPMYlnmvEz6Dsiev6PWcCm2hYrKiIO44ThjQJU
+OggiVTV8pqPtukHW/VmVN/VFPC5k6w==
+=YDrc
+-----END PGP SIGNATURE-----
+
+--f644fc4VKEnWPPLA--
 
