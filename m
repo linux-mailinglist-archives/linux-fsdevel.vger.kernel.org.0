@@ -1,102 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-30904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7851898F4D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 19:09:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A20698F774
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 22:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F4771C21A2B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 17:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07D01F22836
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 20:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FFC1A76B7;
-	Thu,  3 Oct 2024 17:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAC3145B3E;
+	Thu,  3 Oct 2024 20:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="eQ0ANPeT"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cCbsgQMv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C8D1A4F12
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 17:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134754C8F;
+	Thu,  3 Oct 2024 20:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727975364; cv=none; b=nTwrRo0r65oBWUjD/I3KlAiLecuJZaSrKoVQHcRA029Rw0mF2WA9aRMHEWnM+SU3E8kWsbXbpzZQdWWQlbQ/GHeDZhNvYRXNsVBPmyB7nVo1l5Gb6j0Mr1HIHwmaqA3OMcj3MIoNVVUhGaGWonSVlEJyLErVik84CdKScIgZCoA=
+	t=1727985694; cv=none; b=OFl6Zx5qrlQJmnBOUIe760YxVa8NDej5zS5DF8DGod9ZCxLoBC8gesdFket4ivNWsaekenAmwbepb3v61OGWhaswtpqIuz0sGXZHD7TFMks94qVmtCPXrqct4LelFGG7NTWsYMg7pNqHd62vVTJ+4E2AqVZ8h62GHyk6NBo5gSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727975364; c=relaxed/simple;
-	bh=veZob2f6f+jF2aoHyYukXoVPX5HhWe0/4HygDAWChU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fACPns2rLnShOYb8V1eGO188v63phUUU1vVoghpxUpv70q5f3HCokJI0+H8nOyEr1HwyDhRDSkATflmQTnigDYJ/khP5KZS9bMVCy/YXHvT31BI3znlWQTm9I+98K1IFT2uSGVofD2OlnD/EH57QfEAME16guaYyZPdv8HecUPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=eQ0ANPeT; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6cb7f5f9fb7so11124166d6.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 10:09:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1727975362; x=1728580162; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lv6+V5DD1q+EbvJERytZupM7GavIklndcKQm84ak25U=;
-        b=eQ0ANPeTYr8J7l35leuTWmevYYkn3K9uaDc2xiHwiHkiLe3SJ+5kibIXt7agq4PFDA
-         JQeUfRsW08ZF3ba3BvlcmILg9PRosdgOwcoWZ610B9g29P9PX8fWgVVh9fqSJrT88H/P
-         JqNHnzjsVMK8ESNdiSz1gSOgah2yixAcfEi5aXNaUFOBKEKyBJwaFtjtZCoSuHMHpLoY
-         dzU2ZZ0ItUGWtzbdHoDRBlvR8C0YHbuhPLB81Is+wNq9pgJ08W/T017eQLZ7VGm3fG8z
-         wuUzmqxV6scwPswbdeJUiaSFdUZYanVxkelJwG+RVL3CIF/01tKvZL0HKohFo0pr2syG
-         wg4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727975362; x=1728580162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lv6+V5DD1q+EbvJERytZupM7GavIklndcKQm84ak25U=;
-        b=vJ/pcnrljzaiCcDTZoyI2VNdvPcnvhZNhUEyLhUly0Qt+UKpw2963KSy6ZLf8uHLjJ
-         ApIGFTd2IyyrP+itRUZGYNEtLKjIFeyKwPZl6bFT2DRPORUuyerYaSJg+3gqeNi17h1j
-         KRWu4uZrN99bwdVTlm9bQauC2Z5tf2ApA1VPJFEryz9SQybtdSa5+WFjwuLVLk4X78FE
-         FF8Mg8799xN6pK/xwt4YoDiUYk4DJXr1Iq9+Mn2lK6Y/yEPRNJDCUOsTlT4oNBQ+Dcqd
-         8GjkPU8NhO1StcXPJKfFfqTCvlv5ydnF9YHnV9U0SAYwmQWTyfZYJ5TwokVuf1dCAnSd
-         dXcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMs0TuyKCBSNKGENjDdgGW7rIr49LZlrkJ6a66Cn6wSK7cAkNvLTah+WQLNCXRSA+D9nOyyIFGr5Jh1FOj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn7DBLfAWLv+vm4Mt4s+DHtTtp2xpiQ+nZ/salOPtlxhqcCnMv
-	gsX4rmx69zCZbEcM3b9dv0QuFYjR6AeNZQLaYCB+V+NAnd1BrVHIxk1/QTxmC7s=
-X-Google-Smtp-Source: AGHT+IEkPpCAXCAtA9gfAP3eyJpKVnJ4NiXCYXXWlVAcJ8PH9XCm1z/O2+YTyJX5Rf/ppniNPbZCyg==
-X-Received: by 2002:a05:6214:5547:b0:6cb:3d8c:994a with SMTP id 6a1803df08f44-6cb81a955femr111164996d6.32.1727975361783;
-        Thu, 03 Oct 2024 10:09:21 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb937f478fsm8082636d6.121.2024.10.03.10.09.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 10:09:20 -0700 (PDT)
-Date: Thu, 3 Oct 2024 13:09:19 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-nilfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 4/6] btrfs: Switch from using the private_2 flag to
- owner_2
-Message-ID: <20241003170919.GA1652670@perftesting>
-References: <20241002040111.1023018-1-willy@infradead.org>
- <20241002040111.1023018-5-willy@infradead.org>
+	s=arc-20240116; t=1727985694; c=relaxed/simple;
+	bh=RqvHe7FU3fH5p95Bh+yW9c9wRy4QevpHahv2OjiepJE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=J7m8iP/BEgWkqgznkwWPKluAg2l5sAYGCHB39KryQxA/OLzrYtswmRmJPUO72J6CL+aKDMD5WcLVKLNnXr3l46TnEqNdj5zDV8b2IVaPEzdMywidXCzPiuS7kPZydPHDSR6gRyimKJMpL/3X6iG76I9QMoc8pMCc7yd3geEoeEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cCbsgQMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D2EC4CEC5;
+	Thu,  3 Oct 2024 20:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727985693;
+	bh=RqvHe7FU3fH5p95Bh+yW9c9wRy4QevpHahv2OjiepJE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cCbsgQMv4beJNsGDComQA56FRALBKQ/tfqX/N8uf/WNy+YhDxz1SJ4HvrNYalZr59
+	 NLQ0webp0FE1qcMxRH94bFnuJKnNIA5yhCIgx8FAKNqTsxLjoxFugbDAC2bB5Hroke
+	 vbuDkw9SQ9foeP8Yh5ndTbCKfD8Yf/nhPhkH0JvM=
+Date: Thu, 3 Oct 2024 13:01:33 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox
+ <willy@infradead.org>, Yu Zhao <yuzhao@google.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] mm/truncate: reset xa_has_values flag on each iteration
+Message-Id: <20241003130133.afb8e8bbdfa8f638b0343473@linux-foundation.org>
+In-Reply-To: <zdrmuzjcgxps3ivdvnmouygdct2lr6qj2avypuj3hatv746rye@7wu3txx5hyou>
+References: <20241002225150.2334504-1-shakeel.butt@linux.dev>
+	<20241002155555.7fc4c6e294c75e2510426598@linux-foundation.org>
+	<zdrmuzjcgxps3ivdvnmouygdct2lr6qj2avypuj3hatv746rye@7wu3txx5hyou>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002040111.1023018-5-willy@infradead.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 02, 2024 at 05:01:06AM +0100, Matthew Wilcox (Oracle) wrote:
-> We are close to removing the private_2 flag, so switch btrfs to using
-> owner_2 for its ordered flag.  This is mostly used by buffer head
-> filesystems, so btrfs can use it because it doesn't use buffer heads.
+On Wed, 2 Oct 2024 16:09:11 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+
+> On Wed, Oct 02, 2024 at 03:55:55PM GMT, Andrew Morton wrote:
+> > On Wed,  2 Oct 2024 15:51:50 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > 
+> > > Currently mapping_try_invalidate() and invalidate_inode_pages2_range()
+> > > traverses the xarray in batches and then for each batch, maintains and
+> > > set the flag named xa_has_values if the batch has a shadow entry to
+> > > clear the entries at the end of the iteration. However they forgot to
+> > > reset the flag at the end of the iteration which cause them to always
+> > > try to clear the shadow entries in the subsequent iterations where
+> > > there might not be any shadow entries. Fixing it.
+> > > 
+> > 
+> > So this is an efficiency thing, no other effects expected?
+> > 
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Correct, just an efficiency thing.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-
-Thanks,
-
-Josef
+Thanks.  I'm assuming the benfits are sufficiently small that a
+backport is inappropriate.
 
