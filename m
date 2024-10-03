@@ -1,220 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-30846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D544898EC2A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:18:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95E698EC2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B8451F230D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 09:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090131C21EE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 09:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3B013DDA7;
-	Thu,  3 Oct 2024 09:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AC4145FE8;
+	Thu,  3 Oct 2024 09:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PdovzOO2"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kINfBTiO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XopqQ4Hh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kINfBTiO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XopqQ4Hh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A3F13D278
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 09:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760E3142E7C;
+	Thu,  3 Oct 2024 09:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727947100; cv=none; b=YVS8T8K7lgT53xiKPCUaMspSGU9TR3Q5g4W4llJsBv4XOX5HmX4+fVmIKAj3Yvou6Hk5pqNwml+gCcBUi7Ivf41M6O3BjSOPVWL5LHGePxJe6UM8XTpCqrj7geG8WbowC/6EaXalD+CkhBaBlveZ9P/MtZa5ffcrixMIIgLcfgQ=
+	t=1727947213; cv=none; b=rXv3XijHoR1CL4a7+5V+OIPG1Bd6V80aiEvI5CUWffRsd8TQlSDrJscXlACocncRxgzvLuDqajdklMQ8hjXdAhfEnIfwBTrwzxLK8ae8O7rAp3xXvpgaTLpfevCjPQo1+crKTZrm7d7BtSP406Y6l8YCFEIGgQuhez59/H0Awn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727947100; c=relaxed/simple;
-	bh=15bsU0HbITQ3+oiuRp/G0tZQ0ATd6GnQtB2srh/nO6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HQwuUqyZKkQIRMLjKxXI+9GU82bdAwriHS0PYlQWjLwg+c2P04sCLt3DDTrMJX9jiJrJAGKeMMyUucaAmvqX/Qubv7ZxWpIN2IIU0zLXfSWWFDT+Pqw4OftM5VEeLaNgbF5cpoN0CgiCo6knWK8InIaPMf4SuM3buH5NoXfUu4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PdovzOO2; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7ac83a98e5eso68216785a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 02:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727947098; x=1728551898; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=15bsU0HbITQ3+oiuRp/G0tZQ0ATd6GnQtB2srh/nO6c=;
-        b=PdovzOO2HFylhjXvHq+Xbrpyt2huI6yKmINOgxL+U8QcSNU74h8WXdsdeGEIejuGrp
-         CXDLZoz9PkaF2eUj6t84O2Gn1GiupH72bsib+fW2BedAJtbwu9bna1QcbiXD+QlEMjoN
-         hjiifbdiXrDcsfuil6+xiT7lXXXd2YaykzhWZ08hM9GUEmiOc/zZK43Ac8OhyEpmlcxz
-         ljYPUOGrh5JP0TKlIbd/0o6yDom0ortZZVBvkiztpNm9NWfNYF3RpUT8rHtG72mUOGUb
-         h1q1Fd0GxdfA+cNLbqo/l/wsX04VZP8KY6gqvY9ppNeGQLytV5mJRO6g4lGBd8SFsmEm
-         Bn5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727947098; x=1728551898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=15bsU0HbITQ3+oiuRp/G0tZQ0ATd6GnQtB2srh/nO6c=;
-        b=VukE8ZYei7COeKUKmw6IQPjk68jat4EC28FQOmxNiYfao/X1UbXip/93Ac0vjY37bl
-         O6IvDUqTyBBr+sUpI7kRJvwu1lt1wmqFxM3kh89PgXS+G/6pbysRBrDDtlar+iz7wdLq
-         2heqPWvtFVrj5UPFNnYh4EEdN0tvHtxAzH9nx6oOKm9wJCJ9RMmiqpJgLn8hQTILcMyX
-         T9NhtPqM4yyPLlfVtoPxuNPPeE9qtJLbKoV64vO9okGc652qIDW7WoXRRFnaB7fvhbOu
-         ub6i2GS5gSvb4N4TvJ9JHNxH66YqVIO+fipXDnDVApm4OUuv3C3a7/3L2TUR9CyxbEGB
-         vg+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU7DfjAc+Wo5RKfYNaayxBBYo1vXzeAM+MkcBsSLX+SlU/rLOofZd9cd+JQM6w+nfkzwXXQL3kECu1I2dgf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4BVOz0FwQgzoq+Unq0uXvytAyAo3efzY2K4IzDXscdAbSat/j
-	WoieBG/2mQitKMUZZo8bSCtqtEutAZr6dtoVCsKrxq/ACTmYcdDs+61qSSZlgkrN6E1Q02rW1w7
-	hz+VsUcT5OLu6+/zKfiLRltAD5OU=
-X-Google-Smtp-Source: AGHT+IG6/mKVmnuYrJQTUn6inhgP4WmfvvwWksg5tjEi0jB1xKgq1YmXqrTKKQRIw/Iy1PXNYr04fhnt9ohLHyLeev4=
-X-Received: by 2002:a05:620a:c42:b0:7a6:4da7:8325 with SMTP id
- af79cd13be357-7ae67e2a8e5mr412301485a.6.1727947097654; Thu, 03 Oct 2024
- 02:18:17 -0700 (PDT)
+	s=arc-20240116; t=1727947213; c=relaxed/simple;
+	bh=HpSg4uPT57z+yFVjv2qUWXRrtFmbShFKEto95tZFuto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTrV/pbkCZ1Njz9pZpr0UOu7Z8HakM+UWQ76f1nJMiFtta98P9A0d2iox79ElKk9ogRpaRvAUtZiI7GFW+EQlIO43T7rQfXCKh18ETyJE76RRQlRdzITD2A2O1wZZTwVWmpjzO6S2wt2k9YJSJtYiHy+k/rt6xGkYXielBvQD9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kINfBTiO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XopqQ4Hh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kINfBTiO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XopqQ4Hh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0994721D1C;
+	Thu,  3 Oct 2024 09:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727947203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jtiHrCDe2cBAFXvqtg+ujXCV8xUpYaNIQo/MxZah8zs=;
+	b=kINfBTiOs46E5+lwjBmfaTewMASHQMuEx3imq8916qdWtOUloHJO/wibONsr5IXPOpYpAQ
+	2NK77PgCQLL+ZEUon5sSdrOglvd2Rj/ScGkrj9jewMrvRLf08Xh6RdhoGUW+Um8cFIV+IB
+	xTaxfqb2R0tooQl0B01OLli972chZ0E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727947203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jtiHrCDe2cBAFXvqtg+ujXCV8xUpYaNIQo/MxZah8zs=;
+	b=XopqQ4Hhpnfww9fNxDYALkapBPpSOo3v9OhDRG0lVS0e1TiwuFDinqG9HRkSupVLgbhc8o
+	IZtHe3qrsm5lElCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kINfBTiO;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=XopqQ4Hh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727947203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jtiHrCDe2cBAFXvqtg+ujXCV8xUpYaNIQo/MxZah8zs=;
+	b=kINfBTiOs46E5+lwjBmfaTewMASHQMuEx3imq8916qdWtOUloHJO/wibONsr5IXPOpYpAQ
+	2NK77PgCQLL+ZEUon5sSdrOglvd2Rj/ScGkrj9jewMrvRLf08Xh6RdhoGUW+Um8cFIV+IB
+	xTaxfqb2R0tooQl0B01OLli972chZ0E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727947203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jtiHrCDe2cBAFXvqtg+ujXCV8xUpYaNIQo/MxZah8zs=;
+	b=XopqQ4Hhpnfww9fNxDYALkapBPpSOo3v9OhDRG0lVS0e1TiwuFDinqG9HRkSupVLgbhc8o
+	IZtHe3qrsm5lElCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F3C66139CE;
+	Thu,  3 Oct 2024 09:20:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sQuCO8Jh/mZqagAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 03 Oct 2024 09:20:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B1314A086F; Thu,  3 Oct 2024 11:20:02 +0200 (CEST)
+Date: Thu, 3 Oct 2024 11:20:02 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 1/7] vfs: replace invalidate_inodes() with evict_inodes()
+Message-ID: <20241003092002.h4p46cifkodeubjb@quack3>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-2-david@fromorbit.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927125624.2198202-1-amir73il@gmail.com> <20240930154249.4oqs5cg4n6wzftzs@quack3>
- <CAOQ4uxg-peR_1iy8SL64LD919BGP3TK5nde_4ZiAjJg5F_qOjQ@mail.gmail.com>
- <20241002130103.ofnborpit3tcm7iw@quack3> <CAOQ4uxgo=0ignH-2gSyWYmcCoAvQJA=o8ABS+u2_=iiBDvsLgQ@mail.gmail.com>
- <20241002144749.zi7d56ndvvj3ieol@quack3>
-In-Reply-To: <20241002144749.zi7d56ndvvj3ieol@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 3 Oct 2024 11:18:06 +0200
-Message-ID: <CAOQ4uxjY0hAVVEbWCU1C02xqGPej67JsQk06BTj6=f=NGc6d5Q@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: allow reporting errors on failure to open fd
-To: Jan Kara <jack@suse.cz>
-Cc: Krishna Vivek Vitta <kvitta@microsoft.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002014017.3801899-2-david@fromorbit.com>
+X-Rspamd-Queue-Id: 0994721D1C
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On Wed, Oct 2, 2024 at 4:47=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 02-10-24 15:54:02, Amir Goldstein wrote:
-> > On Wed, Oct 2, 2024 at 3:01=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Mon 30-09-24 18:14:33, Amir Goldstein wrote:
-> > > > On Mon, Sep 30, 2024 at 5:42=E2=80=AFPM Jan Kara <jack@suse.cz> wro=
-te:
-> > > > >
-> > > > > On Fri 27-09-24 14:56:24, Amir Goldstein wrote:
-> > > > > > When working in "fd mode", fanotify_read() needs to open an fd
-> > > > > > from a dentry to report event->fd to userspace.
-> > > > > >
-> > > > > > Opening an fd from dentry can fail for several reasons.
-> > > > > > For example, when tasks are gone and we try to open their
-> > > > > > /proc files or we try to open a WRONLY file like in sysfs
-> > > > > > or when trying to open a file that was deleted on the
-> > > > > > remote network server.
-> > > > > >
-> > > > > > Add a new flag FAN_REPORT_FD_ERROR for fanotify_init().
-> > > > > > For a group with FAN_REPORT_FD_ERROR, we will send the
-> > > > > > event with the error instead of the open fd, otherwise
-> > > > > > userspace may not get the error at all.
-> > > > > >
-> > > > > > In any case, userspace will not know which file failed to
-> > > > > > open, so leave a warning in ksmg for further investigation.
-> > > > > >
-> > > > > > Reported-by: Krishna Vivek Vitta <kvitta@microsoft.com>
-> > > > > > Closes: https://lore.kernel.org/linux-fsdevel/SI2P153MB07182F34=
-24619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM/
-> > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > > ---
-> > > > > >
-> > > > > > Jan,
-> > > > > >
-> > > > > > This is my proposal for a slightly better UAPI for error report=
-ing.
-> > > > > > I have a vague memory that we discussed this before and that yo=
-u preferred
-> > > > > > to report errno in an extra info field (?), but I have a strong=
- repulsion
-> > > > > > from this altenative, which seems like way over design for the =
-case.
-> > > > >
-> > > > > Hum, I don't remember a proposal for extra info field to hold err=
-no. What I
-> > > > > rather think we talked about was that we would return only the su=
-ccessfully
-> > > > > formatted events, push back the problematic one and on next read =
-from
-> > > > > fanotify group the first event will be the one with error so that=
- will get
-> > > > > returned to userspace. Now this would work but I agree that from =
-userspace
-> > > > > it is kind of difficult to know what went wrong when the read fai=
-led (were
-> > > > > the arguments somehow wrong, is this temporary or permanent probl=
-em, is it
-> > > > > the fd or something else in the event, etc.) so reporting the err=
-or in
-> > > > > place of fd looks like a more convenient option.
-> > > > >
-> > > > > But I wonder: Do we really need to report the error code? We alre=
-ady have
-> > > > > FAN_NOFD with -1 value (which corresponds to EPERM), with pidfd w=
-e are
-> > > > > reporting FAN_EPIDFD when its open fails so here we could have FA=
-N_EFD =3D=3D
-> > > > > -2 in case opening of fd fails for whatever reason?
-> > > > >
-> > > >
-> > > > Well it is hard as it is to understand that went wrong, so the erro=
-r
-> > > > codes provide some clues for the bug report.
-> > > > ENOENT, ENXIO, EROFS kind of point to the likely reason of
-> > > > failures, so it does not make sense for me to hide this information=
-,
-> > > > which is available.
-> > >
-> > > OK, fair enough. I was kind of hoping we could avoid the feature flag=
- but
-> > > probably we cannot even if we added just FAN_EFD. But I still have a =
-bit of
-> > > problem with FAN_NOFD overlapping with -EPERM. I guess it kind of mak=
-es
-> > > sense to return -EPERM in that field for unpriviledged groups but we =
-return
-> > > FAN_NOFD also for events without path attached and there it gets
-> > > somewhat confusing... Perhaps we should refuse FAN_REPORT_FD_ERROR fo=
-r
-> > > groups in fid mode?
-> >
-> > Makes sense.
-> >
-> > > That would still leave overflow events so instead of
-> > > setting fd to FAN_NOFD, we could set it to -EINVAL to preserve the pr=
-operty
-> > > that fd is either -errno or fd number?
-> > >
-> >
-> > EOVERFLOW? nah, witty but irrelevant.
-> > I think EBADF would be a good substitute for FAN_NOFD,
-> > but I can live with EINVAL as well.
->
-> EBADF is fine with me, probably even better.
->
-> > > And then I have a second question about pidfd. Should FAN_REPORT_FD_E=
-RROR
-> > > influence it in the same way? Something like -ESRCH if the process al=
-ready
-> > > exited and otherwise pass back the errno?
-> >
-> > Yeh that sounds useful.
->
-> OK, I guess we have an agreement :) Will you send an updated patch please=
-?
->
+On Wed 02-10-24 11:33:18, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
+> 
+> As of commit e127b9bccdb0 ("fs: simplify invalidate_inodes"),
+> invalidate_inodes() is functionally identical to evict_inodes().
+> Replace calls to invalidate_inodes() with a call to
+> evict_inodes() and kill the former.
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
 
-Sure. Will do.
+Indeed :). Looks good. Feel free to add:
 
-Please note that I intend to funnel this API change to stable.
-That is why I have annotated the patch with Reported-by and Closes.
-While this is not a traditional stable backport candidate, this API can
-really be used by the user that reported the issue to solve a problem
-or get better insights once the distro picks up this API.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Also, considering the recent backport of the entire fanotify API from
-v6.6 back to v5.10, I no longer feel compelled to obey no the legacy
-no new features rule for the stable trees.
+								Honza
 
-Thanks,
-Amir.
+> ---
+>  fs/inode.c    | 40 ----------------------------------------
+>  fs/internal.h |  1 -
+>  fs/super.c    |  2 +-
+>  3 files changed, 1 insertion(+), 42 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 471ae4a31549..0a53d8c34203 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -827,46 +827,6 @@ void evict_inodes(struct super_block *sb)
+>  }
+>  EXPORT_SYMBOL_GPL(evict_inodes);
+>  
+> -/**
+> - * invalidate_inodes	- attempt to free all inodes on a superblock
+> - * @sb:		superblock to operate on
+> - *
+> - * Attempts to free all inodes (including dirty inodes) for a given superblock.
+> - */
+> -void invalidate_inodes(struct super_block *sb)
+> -{
+> -	struct inode *inode, *next;
+> -	LIST_HEAD(dispose);
+> -
+> -again:
+> -	spin_lock(&sb->s_inode_list_lock);
+> -	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
+> -		spin_lock(&inode->i_lock);
+> -		if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
+> -			spin_unlock(&inode->i_lock);
+> -			continue;
+> -		}
+> -		if (atomic_read(&inode->i_count)) {
+> -			spin_unlock(&inode->i_lock);
+> -			continue;
+> -		}
+> -
+> -		inode->i_state |= I_FREEING;
+> -		inode_lru_list_del(inode);
+> -		spin_unlock(&inode->i_lock);
+> -		list_add(&inode->i_lru, &dispose);
+> -		if (need_resched()) {
+> -			spin_unlock(&sb->s_inode_list_lock);
+> -			cond_resched();
+> -			dispose_list(&dispose);
+> -			goto again;
+> -		}
+> -	}
+> -	spin_unlock(&sb->s_inode_list_lock);
+> -
+> -	dispose_list(&dispose);
+> -}
+> -
+>  /*
+>   * Isolate the inode from the LRU in preparation for freeing it.
+>   *
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 8c1b7acbbe8f..37749b429e80 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -207,7 +207,6 @@ bool in_group_or_capable(struct mnt_idmap *idmap,
+>   * fs-writeback.c
+>   */
+>  extern long get_nr_dirty_inodes(void);
+> -void invalidate_inodes(struct super_block *sb);
+>  
+>  /*
+>   * dcache.c
+> diff --git a/fs/super.c b/fs/super.c
+> index 1db230432960..a16e6a6342e0 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1417,7 +1417,7 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
+>  	if (!surprise)
+>  		sync_filesystem(sb);
+>  	shrink_dcache_sb(sb);
+> -	invalidate_inodes(sb);
+> +	evict_inodes(sb);
+>  	if (sb->s_op->shutdown)
+>  		sb->s_op->shutdown(sb);
+>  
+> -- 
+> 2.45.2
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
