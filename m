@@ -1,83 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-30858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFF698EE85
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 13:52:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234A398EE90
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 13:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C26B2B21D0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:52:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6610283864
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237BC156C63;
-	Thu,  3 Oct 2024 11:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676EC15573B;
+	Thu,  3 Oct 2024 11:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bF/smIYF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ps3M+oYL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB87156885;
-	Thu,  3 Oct 2024 11:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389BA153BE4;
+	Thu,  3 Oct 2024 11:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727956305; cv=none; b=mImGgSmCS+b3cUhE8zg9Jp4myRNpRmdECpahnf3q3Hzxc/s2WTq85DqOzgyvo+dAObTEQIdPTi38RlGepHY7sycljCLWQGVe+XOdemyL4X/BAKgwb6uVKsGSDychsxtzMWfr7/2bh646DRPQ+PO9m87SO6rxnkj9eTEIRsZM3IQ=
+	t=1727956496; cv=none; b=K2xsWZn63i52V5Wi87XlATZGpyZAs9ezdf002PXTV5boLT/ufiJK9Dn5p82ePztfWEc0emGCcUfobol6ANgIxq4tOiw5NhyA2xXxtNjgy0xltVNz+GSpjskaAxnPzCb087FXSFCUfpCZ8UxzrI8EehrQpf7yUG04obGn3o9aLpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727956305; c=relaxed/simple;
-	bh=CE7nNG51C6FeTTZw/ZBE+xT/oR0uJD4QBMk9e4oDudI=;
+	s=arc-20240116; t=1727956496; c=relaxed/simple;
+	bh=P8eNBDWVtzOMU2dzORz7tnQpI5eec8Q+7oxATEblvAQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iQbA/KmgsEcltIp8PvEExztLL5DW8Xsy1PoJiHdvbsIPbmdY2Nh/ZNbvV3oewWZdNFRtnHvi14TUfw8K/Nhi4+VWZqDb9U4U6nEMKW6fKSRTNPCdLYeSl8LOxVu8S/28aqGVgt2UV1Nk0rbljWdSceyFx1qkOnU4cHqbFtbCfRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bF/smIYF; arc=none smtp.client-ip=209.85.208.179
+	 To:Cc:Content-Type; b=boukKuL5ufoGk88iqg3qpvK0syyIHrcJwggFlzKF9q243cxjs3ML1BJ4YpozAwaRrgfOBnZ4i+mNGYQ/xVJubLhYbl4DCPb/ofdp1ver/SUAcnHrn7gttT8bZGdY0XGztwHvIFEoAi8PyhUuvM9cK2e9dlmBY/2gLWFiArWCHR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ps3M+oYL; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2facf00b0c7so17733741fa.1;
-        Thu, 03 Oct 2024 04:51:43 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53994aadb66so820822e87.2;
+        Thu, 03 Oct 2024 04:54:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727956302; x=1728561102; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727956493; x=1728561293; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wHoupr0/kc4L7oGrZ6tJxNRor5ARaNvDgSroHEc/yPw=;
-        b=bF/smIYF+9ZxO4XxSW1uFEav83VsCLMETHhPN4GlgeoGydcSZ9lc9f80A4nbCVnt2U
-         Yxi2DPWH+VTmMvQVPQgt1QEexHi7sb89KMIBFqus4vzQxL4QXP+KVJrHGtmT1gSSmytE
-         P2nXtwhI7Zp4N9oweIKNOxYbRo0fJ2DkbyrqiPZ0MILUVB1zINpzs+zkt2IHAcUliPYF
-         u+eQURnNPgTGZy1dlfu2sj54OrsawjMeZXMDBXSS9hxX/HOKO8EKgdxMyHDDwHi5fmQp
-         vtSzi0v1lMwTfvAChCKslpsX9IEzFaNK2MuOY3tOnzT4zE5IsmPg7U+8LOUcM3jNssuA
-         e8Bg==
+        bh=Oxy0+phAIfClp/v+IJA18wQYVoxZOy+Eb6ccP7IJ4Tc=;
+        b=Ps3M+oYLVVEitH/7piLVW/jHJ5U6OXF1w7iqnbuct4yD0gvEu8JLo/a++1I+cK9t9u
+         XiDXGc3sfmppeAHH0s3UwEs6TngMMtHeSaYRzl92hKvj2xyNvfRCPYXIRpK3T/BvA+18
+         B8grt4WRxsJFFJMl6VIAjC+uu0IXHOG/C0eJua2FGOCmnLmkfQNdCDmit5QVM7DvsvZN
+         cUDC2g9xIeZbh//VfTCgeB+z2J6r7UJLdpf2ejDTUsnu93NKDgiiRmqqMvXYlgHVtrsx
+         v7C4wggZSnSElp0c+b9/8JWrxDHyaEfF5ItXRWA53pGJurA5RjRWEgZG4p7Amiwci5Yt
+         gC0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727956302; x=1728561102;
+        d=1e100.net; s=20230601; t=1727956493; x=1728561293;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wHoupr0/kc4L7oGrZ6tJxNRor5ARaNvDgSroHEc/yPw=;
-        b=E5gz2Mv2cdDQ78Rb6AOopVw+Szu492G/3oha9Mqj4GWfc2w3V1IVnqsWiDkOKYb+ON
-         FyHpXW7qeR4p+1JTLqmMFPgQdMQTAflg+bRWwkSyUz5DwlNH37qmZiQ+HInFx1NQV6gS
-         7hdxL5+tUOe8W5pinbY06RoczecaHyM2onNrYdB5R2+pTqAP/w4xBBx6C6YGYC5zdmrk
-         qlKUNz6CTS1JtgjMPzbuVAQ7FcLoszB3WnM3a0yGnYE/4DO4quW77VoBvmO4j8PSuTrE
-         weafuSlIzEh/cPp1Je27tBsKibAQVIp/8jUb1g/oKwg2rf0f0tBEeLa1TPDrJsQUzlnu
-         8klQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgBd2TVWkPlLokAzBYILsy3ZnWa5LD8wp2KPxPQj1Fx0ghBx421qy9aOGZ78nMgDktRWwF/fw1IsT0Sg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4Xbw9HSX4g1CNAIhub5gWrK1uEzk1MXcVqZVlLypHN2SxSy0x
-	Wtymgtnsf1zLHdEvcO2Dtqfr645wroDv9LST+3L1nv7vh0T+1C7bkqh0CFT+0hQt0EN1cveYmSm
-	mOu0KopBi2dm7aQgjfXkJC90eAtc=
-X-Google-Smtp-Source: AGHT+IGQpY303XxEqOQ/bacZLKkyfAaGZB10dyypbECrdl5KesyhJBV10e5GhVy5CHllXVyMfE9trDz8kOjJNCY/U1Y=
-X-Received: by 2002:a2e:bcc1:0:b0:2f0:2026:3f71 with SMTP id
- 38308e7fff4ca-2faea1db590mr10315201fa.8.1727956301420; Thu, 03 Oct 2024
- 04:51:41 -0700 (PDT)
+        bh=Oxy0+phAIfClp/v+IJA18wQYVoxZOy+Eb6ccP7IJ4Tc=;
+        b=uYBe0PmOBTkZHSBcZgHzxRCNY61UcYajfzEkc7BOXR8r9+hAs8mKpCF0pXa+VvZJ3L
+         2X8WI3BOhikfspsrPxHjDRXypzi2e/yeYVNvkfRQDuAGPNERHTB7sw0s8ltSaoAP0uof
+         Xdr+cczkUna+AtuMcIwjIs0WkgVMSByqQlLkTai9MpTjKX81Kkw1aj/CN0HGKAc/wAMO
+         nkxnqfzDSmeFwvYBvqZpOT2HgIDmWBZ1IgxVQ1363sRFgg+DCwV7P4UEFRHwl0d0J+7v
+         XqzjQ9lm2WDrztiFipmj1xwjUk8t84rI2rKfzE7l2e6ma4Y3iUmjZZoTmnFHEi0gtG2l
+         gerQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfHg0jwAzLoGWaaVlWf5OEXQ3VZ7gcXlx2oUQlCB0eitwX00/xMaztFE+4KrrMcr19KhG7jEsviWWK3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyexDoJZGeikvj7c6MhbOYpAQ8iK/rZoAma2x6OmB0BleIPRhBm
+	BIUWBwzMLde2tBlpx2yWP1bTgKP4HRhZhnZQ0M7qe9k3LQQqbeuTCQs+dTxqr457w+SOa9S+qWW
+	8bcgfjAPZC0YkN9Z9ncn7mKTa368=
+X-Google-Smtp-Source: AGHT+IG6uqZJZUHD3+1xov5WaxdgGADThoaRSsOjeqB5KCIq0WCGL4WkZtMvonVRG7U3Ly71QQbsHD7vyV+vP5WqI78=
+X-Received: by 2002:a05:6512:158e:b0:539:8847:d7e9 with SMTP id
+ 2adb3069b0e04-539a0683412mr3846830e87.35.1727956493063; Thu, 03 Oct 2024
+ 04:54:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002150036.1339475-1-willy@infradead.org> <20241002150036.1339475-3-willy@infradead.org>
-In-Reply-To: <20241002150036.1339475-3-willy@infradead.org>
+References: <20241002150036.1339475-1-willy@infradead.org> <20241002150036.1339475-4-willy@infradead.org>
+In-Reply-To: <20241002150036.1339475-4-willy@infradead.org>
 From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Thu, 3 Oct 2024 20:51:25 +0900
-Message-ID: <CAKFNMonadkY_0Je86FRy81VGKaa6yw+bH_zCfhOmYFbiCNhi+Q@mail.gmail.com>
-Subject: Re: [PATCH 2/4] nilfs2: Convert nilfs_page_count_clean_buffers() to
- take a folio
+Date: Thu, 3 Oct 2024 20:54:36 +0900
+Message-ID: <CAKFNMokLUW16GJQNT3q9BPMUEbwPDvj6MKc=qCO4ZbUmGjo4Ww@mail.gmail.com>
+Subject: Re: [PATCH 3/4] nilfs2: Convert nilfs_recovery_copy_block() to take a folio
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-nilfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
@@ -85,102 +84,66 @@ Content-Transfer-Encoding: quoted-printable
 
 On Thu, Oct 3, 2024 at 12:00=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
 >
-> Both callers have a folio, so pass it in and use it directly.
+> Use memcpy_to_folio() instead of open-coding it, and use offset_in_folio(=
+)
+> in case anybody wants to use nilfs2 on a device with large blocks.
 >
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->  fs/nilfs2/dir.c   | 2 +-
->  fs/nilfs2/inode.c | 2 +-
->  fs/nilfs2/page.c  | 4 ++--
->  fs/nilfs2/page.h  | 4 ++--
->  4 files changed, 6 insertions(+), 6 deletions(-)
+>  fs/nilfs2/recovery.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
 >
-> diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-> index fe5b1a30c509..b1ad4062bbab 100644
-> --- a/fs/nilfs2/dir.c
-> +++ b/fs/nilfs2/dir.c
-> @@ -95,7 +95,7 @@ static void nilfs_commit_chunk(struct folio *folio,
->         unsigned int nr_dirty;
->         int err;
+> diff --git a/fs/nilfs2/recovery.c b/fs/nilfs2/recovery.c
+> index 21d81097a89f..1c665a32f002 100644
+> --- a/fs/nilfs2/recovery.c
+> +++ b/fs/nilfs2/recovery.c
+> @@ -481,19 +481,16 @@ static int nilfs_prepare_segment_for_recovery(struc=
+t the_nilfs *nilfs,
 >
-> -       nr_dirty =3D nilfs_page_count_clean_buffers(&folio->page, from, t=
-o);
-> +       nr_dirty =3D nilfs_page_count_clean_buffers(folio, from, to);
->         copied =3D block_write_end(NULL, mapping, pos, len, len, folio, N=
-ULL);
->         if (pos + copied > dir->i_size)
->                 i_size_write(dir, pos + copied);
-> diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-> index f1b47b655672..005dfd1f8fec 100644
-> --- a/fs/nilfs2/inode.c
-> +++ b/fs/nilfs2/inode.c
-> @@ -242,7 +242,7 @@ static int nilfs_write_end(struct file *file, struct =
-address_space *mapping,
->         unsigned int nr_dirty;
->         int err;
->
-> -       nr_dirty =3D nilfs_page_count_clean_buffers(&folio->page, start,
-> +       nr_dirty =3D nilfs_page_count_clean_buffers(folio, start,
->                                                   start + copied);
->         copied =3D generic_write_end(file, mapping, pos, len, copied, fol=
-io,
->                                    fsdata);
-> diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-> index 16bb82cdbc07..ebd395dd131b 100644
-> --- a/fs/nilfs2/page.c
-> +++ b/fs/nilfs2/page.c
-> @@ -419,14 +419,14 @@ void nilfs_clear_folio_dirty(struct folio *folio)
->         __nilfs_clear_folio_dirty(folio);
->  }
->
-> -unsigned int nilfs_page_count_clean_buffers(struct page *page,
-> +unsigned int nilfs_page_count_clean_buffers(struct folio *folio,
->                                             unsigned int from, unsigned i=
-nt to)
+>  static int nilfs_recovery_copy_block(struct the_nilfs *nilfs,
+>                                      struct nilfs_recovery_block *rb,
+> -                                    loff_t pos, struct page *page)
+> +                                    loff_t pos, struct folio *folio)
 >  {
->         unsigned int block_start, block_end;
->         struct buffer_head *bh, *head;
->         unsigned int nc =3D 0;
+>         struct buffer_head *bh_org;
+> -       size_t from =3D pos & ~PAGE_MASK;
+> -       void *kaddr;
+> +       size_t from =3D offset_in_folio(folio, pos);
 >
-> -       for (bh =3D head =3D page_buffers(page), block_start =3D 0;
-> +       for (bh =3D head =3D folio_buffers(folio), block_start =3D 0;
->              bh !=3D head || !block_start;
->              block_start =3D block_end, bh =3D bh->b_this_page) {
->                 block_end =3D block_start + bh->b_size;
-> diff --git a/fs/nilfs2/page.h b/fs/nilfs2/page.h
-> index 64521a03a19e..b6d9301f16ae 100644
-> --- a/fs/nilfs2/page.h
-> +++ b/fs/nilfs2/page.h
-> @@ -43,8 +43,8 @@ int nilfs_copy_dirty_pages(struct address_space *, stru=
-ct address_space *);
->  void nilfs_copy_back_pages(struct address_space *, struct address_space =
-*);
->  void nilfs_clear_folio_dirty(struct folio *folio);
->  void nilfs_clear_dirty_pages(struct address_space *mapping);
-> -unsigned int nilfs_page_count_clean_buffers(struct page *, unsigned int,
-> -                                           unsigned int);
-> +unsigned int nilfs_page_count_clean_buffers(struct folio *,
-> +               unsigned int from, unsigned int to);
-
-This gives the following checkpatch warning:
-
-WARNING: function definition argument 'struct folio *' should also
-have an identifier name
-#75: FILE: fs/nilfs2/page.h:46:
-+unsigned int nilfs_page_count_clean_buffers(struct folio *,
-
-It would be appreciated if you could include the argument name in the
-declaration of nilfs_page_count_clean_buffer after replacement.
-
-Everything else seems fine.
-
-Thanks,
-Ryusuke Konishi
-
->  unsigned long nilfs_find_uncommitted_extent(struct inode *inode,
->                                             sector_t start_blk,
->                                             sector_t *blkoff);
+>         bh_org =3D __bread(nilfs->ns_bdev, rb->blocknr, nilfs->ns_blocksi=
+ze);
+>         if (unlikely(!bh_org))
+>                 return -EIO;
+>
+> -       kaddr =3D kmap_local_page(page);
+> -       memcpy(kaddr + from, bh_org->b_data, bh_org->b_size);
+> -       kunmap_local(kaddr);
+> +       memcpy_to_folio(folio, from, bh_org->b_data, bh_org->b_size);
+>         brelse(bh_org);
+>         return 0;
+>  }
+> @@ -531,7 +528,7 @@ static int nilfs_recover_dsync_blocks(struct the_nilf=
+s *nilfs,
+>                         goto failed_inode;
+>                 }
+>
+> -               err =3D nilfs_recovery_copy_block(nilfs, rb, pos, &folio-=
+>page);
+> +               err =3D nilfs_recovery_copy_block(nilfs, rb, pos, folio);
+>                 if (unlikely(err))
+>                         goto failed_page;
+>
 > --
 > 2.43.0
 >
+
+This patch looks good to me.
+
+One small thing: with this conversion, there is no reference to the
+page structure in nilfs_recover_dsync_blocks, so how about changing
+the jump label "failed_page" to "failed_folio"?
+This will reduce noise when searching for "page" with grep.
+
+Thanks,
+Ryusuke Konishi
 
