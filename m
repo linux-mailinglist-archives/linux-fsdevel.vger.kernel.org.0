@@ -1,244 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-30847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95E698EC2E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B621998EC7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090131C21EE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 09:20:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D37311C21DD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 09:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AC4145FE8;
-	Thu,  3 Oct 2024 09:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010C0147C91;
+	Thu,  3 Oct 2024 09:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kINfBTiO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XopqQ4Hh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kINfBTiO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XopqQ4Hh"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="K5EGoVjt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760E3142E7C;
-	Thu,  3 Oct 2024 09:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A081474B2
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 09:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727947213; cv=none; b=rXv3XijHoR1CL4a7+5V+OIPG1Bd6V80aiEvI5CUWffRsd8TQlSDrJscXlACocncRxgzvLuDqajdklMQ8hjXdAhfEnIfwBTrwzxLK8ae8O7rAp3xXvpgaTLpfevCjPQo1+crKTZrm7d7BtSP406Y6l8YCFEIGgQuhez59/H0Awn0=
+	t=1727949061; cv=none; b=aS/htdDhOaU5e4OYUyoeJpV0xdqWYkXHxU3IkMez4hAJ/t1f2YfjlhmQ4MYPh+Pq/E/Q3rh6Jgkgr7j2++qXXtDF3tWjPDDGvto8QMjPaxdIBBUkm78UBem3QWNJ9HNcG1stPHX6mj3iii5i2HmSW6iOzn943+cvq2lcSCsEbC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727947213; c=relaxed/simple;
-	bh=HpSg4uPT57z+yFVjv2qUWXRrtFmbShFKEto95tZFuto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTrV/pbkCZ1Njz9pZpr0UOu7Z8HakM+UWQ76f1nJMiFtta98P9A0d2iox79ElKk9ogRpaRvAUtZiI7GFW+EQlIO43T7rQfXCKh18ETyJE76RRQlRdzITD2A2O1wZZTwVWmpjzO6S2wt2k9YJSJtYiHy+k/rt6xGkYXielBvQD9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kINfBTiO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XopqQ4Hh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kINfBTiO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XopqQ4Hh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0994721D1C;
-	Thu,  3 Oct 2024 09:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727947203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jtiHrCDe2cBAFXvqtg+ujXCV8xUpYaNIQo/MxZah8zs=;
-	b=kINfBTiOs46E5+lwjBmfaTewMASHQMuEx3imq8916qdWtOUloHJO/wibONsr5IXPOpYpAQ
-	2NK77PgCQLL+ZEUon5sSdrOglvd2Rj/ScGkrj9jewMrvRLf08Xh6RdhoGUW+Um8cFIV+IB
-	xTaxfqb2R0tooQl0B01OLli972chZ0E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727947203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jtiHrCDe2cBAFXvqtg+ujXCV8xUpYaNIQo/MxZah8zs=;
-	b=XopqQ4Hhpnfww9fNxDYALkapBPpSOo3v9OhDRG0lVS0e1TiwuFDinqG9HRkSupVLgbhc8o
-	IZtHe3qrsm5lElCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kINfBTiO;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=XopqQ4Hh
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727947203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jtiHrCDe2cBAFXvqtg+ujXCV8xUpYaNIQo/MxZah8zs=;
-	b=kINfBTiOs46E5+lwjBmfaTewMASHQMuEx3imq8916qdWtOUloHJO/wibONsr5IXPOpYpAQ
-	2NK77PgCQLL+ZEUon5sSdrOglvd2Rj/ScGkrj9jewMrvRLf08Xh6RdhoGUW+Um8cFIV+IB
-	xTaxfqb2R0tooQl0B01OLli972chZ0E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727947203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jtiHrCDe2cBAFXvqtg+ujXCV8xUpYaNIQo/MxZah8zs=;
-	b=XopqQ4Hhpnfww9fNxDYALkapBPpSOo3v9OhDRG0lVS0e1TiwuFDinqG9HRkSupVLgbhc8o
-	IZtHe3qrsm5lElCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F3C66139CE;
-	Thu,  3 Oct 2024 09:20:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sQuCO8Jh/mZqagAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 03 Oct 2024 09:20:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B1314A086F; Thu,  3 Oct 2024 11:20:02 +0200 (CEST)
-Date: Thu, 3 Oct 2024 11:20:02 +0200
-From: Jan Kara <jack@suse.cz>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 1/7] vfs: replace invalidate_inodes() with evict_inodes()
-Message-ID: <20241003092002.h4p46cifkodeubjb@quack3>
-References: <20241002014017.3801899-1-david@fromorbit.com>
- <20241002014017.3801899-2-david@fromorbit.com>
+	s=arc-20240116; t=1727949061; c=relaxed/simple;
+	bh=9E6f/uCDaDGHrcTPXLc5evKBv9bcT7mSdk4eDvg18ZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aLcKpVoegOhVmzQ5Nkoh0s+mBKRp7NeoQYuPUoeuHSnzGP6Kxv09c0RMjTJBMlFrBbZAErhPs+mlDBkKKGXq8z4fXHfUdzJvAAQnfaPUK71K/MyT1B0r8IUEUXLAOvJtg8ng81sW4JNLjiKq2h4ACqWovJS5K/QZ5Bc+aGo0pDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=K5EGoVjt; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c89668464cso883891a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 02:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1727949056; x=1728553856; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kvtstig7vTzXAllV/rphN85fT9kacfaghzm/BxzXMbE=;
+        b=K5EGoVjtkXIz3i6yo3hcLS6q2zWKTK3cujc7WHq2NePytRXtcOKVffjbAA1YRcyvbR
+         flybQj4783AyCvlcPtWEYNt9E6OF4ldG9az3mulKpSsXJ5pzGoMYlNgVImtWcoqRn025
+         WuO6/iRSgafJCHQFaE4r+PiBp6GC2ZQc1L9D4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727949056; x=1728553856;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kvtstig7vTzXAllV/rphN85fT9kacfaghzm/BxzXMbE=;
+        b=LssaZeVXCN96iwqjG20Unjvdox+QJmTUEBJXxfAloFiU8mhy6XQllvXZ0aojQHcJ/c
+         7KBeYWMVn515KvcVHe+DqPbrD0BjLDHcg6vx8pGH/VJD8zBoijpMuwEd7PR5e93J/GEa
+         ySCLQAWzQWaxhBfTBWpZNbdN4Jx5lhV8/YPjemSqiJZjTlruINDmKo61B7wFrV9QLtwA
+         co3lsusvi85kD0s6q6YTearLO1bLlS0+J7gJ+Q8+L69KzlcnNvSasPtalpTtdEyEKSvJ
+         SxxnZjStnXlTExakeLW9qU2TOljw+IUjdEbH8tv1gwdp0Us5CmA9J7acsWNKdWmyNgDi
+         Hspw==
+X-Gm-Message-State: AOJu0YwKCFiLqn7R3JCNYlGGmNq0oFU2ca2RV36OiPOb3qZzWvEdOfy7
+	QcRscSUNnq3nRgEQqXTLCZ3AUwxzL/gWVvaJSpegqda4fqKFupeSgX0PKNpqAkXkNAPkxzaoDNA
+	m6Gs8n21NxLHarcJvRWKBeN/km96XdzF97+rXJR3RYA85/hcpxvk=
+X-Google-Smtp-Source: AGHT+IF0rRHGX9VuxphY62DcQJ+nNNFpmW3Itz/RYpxgG1l1gW39u8hdXaht5Qcz+RWhzGLEz5QadUXFXGPMkKmCP64=
+X-Received: by 2002:a17:906:c143:b0:a86:8d83:542d with SMTP id
+ a640c23a62f3a-a98f8372af8mr562814566b.45.1727949056527; Thu, 03 Oct 2024
+ 02:50:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002014017.3801899-2-david@fromorbit.com>
-X-Rspamd-Queue-Id: 0994721D1C
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+References: <e3a4e7a8-a40f-495f-9c7c-1f296c306a35@fastmail.fm>
+In-Reply-To: <e3a4e7a8-a40f-495f-9c7c-1f296c306a35@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 3 Oct 2024 11:50:44 +0200
+Message-ID: <CAJfpegsCXix+vVRp0O6bxXgwKeq11tU655pk9kjHN85WzWTpWA@mail.gmail.com>
+Subject: Re: fuse-io-uring: We need to keep the tag/index
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 02-10-24 11:33:18, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> As of commit e127b9bccdb0 ("fs: simplify invalidate_inodes"),
-> invalidate_inodes() is functionally identical to evict_inodes().
-> Replace calls to invalidate_inodes() with a call to
-> evict_inodes() and kill the former.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+On Wed, 2 Oct 2024 at 23:54, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>
+> Hi Miklos,
+>
+> in the discussion we had you asked to avoid an entry tag/index,
+> in the mean time I don't think we can.
+> In fuse_uring_cmd(), i.e. the function that gets
+> 'struct io_uring_cmd *cmd' we need identify the corresponding fuse
+> data structure ('struct fuse_ring_ent'). Basically same as in
+> as in do_write(), which calls request_find() and does a list search.
+> With a large queue size that would be an issue (and even for smaller
+> queue sizes not beautiful, imho).
 
-Indeed :). Looks good. Feel free to add:
+I don't really understand the problem.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Is efficiency the issue?  I agree, that that would need to be
+addressed.  But that's not a interface question, it's an
+implementation question, and there are plenty of potential solutions
+for that (hash table, rbtree, etc.)
 
-								Honza
+> I'm now rewriting code to create an index in
+> FUSE_URING_REQ_FETCH and return that later on with the request
+> to userspace. That needs to do realloc the array as we do know the
+> exact queue size anymore.
 
-> ---
->  fs/inode.c    | 40 ----------------------------------------
->  fs/internal.h |  1 -
->  fs/super.c    |  2 +-
->  3 files changed, 1 insertion(+), 42 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 471ae4a31549..0a53d8c34203 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -827,46 +827,6 @@ void evict_inodes(struct super_block *sb)
->  }
->  EXPORT_SYMBOL_GPL(evict_inodes);
->  
-> -/**
-> - * invalidate_inodes	- attempt to free all inodes on a superblock
-> - * @sb:		superblock to operate on
-> - *
-> - * Attempts to free all inodes (including dirty inodes) for a given superblock.
-> - */
-> -void invalidate_inodes(struct super_block *sb)
-> -{
-> -	struct inode *inode, *next;
-> -	LIST_HEAD(dispose);
-> -
-> -again:
-> -	spin_lock(&sb->s_inode_list_lock);
-> -	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
-> -		spin_lock(&inode->i_lock);
-> -		if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
-> -			spin_unlock(&inode->i_lock);
-> -			continue;
-> -		}
-> -		if (atomic_read(&inode->i_count)) {
-> -			spin_unlock(&inode->i_lock);
-> -			continue;
-> -		}
-> -
-> -		inode->i_state |= I_FREEING;
-> -		inode_lru_list_del(inode);
-> -		spin_unlock(&inode->i_lock);
-> -		list_add(&inode->i_lru, &dispose);
-> -		if (need_resched()) {
-> -			spin_unlock(&sb->s_inode_list_lock);
-> -			cond_resched();
-> -			dispose_list(&dispose);
-> -			goto again;
-> -		}
-> -	}
-> -	spin_unlock(&sb->s_inode_list_lock);
-> -
-> -	dispose_list(&dispose);
-> -}
-> -
->  /*
->   * Isolate the inode from the LRU in preparation for freeing it.
->   *
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 8c1b7acbbe8f..37749b429e80 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -207,7 +207,6 @@ bool in_group_or_capable(struct mnt_idmap *idmap,
->   * fs-writeback.c
->   */
->  extern long get_nr_dirty_inodes(void);
-> -void invalidate_inodes(struct super_block *sb);
->  
->  /*
->   * dcache.c
-> diff --git a/fs/super.c b/fs/super.c
-> index 1db230432960..a16e6a6342e0 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1417,7 +1417,7 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
->  	if (!surprise)
->  		sync_filesystem(sb);
->  	shrink_dcache_sb(sb);
-> -	invalidate_inodes(sb);
-> +	evict_inodes(sb);
->  	if (sb->s_op->shutdown)
->  		sb->s_op->shutdown(sb);
->  
-> -- 
-> 2.45.2
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+It should not be an array because dynamic arrays are complex and
+inefficient.   Rbtree sounds right, but I haven't thought much about
+it.
+
+Thanks,
+Miklos
 
