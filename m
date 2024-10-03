@@ -1,111 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-30848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B621998EC7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A97998EC95
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D37311C21DD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 09:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7C41C21DE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 09:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010C0147C91;
-	Thu,  3 Oct 2024 09:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F5814AD0C;
+	Thu,  3 Oct 2024 09:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="K5EGoVjt"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ixkIPFsQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A081474B2
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 09:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40E114A639
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 09:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727949061; cv=none; b=aS/htdDhOaU5e4OYUyoeJpV0xdqWYkXHxU3IkMez4hAJ/t1f2YfjlhmQ4MYPh+Pq/E/Q3rh6Jgkgr7j2++qXXtDF3tWjPDDGvto8QMjPaxdIBBUkm78UBem3QWNJ9HNcG1stPHX6mj3iii5i2HmSW6iOzn943+cvq2lcSCsEbC8=
+	t=1727949575; cv=none; b=hhuahHa8wxJUJSQ44mKhnkYQhuB0gk88WKjy1AxOZZDFZL2v8Jdn0UK61MPez4SEh0nH/nLfahWoOqwnQTb5llGlsP4eQy5mVX/RAWac63Xy3CjKpCrGWLr23Z+SzEuKCU4a/IyrM0zs+gtirMU7MD+zCTZnR53xn3HK4DPmn+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727949061; c=relaxed/simple;
-	bh=9E6f/uCDaDGHrcTPXLc5evKBv9bcT7mSdk4eDvg18ZI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLcKpVoegOhVmzQ5Nkoh0s+mBKRp7NeoQYuPUoeuHSnzGP6Kxv09c0RMjTJBMlFrBbZAErhPs+mlDBkKKGXq8z4fXHfUdzJvAAQnfaPUK71K/MyT1B0r8IUEUXLAOvJtg8ng81sW4JNLjiKq2h4ACqWovJS5K/QZ5Bc+aGo0pDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=K5EGoVjt; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c89668464cso883891a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 02:50:57 -0700 (PDT)
+	s=arc-20240116; t=1727949575; c=relaxed/simple;
+	bh=ws++fftyryHhCAETNNzTX0HjvxlfudjsCorBxr25E9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuBqFUGKqSxwfRzlKrnLzHYJ25+JZ1rwwJJtrnJBBvBrK5oP7EUrmzGnVe8/ETh70cFxRdlg+sRWmXBgYPvpbM3ZsbNdMl4GC5dmRq9q6L5GLjAIX/SHJI6dxBbgosTfwsJJfA9ddfGv9HU9w7h/wfYNXmaOyF8iXk/J/C4ZxLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ixkIPFsQ; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7d7a9200947so432629a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 02:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1727949056; x=1728553856; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kvtstig7vTzXAllV/rphN85fT9kacfaghzm/BxzXMbE=;
-        b=K5EGoVjtkXIz3i6yo3hcLS6q2zWKTK3cujc7WHq2NePytRXtcOKVffjbAA1YRcyvbR
-         flybQj4783AyCvlcPtWEYNt9E6OF4ldG9az3mulKpSsXJ5pzGoMYlNgVImtWcoqRn025
-         WuO6/iRSgafJCHQFaE4r+PiBp6GC2ZQc1L9D4=
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727949573; x=1728554373; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FZoVePEjRG3urznVwj0SIfeUiNk8Ws/Gg0iUzR96R7c=;
+        b=ixkIPFsQcNrsGNxCOjHKFh2AFYRm6FRDqg2JkLijTz9+X1TrczYA0uAqvoOXekDvtG
+         uc1VgRBOBHwZpTGKoDmUqRRmKo8j2AE6uL+NaAAdRxQaEyTlFy2wsgBNOScunA/XjWNH
+         gemZhcos3TMMn3L9O6yIbHxpGeU3FbusIxMUhH7KBKexdojjF5c+d5yRtMR0+OxnPCPi
+         gSc4pL5GgIgL46/ZL30Ztb7k+v/X3eNBx0FFpFeqZ3vDnqLiHolbYnYjbiUZJMhIvmIE
+         S6urCvkJLyqxU+zcC7f6KGJDUpZ3mElBOM+RBG7NiD1IR1I27Vd2ikpJxaEmZaqZtSFM
+         Uxuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727949056; x=1728553856;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kvtstig7vTzXAllV/rphN85fT9kacfaghzm/BxzXMbE=;
-        b=LssaZeVXCN96iwqjG20Unjvdox+QJmTUEBJXxfAloFiU8mhy6XQllvXZ0aojQHcJ/c
-         7KBeYWMVn515KvcVHe+DqPbrD0BjLDHcg6vx8pGH/VJD8zBoijpMuwEd7PR5e93J/GEa
-         ySCLQAWzQWaxhBfTBWpZNbdN4Jx5lhV8/YPjemSqiJZjTlruINDmKo61B7wFrV9QLtwA
-         co3lsusvi85kD0s6q6YTearLO1bLlS0+J7gJ+Q8+L69KzlcnNvSasPtalpTtdEyEKSvJ
-         SxxnZjStnXlTExakeLW9qU2TOljw+IUjdEbH8tv1gwdp0Us5CmA9J7acsWNKdWmyNgDi
-         Hspw==
-X-Gm-Message-State: AOJu0YwKCFiLqn7R3JCNYlGGmNq0oFU2ca2RV36OiPOb3qZzWvEdOfy7
-	QcRscSUNnq3nRgEQqXTLCZ3AUwxzL/gWVvaJSpegqda4fqKFupeSgX0PKNpqAkXkNAPkxzaoDNA
-	m6Gs8n21NxLHarcJvRWKBeN/km96XdzF97+rXJR3RYA85/hcpxvk=
-X-Google-Smtp-Source: AGHT+IF0rRHGX9VuxphY62DcQJ+nNNFpmW3Itz/RYpxgG1l1gW39u8hdXaht5Qcz+RWhzGLEz5QadUXFXGPMkKmCP64=
-X-Received: by 2002:a17:906:c143:b0:a86:8d83:542d with SMTP id
- a640c23a62f3a-a98f8372af8mr562814566b.45.1727949056527; Thu, 03 Oct 2024
- 02:50:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727949573; x=1728554373;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FZoVePEjRG3urznVwj0SIfeUiNk8Ws/Gg0iUzR96R7c=;
+        b=Tw0usRKHQpwgQ5q+0+MILm+JAPhHH4ya4jG7irczZfbtHaSXPb8xFUVrODAhSlNsk4
+         iWcftYJC0EDHVKSzxv8bNH55NX59rLDczuz/NVopjxo4qqu9z1KJo9t36q5JCMjQ8HAp
+         oBJz2908ST+t80jyO5cQf9n+hhBbMGveTPnnIOnUot6Jk7xZmWcNCaJ3W3uUpDzFPJ4s
+         iAHO7s6ColM0683ZuFub+eUMmdOQKbWN0iI7xcF1bOaGUmYhYxqg3aNgjcDtUFshhqei
+         pv810QUYlploNIyHc8bcp8NAMUaWY36n6V15J+79Wj35pTsb+/VCNqdyZ9Za76KJWeOw
+         25eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkIgpcRNVzofWENbEM1Mg4cP8+YYIEXzGICqzzQvMyBf/S9yd1zwG9GGsAam2wxXpcxLjvr0fT62eEcqwb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfUQfplRjsFdv/70EHPhHqtEO9ombPKk9d/9GWMKr1TW9M+ur1
+	7a0pTbNRz7lJiwFkd1O2EPjCxlcfW+lPb/92Zv8coeePT7pXhyw1XXXqom6KTkE=
+X-Google-Smtp-Source: AGHT+IHRE80iIS0vtT8WICPYgmm1vV8aDhQHpiTupQ0As/uP52it766oR+Cw0QAYw1lPazD0ArHY1g==
+X-Received: by 2002:a05:6a21:1643:b0:1d5:14ff:a15f with SMTP id adf61e73a8af0-1d5db20a5c0mr10402698637.11.1727949573106;
+        Thu, 03 Oct 2024 02:59:33 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9dee6adsm974968b3a.144.2024.10.03.02.59.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 02:59:32 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1swIcL-00DL4k-2o;
+	Thu, 03 Oct 2024 19:59:29 +1000
+Date: Thu, 3 Oct 2024 19:59:29 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [RFC PATCH 0/7] vfs: improving inode cache iteration scalability
+Message-ID: <Zv5rAYEgY3o7Rhju@dread.disaster.area>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002-lethargisch-hypnose-fd06ae7a0977@brauner>
+ <Zv098heGHOtGfw1R@dread.disaster.area>
+ <3lukwhxkfyqz5xsp4r7byjejrgvccm76azw37pmudohvxcxqld@kiwf5f5vjshk>
+ <Zv3H8BxJX2GwNW2Y@dread.disaster.area>
+ <lngs2n3kfwermwuadhrfq2loff3k4psydbjullhecuutthpqz3@4w6cybx7boxw>
+ <Zv32Vow1YdYgB8KC@dread.disaster.area>
+ <20241003091741.vmw3muqt5xagjion@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e3a4e7a8-a40f-495f-9c7c-1f296c306a35@fastmail.fm>
-In-Reply-To: <e3a4e7a8-a40f-495f-9c7c-1f296c306a35@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 3 Oct 2024 11:50:44 +0200
-Message-ID: <CAJfpegsCXix+vVRp0O6bxXgwKeq11tU655pk9kjHN85WzWTpWA@mail.gmail.com>
-Subject: Re: fuse-io-uring: We need to keep the tag/index
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003091741.vmw3muqt5xagjion@quack3>
 
-On Wed, 2 Oct 2024 at 23:54, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->
-> Hi Miklos,
->
-> in the discussion we had you asked to avoid an entry tag/index,
-> in the mean time I don't think we can.
-> In fuse_uring_cmd(), i.e. the function that gets
-> 'struct io_uring_cmd *cmd' we need identify the corresponding fuse
-> data structure ('struct fuse_ring_ent'). Basically same as in
-> as in do_write(), which calls request_find() and does a list search.
-> With a large queue size that would be an issue (and even for smaller
-> queue sizes not beautiful, imho).
+On Thu, Oct 03, 2024 at 11:17:41AM +0200, Jan Kara wrote:
+> On Thu 03-10-24 11:41:42, Dave Chinner wrote:
+> > On Wed, Oct 02, 2024 at 07:20:16PM -0400, Kent Overstreet wrote:
+> > > A couple things that help - we've already determined that the inode LRU
+> > > can go away for most filesystems,
+> > 
+> > We haven't determined that yet. I *think* it is possible, but there
+> > is a really nasty inode LRU dependencies that has been driven deep
+> > down into the mm page cache writeback code.  We have to fix that
+> > awful layering violation before we can get rid of the inode LRU.
+> > 
+> > I *think* we can do it by requiring dirty inodes to hold an explicit
+> > inode reference, thereby keeping the inode pinned in memory whilst
+> > it is being tracked for writeback. That would also get rid of the
+> > nasty hacks needed in evict() to wait on writeback to complete on
+> > unreferenced inodes.
+> > 
+> > However, this isn't simple to do, and so getting rid of the inode
+> > LRU is not going to happen in the near term.
+> 
+> Yeah. I agree the way how writeback protects from inode eviction is not the
+> prettiest one but the problem with writeback holding normal inode reference
+> is that then flush worker for the device can end up deleting unlinked
+> inodes which was causing writeback stalls and generally unexpected lock
+> ordering issues for some filesystems (already forgot the details).
 
-I don't really understand the problem.
+Yeah, if we end up in evict() on ext4 it will can then do all sorts
+of whacky stuff that involves blocking, running transactions and
+doing other IO. XFS, OTOH, has been changed to defer all that crap
+to background threads (the xfs_inodegc infrastructure) that runs
+after the VFS thinks the inode is dead and destroyed. There are some
+benefits to having the filesystem inode exist outside the VFS inode
+life cycle....
 
-Is efficiency the issue?  I agree, that that would need to be
-addressed.  But that's not a interface question, it's an
-implementation question, and there are plenty of potential solutions
-for that (hash table, rbtree, etc.)
+> Now this
+> was more that 12 years ago so maybe we could find a better solution to
+> those problems these days (e.g. interactions between page writeback and
+> page reclaim are very different these days) but I just wanted to warn there
+> may be nasty surprises there.
 
-> I'm now rewriting code to create an index in
-> FUSE_URING_REQ_FETCH and return that later on with the request
-> to userspace. That needs to do realloc the array as we do know the
-> exact queue size anymore.
+I don't think the situation has improved with filesytsems like ext4.
+I think they've actually gotten worse - I recently learnt that ext4
+inode eviction can recurse back into the inode cache to instantiate
+extended attribute inodes so they can be truncated to allow inode
+eviction to make progress.
 
-It should not be an array because dynamic arrays are complex and
-inefficient.   Rbtree sounds right, but I haven't thought much about
-it.
+I suspect the ext4 eviction behaviour is unfixable in any reasonable
+time frame, so the only solution I can come up with is to run the
+iput() call from a background thread context.  (e.g. defer it to a
+workqueue). That way iput_final() and eviction processing will not
+interfere with other writeback operations....
 
-Thanks,
-Miklos
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
