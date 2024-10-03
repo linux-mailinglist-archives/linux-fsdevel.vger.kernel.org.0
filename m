@@ -1,221 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-30855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3725B98EE5D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 13:46:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D234098EE73
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 13:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF791C21A15
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:46:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E129B23E3B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FABE155330;
-	Thu,  3 Oct 2024 11:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95877154458;
+	Thu,  3 Oct 2024 11:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="feY+wyL9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sz6F9+5Z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="feY+wyL9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sz6F9+5Z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9O8YLmC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E4313D245;
-	Thu,  3 Oct 2024 11:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308741487D5;
+	Thu,  3 Oct 2024 11:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727955968; cv=none; b=DL1s6jAVrkvZbConfRBz4WuEI9v7Lct3k/dc58xZPjTM9RPU+HXMbZE8LIE/dTc4Xsi77fQK9D97+sXM/RYka9cqBT827crw8qzub84iPtp/GtXA5M1YUWvNTV7Eu+A6a5xb0oCCqT3YCFdcIbjRMJga5ro3Swj0n+qMpu6M7/Y=
+	t=1727956083; cv=none; b=BVIRBZRPTEOStQ3iNHDntY7rEndBmT9D0m2YHCdMitn+BRxd55jbJ/yO3zFYhx9BWl/i5z81AwH7f6pRaOIlmUyHllIPX34hRVx2SWKJ1NOydOj57eSZUrr+7xQQF3kcT6DIde9tfspUfveYatoIUlxTSosIyye3llXUgfJA8v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727955968; c=relaxed/simple;
-	bh=uYxntOLomNurH/glEymVuBYbQJqrhAopyIorvKSj8zQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4CBAGstm//0rstAPbypd/AepsVeIuuaTOPprbqG4K3l/fowJLJwUpd1kCSWFrJp0OiwM4cL9rsfDnb7eCYccdQK6XL7N/tGMSdSgNxLvJY45qjP5qx3MISaYjfjJle0bie1bon0eCyxWygtkMic8LxgDjzTp4x2eGl/G+n//b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=feY+wyL9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sz6F9+5Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=feY+wyL9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sz6F9+5Z; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9047F1FDE6;
-	Thu,  3 Oct 2024 11:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727955964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YcC68ZzlwFoukPB1up1folji2OO+BVaGy0P+ZZAdd5Y=;
-	b=feY+wyL94AZGixecMwLvGBEloL+wvtyZGZlf6Da4/pw0GOWAYk+9bElFoMMIUzIaBksBFt
-	IktvpH7NuVDiCD7/w2V8AXkoHL78X1yKvSZU9/y8u4r2cHcGQNuoUO9awhjvlXhrdoU3Rf
-	MedlNd8WYcmzI2/u9d0tuwQxTeCcLtE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727955964;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YcC68ZzlwFoukPB1up1folji2OO+BVaGy0P+ZZAdd5Y=;
-	b=sz6F9+5Za9PWzZFXOsZGjNi9C9aj46at2HjHlbluoZ4/HWH+eLHQRGMC/zRJZFiDuQ5YGO
-	Jeke18qX0qlVLECQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727955964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YcC68ZzlwFoukPB1up1folji2OO+BVaGy0P+ZZAdd5Y=;
-	b=feY+wyL94AZGixecMwLvGBEloL+wvtyZGZlf6Da4/pw0GOWAYk+9bElFoMMIUzIaBksBFt
-	IktvpH7NuVDiCD7/w2V8AXkoHL78X1yKvSZU9/y8u4r2cHcGQNuoUO9awhjvlXhrdoU3Rf
-	MedlNd8WYcmzI2/u9d0tuwQxTeCcLtE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727955964;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YcC68ZzlwFoukPB1up1folji2OO+BVaGy0P+ZZAdd5Y=;
-	b=sz6F9+5Za9PWzZFXOsZGjNi9C9aj46at2HjHlbluoZ4/HWH+eLHQRGMC/zRJZFiDuQ5YGO
-	Jeke18qX0qlVLECQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7DAD2139CE;
-	Thu,  3 Oct 2024 11:46:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id f8GoHvyD/mZ+GgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 03 Oct 2024 11:46:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0B8AAA086F; Thu,  3 Oct 2024 13:45:56 +0200 (CEST)
-Date: Thu, 3 Oct 2024 13:45:55 +0200
-From: Jan Kara <jack@suse.cz>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
-	torvalds@linux-foundation.org
-Subject: Re: [RFC PATCH 0/7] vfs: improving inode cache iteration scalability
-Message-ID: <20241003114555.bl34fkqsja4s5tok@quack3>
-References: <20241002014017.3801899-1-david@fromorbit.com>
+	s=arc-20240116; t=1727956083; c=relaxed/simple;
+	bh=679JULyQ0Lgk2IP/sOrpDLiKJg1kCsRdixf915ql8yE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+0N4E7tILegFTLFLuJO7R029EZ3xOWFpePutfq39NgAREvF8HFYgftUZhWjbl0gCsObiqqBcr+5iu5Vw9IED60meSQwDXcJ5/w3nmcHk4u013UDI1MAnev8w4SpQxxa6kK2t8JNhvxLZLKqDbZ9wH3UMx41VGbUka3brGO/KHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9O8YLmC; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5398ec2f3c3so1100833e87.1;
+        Thu, 03 Oct 2024 04:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727956079; x=1728560879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cUC85ZpiQ8kiNmmBVcA942s4Vwz+b8UvBsX7XvYIGVc=;
+        b=j9O8YLmCQEZDMvRdrhHIFtiy01rqKbz0GnRfHOSC26aX78H7GYIBTXv9dOfLR+/qNd
+         fOYzqNzTa2TIi/z1CF4qn9G6WHpFKR7ACDyT/ggso2F0JJEaprQwG7rx7dT4mPiNAg//
+         vYZWz7p7FtUM/KHAMgvje2QNQNUNRmFNNy67n705ehCvQ6JV3RHEj7QgJ0VACctfT2Os
+         qvHk4+Y8MLZTJZfr6vKniC0p82NKJIgO1m7NUzpBwh7uEMR9R0Df80jKWH7mlQ5j37Ow
+         B31j/btZ2njT6lVOrdNMYmjLyFUtlgwnlHH6XuNd1QKdnbdAYVL6JhAMTYr4aUTe3gxB
+         p7hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727956079; x=1728560879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cUC85ZpiQ8kiNmmBVcA942s4Vwz+b8UvBsX7XvYIGVc=;
+        b=rhCnmUVHRWksqTlvm8WLcgMbtza9qcjaMawB3t9frEzBJFF6MTtHZKTaieBGOaBbet
+         DJeUFd313k6betq7QiqJZc50flsNfd9ObEtTn+swSYqUPQ3tvBZCAellslHwnwuwJ/xz
+         o3JjR8qlsl5sf5vm0BLdzrAqK0rgW4kzlPCJEnfub5PpFRy36X3aNFn4WxTfU9nMXzEM
+         srMnE24r5VXK0T6CwG0jUB/NFzyp2d2ZsnAK2wzD2xVohU06NLTEbbzBW8gKCDENwdSj
+         R9MKM2XWrFh5VqhErj8qbWUTk3qqRHocYqg9Qm5E4d/Pi3RLXKF5b70bsJBlXEZsUF2D
+         ae8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVTh2xS6jdSx1+zPCRHHvUDkdk7qrQA0zDjFDY2TkKe5qEoPBmK/9AD0cPcptTp3CeFvrAXYaXhItLCLw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHQpU0/cSPmPVu1u1pTz73jHXXMxYj+PcbzD6jvI5SXkzfA0QF
+	ESfTtZ/gM4LZmnvOHv6+8hP07ST9aFOTugx2XLHBaFmvZhvH3YbjYca3QfAX7eT1SUtvOzaOPMx
+	pIFlGNWzeqFHYZjpoVTfbmfxb54Y=
+X-Google-Smtp-Source: AGHT+IElqELFO0VA7BIZxFa5YGNoDX7mRmi5A1CyRb8rWuHqNJrGzMnezbCPfoYfZ01B6tGXseDVH5GVVT/Ve9+UETQ=
+X-Received: by 2002:a05:6512:e8c:b0:52e:7448:e137 with SMTP id
+ 2adb3069b0e04-539a065d3bbmr3802054e87.6.1727956079122; Thu, 03 Oct 2024
+ 04:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002014017.3801899-1-david@fromorbit.com>
-X-Spam-Score: -3.79
-X-Spamd-Result: default: False [-3.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.19)[-0.967];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241002150036.1339475-1-willy@infradead.org> <20241002150036.1339475-2-willy@infradead.org>
+In-Reply-To: <20241002150036.1339475-2-willy@infradead.org>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Thu, 3 Oct 2024 20:47:42 +0900
+Message-ID: <CAKFNMonzrHj=o2LfPfR00+fvyVLV_Tojq1nSqwKw0MRVw7PD5Q@mail.gmail.com>
+Subject: Re: [PATCH 1/4] nilfs2: Remove nilfs_writepage
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-nilfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dave!
+On Thu, Oct 3, 2024 at 12:00=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
+>
+> Since nilfs2 has a ->writepages operation already, ->writepage is only
+> called by the migration code.  If we add a ->migrate_folio operation,
+> it won't even be used for that and so it can be deleted.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/nilfs2/inode.c | 33 +--------------------------------
+>  1 file changed, 1 insertion(+), 32 deletions(-)
+>
+> diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+> index be6acf6e2bfc..f1b47b655672 100644
+> --- a/fs/nilfs2/inode.c
+> +++ b/fs/nilfs2/inode.c
+> @@ -170,37 +170,6 @@ static int nilfs_writepages(struct address_space *ma=
+pping,
+>         return err;
+>  }
+>
+> -static int nilfs_writepage(struct page *page, struct writeback_control *=
+wbc)
+> -{
+> -       struct folio *folio =3D page_folio(page);
+> -       struct inode *inode =3D folio->mapping->host;
+> -       int err;
+> -
+> -       if (sb_rdonly(inode->i_sb)) {
+> -               /*
+> -                * It means that filesystem was remounted in read-only
+> -                * mode because of error or metadata corruption. But we
+> -                * have dirty pages that try to be flushed in background.
+> -                * So, here we simply discard this dirty page.
+> -                */
+> -               nilfs_clear_folio_dirty(folio);
+> -               folio_unlock(folio);
+> -               return -EROFS;
+> -       }
+> -
+> -       folio_redirty_for_writepage(wbc, folio);
+> -       folio_unlock(folio);
+> -
+> -       if (wbc->sync_mode =3D=3D WB_SYNC_ALL) {
+> -               err =3D nilfs_construct_segment(inode->i_sb);
+> -               if (unlikely(err))
+> -                       return err;
+> -       } else if (wbc->for_reclaim)
+> -               nilfs_flush_segment(inode->i_sb, inode->i_ino);
+> -
+> -       return 0;
+> -}
+> -
+>  static bool nilfs_dirty_folio(struct address_space *mapping,
+>                 struct folio *folio)
+>  {
+> @@ -295,7 +264,6 @@ nilfs_direct_IO(struct kiocb *iocb, struct iov_iter *=
+iter)
+>  }
+>
+>  const struct address_space_operations nilfs_aops =3D {
+> -       .writepage              =3D nilfs_writepage,
+>         .read_folio             =3D nilfs_read_folio,
+>         .writepages             =3D nilfs_writepages,
+>         .dirty_folio            =3D nilfs_dirty_folio,
+> @@ -304,6 +272,7 @@ const struct address_space_operations nilfs_aops =3D =
+{
+>         .write_end              =3D nilfs_write_end,
+>         .invalidate_folio       =3D block_invalidate_folio,
+>         .direct_IO              =3D nilfs_direct_IO,
+> +       .migrate_folio          =3D buffer_migrate_folio,
+>         .is_partially_uptodate  =3D block_is_partially_uptodate,
+>  };
+>
 
-On Wed 02-10-24 11:33:17, Dave Chinner wrote:
-> There are two superblock iterator functions provided. The first is a
-> generic iterator that provides safe, reference counted inodes for
-> the callback to operate on. This is generally what most sb->s_inodes
-> iterators use, and it allows the iterator to drop locks and perform
-> blocking operations on the inode before moving to the next inode in
-> the sb->s_inodes list.
-> 
-> There is one quirk to this interface - INO_ITER_REFERENCE - because
-> fsnotify iterates the inode cache -after- evict_inodes() has been
-> called during superblock shutdown to evict all non-referenced
-> inodes. Hence it should only find referenced inodes, and it has
-> a check to skip unreferenced inodes. This flag does the same.
+After applying this patch, fsstress started causing kernel panics.
 
-Overall I really like the series. A lot of duplicated code removed and
-scalability improved, we don't get such deals frequently :) Regarding
-INO_ITER_REFERENCE I think that after commit 1edc8eb2e9313 ("fs: call
-fsnotify_sb_delete after evict_inodes") the check for 0 i_count in
-fsnotify_unmount_inodes() isn't that useful anymore so I'd be actually fine
-dropping it (as a separate patch please).
+Looking at the patch, I realized that migrate_folio needs to use
+buffer_migrate_folio_norefs, which checks for buffer head references.
 
-That being said I'd like to discuss one thing: As you have surely noticed,
-some of the places iterating inodes perform additional checks on the inode
-to determine whether the inode is interesting or not (e.g. the Landlock
-iterator or iterators in quota code) to avoid the unnecessary iget / iput
-and locking dance. The inode refcount check you've worked-around with
-INO_ITER_REFERENCE is a special case of that. Have you considered option to
-provide callback for the check inside the iterator?
+I was able to eliminate the kernel panic by setting migrate_folio as follow=
+s:
 
-Also maybe I'm went a *bit* overboard here with macro magic but the code
-below should provide an iterator that you can use like:
++ .migrate_folio =3D buffer_migrate_folio_norefs,
 
-	for_each_sb_inode(sb, inode, inode_eligible_check(inode)) {
-		do my stuff here
-	}
+I would like to continue load testing to avoid side effects of reclaim
+by completely eliminating nilfs_writepage (calling
+nilfs_flush_segment). So far, no problems have occurred even in tests
+with different block sizes or architectures, as long as I make the
+above changes.
 
-that will avoid any indirect calls and will magically handle all the
-cleanup that needs to be done if you break / jump out of the loop or
-similar. I actually find such constructs more convenient to use than your
-version of the iterator because there's no need to create & pass around the
-additional data structure for the iterator body, no need for special return
-values to abort iteration etc.
-
-								Honza
-
-/* Find next inode on the inode list eligible for processing */
-#define sb_inode_iter_next(sb, inode, old_inode, inode_eligible) 	\
-({									\
-	struct inode *ret = NULL;					\
-									\
-	cond_resched();							\
-	spin_lock(&(sb)->s_inode_list_lock);				\
-	if (!(inode))							\
-		inode = list_first_entry((sb)->s_inodes, struct inode,	\
-					 i_sb_list);			\
-	while (1) {							\
-		if (list_entry_is_head(inode, (sb)->s_inodes, i_sb_list)) { \
-			spin_unlock(&(sb)->s_inode_list_lock);		\
-			break;						\
-		}							\
-		spin_lock(&inode->i_lock);				\
-		if ((inode)->i_state & (I_NEW | I_FREEING | I_WILL_FREE) || \
-		    !inode_eligible) {					\
-			spin_unlock(&(inode)->i_lock);			\
-			continue;					\
-		}							\
-		__iget(inode);						\
-		spin_unlock(&(inode)->i_lock);				\
-		spin_unlock(&(sb)->s_inode_list_lock);			\
-		iput(*old_inode);					\
-		*old_inode = inode;					\
-		ret = inode;						\
-		break;							\
-	}								\
-	ret;								\
-})
-
-#define for_each_sb_inode(sb, inode, inode_eligible)			\
-	for (DEFINE_FREE(old_inode, struct inode *, if (_T) iput(_T)),	\
-	     inode = NULL;						\
-	     inode = sb_inode_iter_next((sb), inode, &old_inode,	\
-					 inode_eligible);		\
-	    )
-	     
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Ryusuke Konishi
 
