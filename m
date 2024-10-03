@@ -1,120 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-30913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E9198F9C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 00:18:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 310B598FA39
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 01:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8E61F237AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 22:18:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1F22829E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 23:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61CA1C9B68;
-	Thu,  3 Oct 2024 22:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538501CF7C9;
+	Thu,  3 Oct 2024 23:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1QLLbA/"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FB5pVejv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA171C9EBE;
-	Thu,  3 Oct 2024 22:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C081CC16F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 23:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993868; cv=none; b=mWxzwENydelETHLQhZkV0EwrYU5rStZMpm7q/trgKU9MJx4YUo/1au1IFqD26c7GIDuHDyNp3kjJL0h3zqo7ucOmRAak4m+9ls/bxbw8A2elpGel5Svfgyk9/edRnMT3zc8VIObHQ6LOqsaaPjqK+Q8u0cV1GBVRViuCZCN4JPs=
+	t=1727996692; cv=none; b=jqDDCoEkrnS6hdPE8A3tAWN8pGt9ziWSR0fKuEyeSToixKyhnMeR1Iaqs9J3OyJmwIQBq9+0QZ1DtJWIy+uixO0VS9Sm7M2ah6IrTMX5bHZABBv6GDjJebInv9aUaCU/TM7OxU5xgvCuYKzxRR3jG6d6Gf+EdZ3LD7rG3p5kz40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993868; c=relaxed/simple;
-	bh=0TbLr7PEK0+8ZHCM/bRv8RnmYwcLf2s4vLPJ99IQmwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUeWLd092Jkcv7rn+ecklrOQLIdjoboYVYHKEFqCV7Ei9DBhmEKBhqQWu/iviJh5AcWKkJgdvD0Vd9ximfTnTjaspDgk8rD+oqGhEE63PMpfWFYT/s3EpqKa50cNcbBGu3VLQ0ZdJu8bRYnyz/mRLwc4GvmeF4oWBoaNRtmk/R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1QLLbA/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49CFDC4CEC5;
-	Thu,  3 Oct 2024 22:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727993867;
-	bh=0TbLr7PEK0+8ZHCM/bRv8RnmYwcLf2s4vLPJ99IQmwg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d1QLLbA/9L0fikcnrZuItErUo72FCpOtJ1AUJZu0xdB7zk59VRLak7TX2g+Ld//z/
-	 ieXkpFk2+O1ssw5HSZtcP3bJqe+f2eQR6n2k2yV1NAQm9akg+1RKaGGu9Okqyy4XpD
-	 rASUEd4PDE7ceib6Xh89G+Hsrn5ikYgx3hon/QOY55JaRr51jqTwxjxnerlh74oyct
-	 5wjLPn0N2nyGCxdhtn4PTqm7vq4pkcqoQ0G1U7SII8IZ44D4aOD2Rmmqxz0lyC7YIe
-	 SkMdyc2rZptHXgzrZQ8DkaQBHbMcH7NEqaXMgAES4Lzs4PECYFQAVPqWO5lBXg4TUz
-	 BA/EVoIza/ckg==
-Date: Thu, 3 Oct 2024 16:17:44 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>,
-	hare@suse.de, sagi@grimberg.me, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
-	bcrl@kvack.org, dhowells@redhat.com, asml.silence@gmail.com,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-aio@kvack.org, gost.dev@samsung.com, vishak.g@samsung.com,
-	javier.gonz@samsung.com
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <Zv8YCFhJJZ_UtKOQ@kbusch-mbp>
-References: <20241002075140.GB20819@lst.de>
- <f14a246b-10bf-40c1-bf8f-19101194a6dc@kernel.dk>
- <20241002151344.GA20364@lst.de>
- <Zv1kD8iLeu0xd7eP@kbusch-mbp.dhcp.thefacebook.com>
- <20241002151949.GA20877@lst.de>
- <yq17caq5xvg.fsf@ca-mkp.ca.oracle.com>
- <a8b6c57f-88fa-4af0-8a1a-d6a2f2ca8493@acm.org>
- <20241003125516.GC17031@lst.de>
- <Zv8RQLES1LJtDsKC@kbusch-mbp>
- <abd54d3a-3a5e-4ddc-9716-f6899512a3a4@acm.org>
+	s=arc-20240116; t=1727996692; c=relaxed/simple;
+	bh=6FHqkRQuz3uxjkneqqwW6xoBxVKVyzxwgpRcDKWL8SY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AtcHLVf2qTdrrnZPN/419ouMaRZ6g1eXhciqsrleVildfe640n1Q7GpbzBfkfYDJJcLB0fb7SOyM24GF5CY7vi/xUGJqKlMzGZxNEQGAAehzLJxJI+AkEaHye7Ig2nP1/S87SNkVVnGjM773hE3FBqkD3pMlI+fAur6DucIcfJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FB5pVejv; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a342bae051so6151595ab.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 16:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727996690; x=1728601490; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M6nfuUKflXlu0gy64XrlY7jGUy2rKVA8VyjGUfxntcw=;
+        b=FB5pVejv5ItK6zYkPtB+PviRINede0U2H6tYLbueQqDygJvQgX6JiNKnjTXw/TbJRf
+         pkrZ+JGPSJzLQXp3L59y8mGIgGSEFfsedv0XXfCXYSt1XUbxv5hzUCLaG86S3ugmfn7C
+         KZaeOUAs+OmQaUFOnUSoGcvLJyJYj+iBe70qc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727996690; x=1728601490;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M6nfuUKflXlu0gy64XrlY7jGUy2rKVA8VyjGUfxntcw=;
+        b=Tytx3dJqTr7hU5ZFmj8y+v649wD7fl4OxxnENAwbHJdlr3weLbiafltVmQ86/kRWxe
+         aB6rNooUZpde3I+ZowAkmZo0zkDTXSUlvSn0QzGQy2SPPxcU/DH0lr0hl3tYzWjyXFDf
+         lev+MDTRdOL98VFWD940UwCh+w/NTNvHe3U1zP/RIbXHl/4cxrBGf6CrUEWHnv+dTwBW
+         SVh499KxnZZAAvRPUa4GHJBhwk9+iAnfIHirxvvILDaj9YPmgPd2sfCKZw85IbZUF5M/
+         BdA0+LuPtglfo38pGqPnAJm/7+xxoOWdVWKtIP4y+RbQ5r1kT0FPIZ3XN2WgNGSUbeJ+
+         glZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVSEfokbn2jGXb05MoyXAH0RFc5URF3BwB2iXIWVKeE8xmA4rHb2mDBuXuzBhqCRxivK/UCuYUJ7gc5DaG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuSAQn+bQp+ukTBa8XrovjHjwtqUjOanIqp+lE06bJQpy5iwKz
+	F1avn0iovf6yZJZlPS9W7hjM75ZdtZykoBSswbx1nlI4ClXuZkxuvecpmcpnSBw=
+X-Google-Smtp-Source: AGHT+IEf92eF4XbI75+DDch6LT1NVeo6TRIQ29YwXnjI+iDeNTTSz8c4ISNOJ8P9ysseWA+UZhFJyQ==
+X-Received: by 2002:a05:6e02:214d:b0:3a0:480c:6ac4 with SMTP id e9e14a558f8ab-3a375bd323emr8671095ab.22.1727996690235;
+        Thu, 03 Oct 2024 16:04:50 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db5585f2ebsm482149173.4.2024.10.03.16.04.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 16:04:49 -0700 (PDT)
+Message-ID: <cb25b144-a388-4535-869d-98220a601ebe@linuxfoundation.org>
+Date: Thu, 3 Oct 2024 17:04:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <abd54d3a-3a5e-4ddc-9716-f6899512a3a4@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 33/33] kselftest/riscv: kselftest for user mode cfi
+To: Mark Brown <broonie@kernel.org>
+Cc: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
+ alexghiti@rivosinc.com, samitolvanen@google.com, rick.p.edgecombe@intel.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+ <20241001-v5_user_cfi_series-v1-33-3ba65b6e550f@rivosinc.com>
+ <fdf602e9-a8b1-4f62-9e26-bb62a7202d22@linuxfoundation.org>
+ <b4347055-46f7-4e06-b484-bbf147b80fe4@sirena.org.uk>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <b4347055-46f7-4e06-b484-bbf147b80fe4@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 03, 2024 at 03:00:21PM -0700, Bart Van Assche wrote:
-> On 10/3/24 2:48 PM, Keith Busch wrote:
-> > The only "bonus" I have is not repeatedly explaining why people can't
-> > use h/w features the way they want.
+On 10/3/24 05:03, Mark Brown wrote:
+> On Wed, Oct 02, 2024 at 05:18:36PM -0600, Shuah Khan wrote:
+>> On 10/1/24 10:06, Deepak Gupta wrote:
 > 
-> Hi Keith,
+>>> +#ifndef __NR_prctl
+>>> +#define __NR_prctl 167
+>>> +#endif
 > 
-> Although that's a fair argument, what are the use cases for this patch
-> series? Filesystems in the kernel? Filesystems implemented in user
-> space? Perhaps something else?
+>>> +#ifndef __NR_map_shadow_stack
+>>> +#define __NR_map_shadow_stack 453
 > 
-> This patch series adds new a new user space interface for passing hints
-> to storage devices (in io_uring). As we all know such interfaces are
-> hard to remove once these have been added.
+>> Why do we need to define these? Shouldn't including
+>> asm-generic/unistd.h sufficient?
 > 
-> We don't need new user space interfaces to support FDP for filesystems
-> in the kernel.
-> 
-> For filesystems implemented in user space, would using NVMe pass-through
-> be a viable approach? With this approach, no new user space interfaces
-> have to be added.
-> 
-> I'm wondering how to unblock FDP users without adding a new
-> controversial mechanism in the kernel.
+> We have this issue on arm64 as well, there's some issue with directly
+> pulling in the asm header interfering with libc in some situation (I
+> can't immediately figure out which situation or which libc to remind
+> myself what it is though...) so we've got local defines like we do for
+> the NT_ defines for ptrace.  I see x86 is doing the same.
 
-I really like the passthrough interface. This is flexible and enables
-experimenting with all sorts of features.
+It would be nice to figure. There have been some issues reported due
+to local defines - the test fails if the define happens to not match.
 
-But it exposes exploits and pitfalls. Just check the CVE's against it
-(ex: CVE-2023-6238, note: same problem exists without metadata). The
-consequences of misuse include memory corruption and private memory
-leakage. The barriers for exploits are too low, and the potential for
-mistakes are too high. A possible h/w solution requires an IOMMU, but
-that's a non-starter for many users and only solves the private memory
-vulnerabilities.
+Does including <asm/unistd.h> fix the problem?
 
-Passthrough also skips all the block layer features. I just today added
-statistics to it staged for 6.13, but even that requires yet another
-config step to enable it.
-
-tl;dr: no one wants to use nvme passthrough in production long term.
+thanks,
+-- Shuah
 
