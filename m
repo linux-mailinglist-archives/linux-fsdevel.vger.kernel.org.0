@@ -1,150 +1,250 @@
-Return-Path: <linux-fsdevel+bounces-30884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDBF98F081
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 15:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1490898F0D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 15:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4916EB21AD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 13:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ABD1B22921
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 13:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF36F145B1F;
-	Thu,  3 Oct 2024 13:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="0Z3oQEyK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D8919CC2F;
+	Thu,  3 Oct 2024 13:51:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23034C70
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 13:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5183D186E3D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 13:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727962561; cv=none; b=tKOL0gZ1wmo2EMHAFs55JdU1SQ6ErF7AeppfQq8JZLQrlqda3UxD2fFAOMozR9e3f8EfY92rzgAcc6uX0jm+1Ajt2pCAPAf4oS83Lalf1tTV6kfTZE+T2/g8RhZ0EelDdwjI6izoMI2wo/wFXAIPL1z7HmW0V/YVKuMbPZz5w1k=
+	t=1727963493; cv=none; b=J8S4t+Jupl2T6H0xqsPbp+XNU+SmXKXMUH+ssth6BcAbfNhronHijn8awuZPO2QmCGWC0NC8eD7NBoR1bzlJP/aB4/6zLrFq3GyvSJpoeXh0FZekt76KX9WmwiNPaWgsAs9mljDRA6NMLI02rSsbZaRpiucsJcbD0x8DswkqfCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727962561; c=relaxed/simple;
-	bh=IYUWfu1GPkk7tW+imquhNZ2H55pgGP4BiuyjLAcXJi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bllx0MYKyoY/2gKCJ9tdOJY1QsAtJf8U5tD4zW2Jzp6Di483lPjFbEHTgxV0/TLgOZQAm7wzpB5+WeRqmgxE70tt9TcVT5X7EAjNZMsHZoWhz+VSCV1u1XkxbnfowQOqucqcNkCoRYqDit+1D0SQbUanPm0Q46V/+8rOAts+9/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=0Z3oQEyK; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e109539aedso870766a91.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 06:35:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727962559; x=1728567359; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZAKL7EAiCi/gQr9jLemKWgPvKxknL4IDkDRFsgw4LM=;
-        b=0Z3oQEyKLI/5nzyn+vn/DAX4anHdqvdn+32u5TOInBbxpXEKOjGUUX8vgP1vwvPBbv
-         E2V7nSEt+Ci7YHEbIsVyV4jEhZIhBwIHhPvu6pjUugi/YfOBT+C5eQisBRMIQtWq6q+o
-         hTzncH7M8fe7cBQIQ4WdYQuqhXL4tdDyU/8lAu1whP+4eoIwCM0v6FoNbhNd2uwqHhy9
-         KkPbYC0d5OC+JnPWrV/x9oNHZYP9lcrZ76egLAroRyYEBOQuYGhYhRC7xpYLHIY0p8AM
-         i85PVFy9PZY+TyNUKq4lJS/rQRJ8eWisLd84bDWj9vsGKCFAq6JYBRjGobyuVeaByhbf
-         5WFw==
+	s=arc-20240116; t=1727963493; c=relaxed/simple;
+	bh=1ADzxu2OBA0VIRCOHkbscM+iCtwXCe9dARhDHr/xHDQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CoPqt9dkxQGBxc/nNzeWpknjDxliKikZuqQA6Z86gln3xM0APj+qutdTVjwxh+574WE/ZxlKoOmXS8AOMNgBpyx1OnkYa+0y4lFzGDFtDbRkf4KoPPanlNau5v3nL6B6eBbRfyMMrSBWdwK2TKMDY9z6RhXH+4eePBy8MdPQP7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cdb4971b9so96795439f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 06:51:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727962559; x=1728567359;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mZAKL7EAiCi/gQr9jLemKWgPvKxknL4IDkDRFsgw4LM=;
-        b=sLhG8Om0Im36kHikoHNTr1VPWx/xI66L9LqSdewAJDQgbj2h7o6TQguhmFHJAVxRJU
-         pt0Nt9wDHYDvrpHfDys9QSQ9p4qXdI7CSK4o9gYcOaq6tjyC11JyNKy/dOcTPCWxlcpK
-         4hG/r7oVm3W98c3/iB6VHKjJN1xoxrShaDcZVzR5AUdYncsmtrzIa5T2+ZvKdJf27y9f
-         ss6dOnr1BnnnGr8qguIGXjZARPLiTm7RE1g4Syvxs7NEpS4s6C2CO/xFnJQB8WLpdDH9
-         Vf9tZwOyAVQaMS23cj4ZDXzdbROSApdpQP9r77H8Cbzj+ot2gnhS1Ir8nYT6iydZias/
-         erHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfnF0V+/6R6CJzKgZHIRY+it/ghAN/ku266/cMr9ihUE36PtpmoLKHw+3yN4XgogHeEX/Q+Rk5zzNy75us@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFsjFch6AzlmGUgadnT3oF6gorAOft7AyDHaLbc8isslSqQg99
-	jS49B4rrcsqSg3zkm6gsMm1MLt2QwR1RJ+yHjR5rSDTAEak3eBjgVS647eMWz9w=
-X-Google-Smtp-Source: AGHT+IHDxoI0gNIAwGJf4C3QsyVQPomEeY43/JpCrdta+TjkXgvhmW2gsnZ4m/Ving6k2wsvslo/Pg==
-X-Received: by 2002:a17:90a:d250:b0:2d8:27c1:1d4a with SMTP id 98e67ed59e1d1-2e1847f3928mr8644873a91.24.1727962559235;
-        Thu, 03 Oct 2024 06:35:59 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfad7d0esm1588006a91.8.2024.10.03.06.35.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 06:35:58 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1swLzo-00DP8E-0o;
-	Thu, 03 Oct 2024 23:35:56 +1000
-Date: Thu, 3 Oct 2024 23:35:56 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	kent.overstreet@linux.dev, torvalds@linux-foundation.org
-Subject: Re: [RFC PATCH 0/7] vfs: improving inode cache iteration scalability
-Message-ID: <Zv6dvCpGIqOr9IPw@dread.disaster.area>
-References: <20241002014017.3801899-1-david@fromorbit.com>
- <20241003114555.bl34fkqsja4s5tok@quack3>
- <Zv6Llgzj7_Se1m7H@infradead.org>
- <20241003124619.wfgozqj4yoyl4xbu@quack3>
+        d=1e100.net; s=20230601; t=1727963490; x=1728568290;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OB1j0MrR34XgoaspLCqHmH56Fm6vQhBtOup8NTuwZhc=;
+        b=vlicq0nDOuXF8BAiq8fY+ZtuA45aw7tjO5zqJsTVn9o+GIpKZECUVGp1R05h/3fSgn
+         kjY95beoYgQU4g28QNlLNPJin7wPF9q6w7iPisUa7GFJ7grJYeblzfCWB1XaToNG8G+2
+         E5SnKb7g35y8UuB1XhKs6xmUVz2ksd9ul2o9cQsTmYmIdD0NDO5kD0b4noisysVXxpyr
+         QOvMVqMD8JhZuFhz+b3J6YhM+nmSZqtoJH+X4AfKwNytHFmlacnm4n3UlhB6MCjw3DvQ
+         hFtgRqLNk03k2ySyiiEcHz22of3Dg7FniepIHe6alwVjQgfMf83GFNDqC2bCGbaV//Y6
+         r15Q==
+X-Gm-Message-State: AOJu0YxneGR5+3AYIph3fJmXRJkkpBqcrl7R+3nzzLJWMblfZdD5B3dy
+	AghV4UZHOA40XNFXZqAxrdeWlgAQRxK1PJkZygSrukeJsCaL5zdfmwAjUE0B12HM896qcHK85OI
+	woLCeZYCILZK7lFnEaeNZx5kjlsZ9fjgLHDKnvi9NG8wndp4FowlFAkQ=
+X-Google-Smtp-Source: AGHT+IFMoW/0WzVswhR7l3puDOl3yWzQWgWZxLUB9Dy4O9Tjff8STIVqWDt9PyxWBDhfHVdCrp6OjbVmol0WOVcSdI8h/n5z8i9J
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003124619.wfgozqj4yoyl4xbu@quack3>
+X-Received: by 2002:a05:6602:6009:b0:82c:fd13:271c with SMTP id
+ ca18e2360f4ac-834d8410f96mr655381539f.4.1727963490480; Thu, 03 Oct 2024
+ 06:51:30 -0700 (PDT)
+Date: Thu, 03 Oct 2024 06:51:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fea162.050a0220.9ec68.003d.GAE@google.com>
+Subject: [syzbot] [hfs?] KASAN: slab-out-of-bounds Write in hfs_bnode_read_key (2)
+From: syzbot <syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 03, 2024 at 02:46:19PM +0200, Jan Kara wrote:
-> On Thu 03-10-24 05:18:30, Christoph Hellwig wrote:
-> > On Thu, Oct 03, 2024 at 01:45:55PM +0200, Jan Kara wrote:
-> > > /* Find next inode on the inode list eligible for processing */
-> > > #define sb_inode_iter_next(sb, inode, old_inode, inode_eligible) 	\
-> > > ({									\
-> > > 	struct inode *ret = NULL;					\
-> > 
-> > <snip>
-> > 
-> > > 	ret;								\
-> > > })
-> > 
-> > How is this going to interact with calling into the file system
-> > to do the interaction, which is kinda the point of this series?
-> 
-> Yeah, I was concentrated on the VFS bits and forgot why Dave wrote this
-> series in the first place. So this style of iterator isn't useful for what
-> Dave wants to achieve. Sorry for the noise. Still the possibility to have a
-> callback under inode->i_lock being able to do stuff and decide whether we
+Hello,
 
-I did that first, and turned into an utter mess the moment we step
-outside the existing iterator mechanism.
+syzbot found the following issue on:
 
-I implemented a separate XFS icwalk function because having to hold
-the inode->i_lock between inode lookup and the callback function
-means we cannot do batched inode lookups from the radix tree.
+HEAD commit:    3efc57369a0c Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=174b0ea9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a4fcb065287cdb84
+dashboard link: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10124b8b980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11894c57980000
 
-The existing icwalk code grabs 32 inodes at a time from the radix
-tree and validates them all, then runs the callback on them one at a
-time, then it drops them all.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-3efc5736.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d0988c372a39/vmlinux-3efc5736.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8547f30d7e9d/bzImage-3efc5736.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7608c0ff0561/mount_0.gz
 
-If the VFS inode callback requires the inode i_lock to be held and
-be atomic with the initial state checks, then we have to nest 32
-spinlocks in what is effectively a random lock order.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
 
-So I implemented a non-batched icwalk method, and it didn't get that
-much cleaner. It wasn't until I dropped the inode->i_lock from the
-callback API that everything cleaned up and the offload mechanism
-started to make sense. And it was this change that also makes it
-possible for XFs to use it's existing batched lookup mechanisms
-instead of the special case implementation that I wrote for this
-patch set.
+loop0: detected capacity change from 0 to 64
+==================================================================
+BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
 
-IOWs, we can't hold the inode->i_lock across lookup validation to
-callback if we want to provide freedom of implementation to the
-filesystem specific code. We aren't really concerned about
-performance of traversals, so I went with freedom of implementation
-over clunky locking semantics to optimise away a couple of atomic
-ops per inode for iget/iput calls.
+CPU: 0 UID: 0 PID: 5102 Comm: syz-executor237 Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+ memcpy_from_page include/linux/highmem.h:423 [inline]
+ hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+ hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+ hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
+ hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
+ hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
+ vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+ do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+ __do_sys_mkdir fs/namei.c:4300 [inline]
+ __se_sys_mkdir fs/namei.c:4298 [inline]
+ __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbdd6057a99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe2eb7e0b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbdd6057a99
+RDX: 00007fbdd6057a99 RSI: 0000000000000000 RDI: 0000000020000300
+RBP: 00007fbdd60cb5f0 R08: 00005555615064c0 R09: 00005555615064c0
+R10: 00000000000002b3 R11: 0000000000000246 R12: 00007ffe2eb7e0e0
+R13: 00007ffe2eb7e308 R14: 431bde82d7b634db R15: 00007fbdd60a003b
+ </TASK>
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Allocated by task 5102:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __do_kmalloc_node mm/slub.c:4265 [inline]
+ __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4277
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ hfs_find_init+0x90/0x1f0 fs/hfs/bfind.c:21
+ hfs_cat_create+0x182/0xa50 fs/hfs/catalog.c:96
+ hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
+ vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+ do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+ __do_sys_mkdir fs/namei.c:4300 [inline]
+ __se_sys_mkdir fs/namei.c:4298 [inline]
+ __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff8880123cd100
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 0 bytes inside of
+ allocated 78-byte region [ffff8880123cd100, ffff8880123cd14e)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x123cd
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801ac41280 ffffea0000498a00 dead000000000004
+raw: 0000000000000000 0000000080200020 00000001f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 4576, tgid 4576 (init), ts 31018946504, free_ts 31015095312
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2413
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2579
+ new_slab mm/slub.c:2632 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
+ __slab_alloc+0x58/0xa0 mm/slub.c:3909
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_noprof+0x25a/0x400 mm/slub.c:4277
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ tomoyo_commit_ok+0x29/0x1d0 security/tomoyo/memory.c:76
+ tomoyo_assign_domain+0x625/0x840 security/tomoyo/domain.c:576
+ tomoyo_find_next_domain+0xe1c/0x1d40 security/tomoyo/domain.c:849
+ tomoyo_bprm_check_security+0x114/0x180 security/tomoyo/hooks.h:76
+ security_bprm_check+0x86/0x250 security/security.c:1296
+ search_binary_handler fs/exec.c:1740 [inline]
+ exec_binprm fs/exec.c:1794 [inline]
+ bprm_execve+0xa56/0x1770 fs/exec.c:1845
+ do_execveat_common+0x55f/0x6f0 fs/exec.c:1952
+page last free pid 4575 tgid 4575 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_folios+0xf12/0x18d0 mm/page_alloc.c:2686
+ folios_put_refs+0x76c/0x860 mm/swap.c:1007
+ free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x496/0xc40 mm/mmap.c:1877
+ __mmput+0x115/0x390 kernel/fork.c:1347
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x28e0 kernel/exit.c:926
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff8880123cd000: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+ ffff8880123cd080: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
+>ffff8880123cd100: 00 00 00 00 00 00 00 00 00 06 fc fc fc fc fc fc
+                                              ^
+ ffff8880123cd180: 00 00 00 00 00 00 00 00 00 00 00 06 fc fc fc fc
+ ffff8880123cd200: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
