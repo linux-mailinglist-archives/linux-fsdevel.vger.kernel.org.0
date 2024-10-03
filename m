@@ -1,183 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-30882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A00D98F02F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 15:19:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDBF98F081
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 15:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF761F21DF8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 13:19:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4916EB21AD3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 13:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF16819AD5C;
-	Thu,  3 Oct 2024 13:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF36F145B1F;
+	Thu,  3 Oct 2024 13:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="eFZsDRji";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jui4qD03"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="0Z3oQEyK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B182BAFC
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 13:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23034C70
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 13:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727961582; cv=none; b=bs3n8mwfmph1xzSshOy7y4Sy+eqmzrMqSjERCzsapiHK2/lH1PoF0rm5fjK5bhjtZpUdD0xLq+8uhNOd9P2Kyr03ymrxw6LFD2qHwlWEPuWATnVsV6IvBVSsZH4xrf/pH+z8wR63rRq1fqaaq0KORjzCYW5puZd/zRq+WSqpCpM=
+	t=1727962561; cv=none; b=tKOL0gZ1wmo2EMHAFs55JdU1SQ6ErF7AeppfQq8JZLQrlqda3UxD2fFAOMozR9e3f8EfY92rzgAcc6uX0jm+1Ajt2pCAPAf4oS83Lalf1tTV6kfTZE+T2/g8RhZ0EelDdwjI6izoMI2wo/wFXAIPL1z7HmW0V/YVKuMbPZz5w1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727961582; c=relaxed/simple;
-	bh=IDlCndBvWaBCAt6szH+YpO0XtWjFJdjkh3m9FXnXaGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AxmsBE2NckmgklpSdD4vxQw2MY9ae0GU3IYs53GEGsx5OfCJDl8o8/5KbSo+5ZuPUtYViJf3Uj/V7f2ksL5zQS1TBXynJyXURn2DrRc/dAQ27YjJj7Uo1IEW/GaeY9XzF4ZiLZz3Gt7eva0FPUZm9qWWT78np8bjelb+3BBVkiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=eFZsDRji; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Jui4qD03; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 60E7C1380244;
-	Thu,  3 Oct 2024 09:19:39 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 03 Oct 2024 09:19:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1727961579;
-	 x=1728047979; bh=hLaw3nlRMwXdd6xv4Fjp7mUdZUi5vNR+kTRy82KrBy0=; b=
-	eFZsDRji/1xtkxsKxtmJ31/ONlSDPDn6rPWgDs4lYrc3y5r8R5IXkcsu3koQ82Ha
-	Eu6sytxSwI+fCl13wiT6k86BzDS/paIZKQmkYoo03ufDfwje5QB6fiLT8fxKaYBH
-	51CnpEYgxu/4CdrHebqZgkgOsY4JfN2vsLnTTkCVCafKBPDgOlU31ojH6chKtwRP
-	+c7Kqp8hX6RXYDUC52Abx8dIewGNKV4gjT0R31NsESQm10Co4pc+R4jMjQhcZCt5
-	DnezF2vszs/MlRqZ3Fg7nJfZ/7DB3dKSF9hrpKQCBOPhjMKcUwwG6sQEnMHIpYZI
-	Wsl8CmWDG7hAphhp9HI3Cg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727961579; x=
-	1728047979; bh=hLaw3nlRMwXdd6xv4Fjp7mUdZUi5vNR+kTRy82KrBy0=; b=J
-	ui4qD03/Wf6SC8+jY1SB1RgYrWDqgwQsytKoJh6i5CPZ16D3fJsLmQm7848zDrQ1
-	5DxYFtDSKyKz6Z743iMJZjdHspMmLDt93DagtvFxGNK1LV+aMpjgdw43++2fhzAU
-	61IZvXdKRHCGW7t1tKToSXqrtHMge/11v67Ub9QPzuon6/3RGGgVYJhLhOI+4yA/
-	G56/H/UXA4fCKS2sudbfyh+7RURuooD8jbdIe8i2jvpvGM/4QZjytIXFXlloJSZe
-	MDj9UlUw6YLD/pHg76pezCOX/zNhjqJyjuJdufbK5eXsCxS/jMhp+3zH/68icj3g
-	6dm6iGJCfXX8X97ORsMag==
-X-ME-Sender: <xms:6pn-ZngOEuv_WTXVJe9ifgCbh0AKePYS5Pc8JgaSmvOLFPV28M7huA>
-    <xme:6pn-ZkAVRv6kvaRrHZFwlUfMslNjSR_xZk6qvARWtLQh2NYlw334zpmFWoqMejiD8
-    TfztaiKdmcc1N82>
-X-ME-Received: <xmr:6pn-ZnHkTkn89G5n6qoaVImW7U8IyEnhDD3oGhCCg_Y0ccjWkthuBHViD2IlVS94kRVcmTFRUqCWp76cA0Smuhpfm1sCd92upasM8H9kqe-eviQ0R_G7>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvuddgieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
-    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
-    lhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhs
-    vghfsehtohigihgtphgrnhgurgdrtghomh
-X-ME-Proxy: <xmx:6pn-ZkQ25PLeg_uz6CgoZgDt4Z5Od6zjQTS3mj_MT3wQ1N3nB1da1Q>
-    <xmx:6pn-Zkz3366wrHI1rmKkZdiDenj69J6GDf1oBp1T1rwp2l-Ug64RTA>
-    <xmx:6pn-Zq4vgRAlKwM2crKFleWVY34nra4RtI9HzPretwNoYMzaLrIDnQ>
-    <xmx:6pn-Zpwy3WK_noFNOIXbB9cXld9Fh9cMoN8QUgtgzNaRlJtFdcmWmA>
-    <xmx:65n-Zuv4b6qlQNZtFhfHYDGK4QS1tEyoW9cG-Afb1O6gBXG5ZImyRXcx>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Oct 2024 09:19:37 -0400 (EDT)
-Message-ID: <c2346ef4-7cf1-412a-982c-cf961aa8c433@fastmail.fm>
-Date: Thu, 3 Oct 2024 15:19:37 +0200
+	s=arc-20240116; t=1727962561; c=relaxed/simple;
+	bh=IYUWfu1GPkk7tW+imquhNZ2H55pgGP4BiuyjLAcXJi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bllx0MYKyoY/2gKCJ9tdOJY1QsAtJf8U5tD4zW2Jzp6Di483lPjFbEHTgxV0/TLgOZQAm7wzpB5+WeRqmgxE70tt9TcVT5X7EAjNZMsHZoWhz+VSCV1u1XkxbnfowQOqucqcNkCoRYqDit+1D0SQbUanPm0Q46V/+8rOAts+9/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=0Z3oQEyK; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e109539aedso870766a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 06:35:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727962559; x=1728567359; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mZAKL7EAiCi/gQr9jLemKWgPvKxknL4IDkDRFsgw4LM=;
+        b=0Z3oQEyKLI/5nzyn+vn/DAX4anHdqvdn+32u5TOInBbxpXEKOjGUUX8vgP1vwvPBbv
+         E2V7nSEt+Ci7YHEbIsVyV4jEhZIhBwIHhPvu6pjUugi/YfOBT+C5eQisBRMIQtWq6q+o
+         hTzncH7M8fe7cBQIQ4WdYQuqhXL4tdDyU/8lAu1whP+4eoIwCM0v6FoNbhNd2uwqHhy9
+         KkPbYC0d5OC+JnPWrV/x9oNHZYP9lcrZ76egLAroRyYEBOQuYGhYhRC7xpYLHIY0p8AM
+         i85PVFy9PZY+TyNUKq4lJS/rQRJ8eWisLd84bDWj9vsGKCFAq6JYBRjGobyuVeaByhbf
+         5WFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727962559; x=1728567359;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mZAKL7EAiCi/gQr9jLemKWgPvKxknL4IDkDRFsgw4LM=;
+        b=sLhG8Om0Im36kHikoHNTr1VPWx/xI66L9LqSdewAJDQgbj2h7o6TQguhmFHJAVxRJU
+         pt0Nt9wDHYDvrpHfDys9QSQ9p4qXdI7CSK4o9gYcOaq6tjyC11JyNKy/dOcTPCWxlcpK
+         4hG/r7oVm3W98c3/iB6VHKjJN1xoxrShaDcZVzR5AUdYncsmtrzIa5T2+ZvKdJf27y9f
+         ss6dOnr1BnnnGr8qguIGXjZARPLiTm7RE1g4Syvxs7NEpS4s6C2CO/xFnJQB8WLpdDH9
+         Vf9tZwOyAVQaMS23cj4ZDXzdbROSApdpQP9r77H8Cbzj+ot2gnhS1Ir8nYT6iydZias/
+         erHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfnF0V+/6R6CJzKgZHIRY+it/ghAN/ku266/cMr9ihUE36PtpmoLKHw+3yN4XgogHeEX/Q+Rk5zzNy75us@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFsjFch6AzlmGUgadnT3oF6gorAOft7AyDHaLbc8isslSqQg99
+	jS49B4rrcsqSg3zkm6gsMm1MLt2QwR1RJ+yHjR5rSDTAEak3eBjgVS647eMWz9w=
+X-Google-Smtp-Source: AGHT+IHDxoI0gNIAwGJf4C3QsyVQPomEeY43/JpCrdta+TjkXgvhmW2gsnZ4m/Ving6k2wsvslo/Pg==
+X-Received: by 2002:a17:90a:d250:b0:2d8:27c1:1d4a with SMTP id 98e67ed59e1d1-2e1847f3928mr8644873a91.24.1727962559235;
+        Thu, 03 Oct 2024 06:35:59 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfad7d0esm1588006a91.8.2024.10.03.06.35.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 06:35:58 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1swLzo-00DP8E-0o;
+	Thu, 03 Oct 2024 23:35:56 +1000
+Date: Thu, 3 Oct 2024 23:35:56 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+	kent.overstreet@linux.dev, torvalds@linux-foundation.org
+Subject: Re: [RFC PATCH 0/7] vfs: improving inode cache iteration scalability
+Message-ID: <Zv6dvCpGIqOr9IPw@dread.disaster.area>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241003114555.bl34fkqsja4s5tok@quack3>
+ <Zv6Llgzj7_Se1m7H@infradead.org>
+ <20241003124619.wfgozqj4yoyl4xbu@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fuse-io-uring: We need to keep the tag/index
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>
-References: <e3a4e7a8-a40f-495f-9c7c-1f296c306a35@fastmail.fm>
- <CAJfpegsCXix+vVRp0O6bxXgwKeq11tU655pk9kjHN85WzWTpWA@mail.gmail.com>
- <813548b9-efd7-40d9-994f-20347071e7b6@fastmail.fm>
- <CAJfpegtazfLLV9FoeUzSMbN3SoVoA6XfcHmOrMZnVMKxbRs0hQ@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegtazfLLV9FoeUzSMbN3SoVoA6XfcHmOrMZnVMKxbRs0hQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003124619.wfgozqj4yoyl4xbu@quack3>
 
+On Thu, Oct 03, 2024 at 02:46:19PM +0200, Jan Kara wrote:
+> On Thu 03-10-24 05:18:30, Christoph Hellwig wrote:
+> > On Thu, Oct 03, 2024 at 01:45:55PM +0200, Jan Kara wrote:
+> > > /* Find next inode on the inode list eligible for processing */
+> > > #define sb_inode_iter_next(sb, inode, old_inode, inode_eligible) 	\
+> > > ({									\
+> > > 	struct inode *ret = NULL;					\
+> > 
+> > <snip>
+> > 
+> > > 	ret;								\
+> > > })
+> > 
+> > How is this going to interact with calling into the file system
+> > to do the interaction, which is kinda the point of this series?
+> 
+> Yeah, I was concentrated on the VFS bits and forgot why Dave wrote this
+> series in the first place. So this style of iterator isn't useful for what
+> Dave wants to achieve. Sorry for the noise. Still the possibility to have a
+> callback under inode->i_lock being able to do stuff and decide whether we
 
+I did that first, and turned into an utter mess the moment we step
+outside the existing iterator mechanism.
 
-On 10/3/24 14:02, Miklos Szeredi wrote:
-> On Thu, 3 Oct 2024 at 12:10, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
-> 
->> What I mean is that you wanted to get rid of the 'tag' - using any kind of
->> search means we still need it. I.e. we cannot just take last list head
->> or tail and use that.
->> The array is only dynamic at initialization time. And why spending O(logN)
->> to search instead of O(1)?
-> 
-> Because for sane queue depths they are essentially the same.  This is
-> not where we can gain or lose any significant performance.
-> 
->> And I know that it is an implementation detail, I just would like to avoid
->> many rebasing rounds on these details.
-> 
-> I think the logical interface would be:
-> 
->  - pass a userspace buffer to FETCH (you told me, but I don't remember
-> why sqe->addr isn't suitable)
+I implemented a separate XFS icwalk function because having to hold
+the inode->i_lock between inode lookup and the callback function
+means we cannot do batched inode lookups from the radix tree.
 
-I think we could change to that now. 
+The existing icwalk code grabs 32 inodes at a time from the radix
+tree and validates them all, then runs the callback on them one at a
+time, then it drops them all.
 
-> 
->  - set sqe->user_data to an implementation dependent value, this could
-> be just the userspace buffer, but it could be a request object
+If the VFS inode callback requires the inode i_lock to be held and
+be atomic with the initial state checks, then we have to nest 32
+spinlocks in what is effectively a random lock order.
 
-Libfuse already does this, it points to 'struct fuse_ring_ent', which then
-points to the buffer. Maybe that could be optimized to have 
-'struct fuse_ring_ent' as part of the buffer.
+So I implemented a non-batched icwalk method, and it didn't get that
+much cleaner. It wasn't until I dropped the inode->i_lock from the
+callback API that everything cleaned up and the offload mechanism
+started to make sense. And it was this change that also makes it
+possible for XFs to use it's existing batched lookup mechanisms
+instead of the special case implementation that I wrote for this
+patch set.
 
-> 
->  - kernel allocates an idle request and queues it.
-> 
->  - request comes in, kernel takes a request from the idle queue and fills it
-> 
->  - cqe->user_data is returned with the original sqe->user_data, which
-> should be sufficient for the server to identify the request
-> 
->  - process request, send COMMIT_AND_FETCH with the userspace buffer
-> and user data
-> 
->  - the kernel reads the header from the userspace buffer, finds
-> outh->unique, finds and completes the request
-> 
->  - then queues the request on the idle queue
-> 
-> ...
-> 
-> What's wrong with that?
+IOWs, we can't hold the inode->i_lock across lookup validation to
+callback if we want to provide freedom of implementation to the
+filesystem specific code. We aren't really concerned about
+performance of traversals, so I went with freedom of implementation
+over clunky locking semantics to optimise away a couple of atomic
+ops per inode for iget/iput calls.
 
-In my opinion a bit sad that we have to search
-instead of just doing an array[ID] access. I certainly don't want to
-rely on the current hashed list search, this only works reasonably
-well, because with the current threading model requests in fly is
-typically small. 
-And then rb entries also have pointers - it won't take 
-any less memory, more on the contrary. 
-
-At best one could argue that on tear down races are avoided as one
-has to do a search now. Although that was handled but checks
-tear-down checks in fuse_uring_cmd.
-
-Well, if you really prefer, I'm going to add use an rbtree or maybe
-better xarray search.  No reason for anything like that in libfuse, it can
-just continue to type cast 'user_data'.
-
-
-Thanks,
-Bernd
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
