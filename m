@@ -1,98 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-30843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E0198EBAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 10:34:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A28398EBF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 11:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26E2281C96
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 08:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05CBD1F23981
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 09:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A3413CF8E;
-	Thu,  3 Oct 2024 08:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9191422C7;
+	Thu,  3 Oct 2024 09:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMvqFrK5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EUvhodXz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5272B13B2A4;
-	Thu,  3 Oct 2024 08:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6897A45BE3;
+	Thu,  3 Oct 2024 09:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727944432; cv=none; b=VKg9/WcP6T8DDUSR8A8enuaoH8E6506txps9fQ4+Jrrpn+dtFYpixkRdCLgZicNin9dRqOaOqqiRe8Ll/yMSuiPWKDmqphS0+W/Yv0/OqtgsfYULk+VOtXo3VS7QyK4hDvB5ovd0dUM0C6z8dXDpgpo+/uZjw83C2BHL65osdOY=
+	t=1727946039; cv=none; b=P+0+Pq1QhaNx9lQ9E5XaGWbcdThE3ULmdw2AGhhT/NgrfOeI+zKq8+4it0a+Ee0j7rVtHZMhqsuIX3ZdmcgMLCXEIMx1L9tROXvfj/GmPcinLaaK9R95mVNYnHLK/PTh6hUzSNURqATsXjif+yCjRRfcLcmhbYdVhy7At3tW60U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727944432; c=relaxed/simple;
-	bh=t9NCdJyZZVWNegvqtHbQXG06Vs/AZR9IoZ/MuxzH4j8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZOP3JnAZtWeivhwhQif5g2hxCwRSMh975K3SMbHYBo3SOhsIrk4iHEIsXDBcwpbC9jMswplsoS/NA9nIjVjoAuEJmZWjTgV3F54lnV8fADMkl5nFHtjF2q0LNM6ePkTgrs1R2d6pYk8f3Vz295Yz8//zzOBWgI8Ougdfao9l2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMvqFrK5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD066C4CEC7;
-	Thu,  3 Oct 2024 08:33:48 +0000 (UTC)
+	s=arc-20240116; t=1727946039; c=relaxed/simple;
+	bh=oWnWVcbRYOqF6dqFeKKxm/8XQtTMj28eNVFxgPIxyqU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CMe6144LbZud3s0W+9eSvA7CWUdkhbnNvOENyECnslQ9Yyvq5jhyr9T/qRoLgTW5O0A80lVOGnow+cNPvbmptYH4kb+watOpJ8sy3bBa6TUtQ4nFa2Z+ylQmknMmwyGT/GVVZz/utnJgHeXTXuMcpfod9KUZCCtYSV63EHt6U44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EUvhodXz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1DD8C4CEC7;
+	Thu,  3 Oct 2024 09:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727944431;
-	bh=t9NCdJyZZVWNegvqtHbQXG06Vs/AZR9IoZ/MuxzH4j8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uMvqFrK5wTisMBMy2BU2/zMOBSpHxJKIS+iabq4XEt5oPI3RKYc4DngolQvSlOqyA
-	 WL71jQXEzXUxCSrAb2D+hpZ92qQ3StEFY/mv2sY+jtgktMzNBmX3gR636iUX0GC8c0
-	 +p+oHYO8njVrY/GKLmfIeCSGdawJ05Xg87flRxa/ixkdvXNL/HPa3gs6A7JEP1h1oa
-	 rZJaRGb7PdghKiQ/T16iBpebEcuewl8CoX85AlNuH+AuJkcZNtSbSkeFwLQedyjVEn
-	 QkQVD3hGVPKgabMDKsQfhBNkHKitCCC/Ha30od3CtQGVF4AsT1RCS/+n+5S/xgkb2k
-	 fVzOEWWOnpg1w==
-Date: Thu, 3 Oct 2024 10:33:46 +0200
+	s=k20201202; t=1727946039;
+	bh=oWnWVcbRYOqF6dqFeKKxm/8XQtTMj28eNVFxgPIxyqU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EUvhodXzHD9KZzNnGMsFdOUxDf1yYly10JF7Ronc3Ncf/p12Hfn+WE8bbUzvHfuwH
+	 OSLNXt3bVYOaMzvkB531lbahpxPr4I3eR86AMiNvurH35HU+r7GRjJMC3U1mpBelko
+	 naEMAq5zIBMA79UQYYAoy9J8EqhU228LFPbQUlLgLX1+NJs80zXbj3dQCUP0ieQe/z
+	 8Jjfh1qWvCh5s/LIobEmTn8DcWINX/IYSFhyx3fV7HldkRzfjWF+Pa3ykD2DjMUwhn
+	 eDhAk/Xoo4xpvHZGBVP14vJE7BJi2l6AfPtZJeHk4cdDffbjsaEKXSnVrKXKvVcNa0
+	 x9xE5+n7mI3Iw==
 From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-Message-ID: <20241003-karotten-geist-0ac7914b4445@brauner>
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
- <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
- <20241002-ertrag-syntaktisch-6c18b81d6c90@brauner>
- <CAH5fLgjm=u_im776f9cTrqjKCYQ31F4t=_Dg6mDzCoSEGoJm-w@mail.gmail.com>
+Subject: [GIT PULL] vfs fixes
+Date: Thu,  3 Oct 2024 11:00:20 +0200
+Message-ID: <20241003-vfs-fixes-86b826e78b57@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2600; i=brauner@kernel.org; h=from:subject:message-id; bh=oWnWVcbRYOqF6dqFeKKxm/8XQtTMj28eNVFxgPIxyqU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9i1Xb0tm/SrThK/ezNivj1R0dL7X3KNp0PJtyrvjHr EttpSJ3O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSHM7I8KV7boXYyX0r0/Uc PVxnVDK51E5TNXTcOk1C/lJRyZQt5xkZDntneOUnzzujZvCM5dzFD2lL425dyea7fmeFwjrpcLd KDgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgjm=u_im776f9cTrqjKCYQ31F4t=_Dg6mDzCoSEGoJm-w@mail.gmail.com>
 
-On Wed, Oct 02, 2024 at 04:24:58PM GMT, Alice Ryhl wrote:
-> On Wed, Oct 2, 2024 at 4:06 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Oct 01, 2024 at 08:22:22AM GMT, Alice Ryhl wrote:
-> > > +unsafe extern "C" fn fops_open<T: MiscDevice>(
-> > > +    inode: *mut bindings::inode,
-> > > +    file: *mut bindings::file,
-> > > +) -> c_int {
-> > > +    // SAFETY: The pointers are valid and for a file being opened.
-> > > +    let ret = unsafe { bindings::generic_file_open(inode, file) };
-> > > +    if ret != 0 {
-> > > +        return ret;
-> > > +    }
-> >
-> > Do you have code where that function is used? Because this looks wrong
-> > or at least I don't understand from just a glance whether that
-> > generic_file_open() call makes sense.
-> >
-> > Illustrating how we get from opening /dev/binder to this call would
-> > help.
-> 
-> Hmm. I wrote this by comparing with the ashmem open callback. Now that
-> you mention it you are right that Binder does not call
-> generic_file_open ... I have to admit that I don't know what
-> generic_file_open does.
+Hey Linus,
 
-It's irrelevant for binder.
+/* Summary */
+
+This contains fixes for this merge window:
+
+vfs:
+
+- Ensure that iter_folioq_get_pages() advances to the next slot otherwise it
+  will end up using the same folio with an out-of-bound offset.
+
+iomap:
+
+- Dont unshare delalloc extents which can't be reflinked, and thus can't be shared.
+
+- Constrain the file range passed to iomap_file_unshare() directly in iomap
+  instead of requiring the callers to do it.
+
+netfs:
+
+- Use folioq_count instead of folioq_nr_slot to prevent an unitialized value
+  warning in netfs_clear_buffer().
+
+- Fix missing wakeup after issuing writes by scheduling the write collector
+  only if all the subrequest queues are empty and thus no writes are pending.
+
+- Fix two minor documentation bugs.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-3)
+Debian clang version 16.0.6 (27+b1)
+
+/* Conflicts */
+
+No known conflicts.
+
+The following changes since commit e32cde8d2bd7d251a8f9b434143977ddf13dcec6:
+
+  Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext (2024-09-30 12:58:17 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12-rc2.fixes.2
+
+for you to fetch changes up to a311a08a4237241fb5b9d219d3e33346de6e83e0:
+
+  iomap: constrain the file range passed to iomap_file_unshare (2024-10-03 10:22:28 +0200)
+
+Please consider pulling these changes from the signed vfs-6.12-rc2.fixes.2 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.12-rc2.fixes.2
+
+----------------------------------------------------------------
+Chang Yu (1):
+      netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
+
+Christian Brauner (2):
+      folio_queue: fix documentation
+      Documentation: add missing folio_queue entry
+
+Darrick J. Wong (2):
+      iomap: don't bother unsharing delalloc extents
+      iomap: constrain the file range passed to iomap_file_unshare
+
+David Howells (1):
+      netfs: Fix missing wakeup after issuing writes
+
+Omar Sandoval (1):
+      iov_iter: fix advancing slot in iter_folioq_get_pages()
+
+ Documentation/core-api/index.rst |  1 +
+ fs/dax.c                         |  6 +++++-
+ fs/iomap/buffered-io.c           |  9 +++++++--
+ fs/netfs/misc.c                  |  2 +-
+ fs/netfs/write_issue.c           | 42 ++++++++++++++++++++++++++--------------
+ include/linux/folio_queue.h      |  2 +-
+ lib/iov_iter.c                   |  2 +-
+ 7 files changed, 43 insertions(+), 21 deletions(-)
 
