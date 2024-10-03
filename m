@@ -1,99 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-30839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE3598EA88
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 09:39:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5048698EB18
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 10:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30A1FB22D2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 07:38:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB6EEB20B94
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 08:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177B312C460;
-	Thu,  3 Oct 2024 07:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F08136E21;
+	Thu,  3 Oct 2024 08:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gvZoT49b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMqR0r4c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1485613D8A3;
-	Thu,  3 Oct 2024 07:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B46126C04;
+	Thu,  3 Oct 2024 08:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727941088; cv=none; b=QX7cjHS+3NPsw1XF8DdU13yXrvLHaFOzYzTl7fh4+aFuC3PKgXH1uZZllV1xiXA/sHCKf5AsZqrBlJAOsRW5oeIJ+k2a80s/nBxEi0uRbL2LsJMDvs4V3DFNUkE4jBXcWKkhouWCLQ/DMDiiT91mHGormpcBb61jA8EvfhBI6ag=
+	t=1727942996; cv=none; b=LOWvg3nfFvG3uR50saAtoW+dTXI7G7IJ2ab9gVpJ+KD+OIwC947v8DvqUlL4fUKkwxSV/D8zaUYIDOaUiB0nAbMjcj0beo1A0sUNWgYz3HfiadCL1Xitbuv3xDmjaVwxl1E/a8BGtV+7A98+5/Lnfb1m5ZFbdRBbCKjSlnx/du8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727941088; c=relaxed/simple;
-	bh=Z8vxIMP8M5qWA1eWQH4xk72EVHr7rDe+WWkK7RKFCKk=;
+	s=arc-20240116; t=1727942996; c=relaxed/simple;
+	bh=qQeayOm0L0sSl/y1Csw+TfpLfgb2PW3yPbPgwLvTd0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2db529ixbUAuhNOhapE6jb+Z4W62mDgi5i2QUAbeF5BhUGatCovigvz/gARSKmQ1K0O+EAi6qqlKUVTl1FJL8G5Rjglw0emosBX62eg81pzor4BKxLfpc7loNkk2rsHHlyM7Z029KF3LhKgA0+01TgGTUKQRbaOp4Vhqp1w4H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gvZoT49b; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8OnmhiQjCnWTVMeAh5YC42peUZpmpY/M4dDvvKxMHi4=; b=gvZoT49bQWyRtbkYqv0gR67IkY
-	lso8bhxu9Y17FdTd36poSIFeQYYQ4I/XQIv9Vu78yjP+9ZJvaUSQxqK8EEB31QrmBCwZC4THB+kKK
-	y7R+sQ2cGAfUNclQTeP7Hxy0pbJKjtW1KublKGmQaIsxZY5tyfG5csw67GTLqykHAFv+tB+Y6A0zP
-	xaT5nBf92OoESVvE+tSUCm11d38Lpn7kfp4XPruqVjd/sfO72t2jYe1nibEzQzqVTlaLrubEuAgvv
-	j5YWHJkJwXTGL0MZj5JAEEKbSg+Ln4QdTwjoqBZ33tj6fcrVmsMI9aZZNvvSRHUYVCq4eRAF7z+5B
-	uWGeBC3g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1swGPV-00000008P6G-2Qbd;
-	Thu, 03 Oct 2024 07:38:05 +0000
-Date: Thu, 3 Oct 2024 00:38:05 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
-	torvalds@linux-foundation.org,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
-	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
-	Kees Cook <keescook@chromium.org>,
-	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
- sb->s_inodes iteration to super_iter_inodes()
-Message-ID: <Zv5J3VTGqdjUAu1J@infradead.org>
-References: <20241002014017.3801899-1-david@fromorbit.com>
- <20241002014017.3801899-5-david@fromorbit.com>
- <Zv5GfY1WS_aaczZM@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q8vtrQyToTfr1ICtsCVJQ8QXV7XKBvHyQBpD0Jqgji1IKmGiXXJ16xStwQAtX8rdsItKi2/VmTAplDcXaedxTGQVU0Yh0qzycPYMS+NrCq5/fL7nGJpAMwKCYGRMWgYQ4jtEIbQtf8K6Mf9rs1h1Ah4JY7untpja51S8qUWa1Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMqR0r4c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC63BC4CECC;
+	Thu,  3 Oct 2024 08:09:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727942996;
+	bh=qQeayOm0L0sSl/y1Csw+TfpLfgb2PW3yPbPgwLvTd0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qMqR0r4c535Qw1/zSFmD71mAE01tk4kDkUOo2n7zhWRb1dhvhhJpqI/NBxQKYxVG9
+	 zTRbnISP5rMsldDpTrUVXQTeqjiV7JnknYqTkOi9X0Lwaizj+Epm81HVhDwYcGIdBz
+	 OKhvjQ8Vkn1vHHQ+utTO2Xuy5CxgKgJgDNIpI9PSVBY08XqdUMhLGR6FelisZBEa+R
+	 gskufR6f7Uf062fx2OoaI02G7SiEOMNVzTK/dcU/E276lLxRm0YG2gn8155r7dmKpU
+	 4TasQvuacPMssc4iczt8UNr7FXAHDmIMPlGFUJqo0M+oW2a0XnvDu3qniNXMjkq458
+	 PONHRIQSexyxA==
+Date: Thu, 3 Oct 2024 10:09:50 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alice Ryhl <aliceryhl@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+Message-ID: <20241003-atempause-entrichten-2552bfddae99@brauner>
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
+ <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
+ <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
+ <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
+ <20241002-inbegriff-getadelt-9275ce925594@brauner>
+ <10dca723-73e2-4757-8e94-22407f069a75@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zv5GfY1WS_aaczZM@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <10dca723-73e2-4757-8e94-22407f069a75@app.fastmail.com>
 
-On Thu, Oct 03, 2024 at 12:23:41AM -0700, Christoph Hellwig wrote:
-> On Wed, Oct 02, 2024 at 11:33:21AM +1000, Dave Chinner wrote:
-> > --- a/security/landlock/fs.c
-> > +++ b/security/landlock/fs.c
-> > @@ -1223,109 +1223,60 @@ static void hook_inode_free_security_rcu(void *inode_security)
-> >  
-> >  /*
-> >   * Release the inodes used in a security policy.
-> > - *
-> > - * Cf. fsnotify_unmount_inodes() and invalidate_inodes()
-> >   */
-> > +static int release_inode_fn(struct inode *inode, void *data)
+On Wed, Oct 02, 2024 at 03:45:08PM GMT, Arnd Bergmann wrote:
+> On Wed, Oct 2, 2024, at 14:23, Christian Brauner wrote:
 > 
-> Looks like this is called from the sb_delete LSM hook, which
-> is only implemented by landlock, and only called from
-> generic_shutdown_super, separated from evict_inodes only by call
-> to fsnotify_sb_delete.  Why did LSM not hook into that and instead
+> > and then copy the stuff via copy_struct_from_user() or copy back out to
+> > user via other means.
+> >
+> > This way you can safely extend ioctl()s in a backward and forward
+> > compatible manner and if we can enforce this for new drivers then I
+> > think that's what we should do.
+> 
+> I don't see much value in building generic code for ioctl around
+> this specific variant of extensibility. Extending ioctl commands
+> by having a larger structure that results in a new cmd code
+> constant is fine, but there is little difference between doing
+> this with the same or a different 'nr' value. Most drivers just
+> always use a new nr here, and I see no reason to discourage that.
+> 
+> There is actually a small risk in your example where it can
+> break if you have the same size between native and compat
+> variants of the same command, like
+> 
+> struct old {
+>     long a;
+> };
+> 
+> struct new {
+>     long a;
+>     int b;
+> };
+> 
+> Here, the 64-bit 'old' has the same size as the 32-bit 'new',
+> so if we try to handle them in a shared native/compat ioctl
+> function, this needs an extra in_conmpat_syscall() check that
+> adds complexity and is easy to forget.
 
-An the main thing that fsnotify_sb_delete does is yet another inode
-iteration..
-
-Ay chance you all could get together an figure out how to get down
-to a single sb inode iteration per unmount?
-
+This presupposes that we will have Rust drivers - not C drivers - that
+define structs like it's 1990. You yourself and me included try to
+enforce that structs are correctly aligned and padded. So I see this as
+a non-argument. We wouldn't let this slide in new system calls so I
+don't see why we would in new ioctls.
 
