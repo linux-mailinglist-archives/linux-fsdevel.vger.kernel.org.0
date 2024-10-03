@@ -1,135 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-30823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D477498E757
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 01:47:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A90798E7B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 02:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123EC1C25F74
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2024 23:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211F01F232EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 00:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2967A1CCB23;
-	Wed,  2 Oct 2024 23:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F118C07;
+	Thu,  3 Oct 2024 00:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JUOKNPWp"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="q4Q10RP3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221F81A0AE9;
-	Wed,  2 Oct 2024 23:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D064A;
+	Thu,  3 Oct 2024 00:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912752; cv=none; b=Ue2mT8Ehffzfac5ZMW1ptXtEhr31FS4VAa5nd4ecb39063caSv4J53+jdFprWYDN8OmZnK1XgJLQkoh/eHAQ7uwCRVcnxd9/IDxW0kMJ0SvaSlr+jkaHtz+LcRHcf5M7e3ZRpX+x7bGJdosmPC4LOXcpH0NcmPs9zka8jpwmF3M=
+	t=1727914847; cv=none; b=UAolAD5AGZfd4pY9+InxaD3RUZARDHvnehZuzVa7BV3MHRRZEftGj8uaFzPycStYoAxtN90pPwcnvMwa+O2fpabU6DS4XtXIwFhaB/rb5s2Jj6HQ9EjoMKxaWB40SrFc3yspdqjHNAdA+L9xSO9KthyOndU7Kwv1R8R1QapzPJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912752; c=relaxed/simple;
-	bh=g6SodgXuhFSjZPqpwigjcfcJJcRz7X6EEVS62TB2WS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k6K1i4I1M+HS3Xju26VTQpDXDiwKz7aJtOU+k+NdnRgKED+njx/30XOugg1hdVVbe6u/fmROr5VYkgLH2sLCFS1QtzP5eWQaHZo263KKHM/7dl2Th4Wx/1X0got9ABN237t+rcgsE1flqUOOw0yAiVZviCbSHblpgOnRu0hQrRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JUOKNPWp; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=bm71yghG5LmMPzMX6MAemKlkSPoby82wgR5jHJ9lUOc=; b=JUOKNPWprVahbSaKyzgJmNEx3M
-	oddv6lJOok+SD7V/VPr5KC+WOTyqzaNMHoygRYybFzuPmkQvSGabEroPITqAbrEqUoJLlbjmakWUX
-	hoScsaL4uMDdYEijrIvsiQxlnzqY7xACli8TttrH8Yy/LF94oWJWS2PtftPR4qaWqGqRuvnnoWKy3
-	CntcYbyf3l+Z1irHv4S9UUt56wM37QvLpNIzei5pCPOpcDRWjuKox8OWO+LkUUs5Jp6TfYQ/A9P8G
-	lGJTtTypJdsTL+JjpHdQkscGbV7p2UgehaMyGB0lGLtg9M8SyPMKkkCBd3EK5zQbwnJ3SKKQIc/Yi
-	eB2wDhuQ==;
-Received: from [187.57.199.212] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sw92M-0045tc-81; Thu, 03 Oct 2024 01:45:42 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com,
-	Christoph Hellwig <hch@lst.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v5 10/10] docs: tmpfs: Add casefold options
-Date: Wed,  2 Oct 2024 20:44:44 -0300
-Message-ID: <20241002234444.398367-11-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241002234444.398367-1-andrealmeid@igalia.com>
-References: <20241002234444.398367-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1727914847; c=relaxed/simple;
+	bh=fNsT/Ir6QY/XIv84TKawGit7Z43Us4YdiuXKg6+cAjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=skJivGWyXMP9QSy7egeTTu4+AaTWSbSYlKAnW+pEtBI9rQngsN195gaxzrnQfLqK6vipEY7REngkYIlakD25JtdGtckvT6+amYXcuskYMXjWj+4hb5D9W2didNbcdilG5XBa3bpP8wrAvvRWK3SBRTZoEMWGlFpud983uQZgbLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=q4Q10RP3; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XJslc5hknzlgMW9;
+	Thu,  3 Oct 2024 00:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1727914839; x=1730506840; bh=Oh0VWAuDQnXtvqrOgW+mdNBp
+	O1eMzfyHq16DUHZnGIc=; b=q4Q10RP3cvtsde0sb2ibCa9e909lRJus9XrjroPK
+	B+Vo8AEO2LHR4T59I2Vw8U7LuErXXaOZ3yQsZP4gHblTnU6tXSqsVRiXydJ7yCe0
+	sGYpf69OhfMjsorv6slK6lRQXdgOKgUVgPoAHHWdk1O3+QW8Ogp8ku5bFmOnthYC
+	oR2lvZRouL6esIoM3OM/Wr1bdJ+1nH5ZUYqTpkoKZLFYRN7Df7JUld7g2e/yiYag
+	TQFHmM8W3jpPk/XHPMOnDjN52iYxzDWmChJP+gDGwkwrjCM2EufkemQO4zPUG+Ap
+	pZK6LSrTtVI7ZPgT54P0IEFiPSWQH6iz6f8JUn2Om1hmmg==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id LlQiNrpWlL36; Thu,  3 Oct 2024 00:20:39 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XJslN5L2NzlgVnY;
+	Thu,  3 Oct 2024 00:20:32 +0000 (UTC)
+Message-ID: <052e0503-eb3f-4345-b366-1c0a2c4604a5@acm.org>
+Date: Wed, 2 Oct 2024 17:20:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+To: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
+ hch@lst.de, hare@suse.de, sagi@grimberg.me, martin.petersen@oracle.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+ asml.silence@gmail.com
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+ gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
+References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
+ <20240930181305.17286-1-joshi.k@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240930181305.17286-1-joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Document mounting options for casefold support in tmpfs.
+On 9/30/24 11:13 AM, Kanchan Joshi wrote:
+> Another spin to incorporate the feedback from LPC and previous
+> iterations. The series adds two capabilities:
+> - FDP support at NVMe level (patch #1)
+> - Per-io hinting via io_uring (patch #3)
+> Patch #2 is needed to do per-io hints.
+> 
+> The motivation and interface details are present in the commit
+> descriptions.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
-Changes from v3:
-- Rewrote note about "this doesn't enable casefold by default" (Krisman)
----
- Documentation/filesystems/tmpfs.rst | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Something is missing from the patch descriptions. What is the goal
+of this patch series? Is the goal to support FDP in filesystems in
+the kernel, is the goal to support filesystems implemented in user
+space or perhaps something else? I think this should be mentioned in
+the cover letter.
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 56a26c843dbe..0385310f2258 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -241,6 +241,28 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
- will give you tmpfs instance on /mytmpfs which can allocate 10GB
- RAM/SWAP in 10240 inodes and it is only accessible by root.
- 
-+tmpfs has the following mounting options for case-insensitive lookup support:
-+
-+================= ==============================================================
-+casefold          Enable casefold support at this mount point using the given
-+                  argument as the encoding standard. Currently only UTF-8
-+                  encodings are supported. If no argument is used, it will load
-+                  the latest UTF-8 encoding available.
-+strict_encoding   Enable strict encoding at this mount point (disabled by
-+                  default). In this mode, the filesystem refuses to create file
-+                  and directory with names containing invalid UTF-8 characters.
-+================= ==============================================================
-+
-+This option doesn't render the entire filesystem case-insensitive. One needs to
-+still set the casefold flag per directory, by flipping +F attribute in an empty
-+directory. Nevertheless, new directories will inherit the attribute. The
-+mountpoint itself cannot be made case-insensitive.
-+
-+Example::
-+
-+    $ mount -t tmpfs -o casefold=utf8-12.1.0,strict_encoding fs_name /mytmpfs
-+    $ mount -t tmpfs -o casefold fs_name /mytmpfs
-+
- 
- :Author:
-    Christoph Rohland <cr@sap.com>, 1.12.01
-@@ -250,3 +272,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by root.
-    KOSAKI Motohiro, 16 Mar 2010
- :Updated:
-    Chris Down, 13 July 2020
-+:Updated:
-+   André Almeida, 23 Aug 2024
--- 
-2.46.0
+Thanks,
+
+Bart.
 
 
