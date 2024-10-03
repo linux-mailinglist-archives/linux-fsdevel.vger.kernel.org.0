@@ -1,85 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-30851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E744298ED1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 12:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F7698ED42
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 12:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2E2283548
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 10:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B4E2821C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2024 10:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B0178289;
-	Thu,  3 Oct 2024 10:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E173153BE8;
+	Thu,  3 Oct 2024 10:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="tBT6MHGK"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="L4yUiyjl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E98314A099
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 10:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4761531E1
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Oct 2024 10:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727951766; cv=none; b=VLjbvgL5U0P8QvyoAquCZp5esZWtgfNcz82oTCDg95O3YNsL50CDsuIWWKNlChXZAPH6SbrSsV9s1M58q63AtmGNePPgpdKqbwSNlR3fhTEB2DUd0t2+jKVhWVQPou9Mtr9T/CvKTK48sDoPwlPn9/iFcUsu+NSac2g+14s1V7Y=
+	t=1727952342; cv=none; b=FzgoZ4/ZSAan6V9jChGfnXGw6WUBDjHdN7frpdnJNX0EHx7ibt10KB4h+i+FVObXXumcdOSTqSbOjVOJkpBwj4HcVhqDhhMrj7ixyUhu9pZlhrg2pi/fcL001Zp7Nd8wSrP3CoKv80rEKh8kKG8Y09OCQqqUAnb9CpE1F8apZY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727951766; c=relaxed/simple;
-	bh=8oK4I+JBIU/DL1qfcLk0wLwR/KnTVzyuzZnecZa4deU=;
+	s=arc-20240116; t=1727952342; c=relaxed/simple;
+	bh=JnDst/N3EU8yXgVsCAnf0R6OPYnWSUN7cuQxkqSLUqE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smkYD/UVYP2fNif6FsPj39+drfhr3sn3dnvbJuyVB4jhXSSMrTxlztTZp4Nfl/OxzHtobECcsz4OcKd0GAXzrrp1QddReyiCNQxCr7OC5oVbOtSAE14yl1weBpDMXI5d/M8s+u5zwAfu/UqN/SnzLyPq/OfZPlGl//HF+Wa6/YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=tBT6MHGK; arc=none smtp.client-ip=209.85.214.175
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9ePOsN556zvIy5omVWyrjIQriq+ETs+mooj+MGuFCVZQxwhjOYgJ5vLGPAOi+OJt3KidrHW1T1sa4NB1yAL2JQMDbKQyEhnXEYMZBSxrayQYNfG0fb6GogTDFHMG1KVvSpGtDJ/5SKKnSrZ1HpM+17kP8KQkjrLUbpE0U7LaP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=L4yUiyjl; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20bb39d97d1so6105065ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 03:36:04 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e0a5088777so669186a91.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2024 03:45:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727951764; x=1728556564; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727952340; x=1728557140; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=meBlkFYSu8tQQG8fzuHlW0Llugrqw0c4D3dP4w0sd0k=;
-        b=tBT6MHGKDoVN6TKilxvrhHMf7tMu/9GjUI4PWr7im5rMk0zLW4UlNJrW+jSCGXKZts
-         rdeprrrtJMFXrOMbKIwFdcTJE/W6ihpZdbq19h3ZAqJNpALTWR1Fim6/8i2JOYD6/x7+
-         fgL5KHJFVKRH798UKo9r1KTlkc1ggz0Quw7kD3wKhel+IcdaeamNrsLA675i7hGq32rW
-         jbmOAoPavdiyq808JBj4Ft3cx2HwpKtXCb+DVr2GdMa/nOiygJHDcCvjXqXYzUvbY4RX
-         uYwaSZv0cwZfWrin/onvdeT5iOS4+xV7IY/VMxtil+UWy1A9XownGQKDfx8yf1PBX8QQ
-         1+mw==
+        bh=o6UEGl17TzSnxTVIe1qUXkNcfbf0xAa9jJkDuFXexI0=;
+        b=L4yUiyjlYspY5GbjjV57mDjnDtLz4boQhMHNQW2JnEwIB6/kKcut3f8DI7c0ajPyV7
+         pQ44zRRYaFyZU7P2lqq6ttuT6VBqXekagyHx1dZ5uxTyAfNik+9KEmNippBnL5LU0pu3
+         e0SalqI1K4HxavWYuaugt3EDDkM0dbJn0xN1FBFVXN+m/R3yanIKb4Rxet7qnkryKqcg
+         OQs2T4j3BTZDFORppiD1iQjpNCNCUN+zPJSLjR0sdgDUzmEmygwRWOXnX0JS3yrk/Nsl
+         QzF6v4k0HSt+QYzTw692WR4/5NA7gNnp566Fjtxrndtz5ttTh88zP8aoaknx/yH/99rf
+         3jHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727951764; x=1728556564;
+        d=1e100.net; s=20230601; t=1727952340; x=1728557140;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=meBlkFYSu8tQQG8fzuHlW0Llugrqw0c4D3dP4w0sd0k=;
-        b=BzGJg6N1tyVAnKSgkH4USgTBYy5XJQNgNv84awNb5QNnrpcDB/zSkrcGagnbvM7coA
-         /18K15i7O9R9cbov9M1eAiizEbsjqtj7SpwqPrWxdiI5Q7f3xnaR2OenqVSF8OIXYr5a
-         DpPZjp8PHGYlbevikSBwdRFecDOUGopGeIPM6GIEw1+V06mcCD8FE3y3dzWBbO96u790
-         UIX0Z0U0oLXjn4jPbSgIrwO3IEHKwvmVg1vX4SPgNIynmF8Oa1sQYNXA0lngQ3I+pVh2
-         WXC0SLehF71+nZxsoevVuPMXn5aGtZrlqmpvydW5EzKrJrtedB2TKG++YQjcCJurFN7q
-         W47Q==
-X-Gm-Message-State: AOJu0Yxv+wLIcyyOu+v9e0G5davUirpPaAnHHlWoQ/2Qak4vNJepNBQn
-	nZDu6jcA52fIWURG1pe/LqiRYmBI90vPYlXMFkEm/hP/ErQT3Pf9pufOrhYLqX4=
-X-Google-Smtp-Source: AGHT+IHAbmLCjTe9ucPXUjhaOkLLAkmHqYr94XYuHe2VWk7hgIGyvqHOxEgqNzNISkYi8RQMpJxqkg==
-X-Received: by 2002:a17:902:f68d:b0:206:8acc:8871 with SMTP id d9443c01a7336-20bc5a13640mr66308755ad.31.1727951763533;
-        Thu, 03 Oct 2024 03:36:03 -0700 (PDT)
+        bh=o6UEGl17TzSnxTVIe1qUXkNcfbf0xAa9jJkDuFXexI0=;
+        b=DpDZXUIf8s25gspUDlVMLphgDJ1KQ/B7ymd0mDOGRg3g/9/LjJA92679bXkVdgK5Tv
+         hxE/qCCPxsfCXzpOCe6Lxr3xee/tpOmc4SkQv8woI0FQnwGNhp7XxQZqOdnt0ZCUokMh
+         j0rjjaLYuVcRL75scW1Tz6g/RBvZY3f33sB/bVXoCdA7OITk4Bnu0lKurmOCTcdlvumB
+         iMdvbyue4V4wtjFZgFfoJolAuxBO0dO1Phc+Z0jwpXtNZTYAix8bx+qvzyKBc+Ez/ZFO
+         x4PbZbJQHptNe/gUV9Ep7h/flDn86KA5OnDyMrX3kitzG20sBE9uLAQF5OBrQJQpG9yb
+         2PVA==
+X-Gm-Message-State: AOJu0YwZ8UdO2HMb5EMWRkRPHCKqAsu9lcAnutd3POdnv/fq0Rl41WgY
+	An8Q5xqVD8NElTGyBLPS0msoOZ32sy8pRZRCfxcssHbrnMv728H8flQOG1YgnkDt/DKYVPKYkbj
+	E
+X-Google-Smtp-Source: AGHT+IGoytEofKifwHVbCQpUDi4tPiiN7+0yohLIMmp0p3RrLmvhOU0hAQk1EofdGGJ9Nht5ooiEog==
+X-Received: by 2002:a17:90a:c713:b0:2da:802d:1f95 with SMTP id 98e67ed59e1d1-2e18456b4e8mr7835223a91.5.1727952339868;
+        Thu, 03 Oct 2024 03:45:39 -0700 (PDT)
 Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca2256sm6720985ad.91.2024.10.03.03.36.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfad5d15sm1232890a91.7.2024.10.03.03.45.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 03:36:02 -0700 (PDT)
+        Thu, 03 Oct 2024 03:45:39 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1swJBf-00DLiE-2H;
-	Thu, 03 Oct 2024 20:35:59 +1000
-Date: Thu, 3 Oct 2024 20:35:59 +1000
+	id 1swJKy-00DLpH-1h;
+	Thu, 03 Oct 2024 20:45:36 +1000
+Date: Thu, 3 Oct 2024 20:45:36 +1000
 From: Dave Chinner <david@fromorbit.com>
 To: Christoph Hellwig <hch@infradead.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
 	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
 	torvalds@linux-foundation.org
-Subject: Re: [PATCH 2/7] vfs: add inode iteration superblock method
-Message-ID: <Zv5zj2k8X3ZasfYB@dread.disaster.area>
+Subject: Re: [PATCH 3/7] vfs: convert vfs inode iterators to
+ super_iter_inodes_unsafe()
+Message-ID: <Zv510LDnAtmJFuTA@dread.disaster.area>
 References: <20241002014017.3801899-1-david@fromorbit.com>
- <20241002014017.3801899-3-david@fromorbit.com>
- <Zv5D3ag3HlYFsCAX@infradead.org>
+ <20241002014017.3801899-4-david@fromorbit.com>
+ <Zv5EcaWsFYHhlMaI@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,84 +90,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zv5D3ag3HlYFsCAX@infradead.org>
+In-Reply-To: <Zv5EcaWsFYHhlMaI@infradead.org>
 
-On Thu, Oct 03, 2024 at 12:12:29AM -0700, Christoph Hellwig wrote:
-> On Wed, Oct 02, 2024 at 11:33:19AM +1000, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > Add a new superblock method for iterating all cached inodes in the
-> > inode cache.
+On Thu, Oct 03, 2024 at 12:14:57AM -0700, Christoph Hellwig wrote:
+> > diff --git a/block/bdev.c b/block/bdev.c
+> > index 33f9c4605e3a..b5a362156ca1 100644
+> > --- a/block/bdev.c
+> > +++ b/block/bdev.c
+> > @@ -472,16 +472,28 @@ void bdev_drop(struct block_device *bdev)
+> >  	iput(BD_INODE(bdev));
+> >  }
+> >  
+> > +static int bdev_pages_count(struct inode *inode, void *data)
 > 
-> The method is added later, this just adds an abstraction.
+> This are guaranteed to operate on the bdev superblock, so just
+> hardcoding the s_inodes list seems fine here as it keeps the code
+> much simpler.
 
-Ah, I forgot to remove that from the commit message when I split the
-patch up....
-
-> > +/**
-> > + * super_iter_inodes - iterate all the cached inodes on a superblock
-> > + * @sb: superblock to iterate
-> > + * @iter_fn: callback to run on every inode found.
-> > + *
-> > + * This function iterates all cached inodes on a superblock that are not in
-> > + * the process of being initialised or torn down. It will run @iter_fn() with
-> > + * a valid, referenced inode, so it is safe for the caller to do anything
-> > + * it wants with the inode except drop the reference the iterator holds.
-> > + *
-> > + */
-> 
-> Spurious empty comment line above.
-> 
-> > +void super_iter_inodes_unsafe(struct super_block *sb, ino_iter_fn iter_fn,
-> > +		void *private_data)
-> > +{
-> > +	struct inode *inode;
-> > +	int ret;
-> > +
-> > +	rcu_read_lock();
-> > +	spin_lock(&sb->s_inode_list_lock);
-> > +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> > +		ret = iter_fn(inode, private_data);
-> > +		if (ret == INO_ITER_ABORT)
-> > +			break;
-> > +	}
-> 
-> Looking at the entire series, splitting the helpers for the unsafe
-> vs safe iteration feels a bit of an odd API design given that the
-> INO_ITER_REFERENCED can be passed to super_iter_inodes, but is an
-> internal flag pass here to the file system method.
-
-The INO_ITER_REFERENCED flag is a hack to support the whacky
-fsnotify and landlock iterators that are run after evict_inodes()
-(which you already noticed...).  i.e.  there should not be any
-unreferenced inodes at this point, so if any are found they should
-be skipped.
-
-I think it might be better to remove that flag and replace the
-iterator implementation with some kind of SB flag and
-WARN_ON_ONCE that fires if a referenced inode is found. With that,
-the flags field for super_iter_inodes() can go away...
-
-> Not sure what
-> the best way to do it, but maybe just make super_iter_inodes
-> a wrapper that calls into the method if available, or
-> a generic_iter_inodes_unsafe if the unsafe flag is set, else
-> a plain generic_iter_inodes?
-
-Perhaps. I'll look into it.
-
-> > +/* Inode iteration callback return values */
-> > +#define INO_ITER_DONE		0
-> > +#define INO_ITER_ABORT		1
-> > +
-> > +/* Inode iteration control flags */
-> > +#define INO_ITER_REFERENCED	(1U << 0)
-> > +#define INO_ITER_UNSAFE		(1U << 1)
-> 
-> Please adjust the naming a bit to make clear these are different
-> namespaces, e.g. INO_ITER_RET_ and INO_ITER_F_.
-
-Will do.
+Maybe, but right now I want to remove all external accesses to
+sb->s_inodes. This isn't performance critical, and we can revisit
+how the bdev sb tracks inodes when we move to per-sb inode
+caches....
 
 -Dave.
 -- 
