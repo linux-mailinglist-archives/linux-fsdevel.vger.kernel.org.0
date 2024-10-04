@@ -1,41 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-30963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4038A9901F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 13:19:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CB1990281
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 13:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA036281B3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 11:19:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D438AB2296E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 11:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F57413B792;
-	Fri,  4 Oct 2024 11:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D72D15B140;
+	Fri,  4 Oct 2024 11:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6TkvVj7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CF1224D1;
-	Fri,  4 Oct 2024 11:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0541D5AD8;
+	Fri,  4 Oct 2024 11:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728040736; cv=none; b=VW7Knnu9G5xdq2hOvPhZdf5wFpQ4ZYtiqqW7ZsXreZgFgUvmvUIJ3OneaVbGXkGbba8VE7IN9F12Q26vQvtXyOzbO42ATL2Y9X2gIgl1+4WCUnBegCChwcT6FiUo5Hker+iekPhxAM8zkQk4Ct9jTQXnV1JzQxSe++lXdGKUPnE=
+	t=1728042619; cv=none; b=S5AarNBgJUmP63fqpOcfwj+AhPtpLj7HHk9TJO5ndyPQsL1p2qNMNbzXxKQwHy+TeCdaLbGJn3vUHFejs9ZjniMkNdnvyllUf+MGEnmYFjFmfT8GU0p8eJsVkupfHzXurmdgUyimdK22niYEKnoDXEXuFNeEp1sdea9XMmxFftI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728040736; c=relaxed/simple;
-	bh=pZHox8K1Nmvgt3lxsApWtJFu8tZf+W8GEvc4spiFT0A=;
+	s=arc-20240116; t=1728042619; c=relaxed/simple;
+	bh=+BeodDaFGWOje549S0KudeQ/WQofpaiwc9P5QexdJr4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3kjrljMSxvGGSKBmubQjma5vGj/0PH5b2OTKTPnb38LSrJXXp1rzelLuNM4O4KLwDJ1xbO5VoKcbuhTq0IBgtgfEqfZOHXuzG6M8SHwOJqxuZHNMDGUglk95mEY79PInsCOd+UDFA6B9EauP/xyLSDavspP6vyDyioJ5sToypg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DEE0339;
-	Fri,  4 Oct 2024 04:19:23 -0700 (PDT)
-Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DE1F3F640;
-	Fri,  4 Oct 2024 04:18:47 -0700 (PDT)
-Date: Fri, 4 Oct 2024 14:18:45 +0300
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O13Ic9kOUeIdwP7Hpvq0DJ/oG65uHXhkWSvAQ+eLFyFjXK3z0rDkr7gf8nU0vLbZIlyZ+jXQ3u3kYDg+KESLiRuvANuzquIHkHMZVSQeVR+is8lE7NptAYP0a0tzpXY+9whttbIKNR8WobKYyOZINyd5gWhvetsYrf3XIFe5FH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6TkvVj7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83680C4CEC6;
+	Fri,  4 Oct 2024 11:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728042618;
+	bh=+BeodDaFGWOje549S0KudeQ/WQofpaiwc9P5QexdJr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k6TkvVj7GMjGbmKB1HJLF/vkMjkfzBK2z4CFAq24H++hZNqit5hWnu+qiurDMqtJ9
+	 DW7IidlCRTM3QaMhphpojCHjZ9fTG9JpZUW3qZPbU5yq9fQl1YgOGiV+fPAEKsj4YY
+	 lHObhuf9Yt8SIkxWEEYLeXqbYgcv7Or4B9En46bl/EKtkJpsJKrdkSrdZTlfIUvbGS
+	 HHtgo5u5ZT9DkHGaMrAGkcfT9+xGVcKVHfYCKheZIw9xBKQUz0jS4MB3qmjis5vPXQ
+	 hgzdrNECfwJPJwiQuKv4im1uOOuAQYJSeqvyP18pTTVOMYiRTqVEpfylWiGr7FpOK+
+	 w/AUkl/4UDraA==
+Date: Fri, 4 Oct 2024 12:50:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Marc Zyngier <maz@kernel.org>,
@@ -65,43 +73,55 @@ Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
 	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org
 Subject: Re: [PATCH v13 22/40] arm64/gcs: Ensure that new threads have a GCS
-Message-ID: <Zv_PFVffwIkKevzE@arm.com>
+Message-ID: <0e4d84e6-81ae-41ea-a17e-484df90f4444@sirena.org.uk>
 References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
  <20241001-arm64-gcs-v13-22-222b78d87eee@kernel.org>
+ <Zv_PFVffwIkKevzE@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LKVsNEPzgkEHa/nF"
+Content-Disposition: inline
+In-Reply-To: <Zv_PFVffwIkKevzE@arm.com>
+X-Cookie: A bachelor is an unaltared male.
+
+
+--LKVsNEPzgkEHa/nF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001-arm64-gcs-v13-22-222b78d87eee@kernel.org>
 
-On Tue, Oct 01, 2024 at 11:59:01PM +0100, Mark Brown wrote:
-> When a new thread is created by a thread with GCS enabled the GCS needs
-> to be specified along with the regular stack.
-> 
-> Unfortunately plain clone() is not extensible and existing clone3()
-> users will not specify a stack so all existing code would be broken if
-> we mandated specifying the stack explicitly.  For compatibility with
-> these cases and also x86 (which did not initially implement clone3()
-> support for shadow stacks) if no GCS is specified we will allocate one
-> so when a thread is created which has GCS enabled allocate one for it.
-> We follow the extensively discussed x86 implementation and allocate
-> min(RLIMIT_STACK/2, 2G).  Since the GCS only stores the call stack and not
-> any variables this should be more than sufficient for most applications.
-> 
-> GCSs allocated via this mechanism will be freed when the thread exits.
+On Fri, Oct 04, 2024 at 02:18:45PM +0300, Catalin Marinas wrote:
 
-I think Szabolcs mentioned a GCS leak with v12:
+> I think Szabolcs mentioned a GCS leak with v12:
 
-https://lore.kernel.org/r/ZtrihWQFyb2/XrQV@arm.com
+> https://lore.kernel.org/r/ZtrihWQFyb2/XrQV@arm.com
 
-(and in some private messages IIRC)
+> (and in some private messages IIRC)
 
-Has this been identified? The changelog only mentions a leak in v8.
+> Has this been identified? The changelog only mentions a leak in v8.
 
--- 
-Catalin
+Yes, it's this in the changelog:
+
+  - Implement mm_release() and free transparently allocated GCSs there.
+
+--LKVsNEPzgkEHa/nF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb/1m8ACgkQJNaLcl1U
+h9CX5Qf/YXV4PCUMoouOlHODLlWL0QpqxDnrB4g2yYs90X9BTpJIF7Ax3i9mVe6N
+UETYxylUWRj9l39/OFtO1HFZkJcLdlWYkYREST9X6NX4htudvuu/5oAN06NXH9jd
+znOG1a/FdzPxRygtN3Lt6P6eodHJct9XRgduDANTu4oCEl7PAuW6ob88izh/c+FO
+MaiKZXsdWB+nc0KOSVk3HA0ogs8szrCQcWNti/LArlYFZWwurCtfYxgCUQFEzSSh
+SDemv5W+sFX+l7V/S4YCawDcIcLv0B+jV9lx0ECWzyhLeOrIxBDTYSKr3ukgLR7n
++XdVZaKYGBSKeIaoCVbZcVM3Ul+CTQ==
+=zRYX
+-----END PGP SIGNATURE-----
+
+--LKVsNEPzgkEHa/nF--
 
