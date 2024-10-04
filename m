@@ -1,472 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-30952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763F5990029
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 11:45:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50040990055
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 11:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10DED2818D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 09:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13911F248D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 09:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E041494A8;
-	Fri,  4 Oct 2024 09:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18117148FF2;
+	Fri,  4 Oct 2024 09:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOoBBNXg"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PfaZTAg0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3D9148318
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Oct 2024 09:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217C3140E50;
+	Fri,  4 Oct 2024 09:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728035018; cv=none; b=AeZ1AFbkHmEMH0xKdMb4iYpVk6jyYDrEY/PelDRcaJCXthohsrlPdgZBTPhHFB0AkzznRdLTihz6P7+r+L3ZxP8oe9tpp0U80AzuH8v8vrsyi5Ah9TpK6sS3vNhcXspxh6fU1QfCj0ibJgqCQrZRpnIkdKVWR5/pr3H2lppcUHY=
+	t=1728035656; cv=none; b=JfRfTKbj480jeC8SmfNQd+yOBs1LioU9Yb2wozEMgK4X9sSnTcUFISSylmPRQdr5kuhnbER6vIldAENLDcSkiGZO8ri2YJNcMnXZYzSmeEFhU8yta8VzRRBoQztLJ5vjvhSYg8c69vRKXgTt5oPO42cu4TJgeYn4bTvz9qHJRb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728035018; c=relaxed/simple;
-	bh=JfduUuZgPCfRDfII2uwrt5vj6bg/96afc8pKOM+G8HU=;
+	s=arc-20240116; t=1728035656; c=relaxed/simple;
+	bh=No1Zczym9zA0U6AM4Yjp5S/GQIC28WW4I8Vm9nagyu4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h8HiJxH5PibbbnsVkDX41alC8l20l4c3I7DBIFKUuEXJ7OopU+lqlwoPYvJnYqXLhTeEbhERsHm17RCTuCcawRQtdcWhunYeVhI7SSgBKoPFAnrSSzjPrl7lHEbVoHNYoI1NqRLhVmzPs+iUzdD1N5nVVv32LTYHze+Nl/IgbIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOoBBNXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBA3DC4CEC6;
-	Fri,  4 Oct 2024 09:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728035017;
-	bh=JfduUuZgPCfRDfII2uwrt5vj6bg/96afc8pKOM+G8HU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eOoBBNXgZdLVQXKNZsEgYROhuxMsRRVQl7nZpld/+GXHuzwYJZs/cIo01MiAX8QZX
-	 SNuMwIazcxYGzefoX3oVVf3c97hdtAP2ZJUhiq03LAuFZi7tCpzWuGWKrtw6rPfH8b
-	 DcNPDPaUM33oMFtSbv2lWPyy6kikE15lJ6uOz57+ZlJQsq97uCWQRHURW3GQSRZbPN
-	 B/RHwo/3W5KPcr/BDhvJGMWHpB7w5VQckKGtXfvUfxtDltCxz6TOlWyELz+pkAUnQ5
-	 MDEVb/3vvg7fYurhi3J5hvYgQcK0LOzcKH2YYmqjnPnFLBdQq7KaDDD8wA7e0m2Plq
-	 HHP2weaDKl1Pg==
-Date: Fri, 4 Oct 2024 11:43:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: introduce struct fderr, convert overlayfs uses to that
-Message-ID: <20241004-zuviel-einbiegen-329e97233ff8@brauner>
-References: <20241003234534.GM4017910@ZenIV>
- <20241003234732.GB147780@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKz7AHKQ/FQptmTfItMKYFR83Pe40DLr9wB2/j+n094MOysZfnhisi0gTppSry8nNXQtGWuNEEJL//en6IPepOowLuNGbOnTMths2cy3fjM9s27morswAR4gcC9gpMnNTylf9RX6bPA8GNQwOcXogmXaj0fQkFdCq0HpkhOKkIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PfaZTAg0; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728035654; x=1759571654;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=No1Zczym9zA0U6AM4Yjp5S/GQIC28WW4I8Vm9nagyu4=;
+  b=PfaZTAg0vSIy0ahotVo3UXtTfsSGbOXPd1uEslgcoPqJGfIqDIBZp1XW
+   ip9new+kYKDRoZuCB5Q8jNegxbCcbp0tKsqnx+eK23ldRleu84KtdSywD
+   ZEJEZh0Xwll+5ny2nCMjxjRyOeV5zw3b1Gykcisqae/wrlHJQGY9Jmb57
+   atf2G15i1aBRsGCxLpsbcmqQnBlZVuXcWqD2znGL3FVQHVYHXIf1HvUCt
+   3pXQk8IafW94sS2EAjwhfLxnDNoirG2rjl2df278SZUidahbim2qlmDuc
+   GnlcXwGxWYD9ysMR7E5dOol1K9piLfasS401/bW901YWJ0xoPKZjdvvpX
+   A==;
+X-CSE-ConnectionGUID: SVKyQ/zGTpKXrdkSaGdsUg==
+X-CSE-MsgGUID: gXvyGQb3RbyABxd79AOXaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="44719853"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="44719853"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 02:54:13 -0700
+X-CSE-ConnectionGUID: KAiSxmwPSmyNaOWcpdDlMw==
+X-CSE-MsgGUID: Fiw1YLBmTsqRkSqmTltRbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="79420510"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 04 Oct 2024 02:54:12 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swf0j-0001RK-0I;
+	Fri, 04 Oct 2024 09:54:09 +0000
+Date: Fri, 4 Oct 2024 17:53:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 2/7] vfs: add inode iteration superblock method
+Message-ID: <202410041724.REiCiIEQ-lkp@intel.com>
+References: <20241002014017.3801899-3-david@fromorbit.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241003234732.GB147780@ZenIV>
+In-Reply-To: <20241002014017.3801899-3-david@fromorbit.com>
 
-On Fri, Oct 04, 2024 at 12:47:32AM GMT, Al Viro wrote:
-> Similar to struct fd; unlike struct fd, it can represent
-> error values.
-> 
-> Accessors:
-> 
-> * fd_empty(f):	true if f represents an error
-> * fd_file(f):	just as for struct fd it yields a pointer to
-> 		struct file if fd_empty(f) is false.  If
-> 		fd_empty(f) is true, fd_file(f) is guaranteed
-> 		_not_ to be an address of any object (IS_ERR()
-> 		will be true in that case)
-> * fd_err(f):	if f represents an error, returns that error,
-> 		otherwise the return value is junk.
-> 
-> Constructors:
-> 
-> * ERR_FDERR(-E...):	an instance encoding given error [ERR_FDERR, perhaps?]
-> * BORROWED_FDERR(file):	if file points to a struct file instance,
-> 			return a struct fderr representing that file
-> 			reference with no flags set.
-> 			if file is an ERR_PTR(-E...), return a struct
-> 			fderr representing that error.
-> 			file MUST NOT be NULL.
-> * CLONED_FDERR(file):	similar, but in case when file points to
-> 			a struct file instance, set FDPUT_FPUT in flags.
-> 
-> Same destructor as for struct fd; I'm not entirely convinced that
-> playing with _Generic is a good idea here, but for now let's go
+Hi Dave,
 
-Why? It's exactly what it's very useful for and I've used it myself this
-way. I think that's good use of _Generic.
+kernel test robot noticed the following build warnings:
 
-> that way...
-> 
-> See fs/overlayfs/file.c for example of use.
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/overlayfs/file.c  | 128 +++++++++++++++++++++----------------------
->  include/linux/file.h |  37 +++++++++++--
->  2 files changed, 95 insertions(+), 70 deletions(-)
-> 
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 4504493b20be..c711fa5d802f 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -89,56 +89,46 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
->  	return 0;
->  }
->  
-> -static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
-> -			       bool allow_meta)
-> +static struct fderr ovl_real_fdget_meta(const struct file *file, bool allow_meta)
->  {
->  	struct dentry *dentry = file_dentry(file);
->  	struct file *realfile = file->private_data;
->  	struct path realpath;
->  	int err;
->  
-> -	real->word = (unsigned long)realfile;
-> -
->  	if (allow_meta) {
->  		ovl_path_real(dentry, &realpath);
->  	} else {
->  		/* lazy lookup and verify of lowerdata */
->  		err = ovl_verify_lowerdata(dentry);
->  		if (err)
-> -			return err;
-> +			return ERR_FDERR(err);
->  
->  		ovl_path_realdata(dentry, &realpath);
->  	}
->  	if (!realpath.dentry)
-> -		return -EIO;
-> +		return ERR_FDERR(-EIO);
->  
->  	/* Has it been copied up since we'd opened it? */
-> -	if (unlikely(file_inode(realfile) != d_inode(realpath.dentry))) {
-> -		struct file *f = ovl_open_realfile(file, &realpath);
-> -		if (IS_ERR(f))
-> -			return PTR_ERR(f);
-> -		real->word = (unsigned long)f | FDPUT_FPUT;
-> -		return 0;
-> -	}
-> +	if (unlikely(file_inode(realfile) != d_inode(realpath.dentry)))
-> +		return CLONED_FDERR(ovl_open_realfile(file, &realpath));
->  
->  	/* Did the flags change since open? */
-> -	if (unlikely((file->f_flags ^ realfile->f_flags) & ~OVL_OPEN_FLAGS))
-> -		return ovl_change_flags(realfile, file->f_flags);
-> +	if (unlikely((file->f_flags ^ realfile->f_flags) & ~OVL_OPEN_FLAGS)) {
-> +		err = ovl_change_flags(realfile, file->f_flags);
-> +		if (err)
-> +			return ERR_FDERR(err);
-> +	}
->  
-> -	return 0;
-> +	return BORROWED_FDERR(realfile);
->  }
->  
-> -static int ovl_real_fdget(const struct file *file, struct fd *real)
-> +static struct fderr ovl_real_fdget(const struct file *file)
->  {
-> -	if (d_is_dir(file_dentry(file))) {
-> -		struct file *f = ovl_dir_real_file(file, false);
-> -		if (IS_ERR(f))
-> -			return PTR_ERR(f);
-> -		real->word = (unsigned long)f;
-> -		return 0;
-> -	}
-> +	if (d_is_dir(file_dentry(file)))
-> +		return BORROWED_FDERR(ovl_dir_real_file(file, false));
->  
-> -	return ovl_real_fdget_meta(file, real, false);
-> +	return ovl_real_fdget_meta(file, false);
->  }
->  
->  static int ovl_open(struct inode *inode, struct file *file)
-> @@ -183,7 +173,7 @@ static int ovl_release(struct inode *inode, struct file *file)
->  static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
->  {
->  	struct inode *inode = file_inode(file);
-> -	struct fd real;
-> +	struct fderr real;
->  	const struct cred *old_cred;
->  	loff_t ret;
->  
-> @@ -199,9 +189,9 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
->  			return vfs_setpos(file, 0, 0);
->  	}
->  
-> -	ret = ovl_real_fdget(file, &real);
-> -	if (ret)
-> -		return ret;
-> +	real = ovl_real_fdget(file);
-> +	if (fd_empty(real))
-> +		return fd_err(real);
->  
->  	/*
->  	 * Overlay file f_pos is the master copy that is preserved
-> @@ -262,7 +252,7 @@ static void ovl_file_accessed(struct file *file)
->  static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	struct file *file = iocb->ki_filp;
-> -	struct fd real;
-> +	struct fderr real;
->  	ssize_t ret;
->  	struct backing_file_ctx ctx = {
->  		.cred = ovl_creds(file_inode(file)->i_sb),
-> @@ -273,9 +263,9 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->  	if (!iov_iter_count(iter))
->  		return 0;
->  
-> -	ret = ovl_real_fdget(file, &real);
-> -	if (ret)
-> -		return ret;
-> +	real = ovl_real_fdget(file);
-> +	if (fd_empty(real))
-> +		return fd_err(real);
->  
->  	ret = backing_file_read_iter(fd_file(real), iter, iocb, iocb->ki_flags,
->  				     &ctx);
-> @@ -288,7 +278,7 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	struct file *file = iocb->ki_filp;
->  	struct inode *inode = file_inode(file);
-> -	struct fd real;
-> +	struct fderr real;
->  	ssize_t ret;
->  	int ifl = iocb->ki_flags;
->  	struct backing_file_ctx ctx = {
-> @@ -304,9 +294,11 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  	/* Update mode */
->  	ovl_copyattr(inode);
->  
-> -	ret = ovl_real_fdget(file, &real);
-> -	if (ret)
-> +	real = ovl_real_fdget(file);
-> +	if (fd_empty(real)) {
-> +		ret = fd_err(real);
->  		goto out_unlock;
-> +	}
->  
->  	if (!ovl_should_sync(OVL_FS(inode->i_sb)))
->  		ifl &= ~(IOCB_DSYNC | IOCB_SYNC);
-> @@ -329,7 +321,7 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
->  			       struct pipe_inode_info *pipe, size_t len,
->  			       unsigned int flags)
->  {
-> -	struct fd real;
-> +	struct fderr real;
->  	ssize_t ret;
->  	struct backing_file_ctx ctx = {
->  		.cred = ovl_creds(file_inode(in)->i_sb),
-> @@ -337,9 +329,9 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
->  		.accessed = ovl_file_accessed,
->  	};
->  
-> -	ret = ovl_real_fdget(in, &real);
-> -	if (ret)
-> -		return ret;
-> +	real = ovl_real_fdget(in);
-> +	if (fd_empty(real))
-> +		return fd_err(real);
->  
->  	ret = backing_file_splice_read(fd_file(real), ppos, pipe, len, flags, &ctx);
->  	fdput(real);
-> @@ -358,7 +350,7 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
->  static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
->  				loff_t *ppos, size_t len, unsigned int flags)
->  {
-> -	struct fd real;
-> +	struct fderr real;
->  	struct inode *inode = file_inode(out);
->  	ssize_t ret;
->  	struct backing_file_ctx ctx = {
-> @@ -371,9 +363,11 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
->  	/* Update mode */
->  	ovl_copyattr(inode);
->  
-> -	ret = ovl_real_fdget(out, &real);
-> -	if (ret)
-> +	real = ovl_real_fdget(out);
-> +	if (fd_empty(real)) {
-> +		ret = fd_err(real);
->  		goto out_unlock;
-> +	}
->  
->  	ret = backing_file_splice_write(pipe, fd_file(real), ppos, len, flags, &ctx);
->  	fdput(real);
-> @@ -386,7 +380,7 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
->  
->  static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->  {
-> -	struct fd real;
-> +	struct fderr real;
->  	const struct cred *old_cred;
->  	int ret;
->  
-> @@ -394,9 +388,9 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->  	if (ret <= 0)
->  		return ret;
->  
-> -	ret = ovl_real_fdget_meta(file, &real, !datasync);
-> -	if (ret)
-> -		return ret;
-> +	real = ovl_real_fdget_meta(file, !datasync);
-> +	if (fd_empty(real))
-> +		return fd_err(real);
->  
->  	/* Don't sync lower file for fear of receiving EROFS error */
->  	if (file_inode(fd_file(real)) == ovl_inode_upper(file_inode(file))) {
-> @@ -425,7 +419,7 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
->  static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  {
->  	struct inode *inode = file_inode(file);
-> -	struct fd real;
-> +	struct fderr real;
->  	const struct cred *old_cred;
->  	int ret;
->  
-> @@ -435,10 +429,11 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
->  	ret = file_remove_privs(file);
->  	if (ret)
->  		goto out_unlock;
-> -
-> -	ret = ovl_real_fdget(file, &real);
-> -	if (ret)
-> +	real = ovl_real_fdget(file);
-> +	if (fd_empty(real)) {
-> +		ret = fd_err(real);
->  		goto out_unlock;
-> +	}
->  
->  	old_cred = ovl_override_creds(file_inode(file)->i_sb);
->  	ret = vfs_fallocate(fd_file(real), mode, offset, len);
-> @@ -457,13 +452,13 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
->  
->  static int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
->  {
-> -	struct fd real;
-> +	struct fderr real;
->  	const struct cred *old_cred;
->  	int ret;
->  
-> -	ret = ovl_real_fdget(file, &real);
-> -	if (ret)
-> -		return ret;
-> +	real = ovl_real_fdget(file);
-> +	if (fd_empty(real))
-> +		return fd_err(real);
->  
->  	old_cred = ovl_override_creds(file_inode(file)->i_sb);
->  	ret = vfs_fadvise(fd_file(real), offset, len, advice);
-> @@ -485,7 +480,7 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
->  			    loff_t len, unsigned int flags, enum ovl_copyop op)
->  {
->  	struct inode *inode_out = file_inode(file_out);
-> -	struct fd real_in, real_out;
-> +	struct fderr real_in, real_out;
->  	const struct cred *old_cred;
->  	loff_t ret;
->  
-> @@ -498,13 +493,16 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
->  			goto out_unlock;
->  	}
->  
-> -	ret = ovl_real_fdget(file_out, &real_out);
-> -	if (ret)
-> +	real_out = ovl_real_fdget(file_out);
-> +	if (fd_empty(real_out)) {
-> +		ret = fd_err(real_out);
->  		goto out_unlock;
-> +	}
->  
-> -	ret = ovl_real_fdget(file_in, &real_in);
-> -	if (ret) {
-> +	real_in = ovl_real_fdget(file_in);
-> +	if (fd_empty(real_in)) {
->  		fdput(real_out);
-> +		ret = fd_err(real_in);
->  		goto out_unlock;
->  	}
->  
-> @@ -577,13 +575,13 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
->  
->  static int ovl_flush(struct file *file, fl_owner_t id)
->  {
-> -	struct fd real;
-> +	struct fderr real;
->  	const struct cred *old_cred;
-> -	int err;
-> +	int err = 0;
->  
-> -	err = ovl_real_fdget(file, &real);
-> -	if (err)
-> -		return err;
-> +	real = ovl_real_fdget(file);
-> +	if (fd_empty(real))
-> +		return fd_err(real);
->  
->  	if (fd_file(real)->f_op->flush) {
->  		old_cred = ovl_override_creds(file_inode(file)->i_sb);
-> diff --git a/include/linux/file.h b/include/linux/file.h
-> index f98de143245a..d85352523368 100644
-> --- a/include/linux/file.h
-> +++ b/include/linux/file.h
-> @@ -44,13 +44,26 @@ static inline void fput_light(struct file *file, int fput_needed)
->  struct fd {
->  	unsigned long word;
->  };
-> +
-> +/* either a reference to struct file + flags
-> + * (cloned vs. borrowed, pos locked), with
-> + * flags stored in lower bits of value,
-> + * or an error (represented by small negative value).
-> + */
-> +struct fderr {
-> +	unsigned long word;
-> +};
-> +
->  #define FDPUT_FPUT       1
->  #define FDPUT_POS_UNLOCK 2
->  
-> +#define fd_empty(f)	_Generic((f), \
-> +				struct fd: unlikely(!(f).word), \
-> +				struct fderr: IS_ERR_VALUE((f).word))
->  #define fd_file(f) ((struct file *)((f).word & ~(FDPUT_FPUT|FDPUT_POS_UNLOCK)))
-> -static inline bool fd_empty(struct fd f)
-> +static inline long fd_err(struct fderr f)
->  {
-> -	return unlikely(!f.word);
-> +	return (long)f.word;
->  }
->  
->  #define EMPTY_FD (struct fd){0}
-> @@ -63,11 +76,25 @@ static inline struct fd CLONED_FD(struct file *f)
->  	return (struct fd){(unsigned long)f | FDPUT_FPUT};
->  }
->  
-> -static inline void fdput(struct fd fd)
-> +static inline struct fderr ERR_FDERR(long n)
-> +{
-> +	return (struct fderr){(unsigned long)n};
-> +}
-> +static inline struct fderr BORROWED_FDERR(struct file *f)
->  {
-> -	if (fd.word & FDPUT_FPUT)
-> -		fput(fd_file(fd));
-> +	return (struct fderr){(unsigned long)f};
->  }
-> +static inline struct fderr CLONED_FDERR(struct file *f)
-> +{
-> +	if (IS_ERR(f))
-> +		return BORROWED_FDERR(f);
-> +	return (struct fderr){(unsigned long)f | FDPUT_FPUT};
-> +}
-> +
-> +#define fdput(f)	(void) (_Generic((f), \
-> +				struct fderr: IS_ERR_VALUE((f).word),	\
-> +				struct fd: true) && \
-> +			    ((f).word & FDPUT_FPUT) && (fput(fd_file(f)),0))
->  
->  extern struct file *fget(unsigned int fd);
->  extern struct file *fget_raw(unsigned int fd);
-> -- 
-> 2.39.5
-> 
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on xfs-linux/for-next axboe-block/for-next linus/master v6.12-rc1 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Chinner/vfs-replace-invalidate_inodes-with-evict_inodes/20241002-094254
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20241002014017.3801899-3-david%40fromorbit.com
+patch subject: [PATCH 2/7] vfs: add inode iteration superblock method
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20241004/202410041724.REiCiIEQ-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410041724.REiCiIEQ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410041724.REiCiIEQ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> fs/super.c:183: warning: Function parameter or struct member 'private_data' not described in 'super_iter_inodes'
+>> fs/super.c:183: warning: Function parameter or struct member 'flags' not described in 'super_iter_inodes'
+>> fs/super.c:241: warning: bad line: 
+>> fs/super.c:260: warning: Function parameter or struct member 'private_data' not described in 'super_iter_inodes_unsafe'
+
+
+vim +183 fs/super.c
+
+   169	
+   170	/**
+   171	 * super_iter_inodes - iterate all the cached inodes on a superblock
+   172	 * @sb: superblock to iterate
+   173	 * @iter_fn: callback to run on every inode found.
+   174	 *
+   175	 * This function iterates all cached inodes on a superblock that are not in
+   176	 * the process of being initialised or torn down. It will run @iter_fn() with
+   177	 * a valid, referenced inode, so it is safe for the caller to do anything
+   178	 * it wants with the inode except drop the reference the iterator holds.
+   179	 *
+   180	 */
+   181	int super_iter_inodes(struct super_block *sb, ino_iter_fn iter_fn,
+   182			void *private_data, int flags)
+ > 183	{
+   184		struct inode *inode, *old_inode = NULL;
+   185		int ret = 0;
+   186	
+   187		spin_lock(&sb->s_inode_list_lock);
+   188		list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+   189			spin_lock(&inode->i_lock);
+   190			if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
+   191				spin_unlock(&inode->i_lock);
+   192				continue;
+   193			}
+   194	
+   195			/*
+   196			 * Skip over zero refcount inode if the caller only wants
+   197			 * referenced inodes to be iterated.
+   198			 */
+   199			if ((flags & INO_ITER_REFERENCED) &&
+   200			    !atomic_read(&inode->i_count)) {
+   201				spin_unlock(&inode->i_lock);
+   202				continue;
+   203			}
+   204	
+   205			__iget(inode);
+   206			spin_unlock(&inode->i_lock);
+   207			spin_unlock(&sb->s_inode_list_lock);
+   208			iput(old_inode);
+   209	
+   210			ret = iter_fn(inode, private_data);
+   211	
+   212			old_inode = inode;
+   213			if (ret == INO_ITER_ABORT) {
+   214				ret = 0;
+   215				break;
+   216			}
+   217			if (ret < 0)
+   218				break;
+   219	
+   220			cond_resched();
+   221			spin_lock(&sb->s_inode_list_lock);
+   222		}
+   223		spin_unlock(&sb->s_inode_list_lock);
+   224		iput(old_inode);
+   225		return ret;
+   226	}
+   227	
+   228	/**
+   229	 * super_iter_inodes_unsafe - unsafely iterate all the inodes on a superblock
+   230	 * @sb: superblock to iterate
+   231	 * @iter_fn: callback to run on every inode found.
+   232	 *
+   233	 * This is almost certainly not the function you want. It is for internal VFS
+   234	 * operations only. Please use super_iter_inodes() instead. If you must use
+   235	 * this function, please add a comment explaining why it is necessary and the
+   236	 * locking that makes it safe to use this function.
+   237	 *
+   238	 * This function iterates all cached inodes on a superblock that are attached to
+   239	 * the superblock. It will pass each inode to @iter_fn unlocked and without
+   240	 * having performed any existences checks on it.
+ > 241	
+   242	 * @iter_fn must perform all necessary state checks on the inode itself to
+   243	 * ensure safe operation. super_iter_inodes_unsafe() only guarantees that the
+   244	 * inode exists and won't be freed whilst the callback is running.
+   245	 *
+   246	 * @iter_fn must not block. It is run in an atomic context that is not allowed
+   247	 * to sleep to provide the inode existence guarantees. If the callback needs to
+   248	 * do blocking operations it needs to track the inode itself and defer those
+   249	 * operations until after the iteration completes.
+   250	 *
+   251	 * @iter_fn must provide conditional reschedule checks itself. If rescheduling
+   252	 * or deferred processing is needed, it must return INO_ITER_ABORT to return to
+   253	 * the high level function to perform those operations. It can then restart the
+   254	 * iteration again. The high level code must provide forwards progress
+   255	 * guarantees if they are necessary.
+   256	 *
+   257	 */
+   258	void super_iter_inodes_unsafe(struct super_block *sb, ino_iter_fn iter_fn,
+   259			void *private_data)
+ > 260	{
+   261		struct inode *inode;
+   262		int ret;
+   263	
+   264		rcu_read_lock();
+   265		spin_lock(&sb->s_inode_list_lock);
+   266		list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+   267			ret = iter_fn(inode, private_data);
+   268			if (ret == INO_ITER_ABORT)
+   269				break;
+   270		}
+   271		spin_unlock(&sb->s_inode_list_lock);
+   272		rcu_read_unlock();
+   273	}
+   274	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
