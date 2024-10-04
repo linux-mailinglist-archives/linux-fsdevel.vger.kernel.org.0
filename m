@@ -1,183 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-31034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB082991059
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 22:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A22B991094
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 22:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 267B2B28EA3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 20:24:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21D3A283006
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 20:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996831E7C1C;
-	Fri,  4 Oct 2024 20:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0548F231CB7;
+	Fri,  4 Oct 2024 20:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CsbIGiaK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d7yWeA6z";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CsbIGiaK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d7yWeA6z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQjqsV9Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924DF1E5738;
-	Fri,  4 Oct 2024 20:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D105231C80;
+	Fri,  4 Oct 2024 20:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728072358; cv=none; b=Yyb1P0B7E80uvnNNdhdziUVMbK3qGgsSkXW3Xa4VSSDM/cuyaXjWB1a7r1aRI+Fax2StIXvJzh0p2d9WYo8s7Q/Y0Y6g99hvMvcjS3Ls9KeFMqETao0l636S0d58YNlHrciQMXckpedGCRxii57cj3AhxaL0kBjd1uEoKd37NPo=
+	t=1728073764; cv=none; b=DUi59ghAShfYR132HD5L9ytqn0FgW7B0I9Dy6dTjLp7ifq7MgPEz6QTZlnJt+e9sz82d8aD0e0AeNlpeSkaaZSqFozbxoXeulOzRTFzZ6gPJO7rHtzWh56Nzn/LP+2IVp4O2/E/C1i2Op/aIyNBmBt/oGpAiqEYNZQlwsKuEKns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728072358; c=relaxed/simple;
-	bh=jfjst3E5k0T2B6zwqixGj4yYauvR0JGYmKe7AjK0JHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UHUAEKy9ncZWHunb91gmy4L8gV5p03NbuQX3tIXpX4wFKfPlufm+/DPhDx1GvDQcV8XBxp1MzXM+NpmImm5GPL/dFh2b44GmOiFhOB5zY5W1TyqaOH0AhX1X1g1W8LAFcHNwNJ4mNLtz39F98/HldVQVphwDsk0f00e15I2V9Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CsbIGiaK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d7yWeA6z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CsbIGiaK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d7yWeA6z; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D5ADA1F7B4;
-	Fri,  4 Oct 2024 20:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728072354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4bhyoD+vXWDSv7I9433nLLALeIWNmirY85fvj5iloo=;
-	b=CsbIGiaKDGGN2nqjI53FXD00QOoqin/aPN8c7JdYHSgcHKhOd1+CoHWO5yaIEwSfxHCCh0
-	TXbld0F7GwBlI0gQNYd7rhTtSu+2uiP9yTaEsdsF3CWxrBw1jsFT4DdralN2eNJq7GQ+ZS
-	3JcCJD7KXXqOdNWNDyMvsyh9QY/2LOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728072354;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4bhyoD+vXWDSv7I9433nLLALeIWNmirY85fvj5iloo=;
-	b=d7yWeA6zvalmhHwcTTgWyG1nkkXiJVhJOZeyVXS/vymXeJpZ0HhzSBSnKcgNOILL5DuBog
-	hLSZX88KUFWQt3BQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728072354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4bhyoD+vXWDSv7I9433nLLALeIWNmirY85fvj5iloo=;
-	b=CsbIGiaKDGGN2nqjI53FXD00QOoqin/aPN8c7JdYHSgcHKhOd1+CoHWO5yaIEwSfxHCCh0
-	TXbld0F7GwBlI0gQNYd7rhTtSu+2uiP9yTaEsdsF3CWxrBw1jsFT4DdralN2eNJq7GQ+ZS
-	3JcCJD7KXXqOdNWNDyMvsyh9QY/2LOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728072354;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4bhyoD+vXWDSv7I9433nLLALeIWNmirY85fvj5iloo=;
-	b=d7yWeA6zvalmhHwcTTgWyG1nkkXiJVhJOZeyVXS/vymXeJpZ0HhzSBSnKcgNOILL5DuBog
-	hLSZX88KUFWQt3BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6AF5F13883;
-	Fri,  4 Oct 2024 20:05:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dzjgDaJKAGcqRgAAD6G6ig
-	(envelope-from <rgoldwyn@suse.de>); Fri, 04 Oct 2024 20:05:54 +0000
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 12/12] btrfs: switch to iomap for buffered reads
-Date: Fri,  4 Oct 2024 16:04:39 -0400
-Message-ID: <edc8da1d3d6c5a09662a7a788dc17c963f50dfab.1728071257.git.rgoldwyn@suse.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <cover.1728071257.git.rgoldwyn@suse.com>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
+	s=arc-20240116; t=1728073764; c=relaxed/simple;
+	bh=XHZLQD1ErzRyqIdudTG5gz6C2Niq7KA9cBpxBxsq1PM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AO20BcKMMNjp9le1ZOaHKOsWpSWGTPt9VRw2yBIULJu0cSOn1xFBgV5jO4dv8hBZH2NOFwfbWMBV5nmfKEFPd0s6OBxAy/P4z9D/R1e/Qq2wDRT4FEo+/7+gmLBjSuipfvGmYFizT2rNXU3InA9yfrfN7I2U7n+f7mAJUHpumP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQjqsV9Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD1CC4CEC6;
+	Fri,  4 Oct 2024 20:29:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728073763;
+	bh=XHZLQD1ErzRyqIdudTG5gz6C2Niq7KA9cBpxBxsq1PM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DQjqsV9ZyLP+OLobIy07JccH8vO2TK7+oKw1U5fWy4wesiHf7Cz3oyTHXkMgdyFrK
+	 gZ10jSl56ehxhOVGaMA4VLHZtY+gT21RzncgbNTejypeNz3Y0Xzo03Mqfiv9KDdxKc
+	 5GtozZwzwU4cnf58v8P775bAHqj5DhMFwrSRBX37DAY667GNf+wY9Gg7XVskUIc3Z0
+	 j1X6HO8sINK4YDw8ODqVI3ViVvm5rmMwRuveHYSJAtICdq+qFDOJ8JCtv9haQs/ycM
+	 r/lWe+caGEg2i1x2QG0rZA0HeUBs93FKrY3wiUJL9b2f7JerxYGsn9MVL5HXmaFHxR
+	 59TZT9/QlFMdQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH RFC v2 0/2] arm64: Add infrastructure for use of AT_HWCAP3
+Date: Fri, 04 Oct 2024 21:26:28 +0100
+Message-Id: <20241004-arm64-elf-hwcap3-v2-0-799d1daad8b0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHRPAGcC/2WNzQqDMBCEX0X23C3RGH96KhT6AL0WD0FXDVUjm
+ 5K2SN69QXrr8ZthvtnAERtycEo2YPLGGbtEyA4JtKNeBkLTRYZMZLmohULNc5EjTT2Or1avEst
+ S1K1StexkDnG2MvXmvSvvcLteoInhaNzT8me/8ele/YzFv9GnKLDq+lQrKqQS1flBvNB0tDxAE
+ 0L4AvB+mga2AAAA
+X-Change-ID: 20240905-arm64-elf-hwcap3-7709c5593d34
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, Yury Khrustalev <yury.khrustalev@arm.com>, 
+ Wilco Dijkstra <wilco.dijkstra@arm.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2178; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=XHZLQD1ErzRyqIdudTG5gz6C2Niq7KA9cBpxBxsq1PM=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnAFAe7saB3zi5hDCkIVqUtEaorraDTp3QVFiYEQoL
+ if1JERqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZwBQHgAKCRAk1otyXVSH0FHHB/
+ 9+tUh1y+t4MdvijrHJlvp3/g3m9azLRNbbXAVxebaU4mpT/rTRb5MktPyAJf7u8R6k9h2PRkWhTGfR
+ TYQOfK/iUJxoMO19RYWweJ7n6J0/GIrdDcYhLTKaAGwBmZ8FKJJt79Wa+D6KmITPFeW2sdDjaAjAWa
+ E7eLXoSG7TQW0c3IJu2xm+Uza2+WBRsZpV2wgIkkOenzkdj3mPE8UtxWYGEdzT5vE52QLRoipF2o9B
+ bEAoKhzLoq5bhFR+BDDX+BnE04GtT+mUzds9Aq9NDvw66htgkkgKlEonir8/EotyE/WWCB5Fs9Rw+K
+ vQs1YdMhSTFQeWGm6wDjNv2V/4q7a1
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Since arm64 has now used all of AT_HWCAP2 it needs to either start using
+AT_HWCAP3 (which was recently added for PowerPC) or start allocating
+bits 32..61 of AT_HWCAP first.  Those are documented in elf_hwcaps.rst
+as unused and in uapi/asm/hwcap.h as unallocated for potential use by
+libc, glibc does currently use bits 62 and 63.  This series has the code
+for enabling AT_HWCAP3 as a reference.
 
-For buffered reads, call iomap_readahead() and iomap_read_folio().
+While we've decided to go with using the high bits of AT_HWCAP for now
+we will exhaust those at some point so it seems helpful to have this
+code available in order to make life easier when we do need to start
+using AT_HWCAP3.  This seems like it might come up relatively quickly,
+for the past few years the dpISA has used ~15 hwcaps due to the fine
+grained feature definitions and the fact that SVE and SME need
+independent definitions of everything. When we do start using HWCAP3
+we'll potentially have multiple serieses that need to share the addition
+so it seems like it might be helpful to have the scaffolding in place
+at least the release before it's actuallly required in order to make
+things more managable. That's not an issue *now* but could come up
+surprisingly quickly.
 
-This is limited to non-subpage calls.
-
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/btrfs/extent_io.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Changes in v2:
+- Rebase onto v6.12-rc1.
+- Fix cut'n'paste 3/4 issues.
+- Link to v1: https://lore.kernel.org/r/20240906-arm64-elf-hwcap3-v1-0-8df1a5e63508@kernel.org
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 01408bc5b04e..cfe771cebb36 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -1205,9 +1205,15 @@ static int btrfs_do_readpage(struct folio *folio, struct extent_map **em_cached,
- int btrfs_read_folio(struct file *file, struct folio *folio)
- {
- 	struct btrfs_bio_ctrl bio_ctrl = { .opf = REQ_OP_READ };
-+	struct inode *inode = folio->mapping->host;
-+	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- 	struct extent_map *em_cached = NULL;
- 	int ret;
- 
-+	if (!btrfs_is_subpage(fs_info, inode->i_mapping))
-+		return iomap_read_folio(folio, &btrfs_buffered_read_iomap_ops,
-+				&btrfs_iomap_read_folio_ops);
-+
- 	ret = btrfs_do_readpage(folio, &em_cached, &bio_ctrl, NULL);
- 	free_extent_map(em_cached);
- 
-@@ -2449,10 +2455,17 @@ int btrfs_writepages(struct address_space *mapping, struct writeback_control *wb
- void btrfs_readahead(struct readahead_control *rac)
- {
- 	struct btrfs_bio_ctrl bio_ctrl = { .opf = REQ_OP_READ | REQ_RAHEAD };
-+	struct inode *inode = rac->mapping->host;
-+	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- 	struct folio *folio;
- 	struct extent_map *em_cached = NULL;
- 	u64 prev_em_start = (u64)-1;
- 
-+	if (!btrfs_is_subpage(fs_info, rac->mapping)) {
-+		iomap_readahead(rac, &btrfs_buffered_read_iomap_ops, &btrfs_iomap_read_folio_ops);
-+		return;
-+	}
-+
- 	while ((folio = readahead_folio(rac)) != NULL)
- 		btrfs_do_readpage(folio, &em_cached, &bio_ctrl, &prev_em_start);
- 
+---
+Mark Brown (2):
+      binfmt_elf: Wire up AT_HWCAP3 at AT_HWCAP4
+      arm64: Support AT_HWCAP3
+
+ Documentation/arch/arm64/elf_hwcaps.rst |  6 +++---
+ arch/arm64/include/asm/cpufeature.h     |  3 ++-
+ arch/arm64/include/asm/hwcap.h          |  6 +++++-
+ arch/arm64/include/uapi/asm/hwcap.h     |  4 ++++
+ arch/arm64/kernel/cpufeature.c          |  6 ++++++
+ fs/binfmt_elf.c                         |  6 ++++++
+ fs/binfmt_elf_fdpic.c                   |  6 ++++++
+ fs/compat_binfmt_elf.c                  | 10 ++++++++++
+ 8 files changed, 42 insertions(+), 5 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240905-arm64-elf-hwcap3-7709c5593d34
+
+Best regards,
 -- 
-2.46.1
+Mark Brown <broonie@kernel.org>
 
 
