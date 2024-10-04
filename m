@@ -1,181 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-30991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B09A9903DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 15:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF38990457
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 15:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82F951F2226A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 13:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37FE61F21461
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 13:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25230219492;
-	Fri,  4 Oct 2024 13:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D2521731D;
+	Fri,  4 Oct 2024 13:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJeOmtbi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jIkkx/Dv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA75217919;
-	Fri,  4 Oct 2024 13:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2DB216A31;
+	Fri,  4 Oct 2024 13:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728047903; cv=none; b=iuOqIRn30vQgykfCUnqaLdXQvqHPcPs5ORYU8PNIRsY9DcZe9sPW+cSjRlGdl70+U9RxmuZwLr8IDvi3XwQccJCuh683mQGc1QnERL0wE0xJXT9hPG7vLhGP/gvLb3FekotptuS09Exyw8vY8qd7iPauWbBLsd5dsjq7Q/PDhKY=
+	t=1728048507; cv=none; b=F4Lfv4iCehxkc9j8ugASP3YXyxNXfQkoQWCsLLEIUaylfokn7OCIQ/ocUN3ngBWrDNKtcwlVyaJqhObx3PCqiDFO89eXOw8/jp1buhptM4hY4Y4Ad0lv1bqrD1fUcUNg1OnJ3+Zt2+JeSjfP27yAB215fPmPP07+Q1jIjm9Ug60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728047903; c=relaxed/simple;
-	bh=9CCT4emkgZ4aNhjimaMLoft7waX5qJm3j1Zwi+hAwSw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RoTA4ChBSkpXeU0PGj72MtMljL/nsH90xVj+VEi8M8HVW4i0+KH1ZToIsKN34F9Se82A3Gz2cLLMizlNef+Pi4pAak51hUyYsZnjapyYtNav9vkI0O/17yj+75MyWU+XuET9pOmqBbFInRfo69JcujVdZtUPIOT5tmh0RK9XyOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJeOmtbi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFA0C4CED2;
-	Fri,  4 Oct 2024 13:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728047903;
-	bh=9CCT4emkgZ4aNhjimaMLoft7waX5qJm3j1Zwi+hAwSw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SJeOmtbiwFM5KNFReOpcRr58z6Vv32jKCXkme8V5nD9wRXfYUlPqZ44zfyYHt22Sn
-	 FGJ5Ubj7IXI6cj+bRTwhFXtZ1xKITx1s+b3dTOVvEUYsTTZ5xygVBn6ZnvS8e0dPzQ
-	 M+nx0ginjF6gVSfsh3crMvrlDm0ECoOb0e9T8EAe/Yke+x+dscjYTtGuOEuKCYknF6
-	 e7+6BKUHg0dYZ5o42NZh9yqD+udz28l9wdwzpLcVTtFNc2KAGNK2AXoavaW6Z3doz8
-	 Qf2jyLEopuNRQUhU77DnXZtLn6Dgxa0mDiOeJmMksURHgVkU9wQG3d32086APchGb7
-	 gfeLQDqiO6glw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 04 Oct 2024 09:16:52 -0400
-Subject: [PATCH v4 9/9] nfsd: handle delegated timestamps in SETATTR
+	s=arc-20240116; t=1728048507; c=relaxed/simple;
+	bh=FWAanwgui+hTE2w/uN5Fsi1R1HgpTytUTuTEhs3O+nU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ejaY8zOs9cticGAa/tM+zszYT4A7shrAloixt+25eVD5zTMleDArDtDgZx7sf02ukSGdrvrc3x9D+4JKRt01c0LMECVx99eFHpZnaD/muxwOx7i0pl9J+pUMOlaNAH9wHnqDVJqywRZ9JshYEd6scIOcgonYAFKnkqpeE7sDx2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jIkkx/Dv; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7ae3e3db294so122141585a.2;
+        Fri, 04 Oct 2024 06:28:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728048504; x=1728653304; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p3D86/Xz7GWMcJfyoKry0xY7L2mFTRLNs/Qabyq5u3U=;
+        b=jIkkx/DvzFpSO9+oKOz1pTNkgddqXtO25L67pJTn3akMhngIRssZXOVswwWOqPFY1p
+         n1/dthYZWQ/+dZBJfg63xrreYOLWgiZpBoZyAu5XOAP9JRespDFg6QiMpu42Y8tCg6oh
+         J9bf2qgvi+zCwVJVXTYxuLs6zgTYPT3SO+I56RNc0MkMGTC3XLThUIzwZcRCE1qQwn+A
+         uKoGDR60HfD1+8HpXElt99mW7ikKLDvhAOFK2fnOdBvwFCBRLqDwcQ9m5WDvQ0DRLcRC
+         npXPO/lSylMy/tLDDfFo/BeHneggqsgAoVH22ucSJc6cUoFYxu/SlFOlE9idblCi5rIn
+         8xYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728048504; x=1728653304;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p3D86/Xz7GWMcJfyoKry0xY7L2mFTRLNs/Qabyq5u3U=;
+        b=f/Gq4wQ8PPIDBwvhgTYqaUhZ4CtHwMxJ7qjBZJYG7XIq3aX3CkYy9MHmXKmWzlJh9M
+         kz7rNnnkl8cb3mZFUv9bwbqfqv6OgiTOlFHDx1uIiaBHEpb/ny+5oImHX5phIG4PzEAQ
+         snkvE0cR2JMBfw79LANhzeV+Nk+9uKD/LuJRFQdE5nmKBw+R6qx4W3slrjJ9lYZegui0
+         Y86ls7POMHWBqjWux4ojLk4SJqs9a6Gj6Ty3UpYe1I6Bz7ygkjz79FYQXHYVExibhpcf
+         3Nq/6aJaiqR2F+z7+xUi1SYes8uT9Rffrxf7JOHyJGH8to0cJSCn3A6Dma3E7/6Np64e
+         +p8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ7bRt0dlezrULSNG3W4EnOp405QHFHZ5Vmut7SjVnaY75DvjrNhQFjh7LAQKrcQk3IVfzG/XWLVeO@vger.kernel.org, AJvYcCXgTBIvLyx18TtYUBJcYwWV8ShBq89br4ZMQkI6Lm8Jx/tPSGysD3pZa1ECpc92io6zzrQiJtx6jlkqdnOLCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1FpoCJow3eLEXxdOljMO4U+/udf8cgujSAF5Vkd8PEbhToB8m
+	TXmtV9d1uYB1mq4WN64QLPPQDksIzNi7+pIqMiKM5fzCgsnXBhmyoh0/G1kThnrANym4lI5T3XK
+	br8lYKMjt4SxQ34NBeMkEO6UkINI=
+X-Google-Smtp-Source: AGHT+IFTuYdmM6+aufByiyaM0OZDHVhqwE7RcJfZ9RjNuzeqCS2P26MM8134E5yUf+F53VrT1DSjXIxIL2/tOnA+lxA=
+X-Received: by 2002:a05:620a:31a5:b0:7a9:c129:297a with SMTP id
+ af79cd13be357-7ae6f44cb1fmr465662585a.32.1728048504122; Fri, 04 Oct 2024
+ 06:28:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-delstid-v4-9-62ac29c49c2e@kernel.org>
-References: <20241004-delstid-v4-0-62ac29c49c2e@kernel.org>
-In-Reply-To: <20241004-delstid-v4-0-62ac29c49c2e@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3267; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=9CCT4emkgZ4aNhjimaMLoft7waX5qJm3j1Zwi+hAwSw=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm/+sOxNR5js1OIdEyD1VBjMkxCXAGZG1EmjsFO
- +rnBCNLV1GJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZv/rDgAKCRAADmhBGVaC
- FS/UEADWn9vKI2kmakUnaeIm9XrD2SgscYnwNiaR7ogtsv1R1SqMwSTFrACpzpmcL8clOH42T0d
- bBOAbNMqKR3Q5J+CAh6uNzxUWMOm450tRDf14pJTI2fOVh2IqPGG3NlTJAFrpLTKxVI36Q77ycI
- Q+byF+DC0+Sl3GNeV/XVhAe2BwCiuOetx5Zi1nXZGRV13+hboIUNN0L/thANIdbxQjjg3Jg7SNm
- eJZTf8sM9yEAbFy7Fmb1S4bEHtTBgvLaa2QTAxq3gzLAm6tCVpd2IXdHBF5GpMczeYl2C5/BLUe
- garxMC4Fc9ISxLWkonuA0U6tORJpW7QDsVglUVrj7s1zlg+lKrvBRHz8zbCoS2HKbeUka3GYNdT
- 8gnAjX6yI09cZH7mn322IzX+gCj06MdvNDGzvY1mQSip/9oNcxksOD++tPMptXATsAk/hT5ef+Y
- FQ40XOjy8bGnqaEklyYqABL8tB+lyV8wJGQk5QzgZW0zbUfsZLsjAp711rtetkk1oL17oOHQn80
- RVx1FRMbjUneqdMU3SQYuT1C6BEU4WI4iubfoEGKpPJ1G8djt7TXiyDLXJJU1tez8/k8+PG64zq
- vQWcTbE2PGf7Td+mxz5odPRGWfPukadhykK3SKCCwv9lFsM9fM2Fc5wxji8fturpa/MdPteBDEv
- 66w8RymIK3+hhkA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+References: <20240805201241.27286-1-jack@suse.cz> <Zvp6L+oFnfASaoHl@t14s>
+ <20240930113434.hhkro4bofhvapwm7@quack3> <CAOQ4uxjXE7Tyz39wLUcuSTijy37vgUjYxvGL21E32cxStAgQpQ@mail.gmail.com>
+ <CAASaF6yASRgEKfhAVktFit31Yw5e9gwMD0jupchD0gWK9EppTw@mail.gmail.com>
+In-Reply-To: <CAASaF6yASRgEKfhAVktFit31Yw5e9gwMD0jupchD0gWK9EppTw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 4 Oct 2024 15:28:12 +0200
+Message-ID: <CAOQ4uxjmtv88xoH0-s6D9WzRXv_stMsWB5+x2FMbdjCHyy1rmA@mail.gmail.com>
+Subject: Re: [LTP] [PATCH] ext4: don't set SB_RDONLY after filesystem errors
+To: Jan Stancek <jstancek@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, Ted Tso <tytso@mit.edu>, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, ltp@lists.linux.it, 
+	Gabriel Krisman Bertazi <gabriel@krisman.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Allow SETATTR to handle delegated timestamps. This patch assumes that
-only the delegation holder has the ability to set the timestamps in this
-way, so we only allow this if the SETATTR stateid refers to the
-delegation.
+On Fri, Oct 4, 2024 at 2:50=E2=80=AFPM Jan Stancek <jstancek@redhat.com> wr=
+ote:
+>
+> On Fri, Oct 4, 2024 at 2:32=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+> >
+> > On Mon, Sep 30, 2024 at 1:34=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Mon 30-09-24 12:15:11, Jan Stancek wrote:
+> > > > On Mon, Aug 05, 2024 at 10:12:41PM +0200, Jan Kara wrote:
+> > > > > When the filesystem is mounted with errors=3Dremount-ro, we were =
+setting
+> > > > > SB_RDONLY flag to stop all filesystem modifications. We knew this=
+ misses
+> > > > > proper locking (sb->s_umount) and does not go through proper file=
+system
+> > > > > remount procedure but it has been the way this worked since early=
+ ext2
+> > > > > days and it was good enough for catastrophic situation damage
+> > > > > mitigation. Recently, syzbot has found a way (see link) to trigge=
+r
+> > > > > warnings in filesystem freezing because the code got confused by
+> > > > > SB_RDONLY changing under its hands. Since these days we set
+> > > > > EXT4_FLAGS_SHUTDOWN on the superblock which is enough to stop all
+> > > > > filesystem modifications, modifying SB_RDONLY shouldn't be needed=
+. So
+> > > > > stop doing that.
+> > > > >
+> > > > > Link: https://lore.kernel.org/all/000000000000b90a8e061e21d12f@go=
+ogle.com
+> > > > > Reported-by: Christian Brauner <brauner@kernel.org>
+> > > > > Signed-off-by: Jan Kara <jack@suse.cz>
+> > > > > ---
+> > > > > fs/ext4/super.c | 9 +++++----
+> > > > > 1 file changed, 5 insertions(+), 4 deletions(-)
+> > > > >
+> > > > > Note that this patch introduces fstests failure with generic/459 =
+test because
+> > > > > it assumes that either freezing succeeds or 'ro' is among mount o=
+ptions. But
+> > > > > we fail the freeze with EFSCORRUPTED. This needs fixing in the te=
+st but at this
+> > > > > point I'm not sure how exactly.
+> > > > >
+> > > > > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > > > > index e72145c4ae5a..93c016b186c0 100644
+> > > > > --- a/fs/ext4/super.c
+> > > > > +++ b/fs/ext4/super.c
+> > > > > @@ -735,11 +735,12 @@ static void ext4_handle_error(struct super_=
+block *sb, bool force_ro, int error,
+> > > > >
+> > > > >     ext4_msg(sb, KERN_CRIT, "Remounting filesystem read-only");
+> > > > >     /*
+> > > > > -    * Make sure updated value of ->s_mount_flags will be visible=
+ before
+> > > > > -    * ->s_flags update
+> > > > > +    * EXT4_FLAGS_SHUTDOWN was set which stops all filesystem
+> > > > > +    * modifications. We don't set SB_RDONLY because that require=
+s
+> > > > > +    * sb->s_umount semaphore and setting it without proper remou=
+nt
+> > > > > +    * procedure is confusing code such as freeze_super() leading=
+ to
+> > > > > +    * deadlocks and other problems.
+> > > > >      */
+> > > > > -   smp_wmb();
+> > > > > -   sb->s_flags |=3D SB_RDONLY;
+> > > >
+> > > > Hi,
+> > > >
+> > > > shouldn't the SB_RDONLY still be set (in __ext4_remount()) for the =
+case
+> > > > when user triggers the abort with mount(.., "abort")? Because now w=
+e seem
+> > > > to always hit the condition that returns EROFS to user-space.
+> > >
+> > > Thanks for report! I agree returning EROFS from the mount although
+> > > 'aborting' succeeded is confusing and is mostly an unintended side ef=
+fect
+> > > that after aborting the fs further changes to mount state are forbidd=
+en but
+> > > the testcase additionally wants to remount the fs read-only.
+> >
+> > Regardless of what is right or wrong to do in ext4, I don't think that =
+the test
+> > really cares about remount read-only.
+> > I don't see anything in the test that requires it. Gabriel?
+> > If I remove MS_RDONLY from the test it works just fine.
+> >
+> > Any objection for LTP maintainers to apply this simple test fix?
+>
+> Does that change work for you on older kernels? On 6.11 I get EROFS:
+>
+> fanotify22.c:59: TINFO: Mounting /dev/loop0 to
+> /tmp/LTP_fangb5wuO/test_mnt fstyp=3Dext4 flags=3D20
+> fanotify22.c:59: TBROK: mount(/dev/loop0, test_mnt, ext4, 32,
+> 0x4211ed) failed: EROFS (30)
+>
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/nfs4proc.c | 29 ++++++++++++++++++++++++++---
- fs/nfsd/nfs4xdr.c  | 20 ++++++++++++++++++++
- 2 files changed, 46 insertions(+), 3 deletions(-)
+Yeh me too, but if you change s/SAFE_MOUNT/mount
+the test works just fine on 6.11 and 6.12-rc1 with or without MS_RDONLY.
+The point of trigger_fs_abort() is to trigger the FS_ERROR event and it
+does not matter whether remount succeeds or not for that matter at all.
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index b5a6bf4f459fb2309a0ccc9f585c5d6318ceedf1..7f874943583c86dcfe686d38e69949e86b2a723e 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1133,18 +1133,41 @@ nfsd4_setattr(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 		.na_iattr	= &setattr->sa_iattr,
- 		.na_seclabel	= &setattr->sa_label,
- 	};
-+	struct nfs4_stid *st = NULL;
- 	struct inode *inode;
- 	__be32 status = nfs_ok;
--	bool save_no_wcc;
-+	bool save_no_wcc, deleg_attrs;
- 	int err;
- 
--	if (setattr->sa_iattr.ia_valid & ATTR_SIZE) {
-+	deleg_attrs = setattr->sa_bmval[2] & (FATTR4_WORD2_TIME_DELEG_ACCESS |
-+					      FATTR4_WORD2_TIME_DELEG_MODIFY);
-+
-+	if (deleg_attrs || (setattr->sa_iattr.ia_valid & ATTR_SIZE)) {
- 		status = nfs4_preprocess_stateid_op(rqstp, cstate,
- 				&cstate->current_fh, &setattr->sa_stateid,
--				WR_STATE, NULL, NULL);
-+				WR_STATE, NULL, &st);
- 		if (status)
- 			return status;
- 	}
-+
-+	/*
-+	 * If client is trying to set delegated timestamps, ensure that the
-+	 * stateid refers to a write delegation.
-+	 */
-+	if (deleg_attrs) {
-+		status = nfserr_bad_stateid;
-+		if (st->sc_type & SC_TYPE_DELEG) {
-+			struct nfs4_delegation *dp = delegstateid(st);
-+
-+			if (dp->dl_type == NFS4_OPEN_DELEGATE_WRITE)
-+				status = nfs_ok;
-+		}
-+	}
-+	if (st)
-+		nfs4_put_stid(st);
-+	if (status)
-+		return status;
-+
- 	err = fh_want_write(&cstate->current_fh);
- 	if (err)
- 		return nfserrno(err);
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 6241e93e9e13410b4fa926c0992127b1cc757b5e..bad75451d18f6d60faf33d6317a79011247ed7e6 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -521,6 +521,26 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 		*umask = mask & S_IRWXUGO;
- 		iattr->ia_valid |= ATTR_MODE;
- 	}
-+	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_ACCESS) {
-+		fattr4_time_deleg_access access;
-+
-+		if (!xdrgen_decode_fattr4_time_deleg_access(argp->xdr, &access))
-+			return nfserr_bad_xdr;
-+		iattr->ia_atime.tv_sec = access.seconds;
-+		iattr->ia_atime.tv_nsec = access.nseconds;
-+		iattr->ia_valid |= ATTR_ATIME | ATTR_ATIME_SET | ATTR_DELEG;
-+	}
-+	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_MODIFY) {
-+		fattr4_time_deleg_modify modify;
-+
-+		if (!xdrgen_decode_fattr4_time_deleg_modify(argp->xdr, &modify))
-+			return nfserr_bad_xdr;
-+		iattr->ia_mtime.tv_sec = modify.seconds;
-+		iattr->ia_mtime.tv_nsec = modify.nseconds;
-+		iattr->ia_ctime.tv_sec = modify.seconds;
-+		iattr->ia_ctime.tv_nsec = modify.seconds;
-+		iattr->ia_valid |= ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
-+	}
- 
- 	/* request sanity: did attrlist4 contain the expected number of words? */
- 	if (attrlist4_count != xdr_stream_pos(argp->xdr) - starting_pos)
+So you can either ignore the return value of mount() or assert that it
+can either succeed or get EROFS for catching unexpected errors.
 
--- 
-2.46.2
-
+Thanks,
+Amir.
 
