@@ -1,60 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-31041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA60F991251
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 00:28:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0086299127D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 00:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC5791C22E75
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 22:28:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D72B1F23DAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 22:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359D21B4F26;
-	Fri,  4 Oct 2024 22:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1698514D283;
+	Fri,  4 Oct 2024 22:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cmfKJI/7"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="iNcLVTFV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB8B140E34;
-	Fri,  4 Oct 2024 22:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50983140E34
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Oct 2024 22:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728080894; cv=none; b=T8fNC23up4zzymgOzsLN8ifvexu5MJwY0NtceyintrT3E576FTvy74dB7QRRfnfzJ8zTpczWepbQAgnv0bI33Aak5JghAePNOaVNPm8clHB/+u7Af1xHT1XXLsy1CscSdKzjCHrahWFT3cak+g8/h90XIECkYPXvlMkEbciGEJI=
+	t=1728081997; cv=none; b=dhzlx4WsE58T7PjsvSLXu8PzjXNhjAe6/cjYpnJv7kQQ1CjHcpyInLERA8+WX4qo//djiPOm+y/euyD202YZJnoUaygiyV+fdB1lSdfrzgCUg7cuHZDSXk6wA8QnDVu1iW8zanvBpq/jNQiJ3EFuEscGpYCIWczt35xWlhdTTtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728080894; c=relaxed/simple;
-	bh=1gv0odzWOvkjk6X2IHkIqlfeI9JgRBx4p55HyuQ22po=;
+	s=arc-20240116; t=1728081997; c=relaxed/simple;
+	bh=KGDBW+VzICTuok5HmgYwSc6Q3qKxP7NeiQvuKpfuJj8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3rinGoRA9wKE93HQQeLP69AfhvCj2S9ZOQefWbNEq6gj0cSEF8sh9syjgmK+M8+pG/0kBA5b0VkbMfCfxmQqYhOaM6jmDBQAHpa7naKxmXS49RwBFJyeXKg+CVncIra5mQRwCdhllhupNAoF/zdRxsyQ7r1z+tNAf2ANASoqBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cmfKJI/7; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4TeFbJreJhhr2F+XDO4Y9bSx72bBZDuZjyZm5w8kduU=; b=cmfKJI/72ZSwTU2Ahx5CNacGEu
-	gOg2vmevsOxGfNkCYfQfeNWEtYGrTGZ0LxhpVXymI5N71Q/QOuVhRQC3BcbwbMUJrtA6CwNm8YMjq
-	FegJ7zvIrp+WG5yIurgDpbKsLCV76er93KIocskBExooKkcTlh+H9RW8OkXtP4fNg9E31bfDMfl7l
-	hOyv/TppFn6nkTvRUBlQIJJxu/JXvYq29+xXkkCz9ZAHUYDEKWAVWJXDaietwOg306h+IvYA2BFih
-	s8VDRoszPvUdQGx1tGyUzMJKQZ443uRL7SLajS+tng2Tn8kwi71IO1Ouy8nvUVjTCD7yTuVb0BgIR
-	APqT6z7g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1swqmR-00000000tkc-2AP0;
-	Fri, 04 Oct 2024 22:28:11 +0000
-Date: Fri, 4 Oct 2024 23:28:11 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH 1/4] ovl: do not open non-data lower file for fsync
-Message-ID: <20241004222811.GU4017910@ZenIV>
-References: <20241004102342.179434-1-amir73il@gmail.com>
- <20241004102342.179434-2-amir73il@gmail.com>
- <20241004221625.GR4017910@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAoKUi002ubNBP+5HHjxBOpramGtk7pMnjqRq4tZ98MmSY1WWxUwVGP3EwA02X/FebzHWkVvCyu3Nfu9dBbR1jEykG+P4UstlNOwnx9jn10AWAd2xp1Ym3VTD6EQ0pTzOKTYWuPdYuJDVUKe/WUzWQolZAMNPGHmSnZfewEivUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=iNcLVTFV; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71ddfc61c78so1471976b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Oct 2024 15:46:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1728081994; x=1728686794; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mfPYWu0zoQuwrp1D6VKi5ike7t96l9DXCZP1d6TBs20=;
+        b=iNcLVTFVEhfPpmJZiXGLhSTr6HJNAURf1G6aOa5qkkUggoVAu42F5VeraclLkx2sBg
+         oA8T/zD7Gp2PcY/p84c2darNZGHnCFo5KXMA7YkLdVot4SNYl3fpkJowKl84piJAUFga
+         NJTfVB3Tz94sSGh3EN2J1sxvjdzqjKQVBYVWjk5+h1mq9HHWpaf384ZrOujuD1X0+oOQ
+         xx88+wtYtElrZ/UzuCy7N7j4EFVtmlLp2ZrQ9DDMXt1mcijzMAf3uqDQ0PMMpI60yzt4
+         awXGt2+DRMuPZlkeS8pE44Tk5D/IXVaTcsXfF2lK1seORExX5N65iK6xyaesurDnYQH1
+         etYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728081994; x=1728686794;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mfPYWu0zoQuwrp1D6VKi5ike7t96l9DXCZP1d6TBs20=;
+        b=IDzendu2Gipkfn3Hr3dPjsJI0k/IB8735Qakg4qG4+EY+L1AmtkAv49A4nPk09ZyUa
+         P+/rYBpP6QpViueGXNbYLgpJNWIr3wtvS5gPMRAd0EpqttkDTl7Co1ho3kgmOzEdPP6h
+         Q4C34Vzc/aXehdrPWLDsC7GN9SVgM0Sm7m4YbQtKPY6FVkZ5LqhPDvD6tNMuYZxBvAhg
+         c17Q4rzOaDLcBGlKUO71aqtXwLPSFymYxy5MZXuWNm0lwj3TYepGrlWOH/VmEwDz3Xl4
+         ZYBOEAcnkA3P19p8xCwfCO/y5zbI4NNlpqFl0Acstmg4mMRXJY0ZaDrEbS8dyFzrQ3AQ
+         s6Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnuCUK7OBxZ9KNRva8wpi81Ce/7nLN28h9rXmORsHakEscKLDxBfIsdftkp8rY96LXae0VFpYg38qVsMtZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaX8xKhTHa34tSiHdhCylV/pltEgwLxwcuHaBoXpi8BI4E+hzR
+	a3rC93jzQt7psLYQ+SEnF5yGOrs6grEPzpXoTULuzAVajDrKcn635xlwt2edfVA=
+X-Google-Smtp-Source: AGHT+IHH6D+mR+kPDuhUqfvHx3wFJkWq0SHSNLLQousrnyeEieGnCefv4dnbkilmvTDOj0X5j+GnTQ==
+X-Received: by 2002:a05:6a00:23d5:b0:718:dc55:728a with SMTP id d2e1a72fcca58-71de23b5e95mr6803811b3a.8.1728081994552;
+        Fri, 04 Oct 2024 15:46:34 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d47863sm384166b3a.119.2024.10.04.15.46.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 15:46:34 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1swr4A-00E116-26;
+	Sat, 05 Oct 2024 08:46:30 +1000
+Date: Sat, 5 Oct 2024 08:46:30 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Hannes Reinecke <hare@suse.de>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Dave Chinner <dchinner@redhat.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.11 14/76] iomap: fix iomap_dio_zero() for fs bs
+ > system page size
+Message-ID: <ZwBwRqGRwoDd2eT4@dread.disaster.area>
+References: <20241004181828.3669209-1-sashal@kernel.org>
+ <20241004181828.3669209-14-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,54 +94,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004221625.GR4017910@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20241004181828.3669209-14-sashal@kernel.org>
 
-On Fri, Oct 04, 2024 at 11:16:25PM +0100, Al Viro wrote:
-> On Fri, Oct 04, 2024 at 12:23:39PM +0200, Amir Goldstein wrote:
-> > ovl_fsync() with !datasync opens a backing file from the top most dentry
-> > in the stack, checks if this dentry is non-upper and skips the fsync.
-> > 
-> > In case of an overlay dentry stack with lower data and lower metadata
-> > above it, but without an upper metadata above it, the backing file is
-> > opened from the top most lower metadata dentry and never used.
-> > 
-> > Fix the helper ovl_real_fdget_meta() to return an empty struct fd in
-> > that case to avoid the unneeded backing file open.
+On Fri, Oct 04, 2024 at 02:16:31PM -0400, Sasha Levin wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> Umm...  Won't that screw the callers of ovl_real_fd()?
+> [ Upstream commit 10553a91652d995274da63fc317470f703765081 ]
 > 
-> I mean, here
+> iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
+> < fs block size. iomap_dio_zero() has an implicit assumption that fs block
+> size < page_size. This is true for most filesystems at the moment.
 > 
-> > @@ -395,7 +397,7 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
-> >  		return ret;
-> >  
-> >  	ret = ovl_real_fdget_meta(file, &real, !datasync);
-> > -	if (ret)
-> > +	if (ret || fd_empty(real))
-> >  		return ret;
-> >  
+> If the block size > page size, this will send the contents of the page
+> next to zero page(as len > PAGE_SIZE) to the underlying block device,
+> causing FS corruption.
 > 
-> you are taking account of that, but what of e.g.
->         ret = ovl_real_fdget(file, &real);
->         if (ret)
->                 return ret;
+> iomap is a generic infrastructure and it should not make any assumptions
+> about the fs block size and the page size of the system.
 > 
->         /*
->          * Overlay file f_pos is the master copy that is preserved
->          * through copy up and modified on read/write, but only real
->          * fs knows how to SEEK_HOLE/SEEK_DATA and real fs may impose
->          * limitations that are more strict than ->s_maxbytes for specific
->          * files, so we use the real file to perform seeks.
->          */
->         ovl_inode_lock(inode);
->         fd_file(real)->f_pos = file->f_pos;
-> in ovl_llseek()?  Get ovl_real_fdget_meta() called by ovl_real_fdget() and
-> have it return 0 with NULL in fd_file(real), and you've got an oops right
-> there, don't you?
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Link: https://lore.kernel.org/r/20240822135018.1931258-7-kernel@pankajraghav.com
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/iomap/buffered-io.c |  4 ++--
+>  fs/iomap/direct-io.c   | 45 ++++++++++++++++++++++++++++++++++++------
+>  2 files changed, 41 insertions(+), 8 deletions(-)
 
-I see... so you rely upon that thing never happening when the last argument of
-ovl_real_fdget_meta() is false, including the call from ovl_real_fdget().
+For the second time: NACK to this patch for -all- LTS kernels.
 
-I still don't like the calling conventions, TBH.  Let me think a bit...
+It is a support patch for a new feature introduced in 6.12-rc1 - it
+is *not* a bug fix, it is not in any way relevant to LTS kernels,
+and it will *break some architectures* as it stands.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
