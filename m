@@ -1,223 +1,275 @@
-Return-Path: <linux-fsdevel+bounces-31018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68FE0990F84
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 22:01:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA86990F80
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 22:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22991F250CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 20:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97386283997
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 20:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09971F9A82;
-	Fri,  4 Oct 2024 19:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVw0/2AU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25651F943B;
+	Fri,  4 Oct 2024 19:04:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472861F9AA8;
-	Fri,  4 Oct 2024 19:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C681F9427;
+	Fri,  4 Oct 2024 19:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728068679; cv=none; b=aUuD+olHTOodmPrPTc68ob1rYkBZ8zw42XoOzjamb6OptjDoSHVxUD0nk3Necj7zCDCGHFE4O0FInPePKMswnyegTr7ZpcDgOxI3BJj9KxpYyIpjvWQsVGmsZlEq+E8Y/cvNuXBvtCjBIR5V73TsnWCc5nUdiTtznkdT8UOuDCc=
+	t=1728068667; cv=none; b=XIF0LngfPpw31Y3euVcYtdSoGa+u7drWUo5sSmuU7A6e5yDGoMnAkNDGuT1W+ysvdBYYns3+5rcBWe/og8WOiEVl/WFFdmAQu2NNeXdsveoRMTra0Cf3Ymg20G+WG7INn3F8Ei2cjeadULopnWcN2t+bzyJkqyqOKcIDEaIs+IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728068679; c=relaxed/simple;
-	bh=EYXoxF8J+Y51OPF0Evi9LCP8HPNnSPwukPuNw27WKEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QmQoSdCBlWXcETXCV9wVTR+MHT7XDC2PAEyPm0UcuOD14Avj8eQvNtNbcVgYQGVyNWdQ7xqWiuH6/sl4OqfMCNh3Ym8qqwrlXe+H2ShFmOozGRx19tPUHL8A1a4/vBCVXQ/Xaqweo++YhVErfKwmWLvnr3cBpdx+tJR1FVamfMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVw0/2AU; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4585e250f9dso15788871cf.1;
-        Fri, 04 Oct 2024 12:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728068676; x=1728673476; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EStsrddaAqsEdZHuo7kWeqjRs5ADGW1wT+p+2UhGVJk=;
-        b=QVw0/2AUBbJLuF2ZLsNNhwXv6MMD5KfOwtqbPVt/+uS9OqqsrD8eoDW8bo/8irsZA8
-         ku0HFlLftytWFaNoyAhRY1T68hRKAFCwfq9zmLDa5w8bbXN5rPvrrR7B08Se6+v55KL5
-         BqbBvp5X2TVysiVR6oGsiJqmQIRoKq1KnYRGKnWqmECpzKz8VA5EDH/qsA2K/VyPv8+g
-         qfjSKANBkPpZyNEQJSXmG7g1XWT0MlSrDTShtlrKHp1dMEIfQ6wJ0supMpeGX051cIMJ
-         UAnWD3qIyb5Fa8vsYzPxQrVgf6zwjm45LNoYOgLvysMIc2wdCguT/1iR6Dvddu1sYUCr
-         YpBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728068676; x=1728673476;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EStsrddaAqsEdZHuo7kWeqjRs5ADGW1wT+p+2UhGVJk=;
-        b=UhN8QflSEgpZmR2jh5fSZFf7C1wXgeOsjQCerMmxaP3pwPoL54fv1pdOvTm8w//XaZ
-         WgGBjo0ky5D9HFzB6b22UNZdBnkdP3VUxV5nCOpo2+kuiScDQyVS77hYDNyeeEc8Xqhw
-         QodjjjD48lgeTN7ohBbU4YSxjqPD2NVm6gHuOvqFThHkgOdj8DP65iiwtD4fNCV6MUGl
-         XDtboG6hbNYGhA28rf+BBPxaFvn1Dy8XCkxUSNe8Me2pW8uqP3q0CmlnDGxnuZkVZ7yW
-         Xvxkp+ei8gmMqhjv0Il9uk2YZGILkTfN/1sT1nyDZ2ayzAdUmocOYVg8vuUN7KpWs+Q/
-         /nfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWHs804+fIWaHWXE1EUj9hIa0e1vcIO5vrR6X0X4Fe/TBoZE+zsj2UQ4wPOvUlYCCq3YfI3iYv3/fsxIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpvcZ/oWJvp61eWfTsu5CBKL2Ukwtlc9Ey843K7fiBY1/JUXUh
-	B/Roy0YI9VuwOSvFRiNdkjvhnGPpuvO4fs29lFDkQRT7zC/VcC77ncp4u2jckUmDdhB+nyv8SQh
-	rSY05Kx05PAzqOtNt9oyb3R9hJ00mjhuj
-X-Google-Smtp-Source: AGHT+IE6ecGGBT7nhmFk2o6LxeTZEkQYiEHXxbrFjAKAWH8n5fvpH7/CsF31zubGxANEzTetv3NRCPaF7NPpBBs/2iw=
-X-Received: by 2002:ac8:7fd0:0:b0:458:1431:d3ef with SMTP id
- d75a77b69052e-45d9ba2f024mr46004071cf.5.1728068676092; Fri, 04 Oct 2024
- 12:04:36 -0700 (PDT)
+	s=arc-20240116; t=1728068667; c=relaxed/simple;
+	bh=2MpuodfLJmLx8CQl8yY7IALszfE+GszCrpWSPCvHPlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qXYsMtOdk8C5NWzZ1YUrzQbsEH4+XjvhaxHyiVr3bg2B7+tgYly6XO4jM2Orklz5vC8xwA1mbEhU1+YDmKjT1TPOu3hka/H/qEcCNE55TwFPfYaayqqhnwjlQcD++vKGCsb1PF3M+xheYZm0eiVmTFcRvpQBZgvFVNWxe9Ra0AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C899CC4CEC6;
+	Fri,  4 Oct 2024 19:04:25 +0000 (UTC)
+Date: Fri, 4 Oct 2024 15:05:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yun Zhou <yun.zhou@windriver.com>
+Cc: <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
+ <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kernel: add pid_max to pid_namespace
+Message-ID: <20241004150521.361af760@gandalf.local.home>
+In-Reply-To: <20240902114920.1534699-1-yun.zhou@windriver.com>
+References: <20240902114920.1534699-1-yun.zhou@windriver.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66fc4b74.050a0220.f28ec.04c8.GAE@google.com> <CAJnrk1ZrPcDsD_mmNjTHj51NkuVR83g5cgZOJTHez6CB6T31Ww@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZrPcDsD_mmNjTHj51NkuVR83g5cgZOJTHez6CB6T31Ww@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 4 Oct 2024 12:04:24 -0700
-Message-ID: <CAJnrk1ZSZVrMY=EeuLQ0EGonL-9n72aOCEvvbs4=dhQ=xWqZYw@mail.gmail.com>
-Subject: Re: [syzbot] [fuse?] WARNING in fuse_writepages
-To: syzbot <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 1, 2024 at 5:02=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> On Tue, Oct 1, 2024 at 12:24=E2=80=AFPM syzbot
-> <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1'=
- of..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12e8bdd0580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1b5201b9103=
-5a876
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D217a976dc26ef=
-2fa8711
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
- Debian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/a585cdb91cda/d=
-isk-e32cde8d.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/dbeec5d7b296/vmli=
-nux-e32cde8d.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/000fd790e08a=
-/bzImage-e32cde8d.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_write_file_get fs=
-/fuse/file.c:1989 [inline]
-> > WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_write_file_get fs=
-/fuse/file.c:1986 [inline]
-> > WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_writepages+0x497/=
-0x5a0 fs/fuse/file.c:2368
-> > Modules linked in:
-> > CPU: 0 UID: 0 PID: 5296 Comm: kworker/u8:8 Not tainted 6.12.0-rc1-syzka=
-ller-00031-ge32cde8d2bd7 #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 09/13/2024
-> > Workqueue: writeback wb_workfn (flush-0:52)
-> > RIP: 0010:fuse_write_file_get fs/fuse/file.c:1989 [inline]
-> > RIP: 0010:fuse_write_file_get fs/fuse/file.c:1986 [inline]
-> > RIP: 0010:fuse_writepages+0x497/0x5a0 fs/fuse/file.c:2368
-> > Code: 00 00 00 44 89 f8 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8=
- 79 b6 90 fe 48 8b 7c 24 08 e8 af 6f 27 08 e8 6a b6 90 fe 90 <0f> 0b 90 41 =
-bf fb ff ff ff eb 8b e8 59 b6 90 fe 48 8b 7c 24 18 be
-> > RSP: 0018:ffffc900044ff4a8 EFLAGS: 00010293
-> > RAX: 0000000000000000 RBX: ffffc900044ff4f8 RCX: 0000000000000000
-> > RDX: ffff88802d42da00 RSI: ffffffff82fcd286 RDI: 0000000000000001
-> > RBP: ffff88805c994aa0 R08: 0000000000000000 R09: ffffed100b9329d7
-> > R10: ffff88805c994ebb R11: 0000000000000003 R12: ffffc900044ff840
-> > R13: ffff88805c994880 R14: ffff88805f330000 R15: ffff88805c994d50
-> > FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000000020055000 CR3: 000000005df4a000 CR4: 00000000003526f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  <TASK>
-> >  do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
-> >  __writeback_single_inode+0x166/0xfa0 fs/fs-writeback.c:1658
-> >  writeback_sb_inodes+0x603/0xfa0 fs/fs-writeback.c:1954
-> >  wb_writeback+0x199/0xb50 fs/fs-writeback.c:2134
-> >  wb_do_writeback fs/fs-writeback.c:2281 [inline]
-> >  wb_workfn+0x294/0xbc0 fs/fs-writeback.c:2321
-> >  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
-> >  process_scheduled_works kernel/workqueue.c:3310 [inline]
-> >  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-> >  kthread+0x2c1/0x3a0 kernel/kthread.c:389
-> >  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >  </TASK>
-> >
->
-> #syz dup: [syzbot] [fuse?] WARNING in fuse_write_file_get (2)
->
-> This is the same warning reported in
-> https://lore.kernel.org/linux-fsdevel/66fbae38.050a0220.6bad9.0051.GAE@go=
-ogle.com/T/#u
->
-> The warning is complaining about this WARN_ON here
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/f=
-s/fuse/file.c#n1989.
-> I think this warning can get triggered if there's a race between a
-> write() and a close() where the page is dirty in the cache after the
-> release has happened. Then when writeback (eg fuse_writepages()) is
-> triggered, we hit this warning. (this possibility has always existed,
-> it was surfaced after this refactoring commit 4046d3adcca4: "move fuse
-> file initialization to wpa allocation time" but the actual logic
-> hasn't been changed).
+On Mon, 2 Sep 2024 19:49:20 +0800
+Yun Zhou <yun.zhou@windriver.com> wrote:
 
-Actually, it's not clear how this WARN_ON is getting triggered.
 
-I will wait for syzbot to surface a repro first before taking further actio=
-n.
+-ENOCHANGELOG
 
->
-> I think we can address this by instead calling "data.ff =3D
-> __fuse_write_file_get(fi);" in fuse_writepages(). I'll submit a fix
-> for this to Miklos's tree.
->
->
-> Thanks,
-> Joanne
->
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> > If the report is already addressed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> >
-> > If you want to overwrite report's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> >
-> > If the report is a duplicate of another one, reply with:
-> > #syz dup: exact-subject-of-another-report
-> >
-> > If you want to undo deduplication, reply with:
-> > #syz undup
-> >
+What? Why? Why should I care about this?
+
+A change log *must* have all the information to say why this change is
+necessary. It's OK for the subject to state what it is doing, but there
+most definitely needs a "why?" in the change log.
+
+-- Steve
+
+
+> Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+> ---
+>  include/linux/pid_namespace.h |  1 +
+>  kernel/pid.c                  | 12 ++++++------
+>  kernel/pid_namespace.c        | 33 ++++++++++++++++++++++++++++-----
+>  kernel/sysctl.c               |  9 ---------
+>  kernel/trace/pid_list.c       |  2 +-
+>  kernel/trace/trace.c          |  2 +-
+>  kernel/trace/trace.h          |  2 --
+>  7 files changed, 37 insertions(+), 24 deletions(-)
+> 
+> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+> index f9f9931e02d6..0e3c18f3cac5 100644
+> --- a/include/linux/pid_namespace.h
+> +++ b/include/linux/pid_namespace.h
+> @@ -27,6 +27,7 @@ struct pid_namespace {
+>  	struct idr idr;
+>  	struct rcu_head rcu;
+>  	unsigned int pid_allocated;
+> +	int pid_max;
+>  	struct task_struct *child_reaper;
+>  	struct kmem_cache *pid_cachep;
+>  	unsigned int level;
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 6500ef956f2f..14da3f68ceed 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -59,8 +59,6 @@ struct pid init_struct_pid = {
+>  	}, }
+>  };
+>  
+> -int pid_max = PID_MAX_DEFAULT;
+> -
+>  #define RESERVED_PIDS		300
+>  
+>  int pid_max_min = RESERVED_PIDS + 1;
+> @@ -74,6 +72,7 @@ int pid_max_max = PID_MAX_LIMIT;
+>   */
+>  struct pid_namespace init_pid_ns = {
+>  	.ns.count = REFCOUNT_INIT(2),
+> +	.pid_max = PID_MAX_DEFAULT,
+>  	.idr = IDR_INIT(init_pid_ns.idr),
+>  	.pid_allocated = PIDNS_ADDING,
+>  	.level = 0,
+> @@ -194,7 +193,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+>  			tid = set_tid[ns->level - i];
+>  
+>  			retval = -EINVAL;
+> -			if (tid < 1 || tid >= pid_max)
+> +			if (tid < 1 || tid >= tmp->pid_max)
+>  				goto out_free;
+>  			/*
+>  			 * Also fail if a PID != 1 is requested and
+> @@ -234,7 +233,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+>  			 * a partially initialized PID (see below).
+>  			 */
+>  			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+> -					      pid_max, GFP_ATOMIC);
+> +					      tmp->pid_max, GFP_ATOMIC);
+>  		}
+>  		spin_unlock_irq(&pidmap_lock);
+>  		idr_preload_end();
+> @@ -651,11 +650,12 @@ void __init pid_idr_init(void)
+>  	BUILD_BUG_ON(PID_MAX_LIMIT >= PIDNS_ADDING);
+>  
+>  	/* bump default and minimum pid_max based on number of cpus */
+> -	pid_max = min(pid_max_max, max_t(int, pid_max,
+> +	init_pid_ns.pid_max = min(pid_max_max, max_t(int, init_pid_ns.pid_max,
+>  				PIDS_PER_CPU_DEFAULT * num_possible_cpus()));
+>  	pid_max_min = max_t(int, pid_max_min,
+>  				PIDS_PER_CPU_MIN * num_possible_cpus());
+> -	pr_info("pid_max: default: %u minimum: %u\n", pid_max, pid_max_min);
+> +	pr_info("pid_max: default: %u minimum: %u\n", init_pid_ns.pid_max,
+> +			pid_max_min);
+>  
+>  	idr_init(&init_pid_ns.idr);
+>  
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 3028b2218aa4..d6b3f34ecb25 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -110,6 +110,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
+>  	ns->user_ns = get_user_ns(user_ns);
+>  	ns->ucounts = ucounts;
+>  	ns->pid_allocated = PIDNS_ADDING;
+> +	ns->pid_max = parent_pid_ns->pid_max;
+>  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
+>  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
+>  #endif
+> @@ -295,20 +296,44 @@ static int pid_ns_ctl_handler(struct ctl_table *table, int write,
+>  
+>  	return ret;
+>  }
+> +#endif	/* CONFIG_CHECKPOINT_RESTORE */
+> +
+> +static int pid_max_ns_ctl_handler(struct ctl_table *table, int write,
+> +		void *buffer, size_t *lenp, loff_t *ppos)
+> +{
+> +	struct pid_namespace *pid_ns = task_active_pid_ns(current);
+> +
+> +	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
+> +		return -EPERM;
+> +
+> +	table->data = &pid_ns->pid_max;
+> +	if (pid_ns->parent)
+> +		table->extra2 = &pid_ns->parent->pid_max;
+> +
+> +	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+> +}
+>  
+> -extern int pid_max;
+>  static struct ctl_table pid_ns_ctl_table[] = {
+> +#ifdef CONFIG_CHECKPOINT_RESTORE
+>  	{
+>  		.procname = "ns_last_pid",
+>  		.maxlen = sizeof(int),
+>  		.mode = 0666, /* permissions are checked in the handler */
+>  		.proc_handler = pid_ns_ctl_handler,
+>  		.extra1 = SYSCTL_ZERO,
+> -		.extra2 = &pid_max,
+> +		.extra2 = &init_pid_ns.pid_max,
+> +	},
+> +#endif	/* CONFIG_CHECKPOINT_RESTORE */
+> +	{
+> +		.procname	= "pid_max",
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= pid_max_ns_ctl_handler,
+> +		.extra1		= &pid_max_min,
+> +		.extra2		= &pid_max_max,
+>  	},
+>  	{ }
+>  };
+> -#endif	/* CONFIG_CHECKPOINT_RESTORE */
+>  
+>  int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
+>  {
+> @@ -465,9 +490,7 @@ static __init int pid_namespaces_init(void)
+>  {
+>  	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACCOUNT);
+>  
+> -#ifdef CONFIG_CHECKPOINT_RESTORE
+>  	register_sysctl_init("kernel", pid_ns_ctl_table);
+> -#endif
+>  
+>  	register_pid_ns_sysctl_table_vm();
+>  	return 0;
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 157f7ce2942d..857bfdb39b15 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -1809,15 +1809,6 @@ static struct ctl_table kern_table[] = {
+>  		.proc_handler	= proc_dointvec,
+>  	},
+>  #endif
+> -	{
+> -		.procname	= "pid_max",
+> -		.data		= &pid_max,
+> -		.maxlen		= sizeof (int),
+> -		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec_minmax,
+> -		.extra1		= &pid_max_min,
+> -		.extra2		= &pid_max_max,
+> -	},
+>  	{
+>  		.procname	= "panic_on_oops",
+>  		.data		= &panic_on_oops,
+> diff --git a/kernel/trace/pid_list.c b/kernel/trace/pid_list.c
+> index 95106d02b32d..ef52820e6719 100644
+> --- a/kernel/trace/pid_list.c
+> +++ b/kernel/trace/pid_list.c
+> @@ -414,7 +414,7 @@ struct trace_pid_list *trace_pid_list_alloc(void)
+>  	int i;
+>  
+>  	/* According to linux/thread.h, pids can be no bigger that 30 bits */
+> -	WARN_ON_ONCE(pid_max > (1 << 30));
+> +	WARN_ON_ONCE(init_pid_ns.pid_max > (1 << 30));
+>  
+>  	pid_list = kzalloc(sizeof(*pid_list), GFP_KERNEL);
+>  	if (!pid_list)
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index fbcd3bafb93e..6295679ce16c 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -5415,7 +5415,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
+>  
+>  	if (mask == TRACE_ITER_RECORD_TGID) {
+>  		if (!tgid_map) {
+> -			tgid_map_max = pid_max;
+> +			tgid_map_max = init_pid_ns.pid_max;
+>  			map = kvcalloc(tgid_map_max + 1, sizeof(*tgid_map),
+>  				       GFP_KERNEL);
+>  
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index b7f4ea25a194..df61b1db86a2 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -700,8 +700,6 @@ extern unsigned long tracing_thresh;
+>  
+>  /* PID filtering */
+>  
+> -extern int pid_max;
+> -
+>  bool trace_find_filtered_pid(struct trace_pid_list *filtered_pids,
+>  			     pid_t search_pid);
+>  bool trace_ignore_this_task(struct trace_pid_list *filtered_pids,
+
 
