@@ -1,252 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-30996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E39990621
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 16:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B312599062F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 16:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05A41F2345A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 14:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613982815D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 14:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE192178EE;
-	Fri,  4 Oct 2024 14:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD925217911;
+	Fri,  4 Oct 2024 14:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GA8Y0S03";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="STpRqHtY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GA8Y0S03";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="STpRqHtY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OSg1bg/R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B1F7E59A;
-	Fri,  4 Oct 2024 14:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CF7217330
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Oct 2024 14:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728052328; cv=none; b=Mj+ox94rh6bp3D9tHVz0sXTnG0g0qKzAeX/qIffIE+xJRCMFAH483Zv59Ou0yHM9g72mjqV3Cc97M7dl3CJFO5yh0hkBvrFPuBOfuY35DQO3Xiv+F4pYV0Lqkq7hUXYGTTBOnX3lnxazwFOMn+AMA5BuKlQgKPYLvWwd5aCgBHw=
+	t=1728052449; cv=none; b=JZaYucs/pd61ua7hAYWLP/l0cQ6e7rbeQxy5tPNZO5dhnxn048hPFULmQeqW/s00cvfpflwaTunmvt9L/l8RchL9F7G7fjHK8WsDIKRHGUxpKThpi7NFy+gznM3P0kJo3HZ5GB7tLX1MMbB8bxeT+8/QGIBPLGE1gDWz0VB5G6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728052328; c=relaxed/simple;
-	bh=P7d+ajJbfj3Nx30GJ0yVIrrequybML/qpR03+fYZ3Qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/KLnJDv94ps/GhPudcHCljHeLAJIrU6LuRl9n4vsNcj9pFpfgTfdgtEYVmti5KP389SA8Ye2J/jnrtwU2sjJZ5Mhk2xpRKTvbwi/AIcCE89SO6MxkZ4HvvUlM15Xt6JJRjE3DO5U3XwWtDztG2rPvh636ij7YYvbfTg2vhIkxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GA8Y0S03; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=STpRqHtY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GA8Y0S03; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=STpRqHtY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1728052449; c=relaxed/simple;
+	bh=dg/JlRn0H+tthLm9axveuXLsy7nnpjo7rpM9hSESaPQ=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=IMZl5tI/rjQl76UCQMizWU3PTydxNO9jJfoo+lEb7uqGX9+e4kNh9NkTKKi+dfZmSdXOC9qLnzzePM9k1+lCVEbqltbX4w/V7KH6K3kpEfI2TB8+bsdIgDufXw1mvW+K1wPK3tOdNcjI/YwuTg2zVbo/Oet08bA4mRaelf02RYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OSg1bg/R; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728052446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=f1XZvlT7o8oSbF4HuhkqAPlXh5kAhT6DviPjd2xOrk0=;
+	b=OSg1bg/R0R9+ZwuVJQU0oo5pUuP+3FvB3Di0cfQbmXPfh26rt5eLZJ4NvgW2jcO89RJ50D
+	GInjMe/RLrzJvXhhRn5/RIoV0hhFyfEM4jDaTB1O6trmJZ6y/Ch2FB2f9vmR4CJ45j7HQF
+	jx0PFjEu8ToQ8cEMz3Lr7yLzSQqXYVY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-158-MgEqM_UkMWi8Y9TB9fcswg-1; Fri,
+ 04 Oct 2024 10:34:03 -0400
+X-MC-Unique: MgEqM_UkMWi8Y9TB9fcswg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A317C1FD87;
-	Fri,  4 Oct 2024 14:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728052324; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Rhux+R3mY2kPLt5yr85/QSxonjAVE+LGpExp6//qvM=;
-	b=GA8Y0S03IDFFoWHK43FlATEuokqFucBCb4DUbqwUXy2Wj9x/MPXVjY9QGKg58DKotm4Azx
-	eoN5a0CZqHcMCpuSvvbHw34OcaOdwzOIKlsrtQddUmX0zdenoi19hG3WGUI3/WQETB6LPR
-	hvWAr4k2fBZP13t62TOtXJlEeTAx1UU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728052324;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Rhux+R3mY2kPLt5yr85/QSxonjAVE+LGpExp6//qvM=;
-	b=STpRqHtYXRnmbKTzEYPQRtlUkKijj1+UcWyQ1zNBPANAxg7mkYdlYCIfUuIAB2K/hruISN
-	lz8GGOCuDywJA2DQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GA8Y0S03;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=STpRqHtY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728052324; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Rhux+R3mY2kPLt5yr85/QSxonjAVE+LGpExp6//qvM=;
-	b=GA8Y0S03IDFFoWHK43FlATEuokqFucBCb4DUbqwUXy2Wj9x/MPXVjY9QGKg58DKotm4Azx
-	eoN5a0CZqHcMCpuSvvbHw34OcaOdwzOIKlsrtQddUmX0zdenoi19hG3WGUI3/WQETB6LPR
-	hvWAr4k2fBZP13t62TOtXJlEeTAx1UU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728052324;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Rhux+R3mY2kPLt5yr85/QSxonjAVE+LGpExp6//qvM=;
-	b=STpRqHtYXRnmbKTzEYPQRtlUkKijj1+UcWyQ1zNBPANAxg7mkYdlYCIfUuIAB2K/hruISN
-	lz8GGOCuDywJA2DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D0BE13A6E;
-	Fri,  4 Oct 2024 14:32:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9JRqImT8/2ataQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 04 Oct 2024 14:32:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3C01EA0877; Fri,  4 Oct 2024 16:31:56 +0200 (CEST)
-Date: Fri, 4 Oct 2024 16:31:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Stancek <jstancek@redhat.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>, Ted Tso <tytso@mit.edu>,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	ltp@lists.linux.it, Gabriel Krisman Bertazi <gabriel@krisman.be>
-Subject: Re: [LTP] [PATCH] ext4: don't set SB_RDONLY after filesystem errors
-Message-ID: <20241004143156.6ihj64d2vj6nqt3n@quack3>
-References: <20240805201241.27286-1-jack@suse.cz>
- <Zvp6L+oFnfASaoHl@t14s>
- <20240930113434.hhkro4bofhvapwm7@quack3>
- <CAOQ4uxjXE7Tyz39wLUcuSTijy37vgUjYxvGL21E32cxStAgQpQ@mail.gmail.com>
- <CAASaF6yASRgEKfhAVktFit31Yw5e9gwMD0jupchD0gWK9EppTw@mail.gmail.com>
- <CAOQ4uxjmtv88xoH0-s6D9WzRXv_stMsWB5+x2FMbdjCHyy1rmA@mail.gmail.com>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E41501955F10;
+	Fri,  4 Oct 2024 14:34:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E21AF1955E93;
+	Fri,  4 Oct 2024 14:33:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: In readahead, put the folio refs as soon extracted
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjmtv88xoH0-s6D9WzRXv_stMsWB5+x2FMbdjCHyy1rmA@mail.gmail.com>
-X-Rspamd-Queue-Id: A317C1FD87
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3771537.1728052438.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 04 Oct 2024 15:33:58 +0100
+Message-ID: <3771538.1728052438@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri 04-10-24 15:28:12, Amir Goldstein wrote:
-> On Fri, Oct 4, 2024 at 2:50 PM Jan Stancek <jstancek@redhat.com> wrote:
-> >
-> > On Fri, Oct 4, 2024 at 2:32 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Mon, Sep 30, 2024 at 1:34 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Mon 30-09-24 12:15:11, Jan Stancek wrote:
-> > > > > On Mon, Aug 05, 2024 at 10:12:41PM +0200, Jan Kara wrote:
-> > > > > > When the filesystem is mounted with errors=remount-ro, we were setting
-> > > > > > SB_RDONLY flag to stop all filesystem modifications. We knew this misses
-> > > > > > proper locking (sb->s_umount) and does not go through proper filesystem
-> > > > > > remount procedure but it has been the way this worked since early ext2
-> > > > > > days and it was good enough for catastrophic situation damage
-> > > > > > mitigation. Recently, syzbot has found a way (see link) to trigger
-> > > > > > warnings in filesystem freezing because the code got confused by
-> > > > > > SB_RDONLY changing under its hands. Since these days we set
-> > > > > > EXT4_FLAGS_SHUTDOWN on the superblock which is enough to stop all
-> > > > > > filesystem modifications, modifying SB_RDONLY shouldn't be needed. So
-> > > > > > stop doing that.
-> > > > > >
-> > > > > > Link: https://lore.kernel.org/all/000000000000b90a8e061e21d12f@google.com
-> > > > > > Reported-by: Christian Brauner <brauner@kernel.org>
-> > > > > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > > > > ---
-> > > > > > fs/ext4/super.c | 9 +++++----
-> > > > > > 1 file changed, 5 insertions(+), 4 deletions(-)
-> > > > > >
-> > > > > > Note that this patch introduces fstests failure with generic/459 test because
-> > > > > > it assumes that either freezing succeeds or 'ro' is among mount options. But
-> > > > > > we fail the freeze with EFSCORRUPTED. This needs fixing in the test but at this
-> > > > > > point I'm not sure how exactly.
-> > > > > >
-> > > > > > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > > > > > index e72145c4ae5a..93c016b186c0 100644
-> > > > > > --- a/fs/ext4/super.c
-> > > > > > +++ b/fs/ext4/super.c
-> > > > > > @@ -735,11 +735,12 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
-> > > > > >
-> > > > > >     ext4_msg(sb, KERN_CRIT, "Remounting filesystem read-only");
-> > > > > >     /*
-> > > > > > -    * Make sure updated value of ->s_mount_flags will be visible before
-> > > > > > -    * ->s_flags update
-> > > > > > +    * EXT4_FLAGS_SHUTDOWN was set which stops all filesystem
-> > > > > > +    * modifications. We don't set SB_RDONLY because that requires
-> > > > > > +    * sb->s_umount semaphore and setting it without proper remount
-> > > > > > +    * procedure is confusing code such as freeze_super() leading to
-> > > > > > +    * deadlocks and other problems.
-> > > > > >      */
-> > > > > > -   smp_wmb();
-> > > > > > -   sb->s_flags |= SB_RDONLY;
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > shouldn't the SB_RDONLY still be set (in __ext4_remount()) for the case
-> > > > > when user triggers the abort with mount(.., "abort")? Because now we seem
-> > > > > to always hit the condition that returns EROFS to user-space.
-> > > >
-> > > > Thanks for report! I agree returning EROFS from the mount although
-> > > > 'aborting' succeeded is confusing and is mostly an unintended side effect
-> > > > that after aborting the fs further changes to mount state are forbidden but
-> > > > the testcase additionally wants to remount the fs read-only.
-> > >
-> > > Regardless of what is right or wrong to do in ext4, I don't think that the test
-> > > really cares about remount read-only.
-> > > I don't see anything in the test that requires it. Gabriel?
-> > > If I remove MS_RDONLY from the test it works just fine.
-> > >
-> > > Any objection for LTP maintainers to apply this simple test fix?
-> >
-> > Does that change work for you on older kernels? On 6.11 I get EROFS:
-> >
-> > fanotify22.c:59: TINFO: Mounting /dev/loop0 to
-> > /tmp/LTP_fangb5wuO/test_mnt fstyp=ext4 flags=20
-> > fanotify22.c:59: TBROK: mount(/dev/loop0, test_mnt, ext4, 32,
-> > 0x4211ed) failed: EROFS (30)
-> >
-> 
-> Yeh me too, but if you change s/SAFE_MOUNT/mount
-> the test works just fine on 6.11 and 6.12-rc1 with or without MS_RDONLY.
-> The point of trigger_fs_abort() is to trigger the FS_ERROR event and it
-> does not matter whether remount succeeds or not for that matter at all.
+netfslib currently defers dropping the ref on the folios it obtains during
+readahead to after it has started I/O on the basis that we can do it whils=
+t
+we wait for the I/O to complete, but this runs the risk of the I/O
+collection racing with this in future.
 
-Well, the handling of 'abort' option is suboptimal. It gets acted on in the
-middle of the remount process so some mount options get applied before it (and can
-fail with error which would make 'abort' ignored), some get applied after
-it which can fail because the fs is already shutdown.
+Furthermore, Matthew Wilcox strongly suggests that the refs should be
+dropped immediately, as readahead_folio() does (netfslib is using
+__readahead_batch() which doesn't drop the refs).
 
-> So you can either ignore the return value of mount() or assert that it
-> can either succeed or get EROFS for catching unexpected errors.
+Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/buffered_read.c     |   47 ++++++++++++-------------------------=
+------
+ fs/netfs/read_collect.c      |    2 +
+ include/trace/events/netfs.h |    1 =
 
-Either that or I'm currently testing ext4 fix which will make 'abort'
-handling more consistent.
+ 3 files changed, 16 insertions(+), 34 deletions(-)
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index c40e226053cc..af46a598f4d7 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -67,7 +67,8 @@ static int netfs_begin_cache_read(struct netfs_io_reques=
+t *rreq, struct netfs_in
+  * Decant the list of folios to read into a rolling buffer.
+  */
+ static size_t netfs_load_buffer_from_ra(struct netfs_io_request *rreq,
+-					struct folio_queue *folioq)
++					struct folio_queue *folioq,
++					struct folio_batch *put_batch)
+ {
+ 	unsigned int order, nr;
+ 	size_t size =3D 0;
+@@ -82,6 +83,9 @@ static size_t netfs_load_buffer_from_ra(struct netfs_io_=
+request *rreq,
+ 		order =3D folio_order(folio);
+ 		folioq->orders[i] =3D order;
+ 		size +=3D PAGE_SIZE << order;
++
++		if (!folio_batch_add(put_batch, folio))
++			folio_batch_release(put_batch);
+ 	}
+ =
+
+ 	for (int i =3D nr; i < folioq_nr_slots(folioq); i++)
+@@ -120,6 +124,9 @@ static ssize_t netfs_prepare_read_iterator(struct netf=
+s_io_subrequest *subreq)
+ 		 * that we will need to release later - but we don't want to do
+ 		 * that until after we've started the I/O.
+ 		 */
++		struct folio_batch put_batch;
++
++		folio_batch_init(&put_batch);
+ 		while (rreq->submitted < subreq->start + rsize) {
+ 			struct folio_queue *tail =3D rreq->buffer_tail, *new;
+ 			size_t added;
+@@ -132,10 +139,11 @@ static ssize_t netfs_prepare_read_iterator(struct ne=
+tfs_io_subrequest *subreq)
+ 			new->prev =3D tail;
+ 			tail->next =3D new;
+ 			rreq->buffer_tail =3D new;
+-			added =3D netfs_load_buffer_from_ra(rreq, new);
++			added =3D netfs_load_buffer_from_ra(rreq, new, &put_batch);
+ 			rreq->iter.count +=3D added;
+ 			rreq->submitted +=3D added;
+ 		}
++		folio_batch_release(&put_batch);
+ 	}
+ =
+
+ 	subreq->len =3D rsize;
+@@ -348,6 +356,7 @@ static int netfs_wait_for_read(struct netfs_io_request=
+ *rreq)
+ static int netfs_prime_buffer(struct netfs_io_request *rreq)
+ {
+ 	struct folio_queue *folioq;
++	struct folio_batch put_batch;
+ 	size_t added;
+ =
+
+ 	folioq =3D kmalloc(sizeof(*folioq), GFP_KERNEL);
+@@ -360,39 +369,14 @@ static int netfs_prime_buffer(struct netfs_io_reques=
+t *rreq)
+ 	rreq->submitted =3D rreq->start;
+ 	iov_iter_folio_queue(&rreq->iter, ITER_DEST, folioq, 0, 0, 0);
+ =
+
+-	added =3D netfs_load_buffer_from_ra(rreq, folioq);
++	folio_batch_init(&put_batch);
++	added =3D netfs_load_buffer_from_ra(rreq, folioq, &put_batch);
++	folio_batch_release(&put_batch);
+ 	rreq->iter.count +=3D added;
+ 	rreq->submitted +=3D added;
+ 	return 0;
+ }
+ =
+
+-/*
+- * Drop the ref on each folio that we inherited from the VM readahead cod=
+e.  We
+- * still have the folio locks to pin the page until we complete the I/O.
+- *
+- * Note that we can't just release the batch in each queue struct as we u=
+se the
+- * occupancy count in other places.
+- */
+-static void netfs_put_ra_refs(struct folio_queue *folioq)
+-{
+-	struct folio_batch fbatch;
+-
+-	folio_batch_init(&fbatch);
+-	while (folioq) {
+-		for (unsigned int slot =3D 0; slot < folioq_count(folioq); slot++) {
+-			struct folio *folio =3D folioq_folio(folioq, slot);
+-			if (!folio)
+-				continue;
+-			trace_netfs_folio(folio, netfs_folio_trace_read_put);
+-			if (!folio_batch_add(&fbatch, folio))
+-				folio_batch_release(&fbatch);
+-		}
+-		folioq =3D folioq->next;
+-	}
+-
+-	folio_batch_release(&fbatch);
+-}
+-
+ /**
+  * netfs_readahead - Helper to manage a read request
+  * @ractl: The description of the readahead request
+@@ -436,9 +420,6 @@ void netfs_readahead(struct readahead_control *ractl)
+ 		goto cleanup_free;
+ 	netfs_read_to_pagecache(rreq);
+ =
+
+-	/* Release the folio refs whilst we're waiting for the I/O. */
+-	netfs_put_ra_refs(rreq->buffer);
+-
+ 	netfs_put_request(rreq, true, netfs_rreq_trace_put_return);
+ 	return;
+ =
+
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index b18c65ba5580..3cbb289535a8 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -77,6 +77,8 @@ static void netfs_unlock_read_folio(struct netfs_io_subr=
+equest *subreq,
+ 			folio_unlock(folio);
+ 		}
+ 	}
++
++	folioq_clear(folioq, slot);
+ }
+ =
+
+ /*
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index 1d7c52821e55..69975c9c6823 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -172,7 +172,6 @@
+ 	EM(netfs_folio_trace_read,		"read")		\
+ 	EM(netfs_folio_trace_read_done,		"read-done")	\
+ 	EM(netfs_folio_trace_read_gaps,		"read-gaps")	\
+-	EM(netfs_folio_trace_read_put,		"read-put")	\
+ 	EM(netfs_folio_trace_read_unlock,	"read-unlock")	\
+ 	EM(netfs_folio_trace_redirtied,		"redirtied")	\
+ 	EM(netfs_folio_trace_store,		"store")	\
+
 
