@@ -1,201 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-30980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5934899034F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 14:51:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E16499038B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 15:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78AC31C20B2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 12:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 439BB2836E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 13:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9F220FAA1;
-	Fri,  4 Oct 2024 12:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C78210190;
+	Fri,  4 Oct 2024 13:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z3QJrdpS"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jbsfMxPm";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HzF7gD0+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECB8148FF6
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Oct 2024 12:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728046262; cv=none; b=pdaaE7SaI9AodcooYw6NmMJyAPiNvcnHG40kvZO7oUexo+YzRrl8moRTuswHiFaDOBZAiVK9wrRduJkhUYgbzELbqyF+sSlqTfGs9vgGyN5DHGzCAOP/BW2dIiCWij/VwTZB0g7XVyKmMylROXkMG8De9Q6GIj4ikJ1H+GnEds8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728046262; c=relaxed/simple;
-	bh=fTD2ucq9J26AkeNSNPlAWDmTU4qktKPFMukHQfAOpKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W+kzJERKlO/nNZP1syUut2gpQ8CZy5VZoesBnWFry+fW5Gm3NDw6rfywhSLYHjNtqCi1yncqRi5gPArki2N2UJ9AyWz8XuNguQLRFSylocQJ5a27pcNM1JaaxSPDRme0okQTCeRc38dj0c+F1t+nF6k8YV6pWSkQWZS9RF601MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z3QJrdpS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728046258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZVF8DgPOYH31LJm3NWs4Ti1Tq8gTaEHw5QsDrHnfb/s=;
-	b=Z3QJrdpS7iQuZ/ih39BYvwOwtkoy2KyLtqdERxDBSasUtMmj9TzkyH2xtDOuRs+ztb/sX1
-	xSjo/YMuB0VgBhhX80/Ti2384uNAny/TsMRC6glPJVO38c9rdeH8iQ84eRY6SHALbv/Sr0
-	72H4zBG3euJJ8qy92MbVe3StXqg1nzY=
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
- [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-knsxtWiMN0SJlbqa-zbA-w-1; Fri, 04 Oct 2024 08:50:57 -0400
-X-MC-Unique: knsxtWiMN0SJlbqa-zbA-w-1
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3e3a993fbc7so1800386b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Oct 2024 05:50:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728046256; x=1728651056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZVF8DgPOYH31LJm3NWs4Ti1Tq8gTaEHw5QsDrHnfb/s=;
-        b=p4y1klH0liCpA+OgRFVH861lfVtBnRI7OsSh/B2Hu/owjZOkbJR0JfYEgGPODCpKOn
-         vkpHs+DG+W2wBwYM/Db1hTY1IM1GcZ2w2ZzaqE9OJGLXraX9JFrUK0DFvhd+FtBR/CDc
-         UQW75KE3XbHi8VJFuyKrPYx/wna9TP4VD4fQtAtZ0abUzlpUL251vyQMR+UGt/WvyqHN
-         wwiniQSPhIb0tH4ySCdg4ls9Q8QCXEvSLF4Cg/yl5J+4V+WU3PMkK0F1Y/+6FG1R9acV
-         BSKE+Z7E0ossx15/LCmOUpw0Czi0R42hnuutQMRtbYEq/bgBpJA6AdJHiKkAh/qhHJOI
-         sHIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNBce1eGzIUykJCWEc52UmLXKoazscrXIJK1TitdDVFyh6iVZb7SIn505nSPj1Ychz7wTf0Eh1qydWeJtI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDSaDZ85H9T9BqRkq532VPXiPC8H5/xCFHpR9+aX6KtGomF4Ez
-	nEVLmmqfaciQnTW2evYK/MXvOgob7it2+BweriIAPR42q2OuyiAoyZpIUPcFzH1giHkb6hAqt3x
-	L3U3CWKrixNaGrh/Q7xgTvZVcKcr5W09V6fWp7kQbNTNWclHsQ5fNLbPBvt9AYXdzMwC7BUdTzK
-	SXtiQAbiyNxGDTqnLX1E+S/nh1wiBPqg6heqCU1x9rw+e2tb1M
-X-Received: by 2002:a05:6808:448c:b0:3e3:c411:5e86 with SMTP id 5614622812f47-3e3c411848dmr812687b6e.35.1728046256380;
-        Fri, 04 Oct 2024 05:50:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpqfAKYzgpxhx1Y0BybucSFPMqmPot5eRKUtb/w2XIi6XfDKI/xhyBng1Hj827T1HCrAcFDKKTHQWLD2IflRU=
-X-Received: by 2002:a05:6808:448c:b0:3e3:c411:5e86 with SMTP id
- 5614622812f47-3e3c411848dmr812677b6e.35.1728046256097; Fri, 04 Oct 2024
- 05:50:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B2B210180;
+	Fri,  4 Oct 2024 13:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728047262; cv=fail; b=AdmgytuR2CtCrODwgItAzEqQ5bmwbVqQeadtYuGucMVenxXQvM1ICNVaHxIDLwGCeXHktPFkC7Ck0QSh2a2dFob4iJRlza41PjwtsqTpnjCkTruYU8+4kjVKvPzm2TGi4fQ/NTsPGu+UestELB3Dd3DT85bCV9tHLv5hSFw8dkc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728047262; c=relaxed/simple;
+	bh=se+KO1+WnkDpDCJuuH2D/mgk3gd5JyySFoh7120GktU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=vFCmhtVJmhv3w5Rf7qXEjcblM+VUWVfW5gRHzbdkNYVWkyy4ho/ZWot6SHXVy5nDl6NoydNsPX+rIOfA59eJyy3k0bwzlR95Dn17ubxlT75oFAt5umwQpPVeSj6y7g/X5Crs4PpO1XlSGk/HnfDWrDJ7qixiMEsdmffmxgJ9a6w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=jbsfMxPm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HzF7gD0+; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494CMXQG005633;
+	Fri, 4 Oct 2024 13:07:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=4+MUecNKIC28dP78VgEX4gOlD3WWQ9xvsh/4HgXLst0=; b=
+	jbsfMxPmHRxREUK25lv4m35mWfLrEGFenWsEzFu0Qq8DNw/X1faqFl/ksmpbAIcW
+	fV934CZj2VI3/ikQZRrIpWVf3f/CedPNubTDZ/LFYYf4sOHsTJm+RCqKS1R4V+Z8
+	1jGiQaVbI5F/pMXuHqXaaX5Hz1nU95DbMCCpft/pp3cpu7G/5rcW6+D4Lw2c2c+N
+	cMChUnE1gt+foQ2nEzclGPQk8gClAvIR0Dkz3JHwvrHdM2F+OeLG+f72WThp1Bpv
+	L0mqXtEmnxXZYjvENzKiDVJR5yhwGe4RVo+0S2mrrNfk1QVoLV9cX3V9LNXbFVwl
+	ctvCHTmnjPq86awfHzHq0Q==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42206m1hba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 04 Oct 2024 13:07:13 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 494BbHoc038180;
+	Fri, 4 Oct 2024 13:07:12 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4220578ard-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 04 Oct 2024 13:07:12 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AABohpYnUhWfgDKywGRi6dP+WUioNXCbnHmwNXisiY/IBlAbZFlVCpmUUFsmTPHUVd6T/P/3olfMb/tfQnzNmBtHofisS48+1Ne0KWRwfrx30jGgbcdX9IYnOlMDGs7dwkvpOd+KaFuNRsOa3w+d2M1UcQVEbBwizUYro7oABpBLAiwplodLeFC7Kkb8i05JM3fWR1fPoIQtWiCNB8m2m1eQuRg2oFQq0IgNZSpAOiYkr1n/zQYCeXZ/Q3aV5oWTrxzQKpNQxeCL1CVwPj7S81y6em4b7EowG+whSsNXuVn7R8Qba7u/MN02GBCCs97iiuCnssOerfGusqhzifNpCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4+MUecNKIC28dP78VgEX4gOlD3WWQ9xvsh/4HgXLst0=;
+ b=cQEUpZoKU+WRbaUiE4LEA/8v06TPAufJ1XHZ6YQ88gO15gyjcxA5YiL87yQ/DIGnK0O/bc4pxmSfatA4BJwuf4RpDQoDB1OErQ9bFtjqldfbQ6Qv6lK2m35U5A2UhDdTcBOCFfQ4uvNWnwbAcp5eSDzCBL9w68KVbIeNhc0az9tJ/7dm8A3i2Rsea0Dhxp54WLJASD5PFCmf/q05E9/YG5+V7qjMCJh+DDRdWCRakyonCUIZur4fVKtVS8yQWadCfUYAqEeD/USnnjVbldDhlhj+QLQsqLA4ES9WoEErIHAIa7UrblCse25RLohsTB8U8A7Q/Xh5cYaynJNEwJj6gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4+MUecNKIC28dP78VgEX4gOlD3WWQ9xvsh/4HgXLst0=;
+ b=HzF7gD0+LrCZCJ1jv531EjyHnNlrbC8LQMjlmwwROhCxtVKsTmT1c71UsbfjlvoNABELE1th0Ha9TTzrpRqymwT/yQp1icAtLaZjjlTyGzi2ZRkHY5jWgWpoq1iKPnfiMLAXvpUnXJqfCEi6buI42P5Rcv7H/Eu+AvkrVEubOkA=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DM4PR10MB6885.namprd10.prod.outlook.com (2603:10b6:8:103::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19; Fri, 4 Oct
+ 2024 13:07:09 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.8026.016; Fri, 4 Oct 2024
+ 13:07:09 +0000
+Message-ID: <f4d2180a-8baa-4636-a0a1-36e474fcd157@oracle.com>
+Date: Fri, 4 Oct 2024 14:07:05 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/8] xfs: Support FS_XFLAG_ATOMICWRITES
+To: Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com,
+        cem@kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hare@suse.de,
+        martin.petersen@oracle.com, catherine.hoang@oracle.com,
+        mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+References: <20241004092254.3759210-1-john.g.garry@oracle.com>
+ <20241004092254.3759210-6-john.g.garry@oracle.com>
+ <20241004123520.GB19295@lst.de>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20241004123520.GB19295@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0201.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a5::8) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805201241.27286-1-jack@suse.cz> <Zvp6L+oFnfASaoHl@t14s>
- <20240930113434.hhkro4bofhvapwm7@quack3> <CAOQ4uxjXE7Tyz39wLUcuSTijy37vgUjYxvGL21E32cxStAgQpQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjXE7Tyz39wLUcuSTijy37vgUjYxvGL21E32cxStAgQpQ@mail.gmail.com>
-From: Jan Stancek <jstancek@redhat.com>
-Date: Fri, 4 Oct 2024 14:50:40 +0200
-Message-ID: <CAASaF6yASRgEKfhAVktFit31Yw5e9gwMD0jupchD0gWK9EppTw@mail.gmail.com>
-Subject: Re: [LTP] [PATCH] ext4: don't set SB_RDONLY after filesystem errors
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, Ted Tso <tytso@mit.edu>, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, ltp@lists.linux.it, 
-	Gabriel Krisman Bertazi <gabriel@krisman.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DM4PR10MB6885:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7adf0de5-a28c-4ae3-0169-08dce4757473
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OXZqeVN2TzRML1REU2JpeUh4blJlQklLeHowaWhTWmhnejBvTDZONVFQcFUy?=
+ =?utf-8?B?eVhIVFlUckhic1E5V2FCdG1NUi9VRFRUc0R4MHlDZW5ya00zMk4wc1lZMWtO?=
+ =?utf-8?B?MnJaa2JOVSttVDVHd09sUndpREp6MjNROTRmTWx0aHdoNVRValcwMm1HSE9U?=
+ =?utf-8?B?MDZPVVhsVWlmeGw1OFBQdEo3ZTd0eUpxQWtudEt3WWF1QlRLWWxNbXUvUGhT?=
+ =?utf-8?B?YWUwZjdiazNTV0NQVkVMa3RmVEh2STRPOUM2bFBqRUJKelRhSG1pWkx1Sjdw?=
+ =?utf-8?B?emlQVXNFeU9WeSs2SlR0SVZ0TzRieWdITEN4cXdiRG5BK01wWnp0R2FQbTlS?=
+ =?utf-8?B?RndzR2kvZUowcGdtNzB1MXlOcENxc0FWSG54TGRLMnFFMFc2aW9FWDQ2TU5q?=
+ =?utf-8?B?UHV4dE9wTnBka0tCVGg0bWI0MEQyYlJIaVRJMm1ka3NMNWRWTTZPN2c3UTdl?=
+ =?utf-8?B?ZnZQZGhMYzk1cUsvUGJJdmtvd3pxUWtueTJyN2NDZWI3c3N3a3FUcTJYQ2Yx?=
+ =?utf-8?B?eVVlb2lHcGQrbTVWVm8xTWlCUy9NdUlxSlJucy9PWEVZQ3A1QWEyRDI5Sm9m?=
+ =?utf-8?B?OWFzYkZYNkdWSDVxMFhPckRvOU1OaWE1Q1Eyd0t3R04yby9pNTJWTmtSMDRY?=
+ =?utf-8?B?aHJXVC9PTG1FSVRFNlEzZ0hZNk53cDR0Vk1rNGxJdGM4N1g4UmFidi9zS3JP?=
+ =?utf-8?B?RnA0RFlrbk5VdFRLbCtxTUN2dmd2UUJtYUhzTXZmZzhlRlI4OUwvUUtCUTNN?=
+ =?utf-8?B?aUQwK1dVTnVNRmtSZjBiS1VDSGR6blEyM1VyRm1nM1VNNWduZkE5UloxaE9h?=
+ =?utf-8?B?eWwyZno1RjNpdUh1Um5reVJvYVY0S2JDbDRONEU5TTErOU9MZnZjdlppOGpF?=
+ =?utf-8?B?N09LOTQ2c09JcXdicjY0c1NYMFArYVlCdE1MeW5tdTRkNGxFTitoT3Nka1Bu?=
+ =?utf-8?B?K09rVi92OEw4SzFMSGo0NHpZYk9wNmlBMXFLTVNFRW9vQit0THphZ1EreHRU?=
+ =?utf-8?B?UGNycmtOVzhBb09QNEdhbjE4QVdzQmVjZnJnN3hoV0l5YVhqQVdKNDZPNmRW?=
+ =?utf-8?B?MHhGL2dIcExRa0FFWkMwbkM2d3pIcTFqN0hkT3NrU3p6eDFLWi9OVytqMjY3?=
+ =?utf-8?B?UDZ5SXF6djlLVnU0S3V6RytHRGgyNGhEeVNpdU8yd2pkN1JmTmtuMHFZMC9D?=
+ =?utf-8?B?UXk2MVFPYzc2NE5ER1NMOThlUzcyRGRYWHZ2USs5NWhpTFRIM0NRcksvQ0F0?=
+ =?utf-8?B?Z2JJVVlLMGhJM3pOdXZCTHladStxT3hrYnFVd0htcjdWOXNqeDJsZWFEQlVu?=
+ =?utf-8?B?ZkkzSHg2QTg4cXJjdVNheTE1TzFhKzR4WU9jNkFES0lnRUxKNk5QTCtxRGhG?=
+ =?utf-8?B?UndpZXFoTzdwVno5ZlBaM2FkK1hZUCtnbGFXU1lZcU5uRUU4b1pFelZKcXhu?=
+ =?utf-8?B?bkJLam5iQjBVTFNjV3NrU0dYeUZKMGV2UkQ2TzdsajRwa29sOGpMTDJxN2Fu?=
+ =?utf-8?B?ZGpVZWVvSkJkb09rMmJIUFBsWG1mQkE5aUJ5ZHFTNEpFOUNpSS9teTRhYWkr?=
+ =?utf-8?B?eVE0bmFvN2pNMCs4K0svaENTYXk0VWNvbDFnQUdGUlJxa0xhem5JamR1eFJj?=
+ =?utf-8?B?a01BTUxsbjNVM3ZDK21mUzNVTVZVbnF4Wkt6ZGZrYU1GeVFUY21pckFpQlVB?=
+ =?utf-8?B?Qk1GMUE3bXNQSjcwSDlQNll5QzFPTlFmVzgrOXNmSFZzMUtTa3ZGa2lBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VjBCSWdpTnR4QVdscy83Tno0MThoS0h0THVSY3FnTlVuUGo1amxpcTF1dFFh?=
+ =?utf-8?B?WjRFa3JTaW5zd0dIL1pDc1B3UDlCN05UWm0vOUVzZm5LbVlYOVdWUDNvZmNW?=
+ =?utf-8?B?d05BeUsrSVUvbGZrenBRSXJiK0pFUnhLci9jZEdRN2gyVzQvQStVSTFCcnRj?=
+ =?utf-8?B?VFFocFlwazhLNlhtNGp6TmRiajVXcnNqTkVKWWtnUFFOVXcrdVdZa0FtL0VG?=
+ =?utf-8?B?YTlWSWVtVTMrbk5DUndHMndKZThpNGdrWXFUaTNxbEhiVUxPTXBqU2owTGk1?=
+ =?utf-8?B?NFhSNFdiR3pCdHpwTkhkbFhaMFQ2dVJYdkx5UGlLRm44Q2JBQUI2UWJCSmp4?=
+ =?utf-8?B?ZERCOHpraU00YTZnRklQSFI4UktDalRhaFhWdXJjUTZvTUtRek01MXFFMTd1?=
+ =?utf-8?B?UU9CNnFJdjYxcDNVWkF2NkNzUS84TXVEUDJZaE9RcjllazhwbEpCL1lzVmh5?=
+ =?utf-8?B?THg3dzM5RC9WTnNEK3dFV1d4SEpIK1A1aDJpa0NOc0I2Zlk0aWtMYXprOTVR?=
+ =?utf-8?B?cVFiOGZhVWhTNElEMVR2cTVLeEpOMFVLOUZPMWpjaGRTZm1HblE3aUtFWkJW?=
+ =?utf-8?B?V2lRVXAwalhHS012VHVaQTNBdnkxcDZrTSs0cnl1SEw4ODBQdVRMb2ZZeW9S?=
+ =?utf-8?B?R3Nrejc0NmZ4SGN4bTUrbjVnNFpwNXFxZjVNRVRiWkc2WnlIR0hJbXNSUUgx?=
+ =?utf-8?B?SmNRUkd2Q2NIMXIwQjdMRXprS0hMQi8zY3d5R3l0K0t5cGlsZ0oyNlRQNW8y?=
+ =?utf-8?B?WjJncHlFVGluZ0dPeFVRWk1ia1BUMDhqRzFBSUNiZkp2MlI3NlJ2RW5ybXBq?=
+ =?utf-8?B?NG0waE5OQTdPZ3FLZHZDRUdjRnFPWXc3SEtSUzBnTTVjQUIrQ3BCa21iOUZs?=
+ =?utf-8?B?cU9RUGcrTm5JVXZBN0ZxQklYUXRRT1NvNVpnNVJBMzVEQStEaDc2RWxndjNl?=
+ =?utf-8?B?dmxJUjErbm42b3V0Z0NjNFRqTEVCMDlYWEtnZFNjb3dzY2xlQm8zZXNzN24z?=
+ =?utf-8?B?OU94QUdoQ3JhUVZPSkg1WUlZY3E3TCtZUk0zNFI3OUFsVjNiVzhtTUpmcUdQ?=
+ =?utf-8?B?NW1Semg1VU1KUCtCNVFPWmxYQWFpaGJPNjNPMEZvajcxYm5oUG9ZbHV3dmJu?=
+ =?utf-8?B?N3NoQlZQMmdZaUc2a1BlN2tJTkE2VkMwVUdhcTJxWVVSd3VwaEN3OUMvd1dG?=
+ =?utf-8?B?azZNMklxWERVSmhwWkM2LzdtTlpLdHBBclJKZXpqdG1valRSb01PZXh5cU5T?=
+ =?utf-8?B?YjQ4TXB0R0V5MUVxSVprMlZ3YklEZUUxS0FROEo2NURtVk95a1liSnpSQmNv?=
+ =?utf-8?B?MHJrbFN1UkgwN09SdzRvWS9qOTdqZnBjTVZhdzNIdkhlMXFDeThZalNZdk1K?=
+ =?utf-8?B?L0hMRW14YzlCaVpBOVZFc3pMU3JNNkt1dEZick1wK0QxczU0L001c1JNeGJ4?=
+ =?utf-8?B?a0VkRHJITHVTMTBTWkFZbXo4Vk5VeUh3czM5V1p4QzlGemtQSjlLOWFaVGdU?=
+ =?utf-8?B?anVQVE9vL0d6dkE4bGdMYWZNWHYwSWJISkZOMTFtRXNBM2RuVXFySTR2cGpk?=
+ =?utf-8?B?WHFJNS8rdXZBanU4VVFPekFtakNSS3c0RVZzclRzeHl3cm81YjlGV2R2aDJ4?=
+ =?utf-8?B?VnRsMGNSZ1gzZmI2M1VnSWZWOVN6bGN5WlZzUmQrb2FBN3A4emhrZGNmTmM0?=
+ =?utf-8?B?T1AxU28wUzFaQzNqc3lJTDlyVUJhajNGeXRlbGpWWExPZFZsNDduQ1A1OTRr?=
+ =?utf-8?B?NkIzclNyejkwUW9MR1J4R3hFK3U2dHBJcDJiZzhlZGtmRUhhaXlxd0pva2lB?=
+ =?utf-8?B?SkhuNm1LV2wwNGh6WFpqek51Uk5xYjJ2clN1SU9sUTZUeG1UMDcwdGZsQ0hL?=
+ =?utf-8?B?bXo0R0hnR3RiNVduVGxodzBqc3ZrZ3VRbkZQRGFMR21mWXl3UXkrZlBSdnlQ?=
+ =?utf-8?B?ZE9WTW15cWpaUXVQb0w3cEs5U2JVNEhNZmg4UmRkOERURjB5K1dPNWx3Tkxj?=
+ =?utf-8?B?dkZuOWJnTkpwYi9Qc3FzRlZjSXkzV20vV3Vqb0duK1R0YUFVTmJzdDZPZmVm?=
+ =?utf-8?B?em41RWhBbmV5R0JwcTJEOHRCdWtSQng1UmxsNGgzOTFrNDFlcGNHaXV6bTIr?=
+ =?utf-8?B?cUx2SVlzaThEY3E3K1Z5WjY1TUFZM2F6Tml1cVlMN0FhdXBSWnBvdGNybVNZ?=
+ =?utf-8?B?akE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	7B6kM2Md06JRoll9PsugayAegF2a9LgZFRo1IU+owQJ32fM0yPQnhf/DLxPQ4p3DkdhEgzc1QgIQsdMJGSq6S3IU8KfGvIcdL8sMhPIFdBh3iDqj+0tl7XbpYSM6y+ylAlAl8xJjx9ejT+ho+d0H1zjvK4WHXuv8A8CtdBqNQ/Pp1I5alQC1rIiedyvHcsiq7GSe/+MpnWda9O8pfeJIWn9y7AhGLgfZwuAK56Aut+Q4fO4E+PQppzuxU2vqY0LPa55fwgWhIfYpI4fLEQUVdSo7ozKp01kvckPNF4FcaRrtbY3G5dJ+69gOTe3LokscZoHTKAWZUxXJStonN8ZTkZTpHLvB48Dtz1ADHud9HWVBqlyCvY2FyO7KJqeK1Zxrc5RnCXYLjeWCBMVvFKEYGumI1J1pPPSC3krfe4pm3DVYiqfCNPtrkDVkdubB1EViJu/Av7i/TCB4Zp42Zj3Viv0eOJ5qQkocyAHm5rtRzV7Di2yRvXjpwC0aNtuvLOFUtOOaJTxt0vSG291qHSUrXDk62TbNKtLG4RZHV0KknTMGm5z9Krwz3mcCxZhHPiGB+9VQY6Stw3Py2OIW9MKmlGTze+69IYayerK/cVU0Yug=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7adf0de5-a28c-4ae3-0169-08dce4757473
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 13:07:09.7878
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4y2j/WkcQnQ6BT88g8E99n66faKKOwe+OGczjpE5/n/Hsei0y6p5lKqy7xhrHnZyYH1bDRbypkaUKwAmxdF19Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6885
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-04_10,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
+ adultscore=0 suspectscore=0 mlxscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410040094
+X-Proofpoint-GUID: otMuD0fI3vR90p9O3aw5yAdyiqlhVzSn
+X-Proofpoint-ORIG-GUID: otMuD0fI3vR90p9O3aw5yAdyiqlhVzSn
 
-On Fri, Oct 4, 2024 at 2:32=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
-wrote:
->
-> On Mon, Sep 30, 2024 at 1:34=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Mon 30-09-24 12:15:11, Jan Stancek wrote:
-> > > On Mon, Aug 05, 2024 at 10:12:41PM +0200, Jan Kara wrote:
-> > > > When the filesystem is mounted with errors=3Dremount-ro, we were se=
-tting
-> > > > SB_RDONLY flag to stop all filesystem modifications. We knew this m=
-isses
-> > > > proper locking (sb->s_umount) and does not go through proper filesy=
-stem
-> > > > remount procedure but it has been the way this worked since early e=
-xt2
-> > > > days and it was good enough for catastrophic situation damage
-> > > > mitigation. Recently, syzbot has found a way (see link) to trigger
-> > > > warnings in filesystem freezing because the code got confused by
-> > > > SB_RDONLY changing under its hands. Since these days we set
-> > > > EXT4_FLAGS_SHUTDOWN on the superblock which is enough to stop all
-> > > > filesystem modifications, modifying SB_RDONLY shouldn't be needed. =
-So
-> > > > stop doing that.
-> > > >
-> > > > Link: https://lore.kernel.org/all/000000000000b90a8e061e21d12f@goog=
-le.com
-> > > > Reported-by: Christian Brauner <brauner@kernel.org>
-> > > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > > ---
-> > > > fs/ext4/super.c | 9 +++++----
-> > > > 1 file changed, 5 insertions(+), 4 deletions(-)
-> > > >
-> > > > Note that this patch introduces fstests failure with generic/459 te=
-st because
-> > > > it assumes that either freezing succeeds or 'ro' is among mount opt=
-ions. But
-> > > > we fail the freeze with EFSCORRUPTED. This needs fixing in the test=
- but at this
-> > > > point I'm not sure how exactly.
-> > > >
-> > > > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > > > index e72145c4ae5a..93c016b186c0 100644
-> > > > --- a/fs/ext4/super.c
-> > > > +++ b/fs/ext4/super.c
-> > > > @@ -735,11 +735,12 @@ static void ext4_handle_error(struct super_bl=
-ock *sb, bool force_ro, int error,
-> > > >
-> > > >     ext4_msg(sb, KERN_CRIT, "Remounting filesystem read-only");
-> > > >     /*
-> > > > -    * Make sure updated value of ->s_mount_flags will be visible b=
-efore
-> > > > -    * ->s_flags update
-> > > > +    * EXT4_FLAGS_SHUTDOWN was set which stops all filesystem
-> > > > +    * modifications. We don't set SB_RDONLY because that requires
-> > > > +    * sb->s_umount semaphore and setting it without proper remount
-> > > > +    * procedure is confusing code such as freeze_super() leading t=
-o
-> > > > +    * deadlocks and other problems.
-> > > >      */
-> > > > -   smp_wmb();
-> > > > -   sb->s_flags |=3D SB_RDONLY;
-> > >
-> > > Hi,
-> > >
-> > > shouldn't the SB_RDONLY still be set (in __ext4_remount()) for the ca=
-se
-> > > when user triggers the abort with mount(.., "abort")? Because now we =
-seem
-> > > to always hit the condition that returns EROFS to user-space.
-> >
-> > Thanks for report! I agree returning EROFS from the mount although
-> > 'aborting' succeeded is confusing and is mostly an unintended side effe=
-ct
-> > that after aborting the fs further changes to mount state are forbidden=
- but
-> > the testcase additionally wants to remount the fs read-only.
->
-> Regardless of what is right or wrong to do in ext4, I don't think that th=
-e test
-> really cares about remount read-only.
-> I don't see anything in the test that requires it. Gabriel?
-> If I remove MS_RDONLY from the test it works just fine.
->
-> Any objection for LTP maintainers to apply this simple test fix?
+On 04/10/2024 13:35, Christoph Hellwig wrote:
+> On Fri, Oct 04, 2024 at 09:22:51AM +0000, John Garry wrote:
+>> Add initial support for new flag FS_XFLAG_ATOMICWRITES.
+>>
+>> This flag is a file attribute that mirrors an ondisk inode flag.  Actual
+>> support for untorn file writes (for now) depends on both the iflag and the
+>> underlying storage devices, which we can only really check at statx and
+>> pwritev2() time.  This is the same story as FS_XFLAG_DAX, which signals to
+>> the fs that we should try to enable the fsdax IO path on the file (instead
+>> of the regular page cache), but applications have to query STAT_ATTR_DAX to
+>> find out if they really got that IO path.
+>>
+>> Current kernel support for atomic writes is based on HW support (for atomic
+>> writes). Since for regular files XFS has no way to specify extent alignment
+>> or granularity, atomic write size is limited to the FS block size.
+> 
+> I'm still confused why this flag is needed for the current version
+> of this patch set. 
 
-Does that change work for you on older kernels? On 6.11 I get EROFS:
 
-fanotify22.c:59: TINFO: Mounting /dev/loop0 to
-/tmp/LTP_fangb5wuO/test_mnt fstyp=3Dext4 flags=3D20
-fanotify22.c:59: TBROK: mount(/dev/loop0, test_mnt, ext4, 32,
-0x4211ed) failed: EROFS (30)
+> We should always be able to support atomic writes
+> <= block size if support by the block device.
+> 
 
->
-> Thanks,
-> Amir.
->
-> --- a/testcases/kernel/syscalls/fanotify/fanotify22.c
-> +++ b/testcases/kernel/syscalls/fanotify/fanotify22.c
-> @@ -57,7 +57,7 @@ static struct fanotify_fid_t bad_link_fid;
->  static void trigger_fs_abort(void)
->  {
->         SAFE_MOUNT(tst_device->dev, MOUNT_PATH, tst_device->fs_type,
-> -                  MS_REMOUNT|MS_RDONLY, "abort");
-> +                  MS_REMOUNT, "abort");
->  }
->
+Sure, that is true (about being able to atomically write 1x FS block if 
+the bdev support it).
 
+But if we are going to add forcealign or similar later, then it would 
+make sense (to me) to have FS_XFLAG_ATOMICWRITES (and its other flags) 
+from the beginning. I mean, for example, if FS_XFLAG_FORCEALIGN were 
+enabled and we want atomic writes, setting FS_XFLAG_ATOMICWRITES would 
+be rejected if AG count is not aligned with extsize, or extsize is not a 
+power-of-2, or extsize exceeds bdev limits. So FS_XFLAG_ATOMICWRITES 
+could have some value there.
+
+As such, it makes sense to have a consistent user experience and require 
+FS_XFLAG_ATOMICWRITES from the beginning.
+
+Cheers,
+John
 
