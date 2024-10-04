@@ -1,171 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-30937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5FA98FD9E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 08:59:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A70998FDBC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 09:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3231F22FDA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 06:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8762840BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 07:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C9F136338;
-	Fri,  4 Oct 2024 06:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D6C139579;
+	Fri,  4 Oct 2024 07:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U2wAIc13"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4jeFEId"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8801685260
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Oct 2024 06:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1958C1A;
+	Fri,  4 Oct 2024 07:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728025171; cv=none; b=NIJYPe4c7sFIVj0+fNqP77itZluqR9fD5PZI//tDc6C36JIzeBZsLr+q0GH2ppu2j0gPQO+DTqhyKXPas2v0MJU4e3HJE6+3d0BU0e0SJ9KTh1zPnuVj0Coclcp+UFVYB2/mjYiyYq+Gt07dAhoU+LxxCHHeOQSRL5AZ/WDdRvA=
+	t=1728026485; cv=none; b=ozgFo1+V9y5VEOJwPQK6xtcxvxO1R3VR88xb63Y/CmYpfVd6++/rWSPAWwJlYmG1M8xy6R8og+FUiD9m3zza4kpS8LEzLWVC1El85eZyFoKTccX4fW42+HzCbNBgcdrtylYlqfUojaE4TFsa6z+zNt8z8Xv40YPeIfpRtNBK90A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728025171; c=relaxed/simple;
-	bh=SYN09Xbe0PYTJ9ppx0TFZKZbxwEzo13CyM8oiPI0iAw=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=JMz+SKmKMjr7qweHp2rKorsNh0OD0TArnPqSSNFUjvXnXkkbIOvNEvgEew9yy290NzaOZ2fN8R82y604dCnKrcLSrZXcWtgTr9sdowAIfoIH6DIXcDOCT/qPKxmxbxinHzBBc+8CzX2dZbHu6+Iv7LGM1AjZUrcrYyaANnluE9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=U2wAIc13; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241004065927euoutp0115ee709a802aabfb152bec2af5b25b8e~7LbwZ3msp2610226102euoutp018
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Oct 2024 06:59:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241004065927euoutp0115ee709a802aabfb152bec2af5b25b8e~7LbwZ3msp2610226102euoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728025167;
-	bh=SYN09Xbe0PYTJ9ppx0TFZKZbxwEzo13CyM8oiPI0iAw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=U2wAIc13yrx/Yctii7AGAPt3xRg9kAJS7HluBrRYgFF7ADP9u+4Skf65ejl/ZyU8Y
-	 VYUL84ar3zTvv52f3nPspIknxf10dwr9CYIymvh1/weHsMFZGSvXy8pnUEtOl6ZTfQ
-	 W5iDtdspw+t886cF4l4pMlP+6cPWsjEv0nHp7eZA=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241004065927eucas1p1e9b244cdb734ff657d36fa1743d0d817~7LbvtdUrD0035300353eucas1p1g;
-	Fri,  4 Oct 2024 06:59:27 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 9B.95.09624.F429FF66; Fri,  4
-	Oct 2024 07:59:27 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241004065926eucas1p15ba0fcb2cecce51f4006abd5569012d8~7LbvMpqz00873808738eucas1p10;
-	Fri,  4 Oct 2024 06:59:26 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241004065926eusmtrp1159c38c63f2d07b201a490752a3e857c~7LbvLh1tG0471004710eusmtrp1d;
-	Fri,  4 Oct 2024 06:59:26 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-02-66ff924f034f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id D5.F5.19096.E429FF66; Fri,  4
-	Oct 2024 07:59:26 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241004065926eusmtip28a31675353c172ac8997699aa2c5014c~7Lbu01tpC0535105351eusmtip2Z;
-	Fri,  4 Oct 2024 06:59:26 +0000 (GMT)
-Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 4 Oct 2024 07:59:24 +0100
-Date: Fri, 4 Oct 2024 08:59:23 +0200
-From: Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-CC: Bart Van Assche <bvanassche@acm.org>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Keith Busch <kbusch@kernel.org>, Jens Axboe
-	<axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>, <hare@suse.de>,
-	<sagi@grimberg.me>, <brauner@kernel.org>, <viro@zeniv.linux.org.uk>,
-	<jack@suse.cz>, <jaegeuk@kernel.org>, <bcrl@kvack.org>,
-	<dhowells@redhat.com>, <asml.silence@gmail.com>,
-	<linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-aio@kvack.org>, <gost.dev@samsung.com>, <vishak.g@samsung.com>
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241004065923.zddb4fsyevfw2n24@ArmHalley.local>
+	s=arc-20240116; t=1728026485; c=relaxed/simple;
+	bh=n/54bgSIzo01R4ZrkXvfkm2/9pgFHNkd2Tqp8OzR28Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9ycqhWgG7t3KcOrCXj9aKLgHYajUYVEaTGv0jGHDhstMI1Wxb2pqX/wYnwfJWkgZ+TgaGVQ3iCSsYW1O3fer50ehFg8+WNRMx634QGkeZx9y+11FQPMxnH/ESIqXAYnzBNAnhZ2Hx4lJj1FxH2KtkDQDzSUlrsaq2n4cCt8Bxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4jeFEId; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 652EDC4CEC6;
+	Fri,  4 Oct 2024 07:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728026485;
+	bh=n/54bgSIzo01R4ZrkXvfkm2/9pgFHNkd2Tqp8OzR28Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R4jeFEIdbUdRnMhuPRZd+fY4uCZe5og7w9s0i9zphoCi2lo5KNMlDkvXKaZhdfEl3
+	 j090edszQIjuPEidbSwREM27YkZd2tGGMzEXkx8TIZWEzgZgtZI2j2YXeBMD/sr2ng
+	 ckOE4v8cvXQeLcHWOTTa3hbF8vARUk1R+WJZW73jk97C66AAqx0jcwisc5d72HGIWF
+	 SHE9JBt/g3/Tb3aaE977AbtQxExPSa3IGiDzq5foZALjvfGVqOnJIOqA5QtdrBBJlY
+	 QMtOuzLWZ3IOKjBuHVfULsfazmpK/ibw06PJwGrOzWxr1ktxli1YammjoR7t8cAo+c
+	 3NdftA9G/95Pw==
+Date: Fri, 4 Oct 2024 09:21:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	kent.overstreet@linux.dev, torvalds@linux-foundation.org, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>, Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, 
+	Kees Cook <keescook@chromium.org>, linux-security-module@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
+References: <Zv5GfY1WS_aaczZM@infradead.org>
+ <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <Zv6J34fwj3vNOrIH@infradead.org>
+ <20241003122657.mrqwyc5tzeggrzbt@quack3>
+ <Zv6Qe-9O44g6qnSu@infradead.org>
+ <20241003125650.jtkqezmtnzfoysb2@quack3>
+ <Zv6jV40xKIJYuePA@dread.disaster.area>
+ <20241003161731.kwveypqzu4bivesv@quack3>
+ <Zv8648YMT10TMXSL@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241004062415.GA14876@lst.de>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkk+LIzCtJLcpLzFFi42LZduznOV3/Sf/TDNZtZ7WYs2obo8Xqu/1s
-	Fl3/trBYvD78idFi2oefzBbvmn6zWOxZNInJYuXqo0wW71rPsVjMnt7MZPFk/Sxmi0mHrjFa
-	TJnWxGix95a2xZ69J1ks5i97ym6x/Pg/Jot1r9+zWJz/e5zVQdjj8hVvj52z7rJ7nL+3kcXj
-	8tlSj02rOtk8Nn2axO6xeUm9x+6bDWweH5/eYvF4v+8qm8eZBUeA4qerPT5vkvPY9OQtUwBf
-	FJdNSmpOZllqkb5dAlfGrqMnmQuusVUcWPeSuYFxPWsXIyeHhICJxOLZ85hBbCGBFYwS048z
-	djFyAdlfGCV2PHnBBuF8ZpR4evcCO0zH3s9vmSESyxklJr+8zghXtfHaO3YIZzOjxKm7B8Ba
-	WARUJE6//MICYrMJ2EtcWnYLbKGIgJLE01dnwbqZBS6xSNy6eIYNJCEsYCDx/nsvkM3BwStg
-	K7Fnui1ImFdAUOLkzCdgc5gFrCQ6PzSxgpQwC0hLLP/HARGWl2jeOhtsPKeAjsS3o6eYIK5W
-	knj84i0jhF0rcWrLLSaQtRICfVwSe5p7oYpcJJbuegxVJCzx6vgWqJdlJE5P7mGBsKslGk6e
-	gGpuYZRo7dgKdoSEgLVE35kciBpHiYOvfjNDhPkkbrwVhLiNT2LStulQYV6JjjahCYwqs5A8
-	NgvJY7MQHpuF5LEFjCyrGMVTS4tz01OLDfNSy/WKE3OLS/PS9ZLzczcxAlPp6X/HP+1gnPvq
-	o94hRiYOxkOMEhzMSiK887b/TRPiTUmsrEotyo8vKs1JLT7EKM3BoiTOq5oinyokkJ5Ykpqd
-	mlqQWgSTZeLglGpgKnpbzWZ7fKfe35Bbb1/vv7/BQ0C68wULh8rf+0m7Ai+f9liRLv7XnKe8
-	1PPOU+3cjizzkzP0nqs/YNMwvrrkmtHs3QsbD6YkF5+asnu1qMA//lLht7WZsWcso/mC0+TO
-	mj5Jr8ttTvn/9YTrHElD/l5j9vX3FsWKnAkM/cYt8nBVz9zJ0y9tO+/0fs6OrHNzzrasNN2z
-	zEjjn6tuM5vEsUrZ97s+fNlguK9gZ7R4/r8HbqvWOWvfCpuhL/fg6pVvc7xVd6l/WzldMyxv
-	lvaLWdGmDb5aJ9JuKFcFBd61yH76PF7M3X/XiyrZ+ncnnyqebTiWWZIyO75re4zPntO8ERO2
-	p+bF/tin8aZnd9FOVyWW4oxEQy3mouJEADqfXjwUBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsVy+t/xe7p+k/6nGVyZKmMxZ9U2RovVd/vZ
-	LLr+bWGxeH34E6PFtA8/mS3eNf1msdizaBKTxcrVR5ks3rWeY7GYPb2ZyeLJ+lnMFpMOXWO0
-	mDKtidFi7y1tiz17T7JYzF/2lN1i+fF/TBbrXr9nsTj/9zirg7DH5SveHjtn3WX3OH9vI4vH
-	5bOlHptWdbJ5bPo0id1j85J6j903G9g8Pj69xeLxft9VNo8zC44AxU9Xe3zeJOex6clbpgC+
-	KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MXUdP
-	MhdcY6s4sO4lcwPjetYuRk4OCQETib2f3zJ3MXJxCAksZZQ4v3EtVEJGYuOXq1C2sMSfa11s
-	ILaQwEdGiYNfJSAaNjNKrFw5iR0kwSKgInH65RcWEJtNwF7i0rJbzCC2iICSxNNXZxlBGpgF
-	LrFI3Lp4BmySsICBxPvvvUA2BwevgK3Enum2EENvM0vsO7sebCivgKDEyZlPwIYyC1hIzJx/
-	nhGknllAWmL5Pw6IsLxE89bZYLs4BXQkvh09xQRxtJLE4xdvGSHsWonPf58xTmAUmYVk6iwk
-	U2chTJ2FZOoCRpZVjCKppcW56bnFRnrFibnFpXnpesn5uZsYgalm27GfW3Ywrnz1Ue8QIxMH
-	4yFGCQ5mJRHeedv/pgnxpiRWVqUW5ccXleakFh9iNAUG0URmKdHkfGCyyyuJNzQzMDU0MbM0
-	MLU0M1YS52W7cj5NSCA9sSQ1OzW1ILUIpo+Jg1OqgUl+3dXGSscNq6Jrw49PPj2hsuOSvVPG
-	ie9Z94/89HzDvHDqEwa1gwz79qz7GerrXndJcFZl7dtDVeXnexyezD3h+a1l+SxLJ4dLEduy
-	n1rO91ra1bzvvFiZeuqq3Utat+l/EThkkC2TX3fmh3bxtDsuEz+3iS535uBfcH9myBmFOpF5
-	f5Y8PJji+Ci9jNvbesKbkLPmf9PfJCntWuHEOyHim6Z8dmWZdue7FO9D/5YJmnJzH+gNCYk7
-	paESYKNWdm/RQ4lTRmZsJe6ro2KWnL1//9u7V31f563Sj3tWFHD12d39j6z6hd7kCSgeWf1S
-	Ze1awzuXwi5cf+Lyac9VnuR7azNErj+zrTH5kfIlsMpMiaU4I9FQi7moOBEAUqqfUb4DAAA=
-X-CMS-MailID: 20241004065926eucas1p15ba0fcb2cecce51f4006abd5569012d8
-X-Msg-Generator: CA
-X-RootMTR: 20241003125523eucas1p272ad9afc8decfd941104a5c137662307
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241003125523eucas1p272ad9afc8decfd941104a5c137662307
-References: <f14a246b-10bf-40c1-bf8f-19101194a6dc@kernel.dk>
-	<20241002151344.GA20364@lst.de>
-	<Zv1kD8iLeu0xd7eP@kbusch-mbp.dhcp.thefacebook.com>
-	<20241002151949.GA20877@lst.de> <yq17caq5xvg.fsf@ca-mkp.ca.oracle.com>
-	<a8b6c57f-88fa-4af0-8a1a-d6a2f2ca8493@acm.org>
-	<CGME20241003125523eucas1p272ad9afc8decfd941104a5c137662307@eucas1p2.samsung.com>
-	<20241003125516.GC17031@lst.de>
-	<20241004062129.z4n6xi4i2ck4nuqh@ArmHalley.local>
-	<20241004062415.GA14876@lst.de>
+In-Reply-To: <Zv8648YMT10TMXSL@dread.disaster.area>
 
-On 04.10.2024 08:24, Christoph Hellwig wrote:
->On Fri, Oct 04, 2024 at 08:21:29AM +0200, Javier González wrote:
->>> So I think some peoples bonuses depend on not understanding the problem
->>> I fear :(
->>>
->>
->> Please, don't.
->>
->> Childish comments like this delegitimize the work that a lot of people
->> are doing in Linux.
->
->It's the only very sarcastic explanation I can come up with to explain
->this discussion, where people from the exactly two companies where this
->might be bonus material love political discussion and drop dead when it
->turns technical.
+On Fri, Oct 04, 2024 at 10:46:27AM GMT, Dave Chinner wrote:
+> On Thu, Oct 03, 2024 at 06:17:31PM +0200, Jan Kara wrote:
+> > On Thu 03-10-24 23:59:51, Dave Chinner wrote:
+> > > As for the landlock code, I think it needs to have it's own internal
+> > > tracking mechanism and not search the sb inode list for inodes that
+> > > it holds references to. LSM cleanup should be run before before we
+> > > get to tearing down the inode cache, not after....
+> > 
+> > Well, I think LSM cleanup could in principle be handled together with the
+> > fsnotify cleanup but I didn't check the details.
+> 
+> I'm not sure how we tell if an inode potentially has a LSM related
+> reference hanging off it. The landlock code looks to make an
+> assumption in that the only referenced inodes it sees will have a
+> valid inode->i_security pointer if landlock is enabled. i.e. it
+> calls landlock_inode(inode) and dereferences the returned value
+> without ever checking if inode->i_security is NULL or not.
+> 
+> I mean, we could do a check for inode->i_security when the refcount
+> is elevated and replace the security_sb_delete hook with an
+> security_evict_inode hook similar to the proposed fsnotify eviction
+> from evict_inodes().
+> 
+> But screwing with LSM instructure looks ....  obnoxiously complex
+> from the outside...
 
-FDP has authors from Meta, Google, Kioxia, Micron, Hynix, Solidigm,
-Microship, Marvell, FADU, WDC, and Samsung.
-
-The fact that 2 of these companies are the ones starting to build the
-Linux ecosystem should not surprise you, as it is the way things work
-normally.
-
+Imho, please just focus on the immediate feedback and ignore all the
+extra bells and whistles that we could or should do. I prefer all of
+that to be done after this series lands.
 
