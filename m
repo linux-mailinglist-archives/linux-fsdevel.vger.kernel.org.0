@@ -1,61 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-31011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA866990D78
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 21:11:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7FF990D51
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 21:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86842B27395
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 19:00:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD5681C20404
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 19:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5122022EC;
-	Fri,  4 Oct 2024 18:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0F020896D;
+	Fri,  4 Oct 2024 18:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fH8lovuf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQ1iO1b+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF5C2022D7;
-	Fri,  4 Oct 2024 18:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB868207A2E;
+	Fri,  4 Oct 2024 18:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066325; cv=none; b=joq/kE4z/WonpxiFeY6KWMLBqA3aQoaRj6lxcGgfVwVBVhK4zn5vcWBSevOZw9KSO9IpVdyAEfkNg1jvrMkRnXWKn2qzEgko9DGR2P8B80ERqdXxZBQr9NFYG5NcgejqGLzUP0BKd2zbXpcVIc/X8mAfjaaK4aaPV1hLIdGvu7c=
+	t=1728066373; cv=none; b=m6225xRO8qVPLJPCDY4x+fKRnE8jvQdsoIT3l8FC7lgjaoZdSBGbo49Z5WWmzX0g/ytBeh8UIVSd45sRXCTAvJZsm34UgsUm7/pbnJfV+xDrW6iLuRw5JZxFnPe7eZIcfnW8aj8XSZHOhHmeGHgMUlwR6ZjxFV13GTtGGo3UBgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066325; c=relaxed/simple;
-	bh=L46bPyYoG91u3ZbZDaYScM15XmP2KiD6b35+UXfWRyU=;
+	s=arc-20240116; t=1728066373; c=relaxed/simple;
+	bh=3DupCd0BK5nVMeJtrsvS8AMecK7ocigIZU05ubrKsxE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OaxQeM8KfRnnAlWjqPMXZ/K7JwusES1n+4Zma5sBJaQzk4WnZhDNPoODQjSwtZqFG5U+CPEZDNAWL00M1dU/Cy9hoGr7uPcmrFVCjIIeQov/QcRWLsaA8x8CRzMevyr7VW7ACLR354dr53FQJfgDm6SgZKlufJdgMohuiyKSGPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fH8lovuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33D99C4CEC6;
-	Fri,  4 Oct 2024 18:25:24 +0000 (UTC)
+	 MIME-Version; b=F6PgRCLV+zsNJTRJ1azM1DJmmTI7coR01CMvuDdPNdHgra2l/96Gcx6YCI7fW9Cn9Cmx1awqtJbBSw46KTqTZ5aK141//OOJ72KOzDMX881MO1EUr0PctyHVVGVPR1Mk7+YU0bUo00Ex6W1tPNH5W+3wXUrZw3bIEpomP0sjOZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQ1iO1b+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F58C4CEC6;
+	Fri,  4 Oct 2024 18:26:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066325;
-	bh=L46bPyYoG91u3ZbZDaYScM15XmP2KiD6b35+UXfWRyU=;
+	s=k20201202; t=1728066372;
+	bh=3DupCd0BK5nVMeJtrsvS8AMecK7ocigIZU05ubrKsxE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fH8lovufw3UoGshs+nALrPfXvLkrqX7bZ4JFfep3kejJD8+8JqhNkhOjAA+cyCAJM
-	 2WUXonnvGhWT43S++j+R/d+y+O4LxGo4Jj5atyQh0JHKX4b9oV+hGi5MD5Radi2ZQz
-	 LqGlu/ad6niXJpFP54mkmSygHsEZgAfQYqDu7jgZsAPEdrgC3XMz5kLkYqio0iDGcr
-	 telbcwluYI2L70QJMS7rO9Pc7UrPEsvs3eQs8tNIh7RQs8s9dXa80S34akEYPILIzo
-	 cXC428ecJuvqXfyyOquhOwp8ZJTxLGg9C9mklTXjFo9GfheQk2ya2VMMwXeZQUKdsq
-	 n4nN713bs2ekQ==
+	b=oQ1iO1b+VR8pLvRU7HaRQQPtH6rhuYaAvAfn7cL0PbCR5uU0807MkZjLTBkkE0svW
+	 UmddizpCO3Rny4E0miJWFEozSFv4gjbktOwG9rkkWbXK+XPJQDOJ2XUujF4uIyGA+Y
+	 6Zl8Z0tcuwIqsv8iP8Uo4P4eeTR3SV1bSnjg3/VZz6O+4kUGxY9oYw9JxZpCNloSD9
+	 6W+FZD0TIjHKg6rSxcaJfY8C/DWy62+Hi/v6TJAZ2vk/U6Bd0RFgPJr6cOXJm1MzED
+	 wMcCEQn/1PMkCkkRtyO2ItBOslzew0dUWpMZn00Fn9kNgm50hjAEh/h6s9ZCDPafcn
+	 KvDgM6XTMD+Kg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Pankaj Raghav <p.raghav@samsung.com>,
-	Hannes Reinecke <hare@suse.de>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Dave Chinner <dchinner@redhat.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Christian Brauner <brauner@kernel.org>,
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-xfs@vger.kernel.org,
+	miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 12/58] iomap: fix iomap_dio_zero() for fs bs > system page size
-Date: Fri,  4 Oct 2024 14:23:45 -0400
-Message-ID: <20241004182503.3672477-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 39/58] fuse: handle idmappings properly in ->write_iter()
+Date: Fri,  4 Oct 2024 14:24:12 -0400
+Message-ID: <20241004182503.3672477-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241004182503.3672477-1-sashal@kernel.org>
 References: <20241004182503.3672477-1-sashal@kernel.org>
@@ -70,152 +66,40 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.54
 Content-Transfer-Encoding: 8bit
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
-[ Upstream commit 10553a91652d995274da63fc317470f703765081 ]
+[ Upstream commit 5b8ca5a54cb89ab07b0389f50e038e533cdfdd86 ]
 
-iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
-< fs block size. iomap_dio_zero() has an implicit assumption that fs block
-size < page_size. This is true for most filesystems at the moment.
+This is needed to properly clear suid/sgid.
 
-If the block size > page size, this will send the contents of the page
-next to zero page(as len > PAGE_SIZE) to the underlying block device,
-causing FS corruption.
-
-iomap is a generic infrastructure and it should not make any assumptions
-about the fs block size and the page size of the system.
-
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-Link: https://lore.kernel.org/r/20240822135018.1931258-7-kernel@pankajraghav.com
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/iomap/buffered-io.c |  4 ++--
- fs/iomap/direct-io.c   | 45 ++++++++++++++++++++++++++++++++++++------
- 2 files changed, 41 insertions(+), 8 deletions(-)
+ fs/fuse/file.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 975fd88c1f0f4..6b89b5589ba28 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1998,10 +1998,10 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
- }
- EXPORT_SYMBOL_GPL(iomap_writepages);
- 
--static int __init iomap_init(void)
-+static int __init iomap_buffered_init(void)
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index ceb9f7d230388..eb2a3ffb1e816 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1301,6 +1301,7 @@ static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
+ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
  {
- 	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
- 			   offsetof(struct iomap_ioend, io_inline_bio),
- 			   BIOSET_NEED_BVECS);
- }
--fs_initcall(iomap_init);
-+fs_initcall(iomap_buffered_init);
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index bcd3f8cf5ea42..409a21144a555 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -11,6 +11,7 @@
- #include <linux/iomap.h>
- #include <linux/backing-dev.h>
- #include <linux/uio.h>
-+#include <linux/set_memory.h>
- #include <linux/task_io_accounting_ops.h>
- #include "trace.h"
+ 	struct file *file = iocb->ki_filp;
++	struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 	struct address_space *mapping = file->f_mapping;
+ 	ssize_t written = 0;
+ 	struct inode *inode = mapping->host;
+@@ -1315,7 +1316,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			return err;
  
-@@ -27,6 +28,13 @@
- #define IOMAP_DIO_WRITE		(1U << 30)
- #define IOMAP_DIO_DIRTY		(1U << 31)
- 
-+/*
-+ * Used for sub block zeroing in iomap_dio_zero()
-+ */
-+#define IOMAP_ZERO_PAGE_SIZE (SZ_64K)
-+#define IOMAP_ZERO_PAGE_ORDER (get_order(IOMAP_ZERO_PAGE_SIZE))
-+static struct page *zero_page;
-+
- struct iomap_dio {
- 	struct kiocb		*iocb;
- 	const struct iomap_dio_ops *dops;
-@@ -232,13 +240,20 @@ void iomap_dio_bio_end_io(struct bio *bio)
- }
- EXPORT_SYMBOL_GPL(iomap_dio_bio_end_io);
- 
--static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-+static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
- 		loff_t pos, unsigned len)
- {
- 	struct inode *inode = file_inode(dio->iocb->ki_filp);
--	struct page *page = ZERO_PAGE(0);
- 	struct bio *bio;
- 
-+	if (!len)
-+		return 0;
-+	/*
-+	 * Max block size supported is 64k
-+	 */
-+	if (WARN_ON_ONCE(len > IOMAP_ZERO_PAGE_SIZE))
-+		return -EINVAL;
-+
- 	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
- 	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
- 				  GFP_KERNEL);
-@@ -246,8 +261,9 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
- 	bio->bi_private = dio;
- 	bio->bi_end_io = iomap_dio_bio_end_io;
- 
--	__bio_add_page(bio, page, len, 0);
-+	__bio_add_page(bio, zero_page, len, 0);
- 	iomap_dio_submit_bio(iter, dio, bio, pos);
-+	return 0;
- }
- 
- /*
-@@ -356,8 +372,10 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
- 	if (need_zeroout) {
- 		/* zero out from the start of the block to the write offset */
- 		pad = pos & (fs_block_size - 1);
--		if (pad)
--			iomap_dio_zero(iter, dio, pos - pad, pad);
-+
-+		ret = iomap_dio_zero(iter, dio, pos - pad, pad);
-+		if (ret)
-+			goto out;
- 	}
- 
- 	/*
-@@ -430,7 +448,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
- 		/* zero out from the end of the write to the end of the block */
- 		pad = pos & (fs_block_size - 1);
- 		if (pad)
--			iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
-+			ret = iomap_dio_zero(iter, dio, pos,
-+					     fs_block_size - pad);
- 	}
- out:
- 	/* Undo iter limitation to current extent */
-@@ -752,3 +771,17 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	return iomap_dio_complete(dio);
- }
- EXPORT_SYMBOL_GPL(iomap_dio_rw);
-+
-+static int __init iomap_dio_init(void)
-+{
-+	zero_page = alloc_pages(GFP_KERNEL | __GFP_ZERO,
-+				IOMAP_ZERO_PAGE_ORDER);
-+
-+	if (!zero_page)
-+		return -ENOMEM;
-+
-+	set_memory_ro((unsigned long)page_address(zero_page),
-+		      1U << IOMAP_ZERO_PAGE_ORDER);
-+	return 0;
-+}
-+fs_initcall(iomap_dio_init);
+ 		if (fc->handle_killpriv_v2 &&
+-		    setattr_should_drop_suidgid(&nop_mnt_idmap,
++		    setattr_should_drop_suidgid(idmap,
+ 						file_inode(file))) {
+ 			goto writethrough;
+ 		}
 -- 
 2.43.0
 
