@@ -1,220 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-30926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4894098FBEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 03:21:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D09198FCCD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 06:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D14F283EE0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 01:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 439C11F2373F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 04:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B1E156CF;
-	Fri,  4 Oct 2024 01:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9927581F;
+	Fri,  4 Oct 2024 04:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NA8l0VHt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVi6pqYK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C69128F0;
-	Fri,  4 Oct 2024 01:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021819475;
+	Fri,  4 Oct 2024 04:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728004869; cv=none; b=Pt9Fvb6bvmbMrM73VQey+FZpbgd6OQAgC3hIM24TkYX4hkGqaUyeuufzvaVSkGcbgIGR3+VsgtiKFxRzPLjRBHq5gCHxAVR5FKvnsfZlVzMFgUXz7nbDP5qBET/k+zesz0Z4lRXYbMfXT3zsWNtNXhU3cX0KyxhZk3OIho+M0yE=
+	t=1728017368; cv=none; b=QJqXhmXioBBS/Ij9ez1rK/DT9XPBR4z2Yo6Ougf5ONJ97BVXHgoudQxmX2/Aw3rGP7dBgLVjhNM7O8+v9jaoY4dX8FUbwy2rSMRxMTWMhulcXg0JgugMtebYbjlRfKp6Jm22LBHUUG6pEaroc2YEV9dyM1dvOcNqUfmC0SmsI1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728004869; c=relaxed/simple;
-	bh=XAwp1HajigedLWPNyvDA2B/OVsp5lSLx9eQxfxT3RdA=;
+	s=arc-20240116; t=1728017368; c=relaxed/simple;
+	bh=TUsrG1YURfFbI9ZQ5O9KwQkkpUD3OiESPgahQWq2Rus=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+1Mhht9ZZoCxcwDkSxIK/EiQ98onmg9tSjz45utzfWPjFRB8rM3nUq1V4e5XDtIcOiLTer80bjo5c8P5VgV8KGJ5gQB9Bg1YfdZHgntWLcADPR7pTu5HY9rcNIPMzd7exAOWDhG2cPYY0atkVqfZEc/teSnYUHzCiVAT0ytDXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NA8l0VHt; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728004867; x=1759540867;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=XAwp1HajigedLWPNyvDA2B/OVsp5lSLx9eQxfxT3RdA=;
-  b=NA8l0VHt/g2yXBxK1Ir7eO67PDYRZhBFcJH3rpEmQZ+zwhJwJQYWxoRc
-   UvUQzrmZzYRq6wxnAr1VnIJr8WYHpH1XvUAiIF4KG1LBnEksaG4zW1LRI
-   dDdS6B3Y+TekdOMpNhyIK+HF89PCMxmWF3xtu9ZyMlm+v2Selj8FiDJgT
-   zFHTzponPizRj5rqX3GEQL/bGzI4Af9oIE+RzPZyaOfh4d5g47fEx22XJ
-   kytxxUjSqDVoein/NJO6IzV33zdigCLh7/kBGRKOBbhbov4jf4khYgcv7
-   ImftI8JNK+spsAQ+QjZBeacEp3ceN5xhZHzgoq8PyPjr4B4IBMcas116U
-   A==;
-X-CSE-ConnectionGUID: Fh18YlQcQR+U+IZ4DxRmjA==
-X-CSE-MsgGUID: 21HWNlupQeGRxbwI8K+y0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="26689231"
-X-IronPort-AV: E=Sophos;i="6.11,176,1725346800"; 
-   d="scan'208";a="26689231"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 18:21:06 -0700
-X-CSE-ConnectionGUID: 1PmMfVzDQZqzvxQvcU6udQ==
-X-CSE-MsgGUID: fxKs9q26TUComuwqMFdUkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,176,1725346800"; 
-   d="scan'208";a="74234010"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 03 Oct 2024 18:20:58 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swX04-000160-07;
-	Fri, 04 Oct 2024 01:20:56 +0000
-Date: Fri, 4 Oct 2024 09:20:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQXOooEoqL21yRBaPHJ8i6qFu++3c+hZc0QA5OJydLIGGocFyAp5/HdU+lYmhg4MKa7BNvjfpZeSFpilEfsBWFmATkPAqMe/MAIHXfLk/a5rZxnBNil+VddPrhHBwUpPxbApR/I5RLPD7njcinx5EIecMHhDwnHesGhtGVTm+UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVi6pqYK; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b64584fd4so16764895ad.1;
+        Thu, 03 Oct 2024 21:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728017366; x=1728622166; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TUsrG1YURfFbI9ZQ5O9KwQkkpUD3OiESPgahQWq2Rus=;
+        b=hVi6pqYKrn8dgM0eI9ixdE8WIexPLQwey+MXTfB7nkMehLW5N3wwatdfeCYP5P02+P
+         2aMcfARvvz6lnmj9H4QNS8Chz3SCOo/wpbpjaKnt67xRwmxyEBC3Uh+qL9jGRgcttizR
+         Y3obqhXJYcJtmHgppDwYb6UgiuyKEn5X7OuhkL6Jemp7p56srEJI9qiiwuoB7P4s81Zx
+         4Xfk9k9xx7B8gfvGyNaDO5sCPtOkqllD66J9SwR9p3xoqS9JFydoFzsnzeMV3+zy/TwC
+         HQ0+jUweQGQLIi8GVThtk9Mgkegm2Wndm0gsgyV0QfDwMDawVRGsoMhX+hwa4J7M8biJ
+         x1AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728017366; x=1728622166;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TUsrG1YURfFbI9ZQ5O9KwQkkpUD3OiESPgahQWq2Rus=;
+        b=Uez4rjhsNmKsYoe/XaFg5wOnVucWeobAg6vKPA4F7oT0SCiuIO6JvRz/l/lF1FpvVN
+         +HqU7MoeRGpedZyghSTDfz8D/9UrZAnQJwZmPwB00knZMY8mbt2Z04RH0ICFdWkh7c82
+         XRyB3290xnQtSTENukEB+C1yu51eDxHKNcgSLYfb+Jq0Du0bhdWPOST3rwljGhfxv1um
+         aWnkmOs2J7btwWymgTGvnWn1hc1lFB4htCTABQd3mTAjiDqdkaJZ6wb+b4HZ50+qNqUt
+         ChHrU65wjXyUb6C9UHo2ao5XOehiyZmGIdT7sd6k3N7yRw64BQ+S4fkdzAOjWz2T0vll
+         Q1Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE9Wo63qg9LZj4tgHdX9hTRtxJIIiYRmo1O3MQLP0Iqaoqb3c5m6kZYSKVBzUKFHgGx/DkS39rrbwF@vger.kernel.org, AJvYcCUO6FHwqC5n1RM1ObWoHF1jDCASQwObgBmxEKd5qUNpW4knWog6o+ILbUHBsnI7E1AT5X8Wf7lXwu/g4SbOAg==@vger.kernel.org, AJvYcCVJ/w4XsBf3ZYT4XO/1DJevRd02A//DnFnyQKwT5ApSIg6hxObHOlJRm4x+WOGrCbqkCokIcpUvNGF9hQ==@vger.kernel.org, AJvYcCVSB36FTaycSaEu8J8sAXgWHEPjodeUcSstg1neePtKwxZIJ1oxj077SUtUpJJl7lTDHZpfxymIUcv4@vger.kernel.org, AJvYcCX/AmP27C06Gn1XnE8fi1EJ3uGc1/p3E4ioPVh64bpYWIQuU/WyO4cYRW3ExQsdiCvhG3oQ2AKVbkWm@vger.kernel.org, AJvYcCXCAgarJlzAGjaaSpZ4eQYgEiJo+XufLAUWqej1/qz/QjzFxnBb8WIp/Vw5LzXBu6Q0eAW3i67JxyvJ6y7sfRv5ET5u@vger.kernel.org, AJvYcCXuSJ94SmW3oLDSqh4gEuVSZ6cpIMwNINwHrW0saYiWLOpYh56DNlcoeLdW0XJAR7i/DYF+261CeGn+OQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7szFqV9+BoQphTwgaC/Agvqk6AH1gOSDsgquNsL8WDjZo5XDK
+	2on3CWckidUp6/2J0bwVQkcP+KBJZfZXoH4fXQ0rRaeEolu+HQTf
+X-Google-Smtp-Source: AGHT+IEOZ5VHabq4uat+pKHrLZtskvm5qkTvRMBGxvUt1yb7vzghAthcJh027s31hSLyjL6Ys/bM7A==
+X-Received: by 2002:a17:902:ec87:b0:20b:5046:356 with SMTP id d9443c01a7336-20bff04fad3mr14990785ad.36.1728017366009;
+        Thu, 03 Oct 2024 21:49:26 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beef8decasm16481015ad.142.2024.10.03.21.49.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 21:49:25 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id CE80345D328D; Fri, 04 Oct 2024 11:49:22 +0700 (WIB)
+Date: Fri, 4 Oct 2024 11:49:22 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH 22/33] riscv: signal: abstract header saving for
- setup_sigcontext
-Message-ID: <202410040912.4TpCD7iU-lkp@intel.com>
-References: <20241001-v5_user_cfi_series-v1-22-3ba65b6e550f@rivosinc.com>
+	Randy Dunlap <rdunlap@infradead.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v9 08/12] Documentation: add a new file documenting
+ multigrain timestamps
+Message-ID: <Zv9z0qWAvTuS8zg7@archie.me>
+References: <20241002-mgtime-v9-0-77e2baad57ac@kernel.org>
+ <20241002-mgtime-v9-8-77e2baad57ac@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OBP6+ccGLM5fNBOy"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001-v5_user_cfi_series-v1-22-3ba65b6e550f@rivosinc.com>
-
-Hi Deepak,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 9852d85ec9d492ebef56dc5f229416c925758edc]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Deepak-Gupta/mm-Introduce-ARCH_HAS_USER_SHADOW_STACK/20241002-000937
-base:   9852d85ec9d492ebef56dc5f229416c925758edc
-patch link:    https://lore.kernel.org/r/20241001-v5_user_cfi_series-v1-22-3ba65b6e550f%40rivosinc.com
-patch subject: [PATCH 22/33] riscv: signal: abstract header saving for setup_sigcontext
-config: riscv-allnoconfig (https://download.01.org/0day-ci/archive/20241004/202410040912.4TpCD7iU-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410040912.4TpCD7iU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410040912.4TpCD7iU-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/riscv/kernel/signal.c: In function 'save_v_state':
->> arch/riscv/kernel/signal.c:89:9: error: implicit declaration of function 'get_cpu_vector_context' [-Wimplicit-function-declaration]
-      89 |         get_cpu_vector_context();
-         |         ^~~~~~~~~~~~~~~~~~~~~~
->> arch/riscv/kernel/signal.c:91:9: error: implicit declaration of function 'put_cpu_vector_context' [-Wimplicit-function-declaration]
-      91 |         put_cpu_vector_context();
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/kernel/signal.c: In function '__restore_v_state':
->> arch/riscv/kernel/signal.c:123:9: error: implicit declaration of function 'riscv_v_vstate_set_restore'; did you mean 'riscv_v_vstate_restore'? [-Wimplicit-function-declaration]
-     123 |         riscv_v_vstate_set_restore(current, regs);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-         |         riscv_v_vstate_restore
+In-Reply-To: <20241002-mgtime-v9-8-77e2baad57ac@kernel.org>
 
 
-vim +/get_cpu_vector_context +89 arch/riscv/kernel/signal.c
+--OBP6+ccGLM5fNBOy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-e2c0cdfba7f699 Palmer Dabbelt 2017-07-10   70  
-3fad3080e143f7 Andy Chiu      2024-10-01   71  static long save_v_state(struct pt_regs *regs, void __user *sc_vec)
-8ee0b41898fa26 Greentime Hu   2023-06-05   72  {
-8ee0b41898fa26 Greentime Hu   2023-06-05   73  	struct __sc_riscv_v_state __user *state;
-8ee0b41898fa26 Greentime Hu   2023-06-05   74  	void __user *datap;
-8ee0b41898fa26 Greentime Hu   2023-06-05   75  	long err;
-8ee0b41898fa26 Greentime Hu   2023-06-05   76  
-3fad3080e143f7 Andy Chiu      2024-10-01   77  	if (!IS_ENABLED(CONFIG_RISCV_ISA_V) ||
-3fad3080e143f7 Andy Chiu      2024-10-01   78  		!(has_vector() && riscv_v_vstate_query(regs)))
-3fad3080e143f7 Andy Chiu      2024-10-01   79  		return 0;
-3fad3080e143f7 Andy Chiu      2024-10-01   80  
-3fad3080e143f7 Andy Chiu      2024-10-01   81  	/* Place state to the user's signal context spac */
-3fad3080e143f7 Andy Chiu      2024-10-01   82  	state = (struct __sc_riscv_v_state __user *)sc_vec;
-8ee0b41898fa26 Greentime Hu   2023-06-05   83  	/* Point datap right after the end of __sc_riscv_v_state */
-8ee0b41898fa26 Greentime Hu   2023-06-05   84  	datap = state + 1;
-8ee0b41898fa26 Greentime Hu   2023-06-05   85  
-8ee0b41898fa26 Greentime Hu   2023-06-05   86  	/* datap is designed to be 16 byte aligned for better performance */
-1d20e5d437cfeb Zhongqiu Han   2024-06-20   87  	WARN_ON(!IS_ALIGNED((unsigned long)datap, 16));
-8ee0b41898fa26 Greentime Hu   2023-06-05   88  
-7df56cbc27e423 Andy Chiu      2024-01-15  @89  	get_cpu_vector_context();
-d6c78f1ca3e8ec Andy Chiu      2024-01-15   90  	riscv_v_vstate_save(&current->thread.vstate, regs);
-7df56cbc27e423 Andy Chiu      2024-01-15  @91  	put_cpu_vector_context();
-7df56cbc27e423 Andy Chiu      2024-01-15   92  
-8ee0b41898fa26 Greentime Hu   2023-06-05   93  	/* Copy everything of vstate but datap. */
-8ee0b41898fa26 Greentime Hu   2023-06-05   94  	err = __copy_to_user(&state->v_state, &current->thread.vstate,
-8ee0b41898fa26 Greentime Hu   2023-06-05   95  			     offsetof(struct __riscv_v_ext_state, datap));
-8ee0b41898fa26 Greentime Hu   2023-06-05   96  	/* Copy the pointer datap itself. */
-869436dae72acf Ben Dooks      2023-11-23   97  	err |= __put_user((__force void *)datap, &state->v_state.datap);
-8ee0b41898fa26 Greentime Hu   2023-06-05   98  	/* Copy the whole vector content to user space datap. */
-8ee0b41898fa26 Greentime Hu   2023-06-05   99  	err |= __copy_to_user(datap, current->thread.vstate.datap, riscv_v_vsize);
-8ee0b41898fa26 Greentime Hu   2023-06-05  100  	if (unlikely(err))
-3fad3080e143f7 Andy Chiu      2024-10-01  101  		return -EFAULT;
-8ee0b41898fa26 Greentime Hu   2023-06-05  102  
-3fad3080e143f7 Andy Chiu      2024-10-01  103  	/* Only return the size if everything has done successfully  */
-3fad3080e143f7 Andy Chiu      2024-10-01  104  	return riscv_v_sc_size;
-8ee0b41898fa26 Greentime Hu   2023-06-05  105  }
-8ee0b41898fa26 Greentime Hu   2023-06-05  106  
-8ee0b41898fa26 Greentime Hu   2023-06-05  107  /*
-8ee0b41898fa26 Greentime Hu   2023-06-05  108   * Restore Vector extension context from the user's signal frame. This function
-8ee0b41898fa26 Greentime Hu   2023-06-05  109   * assumes a valid extension header. So magic and size checking must be done by
-8ee0b41898fa26 Greentime Hu   2023-06-05  110   * the caller.
-8ee0b41898fa26 Greentime Hu   2023-06-05  111   */
-8ee0b41898fa26 Greentime Hu   2023-06-05  112  static long __restore_v_state(struct pt_regs *regs, void __user *sc_vec)
-8ee0b41898fa26 Greentime Hu   2023-06-05  113  {
-8ee0b41898fa26 Greentime Hu   2023-06-05  114  	long err;
-8ee0b41898fa26 Greentime Hu   2023-06-05  115  	struct __sc_riscv_v_state __user *state = sc_vec;
-8ee0b41898fa26 Greentime Hu   2023-06-05  116  	void __user *datap;
-8ee0b41898fa26 Greentime Hu   2023-06-05  117  
-c27fa53b858b4e Björn Töpel    2024-04-03  118  	/*
-c27fa53b858b4e Björn Töpel    2024-04-03  119  	 * Mark the vstate as clean prior performing the actual copy,
-c27fa53b858b4e Björn Töpel    2024-04-03  120  	 * to avoid getting the vstate incorrectly clobbered by the
-c27fa53b858b4e Björn Töpel    2024-04-03  121  	 *  discarded vector state.
-c27fa53b858b4e Björn Töpel    2024-04-03  122  	 */
-c27fa53b858b4e Björn Töpel    2024-04-03 @123  	riscv_v_vstate_set_restore(current, regs);
-c27fa53b858b4e Björn Töpel    2024-04-03  124  
-8ee0b41898fa26 Greentime Hu   2023-06-05  125  	/* Copy everything of __sc_riscv_v_state except datap. */
-8ee0b41898fa26 Greentime Hu   2023-06-05  126  	err = __copy_from_user(&current->thread.vstate, &state->v_state,
-8ee0b41898fa26 Greentime Hu   2023-06-05  127  			       offsetof(struct __riscv_v_ext_state, datap));
-8ee0b41898fa26 Greentime Hu   2023-06-05  128  	if (unlikely(err))
-8ee0b41898fa26 Greentime Hu   2023-06-05  129  		return err;
-8ee0b41898fa26 Greentime Hu   2023-06-05  130  
-8ee0b41898fa26 Greentime Hu   2023-06-05  131  	/* Copy the pointer datap itself. */
-8ee0b41898fa26 Greentime Hu   2023-06-05  132  	err = __get_user(datap, &state->v_state.datap);
-8ee0b41898fa26 Greentime Hu   2023-06-05  133  	if (unlikely(err))
-8ee0b41898fa26 Greentime Hu   2023-06-05  134  		return err;
-8ee0b41898fa26 Greentime Hu   2023-06-05  135  	/*
-8ee0b41898fa26 Greentime Hu   2023-06-05  136  	 * Copy the whole vector content from user space datap. Use
-8ee0b41898fa26 Greentime Hu   2023-06-05  137  	 * copy_from_user to prevent information leak.
-8ee0b41898fa26 Greentime Hu   2023-06-05  138  	 */
-c27fa53b858b4e Björn Töpel    2024-04-03  139  	return copy_from_user(current->thread.vstate.datap, datap, riscv_v_vsize);
-8ee0b41898fa26 Greentime Hu   2023-06-05  140  }
-3fad3080e143f7 Andy Chiu      2024-10-01  141  
+On Wed, Oct 02, 2024 at 02:49:36PM -0400, Jeff Layton wrote:
+> Add a high-level document that describes how multigrain timestamps work,
+> rationale for them, and some info about implementation and tradeoffs.
+>=20
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+LGTM, thanks!
+
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--OBP6+ccGLM5fNBOy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZv9zzgAKCRD2uYlJVVFO
+o8z+AQDazz4grBaoJ/mtVu4UdxF3vdyAVG6PXKSWPFhB0JejcwD9E8qbXnSUInxR
+88neK7F3Iq9tS3rwTgLVOuOzET6WWAE=
+=TFot
+-----END PGP SIGNATURE-----
+
+--OBP6+ccGLM5fNBOy--
 
