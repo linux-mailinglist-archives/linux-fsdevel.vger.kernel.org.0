@@ -1,196 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-30994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-30995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0219904E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 15:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C27990547
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 16:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2C81F22E8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 13:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C081F22C1B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2024 14:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEEB2139A7;
-	Fri,  4 Oct 2024 13:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641832139DD;
+	Fri,  4 Oct 2024 14:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="azN1IfGa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D0B212EEE;
-	Fri,  4 Oct 2024 13:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE51212EF7
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Oct 2024 14:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049949; cv=none; b=S+2ZB1/9HsoURbtcaIYbyiC2clZn3iIIWDOYQEz92gOxHD/6Dzld5MnsE+h7pIFG9Ia/kXK3owQ1rFHJ4J/NTGzdgzP79YCPyDzET/52jlzC0F6H3e097zhFxUKtGmVbJX4w1omxI3bhBCeynIMyzjVxZZiH951ChNcKtQrf5nA=
+	t=1728050736; cv=none; b=himTNYxySYBFpl5fzDPQSEG+FVMelZpjXNPnnkYejLCU8P/ykxMFSyq9kYRQKjLDgcvbcR10Z6GgcN//qe17l74kbqSvF3dK+0m+bEmY63zFtKAotsddRrlfl+ax0Xu75A2cqmbw9RCuHISd7GJrWBt5t3Fg/nEjK1jl5n2PH5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049949; c=relaxed/simple;
-	bh=CgGaF1WPSG5Fi8uzeesZWuMpwpxItmoNQIqnngNVELo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sljDY5+XXEMXzWYrpiDuD5MNo9CB6aHrJiF11d72/VJgWTljhoGn1CCFdhMR2TY7mulIsBsBaWhbKTVcWq4YkAN21wG1YQ9KQgW/tRAH9H6in90/Yk7SU844WzmZTZu4yP6KIxQivp7j4c6FRaXYtuZqvyh7BKLeoZEBooN9VbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96531C4CEC6;
-	Fri,  4 Oct 2024 13:52:22 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: "H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	David Spickett <david.spickett@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	David Hildenbrand <david@redhat.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: (subset) [PATCH v13 00/40] arm64/gcs: Provide support for GCS in userspace
-Date: Fri,  4 Oct 2024 14:52:20 +0100
-Message-Id: <172804948348.2705006.18010706949544079891.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
-References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
+	s=arc-20240116; t=1728050736; c=relaxed/simple;
+	bh=gRqRTWmg+rWkHl62ec5Ha2rtKjOwiMVK2MEXoSt+C5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BN3z4y8V8uOPvhKCsXvwaWAJlphC8IioT47M+ykPtxuZ6tSpI0aqTzalr24TN2MNSAaIPSU9n0Lap/JbdtNVy/lphPCUvKkRAtI2+0hlFzJdYnzgVgJ4yA029Xs/aJ/pr+kHqUwxQRnmwSraLZEZc3e0hHvrlnnbzm2ihqRLnmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=azN1IfGa; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6dbc5db8a31so17255207b3.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Oct 2024 07:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728050734; x=1728655534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DJytvBuB/Bsj41TS+0yXamimG68++P3s2DCi3Nn0Lro=;
+        b=azN1IfGaYoM9ltQwwfwBs7yural4ByjSEkvSHBd7hWmRqx0tsukmzWnlh7tqyqIW2p
+         VRPd/Hg2Xb2Yfx4HUClXuSY0BKO9WuQy6RX0qflguNSPBMJl19Enu3kETr2UPYfkogzT
+         DtINIQeFXEMctauhHl/JtgIPMYAYMTnoSJOjuAeTfLMIeUAfGyFnHQVKeRtzkalqhxkp
+         DBVoZvZY7AknOHdqgLF/vol83pjUZepoY9Bc8CQ8MmRvDdW5NRVzR7m25CaIgaJmmVVX
+         BWQ38Zi0aPy5EsC/vTXdAXw7n64yK2lvF5NpsymNSAKIh+PeVBjAC+5ZIySNRIT8LehI
+         fvUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728050734; x=1728655534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DJytvBuB/Bsj41TS+0yXamimG68++P3s2DCi3Nn0Lro=;
+        b=MaOSd+OacYvLTCH8jt6aMqkTptJiynFnelDP8xzMmreWD16cWwhsem54S/soJ4vqcw
+         Mq0wWKvvjNg8TLG2YdJqxoAvROEoChdqBh/OLcAZd2dbfuX1cTO2wxH0rNRBn9zZw4Hf
+         Wgwmb4kdm9mWZUxcaqKoVq3ZgX90Q7HzwzSiD8pT3K40iXIGFtuyHU9OhwgQKgwTtzsx
+         QLTYjrrpJwJiT0Vj4wTn9Sg+7302TBOIA/AlKw6sV7VV7lfrOQ+ZjkWBBBAP6SEuOp3A
+         wbAByTPHzb9wlooRuq2d0aHappEfje9i44HVf2T63s7Nysll7C7BUoCEQGegHc9uPdeG
+         cZxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxjNLLwXFZKLa+GX8a3YiFjY1bGnQul3A91DCDxPbkh0kI8S5+1BUbtv4Lh5+XtArA+ZKnFJ0ZouytB3tE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQxrxOR+9IxB4tqFf+VNrtN8jPMd3Ds3blmRO3bA2uboyGmWO9
+	FHpw8aKWFkzVl07o/+K4z0fAtGXBDUPOJ5QN05QI4f7y0N1BXkyykyJiL1sslWtv4XP8HOvV839
+	FdhBI73m96svk5WISMucIcESmATh+h7D6LZmF
+X-Google-Smtp-Source: AGHT+IFawfBRfIvYMmrmR6dbUrMgAbTY0IrMAlq+YHUoQVcHDUJpjj2XE/pJaQnFFpXbKi6Xl9jZYPoFoutTfyVTz4M=
+X-Received: by 2002:a05:690c:6382:b0:64b:b7e:3313 with SMTP id
+ 00721157ae682-6e2c7c3d563mr19656677b3.13.1728050734071; Fri, 04 Oct 2024
+ 07:05:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20241002142516.110567-1-luca.boccassi@gmail.com> <20241004-signal-erfolg-c76d6fdeee1c@brauner>
+In-Reply-To: <20241004-signal-erfolg-c76d6fdeee1c@brauner>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 4 Oct 2024 10:05:23 -0400
+Message-ID: <CAHC9VhRaS2Hjx1ao7x3BEURGk1Tb1z5_OHFnpHYa-y=62HuvLg@mail.gmail.com>
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+To: Christian Brauner <brauner@kernel.org>
+Cc: luca.boccassi@gmail.com, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 01 Oct 2024 23:58:39 +0100, Mark Brown wrote:
-> The arm64 Guarded Control Stack (GCS) feature provides support for
-> hardware protected stacks of return addresses, intended to provide
-> hardening against return oriented programming (ROP) attacks and to make
-> it easier to gather call stacks for applications such as profiling.
-> 
-> When GCS is active a secondary stack called the Guarded Control Stack is
-> maintained, protected with a memory attribute which means that it can
-> only be written with specific GCS operations.  The current GCS pointer
-> can not be directly written to by userspace.  When a BL is executed the
-> value stored in LR is also pushed onto the GCS, and when a RET is
-> executed the top of the GCS is popped and compared to LR with a fault
-> being raised if the values do not match.  GCS operations may only be
-> performed on GCS pages, a data abort is generated if they are not.
-> 
-> [...]
+On Fri, Oct 4, 2024 at 5:29=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+> On Wed, Oct 02, 2024 at 03:24:33PM GMT, luca.boccassi@gmail.com wrote:
+> > From: Luca Boccassi <bluca@debian.org>
+> >
+> > A common pattern when using pid fds is having to get information
+> > about the process, which currently requires /proc being mounted,
+> > resolving the fd to a pid, and then do manual string parsing of
+> > /proc/N/status and friends. This needs to be reimplemented over
+> > and over in all userspace projects (e.g.: I have reimplemented
+> > resolving in systemd, dbus, dbus-daemon, polkit so far), and
+> > requires additional care in checking that the fd is still valid
+> > after having parsed the data, to avoid races.
+> >
+> > Having a programmatic API that can be used directly removes all
+> > these requirements, including having /proc mounted.
 
-I applied most of the series to arm64 (for-next/gcs), apart from two KVM
-patches - 16 and 40 (the latter is the kselftest). I usually start
-picking patches at -rc3 but the glibc folk are waiting for these patches
-to at least end up in a maintainer's branch. Of course, these patches
-are subject to change until the final 6.13 release.
+...
 
-The KVM patches can go on top once agreed (or they can go in via the KVM
-tree, I don't mind either way).
+> > +             const struct cred *c =3D get_task_cred(task);
+> > +             if (!c)
+> > +                     return -ESRCH;
+> > +
+> > +             info.uid =3D from_kuid_munged(current_user_ns(), c->uid);
+> > +             info.gid =3D from_kgid_munged(current_user_ns(), c->gid);
+> > +     }
+> > +
+> > +     if (uinfo.request_mask & PIDFD_INFO_CGROUPID) {
+> > +             struct cgroup *cgrp =3D task_css_check(task, pids_cgrp_id=
+, 1)->cgroup;
+> > +             if (!cgrp)
+> > +                     return -ENODEV;
+> > +
+> > +             info.cgroupid =3D cgroup_id(cgrp);
+> > +     }
+> > +
+> > +     if (uinfo.request_mask & PIDFD_INFO_SECURITY_CONTEXT) {
+>
+> It would make sense for security information to get a separate ioctl so
+> that struct pidfd_info just return simple and fast information and the
+> security stuff can include things such as seccomp, caps etc pp.
 
-Thanks!
+I'm okay with moving the security related info to a separate ioctl,
+but I'd like to strongly request that it be merged at the same time as
+the process ID related info.  It can be a separate patch as part of a
+single patchset if you want to make the ID patch backport friendly for
+distros, but I think we should treat the security related info with
+the same importance as the ID info.
 
-[01/40] mm: Introduce ARCH_HAS_USER_SHADOW_STACK
-        https://git.kernel.org/arm64/c/bcc9d04e749a
-[02/40] mm: Define VM_HIGH_ARCH_6
-        https://git.kernel.org/arm64/c/9ab515b18f84
-[03/40] arm64/mm: Restructure arch_validate_flags() for extensibility
-        https://git.kernel.org/arm64/c/f645e888b1a6
-[04/40] prctl: arch-agnostic prctl for shadow stack
-        https://git.kernel.org/arm64/c/91e102e79740
-[05/40] mman: Add map_shadow_stack() flags
-        https://git.kernel.org/arm64/c/3630e82ab6bd
-[06/40] arm64: Document boot requirements for Guarded Control Stacks
-        https://git.kernel.org/arm64/c/830ae8a39685
-[07/40] arm64/gcs: Document the ABI for Guarded Control Stacks
-        https://git.kernel.org/arm64/c/7058bf87cd59
-[08/40] arm64/sysreg: Add definitions for architected GCS caps
-        https://git.kernel.org/arm64/c/ce0641d48ddd
-[09/40] arm64/gcs: Add manual encodings of GCS instructions
-        https://git.kernel.org/arm64/c/dad947cc22cf
-[10/40] arm64/gcs: Provide put_user_gcs()
-        https://git.kernel.org/arm64/c/d0aa2b435186
-[11/40] arm64/gcs: Provide basic EL2 setup to allow GCS usage at EL0 and EL1
-        https://git.kernel.org/arm64/c/ff5181d8a2a8
-[12/40] arm64/cpufeature: Runtime detection of Guarded Control Stack (GCS)
-        https://git.kernel.org/arm64/c/6487c963083c
-[13/40] arm64/mm: Allocate PIE slots for EL0 guarded control stack
-        https://git.kernel.org/arm64/c/092055f1508c
-[14/40] mm: Define VM_SHADOW_STACK for arm64 when we support GCS
-        https://git.kernel.org/arm64/c/ae80e1629aea
-[15/40] arm64/mm: Map pages for guarded control stack
-        https://git.kernel.org/arm64/c/6497b66ba694
-[17/40] arm64/idreg: Add overrride for GCS
-        https://git.kernel.org/arm64/c/a94452112ce4
-[18/40] arm64/hwcap: Add hwcap for GCS
-        https://git.kernel.org/arm64/c/eefc98711f84
-[19/40] arm64/traps: Handle GCS exceptions
-        https://git.kernel.org/arm64/c/8ce71d270536
-[20/40] arm64/mm: Handle GCS data aborts
-        https://git.kernel.org/arm64/c/cfad706e8f6d
-[21/40] arm64/gcs: Context switch GCS state for EL0
-        https://git.kernel.org/arm64/c/fc84bc5378a8
-[22/40] arm64/gcs: Ensure that new threads have a GCS
-        https://git.kernel.org/arm64/c/506496bcbb42
-[23/40] arm64/gcs: Implement shadow stack prctl() interface
-        https://git.kernel.org/arm64/c/b57180c75c7e
-[24/40] arm64/mm: Implement map_shadow_stack()
-        https://git.kernel.org/arm64/c/8f3e750673b2
-[25/40] arm64/signal: Set up and restore the GCS context for signal handlers
-        https://git.kernel.org/arm64/c/eaf62ce1563b
-[26/40] arm64/signal: Expose GCS state in signal frames
-        https://git.kernel.org/arm64/c/16f47bb9ac8a
-[27/40] arm64/ptrace: Expose GCS via ptrace and core files
-        https://git.kernel.org/arm64/c/7ec3b57cb29f
-[28/40] arm64: Add Kconfig for Guarded Control Stack (GCS)
-        https://git.kernel.org/arm64/c/5d8b172e7005
-[29/40] kselftest/arm64: Verify the GCS hwcap
-        https://git.kernel.org/arm64/c/7a2f671db61f
-[30/40] kselftest/arm64: Add GCS as a detected feature in the signal tests
-        https://git.kernel.org/arm64/c/b2d2f11ff5d6
-[31/40] kselftest/arm64: Add framework support for GCS to signal handling tests
-        https://git.kernel.org/arm64/c/0d426f7dd9a0
-[32/40] kselftest/arm64: Allow signals tests to specify an expected si_code
-        https://git.kernel.org/arm64/c/956573ac1890
-[33/40] kselftest/arm64: Always run signals tests with GCS enabled
-        https://git.kernel.org/arm64/c/42155a8eb0f6
-[34/40] kselftest/arm64: Add very basic GCS test program
-        https://git.kernel.org/arm64/c/3d37d4307e0f
-[35/40] kselftest/arm64: Add a GCS test program built with the system libc
-        https://git.kernel.org/arm64/c/a505a52b4e29
-[36/40] kselftest/arm64: Add test coverage for GCS mode locking
-        https://git.kernel.org/arm64/c/58d69a3e3582
-[37/40] kselftest/arm64: Add GCS signal tests
-        https://git.kernel.org/arm64/c/794b64ca5665
-[38/40] kselftest/arm64: Add a GCS stress test
-        https://git.kernel.org/arm64/c/05e6cfff58c4
-[39/40] kselftest/arm64: Enable GCS for the FP stress tests
-        https://git.kernel.org/arm64/c/bb9ae1a66c85
+> > +struct pidfd_info {
+> > +        __u64 request_mask;
+> > +        __u32 size;
+> > +        uint pid;
+>
+> The size is unnecessary because it is directly encoded into the ioctl
+> command.
+>
+> > +        uint uid;
+> > +        uint gid;
+> > +        __u64 cgroupid;
+> > +        char security_context[NAME_MAX];
+> > +} __packed;
+>
+> The packed attribute should be unnecessary. The structure should simply
+> be correctly padded and should use explicitly sized types:
+>
+> struct pidfd_info {
+>         /* Let userspace request expensive stuff explictly. */
+>         __u64 request_mask;
+>         /* And let the kernel indicate whether it knows about it. */
+>         __u64 result_mask;
+>         __u32 pid;
+>         __u32 uid;
+>         __u32 gid;
+>         __u64 cgroup_id;
+>         __u32 spare0[1];
+> };
+>
+> I'm not sure what LSM info to be put in there and we can just do it as
+> an extension.
 
--- 
-Catalin
+See my original response to Luca on October 2nd, you were on the To/CC line=
+.
 
+--=20
+paul-moore.com
 
