@@ -1,76 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-31049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16089913EA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 04:31:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A359914B1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 07:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 344A1B23426
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 02:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B401F23356
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 05:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4CE1C2BD;
-	Sat,  5 Oct 2024 02:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vCA79v/s"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC02481D1;
+	Sat,  5 Oct 2024 05:50:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEC2211C;
-	Sat,  5 Oct 2024 02:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75826380;
+	Sat,  5 Oct 2024 05:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728095459; cv=none; b=r44Ch398iVK1H34V7Wm8yQH0nWNQ+P0zxK+x70PXP/5Sux5nZrkZrmsl/6QsFaAq9asG357r7EvRdW3km30neE5F2x8KhT+neY6D/T4MsqP40ob0wTIZ8+K66ks9uWUm+VHF1QcqkYeq/5jhfs7uPEwJNaBiRJiDHjwstqH4pR0=
+	t=1728107445; cv=none; b=bAKTNkreNZc25dhy9jNHzY6N0s7yYc4pz73Q+LoEPmkC+qLCRpDOjx/FpF+Z2666Wdw4YslicIGwBGd+w299WTJQd406xi2jxpZzORFfG2qJHIFZM2S2iRHtTkrmcfEyuL/HxDh5mkSSbNoH6kKiz5pFkGwAbOw2d5aNKQS2tNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728095459; c=relaxed/simple;
-	bh=csqTLQaxf4ZlCsS3YHzbWIYnBSpqEvG0c3+B/4vCe/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8EdoBqcMh+RLX2MEGlZuntIEdbnV343LerYmdtSUqelwz48Jm8nU7rbl4UyBQ3kwSz3nQyfGE0Phj3HKRV5RAvLIOjIvCnuT0guS2Ija7zDDENlMfqqa8RelW8SaBRz2jm3+1UxjO0USMKBlEWzq2gjrIecWV3h+zdjjxpr1Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vCA79v/s; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=csqTLQaxf4ZlCsS3YHzbWIYnBSpqEvG0c3+B/4vCe/0=; b=vCA79v/sQ77e3a329C9tabA+R0
-	HMM9Vli8zLXdVJCApU9QKQ1uI7vBfEz6kdhT1bocIW7K1XVGxES7wS82k2eLeCz851KKpTO+CQo7j
-	xf948hqZ0+0Y/nJX6DBG17AWCDXxSicN4itHylA+Kjox7dx8yeFcWMygXcfU+2dd6DSH9+cgUy8pm
-	7tm6yynoh5z+dQY2kRBSfr7sGroHwynOqlhsgQJCHZU1UyBdEfZ84pkSDGNvjqpm9JITMJnpuaZi3
-	dvtRSTAO90iUZKN7iASNW4yqBXRoGJ++PCSEPneJmcd3MDtqnsDLe9BquFUfXxASOUgjXSo/43QY+
-	KHBOTs2g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1swuZJ-0000000Bs24-2ZPa;
-	Sat, 05 Oct 2024 02:30:53 +0000
-Date: Sat, 5 Oct 2024 03:30:53 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 06/12] iomap: Introduce read_inline() function hook
-Message-ID: <ZwCk3eROTMDsZql1@casper.infradead.org>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
- <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
+	s=arc-20240116; t=1728107445; c=relaxed/simple;
+	bh=R7cxEsN+UnbUmIliTAH/0H4gE9lFR/4ihLfCPer5wII=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K+FSN4EQPqx+t5Wbt24Qsr+PGciqzoneFlVRCnzFDOoG4adsoj+v8M3u67nVJgyMOK3iDn3QSqhNBh2p7vLHh+yhWbkki8AhLan98G1QX6N2qQUkDG8MDM9DfTRx7k3FEAGw9Iq5SRSOhuSISsi5jrdSKZELbpwIJGddfDgPOGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 232AD2055FA2;
+	Sat,  5 Oct 2024 14:50:41 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4955odwl012195
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 5 Oct 2024 14:50:40 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4955odmH101869
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 5 Oct 2024 14:50:39 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 4955odGi101868;
+	Sat, 5 Oct 2024 14:50:39 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: syzbot <syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com>,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in vfat_rename2
+In-Reply-To: <20241004155332.b2a7603be540c692e56dc71c@linux-foundation.org>
+	(Andrew Morton's message of "Fri, 4 Oct 2024 15:53:32 -0700")
+References: <66ff2c95.050a0220.49194.03e9.GAE@google.com>
+	<87r08wjsnh.fsf@mail.parknet.co.jp>
+	<20241004155332.b2a7603be540c692e56dc71c@linux-foundation.org>
+Date: Sat, 05 Oct 2024 14:50:39 +0900
+Message-ID: <874j5rgksw.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
+Content-Type: text/plain
 
-On Fri, Oct 04, 2024 at 04:04:33PM -0400, Goldwyn Rodrigues wrote:
-> Introduce read_inline() function hook for reading inline extents. This
-> is performed for filesystems such as btrfs which may compress the data
-> in the inline extents.
+Andrew Morton <akpm@linux-foundation.org> writes:
 
-This feels like an attempt to work around "iomap doesn't support
-compressed extents" by keeping the decompression in the filesystem,
-instead of extending iomap to support compressed extents itself.
-I'd certainly prefer iomap to support compressed extents, but maybe I'm
-in a minority here.
+> On Fri, 04 Oct 2024 15:20:34 +0900 OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wrote:
+>
+>> syzbot <syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com> writes:
+>> 
+>> > git tree:       upstream
+>> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b54ea9980000
+>> > kernel config:  https://syzkaller.appspot.com/x/.config?x=92da5062b0d65389
+>> > dashboard link: https://syzkaller.appspot.com/bug?extid=ef0d7bc412553291aa86
+>> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b7ed07980000
+>> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101dfd9f980000
+
+[...]
+
+>> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> > Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
+>> 
+>> The patch fixes this bug. Please apply.
+>> Thanks.
+>> 
+>> 
+>> From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+>> Subject: [PATCH] fat: Fix uninitialized variable
+>> Date: Fri, 04 Oct 2024 15:03:49 +0900
+>> 
+>> Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
+>> Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+>
+> Could we please have some description?  Seems that an IO error triggers this?
+
+OK, I added the description guessed from syzbot log.
+
+Thanks.
+
+
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: [PATCH v2] fat: Fix uninitialized variable
+Date: Fri, 04 Oct 2024 15:03:49 +0900
+
+This produced by corrupted fs image of syzbot, in theory, however IO
+error would trigger this too.
+
+This affects just a error report, so should not be serious error.
+
+Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
+ fs/fat/namei_vfat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 6423e1d..15bf32c 100644
+--- a/fs/fat/namei_vfat.c	2024-10-04 14:51:50.473038530 +0900
++++ b/fs/fat/namei_vfat.c	2024-10-04 14:56:53.108618655 +0900
+@@ -1037,7 +1037,7 @@ error_inode:
+ 	if (corrupt < 0) {
+ 		fat_fs_error(new_dir->i_sb,
+ 			     "%s: Filesystem corrupted (i_pos %lld)",
+-			     __func__, sinfo.i_pos);
++			     __func__, new_i_pos);
+ 	}
+ 	goto out;
+ }
+_
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
