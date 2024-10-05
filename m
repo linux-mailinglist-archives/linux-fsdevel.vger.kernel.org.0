@@ -1,139 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-31091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A197B991B46
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 00:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB35991B47
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 00:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEDDF1C20F77
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 22:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4D11C20ECE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 22:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C481684A1;
-	Sat,  5 Oct 2024 22:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B594E165F05;
+	Sat,  5 Oct 2024 22:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WonSDtYz"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fWrfH4LK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9512513BC0E;
-	Sat,  5 Oct 2024 22:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4BB1591F0
+	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 22:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728168515; cv=none; b=XU43q/Jpx7GyV3ofR2dkrzrf25NNz5RZ1XGx2L0EEksk6kfl49cmOAPvrJ6E0a8ZxGauuMWupgpADab+sRWqEx5bVcnzFUNgjvQOpD192pmD/d90qlpvgcWqDcg0b+JRwJly+LL2iIB1r4RMnJSnFXdaDpcK6FJ5DeIAJI9Bt9U=
+	t=1728168717; cv=none; b=lslvlwnssXNNi5+QXQmWbiD4X/RExLKUyyEac+0tlv2b3xMw0hPMya5VEc6xGBhauYn70NUw4XBZ9COpJ4vWZsmPmQUBN06g2sAOkFfRAACTea79mLaQAQClNcMFaDNwloU15+QF2cYutdV8mDWIDZFIGADIDU0jajGWIYvvyNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728168515; c=relaxed/simple;
-	bh=fcxhcwCykS7VaBZCUXvsZKD9I3qiLo7RBBc3MRaeHgs=;
+	s=arc-20240116; t=1728168717; c=relaxed/simple;
+	bh=PWbPk/91BWSgD7U6SQp6I1sP5y5aeq55/EMAIshOnm0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WsP9sefu6kjxL/HaKCRVkGWgSemtiTwHiicdhTVKL+yZEh/D+AAmRd7YTM1fRGKk2y4UuBoFqaf84OOOTX0W0n4CxSmygQDPaGcXN9B0QCV5ozQKaLFDyVig7IhH7NBLeU29l2R6qMHuBDT7tmQtfbtwd4G3PmOdGkoONSZrOeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WonSDtYz; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728168514; x=1759704514;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=fcxhcwCykS7VaBZCUXvsZKD9I3qiLo7RBBc3MRaeHgs=;
-  b=WonSDtYzqCT3sPeDxbr4coVaxcgEz9PRUxu4ctDpMBCXvgTg1EUy6J17
-   JdfPWTnmc3gTlAxD5aBfi7xgjLkvIiHRRdOlSbZu3V1EShNaJIaAc2508
-   1efwT4DmsHMXawk2+BGzg1gtX7YVkoWabXWaYShwwLlkl8NzvWj+4nUAb
-   Pr6Ko4fUbSEqrEqudUC2JnEoj8UrkKAARNYqmiQpsiBE7ppwrHokHzncn
-   40ftmH75IeRsGMaF21DexjY8RbAHldq0qCB+ITyQ6t4G9EGarAoqiaFGQ
-   fyD977m1QXdIb2d78pL9OMNCNVrJgx8+Po+tDCJdNNswZEXWsg2apwZk/
-   Q==;
-X-CSE-ConnectionGUID: AnewLLSZQVuD+F9p12h19Q==
-X-CSE-MsgGUID: 6eQLN/AeTRqacMijOQi6HA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="27245123"
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="27245123"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 15:48:33 -0700
-X-CSE-ConnectionGUID: CV2sg/NOQ72FEAJ4t9XQOA==
-X-CSE-MsgGUID: jKZffiplSSihmYagvQ5lAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="79643759"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 05 Oct 2024 15:48:29 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxDZb-0003QO-1W;
-	Sat, 05 Oct 2024 22:48:27 +0000
-Date: Sun, 6 Oct 2024 06:47:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com, Christoph Hellwig <hch@lst.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [PATCH v5 07/10] tmpfs: Add casefold lookup support
-Message-ID: <202410060658.4QOeUy1M-lkp@intel.com>
-References: <20241002234444.398367-8-andrealmeid@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mpChP9udLtV8dp7CQXsxTx+DvysKGOhQru2N2+56jzPMaUEOkn4mrYPYQKsaWhkuKCBkzTDDcndVbNgwX/5WLgxgKjZTceTq/CSL/bray61lGpl1LTrmhs83vWyfYIbELvu/3dQ3lvWF94JsyIrJQFG1z30gGa3212L/neZ7iA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fWrfH4LK; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FcEL1bmO1UcL2fj8S/pd+T8y+wocj4zjI1UZe+Ju31Q=; b=fWrfH4LKiJ+CJ19HhMyNZMuNnz
+	DBrtdUJzRxPEkqkJi093DUYQKlkIj8fhxsegyVEXdKVl5jhTL8A7kkaUtIrY6rV/WVp8cB8zhUyoX
+	JmOenxsy6zsETUYFKZLjAXyaNZUO6kVrD3847z+iWUuqrnUias2QbbixT8isZMppY3EToV1XCi8Tt
+	rFnEomVXgrALeqbDjdcrNekAqP/qfBR3RU4XX+bnVSpny/84agiVZ5DKn3z8H50dCoICQJy97HQYZ
+	mt19ab71rpaU59ZREi1M8gK/HIfNyE441ikKOPmuMrBGSS0L/or4ZEQkNyRE6Z7a4szg8szEAc+6/
+	NVZ3Wi0g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxDcu-00000001Bce-39zG;
+	Sat, 05 Oct 2024 22:51:52 +0000
+Date: Sat, 5 Oct 2024 23:51:52 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH RFC 0/4] fs: port files to rcuref_long_t
+Message-ID: <20241005225152.GC4017910@ZenIV>
+References: <20241005-brauner-file-rcuref-v1-0-725d5e713c86@kernel.org>
+ <CAHk-=wj7=Ynmk9+Fm860NqHu5q119AiN4YNXNJPt=6Q=Y=w3HA@mail.gmail.com>
+ <20241005220100.GA4017910@ZenIV>
+ <CAHk-=whAwEqFKXjvYpnsq42JbE1GFoDR5LnmjjK_cOF4+nAhtg@mail.gmail.com>
+ <20241005222836.GB4017910@ZenIV>
+ <CAHk-=wgKmjuc8T_9mc7hWpBp1m_E+wkri-jFAD67AqkHZQjWPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241002234444.398367-8-andrealmeid@igalia.com>
+In-Reply-To: <CAHk-=wgKmjuc8T_9mc7hWpBp1m_E+wkri-jFAD67AqkHZQjWPQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi André,
+On Sat, Oct 05, 2024 at 03:43:16PM -0700, Linus Torvalds wrote:
 
-kernel test robot noticed the following build warnings:
+> Come on - the only possible reason for two billion files is a bad
+> user. Do we care what error return an attacker gets? No. We're not
+> talking about breaking existing programs.
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on akpm-mm/mm-everything tytso-ext4/dev linus/master v6.12-rc1 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Umm...  It can be a bad failure mode of a buggy program, really
+unpleasant to debug if the pile of references kept growing on stdin
+of that sucker, which just happens to be controlling tty of your
+login session; fork(2) starting to fail for everything that has it
+opened is not fun.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/libfs-Create-the-helper-function-generic_ci_validate_strict_name/20241003-074711
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20241002234444.398367-8-andrealmeid%40igalia.com
-patch subject: [PATCH v5 07/10] tmpfs: Add casefold lookup support
-config: arm-randconfig-001-20241006 (https://download.01.org/0day-ci/archive/20241006/202410060658.4QOeUy1M-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410060658.4QOeUy1M-lkp@intel.com/reproduce)
+That's really nit-picking though, since
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410060658.4QOeUy1M-lkp@intel.com/
+> So I don't think that's actually the important thing here. If we keep
+> it a 'long', I won't lose any sleep over it.
 
-All warnings (new ones prefixed by >>):
+... exactly.
 
->> mm/shmem.c:4717:39: warning: 'shmem_ci_dentry_ops' defined but not used [-Wunused-const-variable=]
-    4717 | static const struct dentry_operations shmem_ci_dentry_ops = {
-         |                                       ^~~~~~~~~~~~~~~~~~~
+> But using the rcuref code doesn't work (regardless of whether 32-bit
+> or 'long' ref), because of the memory ordering issues.
 
-
-vim +/shmem_ci_dentry_ops +4717 mm/shmem.c
-
-  4715	
-  4716	#if IS_ENABLED(CONFIG_UNICODE)
-> 4717	static const struct dentry_operations shmem_ci_dentry_ops = {
-  4718		.d_hash = generic_ci_d_hash,
-  4719		.d_compare = generic_ci_d_compare,
-  4720		.d_delete = always_delete_dentry,
-  4721	};
-  4722	#endif
-  4723	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+*nod*
 
