@@ -1,93 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-31055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5731D991636
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 12:51:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE9199167D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 13:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0719D1F2306B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 10:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 376A61F2303B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 11:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E1E142E6F;
-	Sat,  5 Oct 2024 10:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA2A14D2BB;
+	Sat,  5 Oct 2024 11:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B5AYUQjr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818211E492
-	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 10:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F46914C5AA
+	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 11:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728125463; cv=none; b=EYe/nJ+aSLMSYUU/BWAsFmWw9RXJ1hNCrrNNFxH1zZTnOs7JhSVidMEmp+9bF4XwNm2fdeOe6IDMP1BzF4WrB0IYvm7ppHN5Xum9RcQsTJydsltwI3UNf22mrr6AIo0LlhgrwUBWU+kgRPq8KumIap44rIJHmxz41IAXttJLQhU=
+	t=1728127797; cv=none; b=pUQzMRxGTTJj4TgL5DsAlH+q+dP01BCmJCRPUmMny0ibKNHXRyQ0C+QzfnLif/8XH0cogyh8HlS393TBWtOb1haPh1WW/fmhDkJ4TSLEJfvvlXC/a7LI3rG4dA9AUvHnvxibCsYfx1veKJj/gbAjjDc1kVPizhh3ZsxGhncbnuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728125463; c=relaxed/simple;
-	bh=NxyU9nUCsSgkON5O2lxEwFubpms7qTUo9JLUnCO7ii8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CRTQ2Q3TWPmqCkHk/IV8kxai5fmCXkPiGefoO+WGLShpt3CPvdltBM65HEpqTBllUhPUvq2R4crNXJfpjBVtq1veLS22OQP0LxFt0l1ryJAcc0s3uzM5/iFjRTjTei+yFQuJAxEUPxnIZhxZ4Fba9A2ko7j4B9p7tVeFBrzjsGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-832160abde4so327812939f.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Oct 2024 03:51:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728125461; x=1728730261;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=anhF7OilqNw/V1vwJD6fWlrrfYeQAh4r7ZAbYmfGYJc=;
-        b=uG/yYVeW15yxdjj+rZo7NckmtPaL30OnNHJd53lmkgvVIHaL+aX1e5lu5eWJLkBYqO
-         TbNwb1ZnMW+FLNPS2E5cFsqYum1fj5GeUdeTIpVYOA44aqLVIISZZjsIDUTJJ19SoS2S
-         VeXFF+uJ5X3rywOmxcXU4LUX+vB3/dJJib/oJeTIO2KTxiMGwLDMRzZ3mtxGvLl+QaIs
-         8ub/hhnlMCaS3c1rUgZzOaE2wO/Tta2hWmGUVh4VnUx195eNxr58ideTQiBYbZjzz55y
-         jcrQv7ih/RGCib7LkiAsFNcHUw+sOBx07nnADHojnoeJK5lIdbof2SCvsLsw9CUGyAkk
-         7nig==
-X-Forwarded-Encrypted: i=1; AJvYcCXrHJiQwuNwZkzd/GpCjEcAxc87tCdN3/6VbAUj3o23WJ0BWWXaoanBC8r5XAbtPHgvMO8Kx0bVxWhq4NMe@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxz5DgJ6SvC5rx69EVlgqRC7LMHeT03owyPI8sj1adTbNE56Eu
-	UHaagbUOr7ChIoA1IINUXWRc05vhxIwi06Mvz5ynCHwfWgzlxDz5QTmEZSk6WT/vDs9CI8Cq7CG
-	loIQySV5Yvwva3e2x6lSTuR26Kr3QQQmswCS4IgFREXekBXYUwq6ahRc=
-X-Google-Smtp-Source: AGHT+IEvijPTYF13ZC+76LQBGvEA4RUUT6MHwfmVXAKfc9yueA8V0SRkS1R1pPXSwhWZkKMfvDI9Dpz7hoeUCmXDZd8Of01pwfEX
+	s=arc-20240116; t=1728127797; c=relaxed/simple;
+	bh=H3gJOBEhKV3hH0xXZ0LSqXKayhs6Juf9evTT1CuS0TI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRRceYkcbOu/Kwhu2wLpnyjB9cSESJDWxiX+Rfroq7oz2Cf7pHYOka7wC3WGly1BO2kVo8tBQS8vJdeJasSagX+j1W0gS56AqaSPYQ9bp4hXMI39TfvZ5bOfHh4rMdgGirQYVSD6T/yAJaDaOhJg08qksNzl0YM/u6wPjjHTYM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B5AYUQjr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728127794;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RHETXvLrrh4dL5doL/kbVtAAMHPfV8QYEzlH6ARMCNA=;
+	b=B5AYUQjrjWOKRHmwqzPwKBHPdiOIysN0pkCc3yb3ssPILRDW9B+Ke8qZ4NxToxWz1arpVd
+	42D8hxDnSQWoGwr1r2QrtethrkoaTVE3G68ooUKvQ0hS61lYvVBdlaeW78/TO6R2rCnJcX
+	P8f1qb6pi0MXdS1e/c4vLtu2wwGaTiA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-wKFeT59nPXOrT7M57q9Czg-1; Sat,
+ 05 Oct 2024 07:29:49 -0400
+X-MC-Unique: wKFeT59nPXOrT7M57q9Czg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 27B9A1954AE4;
+	Sat,  5 Oct 2024 11:29:47 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.51])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2E82B3000198;
+	Sat,  5 Oct 2024 11:29:43 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat,  5 Oct 2024 13:29:33 +0200 (CEST)
+Date: Sat, 5 Oct 2024 13:29:29 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Luca Boccassi <luca.boccassi@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
+	paul@paul-moore.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241005112929.GA24386@redhat.com>
+References: <20241002142516.110567-1-luca.boccassi@gmail.com>
+ <20241004-signal-erfolg-c76d6fdeee1c@brauner>
+ <CAMw=ZnRt3Zvmf9Nt0sDHGPUn06HP3NE3at=x+infO=Ms4gYDGA@mail.gmail.com>
+ <20241004192958.GA28441@redhat.com>
+ <CAMw=ZnRp5N6tU=4T5VTbk-jx58fFUM=1YdkWc2MsmrDqkO2BZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219d:b0:3a2:762b:faf0 with SMTP id
- e9e14a558f8ab-3a375ce0f15mr41351735ab.11.1728125461684; Sat, 05 Oct 2024
- 03:51:01 -0700 (PDT)
-Date: Sat, 05 Oct 2024 03:51:01 -0700
-In-Reply-To: <6700d799.050a0220.49194.04b3.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67011a15.050a0220.49194.04bc.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] general protection fault in hfs_mdb_commit
-From: syzbot <syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sandeen@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMw=ZnRp5N6tU=4T5VTbk-jx58fFUM=1YdkWc2MsmrDqkO2BZA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-syzbot has bisected this issue to:
+On 10/04, Luca Boccassi wrote:
+>
+> On Fri, 4 Oct 2024 at 20:30, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > I guess Christian meant you should simply use
+> >
+> >                 info.pid = task_pid_vnr(task);
+> >
+> > task_pid_vnr(task) returns the task's pid in the caller's namespace.
+>
+> Ah I see, I didn't realize there was a difference, sent v3 with the
+> suggested change just now, thanks.
 
-commit c87d1f1aa91c2e54234672c728e0e117d2bff756
-Author: Eric Sandeen <sandeen@redhat.com>
-Date:   Mon Sep 16 17:26:21 2024 +0000
+I didn't get v3, I guess I wasn't cc'ed again.
 
-    hfs: convert hfs to use the new mount api
+So, just in case, let me add that task_pid_vnr(task) can return 0 if
+this task exits after get_pid_task().
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17b2bbd0580000
-start commit:   c02d24a5af66 Add linux-next specific files for 20241003
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1472bbd0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1072bbd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5cfa9ffce7cc5744fe24
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114be307980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bef527980000
+Perhaps this is fine, I do not know. But perhaps you should actually
+use pid_vnr(pid).
 
-Reported-by: syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com
-Fixes: c87d1f1aa91c ("hfs: convert hfs to use the new mount api")
+Oleg.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
