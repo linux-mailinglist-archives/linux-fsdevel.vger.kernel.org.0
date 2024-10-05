@@ -1,56 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-31074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1084E991983
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 20:31:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B540C991993
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 20:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC35282A8A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 18:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23DA1B21499
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 18:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC3D15B0F4;
-	Sat,  5 Oct 2024 18:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D7715D5DA;
+	Sat,  5 Oct 2024 18:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="U7e68Nga"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P3NpJU6Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85C7231C81
-	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 18:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631BC15854F
+	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 18:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728153073; cv=none; b=M7rWjSU47jEWv+6moU82Zd5kK3cGJbmtiU+o6pOpke61QRJ/APThnetcmfFGVfYe3HzK0HFeLRKR41iSUXADAx24UGaFCc/3GrA582lpkdtwWC5vKPn9bkxHkmHAHR5xIguU2NMcKxierzqiakO6edZx3cWDOdo7ySk30WN9fXg=
+	t=1728153326; cv=none; b=I2gIFuRQrgof3vY8C7zIf4vr4HrBlQWYz3/xVdn0MRgvw8FcwGOCYfGM6IK7qABHC0TiTO19Ymjb+JG/X0J4SOe8U9A83gd0lEm5l8Tr3UcK25if6JRjLiLW+Sy3zjUnguj9zIUmsLWBcVimaDbYl/W/7qmczwM69pAWt4WuJkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728153073; c=relaxed/simple;
-	bh=xCuTxDcJUCt4XYfuX1LTUca68MozuZNyVUIU63Kwu+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fz1pJHCLil6N3obF7n7Vr06dEDIFf2omUBXUVvHpcuBNUkrcCUvqHyBvX79JBlkWw6k8TFpYSeh8NXfXs2IAaCaNfuJa1APtZ+tCJ2MzTFQbKRCrsb8cD8CCiFOTWpVi1wiMZR8iwZTWkcCn1xwOQC0PwJWFmkjU1OLucHbOSJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=U7e68Nga; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UK9HYobtWNw+nKyu9l7GQfPcWBkfTUofDZv1QUmuoss=; b=U7e68Nga+o4nD6qlaxJHmEb7ko
-	GcndVVM+yK4ojLmsiqWI1PogFH0aDXNvpsjjuQ7cWl8MTGc9Uc5kaXYwtKDrM7hi9lUewzIJYFCP6
-	tCIw9byXMdtWKpNm9o1rNwVgQZTwy5Qo0RHJuB+Tal3D6UxTF8mxBoFDJrHDdjvNPdh9dTwNiE+UU
-	YxnznWYLT/9CYjvDSZQJF4KfLAk0VsJwtaonvcW4ZQHbplF4HHmoLqTzweMn80P3rq2Uru9rmZpuo
-	y15gjvmrtQNvDKMQfKlpmk87I+WphbuG27GspCE9OlKDa5917AI4ZQxl/ykE8AYw0aWCSlScKSjfd
-	nrmEP1mg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sx9Ya-000000017S5-3UQF;
-	Sat, 05 Oct 2024 18:31:08 +0000
-Date: Sat, 5 Oct 2024 19:31:08 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] UFS: Final folio conversions
-Message-ID: <20241005183108.GX4017910@ZenIV>
-References: <20241005180214.3181728-1-willy@infradead.org>
+	s=arc-20240116; t=1728153326; c=relaxed/simple;
+	bh=lCw7vnpXDNzWRzBIGJZ41zjrjyexnOuB98d+jyGedFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LkrFBWkx06gFlvC8I1IWD89nrg7mPIvSJYNOL5xP8+tgERMOyRieSigeaErCSzvt0XVAlWXrEpiSrmOtlsrdbrWTvvd5qeeS0hHaN+cE6V7U5C/V1SShU6QrZooPpsdExRAGggM/25TWdHBjAwlH/Lk1Yf/OT/NfM95m2I+ly8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P3NpJU6Z; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 5 Oct 2024 14:35:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728153322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=AM7Qw3VEFLcUwcLSiVIWVKX76u7BUc/+Zwgd/c7iThE=;
+	b=P3NpJU6ZrZKZbyYAeE5f7UeFsOkC94I+Ui/Gbm2VLC5AfWpwzzs62ek+PIbF0Hm9mPznkP
+	0odq9ONjU+BWa14vIkwUfbdZpoyikVaggyuHtLwZsBxwOXHKk3hbAGIrqKJYpITWd7smz3
+	6KSIhpm0MKCDO/o7AbuNHpz/reet6Yw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.12-rc2
+Message-ID: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,31 +55,84 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241005180214.3181728-1-willy@infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Oct 05, 2024 at 07:02:03PM +0100, Matthew Wilcox (Oracle) wrote:
-> This is the last use of struct page I've been able to find in UFS.
-> All the hard work was done earlier; this is just passing in bh->b_folio
-> instead of bh->b_page.
-> 
-> Matthew Wilcox (Oracle) (5):
->   ufs: Convert ufs_inode_getblock() to take a folio
->   ufs: Convert ufs_extend_tail() to take a folio
->   ufs: Convert ufs_inode_getfrag() to take a folio
->   ufs: Pass a folio to ufs_new_fragments()
->   ufs: Convert ufs_change_blocknr() to take a folio
-> 
->  fs/ufs/balloc.c | 16 ++++++++--------
->  fs/ufs/inode.c  | 30 ++++++++++++++----------------
->  fs/ufs/ufs.h    |  8 ++++----
->  3 files changed, 26 insertions(+), 28 deletions(-)
+Several more filesystems repaired, thank you to the users who have been
+providing testing. The snapshots + unlinked fixes on top of this are
+posted here:
 
-Looks sane (for now - there's really interesting shite around the block
-relocation, hole filling, etc.); I've got a bunch of UFS patches and IMO
-it makes sense to keep it in the same branch.  Mine is in #work.ufs
-and there's pending work locally.
+https://lore.kernel.org/linux-bcachefs/20241005182955.1588763-1-kent.overstreet@linux.dev/T/#t
 
-I'll add yours to the mix and see if xfstests catch any problems there;
-will post tonight.
+The following changes since commit 2007d28ec0095c6db0a24fd8bb8fe280c65446cd:
+
+  bcachefs: rename version -> bversion for big endian builds (2024-09-29 23:55:52 -0400)
+
+are available in the Git repository at:
+
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-05
+
+for you to fetch changes up to 0f25eb4b60771f08fbcca878a8f7f88086d0c885:
+
+  bcachefs: Rework logged op error handling (2024-10-04 20:25:32 -0400)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.12-rc2
+
+A lot of little fixes, bigger ones include:
+
+- bcachefs's __wait_on_freeing_inode() was broken in rc1 due to vfs
+  changes, now fixed along with another lost wakeup
+- fragmentation LRU fixes; fsck now repairs successfully (this is the
+  data structure copygc uses); along with some nice simplification.
+- Rework logged op error handling, so that if logged op replay errors
+  (due to another filesystem error) we delete the logged op instead of
+  going into an infinite loop)
+- Various small filesystem connectivitity repair fixes
+
+The final part of this patch series, fixing snapshots + unlinked file
+handling, is now out on the list - I'm giving that part of the series
+more time for user testing.
+
+----------------------------------------------------------------
+Kent Overstreet (18):
+      bcachefs: Fix bad shift in bch2_read_flag_list()
+      bcachefs: Fix return type of dirent_points_to_inode_nowarn()
+      bcachefs: Fix bch2_inode_is_open() check
+      bcachefs: Fix trans_commit disk accounting revert
+      bcachefs: Add missing wakeup to bch2_inode_hash_remove()
+      bcachefs: Fix reattach_inode()
+      bcachefs: Create lost+found in correct snapshot
+      bcachefs: bkey errors are only AUTOFIX during read
+      bcachefs: Make sure we print error that causes fsck to bail out
+      bcachefs: Mark more errors AUTOFIX
+      bcachefs: minor lru fsck fixes
+      bcachefs: Kill alloc_v4.fragmentation_lru
+      bcachefs: Check for directories with no backpointers
+      bcachefs: Check for unlinked inodes with dirents
+      bcachefs: Check for unlinked, non-empty dirs in check_inode()
+      bcachefs: Kill snapshot arg to fsck_write_inode()
+      bcachefs: Add warn param to subvol_get_snapshot, peek_inode
+      bcachefs: Rework logged op error handling
+
+ fs/bcachefs/alloc_background.c        |  30 ++++--
+ fs/bcachefs/alloc_background_format.h |   2 +-
+ fs/bcachefs/btree_gc.c                |   3 -
+ fs/bcachefs/btree_trans_commit.c      |   3 +-
+ fs/bcachefs/error.c                   |  23 +++-
+ fs/bcachefs/error.h                   |   9 +-
+ fs/bcachefs/fs.c                      |  33 +++---
+ fs/bcachefs/fsck.c                    | 194 ++++++++++++++++++++++------------
+ fs/bcachefs/inode.c                   |  44 +++-----
+ fs/bcachefs/inode.h                   |  28 +++--
+ fs/bcachefs/io_misc.c                 |  63 +++++++----
+ fs/bcachefs/logged_ops.c              |  16 +--
+ fs/bcachefs/logged_ops.h              |   2 +-
+ fs/bcachefs/lru.c                     |  34 +++---
+ fs/bcachefs/move.c                    |   2 +-
+ fs/bcachefs/movinggc.c                |  12 ++-
+ fs/bcachefs/sb-errors_format.h        |  33 +++---
+ fs/bcachefs/subvolume.c               |  16 ++-
+ fs/bcachefs/subvolume.h               |   2 +
+ fs/bcachefs/util.c                    |   2 +-
+ 20 files changed, 342 insertions(+), 209 deletions(-)
 
