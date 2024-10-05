@@ -1,177 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-31051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869979914CC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 08:07:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6EB9914E4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 08:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91EE1C22009
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 06:07:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0C40B2103D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 06:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CC54D8CB;
-	Sat,  5 Oct 2024 06:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096DF487A5;
+	Sat,  5 Oct 2024 06:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fIpN79aF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4973F380
-	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 06:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E4F2F2A;
+	Sat,  5 Oct 2024 06:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728108443; cv=none; b=T6qd1K8iQ15EVbicWyPLWrdLPjjiuqCDeqWJIuevHna/T7cnBykP6WXZobACTsS1d/QVXVtkjDe5a9lrNcIDlY7Gi63XcD/eenj7qLHwqmN3rUWODJkM0021VD4dvsvqCsH1AwzZxXkfGLN8T5wTKQNFJPmdhqEBZOKIiKLf8cc=
+	t=1728109837; cv=none; b=AOp6bWPV3GclOA5MY+2Q3Mr46qCvOld4MiOIb2kWpGQVFRtVxabv3K5BXGnFLg2P6EjvjHkMAsgJtZFcNFyV96pq6uVZEH9Hb6p56WdEUq2Ocb7NNdXBdAbdgKD0rZNgcNyUrDzyzFlh/yW+jG2HUEEKf/6PGQjYyFZfzgAIcic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728108443; c=relaxed/simple;
-	bh=gONovUP7gKAFRYGOqQseh1xM+X2PLsk0KbDjNHYRmZU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PgSeFbrfmUS60bpFQLjEvcSozrvy6BVXDxJOxLX5xquhvenut8mPjYMkQntFcsA2QUNZboNiR5gWziz8Mnye2cvhxcRfI7eNotb5x0wX1ZCphVdpwr1tDw+ZtArPheSI6SL8vbkczyqCFs0KqG2+A319ilp6oaJ7I649//nBCxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0cadb1536so32128985ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Oct 2024 23:07:22 -0700 (PDT)
+	s=arc-20240116; t=1728109837; c=relaxed/simple;
+	bh=FMbKnl2kr9X9cITACii8Oc1oNYwReY/rvET9aX5mHvw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RbnfaX/ifkfyi3FRYJ1yZ3w55reBkY7RX8lnwfWAY7a4+49FxSSwar6pvAp7QCaCWZeoYDrUwL8j1CawDghbJiLAEQVotQlB291gp7Q0bsdcBEefc++0uKrfhAVLoEuCCyf8ezKcEwM/lrmpPiI2N4pF1ZAZK1ftsCibaEo0wkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fIpN79aF; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a99e4417c3so231052085a.1;
+        Fri, 04 Oct 2024 23:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728109835; x=1728714635; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r+fR6xuL4U1Qi/6NqDs4tODnhzqj9PCbnMbFBbj7vBU=;
+        b=fIpN79aFVXhVwQwvgNDpD7J8XlIbsdjrB5L400IRmY5/m/Z/68C8m1/ZmhZDkW8VrY
+         1JVx2mOD3rVpUZN1F01gSnnajZJ52w+CGpKyruqDXHILPEHjeweD05q8mrFRQml0Ng6t
+         3CNMh0Um+GuK6lsly++xeKGh127hTfQ+b9ZmVy7DeK3Vih7crwwnCq2jDSgAYF17CyyF
+         MtHVxH+AL36u2aFr0n89Co+dhEHQRqtywXAoaUFpXxHM1sFgD6AH+oyesZNhNGC9+iOX
+         ZqPItUfqh6yfCU67bIsBplA35R5yRzb4IyaQ7tRmRlBmTdn2zqeIjgr1gR4tLH+0AqCx
+         5EJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728108441; x=1728713241;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EFodhiVlq4+O7me1WVkauzyh9TXZODm22YdIvxpWN4Y=;
-        b=BL4Y1RXd/f36VCoR3VqwOqYTZPLTG06hg7pE3U3ColYDCIcUEmofC0SL44Zhrq3pLV
-         i88ANeGyckb3hxHYPV99XV3vGDkRgwQ9kIfSujkRkHmetDJ5akP9mFLkeLdEEFC9fbCy
-         YgB2p6iXeh/jPQqS8yxEGYyAZNRLfcsp2B7z7yAuHhdsDniqFJs5U6oxyog+zFnKIo0h
-         92KDXRTv8kQSFvTzPJo08Z/MseB/nvFzsDeQXVzHdQBguCC54Osj3BLcXKoPYd/FE0uk
-         vF4/zE2g9ZwoPhsc3SMiN2pTWJ3ExCTOkkZDS3ekgLF0+HNBsMtwwbzksAND9FopW4mQ
-         edNQ==
-X-Gm-Message-State: AOJu0YxDDGDoS0BDzDIX3G941iWJWbTxLJ9XujmsWrW2alhfnCU9Qosr
-	IxJYjSurONGKC+qjbTNcWms+ChpjFVYeKBWneMQFG4R4ZU1/xgEyWauQ6WGjntx8eP9NH1XeWpE
-	vV6jO9vzDWOvXTmoPkH6/Tj06GuLfVDKPP5WlyP3kWTvQZ0lAzNg+12s=
-X-Google-Smtp-Source: AGHT+IEWto7aa75v+J7jTZq/XV6o9wg1kCf5LxVcNd+r9xMQwnMzb9j2ssR4vqklZiXYA3cNrQwssHDGsBz4IuImngo4c3kwJ9y+
+        d=1e100.net; s=20230601; t=1728109835; x=1728714635;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r+fR6xuL4U1Qi/6NqDs4tODnhzqj9PCbnMbFBbj7vBU=;
+        b=CdfPIzw2QE5/ylOmY0cpY8nDgXfaEDHen2+oLFuYMv67BuV1k9q2pcFq1bemlbt8nM
+         f3KJgpDBxFS8lWe8iihotVA3G9THE90bAGIF6+FtYe9igZqk/y/ijM2JL6U6/jKlIxHz
+         Qf1YnrYSqCTiCqn1BXvEK+3xJYkUeEcHxUn7Q0Vk2rrKYnHsaHaHGcVBUjjxdDCf6x0Q
+         QE4WIlLvUVBaQ2YkhfwMtM8rW2OMKw1SgLh3P+U76vuZNey2yk3xHRKhdmOXWBHc5GfB
+         ekGHzBNNIDhvRtrvVY3P7Mm5Q0Qh5ofXCHUy1og1F8QlgeN2bYh8+S1cO7OT49FDSj5g
+         ngyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUx3Pp8cLszjcCD82o48VT6/FDXwE/GYEh8ROP7ZoM0cuioPDlP6xlh2nulFX2VWciqY3lqdNep4HGYLvK8@vger.kernel.org, AJvYcCWLtvg1N5HdhDfRuK0HZGJQ1GORVuSFOkDKxwnOBhwHc3XaXi+wxDWYsTmhxb4VHCZtBjwmjTh87PRILsEoug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKYM7WbkYi6KoO7sdF/cjmkcM9EmkZn7Ka6tzURjpdj0UuXocn
+	Um9JsLsZ/9pwP0QWAvEJWtoXClpm+5VCnAmKO5J2bB1mGPknGbT+XHzu4BiympsNb2e0q6UOQyq
+	Oc5VUqmV93UW3Z27KVCZs9ky2G21ZYzuhmJI=
+X-Google-Smtp-Source: AGHT+IHAIRsjhMIyJ/JqJ7hqKxTCEuFfB63lAhi3Vy+XWDx2j5Th58LM+U/ArGetMTImtJvdM6neBhEfLN6GYmlPr+M=
+X-Received: by 2002:a05:620a:4611:b0:7a9:bd5b:eb60 with SMTP id
+ af79cd13be357-7ae6f44cc8fmr767322085a.35.1728109834746; Fri, 04 Oct 2024
+ 23:30:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24f:0:b0:3a2:74f8:675d with SMTP id
- e9e14a558f8ab-3a375bd1be9mr58741775ab.20.1728108441388; Fri, 04 Oct 2024
- 23:07:21 -0700 (PDT)
-Date: Fri, 04 Oct 2024 23:07:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6700d799.050a0220.49194.04b3.GAE@google.com>
-Subject: [syzbot] [hfs?] general protection fault in hfs_mdb_commit
-From: syzbot <syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241004102342.179434-1-amir73il@gmail.com> <20241004102342.179434-2-amir73il@gmail.com>
+ <20241004221625.GR4017910@ZenIV> <20241004222811.GU4017910@ZenIV> <20241005013521.GV4017910@ZenIV>
+In-Reply-To: <20241005013521.GV4017910@ZenIV>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 5 Oct 2024 08:30:23 +0200
+Message-ID: <CAOQ4uxiqrHeBbF49C0OkoyQm=BqQjvUYEd7k8oinCMwCSOuP3w@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ovl: do not open non-data lower file for fsync
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Oct 5, 2024 at 3:35=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Fri, Oct 04, 2024 at 11:28:11PM +0100, Al Viro wrote:
+> > >         /*
+> > >          * Overlay file f_pos is the master copy that is preserved
+> > >          * through copy up and modified on read/write, but only real
+> > >          * fs knows how to SEEK_HOLE/SEEK_DATA and real fs may impose
+> > >          * limitations that are more strict than ->s_maxbytes for spe=
+cific
+> > >          * files, so we use the real file to perform seeks.
+> > >          */
+> > >         ovl_inode_lock(inode);
+> > >         fd_file(real)->f_pos =3D file->f_pos;
+> > > in ovl_llseek()?  Get ovl_real_fdget_meta() called by ovl_real_fdget(=
+) and
+> > > have it return 0 with NULL in fd_file(real), and you've got an oops r=
+ight
+> > > there, don't you?
+> >
+> > I see... so you rely upon that thing never happening when the last argu=
+ment of
+> > ovl_real_fdget_meta() is false, including the call from ovl_real_fdget(=
+).
+> >
 
-syzbot found the following issue on:
+Correct. I had considered renaming the argument to allow_empty_upper_meta
+but I don't think that will make the contract a lot better.
+The thing is that ovl_fsync() caller is really different in two
+different aspects:
+1. It wants only upper and therefore fd_empty() is a possible outcome
+2. It (may) want the metadata inode (when data is still in lower inode)
 
-HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=111f2b9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5cfa9ffce7cc5744fe24
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114be307980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bef527980000
+Overlayfs can have up to 3 different inodes in the stack for a regular file=
+:
+lower_data+lower_metadata+upper_metdata
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d12a33e3e104/mount_0.gz
+There is currently no file operation that requires opening the lower_metada=
+ta
+inode and therefore, staching one backing file in ->private_data and anothe=
+r
+optional backing file chained from the first one is enough.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com
+If there is ever a file operation that needs to open a realfile from
+lower_metadata (only ioctl comes to mind), we may need to reevaluate.
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc00000000c7: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000638-0x000000000000063f]
-CPU: 1 UID: 0 PID: 116 Comm: kworker/1:2 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events_long flush_mdb
-RIP: 0010:hfs_mdb_commit+0x37/0xfd0 fs/hfs/mdb.c:266
-Code: 53 48 83 ec 48 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 dc 45 0a ff 48 89 5c 24 08 4c 8d a3 38 06 00 00 4c 89 e3 48 c1 eb 03 <42> 80 3c 2b 00 74 08 4c 89 e7 e8 0a 2b 74 ff 4d 8b 34 24 49 8d 6e
-RSP: 0018:ffffc90002d0fb40 EFLAGS: 00010202
-RAX: ffffffff828a89e4 RBX: 00000000000000c7 RCX: ffff88801ef68000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: ffffc90002d0fdc0 R08: ffff88802e32d1eb R09: 1ffff11005c65a3d
-R10: dffffc0000000000 R11: ffffed1005c65a3e R12: 0000000000000638
-R13: dffffc0000000000 R14: 0000000000000001 R15: 0000000001800000
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055fc5eb2fb50 CR3: 00000000786e8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hfs_mdb_commit+0x37/0xfd0 fs/hfs/mdb.c:266
-Code: 53 48 83 ec 48 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 dc 45 0a ff 48 89 5c 24 08 4c 8d a3 38 06 00 00 4c 89 e3 48 c1 eb 03 <42> 80 3c 2b 00 74 08 4c 89 e7 e8 0a 2b 74 ff 4d 8b 34 24 49 8d 6e
-RSP: 0018:ffffc90002d0fb40 EFLAGS: 00010202
-RAX: ffffffff828a89e4 RBX: 00000000000000c7 RCX: ffff88801ef68000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: ffffc90002d0fdc0 R08: ffff88802e32d1eb R09: 1ffff11005c65a3d
-R10: dffffc0000000000 R11: ffffed1005c65a3e R12: 0000000000000638
-R13: dffffc0000000000 R14: 0000000000000001 R15: 0000000001800000
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055fc5eb2fb50 CR3: 00000000786e8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	53                   	push   %rbx
-   1:	48 83 ec 48          	sub    $0x48,%rsp
-   5:	48 89 fb             	mov    %rdi,%rbx
-   8:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
-   f:	fc ff df
-  12:	e8 dc 45 0a ff       	call   0xff0a45f3
-  17:	48 89 5c 24 08       	mov    %rbx,0x8(%rsp)
-  1c:	4c 8d a3 38 06 00 00 	lea    0x638(%rbx),%r12
-  23:	4c 89 e3             	mov    %r12,%rbx
-  26:	48 c1 eb 03          	shr    $0x3,%rbx
-* 2a:	42 80 3c 2b 00       	cmpb   $0x0,(%rbx,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	4c 89 e7             	mov    %r12,%rdi
-  34:	e8 0a 2b 74 ff       	call   0xff742b43
-  39:	4d 8b 34 24          	mov    (%r12),%r14
-  3d:	49                   	rex.WB
-  3e:	8d                   	.byte 0x8d
-  3f:	6e                   	outsb  %ds:(%rsi),(%dx)
+> > I still don't like the calling conventions, TBH.  Let me think a bit...
+>
 
+I understand your concern, but honestly, I am not sure that returning
+struct fderr is fundamentally different from checking IS_ERR_OR_NULL.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+What I can do is refactor the helpers differently so that ovl_fsync() will
+call ovl_file_upper() to clarify that it may return NULL, just like
+ovl_{dentry,inode,path}_upper() and all the other callers will
+call ovl_file_real() which cannot return NULL, because it returns
+either lower or upper file, just like ovl_{inode,path}_real{,data}().
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> Sorry, I'm afraid I'll have to leave that until tomorrow - over 38C after=
+ the sodding
+> shingles shot really screws the ability to dig through the code ;-/  My a=
+pologies...
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Ouch! feel well soon.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Amir.
 
