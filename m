@@ -1,113 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-31094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8635E991B50
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 01:15:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B31991B6F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 01:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72B7B1C20FB0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 23:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A7D2832A3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 23:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15C6166F1B;
-	Sat,  5 Oct 2024 23:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2098170A3F;
+	Sat,  5 Oct 2024 23:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HCB74KiO"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IBDTV5eJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD1013635B
-	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 23:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615C1146589
+	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 23:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728170151; cv=none; b=IpfqZUcWYteIlZSPlGhOM2lewLCRH4EimggPpezAVOU5UC3YE6AKQHDSD8u/FdQewYUjjR93i+hUjqScW3LRToLwgiJ3gEanVK6aXc8Na/yUHPMqB0sePTuS2vHMwuz8ku9DaUODK13tjsKszyj75r3OdeiP0CqgLf1tfXn7QrI=
+	t=1728171669; cv=none; b=ecJYzZ6WyVhyJ2wPgenMIm2vB3aXfbx9MmcKgfg5OIoASjsBFgmlJQeyV00ugZ3E21UDMirZ0LZub3COwRk7z/cNU0hGKndwUexSI9zFQpzOQMuw9tXxWyzJ2rD7BGN46c3fnix5TUnlESmd5J8AB0ZVsGbliKWjG1HP/JXCHgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728170151; c=relaxed/simple;
-	bh=cW9voHQW5KDncJFUKsCyNd2iDsh+IZlwySB2TQy6Ai0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q5OHbabCa5LmS6NQGsPtYNK5P7J+lufSirdcmByngmyvJJXKOzDlD11tW7/juhB5pPhsrr/WztQqzGhCfiY0fmqRxgP/ShMe32xyWVuo7zgtPoUegTZ90zmmKjDKCbxYO6BzmroWV6XTP4+VyBXYK/MCjGnH2f8EGEkVM5YIR3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HCB74KiO; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99388e3009so113695166b.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Oct 2024 16:15:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728170143; x=1728774943; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NhjXXWdst9jlpC/rp/tuj7IYcehyrssGedcgZn1fDGA=;
-        b=HCB74KiOlOXbwVgbfHW3HiM97rDyqY4uyQo12cHrbZKl+yVYI72HBgbohAjA4whTgF
-         hOpppC47NQmwyDkzEKSViECyXvgs4c9eWE/lmilPh4u1AnBmq0rD3rm6kV6d0JzYyFJW
-         SAjKIMSCH7ca0wSmsRPqOW1+E8iu1Mxy8Tmd4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728170143; x=1728774943;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NhjXXWdst9jlpC/rp/tuj7IYcehyrssGedcgZn1fDGA=;
-        b=AU37+PsU/ItY9fDSF+KgnNHqGs6fMuWybuIGYcWLxnL9dcwuSQRdlprCkhlgUeH4Va
-         tUPWA2JLCNxr6iuEo5TNcArBViFxa2w7P0Jfngsp91MWELBfGhOn15I8G0E1xoMAiBps
-         9c4x/NmesRTPxFzZEubKhTcGceoNayYU2ARamdPo2GZIu/Y7bk6MjQU0/P+NLym3ATPV
-         ytJUV0xwx2CuvExvLOSsNea3qsUkRXEBFI5JjUaQmPbSwCmwhKgkj76RtIUpPkcjp7hW
-         h97YSemkXoTeYim8Dp6LFF8hi0CXEL26OX3Pgi22QBB3ufRx5Wfh0egZw8gScsQPk+gV
-         kW3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUyVEhMZVPC/ftE2Anq/zE3RbNpucsJltqDFwz9h9J89iN7cac2LFcy93r+h+MvUhwq03Qn82O41EGSlRpI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxaij8r7vt6A/J/2XN6K2Rbu0AIGTFNix4tGchPeJFmQCjDoO36
-	0/zGj5olSwpUt4AvCznxzdI3kYrHLl3bHdzt4LqjwjcAakCqIkheniN0w6snLTWn8dHFdmkSbsS
-	SJ9mxJA==
-X-Google-Smtp-Source: AGHT+IGUCWpvRuYliSSa4N+lKhnLrtvSjwh568rNI7bvBeDziPtLTl0vkwidumZKOGxUWpWwWkNawA==
-X-Received: by 2002:a17:907:8004:b0:a99:3729:f6e0 with SMTP id a640c23a62f3a-a993729f93dmr228241166b.14.1728170143475;
-        Sat, 05 Oct 2024 16:15:43 -0700 (PDT)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99305901b2sm179633566b.71.2024.10.05.16.15.42
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 16:15:42 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99388e3009so113693266b.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Oct 2024 16:15:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPyJ+RFKkft5IJXHnBoJPZZ/YnmRcpsc2tpM8niVWEz2lGMujORonQw5quqqFBdukV085g8qbYokIxEjR7@vger.kernel.org
-X-Received: by 2002:a17:907:3e22:b0:a8c:d6a3:d025 with SMTP id
- a640c23a62f3a-a991bd6ae43mr732521166b.32.1728170142480; Sat, 05 Oct 2024
- 16:15:42 -0700 (PDT)
+	s=arc-20240116; t=1728171669; c=relaxed/simple;
+	bh=HRFm4/t2t9NRoBAlYcqFtrp/N0q2veNV8kygHa6Kfro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UuCsSaDZJEgYEiIfECtEGHPJNP1gyFzOaQMVhB83mLQ6IfEuGKoYwk99Ncpo8J3jdSHOPqLkdtFCacxDYQMLU3PRN75tR5DPKA0A8WI25flrFiMqAoGjB5i0MPNyheImvr0SV8Hwd+DT9Z0f0hbFEIQPVhEq8JTKMUziWebs+fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IBDTV5eJ; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 5 Oct 2024 19:40:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728171663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N94jXO8rXgw/sYZ7EbL/8D5WR9t7A3fqzLTeq3yNnDY=;
+	b=IBDTV5eJfSgYxkLZAkwuZbh9fg6OzYQ0A3NV3bSva58ItNuu82TqgC3Nj2WSu5cNYdoDqF
+	FQ8S52wfBumnVVVHqBw36dk77TDAuTa7X9K3OS6Bi1aWBXy1Wwyz0pllYZdZsDkHke+qZF
+	M0mOKxLhjnEaEPnVi1v6gwdL7JHIct4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+Message-ID: <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com> <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
-In-Reply-To: <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 5 Oct 2024 16:15:25 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
-Message-ID: <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, 5 Oct 2024 at 15:54, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> The vast majority of those fixes are all ~2 weeks old.
+On Sat, Oct 05, 2024 at 04:15:25PM GMT, Linus Torvalds wrote:
+> On Sat, 5 Oct 2024 at 15:54, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > The vast majority of those fixes are all ~2 weeks old.
+> 
+> With the patches not appearing on the list, that seems entirely irrelevant.
+> 
+> Apparently they are 2 weeks on IN YOUR TREE.
+> 
+> And absolutely nowhere else.
 
-With the patches not appearing on the list, that seems entirely irrelevant.
+If what you want is patches appearing on the list, I'm not unwilling to
+make that change.
 
-Apparently they are 2 weeks on IN YOUR TREE.
+I take issue, and indeed even dig my heels in, when the only people
+asking for that are _only_ yelling about that and aren't involved
+otherwise.
 
-And absolutely nowhere else.
+But you will find that if you talk to me as one human being to another,
+where we can share and listen to each other's concerns, I'm more than
+happy to be reasonable.
 
-> Let that sink in.
+But I'm not going to just toe the line when it's just yelling.
 
 Seriously.
 
-You completely dodged my actual argument, except for pointing at how
-we didn't have process two decades ago.
+Because the last time you flipped out over a pull request, I spent the
+rest of the cycle telling people "x y and z are fixed, but you'll have
+to build my tree instead of running a released kernel". And that gets
+tiresome; some of the bugs were significant - and no issues to date have
+been found in the stuff you kicked back, which tells me my process is
+just fine.
 
-If you can't actually even face this, what's the point any more?
+So let _that_ sink in. In order to support my userbase, as well as
+iterate to find the _next_ set of bugs, I have to be able to ship
+bugfixes in a timely manner, and if that's going to keep being an issue
+perhaps I should be having those conversations with distro kernel
+maintainers now, instead of later.
 
-               Linus
+> > Let that sink in.
+> 
+> Seriously.
+> 
+> You completely dodged my actual argument, except for pointing at how
+> we didn't have process two decades ago.
+> 
+> If you can't actually even face this, what's the point any more?
+
+Face _what_ exactly? Because at this point, I can't even tell what it is
+you want, what you're reacting to keeps shifting.
 
