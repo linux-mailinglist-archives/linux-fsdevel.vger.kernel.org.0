@@ -1,109 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-31056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE9199167D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 13:30:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E809916CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 14:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 376A61F2303B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 11:30:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 566E6284493
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 12:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA2A14D2BB;
-	Sat,  5 Oct 2024 11:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B2E14AD19;
+	Sat,  5 Oct 2024 12:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B5AYUQjr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZkNRFmm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F46914C5AA
-	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 11:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19432231C81;
+	Sat,  5 Oct 2024 12:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728127797; cv=none; b=pUQzMRxGTTJj4TgL5DsAlH+q+dP01BCmJCRPUmMny0ibKNHXRyQ0C+QzfnLif/8XH0cogyh8HlS393TBWtOb1haPh1WW/fmhDkJ4TSLEJfvvlXC/a7LI3rG4dA9AUvHnvxibCsYfx1veKJj/gbAjjDc1kVPizhh3ZsxGhncbnuA=
+	t=1728131866; cv=none; b=lBxWoMW0HnzKH3GorxrstCwED1cRjnWBDrrmpB5wZ571Ol97KevE90q05pNP+VAEbVfVOpyxl8aVaM1oYuNYTOLImgtwZL5oOxMCK+dWgaWVrj4i9cAPA+jNn8BGQe7ogqkvpgQ/IkG+n3BmnknuKo27Xhxgz8AdDSM2dBQfoXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728127797; c=relaxed/simple;
-	bh=H3gJOBEhKV3hH0xXZ0LSqXKayhs6Juf9evTT1CuS0TI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRRceYkcbOu/Kwhu2wLpnyjB9cSESJDWxiX+Rfroq7oz2Cf7pHYOka7wC3WGly1BO2kVo8tBQS8vJdeJasSagX+j1W0gS56AqaSPYQ9bp4hXMI39TfvZ5bOfHh4rMdgGirQYVSD6T/yAJaDaOhJg08qksNzl0YM/u6wPjjHTYM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B5AYUQjr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728127794;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RHETXvLrrh4dL5doL/kbVtAAMHPfV8QYEzlH6ARMCNA=;
-	b=B5AYUQjrjWOKRHmwqzPwKBHPdiOIysN0pkCc3yb3ssPILRDW9B+Ke8qZ4NxToxWz1arpVd
-	42D8hxDnSQWoGwr1r2QrtethrkoaTVE3G68ooUKvQ0hS61lYvVBdlaeW78/TO6R2rCnJcX
-	P8f1qb6pi0MXdS1e/c4vLtu2wwGaTiA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-wKFeT59nPXOrT7M57q9Czg-1; Sat,
- 05 Oct 2024 07:29:49 -0400
-X-MC-Unique: wKFeT59nPXOrT7M57q9Czg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 27B9A1954AE4;
-	Sat,  5 Oct 2024 11:29:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.51])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2E82B3000198;
-	Sat,  5 Oct 2024 11:29:43 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sat,  5 Oct 2024 13:29:33 +0200 (CEST)
-Date: Sat, 5 Oct 2024 13:29:29 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Luca Boccassi <luca.boccassi@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
-	paul@paul-moore.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-Message-ID: <20241005112929.GA24386@redhat.com>
-References: <20241002142516.110567-1-luca.boccassi@gmail.com>
- <20241004-signal-erfolg-c76d6fdeee1c@brauner>
- <CAMw=ZnRt3Zvmf9Nt0sDHGPUn06HP3NE3at=x+infO=Ms4gYDGA@mail.gmail.com>
- <20241004192958.GA28441@redhat.com>
- <CAMw=ZnRp5N6tU=4T5VTbk-jx58fFUM=1YdkWc2MsmrDqkO2BZA@mail.gmail.com>
+	s=arc-20240116; t=1728131866; c=relaxed/simple;
+	bh=DdH/9gsVIPkzeKKhSXiZMTjh5aWjDgeaP9nuwKM6B0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cfjtTjIfrSmrWuEjru5ig+hlY78DjoIxMUV45jS4MEqj6yXbMxLF5IgkVTnHseZviofSeRTPbBbpxlbsPdQF5XMjc9Vg1zTWCJG6ZfVMfIJlwC9HCwVgwaL1JI5rbO4moqICIK3PLKMijT32Wp9RoDArNNO+6kYXeeTbtgYcu/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aZkNRFmm; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a99e8d5df1so299036585a.2;
+        Sat, 05 Oct 2024 05:37:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728131859; x=1728736659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8oedNx2JEWYoenACq4QBgxY9clB8bBuK49x1vd3Sjkk=;
+        b=aZkNRFmmo4QQPDzQTct5QkdOIg1326YgsQt6+QPs6p8ZEn+zoQppNovHO8efZPFknK
+         B3NkWuNrRdFZaCsny27AvtXEGQmGT2uUbrm1fe2OgFRacodNnQw6FJFlLjKVMtQCRqX4
+         1L7+q5e8ZWspNIRm8pdYeAGQYCS/k38TRPT5ZPKF0p83QXBWrxoKNy5jvkE+1qgzNueg
+         9x7tkh2ZRUWCqYIxCkJZJfqO5ME4YF2a0tkDYFAyCX+tNo3ROtsQnyoCHUgQXVpVEUlJ
+         91fK50d92debZ+7nxC12T7cgtQ4RqAsErGFucAkAKNKd8Nq5eoTjjdZKfu66aHoYnzKb
+         nvDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728131859; x=1728736659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8oedNx2JEWYoenACq4QBgxY9clB8bBuK49x1vd3Sjkk=;
+        b=bTiIHL6a8KNPI+bcUKe3kfUSt0sz4V1BMWjaSfPxF4Avs6XJaRPHoujwsJjSqodyW8
+         8kGIrczKBZj5nHjUQHcekg7BxhxNOqj3Y3q2f0PxRX5w7FvHWwECiqYcvmOj3lUGm6JG
+         LJQeN0kAnGUD+oE+igT8U6HPQbps3nhRqZRFTFDwkn+lm/9QbtAY5DHz0KeK9vH9IvN5
+         3IjiyOnmn/wnWLu2uOOt7Zt5Z01fSPglsswCi8dkEgbXVOkZ6pxYMmDr+OEIksMEc3p9
+         J05Nmn4qhXqSipT75OvCjJq1aJ2zbiekXmG8wMdbMbgTjgiJ/y4OBE9sidawyQM+byeS
+         +ppg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6dcN1T+yfgKL6dDTR6VOACPwSX9JocOrdwX9oL+GDD2QXSVh2Mtv+te4vCgkAsiwbeD3w4gNKI1VWySmi/g==@vger.kernel.org, AJvYcCW/xBwpFUEsaAdR/Xm0umW4uFIWLd3ooD3f4Nbgd1YuOV1MChdz+gIrFEVrpXcGcPPC14QYqHD4i9jmiVLf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjRAxLf2TN1eZd1NHmrmGCI66DlLfAqmevLzoEMaSsmYBU+DwS
+	GISfTRMe88/uladVlyrKfC1rCcCReuPBGqpmU3dn16Su1VuDP/FnwJNOJVsJmw/YLgNKEbES+8i
+	RQ77RZ0uEiHi31mUiqeLLCk9GDy4=
+X-Google-Smtp-Source: AGHT+IExRW9JSMn8URNChlDGtgL2trbbqxgOpYx3w8YC6fpPWCQVCxXZdMHV3DY3worWDWlSbFOSag9Xb3hN5o3CegM=
+X-Received: by 2002:a05:620a:c4a:b0:7a9:c203:7c10 with SMTP id
+ af79cd13be357-7ae6f421dd8mr957821785a.7.1728131858627; Sat, 05 Oct 2024
+ 05:37:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMw=ZnRp5N6tU=4T5VTbk-jx58fFUM=1YdkWc2MsmrDqkO2BZA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20241004102342.179434-1-amir73il@gmail.com> <20241004102342.179434-4-amir73il@gmail.com>
+ <20241004222323.GS4017910@ZenIV>
+In-Reply-To: <20241004222323.GS4017910@ZenIV>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 5 Oct 2024 14:37:27 +0200
+Message-ID: <CAOQ4uxi5vPmzcuL0YvPzWoqrNd9ARb09pJrmrcGF4YtE6NbM0Q@mail.gmail.com>
+Subject: Re: [PATCH 3/4] ovl: convert ovl_real_fdget_meta() callers to ovl_real_file_meta()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/04, Luca Boccassi wrote:
+On Sat, Oct 5, 2024 at 12:23=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
 >
-> On Fri, 4 Oct 2024 at 20:30, Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > I guess Christian meant you should simply use
-> >
-> >                 info.pid = task_pid_vnr(task);
-> >
-> > task_pid_vnr(task) returns the task's pid in the caller's namespace.
+> On Fri, Oct 04, 2024 at 12:23:41PM +0200, Amir Goldstein wrote:
 >
-> Ah I see, I didn't realize there was a difference, sent v3 with the
-> suggested change just now, thanks.
+> >       if (upper_meta) {
+> >               ovl_path_upper(dentry, &realpath);
+> >               if (!realpath.dentry)
+> > -                     return 0;
+> > +                     return NULL;
+> >       } else {
+> >               /* lazy lookup and verify of lowerdata */
+> >               err =3D ovl_verify_lowerdata(dentry);
+> >               if (err)
+> > -                     return err;
+> > +                     return ERR_PTR(err);
+>
+> Ugh...  That kind of calling conventions is generally a bad idea.
+>
+> > +     return realfile;
+>
+> ... especially since it's NULL/ERR_PTR()/pointer to object.
+>
+>
+> > +     realfile =3D ovl_real_file_meta(file, !datasync);
+> > +     if (IS_ERR_OR_NULL(realfile))
+> > +             return PTR_ERR(realfile);
+>
+> Please, don't.  IS_ERR_OR_NULL is bogus 9 times out of 10 (at least).
 
-I didn't get v3, I guess I wasn't cc'ed again.
+IDK, we have quite a few of these constants in ovl code and it's pretty
+clear and useful to my taste, but I am open to being corrected.
 
-So, just in case, let me add that task_pid_vnr(task) can return 0 if
-this task exits after get_pid_task().
+Anyway, I pushed a new version to
+https://github.com/amir73il/linux/commits/ovl_real_file-v2/
 
-Perhaps this is fine, I do not know. But perhaps you should actually
-use pid_vnr(pid).
+Where we have:
+- ovl_dir_real_file() and ovl_upper_file() can return NULL and their
+  few callers check for IS_ERR_OR_NULL()
 
-Oleg.
+> And you still have breakage in llseek et.al.
 
+- ovl_real_file() and ovl_real_file_path() cannot return NULL and all
+  their callers (llseek et.al.) check only for IS_ERR()
+
+Let me know if you think this is still problematic.
+
+Thanks,
+Amir.
 
