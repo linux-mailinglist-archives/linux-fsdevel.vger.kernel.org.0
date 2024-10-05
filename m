@@ -1,155 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-31061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4B29917FF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 17:53:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6DF99180C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 18:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B73A28530D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 15:53:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1797C1C2123B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2024 16:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DEA158D63;
-	Sat,  5 Oct 2024 15:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9472156C74;
+	Sat,  5 Oct 2024 16:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMShhU6+"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="r0yKtELM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9C9158A09;
-	Sat,  5 Oct 2024 15:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BC215444E
+	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Oct 2024 16:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728143593; cv=none; b=Bhb55cFMbwNCrm7vqTuFP/GlYHGWTYhWXSfQIz35/TASpwrnnqD91VJ42tQkfk86NuAD7TWP9R25UkrjuA4dgICrBJmyF7VIq1r3VVTnWTrFz/TL/adp3OeOZ+xSR/aJ+6skwAShtYCI0pnC7uMLwUQKV68nv4KQAeRNfht5NxQ=
+	t=1728144215; cv=none; b=Qewgh+b9SbxFRXbk93SNyp5nzis7IJDx/ehxf62Afmzh7ChALaDhM6P8bTI8uVmxVpeYg6h1ZG3Y1T266sOQm2YV4m0BOa/kih0ZqI5Q588at8dWkzMR6NXd/xwgToAJa1NVTYyg+ludjP0O1NPJCFAaYkJvvx/3M9r5WTsis44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728143593; c=relaxed/simple;
-	bh=L8yA4MWWFugj2tkno+UxsF9dbyscX58UWixAtmtGuvk=;
+	s=arc-20240116; t=1728144215; c=relaxed/simple;
+	bh=K7O/IKTj7JAMERpvVB67YoFT1tQi7t3qQXWQjya8WlY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huwlrq1SIa34pdkUos/6BDAW1uhzRikIMFWNkK+ESoh/br6BW9tLAduCzk4GAP0ItWSu1ja1gV7Y1boxm1zODTjZ7bnF6iEmaLDhsnbFL8wUBNrXp/P883r0LODSGw9qIiCu6gZXxK5xLXJZrai5wfYGDeRs3uQ4zODw9VIYE38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMShhU6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4D5CC4CEC2;
-	Sat,  5 Oct 2024 15:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728143593;
-	bh=L8yA4MWWFugj2tkno+UxsF9dbyscX58UWixAtmtGuvk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ux2uWNaLKghXNJNbEk0nsdzZ8VnniF/pKRavZBuZIIaGLTsxj2rXdjbeVI2/yDMVP22+cZtBxq5K9lbLhvBl5aXrLQAudCzR1d8roqi0/irSUJwe/0kwYPCoJbrbJt5TRPo16qDP5XQdVlB/FR0sqWyQZa20Z2hlbl/TU1aZE+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=r0yKtELM; arc=none smtp.client-ip=83.166.143.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XLVZL4w5fzKsf;
+	Sat,  5 Oct 2024 18:03:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1728144202;
+	bh=/46zxzMRhFBNtUJv6VsdBeWbXBpEeOG8UcnJk197lAw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cMShhU6+RI37DS/wkC04l5P/MA2CRfyHrQAzJocKo+ba7cwbZlVCJq/U2UkK+N/zH
-	 DS+gTLfbzNy1T6Yj8OH+XlxFWuNlFHLN911QOVyv4oCfWfxiDWX3cFTV2YHpysLzOy
-	 9AgCC1coKVx+nn8Zy96oRIHRvv7WLMD8yC7co6rjp5XubQ3O5elzQB2U/tKo5JE5Yu
-	 5OWHGI8+iEh0HvyS34KN+FYjgEyMAzNT5rLgI6V4+pBZOkq5Z+aQv9cyjbFQtp1IdH
-	 BuNd6pvF5gVJ8TaOzbL7vsviXaon4/co0TctuvFg10OJj2ZWVAI5ZzJzdaW2gNuH7q
-	 NVsk34mEGZZqA==
-Date: Sat, 5 Oct 2024 08:53:12 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: fix stale delalloc punching for COW I/O v4
-Message-ID: <20241005155312.GM21853@frogsfrogsfrogs>
-References: <20240924074115.1797231-1-hch@lst.de>
+	b=r0yKtELM42JYTUJHwjJVGNIObv/XXq/xn76mfKNMKw/7gdEw6mspsa0b6BKLhb9rS
+	 mWRmC7jxob/xQSv6N/3wqhdaj197blHI0ym8O/lvVFimxJcsUFNryymB80w9k8Eimg
+	 /JDZZiYJ+Do4jh08pFEqM+oL6U6ne1J2XNL4N710=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XLVZK4W6tzN2w;
+	Sat,  5 Oct 2024 18:03:21 +0200 (CEST)
+Date: Sat, 5 Oct 2024 18:03:19 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev, torvalds@linux-foundation.org, 
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, 
+	Kees Cook <keescook@chromium.org>, linux-security-module@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Paul Moore <paul@paul-moore.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <20241005.euDithie4Ue0@digikod.net>
+References: <Zv6J34fwj3vNOrIH@infradead.org>
+ <20241003122657.mrqwyc5tzeggrzbt@quack3>
+ <Zv6Qe-9O44g6qnSu@infradead.org>
+ <20241003125650.jtkqezmtnzfoysb2@quack3>
+ <Zv6jV40xKIJYuePA@dread.disaster.area>
+ <20241003161731.kwveypqzu4bivesv@quack3>
+ <Zv8648YMT10TMXSL@dread.disaster.area>
+ <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
+ <ZwBy3H/nR626eXSL@dread.disaster.area>
+ <20241005.phah4Yeiz4oo@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240924074115.1797231-1-hch@lst.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241005.phah4Yeiz4oo@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Tue, Sep 24, 2024 at 09:40:42AM +0200, Christoph Hellwig wrote:
-> Hi all,
-> 
-> this is another fallout from the zoned XFS work, which stresses the XFS
-> COW I/O path very heavily.  It affects normal I/O to reflinked files as
-> well, but is very hard to hit there.
-> 
-> The main problem here is that we only punch out delalloc reservations
-> from the data fork, but COW I/O places delalloc extents into the COW
-> fork, which means that it won't get punched out forshort writes.
-> 
-> [Sorry for the rapid fire repost, but as we're down to comment changes
->  and the series has been fully reviewed except for the trivial
->  refactoring patch at the beginning I'd like to get it out before being
->  semi-offline for a few days]
+On Sat, Oct 05, 2024 at 05:21:30PM +0200, Mickaël Salaün wrote:
+> On Sat, Oct 05, 2024 at 08:57:32AM +1000, Dave Chinner wrote:
 
-Hmmm so I tried applying this series, but now I get this splat:
-
-[  217.170122] run fstests xfs/574 at 2024-10-04 16:36:30
-[  218.248617] XFS (sda3): EXPERIMENTAL online scrub feature in use. Use at your own risk!
-[  219.030068] XFS (sda4): EXPERIMENTAL exchange-range feature enabled. Use at your own risk!
-[  219.032253] XFS (sda4): EXPERIMENTAL parent pointer feature enabled. Use at your own risk!
-[  219.034749] XFS (sda4): Mounting V5 Filesystem 9de8b32b-dada-468a-b83b-f2c702031b67
-[  219.073377] XFS (sda4): Ending clean mount
-[  219.076260] XFS (sda4): Quotacheck needed: Please wait.
-[  219.083160] XFS (sda4): Quotacheck: Done.
-[  219.116532] XFS (sda4): EXPERIMENTAL online scrub feature in use. Use at your own risk!
-[  306.312461] INFO: task fsstress:27661 blocked for more than 61 seconds.
-[  306.342904]       Not tainted 6.12.0-rc1-djwx #rc1
-[  306.344066] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  306.345961] task:fsstress        state:D stack:11464 pid:27661 tgid:27661 ppid:1      flags:0x00004004
-[  306.348070] Call Trace:
-[  306.348722]  <TASK>
-[  306.349177]  __schedule+0x419/0x14c0
-[  306.350024]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-[  306.351305]  schedule+0x2c/0x110
-[  306.352082]  schedule_preempt_disabled+0x18/0x30
-[  306.353183]  rwsem_down_write_slowpath+0x2a8/0x6a0
-[  306.354229]  ? filemap_add_folio+0xc5/0xf0
-[  306.355160]  down_write+0x6e/0x70
-[  306.355953]  xfs_buffered_write_iomap_end+0xcf/0x130 [xfs 05abef6fe7019e4129a0560dad36f86c40f3b541]
-[  306.358115]  iomap_iter+0x78/0x2f0
-[  306.358974]  iomap_file_unshare+0x82/0x290
-[  306.359935]  xfs_reflink_unshare+0xf4/0x170 [xfs 05abef6fe7019e4129a0560dad36f86c40f3b541]
-[  306.361787]  xfs_file_fallocate+0x13f/0x430 [xfs 05abef6fe7019e4129a0560dad36f86c40f3b541]
-[  306.364005]  vfs_fallocate+0x110/0x320
-[  306.364984]  __x64_sys_fallocate+0x42/0x70
-[  306.365999]  do_syscall_64+0x47/0x100
-[  306.366974]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[  306.368228] RIP: 0033:0x7f893d3b2cb3
-[  306.369064] RSP: 002b:00007ffd32c796d8 EFLAGS: 00000202 ORIG_RAX: 000000000000011d
-[  306.370650] RAX: ffffffffffffffda RBX: 000000000000131e RCX: 00007f893d3b2cb3
-[  306.372183] RDX: 000000000002eb27 RSI: 0000000000000041 RDI: 0000000000000005
-[  306.373940] RBP: 0000000000000041 R08: 000000000000005f R09: 0000000000000078
-[  306.375365] R10: 00000000000b0483 R11: 0000000000000202 R12: 0000000000000005
-[  306.376763] R13: 000000000002eb27 R14: 0000000000000000 R15: 00000000000b0483
-[  306.378174]  </TASK>
-
-I think this series needs to assert that the invalidatelock is held
-(instead of taking it) for the IOMAP_UNSHARE case too, since UNSHARE is
-called from fallocate, which has already taken the MMAPLOCK.
-
---D
-
-> Changes since v3:
->  - improve two comments
+> > Actually, it's not as bad as I thought it was going to be. I've
+> > already moved both fsnotify and LSM inode eviction to
+> > evict_inodes() as preparatory patches...
 > 
-> Changes since v2:
->  - drop the patches already merged and rebased to latest Linus' tree
->  - moved taking invalidate_lock from iomap to the caller to avoid a
->    too complicated locking protocol
->  - better document the xfs_file_write_zero_eof return value
->  - fix a commit log typo
+> Good, please Cc me and Günther on related patch series.
 > 
-> Changes since v1:
->  - move the already reviewed iomap prep changes to the beginning in case
->    Christian wants to take them ASAP
->  - take the invalidate_lock for post-EOF zeroing so that we have a
->    consistent locking pattern for zeroing.
+> FYI, we have the two release_inodes tests to check this hook in
+> tools/testing/selftests/landlock/fs_test.c
 > 
-> Diffstat:
->  Documentation/filesystems/iomap/operations.rst |    2 
->  fs/iomap/buffered-io.c                         |  111 ++++++-------------
->  fs/xfs/xfs_aops.c                              |    4 
->  fs/xfs/xfs_bmap_util.c                         |   10 +
->  fs/xfs/xfs_bmap_util.h                         |    2 
->  fs/xfs/xfs_file.c                              |  146 +++++++++++++++----------
->  fs/xfs/xfs_iomap.c                             |   65 +++++++----
->  include/linux/iomap.h                          |   20 ++-
->  8 files changed, 196 insertions(+), 164 deletions(-)
-> 
+> > 
+> > Dave Chinner (2):
+> >       vfs: move fsnotify inode eviction to evict_inodes()
+> >       vfs, lsm: rework lsm inode eviction at unmount
+> > 
+> >  fs/inode.c                    |  52 +++++++++++++---
+> >  fs/notify/fsnotify.c          |  60 -------------------
+> >  fs/super.c                    |   8 +--
+> >  include/linux/lsm_hook_defs.h |   2 +-
+> >  include/linux/security.h      |   2 +-
+> >  security/landlock/fs.c        | 134 ++++++++++--------------------------------
+
+Please run clang-format -i security/landlock/fs.c
+
+> >  security/security.c           |  31 ++++++----
+> > 7 files changed, 99 insertions(+), 190 deletions(-)
+> > 
+> > -Dave.
+> > -- 
+> > Dave Chinner
+> > david@fromorbit.com
+> > 
 
