@@ -1,132 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-31132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC73992042
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 20:09:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABA599208B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 21:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D57C1C20E4C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 18:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ABBA1F20419
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 19:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52447189F33;
-	Sun,  6 Oct 2024 18:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AC818A931;
+	Sun,  6 Oct 2024 19:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aJIaM4Jx"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OIadaYup"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932D9189917
-	for <linux-fsdevel@vger.kernel.org>; Sun,  6 Oct 2024 18:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDB6189B99
+	for <linux-fsdevel@vger.kernel.org>; Sun,  6 Oct 2024 19:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728238192; cv=none; b=p39ydGTUP3PYVn3jaHkRYyrNLmEVhDCl8Zob4t0YFu/3trQTl12vRbOzp+JFIMFKjbsMws8NbFoZtM0bAaPhnMgWshuoX9+g97Fmryu4L/bCM/hUJgxqcfe4cLjam6ZgmybsE+i5jEjbPlgI6HjRw2OMf6SWFpiEwifN6XmW+70=
+	t=1728241507; cv=none; b=ddKhOfkYp5XQl5DzbaFNON/JHRVs00rR3Nyyrj10NC7Ny3fGZPsM71YytosMLDPMuID8bege+PqG9TtEI+RbSp6whcE9+KYEBPyPEYD4Yj64J8hrnQ4gPP/QAxAduFrsZxpTWYJz8dpqIK5XDHtTrNr33F6zMfFbFE+hVvu0Rgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728238192; c=relaxed/simple;
-	bh=GhYwFHPF3z0gEg+L3cwhKmqowjN7RsxJiYEt/aXrtVQ=;
+	s=arc-20240116; t=1728241507; c=relaxed/simple;
+	bh=lBUg1G5w0xbiORJkJOiJgn1ZBETpknqPHoI9s+ukgpI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mUCPH3UiLrG7nzK5RXJuAf1GbI1eWErJylKiT5QiWhOsjclfK+ygrceEq6QQqiFim4ffN64R+gKgXp/FHeqPLwA8Pq+QUUethjRhKdFTLf+7032wM76rostOFB0FHZTwF/Gm77eIFIMTLJNr6udg6nyly1gKTZSUjijQOqkVcuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aJIaM4Jx; arc=none smtp.client-ip=209.85.208.45
+	 To:Cc:Content-Type; b=eBxS39sEq/vtvb+GsAoWcMpm+RUCTCMZiseoti0gJEQX3hFd9QOJS7zwUILuXRmXZN7KRwRVGvyS2T5bb+TvLGGASnJJEIspXXVVKCpvU4LW4DI7eH0JMAIJnUr/TJOCFb9Cnr9tE9dnOBqv5i5eoEQt9Cj9euN+2IXPxastn7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OIadaYup; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c87853df28so5104270a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 11:09:50 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c896b9b3e1so5268728a12.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 12:05:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728238189; x=1728842989; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1728241504; x=1728846304; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2i5rM7rJ9PoDyKGOfI+tNj3jSlRCBrI5CqGeex8O4rI=;
-        b=aJIaM4Jxg4Y6Lk2iEBmGpYYUgCChRZCiMLq9zO83H9rTbToILc7Z52nScZLN7kr5aw
-         7DiHDJUDJNwPmSH1Ro0Lp/vGNIHCw/H4OAyPNqS3CWYnR/7QHHJAztBdM4lf1GUDyOqc
-         C5AvRJverWZ6EJZkhPYuzRokg2bDT7wPFPzTQ=
+        bh=g/pTi4WP+DUWGLMsn6tW08xKN8735zsCNYj+R00ve1A=;
+        b=OIadaYupnpoT5nXmcNCvkX+Kp2uo+phSbSISfVRvuULWqnGAfyw8bevqa30mAcN84Q
+         zBUb+go1TPXCcgtTe25MqPq9Pr49gOnBflrFa501amWUPIEzNlZRazWyxewlEtp4DLJg
+         LH1UQpLaR4F+laUAnyx3iFXub0PX+OA/xeyMI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728238189; x=1728842989;
+        d=1e100.net; s=20230601; t=1728241504; x=1728846304;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2i5rM7rJ9PoDyKGOfI+tNj3jSlRCBrI5CqGeex8O4rI=;
-        b=ToAmeX9NO2JrQCQRzbw0IIFSSciJ6W/BZ9VrveGx6yWImdsc8Rb8Tb8TtMdeDFlcb0
-         nUlYyFhmfQWj3MhubNmadqXbhZuNosQwzynnpciL+igTMHK4q9bewB/RS525dCPPWToI
-         4+iYr0EEf0ZtE+1l5GRA+PP1OwK+45HSitwzQVviaMRsFslU2o5XgfNiAKVsdzjGCUnA
-         5QYPmPKCQ78fgKZ08jlkDmp1Q+biHvwwNplAz8h8INnOy4dHyhzBiKHnI93t03Trlpnd
-         qMSNbDMn6Iifxl56kS+yx6xrWXaFGznFO7H1xj/RirfH/IThbd6gzlm+RE+tChLFbyuw
-         eOgQ==
-X-Gm-Message-State: AOJu0Yw7+caQsH7T2AUaYWbBkAfpVVzMzxE6RKftriqXmz2fEc7xgNWA
-	1FOhXqhVhCnSFOgPS0ekE2rt9twZ7dYnCvZvj+VM2KvShXSikGUApaji663Yg/E02bW6spVIcXe
-	D4y8=
-X-Google-Smtp-Source: AGHT+IFkgwOAuZsOSodg8+Kcdz44+Zf9DiD8j1Jy0K9EoDYZGezD65kNye2CUBuvjHojBIlVzdhDyw==
-X-Received: by 2002:a17:907:3da0:b0:a99:499f:4cb7 with SMTP id a640c23a62f3a-a99499f58eamr423888666b.23.1728238188710;
-        Sun, 06 Oct 2024 11:09:48 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9937813111sm248247066b.127.2024.10.06.11.09.48
+        bh=g/pTi4WP+DUWGLMsn6tW08xKN8735zsCNYj+R00ve1A=;
+        b=O8DUwYNqc5iX/oXTbRRTwSnDNopo047NwsmF4maAzh26DMJDaS8SiIbe0ZBHDzdLmE
+         IuiVOE3ADS44oNkpkLtB8pdnoYEE9Z+FJbQ1g6Ek/vRrkwQ3YU7HOSHN3qER990H5Gzi
+         PDB6ESW88BK6hRnK/nW8x+12L9cHYqhQc84PY3eCieN8bIdZSN97ODJfzQrafXPsR9vs
+         VF/unLG1/NYD/+su0Y+6b0DOTLRidJD1t3p3CO/5+5htpZFX22iuAfmWxJ780IjlJlGA
+         Y+L8EsFNKTd615jVCG/PPViszP5rUgju+CDVqQVa6mt6x0YU/FwBQ/LUaihb+OrfnqgD
+         Z5Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+tYM36G6TTLd/tBS5vIkp05ALHyLngv81myEh4BZJSQIKIKqLIb8d53x/5hEhCi5p2MrxfVQu0EKiEeVA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV+FMJZd3UANDtS39HGk6aZW22OIHO+d1YdRu76/nUArdPB4fM
+	4F8Vc91Sujj0jyvTyPZmaJUNa4AKvrAlTYTR/0vTnxv/7T38JFVvcsY5xE2jX67tbIOAnNUjsMV
+	RGSU=
+X-Google-Smtp-Source: AGHT+IHVHfia3Ih+7G8PES4dTHsyGyN0q4QeSLCW5WsbTxmW975ckRIjbsohr9s9wHKR6FAvxUOrMw==
+X-Received: by 2002:a17:907:ea0:b0:a80:7193:bd93 with SMTP id a640c23a62f3a-a991bd40f79mr1036180466b.25.1728241503814;
+        Sun, 06 Oct 2024 12:05:03 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05be8d2sm2337646a12.53.2024.10.06.12.05.02
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 11:09:48 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a994cd82a3bso98950266b.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 11:09:48 -0700 (PDT)
-X-Received: by 2002:a17:907:3e8e:b0:a86:9644:2a60 with SMTP id
- a640c23a62f3a-a991bce5b80mr1006445866b.6.1728238187763; Sun, 06 Oct 2024
- 11:09:47 -0700 (PDT)
+        Sun, 06 Oct 2024 12:05:02 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c718bb04a3so5115778a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 12:05:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUtqnwgo19aRfmy/aJhEEOwSLg5fkpPE4AEp9EKsp8mfmnVTNIBMbv3oKr/fxzfrnSWMTUEr/AvFSeqlPUB@vger.kernel.org
+X-Received: by 2002:a17:907:2681:b0:a8a:91d1:5262 with SMTP id
+ a640c23a62f3a-a991bd71ddcmr1143956566b.28.1728241502270; Sun, 06 Oct 2024
+ 12:05:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005-brauner-file-rcuref-v1-0-725d5e713c86@kernel.org>
- <CAHk-=wj7=Ynmk9+Fm860NqHu5q119AiN4YNXNJPt=6Q=Y=w3HA@mail.gmail.com>
- <CAHk-=wgwPwrao9Bq2SKDExPHXJAYO2QD1F-0C6JMtSaE1_T_ag@mail.gmail.com> <20241006-textzeilen-liehen-2e3083bd60bb@brauner>
-In-Reply-To: <20241006-textzeilen-liehen-2e3083bd60bb@brauner>
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+ <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+ <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+ <20241006043002.GE158527@mit.edu> <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
+In-Reply-To: <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 6 Oct 2024 11:09:30 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg2VQzbenNK2puyjMQnpCLeXih92B8032Q-9ur0z33iXw@mail.gmail.com>
-Message-ID: <CAHk-=wg2VQzbenNK2puyjMQnpCLeXih92B8032Q-9ur0z33iXw@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/4] fs: port files to rcuref_long_t
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Jann Horn <jannh@google.com>
+Date: Sun, 6 Oct 2024 12:04:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com>
+Message-ID: <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 6 Oct 2024 at 03:21, Christian Brauner <brauner@kernel.org> wrote:
+On Sat, 5 Oct 2024 at 21:33, Kent Overstreet <kent.overstreet@linux.dev> wrote:
 >
-> Iiuc, then we should retain the deadzone handling but should replace
-> atomic_long_add_negative() with atomic_long_add_negative_relaxed().
+> On Sun, Oct 06, 2024 at 12:30:02AM GMT, Theodore Ts'o wrote:
+> >
+> > You may believe that yours is better than anyone else's, but with
+> > respect, I disagree, at least for my own workflow and use case.  And
+> > if you look at the number of contributors in both Luis and my xfstests
+> > runners[2][3], I suspect you'll find that we have far more
+> > contributors in our git repo than your solo effort....
+>
+> Correct me if I'm wrong, but your system isn't available to the
+> community, and I haven't seen a CI or dashboard for kdevops?
+>
+> Believe me, I would love to not be sinking time into this as well, but
+> we need to standardize on something everyone can use.
 
-I assume you meant the other way around.
+I really don't think we necessarily need to standardize. Certainly not
+across completely different subsystems.
 
-However, then it's not the same as the regular rcuref any more. It
-looks similar, it sounds similar, but it's something completely
-different.
+Maybe filesystem people have something in common, but honestly, even
+that is rather questionable. Different filesystems have enough
+different features that you will have different testing needs.
 
-I definitely do *not* want to have "rcuref_long_get()" fundamentally
-different from just plain "rcuref_get()" .
+And a filesystem tree and an architecture tree (or the networking
+tree, or whatever) have basically almost _zero_ overlap in testing -
+apart from the obvious side of just basic build and boot testing.
 
-Now, maybe we should just make the plain version also do a full memory
-barrier. Honestly, we have exactly *one* user of rcyref_get(): the
-networking code dst cache. Using the relaxed op clearly makes no
-difference at all on x86, and it _probably_ makes little to no
-difference on other relevant architectures either.
+And don't even get me started on drivers, which have a whole different
+thing and can generally not be tested in some random VM at all.
 
-But if the networking people want their relaxed version, I really
-really don't want rcuref_long_get() using non-relaxed one. And with
-just one single user of the existing rcuref code, and now another
-single user of the "long" variant, I really don't think it makes much
-sense as a "library".
+So no. People should *not* try to standardize on something everyone can use.
 
-IOW, my gut feeling is that you'd actually be better off just taking
-the rcuref code, changing it to using atomic_long_t and the
-non-relaxed version, and renaming it to "file_ref", and keep it all
-purely in fs/file.c (actually right now it's oddly split between
-fs/file.c and fs/file_table.c, but whatever - you get the idea).
+But _everybody_ should participate in the basic build testing (and the
+basic boot testing we have, even if it probably doesn't exercise much
+of most subsystems).  That covers a *lot* of stuff that various
+domain-specific testing does not (and generally should not).
 
-Trying to make it a library when it has one user and that one user
-wants a very very different model than the other user that looked
-similar smells like a BAD idea to me.
+For example, when you do filesystem-specific testing, you very seldom
+have much issues with different compilers or architectures. Sure,
+there can be compiler version issues that affect behavior, but let's
+be honest: it's very very rare. And yes, there are big-endian machines
+and the whole 32-bit vs 64-bit thing, and that can certainly affect
+your filesystem testing, but I would expect it to be a fairly rare and
+secondary thing for you to worry about when you try to stress your
+filesystem for correctness.
 
-The whole "let's make it generic" is a disease, if the result only has
-a single use.
+But build and boot testing? All those random configs, all those odd
+architectures, and all those odd compilers *do* affect build testing.
+So you as a filesystem maintainer should *not* generally strive to do
+your own basic build test, but very much participate in the generic
+build test that is being done by various bots (not just on linux-next,
+but things like the 0day bot on various patch series posted to the
+list etc).
 
-              Linus
+End result: one size does not fit all. But I get unhappy when I see
+some subsystem that doesn't seem to participate in what I consider the
+absolute bare minimum.
+
+Btw, there are other ways to make me less unhappy. For example, a
+couple of years ago, we had a string of issues with the networking
+tree. Not because there was any particular maintenance issue, but
+because the networking tree is basically one of the biggest subsystems
+there are, and so bugs just happen more for that simple reason. Random
+driver issues that got found resolved quickly, but that kept happening
+in rc releases (or even final releases).
+
+And that was *despite* the networking fixes generally having been in linux-next.
+
+Now, the reason I mention the networking tree is that the one simple
+thing that made it a lot less stressful was that I asked whether the
+networking fixes pulls could just come in on Thursday instead of late
+on Friday or Saturday. That meant that any silly things that the bots
+picked up on (or good testers picked up on quickly) now had an extra
+day or two to get resolved.
+
+Now, it may be that the string of unfortunate networking issues that
+caused this policy were entirely just bad luck, and we just haven't
+had that. But the networking pull still comes in on Thursdays, and
+we've been doing it that way for four years, and it seems to have
+worked out well for both sides. I certainly feel a lot better about
+being able to do the (sometimes fairly sizeable) pull on a Thursday,
+knowing that if there is some last-minute issue, we can still fix just
+*that* before the rc or final release.
+
+And hey, that's literally just a "this was how we dealt with one
+particular situation". Not everybody needs to have the same rules,
+because the exact details will be different. I like doing releases on
+Sundays, because that way the people who do a fairly normal Mon-Fri
+week come in to a fresh release (whether rc or not). And people tend
+to like sending in their "work of the week" to me on Fridays, so I get
+a lot of pull requests on Friday, and most of the time that works just
+fine.
+
+So the networking tree timing policy ended up working quite well for
+that, but there's no reason it should be "The Rule" and that everybody
+should do it. But maybe it would lessen the stress on both sides for
+bcachefs too if we aimed for that kind of thing?
+
+             Linus
 
