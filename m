@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-31114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EB2991D30
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 10:24:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82325991D32
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 10:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490FC1C2163D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 08:24:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF180B21E98
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 08:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F3916BE0B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0E5171E5A;
 	Sun,  6 Oct 2024 08:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qu5yIkF7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="neJXzSq9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0061A155C97;
-	Sun,  6 Oct 2024 08:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D513170A3D;
+	Sun,  6 Oct 2024 08:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728203050; cv=none; b=leLV9ENqtEQzo4lmzvfDgccgpI/5TGR3lTWg06+woE0O/IZ1Lzim2wRC53svyvXCE+bEQCzlChbtpJpq8qHSyYkWh04kviTEf55DysTSqKlz87MAuON+IAmqVnNOoXr0t9rD4XF60goEkd+2JiSa1eQwX4hrgfGIcaUN7yhkcw4=
+	t=1728203051; cv=none; b=t82+TDrbidL/sZ/2MC9dIeaJUE9R0VpsahPag2sC3lErLVdoRn3xla0asdV90sE0Lkpi7Zp439Do3kNNhgVFZZG6T0EgxVBEGqbvpt6O0dXE0srgmX0DA+gcGeTTalCrk1huEie8H9479TOBwy1DJBoN9g0YjLt7YCA4gsCOk0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728203050; c=relaxed/simple;
-	bh=dIjw98HIv0YoVPu2QAz3/lYrwRh6CuVZ1oKwRx0Plbw=;
+	s=arc-20240116; t=1728203051; c=relaxed/simple;
+	bh=EBsdYo7bjPZ1aqvaTJFltbGN+wMV4FZuX0JUqmqPrGM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mQ+g8SSEf2Wv/1/EV5BHoiWje1/EcF9kJ/v4d3xMBkt/DA8oyIqJTc/oLH/rv8E1io1tYrI6nYadLjHl9x/hAIRkjacxQ28SR1IJVlBjfpAQEbGd66dopBtL304ZwFtBcrJS/gETrANHaXFU6Cgb4bsCLiUJ1tMVjpCKzWpZJ98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qu5yIkF7; arc=none smtp.client-ip=209.85.218.41
+	 MIME-Version; b=ZQ3L6THgbc1yMhA/HsOpL2SAXZ0sOePN98U98JDXuYVdXtc8oy88GbN9WnPLsMGrAVkMgb9htghsBLKDgLrcIrijNkPmW7FRiEBPXe0GGUJ51eRRwnyCqvHDg4coj4xL/J8GZPkarfa44IpTdKVfPyIBVNS/AAGenzedM6aD/u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=neJXzSq9; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a993302fa02so149192666b.0;
-        Sun, 06 Oct 2024 01:24:08 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9932aa108cso188878366b.2;
+        Sun, 06 Oct 2024 01:24:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728203047; x=1728807847; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728203048; x=1728807848; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s8e2JY6Sb9s49zoQBWf54t+HgfcDEXFKWbnObt6EfRM=;
-        b=Qu5yIkF7TTzGVPchXGeaAuNLqA1wtjT5Qjrw8fZDWQZeJdst1wcgTRc8ksyGkoHxa4
-         E/NTQH56yAM7MsS+r1JZmfchQ3RL2gAf8AbreNJIH8yxSivvWvmctnSTCarNjiKI1G9S
-         qq+lKNFMM5OwVbVSU18XUglEmWUKHMIgU5Ny3DrD0m/2fl8cNt3urMaZ62YCeTt/lBmF
-         xJSOVw5TXm10mV3zxUE5AyXATkfZCxHB7PgbOkBRSrNB0A9GROdwdwYk3Lza2i1VsvmQ
-         zX33T3xBjZn/dMa9ToeR8nzbCXgICvwt/OU2EzJwHkkGS1s8qUVqxHpW1AF1TCDv6o8Y
-         MobQ==
+        bh=+teoezE0H0ewSa/OIMieId5ijhGIgbWQwtLr4wiUezo=;
+        b=neJXzSq96n8idqYu01voJdAnMyjE6B2f/fzTK5ylyn/fNgXedndFtN0c8AcAoik1oB
+         lwAdC7F8OJJuz4+OjkHRNUtZ7Epc+EqctP+UJfO/YA6hK7kL0Hkn90B1aILryVQYPipq
+         RUJQBAtCRWyhDU9JmSjw0wclBuaBwhL1LsbWUP3BJNS+h5ffHrrSpZHzC+H9MIFX8Sl7
+         17qrbC6T1XV0HJ2clfsXvHQUXAEMoXwGUgi/0ba1UBNPRYooTLdNKNkRGdPmmakq1+GY
+         TEmY9MZO6bdkrIMixDeKq564yxn+PKAF9BgFhQ0xL2w2QRsXkLKSB5LZMGSFKJLeGqF/
+         OieA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728203047; x=1728807847;
+        d=1e100.net; s=20230601; t=1728203048; x=1728807848;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=s8e2JY6Sb9s49zoQBWf54t+HgfcDEXFKWbnObt6EfRM=;
-        b=F2NFJutuXrumNIrK9CyX3WJDnZHT96aUozFROwyEZ+QcSMJiQp6U6pJDwjWBOoQ5eF
-         bSMPy5gcHITxvQjaVWD5ZW0Nc9jDj7jagqmmIniY8FQpEJvu/CnAHSVlKOrdI+wIBPru
-         HESwKwCC7dCV0w8CcV/OWoiwZYb3HImUn3k58UX8CHv+EFD8N3m5OQ8qwRwRgxJ1RpZy
-         hPqw/4szu5D04bSs8I6742YUJRpmRBrtXNKNIPrFFzsdfw47W1E4T74iXAaiJAGWEOF9
-         nUpBa/CSPJ6Ccyum37a7jV6B+HZf9ChrxJm9JL61MB9cNfjKNjBSL7U0YsMLsiSCmDrd
-         mQ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2DkOo0YiJo7Nqg9ufijP/KWjteuf7W84/L/QDyz8B9Xd1/giy0mb7lt+/awogrcSKUq5YlKRFfttoqa+8@vger.kernel.org, AJvYcCV1FZdNgd1jcXP7BTvCf7BhX56MX1CeTEFJzJzLu9IGPPY9dHID3QDWPUqUT0bGPvbweLDt1Vm+hy3wb7aW0w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgvBaZPmWoTuyyeL/xW/cMI+b9x+MbTcPjqjR09+rtO6tTkJ0v
-	ZOCf7Wym3UPnY9EWUQw89L3Zya/IINOwcI3vcFfANPDVfvYqQSfR
-X-Google-Smtp-Source: AGHT+IGi5VDBtRaqHuyQKaUXVA62T87DqCeSvB984i2MKQoCfGJjw6W+vkhPhF5+q01G7kT7TfhPIw==
-X-Received: by 2002:a17:907:efd5:b0:a86:78fd:1df0 with SMTP id a640c23a62f3a-a991bd7950fmr851397166b.34.1728203046729;
-        Sun, 06 Oct 2024 01:24:06 -0700 (PDT)
+        bh=+teoezE0H0ewSa/OIMieId5ijhGIgbWQwtLr4wiUezo=;
+        b=kto4e1azsbbvrFsTFvPuyOTvw40IloUZtQk5F6A/huwTrOVkoPReBFLNp4Cnw0GqeY
+         JtPK7WXT0sZHB+wS2jIlRq3XeXLYSnbiG/kFr/yCQiotpPnAD3MOHggF07D3Lcqj/g1C
+         s2VtpQbIfpc56i+WK7QX5lwg3tTpavAivvgIGo4GSaB6dVxo9fUzyyrqzmfs9YQQZD9r
+         ACNSbMo2MWfW3pMrtTgSffzFxh4p5Kk/DjyY51yMmwaSkPmc5eoRYiooDVn1Eql4g0LF
+         +2l2FbWdk1axVDfwcTrcmbFTfYbjynkLPOpIpGNdTOFmW+zNpwhSvad3zsXjdaVG1oj/
+         BRRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5NtGjvHJKSjeLhzKUeT3UIm3YmF9bEvR6zu5NwL0UV4kdjHZNJ0SaiZNbj0A0vO0de+f3WxpQemZeRxrrCg==@vger.kernel.org, AJvYcCUh/85Tuhjcs32Rfkzrqb4abkTsTkdASBNmz8xNlRP1E1AodmdSXBYg/bQMvjpncQRKX2qeNOlQL/0QeNgl@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLUvhMmd1NGjcb2Mko30gIcyMH2v8aVtdFWHSHkQdOAYLdgWL7
+	CMm01c23XJz4772MEldZ+9GLtBaYBIo4OwIwrmNDYTWlZxsfi07g
+X-Google-Smtp-Source: AGHT+IFYekoqVOml8l0CmtVFgAGuu6Q6Du1f0bxVqfg9jRAEuebkWv8k8ZJgWfhmBzgIkt8hSA6bzg==
+X-Received: by 2002:a17:907:9445:b0:a99:bb:736c with SMTP id a640c23a62f3a-a991c01a797mr889263566b.55.1728203047601;
+        Sun, 06 Oct 2024 01:24:07 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a993fdd2202sm153215766b.55.2024.10.06.01.24.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 01:24:06 -0700 (PDT)
+        Sun, 06 Oct 2024 01:24:07 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Al Viro <viro@zeniv.linux.org.uk>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org
-Subject: [PATCH v2 3/4] ovl: convert ovl_real_fdget_path() callers to ovl_real_file_path()
-Date: Sun,  6 Oct 2024 10:23:58 +0200
-Message-Id: <20241006082359.263755-4-amir73il@gmail.com>
+Subject: [PATCH v2 4/4] ovl: convert ovl_real_fdget() callers to ovl_real_file()
+Date: Sun,  6 Oct 2024 10:23:59 +0200
+Message-Id: <20241006082359.263755-5-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241006082359.263755-1-amir73il@gmail.com>
 References: <20241006082359.263755-1-amir73il@gmail.com>
@@ -87,177 +87,354 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Stop using struct fd to return a real file from ovl_real_fdget_path(),
+Stop using struct fd to return a real file from ovl_real_fdget(),
 because we no longer return a temporary file object and the callers
 always get a borrowed file reference.
 
-Rename the helper to ovl_real_file_path(), return a borrowed reference
-of the real file that is referenced from the overlayfs file or an error.
+Rename the helper to ovl_real_file(), return a borrowed reference of
+the real file that is referenced from the overlayfs file or an error.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/overlayfs/file.c | 70 +++++++++++++++++++++++++--------------------
- 1 file changed, 39 insertions(+), 31 deletions(-)
+ fs/overlayfs/file.c | 145 ++++++++++++++++++--------------------------
+ 1 file changed, 59 insertions(+), 86 deletions(-)
 
 diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 42f9bbdd65b4..ead805e9f2d6 100644
+index ead805e9f2d6..5e3f688ae908 100644
 --- a/fs/overlayfs/file.c
 +++ b/fs/overlayfs/file.c
-@@ -97,16 +97,14 @@ static bool ovl_is_real_file(const struct file *realfile,
- 	return file_inode(realfile) == d_inode(realpath->dentry);
- }
- 
--static int ovl_real_fdget_path(const struct file *file, struct fd *real,
--			       struct path *realpath)
-+static struct file *ovl_real_file_path(const struct file *file,
-+				       struct path *realpath)
- {
- 	struct file *realfile = file->private_data;
- 	struct file *upperfile = backing_file_private(realfile);
- 
--	real->word = 0;
--
- 	if (WARN_ON_ONCE(!realpath->dentry))
--		return -EIO;
-+		return ERR_PTR(-EIO);
- 
- 	/*
- 	 * Usually, if we operated on a stashed upperfile once, all following
-@@ -129,11 +127,11 @@ static int ovl_real_fdget_path(const struct file *file, struct fd *real,
- 
- 		/* Either stashed realfile or upperfile must match realinode */
- 		if (WARN_ON_ONCE(upperfile))
--			return -EIO;
-+			return ERR_PTR(-EIO);
- 
- 		upperfile = ovl_open_realfile(file, realpath);
- 		if (IS_ERR(upperfile))
--			return PTR_ERR(upperfile);
-+			return upperfile;
- 
- 		old = cmpxchg_release(backing_file_private_ptr(realfile), NULL,
- 				      upperfile);
-@@ -144,21 +142,24 @@ static int ovl_real_fdget_path(const struct file *file, struct fd *real,
- 
- 		/* Stashed upperfile that won the race must match realinode */
- 		if (WARN_ON_ONCE(!ovl_is_real_file(upperfile, realpath)))
--			return -EIO;
-+			return ERR_PTR(-EIO);
- 
- 		realfile = upperfile;
- 	}
- 
- checkflags:
- 	/* Did the flags change since open? */
--	if (unlikely((file->f_flags ^ realfile->f_flags) & ~OVL_OPEN_FLAGS))
--		return ovl_change_flags(realfile, file->f_flags);
-+	if (unlikely((file->f_flags ^ realfile->f_flags) & ~OVL_OPEN_FLAGS)) {
-+		int err = ovl_change_flags(realfile, file->f_flags);
- 
--	real->word = (unsigned long)realfile;
--	return 0;
-+		if (err)
-+			return ERR_PTR(err);
-+	}
-+
-+	return realfile;
+@@ -183,16 +183,6 @@ static struct file *ovl_real_file(const struct file *file)
+ 	return ovl_real_file_path(file, &realpath);
  }
  
 -static int ovl_real_fdget(const struct file *file, struct fd *real)
-+static struct file *ovl_real_file(const struct file *file)
+-{
+-	struct file *f = ovl_real_file(file);
+-
+-	if (IS_ERR(f))
+-		return PTR_ERR(f);
+-	real->word = (unsigned long)f;
+-	return 0;
+-}
+-
+ static struct file *ovl_upper_file(const struct file *file, bool data)
  {
  	struct dentry *dentry = file_dentry(file);
- 	struct path realpath;
-@@ -166,23 +167,33 @@ static int ovl_real_fdget(const struct file *file, struct fd *real)
- 
- 	if (d_is_dir(dentry)) {
- 		struct file *f = ovl_dir_real_file(file, false);
--		if (IS_ERR(f))
--			return PTR_ERR(f);
--		real->word = (unsigned long)f;
--		return 0;
-+
-+		if (WARN_ON_ONCE(!f))
-+			return ERR_PTR(-EIO);
-+		return f;
- 	}
- 
- 	/* lazy lookup and verify of lowerdata */
- 	err = ovl_verify_lowerdata(dentry);
- 	if (err)
--		return err;
-+		return ERR_PTR(err);
- 
- 	ovl_path_realdata(dentry, &realpath);
- 
--	return ovl_real_fdget_path(file, real, &realpath);
-+	return ovl_real_file_path(file, &realpath);
-+}
-+
-+static int ovl_real_fdget(const struct file *file, struct fd *real)
-+{
-+	struct file *f = ovl_real_file(file);
-+
-+	if (IS_ERR(f))
-+		return PTR_ERR(f);
-+	real->word = (unsigned long)f;
-+	return 0;
- }
- 
--static int ovl_upper_fdget(const struct file *file, struct fd *real, bool data)
-+static struct file *ovl_upper_file(const struct file *file, bool data)
+@@ -262,7 +252,7 @@ static int ovl_release(struct inode *inode, struct file *file)
+ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
  {
- 	struct dentry *dentry = file_dentry(file);
- 	struct path realpath;
-@@ -193,12 +204,11 @@ static int ovl_upper_fdget(const struct file *file, struct fd *real, bool data)
- 	else
- 		type = ovl_path_real(dentry, &realpath);
- 
--	real->word = 0;
- 	/* Not interested in lower nor in upper meta if data was requested */
- 	if (!OVL_TYPE_UPPER(type) || (data && OVL_TYPE_MERGE(type)))
--		return 0;
-+		return NULL;
- 
--	return ovl_real_fdget_path(file, real, &realpath);
-+	return ovl_real_file_path(file, &realpath);
- }
- 
- static int ovl_open(struct inode *inode, struct file *file)
-@@ -455,7 +465,7 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 
- static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- {
+ 	struct inode *inode = file_inode(file);
 -	struct fd real;
 +	struct file *realfile;
  	const struct cred *old_cred;
- 	int ret;
+ 	loff_t ret;
  
-@@ -463,19 +473,17 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	if (ret <= 0)
- 		return ret;
+@@ -278,9 +268,9 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ 			return vfs_setpos(file, 0, 0);
+ 	}
  
--	ret = ovl_upper_fdget(file, &real, datasync);
--	if (ret || fd_empty(real))
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
 -		return ret;
-+	realfile = ovl_upper_file(file, datasync);
-+	if (IS_ERR_OR_NULL(realfile))
++	realfile = ovl_real_file(file);
++	if (IS_ERR(realfile))
 +		return PTR_ERR(realfile);
  
- 	/* Don't sync lower file for fear of receiving EROFS error */
--	if (file_inode(fd_file(real)) == ovl_inode_upper(file_inode(file))) {
-+	if (file_inode(realfile) == ovl_inode_upper(file_inode(file))) {
- 		old_cred = ovl_override_creds(file_inode(file)->i_sb);
--		ret = vfs_fsync_range(fd_file(real), start, end, datasync);
-+		ret = vfs_fsync_range(realfile, start, end, datasync);
- 		revert_creds(old_cred);
- 	}
+ 	/*
+ 	 * Overlay file f_pos is the master copy that is preserved
+@@ -290,17 +280,15 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ 	 * files, so we use the real file to perform seeks.
+ 	 */
+ 	ovl_inode_lock(inode);
+-	fd_file(real)->f_pos = file->f_pos;
++	realfile->f_pos = file->f_pos;
+ 
+ 	old_cred = ovl_override_creds(inode->i_sb);
+-	ret = vfs_llseek(fd_file(real), offset, whence);
++	ret = vfs_llseek(realfile, offset, whence);
+ 	revert_creds(old_cred);
+ 
+-	file->f_pos = fd_file(real)->f_pos;
++	file->f_pos = realfile->f_pos;
+ 	ovl_inode_unlock(inode);
  
 -	fdput(real);
 -
  	return ret;
  }
  
+@@ -341,8 +329,7 @@ static void ovl_file_accessed(struct file *file)
+ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct file *file = iocb->ki_filp;
+-	struct fd real;
+-	ssize_t ret;
++	struct file *realfile;
+ 	struct backing_file_ctx ctx = {
+ 		.cred = ovl_creds(file_inode(file)->i_sb),
+ 		.user_file = file,
+@@ -352,22 +339,19 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	if (!iov_iter_count(iter))
+ 		return 0;
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
+-		return ret;
+-
+-	ret = backing_file_read_iter(fd_file(real), iter, iocb, iocb->ki_flags,
+-				     &ctx);
+-	fdput(real);
++	realfile = ovl_real_file(file);
++	if (IS_ERR(realfile))
++		return PTR_ERR(realfile);
+ 
+-	return ret;
++	return backing_file_read_iter(realfile, iter, iocb, iocb->ki_flags,
++				      &ctx);
+ }
+ 
+ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
+-	struct fd real;
++	struct file *realfile;
+ 	ssize_t ret;
+ 	int ifl = iocb->ki_flags;
+ 	struct backing_file_ctx ctx = {
+@@ -383,8 +367,9 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	/* Update mode */
+ 	ovl_copyattr(inode);
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
++	realfile = ovl_real_file(file);
++	ret = PTR_ERR(realfile);
++	if (IS_ERR(realfile))
+ 		goto out_unlock;
+ 
+ 	if (!ovl_should_sync(OVL_FS(inode->i_sb)))
+@@ -395,8 +380,7 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	 * this property in case it is set by the issuer.
+ 	 */
+ 	ifl &= ~IOCB_DIO_CALLER_COMP;
+-	ret = backing_file_write_iter(fd_file(real), iter, iocb, ifl, &ctx);
+-	fdput(real);
++	ret = backing_file_write_iter(realfile, iter, iocb, ifl, &ctx);
+ 
+ out_unlock:
+ 	inode_unlock(inode);
+@@ -408,28 +392,24 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
+ 			       struct pipe_inode_info *pipe, size_t len,
+ 			       unsigned int flags)
+ {
+-	struct fd real;
+-	ssize_t ret;
++	struct file *realfile;
+ 	struct backing_file_ctx ctx = {
+ 		.cred = ovl_creds(file_inode(in)->i_sb),
+ 		.user_file = in,
+ 		.accessed = ovl_file_accessed,
+ 	};
+ 
+-	ret = ovl_real_fdget(in, &real);
+-	if (ret)
+-		return ret;
+-
+-	ret = backing_file_splice_read(fd_file(real), ppos, pipe, len, flags, &ctx);
+-	fdput(real);
++	realfile = ovl_real_file(in);
++	if (IS_ERR(realfile))
++		return PTR_ERR(realfile);
+ 
+-	return ret;
++	return backing_file_splice_read(realfile, ppos, pipe, len, flags, &ctx);
+ }
+ 
+ /*
+  * Calling iter_file_splice_write() directly from overlay's f_op may deadlock
+  * due to lock order inversion between pipe->mutex in iter_file_splice_write()
+- * and file_start_write(fd_file(real)) in ovl_write_iter().
++ * and file_start_write(realfile) in ovl_write_iter().
+  *
+  * So do everything ovl_write_iter() does and call iter_file_splice_write() on
+  * the real file.
+@@ -437,7 +417,7 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
+ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 				loff_t *ppos, size_t len, unsigned int flags)
+ {
+-	struct fd real;
++	struct file *realfile;
+ 	struct inode *inode = file_inode(out);
+ 	ssize_t ret;
+ 	struct backing_file_ctx ctx = {
+@@ -450,12 +430,12 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 	/* Update mode */
+ 	ovl_copyattr(inode);
+ 
+-	ret = ovl_real_fdget(out, &real);
+-	if (ret)
++	realfile = ovl_real_file(out);
++	ret = PTR_ERR(realfile);
++	if (IS_ERR(realfile))
+ 		goto out_unlock;
+ 
+-	ret = backing_file_splice_write(pipe, fd_file(real), ppos, len, flags, &ctx);
+-	fdput(real);
++	ret = backing_file_splice_write(pipe, realfile, ppos, len, flags, &ctx);
+ 
+ out_unlock:
+ 	inode_unlock(inode);
+@@ -502,7 +482,7 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
+ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct fd real;
++	struct file *realfile;
+ 	const struct cred *old_cred;
+ 	int ret;
+ 
+@@ -513,19 +493,18 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ 	if (ret)
+ 		goto out_unlock;
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
++	realfile = ovl_real_file(file);
++	ret = PTR_ERR(realfile);
++	if (IS_ERR(realfile))
+ 		goto out_unlock;
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+-	ret = vfs_fallocate(fd_file(real), mode, offset, len);
++	ret = vfs_fallocate(realfile, mode, offset, len);
+ 	revert_creds(old_cred);
+ 
+ 	/* Update size */
+ 	ovl_file_modified(file);
+ 
+-	fdput(real);
+-
+ out_unlock:
+ 	inode_unlock(inode);
+ 
+@@ -534,20 +513,18 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ 
+ static int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+ {
+-	struct fd real;
++	struct file *realfile;
+ 	const struct cred *old_cred;
+ 	int ret;
+ 
+-	ret = ovl_real_fdget(file, &real);
+-	if (ret)
+-		return ret;
++	realfile = ovl_real_file(file);
++	if (IS_ERR(realfile))
++		return PTR_ERR(realfile);
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+-	ret = vfs_fadvise(fd_file(real), offset, len, advice);
++	ret = vfs_fadvise(realfile, offset, len, advice);
+ 	revert_creds(old_cred);
+ 
+-	fdput(real);
+-
+ 	return ret;
+ }
+ 
+@@ -562,7 +539,7 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ 			    loff_t len, unsigned int flags, enum ovl_copyop op)
+ {
+ 	struct inode *inode_out = file_inode(file_out);
+-	struct fd real_in, real_out;
++	struct file *realfile_in, *realfile_out;
+ 	const struct cred *old_cred;
+ 	loff_t ret;
+ 
+@@ -575,31 +552,31 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ 			goto out_unlock;
+ 	}
+ 
+-	ret = ovl_real_fdget(file_out, &real_out);
+-	if (ret)
++	realfile_out = ovl_real_file(file_out);
++	ret = PTR_ERR(realfile_out);
++	if (IS_ERR(realfile_out))
+ 		goto out_unlock;
+ 
+-	ret = ovl_real_fdget(file_in, &real_in);
+-	if (ret) {
+-		fdput(real_out);
++	realfile_in = ovl_real_file(file_in);
++	ret = PTR_ERR(realfile_in);
++	if (IS_ERR(realfile_in))
+ 		goto out_unlock;
+-	}
+ 
+ 	old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
+ 	switch (op) {
+ 	case OVL_COPY:
+-		ret = vfs_copy_file_range(fd_file(real_in), pos_in,
+-					  fd_file(real_out), pos_out, len, flags);
++		ret = vfs_copy_file_range(realfile_in, pos_in,
++					  realfile_out, pos_out, len, flags);
+ 		break;
+ 
+ 	case OVL_CLONE:
+-		ret = vfs_clone_file_range(fd_file(real_in), pos_in,
+-					   fd_file(real_out), pos_out, len, flags);
++		ret = vfs_clone_file_range(realfile_in, pos_in,
++					   realfile_out, pos_out, len, flags);
+ 		break;
+ 
+ 	case OVL_DEDUPE:
+-		ret = vfs_dedupe_file_range_one(fd_file(real_in), pos_in,
+-						fd_file(real_out), pos_out, len,
++		ret = vfs_dedupe_file_range_one(realfile_in, pos_in,
++						realfile_out, pos_out, len,
+ 						flags);
+ 		break;
+ 	}
+@@ -608,9 +585,6 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ 	/* Update size */
+ 	ovl_file_modified(file_out);
+ 
+-	fdput(real_in);
+-	fdput(real_out);
+-
+ out_unlock:
+ 	inode_unlock(inode_out);
+ 
+@@ -654,20 +628,19 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
+ 
+ static int ovl_flush(struct file *file, fl_owner_t id)
+ {
+-	struct fd real;
++	struct file *realfile;
+ 	const struct cred *old_cred;
+-	int err;
++	int err = 0;
+ 
+-	err = ovl_real_fdget(file, &real);
+-	if (err)
+-		return err;
++	realfile = ovl_real_file(file);
++	if (IS_ERR(realfile))
++		return PTR_ERR(realfile);
+ 
+-	if (fd_file(real)->f_op->flush) {
++	if (realfile->f_op->flush) {
+ 		old_cred = ovl_override_creds(file_inode(file)->i_sb);
+-		err = fd_file(real)->f_op->flush(fd_file(real), id);
++		err = realfile->f_op->flush(realfile, id);
+ 		revert_creds(old_cred);
+ 	}
+-	fdput(real);
+ 
+ 	return err;
+ }
 -- 
 2.34.1
 
