@@ -1,118 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-31129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3ABB991F33
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 17:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF77991F02
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 16:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59B8CB21A9A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 15:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E971F219DA
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 14:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9663413CA81;
-	Sun,  6 Oct 2024 14:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3419B138490;
+	Sun,  6 Oct 2024 14:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQ8/++vp"
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="RxDzy/sd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C16139D04;
-	Sun,  6 Oct 2024 14:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31789482EF
+	for <linux-fsdevel@vger.kernel.org>; Sun,  6 Oct 2024 14:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728226796; cv=none; b=qSQVboMKBGZkBmUITRYiIua/wwoaRGvyP45oKk3ydJLReDiFJZNYfwiZrLcNJKqCHa/EsI6ooFe58otJTmW1MBdb+a2fqXpm0qhmKYbapRLSMNCnUp8userSKsQ6qk4UDrUVWnVwzPC57EZSbG0fOR9JKT7idnWb4guYi6RnVcg=
+	t=1728226379; cv=none; b=HP8kbEOahi+RG+L828YEZqjZjg9FruTQ8t+IipDtxJP47q7AU1rjgxcrXp5YjiP3JHqYxsxVAlql/mZqyJvd7NBvH8Q53EURny19yhjyNLB/G0UqS2oGpO8aYTG6b5C7ze7iL+EBJO0juJrdEd9/GbIl25kx73sRZtHzl1IXGI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728226796; c=relaxed/simple;
-	bh=lXsOWchDeB0DKztDhSEu4SLBTSpDiAINtpmIIYN2ECU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JU1lqv845N4mcFa+sXwRjLti9blJQUSNA7uSnC7ldREHdlWZddQku9Gj2ZRDvG1bP0fzuGffqCq+wC1+KDeWF7TOhg+kwBvRKauDAA5JyTGe0gLKzRcnpu1+26Cb4mimOcV9R5ZPl8Y3a0AMk8w/nnn/FeeEKLpgZ6RXqoEnsrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQ8/++vp; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e25f3748e0so35201597b3.0;
-        Sun, 06 Oct 2024 07:59:54 -0700 (PDT)
+	s=arc-20240116; t=1728226379; c=relaxed/simple;
+	bh=shgDBjQqYSVf0UslaCxth3Qda0hEBLGt1sWdyIHJPVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qGVNGZw2pRb2HwbHkAjhkYGlg3SlgDPeHDg1LrNwEnAEEv92WGeZZi+DgtKicRqTF1Rrcx/wccIhlFSJxN51hHVDNYbL9NQ5FLR9JHMHO78S1Rf38OOojd/KAnJaJarEYceGCxtRfg0eenUAI/cLKb7I2/gWvic76Ju3Lm7e6wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=RxDzy/sd; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e07d85e956so2974818a91.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 07:52:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728226794; x=1728831594; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6+Wg2986G03us2gYz8rYilG8qAjZ8Fp5YpwGKJLHPE=;
-        b=aQ8/++vpVwQDBNWtzC9OMvVgnBijr/Fvwr94qVQnhdJn781jK5p182gA8oKu6zKL6G
-         bdvJUTr9MjdyiKXGjFX4zwMyLel/wVQDRTh75Q2MFyv/D5cDL8nOoD1oKhiqFZAncWjz
-         MYDumEoX8OS4bqSasDEqYL1NetIzxtMaA6ZkfBchZkRlQtHdl4D3/JZNZR5d19zh8FpE
-         eVcfmc615aBwx6rklCS/SVToE5VhmIFeGOSlNQCr5NbmVaTVyHq5u7nafEfwzX6Z7Dkh
-         fEF1nmhAFalf9v90jrOZ5ErES5Kj6d8PomiXxKfAs4+9+7+GKSrPQKVHzZPdJg7XMQzK
-         cyiQ==
+        d=shopee.com; s=shopee.com; t=1728226377; x=1728831177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/jN5IJB1E2Lr0al72GEamd2RYur9sqqi/hVsmg8n8rw=;
+        b=RxDzy/sddpK++kRlX7NALV7binrBIaAPHAjYb1RFTHcEyReTxzdPYeLEVKFdTpt32b
+         A0vj0Qs1satPkjmFxWMZJxNmmrmisCuhLu2B2RHyAt56mkTDTOBXw69D8q1+jULwQToH
+         xJn17BmCM0zyRWrdRDJjkXB5fE+Oen2MQDlULNFP4S1VdXtdWNUvSitS4lrB5DnVPf5n
+         XlUps8LrX7Plkieoq7wiWJRk7Vipob8RmCBQyQF3qNm2iSbzG6QCzCp6xUTd64i6ub+k
+         ptddsiyFX7jwkGJm5/f1Cidq+r/mX1dsiSRW1bAwYFm0qyt3RsKFrpVEzExCIo6GUJcp
+         2DGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728226794; x=1728831594;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1728226377; x=1728831177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N6+Wg2986G03us2gYz8rYilG8qAjZ8Fp5YpwGKJLHPE=;
-        b=rgSJ+2xPouQTihy7cB5F3XCZ44E2GDki2MXzMmzwSDqThVxOkCHZl9qopr9bzgJmf7
-         yq6OOGvU1ZVfWesD0cn82mgpFXF0VgZOQ91/4jY8Q5HDFBEX+3kmoOn/r4F/Zw54sP+v
-         OSJbo5rpjXVECbdZWwOPk8sO0SvxAPmOusAvoSV5IvT2XFyQ5XfxMfWi1VWutrpsvk20
-         AHZA++5an+7pvmqV14Ucd9fJcUE4Nz7xp2RxvDaKB0rp2cuyzR0m6BvfqbjZuvWXcUy/
-         H4MUHB8yPy4aw7R4yEtAOC2d0R1eGf8xfOy0ExpLI6S0mg72BtjV+9AodH+QPCZJe4Km
-         f56A==
-X-Forwarded-Encrypted: i=1; AJvYcCWPypSVwmL2EMa2HWmdzUHLeQxWZjRWeEm8tZtdWHfZJJtXho/l0WIaX/fkleZ0Zg5lfyMsrj5M+WDzv5Qt@vger.kernel.org, AJvYcCXCEjZJYrhSom3z0FRdFMXWQjf2TlgCNsgvNrk61lT0kUXPIIWdzJcb6rgywljV4n/3BG7v+fv9uY8bE0k1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbKFtbugEgaU7Kj9YLtmjhjMsz0KCSGdzuS/pXNMp8jpKE31cV
-	z3YMe7wAql8+30H+uMgRa1h0P3XlQnmI14kbt+Clq0LxXSWXj0W3xUdcgytWTSIc3+rF+BNGz0c
-	3mIZBoli/HZhdfXJMDFY3XO9Lrd4=
-X-Google-Smtp-Source: AGHT+IFm7maYo6rzOtAGgDPgWzCxAuhLdf6EWEcyPkvdTVjmROdt9OcZpx4l8tdmq9Db4QIulLYNvvxSXoTFoa+2G+Q=
-X-Received: by 2002:a05:690c:700a:b0:6b1:2825:a3cd with SMTP id
- 00721157ae682-6e2c728aa03mr67808637b3.35.1728226793746; Sun, 06 Oct 2024
- 07:59:53 -0700 (PDT)
+        bh=/jN5IJB1E2Lr0al72GEamd2RYur9sqqi/hVsmg8n8rw=;
+        b=rpxtSBWZjhzY6VNo+gw14xWwV7U5EWSwcTv7EHqvPOGxjslwwSzSL5wmVap0B+MU39
+         /rhhIB6hgfcGQz9wn8AtrXeTpgh90cXrdXgdn8rL/WF1TC8rbCSZhJacULmilSXCEC1d
+         75oRicmer4bxRtUzFP/BKT6eHkoQiSpGrYE1iU3OJ/fvIuAPpk2qfHUAxVDgvohDT6bC
+         oNXqsM9k3QPB5KLW2gQZ3BNLkUt00ZNzqeWO/CXtdo5Pxz0qME7lH6wewOzahkVLsDhW
+         hy20WAuns/6qEGzoeKChFpfSS8fYSLy6p/k0v3GNmF5LV4TPMco5sZWIUd9iUICLYG9O
+         WeRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrQNevFWe9j33ivzCKJ1wQGyPQqKrf+vhlX82Zfjj2hwuQceeXAewyzwFCSgBX3k8Lezkm4QlXoXsZibQf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA1Z8q7AiAC94M/gygz6VHFVl5lIzBdUvqfL4dvZ+ylEZkCVGf
+	5+93Oa/RnHrQoJ9djL0Gg9mByrkvoV2hIpElIMmQFzBUOQqISgNJARsVyIIpB0M=
+X-Google-Smtp-Source: AGHT+IGuPc5eZvJWKPTOyXTikGuhJmkR+fXTXGygxbFH1nWXgpOcVKkQSkjknXHFwPK0qUQPDVGQDA==
+X-Received: by 2002:a17:90a:4bc6:b0:2d3:ca3f:7f2a with SMTP id 98e67ed59e1d1-2e1e62674damr9537001a91.22.1728226377448;
+        Sun, 06 Oct 2024 07:52:57 -0700 (PDT)
+Received: from localhost.localdomain ([143.92.64.17])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e8664bfasm5213680a91.44.2024.10.06.07.52.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 07:52:56 -0700 (PDT)
+From: Tang Yizhou <yizhou.tang@shopee.com>
+X-Google-Original-From: Tang Yizhou
+To: jack@suse.cz,
+	hch@infradead.org,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	chandan.babu@oracle.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	Tang Yizhou <yizhou.tang@shopee.com>
+Subject: [PATCH v2 0/3] Cleanup some writeback codes
+Date: Sun,  6 Oct 2024 23:28:46 +0800
+Message-Id: <20241006152849.247152-1-yizhou.tang@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002142516.110567-1-luca.boccassi@gmail.com>
- <20241004-signal-erfolg-c76d6fdeee1c@brauner> <CAMw=ZnRt3Zvmf9Nt0sDHGPUn06HP3NE3at=x+infO=Ms4gYDGA@mail.gmail.com>
- <20241004192958.GA28441@redhat.com> <CAMw=ZnRp5N6tU=4T5VTbk-jx58fFUM=1YdkWc2MsmrDqkO2BZA@mail.gmail.com>
- <20241005112929.GA24386@redhat.com>
-In-Reply-To: <20241005112929.GA24386@redhat.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Sun, 6 Oct 2024 15:59:42 +0100
-Message-ID: <CAMw=ZnQB-xsvPX6TrmaXed3KGBR1YO1qYP-iNsUAv8XAOvB=YQ@mail.gmail.com>
-Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org, paul@paul-moore.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 5 Oct 2024 at 12:29, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 10/04, Luca Boccassi wrote:
-> >
-> > On Fri, 4 Oct 2024 at 20:30, Oleg Nesterov <oleg@redhat.com> wrote:
-> > >
-> > > I guess Christian meant you should simply use
-> > >
-> > >                 info.pid = task_pid_vnr(task);
-> > >
-> > > task_pid_vnr(task) returns the task's pid in the caller's namespace.
-> >
-> > Ah I see, I didn't realize there was a difference, sent v3 with the
-> > suggested change just now, thanks.
->
-> I didn't get v3, I guess I wasn't cc'ed again.
->
-> So, just in case, let me add that task_pid_vnr(task) can return 0 if
-> this task exits after get_pid_task().
->
-> Perhaps this is fine, I do not know. But perhaps you should actually
-> use pid_vnr(pid).
->
-> Oleg.
+From: Tang Yizhou <yizhou.tang@shopee.com>
 
-I have just sent v5 CC'ing you and adding a final check before the
-copy to userspace, that returns ESRCH if the task has exited. This
-should solve that issue, and also be future-proof against potential
-additions that might slow down processing due to gathering more data
-or so.
+v2:
+PATCH #1: Rename BANDWIDTH_INTERVAL to BW_DIRTYLIMIT_INTERVAL and update
+some comments.
+
+PATCH #2: Pick up Jan's Reviewed-by tag.
+
+PATCH #3: xfs_max_map_length() was written following the logic of
+writeback_chunk_size().
+
+
+Tang Yizhou (3):
+  mm/page-writeback.c: Rename BANDWIDTH_INTERVAL to
+    BW_DIRTYLIMIT_INTERVAL
+  mm/page-writeback.c: Fix comment of wb_domain_writeout_add()
+  xfs: Let the max iomap length be consistent with the writeback code
+
+ fs/fs-writeback.c         |  5 ----
+ fs/xfs/xfs_iomap.c        | 52 ++++++++++++++++++++++++---------------
+ include/linux/writeback.h |  5 ++++
+ mm/page-writeback.c       | 18 +++++++-------
+ 4 files changed, 46 insertions(+), 34 deletions(-)
+
+-- 
+2.25.1
+
 
