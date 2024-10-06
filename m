@@ -1,171 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-31119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB5DA991E38
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 13:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EBD991E45
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 14:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 462BAB21986
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 11:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D95AB20ED6
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 12:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594F8176237;
-	Sun,  6 Oct 2024 11:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68850176AA3;
+	Sun,  6 Oct 2024 12:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="KzByrRQs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91165364A0;
-	Sun,  6 Oct 2024 11:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1736754F95
+	for <linux-fsdevel@vger.kernel.org>; Sun,  6 Oct 2024 12:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728215795; cv=none; b=WqEY92OOBt59zseCJGCa5RyQdWGYAOvX71bK3BqEZA9lcFQDZwzEjCzXh+OQ7S6reCG2oTPIZMjFzvmFv6PJ4/WvEif7r7vlhvsb/Y4QRgNMM/dUiwVK5A7cwqEGbmQ+a065QFYjmZdOUurYTbRhwtQOIG3c4/3AKtaNS3Dwers=
+	t=1728218487; cv=none; b=jpGwAmJCEILqL119FuSOe1rkmazNSqRLYHCiiRo8b5VCie6/KzmojVVjrbaxGTrpLeejE7rT8xPXRa4rkWmFgedmqcbo6TkiqDkLrps5iTwOG++i8K5i8QuZTKcaSLIiHdsN94tCQukKFTT2Myr8EAXYJ45RKWJtNNX3xsu7V1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728215795; c=relaxed/simple;
-	bh=fYm8XZM7szcIecmiSvIW0b+adLjsjNfHN8DO3gDpkPA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qxPbkzXW39NXLHCwk1fAMO9fUqihA36OW/dVNHThwb9RGqAgJ2qIxr+bq0L8MeobRSlNmM2EY6eb+R3RxdxPGu030e4yIF5134rvvsxSpjkzf6Q0vLdmHxkFb8GrZjV0GureG2SKYY0JCQx7f3sDlm9ZCnV5XMRDhv74MeqicLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id 9E79A73FD6;
-	Sun, 06 Oct 2024 11:49:23 +0000 (UTC)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Date: Sun, 06 Oct 2024 13:49:23 +0200
-Message-ID: <5987583.MhkbZ0Pkbq@lichtvoll.de>
-In-Reply-To: <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
-References:
- <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+	s=arc-20240116; t=1728218487; c=relaxed/simple;
+	bh=u8Mj+N0uBo+FjlXTOOH0rCGocurIdJqfnIy06CFNZ4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BQMQbO2KcaYrG1X7j3c9Xt5Gs90Ql0cNEUsR/sn8IFWt7lcYWY0ghsGbHoxbq97gxJwZbAVXA1GxGx3q8BDW/vEIe4sV89OSMyy/om2Syhur+OuXNAvRaC1BwDuFrxt4giiUWhN8gwUTmqYFFx3Axf4Lio/ntZdml8WBJ5pEJzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=KzByrRQs; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c89f3e8a74so4947932a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 05:41:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1728218483; x=1728823283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wfp1qjvTY96JjSBPZFBQdcNzYYrkwI+G1xfIpJuix4g=;
+        b=KzByrRQsWL0+ym4Mh0UGvu24GFDG3bG9I5ZtMN0so5vw3XZFZUC3s7dea1fGQDiX+K
+         Jj/4OwWTG/cbTgM8PZKG+EM4jsAUR54A6KLx89t5KoIFMKisOmT3A/HxoQXFGgw5iWBV
+         n0wk7qdlk3PtMdbzrIBXxyG2pEna+VL10KNLe2SaNeSR5cLulsfMO6iHCMos/B8UXfZs
+         FGTS5fncofwn9O+viaDqD6JePcJa+vWGVOFgQ4GILSJo92uNewlKKmY7m15/eoQZ8suT
+         tc30WLKXWrzAjcV7jhii7a6JFOW7nXok2+Ju7jFQH9ww6D/ANAtaogsM0XdFo2wWB1iD
+         kp0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728218483; x=1728823283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wfp1qjvTY96JjSBPZFBQdcNzYYrkwI+G1xfIpJuix4g=;
+        b=Qmadl/QcDxGE58hxE9XNykyzQbmWZZ8E5ZQUSSAB/1tsT4350keDLTUVFi6FbHT61r
+         65FVg5R5NjpML0ojZmnRfWf9sl+92sF7z8LTJ2ILMvl3IltCyfShkGzHHkfJROR1Ir6l
+         /3c2dnb19dqlOSOBs+yTjZmsLos+UXJ1eyAIz1QJzd0vky/mkU0Umvc5/1I6Fdvik+7J
+         rf3QkBbepdkj7fI6Q0xRHGfAB+8a3UjrfIJGkDU7sPTy39ABTU18J1fo4FFIWeF6ERoW
+         cX7nUSIyOnyWgiLOb0dbtzRC4MPYlR4UaA4xmVpQBu1CYEiqYydW8N+Jh/yYkFVw4SZN
+         4Lxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVKq0ypd+yOSgHGvn+Rs/xsD2QLOrIE99DExn8cPL5z0j54xeeDskchxGwWuA7/t3ypl8c7DuM7acCN5SH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwJxY5U7dMkXyywAYinG8zIYNdeXa8grEzom3OqMZ7PS+6LXBz
+	/hKDxFx+BFVDTj4Vs2M/VZTMflvaXkrUdJhAsAPAQg+/IGlZYTTQad0be5I8D46JcgeTj3lFH+I
+	8fZvwO/CdhDcUvwb8g7rtNwl05jsCfscg0TeY8g==
+X-Google-Smtp-Source: AGHT+IEF9NwbobBLuKG517PdIWkR4xGN0N5GZnoenM1ha2mMz3y+73DuJ+bYd39ST4E88BP40fitG4CKTsuEf/ce1/U=
+X-Received: by 2002:a05:6402:4314:b0:5c7:1f13:9352 with SMTP id
+ 4fb4d7f45d1cf-5c8d2ed3439mr7944293a12.34.1728218483427; Sun, 06 Oct 2024
+ 05:41:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20241002130004.69010-1-yizhou.tang@shopee.com>
+ <20241002130004.69010-2-yizhou.tang@shopee.com> <20241003130127.45kinxoh77xm5qfb@quack3>
+In-Reply-To: <20241003130127.45kinxoh77xm5qfb@quack3>
+From: Tang Yizhou <yizhou.tang@shopee.com>
+Date: Sun, 6 Oct 2024 20:41:11 +0800
+Message-ID: <CACuPKxmwZgNx242x5HgTUCpu6v6QC3XtFY2ZDOE-mcu=ARK=Ag@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mm/page-writeback.c: Rename BANDWIDTH_INTERVAL to UPDATE_INTERVAL
+To: Jan Kara <jack@suse.cz>
+Cc: willy@infradead.org, akpm@linux-foundation.org, chandan.babu@oracle.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kent, hi Linus.
+On Thu, Oct 3, 2024 at 9:01=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 02-10-24 21:00:02, Tang Yizhou wrote:
+> > From: Tang Yizhou <yizhou.tang@shopee.com>
+> >
+> > The name of the BANDWIDTH_INTERVAL macro is misleading, as it is not
+> > only used in the bandwidth update functions wb_update_bandwidth() and
+> > __wb_update_bandwidth(), but also in the dirty limit update function
+> > domain_update_dirty_limit().
+> >
+> > Rename BANDWIDTH_INTERVAL to UPDATE_INTERVAL to make things clear.
+> >
+> > This patche doesn't introduce any behavioral changes.
+> >
+> > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+>
+> Umm, I agree BANDWIDTH_INTERVAL may be confusing but UPDATE_INTERVAL does
+> not seem much better to be honest. I actually have hard time coming up wi=
+th
+> a more descriptive name so what if we settled on updating the comment onl=
+y
+> instead of renaming to something not much better?
+>
+>                                                                 Honza
 
-Kent Overstreet - 06.10.24, 02:54:32 CEST:
-> On Sat, Oct 05, 2024 at 05:14:31PM GMT, Linus Torvalds wrote:
-> > On Sat, 5 Oct 2024 at 16:41, Kent Overstreet=20
-<kent.overstreet@linux.dev> wrote:
-> > > If what you want is patches appearing on the list, I'm not unwilling
-> > > to
-> > > make that change.
-> >=20
-> > I want you to WORK WITH OTHERS. Including me - which means working
-> > with the rules and processes we have in place.
->=20
-> That has to work both ways.
+Thank you for your review. I agree that UPDATE_INTERVAL is not a good
+name. How about
+renaming it to BW_DIRTYLIMIT_INTERVAL?
 
-Exactly, Kent.
+Yi
 
-And it is my impression from reading the whole thread up to now and from=20
-reading previous threads it is actually about: Having your way and your=20
-way only.
-
-That is not exactly "work both ways".
-
-Quite similarly regarding your stand towards distributions like Debian.
-
-Sure you can question well established rules all the way you want and=20
-maybe you are even right about it. I do not feel qualified enough to judge=
-=20
-on that. I am all for challenging well established rules on justified=20
-grounds=E2=80=A6
-
-But=E2=80=A6 even if that is the case it is still a negotiation process. Ex=
-pecting=20
-that communities change well established rules on the spot just cause you=20
-are asking for it=E2=80=A6 quite bold if you ask me. It would be a negotiat=
-ion=20
-process and work both ways would mean to agree on some kind of middle=20
-ground. But it appears to me you do not seem to have the patience for such=
-=20
-a process. So it is arguing on both sides which costs a lot of energy of=20
-everyone involved.
-
-=46rom what I perceive you are actually actively working against well=20
-established rules. And you are surprised on the reaction? That is kind of=20
-naive if you ask me.
-
-At least you wrote you are willing to post patches to the mailing list: So=
-=20
-why not start with at least that *minimal* requirement according to Linus=20
-as a step you do? Maybe even just as a sign of good will towards the=20
-kernel community? That has been asked of you concretely, so why not just=20
-do it?
-
-Maybe this can work out by negotiating a middle ground going one little=20
-step at a time?
-
-
-I still do have a BCacheFS on my laptop for testing, but meanwhile I=20
-wonder whether some of the crazy kernel regressions I have seen with the=20
-last few kernels where exactly related to having mounted that BCacheFS=20
-test filesystem. I am tempted to replace the BCacheFS with a BTRFS just to=
-=20
-find out.
-
-Lastly 6.10.12-1 Debian kernel crashes on a pool-spawner thread when I=20
-enter the command =E2=80=9Ereboot=E2=80=9C. That is right a reboot crashes =
-the system =E2=80=93 I=20
-never have seen anything this crazy with any Linux kernel so far! I have=20
-made a photo of it but after that long series of regressions I am even too=
-=20
-tired to post a bug report about it just to be told again to bisect the=20
-issue. And it is not the first work queue related issue I found between 6.8=
-=20
-and 6.11 kernels.
-
-Actually I think I just replace that BCacheFS with another BTRFS in order=20
-to see whether it reduces the amount of crazy regressions I got so fed up=20
-with recently. Especially its not fair to report all of this to the Lenovo=
-=20
-Linux community guy Mark Pearson in case its not even related to the new=20
-ThinkPad T14 AMD Gen 5 I am using. Mind you that series of regressions=20
-started with a T14 AMD Gen 1 roughly at the time I started testing=20
-BCacheFS and I had hoped they go away with the new laptop. Additionally I=20
-have not seen a single failure with BTRFS on any on my systems =E2=80=93 in=
-cluding=20
-quite some laptops and several servers, even using LXC containers =E2=80=93=
- for=E2=80=A6 I=20
-don't remember when. Since kernel 4.6 BTRFS at least for me is rock=20
-stable. And I agree, it took a huge lot of time until it was stable. But=20
-whether that is due to the processes you criticize or other reasons or a=20
-combination thereof=E2=80=A6 do you know for sure?
-
-I am wondering: did the mainline kernel just get so much more unstable in=20
-the last 3-6 months or may there be a relationship to the test BCacheFS=20
-filesystem I was using that eluded me so far. Of course, I do not know for=
-=20
-now, but reading Carl's mails really made me wonder.
-
-Maybe there is none, so don't get me wrong=E2=80=A6 but reading this thread=
- got me=20
-suspicious now. I am happily proven wrong on that suspicion and I commit=20
-to report back on it. Especially when the amount of regressions does not=20
-decline and I got suspicious of BCacheFS unjustly.
-
-Best,
-=2D-=20
-Martin
-
-
+> > ---
+> >  mm/page-writeback.c | 16 ++++++++--------
+> >  1 file changed, 8 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> > index fcd4c1439cb9..a848e7f0719d 100644
+> > --- a/mm/page-writeback.c
+> > +++ b/mm/page-writeback.c
+> > @@ -54,9 +54,9 @@
+> >  #define DIRTY_POLL_THRESH    (128 >> (PAGE_SHIFT - 10))
+> >
+> >  /*
+> > - * Estimate write bandwidth at 200ms intervals.
+> > + * Estimate write bandwidth or update dirty limit at 200ms intervals.
+> >   */
+> > -#define BANDWIDTH_INTERVAL   max(HZ/5, 1)
+> > +#define UPDATE_INTERVAL              max(HZ/5, 1)
+> >
+> >  #define RATELIMIT_CALC_SHIFT 10
+> >
+> > @@ -1331,11 +1331,11 @@ static void domain_update_dirty_limit(struct di=
+rty_throttle_control *dtc,
+> >       /*
+> >        * check locklessly first to optimize away locking for the most t=
+ime
+> >        */
+> > -     if (time_before(now, dom->dirty_limit_tstamp + BANDWIDTH_INTERVAL=
+))
+> > +     if (time_before(now, dom->dirty_limit_tstamp + UPDATE_INTERVAL))
+> >               return;
+> >
+> >       spin_lock(&dom->lock);
+> > -     if (time_after_eq(now, dom->dirty_limit_tstamp + BANDWIDTH_INTERV=
+AL)) {
+> > +     if (time_after_eq(now, dom->dirty_limit_tstamp + UPDATE_INTERVAL)=
+) {
+> >               update_dirty_limit(dtc);
+> >               dom->dirty_limit_tstamp =3D now;
+> >       }
+> > @@ -1928,7 +1928,7 @@ static int balance_dirty_pages(struct bdi_writeba=
+ck *wb,
+> >               wb->dirty_exceeded =3D gdtc->dirty_exceeded ||
+> >                                    (mdtc && mdtc->dirty_exceeded);
+> >               if (time_is_before_jiffies(READ_ONCE(wb->bw_time_stamp) +
+> > -                                        BANDWIDTH_INTERVAL))
+> > +                                        UPDATE_INTERVAL))
+> >                       __wb_update_bandwidth(gdtc, mdtc, true);
+> >
+> >               /* throttle according to the chosen dtc */
+> > @@ -2705,7 +2705,7 @@ int do_writepages(struct address_space *mapping, =
+struct writeback_control *wbc)
+> >        * writeback bandwidth is updated once in a while.
+> >        */
+> >       if (time_is_before_jiffies(READ_ONCE(wb->bw_time_stamp) +
+> > -                                BANDWIDTH_INTERVAL))
+> > +                                UPDATE_INTERVAL))
+> >               wb_update_bandwidth(wb);
+> >       return ret;
+> >  }
+> > @@ -3057,14 +3057,14 @@ static void wb_inode_writeback_end(struct bdi_w=
+riteback *wb)
+> >       atomic_dec(&wb->writeback_inodes);
+> >       /*
+> >        * Make sure estimate of writeback throughput gets updated after
+> > -      * writeback completed. We delay the update by BANDWIDTH_INTERVAL
+> > +      * writeback completed. We delay the update by UPDATE_INTERVAL
+> >        * (which is the interval other bandwidth updates use for batchin=
+g) so
+> >        * that if multiple inodes end writeback at a similar time, they =
+get
+> >        * batched into one bandwidth update.
+> >        */
+> >       spin_lock_irqsave(&wb->work_lock, flags);
+> >       if (test_bit(WB_registered, &wb->state))
+> > -             queue_delayed_work(bdi_wq, &wb->bw_dwork, BANDWIDTH_INTER=
+VAL);
+> > +             queue_delayed_work(bdi_wq, &wb->bw_dwork, UPDATE_INTERVAL=
+);
+> >       spin_unlock_irqrestore(&wb->work_lock, flags);
+> >  }
+> >
+> > --
+> > 2.25.1
+> >
+> >
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
