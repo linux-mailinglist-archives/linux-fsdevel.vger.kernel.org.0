@@ -1,143 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-31108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C38991C9A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 07:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81391991CA8
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 07:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFD71F21EF5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 05:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CDFB1F21EB3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 05:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEFB16190C;
-	Sun,  6 Oct 2024 05:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2FC165F16;
+	Sun,  6 Oct 2024 05:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gTL8S6Z9"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mXBbTG7/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C5BEC5;
-	Sun,  6 Oct 2024 05:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D37714D2B9;
+	Sun,  6 Oct 2024 05:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728191456; cv=none; b=i4LArBzOUhW9hiFZ9dbWRwFQPOFMXKJ1pPAEdCpOUjF+HvEAtQQC5k3dncRuy7s5tJhriiJTMZkjUXWxIHv5JDrl4uuckzOW4BVn6h2j0vWymiBBeskUcLsptOdLjR1Hk2KyyMDlJqA+xzZV+5O52ks00EOMqJ4unMw5el6g+UA=
+	t=1728192552; cv=none; b=O3Ovv2hisQyGMjrcuN7t2lCEOK318TUwB7Lsuypv58l1uuJWEI70FASJfDL9Cq8KWTwGL4EqATs5Uwlu1SFplbM0x6j4Qu1/YwePigzV2A9fwZZE5lg8B78S9fU76hTRoCNhkmfbXDtZ1+J2ePWKg5s92IAEpYyrxQGWY3bJHY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728191456; c=relaxed/simple;
-	bh=TuqrH0MK9XVTYwOnrSQOST4+hIMOBIr6LNB6z8HJ2pE=;
+	s=arc-20240116; t=1728192552; c=relaxed/simple;
+	bh=+qvf+pVKRbwGu6gLpBn33/Zs3vLuu8P/6IkCw+IxAa4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+CoF+39d1kz2Hd9G/M3QAjNlIuvmHYD6M6iv28Z8tJNmoVSiKreO2B1ou7KDMwG0Vn6MvptXn9SrDp6OnCN1BjNr0tdZD/f1s3IKN/sj6NKpc/5PIZT0jXhFEleL0pXYTV/hxET1OiITitLji5OUsNiG8GyiD+Oz8SCUv/RUHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gTL8S6Z9; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728191451; x=1759727451;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=TuqrH0MK9XVTYwOnrSQOST4+hIMOBIr6LNB6z8HJ2pE=;
-  b=gTL8S6Z9ZYGz3LgM2nV+DfFPE6hZYwjHCQ7HjBsixBCHhJvxbvKkDp6+
-   MU41/7QWtSkvMR01tRX0MWb7dAWN+IauM88df0VzGuzs67zhJoDtfZI0z
-   OZXhyjP46sNyWeRXMIci/nVAW3ZbTgTm/V83ebTJl8eSrvJjqAoU1KyTH
-   /GHi1sgOqqHSombMsPS8cbwC3kWLckEmWE8Jil2rdXlQQd++Tg9DeCDPW
-   ugQcqo908LQByeqeDEJk10dti6GY0Mji8kKcjYLl70Nym81diSELJuGRq
-   d5w3oCKNVuCF1eVkBUToXt5+6JMjbAgdEJpZOrMkM1DkbIOH9+yN+tZko
-   g==;
-X-CSE-ConnectionGUID: VqtcqO12QeKRS0x1CVDv4A==
-X-CSE-MsgGUID: 3JObBAw2QEeHUbuVqMbuCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="26867394"
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="26867394"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 22:10:50 -0700
-X-CSE-ConnectionGUID: /1nD6UcSSji0idIG5sfvBw==
-X-CSE-MsgGUID: Qex4CVsXQoK1aSuVcW0B0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="98432378"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 05 Oct 2024 22:10:46 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxJXY-0003ca-1L;
-	Sun, 06 Oct 2024 05:10:44 +0000
-Date: Sun, 6 Oct 2024 13:10:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com, Christoph Hellwig <hch@lst.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [PATCH v5 07/10] tmpfs: Add casefold lookup support
-Message-ID: <202410061202.rhZIs2gr-lkp@intel.com>
-References: <20241002234444.398367-8-andrealmeid@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hmzJdeayKixuYawR4VJ1JCZWuBwj9FaURBnplaiZik9iMo2bvfBgcD1tkIP0LPHhd2zFczYxe/4zJYxX5CgBN2w653V/8hZoDTC1uRwOdgsRf8BpJlSX8YiWgWXBer5OyBX/N1LSMrPI3IhAPob2i8CmpDv2/WLt58+fCow+084=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mXBbTG7/; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9H6bmpjotof79tAf7RgMUcUrKT2EtJKt/JeJ+48AWwo=; b=mXBbTG7/bRjFtUx1Dg/8LZmJqs
+	PW/i/dK2d/RurQk0x6oH60j4KxDXkpSq45yO7kxy52A3oX5mBNMkotIKHGgvlQ6uN59XWKJoPM8dp
+	9uBbbG9CY20eLGYQzZyNKIpifFLWVgXYvxrF370FP2qsL/sxiQK423nN0yL+3Vi5Uzn/jjfnmICc9
+	TL6VUkMhkJawOKu/J8VAFXx1Fas4VaHFweCfwdrSx7FJI6qstBN+QYPswdJKp7vCQ0naUc1/nvy7g
+	ecXIEhhZooI4tJt0DOb2Ajz6AyRBKscm6gUHwSz0AklrOt+oGU5bBFnu5wH+ji3Enw6bCWZp3aLRW
+	HquyGvrw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxJpD-00000001FjB-3m5i;
+	Sun, 06 Oct 2024 05:28:59 +0000
+Date: Sun, 6 Oct 2024 06:28:59 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	io-uring@vger.kernel.org, cgzones@googlemail.com
+Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
+Message-ID: <20241006052859.GD4017910@ZenIV>
+References: <20241002011011.GB4017910@ZenIV>
+ <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
+ <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
+ <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
+ <20241002020857.GC4017910@ZenIV>
+ <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
+ <20241002211939.GE4017910@ZenIV>
+ <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241002234444.398367-8-andrealmeid@igalia.com>
+In-Reply-To: <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi André,
+On Wed, Oct 02, 2024 at 04:55:22PM -0600, Jens Axboe wrote:
 
-kernel test robot noticed the following build warnings:
+> The reason I liked the putname() is that it's unconditional - the caller
+> can rely on it being put, regardless of the return value. So I'd say the
+> same should be true for ctx.kvalue, and if not, the caller should still
+> free it. That's the path of least surprise - no leak for the least
+> tested error path, and no UAF in the success case.
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on akpm-mm/mm-everything tytso-ext4/dev linus/master v6.12-rc1 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The problem with ctx.kvalue is that on the syscall side there's a case when
+we do not call either file_setxattr() or filename_setxattr() - -EBADF.
+And it's a lot more convenient to do setxattr_copy() first, so we end
+up with a lovely landmine:
+        filename = getname_xattr(pathname, at_flags);
+	if (!filename) {
+		CLASS(fd, f)(dfd);
+		if (fd_empty(f)) {
+			kfree(ctx.kvalue); // lest we leak
+			return -EBADF;
+		}
+		return file_setxattr(fd_file(f), &ctx);
+	}
+	return filename_setxattr(dfd, filename, lookup_flags, &ctx);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/libfs-Create-the-helper-function-generic_ci_validate_strict_name/20241003-074711
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20241002234444.398367-8-andrealmeid%40igalia.com
-patch subject: [PATCH v5 07/10] tmpfs: Add casefold lookup support
-config: x86_64-buildonly-randconfig-004-20241006 (https://download.01.org/0day-ci/archive/20241006/202410061202.rhZIs2gr-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410061202.rhZIs2gr-lkp@intel.com/reproduce)
+That's asking for trouble, obviously.  So I think we ought to consume
+filename (in filename_...()) case, leave struct file reference alone
+(we have to - it might have been borrowed rather than cloned) and leave
+->kvalue unchanged.  Yes, it ends up being more clumsy, but at least
+it's consistent between the cases...
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410061202.rhZIs2gr-lkp@intel.com/
+As for consuming filename...  On the syscall side it allows things like
+SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+{
+        return do_mkdirat(dfd, getname(pathname), mode);
+}  
+which is better than the alternatives - I mean, that's
+SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+{
+	struct filename *filename = getname(pathname);
+	int res = do_mkdirat(dfd, filename, mode);
+	putname(filename);
+	return ret;
+}  
+or 
+SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+{
+	struct filename *filename __free(putname) = getname(pathname);
+	return do_mkdirat(dfd, filename, mode);
+}
+and both stink, if for different reasons ;-/  Having those things consume
+(unconditionally) is better, IMO.
 
-All warnings (new ones prefixed by >>):
+Hell knows; let's go with what I described above for now and see where it leads
+when more such helpers are regularized.
 
-   mm/shmem.c:1608:20: warning: unused function 'shmem_show_mpol' [-Wunused-function]
-    1608 | static inline void shmem_show_mpol(struct seq_file *seq, struct mempolicy *mpol)
-         |                    ^~~~~~~~~~~~~~~
->> mm/shmem.c:4717:39: warning: unused variable 'shmem_ci_dentry_ops' [-Wunused-const-variable]
-    4717 | static const struct dentry_operations shmem_ci_dentry_ops = {
-         |                                       ^~~~~~~~~~~~~~~~~~~
-   2 warnings generated.
+> That's a bit different than your putname() case, but I think as long as
+> it's consistent regardless of return value, then either approach is
+> fine. Maybe just add a comment about that? At least for the consistent
+> case, if it blows up, it'll blow up instantly rather than be a surprise
+> down the line for "case x,y,z doesn't put it" or "case x,y,z always puts
+> in, normal one does not".
 
+Obviously.
 
-vim +/shmem_ci_dentry_ops +4717 mm/shmem.c
+> > Questions on the io_uring side:
+> > 	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
+> > Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
+> > Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
+> > Am I missing something subtle here?
+> 
+> Right, it could be allowed for fgetxattr on the io_uring side. Anything
+> that passes in a struct file would be fair game to enable it on.
+> Anything that passes in a path (eg a non-fd value), it obviously
+> wouldn't make sense anyway.
 
-  4715	
-  4716	#if IS_ENABLED(CONFIG_UNICODE)
-> 4717	static const struct dentry_operations shmem_ci_dentry_ops = {
-  4718		.d_hash = generic_ci_d_hash,
-  4719		.d_compare = generic_ci_d_compare,
-  4720		.d_delete = always_delete_dentry,
-  4721	};
-  4722	#endif
-  4723	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+OK, done and force-pushed into #work.xattr.
 
