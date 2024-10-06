@@ -1,104 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-31123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6CD991EE3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 16:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC9F991F30
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 16:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC36282564
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 14:29:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B69281E8E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 14:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8F38175B;
-	Sun,  6 Oct 2024 14:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEC01422D2;
+	Sun,  6 Oct 2024 14:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="a7wAsigS"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ym5kQUjt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CEC2557A
-	for <linux-fsdevel@vger.kernel.org>; Sun,  6 Oct 2024 14:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D51313665B;
+	Sun,  6 Oct 2024 14:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728224940; cv=none; b=dFKnPrYbeFZuSLn50MaRKO58vOM8f0tqlhUb4uAuEzVV+XY46KIYKfW1g+0qnqaCVRefMii6sIP8hkuvxa6wXf4AGWY/6ZDZSaxMDIxea0QOTbyh5vW6sNEkjhtMUoaGW7b/LPnXJy2e0/ekCyhjppQtvT2MsJDlPx+KQt94Qvo=
+	t=1728226751; cv=none; b=CAOwwh6gb30/XCz20wY6THnt+XsX3rWA4UTewhgl9S2ONFITJwwh4TQ6ae9IFKyfLv13HG00kBxk3JKVO3fyU+j9BkDXKt9iu8E8T/nMg9FqPu1Kco0+NKnhQ+0s1OT0lg1Q35RHA+G8JKhMPXEbBn4CPPVUfGAAlUWwWnxP4OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728224940; c=relaxed/simple;
-	bh=cvh1VNDKgVQtS0kqZZTJM4ITFk0EyN0F03KA/hlcgRk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oLt9eBWNS5hEqXMrYc47npaTmSQYxs9SIlYIJai7mEbU8zC5QCIXhF4Z/3kK1f1KTW3IF/2w/TrHdSX6pRqRy41cZNSt43+CMEZ2NkgjtO5yyseUPqyYetjz31r9f85s2+sd8ZbAocF6ntdJUSKT43SJTQe4anVYXWATZDKgGGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=a7wAsigS; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c89668464cso4786941a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 07:28:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1728224937; x=1728829737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cvh1VNDKgVQtS0kqZZTJM4ITFk0EyN0F03KA/hlcgRk=;
-        b=a7wAsigS5KIW3PMQtmb31aKgweL8Wu+uluAFdSiVe7P/vEPZT/mXnWkMEPuWFnvNUC
-         PyLAMuIuUjt5jwDR3UJo8Ncn6+TXiBmPYskawrZ/Pv/3Fn65wTUUQmR3CCSzhyTM40nv
-         1yODh4aQqQH1NwsFvMX/Xa0wanoMLES8JevOc21PZs9URxAsn6RRGLGSDgw+gfkFqjsG
-         wXhKLDing37MOZpsQic8c5ZlJDL+heLllM6w/DA7O75EAC2gaipoYqILxiOtKGQ8YT2I
-         q3sUmqQVbwKJ07Xg2r1yX+ThgHmgwZvLJWjnR9cr3Z2rIiOhosv+rNAYlHh3/ORFT4pO
-         a+Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728224937; x=1728829737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cvh1VNDKgVQtS0kqZZTJM4ITFk0EyN0F03KA/hlcgRk=;
-        b=SwrFSMeY3g3C0dvrP4BevyJGXlOmEYGFMS362+CWz+oCg414lgTxvCqnTQdfkSReMH
-         awRfqihUtzihe55BRcBLVL7JYDENvEC/S93sC1A4bt3sez8oeG2n0ZNvo9YUUrNfe6lU
-         xsH1eBEmepk7CRiARr3HZBDE70I7iWqRDyMe7eEKn9Kh3AkHvPv/PSkQUFDmtZKaZbF3
-         Hw0zMd4ml1uYL9p6kdDK56UaJdYxwUI0lxN0Gwzt0C2GH19xwXMsa8BxF6WKiVU+bUnH
-         0eGv3v5JiL5bA7W8oZh2qWkOvnuXwRMh8WvjuFZUq9oJgxLGcPqm7OpDVnN41I67S+uT
-         pRxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTYe/ph0W5u8/KEOdqkb4w9OrK2JgLz4fJ67r/msWm+qMY9+LR9B6qNgyKLGFaVqb73YnEi5p75lyjMHI3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi9NESlA3XyOK0iDGzUPlt3H/6xEzvCX6S8epfvVL51d4iAubl
-	4UetsWcPzdnM7D2+WJ/TAfd5j354/zzIJ1Qt7gGirZSxFWhq5UMJ3MLY7H6KoVjy5Fz0qVSWfc+
-	vz81n0FHEtlg2pCSf/uGyhhspPqpO+zmafsgDfQ==
-X-Google-Smtp-Source: AGHT+IERmoeIAzbY//wPQ0ALN0hsGZOsI5Ri64LPZKPMVqcGOVQM6SZuK6lN209r8+tDeh3E7y0WZX9FnBRU4TONBKA=
-X-Received: by 2002:a05:6402:3512:b0:5c8:97dd:3b03 with SMTP id
- 4fb4d7f45d1cf-5c8d2e9ef80mr6600615a12.33.1728224937414; Sun, 06 Oct 2024
- 07:28:57 -0700 (PDT)
+	s=arc-20240116; t=1728226751; c=relaxed/simple;
+	bh=aZIyK0YX9RB1Yi01JNjPLgy28xsvKkXz8fEnxnLlZXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTe3evuaU83hpFrcByrBYXIagFW8KLVCgCnfYmoSThpYCbCr4VdHJxFxxENj/sLaXqTM1Gqr1i6EL9CgY9coLqptFahPp1dcIdZqwaRC243olr36SZvpXfeyXmWAbMnUUBX3OBKMD0Sw2k+dfwFImAEnJn/UqGnUCH/nxoEikow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ym5kQUjt; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QjaM5k9qqJvchGVL0bXBB8KvEd+WrkzXBDa2YMdrjdE=; b=Ym5kQUjtP6Dd9OwFUXGvXnWioY
+	wZDDdxmGBO5Nh6hBKstzXXUHYdcnxEuktG17KW4lqXwW2x5sqvFM7mFPaNJPWOFyxIz+rbVF9HNs5
+	sTl+zw6W+PsAb83XpQOTAgQaZFbLwWTz5Ne0oSzir8MLlnz1+bijsRoiBOGoSSyv908vaVW3H3Mtc
+	dnd09+IPd5K6u683QoytSS3TepbbHEzHzcYWNO3tMcVIXt/bmeK6F6o+DoP4sVS3lmun60RRoABep
+	5azAeIBPC110DvZjWc43lgMUVLlpFwZAKrqbKELDkwbyv27ERTUmyioMtaoYcIdEXgGOo3Stavnop
+	RNNpg/bw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxSiu-00000001MPd-0X0j;
+	Sun, 06 Oct 2024 14:59:04 +0000
+Date: Sun, 6 Oct 2024 15:59:04 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
+	oe-lkp@lists.linux.dev, lkp@intel.com,
+	linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>, linux-alpha@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+	audit@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [viro-vfs:work.xattr2] [fs/xattr]  64d47e878a:
+ xfstests.xfs.046.fail
+Message-ID: <20241006145904.GE4017910@ZenIV>
+References: <202410062250.ee92fca7-oliver.sang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002130004.69010-1-yizhou.tang@shopee.com>
- <20241002130004.69010-4-yizhou.tang@shopee.com> <Zv1OYxSYWUHarUrL@infradead.org>
-In-Reply-To: <Zv1OYxSYWUHarUrL@infradead.org>
-From: Tang Yizhou <yizhou.tang@shopee.com>
-Date: Sun, 6 Oct 2024 22:28:45 +0800
-Message-ID: <CACuPKxn=XaJPcANC4VwtSX63EaVpYJA5FJ9mcN+LR+XmMpASiA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] xfs: Fix comment of xfs_buffered_write_iomap_begin()
-To: Christoph Hellwig <hch@infradead.org>
-Cc: willy@infradead.org, akpm@linux-foundation.org, chandan.babu@oracle.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202410062250.ee92fca7-oliver.sang@intel.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Oct 2, 2024 at 9:45=E2=80=AFPM Christoph Hellwig <hch@infradead.org=
-> wrote:
->
-> On Wed, Oct 02, 2024 at 09:00:04PM +0800, Tang Yizhou wrote:
-> > From: Tang Yizhou <yizhou.tang@shopee.com>
-> >
-> > Since macro MAX_WRITEBACK_PAGES has been removed from the writeback
-> > path, change MAX_WRITEBACK_PAGES to the actual value of 1024.
->
-> Well, that's an indicator that this code need a bit of a resync with
-> the writeback code so that the comment stays true.
+On Sun, Oct 06, 2024 at 10:20:57PM +0800, kernel test robot wrote:
 
-Thanks for your advice. I will rewrite the code following the logic of
-writeback_chunk_size().
+> xfs/046       - output mismatch (see /lkp/benchmarks/xfstests/results//xfs/046.out.bad)
+>     --- tests/xfs/046.out	2024-09-30 21:13:44.000000000 +0000
+>     +++ /lkp/benchmarks/xfstests/results//xfs/046.out.bad	2024-10-06 05:31:50.379495110 +0000
+>     @@ -34,4 +34,8 @@
+>      xfsrestore: restore complete: SECS seconds elapsed
+>      xfsrestore: Restore Status: SUCCESS
+>      Comparing listing of dump directory with restore directory
+>     +ls: /fs/scratch/dumpdir/sub/a-link: No such file or directory
+>     +ls: /fs/scratch/dumpdir/sub/b-link: No such file or directory
+>     +ls: /fs/scratch/restoredir/dumpdir/sub/a-link: No such file or directory
+>     +ls: /fs/scratch/restoredir/dumpdir/sub/b-link: No such file or directory
+>     ...
+>     (Run 'diff -u /lkp/benchmarks/xfstests/tests/xfs/046.out /lkp/benchmarks/xfstests/results//xfs/046.out.bad'  to see the entire diff)
+> Ran: xfs/046
+> Failures: xfs/046
+> Failed 1 of 1 tests
 
-Yi
+*stares*
+
+D'oh...  Inverted sense for AT_SYMLINK_NOFOLLOW => LOOKUP_FLAGS...
+
+Try this:
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 0b506b6565b7..b96cca3f4bf8 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -721,7 +721,7 @@ static int path_setxattrat(int dfd, const char __user *pathname,
+ 	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+ 		return -EINVAL;
+ 
+-	if (at_flags & AT_SYMLINK_NOFOLLOW)
++	if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+ 		lookup_flags = LOOKUP_FOLLOW;
+ 
+ 	error = setxattr_copy(name, &ctx);
+@@ -880,7 +880,7 @@ static ssize_t path_getxattrat(int dfd, const char __user *pathname,
+ 		return file_getxattr(fd_file(f), &ctx);
+ 	} else {
+ 		int lookup_flags = 0;
+-		if (at_flags & AT_SYMLINK_NOFOLLOW)
++		if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+ 			lookup_flags = LOOKUP_FOLLOW;
+ 		return filename_getxattr(dfd, filename, lookup_flags, &ctx);
+ 	}
 
