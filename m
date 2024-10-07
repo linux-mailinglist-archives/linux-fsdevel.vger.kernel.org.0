@@ -1,81 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-31216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B0B9932E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 18:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865B3993304
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 18:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01C58B23AAA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59AB41C229D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14A11DACB8;
-	Mon,  7 Oct 2024 16:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72251DA62C;
+	Mon,  7 Oct 2024 16:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DuXHKOzl"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="liECcmm1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gkJLSa+J";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="liECcmm1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gkJLSa+J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D1A1DAC9F;
-	Mon,  7 Oct 2024 16:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715EA1D9673;
+	Mon,  7 Oct 2024 16:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728317632; cv=none; b=O3bfN/4QyLI9TiOQcNIMm0EC7gOnOIrGSRLTUPeBSO7O/kUuyInKDQZwUR3MkAembZMjOXXaVBFkMHPkZnv13+Z/QPaPcaiapckjVpcQKwk9AIRBn1mHjapB9ULx9uy7FRYEc9Pq/Gb/eAjqEGFvNZQFYKcW2fDWwcFy04cxHaA=
+	t=1728318203; cv=none; b=ZvL8LEB6Y8EwYfSGiJgak85JY1Bqi5TL7Ntk08DL8XLwtLMP5ynYvYJOOTK01kNJw2yvr/j0eb5JOz+L4jS23GcKyjBIBbMRyoJcx0TB3q8KgxyYSxVwj2NzCAHylF1XCVHMeMYPvbhV8rHNQwLoLcha+2uP6JRITfRoqykIv6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728317632; c=relaxed/simple;
-	bh=T7lUJ3R4cF9aAWBcQ84V/rp0o1tcqum0bACUdkSEU+8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oWPzMNWfR86JHvn4WKXLGF+z8/5R6ZjPIKanKX7x6TaReUH/tPz+Ler/gRCN1ABYAHt8xcqv8RiVDogRw7gI0pNs4hNN/hJdjCc+nobK+Dz2BTaf7KToz6rtEIs9yQMABLUbYu8uqHk2WJMdCZ1AAuq2Bw2ZHfK575b+CVbdp4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DuXHKOzl; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728317630; x=1759853630;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=T7lUJ3R4cF9aAWBcQ84V/rp0o1tcqum0bACUdkSEU+8=;
-  b=DuXHKOzlBNQybBoXVkNNYFOZH/QUg40vdmlXqlbLqwjKo7HKr6wASMFd
-   +f1Nj8tW9orENMIxz2Cu+MVJ/zf7WmAm6AIs35k3TvLxESb7igLbNbDa6
-   p2AYXF6M54jUzRUcdtKL21GnEVp1xn78aayY9zt0L0QCbZSEaAydl9cu9
-   CzSoc2NbCbxDkudes3XTKIU+WdZKOt+ybaN1b4QAFy9GWqDkgwcaVvk8O
-   WN1DsTlZ2IrgUV20HgfwkEi1rGfeFIbQkgc9dn4JsMm1Icbc7vz5LhFgl
-   wbO+CGbdV3MYKNtBbiKAIn2IIjey7rb8lpglcs277tOsG+EPfdtknVAz6
-   Q==;
-X-CSE-ConnectionGUID: A/pnPHeqQ8eVZEy3Fp4N7g==
-X-CSE-MsgGUID: 28ogqBv3QsKJu6TjTggblg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27357250"
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="27357250"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:13:50 -0700
-X-CSE-ConnectionGUID: kvy8GJ/tRbKNJAf6jlMkrA==
-X-CSE-MsgGUID: We4m2xhFSzu0+TZpg1hwxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="75779008"
-Received: from hcaldwel-desk1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.222.43])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:13:49 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi
- <miklos@szeredi.hu>, hu1.chen@intel.com, malini.bhandaru@intel.com,
- tim.c.chen@intel.com, mikko.ylinen@intel.com,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/16] overlayfs: Document critical override_creds()
- operations
-In-Reply-To: <CAOQ4uxhuvBtSrbw2RAGKnO6O9dXH2DZ-fHJ=z8v+T+5PariZ0w@mail.gmail.com>
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-5-vinicius.gomes@intel.com>
- <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
- <87wmk2lx3s.fsf@intel.com> <87h6a43gcc.fsf@intel.com>
- <20240925-umweht-schiffen-252e157b67f7@brauner> <87bk0b3jis.fsf@intel.com>
- <CAOQ4uxhuvBtSrbw2RAGKnO6O9dXH2DZ-fHJ=z8v+T+5PariZ0w@mail.gmail.com>
-Date: Mon, 07 Oct 2024 09:13:48 -0700
-Message-ID: <87o73vuc03.fsf@intel.com>
+	s=arc-20240116; t=1728318203; c=relaxed/simple;
+	bh=vrzdlFeCjprI8T3iVcnGnLDLZN+XRgBxaHxpBktItlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JhqDyNr7TBa8T+fwGv8JnWXC7pbNl2nZk7ywwYUTj6SiXBr6MTWM66PZtNAIzhTSvX4r48bp3fBJjnfRzJoOM/OdQiS3YsLe8vSoBecghM+z2g7H46eBFgPALm4ZaoEIP8OkTW1JFR8gviPDEuPjcUAsZuksWGt3qwPdgLvegc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=liECcmm1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gkJLSa+J; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=liECcmm1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gkJLSa+J; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8D13F21BA7;
+	Mon,  7 Oct 2024 16:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728318199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FULVdtLgJ2GY/aWi+tpi8/PNetHdEH/nx3KLO2yF7ng=;
+	b=liECcmm1FXfKVrEt5m/8q/OzhLbINpwsz0i3SW1VMdY7p2kVlQjVFmzEUQnZ8lDdU8rloY
+	dt7A/iV+Aw1S2Fv7QM3vAdo9LTkMLExa1QYjZDDzE5QmiMkPIpNK8W/vz6Kv6duE6m3/LP
+	PWRjnqRjoEE6gGNtfDlDpWNY00tN71Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728318199;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FULVdtLgJ2GY/aWi+tpi8/PNetHdEH/nx3KLO2yF7ng=;
+	b=gkJLSa+JrHyUx1s57MHLBjcSz0IyWJlsbF6hGLKhmsC6m0RLDcV2lb8fGdfCxXPHMGtyGp
+	pHitEoYjACC+cOBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=liECcmm1;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=gkJLSa+J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728318199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FULVdtLgJ2GY/aWi+tpi8/PNetHdEH/nx3KLO2yF7ng=;
+	b=liECcmm1FXfKVrEt5m/8q/OzhLbINpwsz0i3SW1VMdY7p2kVlQjVFmzEUQnZ8lDdU8rloY
+	dt7A/iV+Aw1S2Fv7QM3vAdo9LTkMLExa1QYjZDDzE5QmiMkPIpNK8W/vz6Kv6duE6m3/LP
+	PWRjnqRjoEE6gGNtfDlDpWNY00tN71Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728318199;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FULVdtLgJ2GY/aWi+tpi8/PNetHdEH/nx3KLO2yF7ng=;
+	b=gkJLSa+JrHyUx1s57MHLBjcSz0IyWJlsbF6hGLKhmsC6m0RLDcV2lb8fGdfCxXPHMGtyGp
+	pHitEoYjACC+cOBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8056B13786;
+	Mon,  7 Oct 2024 16:23:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id f/xPH/cKBGdpIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 07 Oct 2024 16:23:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 374F9A07D0; Mon,  7 Oct 2024 18:23:11 +0200 (CEST)
+Date: Mon, 7 Oct 2024 18:23:11 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tang Yizhou <yizhou.tang@shopee.com>
+Cc: Jan Kara <jack@suse.cz>, willy@infradead.org, akpm@linux-foundation.org,
+	chandan.babu@oracle.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm/page-writeback.c: Rename BANDWIDTH_INTERVAL to
+ UPDATE_INTERVAL
+Message-ID: <20241007162311.77r5rra2tdhzszek@quack3>
+References: <20241002130004.69010-1-yizhou.tang@shopee.com>
+ <20241002130004.69010-2-yizhou.tang@shopee.com>
+ <20241003130127.45kinxoh77xm5qfb@quack3>
+ <CACuPKxmwZgNx242x5HgTUCpu6v6QC3XtFY2ZDOE-mcu=ARK=Ag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,172 +111,152 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACuPKxmwZgNx242x5HgTUCpu6v6QC3XtFY2ZDOE-mcu=ARK=Ag@mail.gmail.com>
+X-Rspamd-Queue-Id: 8D13F21BA7
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi,
+On Sun 06-10-24 20:41:11, Tang Yizhou wrote:
+> On Thu, Oct 3, 2024 at 9:01 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 02-10-24 21:00:02, Tang Yizhou wrote:
+> > > From: Tang Yizhou <yizhou.tang@shopee.com>
+> > >
+> > > The name of the BANDWIDTH_INTERVAL macro is misleading, as it is not
+> > > only used in the bandwidth update functions wb_update_bandwidth() and
+> > > __wb_update_bandwidth(), but also in the dirty limit update function
+> > > domain_update_dirty_limit().
+> > >
+> > > Rename BANDWIDTH_INTERVAL to UPDATE_INTERVAL to make things clear.
+> > >
+> > > This patche doesn't introduce any behavioral changes.
+> > >
+> > > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+> >
+> > Umm, I agree BANDWIDTH_INTERVAL may be confusing but UPDATE_INTERVAL does
+> > not seem much better to be honest. I actually have hard time coming up with
+> > a more descriptive name so what if we settled on updating the comment only
+> > instead of renaming to something not much better?
+> >
+> >                                                                 Honza
+> 
+> Thank you for your review. I agree that UPDATE_INTERVAL is not a good
+> name. How about
+> renaming it to BW_DIRTYLIMIT_INTERVAL?
 
-Amir Goldstein <amir73il@gmail.com> writes:
+Maybe WB_STAT_INTERVAL? Because it is interval in which we maintain
+statistics about writeback behavior.
 
-> On Wed, Sep 25, 2024 at 4:17=E2=80=AFPM Vinicius Costa Gomes
-> <vinicius.gomes@intel.com> wrote:
->>
->> Christian Brauner <brauner@kernel.org> writes:
->>
->> > On Tue, Sep 24, 2024 at 06:13:39PM GMT, Vinicius Costa Gomes wrote:
->> >> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
->> >>
->> >> > Miklos Szeredi <miklos@szeredi.hu> writes:
->> >> >
->> >> >> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
->> >> >> <vinicius.gomes@intel.com> wrote:
->> >> >>>
->> >> >>> Add a comment to these operations that cannot use the _light vers=
-ion
->> >> >>> of override_creds()/revert_creds(), because during the critical
->> >> >>> section the struct cred .usage counter might be modified.
->> >> >>
->> >> >> Why is it a problem if the usage counter is modified?  Why is the
->> >> >> counter modified in each of these cases?
->> >> >>
->> >> >
->> >> > Working on getting some logs from the crash that I get when I conve=
-rt
->> >> > the remaining cases to use the _light() functions.
->> >> >
->> >>
->> >> See the log below.
->> >>
->> >> > Perhaps I was wrong on my interpretation of the crash.
->> >> >
->> >>
->> >> What I am seeing is that ovl_setup_cred_for_create() has a "side
->> >> effect", it creates another set of credentials, runs the security hoo=
-ks
->> >> with this new credentials, and the side effect is that when it return=
-s,
->> >> by design, 'current->cred' is this new credentials (a third set of
->> >> credentials).
->> >
->> > Well yes, during ovl_setup_cred_for_create() the fs{g,u}id needs to be
->> > overwritten. But I'm stil confused what the exact problem is as it was
->> > always clear that ovl_setup_cred_for_create() wouldn't be ported to
->> > light variants.
->> >
->> > /me looks...
->> >
->> >>
->> >> And this implies that refcounting for this is somewhat tricky, as said
->> >> in commit d0e13f5bbe4b ("ovl: fix uid/gid when creating over whiteout=
-").
->> >>
->> >> I see two ways forward:
->> >>
->> >> 1. Keep using the non _light() versions in functions that call
->> >>    ovl_setup_cred_for_create().
->> >> 2. Change ovl_setup_cred_for_create() so it doesn't drop the "extra"
->> >>    refcount.
->> >>
->> >> I went with (1), and it still sounds to me like the best way, but I
->> >> agree that my explanation was not good enough, will add the informati=
-on
->> >> I just learned to the commit message and to the code.
->> >>
->> >> Do you see another way forward? Or do you think that I should go with
->> >> (2)?
->> >
->> > ... ok, I understand. Say we have:
->> >
->> > ovl_create_tmpfile()
->> > /* current->cred =3D=3D ovl->creator_cred without refcount bump /*
->> > old_cred =3D ovl_override_creds_light()
->> > -> ovl_setup_cred_for_create()
->> >    /* Copy current->cred =3D=3D ovl->creator_cred */
->> >    modifiable_cred =3D prepare_creds()
->> >
->> >    /* Override current->cred =3D=3D modifiable_cred */
->> >    mounter_creds =3D override_creds(modifiable_cred)
->> >
->> >    /*
->> >     * And here's the BUG BUG BUG where we decrement the refcount on the
->> >     * constant mounter_creds.
->> >     */
->> >    put_cred(mounter_creds) // BUG BUG BUG
->> >
->> >    put_cred(modifiable_creds)
->> >
->> > So (1) is definitely the wrong option given that we can get rid of
->> > refcount decs and incs in the creation path.
->> >
->> > Imo, you should do (2) and add a WARN_ON_ONC(). Something like the
->> > __completely untested__:
->> >
->>
->> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
->> > index ab65e98a1def..e246e0172bb6 100644
->> > --- a/fs/overlayfs/dir.c
->> > +++ b/fs/overlayfs/dir.c
->> > @@ -571,7 +571,12 @@ static int ovl_setup_cred_for_create(struct dentr=
-y *dentry, struct inode *inode,
->> >                 put_cred(override_cred);
->> >                 return err;
->> >         }
->> > -       put_cred(override_creds(override_cred));
->> > +
->> > +       /*
->> > +        * We must be called with creator creds already, otherwise we =
-risk
->> > +        * leaking creds.
->> > +        */
->> > +       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dent=
-ry->d_sb));
->> >         put_cred(override_cred);
->> >
->> >         return 0;
->> >
->>
->> At first glance, looks good. Going to test it and see how it works.
->> Thank you.
->>
->> For the next version of the series, my plan is to include this
->> suggestion/change and remove the guard()/scoped_guard() conversion
->> patches from the series.
->>
->
-> Vinicius,
->
-> I have a request. Since the plan is to keep the _light() helpers around f=
-or the
-> time being, please make the existing helper ovl_override_creds() use the
-> light version and open code the non-light versions in the few places where
-> they are needed and please replace all the matching call sites of
-> revert_creds() to
-> a helper ovl_revert_creds() that is a wrapper for the light version.
->
+								Honza
 
-Seems like a good idea. Will do that, and see how it looks.
-
-> Also, depending on when you intend to post your work for review,
-> I have a feeling that the review of my patches is going to be done
-> before your submit your patches for review, so you may want to consider
-> already basing your patches on top of my development branch [2] to avoid
-> conflicts later.
->
-
-Thanks for the heads up. Will rebase my code on top of your branch.
-
-> Anyway, the parts of my patches that conflict with yours (s/real.file/rea=
-lfile/)
-> are not likely to change anymore.
->
-> Thanks,
-> Amir.
->
-> [1] https://lore.kernel.org/linux-unionfs/20241006082359.263755-1-amir73i=
-l@gmail.com/
-> [2] https://github.com/amir73il/linux/commits/ovl_real_file/
-
-
-Cheers,
---=20
-Vinicius
+> > > ---
+> > >  mm/page-writeback.c | 16 ++++++++--------
+> > >  1 file changed, 8 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> > > index fcd4c1439cb9..a848e7f0719d 100644
+> > > --- a/mm/page-writeback.c
+> > > +++ b/mm/page-writeback.c
+> > > @@ -54,9 +54,9 @@
+> > >  #define DIRTY_POLL_THRESH    (128 >> (PAGE_SHIFT - 10))
+> > >
+> > >  /*
+> > > - * Estimate write bandwidth at 200ms intervals.
+> > > + * Estimate write bandwidth or update dirty limit at 200ms intervals.
+> > >   */
+> > > -#define BANDWIDTH_INTERVAL   max(HZ/5, 1)
+> > > +#define UPDATE_INTERVAL              max(HZ/5, 1)
+> > >
+> > >  #define RATELIMIT_CALC_SHIFT 10
+> > >
+> > > @@ -1331,11 +1331,11 @@ static void domain_update_dirty_limit(struct dirty_throttle_control *dtc,
+> > >       /*
+> > >        * check locklessly first to optimize away locking for the most time
+> > >        */
+> > > -     if (time_before(now, dom->dirty_limit_tstamp + BANDWIDTH_INTERVAL))
+> > > +     if (time_before(now, dom->dirty_limit_tstamp + UPDATE_INTERVAL))
+> > >               return;
+> > >
+> > >       spin_lock(&dom->lock);
+> > > -     if (time_after_eq(now, dom->dirty_limit_tstamp + BANDWIDTH_INTERVAL)) {
+> > > +     if (time_after_eq(now, dom->dirty_limit_tstamp + UPDATE_INTERVAL)) {
+> > >               update_dirty_limit(dtc);
+> > >               dom->dirty_limit_tstamp = now;
+> > >       }
+> > > @@ -1928,7 +1928,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
+> > >               wb->dirty_exceeded = gdtc->dirty_exceeded ||
+> > >                                    (mdtc && mdtc->dirty_exceeded);
+> > >               if (time_is_before_jiffies(READ_ONCE(wb->bw_time_stamp) +
+> > > -                                        BANDWIDTH_INTERVAL))
+> > > +                                        UPDATE_INTERVAL))
+> > >                       __wb_update_bandwidth(gdtc, mdtc, true);
+> > >
+> > >               /* throttle according to the chosen dtc */
+> > > @@ -2705,7 +2705,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
+> > >        * writeback bandwidth is updated once in a while.
+> > >        */
+> > >       if (time_is_before_jiffies(READ_ONCE(wb->bw_time_stamp) +
+> > > -                                BANDWIDTH_INTERVAL))
+> > > +                                UPDATE_INTERVAL))
+> > >               wb_update_bandwidth(wb);
+> > >       return ret;
+> > >  }
+> > > @@ -3057,14 +3057,14 @@ static void wb_inode_writeback_end(struct bdi_writeback *wb)
+> > >       atomic_dec(&wb->writeback_inodes);
+> > >       /*
+> > >        * Make sure estimate of writeback throughput gets updated after
+> > > -      * writeback completed. We delay the update by BANDWIDTH_INTERVAL
+> > > +      * writeback completed. We delay the update by UPDATE_INTERVAL
+> > >        * (which is the interval other bandwidth updates use for batching) so
+> > >        * that if multiple inodes end writeback at a similar time, they get
+> > >        * batched into one bandwidth update.
+> > >        */
+> > >       spin_lock_irqsave(&wb->work_lock, flags);
+> > >       if (test_bit(WB_registered, &wb->state))
+> > > -             queue_delayed_work(bdi_wq, &wb->bw_dwork, BANDWIDTH_INTERVAL);
+> > > +             queue_delayed_work(bdi_wq, &wb->bw_dwork, UPDATE_INTERVAL);
+> > >       spin_unlock_irqrestore(&wb->work_lock, flags);
+> > >  }
+> > >
+> > > --
+> > > 2.25.1
+> > >
+> > >
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
