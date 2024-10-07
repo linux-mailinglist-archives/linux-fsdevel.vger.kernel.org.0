@@ -1,220 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-31260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2EB99396B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 23:38:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85884993A37
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 00:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3083B1F21E5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 21:38:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA2B3B21992
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 22:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9862B18CBE9;
-	Mon,  7 Oct 2024 21:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224F318CC17;
+	Mon,  7 Oct 2024 22:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="iaSqz3ff"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fcf59brg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBB518C935
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 21:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072AC18C333
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 22:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728336969; cv=none; b=U7qo1sdGTENI2k6XsBGHctaMP06wGInGrWMF12f97bvzcwJUOGN2PfeGIQOckuPYIHpTrBmfmoqp3cPOfYQXBQxZt22eiabH2UewSPANPfZZ1hHvFYdyFdNRq0OT3F0Pa0aMxYpAdoX4fjc+Vwbr4xRR0ZP9VUozSz+BpwP5AKA=
+	t=1728340174; cv=none; b=Uta5183UOyH7DKKb8R2Q406yaVMKMzohaRXA9dxsApKNKMwa6cupSckCWj/sA6/y/y8SUSZFDw25bxx6Vss/KoOj8LPKAUIG7xYjRx9KbA6wICLrtj12OgOT5K2zUnzd54EEcOeh8qm8rNfUHTi8siNDRvWjWza3iHtWXKQtJ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728336969; c=relaxed/simple;
-	bh=JQy2zL4oAPwikhk17+kQURqFnFir6FA9LSRRTMyBm94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9UwtXDPy7ubZgRNyl0v2wdVHjbmAJG4fjrTJea2Hvoqk2yTLZrR2+1L8idEUelLZdKkpaCgBh857p8q6eI9pnNUMAGE3/Akzl0SHSuWn0T47374oDOlAZ8eLsCrYszFU4rZVmPfCyYYblPIQPtM3oF65/eXrd/jxjI57xOSQTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=iaSqz3ff; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e0a060f6e8so3523594a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 14:36:07 -0700 (PDT)
+	s=arc-20240116; t=1728340174; c=relaxed/simple;
+	bh=dFBGJ7Fkq5TiDATvU9vo7164l+g2CBClix4Hq87gImE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ayRxwKLRIDLRcQUJWSb7XiuiD/9giSXcRyXfthmdEqMfP9bHSJff1hLHZvItlqY/xG9xy7Pbe7pQcLATlYDn3OX9if8ruWVP76oiWwH8Nxn6iqU2nIiWbWJEf3CH+lJ3UljmmyHl7W80GFZMBqvKDy/bODj9L/3ZPhigymimh5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fcf59brg; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b5fb2e89dso38368005ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 15:29:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1728336966; x=1728941766; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YNElnBEDYpWFvzvIDSHHM3zq8aWA/ncVSKt50m3p1Uc=;
-        b=iaSqz3ffv9QcEsvbFPKokl1pHTR3fk5D3y26Ge/n8xgDS2hK6Gj18jhmQehKUVP0o1
-         iGn2MF5Vmd9vsNPQUd5KmhXwkovrVOIvJdZht3JwHEHoOYaO1h2h7gaSf/DqD5nWaHq4
-         p50qHwYtT5T33j1ChjEt9f/LfGIVc2xFR+sopmFLI1q4K9wsq6NwDUkCIYWhKB2BxvDv
-         Gck4gUy7W+Gu3cdqI2aUyicuVlO58UVphfIiG4YZvSEBK4f3osGON+eEUQ0hacyytkca
-         v3Rq2Z+zNHQabNM0d01bmqTGUldp8nWC/3mwX4r8PvCeL6lQvuRSZ2ArRQWkS6A95ys6
-         iz7g==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728340171; x=1728944971; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u7Yr4WO6vKFC515dnzWPLRRBdfJDGWgI8I6HVaT96bc=;
+        b=fcf59brg4H5iQuVla2nfg/+lzvVh9+OkxVEBNmuaqRXaiOv7sIA4wMmOyx3qPJX8bR
+         NPN/PV4jIgfSdAeIOcwig8OpQoFu0Iw8bLJignJMk6O2qBFFUYiJn8OC8AQ0AQDlT7/t
+         ztJycwjlix6+o1X2BO/FtLjPAHqHAYC+SUwootFBmNDJ4qPrO1MJkz2HAzZ0DXDVvamk
+         n29reW/0I2JDO1X5OluGtZ2a0cAdazcAYZZpvvuehE/a9X/42nrGa821/z5RKwR7uUcw
+         Irdt+hMipYAIUXm1lJuSRXxjIUMgb2POaesEg19itoi0wNuAs77xiCAfWnJ6k2E5qxiD
+         v+Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728336966; x=1728941766;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YNElnBEDYpWFvzvIDSHHM3zq8aWA/ncVSKt50m3p1Uc=;
-        b=gQhbr7Fywa2pBJAutQAOVtqNMAvuqz6zk/a9Mmp9nQtIZUj4/fRGYpr+nlGpyARvB3
-         stZIkjg3rB2rY5NuggfJg2p3eZY3Is9NpuURykii8pbQRoK1k7/4iqibL6Rsjd4mHG69
-         J5OqtzfADuK41yPAn88/foWr6wIJGURPcJv0nuSi92S8tA4G6Y1yA1IXEsU9KuF3l6Ns
-         BDKRxD7RxOnZX4PR7KdN+oji/5rNSee/s/AUupEP0qbzkptmtqnxeSc7dqtWE1fGqgs2
-         otGv3eeBnFWx/KAGqiqFb0tAEBenpjRUL3P3DPNT4K3yC1DiWUKr40ZpGWIyBt+jQsq3
-         vtlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX06iR+m7o9a6KE9kuHZZPoG36W0qkCvqLRjnL1oxpqtMYY4dKnHbMgXvYKweV3e70VG7QucDqlBQxEvkyp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuWPVzbJc5H/ZzQCY9lR9Mv6Z/xFkmPuljWS3PZmAUSK9m37UX
-	qeFVFWWyHmlEV1KL4oOkN5TZKI9y/GwrrDOP0EmRVcS8WxCYeDkklnXU9k8tF75murvuYRjbpaC
-	s
-X-Google-Smtp-Source: AGHT+IExu8G+LbTmre/7Wvi64/0zNdjewTInymIURS0AgdTaL/5h/Wa336/N3B/Hwt0kgIfIZhHc+A==
-X-Received: by 2002:a17:90a:ec07:b0:2e0:8095:98d9 with SMTP id 98e67ed59e1d1-2e1e6222221mr14172739a91.11.1728336966427;
-        Mon, 07 Oct 2024 14:36:06 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e83ca284sm7699214a91.11.2024.10.07.14.36.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 14:36:05 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sxvOc-00FJuO-37;
-	Tue, 08 Oct 2024 08:36:02 +1100
-Date: Tue, 8 Oct 2024 08:36:02 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Tang Yizhou <yizhou.tang@shopee.com>
-Cc: jack@suse.cz, hch@infradead.org, willy@infradead.org,
-	akpm@linux-foundation.org, chandan.babu@oracle.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] xfs: Let the max iomap length be consistent with
- the writeback code
-Message-ID: <ZwRUQvq4wqfL8rBd@dread.disaster.area>
-References: <20241006152849.247152-1-yizhou.tang@shopee.com>
- <20241006152849.247152-4-yizhou.tang@shopee.com>
+        d=1e100.net; s=20230601; t=1728340171; x=1728944971;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u7Yr4WO6vKFC515dnzWPLRRBdfJDGWgI8I6HVaT96bc=;
+        b=MWp9YeEfvZfijeCxuf8zp/8g37olH1aK1/A1eYQrSgb2JwgN4vw32gz3E81wVvV1rF
+         1C2pv8YWaBU53ADkREvJrEhV8zvyP2ehfyIuuH0kPcKB4opiaGpr/tPshugkr443nou7
+         Mw5/wjrJtwTNYUuasObCnppHXQdeH4tKTNygRPKrqL7V3NXcOWHFzSMI29/uhGUTYzA6
+         BepLssuf51TqO26F1eGm+nWtndk3sloKdTox9L0aikdy0c16yb+XeSEFl+WLzlgijL/r
+         cz710g8ma/VPX8MlqFQNMxvXapi5pgj180WXtse3vT4VvJ/vxLVHuCmhkJKJpOL0YFhu
+         NwKA==
+X-Gm-Message-State: AOJu0YxUSERMdfJmyx8PS5s24VWWFKyAjyZW28Rcci/U8UuAOIlMJSNh
+	nsu3Y063Bwoj6ErTYVcgGVmSzYQG33Vhz3xNDy7Uq8Oc6JA9UKUj9tLah9yS6XY=
+X-Google-Smtp-Source: AGHT+IH5NEobdxwS04ehz34YXVr2JyGbv2t0wb0CI25E+GEqKPdOzfpWGeUld/PYfzZktVocnX+3fQ==
+X-Received: by 2002:a17:902:f68a:b0:205:4721:19c with SMTP id d9443c01a7336-20bff1944a8mr137708025ad.37.1728340171233;
+        Mon, 07 Oct 2024 15:29:31 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13990b52sm44234165ad.281.2024.10.07.15.29.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 15:29:30 -0700 (PDT)
+Message-ID: <2da6c045-3e55-4137-b646-f2da69032fff@kernel.dk>
+Date: Mon, 7 Oct 2024 16:29:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241006152849.247152-4-yizhou.tang@shopee.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+ io-uring@vger.kernel.org, cgzones@googlemail.com
+References: <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
+ <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
+ <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
+ <20241002020857.GC4017910@ZenIV>
+ <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
+ <20241002211939.GE4017910@ZenIV>
+ <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
+ <20241006052859.GD4017910@ZenIV>
+ <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
+ <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
+ <20241007212034.GS4017910@ZenIV>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241007212034.GS4017910@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 06, 2024 at 11:28:49PM +0800, Tang Yizhou wrote:
-> From: Tang Yizhou <yizhou.tang@shopee.com>
+On 10/7/24 3:20 PM, Al Viro wrote:
+> On Mon, Oct 07, 2024 at 12:20:20PM -0600, Jens Axboe wrote:
+>> On 10/7/24 12:09 PM, Jens Axboe wrote:
+>>>>>> Questions on the io_uring side:
+>>>>>> 	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
+>>>>>> Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
+>>>>>> Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
+>>>>>> Am I missing something subtle here?
+>>>>>
+>>>>> Right, it could be allowed for fgetxattr on the io_uring side. Anything
+>>>>> that passes in a struct file would be fair game to enable it on.
+>>>>> Anything that passes in a path (eg a non-fd value), it obviously
+>>>>> wouldn't make sense anyway.
+>>>>
+>>>> OK, done and force-pushed into #work.xattr.
+>>>
+>>> I just checked, and while I think this is fine to do for the 'fd' taking
+>>> {s,g}etxattr, I don't think the path taking ones should allow
+>>> IOSQE_FIXED_FILE being set. It's nonsensical, as they don't take a file
+>>> descriptor. So I'd prefer if we kept it to just the f* variants. I can
+>>> just make this tweak in my io_uring 6.12 branch and get it upstream this
+>>> week, that'll take it out of your hands.
+>>>
+>>> What do you think?
+>>
+>> Like the below. You can update yours if you want, or I can shove this
+>> into 6.12, whatever is the easiest for you.
 > 
-> Since commit 1a12d8bd7b29 ("writeback: scale IO chunk size up to half
-> device bandwidth"), macro MAX_WRITEBACK_PAGES has been removed from the
-> writeback path. Therefore, the MAX_WRITEBACK_PAGES comments in
-> xfs_direct_write_iomap_begin() and xfs_buffered_write_iomap_begin() appear
-> outdated.
+> Can I put your s-o-b on that, with e.g.
 > 
-> In addition, Christoph mentioned that the xfs iomap process should be
-> similar to writeback, so xfs_max_map_length() was written following the
-> logic of writeback_chunk_size().
+> io_uring: IORING_OP_F[GS]ETXATTR is fine with REQ_F_FIXED_FILE
 > 
-> v2: Thanks for Christoph's advice. Resync with the writeback code.
-> 
-> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-> ---
->  fs/fs-writeback.c         |  5 ----
->  fs/xfs/xfs_iomap.c        | 52 ++++++++++++++++++++++++---------------
->  include/linux/writeback.h |  5 ++++
->  3 files changed, 37 insertions(+), 25 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index d8bec3c1bb1f..31c72e207e1b 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -31,11 +31,6 @@
->  #include <linux/memcontrol.h>
->  #include "internal.h"
->  
-> -/*
-> - * 4MB minimal write chunk size
-> - */
-> -#define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_SHIFT - 10))
-> -
->  /*
->   * Passed into wb_writeback(), essentially a subset of writeback_control
->   */
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 1e11f48814c0..80f759fa9534 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -4,6 +4,8 @@
->   * Copyright (c) 2016-2018 Christoph Hellwig.
->   * All Rights Reserved.
->   */
-> +#include <linux/writeback.h>
-> +
->  #include "xfs.h"
->  #include "xfs_fs.h"
->  #include "xfs_shared.h"
-> @@ -744,6 +746,34 @@ xfs_ilock_for_iomap(
->  	return 0;
->  }
->  
-> +/*
-> + * We cap the maximum length we map to a sane size to keep the chunks
-> + * of work done where somewhat symmetric with the work writeback does.
-> + * This is a completely arbitrary number pulled out of thin air as a
-> + * best guess for initial testing.
-> + *
-> + * Following the logic of writeback_chunk_size(), the length will be
-> + * rounded to the nearest 4MB boundary.
-> + *
-> + * Note that the values needs to be less than 32-bits wide until the
-> + * lower level functions are updated.
-> + */
-> +static loff_t
-> +xfs_max_map_length(struct inode *inode, loff_t length)
-> +{
-> +	struct bdi_writeback *wb;
-> +	long pages;
-> +
-> +	spin_lock(&inode->i_lock);
-> +	wb = inode_to_wb(wb);
-> +	pages = min(wb->avg_write_bandwidth / 2,
-> +		    global_wb_domain.dirty_limit / DIRTY_SCOPE);
-> +	spin_unlock(&inode->i_lock);
-> +	pages = round_down(pages + MIN_WRITEBACK_PAGES, MIN_WRITEBACK_PAGES);
-> +
-> +	return min_t(loff_t, length, pages * PAGE_SIZE);
-> +}
+> Rejection of IOSQE_FIXED_FILE combined with IORING_OP_[GS]ETXATTR
+> is fine - these do not take a file descriptor, so such combination
+> makes no sense.  The checks are misplaced, though - as it is, they
+> triggers on IORING_OP_F[GS]ETXATTR as well, and those do take 
+> a file reference, no matter the origin. 
 
-I think this map size limiting is completely unnecessary for
-buffered writeback - buffered writes are throttled against writeback
-by balance_dirty_pages(), not by extent allocation size. The size of
-the delayed allocation or the overwrite map is largely irrelevant -
-we're going to map the entire range during a write, do it just
-doesn't matter what size the mapping is...
+Yep that's perfect, officially:
 
->  /*
->   * Check that the imap we are going to return to the caller spans the entire
->   * range that the caller requested for the IO.
-> @@ -878,16 +908,7 @@ xfs_direct_write_iomap_begin(
->  	if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY))
->  		goto out_unlock;
->  
-> -	/*
-> -	 * We cap the maximum length we map to a sane size  to keep the chunks
-> -	 * of work done where somewhat symmetric with the work writeback does.
-> -	 * This is a completely arbitrary number pulled out of thin air as a
-> -	 * best guess for initial testing.
-> -	 *
-> -	 * Note that the values needs to be less than 32-bits wide until the
-> -	 * lower level functions are updated.
-> -	 */
-> -	length = min_t(loff_t, length, 1024 * PAGE_SIZE);
-> +	length = xfs_max_map_length(inode, length);
->  	end_fsb = xfs_iomap_end_fsb(mp, offset, length);
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-And I'd just remove this altogether from the direct IO path. The DIO
-code will chain as many bios as it takes to issue Io over the entire
-mapping that is returned. Given that buffered writeback has done
-arbitrarily large writeback for quite some time now, I don't think
-there is any need to limit the bio chain lengths in the DIO path
-like this anymore, either.
+Thanks Al!
 
-i.e. I'd be looking at removing the "arbitrary size limit" code, not
-making it more complex.
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
 
