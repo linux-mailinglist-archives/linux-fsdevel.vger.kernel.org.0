@@ -1,57 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-31221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811A499344E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 19:01:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56662993452
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 19:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E271F23B71
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 17:01:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A381C2276C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 17:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503601DC047;
-	Mon,  7 Oct 2024 17:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D981DC045;
+	Mon,  7 Oct 2024 17:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJzADLtx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dojKfxVD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10801DA626;
-	Mon,  7 Oct 2024 17:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A135338D;
+	Mon,  7 Oct 2024 17:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320495; cv=none; b=Qlat04fRPnsLOTCpybLlipeb8+r17gfEXMIF7q4iTUDMEefH+ZXYTGgCmvbBzgkBPsKZIEaxP+HfToe8xmLM0xgUHxZx6L0Y/y8McYXdcOYjhkL5qN4voOQe9iMHNKOd01UftJ8oFGlSQ2cjI57FRVNRnYHYB+4I9q9HXyqb/2o=
+	t=1728320537; cv=none; b=Hf6TdDScqRgkDuZitR15O0MzSZr/ZFVjFGw/DhcDaKaGp2sN7bOLLhW0zfIZJtRzUQlbkpEM1t+QGB5VsxqQDaJ2/ZaOw5fnp5nQWqx/bsFd1DyBYaYH46rWJmdh2KiP2VXpyRGrXwYB3VNC9D6OSYWz5BxFdRbcrV5fkdob6h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320495; c=relaxed/simple;
-	bh=5NyoUBrP5+P5kR1M0DwdWjMlZxqMLmaKFfkeCUYAPbI=;
+	s=arc-20240116; t=1728320537; c=relaxed/simple;
+	bh=wAcQZUYR2X+U9mQnYI6Nw7qul/vVksbDqUcIiTCow7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnImHYJG0DE954Y4W8gcjNNuZ1fWerav0BI8hQfzRc7FW8Oj0p/nQaqECISLr4YN9fLqgSg1CXB55IuL9QmAJmXbt0dWy7hJpZo1tJum3z4i+WTqUvPlQ2lA+EH17TbnOGRsQ+b5y9zxHE+nmfrONJz4xt4CKPKDELEegkL8oy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJzADLtx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF95C4CEC6;
-	Mon,  7 Oct 2024 17:01:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJYCuJZ7U/0IDP6AtHNTFPBqdPjNgYQLfl6EHHyAqO68Tc32Aeo3ctlw1ThSxLHMf1BS4grnMqVbiN/iVLa+PfNovygHCxuG/l2mj/XqGqJ57LEkKpuHK8+VU5JGwueAX5dFefkwVl5HnVLTkY7YAXG5v1paNBuwPZObp67Zw8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dojKfxVD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84A34C4CEC6;
+	Mon,  7 Oct 2024 17:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728320495;
-	bh=5NyoUBrP5+P5kR1M0DwdWjMlZxqMLmaKFfkeCUYAPbI=;
+	s=k20201202; t=1728320537;
+	bh=wAcQZUYR2X+U9mQnYI6Nw7qul/vVksbDqUcIiTCow7s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MJzADLtx5QWV93wWj2f9kFZ7lkmNPkR+EiPG76odnlxR963ZKLloAtt5K7HSq6vrA
-	 ylhA7zguk8cuw8HY12n7Fnus06/0LlKmjxiLft2+BAuGRvsT879KtNTHjRnpypWNtt
-	 Gxc+x0tX2J4Qj7NU8B1FpTS1oXu9smQpP0rOWv2BzX+mFhTgDeWSukblD53BSCZ+Nt
-	 +WJX8hXvvznhw074AUN493pqmUhteXZKYRGYZawVPypomdoUQXyRjWk63v/Y3rszhB
-	 dE2L27LVm024GKjGLek5ooxaubNPKcuq0g9y54WkyMhhk824JtuOo84Sms7xDVuzqD
-	 LNhHw4VOhwjQw==
-Date: Mon, 7 Oct 2024 10:01:34 -0700
+	b=dojKfxVDeQKLrEqv1GEKYDiZmXATDi3sJWsFxNiZDIypv2fGdTTJrFxJuwt0hI55R
+	 Kh0myqpGe3iAZksI4c8RJXhJH+dIeU1cMzc29FqeYeWzT7hq8HB5amaHHQxT/R0lEa
+	 AyACcOuwMEqo45+fXho8zaWD/BRuovdRhCPduEKU6FT14jcQr78vKE0dJaATWSrI8J
+	 /oSHAGRutKEe7rv7s6MKLZcsBzAWJecisT3WNvKr+3MA9cH6vxWbmKV2Qix8CHE63/
+	 /1CaTpYVgATc/o5r3F0Cved9rB9jW3n+nKCyH0iiVvafDwX58G5Vxq+QMx9iScQDDn
+	 +hjkWQNijoY9Q==
+Date: Mon, 7 Oct 2024 10:02:17 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+To: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 02/12] iomap: Introduce iomap_read_folio_ops
-Message-ID: <20241007170134.GC21836@frogsfrogsfrogs>
+Subject: Re: [PATCH 04/12] iomap: include iomap_read_end_io() in header
+Message-ID: <20241007170217.GD21836@frogsfrogsfrogs>
 References: <cover.1728071257.git.rgoldwyn@suse.com>
- <0bb16341dc43aa7102c1d959ebaecbf1b539e993.1728071257.git.rgoldwyn@suse.com>
- <ZwCiVmhWm0O5paG4@casper.infradead.org>
+ <b608329aef0841544f380acede9252caf10a48c6.1728071257.git.rgoldwyn@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,48 +58,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwCiVmhWm0O5paG4@casper.infradead.org>
+In-Reply-To: <b608329aef0841544f380acede9252caf10a48c6.1728071257.git.rgoldwyn@suse.com>
 
-On Sat, Oct 05, 2024 at 03:20:06AM +0100, Matthew Wilcox wrote:
-> On Fri, Oct 04, 2024 at 04:04:29PM -0400, Goldwyn Rodrigues wrote:
-> > iomap_read_folio_ops provide additional functions to allocate or submit
-> > the bio. Filesystems such as btrfs have additional operations with bios
-> > such as verifying data checksums. Creating a bio submission hook allows
-> > the filesystem to process and verify the bio.
+On Fri, Oct 04, 2024 at 04:04:31PM -0400, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
-> But surely you're going to need something similar for writeback too?
-> So why go to all this trouble to add a new kind of ops instead of making
-> it part of iomap_ops or iomap_folio_ops?
+> iomap_read_end_io() will be used BTRFS after it has completed the reads
+> to handle control back to iomap to finish reads on all folios.
 
-iomap_folio_ops, and maybe it's time to rename it iomap_pagecache_ops.
-
-I almost wonder if we should have this instead:
-
-struct iomap_pagecache_ops {
-	struct iomap_ops ops;
-
-	/* folio management */
-	struct folio *(*get_folio)(struct iomap_iter *iter, loff_t pos,
-			unsigned len);
-	void (*put_folio)(struct inode *inode, loff_t pos, unsigned copied,
-			struct folio *folio);
-
-	/* mapping revalidation */
-	bool (*iomap_valid)(struct inode *inode, const struct iomap *iomap);
-
-	/* writeback */
-	int (*map_blocks)(struct iomap_writepage_ctx *wpc, struct inode *inode,
-			  loff_t offset, unsigned len);
-
-	int (*prepare_ioend)(struct iomap_ioend *ioend, int status);
-	void (*discard_folio)(struct folio *folio, loff_t pos);
-};
-
-and then we change the buffered-io.c functions to take a (const struct
-iomap_pagecache_ops*) instead of iomap_ops+iomap_folio_ops, or
-iomap_ops+iomap_writeback_ops.
-
-Same embedding suggestion for iomap_dio_ops.
+That probably needs EXPORT_SYMBOL_GPL if btrfs is going to use it,
+right?
 
 --D
+
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> ---
+>  fs/iomap/buffered-io.c | 2 +-
+>  include/linux/iomap.h  | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index d007b4a8307c..0e682ff84e4a 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -326,7 +326,7 @@ static void iomap_finish_folio_read(struct folio *folio, size_t off,
+>  		folio_end_read(folio, uptodate);
+>  }
+>  
+> -static void iomap_read_end_io(struct bio *bio)
+> +void iomap_read_end_io(struct bio *bio)
+>  {
+>  	int error = blk_status_to_errno(bio->bi_status);
+>  	struct folio_iter fi;
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index f876d16353c6..7b757bea8455 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -280,6 +280,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
+>  		const struct iomap_read_folio_ops *);
+>  void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops,
+>  		const struct iomap_read_folio_ops *);
+> +void iomap_read_end_io(struct bio *bio);
+>  bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+>  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
+>  bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
+> -- 
+> 2.46.1
+> 
+> 
 
