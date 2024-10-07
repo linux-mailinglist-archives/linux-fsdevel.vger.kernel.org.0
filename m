@@ -1,99 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-31207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D3F99302B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46820993034
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44F3B24F2E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F3E028AB02
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610301D89F7;
-	Mon,  7 Oct 2024 14:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D751D79BB;
+	Mon,  7 Oct 2024 14:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="LIWPryA0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bah2ODZF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0171D7E3E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 14:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E83A1D2B35;
+	Mon,  7 Oct 2024 14:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312931; cv=none; b=KzGj0MV6KyaiDtY7YsqzJ3/0dtG0bOU6m/2PTWD0g83kKqbtphehHdCyJk1xBNyKSZ3tnPdghLG5P+FDNyUhyCrAfomrRO4jo5hyWaTh+95a2JTQ2kCOUdNXSQAlvMeW5bazpQY5Aepcn9sTzM1ERgxBdtoI/alhnjKKTYLFzKw=
+	t=1728313015; cv=none; b=KzwFYVpeIPXj8bOjG6l7oHjlZ7ASiiC66/+63AZqt8HUoEFZXWlLuVVC9DZRsZXMOxfnpnuImp3LJA6O9VLj+ugF2FdXHf8qyzEdbZKoYa4FIXFTKf6z3oaQylSu+sFFbuM1nNpsD9maN9rlXIiLNmvoz9IahxTMZt4lcMz2Z5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312931; c=relaxed/simple;
-	bh=9CwTgWElBJb0LcznUFDVpO7YSKyNZQkxv/GNCyKR/Vw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aDIQETJgBMbfdj3+L0N4M92JA3C6bZfDgFuKpdkRudAOfesEC3V2y8jhSS0dGtCgoFEeW/Jakekt0hca7fEfBylstSNqkADXvB9nOpuSSnDmoAmdAgag2pQ+asjf2tSmtoSw3lWrKYk8PkRGJ/FNcXkLXUXB6aet1gt2E7nwun4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=LIWPryA0; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a99422929c5so236781466b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 07:55:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1728312928; x=1728917728; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5WRDXDsnn8xfUzvyZAlipJKvUJbHPqjoW3kJr/J9Wc=;
-        b=LIWPryA0xf+PX3NRlOG8G8B6kla+upAe7zDaJ+qbgn7pyldsdFANeySr9eFrRSf231
-         Un09v14WEKsf753LSDqg83VhFVC1fB4Fmov+XnGrLtXd1+OMv43EoVeQeA6j8lYxDdzf
-         kp76/FTpOybhUmnAy/Wqiwis+47XBj9rdTRpw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728312928; x=1728917728;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m5WRDXDsnn8xfUzvyZAlipJKvUJbHPqjoW3kJr/J9Wc=;
-        b=XBzWIWclpTqZsXoB1KhUvYMcck8HoKXCOTLTOrjrp9o4aBRKIZiQEsB5VV0YbTvkOv
-         Q7YkFfb+UzUa7VCfLgtKfxLSVCFj0iAC0kHK17P7+P75dzNv/bxuVtdvsKJg3y1IzMkZ
-         hJ8IHq3u8VxTYKhg+Qu4s7H0SHbbTkVbGXqUFUKaeQej33pc8KYjza0h79oubT5ORE99
-         3fkDMK6CliViqRx0A9YH0uKbt3xj+Y0rd3V8yUqVjTgQaGtNajHqI7DLsd1zpis0j6Fi
-         xLam9nWpFAhcOBI3ALkbeKICMQA7RueKUL8Eyym34wxcVJM0WELGbE9jFqEedWCtRf8o
-         697Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVdbBGj8iWP+mIwyATTpYWjgbzSKbHX0GfqUKzyq/nN4kMU83dO/FB242rX8iBi+laxI3RGJoCVe4HJ1t/s@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3m6CTPEDSTwK6DPtUopKGfa61dHRF87RcXRxY5v7JA1S1kbPC
-	k3c1LbA+eBcbrLVdkG0BUovboPQKI4LOjdp0GAEX3tCquhD8FjnE9gyH2zQD6NXRBy2mTCUJRVr
-	s7zh2Pa0faHvZl/5coAP4S9/nt9UraUOF9W1URA==
-X-Google-Smtp-Source: AGHT+IGkCl7U41DlnyVIm3YIZPuS3Zah00DcxXpjdIwWfD9jptoyPrrEo3T7JuSRwfhfqKWTkqcavZ1DAEcm3b3d1fs=
-X-Received: by 2002:a17:907:9301:b0:a99:389a:63c2 with SMTP id
- a640c23a62f3a-a99389a66edmr753929166b.62.1728312928285; Mon, 07 Oct 2024
- 07:55:28 -0700 (PDT)
+	s=arc-20240116; t=1728313015; c=relaxed/simple;
+	bh=6iic3wdWBosJglMC+i44cbzejQl/TRQeICH6/SoXQG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYJgjM1xbi9T030iIvkM+ByG+6HtuujTXiC75UkvNViD4x+gLyQr7WhjmCxe4QmguNahpaLtfVC3ch1XTHdbKwj2GafUkNMMnM/uU++UT4cHKARFm2ZsK/yfe2yzxORTaojyptY0RHwfBkVfNOyC2HRNdpHMzo/dQaycyEbvSa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bah2ODZF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA20CC4CEC7;
+	Mon,  7 Oct 2024 14:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728313015;
+	bh=6iic3wdWBosJglMC+i44cbzejQl/TRQeICH6/SoXQG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bah2ODZFwYUZb7WWkI6I6ImJPD6A657T4Y7NSH0+mA2HbCw902Z5ohPlE1vhal9WZ
+	 bO8qgYwESXiry4oyLwBAGXHMaVqk8+JdHvZKwuxRUgkU38otGXKWT3EKIayw3s/PKE
+	 kGltFpi9LJdAn+uY4V0KlIthXlH0DcmOyX90J9WyZ9JPtnbT0MwLmdZQh5e9zTnx++
+	 PFmz2yNK3s0mBACLBps6TA3U9S+ycWBiWLmiTDOKDK8vW1Ds2z9swXwVY/vsnagQY5
+	 hVlrp+OYthHILpkm4PnTDjuvoccHYr6/P9Z99ajJNSJ2nU9bLZN1Wu0OFuNj7eMrso
+	 W+d2ecq5pFezw==
+Date: Mon, 7 Oct 2024 16:56:51 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Uros Bizjak <ubizjak@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] namespace: Use atomic64_inc_return() in alloc_mnt_ns()
+Message-ID: <20241007-unklar-wurzel-ce2d0693dfc8@brauner>
+References: <20241007085303.48312-1-ubizjak@gmail.com>
+ <20241007145034.GM4017910@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007141925.327055-1-amir73il@gmail.com> <20241007141925.327055-3-amir73il@gmail.com>
- <20241007144338.GL4017910@ZenIV>
-In-Reply-To: <20241007144338.GL4017910@ZenIV>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 7 Oct 2024 16:55:16 +0200
-Message-ID: <CAJfpegvsA=D_i3mRr9yLUBDQMmKhfbk1cs6Gcd+8Tpq=NVVVwQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] ovl: allocate a container struct ovl_file for ovl
- private context
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Amir Goldstein <amir73il@gmail.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241007145034.GM4017910@ZenIV>
 
-On Mon, 7 Oct 2024 at 16:43, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Mon, Oct 07, 2024 at 04:19:22PM +0200, Amir Goldstein wrote:
-> > Instead of using ->private_data to point at realfile directly, so
-> > that we can add more context per ovl open file.
->
-> Hmm...  That'll cost you an extra deref to get to underlying file.
-> Cache footprint might get unpleasant...
+On Mon, Oct 07, 2024 at 03:50:34PM GMT, Al Viro wrote:
+> On Mon, Oct 07, 2024 at 10:52:37AM +0200, Uros Bizjak wrote:
+> > Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+> > to use optimized implementation and ease register pressure around
+> > the primitive for targets that implement optimized variant.
+> > 
+> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Jan Kara <jack@suse.cz>
+> > ---
+> >  fs/namespace.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index 93c377816d75..9a3c251d033d 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -3901,7 +3901,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
+> >  	}
+> >  	new_ns->ns.ops = &mntns_operations;
+> >  	if (!anon)
+> > -		new_ns->seq = atomic64_add_return(1, &mnt_ns_seq);
+> > +		new_ns->seq = atomic64_inc_return(&mnt_ns_seq);
+> 
+> On which load do you see that path hot enough for the change to
+> make any difference???
 
-Yes, that's an extra deref.  But stacking is bound to greatly increase
-the cache footprint anyway, so this doesn't look a serious worry to
-me.  I don't think overlayfs is at the point where we are ready to
-optimize at the cache access level.
-
-Thanks,
-Miklos
+I don't think that's really an issue. Imho, *inc_return() is just
+straightforward compared to the add variant. That can easily be
+reflected in the commit message when I push out.
 
