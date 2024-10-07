@@ -1,91 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-31225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F43993490
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 19:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87B3993488
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 19:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A8B1C220F3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 17:15:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFBB1F24970
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 17:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3E51DD55E;
-	Mon,  7 Oct 2024 17:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816911DD523;
+	Mon,  7 Oct 2024 17:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="kvVV1kR0"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nkPquOaN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E79D1DD534;
-	Mon,  7 Oct 2024 17:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A6D1E52D;
+	Mon,  7 Oct 2024 17:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728321298; cv=none; b=Kr24yHc7IYxEg0l4YiZ5GMHWVPDvqoTY+CQq+Fdy4x0bOksG5npyEBy2w3PN7isi9ULM4spOPbchoz6KX/RqGBSE/pWj7Kjb7QX9nHsjaPd6j6rAi2RZvB3r0GQ5Pr+wx5RcQR6hFvBmVfilGm6c2+lYkVQou3NleaiQdNp5GHo=
+	t=1728321189; cv=none; b=kj3dhqCdQ35L4hfkg0FJSbcAcUk4na3N948Qa1QX+6SUA1pPfnzGZddghHGZE6raS17Xpm29VAevrfQK4kzYvFFyRAFPQo1STcvtT6tYt27ByjpBhjV9huPUBJu1wuJ0z9uHilTY6v3m7U2t521pGFBsfvSqoO5fQMZihKD2Gog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728321298; c=relaxed/simple;
-	bh=UKymu+mzuZLEK69UaQG2sYNhML4Ojs7J1jeASLinB+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cAescQhNhNy+KzFFgCVOzR+33QZFMWJYu6jSw9ijO7kcrt7O/t12GS2WqeRgchTfc/YUMxW75Nw1T2KITJkVTLkk+yFQ2MUBdPzkFN5VmOUCyRTS/+4s2j+UmKxn5pXAulws28v3IksB/rcFuFrnVsAKG4ah6SoJzyPKaVI4BhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=kvVV1kR0; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3B61A42B38
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728320698; bh=HfbsOkmGxKTMn8UUu6s8L07CkPvNg5PaKCyqCkClrFI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kvVV1kR0NUD2LHQ9PlPj2IROekdRvtzVJL2kVZzltv6QZGUYvv5lQoW9srUUpv8fY
-	 stRCRzThSe8zH5Sfu0pE5ESnmF+lzmjPTDWZd0PzH5aQEJkfPLLBFjmd8aFxRYQGet
-	 oA35kKX+o2MibQJuOmwunrPHWqkSe+gKtlA8oBedlF1a5kK78Eh8ST6HY3pWKCSK4d
-	 sXdTJAH5CKLYo/DmJkYXFhHAQabevtC7BabQsuarZOW9B+M628ETL89+Ql3f9te37y
-	 otv5VgP0n4lqZYyl22TjKjx1vcdB144iSH9ot2bQuSG0VIj3Kfym+lJ2xfPSyuRUO/
-	 W8C+ODd6dj+Jg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3B61A42B38;
-	Mon,  7 Oct 2024 17:04:58 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Christian Brauner <brauner@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: [PATCH] netfs: fix documentation build error
-Date: Mon, 07 Oct 2024 11:04:57 -0600
-Message-ID: <874j5nlu86.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728321189; c=relaxed/simple;
+	bh=wvrWQJtopaGCe+FQlg3DUNgNJoZsiZ3I1Ia3xnuJLuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZqosFQ1YWjayrRYhdKUvxhqTO1fMRi1Pp2aPoJWoeGzWR9Tg29wac5cL3AgKdvgVfwx5sYakTnAy42Yt7GTO7qWaZiJIrrFrlnOP4Kozpr0d6Zt6fOyz10S7L7IddMo844Fb/EtFFMn9K/QAJyl1ECociuEjmuVrY70DgTcLjQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nkPquOaN; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LeL/VcQehP2raq7vQszs+ZornlPb/JZTIx+OrLm0sdc=; b=nkPquOaNHZ76m/+lTAEupj1P8k
+	Ff++cG4e9058TLxSneRcYKGwbpXkEIcEOCdqOBc4bv5qe4s+UEPOqJiyt8IMrfhHrujS0a1TvSrRq
+	pngMXeZL/EOE+Im1chPvSfFjl98dbiOQzcCwX37Z9XteNVZoy7TIj6iJhmQG+1O6drc8UseF/ocyE
+	V2wqfk1lqu2rZMF6djwce2majk6ah2VigVjd2jKcMt2BZWffDb7vnSmcZBvQ+8bNAYGRP6wXhB0tN
+	YiMJ57rUcHXtwNoOfyZ6MeMDE4r51fr39qZv/AgwR8R9UPkrHFOlqAvFeU+AQzGiPKFd0oIBjt6la
+	ITehYA7g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxrI9-00000001eSE-3Q7V;
+	Mon, 07 Oct 2024 17:13:05 +0000
+Date: Mon, 7 Oct 2024 18:13:05 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] ovl: do not open non-data lower file for fsync
+Message-ID: <20241007171305.GP4017910@ZenIV>
+References: <20241007141925.327055-1-amir73il@gmail.com>
+ <20241007141925.327055-2-amir73il@gmail.com>
+ <20241007165540.GN4017910@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007165540.GN4017910@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Commit 86b374d061ee ("netfs: Remove fs/netfs/io.c") did what it said on the
-tin, but failed to remove the reference to fs/netfs/io.c from the
-documentation, leading to this docs build error:
+On Mon, Oct 07, 2024 at 05:55:40PM +0100, Al Viro wrote:
 
-  WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -sphinx-version 7.3.7 ./fs/netfs/io.c' failed with return code 1
+> > +static int ovl_upper_fdget(const struct file *file, struct fd *real, bool data)
+> > +{
+> > +	struct dentry *dentry = file_dentry(file);
+> > +	struct path realpath;
+> > +	enum ovl_path_type type;
+> > +
+> > +	if (data)
+> > +		type = ovl_path_realdata(dentry, &realpath);
+> 
+> ... but not here.
+> 
+> I can see the point of not doing that in ->fsync() after we'd already
+> done ovl_verify_lowerdata() at open time, but what's different about
+> ->read_iter() and friends that also come only after ->open()?
+> IOW, why is fdatasync() different from other data-access cases?
 
-Remove the offending kernel-doc line, making the docs build process a
-little happier.
+Nevermind that one - the answer is that ovl_path_realdata()
+calls ovl_path_lowerdata() only in case when it sees
+!OVL_TYPE_UPPER(type) || OVL_TYPE_MERGE(type), which guarantees
+that the type check below that if (data) will fail anyway
+(check being (!OVL_TYPE_UPPER(type) || (data && OVL_TYPE_MERGE(type))).
 
-Fixes: 86b374d061ee ("netfs: Remove fs/netfs/io.c")
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/filesystems/netfs_library.rst | 1 -
- 1 file changed, 1 deletion(-)
+So this reduces the fdatasync case to
+	if (!OVL_TYPE_UPPER(type) || OVL_TYPE_MERGE(type))
+		fail;
+	ovl_path_upper(dentry, &realpath);
+just as the fsync case reduces to
+	if (!OVL_TYPE_UPPER(type))
+		fail;
+	ovl_path_upper(dentry, &realpath);
 
-diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
-index f0d2cb257bb8..73f0bfd7e903 100644
---- a/Documentation/filesystems/netfs_library.rst
-+++ b/Documentation/filesystems/netfs_library.rst
-@@ -592,4 +592,3 @@ API Function Reference
- 
- .. kernel-doc:: include/linux/netfs.h
- .. kernel-doc:: fs/netfs/buffered_read.c
--.. kernel-doc:: fs/netfs/io.c
--- 
-2.46.2
-
+making any lowerpath-related stuff irrelevant.
 
