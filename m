@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-31187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CA5992EE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:20:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758B6992EE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE40E2858B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0F91C23722
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05521D7E29;
-	Mon,  7 Oct 2024 14:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D751D8DE3;
+	Mon,  7 Oct 2024 14:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTr8Hvce"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVNLE7iJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BAF1D8DEC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CE31D8DFB;
 	Mon,  7 Oct 2024 14:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310776; cv=none; b=luCYsVZ4AnPYagwzms9EmaK+cRPKbtbbtZTZ7WR9ohILdxRMCR0Am3HkAu7j+2WFz5iIIpTpSEXO3fqtZXo2A3tvJZT6vqkBJ+vJyoshUNziQh8AUiaFrlEUHahN1Pa+ziKxeJre6+Me35vhCiZQ+4q8O+DhHVtx0pZNKHlGIGQ=
+	t=1728310777; cv=none; b=SOynv0UQwkslzEnSTwd2nUGZeqjLMH5nwCxvLZTMvRaHo42PEkA+Clc9jS5ZYE1jra+YiSfMk6YsRKSZxLZYSPdQm9KxJdTymO71LWc97khJAnfdxeVXhw5vs1/SmsxnvpP8tn0/fKsZgzOXqadtxW3syWMSgsV6WbvEV/UfWgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310776; c=relaxed/simple;
-	bh=J2P5IiHrUlxURdsqJ0nNZ62+0PHUNMZc9zVb0F22A1k=;
+	s=arc-20240116; t=1728310777; c=relaxed/simple;
+	bh=ShLWCnLy37MvRFlXnqMMASukN/oTTXfwXOi0kGFCvYc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ae9mqQfYQnxHzUtaGDX2LY2F9gWFHgzI7vpExPS+yD6mIlj25Z9+B/TYwP+SS98kqg88idlMfXStVjenNi5dIcYii+KVYuN8m0TMcyENto2fG35mrRYmMEGKCwOSaks9ybzRZdd1Q5ZqA73hNeizZ/CC9C8zvH6+SYuQNrn8RuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTr8Hvce; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=iHBbipuaEVv5REG/RCMzSS/IxNTTW6fzTlJtQ9erJFH9v+mppRDKAxBdHpuWbq5FXPGawXooz8UO7CCaiZKH42RkkMCi47fGomIrgjB5Fl1j3OvNh6Aq7Rix0Ujr1YD676il1QyZR3rJdghzvrmgly0npQCkrjO9mGNdXTY4g9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVNLE7iJ; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so46681525e9.1;
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37cdbcb139cso3535327f8f.1;
         Mon, 07 Oct 2024 07:19:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1728310773; x=1728915573; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=K5pl2ROicOhNAoVpZjAYZikcTP1+nppS1IdoYmg8e5Y=;
-        b=PTr8HvcelcCWFRHa1GaqLjxSzRz9iwFzsgfUMkkM/HYijnW9zJqHIUxI5/bbnCAB5m
-         ZFeC3ePXMIf1AJdA0WJEISh11FDjgd/GB3CIHSUQ6XaRDXau1AImixElyufoiXq5TY6h
-         SuzMXFGOn8vwZrgmC/jtDasIgUt+DpkdyqKQxRr0LOVFad+GKyYu9GSCpcy0wDt9lMUH
-         dLR9PgMssuG/5/1KwgMsOYErPuuFDEoVSLU/G8qFdXRKq4qgkyq3uGE3eja+xqWsgCwv
-         b6G4F+mTgdkYi1n5Hcl3KmzBE18M5XYnddLHk7qV2wA4UJq3PlS5FK1f8TWs+JBWyytL
-         bxSg==
+        bh=w3aPZorWQGjj1ymVuXXU2EaIpRVEVNJmdpk026ZQD5M=;
+        b=iVNLE7iJTsDfSBGqjZfBd7+o6ju6q+ZHiqY0IFazJMlpoJtWXFykHrbwnonYh/9s4e
+         wdeZm+F3tp8M9gcPA9QBmKlQzB0sEishYKarVBRKFvJZFyGZYMEOtHBTEQsdNc582CCo
+         2M4nEPu1/TfW5uMwT4wZaX/xcfSEX+8n720tyG23kYPi8wXwUKNeGDVTbksb6qx5Nrvb
+         l3vk1al0WAeNlX/CEKzsmaPFfRFeafKY70ClH79CBfRS+ejvg02Cr9vsIdgTKDCPx9Hq
+         5BNXu9DUrN1xmcDa0mrP38CgNsArTrjYwT1ZKCbK1huWeiupbbF/xiKJMNvvFpqyAwOo
+         INHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1728310773; x=1728915573;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=K5pl2ROicOhNAoVpZjAYZikcTP1+nppS1IdoYmg8e5Y=;
-        b=Bq0eqG0vo9OEcDNFOBDDRgD42qMUSiUx9JMZg6EgSLJnMIEW7R0jkMIzhQfarna2zc
-         SF1VaOVO8AtrMmIECoK2rSuhKTQZ3Y1J4csE92OkMfaYE82aHqmt58nRWcuQtCRxn3XG
-         O6qxxs/g6MSTO+6+OX1x+ZTOdG6KkPECvpXmreY95IPAcUeofDUGr6UoRZD18YTBdPM/
-         jqn6MsMJxKM/hLS3ZhKOc9//d8crK7YwCyHhBCzA1tDivvKbLP5jRA2F6HhaVOPW9Rmu
-         C9tPVsdTtEeAj3uNivlIcTe1R1nn4mPFWcaZEj5VA7ZLln70TWZFECHCV4aRUNCXQ+F5
-         J1Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNYyrEZ5LkX2RPAp6sNPq5HcRLR3YiZYb+ZmlVDP/9/7J4P1maCyqutZmhNxw0+7Tg1mJ4GVSXTgYaeKfOOg==@vger.kernel.org, AJvYcCXN+S9FxPLyKRRBKqNLAVHHV8tlF7IilVf+WKvJBEpXTv9ztv0nsWX0aKF1THTtU84lEqgI7UVe5F0UkWiK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLRU/iibW/+BZW9MXCLnIJ/PXLeQeEE4u2jxD/J+FWMu3M7Gou
-	O/g6mNcDu9JwySoX0g7DnpwdTC1B+ot19lKy27de+EFWjbEduGZy
-X-Google-Smtp-Source: AGHT+IEH16bvwIy00udG2k+69iE/yqFxITAt47WoPiPNyMmmaDYZm+128yrq5+B8sUVyqXHgRT0NlQ==
-X-Received: by 2002:adf:f588:0:b0:37c:ce58:5a1a with SMTP id ffacd0b85a97d-37d0e8e0415mr5918662f8f.54.1728310772238;
-        Mon, 07 Oct 2024 07:19:32 -0700 (PDT)
+        bh=w3aPZorWQGjj1ymVuXXU2EaIpRVEVNJmdpk026ZQD5M=;
+        b=aXJuP8COBF/HXbTEiRdC0MyrAAO9t2LTXuHC3YbtC8ecqTYxjTsXIxsmcpyt5Sue5z
+         oaMkuzeQ+EhgD1NfVd+8zKhhC0uqopNNJ07cSLCNS3czmyqu+JZR4CA7VGPhqVsxW3/D
+         6OXmaWCXFVQAqoFGNPlRs6unpYnAvo9iCufcIrsoRvM2LQznyANGwuMspUWBCHs017By
+         gFwLifUfj9VXxbp55ETguMNdYb4PPc2FcUzFEqsIEiMQgJE1S/1uEB1ljypGFQUcxgW2
+         8tsNYXUyDU2zRI55Vwcnjr94Y+DIavjWhD2oaD+kIanp3F0lCqfQKVSY8atOlXUjkWOH
+         IgWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVg5tc9KdS/siZLtYoSdD0lVrFV8ohQ5hOHLi2747/1X8gQvC7XX0T8cQIQNaLNnDH2+TWTWW5YgsFp1mvq@vger.kernel.org, AJvYcCXLHxFLafWpSobq/pRVwMFPgOwXVboLP8JhAl9V93AwDpz0xg0WGtDLfrsXNk40hn1CJ9I4xTWhqI7hNVfsSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM26KiLl7MrMlk1OBrujzsJAGAnIbO1wiEALQ/mTp1+xxQCJ/r
+	t11ggNkVRfl112dQZk1aqNAggG3KoRPrMftY+ndmw3G5lMnE2Czx
+X-Google-Smtp-Source: AGHT+IFFCLNMa7ozCLRyuQwffwAl/1LKN9IarPzd4fugtBrwPtOc+bNIHnX9YVRivQldcUJnydmx/Q==
+X-Received: by 2002:adf:f987:0:b0:374:cbe8:6f43 with SMTP id ffacd0b85a97d-37d0e7902b2mr6953417f8f.33.1728310773065;
+        Mon, 07 Oct 2024 07:19:33 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16970520sm5829396f8f.96.2024.10.07.07.19.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16970520sm5829396f8f.96.2024.10.07.07.19.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 07:19:31 -0700 (PDT)
+        Mon, 07 Oct 2024 07:19:32 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Al Viro <viro@zeniv.linux.org.uk>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org
-Subject: [PATCH v3 3/5] ovl: store upper real file in ovl_file struct
-Date: Mon,  7 Oct 2024 16:19:23 +0200
-Message-Id: <20241007141925.327055-4-amir73il@gmail.com>
+Subject: [PATCH v3 4/5] ovl: convert ovl_real_fdget_path() callers to ovl_real_file_path()
+Date: Mon,  7 Oct 2024 16:19:24 +0200
+Message-Id: <20241007141925.327055-5-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241007141925.327055-1-amir73il@gmail.com>
 References: <20241007141925.327055-1-amir73il@gmail.com>
@@ -87,103 +87,167 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When an overlayfs file is opened as lower and then the file is copied up,
-every operation on the overlayfs open file will open a temporary backing
-file to the upper dentry and close it at the end of the operation.
+Stop using struct fd to return a real file from ovl_real_fdget_path(),
+because we no longer return a temporary file object and the callers
+always get a borrowed file reference.
 
-Store the upper real file along side the original (lower) real file in
-ovl_file instead of opening a temporary upper file on every operation.
+Rename the helper to ovl_real_file_path(), return a borrowed reference
+of the real file that is referenced from the overlayfs file or an error.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/overlayfs/file.c | 49 +++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 41 insertions(+), 8 deletions(-)
+ fs/overlayfs/file.c | 66 +++++++++++++++++++++++++--------------------
+ 1 file changed, 37 insertions(+), 29 deletions(-)
 
 diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 03bf6037b129..525bcddb49e5 100644
+index 525bcddb49e5..b6d6ccc39dad 100644
 --- a/fs/overlayfs/file.c
 +++ b/fs/overlayfs/file.c
-@@ -91,32 +91,63 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
+@@ -100,16 +100,14 @@ static bool ovl_is_real_file(const struct file *realfile,
+ 	return file_inode(realfile) == d_inode(realpath->dentry);
+ }
  
- struct ovl_file {
- 	struct file *realfile;
-+	struct file *upperfile;
- };
- 
-+static bool ovl_is_real_file(const struct file *realfile,
-+			     const struct path *realpath)
-+{
-+	return file_inode(realfile) == d_inode(realpath->dentry);
-+}
-+
- static int ovl_real_fdget_path(const struct file *file, struct fd *real,
- 			       struct path *realpath)
+-static int ovl_real_fdget_path(const struct file *file, struct fd *real,
+-			       struct path *realpath)
++static struct file *ovl_real_file_path(const struct file *file,
++				       struct path *realpath)
  {
  	struct ovl_file *of = file->private_data;
  	struct file *realfile = of->realfile;
  
--	real->word = (unsigned long)realfile;
-+	real->word = 0;
- 
+-	real->word = 0;
+-
  	if (WARN_ON_ONCE(!realpath->dentry))
- 		return -EIO;
+-		return -EIO;
++		return ERR_PTR(-EIO);
  
--	/* Has it been copied up since we'd opened it? */
--	if (unlikely(file_inode(realfile) != d_inode(realpath->dentry))) {
--		struct file *f = ovl_open_realfile(file, realpath);
--		if (IS_ERR(f))
--			return PTR_ERR(f);
--		real->word = (unsigned long)f | FDPUT_FPUT;
--		return 0;
-+	/*
-+	 * If the realfile that we want is not where the data used to be at
-+	 * open time, either we'd been copied up, or it's an fsync of a
-+	 * metacopied file.  We need the upperfile either way, so see if it
-+	 * is already opened and if it is not then open and store it.
-+	 */
-+	if (unlikely(!ovl_is_real_file(realfile, realpath))) {
-+		struct file *upperfile = READ_ONCE(of->upperfile);
-+		struct file *old;
-+
-+		if (!upperfile) { /* Nobody opened upperfile yet */
-+			upperfile = ovl_open_realfile(file, realpath);
-+			if (IS_ERR(upperfile))
-+				return PTR_ERR(upperfile);
-+
-+			/* Store the upperfile for later */
-+			old = cmpxchg_release(&of->upperfile, NULL, upperfile);
-+			if (old) { /* Someone opened upperfile before us */
-+				fput(upperfile);
-+				upperfile = old;
-+			}
-+		}
-+		/*
-+		 * Stored file must be from the right inode, unless someone's
-+		 * been corrupting the upper layer.
-+		 */
-+		if (WARN_ON_ONCE(!ovl_is_real_file(upperfile, realpath)))
-+			return -EIO;
-+
-+		realfile = upperfile;
+ 	/*
+ 	 * If the realfile that we want is not where the data used to be at
+@@ -124,7 +122,7 @@ static int ovl_real_fdget_path(const struct file *file, struct fd *real,
+ 		if (!upperfile) { /* Nobody opened upperfile yet */
+ 			upperfile = ovl_open_realfile(file, realpath);
+ 			if (IS_ERR(upperfile))
+-				return PTR_ERR(upperfile);
++				return upperfile;
+ 
+ 			/* Store the upperfile for later */
+ 			old = cmpxchg_release(&of->upperfile, NULL, upperfile);
+@@ -138,20 +136,23 @@ static int ovl_real_fdget_path(const struct file *file, struct fd *real,
+ 		 * been corrupting the upper layer.
+ 		 */
+ 		if (WARN_ON_ONCE(!ovl_is_real_file(upperfile, realpath)))
+-			return -EIO;
++			return ERR_PTR(-EIO);
+ 
+ 		realfile = upperfile;
  	}
  
  	/* Did the flags change since open? */
- 	if (unlikely((file->f_flags ^ realfile->f_flags) & ~OVL_OPEN_FLAGS))
- 		return ovl_change_flags(realfile, file->f_flags);
+-	if (unlikely((file->f_flags ^ realfile->f_flags) & ~OVL_OPEN_FLAGS))
+-		return ovl_change_flags(realfile, file->f_flags);
++	if (unlikely((file->f_flags ^ realfile->f_flags) & ~OVL_OPEN_FLAGS)) {
++		int err = ovl_change_flags(realfile, file->f_flags);
  
-+	real->word = (unsigned long)realfile;
- 	return 0;
+-	real->word = (unsigned long)realfile;
+-	return 0;
++		if (err)
++			return ERR_PTR(err);
++	}
++
++	return realfile;
  }
  
-@@ -208,6 +239,8 @@ static int ovl_release(struct inode *inode, struct file *file)
- 	struct ovl_file *of = file->private_data;
+-static int ovl_real_fdget(const struct file *file, struct fd *real)
++static struct file *ovl_real_file(const struct file *file)
+ {
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct path realpath;
+@@ -159,23 +160,33 @@ static int ovl_real_fdget(const struct file *file, struct fd *real)
  
- 	fput(of->realfile);
-+	if (of->upperfile)
-+		fput(of->upperfile);
- 	kfree(of);
+ 	if (d_is_dir(dentry)) {
+ 		struct file *f = ovl_dir_real_file(file, false);
+-		if (IS_ERR(f))
+-			return PTR_ERR(f);
+-		real->word = (unsigned long)f;
+-		return 0;
++
++		if (WARN_ON_ONCE(!f))
++			return ERR_PTR(-EIO);
++		return f;
+ 	}
  
- 	return 0;
+ 	/* lazy lookup and verify of lowerdata */
+ 	err = ovl_verify_lowerdata(dentry);
+ 	if (err)
+-		return err;
++		return ERR_PTR(err);
+ 
+ 	ovl_path_realdata(dentry, &realpath);
+ 
+-	return ovl_real_fdget_path(file, real, &realpath);
++	return ovl_real_file_path(file, &realpath);
+ }
+ 
+-static int ovl_upper_fdget(const struct file *file, struct fd *real, bool data)
++static int ovl_real_fdget(const struct file *file, struct fd *real)
++{
++	struct file *f = ovl_real_file(file);
++
++	if (IS_ERR(f))
++		return PTR_ERR(f);
++	real->word = (unsigned long)f;
++	return 0;
++}
++
++static struct file *ovl_upper_file(const struct file *file, bool data)
+ {
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct path realpath;
+@@ -186,12 +197,11 @@ static int ovl_upper_fdget(const struct file *file, struct fd *real, bool data)
+ 	else
+ 		type = ovl_path_real(dentry, &realpath);
+ 
+-	real->word = 0;
+ 	/* Not interested in lower nor in upper meta if data was requested */
+ 	if (!OVL_TYPE_UPPER(type) || (data && OVL_TYPE_MERGE(type)))
+-		return 0;
++		return NULL;
+ 
+-	return ovl_real_fdget_path(file, real, &realpath);
++	return ovl_real_file_path(file, &realpath);
+ }
+ 
+ static int ovl_open(struct inode *inode, struct file *file)
+@@ -452,7 +462,7 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 
+ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ {
+-	struct fd real;
++	struct file *upperfile;
+ 	const struct cred *old_cred;
+ 	int ret;
+ 
+@@ -461,16 +471,14 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ 		return ret;
+ 
+ 	/* Don't sync lower file for fear of receiving EROFS error */
+-	ret = ovl_upper_fdget(file, &real, datasync);
+-	if (ret || fd_empty(real))
+-		return ret;
++	upperfile = ovl_upper_file(file, datasync);
++	if (IS_ERR_OR_NULL(upperfile))
++		return PTR_ERR(upperfile);
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+-	ret = vfs_fsync_range(fd_file(real), start, end, datasync);
++	ret = vfs_fsync_range(upperfile, start, end, datasync);
+ 	revert_creds(old_cred);
+ 
+-	fdput(real);
+-
+ 	return ret;
+ }
+ 
 -- 
 2.34.1
 
