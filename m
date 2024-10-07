@@ -1,242 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-31162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CDB992A10
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 13:13:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090BE992A19
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 13:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7941F22E76
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 11:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB61283223
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 11:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7151D1E65;
-	Mon,  7 Oct 2024 11:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985FC199948;
+	Mon,  7 Oct 2024 11:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXGTxGb6"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="QgAwakk7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3462AD05;
-	Mon,  7 Oct 2024 11:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670E318BBB2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 11:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728299574; cv=none; b=gUif8pHDoEcmLl+u5a/vx/2pscmm8YHjqGcOWLCbclfRrOw0xCdY+ZzulmnSd7Xq3IW8Z6HZjN1Uj8xZ0FU6auWkfaRL9HaoQp96NsCrSH56coLcul7uwi+xLXM8urj3xRNu6USnrhlIprTtM/XzQO9u/FXA6Cj/73LM9YQj9f4=
+	t=1728299770; cv=none; b=Jm3ql5E+ZsRVxoiaugHEG4mqv3HIl1DEHYMeqk2PA3a7V+6wNlW9ZJff6dFcymm1jzO2L3RN8A2tO6izpnH6nM1ozFTzo41lITKgqnTFsr4pLAOJ4L1qg2UUFc/+lgtwJL1mbl6NIBqCvWQESurfQTO+5LHwWSxV0lkwrI+aOyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728299574; c=relaxed/simple;
-	bh=+0UBYzLaamVI5QhpfCQYL3WXU8nHfkUEMofM6kpbGzU=;
+	s=arc-20240116; t=1728299770; c=relaxed/simple;
+	bh=E8fRdAlJgiJme94BbN4pIOluZYOFhIbAZOVzz3VquwQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r807mg6EmwrnB7W+CUWFQAsYqjPcEMgBFkomJGNzqM4/wuHYL6m2ich8skuQRf+edR+d15DG4JfXigB8AcTAX+IYxIblTg/okECMzCDJ6ycgpRrNHfQ69Yajg2yHgYQ/ygpHmdXtGUIPVV3bCjOqVhyeclxKL26MQOyE1ameiSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jXGTxGb6; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a9ad15d11bso373423085a.0;
-        Mon, 07 Oct 2024 04:12:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=HWNsbsqOQVJax7u0zZmb/a2Vp3gUrejS4nAAG+OxASgEYYnW6PxiT6hFlTfsMOoGcXOkCb+Op1jqUm0SZ+2pkSpTD1YSZwfQQkTwT883TRonMOhBZLpaO3a15hs7jORYvqroW+esCM5ZqQ4s1fM+dOjDlIY0dMGQ906Zv4phmso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=QgAwakk7; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99415adecaso253513066b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 04:16:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728299571; x=1728904371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P0Pu7w7Qofm8rf+EQz/VvkYu8KIa27zSMi6qN0yhbGo=;
-        b=jXGTxGb6/ixz58lvV9Xp77QVQo4/z05RHcUk64Exqhx9BAhQFktaWe7HBWN4j3iVic
-         +yCITAQ0p6QeUJcpVgfhvo6dyu4Spv9cvpb9cysoDK2y2nsKZvFbWqj1zYxhPVfqSsj2
-         knUQ1wp6H01sAo9K0dQSCw04NmIAq112qsUjT6BWeE/78AC8/l8HFKJpZB9/2vhOvUyl
-         i0iyBynaVqp9LJVHolAf7oDKLfaSpKRTlYpQ+9+npqTrYFYt/WddIt5IBWVhgHnNubGx
-         C14ibDuWCc+lELxjTjwfaurZAJMZhcvE1xf+3nN0ORdHCiCmzqFn3m9svRCCOW9je3V5
-         W88A==
+        d=szeredi.hu; s=google; t=1728299767; x=1728904567; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=W0HQTGv3eqxjC2PrnLBuK91AoOyVLLFoAbV8Ry+Sw1Y=;
+        b=QgAwakk7w9OSw2cpgW/mC9UMVyLlfVY/XZvbF+Sca4C0yh823AeXz0/RzE+7/5qaxG
+         YWKIda/B9s2rck1dMByFxM3V/qLTqQpvCYRBLW4s7E8fTSEmbhI/zFJOKhcU8vZeKWrb
+         YqTU6j+9AW73O4k8bn+/L2fBcnml9LT46Yj60=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728299571; x=1728904371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P0Pu7w7Qofm8rf+EQz/VvkYu8KIa27zSMi6qN0yhbGo=;
-        b=q6OoV/e7PlpGY1XOICMR6pjrCyTi/Z/njtktyCZk//SrROacXbEWpy5h0H5t14pM5B
-         LiWPReO2FXXYUW9jwc7qnn7MwQJO/MfzNgJ5KSI6tBmu7Fh2RWq0+nTXbs9Lwrd9H4yf
-         QEOB6g1rE4B/1kvosc2RG+vOansu5Vz6CSMqmnelRTUTSqopgahGj5pm9nthbEyoMk6i
-         DaDmfVfrJS84oN9uEGDksjEhBveVZqBLgc5RzwsBmS9pV3HGazJuol810KYexomkIJRZ
-         Rk/uRZUMcT7DkhSrs4ehIBqnULU/VaOLS3iopw1JuFN5nbmO79Lea/St6NTUAs5/GNWA
-         O7TA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNBPgNEFDfBPD6ygcmoFZdd6GNw6UkdjToPWAeYI+Qb2CvxlYyickCqot1Be/bWYvd21gwuLDJEh1B4y4E@vger.kernel.org, AJvYcCUdsbjupYcmdVMHyn5Gb7SNGclvgk7bBfIPmK+s0EnjJwACEnqbvmtfbocK1MejbZK0c/hTiaoF7oZHhFiw@vger.kernel.org, AJvYcCWCQQX8PuI/bHaoT0BDSal/WY8QIDDwYehIMmltjxYzr+X2xXn8+fxB6ueRnVykQj68MO4TUfnc/Nh5QnFjcw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLx2Aoj5q4fXLfUtSgNk2tXZegXRMyNGi7rcc7xCFVCvRWOaL2
-	q9Ty00HiO8f3hm06vp38jDprHe0F29RIi47+JiTBf920b3g6aN3cORVIK8r8GOLBCuhl/XXPJVB
-	2C6gDhtYgnTH5xRMMylDYkt+QXV4=
-X-Google-Smtp-Source: AGHT+IFNLQwu9WYwxkT9V/5IpXoKM/Gp5ODCQEgaSziss4Rh4GRcegimwTg7Sq8jcoV0sbHBvx0DcunvFCiyMFzaVI8=
-X-Received: by 2002:a05:620a:394b:b0:7a1:d73f:53d2 with SMTP id
- af79cd13be357-7ae6f4451d4mr1918784085a.20.1728299571575; Mon, 07 Oct 2024
- 04:12:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728299767; x=1728904567;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W0HQTGv3eqxjC2PrnLBuK91AoOyVLLFoAbV8Ry+Sw1Y=;
+        b=pq/0SfXM/JdR5BB+ZwSbEHgqGE3bEsQCu0Ro/g8F8TyeNHU1IxevPzskR7WnDLbsdn
+         cJK+Jo5ON8u8Qks8x207YgOO+g+5ajuLCWyIrUEEcyrh1LPgB8IF6ubOaWYMtkvV2a4p
+         YlzF5Vu01KHnRM7WeWn5wmmDgwqE2aAgM+b7EZuqQ6VDKNH93u4Ili/b+ISDt+J2h6oH
+         lUQorUA75EgQQ5WY0mVtUXtE32yceMRh4s5S4q9qPTHDcooiY9jkCPKwiRDMMWIeIqOw
+         Lf25YgCpgd5L3eqyH7H0ImZO6sp6rmvx8+ebgIIpfydlQBmnX+xhrDOd3NHjFC6DceaZ
+         Gu9g==
+X-Forwarded-Encrypted: i=1; AJvYcCX1DGKnkqdfkZb3cyRVvMVyDgIzqc4Q5fPfU8H1R42Mh2yDwRBCRlrY+HlXUrU0QpqekAh76mm2HVcMGrg4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQmJcA3Wmmww9sgW3BlprcsuquU4XRvuOGsgQTdigX/Eb71+YB
+	CZteOTuZ8K9KAZwo+bKALf4gLiT8A0tHEpzMSXPyFcott1JjXeutuhRTSBa68og+74KB238gU55
+	nhgYJOfkXEAyHo2Xu952hO1AuLIqfz9UdmDZdzw==
+X-Google-Smtp-Source: AGHT+IFeWJONUHm3u6eVtymxYPEbVewyVDCoMmV+T2ZsewlRtBCaQBcWI5MoI2zkwzEl0J0t6OaEfsaXLMg4yr6DmUQ=
+X-Received: by 2002:a17:906:ee82:b0:a8d:2281:94d9 with SMTP id
+ a640c23a62f3a-a990a21d61emr1808778466b.23.1728299766818; Mon, 07 Oct 2024
+ 04:16:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-5-vinicius.gomes@intel.com> <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
- <87wmk2lx3s.fsf@intel.com> <87h6a43gcc.fsf@intel.com> <20240925-umweht-schiffen-252e157b67f7@brauner>
- <87bk0b3jis.fsf@intel.com>
-In-Reply-To: <87bk0b3jis.fsf@intel.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 7 Oct 2024 13:12:39 +0200
-Message-ID: <CAOQ4uxhuvBtSrbw2RAGKnO6O9dXH2DZ-fHJ=z8v+T+5PariZ0w@mail.gmail.com>
-Subject: Re: [PATCH v2 04/16] overlayfs: Document critical override_creds() operations
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, hu1.chen@intel.com, 
-	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
-	lizhen.you@intel.com, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241006082359.263755-1-amir73il@gmail.com> <CAJfpegsrwq8GCACdqCG3jx5zBVWC4DRp4+uvQjYAsttr5SuqQw@mail.gmail.com>
+ <CAOQ4uxjxLRuVEXhY1z_7x-u=Yui4sC8m0NU83e0dLggRLSXHRA@mail.gmail.com>
+ <CAJfpegvbAsRu-ncwZcr-FTpst4Qq_ygrp3L7T5X4a2YiODZ4yg@mail.gmail.com> <CAOQ4uxi0LKDi0VaYzDq0ja-Qn0D=Zg_wxraqnVomat29Z1QVuw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxi0LKDi0VaYzDq0ja-Qn0D=Zg_wxraqnVomat29Z1QVuw@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 7 Oct 2024 13:15:54 +0200
+Message-ID: <CAJfpegtdL0R9BgbdMP7YzEVD0ZdWV=71cWSZtkCFhhOjXWOzrg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Stash overlay real upper file in backing_file
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 4:17=E2=80=AFPM Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
->
-> Christian Brauner <brauner@kernel.org> writes:
->
-> > On Tue, Sep 24, 2024 at 06:13:39PM GMT, Vinicius Costa Gomes wrote:
-> >> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
-> >>
-> >> > Miklos Szeredi <miklos@szeredi.hu> writes:
-> >> >
-> >> >> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
-> >> >> <vinicius.gomes@intel.com> wrote:
-> >> >>>
-> >> >>> Add a comment to these operations that cannot use the _light versi=
-on
-> >> >>> of override_creds()/revert_creds(), because during the critical
-> >> >>> section the struct cred .usage counter might be modified.
-> >> >>
-> >> >> Why is it a problem if the usage counter is modified?  Why is the
-> >> >> counter modified in each of these cases?
-> >> >>
-> >> >
-> >> > Working on getting some logs from the crash that I get when I conver=
-t
-> >> > the remaining cases to use the _light() functions.
-> >> >
-> >>
-> >> See the log below.
-> >>
-> >> > Perhaps I was wrong on my interpretation of the crash.
-> >> >
-> >>
-> >> What I am seeing is that ovl_setup_cred_for_create() has a "side
-> >> effect", it creates another set of credentials, runs the security hook=
-s
-> >> with this new credentials, and the side effect is that when it returns=
-,
-> >> by design, 'current->cred' is this new credentials (a third set of
-> >> credentials).
-> >
-> > Well yes, during ovl_setup_cred_for_create() the fs{g,u}id needs to be
-> > overwritten. But I'm stil confused what the exact problem is as it was
-> > always clear that ovl_setup_cred_for_create() wouldn't be ported to
-> > light variants.
-> >
-> > /me looks...
-> >
-> >>
-> >> And this implies that refcounting for this is somewhat tricky, as said
-> >> in commit d0e13f5bbe4b ("ovl: fix uid/gid when creating over whiteout"=
-).
-> >>
-> >> I see two ways forward:
-> >>
-> >> 1. Keep using the non _light() versions in functions that call
-> >>    ovl_setup_cred_for_create().
-> >> 2. Change ovl_setup_cred_for_create() so it doesn't drop the "extra"
-> >>    refcount.
-> >>
-> >> I went with (1), and it still sounds to me like the best way, but I
-> >> agree that my explanation was not good enough, will add the informatio=
-n
-> >> I just learned to the commit message and to the code.
-> >>
-> >> Do you see another way forward? Or do you think that I should go with
-> >> (2)?
-> >
-> > ... ok, I understand. Say we have:
-> >
-> > ovl_create_tmpfile()
-> > /* current->cred =3D=3D ovl->creator_cred without refcount bump /*
-> > old_cred =3D ovl_override_creds_light()
-> > -> ovl_setup_cred_for_create()
-> >    /* Copy current->cred =3D=3D ovl->creator_cred */
-> >    modifiable_cred =3D prepare_creds()
-> >
-> >    /* Override current->cred =3D=3D modifiable_cred */
-> >    mounter_creds =3D override_creds(modifiable_cred)
-> >
-> >    /*
-> >     * And here's the BUG BUG BUG where we decrement the refcount on the
-> >     * constant mounter_creds.
-> >     */
-> >    put_cred(mounter_creds) // BUG BUG BUG
-> >
-> >    put_cred(modifiable_creds)
-> >
-> > So (1) is definitely the wrong option given that we can get rid of
-> > refcount decs and incs in the creation path.
-> >
-> > Imo, you should do (2) and add a WARN_ON_ONC(). Something like the
-> > __completely untested__:
-> >
->
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index ab65e98a1def..e246e0172bb6 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -571,7 +571,12 @@ static int ovl_setup_cred_for_create(struct dentry=
- *dentry, struct inode *inode,
-> >                 put_cred(override_cred);
-> >                 return err;
-> >         }
-> > -       put_cred(override_creds(override_cred));
-> > +
-> > +       /*
-> > +        * We must be called with creator creds already, otherwise we r=
-isk
-> > +        * leaking creds.
-> > +        */
-> > +       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentr=
-y->d_sb));
-> >         put_cred(override_cred);
-> >
-> >         return 0;
-> >
->
-> At first glance, looks good. Going to test it and see how it works.
-> Thank you.
->
-> For the next version of the series, my plan is to include this
-> suggestion/change and remove the guard()/scoped_guard() conversion
-> patches from the series.
->
+On Mon, 7 Oct 2024 at 13:02, Amir Goldstein <amir73il@gmail.com> wrote:
 
-Vinicius,
+> What I see after my patch is that ->private_data points to a singly
+> linked list of length 1 to 2 of backing files.
 
-I have a request. Since the plan is to keep the _light() helpers around for=
- the
-time being, please make the existing helper ovl_override_creds() use the
-light version and open code the non-light versions in the few places where
-they are needed and please replace all the matching call sites of
-revert_creds() to
-a helper ovl_revert_creds() that is a wrapper for the light version.
+Well, yeah.
 
-Also, depending on when you intend to post your work for review,
-I have a feeling that the review of my patches is going to be done
-before your submit your patches for review, so you may want to consider
-already basing your patches on top of my development branch [2] to avoid
-conflicts later.
+Still, it's adding (arguably minimal) data and code to backing_file,
+that is overlay specific.   If you show how this is relevant to fuse's
+use of backing files, then that's a much stronger argument in favor.
 
-Anyway, the parts of my patches that conflict with yours (s/real.file/realf=
-ile/)
-are not likely to change anymore.
+> Well, this is not any worth that current ->private_data, but I could
+> also make it, if you like it better:
+>
+>  struct backing_file {
+>         struct file file;
+>         struct path user_path;
+> +       struct file *next;
+>  };
+>
+> +struct file **backing_file_private_ptr(struct file *f)
+> +{
+> +       return &backing_file(f)->next;
+> +}
+> +EXPORT_SYMBOL_GPL(backing_file_next_ptr);
+
+Yeah, that would solve type safety, but would make the infrastructure
+less generic.
+
+> Again, I am not terribly opposed to allocating struct ovl_file as we do
+> with directory - it is certainly more straight forward to read, so that
+> is a good enough argument in itself, and "personal dislike" is also a fair
+> argument, just arguing for the sake of argument so you understand my POV.
+
+I think readability is more important here than savings on memory or CPU.
 
 Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-unionfs/20241006082359.263755-1-amir73il@=
-gmail.com/
-[2] https://github.com/amir73il/linux/commits/ovl_real_file/
+Miklos
 
