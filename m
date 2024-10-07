@@ -1,215 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-31156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9759928D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 12:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD3E9928F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 12:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99EE2B22A04
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 10:10:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54072B23CE1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 10:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3901AB6F3;
-	Mon,  7 Oct 2024 10:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A4E18E059;
+	Mon,  7 Oct 2024 10:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fttvgpkt"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JG1A22tr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8921A76A2
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 10:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2CB1E519
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 10:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728295823; cv=none; b=TvP0bmV/ulbNcOyFiUAhp46RLfM4LK1QbDWC0Zh6sIX5bwSPl5ZJJy+aWidcnzUhtwvwAxhNKRQ47TnHUhRzOIPdAtX2IoLdQ0FrRLPHp3ZdM0EVft1Bnb47GUsi1ZRg3aiSD2A0OdracmLZ3Zk1I/0qHxqTzWi01Q6KC/RJev0=
+	t=1728296162; cv=none; b=CGeJBCIMpyozW1B0EaNbHZrUFVDlA7x1KbNg11jzu+ahcN+yJIBkMDZrRXyTg1PgSLtHZfsgPxw+LNqwjisIel6DFHzRZZpeWXPPcc8u0CcDd8eWTGaiQMAezHnoRu1US+VasDgOD7mP7XqFvFXA2lsQ7HeZU+xTJwbjEpRqAZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728295823; c=relaxed/simple;
-	bh=/qon21ZaisnOlLkY7R2OhoF5IXf7cHCKcZo4Pa5BJ2M=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=JnWxNRLTVr08XxwBQFHKs3C9jAwXVDOkxJ6crPaiianZw1tgu6oKPUtMg2fxprkw3JS0qKuf2bkJa/l9QviFJHCjIIl5FoEynpFjQaDctV5tnNj/UWR6hzqnsav6EQ0eXMNtHUcb1/PThwfu+rpeB5m9qjvNfiqM+XBKYleI674=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fttvgpkt; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241007101014euoutp01f8d5fc8cfee076525af8c2d7bab5608c~8I_LfKtUs1363513635euoutp01n
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 10:10:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241007101014euoutp01f8d5fc8cfee076525af8c2d7bab5608c~8I_LfKtUs1363513635euoutp01n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728295814;
-	bh=Wrs5njHyhQsaY2qMFeXLDtqldIUMw8Cs3rLGXTGdDr0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=fttvgpktprywwOA+/0HlQCx5zxyylOxEABRZ9YUD3IhWKXU5yYU2eDkKER0RJM7pT
-	 ey1PLMpk4QblRV/fzbUw4hTEBVVwayKRXKnbtN3Ez80dg7Fbyo1QBm0rnBdv+FbiFs
-	 sJ7yDiDDDjYHQQotBbNXyjNfYX5/fqj9EhRtyKFw=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241007101013eucas1p111022db7dfe721a110142c87b67de368~8I_LHGbUa1203412034eucas1p17;
-	Mon,  7 Oct 2024 10:10:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 07.B8.09875.583B3076; Mon,  7
-	Oct 2024 11:10:13 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241007101013eucas1p13db5988cea66fb961cbb06a99d2878c8~8I_Krfv4c1224012240eucas1p1R;
-	Mon,  7 Oct 2024 10:10:13 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241007101013eusmtrp2e4e3882eb2a6277ce376cd99feffb5fa~8I_Kq0ipg2830128301eusmtrp2N;
-	Mon,  7 Oct 2024 10:10:13 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-cd-6703b385af9f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 9B.A1.14621.583B3076; Mon,  7
-	Oct 2024 11:10:13 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241007101013eusmtip1593046fbf475df26d943c475dd73c5ad~8I_KYi01k0296502965eusmtip1Y;
-	Mon,  7 Oct 2024 10:10:13 +0000 (GMT)
-Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 7 Oct 2024 11:10:12 +0100
-Date: Mon, 7 Oct 2024 12:10:11 +0200
-From: Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-CC: Jens Axboe <axboe@kernel.dk>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Keith Busch <kbusch@kernel.org>, Kanchan Joshi
-	<joshi.k@samsung.com>, <hare@suse.de>, <sagi@grimberg.me>,
-	<brauner@kernel.org>, <viro@zeniv.linux.org.uk>, <jack@suse.cz>,
-	<jaegeuk@kernel.org>, <bcrl@kvack.org>, <dhowells@redhat.com>,
-	<bvanassche@acm.org>, <asml.silence@gmail.com>,
-	<linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-aio@kvack.org>, <gost.dev@samsung.com>, <vishak.g@samsung.com>
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241007101011.boufh3tipewgvuao@ArmHalley.local>
+	s=arc-20240116; t=1728296162; c=relaxed/simple;
+	bh=QEW8xS45co+9Q5+FEHW81DqGS+oo/TRSeAM4ZM3skio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u6oXCqOQ7TYIbzibyVNt37znY/ZoFc0eJT+/TrJNKOBQOQLv4zF3g6CHNsaGJF4VvHEFuUqRo19Z55iIsxIuoNYlYJm28HMgBhXXRHh1NXnMYxN+qq7jUjqNSr2gtmSqu0txQW9vv0cJCJF3OmP0y9sC3qLCg/AKPxD68DDWW9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JG1A22tr; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d43657255so692795766b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 03:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1728296159; x=1728900959; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uD7+x06HNAsGvnUsU1IbHnMrioZv6+EXemRCdJxKLoc=;
+        b=JG1A22trKkxeWEox2orUGktlpl6VEbgDbaodTAd30NA32GSkOR5ZqZ3E6iZ9SFU5of
+         rfebmBe6r/Cbr4stD1kD6AExUcInMJGWWID9u3qXr/8/AkHlRQ+avwntU7s/XS1mE4fN
+         sMowWHkKxx/d7sEXaF2k7EegA+kA0LDlLDNgA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728296159; x=1728900959;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uD7+x06HNAsGvnUsU1IbHnMrioZv6+EXemRCdJxKLoc=;
+        b=uQKquXh2PxXWhgz7sjsuqLDa6lv/JsIGs3ommL+8BAyU3HUpsVTR2LPLaRbbpgCZS1
+         QIR+ZKWpJInZh1VVGH5SWkvNxwQ04u9wf+G7iXw0f7U9AyAcd3wplpavMoUfoOtEBiSO
+         uen9EiGIGy1rsEn/0wKi7ykxpI6ZheoMelwrF5/W8DvvnubHUV2tcPeAVgSb/CLUOv++
+         aPvyDm2xieP2FlNHYw9jrKbvrZGrKC36DvxS51ZF0uBrsnqnahsvZPsK2tHUg5MITcGQ
+         pO2QFP6sCZOYphcTTZyyFWGWFgfDn9+HFTF3iv/UCc9EUuy7H08UrszPSV4aOBLSFFpp
+         GSKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbutQ8FH2IZvTX2jc8t0wL68RZqGerfmpjAZPpt+xocitNYKXm9NM1myJ7TqcROCmRJ3bhj6FBuVAb/MYp@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl/qzxmccDgg+SpdPjw0RGu+nP1HDJVWsspypTynwo1m38ltFs
+	30mcijl25aFgpQihkaYtrBsFkAWoMSzFwSmjOzyOSzrwuFWHNWkgCW0dX9+mrpEGS68WaSrUMyc
+	DtIxRA7BSXzVmhdYapTzN7R+Hm8qxxd/1Yf/NhA==
+X-Google-Smtp-Source: AGHT+IHCZRkH8BOWmS+bXReQgFIle5qN39Wo9G9kYJNjoBdkjLUW7WB9tEXtznOwowsN9Uy1rnTsh/v4dV2Zx1Ta3bQ=
+X-Received: by 2002:a17:907:7206:b0:a99:3dbf:648d with SMTP id
+ a640c23a62f3a-a993dbf6715mr607796966b.45.1728296158491; Mon, 07 Oct 2024
+ 03:15:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241004123027.GA19168@lst.de>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7djPc7qtm5nTDV68NbKYs2obo8Xqu/1s
-	Fl3/trBYvD78idFi2oefzBbvmn6zWOxZNInJYuXqo0wW71rPsVjMnt7MZPFk/Sxmi0mHrjFa
-	TJnWxGix95a2xZ69J1ks5i97ym6x/Pg/Jot1r9+zWJz/e5zVQdjj8hVvj52z7rJ7nL+3kcXj
-	8tlSj02rOtk8Nn2axO6xeUm9x+6bDWweH5/eYvF4v+8qm8eZBUeA4qerPT5vkvPY9OQtUwBf
-	FJdNSmpOZllqkb5dAlfGs6s7mQrOSFe83ZbTwPhXtIuRk0NCwERi+9sPLF2MXBxCAisYJZru
-	NrJDOF8YJZ4/3cIK4XxmlOg58gUowwHWsuqsDER8OaNE45kVbCCjwIq+HxKDSGxmlDg65zM7
-	SIJFQEXi58IPYEVsAvYSl5bdYgaxRQSUJJ6+OssI0sAscIhF4suB+WANwgIGEu+/97KBbOMV
-	sJX4ddobJMwrIChxcuYTFhCbWcBKovNDEytICbOAtMTyfxwQYXmJ5q2zwcZzCuhIbL5zhhHi
-	TSWJxy/eQtm1Eqe23GICWSsh0Mcl0ThxCztEwkWi91s/VJGwxKvjMHEZif875zNB2NUSDSdP
-	QDW3MEq0dmxlhYSKtUTfmRyIGkeJV9N/QgOLT+LGW0GI2/gkJm2bzgwR5pXoaBOawKgyC8lj
-	s5A8NgvhsVlIHlvAyLKKUTy1tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMI2e/nf8yw7G5a8+
-	6h1iZOJgPMQowcGsJMIbsYYxXYg3JbGyKrUoP76oNCe1+BCjNAeLkjivaop8qpBAemJJanZq
-	akFqEUyWiYNTqoHJw2pe+rcv03fFVURIC0/OnKQyT2v/EZv6ugff26RW/FSPSqvz1vc+V+Xn
-	yr8h8Yvn9X8Xj7TkJSmahgX6TxWs9e1mVfm5+K3ljLu1lRdVcmR3K8kudxA8kqywf87M430i
-	57RV9qSsV4/QnjDRSj5Vot8s9R9H2vXCu2nB3XOits+qdXD23BVRvTi3vOLKBU6vZeza/UJz
-	fk/tkjDWsk3iKDaucVlfpl39aottwRb+8jjtei8r0+Jjid8WfjCRLXgkPH3Xpi13vNwk2ZQv
-	zMrK9jxjf6Xop4P6yvO3rQV/aKvOTTbud2pgt7hjtb9f6MHPRROd3Wqntty/E33yh+/u5N/T
-	HhXc+Zq+yu7fSSWW4oxEQy3mouJEAMwS+yASBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsVy+t/xu7qtm5nTDX5/FLGYs2obo8Xqu/1s
-	Fl3/trBYvD78idFi2oefzBbvmn6zWOxZNInJYuXqo0wW71rPsVjMnt7MZPFk/Sxmi0mHrjFa
-	TJnWxGix95a2xZ69J1ks5i97ym6x/Pg/Jot1r9+zWJz/e5zVQdjj8hVvj52z7rJ7nL+3kcXj
-	8tlSj02rOtk8Nn2axO6xeUm9x+6bDWweH5/eYvF4v+8qm8eZBUeA4qerPT5vkvPY9OQtUwBf
-	lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7Gs6s7
-	mQrOSFe83ZbTwPhXtIuRg0NCwERi1VmZLkYuDiGBpYwSz/9eYuxi5ASKy0hs/HKVFcIWlvhz
-	rYsNougjo8SM9feZIJzNjBLH151iBqliEVCR+LnwAxuIzSZgL3Fp2S2wuIiAksTTV2cZQRqY
-	BQ6xSHw5MJ8dJCEsYCDx/nsvG8gZvAK2Er9Oe4OEhQROM0v8+S8MYvMKCEqcnPmEBcRmFrCQ
-	mDn/PCNIObOAtMTyfxwQYXmJ5q2zwVZxCuhIbL5zBuoBJYnHL95C2bUSn/8+Y5zAKDILydRZ
-	SKbOQpg6C8nUBYwsqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQLTzLZjPzfvYJz36qPeIUYm
-	DsZDjBIczEoivBFrGNOFeFMSK6tSi/Lji0pzUosPMZoCQ2gis5Rocj4w0eWVxBuaGZgamphZ
-	GphamhkrifO6XT6fJiSQnliSmp2aWpBaBNPHxMEp1cC0gTPWO75AXqPGeadQe+v3U+a3m1ie
-	lnMvPZDbkHx/2c6grGZXv825hlsjN/1+ntEjXnF618PUIpklfGedPM8+bMvfMPvJ3DVmJ0+c
-	PqNqI//6utWT/yt7tz5XFGhav/XElHlVHoWq36sF5xjvPCsv8ezsq5z3MwLX/9q04cb+My/1
-	ZU3OdG7wOyIf5X/MOPvWrfyVBfpMr+vvtz5sFG76GrMqMOLf7KREX0F/+7nFcRd3CFnIzp1f
-	YDDLcJX/ou/rzRuPaIrcSuDbuHCi95zTkSJSeQusdD+Z8pz2TD7x4UVF7zrRHzwWtYWh3T5X
-	2ha2cXusEH6x1XjWqyPn7nvN/mAvfOLBn5a2f9I7Lv0UU2Ipzkg01GIuKk4EAHcvjMe8AwAA
-X-CMS-MailID: 20241007101013eucas1p13db5988cea66fb961cbb06a99d2878c8
-X-Msg-Generator: CA
-X-RootMTR: 20241004053129eucas1p2aa4888a11a20a1a6287e7a32bbf3316b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241004053129eucas1p2aa4888a11a20a1a6287e7a32bbf3316b
-References: <20241002151949.GA20877@lst.de>
-	<yq17caq5xvg.fsf@ca-mkp.ca.oracle.com> <20241003125400.GB17031@lst.de>
-	<c68fef87-288a-42c7-9185-8ac173962838@kernel.dk>
-	<CGME20241004053129eucas1p2aa4888a11a20a1a6287e7a32bbf3316b@eucas1p2.samsung.com>
-	<20241004053121.GB14265@lst.de>
-	<20241004061811.hxhzj4n2juqaws7d@ArmHalley.local>
-	<20241004062733.GB14876@lst.de>
-	<20241004065233.oc5gqcq3lyaxzjhz@ArmHalley.local>
-	<20241004123027.GA19168@lst.de>
+References: <20241004181828.3669209-1-sashal@kernel.org> <20241004181828.3669209-48-sashal@kernel.org>
+In-Reply-To: <20241004181828.3669209-48-sashal@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 7 Oct 2024 12:15:45 +0200
+Message-ID: <CAJfpegtNF6CkSsE7yWq8-4W7HP3aOjE4xnAzJp0uiU-S7Wb8pg@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.11 48/76] fuse: allow O_PATH fd for FUSE_DEV_IOC_BACKING_OPEN
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Miklos Szeredi <mszeredi@redhat.com>, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 04.10.2024 14:30, Christoph Hellwig wrote:
->On Fri, Oct 04, 2024 at 08:52:33AM +0200, Javier González wrote:
->> So, considerign that file system _are_ able to use temperature hints and
->> actually make them work, why don't we support FDP the same way we are
->> supporting zones so that people can use it in production?
+On Fri, 4 Oct 2024 at 20:19, Sasha Levin <sashal@kernel.org> wrote:
 >
->Because apparently no one has tried it.  It should be possible in theory,
->but for example unless you have power of 2 reclaim unit size size it
->won't work very well with XFS where the AGs/RTGs must be power of two
->aligned in the LBA space, except by overprovisioning the LBA space vs
->the capacity actually used.
-
-This is good. I think we should have at least a FS POC with data
-placement support to be able to drive conclusions on how the interface
-and requirements should be. Until we have that, we can support the
-use-cases that we know customers are asking for, i.e., block-level hints
-through the existing temperature API.
-
+> From: Miklos Szeredi <mszeredi@redhat.com>
 >
->> I agree that down the road, an interface that allows hints (many more
->> than 5!) is needed. And in my opinion, this interface should not have
->> semintics attached to it, just a hint ID, #hints, and enough space to
->> put 100s of them to support storage node deployments. But this needs to
->> come from the users of the hints / zones / streams / etc,  not from
->> us vendors. We do not have neither details on how they deploy these
->> features at scale, nor the workloads to validate the results. Anything
->> else will probably just continue polluting the storage stack with more
->> interfaces that are not used and add to the problem of data placement
->> fragmentation.
+> [ Upstream commit efad7153bf93db8565128f7567aab1d23e221098 ]
 >
->Please always mentioned what layer you are talking about.  At the syscall
->level the temperatur hints are doing quite ok.  A full stream separation
->would obviously be a lot better, as would be communicating the zone /
->reclaim unit / etc size.
-
-I mean at the syscall level. But as mentioned above, we need to be very
-sure that we have a clear use-case for that. If we continue seeing hints
-being use in NVMe or other protocols, and the number increase
-significantly, we can deal with it later on.
-
+> Only f_path is used from backing files registered with
+> FUSE_DEV_IOC_BACKING_OPEN, so it makes sense to allow O_PATH descriptors.
 >
->As an interface to a driver that doesn't natively speak temperature
->hint on the other hand it doesn't work at all.
+> O_PATH files have an empty f_op, so don't check read_iter/write_iter.
 >
->> The issue is that the first series of this patch, which is as simple as
->> it gets, hit the list in May. Since then we are down paths that lead
->> nowhere. So the line between real technical feedback that leads to
->> a feature being merged, and technical misleading to make people be a
->> busy bee becomes very thin. In the whole data placement effort, we have
->> been down this path many times, unfortunately...
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/fuse/passthrough.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 >
->Well, the previous round was the first one actually trying to address the
->fundamental issue after 4 month.  And then after a first round of feedback
->it gets shutdown somehow out of nowhere.  As a maintainer and review that
->is the kinda of contributors I have a hard time taking serious.
+> diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+> index 9666d13884ce5..62aee8289d110 100644
+> --- a/fs/fuse/passthrough.c
+> +++ b/fs/fuse/passthrough.c
+> @@ -228,16 +228,13 @@ int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map)
+>         if (map->flags || map->padding)
+>                 goto out;
+>
+> -       file = fget(map->fd);
+> +       file = fget_raw(map->fd);
+>         res = -EBADF;
+>         if (!file)
+>                 goto out;
+>
+> -       res = -EOPNOTSUPP;
+> -       if (!file->f_op->read_iter || !file->f_op->write_iter)
+> -               goto out_fput;
+> -
+>         backing_sb = file_inode(file)->i_sb;
+> +       pr_info("%s: %x:%pD %i\n", __func__, backing_sb->s_dev, file, backing_sb->s_stack_depth);
 
-I am not sure I understand what you mean in the last sentece, so I will
-not respond filling blanks with a bad interpretation.
+That's a stray debug line that wasn't in there when I posted the patch
+for review[1], but somehow made it into the pull...
 
-In summary, what we are asking for is to take the patches that cover the
-current use-case, and work together on what might be needed for better
-FS support. For this, it seems you and Hans have a good idea of what you
-want to have based on XFS. We can help review or do part of the work,
-but trying to guess our way will only delay existing customers using
-existing HW.
+Since this isn't a bug fix, it would be easiest to just drop the patch
+from the stable queues.
 
+But I'm okay with just dropping this stray line from the backport, or
+waiting for an upstream fix which does that.
 
+Thanks,
+Miklos
+
+[1] https://lore.kernel.org/all/20240913104703.1673180-1-mszeredi@redhat.com/
 
