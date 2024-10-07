@@ -1,124 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-31190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE01992EED
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:21:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88BE992F04
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 505232834B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:21:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC8FA1C237B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0731D61A3;
-	Mon,  7 Oct 2024 14:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C2E1D47AC;
+	Mon,  7 Oct 2024 14:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bbo9e4rp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e26xsIAD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2D01D6DDC;
-	Mon,  7 Oct 2024 14:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E811B1D1F76
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 14:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310882; cv=none; b=kFH/PHKJTSb6SkKu4QMIcQYuNiTOPJsq04RKjl16VLHLEN35KbR7JM7ubBOd0UynPEygY0GskYGKxLfTPm/PGoD8ggVo8xjsmxVaEbFk97g1kc9Cw+nT+VpSeEdFLuj2PVgqEMlcL/2LP3mixhRf2HGfakZrBq/9sEF+vMvsGqk=
+	t=1728311075; cv=none; b=nxapi+TbDRQ1yx8aBcC439ZLWFEJRTrqHrV7yVXP4/4x8O6o0rc3HmOLqddjRnD/Af5SXIK9qMIkFc1PwLHjNrc/YVBUG+N4rob3+zU41Su+4eBybqEpoUpNUt7P2CHy0yiCUSLcPftNGUbDpQkzFbt5Z7Ek42nk2JkdwkBjPOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310882; c=relaxed/simple;
-	bh=ch6/7cgrpsmrHEwwIBUlOGdRppXZ9IxbBTvPTtdewKE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W1ASOQmyp/EOCzKKvYkW6VcHtlcnCkRTXPK2jaAWuO4QaosJenYE3FIvpKQznpx1Bcl0XnYcXXwhNwAYe/8Pck7SoHSUBh2d44BkejOblQoSFEaBH1rlfxm3WGSirVUcocqXzUwsqobNytwJP2gKGvynUAcENY82gMvTvHeL8eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bbo9e4rp; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a99de9beb2so239950085a.3;
-        Mon, 07 Oct 2024 07:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728310879; x=1728915679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ch6/7cgrpsmrHEwwIBUlOGdRppXZ9IxbBTvPTtdewKE=;
-        b=Bbo9e4rpbKgyP7OP8lp07O65gD1yfTyc2+K3OfFB0SJWEvagVyTxWioPKYvQoC3yZ/
-         Rb3n/+bSp3HpVAXgdoSMx2wkR7wGb18FfftBwGIqC0DCyv7giQDjEbikz8LYs/VECivp
-         PLPUJs6fvUwsrCvlABbH8GeSrL6TwPuxugd6eb6Eb8baG36pYfkGXx40Ewc0gJQ4vOZn
-         AI/DCCxWIKj4O4w10mpoFIlZ94ix460gj75DvyXLZXz3n13QGrEPCTcx0Yqu70Xsq+QF
-         STfEy2RQVcjLUg5aRdJGwz+7oL56Kp8xi/wjtBaKDFykyyYSQ0a61svaX45yU+vk938t
-         ZgBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728310879; x=1728915679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ch6/7cgrpsmrHEwwIBUlOGdRppXZ9IxbBTvPTtdewKE=;
-        b=Z0XmYC2vEV9TEtAD01eJoiIKVDC1whQCltewmiEhxSX1fy9tKPdMf6u4gabq4g4rHR
-         jU/q0F5sGY2HjGkFxxz1uh1jRom975HLMckOwCFS579tqeReAt0HnjCroDL9aWF0G6HL
-         6a0sIVmqJh6XE7TNJm8rqPuzW7UkwFpTm/atxG9naJcEtcPwy5C49Efgew9lIg8Wg/cC
-         cY6deZBf8hvBYPbO7NB+IXK6tRMa1YXrSNI+3VSBvPMUVh0mMVEILFQfrjmLvZgmQKZl
-         qWUsqYNiCceHgtP+oo00X3AipbuqY4SIEgw9a8N2GR/68vUOrCUjOIXuOBSdBQhcjuLu
-         jNBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxML52jHVlP+p48gNynNtWzH3DbVAYM4yNB8YUGgVMh1kzZOKcW0O4Ox58nLg67qz6HcteJtpEHOFpi9OuRQ==@vger.kernel.org, AJvYcCVA4JM+M5kWLimaXSQfE/bZ53tRNZ9UkTdn+oLrbXydOFftzxVjRNl0//44HICjSEytE9z0d2BQTkC55JMx@vger.kernel.org
-X-Gm-Message-State: AOJu0YytReLaIGlojb5eKsa1IlWOevG+m808fM7H6u6w+sa81NiWUACy
-	GXDTTKW78T2njNxRZImNv2A8QOatgdusn1pqyH0OluITEnZ5MZCpnL686RH+HBMlPrD/AE0hu+/
-	KbJva7lM6zxx1R/WOp1JKWL8geC0=
-X-Google-Smtp-Source: AGHT+IHT2Vw006wgZpWJ2td/9XjfYp/mFcOIdtIIhSgF1bxYsE8QoMC/+zT+gypO4J3TE+e0NpuHYFcQmgWF+QnyaHU=
-X-Received: by 2002:a05:620a:3705:b0:7a9:bf33:c17a with SMTP id
- af79cd13be357-7ae6f44cd13mr1974691685a.33.1728310879179; Mon, 07 Oct 2024
- 07:21:19 -0700 (PDT)
+	s=arc-20240116; t=1728311075; c=relaxed/simple;
+	bh=qROs4JxiTGfNaMYyHNnuOH9Ab6ZFVJYV+sBD3g6MCec=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Z9iJVknmblRbpwBQxhnajiWOmVmvcBlpZEwCeXOTXqq9u3G1PTPk/LmySVuWpvOihIOjQ0p+U7tB4DfipcdfVHqOLaA8fLs4zPiNSkgg6hCvbmWEF0+kTNFpjI0kzOL+qI2HCkKyYujYQaOJ48IWpJnM4xs1KBbMbWoMlCmhN9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e26xsIAD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72645C4CEC6;
+	Mon,  7 Oct 2024 14:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728311074;
+	bh=qROs4JxiTGfNaMYyHNnuOH9Ab6ZFVJYV+sBD3g6MCec=;
+	h=From:Subject:Date:To:Cc:From;
+	b=e26xsIADHreleuxlan4tfNU/Y8QoGDLZ83D9p0am3dW2ikNV0pURMVrf6gkSRy97K
+	 ddcugPf1PiAsWXRjGMCXcctqoM+OXlcSwO8hl2kCaijAERSMPkovxJtYX6VUtZhw+7
+	 uBHsP95ptsqIaZi6Uey5RsijDrwP78tXWZheOFPP0LjC3x6rVLyPg7Bpq5iDEXKAuE
+	 wQLs2DvjOPmpP9sTLAIaoIu5kSqomn1BW1tMQPajUK8OfSEbLdgKdJddkjXkhbOBa+
+	 6ZiD6u5l3IUs/ddOhnmlGSIBl6RzxbVk8OHrnDsudXkc6Es5NQbhEkI4SJgubhQ3ya
+	 y+3i4sVsdFPkw==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 0/3] fs: introduce file_ref_t
+Date: Mon, 07 Oct 2024 16:23:56 +0200
+Message-Id: <20241007-brauner-file-rcuref-v2-0-387e24dc9163@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006082359.263755-1-amir73il@gmail.com> <CAJfpegsrwq8GCACdqCG3jx5zBVWC4DRp4+uvQjYAsttr5SuqQw@mail.gmail.com>
- <CAOQ4uxjxLRuVEXhY1z_7x-u=Yui4sC8m0NU83e0dLggRLSXHRA@mail.gmail.com>
- <CAJfpegvbAsRu-ncwZcr-FTpst4Qq_ygrp3L7T5X4a2YiODZ4yg@mail.gmail.com>
- <CAOQ4uxi0LKDi0VaYzDq0ja-Qn0D=Zg_wxraqnVomat29Z1QVuw@mail.gmail.com> <20241007-trial-abbrechen-dc2976f10eb3@brauner>
-In-Reply-To: <20241007-trial-abbrechen-dc2976f10eb3@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 7 Oct 2024 16:21:07 +0200
-Message-ID: <CAOQ4uxhm896AYzv_j=X7jLajJTQ_9mC7YaCTHDidFzg=zzjgnA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] Stash overlay real upper file in backing_file
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPzuA2cC/33OQQ6DIBCF4asY1sUAitaueo/GBeCopBabQUkb4
+ 90Lrrppl4/k+4eNeEALnlyyjSAE6+3s4hCnjJhRuQGo7eImgomSNaKmGtXqAGlvJ6BoVoSe6l6
+ VqtSq4VKTKJ/x0b6O6q2NWysPCTozptZD+QUwD1XORUzwREbrlxnfxz8CT/D/ycApo6wwAjjrC
+ lOr6x3QwZTPOKRewpwx+RvXQnYSal6Yc/WN233fP0bo/KcXAQAA
+X-Change-ID: 20240927-brauner-file-rcuref-bfa4a4ba915b
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+ Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2489; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=qROs4JxiTGfNaMYyHNnuOH9Ab6ZFVJYV+sBD3g6MCec=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQzv1eounjbLVlNTEf0h7iQpWqcXE90iIIn8/X7Zds+S
+ 0k+anjfUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJEdDxgZ1n26NznCviNEo/yH
+ nfuUd0Hn5+9i3/aoSacik29Oj3fYXkaGd9MLj+5x+x77LGONtsP07J+nLygmfYn/xmv/n4/1yIu
+ vbAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Mon, Oct 7, 2024 at 4:12=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Mon, Oct 07, 2024 at 01:01:56PM GMT, Amir Goldstein wrote:
-> > On Mon, Oct 7, 2024 at 12:38=E2=80=AFPM Miklos Szeredi <miklos@szeredi.=
-hu> wrote:
-> > >
-> > > On Mon, 7 Oct 2024 at 12:22, Amir Goldstein <amir73il@gmail.com> wrot=
-e:
-> > >
-> > > > Maybe it is more straightforward, I can go with that, but it
-> > > > feels like a waste not to use the space in backing_file,
-> > > > so let me first try to convince you otherwise.
-> > >
-> > > Is it not a much bigger waste to allocate backing_file with kmalloc()
-> > > instead of kmem_cache_alloc()?
-> >
-> > Yes, much bigger...
-> >
-> > Christian is still moving things around wrt lifetime of file and
-> > backing_file, so I do not want to intervene in the file_table.c space.
->
-> My plan was to just snatch your series on top of things once it's ready.
-> Sorry, I didn't get around to take a look. It seems even just closing
-> your eyes for a weekend to a computer screen is like opening flood
-> gates...
+As atomic_inc_not_zero() is implemented with a try_cmpxchg() loop it has
+O(N^2) behaviour under contention with N concurrent operations and it is
+in a hot path in __fget_files_rcu().
 
-Well I just posted v3 and it leaves backing_file alone
-which I also now agree with Miklos is looking much nicer.
+The rcuref infrastructures remedies this problem by using an
+unconditional increment relying on safe- and dead zones to make this
+work and requiring rcu protection for the data structure in question.
+This not just scales better it also introduces overflow protection.
 
-So whatever changes in lifetime of backing_file that you wanted to make
-feel free to make them.
+However, in contrast to generic rcuref, files require a memory barrier
+and thus cannot rely on *_relaxed() atomic operations and also require
+to be built on atomic_long_t as having massive amounts of reference
+isn't unheard of even if it is just an attack.
 
-Thanks,
-Amir.
+As suggested by Linus, add a file specific variant instead of making
+this a generic library.
+
+I've been testing this with will-it-scale using a multi-threaded fstat()
+on the same file descriptor on a machine that Jens gave me access (thank
+you very much!):
+
+processor       : 511
+vendor_id       : AuthenticAMD
+cpu family      : 25
+model           : 160
+model name      : AMD EPYC 9754 128-Core Processor
+
+and I consistently get a 3-5% improvement on workloads with 256+ and
+more threads comparing v6.12-rc1 as base with and without these patches
+applied.
+
+In vfs.file now.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- Don't introduce a separate rcuref_long_t library just implement it
+  only for files for now.
+- Retain memory barrier by using atomic_long_add_negative() instead of
+  atomic_long_add_negative_relaxed() to order the loads before and after
+  the increment in __fget_files_rcu().
+- Link to v1: https://lore.kernel.org/r/20241005-brauner-file-rcuref-v1-0-725d5e713c86@kernel.org
+
+---
+Christian Brauner (3):
+      fs: protect backing files with rcu
+      fs: add file_ref
+      fs: port files to file_ref
+
+ drivers/gpu/drm/i915/gt/shmem_utils.c |   2 +-
+ drivers/gpu/drm/vmwgfx/ttm_object.c   |   2 +-
+ fs/eventpoll.c                        |   2 +-
+ fs/file.c                             | 120 ++++++++++++++++++++++++++++++++--
+ fs/file_table.c                       |  23 +++++--
+ include/linux/file_ref.h              | 116 ++++++++++++++++++++++++++++++++
+ include/linux/fs.h                    |   9 +--
+ 7 files changed, 253 insertions(+), 21 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240927-brauner-file-rcuref-bfa4a4ba915b
+
 
