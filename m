@@ -1,119 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-31206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57285993026
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:56:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D3F99302B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8F428A394
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:56:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44F3B24F2E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEF01D7E37;
-	Mon,  7 Oct 2024 14:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610301D89F7;
+	Mon,  7 Oct 2024 14:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="u/43ePR2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PGesNq7c"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="LIWPryA0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780EB1D88D2;
-	Mon,  7 Oct 2024 14:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0171D7E3E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 14:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312899; cv=none; b=b3I5BFLbgWEh0W0it331KFdc2aq8uhwFL+dBe1FXiIoQELgm1gj91ejwoCHHOt+fWxrAvfzlnblW1UhCYEDiRv0ErJ+jHdNRYrZYfEa9Bh9BLzyISWAb0TSPvx2xlNY8fT6f9sj4IiQOn9pRdqaZzMCtCC2Tc4lBnB05d9dvnK4=
+	t=1728312931; cv=none; b=KzGj0MV6KyaiDtY7YsqzJ3/0dtG0bOU6m/2PTWD0g83kKqbtphehHdCyJk1xBNyKSZ3tnPdghLG5P+FDNyUhyCrAfomrRO4jo5hyWaTh+95a2JTQ2kCOUdNXSQAlvMeW5bazpQY5Aepcn9sTzM1ERgxBdtoI/alhnjKKTYLFzKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312899; c=relaxed/simple;
-	bh=Chjdo4B4945DNyZFQ5W1A0sxa6Fj/cOk0C6uKPSllSU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:Subject:
-	 Content-Type; b=cNs2s/sEoAIDkbMUiS3YDgGK0F+BW+b1/ISl0A+ThRbRj0VGmgDKSgJMZIUYGSO+RL1i/Wg8V5bWOAyzTOCVSmrG6w2Dxo+UTZYrUGMQTKPcIV7+f5HN+2yO5GT7Lu4m+MeZVVAZE00eV6mkA8Yhl4GzxV9erO9o9M4Mq6dTASI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=u/43ePR2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PGesNq7c; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 711DC138024C;
-	Mon,  7 Oct 2024 10:54:56 -0400 (EDT)
-Received: from phl-imap-05 ([10.202.2.95])
-  by phl-compute-12.internal (MEProxy); Mon, 07 Oct 2024 10:54:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	joshtriplett.org; h=cc:cc:content-transfer-encoding:content-type
-	:content-type:date:date:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
-	 t=1728312896; x=1728399296; bh=+zETDJVIuuQb6NDuacP4RzC0wFbiECMa
-	xhOidZj2O/c=; b=u/43ePR2Yj3tNsFZIekl1St3DhWeQTPJ2wmuqlP/tT02iyuV
-	UXLz/9owPRgxKE7JB2vfBLgcpoW/pzLpeHywuCa5gZ8qhnLG839tvunBObG70r+h
-	5K8L28ZK76WLSOsfpNDLeEoOJEnqN/Nu1kUIIGvGKhsYzwogTTcQXx+/EfnIM69Y
-	9X7wQ7WbSO3idpE9jqVR3pPe9vpVFzQ05G30aDxdbJS2yIqnmvTEfstr43700u8w
-	xZZEvWC2EkxU4ZGKlwvgMQAW+0kRLN204VEb+s18dJ6B1LGx9W8P5OlzXe12+/V4
-	BwR1r19bBtsi7CAvrrguOCACJg1K5prOaBBMtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728312896; x=
-	1728399296; bh=+zETDJVIuuQb6NDuacP4RzC0wFbiECMaxhOidZj2O/c=; b=P
-	GesNq7cqsklHQMavEWBalymh92VS5ZAu7KwUe8Zg0p6KCepttM5K68tu9k+JuOQq
-	Jxs+FqdMOLiEg5WxFwenidTbUSKRiDEz4n9sAJ2nRtziirCeE2k9GiTFln6IbmgF
-	nITxYrMgZiSfISZ0gZmUtLtQIyeWgZ8tEoEAZE4iOtndVj2oLQjTQsE3wbKZJpRj
-	/vLQoimfMQbZ00ChIm6q6q11N6yP8w1v9U703rzXDOZlAjgbvAx752q8pNKZH9HC
-	ttn2iaj+tgvFmKg0TES541u0kGMKto2c7qR9VbCjosKgbO//mm8F68YVot78j99Q
-	iMaW83fbTOZcVw/n17B/A==
-X-ME-Sender: <xms:P_YDZ2AamqeK6E2b_wGq0zz2mxp58JMVBo47sUxnGCqg4rKFOy2L6A>
-    <xme:P_YDZwiXxai1W-G06LPar51zlMN25nXvwqNSeimcLOQ0uCYyYZ9M2lOAkaEva-VoZ
-    idRJgESe2aN3rUbmGU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefoggffhf
-    fvvefkjgfutgfgsehtjeertdertddtnecuhfhrohhmpedflfhoshhhucfvrhhiphhlvght
-    thdfuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepueehtedufffffeevudevueejffefveeggfdvudeijeeuffethfehfeehlefflefh
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhosh
-    hhsehjohhshhhtrhhiphhlvghtthdrohhrghdpnhgspghrtghpthhtohepkedpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtoheplhhutggrrdgsohgttggrshhsihesghhmrghilh
-    drtghomhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhesph
-    gruhhlqdhmohhorhgvrdgtohhmpdhrtghpthhtohepohhlvghgsehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtth
-    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:P_YDZ5nWkoRcLmG-yYq1dMsFQbWSfmHHKOAW2T8UdMOqexJNNVXMig>
-    <xmx:P_YDZ0xBQifq1LlSisunHDivIR2g4iV0G2nvhKznwWPgZCVW3EeJdA>
-    <xmx:P_YDZ7TZM5RiEEJmOdGXHBOn9lwspsO0G8Rlajt70UxMvfKJBCJWxQ>
-    <xmx:P_YDZ_YFgvqRjeieNMxRcpmKgYshK6sVGPqd2KQ6w1kDnrbOSnpYfQ>
-    <xmx:QPYDZ0TzYscl_K3aEOQ-OqunpKHQq-leK7fPIzhVrq6nvxodWf07FRZM>
-Feedback-ID: i83e94755:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B40183020080; Mon,  7 Oct 2024 10:54:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728312931; c=relaxed/simple;
+	bh=9CwTgWElBJb0LcznUFDVpO7YSKyNZQkxv/GNCyKR/Vw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aDIQETJgBMbfdj3+L0N4M92JA3C6bZfDgFuKpdkRudAOfesEC3V2y8jhSS0dGtCgoFEeW/Jakekt0hca7fEfBylstSNqkADXvB9nOpuSSnDmoAmdAgag2pQ+asjf2tSmtoSw3lWrKYk8PkRGJ/FNcXkLXUXB6aet1gt2E7nwun4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=LIWPryA0; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a99422929c5so236781466b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 07:55:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1728312928; x=1728917728; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=m5WRDXDsnn8xfUzvyZAlipJKvUJbHPqjoW3kJr/J9Wc=;
+        b=LIWPryA0xf+PX3NRlOG8G8B6kla+upAe7zDaJ+qbgn7pyldsdFANeySr9eFrRSf231
+         Un09v14WEKsf753LSDqg83VhFVC1fB4Fmov+XnGrLtXd1+OMv43EoVeQeA6j8lYxDdzf
+         kp76/FTpOybhUmnAy/Wqiwis+47XBj9rdTRpw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728312928; x=1728917728;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m5WRDXDsnn8xfUzvyZAlipJKvUJbHPqjoW3kJr/J9Wc=;
+        b=XBzWIWclpTqZsXoB1KhUvYMcck8HoKXCOTLTOrjrp9o4aBRKIZiQEsB5VV0YbTvkOv
+         Q7YkFfb+UzUa7VCfLgtKfxLSVCFj0iAC0kHK17P7+P75dzNv/bxuVtdvsKJg3y1IzMkZ
+         hJ8IHq3u8VxTYKhg+Qu4s7H0SHbbTkVbGXqUFUKaeQej33pc8KYjza0h79oubT5ORE99
+         3fkDMK6CliViqRx0A9YH0uKbt3xj+Y0rd3V8yUqVjTgQaGtNajHqI7DLsd1zpis0j6Fi
+         xLam9nWpFAhcOBI3ALkbeKICMQA7RueKUL8Eyym34wxcVJM0WELGbE9jFqEedWCtRf8o
+         697Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVdbBGj8iWP+mIwyATTpYWjgbzSKbHX0GfqUKzyq/nN4kMU83dO/FB242rX8iBi+laxI3RGJoCVe4HJ1t/s@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3m6CTPEDSTwK6DPtUopKGfa61dHRF87RcXRxY5v7JA1S1kbPC
+	k3c1LbA+eBcbrLVdkG0BUovboPQKI4LOjdp0GAEX3tCquhD8FjnE9gyH2zQD6NXRBy2mTCUJRVr
+	s7zh2Pa0faHvZl/5coAP4S9/nt9UraUOF9W1URA==
+X-Google-Smtp-Source: AGHT+IGkCl7U41DlnyVIm3YIZPuS3Zah00DcxXpjdIwWfD9jptoyPrrEo3T7JuSRwfhfqKWTkqcavZ1DAEcm3b3d1fs=
+X-Received: by 2002:a17:907:9301:b0:a99:389a:63c2 with SMTP id
+ a640c23a62f3a-a99389a66edmr753929166b.62.1728312928285; Mon, 07 Oct 2024
+ 07:55:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 07 Oct 2024 07:54:35 -0700
-From: "Josh Triplett" <josh@joshtriplett.org>
-To: brauner@kernel.org
-Cc: jlayton@kernel.org, josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, luca.boccassi@gmail.com, oleg@redhat.com,
- paul@paul-moore.com
-Message-Id: <2ab879f1-2938-4ece-a6b2-be34e4ad4c5d@app.fastmail.com>
-In-Reply-To: <20241004-signal-erfolg-c76d6fdeee1c@brauner>
-Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20241007141925.327055-1-amir73il@gmail.com> <20241007141925.327055-3-amir73il@gmail.com>
+ <20241007144338.GL4017910@ZenIV>
+In-Reply-To: <20241007144338.GL4017910@ZenIV>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 7 Oct 2024 16:55:16 +0200
+Message-ID: <CAJfpegvsA=D_i3mRr9yLUBDQMmKhfbk1cs6Gcd+8Tpq=NVVVwQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] ovl: allocate a container struct ovl_file for ovl
+ private context
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Amir Goldstein <amir73il@gmail.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Christian Brauner wrote:
-> struct pidfd_info {
->	/* Let userspace request expensive stuff explictly. */
->	__u64 request_mask;
->	/* And let the kernel indicate whether it knows about it. */
->	__u64 result_mask;
+On Mon, 7 Oct 2024 at 16:43, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Mon, Oct 07, 2024 at 04:19:22PM +0200, Amir Goldstein wrote:
+> > Instead of using ->private_data to point at realfile directly, so
+> > that we can add more context per ovl open file.
+>
+> Hmm...  That'll cost you an extra deref to get to underlying file.
+> Cache footprint might get unpleasant...
 
-I don't think it's necessary to have these two fields separate. The kernel should write to the same mask field userspace used.
+Yes, that's an extra deref.  But stacking is bound to greatly increase
+the cache footprint anyway, so this doesn't look a serious worry to
+me.  I don't think overlayfs is at the point where we are ready to
+optimize at the cache access level.
 
-In theory there could be an operation to probe for *everything* the kernel understands, but in practice with a binary structure there's little point finding out about flags you don't know the corresponding structure bits for.
+Thanks,
+Miklos
 
