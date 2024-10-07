@@ -1,130 +1,295 @@
-Return-Path: <linux-fsdevel+bounces-31141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE00992322
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 05:42:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9589923E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 07:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B689CB2229E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 03:42:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9DB1F22996
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 05:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEA514A96;
-	Mon,  7 Oct 2024 03:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14D9136672;
+	Mon,  7 Oct 2024 05:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ro7bIEA/"
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="f7vqi/SZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167B1FC11;
-	Mon,  7 Oct 2024 03:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57970487A5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 05:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728272527; cv=none; b=A5tfJijXUVjKNVWeYhaobal5cZDrWW/UC3BKpQMnLIhuZ2VvsLjW5NytwDrPeN70b5FqwG9gslb2vjIWYEQpEEG9Yi206aX17v6G8OWhUQuCm6VMjERga88wmyn6TwZuBnJEnGSUFRH4zrfPDtxOhwDnCgWcRUu2qGxLfPEXk5A=
+	t=1728279384; cv=none; b=NnSXYKEx9zPbmDr+gvn2qKRRw2LOGxIsA7cqjdtn8KX11thljKsErAH0mjxIQC5PImq3bKqmxkfnrE4y2CI96JTssoYoD1Pxv2l/X+l0C1be8Y5bWqgWmwLSdM7qlIT0Y7wZlWFJkDflRzZAbRQld68i0XJ1JeuAhEWKaYUVJFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728272527; c=relaxed/simple;
-	bh=bxsKrLhpeDGylPcF2ZYaLm38eOHy3zaKnGY3q16hXO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/ZnWCXVgnNnWHFTJOx5pP29ndnXOZyxTmHjjVpJuh+hFczSk2DpS0W5bfUJCip/HqkSlCXpuRAs2yOpXVBRJ7aqYLrSEMeJ0qdHNCZqtrXNEbDZeyGyZnSffPOjsf639s/I5X1B17X/k65k7M7AQ4fEqMOxkIXP7UVCybYgpvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ro7bIEA/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VKmfv3dETOs05yeVlO4FeyoMO6M00+hY0xYfVZ+DuFQ=; b=Ro7bIEA/2aSQdNPfmEzOtuqesA
-	amx5MjtjrliGtlJ4Cacq4nx+EysGw9gTA9vQnZPzoAveptzgoIK6axWKmkrb1H/CI2jhfqoTftdU9
-	VgXlc3sx310+s/b2iwWXpv7XbXBtf+czB35E32so41PbzlHOuqJWUZNkBExvL/+NFeVQD5QiP4Fkm
-	crXHB/I2pR7V44AHHIBAz62hcnXsdH1C7/dg8WFQqUvt9qL6345V6SmN45F736zZZjqwziP+IdrGA
-	1fEaNVzn4jNKd0rRRWMJB7vxv5mYtgDruZs5fIQzHn/IFsOfUT4vKOqizGt+NWhbSxl1kxi1LP7Qf
-	b9LrFk/A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxedG-00000001UVP-2gfr;
-	Mon, 07 Oct 2024 03:42:02 +0000
-Date: Mon, 7 Oct 2024 04:42:02 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] ovl: stash upper real file in backing_file struct
-Message-ID: <20241007034202.GJ4017910@ZenIV>
-References: <20241006082359.263755-1-amir73il@gmail.com>
- <20241006082359.263755-3-amir73il@gmail.com>
- <20241006210426.GG4017910@ZenIV>
- <20241007030313.GH4017910@ZenIV>
+	s=arc-20240116; t=1728279384; c=relaxed/simple;
+	bh=KRPdGFwAaLkfIeM+qmukKMdUHAF5E5Hwn30K03RYcFo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rogRfj8MnXh0xMYeKRLgZIgi8IexcsmX/ZQnCuSaEs/y8kN5kxivds9vDJXq36iOv5AVM/x++iS+oehCJfgNX1SWrOVdvKjOjxfSRpj1319+1CfbDLbVGeagbq2VzjKJ5uRgOgwwC7a0p/kRtFUuVyWI/V+2vDbc7ZhLPY8BMfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=f7vqi/SZ; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c88e45f467so6513528a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 22:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1728279381; x=1728884181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmuRDQ+789Dxrdbe7Plu2amgbdeY0UDHzLyD3KlOvB4=;
+        b=f7vqi/SZ8G7RzEJ4lKWlRLJk0OVeA6OXIk+KvaQEkC3uS0ZeRwpQR3SCCQHMQfZ9om
+         Ib7WJz6LK0MAOz/M52iGv1Unu9fKbZ+YJzLHkmD/LCcWcTtxTw6sDJ4kJ0pU8QLNCrKD
+         /gEZjm4LRmkHyI+Lo1XLmkfQctry5UMjnGFdpmLJTDRAG+fwKyuRZX6nP2uWXfzUepLc
+         rBB3gcZq45+xG+QzpPrNLWZAxbjwtCxnSOnjmDElrsgFvRYL+SPcurbS/bFuzRV7ohJY
+         s4eZTv0Az2DO+8fWkV1+b8g0Rk9jS44opQTOBvhwPgYEj3Y6/IMhHkWPvkrEl2miWRP9
+         hnxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728279381; x=1728884181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmuRDQ+789Dxrdbe7Plu2amgbdeY0UDHzLyD3KlOvB4=;
+        b=nT+rduWBz+cVoJk5hjuhyd8t50P+04wgFYiYm1O80tvNjPcTMJT2pAylMHty5IEoqH
+         ERm5YGqq5V6YYSXLEiGoUM5T5u4hjUBKCudkIIo8IEWs4QP2LebtSiE7CEWfso5+9ZZL
+         q7F8iHLbnCgx5dBXy670cJ6k6hFF3wpLnJP8iDDGc6fEN1tS3Rz7eFh3YlOGl3HL6sRh
+         cK/WJEbPwUJnH/MO59aC2aQ/fQErlRtzXyZSJnvpryMkfI+Fyu6b51JCE6sxPb72Oy9D
+         aWAVAHOys6Ydjz3rH5r57zcn41TpJ1n8tjkvExcRG7RsJxUriXci567SLLSGsKUiun3A
+         CaLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwlVi6y2AwdnCXY/JF7bpJu9fUsmJRdKPHztr1pADGwwfa6S3mvkd5LXQ3XhmBQqcd3WUC9BwRGNykhwsi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUoe9UnVwTdas68AIE1WY5tmxLuwO2VKjch6L/qH5lclbyf5Sv
+	Uz92TxHcdSZmb4GwqytPLuLReXJ2PSwro0oD+Xo7DBchmL8kqrqQdSLAuSwRoDJ33uMQrc4Oins
+	X9IeRlu56/u9f3OAvsjmx8KzJkSdH7UKphWQkOg==
+X-Google-Smtp-Source: AGHT+IFmB9y6/+kQL6KjsmY8/EdfpVKJMGg25s2uWIbdIaizpuU4BwX+luKVWgAn+4aggb52o4zBWQfQLDFbETfCjoI=
+X-Received: by 2002:a05:6402:34c5:b0:5c8:9f3e:5efc with SMTP id
+ 4fb4d7f45d1cf-5c8c0a0f606mr15771857a12.6.1728279380643; Sun, 06 Oct 2024
+ 22:36:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007030313.GH4017910@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20241006152849.247152-1-yizhou.tang@shopee.com>
+ <20241006152849.247152-4-yizhou.tang@shopee.com> <20241006163013.GN21853@frogsfrogsfrogs>
+In-Reply-To: <20241006163013.GN21853@frogsfrogsfrogs>
+From: Tang Yizhou <yizhou.tang@shopee.com>
+Date: Mon, 7 Oct 2024 13:36:09 +0800
+Message-ID: <CACuPKxkceb0zARj-B_ZuYbSH70rZHwgrJzjhjxpKFf53C9GNRg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] xfs: Let the max iomap length be consistent with
+ the writeback code
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: jack@suse.cz, hch@infradead.org, willy@infradead.org, 
+	akpm@linux-foundation.org, chandan.babu@oracle.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 07, 2024 at 04:03:13AM +0100, Al Viro wrote:
+On Mon, Oct 7, 2024 at 12:30=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Sun, Oct 06, 2024 at 11:28:49PM +0800, Tang Yizhou wrote:
+> > From: Tang Yizhou <yizhou.tang@shopee.com>
+> >
+> > Since commit 1a12d8bd7b29 ("writeback: scale IO chunk size up to half
+> > device bandwidth"), macro MAX_WRITEBACK_PAGES has been removed from the
+> > writeback path. Therefore, the MAX_WRITEBACK_PAGES comments in
+> > xfs_direct_write_iomap_begin() and xfs_buffered_write_iomap_begin() app=
+ear
+> > outdated.
+> >
+> > In addition, Christoph mentioned that the xfs iomap process should be
+> > similar to writeback, so xfs_max_map_length() was written following the
+> > logic of writeback_chunk_size().
+> >
+> > v2: Thanks for Christoph's advice. Resync with the writeback code.
+> >
+> > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+> > ---
+> >  fs/fs-writeback.c         |  5 ----
+> >  fs/xfs/xfs_iomap.c        | 52 ++++++++++++++++++++++++---------------
+> >  include/linux/writeback.h |  5 ++++
+> >  3 files changed, 37 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> > index d8bec3c1bb1f..31c72e207e1b 100644
+> > --- a/fs/fs-writeback.c
+> > +++ b/fs/fs-writeback.c
+> > @@ -31,11 +31,6 @@
+> >  #include <linux/memcontrol.h>
+> >  #include "internal.h"
+> >
+> > -/*
+> > - * 4MB minimal write chunk size
+> > - */
+> > -#define MIN_WRITEBACK_PAGES  (4096UL >> (PAGE_SHIFT - 10))
+> > -
+> >  /*
+> >   * Passed into wb_writeback(), essentially a subset of writeback_contr=
+ol
+> >   */
+> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> > index 1e11f48814c0..80f759fa9534 100644
+> > --- a/fs/xfs/xfs_iomap.c
+> > +++ b/fs/xfs/xfs_iomap.c
+> > @@ -4,6 +4,8 @@
+> >   * Copyright (c) 2016-2018 Christoph Hellwig.
+> >   * All Rights Reserved.
+> >   */
+> > +#include <linux/writeback.h>
+> > +
+> >  #include "xfs.h"
+> >  #include "xfs_fs.h"
+> >  #include "xfs_shared.h"
+> > @@ -744,6 +746,34 @@ xfs_ilock_for_iomap(
+> >       return 0;
+> >  }
+> >
+> > +/*
+> > + * We cap the maximum length we map to a sane size to keep the chunks
+> > + * of work done where somewhat symmetric with the work writeback does.
+> > + * This is a completely arbitrary number pulled out of thin air as a
+> > + * best guess for initial testing.
+> > + *
+> > + * Following the logic of writeback_chunk_size(), the length will be
+> > + * rounded to the nearest 4MB boundary.
+> > + *
+> > + * Note that the values needs to be less than 32-bits wide until the
+> > + * lower level functions are updated.
+> > + */
+> > +static loff_t
+> > +xfs_max_map_length(struct inode *inode, loff_t length)
+> > +{
+> > +     struct bdi_writeback *wb;
+> > +     long pages;
+> > +
+> > +     spin_lock(&inode->i_lock);
+>
+> Why's it necessary to hold a spinlock?  AFAICT writeback_chunk_size
+> doesn't hold it.
+>
 
-> > Hmm...  That still feels awkward.  Question: can we reach that code with
-> > 	* non-NULL upperfile
-> > 	* false ovl_is_real_file(upperfile, realpath)
-> > 	* true ovl_is_real_file(realfile, realpath)
-> > Is that really possible?
-> 
-> read() from metacopied file after fsync(), with the data still in lower
-> layer?  Or am I misreading that?
+Since the caller of writeback_chunk_size(), writeback_sb_inodes(), already =
+holds
+wb->list_lock. According to the function comments of inode_to_wb(),
+holding either
+inode->i_lock or the associated wb's list_lock is acceptable.
 
-Unless I'm misreading that thing, the logics would be
+> > +     wb =3D inode_to_wb(wb);
+>
+> Hmm, it looks like you're trying to cap writes based on storage device
+> bandwidth instead of a static limit.  That could be nifty, but does this
+> work for a file on the realtime device?  Or any device that isn't the
+> super_block s_bdi?
+>
 
-	If what we are asked for is where the data used to be at open time
-		just use what we'd opened back then and be done with that.
+I'm not very sure. Considering that the implementation of
+writeback_chunk_size() in
+the writeback path has remained unchanged for many years, I believe
+its logic works
+well in various scenarios.
 
-	Either we'd been copied up since open, or it's a metadata fsync of
-	a metacopied file; it doesn't matter which, since the upper layer
-	file will be the same either way.
+> > +     pages =3D min(wb->avg_write_bandwidth / 2,
+> > +                 global_wb_domain.dirty_limit / DIRTY_SCOPE);
+> > +     spin_unlock(&inode->i_lock);
+> > +     pages =3D round_down(pages + MIN_WRITEBACK_PAGES, MIN_WRITEBACK_P=
+AGES);
+> > +
+> > +     return min_t(loff_t, length, pages * PAGE_SIZE);
+> > +}
+>
+> There's nothing in here that's xfs-specific, shouldn't this be a
+> fs-writeback.c function for any other filesystem that might want to cap
+> the size of a write?
+>
 
-	If it hadn't been opened and stashed into the backing_file, do so.
+These logics are indeed not xfs-specific. However, I checked the
+related implementations
+in ext4 and btrfs, and it seems that these file systems do not require
+similar logic to cap
+the size. If we move the implementation of this function to
+fs-writeback.c, the only user
+would still be xfs.
 
-	If we end up using the reference stashed by somebody else (either
-	by finding it there in the first place, or by having cmpxchg tell
-	us we'd lost the race), verify that it _is_ in the right place;
-	it really should be, short of an equivalent of fs corruption
-	(== somebody fucking around with the upper layer under us).
+Additionally, there are some differences in the implementation details
+between this function
+and writeback_chunk_size(), so it doesn't seem convenient to reuse the code=
+.
 
-Is that what's going on there?  If so, I think your current version is
-correct, but I'd probably put it in a different way:
+Yi
 
-        if (!ovl_is_real_file(realfile, realpath) {
-		/*
-		 * the place we want is not where the data used to be at
-		 * open time; either we'd been copied up, or it's an fsync
-		 * of metacopied file.  Should be the same location either
-		 * way...
-		 */
-	        struct file *upperfile = backing_file_private(realfile);
-		struct file *old;
-
-		if (!upperfile) { /* nobody opened it yet */
-			upperfile = ovl_open_realfile(file, realpath);
-			if (IS_ERR(upperfile))
-				return upperfile;
-			old = cmpxchg_release(backing_file_private_ptr(realfile),
-					      NULL, upperfile);
-			if (old) { /* but they did while we were opening it */
-				fput(upperfile);
-				upperfile = old;
-			}
-		}
-		/*
-		 * stashed file must have been from the right place, unless
-		 * someone's been corrupting the upper layer.
-		 */
-		if (WARN_ON_ONCE(!ovl_is_real_file(upperfile, realpath)))
-			return ERR_PTR(-EIO);
-		realfile = upperfile;
-	}
+> --D
+>
+> > +
+> >  /*
+> >   * Check that the imap we are going to return to the caller spans the =
+entire
+> >   * range that the caller requested for the IO.
+> > @@ -878,16 +908,7 @@ xfs_direct_write_iomap_begin(
+> >       if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY))
+> >               goto out_unlock;
+> >
+> > -     /*
+> > -      * We cap the maximum length we map to a sane size  to keep the c=
+hunks
+> > -      * of work done where somewhat symmetric with the work writeback =
+does.
+> > -      * This is a completely arbitrary number pulled out of thin air a=
+s a
+> > -      * best guess for initial testing.
+> > -      *
+> > -      * Note that the values needs to be less than 32-bits wide until =
+the
+> > -      * lower level functions are updated.
+> > -      */
+> > -     length =3D min_t(loff_t, length, 1024 * PAGE_SIZE);
+> > +     length =3D xfs_max_map_length(inode, length);
+> >       end_fsb =3D xfs_iomap_end_fsb(mp, offset, length);
+> >
+> >       if (offset + length > XFS_ISIZE(ip))
+> > @@ -1096,16 +1117,7 @@ xfs_buffered_write_iomap_begin(
+> >               allocfork =3D XFS_COW_FORK;
+> >               end_fsb =3D imap.br_startoff + imap.br_blockcount;
+> >       } else {
+> > -             /*
+> > -              * We cap the maximum length we map here to MAX_WRITEBACK=
+_PAGES
+> > -              * pages to keep the chunks of work done where somewhat
+> > -              * symmetric with the work writeback does.  This is a com=
+pletely
+> > -              * arbitrary number pulled out of thin air.
+> > -              *
+> > -              * Note that the values needs to be less than 32-bits wid=
+e until
+> > -              * the lower level functions are updated.
+> > -              */
+> > -             count =3D min_t(loff_t, count, 1024 * PAGE_SIZE);
+> > +             count =3D xfs_max_map_length(inode, count);
+> >               end_fsb =3D xfs_iomap_end_fsb(mp, offset, count);
+> >
+> >               if (xfs_is_always_cow_inode(ip))
+> > diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> > index d6db822e4bb3..657bc4dd22d0 100644
+> > --- a/include/linux/writeback.h
+> > +++ b/include/linux/writeback.h
+> > @@ -17,6 +17,11 @@ struct bio;
+> >
+> >  DECLARE_PER_CPU(int, dirty_throttle_leaks);
+> >
+> > +/*
+> > + * 4MB minimal write chunk size
+> > + */
+> > +#define MIN_WRITEBACK_PAGES  (4096UL >> (PAGE_SHIFT - 10))
+> > +
+> >  /*
+> >   * The global dirty threshold is normally equal to the global dirty li=
+mit,
+> >   * except when the system suddenly allocates a lot of anonymous memory=
+ and
+> > --
+> > 2.25.1
+> >
+> >
 
