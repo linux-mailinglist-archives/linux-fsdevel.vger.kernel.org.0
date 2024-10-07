@@ -1,120 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-31165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3189992A49
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 13:36:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29183992A5D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 13:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B4AAB220E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 11:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63731F22F31
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 11:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547A51D1E7A;
-	Mon,  7 Oct 2024 11:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F6A1D1F71;
+	Mon,  7 Oct 2024 11:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9uZIOmH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVeR7nlZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6715101C4
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 11:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5F11D1E91;
+	Mon,  7 Oct 2024 11:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300950; cv=none; b=Uzy8lIKGzasYLgfk/XB1aeF9E4lFs/nb5WTVxYAtWl9dVkcVR1VCdImoi5u+XHhY80dkD46juU8d2d0Q5ZqxJgwgrUUUvTKTeBIMpkFronI8KRwmuBsHqUuFY/vY7Rqhveorxu18Eq9HzK6eCiRV7QfQtHovpsSbVELm2cezETY=
+	t=1728301179; cv=none; b=PboFYrri6gWtAEGhi295eDfneE2buA+xf3ft1WcaAIOHu8bLVrkBW+ulH7hzmQAGLasrtQd/b6NpzNmDcIthbv7zZg2lh0pktvrs+qC9UxzYIvXiHG+KB8H+X+I5QPQLlvF84T1nzJM5u/e2HX6SrefH1qU7dl1xYtwL95ri0cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300950; c=relaxed/simple;
-	bh=ExKbvQRI59nD5ZMwmjywvVJv7FMUpq4qs89AG+vLOVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAwmrEGKoSCoADAqwpRI+AE/83ZqYgtnxv21xhlNbhg1xbY3xpPwYrtZQOr+sHZci542MHOQ+hskwlHZD1M+OUqkjN15Bz9kprUXnqvguo9q5uV7jGDohLQ/OfL4Et2RIXzCmV4rI0cGBsjsTL5lKPIniLXuV9KmK+zWlp89syM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9uZIOmH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D63C4CEC6;
-	Mon,  7 Oct 2024 11:35:48 +0000 (UTC)
+	s=arc-20240116; t=1728301179; c=relaxed/simple;
+	bh=6TfGHJbx+uV5cVoNt6UJIaSS5C535EHg32pLeJeZk90=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=No29L7rAbkFrn6ik/BcHZJ/7dd0sB1dmvdKEJokuC/tkKVp+y7kCMqROFa9Kscovh5NIkdaQ7ivq4IKpi7jBZSHQyOafy1dCYUULGolPVykrkFbhYMZFOajfMleb8rAaXrZlNGEFEqUSyLiO1Z27pEOg2SHa9JGGcBkNeF2zSx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVeR7nlZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4BA0C4CEC6;
+	Mon,  7 Oct 2024 11:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728300950;
-	bh=ExKbvQRI59nD5ZMwmjywvVJv7FMUpq4qs89AG+vLOVE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h9uZIOmHqzcJgOt4HVOEph+iRZunjAuniSYZE9C65r/KP5PMRM6X0GzmRxWBYMXib
-	 p/Eg4DiKZC+cO8RPUdVlCfweFjUSOfzk3W8gWbGocH6IPJ9IQ8sJbhqh79ekmfakiM
-	 Xvpa5FrbWzK+ftuKDBTBmLBYe6pPaaiNAOWRYmSMs+veyCaQ1CCyS+S9JOpR7NzAoW
-	 4LuHxDi6MIlQDBPe2ujHhNxtOq0augGFUJydCaa/MUMv9x3rU7IIAT2y7R9gtq9C9H
-	 NCe3ztXdyQLQ2Isy2T7TJiVyPPalm/PWVqiwbv11zXbBGCmiIFcY55lE7G8cx/aBpg
-	 PA0RbpmD+3ScA==
-Date: Mon, 7 Oct 2024 13:35:46 +0200
+	s=k20201202; t=1728301178;
+	bh=6TfGHJbx+uV5cVoNt6UJIaSS5C535EHg32pLeJeZk90=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OVeR7nlZc4MqHUS87ocq/yqkglvc73XZbna0UARWXW9Xh2CmdtXuERWMIG1RO310M
+	 dJoQnZTl3vXJgPkiRmvWtcWS+O1cKadTLz7FrmYlHiS8e/Rh8Uj6e/ASTGzUPxBl6q
+	 0D2KqGJEkKMwxeR9SoVLpGTJKdxH8mMAtKrL3+BFDwLxYoWZup3x/6wN1QzXDC+yJ7
+	 rZWkklJ3Bs29s/zpec749p46D6PFnsRQ+8HjP/c1ysnyt2N0mfZ4+GVl7nRflH7Oll
+	 gVHsg0pTH6vvUnyKoT1xVlGP1vsy6vkRi0BloLqpyCMV+K/XG+bRpaB1cRgKTEJfgX
+	 +P3nth+o6Gizg==
 From: Christian Brauner <brauner@kernel.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Allison Karlitskaya <allison.karlitskaya@redhat.com>, 
-	Gao Xiang <xiang@kernel.org>, linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
-Subject: Re: Incorrect error message from erofs "backed by file" in 6.12-rc
-Message-ID: <20241007-zwietracht-flehen-1eeed6fac1a5@brauner>
-References: <CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com>
- <bb781cf6-1baf-4a98-94a5-f261a556d492@linux.alibaba.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Uros Bizjak <ubizjak@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] namespace: Use atomic64_inc_return() in alloc_mnt_ns()
+Date: Mon,  7 Oct 2024 13:39:28 +0200
+Message-ID: <20241007-anfingen-vorhaben-b6125e17972b@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241007085303.48312-1-ubizjak@gmail.com>
+References: <20241007085303.48312-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1035; i=brauner@kernel.org; h=from:subject:message-id; bh=6TfGHJbx+uV5cVoNt6UJIaSS5C535EHg32pLeJeZk90=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQznygJe6zsNe/bX09ZK55Htlquj7ObF7+9Ip2ZHrdZ4 giL5W/NjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInwyTH8rw4o/3OEYePrzadv vWPtFJthtW+3ahnD45tqAnfd2qbILWNkWGC4/andQRuRepujxyY/uGCe8jxjs8g+ofpi/st8Qi5 3GQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bb781cf6-1baf-4a98-94a5-f261a556d492@linux.alibaba.com>
 
-On Sat, Oct 05, 2024 at 10:41:10PM GMT, Gao Xiang wrote:
-> Hi Allison,
+On Mon, 07 Oct 2024 10:52:37 +0200, Uros Bizjak wrote:
+> Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+> to use optimized implementation and ease register pressure around
+> the primitive for targets that implement optimized variant.
 > 
-> (try to +Cc Christian)
 > 
-> On 2024/10/2 20:58, Allison Karlitskaya wrote:
-> > hi,
-> > 
-> > In context of my work on composefs/bootc I've been testing the new support for directly mounting files with erofs (ie: without a loopback device) and it's working well.  Thanks for adding this feature --- it's a huge quality of life improvement for us.
-> > 
-> > I've observed a strange behaviour, though: when mounting a file as an erofs, if you read() the filesystem context fd, you always get the following error message reported: Can't lookup blockdev.
-> > 
-> > That's caused by the code in erofs_fc_get_tree() trying to call get_tree_bdev() and recovering from the error in case it was ENOTBLK and CONFIG_EROFS_FS_BACKED_BY_FILE.  Unfortunately, get_tree_bdev() logs the error directly on the fs_context, so you get the error message even on successful mounts.
-> > > It looks something like this at the syscall level:
-> > 
-> > fsopen("erofs", FSOPEN_CLOEXEC)         = 3
-> > fsconfig(3, FSCONFIG_SET_FLAG, "ro", NULL, 0) = 0
-> > fsconfig(3, FSCONFIG_SET_STRING, "source", "/home/lis/src/mountcfs/cfs", 0) = 0
-> > fsconfig(3, FSCONFIG_CMD_CREATE, NULL, NULL, 0) = 0
-> > fsmount(3, FSMOUNT_CLOEXEC, 0)          = 5
-> > move_mount(5, "", AT_FDCWD, "/tmp/composefs.upper.KuT5aV", MOVE_MOUNT_F_EMPTY_PATH) = 0
-> > read(3, "e /home/lis/src/mountcfs/cfs: Can't lookup blockdev\n", 1024) = 52
-> > 
-> > This is kernel 6.12.0-0.rc0.20240926git11a299a7933e.13.fc42.x86_64 from Fedora Rawhide.
-> > 
-> > It's a pretty minor issue, but it sent me on a wild goose chase for an hour or two, so probably it should get fixed before the final release.
-> > 
-> 
-> Sorry for late response. I'm on vacation recently.
-> 
-> Yes, I also observed this message, but I'm not sure
-> how to handle it better.  Indeed, the message itself
-> is out of get_tree_bdev() as you said.
-> 
-> Yet I tend to avoid unnecessary extra lookup_bdev()
-> likewise to confirm the type of the source in advance,
-> since the majority mount type of EROFS is still
-> bdev-based instead file-based so I tend to make
-> file-based mount as a fallback...
-> 
-> Hi Christian, if possible, could you give some other
-> idea to handle this case better? Many thanks!
 
-(1) Require that the path be qualified like:
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-    fsconfig(<fd>, FSCONFIG_SET_STRING, "source", "file:/home/lis/src/mountcfs/cfs", 0)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-    and match on it in either erofs_*_get_tree() or by adding a custom
-    function for the Opt_source/"source" parameter.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-(2) Add a erofs specific "source-file" mount option. IOW, check that
-    either "source-file" or "source" was specified but not both. You
-    could even set fc->source to "source-file" value and fail if
-    fc->source is already set. You get the idea.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] namespace: Use atomic64_inc_return() in alloc_mnt_ns()
+      https://git.kernel.org/vfs/vfs/c/26bb6d8535e7
 
