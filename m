@@ -1,96 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-31203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D9B992FFD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:52:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57285993026
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C026E1C23A64
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8F428A394
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340D71D958E;
-	Mon,  7 Oct 2024 14:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEF01D7E37;
+	Mon,  7 Oct 2024 14:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ADC7X/XI"
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="u/43ePR2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PGesNq7c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB67B5338D;
-	Mon,  7 Oct 2024 14:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780EB1D88D2;
+	Mon,  7 Oct 2024 14:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312637; cv=none; b=Scl7ZQpPboDVPexttXmDebqdDjXzpSMSFEmQ4vgtplJ3RCyhSh2546/9y7z74fCerczyMtm07LuBdRLx+IWwRwttDnzxmJGKq5bRgOjBm6cQxQ4Hdd2RQdt6LQgMPiNR91fu97T0z71pdHciJtnHbAFcTnKJ9ET29ZtCoLFV/ig=
+	t=1728312899; cv=none; b=b3I5BFLbgWEh0W0it331KFdc2aq8uhwFL+dBe1FXiIoQELgm1gj91ejwoCHHOt+fWxrAvfzlnblW1UhCYEDiRv0ErJ+jHdNRYrZYfEa9Bh9BLzyISWAb0TSPvx2xlNY8fT6f9sj4IiQOn9pRdqaZzMCtCC2Tc4lBnB05d9dvnK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312637; c=relaxed/simple;
-	bh=UbpbFvTNOVZRFax6Q3Rv/M1ysuIYRGy2GDLq5E3AuR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aBSMolxqGskK5eVeG0gdDt69TA5/OBY+S4T6x5JltjsJoWz+PG5t1GgDp4jHC2ryloa8RIF99bSfQikcjkD+9KM+2faSTGo7EyKvE8oSE/wPenCzCjF/Wz5tdcN+40shsh73wfAQogTro38IAby6EuxhklHVGqK61EMo0lThJew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ADC7X/XI; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iHiwZTTEd2jFO0zmdAQaCGTn6HE3o2CfaOkXTF2rcik=; b=ADC7X/XIwnfIKCjEEPRoWK4x6z
-	rrbccgcePd9ReoBn4iUM1gEde0RFz6NxrE8Vkur55I4r5Ip7LNLqjVB+BEI6EHhDrR9PwubvzYJFj
-	I99MkVcayy7mdcxyOg0z619NRG3TC/RMn9qNA1Yq/dn135LwZ18T6CVLOSe1Drcv1tE/xpkraC4Kv
-	1WUR/I+7nt9C6lWEqCRITujZkRcX/rm9tQcXV+nEi7AgZgJr31s3rMBK6t90VV3gi1pUdTRjF5Wmd
-	mmS4hn9GYs5sLLyrusXgTt96KHW/EmGr7NctvDGof5thXMvaByOuRuIKMjf+y7zjEgm4JDOgkGGrM
-	ucUfRk3A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxp4E-00000001cCs-0Bzc;
-	Mon, 07 Oct 2024 14:50:34 +0000
-Date: Mon, 7 Oct 2024 15:50:34 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] namespace: Use atomic64_inc_return() in alloc_mnt_ns()
-Message-ID: <20241007145034.GM4017910@ZenIV>
-References: <20241007085303.48312-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1728312899; c=relaxed/simple;
+	bh=Chjdo4B4945DNyZFQ5W1A0sxa6Fj/cOk0C6uKPSllSU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:Subject:
+	 Content-Type; b=cNs2s/sEoAIDkbMUiS3YDgGK0F+BW+b1/ISl0A+ThRbRj0VGmgDKSgJMZIUYGSO+RL1i/Wg8V5bWOAyzTOCVSmrG6w2Dxo+UTZYrUGMQTKPcIV7+f5HN+2yO5GT7Lu4m+MeZVVAZE00eV6mkA8Yhl4GzxV9erO9o9M4Mq6dTASI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=u/43ePR2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PGesNq7c; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id 711DC138024C;
+	Mon,  7 Oct 2024 10:54:56 -0400 (EDT)
+Received: from phl-imap-05 ([10.202.2.95])
+  by phl-compute-12.internal (MEProxy); Mon, 07 Oct 2024 10:54:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	joshtriplett.org; h=cc:cc:content-transfer-encoding:content-type
+	:content-type:date:date:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
+	 t=1728312896; x=1728399296; bh=+zETDJVIuuQb6NDuacP4RzC0wFbiECMa
+	xhOidZj2O/c=; b=u/43ePR2Yj3tNsFZIekl1St3DhWeQTPJ2wmuqlP/tT02iyuV
+	UXLz/9owPRgxKE7JB2vfBLgcpoW/pzLpeHywuCa5gZ8qhnLG839tvunBObG70r+h
+	5K8L28ZK76WLSOsfpNDLeEoOJEnqN/Nu1kUIIGvGKhsYzwogTTcQXx+/EfnIM69Y
+	9X7wQ7WbSO3idpE9jqVR3pPe9vpVFzQ05G30aDxdbJS2yIqnmvTEfstr43700u8w
+	xZZEvWC2EkxU4ZGKlwvgMQAW+0kRLN204VEb+s18dJ6B1LGx9W8P5OlzXe12+/V4
+	BwR1r19bBtsi7CAvrrguOCACJg1K5prOaBBMtA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728312896; x=
+	1728399296; bh=+zETDJVIuuQb6NDuacP4RzC0wFbiECMaxhOidZj2O/c=; b=P
+	GesNq7cqsklHQMavEWBalymh92VS5ZAu7KwUe8Zg0p6KCepttM5K68tu9k+JuOQq
+	Jxs+FqdMOLiEg5WxFwenidTbUSKRiDEz4n9sAJ2nRtziirCeE2k9GiTFln6IbmgF
+	nITxYrMgZiSfISZ0gZmUtLtQIyeWgZ8tEoEAZE4iOtndVj2oLQjTQsE3wbKZJpRj
+	/vLQoimfMQbZ00ChIm6q6q11N6yP8w1v9U703rzXDOZlAjgbvAx752q8pNKZH9HC
+	ttn2iaj+tgvFmKg0TES541u0kGMKto2c7qR9VbCjosKgbO//mm8F68YVot78j99Q
+	iMaW83fbTOZcVw/n17B/A==
+X-ME-Sender: <xms:P_YDZ2AamqeK6E2b_wGq0zz2mxp58JMVBo47sUxnGCqg4rKFOy2L6A>
+    <xme:P_YDZwiXxai1W-G06LPar51zlMN25nXvwqNSeimcLOQ0uCYyYZ9M2lOAkaEva-VoZ
+    idRJgESe2aN3rUbmGU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgkedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefoggffhf
+    fvvefkjgfutgfgsehtjeertdertddtnecuhfhrohhmpedflfhoshhhucfvrhhiphhlvght
+    thdfuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepueehtedufffffeevudevueejffefveeggfdvudeijeeuffethfehfeehlefflefh
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhosh
+    hhsehjohhshhhtrhhiphhlvghtthdrohhrghdpnhgspghrtghpthhtohepkedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtoheplhhutggrrdgsohgttggrshhsihesghhmrghilh
+    drtghomhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhesph
+    gruhhlqdhmohhorhgvrdgtohhmpdhrtghpthhtohepohhlvghgsehrvgguhhgrthdrtgho
+    mhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtth
+    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:P_YDZ5nWkoRcLmG-yYq1dMsFQbWSfmHHKOAW2T8UdMOqexJNNVXMig>
+    <xmx:P_YDZ0xBQifq1LlSisunHDivIR2g4iV0G2nvhKznwWPgZCVW3EeJdA>
+    <xmx:P_YDZ7TZM5RiEEJmOdGXHBOn9lwspsO0G8Rlajt70UxMvfKJBCJWxQ>
+    <xmx:P_YDZ_YFgvqRjeieNMxRcpmKgYshK6sVGPqd2KQ6w1kDnrbOSnpYfQ>
+    <xmx:QPYDZ0TzYscl_K3aEOQ-OqunpKHQq-leK7fPIzhVrq6nvxodWf07FRZM>
+Feedback-ID: i83e94755:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B40183020080; Mon,  7 Oct 2024 10:54:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007085303.48312-1-ubizjak@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Date: Mon, 07 Oct 2024 07:54:35 -0700
+From: "Josh Triplett" <josh@joshtriplett.org>
+To: brauner@kernel.org
+Cc: jlayton@kernel.org, josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, luca.boccassi@gmail.com, oleg@redhat.com,
+ paul@paul-moore.com
+Message-Id: <2ab879f1-2938-4ece-a6b2-be34e4ad4c5d@app.fastmail.com>
+In-Reply-To: <20241004-signal-erfolg-c76d6fdeee1c@brauner>
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 10:52:37AM +0200, Uros Bizjak wrote:
-> Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-> to use optimized implementation and ease register pressure around
-> the primitive for targets that implement optimized variant.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> ---
->  fs/namespace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 93c377816d75..9a3c251d033d 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -3901,7 +3901,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
->  	}
->  	new_ns->ns.ops = &mntns_operations;
->  	if (!anon)
-> -		new_ns->seq = atomic64_add_return(1, &mnt_ns_seq);
-> +		new_ns->seq = atomic64_inc_return(&mnt_ns_seq);
+Christian Brauner wrote:
+> struct pidfd_info {
+>	/* Let userspace request expensive stuff explictly. */
+>	__u64 request_mask;
+>	/* And let the kernel indicate whether it knows about it. */
+>	__u64 result_mask;
 
-On which load do you see that path hot enough for the change to
-make any difference???
+I don't think it's necessary to have these two fields separate. The kernel should write to the same mask field userspace used.
 
-Seriously, if we have something that manages that, I would like
-to know - the same load would be a great way to stress a lot of
-stuff in fs/namespace.c and fs/pnode.c...
+In theory there could be an operation to probe for *everything* the kernel understands, but in practice with a binary structure there's little point finding out about flags you don't know the corresponding structure bits for.
 
