@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-31185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3C9992EDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:20:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9E4992EE1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED6528560B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05897285808
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 14:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9EF1D7986;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50DD1D8E09;
 	Mon,  7 Oct 2024 14:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pge6O+w0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xpda9vS9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9A21D8A1D;
-	Mon,  7 Oct 2024 14:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BC71D54D4;
+	Mon,  7 Oct 2024 14:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310774; cv=none; b=KB84tRiIbuZFQmJ0iUND9ulSg0XDvY+OteLu3QUWSzktL9PZgAC/Pl3ns7/J9Fwa1C/Lz8ocCY9+mzKQGuef3RWckYLU1LW03HIN7KnHveYpBx+W958zN95hhP8WxmNCsRbr9zYG2L9ArrGf0aDbzZSyv7DtxWPYR3LUKdRoRTQ=
+	t=1728310775; cv=none; b=BkAZun6FT25zadg+RRvNc/rYDSh3QilGHu62hUyBPCM1XSWJBPz+6M1qeY1x8Axq0aa6f8uJuLEIifzDiMeQGawTnluleBrFW2JMMu5UeWLGF5dBMwqKxEzwgpcFT3rhf3fdUTGbzb5KMoQw9eWM8al84h5KfwR7vwThYEZFMvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310774; c=relaxed/simple;
-	bh=u5uN/v0hcCXxJzVjMecqx8XNsYDzzBB91/lRJbyg+lQ=;
+	s=arc-20240116; t=1728310775; c=relaxed/simple;
+	bh=pubetNtaZBB6HQRWyxq/zdamFrw+VN9WayJdV93bV24=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QgnvqW2DMIbCw4kovW7hw8QwrNGFDs8wK35NZeZJoR6T6f2cEyo25icq9tdvcDa0LJtLwzZBVMyuG5C9cvtDHlBo2AzuitD2xr/SLTITb/MgD/KtBv49w4kmypLp+iO8rpEJ0b6EcrCMp8+V7dvGOdJa78ylg9NrnSVKWjRvLRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pge6O+w0; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=aH46L05aDbKAtQ667VNxoW9P5PGwiunReasJrGEXQg+LbgiTg54ArhkV+NzdMfEVwg7GdJYHwTvkLJHc3Vnb+2XNYiKurH2wNiMg5lOdgI4p89HZvGgMjvRs/HljjOJMlU9dlzAnmadBqsa9TUyiVxg0M4es28Ess6y9+Q41YHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xpda9vS9; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42e7b7bef42so39740245e9.3;
-        Mon, 07 Oct 2024 07:19:32 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37ccfada422so2744301f8f.2;
+        Mon, 07 Oct 2024 07:19:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728310771; x=1728915571; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728310772; x=1728915572; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vkU+cfiiNTUBWGlMXTLsIHnT7e0/Q3j2lLd4OH/mVZQ=;
-        b=Pge6O+w0mnxdqtjIiXHPVkiZQUfxj6SX17OKYzSt3/rrzjlH7Io5CjeGoagdy8PuSx
-         JIh2teeu3xHV6OCkr2o04eOb0wWM71w4fhJPTXWfEAPnu6jcpEIG0dfSGfQtHDjD5g45
-         06AxS9vK471H0cYVS7ia9vLID3WB0fPZnJ0oQaLtSav/I4SfVtRXGtxeV4zK1xVnxs0e
-         i36xTKHDBHqODXPw+gnzlIrSI99sKJS0Cb5nqDhTZmQGnFoUeXLAXIxv85YeN7xkS7zl
-         QVOG7G5Td1yDcfW7YsMDluss2+XsOYnl20ZBYp/G+ZiIV+l7m+icpv5iQhuUZdLZglgo
-         nKUA==
+        bh=1GE/dxQSdo3FDX8cP0cmk86KhCkq//3GbFgRlty45nI=;
+        b=Xpda9vS9xsHSJ2up4cJXswBYsDu+RPE9z00/jfyM7Xo8KLJLmnwW8ZIPI9U26sM4nZ
+         5dj2Ql6+RY5i3OEudTAu/Mj8c0ixW5QaQ9fDhIiE5XKhnEYEY54ttsmLkkqy9CxoGD72
+         UGZm8OmwXbyxSM/m1GbYJ73x8cgAxdPU+k6SoyvLmT0QDB9pm4MpU8mppmhMW6kqNm5Q
+         lpR/XWW6oEkj+H8psausK3K5NFoZBtNYWne0loImx7StluzqTLZ5ht8KQf5Q7WMx5cFc
+         lUVyZWBnKJXi4mfe69t31prC2LzSXeICu6R9eNyJuFINRzNL/tgBUS8/jadFf8DjtsBt
+         pM2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728310771; x=1728915571;
+        d=1e100.net; s=20230601; t=1728310772; x=1728915572;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vkU+cfiiNTUBWGlMXTLsIHnT7e0/Q3j2lLd4OH/mVZQ=;
-        b=dKKTVU523hexg2iH+MsU3rDU2aAHlrA45+eqrWQi8bsX9EtxCevHoOlclmXSrBwPyr
-         eLqaagyrknpGq84JuNSDNbRD5tWnzkXL7r/M6PiX3OTGcDmP6A/hHnOohFK51N2Sow1X
-         g2wvMmKInYSZnkGMCk/3lfTH+M8J7PTtHHWppZxVAi0pCF4Zy/i6iA0aiK74CRR/7Rj0
-         CzA4okw5/uxnbWqc39zOzh4BYoeM9b/q0CkdNX+J9IDwfbGhohhsBg249QuH2Lr0ms9r
-         Pogtgfh284zS/ZTZ9WPDpHz15/z4Ghqz5sy5dR9F6yc1XucoV79kqkL4fVqhRAxNWVjO
-         8XRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFjgGqRvESfU1jWjvVgq6orZfZV2XYN+0IaAJmCOcJoSqNK4pBoKd9e2lUwHacXhSZdt4W+GVp853EVCMxvA==@vger.kernel.org, AJvYcCWM+wbwgNg7bqgqFoJxHNegKqVfmfGpeupsPZw5gec1psN20tVUlZUPON1Hvp8TKtmY9O/zzsaSiHZfJGjF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO0hRXN+Uydl8VVqKGyuk8eX9oAUGCz/DHD4C4n23doBM4nQPF
-	RULTVWNcZ+kB+efJwNWtE6Pih/kqS1BGe+G03IlupOCxjjP+5b/o
-X-Google-Smtp-Source: AGHT+IGKxDvdA09dWlHWXnHyK0wlYmqqaOmgsyBKkbb/tPoGFyLrB44dzfPBTJ4IFTFAZ29mEoADog==
-X-Received: by 2002:a05:600c:5124:b0:426:6f17:531 with SMTP id 5b1f17b1804b1-42f947a79b8mr2643175e9.13.1728310770701;
-        Mon, 07 Oct 2024 07:19:30 -0700 (PDT)
+        bh=1GE/dxQSdo3FDX8cP0cmk86KhCkq//3GbFgRlty45nI=;
+        b=Fg3QeW51BCzzee98YfexjXosnRoLhhf5mBnjy7akeCj/y4HGEde6t3yXTDzUyMo1Mo
+         miAX+fGL5hb+fKl6EHfNXhGSTDD75qd1b3lkSAuIOBEqrUBp7c6TkiNYajSXrOOL9d6P
+         Y/Op2GcRJ3EZb0CUH3I3+d5fyl+eEcqgqFzddiMywPXxpTfppCr/3gTTJaBwppS5VDI6
+         rLIOw2dbBb2/sajCXjCOjCu7w/LQr9O51A/Jj7Zr7emq1pKIkVmPTsah2cgHVo2dR2wL
+         xFyj/eAUaHYTrQzpg+/ly27KEjr8x1vMiDvVFaWzG4JL3upd1zLT9cMOtLx5tf+Qv6/U
+         K0oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJIyty0zM+ZyLx6TRrvnif8WOGO8/BKTLV1QJLjGtoDhBXHxiIz9pxMf+lMGUr4kH1w2Rl8vKGsYr5R07C@vger.kernel.org, AJvYcCWsdf7guNYZKqklnVyfSX95zA9kszqynpwmo/mfU57U9d693p/XoVzW/+zktSO4MvYTGhCKS7UNfRCG9vKtYQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4KW30RJh8AI3t+BYkCblHqtPappkmQp+ias2VGrTIExY0DDOZ
+	Fzy9mqVeOgZmk+FD32t6BitIpHW3QTlHr8JPr5H0fFFHj/vqH5/b
+X-Google-Smtp-Source: AGHT+IFO2GfE0BBrw7is/zr+2wdjYgBDzcLwPn8HYeouW1s4YXjUEqKhcSG1e6mvxD0XHBfNxfRagg==
+X-Received: by 2002:a5d:648a:0:b0:375:1b02:1e3c with SMTP id ffacd0b85a97d-37d0e8de99dmr10227229f8f.45.1728310771496;
+        Mon, 07 Oct 2024 07:19:31 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16970520sm5829396f8f.96.2024.10.07.07.19.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16970520sm5829396f8f.96.2024.10.07.07.19.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 07:19:29 -0700 (PDT)
+        Mon, 07 Oct 2024 07:19:31 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Al Viro <viro@zeniv.linux.org.uk>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org
-Subject: [PATCH v3 1/5] ovl: do not open non-data lower file for fsync
-Date: Mon,  7 Oct 2024 16:19:21 +0200
-Message-Id: <20241007141925.327055-2-amir73il@gmail.com>
+Subject: [PATCH v3 2/5] ovl: allocate a container struct ovl_file for ovl private context
+Date: Mon,  7 Oct 2024 16:19:22 +0200
+Message-Id: <20241007141925.327055-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241007141925.327055-1-amir73il@gmail.com>
 References: <20241007141925.327055-1-amir73il@gmail.com>
@@ -87,135 +87,92 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ovl_fsync() with !datasync opens a backing file from the top most dentry
-in the stack, checks if this dentry is non-upper and skips the fsync.
-
-In case of an overlay dentry stack with lower data and lower metadata
-above it, but without an upper metadata above it, the backing file is
-opened from the top most lower metadata dentry and never used.
-
-Refactor the helper ovl_real_fdget_meta() into ovl_real_fdget_path() and
-ovl_upper_fdget() where the latter returns an empty struct fd in that
-case to avoid the unneeded backing file open.
+Instead of using ->private_data to point at realfile directly, so
+that we can add more context per ovl open file.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/overlayfs/file.c | 71 +++++++++++++++++++++++++++------------------
- 1 file changed, 43 insertions(+), 28 deletions(-)
+ fs/overlayfs/file.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
 diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 4504493b20be..f5d0498355d0 100644
+index f5d0498355d0..03bf6037b129 100644
 --- a/fs/overlayfs/file.c
 +++ b/fs/overlayfs/file.c
-@@ -89,32 +89,19 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
+@@ -89,10 +89,15 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
  	return 0;
  }
  
--static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
--			       bool allow_meta)
-+static int ovl_real_fdget_path(const struct file *file, struct fd *real,
-+			       struct path *realpath)
++struct ovl_file {
++	struct file *realfile;
++};
++
+ static int ovl_real_fdget_path(const struct file *file, struct fd *real,
+ 			       struct path *realpath)
  {
--	struct dentry *dentry = file_dentry(file);
- 	struct file *realfile = file->private_data;
--	struct path realpath;
--	int err;
+-	struct file *realfile = file->private_data;
++	struct ovl_file *of = file->private_data;
++	struct file *realfile = of->realfile;
  
  	real->word = (unsigned long)realfile;
  
--	if (allow_meta) {
--		ovl_path_real(dentry, &realpath);
--	} else {
--		/* lazy lookup and verify of lowerdata */
--		err = ovl_verify_lowerdata(dentry);
--		if (err)
--			return err;
--
--		ovl_path_realdata(dentry, &realpath);
--	}
--	if (!realpath.dentry)
-+	if (WARN_ON_ONCE(!realpath->dentry))
+@@ -163,6 +168,7 @@ static int ovl_open(struct inode *inode, struct file *file)
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct file *realfile;
+ 	struct path realpath;
++	struct ovl_file *of;
+ 	int err;
+ 
+ 	/* lazy lookup and verify lowerdata */
+@@ -181,18 +187,28 @@ static int ovl_open(struct inode *inode, struct file *file)
+ 	if (!realpath.dentry)
  		return -EIO;
  
- 	/* Has it been copied up since we'd opened it? */
--	if (unlikely(file_inode(realfile) != d_inode(realpath.dentry))) {
--		struct file *f = ovl_open_realfile(file, &realpath);
-+	if (unlikely(file_inode(realfile) != d_inode(realpath->dentry))) {
-+		struct file *f = ovl_open_realfile(file, realpath);
- 		if (IS_ERR(f))
- 			return PTR_ERR(f);
- 		real->word = (unsigned long)f | FDPUT_FPUT;
-@@ -130,7 +117,11 @@ static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
++	of = kzalloc(sizeof(struct ovl_file), GFP_KERNEL);
++	if (!of)
++		return -ENOMEM;
++
+ 	realfile = ovl_open_realfile(file, &realpath);
+-	if (IS_ERR(realfile))
++	if (IS_ERR(realfile)) {
++		kfree(of);
+ 		return PTR_ERR(realfile);
++	}
  
- static int ovl_real_fdget(const struct file *file, struct fd *real)
- {
--	if (d_is_dir(file_dentry(file))) {
-+	struct dentry *dentry = file_dentry(file);
-+	struct path realpath;
-+	int err;
-+
-+	if (d_is_dir(dentry)) {
- 		struct file *f = ovl_dir_real_file(file, false);
- 		if (IS_ERR(f))
- 			return PTR_ERR(f);
-@@ -138,7 +129,33 @@ static int ovl_real_fdget(const struct file *file, struct fd *real)
- 		return 0;
- 	}
+-	file->private_data = realfile;
++	of->realfile = realfile;
++	file->private_data = of;
  
--	return ovl_real_fdget_meta(file, real, false);
-+	/* lazy lookup and verify of lowerdata */
-+	err = ovl_verify_lowerdata(dentry);
-+	if (err)
-+		return err;
-+
-+	ovl_path_realdata(dentry, &realpath);
-+
-+	return ovl_real_fdget_path(file, real, &realpath);
-+}
-+
-+static int ovl_upper_fdget(const struct file *file, struct fd *real, bool data)
-+{
-+	struct dentry *dentry = file_dentry(file);
-+	struct path realpath;
-+	enum ovl_path_type type;
-+
-+	if (data)
-+		type = ovl_path_realdata(dentry, &realpath);
-+	else
-+		type = ovl_path_real(dentry, &realpath);
-+
-+	real->word = 0;
-+	/* Not interested in lower nor in upper meta if data was requested */
-+	if (!OVL_TYPE_UPPER(type) || (data && OVL_TYPE_MERGE(type)))
-+		return 0;
-+
-+	return ovl_real_fdget_path(file, real, &realpath);
+ 	return 0;
  }
  
- static int ovl_open(struct inode *inode, struct file *file)
-@@ -394,16 +411,14 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	if (ret <= 0)
- 		return ret;
+ static int ovl_release(struct inode *inode, struct file *file)
+ {
+-	fput(file->private_data);
++	struct ovl_file *of = file->private_data;
++
++	fput(of->realfile);
++	kfree(of);
  
--	ret = ovl_real_fdget_meta(file, &real, !datasync);
--	if (ret)
-+	/* Don't sync lower file for fear of receiving EROFS error */
-+	ret = ovl_upper_fdget(file, &real, datasync);
-+	if (ret || fd_empty(real))
- 		return ret;
+ 	return 0;
+ }
+@@ -427,14 +443,14 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
  
--	/* Don't sync lower file for fear of receiving EROFS error */
--	if (file_inode(fd_file(real)) == ovl_inode_upper(file_inode(file))) {
--		old_cred = ovl_override_creds(file_inode(file)->i_sb);
--		ret = vfs_fsync_range(fd_file(real), start, end, datasync);
--		revert_creds(old_cred);
--	}
-+	old_cred = ovl_override_creds(file_inode(file)->i_sb);
-+	ret = vfs_fsync_range(fd_file(real), start, end, datasync);
-+	revert_creds(old_cred);
+ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+-	struct file *realfile = file->private_data;
++	struct ovl_file *of = file->private_data;
+ 	struct backing_file_ctx ctx = {
+ 		.cred = ovl_creds(file_inode(file)->i_sb),
+ 		.user_file = file,
+ 		.accessed = ovl_file_accessed,
+ 	};
  
- 	fdput(real);
+-	return backing_file_mmap(realfile, vma, &ctx);
++	return backing_file_mmap(of->realfile, vma, &ctx);
+ }
  
+ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
 -- 
 2.34.1
 
