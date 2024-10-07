@@ -1,151 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-31254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B082993817
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 22:21:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315C8993836
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 22:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080181F223DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 20:21:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAE701F2217F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 20:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9675E1DE4E7;
-	Mon,  7 Oct 2024 20:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D111DE885;
+	Mon,  7 Oct 2024 20:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d7RUNUBh"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L4coOals"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C9A1865FC
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 20:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5C81DE4EE
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 20:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728332482; cv=none; b=TzPXu/FA9zKijb51MJ3ywCQfgJ4vofrzfzxXzPeioM5geZAwZmKb09cplLi1S/R2AAPx0RAnnNmlJM7hP69EbpMw8MemSnjw7jvxWNYHR/0B6/z+lDFG1qTQYzKJhHWLTrtCqBdUDMyzDz1EAq89Qe4guOUSWdlOvBcWX0usZD8=
+	t=1728332888; cv=none; b=YyhmjGFPV2imVZ95HZ+UnQ5HkJPLSnqozsl0QwQeck90o9vqPYaRhSExNQAjvuZPSEkoGkG1gp4W8lYdVPwYqBXOFDdw6RrhySdNFPo79ETVZ12j6Oqz8j4jGKqILtaPNiKcW6qFaPtezMj/331o/oZeuzxRhYp3qaYsX1j+QIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728332482; c=relaxed/simple;
-	bh=c4a30u6REFUzrAsoAQwDjsVAZw5JYJBEWWtd09jMs5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnZR3fprOnR/ZgFLW0+1Otkd9iypOmsygvqvtsoZFHbAPnEtz/vBUZTcAvW+u6mDWyuP9DeACYqOrcov55CliWgFYFOONM+6qCQD8/yB1AMCff4t/0RsjgVYl2CQp2WrSP6LHbAYb0P3r2UfxEk4brzBWPeTmdrf5Lu8SMZi51Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d7RUNUBh; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 7 Oct 2024 16:21:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728332477;
+	s=arc-20240116; t=1728332888; c=relaxed/simple;
+	bh=lFATey50dXtS9PQrNILwMtPc5G4caMsohzKY0ft8MzE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DHOJFt/9UbhSRp/02ZPrtOSXWFc3f8Vzk3ZPbEcGPy0/jYytnJBLlqVaRD4ntaWvVz+n4nlKPqZ+IUGmSGTG0sOAdnItFLQv/BBrLRfxlZBj2INS8dIqq0/X8iL6/TCBWAw2SeL5f7jfirrN+bMdRdG2w61R9x/xmHFSMBKK0kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L4coOals; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728332885;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Dq8JvnD9tzMMx6q54o7Cvi4gHmHlyDT4zjfEUm1ieqo=;
-	b=d7RUNUBhxcjAVCJTzWcmfZ/fB9XCDnpJxlrgRmQvtrXRB4BM7BWUz8xIz4UV3rTIjTiHWN
-	883bnt5baC77psLPAMIMRzRQcWkLM6eGlgQ6X4j9+fNu5kXJwQ8ZXLUw80ffsg/OEni79E
-	7CbM+gl62PlVQlx+DjLCPh0NL8Bt7Bk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@fb.com
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <u266iwml67vr2zrkhebfr3zwak5k7mebk4grhavnujf2wodwkz@eyksfejhgve2>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <20241007145847.GA1898642@perftesting>
+	bh=4B4glB5DjDUk8NiG4IJ2tdcRgXmWk2aBSKv4B5a3gzA=;
+	b=L4coOals5FOPwCQd8nahFoQi0lG+N7owMiWPMbF5PM1UdxVrW8m3AeSP+zIRHP9uv30Cre
+	LDq05NpnCJXii9GQj/GXW5G6wi/xhEZBKskIhsA2pCfdrZ7QKpPWrUeGz4YgnXFnZGiLoS
+	FfZELtRUAAz8P7s8cBfhkzJX63rm+jw=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-75-pcmfxxLbOFKZ2rzS44o3OA-1; Mon, 07 Oct 2024 16:28:04 -0400
+X-MC-Unique: pcmfxxLbOFKZ2rzS44o3OA-1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aa467836eso869581539f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 13:28:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728332884; x=1728937684;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4B4glB5DjDUk8NiG4IJ2tdcRgXmWk2aBSKv4B5a3gzA=;
+        b=aATkWAS9rQ6ZvdQNx/u1Clhzkisb8cUrLaEfiUuilaq9W547sIgeYIHl7bIYyrSnYJ
+         nS9FEOXiVKvboQc5K+GKUGRbhdXQfrvWxW4BbrSrM9vrPMirnxa/iBmZxQMqiCUtkagS
+         +PgIyMJj0vUnY7HI1pgFlbitogK1C0PNIW7uFYKUvoZjV+e99G7lgesLKhNwMqD1ZUvH
+         l2Ow3iknU8B993SaSzic3klwZvHDUWt+bDaC8q0kDS5XIFZuNIf91ifDcnmNitIIZ6El
+         2HgUPvj+hyBxie21/3Cm5oJ37qOjyHTeeIUyoWNneIDDaPthnb1hjGS68gDSLaiPJybj
+         Sfbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmQJ+Vpg1DbdS8YLW6ls16GfhpxqaM7BCHJzjdXzBOAYcJnX0SImXuedafYVtEzYHkYmBT/U9pBgTMkz1r@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxiu5+STvr8rBFu9B2aujQKFFNJINMub2vxCa6SaA+Msw7NiiJG
+	j9cnZzXXkpVy67R4zCVOGEhZv9HStfXfIO1w1Xib0ADbnWQn1OEQvxHrvxM+dBRJs8sDIXtVAKf
+	5WgCjSLcRB3+lGPywP+KfgovDezuCJIf8BiBKBKL0wmHPE9nqtbTb5Y3DT02+vIyz13eeNzmbtw
+	==
+X-Received: by 2002:a05:6e02:13a7:b0:3a0:8edc:d133 with SMTP id e9e14a558f8ab-3a375999ec7mr110742035ab.9.1728332883843;
+        Mon, 07 Oct 2024 13:28:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBmRzjnCd//uRIldrVNUB+pEl5NkIv81VplPeLwdKtLvMVnjarQoTS1mbY8SY7c7SWCayFCA==
+X-Received: by 2002:a05:6e02:13a7:b0:3a0:8edc:d133 with SMTP id e9e14a558f8ab-3a375999ec7mr110741895ab.9.1728332883548;
+        Mon, 07 Oct 2024 13:28:03 -0700 (PDT)
+Received: from [10.0.0.71] (67-4-202-127.mpls.qwest.net. [67.4.202.127])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db884f47edsm575830173.111.2024.10.07.13.28.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 13:28:02 -0700 (PDT)
+Message-ID: <5c31f6f0-b68e-4ee6-80ae-e57799177f6c@redhat.com>
+Date: Mon, 7 Oct 2024 15:28:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007145847.GA1898642@perftesting>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [hfs?] general protection fault in hfs_mdb_commit
+To: syzbot <syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com>,
+ brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <67011a15.050a0220.49194.04bc.GAE@google.com>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <67011a15.050a0220.49194.04bc.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 10:58:47AM GMT, Josef Bacik wrote:
-> I tend to ignore these kind of emails, it's been a decade and weirdly the file
-> system development community likes to use btrfs as a punching bag.  I honestly
-> don't care what anybody else thinks, but I've gotten feedback from others in the
-> community that they wish I'd say something when somebody says things so patently
-> false.  So I'm going to respond exactly once to this, and it'll be me satisfying
-> my quota for this kind of thing for the rest of the year.
+On 10/5/24 5:51 AM, syzbot wrote:
+> syzbot has bisected this issue to:
 > 
-> Btrfs is used by default in the desktop spin of Fedora, openSuse, and maybe some
-> others.  Our development community is actively plugged into those places, we
-> drop everything to help when issues arise there.  Btrfs is the foundation of the
-> Meta fleet.  We rely on its capabilities and, most importantly of all, its
-> stability for our infrastructure.
+> commit c87d1f1aa91c2e54234672c728e0e117d2bff756
+> Author: Eric Sandeen <sandeen@redhat.com>
+> Date:   Mon Sep 16 17:26:21 2024 +0000
 > 
-> Is it perfect?  Absolutely not.  You will never hear me say that.  I have often,
-> and publicly, said that Meta also uses XFS in our database workloads, because it
-> simply is just better than Btrfs at that.
+>     hfs: convert hfs to use the new mount api
 > 
-> Yes, XFS is better at Btrfs at some things.  I'm not afraid to admit that,
-> because my personal worth is not tied to the software projects I'm involved in.
-> Dave Chinner, Darrick Wong, Christoph Hellwig, Eric Sandeen, and many others have
-> done a fantastic job with XFS.  I have a lot of respect for them and the work
-> they've done.  I've learned a lot from them.
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17b2bbd0580000
+> start commit:   c02d24a5af66 Add linux-next specific files for 20241003
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1472bbd0580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1072bbd0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5cfa9ffce7cc5744fe24
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114be307980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bef527980000
 > 
-> Ext4 is better at Btrfs in a lot of those same things.  Ted T'so, Andreas
-> Dilger, Jan Kara, and many others have done a fantastic job with ext4.
+> Reported-by: syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com
+> Fixes: c87d1f1aa91c ("hfs: convert hfs to use the new mount api")
 > 
-> I have learned a lot from all of these developers, all of these file systems,
-> and many others in this community.
-> 
-> Bcachefs is doing new and interesting things.  There are many things that I see
-> you do that I wish we had the foresight to know were going to be a problem with
-> Btrfs and done it differently.  You, along with the wider file system community,
-> have a lot of the same ideals, same practices, and same desire to do your
-> absolute best work.  That is an admirable trait, one that we all share.
-> 
-> But dragging other people and their projects down is not the sort of behavior
-> that I think should have a place in this community.  This is not the kind of
-> community I want to exist in.  You are not the only person who does this, but
-> you are the most vocal and constant example of it.  Just like I tell my kids,
-> just because somebody else is doing something wrong doesn't mean you get to do
-> it too.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Josef, I've got to be honest with you, if 10 years in one filesystem
-still has a lot of user reports that clearly aren't being addressed
-where the filesystem is wedging itself, that's a pretty epic fail and
-that really is the main reason why I'm here.
+#syz test 
 
-#1 priority in filesystem land has to be robustness. Not features, not
-performance; it has to simply work.
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index ee314f3e39f8..3bee9b5dba5e 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -328,6 +328,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	spin_lock_init(&sbi->work_lock);
+ 	INIT_DELAYED_WORK(&sbi->mdb_work, flush_mdb);
+ 
++	sbi->sb = sb;
+ 	sb->s_op = &hfs_super_operations;
+ 	sb->s_xattr = hfs_xattr_handlers;
+ 	sb->s_flags |= SB_NODIRATIME;
 
-The bar for "acceptably good" is really, really high when you're
-responsible for user's data. In the rest of the kernel, if you screw up,
-generally the worst that happens is you crash the machine - users are
-annoyed, whatever they were doing gets interrupted, but nothing
-drastically bad happens.
 
-In filesystem land, fairly minor screwups can lead to the entire machine
-being down for extended periods of time if the filesystem has wedged
-itself and really involved repair procedures that users _should not_
-have to do, or worst real data loss. And you need to be thinking about
-the trust that users are placing in you; that's people's _lives_ they're
-storing on their machines.
-
-So no, based on the feedback I still _regularly_ get I don't think btrfs
-hit an acceptable level of reliability, and if it's taking this long I
-doubt it will.
-
-"Mostly works" is just not good enough.
-
-To be fair, bcachefs isn't "good enough" yet either, I'm still getting
-bug reports where bcachefs wedges itself too.
-
-But I've also been pretty explicit about that, and I'm not taking the
-experimental label off until those reports have stopped and we've
-addressed _every_ known way it can wedge itself and we've torture tested
-the absolute crap out of repair.
-
-And I think you've set the bar too low, by just accepting that btrfs
-isn't going to be as good as xfs in some situations.
-
-I don't think there's any reason a modern COW filesystem has to be
-crappier in _any_ respect than ext4/xfs. It's just a matter of
-prioritizing the essentials and working at it until it's done.
 
