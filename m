@@ -1,122 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-31264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EDD993B3E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 01:34:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4B2993B78
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 01:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3CB282AB6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 23:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED001C22DCA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 23:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C316190055;
-	Mon,  7 Oct 2024 23:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558DD192B9C;
+	Mon,  7 Oct 2024 23:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CuZVWghx"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lzymT+VD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A85917279E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 23:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4305618CBF4;
+	Mon,  7 Oct 2024 23:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728344052; cv=none; b=p1nwTrOHI1iEM+DpPHCjRkwT2fEsK++0PeFSvakRVrwIYCSLYuY/i/5EQsL6jbtxwvrcap+E4dgbgTE2E9umFwCp/7/+mDYoWWJoHjLIC/OOmw5Ysi8fTKM1j4wBkMaskCbUyUGSwBEmakIYHFHRVRKwVvRdT08Bp8SeRo9uhIM=
+	t=1728345499; cv=none; b=HQTmY8vEw0lmwzfRvwImt6QHKDQ6yCps97Sg2kOtMxmxg4uOusPf3KO6Gci3AII6gtNBjp1z2UeF4gqZnhE987o/8BEIFJUlYviFRa61MRwDJl+2A1APMkopCLLenHg25McCLFQzsUnkiBK0QdOovDS4dHnDTAqJTmnHFv+tXFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728344052; c=relaxed/simple;
-	bh=31i13373D7hjydGNkXUzyHoWoEZHSJM+HBCGF/6GeLg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hakcqn+KxkXBI2Sj/OTbf1QIteKeLPsvaGWdkK/Y0SeAj2CNEO4n1tEPNVB8NeOSvp7vDCx2BArF+stHs18SeyXUNNEc6jD3pVwyjFyK6pMw9FRqxuZfoE0ZGDuf49z8oIKMFZ1IqmsRuHyi7HLeujQ6ckJ9h6HzA+FKQIAFOXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CuZVWghx; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42f6995dab8so107795e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 16:34:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728344049; x=1728948849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=31i13373D7hjydGNkXUzyHoWoEZHSJM+HBCGF/6GeLg=;
-        b=CuZVWghxLC/z9FWdKa4DXebixUXU35dd0kGSjmtEg/jMMOK2nQZs/Y+fGOJ6nbaqpD
-         aLKzhakr7m/XJvCLWMy2gqYrpRIn+tpsx243yyHuSkaAWh++xS6R/DrBa5AMu3s2zD4l
-         /z3d1STBfKxzqrOgYoCr9351CPiHRfmVnjWIrCQyjM7CO6SWPJu7WCJWVWu2LkjV+zmq
-         GlvzKQc/mJkQErd6H9lO+Djb16q5/LrzxAw79dwQ5zJrH38SzLQYpOsSnUaJq/GxPMe2
-         SMe+BR6rfXOA9y038HKdBw0TOOXT+yD/rSv+zrZInbff02fO4yWmFqEYGO/8x/rfTHYd
-         /gdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728344049; x=1728948849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=31i13373D7hjydGNkXUzyHoWoEZHSJM+HBCGF/6GeLg=;
-        b=ucXzK1Jzf2IiIvtjQDXXcYBMzauyxSAPuB+ZckIsmGU/o6Z0YlDrqwEkhcJy6tFbtS
-         XTWW7uPQlyN+KWexd5zp/9WTKXmxamQa/3+gt9JMoMN+YKPhxl2yYS7zwjGPuzKRguFm
-         uQxSF4HeWMszk9Vul23uGpvbyCBd01bdo64S+9skemwfDa+XweVrmro7HJV96bh8POiq
-         SibI8UL+eMCU8s1rW/OGUQbMO1U3gAbStoiEkSqZvuoqNWUk8A2eDQfad96kMUdhq0Rq
-         55SKcAtm1ZfW/1jDNLA0Q3R4l65Mt+jJxYz4NDi5/TDOlsYTlYgzh4PihTu2/P+ZApVV
-         SaSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlxQoAm6xxraH9OqGjL3gl5WWQsg/lR46u4h5XUDgW9JjThpzdiAr7hJiIojtOf7/nsJq8g9k5cKZrD1V/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+abC6n7Z906iI0IpzS9gFkEttWw1p9D2Gll5n8Hmwn6dG+NVR
-	Ci62xpaerF6dJNV5B5MquHCMBzX3TNJQwHlv/bMCQZAxKeQGM60yEqysK7+JUq3oB//xz2yRKc7
-	8uxkiGfwt2zZgNwWnxh8OdYY7kAKYHObzaSfb
-X-Google-Smtp-Source: AGHT+IGIt7Fwqy3Pp7BHopSoM+TcDYPhYnnQ4DFKz14Gm8T6iB9xp1mSDJ2OSyz3D9vFqJOGu81NMdE2fTX+gXKnSJ8=
-X-Received: by 2002:a05:600c:5010:b0:428:e6eb:1340 with SMTP id
- 5b1f17b1804b1-42fcdcddf49mr2008895e9.4.1728344048449; Mon, 07 Oct 2024
- 16:34:08 -0700 (PDT)
+	s=arc-20240116; t=1728345499; c=relaxed/simple;
+	bh=90Bwktj5IOiWk4M0yQuEDT80jv0QRJpvTcOJARftBUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bx0Zqfq5VozLxMA/I8UmDNk9NJwaw7q38HpAjhY21212J/waW1Q2kJItqdlGCxamy00O8gHzn4WN3jpxivg1MZuugVp1JNAE2jYIs4nlFKDHfJSbvOdVicBIsJ3Ueh/OpblF2KSETX+nsFS/dOZVZvTSP0dnMvColeV7V30pqRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lzymT+VD; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Z7wWOJjw+YlO5tJ4k9pD+F+6MgV6cgp39aSz1M6inXo=; b=lzymT+VD0z17msR0bECXH3HgR/
+	qVYxErpxJRUJzXr/TsFL+CGdQ5barLN2DEcxCoMwg9Y2JhlKKje4jF2LxVt3CM4R9QCD5QInhWKV3
+	DpkhFsXoR3Rl8zMp42qzwpNIKS8A9eAeTIOjXHnJWVSxFBxyW3CjzMYQHibHIojOkzqvGwiUvapSq
+	YzNJ9pVh/+0BczA7GXVmV+qRVPWHIbf3fcO6FZ3k1xqdeIxiZlbIntPmfnnJkY64MdbT3Y58ROrGb
+	fbt3SppV7FjqRIEDALlLNLvtnOHbAx0A0c+ugm+Bb2XZEhggZzxHPNzDjEM99DPkhKvpB+3t9mYev
+	mhulnUVg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxxcF-00000001j8n-1E8F;
+	Mon, 07 Oct 2024 23:58:15 +0000
+Date: Tue, 8 Oct 2024 00:58:15 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	io-uring@vger.kernel.org, cgzones@googlemail.com
+Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
+Message-ID: <20241007235815.GT4017910@ZenIV>
+References: <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
+ <20241002020857.GC4017910@ZenIV>
+ <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
+ <20241002211939.GE4017910@ZenIV>
+ <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
+ <20241006052859.GD4017910@ZenIV>
+ <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
+ <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
+ <20241007212034.GS4017910@ZenIV>
+ <2da6c045-3e55-4137-b646-f2da69032fff@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
- <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
- <20241006043002.GE158527@mit.edu> <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
- <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com> <dcfwznpfogbtbsiwbtj56fa3dxnba4aptkcq5a5buwnkma76nc@rjon67szaahh>
-In-Reply-To: <dcfwznpfogbtbsiwbtj56fa3dxnba4aptkcq5a5buwnkma76nc@rjon67szaahh>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 8 Oct 2024 01:33:31 +0200
-Message-ID: <CAG48ez3S-COLHLR37LA_XyPxMQLCYpT+H68heA3yfBxKpyhuLg@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2da6c045-3e55-4137-b646-f2da69032fff@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Oct 6, 2024 at 9:29=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
-> On Sun, Oct 06, 2024 at 12:04:45PM GMT, Linus Torvalds wrote:
-> > But build and boot testing? All those random configs, all those odd
-> > architectures, and all those odd compilers *do* affect build testing.
-> > So you as a filesystem maintainer should *not* generally strive to do
-> > your own basic build test, but very much participate in the generic
-> > build test that is being done by various bots (not just on linux-next,
-> > but things like the 0day bot on various patch series posted to the
-> > list etc).
-> >
-> > End result: one size does not fit all. But I get unhappy when I see
-> > some subsystem that doesn't seem to participate in what I consider the
-> > absolute bare minimum.
->
-> So the big issue for me has been that with the -next/0day pipeline, I
-> have no visibility into when it finishes; which means it has to go onto
-> my mental stack of things to watch for and becomes yet another thing to
-> pipeline, and the more I have to pipeline the more I lose track of
-> things.
+On Mon, Oct 07, 2024 at 04:29:29PM -0600, Jens Axboe wrote:
+> > Can I put your s-o-b on that, with e.g.
+> > 
+> > io_uring: IORING_OP_F[GS]ETXATTR is fine with REQ_F_FIXED_FILE
+> > 
+> > Rejection of IOSQE_FIXED_FILE combined with IORING_OP_[GS]ETXATTR
+> > is fine - these do not take a file descriptor, so such combination
+> > makes no sense.  The checks are misplaced, though - as it is, they
+> > triggers on IORING_OP_F[GS]ETXATTR as well, and those do take 
+> > a file reference, no matter the origin. 
+> 
+> Yep that's perfect, officially:
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> Thanks Al!
 
-FWIW, my understanding is that linux-next is not just infrastructure
-for CI bots. For example, there is also tooling based on -next that
-doesn't have such a thing as "done with processing" - my understanding
-is that syzkaller (https://syzkaller.appspot.com/upstream) has
-instances that fuzz linux-next
-("ci-upstream-linux-next-kasan-gce-root").
+OK, updated and force-pushed (with slight reordering).  I can almost
+promise no-rebase mode for that thing from now on, as long as nobody
+on fsdevel objects to fs/xattr.c part of things after I repost the
+series in the current form.
+
+One possible exception: I'm not sure that fs/internal.h is a good
+place for those primitives.  OTOH, any bikeshedding in that direction
+can be delayed until the next cycle...
+
+To expand the circle of potential bikeshedders: s/do_mkdirat/filename_mkdirat/
+is a reasonable idea for this series, innit?  How about turning e.g.
+
+int __init init_mkdir(const char *pathname, umode_t mode)
+{
+        struct dentry *dentry;
+        struct path path;
+        int error;
+
+        dentry = kern_path_create(AT_FDCWD, pathname, &path, LOOKUP_DIRECTORY);
+        if (IS_ERR(dentry))
+                return PTR_ERR(dentry);
+        mode = mode_strip_umask(d_inode(path.dentry), mode);
+        error = security_path_mkdir(&path, dentry, mode);
+        if (!error)
+                error = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
+                                  dentry, mode);
+        done_path_create(&path, dentry);
+        return error;
+}
+
+into
+
+int __init init_mkdir(const char *pathname, umode_t mode)
+{
+	return filename_mkdirat(AT_FDCWD, getname_kernel(pathname), mode);
+}
+
+reducing the duplication?  It really should not be accessible to random
+places in the kernel, but syscalls in core VFS + io_uring interface for
+the same + possibly init/*.c...
+
+OTOH, I'm afraid to let the "but our driver is sooo special!" crowd play
+with the full set of syscalls...  init_syscalls.h is already bad enough.
+Hell knows, fs/internal.h just might be a bit of deterrent...
 
