@@ -1,178 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-31243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8CC9935BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 20:10:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D299935C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 20:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71280B22157
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 18:10:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3B1284861
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 18:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072CD1DDC14;
-	Mon,  7 Oct 2024 18:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538E41DDC16;
+	Mon,  7 Oct 2024 18:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="E/3iwE+R"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ysoc/eeN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B572715853D
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 18:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F284E1DB349
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 18:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728324596; cv=none; b=rBRYbRfXG4uJiEWdCZLkGgi+XE0UzbveZ5wltLevT6lMH3myLlZ43H2wf1Jaw0TLaSZ76XBFCsioJB67D+j2Vm+6ou9atoh2YbBhKsmI/d4ETeMfRrAv9mGTQlTYCenYhfBNlpKjkC59GQemjshbBgUudkdyNW1N8kGkR82BI60=
+	t=1728324778; cv=none; b=I/CQ29OzEU3hTdokSFzGbSM/rHDmvqY++fjcJT4w+YkJT8SZtxEDc/Tlhf+6iJlsaA4vlZqHI2YHZpAoJVBpqg9NlJ4E+YO1GqXfK26IyPLrKBsFDBQdUHWJRq2ts/tAabJp9sB+/1asQZPM/Tn0wHkGyB05JSTmUYobraBvfSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728324596; c=relaxed/simple;
-	bh=zLIMppPrugMzT25m7sk/+p2h9l3KxnUIurhtYqBnXRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MQR4i2ATIbXKb3T1WW+vbn60iBsPNa9zyNXN+pxIH31PTgPc5KWyRaWBhtit0tPY74f0Ck/NQkKAxfJ6pdgmUi4lXZ0yUlhq9YN/2t7tx8BBJb2CIgUyEWoomzinvkEIfjx+IjnvYMIvwhEuFwDFbJw4IgYHlHa1pVcGAlAnEVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=E/3iwE+R; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8349389f9b8so279696839f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 11:09:53 -0700 (PDT)
+	s=arc-20240116; t=1728324778; c=relaxed/simple;
+	bh=qPpfVtqAS2L1ezaV4Z0UzixAZyRPmq4QOJs33vi0Gac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rd7SzfQHe3++AcSPmB/jDz9NrO42eWvbLW0LKXBtWghFhNz29Kdy3K2juFEQ0TssFWf/zDJKcTrXVYOBD8SkdupeUyIF1ros31VcO5GSsdCq1ssLxMctFnUCBHk+uOfMamFviJQZKGW4py3g+J+l4CPuwo90L0L8E1aGwpYtD1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ysoc/eeN; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fac60ab585so49615441fa.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 11:12:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728324593; x=1728929393; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nKx2q0E55QyK3Ag9/pVGGc/umM/e0PybS3c+2amWNpU=;
-        b=E/3iwE+RetvIoLzF5R4gvyTNMl7iQnHh2A8/K/bBz/yQRlPuB0n+05LluR5LJsXiu+
-         kK/4UFYOT7f4mqcisOZqQdmHH1dOJ3W3Yw5LeJTXfF+TFdwxb7D2e8O4nugRfNBlp0Ss
-         kTzlvQr0RkDvCTgfwv6a/dftZct0c2YnWSBQyuw+0/e9l3fKFhXEzhJDVBxvkhML3fgh
-         eQk+ZfkCg4IjBTG6syxFA/YO8jhBTBmM6kLvq0y56xW/STSRrwkpkBCqz9f0v+GQbt54
-         QiARhKJxR2jI9qq5ZolALrqhxLL75gVUyCAb1CBl8hmT47LUldRH6SvzK+DgfwIu+umW
-         4i6A==
+        d=linux-foundation.org; s=google; t=1728324775; x=1728929575; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LVNysWYUY4jZQfEOdfDhYGKNKb56ic6Qv43E6kWBbsI=;
+        b=Ysoc/eeNFIxg50SLKuxu819PBZjqSu5AM2PSNBIHJhTSKvIL1HIwcm2fOz7Uw6Isk9
+         huvwjaIpw9XHl0ecvM3c8Q2hJr2+xG2A2rm3iI9z808Byojz8A1wdL+HQSAZEg2vDj6I
+         xnhVOmPPnzJl2tvE/nHtgtbHmD8bgRBr6hhcA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728324593; x=1728929393;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nKx2q0E55QyK3Ag9/pVGGc/umM/e0PybS3c+2amWNpU=;
-        b=NOZtzyBFc0zpC+jpeSMhjSlZJAyWj65hd6aRbIo6JOMkXu2IPmaj5xTfKOMZljgTVo
-         RRxHBMrPxxLHY5ACtsyTcrhAbNsMQhFAaskEyjD35I0ikuYZEoD4JPPU1abRcqLKZ8IZ
-         N1fY/j0XP3t8MZcT/LUA4aIp2VGDfY+7Z4/zHV1xt0LqbyKmadvqK76FAD5fjxvyRDAj
-         ++w8uVXYr0qvA7/E7kIzX516MwP4gPIMVNKsKS9FpTenA93BWoE1yL9JJ889hQoEtxBi
-         r593OjJ3GLaGVwr/8dimYnlh/ndeNY3jDfGnr542s8RCk4rI2l20D5V828pm6Ef0qkBd
-         G9yQ==
-X-Gm-Message-State: AOJu0Yxo7ItA5+p17HQzY7VdTVZ+dfPwazpqUgfhP0/1v4mfHIOYTrWt
-	hyO/ypsKLhOWglNv9ORRZZWuIKKSY0OzIOJzPz43AXmmO+6mIOVrta4TJ790dnE=
-X-Google-Smtp-Source: AGHT+IHhFJn70IIXJQ+W0tL8QD/Au4FOw48FkcEptLvLQrXMCQ3Y6tnncnEvSJ9XKQXcDAtK7gF63A==
-X-Received: by 2002:a05:6602:6b0c:b0:832:4000:fc63 with SMTP id ca18e2360f4ac-834f7d9a65fmr1114094639f.16.1728324592865;
-        Mon, 07 Oct 2024 11:09:52 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83503a92f7bsm133620839f.18.2024.10.07.11.09.51
+        d=1e100.net; s=20230601; t=1728324775; x=1728929575;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LVNysWYUY4jZQfEOdfDhYGKNKb56ic6Qv43E6kWBbsI=;
+        b=Mq2YdaUcTaVA9oW52Q2OR/feK3BwItYtJH7gzwuu4/Cz9issFtyXLPNva9fgdoRvat
+         lKt4EQKnlic7OYOn8srgRb1FKWhPG+h1JK1YF0dKQVYZpz7CwNCgM3ss17l3kjvWaFWk
+         0m8SQafd2BTc6eAvWei8MVNbu3MktTtTtJ9a/xf/I7jlDc1HVfGPttpaY9jBq4DsUcWg
+         0G1d5dxpCi/K7vseavD0yZqpJBWUVsEDwV5rlEm4z10SsI5nWp7aSmvglvkKrnDPTPl3
+         GL9zPbGNN7hbrwX1DaJxve1SZI1teUj/iDjQf/c7L9Muzy8BU0kT8IiM7rYu0Vxa6k4d
+         4IPA==
+X-Gm-Message-State: AOJu0YzrDGiHA5MhdBAzHzP74Ug7EaOy43WB57SsLFlPm0SCoJ7m35Re
+	GFXUMsIsPxc/Me12aWYIjke2wqlyZrTMCvn/8wxY0YL8D1F55UrgDjWIci5ccPNZWzVuJDpDlrA
+	jlAnvjQ==
+X-Google-Smtp-Source: AGHT+IFLp0wtSCDArnoPWTblB1boLdaE7oEQcEazgO+YKHWN6r3Lqx+Q8rNbB5k/Cchx0iSeKd6nkw==
+X-Received: by 2002:a2e:a985:0:b0:2f5:806:5cee with SMTP id 38308e7fff4ca-2faf3c5f7c9mr63675491fa.11.1728324774876;
+        Mon, 07 Oct 2024 11:12:54 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb5f8sm3381148a12.60.2024.10.07.11.12.53
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 11:09:52 -0700 (PDT)
-Message-ID: <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
-Date: Mon, 7 Oct 2024 12:09:51 -0600
+        Mon, 07 Oct 2024 11:12:54 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9957588566so169562766b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 11:12:53 -0700 (PDT)
+X-Received: by 2002:a17:907:6ea6:b0:a99:3a81:190e with SMTP id
+ a640c23a62f3a-a993a811a16mr921852366b.36.1728324773394; Mon, 07 Oct 2024
+ 11:12:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
+References: <20240822002012.GM504335@ZenIV> <20241007173912.GR4017910@ZenIV>
+In-Reply-To: <20241007173912.GR4017910@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 7 Oct 2024 11:12:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh8XriUt2mJTJaHBTTufUJzunYG45R_i3ZVw71r+wfcYg@mail.gmail.com>
+Message-ID: <CAHk-=wh8XriUt2mJTJaHBTTufUJzunYG45R_i3ZVw71r+wfcYg@mail.gmail.com>
+Subject: Re: [PATCHES] fdtable series v3
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
- io-uring@vger.kernel.org, cgzones@googlemail.com
-References: <20241002011011.GB4017910@ZenIV>
- <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
- <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
- <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
- <20241002020857.GC4017910@ZenIV>
- <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
- <20241002211939.GE4017910@ZenIV>
- <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
- <20241006052859.GD4017910@ZenIV>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241006052859.GD4017910@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/5/24 11:28 PM, Al Viro wrote:
-> On Wed, Oct 02, 2024 at 04:55:22PM -0600, Jens Axboe wrote:
-> 
->> The reason I liked the putname() is that it's unconditional - the caller
->> can rely on it being put, regardless of the return value. So I'd say the
->> same should be true for ctx.kvalue, and if not, the caller should still
->> free it. That's the path of least surprise - no leak for the least
->> tested error path, and no UAF in the success case.
-> 
-> The problem with ctx.kvalue is that on the syscall side there's a case when
-> we do not call either file_setxattr() or filename_setxattr() - -EBADF.
-> And it's a lot more convenient to do setxattr_copy() first, so we end
-> up with a lovely landmine:
->         filename = getname_xattr(pathname, at_flags);
-> 	if (!filename) {
-> 		CLASS(fd, f)(dfd);
-> 		if (fd_empty(f)) {
-> 			kfree(ctx.kvalue); // lest we leak
-> 			return -EBADF;
-> 		}
-> 		return file_setxattr(fd_file(f), &ctx);
-> 	}
-> 	return filename_setxattr(dfd, filename, lookup_flags, &ctx);
-> 
-> That's asking for trouble, obviously.  So I think we ought to consume
-> filename (in filename_...()) case, leave struct file reference alone
-> (we have to - it might have been borrowed rather than cloned) and leave
-> ->kvalue unchanged.  Yes, it ends up being more clumsy, but at least
-> it's consistent between the cases...
-> 
-> As for consuming filename...  On the syscall side it allows things like
-> SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
-> {
->         return do_mkdirat(dfd, getname(pathname), mode);
-> }  
-> which is better than the alternatives - I mean, that's
-> SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
-> {
-> 	struct filename *filename = getname(pathname);
-> 	int res = do_mkdirat(dfd, filename, mode);
-> 	putname(filename);
-> 	return ret;
-> }  
-> or 
-> SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
-> {
-> 	struct filename *filename __free(putname) = getname(pathname);
-> 	return do_mkdirat(dfd, filename, mode);
-> }
-> and both stink, if for different reasons ;-/  Having those things consume
-> (unconditionally) is better, IMO.
-> 
-> Hell knows; let's go with what I described above for now and see where
-> it leads when more such helpers are regularized.
+On Mon, 7 Oct 2024 at 10:39, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Changes since v2:
+>         Rebased to 6.12-rc2, now that close_range() fix got into
+> mainline.  No more than that so far (there will be followup
+> cleanups, but for now I just want it posted and in -next).
 
-Sounds like a plan.
+Looks all sane to me, the patches look clean, and removing over a
+hundred lines certainly is an improvement.
 
->>> Questions on the io_uring side:
->>> 	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
->>> Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
->>> Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
->>> Am I missing something subtle here?
->>
->> Right, it could be allowed for fgetxattr on the io_uring side. Anything
->> that passes in a struct file would be fair game to enable it on.
->> Anything that passes in a path (eg a non-fd value), it obviously
->> wouldn't make sense anyway.
-> 
-> OK, done and force-pushed into #work.xattr.
-
-I just checked, and while I think this is fine to do for the 'fd' taking
-{s,g}etxattr, I don't think the path taking ones should allow
-IOSQE_FIXED_FILE being set. It's nonsensical, as they don't take a file
-descriptor. So I'd prefer if we kept it to just the f* variants. I can
-just make this tweak in my io_uring 6.12 branch and get it upstream this
-week, that'll take it out of your hands.
-
-What do you think?
-
--- 
-Jens Axboe
+                     Linus
 
