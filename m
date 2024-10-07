@@ -1,145 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-31261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85884993A37
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 00:29:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC42993B36
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 01:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA2B3B21992
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 22:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D8C71C23607
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 23:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224F318CC17;
-	Mon,  7 Oct 2024 22:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B01B192B93;
+	Mon,  7 Oct 2024 23:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fcf59brg"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ktby9xLk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072AC18C333
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 22:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E16190477
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 23:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728340174; cv=none; b=Uta5183UOyH7DKKb8R2Q406yaVMKMzohaRXA9dxsApKNKMwa6cupSckCWj/sA6/y/y8SUSZFDw25bxx6Vss/KoOj8LPKAUIG7xYjRx9KbA6wICLrtj12OgOT5K2zUnzd54EEcOeh8qm8rNfUHTi8siNDRvWjWza3iHtWXKQtJ4Q=
+	t=1728343815; cv=none; b=Jtx/U3ZkM4oU4Qjjlbv7p3vuIok4VOH3PWLFTwOOM1IfmQjG/jzlZRxxv6aGKjStmQM7AYvXkGn6c2dzL9Ac3mhu9HSHvrRKPgMSFhBvXP5v6MnSosXV8n0y1kgdK3fRxGMl9LTI4hEY1HcYTfBEEOS+Uc4mP0tEty/KY0FJvbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728340174; c=relaxed/simple;
-	bh=dFBGJ7Fkq5TiDATvU9vo7164l+g2CBClix4Hq87gImE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ayRxwKLRIDLRcQUJWSb7XiuiD/9giSXcRyXfthmdEqMfP9bHSJff1hLHZvItlqY/xG9xy7Pbe7pQcLATlYDn3OX9if8ruWVP76oiWwH8Nxn6iqU2nIiWbWJEf3CH+lJ3UljmmyHl7W80GFZMBqvKDy/bODj9L/3ZPhigymimh5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fcf59brg; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b5fb2e89dso38368005ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 15:29:31 -0700 (PDT)
+	s=arc-20240116; t=1728343815; c=relaxed/simple;
+	bh=S1F++puxXk1Ulj8gHCvxmOOAcPGjm+vi9Ym0UiVV8hc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozvza2XS71opsD/TFZUnPaz/8fsNmWHdlB3FyeieKeP6qUIBiUvGBYOd4tvpa1ZMjhUa7tqA6V/rTUYERa5Zl5OKHxAiQvERQ5qbPyzr+TJ83/4UNwsknR69Ze5/6EcoAQCTfm+j/iXqmmnXgaxPTHdxOBjPhyUUjYgd8U59IKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ktby9xLk; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71de9e1f431so2671196b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 16:30:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728340171; x=1728944971; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u7Yr4WO6vKFC515dnzWPLRRBdfJDGWgI8I6HVaT96bc=;
-        b=fcf59brg4H5iQuVla2nfg/+lzvVh9+OkxVEBNmuaqRXaiOv7sIA4wMmOyx3qPJX8bR
-         NPN/PV4jIgfSdAeIOcwig8OpQoFu0Iw8bLJignJMk6O2qBFFUYiJn8OC8AQ0AQDlT7/t
-         ztJycwjlix6+o1X2BO/FtLjPAHqHAYC+SUwootFBmNDJ4qPrO1MJkz2HAzZ0DXDVvamk
-         n29reW/0I2JDO1X5OluGtZ2a0cAdazcAYZZpvvuehE/a9X/42nrGa821/z5RKwR7uUcw
-         Irdt+hMipYAIUXm1lJuSRXxjIUMgb2POaesEg19itoi0wNuAs77xiCAfWnJ6k2E5qxiD
-         v+Rw==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728343812; x=1728948612; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=e7/GR1vy5g6MzSW/6AGsBA6lPgGhyPg9oR0WwZB3CYI=;
+        b=ktby9xLkZAr2/l0cdYu5vXBZSpJTc8C1WJY4c0br7+rLMbpYJICVnk5B8OlUVXfThH
+         WiW2iiUvC5W0J2qdKb/9cuSXSuQF4i51HcPsmcDJpiaBmm6YjTRrH2tBqMMlaV++p3fG
+         u0E26Y23eCqRzhG6wbKWlJJIvsfnQ98Jy1HKkmUM2sv1Zg6jL/s+woWdKI+17vZr+XXC
+         OYorqtcblNuNivuqozuxo2THjZyAK2r1TCSwDiOf1tz9n3Dkfeon1W/kvpl+j6kegFsF
+         w5Ea1KLLz5H33G8KmASrKvkCvKstLrFWKDHQ5r8yEUOyR15C3KJlRe5TCnXqknDhd2oO
+         /60w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728340171; x=1728944971;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728343812; x=1728948612;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u7Yr4WO6vKFC515dnzWPLRRBdfJDGWgI8I6HVaT96bc=;
-        b=MWp9YeEfvZfijeCxuf8zp/8g37olH1aK1/A1eYQrSgb2JwgN4vw32gz3E81wVvV1rF
-         1C2pv8YWaBU53ADkREvJrEhV8zvyP2ehfyIuuH0kPcKB4opiaGpr/tPshugkr443nou7
-         Mw5/wjrJtwTNYUuasObCnppHXQdeH4tKTNygRPKrqL7V3NXcOWHFzSMI29/uhGUTYzA6
-         BepLssuf51TqO26F1eGm+nWtndk3sloKdTox9L0aikdy0c16yb+XeSEFl+WLzlgijL/r
-         cz710g8ma/VPX8MlqFQNMxvXapi5pgj180WXtse3vT4VvJ/vxLVHuCmhkJKJpOL0YFhu
-         NwKA==
-X-Gm-Message-State: AOJu0YxUSERMdfJmyx8PS5s24VWWFKyAjyZW28Rcci/U8UuAOIlMJSNh
-	nsu3Y063Bwoj6ErTYVcgGVmSzYQG33Vhz3xNDy7Uq8Oc6JA9UKUj9tLah9yS6XY=
-X-Google-Smtp-Source: AGHT+IH5NEobdxwS04ehz34YXVr2JyGbv2t0wb0CI25E+GEqKPdOzfpWGeUld/PYfzZktVocnX+3fQ==
-X-Received: by 2002:a17:902:f68a:b0:205:4721:19c with SMTP id d9443c01a7336-20bff1944a8mr137708025ad.37.1728340171233;
-        Mon, 07 Oct 2024 15:29:31 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13990b52sm44234165ad.281.2024.10.07.15.29.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 15:29:30 -0700 (PDT)
-Message-ID: <2da6c045-3e55-4137-b646-f2da69032fff@kernel.dk>
-Date: Mon, 7 Oct 2024 16:29:29 -0600
+        bh=e7/GR1vy5g6MzSW/6AGsBA6lPgGhyPg9oR0WwZB3CYI=;
+        b=ZCzXFvNfn8pdbGZRQMYGINrPP9AOkaQhn/JsGJS94VdUx9GhBVHlR7Cqgsehd8aC+4
+         vjFgMkDFvAkeSgQP3jX64LiWjJERDvNO1dZdMq4AHrm5Ze3jfJWms99e3RPVRu1PaMDf
+         WHkjUBK4Ti0jjSlrnQCk37Zi5W150jm/iihGnCBN6/gBp67yFOKP+hmIf+FYK7ZuuGHe
+         sKpv+SKAdJpxJRTJvTs3x9YZgBVN2Ae9kZx5HDKSUPCQhmYfxpuiszhaggVnBkuMAsA4
+         EsamM04xipVxlwNR87Tdc8I3AKx8m/zkgLy6lbWD09f6yM3b/umQGsw3SzzFNe3ObSVP
+         RL4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUr1U0lCM7nnPftjJ3Cvz3Bt0dzu4rCJjtBe3Mvd/LUL8u8utdbcLb8xfGk/Ljw/vYE5aMCWjpiiP8yFGE9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXSz0MeC3tinBS4/4R4RUuLlX1p8uP8cARHgGA8jZfdtlCrqin
+	jxWyEp3FtCob/5yB89nFpebaXh+5IsD5nLTFlj8m7+JEkR7mDLDPfXTKkeRjqsQ=
+X-Google-Smtp-Source: AGHT+IGbBDU9FuYkbc/ROL+eEuwX1ANHvoegHjKgVYPBMiJcEOGbwaOtHTQqomqAdeFDnRJFbE5XwQ==
+X-Received: by 2002:a05:6a00:8a03:b0:71d:ee1b:c854 with SMTP id d2e1a72fcca58-71dee1bcacamr11916142b3a.9.1728343812103;
+        Mon, 07 Oct 2024 16:30:12 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cbba1csm4970382b3a.33.2024.10.07.16.30.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 16:30:11 -0700 (PDT)
+Date: Mon, 7 Oct 2024 16:30:08 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Zong Li <zong.li@sifive.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH 16/33] riscv/shstk: If needed allocate a new shadow stack
+ on clone
+Message-ID: <ZwRvAEwFbrpq3zZq@debug.ba.rivosinc.com>
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+ <20241001-v5_user_cfi_series-v1-16-3ba65b6e550f@rivosinc.com>
+ <CANXhq0rpwQkZ9+mZLGVUq=r4WiA8BbZ-eeTDogf3fzeEPqeeqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
- io-uring@vger.kernel.org, cgzones@googlemail.com
-References: <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
- <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
- <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
- <20241002020857.GC4017910@ZenIV>
- <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
- <20241002211939.GE4017910@ZenIV>
- <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
- <20241006052859.GD4017910@ZenIV>
- <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
- <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
- <20241007212034.GS4017910@ZenIV>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241007212034.GS4017910@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANXhq0rpwQkZ9+mZLGVUq=r4WiA8BbZ-eeTDogf3fzeEPqeeqA@mail.gmail.com>
 
-On 10/7/24 3:20 PM, Al Viro wrote:
-> On Mon, Oct 07, 2024 at 12:20:20PM -0600, Jens Axboe wrote:
->> On 10/7/24 12:09 PM, Jens Axboe wrote:
->>>>>> Questions on the io_uring side:
->>>>>> 	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
->>>>>> Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
->>>>>> Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
->>>>>> Am I missing something subtle here?
->>>>>
->>>>> Right, it could be allowed for fgetxattr on the io_uring side. Anything
->>>>> that passes in a struct file would be fair game to enable it on.
->>>>> Anything that passes in a path (eg a non-fd value), it obviously
->>>>> wouldn't make sense anyway.
->>>>
->>>> OK, done and force-pushed into #work.xattr.
->>>
->>> I just checked, and while I think this is fine to do for the 'fd' taking
->>> {s,g}etxattr, I don't think the path taking ones should allow
->>> IOSQE_FIXED_FILE being set. It's nonsensical, as they don't take a file
->>> descriptor. So I'd prefer if we kept it to just the f* variants. I can
->>> just make this tweak in my io_uring 6.12 branch and get it upstream this
->>> week, that'll take it out of your hands.
->>>
->>> What do you think?
+On Mon, Oct 07, 2024 at 04:17:47PM +0800, Zong Li wrote:
+>On Wed, Oct 2, 2024 at 12:20 AM Deepak Gupta <debug@rivosinc.com> wrote:
 >>
->> Like the below. You can update yours if you want, or I can shove this
->> into 6.12, whatever is the easiest for you.
-> 
-> Can I put your s-o-b on that, with e.g.
-> 
-> io_uring: IORING_OP_F[GS]ETXATTR is fine with REQ_F_FIXED_FILE
-> 
-> Rejection of IOSQE_FIXED_FILE combined with IORING_OP_[GS]ETXATTR
-> is fine - these do not take a file descriptor, so such combination
-> makes no sense.  The checks are misplaced, though - as it is, they
-> triggers on IORING_OP_F[GS]ETXATTR as well, and those do take 
-> a file reference, no matter the origin. 
+>> Userspace specifies CLONE_VM to share address space and spawn new thread.
+>> `clone` allow userspace to specify a new stack for new thread. However
+>> there is no way to specify new shadow stack base address without changing
+>> API. This patch allocates a new shadow stack whenever CLONE_VM is given.
+>>
+>> In case of CLONE_VFORK, parent is suspended until child finishes and thus
+>> can child use parent shadow stack. In case of !CLONE_VM, COW kicks in
+>> because entire address space is copied from parent to child.
+>>
+>> `clone3` is extensible and can provide mechanisms using which shadow stack
+>> as an input parameter can be provided. This is not settled yet and being
+>> extensively discussed on mailing list. Once that's settled, this commit
+>> will adapt to that.
+>>
+>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> ---
+>>  arch/riscv/include/asm/usercfi.h |  25 ++++++++
 
-Yep that's perfect, officially:
+... snipped...
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> +
+>> +/*
+>> + * This gets called during clone/clone3/fork. And is needed to allocate a shadow stack for
+>> + * cases where CLONE_VM is specified and thus a different stack is specified by user. We
+>> + * thus need a separate shadow stack too. How does separate shadow stack is specified by
+>> + * user is still being debated. Once that's settled, remove this part of the comment.
+>> + * This function simply returns 0 if shadow stack are not supported or if separate shadow
+>> + * stack allocation is not needed (like in case of !CLONE_VM)
+>> + */
+>> +unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
+>> +                                          const struct kernel_clone_args *args)
+>> +{
+>> +       unsigned long addr, size;
+>> +
+>> +       /* If shadow stack is not supported, return 0 */
+>> +       if (!cpu_supports_shadow_stack())
+>> +               return 0;
+>> +
+>> +       /*
+>> +        * If shadow stack is not enabled on the new thread, skip any
+>> +        * switch to a new shadow stack.
+>> +        */
+>> +       if (is_shstk_enabled(tsk))
+>
+>Hi Deepak,
+>Should it be '!' is_shstk_enabled(tsk)?
 
-Thanks Al!
+Yes it is a bug. It seems like fork without CLONE_VM or with CLONE_VFORK, it was returning
+0 anyways. And in the case of CLONE_VM (used by pthread), it was not doing the right thing.
+Most of the testing has been with busybox build (independent binaries0 driven via buildroot
+setup. Wondering why it wasn't caught.
 
--- 
-Jens Axboe
+Anyways, will fix it. Thanks for catching it.
+
+>
+>> +               return 0;
+>> +
+>> +       /*
 
