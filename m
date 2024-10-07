@@ -1,47 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-31143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EACE9923EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 07:41:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB599923F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 07:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBDF81C2219C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 05:41:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C46B22499
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 05:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE2E13B294;
-	Mon,  7 Oct 2024 05:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DF313C807;
+	Mon,  7 Oct 2024 05:42:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD73327726;
-	Mon,  7 Oct 2024 05:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F295D13635E;
+	Mon,  7 Oct 2024 05:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728279674; cv=none; b=Cp3lXPUgzwKkWXuOBIogSQpBPn1YAoIHmZ1ls/PSzs3GPkpMoyHwzlPsjmeCGa7/2FhJBVB80ZgJEEWO2e7hNc1213cgX+ISIthpw3IzGzAoVqvF7fc0hxY5uTkf3HjO0HV8M2wXnjREu2O/7Ljy1ytMQqivPNqYo9U0r7CxdgY=
+	t=1728279756; cv=none; b=hYwGLEQKk8NPFYkfjpaLL1rZMvax++TA03/maBlp6/Vylftk+vETvI6G4HrugO1gg1uhkiSkvtwMGqfnSTHIQn7zwPm7mFokJaC7yrXsH/6mWxViglXo8E9xy8MRfIuYWdJnrIQZUkt8fE9+06OqRSqcE2rF1PycAuetPv+4uRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728279674; c=relaxed/simple;
-	bh=3rmfuYqFvxZSpPkPu3avf0MagV/I61EnJUtADx4nSnE=;
+	s=arc-20240116; t=1728279756; c=relaxed/simple;
+	bh=jNFJbeaBC/ddBNQtHsaqiEZYQpM+ep++AQHObx5w6UI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtLFU5MbhVWaqcXJin9JlYUuHxg+/29mDMoXKYJemRpVvJNBXWiU5jU9lxSUdnBjHRI3xjk0NTYqe8M7FF3XGd4mTH5XgFM5/4TOMiWmtNf4EvRI7Pf0PehPOHr1+aAZjY9GwVlnbrterl3AqLvepg44f25Zn2c9gXl2gwtRLNw=
+	 Content-Type:Content-Disposition:In-Reply-To; b=OeE4si6CambJ6bsx4+xVcxQuz+24W39Ec648FzG5tKo9Ovs0aH961Q6Q4RCYoOWjFZOJfaDJWSxEaMQCnHwMSZ7cGIXUee6gDFGPQKJY+DKUDQAZvcBze48NlV7WX1DBaxSPEJbv8msMb5ICfzJ1dm4sVpM9f6bkpSTq+XdwSeU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 0F621227A8E; Mon,  7 Oct 2024 07:41:02 +0200 (CEST)
-Date: Mon, 7 Oct 2024 07:41:01 +0200
+	id 85BB1227A8E; Mon,  7 Oct 2024 07:42:29 +0200 (CEST)
+Date: Mon, 7 Oct 2024 07:42:29 +0200
 From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: fix stale delalloc punching for COW I/O v4
-Message-ID: <20241007054101.GA32670@lst.de>
-References: <20240924074115.1797231-1-hch@lst.de> <20241005155312.GM21853@frogsfrogsfrogs>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, brauner@kernel.org,
+	djwong@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	dchinner@redhat.com, cem@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v7 5/8] xfs: Support FS_XFLAG_ATOMICWRITES
+Message-ID: <20241007054229.GA307@lst.de>
+References: <20241004092254.3759210-1-john.g.garry@oracle.com> <20241004092254.3759210-6-john.g.garry@oracle.com> <20241004123520.GB19295@lst.de> <f4d2180a-8baa-4636-a0a1-36e474fcd157@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,21 +52,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241005155312.GM21853@frogsfrogsfrogs>
+In-Reply-To: <f4d2180a-8baa-4636-a0a1-36e474fcd157@oracle.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Sat, Oct 05, 2024 at 08:53:12AM -0700, Darrick J. Wong wrote:
-> Hmmm so I tried applying this series, but now I get this splat:
-> 
-> [  217.170122] run fstests xfs/574 at 2024-10-04 16:36:30
+On Fri, Oct 04, 2024 at 02:07:05PM +0100, John Garry wrote:
+> Sure, that is true (about being able to atomically write 1x FS block if the 
+> bdev support it).
+>
+> But if we are going to add forcealign or similar later, then it would make 
+> sense (to me) to have FS_XFLAG_ATOMICWRITES (and its other flags) from the 
+> beginning. I mean, for example, if FS_XFLAG_FORCEALIGN were enabled and we 
+> want atomic writes, setting FS_XFLAG_ATOMICWRITES would be rejected if AG 
+> count is not aligned with extsize, or extsize is not a power-of-2, or 
+> extsize exceeds bdev limits. So FS_XFLAG_ATOMICWRITES could have some value 
+> there.
+>
+> As such, it makes sense to have a consistent user experience and require 
+> FS_XFLAG_ATOMICWRITES from the beginning.
 
-I don't.  What xfstests tree is this with?
-
-> I think this series needs to assert that the invalidatelock is held
-> (instead of taking it) for the IOMAP_UNSHARE case too, since UNSHARE is
-> called from fallocate, which has already taken the MMAPLOCK.
-
-Yes.  I'll look into fixing it, but so far I haven't managed to
-reproduce the actual splat.
+Well, even with forcealign we're not going to lose support for atomic
+writes <= block size, are we?
 
 
