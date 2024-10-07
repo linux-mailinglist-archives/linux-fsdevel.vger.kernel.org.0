@@ -1,73 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-31245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6C99935F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 20:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AD2993629
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 20:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 095AF286B30
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 18:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C96282DA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 18:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1A21C1AAA;
-	Mon,  7 Oct 2024 18:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3551DDC35;
+	Mon,  7 Oct 2024 18:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sOJIFcRU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1BrJF12T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF24D1369A8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 18:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9254132111
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Oct 2024 18:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728325225; cv=none; b=U4IP3vQsS8VMZR8ST57/EN/2fLvGDX6BmHsvbiaRR+ExdpMq4fJ/T2MZyQVQm2u4MM1/qKWWU3TCvOauV4c9QvT2M8DUJM4bI+Ssje01xJQKvh44kBaKyl9mh91s9X3vH3NMFW143wQALrtMq9idMV9T1x+U9e5BfX9eDVEpfEg=
+	t=1728325626; cv=none; b=Jrtz9Kt4UOdCBFbfe25p7phmRt+kAxOhWQ+chaSHttGfAKgQXDdq3R6kqBqXPgif1MmIjY1Rz41JL63TLodELtXHXelmYaiUpgqer7HbiJTnpzypMOSTKIbpIRg2SOqRmsYz0ZTsJhBwL8mWcy18XLDp7WIZ6oTDA+oT2VFmrmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728325225; c=relaxed/simple;
-	bh=ojSf5cbidjyO8BtBhVFcTNRnlmrewtRNc0xe7Fx60FY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kSr69Lk5Tk67G1FWgzo4kBO3vVvICuefO6SRHhRwxMCMHfdbNxJqZKcpibor6LDecrexzdlsknEE7+PmgZ6ZLFTrYvjowcvoEYmrBtIFvn87nPNBtsMweOX9oHT5no/uVXlh5zSS6G413snIgIk3R9DzttO4PYiDMed51MfOpPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sOJIFcRU; arc=none smtp.client-ip=209.85.166.48
+	s=arc-20240116; t=1728325626; c=relaxed/simple;
+	bh=uPnOz8oYDJjrvBUaD25yi+xjE2XYM35iRidKrrPUnI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sDOAZWOZjc/cNCASOTECsi6g3+1xA3TRUgEhGi/3QJrWJBY9O7uF6Nb3hSRpCWBkTSV/n13MaZqW57O0rP0pFpPNmMWJ5WhFkC893r5Ihc/GDOSNa+Ix4/WZbySEEsyMIr5XJvxtmwsdGdsu6uLskgzduHKvqkBNG1GaNzgVOXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1BrJF12T; arc=none smtp.client-ip=209.85.166.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82ceab75c27so306260439f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 11:20:22 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a33a6c3102so13777605ab.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 11:27:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728325222; x=1728930022; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=u2v+8dRG3UE1nMM69AsVKIVOw5VffZD/lCmj3L+nU2o=;
-        b=sOJIFcRUN7YdCEC44GOBihYdDHZCsljQ5usYhbhASaPPWYvOtYn2vFk0d7avOx6+2q
-         yBdz5GyghM5S9SueGD+deyzajya/+pYyZ9nqV5nLgr5qw7RR5/z9BbkZwCOVWerFqMcg
-         FHd5pU6dU/8QmaarjWeynwpDvMyW1rP8gy1NmqoSMmUkx9m26b9GyRnabfRlu2tWfj9I
-         n+Gja60UfP1jROhQltjywXuPrJpiy3Qx8KELVY1fSujRbDaSrGjKxu9tmv8AckRjVeI0
-         hZt5uz7sqjRpyzMpHYSUOOMcOnsaV3m5FP3QwLXfP18EKd3lLgyQKBmrMGLQf4pCBJSX
-         ExTw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728325623; x=1728930423; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WxrnObm0BNDzoFIuAPxsLMa6K6BQSMTEdRxzlKh9FjQ=;
+        b=1BrJF12TkcpX6c13/jn73x+3+9cwHf7C/xmv5cZWGjt+CY4qw9TraMZviLJZwzg8uT
+         BiWoyaxcIpUSMuMQ+7Ee8r8rScEllf01eGCuuwlaO2oqWnsFmI4KjiILpPpk8SYVYRQn
+         WRMXpRC6WIYcubv/k8Zo6Ptvt/T0fLrEFpukxCs/1Kme5ir47KkQKaJSDvVNlNPWwxqN
+         fyuS0lSNXCThgj1wDsnwb1FINNgkwLKWiZqkuFViIIgdnwf5k50kNFm3ifKy4VYangSv
+         YX/lfxkT450vfWWNbHEmn0+pf1b67Z8YXhZe7P+DBWQCxSB/1pTqWE2dbtxY/+9yAZif
+         SZsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728325222; x=1728930022;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728325623; x=1728930423;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2v+8dRG3UE1nMM69AsVKIVOw5VffZD/lCmj3L+nU2o=;
-        b=aUPFciMsxqNp3RJ1+yvvyZncG7fzk4SJa4MvdhasCC+laypwN3llbmd3qI8TuTCW99
-         ErmYvQQOgVIkohSTP/dGtrwp8AOdpxKFtUYrgzWz80NCf+PJW3R0Yoz6Ng/qQVhWvU8K
-         8a7SARAKFBDviIOeb2adbZPUyW16p6UNp5N+px9cUay/DYZwacdig0My/Ovja4mmDGDn
-         Kld1CSAvU9axyjwJU/405J0sWa+rdBnP4R/93HHbKq08NYh5PteUIJMU9VBsRbib+xdd
-         BD5D7PAPmAcWQ7AupKFVjUl23ZsQL9zM6qwshcbsXA4WApUJ85VnnYn2/eeqfyQho+jH
-         sr9g==
-X-Gm-Message-State: AOJu0YzsZS2aeTbA26Dw089Q8w0R1DGCVj5Ssl81Sjzjwg+mHgaFWyvf
-	MbUmRHRlWmOdd2J5HoeFeRCst+39gGlHUFHbQENmL8+B7AZjY2Ow4IUEmIRLoDk=
-X-Google-Smtp-Source: AGHT+IGyvCO4hk9dD0z++2E+tCl7PlWSCqS+Vxlnqkga5Qs+bR1Yv5xManU/Zq/VXIHQuRZvUimsgg==
-X-Received: by 2002:a05:6e02:12c7:b0:39f:6f8c:45f3 with SMTP id e9e14a558f8ab-3a375bae0b2mr106028055ab.16.1728325221940;
-        Mon, 07 Oct 2024 11:20:21 -0700 (PDT)
+        bh=WxrnObm0BNDzoFIuAPxsLMa6K6BQSMTEdRxzlKh9FjQ=;
+        b=quuN34YRVeNNTSvYo5BeUXvbzc0V/JRYjX6HkAXY3gupHE6+OYOr2lUXWOd1fwgKT1
+         Ccl3zbSzgt/4BMJW9lJNlUgbjtmIGJzwLwDCiWhQgT6ZXSu3/NUgJ6TF6BLn+mMGgNxR
+         R25JAYuSQR7yHmuSPO2D9pgtZs+ooYwnJVHJFL5wxAqXTcG+HMq88UZOwVVbkGRKJXnJ
+         yq5xPdmM81o+eIf6kBArDZIQd1Mxykap7U2X4krYnZe8g7DcKZzNM9AbAdhL/5m0Uo+R
+         AQu8y4bg5HjMHts19xo9sQMQGfFNicD75v6bKev4h3aOl79SO+i5E9GDp+K6dwV7bydF
+         pdrA==
+X-Gm-Message-State: AOJu0YwYZ0Balll5tcK1VjuViQgGhb12a74J4R6cpL+wb7/LMiKe+9Na
+	Rutyo1j5Br9OsVljr84KxyAJ82hnZBo3DLtOEaREIYlA4BkhMsg4laQ9ytzJCSs=
+X-Google-Smtp-Source: AGHT+IFMnnsd1Zrr0GTeY88yH4igfTcqd+VLGHUrMWdnSVvTWYH7gT5DJWlR/5RrMQ4ZzdYwe5UR9Q==
+X-Received: by 2002:a05:6e02:138b:b0:3a0:9c04:8047 with SMTP id e9e14a558f8ab-3a38af22d53mr5028195ab.6.1728325622963;
+        Mon, 07 Oct 2024 11:27:02 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a37a868967sm14065885ab.67.2024.10.07.11.20.20
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a37a868b95sm14404745ab.69.2024.10.07.11.27.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 11:20:21 -0700 (PDT)
-Message-ID: <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
-Date: Mon, 7 Oct 2024 12:20:20 -0600
+        Mon, 07 Oct 2024 11:27:02 -0700 (PDT)
+Message-ID: <ccfe92d7-0874-4e0d-bb79-c1df7eb0b302@kernel.dk>
+Date: Mon, 7 Oct 2024 12:27:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,97 +75,60 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
-From: Jens Axboe <axboe@kernel.dk>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
- io-uring@vger.kernel.org, cgzones@googlemail.com
-References: <20241002011011.GB4017910@ZenIV>
- <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
- <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
- <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
- <20241002020857.GC4017910@ZenIV>
- <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
- <20241002211939.GE4017910@ZenIV>
- <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
- <20241006052859.GD4017910@ZenIV>
- <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
+Subject: Re: [PATCH v2 0/3] fs: introduce file_ref_t
+To: Christian Brauner <brauner@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <20241007-brauner-file-rcuref-v2-0-387e24dc9163@kernel.org>
 Content-Language: en-US
-In-Reply-To: <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241007-brauner-file-rcuref-v2-0-387e24dc9163@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/7/24 12:09 PM, Jens Axboe wrote:
->>>> Questions on the io_uring side:
->>>> 	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
->>>> Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
->>>> Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
->>>> Am I missing something subtle here?
->>>
->>> Right, it could be allowed for fgetxattr on the io_uring side. Anything
->>> that passes in a struct file would be fair game to enable it on.
->>> Anything that passes in a path (eg a non-fd value), it obviously
->>> wouldn't make sense anyway.
->>
->> OK, done and force-pushed into #work.xattr.
+On 10/7/24 8:23 AM, Christian Brauner wrote:
+> As atomic_inc_not_zero() is implemented with a try_cmpxchg() loop it has
+> O(N^2) behaviour under contention with N concurrent operations and it is
+> in a hot path in __fget_files_rcu().
 > 
-> I just checked, and while I think this is fine to do for the 'fd' taking
-> {s,g}etxattr, I don't think the path taking ones should allow
-> IOSQE_FIXED_FILE being set. It's nonsensical, as they don't take a file
-> descriptor. So I'd prefer if we kept it to just the f* variants. I can
-> just make this tweak in my io_uring 6.12 branch and get it upstream this
-> week, that'll take it out of your hands.
+> The rcuref infrastructures remedies this problem by using an
+> unconditional increment relying on safe- and dead zones to make this
+> work and requiring rcu protection for the data structure in question.
+> This not just scales better it also introduces overflow protection.
 > 
-> What do you think?
+> However, in contrast to generic rcuref, files require a memory barrier
+> and thus cannot rely on *_relaxed() atomic operations and also require
+> to be built on atomic_long_t as having massive amounts of reference
+> isn't unheard of even if it is just an attack.
+> 
+> As suggested by Linus, add a file specific variant instead of making
+> this a generic library.
+> 
+> I've been testing this with will-it-scale using a multi-threaded fstat()
+> on the same file descriptor on a machine that Jens gave me access (thank
+> you very much!):
+> 
+> processor       : 511
+> vendor_id       : AuthenticAMD
+> cpu family      : 25
+> model           : 160
+> model name      : AMD EPYC 9754 128-Core Processor
+> 
+> and I consistently get a 3-5% improvement on workloads with 256+ and
+> more threads comparing v6.12-rc1 as base with and without these patches
+> applied.
 
-Like the below. You can update yours if you want, or I can shove this
-into 6.12, whatever is the easiest for you.
+FWIW, I ran this on another box, which is a 2-socket with these CPUs:
 
+AMD EPYC 7763 64-Core Processor
 
-diff --git a/io_uring/xattr.c b/io_uring/xattr.c
-index 6cf41c3bc369..4b68c282c91a 100644
---- a/io_uring/xattr.c
-+++ b/io_uring/xattr.c
-@@ -48,9 +48,6 @@ static int __io_getxattr_prep(struct io_kiocb *req,
- 	const char __user *name;
- 	int ret;
- 
--	if (unlikely(req->flags & REQ_F_FIXED_FILE))
--		return -EBADF;
--
- 	ix->filename = NULL;
- 	ix->ctx.kvalue = NULL;
- 	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
-@@ -90,6 +87,9 @@ int io_getxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	const char __user *path;
- 	int ret;
- 
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
- 	ret = __io_getxattr_prep(req, sqe);
- 	if (ret)
- 		return ret;
-@@ -152,9 +152,6 @@ static int __io_setxattr_prep(struct io_kiocb *req,
- 	const char __user *name;
- 	int ret;
- 
--	if (unlikely(req->flags & REQ_F_FIXED_FILE))
--		return -EBADF;
--
- 	ix->filename = NULL;
- 	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	ix->ctx.cvalue = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-@@ -183,6 +180,9 @@ int io_setxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	const char __user *path;
- 	int ret;
- 
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
- 	ret = __io_setxattr_prep(req, sqe);
- 	if (ret)
- 		return ret;
+hence 128 cores, 256 threads. I ran my usual max iops test case, which
+is 24 threads, each driving a fast drive. If I run without io_uring
+direct descriptors, then fget/fput is hit decently hard. In that case, I
+see a net reduction of about 1.2% CPU time for the fget/fput parts. So
+not as huge a win as mentioned above, but it's also using way fewer
+threads and different file descriptors. I'd say that's a pretty
+noticeable win!
 
 -- 
 Jens Axboe
