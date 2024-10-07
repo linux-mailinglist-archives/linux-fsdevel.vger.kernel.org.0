@@ -1,145 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-31160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5609929A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 12:59:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B38E9929CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 13:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61ED9284287
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 10:59:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAEC11F22B16
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 11:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4E71D2F5C;
-	Mon,  7 Oct 2024 10:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8C21D175F;
+	Mon,  7 Oct 2024 11:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xo6a7QoP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ii3JlSB7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F386315D5C1;
-	Mon,  7 Oct 2024 10:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2091D1AB51F;
+	Mon,  7 Oct 2024 11:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728298714; cv=none; b=jwJnNg5UFPdwvncNbgOHpU3ge8MnLePNH36mNBmYPLDggaqB9IT8bqjihmIFsdr5KXyjsX0mx4uSFYtFuKLPIlKr1f4AwljXKeq8P3ta/lVcf9uPMSUGDYTmmbJLaqkhOQNejJk0wpQTg4am/SD+QuWHtlXUmDGDo0CY65H3Cn8=
+	t=1728298930; cv=none; b=CZWFVBydv4QDbUHb1pBRe1UXgNsZ5Apd7mEr7Ap98ZdqUOQ/62vfLwhmTlXCHVi3GnP2jiHrcbnhBnfwHtqLo54BRlme1VYhnYEMFEItu0ChI0MlDMC/2cJxhkIAxp8Yyahi1TGQRThB/Xtj5JNwooyNB2E5s6LVR9OT2vOyBz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728298714; c=relaxed/simple;
-	bh=2GHIYkn8cRFjuA6UoXjds38baJgePZQPA32Pa4pACIs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lRDly8FY6G9BuBtQstwR5mm4mJtcBabfECSTlYEtxqE1Uv96++qT8p1FEvkiQLz0f7EEMKYB01BCaCk8Kfrrp7ZhTPc74i6jT5TO5ixuf3VGwXTC8Baf7HvZGQXZ/JOqeEWohuJnTZvMnJSNTd/Ia7oAmWxr9aASZNiiBluOXvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xo6a7QoP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F3CC4CECF;
-	Mon,  7 Oct 2024 10:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728298713;
-	bh=2GHIYkn8cRFjuA6UoXjds38baJgePZQPA32Pa4pACIs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xo6a7QoPaAsdhkEDock0VKt30RgKQGDYB55iSjs8d7YTjilKAWw7i3RESilp0cQmJ
-	 RkjDVaYeEP4FP9Um0SKIfeDcDl7H+Fi+NhKi0FBYdFB987Lxfsc/g9l1JNp8UGKwMc
-	 Fw4+iKLZ4j5+PeS1HlhU82WbFMjMgy9PbJI3nNlnMDRZI+xMrTIf9oliBkKKNKIEUV
-	 3iQt4cjUHMHjHCiQn6OAZh2AOaoIPFY3DYE1VAJSG1MGdziqr64pvzgt8d9LGQCH6l
-	 6Yp4ik5VqzQOvKusiZPsiQyiGE/GDJ+EKPs8F/8xOnQ5XAM59NbuIRCxgjag482bXQ
-	 /nWr7X/hM+SpQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-mm@kvack.org,
-	John Stultz <jstultz@google.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: Re: (subset) [PATCH v10 00/12] timekeeping/fs: multigrain timestamp redux
-Date: Mon,  7 Oct 2024 12:58:21 +0200
-Message-ID: <20241007-restlaufzeit-birnen-2f412852441e@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241002-mgtime-v10-0-d1c4717f5284@kernel.org>
-References: <20241002-mgtime-v10-0-d1c4717f5284@kernel.org>
+	s=arc-20240116; t=1728298930; c=relaxed/simple;
+	bh=x0XMAhxdJcqJh6lyhyMwHpYIegB7eFV4To1CVwHMbLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hcKN7PLv5tKVOWr3SMJ/XJKQlp5Vj03sRCQwco5b7TbEr0bTAtJ+K6Rjs9TgAvxf4eryW3GAq7bXXCg1DVmX6PlaP8J8XnxrJJzVo7TzhMXgfy4PsMU3XPDXcGMct60OiTSfcsbl/YPtpf9VZ2vDTOhxiQ1HoUeEulf6CFOWPHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ii3JlSB7; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a9ab721058so449107085a.1;
+        Mon, 07 Oct 2024 04:02:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728298928; x=1728903728; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7jBU1B3c4Xtk6xVi6h5PIiFMEYdlpnr0VgQhAVUNZz0=;
+        b=Ii3JlSB7sQ27mgaFsEZTSPoZHODCfTDgfmEG535i0AnxPndw5VFiN36U2ZmHpfsDsU
+         yZqrRRxyEhg8/vnV4uVrnrOnc7+i0Lx1GOKCSTqQeMC73A/38aopW6VANF+ZQLFehlXR
+         WAK1kNTIdT/+hAEA1uCsLtaVpnLG5onohOFzvFUvOgG4rdAeyiv8Q5T7LQaOXaY5vvLZ
+         xMJUuVTf1edGbs456/7ns1CDkhnNWUlbOZj/0tydugEJoNQhLWdaEQ7Hze5jdm2qu7P9
+         fHQVTkiLhELU/VQeIIx4e3vATFZh4UGodrSHU3XOJJ1va9LFVCqkuhYcYJsxQfQxOFpN
+         s7RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728298928; x=1728903728;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7jBU1B3c4Xtk6xVi6h5PIiFMEYdlpnr0VgQhAVUNZz0=;
+        b=jTGYQC1VGeLGt3RBPOxlGwV2FtURkYmRTdBB9g0OStqWs/4LJWimfOzFeoGVeChWGV
+         G63nNktBBmHRijFvkTaGSBDQu3kP/9DeiBw4iyIWJvZNgF0KgJHNmAz3DG8CInEhZ2BZ
+         k9VacTvU2SiXYKgh8XAcn0YTJKRs+j9tkekWriaETnMlBrDn/wC1w4eD1mBljB5Hw4Xi
+         KiSlHuaLKvLSEc4wGf997fZ1jrpSur/GCTErFEt92dfCGY/FM9mOHRAup1Cc0gxQ6JJG
+         CfreSJOnPI8Cv6huL/D21zb5WHryVnReZdXP5ID0U3XhJLBJF1M3jESQPbdZ0bfhvj6u
+         yFzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAFS/OXyOYDVPjcWn9WmwjMs4TGQqX6OqlKBEw4UR1ZqTcT0s78AHHUF2D2EHL3jOZP3dXQDbrB1VD4QRXOg==@vger.kernel.org, AJvYcCWKsnU8zs5GsbFIO3aJNGsvGYZGgOMmJkFJ2NogJbuv7AoDWPuHm3GmH1i1sC/mCyVeZlFg/GhGUhGCzHST@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg1YbcPHWMDiWKWZOEZxjs4tcHaQMSnMOsdDs0/nGgPdPYdDeD
+	Pgt9InnEhFd+8Kp60qlBRl8z2xdpPSqfTYrYmXbNTvweTcESNWUNfTxjuNDBtKdSao8gG9bAH1y
+	NJ5Qs74GWtQoO+7kDZqFBrHPa4cc=
+X-Google-Smtp-Source: AGHT+IHHtgT3lfmWv8nu5wik20N2JeGOKj62WY3oenGtrFmKfzoXJjut7rpOqYYXpQ4kyKYEZebmadWMzttCcEF9fFc=
+X-Received: by 2002:a05:620a:280a:b0:7a9:b80b:81e with SMTP id
+ af79cd13be357-7ae6fb4064cmr1498241785a.10.1728298927821; Mon, 07 Oct 2024
+ 04:02:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2375; i=brauner@kernel.org; h=from:subject:message-id; bh=2GHIYkn8cRFjuA6UoXjds38baJgePZQPA32Pa4pACIs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQz7zt3ROG96vKmhmAJRb2iW0lPrWYvcrN65X025sO3H TIF+Vq3O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZSuo7hD++GxO7jd4sfeZ2Y e2VOTlbbRvlo2xPWddtPcQQeKVu3dBrDP+O0xuMVC6u2NJnKzzd25XLIvFWufkOs6q/e5LaD4Z3 LWQE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20241006082359.263755-1-amir73il@gmail.com> <CAJfpegsrwq8GCACdqCG3jx5zBVWC4DRp4+uvQjYAsttr5SuqQw@mail.gmail.com>
+ <CAOQ4uxjxLRuVEXhY1z_7x-u=Yui4sC8m0NU83e0dLggRLSXHRA@mail.gmail.com> <CAJfpegvbAsRu-ncwZcr-FTpst4Qq_ygrp3L7T5X4a2YiODZ4yg@mail.gmail.com>
+In-Reply-To: <CAJfpegvbAsRu-ncwZcr-FTpst4Qq_ygrp3L7T5X4a2YiODZ4yg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 7 Oct 2024 13:01:56 +0200
+Message-ID: <CAOQ4uxi0LKDi0VaYzDq0ja-Qn0D=Zg_wxraqnVomat29Z1QVuw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Stash overlay real upper file in backing_file
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 02 Oct 2024 17:27:15 -0400, Jeff Layton wrote:
-> This is a replacement for the v6 series sitting in Christian's
-> vfs.mgtime branch. The main changes here are to the changelogs,
-> documentation and comments. I've also moved the timekeeping patches to
-> the front of the series, and done some minor cleanups.
-> 
-> The pipe1_threads test shows these averages on my test rig with this
-> series:
-> 
-> [...]
+On Mon, Oct 7, 2024 at 12:38=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Mon, 7 Oct 2024 at 12:22, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > Maybe it is more straightforward, I can go with that, but it
+> > feels like a waste not to use the space in backing_file,
+> > so let me first try to convince you otherwise.
+>
+> Is it not a much bigger waste to allocate backing_file with kmalloc()
+> instead of kmem_cache_alloc()?
 
-I've merged the tag that Thomas provided with the time specific changes and
-pulled the remaining patches - excluding 01/12 and 02/12.
+Yes, much bigger...
 
----
+Christian is still moving things around wrt lifetime of file and
+backing_file, so I do not want to intervene in the file_table.c space.
 
-Applied to the vfs.mgtime branch of the vfs/vfs.git tree.
-Patches in the vfs.mgtime branch should appear in linux-next soon.
+>
+> > IMO, this is not a layer violation at all.
+> > The way I perceive struct backing_file is as an inheritance from struct=
+ file,
+> > similar to the way that ovl_inode is an inheritance from vfs_inode.
+>
+> That sounds about right.
+>
+> > You can say that backing_file_user_path() is the layer violation, havin=
+g
+> > the vfs peek into the ovl layer above it, but backing_file_private_ptr(=
+)
+> > is the opposite - it is used only by the layer that allocated backing_f=
+ile,
+> > so it is just like saying that a struct file has a single private_data,=
+ while
+> > the inherited generic backing_file can store two private_data pointers.
+> >
+> > What's wrong with that?
+>
+> It feels wrong to me, because lowerfile's backing_file is just a
+> convenient place to stash a completely unrelated pointer into.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Funny, that's like saying that a ->next member in a struct is
+completely unrelated.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+What I see after my patch is that ->private_data points to a singly
+linked list of length 1 to 2 of backing files.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+>
+> Furthermore private_data pointers lack type safety with all the
+> problems that entails.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.mgtime
+Well, this is not any worth that current ->private_data, but I could
+also make it, if you like it better:
 
-[03/12] fs: add infrastructure for multigrain timestamps
-        https://git.kernel.org/vfs/vfs/c/4e40eff0b573
-[04/12] fs: have setattr_copy handle multigrain timestamps appropriately
-        https://git.kernel.org/vfs/vfs/c/b82f92d5dd1a
-[05/12] fs: handle delegated timestamps in setattr_copy_mgtime
-        https://git.kernel.org/vfs/vfs/c/d8d11298e8a1
-[06/12] fs: tracepoints around multigrain timestamp events
-        https://git.kernel.org/vfs/vfs/c/a80f53809ccc
-[07/12] fs: add percpu counters for significant multigrain timestamp events
-        https://git.kernel.org/vfs/vfs/c/7b1aba010c47
-[08/12] Documentation: add a new file documenting multigrain timestamps
-        https://git.kernel.org/vfs/vfs/c/95c6907be544
-[09/12] xfs: switch to multigrain timestamps
-        https://git.kernel.org/vfs/vfs/c/0f4865448420
-[10/12] ext4: switch to multigrain timestamps
-        https://git.kernel.org/vfs/vfs/c/e44ab3151adc
-[11/12] btrfs: convert to multigrain timestamps
-        https://git.kernel.org/vfs/vfs/c/0d4f9f7ad685
-[12/12] tmpfs: add support for multigrain timestamps
-        https://git.kernel.org/vfs/vfs/c/cba2a92eff80
+ struct backing_file {
+        struct file file;
+        struct path user_path;
++       struct file *next;
+ };
+
++struct file **backing_file_private_ptr(struct file *f)
++{
++       return &backing_file(f)->next;
++}
++EXPORT_SYMBOL_GPL(backing_file_next_ptr);
+
+Again, I am not terribly opposed to allocating struct ovl_file as we do
+with directory - it is certainly more straight forward to read, so that
+is a good enough argument in itself, and "personal dislike" is also a fair
+argument, just arguing for the sake of argument so you understand my POV.
+
+Let me know your decision.
+
+Thanks,
+Amir.
 
