@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-31175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CA0992CAB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 15:09:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB435992CAD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 15:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0237B231C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 13:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562AC1F23EF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 13:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA801D3621;
-	Mon,  7 Oct 2024 13:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C7D1D4173;
+	Mon,  7 Oct 2024 13:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="O6SQX4Z3"
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="mCoRwMsC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3633118BC14;
-	Mon,  7 Oct 2024 13:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C636E1D3644;
+	Mon,  7 Oct 2024 13:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728306532; cv=none; b=EIvTiO+SqxBM1Rl1U74/2VZ5lLqGEUrx6oZxeKaNv6uQ4be2zV2wUYfWJTYNESoB4GRpdJlUIkoMpV9rC89NgscpzKAX/e6LYsIpbNxsQqQUp4whLo6GikAQiwjeflctOa8md5qZbczHDfihZB6FR2zSxGrqOAbM3hhJKshT5o8=
+	t=1728306535; cv=none; b=GQdLhKstwFiAaVwLtQimqw7s+A9e34OZxbwlV/QbBZt7TQg69kcE6KZFdh0ACTMmBuizKEtTOiW0TrtBiK2FTEMTkGVg4cL1o7ffnBQsv6tOo0bOHw3Dpc4SGzwQ2pHlAXAqPIlcE4yllPEIJQb12KwOZEB8c9UmsKoveKHbdZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728306532; c=relaxed/simple;
-	bh=KflhzfhUgY57tKVXRMr3jE4oHSBqoCo9AU2kwIcsV5Q=;
+	s=arc-20240116; t=1728306535; c=relaxed/simple;
+	bh=Hwn+L+H96EJQ6fbu74oOsk0yt1bHFdhq8Aneq+L/aRs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IhLAGasPbkcuH1TZ42zM0MWSFf5NGapxQJ467Njmb/6I93C8+uzyJpCWdtxcx45DtqhZEUtAjIn4aaErjO4aUhlqM6Z+E1PidGW/5gOBIGOqF2KhMC2ravPfemfWX/oVUegvmnHBuOxwyW3DbP+z3DjqbBHSnELGWtwZme8RBkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=O6SQX4Z3; arc=none smtp.client-ip=89.208.246.23
+	 MIME-Version; b=DRNhjvWVegXM89boAolFYycDBSHyWKkZtyqYLnIzzjwFVdMKY66OJH9UuY/vAqMmw1Y17Zz0+RD38x912NRw6Zh2tOTdJ2yIh8F0iHC7QsuEFICB1ENDq+3UFGSF/M5OgUDaTg/pCAQVb0772O/ANzxhEGEhhREHa/h1IxV3TU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=mCoRwMsC; arc=none smtp.client-ip=89.208.246.23
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1728306530;
-	bh=wNWpuAHmz1SOTelz1pgpdf/5OLCVcYGot+p8wJ9AHcg=;
+	s=default; t=1728306533;
+	bh=YjS8pOHAMAb3lFxDk/ag9Aaz6T0IQGKpkIr0d1Ynq34=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O6SQX4Z3teX2lnMeGa08CfdeLI5evFvrfH3oikbwIoHEgMfoeo1pWyd8oALTFYSNd
-	 CrafurULeAQb2ml8bhbP1iy3HIA/5LKmiW6Cm9IrmmJQAfGqjRdHCPN9QLtb5VmZmG
-	 G2ppuXR2iNouz99u3Xdmh+9okbJ31RlnzW4LvEZ8=
+	b=mCoRwMsCPg0+MVQJ+sI5hryZA7UL982qDRqI5yEclIPiyRC4TaFYgNR7uMktIzsg4
+	 XW9AxBauMiQF4HfOgCP7blZ2H7zxjm2JcFRK22JYoTXqY6NuWxBvUhvNhxQUnHdJ9b
+	 k/oxGeE9gVD8YKlZBEkvKQD1FgeNuLslVZhrU6nw=
 Received: from stargazer.. (unknown [113.200.174.29])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
 	(Client did not present a certificate)
 	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id BA6B91A41FE;
-	Mon,  7 Oct 2024 09:08:48 -0400 (EDT)
+	by xry111.site (Postfix) with ESMTPSA id 858D91A41FF;
+	Mon,  7 Oct 2024 09:08:51 -0400 (EDT)
 From: Xi Ruoyao <xry111@xry111.site>
 To: Mateusz Guzik <mjguzik@gmail.com>,
 	Christian Brauner <brauner@kernel.org>
@@ -53,9 +53,9 @@ Cc: Xi Ruoyao <xry111@xry111.site>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: [PATCH 1/2] vfs: support fstatat(..., NULL, AT_EMPTY_PATH | AT_NO_AUTOMOUNT, ...)
-Date: Mon,  7 Oct 2024 21:08:22 +0800
-Message-ID: <20241007130825.10326-2-xry111@xry111.site>
+Subject: [PATCH 2/2] vfs: Make sure {statx,fstatat}(..., AT_EMPTY_PATH | ..., NULL, ...) behave as (..., AT_EMPTY_PATH | ..., "", ...)
+Date: Mon,  7 Oct 2024 21:08:23 +0800
+Message-ID: <20241007130825.10326-3-xry111@xry111.site>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241007130825.10326-1-xry111@xry111.site>
 References: <20241007130825.10326-1-xry111@xry111.site>
@@ -67,29 +67,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since Linux 4.11 AT_NO_AUTOMOUNT is implied for fstatat.  So we should
-support this like fstatat(..., NULL, AT_EMPTY_PATH, ...) for
-consistency.  Also note that statx(..., NULL, AT_EMPTY_PATH |
-AT_NO_AUTOMOUNT) is already supported.
+We've supported {statx,fstatat}(real_fd, NULL, AT_EMPTY_PATH, ...) since
+Linux 6.11 for better performance.  However there are other cases, for
+example using AT_FDCWD as the fd or having AT_SYMLINK_NOFOLLOW in flags,
+not covered by the fast path.  While it may be impossible, too
+difficult, or not very beneficial to optimize these cases, we should
+still turn NULL into "" for them in the slow path to make the API easier
+to be documented and used.
 
-Fixes: 27a2d0cb2f38 ("stat: use vfs_empty_path() helper")
+Fixes: 0ef625bba6fb ("vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)")
 Cc: stable@vger.kernel.org
 Signed-off-by: Xi Ruoyao <xry111@xry111.site>
 ---
- fs/stat.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/stat.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/fs/stat.c b/fs/stat.c
-index 41e598376d7e..ed9d4fd8ba2c 100644
+index ed9d4fd8ba2c..5d1b51c23c62 100644
 --- a/fs/stat.c
 +++ b/fs/stat.c
-@@ -334,6 +334,7 @@ int vfs_fstatat(int dfd, const char __user *filename,
- 	 * If AT_EMPTY_PATH is set, we expect the common case to be that
- 	 * empty path, and avoid doing all the extra pathname work.
- 	 */
-+	flags &= ~AT_NO_AUTOMOUNT;
+@@ -337,8 +337,11 @@ int vfs_fstatat(int dfd, const char __user *filename,
+ 	flags &= ~AT_NO_AUTOMOUNT;
  	if (flags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
  		return vfs_fstat(dfd, stat);
++	else if ((flags & AT_EMPTY_PATH) && !filename)
++		name = getname_kernel("");
++	else
++		name = getname_flags(filename, getname_statx_lookup_flags(statx_flags));
+ 
+-	name = getname_flags(filename, getname_statx_lookup_flags(statx_flags));
+ 	ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
+ 	putname(name);
+ 
+@@ -791,8 +794,11 @@ SYSCALL_DEFINE5(statx,
+ 	lflags = flags & ~(AT_NO_AUTOMOUNT | AT_STATX_SYNC_TYPE);
+ 	if (lflags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
+ 		return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, buffer);
++	else if ((lflags & AT_EMPTY_PATH) && !filename)
++		name = getname_kernel("");
++	else
++		name = getname_flags(filename, getname_statx_lookup_flags(flags));
+ 
+-	name = getname_flags(filename, getname_statx_lookup_flags(flags));
+ 	ret = do_statx(dfd, name, flags, mask, buffer);
+ 	putname(name);
  
 -- 
 2.46.2
