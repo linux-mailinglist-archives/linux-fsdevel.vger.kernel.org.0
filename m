@@ -1,102 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-31138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8CCE99220D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 00:04:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C309922E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 05:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4531F21516
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2024 22:04:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31CC282D4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 03:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7183618BC05;
-	Sun,  6 Oct 2024 22:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E3C14A84;
+	Mon,  7 Oct 2024 03:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1U/fJkiQ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WLdC5NRE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C68C152165
-	for <linux-fsdevel@vger.kernel.org>; Sun,  6 Oct 2024 22:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CD2FC11;
+	Mon,  7 Oct 2024 03:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728252252; cv=none; b=NiY/HUPzufusR7o1NwTs85wvsQSAIH9FCzqB+7mXLaFxf6ALjPwcgRNG4Zqwg/7e4sXqTs0iAfGoG8EhaLdzWP817gEdLGfob763NiFHFFcmWUxzOr0qmX40tte09QP97NEx5LJkQN9utsIwyCWarMxVZnPO7B0vIy9uIsHi44g=
+	t=1728270198; cv=none; b=p0KUfdSgooZGL7vncUWBXNEkFOZ6jrrvO27cWdv1eePCncGtsmnYL45T1wa39KtN40BVycQhl5BcCDCUiSR21uLD/res6Gadq5xJhwbARKvo3U36EFWlfqs54effahHIrKG9SXiSCaxS9azqbWqTp8APe0J8YsxEK4uITVF+X5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728252252; c=relaxed/simple;
-	bh=AVMT2ksBxbHoyLr2X5OlhSzaVPcgiqa8Ios/l6Z3o9s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cSH6zGfaMSlJM6KjcWP8phbAgTfdQN2HRVNypeGUISt2HPT1dsxtC5e2P3yyHcwOL52odNA61FdM836plbyKVapV8kVDowM8zpInW6LjChrK06fjh2mRndAcMLzmClnMh18vFx6qIj51avy6qMqLIpVAv93aqsPUejZYOZ645q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1U/fJkiQ; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4a3c6bc4cecso1046259137.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2024 15:04:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728252250; x=1728857050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AVMT2ksBxbHoyLr2X5OlhSzaVPcgiqa8Ios/l6Z3o9s=;
-        b=1U/fJkiQtyYQpl1JHMV9qgmtZKiv22IgBQ4zxwXm7/a6bAXLMBhFd5P2A61maPFXAk
-         JcZVpJiOsRRxTfwMmqxlbkNZ3GBo6BPmcSOcKbtWQ/yLG9WzvJlok643IhYzMaQ2mpPP
-         P5qqLf6tZCIW5owzY9GPCY3AW4qZMr8sH806jqMfkg8tWUzihhREK5URqt4j3I3ymz70
-         yc7gOKaCXEK5Di+MTORjH4/0Xi79oPykhNx4Jwt357HBiugU9DRKVF5DvS50lKZIG5Eg
-         QTcPq4WPpHix13XBPfXQJr5hj0INFaVNdDolHzt6MjBgcSAhcazlHkQ469qhseJEmAzg
-         DckQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728252250; x=1728857050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AVMT2ksBxbHoyLr2X5OlhSzaVPcgiqa8Ios/l6Z3o9s=;
-        b=tXcVU1f/m9cWYU8a8W8HUjJI7NUARF5WRcp4BMsoVftpw56KKMlUgKNncvo3w2JCy4
-         o1cSOGd98UlL4SmUQrLlSs7g+k1l23T5YFH2jDKR/1M/GodHyUzSw7ryQOnz4aDeasMg
-         YcX149ODpCieudItOj1ZWupYVsHNIqfba3lpO1aCdKsiSZ9FYNrcIaKmKE7JEi51j7pY
-         BA6c+rWNL8lf4a1q8h2N/bxz/Pgwb7twJJyto82nN93YHtsDDdTBOsQVnJMVMk5xZ9Dh
-         XM3dN3NRQ0V5BZImdXb+U7Wsbmua8ozcm6Y/f0/upAPrmVBRGSSMVEOFeOk1ptkVwMB6
-         LGhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWHi1+gylCgcPXLgAi1FTAWBvp3ZBNvITmV+V9BN0X932kPVgnunBQNacKowZ53ml5rzc8C6U4OzKZaDWt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWjZM8xDM9mvNASsE4VX/pFn1Ci9BmUZD4Y2EVlbBHIKKVqqf5
-	X6j7sHXaxgYOUl8C1QkTsibX+2hEvdnGjjHF5DiIkYn/v8HdN3e+wk2PBM9Y9/rnIoHpw4Uv8Ll
-	NQ7CCBVMKSWlqc8DNbBCm+9C4t8siTmJjEKB/
-X-Google-Smtp-Source: AGHT+IEhMp2OSt7XqbP4MYcacFLWXYXdwh/F2Py4xZcA4lLz/qCIm0hnmkgR5mRLKSopgCYsEWGoXbueD1YCbwt71o0=
-X-Received: by 2002:a05:6102:290e:b0:4a3:cb2b:9748 with SMTP id
- ada2fe7eead31-4a4058ee453mr5315729137.24.1728252250091; Sun, 06 Oct 2024
- 15:04:10 -0700 (PDT)
+	s=arc-20240116; t=1728270198; c=relaxed/simple;
+	bh=JfBOHA2Zp1d++xwrRm7cKi3Zi+Ot+yWu5ZZV64Fi8WM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bFDr8Vt2AypgVPa1RtV+hUYujOo0GFSyNtXVTsr3wybvEeIGhNKcIEIdZNGo5J5tjGXn18XtcgKhA8kYfzTxE7Zlzb0oHsp1TD/3NXNPSeoc2B1vWsl8g2OI5LIjvyzcr/GwBOk8yhv12DWzNdcnljSWCih83FQ33VvKJGuoJ5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WLdC5NRE; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GwekB3aqW6ryImoefbQulyTYf/6BVTLgwz7dZJUzN/w=; b=WLdC5NREscvr5Qnp2ECEA9Fii7
+	Sk/3+q8jy508pzDVf1utoxNqVwrRwp7CJG6HZL4GvGUBlFtC4xa1x9R+HEW+sYllPdlRMgWebr12S
+	bOjql4AgfXi44t1rVx/GaauAqYr/BhMusQX5/IOYip22A3xG4eQrWvNFGqWkm0yUCiYnrYkvbKBfb
+	A8Y+Bf/LIKhVnoPT4MutKUh/3lQPHJYm2aTgFDf9zdUWjqOXsXN3jHwwwz73FYTbMvNMaoJzsxqpe
+	nhUQcPkFZMBYXhlajlk3ruWRrPZZ9sGEH9B1NxqxVrhgCo/w7t8pdN7ypf+oY0hWwvy8jgUgwZskh
+	V1rynMjw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxe1h-00000001U3Z-139g;
+	Mon, 07 Oct 2024 03:03:13 +0000
+Date: Mon, 7 Oct 2024 04:03:13 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] ovl: stash upper real file in backing_file struct
+Message-ID: <20241007030313.GH4017910@ZenIV>
+References: <20241006082359.263755-1-amir73il@gmail.com>
+ <20241006082359.263755-3-amir73il@gmail.com>
+ <20241006210426.GG4017910@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002225150.2334504-1-shakeel.butt@linux.dev>
-In-Reply-To: <20241002225150.2334504-1-shakeel.butt@linux.dev>
-From: Yu Zhao <yuzhao@google.com>
-Date: Sun, 6 Oct 2024 16:03:31 -0600
-Message-ID: <CAOUHufbsHKDWidQwEUViPRw-snCUnn6JVvd1DnNefK6xhmPD5Q@mail.gmail.com>
-Subject: Re: [PATCH] mm/truncate: reset xa_has_values flag on each iteration
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241006210426.GG4017910@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Oct 2, 2024 at 4:52=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.dev=
-> wrote:
->
-> Currently mapping_try_invalidate() and invalidate_inode_pages2_range()
-> traverses the xarray in batches and then for each batch, maintains and
-> set the flag named xa_has_values if the batch has a shadow entry to
-> clear the entries at the end of the iteration. However they forgot to
-> reset the flag at the end of the iteration which cause them to always
-> try to clear the shadow entries in the subsequent iterations where
-> there might not be any shadow entries. Fixing it.
->
-> Fixes: 61c663e020d2 ("mm/truncate: batch-clear shadow entries")
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On Sun, Oct 06, 2024 at 10:04:26PM +0100, Al Viro wrote:
+> On Sun, Oct 06, 2024 at 10:23:57AM +0200, Amir Goldstein wrote:
+> > +	/*
+> > +	 * Usually, if we operated on a stashed upperfile once, all following
+> > +	 * operations will operate on the stashed upperfile, but there is one
+> > +	 * exception - ovl_fsync(datasync = false) can populate the stashed
+> > +	 * upperfile to perform fsync on upper metadata inode.  In this case,
+> > +	 * following read/write operations will not use the stashed upperfile.
+> > +	 */
+> > +	if (upperfile && likely(ovl_is_real_file(upperfile, realpath))) {
+> > +		realfile = upperfile;
+> > +		goto checkflags;
+> >  	}
+> >  
+> > +	/*
+> > +	 * If realfile is lower and has been copied up since we'd opened it,
+> > +	 * open the real upper file and stash it in backing_file_private().
+> > +	 */
+> > +	if (unlikely(!ovl_is_real_file(realfile, realpath))) {
+> > +		struct file *old;
+> > +
+> > +		/* Either stashed realfile or upperfile must match realinode */
+> > +		if (WARN_ON_ONCE(upperfile))
+> > +			return -EIO;
+> > +
+> > +		upperfile = ovl_open_realfile(file, realpath);
+> > +		if (IS_ERR(upperfile))
+> > +			return PTR_ERR(upperfile);
+> > +
+> > +		old = cmpxchg_release(backing_file_private_ptr(realfile), NULL,
+> > +				      upperfile);
+> > +		if (old) {
+> > +			fput(upperfile);
+> > +			upperfile = old;
+> > +		}
+> > +
+> > +		/* Stashed upperfile that won the race must match realinode */
+> > +		if (WARN_ON_ONCE(!ovl_is_real_file(upperfile, realpath)))
+> > +			return -EIO;
+> > +
+> > +		realfile = upperfile;
+> > +	}
+> > +
+> > +checkflags:
+> 
+> Hmm...  That still feels awkward.  Question: can we reach that code with
+> 	* non-NULL upperfile
+> 	* false ovl_is_real_file(upperfile, realpath)
+> 	* true ovl_is_real_file(realfile, realpath)
+> Is that really possible?
 
-Acked-by: Yu Zhao <yuzhao@google.com>
+read() from metacopied file after fsync(), with the data still in lower
+layer?  Or am I misreading that?
 
