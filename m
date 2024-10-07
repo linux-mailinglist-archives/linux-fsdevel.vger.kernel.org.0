@@ -1,59 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-31219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0DA99342A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 18:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24ABC993434
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 18:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F12A1C20434
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:58:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1B51F23766
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 16:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54DA1DD54D;
-	Mon,  7 Oct 2024 16:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433B11DD867;
+	Mon,  7 Oct 2024 16:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DH7kfAZG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ky9T4tC9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815831DD540;
-	Mon,  7 Oct 2024 16:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1511DC1AE;
+	Mon,  7 Oct 2024 16:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320145; cv=none; b=GKa2aeITeO0+cE+nJ0BkpsIiLjdrBLrpPUbhzIXBmACyz+INitnK9n9etjWkWXb1M7eg1xc1JMVmhpTucHobGi3JJ38yUCj3Jlu3uB2Eih96qUpF7UwkZo4Ep4ueSyZP40p3FRP4Cu3sPatuA7EsQ5rcUyhUU242lMvzXoCXBzg=
+	t=1728320222; cv=none; b=F5hCWgxsfAL4ZycH1kD7XwNvEnSQvkK2dIYI8t5J/kdTM3IJ6sKUeYD9fFtQQ+RfTr4WVWNiWeJvybWpKG6bpN8SWIsqelNmK3uoa6OL8hbGeCyJsZ7F3QF9x+K0BWpTz3c+mbixVJCcNxSqEtviQW+69QEuzfFNEfddkiyrj8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320145; c=relaxed/simple;
-	bh=rEoRj54Zi2vbI08YVZ5dfNVwuRg26U3vrODGYxYWpzE=;
+	s=arc-20240116; t=1728320222; c=relaxed/simple;
+	bh=xcXKw2m89hBWIM4ZfeefRHBeTdHv9hQNK29Cj4F0q50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nc/jxFo9tPFWXaCgq8Se+5YRfYBRJ2awn0SjgrDjwkxrHNF7cjs3HBD5IR/MsfVOsRggkItrY6UQncGhHSmeoSwHSWHlLnWMnbTlDxaH17IzNtv6VXOZEZkPj0aqC6ag7tLo9MxuJDqtpbNuk7VdXV3jXnmJVNIRnnN2MDff33I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DH7kfAZG; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=P7ah67g70yHoJ5IWW6Bl5ziDa5azCVHQ/VHlRqt0q1Y=; b=DH7kfAZGsaPzLptOMKxrTAdPPW
-	NIfnz5LtDlK8XWftGDZskPAP+fyU22Y5yWvryKSpVFx/ctDQkrdafnHrhl01nsAMV1x0GpodJ3P2Y
-	dyNGj2aCOUwxDLbyPfQOqoA5p7ClCJux03+LwUlHHYGX2mTzAsPcDSkM4CXukllPxxCO/s0sjgarN
-	fe5lvKaConEu1+j4P7TBYKhmJ2xzeiA6XK8SWJVm5kC+gEXH1tP1ZIa6pufe/KXNn2y+oU2we4Ajt
-	tflhOD/mM0xLXH2k5IhMrbSLXkAUEEmKKiacd8O+9xLJ55DYxp0kJOfqqqJ50d/DblLKGZLyhpKj9
-	KzA7q9Pg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxr1I-00000001eDs-1Cag;
-	Mon, 07 Oct 2024 16:55:40 +0000
-Date: Mon, 7 Oct 2024 17:55:40 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] ovl: do not open non-data lower file for fsync
-Message-ID: <20241007165540.GN4017910@ZenIV>
-References: <20241007141925.327055-1-amir73il@gmail.com>
- <20241007141925.327055-2-amir73il@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AVGRsHx9E+mj48/vepfEnMc2rO9pWMvR+vWsNZGLDn/S6pg0GaKBhG2Q3e2knHJZjtP/PbUqziYUOa/AlRXTk0VR+u4ab4mYdAdylign/svznf6Tq1GRpYPytPfY+UfTrID1UQOgZTkSJcchX5NFPfxrBpoCLGmbwTbWN7Rdf00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ky9T4tC9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550ACC4CEC6;
+	Mon,  7 Oct 2024 16:57:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728320222;
+	bh=xcXKw2m89hBWIM4ZfeefRHBeTdHv9hQNK29Cj4F0q50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ky9T4tC9+D9Fzx5HOrNmvh72thajEfb5RaYm+lj3pSvO277kRmjdCitvRHq+cCT/u
+	 kEBG7Dksq8JQDbDeTmEaLpJjfC3ThrQR0sNwDMWE+ilswO8bWkOUyTKY75LOcDOJta
+	 8MSCUGYOKHvIjKkDXyyjv2Sm+uKLm+NH1HQ3B62h/iZCsISwUlngVmdh4LPBq6FWt5
+	 WL1pqqMyitjdqpvMiSMtd9euG/DJQzfoFwIlAyDW/9QTbjgxAPvciJoVu9DMaaE11Q
+	 ifjejDzki1ynkr4sThMqojZr7jYII6LATViBk5o4SOi7z/yHkRRp4UtMtB2IETvx+r
+	 RZKL4udMpy6bQ==
+Date: Mon, 7 Oct 2024 09:57:01 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 01/12] iomap: check if folio size is equal to FS block
+ size
+Message-ID: <20241007165701.GB21836@frogsfrogsfrogs>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <b25b678264d02e411cb2c956207e2acd95188e4c.1728071257.git.rgoldwyn@suse.com>
+ <ZwChy4jNCP6gJNJ0@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,53 +61,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007141925.327055-2-amir73il@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <ZwChy4jNCP6gJNJ0@casper.infradead.org>
 
-On Mon, Oct 07, 2024 at 04:19:21PM +0200, Amir Goldstein wrote:
-> +static int ovl_real_fdget_path(const struct file *file, struct fd *real,
-> +			       struct path *realpath)
+On Sat, Oct 05, 2024 at 03:17:47AM +0100, Matthew Wilcox wrote:
+> On Fri, Oct 04, 2024 at 04:04:28PM -0400, Goldwyn Rodrigues wrote:
+> > Filesystems such as BTRFS use folio->private so that they receive a
+> > callback while releasing folios. Add check if folio size is same as
+> > filesystem block size while evaluating iomap_folio_state from
+> > folio->private.
+> > 
+> > I am hoping this will be removed when all of btrfs code has moved to
+> > iomap and BTRFS uses iomap's subpage.
+> 
+> This seems like a terrible explanation for why you need this patch.
+> 
+> As I understand it, what you're really doing is saying that iomap only
+> uses folio->private for block size < folio size.  So if you add this
+> hack, iomap won't look at folio->private for block size == folio size
+> and that means that btrfs can continue to use it.
+> 
+> I don't think this is a good way to start the conversion.  I appreciate
+> that it's a long, complex procedure, and you can't do the whole
+> conversion in a single patchset.
+> 
+> Also, please stop calling this "subpage".  That's btrfs terminology,
+> it's confusing as hell, and it should be deleted from your brain.
 
-> -	if (allow_meta) {
-> -		ovl_path_real(dentry, &realpath);
-> -	} else {
-> -		/* lazy lookup and verify of lowerdata */
-> -		err = ovl_verify_lowerdata(dentry);
-This check went
-> -		if (err)
-> -			return err;
-> -
-> -		ovl_path_realdata(dentry, &realpath);
-> -	}
+I've long wondered if 'subpage' is shorthand for 'subpage blocksize'?
+If so then the term makes sense to me as a fs developer, but I can also
+see how it might not make sense to anyone from the mm side of things.
 
-> @@ -138,7 +129,33 @@ static int ovl_real_fdget(const struct file *file, struct fd *real)
->  		return 0;
->  	}
->  
-> -	return ovl_real_fdget_meta(file, real, false);
-> +	/* lazy lookup and verify of lowerdata */
-> +	err = ovl_verify_lowerdata(dentry);
+Wait, is a btrfs sector the same as what ext4/xfs call a fs block?
 
-... here
+> But I don't understand why you need it at all.  btrfs doesn't attach
+> private data to folios unless block size < page size.  Which is precisely
+> the case that you're not using.  So it seems like you could just drop
+> this patch and everything would still work.
 
-> +	if (err)
-> +		return err;
-> +
-> +	ovl_path_realdata(dentry, &realpath);
+I was also wondering this.  Given that the end of struct btrfs_subpage
+is an uptodate/dirty/ordered bitmap, maybe iomap_folio_ops should grow a
+method to allocate a struct iomap_folio_state object, and then you could
+embed one in the btrfs subpage object and provide that custom allocation
+function?
 
-> +static int ovl_upper_fdget(const struct file *file, struct fd *real, bool data)
-> +{
-> +	struct dentry *dentry = file_dentry(file);
-> +	struct path realpath;
-> +	enum ovl_path_type type;
-> +
-> +	if (data)
-> +		type = ovl_path_realdata(dentry, &realpath);
+(and yes that makes for an ugly mess of pointer math crud to have two
+VLAs inside struct btrfs_subpage, so this might be too ugly to live in
+practice)
 
-... but not here.
-
-I can see the point of not doing that in ->fsync() after we'd already
-done ovl_verify_lowerdata() at open time, but what's different about
-->read_iter() and friends that also come only after ->open()?
-IOW, why is fdatasync() different from other data-access cases?
+--D
 
