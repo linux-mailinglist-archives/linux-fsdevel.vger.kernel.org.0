@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-31359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6209F995650
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 20:19:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C1A995695
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 20:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1356B21CA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 18:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AAA7286951
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 18:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42248212644;
-	Tue,  8 Oct 2024 18:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B52212D0E;
+	Tue,  8 Oct 2024 18:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLs0bV1F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVhdBw/t"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A060420B20;
-	Tue,  8 Oct 2024 18:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0666487BF;
+	Tue,  8 Oct 2024 18:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728411567; cv=none; b=JVX7MmlZqLFf8tK9fexEDvFsV48VzIiqy6yP8ImH7M2J8Q8zTlF5G9jZDaxWYs+c5KKFZCF8Rpx/Zqbn6oM+fqw+8FAnp1iVLRMgCUbpHk3Z10PdA5QZQ6lw8+XMzceiwHdy1gqBdsfuNntSqcdLA1gcLqGgMB63tXhPjnaFIZ0=
+	t=1728412314; cv=none; b=jvPcVMiSdLIuCLDnn3llyPtznfBEukiqbu9qJhEIFofdhm1es4aZEdrlxQqk1oxHQbH4iisYs+XFf3qgxMYTycUbPvQu/KlQ0nswQb+K8/qMn6YrpN6prQ4T7h5u3hDu2sIMSFk00TMTvbgM73EmR53Doafd3V+DEcOqDE0rXuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728411567; c=relaxed/simple;
-	bh=z54KckxhgJG3g7xIM1xPAckD2eOaytBEiXST0+QTFi8=;
+	s=arc-20240116; t=1728412314; c=relaxed/simple;
+	bh=gqH7FBABbdqXlfTTq/YBPfcaDVyCpwZuXhPQBMa3CbI=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RbxwXJIbpOBQeAFJLGUTqIJdbNIEZwDU1DYbPyru1ogYKemYT+EGbAzuxB8dJja3WR47cF+LQ8cTNuKWkawFgLhIDfYU7nYwqPhvWap570vC2PucO1aj268UiRzI2RWBwj6RhWLQv3EzZw5y1KXd3Zce/eRlLK6gLlD1mjHScrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLs0bV1F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB3FC4CEC7;
-	Tue,  8 Oct 2024 18:19:26 +0000 (UTC)
+	 Content-Type:MIME-Version; b=cvWcvGuQk9PzhT0F6kLQ3pFrdplOBY7anNLPsbKRlksQr5Ueki2JxTGMs7HTp0vtKQdlKRvCIsK30rHlkX8Q2r4FB6mDGpRpTsnHhk8usM90E83JPm12uSEhCN22L1ZcKycVtbdyOmBUDlS+OtzASKIfxbE8nDRxU6RpyHPzLAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVhdBw/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3F85C4CEC7;
+	Tue,  8 Oct 2024 18:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728411567;
-	bh=z54KckxhgJG3g7xIM1xPAckD2eOaytBEiXST0+QTFi8=;
+	s=k20201202; t=1728412314;
+	bh=gqH7FBABbdqXlfTTq/YBPfcaDVyCpwZuXhPQBMa3CbI=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JLs0bV1F3aUUl1juIVgv1kMHK/xtpxJPD91j5csNJEONaEBx7Sx6IiGMVo0b+zSv/
-	 IQy2DRQNoHAf8kvZbyRsaDvYiOZ18ww7oOnNlnpOIATEGjKgEdWH8NSxcRl/z/BBk6
-	 FQ3hLKIUq3IHn/PfmoKsgrM6TNBPoxJJz097Z9MqIg3gWDIYVMLPmDXSfm+glQHrqp
-	 rnWwZf/4kfRVaUJxHAeqqmnEX9gyGQGu9SHHTj7lw2LoTAnx9Xl1kLdkPAPmMHGPEk
-	 4xJYdvSJUqNJhAZF7KwpbrrQ52G/U+PbX3GPWRrGviUyd2gUw4JadxGL7TPawF73WR
-	 2x1mlC2/LFsUA==
-Message-ID: <b2df96ad86950b4b3a790f68be99df845a6a2108.camel@kernel.org>
-Subject: Re: [PATCH v3 1/3] fs: prepare for "explicit connectable" file
- handles
+	b=eVhdBw/tUGl4nXIVlFvSWbBDvUtOcx2yzJlev48Sy25YbwlwwNeVCXXEiP2gcCM8y
+	 rISOvzu1wI+1vrMKvqkHTs/MxPqhmXJ9MYSt1BcCCHbX2gR7X0g+zyVEGxMCX+jKrv
+	 Cmbo/eNwWkgMaVU4mJtLFzcJwYgIZNyin3vV7Zb8ZkwW6FAW3CN7hKZzOoA3ejE+Ws
+	 lSpv8DP0NIGS+pYzPhZIV7IZfK15JcehTs/KXchGiW7TMF8sSFIWBs88MN+VPJDnX8
+	 XO+zHSoPBHJIH53uik3FZf1G0BuYkDDL8J8pAnHI/q4mUn1o4HrocYz6ZFln1gBmTy
+	 1SplazI8rdcJg==
+Message-ID: <a990a33d58e922381dec54a7748995d3e773b5b3.camel@kernel.org>
+Subject: Re: [PATCH v3 2/3] fs: name_to_handle_at() support for "explicit
+ connectable" file handles
 From: Jeff Layton <jlayton@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>
 Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Aleksa
  Sarai <cyphar@cyphar.com>, Chuck Lever <chuck.lever@oracle.com>, 
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Date: Tue, 08 Oct 2024 14:19:25 -0400
-In-Reply-To: <20241008152118.453724-2-amir73il@gmail.com>
+Date: Tue, 08 Oct 2024 14:31:52 -0400
+In-Reply-To: <20241008152118.453724-3-amir73il@gmail.com>
 References: <20241008152118.453724-1-amir73il@gmail.com>
-	 <20241008152118.453724-2-amir73il@gmail.com>
+	 <20241008152118.453724-3-amir73il@gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,130 +138,161 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Tue, 2024-10-08 at 17:21 +0200, Amir Goldstein wrote:
-> We would like to use the high 16bit of the handle_type field to encode
-> file handle traits, such as "connectable".
+> nfsd encodes "connectable" file handles for the subtree_check feature,
+> which can be resolved to an open file with a connected path.
+> So far, userspace nfs server could not make use of this functionality.
 >=20
-> In preparation for this change, make sure that filesystems do not return
-> a handle_type value with upper bits set and that the open_by_handle_at(2)
-> syscall rejects these handle types.
+> Introduce a new flag AT_HANDLE_CONNECTABLE to name_to_handle_at(2).
+> When used, the encoded file handle is "explicitly connectable".
+>=20
+> The "explicitly connectable" file handle sets bits in the high 16bit of
+> the handle_type field, so open_by_handle_at(2) will know that it needs
+> to open a file with a connected path.
+>=20
+> old kernels will now recognize the handle_type with high bits set,
+> so "explicitly connectable" file handles cannot be decoded by
+> open_by_handle_at(2) on old kernels.
+>=20
+> The flag AT_HANDLE_CONNECTABLE is not allowed together with either
+> AT_HANDLE_FID or AT_EMPTY_PATH.
 >=20
 > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  fs/exportfs/expfs.c      | 14 ++++++++++++--
->  fs/fhandle.c             |  6 ++++++
->  include/linux/exportfs.h | 14 ++++++++++++++
->  3 files changed, 32 insertions(+), 2 deletions(-)
+>  fs/fhandle.c               | 48 ++++++++++++++++++++++++++++++++++----
+>  include/linux/exportfs.h   |  2 ++
+>  include/uapi/linux/fcntl.h |  1 +
+>  3 files changed, 46 insertions(+), 5 deletions(-)
 >=20
-> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-> index 4f2dd4ab4486..c8eb660fdde4 100644
-> --- a/fs/exportfs/expfs.c
-> +++ b/fs/exportfs/expfs.c
-> @@ -382,14 +382,21 @@ int exportfs_encode_inode_fh(struct inode *inode, s=
-truct fid *fid,
->  			     int *max_len, struct inode *parent, int flags)
->  {
->  	const struct export_operations *nop =3D inode->i_sb->s_export_op;
-> +	enum fid_type type;
-> =20
->  	if (!exportfs_can_encode_fh(nop, flags))
->  		return -EOPNOTSUPP;
-> =20
->  	if (!nop && (flags & EXPORT_FH_FID))
-> -		return exportfs_encode_ino64_fid(inode, fid, max_len);
-> +		type =3D exportfs_encode_ino64_fid(inode, fid, max_len);
-> +	else
-> +		type =3D nop->encode_fh(inode, fid->raw, max_len, parent);
-> +
-> +	if (WARN_ON_ONCE(FILEID_USER_FLAGS(type)))
-> +		return -EINVAL;
-> +
-
-The stack trace won't be very useful here. Rather than a WARN, it might
-be better to dump out some info about the fstype (and maybe other
-info?) that returned the bogus type value here. I'm pretty sure most
-in-kernel fs's don't do this, but who knows what 3rd party fs's might
-do.
-
-> +	return type;
-> =20
-> -	return nop->encode_fh(inode, fid->raw, max_len, parent);
->  }
->  EXPORT_SYMBOL_GPL(exportfs_encode_inode_fh);
-> =20
-> @@ -436,6 +443,9 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct f=
-id *fid, int fh_len,
->  	char nbuf[NAME_MAX+1];
->  	int err;
-> =20
-> +	if (WARN_ON_ONCE(FILEID_USER_FLAGS(fileid_type)))
-> +		return -EINVAL;
-> +
-
-
-This is called from do_handle_to_path() or nfsd_set_fh_dentry(), which
-means that this fh comes from userland or from an NFS client. I don't
-think we want to WARN because someone crafted a bogus fh and passed it
-to us.
-
-
->  	/*
->  	 * Try to get any dentry for the given file handle from the filesystem.
->  	 */
 > diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 82df28d45cd7..c5792cf3c6e9 100644
+> index c5792cf3c6e9..7b4c8945efcb 100644
 > --- a/fs/fhandle.c
 > +++ b/fs/fhandle.c
-> @@ -307,6 +307,10 @@ static int handle_to_path(int mountdirfd, struct fil=
-e_handle __user *ufh,
->  		retval =3D -EINVAL;
->  		goto out_path;
->  	}
-> +	if (!FILEID_USER_TYPE_IS_VALID(f_handle.handle_type)) {
-> +		retval =3D -EINVAL;
-> +		goto out_path;
+> @@ -31,6 +31,14 @@ static long do_sys_name_to_handle(const struct path *p=
+ath,
+>  	if (!exportfs_can_encode_fh(path->dentry->d_sb->s_export_op, fh_flags))
+>  		return -EOPNOTSUPP;
+> =20
+> +	/*
+> +	 * A request to encode a connectable handle for a disconnected dentry
+> +	 * is unexpected since AT_EMPTY_PATH is not allowed.
+> +	 */
+> +	if (fh_flags & EXPORT_FH_CONNECTABLE &&
+> +	    WARN_ON(path->dentry->d_flags & DCACHE_DISCONNECTED))
+> +		return -EINVAL;
+> +
+
+Is it possible to get a DCACHE_DISCONNECTED dentry here? This thing
+comes from a userland path walk (a'la name_to_handle_at()). That means
+that it necessarily is connected.
+
+I'd drop the fh_flags check, since it seems like having that set on any
+dentry we get in this interface would be a bug.
+
+>  	if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle)))
+>  		return -EFAULT;
+> =20
+> @@ -45,7 +53,7 @@ static long do_sys_name_to_handle(const struct path *pa=
+th,
+>  	/* convert handle size to multiple of sizeof(u32) */
+>  	handle_dwords =3D f_handle.handle_bytes >> 2;
+> =20
+> -	/* we ask for a non connectable maybe decodeable file handle */
+> +	/* Encode a possibly decodeable/connectable file handle */
+>  	retval =3D exportfs_encode_fh(path->dentry,
+>  				    (struct fid *)handle->f_handle,
+>  				    &handle_dwords, fh_flags);
+> @@ -67,8 +75,23 @@ static long do_sys_name_to_handle(const struct path *p=
+ath,
+>  		 * non variable part of the file_handle
+>  		 */
+>  		handle_bytes =3D 0;
+> -	} else
+> +	} else {
+> +		/*
+> +		 * When asked to encode a connectable file handle, encode this
+> +		 * property in the file handle itself, so that we later know
+> +		 * how to decode it.
+> +		 * For sanity, also encode in the file handle if the encoded
+> +		 * object is a directory and verify this during decode, because
+> +		 * decoding directory file handles is quite different than
+> +		 * decoding connectable non-directory file handles.
+> +		 */
+> +		if (fh_flags & EXPORT_FH_CONNECTABLE) {
+> +			handle->handle_type |=3D FILEID_IS_CONNECTABLE;
+> +			if (d_is_dir(path->dentry))
+> +				fh_flags |=3D FILEID_IS_DIR;
+> +		}
+>  		retval =3D 0;
 > +	}
->  	handle =3D kmalloc(struct_size(handle, f_handle, f_handle.handle_bytes)=
-,
->  			 GFP_KERNEL);
->  	if (!handle) {
-> @@ -322,6 +326,8 @@ static int handle_to_path(int mountdirfd, struct file=
-_handle __user *ufh,
->  		goto out_handle;
->  	}
+>  	/* copy the mount id */
+>  	if (unique_mntid) {
+>  		if (put_user(real_mount(path->mnt)->mnt_id_unique,
+> @@ -109,15 +132,30 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const =
+char __user *, name,
+>  {
+>  	struct path path;
+>  	int lookup_flags;
+> -	int fh_flags;
+> +	int fh_flags =3D 0;
+>  	int err;
 > =20
-> +	/* Filesystem code should not be exposed to user flags */
-> +	handle->handle_type &=3D ~FILEID_USER_FLAGS_MASK;
->  	retval =3D do_handle_to_path(handle, path, &ctx);
+>  	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
+> -		     AT_HANDLE_MNT_ID_UNIQUE))
+> +		     AT_HANDLE_MNT_ID_UNIQUE | AT_HANDLE_CONNECTABLE))
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * AT_HANDLE_FID means there is no intention to decode file handle
+> +	 * AT_HANDLE_CONNECTABLE means there is an intention to decode a
+> +	 * connected fd (with known path), so these flags are conflicting.
+> +	 * AT_EMPTY_PATH could be used along with a dfd that refers to a
+> +	 * disconnected non-directory, which cannot be used to encode a
+> +	 * connectable file handle, because its parent is unknown.
+> +	 */
+> +	if (flag & AT_HANDLE_CONNECTABLE &&
+> +	    flag & (AT_HANDLE_FID | AT_EMPTY_PATH))
+>  		return -EINVAL;
+> +	else if (flag & AT_HANDLE_FID)
+> +		fh_flags |=3D EXPORT_FH_FID;
+> +	else if (flag & AT_HANDLE_CONNECTABLE)
+> +		fh_flags |=3D EXPORT_FH_CONNECTABLE;
 > =20
->  out_handle:
+>  	lookup_flags =3D (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
+> -	fh_flags =3D (flag & AT_HANDLE_FID) ? EXPORT_FH_FID : 0;
+>  	if (flag & AT_EMPTY_PATH)
+>  		lookup_flags |=3D LOOKUP_EMPTY;
+>  	err =3D user_path_at(dfd, name, lookup_flags, &path);
 > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> index 893a1d21dc1c..76a3050b3593 100644
+> index 76a3050b3593..230b0e1d669d 100644
 > --- a/include/linux/exportfs.h
 > +++ b/include/linux/exportfs.h
-> @@ -160,6 +160,20 @@ struct fid {
->  #define EXPORT_FH_FID		0x2 /* File handle may be non-decodeable */
->  #define EXPORT_FH_DIR_ONLY	0x4 /* Only decode file handle for a director=
-y */
+> @@ -169,6 +169,8 @@ struct fid {
+>  #define FILEID_USER_FLAGS(type) ((type) & FILEID_USER_FLAGS_MASK)
 > =20
-> +/*
-> + * Filesystems use only lower 8 bits of file_handle type for fid_type.
-> + * name_to_handle_at() uses upper 16 bits of type as user flags to be
-> + * interpreted by open_by_handle_at().
-> + */
-> +#define FILEID_USER_FLAGS_MASK	0xffff0000
-> +#define FILEID_USER_FLAGS(type) ((type) & FILEID_USER_FLAGS_MASK)
-> +
-> +/* Flags supported in encoded handle_type that is exported to user */
-> +#define FILEID_VALID_USER_FLAGS	(0)
-> +
-> +#define FILEID_USER_TYPE_IS_VALID(type) \
-> +	(!(FILEID_USER_FLAGS(type) & ~FILEID_VALID_USER_FLAGS))
-> +
->  /**
->   * struct export_operations - for nfsd to communicate with file systems
->   * @encode_fh:      encode a file handle fragment from a dentry
+>  /* Flags supported in encoded handle_type that is exported to user */
+> +#define FILEID_IS_CONNECTABLE	0x10000
+> +#define FILEID_IS_DIR		0x40000
 
-The rest looks reasonable.
+nit: why skip 0x20000 ?
+
+>  #define FILEID_VALID_USER_FLAGS	(0)
+> =20
+>  #define FILEID_USER_TYPE_IS_VALID(type) \
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index 87e2dec79fea..56ff2100e021 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -153,6 +153,7 @@
+>  					   object identity and may not be
+>  					   usable with open_by_handle_at(2). */
+>  #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID.=
+ */
+> +#define AT_HANDLE_CONNECTABLE	0x002	/* Request a connectable file handle=
+ */
+> =20
+>  #if defined(__KERNEL__)
+>  #define AT_GETATTR_NOSEC	0x80000000
+
 --=20
 Jeff Layton <jlayton@kernel.org>
 
