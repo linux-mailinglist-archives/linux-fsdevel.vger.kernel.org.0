@@ -1,76 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-31328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D029949C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 14:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F1F9949E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 14:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB9A283D28
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 12:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D255128345B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 12:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCED91DFD89;
-	Tue,  8 Oct 2024 12:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46571DF747;
+	Tue,  8 Oct 2024 12:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rapY8Ysu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC65E1DF96D;
-	Tue,  8 Oct 2024 12:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041581DF25A;
+	Tue,  8 Oct 2024 12:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728390344; cv=none; b=Lwg5dwNitpp0Zd2+LRLOX2Hx8DKSlZKr9B8kncgtd8jtAluN/MtEKqU0vbl4XRoSWDTV4PpMpKdRs4+oM+KYHpwGsamdL0pPNns5Hla2Yab5BsxsjQ+DC1NtFYg5CHDdqX4n1niamCEPljFc59N6G8QsreXErGRnI52O8EWhRhU=
+	t=1728390433; cv=none; b=qiWjcIWXClnjlr22I1g2Khd1ZNY+EYSWcIYigs1FarrYZd76V/zyNM66QhJJdA/BadM0Nc3DivR+y7KLLmm+DIm9IXai3W/myKPLRK1Vx8/MfDsIxjGep0blW6TOgxX6QEwvjr8CrRKeu1vCG2SoTh6+gjSSv/AW4SHdK2EpQak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728390344; c=relaxed/simple;
-	bh=B44zCzGUCIX1NtY3r8uI7cSHsIoSsL1pTHE/io/urC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abCmuiwkyYzPFaFl4ychUSHUH++sslDgeQs1xD+btmAJo44E8c2V8PSkW0KebEpKDs73rfjEThNtlkzKYrJGhu/T/m4lHV8SmSsY1hibLs6htuFHqYjid7vLDoEkvJb+qmmxAcrcqvB3oghjJxdTptesqqfvIcNSG7QJZ+D4KMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C8B4F227A88; Tue,  8 Oct 2024 14:25:35 +0200 (CEST)
-Date: Tue, 8 Oct 2024 14:25:35 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Kanchan Joshi <joshi.k@samsung.com>, hare@suse.de, sagi@grimberg.me,
-	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
-	bvanassche@acm.org, asml.silence@gmail.com,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-aio@kvack.org, gost.dev@samsung.com, vishak.g@samsung.com
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241008122535.GA29639@lst.de>
-References: <yq17caq5xvg.fsf@ca-mkp.ca.oracle.com> <20241003125400.GB17031@lst.de> <c68fef87-288a-42c7-9185-8ac173962838@kernel.dk> <CGME20241004053129eucas1p2aa4888a11a20a1a6287e7a32bbf3316b@eucas1p2.samsung.com> <20241004053121.GB14265@lst.de> <20241004061811.hxhzj4n2juqaws7d@ArmHalley.local> <20241004062733.GB14876@lst.de> <20241004065233.oc5gqcq3lyaxzjhz@ArmHalley.local> <20241004123027.GA19168@lst.de> <20241007101011.boufh3tipewgvuao@ArmHalley.local>
+	s=arc-20240116; t=1728390433; c=relaxed/simple;
+	bh=Bex9kWWkf1IYbePz5Dn+VZ9xnqyq7zc+PIKmCL23il4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=P+p169Yx2ZynT9Q8N0FhYn+h3iLsFCoqF9ZqHoVqT21ERfg0C4F/AlAHg4LK/zevI5GBjAMuWtZj+NcY+D4KHMFDHmwruAYvoaY7kCgbqsFYOcklD2BVHWMrn/wAQ17xOlUwoyMB7jD2kfQnPCgRbCy3BMG/1YCdnq1WgG2kaKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rapY8Ysu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A0EC4CEC7;
+	Tue,  8 Oct 2024 12:27:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728390432;
+	bh=Bex9kWWkf1IYbePz5Dn+VZ9xnqyq7zc+PIKmCL23il4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=rapY8YsuiXiFzuUBQL5TU17rlUmLVj37hlrfQRivl7bwl9HHMMPOU0Iwy7WBQAcER
+	 oSF/eHzWaovsjjwgTYof0BkZS9uTE4HOYbxpt0/Tg9/Sgpapb6VRukCQOX/jS+Ai2M
+	 JNeKBM1VQitYCvPk+w1MFX36u8ZX09huNpny5H5ZSBbtKOdLCr4//1LfNEPdQ7BH0Q
+	 UODVymhlRHO+7iT5EAkVe2tBQCtqVxf1Yb5vdY/7Ka54zKuibKdPQ3AHp+dEeFHkiV
+	 uy/xf689Z5/Z+PsU8AMie5ZR20sFo9h7cSedLxNBTJIlhTv6HDlJerz85wdue9fAOZ
+	 x4Sm3OShYZAVA==
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Andrew Kreimer <algonell@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <20241008121602.16778-1-algonell@gmail.com>
+References: <20241008121602.16778-1-algonell@gmail.com>
+Subject: Re: [PATCH] fs/inode: Fix a typo
+Message-Id: <172839043123.1673124.6132955349484034928.b4-ty@kernel.org>
+Date: Tue, 08 Oct 2024 14:27:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241007101011.boufh3tipewgvuao@ArmHalley.local>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-dedf8
 
-On Mon, Oct 07, 2024 at 12:10:11PM +0200, Javier González wrote:
-> In summary, what we are asking for is to take the patches that cover the
-> current use-case, and work together on what might be needed for better
-> FS support.
+On Tue, 08 Oct 2024 15:16:02 +0300, Andrew Kreimer wrote:
+> Fix a typo in comments: wether v-> whether.
+> 
+> 
 
-And I really do not think it is a good idea.  For one it actually
-works against the stated intent of the FDP spec.  Second extending
-the hints to per per-I/O in the io_uring patch is actively breaking
-the nice per-file I/O hint abstraction we have right now, and is
-really unsuitable when actually used on a file and not just a block
-device.  And if you are only on a block device I think passthrough
-of some form is still the far better option, despite the problems
-with it mentioned by Keith.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/inode: Fix a typo
+      https://git.kernel.org/vfs/vfs/c/e1a6efa9de95
 
 
