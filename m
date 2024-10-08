@@ -1,62 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-31320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFF6994870
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 14:13:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E255D994BC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 14:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77221F27455
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 12:13:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16ABB1C24EF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 12:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8F81DED60;
-	Tue,  8 Oct 2024 12:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E644C1DE898;
+	Tue,  8 Oct 2024 12:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kN05klGi"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="t4Gvm20H"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60091DED4D;
-	Tue,  8 Oct 2024 12:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA79183CB8;
+	Tue,  8 Oct 2024 12:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728389564; cv=none; b=dij4RrGt61fsmmWTby/VbhCmZSqmQ8V4IxGJ2UmKJykRGoUbJtxJ5IrgyBWDQnedfSyJqaw6dUbAZ2LfF0a3xKPGjnWhgGJRrjMNjZ6kDwDPcE/nZD3Qkppi/yG7Sa9yC2dwk2Xlu4/AZhg8YSiBILMb3hwugpP9lQZ7VbCBxGs=
+	t=1728391594; cv=none; b=kLzwjh6LNen2iqFkGpf7VzHA9GcL/WW65Zuvkj9zI/cjRb6A1TAW7IcdjWjn7m3bURWaTjCGTFEIOi6gMMdaDxn+4vPsq++fLKdbonUkf+SEWO9lz9NDaEQEg45f0AZ870nbRQ/UVYpNLLYO5oDasWykLHeDXiLgsDMEovZCVIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728389564; c=relaxed/simple;
-	bh=9OZSG/DQ+vm/Wy4qKHJNMCqT64wOmS0vE+hgWFR3ShM=;
+	s=arc-20240116; t=1728391594; c=relaxed/simple;
+	bh=7BkutiVyB04IBNjI6GLaVpa4RxD2t0aFOJ/N6jkWcYM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O+XSQc+FXA5gkqzU9/EDmCfYmhEr7WoyNVwbOvI0RcMSCia9p13Trp2kimf0JbQlqb3t99fI8ICkQX0ltmVhPuZTj8gA0VSkr8JpigcBzv/IMb+n8MNb2XDL7npnS8GPZa4fX2BPFhrMIauLUi9BanfdbuqMhBO/5cSUR8FXO5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kN05klGi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48832C4CECC;
-	Tue,  8 Oct 2024 12:12:43 +0000 (UTC)
+	 MIME-Version; b=tlcsifrRbTWYNPhA5CNuScnQ0jQ832gp/Nt6L2HoxoYl1PM3cN8woyfyZiIuHHAHkspUCUSvw/1Isslxl/a1JGQpHAlHS+Tz3hogeisRVzD4lkf7npX2SrCvY/XEZpxx4mzYsfNA4bWDVH0NHH+D0LdUsV11zKUf5aaAANRrFh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=t4Gvm20H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F03C4CEC7;
+	Tue,  8 Oct 2024 12:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728389563;
-	bh=9OZSG/DQ+vm/Wy4qKHJNMCqT64wOmS0vE+hgWFR3ShM=;
+	s=korg; t=1728391594;
+	bh=7BkutiVyB04IBNjI6GLaVpa4RxD2t0aFOJ/N6jkWcYM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kN05klGikCdplj92XIAKpBJnamgi4qIjhXcRFwONa1AzAct8Tw96BkumSxkrNyAJr
-	 MPAW8mm8QJEDni7qeQ+03PDyAXJUVAMtMMjsVKdipR7MTtTeePtPlQIff7olbaA4QQ
-	 WDZand/G8tGqudEN8OHHHmJ8UdQdXclyG/9gLJ10=
+	b=t4Gvm20HPNWYKUzo2gBhUNUxnkYCLI8SEw0DDRJ/sDWdIo8aQTMPUHSaomoz7PBNk
+	 gxPLIogk+sK3hQaQ9HkQAMrUpiCjRQRX7iLz/McEMRjdsSGxCbULtydCeeBTJnZmkb
+	 NhaSH258yMk7jew5LP7Lkv/ajPP6CrqDJwkOny6M=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
 	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
 	Jeff Layton <jlayton@kernel.org>,
-	linux-afs@lists.infradead.org,
 	netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.10 031/482] afs: Fix missing wire-up of afs_retry_request()
-Date: Tue,  8 Oct 2024 14:01:34 +0200
-Message-ID: <20241008115649.525603250@linuxfoundation.org>
+Subject: [PATCH 6.11 163/558] netfs: Cancel dirty folios that have no storage destination
+Date: Tue,  8 Oct 2024 14:03:13 +0200
+Message-ID: <20241008115708.772965997@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241008115648.280954295@linuxfoundation.org>
-References: <20241008115648.280954295@linuxfoundation.org>
+In-Reply-To: <20241008115702.214071228@linuxfoundation.org>
+References: <20241008115702.214071228@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -68,48 +65,82 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.10-stable review patch.  If anyone has any objections, please let me know.
+6.11-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 2cf36327ee1e47733aba96092d7bd082a4056ff5 ]
+[ Upstream commit 8f246b7c0a1be0882374f2ff831a61f0dbe77678 ]
 
-afs_retry_request() is supposed to be pointed to by the afs_req_ops netfs
-operations table, but the pointer got lost somewhere.  The function is used
-during writeback to rotate through the authentication keys that were in
-force when the file was modified locally.
+Kafs wants to be able to cache the contents of directories (and symlinks),
+but whilst these are downloaded from the server with the FS.FetchData RPC
+op and similar, the same as for regular files, they can't be updated by
+FS.StoreData, but rather have special operations (FS.MakeDir, etc.).
 
-Fix this by adding the pointer to the function.
+Now, rather than redownloading a directory's content after each change made
+to that directory, kafs modifies the local blob.  This blob can be saved
+out to the cache, and since it's using netfslib, kafs just marks the folios
+dirty and lets ->writepages() on the directory take care of it, as for an
+regular file.
 
-Fixes: 1ecb146f7cd8 ("netfs, afs: Use writeback retry to deal with alternate keys")
-Reported-by: Dr. David Alan Gilbert <linux@treblig.org>
+This is fine as long as there's a cache as although the upload stream is
+disabled, there's a cache stream to drive the procedure.  But if the cache
+goes away in the meantime, suddenly there's no way do any writes and the
+code gets confused, complains "R=%x: No submit" to dmesg and leaves the
+dirty folio hanging.
+
+Fix this by just cancelling the store of the folio if neither stream is
+active.  (If there's no cache at the time of dirtying, we should just not
+mark the folio dirty).
+
 Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/1690847.1726346402@warthog.procyon.org.uk
-cc: Marc Dionne <marc.dionne@auristor.com>
 cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-afs@lists.infradead.org
 cc: netfs@lists.linux.dev
 cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20240814203850.2240469-23-dhowells@redhat.com/ # v2
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/file.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/netfs/write_issue.c       | 6 +++++-
+ include/trace/events/netfs.h | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index c3f0c45ae9a9b..e0885cfeb72a7 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -403,6 +403,7 @@ const struct netfs_request_ops afs_req_ops = {
- 	.begin_writeback	= afs_begin_writeback,
- 	.prepare_write		= afs_prepare_write,
- 	.issue_write		= afs_issue_write,
-+	.retry_request		= afs_retry_request,
- };
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 9486e54b1e563..b08673d97470c 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -410,13 +410,17 @@ static int netfs_write_folio(struct netfs_io_request *wreq,
+ 	folio_unlock(folio);
  
- static void afs_add_open_mmap(struct afs_vnode *vnode)
+ 	if (fgroup == NETFS_FOLIO_COPY_TO_CACHE) {
+-		if (!fscache_resources_valid(&wreq->cache_resources)) {
++		if (!cache->avail) {
+ 			trace_netfs_folio(folio, netfs_folio_trace_cancel_copy);
+ 			netfs_issue_write(wreq, upload);
+ 			netfs_folio_written_back(folio);
+ 			return 0;
+ 		}
+ 		trace_netfs_folio(folio, netfs_folio_trace_store_copy);
++	} else if (!upload->avail && !cache->avail) {
++		trace_netfs_folio(folio, netfs_folio_trace_cancel_store);
++		netfs_folio_written_back(folio);
++		return 0;
+ 	} else if (!upload->construct) {
+ 		trace_netfs_folio(folio, netfs_folio_trace_store);
+ 	} else {
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index 606b4a0f92dae..edcc3b3a3ecf8 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -141,6 +141,7 @@
+ 	EM(netfs_streaming_cont_filled_page,	"mod-streamw-f+") \
+ 	/* The rest are for writeback */			\
+ 	EM(netfs_folio_trace_cancel_copy,	"cancel-copy")	\
++	EM(netfs_folio_trace_cancel_store,	"cancel-store")	\
+ 	EM(netfs_folio_trace_clear,		"clear")	\
+ 	EM(netfs_folio_trace_clear_cc,		"clear-cc")	\
+ 	EM(netfs_folio_trace_clear_g,		"clear-g")	\
 -- 
 2.43.0
 
