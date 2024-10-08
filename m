@@ -1,136 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-31265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4B2993B78
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 01:58:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2392993BCE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 02:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED001C22DCA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2024 23:58:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31AA3B24069
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 00:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558DD192B9C;
-	Mon,  7 Oct 2024 23:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1B5AD5B;
+	Tue,  8 Oct 2024 00:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lzymT+VD"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QOGG7VIl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4305618CBF4;
-	Mon,  7 Oct 2024 23:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F19B3214
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Oct 2024 00:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728345499; cv=none; b=HQTmY8vEw0lmwzfRvwImt6QHKDQ6yCps97Sg2kOtMxmxg4uOusPf3KO6Gci3AII6gtNBjp1z2UeF4gqZnhE987o/8BEIFJUlYviFRa61MRwDJl+2A1APMkopCLLenHg25McCLFQzsUnkiBK0QdOovDS4dHnDTAqJTmnHFv+tXFo=
+	t=1728347359; cv=none; b=eQPNKk3Z0bscuE6vZ8OJRn4TWmCmwGA4Zz1YzNPKAtIqLPKV/lliiEUI3krCVZsvrrqbjBDPqIbvbYilT36DIhW2xCDR4J9W33YtT1JbOojF62P19pg15FQxSmmxENjXFsW4d5fF53Uii6W5IXlsT8QvZ2wzdRI9LUmu6NsWZ5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728345499; c=relaxed/simple;
-	bh=90Bwktj5IOiWk4M0yQuEDT80jv0QRJpvTcOJARftBUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bx0Zqfq5VozLxMA/I8UmDNk9NJwaw7q38HpAjhY21212J/waW1Q2kJItqdlGCxamy00O8gHzn4WN3jpxivg1MZuugVp1JNAE2jYIs4nlFKDHfJSbvOdVicBIsJ3Ueh/OpblF2KSETX+nsFS/dOZVZvTSP0dnMvColeV7V30pqRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lzymT+VD; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Z7wWOJjw+YlO5tJ4k9pD+F+6MgV6cgp39aSz1M6inXo=; b=lzymT+VD0z17msR0bECXH3HgR/
-	qVYxErpxJRUJzXr/TsFL+CGdQ5barLN2DEcxCoMwg9Y2JhlKKje4jF2LxVt3CM4R9QCD5QInhWKV3
-	DpkhFsXoR3Rl8zMp42qzwpNIKS8A9eAeTIOjXHnJWVSxFBxyW3CjzMYQHibHIojOkzqvGwiUvapSq
-	YzNJ9pVh/+0BczA7GXVmV+qRVPWHIbf3fcO6FZ3k1xqdeIxiZlbIntPmfnnJkY64MdbT3Y58ROrGb
-	fbt3SppV7FjqRIEDALlLNLvtnOHbAx0A0c+ugm+Bb2XZEhggZzxHPNzDjEM99DPkhKvpB+3t9mYev
-	mhulnUVg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxxcF-00000001j8n-1E8F;
-	Mon, 07 Oct 2024 23:58:15 +0000
-Date: Tue, 8 Oct 2024 00:58:15 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	io-uring@vger.kernel.org, cgzones@googlemail.com
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
-Message-ID: <20241007235815.GT4017910@ZenIV>
-References: <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
- <20241002020857.GC4017910@ZenIV>
- <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
- <20241002211939.GE4017910@ZenIV>
- <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
- <20241006052859.GD4017910@ZenIV>
- <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
- <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
- <20241007212034.GS4017910@ZenIV>
- <2da6c045-3e55-4137-b646-f2da69032fff@kernel.dk>
+	s=arc-20240116; t=1728347359; c=relaxed/simple;
+	bh=Tke8szf/tF+Zw53GGM7FveqgBu9sg0bXcPAEsM0e6AA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cih6xRbZQChl02L+sL6omN5gnuvx/hDuZtULJkJTvKagnMPDx80ubxS8TgARqiygh1wJUwNWKMQetcvPYa6L5EGwABStJ4TCYwNe+hOukVXh0qIFDhj+6/Z4rFw1OvW/FpGUfN+KotqQ3qS4+V71vZfV8CsfSDAEUtfh17dBKwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QOGG7VIl; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c876ed9c93so6309751a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 17:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1728347355; x=1728952155; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nsQ1lX9RfNwwbE7U1ME2PBLb06zd6P+Kklt61iLJfEw=;
+        b=QOGG7VIl46wTFZtLMslm6U/E0QOquNdwYRoWRS0HPtPWqUGDN5OHMd+LxneCfVNMKZ
+         Q6lI0co3MYLO9OrYErYpilwUe8v7P9efQQELiKbjHCQ5yi+3HyEeSbrsdTiMbN+XQrDu
+         Kazrk3+mgEzor0ZgPwyjAPMSZZIaStkvQAvqA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728347355; x=1728952155;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nsQ1lX9RfNwwbE7U1ME2PBLb06zd6P+Kklt61iLJfEw=;
+        b=kp4wENBMejmr+rSohohj1WQs6QUO9sc4Z/Z9zTfOoxw1KyHnmWGwDKNomnGlWHC+N2
+         eu3RTsaJiJlJL0xqf18QH/NhXKsI0EN1owdUTLQxZfhWR7L7TQB+BF87Ddk6itzInTai
+         KJrkeiA/SVFQTsEXkRsV6RyMJ4T53fPMbDERCq34OcienUZt4u7YFpcnhCXGRRJ5KHOT
+         QgnBcjUpAz8TvgXfSvUatlFMMhVkjBG5DqnEZhblVxFSofGUH+sxhO7P+Miy0I0UV2CF
+         eAoVD+mjnzynaQLwQglNa2/U9OV/AtwFNNN8Gtlyo0ZOQ3HzFi4yhO/39v2WHs4SB+b0
+         ilqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNX7JhZCc7tvcrBUf3mmIOpvH2hUP3h0NaBCmBtkuVGDJ8mJSbbvOgQ4AbgGWBl5Sr0392RUnXzF4scG2c@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgqj9+Ce71k92SuL/1FC6YGo1zXXSYHhztGw5tZ0vqpfYIQBj8
+	Wyb10kf+EQuXXaO8WGWlLtHt4+7uQNDSbI4XQOoXXPsbutKaWg4ICChUdDyHn+YkxBNzXpu5uCN
+	ARd7nbQ==
+X-Google-Smtp-Source: AGHT+IGL2joftT7qUqCebjzMYJtMRth0BJfX1qdyKSiIrvcTIwinNwmWplZSH4YkHfMkeFBIbqKsTQ==
+X-Received: by 2002:a17:907:a02:b0:a86:789b:71fe with SMTP id a640c23a62f3a-a991bff297amr1312108366b.48.1728347355257;
+        Mon, 07 Oct 2024 17:29:15 -0700 (PDT)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994e1bb049sm254006866b.165.2024.10.07.17.29.14
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 17:29:14 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99388e3009so344304966b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 17:29:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUw0FpLBEaU/OBAipljTbElMPN2nS80lseOn45r1y3d1nW+csNJO60mdIEIzjBRqWzAV7c9iKAnsmw9Ij8u@vger.kernel.org
+X-Received: by 2002:a17:906:6a19:b0:a99:762f:b296 with SMTP id
+ a640c23a62f3a-a99762fbb7fmr20741966b.59.1728347354279; Mon, 07 Oct 2024
+ 17:29:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2da6c045-3e55-4137-b646-f2da69032fff@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20241002014017.3801899-1-david@fromorbit.com> <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org> <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3> <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
+ <ZwRvshM65rxXTwxd@dread.disaster.area>
+In-Reply-To: <ZwRvshM65rxXTwxd@dread.disaster.area>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 7 Oct 2024 17:28:57 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
+Message-ID: <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert sb->s_inodes
+ iteration to super_iter_inodes()
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	kent.overstreet@linux.dev, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>, 
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 07, 2024 at 04:29:29PM -0600, Jens Axboe wrote:
-> > Can I put your s-o-b on that, with e.g.
-> > 
-> > io_uring: IORING_OP_F[GS]ETXATTR is fine with REQ_F_FIXED_FILE
-> > 
-> > Rejection of IOSQE_FIXED_FILE combined with IORING_OP_[GS]ETXATTR
-> > is fine - these do not take a file descriptor, so such combination
-> > makes no sense.  The checks are misplaced, though - as it is, they
-> > triggers on IORING_OP_F[GS]ETXATTR as well, and those do take 
-> > a file reference, no matter the origin. 
-> 
-> Yep that's perfect, officially:
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> Thanks Al!
+On Mon, 7 Oct 2024 at 16:33, Dave Chinner <david@fromorbit.com> wrote:
+>
+> There may be other inode references being held that make
+> the inode live longer than the dentry cache. When should the
+> fsnotify marks be removed from the inode in that case? Do they need
+> to remain until, e.g, writeback completes?
 
-OK, updated and force-pushed (with slight reordering).  I can almost
-promise no-rebase mode for that thing from now on, as long as nobody
-on fsdevel objects to fs/xattr.c part of things after I repost the
-series in the current form.
+Note that my idea is to just remove the fsnotify marks when the dentry
+discards the inode.
 
-One possible exception: I'm not sure that fs/internal.h is a good
-place for those primitives.  OTOH, any bikeshedding in that direction
-can be delayed until the next cycle...
+That means that yes, the inode may still have a lifetime after the
+dentry (because of other references, _or_ just because I_DONTCACHE
+isn't set and we keep caching the inode).
 
-To expand the circle of potential bikeshedders: s/do_mkdirat/filename_mkdirat/
-is a reasonable idea for this series, innit?  How about turning e.g.
+BUT - fsnotify won't care. There won't be any fsnotify marks on that
+inode any more, and without a dentry that points to it, there's no way
+to add such marks.
 
-int __init init_mkdir(const char *pathname, umode_t mode)
-{
-        struct dentry *dentry;
-        struct path path;
-        int error;
+(A new dentry may be re-attached to such an inode, and then fsnotify
+could re-add new marks, but that doesn't change anything - the next
+time the dentry is detached, the marks would go away again).
 
-        dentry = kern_path_create(AT_FDCWD, pathname, &path, LOOKUP_DIRECTORY);
-        if (IS_ERR(dentry))
-                return PTR_ERR(dentry);
-        mode = mode_strip_umask(d_inode(path.dentry), mode);
-        error = security_path_mkdir(&path, dentry, mode);
-        if (!error)
-                error = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
-                                  dentry, mode);
-        done_path_create(&path, dentry);
-        return error;
-}
+And yes, this changes the timing on when fsnotify events happen, but
+what I'm actually hoping for is that Jan will agree that it doesn't
+actually matter semantically.
 
-into
+> > Then at umount time, the dentry shrinking will deal with all live
+> > dentries, and at most the fsnotify layer would send the FS_UNMOUNT to
+> > just the root dentry inodes?
+>
+> I don't think even that is necessary, because
+> shrink_dcache_for_umount() drops the sb->s_root dentry after
+> trimming the dentry tree. Hence the dcache drop would cleanup all
+> inode references, roots included.
 
-int __init init_mkdir(const char *pathname, umode_t mode)
-{
-	return filename_mkdirat(AT_FDCWD, getname_kernel(pathname), mode);
-}
+Ahh - even better.
 
-reducing the duplication?  It really should not be accessible to random
-places in the kernel, but syscalls in core VFS + io_uring interface for
-the same + possibly init/*.c...
+I didn't actually look very closely at the actual umount path, I was
+looking just at the fsnotify_inoderemove() place in
+dentry_unlink_inode() and went "couldn't we do _this_ instead?"
 
-OTOH, I'm afraid to let the "but our driver is sooo special!" crowd play
-with the full set of syscalls...  init_syscalls.h is already bad enough.
-Hell knows, fs/internal.h just might be a bit of deterrent...
+> > Wouldn't that make things much cleaner, and remove at least *one* odd
+> > use of the nasty s_inodes list?
+>
+> Yes, it would, but someone who knows exactly when the fsnotify
+> marks can be removed needs to chime in here...
+
+Yup. Honza?
+
+(Aside: I don't actually know if you prefer Jan or Honza, so I use
+both randomly and interchangeably?)
+
+> > I have this feeling that maybe we can just remove the other users too
+> > using similar models. I think the LSM layer use (in landlock) is bogus
+> > for exactly the same reason - there's really no reason to keep things
+> > around for a random cached inode without a dentry.
+>
+> Perhaps, but I'm not sure what the landlock code is actually trying
+> to do.
+
+Yeah, I wouldn't be surprised if it's just confused - it's very odd.
+
+But I'd be perfectly happy just removing one use at a time - even if
+we keep the s_inodes list around because of other users, it would
+still be "one less thing".
+
+> Hence, to me, the lifecycle and reference counting of inode related
+> objects in landlock doesn't seem quite right, and the use of the
+> security_sb_delete() callout appears to be papering over an internal
+> lifecycle issue.
+>
+> I'd love to get rid of it altogether.
+
+Yeah, I think the inode lifetime is just so random these days that
+anything that depends on it is questionable.
+
+The quota case is probably the only thing where the inode lifetime
+*really* makes sense, and that's the one where I looked at the code
+and went "I *hope* this can be converted to traversing the dentry
+tree", but at the same time it did look sensible to make it be about
+inodes.
+
+If we can convert the quota side to be based on dentry lifetimes, it
+will almost certainly then have to react to the places that do
+"d_add()" when re-connecting an inode to a dentry at lookup time.
+
+So yeah, the quota code looks worse, but even if we could just remove
+fsnotify and landlock, I'd still be much happier.
+
+             Linus
 
