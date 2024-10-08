@@ -1,88 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-31271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF6F993DCD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 06:08:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDE9993DE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 06:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98DF1F231E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 04:08:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A1B5B23162
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 04:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F131770FE;
-	Tue,  8 Oct 2024 04:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007037DA7F;
+	Tue,  8 Oct 2024 04:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="tGDqaCka"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eLnzV1g+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C7534CF5;
-	Tue,  8 Oct 2024 04:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E333C0C;
+	Tue,  8 Oct 2024 04:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728360506; cv=none; b=SD9zSfli2pgdhfvEbC0fTPopAAbOSWFBTwDRUCO7LiDYmO34hIj9P8UVw8RVjUAu7a71nEOSBxnrsi6/dOZDhZuDNtha7RbAdf9JGCL7Yi0rfqgqXCKUvA0jp000tppWPbDO61Eigsjuju28ksP8jWvYp1ucpTFPpnR1f34GzEs=
+	t=1728360985; cv=none; b=fg0WOXCA08FrF7Uq4nls84vCya51FZb7WV8fgEVgbFK/GaS7fBn8eXkiJYelgA8z3h4ysLSlnLjZCs3sugPwiSieBXIUcOBjebAisstAVziL8saJu1NIEtWks67h0CGAUP0f0cX1vwsX8u2x3wnC+qgCzsTYaRQPJ8Fwa835zdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728360506; c=relaxed/simple;
-	bh=bGSSXqkDC77L/jHqbWDlsIj40Y3cHU10KamYolKowtk=;
+	s=arc-20240116; t=1728360985; c=relaxed/simple;
+	bh=2Rw5XCCscapRli23631yqGLbV9IuinESjjD7/PyBm/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NaGqKb9qvNxM7FlvnXi36mPQPKKbZpY3kKGG+jwe+pjVv5R4P2fQIEM3UDHderQIr61JQajuncPv4INWkHRp6kJHq74yqWOrLfid9niEVabQDNCQRPCMBsA5xpC46esLFkfWGOcuG5j5SxkNlZlzglehBdhEaTTnV/WyZkA+0nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=tGDqaCka; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsDie7omrX6LmV6e14ddOg/dkcQw/c4Fde2q/t7kTIl4w71PKWUU6IDH6bVfWtMimMwPOA8R9JiR4dYaUhXgNwnorduk9ARuy3q/9OkM0t0/DVNHgrfnXLuZJYSrZaltxudaZiKNrIHsCsYZInpsxYMbqy/ddFfT1s6KHfAOQUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eLnzV1g+; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=P3U3gCku+Che5liNxFQp/S+uDp0nZCeCL5rN6L7yXA8=; b=tGDqaCkag+5y/ySMD7tm3K2El9
-	tGQWSI8Sxq0drlCMUhmo3njCprnYBGGsaI6ocIBDd2hZwPrp9oy8vXr64Rhrna+O4dTU9pWmIPNmT
-	LSB1KnzDvchQOy8E1hwNCojL3yxX0ltw1FIKjtJ4EfTbFae271xQCnYIkDnyRTjvOeB6iEOn6+0dj
-	lWOOg5uXGQjNFwlCEuY0SzKCzfUBLcin6U1ojkoz7RMpVoElUemIMxayekAY4bvEfcl62dmVW+MqA
-	WyxGRz5KjQPmC0M/8vPkvm9O9jt7DWvRr9m69Dw3RFGTsUcQqnH2ITPyXaEk+e/4yt28a4Nvuy/pI
-	Nk5lpzCg==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=97l6SjBohVYWdAwAypURyEzWFaCjUnLj/GsOLcXtnv8=; b=eLnzV1g+ysODUXKXYkECsqDMwO
+	0WkZVANtkvlg13cw+SuF5N5Q+MlJeKJsO3UliHKtrF7vdp7PjVp6zJ8wiFNg0xFzwdM69WXuqn/gk
+	ogAeg84YiRG9saUfMQkIeijDDk5yGI/YUZd1Ps49QcWzdZkUbOgAb4J7gUaa4t3+hAn6Ziz3e8BlL
+	dKhtnjkE+ene3VWsKJFGX6VlUIOteTwkj9UWq5odGhnN/FBGvcEclJ/1Q/HqfjfRsBtAMxKkJ1Fq0
+	N4hekTk+SGVr7Ofa/sbLlF3745T3iUokvC0WrMpxotBxje5hDbL5l29tREFWcYwMIp9v7TBje5KHV
+	LCbiOa/Q==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy1WD-00000001lWg-3ofk;
-	Tue, 08 Oct 2024 04:08:17 +0000
-Date: Tue, 8 Oct 2024 05:08:17 +0100
+	id 1sy1e1-00000001lcY-13ED;
+	Tue, 08 Oct 2024 04:16:21 +0000
+Date: Tue, 8 Oct 2024 05:16:21 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	io-uring@vger.kernel.org, cgzones@googlemail.com
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
-Message-ID: <20241008040817.GU4017910@ZenIV>
-References: <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
- <20241002211939.GE4017910@ZenIV>
- <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
- <20241006052859.GD4017910@ZenIV>
- <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
- <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
- <20241007212034.GS4017910@ZenIV>
- <2da6c045-3e55-4137-b646-f2da69032fff@kernel.dk>
- <20241007235815.GT4017910@ZenIV>
- <10fe7485-a672-4a66-9080-c8824b79a030@kernel.dk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Xi Ruoyao <xry111@xry111.site>, Christian Brauner <brauner@kernel.org>,
+	Miao Wang <shankerwangmiao@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] vfs: Make sure {statx,fstatat}(..., AT_EMPTY_PATH |
+ ..., NULL, ...) behave as (..., AT_EMPTY_PATH | ..., "", ...)
+Message-ID: <20241008041621.GV4017910@ZenIV>
+References: <20241007130825.10326-1-xry111@xry111.site>
+ <20241007130825.10326-3-xry111@xry111.site>
+ <CAGudoHHdccL5Lh8zAO-0swqqRCW4GXMSXhq4jQGoVj=UdBK-Lg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <10fe7485-a672-4a66-9080-c8824b79a030@kernel.dk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHHdccL5Lh8zAO-0swqqRCW4GXMSXhq4jQGoVj=UdBK-Lg@mail.gmail.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Oct 07, 2024 at 07:58:15PM -0600, Jens Axboe wrote:
-
-> > OTOH, I'm afraid to let the "but our driver is sooo special!" crowd play
-> > with the full set of syscalls...  init_syscalls.h is already bad enough.
-> > Hell knows, fs/internal.h just might be a bit of deterrent...
+On Tue, Oct 08, 2024 at 05:57:00AM +0200, Mateusz Guzik wrote:
+> On Mon, Oct 7, 2024 at 3:08 PM Xi Ruoyao <xry111@xry111.site> wrote:
+> >
+> > We've supported {statx,fstatat}(real_fd, NULL, AT_EMPTY_PATH, ...) since
+> > Linux 6.11 for better performance.  However there are other cases, for
+> > example using AT_FDCWD as the fd or having AT_SYMLINK_NOFOLLOW in flags,
+> > not covered by the fast path.  While it may be impossible, too
+> > difficult, or not very beneficial to optimize these cases, we should
+> > still turn NULL into "" for them in the slow path to make the API easier
+> > to be documented and used.
+> >
+> > Fixes: 0ef625bba6fb ("vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> > ---
+> >  fs/stat.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/stat.c b/fs/stat.c
+> > index ed9d4fd8ba2c..5d1b51c23c62 100644
+> > --- a/fs/stat.c
+> > +++ b/fs/stat.c
+> > @@ -337,8 +337,11 @@ int vfs_fstatat(int dfd, const char __user *filename,
+> >         flags &= ~AT_NO_AUTOMOUNT;
+> >         if (flags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
+> >                 return vfs_fstat(dfd, stat);
+> > +       else if ((flags & AT_EMPTY_PATH) && !filename)
+> > +               name = getname_kernel("");
+> > +       else
+> > +               name = getname_flags(filename, getname_statx_lookup_flags(statx_flags));
+> >
+> > -       name = getname_flags(filename, getname_statx_lookup_flags(statx_flags));
+> >         ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
+> >         putname(name);
+> >
+> > @@ -791,8 +794,11 @@ SYSCALL_DEFINE5(statx,
+> >         lflags = flags & ~(AT_NO_AUTOMOUNT | AT_STATX_SYNC_TYPE);
+> >         if (lflags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
+> >                 return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, buffer);
+> > +       else if ((lflags & AT_EMPTY_PATH) && !filename)
+> > +               name = getname_kernel("");
+> > +       else
+> > +               name = getname_flags(filename, getname_statx_lookup_flags(flags));
+> >
+> > -       name = getname_flags(filename, getname_statx_lookup_flags(flags));
+> >         ret = do_statx(dfd, name, flags, mask, buffer);
+> >         putname(name);
+> >
 > 
-> Deduping it is a good thing, suggestion looks good to me. For random
-> drivers, very much agree. But are there any of these symbols we end up
-> exporting? That tends to put a damper on the enthusiasm...
+> I thought you are going to patch up the 2 callsites of
+> vfs_empty_path() or add the flags argument to said routine so that it
+> can do the branching internally.
+> 
+> Either way I don't think implementing AT_FDCWD + NULL + AT_EMPTY_PATH
+> with  getname_kernel("") is necessary.
 
-	You wish...  init_unlink() et.al. are not just not exported, they
-are freed once the system is booted.  Doesn't stop that kind of magic being
-attempted.
+Folks, please don't go there.  Really.  IMO vfs_empty_path() is a wrong API
+in the first place.  Too low-level and racy as well.
+
+	See the approach in #work.xattr; I'm going to lift that into fs/namei.c
+(well, the slow path - everything after "if path is NULL, we are done") and
+yes, fs/stat.c users get handled better that way.
 
