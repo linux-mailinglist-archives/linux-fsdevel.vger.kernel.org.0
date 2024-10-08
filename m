@@ -1,85 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-31326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71AA99497B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 14:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D227B9949B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 14:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE371F21D19
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 12:24:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5D91F267F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 12:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D33B1DF26C;
-	Tue,  8 Oct 2024 12:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3082E1DED58;
+	Tue,  8 Oct 2024 12:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wMKZSAVf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAnsVOU/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4FF1DE898;
-	Tue,  8 Oct 2024 12:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7CA1E485;
+	Tue,  8 Oct 2024 12:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728390185; cv=none; b=jU2K/QA8BgcrNuHiTx8RkjwWHAIgoVfQdDumxMkQBDUD0u8h2UdHHKglAWLZDKUNu9GdzrsUgeH/gfRAPWZydjv4z5XMF43zkQaPWBstgZXWvOusKNrVPEk2xu1kH+522l9OWKW8kooyRHfT/hT5S2osxly2vpVCFzAYR6/HVMA=
+	t=1728390304; cv=none; b=ZR0xixvidVQxAdja+0HRHmOk7Ik9gHYmR5XE7zC7dN7rEkWVhHsKXoD6d8BoGqCJO2SP3IlDu/JpXpPPvnV2tz/I02k+XBsq2qNJGKZHBwuyjkWzw34+PL22sZ9Bvw56pzQfu+Mcl0y3cWaMNKd6HCZQmurIeVEnkOOkWOUBgUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728390185; c=relaxed/simple;
-	bh=oaTW+3j9yeNvgxRODXAtsCJmY5aEpjsfkgrxoSXjr3s=;
+	s=arc-20240116; t=1728390304; c=relaxed/simple;
+	bh=5Y375q8ATxO/uo3+9uLQYTUtj+Wm5ldjck50UO6hkCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m49G4TDVBGh9ab9e/Mc88wKsEZS3TEvfzr/4IzyCHcjaMW/u5jsLQyMVcGz+G8HVMv962H7ajA/yGN/OH9An/NowIq4pTHTWqQgvuz8/tJ4lY5SBzLZvFPYWUFR5fB4RD83fptx3XgS5RveXklks1d2WqGdcCAZIJQQHJPKv7XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wMKZSAVf; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uOucjaDDLBn6pVXhclYDmS9P5w8KdiUT3z9VmKsnsyQ=; b=wMKZSAVfys5mDit4w+XYZVptdZ
-	VHuD8UX6YphYoaj4wONU+VkGn/uHro6xXS9tDHvoOb9jxAZGITTnXTkE92vsJSoRenRILUcvJFgNt
-	x+LoxUzeaVrgezrIxXja1V+DfKYd+l/n83Y/LbXDPsrlHYF6qBlRBta7zDiM/XjLHQ5nnEnH5JjJn
-	lS4s0H1WM7m1PVVZ908mMJa7X12JY7D9jaoUfhcX+erKtdvH+qkrqrvlHaJUHnVUjx231GTwJWlO8
-	Z0WZ/r7NAOEgym1ntfuv1v+10mCVRVDwLo5mhSnNmbUOVhx+vD4pyMxDg+8jSOcWI/VxZ88HSWQoM
-	/jEEikcg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy9Ey-00000005nM4-1f73;
-	Tue, 08 Oct 2024 12:23:00 +0000
-Date: Tue, 8 Oct 2024 05:23:00 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH 1/2] fs/super.c: introduce get_tree_bdev_by_dev()
-Message-ID: <ZwUkJEtwIpUA4qMz@infradead.org>
-References: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
- <ZwUcT0qUp2DKOCS3@infradead.org>
- <34cbdb0b-28f4-4408-83b1-198f55427b5c@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=scx4DtahjjGAJXikAlJD1Pq6EjH5bmGqQXWyd2/0z6vYTPQNcfGiQZwmsLLbsE4+yS2Ru2uEC2WPddNBL/pHOU8mG4dP3DXr9r1KnY02NJV0a2OhWB48mY3uL8CCCNF3f/vRzhMLlMGQDWscZKUV+O9T99pPlq6cBGAeYHc2Z4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kAnsVOU/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8706AC4CEC7;
+	Tue,  8 Oct 2024 12:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728390304;
+	bh=5Y375q8ATxO/uo3+9uLQYTUtj+Wm5ldjck50UO6hkCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kAnsVOU/V0FHPjC+2xH9qP8phOq+80tmRFp6NDkvEoievoubAG7taRqqQBNw57Yae
+	 IdeCjGqOuZm7dIFWMq0YNBo3GVhtm0apouLJt+yKr8VsqwqruRgZDIzEDSmbs6d5Qt
+	 Dt2Rn6kpeg06i5CNy0i1NpIw2ONfeLWmYdp/HYvDybCfqfZmSBhAFt2uZFFOUJKEfG
+	 7hvnApgcLNmeIo+gpVcCTsjl7Ae1y7LKlWdsFZ45mS/QaOI3wMK1c/hDxgvh7BRyKw
+	 9tsiEpet+xjzORQm5JkWY6kQe/HxmwH4Jv/pABBu/Z9gQ4UARmZZYcz02zKt6LTJe6
+	 s/pdIKE8OwJlw==
+Date: Tue, 8 Oct 2024 14:25:00 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Josef Bacik <josef@toxicpanda.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] fcntl: make F_DUPFD_QUERY associative
+Message-ID: <20241008-bohrmaschine-falter-49ebcdf42afa@brauner>
+References: <20241008-duften-formel-251f967602d5@brauner>
+ <bb13f7016a1184196d959c2e2421fde820dcc30a.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <34cbdb0b-28f4-4408-83b1-198f55427b5c@linux.alibaba.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <bb13f7016a1184196d959c2e2421fde820dcc30a.camel@kernel.org>
 
-On Tue, Oct 08, 2024 at 08:10:45PM +0800, Gao Xiang wrote:
-> But the error message out of get_tree_bdev() is inflexible and
-> IMHO it's too coupled to `fc->source`.
+On Tue, Oct 08, 2024 at 07:42:51AM GMT, Jeff Layton wrote:
+> On Tue, 2024-10-08 at 13:30 +0200, Christian Brauner wrote:
+> > Currently when passing a closed file descriptor to
+> > fcntl(fd, F_DUPFD_QUERY, fd_dup) the order matters:
+> > 
+> >     fd = open("/dev/null");
+> >     fd_dup = dup(fd);
+> > 
+> > When we now close one of the file descriptors we get:
+> > 
+> >     (1) fcntl(fd, fd_dup) // -EBADF
+> >     (2) fcntl(fd_dup, fd) // 0 aka not equal
+> > 
+> > depending on which file descriptor is passed first. That's not a huge
+> > deal but it gives the api I slightly weird feel. Make it so that the
+> > order doesn't matter by requiring that both file descriptors are valid:
+> > 
+> > (1') fcntl(fd, fd_dup) // -EBADF
+> > (2') fcntl(fd_dup, fd) // -EBADF
+> > 
+> > Fixes: c62b758bae6a ("fcntl: add F_DUPFD_QUERY fcntl()")
+> > Cc: <stable@vger.kernel.org>
+> > Reported-by: Lennart Poettering <lennart@poettering.net>
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/fcntl.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index 22dd9dcce7ec..3d89de31066a 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -397,6 +397,9 @@ static long f_dupfd_query(int fd, struct file *filp)
+> >  {
+> >  	CLASS(fd_raw, f)(fd);
+> >  
+> > +	if (fd_empty(f))
+> > +		return -EBADF;
+> > +
+> >  	/*
+> >  	 * We can do the 'fdput()' immediately, as the only thing that
+> >  	 * matters is the pointer value which isn't changed by the fdput.
 > 
-> > Otherwise just passing a quiet flag of some form feels like a much
-> > saner interface.
+> Consistency is good, so:
 > 
-> I'm fine with this way, but that will be a treewide change, I
-> will send out a version with a flag later.
+>     Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> 
+> ...that said, we should document that -EBADF means that at least one of
+> the fd's is bogus, but this API doesn't tell you which ones those are.
+> To figure that out, I guess you'd need to do something like issue
+> F_GETFD against each and see which ones return -EBADF?
 
-I'd probably just add a get_tree_bdev_flags and pass 0 flags from
-get_tree_bdev.
+It's actually worse because fcntl() can also give you EBADF if you have
+an O_PATH file descriptor and you request an option that won't work on
+an O_PATH file descriptor. It's complete nonsense.
 
+So the most reliable way to figure out whether the fd is valid, is to
+use a really really old fcntl() like idk F_GETFD and call it. Because
+that should always work (ignoring really stupid things such as using
+seccomp or an LSM to block F_GETFD) and if you get EBADF it must be
+because the file descriptor isn't valid. Obviously that's racy if the
+fdtable is shared but I don't think it's a big problem.
+
+So if you get EBADF from F_DUPFD_QUERY and you really really need to
+know whether the kernel supports it or any of the two fds was invalid
+then yes, you need to follow this up with a F_GETFD. Again, racy but
+won't matter most of the time.
+
+Really, we should have returned something like EOPNOTSUPP from fcntl()
+for the O_PATH case that would've meant that it's easy to detect new
+flags.
 
