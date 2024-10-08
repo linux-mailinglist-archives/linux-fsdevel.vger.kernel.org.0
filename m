@@ -1,190 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-31315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C464A994782
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 13:43:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C7C9947A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 13:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459051F225C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 11:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48C002872AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 11:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149921DDA1E;
-	Tue,  8 Oct 2024 11:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F781D6DA3;
+	Tue,  8 Oct 2024 11:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xp8UxWQH"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JteG29r4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2601D2B28;
-	Tue,  8 Oct 2024 11:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B54176FA7;
+	Tue,  8 Oct 2024 11:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728387773; cv=none; b=mdkEtG9YCAgJK7Q3/0eInMYZgBhMbmvSVqE8bz3yfzeH4czmrMP18mwJ+XyCA7so7T6hpnhPIWiWC0fnr8sdHjeBjvfd6LpD1rOX36hpoWNRqunH4PvoTI8btl4sQvPP7Er1iqobjHPExJhwfaSG18M6J3TUE4t0MbSPEB+Zwlo=
+	t=1728388179; cv=none; b=dQYjb5GVd+/ElujCllmx/uMvzHDTNNRjRsQNqdXVIVGSFXrsingdnUQ8Kz2V5baWgGoW47Ll9vgY6odnzLY5tHUe62Nqe9IN/p1rZKFQ+9b3EXVczy7A1jfpbhZVBfwk4TeWrtU55EzyQ0dOMxitpmSXRVlPGzWCOIx1/m6bla4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728387773; c=relaxed/simple;
-	bh=camDXnDg5maPAAMdDOWGwu0gf8dU6q6IzHU9V0Lnh4I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IbTwUaMZKOpTsxajrLU/kdlka7SDYKmlHRYWCasRszLxLyWM8RvfhsaQY4nCJz5phiIIeQ9MjUj0dvIwmGUfF41NuxsPsZZ/BjaZR9seW+0JORTz2xEwP/xzxMml6eJ1Zp9BfQGs2CdLuzC8tCuLEWWsmoe5vvva7utI7+FGWZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xp8UxWQH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F52C4CEC7;
-	Tue,  8 Oct 2024 11:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728387773;
-	bh=camDXnDg5maPAAMdDOWGwu0gf8dU6q6IzHU9V0Lnh4I=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Xp8UxWQHIObszk3l/tJzpffT6zLGC5x5Vot1U87iOoAivrRaIkvFOGYxNXg6jmbUf
-	 p+cmhte2MWVxUukeJcP/yMHDx30UEOlOZhFnC57ZRJQYtSc2vUHnT6ViREvKPwcYNG
-	 HKeklkpyokAjof+CkJ2J9DEjg90YLIA7Qc1V1MXhQ807wKi8+2R6Y2WkYvn7u8JtFX
-	 EZC/e47+HY2hxiXGWX7ZzAu2x7X4PuNzr7Tir3QvsnTgZGfzCaj4CRdIM64icB9wLU
-	 T1miL0QvoDk4YdltjVD1CG+tW8FJTe/H8NZF2FEBWQBO/L1zavPC/CwdlohjsF2GEk
-	 XggM/KUYqg7Ww==
-Message-ID: <bb13f7016a1184196d959c2e2421fde820dcc30a.camel@kernel.org>
-Subject: Re: [PATCH] fcntl: make F_DUPFD_QUERY associative
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>,  Jan Kara <jack@suse.cz>, Lennart Poettering
- <lennart@poettering.net>, linux-fsdevel@vger.kernel.org, 
- stable@vger.kernel.org
-Date: Tue, 08 Oct 2024 07:42:51 -0400
-In-Reply-To: <20241008-duften-formel-251f967602d5@brauner>
-References: <20241008-duften-formel-251f967602d5@brauner>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728388179; c=relaxed/simple;
+	bh=oNbUcL+CWC8MEQpExAL16Ue2D7U2ea9NJhkt7zF3eb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YT2TpgsSuupAxQY91Q64FiVxr0TenevP8xEG+S+iQHA+18I/is98roXpcn187BLV5ofo0t+yIO0NqrO6fsN1wojUykzglc2TfxUcLhKwcQ8rDW1woZAHX1dhS8vROHRmTWi0adI44J3UhCIqswHH/rDfsBQJLAr1xEuB2OnYsSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JteG29r4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=awNsU8kM1gVB2hmGRFW5nD6DpdqCrn8A9zApWM8go6M=; b=JteG29r4u7xWDca3q521WGut1p
+	+W3eln9BohXAIUrXhRM6XRBWCUs6mMh15B8wUEdnqCOz56ViTP0Sw/+Wvt+nufSaS/pzC7P0suvka
+	3zhloUFhkynsKq7ADkTSLRMM7hmfnqnCB8r+xQZrHT7RbWTd+1FhM2MRpOxtIpowWyNodfiJ1+1WL
+	oafDlRbcEokBkwzHyBv+OGAKvfntAeYfKS9NY+Ju0NjSMdL0clrF6Eozpdw30yI+n6ELNEFa8aqR4
+	K981aSZJ0O5YhTu9Npmh0LGyxxKz+zqGLsp0HKXfjFqL1zi6l95XMWx9FEJpbVYVq1i9xh3pprrwH
+	/3ROin+A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sy8id-00000005h9k-2aVa;
+	Tue, 08 Oct 2024 11:49:35 +0000
+Date: Tue, 8 Oct 2024 04:49:35 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Allison Karlitskaya <allison.karlitskaya@redhat.com>,
+	Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH 1/2] fs/super.c: introduce get_tree_bdev_by_dev()
+Message-ID: <ZwUcT0qUp2DKOCS3@infradead.org>
+References: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, 2024-10-08 at 13:30 +0200, Christian Brauner wrote:
-> Currently when passing a closed file descriptor to
-> fcntl(fd, F_DUPFD_QUERY, fd_dup) the order matters:
->=20
->     fd =3D open("/dev/null");
->     fd_dup =3D dup(fd);
->=20
-> When we now close one of the file descriptors we get:
->=20
->     (1) fcntl(fd, fd_dup) // -EBADF
->     (2) fcntl(fd_dup, fd) // 0 aka not equal
->=20
-> depending on which file descriptor is passed first. That's not a huge
-> deal but it gives the api I slightly weird feel. Make it so that the
-> order doesn't matter by requiring that both file descriptors are valid:
->=20
-> (1') fcntl(fd, fd_dup) // -EBADF
-> (2') fcntl(fd_dup, fd) // -EBADF
->=20
-> Fixes: c62b758bae6a ("fcntl: add F_DUPFD_QUERY fcntl()")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Lennart Poettering <lennart@poettering.net>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/fcntl.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 22dd9dcce7ec..3d89de31066a 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -397,6 +397,9 @@ static long f_dupfd_query(int fd, struct file *filp)
->  {
->  	CLASS(fd_raw, f)(fd);
-> =20
-> +	if (fd_empty(f))
-> +		return -EBADF;
-> +
->  	/*
->  	 * We can do the 'fdput()' immediately, as the only thing that
->  	 * matters is the pointer value which isn't changed by the fdput.
+On Tue, Oct 08, 2024 at 05:56:05PM +0800, Gao Xiang wrote:
+> As Allison reported [1], currently get_tree_bdev() will store
+> "Can't lookup blockdev" error message.  Although it makes sense for
+> pure bdev-based fses, this message may mislead users who try to use
+> EROFS file-backed mounts since get_tree_nodev() is used as a fallback
+> then.
+> 
+> Add get_tree_bdev_by_dev() to specify a device number explicitly
+> instead of the hardcoded fc->source as mentioned in [2], there are
+> other benefits like:
+>   - Filesystems can have other ways to get a bdev-based sb
+>     in addition to the current hard-coded source path;
+> 
+>   - Pseudo-filesystems can utilize this method to generate a
+>     filesystem from given device numbers too.
+> 
+>   - Like get_tree_nodev(), it doesn't strictly tie to fc->source
+>     either.
 
-Consistency is good, so:
+Do you have concrete plans for any of those?  If so send pointers.
+Otherwise just passing a quiet flag of some form feels like a much
+saner interface.
 
-    Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
-...that said, we should document that -EBADF means that at least one of
-the fd's is bogus, but this API doesn't tell you which ones those are.
-To figure that out, I guess you'd need to do something like issue
-F_GETFD against each and see which ones return -EBADF?
 
