@@ -1,87 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-31329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F1F9949E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 14:28:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2B19949F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 14:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D255128345B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 12:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9271E1F25C8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 12:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46571DF747;
-	Tue,  8 Oct 2024 12:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rapY8Ysu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA1F1DEFCF;
+	Tue,  8 Oct 2024 12:27:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041581DF25A;
-	Tue,  8 Oct 2024 12:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC3C4C97;
+	Tue,  8 Oct 2024 12:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728390433; cv=none; b=qiWjcIWXClnjlr22I1g2Khd1ZNY+EYSWcIYigs1FarrYZd76V/zyNM66QhJJdA/BadM0Nc3DivR+y7KLLmm+DIm9IXai3W/myKPLRK1Vx8/MfDsIxjGep0blW6TOgxX6QEwvjr8CrRKeu1vCG2SoTh6+gjSSv/AW4SHdK2EpQak=
+	t=1728390472; cv=none; b=lDKlQRa93gU0xLB0UPIcX+ZICb67IOyBS7eLrC7kUaQABfdSaVX/dIABB9fdLYm1qp0B8LH+FKXo+bGl0AZIU0sQGdHlrfz0W13Xfsq4tkunz5ZjbuoNW6bxiqv3psdE5t3e9K6Dpz5r3/dg9X13/bnRRff2ohDb0d8FzCutXx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728390433; c=relaxed/simple;
-	bh=Bex9kWWkf1IYbePz5Dn+VZ9xnqyq7zc+PIKmCL23il4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=P+p169Yx2ZynT9Q8N0FhYn+h3iLsFCoqF9ZqHoVqT21ERfg0C4F/AlAHg4LK/zevI5GBjAMuWtZj+NcY+D4KHMFDHmwruAYvoaY7kCgbqsFYOcklD2BVHWMrn/wAQ17xOlUwoyMB7jD2kfQnPCgRbCy3BMG/1YCdnq1WgG2kaKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rapY8Ysu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A0EC4CEC7;
-	Tue,  8 Oct 2024 12:27:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728390432;
-	bh=Bex9kWWkf1IYbePz5Dn+VZ9xnqyq7zc+PIKmCL23il4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rapY8YsuiXiFzuUBQL5TU17rlUmLVj37hlrfQRivl7bwl9HHMMPOU0Iwy7WBQAcER
-	 oSF/eHzWaovsjjwgTYof0BkZS9uTE4HOYbxpt0/Tg9/Sgpapb6VRukCQOX/jS+Ai2M
-	 JNeKBM1VQitYCvPk+w1MFX36u8ZX09huNpny5H5ZSBbtKOdLCr4//1LfNEPdQ7BH0Q
-	 UODVymhlRHO+7iT5EAkVe2tBQCtqVxf1Yb5vdY/7Ka54zKuibKdPQ3AHp+dEeFHkiV
-	 uy/xf689Z5/Z+PsU8AMie5ZR20sFo9h7cSedLxNBTJIlhTv6HDlJerz85wdue9fAOZ
-	 x4Sm3OShYZAVA==
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Andrew Kreimer <algonell@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20241008121602.16778-1-algonell@gmail.com>
-References: <20241008121602.16778-1-algonell@gmail.com>
-Subject: Re: [PATCH] fs/inode: Fix a typo
-Message-Id: <172839043123.1673124.6132955349484034928.b4-ty@kernel.org>
-Date: Tue, 08 Oct 2024 14:27:11 +0200
+	s=arc-20240116; t=1728390472; c=relaxed/simple;
+	bh=3OWmEp1PuJE0qFBCqaixDxxjkUSmkqpnGOaPE6+Efxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFnRWFebjVoqlsrlRLdOvA1FLFEsAdAbw7sNqEs4pBTsBU9Lj2DLaYiu2uUH+SyPADO98BbckxWdLdC99b0keSm5Rxo192CghkmdVW1rmhAyOfkJA6T3iJ5phkyS/VQsz7SPuEriER1XSc6fDZfUVy+Dr6gvI5y8NGkCkI58Nes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 47343227A88; Tue,  8 Oct 2024 14:27:45 +0200 (CEST)
+Date: Tue, 8 Oct 2024 14:27:45 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, Bart Van Assche <bvanassche@acm.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Kanchan Joshi <joshi.k@samsung.com>, hare@suse.de, sagi@grimberg.me,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+	asml.silence@gmail.com, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-aio@kvack.org,
+	gost.dev@samsung.com, vishak.g@samsung.com
+Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+Message-ID: <20241008122745.GB29639@lst.de>
+References: <20241002151949.GA20877@lst.de> <yq17caq5xvg.fsf@ca-mkp.ca.oracle.com> <a8b6c57f-88fa-4af0-8a1a-d6a2f2ca8493@acm.org> <CGME20241003125523eucas1p272ad9afc8decfd941104a5c137662307@eucas1p2.samsung.com> <20241003125516.GC17031@lst.de> <20241004062129.z4n6xi4i2ck4nuqh@ArmHalley.local> <20241004062415.GA14876@lst.de> <20241004065923.zddb4fsyevfw2n24@ArmHalley.local> <20241004123206.GA19275@lst.de> <20241007112931.afva6zzmipzdewm4@ArmHalley.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-dedf8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241007112931.afva6zzmipzdewm4@ArmHalley.local>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, 08 Oct 2024 15:16:02 +0300, Andrew Kreimer wrote:
-> Fix a typo in comments: wether v-> whether.
-> 
-> 
+On Mon, Oct 07, 2024 at 01:29:31PM +0200, Javier González wrote:
+>> That's not the point.  There is one company that drivers entirely pointless
+>> marketing BS, and that one is pretty central here.  The same company
+>> that said FDP has absolutely no іntent to work on Linux and fought my
+>> initial attempt to make the protocol not totally unusable ony layer system.
+>> And no, that's not Samsung.
+>
+> So you had an interaction in the working group, your feedback was not
+> taking into consideration by the authors, and the result is that FDP
+> cannot be supported in Linux as a consequence of that? Come on...
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs/inode: Fix a typo
-      https://git.kernel.org/vfs/vfs/c/e1a6efa9de95
-
+No, what I am saying is that the "small" FDP group that was doing the
+development while keeping it doing away from the group insisted that
+FDP is only for use in userspace drivers, and even getting the basis
+in to properly make it suitable for a semi-multi tenant setup like
+Linux io_uring passthrough was not welcome and actually fought tooth
+and nail by the particular one particular company.  It a long talk to
+the head of the NVMe board to even get this sorted out.
 
