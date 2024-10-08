@@ -1,109 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-31357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A03F9955A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 19:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF439955DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 19:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7251F261E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 17:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA98F1F256D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 17:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0CA1FA260;
-	Tue,  8 Oct 2024 17:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F00220B1FB;
+	Tue,  8 Oct 2024 17:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LVEG2euN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOw9PViU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136011F9A9A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Oct 2024 17:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2FA20B1ED;
+	Tue,  8 Oct 2024 17:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728408589; cv=none; b=EZcy7cA/EWFa6WshY3354RKfRL0eLPin69iVqGsILlJD6zOpqaqg2JOkgFiC/onIAritUUQVjS6Ky45SOgLZCSs76OhDBQCBd78dPvhyVFYyzmllce5c/ABMQ8kJBbC4FTgPcNqKmDvpoFroa3Qd+qZSXAlgHSWK+990yG+a+cA=
+	t=1728409184; cv=none; b=gvCDhrtlkshlcFNF9osfYrkXutHrU+9w2ltSGTfpDmiWGd4Fzfv5PpXwcDUfLBqgpMKlQh38a1YD4QgJv2nr7OCnM9OGi+h2oAwJm4gXBd5Vc7Zwd2TWMSMJlIwQe75ZZw/czHxeAmbbi/CeY0TBk9f+f+8qEIjW/6Ln3lHAKRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728408589; c=relaxed/simple;
-	bh=wSzJvZVTHd7+YmRM3awZcfGN3GiZns966yZ33wD2sb4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VZXjck8vNAm7ueXiWATTaAXsIAtaY4/QFYhiaMQh3Vk1XconH87tkH11okt4fCCfaH+yFpfEr7TLP0zR1buBy4u75gH7G5DKDX2DKOTOffmB3NdXtSv3DFxxyXeHDBeqL4mezpbmOdeDHhhagB2ToAiubA76rmT/rxY3Ae6+NUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LVEG2euN; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5398996acbeso6635937e87.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Oct 2024 10:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728408585; x=1729013385; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9S+19Kd4HHaDp0BIocGtLD/Km98j7MUve8vt0hS5nao=;
-        b=LVEG2euNXB+Mk7DPtg/hePrf6LRGM8JXHCXRaVBeC72fHn4tJZvfUmEEwaxpfOwrC8
-         Z/Ug7CzhLmgBH2EG5Fcv7+aGS55NRfnOZDWvTnQQsvHPqDMiGCLRh3kuCPkZZZ2ccEHr
-         Q+ewTiLTB5UNwYnCXb8nXNfg3YofwYO2bQrIM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728408585; x=1729013385;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9S+19Kd4HHaDp0BIocGtLD/Km98j7MUve8vt0hS5nao=;
-        b=xPp21cpdY1rCkzE3HT4nq04Py5AL+TWLiMEZMWC+5YUxo6tEoPSrqYbukoaXO93qct
-         jBq+uA99hA83gnt22grAaWA9SIhD1C3Wvas5DUz/ocKkqaNNkCfWqjzb92GjDfxBiAjI
-         zjUW2bd7HzQo8mnaWfiy7zPRRfFBHUwZ3C3hVVIeRskiHEdgTrhCrL3ntXI0mqwtdq0D
-         QZ87gsejvYGRhqveF7WLRppsABSkE8zGwYizcd+6mD786BhIggkm4n8qJuyT0QsFFOL4
-         11GsLePBWQ5ga3AYfyfo9XCqh38upjx1fiv+nh8Tvlu8DyeBOW8/coZ+9iS6q/IYQFro
-         t4+Q==
-X-Gm-Message-State: AOJu0YwqY7eJ5sVBpOKYUupTuQUlm25hfBCEOxHYlZyrb/aTf550lJCS
-	WI7m+9iCvwuJVqunFSF2q/RHB9FnOo3nFDVzYdzuJ6mdy87DoupH7oCmeTllbNOTRcL+wgd2VhE
-	koK4JXw==
-X-Google-Smtp-Source: AGHT+IGMM8tFxALSSZnXN31QcA1GuGeNEat+NCOhBVHttA0fVg/edFd1HWBsyFbC//wPIHJKg0NBEQ==
-X-Received: by 2002:a05:6512:23a7:b0:535:6a83:86f9 with SMTP id 2adb3069b0e04-539ab9f54eamr7419196e87.60.1728408584942;
-        Tue, 08 Oct 2024 10:29:44 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb4b9sm4524001a12.75.2024.10.08.10.29.43
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 10:29:44 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a86e9db75b9so909588066b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Oct 2024 10:29:43 -0700 (PDT)
-X-Received: by 2002:a17:906:6a25:b0:a99:6a5a:bba with SMTP id
- a640c23a62f3a-a996a5a0e0dmr273249766b.2.1728408583422; Tue, 08 Oct 2024
- 10:29:43 -0700 (PDT)
+	s=arc-20240116; t=1728409184; c=relaxed/simple;
+	bh=Z2MbNxcDvsfdgDaNR3y6hbACd+gqp+Qk7xVytopU3Jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNmVLDtyT4LWglwt8l+VLrAEVYfoYbN2hs1DMh23QCbjp3QvIMsbpyan6mpper6PyZsvwUuNh1sXx38V/VWN1HOkfv9JGwc7zHFdw4DU5LgNsYOAbLn3kgdesWOZXXNhyo9X2P5U93lmDwTOa9Rrcm9EQvGy4xNhVR17by7WMSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOw9PViU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50432C4CECE;
+	Tue,  8 Oct 2024 17:39:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728409184;
+	bh=Z2MbNxcDvsfdgDaNR3y6hbACd+gqp+Qk7xVytopU3Jw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iOw9PViUGPvUIm3FfR2A9HKaclq4iHf1gSzqBQS7CK6W8S9PDbDu0nXH9AeBI35F+
+	 fEKgDxxWiIaygwd+exClb94JR5jl2OdfUees7GZo/eDdioV2nXSihfeOESY4KIX8r4
+	 rpzJUTPjFJsPU7XNlsVJeYK7YR7pX/gWAvFw+tT4s6buPIO+tJkWfbjeZ23YROK3/a
+	 Hwob4hoawvJRGEUPruEXX7J2rSUojlH4Ta2ZrVEyH/cNznSDasnV3ieomJGDHRHSOK
+	 NZR9lieAsHkw4WVBJyxtiZZLY0g3aATskUxEXE61pRXjf5HpCzHuic+tTfUgziOQky
+	 Ew9yXoQf8CDaQ==
+Date: Tue, 8 Oct 2024 10:39:43 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 06/10] xfs: IOMAP_ZERO and IOMAP_UNSHARE already hold
+ invalidate_lock
+Message-ID: <20241008173943.GS21853@frogsfrogsfrogs>
+References: <20241008085939.266014-1-hch@lst.de>
+ <20241008085939.266014-7-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007-brauner-file-rcuref-v2-0-387e24dc9163@kernel.org>
- <20241007-brauner-file-rcuref-v2-2-387e24dc9163@kernel.org>
- <CAHk-=wj3Nt6Fyu_YYuNoa+Xi4h__MxAjJs5M3YTHvTshehegzg@mail.gmail.com> <20241008-gedeck-jemand-ebd8c1bf2737@brauner>
-In-Reply-To: <20241008-gedeck-jemand-ebd8c1bf2737@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 8 Oct 2024 10:29:26 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiL9hj0AyqXW1qYnu-L9i_rjdCNGUSV-QBm8jtMjQa8kg@mail.gmail.com>
-Message-ID: <CAHk-=wiL9hj0AyqXW1qYnu-L9i_rjdCNGUSV-QBm8jtMjQa8kg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] fs: add file_ref
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008085939.266014-7-hch@lst.de>
 
-On Tue, 8 Oct 2024 at 03:12, Christian Brauner <brauner@kernel.org> wrote:
->
-> Switching atomic_long_fetch_inc() would change the logic quite a bit
-> though as atomic_long_fetch_inc() returns the previous value.
+On Tue, Oct 08, 2024 at 10:59:17AM +0200, Christoph Hellwig wrote:
+> All XFS callers of iomap_zero_range and iomap_file_unshare already hold
+> invalidate_lock, so we can't take it again in
+> iomap_file_buffered_write_punch_delalloc.
+> 
+> Use the passed in flags argument to detect if we're called from a zero
+> or unshare operation and don't take the lock again in this case.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-You can use atomic_long_inc_return() if you want the new value.
+Thanks for fixing the bug I reported,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-So the "atomic_fetch_op()" is a "fetch old value and do the op".
+--D
 
-The "atomic_op_return()" is "do the op and return the new value".
-
-We do have both, although on x86, the "fetch_op" is the one that most
-closely then maps to "xadd".
-
-But if you find the current code easier, that's fine.
-
-            Linus
+> ---
+>  fs/xfs/xfs_iomap.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 4fa4d66dc37761..17170d9b9ff78a 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -1239,10 +1239,18 @@ xfs_buffered_write_iomap_end(
+>  	if (start_byte >= end_byte)
+>  		return 0;
+>  
+> -	filemap_invalidate_lock(inode->i_mapping);
+> -	iomap_write_delalloc_release(inode, start_byte, end_byte, flags, iomap,
+> -			xfs_buffered_write_delalloc_punch);
+> -	filemap_invalidate_unlock(inode->i_mapping);
+> +	/* For zeroing operations the callers already hold invalidate_lock. */
+> +	if (flags & (IOMAP_UNSHARE | IOMAP_ZERO)) {
+> +		rwsem_assert_held_write(&inode->i_mapping->invalidate_lock);
+> +		iomap_write_delalloc_release(inode, start_byte, end_byte, flags,
+> +				iomap, xfs_buffered_write_delalloc_punch);
+> +	} else {
+> +		filemap_invalidate_lock(inode->i_mapping);
+> +		iomap_write_delalloc_release(inode, start_byte, end_byte, flags,
+> +				iomap, xfs_buffered_write_delalloc_punch);
+> +		filemap_invalidate_unlock(inode->i_mapping);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.45.2
+> 
+> 
 
