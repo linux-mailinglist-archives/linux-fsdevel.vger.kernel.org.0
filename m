@@ -1,219 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-31340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A4D994DF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 15:11:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773FF994E04
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 15:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E96EA1C252BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 13:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38AF82869B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 13:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB53A1DF265;
-	Tue,  8 Oct 2024 13:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2971B1DF256;
+	Tue,  8 Oct 2024 13:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBVDWWgF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMjZt5r6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E151DE4CD;
-	Tue,  8 Oct 2024 13:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074DA1DE88F;
+	Tue,  8 Oct 2024 13:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728393058; cv=none; b=CAemjhLoPnq90gEZkJ45yz/QAGcj1RgJfXOw6OeujzLmZPmYt1aqE0f8I2HiVGJcFwcwH1SRlrB/7BTMSRwLq4I3CgF5hBRry1HVznabxTW7QpJSLxh4Ru0eEo2stSgC4OumpRQXrV+9eG6XuzXxUX1R7QNhJ90eWc7MD6cZ04w=
+	t=1728393113; cv=none; b=TixkJ9tO5mv4JKjHRyt+RfvXIq7K5mMRShpQvMNtXdn/UkK8RelvL9i5szekUbtoIMLk7JVP6v1UU7QPO04mWXe2h6Q5hE4jbkqTlGr5mPepAVLlgcyFe+ctB07Y1iMH8Ij0nkztV1fb+e5Yd7IyyMmxJZZSVybyQoN1Y96YwEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728393058; c=relaxed/simple;
-	bh=tY4N1IuuWaKx0TQWzes5g60+uBIn2G6WmEWkTSqvueU=;
+	s=arc-20240116; t=1728393113; c=relaxed/simple;
+	bh=sctgzteZF0xLIJZeV0v1P46a4lOB3Jen+Szq9MvYebg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V5+tmBJDU0TJtnUGrVWF5Jc91blx+IVNpZ6cjaCMs9ytetGzv2SCKecvQaecKhdoPrwUnWmkqhjODXzqIwZwqXlqNx47SAf6bLJh7s5mskCIMOGSt6AeC5REgxGruh/UrzTTHevWADQgxNuoA94WXHPK9iKxugqezYEY4LE0+aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBVDWWgF; arc=none smtp.client-ip=209.85.128.178
+	 To:Cc:Content-Type; b=oZYnZSkrp9xvqNen4GdDeca+1z5Yq+4KiMWIK8oFflFhefSdL82spHq4YF5Yx5wCX+O87+MO0VjpWNH+Kf5hSrLcOwbMmHRY8N6q1gLlXyi9lBHG006IS6Y/Lclpa0ppCI23n48zPcjVbQH7rGGU5RSVn1mVRb/gsiVuvXeE7Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMjZt5r6; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e25f3748e0so56337867b3.0;
-        Tue, 08 Oct 2024 06:10:56 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a9ae8fc076so610339485a.2;
+        Tue, 08 Oct 2024 06:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728393055; x=1728997855; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a1X88XkNaciEBMOOukkde66JRe9dk6pAw1yAJWCuM2g=;
-        b=TBVDWWgFYRmsoxBQy4D4e1/v2BKL0LqCj5SmXvy2ndNHxl+5ml4+GoZ+u/coJ9h48T
-         PuEGP/0SeDqjfgWoQko6iPCGT9RAp1Cs5KyV4i4GKsaZF+4nYZfbeRl3Ux4dpO3hNpMD
-         tgx90kpmrBOwwIJU6rUFvRaEQza37pH15LiS2zXRvLxpPerd9cMxKOAj+DgFXRqVq78+
-         YQ3a9JuiM8QPl935NDKEog1gcD8iSqbNj4AzkNlqkNcsiCAkWK5po7nF2sC9MwS+5mz1
-         114q/6t5ShXP4iJp0FXBLzia3aj4l5JfRspK3TPNruUjZ6pFZ2K3u2rRdObE7BKPgKz7
-         LIXg==
+        d=gmail.com; s=20230601; t=1728393111; x=1728997911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QUhIhCW4EYVtZ1pFGNbZwIrKmPYGAss7TRP+oocEQ7M=;
+        b=WMjZt5r6k08m67d0i3jJ9QlUMw5LXj2ZD/LbPlIBR5CUkxLsY/aN1qLtwvcb8yrsQm
+         7JKAml6Ul+IKC8KTvzUeK++kKb6f590fHfIJ1HHhVpEamtiRJHL3d5sZfIT1D1I2AiEs
+         jHcot0sGVHfIehGcoJPpaKoQekoqntsCU37NyUEFg3rhwMatLLgENXz/nZ/IjfPFLCzf
+         nzJ1uOKcPLNHCL7TJJNuI5YOg7BVRige1IGkEMe0IeZAwD26a06EH4QZsQbFGikunWvv
+         Nbs6ba3h6MdzLKu0O4COseLVG+arvb/WGhhaUQkuTYrKvpMNWaGkWUJ2hlEQqen1CUVg
+         oV8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728393055; x=1728997855;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a1X88XkNaciEBMOOukkde66JRe9dk6pAw1yAJWCuM2g=;
-        b=X5xpea4Myj4xjZL1TR9MxMVTdGLg2lBgWgrliN6mUHJu8ZPFXWGaskxzcAgunQp1fp
-         AAmpp7B6pTWTxW6v7fHyC0jqd5fq9xaozozI66z+WcWXPCqnfa6ANkL5RrEyQf3t3ef3
-         50+u4q9BTEFGdZnvDLpG8ITF4pEsMeg94WYx3pjsIixbWb9VZqhoT+F/Dys5Lnqb+GrA
-         JVQgpk4sXVWC/k/KSXWyGmntAxBibtfElTjySh5e9CnqSBQ3F93yjoeKGUX6tLaVkXZr
-         GDisk59r1P7MPfSzHOjk8CDwKnX9g2XA6Txni30cB7Y4Nv7yLPQ+24Vo0psLL0lTLwjH
-         DVOw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Q5uEi01BEn13E7S65ZZSeAK+K8JWN0LuMFDPHCWLrGHdpZlW6iI4zO5ZOThw8NNVG9Z8af9J3p5bdbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMQ26iKhkxdDBX/caOW1SluOva/7eT09CTU2+PGKrDaoFlSau1
-	Tu2H9Fl6XvfXjtBEBS+gXerKa9e9CaqKFMV9Dhsu/yReAg1hbK/0KHZYBjxOb61EwZfbcgBekkS
-	GLcOn4foS8rWcMnvhA1zdybjv93w=
-X-Google-Smtp-Source: AGHT+IEKytZnckel6sjSADs+X5jQ0julszOHP4P+Snh8nCjHTLBsuYxtKV1YmAxX1xpSIa+Qc65AYHVMCWU4EKOHSUs=
-X-Received: by 2002:a05:690c:12:b0:6b2:28c3:b706 with SMTP id
- 00721157ae682-6e2c728a23amr121961527b3.34.1728393055291; Tue, 08 Oct 2024
- 06:10:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728393111; x=1728997911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QUhIhCW4EYVtZ1pFGNbZwIrKmPYGAss7TRP+oocEQ7M=;
+        b=bUwIi0hpjoQ+Ipm6knEoNf/I0POL6v0rRfz2rUxgzFgKQzyjtlMfz8oCd6L8nMzN4X
+         012CijCXR55k7422/2GMOzbJ9GCvzN4K+mXc46Y+tPdgUwNG1g4G5v3q1bz0FaEN0yaF
+         w0Rgz+nJ6dSoxhJsz0L3axtvu/OZimpmuzHwaKax/I0kSnLO4aLSRSw7UHwAklUEyhnK
+         yQTUH9tItdAp2JY1i38AvqhNg+VGyrn8zSIgdiI/2+jC8dvyElu4P06nijCFjmoHSadP
+         mhosu8kVuRShGdBIBGKiFARogUJ3j5tLfB5u72MNyyAG8l5MWPhMa62I6Uj4ZlRMtJRv
+         rBTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsigYSxfoifbv13PPJhK3F5lrtZiUFODIiIsBpvpRwfbvrrzqsZHNCRpzqWSUzUHRMgozYzF6ojgvsW+IK@vger.kernel.org, AJvYcCW0vEcD5jWeSVOsu1Nfllo+tajR74OQGehdp2YMah68f1QbMWxKFWWMiiwB0XVYfqtfx4+smTLmlza1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSeC/SdbaT0HoqCag6PwC9wHOsxnoOTvCj7O33gCfHR8eIS/3n
+	YN5IWgzVPZ0rRf/zibniYaFtGB5UbCHWqPLguJYg4+IzHNu3ZHAzYtRyBePKWKWaREuUIesumAc
+	+60V6VXhH9Ki25uMzEW3ryAHKBIs=
+X-Google-Smtp-Source: AGHT+IGlbGUYc4Iv0m2kHtGA8QMswKhBWC24wvpxa3c9aagc6ojOjSPwwHKFaT84+xM3iA5ee2GpWYw3USOI7cUl61I=
+X-Received: by 2002:a05:620a:319c:b0:7a9:bcc7:4ff3 with SMTP id
+ af79cd13be357-7ae6f48b8cdmr2714719985a.42.1728393110565; Tue, 08 Oct 2024
+ 06:11:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008121930.869054-1-luca.boccassi@gmail.com> <20241008-parkraum-wegrand-4e42c89b1742@brauner>
-In-Reply-To: <20241008-parkraum-wegrand-4e42c89b1742@brauner>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Tue, 8 Oct 2024 14:10:43 +0100
-Message-ID: <CAMw=ZnSEwOXw-crX=JmGvYJrQ9C6-v40-swLhALNH0DBPLoyXQ@mail.gmail.com>
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, christian@brauner.io, 
-	linux-kernel@vger.kernel.org, oleg@redhat.com
+References: <20240923082829.1910210-1-amir73il@gmail.com> <20240925-seeufer-atheismus-6f7e6ab4965f@brauner>
+ <CAOQ4uxiBwtEs_weg67MHP4TOsXN7hVi0bDCUe_C7b2tHqohtAQ@mail.gmail.com> <021d3f9acf33ff74bfde7aadd6a9a01a8ee64248.camel@kernel.org>
+In-Reply-To: <021d3f9acf33ff74bfde7aadd6a9a01a8ee64248.camel@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 8 Oct 2024 15:11:39 +0200
+Message-ID: <CAOQ4uxht3A7Rx5eu=DX=Zn2PNyQnj5BkCLMi36Gftt0ej8KhdA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] API for exporting connectable file handles to userspace
+To: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Oct 2024 at 14:06, Christian Brauner <brauner@kernel.org> wrote:
+On Tue, Oct 8, 2024 at 1:07=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
+te:
 >
-> On Tue, Oct 08, 2024 at 01:18:20PM GMT, luca.boccassi@gmail.com wrote:
-> > From: Luca Boccassi <luca.boccassi@gmail.com>
+> On Mon, 2024-10-07 at 17:26 +0200, Amir Goldstein wrote:
+> > On Wed, Sep 25, 2024 at 11:14=E2=80=AFAM Christian Brauner <brauner@ker=
+nel.org> wrote:
+> > >
+> > > > open_by_handle_at(2) does not have AT_ flags argument, but also, I =
+find
+> > > > it more useful API that encoding a connectable file handle can mand=
+ate
+> > > > the resolving of a connected fd, without having to opt-in for a
+> > > > connected fd independently.
+> > >
+> > > This seems the best option to me too if this api is to be added.
 > >
-> > A common pattern when using pid fds is having to get information
-> > about the process, which currently requires /proc being mounted,
-> > resolving the fd to a pid, and then do manual string parsing of
-> > /proc/N/status and friends. This needs to be reimplemented over
-> > and over in all userspace projects (e.g.: I have reimplemented
-> > resolving in systemd, dbus, dbus-daemon, polkit so far), and
-> > requires additional care in checking that the fd is still valid
-> > after having parsed the data, to avoid races.
+> > Thanks.
 > >
-> > Having a programmatic API that can be used directly removes all
-> > these requirements, including having /proc mounted.
+> > Jeff, Chuck,
 > >
-> > As discussed at LPC24, add an ioctl with an extensible struct
-> > so that more parameters can be added later if needed. Start with
-> > returning pid/tgid/ppid and creds unconditionally, and cgroupid
-> > optionally.
+> > Any thoughts on this?
 > >
-> > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
-> > ---
-> > v9: drop result_mask and reuse request_mask instead
-> > v8: use RAII guard for rcu, call put_cred()
-> > v7: fix RCU issue and style issue introduced by v6 found by reviewer
-> > v6: use rcu_read_lock() when fetching cgroupid, use task_ppid_nr_ns() to
-> >     get the ppid, return ESCHR if any of pid/tgid/ppid are 0 at the end
-> >     of the call to avoid providing incomplete data, document what the
-> >     callers should expect
-> > v5: check again that the task hasn't exited immediately before copying
-> >     the result out to userspace, to ensure we are not returning stale data
-> >     add an ifdef around the cgroup structs usage to fix build errors when
-> >     the feature is disabled
-> > v4: fix arg check in pidfd_ioctl() by moving it after the new call
-> > v3: switch from pid_vnr() to task_pid_vnr()
-> > v2: Apply comments from Christian, apart from the one about pid namespaces
-> >     as I need additional hints on how to implement it.
-> >     Drop the security_context string as it is not the appropriate
-> >     metadata to give userspace these days.
-> >
-> >  fs/pidfs.c                                    | 88 ++++++++++++++++++-
-> >  include/uapi/linux/pidfd.h                    | 30 +++++++
-> >  .../testing/selftests/pidfd/pidfd_open_test.c | 80 ++++++++++++++++-
-> >  3 files changed, 194 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > index 80675b6bf884..15cdc7fe4968 100644
-> > --- a/fs/pidfs.c
-> > +++ b/fs/pidfs.c
-> > @@ -2,6 +2,7 @@
-> >  #include <linux/anon_inodes.h>
-> >  #include <linux/file.h>
-> >  #include <linux/fs.h>
-> > +#include <linux/cgroup.h>
-> >  #include <linux/magic.h>
-> >  #include <linux/mount.h>
-> >  #include <linux/pid.h>
-> > @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
-> >       return poll_flags;
-> >  }
-> >
-> > +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
-> > +{
-> > +     struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-> > +     size_t usize = _IOC_SIZE(cmd);
-> > +     struct pidfd_info kinfo = {};
-> > +     struct user_namespace *user_ns;
-> > +     const struct cred *c;
-> > +     __u64 request_mask;
-> > +
-> > +     if (!uinfo)
-> > +             return -EINVAL;
-> > +     if (usize < sizeof(struct pidfd_info))
-> > +             return -EINVAL; /* First version, no smaller struct possible */
-> > +
-> > +     if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
-> > +             return -EFAULT;
-> > +
-> > +     c = get_task_cred(task);
-> > +     if (!c)
-> > +             return -ESRCH;
-> > +
-> > +     /* Unconditionally return identifiers and credentials, the rest only on request */
-> > +
-> > +     user_ns = current_user_ns();
-> > +     kinfo.ruid = from_kuid_munged(user_ns, c->uid);
-> > +     kinfo.rgid = from_kgid_munged(user_ns, c->gid);
-> > +     kinfo.euid = from_kuid_munged(user_ns, c->euid);
-> > +     kinfo.egid = from_kgid_munged(user_ns, c->egid);
-> > +     kinfo.suid = from_kuid_munged(user_ns, c->suid);
-> > +     kinfo.sgid = from_kgid_munged(user_ns, c->sgid);
-> > +     kinfo.fsuid = from_kuid_munged(user_ns, c->fsuid);
-> > +     kinfo.fsgid = from_kgid_munged(user_ns, c->fsgid);
-> > +     put_cred(c);
-> > +
-> > +#ifdef CONFIG_CGROUPS
-> > +     if (request_mask & PIDFD_INFO_CGROUPID) {
-> > +             struct cgroup *cgrp;
-> > +
-> > +             guard(rcu)();
-> > +             cgrp = task_cgroup(task, pids_cgrp_id);
-> > +             if (!cgrp)
-> > +                     return -ENODEV;
 >
-> Afaict this means that the task has already exited. In other words, the
-> cgroup id cannot be retrieved anymore for a task that has exited but not
-> been reaped. Frankly, I would have expected the cgroup id to be
-> retrievable until the task has been reaped but that's another
-> discussion.
+> Sorry for the delay. I think encoding the new flag into the fh itself
+> is a reasonable approach.
 >
-> My point is if you contrast this with the other information in here: If
-> the task has exited but hasn't been reaped then you can still get
-> credentials such as *uid/*gid, and pid namespace relative information
-> such as pid/tgid/ppid.
->
-> So really, I would argue that you don't want to fail this but only
-> report 0 here. That's me working under the assumption that cgroup ids
-> start from 1...
->
-> /me checks
->
-> Yes, they start from 1 so 0 is invalid.
->
-> > +             kinfo.cgroupid = cgroup_id(cgrp);
->
-> Fwiw, it looks like getting the cgroup id is basically just
-> dereferencing pointers without having to hold any meaningful locks. So
-> it should be fast. So making it unconditional seems fine to me.
 
-There's an ifdef since it's an optional kernel feature, and there's
-also this thing that we might not have it, so I'd rather keep the
-flag, and set it only if we can get the information (instead of
-failing). As a user that seems clearer to me.
+Adding Jan.
+Sorry I forgot to CC you on the patches, but struct file_handle is official=
+ly
+a part of fanotify ABI, so your ACK is also needed on this change.
+
+> I'm less thrilled with using bitfields for this, just because I have a
+> general dislike of them, and they aren't implemented the same way on
+> all arches. Would it break ABI if we just turned the handle_type int
+> into two uint16_t's instead?
+
+I think it will because this will not be backward compat on LE arch:
+
+ struct file_handle {
+        __u32 handle_bytes;
+-       int handle_type;
++      __u16 handle_type;
++      __u16 handle_flags;
+        /* file identifier */
+        unsigned char f_handle[] __counted_by(handle_bytes);
+ };
+
+But I can also do without the bitfileds, maybe it's better this way.
+See diff from v2:
+
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 4ce4ffddec62..64d44fc61d43 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -87,9 +87,9 @@ static long do_sys_name_to_handle(const struct path *path=
+,
+                 * decoding connectable non-directory file handles.
+                 */
+                if (fh_flags & EXPORT_FH_CONNECTABLE) {
++                       handle->handle_type |=3D FILEID_IS_CONNECTABLE;
+                        if (d_is_dir(path->dentry))
+-                               fh_flags |=3D EXPORT_FH_DIR_ONLY;
+-                       handle->handle_flags =3D fh_flags;
++                               fh_flags |=3D FILEID_IS_DIR;
+                }
+                retval =3D 0;
+        }
+@@ -352,7 +352,7 @@ static int handle_to_path(int mountdirfd, struct
+file_handle __user *ufh,
+                retval =3D -EINVAL;
+                goto out_path;
+        }
+-       if (f_handle.handle_flags & ~EXPORT_FH_USER_FLAGS) {
++       if (!FILEID_USER_TYPE_IS_VALID(f_handle.handle_type)) {
+                retval =3D -EINVAL;
+                goto out_path;
+        }
+@@ -377,10 +377,14 @@ static int handle_to_path(int mountdirfd, struct
+file_handle __user *ufh,
+         * are decoding an fd with connected path, which is accessible from
+         * the mount fd path.
+         */
+-       ctx.fh_flags |=3D f_handle.handle_flags;
+-       if (ctx.fh_flags & EXPORT_FH_CONNECTABLE)
++       if (f_handle.handle_type & FILEID_IS_CONNECTABLE) {
++               ctx.fh_flags |=3D EXPORT_FH_CONNECTABLE;
+                ctx.flags |=3D HANDLE_CHECK_SUBTREE;
+-
++               if (f_handle.handle_type & FILEID_IS_DIR)
++                       ctx.fh_flags |=3D EXPORT_FH_DIR_ONLY;
++       }
++       /* Filesystem code should not be exposed to user flags */
++       handle->handle_type &=3D ~FILEID_USER_FLAGS_MASK;
+        retval =3D do_handle_to_path(handle, path, &ctx);
+
+ out_handle:
+diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+index 96b62e502f71..3e60bac74fa3 100644
+--- a/include/linux/exportfs.h
++++ b/include/linux/exportfs.h
+@@ -159,8 +159,17 @@ struct fid {
+ #define EXPORT_FH_CONNECTABLE  0x1 /* Encode file handle with parent */
+ #define EXPORT_FH_FID          0x2 /* File handle may be non-decodeable */
+ #define EXPORT_FH_DIR_ONLY     0x4 /* Only decode file handle for a
+directory */
+-/* Flags allowed in encoded handle_flags that is exported to user */
+-#define EXPORT_FH_USER_FLAGS   (EXPORT_FH_CONNECTABLE | EXPORT_FH_DIR_ONLY=
+)
++
++/* Flags supported in encoded handle_type that is exported to user */
++#define FILEID_USER_FLAGS_MASK 0xffff0000
++#define FILEID_USER_FLAGS(type) ((type) & FILEID_USER_FLAGS_MASK)
++
++#define FILEID_IS_CONNECTABLE  0x10000
++#define FILEID_IS_DIR          0x40000
++#define FILEID_VALID_USER_FLAGS        (FILEID_IS_CONNECTABLE | FILEID_IS_=
+DIR)
++
++#define FILEID_USER_TYPE_IS_VALID(type) \
++       (FILEID_USER_FLAGS(type) & ~FILEID_VALID_USER_FLAGS)
+
+ /**
+  * struct export_operations - for nfsd to communicate with file systems
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index cca7e575d1f8..6329fec40872 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1071,8 +1071,7 @@ struct file {
+
+ struct file_handle {
+        __u32 handle_bytes;
+-       int handle_type:16;
+-       int handle_flags:16;
++       int handle_type;
+        /* file identifier */
+        unsigned char f_handle[] __counted_by(handle_bytes);
+ };
 
