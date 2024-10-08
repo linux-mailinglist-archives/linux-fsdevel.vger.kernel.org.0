@@ -1,176 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-31302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D44899449A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 11:45:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFEEE99449F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 11:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ACE21C24BA0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 09:45:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70ECB1F2334D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 09:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DEB18133F;
-	Tue,  8 Oct 2024 09:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D486218C035;
+	Tue,  8 Oct 2024 09:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEDYVtfT"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yIVTlqvy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CB6185B58;
-	Tue,  8 Oct 2024 09:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DB2166F29;
+	Tue,  8 Oct 2024 09:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728380711; cv=none; b=KikRAGXYkow9A4BtgvCCXhF7bj3msoV2uDbE8S5BsEUoO6Q7gRNy/4Obn0/Wyb4V4KNlI1Lm2c/jiVAENoL4qT/v/wryDsRyJ+VGikJkPIAe/cabOR4KEkQWwN9wIrmyYM+PVclR+SA2Gh97vmTfT/oPdKoB+xdP0c3Ueo3ZqHI=
+	t=1728380733; cv=none; b=Vv9sZZKEBjvwbx+qKSof75eBE/5R9HhSwwJqNEV4PTjAbhS7Y3VPyv3DAZHpAu2s9TEBgNjtF3ugaHQmIQVfiLVMKqxlbrWEE8dZggHxmWKidE4OpYqtqbQ0M0TjEI9GG3B5S0rXKF1uFoP4v2LXBbZhiY6ZyqOW3kQ3ZXjTz5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728380711; c=relaxed/simple;
-	bh=n+9fb+3Nmw6pkM1BjelSY7XjQ7KVMSvaL3DgOLud2ho=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QK4O9fDNkQ6pP9ncFc8iNj3e2EarctxUw2tsQX4dUagEGZxrLc0bR8FPWHWYOkOYFFpTmRVPegqAucFGHegf+A4gD3g1Ur6jsGuu1GEGl7RftB0ZlArg31YMWVYZWBNPgDpAcqeEbR+zSE4ezlaZLD6O9tGhUBHB3kzedu5YLcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eEDYVtfT; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9977360f9fso50879666b.0;
-        Tue, 08 Oct 2024 02:45:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728380708; x=1728985508; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MFxI1VKgjkw/8hVmNciu5zIxg5NN9OAwSt9Mfm2Hu5I=;
-        b=eEDYVtfTWFZoHUjhQBh+K6mspSI/LlRwZEHgBhX7pWG0Ji8SYaqtMUN8TbJvcbxGTw
-         xDRKVMwK54W2WuFa9JTriqO7ISL0mUpEZNs1KoLJjuKsz/k5M7PKZ9fdOnChah3abb5l
-         NUvY3GNXVi5beFWzJ7542ObE4k4istpi32Qsc1nmcTWaWm2AARPoOl27o5JSYYXlMdDq
-         ZGrhqIB1jwmgylFZANdefdHx0SjAncM0rmjCjmKXjhcNgpQthrTyoiRbSo/s6GeNBe4c
-         zUJv3j4C3fqYmGb6lI/kfYjRgDECTMjMY3H2SVvmIY8OIMuFjEi+AbBzNnsob00c6GeU
-         rGMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728380708; x=1728985508;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MFxI1VKgjkw/8hVmNciu5zIxg5NN9OAwSt9Mfm2Hu5I=;
-        b=Y2JLPVmis6W1b2vR2oZaTS48cTLdLs3R3TZR+2Bsq1TBvEhw61KUdQzardvhjG4a1g
-         OkXxRVqaGNS8Dyx2IBnv17IhRJZksw1isdjkjowc0EXorBOSyUfwjqHBS40fKefhwRgV
-         NsnKWiVSwLf6shRQhCoYszjhtnDupjcuHxLe4dd2lQjfR+uCyooZvo6ofhcA3kaUEbYi
-         UFud4qdtDY+gsrPeUAlvyosTLSfNiNtEHMgUwfPWdTLWDWc7cHs8c+0dHPq7RP9vP3r/
-         fBLefubLkU2GPqt5e3vlW7eXzIHN7iA3KpOOSdCxyHGPB49j/L7ftnTI3QNl/rPkU/4b
-         g0uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfW9z7gx1SaPgNz0F1X7X2rlEbVQmjOMZie+y4YyReAfYXYl5kpjOthp6Cd3PNF0DOOq39Q4CPLOVAr3Xg@vger.kernel.org, AJvYcCXX4wen9zElbgtBqWS13GHjtpC/Y6AfsAY4NyqpEN75pRTxQn4OcF+ZxuEIp8W4um9PtOY1Z03CtQqk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjJgxspKYM6BJK/n6wDU3Nu0lOA+r89EvrEqvulwb1QqlmnvxN
-	2v2dUq6/sMZrALkE/iUMABgkFIg/gbbvc1zjznWzliYm+kz7mAEB
-X-Google-Smtp-Source: AGHT+IGnSmpDOVJBvJdF1rcolLyjWCWVqbq2QzO6i9FJ1JqWgzWPVxVIyNydojswWiqbPunTqJhI8w==
-X-Received: by 2002:a17:906:6a1e:b0:a99:742c:5a6 with SMTP id a640c23a62f3a-a99742c40ebmr136543566b.10.1728380707461;
-        Tue, 08 Oct 2024 02:45:07 -0700 (PDT)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7856dbsm478108166b.122.2024.10.08.02.45.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 02:45:06 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Alejandro Colomar <alx.manpages@gmail.com>
-Cc: Jan Kara <jack@suse.cz>,
-	linux-man@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fanotify.7,fanotify_mark.2: update documentation of fanotify w.r.t fsid
-Date: Tue,  8 Oct 2024 11:45:03 +0200
-Message-Id: <20241008094503.368923-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728380733; c=relaxed/simple;
+	bh=YN2PwNUjfaV23Za20oCoGcvGryIL/LT8jPKhKHdNgGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGGCIbFL7prI2VlFD3WDq83sXFLZzAhkMytLrfWG4Suq2zXmFOSN09oFHXIrGii4QB8eZUWMqtgBYslqgvJQVfXwRtt0zNOX+2zHQDDbYT2GKHADq6qc7kqP1Dk4dfzjLKTPxJVWqjDxqh11TWgPY/44CFmVQOVWfv2+SRXGbDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yIVTlqvy; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rrGM7mlI9Xc2czdq3tr6zFJJs2zwkNCkLOY6qN7jFU4=; b=yIVTlqvyFccJDrUtQ6x6Fpf1qH
+	E2ao2mE0SNaTAt6WbWX1fma6pdkaVsJa5Bk4phz2zl3OjIGitpxCaHy2CV2q4OBC8rv/0yipqItoo
+	pKK0nLD0zWyet5/RlpfrcCAnsSyN0uEDZeVqhnaCPlbSu6neocm5DhZQdQvBwQ9nJgeptLLgwJEsH
+	TS5Sa9mg79XsrslKiOv42Q5sTelQ+b+/BwZn9kePWd/1nzhOtHIaK+UHKfMIuCrLoeJo9J2Pt3Iy3
+	DtPlB8WtGuNTQ9SZ+Ik10zmMBjg4Asi7XHS25hAsMOlZlo15zZR1qYowNbe7h4inROKUS/q+wox+q
+	5j12NqJA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sy6mZ-00000005MWq-3E0e;
+	Tue, 08 Oct 2024 09:45:31 +0000
+Date: Tue, 8 Oct 2024 02:45:31 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 03/12] iomap: add bioset in iomap_read_folio_ops for
+ filesystems to use own bioset
+Message-ID: <ZwT_OwN9MOZSEseE@infradead.org>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <95262994f8ba468ab26f1e855224c54c2a439669.1728071257.git.rgoldwyn@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95262994f8ba468ab26f1e855224c54c2a439669.1728071257.git.rgoldwyn@suse.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Clarify the conditions for getting the -EXDEV and -ENODEV errors.
+>  	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
+> +		struct bio_set *bioset;
+>  		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
+>  		gfp_t orig_gfp = gfp;
+>  		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
+Nit: I try to keep variables just declared and not initialized after
+those initialized at declaration time.
 
-Hi Alejandro,
+> +
+> +		if (ctx->ops && ctx->ops->bio_set)
+> +			bioset = ctx->ops->bio_set;
+> +		else
+> +			bioset = &fs_bio_set;
+> +
+> +		ctx->bio = bio_alloc_bioset(iomap->bdev, bio_max_segs(nr_vecs),
+> +				REQ_OP_READ, gfp, bioset);
+> +
 
-This is a followup on fanotify changes from v6.8
-that are forgot to follow up on at the time.
-
-Thanks,
-Amir.
-
- man/man2/fanotify_mark.2 | 27 +++++++++++++++++++++------
- man/man7/fanotify.7      | 10 ++++++++++
- 2 files changed, 31 insertions(+), 6 deletions(-)
-
-diff --git a/man/man2/fanotify_mark.2 b/man/man2/fanotify_mark.2
-index fc9b83459..b5e091c25 100644
---- a/man/man2/fanotify_mark.2
-+++ b/man/man2/fanotify_mark.2
-@@ -659,17 +659,16 @@ The filesystem object indicated by
- .I dirfd
- and
- .I pathname
--is not associated with a filesystem that supports
-+is associated with a filesystem that reports zero
- .I fsid
- (e.g.,
- .BR fuse (4)).
--.BR tmpfs (5)
--did not support
--.I fsid
--prior to Linux 5.13.
--.\" commit 59cda49ecf6c9a32fae4942420701b6e087204f6
- This error can be returned only with an fanotify group that identifies
- filesystem objects by file handles.
-+Since Linux 6.8,
-+.\" commit 30ad1938326bf9303ca38090339d948975a626f5
-+this error can be returned only when
-+trying to add a mount or filesystem mark.
- .TP
- .B ENOENT
- The filesystem object indicated by
-@@ -768,6 +767,22 @@ which uses a different
- than its root superblock.
- This error can be returned only with an fanotify group that identifies
- filesystem objects by file handles.
-+Since Linux 6.8,
-+.\" commit 30ad1938326bf9303ca38090339d948975a626f5
-+this error will be returned
-+when trying to add a mount or filesystem mark on a subvolume,
-+when trying to add inode marks in different subvolumes,
-+or when trying to add inode marks in a
-+.BR btrfs (5)
-+subvolume and in another filesystem.
-+Since Linux 6.8,
-+.\" commit 30ad1938326bf9303ca38090339d948975a626f5
-+this error will also be returned
-+when trying to add marks in different filesystems,
-+where one of the filesystems reports zero
-+.I fsid
-+(e.g.,
-+.BR fuse (4)).
- .SH STANDARDS
- Linux.
- .SH HISTORY
-diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
-index 449af949c..db8fe6c00 100644
---- a/man/man7/fanotify.7
-+++ b/man/man7/fanotify.7
-@@ -575,6 +575,16 @@ and contains the same value as
- .I f_fsid
- when calling
- .BR statfs (2).
-+Note that some filesystems (e.g.,
-+.BR fuse (4))
-+report zero
-+.IR fsid .
-+In these cases, it is not possible to use
-+.I fsid
-+to associate the event with a specific filesystem instance,
-+so monitoring different filesystem instances that report zero
-+.I fsid
-+with the same fanotify group is not supported.
- .TP
- .I handle
- This field contains a variable-length structure of type
--- 
-2.34.1
+But it would be nice to move this logic into a helper, similar to what
+is done in the direct I/O code.  That should robably include
+picking the gfp flags from the ctx.
 
 
