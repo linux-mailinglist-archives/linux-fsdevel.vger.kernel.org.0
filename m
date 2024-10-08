@@ -1,91 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-31301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB2B99448C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 11:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D44899449A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 11:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BF4B1C249CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 09:43:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ACE21C24BA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 09:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C0918C038;
-	Tue,  8 Oct 2024 09:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DEB18133F;
+	Tue,  8 Oct 2024 09:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FuTCWqmF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEDYVtfT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1240413AA4E;
-	Tue,  8 Oct 2024 09:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CB6185B58;
+	Tue,  8 Oct 2024 09:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728380605; cv=none; b=kX5MtnRXyAzn966lWyZ72xVpmS2ZJkLVIMEynR3yUb8BmV0Nhi4PAKR0cdJiwWLFx3iLGo8RU35fQZoKh7Xsn9VhS8rJQG470X1PgmloekosJzqQzwZvVhHKjxfEZv2FltEf0eJyO+TjNsPTOmGR4b3g4KuWIwB04hQzpLAco+o=
+	t=1728380711; cv=none; b=KikRAGXYkow9A4BtgvCCXhF7bj3msoV2uDbE8S5BsEUoO6Q7gRNy/4Obn0/Wyb4V4KNlI1Lm2c/jiVAENoL4qT/v/wryDsRyJ+VGikJkPIAe/cabOR4KEkQWwN9wIrmyYM+PVclR+SA2Gh97vmTfT/oPdKoB+xdP0c3Ueo3ZqHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728380605; c=relaxed/simple;
-	bh=yb/CDgSFZHWH4VY3TrxpXMY6jXUIkILz+Oq4q0RIpw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ew0Rl6LbWTgNP4maRBXU2LNzCsJa69hEQotuyqxszKyIt6FzX2aPRMUrJN8OurPn5FGzCP8QAqdP04UoISwlpCx4RBJhz7gbUbBnw6LmOcqz5b1b6wERIqvC82MALWeCBa2iGiaxTdY+oS6xs4+hZA5IPCexcAryGBaq1v37XLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FuTCWqmF; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LsjBoeZxSr3K3xp8U1TguMhxMcrcRkzQtb3Ojs1anNU=; b=FuTCWqmFxwW5xZUnqXnpdSz27D
-	d3Acw8Zoe4SnG7EyY93MzNh7iNyyKZyLLBcDDqL73R0owrtTxNcpUt5M27lwkAYRXxleg9ZQYCa/w
-	MZWpTDAzabn+ZEV7vqSB5/4oGLlu+DnsjhKXjF689N2Wp/aiabmwI7z2hL4pTq2rrtxxB5wDlfpEW
-	AZFuJX5ARf01KGVwOPpmX3/2sITcHMCCMJv5WsF+NIavPqDvqZ7wWoWULLy9DA+plEe12BwmRwhUI
-	nZideX2v3NNY98t5RqaEu8cVhhS3cT7JM9m46xu0wbi5QqvYza6lYXuBH5n1E0nUu9Y67uoCJjmOv
-	UJ7diYiA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy6kV-00000005Lfm-2WPT;
-	Tue, 08 Oct 2024 09:43:23 +0000
-Date: Tue, 8 Oct 2024 02:43:23 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 02/12] iomap: Introduce iomap_read_folio_ops
-Message-ID: <ZwT-u9v1I_gZFuQ1@infradead.org>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
- <0bb16341dc43aa7102c1d959ebaecbf1b539e993.1728071257.git.rgoldwyn@suse.com>
- <ZwCiVmhWm0O5paG4@casper.infradead.org>
+	s=arc-20240116; t=1728380711; c=relaxed/simple;
+	bh=n+9fb+3Nmw6pkM1BjelSY7XjQ7KVMSvaL3DgOLud2ho=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QK4O9fDNkQ6pP9ncFc8iNj3e2EarctxUw2tsQX4dUagEGZxrLc0bR8FPWHWYOkOYFFpTmRVPegqAucFGHegf+A4gD3g1Ur6jsGuu1GEGl7RftB0ZlArg31YMWVYZWBNPgDpAcqeEbR+zSE4ezlaZLD6O9tGhUBHB3kzedu5YLcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eEDYVtfT; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9977360f9fso50879666b.0;
+        Tue, 08 Oct 2024 02:45:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728380708; x=1728985508; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MFxI1VKgjkw/8hVmNciu5zIxg5NN9OAwSt9Mfm2Hu5I=;
+        b=eEDYVtfTWFZoHUjhQBh+K6mspSI/LlRwZEHgBhX7pWG0Ji8SYaqtMUN8TbJvcbxGTw
+         xDRKVMwK54W2WuFa9JTriqO7ISL0mUpEZNs1KoLJjuKsz/k5M7PKZ9fdOnChah3abb5l
+         NUvY3GNXVi5beFWzJ7542ObE4k4istpi32Qsc1nmcTWaWm2AARPoOl27o5JSYYXlMdDq
+         ZGrhqIB1jwmgylFZANdefdHx0SjAncM0rmjCjmKXjhcNgpQthrTyoiRbSo/s6GeNBe4c
+         zUJv3j4C3fqYmGb6lI/kfYjRgDECTMjMY3H2SVvmIY8OIMuFjEi+AbBzNnsob00c6GeU
+         rGMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728380708; x=1728985508;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MFxI1VKgjkw/8hVmNciu5zIxg5NN9OAwSt9Mfm2Hu5I=;
+        b=Y2JLPVmis6W1b2vR2oZaTS48cTLdLs3R3TZR+2Bsq1TBvEhw61KUdQzardvhjG4a1g
+         OkXxRVqaGNS8Dyx2IBnv17IhRJZksw1isdjkjowc0EXorBOSyUfwjqHBS40fKefhwRgV
+         NsnKWiVSwLf6shRQhCoYszjhtnDupjcuHxLe4dd2lQjfR+uCyooZvo6ofhcA3kaUEbYi
+         UFud4qdtDY+gsrPeUAlvyosTLSfNiNtEHMgUwfPWdTLWDWc7cHs8c+0dHPq7RP9vP3r/
+         fBLefubLkU2GPqt5e3vlW7eXzIHN7iA3KpOOSdCxyHGPB49j/L7ftnTI3QNl/rPkU/4b
+         g0uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfW9z7gx1SaPgNz0F1X7X2rlEbVQmjOMZie+y4YyReAfYXYl5kpjOthp6Cd3PNF0DOOq39Q4CPLOVAr3Xg@vger.kernel.org, AJvYcCXX4wen9zElbgtBqWS13GHjtpC/Y6AfsAY4NyqpEN75pRTxQn4OcF+ZxuEIp8W4um9PtOY1Z03CtQqk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjJgxspKYM6BJK/n6wDU3Nu0lOA+r89EvrEqvulwb1QqlmnvxN
+	2v2dUq6/sMZrALkE/iUMABgkFIg/gbbvc1zjznWzliYm+kz7mAEB
+X-Google-Smtp-Source: AGHT+IGnSmpDOVJBvJdF1rcolLyjWCWVqbq2QzO6i9FJ1JqWgzWPVxVIyNydojswWiqbPunTqJhI8w==
+X-Received: by 2002:a17:906:6a1e:b0:a99:742c:5a6 with SMTP id a640c23a62f3a-a99742c40ebmr136543566b.10.1728380707461;
+        Tue, 08 Oct 2024 02:45:07 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7856dbsm478108166b.122.2024.10.08.02.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 02:45:06 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Alejandro Colomar <alx.manpages@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,
+	linux-man@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fanotify.7,fanotify_mark.2: update documentation of fanotify w.r.t fsid
+Date: Tue,  8 Oct 2024 11:45:03 +0200
+Message-Id: <20241008094503.368923-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwCiVmhWm0O5paG4@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 03:20:06AM +0100, Matthew Wilcox wrote:
-> On Fri, Oct 04, 2024 at 04:04:29PM -0400, Goldwyn Rodrigues wrote:
-> > iomap_read_folio_ops provide additional functions to allocate or submit
-> > the bio. Filesystems such as btrfs have additional operations with bios
-> > such as verifying data checksums. Creating a bio submission hook allows
-> > the filesystem to process and verify the bio.
-> 
-> But surely you're going to need something similar for writeback too?
-> So why go to all this trouble to add a new kind of ops instead of making
-> it part of iomap_ops or iomap_folio_ops?
+Clarify the conditions for getting the -EXDEV and -ENODEV errors.
 
-We really should not add anything to iomap_ops.  That's just the
-iteration that should not even know about pages.  In fact I hope
-to eventuall get back and replace it with a single iterator that
-could use direct calls for the fast path as per your RFC from years
-ago.
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-iomap_folio_ops is entirely specific to the buffered write path.
+Hi Alejandro,
 
-I'm honestly not sure what the point is of merging structures specific
-to buffered read, buffered write (and suggested later in the thread
-buffered writeback) when they have very little overlap.
+This is a followup on fanotify changes from v6.8
+that are forgot to follow up on at the time.
+
+Thanks,
+Amir.
+
+ man/man2/fanotify_mark.2 | 27 +++++++++++++++++++++------
+ man/man7/fanotify.7      | 10 ++++++++++
+ 2 files changed, 31 insertions(+), 6 deletions(-)
+
+diff --git a/man/man2/fanotify_mark.2 b/man/man2/fanotify_mark.2
+index fc9b83459..b5e091c25 100644
+--- a/man/man2/fanotify_mark.2
++++ b/man/man2/fanotify_mark.2
+@@ -659,17 +659,16 @@ The filesystem object indicated by
+ .I dirfd
+ and
+ .I pathname
+-is not associated with a filesystem that supports
++is associated with a filesystem that reports zero
+ .I fsid
+ (e.g.,
+ .BR fuse (4)).
+-.BR tmpfs (5)
+-did not support
+-.I fsid
+-prior to Linux 5.13.
+-.\" commit 59cda49ecf6c9a32fae4942420701b6e087204f6
+ This error can be returned only with an fanotify group that identifies
+ filesystem objects by file handles.
++Since Linux 6.8,
++.\" commit 30ad1938326bf9303ca38090339d948975a626f5
++this error can be returned only when
++trying to add a mount or filesystem mark.
+ .TP
+ .B ENOENT
+ The filesystem object indicated by
+@@ -768,6 +767,22 @@ which uses a different
+ than its root superblock.
+ This error can be returned only with an fanotify group that identifies
+ filesystem objects by file handles.
++Since Linux 6.8,
++.\" commit 30ad1938326bf9303ca38090339d948975a626f5
++this error will be returned
++when trying to add a mount or filesystem mark on a subvolume,
++when trying to add inode marks in different subvolumes,
++or when trying to add inode marks in a
++.BR btrfs (5)
++subvolume and in another filesystem.
++Since Linux 6.8,
++.\" commit 30ad1938326bf9303ca38090339d948975a626f5
++this error will also be returned
++when trying to add marks in different filesystems,
++where one of the filesystems reports zero
++.I fsid
++(e.g.,
++.BR fuse (4)).
+ .SH STANDARDS
+ Linux.
+ .SH HISTORY
+diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
+index 449af949c..db8fe6c00 100644
+--- a/man/man7/fanotify.7
++++ b/man/man7/fanotify.7
+@@ -575,6 +575,16 @@ and contains the same value as
+ .I f_fsid
+ when calling
+ .BR statfs (2).
++Note that some filesystems (e.g.,
++.BR fuse (4))
++report zero
++.IR fsid .
++In these cases, it is not possible to use
++.I fsid
++to associate the event with a specific filesystem instance,
++so monitoring different filesystem instances that report zero
++.I fsid
++with the same fanotify group is not supported.
+ .TP
+ .I handle
+ This field contains a variable-length structure of type
+-- 
+2.34.1
+
 
