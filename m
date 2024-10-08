@@ -1,272 +1,336 @@
-Return-Path: <linux-fsdevel+bounces-31405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D752995BB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 01:31:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D04995BD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 01:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF156B220E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 23:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2729B1F24B80
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 23:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5786713C9DE;
-	Tue,  8 Oct 2024 23:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9A5218D6A;
+	Tue,  8 Oct 2024 23:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XRpXHp+6"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="t7frXyRq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3A91CDFDA;
-	Tue,  8 Oct 2024 23:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728430284; cv=fail; b=QwNWH2x2AEzlPH2fhwSg3USs2TQpQO3HVCf9MtHz8JpTqHfqC5k6ZacZyq4U+tgTjAXFbk8MljWaWI5qkrH1BDx++97nq0Y3PtsESQ5nJn4twhFTyNomswnCMlj+lhB6Hr7xNua7hYNFk8d229u7XCUOcEW04qaR60Umxbr4YrI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728430284; c=relaxed/simple;
-	bh=+GUkBXoLbsR04iGGS/h7GIcYd/UFn8ZQK6WIjMp3kXg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MP4xquiB4WILQIzkCUHyegD497+ntMqAAqc/15uKfjxKUtthoSFER94p36NenvjnV06ezDVKScqeOAEm5kQ917dHoOmHwUCgeSQzn6VFtstOdx3soFKD5QLE8sVipRqt6IXS9zIC1Ng7yW//9R9rYIk7Xg8GC/XewV4ZNMgnvCE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XRpXHp+6; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728430282; x=1759966282;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=+GUkBXoLbsR04iGGS/h7GIcYd/UFn8ZQK6WIjMp3kXg=;
-  b=XRpXHp+6VjQ9DYOgVFLQ2u4uqg40L37WwfrC/BVcc5oiKQ9YrNiUF2aJ
-   VxECGt2OBxaJXedGSw6LDZA5+mP8NgA0kTD5yot02zr5Ep1lnzcdIdqvc
-   ckW6Q6xSbUUCMNCG/Ej5O9kCCu+b/aGUJeF1E+mUwM7U4jv9lvVqbOLyi
-   RxO6VQvlWVfbYegFHe1mf6U5GUVKyPYMRhjG6DH2k0D+1/gjCMeuJtQ5x
-   hSAcMLptPcb9lFJB3VxSm0cfWSZSIwZ8RAMFaAfbHpw3TBMZUhn7Y6Lrl
-   GAH/owk3YWpZJhu+a2A2dHbPo52wOsdT5xOd3ICEYPjZjGajFDbnAUJPF
-   g==;
-X-CSE-ConnectionGUID: PAh8+nXsQYCb1kt5XhbgJQ==
-X-CSE-MsgGUID: tyfKa81cTHqOH4p9cdpJFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27810835"
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="27810835"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:31:21 -0700
-X-CSE-ConnectionGUID: Odios2NuSNGow/11DQPyEA==
-X-CSE-MsgGUID: 4iD1LLb2SQO19fbNYvEEZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="76148996"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Oct 2024 16:31:19 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 8 Oct 2024 16:31:19 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 8 Oct 2024 16:31:19 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.173)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 8 Oct 2024 16:31:18 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nvR9oTW7hkJECwUQm6Iv0KulGOiUdLUmZ9dz2q0RGRIEJltCAy2GVbcQ/+8rEbOWTbML+FaL7pQQw/gkeU8mEdXQ/UoKxI5G/dUgA6dvUHknSER/ue2XWP0+UWpvkscK9COoLARlqnaEzhQxFJ0cl/ALzcYCBBe0EOUUdUqcQT5mKn1qHeDmRlpAuZvQKaQgkwIyk+2oym6WUe1duHPtv6CbihJ8HZBMvVh9IVFMArQn0bvJzqHbJXLKkbc567IVop8rnJcCRlxXFgq9h04gXOGSBLljUL+P2QmZlzASe1D0HPwPC1m3iS+biUynh6vkfodzYkRo/5X4jEZjp3pdqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+GUkBXoLbsR04iGGS/h7GIcYd/UFn8ZQK6WIjMp3kXg=;
- b=zW47GxiBUq8M0vMr2+MBRZqj/WZMbLGkMWxj+cV1TnIbOVp5ySClhfBghitzL477Q94c49C1GHxKWLsIup8v7Mq45+wsrFrQIqeHzIOQOroKabCXaOAFush3vISvFNnZzRv7q2grEU/t1S4P4oQ4MylqNiCqXgSRJc2oc02O7I3RBdOzNpSdWPcXfMWKgwTlzJbFr0fzNmUUw9qgIRE+ESI/l2LPxHl+2iLY5/KhA30htrkEWyAUrvsJiCnWu7mF/CrL0TgPoUoB+ofIo+Rppc8xt/FzflFmavfEqZLUJFKa3ruWZNFWDX3VFe6ZvNz7lqH37QMqxYBxyLzHmgwL9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by DM4PR11MB7301.namprd11.prod.outlook.com (2603:10b6:8:10a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
- 2024 23:31:16 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.8026.020; Tue, 8 Oct 2024
- 23:31:16 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "debug@rivosinc.com" <debug@rivosinc.com>
-CC: "kito.cheng@sifive.com" <kito.cheng@sifive.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "lorenzo.stoakes@oracle.com"
-	<lorenzo.stoakes@oracle.com>, "linux-arch@vger.kernel.org"
-	<linux-arch@vger.kernel.org>, "charlie@rivosinc.com" <charlie@rivosinc.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"samitolvanen@google.com" <samitolvanen@google.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "corbet@lwn.net"
-	<corbet@lwn.net>, "kees@kernel.org" <kees@kernel.org>,
-	"alistair.francis@wdc.com" <alistair.francis@wdc.com>, "broonie@kernel.org"
-	<broonie@kernel.org>, "andybnac@gmail.com" <andybnac@gmail.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "palmer@dabbelt.com"
-	<palmer@dabbelt.com>, "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de"
-	<bp@alien8.de>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "aou@eecs.berkeley.edu"
-	<aou@eecs.berkeley.edu>, "arnd@arndb.de" <arnd@arndb.de>,
-	"jim.shu@sifive.com" <jim.shu@sifive.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"shuah@kernel.org" <shuah@kernel.org>, "Liam.Howlett@oracle.com"
-	<Liam.Howlett@oracle.com>, "oleg@redhat.com" <oleg@redhat.com>,
-	"alexghiti@rivosinc.com" <alexghiti@rivosinc.com>, "ebiederm@xmission.com"
-	<ebiederm@xmission.com>, "atishp@rivosinc.com" <atishp@rivosinc.com>,
-	"richard.henderson@linaro.org" <richard.henderson@linaro.org>,
-	"cleger@rivosinc.com" <cleger@rivosinc.com>, "brauner@kernel.org"
-	<brauner@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com"
-	<mingo@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "evan@rivosinc.com" <evan@rivosinc.com>,
-	"conor@kernel.org" <conor@kernel.org>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v6 16/33] riscv/shstk: If needed allocate a new shadow
- stack on clone
-Thread-Topic: [PATCH v6 16/33] riscv/shstk: If needed allocate a new shadow
- stack on clone
-Thread-Index: AQHbGdLZKp0M89bQgUujzl7/KIk8xrJ9drAAgAAGPICAAAPEgA==
-Date: Tue, 8 Oct 2024 23:31:16 +0000
-Message-ID: <93a3315b3acd8a0585fe266bdfdbd44e54aabaee.camel@intel.com>
-References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
-	 <20241008-v5_user_cfi_series-v6-16-60d9fe073f37@rivosinc.com>
-	 <aa75cbd142c51b996423f18769d8b8d7ecc39081.camel@intel.com>
-	 <ZwW9m6pqcTFBovuG@debug.ba.rivosinc.com>
-In-Reply-To: <ZwW9m6pqcTFBovuG@debug.ba.rivosinc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|DM4PR11MB7301:EE_
-x-ms-office365-filtering-correlation-id: 0edcf508-6321-41fb-6de2-08dce7f14e31
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?YkZZWXp4OVdzajVXSFMzZndVQmRwbWsrcCtRTHB1UVhxRTNVMmNWeWpwZVhs?=
- =?utf-8?B?SGtGUTBYNFNSMTdKeDJPejRpZUgzelhSdUtQd1ZLMnJ2bWtnQkcxT0VualhK?=
- =?utf-8?B?azVrLzA4RkhWTnF1bHZKa0lFK2l2U2pic1NpdWh3MWtwVVhCOUtKS0hjQ2tL?=
- =?utf-8?B?OHUxN0hzOFdVVWdUMFE4eUVQV2JJajZrZ0FhTTNUbElJdGRCYjdnaGNMU2d3?=
- =?utf-8?B?WFFUUzR0QlFHSnZobW1pSklmdWxYaGkyM2NkQ3FDREJrTkluMGRuU2hFQm9v?=
- =?utf-8?B?VlJCQ05jV3lrcUs5TWMyUzducjlmSk5oc2hZZWJiRVFpS0xBT1Yrek9Tbkpj?=
- =?utf-8?B?U1J4MjBLdVNvL3FmdkZEYnhyaTJ4WVdaTndDUTRPM2FhclowaXVaRkVOU2dX?=
- =?utf-8?B?VVNFdktNQmUyL3gvMGtUY3NvZU9DaGovalYyR3U4MkxrQXR3Y2c2R2VTOFpS?=
- =?utf-8?B?YWFXMEZINWpFc0RMYXZic3lHTXFJQlBycVRLWkZxS05JbStZYWR1L1JaWkU4?=
- =?utf-8?B?djNUWnYxak5HNWFSNlIvNTFFMkJhYTRDUGIyd2kxd1dITDVHb2YxQ0ZTa2JP?=
- =?utf-8?B?VlMvZzZaVWd1UXQyMjE3RmVtdHJ4UmZzR25zdks2eVB2ckZqTU9iVllLcjRH?=
- =?utf-8?B?MXI2dDduU3dEVG15Q0dYdUNzaW9RS3p2UjluK0UzZ3BqdWxsNFFTSWRPaGhW?=
- =?utf-8?B?UGZ2VmxubERHOW9aY0gxSUxsYkYxVS9JMjljK3lsRWxjRUxWVjFyZTlna2tU?=
- =?utf-8?B?Vk9XNHhKcTZObDMwNHBnbEo4YUF5VTU0MFFiQ1daNDZySDdnd0FUVHBHQmdW?=
- =?utf-8?B?RXJyUTNjYmUyeFJXUFpaMVFSZDB3NEFFRTJxU01zYmJpTDhBdVBmcU92UTdk?=
- =?utf-8?B?ZDRhcDg4bVBLRzBHQlc2UmljWlpJSzhkZzgxdVArOU5OTS9ORFBxczdmN2ta?=
- =?utf-8?B?T2E5VytUK3ZuT1BJY3YwUmxTMElhWXZUek5ncERUcDlkV1lwYitMRTNOai8v?=
- =?utf-8?B?TXphVGRWRS9Qdk8xUUFFWk9BSWxxNXliQ0h2UkFDK2xuRDBVLzVYZUwzd0w1?=
- =?utf-8?B?aWtVNHJUR1JFLzhHZmxXdGtZV21iMDJnMkUxL2lCQ3RGUWt1Z1BJNFR4aG5y?=
- =?utf-8?B?QXpzNnJKeVNvcVBvVVdJSXdYaHpnQmRsYS9FeC9rS3gvc1hPNi9SNEpJUWJs?=
- =?utf-8?B?S0o5QzFhTThlQTZ4YzZrM01rbGUwc0lCcGdTakdPSVFad2F1OW8zVG9BMklB?=
- =?utf-8?B?MVlaN0xlK3I2MzNrUUNZa2Z0QlN0MnFOLzl6SGFMeU5vM053TVBmOHk3aHVZ?=
- =?utf-8?B?SFNSbE1ZczRHbk5mL1hSSU84dUNKeXhZU1JDMENPY0JWRG50TGR3aWE1R2xH?=
- =?utf-8?B?UlpxajlJSmo4eDFIOUZueGVKd2NzaGFReEx1WWl4dDdHSFJDTVZLZW9SVFMx?=
- =?utf-8?B?eEJCZ3FxdTJjY2lUNVg0ZU9xYkU2dDRjQlNjcDdJZVErbTBBaFRaRlg4NXpD?=
- =?utf-8?B?VWhzUW42RXp0N3lRTVkrcEFyR3FlR1RlVTNYVzNkeEtLRHUwK0VuaW1WS3BT?=
- =?utf-8?B?Z0g2ZldudG9saUhtbUtxWU01OUh1Ry9QTFMwTlV5QjFRYTIyNWdnMVd5UXVF?=
- =?utf-8?B?WkUrS3A4aUw4ZWkzaTdkTEVvd0FVOU1xTVo3K2dGRmFPZmRidXNsMHc4UGpD?=
- =?utf-8?B?b2l3ZmVwNENRZGxJbVY4bmFWTjc1ZlZEUndXNk42dzhvM3YybVFCYlQyNWZt?=
- =?utf-8?B?QTRSMEN1OTJ1MVlhUlpYcm5KZkpjN3FIN3ZJcDZ3dEozcWE4ODB3ZXJud3E3?=
- =?utf-8?B?amZGRVcrVVJmUGM0d0lNdz09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NXduamNSS3BzaERDaE5MNzlNYzd2RmMyc2VHSnVQTG45dlFvYVA1WU1Wdit1?=
- =?utf-8?B?SE83b0pmZUhnTDg0OXI5T3hPWk5YdjhuVHdOR21sckFORy9XMU10amgwZlVX?=
- =?utf-8?B?bXZ6dkttZXllczB5WUl2QktVYUVUeXZpTzFlRzVBYXVJQXIzdytWK1Q4ZklT?=
- =?utf-8?B?N0lYSDRoK2pZRlEzcU81dDlNOGJNT00zcWpGbGZjNHhxM29sTXpnQzM0SktY?=
- =?utf-8?B?KzBqdkMrdXBzNmlxaCs5YTRaTmpQakdkT1dKV2JWWk1jc1JVMTlYSkgyMTRP?=
- =?utf-8?B?aTdSeG5INlBVd3JFZ1E1amlsNVVoWHkxZWdGWjYya0s3ekt5b212YXhXMnRo?=
- =?utf-8?B?c00wQ1I3K0ZwL0Z1SXFZS1ZKSys4NW4rMFZoYnJkaUNYUkhybEwxV1pZZEpo?=
- =?utf-8?B?ZGNHK3BYSnhmaUlQaTdFbS9YQ2xaZURyTDBWOVY2cDZQN0Z0T3RuQzJBR3p0?=
- =?utf-8?B?RDBFb05KK0dNcUZLZDdXbG5jeVpxZmM1VGgxajRnL05PQ0RLSTNGL0xqQ3N6?=
- =?utf-8?B?L2JncTRsek1UM1dwUkNYcDJrTTRWeUE2TkJXTlY2L0REeXlKenR5c3Myd285?=
- =?utf-8?B?TnBHdUNFcjl3bnJ2QTErbktpSEl5UFB5c1lOM3RJUC9NNnJza2hYVWExQmZW?=
- =?utf-8?B?bWdFa1hGelRLN052Z3Y1VFcxM2xOQ25LTVNZMDhCY1JLMHN0VTZtQThDcE0v?=
- =?utf-8?B?V0lLblVmaXRJUWZraGpqTk5pUlV5azh4cDBUUkNoRGU0ek1mTTVmNlRKbUVJ?=
- =?utf-8?B?K0pIS0pCZ0RDUWd3QnZUZFdZd1hrUGNsWWFYeHVyR0c0cVhqVjdBS3JUL3Vx?=
- =?utf-8?B?SitVRGp3YnlVYklxcDVqUnZJYlN2dU50UU1tRjVHalNVR1ExSFdLeWxaWVRm?=
- =?utf-8?B?aXVlb1YvOE9mZlBkTzcwSjRmcXdVYS9aY3FyRUx4elhSelhuTlNjYXc3UXht?=
- =?utf-8?B?QWFxRDRTbTIwc2FxNVpxYzIwMEpQbFdHdzFERGxYSFI3RU9jUmt1RzE5aU95?=
- =?utf-8?B?bGFJT3RTaUcyQTBYM0g4ZjA1QVFPWDd2ZjYwZ1VlOHIwbFFoL283K1hZdXE4?=
- =?utf-8?B?MWc5MnlLRTJ5Q1JEVkd1N1BwV2loOVIzZUJ6OCtUekZBcDQ1YTZrdCtrcmtw?=
- =?utf-8?B?aWNFVk1VZXI2Ump2TnlOeEVPL1B6QTFzN3VCWjJUQ1pLQ1FnSUF0NHJDOThB?=
- =?utf-8?B?WXp6bThVeXJqMjExdUFLTWFFWElsT2FUZnJMUG5oQk91Q2dWWThaTmFoTzFT?=
- =?utf-8?B?WFppeWs2NTF0WnlkUUR3djNsTHdFTFRNMExCSmgwNXp2VE82bzZRYnBGNHlu?=
- =?utf-8?B?WkFFL28wYmJSRkUrRENBNzJ3TDV6SFZNUVlGMkJIdHdlQ09HaWxWbGRucGJ6?=
- =?utf-8?B?RTdsY2hPVnpUckR6Z1ZKeWJWQnEwOGRsWTEzcG1XaElVb2ZpRnBReDRIQk5j?=
- =?utf-8?B?Mlp4d2ZvcHNqLzUvR09HdkZVLzZDYTJLSjN6cFZOVWNyT2tXb3VWdnBXZEww?=
- =?utf-8?B?L2s3YmhvUy83dS9tVnJFb3R4RGtlZzZPVUk2NmRvNlBqS2RldElXTFBWVzFw?=
- =?utf-8?B?bCtLYWZnbzJYWEhyUWtQTGxPZFcwUVhjVnBBUW1idndZWVlOVzYzb0M1bVpD?=
- =?utf-8?B?aWF6V0lYckQraEEyS0VtVU9NNFJSMHliRFA2MzFETkw5dElEMEc5cW5OanZN?=
- =?utf-8?B?MkRUbnJIMTV2TFdzYS9ic0hGeWZWMnNVSldSV1dFSXlJekRibGZDbXlmQ0RF?=
- =?utf-8?B?Mk5Pc0tlVEdPMXhoelM3YTh6OTJvdmV3djZQd1hHdUtyUlBVSWNPZDkzRkhy?=
- =?utf-8?B?aXB2SXNVUjd1Z3ZDSWtQVHR1amFYWCtabmR6bDZhL0ZCSDlnZE1BT0c2c0w3?=
- =?utf-8?B?dWdqdEx4aW8wWEpQdzhrNjVCbmFyUG13aG5kU2VuKzFWcHJBekh1RTVWQm1X?=
- =?utf-8?B?dmxkUERoT0ExZ0tlbFduZjFhNGNDVENDTEp4d3MxY1JQaDcrZmt2TC9KR2l0?=
- =?utf-8?B?dmh2a3M1SUtVaUE0UlNUeVlHQ3Zhb1hPZHlSeVN3bTM1bE1oa0ZUK0tub2p3?=
- =?utf-8?B?QU54OE03NHM5elBNSGdiQXFScHNEWnpmWHVUNGFyTTlFcFlBRkl4K0JOT2xq?=
- =?utf-8?B?MitkOFVtMm16dWwyYmpFbmFVMVFBYkdrZ2ZGZEcwMVluN25zN3puRDlRY1Ro?=
- =?utf-8?B?V0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <13496FA7EA2DBB4F92BCD91C68DF7F31@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD32218D6E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Oct 2024 23:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728431059; cv=none; b=caME4JHG2qGUZtEszclueL3v+MO4e1V9Pxkc1is7dm4WZ4t+PB8pkZRtV7QoyITYzCMFGEa7gOlcd4PA2fYkT1KaWLJaNpP3EejTb0ygT21y6kuhM/MmRR8NhrJsWtTYT7+kTPI632q6Iq8irMKMx8kHYTAoUYd99fno32px0hQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728431059; c=relaxed/simple;
+	bh=gr6FKS/fgp3Bt3UvUPqDQm3Fvij7K+mg5ynIoHd60HM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKKGFOljulfs4HWdMTi/GjawJdI4MoZktVbI6tTeRExvHDsm3UMa7CyA5bgY1wAB8GVR/47wozbsRgWNVDRgM0m66/hMEsrWAoyQhnwGmzzMRmRAL36A6cNGzu9Nz6qSebie0qhv+5I4mYPXFmQ7dltB0EGKF7sEoCTVtDCqaWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=t7frXyRq; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7db238d07b3so5226880a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Oct 2024 16:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1728431056; x=1729035856; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GiMT3+ioX4OJkgsUPnWfwXeHQkRJoDKEHMA1xTybSY0=;
+        b=t7frXyRq8Q4QfuwRNNVeSK3wkYjm+JEw2uWUsdYZkfDDea627JcYe580In6pH0RsVv
+         idwpJqvkIBtdKsdy79OUyE5bBcY8McdBqBL5VVu3AASxi+LXAvmZkU9P+xscmj2wb1iz
+         t9vxJyimjq3r4TfZTSMncaEgMNb3StGL9ceX0k5MY9XbJmy2smdfzKhiZFWSqtqjBp19
+         IHJfOZyb20NFe4jxvnLJhzCNyLoX9wnunt/v2d4iQmTr0hMbzOsfiyEoWfhIcVpwGyAu
+         aU89fiNPnmWaDP3xwpdnEGy7a2Bzu2ZxIKMeC+O+jgpQdYejv6wXYS2xG4+ixDdu/1tY
+         fLQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728431056; x=1729035856;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GiMT3+ioX4OJkgsUPnWfwXeHQkRJoDKEHMA1xTybSY0=;
+        b=pa7quiPq1If/+ljGXyguAqEpwWpbf8R5s6jWJbVWLhIhtG/G9GIjQLq5pfSMexUsU0
+         Tn9e3CHMM1FRVP5gH5Zplxcvu7TYKskDs4ZBvcmxjI7lzmmCptTKpaU2C69Q0ckf3PNR
+         Dbzbw89OGhJFpY2dMXbXoqZZYzuxlWJarrE6pDkQlcdPpnm98SJQfz/nGTMMfOpVbHgu
+         jQvfJyeyis9DCvbNfag/ZE3bZxkbbyYj38YoyOUokfWAO6+uiu4DRMxscpGR90BLIe1w
+         ATFVL3sQBqN9pHrmQ/o3v9BOwS3PbFnsol3tmaKELuKOGn8pfOQsm4hdyc10hXz6mN0b
+         Kn7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVWZe036IcxQnwJ9TLq08GO0FOikiUS/8//svotrNzjlsl2Bk5jbc7BDfkSpMPWhPAq4NiGGvgykypFfa/+@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf2auyo7AVEXLDDS/nMMgEcTT4hNyWRLTuxALQ1idlc5HyVZZx
+	1467G2wuFVvM+wOCRsSOzjUCVRaxDSuPzTTNhzHSCVyQ5z5gnnPE8PEvSMFPUH8=
+X-Google-Smtp-Source: AGHT+IErL9DtnYrhJ81B8yQlr3pV9QWY0/ePlDYtB4l7BqgVYVn5E3S2vZ4yVD+4U/rbsNo6DJMwvg==
+X-Received: by 2002:a17:90a:d50e:b0:2cd:4593:2a8e with SMTP id 98e67ed59e1d1-2e2a2335d1cmr706669a91.15.1728431056406;
+        Tue, 08 Oct 2024 16:44:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a5a7a7e3sm167059a91.52.2024.10.08.16.44.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 16:44:15 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1syJsC-00Fnhp-04;
+	Wed, 09 Oct 2024 10:44:12 +1100
+Date: Wed, 9 Oct 2024 10:44:12 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <ZwXDzKGj6Bp28kYe@dread.disaster.area>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org>
+ <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
+ <ZwRvshM65rxXTwxd@dread.disaster.area>
+ <CAOQ4uxgzPM4e=Wc=UVe=rpuug=yaWwu5zEtLJmukJf6d7MUJow@mail.gmail.com>
+ <20241008112344.mzi2qjpaszrkrsxg@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0edcf508-6321-41fb-6de2-08dce7f14e31
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2024 23:31:16.4516
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6dZVeu8B2foNexiVKDdBwyu/1u6Ufi7QVoovsxe3KcqnOlWeB/bHJ/ZJifChhi2ZXCOX64pQa+lkS11jfmAINTLIqC3SLRKR6T/yRRAnyu0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7301
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241008112344.mzi2qjpaszrkrsxg@quack3>
 
-T24gVHVlLCAyMDI0LTEwLTA4IGF0IDE2OjE3IC0wNzAwLCBEZWVwYWsgR3VwdGEgd3JvdGU6DQo+
-IFllYWggeW91J3JlIHJpZ2h0LiBIb25lc3RseSwgSSd2ZSBiZWVuIHNoYW1lbGVzcyBpbiBhZGFw
-dGluZyBtb3N0IG9mIHRoZSBmbG93cw0KPiBmcm9tIHg4NiBgc2hzdGsuY2AgZm9yIHJpc2Mtdi4g
-U28gdGhhbmsgeW91IGZvciB0aGF0Lg0KDQpBbGwgZ29vZCwgZ2xhZCB3ZSBlbmRlZCB1cCB3aXRo
-IHNpbWlsYXIgYmVoYXZpb3IuDQoNCj4gDQo+IE5vdyB0aGF0IHdlJ3ZlIGBBUkNIX0hBU19VU0VS
-X1NIQURPV19TVEFDS2AgcGFydCBvZiBtdWx0aXBsZSBwYXRjaCBzZXJpZXMgKHJpc2N2DQo+IHNo
-YWRvd3N0YWNrLCBjbG9uZTMgYW5kIEkgdGhpbmsgYXJtNjQgZ2NzIHNlcmllcyBhcyB3ZWxsKS4g
-SXQncyBwcm9iYWJseSB0aGUNCj4gYXBwcm9wcmlhdGUgdGltZSB0byBmaW5kIGNvbW1vbiBncm91
-bmRzLg0KDQpUaGVyZSBoYXZlIGJlZW4gYnVncyBpbiB0aGUgc2ltaWxhciBiaXRzIG9mIGNvZGUu
-IFNvIHdpbGwgYmUgbmljZSB0byBub3QgaGF2ZSB0bw0KZml4IHRoZW0gaW4gZWFjaCBhcmNoIHRv
-by4NCg0KPiANCj4gVGhpcyBpcyB3aGF0IEkgc3VnZ2VzdA0KPiANCj4gLSBtb3ZlIG1vc3Qgb2Yg
-dGhlIGNvbW1vbi9hcmNoIGFnbm9zdGljIHNoYWRvdyBzdGFjayBzdHVmZiBpbiBrZXJuZWwvc2hz
-dGsuYw0KPiDCoMKgIFRoaXMgZ2V0cyBwYXJ0IG9mIGNvbXBpbGUgaWYgYEFSQ0hfSEFTX1VTRVJf
-U0hBRE9XX1NUQUNLYCBpcyBlbmFibGVkL3NlbGVjdGVkLg0KDQpZZWEsIEkgZ3Vlc3Mgd2UgaGF2
-ZSBjb21tb25hbGl0eSBmb3IgKGluIHg4NiBuYW1pbmcpOg0KIC0gbWFwX3NoYWRvd19zdGFjaygp
-DQogLSBzaHN0a19mcmVlKCkNCiAtIHNoc3RrX2FsbG9jX3RocmVhZF9zdGFjaygpDQogLSBzaHN0
-a19zZXR1cCgpDQoNClRoZSBzaWduYWwgcGFydCBzdGFydHMgdG8gZGl2ZXJnZS4gVGhlbiBJIGd1
-ZXNzIHg4NiBoYXMgYSBkaWZmZXJlbnQgcHJjdGwNCmludGVyZmFjZS4NCg0KPiANCj4gLSBhbGxv
-dyBhcmNoIHNwZWNpZmljIGJyYW5jaCBvdXQgZ3VhcmQgY2hlY2tzIGZvciAiaWYgY3B1IHN1cHBv
-cnRzIiwgImlzIHNoYWRvdyBzdGFjaw0KPiDCoMKgIGVuYWJsZWQgb24gdGhlIHRhc2tfc3RydWN0
-IiAoSSBleHBlY3QgZWFjaCBhcmNoIGxheW91dCBvZiB0YXNrX3N0cnVjdCB3aWxsIGJlDQo+IMKg
-wqAgZGlmZmVyZW50LCBubyBwb2ludCBmaW5kaW5nIGNvbW1vbiBncm91bmQgdGhlcmUpLCBldGMu
-DQoNClN1cmUuDQoNCj4gDQo+IEkgdGhpbmsgaXQncyB3b3J0aCBhIHRyeS4gDQo+IElmIHlvdSBh
-bHJlYWR5IGRvbid0IGhhdmUgcGF0Y2hlcywgSSdsbCBzcGVuZCBzb21lIHRpbWUgdG8gc2VlIHdo
-YXQgaXQgdGFrZXMgdG8NCj4gY29udmVyZ2UgaW4gbXkgbmV4dCB2ZXJzaW9uLiBJZiBJIGVuZCB1
-cCBpbnRvIHNvbWUgcm9hZGJsb2NrLCB3aWxsIHVzZSB0aGlzIHRocmVhZA0KPiBmb3IgZnVydGhl
-ciBkaXNjdXNzaW9uLg0KDQpTb3VuZHMgZ29vZC4gSSBoYXZlIG5vdCBsb29rZWQgYXQgaXQgdG9v
-IG11Y2guDQo=
+On Tue, Oct 08, 2024 at 01:23:44PM +0200, Jan Kara wrote:
+> On Tue 08-10-24 10:57:22, Amir Goldstein wrote:
+> > On Tue, Oct 8, 2024 at 1:33 AM Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Mon, Oct 07, 2024 at 01:37:19PM -0700, Linus Torvalds wrote:
+> > > > On Thu, 3 Oct 2024 at 04:57, Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > Fair enough. If we go with the iterator variant I've suggested to Dave in
+> > > > > [1], we could combine the evict_inodes(), fsnotify_unmount_inodes() and
+> > > > > Landlocks hook_sb_delete() into a single iteration relatively easily. But
+> > > > > I'd wait with that convertion until this series lands.
+> > > >
+> > > > Honza, I looked at this a bit more, particularly with an eye of "what
+> > > > happens if we just end up making the inode lifetimes subject to the
+> > > > dentry lifetimes" as suggested by Dave elsewhere.
+> > >
+> > > ....
+> > >
+> > > > which makes the fsnotify_inode_delete() happen when the inode is
+> > > > removed from the dentry.
+> > >
+> > > There may be other inode references being held that make
+> > > the inode live longer than the dentry cache. When should the
+> > > fsnotify marks be removed from the inode in that case? Do they need
+> > > to remain until, e.g, writeback completes?
+> > >
+> > 
+> > fsnotify inode marks remain until explicitly removed or until sb
+> > is unmounted (*), so other inode references are irrelevant to
+> > inode mark removal.
+> > 
+> > (*) fanotify has "evictable" inode marks, which do not hold inode
+> > reference and go away on inode evict, but those mark evictions
+> > do not generate any event (i.e. there is no FAN_UNMOUNT).
+> 
+> Yes. Amir beat me with the response so let me just add that FS_UMOUNT event
+> is for inotify which guarantees that either you get an event about somebody
+> unlinking the inode (e.g. IN_DELETE_SELF) or event about filesystem being
+> unmounted (IN_UMOUNT) if you place mark on some inode. I also don't see how
+> we would maintain this behavior with what Linus proposes.
+
+Thanks. I didn't respond last night when I read Amir's decription
+because I wanted to think it over. Knowing where the unmount event
+requirement certainly helps.
+
+I am probably missing something important, but it really seems to me
+that the object reference counting model is the back to
+front.  Currently the mark is being attached to the inode and then
+the inode pinned by a reference count to make the mark attached
+to the inode persistent until unmount. This then requires the inodes
+to be swept by unmount because fsnotify has effectively leaked them
+as it isn't tracking such inodes itself.
+
+[ Keep in mind that I'm not saying this was a bad or wrong thing to
+do because the s_inodes list was there to be able to do this sort of
+lazy cleanup. But now that we want to remove the s_inodes list if at
+all possible, it is a problem we need to solve differently. ]
+
+AFAICT, inotify does not appear to require the inode to send events
+- it only requires access to the inode mark itself. Hence it does
+not the inode in cache to generate IN_UNMOUNT events, it just
+needs the mark itself to be findable at unmount.  Do any of the
+other backends that require unmount notifications that require
+special access to the inode itself?
+
+If not, and the fsnotify sb info is tracking these persistent marks,
+then we don't need to iterate inodes at unmount. This means we don't
+need to pin inodes when they have marks attached, and so the
+dependency on the s_inodes list goes away.
+
+With this inverted model, we need the first fsnotify event callout
+after the inode is instantiated to look for a persistent mark for
+the inode. We know how to do this efficiently - it's exactly the
+same caching model we use for ACLs. On the first lookup, we check
+the inode for ACL data and set the ACL pointer appropriately to
+indicate that a lookup has been done and there are no ACLs
+associated with the inode.
+
+At this point, the fsnotify inode marks can all be removed from the
+inode when it is being evicted and there's no need for fsnotify to
+pin inodes at all.
+
+> > > > Then at umount time, the dentry shrinking will deal with all live
+> > > > dentries, and at most the fsnotify layer would send the FS_UNMOUNT to
+> > > > just the root dentry inodes?
+> > >
+> > > I don't think even that is necessary, because
+> > > shrink_dcache_for_umount() drops the sb->s_root dentry after
+> > > trimming the dentry tree. Hence the dcache drop would cleanup all
+> > > inode references, roots included.
+> > >
+> > > > Wouldn't that make things much cleaner, and remove at least *one* odd
+> > > > use of the nasty s_inodes list?
+> > >
+> > > Yes, it would, but someone who knows exactly when the fsnotify
+> > > marks can be removed needs to chime in here...
+> 
+> So fsnotify needs a list of inodes for the superblock which have marks
+> attached and for which we hold inode reference. We can keep it inside
+> fsnotify code although it would practically mean another list_head for the
+> inode for this list (probably in our fsnotify_connector structure which
+> connects list of notification marks to the inode).
+
+I don't think that is necessary. We need to get rid of the inode
+reference, not move where we track inode references. The persistent
+object is the fsnotify mark, not the cached inode. It's the mark
+that needs to be persistent, and that's what the fsnotify code
+should be tracking.
+
+The fsnotify marks are much smaller than inodes, and there going to
+be fewer cached marks than inodes, especially once inode pinning is
+removed. Hence I think this will result in a net reduction in memory
+footprint for "marked-until-unmount" configurations as we won't pin
+nearly as many inodes in cache...
+
+> If we actually get rid
+> of i_sb_list in struct inode, this will be a win for the overall system,
+> otherwise it is a net loss IMHO. So if we can figure out how to change
+> other s_inodes owners we can certainly do this fsnotify change.
+
+Yes, I am exploring what it would take to get rid of i_sb_list
+altogether right now. That, I don't think this is a concern given
+the difference in memory footprint of the same number of persistent
+marks. i.e. "persistent mark, reclaimable inode" will always have a
+significantly lower memory footprint than "persistent inode and
+mark" under memory pressure....
+
+> > > > And I wonder if the quota code (which uses the s_inodes list
+> > > > to enable quotas on already mounted filesystems) could for
+> > > > all the same reasons just walk the dentry tree instead (and
+> > > > remove_dquot_ref similarly could just remove it at
+> > > > dentry_unlink_inode() time)?
+> > >
+> > > I don't think that will work because we have to be able to
+> > > modify quota in evict() processing. This is especially true
+> > > for unlinked inodes being evicted from cache, but also the
+> > > dquots need to stay attached until writeback completes.
+> > >
+> > > Hence I don't think we can remove the quota refs from the
+> > > inode before we call iput_final(), and so I think quotaoff (at
+> > > least) still needs to iterate inodes...
+> 
+> Yeah, I'm not sure how to get rid of the s_inodes use in quota
+> code. One of the things we need s_inodes list for is during
+> quotaoff on a mounted filesystem when we need to iterate all
+> inodes which are referencing quota structures and free them.  In
+> theory we could keep a list of inodes referencing quota structures
+> but that would require adding list_head to inode structure for
+> filesystems that support quotas.
+
+I don't think that's quite true. Quota is not modular, so we can
+lazily free quota objects even when quota is turned off. All we need
+to ensure is that code checks whether quota is enabled, not for the
+existence of quota objects attached to the inode.
+
+Hence quota-off simply turns off all the quota operations in memory,
+and normal inode eviction cleans up the stale quota objects
+naturally.
+
+My main question is why the quota-on add_dquot_ref() pass is
+required. AFAICT all of the filesystem operations that will modify
+quota call dquot_initialize() directly to attach the required dquots
+to the inode before the operation is started. If that's true, then
+why does quota-on need to do this for all the inodes that are
+already in cache?
+
+i.e. I'm not sure I understand why we need quota to do these
+iterations at all...
+
+> Now for the sake of
+> full context I'll also say that enabling / disabling quotas on a mounted
+> filesystem is a legacy feature because it is quite easy that quota
+> accounting goes wrong with it. So ext4 and f2fs support for quite a few
+> years a mode where quota tracking is enabled on mount and disabled on
+> unmount (if appropriate fs feature is enabled) and you can only enable /
+> disable enforcement of quota limits during runtime.
+
+Sure, this is how XFS works, too. But I think this behaviour is
+largely irrelevant because there are still filesystems out there
+that do stuff the old way...
+
+> So I could see us
+> deprecating this functionality altogether although jfs never adapted to
+> this new way we do quotas so we'd have to deal with that somehow.  But one
+> way or another it would take a significant amount of time before we can
+> completely remove this so it is out of question for this series.
+
+I'm not sure that matters, though it adds to the reasons why we
+should be removing old, unmaintained filesystems from the tree
+and old, outdated formats from maintained filesystems....
+
+> I see one problem with the idea "whoever has a need to iterate inodes needs
+> to keep track of inodes it needs to iterate through". It is fine
+> conceptually but with s_inodes list we pay the cost only once and multiple
+> users benefit. With each subsystem tracking inodes we pay the cost for each
+> user (both in terms of memory and CPU). So if you don't use any of the
+> subsystems that need iteration, you win, but if you use two or more of
+> these subsystems, in particular those which need to track significant
+> portion of all inodes, you are losing.
+
+AFAICT, most of the subsystems don't need to track inodes directly.
+
+We don't need s_inodes for evict_inodes() - we have the inode LRU
+tracking all unreferenced inodes on the superblock. The GFS2 use
+case can probably walk the inode LRU directly, too.
+
+It looks to me that we can avoid needing unmount iteration for
+fsnotify, and I suspect landlock can likely use the same persistence
+inversion as fsnotify (same persistent ruleset model).
+
+The bdev superblock can implement it's own internal list using
+inode->i_devices as this list_head is only used by chardev
+inodes.
+
+All that then remains is the page cache dropping code, and that's
+not really critical to have exacting behaviour. We certainly
+shouldn't be taking a runtime penalty just to optimise the rare
+case of dropping caches..
+
+IOWs, there aren't that many users, and I think there are ways to
+make all these iterations go away without adding new per-inode
+list heads to track inodes.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
