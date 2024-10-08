@@ -1,73 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-31268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE2F993C8E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 03:58:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A72993CCF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 04:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4239285B60
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 01:58:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01246B23CF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2024 02:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05A91CD0C;
-	Tue,  8 Oct 2024 01:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90FA1F60A;
+	Tue,  8 Oct 2024 02:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hJ2iPWL7"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rarWP4vq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out199-10.us.a.mail.aliyun.com (out199-10.us.a.mail.aliyun.com [47.90.199.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C80CEC4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Oct 2024 01:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110AC1E521
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Oct 2024 02:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728352701; cv=none; b=VsKcdgafAyWq9kn6Vgi5yUa4FtmJ6syivhxHJG21zhBxO+haUJIE9YaijdOzTINCuk22q5UnPI1QfIMwBbf6G9iGz4FM+j4X7RJX48Sc+oEBznl8ZQKA7pfd2X21dxqPFSdjJuP8O6AdgZHciRNwClbiPrzLzhfMSnAUs+lsAtk=
+	t=1728353946; cv=none; b=a2aeRfBHa4yOQiZy47czBGBFaFItTo3AeQdCyfiveVMWyP7pWlQRUV8bLu8jVUc0G6heCCu0s0m1glvEFApXcwSjRkxwveroGCO16dS3WEtt+sPxCILJ4CQWzsIt+seHuqbO3rUeVJOCzMX+jONJ0wUKG64wAQ30NRmdQZu+gkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728352701; c=relaxed/simple;
-	bh=vbri1mNMUDtzE+Gb9s0gOMl27VgUfPlsOie7dJPsx34=;
+	s=arc-20240116; t=1728353946; c=relaxed/simple;
+	bh=TUv8QlxEawPB0IiJEST7nlTX4qtq7k4yi8QGDpQ6ewc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q1rvLjEoRm3q5ry/RTQhddZVI7bf9K6mZEnIlH2tYWSKc48ZsofV6WDiwXPRneSsdHlENUl6r1nQgNUohkNsCSDySP57NixuUj0/sW2lyVrfFpeusz6vWsFfljNb1clkcp8WZdcf6/OWT+sX8mhXaZY9WHmeksgaDR/qvL6UUSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hJ2iPWL7; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e0946f9a8eso3474256a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2024 18:58:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728352696; x=1728957496; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SQm7Hfz/Lhn8DotAxXn6g8FppRUOzvGHX7r/1oq6KZY=;
-        b=hJ2iPWL76eYWVF+vKSfkmtc9DkbHqvg/3Q9fk7P1SuYNodoZfnW0R4e2CVoXlDNwhY
-         H6KApuKh9L1m7yJpYiNOiELuqGoJ4GorSWCZ/96y6lCYnK1UA+naXU4pYxbl+rF2mS4B
-         IOLRh76Vyd5KFU6iD2ApPBxmXIGQ9CMFs8nobsUdGHL8kJ3nVrv8hBUjluOiTpBVap0m
-         T+W86+BEJ/wamLnhd8V9I8uWBXSfH0hp3lp8HZ4jtdXx1h1LxEa6eddhhOxYh2HYheHX
-         +gemBN+CjRuseWF8zadbFugwAqTSdYjVuxOOEzPjHsRXtd8BiTF13KIr8bFQWzwX4awk
-         8tPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728352696; x=1728957496;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SQm7Hfz/Lhn8DotAxXn6g8FppRUOzvGHX7r/1oq6KZY=;
-        b=ANzwtxJEZRM7cJUHZsjfNcyOb8U2ZoxUpvXQmCMydfmj6WvnnMO+JQjHlo6BDL4+IZ
-         6qG6ywbOrRZbE09Tzm1ofOf9B8LIALKjnaQklxSYPhn1z5+Vh037mbAi1pd27c6aOTHz
-         R+Xqa23aTznP5WpLFAIjX5Ui5FcsbevI1az9YaeclRUldsg3i1mIBF5eftvnRSl92XLl
-         Ib1wG7/wZVDeNG/tidJHGBBJbkT1MmiEjth0/L64eQq5ihET3zWTth3EhoINt4qpiBOP
-         XeTW7q9z3odNhC8AcHshbg/vTW6JTa4SxvALuaJzwMlhFa/CK8cfi4HXYfOEgsnE2DCY
-         9D7A==
-X-Gm-Message-State: AOJu0YyiED3qbo5J7Jwx+fKMmvguxMqFHO8+r/+oHG8vvx7PmOKzFoLq
-	emZFqgBWlRk5TiZsy3j2HToJicTeL0siTXYZNU+Dejp3RT37TA6wVgRWHEM6DqI=
-X-Google-Smtp-Source: AGHT+IGy/Qifh705grE6gE7k+kLP+53BLqbS1Ib2rIsydDQRwiex9A8jRJO1142gYfnZQDcf5nEOdQ==
-X-Received: by 2002:a17:90b:118c:b0:2e0:d957:1b9d with SMTP id 98e67ed59e1d1-2e1e621f1d2mr17782269a91.13.1728352696606;
-        Mon, 07 Oct 2024 18:58:16 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e866902csm7932346a91.41.2024.10.07.18.58.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 18:58:16 -0700 (PDT)
-Message-ID: <10fe7485-a672-4a66-9080-c8824b79a030@kernel.dk>
-Date: Mon, 7 Oct 2024 19:58:15 -0600
+	 In-Reply-To:Content-Type; b=lZAo1CnXcmas32kNM9w7yN0NYqSymIyt2CLu39r2UC8S70a0BGld5+gdTd/cbVqkxtdJcmtf7vMs84GH/VhXcMMl/Nsq1tvJ9CulQfsQSfIky8r6TK7ZAEahza4z5gfrh1GHAlVZQCSvUQ4rIEWtY6mlTfPlR+dVLnPL9SIJ3Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rarWP4vq; arc=none smtp.client-ip=47.90.199.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728353932; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=/QfZfSGLLAY055ZVAzgt+JLVSi3pnbXH30CE8nx9K/E=;
+	b=rarWP4vqh/Vmf/HlCP4eSY4Erl28CaiRI/IWChj4REMdvLy6RL1ZSxhC1VH/5yYIKnY05qTSmHX3hML4Uh7p6Fv4nd3KWsJg8Mcq9C7iTQsEV641aS8uUnV3dd81nkWVF8vCL+8t8OdZnsS7/EjrE/ZA62on0XhsjsTnX9TB2ZQ=
+Received: from 30.221.129.198(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGXTr9V_1728353612)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Oct 2024 10:13:33 +0800
+Message-ID: <b9565874-7018-46ef-b123-b524a1dffb21@linux.alibaba.com>
+Date: Tue, 8 Oct 2024 10:13:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,103 +48,165 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
- io-uring@vger.kernel.org, cgzones@googlemail.com
-References: <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
- <20241002020857.GC4017910@ZenIV>
- <a2730d25-3998-4d76-8c12-dde7ce1be719@kernel.dk>
- <20241002211939.GE4017910@ZenIV>
- <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
- <20241006052859.GD4017910@ZenIV>
- <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
- <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
- <20241007212034.GS4017910@ZenIV>
- <2da6c045-3e55-4137-b646-f2da69032fff@kernel.dk>
- <20241007235815.GT4017910@ZenIV>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241007235815.GT4017910@ZenIV>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: Incorrect error message from erofs "backed by file" in 6.12-rc
+To: Christian Brauner <brauner@kernel.org>
+Cc: Allison Karlitskaya <allison.karlitskaya@redhat.com>,
+ Gao Xiang <xiang@kernel.org>, linux-erofs@lists.ozlabs.org,
+ linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+References: <CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com>
+ <bb781cf6-1baf-4a98-94a5-f261a556d492@linux.alibaba.com>
+ <20241007-zwietracht-flehen-1eeed6fac1a5@brauner>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20241007-zwietracht-flehen-1eeed6fac1a5@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/7/24 5:58 PM, Al Viro wrote:
-> On Mon, Oct 07, 2024 at 04:29:29PM -0600, Jens Axboe wrote:
->>> Can I put your s-o-b on that, with e.g.
->>>
->>> io_uring: IORING_OP_F[GS]ETXATTR is fine with REQ_F_FIXED_FILE
->>>
->>> Rejection of IOSQE_FIXED_FILE combined with IORING_OP_[GS]ETXATTR
->>> is fine - these do not take a file descriptor, so such combination
->>> makes no sense.  The checks are misplaced, though - as it is, they
->>> triggers on IORING_OP_F[GS]ETXATTR as well, and those do take 
->>> a file reference, no matter the origin. 
+Hi Christian,
+
+On 2024/10/7 19:35, Christian Brauner wrote:
+> On Sat, Oct 05, 2024 at 10:41:10PM GMT, Gao Xiang wrote:
+
+...
+
 >>
->> Yep that's perfect, officially:
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>
->> Thanks Al!
-> 
-> OK, updated and force-pushed (with slight reordering).  I can almost
-> promise no-rebase mode for that thing from now on, as long as nobody
-> on fsdevel objects to fs/xattr.c part of things after I repost the
-> series in the current form.
+>> Hi Christian, if possible, could you give some other
+>> idea to handle this case better? Many thanks!
 
-No worries on my end in terms of rebasing, I have no plans to touch
-xattr.c for the coming series. Risk of conflict should be very low, so I
-don't even need to pull that in.
+Thanks for the reply!
 
-> One possible exception: I'm not sure that fs/internal.h is a good
-> place for those primitives.  OTOH, any bikeshedding in that direction
-> can be delayed until the next cycle...
+> 
+> (1) Require that the path be qualified like:
+> 
+>      fsconfig(<fd>, FSCONFIG_SET_STRING, "source", "file:/home/lis/src/mountcfs/cfs", 0)
+> 
+>      and match on it in either erofs_*_get_tree() or by adding a custom
+>      function for the Opt_source/"source" parameter.
 
-It ended up just being the defacto place to shove declarations for
-things like that. But it always felt a bit dirty, particularly needing
-to include that from the io_uring side as it moved out of fs/ as well.
-Would indeed be nice to get that cleaned up a bit.
+IMHO, Users could create names with the prefix `file:`,
+it's somewhat strange to define a fixed prefix by the
+definition of source path fc->source.
 
-> To expand the circle of potential bikeshedders: s/do_mkdirat/filename_mkdirat/
-> is a reasonable idea for this series, innit?  How about turning e.g.
-> 
-> int __init init_mkdir(const char *pathname, umode_t mode)
-> {
->         struct dentry *dentry;
->         struct path path;
->         int error;
-> 
->         dentry = kern_path_create(AT_FDCWD, pathname, &path, LOOKUP_DIRECTORY);
->         if (IS_ERR(dentry))
->                 return PTR_ERR(dentry);
->         mode = mode_strip_umask(d_inode(path.dentry), mode);
->         error = security_path_mkdir(&path, dentry, mode);
->         if (!error)
->                 error = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
->                                   dentry, mode);
->         done_path_create(&path, dentry);
->         return error;
-> }
-> 
-> into
-> 
-> int __init init_mkdir(const char *pathname, umode_t mode)
-> {
-> 	return filename_mkdirat(AT_FDCWD, getname_kernel(pathname), mode);
-> }
-> 
-> reducing the duplication?  It really should not be accessible to random
-> places in the kernel, but syscalls in core VFS + io_uring interface for
-> the same + possibly init/*.c...
-> 
-> OTOH, I'm afraid to let the "but our driver is sooo special!" crowd play
-> with the full set of syscalls...  init_syscalls.h is already bad enough.
-> Hell knows, fs/internal.h just might be a bit of deterrent...
+Although there could be some escape character likewise
+way, but I'm not sure if it's worthwhile to work out
+this in kernel.
 
-Deduping it is a good thing, suggestion looks good to me. For random
-drivers, very much agree. But are there any of these symbols we end up
-exporting? That tends to put a damper on the enthusiasm...
+> 
+> (2) Add a erofs specific "source-file" mount option. IOW, check that
+>      either "source-file" or "source" was specified but not both. You
+>      could even set fc->source to "source-file" value and fail if
+>      fc->source is already set. You get the idea.
 
--- 
-Jens Axboe
+I once thought to add a new mount option too, yet from
+the user perpertive, I think users may not care about
+the source type of an arbitary path, and the kernel also
+can parse the type of the source path directly... so..
+
+
+So.. I wonder if it's possible to add a new VFS interface
+like get_tree_bdev_by_dev() for filesystems to specify a
+device number rather than hardcoded hard-coded source path
+way, e.g. I could see the potential benefits other than
+the EROFS use case:
+
+  - Filesystems can have other ways to get a bdev-based sb
+    in addition to the current hard-coded source path way;
+
+  - Some pseudo fs can use this way to generate a fs from a
+    bdev.
+
+  - Just like get_tree_nodev(), it doesn't strictly tie to
+    fc->source too.
+
+Also EROFS could lookup_bdev() (this kAPI is already
+exported) itself to check if it uses get_tree_bdev_by_dev()
+or get_tree_nodev()... Does it sounds good?  Many thanks!
+
+Thanks,
+Gao Xiang
+
+diff --git a/fs/super.c b/fs/super.c
+index 1db230432960..8cc8350b9ba6 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1596,26 +1596,17 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
+  EXPORT_SYMBOL_GPL(setup_bdev_super);
+  
+  /**
+- * get_tree_bdev - Get a superblock based on a single block device
++ * get_tree_bdev_by_dev - Get a bdev-based superblock with a given device number
+   * @fc: The filesystem context holding the parameters
+   * @fill_super: Helper to initialise a new superblock
++ * @dev: The device number indicating the target block device
+   */
+-int get_tree_bdev(struct fs_context *fc,
++int get_tree_bdev_by_dev(struct fs_context *fc,
+  		int (*fill_super)(struct super_block *,
+-				  struct fs_context *))
++				  struct fs_context *), dev_t dev)
+  {
+  	struct super_block *s;
+  	int error = 0;
+-	dev_t dev;
+-
+-	if (!fc->source)
+-		return invalf(fc, "No source specified");
+-
+-	error = lookup_bdev(fc->source, &dev);
+-	if (error) {
+-		errorf(fc, "%s: Can't lookup blockdev", fc->source);
+-		return error;
+-	}
+  
+  	fc->sb_flags |= SB_NOSEC;
+  	s = sget_dev(fc, dev);
+@@ -1644,6 +1635,30 @@ int get_tree_bdev(struct fs_context *fc,
+  	fc->root = dget(s->s_root);
+  	return 0;
+  }
++EXPORT_SYMBOL_GPL(get_tree_bdev_by_dev);
++
++/**
++ * get_tree_bdev - Get a superblock based on a single block device
++ * @fc: The filesystem context holding the parameters
++ * @fill_super: Helper to initialise a new superblock
++ */
++int get_tree_bdev(struct fs_context *fc,
++		int (*fill_super)(struct super_block *,
++				  struct fs_context *))
++{
++	int error;
++	dev_t dev;
++
++	if (!fc->source)
++		return invalf(fc, "No source specified");
++
++	error = lookup_bdev(fc->source, &dev);
++	if (error) {
++		errorf(fc, "%s: Can't lookup blockdev", fc->source);
++		return error;
++	}
++	return get_tree_bdev_by_dev(fc, fill_super, dev);
++}
+  EXPORT_SYMBOL(get_tree_bdev);
+  
+  static int test_bdev_super(struct super_block *s, void *data)
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index c13e99cbbf81..54f23589ad5b 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -160,6 +160,9 @@ extern int get_tree_keyed(struct fs_context *fc,
+  
+  int setup_bdev_super(struct super_block *sb, int sb_flags,
+  		struct fs_context *fc);
++int get_tree_bdev_by_dev(struct fs_context *fc,
++			 int (*fill_super)(struct super_block *sb,
++					   struct fs_context *fc), dev_t dev);
+  extern int get_tree_bdev(struct fs_context *fc,
+  			       int (*fill_super)(struct super_block *sb,
+  						 struct fs_context *fc));
+
+
+> 
+> ?
+
 
