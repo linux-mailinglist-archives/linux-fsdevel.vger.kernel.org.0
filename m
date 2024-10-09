@@ -1,54 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-31469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19AB2997518
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 20:50:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E9E997583
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 21:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FDBD1C21BBB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 18:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69715280FB0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 19:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A981A255A;
-	Wed,  9 Oct 2024 18:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B5B1E1A36;
+	Wed,  9 Oct 2024 19:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="X5cRc5HS"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hKq5LyrD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35FFEDE
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 18:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CE15CD49;
+	Wed,  9 Oct 2024 19:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728499814; cv=none; b=ckBmKBXMPpmOW9ATFLk25AqvLQEIkEfKVp471fYvUMU8XMVz3LxDbNRUkzmcYVziYgRaDiyptpef4ymxRCU5f+GZqd3GvP8u8SxjwCXMkhWNkLJb3LFrDpt0dPDXTC3wOVyBAY57qJ75skWr8KkSZCQOPfYNjqfpoRuCYsfFbd0=
+	t=1728501632; cv=none; b=NyZ4E0WzPohsKz2w9t8u+HM6yxItPjN+/AziHMnz/o93OsJA+HL+LgpiBAojRb0/s9gEDSb9fxfRdMOAIQ6yy2rLUjTmWcRXshAcdlsgtCKPmQhLvpC0suwDMMqKSLcHC0+bb+2ifTOX2omk8pvlKQTmrvZg7tG8b4DnKoVg8g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728499814; c=relaxed/simple;
-	bh=G799N47IaQfA/S7q6IaKPCx0SFzQJmZCELJ5YbAHY7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=McfAAAKw6miCujhntMLQGPn3Xc4YoJoGmVSIlY7OGLKE2ExBqGKB4+/dQz1ORrJSGaV5WNYGuQ5hCrtvWEXfx8qMQLeHGoXs2YL/BDyivyduA16qeVCegfAWuYZb5nbop3Z5MyI/CkHJ2QCDH5tJfqs77/eDhbhCDFVHzxMG174=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=X5cRc5HS; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 97AE9FF803;
-	Wed,  9 Oct 2024 18:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1728499810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=3O9E9FJ9+pGPIMh7kjei1THyfGYU9CFhlYDekeb/g8s=;
-	b=X5cRc5HSTvbUGk73K/WGzpm8jsonJuBIGOxDviGY6i2xKqxZVd8y7YX/bIR58Ko3WluDAe
-	HdlRO0ev+motOydpMxTC/n2Zv1tRtXR1iYm9tOAcwOeD/1J8gX/VCylNKkesiWiaPHF2qf
-	OrCFtccd/RC0dmcnDsYff2oZcPX3PR+XvgDPh6DMfhFAyVXptxKDy7CvfNgkkVBGXMaDOo
-	Qbc0apJlt98YacrRahuZ/LzuQdHmdIomLaV9BiPB+JSBTsleAeBc4FQW8KSzNR2z9EH2D8
-	svpG7nMZHt6NeBQyEhvvbQQ6kIIUSqeL+3esriKP0RcTCoXOaK3XcWfY9oLjIg==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL -rc3] unicode fixes
-Date: Wed, 09 Oct 2024 14:50:08 -0400
-Message-ID: <8734l5rtzz.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728501632; c=relaxed/simple;
+	bh=vaFkN0y+BNJI4hpWx9vTBvxzUz2+CG3St1LnByGwgBQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sv9uL2l2MeE1EJ1bMUuCRl1xLW5WF7bCC+ANTsXSCnjJoANVyGfieclaAoLp2rldrP7fJ79hPOjeC1uCoW8Y3bzfByN1NiCYM831A8W+YKWVHQOS76CnRNWhOw1LHXy8kO2YXRMBCZ0EK2WIkVIQVccFHmG0eNNqHfUtFmSAgGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hKq5LyrD; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B673742B27
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728501629; bh=NFviVX6j8uoh4WNDflXHr0jIuDjjpUm7uym8YfejszM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hKq5LyrDtlrqbNzbqYGA0gOoNl8uPiRPMtFw5Ajbk+izIzknVl0BhuHHdtTNbnvve
+	 t1UVx8u5j3B2I536JDmlzFtss1/mJcszQFlrSsO5Rltktd1IQPIKaJ/SlGa+WS5P7y
+	 uxZuCU9MBkH3k5KmgElcu9z0WFiBxNDuItiiOfIqFaOC8DZIjm9CW05nV4j7LtDyXa
+	 pAVq0b2uwt3JcKddIKZLzBoGz/tjaynGzXTxF38/UgrabPOrGzjPNvVE9JdL/YwkaU
+	 yDdm72ub45A1Hbhi+zuq0nZ89O0rK3K/G9dA7XU9eHrQVgrpwQfu8vVUIMIjtVqNdt
+	 FR5aKKQ2a56gA==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id B673742B27;
+	Wed,  9 Oct 2024 19:20:29 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org
+Cc: christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+In-Reply-To: <20241008121930.869054-1-luca.boccassi@gmail.com>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+Date: Wed, 09 Oct 2024 13:20:28 -0600
+Message-ID: <87msjd9j7n.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,36 +62,84 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-GND-Sasl: gabriel@krisman.be
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+luca.boccassi@gmail.com writes:
 
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+> As discussed at LPC24, add an ioctl with an extensible struct
+> so that more parameters can be added later if needed. Start with
+> returning pid/tgid/ppid and creds unconditionally, and cgroupid
+> optionally.
 
-are available in the Git repository at:
+I was looking this over, and a couple of questions came to mind...
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git tags/unicode-fixes-6.12-rc3
+> Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+> ---
 
-for you to fetch changes up to 5c26d2f1d3f5e4be3e196526bead29ecb139cf91:
+[...]
 
-  unicode: Don't special case ignorable code points (2024-10-09 13:34:01 -0400)
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 80675b6bf884..15cdc7fe4968 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/anon_inodes.h>
+>  #include <linux/file.h>
+>  #include <linux/fs.h>
+> +#include <linux/cgroup.h>
+>  #include <linux/magic.h>
+>  #include <linux/mount.h>
+>  #include <linux/pid.h>
+> @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+>  	return poll_flags;
+>  }
+>  
+> +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
+> +	size_t usize = _IOC_SIZE(cmd);
+> +	struct pidfd_info kinfo = {};
+> +	struct user_namespace *user_ns;
+> +	const struct cred *c;
+> +	__u64 request_mask;
+> +
+> +	if (!uinfo)
+> +		return -EINVAL;
+> +	if (usize < sizeof(struct pidfd_info))
+> +		return -EINVAL; /* First version, no smaller struct possible */
+> +
+> +	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
+> +		return -EFAULT;
 
-----------------------------------------------------------------
-unicode updates
+You don't check request_mask for unrecognized flags, so user space will
+not get an error if it puts random gunk there.  That, in turn, can make
+it harder to add new options in the future.
 
-* Patch to handle code-points with the Ignorable property as regular
-character instead of treating them as an empty string. (Me)
+> +	c = get_task_cred(task);
+> +	if (!c)
+> +		return -ESRCH;
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+[...]
 
-----------------------------------------------------------------
-Gabriel Krisman Bertazi (1):
-      unicode: Don't special case ignorable code points
+> +
+> +	/*
+> +	 * If userspace and the kernel have the same struct size it can just
+> +	 * be copied. If userspace provides an older struct, only the bits that
+> +	 * userspace knows about will be copied. If userspace provides a new
+> +	 * struct, only the bits that the kernel knows about will be copied and
+> +	 * the size value will be set to the size the kernel knows about.
+> +	 */
+> +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
+> +		return -EFAULT;
 
- fs/unicode/mkutf8data.c       |   70 -
- fs/unicode/utf8data.c_shipped | 6703 ++++++++++++++++++++---------------------
- 2 files changed, 3346 insertions(+), 3427 deletions(-)
+Which "size value" are you referring to here; I can't see it.
 
--- 
-Gabriel Krisman Bertazi
+If user space has a bigger struct, should you perhaps zero-fill the part
+the kernel doesn't know about?
+
+> +	return 0;
+> +}
+
+Thanks,
+
+jon
 
