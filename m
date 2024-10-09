@@ -1,98 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-31410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BFF995E29
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 05:32:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50117995E5A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 05:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2AD286A1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 03:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5C81F276A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 03:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233E214386D;
-	Wed,  9 Oct 2024 03:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0197145B14;
+	Wed,  9 Oct 2024 03:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ayXIWZJI"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Vq14Ska6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D586D2629D;
-	Wed,  9 Oct 2024 03:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E3252F9E
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 03:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728444726; cv=none; b=MFJRWpz8RxEzZAVsEZR8XYSg0E7Lnb9Yp1VcWtkg0LZvdtDnZES7vmY0fuSKwo9aAe1uzt2aqaB2314sT2t53KOmsHJLx2Tt9m16uYpXoqh2Y0NgnPFbZp4Ofy8WlF745xeSFk7VY4ra6xQ497MAHImS3TMjAt99zPZnpUpdFBA=
+	t=1728445925; cv=none; b=ONtFyANh+teDnM6GKZuO6LqOlKR9vjfkCx8z9Mn8YWke76dR9yTYMD9TTrrQICI6jjuvEky63z0mtvBqVb/Qca9g1D+21Oh57CQiRR9W29j6RzkXgRgwmOFLHFqWfvW3GpWkexqwJpWSv0KJiz0W8VeZ39dRqFHtBlqaA0WUBSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728444726; c=relaxed/simple;
-	bh=UKvWrcN6f43QWH0vx0BHKBG4bIzgzz/qaJLB9NnLBLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aW0fcLfHgoq9V+lcIq5pO18Chi6KtZSYlw12YTPiZb2fGCboHXp0VAhwyvvrkTQK5aXeixAboo6VsRswFNlGQbn9fmDW//jU7WxRpHIXive+35PcQ+/BzPiHMaqCzATN1tIqwdPwUQTOzYRmLeSdDDGunRXpSVIvL4JSBGuje0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ayXIWZJI; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728444721; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=jJSUlb11QHSKUmhauCeDGT4NZMMv9jLK3BJgLEkB/1Q=;
-	b=ayXIWZJILlZk3S+yBUjLUTsz9QMxZ0MRm8wNhjq2goavG0P7taJyC1fJSh5O83hKfgFAT8HmjJGUlAoaNeIqr5btKFjhQ23fZK5h5JhBrOkQHwoshKMGwBXz5WiM3bvfd16osJgnDCpCwpJpnlzRh8bIAuodLKGVqhfEt/nKrfc=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGhJfuR_1728444719)
-          by smtp.aliyun-inc.com;
-          Wed, 09 Oct 2024 11:32:00 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@infradead.org>
-Cc: Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH v2 2/2] erofs: use get_tree_bdev_flags() to avoid misleading messages
-Date: Wed,  9 Oct 2024 11:31:51 +0800
-Message-ID: <20241009033151.2334888-2-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
-References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1728445925; c=relaxed/simple;
+	bh=CNA+IwsxiyK9OFBTXdJn56em+2sA6DE+qY0MP6jbhd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kpQ2Qgnz0kM1NjVnMePGQh/1EndVMwRzKS+yLtDWYdsA4fevzPmqgsdtcsrdmloUqC1wvxAuqojYKZykP9KEpmZFBUyxw1Rt6wiL4Zddc0QWhvU87lA/N4jYeCBIlCw4MZGTAkIMZsfrh69FAAE83xI2zoLFDidVnj2jhbgVDYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Vq14Ska6; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (c-73-9-28-129.hsd1.il.comcast.net [73.9.28.129])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4993pdiQ026190
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Oct 2024 23:51:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1728445902; bh=hc/4UiI2kJNBSUQuicW9YL2kaR4Xf/C8fzRhntjE+WM=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Vq14Ska6VHQMslm1coPtYYuQspE169G6Sv6tSkuYceol5m48jXCBzfJMjOpG8ukEa
+	 SpqdiLM5DuTk2Iaqavt89b0Fog08Zg821cepbtRRrSXQ4KnJklrcBsvmE206Uvtby5
+	 aShbbik+HF4lqbrOSb7KQ2e0DAfSXfVYcW2E4L0O4jDixO17pTC08yvBL3eTB51vxJ
+	 l2SUQ4nqdNr6PG6vEAR+X23LcMNAxxFGcGbTqspMjYekKoeeRJamQKJl5nYo/gMWgw
+	 KB7aYHk1vgPSyBzC8O+VTv15fz6h9xMLDv+7Af1KjjfUrP2/0qol6yOpM0XPQCyhUz
+	 R42RibVDZ+nbw==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 92359340572; Tue, 08 Oct 2024 22:51:39 -0500 (CDT)
+Date: Tue, 8 Oct 2024 22:51:39 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+Message-ID: <20241009035139.GB167360@mit.edu>
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+ <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+ <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+ <20241006043002.GE158527@mit.edu>
+ <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
 
-Users can pass in an arbitrary source path for the proper type of
-a mount then without "Can't lookup blockdev" error message.
+On Sun, Oct 06, 2024 at 12:33:51AM -0400, Kent Overstreet wrote:
+> 
+> Correct me if I'm wrong, but your system isn't available to the
+> community, and I haven't seen a CI or dashboard for kdevops?
 
-Reported-by: Allison Karlitskaya <allison.karlitskaya@redhat.com>
-Closes: https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-changes since v1:
- - use new get_tree_bdev_flags().
+It's up on github for anyone to download, and I've provided pre-built
+test appliance so people don't have to have downloaded xfstests and
+all of its dependencies and build it from scratch.  (That's been
+automated, of course, but the build infrastructure is setup to use a
+Debian build chroot, and with the precompiled test appliances, you can
+use my test runner on pretty much any Linux distribution; it will even
+work on MacOS if you have qemu built from macports, although for now
+you have to build the kernel on Linux distro using Parallels VM[1].)
 
- fs/erofs/super.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I'll note that IMHO making testing resources available to the
+community isn't really the bottleneck.  Using cloud resources,
+especially if you spin up the VM's only when you need to run the
+tests, and shut them down once the test is complete, which
+gce-xfstests does, is actually quite cheap.  At retail prices, running
+a dozen ext4 file system configurations against xfstests's "auto"
+group will take about 24 hours of VM time, and including the cost of
+the block devices, costs just under two dollars USD.  Because the
+tests are run in parallel, the total wall clock time to run all of the
+tests is about two and a half hours.  Running the "quick" group on a
+single file system configuration costs pennies.  So the $300 of free
+GCE credits will actually get someone pretty far!
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 666873f745da..b89836a8760d 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -705,7 +705,9 @@ static int erofs_fc_get_tree(struct fs_context *fc)
- 	if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && sbi->fsid)
- 		return get_tree_nodev(fc, erofs_fc_fill_super);
- 
--	ret = get_tree_bdev(fc, erofs_fc_fill_super);
-+	ret = get_tree_bdev_flags(fc, erofs_fc_fill_super,
-+		IS_ENABLED(CONFIG_EROFS_FS_BACKED_BY_FILE) ?
-+			GET_TREE_BDEV_QUIET_LOOKUP : 0);
- #ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
- 	if (ret == -ENOTBLK) {
- 		if (!fc->source)
--- 
-2.43.5
+No, the bottleneck is having someone knowledgeable enough to interpret
+the test results and then finding the root cause of the failures.
+This is one of the reasons why I haven't stressed all that much about
+dashboards.  Dashboards are only useful if the right person(s) is
+looking at them.  That's why I've been much more interested in making
+it stupidly easy to run tests on someone's local resources, e.g.:
 
+     https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
+
+In fact, for most people, the entry point that I envision as being
+most interesting is that they download the kvm-xfstests, and following
+the instructions in the quickstart, so they can run "kvm-xfstests
+smoke" before sending me an ext4 patch.  Running the smoke test only
+takes 15 minutes using qemu, and it's much more convenient for them to
+run that on their local machine than to trigger the test on some
+remote machine, whether it's in the cloud or someone's remote test
+server.
+
+In any case, that's why I haven't been interesting in working with
+your test infrastructure; I have my own, and in my opinion, my
+approach is the better one to make available to the community, and so
+when I have time to improve it, I'd much rather work on
+{kvm,gce,android}-xfstests.
+
+Cheers,
+
+						- Ted
+
+
+[1] Figuring out how to coerce the MacOS toolchain to build the Linux
+kernel would be cool if anyone ever figures it out.  However, I *have*
+done kernel development using a Macbook Air M2 while on a cruise ship
+with limited internet access, building the kernel using a Parallels VM
+running Debian testing, and then using qemu from MacPorts to avoid the
+double virtualization performance penalty to run xfstests to test the
+freshly-built arm64 kernel, using my xfstests runner -- and all of
+this is available on github for anyone to use.
 
