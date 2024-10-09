@@ -1,121 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-31449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF9B996E5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 16:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FCE996FBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 17:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D661F22034
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 14:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206861F212E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 15:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB8A1A2567;
-	Wed,  9 Oct 2024 14:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0208C1E1A3B;
+	Wed,  9 Oct 2024 15:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="MMd6c0jx"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lm31+UCs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NkTzABFx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bO1iP7Pg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/2IkfBLb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098FE1A0B16
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 14:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14C81E1A25;
+	Wed,  9 Oct 2024 15:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484904; cv=none; b=a2wof9lHhzhaeQ51+Yr9LaVxPyET+60IxyfecLPjTNLfYxWT7y/B4s95JAlEe6veuxj3e5vXD3T11haZHGqdcg9imVU9TE8m8EJ2jtx7t3i1w/zP983idBfrZIDYHQOwUwqqd6JD7sRAa9muZUYMMoJ2+4MwZiz4eANaVFlOO4M=
+	t=1728487253; cv=none; b=dh9sGRY/czpY+vFx+rRq1ADojp2j7Xd79XKNUkXVpiVGqhsEqm9KBi0SfAJI/DFYa7rJBlwyV9ddbYPOIosNjgXZXxAMa6xOBvGvT33ylnpSN5A/6aEqGthU6dDBKaLkCCESFSu8btmeTgqtNX+j2E9F3JhvMShM5XoQ12HbQj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484904; c=relaxed/simple;
-	bh=x1PEDGoQZwbge4Fs0/XyWOQN0GzDczYGkUFOvNnIEXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o6SnGittRSi8wWlh9rYhXi+5gxT4MYzLQGpHQ51y0VuTcLI///X2L+4yHGGh5wBWf+YY48ocCicT7Z+3ehF0BUD9nPZA4epBFQGLF+2nkM2mLC1DXFD673evh4HAFn3xOo3mcJZaDxUQpAHtEQUWoOdDRVNHWx8Ty1LiDyb5NMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=MMd6c0jx; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e05198d1dso2404171b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2024 07:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1728484902; x=1729089702; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=262u3WRSsnZCS6tRA/wryh4VmMTwkyxbe0lMaxXGOBA=;
-        b=MMd6c0jxPSa1HgufRPOSfBtaBGFCjblfIJA2K7hKC3CnW5T7E+LY8nviBarVirRQ1x
-         GRUargm8fPXekdmqIQRwQr9rtAvF+JYe34OjtlZSRbGFal7Tn24YFYhMN0XJlR4i2xea
-         oChWpQ92PIlcwyRfRrgn/SCyUj0E2LXdzm4y2bLrpNJTyUm4QAO7GHKiUrp02GtFSjZu
-         iAWfUQBiYS2bh2WngfVNCYpQ33ouT21H845Z0M1L0Emfxh3RZguvGMkRGVSKUfxMwDoe
-         uFbWocIoUOlF+Y+gX6j3uNGQvYOeoFVppU5Iy0p6+YVl1AQOUo1ZuBCQ+ITza0dcz43T
-         Jh5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728484902; x=1729089702;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=262u3WRSsnZCS6tRA/wryh4VmMTwkyxbe0lMaxXGOBA=;
-        b=oaTIi7wTa+r/CxkkHChsGq/Q8i3rBxfg2L//EBaMhxJCGH9rAhDOxDdw8YFuznvV8W
-         9xHaGephIhmSmSoh6T9POOP8tkB5eGljhIGWo6GnAzGJ/J3Hit0LGPmqdS+SmHEo6DRM
-         avZUUuj2ZW31ZiMWMIfxx49mYdyQnWG3Kkni7sz+H+8WZ6dDdyo55Pxp//xI+r28QDhZ
-         nqG5Q10UCwuDfA4Cs0d6twJF+TKrhWFpnOlyzXxu+TwQ+72052J4mzt3A11arwaJUPTq
-         QnCSMUUOgurL/uOHVabyewbFaGX0diQUS6DafTIWW8M4Y3FH5OGchqVVT3jzJqqV6rkI
-         k4Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoj2Xyy8nFFjAXailgNdR1mgnoHYM/Jt2QWnCtfUDiEKykKtPj45SRjfFmCNAoUQHXF7mZhyt5UzcaAOy9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyqLOvtoeCjPWTU6yAosDSioi2qKbJLAdxF17vCbIN+0k94UGC
-	4HzHlWwFgce4rgGZRAl+RlUw6SAsByMMOEMSrNhLzaZa9ZhDZDbir9LMiel1ULw=
-X-Google-Smtp-Source: AGHT+IG8FUHdCZJ605uLVInPK/Fx/m2C72TUt/JwkrShuf6hbCKGofvSPaCkEirNpBKGNWAE8tweJA==
-X-Received: by 2002:a05:6a00:194f:b0:71d:eb7d:20d5 with SMTP id d2e1a72fcca58-71e1db74bbamr4668154b3a.8.1728484902193;
-        Wed, 09 Oct 2024 07:41:42 -0700 (PDT)
-Received: from localhost.localdomain ([143.92.64.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0ccdb64sm7852764b3a.48.2024.10.09.07.41.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 07:41:41 -0700 (PDT)
-From: Tang Yizhou <yizhou.tang@shopee.com>
-X-Google-Original-From: Tang Yizhou
-To: jack@suse.cz,
-	hch@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Tang Yizhou <yizhou.tang@shopee.com>
-Subject: [PATCH v3 2/2] mm/page-writeback.c: Fix comment of wb_domain_writeout_add()
-Date: Wed,  9 Oct 2024 23:17:28 +0800
-Message-Id: <20241009151728.300477-3-yizhou.tang@shopee.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241009151728.300477-1-yizhou.tang@shopee.com>
+	s=arc-20240116; t=1728487253; c=relaxed/simple;
+	bh=survOVxA/zx0xwYQ/MbRTGIHTmXpnfh+GwbLLEcZYQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yl30SaX6JS9Su08hkSRxSOz7Grq1e7cmE59RGp6QkU/+Pex2/fPQlE0zLN0vl+aet6PFlhwcbtu7TEEedQm4Phb1vZICi+0gfioF2lTA8ycW0aN6HMNJdj9vsJDjr8yuq3QdqRIgUVtH+YLblE9tcpuOuiJS3+MkUBNfjuFwGpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lm31+UCs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NkTzABFx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bO1iP7Pg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/2IkfBLb; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A704021E95;
+	Wed,  9 Oct 2024 15:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728487236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fo49WiSuG4sCrNKiK7epakneXryhlOqOWg2rfR6y4QM=;
+	b=lm31+UCs8WiVSd9Yz1J4qR15NZmjejLPZpxLmG1snj2OxoJ6puP9kAkr40zCiPvsOdhoy4
+	Nenwu7oNjIBMbZOfWIOB2L9522SZ+TZEnhMGA0RXFnlKhHoYkwByO3IAEZWG4Q9jO9zsV8
+	TbQ4zX1RIJYVg4dr6k7xZavIE0LPv+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728487236;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fo49WiSuG4sCrNKiK7epakneXryhlOqOWg2rfR6y4QM=;
+	b=NkTzABFxMLvbyceEfWppx0kZjoyp4JGq0im7v5G9Z3T4rmi9ZZuQ7s6q58mYLw16cueWhL
+	O71qZmQdH7/HSMAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bO1iP7Pg;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="/2IkfBLb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728487235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fo49WiSuG4sCrNKiK7epakneXryhlOqOWg2rfR6y4QM=;
+	b=bO1iP7PglAqwn/zSFWDlyQlwfCktWTI+5npTLXFpMEKBkqPQ5cDz61yjy/7G0a5E/IvSvh
+	Kntnq4n0rugINGqoiduoUUgUTjfVJDFLD+PpUoipPd+0zJdEdYeoF/pXvNE8h3LetK+C94
+	pXZgLLy0yxTFlh2Bb3W5N0b39rLd/jQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728487235;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fo49WiSuG4sCrNKiK7epakneXryhlOqOWg2rfR6y4QM=;
+	b=/2IkfBLbUv6CtoZSGlQXFUmV/rnKDxLKzCV76UqZs3ly9CiJMLWv9CwTuKPSKHRJo7fen4
+	O0kjlspb6FTkk8CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99E6B13A58;
+	Wed,  9 Oct 2024 15:20:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id t6GQJUOfBmfNVQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 15:20:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 43CD1A0896; Wed,  9 Oct 2024 17:20:35 +0200 (CEST)
+Date: Wed, 9 Oct 2024 17:20:35 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tang Yizhou <yizhou.tang@shopee.com>
+Cc: jack@suse.cz, hch@infradead.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] mm/page-writeback.c: Update comment for
+ BANDWIDTH_INTERVAL
+Message-ID: <20241009152035.cwkzs2ryy2fdrs2h@quack3>
 References: <20241009151728.300477-1-yizhou.tang@shopee.com>
+ <20241009151728.300477-2-yizhou.tang@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009151728.300477-2-yizhou.tang@shopee.com>
+X-Rspamd-Queue-Id: A704021E95
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,shopee.com:email,suse.cz:dkim,suse.cz:email];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-From: Tang Yizhou <yizhou.tang@shopee.com>
+On Wed 09-10-24 23:17:27, Tang Yizhou wrote:
+> From: Tang Yizhou <yizhou.tang@shopee.com>
+> 
+> The name of the BANDWIDTH_INTERVAL macro is misleading, as it is not
+> only used in the bandwidth update functions wb_update_bandwidth() and
+> __wb_update_bandwidth(), but also in the dirty limit update function
+> domain_update_dirty_limit().
+> 
+> Currently, we haven't found an ideal name, so update the comment only.
+> 
+> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
 
-__bdi_writeout_inc() has undergone multiple renamings, but the comment
-within the function body have not been updated accordingly. Update it
-to reflect the latest wb_domain_writeout_add().
+Looks good. Feel free to add:
 
-Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
----
- mm/page-writeback.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index c7c6b58a8461..72a5d8836425 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -586,7 +586,7 @@ static void wb_domain_writeout_add(struct wb_domain *dom,
- 	/* First event after period switching was turned off? */
- 	if (unlikely(!dom->period_time)) {
- 		/*
--		 * We can race with other __bdi_writeout_inc calls here but
-+		 * We can race with other wb_domain_writeout_add calls here but
- 		 * it does not cause any harm since the resulting time when
- 		 * timer will fire and what is in writeout_period_time will be
- 		 * roughly the same.
+								Honza
+
+> ---
+>  mm/page-writeback.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index fcd4c1439cb9..c7c6b58a8461 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -54,7 +54,7 @@
+>  #define DIRTY_POLL_THRESH	(128 >> (PAGE_SHIFT - 10))
+>  
+>  /*
+> - * Estimate write bandwidth at 200ms intervals.
+> + * Estimate write bandwidth or update dirty limit at 200ms intervals.
+>   */
+>  #define BANDWIDTH_INTERVAL	max(HZ/5, 1)
+>  
+> -- 
+> 2.25.1
+> 
 -- 
-2.25.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
