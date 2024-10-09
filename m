@@ -1,230 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-31427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97A99965AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 11:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 789E39965DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 11:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99F201C23C7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 09:40:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4151C21253
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 09:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB94D18BC26;
-	Wed,  9 Oct 2024 09:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EBC18C91A;
+	Wed,  9 Oct 2024 09:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iYwmvcrX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pTBLoKKU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iYwmvcrX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pTBLoKKU"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j+mCq6vY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+MgORri";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j+mCq6vY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+MgORri"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE8218BBAE;
-	Wed,  9 Oct 2024 09:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC92328EF;
+	Wed,  9 Oct 2024 09:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728466839; cv=none; b=OAvSVmW4J6nTpWif4dle0iPdH/X/olLfuWe/iM3tvjXTSP2tECh4CrKK1LZHn7eYORvbw1rBqz0faLs0jfOWc6y5IcqZjJ+IrINGXaI5/03K1lpOcIws8L/2JeTc1bP5hJOr3Nq2FDTZcvOblOcTtRVL7meLwfGjYxSPuQKzOi4=
+	t=1728467350; cv=none; b=I7Eisqkjh4fUb277+4vjSkGeKgJ90HHSZjrTrEVtZUoDdj1qho4FgGWOKzB1h6Uyzsh8mGvA++LaQbYpmCTyJJMNEtFV/g+/99MYXtCxeREENzAwSEOmsQ6ut6vANrSkcAAYl15G3mYV9fJqaTTU2mYV060BZy8OQauWl94LA14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728466839; c=relaxed/simple;
-	bh=uR8VAP6tl/ILDhGZcdKBR+RZip67KNyv534M0e/6Log=;
+	s=arc-20240116; t=1728467350; c=relaxed/simple;
+	bh=eh4BxI52PQAK5fm5qC88knwJADaCMCLFIaEWxNMBKoM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WpAbA0kjBguOdiB1guJ2PkchiQ0mqHx6Lh9DY7RoWSc4dmRCyyfPuujw2j+vqCssAkl1i1pQrfhkXPNjb08x0Y4LkxIP7GpQWrDQvCZvwFRbbogCtXFm+khcoyw8iOcdYBU+OPXeby1FUAJ4Ecr7+VnnwggkG+kfg20GK4PgWyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iYwmvcrX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pTBLoKKU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iYwmvcrX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pTBLoKKU; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=roa6csdQkFxrEYpZDl7Y05Kb22zvB+k8I+DZ0ZDaczTHm+0GZZ/Y/hm8AQBLvYHnM1kSIQZco954UMd6SEr0Mb7Q4z8BMkcXNto3fwJ9m4OD943X8Dgfv/PIAuC0esPG1us2wmv23mMtvAgZ4y23iSKl/eUlxlIsmjoSfZj72q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j+mCq6vY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+MgORri; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j+mCq6vY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+MgORri; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 281D621E7F;
-	Wed,  9 Oct 2024 09:40:35 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 186DB1FB93;
+	Wed,  9 Oct 2024 09:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728466835; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1728467347; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MC+XGwFr4dz5nS5NDRH+sEXp/J7wjtSsBD/7FC5N+zI=;
-	b=iYwmvcrXQtTTmKs/PSHnm5h6uzwWSeYnSjM0QQSBzCCswh+3FEq0j2+6gXlo+5NEzELFle
-	PVnNv3YTYYe1vVXzSbY070j+qzX49j7n/ZtGPinerfFo0j7ILO9Y3Po39iYWammEPAYFQu
-	nEyvBbxn7TtySxCA5+Zw5xBgI9tiX10=
+	bh=i2qdj0Nc8sTi+dG8p4WXxx/mzAKRX5B8QIkHtbq6ptU=;
+	b=j+mCq6vYSQXmGdJs1sZBPLyqdZvd0QBxNAJqW+0x87Qcgbt19i2gG+9A81/3++u6wRCU+9
+	m7CB2sOSLYdz/Onx1ufSgH1PR8BMOu7rH82eksGdAao39CMrqX/NsylyMxb1XjYotyBv9/
+	DTT6NEtE287SlTqaGbHpdLL5XCUMeEU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728466835;
+	s=susede2_ed25519; t=1728467347;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MC+XGwFr4dz5nS5NDRH+sEXp/J7wjtSsBD/7FC5N+zI=;
-	b=pTBLoKKUBJw/QYPdigI4MHxk5Qjy3QGfqVtyCE9R+R8AgsUB2bAsywttlyDq8d38rFXvM/
-	KKE9mDs33kInLqCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=iYwmvcrX;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pTBLoKKU
+	bh=i2qdj0Nc8sTi+dG8p4WXxx/mzAKRX5B8QIkHtbq6ptU=;
+	b=L+MgORrigHEYPjH9RYa+KbOcnIOChPh03lkHOxD8n+7i9LfAQ0yCjEFp3Peds44o07gqtd
+	XWVYh3K+gCbCmiCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728466835; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1728467347; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MC+XGwFr4dz5nS5NDRH+sEXp/J7wjtSsBD/7FC5N+zI=;
-	b=iYwmvcrXQtTTmKs/PSHnm5h6uzwWSeYnSjM0QQSBzCCswh+3FEq0j2+6gXlo+5NEzELFle
-	PVnNv3YTYYe1vVXzSbY070j+qzX49j7n/ZtGPinerfFo0j7ILO9Y3Po39iYWammEPAYFQu
-	nEyvBbxn7TtySxCA5+Zw5xBgI9tiX10=
+	bh=i2qdj0Nc8sTi+dG8p4WXxx/mzAKRX5B8QIkHtbq6ptU=;
+	b=j+mCq6vYSQXmGdJs1sZBPLyqdZvd0QBxNAJqW+0x87Qcgbt19i2gG+9A81/3++u6wRCU+9
+	m7CB2sOSLYdz/Onx1ufSgH1PR8BMOu7rH82eksGdAao39CMrqX/NsylyMxb1XjYotyBv9/
+	DTT6NEtE287SlTqaGbHpdLL5XCUMeEU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728466835;
+	s=susede2_ed25519; t=1728467347;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MC+XGwFr4dz5nS5NDRH+sEXp/J7wjtSsBD/7FC5N+zI=;
-	b=pTBLoKKUBJw/QYPdigI4MHxk5Qjy3QGfqVtyCE9R+R8AgsUB2bAsywttlyDq8d38rFXvM/
-	KKE9mDs33kInLqCQ==
+	bh=i2qdj0Nc8sTi+dG8p4WXxx/mzAKRX5B8QIkHtbq6ptU=;
+	b=L+MgORrigHEYPjH9RYa+KbOcnIOChPh03lkHOxD8n+7i9LfAQ0yCjEFp3Peds44o07gqtd
+	XWVYh3K+gCbCmiCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17FE313A58;
-	Wed,  9 Oct 2024 09:40:35 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B7FB13A58;
+	Wed,  9 Oct 2024 09:49:07 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4ziVBZNPBmcmZQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 09:40:35 +0000
+	id ewvLApNRBmfwZwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 09:49:07 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AE2BCA0851; Wed,  9 Oct 2024 11:40:34 +0200 (CEST)
-Date: Wed, 9 Oct 2024 11:40:34 +0200
+	id BA7A0A0851; Wed,  9 Oct 2024 11:49:06 +0200 (CEST)
+Date: Wed, 9 Oct 2024 11:49:06 +0200
 From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 0/2] API for exporting connectable file handles to
- userspace
-Message-ID: <20241009094034.xgcw2inu2tun4qrq@quack3>
-References: <20240923082829.1910210-1-amir73il@gmail.com>
- <20240925-seeufer-atheismus-6f7e6ab4965f@brauner>
- <CAOQ4uxiBwtEs_weg67MHP4TOsXN7hVi0bDCUe_C7b2tHqohtAQ@mail.gmail.com>
- <021d3f9acf33ff74bfde7aadd6a9a01a8ee64248.camel@kernel.org>
- <CAOQ4uxht3A7Rx5eu=DX=Zn2PNyQnj5BkCLMi36Gftt0ej8KhdA@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <20241009094906.m3e2ye4oo7qhhbax@quack3>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org>
+ <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
+ <ZwRvshM65rxXTwxd@dread.disaster.area>
+ <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
+ <CAHk-=wgW0RspdggU630JYUe5CyzNi5MHT4UEfx2+yZKoeezawg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxht3A7Rx5eu=DX=Zn2PNyQnj5BkCLMi36Gftt0ej8KhdA@mail.gmail.com>
-X-Rspamd-Queue-Id: 281D621E7F
+In-Reply-To: <CAHk-=wgW0RspdggU630JYUe5CyzNi5MHT4UEfx2+yZKoeezawg@mail.gmail.com>
 X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
+X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
 	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_THREE(0.00)[3];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[fromorbit.com,suse.cz,infradead.org,vger.kernel.org,linux.dev,linux.microsoft.com,google.com,hallyn.com,chromium.org,gmail.com];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
 	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -3.80
 X-Spam-Flag: NO
 
-On Tue 08-10-24 15:11:39, Amir Goldstein wrote:
-> On Tue, Oct 8, 2024 at 1:07 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Mon 07-10-24 17:54:16, Linus Torvalds wrote:
+> On Mon, 7 Oct 2024 at 17:28, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > On Mon, 2024-10-07 at 17:26 +0200, Amir Goldstein wrote:
-> > > On Wed, Sep 25, 2024 at 11:14 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > > open_by_handle_at(2) does not have AT_ flags argument, but also, I find
-> > > > > it more useful API that encoding a connectable file handle can mandate
-> > > > > the resolving of a connected fd, without having to opt-in for a
-> > > > > connected fd independently.
-> > > >
-> > > > This seems the best option to me too if this api is to be added.
-> > >
-> > > Thanks.
-> > >
-> > > Jeff, Chuck,
-> > >
-> > > Any thoughts on this?
-> > >
-> >
-> > Sorry for the delay. I think encoding the new flag into the fh itself
-> > is a reasonable approach.
-> >
+> > And yes, this changes the timing on when fsnotify events happen, but
+> > what I'm actually hoping for is that Jan will agree that it doesn't
+> > actually matter semantically.
 > 
-> Adding Jan.
-> Sorry I forgot to CC you on the patches, but struct file_handle is officially
-> a part of fanotify ABI, so your ACK is also needed on this change.
-
-Thanks. I've actually seen this series on list, went "eww bitfields, let's
-sleep to this" and never got back to it.
-
-> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> index 96b62e502f71..3e60bac74fa3 100644
-> --- a/include/linux/exportfs.h
-> +++ b/include/linux/exportfs.h
-> @@ -159,8 +159,17 @@ struct fid {
->  #define EXPORT_FH_CONNECTABLE  0x1 /* Encode file handle with parent */
->  #define EXPORT_FH_FID          0x2 /* File handle may be non-decodeable */
->  #define EXPORT_FH_DIR_ONLY     0x4 /* Only decode file handle for a
-> directory */
-> -/* Flags allowed in encoded handle_flags that is exported to user */
-> -#define EXPORT_FH_USER_FLAGS   (EXPORT_FH_CONNECTABLE | EXPORT_FH_DIR_ONLY)
-> +
-> +/* Flags supported in encoded handle_type that is exported to user */
-> +#define FILEID_USER_FLAGS_MASK 0xffff0000
-> +#define FILEID_USER_FLAGS(type) ((type) & FILEID_USER_FLAGS_MASK)
-> +
-> +#define FILEID_IS_CONNECTABLE  0x10000
-> +#define FILEID_IS_DIR          0x40000
-> +#define FILEID_VALID_USER_FLAGS        (FILEID_IS_CONNECTABLE | FILEID_IS_DIR)
-
-FWIW I prefer this variant much over bitfields as their binary format
-depends on the compiler which leads to unpleasant surprises sooner rather
-than later.
-
-> +#define FILEID_USER_TYPE_IS_VALID(type) \
-> +       (FILEID_USER_FLAGS(type) & ~FILEID_VALID_USER_FLAGS)
-
-The macro name is confusing because it speaks about type but actually
-checks flags. Frankly, I'd just fold this in the single call site to make
-things obvious.
-
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index cca7e575d1f8..6329fec40872 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1071,8 +1071,7 @@ struct file {
+> .. and yes, I realize it might actually matter. fsnotify does do
+> 'ihold()' to hold an inode ref, and with this that would actually be
+> more or less pointless, because the mark would be removed _despite_
+> such a ref.
 > 
->  struct file_handle {
->         __u32 handle_bytes;
-> -       int handle_type:16;
-> -       int handle_flags:16;
-> +       int handle_type;
+> So maybe it's not an option to do what I suggested. I don't know the
+> users well enough.
 
-Maybe you want to make handle_type unsigned when you treat it (partially)
-as flags? Otherwise some constructs can lead to surprises with sign
-extension etc...
+Yeah, we need to keep the notification mark alive either until the inode is
+deleted or until the filesystem is unmounted to maintain behavior of
+inotify and fanotify APIs.
+
+That being said we could rework lifetime rules inside fsnotify subsystem as
+Dave suggests so that fsnotify would not pin inodes, detach it's structures
+from inodes on inode reclaim and associate notification marks with inodes
+when they are loaded from disk.  But it's a relatively big overhaul.
 
 								Honza
 -- 
