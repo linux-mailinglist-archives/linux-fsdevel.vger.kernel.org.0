@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-31482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD159976BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 22:46:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BAAE9976C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 22:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2B101C2282D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 20:46:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84123B20B1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 20:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39871E25E9;
-	Wed,  9 Oct 2024 20:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D112A1E8829;
+	Wed,  9 Oct 2024 20:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="YHdhUXRB"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="aqSCXevP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47CE1E1C3A;
-	Wed,  9 Oct 2024 20:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7B81E2837;
+	Wed,  9 Oct 2024 20:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728506534; cv=none; b=lox6pB9piFcE3PnsV4Z7hy2WNlNM0VlQtoqdTyLmjLyEB6h+aWb1HE12Cj3wMepY16v4Cjji6ut9HEBKMAm+1hhWrePS702BdPNAwmrUArx/OnwgrqIOYNH6vErydd9H9WdiHcm+O9+Kre268uGWochW9R57bQyvkRBEJD6bQ/g=
+	t=1728506545; cv=none; b=bAg0T+faUVmRUJBa+1/JYqDdyX5Y9uCf2ADaYkakqfowGgDf9qSRoGujSgDjpZMFHa3ug0epDpKxAUCvmDiiCRyk682ZH8TH0UXCtU0qlW/iSmn9bwWiDS/j1XehdB2gdb6WFsXLpmw6Oaq2x0FC2P4xvu6tGmG41Yz2pu4viZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728506534; c=relaxed/simple;
-	bh=o94o6Toa1Pf4WLXPtt6pgYs8bPe/h3R8eYg1DJcRyfA=;
+	s=arc-20240116; t=1728506545; c=relaxed/simple;
+	bh=Bzh9OsJFyVxxs0UUl9I/hXyHe//SV8qmyJ8G0kkUtCU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cVbwDj/t/AKokRAWofaKHQmCxj+KciNzm3Xl8KqZQ7jqG0lyJlFRnLCkwkoN4aynoeDeu1e5p3+7296mxlA++lUKmhw/aRihXg+I5qQsYfiMUs74t+IbnJnS+qiRfJlCvuDFqIDP2gJIq/X3fX+YPtBNxvzP0Ml08C28Q7lf2Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=YHdhUXRB; arc=none smtp.client-ip=80.241.56.152
+	 In-Reply-To:To:Cc; b=G+mEVMyi2RnFOu9c2YNyc8tVgJr6qQrxsHJttiRZCmEo2UFrmCuFFIMWSPf0n+GqokJnDZRtU1GQRyJq+U3WZDKJUa1TPiyIzM5d5MTqBQH3SNCCqwjvuVpZId3Fj6Y2d2Epeo9E3JqNhlwFPVLMEI08GvkCeChosxLgS/qBUFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=aqSCXevP; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XP4Z83lbZz9tWL;
-	Wed,  9 Oct 2024 22:42:08 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4XP4ZK6FVVz9sxv;
+	Wed,  9 Oct 2024 22:42:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1728506528;
+	t=1728506537;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JvFZhzQibMAuUvYkTNP2DH0255R8R25uInAVXxNHfKg=;
-	b=YHdhUXRBKlxTgq4+K/HlwfGxQBDTI71pIUfYv584e8mB89gfH9rI/6vEcB6c53DJO7+iIP
-	KkFAT4YwWVBW7EDf9WhVmCG9FIIhYJV4bBsovbzxKDjunp6m6xzWPVXT3Vt5lwQDFZQJTD
-	vBVlEZhhRXvv7bzJIIn2XRD0Bq/bkZFwoupWWfJ+qUYO+VMur0YzDszJoGdwTv7YieL41L
-	I8evJBQzvv7oUrHP4+RgPV3QsgbxEvLamvfo6IHlsJNOhwbfV/VxtMzGl/Zuj5Rc9IlvQZ
-	LNHXmTNRzMAfCbDOoDBsa+FGbpC/rrUUiQdCJXRZhuWkdpstPMdbSKlRhJstKg==
+	bh=dCw4fcVlYhpmb9a93CqGmQEl9A3eKBG5nIi80087L/A=;
+	b=aqSCXevPhGic0cJ9OkLYPD+sV6xE4TcjrcPcDD1CWorkSWN9E4yUA6wyDA9c7rscNa2hUP
+	tTvGQNvA9tUGluO0AkKKQDbx4DIkBxy5NGPv9UbMdSvlQ86qsFIbjLwOCR9mtm2V7MpTKU
+	eL0aZe9Lp+Acj0ZgkOZcOKkIPXGwg3TcFV2L3nxFnp1D+fos+jqFgEMmCXKovDHGS4Jurz
+	X1tNpH+CvbXy4y8gpH7UiID892FwozPJFIRtT4i5PrsAY4VRGqcuU8FpkkrelBL5JlvfDO
+	u2uFoULN6HokrvCgNuRDygFaGokxFLEt9MCUdI7jawDDn0gV4i5BCJS7db5NwA==
 From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Thu, 10 Oct 2024 07:40:40 +1100
-Subject: [PATCH RFC v3 07/10] clone3: add CHECK_FIELDS flag to usize
- argument
+Date: Thu, 10 Oct 2024 07:40:41 +1100
+Subject: [PATCH RFC v3 08/10] selftests: clone3: add CHECK_FIELDS selftests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,7 +60,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-extensible-structs-check_fields-v3-7-d2833dfe6edd@cyphar.com>
+Message-Id: <20241010-extensible-structs-check_fields-v3-8-d2833dfe6edd@cyphar.com>
 References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
 In-Reply-To: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
@@ -78,122 +77,316 @@ Cc: Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>,
  linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
  linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, 
  linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3623; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=o94o6Toa1Pf4WLXPtt6pgYs8bPe/h3R8eYg1DJcRyfA=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaSzvQpi/nFmTv/HWQZ/e9iOrts0+5HWpvx/mrO//3+Zq
- xnXNi+htaOUhUGMi0FWTJFlm59n6Kb5i68kf1rJBjOHlQlkCAMXpwBMpCaIkeHJlqsuiUyc07jr
- 1kZXfOsz7tDIu7xi45pKHeWZvc5CE9wZ/gpmfeUW+7bTzl9xftEHkb8qAVdqVJh31nrN6fPb8ex
- HDisA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9631; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=Bzh9OsJFyVxxs0UUl9I/hXyHe//SV8qmyJ8G0kkUtCU=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaSzvQpi1mQPm3r7gEiysmFAV+ChnxdLX6QWstceSjmps
+ 2Ka/aeIjlIWBjEuBlkxRZZtfp6hm+YvvpL8aSUbzBxWJpAhDFycAjARsVJGhrelKXfjBGQTHhXe
+ FTvSsiFp1y+pz2qOMX3PnuZJCl0SqGZk+Mr+p0kwrGTfzIX6yr+Ebua1tZmLbXwfGviz/8+zB9H
+ b2AA=
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
 
-As with openat2(2), this allows userspace to easily figure out what
-flags and fields are supported by clone3(2). For fields which are not
-flag-based, we simply set every bit in the field so that a naive
-bitwise-and would show that any value of the field is valid.
-
-For args->exit_signal, since we have an explicit bitmask for the field
-defined already (CSIGNAL) we can indicate that only those bits are
-supported by current kernels. If we add some extra bits to exit_signal
-in the future, being able to detect them as new features would be quite
-useful.
-
-The intended way of using this interface to get feature information
-looks something like the following:
-
-  static bool clone3_clear_sighand_supported;
-  static bool clone3_cgroup_supported;
-
-  int check_clone3_support(void)
-  {
-      int err;
-      struct clone_args args = {};
-
-      err = clone3(&args, CHECK_FIELDS | sizeof(args));
-      assert(err < 0);
-      switch (errno) {
-      case EFAULT: case E2BIG:
-          /* Old kernel... */
-          check_support_the_old_way();
-          break;
-      case EEXTSYS_NOOP:
-          clone3_clear_sighand_supported = (how.flags & CLONE_CLEAR_SIGHAND);
-          clone3_cgroup_supported = (how.flags & CLONE_INTO_CGROUP) &&
-                                    (how.cgroup != 0);
-          break;
-      }
-  }
-
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- kernel/fork.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ tools/testing/selftests/clone3/.gitignore          |   1 +
+ tools/testing/selftests/clone3/Makefile            |   4 +-
+ .../testing/selftests/clone3/clone3_check_fields.c | 264 +++++++++++++++++++++
+ 3 files changed, 267 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index cc760491f201..bded93f4f5f4 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2925,11 +2925,15 @@ SYSCALL_DEFINE5(clone, unsigned long, clone_flags, unsigned long, newsp,
- }
- #endif
+diff --git a/tools/testing/selftests/clone3/.gitignore b/tools/testing/selftests/clone3/.gitignore
+index 83c0f6246055..4ec3e1ecd273 100644
+--- a/tools/testing/selftests/clone3/.gitignore
++++ b/tools/testing/selftests/clone3/.gitignore
+@@ -3,3 +3,4 @@ clone3
+ clone3_clear_sighand
+ clone3_set_tid
+ clone3_cap_checkpoint_restore
++clone3_check_fields
+diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+index 84832c369a2e..37141ca13f7c 100644
+--- a/tools/testing/selftests/clone3/Makefile
++++ b/tools/testing/selftests/clone3/Makefile
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+-CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
++CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
+ LDLIBS += -lcap
  
-+
-+#define CLONE3_VALID_FLAGS (CLONE_LEGACY_FLAGS | CLONE_CLEAR_SIGHAND | CLONE_INTO_CGROUP)
-+
- noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
- 					      struct clone_args __user *uargs,
- 					      size_t usize)
- {
- 	int err;
-+	bool check_fields;
- 	struct clone_args args;
- 	pid_t *kset_tid = kargs->set_tid;
+ TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+-	clone3_cap_checkpoint_restore
++	clone3_cap_checkpoint_restore clone3_check_fields
  
-@@ -2941,11 +2945,34 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
- 		     CLONE_ARGS_SIZE_VER2);
- 	BUILD_BUG_ON(sizeof(struct clone_args) != CLONE_ARGS_SIZE_VER2);
- 
-+	check_fields = usize & CHECK_FIELDS;
-+	usize &= ~CHECK_FIELDS;
+ include ../lib.mk
+diff --git a/tools/testing/selftests/clone3/clone3_check_fields.c b/tools/testing/selftests/clone3/clone3_check_fields.c
+new file mode 100644
+index 000000000000..477604f9a3fb
+--- /dev/null
++++ b/tools/testing/selftests/clone3/clone3_check_fields.c
+@@ -0,0 +1,264 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Author: Aleksa Sarai <cyphar@cyphar.com>
++ * Copyright (C) 2024 SUSE LLC
++ */
 +
- 	if (unlikely(usize > PAGE_SIZE))
- 		return -E2BIG;
- 	if (unlikely(usize < CLONE_ARGS_SIZE_VER0))
- 		return -EINVAL;
- 
-+	if (unlikely(check_fields)) {
-+		memset(&args, 0, sizeof(args));
-+		args = (struct clone_args) {
-+			.flags = CLONE3_VALID_FLAGS,
-+			.pidfd = 0xFFFFFFFFFFFFFFFF,
-+			.child_tid = 0xFFFFFFFFFFFFFFFF,
-+			.parent_tid = 0xFFFFFFFFFFFFFFFF,
-+			.exit_signal = (u64) CSIGNAL,
-+			.stack = 0xFFFFFFFFFFFFFFFF,
-+			.stack_size = 0xFFFFFFFFFFFFFFFF,
-+			.tls = 0xFFFFFFFFFFFFFFFF,
-+			.set_tid = 0xFFFFFFFFFFFFFFFF,
-+			.set_tid_size = 0xFFFFFFFFFFFFFFFF,
-+			.cgroup = 0xFFFFFFFFFFFFFFFF,
-+		};
++#define _GNU_SOURCE
++#include <errno.h>
++#include <inttypes.h>
++#include <linux/types.h>
++#include <linux/sched.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/syscall.h>
++#include <sys/types.h>
++#include <sys/un.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include <sched.h>
 +
-+		err = copy_struct_to_user(uargs, usize, &args, sizeof(args), NULL);
-+		return err ?: -EEXTSYS_NOOP;
++#include "../kselftest.h"
++#include "clone3_selftests.h"
++
++#ifndef CHECK_FIELDS
++#define CHECK_FIELDS (1ULL << 63)
++#endif
++
++struct __clone_args_v0 {
++	__aligned_u64 flags;
++	__aligned_u64 pidfd;
++	__aligned_u64 child_tid;
++	__aligned_u64 parent_tid;
++	__aligned_u64 exit_signal;
++	__aligned_u64 stack;
++	__aligned_u64 stack_size;
++	__aligned_u64 tls;
++};
++
++struct __clone_args_v1 {
++	__aligned_u64 flags;
++	__aligned_u64 pidfd;
++	__aligned_u64 child_tid;
++	__aligned_u64 parent_tid;
++	__aligned_u64 exit_signal;
++	__aligned_u64 stack;
++	__aligned_u64 stack_size;
++	__aligned_u64 tls;
++	__aligned_u64 set_tid;
++	__aligned_u64 set_tid_size;
++};
++
++struct __clone_args_v2 {
++	__aligned_u64 flags;
++	__aligned_u64 pidfd;
++	__aligned_u64 child_tid;
++	__aligned_u64 parent_tid;
++	__aligned_u64 exit_signal;
++	__aligned_u64 stack;
++	__aligned_u64 stack_size;
++	__aligned_u64 tls;
++	__aligned_u64 set_tid;
++	__aligned_u64 set_tid_size;
++	__aligned_u64 cgroup;
++};
++
++static int call_clone3(void *clone_args, size_t size)
++{
++	int status;
++	pid_t pid;
++
++	pid = sys_clone3(clone_args, size);
++	if (pid < 0)
++		return -errno;
++
++	if (pid == 0) {
++		ksft_print_msg("I am the child, my PID is %d\n", getpid());
++		_exit(EXIT_SUCCESS);
 +	}
 +
- 	err = copy_struct_from_user(&args, sizeof(args), uargs, usize);
- 	if (err)
- 		return err;
-@@ -3025,8 +3052,7 @@ static inline bool clone3_stack_valid(struct kernel_clone_args *kargs)
- static bool clone3_args_valid(struct kernel_clone_args *kargs)
- {
- 	/* Verify that no unknown flags are passed along. */
--	if (kargs->flags &
--	    ~(CLONE_LEGACY_FLAGS | CLONE_CLEAR_SIGHAND | CLONE_INTO_CGROUP))
-+	if (kargs->flags & ~CLONE3_VALID_FLAGS)
- 		return false;
- 
- 	/*
++	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
++			getpid(), pid);
++
++	if (waitpid(-1, &status, __WALL) < 0) {
++		ksft_print_msg("waitpid() returned %s\n", strerror(errno));
++		return -errno;
++	}
++	if (!WIFEXITED(status)) {
++		ksft_print_msg("Child did not exit normally, status 0x%x\n",
++			       status);
++		return EXIT_FAILURE;
++	}
++	if (WEXITSTATUS(status))
++		return WEXITSTATUS(status);
++
++	return 0;
++}
++
++static bool check(bool *failed, bool pred)
++{
++	*failed |= pred;
++	return pred;
++}
++
++static void test_clone3_check_fields(const char *test_name, size_t struct_size)
++{
++	size_t bufsize;
++	void *buffer;
++	pid_t pid;
++	bool failed = false;
++	void (*resultfn)(const char *msg, ...) = ksft_test_result_pass;
++
++	/* Allocate some bytes after clone_args to verify they are cleared. */
++	bufsize = struct_size + 16;
++	buffer = malloc(bufsize);
++	/* Set the structure to dummy values. */
++	memset(buffer, 0, bufsize);
++	memset(buffer, 0xAB, struct_size);
++
++	pid = call_clone3(buffer, CHECK_FIELDS | struct_size);
++	if (check(&failed, (pid != -EEXTSYS_NOOP)))
++		ksft_print_msg("clone3(CHECK_FIELDS) returned the wrong error code: %d (%s) != %d\n",
++			       pid, strerror(-pid), -EEXTSYS_NOOP);
++
++	switch (struct_size) {
++	case sizeof(struct __clone_args_v2): {
++		struct __clone_args_v2 *args = buffer;
++
++		if (check(&failed, (args->cgroup != 0xFFFFFFFFFFFFFFFF)))
++			ksft_print_msg("clone3(CHECK_FIELDS) has wrong cgroup field: 0x%.16llx != 0x%.16llx\n",
++				       args->cgroup, 0xFFFFFFFFFFFFFFFF);
++
++		/* fallthrough; */
++	}
++	case sizeof(struct __clone_args_v1): {
++		struct __clone_args_v1 *args = buffer;
++
++		if (check(&failed, (args->set_tid != 0xFFFFFFFFFFFFFFFF)))
++			ksft_print_msg("clone3(CHECK_FIELDS) has wrong set_tid field: 0x%.16llx != 0x%.16llx\n",
++				       args->set_tid, 0xFFFFFFFFFFFFFFFF);
++		if (check(&failed, (args->set_tid_size != 0xFFFFFFFFFFFFFFFF)))
++			ksft_print_msg("clone3(CHECK_FIELDS) has wrong set_tid_size field: 0x%.16llx != 0x%.16llx\n",
++				       args->set_tid_size, 0xFFFFFFFFFFFFFFFF);
++
++		/* fallthrough; */
++	}
++	case sizeof(struct __clone_args_v0): {
++		struct __clone_args_v0 *args = buffer;
++
++		if (check(&failed, !(args->flags & CLONE_NEWUSER)))
++			ksft_print_msg("clone3(CHECK_FIELDS) is missing CLONE_NEWUSER in flags: 0x%.16llx (0x%.16llx)\n",
++				       args->flags, CLONE_NEWUSER);
++		if (check(&failed, !(args->flags & CLONE_THREAD)))
++			ksft_print_msg("clone3(CHECK_FIELDS) is missing CLONE_THREAD in flags: 0x%.16llx (0x%.16llx)\n",
++				       args->flags, CLONE_THREAD);
++		/*
++		 * CLONE_INTO_CGROUP was added in v2, but it will be set even
++		 * with smaller structure sizes.
++		 */
++		if (check(&failed, !(args->flags & CLONE_INTO_CGROUP)))
++			ksft_print_msg("clone3(CHECK_FIELDS) is missing CLONE_INTO_CGROUP in flags: 0x%.16llx (0x%.16llx)\n",
++				       args->flags, CLONE_INTO_CGROUP);
++
++		if (check(&failed, (args->exit_signal != 0xFF)))
++			ksft_print_msg("clone3(CHECK_FIELDS) has wrong exit_signal field: 0x%.16llx != 0x%.16llx\n",
++				       args->exit_signal, 0xFF);
++
++		if (check(&failed, (args->stack != 0xFFFFFFFFFFFFFFFF)))
++			ksft_print_msg("clone3(CHECK_FIELDS) has wrong stack field: 0x%.16llx != 0x%.16llx\n",
++				       args->stack, 0xFFFFFFFFFFFFFFFF);
++		if (check(&failed, (args->stack_size != 0xFFFFFFFFFFFFFFFF)))
++			ksft_print_msg("clone3(CHECK_FIELDS) has wrong stack_size field: 0x%.16llx != 0x%.16llx\n",
++				       args->stack_size, 0xFFFFFFFFFFFFFFFF);
++		if (check(&failed, (args->tls != 0xFFFFFFFFFFFFFFFF)))
++			ksft_print_msg("clone3(CHECK_FIELDS) has wrong tls field: 0x%.16llx != 0x%.16llx\n",
++				       args->tls, 0xFFFFFFFFFFFFFFFF);
++
++		break;
++	}
++	default:
++		fprintf(stderr, "INVALID STRUCTURE SIZE: %d\n", struct_size);
++		abort();
++	}
++
++	/* Verify that the trailing parts of the buffer are still 0. */
++	for (size_t i = struct_size; i < bufsize; i++) {
++		char ch = ((char *)buffer)[i];
++		if (check(&failed, (ch != '\x00')))
++			ksft_print_msg("clone3(CHECK_FIELDS) touched a byte outside the size: buffer[%d] = 0x%.2x\n",
++				       i, ch);
++	}
++
++	if (failed)
++		resultfn = ksft_test_result_fail;
++
++	resultfn("clone3(CHECK_FIELDS) with %s\n", test_name);
++	free(buffer);
++}
++
++struct check_fields_test {
++	const char *name;
++	size_t struct_size;
++};
++
++static struct check_fields_test check_fields_tests[] = {
++	{"struct v0", sizeof(struct __clone_args_v0)},
++	{"struct v1", sizeof(struct __clone_args_v1)},
++	{"struct v2", sizeof(struct __clone_args_v2)},
++};
++
++static int test_clone3_check_fields_badsize(const char *test_name,
++					    size_t struct_size)
++{
++	void *buffer;
++	pid_t pid;
++	bool failed = false;
++	int expected_err;
++	void (*resultfn)(const char *msg, ...) = ksft_test_result_pass;
++
++	buffer = malloc(struct_size);
++	memset(buffer, 0xAB, struct_size);
++
++	if (struct_size < sizeof(struct __clone_args_v0))
++		expected_err = -EINVAL;
++	if (struct_size > 4096)
++		expected_err = -E2BIG;
++
++	pid = call_clone3(buffer, CHECK_FIELDS | struct_size);
++	if (check(&failed, (pid != expected_err)))
++		ksft_print_msg("clone3(CHECK_FIELDS) returned the wrong error code: %d (%s) != %d (%s)\n",
++			       pid, strerror(-pid),
++			       expected_err, strerror(-expected_err));
++
++	if (failed)
++		resultfn = ksft_test_result_fail;
++
++	resultfn("clone3(CHECK_FIELDS) with %s returns %d (%s)\n", test_name,
++		 expected_err, strerror(-expected_err));
++	free(buffer);
++}
++
++static struct check_fields_test bad_size_tests[] = {
++	{"short struct (< v0)", 1},
++	{"long struct (> PAGE_SIZE)", 0xF000},
++};
++
++int main(void)
++{
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(check_fields_tests) + ARRAY_SIZE(bad_size_tests));
++	test_clone3_supported();
++
++	for (int i = 0; i < ARRAY_SIZE(check_fields_tests); i++) {
++		struct check_fields_test *test = &check_fields_tests[i];
++		test_clone3_check_fields(test->name, test->struct_size);
++	}
++	for (int i = 0; i < ARRAY_SIZE(bad_size_tests); i++) {
++		struct check_fields_test *test = &bad_size_tests[i];
++		test_clone3_check_fields_badsize(test->name, test->struct_size);
++	}
++
++	ksft_finished();
++}
 
 -- 
 2.46.1
