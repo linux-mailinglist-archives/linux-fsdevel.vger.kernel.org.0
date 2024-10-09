@@ -1,188 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-31430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBEB69966E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 12:20:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10DA4996735
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 12:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA2A282A85
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 10:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99342284A21
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 10:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFED718E75A;
-	Wed,  9 Oct 2024 10:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E651218FDAE;
+	Wed,  9 Oct 2024 10:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CU/Syyph"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC3018DF9B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 10:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FB618C008;
+	Wed,  9 Oct 2024 10:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728469225; cv=none; b=j3KVByXDcF4s8w/t99041mvgJlKM+5m28d7ob4CJ8QkEsW2BK17tBZDqZwFOit7QC7F16+yymtfqt41LlHn8hBLnkxhPBjXajzOFGtdJBk9Xg6WtmrHf9wUaI78yc1iobH1eJcPl90DcQMhPLyUK4OgziFrsAGIEiqq6RvwPB5M=
+	t=1728469535; cv=none; b=gH4odi6BhEEuFqNJZ4IW6xn3xzga9Hf5toy4KC0BBlYvRQoj/TvoxJSJYyY+QHrzvAniLekMfoSnm2A8Hav/snPI8HRUilzpMICKX2diJa6WDXutY0A3cgbrn2QV0jKCYX0oxRfavAxMtoPXoc1pY45ZanDLKwjyJD8oWp1rTa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728469225; c=relaxed/simple;
-	bh=qK4KQaIt3lrNwLlYXxWRnQeo7+2COMKtaUQGshtOGZg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WNKgNgdOxY4b92ovOI5sLX+yyKO4jFi/69l+j3rZvFqLgi9Z3YPUIkZIHdPZTLXc/AEoBhl/5zHs96Dty+PsAqfm1LzACAZyWymO1duksjrknt7iBqWCn1HNGarVn7x2bxFjLbkjhUoTor622q7d3ziX6G/H8pxfBUTiwE36Po4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a342620f50so58361125ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2024 03:20:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728469223; x=1729074023;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=msJj4GiB8/jRjpLDDXAICgBBp9XCST7mD/0ou7XdrLU=;
-        b=bYw0lPaHq2MEiJZD4w9abD8PqrVkBXuXK63bRyUSLkevu5taWa9PldPyRhZ2Uvmhwq
-         QL8LDaQV1c3nMKbFL1ozjE1bNsfzlrt0AjqBWBUIfsIDGA/9eZyCyCxU1yQqml5PELgu
-         jBbzE22M3HaLWH7lUmhCHDaFmQEo7zG3HMc42ngWqo+T/VPM8PP4iI+nM1tjZ+o8cknX
-         Cs9JHSfT8iQTTnr92Tc4GH6RKyy+NIsYbhJ3XXiwvS/ouEF+MOt4Wll4y+hq/+NzKfqj
-         PN/4HobWjGexb/TqL0FjBzxi/gb2dwo5aYtg5GH9RzQF9tm21wWw09dAIeGxrQQUjX4b
-         mnew==
-X-Forwarded-Encrypted: i=1; AJvYcCW1xFL7VHRPUXK4AL2AhSKlcjp6WZfPVoa92jEkUDfLbw1Ou9zOqxxppB8y1EZSgAKghdWC6ubi2NwVwWKx@vger.kernel.org
-X-Gm-Message-State: AOJu0YySk15vsdgNF6LZ5+wykETJOa3M7qaWaev5UzqUG3kRfVsA8P6B
-	jiEiqNSQQytkhDzxMCncip0BbyaEmfsmQRULEplijE0IjqEME1kUcLlZnXSXazmzuQB7+oG8+8z
-	3Md5TDYKuzksz/TqDn8Vk6CwSF4hV07N/6rlXmu5VBcXuHk4PVUZ76z8=
-X-Google-Smtp-Source: AGHT+IHzuK32eKNDgGIe5IK0Pc7jlPryOsh91ka5RJTr7nA7zaFq5OmjVp1xf3Jbyg2dod17W8Ca6DzvkMidbEzMcsDAFd9Gb9fU
+	s=arc-20240116; t=1728469535; c=relaxed/simple;
+	bh=E98w9taq8sn2oCFo6PyCyTLfRrjriLoSIyE58uTuJiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MMOuAz3yas3TvRM0NpkUWutt3q4tUgp6zK/V2/GZ5qsFygPBoRpxxClS1wHswLY5U2SN+4Wz55IVawV63sGYSjPGiXAnUY+F3h8wXqfRT4DeVnJQnV9xnb4uYuPKlURD12V6bQ64rGOEArsJM39fazTzQKQ8b2YJwVpz2MYFHIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CU/Syyph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F86C4CEC5;
+	Wed,  9 Oct 2024 10:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728469534;
+	bh=E98w9taq8sn2oCFo6PyCyTLfRrjriLoSIyE58uTuJiw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CU/SyyphBFW7CION5UzN5ZaM2s9B2KaWUYjQIE24jNpQiaaNBcPZ/JBx43vZR9RIm
+	 dKAuev96gZiqv3cQzmnlNpHZGs9yUnbcbXXoet9w9Wkw11upiEbCgMxXNsdL4ezFdY
+	 +p5Tmy9zeIo8mmLnp1544+X/5q23ssqCYC9uPdMTUlybp9F8xH4e8D5xzIK9/AHeT4
+	 VM8+SYp7oWGh1v48rq/tPnXUE9W2Y0QAcFjQlkkDsy7TNbdxWPifO6On6S6nNdb6x/
+	 +Q0hlFwhivhYuLDaOGJFcmJB/380AQV7gmfUOo5/8+ukhcjeDEpd9KT8HTxCDfwmeH
+	 x2vMMvQe1JdeA==
+Date: Wed, 9 Oct 2024 11:25:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "corbet@lwn.net" <corbet@lwn.net>, "robh@kernel.org" <robh@kernel.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"vbabka@suse.cz" <vbabka@suse.cz>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor@kernel.org" <conor@kernel.org>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"jim.shu@sifive.com" <jim.shu@sifive.com>,
+	"alistair.francis@wdc.com" <alistair.francis@wdc.com>,
+	"cleger@rivosinc.com" <cleger@rivosinc.com>,
+	"kito.cheng@sifive.com" <kito.cheng@sifive.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"samitolvanen@google.com" <samitolvanen@google.com>,
+	"evan@rivosinc.com" <evan@rivosinc.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"atishp@rivosinc.com" <atishp@rivosinc.com>,
+	"andybnac@gmail.com" <andybnac@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"charlie@rivosinc.com" <charlie@rivosinc.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"richard.henderson@linaro.org" <richard.henderson@linaro.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"alexghiti@rivosinc.com" <alexghiti@rivosinc.com>
+Subject: Re: [PATCH v6 16/33] riscv/shstk: If needed allocate a new shadow
+ stack on clone
+Message-ID: <ZwZaG3NT72BwYxJO@finisterre.sirena.org.uk>
+References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
+ <20241008-v5_user_cfi_series-v6-16-60d9fe073f37@rivosinc.com>
+ <aa75cbd142c51b996423f18769d8b8d7ecc39081.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1561:b0:3a0:9244:191d with SMTP id
- e9e14a558f8ab-3a397d10ce2mr16425715ab.16.1728469223017; Wed, 09 Oct 2024
- 03:20:23 -0700 (PDT)
-Date: Wed, 09 Oct 2024 03:20:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670658e6.050a0220.22840d.0012.GAE@google.com>
-Subject: [syzbot] [kernfs?] INFO: task hung in fdget_pos
-From: syzbot <syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com>
-To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=110fb307980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9775e9a1af839423
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d0a79f980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/64ef5d6cfda3/disk-fc20a3e5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/42c0ee676795/vmlinux-fc20a3e5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a3072d6383ea/bzImage-fc20a3e5.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a8f928c45431/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com
-
-INFO: task syz.2.17:5434 blocked for more than 159 seconds.
-      Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.2.17        state:D stack:27424 pid:5434  tgid:5432  ppid:5316   flags:0x00000004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- fdget_pos+0x24e/0x320 fs/file.c:1160
- ksys_read+0x7e/0x2b0 fs/read_write.c:703
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f993c77dff9
-RSP: 002b:00007f993d54e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00007f993c936058 RCX: 00007f993c77dff9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 00007f993c7f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f993c936058 R15: 00007fffb8436518
- </TASK>
-INFO: task syz.3.18:5439 blocked for more than 167 seconds.
-      Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.18        state:D stack:27424 pid:5439  tgid:5436  ppid:5317   flags:0x00000004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- fdget_pos+0x24e/0x320 fs/file.c:1160
- ksys_read+0x7e/0x2b0 fs/read_write.c:703
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1134d7dff9
-RSP: 002b:00007f1135adc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00007f1134f36058 RCX: 00007f1134d7dff9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 00007f1134df0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f1134f36058 R15: 00007ffe6e122188
- </TASK>
-INFO: task syz.4.19:5441 blocked for more than 168 seconds.
-      Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.4.19        state:D stack:27424 pid:5441  tgid:5438  ppid:5327   flags:0x00000004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- fdget_pos+0x24e/0x320 fs/file.c:1160
- ksys_read+0x7e/0x2b0 fs/read_write.c:703
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4c9ad7dff9
-RSP: 002b:00007f4c9bc43038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pV5KnxhmLMXWkQIN"
+Content-Disposition: inline
+In-Reply-To: <aa75cbd142c51b996423f18769d8b8d7ecc39081.camel@intel.com>
+X-Cookie: Editing is a rewording activity.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--pV5KnxhmLMXWkQIN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On Tue, Oct 08, 2024 at 10:55:29PM +0000, Edgecombe, Rick P wrote:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> A lot of this patch and the previous one is similar to x86's and arm's. It great
+> that we can have consistency around this behavior.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> There might be enough consistency to refactor some of the arch code into a
+> kernel/shstk.c.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> Should we try?
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+I think so - I think we discussed it before.  I was thinking of looking
+at it once the clone3() stuff settles down, I don't want to trigger any
+unneeded refectorings there and cause further delays.
 
-If you want to undo deduplication, reply with:
-#syz undup
+--pV5KnxhmLMXWkQIN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGWhUACgkQJNaLcl1U
+h9CV8Qf+Ph9QxNDXCUSDZQA7lOMJTS+c3a+WdGbveXt6JMb2hP4Udd4ELfDvQVsP
+2vwWUtByxmDax2qjADTJn56IYnJp+1yB9YBfBuwEGHGP67KgKDpcUHieu4xPemue
+2pid1MtBjTUsviljsva6rAoewc+MO3Z5AAICoplF1wXYwW8JWpgKpALzehjsUnOG
+xGgEXqiS5ycjWc0ikmHyeOQRK13/4EVaiJr+pklcIbhhggLbnNIB7jvKTKnBr/ds
+fkXQZeW9aA6kQUAetPKjlkvwxOhyxix4xDR3tCncJjA/emX+9fze/UwLrBDs75JO
+eMHp4p8ZUDqVuxPu6ZNF8wGk8VJChA==
+=EDL3
+-----END PGP SIGNATURE-----
+
+--pV5KnxhmLMXWkQIN--
 
