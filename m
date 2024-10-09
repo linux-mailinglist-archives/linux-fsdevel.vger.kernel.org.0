@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-31433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69F59967F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 13:03:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A320996803
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 13:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B3628A69F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 11:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 136FD1F22D8E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 11:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3652B1917CD;
-	Wed,  9 Oct 2024 11:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83C31917E6;
+	Wed,  9 Oct 2024 11:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLepzEsh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQ/b9j93"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F861C68F;
-	Wed,  9 Oct 2024 11:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2CA1C6BE;
+	Wed,  9 Oct 2024 11:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728471816; cv=none; b=fWDXJo471xbLcPfbgFzhiJZ4GrGwGHgbl5Mfatl5V7pQsPm6X4t7IFCk7z/hrkBZfoU2hEjTTtpdduvh4IvjLoMXlg/MEIQCJniZzNId4JMCRVEY3VkuZZ3I8qmws3xaSWhRxPKlwiub5m80NDqsla0GL2nppjoCLzwEP8KtvkM=
+	t=1728471961; cv=none; b=fR+eABf2KOUZX6pk5kq0FAJFvs8hWB0Y1+FCj4iog869nM9TywvTpK4BuoPnEs4qkh1n3sZHWQ0sIV2eB/VusrBySnTSnSu1V3sN+fv6tElpdzlTVm12UZZfZG1kcv7qgVUui9k9TL8oVbK/f1nFYWdQUWVgsilRp3UIl83kfgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728471816; c=relaxed/simple;
-	bh=f/EoNW04y2Nr6yAWUDCYj/76s4oDbPK3TY0FW8YOVV4=;
+	s=arc-20240116; t=1728471961; c=relaxed/simple;
+	bh=q/ht5rusQH29reCgQKkQ7cxAxVD7sSLy4Jo1uGfHo0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FsDGa01oEtVOzFVkqh7mKe4WIBmZviuOz5pE5p2gVmYAykxjo87sU/cSfmt/0kHtI/QGcl/uYBxhnaixUzBVHl80f2eFUv110gnJKp8gRyGk3KOWOlMhQBKtkvhCRG69VvYls1RQ+xU6enDeOPzqW+5IhBPVsWu0e9xlPYN/W7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLepzEsh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F023C4CEC5;
-	Wed,  9 Oct 2024 11:03:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yb9v7Ymc0lLZdSQGrCBe2gSNhQQDaOUfGrjzT5ciCvCX8hUSpoq2HbitQTaDaXMkruyQoGDmX+XUKv0yrHvj1WRwzd3+xk0R3tgU4Og3RIYWqpig0jp0hft8rbdRJKiz4laeDny5GRgUw4UD+omRza0v4ogFG5SSTXGqbyEYYic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQ/b9j93; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFB2BC4CEC5;
+	Wed,  9 Oct 2024 11:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728471816;
-	bh=f/EoNW04y2Nr6yAWUDCYj/76s4oDbPK3TY0FW8YOVV4=;
+	s=k20201202; t=1728471960;
+	bh=q/ht5rusQH29reCgQKkQ7cxAxVD7sSLy4Jo1uGfHo0c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DLepzEshP/4mXQsl2XJpjT73NbBGz9G2agwEEd6tQYz9lO+eqYxMzaMcj24H4GW81
-	 Le1KkXnjJBC8MW7FflTwf5k8u62yR275mQzbLM2Xnkksng7BBXCCu3I2IsilKKuh9C
-	 tn5I9gMoOPl9IR/07Z7LrDEOfMozP8crg0Ejm1/cMpecXWaC7fqbOpYoml4pkqT6KZ
-	 8ErbCjP7yR0hITlFP8nBM9WRgd/ZKkYKCpiRE0HjmkZfh/VszZtHEOhp3fV+YeRcul
-	 Wbp42jCJn48Au8WODEcR3T6WeTkaJD6W4x+KhVfOQYXHADlrjbnU7K+GGkOQQF13Wm
-	 yEtogMwRguJXA==
-Date: Wed, 9 Oct 2024 12:03:32 +0100
+	b=ZQ/b9j93K6RqAqgOUVMgfWoJsX5As1kolPBoc1Y73PNguggklUUrUm2Ap+8EzcnQL
+	 q1m6g5FdIty689UhD2b5AzShUkate3A6XOljtsoMwAwmAWIgjx4jayaN+AWF8F4T9S
+	 z26oFKbiOTGuQS86JgZwc2gC9p4KnFCD7dLoSUKSS5Nf2TtSABKSG1CslKD55avTD6
+	 nudWnFJtEZ2i5CHu60HDNsExl6LyE2587gf6cMM3mS/fC9mra+T0Wa4nFpqjpsXVQ4
+	 aagGb/fIscXPvjhoTdQGNYv8iQLBq4HwXneOlsq96NIQAJtqmEm24eqebhSI6o2bfj
+	 1JnC7rG+hfcLg==
+Date: Wed, 9 Oct 2024 12:05:57 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Deepak Gupta <debug@rivosinc.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
@@ -71,12 +71,16 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
 	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
 	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
 	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, rick.p.edgecombe@intel.com
-Subject: Re: [PATCH v6 18/33] prctl: arch-agnostic prctl for indirect branch
- tracking
-Message-ID: <ZwZjBO_7d2-Qq8bF@finisterre.sirena.org.uk>
+	samitolvanen@google.com, rick.p.edgecombe@intel.com,
+	David Hildenbrand <david@redhat.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andy Chiu <andy.chiu@sifive.com>
+Subject: Re: [PATCH v6 00/33] riscv control-flow integrity for usermode
+Message-ID: <ZwZjlSZKoJ9np3td@finisterre.sirena.org.uk>
 References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
- <20241008-v5_user_cfi_series-v6-18-60d9fe073f37@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,41 +88,48 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FXfO/TwhQ+C7Uak4"
+	protocol="application/pgp-signature"; boundary="7oPJV4nwhqMkz2xI"
 Content-Disposition: inline
-In-Reply-To: <20241008-v5_user_cfi_series-v6-18-60d9fe073f37@rivosinc.com>
+In-Reply-To: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
 X-Cookie: Editing is a rewording activity.
 
 
---FXfO/TwhQ+C7Uak4
+--7oPJV4nwhqMkz2xI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Oct 08, 2024 at 03:37:00PM -0700, Deepak Gupta wrote:
-> Three architectures (x86, aarch64, riscv) have support for indirect branch
-> tracking feature in a very similar fashion. On a very high level, indirect
-> branch tracking is a CPU feature where CPU tracks branches which uses
-> memory operand to perform control transfer in program. As part of this
-> tracking on indirect branches, CPU goes in a state where it expects a
-> landing pad instr on target and if not found then CPU raises some fault
-> (architecture dependent)
+On Tue, Oct 08, 2024 at 03:36:42PM -0700, Deepak Gupta wrote:
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+> Equivalent to landing pad (zicfilp) on x86 is `ENDBRANCH` instruction in Intel
+> CET [3] and branch target identification (BTI) [4] on arm.
+> Similarly x86's Intel CET has shadow stack [5] and arm64 has guarded control
+> stack (GCS) [6] which are very similar to risc-v's zicfiss shadow stack.
 
---FXfO/TwhQ+C7Uak4
+> x86 already supports shadow stack for user mode and arm64 support for GCS in
+> usermode [7] is ongoing.
+
+FWIW the arm64 support is now in -next, including these:
+
+> Mark Brown (2):
+>       mm: Introduce ARCH_HAS_USER_SHADOW_STACK
+>       prctl: arch-agnostic prctl for shadow stack
+
+shared changes to generic code.
+
+--7oPJV4nwhqMkz2xI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGYwQACgkQJNaLcl1U
-h9AHsQf9H04XFe+wNJxLZrv59pAwdvHe6MP+LVVOFndbjBmbHFTN6qmAISZyqktF
-SRfj1/m4yG/TwuwLWuBmwzNCYhtdu6T7NxMLpAffd830l1MTkdrF7wQ9gl7ZGRAW
-hwjTCOjqQG+RiCf8msgkCaHpmTaxQyaaXKijwQLlpjse8yXFagVbB7KFfLnU3SdH
-EU1KXwsGKBILqKMesYtkE6OZOORH7YEXvvPcvZD2E/I/6ZVodlxghrEiw+L2z358
-AVd82hg9g4z+W4RfgoHAuzE0DM7w1omjJCy8JvknSzesQFWBmnyDm/chs8uVbfBH
-GWu/B4b4XqB14HIbfiwUtTrT1OMnCw==
-=cHVw
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGY5QACgkQJNaLcl1U
+h9DuYgf/Yx/hYhzwGnR6YPAWZpgt5JjVuDPJa1JE1Ei8ieKYodc7o6QkOA5hSrTm
+WYjjS9qnSLJMACL3DYu4mSJA8xQotPF5iqQaMppk1O/o2e3oTwawz7s0nV/YrWro
+AqVenIjySprRKZMNLMT7px8D0NFUlqICKS05NO3+KlS3J/tdxEnW5ugscd0abE6V
+UuEUA6JnHqtwrdff5T2I3hZqDw1W+3uMDoCYjB5hsmRbZQsdR31IbaAqJIiV30Xn
+e2tXbl+/62YIiebxZzUJGexuc7CbwdMnNC6aRjMTFEZ1R4YF1DJZMu9TcIBP/W2b
+q6AR4EUd7yJlirhYQIzbhTVozmqMlA==
+=L1c6
 -----END PGP SIGNATURE-----
 
---FXfO/TwhQ+C7Uak4--
+--7oPJV4nwhqMkz2xI--
 
