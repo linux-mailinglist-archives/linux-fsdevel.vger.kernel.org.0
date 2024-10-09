@@ -1,127 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-31496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4D09977C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 23:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A501A9977CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 23:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D9A32816F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 21:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D12721C21F81
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 21:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008421E2600;
-	Wed,  9 Oct 2024 21:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3B51E32D6;
+	Wed,  9 Oct 2024 21:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="VJfR5l6d"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="R7UXM0jo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C164A19308C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 21:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2B51E04BF
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 21:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510433; cv=none; b=r3t9r2LEyrKwQF41fM8W6OPFKeNjz8pxp/g+iLuCbNaeRmg9PKhMGsJ10SwnRe5MZBZ22OY/pZdKqDBAUMmIDO9fnoopDK/PC9JVJ5V0ZruqHKhsbjR0+TP6ULt2uyAEwQmhkPNcmi5uEVB2nNf8oyowffIXhNNEUCWLapMITUU=
+	t=1728510535; cv=none; b=NvvL2pq08NaPoOA5qJ4tMnlPe0FqgPaI+dMOJ+FtKpoFtK4a6hBEjlospySsmvfETC85rnWcbpSGOtkRMnydHm1BqXmFP4eeipNdohCFBqUmziHpOwDOP1FLeQJ5M4DERLLQfafxJ/CXbxgReZ+x9Yhhd8bm0xXyONeW+peMyyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510433; c=relaxed/simple;
-	bh=WRSEJpRqVGEx1p+7xonbAfeXiywHBYSCQGtICtTvn0c=;
+	s=arc-20240116; t=1728510535; c=relaxed/simple;
+	bh=edJ4Ngh6nKMZUQDj7p8nv9TBFVoS35vEqKbJQdMwY64=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gjj4K03yVxtqUAp0oivMVwuPY/VF9XVDrrgOMNmCi2rOdvBVyZZ0yyhpFi0AcckzOl69140t72+VStDd7l47hfrScuUca8I2S/URgKmmUNBsJP439ddB63kt1bcLmj3DLmOVBSV7J00lf53UhhmXhvSWPYQ4RToTGvB1PdaqULI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=VJfR5l6d reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.44
+	 To:Cc:Content-Type; b=jVDDDz5NBpE3T7ITM9/rFN+iOBF4ZGknaX8q1y6O5oMCm11dd3LyTI6NYvPClMjg9jiYPrsp3ociQxpDM9B0UXtPjV4q9t1PTKHcGUeqg/tEC7p4ek7XT+38QhfYrsOOEC6E7bUYd0POHX41ta/VJTzQYNSoywPcEGOnlckP+Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=R7UXM0jo reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99422c796eso43186866b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2024 14:47:11 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9950d27234so38149666b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2024 14:48:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc.com.np; s=everest; t=1728510430; x=1729115230; darn=vger.kernel.org;
+        d=everestkc.com.np; s=everest; t=1728510532; x=1729115332; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jNY7/3aGEch2q8J1pUCbG8jb+yZy5FZa1A6L2jUg/rI=;
-        b=VJfR5l6dtd9a/+JQt3YSOHQmUJKnatyiYlKK/SpEsJ+WUaD3I1DfHcZ81yosCdx/6/
-         LK1MI9LX+vZGsXAIL5JDJbj7sOe1CXbr5nk+GQGbF+nisFeDobhWY28+AZcC5cEdh7C9
-         floUWkv/R3XMzKGWiVQcfziqZ0//RhycRsCJYuMtqHC0ALrDpd2cWtgTCAAxoGa7iq1R
-         zA+AFZt7VvnpvHIB4ZvIKJc94hh2v1cYgI3b3tPishACbnjJSJtTXgQ14RnYtPVqNOPl
-         MjyRWUd8AjgicLnVx+0GdB3ztC4Csg+mmgrVRtMO8MsM1mvUH5W+T8eLpf8GkS810jg3
-         LvUw==
+        bh=N3kqt/YrEBXpzF22FqXng450iXUadO+44FmUUeQtHrk=;
+        b=R7UXM0jozaGEWL5W2ISFBlilFQb3e6mlKMNiBiTyWqdkhQ/GhS41btoJfvh07cfAKs
+         /P7MZwr3B9mqGLlVxKQ0l/2RyfsEiHAbot1IAxfF9j4BvJcja0pVKEuNnvRG9ePvpCQp
+         lucjDhH/KOE//87ENNNvzCQs9IOmKxgZM1006ftTs+EmVfCeyvwIToNFMAn19cnDwSU6
+         XAgrsCqAPldBqdVinMnmy5eVwKRCeKvhcZeSdT5tRuQXTHzEzXQebEU5VX8BYiTKU+Ao
+         4f8qi72si0CC41bjmQBhGu3s1r774fMqG3mqEqNJ91+CI0A9xwnl3jynBPnCCIxuMYSb
+         4+Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728510430; x=1729115230;
+        d=1e100.net; s=20230601; t=1728510532; x=1729115332;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jNY7/3aGEch2q8J1pUCbG8jb+yZy5FZa1A6L2jUg/rI=;
-        b=XqItju6rB51B66gtIlUiOEELbTDmyL5t1LnIhJGIbN57dr5ldOGSQz106GGzbcIKn3
-         StoUoBnV7oHg1ZEmM8kRl73gZ4EqDWhlDS0g++K+Q1p0Nwos+/FnRz2f+uUsQp8ou9nM
-         +1nJBJ6epiBBpaSCzPxXuAtJ2HX/PQTcLAlz8c47f4gcPG9mtuClQdO7Oqg5FpItWSP3
-         InAXsbqFX59TZXYqoEqDKJbg2y3wXSzcW4soSj5hBNDMZhWXZcb7k9/84yi7KiwwKwGG
-         lupcnHc3BXRPuglGUW7mbBCMPNNxelUTVWa8INiHOQ5PDQe7Ox5fPdrr1QgzPn1Mb492
-         iRqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWE+2YjPyfvoYX3kIkbEFuSQttYGWQV7cHD0N3XjjOjjGepy6nVxlkr5rQe/WOWPYLFAIumtBblRhiLHKRg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjcJk4T1AFmr4ybmtBUHzYrOPUW/Ig8gNvFGa3WAlT9k0L4/QX
-	/aVbHZCUiy5BvSqX68wDWN+Pv/8DrWpkSJg3QlJ3xDztgRGsQCgaLFXzngPrQ9+qRtcgCzWyJGv
-	0qgZMMpSQpmh+GzyELnQ199qfQVvynf3zfy08ow==
-X-Google-Smtp-Source: AGHT+IE0zrBekMp0OzxByMeyrTa/R8Zyl4m1iSYWvDd5iqQvPvAHYK8tkB354xAtc2sJTVb+vxYrRLAQYa1UDXMGTC8=
-X-Received: by 2002:a17:907:7d8d:b0:a99:497f:317 with SMTP id
- a640c23a62f3a-a999e8f7daemr122394266b.62.1728510430088; Wed, 09 Oct 2024
- 14:47:10 -0700 (PDT)
+        bh=N3kqt/YrEBXpzF22FqXng450iXUadO+44FmUUeQtHrk=;
+        b=YoZaxKPt+X4aiYLV/pCLBqKBpAXH14pke71h99ltNgVl3thCkHsGyGtW9/o686ajKW
+         5qPegAf2tcF2wTwE/cdxKZKhVvb1ehBMApmc8XtrD7PXiUIGcmVdjylL9hp9MNqlCEvY
+         aQP3tW3rdJa/J4wCVLw5KS5LteSTvO1JlHKGOdDKxAXGbJdi3ol8Muiv0Tb2PyKo2MiV
+         D/Ukd9XkoN6RsJRg2DEH50cJjINTgCVXUq4FQl44f22kGlypqjVY4AwdsvbS8dCoO4W+
+         3eiKxg97HLjTrWGfbA7MvDXDYt1AvxLnB2Ng/80Yujq1r1bi/EGFy/qMHcpf5OZ+h/3O
+         rOIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgJvxKOEfd7Skt+QEtXACHMcSZ9Me6DLy8FeqrM/fFkzc7CVgFUyH/hedI6tnFe6B1ywTjUJKGEFiuKCgI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEOeFIJhTtc7MKUy26AYKm43rQhpSO0F8TmsfN2xW0E7Xrgq7b
+	eVf9kXGXCLwvKh+rWzsHtXrVouWdOMTGruiNNBEL1ugWjJ8i9NS2Zl9iQxNkiNcQ14BrsVPkK0t
+	HO2cfh2Akf2irNpRTKhAkgAO3Jh/hllILSZuU9Q==
+X-Google-Smtp-Source: AGHT+IF+o9hN3tl3XbFpu42cVZG80YygQjNFkPcISTjUO3DEVe8SRqj6y+iFAhnwkLoQDIpv8shkVuALVztjhdYdHhY=
+X-Received: by 2002:a17:907:6eaa:b0:a99:68a2:1efd with SMTP id
+ a640c23a62f3a-a998d32876emr306530966b.56.1728510532251; Wed, 09 Oct 2024
+ 14:48:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009200528.36343-1-everestkc@everestkc.com.np> <018e525e-809c-4c69-a948-a1278af1ff2d@linuxfoundation.org>
-In-Reply-To: <018e525e-809c-4c69-a948-a1278af1ff2d@linuxfoundation.org>
+References: <20241009200528.36343-1-everestkc@everestkc.com.np> <263ceb04-f909-45d8-b9b2-5de86617ea25@stanley.mountain>
+In-Reply-To: <263ceb04-f909-45d8-b9b2-5de86617ea25@stanley.mountain>
 From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Wed, 9 Oct 2024 15:46:58 -0600
-Message-ID: <CAEO-vhGcPRQxzZBjDZZA4GZoWwcaOjgK85tUydvr9t7CtD-HGw@mail.gmail.com>
+Date: Wed, 9 Oct 2024 15:48:40 -0600
+Message-ID: <CAEO-vhH29Xepao5sPvT1qAWfz-w6C-2ajLhhFzmiqLh7gvKMVw@mail.gmail.com>
 Subject: Re: [PATCH][next] fs: Fix uninitialized scalar variable now
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 2:38=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.or=
-g> wrote:
+On Wed, Oct 9, 2024 at 2:45=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
 >
-> On 10/9/24 14:05, Everest K.C. wrote:
+> On Wed, Oct 09, 2024 at 02:05:25PM -0600, Everest K.C. wrote:
 > > Variable `now` is declared without initialization. The variable
 > > could be accessed inside the if-else statements following the
 > > variable declaration, before it has been initialized.
->
-> It could be, but it isn't. I am not sure if this change is needed.
-If you look at the full code then,  if  `ia_valid & ATTR_CTIME`
-evaluates to False then now is never initialized.
-
+> >
 > > This patch initializes the variable to
 > > `inode_set_ctime_current(inode)` by default.
->
-> Instead of "This patch initializes", change it to "Initialize ..."
-> Do refer to submitting patches document for information on how
-> to write change logs.
-Will do that and send V2.
 > >
 > > This issue was reported by Coverity Scan.
->
-> Include the the error/report from Coverity.
-Will do that and send V2.
 > >
 > > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+>
+> Fixes: d8d11298e8a1 ("fs: handle delegated timestamps in setattr_copy_mgt=
+ime")
+>
+> Maybe the WARN_ON_ONCE() should be updated to check ATTR_ATIME as well?
+I am not sure about that, but even if that is necessary. I think it
+should be handled in a different patch.
+> regards,
+> dan carpenter
+>
 > > ---
-> >   fs/attr.c | 4 +---
-> >   1 file changed, 1 insertion(+), 3 deletions(-)
+> >  fs/attr.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
 > >
 > > diff --git a/fs/attr.c b/fs/attr.c
 > > index c614b954bda5..77523af2e62d 100644
 > > --- a/fs/attr.c
 > > +++ b/fs/attr.c
 > > @@ -284,7 +284,7 @@ EXPORT_SYMBOL(inode_newsize_ok);
-> >   static void setattr_copy_mgtime(struct inode *inode, const struct iat=
-tr *attr)
-> >   {
+> >  static void setattr_copy_mgtime(struct inode *inode, const struct iatt=
+r *attr)
+> >  {
 > >       unsigned int ia_valid =3D attr->ia_valid;
 > > -     struct timespec64 now;
 > > +     struct timespec64 now =3D inode_set_ctime_current(inode);
@@ -136,22 +134,11 @@ tr *attr)
 me);
 > > -             else
 > > -                     now =3D inode_set_ctime_current(inode);
->
-> The code is clear and easy to read the way it is since it handles both ca=
-ses
-> and does appropriate initialization.
-Yes, I agree, but if we initialize now to the current time during its
-declaration then the else
-condition won't be necessary.
->
 > >       } else {
 > >               /* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be =
 either. */
 > >               WARN_ON_ONCE(ia_valid & ATTR_MTIME);
->
-> I will leave it up to the maintainers to decide whether to take
-> this change or not.
->
-> thanks,
-> -- Shuah
+> > --
+> > 2.43.0
+> >
 
