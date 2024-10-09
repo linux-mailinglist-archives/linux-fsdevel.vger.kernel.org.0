@@ -1,134 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-31467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4456C9973CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 19:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF339997500
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 20:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1773282E70
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 17:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA6728288A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 18:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD351C2DB8;
-	Wed,  9 Oct 2024 17:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8B1E103A;
+	Wed,  9 Oct 2024 18:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="MEhjNNHo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1wvl+2R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39118152E1C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 17:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8233A15FA74;
+	Wed,  9 Oct 2024 18:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728496505; cv=none; b=gHM17OruhQxko6k4ryGfFcXLl1uXnZlPRRcYCm9GCCYsQw6S4/9FlXhAKwjvkYowQJRxauCUxuKzUTwlVyzQj0ZUxYP399XEvJwfG2w7cTHJCi+QNuPpedCvMTbY9sYFiObkrE49y6XttIE0/kpDeuy3TL8Hgo3ZYCegVF9fZWM=
+	t=1728499163; cv=none; b=ALLtPQGUud9OWho4N5dCta5y15UnjoVpsLTMGkyq1mZVonfoBnRM9dSeggIBUf/HYwiE8UFwwRID+oy4Z4l6E4aU7y06H/yAE6+EMeDBHmjRHaTTlYYSmKDto3kMMEai6r0afdReE4/glE3d6o8HcMxxb4eRsBZ2jTzxifPDDYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728496505; c=relaxed/simple;
-	bh=tXBCiljZc7dPJp8Zq2q+dmiW2dnqRJkmkmYaxWWS4WQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+RwdC8fnbdsdnaoBT3bIrW83nZUWhiivkoX0BxiZKjDEsnkCPiJi81ULPXatEbNTOcCxnq7WmkvRdcmqBVSCsVU43/NMjOX+GUpayavD95IxPnNJSuXqcXCTn4J2MNN0NINIhDrEarZdXtatTjW1+Fspe5O1kA0ELxq6iU5cFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=MEhjNNHo; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (c-73-9-28-129.hsd1.il.comcast.net [73.9.28.129])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 499HsmdJ024877
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 13:54:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1728496490; bh=nvWtdn2mNbMqxmG3UQgWF2lcjXKOoW/g6h07k68F3tM=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=MEhjNNHoAALMYqWTbMQXO8h2k3qhEIbtOo+iVjYG7Ot08k9cojDLwp7Sp97GSqMrP
-	 AQyRHGQGT7KLSC08cYMZUtjZs9IY8LBYUDQw6IGVH3aERk/4xtFWTJDeAmWc78e052
-	 BTn1E55ZoAuMJmgmQQtVPwUtTdU30HAp9HHN2OA4RAA+9JJIj4S4N49agprIE2JUFR
-	 dp2Nn/zy+Hi+moccDrwfXehIL/T44Vu+aZKEO14REFEGDO6OeJi37jLt8QJokdup+Y
-	 wTeAgteUAofE/6DZKEgXU48nxZ7NVHPw6Cykz3fbUcrLT6UHYRzRwPtG3X2T5hGUHq
-	 ids0w7vew873A==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id D8E7034058D; Wed, 09 Oct 2024 12:54:47 -0500 (CDT)
-Date: Wed, 9 Oct 2024 12:54:47 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <20241009175447.GC167360@mit.edu>
-References: <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
- <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
- <20241006043002.GE158527@mit.edu>
- <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
- <20241009035139.GB167360@mit.edu>
- <kxi6m3gi7xqv52bupvb7iskyk6e3spq6bbhq4il5pmfieacfmf@5iwcnsfkmfq4>
+	s=arc-20240116; t=1728499163; c=relaxed/simple;
+	bh=O70RbJ/W5KHjzKkgn4kRyKo1RCjNBwz5v/r1wAjDke8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bhq2AAtN7MVBS80+qIqfzKLf6/Wzpm7lYZxYvcOp0HsvaFCzXmEqvit3FvR1DoResEl1w3YZW9i2LTHUeJT04LaDIIcWOUiyggfauwUFvqgKPI2WvfOfFhfIShT4NF0pObRiWEIYiDJepkLqxB/fGys+Ysu46T7mrgVVdyeC3Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1wvl+2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808F7C4CEC3;
+	Wed,  9 Oct 2024 18:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728499163;
+	bh=O70RbJ/W5KHjzKkgn4kRyKo1RCjNBwz5v/r1wAjDke8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=F1wvl+2RVwRn2XOu1mJqRxd79+WnXqk4klgGaZ1jKx6iWpFs8YCPZYRvie1XKyKnF
+	 kQNfHeMmDwRj7yXztr6BQYM/kh0pUTyzb5qfilVAxITZeI4P4JIv3+Z9nei41ZczRj
+	 3bKDFpw/f+vErIoWvvJpvRjdrb9tcW5VQwbnfXohTn0IG6n+lCZHe5FrY7MdFPOkPi
+	 sIEBaOE/6oa+gXqiNqISO2l2R0IgLuBL6dcf20EAc3B6uTeanmQ2MrNZTsWHEEwKXG
+	 pWDV5PXYjzNMuKXoOnbUj7xyJTi84tNlqeXNtM01f3J89YtxmzAgokxv0jWyE61nbi
+	 um0OS53IGB9Ww==
+From: cel@kernel.org
+To: Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Tom Haynes <loghyr@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 0/9] nfsd: implement the "delstid" draft
+Date: Wed,  9 Oct 2024 14:39:06 -0400
+Message-ID: <172849911981.133262.7783476014242763634.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241004-delstid-v4-0-62ac29c49c2e@kernel.org>
+References: <20241004-delstid-v4-0-62ac29c49c2e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <kxi6m3gi7xqv52bupvb7iskyk6e3spq6bbhq4il5pmfieacfmf@5iwcnsfkmfq4>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2015; i=chuck.lever@oracle.com; h=from:subject:message-id; bh=vjk84pj+f7RaG5/L8WxmqKn7Vt+lY94zwhS721SEN/4=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBnBs3ODC79kAdsar9qk76sfCWZIl+5gi9RS21oS 3iMUeWfQpyJAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCZwbNzgAKCRAzarMzb2Z/ lxU/D/9gepVIputtBIgStSYtu0b8nXFE/N6ds4GjK4SOFWxdm3sDlXImFN0O+vBnhyUq8fATk51 jK10Q6Vja+CafV77caoPbVMVmsUe1wjGdh2tqdheoYVjg0oaT7McjWxMGJ8ZLuCtxUZw0rv9Ib3 k4HvQcSmAi9ZwUciSwjRmlR2VbVIVWBYjnZUg1atX72AgYsXkFGWrTB9OlqOkb53K+jDj2b3alF sDL5HTyvLa8JppaeDLQvzxSogS2dIUDlGEyKQZJCXXVTtoe4Bs/k4o61MXr1B5+/p8bQQOkgYOK qh7ULVxp5ywCieBMXHXminPBXdi8yQWMlIsqwHNw8J+3l9LFnfv/rp4oDaWHNFmT+MuDByaWaIc G6ByMRx3hsEbIy/zCkcf8gCGeKg8DfD8Af4u7hvJjgTJR6vhsa5/RLa0GO6cU9+PwKxxPatYunM sfD8Brb2tYSmuC9Q6HQm1YW6/Ge1V6xuRTq22bN9VaSbaO+vOA4M1qcNAzQ6A2fEmiD3qBhn8CC Wd8qv/3pFyTbfs5aQceDQogVnWW3V9XfufPfehX3aVSvJmvTgXD3DjNzZbOeektHqSxr6EBjpqe OUigXHrv/waLytvHUrx8zs1O2VtPKwglCJWGc3CnWL2dg9Osq8/GBpiHBXYVPRE7eoVpvZQ4+DF 4CsqEw
+ b2hfCGtRQ==
+X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 09, 2024 at 12:17:35AM -0400, Kent Overstreet wrote:
-> How many steps are required, start to finish, to test a git branch and
-> get the results?
+From: Chuck Lever <chuck.lever@oracle.com>
 
-See the quickstart doc.  The TL;DR is (1) do the git clone, (2) "make
-; make install" (this is just to set up the paths in the shell scripts
-and then copying it to your ~/bin directory, so this takes a second or
-so)", and then (3) "install-kconfig ; kbuild ; kvm-xfstests smoke" in
-your kernel tree.
-
-> But dashboards are important, as well. And the git log based dashboard
-> I've got drastically reduces time spent manually bisecting.
-
-gce-xfstests ltm -c ext4/1k generic/750 --repo ext4.git \
-	     --bisect-bad dev --bisect-good origin
-
-With automated bisecting, I don't have to spend any of my personal
-time; I just wait for the results to show up in my inbox, without
-needing to refer to any dashboards.  :-)
-
-
-> > In any case, that's why I haven't been interesting in working with
-> > your test infrastructure; I have my own, and in my opinion, my
-> > approach is the better one to make available to the community, and so
-> > when I have time to improve it, I'd much rather work on
-> > {kvm,gce,android}-xfstests.
+On Fri, 04 Oct 2024 09:16:43 -0400, Jeff Layton wrote:                                              
+> We had to pull this series from v6.11 due to a report of a fs_mark file
+> creation performance regression from the kernel test robot [1]. I tried to
+> reproduce this and couldn't. I've asked Oliver to see if this is still
+> reproducible there but haven't heard back yet.
 > 
-> Well, my setup also isn't tied to xfstests, and it's fairly trivial to
-> wrap all of our other (mm, block) tests.
+> During this, we realized that not handing out an updated open stateid
+> when there is an existing one is problematic [2], so this also fixes the
+> server to only respect WANT_OPEN_XOR_DELEGATION if the open stateid
+> is brand new.
+> 
+> [...]                                                                        
 
-Neither is mine; the name {kvm,gce,qemu,android}-xfstests is the same
-for historical reasons.  I have blktests, ltp, stress-ng and the
-Phoronix Test Suites wired up (although using comparing against
-historical baselines with PTS is a bit manual at the moment).
+Applied to nfsd-next for v6.13, thanks!                                                                
 
-> But like I said before, I don't particularly care which one wins, as
-> long as we're pushing forward with something.
+[1/9] nfsd: drop the ncf_cb_bmap field
+      commit: be4c44221f4d066d3726a4712133f69690ac680b
+[2/9] nfsd: drop the nfsd4_fattr_args "size" field
+      commit: 43f2357392c457616b623ed9eb14ddfb009a37f8
+[3/9] nfsd: have nfsd4_deleg_getattr_conflict pass back write deleg pointer
+      commit: fcfcbf7764811c90226da385bec30800f29240cb
+[4/9] nfsd: fix handling of delegated change attr in CB_GETATTR
+      commit: 99ce540b196c8ba7137cdb54d1f8dfdb2f8ebf0e
+[5/9] nfs_common: make include/linux/nfs4.h include generated nfs4_1.h
+      commit: d1e2a01bdbf0cd1b3d0cf4b576a495b7bb2706b0
+[6/9] nfsd: add support for FATTR4_OPEN_ARGUMENTS
+      commit: bba1dc5b66342e54fcc0b710e6317a076b732bab
+[7/9] nfsd: implement OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION
+      commit: e816ca3f9ee0832a30c7947feb137142676d8673
+[8/9] nfsd: add support for delegated timestamps
+      commit: 82ad9af82af79a49ea3b18df06008e8614f9c3e9
+[9/9] nfsd: handle delegated timestamps in SETATTR
+      commit: ba47874bd44a65d23e67f9b6666eb2475ea1c077                                                                      
 
-I'd say that in the file system development community there has been a
-huge amount of interest in testing, because we all have a general
-consensus that testing is support important[1].  Most of us decided
-that the "There Can Be Only One" from the Highlander Movie is just not
-happening, because everyone's test infrastructures is optimized for
-their particular workflow, just as there's a really good reason why
-there are 75+ file systems in Linux, and half-dozen or so very popular
-general-purpose file systems.
-
-And that's a good thing.
-
-Cheers,
-
-						- Ted
-
-[1] https://docs.google.com/presentation/d/14MKWxzEDZ-JwNh0zNUvMbQa5ZyArZFdblTcF5fUa7Ss/edit#slide=id.g1635d98056_0_45
+--                                                                              
+Chuck Lever
 
 
