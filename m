@@ -1,91 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-31499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DDE997830
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 00:05:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83DED99785C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 00:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ED721F22FB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 22:05:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E6E1C210E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 22:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453BE1E284D;
-	Wed,  9 Oct 2024 22:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A90F1E32C2;
+	Wed,  9 Oct 2024 22:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="R16IwXGB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwm5Ycp9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E2917BB0C;
-	Wed,  9 Oct 2024 22:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF7F17A584;
+	Wed,  9 Oct 2024 22:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728511545; cv=none; b=NX79ahUabthsdxiesyva8CIK8FYh4o1l8AKryQ7ECE3G17ZaHIKEfzRdpL+1OFDrI87DKxUMXEcX9AWmHIjiztVsWpsOCAuaVAzg07kf04fobHuzF5gH1G9efUvD/SB63rXp8qiyAXuRCepwpAN81UMI/iqTvfbbFRbNrl+8Lto=
+	t=1728512230; cv=none; b=NKxysIBc3NdvQ4J/bXBCNpzuwObNHTnC7Xpv4bdSSNqPMckVlFOjGTzRK8J6Mh3F117gqeqlWO8tm3FHBar0Bb1m8zvWVwPL282qGvgBZoBGt5aPlLrfmIInlsqIQ6M7WkcsdZ+f0nhQVwhC1QbhRKKdFig3jgXRpIl2fBmh9KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728511545; c=relaxed/simple;
-	bh=wxF79zloP0555edTYf3CDSmVOmYgTFrK1mTExF/iD/o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pTRjk11IdvEFUWRTESj4dGTogApqDJGV1zN6h1y9Rb9xquD+7wsyh5ZSUCM9vffxElHJKF6HVzsA8oe89NkEm0kU/1WhUSpy/kbzlGl1rKQWRH5cDuI9DJwpCpDcpsQGJEQajbTtbu6s9qHkWRF43hxicjZA+TjHBFZijt4vBcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=R16IwXGB; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4ABCF42BFE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728511543; bh=GHDVqJYVncsyLXfe8qK6kBUI51p/2a3Wwqa6+2vFPRc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=R16IwXGBK5EY8sN05mtSLHMC4ghhhkIjPFbQy9XAOCm/obkELNzX5S6NuVi1lNr0a
-	 QLCb9gOr2ukJanfsEw1e9vCXP8Z/m59B+H6m6iT84HnDkiZu9wT5IukQRvl499KNDR
-	 zafwJutTC5Ke4hbsKRJSpyROgGjv13g0wup1N2U52WgC5IFg32mQIDZ5vFCq/mfaLN
-	 Q89K6+ynVHXkL6kvH1MusABIEJxCqDNCKQDuRMOc6LoECqQmlz5lYwdMKl0L4nNQRI
-	 GvDQitEnwfIYAWOcoJTpxQvLHbI5f82Xogfn/QecGEQv9fGYFIR961kzCw1fXvFYn3
-	 ee6tjQgu0WWIg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4ABCF42BFE;
-	Wed,  9 Oct 2024 22:05:43 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org,
- christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-In-Reply-To: <20241009.210353-murky.mole.elite.putt-JnYGYHfGrAtK@cyphar.com>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <87msjd9j7n.fsf@trenco.lwn.net>
- <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
- <20241009.210353-murky.mole.elite.putt-JnYGYHfGrAtK@cyphar.com>
-Date: Wed, 09 Oct 2024 16:05:42 -0600
-Message-ID: <87y12x7wzt.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728512230; c=relaxed/simple;
+	bh=Qz18RXphvenXEN9nRI5napXnTtwj4lI2pWTe5c1vSKc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SC3QmclvFoYBKobG9hXZG5ev/3NZ0jgb7v8FzFRJ22EtlW188YdCnk11jw7a70bv7hoQh1ZxJTURILtJVIhkoulGqT/bR1hiIbUXgyrvAJ59NRragFYig2DNY8jmojHxPmFVZ++qTQTCfXKaZ7vC80mAPGya+O39y15qnR+d1VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cwm5Ycp9; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fad8337aa4so3137401fa.0;
+        Wed, 09 Oct 2024 15:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728512227; x=1729117027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9vJOR5Pe5cnpO/MtL9k0byjEiB3fJceAvrtHENukwyA=;
+        b=cwm5Ycp9Eu4AA3rv/QVfdZWpU4ok6TKZW7aYAcND3CrPKQHe0YmmgMIaOmmjoOeQMQ
+         dXq4NL6BE3TmDFnTItyMp+pPbpDQHCitDEVMCDj3zqzwnDDuWOEJZQjwWeFlzGR/92O7
+         FJuOT5MPHbXKnigrCT8iR5BGHZVdeUc/xwL9OuaIGa0zdIOv7yvfRtFWnFlHvoDWmErx
+         N/454RG5iyOabFNGT3vka67+eX1nCO3ouy0P3mHHGaylMvBqXWdtHhQN9nVKgJZKlh1g
+         edWOydhpPOdM+hf0LG3EZEiM8H8BpWmuVaq2u7Qn3t+8WXXLEb4GLzrXUup4mjUV8n7T
+         3rFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728512227; x=1729117027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9vJOR5Pe5cnpO/MtL9k0byjEiB3fJceAvrtHENukwyA=;
+        b=ADOQHGqbON+bxkCx3SzpzdF8LI2T+CPYsO92UVCy5YxbYesKzvsErnri4jcWrDU73v
+         lxfMcp81BXRbnuruufHzsm7UZCm6NcZa5QdAOU33lFOs+EZw48l4Fh2PLfHh4srE1Hd/
+         ZwW6UEGlavpb5DIRXGySQI6PRZMqBDcW8MGihwJdQEKvLPcZhRxgZHn9KAEou73WZSWA
+         fNVz2AVXAHBmJTM1FzqF6vUrvuHiISW0ggQzm7sjO4N6wuF1gHvb6s9X/DFIclc/1n29
+         nCh3jc3lYFlVpNgsNx3bUcnzZ+SrWl7Ax3Hm60cOleWL2dXt9pJpBRYhB3rPD4mUUu1N
+         eJZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPUNWnA+/GvtyGVg/zLTr6kf0G78dcimRY2wD1t7+HDxPdsDQIylFkCgCSY8EUp+kcrYzUmWWPuXJjwXdiQg==@vger.kernel.org, AJvYcCWS8ffLD2ElVIgmwagPqcl8ycSqXErEMtnO0erNk1bCpV3jyMuPj4GLzxq+vGmzNjPGL17sydpnk/c=@vger.kernel.org, AJvYcCWloOXQ6R/RmLfm5iiz1/RGAO8a8hpvYc5WYLzwdeI/UVNL/F25NpCvaq2b0HiefDzi66vdQrc9eAkUPOhm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh2n9Gm0TuTZsAHkh8NTShV7t9BWgF0l7vM990TNkf64MqwRea
+	hHH5DpvX9whLmr4uGMWPGGIv9pk5CUNTvitG2GWZHQrg6acGiH2nj9+EhZhqrdDn8vWDU0UJSG3
+	gWv5L21iUZraVjVIuQxfrKmH3y9kLMPFe
+X-Google-Smtp-Source: AGHT+IFzQKnqDZgRef9bfo33+6pfeW7KfLapHRRW52/zyYe98ZvvG58H6JkACElKHZrqP0fDYAevwfrbxbh8hmixIA8=
+X-Received: by 2002:a2e:a58b:0:b0:2ef:2555:e52f with SMTP id
+ 38308e7fff4ca-2fb187bf0a2mr25469781fa.35.1728512227009; Wed, 09 Oct 2024
+ 15:17:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
+ <20241009205237.48881-2-tamird@gmail.com> <875xq19bus.fsf@trenco.lwn.net>
+In-Reply-To: <875xq19bus.fsf@trenco.lwn.net>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 9 Oct 2024 18:16:29 -0400
+Message-ID: <CAJ-ks9md9bCrwyCNp3jR=1pF-xpieu8oW4jPqw5w=kCL9bpeBg@mail.gmail.com>
+Subject: Re: [PATCH v2] XArray: minor documentation improvements
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Aleksa Sarai <cyphar@cyphar.com> writes:
-
->> In fairness, this is how statx works and statx does this to not require
->> syscall retries to figure out what flags the current kernel supports and
->> instead defers that to stx_mask.
->> 
->> However, I think verifying the value is slightly less fragile -- as long
->> as we get a cheap way for userspace to check what flags are supported
->> (such as CHECK_FIELDS[1]). It would kind of suck if userspace would have
->> to do 50 syscalls to figure out what request_mask values are valid.
+On Wed, Oct 9, 2024 at 5:59=E2=80=AFPM Jonathan Corbet <corbet@lwn.net> wro=
+te:
 >
-> Unfortunately, we probably need to find a different way to do
-> CHECK_FIELDS for extensible-struct ioctls because CHECK_FIELDS uses the
-> top bit in a u64 but we can't set a size that large with ioctl
-> numbers...
+> I'm not convinced that this is better.  This is programmer
+> documentation, and "storing NULL" says exactly what is going on.
+> "Erasing" is, IMO, less clear.
 
-Add a separate PIDFD_GET_VALID_REQUEST_MASK ioctl()?
+Both are verbs that appear in function names:
+"storing NULL" is to `xa_store(NULL)` as "erasing" is to `xa_erase()`.
 
-But then I'm bad at designing interfaces...
-
-jon
+Cheers.
+Tamir
 
