@@ -1,254 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-31491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5498E9976F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 22:52:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CA69976FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 22:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DE731F248A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 20:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7331F24A43
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 20:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2575B1E260A;
-	Wed,  9 Oct 2024 20:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B97A1E376B;
+	Wed,  9 Oct 2024 20:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Uag3j7SZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpTrzYVU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE0D188926;
-	Wed,  9 Oct 2024 20:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA4A40849;
+	Wed,  9 Oct 2024 20:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728507152; cv=none; b=RJlnDt0pzXCFI3cbLoL8UU6EentTcWXX1+hWcuhxAhqJTvZ0/HvjfBgbSURTHZaNSENnMN2v7SI7Dlojhi4/ZMhM+bG5V2hGW32MCr8I3Amy/NyvkpTTYSxA1YYonskgyU565tYZ9ZIILQ8bTDQeX9WCSL5DHHjd5lwwtJoghfg=
+	t=1728507221; cv=none; b=TIyllOTJVcovOWWfeVIf4VZJPh2zUFIihgOUhwkvImQ0g2FBLwQ71FNsYmq7NrvqLP6fXTrSb0xSGWZyJWy3ERM2LTqFrAoKlLdHR08hBMFMbO54m225QBidQQx5sSWcALXUyMk6OifJnAI1kJc9XDJYIYEBWUTdbefQy04JndI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728507152; c=relaxed/simple;
-	bh=DXe0nSk4UOS3xOoBy02IUS5IT5Af0zijj0s4s+oB2Zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FkeL+ciWokQMiuZy7OXHx5GTRfWXwvXc+hy6oq5ddmmFJTG95WNbw8zZiaq62bc+LJmK2DJW/hoxTKM6goRWhZFkEnIiJsWYg9QD5zjVwIlapzGwThWu6Y6QVTVcaFdWcLNXBmUkMhZmeFAe1qp17B7qilsCwMamFaCBI5MwA+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Uag3j7SZ; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4XP4p25Jpvz9tCV;
-	Wed,  9 Oct 2024 22:52:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1728507146;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ENt63T2mqyJFo/8wMRUgfmolruPGEMaV20ncirwreUs=;
-	b=Uag3j7SZaEipa+rEjhusFrEo9nJ5xy6a/nGuQp2JsCeo39vXwjnZe3Nkk1gpJoKFwQJaaC
-	cJtPOE0Lgzk3SIoymzD0Neb2uY32NWU2zOhi+lrdzr9Zu+FJJDQktTOLgur2H6+5pY1K0I
-	dYYm46fTjve81SYFV4RRHMFkKvQ/bD1bFyHHb1zdAPVRGFnt4P5f9QdqpXiH/kqJIyxN8B
-	XrlfH08MlG2sw+Arn/RDQZAfsh6Spl6IMyaKJvZF15Rbwm6Ch5s96CuJ4Mkf8/vCfHXDEs
-	pdlaiVm9CCnmCHTn0s0M5E22yqHgRJOsVeECKOamUjTiR2/NeXetp2Ms1YseQQ==
-Date: Thu, 10 Oct 2024 07:52:20 +1100
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Luca Boccassi <luca.boccassi@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-Message-ID: <20241009.205103-sudsy.thunder.enamel.kennel-kyrq7lTfmNRZ@cyphar.com>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <20241008-parkraum-wegrand-4e42c89b1742@brauner>
- <CAMw=ZnSEwOXw-crX=JmGvYJrQ9C6-v40-swLhALNH0DBPLoyXQ@mail.gmail.com>
+	s=arc-20240116; t=1728507221; c=relaxed/simple;
+	bh=bPfFF1qLu1s9pS/YSmea4fYvhF7P16Zq+xOKyHPTRFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kgx9/UXCaLCn89u3bE1OduoFBwdibR6dIk/7OLCJrxSiG3WmH0hzkDX0QyKInaY4Q0KzKXcRaqk5VfNPE+ZWr8xBFCSE91IykZcohasyel8z2yA1gHa1ftf8/lvwXENct+adudH76wbBVbXVZYMO5y8AjfmXpbC6uX9/owXJ1xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpTrzYVU; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-716a3e50a81so156728a34.3;
+        Wed, 09 Oct 2024 13:53:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728507219; x=1729112019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=voVO6J0PAZ3Jff9T7o53DzGHe5ozvPynK3o94a09aB8=;
+        b=hpTrzYVU6LkYhYcrdJzY5HmO0IqsBehwjwSc7zI1ilJXQERIWkoY6hykMurPNcSLWl
+         ZTcpoDY04zCHDOKF2kgMcg9j2uGSYtBViDKVGKZVCr5V9VEc4aIy7mLeAEWMeyhHpITZ
+         ZcxE+Fmkl0whfHPwDYlKj/+DJ2VQEqzwr1F0DglJFHRU+EHRI9xozy+qMW6TFRg0e4BS
+         HVIZTnhpUSx9NeIzoVdD5wVx9OTG6uz0fi+DmzzG8MaGRTIB7U0GgCvfpD24bznuvl25
+         CGfLFzZAP7N6O5ola/1VsQec/UrdEYE5DsyVmMLsc/j6QOYVa/fbmbXkd21+RkdWnXdO
+         4BRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728507219; x=1729112019;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=voVO6J0PAZ3Jff9T7o53DzGHe5ozvPynK3o94a09aB8=;
+        b=UqAWbPKZXLjv2aDgyOmTcPuAeAlLU/TCU3M7eohyLvGL5QUwbk9ogJFczt8ryUcmty
+         4g+Ug8OiB+bOyrc02JBo9kdNNmGzBG10/tejf9WNbfSsqQA3SYOtD9bRB6Gh4QXl9Oi9
+         Jn1I3N6czKkTdkZUOwkokt6HubpDKYS2SpqpQmsQHGM8QYS9mIMeXNVyaA/amoTdYaSc
+         kvfY8COWJx+oV9Kb11hrFXxQY5XN7g9ellxci9PxLKJ+2lXd31nzCCdwGJIOR7zOby4f
+         KZSTZrpgvY7VsDCnO3vC8FeU1pJu4gQ55IB9lCooR+t5zWNpIWTZqqG1br5hnGdXGEVX
+         WQxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhqQFYShZ1dR7Vz/VOW9ROIKFOObbFlIvOEcOe2UpbtXnRI8I3qX/94J4gogpQNAxfFc9Z4TtUS2o=@vger.kernel.org, AJvYcCVsBSVbA1XJMT/0oDHaqfuxOqX8VFb3mbv43mr1JNnCJJGudyfazES2Z7yabQmerqDVyQv0m9b+XkQqUdW5uw==@vger.kernel.org, AJvYcCWFRUrHsNeSIt45ERuyoWckMb7TZVo5L70Ef6synOsae4yVyOpW836u3x9LORBbSn0WSOIwsZk/4RRroxi7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXdSx0mRjMeps6s5YIc8yHHM/C11+q0XwloweaFkZ3qBdN0OjV
+	QNu+wec/4tm6EHbgXDgZz8EsYBBq0QMsslqwxykEaJGRxxDo+ZYM
+X-Google-Smtp-Source: AGHT+IE4y28jr+5n5WqaYB/MDvYbGnisP6mV6m87c+QafPqW5BH+Qy878IHtCLdFQ8gXC4fYwBc08w==
+X-Received: by 2002:a05:6358:784:b0:1c2:f41e:dbca with SMTP id e5c5f4694b2df-1c3080c3426mr249239255d.7.1728507219300;
+        Wed, 09 Oct 2024 13:53:39 -0700 (PDT)
+Received: from localhost.localdomain ([2620:10d:c091:600::1:6bd1])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae756628dbsm486670485a.81.2024.10.09.13.53.38
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 09 Oct 2024 13:53:38 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Tamir Duberstein <tamird@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] XArray: minor documentation improvements
+Date: Wed,  9 Oct 2024 16:52:38 -0400
+Message-ID: <20241009205237.48881-2-tamird@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
+References: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dsi44jpzumxx35nr"
-Content-Disposition: inline
-In-Reply-To: <CAMw=ZnSEwOXw-crX=JmGvYJrQ9C6-v40-swLhALNH0DBPLoyXQ@mail.gmail.com>
-X-Rspamd-Queue-Id: 4XP4p25Jpvz9tCV
+Content-Transfer-Encoding: 8bit
 
+- Replace "they" with "you" where "you" is used in the preceding
+  sentence fragment.
+- Use "erasing" rather than "storing `NULL`" when describing multi-index
+  entries. Split this into a separate sentence.
+- Add "call" parentheses on "xa_store" for consistency and
+  linkification.
 
---dsi44jpzumxx35nr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+V1 -> V2: s/use/you/ (Darrick J. Wong)
 
-On 2024-10-08, Luca Boccassi <luca.boccassi@gmail.com> wrote:
-> On Tue, 8 Oct 2024 at 14:06, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Oct 08, 2024 at 01:18:20PM GMT, luca.boccassi@gmail.com wrote:
-> > > From: Luca Boccassi <luca.boccassi@gmail.com>
-> > >
-> > > A common pattern when using pid fds is having to get information
-> > > about the process, which currently requires /proc being mounted,
-> > > resolving the fd to a pid, and then do manual string parsing of
-> > > /proc/N/status and friends. This needs to be reimplemented over
-> > > and over in all userspace projects (e.g.: I have reimplemented
-> > > resolving in systemd, dbus, dbus-daemon, polkit so far), and
-> > > requires additional care in checking that the fd is still valid
-> > > after having parsed the data, to avoid races.
-> > >
-> > > Having a programmatic API that can be used directly removes all
-> > > these requirements, including having /proc mounted.
-> > >
-> > > As discussed at LPC24, add an ioctl with an extensible struct
-> > > so that more parameters can be added later if needed. Start with
-> > > returning pid/tgid/ppid and creds unconditionally, and cgroupid
-> > > optionally.
-> > >
-> > > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
-> > > ---
-> > > v9: drop result_mask and reuse request_mask instead
-> > > v8: use RAII guard for rcu, call put_cred()
-> > > v7: fix RCU issue and style issue introduced by v6 found by reviewer
-> > > v6: use rcu_read_lock() when fetching cgroupid, use task_ppid_nr_ns()=
- to
-> > >     get the ppid, return ESCHR if any of pid/tgid/ppid are 0 at the e=
-nd
-> > >     of the call to avoid providing incomplete data, document what the
-> > >     callers should expect
-> > > v5: check again that the task hasn't exited immediately before copying
-> > >     the result out to userspace, to ensure we are not returning stale=
- data
-> > >     add an ifdef around the cgroup structs usage to fix build errors =
-when
-> > >     the feature is disabled
-> > > v4: fix arg check in pidfd_ioctl() by moving it after the new call
-> > > v3: switch from pid_vnr() to task_pid_vnr()
-> > > v2: Apply comments from Christian, apart from the one about pid names=
-paces
-> > >     as I need additional hints on how to implement it.
-> > >     Drop the security_context string as it is not the appropriate
-> > >     metadata to give userspace these days.
-> > >
-> > >  fs/pidfs.c                                    | 88 +++++++++++++++++=
-+-
-> > >  include/uapi/linux/pidfd.h                    | 30 +++++++
-> > >  .../testing/selftests/pidfd/pidfd_open_test.c | 80 ++++++++++++++++-
-> > >  3 files changed, 194 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > > index 80675b6bf884..15cdc7fe4968 100644
-> > > --- a/fs/pidfs.c
-> > > +++ b/fs/pidfs.c
-> > > @@ -2,6 +2,7 @@
-> > >  #include <linux/anon_inodes.h>
-> > >  #include <linux/file.h>
-> > >  #include <linux/fs.h>
-> > > +#include <linux/cgroup.h>
-> > >  #include <linux/magic.h>
-> > >  #include <linux/mount.h>
-> > >  #include <linux/pid.h>
-> > > @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, st=
-ruct poll_table_struct *pts)
-> > >       return poll_flags;
-> > >  }
-> > >
-> > > +static long pidfd_info(struct task_struct *task, unsigned int cmd, u=
-nsigned long arg)
-> > > +{
-> > > +     struct pidfd_info __user *uinfo =3D (struct pidfd_info __user *=
-)arg;
-> > > +     size_t usize =3D _IOC_SIZE(cmd);
-> > > +     struct pidfd_info kinfo =3D {};
-> > > +     struct user_namespace *user_ns;
-> > > +     const struct cred *c;
-> > > +     __u64 request_mask;
-> > > +
-> > > +     if (!uinfo)
-> > > +             return -EINVAL;
-> > > +     if (usize < sizeof(struct pidfd_info))
-> > > +             return -EINVAL; /* First version, no smaller struct pos=
-sible */
-> > > +
-> > > +     if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(=
-request_mask)))
-> > > +             return -EFAULT;
-> > > +
-> > > +     c =3D get_task_cred(task);
-> > > +     if (!c)
-> > > +             return -ESRCH;
-> > > +
-> > > +     /* Unconditionally return identifiers and credentials, the rest=
- only on request */
-> > > +
-> > > +     user_ns =3D current_user_ns();
-> > > +     kinfo.ruid =3D from_kuid_munged(user_ns, c->uid);
-> > > +     kinfo.rgid =3D from_kgid_munged(user_ns, c->gid);
-> > > +     kinfo.euid =3D from_kuid_munged(user_ns, c->euid);
-> > > +     kinfo.egid =3D from_kgid_munged(user_ns, c->egid);
-> > > +     kinfo.suid =3D from_kuid_munged(user_ns, c->suid);
-> > > +     kinfo.sgid =3D from_kgid_munged(user_ns, c->sgid);
-> > > +     kinfo.fsuid =3D from_kuid_munged(user_ns, c->fsuid);
-> > > +     kinfo.fsgid =3D from_kgid_munged(user_ns, c->fsgid);
-> > > +     put_cred(c);
-> > > +
-> > > +#ifdef CONFIG_CGROUPS
-> > > +     if (request_mask & PIDFD_INFO_CGROUPID) {
-> > > +             struct cgroup *cgrp;
-> > > +
-> > > +             guard(rcu)();
-> > > +             cgrp =3D task_cgroup(task, pids_cgrp_id);
-> > > +             if (!cgrp)
-> > > +                     return -ENODEV;
-> >
-> > Afaict this means that the task has already exited. In other words, the
-> > cgroup id cannot be retrieved anymore for a task that has exited but not
-> > been reaped. Frankly, I would have expected the cgroup id to be
-> > retrievable until the task has been reaped but that's another
-> > discussion.
-> >
-> > My point is if you contrast this with the other information in here: If
-> > the task has exited but hasn't been reaped then you can still get
-> > credentials such as *uid/*gid, and pid namespace relative information
-> > such as pid/tgid/ppid.
-> >
-> > So really, I would argue that you don't want to fail this but only
-> > report 0 here. That's me working under the assumption that cgroup ids
-> > start from 1...
-> >
-> > /me checks
-> >
-> > Yes, they start from 1 so 0 is invalid.
-> >
-> > > +             kinfo.cgroupid =3D cgroup_id(cgrp);
-> >
-> > Fwiw, it looks like getting the cgroup id is basically just
-> > dereferencing pointers without having to hold any meaningful locks. So
-> > it should be fast. So making it unconditional seems fine to me.
->=20
-> There's an ifdef since it's an optional kernel feature, and there's
-> also this thing that we might not have it, so I'd rather keep the
-> flag, and set it only if we can get the information (instead of
-> failing). As a user that seems clearer to me.
+ Documentation/core-api/xarray.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-I think we should keep the request_mask flag when returning from the
-kernel, but it's not necessary for the user to request it explicitly
-because it's cheap to get. This is how STATX_MNT_ID works and I think it
-makes sense to do it that way.
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 77e0ece2b1d6..75c83b37e88f 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
+ to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
+ to retrieve the tag of an entry.  Tagged pointers use the same bits that
+ are used to distinguish value entries from normal pointers, so you must
+-decide whether they want to store value entries or tagged pointers in
+-any particular XArray.
++decide whether you want to store value entries or tagged pointers in any
++particular XArray.
+ 
+ The XArray does not support storing IS_ERR() pointers as some
+ conflict with value entries or internal entries.
+@@ -52,8 +52,8 @@ An unusual feature of the XArray is the ability to create entries which
+ occupy a range of indices.  Once stored to, looking up any index in
+ the range will return the same entry as looking up any other index in
+ the range.  Storing to any index will store to all of them.  Multi-index
+-entries can be explicitly split into smaller entries, or storing ``NULL``
+-into any entry will cause the XArray to forget about the range.
++entries can be explicitly split into smaller entries. Erasing any entry
++will cause the XArray to forget about the range.
+ 
+ Normal API
+ ==========
+@@ -64,7 +64,7 @@ allocated ones.  A freshly-initialised XArray contains a ``NULL``
+ pointer at every index.
+ 
+ You can then set entries using xa_store() and get entries
+-using xa_load().  xa_store will overwrite any entry with the
++using xa_load().  xa_store() will overwrite any entry with the
+ new entry and return the previous entry stored at that index.  You can
+ use xa_erase() instead of calling xa_store() with a
+ ``NULL`` entry.  There is no difference between an entry that has never
+-- 
+2.47.0
 
-(Though there are some complications when we add extensions in the
-future -- see my other mail about copy_struct_to_user().)
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---dsi44jpzumxx35nr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZwbtBAAKCRAol/rSt+lE
-bwL1AQCI/oB6HF8S943TWBwmM5kfndOKMoFRsv1/cj3kzXqFzQD/ZTzEDZgjNtbU
-CJ7yfXmXmaXF8UMtCzjm5cOoVS3tRgk=
-=uKQ3
------END PGP SIGNATURE-----
-
---dsi44jpzumxx35nr--
 
