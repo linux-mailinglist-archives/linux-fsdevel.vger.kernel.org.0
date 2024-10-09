@@ -1,109 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-31462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0059970AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 18:10:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36551997196
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 18:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18A301C20DD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 16:10:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B5528450E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 16:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC001E3DD5;
-	Wed,  9 Oct 2024 15:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B321E4123;
+	Wed,  9 Oct 2024 16:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdbYAXJc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSMJf5Yv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8431E32B7;
-	Wed,  9 Oct 2024 15:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2E51E285C;
+	Wed,  9 Oct 2024 16:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728488969; cv=none; b=kvH4xneH7PBcom6oduyOVUFvO/IJDogSqWVZld5KHBi4z+GRb07ERD+5KFB/Ub/0CV5oOUy5jzCaOQ5BWEeLoqEzQf+rpQdZm7ITGqHOLQL+t5Ds8P11C62d4GrdIiyH1xJPARewnsr/tfE2yVjXaPUwp/lkFacbw5Hr4md58N4=
+	t=1728491200; cv=none; b=BPqUZXvqnGbIxRw4PS0NDECK+8fYdKObCk6IrN/b6RyZzPok0fvdKKtrw2ifoZMEExw9r9XdVCNQhSw0DUWtvcLcuPXQZTgQMylGOfCgNQml0ZDNVaRl9FsW3S/NUe33qfahLv3qJljXAvRWIIdcokb6DB1UH3+NA7QbpXrZdJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728488969; c=relaxed/simple;
-	bh=pliWJTowb4v36/oVVcDzs8wkhL4uPEIgll194fN9VUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dlfwEYSfchj75DtChA5bMF2+I+kfSEMd6Eb7qgj8b5o2tDw7U7k0kI0JfG4f0MBnyCiXgTJv6ItjHxfiJdSFpf784crXDFxK0XUTjQGZjSaRLmKcZQ5hMUFovDDlWlzl2kt7kW6+VW9OLfPPZaQQCfu/r3CwQsN4A1PRpLjDOzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdbYAXJc; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7ac83a98e5eso94547285a.0;
-        Wed, 09 Oct 2024 08:49:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728488967; x=1729093767; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pliWJTowb4v36/oVVcDzs8wkhL4uPEIgll194fN9VUc=;
-        b=kdbYAXJcOebn8/ovWpXCZCieWcbc/nHNZGI7AYi+Nmttkwsb0HRjF+s+n3fwAq9chs
-         tTBG0U2KavFKXdkcVo3jG7VFYCGZ0QUEKkccfKKn/+FSk/gO2Tq9+EpQLqoMwrQKduQl
-         XczjLBeABF7SWviaq8cUGnQFOdnGG4up+WRsRrE2tq893e7y5Ltp60LYZGyEhDuI1kp7
-         NejIc+dDdT4rMQ6b/cROEdWj9y1Uwxv7AhEmFIPEDR5XWyAd03Ur1nvHqjcWNq8ec/I7
-         8mycC6Gn9j/7Zse+CrTLuzMacENt162LGWmuizJi+JAKjU8Ftrc3f6bG8H4xAUO2T2O2
-         kRgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728488967; x=1729093767;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pliWJTowb4v36/oVVcDzs8wkhL4uPEIgll194fN9VUc=;
-        b=HlubbNPzFm/nRXklV0tXy7KUrdOb+Tc0hh0bG2CwD1KeccrrQT9DoiMdz4mlgKK2Xu
-         66uzEvAcm6MPLTJrN3K0w+C9hPucuIQ5IND6qui5HOZe0w3Pb38MMeZR36dxI0N0utts
-         L3aMG1zM0Fy9oWB33Vp5xOA6kFCVq/xGLb/EVWXybMTlbxRRUq3xIixRLLL7LqfpLuUp
-         az/3xr6BM8cB5GaIRePqf1jvlgqEb/T53zOpsg93kd4CeSoZSncY4aGa30E7VYLctxXm
-         pq5/amYbP5AVUBSlQiCNhHOR+HpYOAr/TWGWnx8DGuwqmCM6U2/VnYjlYH/+BTiZDNCS
-         rIpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIoZtoVzKrpLvzjcJElD3Ih/UIjZcFQYJezuTPV7kKtYl3Hq9/0MwHRnu7Uqb2f6Ww+c2kiny19BwE5Cc4@vger.kernel.org, AJvYcCWe0j7CFAPoW/JF195KayX9/KjlEP15h/w/K0uVyATimBjORBsllaZYSZn4nwT+NKLGLWrHEaTk4mJp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6cyjX3fXNyug7D1m8G1PHAtXCXJ8j5E+A1l3hclII6/xZbDB6
-	YWMXJzeLCKPTUoApoVXZtsLMUO5FiXvut2vNqm7IH/YTUZ+9HT+t1YKE2FN/eMIdsz72Fx/FYgL
-	28kF/EqtuJv03+TkB5glACIkLxvI=
-X-Google-Smtp-Source: AGHT+IGMWQNHaR/4azYk0DF/AU8GCtoRx1sTy3DKtQgllhYjDTmOFNXxXvFTkWQtwx/j1GnQsB1vRoCD0jKJq6V6FeA=
-X-Received: by 2002:a05:620a:2802:b0:7ac:9bdd:6e78 with SMTP id
- af79cd13be357-7b1124d215amr12267385a.14.1728488967058; Wed, 09 Oct 2024
- 08:49:27 -0700 (PDT)
+	s=arc-20240116; t=1728491200; c=relaxed/simple;
+	bh=UYuDl25axeC8L+3RX7L0LERIgnmmg03ITxZL5PJpNdI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NPakbFPTmB7TjCdwotUgF/Z8dwHAKwZInj/QjBwXygBRSQ11Qe/2iZepuhrjjSrGEvqMgyG6+s05GuZ8XV4UwJ2pfW/N0frtYWlk+pPnvQfvAfi0h8VSaSa02bU7gRqh4Upgtz/7Um31vl6c+8EuRfpi1L6XRwH3QP1i6VIU9BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSMJf5Yv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5440EC4CEC3;
+	Wed,  9 Oct 2024 16:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728491199;
+	bh=UYuDl25axeC8L+3RX7L0LERIgnmmg03ITxZL5PJpNdI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=nSMJf5YvzT+QslzGw0M0kAAyMWl/wZbwnY5A3F6w5VGm7+wEL/bojhf/xbzh3yVFT
+	 JUgYXQ7il8/yAdrYv3hdvhEcYQxl3WSJ8UZOUOGvziadon0ygS3cvNXBNa3Wruckr6
+	 rJJaaAWEBSOygP+C/ZiueeKEWbKQ3ZkLIKVW2ExMlS8agZnDgEpynkLQg8D0V01PGh
+	 IDACbTDQ+lsxwbps3nvuDdt11BYrEsl8Tp4VLyzhYIxUts9+K6oW6PoPQbWwZ9XxeL
+	 4JD4E/PaqO1qeSSJpA1gfothg0+8aB3TF/1MHEQSOvhED8e3TOQkOGvnTtQP/XHr1z
+	 /5R5Mr7Z7+P7w==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 09 Oct 2024 12:26:32 -0400
+Subject: [PATCH] fs: grab current_time() in setattr_copy_mgtime() when
+ ATTR_CTIME is unset
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008094503.368923-1-amir73il@gmail.com> <20241009153836.xkuzuei2gxeh2ghj@quack3>
-In-Reply-To: <20241009153836.xkuzuei2gxeh2ghj@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 9 Oct 2024 17:49:15 +0200
-Message-ID: <CAOQ4uxiNJ9a40fWzH09pXC7u0OuCqQPLuMJ8Yku+1Qww_Kc7KQ@mail.gmail.com>
-Subject: Re: [PATCH] fanotify.7,fanotify_mark.2: update documentation of
- fanotify w.r.t fsid
-To: Jan Kara <jack@suse.cz>
-Cc: Alejandro Colomar <alx.manpages@gmail.com>, linux-man@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241009-mgtime-v1-1-383b9e0481b5@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALeuBmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNL3dz0kszcVN00M3MjC1OjFDPz5GQloOKCotS0zAqwQdGxtbUAZRh
+ fJ1gAAAA=
+X-Change-ID: 20241009-mgtime-f672852d67cc
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1233; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=UYuDl25axeC8L+3RX7L0LERIgnmmg03ITxZL5PJpNdI=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnBq674ZX0VDNVAHHinEwqEy+bXkux6MUEqvVc8
+ qiUOc/Y1mCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZwauuwAKCRAADmhBGVaC
+ FZ5ID/48wlcjnfOuNSI/y3uSIxj1XoYmkGFYi43I+XRSK1Su0az1/RVXZP1vrEqJxZpgx4xtn/0
+ 4nCKW9puENWee3+6pa+RYt9hQCHx+eFPE0I/Y2RwoEWABLiZfM+EpJxR9oOE/4zsOiH9bcXnkrZ
+ y2LC2txksmU5/emKm0Gj4WYFVe5Ba8n2x3KIdFWRI7CVlluoWgPrbfDU8Ll8Gnau75n9rlEpQsM
+ hR6Z9lpvr7/hG0GGwcE6gVYjR6m2IBwPRMY3o0PIhP/njzwyCVvOwp4JGVKSiJfTB19Nrgu/1RA
+ mffej752kxEzgYXLqZgWGxOVyJVU4yc4P8jEs6I6EgISNte19yLme9w+Q0ffpKLeBrDmICv2BHY
+ KLajW9J9Rc1nzAEkzM5MayffuW0+6eCnI2szYi/L4wCQy0yL3DgMughuojNp+k6V0bgbYQq0CkF
+ zg5tA1RHfzsqPSgZJDYccgBNXTxQE7lHVLIcU5WFwpy0e5d4D9IqHxcYpsKseDcncBopS6rl4Eu
+ XJPmlhTqu8f0jvCoQ2vRXUHpvMKBCqq9VVg2cFN4XJ2yXB8zFaD0lt/KmmCWDvNtScn5PWBWfON
+ xKj4vfO0xpgbBdA06uS1WcZAe6KQK++Cg/q4Yp1SBFcKGRdHaaf32xjPnAN0QjUh3RD4g1n9a4A
+ S+jzvPiMnyBglCA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Wed, Oct 9, 2024 at 5:38=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 08-10-24 11:45:03, Amir Goldstein wrote:
-> > Clarify the conditions for getting the -EXDEV and -ENODEV errors.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> Looks good. Feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
-> But I've read somewhere that Alejandro stepped down as manpages maintaine=
-r
-> so they are officially unmaintained?
+With support of delegated timestamps, nfsd can issue a setattr that sets
+the atime, but not the ctime. Ensure that when the ctime isn't set that
+"now" is set to the current coarse-grained time.
 
-Yes, I just caught up with this news.
-Anyway, it's good to have the patch on the list.
-I will be maintaining the fanotify man pages queue
-until manpages are back to maintenance.
+Reported-by: Jan Kara <jack@suse.cz>
+Closes: https://lore.kernel.org/linux-fsdevel/20241009153022.5uyp6aku2kcfeexp@quack3/
+Fixes: d8d11298e8a1 ("fs: handle delegated timestamps in setattr_copy_mgtime")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+A fix for bug that Jan reported. Christian, it may be best to fold this
+into d8d11298e8a1.
+---
+ fs/attr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Amir.
+diff --git a/fs/attr.c b/fs/attr.c
+index c614b954bda5244cc20ee82a98a8e68845f23bd7..9caf63d20d03e86c535e9c8c91d49c2a34d34b7a 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -298,6 +298,7 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
+ 	} else {
+ 		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
+ 		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
++		now = current_time(inode);
+ 	}
+ 
+ 	if (ia_valid & ATTR_ATIME_SET)
+
+---
+base-commit: 109aff7a3b294d9dc0f49d33fc6746e8d27e46f6
+change-id: 20241009-mgtime-f672852d67cc
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
