@@ -1,56 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-31413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC05995E6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 06:03:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D3F995E80
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 06:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E581F24C3D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 04:03:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A482A28929D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2024 04:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F2714900E;
-	Wed,  9 Oct 2024 04:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3FF142E86;
+	Wed,  9 Oct 2024 04:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aJHqtD6J"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ePqjztGC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC16F208D0
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 04:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1049F137C37
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2024 04:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728446601; cv=none; b=Nw8/itsX9MFm8/JDg1vneLbQOWdyvC8Qgz8Kj/RArWWsw+Ggr7YlVrBYyTyMXRIv1D0w6VPsnpttnTGG+I70/oA2OmdZEcDKV+gH/0oKIUxXJsA+juTZKjqM369oxAyS/XyKMKFo9bPPLQ49lRGqTclCsvLcu8ps6sx5Pu4MQVw=
+	t=1728447465; cv=none; b=W9f8svGzdEET0CH9ChadyVSZq0lpjXzHqoM2GM74L+0MmBM9BiYPhkjF+PVLo7OXgrvwqDqQHjghwZd/tvP7LdHUNNAOp1W2YEgoEqTZjeeU/RtH7iLRbldGBpRPLvTjLGa2eWwuoEZkxRAxI+Lk9SiDXTghHlgprvUvJL/RvKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728446601; c=relaxed/simple;
-	bh=mxo2jFjcd/uBpk3TWa/7hdGiI9h+XtUGtb2ralMbuMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jg9SNEkNZJwkH6WUpHP6J6GkBIrNEuy++mMM5Og0mNUP5VJIX4jAISRnm6cm0HbvfVXDlWOwQvBK/5ltdS+i5WmI43SBC3FSO/H+c2DtzdREsD3Z2s2hW0Wie0CuEaBtJ1qc7y17dE8JqsFFN81ZS1/Ojw3j+f7N1xWJ+OVStCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aJHqtD6J; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=Nkc3/t3OLS4IZEMtC1X487m5ZwynyUtmIikkFH3GW28=; b=aJHqtD6JsXPav09/FhSeyj23m4
-	aI+PIfaDA9P8Nm2uvBdmMouUT+GE6S6XDET1Qr4zeOaIf4JVtqIPRxjkU32H6AwKDvXO1c/8UMFy8
-	zh+Mp+Deuf9XNnygW6su3oUGEIGUK826uTKRn4FUgG/oDhKZwuEDlNm5T9QGhhXWIHuIKiQzcCc89
-	TD5qNf398W2pnSlOIpDHEf8rkirVjEsHXPg8yTDtACG0e49t2nm+EMvXxrwITYZ3cUt/KLsvA9hUz
-	t586m5bnstr2r9BjL0lxxgr6VM3yu+sUmnC940RK96Oct1kGMDBAS4/bdXUKdWgyesi3pGrRbkqG8
-	hu7muyRQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1syNuu-0000000232v-47Bq;
-	Wed, 09 Oct 2024 04:03:17 +0000
-Date: Wed, 9 Oct 2024 05:03:16 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>
-Subject: [RFC][PATCH] getname_maybe_null() - the third variant of pathname
- copy-in
-Message-ID: <20241009040316.GY4017910@ZenIV>
+	s=arc-20240116; t=1728447465; c=relaxed/simple;
+	bh=RrXe6DklimFgZhHmkQOPQtwb2z7G/EVgyyPTR9aeyDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wke0uEx5h3BYIe0sd7HMuHC/6X1eGKumY5kxxqeIfMP3x3YDn1C+7xme+6BKfwhqCUmQW6oxCszRmBW8ZgLrfRA8VBm3GvPwNDOxseSrw25FjOw0hzn2ftzTdzbgZFy094xOtbix0LGk59aqWKZ6ajPzst5KHimCKQCVxurSF2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ePqjztGC; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 9 Oct 2024 00:17:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728447461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GmUha6NmBXATpud6bD8r/lO+t7OtcRYkqayYgW/HEsM=;
+	b=ePqjztGCI/E6efxQ3EOWD3Gnme9CmKvHxUfeziBVce9iaz7yyICXlthWJ6DUCEUGCbdm2F
+	LggmfVIW0O/zxMIOUmM+n3sVMqMA0vvyA7ldTo+q6J/j0dCMjxbDvkQaNudD1Op9ReuGec
+	hGB6pRTthFrdiyGSciNhNWVPzydhUaE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+Message-ID: <kxi6m3gi7xqv52bupvb7iskyk6e3spq6bbhq4il5pmfieacfmf@5iwcnsfkmfq4>
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+ <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+ <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+ <20241006043002.GE158527@mit.edu>
+ <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
+ <20241009035139.GB167360@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,148 +66,83 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20241009035139.GB167360@mit.edu>
+X-Migadu-Flow: FLOW_OUT
 
-[
-in #work.getname; if nobody objects, I'm going to make #work.xattr pull that.
-IMO it's saner than hacks around vfs_empty_path() and it does very similar
-logics - with simpler handling on the caller side.
-]
+On Tue, Oct 08, 2024 at 10:51:39PM GMT, Theodore Ts'o wrote:
+> On Sun, Oct 06, 2024 at 12:33:51AM -0400, Kent Overstreet wrote:
+> > 
+> > Correct me if I'm wrong, but your system isn't available to the
+> > community, and I haven't seen a CI or dashboard for kdevops?
+> 
+> It's up on github for anyone to download, and I've provided pre-built
+> test appliance so people don't have to have downloaded xfstests and
+> all of its dependencies and build it from scratch.  (That's been
+> automated, of course, but the build infrastructure is setup to use a
+> Debian build chroot, and with the precompiled test appliances, you can
+> use my test runner on pretty much any Linux distribution; it will even
+> work on MacOS if you have qemu built from macports, although for now
+> you have to build the kernel on Linux distro using Parallels VM[1].)
 
-Semantics used by statx(2) (and later *xattrat(2)): without AT_EMPTY_PATH
-it's standard getname() (i.e. ERR_PTR(-ENOENT) on empty string,
-ERR_PTR(-EFAULT) on NULL), with AT_EMPTY_PATH both empty string and
-NULL are accepted.
-    
-Calling conventions: getname_maybe_null(user_pointer, flags) returns
-	* pointer to struct filename when non-empty string had been
-successfully read
-	* ERR_PTR(...) on error
-	* NULL if an empty string or NULL pointer had been given
-with AT_EMPTY_FLAGS in the flags argument.
+How many steps are required, start to finish, to test a git branch and
+get the results?
 
-It tries to avoid allocation in the last case; it's not always
-able to do so, in which case the temporary struct filename instance
-is freed and NULL returned anyway.
+Compare that to my setup, where I give you an account, we set up the
+config file that lists tests to run and git branches to test, and then
+results show up in the dashboard.
 
-Fast path is inlined.
+> I'll note that IMHO making testing resources available to the
+> community isn't really the bottleneck.  Using cloud resources,
+> especially if you spin up the VM's only when you need to run the
+> tests, and shut them down once the test is complete, which
+> gce-xfstests does, is actually quite cheap.  At retail prices, running
+> a dozen ext4 file system configurations against xfstests's "auto"
+> group will take about 24 hours of VM time, and including the cost of
+> the block devices, costs just under two dollars USD.  Because the
+> tests are run in parallel, the total wall clock time to run all of the
+> tests is about two and a half hours.  Running the "quick" group on a
+> single file system configuration costs pennies.  So the $300 of free
+> GCE credits will actually get someone pretty far!
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
---- 
-diff --git a/fs/namei.c b/fs/namei.c
-index 4a4a22a08ac2..27eb0a81d9b8 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -211,22 +211,38 @@ getname_flags(const char __user *filename, int flags)
- 	return result;
- }
- 
--struct filename *
--getname_uflags(const char __user *filename, int uflags)
-+struct filename *getname_uflags(const char __user *filename, int uflags)
- {
- 	int flags = (uflags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
- 
- 	return getname_flags(filename, flags);
- }
- 
--struct filename *
--getname(const char __user * filename)
-+struct filename *getname(const char __user * filename)
- {
- 	return getname_flags(filename, 0);
- }
- 
--struct filename *
--getname_kernel(const char * filename)
-+struct filename *__getname_maybe_null(const char __user *pathname)
-+{
-+	struct filename *name;
-+	char c;
-+
-+	/* try to save on allocations; loss on um, though */
-+	if (get_user(c, pathname))
-+		return ERR_PTR(-EFAULT);
-+	if (!c)
-+		return NULL;
-+
-+	name = getname_flags(pathname, LOOKUP_EMPTY);
-+	if (!IS_ERR(name) && !(name->name[0])) {
-+		putname(name);
-+		name = NULL;
-+	}
-+	return name;
-+}
-+
-+struct filename *getname_kernel(const char * filename)
- {
- 	struct filename *result;
- 	int len = strlen(filename) + 1;
-diff --git a/fs/stat.c b/fs/stat.c
-index 41e598376d7e..aa5bfc41a669 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -326,18 +326,11 @@ int vfs_fstatat(int dfd, const char __user *filename,
- {
- 	int ret;
- 	int statx_flags = flags | AT_NO_AUTOMOUNT;
--	struct filename *name;
-+	struct filename *name = getname_maybe_null(filename, flags);
- 
--	/*
--	 * Work around glibc turning fstat() into fstatat(AT_EMPTY_PATH)
--	 *
--	 * If AT_EMPTY_PATH is set, we expect the common case to be that
--	 * empty path, and avoid doing all the extra pathname work.
--	 */
--	if (flags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
-+	if (!name)
- 		return vfs_fstat(dfd, stat);
- 
--	name = getname_flags(filename, getname_statx_lookup_flags(statx_flags));
- 	ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
- 	putname(name);
- 
-@@ -775,7 +768,7 @@ SYSCALL_DEFINE5(statx,
- {
- 	int ret;
- 	unsigned lflags;
--	struct filename *name;
-+	struct filename *name = getname_maybe_null(filename, flags);
- 
- 	/*
- 	 * Short-circuit handling of NULL and "" paths.
-@@ -788,10 +781,9 @@ SYSCALL_DEFINE5(statx,
- 	 * Supporting this results in the uglification below.
- 	 */
- 	lflags = flags & ~(AT_NO_AUTOMOUNT | AT_STATX_SYNC_TYPE);
--	if (lflags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
-+	if (!name)
- 		return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, buffer);
- 
--	name = getname_flags(filename, getname_statx_lookup_flags(flags));
- 	ret = do_statx(dfd, name, flags, mask, buffer);
- 	putname(name);
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e3c603d01337..403258ac2ea2 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2766,6 +2766,16 @@ extern struct filename *getname_flags(const char __user *, int);
- extern struct filename *getname_uflags(const char __user *, int);
- extern struct filename *getname(const char __user *);
- extern struct filename *getname_kernel(const char *);
-+extern struct filename *__getname_maybe_null(const char __user *);
-+static inline struct filename *getname_maybe_null(const char __user *name, int flags)
-+{
-+	if (!(flags & AT_EMPTY_PATH))
-+		return getname(name);
-+
-+	if (!name)
-+		return NULL;
-+	return __getname_maybe_null(name);
-+}
- extern void putname(struct filename *name);
- 
- extern int finish_open(struct file *file, struct dentry *dentry,
+That's the same argument that I've been making - machine resources are
+cheap these days.
+
+And using bare metal machines significantly simplifies the backend
+(watchdogs, catching full kernel and test output, etc.).
+
+> No, the bottleneck is having someone knowledgeable enough to interpret
+> the test results and then finding the root cause of the failures.
+> This is one of the reasons why I haven't stressed all that much about
+> dashboards.  Dashboards are only useful if the right person(s) is
+> looking at them.  That's why I've been much more interested in making
+> it stupidly easy to run tests on someone's local resources, e.g.:
+> 
+>      https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
+
+Yes, it needs to be trivial to run the same test locally that gets run
+by the automated infrastructure, I've got that as well.
+
+But dashboards are important, as well. And the git log based dashboard
+I've got drastically reduces time spent manually bisecting.
+
+> In fact, for most people, the entry point that I envision as being
+> most interesting is that they download the kvm-xfstests, and following
+> the instructions in the quickstart, so they can run "kvm-xfstests
+> smoke" before sending me an ext4 patch.  Running the smoke test only
+> takes 15 minutes using qemu, and it's much more convenient for them to
+> run that on their local machine than to trigger the test on some
+> remote machine, whether it's in the cloud or someone's remote test
+> server.
+> 
+> In any case, that's why I haven't been interesting in working with
+> your test infrastructure; I have my own, and in my opinion, my
+> approach is the better one to make available to the community, and so
+> when I have time to improve it, I'd much rather work on
+> {kvm,gce,android}-xfstests.
+
+Well, my setup also isn't tied to xfstests, and it's fairly trivial to
+wrap all of our other (mm, block) tests.
+
+But like I said before, I don't particularly care which one wins, as
+long as we're pushing forward with something.
 
