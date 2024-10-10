@@ -1,72 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-31609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6689998E2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 19:17:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E42998E2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 19:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964FE1F252DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 17:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2821C24952
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 17:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2D819CD01;
-	Thu, 10 Oct 2024 17:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3B919C57D;
+	Thu, 10 Oct 2024 17:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uq9z9CSu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD9C199FBB;
-	Thu, 10 Oct 2024 17:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFB4199FBB;
+	Thu, 10 Oct 2024 17:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728580621; cv=none; b=D5IrMZJ3CZDesLiFueZWmqo5r7i9pPNxXkeg93EFK9moYHdkaq/dQoS7lsFELIS93nd8O8Ieqh/fIR8gznZXjY8g4tq0biTI43JUdxXk7yypsq6VRZCbO7oyq0vZz/TUOy5IEvNsUMxjJMAXUtSv15nycfVYMr0fLQV36OYsBzE=
+	t=1728580633; cv=none; b=tZEJ/qoFeKNRJuKOnWKilViK7R065qV9BeWZ9m63J0M0Y4ibkoKRnR4gfaAXaoPjMIpAMuVx/jwr620/VQeJRAHrWyQ8M94IjK5mIkHcx2NnxpPMmfaks6g9ddYC98xXNrG1I3Hs21uUaKHRmRmUeowpxbc+EW7n/CSFy5zD0kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728580621; c=relaxed/simple;
-	bh=X46B2QK1MPZh8d3qZPYljUKiES7FvVColdxPmLupi7M=;
+	s=arc-20240116; t=1728580633; c=relaxed/simple;
+	bh=Mqrc/RqiIfUlt4QRnh3oGXGClJEOCxUluibn5jNLHp4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bm7MWdAEJNUe+uF0L/HNMqLwcqyUFWrwmOV1s6DVQ/Cx3bzfoPNPGxQcIfNm1zqL44utlIxnE+oTsy9U6w/ZF8jShX9qa3SzgPLMSSWCu/X0qij3eCazdjjoak/JqI8oFOy7bmBXbbxIpkeXCzKjkKyrIErGJOPOXR+bVbTAvLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBCEAC4CEC5;
-	Thu, 10 Oct 2024 17:16:54 +0000 (UTC)
-Date: Thu, 10 Oct 2024 18:16:52 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	David Spickett <david.spickett@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v13 11/40] arm64/gcs: Provide basic EL2 setup to allow
- GCS usage at EL0 and EL1
-Message-ID: <ZwgMBAhR5-5R5EYC@arm.com>
-References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
- <20241001-arm64-gcs-v13-11-222b78d87eee@kernel.org>
- <20241009204903.GA3353168@thelio-3990X>
- <86msjc56mi.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=llsXLRerTZaOsQXQXLpuyuaif2cqYtwdI4ypQ8Kau6m2OAxZimz1AejOW/rCC/nuq9wyBjsecDkQxRwE3KSOd0eUHuyCzf/DYPaA5bIdeJVs4FoNbeRULhPFGFknveDuf2HxzjfxSTctZt8Xhnt0paq+ZhRCJ8PuZ6V7uHP7xeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uq9z9CSu; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=h+cK7z+ivNy4JuWC9N2vR4jluhoKiT/Fza/vwiCjng0=; b=uq9z9CSuJmsRKpWpng0qwP425B
+	FD6x/0EHivi9oJwc/EpdVTrNfiytb1VGlEL0rX6F54C9aLtQUp9EkgkcXAPbc0buWGAR4W8tm9Q8K
+	sf2P5qx+bOdYJhWd5kqmvAHf9zWfXbeeXyfX7nC0ly3eMIUlP3mtG5FhvTATPlDCFk+dgHaC+2wgU
+	ITbdomD1muBEv3cC/bsvShfnEjGXOjbKfBh8YQt5Wq3kLJ4Eau2RXZCD2bU54BXWXrJ0GVs1AqtgL
+	FJfu1K0xq7XHkI1k6UBjSjFpeV2i9k20FE3Bnkxup/p9ouUeB8PW2/1PzAT2+ELCojFuDikedUru8
+	dFTSJqHQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sywmh-00000002UvW-1oco;
+	Thu, 10 Oct 2024 17:17:07 +0000
+Date: Thu, 10 Oct 2024 18:17:07 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Ye Bin <yebin@huaweicloud.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yebin10@huawei.com,
+	zhangxiaoxu5@huawei.com
+Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
+ filesystem
+Message-ID: <20241010171707.GB4017910@ZenIV>
+References: <20241010112543.1609648-1-yebin@huaweicloud.com>
+ <20241010112543.1609648-3-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,32 +63,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86msjc56mi.wl-maz@kernel.org>
+In-Reply-To: <20241010112543.1609648-3-yebin@huaweicloud.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Oct 10, 2024 at 04:18:13PM +0100, Marc Zyngier wrote:
-> From 20c98d2647c11db1e40768f92c5998ff5d764a3a Mon Sep 17 00:00:00 2001
-> From: Marc Zyngier <maz@kernel.org>
-> Date: Thu, 10 Oct 2024 16:13:26 +0100
-> Subject: [PATCH] KVM: arm64: Shave a few bytes from the EL2 idmap code
-> 
-> Our idmap is becoming too big, to the point where it doesn't fit in
-> a 4kB page anymore.
-> 
-> There are some low-hanging fruits though, such as the el2_init_state
-> horror that is expanded 3 times in the kernel. Let's at least limit
-> ourselves to two copies, which makes the kernel link again.
-> 
-> At some point, we'll have to have a better way of doing this.
-> 
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Link: https://lore.kernel.org/r/20241009204903.GA3353168@thelio-3990X
+On Thu, Oct 10, 2024 at 07:25:42PM +0800, Ye Bin wrote:
 
-Thanks Marc for the quick fix. It looks fine to me, it will keep the
-linker quiet for a while. I pushed it to arm64 for-kernelci for the time
-being, see if anything falls apart. I'll apply it properly once it gets
-a bit more testing.
+> +	if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
+> +		return -EINVAL;
+> +
+> +	if (ctl < *((int *)table->extra1) || ctl > *((int *)table->extra2))
+> +		return -EINVAL;
+> +
+> +	sb = user_get_super(MKDEV(major, minor), false);
+> +	if (!sb)
+> +		return -EINVAL;
 
--- 
-Catalin
+Odd user interface aside, you do realize that you've just grabbed ->s_umount
+from inside a ->write() instance?  Considering how much can be grabbed
+under ->s_umount... Ow.
+
+IOW, I very much doubt that doing that kind of stuff from sysctl is a good
+idea - if nothing else, we'll end up with syzbot screaming its head off
+about many and varied potential deadlocks, as soon as it discovers that one.
+And I wouldn't swear that all of those would be false positives.
 
