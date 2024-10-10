@@ -1,110 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-31524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96D3998202
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 11:22:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E91998216
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 11:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F1A01C24C55
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 09:22:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5371F250B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 09:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2391BE241;
-	Thu, 10 Oct 2024 09:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F7A1A072A;
+	Thu, 10 Oct 2024 09:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fu5s6DNf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600821BDA91;
-	Thu, 10 Oct 2024 09:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE761922DD;
+	Thu, 10 Oct 2024 09:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552019; cv=none; b=SURgbf9NzgiF8ebRdsW5FTeqU4cdH76l3JOYsqVBjAyTwbc4asEegBqswP/3UFdy8vYsDKzsn/XLf9P3MPmoJq8G4Dbmhf3Cb7641rRX6kIYGAaK/xiAkqffM8W6/D1a5zBi8Qj3py2Y+qoflEFcAEi/Vf2LcUeuVIjKj29Y+Qs=
+	t=1728552368; cv=none; b=jHuBdd3dXlGxVejIiJ3dsI3ghpWPS0y8GFtHPzWJag1zSjU16YadXZ+hfJd5w8kEvF3eLYrNIj/LEzUD1Q/4u4ZFiZ0UVnzjMLfj8h6diwpW/+fherh71hb+rFl5g41Q9rj2CkQlTPZOAijvZHieB54RhTI1DD5vQLbdSQdP7eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552019; c=relaxed/simple;
-	bh=bTnovMZgsgVOSlQlxmcq3a9nkqLgejdN9piq3zqLQ9Y=;
+	s=arc-20240116; t=1728552368; c=relaxed/simple;
+	bh=MUNnJAfZBwiGRUv3CoIf4POyn7nVfA36YbnFb7U/+4A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jqYcREFbu+eaUVlCguQ/FWNN1MAa3Lx8jrecIVZoQ8yj05z/oDYIvwhkMdx5f0Cip+ipgHYeTn+VJvL9/F7l71PxP/PGh/cMaLUJZNfvOqwTrL9TZFPXfEJRDfC+oJNRgJQ73vlAqFRke7E8fM0m+xdIYm7DGHE26auZIa1s468=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 14AAD227A8E; Thu, 10 Oct 2024 11:20:11 +0200 (CEST)
-Date: Thu, 10 Oct 2024 11:20:10 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Javier Gonzalez <javier.gonz@samsung.com>
-Cc: Hans Holmberg <hans@owltronix.com>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Kanchan Joshi <joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>,
-	"sagi@grimberg.me" <sagi@grimberg.me>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-	"bcrl@kvack.org" <bcrl@kvack.org>,
-	"dhowells@redhat.com" <dhowells@redhat.com>,
-	"bvanassche@acm.org" <bvanassche@acm.org>,
-	"asml.silence@gmail.com" <asml.silence@gmail.com>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-aio@kvack.org" <linux-aio@kvack.org>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>,
-	"vishak.g@samsung.com" <vishak.g@samsung.com>
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241010092010.GC9287@lst.de>
-References: <20241004053121.GB14265@lst.de> <20241004061811.hxhzj4n2juqaws7d@ArmHalley.local> <20241004062733.GB14876@lst.de> <20241004065233.oc5gqcq3lyaxzjhz@ArmHalley.local> <20241004123027.GA19168@lst.de> <20241007101011.boufh3tipewgvuao@ArmHalley.local> <CANr-nt3TA75MSvTNWP3SwBh60dBwJYztHJL5LZvROa-j9Lov7g@mail.gmail.com> <97bd78a896b748b18e21e14511e8e0f4@CAMSVWEXC02.scsc.local> <CANr-nt11OJfLRFr=rzH0LyRUzVD9ZFLKsgree=Xqv__nWerVkg@mail.gmail.com> <20241010071327.rnh2wsuqdvcu2tx4@ArmHalley.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdXtUr+9i/EkVIuNbxLO5n5S92xxPXm8zo+5do9dKTgnHHnnDiemzh8M3aJnTz0nzAz/OgSAiefim0p+hMQsgIhHktUxzbLHEhVTi4ZEuP76GXMlH773L5CcvGadeSmedf47nnk8L2TS3bJ8E3zcPvn8DR4cY1sMrEnzxPl49bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fu5s6DNf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD39DC4CEC5;
+	Thu, 10 Oct 2024 09:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728552368;
+	bh=MUNnJAfZBwiGRUv3CoIf4POyn7nVfA36YbnFb7U/+4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fu5s6DNf+1ARrhLwLE/vGfJoYMJjs1sM3qq/UNwrvFkVIeIrvyYTEbLzDjCLl4uGm
+	 uFptnniGCFFZuYT5JMqB/nmgOCpqNwbXFtmLTrEvQmKoIjieZuqWTAHJPch2pODdFE
+	 Lvd5xB74Y4eFe1eHpiUBif5iGCGmOJL2DP60QEAOXRZy1TQll5DZ6XSeABb5/EK16o
+	 gplsihkjLuTSldp6xWy/bAARRZnoqA4TdfQWNHiJcrlzlkA2UT7IaGit5o6wKabZKx
+	 nOM+etq+FDjaptgPVcab46mrm5kGqSf/z+LeuQtR99qiq0YBiPgwo3Crnhyo4jXAaz
+	 f4F4g2cn08UYg==
+Date: Thu, 10 Oct 2024 11:26:04 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241010-nahtlos-erproben-27bf691dcc06@brauner>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+ <87msjd9j7n.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241010071327.rnh2wsuqdvcu2tx4@ArmHalley.local>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <87msjd9j7n.fsf@trenco.lwn.net>
 
-On Thu, Oct 10, 2024 at 09:13:27AM +0200, Javier Gonzalez wrote:
-> Is this because RocksDB already does seggregation per file itself? Are
-> you doing something specific on XFS or using your knoledge on RocksDB to
-> map files with an "unwritten" protocol in the midde?
+> > +	/*
+> > +	 * If userspace and the kernel have the same struct size it can just
+> > +	 * be copied. If userspace provides an older struct, only the bits that
+> > +	 * userspace knows about will be copied. If userspace provides a new
+> > +	 * struct, only the bits that the kernel knows about will be copied and
+> > +	 * the size value will be set to the size the kernel knows about.
+> > +	 */
+> > +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
+> > +		return -EFAULT;
+> 
+> Which "size value" are you referring to here; I can't see it.
 
-XFS doesn't really do anything smart at all except for grouping files
-with similar temperatures, but Hans can probably explain it in more
-detail.  So yes, this relies on the application doing the data separation
-and using the most logical vehicle for it: files.
-
->
->    In this context, we have collected data both using FDP natively in
->    RocksDB and using the temperatures. Both look very good, because both
->    are initiated by RocksDB, and the FS just passes the hints directly
->    to the driver.
->
-> I ask this to understand if this is the FS responsibility or the
-> application's one. Our work points more to letting applications use the
-> hints (as the use-cases are power users, like RocksDB). I agree with you
-> that a FS could potentially make an improvement for legacy applications
-> - we have not focused much on these though, so I trust you insights on
-> it.
-
-As mentioned multiple times before in this thread this absolutely
-depends on the abstraction level of the application.  If the application
-works on a raw device without a file system it obviously needs very
-low-level control.  And in my opinion passthrough is by far the best
-interface for that level of control.  If the application is using a
-file system there is no better basic level abstraction than a file,
-which can then be enhanced with relatively small amount of additional
-information going both ways: the file system telling the application
-what good file sizes and write patterns are, and the application telling
-the file system what files are good candidates to merge into the same
-write stream if the file system has to merge multiple actively written
-to files into a write stream.  Trying to do low-level per I/O hints
-on top of a file system is a recipe for trouble because you now have
-to entities fighting over placement control.
-
+Luca did just copy my comment from another interface which has a
+separate size parameter. This should indeed be fixed.
 
