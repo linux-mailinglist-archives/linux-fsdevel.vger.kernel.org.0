@@ -1,302 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-31580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614D09988FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:14:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC42998972
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D78261F21C93
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:14:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D6EEB2FA72
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7D31CDFD1;
-	Thu, 10 Oct 2024 14:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEC81E908F;
+	Thu, 10 Oct 2024 14:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Osxswuo8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B770C1CCECB;
-	Thu, 10 Oct 2024 14:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121271E9079;
+	Thu, 10 Oct 2024 14:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569512; cv=none; b=KcwPaI5FeIeKK1Fo+j/oyNxMBy4tY/2q4kQ4Ix3nChWMIx5SQmn2t+39/mchff91DV7fcAwQlJaAL/VsbpAVb3jLJ2ZQiLCpVlR6Ta2meOrZ8xKacpntfO48QJhJHpky5iY4NXdbxlElz18F9sQveiyyTLvNGbv358KYd0X+b7k=
+	t=1728569546; cv=none; b=D8J+87kSRC8ln5zsJFZeCbcpX1jJ8Y0peySxzdNR3ntWiicgSwXKSV4zTyQhMUFmApiEj0mha67juW/637dgLAz27nu+oBZQ8GuiiiDBdXjQy8Bv5Hhwv6gpMd6BqjbQESsQdji9YU16NHn7tc4f0jgAMSEEzFZKHrMru04mXBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569512; c=relaxed/simple;
-	bh=qjQUM9Pu/xL1uv+5ViWjTEXFrOxn79eIJadQW9kS6+Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sLa2DaTfBN6noUylcDLlZmFkOdjIZ+MkBojN/49wudXQR0LkpLZBlvfki7nmg7RkFGkadiHir3pb3W39/DqBOwrlZW3pUorEC3ol5PujpiqHXtqPXjPLddJqexVJXiB5OYw1NBVfevmPtcYejo3qjfa35Fn/CB08GUfq2Mf9n40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPWpV3pGKzfdB3;
-	Thu, 10 Oct 2024 22:09:22 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id C5727180105;
-	Thu, 10 Oct 2024 22:11:46 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
- (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Oct
- 2024 22:11:43 +0800
-From: Kaixiong Yu <yukaixiong@huawei.com>
-To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
-CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
-	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
-	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
-	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
-	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
-	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
-	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
-	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
-Subject: [PATCH v3 -next 05/15] mm: util: move sysctls to mm/util.c
-Date: Thu, 10 Oct 2024 23:22:05 +0800
-Message-ID: <20241010152215.3025842-6-yukaixiong@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241010152215.3025842-1-yukaixiong@huawei.com>
-References: <20241010152215.3025842-1-yukaixiong@huawei.com>
+	s=arc-20240116; t=1728569546; c=relaxed/simple;
+	bh=9lqWCc5e28CxhVVerGSiAMS304N/AvgObvIwqRd0J+c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TmaHsJGskifJh0isPrTXWjcm4TATeyHF0o4nnFonuKtVGnqN49J4pgL6UzmOdCj8s0WmajdmAs5kKgnFQuMXgMNouwa/ikjhYtWGqojN1LMlnw+xpuSFfhgqhEgIimif6YwJ7h0kJbKHs707clya2KxmyHp6xLCg43II2VELKW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Osxswuo8; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fabd2c4ac0so10638201fa.1;
+        Thu, 10 Oct 2024 07:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728569543; x=1729174343; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FO4nLGdOo+Js2COy6eiR9EScXh41Li3PpsXBgGEPkgI=;
+        b=Osxswuo8qK6q3kAHiMAd+eiC8O41VS2gW/L+Jjr/6NGTAAL6rWxfgdRQ8pTzRTdbA8
+         bIOFZF03GRthzfkR/nPD+qx7zgOAgG4/lFp+k5yO5/WP7oRTHwQEs9RBFKVU6nBXLuEQ
+         UCpaCOdaC9Ii+cLEvTJ/JCjv3hupzfVpe7tMQ9qcuFXUzIyyy9xf6LfgFOC8jC67wzmw
+         CBId4WPifvtbq3OmjlzDAUBtOJByRPlkZBd3yjbgSpQmm1GCRGtUS2jIQnzGj5CL+6f2
+         6FtDG/RS4WzZVVBbH+/VMW68woY/Z0+TXEpTgeDP0yBadneSL8rIOkqbQXOFd+ZkwyQc
+         lLgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728569543; x=1729174343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FO4nLGdOo+Js2COy6eiR9EScXh41Li3PpsXBgGEPkgI=;
+        b=etzKQXbDUj1B7ajYZFmlQLarlUKhmT2AeH++AWHSC7cITsI01MEbQqhsfJzARDvfNT
+         XhU5itEQfE+2H9xktL0ttp1mvifPQPtQSMR8xdIH/s641LJXL5gE8onr4fuOY6Bny5uU
+         tcKKu2FpJKUOu+tgmRk+65fGhPEvfxdqRFXTyzbWdgQIDLogV4Fcn9IPzDqlIeBKMD9R
+         aZZvpOR2UP+jVufW7f4ENke8ofE7ERfdJ0R3Xnh1L7OIAkpIBQnZ02rvfvnBlk77y/6S
+         huFkdF4yRCQsdjDZTW0GDioqTDLGmOShn0kSBOBxZHRvABcZPJkY9o3TglpKszHzF8UV
+         J8Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUp2qOHt9NB2r3ZCgbRdAwOY76mtrDWDQwaVr0JdPwulwekpcSl8HY2tRoVVnTWg0dVUlQxioTmQ3Yok5Rrow==@vger.kernel.org, AJvYcCX9FEHdG7W+DMf3t5N0BbB8Fi/kKQ+aa3G9Nn3pget1nZR3QUyl/Gq+X7fjDA2XEax9aC/1SOkLtQ0=@vger.kernel.org, AJvYcCXVb3XliIX+gVduEkMwBDn1pLBLXs26Jsj6ikTrXga8woAThdYBhghcJVnkpa+JZGaKd6jk9iPAAjWYzOlR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm+bEdkHEO5hpk7LxVC0mvqbDmKMCDKiwuo4rwhylS+CQbBZj3
+	cYPZF5g6eRSl+1H6wYl0DyZG1TispY7qbMyfPgibNrq2bpWrzLBrjj5RkEZ6c3iYvnIwNjnTzRO
+	xMt0mCzbhu+JKHTTmYoAfIb5b3iE=
+X-Google-Smtp-Source: AGHT+IGINqsR0Zo1g9Z44wlDBu6XRxQkz0Oey8C8eYChSH4HUW8yOyh6s5LeCyzpGfOw2s+KW7kXwYon786TbMuNtI8=
+X-Received: by 2002:a2e:742:0:b0:2fb:cc0:2a05 with SMTP id 38308e7fff4ca-2fb187f803emr33690801fa.37.1728569542878;
+ Thu, 10 Oct 2024 07:12:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+References: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
+ <20241009205237.48881-2-tamird@gmail.com> <b4a4668d-1280-446e-b1a9-a01fd073fd8f@infradead.org>
+In-Reply-To: <b4a4668d-1280-446e-b1a9-a01fd073fd8f@infradead.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 10 Oct 2024 10:11:46 -0400
+Message-ID: <CAJ-ks9khQo8o_7qUj_wMS+_LRpmhy7OQ62nhWZBwam59wid5hQ@mail.gmail.com>
+Subject: Re: [PATCH v2] XArray: minor documentation improvements
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This moves all util related sysctls to mm/util.c, as part of the
-kernel/sysctl.c cleaning, also removes redundant external
-variable declarations and function declarations.
+On Wed, Oct 9, 2024 at 6:22=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org>=
+ wrote:
+>
+> Is storing %NULL does by making a function call or just by doing
+>         *xa1 =3D NULL;
+>
+> ?
 
-Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
----
-v3:
- - change the title
----
- include/linux/mm.h   | 11 --------
- include/linux/mman.h |  2 --
- kernel/sysctl.c      | 37 ------------------------
- mm/util.c            | 67 ++++++++++++++++++++++++++++++++++++++------
- 4 files changed, 59 insertions(+), 58 deletions(-)
+No, you cannot interact with XArray this way.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 7c46de4290da..50f0069280f4 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -204,17 +204,6 @@ extern int sysctl_max_map_count;
- extern unsigned long sysctl_user_reserve_kbytes;
- extern unsigned long sysctl_admin_reserve_kbytes;
- 
--extern int sysctl_overcommit_memory;
--extern int sysctl_overcommit_ratio;
--extern unsigned long sysctl_overcommit_kbytes;
--
--int overcommit_ratio_handler(const struct ctl_table *, int, void *, size_t *,
--		loff_t *);
--int overcommit_kbytes_handler(const struct ctl_table *, int, void *, size_t *,
--		loff_t *);
--int overcommit_policy_handler(const struct ctl_table *, int, void *, size_t *,
--		loff_t *);
--
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
- #define folio_page_idx(folio, p)	(page_to_pfn(p) - folio_pfn(folio))
-diff --git a/include/linux/mman.h b/include/linux/mman.h
-index bcb201ab7a41..e62ef272d140 100644
---- a/include/linux/mman.h
-+++ b/include/linux/mman.h
-@@ -58,8 +58,6 @@
- 		| MAP_HUGE_1GB)
- 
- extern int sysctl_overcommit_memory;
--extern int sysctl_overcommit_ratio;
--extern unsigned long sysctl_overcommit_kbytes;
- extern struct percpu_counter vm_committed_as;
- 
- #ifdef CONFIG_SMP
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 184d39944e16..ad3ac6f6c808 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2030,29 +2030,6 @@ static struct ctl_table kern_table[] = {
- };
- 
- static struct ctl_table vm_table[] = {
--	{
--		.procname	= "overcommit_memory",
--		.data		= &sysctl_overcommit_memory,
--		.maxlen		= sizeof(sysctl_overcommit_memory),
--		.mode		= 0644,
--		.proc_handler	= overcommit_policy_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_TWO,
--	},
--	{
--		.procname	= "overcommit_ratio",
--		.data		= &sysctl_overcommit_ratio,
--		.maxlen		= sizeof(sysctl_overcommit_ratio),
--		.mode		= 0644,
--		.proc_handler	= overcommit_ratio_handler,
--	},
--	{
--		.procname	= "overcommit_kbytes",
--		.data		= &sysctl_overcommit_kbytes,
--		.maxlen		= sizeof(sysctl_overcommit_kbytes),
--		.mode		= 0644,
--		.proc_handler	= overcommit_kbytes_handler,
--	},
- 	{
- 		.procname	= "dirtytime_expire_seconds",
- 		.data		= &dirtytime_expire_interval,
-@@ -2133,20 +2110,6 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 	},
- #endif
--	{
--		.procname	= "user_reserve_kbytes",
--		.data		= &sysctl_user_reserve_kbytes,
--		.maxlen		= sizeof(sysctl_user_reserve_kbytes),
--		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
--	},
--	{
--		.procname	= "admin_reserve_kbytes",
--		.data		= &sysctl_admin_reserve_kbytes,
--		.maxlen		= sizeof(sysctl_admin_reserve_kbytes),
--		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
--	},
- #ifdef CONFIG_HAVE_ARCH_MMAP_RND_BITS
- 	{
- 		.procname	= "mmap_rnd_bits",
-diff --git a/mm/util.c b/mm/util.c
-index c1c3b06ab4f9..d0c5f5110aa1 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -12,6 +12,7 @@
- #include <linux/security.h>
- #include <linux/swap.h>
- #include <linux/swapops.h>
-+#include <linux/sysctl.h>
- #include <linux/mman.h>
- #include <linux/hugetlb.h>
- #include <linux/vmalloc.h>
-@@ -894,14 +895,16 @@ int folio_mc_copy(struct folio *dst, struct folio *src)
- EXPORT_SYMBOL(folio_mc_copy);
- 
- int sysctl_overcommit_memory __read_mostly = OVERCOMMIT_GUESS;
--int sysctl_overcommit_ratio __read_mostly = 50;
--unsigned long sysctl_overcommit_kbytes __read_mostly;
-+static int sysctl_overcommit_ratio __read_mostly = 50;
-+static unsigned long sysctl_overcommit_kbytes __read_mostly;
- int sysctl_max_map_count __read_mostly = DEFAULT_MAX_MAP_COUNT;
- unsigned long sysctl_user_reserve_kbytes __read_mostly = 1UL << 17; /* 128MB */
- unsigned long sysctl_admin_reserve_kbytes __read_mostly = 1UL << 13; /* 8MB */
- 
--int overcommit_ratio_handler(const struct ctl_table *table, int write, void *buffer,
--		size_t *lenp, loff_t *ppos)
-+#ifdef CONFIG_SYSCTL
-+
-+static int overcommit_ratio_handler(const struct ctl_table *table, int write,
-+				void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret;
- 
-@@ -916,8 +919,8 @@ static void sync_overcommit_as(struct work_struct *dummy)
- 	percpu_counter_sync(&vm_committed_as);
- }
- 
--int overcommit_policy_handler(const struct ctl_table *table, int write, void *buffer,
--		size_t *lenp, loff_t *ppos)
-+static int overcommit_policy_handler(const struct ctl_table *table, int write,
-+				void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	struct ctl_table t;
- 	int new_policy = -1;
-@@ -952,8 +955,8 @@ int overcommit_policy_handler(const struct ctl_table *table, int write, void *bu
- 	return ret;
- }
- 
--int overcommit_kbytes_handler(const struct ctl_table *table, int write, void *buffer,
--		size_t *lenp, loff_t *ppos)
-+static int overcommit_kbytes_handler(const struct ctl_table *table, int write,
-+				void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret;
- 
-@@ -963,6 +966,54 @@ int overcommit_kbytes_handler(const struct ctl_table *table, int write, void *bu
- 	return ret;
- }
- 
-+static struct ctl_table util_sysctl_table[] = {
-+	{
-+		.procname	= "overcommit_memory",
-+		.data		= &sysctl_overcommit_memory,
-+		.maxlen		= sizeof(sysctl_overcommit_memory),
-+		.mode		= 0644,
-+		.proc_handler	= overcommit_policy_handler,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_TWO,
-+	},
-+	{
-+		.procname	= "overcommit_ratio",
-+		.data		= &sysctl_overcommit_ratio,
-+		.maxlen		= sizeof(sysctl_overcommit_ratio),
-+		.mode		= 0644,
-+		.proc_handler	= overcommit_ratio_handler,
-+	},
-+	{
-+		.procname	= "overcommit_kbytes",
-+		.data		= &sysctl_overcommit_kbytes,
-+		.maxlen		= sizeof(sysctl_overcommit_kbytes),
-+		.mode		= 0644,
-+		.proc_handler	= overcommit_kbytes_handler,
-+	},
-+	{
-+		.procname	= "user_reserve_kbytes",
-+		.data		= &sysctl_user_reserve_kbytes,
-+		.maxlen		= sizeof(sysctl_user_reserve_kbytes),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+	{
-+		.procname	= "admin_reserve_kbytes",
-+		.data		= &sysctl_admin_reserve_kbytes,
-+		.maxlen		= sizeof(sysctl_admin_reserve_kbytes),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+};
-+
-+static int __init init_vm_util_sysctls(void)
-+{
-+	register_sysctl_init("vm", util_sysctl_table);
-+	return 0;
-+}
-+subsys_initcall(init_vm_util_sysctls);
-+#endif /* CONFIG_SYSCTL */
-+
- /*
-  * Committed memory limit enforced when OVERCOMMIT_NEVER policy is used
-  */
--- 
-2.34.1
+> > -into any entry will cause the XArray to forget about the range.
+> > +entries can be explicitly split into smaller entries. Erasing any entr=
+y
+> > +will cause the XArray to forget about the range.
+>
+> Clearing any entry by calling xa_erase() will cause the XArray to forget =
+about the range.
 
+Will send v3 in a moment with new phrasing.
 
