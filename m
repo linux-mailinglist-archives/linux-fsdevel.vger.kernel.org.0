@@ -1,43 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-31575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1E69988E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:11:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B54D9988EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D0E1F26339
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:11:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90F328743E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6071CB522;
-	Thu, 10 Oct 2024 14:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD8E1CC8A1;
+	Thu, 10 Oct 2024 14:11:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033991C9B67;
-	Thu, 10 Oct 2024 14:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D89B1CBEBF;
+	Thu, 10 Oct 2024 14:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569497; cv=none; b=JR2JT3Cy3NlN4fdNljAFionF73GQvySFBr9qXU2zZ9vyo7o/YCRSsvE7KH/AVf8i7onP99wsMp2iLriGeSxM9gk89gdx2xdZoymIrXSTtwvbqx7dO4elBZ3GE9K0aH4AcyMQ/FBuZTg6x5OmeO8GxGGDNGnuxG5csWiJBCCtako=
+	t=1728569502; cv=none; b=s8UpuN+TMMMud0URNHO1sUBdWa3osj1WBxjK85jBCet4XQkV4cixyfDYkXBbwF8IaRjauj/x2iI9o4kg7X+03VFj7YPSDLxEUdK32279cx13ai6gqRc4GsxOOR7FDpRmz+2SB2jzKDjyrSTtdEsoACXAVQLoaVAMhHqx/20XwTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569497; c=relaxed/simple;
-	bh=oi/D2Kzewes91CYXc/5PW2MKqcYFHBamyFrcq+mAGco=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LLknmbpW3Dyi+UZ41h3DV9b18L6HdpVYrgqDPAotlpTVfSbV78bPOmSpbM9rj7+/JhkixJM+JJVoIjruOaA8Fx2v4rken+DcINZw7l1uoruck5Z4HCJwpgYvwwq6Eud+2P3ByTUFPpp9tru9Uykaj/fjezNmtKwZ9QeFeotRfUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	s=arc-20240116; t=1728569502; c=relaxed/simple;
+	bh=K2adqvDY5CZRV7PE0cqCef+Mvn75gmUOMma6le7iDCw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XT+xPyvFx/pjOPMUFMdrpL1gBRayjhQEtJVcbz08RpZzpIruZ2sURgepz4rA8CXTmeECBnk8YpT0i+lSbDtEQZn9AtaUo2VWLUUP7gh2MFEqvs3w2F/xrkmwGiemqGVDLOpZriL4lVhrZ9bWQURFFWdS9by2UmqIaAzWZkHr4ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPWpx4sxVz10N5x;
-	Thu, 10 Oct 2024 22:09:45 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XPWrM1ZmgzCsrx;
+	Thu, 10 Oct 2024 22:10:59 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id BCD6D1402CA;
-	Thu, 10 Oct 2024 22:11:30 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 2FB1E180105;
+	Thu, 10 Oct 2024 22:11:37 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Oct
- 2024 22:11:27 +0800
+ 2024 22:11:33 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -62,88 +63,119 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
-Subject: [PATCH v3 -next 00/15] sysctl: move sysctls from vm_table into its own files
-Date: Thu, 10 Oct 2024 23:22:00 +0800
-Message-ID: <20241010152215.3025842-1-yukaixiong@huawei.com>
+Subject: [PATCH v3 -next 02/15] mm: filemap: move sysctl to mm/filemap.c
+Date: Thu, 10 Oct 2024 23:22:02 +0800
+Message-ID: <20241010152215.3025842-3-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241010152215.3025842-1-yukaixiong@huawei.com>
+References: <20241010152215.3025842-1-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-This patch series moves sysctls of vm_table in kernel/sysctl.c to
-places where they actually belong, and do some related code clean-ups.
-After this patch series, all sysctls in vm_table have been moved into its
-own files, meanwhile, delete vm_table.
+This moves the filemap related sysctl to mm/filemap.c, and
+removes the redundant external variable declaration.
 
-All the modifications of this patch series base on
-linux-next(tags/next-20241010). To test this patch series, the code was
-compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
-x86_64 architectures. After this patch series is applied, all files
-under /proc/sys/vm can be read or written normally.
+Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+Reviewed-by: Kees Cook <kees@kernel.org>
+---
+v3:
+ - change the title
+---
+ include/linux/mm.h |  2 --
+ kernel/sysctl.c    |  8 --------
+ mm/filemap.c       | 18 +++++++++++++++---
+ 3 files changed, 15 insertions(+), 13 deletions(-)
 
-Changes in v3:
- - change patch1~10, patch14 title suggested by Joel Granados
- - change sysctl_stat_interval to static type in patch1
- - add acked-by from Paul Moore in patch7
- - change dirtytime_expire_interval to static type in patch9
- - add acked-by from Anna Schumaker in patch11
-
-Changes in v2:
- - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
- - update changelog for patch7/12, suggested by Kees/Paul
- - fix patch8, sorry for wrong changes and forget to built with NOMMU
- - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
- - add reviewed-by from Jan Kara, Christian Brauner in patch12
-
-Kaixiong Yu (15):
-  mm: vmstat: move sysctls to mm/vmstat.c
-  mm: filemap: move sysctl to mm/filemap.c
-  mm: swap: move sysctl to mm/swap.c
-  mm: vmscan: move vmscan sysctls to mm/vmscan.c
-  mm: util: move sysctls to mm/util.c
-  mm: mmap: move sysctl to mm/mmap.c
-  security: min_addr: move sysctl to security/min_addr.c
-  mm: nommu: move sysctl to mm/nommu.c
-  fs: fs-writeback: move sysctl to fs/fs-writeback.c
-  fs: drop_caches: move sysctl to fs/drop_caches.c
-  sunrpc: use vfs_pressure_ratio() helper
-  fs: dcache: move the sysctl to fs/dcache.c
-  x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
-  sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
-  sysctl: remove unneeded include
-
- arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
- arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
- fs/dcache.c                        |  21 ++-
- fs/drop_caches.c                   |  23 ++-
- fs/fs-writeback.c                  |  30 ++--
- include/linux/dcache.h             |   7 +-
- include/linux/mm.h                 |  23 ---
- include/linux/mman.h               |   2 -
- include/linux/swap.h               |   9 --
- include/linux/vmstat.h             |  11 --
- include/linux/writeback.h          |   4 -
- kernel/sysctl.c                    | 221 -----------------------------
- mm/filemap.c                       |  18 ++-
- mm/internal.h                      |  10 ++
- mm/mmap.c                          |  54 +++++++
- mm/nommu.c                         |  15 +-
- mm/swap.c                          |  16 ++-
- mm/swap.h                          |   1 +
- mm/util.c                          |  67 +++++++--
- mm/vmscan.c                        |  23 +++
- mm/vmstat.c                        |  44 +++++-
- net/sunrpc/auth.c                  |   2 +-
- security/min_addr.c                |  11 ++
- 23 files changed, 330 insertions(+), 312 deletions(-)
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index df0a5eac66b7..a3c3a7d64407 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -39,8 +39,6 @@ struct user_struct;
+ struct pt_regs;
+ struct folio_batch;
+ 
+-extern int sysctl_page_lock_unfairness;
+-
+ void mm_core_init(void);
+ void init_mm_internals(void);
+ 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 726b866af57b..2a875b739054 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2089,14 +2089,6 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ONE,
+ 		.extra2		= SYSCTL_FOUR,
+ 	},
+-	{
+-		.procname	= "page_lock_unfairness",
+-		.data		= &sysctl_page_lock_unfairness,
+-		.maxlen		= sizeof(sysctl_page_lock_unfairness),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-	},
+ #ifdef CONFIG_MMU
+ 	{
+ 		.procname	= "max_map_count",
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 429895f1a564..0d4adf8068ca 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -47,6 +47,7 @@
+ #include <linux/splice.h>
+ #include <linux/rcupdate_wait.h>
+ #include <linux/sched/mm.h>
++#include <linux/sysctl.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlbflush.h>
+ #include "internal.h"
+@@ -1069,6 +1070,19 @@ static wait_queue_head_t *folio_waitqueue(struct folio *folio)
+ 	return &folio_wait_table[hash_ptr(folio, PAGE_WAIT_TABLE_BITS)];
+ }
+ 
++/* How many times do we accept lock stealing from under a waiter? */
++static int sysctl_page_lock_unfairness = 5;
++static struct ctl_table filemap_sysctl_table[] = {
++	{
++		.procname	= "page_lock_unfairness",
++		.data		= &sysctl_page_lock_unfairness,
++		.maxlen		= sizeof(sysctl_page_lock_unfairness),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++	}
++};
++
+ void __init pagecache_init(void)
+ {
+ 	int i;
+@@ -1077,6 +1091,7 @@ void __init pagecache_init(void)
+ 		init_waitqueue_head(&folio_wait_table[i]);
+ 
+ 	page_writeback_init();
++	register_sysctl_init("vm", filemap_sysctl_table);
+ }
+ 
+ /*
+@@ -1224,9 +1239,6 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
+ 	return true;
+ }
+ 
+-/* How many times do we accept lock stealing from under a waiter? */
+-int sysctl_page_lock_unfairness = 5;
+-
+ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+ 		int state, enum behavior behavior)
+ {
 -- 
 2.34.1
 
