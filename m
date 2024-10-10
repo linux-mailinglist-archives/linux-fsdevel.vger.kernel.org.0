@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-31585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15113998917
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:17:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E6F99891D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF44A1F2696E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B801F26F50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045C71E1029;
-	Thu, 10 Oct 2024 14:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C111CBE98;
+	Thu, 10 Oct 2024 14:12:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8A11CBE84;
-	Thu, 10 Oct 2024 14:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838BE1E1A1A;
+	Thu, 10 Oct 2024 14:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569527; cv=none; b=IMOUm/wR4cSoyvNaUWptmNuvFWESbtUhP/NTVAUhgyUkfp65GSZR6l6YQLa0gDp8MQu6M14Yeo5yXuJQd3dkSKUaeBNOnmbWKTSqizd+96HT6OR+o8aPdRn0+zUdcHP/uxezEwYj3r4z4yezMcL8OV9vXbrYSsDs5Zh4YbGeiPA=
+	t=1728569529; cv=none; b=O9JyYATx4WALkJgE4NMGQ1r2uszJUUA/w8ZJ0JXtjBA1Y8NUCQ4lD0gGY0CI6HxQHR8JLqkBNQv96k5PQg/LgOEbnIapUSsg1d/vHATkBnDXoMVm8mYnL/1Z3Y1OZ9cf7HbsgfrakL4PnJ8wgrnAGk+92BczZ5kLsrEDgb+3KZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569527; c=relaxed/simple;
-	bh=Rc7lPZYw0T9V4JdS01u6Hr+Um58cBdfbI0m/8BHx0UE=;
+	s=arc-20240116; t=1728569529; c=relaxed/simple;
+	bh=4mmB9WycSia9hqP1T5wVafkMBmhzcS9jMGjWs5jZBL8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fqza1AhxrFW4XCBfJQEh7HcYm/LE0sw6Hz8cjQ/lcWtwvpDiycgLuQfR73dpfMXXl4o1Fo9QuFG6u1J7nW9XKqrJDwYE/jh+facHw/6awAMBO/OVj2eajKKCuIS78KV1NEWLQth/IAnx1YBRvh6esR1xGCGG4s8hqcpeL47mksw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+	 MIME-Version:Content-Type; b=sYV28bbrzHGphJ3okxx7P85V9zlF/sp6MIZXULBtaj1brt1jBKHTDTuxdvBUHUjBGVGKXRu33WEVVy0MpK+GSoXTq0XaoD04VKseJBhX+SAqhVY71RRIE3Nkj6Hoxbept7gPVKUGmZIwKrqmxA2TG2JSYzYeltM0qKjAZXn+Tvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XPWrH3jK8z1SCPP;
-	Thu, 10 Oct 2024 22:10:55 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPWps55PlzfcvP;
+	Thu, 10 Oct 2024 22:09:41 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id C68131400DC;
-	Thu, 10 Oct 2024 22:12:02 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id F30D8140157;
+	Thu, 10 Oct 2024 22:12:05 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Oct
- 2024 22:11:59 +0800
+ 2024 22:12:02 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -63,9 +63,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
-Subject: [PATCH v3 -next 10/15] fs: drop_caches: move sysctl to fs/drop_caches.c
-Date: Thu, 10 Oct 2024 23:22:10 +0800
-Message-ID: <20241010152215.3025842-11-yukaixiong@huawei.com>
+Subject: [PATCH v3 -next 11/15] sunrpc: use vfs_pressure_ratio() helper
+Date: Thu, 10 Oct 2024 23:22:11 +0800
+Message-ID: <20241010152215.3025842-12-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241010152215.3025842-1-yukaixiong@huawei.com>
 References: <20241010152215.3025842-1-yukaixiong@huawei.com>
@@ -80,103 +80,28 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-The sysctl_drop_caches to fs/drop_caches.c, move it to
-fs/drop_caches.c from /kernel/sysctl.c. And remove the
-useless extern variable declaration from include/linux/mm.h
+Use vfs_pressure_ratio() to simplify code.
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 Reviewed-by: Kees Cook <kees@kernel.org>
+Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
 ---
-v3:
- - change the title
----
- fs/drop_caches.c   | 23 +++++++++++++++++++++--
- include/linux/mm.h |  6 ------
- kernel/sysctl.c    |  9 ---------
- 3 files changed, 21 insertions(+), 17 deletions(-)
+ net/sunrpc/auth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index d45ef541d848..f2551ace800f 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -14,7 +14,7 @@
- #include "internal.h"
+diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
+index 04534ea537c8..3d2b51d7e934 100644
+--- a/net/sunrpc/auth.c
++++ b/net/sunrpc/auth.c
+@@ -489,7 +489,7 @@ static unsigned long
+ rpcauth_cache_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
  
- /* A global variable is a bit ugly, but it keeps the code simple */
--int sysctl_drop_caches;
-+static int sysctl_drop_caches;
- 
- static void drop_pagecache_sb(struct super_block *sb, void *unused)
  {
-@@ -48,7 +48,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 	iput(toput_inode);
+-	return number_cred_unused * sysctl_vfs_cache_pressure / 100;
++	return vfs_pressure_ratio(number_cred_unused);
  }
  
--int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
-+static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
- 		void *buffer, size_t *length, loff_t *ppos)
- {
- 	int ret;
-@@ -77,3 +77,22 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
- 	}
- 	return 0;
- }
-+
-+static struct ctl_table drop_caches_table[] = {
-+	{
-+		.procname	= "drop_caches",
-+		.data		= &sysctl_drop_caches,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0200,
-+		.proc_handler	= drop_caches_sysctl_handler,
-+		.extra1		= SYSCTL_ONE,
-+		.extra2		= SYSCTL_FOUR,
-+	},
-+};
-+
-+static int __init init_vm_drop_caches_sysctls(void)
-+{
-+	register_sysctl_init("vm", drop_caches_table);
-+	return 0;
-+}
-+fs_initcall(init_vm_drop_caches_sysctls);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c7f73bf32024..ed2e7425c838 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3791,12 +3791,6 @@ static inline int in_gate_area(struct mm_struct *mm, unsigned long addr)
- 
- extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
- 
--#ifdef CONFIG_SYSCTL
--extern int sysctl_drop_caches;
--int drop_caches_sysctl_handler(const struct ctl_table *, int, void *, size_t *,
--		loff_t *);
--#endif
--
- void drop_slab(void);
- 
- #ifndef CONFIG_MMU
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 373e018b950c..d638a1bac9af 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2024,15 +2024,6 @@ static struct ctl_table kern_table[] = {
- };
- 
- static struct ctl_table vm_table[] = {
--	{
--		.procname	= "drop_caches",
--		.data		= &sysctl_drop_caches,
--		.maxlen		= sizeof(int),
--		.mode		= 0200,
--		.proc_handler	= drop_caches_sysctl_handler,
--		.extra1		= SYSCTL_ONE,
--		.extra2		= SYSCTL_FOUR,
--	},
- 	{
- 		.procname	= "vfs_cache_pressure",
- 		.data		= &sysctl_vfs_cache_pressure,
+ static void
 -- 
 2.34.1
 
