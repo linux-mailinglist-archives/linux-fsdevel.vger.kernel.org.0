@@ -1,95 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-31551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16B1998585
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:04:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4700F998597
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A26EEB2455F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 12:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E291C241E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 12:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7BA1C3F37;
-	Thu, 10 Oct 2024 12:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BF21C3F2E;
+	Thu, 10 Oct 2024 12:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T5A5EIcS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rGm1tJ3a";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T5A5EIcS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rGm1tJ3a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260E21BFDEE;
-	Thu, 10 Oct 2024 12:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C27B18FDBE;
+	Thu, 10 Oct 2024 12:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728561883; cv=none; b=DiLtqXyeUhq0QQNqpmX34iweRTsxQWlRMIC8jGOaB1yu9f463NI6EWH05bL4MKF/1FNQJc1/IiBQe4yihkTFgwq4tkfmCL0WHLnhHTJlFtIslgsidMa1Xw8Um991s9Lbf7eyjZ79gMGftHd0PiSiNUzdS8VJdATuqndcNrxVTRk=
+	t=1728562073; cv=none; b=oPUp0uEcS2Y3XpFYW6Avwm5dQmMjSLP3gtGF77lcjxYsBPi5bDnNW2B0Hva59sEHJSh198aJrceXX+mk9FsgDKBM3f8AeceCWP3xtta5/vixHcb1aEWoJ32DgpTSgH6Lb8g/ntrOvntmnW1ube2zpeq7uNmWMsdl+dWEuxprnRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728561883; c=relaxed/simple;
-	bh=+ti7+iaC+/ZMJzcBHYfFME65mceK17aAsNlzVfLqVJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QSiyJKucJySYZQ1FuARFIjgNbRSIWBuDFAwGLvA/qATHU43WSjKoCb8oz9Hua9bFUj7kYsUDanZEFuz5vrJ4T8z06DKNehztgEzFoMZfyMgLybuVDHDVCBV5aBGcpendJSRKXSm6XlKJnNPoTKlXjQp8cMRQzfb8PfetNgz+OYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XPT1k6m81zCt9w;
-	Thu, 10 Oct 2024 20:03:54 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id D06BF18010F;
-	Thu, 10 Oct 2024 20:04:32 +0800 (CST)
-Received: from [10.174.176.88] (10.174.176.88) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 20:04:31 +0800
-Message-ID: <8d05cae1-55d2-415b-810e-3fb14c8566fd@huawei.com>
-Date: Thu, 10 Oct 2024 20:04:31 +0800
+	s=arc-20240116; t=1728562073; c=relaxed/simple;
+	bh=b23DmUkPPVUh0RMHhNGyRZzyT51ZPU5TJeFOjzuuHA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hFnHHVdquxI+rSDb9JqOKEX8zLms3Ful4sz2DXfZ9456NstV4u/QpLigeWmtpveHlyIkGQN/3Zuju0Ot+jEw/tVvsihMwZ8165sWX8bJ0HjzFpxNBnxW5B5LdvPw1OU3LVQ1NkErrDnLriB8PTewkqYONe2U8Qciv1CuXmal1N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T5A5EIcS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rGm1tJ3a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T5A5EIcS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rGm1tJ3a; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5E39621DBF;
+	Thu, 10 Oct 2024 12:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728562070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=miOkYgLzd78hF3PRbfRfmms8PfuItF8zeCePsmZ6stI=;
+	b=T5A5EIcSiNozLeib8tZqyP71dlnFJgh6RkT3+Hi5OlgOOZU2t7X0gRvTdCEGFMQXKQkCfE
+	H4Coqn1dnmAL9D5QLQ1EHzE+JtR02QgyLShnnphz9QDfv5BwYBTSMqwX+sbZoh2oxIxeN1
+	128w1/5SW/R9Q4I67UR2p6a8LrHGMJM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728562070;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=miOkYgLzd78hF3PRbfRfmms8PfuItF8zeCePsmZ6stI=;
+	b=rGm1tJ3a8pd0nIxCqJ1ZnEEPiyTGTlhErZA+lgCfuO/CN5pSIU5PgJH8ePEq5khQSwyKby
+	0T3U8Ege0DemqpAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728562070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=miOkYgLzd78hF3PRbfRfmms8PfuItF8zeCePsmZ6stI=;
+	b=T5A5EIcSiNozLeib8tZqyP71dlnFJgh6RkT3+Hi5OlgOOZU2t7X0gRvTdCEGFMQXKQkCfE
+	H4Coqn1dnmAL9D5QLQ1EHzE+JtR02QgyLShnnphz9QDfv5BwYBTSMqwX+sbZoh2oxIxeN1
+	128w1/5SW/R9Q4I67UR2p6a8LrHGMJM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728562070;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=miOkYgLzd78hF3PRbfRfmms8PfuItF8zeCePsmZ6stI=;
+	b=rGm1tJ3a8pd0nIxCqJ1ZnEEPiyTGTlhErZA+lgCfuO/CN5pSIU5PgJH8ePEq5khQSwyKby
+	0T3U8Ege0DemqpAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 515861370C;
+	Thu, 10 Oct 2024 12:07:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FK/UE5bDB2dNOgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 10 Oct 2024 12:07:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C8DFCA08A2; Thu, 10 Oct 2024 14:07:49 +0200 (CEST)
+Date: Thu, 10 Oct 2024 14:07:49 +0200
+From: Jan Kara <jack@suse.cz>
+To: Ye Bin <yebin@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yebin10@huawei.com, zhangxiaoxu5@huawei.com
+Subject: Re: [PATCH 1/3] vfs: introduce shrink_icache_sb() helper
+Message-ID: <20241010120749.7x5xdiodu3lwxg7j@quack3>
+References: <20241010112543.1609648-1-yebin@huaweicloud.com>
+ <20241010112543.1609648-2-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] cachefiles: Fix NULL pointer dereference in
- object->file
-To: David Howells <dhowells@redhat.com>
-CC: <netfs@lists.linux.dev>, <jlayton@kernel.org>,
-	<hsiangkao@linux.alibaba.com>, <jefflexu@linux.alibaba.com>,
-	<zhujia.zj@bytedance.com>, <linux-erofs@lists.ozlabs.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<libaokun1@huawei.com>, <yangerkun@huawei.com>, <houtao1@huawei.com>,
-	<yukuai3@huawei.com>
-References: <20240821024301.1058918-8-wozizhi@huawei.com>
- <20240821024301.1058918-1-wozizhi@huawei.com>
- <303977.1728559565@warthog.procyon.org.uk>
-From: Zizhi Wo <wozizhi@huawei.com>
-In-Reply-To: <303977.1728559565@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010112543.1609648-2-yebin@huaweicloud.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Thu 10-10-24 19:25:41, Ye Bin wrote:
+> From: Ye Bin <yebin10@huawei.com>
+> 
+> This patch is prepare for support drop_caches for specify file system.
+> shrink_icache_sb() helper walk the superblock inode LRU for freeable inodes
+> and attempt to free them.
+> 
+> Signed-off-by: Ye Bin <yebin10@huawei.com>
+> ---
+>  fs/inode.c    | 17 +++++++++++++++++
+>  fs/internal.h |  1 +
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 1939f711d2c9..2129b48571b4 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1045,6 +1045,23 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
+>  	return freed;
+>  }
+>  
+> +/*
+> + * Walk the superblock inode LRU for freeable inodes and attempt to free them.
+> + * Inodes to be freed are moved to a temporary list and then are freed outside
+> + * inode_lock by dispose_list().
+> + */
+> +void shrink_icache_sb(struct super_block *sb)
+> +{
+> +	do {
+> +		LIST_HEAD(dispose);
+> +
+> +		list_lru_walk(&sb->s_inode_lru, inode_lru_isolate,
+> +			      &dispose, 1024);
+> +		dispose_list(&dispose);
+> +	} while (list_lru_count(&sb->s_inode_lru) > 0);
+> +}
+> +EXPORT_SYMBOL(shrink_icache_sb);
 
+Hum, but this will livelock if we cannot remove all the inodes? Now I guess
+inode_lru_isolate() usually removes busy inodes from the LRU so this should
+not happen in practice but such behavior is not guaranteed (we can LRU_SKIP
+inodes if i_lock is busy or LRU_RETRY if inode has page cache pages). So I
+think we need some safety net here...
 
-在 2024/10/10 19:26, David Howells 写道:
-> Zizhi Wo <wozizhi@huawei.com> wrote:
-> 
->> +	spin_lock(&object->lock);
->>   	if (object->file) {
->>   		fput(object->file);
->>   		object->file = NULL;
->>   	}
->> +	spin_unlock(&object->lock);
-> 
-> I would suggest stashing the file pointer in a local var and then doing the
-> fput() outside of the locks.
-> 
-> David
-> 
-> 
-
-If fput() is executed outside the lock, I am currently unsure how to
-guarantee that file in __cachefiles_write() does not trigger null
-pointer dereference...
-
-Thanks,
-Zizhi Wo
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
