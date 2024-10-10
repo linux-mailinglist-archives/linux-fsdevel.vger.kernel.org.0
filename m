@@ -1,121 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-31606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0257998C7E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 17:57:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44304998D0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 18:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E20D41C220EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 15:57:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E887B2BD43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 15:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E261CEAD2;
-	Thu, 10 Oct 2024 15:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B481CCB25;
+	Thu, 10 Oct 2024 15:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSgaAFOs"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="x5Kg8XAg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75B61CEACF;
-	Thu, 10 Oct 2024 15:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014E41CC8A8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 15:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575759; cv=none; b=HYBKQLn9vsY7sNylbhhLFPZxmvLhBmeiVSQfmtuTyLgjwTBelShYuHvsyw63IlpQl9wxBuPiK8Dj7YOhZZEYEgdiW++YF7ylUvxPv58muM2UPS73P7PVeSOVjW2O55nH6M8I6hWqrTdWAnqGyKkOcoL7U65gz2R19T0RtbrayTo=
+	t=1728574029; cv=none; b=tZq1fH2tTu0EqGBMLizb+0gdktiSdeo12mX0oWhZIWoRiiCK5AeAc14gA62eLuV6uO86zDF76Q/ATw6QCbgikjaAR4IWvRGTH0lIvpTLix/frOEqGjgle1ntfxqTWDG7Y8qeLUMHw0J5VghEdw5pz43xguSLsVPZMxwNhECa3EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575759; c=relaxed/simple;
-	bh=Ih4UaDkoM6T5XdxgdVqcQJ+chtmD6qc/9PQo87MShcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KZblxgc+iC3pOaeK4rSbK3VXQWED3MKKIgfWrMeWre8xUIauTK4mprXYfpgxgjx494uJaiw25z5hoSAAnVGpWfkpM4A3bYFtWvcKMr01W1xTQ5i2/VR3ufj+pOoi/fs7LNAGWjTZcZ1ncTMCQFPNEDU2XmmIiHYFOozQ3HnO9+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSgaAFOs; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e314136467so10446267b3.0;
-        Thu, 10 Oct 2024 08:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728575756; x=1729180556; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SxsUMgyvfS+vygJkWKqcFB09pVeqV5iXHjDD4/QxFUw=;
-        b=NSgaAFOsNgrbbECETm0e/m4IXlqLGfPPqxTnCeBt4mYNsVPBmOia7MwP++yGRCjZ4x
-         hWnkBIkopWZ8HWjARK3+B7iNdZpw6Eh4G15loI4gg1EmmoZ47qXSKGepoP+65tKlpdRW
-         C5F6V1Ib6Lt/m7baGFMI4o/STsZgERNfcRLpzRYw7Zaowb1t2TJPmrrHse7mYt8+D1pb
-         KbSXAlA/aS7hk4vPvsy3hpMZszFau7HMstjyaCairXkqYci4EhkxdlUwkCmjQTFlWDLx
-         S5PmtKy0U34bopTAMiTp+ZLbZf1zH9GkYjpk1jsjbMuoOIQ1VP8cGUPJScqs+zLYj+aF
-         3coQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728575756; x=1729180556;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SxsUMgyvfS+vygJkWKqcFB09pVeqV5iXHjDD4/QxFUw=;
-        b=hFbq6LDLI9aBww0ScpMFyjHIxGK1b2wDXtkwpMVhwEO4U5h7uuIA38j7YpYBpZUdcN
-         aXMaVZRPh+WmdFQ9pWtqjltLRs+Iqt/mAtvBvMcExslLp3z7s4iLzoxY7OnG/QYzFHD3
-         pnia5l+unHzTi8Oe8ygnP1Kdq2bkfvYOkR6IcUEWUL1OizH7zMfV4LFukf93OuH0Bk/F
-         1TanXzpl0YN6lbO3t1vtfn272Sdufzs+pP5R7tRUbffDttM9ijAz/QEEDNfxO4U5a9nT
-         BYFyr2Wx0jvE16DGQuxOiOTFg3vNe96Grp0rzaT3QNgw5R44uizI/xWHt64/J76L4aoS
-         YF2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFil/TgZFSa96MXpepSzo4MMTn82hT6VCaNTT6+xA8D5MzMwuq81TUaT0g8aafjpyqdk/HdSMXFym4EmaB@vger.kernel.org, AJvYcCX8g14zT4qclWVt1a4ehfhsgzbHWhwR6dcrO6KKcqwzoe2SpIoQhEvkFp4N2G809XWaYQIjJ8XqjVvwhNHP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzep1gIT/ElAcj2RCypNEp8nqGSEsaJaK+Jkbodql61Pa/k+zkZ
-	uH5fFo5ZCp2Z3p1IPuZOUWLFmlMWupB5pXVydopzr861xjjf8n7TdRIY/mAAWukwXv9rD0K6vI8
-	P1KvWVQ4jbEa3TwG50BbzlWvuWWoORCI+
-X-Google-Smtp-Source: AGHT+IHs7RHd6JMWzZdk7FDJvoBdE504pi4tbzE73D9t92az0pMIB0oDo5fBTOi9qXHRbI/QNJbR/sm14hFCcFLTrAg=
-X-Received: by 2002:a05:690c:f93:b0:6dd:ddf6:90aa with SMTP id
- 00721157ae682-6e32f134e85mr35474857b3.5.1728575756604; Thu, 10 Oct 2024
- 08:55:56 -0700 (PDT)
+	s=arc-20240116; t=1728574029; c=relaxed/simple;
+	bh=pWtLcjsmW4Qrm1YUcmTcA7tapQRt91fGtH3cEhWZ1EY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i5vsf5snPj+VdOB0Tx+er62cyAjzUv7Df66g49+rX7h3vk1TvJpE7WZNyp2wBcF/t8RNAdYzmV1CSyR+nM9ofRZBISLMXJhsXWq35mS9o7IBkLKTj3JCnrW7qXzH0BFAncKEi6E2G11eA5monkpDSK9HpZ6Q4bwEMLgiMCaUIrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=x5Kg8XAg; arc=none smtp.client-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XPYX03MtCz63h;
+	Thu, 10 Oct 2024 17:26:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1728574016;
+	bh=oCSwOw598EhYP254uOWzIyCUOB7f8SxQQTeZxoKvSLU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=x5Kg8XAgBFXfFqaybiH6SHrYOau3tOPmMTIzkIEP/oFRB4WdWdWgzZ4LNSB6l+rSK
+	 l1NE5fgNuGMKWC036+wChsgGxCX8H5R0sG0z3TrH4Ik52EwcHt/Tb4wgCMzb+jdctv
+	 kWakYI2PbopwRZiy5bTbYX/iDfpUfJpPgauzuq8Q=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XPYWz5bv6zQj1;
+	Thu, 10 Oct 2024 17:26:55 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement get_ino() for NFS
+Date: Thu, 10 Oct 2024 17:26:41 +0200
+Message-ID: <20241010152649.849254-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <20241009.202933-chewy.sheen.spooky.icons-4WcDot1Idx9@cyphar.com> <20241010-ersuchen-mitlaufen-e836113886c7@brauner>
-In-Reply-To: <20241010-ersuchen-mitlaufen-e836113886c7@brauner>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Thu, 10 Oct 2024 16:55:45 +0100
-Message-ID: <CAMw=ZnSj=3oSgcTu4ESOKtNgs5sESOBWZWESohUEDbe+Z9JWYg@mail.gmail.com>
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-To: Christian Brauner <brauner@kernel.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org, christian@brauner.io, 
-	linux-kernel@vger.kernel.org, oleg@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Thu, 10 Oct 2024 at 10:46, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Thu, Oct 10, 2024 at 07:50:36AM +1100, Aleksa Sarai wrote:
-> > On 2024-10-08, luca.boccassi@gmail.com <luca.boccassi@gmail.com> wrote:
-> > > From: Luca Boccassi <luca.boccassi@gmail.com>
-> > > +   /*
-> > > +    * If userspace and the kernel have the same struct size it can just
-> > > +    * be copied. If userspace provides an older struct, only the bits that
-> > > +    * userspace knows about will be copied. If userspace provides a new
-> > > +    * struct, only the bits that the kernel knows about will be copied and
-> > > +    * the size value will be set to the size the kernel knows about.
-> > > +    */
-> > > +   if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
-> > > +           return -EFAULT;
-> >
-> > If usize > ksize, we also want to clear_user() the trailing bytes to
-> > avoid userspace thinking that any garbage bytes they had are valid.
-> >
-> > Also, you mention "the size value" but there is no size in pidfd_info. I
-> > don't think it's actually necessary to include such a field (especially
-> > when you have a statx-like request_mask), but it means you really should
-> > clear the trailing bytes to avoid userspace bugs.
-> >
-> > I implemented all of these semantics as copy_struct_to_user() in the
-> > CHECK_FIELDS patch I sent a few weeks ago (I just sent v3[1]). Maybe you
-> > can cherry-pick this patch and use it? The semantics when we extend this
-> > pidfd_info to accept new request_mask values with larger structures is
-> > going to get a little ugly and copy_struct_to_user() makes this a little
-> > easier to deal with.
-> >
-> > [1]: https://lore.kernel.org/all/20241010-extensible-structs-check_fields-v3-1-d2833dfe6edd@cyphar.com/
->
-> I agree. @Luca, you can either send the two patches together or I can
-> just port the patch to it. I don't mind.
+When a filesystem manages its own inode numbers, like NFS's fileid shown
+to user space with getattr(), other part of the kernel may still expose
+the private inode->ino through kernel logs and audit.
 
-I've updated for the latter, given that series is not merged yet, thanks.
+Another issue is on 32-bit architectures, on which ino_t is 32 bits,
+whereas the user space's view of an inode number can still be 64 bits.
+
+Add a new inode_get_ino() helper calling the new struct
+inode_operations' get_ino() when set, to get the user space's view of an
+inode number.  inode_get_ino() is called by generic_fillattr().
+
+Implement get_ino() for NFS.
+
+Cc: Trond Myklebust <trondmy@kernel.org>
+Cc: Anna Schumaker <anna@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+I'm not sure about nfs_namespace_getattr(), please review carefully.
+
+I guess there are other filesystems exposing inode numbers different
+than inode->i_ino, and they should be patched too.
+---
+ fs/nfs/inode.c     | 6 ++++--
+ fs/nfs/internal.h  | 1 +
+ fs/nfs/namespace.c | 2 ++
+ fs/stat.c          | 2 +-
+ include/linux/fs.h | 9 +++++++++
+ 5 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index 542c7d97b235..5dfc176b6d92 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -83,18 +83,19 @@ EXPORT_SYMBOL_GPL(nfs_wait_bit_killable);
+ 
+ /**
+  * nfs_compat_user_ino64 - returns the user-visible inode number
+- * @fileid: 64-bit fileid
++ * @inode: inode pointer
+  *
+  * This function returns a 32-bit inode number if the boot parameter
+  * nfs.enable_ino64 is zero.
+  */
+-u64 nfs_compat_user_ino64(u64 fileid)
++u64 nfs_compat_user_ino64(const struct *inode)
+ {
+ #ifdef CONFIG_COMPAT
+ 	compat_ulong_t ino;
+ #else	
+ 	unsigned long ino;
+ #endif
++	u64 fileid = NFS_FILEID(inode);
+ 
+ 	if (enable_ino64)
+ 		return fileid;
+@@ -103,6 +104,7 @@ u64 nfs_compat_user_ino64(u64 fileid)
+ 		ino ^= fileid >> (sizeof(fileid)-sizeof(ino)) * 8;
+ 	return ino;
+ }
++EXPORT_SYMBOL_GPL(nfs_compat_user_ino64);
+ 
+ int nfs_drop_inode(struct inode *inode)
+ {
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 430733e3eff2..f5555a71a733 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -451,6 +451,7 @@ extern void nfs_zap_acl_cache(struct inode *inode);
+ extern void nfs_set_cache_invalid(struct inode *inode, unsigned long flags);
+ extern bool nfs_check_cache_invalid(struct inode *, unsigned long);
+ extern int nfs_wait_bit_killable(struct wait_bit_key *key, int mode);
++extern u64 nfs_compat_user_ino64(const struct *inode);
+ 
+ #if IS_ENABLED(CONFIG_NFS_LOCALIO)
+ /* localio.c */
+diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
+index e7494cdd957e..d9b1e0606833 100644
+--- a/fs/nfs/namespace.c
++++ b/fs/nfs/namespace.c
+@@ -232,11 +232,13 @@ nfs_namespace_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ const struct inode_operations nfs_mountpoint_inode_operations = {
+ 	.getattr	= nfs_getattr,
+ 	.setattr	= nfs_setattr,
++	.get_ino	= nfs_compat_user_ino64,
+ };
+ 
+ const struct inode_operations nfs_referral_inode_operations = {
+ 	.getattr	= nfs_namespace_getattr,
+ 	.setattr	= nfs_namespace_setattr,
++	.get_ino	= nfs_compat_user_ino64,
+ };
+ 
+ static void nfs_expire_automounts(struct work_struct *work)
+diff --git a/fs/stat.c b/fs/stat.c
+index 41e598376d7e..05636919f94b 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -50,7 +50,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
+ 	vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
+ 
+ 	stat->dev = inode->i_sb->s_dev;
+-	stat->ino = inode->i_ino;
++	stat->ino = inode_get_ino(inode);
+ 	stat->mode = inode->i_mode;
+ 	stat->nlink = inode->i_nlink;
+ 	stat->uid = vfsuid_into_kuid(vfsuid);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e3c603d01337..0eba09a21cf7 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2165,6 +2165,7 @@ struct inode_operations {
+ 			    struct dentry *dentry, struct fileattr *fa);
+ 	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+ 	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
++	u64 (*get_ino)(const struct inode *inode);
+ } ____cacheline_aligned;
+ 
+ static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
+@@ -2172,6 +2173,14 @@ static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return file->f_op->mmap(file, vma);
+ }
+ 
++static inline u64 inode_get_ino(struct inode *inode)
++{
++	if (unlikely(inode->i_op->get_ino))
++		return inode->i_op->get_ino(inode);
++
++	return inode->i_ino;
++}
++
+ extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
+ extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
+ extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
+-- 
+2.46.1
+
 
