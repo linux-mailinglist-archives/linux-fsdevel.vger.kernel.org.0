@@ -1,111 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-31531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C649399833D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 12:10:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B26F9983C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 12:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66941283DCC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 10:10:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16BEC1F256D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 10:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1B81C242E;
-	Thu, 10 Oct 2024 10:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99731C1AB4;
+	Thu, 10 Oct 2024 10:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuLhCxS/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h+gcU4+F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A191BF300;
-	Thu, 10 Oct 2024 10:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D85019E7D0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 10:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728554986; cv=none; b=rqE5vvcK1E0UYrSYKbxvHjZxaLQGRjcIV3NopUHG/D1dena7adKykfmeRtsuSUg6Pjl85Qs8x63MfQFqtVeuhkqTWEkPH3o91nsvxUusuZrv2JvOCW1FQtksDBulMVPyiB6YBX9XbyY0mxwSvLZ1H9vgRMoCl6zvzbb4YeRwYoM=
+	t=1728556515; cv=none; b=bl8xY4zI+ApmqJHhykuYsZHfvM1Sf/No2u+mJRpo8sAfILvBIqi+VwXBaOUG/ChCequUVVHNqoePy6vtIOATnU8kyW9W+bbGra2FBFp63p32gZ93AC1EPJZZaraZ4afBF8hUOAGZJG71OFoF+Wf14gfnr4fQepxaRxsxzqL4T7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728554986; c=relaxed/simple;
-	bh=vCTqIl7jShZpEr0sVmMbfnvFvzmbv2n1ITL19Rj+AWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tNPXgGwsclvxdA2mNiBQxhqw3cDS9KeIr44T6nPMEgbTX4kQcFamBjwqKQIrOcUji9UH5Dj9uYxT7a+0q5aXWkVvR1CryhfCa560poHlrRIxq7q6pMLydESbx8mVWGiXDcPWwmbhX+KzP5/v1LHSK8RhFil4PT+p08f/1FUa0kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuLhCxS/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85CBDC4CECC;
-	Thu, 10 Oct 2024 10:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728554985;
-	bh=vCTqIl7jShZpEr0sVmMbfnvFvzmbv2n1ITL19Rj+AWQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TuLhCxS/kum3UUxI2LxetVqLBebi9ov//MNFTqAdCuXEOE2k5dBBp3lBbyLXKK1UD
-	 +JnBouAShZSx0FpbD1wRXccZwC6S5evYkUqXkmc3pb7TwrRkNF7XTFMW+9jA1xhz6g
-	 BEVS/dNs7+Th8yU89mXKH4GwQV8YO2J+M+WF1DMgtm8X1SWYEWhYQc4lKKF6iKH7JL
-	 Q3vQcsttS3UHj3CZ29aCP1vYw+sX2AYnz93OehQpgxoxdgBDmK3DxHAjkCMHCl6dNS
-	 elj6E5VT44QVNzgeYiHWSZQ2IAZpulbv1bkoWqGkYStFVgf0vu/R9VZZAjmsUtGr9O
-	 egsFyXIZheGog==
-From: Christian Brauner <brauner@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	stable@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: (subset) [PATCH RFC v3 03/10] openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
-Date: Thu, 10 Oct 2024 12:09:35 +0200
-Message-ID: <20241010-pikant-neuer-4dbf48940683@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241010-extensible-structs-check_fields-v3-3-d2833dfe6edd@cyphar.com>
-References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com> <20241010-extensible-structs-check_fields-v3-3-d2833dfe6edd@cyphar.com>
+	s=arc-20240116; t=1728556515; c=relaxed/simple;
+	bh=Dq0XgAclNRaJbXT+vHvoLMbbmE+OqMekcNjkPra9cUI=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=AEkrINq7PWfYAt8nZvlYphfKG+im4qEkFrya1YEBO5iSox9Z/S9JFM7YO8yH8ryA/bPfdRHAw84e7j2rdfxP+3rzD4RTv0MxQpFQmi5SnWOdCCMOeVk/YzhC6DjqCSMp0n0fFDI9nmdgz4HPB3Kiozc7s0nTHSaJ3SJQjUCJCyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h+gcU4+F; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728556512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zx+kPV8292G/Dzt3BTlua2EqMJ9Klq9hxRZJVfmtfTU=;
+	b=h+gcU4+FEJkni+BQ0j1xQNOe/2M0p3Wtm6dyHyTx1P/jbIPoyAuUQb87chkHZ3b4+jbSYu
+	C6DmM02HP8NVJgQIT3jvL5bPjKG2k1J6JIUBem7+s6cHb0a4IOo2w9JKLjLDH/XQ0NLZrH
+	ytIBY1Cj2b2h1FLfU8g3M1cvuYxdC6U=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-227-dLh36eegOY2DWn475u0HWA-1; Thu,
+ 10 Oct 2024 06:35:08 -0400
+X-MC-Unique: dLh36eegOY2DWn475u0HWA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 518751955F3E;
+	Thu, 10 Oct 2024 10:35:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 08CA11956089;
+	Thu, 10 Oct 2024 10:35:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240821024301.1058918-2-wozizhi@huawei.com>
+References: <20240821024301.1058918-2-wozizhi@huawei.com> <20240821024301.1058918-1-wozizhi@huawei.com>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: dhowells@redhat.com, netfs@lists.linux.dev, jlayton@kernel.org,
+    hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
+    zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    libaokun1@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
+    yukuai3@huawei.com
+Subject: Re: [PATCH 1/8] cachefiles: Fix incorrect block calculations in __cachefiles_prepare_write()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1115; i=brauner@kernel.org; h=from:subject:message-id; bh=vCTqIl7jShZpEr0sVmMbfnvFvzmbv2n1ITL19Rj+AWQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSzL3/gcn99iY5JAhOL4eyvLi/V4x5oM8gLr39yhtl0e 47m5MrMjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImI32X4K5d4O//zV+UpEjpp /sHnas908812W3pp/pJJfp53gmsuCTP84TN9cNBg4oRf+UorZZVbtjcUbzs4L+1Zj1eBQeMCj9y 3bAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <302545.1728556499.1@warthog.procyon.org.uk>
+Date: Thu, 10 Oct 2024 11:34:59 +0100
+Message-ID: <302546.1728556499@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, 10 Oct 2024 07:40:36 +1100, Aleksa Sarai wrote:
-> While we do currently return -EFAULT in this case, it seems prudent to
-> follow the behaviour of other syscalls like clone3. It seems quite
-> unlikely that anyone depends on this error code being EFAULT, but we can
-> always revert this if it turns out to be an issue.
+Zizhi Wo <wozizhi@huawei.com> wrote:
+
+> In the __cachefiles_prepare_write function, DIO aligns blocks using
+> PAGE_SIZE as the unit. And currently cachefiles_add_cache() binds
+> cache->bsize with the requirement that it must not exceed PAGE_SIZE.
+> However, if cache->bsize is smaller than PAGE_SIZE, the calculated block
+> count will be incorrect in __cachefiles_prepare_write().
 > 
-> 
+> Set the block size to cache->bsize to resolve this issue.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Have you tested this with 9p, afs, cifs, ceph and/or nfs?  This may cause an
+issue there as it assumed that the cache file will be padded out to
+PAGE_SIZE (see cachefiles_adjust_size()).
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+David
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[03/10] openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
-        https://git.kernel.org/vfs/vfs/c/f92f0a1b0569
 
