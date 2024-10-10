@@ -1,253 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-31624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB65C99926A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 21:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF60F9992C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 21:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6073B2B0EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 19:28:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5431C203A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 19:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747D51CEE8D;
-	Thu, 10 Oct 2024 19:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247BF1E5015;
+	Thu, 10 Oct 2024 19:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ZiTJG6Nz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAB4198E75;
-	Thu, 10 Oct 2024 19:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E67B1A01B9;
+	Thu, 10 Oct 2024 19:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728588527; cv=none; b=AjvmeGXF+rKQB9HN6zxilKhwgmzfxd9DoGQLWhITfSq018le06nUkjtz9g/YQ8IAc/hZj83pDDn7KnEPhdbokluXIl6CxO2+8GGmE13YHv+1R7ggIX8XnlELebX3RS03eeq/I5revTZ+87WAKDRpOtwBrKk12eF959RHyhPoxhA=
+	t=1728589271; cv=none; b=okWbnuGAAJJBwz44x4HIysAyJSN3oK+UIDpcwr+Y1n68fbYqY6XX6ruJlviNuTsbDCKGxMyJT0d6KA36Jui7oEeWsY82wCMyo2MjSiYhSATRcOTwT3gMcPuvhQznQxJRKHJHEx9So7gDHvbwIhn6CaHfChK56fCDDErvGmLP3Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728588527; c=relaxed/simple;
-	bh=9f+uPORL3QH6MhLko8f+K1sxyN1ZmCusxqQ3u/NGhLg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=caW758n+NVLgnZt3XAZ54cXHprarFZlFTjdXEj+Iee/yX7gaEuvmXg3kbRP+ziNMEVyFTyIeIptgEceCLh+XLfG6IsmQo+oSEQw1OxyVul3R5gM5uHYz1pTYsGhheJ3yO1EgKQFZkSku2a2yB6uBEEoAAarFg3Mz1AdNpSmFFwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a39cabb9faso4961875ab.3;
-        Thu, 10 Oct 2024 12:28:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728588524; x=1729193324;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wbM2TvxpGTsKXfcUXNXSabUBNZW6OXcwsb89tZuKTqQ=;
-        b=Fk9UYIcIX8snOiLktjQY7iEAwEsJ2urv7d4FT14it9d/+7Kn8dMoASVPEZOvd334ch
-         j8SG0tbrICm6MEvT93QOHSze1DuadoohxlUVe/xIvIlvfHl78eX7DLo4ZewU22GeZj16
-         0TkogYfUaYvqswYMSGbAlJ4ys5lGu1T+ebdqnF8LzCP1VGCEbY4jGboXm6P+zO1DnbH5
-         N7/1/hnbSBPbyw0l1Dtv5w4YYZnP3jiJ+7o376WnvI/dOFcvv0CJfqLeFky1vMKNPiI8
-         i8d2R0VxUNZFiXWkZdWZDzfxEoxOKO45xf6qWlX5xBIzTFRLdmRdlGyI7X6H0EP7XcQ6
-         Qnuw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7KV4bDYGGW0JNhrKW1VEfBHlud+bDeAGO+dYz6OlBJEzM+quNbtZkOdgAY0MCE91/8IyBeZmi5NqgCn2nYOZ2CIVD7zn1@vger.kernel.org, AJvYcCXXPJZWfSebtPZXb+1Ogm8xMLBQGRwr0idXVRoPfwwP5tDb0O7KwRd/ToARsqzTZIrzkwyyp8myrKhO@vger.kernel.org, AJvYcCXqEKxhs6XzE7b5axqZjh6oOZ4CV78pX6V9pWB9OOXrgKM65MUxFrBfL0IXF33CGWYoUavkjw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwduJz+DSiPrbbaCvG/LM08FaTxKm3AYZEfQzpPAZVyStCqC8mn
-	E7Yel2KnV4OqoKH1kOBraUFuqUHI96YzzOxrs7jvs6m5nifO3TE=
-X-Google-Smtp-Source: AGHT+IHwqSeYYNAJcLFr3vXgoAjvi8VpAQ68Ry5qAG/NHW5XsrSYOCBRL0q+478GeLbFRGJljw3mCg==
-X-Received: by 2002:a05:6e02:1986:b0:3a0:9a32:dedc with SMTP id e9e14a558f8ab-3a3b5f863fbmr329185ab.6.1728588524554;
-        Thu, 10 Oct 2024 12:28:44 -0700 (PDT)
-Received: from [192.168.75.138] (104-63-89-173.lightspeed.livnmi.sbcglobal.net. [104.63.89.173])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3afde4667sm3837435ab.58.2024.10.10.12.28.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 12:28:43 -0700 (PDT)
-Message-ID: <fd90d5d173a47732da87d31aed8a955f73ea086e.camel@kernel.org>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-From: Trond Myklebust <trondmy@kernel.org>
-To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, Christian Brauner
-	 <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
- linux-security-module@vger.kernel.org, audit@vger.kernel.org, Anna
- Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan
- Kara <jack@suse.cz>
-Date: Thu, 10 Oct 2024 15:28:12 -0400
-In-Reply-To: <20241010152649.849254-1-mic@digikod.net>
-References: <20241010152649.849254-1-mic@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728589271; c=relaxed/simple;
+	bh=MK88nhn1oQ7OMjkxgADNCjkPzV+bAEJrglSsBKJJrqo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=thOC9AS3FSvByap3+9pqVA9ghgPpzFMLToFZ2n9sMp89bAM4dRONria2OT5UXNrTxl03Q1EtSl+rZrjc1tA/2jIESw3x07ybrcK3ofhIit8Co0rCwZh1H7ow9gZY4wgzlYsJoK6C6kVaNaoekIOhQvdeGplxiuj+YAAWBgfR0TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ZiTJG6Nz; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=09iDL1axmjrQDK0WLyH9ikUE9Gcp6sSd7bv4iS9IhBM=; b=ZiTJG6NzvItlCYUUoKNFotHlTC
+	wTRRu93p2T6Vj5ZwwttyWGXHm295exVkVXgTcN+RieoPmCiQLSyFoYfNHu17NkTY5rDVxpAsiYCDg
+	pNi3d+AehnJrvn8Tjt6BR6MHInjD+eQgXCOA1eU+UGmGwkHwYHuO1NPE+colgtMPc0pShAoloVXdx
+	HI67LCm81xTigYHkmIvpFNOx/H7a9awRU5IZcyoYf4H5bqhtP29IDquq1nEOwpkwtDul3ul/dGUv6
+	PJtjjfLKI8/xGI7fLmJMVePALWsVjJAtUizTGiGYAOP/t3S6EZzUvwC2vKQUlDMlfXjIRG0/sGfRg
+	YHrbE7og==;
+Received: from [187.57.199.212] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1syz1u-007SHz-2w; Thu, 10 Oct 2024 21:40:58 +0200
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v6 00/10] tmpfs: Add case-insensitive support for tmpfs
+Date: Thu, 10 Oct 2024 16:39:35 -0300
+Message-Id: <20241010-tonyk-tmpfs-v6-0-79f0ae02e4c8@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHctCGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyzHQUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0MD3ZL8vMps3ZLcgrRi3bQUk1RDC0NLQ+MUIyWgjoKi1LTMCrBp0bG
+ 1tQC++7WtXQAAAA==
+X-Change-ID: 20241010-tonyk-tmpfs-fd4e181913d2
+To: Gabriel Krisman Bertazi <krisman@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+ Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com
+Cc: kernel-dev@igalia.com, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+ linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+ Gabriel Krisman Bertazi <krisman@suse.de>, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.2
 
-On Thu, 2024-10-10 at 17:26 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> When a filesystem manages its own inode numbers, like NFS's fileid
-> shown
-> to user space with getattr(), other part of the kernel may still
-> expose
-> the private inode->ino through kernel logs and audit.
->=20
-> Another issue is on 32-bit architectures, on which ino_t is 32 bits,
-> whereas the user space's view of an inode number can still be 64
-> bits.
->=20
-> Add a new inode_get_ino() helper calling the new struct
-> inode_operations' get_ino() when set, to get the user space's view of
-> an
-> inode number.=C2=A0 inode_get_ino() is called by generic_fillattr().
->=20
-> Implement get_ino() for NFS.
->=20
-> Cc: Trond Myklebust <trondmy@kernel.org>
-> Cc: Anna Schumaker <anna@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> ---
->=20
-> I'm not sure about nfs_namespace_getattr(), please review carefully.
->=20
-> I guess there are other filesystems exposing inode numbers different
-> than inode->i_ino, and they should be patched too.
-> ---
-> =C2=A0fs/nfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0 | 6 ++++--
-> =C2=A0fs/nfs/internal.h=C2=A0 | 1 +
-> =C2=A0fs/nfs/namespace.c | 2 ++
-> =C2=A0fs/stat.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2=
- +-
-> =C2=A0include/linux/fs.h | 9 +++++++++
-> =C2=A05 files changed, 17 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> index 542c7d97b235..5dfc176b6d92 100644
-> --- a/fs/nfs/inode.c
-> +++ b/fs/nfs/inode.c
-> @@ -83,18 +83,19 @@ EXPORT_SYMBOL_GPL(nfs_wait_bit_killable);
-> =C2=A0
-> =C2=A0/**
-> =C2=A0 * nfs_compat_user_ino64 - returns the user-visible inode number
-> - * @fileid: 64-bit fileid
-> + * @inode: inode pointer
-> =C2=A0 *
-> =C2=A0 * This function returns a 32-bit inode number if the boot paramete=
-r
-> =C2=A0 * nfs.enable_ino64 is zero.
-> =C2=A0 */
-> -u64 nfs_compat_user_ino64(u64 fileid)
-> +u64 nfs_compat_user_ino64(const struct *inode)
-> =C2=A0{
-> =C2=A0#ifdef CONFIG_COMPAT
-> =C2=A0	compat_ulong_t ino;
-> =C2=A0#else=09
-> =C2=A0	unsigned long ino;
-> =C2=A0#endif
-> +	u64 fileid =3D NFS_FILEID(inode);
-> =C2=A0
-> =C2=A0	if (enable_ino64)
-> =C2=A0		return fileid;
-> @@ -103,6 +104,7 @@ u64 nfs_compat_user_ino64(u64 fileid)
-> =C2=A0		ino ^=3D fileid >> (sizeof(fileid)-sizeof(ino)) * 8;
-> =C2=A0	return ino;
-> =C2=A0}
-> +EXPORT_SYMBOL_GPL(nfs_compat_user_ino64);
-> =C2=A0
-> =C2=A0int nfs_drop_inode(struct inode *inode)
-> =C2=A0{
-> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-> index 430733e3eff2..f5555a71a733 100644
-> --- a/fs/nfs/internal.h
-> +++ b/fs/nfs/internal.h
-> @@ -451,6 +451,7 @@ extern void nfs_zap_acl_cache(struct inode
-> *inode);
-> =C2=A0extern void nfs_set_cache_invalid(struct inode *inode, unsigned lon=
-g
-> flags);
-> =C2=A0extern bool nfs_check_cache_invalid(struct inode *, unsigned long);
-> =C2=A0extern int nfs_wait_bit_killable(struct wait_bit_key *key, int
-> mode);
-> +extern u64 nfs_compat_user_ino64(const struct *inode);
-> =C2=A0
-> =C2=A0#if IS_ENABLED(CONFIG_NFS_LOCALIO)
-> =C2=A0/* localio.c */
-> diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-> index e7494cdd957e..d9b1e0606833 100644
-> --- a/fs/nfs/namespace.c
-> +++ b/fs/nfs/namespace.c
-> @@ -232,11 +232,13 @@ nfs_namespace_setattr(struct mnt_idmap *idmap,
-> struct dentry *dentry,
-> =C2=A0const struct inode_operations nfs_mountpoint_inode_operations =3D {
-> =C2=A0	.getattr	=3D nfs_getattr,
-> =C2=A0	.setattr	=3D nfs_setattr,
-> +	.get_ino	=3D nfs_compat_user_ino64,
-> =C2=A0};
-> =C2=A0
-> =C2=A0const struct inode_operations nfs_referral_inode_operations =3D {
-> =C2=A0	.getattr	=3D nfs_namespace_getattr,
-> =C2=A0	.setattr	=3D nfs_namespace_setattr,
-> +	.get_ino	=3D nfs_compat_user_ino64,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static void nfs_expire_automounts(struct work_struct *work)
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 41e598376d7e..05636919f94b 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -50,7 +50,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32
-> request_mask,
-> =C2=A0	vfsgid_t vfsgid =3D i_gid_into_vfsgid(idmap, inode);
-> =C2=A0
-> =C2=A0	stat->dev =3D inode->i_sb->s_dev;
-> -	stat->ino =3D inode->i_ino;
-> +	stat->ino =3D inode_get_ino(inode);
-> =C2=A0	stat->mode =3D inode->i_mode;
-> =C2=A0	stat->nlink =3D inode->i_nlink;
-> =C2=A0	stat->uid =3D vfsuid_into_kuid(vfsuid);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e3c603d01337..0eba09a21cf7 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2165,6 +2165,7 @@ struct inode_operations {
-> =C2=A0			=C2=A0=C2=A0=C2=A0 struct dentry *dentry, struct fileattr
-> *fa);
-> =C2=A0	int (*fileattr_get)(struct dentry *dentry, struct fileattr
-> *fa);
-> =C2=A0	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
-> +	u64 (*get_ino)(const struct inode *inode);
-> =C2=A0} ____cacheline_aligned;
-> =C2=A0
-> =C2=A0static inline int call_mmap(struct file *file, struct vm_area_struc=
-t
-> *vma)
-> @@ -2172,6 +2173,14 @@ static inline int call_mmap(struct file *file,
-> struct vm_area_struct *vma)
-> =C2=A0	return file->f_op->mmap(file, vma);
-> =C2=A0}
-> =C2=A0
-> +static inline u64 inode_get_ino(struct inode *inode)
-> +{
-> +	if (unlikely(inode->i_op->get_ino))
-> +		return inode->i_op->get_ino(inode);
-> +
-> +	return inode->i_ino;
-> +}
-> +
-> =C2=A0extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_=
-t
-> *);
-> =C2=A0extern ssize_t vfs_write(struct file *, const char __user *, size_t=
-,
-> loff_t *);
-> =C2=A0extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct
-> file *,
+Hi,
 
-There should be no need to add this callback to generic_fillattr().
+This patchset adds support for case-insensitive file names lookups in
+tmpfs. The main difference from other casefold filesystems is that tmpfs
+has no information on disk, just on RAM, so we can't use mkfs to create a
+case-insensitive tmpfs.  For this implementation, I opted to have a mount
+option for casefolding. The rest of the patchset follows a similar approach
+as ext4 and f2fs.
 
-generic_fillattr() is a helper function for use by the filesystems
-themselves. It should never be called from any outside functions, as
-the inode number would be far from the only attribute that will be
-incorrect.
+* Use case (from the original cover letter)
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trond.myklebust@hammerspace.com
+The use case for this feature is similar to the use case for ext4, to
+better support compatibility layers (like Wine), particularly in
+combination with sandboxing/container tools (like Flatpak). Those
+containerization tools can share a subset of the host filesystem with an
+application. In the container, the root directory and any parent
+directories required for a shared directory are on tmpfs, with the
+shared directories bind-mounted into the container's view of the
+filesystem.
 
+If the host filesystem is using case-insensitive directories, then the
+application can do lookups inside those directories in a
+case-insensitive way, without this needing to be implemented in
+user-space. However, if the host is only sharing a subset of a
+case-insensitive directory with the application, then the parent
+directories of the mount point will be part of the container's root
+tmpfs. When the application tries to do case-insensitive lookups of
+those parent directories on a case-sensitive tmpfs, the lookup will
+fail.
+
+For example, if /srv/games is a case-insensitive directory on the host,
+then applications will expect /srv/games/Steam/Half-Life and
+/srv/games/steam/half-life to be interchangeable; but if the
+container framework is only sharing /srv/games/Steam/Half-Life and
+/srv/games/Steam/Portal (and not the rest of /srv/games) with the
+container, with /srv, /srv/games and /srv/games/Steam as part of the
+container's tmpfs root, then making /srv/games a case-insensitive
+directory inside the container would be necessary to meet that
+expectation.
+
+* Testing
+
+I send a patch for xfstests to enable the casefold test (generic/556) for
+tmpfs.[1] The test succeed.
+
+You can test this patchset using:
+
+  sudo mount -t tmpfs -o casefold tmpfs mnt/
+
+And making a dir case-insensitive:
+
+  mkdir mnt/dir
+  chattr +F mnt/dir
+
+[1] https://lore.kernel.org/fstests/20240823173008.280917-1-andrealmeid@igalia.com/
+
+Changes in v6:
+ - Fixed kernel bot warning 'shmem_ci_dentry_ops' defined but not used
+ v5: https://lore.kernel.org/lkml/20241002234444.398367-1-andrealmeid@igalia.com/
+
+Changes in v5:
+ - New patch "Always set simple_dentry_operations as dentry ops"
+ - "Squashed libfs: Check for casefold dirs on simple_lookup()" into "tmpfs: Add
+    casefold lookup support"
+ - Fail to mount if strict_encoding is used without encoding
+ - Inlined generic_ci_validate_strict_name()
+ - Added IS_ENABLED(UNICODE) guards to public generic_ci_ funcs
+ - Dropped .d_revalidate = fscrypt_d_revalidate, tmpfs doesn't support it
+ v4: https://lore.kernel.org/lkml/20240911144502.115260-1-andrealmeid@igalia.com/
+
+Changes in v4:
+ - Got rid of shmem_lookup() and changed simple_lookup() to cover casefold use
+   case
+ - Simplified shmem_parse_opt_casefold() and how it handle the lastest_version
+   option
+ - Simplified utf8_parse_version() to return the version in one variable instead
+   of three
+ - Rewrote part of the documentation patch
+ - Make sure that d_sb->s_d_op is set during mount time
+ - Moved `generic_ci_always_del_dentry_ops` to mm/shmem.c as `shmem_ci_dentry_ops`
+v3: https://lore.kernel.org/lkml/20240905190252.461639-1-andrealmeid@igalia.com/
+
+Changes in v3:
+ - Renamed utf8_check_strict_name() to generic_ci_validate_strict_name(), and
+ reworked the big if(...) to be more clear
+ - Expose the latest UTF-8 version in include/linux/unicode.h
+ - shmem_lookup() now sets d_ops
+ - reworked shmem_parse_opt_casefold()
+ - if `mount -o casefold` has no param, load latest UTF-8 version
+ - using (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir) when possible
+ - Fixed bug when adding a non-casefold flag in a non-empty dir
+v2: https://lore.kernel.org/lkml/20240902225511.757831-1-andrealmeid@igalia.com/
+
+Changes in v2:
+ - Found and fixed a bug in utf8_load()
+ - Created a helper for checking strict file names (Krisman)
+ - Merged patch 1/ and 3/ together (Krisman)
+ - Reworded the explanation about d_compare (Krisman)
+ - Removed bool casefold from shmem_sb_info (Krisman)
+ - Reworked d_add(dentry, NULL) to be called as d_add(dentry, inode) (Krisman)
+ - Moved utf8_parse_version to common unicode code
+ - Fixed some smatch/sparse warnings (kernel test bot/Dan Carpenter)
+v1: https://lore.kernel.org/linux-fsdevel/20240823173332.281211-1-andrealmeid@igalia.com/
+
+---
+André Almeida (10):
+      libfs: Create the helper function generic_ci_validate_strict_name()
+      ext4: Use generic_ci_validate_strict_name helper
+      unicode: Export latest available UTF-8 version number
+      unicode: Recreate utf8_parse_version()
+      libfs: Export generic_ci_ dentry functions
+      tmpfs: Always set simple_dentry_operations as dentry ops
+      tmpfs: Add casefold lookup support
+      tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
+      tmpfs: Expose filesystem features via sysfs
+      docs: tmpfs: Add casefold options
+
+ Documentation/filesystems/tmpfs.rst |  24 ++++
+ fs/ext4/namei.c                     |   5 +-
+ fs/libfs.c                          |  12 +-
+ fs/unicode/utf8-core.c              |  26 +++++
+ fs/unicode/utf8-selftest.c          |   3 -
+ include/linux/fs.h                  |  49 ++++++++
+ include/linux/shmem_fs.h            |   6 +-
+ include/linux/unicode.h             |   4 +
+ mm/shmem.c                          | 226 ++++++++++++++++++++++++++++++++++--
+ 9 files changed, 332 insertions(+), 23 deletions(-)
+---
+base-commit: eb952c47d154ba2aac794b99c66c3c45eb4cc4ec
+change-id: 20241010-tonyk-tmpfs-fd4e181913d2
+
+Best regards,
+-- 
+André Almeida <andrealmeid@igalia.com>
 
 
