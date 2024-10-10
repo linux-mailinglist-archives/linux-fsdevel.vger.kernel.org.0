@@ -1,100 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-31618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9095D998F79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 20:11:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA057998F83
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 20:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD91288D46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 18:11:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A19A286FD5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 18:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EC51CEAAC;
-	Thu, 10 Oct 2024 18:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875CE1C9EBB;
+	Thu, 10 Oct 2024 18:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKTsfTw2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EhLUcAjR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKTsfTw2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EhLUcAjR"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GHIKNQ2S";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R/uGGF6O";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GHIKNQ2S";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R/uGGF6O"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328D91CDA05;
-	Thu, 10 Oct 2024 18:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2F4198831;
+	Thu, 10 Oct 2024 18:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583835; cv=none; b=hIOI0H4cwjnwLCyFlASjM2vpzABrvMkb1lTr/ct0QTulqTiMLQO/b9G/PF0p4UD/RF6Cs/1D6JaLT9HrE8Edmms5G+eoJgAu+YYldOLTwZax9Uha3UHrCJD95kcFGok+Vg6GTjz1CS8KlJOIyoHeuJVfR3hVB2Sn5IHd9mxRyeU=
+	t=1728583970; cv=none; b=nIUYr/IpH1nSUrm6AJWPWLmBvai6qucS/hMBDDxIGKGuT3ynFbHtDWuxLIvJxgF3fgyrG5oMHSnD1sr0QOHl2jRbL0tkoXoT5qEOqRFcYEvo8qpyaE9kfEthw4b/foh6cZhK3ErgWH4ROOXgBiXov1+TF8Cjw9RF3vNbOm1b/ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583835; c=relaxed/simple;
-	bh=WScZ9gq/uZQUaKbsgB0PN31XOdwUs4XfUekePpZN2fY=;
+	s=arc-20240116; t=1728583970; c=relaxed/simple;
+	bh=MeLT9On91Emxdpz2vM4qOLD/wTXoFMl1V2LZJC5eFEk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgbozSvMSJS4/jzXTUbMX37tQDZyAhr38FeQ8PQ4DZ0QsJEwpcsvjzYnLShgy+bKBQXcNDotL9IiTf++ls2fqKhKuNP9ZrOxh7DK4xkkdl5f9xlWU6ZNnUxF+533trLfe2K0DLIcRfnV9MDmoFpyl+BQ8rarTgnZWoHfDG251OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKTsfTw2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EhLUcAjR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKTsfTw2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EhLUcAjR; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/kVahQoXCwWEAQPIrbvljHBAlHldU4ND8jmgJYaeT9yfs3UREIRSJ4rzJMxfwWrFETiZOA82I+rnuiDFkBW/jS3L3sywGMyFUBzzA3tfNEEDiYNOdH4nHAoOp4iX0Bsr5xcNZ8xvHKyzXH35ZdVpddnb/9HQ0iGMS6AtLcb1cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GHIKNQ2S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R/uGGF6O; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GHIKNQ2S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R/uGGF6O; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 412711F7CA;
-	Thu, 10 Oct 2024 18:10:31 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 37D9D1F7CA;
+	Thu, 10 Oct 2024 18:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728583831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1728583964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ycKanNyFQrEkpBWNHjK8KxZCy6yCD8panKmPRnODdpI=;
-	b=qKTsfTw2UaJ520My6r5itapGVInZVHvK+oVNFp8Zb8u3v8oMnYla61bDwT1QFqjHK6WXYB
-	DDWlD1Tuq0/wDgZ5je0bT96exJRVtFXgJ2TssraeUS1Mxq75p8ljLtciHEUfkulI108WeG
-	PjOzYSgbqPVXKzG6OrLYMJhID3AiOK8=
+	bh=jA41+oHeNzNXX8wZAt3OyU0/Uvd/fsqUXfwDVqkoiaU=;
+	b=GHIKNQ2SSSEv8P6wDvwVxbKIlYNa2QC7Rx7308haSY1Ac60eOzlINNouJruR6Cero/Xcgj
+	7QX++4UtfHrNtzDeJ2bdW+hCM3c8WRCsZKE60bdelZNdDYDjEJUIyd7Wt1Ld6ZkUjvCupZ
+	OP93e50VavKs/5tkvx7sRHITEtOUdPs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728583831;
+	s=susede2_ed25519; t=1728583964;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ycKanNyFQrEkpBWNHjK8KxZCy6yCD8panKmPRnODdpI=;
-	b=EhLUcAjRDuCDdHdeJBGdr/MNWvzfDvogbwbNVD+pItwHzw3FOO08IFQvasysE4TfaL8kLv
-	IDov1PixDNtUu+Ag==
+	bh=jA41+oHeNzNXX8wZAt3OyU0/Uvd/fsqUXfwDVqkoiaU=;
+	b=R/uGGF6Oa8Lh7abi4sgTD5cnmC8gDZFwfba+AddlwfkXD0rwu+H4FRtaGA4bDoOSrHEMDi
+	z6U/gpOcqC+MWACA==
 Authentication-Results: smtp-out2.suse.de;
-	none
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=GHIKNQ2S;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="R/uGGF6O"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728583831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1728583964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ycKanNyFQrEkpBWNHjK8KxZCy6yCD8panKmPRnODdpI=;
-	b=qKTsfTw2UaJ520My6r5itapGVInZVHvK+oVNFp8Zb8u3v8oMnYla61bDwT1QFqjHK6WXYB
-	DDWlD1Tuq0/wDgZ5je0bT96exJRVtFXgJ2TssraeUS1Mxq75p8ljLtciHEUfkulI108WeG
-	PjOzYSgbqPVXKzG6OrLYMJhID3AiOK8=
+	bh=jA41+oHeNzNXX8wZAt3OyU0/Uvd/fsqUXfwDVqkoiaU=;
+	b=GHIKNQ2SSSEv8P6wDvwVxbKIlYNa2QC7Rx7308haSY1Ac60eOzlINNouJruR6Cero/Xcgj
+	7QX++4UtfHrNtzDeJ2bdW+hCM3c8WRCsZKE60bdelZNdDYDjEJUIyd7Wt1Ld6ZkUjvCupZ
+	OP93e50VavKs/5tkvx7sRHITEtOUdPs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728583831;
+	s=susede2_ed25519; t=1728583964;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ycKanNyFQrEkpBWNHjK8KxZCy6yCD8panKmPRnODdpI=;
-	b=EhLUcAjRDuCDdHdeJBGdr/MNWvzfDvogbwbNVD+pItwHzw3FOO08IFQvasysE4TfaL8kLv
-	IDov1PixDNtUu+Ag==
+	bh=jA41+oHeNzNXX8wZAt3OyU0/Uvd/fsqUXfwDVqkoiaU=;
+	b=R/uGGF6Oa8Lh7abi4sgTD5cnmC8gDZFwfba+AddlwfkXD0rwu+H4FRtaGA4bDoOSrHEMDi
+	z6U/gpOcqC+MWACA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 050A71370C;
-	Thu, 10 Oct 2024 18:10:30 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 03B061370C;
+	Thu, 10 Oct 2024 18:12:43 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id J2PYNpYYCGdyLAAAD6G6ig
-	(envelope-from <rgoldwyn@suse.de>); Thu, 10 Oct 2024 18:10:30 +0000
-Date: Thu, 10 Oct 2024 14:10:25 -0400
+	id PUK1NhsZCGdCLQAAD6G6ig
+	(envelope-from <rgoldwyn@suse.de>); Thu, 10 Oct 2024 18:12:43 +0000
+Date: Thu, 10 Oct 2024 14:12:38 -0400
 From: Goldwyn Rodrigues <rgoldwyn@suse.de>
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/12] iomap: Introduce read_inline() function hook
-Message-ID: <kplkze6blu5pmojn6ikv65qdsccyuxg4yexgkrmldv5stn2mr4@w6zj7ug63f3f>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/12] iomap: include iomap_read_end_io() in header
+Message-ID: <6zrqn4wicahjhfig6mgs45f3c7qq4xh3z7l5hgux6nmcf6w3gs@obvj4myhvavd>
 References: <cover.1728071257.git.rgoldwyn@suse.com>
- <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
- <ZwCk3eROTMDsZql1@casper.infradead.org>
- <20241007174758.GE21836@frogsfrogsfrogs>
+ <b608329aef0841544f380acede9252caf10a48c6.1728071257.git.rgoldwyn@suse.com>
+ <20241007170217.GD21836@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,99 +102,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007174758.GE21836@frogsfrogsfrogs>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+In-Reply-To: <20241007170217.GD21836@frogsfrogsfrogs>
+X-Rspamd-Queue-Id: 37D9D1F7CA
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	MX_GOOD(-0.01)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
 	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_THREE(0.00)[4]
-X-Spam-Score: -3.80
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 10:47 07/10, Darrick J. Wong wrote:
-> On Sat, Oct 05, 2024 at 03:30:53AM +0100, Matthew Wilcox wrote:
-> > On Fri, Oct 04, 2024 at 04:04:33PM -0400, Goldwyn Rodrigues wrote:
-> > > Introduce read_inline() function hook for reading inline extents. This
-> > > is performed for filesystems such as btrfs which may compress the data
-> > > in the inline extents.
+On 10:02 07/10, Darrick J. Wong wrote:
+> On Fri, Oct 04, 2024 at 04:04:31PM -0400, Goldwyn Rodrigues wrote:
+> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > 
+> > iomap_read_end_io() will be used BTRFS after it has completed the reads
+> > to handle control back to iomap to finish reads on all folios.
 > 
-> Why don't you set iomap->inline_data to the uncompressed buffer, let
-> readahead copy it to the pagecache, and free it in ->iomap_end?
+> That probably needs EXPORT_SYMBOL_GPL if btrfs is going to use it,
+> right?
 
-This will increase the number of copies. BTRFS uncompresses directly
-into pagecache. Yes, this is an option but at the cost of efficiency.
+Yes! I got a warning from kernel test robot as well!
 
-> 
-> > This feels like an attempt to work around "iomap doesn't support
-> > compressed extents" by keeping the decompression in the filesystem,
-> > instead of extending iomap to support compressed extents itself.
-> > I'd certainly prefer iomap to support compressed extents, but maybe I'm
-> > in a minority here.
-> 
-> I'm not an expert on fs compression, but I get the impression that most
-> filesystems handle reads by allocating some folios, reading off the disk
-> into those folios, and decompressing into the pagecache folios.  It
-> might be kind of amusing to try to hoist that into the vfs/iomap at some
-> point, but I think the next problem you'd run into is that fscrypt has
-> similar requirements, since it's also a data transformation step.
-> fsverity I think is less complicated because it only needs to read the
-> pagecache contents at the very end to check it against the merkle tree.
-> 
-> That, I think, is why this btrfs iomap port want to override submit_bio,
-> right?  So that it can allocate a separate set of folios, create a
-> second bio around that, submit the second bio, decode what it read off
-> the disk into the folios of the first bio, then "complete" the first bio
-> so that iomap only has to update the pagecache state and doesn't have to
-> know about the encoding magic?
-
-Yes, but that is not the only reason. BTRFS also calculates and checks
-block checksums for data read during bio completions.
-
-> 
-> And then, having established that beachhead, porting btrfs fscrypt is
-> a simple matter of adding more transformation steps to the ioend
-> processing of the second bio (aka the one that actually calls the disk),
-> right?  And I think all that processing stuff is more or less already in
-> place for the existing read path, so it should be trivial (ha!) to
-> call it in an iomap context instead of straight from btrfs.
-> iomap_folio_state notwithstanding, of course.
-> 
-> Hmm.  I'll have to give some thought to what would the ideal iomap data
-> transformation pipeline look like?
-
-The order of transformation would make all the difference, and I am not
-sure if everyone involved can come to a conclusion that all
-transformations should be done in a particular decided order.
-
-FWIW, checksums are performed on what is read/written on disk. So
-for writes, compression happens before checksums.
-
-> 
-> Though I already have a sneaking suspicion that will morph into "If I
-> wanted to add {crypt,verity,compression} to xfs how would I do that?" ->
-> "How would I design a pipeine to handle all three to avoid bouncing
-> pages between workqueue threads like ext4 does?" -> "Oh gosh now I have
-> a totally different design than any of the existing implementations." ->
-> "Well, crumbs. :("
-> 
-> I'll start that by asking: Hey btrfs developers, what do you like and
-> hate about the current way that btrfs handles fscrypt, compression, and
-> fsverity?  Assuming that you can set all three on a file, right?
+Note to self: Stop building all modules in the kernel for testing.
 
 -- 
 Goldwyn
