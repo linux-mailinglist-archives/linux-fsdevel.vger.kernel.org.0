@@ -1,137 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-31590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B460998939
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B465998B7A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 17:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0106286539
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26D8328D25A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 15:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02271E883B;
-	Thu, 10 Oct 2024 14:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB1D1CC8B7;
+	Thu, 10 Oct 2024 15:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gKW1gsty"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7D71E7C21;
-	Thu, 10 Oct 2024 14:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74E21CC8BF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 15:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569542; cv=none; b=RVnGeU0BaxojRjuvmkiV/un8SWgAMpr03T1aBjgFsi9XsATXCTvxDBHucKhqpXWy/Nk9eDuaLfi/6bNsgI8AE3qvYuAbeclHkAE4Bqq6fiGOOCaeXNxfkIN0bIbyIGom/PHexPCx4PmJyORez61nvHdDORf9w+kuXiBJRO5trUE=
+	t=1728574028; cv=none; b=ahma+H3HX36YvtJNChLvjGK8k1qE432GPGjusAytnA54r4AImJuuvn8RgAR5TTjqk9PVhDpqBNlOMFFU3sHNFeSCCk1xr9fVkKZiQ65PvdmFd/exjR17UCz+PRTbsjsBXqQzZxvpQ1cTbIW3JUMZAXqodT7WCOUtk37uT+JKt9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569542; c=relaxed/simple;
-	bh=3Bjfe7NAtCXidb5TFTCiuIh/dnHj0G/gKNNhaIgHxTY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C0Mo0gu6kmEC2G+kPmnWPcXnDmTwem8BZp8M2lh4Hfxw5I6DUlg2+yB7o5aZPgbd7DPS+hQjbpEUy9by+P+dklEVE2ABPz9mmHVPO9ubdHpcUl3VBNXdJ/+WriQ8DvMsGaqjL+kzW+34YTZ32ajcAtSKt+PJqskSISQennokphI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPWq6495SzfdDh;
-	Thu, 10 Oct 2024 22:09:54 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id CE3A218007C;
-	Thu, 10 Oct 2024 22:12:18 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
- (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Oct
- 2024 22:12:15 +0800
-From: Kaixiong Yu <yukaixiong@huawei.com>
-To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
-CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
-	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
-	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
-	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
-	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
-	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
-	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
-	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
-Subject: [PATCH v3 -next 15/15] sysctl: remove unneeded include
-Date: Thu, 10 Oct 2024 23:22:15 +0800
-Message-ID: <20241010152215.3025842-16-yukaixiong@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241010152215.3025842-1-yukaixiong@huawei.com>
-References: <20241010152215.3025842-1-yukaixiong@huawei.com>
+	s=arc-20240116; t=1728574028; c=relaxed/simple;
+	bh=IP04WyH8b5ClX6RyMbLRjoix/rEmabeVB5T705Da+EI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kMRb8CRBTcz905/ZBl5gcnssOiI/eRRna/9iPIyG28/PeFyJrBpzhmqNZBbnUgUfmZ7dweverQuQzPSas/HQisWTVbYkJL/ufJVnvMiwpWgV6+gDqmtDyXIjsQslY+/DRTAy/ZtjobQ8tfw1MTJDc3ntCcNcu0yrcS9h9MIk1+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=gKW1gsty; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XPYX13NR6zVX;
+	Thu, 10 Oct 2024 17:26:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1728574017;
+	bh=Df586XROJKMF1yQSr381EiSbt/vI6xpJkJY3x0sWo24=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gKW1gstyIqxFplH2KkdMo3/4XmIDKzp7/O2Ibj1sLoDJfTS6MRKhEY4nvBxMuja5W
+	 bYy0A4L+fiNz/URueq3YROpu+osO3p+sBKsvN5EUPTCIl8TWIenJiDHdm8IPu39l1f
+	 +y6wzQ55DHIZMxcNqruev0BkrBpS0PAFPPVEOm7g=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XPYX06nnGz9Rb;
+	Thu, 10 Oct 2024 17:26:56 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org,
+	Eric Paris <eparis@redhat.com>
+Subject: [RFC PATCH v1 2/7] audit: Fix inode numbers
+Date: Thu, 10 Oct 2024 17:26:42 +0200
+Message-ID: <20241010152649.849254-2-mic@digikod.net>
+In-Reply-To: <20241010152649.849254-1-mic@digikod.net>
+References: <20241010152649.849254-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+X-Infomaniak-Routing: alpha
 
-Removing unneeded mm includes in kernel/sysctl.c.
+Use the new inode_get_ino() helper to log the user space's view of
+inode's numbers instead of the private kernel values.
 
-Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- kernel/sysctl.c | 6 ------
- 1 file changed, 6 deletions(-)
+ security/lsm_audit.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index f04da9f3abc6..6e3e0ce4da79 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -20,8 +20,6 @@
-  */
+diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+index 849e832719e2..c39a22b27cce 100644
+--- a/security/lsm_audit.c
++++ b/security/lsm_audit.c
+@@ -227,7 +227,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 		if (inode) {
+ 			audit_log_format(ab, " dev=");
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+-			audit_log_format(ab, " ino=%lu", inode->i_ino);
++			audit_log_format(ab, " ino=%llu", inode_get_ino(inode));
+ 		}
+ 		break;
+ 	}
+@@ -240,7 +240,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 		if (inode) {
+ 			audit_log_format(ab, " dev=");
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+-			audit_log_format(ab, " ino=%lu", inode->i_ino);
++			audit_log_format(ab, " ino=%llu", inode_get_ino(inode));
+ 		}
+ 		break;
+ 	}
+@@ -253,7 +253,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 		if (inode) {
+ 			audit_log_format(ab, " dev=");
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+-			audit_log_format(ab, " ino=%lu", inode->i_ino);
++			audit_log_format(ab, " ino=%llu", inode_get_ino(inode));
+ 		}
  
- #include <linux/module.h>
--#include <linux/mm.h>
--#include <linux/slab.h>
- #include <linux/sysctl.h>
- #include <linux/bitmap.h>
- #include <linux/signal.h>
-@@ -30,7 +28,6 @@
- #include <linux/proc_fs.h>
- #include <linux/security.h>
- #include <linux/ctype.h>
--#include <linux/kmemleak.h>
- #include <linux/filter.h>
- #include <linux/fs.h>
- #include <linux/init.h>
-@@ -41,7 +38,6 @@
- #include <linux/highuid.h>
- #include <linux/writeback.h>
- #include <linux/ratelimit.h>
--#include <linux/hugetlb.h>
- #include <linux/initrd.h>
- #include <linux/key.h>
- #include <linux/times.h>
-@@ -52,13 +48,11 @@
- #include <linux/reboot.h>
- #include <linux/ftrace.h>
- #include <linux/perf_event.h>
--#include <linux/oom.h>
- #include <linux/kmod.h>
- #include <linux/capability.h>
- #include <linux/binfmts.h>
- #include <linux/sched/sysctl.h>
- #include <linux/mount.h>
--#include <linux/userfaultfd_k.h>
- #include <linux/pid.h>
- 
- #include "../lib/kstrtox.h"
+ 		audit_log_format(ab, " ioctlcmd=0x%hx", a->u.op->cmd);
+@@ -271,7 +271,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 		if (inode) {
+ 			audit_log_format(ab, " dev=");
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+-			audit_log_format(ab, " ino=%lu", inode->i_ino);
++			audit_log_format(ab, " ino=%llu", inode_get_ino(inode));
+ 		}
+ 		break;
+ 	}
+@@ -290,7 +290,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 		}
+ 		audit_log_format(ab, " dev=");
+ 		audit_log_untrustedstring(ab, inode->i_sb->s_id);
+-		audit_log_format(ab, " ino=%lu", inode->i_ino);
++		audit_log_format(ab, " ino=%llu", inode_get_ino(inode));
+ 		rcu_read_unlock();
+ 		break;
+ 	}
 -- 
-2.34.1
+2.46.1
 
 
