@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-31569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174C99987E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 15:38:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D649987DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 15:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3630E1C24489
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 13:38:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FBC4B25E94
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 13:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D651CCB3A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1891CC148;
 	Thu, 10 Oct 2024 13:35:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA741C7B8D;
-	Thu, 10 Oct 2024 13:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FA41C9B79;
+	Thu, 10 Oct 2024 13:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567349; cv=none; b=cCNDEWDIjmuV7mua52g2Yx9opqP8v6RB3CLvDmCfwvFd6QRzBrLwqFqdTajA5M0s+c/Yo6sMS1c2vdTDYtdXfe+1h8tPvCcSwRJRwHQnXdhIdD945DSnuiwnJXYhSh31PNF2fx74zisq5llySwkx7Y6lPYQimaXGjpzzprc+WMs=
+	t=1728567348; cv=none; b=IjvCc0meypV8Dl10yuI7QKZJ2j470TJxuu2xa+w/Tx46UX8Fa1sLo57jmBvRjEyP3rhWjSi/Y0C6AEfFZHwipJix/VcPDQXt4n7K3ZQiFIyHHuIXylu6+wrslD6b8Xn/CXxQVzSjVbEPZGYvQBB/LlH/SsthY5hAkv+5dkJBkV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567349; c=relaxed/simple;
-	bh=MMTmuru0uSXetyI199H8UvzbW3ycYcsIf8+FqX5Rajk=;
+	s=arc-20240116; t=1728567348; c=relaxed/simple;
+	bh=yHmuL1Nv422R7dxZXueyIXmIHEgHIv1hVuyrn6vveIY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sC+eyzgRzyOoJ36dkZZUBPJt5Vxtrb8Ryp8xK21I49c1FYUj8kUx10aU1gzDNtucfSELDJjHXWvLYBfuO38xkDLUHtkNRK5SAMfB1aEXJUBJNu3AKU6lkpJMiVmQmMuhL37NygJVxnXeFLeRa9Zfoc2V5NENQA3bLihbLGjqzAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=S9F9b73GYV8H1YlefsQEYUMB7kLm/9JbfKS+aUyFfaBhLld0L4tVMaiPx58HaYVC3tWdEZHOgeX1pBHr9WQ0eMFBrUYRHru3iU973z0k2lrTKEuIhzVuImpH5dcKikUnRThbyWKVpeDF0RkLg8hGk13mICyr2h7ujBr1jTX550A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XPW3K6yC1z4f3jsL;
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XPW3K4lC4z4f3jHg;
 	Thu, 10 Oct 2024 21:35:25 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D3FA91A058E;
-	Thu, 10 Oct 2024 21:35:42 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 4CC2F1A0359;
+	Thu, 10 Oct 2024 21:35:43 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCXysYc2AdnDRnZDg--.21356S9;
-	Thu, 10 Oct 2024 21:35:42 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCXysYc2AdnDRnZDg--.21356S10;
+	Thu, 10 Oct 2024 21:35:43 +0800 (CST)
 From: Zhang Yi <yi.zhang@huawei.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH v3 05/10] ext4: refactor ext4_zero_range()
-Date: Thu, 10 Oct 2024 21:33:28 +0800
-Message-Id: <20241010133333.146793-6-yi.zhang@huawei.com>
+Subject: [PATCH v3 06/10] ext4: refactor ext4_collapse_range()
+Date: Thu, 10 Oct 2024 21:33:29 +0800
+Message-Id: <20241010133333.146793-7-yi.zhang@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241010133333.146793-1-yi.zhang@huawei.com>
 References: <20241010133333.146793-1-yi.zhang@huawei.com>
@@ -63,10 +63,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXysYc2AdnDRnZDg--.21356S9
-X-Coremail-Antispam: 1UD129KBjvJXoW3JFWrGr4DWF1UGr13Jr1fJFb_yoW3Gr1DpF
-	ZIqrW5Kr4xWFyq9r48KFs7ZF40k3WkKrWUCFyxWrn5X3srtwn7Kan0kF95WFWIqrZ7Zw4Y
-	vF4Yyry7GFWUWFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCXysYc2AdnDRnZDg--.21356S10
+X-Coremail-Antispam: 1UD129KBjvJXoW3Gry8KryxGr4fWrW5Kw18uFg_yoW7Kw17pr
+	ZxWry5Kr40ga4kWr48tF4DZF10y3W0g3yUW3yxGr9aqa4qyrnrKa4YyFWF9FW8trWkZFWj
+	qF40v34UWrW7Za7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUHab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -85,242 +85,190 @@ X-Coremail-Antispam: 1UD129KBjvJXoW3JFWrGr4DWF1UGr13Jr1fJFb_yoW3Gr1DpF
 Sender: yi.zhang@huaweicloud.com
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-The current implementation of ext4_zero_range() contains complex
-position calculations and stale error tags. To improve the code's
-clarity and maintainability, it is essential to clean up the code and
-improve its readability, this can be achieved by: a) simplifying and
-renaming variables, making the style the same as ext4_punch_hole(); b)
-eliminating unnecessary position calculations, writing back all data in
-data=journal mode, and drop page cache from the original offset to the
-end, rather than using aligned blocks; c) renaming the stale out_mutex
-tags.
+Simplify ext4_collapse_range() and align its code style with that of
+ext4_zero_range() and ext4_punch_hole(). Refactor it by: a) renaming
+variables, b) removing redundant input parameter checks and moving
+the remaining checks under i_rwsem in preparation for future
+refactoring, and c) renaming the three stale error tags.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/extents.c | 161 +++++++++++++++++++---------------------------
- 1 file changed, 65 insertions(+), 96 deletions(-)
+ fs/ext4/extents.c | 103 +++++++++++++++++++++-------------------------
+ 1 file changed, 48 insertions(+), 55 deletions(-)
 
 diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index aa07b5ddaff8..f843342e5164 100644
+index f843342e5164..a4e95f3b5f09 100644
 --- a/fs/ext4/extents.c
 +++ b/fs/ext4/extents.c
-@@ -4565,40 +4565,15 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+@@ -5295,43 +5295,36 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
  	struct inode *inode = file_inode(file);
- 	struct address_space *mapping = file->f_mapping;
- 	handle_t *handle = NULL;
--	unsigned int max_blocks;
- 	loff_t new_size = 0;
--	int ret = 0;
--	int flags;
--	int credits;
--	int partial_begin, partial_end;
--	loff_t start, end;
--	ext4_lblk_t lblk;
+ 	struct super_block *sb = inode->i_sb;
+ 	struct address_space *mapping = inode->i_mapping;
+-	ext4_lblk_t punch_start, punch_stop;
 +	loff_t end = offset + len;
 +	ext4_lblk_t start_lblk, end_lblk;
-+	unsigned int blocksize = i_blocksize(inode);
- 	unsigned int blkbits = inode->i_blkbits;
-+	int ret, flags, credits;
- 
- 	trace_ext4_zero_range(inode, offset, len, mode);
+ 	handle_t *handle;
+ 	unsigned int credits;
+-	loff_t new_size, ioffset;
++	loff_t start, new_size;
+ 	int ret;
  
 -	/*
--	 * Round up offset. This is not fallocate, we need to zero out
--	 * blocks, so convert interior block aligned part of the range to
--	 * unwritten and possibly manually zero out unaligned parts of the
--	 * range. Here, start and partial_begin are inclusive, end and
--	 * partial_end are exclusive.
+-	 * We need to test this early because xfstests assumes that a
+-	 * collapse range of (0, 1) will return EOPNOTSUPP if the file
+-	 * system does not support collapse range.
 -	 */
--	start = round_up(offset, 1 << blkbits);
--	end = round_down((offset + len), 1 << blkbits);
--
--	if (start < offset || end > offset + len)
--		return -EINVAL;
--	partial_begin = offset & ((1 << blkbits) - 1);
--	partial_end = (offset + len) & ((1 << blkbits) - 1);
--
--	lblk = start >> blkbits;
--	max_blocks = (end >> blkbits);
--	if (max_blocks < lblk)
--		max_blocks = 0;
--	else
--		max_blocks -= lblk;
--
- 	inode_lock(inode);
+-	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+-		return -EOPNOTSUPP;
++	trace_ext4_collapse_range(inode, offset, len);
  
+-	/* Collapse range works only on fs cluster size aligned regions. */
+-	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb)))
+-		return -EINVAL;
++	inode_lock(inode);
+ 
+-	trace_ext4_collapse_range(inode, offset, len);
++	/* Currently just for extent based files */
++	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
+ 
+-	punch_start = offset >> EXT4_BLOCK_SIZE_BITS(sb);
+-	punch_stop = (offset + len) >> EXT4_BLOCK_SIZE_BITS(sb);
++	/* Collapse range works only on fs cluster size aligned regions. */
++	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb))) {
++		ret = -EINVAL;
++		goto out;
++	}
+ 
+-	inode_lock(inode);
  	/*
-@@ -4606,88 +4581,78 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+ 	 * There is no need to overlap collapse range with EOF, in which case
+ 	 * it is effectively a truncate operation
  	 */
- 	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))) {
- 		ret = -EOPNOTSUPP;
+-	if (offset + len >= inode->i_size) {
++	if (end >= inode->i_size) {
+ 		ret = -EINVAL;
+-		goto out_mutex;
+-	}
+-
+-	/* Currently just for extent based files */
+-	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
+-		ret = -EOPNOTSUPP;
 -		goto out_mutex;
 +		goto out;
  	}
  
- 	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
--	    (offset + len > inode->i_size ||
--	     offset + len > EXT4_I(inode)->i_disksize)) {
--		new_size = offset + len;
-+	    (end > inode->i_size || end > EXT4_I(inode)->i_disksize)) {
-+		new_size = end;
- 		ret = inode_newsize_ok(inode, new_size);
- 		if (ret)
--			goto out_mutex;
-+			goto out;
- 	}
- 
--	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
--
- 	/* Wait all existing dio workers, newcomers will block on i_rwsem */
- 	inode_dio_wait(inode);
+ 	/* Wait for existing dio to complete */
+@@ -5339,7 +5332,7 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
  
  	ret = file_modified(file);
  	if (ret)
 -		goto out_mutex;
--
--	/* Preallocate the range including the unaligned edges */
--	if (partial_begin || partial_end) {
--		ret = ext4_alloc_file_blocks(file,
--				round_down(offset, 1 << blkbits) >> blkbits,
--				(round_up((offset + len), 1 << blkbits) -
--				 round_down(offset, 1 << blkbits)) >> blkbits,
--				new_size, flags);
--		if (ret)
--			goto out_mutex;
--
--	}
--
--	/* Zero range excluding the unaligned edges */
--	if (max_blocks > 0) {
--		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
--			  EXT4_EX_NOCACHE);
 +		goto out;
  
--		/*
--		 * Prevent page faults from reinstantiating pages we have
--		 * released from page cache.
--		 */
--		filemap_invalidate_lock(mapping);
-+	/*
-+	 * Prevent page faults from reinstantiating pages we have released
-+	 * from page cache.
-+	 */
-+	filemap_invalidate_lock(mapping);
+ 	/*
+ 	 * Prevent page faults from reinstantiating pages we have released from
+@@ -5349,55 +5342,52 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
  
--		ret = ext4_break_layouts(inode);
--		if (ret) {
--			filemap_invalidate_unlock(mapping);
--			goto out_mutex;
--		}
-+	ret = ext4_break_layouts(inode);
-+	if (ret)
-+		goto out_invalidate_lock;
- 
-+	/*
-+	 * For journalled data we need to write (and checkpoint) pages before
-+	 * discarding page cache to avoid inconsitent data on disk in case of
-+	 * crash before zeroing trans is committed.
-+	 */
-+	if (ext4_should_journal_data(inode)) {
-+		ret = filemap_write_and_wait_range(mapping, offset, end - 1);
-+	} else {
- 		ret = ext4_update_disksize_before_punch(inode, offset, len);
--		if (ret) {
--			filemap_invalidate_unlock(mapping);
--			goto out_mutex;
--		}
-+		ext4_truncate_folios_range(inode, offset, end);
-+	}
-+	if (ret)
-+		goto out_invalidate_lock;
- 
--		/*
--		 * For journalled data we need to write (and checkpoint) pages
--		 * before discarding page cache to avoid inconsitent data on
--		 * disk in case of crash before zeroing trans is committed.
--		 */
--		if (ext4_should_journal_data(inode)) {
--			ret = filemap_write_and_wait_range(mapping, start,
--							   end - 1);
--			if (ret) {
--				filemap_invalidate_unlock(mapping);
--				goto out_mutex;
--			}
--		}
-+	/* Now release the pages and zero block aligned part of pages */
-+	truncate_pagecache_range(inode, offset, end - 1);
- 
--		/* Now release the pages and zero block aligned part of pages */
--		ext4_truncate_folios_range(inode, start, end);
--		truncate_pagecache_range(inode, start, end - 1);
-+	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
-+	/* Preallocate the range including the unaligned edges */
-+	if (offset & (blocksize - 1) || end & (blocksize - 1)) {
-+		ext4_lblk_t alloc_lblk = offset >> blkbits;
-+		ext4_lblk_t len_lblk = EXT4_MAX_BLOCKS(len, offset, blkbits);
- 
--		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
--					     flags);
--		filemap_invalidate_unlock(mapping);
-+		ret = ext4_alloc_file_blocks(file, alloc_lblk, len_lblk,
-+					     new_size, flags);
- 		if (ret)
--			goto out_mutex;
-+			goto out_invalidate_lock;
- 	}
--	if (!partial_begin && !partial_end)
--		goto out_mutex;
-+
-+	/* Zero range excluding the unaligned edges */
-+	start_lblk = round_up(offset, blocksize) >> blkbits;
-+	end_lblk = end >> blkbits;
-+	if (end_lblk > start_lblk) {
-+		ext4_lblk_t zero_blks = end_lblk - start_lblk;
-+
-+		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN | EXT4_EX_NOCACHE);
-+		ret = ext4_alloc_file_blocks(file, start_lblk, zero_blks,
-+					     new_size, flags);
-+		if (ret)
-+			goto out_invalidate_lock;
-+	}
-+	/* Finish zeroing out if it doesn't contain partial block */
-+	if (!(offset & (blocksize - 1)) && !(end & (blocksize - 1)))
+ 	ret = ext4_break_layouts(inode);
+ 	if (ret)
+-		goto out_mmap;
 +		goto out_invalidate_lock;
  
  	/*
- 	 * In worst case we have to writeout two nonadjacent unwritten
-@@ -4700,25 +4665,29 @@ static long ext4_zero_range(struct file *file, loff_t offset,
++	 * Write tail of the last page before removed range and data that
++	 * will be shifted since they will get removed from the page cache
++	 * below. We are also protected from pages becoming dirty by
++	 * i_rwsem and invalidate_lock.
+ 	 * Need to round down offset to be aligned with page size boundary
+ 	 * for page size > block size.
+ 	 */
+-	ioffset = round_down(offset, PAGE_SIZE);
+-	/*
+-	 * Write tail of the last page before removed range since it will get
+-	 * removed from the page cache below.
+-	 */
+-	ret = filemap_write_and_wait_range(mapping, ioffset, offset);
+-	if (ret)
+-		goto out_mmap;
+-	/*
+-	 * Write data that will be shifted to preserve them when discarding
+-	 * page cache below. We are also protected from pages becoming dirty
+-	 * by i_rwsem and invalidate_lock.
+-	 */
+-	ret = filemap_write_and_wait_range(mapping, offset + len,
+-					   LLONG_MAX);
++	start = round_down(offset, PAGE_SIZE);
++	ret = filemap_write_and_wait_range(mapping, start, offset);
++	if (!ret)
++		ret = filemap_write_and_wait_range(mapping, end, LLONG_MAX);
+ 	if (ret)
+-		goto out_mmap;
+-	truncate_pagecache(inode, ioffset);
++		goto out_invalidate_lock;
++
++	truncate_pagecache(inode, start);
+ 
+ 	credits = ext4_writepage_trans_blocks(inode);
+ 	handle = ext4_journal_start(inode, EXT4_HT_TRUNCATE, credits);
  	if (IS_ERR(handle)) {
  		ret = PTR_ERR(handle);
- 		ext4_std_error(inode->i_sb, ret);
--		goto out_mutex;
+-		goto out_mmap;
 +		goto out_invalidate_lock;
  	}
+ 	ext4_fc_mark_ineligible(sb, EXT4_FC_REASON_FALLOC_RANGE, handle);
  
-+	/* Zero out partial block at the edges of the range */
-+	ret = ext4_zero_partial_blocks(handle, inode, offset, len);
++	start_lblk = offset >> inode->i_blkbits;
++	end_lblk = (offset + len) >> inode->i_blkbits;
++
+ 	down_write(&EXT4_I(inode)->i_data_sem);
+ 	ext4_discard_preallocations(inode);
+-	ext4_es_remove_extent(inode, punch_start, EXT_MAX_BLOCKS - punch_start);
++	ext4_es_remove_extent(inode, start_lblk, EXT_MAX_BLOCKS - start_lblk);
+ 
+-	ret = ext4_ext_remove_space(inode, punch_start, punch_stop - 1);
++	ret = ext4_ext_remove_space(inode, start_lblk, end_lblk - 1);
+ 	if (ret) {
+ 		up_write(&EXT4_I(inode)->i_data_sem);
+-		goto out_stop;
++		goto out_handle;
+ 	}
+ 	ext4_discard_preallocations(inode);
+ 
+-	ret = ext4_ext_shift_extents(inode, handle, punch_stop,
+-				     punch_stop - punch_start, SHIFT_LEFT);
++	ret = ext4_ext_shift_extents(inode, handle, end_lblk,
++				     end_lblk - start_lblk, SHIFT_LEFT);
+ 	if (ret) {
+ 		up_write(&EXT4_I(inode)->i_data_sem);
+-		goto out_stop;
++		goto out_handle;
+ 	}
+ 
+ 	new_size = inode->i_size - len;
+@@ -5405,16 +5395,19 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
+ 	EXT4_I(inode)->i_disksize = new_size;
+ 
+ 	up_write(&EXT4_I(inode)->i_data_sem);
+-	if (IS_SYNC(inode))
+-		ext4_handle_sync(handle);
+ 	ret = ext4_mark_inode_dirty(handle, inode);
 +	if (ret)
 +		goto out_handle;
 +
- 	if (new_size)
- 		ext4_update_inode_size(inode, new_size);
- 	ret = ext4_mark_inode_dirty(handle, inode);
- 	if (unlikely(ret))
- 		goto out_handle;
--	/* Zero out partial block at the edges of the range */
--	ret = ext4_zero_partial_blocks(handle, inode, offset, len);
--	if (ret >= 0)
--		ext4_update_inode_fsync_trans(handle, inode, 1);
+ 	ext4_update_inode_fsync_trans(handle, inode, 1);
++	if (IS_SYNC(inode))
++		ext4_handle_sync(handle);
  
-+	ext4_update_inode_fsync_trans(handle, inode, 1);
- 	if (file->f_flags & O_SYNC)
- 		ext4_handle_sync(handle);
- 
- out_handle:
+-out_stop:
++out_handle:
  	ext4_journal_stop(handle);
--out_mutex:
+-out_mmap:
 +out_invalidate_lock:
-+	filemap_invalidate_unlock(mapping);
+ 	filemap_invalidate_unlock(mapping);
+-out_mutex:
 +out:
  	inode_unlock(inode);
  	return ret;
