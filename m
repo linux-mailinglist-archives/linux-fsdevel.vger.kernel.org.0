@@ -1,91 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-31557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BC8998658
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6875A998660
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65E2E1C22BF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 12:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983D01C226A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 12:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B0E1C9B65;
-	Thu, 10 Oct 2024 12:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="E6wOqTfC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EDD1C460D;
+	Thu, 10 Oct 2024 12:45:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AD31C4611;
-	Thu, 10 Oct 2024 12:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEAE1C6882;
+	Thu, 10 Oct 2024 12:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564089; cv=none; b=WA5hLIF4xp+tTlprg13obBMAbytx/oW37UNu65J7ZxLf392iA+nyeMFgaYb6P5s/bK9OqwyUI6IUjeErZNEFkA4PhDlfpGCAufgj0UWMeAoO+8S37t3+K5kKNotXUjFA/sO0UrbqZqlQslEDpHllkdCRlSP1SuxkeihqzM91eoE=
+	t=1728564305; cv=none; b=AGVtCdhsFSsPyHo8dscikXIKhNmJKHZT4pHZ6mODigIlkIuSmFJF8SqRw+yqXPPux2AUcSkqcx8iftUwFtUFXob0OOBny7K4YOPpkYhvWuxXLTw4nWqvdHsFNMQJrGuipleJnFLWdhPJ1r34q2Q0tMm6kqFqsl6HVNgIUoOZgK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564089; c=relaxed/simple;
-	bh=ypDIvwcATtiSO7VRxsF1nhH5/6Dp1JyUkF68kc22vD8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gSPu0pMPFCqZQrGQT4YKTDNEmP3rZx6BMUGdfY4NctiUPHdKiG9IWw/Yid1q6A4HvyZ2V9wFc260ypD6dl9DF8lyJMqPgxKC9Z8KRM4ZwhEuz+WGt4Rv7hRbYWz3mFbRF8yYDn8KrtDod8kjcDOjb0C6jUsg52RVVxQ4MhBuLT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=E6wOqTfC; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C2B0242BFE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728564086; bh=ypDIvwcATtiSO7VRxsF1nhH5/6Dp1JyUkF68kc22vD8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=E6wOqTfCoi42biH81tadWDgjqW04FttF/LLTEtVY+qln3cCgDt4knu2K9qG63Ldt5
-	 8OarMPoXfcDYVp02EH2zv+wBeClrScrcCiL4Fu4LGNZ0vSgblKqkmesKpSghIiFZWA
-	 iKlQGJk5PD4NB/PovaVTvhey2aUWcwnfQ+vATgCmGcypd7n2xYMN+z6A5FSvjOkLYo
-	 9sFe8s+A7DKKDQ94eSfVLEm6HrAGwtdWRUjReRN90rVnzbR3jH5g05z5EKHzSY7g3H
-	 sJY1VYArLDl8CAH52PsBhboCgpAhqWZ21sjFDCLQbSKdbrVw+XDwEJD8MO5rRB0DTp
-	 yTXUaKQskm92w==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id C2B0242BFE;
-	Thu, 10 Oct 2024 12:41:25 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Christian Brauner <brauner@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>
-Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org,
- christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-In-Reply-To: <20241010-bewilligen-wortkarg-3c1195a5fb70@brauner>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <87msjd9j7n.fsf@trenco.lwn.net>
- <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
- <20241010-bewilligen-wortkarg-3c1195a5fb70@brauner>
-Date: Thu, 10 Oct 2024 06:41:25 -0600
-Message-ID: <87h69k870q.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728564305; c=relaxed/simple;
+	bh=xCFgAuZiiogFYGmAMETQx/sjqDPkGLWs2cFFKREAYNU=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=c3XLcZKly+5X1gykQJAT5aV/OK3fw4xDhB0RaME46yU0poqD2OqLaHmZTV8WTnYMmDg+++wFHG+v9NKjb+kE18AmuLsVcio6YyOcrwrdb2LtsyxgwNEVbSQNWQJZmJSFx819SY9VPVWgPxW0WVZYed40zuufpo2SVjdWgOFf5Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XPTvs2gKnz1SCQ8;
+	Thu, 10 Oct 2024 20:43:53 +0800 (CST)
+Received: from kwepemd200022.china.huawei.com (unknown [7.221.188.232])
+	by mail.maildlp.com (Postfix) with ESMTPS id 948651A0190;
+	Thu, 10 Oct 2024 20:45:00 +0800 (CST)
+Received: from [10.174.178.185] (10.174.178.185) by
+ kwepemd200022.china.huawei.com (7.221.188.232) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 20:44:59 +0800
+Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
+ filesystem
+To: Jan Kara <jack@suse.cz>, Ye Bin <yebin@huaweicloud.com>
+References: <20241010112543.1609648-1-yebin@huaweicloud.com>
+ <20241010112543.1609648-3-yebin@huaweicloud.com>
+ <20241010121607.54ttcmdfmh7ywho7@quack3>
+CC: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhangxiaoxu5@huawei.com>
+From: "yebin (H)" <yebin10@huawei.com>
+Message-ID: <6707CC10.2020007@huawei.com>
+Date: Thu, 10 Oct 2024 20:44:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20241010121607.54ttcmdfmh7ywho7@quack3>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd200022.china.huawei.com (7.221.188.232)
 
-Christian Brauner <brauner@kernel.org> writes:
 
-> pidfd_info overwrites the request_mask with what is supported by the
-> kernel. I don't think userspace setting random stuff in the request_mask
-> is a problem. It would already be a problem with statx() and we haven't
-> seen that so far.
+
+On 2024/10/10 20:16, Jan Kara wrote:
+> On Thu 10-10-24 19:25:42, Ye Bin wrote:
+>> From: Ye Bin <yebin10@huawei.com>
+>>
+>> In order to better analyze the issue of file system uninstallation caused
+>> by kernel module opening files, it is necessary to perform dentry recycling
+> I don't quite understand the use case you mention here. Can you explain it
+> a bit more (that being said I've needed dropping caches for a particular sb
+> myself a few times for debugging purposes so I generally agree it is a
+> useful feature).
+Well, I'm analyzing what files are still open and the file system can't 
+be unmounted.
+The process occupied by the opened file cannot be found through the 
+fuser. That is,
+the file may be occupied by the kernel mode. You can insert a module or 
+use kprobe
+to obtain all cached files of the corresponding file system. But there 
+can be a lot of
+files, so I want to clean up irrelevant files first.
+>> on a single file system. But now, apart from global dentry recycling, it is
+>> not supported to do dentry recycling on a single file system separately.
+>> This feature has usage scenarios in problem localization scenarios.At the
+>> same time, it also provides users with a slightly fine-grained
+>> pagecache/entry recycling mechanism.
+>> This patch supports the recycling of pagecache/entry for individual file
+>> systems.
+>>
+>> Signed-off-by: Ye Bin <yebin10@huawei.com>
+>> ---
+>>   fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/mm.h |  2 ++
+>>   kernel/sysctl.c    |  9 +++++++++
+>>   3 files changed, 54 insertions(+)
+>>
+>> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+>> index d45ef541d848..99d412cf3e52 100644
+>> --- a/fs/drop_caches.c
+>> +++ b/fs/drop_caches.c
+>> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>>   	}
+>>   	return 0;
+>>   }
+>> +
+>> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
+>> +				  void *buffer, size_t *length, loff_t *ppos)
+>> +{
+>> +	unsigned int major, minor;
+>> +	unsigned int ctl;
+>> +	struct super_block *sb;
+>> +	static int stfu;
+>> +
+>> +	if (!write)
+>> +		return 0;
+>> +
+>> +	if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
+>> +		return -EINVAL;
+> I think specifying bdev major & minor number is not a great interface these
+> days. In particular for filesystems which are not bdev based such as NFS. I
+> think specifying path to some file/dir in the filesystem is nicer and you
+> can easily resolve that to sb here as well.
 >
-> If userspace happens to set a some random bit in the request_mask and
-> that bit ends up being used a few kernel releases later to e.g.,
-> retrieve additional information then all that happens is that userspace
-> would now receive information they didn't need. That's not a problem.
+> 								Honza
+That's a really good idea. I think by specifying bdev "major & minor", 
+you can reclaim
+the file system pagecache that is not unmounted due to "umount -l" mode. 
+In this
+case, the sb of the corresponding file system cannot be found in the 
+specified path.
+So I think we can support both ways. I look forward to your opinion.
 
-That, of course, assumes that there will never be a request_mask bit
-that affects the information gathering in some other way -- say looking
-in the parent namespace or such (a random example that just popped into
-my undercaffeinated brain and is unlikely to be anything we actually
-do).
-
-But then, as I said, I'm bad at this :)
-
-jon
 
