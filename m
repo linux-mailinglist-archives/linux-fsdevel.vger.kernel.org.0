@@ -1,162 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-31592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31E6699894A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:23:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051D4998959
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 16:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA22B1F28B4E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:23:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351E61C24032
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 14:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9E01CB505;
-	Thu, 10 Oct 2024 14:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IhOwmEZF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD32F1CEEBD;
+	Thu, 10 Oct 2024 14:16:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7C21CDA31;
-	Thu, 10 Oct 2024 14:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E5C1CB524
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 14:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569716; cv=none; b=dbeylfmZQRTcTMh7XNJDyT488Ux1Yz5QFN14r2tJGuqExb/pA4EUcRkZcnakhNNKr86Yl60CXNhExeoZdfrPAmG4R776cLMxhjYKrQVVAN6Gn29LH08Rcw1WWgKifFf+Whl5SfZQYz+D8qY3HRVZt59snoWz5gOC5BTCiP/atYQ=
+	t=1728569766; cv=none; b=EJWpjYg/CxijheUuFjzrIjKC6h5FbW3b6BrwenSDkC4t2lB3Bj0XUezIwzJuhy6nGWpfM+1M64xtCkGWUntNJ2lSD5dThJFZUJKU2TQhkcOmOH/EujGUoKWkvuownWY9JeHRz2FE4nKkMPeL5wGCkOKFMzD/hS+jLhsnvtM/W70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569716; c=relaxed/simple;
-	bh=pxBvWcrhGMIPuPgtXeIxNxIKDs1AJSR+OZH4rWNkoBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N5+HcKHua3EdkZzNNsof2oEoAofowmYekXoMCZczzX7R+z/7p017fS83vxZs/iVs+6hSbW5ZySlOiEsSDNbpeTa6Q+B4nZQRbEctykn1od8M2Uo963J3s+GdYsx07ZsPeXEIKQbA0AJtbeoFQnDs4Crl+KIWpJn2JqFcm+u7IGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IhOwmEZF; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7afc67e9447so86012285a.1;
-        Thu, 10 Oct 2024 07:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728569712; x=1729174512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sqvqzpyos9Z2cHl1Hq4441Cm311q4Rw0QpRuIoqWsVw=;
-        b=IhOwmEZF7l74V/U0nNfx8eyYQrpPJ5MNkJQpmsxy9Td5PCc7tzTK7TbRt25zmj+f65
-         gfDzCY+Z0ls3jn5f5RxJfOXZlzbTaojKICWf3tVAPgKWvOe8RFerkvpwg00vF6jrTvck
-         /e/ugpJqz00wGZ1N4qaooYkC87svJ4x9zQjaqUxH77/ILiSfS5HV6e1t50altKU2AmVL
-         jQGW0o4LlcmLemKDw8FSB3M+lHH2FNIa6uicwKBlXD725C6zzK/m11VX/EcxyHASRYFv
-         owJFFBpPhlV/vgjQwoIgw4MumZ05q+Ztho5hb3Np9yXWt8PvVjZC376cl2fzhNBE6LGZ
-         H1QA==
+	s=arc-20240116; t=1728569766; c=relaxed/simple;
+	bh=wo1aqpD0fJx2ciqxxDy8ZSZ5yYdeEAeEXEqccPnZFUk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NIFZ0S7J54bJf0Bw/WKBN+9LbF803pybjI1ePIOHzLuFYmJJCjpVhGjE9KsfKrTmpMeTygA6an3jYv+rJll7w+dHuANrjna2PTXk6/f0uLf535mGof6emh6sHhT4AJ6SRLtYjmBKYU8PpArPYwwP8EQHh6jfrPj0ihS/2AGi/FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3972c435dso10149515ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 07:16:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728569712; x=1729174512;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sqvqzpyos9Z2cHl1Hq4441Cm311q4Rw0QpRuIoqWsVw=;
-        b=btxqLBkG9PlVIk47gWxLjiWLjbDuCDLAziNCA/nwAWqghd90AkXgm7YfhGRDMdUmip
-         6XPuBWUl4jrKpscGIQgtnt32ie6QzSLWdjM/HNWwg3nlgW3u/tdPosz+ghpoOUV4O7pI
-         vjWGULGDLqDRq9mRYhYYcVS5kwjscgVqzqQVT6+FFAr3xpQLPqi1O54yCjQzp3Q0tRz3
-         2eG6dx2AGhZAcnJPKn34jqYWN29kgszcv4lfASro6wtcvVgZNzY2VzMKWbVTlL/BMq6j
-         Xn6/WLqqszQWMeYu4MeAHHXHWdEkYM5hEbNeaJiW/IAgsGIjthkmgi3cAJX0/ihKxXB5
-         rX+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1U0MD07d6bHpq0PNIfjhk7cUDBoJ6SSBmNgVallqZPaFr/Jj7Wqy2mE8STJ4G7Mk9wyFeAKzIA85tVgfeCw==@vger.kernel.org, AJvYcCWEN2rXpWM2lQkWUgIOOeChpxz4Vs/RXq00l7Ir0VNFN2fVC574KTQ9Sq92UBnmAvP+S6ZZOF9lBS9TMUp0@vger.kernel.org, AJvYcCX/UrEQ7JoUU6TFtwV2ggSlmxyu93wbQBF7N7imA4Y6N+xrSX4YINJFtpuuf+yYWmx8zhZLEJhBoYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdoBfBrsi5OiBri5YetFlaVKc4LFAhSALJ4tiRo+YgdqdT9sV9
-	XUnz9UnHiS0TCiYDInmnxX5x0DL//SqYG33AUKHRNfOgEAxnzFT4
-X-Google-Smtp-Source: AGHT+IHQiOHFkcicch0l/ECWAvjz3Na6Zp7HBy505VDWPlG2NN7O8G09nABk4XVG+XlnB+ahQcIxfQ==
-X-Received: by 2002:a05:620a:2903:b0:7a4:dff8:35d5 with SMTP id af79cd13be357-7b1125481b7mr545113785a.33.1728569711965;
-        Thu, 10 Oct 2024 07:15:11 -0700 (PDT)
-Received: from localhost.localdomain ([2620:10d:c091:600::1:e47b])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1149580bfsm48822085a.76.2024.10.10.07.15.10
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 10 Oct 2024 07:15:11 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-To: tamird@gmail.com
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] XArray: minor documentation improvements
-Date: Thu, 10 Oct 2024 10:12:58 -0400
-Message-ID: <20241010141309.52527-2-tamird@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <CAJ-ks9khQo8o_7qUj_wMS+_LRpmhy7OQ62nhWZBwam59wid5hQ@mail.gmail.com>
-References: <CAJ-ks9khQo8o_7qUj_wMS+_LRpmhy7OQ62nhWZBwam59wid5hQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1728569764; x=1729174564;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xgq60H82SiwsEEYyfETa4MwhBeXGmeG/1/Rkqw+PB7Y=;
+        b=KZ77T7j0RjyEXP0fdZ7vuPcuwr16YnGVM3uoKwC+68axfezMrTCe7QCRk8hhPNSiPJ
+         NkUWbnikSUcfim/ILVPXW5s5NWFdvk2WmKaDyeSvYCzKWhsEPxu4YLfoWsqBQMyW9WTk
+         dOASpUFrr7qjT2adqYn+ZyDKVzziRzzHZppjtq2P4rbFfuqqNonF+1KmJ8zKIeIbnXJV
+         ChBtteH/c/gRV39Hbmd4XIOE/qeY0SjRisAE25/B4z1JW+x7p0nx5LdszlYHAaoRHXq/
+         NT/7IxC1rAqe/J0LTWRHkh2qyaXQWtN81kaUU8K13YNT4zjEXq+UCT7zXKOyF3HlIg8m
+         P1Og==
+X-Gm-Message-State: AOJu0YxWi+pavY/41gpWTA6V96MQYG9GSm3b1TDZuYvB8gqBU0XEgjwt
+	bNbJxngYj7rDygf5n4/RRvQ3yDEB/rsJwqWlj5tweeJ/9SV049CRYwgIW0deIwkfeNXXuD0WNkk
+	fN5x8HXvu5Xh4GBZ+XDkax3Pk18qPIwBosm4fZe+H32CsR7WcVYPTZ6Q=
+X-Google-Smtp-Source: AGHT+IGyR/sLbWQK4QmtOec/SQH+sZL6vZpBJgNUN4MWA4vVduu4+9Z9or8U54sP7rLb2td24R/a8Yihjkcp40W99jiCXYw1Zaiy
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:ca0a:0:b0:3a1:a163:ba58 with SMTP id
+ e9e14a558f8ab-3a397d1d064mr70988585ab.26.1728569764030; Thu, 10 Oct 2024
+ 07:16:04 -0700 (PDT)
+Date: Thu, 10 Oct 2024 07:16:03 -0700
+In-Reply-To: <ZwfZkr_27ycafr7F@iZbp1asjb3cy8ks0srf007Z>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6707e1a3.050a0220.8109b.0010.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
+From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	qianqiang.liu@163.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-- Replace "they" with "you" where "you" is used in the preceding
-  sentence fragment.
-- Mention `xa_erase` in discussion of multi-index entries.  Split this
-  into a separate sentence.
-- Add "call" parentheses on "xa_store" for consistency and
-  linkification.
-- Add caveat that `xa_store` and `xa_erase` are not equivalent in the
-  presence of `XA_FLAGS_ALLOC`.
+Hello,
 
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
-V2 -> V3:
-  - metion `xa_erase`/`xa_store(NULL)` in multi-index entry discussion.
-  - mention non-equivalent of `xa_erase`/`xa_store(NULL)` in the
-    presence of `XA_FLAGS_ALLOC`.
-V1 -> V2: s/use/you/ (Darrick J. Wong)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in __hfs_ext_cache_extent
 
- Documentation/core-api/xarray.rst | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+loop0: detected capacity change from 0 to 64
+=====================================================
+BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
+BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
+ __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
+ __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
+ hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
+ hfs_get_block+0x733/0xf50 fs/hfs/extent.c:366
+ __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
+ block_write_begin fs/buffer.c:2231 [inline]
+ cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
+ hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
+ cont_expand_zero fs/buffer.c:2509 [inline]
+ cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
+ hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
+ hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
+ hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
+ notify_change+0x1a8e/0x1b80 fs/attr.c:503
+ do_truncate+0x22a/0x2b0 fs/open.c:65
+ vfs_truncate+0x5d4/0x680 fs/open.c:111
+ do_sys_truncate+0x104/0x240 fs/open.c:134
+ __do_sys_truncate fs/open.c:146 [inline]
+ __se_sys_truncate fs/open.c:144 [inline]
+ __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
+ x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:77
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
-index 77e0ece2b1d6..78bbb031de91 100644
---- a/Documentation/core-api/xarray.rst
-+++ b/Documentation/core-api/xarray.rst
-@@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
- to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
- to retrieve the tag of an entry.  Tagged pointers use the same bits that
- are used to distinguish value entries from normal pointers, so you must
--decide whether they want to store value entries or tagged pointers in
--any particular XArray.
-+decide whether you want to store value entries or tagged pointers in any
-+particular XArray.
- 
- The XArray does not support storing IS_ERR() pointers as some
- conflict with value entries or internal entries.
-@@ -52,8 +52,9 @@ An unusual feature of the XArray is the ability to create entries which
- occupy a range of indices.  Once stored to, looking up any index in
- the range will return the same entry as looking up any other index in
- the range.  Storing to any index will store to all of them.  Multi-index
--entries can be explicitly split into smaller entries, or storing ``NULL``
--into any entry will cause the XArray to forget about the range.
-+entries can be explicitly split into smaller entries. Unsetting (using
-+xa_erase() or xa_store() with ``NULL``) any entry will cause the XArray
-+to forget about the range.
- 
- Normal API
- ==========
-@@ -63,13 +64,14 @@ for statically allocated XArrays or xa_init() for dynamically
- allocated ones.  A freshly-initialised XArray contains a ``NULL``
- pointer at every index.
- 
--You can then set entries using xa_store() and get entries
--using xa_load().  xa_store will overwrite any entry with the
--new entry and return the previous entry stored at that index.  You can
--use xa_erase() instead of calling xa_store() with a
-+You can then set entries using xa_store() and get entries using
-+xa_load().  xa_store() will overwrite any entry with the new entry and
-+return the previous entry stored at that index.  You can unset entries
-+using xa_erase() or by setting the entry to ``NULL`` using xa_store().
- ``NULL`` entry.  There is no difference between an entry that has never
--been stored to, one that has been erased and one that has most recently
--had ``NULL`` stored to it.
-+been stored to and one that has been erased with xa_erase(); an entry
-+that has most recently had ``NULL`` stored to it is also equivalent
-+except if the XArray was initialized with ``XA_FLAGS_ALLOC``.
- 
- You can conditionally replace an entry at an index by using
- xa_cmpxchg().  Like cmpxchg(), it will only succeed if
--- 
-2.47.0
+Local variable fd.i created at:
+ hfs_ext_read_extent fs/hfs/extent.c:193 [inline]
+ hfs_get_block+0x295/0xf50 fs/hfs/extent.c:366
+ __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
+
+CPU: 1 UID: 0 PID: 5954 Comm: syz.0.15 Not tainted 6.12.0-rc2-syzkaller-00074-gd3d1556696c1-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+
+
+Tested on:
+
+commit:         d3d15566 Merge tag 'mm-hotfixes-stable-2024-10-09-15-4..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17aecb27980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=981fe2ff8a1e457a
+dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1777005f980000
 
 
