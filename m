@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-31536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E114998485
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 13:11:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B6599848D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 13:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E598E285425
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 11:11:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FFA61F2464D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 11:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839811C2457;
-	Thu, 10 Oct 2024 11:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24991C460F;
+	Thu, 10 Oct 2024 11:11:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292631C2327;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2920D1BE86F;
 	Thu, 10 Oct 2024 11:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728558676; cv=none; b=MJ3toSupDgTDbknQbXbVrMPXUEhPam2skK3L8SlKUW/wZmQIj3R/gE+sYxlh99WSOjB1cC0qP/aT8jEhVTMkmhYhfclc3Rp3HN1WDgXv5eT4wlBfkmh3bByvogJ2SpTt7YPWFxOMbNLlVld1wLvWg8P6ReNgm6VdjgiyNa1Fjz8=
+	t=1728558677; cv=none; b=SCUs/PNFvxfW5L+9sbYf/tqOFuKziSOoRLRsFmK1udUqEFIScWYKyYiXHDFS8m9vELAn7agtKUxjZKo2WJpfMp5s3QUZ9MSh4wTUCWQG8fjLSztqgnDwrqWx55mocipeB/AmPwepaCSXGNW6dJk8fwM4o6nram1yZas3u6KpROc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728558676; c=relaxed/simple;
-	bh=LPBP+ydfXLjg4zx4fQ4vMwAgrFq3BvdyOwsW/lolDYw=;
+	s=arc-20240116; t=1728558677; c=relaxed/simple;
+	bh=IVBmOojz8e+eSyRyjC458ty1x3vr+17pkAfmkoicGVY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g7QelYEaSTS2NHI5HnQUNf/xBuxM62bYf6W7l56jrimdquGKdd/iG/jbPfzL2MbVs/Ur7nO3ZaVMg6eiryUeZqjSjCG+IQxM9Q4oUDmTGuQ0i9U3ctvgC4w16uT2I/uWtE49lewOdGX5ihr5Jqpvjtj7cYYFGRQBkggP2tnDZyk=
+	 MIME-Version; b=mSNvxu+erSWnUE6p+UpsBr6ARrPhEeZCpgVxa4OLMJFufiiSrnkBDr/1Ujugck2/6bELGV3HinoHtQLBr+xbMseAfoakovOUZ4iCjcFBFT/FnTsWsIiozulR+d5jiSK8TJdV8OckSkscmJAk0hKeQaKCX8kUWqtIfQlSYF0BvmA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XPRrY6P8fz4f3jXK;
-	Thu, 10 Oct 2024 19:10:53 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XPRrZ1ZLBz4f3jXV;
+	Thu, 10 Oct 2024 19:10:54 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BFCB31A058E;
-	Thu, 10 Oct 2024 19:11:10 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 1B8EB1A018D;
+	Thu, 10 Oct 2024 19:11:11 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.127.227])
-	by APP4 (Coremail) with SMTP id gCh0CgDH+sZMtgdnmHXPDg--.37048S5;
+	by APP4 (Coremail) with SMTP id gCh0CgDH+sZMtgdnmHXPDg--.37048S6;
 	Thu, 10 Oct 2024 19:11:10 +0800 (CST)
 From: Ye Bin <yebin@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
@@ -46,9 +46,9 @@ To: viro@zeniv.linux.org.uk,
 Cc: linux-kernel@vger.kernel.org,
 	yebin10@huawei.com,
 	zhangxiaoxu5@huawei.com
-Subject: [PATCH 1/3] vfs: introduce shrink_icache_sb() helper
-Date: Thu, 10 Oct 2024 19:25:41 +0800
-Message-Id: <20241010112543.1609648-2-yebin@huaweicloud.com>
+Subject: [PATCH 2/3] sysctl: add support for drop_caches for individual filesystem
+Date: Thu, 10 Oct 2024 19:25:42 +0800
+Message-Id: <20241010112543.1609648-3-yebin@huaweicloud.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20241010112543.1609648-1-yebin@huaweicloud.com>
 References: <20241010112543.1609648-1-yebin@huaweicloud.com>
@@ -59,77 +59,128 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDH+sZMtgdnmHXPDg--.37048S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFyrXFWrJr18CFykXw1xGrg_yoW8AFWUpF
-	Z7JryfGr4rZ34q93savF1v934SqF4vvFWDGFy8Wa4Yywn8tryYqFn7tr13AFyFyFW8W39I
-	vF4jkryUur48ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Kb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
-	A2048vs2IY020Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+X-CM-TRANSID:gCh0CgDH+sZMtgdnmHXPDg--.37048S6
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw1fJryDtry3Gry7ZFykAFb_yoW5CF43pF
+	W7ury5KrWruF12qr93CF4IyF4Sv3ykGF17WrZFg34Fyw47Ary0gr1kKryaqFyrtrW7uFW2
+	gFWDKr90g3y5XFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
+	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
 	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
-	0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
-	JVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxU7qjgUUUUU
+	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
+	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
+	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU89NVDUUUUU==
 X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 
 From: Ye Bin <yebin10@huawei.com>
 
-This patch is prepare for support drop_caches for specify file system.
-shrink_icache_sb() helper walk the superblock inode LRU for freeable inodes
-and attempt to free them.
+In order to better analyze the issue of file system uninstallation caused
+by kernel module opening files, it is necessary to perform dentry recycling
+on a single file system. But now, apart from global dentry recycling, it is
+not supported to do dentry recycling on a single file system separately.
+This feature has usage scenarios in problem localization scenarios.At the
+same time, it also provides users with a slightly fine-grained
+pagecache/entry recycling mechanism.
+This patch supports the recycling of pagecache/entry for individual file
+systems.
 
 Signed-off-by: Ye Bin <yebin10@huawei.com>
 ---
- fs/inode.c    | 17 +++++++++++++++++
- fs/internal.h |  1 +
- 2 files changed, 18 insertions(+)
+ fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mm.h |  2 ++
+ kernel/sysctl.c    |  9 +++++++++
+ 3 files changed, 54 insertions(+)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 1939f711d2c9..2129b48571b4 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1045,6 +1045,23 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
- 	return freed;
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index d45ef541d848..99d412cf3e52 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+ 	}
+ 	return 0;
  }
- 
-+/*
-+ * Walk the superblock inode LRU for freeable inodes and attempt to free them.
-+ * Inodes to be freed are moved to a temporary list and then are freed outside
-+ * inode_lock by dispose_list().
-+ */
-+void shrink_icache_sb(struct super_block *sb)
++
++int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
++				  void *buffer, size_t *length, loff_t *ppos)
 +{
-+	do {
-+		LIST_HEAD(dispose);
++	unsigned int major, minor;
++	unsigned int ctl;
++	struct super_block *sb;
++	static int stfu;
 +
-+		list_lru_walk(&sb->s_inode_lru, inode_lru_isolate,
-+			      &dispose, 1024);
-+		dispose_list(&dispose);
-+	} while (list_lru_count(&sb->s_inode_lru) > 0);
++	if (!write)
++		return 0;
++
++	if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
++		return -EINVAL;
++
++	if (ctl < *((int *)table->extra1) || ctl > *((int *)table->extra2))
++		return -EINVAL;
++
++	sb = user_get_super(MKDEV(major, minor), false);
++	if (!sb)
++		return -EINVAL;
++
++	if (ctl & 1) {
++		lru_add_drain_all();
++		drop_pagecache_sb(sb, NULL);
++		count_vm_event(DROP_PAGECACHE);
++	}
++
++	if (ctl & 2) {
++		shrink_dcache_sb(sb);
++		shrink_icache_sb(sb);
++		count_vm_event(DROP_SLAB);
++	}
++
++	drop_super(sb);
++
++	if (!stfu)
++		pr_info("%s (%d): drop_fs_caches: %u:%u:%d\n", current->comm,
++			task_pid_nr(current), major, minor, ctl);
++	stfu |= ctl & 4;
++
++	return 0;
 +}
-+EXPORT_SYMBOL(shrink_icache_sb);
-+
- static void __wait_on_freeing_inode(struct inode *inode, bool is_inode_hash_locked);
- /*
-  * Called with the inode lock held.
-diff --git a/fs/internal.h b/fs/internal.h
-index 81c7a085355c..cee79141e308 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -199,6 +199,7 @@ extern int vfs_open(const struct path *, struct file *);
-  * inode.c
-  */
- extern long prune_icache_sb(struct super_block *sb, struct shrink_control *sc);
-+extern void shrink_icache_sb(struct super_block *sb);
- int dentry_needs_remove_privs(struct mnt_idmap *, struct dentry *dentry);
- bool in_group_or_capable(struct mnt_idmap *idmap,
- 			 const struct inode *inode, vfsgid_t vfsgid);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 344541f8cba0..43079478296f 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3788,6 +3788,8 @@ extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
+ extern int sysctl_drop_caches;
+ int drop_caches_sysctl_handler(const struct ctl_table *, int, void *, size_t *,
+ 		loff_t *);
++int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
++				  void *buffer, size_t *length, loff_t *ppos);
+ #endif
+ 
+ void drop_slab(void);
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 79e6cb1d5c48..d434cbe10e47 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2101,6 +2101,15 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ONE,
+ 		.extra2		= SYSCTL_FOUR,
+ 	},
++	{
++		.procname	= "drop_fs_caches",
++		.data		= NULL,
++		.maxlen		= 256,
++		.mode		= 0200,
++		.proc_handler	= drop_fs_caches_sysctl_handler,
++		.extra1         = SYSCTL_ONE,
++		.extra2         = SYSCTL_FOUR,
++	},
+ 	{
+ 		.procname	= "page_lock_unfairness",
+ 		.data		= &sysctl_page_lock_unfairness,
 -- 
 2.31.1
 
