@@ -1,111 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-31726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1205399A64D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 16:28:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558CC99A68C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 16:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC39B1F22893
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 14:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D2A286178
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 14:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45736219C8B;
-	Fri, 11 Oct 2024 14:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0C4196DA4;
+	Fri, 11 Oct 2024 14:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VpCbsxav"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593E8212F13;
-	Fri, 11 Oct 2024 14:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E288193434;
+	Fri, 11 Oct 2024 14:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728656894; cv=none; b=HMBcsIp8d448c4/pUuyFPbguB8PTjtyZyIcWgfd5hL2Vk4w05uqX+tB0gZU59i7Q4fPdvWWLhJAYNVMzTwQW9xJzyRPoBAWoChRvi2KtJbDCWtuDOwaG34v/dLOpe3zmK8BBDnj5j4QLrHMwEX7m5LgxPTwL59gyErQyH/AxaIo=
+	t=1728657575; cv=none; b=NR8utp8beQDRtXTsW9HM3kCI6473thibhkzEkDLCfCjUFQhRLofTK82mw5p+Y0BZy+q1jc1k0dRlibN7P9fNgyL4dAoQb6Fxx2S572E1+/zwO/jlUx7omDXSDlfsAJVgJJm/Z+OZsTeTXo904t9EbUAbXiDrNwIDYJM8LMDnYo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728656894; c=relaxed/simple;
-	bh=+g+0LIBGUCEHu4NvhOKBtkjnBi25i2JDzjoPYMCQ4h0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LtcTu2Hwy/eQ2KHYXomgKHx+xRMNCRTnKfJ1J5fyAImStdG5IpSHX/eKNQI7ZwOA8u47J2qMURGoW0ZVsbjrTdnukbXaT6+cOh07/7rerRZxt2b7DlceLmOxxGluw7gyRyJ9UuUXU9UzbnO4V9GA1cWaxTWfoqMsvy7HlavOvTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 49BERmJD041800;
-	Fri, 11 Oct 2024 23:27:48 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 49BERmnt041797
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 11 Oct 2024 23:27:48 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <7b379fd1-d596-4c19-80fc-53838175834e@I-love.SAKURA.ne.jp>
-Date: Fri, 11 Oct 2024 23:27:45 +0900
+	s=arc-20240116; t=1728657575; c=relaxed/simple;
+	bh=l4HlSzWQeaFpp+9kptbV4lo/b7FEFhH9MSVYAwYDnCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sE+jE0IQxiu3aLUzyKDxlKoTH7UPAn6oYApieOymATIxkai12IyDN/hzs5lbFEclmdBkvbXWH+UlOdK+Q100l+QQW65Z2n37dSnb/qchqZmB56jcviCSj2iJDF/WUferU7uBQ+5DzH/sYkYLV8IwjP8Nu4s7huVwdMbbbOZRT2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VpCbsxav; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=aJpxtjCRHAsK8ybbCNSnVPpKKHPQSFFkR4387HJaoGs=; b=VpCbsxavobs5WebXAVNyMY/+xa
+	UnyPgIakda9m+TJ0g6joqsyZ4K0ksCwCIgBvdsu8O0ONhGKi+Cy57FGsAn++YpnABXxGYYuZ7IOcC
+	sMatzUQV84/+75uhy87ZlnaLfEj+jMfvJQP2IZqkM3d7AriZaig5gomtu82YnfIb1HO8ke6yAKbO0
+	MGzSMr4Jo0vnJVxwcs1Tiw3zCoZU5FwELpJG6/j7qj+iF7pB9H0nqGa0PC3sZTJz1R9urbuJjy+FQ
+	iWvh1YQ5jHa6mdDGcVXfjSZ/I7gEwMEYB/Vl3B2RePbPW2jqmlMqqYFa6QSJ/OofKkbI9sFoXiUJz
+	AHUDVFzw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1szGnl-0000000GdS9-1j5x;
+	Fri, 11 Oct 2024 14:39:33 +0000
+Date: Fri, 11 Oct 2024 07:39:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+Message-ID: <Zwk4pYzkzydwLRV_@infradead.org>
+References: <20241010152649.849254-1-mic@digikod.net>
+ <ZwkaVLOFElypvSDX@infradead.org>
+ <20241011.ieghie3Aiye4@digikod.net>
+ <ZwkgDd1JO2kZBobc@infradead.org>
+ <20241011.yai6KiDa7ieg@digikod.net>
+ <Zwkm5HADvc5743di@infradead.org>
+ <20241011.aetou9haeCah@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, audit@vger.kernel.org,
-        Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-References: <20241010152649.849254-1-mic@digikod.net>
- <70645876-0dfe-449b-9cb6-678ce885a073@I-love.SAKURA.ne.jp>
- <20241011.Di7Yoh5ikeiX@digikod.net>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20241011.Di7Yoh5ikeiX@digikod.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
-X-Virus-Status: clean
+In-Reply-To: <20241011.aetou9haeCah@digikod.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 2024/10/11 20:04, Mickaël Salaün wrote:
-> On Fri, Oct 11, 2024 at 07:12:17PM +0900, Tetsuo Handa wrote:
->> On 2024/10/11 0:26, Mickaël Salaün wrote:
->>> When a filesystem manages its own inode numbers, like NFS's fileid shown
->>> to user space with getattr(), other part of the kernel may still expose
->>> the private inode->ino through kernel logs and audit.
->>
->> I can't catch what you are trying to do. What is wrong with that?
+On Fri, Oct 11, 2024 at 03:52:42PM +0200, Micka�l Sala�n wrote:
+> > > Yes, but how do you call getattr() without a path?
+> > 
+> > You don't because inode numbers are irrelevant without the path.
 > 
-> My understanding is that tomoyo_get_attributes() is used to log or
-> expose access requests to user space, including inode numbers.  Is that
-> correct?  If yes, then the inode numbers might not reflect what user
-> space sees with stat(2).
+> They are for kernel messages and audit logs.  Please take a look at the
+> use cases with the other patches.
 
-Several questions because I've never seen inode number beyond UINT_MAX...
+It still is useless.  E.g. btrfs has duplicate inode numbers due to
+subvolumes.
 
-Since "struct inode"->i_ino is "unsigned long" (which is 32bits on 32-bit
-architectures), despite stat(2) is ready to receive inode number as 64bits,
-filesystems (except NFS) did not use inode numbers beyond UINT_MAX until now
-so that fs/stat.c will not hit -EOVERFLOW condition, and that resulted in
-misuse of %lu for e.g. audit logs?
-
-But NFS was already using inode numbers beyond UINT_MAX, and e.g. audit logs
-had been recording incorrect values when NFS is used?
-
-Or, some filesystems are already using inode numbers beyond UINT_MAX but the
-capacity limitation on 32-bit architectures practically prevented users from
-creating/mounting filesystems with so many inodes enough to require inode
-numbers going beyond UINT_MAX?
-
-
-
-You are trying to fix out-of-sync between stat(2) and e.g. audit logs
-rather than introducing new feature, aren't you?
-
-Then, what you are trying to do is OK, but TOMOYO side needs more changes.
-Since TOMOYO is currently handling any numeric values (e.g. uid, gid, device
-major/minor number, inode number, ioctl's cmd number) as "unsigned long",
-most of "unsigned long" usage in TOMOYO needs to be updated to use "u64"
-because you are about to change inode number values to always-64bits.
-
+If you want a better pretty but not useful value just work on making
+i_ino 64-bits wide, which is long overdue.
 
