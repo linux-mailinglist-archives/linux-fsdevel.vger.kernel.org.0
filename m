@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-31654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5F499988F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 03:01:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D38F999891
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 03:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A8C02845AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 01:01:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1BDDB21442
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 01:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742875256;
-	Fri, 11 Oct 2024 01:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF62D8BE5;
+	Fri, 11 Oct 2024 01:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT+1m1uu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQJKdynF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DA610F9;
-	Fri, 11 Oct 2024 01:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1911E6FB0;
+	Fri, 11 Oct 2024 01:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728608488; cv=none; b=VgS3TZsAL2VqT0GJnLbRqWIhFFWs+0EFwC8wzAw3nbjC1aQ0bjtLKPgHLhasICQOUYaLCsuyFprl8JHVGuZSpPbnQM/AAY7+ZadBzTtCAFl8ynCE6AvZ3x/cv/jIiWHzG9sThJs4KiEPZ3WqkDQod3X5wGRuznVyPexONvbjP1o=
+	t=1728608502; cv=none; b=qjJIcAp+0ItFVYuC/LDlhrBUdOdgx+hcZTDnUVeFLoTP/Z3Mu4aXjcwq5dn4icIv7a7fapPgxEj4a05/4j2CQyIXxxwKwjPURAHLr42oMfdI1iH+zctHzEAMjN+PYxDzSni6sKd/ao0/hNoSmtQaliZ5gv38Nv4hf3/qt0KpRJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728608488; c=relaxed/simple;
-	bh=RGNKgm3RbyUaqNDlLb6SFgyM+c326PkPyZospDFRJ/E=;
+	s=arc-20240116; t=1728608502; c=relaxed/simple;
+	bh=Qt/5hlRql92AK1Nma6sI6o8MPxQ98DvyWnPnZ61x8VE=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qDWjRONXojz7/eA0EOpy5GPodGU0hBoJa94mnVg5DpEsLNu0cO5trZWdiUCgzimczmr4NtS3Z+L/jUClc0TrQLZg6tUdtTxYdsrhwC6nQTiEcdwP/ObygGko6ZOCWn7Fk1PMu/4CECybYqXVM0e3pUM2owp6USJyCh8XsSeNSHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT+1m1uu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42536C4CEC5;
-	Fri, 11 Oct 2024 01:01:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Nbck3nIf0V7407JwJB7OnzR2LUMZxYB/CFC+zX9dVQOyJhPLYJJZ2b0VdfFUPC8+6bPt7cv0rmSiuS2ON3EO03FOIPP5jUXKg84JeGfcK5GOjs13HlMcBu7qMgXf5MwN9BBNFTw/EwLV+S0fohw0k1MSDa5apq5T1NxVUQB5dG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQJKdynF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB87C4CEC5;
+	Fri, 11 Oct 2024 01:01:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728608485;
-	bh=RGNKgm3RbyUaqNDlLb6SFgyM+c326PkPyZospDFRJ/E=;
+	s=k20201202; t=1728608502;
+	bh=Qt/5hlRql92AK1Nma6sI6o8MPxQ98DvyWnPnZ61x8VE=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=LT+1m1uu7KtV+e2gwrq0DUgDt+gJrZWIpCD7V4uelSPRu1Tqhnoa//fTIdmozp3UT
-	 jWMqXe3EWwB3KeuGvhD/Xv5zXc/7zkSsvO/Lj0DESfd1j0wbDHZWublC1cf5DREiHP
-	 ERfTcsLQDRalr4FX2FDAwReqMwSotm3PQZHXzVYUuu3Sk2luOH2KyaRQMl1lL69FzU
-	 YN5Fo41PjK/3kqgHe+ZxD1aXr7ATwmRAmgF6VSfJ6HZ8ofwQdbdtDRgM6BRht7xmvi
-	 XNOGeTXAMlpTZi0Z7MZ2y1q4Tzx6YkAOziwHUrsx9F9huT5dl7at/IrYk/sfg1Sp15
-	 FZAH5Z0ZhHytg==
-Date: Thu, 10 Oct 2024 18:01:24 -0700
-Subject: [PATCH 1/2] xfs: fix rt device offset calculations for FITRIM
+	b=TQJKdynF6CAs2BvRZgn40w3KQTaKvWeR8ndkBio1VsDskTFhRfWtzN0NM7i+QK30i
+	 xnBfN+WNLGROgx7YZLBWdt0PE5yzhH1Th7sjb9uzPqf31Q4UnoULOo22jg/1cHE8H1
+	 wTyapvGtmm8mf0hPpJiptVQ2P9Y4W8yhjcvuy3Rs0V/E8FgYBUpk9aMqaAZYJSbQNf
+	 Do57xMrPkyUveMKpH2iLC6OUKUfs0nmRCIgvYMMWQIC37HJMHY4cDLGeuucZxEc6VK
+	 At7woX7lWV9Aii/lH6cTGoNMNbfDnhDAGSKYjZ9PZzDWEP3bfTZG8sxcWHH4LuRwp2
+	 1Rm19O/KJqqDw==
+Date: Thu, 10 Oct 2024 18:01:40 -0700
+Subject: [PATCH 2/2] iomap: add a merge boundary flag
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org
 Cc: linux-xfs@vger.kernel.org, hch@lst.de, linux-fsdevel@vger.kernel.org
-Message-ID: <172860643675.4178573.6455434897985057942.stgit@frogsfrogsfrogs>
+Message-ID: <172860643692.4178573.11895337318025367612.stgit@frogsfrogsfrogs>
 In-Reply-To: <172860643652.4178573.7450433759242549822.stgit@frogsfrogsfrogs>
 References: <172860643652.4178573.7450433759242549822.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -59,71 +59,78 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Darrick J. Wong <djwong@kernel.org>
+From: Christoph Hellwig <hch@lst.de>
 
-FITRIM on xfs has this bizarro uapi where we flatten all the physically
-addressable storage across two block devices into a linear address
-space.  In this address space, the realtime device comes immediately
-after the data device.  Therefore, the xfs_trim_rtdev_extents has to
-convert its input parameters from the linear address space to actual
-rtdev block addresses on the realtime volume.
+File systems might have boundaries over which merges aren't possible.
+In fact these are very common, although most of the time some kind of
+header at the beginning of this region (e.g. XFS alloation groups, ext4
+block groups) automatically create a merge barrier.  But if that is
+not present, say for a device purely used for data we need to manually
+communicate that to iomap.
 
-Right now the address space conversion is done in units of rtblocks.
-However, a future patchset will convert xfs_rtblock_t to be a segmented
-address space (group:blkno) like the data device.  Change the conversion
-code to be done in units of daddrs since those will never be segmented.
+Add a IOMAP_F_BOUNDARY flag to never merge I/O into a previous mapping.
 
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/xfs_discard.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ fs/iomap/buffered-io.c |    6 ++++++
+ include/linux/iomap.h  |    4 ++++
+ 2 files changed, 10 insertions(+)
 
 
-diff --git a/fs/xfs/xfs_discard.c b/fs/xfs/xfs_discard.c
-index 34fe6bbeb2a76f..83cc68508a7f6c 100644
---- a/fs/xfs/xfs_discard.c
-+++ b/fs/xfs/xfs_discard.c
-@@ -480,7 +480,7 @@ xfs_discard_rtdev_extents(
- 		trace_xfs_discard_rtextent(mp, busyp->bno, busyp->length);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 3899169b2cf733..6f7691ef1e4164 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1657,6 +1657,8 @@ iomap_ioend_can_merge(struct iomap_ioend *ioend, struct iomap_ioend *next)
+ {
+ 	if (ioend->io_bio.bi_status != next->io_bio.bi_status)
+ 		return false;
++	if (next->io_flags & IOMAP_F_BOUNDARY)
++		return false;
+ 	if ((ioend->io_flags & IOMAP_F_SHARED) ^
+ 	    (next->io_flags & IOMAP_F_SHARED))
+ 		return false;
+@@ -1776,6 +1778,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
+ 	INIT_LIST_HEAD(&ioend->io_list);
+ 	ioend->io_type = wpc->iomap.type;
+ 	ioend->io_flags = wpc->iomap.flags;
++	if (pos > wpc->iomap.offset)
++		wpc->iomap.flags &= ~IOMAP_F_BOUNDARY;
+ 	ioend->io_inode = inode;
+ 	ioend->io_size = 0;
+ 	ioend->io_offset = pos;
+@@ -1787,6 +1791,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
  
- 		error = __blkdev_issue_discard(bdev,
--				XFS_FSB_TO_BB(mp, busyp->bno),
-+				xfs_rtb_to_daddr(mp, busyp->bno),
- 				XFS_FSB_TO_BB(mp, busyp->length),
- 				GFP_NOFS, &bio);
- 		if (error)
-@@ -612,22 +612,25 @@ xfs_trim_rtdev_extents(
- 	xfs_rtblock_t		start_rtbno, end_rtbno;
- 	xfs_rtxnum_t		start_rtx, end_rtx;
- 	xfs_rgnumber_t		start_rgno, end_rgno;
-+	xfs_daddr_t		daddr_offset;
- 	int			last_error = 0, error;
- 	struct xfs_rtgroup	*rtg = NULL;
+ static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos)
+ {
++	if (wpc->iomap.offset == pos && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
++		return false;
+ 	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
+ 	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
+ 		return false;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index d8a7fc84348c4d..d44c982085a39f 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -53,6 +53,9 @@ struct vm_fault;
+  *
+  * IOMAP_F_XATTR indicates that the iomap is for an extended attribute extent
+  * rather than a file data extent.
++ *
++ * IOMAP_F_BOUNDARY indicates that I/O and I/O completions for this iomap must
++ * never be merged with the mapping before it.
+  */
+ #define IOMAP_F_NEW		(1U << 0)
+ #define IOMAP_F_DIRTY		(1U << 1)
+@@ -64,6 +67,7 @@ struct vm_fault;
+ #define IOMAP_F_BUFFER_HEAD	0
+ #endif /* CONFIG_BUFFER_HEAD */
+ #define IOMAP_F_XATTR		(1U << 5)
++#define IOMAP_F_BOUNDARY	(1U << 6)
  
- 	/* Shift the start and end downwards to match the rt device. */
-+	daddr_offset = XFS_FSB_TO_BB(mp, mp->m_sb.sb_dblocks);
-+	if (start > daddr_offset)
-+		start -= daddr_offset;
-+	else
-+		start = 0;
- 	start_rtbno = xfs_daddr_to_rtb(mp, start);
--	if (start_rtbno > mp->m_sb.sb_dblocks)
--		start_rtbno -= mp->m_sb.sb_dblocks;
--	else
--		start_rtbno = 0;
- 	start_rtx = xfs_rtb_to_rtx(mp, start_rtbno);
- 	start_rgno = xfs_rtb_to_rgno(mp, start_rtbno);
- 
-+	if (end <= daddr_offset)
-+		return 0;
-+	else
-+		end -= daddr_offset;
- 	end_rtbno = xfs_daddr_to_rtb(mp, end);
--	if (end_rtbno <= mp->m_sb.sb_dblocks)
--		return 0;
--	end_rtbno -= mp->m_sb.sb_dblocks;
- 	end_rtx = xfs_rtb_to_rtx(mp, end_rtbno + mp->m_sb.sb_rextsize - 1);
- 	end_rgno = xfs_rtb_to_rgno(mp, end_rtbno);
- 
+ /*
+  * Flags set by the core iomap code during operations:
 
 
