@@ -1,273 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-31776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE12499AC7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 21:14:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D3F99AD0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 21:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30DF3B285A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 19:14:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96FB1C21A79
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 19:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12881CF2B6;
-	Fri, 11 Oct 2024 19:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8361D0F4A;
+	Fri, 11 Oct 2024 19:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYAaGmic"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="lV4yCNxs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59921CEAB0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 19:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4711D0DFC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 19:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728674075; cv=none; b=HvOro4lWTs2rSs7f6IqfzJeziGNebWCTiLsu3Q0USrfIaNwEAzmd+Eq5FlYzbyTdqNVwmwBl6KK9zk9cdxwJBzvQUfre4pq0ypDKEOn8PSXj57lX6Ea3urFONRznpeEWvg2zOOZ4StygkkNUk1PUrrN3jmUNU93TAl/QGECVg1s=
+	t=1728675964; cv=none; b=UuMu8Ys00TnEJmV2aS8SeElqi/q3bQ4rprX2KYPSKuGkl+nzs4BWDGWN2VyeHTfSh1+wAOwNczUVp7aCi0YrP2o50/N7+EYO9n3bOwtoKeqFL4xd/aW+qSIBdc5S08ein1urOe80ZO6o8jG+x/bYxOmWhIJhNipY9aPGoWZdkzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728674075; c=relaxed/simple;
-	bh=I7tw/bVSH45lhshygyRy4HFLcUTIKWyetUmJ/6K9iaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jVWoR1NYwDPL20XzUX4CwDzf+U2sgOnj3771zLpNmRK4S6KJy3VDrTU1bvcCleLNwe/3pLKR6zzhxS+vmdlNSQx3/o2SA1/GTa6gFx3fq5OuY4HJK5q+a9KNeuCGk7YaFiJQ0YGPmV9wozJd+ev/BFMKka383/cUGKQR5XppVyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYAaGmic; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso2127362276.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 12:14:33 -0700 (PDT)
+	s=arc-20240116; t=1728675964; c=relaxed/simple;
+	bh=t7P/KEncHEjcXdz1K3PihQemKIQQ61oPnVKnhfUk5n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3F5wF4d65JqZlNlK9k7+mD8ISdW6ssFatyZHJxza8bNmHjl0ZOB7ARiaAJPEUZy6uZJQ2uEuIkpHkvl6ZaAgYjCnxdvzBrVpXuJKfDemSLwe9KBrOsw1xLOSDFJ58KjRu8I8XvlQ7cVAl6c7SDCw1wHx07id7939GaDdRef/No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=lV4yCNxs; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7e6ed072cdaso1676575a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 12:46:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728674072; x=1729278872; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+YYrNMRKsUuSkl/gNQ0TL1isnd75ZvWfVPpKvZ6axJ4=;
-        b=XYAaGmicWzKj7DAag/IGI/OU5KScnyPQR8iBWVftTI/qBxFFPEAXyvvi4cCXyLV2LO
-         6Zfv4VpOm9QLlss2L3SGARz+xzoPIZJIbRvPSN2h+4e3ayrswexbF0zYwnvP5Mv0RDz+
-         R8WCiIB0jfGeCFEZgYraKRygY92O5Tq1+ayHju66RveRgxlw2viN6p+kJ5WdLbPv8om9
-         IX16Z7vJ0QZgcU9mmeQ/WGLBcvKYTD+VLwGizRgcLu+ywmuWVo+EXDBhmynI1HCGUDGD
-         Q1NUMxEZt+QzEcZ9RVmYDlTS6E+p1ehu1tExRG94rob7AiT8sDc9EEfYrE46E/ZtEx/w
-         MIdg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728675961; x=1729280761; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=exLsQV8+AgRTzSgIuh9REhlgyhIFFL6ykktOdGZoGFg=;
+        b=lV4yCNxsWdv45991ghfe2wns7l+/s/d+YLcrIZFmoS3x3hGwHVNM/lLDoTb1S148g/
+         wjCNMuU7ASe99vAOixL04qe3q/lGax6rpPyt1lm67ppD2F21CTYZGTN8/X4wycTxHsxL
+         P/A2LCQBZjkSqlvCJI7zm+qY8vwkdXglEPn3QADdA2zYO8iZeXVHbU9BZJLzXkn6beFT
+         ts9isgOszzowJr6cetdaSLt8ipo3Z6+Aey5qB1O+raze27joEJIvyv4Hklm3/FhjSfT8
+         jaZi6Qz7N48YVKso4KxssvtnXgxeSllxs48Rq9PKybtpTBlB++fwin5ip7uz97JKL8LE
+         BytA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728674072; x=1729278872;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+YYrNMRKsUuSkl/gNQ0TL1isnd75ZvWfVPpKvZ6axJ4=;
-        b=rlTKUdFsBbPVhuzlumvu3M2MImuLsGG99MvOuS+5ZpLOX7Qgi6YfCUOBwtP4R1TC0C
-         njyZZ7ckt2QQNcRO2e5XGY5xORDaydY+21sJFKLtS0XjNjnKGvjOR/mpgJy4HWDu7mzc
-         xv3VgkiOiNhyjWV7S6V/bJKH2OKjOMULqgmccrSErc26OSZnAKTZU+BPq486WVGKThjD
-         haEOivF6sgAq+zJmNTIzHEAW236HeXGKoIUED1m979o5QEEzU5VCPMJqp98jHD4NVVy8
-         CvrpIL2TVfvE+VT3G81Zu7d0UuCQM51Wjfx6AmbgJ/6CckH1XsKAiAV9Sc7gWUJyZGbb
-         I1eg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3zq4xGFpA8D0e5jg9hwsRtPDXTjwLNVkD41edkPvJcBkPTFZuAuI4RWI3rn97BR5yOzEzlrEHbo+hhchh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhgKHpvWnQ+jJLcJ4cRLm60xERrA7o0qANoWWX67rIN5EwKim6
-	JyXBj7sRm9a6qyd3PwmLOV9NTufgrqJuyBv+2YkJyK/m6WUMn5fK
-X-Google-Smtp-Source: AGHT+IGDTtFmRxPCyDfxOFCDMGwimypa7rprGDWIXqYtKcut7CKT11Q+Wez4htXu/9GUy1tFRFcrWQ==
-X-Received: by 2002:a05:6902:2b8f:b0:e29:16aa:b7ab with SMTP id 3f1490d57ef6-e2919fec182mr3147874276.49.1728674072554;
-        Fri, 11 Oct 2024 12:14:32 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-112.fbsv.net. [2a03:2880:25ff:70::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ef7a45asm982008276.56.2024.10.11.12.14.32
+        d=1e100.net; s=20230601; t=1728675961; x=1729280761;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=exLsQV8+AgRTzSgIuh9REhlgyhIFFL6ykktOdGZoGFg=;
+        b=KE1Rk1GlraHF1yAxGKHpZE+m2baloV5gbzvNHmVc1JivGmXsTyJvXt4JfA0IEuenk5
+         W+HZD/i6rD2KbEwZReptyqKOqHITlkjWjW4At9KBnDXnrGqhSzOheQsZc7KJoX5Z7da0
+         5YCyDGLtLwG+FVpaecjYE6ay3Ds+6OLXdUfjfdxciZ2rav2X99jWSxibeAdMWA6kZ6Fw
+         KQCjWdPY2aDdHorbf7ug/GRroPSYrdq69kEoVewda3DYDXbgA2nuSLZ/VqmrP3lbF7Ts
+         v7f2DC1X1zFUwy7JUnvqoQqHyVGrLJFp5PlObtABP9b7+hYZ72L/EmxlqbQY4oB4W55P
+         cqWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlhoS9BhE2TDb9tE9B+8R6Q+GMb5gH700nZ8ussE9FxUc3hJPHRigzMxSbygVvUwg4oBJLpVVY2o2e7FfK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0Z73b9hRMSJG2m7yArhmYS7gR0ZA9EcKuFcJHFfvZ+PMWHbDr
+	9k0EdlJVqjMmFb5X+i6uI9qZbf1h+dJn2texNKb1RfCLr21bQxdRRfYmWMHmFXQ=
+X-Google-Smtp-Source: AGHT+IHj8rWFWjfeD1jnOseU69L54Nubw7fuAuLENErbM2G1CFqjE5ekNxV2rf8nSVkMr8qy+VgzZQ==
+X-Received: by 2002:a05:6a21:1519:b0:1cf:4d4e:532b with SMTP id adf61e73a8af0-1d8c96b986bmr675268637.43.1728675961468;
+        Fri, 11 Oct 2024 12:46:01 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab0f1dcsm2951118b3a.209.2024.10.11.12.45.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:14:32 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm,
-	jefflexu@linux.alibaba.com,
-	laoar.shao@gmail.com,
-	kernel-team@meta.com
-Subject: [PATCH v8 3/3] fuse: add default_request_timeout and max_request_timeout sysctls
-Date: Fri, 11 Oct 2024 12:13:20 -0700
-Message-ID: <20241011191320.91592-4-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241011191320.91592-1-joannelkoong@gmail.com>
-References: <20241011191320.91592-1-joannelkoong@gmail.com>
+        Fri, 11 Oct 2024 12:46:01 -0700 (PDT)
+Date: Fri, 11 Oct 2024 12:45:57 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Zong Li <zong.li@sifive.com>
+Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v6 33/33] kselftest/riscv: kselftest for user mode cfi
+Message-ID: <ZwmAdRb5BRkPLbWg@debug.ba.rivosinc.com>
+References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
+ <20241008-v5_user_cfi_series-v6-33-60d9fe073f37@rivosinc.com>
+ <CANXhq0pXVS2s-hZNusPLoQ4qPkyi1S2BTQ-FyAvcz=cDctKQng@mail.gmail.com>
+ <Zwj7aZj36TBGzpZa@finisterre.sirena.org.uk>
+ <CANXhq0q49k6q3ZGYqzczMeFr+_rrfa9mL7FMu62xPHeUKfvhMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANXhq0q49k6q3ZGYqzczMeFr+_rrfa9mL7FMu62xPHeUKfvhMw@mail.gmail.com>
 
-Introduce two new sysctls, "default_request_timeout" and
-"max_request_timeout". These control how long (in minutes) a server can
-take to reply to a request. If the server does not reply by the timeout,
-then the connection will be aborted.
+On Fri, Oct 11, 2024 at 07:43:30PM +0800, Zong Li wrote:
+>On Fri, Oct 11, 2024 at 6:18 PM Mark Brown <broonie@kernel.org> wrote:
+>>
+>> On Fri, Oct 11, 2024 at 01:44:55PM +0800, Zong Li wrote:
+>> > On Wed, Oct 9, 2024 at 7:46 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> > > +       if (si->si_code == SEGV_CPERR) {
+>>
+>> > Hi Deepak,
+>> > I got some errors when building this test, I suppose they should be
+>> > fixed in the next version.
+>>
+>> > riscv_cfi_test.c: In function 'sigsegv_handler':
+>> > riscv_cfi_test.c:17:28: error: 'SEGV_CPERR' undeclared (first use in
+>> > this function); did you mean 'SEGV_ACCERR'?
+>> >    17 |         if (si->si_code == SEGV_CPERR) {
+>> >       |                            ^~~~~~~~~~
+>> >       |                            SEGV_ACCERR
+>> >
+>>
+>> Did you run "make headers_install" prior to building kselftest to get
+>> the current kernel's headers available for userspace builds?
+>
+>Yes, I have run "make header" and "make header_install" before
+>building the kselftest. This error happens when I cross compiled it,
+>perhaps I can help to check if it is missing some header files or
+>header search path.
 
-"default_request_timeout" sets the default timeout if no timeout is
-specified by the fuse server on mount. 0 (default) indicates no default
-timeout should be enforced. If the server did specify a timeout, then
-default_request_timeout will be ignored.
+That's wierd.
 
-"max_request_timeout" sets the max amount of time the server may take to
-reply to a request. 0 (default) indicates no maximum timeout. If
-max_request_timeout is set and the fuse server attempts to set a
-timeout greater than max_request_timeout, the system will use
-max_request_timeout as the timeout. Similarly, if default_request_timeout
-is greater than max_request_timeout, the system will use
-max_request_timeout as the timeout. If the server does not request a
-timeout and default_request_timeout is set to 0 but max_request_timeout
-is set, then the timeout will be max_request_timeout.
+It doesn't fail for me even if I do not do `make headers_install`. But I am
+building kernel and selftests with toolchain which supports shadow stack and
+landing pad. It's defined in `siginfo.h`. When I built toolchain, I did point
+it at the latest kernel headers. May be that's the trick.
 
-Please note that these timeouts are not 100% precise. The request may
-take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the set max timeout
-due to how it's internally implemented.
+"""
 
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 0
+$ grep -nir SEGV_CPERR /scratch/debug/linux/kbuild/usr/include/*
+/scratch/debug/linux/kbuild/usr/include/asm-generic/siginfo.h:240:#define SEGV_CPERR    10      /* Control protection fault */
 
-$ echo 65536 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
+$ grep -nir SEGV_CPERR /scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/*
+/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/asm-generic/siginfo.h:240:#define SEGV_CPERR    10      /* Control protection fault */
+/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/bits/siginfo-consts.h:139:  SEGV_CPERR                  /* Control protection fault.  */
+/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/bits/siginfo-consts.h:140:#  define SEGV_CPERR  SEGV_CPERR
 
-$ echo 65535 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-65535
-
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 65535
-
-$ echo 0 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-0
-
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 0
-
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- Documentation/admin-guide/sysctl/fs.rst | 27 +++++++++++++++++++++++++
- fs/fuse/fuse_i.h                        | 10 +++++++++
- fs/fuse/inode.c                         | 16 +++++++++++++--
- fs/fuse/sysctl.c                        | 20 ++++++++++++++++++
- 4 files changed, 71 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index fa25d7e718b3..790a34291467 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -342,3 +342,30 @@ filesystems:
- ``/proc/sys/fs/fuse/max_pages_limit`` is a read/write file for
- setting/getting the maximum number of pages that can be used for servicing
- requests in FUSE.
-+
-+``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file for
-+setting/getting the default timeout (in minutes) for a fuse server to
-+reply to a kernel-issued request in the event where the server did not
-+specify a timeout at mount. If the server set a timeout,
-+then default_request_timeout will be ignored.  The default
-+"default_request_timeout" is set to 0. 0 indicates a no-op (eg
-+requests will not have a default request timeout set if no timeout was
-+specified by the server).
-+
-+``/proc/sys/fs/fuse/max_request_timeout`` is a read/write file for
-+setting/getting the maximum timeout (in minutes) for a fuse server to
-+reply to a kernel-issued request. A value greater than 0 automatically opts
-+the server into a timeout that will be at most "max_request_timeout", even if
-+the server did not specify a timeout and default_request_timeout is set to 0.
-+If max_request_timeout is greater than 0 and the server set a timeout greater
-+than max_request_timeout or default_request_timeout is set to a value greater
-+than max_request_timeout, the system will use max_request_timeout as the
-+timeout. 0 indicates a no-op (eg requests will not have an upper bound on the
-+timeout and if the server did not request a timeout and default_request_timeout
-+was not set, there will be no timeout).
-+
-+Please note that for the timeout options, if the server does not respond to
-+the request by the time the timeout elapses, then the connection to the fuse
-+server will be aborted. Please also note that the timeouts are not 100%
-+precise (eg you may set 10 minutes but the timeout may kick in after 11
-+minutes).
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index ef4558c2c44e..28d9230f4fcb 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -46,6 +46,16 @@
- 
- /** Maximum of max_pages received in init_out */
- extern unsigned int fuse_max_pages_limit;
-+/*
-+ * Default timeout (in minutes) for the server to reply to a request
-+ * before the connection is aborted, if no timeout was specified on mount.
-+ */
-+extern unsigned int fuse_default_req_timeout;
-+/*
-+ * Max timeout (in minutes) for the server to reply to a request before
-+ * the connection is aborted.
-+ */
-+extern unsigned int fuse_max_req_timeout;
- 
- /** List of active connections */
- extern struct list_head fuse_conn_list;
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index a78aac76b942..d97dde59eac3 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -36,6 +36,9 @@ DEFINE_MUTEX(fuse_mutex);
- static int set_global_limit(const char *val, const struct kernel_param *kp);
- 
- unsigned int fuse_max_pages_limit = 256;
-+/* default is no timeout */
-+unsigned int fuse_default_req_timeout = 0;
-+unsigned int fuse_max_req_timeout = 0;
- 
- unsigned max_user_bgreq;
- module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
-@@ -1701,8 +1704,17 @@ EXPORT_SYMBOL_GPL(fuse_init_fs_context_submount);
- 
- static void fuse_init_fc_timeout(struct fuse_conn *fc, struct fuse_fs_context *ctx)
- {
--	if (ctx->req_timeout) {
--		if (check_mul_overflow(ctx->req_timeout * 60, HZ, &fc->timeout.req_timeout))
-+	unsigned int timeout = ctx->req_timeout ?: fuse_default_req_timeout;
-+
-+	if (fuse_max_req_timeout) {
-+		if (!timeout)
-+			timeout = fuse_max_req_timeout;
-+		else
-+			timeout = min(timeout, fuse_max_req_timeout);
-+	}
-+
-+	if (timeout) {
-+		if (check_mul_overflow(timeout * 60, HZ, &fc->timeout.req_timeout))
- 			fc->timeout.req_timeout = U32_MAX;
- 		timer_setup(&fc->timeout.timer, fuse_check_timeout, 0);
- 		mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIMER_FREQ);
-diff --git a/fs/fuse/sysctl.c b/fs/fuse/sysctl.c
-index b272bb333005..e70b5269c16d 100644
---- a/fs/fuse/sysctl.c
-+++ b/fs/fuse/sysctl.c
-@@ -13,6 +13,8 @@ static struct ctl_table_header *fuse_table_header;
- /* Bound by fuse_init_out max_pages, which is a u16 */
- static unsigned int sysctl_fuse_max_pages_limit = 65535;
- 
-+static unsigned int sysctl_fuse_max_req_timeout_limit = U16_MAX;
-+
- static struct ctl_table fuse_sysctl_table[] = {
- 	{
- 		.procname	= "max_pages_limit",
-@@ -23,6 +25,24 @@ static struct ctl_table fuse_sysctl_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= &sysctl_fuse_max_pages_limit,
- 	},
-+	{
-+		.procname	= "default_request_timeout",
-+		.data		= &fuse_default_req_timeout,
-+		.maxlen		= sizeof(fuse_default_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2		= &sysctl_fuse_max_req_timeout_limit,
-+	},
-+	{
-+		.procname	= "max_request_timeout",
-+		.data		= &fuse_max_req_timeout,
-+		.maxlen		= sizeof(fuse_max_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2		= &sysctl_fuse_max_req_timeout_limit,
-+	},
- };
- 
- int fuse_sysctl_register(void)
--- 
-2.43.5
+"""
 
 
