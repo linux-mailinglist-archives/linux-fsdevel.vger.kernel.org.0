@@ -1,166 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-31777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D3F99AD0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 21:46:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E4F99AD97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 22:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96FB1C21A79
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 19:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946FC1F23C3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 20:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8361D0F4A;
-	Fri, 11 Oct 2024 19:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54C31D14E8;
+	Fri, 11 Oct 2024 20:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="lV4yCNxs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYAbcrXK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4711D0DFC
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 19:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F841C3F0A;
+	Fri, 11 Oct 2024 20:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675964; cv=none; b=UuMu8Ys00TnEJmV2aS8SeElqi/q3bQ4rprX2KYPSKuGkl+nzs4BWDGWN2VyeHTfSh1+wAOwNczUVp7aCi0YrP2o50/N7+EYO9n3bOwtoKeqFL4xd/aW+qSIBdc5S08ein1urOe80ZO6o8jG+x/bYxOmWhIJhNipY9aPGoWZdkzg=
+	t=1728679048; cv=none; b=KbpdVama0ONF5wVqel0SJSnH0htrIYgzsSEgef2eqyRTsUZ+r7FBAPyozhy8BQLOLe/qh5rRdnTLpCFu2bRW9TJZeEBx0aaHFD6nN3+VPtwz0TtiZfSbQhqKbweoq/MXkR/3oFZzSOL04siUBbTauEzg24nLGEIB+sOGIwn6ITo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675964; c=relaxed/simple;
-	bh=t7P/KEncHEjcXdz1K3PihQemKIQQ61oPnVKnhfUk5n8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k3F5wF4d65JqZlNlK9k7+mD8ISdW6ssFatyZHJxza8bNmHjl0ZOB7ARiaAJPEUZy6uZJQ2uEuIkpHkvl6ZaAgYjCnxdvzBrVpXuJKfDemSLwe9KBrOsw1xLOSDFJ58KjRu8I8XvlQ7cVAl6c7SDCw1wHx07id7939GaDdRef/No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=lV4yCNxs; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7e6ed072cdaso1676575a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 12:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728675961; x=1729280761; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=exLsQV8+AgRTzSgIuh9REhlgyhIFFL6ykktOdGZoGFg=;
-        b=lV4yCNxsWdv45991ghfe2wns7l+/s/d+YLcrIZFmoS3x3hGwHVNM/lLDoTb1S148g/
-         wjCNMuU7ASe99vAOixL04qe3q/lGax6rpPyt1lm67ppD2F21CTYZGTN8/X4wycTxHsxL
-         P/A2LCQBZjkSqlvCJI7zm+qY8vwkdXglEPn3QADdA2zYO8iZeXVHbU9BZJLzXkn6beFT
-         ts9isgOszzowJr6cetdaSLt8ipo3Z6+Aey5qB1O+raze27joEJIvyv4Hklm3/FhjSfT8
-         jaZi6Qz7N48YVKso4KxssvtnXgxeSllxs48Rq9PKybtpTBlB++fwin5ip7uz97JKL8LE
-         BytA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728675961; x=1729280761;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=exLsQV8+AgRTzSgIuh9REhlgyhIFFL6ykktOdGZoGFg=;
-        b=KE1Rk1GlraHF1yAxGKHpZE+m2baloV5gbzvNHmVc1JivGmXsTyJvXt4JfA0IEuenk5
-         W+HZD/i6rD2KbEwZReptyqKOqHITlkjWjW4At9KBnDXnrGqhSzOheQsZc7KJoX5Z7da0
-         5YCyDGLtLwG+FVpaecjYE6ay3Ds+6OLXdUfjfdxciZ2rav2X99jWSxibeAdMWA6kZ6Fw
-         KQCjWdPY2aDdHorbf7ug/GRroPSYrdq69kEoVewda3DYDXbgA2nuSLZ/VqmrP3lbF7Ts
-         v7f2DC1X1zFUwy7JUnvqoQqHyVGrLJFp5PlObtABP9b7+hYZ72L/EmxlqbQY4oB4W55P
-         cqWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlhoS9BhE2TDb9tE9B+8R6Q+GMb5gH700nZ8ussE9FxUc3hJPHRigzMxSbygVvUwg4oBJLpVVY2o2e7FfK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0Z73b9hRMSJG2m7yArhmYS7gR0ZA9EcKuFcJHFfvZ+PMWHbDr
-	9k0EdlJVqjMmFb5X+i6uI9qZbf1h+dJn2texNKb1RfCLr21bQxdRRfYmWMHmFXQ=
-X-Google-Smtp-Source: AGHT+IHj8rWFWjfeD1jnOseU69L54Nubw7fuAuLENErbM2G1CFqjE5ekNxV2rf8nSVkMr8qy+VgzZQ==
-X-Received: by 2002:a05:6a21:1519:b0:1cf:4d4e:532b with SMTP id adf61e73a8af0-1d8c96b986bmr675268637.43.1728675961468;
-        Fri, 11 Oct 2024 12:46:01 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab0f1dcsm2951118b3a.209.2024.10.11.12.45.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:46:01 -0700 (PDT)
-Date: Fri, 11 Oct 2024 12:45:57 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Zong Li <zong.li@sifive.com>
-Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, rick.p.edgecombe@intel.com
-Subject: Re: [PATCH v6 33/33] kselftest/riscv: kselftest for user mode cfi
-Message-ID: <ZwmAdRb5BRkPLbWg@debug.ba.rivosinc.com>
-References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
- <20241008-v5_user_cfi_series-v6-33-60d9fe073f37@rivosinc.com>
- <CANXhq0pXVS2s-hZNusPLoQ4qPkyi1S2BTQ-FyAvcz=cDctKQng@mail.gmail.com>
- <Zwj7aZj36TBGzpZa@finisterre.sirena.org.uk>
- <CANXhq0q49k6q3ZGYqzczMeFr+_rrfa9mL7FMu62xPHeUKfvhMw@mail.gmail.com>
+	s=arc-20240116; t=1728679048; c=relaxed/simple;
+	bh=CWZGBnEJ80UiaDTPSuDUZ70kqMw3cxxu6gG4Z0pcQVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M5iLnQr7yGD6fnSGRXwEpejfQdLXQk+O4UJHXZnOz1DdfdT7j+WRYQJNWdxgDHy/VCnc4P8mXN+rDx6/fZKMTR3F4JJtWORhLkFY3RX3c6Yl71Rdns+194czOOQXIZSKKW5E/lGJyrxJZE9rXv2JMcU8NfeDQYO7T6+ioi5xVSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYAbcrXK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 831CEC4CEC3;
+	Fri, 11 Oct 2024 20:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728679047;
+	bh=CWZGBnEJ80UiaDTPSuDUZ70kqMw3cxxu6gG4Z0pcQVE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uYAbcrXK8FLRoEkmirqKqE2T2BWanywm0TM90kzfEKK0nYuDxOhrIhDbmui+SrNt+
+	 1mjjpUvymCswoPAWZddBRZSI7fZe1o/evRZNqBo4Dx0xEuYkhxpBEJfDTd3GNxZ7x6
+	 EfQdm7CxvjmXuQiP/TXiDi+s7rhBX8ol2CN0MOjYzQ641N3+0xB/AMBZfdDW9fuMFx
+	 P22KWy+9B9G/KGvAJ+MhJiAwddKNcyTSZWStAhfBiaqRPqSU4L7Qo+fr2ai89iLO7+
+	 Hpf0G4myWZ4l50hTbL1Ymw49gXx1n5eI2ZVFY1+67nxeDf2gyZfuLV8Q+x3Tkzavr1
+	 H7vOx5CHPuwdg==
+From: Song Liu <song@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	kernel-team@fb.com,
+	song@kernel.org
+Subject: [PATCH] fsnotify, lsm: Separate fsnotify_open_perm() and security_file_open()
+Date: Fri, 11 Oct 2024 13:37:22 -0700
+Message-ID: <20241011203722.3749850-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANXhq0q49k6q3ZGYqzczMeFr+_rrfa9mL7FMu62xPHeUKfvhMw@mail.gmail.com>
 
-On Fri, Oct 11, 2024 at 07:43:30PM +0800, Zong Li wrote:
->On Fri, Oct 11, 2024 at 6:18 PM Mark Brown <broonie@kernel.org> wrote:
->>
->> On Fri, Oct 11, 2024 at 01:44:55PM +0800, Zong Li wrote:
->> > On Wed, Oct 9, 2024 at 7:46 AM Deepak Gupta <debug@rivosinc.com> wrote:
->>
->> > > +       if (si->si_code == SEGV_CPERR) {
->>
->> > Hi Deepak,
->> > I got some errors when building this test, I suppose they should be
->> > fixed in the next version.
->>
->> > riscv_cfi_test.c: In function 'sigsegv_handler':
->> > riscv_cfi_test.c:17:28: error: 'SEGV_CPERR' undeclared (first use in
->> > this function); did you mean 'SEGV_ACCERR'?
->> >    17 |         if (si->si_code == SEGV_CPERR) {
->> >       |                            ^~~~~~~~~~
->> >       |                            SEGV_ACCERR
->> >
->>
->> Did you run "make headers_install" prior to building kselftest to get
->> the current kernel's headers available for userspace builds?
->
->Yes, I have run "make header" and "make header_install" before
->building the kselftest. This error happens when I cross compiled it,
->perhaps I can help to check if it is missing some header files or
->header search path.
+Currently, fsnotify_open_perm() is called from security_file_open(). This
+is not right for CONFIG_SECURITY=n and CONFIG_FSNOTIFY=y case, as
+security_file_open() in this combination will be a no-op and not call
+fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
 
-That's wierd.
+Signed-off-by: Song Liu <song@kernel.org>
 
-It doesn't fail for me even if I do not do `make headers_install`. But I am
-building kernel and selftests with toolchain which supports shadow stack and
-landing pad. It's defined in `siginfo.h`. When I built toolchain, I did point
-it at the latest kernel headers. May be that's the trick.
+---
 
-"""
+PS: I didn't included a Fixes tag. This issue was probably introduced 15
+years ago in [1]. If we want to back port this to stable, we will need
+another version for older kernel because of [2].
 
-$ grep -nir SEGV_CPERR /scratch/debug/linux/kbuild/usr/include/*
-/scratch/debug/linux/kbuild/usr/include/asm-generic/siginfo.h:240:#define SEGV_CPERR    10      /* Control protection fault */
+[1] c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for access decisions")
+[2] 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
+---
+ fs/open.c           | 4 ++++
+ security/security.c | 9 +--------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
-$ grep -nir SEGV_CPERR /scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/*
-/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/asm-generic/siginfo.h:240:#define SEGV_CPERR    10      /* Control protection fault */
-/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/bits/siginfo-consts.h:139:  SEGV_CPERR                  /* Control protection fault.  */
-/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/bits/siginfo-consts.h:140:#  define SEGV_CPERR  SEGV_CPERR
-
-"""
+diff --git a/fs/open.c b/fs/open.c
+index acaeb3e25c88..6c4950f19cfb 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -946,6 +946,10 @@ static int do_dentry_open(struct file *f,
+ 	if (error)
+ 		goto cleanup_all;
+ 
++	error = fsnotify_open_perm(f);
++	if (error)
++		goto cleanup_all;
++
+ 	error = break_lease(file_inode(f), f->f_flags);
+ 	if (error)
+ 		goto cleanup_all;
+diff --git a/security/security.c b/security/security.c
+index 6875eb4a59fc..a72cc62c0a07 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -19,7 +19,6 @@
+ #include <linux/kernel.h>
+ #include <linux/kernel_read_file.h>
+ #include <linux/lsm_hooks.h>
+-#include <linux/fsnotify.h>
+ #include <linux/mman.h>
+ #include <linux/mount.h>
+ #include <linux/personality.h>
+@@ -3102,13 +3101,7 @@ int security_file_receive(struct file *file)
+  */
+ int security_file_open(struct file *file)
+ {
+-	int ret;
+-
+-	ret = call_int_hook(file_open, file);
+-	if (ret)
+-		return ret;
+-
+-	return fsnotify_open_perm(file);
++	return call_int_hook(file_open, file);
+ }
+ 
+ /**
+-- 
+2.43.5
 
 
