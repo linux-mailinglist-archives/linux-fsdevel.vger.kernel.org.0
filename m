@@ -1,87 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-31712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D6E99A4F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 15:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB54699A556
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 15:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B0528119E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 13:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273C81C21577
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 13:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52FC218D92;
-	Fri, 11 Oct 2024 13:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3202194AD;
+	Fri, 11 Oct 2024 13:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MG82wZOK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9PxUVdg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED57021859D;
-	Fri, 11 Oct 2024 13:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B907219488
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 13:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653030; cv=none; b=rJsn/BUluZZu1kD3Qe2gTnHHlkV2V/FpkKDSmE1LiwC+aZ/UkDpWvL8Mp3l2r9XRULlkQTljif1d8cvnslD8WodQQLrGCPyLw5/Yd/THEqLJvemyhEpWiKPi7yppvU+dDExFtbGIbkkRM7b8aJ/V0bnOJ3NzQ69swwH9GxJt/BQ=
+	t=1728654371; cv=none; b=h9Lsx7HVMlgeSsZtTkjie/d/JvP59+5VuxD99TGI0+COItkTxyfVQZKmWeZIr5VJPKQdpd0SYU+CbfEpOr7+GPofbC3h09HXNteT3jRcLZ5FoQeTvLScP1akd1QAmOed5uqijUtWlXjADwxrIYbEsDkYt6nqQvzQDniFp6lo+Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653030; c=relaxed/simple;
-	bh=OPdi+JkYvfnco2yJ4bi8tslLJXq0lq7HC8Re2rXId2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y9MHVZFgL0sHeiu9zt88742HHhxvfiDNeIivGLbXfIELuIjF83JdqLpWLzvFqJQ7eDPDICu/IvhJjByZb1Atyv4IP2rMwuSt6ZdOBHD0N8cuQW+169T6xFOTEwBmeftgD3MPR5qarfgqRZvAG3r4m1q00h9TgvwScSwQGWv9m0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MG82wZOK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=V7+Xqfxxid8hrOCCfSJuGgdRDv22s+bqkfCVccVpG4c=; b=MG82wZOKfeb4GMDSXf5b1+o5Kh
-	59Y3g5+dHIKdcL1CtzJPMCSOcKJAKuINbP9jhe82mb1ehRs4xmAYoXESLe9dm4addp4RcW5kzfdlO
-	ghzC/m1OB2d5uwcIGtJ7tn/nYjWeOAkYupZr0uow2wZzYkZQhJw6RJO1SmtaJGQkBdBujPFd8bo1E
-	QzL/uYFNH+/AgQcxWMIhRBsf+5yUQ8eNdMC+CRa9EmTuJ5KaB6swdrZg+ysqz/rZSD8GIofMzXr7e
-	1l0jA76kPTsZvmrcq77DarS37guSqge9wicpCiT5p+ctzEwWeCpRHgfC/s5mWkmMihlaFhSgYHQBm
-	L4b+F9cg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1szFcS-0000000GRLy-2WA7;
-	Fri, 11 Oct 2024 13:23:48 +0000
-Date: Fri, 11 Oct 2024 06:23:48 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	audit@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-Message-ID: <Zwkm5HADvc5743di@infradead.org>
-References: <20241010152649.849254-1-mic@digikod.net>
- <ZwkaVLOFElypvSDX@infradead.org>
- <20241011.ieghie3Aiye4@digikod.net>
- <ZwkgDd1JO2kZBobc@infradead.org>
- <20241011.yai6KiDa7ieg@digikod.net>
+	s=arc-20240116; t=1728654371; c=relaxed/simple;
+	bh=irWxn9y3gfQEpWGmf6kmundSrrggF9aMOMV5XKsybGk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oNphMAC1f6pB47F4YJviCtAouBwpOpWJCe4YalBd12MW4OmXJvVRUvn8IOTOEMFSnnjU+P6ho41xpEPm/r5hXhyjBCFifqimmbNsXaQGGoFMw+niq7JOYEb4n4qi1uxU6jU9Ybn7TPZG/hOk6GFyncPjPaAPfNMsjpZs4vzc5M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9PxUVdg; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4311420b63fso15026565e9.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 06:46:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728654368; x=1729259168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E2qp85caGkHrNfR7469NqoR0KI++fVRvHImGSKJSP7w=;
+        b=H9PxUVdg3t3mjHJaz2zWcv4WXpkOS+3pMF8pMYEwWMkXheqzUxocabnGMRw6ATm1tj
+         t0ysbJYhgHfUXvOd3lvd/NJZftc7oQjYsCrEb5TTECfneqFqJlMZtGVoDzkPMdrPdTVZ
+         vz7pRPYf2u6Mgl1+LWxd/tOq2ZgymT5I8p8y4IzMGc2/FmStBlKJ8ieruYuTOELkTocr
+         cZho7f7n+zSMTcNxkOQiFcoizej/tvUEtEK1OecMsgKjCRRN/S6udnRzVk0TM/m9BtUG
+         Yn9FijgafVGG5/7/SIXf1kJBQsB9AxhHXtbEUtrVZmHemErCkz8flVTgHYRaQDwiHJnl
+         2gHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728654368; x=1729259168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E2qp85caGkHrNfR7469NqoR0KI++fVRvHImGSKJSP7w=;
+        b=skVDlUeQYmcY7pCUc6EzvJP4N61JVdhZm8XWHRSVrkzlHejAxafvtDVMOTFKUfegBH
+         Y0Yxime5Oy8y79/1wXTGJUnnPV0vYxZepTO7Fgn1Qi9GQBevUOtfdu3BvAV8fb7/WT9m
+         Ql7d47Q9WJLEFrG9rgklc+bt63qj5veIssxH1vuPs/fYNyzqrdODJD3lclndXQWsVapV
+         JJHgBaPMxkI4hANYUTzkn/LspnElT7rfiihfldkgLKvvM8EQtH3N8Dtyx1HzYqZtAdvN
+         nhYgtK1n7mVf6qszv7i3rlSmzazk9eVam11CzEE8ubpAdJbdhXY3b/bN2b57/YE50dgw
+         Z92g==
+X-Forwarded-Encrypted: i=1; AJvYcCVqoLAM3UZ7aMe6yfGzONB1pWeNKUkro76QEKQrqMnmOxC1VvfrnN8PSQ2+uIjAa13/VHJfJgOjxRiiildn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsOF2nEhJjJVJwFRjSyDUxj5KsrEgetCgojbBfjGiEXiestK99
+	bCMmVhTBaOiodkO/uMTE9LcO2sc/gPY5JL/c/YHXk7K7YCchjqG2hhniwK9H
+X-Google-Smtp-Source: AGHT+IH7eUfGQHY4WtDe22cfNkE+AaccwDz7YYRgreDlA+DMf6mon2qwh1DXP5Jbd16qXIbHRcoixw==
+X-Received: by 2002:adf:f189:0:b0:37d:5338:872c with SMTP id ffacd0b85a97d-37d551afa0emr1739957f8f.1.1728654368113;
+        Fri, 11 Oct 2024 06:46:08 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79faa8sm3992870f8f.66.2024.10.11.06.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 06:46:07 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+	yangyun <yangyun50@huawei.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] ovl: update inode size after extending passthrough write
+Date: Fri, 11 Oct 2024 15:46:01 +0200
+Message-Id: <20241011134601.667572-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241011.yai6KiDa7ieg@digikod.net>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Oct 11, 2024 at 03:20:30PM +0200, Mickaël Salaün wrote:
-> On Fri, Oct 11, 2024 at 05:54:37AM -0700, Christoph Hellwig wrote:
-> > On Fri, Oct 11, 2024 at 02:47:14PM +0200, Mickaël Salaün wrote:
-> > > How to get the inode number with ->getattr and only a struct inode?
-> > 
-> > You get a struct kstat and extract it from that.
-> 
-> Yes, but how do you call getattr() without a path?
+yangyun reported that libfuse test test_copy_file_range() copies zero
+bytes from a newly written file when fuse passthrough is enabled.
 
-You don't because inode numbers are irrelevant without the path.
+The reason is that extending passthrough write is not updating the fuse
+inode size and when vfs_copy_file_range() observes a zero size inode,
+it returns without calling the filesystem copy_file_range() method.
+
+Extend the fuse inode size to the size of the backing inode after every
+passthrough write if the backing inode size is larger.
+
+This does not yet provide cache coherency of fuse inode attributes and
+backing inode attributes, but it should prevent situations where fuse
+inode size is too small, causing read/copy to be wrongly shortened.
+
+Reported-by: yangyun <yangyun50@huawei.com>
+Closes: https://github.com/libfuse/libfuse/issues/1048
+Fixes: 57e1176e6086 ("fuse: implement read/write passthrough")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/fuse/passthrough.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+index ba3207f6c4ce..d3047a4bc40e 100644
+--- a/fs/fuse/passthrough.c
++++ b/fs/fuse/passthrough.c
+@@ -20,9 +20,18 @@ static void fuse_file_accessed(struct file *file)
+ 
+ static void fuse_file_modified(struct file *file)
+ {
++	struct fuse_file *ff = file->private_data;
++	struct file *backing_file = fuse_file_passthrough(ff);
+ 	struct inode *inode = file_inode(file);
+-
+-	fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
++	loff_t size = i_size_read(file_inode(backing_file));
++
++	/*
++	 * Most of the time we will be holding inode_lock(), but even if we are
++	 * called from async io completion without inode_lock(), the last write
++	 * will update fuse inode size to the size of the backing inode, even if
++	 * the last write was not the extending write.
++	 */
++	fuse_write_update_attr(inode, size, size);
+ }
+ 
+ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+-- 
+2.34.1
+
 
