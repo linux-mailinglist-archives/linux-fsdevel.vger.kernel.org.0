@@ -1,98 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-31736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE8699A863
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 17:53:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6023C99A94E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 18:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD75DB22C21
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 15:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF0D72839E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 16:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC990198E7A;
-	Fri, 11 Oct 2024 15:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284CC1A01AB;
+	Fri, 11 Oct 2024 16:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ARJeQ+ZG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XthzRxwl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40453196C7B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 15:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFFA19F133;
+	Fri, 11 Oct 2024 16:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661972; cv=none; b=TV9SsPG/D7z8TtsMBPcrnQBejvSiKOdQQ/Rfw3RWNredWsRqfkGzPDox/rTf9pl2kxTgNGRSjreY+ijehJGztEdIZBLcusJG3r/P5jQlDBJ9Q+YDaxAEZ1Z0dlPzttx0TCR3vTAqC9RZsESmUjSAxiFvrigIU1kz0mzknPTyYag=
+	t=1728665948; cv=none; b=TBfl78BK3aL+bfOuv4vJIcMYjyWFemMqSSKKTFSIR0zoGiMDdq36pBC29H2sNpxGPtwhMZxSXe/LKtXKLbVCR9FSWvEvyQLVbgQzADwsJ9RAzky9pz8sGu/6osziICACiCundDEfwP6F9ytkLlSCp7M5T+kFm+Fc/f2heCCaLvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661972; c=relaxed/simple;
-	bh=2cnpIpx2npZ2RcJMdl1om2QaNoJNOR0GO7VoLTyd3PY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JmjXMuYjloBhE6EsGSyOMwbVP0+Biu/x9Dfszoex92vyx9Af3XjHRfrCt6G19NW0JlKTDOGM0CCqwcEd1Ya2F2ObZHsXKXFWitm7w2+Dja0eZehdrNAqZEtSWaym/lQVgJTGk1sHgC9NItw0IQzGsMgcr7JViIPxqig3kG9CQ9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ARJeQ+ZG; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fac6b3c220so34474641fa.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 08:52:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1728661968; x=1729266768; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CKbCfc0GSJHP9tDSJaE2Sqci6+zlP6d2qUVYjC2YJRw=;
-        b=ARJeQ+ZG12H0vVt5jsmZC9KjhSroNqKV8oWpZ8cOrbAbEu/T7RmP3dO7cPa3vWQLn/
-         gCyASBh4y6JS3+9F/tHXKu0UBUE+akBPsw4gsiE4Fsm1xbK7cS53RayCcgB6HuP7v/Se
-         sy35Kzh1DAa8rcc29nsSVQ2mzy5zAVjWs0fwU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728661968; x=1729266768;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CKbCfc0GSJHP9tDSJaE2Sqci6+zlP6d2qUVYjC2YJRw=;
-        b=mk68STbKDUsUC/rqVBGGBXWz3lVEGq56RSb9T2VYsvVLkKwM8stLcnn8ZCuBivIt74
-         rtC2Q4w/gwrKEqZes2uROmRrNF0cPfK8/xthi9yNztDuwMCp8KD0lImDISQCvbDDyz8a
-         MpWQp5PcvdBXZHAMsDEwvlYlO/DO0Z7v3IJpa5zSSY+qXw6/SrfjRAF+ORzQDoVTXVJX
-         Pgnz4zqpm+87F5/ikGlculIzOtVrdwRaMVh/HHGMLWJJsGmRfvunCVzOycTR6EXtqFY6
-         IZjo9vcvwekMnhMM1CRmt1DSL4lNc5RdctWmdr8wfFvq6cizMGNiaEPAxX4EsJNxI10K
-         DTyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXu7JxQEPhqjXW/ivF80Q5roCIKaXlaAtjR+BWX9xZSvdf/kVQnxWBtHMLpjQPBailhIYq5fRI68gyZVDjs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqRCJnPslJK5XEccWtqgVdhmqAnT7AH3P2dtpigyZI46PKtKL9
-	vzYFTQozAwDnVcHOvwhbYhF51z1PF8lBdSru1itv030dRw+nNbwDjdMQFK8AnCaG5jrsRU//Rra
-	+2Hl42itKIWaIIsPACU1sXHTqvaDC9qc4yifQLw==
-X-Google-Smtp-Source: AGHT+IE5ypaAeiPlzEi3oHU8Y8cqAc8XraDYoYQ1xE4i6SbfplJ5kRLScOWnTlK7NqRHiXp9tOW+Vu6lYmpKsKKGKe8=
-X-Received: by 2002:a2e:4e12:0:b0:2fa:dd6a:9250 with SMTP id
- 38308e7fff4ca-2fb3f1b476fmr397641fa.20.1728661967999; Fri, 11 Oct 2024
- 08:52:47 -0700 (PDT)
+	s=arc-20240116; t=1728665948; c=relaxed/simple;
+	bh=mkYGbk6JIVdaR+ngMKVGQQpONnRKTN08+o+35jtWhaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1Ook/gX/dMm9JKMeK7h2z2fGzVGgThPekPpQtEV8fmHXTjw/4UCxh5J1dCP4WP7czFSwOsKRonlSBkEtLKpxY0BWsG4IuTfH+TTY3fWg5BnZwv4aqimpkqYfxYgo6vJMTJ2OEFV2NK1qiRtQC7a2yN8JMuoy46p6AWRekguANw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XthzRxwl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087ADC4CEC3;
+	Fri, 11 Oct 2024 16:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728665948;
+	bh=mkYGbk6JIVdaR+ngMKVGQQpONnRKTN08+o+35jtWhaw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XthzRxwlyTwMBL7/dqVToKwmwWz/tmxBQIW9AGGTzEbGctR95F+R+YjqQugDgkuM8
+	 ZSdTLWGDrN9cpZ51C0wJxyeMztsF7Xnui24tVXpK4IRnur7/ZP3iqO0Tus+pEeEM0c
+	 LHUarhCe+CYGrvy0yQHbNyjm5pR7UezxR/EfqQ33483z9FLJNAT2s5iNercKVORDh0
+	 p1o9EahbR95h7eZ55BqhKXKbcRHrTuCkVs15ZBP9MtomhvKSdktlzZ2jSNLmLui8Ph
+	 v30Z70FuMrkmRWIBObje29CAG014E7yhsJ30Qs6x/3H70RPamvzNp6T1FVHsUr2yVw
+	 RDAOSf9awHmUA==
+Date: Fri, 11 Oct 2024 10:59:05 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Javier Gonzalez <javier.gonz@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, Hans Holmberg <hans@owltronix.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>,
+	"sagi@grimberg.me" <sagi@grimberg.me>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+	"bcrl@kvack.org" <bcrl@kvack.org>,
+	"dhowells@redhat.com" <dhowells@redhat.com>,
+	"bvanassche@acm.org" <bvanassche@acm.org>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-aio@kvack.org" <linux-aio@kvack.org>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>,
+	"vishak.g@samsung.com" <vishak.g@samsung.com>
+Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+Message-ID: <ZwlZWWiPXT4NGErp@kbusch-mbp.mynextlight.net>
+References: <20241007101011.boufh3tipewgvuao@ArmHalley.local>
+ <CANr-nt3TA75MSvTNWP3SwBh60dBwJYztHJL5LZvROa-j9Lov7g@mail.gmail.com>
+ <97bd78a896b748b18e21e14511e8e0f4@CAMSVWEXC02.scsc.local>
+ <CANr-nt11OJfLRFr=rzH0LyRUzVD9ZFLKsgree=Xqv__nWerVkg@mail.gmail.com>
+ <20241010071327.rnh2wsuqdvcu2tx4@ArmHalley.local>
+ <CGME20241010092019eucas1p157b87b63e91cd2294df4a8f8e2de4cdf@eucas1p1.samsung.com>
+ <20241010092010.GC9287@lst.de>
+ <20241010122232.r2omntepzkmtmx7p@ArmHalley.local>
+ <20241011085631.GA4039@lst.de>
+ <20241011122102.znguf6kpmbbsa42t@ArmHalley.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011-work-overlayfs-v1-0-e34243841279@kernel.org>
-In-Reply-To: <20241011-work-overlayfs-v1-0-e34243841279@kernel.org>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 11 Oct 2024 17:52:32 +0200
-Message-ID: <CAJfpeguO7PWQ9jRsYkW-ENRk6Y0GDGHJ6qt59+Wu6-sphQ75aw@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/3] ovl: specify layers via file descriptors
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011122102.znguf6kpmbbsa42t@ArmHalley.local>
 
-On Fri, 11 Oct 2024 at 17:43, Christian Brauner <brauner@kernel.org> wrote:
+On Fri, Oct 11, 2024 at 02:21:02PM +0200, Javier Gonzalez wrote:
+> > That's a lot of marketing babble :)    What exact thing is missing
+> > from the passthrough interface when using say spdx over io_uring?
+> 
+> The block layer provides a lot of functionality that passthru cannot
+> provide. A simple example would be splits. You know this :)
+> 
+> I am sure Jens and Keith can give you more specifics on their particular
+> reasons.
 
-> The mount api doesn't allow overloading of mount option parameters
-> (except for strings and flags). Making this work for arbitrary
-> parameters would be quite ugly or file descriptors would have to be
-> special cased. Neither is very appealing. I do prefer the *_fd mount
-> options because they aren't ambiguous.
+Splitting, merging, cgroups, iostats, error retries, failover.
 
-But the fd's just represent a path (they can be O_PATH, right?)
+We have a recent change staged in 6.13 to try to count iostats on
+passthrough, but it doesn't do discards.
 
-So upperdir and upperdir_fd are exactly the same options, no?  Just
-the representation is different.
+Passthrough to partitions requires root access and the slow CAP_SYSADMIN
+check on every IO.
 
-Am I missing something?
+Page cache. Though that may not readily work with this io_uring proposal
+as-is either.
 
-Thanks,
-Miklos
+The generic IO path is safe to changing formats; passthrough isn't.
+
+And it's just generally more work to port existing applications to use
+the passthrough interface. It causes duplicating solutions to scenarios
+the kernel already handles.
 
