@@ -1,102 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-31731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E4599A7DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 17:34:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A754899A815
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 17:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91A81F251A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 15:34:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18C2D282B91
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 15:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEED5195B37;
-	Fri, 11 Oct 2024 15:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A12B195B37;
+	Fri, 11 Oct 2024 15:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lLgYVWvw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BNsvzNMM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646995381E;
-	Fri, 11 Oct 2024 15:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64815194AE8;
+	Fri, 11 Oct 2024 15:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660879; cv=none; b=JQPwObNRVNokL3VuvEd6a5EgnpNljFVCJoPktsYOz9cMj280VMS+bIrfwOvrdnouoForXpIz/eyM+np3PGvEF8TfjtMUYp0cbWcYPof7dyRqQXUGQwCvZ+Sz+fSzvQ3K4j6s/CRToCL2IH3oryCtlYDk+paXJ+TsqruA0z9BXNw=
+	t=1728661422; cv=none; b=sQIp6Gm6EA3c5M2sBOBr0Ml/HxZQq5Ze/8mdvaxQYejbEKwFjGPBBKS1DeZoEPXRXLJDCj8+Sj+O/HK0/PhwvWAqzWyl7kB7AyrPwThPOjHAs1D4uxOvnv9rL/MLQbRabi2taK1ziN/Q1EjYld4R0T/j22Vu2Z0V6eR9lK6/TIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660879; c=relaxed/simple;
-	bh=dtcs1yN4pz+Zbu8KHjgOTEMBUEC8VG9TJOw5rXp6cgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ri+hM9AXqYevIV5mWZGvDG3U77vdhDxOpX6AnwzBvkJ/fmPeJDiqHAcSkwQa7IYL8rIZPyfFuYF+7asMIIZazF7iRvZnFtQQHBYUrt55bG5W7oZp4dkkHHcikL6tSfpkh44vhzi3UPkD1aF+6+7HNfR7iAkIEQYsa7VCLW3SjL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lLgYVWvw; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=V5IK78oxLAcUke4+8ve0ylm+nCiIdwlDSu6wnFwD3fQ=; b=lLgYVWvwIbQuKavphrC2s+Zo+a
-	yp6uiYGdPJKOvLMrF5lWNo1w3tIe8Tk1cy0z9jURe4qUe6LYYqYMqiIu/8bq6IdvqxXYSYC/5daPe
-	xdiYL44Y1hUfz2NRhrYeI0xR7J9mNvDd7hQFfdbJf03e/7xBay/CEwa1JgRysSJ2W/jnWYVzVDMSF
-	ptG2V3fl9oUNjfEn0piSuHpqk6j3821IdiKpc7xp71S+PQrkS6pzP6Ial1cHTLiT+ypVd1Fr7ksxh
-	Nk4hYnt3IanT0tE4DMGGkvynCqFwc37lQPI2sgfyZ51VciibVmrGbbGl57qrDup+/u0oCk78P31Jd
-	mvyCLsHg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1szHf1-0000000Goqs-2W9z;
-	Fri, 11 Oct 2024 15:34:35 +0000
-Date: Fri, 11 Oct 2024 08:34:35 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	audit@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-Message-ID: <ZwlFi5EI08LlJPSw@infradead.org>
-References: <20241010152649.849254-1-mic@digikod.net>
- <ZwkaVLOFElypvSDX@infradead.org>
- <20241011.ieghie3Aiye4@digikod.net>
- <ZwkgDd1JO2kZBobc@infradead.org>
- <20241011.yai6KiDa7ieg@digikod.net>
- <Zwkm5HADvc5743di@infradead.org>
- <20241011.aetou9haeCah@digikod.net>
- <Zwk4pYzkzydwLRV_@infradead.org>
- <20241011.uu1Bieghaiwu@digikod.net>
+	s=arc-20240116; t=1728661422; c=relaxed/simple;
+	bh=oZJ6c9mbFwpso+luISAwXCvvxhRmHFjUmeTxr2ZtRYU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Wuybo6VajPXEbL/uj+lwf5JJlwiTvNl2xpKeE//VEjGptkD04vyf1Q8LsXLEo75m5hyrIhGRLhA1kYkvO1U3dMFL4v3Vsu/qEDdz3QRwik4CtLJSnAaPpyLG8Uxdd/VIGN9YZbA6mAWVJSHkQ0dYxONCYaK1yg8d/Ba2vqRDiiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BNsvzNMM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB75EC4CEC3;
+	Fri, 11 Oct 2024 15:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728661422;
+	bh=oZJ6c9mbFwpso+luISAwXCvvxhRmHFjUmeTxr2ZtRYU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=BNsvzNMMd/PsXhZ52RyIFtLQm3E+iZXj7MlnKvZBJOdVcqgW03xqYuQNAaotNo+IG
+	 efFe47nIswyuM1NQjHM9r+Q1/InD4BMxMPeDt++GYfqOo2cph7/+p4nDQYQZSp8sqp
+	 cXC/ih3yQNmtaz2IwnbiVTPHA9a9MN8JPC4iaQ1FMDBmXMepd2iyhbZ9XxOv2dsqf2
+	 e7ad3GhloEs6XXxZGZfHo7jSMZI8JpRXn4x6FYJTE6gJ10TQ59ZZwF+EvkyrFgMPju
+	 99zWtYpriu2qlogXhrQOHPQT0GrnpVxLqhZkoRIMZ9EUliPliAcmDYBgR9+Tgk0V+u
+	 rPwEw5tbvtUoA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC 0/3] ovl: specify layers via file descriptors
+Date: Fri, 11 Oct 2024 17:43:34 +0200
+Message-Id: <20241011-work-overlayfs-v1-0-e34243841279@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241011.uu1Bieghaiwu@digikod.net>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKdHCWcC/x2MywrCMBAAf6Xs2ZRmFV9XwQ/wKh426cYGbSK7E
+ pXSfzd6nIGZCZQlssK+mUC4RI05VbCLBvxA6com9pUBO1zZzlrzynIzubDc6RPU9M4H2iEuebu
+ BGj2EQ3z/h2c4HQ9wqdKRsnFCyQ+/10j6ZGnLurVoxCPM8xfrXfvIiAAAAA==
+X-Change-ID: 20241011-work-overlayfs-dbcfa9223e87
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+ linux-unionfs@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1987; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=oZJ6c9mbFwpso+luISAwXCvvxhRmHFjUmeTxr2ZtRYU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRzuq+psOJ28qwUmL9xVnbkv6nuK9PjWeW3ueq/O82bn
+ ml1l/V+RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwET+yTEyrD988yfH5SUTdqfF
+ am73Ttf65hKTt/mI5e6nJVe+HDct62D4xfRAWDuxTGqhytelpt94Ft87LTzvnixHkY3n85NprHr
+ /WAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Fri, Oct 11, 2024 at 05:30:59PM +0200, Mickaël Salaün wrote:
-> > It still is useless.  E.g. btrfs has duplicate inode numbers due to
-> > subvolumes.
-> 
-> At least it reflects what users see.
+Hey,
 
-Users generally don't see inode numbers.
+Currently overlayfs only allows specifying layers through path names.
+This is inconvenient for users such as systemd that want to assemble an
+overlayfs mount purely based on file descriptors.
 
-> > If you want a better pretty but not useful value just work on making
-> > i_ino 64-bits wide, which is long overdue.
-> 
-> That would require too much work for me, and this would be a pain to
-> backport to all stable kernels.
+When porting overlayfs to the new mount api I already provided patches
+for this but we decided to keep this work separate. This is a revamp of
+the patchset as the use-case has become more urgent.
 
-Well, if doing the right thing is too hard we can easily do nothing.
+This introduces the new mount options:
 
-In case it wan't clear, this thread has been a very explicit:
+lowerdir_fd+
+datadir_fd+
+upperdir_fd
+workdir_fd
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+which can be used as follows:
 
+fsconfig(fd_overlay, FSCONFIG_SET_FD, "upperdir_fd+", NULL, fd_upper);
+fsconfig(fd_overlay, FSCONFIG_SET_FD, "workdir_fd+", NULL, fd_work);
+fsconfig(fd_overlay, FSCONFIG_SET_FD, "lowerdir_fd+", NULL, fd_lower1);
+fsconfig(fd_overlay, FSCONFIG_SET_FD, "lowerdir_fd+", NULL, fd_lower2);
+
+The selftest contains an example for this.
+
+The mount api doesn't allow overloading of mount option parameters
+(except for strings and flags). Making this work for arbitrary
+parameters would be quite ugly or file descriptors would have to be
+special cased. Neither is very appealing. I do prefer the *_fd mount
+options because they aren't ambiguous.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (3):
+      ovl: specify layers via file descriptors
+      selftests: use shared header
+      selftests: add overlayfs fd mounting selftests
+
+ fs/overlayfs/params.c                              | 132 +++++++++++++++++----
+ .../selftests/filesystems/overlayfs/.gitignore     |   1 +
+ .../selftests/filesystems/overlayfs/Makefile       |   2 +-
+ .../selftests/filesystems/overlayfs/dev_in_maps.c  |  27 +----
+ .../filesystems/overlayfs/set_layers_via_fds.c     | 122 +++++++++++++++++++
+ .../selftests/filesystems/overlayfs/wrappers.h     |  47 ++++++++
+ 6 files changed, 281 insertions(+), 50 deletions(-)
+---
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+change-id: 20241011-work-overlayfs-dbcfa9223e87
 
 
