@@ -1,104 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-31742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B663599AA9C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 19:43:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF79999AAC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 19:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB881F2228E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 17:43:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09565B213B9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 17:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5FD1C1ACF;
-	Fri, 11 Oct 2024 17:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171911C175B;
+	Fri, 11 Oct 2024 17:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hq5/iFLl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kDqF0DiR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBAE1BD4E7;
-	Fri, 11 Oct 2024 17:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B9C1BB6BB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 17:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728668414; cv=none; b=HeZq/zrSugugKe9Y3u2YfjAiP6Io8AK2r5w08MDoGHgNciQptyJDk3z/Se6p1CYlAtHcYXRPuzt28Q5pZihbLyLlnWxMgMVWdcvCty8VtsqrEdaVP3wHzZxsryArMeRLuRX1FLThQ7NQu9V7hrffz1mVyVe1vrcLsmrkxR1fW0U=
+	t=1728669475; cv=none; b=CYX9U4BINaghIgAX+RXpBEn9VY1fyrntNCSSWSKYk183i4nLM8I5PfOhSy8svG99OCFPpksFVsF0bhbJCR62QLhe7OrfsEJgUv9FhQ/PkICjencDCKyV0NVX+CepnUtatMf+3HRasGrZ0+7XKlwFNcp1691ZshMrLje3Uqcmrew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728668414; c=relaxed/simple;
-	bh=M+hdYJlFyL0OZx5yExYHmOFQXmQgma78xTFYbCNq0io=;
+	s=arc-20240116; t=1728669475; c=relaxed/simple;
+	bh=yB2JDZVN3ibu67jB7COqvToRjbUGooN0YOPImmiwvwI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DJ8ImsDZXT4Q1h7atgxfuoZ2vGp5ADAYtcT9qcpYRiQrOWpC4Vf7OSl4TNFmeoywXdACtixo13eHDqar5zp9c8GG/0bNTIstn2mAhzCApWkzKSc9YhY7yWUOVMh97ESc7ZZU05bFZaMyQ8qzDHZHKKEFeI24zGJhfmRezgncgHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hq5/iFLl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 683F1C4CED2;
-	Fri, 11 Oct 2024 17:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728668414;
-	bh=M+hdYJlFyL0OZx5yExYHmOFQXmQgma78xTFYbCNq0io=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Hq5/iFLllAr4TOwrmWCx/OtZ6lEhPewnjt2QHTTPaiS9es2MxaPaQ9tOOPSMmatuW
-	 H5WYkBrCZWOO2TC44R1i7mJMvDnM70C9Ga+bkyDs1JYQIwp/Je6BtuEPRNysW78ZsV
-	 ZxOnRFjdbkhzobrMz0DY0/IRM/TNVQa5t9c50hlJLUPdYS4Ys3zuYVDu+nYFh2FsmH
-	 nh7yMenHDsUa6iN3s1SRsAKkVcgs9hEUJGKgisaLHPemhYd61TU4iAJs2mAZyHXwJK
-	 C4BupP+G5UfZ8BAPE90P+K1RCXjPrtD55FsNyqqGj6T3TwGsJpZfTMDFgE/fkSuwYP
-	 ry/j/vttLiRyg==
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8354c496c90so72108739f.3;
-        Fri, 11 Oct 2024 10:40:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW0Niv9xYzju7/i4/w1xpt8nGb3ARvdQ0yL54EwOzmJwkZJZttSg9VEXknmzbfpQ4iQwk8krB1ZlKL6katH@vger.kernel.org, AJvYcCXMVH2POQJcuQUVWyZzx8qV1rFbOMxufYLZ+o385v5seBGXLdFA/BMLur5vMrBeghWlZG89wYSAlmL7G7Oq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcCS0b1ox8Vzq2kccQl776jqa9fQR7QRIGbib41scro3bUp02Y
-	fbs0Vu6fNYxwPTbvXJ47284Kz8i+2oAHQ2Bf/lgzy3rMEwUyj7qWK8gQ8/D8Qcpjfh5LEO4lYmx
-	GQ1oZ7yBMVC7FfdLR09HS/aHQQP8=
-X-Google-Smtp-Source: AGHT+IEw7zHvzixrCNkcdvbFz3a6TBhJkMVm8ycQ5AOQZEAi5W1sZlvl3yEl5OfWvfU5y3PKoFGNOr/ijiz/Acz/JZs=
-X-Received: by 2002:a05:6e02:18cd:b0:3a0:a71b:75e5 with SMTP id
- e9e14a558f8ab-3a3bcdb421amr2020225ab.7.1728668413737; Fri, 11 Oct 2024
- 10:40:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=V7WOEwQQc0OpzfLiJ3SaUf/gniOBNZk+H/GAbavnLbRaQ8tBthY8NjZ+Q4ZLa5kkw81xjSQMPG5QD3SaaiPnz3wjn8I41Z8XRcsUWGuzXvIwaeJZmHAbt5xFOKD1zIs/JwH/edbyn+SEh6fO99lSnyKVT/jhoUP0xKq7XPwpD1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kDqF0DiR; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b10f2c24f0so228360285a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 10:57:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728669473; x=1729274273; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B0IX45qBtp7XnfaFa312GgHPMc6dJqIcmn71EIvOrHw=;
+        b=kDqF0DiRVlOGVcYxr4dXOFfZGZeCw5bnvo/kr6OEh0CFGd5R2wTn+WX/mO5GWudQZm
+         MSEJXG8GFzAOiaKjdqWW2/Y7lbT17ruQBEDcAHA+/5tlKyOvpEy7AsMEhA1Z1bmngQu5
+         mkUvjpAzEUU1vbgmrRpq0+9Zytmv0jChlGGQXx2XB1wwsHjFol37SZ/GhFHxa7MXUHBI
+         jb0pSHocYbq9XAIvfQNWmFF0Rtm2SS3q2IBdQPbdvzl7Gcp8obqB1uYczzwx/GXGNUaa
+         fUFBfjhHki+0xrJk3FxTWC6DVQn4p032aWTZ9vMObCHLAybxRLAWpVlgnyWa09AfOo9i
+         Nw2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728669473; x=1729274273;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B0IX45qBtp7XnfaFa312GgHPMc6dJqIcmn71EIvOrHw=;
+        b=lK9q9Pk8HcVgy1b4EeyHJd4uZsDKOhTB4N4qBcxwPCWtSqx7SqyxV+GTJhTUhgl+3l
+         efSoHQ2vZKxSW1Psbn5pSoResJ5XDEHXhQWLZUji+kVj2pn2pux3xG+8HnDkRGTUvMnp
+         l4o9p/yTpBvNC6hspkHe9tbLiUKV3tOnaSot4Vkup1AAOA+wiNP1tsq5fciqneIcKVbJ
+         lwWy/Bnu4m3R6o/lRvML3VVsFbtY5zI0bEbE3McI7lNXjK5HNV4c+HYJOYBbVpv/AQ2Z
+         MYPmfhgSqoSa3+s2dHU4SdRE/qU2mLh4eH9YMdgcxVLJZuyIGPm3aJobWh3EBqUdnuiP
+         lp6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhcgBBf74m2Rpoae14oGQQ3HR57U4EhWdQfWBBp+3VCxPqmgBuqiDROO2TURLOqyNjM19TrN1BTloldbxN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZhn7sueWNZNVycBx5hop8m5hhRA2/W4+A/LFZGSxRwLouzkeQ
+	B2HPJjE3R4vEsBiob1mUOZzkkpvk1XVmLv9rsbBgTZDMtkNWgJy/3vTj6qqajoIa9DjSbmuoXLX
+	ZvvQJwDaQK8a+QtU7fHRdFX28zW0=
+X-Google-Smtp-Source: AGHT+IGScK50AMe6YiNNsStFf8LWJ57RRMW7ynYb9rCeSWgEkYimZdr5P8J/aUSBtTUQG7GSS7gn9RUqhJ067Ce3IlQ=
+X-Received: by 2002:a05:620a:28cc:b0:7b1:11f4:d0af with SMTP id
+ af79cd13be357-7b120fc3e21mr53510485a.29.1728669472866; Fri, 11 Oct 2024
+ 10:57:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002214637.3625277-1-song@kernel.org>
-In-Reply-To: <20241002214637.3625277-1-song@kernel.org>
-From: Song Liu <song@kernel.org>
-Date: Fri, 11 Oct 2024 10:40:02 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6nv=-wEaoPxB_+VQTkfnvYzBtfjbrg2EeNK7jjN6V83g@mail.gmail.com>
-Message-ID: <CAPhsuW6nv=-wEaoPxB_+VQTkfnvYzBtfjbrg2EeNK7jjN6V83g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/2] security.bpf xattr name prefix
-To: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	jack@suse.cz
-Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, kpsingh@kernel.org, 
-	mattbobrowski@google.com
+References: <20241011135326.667781-1-amir73il@gmail.com> <CAJfpegsvwqo8N+bOyWaO1+HxoYvSOSdHH=OCLfwj6dcqNqED-A@mail.gmail.com>
+In-Reply-To: <CAJfpegsvwqo8N+bOyWaO1+HxoYvSOSdHH=OCLfwj6dcqNqED-A@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 11 Oct 2024 19:57:41 +0200
+Message-ID: <CAOQ4uxj1LjzF0GyG3pb+TYHy+L1N+PD59FzBUuy0uuyNLgW+og@mail.gmail.com>
+Subject: Re: [PATCH] fuse: update inode size after extending passthrough write
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
+	yangyun <yangyun50@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christian, Al, and Jan,
+On Fri, Oct 11, 2024 at 4:25=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Fri, 11 Oct 2024 at 15:53, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > @@ -20,9 +20,18 @@ static void fuse_file_accessed(struct file *file)
+> >
+> >  static void fuse_file_modified(struct file *file)
+> >  {
+> > +       struct fuse_file *ff =3D file->private_data;
+> > +       struct file *backing_file =3D fuse_file_passthrough(ff);
+> >         struct inode *inode =3D file_inode(file);
+> > -
+> > -       fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
+> > +       loff_t size =3D i_size_read(file_inode(backing_file));
+>
+> What about passing iocb and res to ->end_write() instead of just the
+> file, so that we don't need to touch the underlying inode?
+>
 
-Could you please review and share your comments on this set?
+I considered that. It was like this in one of my older versions.
+
+But why do we want to avoid copying attributes from the underlying inode?
+If anything, I thought that we would want to get closer to ovl_file_modifie=
+d()
+for backing inodes in some situations like this one.
+I understand that brute copy of attributes is a problem, but I don't see th=
+e
+problem with i_size =3D max(i_size, i_backing_size)
+
+Can you explain the problem?
 
 Thanks,
-Song
-
-On Wed, Oct 2, 2024 at 2:47=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> Follow up discussion in LPC 2024 [1], that we need security.bpf xattr
-> prefix. This set adds "security.bpf" xattr name prefix, and allows
-> bpf kfuncs bpf_get_[file|dentry]_xattr() to read these xattrs.
->
->
-> [1] https://lpc.events/event/18/contributions/1940/
->
-> Song Liu (2):
->   fs/xattr: bpf: Introduce security.bpf xattr name prefix
->   selftests/bpf: Extend test fs_kfuncs to cover security.bpf xattr names
->
->  fs/bpf_fs_kfuncs.c                            | 19 ++++++++-
->  include/uapi/linux/xattr.h                    |  4 ++
->  .../selftests/bpf/prog_tests/fs_kfuncs.c      | 40 ++++++++++++++-----
->  .../selftests/bpf/progs/test_get_xattr.c      | 30 ++++++++++++--
->  4 files changed, 78 insertions(+), 15 deletions(-)
->
-> --
-> 2.43.5
+Amir.
 
