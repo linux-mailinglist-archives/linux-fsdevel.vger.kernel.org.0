@@ -1,136 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-31655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D38F999891
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 03:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDC8999914
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 03:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1BDDB21442
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 01:01:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73CE285A18
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 01:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF62D8BE5;
-	Fri, 11 Oct 2024 01:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CF7D529;
+	Fri, 11 Oct 2024 01:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQJKdynF"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="M/3NUOpU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1911E6FB0;
-	Fri, 11 Oct 2024 01:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D91BD2FB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 01:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728608502; cv=none; b=qjJIcAp+0ItFVYuC/LDlhrBUdOdgx+hcZTDnUVeFLoTP/Z3Mu4aXjcwq5dn4icIv7a7fapPgxEj4a05/4j2CQyIXxxwKwjPURAHLr42oMfdI1iH+zctHzEAMjN+PYxDzSni6sKd/ao0/hNoSmtQaliZ5gv38Nv4hf3/qt0KpRJc=
+	t=1728609654; cv=none; b=IMdqbw923xb6fpvDL3reKqPPA1Gktp+Cdm6zJxprn4eAcb2bol5svb9SC32ymgbkiYzk0FotWsQX5gmsSQUIBg9dCqKnabpBW7edxVExqqMoXPxu6x7dywqsRhhgRhVfmuI2H4iW9Yczt75ZUULLlA0w/04vK4QZ8EaNxBhk+AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728608502; c=relaxed/simple;
-	bh=Qt/5hlRql92AK1Nma6sI6o8MPxQ98DvyWnPnZ61x8VE=;
-	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nbck3nIf0V7407JwJB7OnzR2LUMZxYB/CFC+zX9dVQOyJhPLYJJZ2b0VdfFUPC8+6bPt7cv0rmSiuS2ON3EO03FOIPP5jUXKg84JeGfcK5GOjs13HlMcBu7qMgXf5MwN9BBNFTw/EwLV+S0fohw0k1MSDa5apq5T1NxVUQB5dG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQJKdynF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB87C4CEC5;
-	Fri, 11 Oct 2024 01:01:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728608502;
-	bh=Qt/5hlRql92AK1Nma6sI6o8MPxQ98DvyWnPnZ61x8VE=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=TQJKdynF6CAs2BvRZgn40w3KQTaKvWeR8ndkBio1VsDskTFhRfWtzN0NM7i+QK30i
-	 xnBfN+WNLGROgx7YZLBWdt0PE5yzhH1Th7sjb9uzPqf31Q4UnoULOo22jg/1cHE8H1
-	 wTyapvGtmm8mf0hPpJiptVQ2P9Y4W8yhjcvuy3Rs0V/E8FgYBUpk9aMqaAZYJSbQNf
-	 Do57xMrPkyUveMKpH2iLC6OUKUfs0nmRCIgvYMMWQIC37HJMHY4cDLGeuucZxEc6VK
-	 At7woX7lWV9Aii/lH6cTGoNMNbfDnhDAGSKYjZ9PZzDWEP3bfTZG8sxcWHH4LuRwp2
-	 1Rm19O/KJqqDw==
-Date: Thu, 10 Oct 2024 18:01:40 -0700
-Subject: [PATCH 2/2] iomap: add a merge boundary flag
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org, hch@lst.de, linux-fsdevel@vger.kernel.org
-Message-ID: <172860643692.4178573.11895337318025367612.stgit@frogsfrogsfrogs>
-In-Reply-To: <172860643652.4178573.7450433759242549822.stgit@frogsfrogsfrogs>
-References: <172860643652.4178573.7450433759242549822.stgit@frogsfrogsfrogs>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1728609654; c=relaxed/simple;
+	bh=yslYLZ3UmvXQ3tXwi9DG46llkHldFxew638wc6nmTfk=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=TLLrK4ladWRm/hZ5UkcevLHnBDV0NcLEteEJc8HwAvIBErHiz31KAUeZsPTVZZW917d6dTUEr+A9voJ5OqetjORV9gqkHRmpU8Nm0+ELwhkjPeJ55xWH7+bgAuAtUEWd/NRL40Tfx7NJkuS0/6FR/gkc8LDuuJGVMZZLdxJRbDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=M/3NUOpU; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cbf340fccaso6146d6.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 18:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728609651; x=1729214451; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DSYc5T3VWRhsmruLA3gY07A0OlNZL+RmUFs8WfbL2kA=;
+        b=M/3NUOpUqIoQ77RRYcYI/jJyZ/Xtik7haqQnRIc03MpHO+vtxDG2so4zK5yXMlOE70
+         esudG/z4yLG0d93IWpHOIDMhnwsPhvUSVQKzYI4U+RDv9nSGCIMc1aRQ8RgzC5/wTPO5
+         HmOyi5mXt6Ny+XHkhUuDcMaqWDk917J9DPurXoUOLSIDv4k2rMy8mK5O6tsbdHqgbNAt
+         qsWSihDuCmm2NYTlAhzp/Ysf1wkBA1JxdPenX97Qf67FGbBgF61TxwWWj1mK0F72B0OU
+         daZDc9DYyhJMId9SRHG1EcNLVI9r4z3RXRwF37OnDmv8CRz2LjSmJpk7hPPeAueeZqPG
+         M1Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728609651; x=1729214451;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DSYc5T3VWRhsmruLA3gY07A0OlNZL+RmUFs8WfbL2kA=;
+        b=BNJEMfD1EiWusRf7EVlkObTYnH6o92Q8MTrjUchSfWb8N0028WHbMyhjFvrOPUSewn
+         qieQqNcHA/n+5bLKRTMNWplhMazQKl9T1a+hY4fKuBYhyX1fqmMrvIU3Cupxvwb0r8UJ
+         LcIZgtKdlfIbXLKtgd4qtrf8lz1QGtTINSxTQFI2yqiUuj5MOHvb5Bi4/bId5AwUAIjw
+         LEwoaysiLA+5iBa70E8vsrRfF9rtkLUdA9fPNsS/rRfEpK5eoEo06FFZ98UP+RSI3SHX
+         8bf4zowzAzzUYoqJ1xUUihJn0+badzgM6ZHjrerpxeo8pBALmoYk26yeJ//Teh4qQDYJ
+         Ku/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOjGHNIfFZTzR5LBOzLtruBmxLrOl+XzoeMdqjjLtH+ntb8TLIIZDZOFb05l0zkHVYh4rRTlc2ai+kIGZ6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUWFLKsqfZL2sG67m2f6mdkZ0hO6ydD+D/UglQIQrZ9qPADoP2
+	h1qTK4UTYQ8qZ7OhLVgQ/uzbHiH8uwmD/S4s1Kcjeve+JvK8tc5B477ca65CwQ==
+X-Google-Smtp-Source: AGHT+IEqJeWFt79nQGeuR3bq2NUHrSRVHy+WW2D2IxkX40eKx9WlSMBeeYzd4yPkBCBf4eMRVOJxdw==
+X-Received: by 2002:a05:6214:498b:b0:6cb:d3e2:ea0d with SMTP id 6a1803df08f44-6cbefabae20mr21350876d6.12.1728609651103;
+        Thu, 10 Oct 2024 18:20:51 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608ebasm10941006d6.80.2024.10.10.18.20.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 18:20:50 -0700 (PDT)
+Date: Thu, 10 Oct 2024 21:20:50 -0400
+Message-ID: <c4260a81d3c0ebe54c191b432ca33140@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, audit@vger.kernel.org, Eric Paris <eparis@redhat.com>
+Subject: Re: [PATCH RFC v1 2/7] audit: Fix inode numbers
+References: <20241010152649.849254-2-mic@digikod.net>
+In-Reply-To: <20241010152649.849254-2-mic@digikod.net>
 
-From: Christoph Hellwig <hch@lst.de>
+On Oct 10, 2024 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+> 
+> Use the new inode_get_ino() helper to log the user space's view of
+> inode's numbers instead of the private kernel values.
+> 
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Eric Paris <eparis@redhat.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>  security/lsm_audit.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-File systems might have boundaries over which merges aren't possible.
-In fact these are very common, although most of the time some kind of
-header at the beginning of this region (e.g. XFS alloation groups, ext4
-block groups) automatically create a merge barrier.  But if that is
-not present, say for a device purely used for data we need to manually
-communicate that to iomap.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-Add a IOMAP_F_BOUNDARY flag to never merge I/O into a previous mapping.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/iomap/buffered-io.c |    6 ++++++
- include/linux/iomap.h  |    4 ++++
- 2 files changed, 10 insertions(+)
-
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 3899169b2cf733..6f7691ef1e4164 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1657,6 +1657,8 @@ iomap_ioend_can_merge(struct iomap_ioend *ioend, struct iomap_ioend *next)
- {
- 	if (ioend->io_bio.bi_status != next->io_bio.bi_status)
- 		return false;
-+	if (next->io_flags & IOMAP_F_BOUNDARY)
-+		return false;
- 	if ((ioend->io_flags & IOMAP_F_SHARED) ^
- 	    (next->io_flags & IOMAP_F_SHARED))
- 		return false;
-@@ -1776,6 +1778,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
- 	INIT_LIST_HEAD(&ioend->io_list);
- 	ioend->io_type = wpc->iomap.type;
- 	ioend->io_flags = wpc->iomap.flags;
-+	if (pos > wpc->iomap.offset)
-+		wpc->iomap.flags &= ~IOMAP_F_BOUNDARY;
- 	ioend->io_inode = inode;
- 	ioend->io_size = 0;
- 	ioend->io_offset = pos;
-@@ -1787,6 +1791,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
- 
- static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos)
- {
-+	if (wpc->iomap.offset == pos && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
-+		return false;
- 	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
- 	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
- 		return false;
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index d8a7fc84348c4d..d44c982085a39f 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -53,6 +53,9 @@ struct vm_fault;
-  *
-  * IOMAP_F_XATTR indicates that the iomap is for an extended attribute extent
-  * rather than a file data extent.
-+ *
-+ * IOMAP_F_BOUNDARY indicates that I/O and I/O completions for this iomap must
-+ * never be merged with the mapping before it.
-  */
- #define IOMAP_F_NEW		(1U << 0)
- #define IOMAP_F_DIRTY		(1U << 1)
-@@ -64,6 +67,7 @@ struct vm_fault;
- #define IOMAP_F_BUFFER_HEAD	0
- #endif /* CONFIG_BUFFER_HEAD */
- #define IOMAP_F_XATTR		(1U << 5)
-+#define IOMAP_F_BOUNDARY	(1U << 6)
- 
- /*
-  * Flags set by the core iomap code during operations:
-
+--
+paul-moore.com
 
