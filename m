@@ -1,90 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-31670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF89999F6F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 10:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8F4999F74
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 10:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76579287E2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 08:56:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A8ED287E6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 08:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3659A20C470;
-	Fri, 11 Oct 2024 08:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727AA20C489;
+	Fri, 11 Oct 2024 08:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTArbzVF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935FB20A5E2;
-	Fri, 11 Oct 2024 08:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B650119413B;
+	Fri, 11 Oct 2024 08:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728636999; cv=none; b=q6r6AARwAuHdg8pWhkf+3G1uJO/5VT8HAhJt11FpP5nroY+qzXwDZJyjzv1C0ysbSRyze1g/95egvi9jQkTUe+WS4p4NdNPHcIXc4oWLBt+JcMfYhsWXFv3sGzcIBE9MR1gRStB/7ZF/V970gmlY1yxgxc6srT28imNN4nl9hJM=
+	t=1728637016; cv=none; b=PWXwwuVveH9+r1LGgUT8Ru4oettGPZ2kZy9uMRrCqCOlUjMLd5XUcVXnzYPP/Di5urqCUL3IIoecOK7TB3IIYkax9nH9EzNKwpZFj8wqWykKkylJmCK+36pFdcnd88gmHjHv1sqIL7Phj+vlXocqcI0qyNA3t/eisLH6AoO2n/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728636999; c=relaxed/simple;
-	bh=3aK2GFXaB51o5dyRuGxLEUmOb2CRwQ0mXANQpLb2hNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/UEBIg7KepTQrm17lWOuwsa4ZFtmS/yWHXpyRJYbSxlV60PaZ0PhZ71nLFBgQ87IDNr4wx+haMXYrneexvPBUxHtgjgyM0KgTjMvQbf5f2BMkeviyKnwvvWyiKeII53pIvv8E+Tp+rQRs9Ln8U4p/UNjoItiR9Nlc5dMcwjO3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id A1AE1227AB3; Fri, 11 Oct 2024 10:56:31 +0200 (CEST)
-Date: Fri, 11 Oct 2024 10:56:31 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Javier Gonzalez <javier.gonz@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Hans Holmberg <hans@owltronix.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Kanchan Joshi <joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>,
-	"sagi@grimberg.me" <sagi@grimberg.me>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-	"bcrl@kvack.org" <bcrl@kvack.org>,
-	"dhowells@redhat.com" <dhowells@redhat.com>,
-	"bvanassche@acm.org" <bvanassche@acm.org>,
-	"asml.silence@gmail.com" <asml.silence@gmail.com>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-aio@kvack.org" <linux-aio@kvack.org>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>,
-	"vishak.g@samsung.com" <vishak.g@samsung.com>
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241011085631.GA4039@lst.de>
-References: <20241004065233.oc5gqcq3lyaxzjhz@ArmHalley.local> <20241004123027.GA19168@lst.de> <20241007101011.boufh3tipewgvuao@ArmHalley.local> <CANr-nt3TA75MSvTNWP3SwBh60dBwJYztHJL5LZvROa-j9Lov7g@mail.gmail.com> <97bd78a896b748b18e21e14511e8e0f4@CAMSVWEXC02.scsc.local> <CANr-nt11OJfLRFr=rzH0LyRUzVD9ZFLKsgree=Xqv__nWerVkg@mail.gmail.com> <20241010071327.rnh2wsuqdvcu2tx4@ArmHalley.local> <CGME20241010092019eucas1p157b87b63e91cd2294df4a8f8e2de4cdf@eucas1p1.samsung.com> <20241010092010.GC9287@lst.de> <20241010122232.r2omntepzkmtmx7p@ArmHalley.local>
+	s=arc-20240116; t=1728637016; c=relaxed/simple;
+	bh=O8UMgy4NK3I9Ac3Z4UxYDyPfUUZlGgk3rritssUgmSE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tARUZFXjkRilAgHZolZI8wwyzUbDh0CI/KW8wpDk9KE24GW/KY6Jv8mHIiUtXJbigOEXUPgOzZ5zMFXvo/sVA4VwsG0QxIpFxZrsNooxoa92JsY7TxLX3YvFRvPgoPNYEILUwhSKWdT7ed0yb4tyMFWZ2zT7v/rVg++4OttSb9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTArbzVF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7DBC4CEC3;
+	Fri, 11 Oct 2024 08:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728637016;
+	bh=O8UMgy4NK3I9Ac3Z4UxYDyPfUUZlGgk3rritssUgmSE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ZTArbzVFqv+vzi6Ln/obGoDSQd75fU7AS/1J/rnwZ9ku7vVaqKOt4oBS7JFJl97LO
+	 yfC4gpjRIdwLUVcsR9aNXaQ6VxmcJjgqc03c2XxyAheP9pjPRqKKdIVrJRezZcmW7+
+	 u7ukKjQBckULxox8wj4bRRfYoIAOsNmJ8L6ZPg91RV4KwaOr43dORcPYh54BY6GKfA
+	 7jcHaXhmB6Yr6s1PdvDKz/PoD24aPBKaeXx1xn1bWJCfC7unyVJ9J60SyCACrCVTR6
+	 7nFcVxyZz16BTAgYSUOGucG0jGiJ+vlDb+LhwhTgc1Ntryp70OhvnjbNbVa8XXHbce
+	 XYBaxpbPM8g0g==
+Message-ID: <94166f32-7ff9-46d2-83c9-4df2a787fe25@kernel.org>
+Date: Fri, 11 Oct 2024 16:56:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010122232.r2omntepzkmtmx7p@ArmHalley.local>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Theodore Ts'o <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
+ Josef Bacik <josef@toxicpanda.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ "Darrick J . Wong" <djwong@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Tejun Heo <tj@kernel.org>, akpm@linux-foundation.org,
+ Christian Brauner <brauner@kernel.org>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>,
+ Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ cgroups@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ mcgrof@kernel.org, gost.dev@samsung.com, linux-doc@vger.kernel.org,
+ linux-xfs@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH] fs/writeback: convert wbc_account_cgroup_owner to take a
+ folio
+To: Matthew Wilcox <willy@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20240926140121.203821-1-kernel@pankajraghav.com>
+ <ZvVrmBYTyNL3UDyR@casper.infradead.org> <ZvstH7UHpdnnDxW6@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZvstH7UHpdnnDxW6@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 02:22:32PM +0200, Javier Gonzalez wrote:
-> Passthru is great for prototyping and getting insights on end-to-end
-> applicability. We see though that it is difficult to get a full solution
-> based on it, unless people implement a use-space layer tailored to their
-> use-case (e.g., a version SPDK's bdev). After the POC phase, most folks
-> that can use passthru prefer to move to block - with a validated
-> use-case it should be easier to get things upstream.
->
-> This is exactly where we are now.
+On 2024/10/1 6:58, Jaegeuk Kim wrote:
+> On 09/26, Matthew Wilcox wrote:
+>> On Thu, Sep 26, 2024 at 04:01:21PM +0200, Pankaj Raghav (Samsung) wrote:
+>>> Convert wbc_account_cgroup_owner() to take a folio instead of a page,
+>>> and convert all callers to pass a folio directly except f2fs.
+>>>
+>>> Convert the page to folio for all the callers from f2fs as they were the
+>>> only callers calling wbc_account_cgroup_owner() with a page. As f2fs is
+>>> already in the process of converting to folios, these call sites might
+>>> also soon be calling wbc_account_cgroup_owner() with a folio directly in
+>>> the future.
+>>
+>> I was hoping for more from f2fs.  I still don't have an answer from them
+>> whether they're going to support large folios.  There's all kinds of
+>> crud already in these functions like:
+>>
+>>          f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
+>>                          page_folio(fio->page)->index, fio, GFP_NOIO);
+>>
+>> and this patch is making it worse, not better.  A series of patches
+>> which at least started to spread folios throughout f2fs would be better.
+>> I think that struct f2fs_io_info should have its page converted to
+>> a folio, for example.  Although maybe not; perhaps this structure can
+>> carry data which doesn't belong to a folio that came from the page cache.
+>> It's very hard to tell because f2fs is so mind-numbingly complex and
+>> riddled with stupid abstraction layers.
+> 
+> Hah, I don't think it's too complex at all tho, there's a somewhat complexity to
+> support file-based encryption, compression, and fsverity, which are useful
 
-That's a lot of marketing babble :)    What exact thing is missing
-from the passthrough interface when using say spdx over io_uring?
+I agree w/ Jaegeuk.
 
-> If you saw the comments from Christian on the inode space, there are a
-> few plumbing challenges. Do you have any patches we could look at?
+> for Android users. Well, I don't see any strong needs to support large folio,
+> but some requests exist which was why we had to do some conversion.
+> 
+>>
+>> But I don't know what the f2fs maintainers have planned.  And they won't
+>> tell me despite many times of asking.
 
-I'm not sure what you refer to here.
+I supported large folio in f2fs by using a hacking way /w iomap fwk, it can
+only be enabled in very limited condition, after some seqread tests, I can
+see performance gain in server environment, but none in android device, and
+in addition, there is a memory leak bug which can cause out-of-memory issue.
+Unlucky, I have no slots to dig into these issues recently.
+
+Thanks,
+
 
 
