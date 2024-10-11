@@ -1,117 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-31659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A59F999963
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 03:32:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED76999999F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 03:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAE22B22058
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 01:32:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66413285944
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 01:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D203EAF6;
-	Fri, 11 Oct 2024 01:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE8D11187;
+	Fri, 11 Oct 2024 01:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JSCg7dbs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE09C13D;
-	Fri, 11 Oct 2024 01:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB86EEA9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 01:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728610320; cv=none; b=GLst8ScNNzPO+t5X41pTfqkH9SVUv23t/eCO1Pzy0dU432z3n4NfXu1LnX1qJX9pWg6v2G1tb+q7xb1WGraI9+a0cAcHLVTDkdkGJMeDEyM9/0zEiWi4owIssvDwuj2Aah0/Hp9Lwu7XopOOT92xUyDOY0Q//UYGVbZjON0JbTc=
+	t=1728610737; cv=none; b=Yyu6vtA8nRhtU7jsN3Txcz+ImSGKS/B33yZps4pwgzCzwN25aCCa2BNHdtSlq+v6Fa1/vCpC2gqWsd06gwBQQUG+ls3IOrguPlfFh6gCgss+eeHQre2pj2EmTMIGS6LWWOUVAgKVJ2lR9kaEUL4ED4KjH8nNd5Fsx1M9A3RJ+I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728610320; c=relaxed/simple;
-	bh=WLIZqd8dlb1m7im5zIyPaUymXTbEoBm4AkPS9EzR/ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uRBkimVwJhMtDP9Q2Q6Qw3B5I+4WzwEBj2w2pINIcz+EdjK1LzpeYhA7Rl8bFxYM4vEGQOug3V4h2UcSW5JHMY0xaiQO3t9KU2FbrZ68pvaq/7d6V/FBjNfjtdFJ9n7I67yI49KFCp86OEsGtxd6WZ6BlWpJIs9fVB1QYbJpwzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XPpy82zS0z2VRTp;
-	Fri, 11 Oct 2024 09:32:00 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9C2C8140202;
-	Fri, 11 Oct 2024 09:31:55 +0800 (CST)
-Received: from [10.174.176.88] (10.174.176.88) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 11 Oct 2024 09:31:54 +0800
-Message-ID: <94004b36-01ae-4c62-ad74-0bad5992eb7c@huawei.com>
-Date: Fri, 11 Oct 2024 09:31:53 +0800
+	s=arc-20240116; t=1728610737; c=relaxed/simple;
+	bh=9tJXSsQ9fSvcpkQGEvBg2L68OGr0KwcdVp0VeMEtExA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gl0gyUKt8bcLpSOk5lye/S3WxQWjUx4LeI0r6ThQH/zzTBQiqwMHL39bziFlsMtyVbVVKX2XR+fwUrxrmZ4d/mP5wU+rujd/NkdcJGlfDk5XXCfWaoDdiIpIAYJY9X0tq9w69s4L5EtL01MgV1Yrd+uan9gRJFq327EhQrSJIW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JSCg7dbs; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6dbb24ee2ebso18761717b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 18:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728610735; x=1729215535; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VRcd9cwIZFh48Jk9iJ5FWFlPG9snV80qLzRLo6hXxJo=;
+        b=JSCg7dbsLrzz2Z4F7/4WhtnEh8Ni8l0mm6RCMLDgsI2tctqgNbvd5Gl4acrgKk7mtw
+         82HqGBD8uC8gf+svvHOMvucERy7YIRytPO1b14sAaDoCjXK4kgUqOi28GftMSHmvQEVx
+         HeflE8bxjuuADOiB8wnDYcwZy3JAC0fwyPj819EBeZBpnFFg3Jmc27yIeaikX7o5o4nD
+         3bQLiR7XNRBJSMQXJCaqlt0qCkf/B2R1DcErvCqPFedM2i2JoJf+AWSMNcceyPovU3uZ
+         kRLskDTU2vvEdO/MVMdQewQNhlpBXqy7PxkUey+1M9gf1as0jxayQ0CeUPG0U1ypTbA/
+         VTKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728610735; x=1729215535;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VRcd9cwIZFh48Jk9iJ5FWFlPG9snV80qLzRLo6hXxJo=;
+        b=SCTbknLGMI2ZV+dhRZZpori+cJLRTgti/oM/gA+UD0UGyXgKkfC0lbTwydmLpvVMt6
+         4hkaw9/y2/ySub88NOiE/h5BXUK/9SRMOq9H3wFNF3Ptx0DuURwdWmq3i1Xu/a5ZzG4H
+         OrabATatz3BnKjA1kYL7If25z504Dcs0DN9Za0jKlPyOl1/crRRtE0W7YSau4ShhRlw5
+         S7+g5lWb+capRoo5ImLQAEs2RZW/XdH2E9YPybXV6KydR9z1UTorfx2XgfcaQbPPN4Wz
+         9ZnLLEiTUaeiDdojAmU3EsL1rXMmlyf/26v7CMApC+Hb7jcObRNAmFJfRYqszJPhssmG
+         73wA==
+X-Gm-Message-State: AOJu0Yz7gpnhJ/an7q/xZwp5clKGx5uZeZCSV/o+txZTnvmQ9grqY0bH
+	+B9MpbXl78xzu/ke2+KeGyyWyhMMGk51Tw5akejq0i6cBG8yvGwKL5EFt2jkfvM8S1j+50GPWqa
+	XvGvBT+Jp9eFZXnvGyVIY7InQPtC3sYmLdDfN
+X-Google-Smtp-Source: AGHT+IFvoAiqQTsFIOJfK+l/01uP1b8r2mlIlEpP49rC76iACwSSk+CMcgg9Ira3XeXkyuN2zyckIivG5f2h/gWZomE=
+X-Received: by 2002:a05:6902:124f:b0:e29:6b8:af3 with SMTP id
+ 3f1490d57ef6-e2919df898fmr992944276.44.1728610735214; Thu, 10 Oct 2024
+ 18:38:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] cachefiles: Fix NULL pointer dereference in
- object->file
-To: David Howells <dhowells@redhat.com>
-CC: <netfs@lists.linux.dev>, <jlayton@kernel.org>,
-	<hsiangkao@linux.alibaba.com>, <jefflexu@linux.alibaba.com>,
-	<zhujia.zj@bytedance.com>, <linux-erofs@lists.ozlabs.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<libaokun1@huawei.com>, <yangerkun@huawei.com>, <houtao1@huawei.com>,
-	<yukuai3@huawei.com>
-References: <8d05cae1-55d2-415b-810e-3fb14c8566fd@huawei.com>
- <20240821024301.1058918-8-wozizhi@huawei.com>
- <20240821024301.1058918-1-wozizhi@huawei.com>
- <303977.1728559565@warthog.procyon.org.uk>
- <443969.1728571940@warthog.procyon.org.uk>
-From: Zizhi Wo <wozizhi@huawei.com>
-In-Reply-To: <443969.1728571940@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+References: <20241010152649.849254-2-mic@digikod.net> <c4260a81d3c0ebe54c191b432ca33140@paul-moore.com>
+In-Reply-To: <c4260a81d3c0ebe54c191b432ca33140@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 10 Oct 2024 21:38:44 -0400
+Message-ID: <CAHC9VhSJOWD93H0nPTCdKpbM2dDnq65+JVF1khPmEbX_KhHxsQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v1 2/7] audit: Fix inode numbers
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
+	Eric Paris <eparis@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Oct 10, 2024 at 9:20=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Oct 10, 2024 =3D?UTF-8?q?Micka=3DC3=3DABl=3D20Sala=3DC3=3DBCn?=3D <mic=
+@digikod.net> wrote:
+> >
+> > Use the new inode_get_ino() helper to log the user space's view of
+> > inode's numbers instead of the private kernel values.
+> >
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Eric Paris <eparis@redhat.com>
+> > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > ---
+> >  security/lsm_audit.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> Acked-by: Paul Moore <paul@paul-moore.com>
 
+It looks like patch 1/7 still needs some revisions, and an ACK from
+the NFS/VFS folks, but once that's sorted I can send the patchset up
+to Linus marked for stable.
 
-在 2024/10/10 22:52, David Howells 写道:
-> Zizhi Wo <wozizhi@huawei.com> wrote:
-> 
->> 在 2024/10/10 19:26, David Howells 写道:
->>> Zizhi Wo <wozizhi@huawei.com> wrote:
->>>
->>>> +	spin_lock(&object->lock);
->>>>    	if (object->file) {
->>>>    		fput(object->file);
->>>>    		object->file = NULL;
->>>>    	}
->>>> +	spin_unlock(&object->lock);
->>> I would suggest stashing the file pointer in a local var and then doing the
->>> fput() outside of the locks.
->>> David
->>>
->>
->> If fput() is executed outside the lock, I am currently unsure how to
->> guarantee that file in __cachefiles_write() does not trigger null
->> pointer dereference...
-> 
-> I'm not sure why there's a problem here.  I was thinking along the lines of:
-> 
-> 	struct file *tmp;
-> 	spin_lock(&object->lock);
->   	tmp = object->file)
-> 	object->file = NULL;
-> 	spin_unlock(&object->lock);
-> 	if (tmp)
-> 		fput(tmp);
-> 
-> Note that fput() may defer the actual work if the counter hits zero, so the
-> cleanup may not happen inside the lock; further, the cleanup done by __fput()
-> may sleep.
-> 
-> David
-> 
-> 
-Oh, I see what you mean. I will sort it out and issue the second patch
-as soon as possible.
-
-Thanks,
-Zizhi Wo
+--=20
+paul-moore.com
 
