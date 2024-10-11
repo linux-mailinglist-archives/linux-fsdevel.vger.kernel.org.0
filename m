@@ -1,752 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-31753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E6A99AB55
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 20:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D9899ABAA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 20:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026202848EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 18:47:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27966283790
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 18:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49EB1D0DE2;
-	Fri, 11 Oct 2024 18:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223A41D0422;
+	Fri, 11 Oct 2024 18:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CJYkvWVe"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WlQavfb2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923731CEADB;
-	Fri, 11 Oct 2024 18:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7B81D0156
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 18:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728672298; cv=none; b=aZuUWSA+dIWseFrXa5yjMcjNwNv5M0WIXW0f79t+ouQ5ueDsjGA9QLyOFZz2QooMXS4ndoP2f4guckukMttf8UQc+SbDxllj5n4NE1VSF3kJ9iw/0Df+dizVFw7FMUwwcntbeCBuaSx80l4rf0MEVjulGaJT+B3hXOhExrkZIVo=
+	t=1728672872; cv=none; b=BYBg3DuckMoRM+0QyEMOeXmptZUKm1tKg89Ox/O1Hf7ipdLOL7gmczSqXYd4Wgnw4n4h/hsmBHUb10oyLr/HLwPEm9Xzo/7QHyMOdZ361gjMhj7fIjp7oZqEAtPibPi+Cz1UKQ4sgzz3pjJAul/hXcJppLWi9dXyq/uF+j6KzyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728672298; c=relaxed/simple;
-	bh=2XWtejVXrR6l4R/h50rDRcbu0QtoNEuLf+Cfu3de6no=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eBh8RK4cj6T6Ht22XYVVWnM2N+JUgNd/sSByHhbzeCtkqF+uxDvpUKkVnpJmJNebnGjGLm0sMN65wpvcd7BoDvnYYf3+G+067ZnaJeoW8NJ3n7b73Gq/dWzuYZyumrj1bCdUiLpldq7M0Md0tpgFSSURi48UjMAcLOg9Y5TjWwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CJYkvWVe; arc=none smtp.client-ip=185.125.25.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XQFsq2lMdzGh5;
-	Fri, 11 Oct 2024 20:44:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728672287;
-	bh=z8VzaCq/UYqHGlvynkVHXwnIimRiVgUcmF7oZT7reaY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CJYkvWVeMuesQV6WOA0R0mE+p0jTFhgYjhTGQiGQkAluRiv0kT0I2/2S1BotwDqwK
-	 miGpk2chDBmMCYu2fP77s6T/KTZZhvCTqHQ81RFY1i7LromL5bd0iYeYnhuv8JI52l
-	 wbYwO0UogFZHEts+aBodOWslqfyM71TebaiaCwh4=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XQFsn4ndzz447;
-	Fri, 11 Oct 2024 20:44:45 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <serge@hallyn.com>,
-	Theodore Ts'o <tytso@mit.edu>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Alejandro Colomar <alx@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Elliott Hughes <enh@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Chiang <ericchiang@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Jan Kara <jack@suse.cz>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Luca Boccassi <bluca@debian.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Scott Shell <scottsh@microsoft.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Steve Dower <steve.dower@python.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-	Xiaoming Ni <nixiaoming@huawei.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	kernel-hardening@lists.openwall.com,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v20 6/6] samples/check-exec: Add an enlighten "inc" interpreter and 28 tests
-Date: Fri, 11 Oct 2024 20:44:22 +0200
-Message-ID: <20241011184422.977903-7-mic@digikod.net>
-In-Reply-To: <20241011184422.977903-1-mic@digikod.net>
-References: <20241011184422.977903-1-mic@digikod.net>
+	s=arc-20240116; t=1728672872; c=relaxed/simple;
+	bh=V+W549yZR4YXE4o9ySJ5Sa4Yc/1frqei+R9VTkOnjww=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dpdVsGOmyM9D9frsjyODATC+CSOD/dgyH+wx6KY1QZRASdGRESTv434rOdF/7LabBmelMnSxkSDQraZE0P7BbY6Ihcn3ideoKYa9sBXXy+M0zQ5u4rLmqKu0TKmkUOITNTcVkz4wpdUmoSqzK/5XtlVi0WC0rm/5jxPz7W1stiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WlQavfb2; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43056d99a5aso21879505e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 11:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728672868; x=1729277668; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CMw51FgUh2hUVjZgjRJM4Ju1tWp7eQweTumzW/cQKyE=;
+        b=WlQavfb2Sv0zMF4RRsI23bY6LL8JpqJxdS6hIswSj0jf02fWUK9CwsjJqNzW2sTnrp
+         Tfhq08jxZVrtF6asdgJ20XE+hygjiTV/JOJUqclfjC6oulx3+T+l7v7RPSVmgvilO7lo
+         ZMseE2zdc+RMkAMjK+KTL79TE4ZHX1Lh3bP/ZjLM6w37KyojtdSvjuOYmy1Ry2at4xKH
+         Frf3xCDRrzdXyeliuKJsokcpLU/EgzoD1oqJJsi3L5ZEMZliLzDshVpnlGTv9zt29Vf4
+         ZAccbhaZAkvyOJCxP25XxS6UUbnnzEWroZgE8hCrnTJwtTfpYtwTAaV4Xvl5cjEtr54Z
+         RVGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728672868; x=1729277668;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CMw51FgUh2hUVjZgjRJM4Ju1tWp7eQweTumzW/cQKyE=;
+        b=ROlI/J7WTq7ic+CAgkYuIEzExBGFuKWHDRjvedEoyjivIPVfyeFp81t1EsIrmriBG2
+         UXUVfN/YyjcA7jZq0QR8lyGHC6nGpQvKeSv2mJkgL5TSmpoW5QzoYXCzzi2e9tNh8PSY
+         baEQTlAtbCXNnpR2VdgY3SP5T5BqJJKbHpFbV+i1abyoelOVxmQQ1+L3eU4vePeNfdTl
+         9tpwZp7/IiR3I4IJ0R0Xl8aHjPoPC16WMtwx9e5lWyD21HN1reVZtvq1DmKbe0FchWqi
+         /wdhBhej+eLA9qGDzciOqp4mtKG4132pzQg73kLxWYsCJyuRWibLC3l/hOVM+GSMQ2JV
+         gr/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDKd+yfJNZIrv8cO2mhVAFTD6J5GurVg9i97BBU5qlCovh9uakdhWYlCFomwM+eKg1+nOUjhyxdm9YC9D7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5TrZe/FmstNFAOVJnu+4lmigV1gIlRiEJ8waRNI84s43eqRBh
+	JpdAB1CIXn1h0lopkWgp/0pYr0szseMkacD5KCkriBFOXx7FI3BtI1lL942EapI=
+X-Google-Smtp-Source: AGHT+IHlglhANRvpdTESP3LsM2lgJBYup01gWvrpmxLiylK//L7bzFq3mNfdN8XOV1pwMyWsj+dc6w==
+X-Received: by 2002:a5d:44c5:0:b0:37d:3141:5b6 with SMTP id ffacd0b85a97d-37d551d6533mr3343204f8f.12.1728672867357;
+        Fri, 11 Oct 2024 11:54:27 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:68b8:bef:b7eb:538f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fe7csm4559161f8f.70.2024.10.11.11.54.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 11:54:27 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v7 00/17] Hardware wrapped key support for QCom ICE and UFS
+ core
+Date: Fri, 11 Oct 2024 20:53:59 +0200
+Message-Id: <20241011-wrapped-keys-v7-0-e3f7a752059b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEd0CWcC/1XMQQ6CMBCF4auQWVszVqzCynsYFi0dYKKhZGqqh
+ HB3K65c/i953wKRhClCXSwglDhyGHOcdwW0gx17Uuxzg0Zd4gW1eomdJvLqTnNURBbxqDvXkYd
+ 8mYQ6fm/crck9cHwGmTc9me/6gyo0/1AyCpU/VWQOrsXWldcHj1bCPkgPzbquH6oQeNSpAAAA
+To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, 
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+ Mikulas Patocka <mpatocka@redhat.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Asutosh Das <quic_asutoshd@quicinc.com>, 
+ Ritesh Harjani <ritesh.list@gmail.com>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
+ Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev, 
+ linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Eric Biggers <ebiggers@google.com>, 
+ Om Prakash Singh <quic_omprsing@quicinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6675;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=V+W549yZR4YXE4o9ySJ5Sa4Yc/1frqei+R9VTkOnjww=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnCXRXheFkvmAfCwx0Kc8rJKoU5BpA3kyWjxAV/
+ 35LTWYZNfmJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZwl0VwAKCRARpy6gFHHX
+ cgA0D/4p3Bi0fXlOemSeU2xvKKK25ZEN3/EmT9KnIyEvzW9pkACbc3kmA+hczDu+fEwMdi4SpF5
+ wHgSASml14w4srJR/lEyN8QjLuq4WJB5aMwzRR/uLmxIkqI5oONlowHYqbrYs3fL2pUaiEmc9Xf
+ z2jBXeZl7d1yLJMHyDke9WIB1jsEVzqsKBYbLnK1APKctF9NBkIOpsEmMEA1TKwlh8W9W9QJ1UM
+ JwnX7CINZdXBI4gA2W3uUcF6lcovxO2QZRkViLGcgMQZfJlsFWP0sI0bOuPXejQMp3T71S2/Arm
+ SlCRJ2mrhY6Gj0ycUjt8bH57j14pS8Q05CvGuwFDfcCZl+uF1GAjhw21G/dxCOaS7WglRuOq55x
+ ZTQT1UsptQVVfQTCvY2OKUWPSrdBKCw60tXAYC1KDkbRWkTDurZnoLbls3SoS2c6IBJsMKeDa40
+ GdDpfPRU8AWr3oXYwo34OoYMI1aR7zKd6dCxJwuYX2EqT5fTDhgGm61Fz3OqxMPYkIU6wxbZopK
+ sBpaN3p5QYVq+HcVlblb1TJE2rnT/J3nekeHAO1Nd3G0y6VFoE3P8Z7Wet05HOSJzH8hKjDHIgX
+ ekggBI63eC4hPHcK9Ayb21XHlt2yzjO0Hd/6aeS7v8sLL960tlGQ0ElhucsvwZiyE2IFqQD1MaD
+ ph2BvhVDuk9LM6A==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add a very simple script interpreter called "inc" that can evaluate two
-different commands (one per line):
-- "?" to initialize a counter from user's input;
-- "+" to increment the counter (which is set to 0 by default).
+The preferred solution to the HWKM configuration issue seems to be
+using a module param so this is what I did in this iteration.
 
-It is enlighten to only interpret executable files according to AT_CHECK
-and the related securebits:
+Hardware-wrapped keys are encrypted keys that can only be unwrapped
+(decrypted) and used by hardware - either by the inline encryption
+hardware itself, or by a dedicated hardware block that can directly
+provision keys to the inline encryption hardware. For more details,
+please see patches 1-3 in this series which extend the inline encryption
+docs with more information.
 
-  # Executing a script with RESTRICT_FILE is only allowed if the script
-  # is exectuable:
-  ./set-exec -f -- ./inc script-exec.inc # Allowed
-  ./set-exec -f -- ./inc script-noexec.inc # Denied
+This series adds support for wrapped keys to the block layer, fscrypt
+and then build upwards from there by implementing relevant callbacks in
+QCom SCM driver, then the ICE driver and finally in UFS core and QCom
+layer.
 
-  # Executing stdin with DENY_INTERACTIVE is only allowed if stdin is an
-  # executable regular file:
-  ./set-exec -i -- ./inc -i < script-exec.inc # Allowed
-  ./set-exec -i -- ./inc -i < script-noexec.inc # Denied
+Tested on sm8650-qrd.
 
-  # However, a pipe is not executable and it is then denied:
-  cat script-noexec.inc | ./set-exec -i -- ./inc -i # Denied
+How to test:
 
-  # Executing raw data (e.g. command argument) with DENY_INTERACTIVE is
-  # always denied.
-  ./set-exec -i -- ./inc -c "+" # Denied
-  ./inc -c "$(<script-ask.inc)" # Allowed
+Use the wip-wrapped-keys branch from https://github.com/ebiggers/fscryptctl
+to build a custom fscryptctl that supports generating wrapped keys.
 
-  # To directly execute a script, we can update $PATH (used by `env`):
-  PATH="${PATH}:." ./script-exec.inc
+Enable the following config options:
+CONFIG_BLK_INLINE_ENCRYPTION=y
+CONFIG_QCOM_INLINE_CRYPTO_ENGINE=m
+CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+CONFIG_SCSI_UFS_CRYPTO=y
 
-  # To execute several commands passed as argument:
+$ mkfs.ext4 -F -O encrypt,stable_inodes /dev/disk/by-partlabel/userdata
+$ mount /dev/disk/by-partlabel/userdata -o inlinecrypt /mnt
+$ fscryptctl generate_hw_wrapped_key /dev/disk/by-partlabel/userdata > /mnt/key.longterm
+$ fscryptctl prepare_hw_wrapped_key /dev/disk/by-partlabel/userdata < /mnt/key.longterm > /tmp/key.ephemeral
+$ KEYID=$(fscryptctl add_key --hw-wrapped-key < /tmp/key.ephemeral /mnt)
+$ rm -rf /mnt/dir
+$ mkdir /mnt/dir
+$ fscryptctl set_policy --hw-wrapped-key --iv-ino-lblk-64 "$KEYID" /mnt/dir
+$ dmesg > /mnt/dir/test.txt
+$ sync
 
-Add a complete test suite to check the script interpreter against all
-possible execution cases:
+Reboot the board
 
-  make TARGETS=exec kselftest-install
-  ./tools/testing/selftests/kselftest_install/run_kselftest.sh
+$ mount /dev/disk/by-partlabel/userdata -o inlinecrypt /mnt
+$ ls /mnt/dir
+$ fscryptctl prepare_hw_wrapped_key /dev/disk/by-partlabel/userdata < /mnt/key.longterm > /tmp/key.ephemeral
+$ KEYID=$(fscryptctl add_key --hw-wrapped-key < /tmp/key.ephemeral /mnt)
+$ fscryptctl set_policy --hw-wrapped-key --iv-ino-lblk-64 "$KEYID" /mnt/dir
+$ cat /mnt/dir/test.txt # File should now be decrypted
 
-Fix ktap_helpers.sh to gracefully ignore optional argument.
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241011184422.977903-7-mic@digikod.net
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
+Changes in v7:
+- use a module param in conjunction with checking the platform support
+  at run-time to determine whether to use wrapped keys in the ICE driver
+- various minor refactorings, replacing magic numbers with defines etc.
+- fix kernel doc issues raised by autobuilders
+- Link to v6: https://lore.kernel.org/r/20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org
 
-Changes since v19:
-* New patch.
+Changes in v6:
+- add the wrapped key support from Eric Biggers to the series
+- remove the new DT property from the series and instead query the
+  at run-time rustZone to find out if wrapped keys are supported
+- make the wrapped key support into a UFS capability, not a quirk
+- improve kerneldocs
+- improve and rework coding style in most patches
+- improve and reformat commit messages
+- simplify the offset calculation for CRYPTOCFG
+- split out the DTS changes into a separate series
+
 ---
- samples/Kconfig                               |   3 +-
- samples/check-exec/.gitignore                 |   1 +
- samples/check-exec/Makefile                   |   1 +
- samples/check-exec/inc.c                      | 204 +++++++++++++++++
- samples/check-exec/run-script-ask.inc         |   8 +
- samples/check-exec/script-ask.inc             |   4 +
- samples/check-exec/script-exec.inc            |   3 +
- samples/check-exec/script-noexec.inc          |   3 +
- tools/testing/selftests/exec/.gitignore       |   2 +
- tools/testing/selftests/exec/Makefile         |  14 +-
- .../selftests/exec/check-exec-tests.sh        | 205 ++++++++++++++++++
- .../selftests/kselftest/ktap_helpers.sh       |   2 +-
- 12 files changed, 446 insertions(+), 4 deletions(-)
- create mode 100644 samples/check-exec/inc.c
- create mode 100755 samples/check-exec/run-script-ask.inc
- create mode 100755 samples/check-exec/script-ask.inc
- create mode 100755 samples/check-exec/script-exec.inc
- create mode 100644 samples/check-exec/script-noexec.inc
- create mode 100755 tools/testing/selftests/exec/check-exec-tests.sh
+Bartosz Golaszewski (1):
+      firmware: qcom: scm: add a call for checking wrapped key support
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index efa28ceadc42..0128cc68deed 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -296,7 +296,8 @@ config SAMPLE_CHECK_EXEC
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
- 	help
- 	  Build a tool to easily configure SECBIT_EXEC_RESTRICT_FILE and
--	  SECBIT_EXEC_DENY_INTERACTIVE.
-+	  SECBIT_EXEC_DENY_INTERACTIVE, and a simple script interpreter to
-+	  demonstrate how they should be used with execveat(2) + AT_CHECK.
- 
- source "samples/rust/Kconfig"
- 
-diff --git a/samples/check-exec/.gitignore b/samples/check-exec/.gitignore
-index 3f8119112ccf..cd759a19dacd 100644
---- a/samples/check-exec/.gitignore
-+++ b/samples/check-exec/.gitignore
-@@ -1 +1,2 @@
-+/inc
- /set-exec
-diff --git a/samples/check-exec/Makefile b/samples/check-exec/Makefile
-index d9f976e3ff98..c4f08ad0f8e3 100644
---- a/samples/check-exec/Makefile
-+++ b/samples/check-exec/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- 
- userprogs-always-y := \
-+	inc \
- 	set-exec
- 
- userccflags += -I usr/include
-diff --git a/samples/check-exec/inc.c b/samples/check-exec/inc.c
-new file mode 100644
-index 000000000000..0710a860f360
---- /dev/null
-+++ b/samples/check-exec/inc.c
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Very simple script interpreter that can evaluate two different commands (one
-+ * per line):
-+ * - "?" to initialize a counter from user's input;
-+ * - "+" to increment the counter (which is set to 0 by default).
-+ *
-+ * See tools/testing/selftests/exec/check-exec-tests.sh
-+ *
-+ * Copyright © 2024 Microsoft Corporation
-+ */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <linux/fcntl.h>
-+#include <linux/prctl.h>
-+#include <linux/securebits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/prctl.h>
-+#include <unistd.h>
-+
-+/* Returns 1 on error, 0 otherwise. */
-+static int interpret_buffer(char *buffer, size_t buffer_size)
-+{
-+	char *line, *saveptr = NULL;
-+	long long number = 0;
-+
-+	/* Each command is the first character of a line. */
-+	saveptr = NULL;
-+	line = strtok_r(buffer, "\n", &saveptr);
-+	while (line) {
-+		if (*line != '#' && strlen(line) != 1) {
-+			fprintf(stderr, "# ERROR: Unknown string\n");
-+			return 1;
-+		}
-+		switch (*line) {
-+		case '#':
-+			/* Skips shebang and comments. */
-+			break;
-+		case '+':
-+			/* Increments and prints the number. */
-+			number++;
-+			printf("%lld\n", number);
-+			break;
-+		case '?':
-+			/* Reads integer from stdin. */
-+			fprintf(stderr, "> Enter new number: \n");
-+			if (scanf("%lld", &number) != 1) {
-+				fprintf(stderr,
-+					"# WARNING: Failed to read number from stdin\n");
-+			}
-+			break;
-+		default:
-+			fprintf(stderr, "# ERROR: Unknown character '%c'\n",
-+				*line);
-+			return 1;
-+		}
-+		line = strtok_r(NULL, "\n", &saveptr);
-+	}
-+	return 0;
-+}
-+
-+/* Returns 1 on error, 0 otherwise. */
-+static int interpret_stream(FILE *script, char *const script_name,
-+			    char *const *const envp, const bool restrict_stream)
-+{
-+	int err;
-+	char *const script_argv[] = { script_name, NULL };
-+	char buf[128] = {};
-+	size_t buf_size = sizeof(buf);
-+
-+	/*
-+	 * We pass a valid argv and envp to the kernel to emulate a native
-+	 * script execution.  We must use the script file descriptor instead of
-+	 * the script path name to avoid race conditions.
-+	 */
-+	err = execveat(fileno(script), "", script_argv, envp,
-+		       AT_EMPTY_PATH | AT_CHECK);
-+	if (err && restrict_stream) {
-+		perror("ERROR: Script execution check");
-+		return 1;
-+	}
-+
-+	/* Reads script. */
-+	buf_size = fread(buf, 1, buf_size - 1, script);
-+	return interpret_buffer(buf, buf_size);
-+}
-+
-+static void print_usage(const char *argv0)
-+{
-+	fprintf(stderr, "usage: %s <script.inc> | -i | -c <command>\n\n",
-+		argv0);
-+	fprintf(stderr, "Example:\n");
-+	fprintf(stderr, "  ./set-exec -fi -- ./inc -i < script-exec.inc\n");
-+}
-+
-+int main(const int argc, char *const argv[], char *const *const envp)
-+{
-+	int opt;
-+	char *cmd = NULL;
-+	char *script_name = NULL;
-+	bool interpret_stdin = false;
-+	FILE *script_file = NULL;
-+	int secbits;
-+	bool deny_interactive, restrict_file;
-+	size_t arg_nb;
-+
-+	secbits = prctl(PR_GET_SECUREBITS);
-+	if (secbits == -1) {
-+		/*
-+		 * This should never happen, except with a buggy seccomp
-+		 * filter.
-+		 */
-+		perror("ERROR: Failed to get securebits");
-+		return 1;
-+	}
-+
-+	deny_interactive = !!(secbits & SECBIT_EXEC_DENY_INTERACTIVE);
-+	restrict_file = !!(secbits & SECBIT_EXEC_RESTRICT_FILE);
-+
-+	while ((opt = getopt(argc, argv, "c:i")) != -1) {
-+		switch (opt) {
-+		case 'c':
-+			if (cmd) {
-+				fprintf(stderr, "ERROR: Command already set");
-+				return 1;
-+			}
-+			cmd = optarg;
-+			break;
-+		case 'i':
-+			interpret_stdin = true;
-+			break;
-+		default:
-+			print_usage(argv[0]);
-+			return 1;
-+		}
-+	}
-+
-+	/* Checks that only one argument is used, or read stdin. */
-+	arg_nb = !!cmd + !!interpret_stdin;
-+	if (arg_nb == 0 && argc == 2) {
-+		script_name = argv[1];
-+	} else if (arg_nb != 1) {
-+		print_usage(argv[0]);
-+		return 1;
-+	}
-+
-+	if (cmd) {
-+		/*
-+		 * Other kind of interactive interpretations should be denied
-+		 * as well (e.g. CLI arguments passing script snippets,
-+		 * environment variables interpreted as script).  However, any
-+		 * way to pass script files should only be restricted according
-+		 * to restrict_file.
-+		 */
-+		if (deny_interactive) {
-+			fprintf(stderr,
-+				"ERROR: Interactive interpretation denied.\n");
-+			return 1;
-+		}
-+
-+		return interpret_buffer(cmd, strlen(cmd));
-+	}
-+
-+	if (interpret_stdin && !script_name) {
-+		script_file = stdin;
-+		/*
-+		 * As for any execve(2) call, this path may be logged by the
-+		 * kernel.
-+		 */
-+		script_name = "/proc/self/fd/0";
-+		/*
-+		 * When stdin is used, it can point to a regular file or a
-+		 * pipe.  Restrict stdin execution according to
-+		 * SECBIT_EXEC_DENY_INTERACTIVE but always allow executable
-+		 * files (which are not considered as interactive inputs).
-+		 */
-+		return interpret_stream(script_file, script_name, envp,
-+					deny_interactive);
-+	} else if (script_name && !interpret_stdin) {
-+		/*
-+		 * In this sample, we don't pass any argument to scripts, but
-+		 * otherwise we would have to forge an argv with such
-+		 * arguments.
-+		 */
-+		script_file = fopen(script_name, "r");
-+		if (!script_file) {
-+			perror("ERROR: Failed to open script");
-+			return 1;
-+		}
-+		/*
-+		 * Restricts file execution according to
-+		 * SECBIT_EXEC_RESTRICT_FILE.
-+		 */
-+		return interpret_stream(script_file, script_name, envp,
-+					restrict_file);
-+	}
-+
-+	print_usage(argv[0]);
-+	return 1;
-+}
-diff --git a/samples/check-exec/run-script-ask.inc b/samples/check-exec/run-script-ask.inc
-new file mode 100755
-index 000000000000..3ea3e15fbd5a
---- /dev/null
-+++ b/samples/check-exec/run-script-ask.inc
-@@ -0,0 +1,8 @@
-+#!/usr/bin/env sh
-+
-+DIR="$(dirname -- "$0")"
-+
-+PATH="${PATH}:${DIR}"
-+
-+set -x
-+"${DIR}/script-ask.inc"
-diff --git a/samples/check-exec/script-ask.inc b/samples/check-exec/script-ask.inc
-new file mode 100755
-index 000000000000..f48252ab07c1
---- /dev/null
-+++ b/samples/check-exec/script-ask.inc
-@@ -0,0 +1,4 @@
-+#!/usr/bin/env inc
-+
-+?
-++
-diff --git a/samples/check-exec/script-exec.inc b/samples/check-exec/script-exec.inc
-new file mode 100755
-index 000000000000..525e958e1c20
---- /dev/null
-+++ b/samples/check-exec/script-exec.inc
-@@ -0,0 +1,3 @@
-+#!/usr/bin/env inc
-+
-++
-diff --git a/samples/check-exec/script-noexec.inc b/samples/check-exec/script-noexec.inc
-new file mode 100644
-index 000000000000..525e958e1c20
---- /dev/null
-+++ b/samples/check-exec/script-noexec.inc
-@@ -0,0 +1,3 @@
-+#!/usr/bin/env inc
-+
-++
-diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/selftests/exec/.gitignore
-index a32c63bb4df1..7f3d1ae762ec 100644
---- a/tools/testing/selftests/exec/.gitignore
-+++ b/tools/testing/selftests/exec/.gitignore
-@@ -11,9 +11,11 @@ non-regular
- null-argv
- /check-exec
- /false
-+/inc
- /load_address.*
- !load_address.c
- /recursion-depth
-+/set-exec
- xxxxxxxx*
- pipe
- S_I*.test
-diff --git a/tools/testing/selftests/exec/Makefile b/tools/testing/selftests/exec/Makefile
-index 8713d1c862ae..45a3cfc435cf 100644
---- a/tools/testing/selftests/exec/Makefile
-+++ b/tools/testing/selftests/exec/Makefile
-@@ -10,9 +10,9 @@ ALIGN_PIES        := $(patsubst %,load_address.%,$(ALIGNS))
- ALIGN_STATIC_PIES := $(patsubst %,load_address.static.%,$(ALIGNS))
- ALIGNMENT_TESTS   := $(ALIGN_PIES) $(ALIGN_STATIC_PIES)
- 
--TEST_PROGS := binfmt_script.py
-+TEST_PROGS := binfmt_script.py check-exec-tests.sh
- TEST_GEN_PROGS := execveat non-regular $(ALIGNMENT_TESTS)
--TEST_GEN_PROGS_EXTENDED := false
-+TEST_GEN_PROGS_EXTENDED := false inc set-exec script-exec.inc script-noexec.inc
- TEST_GEN_FILES := execveat.symlink execveat.denatured script subdir
- # Makefile is a run-time dependency, since it's accessed by the execveat test
- TEST_FILES := Makefile
-@@ -26,6 +26,8 @@ EXTRA_CLEAN := $(OUTPUT)/subdir.moved $(OUTPUT)/execveat.moved $(OUTPUT)/xxxxx*
- 
- include ../lib.mk
- 
-+CHECK_EXEC_SAMPLES := $(top_srcdir)/samples/check-exec
-+
- $(OUTPUT)/subdir:
- 	mkdir -p $@
- $(OUTPUT)/script: Makefile
-@@ -45,3 +47,11 @@ $(OUTPUT)/load_address.static.0x%: load_address.c
- 		-fPIE -static-pie $< -o $@
- $(OUTPUT)/false: false.c
- 	$(CC) $(CFLAGS) $(LDFLAGS) -static $< -o $@
-+$(OUTPUT)/inc: $(CHECK_EXEC_SAMPLES)/inc.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+$(OUTPUT)/set-exec: $(CHECK_EXEC_SAMPLES)/set-exec.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+$(OUTPUT)/script-exec.inc: $(CHECK_EXEC_SAMPLES)/script-exec.inc
-+	cp $< $@
-+$(OUTPUT)/script-noexec.inc: $(CHECK_EXEC_SAMPLES)/script-noexec.inc
-+	cp $< $@
-diff --git a/tools/testing/selftests/exec/check-exec-tests.sh b/tools/testing/selftests/exec/check-exec-tests.sh
-new file mode 100755
-index 000000000000..87102906ae3c
---- /dev/null
-+++ b/tools/testing/selftests/exec/check-exec-tests.sh
-@@ -0,0 +1,205 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Test the "inc" interpreter.
-+#
-+# See include/uapi/linux/securebits.h, include/uapi/linux/fcntl.h and
-+# samples/check-exec/inc.c
-+#
-+# Copyright © 2024 Microsoft Corporation
-+
-+set -u -e -o pipefail
-+
-+EXPECTED_OUTPUT="1"
-+exec 2>/dev/null
-+
-+DIR="$(dirname $(readlink -f "$0"))"
-+source "${DIR}"/../kselftest/ktap_helpers.sh
-+
-+exec_direct() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Updates PATH for `env` to execute the `inc` interpreter.
-+	out="$(PATH="." "$@" "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for direct file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for direct file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_indirect() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Script passed as argument.
-+	out="$("$@" ./inc "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for indirect file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for indirect file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_stdin_reg() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Executing stdin must be allowed if the related file is executable.
-+	out="$("$@" ./inc -i < "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for stdin regular file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for stdin regular file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_stdin_pipe() {
-+	local expect="$1"
-+	shift
-+	local ret=0
-+	local out
-+
-+	# A pipe is not executable.
-+	out="$(cat script-exec.inc | "$@" ./inc -i)" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for stdin pipe execution: ${ret}"
-+		return 1
-+	fi
-+}
-+
-+exec_argument() {
-+	local expect="$1"
-+	local ret=0
-+	shift
-+	local out
-+
-+	# Script not coming from a file must not be executed.
-+	out="$("$@" ./inc -c "$(< script-exec.inc)")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for arbitrary argument execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for arbitrary argument execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_interactive() {
-+	exec_stdin_pipe "$@"
-+	exec_argument "$@"
-+}
-+
-+ktap_test() {
-+	ktap_test_result "$*" "$@"
-+}
-+
-+ktap_print_header
-+ktap_set_plan 28
-+
-+# Without secbit configuration, nothing is changed.
-+
-+ktap_print_msg "By default, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc
-+ktap_test exec_indirect 0 script-exec.inc
-+
-+ktap_print_msg "By default, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc
-+
-+ktap_print_msg "By default, non-executable scripts are allowed to be interpreted, but not directly executed."
-+# We get 126 because of direct execution by Bash.
-+ktap_test exec_direct 126 script-noexec.inc
-+ktap_test exec_indirect 0 script-noexec.inc
-+
-+ktap_print_msg "By default, non-executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-noexec.inc
-+
-+ktap_print_msg "By default, interactive commands are allowed to be interpreted."
-+ktap_test exec_interactive 0
-+
-+# With only file restriction: protect non-malicious users from inadvertent errors (e.g. python ~/Downloads/*.py).
-+
-+ktap_print_msg "With -f, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -f --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, non-executable scripts are not allowed to be executed nor interpreted."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -f --
-+ktap_test exec_indirect 1 script-noexec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, non-executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-noexec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, interactive commands are allowed to be interpreted."
-+ktap_test exec_interactive 0 ./set-exec -f --
-+
-+# With only denied interactive commands: check or monitor script content (e.g. with LSM).
-+
-+ktap_print_msg "With -i, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -i --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, non-executable scripts are allowed to be interpreted, but not directly executed."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -i --
-+ktap_test exec_indirect 0 script-noexec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, non-executable stdin is not allowed to be interpreted."
-+ktap_test exec_stdin_reg 1 script-noexec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, interactive commands are not allowed to be interpreted."
-+ktap_test exec_interactive 1 ./set-exec -i --
-+
-+# With both file restriction and denied interactive commands: only allow executable scripts.
-+
-+ktap_print_msg "With -fi, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -fi --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, non-executable scripts are not allowed to be interpreted nor executed."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -fi --
-+ktap_test exec_indirect 1 script-noexec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, non-executable stdin is not allowed to be interpreted."
-+ktap_test exec_stdin_reg 1 script-noexec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, interactive commands are not allowed to be interpreted."
-+ktap_test exec_interactive 1 ./set-exec -fi --
-+
-+ktap_finished
-diff --git a/tools/testing/selftests/kselftest/ktap_helpers.sh b/tools/testing/selftests/kselftest/ktap_helpers.sh
-index 79a125eb24c2..14e7f3ec3f84 100644
---- a/tools/testing/selftests/kselftest/ktap_helpers.sh
-+++ b/tools/testing/selftests/kselftest/ktap_helpers.sh
-@@ -40,7 +40,7 @@ ktap_skip_all() {
- __ktap_test() {
- 	result="$1"
- 	description="$2"
--	directive="$3" # optional
-+	directive="${3:-}" # optional
- 
- 	local directive_str=
- 	[ ! -z "$directive" ] && directive_str="# $directive"
+Eric Biggers (4):
+      blk-crypto: add basic hardware-wrapped key support
+      blk-crypto: show supported key types in sysfs
+      blk-crypto: add ioctls to create and prepare hardware-wrapped keys
+      fscrypt: add support for hardware-wrapped keys
+
+Gaurav Kashyap (12):
+      ice, ufs, mmc: use the blk_crypto_key struct when programming the key
+      firmware: qcom: scm: add a call for deriving the software secret
+      firmware: qcom: scm: add calls for creating, preparing and importing keys
+      soc: qcom: ice: add HWKM support to the ICE driver
+      soc: qcom: ice: add support for hardware wrapped keys
+      soc: qcom: ice: add support for generating, importing and preparing keys
+      ufs: core: add support for wrapped keys to UFS core
+      ufs: core: add support for deriving the software secret
+      ufs: core: add support for generating, importing and preparing keys
+      ufs: host: add support for wrapped keys in QCom UFS
+      ufs: host: add a callback for deriving software secrets and use it
+      ufs: host: add support for generating, importing and preparing wrapped keys
+
+ Documentation/ABI/stable/sysfs-block               |  18 +
+ Documentation/block/inline-encryption.rst          | 245 +++++++++++++-
+ Documentation/filesystems/fscrypt.rst              | 154 ++++++++-
+ Documentation/userspace-api/ioctl/ioctl-number.rst |   2 +
+ block/blk-crypto-fallback.c                        |   5 +-
+ block/blk-crypto-internal.h                        |  10 +
+ block/blk-crypto-profile.c                         | 103 ++++++
+ block/blk-crypto-sysfs.c                           |  35 ++
+ block/blk-crypto.c                                 | 194 ++++++++++-
+ block/ioctl.c                                      |   5 +
+ drivers/firmware/qcom/qcom_scm.c                   | 233 +++++++++++++
+ drivers/firmware/qcom/qcom_scm.h                   |   4 +
+ drivers/md/dm-table.c                              |   1 +
+ drivers/mmc/host/cqhci-crypto.c                    |   9 +-
+ drivers/mmc/host/cqhci.h                           |   2 +
+ drivers/mmc/host/sdhci-msm.c                       |   6 +-
+ drivers/soc/qcom/ice.c                             | 365 ++++++++++++++++++++-
+ drivers/ufs/core/ufshcd-crypto.c                   |  86 ++++-
+ drivers/ufs/host/ufs-qcom.c                        |  61 +++-
+ fs/crypto/fscrypt_private.h                        |  71 +++-
+ fs/crypto/hkdf.c                                   |   4 +-
+ fs/crypto/inline_crypt.c                           |  44 ++-
+ fs/crypto/keyring.c                                | 124 +++++--
+ fs/crypto/keysetup.c                               |  54 ++-
+ fs/crypto/keysetup_v1.c                            |   5 +-
+ fs/crypto/policy.c                                 |  11 +-
+ include/linux/blk-crypto-profile.h                 |  73 +++++
+ include/linux/blk-crypto.h                         |  75 ++++-
+ include/linux/firmware/qcom/qcom_scm.h             |   8 +
+ include/soc/qcom/ice.h                             |  18 +-
+ include/uapi/linux/blk-crypto.h                    |  44 +++
+ include/uapi/linux/fs.h                            |   6 +-
+ include/uapi/linux/fscrypt.h                       |   7 +-
+ include/ufs/ufshcd.h                               |  21 ++
+ 34 files changed, 1968 insertions(+), 135 deletions(-)
+---
+base-commit: eae80d86fb04e37032e5bdaec64e0b70316d11ae
+change-id: 20240802-wrapped-keys-eea0032fbfed
+
+Best regards,
 -- 
-2.46.1
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
