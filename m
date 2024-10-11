@@ -1,132 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-31778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E4F99AD97
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 22:37:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB4D99ADDE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 22:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946FC1F23C3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 20:37:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F12028B80F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 20:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54C31D14E8;
-	Fri, 11 Oct 2024 20:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085F21D150C;
+	Fri, 11 Oct 2024 20:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYAbcrXK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZgsjuJu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F841C3F0A;
-	Fri, 11 Oct 2024 20:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F35D199231;
+	Fri, 11 Oct 2024 20:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728679048; cv=none; b=KbpdVama0ONF5wVqel0SJSnH0htrIYgzsSEgef2eqyRTsUZ+r7FBAPyozhy8BQLOLe/qh5rRdnTLpCFu2bRW9TJZeEBx0aaHFD6nN3+VPtwz0TtiZfSbQhqKbweoq/MXkR/3oFZzSOL04siUBbTauEzg24nLGEIB+sOGIwn6ITo=
+	t=1728680270; cv=none; b=pL6FB3kBTE62WOiclFAtLR9oS8oWl9npLdYe1z39y9w9Ov+qKAGoA8q8T6aIzzAeNj/nRZaYg9hsr28Kb5BIMArASGrjr5vBQkYNdBxag/9qYhFHf76LwIDUE5nNvXbsR51vzWgKaFbSeXWhrfUy/e25oM+a5xHYpP9+giOH3Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728679048; c=relaxed/simple;
-	bh=CWZGBnEJ80UiaDTPSuDUZ70kqMw3cxxu6gG4Z0pcQVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M5iLnQr7yGD6fnSGRXwEpejfQdLXQk+O4UJHXZnOz1DdfdT7j+WRYQJNWdxgDHy/VCnc4P8mXN+rDx6/fZKMTR3F4JJtWORhLkFY3RX3c6Yl71Rdns+194czOOQXIZSKKW5E/lGJyrxJZE9rXv2JMcU8NfeDQYO7T6+ioi5xVSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYAbcrXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 831CEC4CEC3;
-	Fri, 11 Oct 2024 20:37:25 +0000 (UTC)
+	s=arc-20240116; t=1728680270; c=relaxed/simple;
+	bh=v2N0a/Yur6GVpp1VVlX+ze23d7R8hMgMApwH0R/R570=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YDsOhG9t27KOOnOr0ql5czGphLwFK8XCLkhKRa3ynPc87mxjF1eZ38sAcK9wzPiptStJYDTCTHjS+rF/Y5A9WAn5UtFVMLpF3hNK/nJRj+TzGeyXUYS0lBEZr5kYliWh0Xf2zI2q5knnVpiX+X2J7W34N9zZAB1DOyQqo7HUDOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZgsjuJu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A28ACC4CED0;
+	Fri, 11 Oct 2024 20:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728679047;
-	bh=CWZGBnEJ80UiaDTPSuDUZ70kqMw3cxxu6gG4Z0pcQVE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uYAbcrXK8FLRoEkmirqKqE2T2BWanywm0TM90kzfEKK0nYuDxOhrIhDbmui+SrNt+
-	 1mjjpUvymCswoPAWZddBRZSI7fZe1o/evRZNqBo4Dx0xEuYkhxpBEJfDTd3GNxZ7x6
-	 EfQdm7CxvjmXuQiP/TXiDi+s7rhBX8ol2CN0MOjYzQ641N3+0xB/AMBZfdDW9fuMFx
-	 P22KWy+9B9G/KGvAJ+MhJiAwddKNcyTSZWStAhfBiaqRPqSU4L7Qo+fr2ai89iLO7+
-	 Hpf0G4myWZ4l50hTbL1Ymw49gXx1n5eI2ZVFY1+67nxeDf2gyZfuLV8Q+x3Tkzavr1
-	 H7vOx5CHPuwdg==
-From: Song Liu <song@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	kernel-team@fb.com,
-	song@kernel.org
-Subject: [PATCH] fsnotify, lsm: Separate fsnotify_open_perm() and security_file_open()
-Date: Fri, 11 Oct 2024 13:37:22 -0700
-Message-ID: <20241011203722.3749850-1-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	s=k20201202; t=1728680269;
+	bh=v2N0a/Yur6GVpp1VVlX+ze23d7R8hMgMApwH0R/R570=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HZgsjuJu0eV8PYlvOAup0IL2ATbcZFjDRbjqMVrxK/nHo1DJceshmnbdBgJZEb5eg
+	 19DQoZ4sGgnkpZuq/uJWDaetbPzQy7524qtGX5crbTqmjkShJdOwhMwZCDi1Kqr8Qs
+	 7yQ55n4EZEL5Qub+NPOIYD+EnUiQpgnkIjpk0XWKnIPipa3aMDYH+UsLbanBcuGglb
+	 O0Iwl2SjqHFtonDVxogIX4oAl6rq5beB2+hzLlJ7HqWG+bnQTgya4I9q2x1SpO2JLG
+	 doU0xhxSR/I7eco9JJx3IbGAvbTRJaOP+d7MlVKyjxB/abZZhWZHiqSgII3vHbVQXb
+	 kUPFg5hcZmPuw==
+Date: Fri, 11 Oct 2024 22:57:46 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] ovl: specify layers via file descriptors
+Message-ID: <20241011-bestform-sinnieren-0b5ec266b26b@brauner>
+References: <20241011-work-overlayfs-v1-0-e34243841279@kernel.org>
+ <CAJfpeguO7PWQ9jRsYkW-ENRk6Y0GDGHJ6qt59+Wu6-sphQ75aw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguO7PWQ9jRsYkW-ENRk6Y0GDGHJ6qt59+Wu6-sphQ75aw@mail.gmail.com>
 
-Currently, fsnotify_open_perm() is called from security_file_open(). This
-is not right for CONFIG_SECURITY=n and CONFIG_FSNOTIFY=y case, as
-security_file_open() in this combination will be a no-op and not call
-fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
+> But the fd's just represent a path (they can be O_PATH, right?)
+> 
+> So upperdir and upperdir_fd are exactly the same options, no?  Just
+> the representation is different.
 
-Signed-off-by: Song Liu <song@kernel.org>
-
----
-
-PS: I didn't included a Fixes tag. This issue was probably introduced 15
-years ago in [1]. If we want to back port this to stable, we will need
-another version for older kernel because of [2].
-
-[1] c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for access decisions")
-[2] 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
----
- fs/open.c           | 4 ++++
- security/security.c | 9 +--------
- 2 files changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/fs/open.c b/fs/open.c
-index acaeb3e25c88..6c4950f19cfb 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -946,6 +946,10 @@ static int do_dentry_open(struct file *f,
- 	if (error)
- 		goto cleanup_all;
- 
-+	error = fsnotify_open_perm(f);
-+	if (error)
-+		goto cleanup_all;
-+
- 	error = break_lease(file_inode(f), f->f_flags);
- 	if (error)
- 		goto cleanup_all;
-diff --git a/security/security.c b/security/security.c
-index 6875eb4a59fc..a72cc62c0a07 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
- #include <linux/personality.h>
-@@ -3102,13 +3101,7 @@ int security_file_receive(struct file *file)
-  */
- int security_file_open(struct file *file)
- {
--	int ret;
--
--	ret = call_int_hook(file_open, file);
--	if (ret)
--		return ret;
--
--	return fsnotify_open_perm(file);
-+	return call_int_hook(file_open, file);
- }
- 
- /**
--- 
-2.43.5
-
+So I misread the code which lead me to believe that aliasing would be
+more involved but it really isn't. Just give me a minute to fix this.
 
