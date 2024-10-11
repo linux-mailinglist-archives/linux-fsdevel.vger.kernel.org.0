@@ -1,94 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-31706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC66C99A42E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 14:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E68F99A43D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 14:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F600B2267B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 12:47:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E0951C228C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 12:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60FD21858E;
-	Fri, 11 Oct 2024 12:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DBE21859A;
+	Fri, 11 Oct 2024 12:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FzoYcd5l"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cB3SRmzC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6578521791B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 12:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8251E2178FF;
+	Fri, 11 Oct 2024 12:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728650843; cv=none; b=AO8F9tuwktWfp5Rl+nCR6hEnAdiYuYhv6vyJavxSFRkv5ezl4nQGZk+nZcobj5QwNz3YQRI6YocBWzCYf2MLHKys+d2YPlb6rmdKdQX5nOnJvngICsfom7NM6+K/slZ82Lh7vwtZOIMziakA4N1UnTM8ShjfJAOhx6hopeP3fVg=
+	t=1728651279; cv=none; b=oA3Yjs0jM47QNkauNj3SF+bJnNhDVHmwaQoZZYJZHLoo2nPrhn5yI6yPhwbDsK2Dgn9bjS87lpRiUIBsGUSwQqzA5X4XcGC7roA/pKtHeBCbUSan4PPJ9VGuuToojnH+6HBqPLyt5+F+Tao4L+yAPTt07KF1VjBaY86kSXCD3r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728650843; c=relaxed/simple;
-	bh=Ssj50jhLa6QTaxxQAPUc0/csO1mGN9hS2lCU62Fjl34=;
+	s=arc-20240116; t=1728651279; c=relaxed/simple;
+	bh=hUF503SshZFnhDTc/TnXqrKN0/ZZy1/GZ3WEZ0BbrjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=si6+h85BhDx+RVAtoloHyUEEkK0cPEjKFeo/x/59BQH8zRXWScBFQba9oUoYlV4QV5+zzAy95Fl2QzlM213S7jpbJLUWY7AIOSosd4ENPTS6LZiP112wi2j6YOHd9QY19vfJNR5edq+UePm7k1fxNIvWT+sPCO5ee5/YSSM3C84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FzoYcd5l; arc=none smtp.client-ip=84.16.66.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XQ5xL1Zn9zmd6;
-	Fri, 11 Oct 2024 14:47:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728650838;
-	bh=mUqoHhS7jRHHrLnQ2C+m0/2kYey48fPAy6v5oOk7vrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FzoYcd5lONxYRZH38zsyGdlP6o2g+tIeo9OaCQPGSPNtSo6aBOrNYhwXqVs8Z4C/G
-	 3UmZ93Lj8H8V947n/8+ZgXmpQ/fi1Zvr505F7cLp2rTv8+nWGmGxAg0tHzOEyetzem
-	 TuCagL29HYvAbWFeeg862LwYBgR4v4QswK2UTI9o=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XQ5xK4v5hzkK3;
-	Fri, 11 Oct 2024 14:47:17 +0200 (CEST)
-Date: Fri, 11 Oct 2024 14:47:14 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gHM+f3ZIjal4ywvVSQDj/avcAy/AtLp5N8GeieDRvnPeQpvkUYtxrLdsXS84iDXyOfXJ+h25es6RpKowjoxfA1QNaEW8pcILgkXMNIeFCp8J6lEAVd8Ysx+mQmK3fTsa7mdrVj31QnNuKfoG9EBf7yyiFAltaMOcYm9HDElluQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cB3SRmzC; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=hUF503SshZFnhDTc/TnXqrKN0/ZZy1/GZ3WEZ0BbrjI=; b=cB3SRmzCdneY8cgh56Eemb7PlF
+	yFL6JsxdLZw5J8sO/8eTqXbSXxtqP/5OUxS4fTzQszsMfug6ufol/YKP9zR9hgGAsxGpJn7/OIA7Y
+	Ukt8xNXuhKMm7AVpf6e6cWMkWl0ucqIU9AQCuG5Dqf5evD9ueIIVwZig66QEMgv5oOZ8EsZYjPBDo
+	8EQdNBwT74H5jk801UgF8s7AsRA1dP6osrdrTbCE9jwZcSKgFXSMtx8mxCpmQTj0W6uO3Hs0u8OLz
+	0P9712ZQ2x8pfTIzp9Cs0aaqyI0VsWlkNsiL4vEsLaK7SR+lY1B87x+OKc/uCzFemw2KDF+YXd3ya
+	E4T692cA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1szFAD-0000000GMXd-1Y70;
+	Fri, 11 Oct 2024 12:54:37 +0000
+Date: Fri, 11 Oct 2024 05:54:37 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
 Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
  get_ino() for NFS
-Message-ID: <20241011.ieghie3Aiye4@digikod.net>
+Message-ID: <ZwkgDd1JO2kZBobc@infradead.org>
 References: <20241010152649.849254-1-mic@digikod.net>
  <ZwkaVLOFElypvSDX@infradead.org>
+ <20241011.ieghie3Aiye4@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZwkaVLOFElypvSDX@infradead.org>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20241011.ieghie3Aiye4@digikod.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Oct 11, 2024 at 05:30:12AM -0700, Christoph Hellwig wrote:
-> On Thu, Oct 10, 2024 at 05:26:41PM +0200, MickaÃ«l SalaÃ¼n wrote:
-> > When a filesystem manages its own inode numbers, like NFS's fileid shown
-> > to user space with getattr(), other part of the kernel may still expose
-> > the private inode->ino through kernel logs and audit.
-> > 
-> > Another issue is on 32-bit architectures, on which ino_t is 32 bits,
-> > whereas the user space's view of an inode number can still be 64 bits.
-> > 
-> > Add a new inode_get_ino() helper calling the new struct
-> > inode_operations' get_ino() when set, to get the user space's view of an
-> > inode number.  inode_get_ino() is called by generic_fillattr().
-> > 
-> > Implement get_ino() for NFS.
-> 
-> The proper interface for that is ->getattr, and you should use that for
-> all file systems (through the proper vfs wrappers).
+On Fri, Oct 11, 2024 at 02:47:14PM +0200, Mickaël Salaün wrote:
+> How to get the inode number with ->getattr and only a struct inode?
 
-How to get the inode number with ->getattr and only a struct inode?
+You get a struct kstat and extract it from that.
 
-> 
-> And yes, it's really time to move to a 64-bit i_ino, but that's a
-> separate discussion.
 
