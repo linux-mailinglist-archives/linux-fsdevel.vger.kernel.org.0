@@ -1,450 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-31645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D499995A8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 01:16:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7E59997D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 02:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D78FF1F23D3D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2024 23:16:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 022E11C23D41
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 00:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1DD1E6DD4;
-	Thu, 10 Oct 2024 23:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A9E18787F;
+	Fri, 11 Oct 2024 00:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FI30Cdod"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J71GMo7o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E9D18DF81
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 23:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728602187; cv=none; b=eWh/XosfLXeY5mv9/bP5uh/Y+a5H+Q89eu/33M+/qVceBLv2n48DPcBIRdsC9XA+78wlNGSkyShYNzHm46L9MUgnDWvZmORLVhVHF6G0fGLvavKoxyFXTO79xgRo68tpUPDnpw2cnphcmnJ/BxTLgOLoCQVzYrbvr6F+Et2JZgI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728602187; c=relaxed/simple;
-	bh=KvTHna+ZtApDPOmd2a40igweP/Dy8M0dpMij23VQIYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oW39aXlEyjCLwXqIQeD0mjV2/7Bhqv5xQDM0ezEuwRAET+uL30qOTOQVW+/ENshYBcl2xHWfdcX7g/fDdVEqRaV3sS+LRyQ1YcVf8m8t49epQJRqKVGx2repuAZO5AqlzFmTjo4v+HhkEbmxyDvKYNwjZJpymzI0tMnr0W9QX1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FI30Cdod; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-835453714cfso64367339f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2024 16:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728602184; x=1729206984; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MjTbqXkgY8LUStOR5rf/WpaxQMK/Kx6NjYvjTVOb6hc=;
-        b=FI30CdodrY/KFtsa4CUr5RKJyO2qtLJ1FU/+aMOnWzLx6zCsqEPGQG2OyntXZ+EUSF
-         KTO/KhGXpBilXGJfUQlcnwDy2CHeQcfVVKqy4M2MsGwR9kDoYvBPU32XBIuqNsebYCUw
-         k4K8rJ5+mPT/jhX2Py6Xf6cwb7FRK7qpEF6dU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728602184; x=1729206984;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MjTbqXkgY8LUStOR5rf/WpaxQMK/Kx6NjYvjTVOb6hc=;
-        b=A23VRYGRXQrUKuPZ7cgnNLvjL1eNF63Cy5rla0kOkMr22yDeUqmfK+2FJt4z2+fWR0
-         dsddVffXJjRvF8eeqflUdW09Ofazkl6zzgqHvM9MFE3sNGGvIBTlhyVCGRvq4kkpK0P9
-         PISyufh173Q8/F2Bsl+oO39oQw1shRWWulEOXcsfLpnImV0W0SeEW6stB20Lhjog4DG1
-         laPnc43KKEYrHjMFhGN754TSGG47XGdftPbZHo8lAYgQTzhSpi0Ycq6MFi+gpm8UoosN
-         jwbslNKiJU2mjSGTueOlPWTxYiaPxY0efMMXv4uh2uimmT/A+ZAV2LTgOfGsdGKrXVqm
-         1cSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXjxDy1MWCLJ/zhW+IJw3hgQ4TOkzyH7MIDjc0b9+mAOrJhlmNgE/y+e84pqYCVAvIJSco+jHsNnBVPOmq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwj0QYnzRJ/wnzgurmx6sIN5wyfZ/lJwmIougwjpEOxEpghbeR
-	dQcHnvPg63Tq+EEYtl/u36ao/Paw3/iJd/mnh72Hg5YWGGc83DV+vFKHtl6ThX0=
-X-Google-Smtp-Source: AGHT+IFlVbQGSILLXeO5nvykYOl8M4yjUO6AwPJGeeduUP5DYUvTqoxodwU5XfkR5e84yQ696UHUgw==
-X-Received: by 2002:a05:6602:6413:b0:835:359b:8a07 with SMTP id ca18e2360f4ac-837952203bdmr45601839f.16.1728602183521;
-        Thu, 10 Oct 2024 16:16:23 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8354b8dfcd1sm45225439f.3.2024.10.10.16.16.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 16:16:23 -0700 (PDT)
-Message-ID: <1d1190be-f74f-45ab-ac6c-2251d0bec1bc@linuxfoundation.org>
-Date: Thu, 10 Oct 2024 17:16:22 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF172107;
+	Fri, 11 Oct 2024 00:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728606004; cv=fail; b=mY+NxKidT3m8L+ktDzkyCEWrdqij4dA3bOZ5ddbkU55rDlX2vqbv83MjlNRmwP9MIwEJ2bfn5UelQ2eNjWkStprERi3wLwW0Y3AJxj3Hpvd3uXnuyqrw+iTz4OBprhoU/R5DD8U2iXxbUdrtpJNqPHDigsOcGvbedJiCThc9/qw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728606004; c=relaxed/simple;
+	bh=QROi5C7c+iUQLmkJDrl8OFF4b8bYVoX9c8LtcF1abI4=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=FFpAyDcPukLinczVF5mYwgdxrIShv8rW1VBXgqmKaRqvtlE5iKB6w/3ht8A16dETF3KRJUtAJVD5fbDwXshHqPaJTEb2gzTjYLHKjF2NyCWTSbK1bye6/LjL71C6ib6PDHB5k3odRy5F5zQxd9yiVePbp1/hn5DAEbnSat9xmjg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J71GMo7o; arc=fail smtp.client-ip=40.107.223.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dwBqXTSyZBkx5+kXv1LXj2edMfqG4bLPW6eIOdeAn/8y5EV9Cn3BngFwwP34vb1D2zkCd98cMdajQ8LUr2qfsJRSxe6fi/5K6bk1y/lBTdsNOS71z5Zwc5jzI5KLodYo6M/aB7Bi13fERmj8rFWB48wl6ejN2lx7y0TKC2klTqAx3eARwHJUnAy7oyB2czLYl+O9as2l/VPJNJYmGtAHzfHBNdesXICsVR5EjsS4tuFxZ0uFZF6LTUWVlvfKFQYjKW3sx4uYH6I7y4ueWydze4DLiedb4uiagohkJiAYUbAoyU/XHHkfVnfgsIotzSvgAN5qW18WlIIgISWTix+zOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X6Tzpq3BX8iqwYIQyHk+sqXAQoU6Nczpy+Lk/2ZDWB0=;
+ b=fNjIBlbEYtlK/HFhzNBKygdKQQ/JnV4ApIxQZVd6b2opd0swQicpxizFBlELOcCn9ilwPDQyDF8YrsOw/m2wemP/pigJk3e2JJ9fjtbRdso89u6esljkat5LJ0oWQvgs/ldBpQy2dr4gB5RlSzXooFgXo1fD4+pbkxR+/c7Kvmt84uxoC98NFBTPtEvuuFbZvpH8WMNJ6/VqdqNxPWKxfxLuc+S9IwYlDgAety0kaWTV34jGBfjoOHiHvzU5yxAzpVjFLcgF6BsELRSqqnYMhzgG0J32aCf1Mq6iGB0L93I+rAfMFhDvEL0aQEw5secRU4yaxxwvqf3v8za1x5xhoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X6Tzpq3BX8iqwYIQyHk+sqXAQoU6Nczpy+Lk/2ZDWB0=;
+ b=J71GMo7oGe7Dm2viOQebnCWMFTJkglMJBoM6sy47LiYCujf+dLkJTv0Jh6yBmtkBENcL1ggQC3Lnq4rwG8W6Mn+23LbYm88gk+8qq4SDTKAOmVMtzznZpV77S8HSedQcVeRwsxufdY55SGNBEd4zeMXlZaWAY3Jvdjd3CJR0piRADOoJ3B/RYQXOIo8xeoPkdjWYPqtmp+YLxt3Xo1WyoIc88K0BfTw9jSppoeXCdNs5LvYa2hNlEAfCsr9k1NTxrPyMZxMWwcnWgtPi8q4QqgRqvs6cjT4ilIeMwoziz0zW8i7k+a5Hrv/YKGS0wTZqCa+cpALzWh6DMEPYzMB4Hw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ SJ0PR12MB6829.namprd12.prod.outlook.com (2603:10b6:a03:47b::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.16; Fri, 11 Oct 2024 00:19:59 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8048.017; Fri, 11 Oct 2024
+ 00:19:59 +0000
+References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
+ <4f8326d9d9e81f1cb893c2bd6f17878b138cf93d.1725941415.git-series.apopple@nvidia.com>
+ <66ef6c41eeb4f_10422294fb@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-mm@kvack.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
+ logang@deltatee.com, bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
+ catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+ npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
+ willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+ linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ david@fromorbit.com
+Subject: Re: [PATCH 02/12] pci/p2pdma: Don't initialise page refcount to one
+Date: Fri, 11 Oct 2024 11:17:20 +1100
+In-reply-to: <66ef6c41eeb4f_10422294fb@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Message-ID: <87y12vxzh1.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY0PR01CA0009.ausprd01.prod.outlook.com
+ (2603:10c6:10:1bb::10) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Christian Brauner <christian@brauner.io>
-Cc: Shuah Khan <shuah@kernel.org>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1728578231.git.lorenzo.stoakes@oracle.com>
- <8917d809e1509c4e0bce02436a493db29e2115b3.1728578231.git.lorenzo.stoakes@oracle.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <8917d809e1509c4e0bce02436a493db29e2115b3.1728578231.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ0PR12MB6829:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72b6c5b2-29a2-4966-f1f8-08dce98a7168
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?R4U4MBrkCQxSQYFRs+zA7ENWUBtRcRPjFwFeyqCQ9WgnOy4Uou7SR2jhooKV?=
+ =?us-ascii?Q?lSnrhV+F+aFM4qP7ZbTo3FpvI3Cucyg8TdNvBRGvKIX4QtfHUXPg36EE0ytd?=
+ =?us-ascii?Q?er5WZaSjVwXmH2ltLPkX907++ZSWd2b1PpZHmKpl0AlrtukcKxSmMpHwT00V?=
+ =?us-ascii?Q?UvR1kLo7PLOPwPwyySmYw/VAGB2GA8zR7LzEWuHWzc7JlLpBS9IpJEnsYf04?=
+ =?us-ascii?Q?2UBpPf/VEGZHFTqLOv+ewWy6LsiuPyo8mYnVtQ6IeZWQ2V4gXpXCfDJO6w/V?=
+ =?us-ascii?Q?YS10bgEH30W3TFucfh95xyjw/B0/zNgiBAB7vn8d0/9EyV0lk+1VFgWPMxWz?=
+ =?us-ascii?Q?juvoAZmUgHVtJu9DjF4xx6Q2FFE6otQ7Icz/ryKPVk0igICMuhxAq6ikHtLf?=
+ =?us-ascii?Q?fvfBTwWhhfpDcl1z5XKmLhUkjlsaOp5CSo5BDss7oPADnvnapFNuJqrO84Nu?=
+ =?us-ascii?Q?4PGPeQ9/TZ6gp/+rzKPDwiRYWiUATd9sQmxT1yFkP4Jz2q5XubhiOsQaPoKm?=
+ =?us-ascii?Q?LYMtcSND1Rdn7p34VGs0Yrr09++4H3kJNLnI0enTtE6oOkuYLvlzwGI+YgXH?=
+ =?us-ascii?Q?+/EyKezrhsrbxESHNaW/OGZ4azXcTAUWzG4lxQ2hl2MQQ86m++93ucam6A9D?=
+ =?us-ascii?Q?QODlG2YnX7hoTrTeYZ0d1jpto1nKg4IAGLIBI0du/zMnkRVwjtzpQ5l0J/gv?=
+ =?us-ascii?Q?WFfwUBggCz4zennAXbTxmHf5CSJoTQAGGDKrTdz0uldfl+e5a95vg/PjieYi?=
+ =?us-ascii?Q?66BGLyOUjkgrnIqOsfkanl1Mxr2P7ekOl9E4poFNwyB7uUPFL6vBqdTiku/W?=
+ =?us-ascii?Q?GlO22ZST7DbbMqESc4nnaS7uH4nauOWgHhJILhJr3WIdHmdHTv2NjfNtc5fw?=
+ =?us-ascii?Q?UUN3352N88roWioi7C6PAsnv2yiIGscD88gn+Z4R1XHgPpSx3dAuQE+RH8Pe?=
+ =?us-ascii?Q?L7LD0ePHDyVSN5RUNz+DOB1zVRnAdPie+/M5sp3xAJd6X/gbG0AZC79WTXH7?=
+ =?us-ascii?Q?nk6jAqXMbeCJyUiXKfQPDEv6BZalns/EvB/ZExaxVcxlBnBo5Ax+88gJQQ3+?=
+ =?us-ascii?Q?VLo79umyzLCWkniRDpcM8vx2c6quAII6jCQRsjx0NTeoTdmlB62WgC+8tjMC?=
+ =?us-ascii?Q?YhGs5DYGnyF/qOoRhqbhtQ9rsTdITOK7Puiv2pcb/y6v09iTmZOXrCy3PERz?=
+ =?us-ascii?Q?B0/OydtcmzEyLqZgTqkeofCW6NXyNMd0Nmz8qKwOeJteStaJ5BR0geuNYxma?=
+ =?us-ascii?Q?+tiYLzkikvoA1pBwFfMF5WaQKka9BvPUL7sG3NyOTg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?q2wy3b4iKOGtpFKs4kDyK0wIVUPs6JFNyevaXc2phxnt4+VQRYImpfOoEpnA?=
+ =?us-ascii?Q?BKm7X9YNCxUJ61Ajs/vtdnmyGspKNEXIa7Rd8EmD1epMKLDh4pVAzmZI9+5K?=
+ =?us-ascii?Q?p6iMl1k39m1t9LLCmZnN4+g+GQcMlC9Ty94IJFGjYZJHaRfOEdnxlRcA26q3?=
+ =?us-ascii?Q?6dnDptElHXdR3EaVFKjgvQcftJ3l65I8jLbvSvfa8X4kx789c5VdazWLAFki?=
+ =?us-ascii?Q?TfkbEGMmyQIu2kprN9ghFvHx0E7wiKcFT+qfVrX2M2ryOlOR2F7wYpFQ3Vs3?=
+ =?us-ascii?Q?43tY9w4932L4KwCrBU4iKXFauhsi88UZCJbEy/7phyIrE61hGWi40FyaNNjS?=
+ =?us-ascii?Q?bNo3VbQJ2dtD4tEIBviGvZWIgYV2J5F33t6EUPxTxCWmLFiTx/nrBTsmMEE4?=
+ =?us-ascii?Q?AfOsFLFonk4p91+DsAKYR1qqRDTOAOFfOscWKb7b+S7DECXI9l3Cce6/iiLS?=
+ =?us-ascii?Q?dTVfHWSA7qbpGs7boiEuQGj3ILzU+gJ4PHzzOQaP0Qagzdu3j6ZpJgXK8ZdZ?=
+ =?us-ascii?Q?FKjA7423vrmvcLynkz4Y5NaqtmiJ4O61SVAqQ7Q9hkmYZ/1aBahL9N8/Fsf2?=
+ =?us-ascii?Q?JTbZT+k7P98blP2J9ZwGxW6ahjhHgG8DvoOgiu0nrT50DIdTZlO/xdKR9dLK?=
+ =?us-ascii?Q?rLl2+54mZOcIfH56B5C6JvG2JXLI0YSaXpEiinzFAOCCEv4uCFul2RgHJ2Cg?=
+ =?us-ascii?Q?A/99vxuWXmi54UO8+BMGobEcBq9ShTrqG+IvH72x7UJKtz475xF+chmEpcgQ?=
+ =?us-ascii?Q?or0dH3A2/McYfFvmlEX8c2zR2n+eNZQLji7XLp+lYa+1JDjJlRkA4BK8J/ux?=
+ =?us-ascii?Q?Mk0IYmGPD797MlLzIMVXXGPwQyLokkXMFik3BOxL/Gto9FsRJqgRsHCvX7aU?=
+ =?us-ascii?Q?ceQWA94XnjgJRxtQnfDEMWopmyAK/44nX2NR7xJxhdbYlU/Ul8DZTEMW+rcp?=
+ =?us-ascii?Q?NSTjF+z8qzJ3pNEy0Is5OGfuEgNHx41D7mAbQGWMzqXNXOGorRjDZnXKwkn5?=
+ =?us-ascii?Q?kFsLh8sdKWOXCZDgIvCe457cq8g6IzHpAMJQyJO3XJ7WrVpikm3xg1isI3ok?=
+ =?us-ascii?Q?/af9d05vhcU8hh/BHyux7sgI317rBG1255NrSWyP2TXme3O1yXm+wb4V/v+N?=
+ =?us-ascii?Q?TRj8mrAF0tiIl4xQIfyCWcz5SCrVK1clbw42pPnRq44Adw2xqd2yy8HqC5rs?=
+ =?us-ascii?Q?qFKIR//agEixIhISTKxjbhDhvXNtPFUKqB+ZW2FMi9yYjyJIJTtVg7uVfm9U?=
+ =?us-ascii?Q?NKoWAXlRcMBW8ReAheqkKkngZiULOV3QpOsfpIyCnxDc84qRj+8kFiaM61ot?=
+ =?us-ascii?Q?s07QPC2hqAn310ZkmlQNnWvt/GTmMf5s3H9GSi32rUezh2WUYieL5G+7Zpx+?=
+ =?us-ascii?Q?WhwuJbvidKXGc9Rui/leyxP3HR0vcB/sAQQ8ZuFopdzwFjSTlWXYQYUVJJyB?=
+ =?us-ascii?Q?Ln67t0Llw4lMQKAytjPddrRWxs8jWjl2rjRYi7o7yGfnMuxqoVqzSbxbsZqK?=
+ =?us-ascii?Q?tcaKOVfIIPv2QFw1N/8r6yBlQDh/q1vSbzOHjGF7B/96DwwHBEA+BnlbanAE?=
+ =?us-ascii?Q?/tNAq7VVyDMMngswhPxChH80q8SUOCB5H/bY87Tg?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72b6c5b2-29a2-4966-f1f8-08dce98a7168
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 00:19:59.8659
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9WhrJtz9uOMMwwnCviEbWkg5twU03Qq8sSW2288U7I6pyXZL6r7q9mMszfnZhYsEJbLLaBtIvzUPi1QQ7OHyaA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6829
 
-On 10/10/24 12:15, Lorenzo Stoakes wrote:
-> Add tests to assert that PIDFD_SELF_* correctly refers to the current
-> thread and process.
-> 
-> This is only practically meaningful to pidfd_send_signal() and
-> pidfd_getfd(), but also explicitly test that we disallow this feature for
-> setns() where it would make no sense.
-> 
-> We cannot reasonably wait on ourself using waitid(P_PIDFD, ...) so while in
-> theory PIDFD_SELF_* would work here, we'd be left blocked if we tried it.
-> 
-> We defer testing of mm-specific functionality which uses pidfd, namely
-> process_madvise() and process_mrelease() to mm testing (though note the
-> latter can not be sensibly tested as it would require the testing process
-> to be dying).
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->   tools/testing/selftests/pidfd/pidfd.h         |   8 ++
->   .../selftests/pidfd/pidfd_getfd_test.c        | 136 ++++++++++++++++++
->   .../selftests/pidfd/pidfd_setns_test.c        |  11 ++
->   tools/testing/selftests/pidfd/pidfd_test.c    |  67 +++++++--
->   4 files changed, 213 insertions(+), 9 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-> index 88d6830ee004..1640b711889b 100644
-> --- a/tools/testing/selftests/pidfd/pidfd.h
-> +++ b/tools/testing/selftests/pidfd/pidfd.h
-> @@ -50,6 +50,14 @@
->   #define PIDFD_NONBLOCK O_NONBLOCK
->   #endif
->   
-> +/* System header file may not have this available. */
-> +#ifndef PIDFD_SELF_THREAD
-> +#define PIDFD_SELF_THREAD -100
-> +#endif
-> +#ifndef PIDFD_SELF_THREAD_GROUP
-> +#define PIDFD_SELF_THREAD_GROUP -200
-> +#endif
-> +
 
-Can't we pick these up from linux/pidfd.h - patch 2/3 adds
-them.
+Dan Williams <dan.j.williams@intel.com> writes:
 
->   /*
->    * The kernel reserves 300 pids via RESERVED_PIDS in kernel/pid.c
->    * That means, when it wraps around any pid < 300 will be skipped.
-> diff --git a/tools/testing/selftests/pidfd/pidfd_getfd_test.c b/tools/testing/selftests/pidfd/pidfd_getfd_test.c
-> index cd51d547b751..10793fc845ed 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_getfd_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_getfd_test.c
-> @@ -6,6 +6,7 @@
->   #include <limits.h>
->   #include <linux/types.h>
->   #include <poll.h>
-> +#include <pthread.h>
->   #include <sched.h>
->   #include <signal.h>
->   #include <stdio.h>
-> @@ -15,6 +16,7 @@
->   #include <sys/prctl.h>
->   #include <sys/wait.h>
->   #include <unistd.h>
-> +#include <sys/mman.h>
->   #include <sys/socket.h>
->   #include <linux/kcmp.h>
->   
-> @@ -114,6 +116,89 @@ static int child(int sk)
->   	return ret;
->   }
->   
-> +static int __pidfd_self_thread_worker(unsigned long page_size)
-> +{
-> +	int memfd;
-> +	int newfd;
-> +	char *ptr;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * Unshare our FDs so we have our own set. This means
-> +	 * PIDFD_SELF_THREAD_GROUP will fail.
-> +	 */
-> +	if (unshare(CLONE_FILES) < 0) {
-> +		ret = -errno;
-> +		goto exit;
-> +	}
-> +
-> +	/* Truncate, map in and write to our memfd. */
-> +	memfd = sys_memfd_create("test_self_child", 0);
+> Alistair Popple wrote:
 
-Missing eror check.
+[...]
 
-> +	if (ftruncate(memfd, page_size)) {
-> +		ret = -errno;
-> +		goto exit;
+>> diff --git a/mm/memremap.c b/mm/memremap.c
+>> index 40d4547..07bbe0e 100644
+>> --- a/mm/memremap.c
+>> +++ b/mm/memremap.c
+>> @@ -488,15 +488,24 @@ void free_zone_device_folio(struct folio *folio)
+>>  	folio->mapping = NULL;
+>>  	folio->page.pgmap->ops->page_free(folio_page(folio, 0));
+>>  
+>> -	if (folio->page.pgmap->type != MEMORY_DEVICE_PRIVATE &&
+>> -	    folio->page.pgmap->type != MEMORY_DEVICE_COHERENT)
+>> +	switch (folio->page.pgmap->type) {
+>> +	case MEMORY_DEVICE_PRIVATE:
+>> +	case MEMORY_DEVICE_COHERENT:
+>> +		put_dev_pagemap(folio->page.pgmap);
+>> +		break;
+>> +
+>> +	case MEMORY_DEVICE_FS_DAX:
+>> +	case MEMORY_DEVICE_GENERIC:
+>>  		/*
+>>  		 * Reset the refcount to 1 to prepare for handing out the page
+>>  		 * again.
+>>  		 */
+>>  		folio_set_count(folio, 1);
+>> -	else
+>> -		put_dev_pagemap(folio->page.pgmap);
+>> +		break;
+>> +
+>> +	case MEMORY_DEVICE_PCI_P2PDMA:
+>> +		break;
+>
+> A follow on cleanup is that either all implementations should be
+> put_dev_pagemap(), or none of them. Put the onus on the implementation
+> to track how many pages it has handed out in the implementation
+> allocator.
 
-Hmm. you probably need scoped cleanup paths. "exit" closes
-memfd and newfd which isn't open yet and sys_memfd_create()
-could fail and memfd doesn't need closing?
+Agreed. I've ignored the get/put_dev_pagemap() calls for this clean up
+but am planning to do a follow up to clean those up too, probably by
+removing them entirely as you suggest.
 
-> +	}
-> +
-> +	ptr = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
-> +		   MAP_SHARED, memfd, 0);
-> +	if (ptr == MAP_FAILED) {
-> +		ret = -errno;
-> +		goto exit;
-> +	}
-> +	ptr[0] = 'y';
-> +	if (munmap(ptr, page_size)) {
-> +		ret = -errno;
-> +		goto exit;
-> +	}
-> +
-> +	/* Get a thread-local duplicate of our memfd. */
-> +	newfd = sys_pidfd_getfd(PIDFD_SELF_THREAD, memfd, 0);
-> +	if (newfd < 0) {
-> +		ret = -errno;
-> +		goto exit;
+[...]
 
-Same comment here - "exit" closes newfd
+> For this one:
+>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
-> +	}
-> +
-> +	if (memfd == newfd) {
-> +		ret = -EINVAL;
-> +		goto exit;
-> +	}
-> +
-> +	/* Map in new fd and make sure that the data is as expected. */
-> +	ptr = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
-> +		   MAP_SHARED, newfd, 0);
-> +	if (ptr == MAP_FAILED) {
-> +		ret = -errno;
-> +		goto exit;
-> +	}
-> +
-> +	if (ptr[0] != 'y') {
-> +		ret = -EINVAL;
-> +		goto exit;
-> +	}
-> +
-> +	if (munmap(ptr, page_size)) {
-> +		ret = -errno;
-> +		goto exit;
-> +	}
-> +
-> +exit:
-> +	/* Cleanup. */
-> +	close(newfd);
-> +	close(memfd);
-> +
-> +	return ret;
-> +}
-> +
-> +static void *pidfd_self_thread_worker(void *arg)
-> +{
-> +	unsigned long page_size = (unsigned long)arg;
-> +	int ret;
-> +
-> +	ret = __pidfd_self_thread_worker(page_size);
-
-Don't you want to check error here?
-
-> +
-> +	return (void *)(intptr_t)ret;
-> +}
-> +
->   FIXTURE(child)
->   {
->   	/*
-> @@ -264,6 +349,57 @@ TEST_F(child, no_strange_EBADF)
->   	EXPECT_EQ(errno, ESRCH);
->   }
->   
-> +TEST(pidfd_self)
-> +{
-> +	int memfd = sys_memfd_create("test_self", 0);
-> +	unsigned long page_size = sysconf(_SC_PAGESIZE);
-> +	int newfd;
-> +	char *ptr;
-> +	pthread_t thread;
-> +	void *res;
-> +	int err;
-> +
-> +	ASSERT_GE(memfd, 0);
-> +	ASSERT_EQ(ftruncate(memfd, page_size), 0);
-> +
-> +	/*
-> +	 * Map so we can assert that the duplicated fd references the same
-> +	 * memory.
-> +	 */
-> +	ptr = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
-> +		   MAP_SHARED, memfd, 0);
-> +	ASSERT_NE(ptr, MAP_FAILED);
-> +	ptr[0] = 'x';
-> +	ASSERT_EQ(munmap(ptr, page_size), 0);
-> +
-> +	/* Now get a duplicate of our memfd. */
-> +	newfd = sys_pidfd_getfd(PIDFD_SELF_THREAD_GROUP, memfd, 0);
-> +	ASSERT_GE(newfd, 0);
-> +	ASSERT_NE(memfd, newfd);
-> +
-> +	/* Now map duplicate fd and make sure it references the same memory. */
-> +	ptr = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
-> +		   MAP_SHARED, newfd, 0);
-> +	ASSERT_NE(ptr, MAP_FAILED);
-> +	ASSERT_EQ(ptr[0], 'x');
-> +	ASSERT_EQ(munmap(ptr, page_size), 0);
-> +
-> +	/* Cleanup. */
-> +	close(memfd);
-> +	close(newfd);
-> +
-> +	/*
-> +	 * Fire up the thread and assert that we can lookup the thread-specific
-> +	 * PIDFD_SELF_THREAD (also aliased by PIDFD_SELF).
-> +	 */
-> +	ASSERT_EQ(pthread_create(&thread, NULL, pidfd_self_thread_worker,
-> +				 (void *)page_size), 0);
-> +	ASSERT_EQ(pthread_join(thread, &res), 0);
-> +	err = (int)(intptr_t)res;
-> +
-> +	ASSERT_EQ(err, 0);
-> +}
-> +
->   #if __NR_pidfd_getfd == -1
->   int main(void)
->   {
-> diff --git a/tools/testing/selftests/pidfd/pidfd_setns_test.c b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-> index 7c2a4349170a..bbd39dc5ceb7 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_setns_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-> @@ -752,4 +752,15 @@ TEST(setns_einval)
->   	close(fd);
->   }
->   
-> +TEST(setns_pidfd_self_disallowed)
-> +{
-> +	ASSERT_EQ(setns(PIDFD_SELF_THREAD, 0), -1);
-> +	EXPECT_EQ(errno, EBADF);
-> +
-> +	errno = 0;
-> +
-> +	ASSERT_EQ(setns(PIDFD_SELF_THREAD_GROUP, 0), -1);
-> +	EXPECT_EQ(errno, EBADF);
-> +}
-> +
->   TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/pidfd/pidfd_test.c b/tools/testing/selftests/pidfd/pidfd_test.c
-> index 9faa686f90e4..ab5caa0368a1 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_test.c
-> @@ -42,12 +42,41 @@ static pid_t pidfd_clone(int flags, int *pidfd, int (*fn)(void *))
->   #endif
->   }
->   
-> -static int signal_received;
-> +static pthread_t signal_received;
->   
->   static void set_signal_received_on_sigusr1(int sig)
->   {
->   	if (sig == SIGUSR1)
-> -		signal_received = 1;
-> +		signal_received = pthread_self();
-> +}
-> +
-> +static int send_signal(int pidfd)
-> +{
-> +	int ret = 0;
-> +
-> +	if (sys_pidfd_send_signal(pidfd, SIGUSR1, NULL, 0) < 0) {
-> +		ret = -EINVAL;
-> +		goto exit;
-> +	}
-> +
-> +	if (signal_received != pthread_self()) {
-> +		ret = -EINVAL;
-> +		goto exit;
-> +	}
-> +
-> +exit:
-> +	signal_received = 0;
-> +	return ret;
-> +}
-> +
-> +static void *send_signal_worker(void *arg)
-> +{
-> +	int pidfd = (int)(intptr_t)arg;
-> +	int ret;
-> +
-> +	ret = send_signal(pidfd);
-> +
-
-Same here - don't you have to check ret?
-
-> +	return (void *)(intptr_t)ret;
->   }
->   
->   /*
-> @@ -56,8 +85,11 @@ static void set_signal_received_on_sigusr1(int sig)
->    */
->   static int test_pidfd_send_signal_simple_success(void)
->   {
-> -	int pidfd, ret;
-> +	int pidfd;
->   	const char *test_name = "pidfd_send_signal send SIGUSR1";
-> +	pthread_t thread;
-> +	void *thread_res;
-> +	int res;
->   
->   	if (!have_pidfd_send_signal) {
->   		ksft_test_result_skip(
-> @@ -74,17 +106,34 @@ static int test_pidfd_send_signal_simple_success(void)
->   
->   	signal(SIGUSR1, set_signal_received_on_sigusr1);
->   
-> -	ret = sys_pidfd_send_signal(pidfd, SIGUSR1, NULL, 0);
-> +	send_signal(pidfd);
->   	close(pidfd);
-> -	if (ret < 0)
-> -		ksft_exit_fail_msg("%s test: Failed to send signal\n",
-> +
-> +	/* Now try the same thing only using PIDFD_SELF_THREAD_GROUP. */
-> +	res = send_signal(PIDFD_SELF_THREAD_GROUP);
-> +	if (res)
-> +		ksft_exit_fail_msg(
-> +			"%s test: Error %d on PIDFD_SELF_THREAD_GROUP signal\n",
-> +			test_name, res);
-> +
-> +	/*
-> +	 * Now try the same thing in a thread and assert thread ID is equal to
-> +	 * worker thread ID.
-> +	 */
-> +	if (pthread_create(&thread, NULL, send_signal_worker,
-> +			   (void *)(intptr_t)PIDFD_SELF_THREAD))
-> +		ksft_exit_fail_msg("%s test: Failed to create thread\n",
->   				   test_name);
->   
-> -	if (signal_received != 1)
-> -		ksft_exit_fail_msg("%s test: Failed to receive signal\n",
-> +	if (pthread_join(thread, &thread_res))
-> +		ksft_exit_fail_msg("%s test: Failed to join thread\n",
->   				   test_name);
-> +	res = (int)(intptr_t)thread_res;
-> +	if (res)
-> +		ksft_exit_fail_msg(
-> +			"%s test: Error %d on PIDFD_SELF_THREAD signal\n",
-> +			test_name, res);
->   
-> -	signal_received = 0;
->   	ksft_test_result_pass("%s test: Sent signal\n", test_name);
->   	return 0;
->   }
-
-thanks,
--- Shuah
+Thanks.
 
