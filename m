@@ -1,182 +1,300 @@
-Return-Path: <linux-fsdevel+bounces-31697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD5699A3C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 14:21:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3A199A3D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 14:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303671C2340A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 12:21:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 208111C22E63
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2024 12:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973A2217319;
-	Fri, 11 Oct 2024 12:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LS1hQtyf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABFC21731B;
+	Fri, 11 Oct 2024 12:23:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C38120C478
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 12:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95292802;
+	Fri, 11 Oct 2024 12:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728649275; cv=none; b=RclzDQtraEg0AF0Xm9AD073sK6fEf/AZheytb9/dqsKxbGjQxR32x9744g4b0QleRkVnySYsYBg6xnc5YUPcAVos3q5q4rV/PiAnfYmkqQdhhJ7TYlUxh76yPkuXcRX9ZAY8yBwLpiQHlRKeHh3vAiQAi4qREZ3xYmCCDgIAdm4=
+	t=1728649406; cv=none; b=VE7gn5ioatHENYkdeX7NQUdRkmrA/nxajAmPDQc1SIrUH0/Tsiuo2DAmxrwp2TSzVN/5e9AWfMAIKgvQ3mFV7xsuA4lw8FDR5c2KP40Dy+a412LU5SBE3hRlzAYVsNWSPW2mdKhdymxtdQ5rsr1spN3g8EyVF1jesJjA0C3yEpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728649275; c=relaxed/simple;
-	bh=UNYK9KIqo8UAE1kFipvlWrPRtyaFhx6K8hW4uJoytaw=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=I+yNeT8u6hD2pDYJ2vg99ZAjyXQkHiXoueGc62Nehwe4Q+0Rt/nVA9iw/c35vYPzt3P6JPE9vTLOa7cwzggNRKcpcJIx9vfrvjSLACjKN8MkI4KvJK3IQPsGpF/MM0d5ZeGVB4A7DISJHwXUlY9bRiLxOPtknZB1LVMPA9WkoyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LS1hQtyf; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241011122105euoutp01d4547e69b320670a630154d82fe7aa5a~9ZVkjP-3i2704327043euoutp01J
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2024 12:21:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241011122105euoutp01d4547e69b320670a630154d82fe7aa5a~9ZVkjP-3i2704327043euoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728649265;
-	bh=FT7MJh5JI+H2sqgHyHILJBUQ7TL2PzQgzLPaiYaOkYk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=LS1hQtyfOXfWlzkpxK39EzraCHNKXhnQi0O55u2Vfbtawv08T9W48xC/FxlBV5Jsf
-	 6Ol/jBLDLBTjzusIXJFt+INff76v7gdSCZFHJnfWggELkSID73OvZXIajvDVDGVdZE
-	 ug4i00RmElKU3nEXKvkaat5YzavhGoNJ/SMCbWb0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241011122104eucas1p2fd9851ae922e96d808441e75bfe5050c~9ZVkDZ1y32333823338eucas1p2o;
-	Fri, 11 Oct 2024 12:21:04 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id E7.AE.09624.03819076; Fri, 11
-	Oct 2024 13:21:04 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241011122104eucas1p2f5cdb80296ef765dd2e4fda6797017de~9ZVjbzcc12333823338eucas1p2n;
-	Fri, 11 Oct 2024 12:21:04 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241011122104eusmtrp18312c6654091b567517730a0cc89784f~9ZVjahTqf2348623486eusmtrp1x;
-	Fri, 11 Oct 2024 12:21:04 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-66-67091830b407
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 3D.0E.19096.03819076; Fri, 11
-	Oct 2024 13:21:04 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241011122104eusmtip269afd5e016719b370f634fa96a64864f~9ZVjOp9Zp1387013870eusmtip2x;
-	Fri, 11 Oct 2024 12:21:04 +0000 (GMT)
-Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 11 Oct 2024 13:21:03 +0100
-Date: Fri, 11 Oct 2024 14:21:02 +0200
-From: Javier Gonzalez <javier.gonz@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-CC: Hans Holmberg <hans@owltronix.com>, Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Keith Busch <kbusch@kernel.org>, Kanchan Joshi
-	<joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>, "sagi@grimberg.me"
-	<sagi@grimberg.me>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-	"bcrl@kvack.org" <bcrl@kvack.org>, "dhowells@redhat.com"
-	<dhowells@redhat.com>, "bvanassche@acm.org" <bvanassche@acm.org>,
-	"asml.silence@gmail.com" <asml.silence@gmail.com>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-aio@kvack.org" <linux-aio@kvack.org>, "gost.dev@samsung.com"
-	<gost.dev@samsung.com>, "vishak.g@samsung.com" <vishak.g@samsung.com>
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241011122102.znguf6kpmbbsa42t@ArmHalley.local>
+	s=arc-20240116; t=1728649406; c=relaxed/simple;
+	bh=nZivsUzyusCoUb6nsB1KInHaB4/v3ENpR/KfxFV5PSA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t1ElIO2i/69H1hmWrU2h0r+PdghDmcaSzzFB7uJW4ODJZPWIR9/UMx7ruVmcZItLXx015r3tvIBsOzwbYZ3RSHBsPH/QxncoMHOT6Pnryooi6Bv/MEgXVD/z35FpnSe2n59T+CEIa9KeBe+/Zu8cyZf3GAkdu5d9+9JT9xB14lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a3a3075af2so9532005ab.3;
+        Fri, 11 Oct 2024 05:23:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728649404; x=1729254204;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VUnmCqxRxh6mT7xFdAu/9swIFYMxqTBQ/TLYAWa60pU=;
+        b=m4ldnHd2gWAQ4KI6wdXEGiMg88b+AJxfjp5Uok9LChOMANxEh3jWcjUeYAVSKlGDnJ
+         QzTxXUIjik4sE6Pz4Iu4uU1CvTmOWTzdYCbUwZ0wCL9Bt6NZ+YOQNiV5jAPhBS2O37LG
+         ANRchFWYp/Mu17FgioF/FEZ0WAreMkmc4Z/iEr7uqI4OSDIHxjhLqqQzUHatWNThHOLz
+         NIQTiYVTA3wUYIjGJWR2NRJyGFjW6CqzWUYzMI9x1+TZvwvw+J8UYvSQZPh3bwQQkuJO
+         ih9OnLXWLkJFFrf1ISn8hSWErc2METVqXz7h9RonDXL5sOLb7X7tqBI5JjhUkSqHnRKr
+         Z55Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUf71bQeofi4F5e6gOw1R+v3/teWhmN3k4RvNLDYvC+M3A+Nc2paMMbA9knLZ/iMsEv2FN4xw==@vger.kernel.org, AJvYcCVcM1u41mUULSQtzHNkddFIp2SlnIiqTuqdtfYK+sgVFGeQcGCgieNPcyP8J1GB6J4Ljv7CMxSLSw9P685G5es1n8afnOlT@vger.kernel.org, AJvYcCWeQAMIxIHf/WMpU7oGPcK7Vn2RvrTobaP1WPLoJAI9npUIqKoPLhmqVWv6B1nHLwyV6NIxyWnO5I6U@vger.kernel.org, AJvYcCXoE14f6GS9EV/GNWlOVv4F/erQMDGzLoiuDXmnUz2+n3nj0tUeBy6YFPSUlay7diPeBZZ+O9tfCrozq8gVow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqwCf45El2ZzfmUUvdb6e0W7Vi3DP9sz7KG+Zp7AVTC7uJmF2y
+	dQ2mMORFBn5zP1IaHOq62wTnFPJVaciq8UM/R4nVHLjWIojU7NQ=
+X-Google-Smtp-Source: AGHT+IGUUzJd8jKDQk+4ofpNJXKAz6AIyY79VJ5BzzjvatMBkMJrnmGZNegHf3T4phSp5qKWRuLFjQ==
+X-Received: by 2002:a05:6e02:1c0e:b0:3a0:a4ac:ee36 with SMTP id e9e14a558f8ab-3a3b5f1f34cmr17637275ab.5.1728649403589;
+        Fri, 11 Oct 2024 05:23:23 -0700 (PDT)
+Received: from [192.168.75.138] (104-63-89-173.lightspeed.livnmi.sbcglobal.net. [104.63.89.173])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbad9b10b8sm638143173.21.2024.10.11.05.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 05:23:23 -0700 (PDT)
+Message-ID: <1465e709f91b771e3aa4b3f0a6fe948855204f09.camel@kernel.org>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+From: Trond Myklebust <trondmy@kernel.org>
+To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, Paul Moore
+ <paul@paul-moore.com>,  linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ audit@vger.kernel.org, Anna Schumaker <anna@kernel.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Date: Fri, 11 Oct 2024 08:22:51 -0400
+In-Reply-To: <20241011.xaeMo6Fohj3h@digikod.net>
+References: <20241010152649.849254-1-mic@digikod.net>
+	 <fd90d5d173a47732da87d31aed8a955f73ea086e.camel@kernel.org>
+	 <20241011.xaeMo6Fohj3h@digikod.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-In-Reply-To: <20241011085631.GA4039@lst.de>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbZRTG9957e3vbpN2lQHhD51fJjBkDuujm6/dm1FzndHNZMCiJq3JX
-	lpWWtAOdlawWKqNO3AoOYW5jZLGsMAilgs6yjcJGO2gJFBAwJYS1qLCOrynOBZD2ou6/3znP
-	c3LO8+alcMkKL5E6qD7MatUKlYwUEi037vWmyKFAKTeObkPf2loAqgt8RSLzsoNA0x3zAJ2a
-	vYejO8b7BDrzdR0POWssGLpYdx1Dd0w+Ap2uKMRQsLEKRxbXEEDlp4wAtY0mI2ebh0Dnvgvx
-	kbVrGUMN0zME6l3q4m2PY/wDbzA/VgX4TO9YE8H4vXmM3VZCMvZ5C59pvnCU+WnEQDJzoVGC
-	6bDX8JiZK4Mk01PduSp265kF+8OMPRjG9qx/V/h8Fqs6mM9q017cL8wePLdC5o4LPr5i0BnA
-	DN8MBBSkn4LO+lbCDISUhK4F8JqtGeOKuwCuXL8LuGIBwDF3xaqNio7ccOZxfSuAxbNu/D9T
-	2FrK4woHgJaTRjyyhKA3wrbTfxMRJuk0aGu9CSIcR8tgaMobXYHTi3xYNuyOCrG0HM4sfklG
-	WES/ACsbagiOY6CnMhhlnH4WlswaeZGTcFoKrctUpC2gk2FgYmotnAze+i0MOC6ANx2j0WyQ
-	NgvhyIkBjBNegQvfzJEcx8KpLsfa8AbYXXac4FgPDR732nARgKZj3/O4t3gOlvaoOM8OeLy/
-	H3BtMRwOx3BniqGlpQLn2iJ47HMJ534c1o3dJk6ApKoHglU9EKzq/2DVALeBBDZPl6NkdVvU
-	7EepOkWOLk+tTP1Qk2MHq3+0e7lr/gdwZmou1QUwCrgApHBZnCjlPE8pEWUpjnzCajXva/NU
-	rM4FpBQhSxBtzHqEldBKxWH2EMvmstp/VYwSJBqwlIfGl1/ajJIU+fmH3I3C7Jb1fUuu2pH6
-	+J7ffZ9Ovm5vh5VDv2x4R9XgN43Vtb/9RUdwn9RTXL7Jf1/fmZGl3rlbf4E8MNSePp0RDoc1
-	617d1R7sCLvGPb8uvlXw2R/O6glN3zO+yc6rl+VNxeXUQO2lwKP5wmuZwlBqbFNCStPts0/o
-	JxP7rAm+0mGdeN/Mm5eIo2e3qj8oZL2x6UZ/Qn3By+/deu1q0YBc6ujfsa5M0ZyStL/IV7rL
-	PGE0l4Q8Jlmmx4al/ZU7eN57IP5ngbIwXex3WUYzTd6lnY+17g0ELz9ZfHFk959YTEYPLeUL
-	NcmCzSD+yB7nVvHT27ftbZQRumzFlk24Vqf4B86lIfESBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNKsWRmVeSWpSXmKPExsVy+t/xe7oGEpzpBrNfcVvMWbWN0WL13X42
-	i65/W1gsXh/+xGgx7cNPZot3Tb9ZLOZOXc1qsWfRJCaLlauPMlm8az3HYjF7ejOTxZP1s5gt
-	Jh26xmgxZVoTo8XeW9oWe/aeZLGYv+wpu8Xy4/+YLNa9fs9icf7vcVYHEY/LV7w9ds66y+5x
-	/t5GFo/LZ0s9Nq3qZPPY9GkSu8fmJfUeu282sHl8fHqLxePwpkWsHu/3XWXzOLPgCFDydLXH
-	501yHpuevGUK4I/SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcks
-	Sy3St0vQy7g6/z9bwQPOin0NxQ2M79m7GDk4JARMJI7tKe1i5OIQEljKKDF7z1rGLkZOoLiM
-	xMYvV1khbGGJP9e62CCKPjJKfOrayASSEBLYwihx5a4XiM0ioCqxd/YvFhCbTUBfYtX2U2CD
-	RASUJJ6+OssI0sws8J1dYvKNE2AJYQEDifffe9lAbF4BW4mZ6xaxQAxdziLR2msEEReUODnz
-	CVicWcBCYub884wgVzMLSEss/8cBEuYU0Ja4++gVO8ShShKPX7yFeqBW4vPfZ4wTGIVnIZk0
-	C8mkWQiTFjAyr2IUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAhMJduO/dyyg3Hlq496hxiZOBgP
-	MUpwMCuJ8OouZE0X4k1JrKxKLcqPLyrNSS0+xGgKDIqJzFKiyfnAZJZXEm9oZmBqaGJmaWBq
-	aWasJM7LduV8mpBAemJJanZqakFqEUwfEwenVANTWURI47xy3SfyZyU/JXxsrD4kc9h3l5DR
-	8wW17XNXXbc53LJzWcO03Dfv6vcIuH1ymxmzeMaKL23HfRgqpDUu9hw/f9aL+9m9LWsNvY0v
-	L43jWHR40kbB42wX6t+ce7BgUc68miveObM/BOzwOxfkOYmvU11acbora9id8OvRpkV7ev/t
-	uJ7vu1Gp97nC/t8cSWfmxfV6f3jy9p95fEzwlzt3Z7GVHO/ZE8I3e8fB/t/O8e7XLuzKbeSv
-	Fpvz6sfGy/5OpQ36c5Rl1u4yPLHvRtLDE39/tLy7+8d/n5Qf216bhYFtN0Jfiv2ptA2R4FD9
-	r7tTWW3u5iVz+KR5OlbfdZWbssfhE0N6KrfE5dWyHEosxRmJhlrMRcWJAGrl7aGuAwAA
-X-CMS-MailID: 20241011122104eucas1p2f5cdb80296ef765dd2e4fda6797017de
-X-Msg-Generator: CA
-X-RootMTR: 20241010092019eucas1p157b87b63e91cd2294df4a8f8e2de4cdf
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241010092019eucas1p157b87b63e91cd2294df4a8f8e2de4cdf
-References: <20241004123027.GA19168@lst.de>
-	<20241007101011.boufh3tipewgvuao@ArmHalley.local>
-	<CANr-nt3TA75MSvTNWP3SwBh60dBwJYztHJL5LZvROa-j9Lov7g@mail.gmail.com>
-	<97bd78a896b748b18e21e14511e8e0f4@CAMSVWEXC02.scsc.local>
-	<CANr-nt11OJfLRFr=rzH0LyRUzVD9ZFLKsgree=Xqv__nWerVkg@mail.gmail.com>
-	<20241010071327.rnh2wsuqdvcu2tx4@ArmHalley.local>
-	<CGME20241010092019eucas1p157b87b63e91cd2294df4a8f8e2de4cdf@eucas1p1.samsung.com>
-	<20241010092010.GC9287@lst.de>
-	<20241010122232.r2omntepzkmtmx7p@ArmHalley.local>
-	<20241011085631.GA4039@lst.de>
 
-On 11.10.2024 10:56, Christoph Hellwig wrote:
->On Thu, Oct 10, 2024 at 02:22:32PM +0200, Javier Gonzalez wrote:
->> Passthru is great for prototyping and getting insights on end-to-end
->> applicability. We see though that it is difficult to get a full solution
->> based on it, unless people implement a use-space layer tailored to their
->> use-case (e.g., a version SPDK's bdev). After the POC phase, most folks
->> that can use passthru prefer to move to block - with a validated
->> use-case it should be easier to get things upstream.
->>
->> This is exactly where we are now.
->
->That's a lot of marketing babble :)    What exact thing is missing
->from the passthrough interface when using say spdx over io_uring?
+On Fri, 2024-10-11 at 12:15 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Thu, Oct 10, 2024 at 03:28:12PM -0400, Trond Myklebust wrote:
+> > On Thu, 2024-10-10 at 17:26 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> > > When a filesystem manages its own inode numbers, like NFS's
+> > > fileid
+> > > shown
+> > > to user space with getattr(), other part of the kernel may still
+> > > expose
+> > > the private inode->ino through kernel logs and audit.
+> > >=20
+> > > Another issue is on 32-bit architectures, on which ino_t is 32
+> > > bits,
+> > > whereas the user space's view of an inode number can still be 64
+> > > bits.
+> > >=20
+> > > Add a new inode_get_ino() helper calling the new struct
+> > > inode_operations' get_ino() when set, to get the user space's
+> > > view of
+> > > an
+> > > inode number.=C2=A0 inode_get_ino() is called by generic_fillattr().
+> > >=20
+> > > Implement get_ino() for NFS.
+> > >=20
+> > > Cc: Trond Myklebust <trondmy@kernel.org>
+> > > Cc: Anna Schumaker <anna@kernel.org>
+> > > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Cc: Jan Kara <jack@suse.cz>
+> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > ---
+> > >=20
+> > > I'm not sure about nfs_namespace_getattr(), please review
+> > > carefully.
+> > >=20
+> > > I guess there are other filesystems exposing inode numbers
+> > > different
+> > > than inode->i_ino, and they should be patched too.
+> > > ---
+> > > =C2=A0fs/nfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0 | 6 ++++--
+> > > =C2=A0fs/nfs/internal.h=C2=A0 | 1 +
+> > > =C2=A0fs/nfs/namespace.c | 2 ++
+> > > =C2=A0fs/stat.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 2 +-
+> > > =C2=A0include/linux/fs.h | 9 +++++++++
+> > > =C2=A05 files changed, 17 insertions(+), 3 deletions(-)
+> > >=20
+> > > diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+> > > index 542c7d97b235..5dfc176b6d92 100644
+> > > --- a/fs/nfs/inode.c
+> > > +++ b/fs/nfs/inode.c
+> > > @@ -83,18 +83,19 @@ EXPORT_SYMBOL_GPL(nfs_wait_bit_killable);
+> > > =C2=A0
+> > > =C2=A0/**
+> > > =C2=A0 * nfs_compat_user_ino64 - returns the user-visible inode numbe=
+r
+> > > - * @fileid: 64-bit fileid
+> > > + * @inode: inode pointer
+> > > =C2=A0 *
+> > > =C2=A0 * This function returns a 32-bit inode number if the boot
+> > > parameter
+> > > =C2=A0 * nfs.enable_ino64 is zero.
+> > > =C2=A0 */
+> > > -u64 nfs_compat_user_ino64(u64 fileid)
+> > > +u64 nfs_compat_user_ino64(const struct *inode)
+> > > =C2=A0{
+> > > =C2=A0#ifdef CONFIG_COMPAT
+> > > =C2=A0	compat_ulong_t ino;
+> > > =C2=A0#else=09
+> > > =C2=A0	unsigned long ino;
+> > > =C2=A0#endif
+> > > +	u64 fileid =3D NFS_FILEID(inode);
+> > > =C2=A0
+> > > =C2=A0	if (enable_ino64)
+> > > =C2=A0		return fileid;
+> > > @@ -103,6 +104,7 @@ u64 nfs_compat_user_ino64(u64 fileid)
+> > > =C2=A0		ino ^=3D fileid >> (sizeof(fileid)-sizeof(ino)) *
+> > > 8;
+> > > =C2=A0	return ino;
+> > > =C2=A0}
+> > > +EXPORT_SYMBOL_GPL(nfs_compat_user_ino64);
+> > > =C2=A0
+> > > =C2=A0int nfs_drop_inode(struct inode *inode)
+> > > =C2=A0{
+> > > diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+> > > index 430733e3eff2..f5555a71a733 100644
+> > > --- a/fs/nfs/internal.h
+> > > +++ b/fs/nfs/internal.h
+> > > @@ -451,6 +451,7 @@ extern void nfs_zap_acl_cache(struct inode
+> > > *inode);
+> > > =C2=A0extern void nfs_set_cache_invalid(struct inode *inode, unsigned
+> > > long
+> > > flags);
+> > > =C2=A0extern bool nfs_check_cache_invalid(struct inode *, unsigned
+> > > long);
+> > > =C2=A0extern int nfs_wait_bit_killable(struct wait_bit_key *key, int
+> > > mode);
+> > > +extern u64 nfs_compat_user_ino64(const struct *inode);
+> > > =C2=A0
+> > > =C2=A0#if IS_ENABLED(CONFIG_NFS_LOCALIO)
+> > > =C2=A0/* localio.c */
+> > > diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
+> > > index e7494cdd957e..d9b1e0606833 100644
+> > > --- a/fs/nfs/namespace.c
+> > > +++ b/fs/nfs/namespace.c
+> > > @@ -232,11 +232,13 @@ nfs_namespace_setattr(struct mnt_idmap
+> > > *idmap,
+> > > struct dentry *dentry,
+> > > =C2=A0const struct inode_operations nfs_mountpoint_inode_operations =
+=3D
+> > > {
+> > > =C2=A0	.getattr	=3D nfs_getattr,
+> > > =C2=A0	.setattr	=3D nfs_setattr,
+> > > +	.get_ino	=3D nfs_compat_user_ino64,
+> > > =C2=A0};
+> > > =C2=A0
+> > > =C2=A0const struct inode_operations nfs_referral_inode_operations =3D=
+ {
+> > > =C2=A0	.getattr	=3D nfs_namespace_getattr,
+> > > =C2=A0	.setattr	=3D nfs_namespace_setattr,
+> > > +	.get_ino	=3D nfs_compat_user_ino64,
+> > > =C2=A0};
+> > > =C2=A0
+> > > =C2=A0static void nfs_expire_automounts(struct work_struct *work)
+> > > diff --git a/fs/stat.c b/fs/stat.c
+> > > index 41e598376d7e..05636919f94b 100644
+> > > --- a/fs/stat.c
+> > > +++ b/fs/stat.c
+> > > @@ -50,7 +50,7 @@ void generic_fillattr(struct mnt_idmap *idmap,
+> > > u32
+> > > request_mask,
+> > > =C2=A0	vfsgid_t vfsgid =3D i_gid_into_vfsgid(idmap, inode);
+> > > =C2=A0
+> > > =C2=A0	stat->dev =3D inode->i_sb->s_dev;
+> > > -	stat->ino =3D inode->i_ino;
+> > > +	stat->ino =3D inode_get_ino(inode);
+> > > =C2=A0	stat->mode =3D inode->i_mode;
+> > > =C2=A0	stat->nlink =3D inode->i_nlink;
+> > > =C2=A0	stat->uid =3D vfsuid_into_kuid(vfsuid);
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index e3c603d01337..0eba09a21cf7 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -2165,6 +2165,7 @@ struct inode_operations {
+> > > =C2=A0			=C2=A0=C2=A0=C2=A0 struct dentry *dentry, struct
+> > > fileattr
+> > > *fa);
+> > > =C2=A0	int (*fileattr_get)(struct dentry *dentry, struct
+> > > fileattr
+> > > *fa);
+> > > =C2=A0	struct offset_ctx *(*get_offset_ctx)(struct inode
+> > > *inode);
+> > > +	u64 (*get_ino)(const struct inode *inode);
+> > > =C2=A0} ____cacheline_aligned;
+> > > =C2=A0
+> > > =C2=A0static inline int call_mmap(struct file *file, struct
+> > > vm_area_struct
+> > > *vma)
+> > > @@ -2172,6 +2173,14 @@ static inline int call_mmap(struct file
+> > > *file,
+> > > struct vm_area_struct *vma)
+> > > =C2=A0	return file->f_op->mmap(file, vma);
+> > > =C2=A0}
+> > > =C2=A0
+> > > +static inline u64 inode_get_ino(struct inode *inode)
+> > > +{
+> > > +	if (unlikely(inode->i_op->get_ino))
+> > > +		return inode->i_op->get_ino(inode);
+> > > +
+> > > +	return inode->i_ino;
+> > > +}
+> > > +
+> > > =C2=A0extern ssize_t vfs_read(struct file *, char __user *, size_t,
+> > > loff_t
+> > > *);
+> > > =C2=A0extern ssize_t vfs_write(struct file *, const char __user *,
+> > > size_t,
+> > > loff_t *);
+> > > =C2=A0extern ssize_t vfs_copy_file_range(struct file *, loff_t ,
+> > > struct
+> > > file *,
+> >=20
+> > There should be no need to add this callback to generic_fillattr().
+> >=20
+> > generic_fillattr() is a helper function for use by the filesystems
+> > themselves. It should never be called from any outside functions,
+> > as
+> > the inode number would be far from the only attribute that will be
+> > incorrect.
+>=20
+> This change will not impact filesystems except the ones that
+> implement the new
+> get_ino() operation, and I suspect NFS is not or will not be the only
+> one.=C2=A0 We
+> need to investigate on other filesystems but I wanted to get a first
+> feedback
+> before.=C2=A0 Using get_ino() in generic_fillattr() should guarantee a
+> consistent
+> getattr() wrt inode numbers.=C2=A0 I forgot to remove the now-useless cal=
+l
+> to
+> nfs_compat_user_ino64() in nfs_getattr() for this to make sense:
 
-The block layer provides a lot of functionality that passthru cannot
-provide. A simple example would be splits. You know this :)
+You're missing my point. From the point of view of NFS, all you're
+doing is to replace a relatively fast direct call to
+nfs_compat_user_ino64() with a much slower callback. There is no
+benefit at all to anyone in doing so.
 
-I am sure Jens and Keith can give you more specifics on their particular
-reasons.
+Yes, other filesystems may also want to replace this and/or other
+fields in the "struct kstat" that they return, but none of them should
+have a problem with doing that after the actual call to
+generic_fillattr().
 
->
->> If you saw the comments from Christian on the inode space, there are a
->> few plumbing challenges. Do you have any patches we could look at?
->
->I'm not sure what you refer to here.
 
-This from Christian:
-   https://lore.kernel.org/all/20240903-erfassen-bandmitglieder-32dfaeee66b2@brauner/
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trond.myklebust@hammerspace.com
+
+
 
