@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-31794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A8999B179
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 09:19:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71A299B183
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 09:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F2B1C224CA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 07:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C888E1C22558
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 07:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5251F13C9A9;
-	Sat, 12 Oct 2024 07:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5A813C9A9;
+	Sat, 12 Oct 2024 07:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k68AbDmR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FN4xUxUK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126AF126BE1;
-	Sat, 12 Oct 2024 07:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7B412CDA5;
+	Sat, 12 Oct 2024 07:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728717551; cv=none; b=GYwIAjFR+t0DjTQINbyp4VKA4eUfd600wKya35k8j7h+jX6Ck+LBxdC3ImeHgyBKsqWUN2jmitWSt7n/xH3Y2kLXUorSANISd23Q8Zmp8ESkpJpsNPzAvvXirS7KLz3Dk44ZLtCl5LBnJnkzgVh0H6PF4UyTIarPqIqtYIXUNio=
+	t=1728717699; cv=none; b=DFS7kIwKYg1QRKI4BOmJszl2mB/NJeHzINFomk+OPKaF16lOFzQhJuVVP1qtUbWuzzA2ATAoQHQWDPNx/9MN1E8LmkJ4xTcrQ4m5BDJG1EGsiLOHFIYf+TkM/VL7dkf/z/oNP5aQgIz1oVBXAq1FWiLqSbp8xoRw0BqLVpzj8m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728717551; c=relaxed/simple;
-	bh=Qfo9EQK76ErqcP00KRf6TIgx+TAEBQJi4jZL980MklQ=;
+	s=arc-20240116; t=1728717699; c=relaxed/simple;
+	bh=ecbVtV23lVFHYfzJIZT2bYLRIVh2pTpPLqvxS0n2m0s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lUvbw/O/Oj7cFBtqqdDm2vOXcxmhGDFb044KAW4ZaVq8WcizdwZc2EKRkjw1iJwsgih6M5Lk2X4zNcH6thi7EZ0ncnlUeykb2nD+HFoMfRflbzBHQzR6xj18ka7y6taUV3eIE5EQ45peWxiK1faayGnHdqSL3ZpK0ybEn51KD0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k68AbDmR; arc=none smtp.client-ip=209.85.222.182
+	 To:Cc:Content-Type; b=b+/Nnq4DneYoKUYvgg10GzjvlReWeji5LqsnOwqlel63igBwexbUMNw8Y4aCu87pmmHfs06PQKhYZeydMxhraYB0+VcEC4r2NAx+wf4Yo7fi8Ni9QmetTMMJ9RHShcfV0b8AmVa4DKN8l5aVppHVnfb87pFWBLCHLlQrV3rWlsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FN4xUxUK; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7ac83a98e5eso233908185a.0;
-        Sat, 12 Oct 2024 00:19:09 -0700 (PDT)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b1109e80f8so198530785a.0;
+        Sat, 12 Oct 2024 00:21:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728717549; x=1729322349; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728717696; x=1729322496; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gTWk7opqhOjqGO2ekzAnC4nQnKlbq9yyE9WDuYCehig=;
-        b=k68AbDmROzmEVnPrnEryd9+ANremdT0muHwuN4vxR4B8t10K0GIY34ZWx/gKb2ujyY
-         ewWUURnINqJW/IzrLDElH8XXp7qABK1gofY4R9w40fafnUJfzMEiOoLhOfTF+6QiG02x
-         TeYBH2ew7ubgLl93UP7Cy8v3LNqCdZlsKq34UL/gVS5+C+bP5hUEO5etSepWCVpW8Sn+
-         zN5M4UPBbzsbBKyEvCCfeB4O85zC7vYANOVga58ZKf16r+JBi811icRF5auKA0WUHonR
-         q9wNDCg4L1mmA+QJO1thde6jragV/1U+ONBpvJfKe7O5tnvvTm9krQwdx3NjQYlf4cEh
-         bHqw==
+        bh=W8mOG9MbiudhfLmzoSHfBQjhy604ut/s3KlqRdwyU0k=;
+        b=FN4xUxUKTgzGUUIY2uTbWvdVKH4AmeogqqA1fntF76QCssAT2LnyIUl/OoiGT7TntK
+         xRlWcfNDWC3jypq16WypoZi/RlhJfQJ6s1o7I4ias34HSGUF9FloVcSTRGVJNimH7MU7
+         N56Mqza8TRAbwiKeVVSF43/vvLwELtJ2+r1lrPXdVW8I+Qm+9HBEEJZRJqN5vN3HZmz+
+         1CAYcJCLUuS2grkgKcGvx6dnjJcxWN56FmdqGK03D++GthbZzNuorn9Po6Hij8oaEPFT
+         szSWHITfP7S9ltsFTpySSh9a63YvZVKRlzmtqmqtY+YFt8LEaKarWbqwVpYbAy9T6lbc
+         /tzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728717549; x=1729322349;
+        d=1e100.net; s=20230601; t=1728717696; x=1729322496;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gTWk7opqhOjqGO2ekzAnC4nQnKlbq9yyE9WDuYCehig=;
-        b=nPrFvIQliu8RZyrATdSK6nu+AIB9CDt/qA9DIJG1rvBaBDt9MKaW9PLfpQU/2bAk8l
-         c3Z/TPhD86vkFm2tiDayLxDPCHYSEceziwNw7iI3AYE+xjRahnp2rqc+UsKQAkdP8Xid
-         FQrxfJrOGdvoarcjmcy3w9t1+FVyjEIoGrUVa10ZUidt20ZMieHOjcHJnoLiHDzMk2df
-         zcpCgVng4gh6Sru4erzvCj9xJy2L//bkqJfqPtVjGonJsMPlUBan26qboOIb16l9euUp
-         lZYuJXYczSRbtlskkHJ62VA15I0Mc/HTfWeMfgu42VqogaXrTRqf5r064IlD7w4AVKRw
-         loyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMytoFx2LvFyuKeUW/tVAfFUtVjb0kwqupF5F8ZZZ94xptXBveIJV6OZbKENKIfaadE1Vf8TlaRgXPmaYuTw==@vger.kernel.org, AJvYcCXXUJxp7ljbitH5IRmreZjIhYh6rDv3BCDzeAlaBGKewhG6hOJa/EjqhPm+mPW/7Dfall0WiKyg+ueFSB0n@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgl365XZ9LreWt3TpcNKam3Da5LpYcmimePVth3FXhuWqhW5F6
-	7TvU1cFU90zCK5OsTTJ70df2q7QkNEeSC3HmaoSje0R9h8KBa1x9DPf1N8ktGoNlQhmPH6dpL4x
-	N4mhjZQX8iB/U8LQpmOwWQueI/u/kHSinO88=
-X-Google-Smtp-Source: AGHT+IFCr0S8qiwnzY2fQZKMME8ZxQ6Dhru6RJVEkYxx7rN9GAihBrXTJRPRzAJkdAfHPysM+Dam3a8ndw+oqkoINQE=
-X-Received: by 2002:a05:620a:1926:b0:7b1:1216:ef33 with SMTP id
- af79cd13be357-7b1124a6247mr1387961585a.7.1728717548571; Sat, 12 Oct 2024
- 00:19:08 -0700 (PDT)
+        bh=W8mOG9MbiudhfLmzoSHfBQjhy604ut/s3KlqRdwyU0k=;
+        b=cmZkPnw+ymJQnvK9j4hLDINrjrHftahX1O3riGKPTJPoonKE35smozmqr39q2/0G9U
+         5RPk1IUs7CiCECCpXjhLu/Z89c3X3P1Kgylj05/Y6awBiKgOHFFRLOazInTeoseJ5ApX
+         3vxC42/5yqzs9THdLN41ARCG5MnhHYOldqrnOCNW1IHx9+uoTTnWrNu754iZ+MMNSXwT
+         CMnS41EKKwqHolNlARMfSOIN8V7zywI0ztrUHgsbsVUT4dy2qSFcZiIV2W7CvI8TtyNx
+         3pA2x/3aTosQfU6Zt49IAC2HNw57XqNv3oXT4kwotm0iL09Jt32Rzu5CKdP/b3VfSTKl
+         Ivug==
+X-Forwarded-Encrypted: i=1; AJvYcCU2oBS1RLRN8gbh91zUXhwf/IYH1SrJKDjZ+bv+eGi+IwhS26iA+ho554ycfW00lWR1xAY0ebj6jLqWM2O9@vger.kernel.org, AJvYcCUyTYStJ6IlAr4J7+wW0FHFUIXRkpCdSp3O5PBw/MuJyfpM1GWh8awK5kS1iuDUn0JdrVFOHcwbE9+i9hUC7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YykxgMPBAiMgI47Y32KEmPKhmNNMNHoWkTHAJLaxTnLx6ky0wBQ
+	pVmmriJjUmDYimb+f7RVMVYlwFcf4YwNRm4lb0MvyuBCosXIQrSel/fc8L5v8vrIO6MJz1Dol1g
+	7LsvXeqMG2Wv/dLTevUC7NvfTaCs=
+X-Google-Smtp-Source: AGHT+IGjnT7YGImFjIEXFUMZV+sxVlVJd2ImPBReiAy29nuw3ytAfzXFRFKC81XvvV2gil7w07uMd7n0Mr1abG71dWI=
+X-Received: by 2002:a05:620a:4587:b0:7a4:f2e9:814a with SMTP id
+ af79cd13be357-7b12101af5dmr325732785a.54.1728717696486; Sat, 12 Oct 2024
+ 00:21:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011-work-overlayfs-v2-0-1b43328c5a31@kernel.org> <20241011-work-overlayfs-v2-4-1b43328c5a31@kernel.org>
-In-Reply-To: <20241011-work-overlayfs-v2-4-1b43328c5a31@kernel.org>
+References: <20241011-work-overlayfs-v2-0-1b43328c5a31@kernel.org> <20241011-work-overlayfs-v2-1-1b43328c5a31@kernel.org>
+In-Reply-To: <20241011-work-overlayfs-v2-1-1b43328c5a31@kernel.org>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 12 Oct 2024 09:18:57 +0200
-Message-ID: <CAOQ4uxjqwh3jzxrZFBdivsAjeB0d9BumN4ur9A53u07q=A7Kkg@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 4/4] selftests: add overlayfs fd mounting selftests
+Date: Sat, 12 Oct 2024 09:21:25 +0200
+Message-ID: <CAOQ4uxgGiXN-X1KbZZT=pnbhRbUSPNUJscVHn9J=Fii6fZs-cw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 1/4] fs: add helper to use mount option as path or fd
 To: Christian Brauner <brauner@kernel.org>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Josef Bacik <josef@toxicpanda.com>, 
 	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
@@ -86,205 +86,90 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Oct 11, 2024 at 11:46=E2=80=AFPM Christian Brauner <brauner@kernel.=
 org> wrote:
 >
+> Allow filesystems to use a mount option either as a
+> path or a file descriptor.
+>
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Very cool!
+Looks sane
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
 > ---
->  .../selftests/filesystems/overlayfs/.gitignore     |   1 +
->  .../selftests/filesystems/overlayfs/Makefile       |   2 +-
->  .../filesystems/overlayfs/set_layers_via_fds.c     | 122 +++++++++++++++=
-++++++
->  .../selftests/filesystems/overlayfs/wrappers.h     |   4 +
->  4 files changed, 128 insertions(+), 1 deletion(-)
+>  fs/fs_parser.c            | 19 +++++++++++++++++++
+>  include/linux/fs_parser.h |  5 ++++-
+>  2 files changed, 23 insertions(+), 1 deletion(-)
 >
-> diff --git a/tools/testing/selftests/filesystems/overlayfs/.gitignore b/t=
-ools/testing/selftests/filesystems/overlayfs/.gitignore
-> index 52ae618fdd980ee22424d35d79f077077b132401..e23a18c8b37f2cdbb121496b1=
-df1faffd729ad79 100644
-> --- a/tools/testing/selftests/filesystems/overlayfs/.gitignore
-> +++ b/tools/testing/selftests/filesystems/overlayfs/.gitignore
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  dev_in_maps
-> +set_layers_via_fds
-> diff --git a/tools/testing/selftests/filesystems/overlayfs/Makefile b/too=
-ls/testing/selftests/filesystems/overlayfs/Makefile
-> index 56b2b48a765b1d6706faee14616597ed0315f267..e8d1adb021af44588dd7af104=
-9de66833bb584ce 100644
-> --- a/tools/testing/selftests/filesystems/overlayfs/Makefile
-> +++ b/tools/testing/selftests/filesystems/overlayfs/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->
-> -TEST_GEN_PROGS :=3D dev_in_maps
-> +TEST_GEN_PROGS :=3D dev_in_maps set_layers_via_fds
->
->  CFLAGS :=3D -Wall -Werror
->
-> diff --git a/tools/testing/selftests/filesystems/overlayfs/set_layers_via=
-_fds.c b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d3b497eea5e5c9f718caa4957=
-f7fec7c40970502
-> --- /dev/null
-> +++ b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-> @@ -0,0 +1,122 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#define _GNU_SOURCE
-> +#define __SANE_USERSPACE_TYPES__ // Use ll64
-> +
-> +#include <fcntl.h>
-> +#include <sched.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +#include <sys/stat.h>
-> +#include <sys/mount.h>
-> +#include <unistd.h>
-> +
-> +#include "../../kselftest_harness.h"
-> +#include "log.h"
-> +#include "wrappers.h"
-> +
-> +FIXTURE(set_layers_via_fds) {
-> +};
-> +
-> +FIXTURE_SETUP(set_layers_via_fds)
-> +{
-> +       ASSERT_EQ(mkdir("/set_layers_via_fds", 0755), 0);
-> +}
-> +
-> +FIXTURE_TEARDOWN(set_layers_via_fds)
-> +{
-> +       umount2("/set_layers_via_fds", 0);
-> +       ASSERT_EQ(rmdir("/set_layers_via_fds"), 0);
-> +}
-> +
-> +TEST_F(set_layers_via_fds, set_layers_via_fds)
-> +{
-> +       int fd_context, fd_tmpfs, fd_overlay;
-> +       int layer_fds[5] =3D { -EBADF, -EBADF, -EBADF, -EBADF, -EBADF };
-> +       bool layers_found[5] =3D { false, false, false, false, false };
-> +       size_t len =3D 0;
-> +       char *line =3D NULL;
-> +       FILE *f_mountinfo;
-> +
-> +       ASSERT_EQ(unshare(CLONE_NEWNS), 0);
-> +       ASSERT_EQ(sys_mount(NULL, "/", NULL, MS_SLAVE | MS_REC, NULL), 0)=
-;
-> +
-> +       fd_context =3D sys_fsopen("tmpfs", 0);
-> +       ASSERT_GE(fd_context, 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
-L, 0), 0);
-> +       fd_tmpfs =3D sys_fsmount(fd_context, 0, 0);
-> +       ASSERT_GE(fd_tmpfs, 0);
-> +       ASSERT_EQ(close(fd_context), 0);
-> +
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "w", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "u", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l1", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l2", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l3", 0755), 0);
-> +
-> +       layer_fds[0] =3D openat(fd_tmpfs, "w", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[0], 0);
-> +
-> +       layer_fds[1] =3D openat(fd_tmpfs, "u", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[1], 0);
-> +
-> +       layer_fds[2] =3D openat(fd_tmpfs, "l1", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[2], 0);
-> +
-> +       layer_fds[3] =3D openat(fd_tmpfs, "l2", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[3], 0);
-> +
-> +       layer_fds[4] =3D openat(fd_tmpfs, "l3", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[4], 0);
-> +
-> +       ASSERT_EQ(sys_move_mount(fd_tmpfs, "", -EBADF, "/tmp", MOVE_MOUNT=
-_F_EMPTY_PATH), 0);
-> +       ASSERT_EQ(close(fd_tmpfs), 0);
-> +
-> +       fd_context =3D sys_fsopen("overlay", 0);
-> +       ASSERT_GE(fd_context, 0);
-> +
-> +       ASSERT_NE(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir", N=
-ULL, layer_fds[2]), 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "workdir", NU=
-LL, layer_fds[0]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "upperdir", N=
-ULL, layer_fds[1]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
-NULL, layer_fds[2]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
-NULL, layer_fds[3]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
-NULL, layer_fds[4]), 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
-L, 0), 0);
-> +
-> +       fd_overlay =3D sys_fsmount(fd_context, 0, 0);
-> +       ASSERT_GE(fd_overlay, 0);
-> +
-> +       ASSERT_EQ(sys_move_mount(fd_overlay, "", -EBADF, "/set_layers_via=
-_fds", MOVE_MOUNT_F_EMPTY_PATH), 0);
-> +
-> +       f_mountinfo =3D fopen("/proc/self/mountinfo", "r");
-> +       ASSERT_NE(f_mountinfo, NULL);
-> +
-> +       while (getline(&line, &len, f_mountinfo) !=3D -1) {
-> +               char *haystack =3D line;
-> +
-> +               if (strstr(haystack, "workdir=3D/tmp/w"))
-> +                       layers_found[0] =3D true;
-> +               if (strstr(haystack, "upperdir=3D/tmp/u"))
-> +                       layers_found[1] =3D true;
-> +               if (strstr(haystack, "lowerdir+=3D/tmp/l1"))
-> +                       layers_found[2] =3D true;
-> +               if (strstr(haystack, "lowerdir+=3D/tmp/l2"))
-> +                       layers_found[3] =3D true;
-> +               if (strstr(haystack, "lowerdir+=3D/tmp/l3"))
-> +                       layers_found[4] =3D true;
-> +       }
-> +       free(line);
-> +
-> +       for (int i =3D 0; i < 5; i++) {
-> +               ASSERT_EQ(layers_found[i], true);
-> +               ASSERT_EQ(close(layer_fds[i]), 0);
-> +       }
-> +
-> +       ASSERT_EQ(close(fd_context), 0);
-> +       ASSERT_EQ(close(fd_overlay), 0);
-> +       ASSERT_EQ(fclose(f_mountinfo), 0);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/filesystems/overlayfs/wrappers.h b/t=
-ools/testing/selftests/filesystems/overlayfs/wrappers.h
-> index 4f99e10f7f018fd9a7be5263f68d34807da4c53c..071b95fd2ac0ad7b02d90e8e8=
-9df73fd27be69c3 100644
-> --- a/tools/testing/selftests/filesystems/overlayfs/wrappers.h
-> +++ b/tools/testing/selftests/filesystems/overlayfs/wrappers.h
-> @@ -32,6 +32,10 @@ static inline int sys_mount(const char *src, const cha=
-r *tgt, const char *fst,
->         return syscall(__NR_mount, src, tgt, fst, flags, data);
+> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> index 24727ec34e5aa434364e87879cccf9fe1ec19d37..a017415d8d6bc91608ece5d42=
+fa4bea26e47456b 100644
+> --- a/fs/fs_parser.c
+> +++ b/fs/fs_parser.c
+> @@ -308,6 +308,25 @@ int fs_param_is_fd(struct p_log *log, const struct f=
+s_parameter_spec *p,
 >  }
+>  EXPORT_SYMBOL(fs_param_is_fd);
 >
-> +#ifndef MOVE_MOUNT_F_EMPTY_PATH
-> +#define MOVE_MOUNT_F_EMPTY_PATH 0x00000004 /* Empty from path permitted =
-*/
-> +#endif
+> +int fs_param_is_fd_or_path(struct p_log *log, const struct fs_parameter_=
+spec *p,
+> +                          struct fs_parameter *param,
+> +                          struct fs_parse_result *result)
+> +{
+> +       switch (param->type) {
+> +       case fs_value_is_string:
+> +               return fs_param_is_string(log, p, param, result);
+> +       case fs_value_is_file:
+> +               result->uint_32 =3D param->dirfd;
+> +               if (result->uint_32 <=3D INT_MAX)
+> +                       return 0;
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +       return fs_param_bad_value(log, param);
+> +}
+> +EXPORT_SYMBOL(fs_param_is_fd_or_path);
 > +
->  static inline int sys_move_mount(int from_dfd, const char *from_pathname=
+>  int fs_param_is_uid(struct p_log *log, const struct fs_parameter_spec *p=
 ,
->                                  int to_dfd, const char *to_pathname,
->                                  unsigned int flags)
+>                     struct fs_parameter *param, struct fs_parse_result *r=
+esult)
+>  {
+> diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+> index 6cf713a7e6c6fc2402a68c87036264eaed921432..73fe4e119ee24b3bed1f0cf2b=
+c23d6b31811cb69 100644
+> --- a/include/linux/fs_parser.h
+> +++ b/include/linux/fs_parser.h
+> @@ -28,7 +28,8 @@ typedef int fs_param_type(struct p_log *,
+>   */
+>  fs_param_type fs_param_is_bool, fs_param_is_u32, fs_param_is_s32, fs_par=
+am_is_u64,
+>         fs_param_is_enum, fs_param_is_string, fs_param_is_blob, fs_param_=
+is_blockdev,
+> -       fs_param_is_path, fs_param_is_fd, fs_param_is_uid, fs_param_is_gi=
+d;
+> +       fs_param_is_path, fs_param_is_fd, fs_param_is_uid, fs_param_is_gi=
+d,
+> +       fs_param_is_fd_or_path;
+>
+>  /*
+>   * Specification of the type of value a parameter wants.
+> @@ -133,6 +134,8 @@ static inline bool fs_validate_description(const char=
+ *name,
+>  #define fsparam_bdev(NAME, OPT)        __fsparam(fs_param_is_blockdev, N=
+AME, OPT, 0, NULL)
+>  #define fsparam_path(NAME, OPT)        __fsparam(fs_param_is_path, NAME,=
+ OPT, 0, NULL)
+>  #define fsparam_fd(NAME, OPT)  __fsparam(fs_param_is_fd, NAME, OPT, 0, N=
+ULL)
+> +#define fsparam_fd_or_path(NAME, OPT) \
+> +                               __fsparam(fs_param_is_fd_or_path, NAME, O=
+PT, 0, NULL)
+>  #define fsparam_uid(NAME, OPT) __fsparam(fs_param_is_uid, NAME, OPT, 0, =
+NULL)
+>  #define fsparam_gid(NAME, OPT) __fsparam(fs_param_is_gid, NAME, OPT, 0, =
+NULL)
+>
 >
 > --
 > 2.45.2
