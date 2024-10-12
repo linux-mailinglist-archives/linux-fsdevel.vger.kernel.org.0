@@ -1,171 +1,292 @@
-Return-Path: <linux-fsdevel+bounces-31793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8712299B16C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 09:09:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A8999B179
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 09:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D49D1F22AD0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 07:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F2B1C224CA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 07:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCA113B7BC;
-	Sat, 12 Oct 2024 07:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5251F13C9A9;
+	Sat, 12 Oct 2024 07:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZgZ/g0tu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k68AbDmR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D6C10940;
-	Sat, 12 Oct 2024 07:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126AF126BE1;
+	Sat, 12 Oct 2024 07:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728716961; cv=none; b=UnTvuJUKi2B0j4E2WDfsVFYWT63wVmmCkrqnEoJFtb02duB47V8MDHMpsEP6xNqd1j6TM3bpBK0BUAvu9bhKH1mX4OSyvECJy+CZb5nPt8cdjo3GR66vcGhfySjtcBHbjJofsv91Daq0uIv4AKOerV/2mgz061if2LP7fZohZ/Y=
+	t=1728717551; cv=none; b=GYwIAjFR+t0DjTQINbyp4VKA4eUfd600wKya35k8j7h+jX6Ck+LBxdC3ImeHgyBKsqWUN2jmitWSt7n/xH3Y2kLXUorSANISd23Q8Zmp8ESkpJpsNPzAvvXirS7KLz3Dk44ZLtCl5LBnJnkzgVh0H6PF4UyTIarPqIqtYIXUNio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728716961; c=relaxed/simple;
-	bh=n/+IHlvyrFv43hNppw6NeAufbfPHhTMVSRJ/cJt+RDM=;
+	s=arc-20240116; t=1728717551; c=relaxed/simple;
+	bh=Qfo9EQK76ErqcP00KRf6TIgx+TAEBQJi4jZL980MklQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hCpZlfr631AtRttvMNff6xDYTI5I1D/gx4Ijn+jbyeqGKPTTFfyr3JXy07c8jyXAm5zwidoPx3/j5mPlPCQHvW/PtLujBRck2g3h0kXDgxmGkwiIK7z+JVEHD3OIdwWLRxQY9RQL0/ZUintF7C5YD3wQj8+GoiKTaGsqwNzjRXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZgZ/g0tu; arc=none smtp.client-ip=209.85.222.179
+	 To:Cc:Content-Type; b=lUvbw/O/Oj7cFBtqqdDm2vOXcxmhGDFb044KAW4ZaVq8WcizdwZc2EKRkjw1iJwsgih6M5Lk2X4zNcH6thi7EZ0ncnlUeykb2nD+HFoMfRflbzBHQzR6xj18ka7y6taUV3eIE5EQ45peWxiK1faayGnHdqSL3ZpK0ybEn51KD0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k68AbDmR; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7afc658810fso239994485a.3;
-        Sat, 12 Oct 2024 00:09:20 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7ac83a98e5eso233908185a.0;
+        Sat, 12 Oct 2024 00:19:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728716959; x=1729321759; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728717549; x=1729322349; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ypi/Dg1wLPrnyeTGvBf3rX1Xz7l1FKvNt4NNG762eZI=;
-        b=ZgZ/g0tu77g5WRHpTPCKRb66xwdHw2F2GvDzVgEZL04j7el7KuZ9A0Goa6jNzbpobX
-         CpJTgca5RbBnnL1RrpMTa4wx5PRoklsEP3TkBNxUtCyD2Woe6JbmMdVVE0LGzB7CGWeQ
-         6nMTQ+T53Yhk/RuY8mkwLodMXrEm7FlGPAVBcXjeW60agmq66Mq8b5ZDaaZLMCxKSUbn
-         YjQ/FAtxDZsql3i7fdEH2xCJyYlNx7nZW+dOxGf9fLihikETE2tv4NfvtyoKGLfIFq3I
-         5/9MJbTH1SIyxCv7cQbfYRad1vyXXYWWcxlnq16fLAgih7/E50mgHLmFLYJBKaJVBA5S
-         EEYA==
+        bh=gTWk7opqhOjqGO2ekzAnC4nQnKlbq9yyE9WDuYCehig=;
+        b=k68AbDmROzmEVnPrnEryd9+ANremdT0muHwuN4vxR4B8t10K0GIY34ZWx/gKb2ujyY
+         ewWUURnINqJW/IzrLDElH8XXp7qABK1gofY4R9w40fafnUJfzMEiOoLhOfTF+6QiG02x
+         TeYBH2ew7ubgLl93UP7Cy8v3LNqCdZlsKq34UL/gVS5+C+bP5hUEO5etSepWCVpW8Sn+
+         zN5M4UPBbzsbBKyEvCCfeB4O85zC7vYANOVga58ZKf16r+JBi811icRF5auKA0WUHonR
+         q9wNDCg4L1mmA+QJO1thde6jragV/1U+ONBpvJfKe7O5tnvvTm9krQwdx3NjQYlf4cEh
+         bHqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728716959; x=1729321759;
+        d=1e100.net; s=20230601; t=1728717549; x=1729322349;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ypi/Dg1wLPrnyeTGvBf3rX1Xz7l1FKvNt4NNG762eZI=;
-        b=UVkkGq3yMNpTSjo1/ethtjpPMwg1dQnnKAorEFO33WxKfznHwabn4xMRcYJ5XW8r5E
-         dig7Fjrm8HhUJyrRemHlzqwDx1Zzw0sbAa++c6QtQV9sDZOZ8cYSbSBw9+MIUlraDncj
-         WyMof8uyhcRBqRQHnqZTX7cWetZh8R9yI05GSla8295zxygkzSThL3Dd8MxMuU74KBAX
-         VEaszMOG0lELCKubA5PH1r3Ifpx47iZfQL/9NCH8ZceFsuZfln+8GXRlHhVv1Z+PY8r8
-         IeFY/W6PhEqGJNgDeCADEgPd3Z6+9WxgVT6/qlI8ImfYNVtWSkZxcgb3VzHJE/89E/Q6
-         mXYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUu8voMtM+Fgj85ou+NLncZM8tnsVOtIngpGypi90tpNhWaXfEKepsF2/XAVAIvWhdGw9rBefS/6hrTnF+TTsMqBe7UR1bE@vger.kernel.org, AJvYcCWn/d8iZXhK5Z+RtxuGXoG9B4/rTMhuXNSf4YcsZr1M5MgJ/wj4PB0DXalnoKFxtPVXpo8qPWgL1BhcT3IG@vger.kernel.org, AJvYcCXCSvQ/9cA0M9SIa9P1zsViOXo/N08TTkSSwug8OeHZXKkwnRDjFwttQcuxbVo37t4J9n6Fh7GJAD1dTeDO@vger.kernel.org
-X-Gm-Message-State: AOJu0YymobmIFNjGTyjmtFVax9CAJTpu87zT/V1tJobZjO8RtIyFD0u4
-	KaJiUESenj25oy+Whn2cJ/awKMq/Y5t0FjwJYi0ii/EqQeAv1oObAwcWn29Ko0xeJncjvx3z66P
-	95GVrmdla2KtlVLOp3f1Szfaq2eY=
-X-Google-Smtp-Source: AGHT+IG3JYTfBGf9abnh5e61xwfLmIgrY2uMsu5WtatU44POcZFPBjqylFOv0aOl1OtG+HoQIFGV3gw18RWCfUcZMU8=
-X-Received: by 2002:a05:620a:2415:b0:7a9:b3a0:84a7 with SMTP id
- af79cd13be357-7b11a34309cmr831986985a.12.1728716959013; Sat, 12 Oct 2024
- 00:09:19 -0700 (PDT)
+        bh=gTWk7opqhOjqGO2ekzAnC4nQnKlbq9yyE9WDuYCehig=;
+        b=nPrFvIQliu8RZyrATdSK6nu+AIB9CDt/qA9DIJG1rvBaBDt9MKaW9PLfpQU/2bAk8l
+         c3Z/TPhD86vkFm2tiDayLxDPCHYSEceziwNw7iI3AYE+xjRahnp2rqc+UsKQAkdP8Xid
+         FQrxfJrOGdvoarcjmcy3w9t1+FVyjEIoGrUVa10ZUidt20ZMieHOjcHJnoLiHDzMk2df
+         zcpCgVng4gh6Sru4erzvCj9xJy2L//bkqJfqPtVjGonJsMPlUBan26qboOIb16l9euUp
+         lZYuJXYczSRbtlskkHJ62VA15I0Mc/HTfWeMfgu42VqogaXrTRqf5r064IlD7w4AVKRw
+         loyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMytoFx2LvFyuKeUW/tVAfFUtVjb0kwqupF5F8ZZZ94xptXBveIJV6OZbKENKIfaadE1Vf8TlaRgXPmaYuTw==@vger.kernel.org, AJvYcCXXUJxp7ljbitH5IRmreZjIhYh6rDv3BCDzeAlaBGKewhG6hOJa/EjqhPm+mPW/7Dfall0WiKyg+ueFSB0n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgl365XZ9LreWt3TpcNKam3Da5LpYcmimePVth3FXhuWqhW5F6
+	7TvU1cFU90zCK5OsTTJ70df2q7QkNEeSC3HmaoSje0R9h8KBa1x9DPf1N8ktGoNlQhmPH6dpL4x
+	N4mhjZQX8iB/U8LQpmOwWQueI/u/kHSinO88=
+X-Google-Smtp-Source: AGHT+IFCr0S8qiwnzY2fQZKMME8ZxQ6Dhru6RJVEkYxx7rN9GAihBrXTJRPRzAJkdAfHPysM+Dam3a8ndw+oqkoINQE=
+X-Received: by 2002:a05:620a:1926:b0:7b1:1216:ef33 with SMTP id
+ af79cd13be357-7b1124a6247mr1387961585a.7.1728717548571; Sat, 12 Oct 2024
+ 00:19:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011203722.3749850-1-song@kernel.org> <a083e273353d7bc5742ab0030e5ff1f5@paul-moore.com>
-In-Reply-To: <a083e273353d7bc5742ab0030e5ff1f5@paul-moore.com>
+References: <20241011-work-overlayfs-v2-0-1b43328c5a31@kernel.org> <20241011-work-overlayfs-v2-4-1b43328c5a31@kernel.org>
+In-Reply-To: <20241011-work-overlayfs-v2-4-1b43328c5a31@kernel.org>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 12 Oct 2024 09:09:07 +0200
-Message-ID: <CAOQ4uxhg8zEZ4iOpUigv1paHMXvZNCFv_qTNfg-1CcehjE+7oA@mail.gmail.com>
-Subject: Re: [PATCH] fsnotify, lsm: Separate fsnotify_open_perm() and security_file_open()
-To: Paul Moore <paul@paul-moore.com>
-Cc: Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, jmorris@namei.org, 
-	serge@hallyn.com, kernel-team@fb.com
+Date: Sat, 12 Oct 2024 09:18:57 +0200
+Message-ID: <CAOQ4uxjqwh3jzxrZFBdivsAjeB0d9BumN4ur9A53u07q=A7Kkg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 4/4] selftests: add overlayfs fd mounting selftests
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 11:42=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
+On Fri, Oct 11, 2024 at 11:46=E2=80=AFPM Christian Brauner <brauner@kernel.=
+org> wrote:
 >
-> On Oct 11, 2024 Song Liu <song@kernel.org> wrote:
-> >
-> > Currently, fsnotify_open_perm() is called from security_file_open(). Th=
-is
-> > is not right for CONFIG_SECURITY=3Dn and CONFIG_FSNOTIFY=3Dy case, as
-> > security_file_open() in this combination will be a no-op and not call
-> > fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly=
-.
-> >
-> > Signed-off-by: Song Liu <song@kernel.org>
-> > ---
-> > PS: I didn't included a Fixes tag. This issue was probably introduced 1=
-5
-> > years ago in [1]. If we want to back port this to stable, we will need
-> > another version for older kernel because of [2].
-> >
-> > [1] c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for ac=
-cess decisions")
-> > [2] 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
-> > ---
-> >  fs/open.c           | 4 ++++
-> >  security/security.c | 9 +--------
-> >  2 files changed, 5 insertions(+), 8 deletions(-)
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Nice cleanup, but please finish off the coupling of lsm/fsnotify altogether=
-.
-I would either change the title to "decouple fsnotify from lsm" or
-submit an additional patch with that title.
+Very cool!
 
-diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-index a511f9d8677b..0e36aaf379b7 100644
---- a/fs/notify/fanotify/Kconfig
-+++ b/fs/notify/fanotify/Kconfig
-@@ -15,7 +15,6 @@ config FANOTIFY
- config FANOTIFY_ACCESS_PERMISSIONS
-        bool "fanotify permissions checking"
-        depends on FANOTIFY
--       depends on SECURITY
-        default n
-        help
-           Say Y here is you want fanotify listeners to be able to
-make permissions
-diff --git a/security/security.c b/security/security.c
-index 6875eb4a59fc..8d238ffdeb4a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
- #include <linux/personality.h>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
+> ---
+>  .../selftests/filesystems/overlayfs/.gitignore     |   1 +
+>  .../selftests/filesystems/overlayfs/Makefile       |   2 +-
+>  .../filesystems/overlayfs/set_layers_via_fds.c     | 122 +++++++++++++++=
+++++++
+>  .../selftests/filesystems/overlayfs/wrappers.h     |   4 +
+>  4 files changed, 128 insertions(+), 1 deletion(-)
 >
-> This looks fine to me, if we can get an ACK from the VFS folks I can
-> merge this into the lsm/stable-6.12 tree and send it to Linus, or the
-> VFS folks can do it if they prefer (my ACK is below just in case).
-
-My preference would be to take this via the vfs or fsnotify tree.
-
+> diff --git a/tools/testing/selftests/filesystems/overlayfs/.gitignore b/t=
+ools/testing/selftests/filesystems/overlayfs/.gitignore
+> index 52ae618fdd980ee22424d35d79f077077b132401..e23a18c8b37f2cdbb121496b1=
+df1faffd729ad79 100644
+> --- a/tools/testing/selftests/filesystems/overlayfs/.gitignore
+> +++ b/tools/testing/selftests/filesystems/overlayfs/.gitignore
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  dev_in_maps
+> +set_layers_via_fds
+> diff --git a/tools/testing/selftests/filesystems/overlayfs/Makefile b/too=
+ls/testing/selftests/filesystems/overlayfs/Makefile
+> index 56b2b48a765b1d6706faee14616597ed0315f267..e8d1adb021af44588dd7af104=
+9de66833bb584ce 100644
+> --- a/tools/testing/selftests/filesystems/overlayfs/Makefile
+> +++ b/tools/testing/selftests/filesystems/overlayfs/Makefile
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
 >
-> As far as stable prior to v6.8 is concerned, once this hits Linus'
-> tree you can submit an adjusted backport for the older kernels to the
-> stable team.
-
-Please do NOT submit an adjustable backport.
-Instead please include the following tags for the decoupling patch:
-
-Depends-on: 36e28c42187c fsnotify: split fsnotify_perm() into two hooks
-Depends-on: d9e5d31084b0 fsnotify: optionally pass access range in
-file permission hooks
-
+> -TEST_GEN_PROGS :=3D dev_in_maps
+> +TEST_GEN_PROGS :=3D dev_in_maps set_layers_via_fds
 >
-> Acked-by: Paul Moore <paul@paul-moore.com>
+>  CFLAGS :=3D -Wall -Werror
 >
-
-Thanks,
-Amir.
+> diff --git a/tools/testing/selftests/filesystems/overlayfs/set_layers_via=
+_fds.c b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d3b497eea5e5c9f718caa4957=
+f7fec7c40970502
+> --- /dev/null
+> +++ b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
+> @@ -0,0 +1,122 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#define _GNU_SOURCE
+> +#define __SANE_USERSPACE_TYPES__ // Use ll64
+> +
+> +#include <fcntl.h>
+> +#include <sched.h>
+> +#include <stdio.h>
+> +#include <string.h>
+> +#include <sys/stat.h>
+> +#include <sys/mount.h>
+> +#include <unistd.h>
+> +
+> +#include "../../kselftest_harness.h"
+> +#include "log.h"
+> +#include "wrappers.h"
+> +
+> +FIXTURE(set_layers_via_fds) {
+> +};
+> +
+> +FIXTURE_SETUP(set_layers_via_fds)
+> +{
+> +       ASSERT_EQ(mkdir("/set_layers_via_fds", 0755), 0);
+> +}
+> +
+> +FIXTURE_TEARDOWN(set_layers_via_fds)
+> +{
+> +       umount2("/set_layers_via_fds", 0);
+> +       ASSERT_EQ(rmdir("/set_layers_via_fds"), 0);
+> +}
+> +
+> +TEST_F(set_layers_via_fds, set_layers_via_fds)
+> +{
+> +       int fd_context, fd_tmpfs, fd_overlay;
+> +       int layer_fds[5] =3D { -EBADF, -EBADF, -EBADF, -EBADF, -EBADF };
+> +       bool layers_found[5] =3D { false, false, false, false, false };
+> +       size_t len =3D 0;
+> +       char *line =3D NULL;
+> +       FILE *f_mountinfo;
+> +
+> +       ASSERT_EQ(unshare(CLONE_NEWNS), 0);
+> +       ASSERT_EQ(sys_mount(NULL, "/", NULL, MS_SLAVE | MS_REC, NULL), 0)=
+;
+> +
+> +       fd_context =3D sys_fsopen("tmpfs", 0);
+> +       ASSERT_GE(fd_context, 0);
+> +
+> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
+L, 0), 0);
+> +       fd_tmpfs =3D sys_fsmount(fd_context, 0, 0);
+> +       ASSERT_GE(fd_tmpfs, 0);
+> +       ASSERT_EQ(close(fd_context), 0);
+> +
+> +       ASSERT_EQ(mkdirat(fd_tmpfs, "w", 0755), 0);
+> +       ASSERT_EQ(mkdirat(fd_tmpfs, "u", 0755), 0);
+> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l1", 0755), 0);
+> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l2", 0755), 0);
+> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l3", 0755), 0);
+> +
+> +       layer_fds[0] =3D openat(fd_tmpfs, "w", O_DIRECTORY);
+> +       ASSERT_GE(layer_fds[0], 0);
+> +
+> +       layer_fds[1] =3D openat(fd_tmpfs, "u", O_DIRECTORY);
+> +       ASSERT_GE(layer_fds[1], 0);
+> +
+> +       layer_fds[2] =3D openat(fd_tmpfs, "l1", O_DIRECTORY);
+> +       ASSERT_GE(layer_fds[2], 0);
+> +
+> +       layer_fds[3] =3D openat(fd_tmpfs, "l2", O_DIRECTORY);
+> +       ASSERT_GE(layer_fds[3], 0);
+> +
+> +       layer_fds[4] =3D openat(fd_tmpfs, "l3", O_DIRECTORY);
+> +       ASSERT_GE(layer_fds[4], 0);
+> +
+> +       ASSERT_EQ(sys_move_mount(fd_tmpfs, "", -EBADF, "/tmp", MOVE_MOUNT=
+_F_EMPTY_PATH), 0);
+> +       ASSERT_EQ(close(fd_tmpfs), 0);
+> +
+> +       fd_context =3D sys_fsopen("overlay", 0);
+> +       ASSERT_GE(fd_context, 0);
+> +
+> +       ASSERT_NE(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir", N=
+ULL, layer_fds[2]), 0);
+> +
+> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "workdir", NU=
+LL, layer_fds[0]), 0);
+> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "upperdir", N=
+ULL, layer_fds[1]), 0);
+> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
+NULL, layer_fds[2]), 0);
+> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
+NULL, layer_fds[3]), 0);
+> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
+NULL, layer_fds[4]), 0);
+> +
+> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
+L, 0), 0);
+> +
+> +       fd_overlay =3D sys_fsmount(fd_context, 0, 0);
+> +       ASSERT_GE(fd_overlay, 0);
+> +
+> +       ASSERT_EQ(sys_move_mount(fd_overlay, "", -EBADF, "/set_layers_via=
+_fds", MOVE_MOUNT_F_EMPTY_PATH), 0);
+> +
+> +       f_mountinfo =3D fopen("/proc/self/mountinfo", "r");
+> +       ASSERT_NE(f_mountinfo, NULL);
+> +
+> +       while (getline(&line, &len, f_mountinfo) !=3D -1) {
+> +               char *haystack =3D line;
+> +
+> +               if (strstr(haystack, "workdir=3D/tmp/w"))
+> +                       layers_found[0] =3D true;
+> +               if (strstr(haystack, "upperdir=3D/tmp/u"))
+> +                       layers_found[1] =3D true;
+> +               if (strstr(haystack, "lowerdir+=3D/tmp/l1"))
+> +                       layers_found[2] =3D true;
+> +               if (strstr(haystack, "lowerdir+=3D/tmp/l2"))
+> +                       layers_found[3] =3D true;
+> +               if (strstr(haystack, "lowerdir+=3D/tmp/l3"))
+> +                       layers_found[4] =3D true;
+> +       }
+> +       free(line);
+> +
+> +       for (int i =3D 0; i < 5; i++) {
+> +               ASSERT_EQ(layers_found[i], true);
+> +               ASSERT_EQ(close(layer_fds[i]), 0);
+> +       }
+> +
+> +       ASSERT_EQ(close(fd_context), 0);
+> +       ASSERT_EQ(close(fd_overlay), 0);
+> +       ASSERT_EQ(fclose(f_mountinfo), 0);
+> +}
+> +
+> +TEST_HARNESS_MAIN
+> diff --git a/tools/testing/selftests/filesystems/overlayfs/wrappers.h b/t=
+ools/testing/selftests/filesystems/overlayfs/wrappers.h
+> index 4f99e10f7f018fd9a7be5263f68d34807da4c53c..071b95fd2ac0ad7b02d90e8e8=
+9df73fd27be69c3 100644
+> --- a/tools/testing/selftests/filesystems/overlayfs/wrappers.h
+> +++ b/tools/testing/selftests/filesystems/overlayfs/wrappers.h
+> @@ -32,6 +32,10 @@ static inline int sys_mount(const char *src, const cha=
+r *tgt, const char *fst,
+>         return syscall(__NR_mount, src, tgt, fst, flags, data);
+>  }
+>
+> +#ifndef MOVE_MOUNT_F_EMPTY_PATH
+> +#define MOVE_MOUNT_F_EMPTY_PATH 0x00000004 /* Empty from path permitted =
+*/
+> +#endif
+> +
+>  static inline int sys_move_mount(int from_dfd, const char *from_pathname=
+,
+>                                  int to_dfd, const char *to_pathname,
+>                                  unsigned int flags)
+>
+> --
+> 2.45.2
+>
 
