@@ -1,55 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-31808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB14B99B69F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 20:43:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE01399B7CB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2024 02:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A121B2833CD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2024 18:42:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1C391C21681
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2024 00:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C08984FAD;
-	Sat, 12 Oct 2024 18:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C322128FD;
+	Sun, 13 Oct 2024 00:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bF1A27KI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeWrSY0g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29082768FD
-	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Oct 2024 18:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4C0819;
+	Sun, 13 Oct 2024 00:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728758577; cv=none; b=GUFkhQfMRsTjxBEGKZldj+F3KERaeB48FzQs5UAhYsydQyYNXgm8MFSPCA/roTJ6arszuE/9Yq0As6/fzI+rSHC8A7BjDGUbkZ/40w71zIZYik5OR6zsHEDdS2aZMDUZDZKzMLHzFReVHkqumgvCcOAlBaMG+e6tIF4vb+r/USU=
+	t=1728778981; cv=none; b=IpRqFJr3uU3SbJM/PXKn7Amf3LVdbpHdttpMl7Tj2b/QP9Av1TtSNyF7Q6d1NUqqIsBfbW8eQn7PW2p6kwK67VqRz7fd4asyk28xzzIQcD6uSAgD4Zj3ZkBhh+vsSb5AGEqY4HHf6bNKIrMPR1rTPIkzmphJI6/exeT4xnw/lhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728758577; c=relaxed/simple;
-	bh=rNaAzK1QA47pnaAoe8F69BGleQCAHGxwvNQMvAl4/yg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=burlGjDp/qsmu2b5ZswinrYVZpz0gYSA00cW/rjxkm6lt2UkqoUt3M4Pkq8o3hw4IhYwscjNib3krGAqtyz5wwYoz63gK6PXpGsnhnbRNr5Z2vdRvXED0c8zU6c4APLpZj0pMWDsFwpDyRk3KyWOofnqy08YhGHRuJ5yE4o0fVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bF1A27KI; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728758568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=op+lPm3NAWju6hQm59ucRMw5qO4FBhJZsP6B74qdwq8=;
-	b=bF1A27KIRO2AJLZI5bJbs4KKT3HokW9iWIwtcPhptZOxSZMl9F4Qb5cGb9IUdcIjnyoMeE
-	BWL14es5xZhBw1uS2fEW7BsA7aU9iXRp3g6jDtMlqw8prbJDrxI4OA1u6JCUAinhgvJAXZ
-	ClfnsTEkrooGrX1FSRxtg2KtffjdCd0=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH] bcachefs: Fix sysfs warning in fstests generic/730,731
-Date: Sat, 12 Oct 2024 14:42:39 -0400
-Message-ID: <20241012184239.3785089-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1728778981; c=relaxed/simple;
+	bh=rEzJzobjxqPB3qyg2IMyvh87zgno3Ga2EHEkOAM7yd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d/a4/HMlqatk9lgObG+foy0/Lhe+LaPgoEo+8GwIaPZLTZBvBJJdObah/eul7hyN1BTkwMmPNcXWj+T3xBTo8M/m3IVHYvyyf5cgrYYWLgoSEMWG7z4j1kEr9QpMH2bQ6lJW7HxO5cM1jpr2TJEcxuu7ER+/6KKRB130BbrQ9pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeWrSY0g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F350EC4CEC6;
+	Sun, 13 Oct 2024 00:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728778980;
+	bh=rEzJzobjxqPB3qyg2IMyvh87zgno3Ga2EHEkOAM7yd4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oeWrSY0gxznVTGjDFVkfdFHWB3YjzUD3AQarRSa9Mw6V6GdW067x3V4EBytbc81J2
+	 am2DeBgwCPhd2vl2fvX5LuL4c7cW2ndvRDUOQKPF7R49O1tiMAbVusuKPK2xogqmUF
+	 nAeIgHQr2LjZX6fEPSVpLa+815A3a8SNB5P5PWrbikkIWmcreYixhix0CFb0vy7MEP
+	 TmbVXV+GZpP8Cedu3LsrAfi871moIunrsTLB/5mdF9/HIrugfdPYAGOCXyfkA4qXXN
+	 kkuuGOeM9cwFQQxwiNuCWDK0skE9jQQnAwwi9/yxiwT1FZQk03+4JonG2D7CqBzVk7
+	 lXIvMH84UH9Sw==
+From: Song Liu <song@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	kernel-team@fb.com,
+	song@kernel.org
+Subject: [PATCH v2] fsnotify, lsm: Decouple fsnotify from lsm
+Date: Sat, 12 Oct 2024 17:22:48 -0700
+Message-ID: <20241013002248.3984442-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,106 +63,92 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-sysfs warns if we're removing a symlink from a directory that's no
-longer in sysfs; this is triggered by fstests generic/730, which
-simulates hot removal of a block device.
+Currently, fsnotify_open_perm() is called from security_file_open(). This
+is not right for CONFIG_SECURITY=n and CONFIG_FSNOTIFY=y case, as
+security_file_open() in this combination will be a no-op and not call
+fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
 
-This patch is however not a correct fix, since checking
-kobj->state_in_sysfs on a kobj owned by another subsystem is racy.
+After this, CONFIG_FANOTIFY_ACCESS_PERMISSIONS does not require
+CONFIG_SECURITY any more. Remove the dependency in the config.
 
-A better fix would be to add the appropriate check to
-sysfs_remove_link() - and sysfs_create_link() as well.
+Signed-off-by: Song Liu <song@kernel.org>
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-But kobject_add_internal()/kobject_del() do not as of today have locking
-that would support that.
-
-Note that the block/holder.c code appears to be subject to this race as
-well.
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:  Christoph Hellwig <hch@lst.de>
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- fs/bcachefs/super.c | 34 ++++++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-index 843431e58cf5..f96355ecb296 100644
---- a/fs/bcachefs/super.c
-+++ b/fs/bcachefs/super.c
-@@ -184,6 +184,7 @@ static DEFINE_MUTEX(bch_fs_list_lock);
+v1: https://lore.kernel.org/linux-fsdevel/20241011203722.3749850-1-song@kernel.org/
+
+As far as I can tell, it is necessary to back port this to stable. Because
+CONFIG_FANOTIFY_ACCESS_PERMISSIONS is the only user of fsnotify_open_perm,
+and CONFIG_FANOTIFY_ACCESS_PERMISSIONS depends on CONFIG_SECURITY.
+Therefore, the following tags are not necessary. But I include here as
+these are discussed in v1.
+
+Fixes: c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for access decisions")
+Depends-on: 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
+Depends-on: d9e5d31084b0 ("fsnotify: optionally pass access range in file permission hooks")
+---
+ fs/notify/fanotify/Kconfig | 1 -
+ fs/open.c                  | 4 ++++
+ security/security.c        | 9 +--------
+ 3 files changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
+index a511f9d8677b..0e36aaf379b7 100644
+--- a/fs/notify/fanotify/Kconfig
++++ b/fs/notify/fanotify/Kconfig
+@@ -15,7 +15,6 @@ config FANOTIFY
+ config FANOTIFY_ACCESS_PERMISSIONS
+ 	bool "fanotify permissions checking"
+ 	depends on FANOTIFY
+-	depends on SECURITY
+ 	default n
+ 	help
+ 	   Say Y here is you want fanotify listeners to be able to make permissions
+diff --git a/fs/open.c b/fs/open.c
+index acaeb3e25c88..6c4950f19cfb 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -946,6 +946,10 @@ static int do_dentry_open(struct file *f,
+ 	if (error)
+ 		goto cleanup_all;
  
- DECLARE_WAIT_QUEUE_HEAD(bch2_read_only_wait);
- 
-+static void bch2_dev_unlink(struct bch_dev *);
- static void bch2_dev_free(struct bch_dev *);
- static int bch2_dev_alloc(struct bch_fs *, unsigned);
- static int bch2_dev_sysfs_online(struct bch_fs *, struct bch_dev *);
-@@ -620,9 +621,7 @@ void __bch2_fs_stop(struct bch_fs *c)
- 	up_write(&c->state_lock);
- 
- 	for_each_member_device(c, ca)
--		if (ca->kobj.state_in_sysfs &&
--		    ca->disk_sb.bdev)
--			sysfs_remove_link(bdev_kobj(ca->disk_sb.bdev), "bcachefs");
-+		bch2_dev_unlink(ca);
- 
- 	if (c->kobj.state_in_sysfs)
- 		kobject_del(&c->kobj);
-@@ -1188,9 +1187,7 @@ static void bch2_dev_free(struct bch_dev *ca)
++	error = fsnotify_open_perm(f);
++	if (error)
++		goto cleanup_all;
++
+ 	error = break_lease(file_inode(f), f->f_flags);
+ 	if (error)
+ 		goto cleanup_all;
+diff --git a/security/security.c b/security/security.c
+index 6875eb4a59fc..a72cc62c0a07 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -19,7 +19,6 @@
+ #include <linux/kernel.h>
+ #include <linux/kernel_read_file.h>
+ #include <linux/lsm_hooks.h>
+-#include <linux/fsnotify.h>
+ #include <linux/mman.h>
+ #include <linux/mount.h>
+ #include <linux/personality.h>
+@@ -3102,13 +3101,7 @@ int security_file_receive(struct file *file)
+  */
+ int security_file_open(struct file *file)
  {
- 	cancel_work_sync(&ca->io_error_work);
- 
--	if (ca->kobj.state_in_sysfs &&
--	    ca->disk_sb.bdev)
--		sysfs_remove_link(bdev_kobj(ca->disk_sb.bdev), "bcachefs");
-+	bch2_dev_unlink(ca);
- 
- 	if (ca->kobj.state_in_sysfs)
- 		kobject_del(&ca->kobj);
-@@ -1227,10 +1224,7 @@ static void __bch2_dev_offline(struct bch_fs *c, struct bch_dev *ca)
- 	percpu_ref_kill(&ca->io_ref);
- 	wait_for_completion(&ca->io_ref_completion);
- 
--	if (ca->kobj.state_in_sysfs) {
--		sysfs_remove_link(bdev_kobj(ca->disk_sb.bdev), "bcachefs");
--		sysfs_remove_link(&ca->kobj, "block");
--	}
-+	bch2_dev_unlink(ca);
- 
- 	bch2_free_super(&ca->disk_sb);
- 	bch2_dev_journal_exit(ca);
-@@ -1252,6 +1246,26 @@ static void bch2_dev_io_ref_complete(struct percpu_ref *ref)
- 	complete(&ca->io_ref_completion);
+-	int ret;
+-
+-	ret = call_int_hook(file_open, file);
+-	if (ret)
+-		return ret;
+-
+-	return fsnotify_open_perm(file);
++	return call_int_hook(file_open, file);
  }
  
-+static void bch2_dev_unlink(struct bch_dev *ca)
-+{
-+	struct kobject *b;
-+
-+	/*
-+	 * This is racy w.r.t. the underlying block device being hot-removed,
-+	 * which removes it from sysfs.
-+	 *
-+	 * It'd be lovely if we had a way to handle this race, but the sysfs
-+	 * code doesn't appear to provide a good method and block/holder.c is
-+	 * susceptible as well:
-+	 */
-+	if (ca->kobj.state_in_sysfs &&
-+	    ca->disk_sb.bdev &&
-+	    (b = bdev_kobj(ca->disk_sb.bdev))->state_in_sysfs) {
-+		sysfs_delete_link(b, &ca->kobj, "bcachefs");
-+		sysfs_delete_link(&ca->kobj, b, "block");
-+	}
-+}
-+
- static int bch2_dev_sysfs_online(struct bch_fs *c, struct bch_dev *ca)
- {
- 	int ret;
+ /**
 -- 
-2.45.2
+2.43.5
 
 
