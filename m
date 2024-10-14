@@ -1,67 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-31916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473DC99D6F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 21:03:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890F999D777
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 21:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556DC2841E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 19:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35ABA1F23CC0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 19:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8631C9B87;
-	Mon, 14 Oct 2024 19:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5701CEEAA;
+	Mon, 14 Oct 2024 19:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kzevtmp0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLrllc0f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0553626296
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 19:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7576A1CDFDE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 19:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728932582; cv=none; b=UrDns9liL+3rjK4EIHjHoA0X+wan7P6yv1N25yk3FjAeEoL1z+7QpQ/vhmZ8+mqGVhxkQgi84+76YUUPm0LDiZ5bYAi4OX5+HuH/lSTSj//ULRkLdN2Vynx2KOEvCFOJm9PrPe13n/ys1oE4r3LgoHjP5ZpaGQq/iJNSudJwkrA=
+	t=1728934085; cv=none; b=sTMM1RgabyamX4+BVj0tEhBhQcjXP5NlCOmBd8Xaj71/Zfgn3Ie5iJ9Vo1yeHBkySOwJvjpgT3bR+lgu2K3G82Kl4/QHq8tzIZnJEVlsLc5/fCxkNjmK5Qioq0ljp1JRzpBwzaugGG/97fobU9Raz+UaZPD4KpIgx727QdLKOhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728932582; c=relaxed/simple;
-	bh=vuM6giDHQnqPchWEaVJdjYCTAWTFy9iX2aRerVbFtBw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qj8FLlZTUC8kVTnXCeaaIEqQ2jmsmPsIr/+yb9sE7CAXZOV7hdxkOq9vQi2r4kzlvxBLRXA5DJXWCJgFYY0Mxzodc1ItiusJXMn5Q12G813kAfIpIjEXWOUEgZPTWgGhAZeQVJo35tTgBy0wL2RuNO5rYe3PGALJQ8vJD92xqcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kzevtmp0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728932580;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SqsWiL8acSHPEBRQ0NsndKrZE4UQGuUTL2BTNpytimw=;
-	b=Kzevtmp069EtInLBZnNgYldL2n66LsgmPx6Y50o+oV6XY/Mm0jVzqCosxpQuMTkSrSXi3y
-	35nvEthbB3GZn/vTl9smXHd3eX6mhizMWRSp/jJOhXP2g81zSooXysrvW4+r5CT4Ne8pAy
-	M7/kV2w0yCdjj6mC7fw21IcZs0YtXDc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-BoMzE21jPYepweGCDykQng-1; Mon,
- 14 Oct 2024 15:02:56 -0400
-X-MC-Unique: BoMzE21jPYepweGCDykQng-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03A1819560A6;
-	Mon, 14 Oct 2024 19:02:56 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.34.4])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D018B1955F42;
-	Mon, 14 Oct 2024 19:02:54 +0000 (UTC)
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org,
-	sandeen@redhat.com,
-	Bill O'Donnell <bodonnel@redhat.com>
-Subject: [PATCH] efs: fix the efs new mount api implementation
-Date: Mon, 14 Oct 2024 14:02:41 -0500
-Message-ID: <20241014190241.4093825-1-bodonnel@redhat.com>
+	s=arc-20240116; t=1728934085; c=relaxed/simple;
+	bh=0LnQhNZTIgYFvJrfaEghFPghAChVcw6NyGNBMsWk8Y4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MtZ4p2mW86nsGyuUzp8LUBvQri0Cn2cf0dIlLpEXb+r00nwbHL63X1LR9KGBhlSvfWeEJ4u+sf1flSSZoDjtxKh9dW6yrXwssauT4LbZ0Nq8HWbiqnHTgAA97V7S8BzDztX7lW0L8aZVjNkQi3eokhBiASDy0sZzBpY1eWE8q30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLrllc0f; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d51055097so2691987f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 12:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728934083; x=1729538883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=El+Oir1dCDEahPI/4D66nWpBD6UrhMcN0q77yC/Ouhc=;
+        b=YLrllc0f2Tyi7lEj9F9pSeqB5QVlYHbA5JKVIY+qsLWpv6dTGG+wbn2jsikKWqme2y
+         RCMfa5PH3D81QAjonMHFAHbt1f85vpu4MAbrMsB3ZCg2dOIMkdIIQTKmHCrvedzhfFxr
+         rkhgzIf4fH6pvj4griJWBBHHNOOO4Xmhjt9nbtzMSAKas5XMDBVbbuO560jujTPaNLqJ
+         pPjpknLNiqNOM64o0aC/PyxmZ/OOH0suMTK2Spod02QW9n19Ywydjm4DRTcM1nYl/l9U
+         LWWZlp+Z4+cLQsc/S9pKKBRoAIRASlEG79lXIDKt/8EsXggyZfKdiv1Y6NdPQKsr7Ck7
+         a3Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728934083; x=1729538883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=El+Oir1dCDEahPI/4D66nWpBD6UrhMcN0q77yC/Ouhc=;
+        b=Ak0Sw+XbeISgASFDdtUHkMyFHcHVZz67TsJqd+UI5X2JTMxU9yceizU2GKbKGNgsSa
+         YThtw32UNuDYooQshElXqDDCz1S9Ff9fc6lAHqCAL9zKbtycmGOgWZMCbwaADZtFSEHz
+         skHos4BP8Q+h1mqPZNYLSSU6zFHN9LQcYJJ/+ZYMxjMozbKxu3qcGB+QdLHZwtLL+7FT
+         bdePmN3dbUlzQKO4sUxkkc5pvnoGUO3hGrDjdhi8J9JRn8VvoKckvAB6RssDdBLbDiR2
+         ZOF08ixsxPnPiXI4H93vOFhHK3LNB8bDbjpZLld0XHkNa1J1kPVpv/e3Sf8YNPCX6PVw
+         8RHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfjCqER1StbmYOmQv8xJhY79bcZ3+cI6wdulPhB0NIDexmLg3GegQ/B52oegFta7ek2W5GU+K0+QSmBBa6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9jq7G6qL+QXWTPOr4Ff6b/juTgTDJP8pGoCBFp8JYEinkqWo2
+	Jb1plbC7cegGAraY3XuGdItRg2Um7mkqPamGWKhqPllJFpfMWympLR5nXqjCY3k=
+X-Google-Smtp-Source: AGHT+IH4kNqW4O4sjfdPlc2WNh5wzbtqB0CURkU7AqtDjDBgvDOVkrrKbiEJxutHm2yKtUcJRzw+9A==
+X-Received: by 2002:a05:6000:10c1:b0:37d:4a68:61a1 with SMTP id ffacd0b85a97d-37d601cd19amr6438112f8f.56.1728934082534;
+        Mon, 14 Oct 2024 12:28:02 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79f9d9sm12162673f8f.77.2024.10.14.12.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 12:28:02 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+	yangyun <yangyun50@huawei.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/2] Fix regression in libfuse test_copy_file_range()
+Date: Mon, 14 Oct 2024 21:27:57 +0200
+Message-Id: <20241014192759.863031-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,125 +81,30 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Commit 39a6c668e4 (efs: convert efs to use the new mount api)
-did not include anything from v2 and v3 that were also submitted.
-Fix this by bringing in those changes that were proposed in v2 and
-v3.
+Miklos,
 
-Fixes: 39a6c668e4 efs: convert efs to use the new mount api.
+I figured it was best to split the backing_file interface change from
+the fix, but both changes should be targetting stable.
 
-Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
----
- fs/efs/super.c | 43 +++----------------------------------------
- 1 file changed, 3 insertions(+), 40 deletions(-)
+Thanks,
+Amir.
 
-diff --git a/fs/efs/super.c b/fs/efs/super.c
-index e4421c10caeb..c59086b7eabf 100644
---- a/fs/efs/super.c
-+++ b/fs/efs/super.c
-@@ -15,7 +15,6 @@
- #include <linux/vfs.h>
- #include <linux/blkdev.h>
- #include <linux/fs_context.h>
--#include <linux/fs_parser.h>
- #include "efs.h"
- #include <linux/efs_vh.h>
- #include <linux/efs_fs_sb.h>
-@@ -49,15 +48,6 @@ static struct pt_types sgi_pt_types[] = {
- 	{0,		NULL}
- };
- 
--enum {
--	Opt_explicit_open,
--};
--
--static const struct fs_parameter_spec efs_param_spec[] = {
--	fsparam_flag    ("explicit-open",       Opt_explicit_open),
--	{}
--};
--
- /*
-  * File system definition and registration.
-  */
-@@ -67,7 +57,6 @@ static struct file_system_type efs_fs_type = {
- 	.kill_sb		= efs_kill_sb,
- 	.fs_flags		= FS_REQUIRES_DEV,
- 	.init_fs_context	= efs_init_fs_context,
--	.parameters		= efs_param_spec,
- };
- MODULE_ALIAS_FS("efs");
- 
-@@ -265,7 +254,8 @@ static int efs_fill_super(struct super_block *s, struct fs_context *fc)
- 	if (!sb_set_blocksize(s, EFS_BLOCKSIZE)) {
- 		pr_err("device does not support %d byte blocks\n",
- 			EFS_BLOCKSIZE);
--		return -EINVAL;
-+		return invalf(fc, "device does not support %d byte blocks\n",
-+			      EFS_BLOCKSIZE);
- 	}
- 
- 	/* read the vh (volume header) block */
-@@ -327,43 +317,22 @@ static int efs_fill_super(struct super_block *s, struct fs_context *fc)
- 	return 0;
- }
- 
--static void efs_free_fc(struct fs_context *fc)
--{
--	kfree(fc->fs_private);
--}
--
- static int efs_get_tree(struct fs_context *fc)
- {
- 	return get_tree_bdev(fc, efs_fill_super);
- }
- 
--static int efs_parse_param(struct fs_context *fc, struct fs_parameter *param)
--{
--	int token;
--	struct fs_parse_result result;
--
--	token = fs_parse(fc, efs_param_spec, param, &result);
--	if (token < 0)
--		return token;
--	return 0;
--}
--
- static int efs_reconfigure(struct fs_context *fc)
- {
- 	sync_filesystem(fc->root->d_sb);
-+	fc->sb_flags |= SB_RDONLY;
- 
- 	return 0;
- }
- 
--struct efs_context {
--	unsigned long s_mount_opts;
--};
--
- static const struct fs_context_operations efs_context_opts = {
--	.parse_param	= efs_parse_param,
- 	.get_tree	= efs_get_tree,
- 	.reconfigure	= efs_reconfigure,
--	.free		= efs_free_fc,
- };
- 
- /*
-@@ -371,12 +340,6 @@ static const struct fs_context_operations efs_context_opts = {
-  */
- static int efs_init_fs_context(struct fs_context *fc)
- {
--	struct efs_context *ctx;
--
--	ctx = kzalloc(sizeof(struct efs_context), GFP_KERNEL);
--	if (!ctx)
--		return -ENOMEM;
--	fc->fs_private = ctx;
- 	fc->ops = &efs_context_opts;
- 
- 	return 0;
+Changes since v1:
+- Change end_write() callback arguments
+- Use pos argument to extend i_size instead of using backing inode size
+
+Amir Goldstein (2):
+  fs: pass offset and result to backing_file end_write() callback
+  fuse: update inode size after extending passthrough write
+
+ fs/backing-file.c            | 8 ++++----
+ fs/fuse/passthrough.c        | 8 ++++----
+ fs/overlayfs/file.c          | 9 +++++++--
+ include/linux/backing-file.h | 2 +-
+ 4 files changed, 16 insertions(+), 11 deletions(-)
+
 -- 
-2.47.0
+2.34.1
 
 
