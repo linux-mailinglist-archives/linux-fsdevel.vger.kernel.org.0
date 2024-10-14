@@ -1,119 +1,275 @@
-Return-Path: <linux-fsdevel+bounces-31883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7E299C9CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 14:12:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2581599C9D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 14:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0181C2289F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 12:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986221F21FA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 12:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD2B19F43B;
-	Mon, 14 Oct 2024 12:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF191A0BC4;
+	Mon, 14 Oct 2024 12:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iinet.net.au header.i=@iinet.net.au header.b="a42kvwFP"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MSkRzHJL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9eOjRoJL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MSkRzHJL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9eOjRoJL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from omr000.pc5.atmailcloud.com (omr000.pc5.atmailcloud.com [103.150.252.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F9E19D086;
-	Mon, 14 Oct 2024 12:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1287156F3F;
+	Mon, 14 Oct 2024 12:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728907956; cv=none; b=KH5GwYaFWDPO6EvofOmVTfXR1gGY2AAZo3C/4wrqdJ6dcK5fQ3c5ZiflXtfV2XR/NGV+tulGcQFAJJE/h1GgNRj9ijfNoTdja75/GcH3rNRgQSY6zFIhcyRuJPdwZ/LlqUbWjUc7jbOwGXabRWWgjvX8ElCKYFU0YzR5ELH85Mo=
+	t=1728908072; cv=none; b=oRqVTsmWbw0t2+vpjVOObNaVfTw2AInsdFZkr3T9sRc83lAvCr+PqfthrG/RftCjzyA8HptC7+20cmfeoyfcElE2NFjL5mth73pmoeCNpUutVDk6+YSaPW9ZU7RRT37EqnrQ+cje4agU5jCmpCjIFiYuo4t5LcfyIQMfoov1C8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728907956; c=relaxed/simple;
-	bh=JZLBHV5vFgJKv+6jkMgKEJyH05oqWfyMdWfWaJ6792s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jMhr7zK+BG1398cUJXGPnRUjpCMsPvCzfaakJjh32Y6ZCEK9lmgPMbuMQ9FPU2Y3fyMMzmzDruF3AKNRDRTjiNPjuQUqV9X58K+3qmESMx/H3NBqu3nGNcnuwBHrKMFqN6ct9uYZl9tKP7eHqmRSGQPUIPum6uLBew5YlXh8P6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iinet.net.au; spf=pass smtp.mailfrom=iinet.net.au; dkim=pass (2048-bit key) header.d=iinet.net.au header.i=@iinet.net.au header.b=a42kvwFP; arc=none smtp.client-ip=103.150.252.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iinet.net.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iinet.net.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iinet.net.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
-	Message-ID; bh=7bzoUaGmGd5GJ8pEJdquUclvFKaCwupX43uBvA/GI+g=; b=a42kvwFP81OpuC
-	SqIZ0ALxc+ySEPI6GBWLvLOxcJXjVdRy+WtQbXOlfRkbzj+kovllcRIXz4Xxw+IEVRSI0Z7hqYYa4
-	yuaGlKx/PQ5fqipf4oMAqeWWP/iyFKnqMOViXBOgsSAyaciVVo7Kx+HOCTViEsLjAzsMZnQMlG41C
-	2AdulAVLNfTESIeVKKQGwkEob2HmNC0XX0B10/uNZeVah/DRwI0Ld9eGyEW+uHmtV+yvw8nzC8n60
-	hZlaS3DF+NaNyS7r7UXF8addHDFaAtUYm4GVxv7Q62+5fs4VKUdFVoyyzjy+9vzeKHkX5qhqNSmlp
-	Zhc/kwfl/KLAq2DUWv2Q==;
-Received: from CMR-TMC.i-0acf53ef05dcc86bb
-	 by OMR.i-0dfa7ead5d297886b with esmtps
-	(envelope-from <burn.alting@iinet.net.au>)
-	id 1t0Jw4-000000004T2-3hw0;
-	Mon, 14 Oct 2024 12:12:28 +0000
-Received: from [121.45.199.178] (helo=[192.168.2.220])
-	 by CMR-TMC.i-0acf53ef05dcc86bb with esmtpsa
-	(envelope-from <burn.alting@iinet.net.au>)
-	id 1t0Jw4-000000000KE-2GfL;
-	Mon, 14 Oct 2024 12:12:28 +0000
-Message-ID: <e0188174-a8ae-461b-b30a-bc7acd545a18@iinet.net.au>
-Date: Mon, 14 Oct 2024 23:12:25 +1100
+	s=arc-20240116; t=1728908072; c=relaxed/simple;
+	bh=hI9GQ3vWz+dBlWIaegULE8LirCEC8ki5cfl4RmMwbPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKX6tUv6Zi3DQaXYELqfOoBxepzHPgihFD+1+DTeTs1qGa7fbX6yY7iwQgLuDdFCsrl7cbt5yN6Hv4PGbZu476LJ5JYlnfDKRy0fQjq/Ip2wov41wOe51LmsJwCI2HTNOpi6UPLcv7cUOLHrqNkuL0YaXVVBwjezxv6TxjucuEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MSkRzHJL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9eOjRoJL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MSkRzHJL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9eOjRoJL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 110F321B5D;
+	Mon, 14 Oct 2024 12:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728908068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WDvMMHa5hCU5rljm//6SmMBj9GhVvVjaeKHjUwQCpNw=;
+	b=MSkRzHJL2U9tNILZ53M7T+G7hBt5Gu3qsdJDFOEQGfiSTxYSNoTxDzdn7XosPoeklNOD8O
+	eZz7rgPHanpLc0QREwoMWLe0gXVWK5oHqMM6l65GTF2/zp2vqDfbQCN1/mMyFxh1iMJjFy
+	xuTVOaZ/H7tyyf9Nlxs5WeIboGM/qAg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728908068;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WDvMMHa5hCU5rljm//6SmMBj9GhVvVjaeKHjUwQCpNw=;
+	b=9eOjRoJLlTvz5l4PYWguZW27Xg22LNgu4zu/8XkcB0ssuDH50N40nmDYnhSbcx8qRjKZcM
+	DmVFF+M12aAo5wAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728908068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WDvMMHa5hCU5rljm//6SmMBj9GhVvVjaeKHjUwQCpNw=;
+	b=MSkRzHJL2U9tNILZ53M7T+G7hBt5Gu3qsdJDFOEQGfiSTxYSNoTxDzdn7XosPoeklNOD8O
+	eZz7rgPHanpLc0QREwoMWLe0gXVWK5oHqMM6l65GTF2/zp2vqDfbQCN1/mMyFxh1iMJjFy
+	xuTVOaZ/H7tyyf9Nlxs5WeIboGM/qAg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728908068;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WDvMMHa5hCU5rljm//6SmMBj9GhVvVjaeKHjUwQCpNw=;
+	b=9eOjRoJLlTvz5l4PYWguZW27Xg22LNgu4zu/8XkcB0ssuDH50N40nmDYnhSbcx8qRjKZcM
+	DmVFF+M12aAo5wAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECE9513A79;
+	Mon, 14 Oct 2024 12:14:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BA6EOSMLDWe2PQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 12:14:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8A807A0896; Mon, 14 Oct 2024 14:14:27 +0200 (CEST)
+Date: Mon, 14 Oct 2024 14:14:27 +0200
+From: Jan Kara <jack@suse.cz>
+To: Kaixiong Yu <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org,
+	ysato@users.sourceforge.jp, dalias@libc.org,
+	glaubitz@physik.fu-berlin.de, luto@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, kees@kernel.org, j.granados@samsung.com,
+	willy@infradead.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com, trondmy@kernel.org, anna@kernel.org,
+	chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org, dhowells@redhat.com,
+	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com,
+	shikemeng@huaweicloud.com, dchinner@redhat.com, bfoster@redhat.com,
+	souravpanda@google.com, hannes@cmpxchg.org, rientjes@google.com,
+	pasha.tatashin@soleen.com, david@redhat.com, ryan.roberts@arm.com,
+	ying.huang@intel.com, yang@os.amperecomputing.com,
+	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com,
+	wangkefeng.wang@huawei.com, sunnanyong@huawei.com
+Subject: Re: [PATCH v3 -next 09/15] fs: fs-writeback: move sysctl to
+ fs/fs-writeback.c
+Message-ID: <20241014121427.vuebknsmdlrtbveh@quack3>
+References: <20241010152215.3025842-1-yukaixiong@huawei.com>
+ <20241010152215.3025842-10-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-To: Christoph Hellwig <hch@infradead.org>
-Cc: audit@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <ZwkaVLOFElypvSDX@infradead.org>
- <20241011.ieghie3Aiye4@digikod.net> <ZwkgDd1JO2kZBobc@infradead.org>
- <20241011.yai6KiDa7ieg@digikod.net> <Zwkm5HADvc5743di@infradead.org>
- <20241011.aetou9haeCah@digikod.net> <Zwk4pYzkzydwLRV_@infradead.org>
- <20241011.uu1Bieghaiwu@digikod.net>
- <05cb94c0dda9e1b23fe566c6ecd71b3d1739b95b.camel@kernel.org>
- <0e4e7a6d-09e0-480d-baa9-a2e7522a088a@iinet.net.au>
- <ZwzeGausiU0IDkFy@infradead.org>
-Content-Language: en-US
-From: Burn Alting <burn.alting@iinet.net.au>
-In-Reply-To: <ZwzeGausiU0IDkFy@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Atmail-Id: burn.alting@iinet.net.au
-X-atmailcloud-spam-action: no action
-X-Cm-Analysis: v=2.4 cv=E4bLp7dl c=1 sm=1 tr=0 ts=670d0aac a=ad8utJckiWseeaTPZMijYg==:117 a=ad8utJckiWseeaTPZMijYg==:17 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=x7bEGLp0ZPQA:10 a=jEJR_5qdvOA3Q1yG22IA:9 a=QEXdDO2ut3YA:10
-X-Cm-Envelope: MS4xfFZ1mGb3gpeJ4QhT+lZ1HPnqxfoCLMTv+9F+DKGtZPHX3yX3sOtIBjJ1poCaXTW9Xr+qRhVSCHmFrP9c/dAKGLZGJBqnC1pTsV7HeNZnrs7ajIw096q7 nD+lZYwnYInsYl0Xx3vco6iZVrdHBzgFkbuoRQwaXyZk04nrE7jyjfCDQm60EMpk0I7eYpbysTAcSA==
-X-atmailcloud-route: unknown
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010152215.3025842-10-yukaixiong@huawei.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_GT_50(0.00)[61];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-
-
-On 14/10/24 20:02, Christoph Hellwig wrote:
-> On Mon, Oct 14, 2024 at 07:40:37PM +1100, Burn Alting wrote:
->> As someone who lives in the analytical user space of Linux audit,  I take it
->> that for large (say >200TB) file systems, the inode value reported in audit
->> PATH records is no longer forensically defensible and it's use as a
->> correlation item is of questionable value now?
+On Thu 10-10-24 23:22:09, Kaixiong Yu wrote:
+> The dirtytime_expire_interval belongs to fs/fs-writeback.c, move it to
+> fs/fs-writeback.c from /kernel/sysctl.c. And remove the useless extern
+> variable declaration and the function declaration from
+> include/linux/writeback.h
 > 
-> What do you mean with forensically defensible?
+> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+> Reviewed-by: Kees Cook <kees@kernel.org>
 
-If the auditd system only maintains a 32 bit variable for an inode 
-value, when it emits an inode number, then how does one categorically 
-state/defend that the inode value in the audit event is the actual one 
-on the file system. The PATH record will offer one value (32 bits) but 
-the returned inode value from a stat will return another (the actual 64 
-bit value). Basically auditd would not be recording the correct value.
+Looks good. Feel free to add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> v3:
+>  - change dirtytime_expire_interval to static type
+>  - change the title
+> ---
+>  fs/fs-writeback.c         | 30 +++++++++++++++++++++---------
+>  include/linux/writeback.h |  4 ----
+>  kernel/sysctl.c           |  8 --------
+>  3 files changed, 21 insertions(+), 21 deletions(-)
 > 
-> A 64-bit inode number is supposed to be unique.  Some file systems
-> (most notably btrfs, but probably also various non-native file system)
-> break and this, and get away with lots of userspace hacks papering
-> over it.  If you are on a 32-bit system and not using the LFS APIs
-> stat will fail with -EOVERFLOW.  Some file systems have options to
-> never generate > 32bit inode numbers.  None of that is directly
-> related to file system size, although at least for XFS file system
-> size is one relevant variable, but 200TB is in no way relevant.
-
-My reference to the filesystem size was a quick and dirty estimate of 
-when one may see more than 2^32 inodes on a single filesystem. What I 
-failed to state (my apologies) is that this presumed an xfs filesystem 
-with default values when creating the file system. (A quick check on an 
-single 240TB xfs filesystem advised more than 5000000000 inodes were 
-available).
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index d8bec3c1bb1f..4fedefdb8e15 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -65,7 +65,7 @@ struct wb_writeback_work {
+>   * timestamps written to disk after 12 hours, but in the worst case a
+>   * few inodes might not their timestamps updated for 24 hours.
+>   */
+> -unsigned int dirtytime_expire_interval = 12 * 60 * 60;
+> +static unsigned int dirtytime_expire_interval = 12 * 60 * 60;
+>  
+>  static inline struct inode *wb_inode(struct list_head *head)
+>  {
+> @@ -2413,14 +2413,7 @@ static void wakeup_dirtytime_writeback(struct work_struct *w)
+>  	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
+>  }
+>  
+> -static int __init start_dirtytime_writeback(void)
+> -{
+> -	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
+> -	return 0;
+> -}
+> -__initcall(start_dirtytime_writeback);
+> -
+> -int dirtytime_interval_handler(const struct ctl_table *table, int write,
+> +static int dirtytime_interval_handler(const struct ctl_table *table, int write,
+>  			       void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+>  	int ret;
+> @@ -2431,6 +2424,25 @@ int dirtytime_interval_handler(const struct ctl_table *table, int write,
+>  	return ret;
+>  }
+>  
+> +static struct ctl_table vm_fs_writeback_table[] = {
+> +	{
+> +		.procname	= "dirtytime_expire_seconds",
+> +		.data		= &dirtytime_expire_interval,
+> +		.maxlen		= sizeof(dirtytime_expire_interval),
+> +		.mode		= 0644,
+> +		.proc_handler	= dirtytime_interval_handler,
+> +		.extra1		= SYSCTL_ZERO,
+> +	},
+> +};
+> +
+> +static int __init start_dirtytime_writeback(void)
+> +{
+> +	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
+> +	register_sysctl_init("vm", vm_fs_writeback_table);
+> +	return 0;
+> +}
+> +__initcall(start_dirtytime_writeback);
+> +
+>  /**
+>   * __mark_inode_dirty -	internal function to mark an inode dirty
+>   *
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index d6db822e4bb3..5f35b24aff7b 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -351,12 +351,8 @@ extern struct wb_domain global_wb_domain;
+>  /* These are exported to sysctl. */
+>  extern unsigned int dirty_writeback_interval;
+>  extern unsigned int dirty_expire_interval;
+> -extern unsigned int dirtytime_expire_interval;
+>  extern int laptop_mode;
+>  
+> -int dirtytime_interval_handler(const struct ctl_table *table, int write,
+> -		void *buffer, size_t *lenp, loff_t *ppos);
+> -
+>  void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty);
+>  unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh);
+>  unsigned long cgwb_calc_thresh(struct bdi_writeback *wb);
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index d3de31ec74bf..373e018b950c 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2024,14 +2024,6 @@ static struct ctl_table kern_table[] = {
+>  };
+>  
+>  static struct ctl_table vm_table[] = {
+> -	{
+> -		.procname	= "dirtytime_expire_seconds",
+> -		.data		= &dirtytime_expire_interval,
+> -		.maxlen		= sizeof(dirtytime_expire_interval),
+> -		.mode		= 0644,
+> -		.proc_handler	= dirtytime_interval_handler,
+> -		.extra1		= SYSCTL_ZERO,
+> -	},
+>  	{
+>  		.procname	= "drop_caches",
+>  		.data		= &sysctl_drop_caches,
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
